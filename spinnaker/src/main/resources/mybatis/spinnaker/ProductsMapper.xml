@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.spinnaker.dao.ProductsMapper">
+
+	<resultMap id="ProductsResultMap" type="spinnaker_product">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="product_no" property="productNo" jdbcType="VARCHAR" />
+		<result column="promo_id" property="promoId" jdbcType="INTEGER" />
+		<result column="promo_type" property="promoType" jdbcType="INTEGER" />
+		<result column="max_num" property="maxNum" jdbcType="INTEGER" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="discount" property="discount" jdbcType="TINYINT" />
+		<result column="coupon" property="coupon" jdbcType="INTEGER" />
+		<result column="multi_num1" property="multiNum1" jdbcType="INTEGER" />
+		<result column="muti_price1" property="mutiPrice1" jdbcType="DECIMAL" />
+		<result column="multi_num2" property="multiNum2" jdbcType="INTEGER" />
+		<result column="muti_price2" property="mutiPrice2" jdbcType="DECIMAL" />
+		<result column="multi_num3" property="multiNum3" jdbcType="INTEGER" />
+		<result column="muti_price3" property="mutiPrice3" jdbcType="DECIMAL" />
+		<result column="create_at" property="createAt" jdbcType="TIMESTAMP" />
+		<result column="update_at" property="updateAt" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<resultMap type="PromoProducts" id="ListProductNo">
+		<result column="product_no" property="productNo" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<resultMap type="PromoProducts" id="ListPromoId">
+		<result column="promo_id" property="promoId" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<!-- 临时用的vo类，包括商品编号，参加的促销id -->
+	<resultMap type="com.shangpin.promotion.model.ext.IncludeProductId" 
+		id="findListIncludeProductId">
+		<result column="product_no" property="productNo"/>
+		<result column="promo_id" property="promoId"/>
+		<result column="start_date" property="startDate"/>
+		<result column="end_date" property="endDate"/>
+	</resultMap>
+	
+	<!-- 临时用到的促销详情vo类 -->
+	<resultMap type="com.shangpin.promotion.model.ext.PromoDetail" 
+		id="listPromoDetail">
+		<result column="promo_id" property="promoId"/>
+		<result column="promo_name" property="promoName"/>
+		<result column="promo_type" property="promoType"/>
+		<result column="is_step_incr" property="isStepIncr"/>
+		<result column="start_date" property="startDate" jdbcType="TIMESTAMP"/>
+		<result column="end_date" property="endDate" jdbcType="TIMESTAMP"/>
+		<result column="promo_app_url" property="promoAppUrl"/>
+		<result column="promo_pc_url" property="promoPcUrl"/>
+		<result column="promo_desc" property="promoDesc"/>
+	</resultMap>
+	
+	
+	<sql id="select_detail">
+		promo_id,
+		promo_name,
+		promo_type,
+		is_step_incr,
+        start_date,
+        end_date,
+        promo_app_url, 
+        promo_pc_url,
+        promo_desc
+	</sql>
+	
+	<sql id="all_promoProducts_column">
+		id, product_no, promo_id, promo_type, max_num, price,
+		discount, coupon, multi_num1, muti_price1, multi_num2,
+		muti_price2, multi_num3, muti_price3, create_at, update_at
+	</sql>
+	
+	<!-- 根据promo_id查询所有的促销商品信息 -->
+	<select id="getAllByPromoId" resultMap="PromoProductsResultMap">
+		select
+		<include refid="all_promoProducts_column"></include>
+		from promo_products
+		where promo_id in
+		<foreach collection="list" index="index" item="promoId" open="(" close=")" separator=",">
+			#{promoId}
+		</foreach>
+	</select>
+	
+	<!-- 根据product_no查出在promo_products表中存在的product_no和对应的promo_id -->
+	<select id="findByParams" resultMap="findListIncludeProductId">
+		select product_no, promo_id
+		from promo_products
+		where product_no in
+		<foreach collection="array" index="index" item="productNo" open="(" close=")" separator=",">
+			#{productNo}
+		</foreach>
+	</select>
+	
+	
+	<select id="getPromoByProductId" resultMap="listPromoDetail">
+		select
+		<include refid="select_detail"></include>
+		from promo_setting
+		where
+		<![CDATA[
+		start_date <= now() and end_date >= now()
+		and status = 1
+		and audit_status = 5
+		]]>
+		and promo_id in
+		<foreach collection="list" index="index" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+	
+	<!-- 查询出所有的promo_id -->
+	<select id="findAll" resultMap="ListPromoId">
+		select distinct promo_id
+		from promo_products
+		where product_no in
+		<foreach collection="nos" index="index" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+	
+	<!-- 根据promoId查询出所有的product_no -->
+	<select id="findListByMap" resultMap="ListProductNo">
+		select product_no from promo_products
+		where promo_id = #{promoId}
+		and product_no in
+		<foreach collection="nos" index="index" item="productNo" open="(" close=")" separator=",">
+			#{productNo}
+		</foreach>
+	</select>
+	
+	<!-- 根据promo_id查product_no-->
+	<select id="findProducById" parameterType="java.lang.Integer"  resultType="Object">
+		select product_no
+		from promo_products
+		<trim prefix="WHERE" prefixOverrides="AND|OR ">
+			<if test="_parameter!=null">  
+			and promo_id = #{promoId}
+            </if>
+            
+            <![CDATA[
+            and product_no is not null
+            and product_no <> ''
+            ]]>
+            
+		</trim>
+	</select>
+	
+	<!-- 批量添加促销的商品 -->
+	<insert id="saveList" useGeneratedKeys="true" parameterType="java.util.List">
+	
+		<selectKey resultType="java.lang.Long" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		
+		insert into promo_products(product_no, promo_id)
+		values
+		<foreach collection="list" index="index" item="item" separator=",">
+			(#{item.productNo}, #{item.promoId})
+		</foreach>
+		
+	</insert>
+	
+	
+	<!-- 批量删除促销商品 -->
+	<delete id="deleteByMap" parameterType="java.util.Map">
+		delete from promo_products
+		where promo_id = #{promoId}
+		and product_no in
+		<foreach collection="nos" index="index" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</delete>
+	
+		<!-- 批量删除数据 -->
+	<delete id="deleteList">
+		delete from promo_products
+		where id in 
+		<foreach collection="list" index="index" item="item" open="(" close=")" separator=",">
+			#{item.id}
+		</foreach>
+	</delete>
+	
+</mapper>

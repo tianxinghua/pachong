@@ -1,2 +1,14 @@
+include "project-common"
+
 rootProject.name = 'iog'
+
+include 'project-framework'
+
+include 'spinnaker'
+
+include 'iog-facade'
+
+include 'project-dao'
+
+include 'iog-service'
 
