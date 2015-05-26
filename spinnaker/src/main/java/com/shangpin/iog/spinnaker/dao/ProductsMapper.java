@@ -6,6 +6,8 @@ package com.shangpin.iog.spinnaker.dao;
 import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.spinnaker.domain.Product;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 import java.util.Date;
 import java.util.List;
@@ -15,13 +17,26 @@ public interface ProductsMapper extends IBaseDao<Product> {
 
 
     /**
-     * 根据品类和最后修改时间获取产品
+     * 根据品类和最后修改时间获取产品分页列表
      * @param categoryId 品类ID
      * @param startDate  开始时间
      * @param endDate    结束时间
-     * @param pageIndex  页码
-     * @param pageSize   每页大小
+     * @param rowBounds  rowBounds 对象
      * @return
      */
-	List<Product> findListByCategoryAndLastDate(String categoryId,Date startDate,Date endDate,int pageIndex,int pageSize);
+	List<Product> findListByCategoryAndLastDate(@Param("categoryId")String categoryId,
+                                                @Param("startDate")Date startDate,
+                                                @Param("endDate")Date endDate,
+                                                RowBounds rowBounds);
+
+    /**
+     * 根据品类和最后修改时间获取产品列表
+     * @param categoryId 品类ID
+     * @param startDate  开始时间
+     * @param endDate    结束时间
+     * @return
+     */
+    List<Product> findListByCategoryAndLastDate(@Param("categoryId")String categoryId,
+                                                @Param("startDate")Date startDate,
+                                                @Param("endDate")Date endDate);
 }

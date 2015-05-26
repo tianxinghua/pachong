@@ -12,3 +12,5 @@ include 'project-dao'
 
 include 'iog-service'
 
+include 'iog-web-container'
+

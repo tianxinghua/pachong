@@ -1,0 +1,55 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>
+            org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+        </param-value>
+    </context-param>
+    <!-- 父上下文 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <!-- spring 纯注解-->
+        <param-value>com.shangpin.iog.webcontainer.front.conf.AppContext</param-value>
+        <!--<param-value>classpath*:META-INF/spring/*.xml</param-value>-->
+    </context-param>
+
+
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!-- DispatcherServlet继承了父上下文，由于父子上下文用的同一个，因此不用再注解父上下文了，
+                    除非contextConfigLocation指明的class明确区分了父子上下文：
+                    比如：父上下文class注解@ComponentScan("com.shangpin.shop.schedule.service")只扫描了业务层，
+                    而只上下文class注解@ComponentScan("com.shangpin.shop.frontnt.web")只扫描了v层
+                    那么就可以定义下面的:
+         -->
+        <init-param>
+            <param-name>contextClass</param-name>
+            <param-value>
+                org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>com.shangpin.iog.webcontainer.front.conf.WebControllerContext</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <!-- 这里在配成spring,下边也要写一个名为spring-servlet.xml的文件，主要用来配置它的controller -->
+        <servlet-name>spring</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+
+</web-app>

@@ -33,38 +33,30 @@ dependencies {
 }
 
 ext {
-//    profile = project['profile']
-    profile = 'development'
-    springVersion='4.1.2.RELEASE'
+    if (project.hasProperty('profile')) {
+        profile = project['profile']
+    } else {
+        profile = "development"
+    }
+    springVersion='4.1.4.RELEASE'
     slf4jversion='1.6.6'
     codehaus_jackson_version='1.9.13'
     fasterxml_jackson_version='2.4.4'
+    slf4j_version='1.6.6'
+    log4j_version='1.2.17'
 }
 
-def loadGroovyConfig(){
+
+
+def loadGroovy(){
     def configFile = file('conf/config.groovy')
+
     new ConfigSlurper(profile).parse(configFile.toURL()).toProperties()
 }
 
-//task replace(type: Sync) {
-//    def configHome = "${project.rootDir}/config"
-//
-//    from(configHome) {
-//        include '**/*.properties'
-//        include '**/*.xml'
-//        filter org.org.apache.tools.ant.filters.ReplaceTokens,
-//                tokens: loadGroovyConfig()
-//    }
-//    into "${buildDir}/resources/main"
-//}
 
-processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        filter(org.apache.tools.ant.filters.ReplaceTokens,
-                tokens: loadGroovyConfig()
-        )
-    }
-}
+
+
 
 
 subprojects {
@@ -76,7 +68,9 @@ subprojects {
         compile(
                 "org.projectlombok:lombok:1.14.8",
                 "org.springframework:spring-context:${springVersion}",
-                "org.codehaus.groovy:groovy-all:2.3.10"
+                "org.codehaus.groovy:groovy-all:2.3.10",
+                "org.slf4j:slf4j-api:${slf4j_version}",
+                "org.slf4j:slf4j-log4j12:${slf4j_version}"
         )
         testCompile (
                 'junit:junit:4.11'
@@ -104,6 +98,3 @@ task wrapper(type: Wrapper) {
 //    archivePath = 'gradle/dists'
 }
 
-task testP {
-    println profile
-}

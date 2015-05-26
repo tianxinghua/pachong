@@ -27,7 +27,7 @@ public class Product implements Serializable {
     //季节
     private String season;
 	//产品名称
-    private String productNme;
+    private String productName;
     //描述
     private String description;
     //分类
@@ -92,12 +92,12 @@ public class Product implements Serializable {
         this.season = season;
     }
 
-    public String getProductNme() {
-        return productNme;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setProductNme(String productNme) {
-        this.productNme = productNme;
+    public void setProductNme(String productName) {
+        this.productName = productName;
     }
 
     public String getDescription() {
