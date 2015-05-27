@@ -88,6 +88,7 @@ public class WebControllerContext extends WebMvcConfigurationSupport {
 		viewResolvers.add(jspViewResolver());
 		viewResolvers.add(new BeanNameViewResolver());
 		cnvr.setViewResolvers(viewResolvers);
+
 		//设置默认view
 		List<View> defaultViews=new ArrayList<>();
 		MappingJackson2JsonView mj = new MappingJackson2JsonView();
