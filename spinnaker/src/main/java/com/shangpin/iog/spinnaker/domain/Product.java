@@ -37,7 +37,7 @@ public class Product implements Serializable {
     //供货商价格
     private BigDecimal supplyPrice;
     //skuID
-    private Long itemId;
+    private String  itemId;
     //尺码
     private String  itemSize;
     //条形码
@@ -45,7 +45,7 @@ public class Product implements Serializable {
     //颜色
     private String color;
     //库存
-    private Integer stock;
+    private String stock;
     //创建时间
     private Date createDate;
     //最后修改时间
@@ -132,11 +132,11 @@ public class Product implements Serializable {
         this.supplyPrice = supplyPrice;
     }
 
-    public Long getItemId() {
+    public String getItemId() {
         return itemId;
     }
 
-    public void setItemId(Long itemId) {
+    public void setItemId(String itemId) {
         this.itemId = itemId;
     }
 
@@ -164,11 +164,11 @@ public class Product implements Serializable {
         this.color = color;
     }
 
-    public Integer getStock() {
+    public String getStock() {
         return stock;
     }
 
-    public void setStock(Integer stock) {
+    public void setStock(String stock) {
         this.stock = stock;
     }
 

@@ -12,7 +12,8 @@ dependencies {
             "commons-httpclient:commons-httpclient:3.1",
             "org.apache.httpcomponents:httpclient:4.1.1",
             "net.sf.json-lib:json-lib:2.2:jdk15",
-            "org.apache.poi:poi:3.0.1-FINAL"
+            "org.apache.poi:poi:3.0.1-FINAL",
+            "redis.clients:jedis:${jedis_version}"
 
 
 

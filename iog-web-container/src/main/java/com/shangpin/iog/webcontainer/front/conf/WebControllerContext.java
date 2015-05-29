@@ -173,7 +173,8 @@ public class WebControllerContext extends WebMvcConfigurationSupport {
 	@Override  
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {  
         log.info("---------addResourceHandlers");  
-        registry.addResourceHandler("/static/**","/assets/**").addResourceLocations("/static/","/assets/");  
+        registry.addResourceHandler("/static/**","/assets/**","/js/**")
+                .addResourceLocations("/static/","/assets/","/js/");
     }
 	
 

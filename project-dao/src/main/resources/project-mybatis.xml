@@ -24,10 +24,10 @@
 		<!-- 参数：mapper文件集合 -->
 		<property name="mapperLocations">
 			<list>
-				<value>classpath:/mybatis/spinnaker/*Mapper.xml</value>
+				<value>classpath:/mybatis/*/*Mapper.xml</value>
 			</list>
 		</property>
-		<property name="typeAliasesPackage" value="com.shangpin.iog.spinnaker.domain" />
+		<property name="typeAliasesPackage" value="com.shangpin.iog.*.domain" />
 
         <property name="plugins">
             <array>

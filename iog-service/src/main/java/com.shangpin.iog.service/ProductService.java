@@ -3,7 +3,7 @@ package com.shangpin.iog.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.common.utils.excel.AccountsExcelTemplate;
-import com.shangpin.iog.dto.ProductDTO;
+import com.shangpin.iog.dto.SpinnakerProductDTO;
 
 import java.util.Date;
 
@@ -21,7 +21,7 @@ public interface ProductService {
 
     /**
      * 从数据库中获取产品信息
-     * @param categoryId   品类
+     * @param category   品类
      * @param startDate 开始日期
      * @param endDate   结束日期
      * @param pageIndex 开始页码
@@ -29,11 +29,12 @@ public interface ProductService {
      * @return
      * @throws ServiceException 自定义异常
      */
-    public Page<ProductDTO> findProduct(String categoryId,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+    public Page<SpinnakerProductDTO> findProduct(String category,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
 
     /**
      * 导出excel产品信息
-     * @param categoryId   品类
+     * @param templatePath 模板位置
+     * @param category   品类
      * @param startDate 开始日期
      * @param endDate   结束日期
      * @param pageIndex 开始页码
@@ -41,5 +42,5 @@ public interface ProductService {
      * @return   excel模板
      * @throws ServiceException
      */
-    public AccountsExcelTemplate exportProduct(String categoryId,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+    public AccountsExcelTemplate exportProduct(String templatePath ,String category,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
 }

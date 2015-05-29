@@ -5,7 +5,7 @@
 	<!-- 实体别名设置 -->
 	<typeAliases>
 		<!-- promotion database -->
-		<typeAlias alias="spinnaker_product" type="com.shangpin.iog.spinnaker.domain.Product" />
+		<typeAlias alias="spinnaker_product" type="com.shangpin.iog.dto.SpinnakerProductDTO" />
 
 	</typeAliases>
 </configuration>

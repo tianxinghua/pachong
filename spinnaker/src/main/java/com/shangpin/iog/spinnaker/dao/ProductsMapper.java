@@ -5,6 +5,7 @@ package com.shangpin.iog.spinnaker.dao;
 
 import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
+import com.shangpin.iog.dto.SpinnakerProductDTO;
 import com.shangpin.iog.spinnaker.domain.Product;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
@@ -13,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @Mapper
-public interface ProductsMapper extends IBaseDao<Product> {
+public interface ProductsMapper extends IBaseDao<SpinnakerProductDTO> {
 
 
     /**
@@ -24,7 +25,7 @@ public interface ProductsMapper extends IBaseDao<Product> {
      * @param rowBounds  rowBounds 对象
      * @return
      */
-	List<Product> findListByCategoryAndLastDate(@Param("categoryId")String categoryId,
+	List<SpinnakerProductDTO> findListByCategoryAndLastDate(@Param("category")String categoryId,
                                                 @Param("startDate")Date startDate,
                                                 @Param("endDate")Date endDate,
                                                 RowBounds rowBounds);
@@ -36,7 +37,7 @@ public interface ProductsMapper extends IBaseDao<Product> {
      * @param endDate    结束时间
      * @return
      */
-    List<Product> findListByCategoryAndLastDate(@Param("categoryId")String categoryId,
+    List<SpinnakerProductDTO> findListByCategoryAndLastDate(@Param("category")String categoryId,
                                                 @Param("startDate")Date startDate,
                                                 @Param("endDate")Date endDate);
 }

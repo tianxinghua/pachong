@@ -7,6 +7,8 @@ package com.shangpin.iog.webcontainer.front.controller;
 
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.excel.AccountsExcelTemplate;
+import com.shangpin.iog.common.utils.json.JsonUtil;
+import com.shangpin.iog.dto.ProductSearchDTO;
 import com.shangpin.iog.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.Base64Utils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -36,28 +39,41 @@ public class FileDownloadController {
     @Autowired
     ProductService productService;
 
-    @RequestMapping(value = "viewpage")
-    public String  viewoaddownPage() throws Exception {
+    @RequestMapping(value = "view")
+    public String  viewPage() throws Exception {
         return "spinnaker";
     }
 
 
     @RequestMapping(value = "spinnaker")
     public void download(HttpServletRequest request,
-                                 HttpServletResponse response) throws Exception {
+                                 HttpServletResponse response,
+                                 String queryJson) throws Exception {
+
+        ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);;
+        if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
 
 
-//        String realpath = request.getSession().getServletContext().getRealPath("/template/spinnaker.xls");
-//        AccountsExcelTemplate template = AccountsExcelTemplate.newInstance(realpath);
+        String realPath = request.getSession().getServletContext().getRealPath("/template/common.xls");
 
-        Date start =DateTimeUtil.convertFormat("2015-05-26 00:00:00","yyyy-MM-dd HH:mm:ss");
+        Date startDate  =null;
+        if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
+            startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
+        }
 
-        productService.exportProduct("BORSA",start,new Date(),1,10);
+        Date endDate = null;
+        if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
+            endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
+        }
+
+        AccountsExcelTemplate template =   productService.exportProduct(realPath ,productSearchDTO.getCategory(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize());
+
+
 
         response.reset();
-        response.setContentType("application/x-download;charset=GBK");
-        response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("结算单_" + System.currentTimeMillis() + ".xls", "UTF-8"));
-//        template.getWorkbook().write(response.getOutputStream());
+        response.setContentType("application/x-download;charset=UTF-8");//GBK
+        response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("product" + System.currentTimeMillis() + ".xls", "UTF-8"));
+        template.getWorkbook().write(response.getOutputStream());
         response.getOutputStream().flush();
         response.getOutputStream().close();
 
