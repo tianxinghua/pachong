@@ -129,3 +129,4 @@ Icon
 !**/wrapper/*.jar
 
 *.gitignore
+iog-web-container/WebContent/META-INF/MANIFEST.MF
