@@ -130,3 +130,4 @@ Icon
 
 *.gitignore
 iog-web-container/WebContent/META-INF/MANIFEST.MF
+*.MF

@@ -2,9 +2,12 @@ package com.shangpin.iog.webcontainer.front.conf;
 
 
 
-import com.shangpin.iog.webcontainer.front.conf.interceptor.MySimpleMappingExceptionResolver;
-import com.shangpin.iog.webcontainer.front.conf.interceptor.PageInterceptor;
-import com.shangpin.iog.webcontainer.front.conf.interceptor.TokenInterceptor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import javax.servlet.Filter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -16,8 +19,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
@@ -38,10 +39,9 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import com.shangpin.iog.webcontainer.front.conf.interceptor.MySimpleMappingExceptionResolver;
+import com.shangpin.iog.webcontainer.front.conf.interceptor.PageInterceptor;
+import com.shangpin.iog.webcontainer.front.conf.interceptor.TokenInterceptor;
 
 /**
  * @description web应用上下文，用于扫描controller(view)层<br/>
@@ -64,10 +64,6 @@ import java.util.Properties;
 public class WebControllerContext extends WebMvcConfigurationSupport {
 	static Logger log = LoggerFactory.getLogger(WebControllerContext.class);
 	
-
-
-
-
 	public ViewResolver jspViewResolver() {
 		log.info("-------------viewResolver:jspViewResolver");
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
@@ -76,6 +72,11 @@ public class WebControllerContext extends WebMvcConfigurationSupport {
 		viewResolver.setOrder(110);
 		return viewResolver;	
 	}
+	@Bean
+	public Filter permissionFilter(){
+		return new PermissionFilter();
+	}
+	
 	@Bean
 	public ViewResolver contentNegotiatingViewResolver(){
 		log.info("-------------viewResolver:contentNegotiatingViewResolver-------");
