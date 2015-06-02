@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -25,7 +26,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 public class PermissionFilter extends OncePerRequestFilter  {
 	private Logger log = LoggerFactory.getLogger(PermissionFilter.class) ;
-	static Long tokenOutTime=7200000L;//120min
 	static List<String> resource=new ArrayList<>();
 	static List<String> uris=new ArrayList<>();
 	{
@@ -33,32 +33,45 @@ public class PermissionFilter extends OncePerRequestFilter  {
 		for(String s:rstr.split(",")){
 			resource.add(s);			
 		}
-		uris.add("/login");uris.add("/logout");uris.add("/loging");
+		uris.add("/login");uris.add("/logout");
 	}
 	@Override
 	protected void doFilterInternal(HttpServletRequest request,
 			HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		//filterChain.doFilter(request, response);
 		log.info("----->Permision Filter:"+request.getRequestURI());
 		String uri=request.getServletPath();
 		HttpSession session=request.getSession();
-		boolean filter=false;
-		if(session.getAttribute(UAASUtil.TOKEN)==null && !passUrl(uri)	){
-			filter=true;
-		}
-		log.info("filter result:"+filter);
-		if(filter){
-			request.getRequestDispatcher("/loging").forward(request,response);
+		boolean passed = (session.getAttribute(UAASUtil.TOKEN)!=null || passUrl(uri));
+		if(!passed){
+			response.sendRedirect(UAASUtil.redirectUAAS(null));
 			return;
 		}else{
 			long tokenTime=request.getSession().getCreationTime();
-			if((new Date().getTime()-tokenTime)>tokenOutTime){
+			if((new Date().getTime()-tokenTime)>UAASUtil.TOKEN_OUT_SEC*1000){
 				touchToken((String)session.getAttribute(UAASUtil.TOKEN),session);
+			}
+			if(!isPermit(uri,request)){
+				response.sendRedirect(UAASUtil.redirectUAAS(null));
+				return;
 			}
 			filterChain.doFilter(request, response);
 		}
-		//String token=(String)session.getAttribute(LoginController.TOKEN);
+	}
+
+	/**
+	 * 判断url是否允许访问
+	 * @param uri 访问的uri，项目相对路径
+	 * @param request 访问请求，获取会话对象中授权的uri 
+	 * @return 
+	 */
+	private boolean isPermit(String uri, HttpServletRequest request) {
+		@SuppressWarnings("unchecked")
+		Set<String> menus=(Set<String>) request.getSession().getAttribute(UAASUtil.APPMENUSET);
+		if(menus.contains(uri)){
+			return true;
+		}
+		return false;
 	}
 
 	/**
