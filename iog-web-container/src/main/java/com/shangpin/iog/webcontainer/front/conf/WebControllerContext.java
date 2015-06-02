@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import javax.servlet.Filter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -71,10 +69,6 @@ public class WebControllerContext extends WebMvcConfigurationSupport {
 		viewResolver.setSuffix(".jsp");
 		viewResolver.setOrder(110);
 		return viewResolver;	
-	}
-	@Bean
-	public Filter permissionFilter(){
-		return new PermissionFilter();
 	}
 	
 	@Bean
