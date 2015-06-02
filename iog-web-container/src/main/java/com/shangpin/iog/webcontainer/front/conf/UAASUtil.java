@@ -149,6 +149,7 @@ public class UAASUtil {
 		try {
 			rtnMenu = objectMapper.readValue(json,javaType);
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return rtnMenu;
 	}
@@ -159,7 +160,7 @@ public class UAASUtil {
 	 */
 	public static List<MenuDTO> findAPPMenus(String token){
 		String menuFace="facade/json/com.shangpin.uaas.api/User/findMenusByAppCode";
-		String json=request(menuFace,token,"CSS");
+		String json=request(menuFace,token,"CMS");
 		List<MenuDTO> rtnMenu = json2Obj(getVal(json));
 		System.out.println(JSONArray.fromObject(rtnMenu).toString());
 		return rtnMenu;
@@ -173,12 +174,29 @@ public class UAASUtil {
 		return (host+loginURI).replaceFirst("{clientURL}", appURL==null?appUrl:appURL);
 	}
 	public static void main(String[] args) {
-		String token="8a0e241d-d6f9-4b6e-b903-e4f40a64d4dc";//login("admin", "123456");
-		findAPPMenus(token);
-		
+		//String token=login("admin", "123456");
+		String token="4776c60d-0ddd-4de1-a2fb-e5b7a2a9ebaa";
+		//findAPPMenus(token);
+		//mvc-action://iog/iog.shangpin.com
+		//String uri="mvc-action://iog/iog.shangpin.com/download/view";
+		//mvc-action://cms/shangpin/productmsg/submitbatchaudit";
+		String uri="mvc-action://iog/download/xls";
+		isPermitted(token,uri);
 		//delayTokenTime(token);
 		//isPermitted(token, "mvc-action://tms/tms.shangpin.com/DeliveryInfo");
 		//isPermitted(token, "mvc-action://tms/Delivery/OrderManage/DeliveryInfo");
+	}
+
+	/**
+	 * @param string
+	 * @param string2
+	 * @return
+	 */
+	public static String login(String userName, String password) {
+		String loginFace="facade/json/com.shangpin.uaas.api/Authentication/login";
+		String jsonStr=request(loginFace,userName,password);
+		String isV=getVal(jsonStr);
+		return isV;
 	}
 
 }
