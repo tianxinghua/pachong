@@ -5,6 +5,7 @@ package com.shangpin.iog.webcontainer.front.controller;
 
 
 
+import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.excel.AccountsExcelTemplate;
 import com.shangpin.iog.common.utils.json.JsonUtil;
@@ -23,10 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -74,8 +72,73 @@ public class FileDownloadController {
         response.setContentType("application/x-download;charset=UTF-8");//GBK
         response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("product" + System.currentTimeMillis() + ".xls", "UTF-8"));
         template.getWorkbook().write(response.getOutputStream());
+
+
         response.getOutputStream().flush();
         response.getOutputStream().close();
+
+    }
+
+
+    @RequestMapping(value = "csv")
+    public void downloadCsv(
+                         HttpServletResponse response,
+                         String queryJson) throws Exception {
+//        BufferedInputStream in = null;
+//        BufferedOutputStream out = null;
+        try {
+
+
+            ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
+            ;
+            if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
+
+
+            Date startDate  =null;
+            if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
+                startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
+            }
+
+            Date endDate = null;
+            if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
+                endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
+            }
+
+            StringBuffer productBuffer =productService.exportProduct(productSearchDTO.getCategory(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize());
+
+            response.reset();
+
+            response.setContentType("text/csv;charset=gb2312");
+
+            response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("spinnaker_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+
+//            System.out.print("kk ----------------- " + productBuffer.toString());
+//            in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("UTF-8")));
+//
+//            out = new BufferedOutputStream(response.getOutputStream());
+//            byte[] data = new byte[1024];
+//            int len = 0;
+//            while (-1 != (len=in.read(data, 0, data.length))) {
+//                out.write(data, 0, len);
+//            }
+
+            response.getOutputStream().write(productBuffer.toString().getBytes("gb2312"));
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+//            if (in != null) {
+//                in.close();
+//            }
+//            if (out != null) {
+//                out.close();
+//            }
+        }
+
+
 
     }
 

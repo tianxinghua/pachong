@@ -18,7 +18,8 @@
         <result column="item_size" property="itemSize" />
         <result column="color" property="color" />
         <result column="stock" property="stock" />
-        <result column="item_picture" property="itemPictureUrl"/>
+        <result column="pictures" property="itemPictureUrl"/>
+        <result column="product_detail" property="productDetail"/>
 
 
 	</resultMap>
@@ -38,7 +39,7 @@
         category,
         url,
         supply_price,
-        item_id,barcode,item_size,color,stock,item_picture
+        item_id,barcode,item_size,color,stock,pictures,product_detail
 	</sql>
 	
 
@@ -54,10 +55,16 @@
             <if test="null!=startDate">
                 and spidertime >= #{startDate}
             </if>
+           <if test="endDate!=null">
+
+                <![CDATA[ and spidertime <= #{endDate}    ]]>
+
+            </if>
+
 
 
         </where>
-        order by id
+        order by producer_id , category
 
 
 	</select>

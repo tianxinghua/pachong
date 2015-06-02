@@ -25,25 +25,27 @@
 
     function exportProduct() {
 
-        if(""!=$('pageIndex').val()){
+
+        if(typeof($('#pageIndex').val()) != "undefined"&& $.trim($('#pageIndex').val()).length !=0){
             if(isNaN($('#pageIndex').val())){
                 alert("请输入数字");
                 $('#pageIndex').focus();
                 return ;
             }
-            if(""==$('pageSize').val()){
+
+            if(typeof($('#pageSize').val()) == "undefined"||$.trim($('#pageSize').val()).length ==0){
                 alert("页码有数值时，导出行数必须也要有数值");
                 return ;
             }
         }
 
-        if(""!=$('pageSize').val()){
+        if(typeof($('#pageSize').val()) != "undefined"&&$.trim($('#pageSize').val()).length !=0){
             if(isNaN($('#pageSize').val())){
                 alert("请输入数字");
                 $('#pageSize').focus();
                 return ;
             }
-            if(""==$('pageIndex').val()){
+            if(typeof($('#pageIndex').val()) == "undefined"||$.trim($('#pageIndex').val()).length ==0){
                 alert("导出行数有数值时，页码必须也要有数值");
                 return ;
             }
@@ -59,7 +61,7 @@
             pageSize:$('#pageSize').val()
 
         };
-        window.open('spinnaker?queryJson='+$.toJSON(search), '','');
+        window.open('csv?queryJson='+$.toJSON(search), '','');
     }
 
     function clearText(){
@@ -85,9 +87,9 @@
             <tr>
 
                 <td>导出时间:</td>
-                <td><input id="startDate" name="startDate" style="width: 90px;" onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}',minDate:'#F{$dp.$D(\'endDate\',{M:-1})}'})">
+                <td><input id="startDate" name="startDate" style="width: 130px;" onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}',minDate:'#F{$dp.$D(\'endDate\',{M:-1})}'})">
 
-                <input id="endDate" name="endDate" style="width: 90px;" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDate\')}',maxDate:'#F{$dp.$D(\'startDate\',{M:+1})}'})"></td>
+                <input id="endDate" name="endDate" style="width: 130px;" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDate\')}',maxDate:'#F{$dp.$D(\'startDate\',{M:+1})}'})"></td>
                 <td></td><td></td>
             </tr>
             <tr>

@@ -34,6 +34,8 @@ public class SpinnakerProductDTO implements Serializable{
     private String url;
     //供货商价格
     private String supplyPrice;
+    //具体信息 产地 材质
+    private String  productDetail;
     //skuID
     private String itemId;
     //尺码
@@ -47,21 +49,21 @@ public class SpinnakerProductDTO implements Serializable{
     //明细图片地址
     private String itemPictureUrl;
 
-    private String itemPictureUrl1;
+    private String itemPictureUrl1="";
 
-    private String itemPictureUrl2;
+    private String itemPictureUrl2="";
 
-    private String itemPictureUrl3;
+    private String itemPictureUrl3="";
 
-    private String itemPictureUrl4;
+    private String itemPictureUrl4="";
 
-    private String itemPictureUrl5;
+    private String itemPictureUrl5="";
 
-    private String itemPictureUrl6;
+    private String itemPictureUrl6="";
 
-    private String itemPictureUrl7;
+    private String itemPictureUrl7="";
 
-    private String itemPictureUrl8;
+    private String itemPictureUrl8="";
 
 
 

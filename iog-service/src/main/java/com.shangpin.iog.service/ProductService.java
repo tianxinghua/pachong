@@ -43,4 +43,16 @@ public interface ProductService {
      * @throws ServiceException
      */
     public AccountsExcelTemplate exportProduct(String templatePath ,String category,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+
+    /**
+     * 获取产品信息
+     * @param category   品类
+     * @param startDate 开始日期
+     * @param endDate   结束日期
+     * @param pageIndex 开始页码
+     * @param pageSize  每页显示行数
+     * @return  StringBuffer
+     * @throws ServiceException
+     */
+    public StringBuffer exportProduct(String category,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
 }
