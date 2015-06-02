@@ -9,14 +9,17 @@ version = '1.0'
 
 allprojects {
     apply plugin: 'idea'
-
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
     idea {
         module {
             inheritOutputDirs = false
             outputDir = file("$buildDir/classes/main/")
         }
     }
-
+	eclipse.project {
+		natures 'org.springsource.ide.eclipse.gradle.core.nature'
+	}
     repositories {
         mavenLocal()
         maven {
