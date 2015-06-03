@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.spinnaker.dao.ProductsMapper">
+
+	<resultMap id="ProductsResultMap" type="spinnaker_product">
+		<id column="id" property="id" />
+		<result column="product_id" property="productId"  />
+		<result column="producer_id" property="producerId"  />
+		<result column="p_type" property="type"  />
+		<result column="season" property="season"  />
+		<result column="product_name" property="productName" />
+		<result column="description" property="description"  />
+		<result column="category" property="category"  />
+		<result column="url" property="url"  />
+        <result column="supply_price" property="supplyPrice"/>
+        <result column="item_id" property="itemId"  />
+        <result column="barcode" property="barcode" />
+        <result column="item_size" property="itemSize" />
+        <result column="color" property="color" />
+        <result column="stock" property="stock" />
+        <result column="pictures" property="itemPictureUrl"/>
+        <result column="product_detail" property="productDetail"/>
+
+
+	</resultMap>
+	
+
+
+	
+	
+	<sql id="all_products_column">
+		id ,
+		product_id ,
+		producer_id,
+		p_type,
+        season,
+        product_name,
+        description,
+        category,
+        url,
+        supply_price,
+        item_id,barcode,item_size,color,stock,pictures,product_detail
+	</sql>
+	
+
+	<select id="findListByCategoryAndLastDate"  resultMap="ProductsResultMap">
+		select
+		<include refid="all_products_column"></include>
+		from spinaker_sku
+        <where>
+          <if test="null!=category">
+               category = #{category}
+          </if>
+            <if test="null!=startDate">
+                and spidertime >= #{startDate}
+            </if>
+           <if test="endDate!=null">
+
+                <![CDATA[ and spidertime <= #{endDate}    ]]>
+
+            </if>
+
+
+
+        </where>
+        order by producer_id , category
+
+
+	</select>
+	
+
+	
+	
+
+	
+
+
+	
+</mapper>

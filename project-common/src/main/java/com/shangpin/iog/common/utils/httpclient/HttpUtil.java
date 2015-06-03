@@ -111,7 +111,6 @@ public class HttpUtil {
             if(isAuthentication){//需要验证
 
 
-//           CredentialsProvider provider = new Basic
                 httpClient.getParams().setAuthenticationPreemptive(true);
 
                 UsernamePasswordCredentials creds = new UsernamePasswordCredentials(user, password);
@@ -133,7 +132,6 @@ public class HttpUtil {
 
 
     public static String getData(String url,Boolean proxy) throws ServiceException {
-        String responseStr="";
         if(null==proxy) proxy=false;
         HttpClient httpClient = new HttpClient(proxy);
 
@@ -151,26 +149,20 @@ public class HttpUtil {
 
 
     public static String getData(String url,Boolean proxy,Boolean isAuthentication,String user,String password) throws ServiceException {
-        String responseStr="";
         if(null==proxy) proxy=false;
         HttpClient httpClient = new HttpClient(proxy);
         GetMethod getMethod = new GetMethod(url);
 
         if(isAuthentication){//需要验证
 
-
-//           CredentialsProvider provider = new Basic
+            httpClient.getParams().setAuthenticationPreemptive(true);
 
             UsernamePasswordCredentials creds = new UsernamePasswordCredentials(user, password);
 
-            httpClient.getState().setCredentials(AuthScope.ANY, creds);
-            getMethod.setDoAuthentication(true);
+            httpClient.getState().setCredentials(new AuthScope(null, 443, AuthScope.ANY_REALM), creds);
         }
 
-//       //设置http头
-//        List<Header> headers = new ArrayList<Header>();
-//        headers.add(new Header("User-Agent", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)"));
-//        httpClient.getHostConfiguration().getParams().setParameter("http.default-headers", headers);
+
 
 
 
