@@ -43,7 +43,6 @@
 	</sql>
 	
 
-	<!-- 根据promo_id查询所有的促销商品信息 -->
 	<select id="findListByCategoryAndLastDate"  resultMap="ProductsResultMap">
 		select
 		<include refid="all_products_column"></include>

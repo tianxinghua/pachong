@@ -1,9 +1,9 @@
 package com.shangpin.iog.common.utils.redis;
 
-import redis.clients.jedis.JedisShardInfo;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import redis.clients.jedis.JedisShardInfo;
 
 /**
  * Created by loyalty on 15/2/28.

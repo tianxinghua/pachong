@@ -37,7 +37,14 @@
         <filter-name>charsetFilter</filter-name>
         <servlet-name>spring</servlet-name>
     </filter-mapping>
-
+   <!--  <filter>
+        <filter-name>permissionFilter</filter-name>
+        <filter-class>com.shangpin.iog.webcontainer.front.conf.PermissionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>permissionFilter</filter-name>
+        <servlet-name>spring</servlet-name>
+    </filter-mapping> -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>

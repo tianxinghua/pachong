@@ -1,73 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-    xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+ xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
 
-    <context:property-placeholder
-            location="classpath:datasource.properties" ignore-unresolvable="true"/>
+ <context:property-placeholder location="classpath:datasource.properties"
+  ignore-unresolvable="true" />
 
-	<!-- 配置数据库连接配置文件 -->
-	<import resource="classpath:project-datasource.xml" />
+ <import resource="classpath:project-datasource.xml" />
 
-	<!--  SqlSessionFactoryBean -->
-	<bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<!-- 参数：数据源 -->
-		<property name="dataSource" ref="iogDataSource" />
-		<!-- 参数：配置实体 -->
-		<property name="configLocation" value="classpath:/mybatis/sqlmap-config.xml" />
-		<!-- 参数：mapper文件集合 -->
-		<property name="mapperLocations">
-			<list>
-				<value>classpath:/mybatis/*/*Mapper.xml</value>
-			</list>
-		</property>
-		<property name="typeAliasesPackage" value="com.shangpin.iog.*.domain" />
+ <!-- SqlSessionFactoryBean -->
+ <bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+  <property name="dataSource" ref="iogDataSource" />
+  <property name="configLocation" value="classpath:/mybatis/sqlmap-config.xml" />
+  <property name="mapperLocations">
+   <list>
+    <value>classpath:/mybatis/*/*Mapper.xml</value>
+   </list>
+  </property>
+  <property name="typeAliasesPackage" value="com.shangpin.iog.*.domain" />
 
-        <property name="plugins">
-            <array>
-                <bean class="com.github.pagehelper.PageHelper">
-                    <property name="properties">
-                        <value>
-                            dialect=sqlserver
-                            reasonable=true
-                        </value>
-                    </property>
-                </bean>
+  <property name="plugins">
+   <array>
+    <bean class="com.github.pagehelper.PageHelper">
+     <property name="properties">
+      <value>
+       dialect=sqlserver
+       reasonable=true
+      </value>
+     </property>
+    </bean>
 
-            </array>
-        </property>
-	</bean>
+   </array>
+  </property>
+ </bean>
 
 
 
-	<!--  通过扫描指定目录下所有Mapper，所有的Mapper都继承了SqlMapper接口 -->
-	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="sqlSessionFactoryBeanName" value="sessionFactory" />
-		<property name="basePackage" value="com.shangpin.iog.*.dao" />
-		<property name="annotationClass" value="com.shangpin.iog.dao.base.Mapper" />
-	</bean>
+ <!-- 通过扫描指定目录下所有Mapper，所有的Mapper都继承了SqlMapper接口 -->
+ <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+  <property name="sqlSessionFactoryBeanName" value="sessionFactory" />
+  <property name="basePackage" value="com.shangpin.iog.*.dao" />
+  <property name="annotationClass" value="com.shangpin.iog.dao.base.Mapper" />
+ </bean>
 
 
 
 
 
 
-	<!-- 事务配置Start -->
-	<bean id="spinnakerTransactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="iogDataSource" />
-	</bean>
-	
+ <!-- 事务配置Start -->
+ <bean id="spinnakerTransactionManager"
+  class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+  <property name="dataSource" ref="iogDataSource" />
+ </bean>
 
 
-	<tx:annotation-driven transaction-manager="spinnakerTransactionManager" />
-	<!-- 事务配置End -->
+
+ <tx:annotation-driven transaction-manager="spinnakerTransactionManager" />
+ <!-- 事务配置End -->
 
 
 
