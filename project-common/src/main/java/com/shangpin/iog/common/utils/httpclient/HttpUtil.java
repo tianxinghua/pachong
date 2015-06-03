@@ -1,23 +1,25 @@
 package com.shangpin.iog.common.utils.httpclient;
 
 
-import com.shangpin.framework.ServiceException;
-import com.shangpin.framework.ServiceMessageException;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.auth.AuthScheme;
+import java.io.IOException;
+
+import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.auth.CredentialsNotAvailableException;
-import org.apache.commons.httpclient.auth.CredentialsProvider;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.DefaultProtocolSocketFactory;
 import org.apache.commons.httpclient.protocol.Protocol;
-import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
 
 
 /**

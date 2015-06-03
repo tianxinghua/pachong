@@ -27,18 +27,35 @@
 
 package org.apache.http.impl.client;
 
+import java.util.ResourceBundle;
+
 import org.apache.http.HttpHost;
 import org.apache.http.HttpVersion;
 import org.apache.http.annotation.ThreadSafe;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.protocol.*;
+import org.apache.http.client.protocol.RequestAddCookies;
+import org.apache.http.client.protocol.RequestAuthCache;
+import org.apache.http.client.protocol.RequestClientConnControl;
+import org.apache.http.client.protocol.RequestDefaultHeaders;
+import org.apache.http.client.protocol.RequestExpectContinue;
+import org.apache.http.client.protocol.RequestProxyAuthentication;
+import org.apache.http.client.protocol.RequestTargetAuthentication;
+import org.apache.http.client.protocol.ResponseAuthCache;
+import org.apache.http.client.protocol.ResponseProcessCookies;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.params.*;
-import org.apache.http.protocol.*;
+import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.params.SyncBasicHttpParams;
+import org.apache.http.protocol.BasicHttpProcessor;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.RequestContent;
+import org.apache.http.protocol.RequestTargetHost;
+import org.apache.http.protocol.RequestUserAgent;
 import org.apache.http.util.VersionInfo;
-
-import java.util.ResourceBundle;
 
 /**
  * Default implementation of {@link HttpClient} pre-configured for most common use scenarios.
