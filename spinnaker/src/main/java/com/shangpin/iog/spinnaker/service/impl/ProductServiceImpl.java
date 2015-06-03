@@ -150,6 +150,12 @@ public class ProductServiceImpl implements ProductService {
 
 
     }
+
+    @Override
+    public Page<SpinnakerProductDTO> findProductBySupplierAndTime(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
+        return null;
+    }
+
     @Override
     public Page<SpinnakerProductDTO> findProduct(String category,Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
 

@@ -7,6 +7,9 @@
 		<!-- promotion database -->
 		<typeAlias alias="spinnaker_product" type="com.shangpin.iog.dto.SpinnakerProductDTO" />
         <typeAlias alias="iog_spu" type="com.shangpin.iog.dto.SpuDTO" />
+        <typeAlias alias="iog_sku" type="com.shangpin.iog.dto.SkuDTO" />
+
+
 
 	</typeAliases>
 </configuration>
