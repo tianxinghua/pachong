@@ -4,6 +4,10 @@ package com.shangpin.iog.common.utils.httpclient;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.auth.AuthScheme;
+import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.auth.CredentialsNotAvailableException;
+import org.apache.commons.httpclient.auth.CredentialsProvider;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -12,6 +16,8 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -20,14 +26,18 @@ import java.io.IOException;
 public class HttpUtil {
 	public static void main(String args[]) {
 
-        String url="http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetAllTypes?DBContext=default&key=8IZk2x5tVN";
+        String url="https://api.orderlink.it/v1/user/token";
         NameValuePair[] data = {
-                new NameValuePair("DBContext", "default"),
-                new NameValuePair("data", "8IZk2x5tVN")
+                new NameValuePair("access_token", "6c9ade4c5fea79a5c0b060c67b55f4a2a59316dff3a18f047990484b8cc74d8c6ecddbbbb03139211f017ee9ea983f908ae5a46cf087294ccfdb46a78107fd01c51b13b2dc624f8496fc85de3a7f6ce72554196bc78f1e0a0c78dfe433c1ace4"),
+                new NameValuePair("page","10"),
+                new NameValuePair("limit","100")
+
 
         };
         try {
-          String kk=  HttpUtil.getData(url,false);
+//          String kk= HttpUtil.getData("https://api.orderlink.it/v1/products?access_token=6c9ade4c5fea79a5c0b060c67b55f4a2a59316dff3a18f047990484b8cc74d8c6ecddbbbb03139211f017ee9ea983f908ae5a46cf087294ccfdb46a78107fd010da5437c42e13b17de93a90c3fa2bee5e11d1723eb68026b1bc26f37152c8a38&page=10&limit=100",false);// HttpUtil.getData(url,false,true,"SHANGPIN","12345678");
+            String kk = HttpUtil.postData(url, null, false, true, "SHANGPIN", "12345678");
+//            String kk=HttpUtil.getData("https://api.orderlink.it/v1/user/token?username=SHANGPIN&password=12345678",false);
             System.out.println("content = "  + kk);
         } catch (ServiceException e) {
             e.printStackTrace();
@@ -56,56 +66,68 @@ public class HttpUtil {
      * @throws ServiceException
      */
     public static String postData(String url,NameValuePair[] data,Boolean proxy) throws ServiceException {
+        if(null==proxy) proxy=false;
+        HttpClient httpClient = new HttpClient(proxy);
+
+        try {
+            PostMethod postMethod =  new PostMethod(url);
+
+            // 将表单的值放入postMethod中
+            if(null!=data) {
+                postMethod.setRequestBody(data);
+            }
+
+
+            return getResponse(httpClient,postMethod);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        return "{\"error\":\"失败\"}";
+    }
+
+    /**
+     *
+     * @param url 地址
+     * @param data 参数
+     * @param proxy 是否代理
+     * @param isAuthentication 是否认证
+     * @param user  认证用户
+     * @param password  认证密码
+     * @return
+     * @throws ServiceException 自定义异常
+     */
+    public static String postData(String url,NameValuePair[] data,Boolean proxy,Boolean isAuthentication,String user,String password) throws ServiceException {
         String responseStr="";
         if(null==proxy) proxy=false;
         HttpClient httpClient = new HttpClient(proxy);
-        // 执行postMethod
-        int statusCode = 0;
-        PostMethod postMethod = null;
         try {
-            postMethod = new PostMethod(url);
-
+            PostMethod postMethod =  new PostMethod(url);
 
             // 将表单的值放入postMethod中
-            postMethod.setRequestBody(data);
-
-            postMethod.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
-
-            statusCode = httpClient.executeMethod(postMethod);
-
-            // HttpClient对于要求接受后继服务的请求，象POST和PUT等不能自动处理转发
-            // 301或者302
-            if (statusCode == HttpStatus.SC_MOVED_PERMANENTLY
-                    || statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
-                // 从头中取出转向的地址
-                Header locationHeader = postMethod.getResponseHeader("location");
-                String location = null;
-                if (locationHeader != null) {
-                    location = locationHeader.getValue();
-                    responseStr="The page was redirected to:" + location;
-                } else {
-                    responseStr="Location field value is null.";
-                }
-
-            } else {
+            if(null!=data) {
+                postMethod.setRequestBody(data);
+            }
+            if(isAuthentication){//需要验证
 
 
-                responseStr = postMethod.getResponseBodyAsString();
+//           CredentialsProvider provider = new Basic
 
+                UsernamePasswordCredentials creds = new UsernamePasswordCredentials(user, password);
+
+                httpClient.getState().setCredentials(AuthScope.ANY, creds);
+                postMethod.setDoAuthentication(true);
             }
 
-        } catch (HttpException e) {
-            e.printStackTrace();
-            throw new ServiceMessageException("网络连接异常");
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new ServiceMessageException("网络连接异常");
-        } finally {
-            postMethod.releaseConnection();
-            httpClient.getHttpConnectionManager().closeIdleConnections(0);
-        }
 
-        return responseStr;
+            return getResponse(httpClient,postMethod);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        return "{\"error\":\"失败\"}";
     }
 
 
@@ -114,25 +136,68 @@ public class HttpUtil {
         String responseStr="";
         if(null==proxy) proxy=false;
         HttpClient httpClient = new HttpClient(proxy);
-        // 执行postMethod
-        int statusCode = 0;
-        GetMethod getMethod = null;
+
+        GetMethod getMethod = new GetMethod(url);
+
+        return getResponse(httpClient, getMethod);
+    }
+
+
+
+
+
+
+
+
+
+    public static String getData(String url,Boolean proxy,Boolean isAuthentication,String user,String password) throws ServiceException {
+        String responseStr="";
+        if(null==proxy) proxy=false;
+        HttpClient httpClient = new HttpClient(proxy);
+        GetMethod getMethod = new GetMethod(url);
+
+        if(isAuthentication){//需要验证
+
+
+//           CredentialsProvider provider = new Basic
+
+            UsernamePasswordCredentials creds = new UsernamePasswordCredentials(user, password);
+
+            httpClient.getState().setCredentials(AuthScope.ANY, creds);
+            getMethod.setDoAuthentication(true);
+        }
+
+//       //设置http头
+//        List<Header> headers = new ArrayList<Header>();
+//        headers.add(new Header("User-Agent", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)"));
+//        httpClient.getHostConfiguration().getParams().setParameter("http.default-headers", headers);
+
+
+
+        return getResponse(httpClient, getMethod);
+    }
+
+
+    private static String getResponse(HttpClient httpClient,HttpMethod method) throws ServiceException{
+        String responseStr="";
         try {
-            getMethod = new GetMethod(url);
 
 
             // 将表单的值放入postMethod中
 
-            getMethod.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
+            method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
+                    new DefaultHttpMethodRetryHandler(3, false));
 
-            statusCode = httpClient.executeMethod(getMethod);
+            method.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
+
+            int statusCode = httpClient.executeMethod(method);
 
             // HttpClient对于要求接受后继服务的请求，象POST和PUT等不能自动处理转发
             // 301或者302
             if (statusCode == HttpStatus.SC_MOVED_PERMANENTLY
                     || statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
                 // 从头中取出转向的地址
-                Header locationHeader = getMethod.getResponseHeader("location");
+                Header locationHeader = method.getResponseHeader("location");
                 String location = null;
                 if (locationHeader != null) {
                     location = locationHeader.getValue();
@@ -144,7 +209,7 @@ public class HttpUtil {
             } else {
 
 
-                responseStr = getMethod.getResponseBodyAsString();
+                responseStr = method.getResponseBodyAsString();
 
             }
 
@@ -155,12 +220,13 @@ public class HttpUtil {
             e.printStackTrace();
             throw new ServiceMessageException("网络连接异常");
         } finally {
-            getMethod.releaseConnection();
+            method.releaseConnection();
             httpClient.getHttpConnectionManager().closeIdleConnections(0);
         }
-
         return responseStr;
     }
+
+
 
     private static PostMethod getPostMethod(String url) {
          PostMethod pmethod = new PostMethod(url);

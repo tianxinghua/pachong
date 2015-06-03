@@ -133,21 +133,26 @@ public class DefaultHttpClient extends AbstractHttpClient {
     }
 
 
-    public DefaultHttpClient() {
+
+
+    public DefaultHttpClient(Boolean useProxy) {
         super(null, null);
         // 代理的设置
-        try {
-            ResourceBundle bundle = ResourceBundle.getBundle("proxy");
+        if(useProxy){
+            try {
+                ResourceBundle bundle = ResourceBundle.getBundle("proxy");
 
-            String proxyAddress = bundle.getString("proxy.address");
-            Integer proxyPort = Integer.parseInt(bundle.getString("proxy.port"));
-            if(!proxyAddress.isEmpty()&&proxyPort!=null){
-                HttpHost proxy = new HttpHost(proxyAddress, proxyPort);
-                this.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+                String proxyAddress = bundle.getString("proxy.address");
+                Integer proxyPort = Integer.parseInt(bundle.getString("proxy.port"));
+                if(!proxyAddress.isEmpty()&&proxyPort!=null){
+                    HttpHost proxy = new HttpHost(proxyAddress, proxyPort);
+                    this.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
             }
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
         }
+
     }
 
 
