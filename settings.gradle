@@ -16,3 +16,5 @@ include 'iog-web-container'
 
 include 'apennine'
 
+include 'iog-common-product'
+

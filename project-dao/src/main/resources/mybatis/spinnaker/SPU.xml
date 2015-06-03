@@ -27,7 +27,7 @@
 
 	
 	
-	<sql id="all_products_column">
+	<sql id="all_spu_column">
 		ID ,
 		SUPPLIER_ID ,
 		SPU_ID,
@@ -44,12 +44,9 @@
 
 
     <!-- batch save spu  -->
-    <insert id="saveSPU" useGeneratedKeys="true" parameterType="java.util.List">
+    <insert id="saveSPU"  parameterType="java.util.List" >
 
-        <selectKey resultType="java.lang.Long" order="AFTER"
-                   keyProperty="id">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
+
 
         insert into spu(ID ,
         SUPPLIER_ID ,
@@ -61,7 +58,10 @@
         PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME)
         values
         <foreach collection="list" index="index" item="item" separator=",">
-            (#{item.productNo}, #{item.promoId})
+            (#{item.id}, #{item.supplierId}, #{item.spuId}, #{item.spuName},
+            #{item.categoryId}, #{item.categoryName}, #{item.brandId}, #{item.brandName},
+            #{item.seasonId} , #{item.seasonName}, #{item.picUrl}, #{item.material}, #{item.productOrigin},
+            #{item.createTime}, #{item.lastTime})
         </foreach>
 
     </insert>
