@@ -29,7 +29,7 @@
     <bean class="com.github.pagehelper.PageHelper">
      <property name="properties">
       <value>
-       dialect=sqlserver
+       dialect=mysql
        reasonable=true
       </value>
      </property>

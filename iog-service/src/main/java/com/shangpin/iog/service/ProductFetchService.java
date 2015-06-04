@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * Created by loyalty on 15/6/4.
+ * 产品
  */
 public interface ProductFetchService {
     /**
