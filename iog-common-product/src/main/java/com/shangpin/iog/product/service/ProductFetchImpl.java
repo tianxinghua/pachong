@@ -1,6 +1,7 @@
 package com.shangpin.iog.product.service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -37,32 +38,58 @@ public class ProductFetchImpl implements ProductFetchService {
         try {
             spuDAO.saveList(spuDTOList);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new ServiceMessageException("数据插入失败");
         }
     }
 
     @Override
     public void saveSPU(SpuDTO spuDTO) throws ServiceException {
+        try {
+            spuDAO.save(spuDTO);
+        } catch (SQLException e) {
+            throw new ServiceMessageException("数据插入失败");
+        }
 
     }
 
     @Override
     public void saveSKU(List<SkuDTO> skuDTOList) throws ServiceException {
 
+        try {
+            skuDAO.saveList(skuDTOList);
+        } catch (SQLException e) {
+            throw new ServiceMessageException("数据插入失败");
+        }
+
     }
 
     @Override
     public void saveSKU(SkuDTO skuDTO) throws ServiceException {
 
+        try {
+            skuDAO.save(skuDTO);
+        } catch (SQLException e) {
+            throw new ServiceMessageException("数据插入失败");
+        }
     }
 
     @Override
     public void savePicture(ProductPictureDTO pictureDTO) throws ServiceException {
+        try {
+            pictureDAO.save(pictureDTO);
+        } catch (SQLException e) {
+            throw new ServiceMessageException("数据插入失败");
+        }
 
     }
 
     @Override
     public void savePicture(List<ProductPictureDTO> pictureDTOList) throws ServiceException {
+        try {
+            pictureDAO.saveList(pictureDTOList);
+        } catch (SQLException e) {
+            throw new ServiceMessageException("数据插入失败");
+        }
 
     }
 }

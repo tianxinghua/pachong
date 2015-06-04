@@ -37,8 +37,28 @@
         SEASON_ID,SEASON_NAME,
         PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME
 	</sql>
-	
 
+    <insert id="save"  parameterType="iog_spu" >
+
+
+
+        insert into spu(ID ,
+        SUPPLIER_ID ,
+        SPU_ID,
+        SPU_NAME,
+        CATEGORY_ID,CATEGORY_NAME,
+        BRAND_ID,BRAND_NAME,
+        SEASON_ID,SEASON_NAME,
+        PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME)
+        values(
+            #{item.id}, #{item.supplierId}, #{item.spuId}, #{item.spuName},
+            #{item.categoryId}, #{item.categoryName}, #{item.brandId}, #{item.brandName},
+            #{item.seasonId} , #{item.seasonName}, #{item.picUrl}, #{item.material}, #{item.productOrigin},
+            #{item.createTime}, #{item.lastTime}
+        )
+
+
+    </insert>
 
 
 

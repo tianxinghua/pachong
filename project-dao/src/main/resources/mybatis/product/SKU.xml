@@ -42,12 +42,29 @@
 	</sql>
 
 
+    <insert id="save"  parameterType="iog_sku" >
+
+
+
+        insert into sku(
+
+        <include refid="all_sku_column"></include>
+        )
+        values(
+            #{item.id}, #{item.supplierId}, #{item.spuId}, #{item.skuId},
+            #{item.productName}, #{item.supplierPrice}, #{item.barcode}, #{item.productCode},
+            #{item.color} , #{item.productDescribe}, #{item.saleCurrency}, #{item.productSize}, #{item.stock},
+            #{item.createTime}, #{item.lastTime}
+        )
+
+
+    </insert>
 
     <insert id="saveList"  parameterType="java.util.List" >
 
 
 
-        insert into spu(
+        insert into sku(
 
         <include refid="all_sku_column"></include>
         )
