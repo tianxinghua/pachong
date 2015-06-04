@@ -22,7 +22,7 @@
     <value>classpath:/mybatis/*/*Mapper.xml</value>
    </list>
   </property>
-  <property name="typeAliasesPackage" value="com.shangpin.iog.*.domain" />
+  <!--<property name="typeAliasesPackage" value="com.shangpin.iog.*.domain" />-->
 
   <property name="plugins">
    <array>

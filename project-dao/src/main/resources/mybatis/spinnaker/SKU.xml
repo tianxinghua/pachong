@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.dao.SKUMapper">
+
+	<resultMap id="skuMap" type="iog_sku">
+		<id column="ID" property="id" />
+		<result column="SUPPLIER_ID" property="supplierId"  />
+		<result column="SPU_ID" property="spuId"  />
+		<result column="SKU_ID" property="skuId"  />
+		<result column="PRODUCT_NAME" property="productName"  />
+		<result column="SUPPLIER_PRICE" property="supplierPrice" />
+		<result column="BARCODE" property="barcode"  />
+		<result column="PRODUCT_CODE" property="productCode"  />
+		<result column="COLOR" property="color"  />
+        <result column="PRODUCT_DESCRIBE" property="productDescribe"/>
+        <result column="SALE_CURRENCY" property="saleCurrency"  />
+        <result column="PRODUCT_SIZE" property="productSize" />
+        <result column="STOCK" property="stock" />
+        <result column="CREATE_TIME" property="color" />
+        <result column="LAST_TIME" property="stock" />
+
+
+
+	</resultMap>
+	
+
+
+	
+	
+	<sql id="all_sku_column">
+		ID ,
+		SUPPLIER_ID ,
+		SPU_ID,
+		SKU_ID,
+        PRODUCT_NAME,
+        SUPPLIER_PRICE,
+        BARCODE,
+        PRODUCT_CODE,
+        COLOR,
+        PRODUCT_DESCRIBE,SALE_CURRENCY,
+        PRODUCT_SIZE,STOCK,CREATE_TIME,LAST_TIME
+	</sql>
+
+
+
+    <insert id="saveSKU"  parameterType="java.util.List" >
+
+
+
+        insert into spu(
+
+        <include refid="all_sku_column"></include>
+        )
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.id}, #{item.supplierId}, #{item.spuId}, #{item.skuId},
+            #{item.productName}, #{item.supplierPrice}, #{item.barcode}, #{item.productCode},
+            #{item.color} , #{item.productDescribe}, #{item.saleCurrency}, #{item.productSize}, #{item.stock},
+            #{item.createTime}, #{item.lastTime})
+        </foreach>
+
+    </insert>
+
+	
+	
+
+	
+
+
+	
+</mapper>

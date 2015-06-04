@@ -19,6 +19,22 @@ public interface ProductService {
      */
     public void  fetchProduct() throws ServiceException;
 
+
+
+    /**
+     * 从数据库中获取产品信息
+     * @param category   品类
+     * @param startDate 开始日期
+     * @param endDate   结束日期
+     * @param pageIndex 开始页码
+     * @param pageSize  每页显示行数
+     * @return
+     * @throws ServiceException 自定义异常
+     */
+    public Page<SpinnakerProductDTO> findProductBySupplierAndTime(String category,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+
+
+
     /**
      * 从数据库中获取产品信息
      * @param category   品类
