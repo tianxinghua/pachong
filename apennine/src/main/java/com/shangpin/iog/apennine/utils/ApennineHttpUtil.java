@@ -4,8 +4,9 @@ package com.shangpin.iog.apennine.utils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.apennine.domain.Product;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil;
+import com.shangpin.iog.dto.ApennineProductDTO;
+import com.shangpin.iog.dto.SpuDTO;
 import org.apache.commons.httpclient.NameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,11 +19,11 @@ import java.util.List;
 public class ApennineHttpUtil {
     @Autowired
     HttpUtil httpUtilService;
-    private Product getObjectByJsonString(String jsonStr) {
-        Product obj =null;
+    private ApennineProductDTO getObjectByJsonString(String jsonStr) {
+        ApennineProductDTO obj =null;
         Gson gson = new Gson();
         try {
-            obj=gson.fromJson(jsonStr, Product.class);
+            obj=gson.fromJson(jsonStr, ApennineProductDTO.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -34,18 +35,18 @@ public class ApennineHttpUtil {
      * @return
      */
 
-    private  List<Product>  getObjectsByJsonString(String jsonStr){
+    private  List<ApennineProductDTO>  getObjectsByJsonString(String jsonStr){
         Gson gson = new Gson();
-        List<Product> objs = new ArrayList<Product>();
+        List<ApennineProductDTO> objs = new ArrayList<ApennineProductDTO>();
         try {
-            objs = gson.fromJson(jsonStr, new TypeToken<List<Product>>(){}.getType());
+            objs = gson.fromJson(jsonStr, new TypeToken<List<ApennineProductDTO>>(){}.getType());
         } catch (Exception e) {
             e.printStackTrace();
         }
         return objs;
     }
-    private  List<Product>getProductsByUrl(String url){
-        List<Product>list=new ArrayList<>();
+    private  List<ApennineProductDTO>getProductsByUrl(String url){
+        List<ApennineProductDTO>list=new ArrayList<>();
         try {
             String jsonStr=httpUtilService.getData(url,false);
             list=this.getObjectsByJsonString(jsonStr);
@@ -54,8 +55,8 @@ public class ApennineHttpUtil {
         }
         return list;
     }
-    private  List<Product>getProductsByUrlAndParam(String url,NameValuePair[] data){
-        List<Product>list=new ArrayList<>();
+    private  List<ApennineProductDTO>getProductsByUrlAndParam(String url,NameValuePair[] data){
+        List<ApennineProductDTO>list=new ArrayList<>();
         try {
             String jsonStr=httpUtilService.postData(url, data,false);
             list=this.getObjectsByJsonString(jsonStr);
@@ -63,5 +64,17 @@ public class ApennineHttpUtil {
             e.printStackTrace();
         }
         return list;
+    }
+    private List<SpuDTO> formatToSpu(List<ApennineProductDTO>list){
+        List<SpuDTO>spuList=new ArrayList<>();
+        SpuDTO spuDTO=new SpuDTO();
+        for (int i = 0;i<list.size();i++){
+            ApennineProductDTO dto=list.get(i);
+            spuDTO.setSeasonId(dto.getCat1());
+            spuDTO.setBrandName(dto.getCat());
+            spuDTO.setSpuId(dto.getScode());
+            spuList.add(spuDTO);
+        }
+        return spuList;
     }
 }
