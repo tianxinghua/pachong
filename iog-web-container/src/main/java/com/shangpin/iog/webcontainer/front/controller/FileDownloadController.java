@@ -10,17 +10,13 @@ import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.excel.AccountsExcelTemplate;
 import com.shangpin.iog.common.utils.json.JsonUtil;
 import com.shangpin.iog.dto.ProductSearchDTO;
-import com.shangpin.iog.service.ProductService;
+import com.shangpin.iog.service.ProductSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +31,7 @@ public class FileDownloadController {
 	private Logger log = LoggerFactory.getLogger(FileDownloadController.class) ;
 
     @Autowired
-    ProductService productService;
+    ProductSearchService productService;
 
     @RequestMapping(value = "view")
     public String  viewPage() throws Exception {

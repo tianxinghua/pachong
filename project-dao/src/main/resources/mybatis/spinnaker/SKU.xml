@@ -43,7 +43,7 @@
 
 
 
-    <insert id="saveSKU"  parameterType="java.util.List" >
+    <insert id="saveList"  parameterType="java.util.List" >
 
 
 

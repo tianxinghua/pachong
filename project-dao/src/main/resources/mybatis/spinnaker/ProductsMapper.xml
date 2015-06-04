@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shangpin.iog.spinnaker.dao.ProductsMapper">
 
-	<resultMap id="ProductsResultMap" type="spinnaker_product">
+	<resultMap id="ProductsResultMap" type="iog_product">
 		<id column="id" property="id" />
 		<result column="product_id" property="productId"  />
 		<result column="producer_id" property="producerId"  />

@@ -4,22 +4,10 @@
 
 	<resultMap id="ProductsResultMap" type="spinnaker_product">
 		<id column="id" property="id" />
-		<result column="product_id" property="productId"  />
 		<result column="producer_id" property="producerId"  />
 		<result column="p_type" property="type"  />
 		<result column="season" property="season"  />
-		<result column="product_name" property="productName" />
-		<result column="description" property="description"  />
-		<result column="category" property="category"  />
-		<result column="url" property="url"  />
-        <result column="supply_price" property="supplyPrice"/>
-        <result column="item_id" property="itemId"  />
-        <result column="barcode" property="barcode" />
-        <result column="item_size" property="itemSize" />
-        <result column="color" property="color" />
-        <result column="stock" property="stock" />
-        <result column="pictures" property="itemPictureUrl"/>
-        <result column="product_detail" property="productDetail"/>
+
 
 
 	</resultMap>

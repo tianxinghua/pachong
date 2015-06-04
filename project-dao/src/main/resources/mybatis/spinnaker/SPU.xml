@@ -44,7 +44,7 @@
 
 
     <!-- batch save spu  -->
-    <insert id="saveSPU"  parameterType="java.util.List" >
+    <insert id="saveList"  parameterType="java.util.List" >
 
 
 
