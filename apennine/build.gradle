@@ -18,7 +18,9 @@ dependencies {
             project(':project-framework'),
             project(':project-common'),
             project(':iog-service'),
-            project(':project-dao')
+            project(':project-dao'),
+            project(':iog-common-product')
+            /*project(':iog-web-container')*/
     )
 
 
