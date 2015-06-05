@@ -21,7 +21,7 @@ import java.util.List;
  * Created by loyalty on 15/6/4.
  */
 @Service
-public class ProductFetchImpl implements ProductFetchService {
+public class ProductFetchServiceImpl implements ProductFetchService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired

@@ -21,7 +21,7 @@ public class SkuDTO {
     private String barcode;//条形码
     private String productCode;//货号
     private String color;
-    private String productDescribe;//描述
+    private String productDescription;//描述
     private String saleCurrency;//币种
     private String productSize;//尺码
     private String stock;//库存

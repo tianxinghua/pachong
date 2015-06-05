@@ -6,6 +6,7 @@ import com.shangpin.framework.page.Page;
 import com.shangpin.iog.common.utils.excel.AccountsExcelTemplate;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.SpinnakerProductDTO;
+import com.shangpin.iog.product.dao.ProductPictureMapper;
 import com.shangpin.iog.product.dao.SkuMapper;
 import com.shangpin.iog.product.dao.SpuMapper;
 import com.shangpin.iog.service.ProductSearchService;
@@ -24,7 +25,7 @@ import java.util.Map;
  * Created by loyalty on 15/5/20.
  */
 @Service
-public class ProductServiceImpl implements ProductSearchService {
+public class ProductSearchServiceImpl implements ProductSearchService {
     protected  final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -33,16 +34,24 @@ public class ProductServiceImpl implements ProductSearchService {
     @Autowired
     SpuMapper spuDAO;
 
+    @Autowired
+    ProductPictureMapper picDAO;
+
+
+
+
 
     @Override
-    public Page<ProductDTO> findProductBySupplierAndTime(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
+    public Page<ProductDTO> findProductPageBySupplierAndTime(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
         return null;
     }
 
     @Override
-    public AccountsExcelTemplate exportProduct(String templatePath, String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
+    public List<ProductDTO> findProductListBySupplierAndTime(String supplier, Date startDate, Date endDate) throws ServiceException {
         return null;
     }
+
+
 
     @Override
     public StringBuffer exportProduct(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {

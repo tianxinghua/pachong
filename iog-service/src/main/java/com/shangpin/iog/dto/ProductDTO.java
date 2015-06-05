@@ -16,7 +16,7 @@ public class ProductDTO {
     private String supplierId;
     private String spuId;
     private String spuName;
-    private String skuID;
+    private String skuId;
     private String productName;
     private String categoryId;
     private String categoryName;
@@ -24,7 +24,11 @@ public class ProductDTO {
     private String seasonId;//上市季节ID
     private String brandName;
     private String seasonName;
+    private String productCode;//货号
     private String picUrl;//图片地址
+    private String supplierPrice;//供货价
+    private String saleCurrency;//币种
+    private String productDescription;//描述
 
 
     private String itemPictureUrl1="";
@@ -49,6 +53,8 @@ public class ProductDTO {
     private String  size;
     //条形码
     private String  barcode;
+
+    private String stock;//库存
 
     private Date createTime;
     private Date lastTime;//修改时间

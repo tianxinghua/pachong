@@ -25,8 +25,15 @@ public class ProductServiceImpl implements ProductSearchService {
     protected  final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
+
+
     @Override
-    public Page<ProductDTO> findProductBySupplierAndTime(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
+    public Page<ProductDTO> findProductPageBySupplierAndTime(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
+        return null;
+    }
+
+    @Override
+    public List<ProductDTO> findProductListBySupplierAndTime(String supplier, Date startDate, Date endDate) throws ServiceException {
         return null;
     }
 
