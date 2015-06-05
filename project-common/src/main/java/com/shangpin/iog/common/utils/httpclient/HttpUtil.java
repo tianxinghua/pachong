@@ -37,8 +37,8 @@ public class HttpUtil {
 
         };
         try {
-//          String kk= HttpUtil.getData("https://api.orderlink.it/v1/products?access_token=6c9ade4c5fea79a5c0b060c67b55f4a2a59316dff3a18f047990484b8cc74d8c6ecddbbbb03139211f017ee9ea983f908ae5a46cf087294ccfdb46a78107fd010da5437c42e13b17de93a90c3fa2bee5e11d1723eb68026b1bc26f37152c8a38&page=10&limit=100",false);// HttpUtil.getData(url,false,true,"SHANGPIN","12345678");
-            String kk = HttpUtil.postData(url,null, false, true, "SHANGPIN", "12345678");
+          String kk= HttpUtil.getData("http://www.acanfora.it/api_ecommerce_v2.aspx",false);// HttpUtil.getData(url,false,true,"SHANGPIN","12345678");
+//            String kk = HttpUtil.postData(url,null, false, true, "SHANGPIN", "12345678");
 //            String kk=HttpUtil.getData("https://api.orderlink.it/v1/user/token?username=SHANGPIN&password=12345678",false);
             System.out.println("content = "  + kk);
         } catch (ServiceException e) {

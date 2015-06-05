@@ -230,25 +230,16 @@ public class HttpUtils {
 	}
 	
 	
-	/*public static void main(String[] args) {
+	public static void main(String[] args) {
 		String url = "https://api.orderlink.it/v1/user/token";
 		String user="SHANGPIN";String pwd="12345678";
 		String rs="";
 		try {
-			//rs=post(url,null,false,true,user,pwd);
-			//String token="6c9ade4c5fea79a5c0b060c67b55f4a2a59316dff3a18f047990484b8cc74d8c6ecddbbbb03139211f017ee9ea983f908ae5a46cf087294ccfdb46a78107fd018806c295d069a2c1643a8fdc96608ba812925a39d4eb3b66346a03910ae2736b";
-			// String kk=
-			//rs =get("https://api.orderlink.it/v1/products?access_token="+token+"&page=10&limit=100");//
-			rs+=getPort(url)+url.substring(0, url.indexOf(":"));
-			System.out.println(rs);
-			// HttpUtil.getData(url,false,true,"SHANGPIN","12345678");
-			// String kk = HttpUtils.post(url,
-			// null,false,true,"SHANGPIN","12345678");
-			// String
-			// kk=HttpUtil.getData("https://api.orderlink.it/v1/user/token?username=SHANGPIN&password=12345678",false);
-			// System.out.println("content = " + kk);
-		} catch (Exception e) {
+
+			String kk=HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");//.getData("https://api.orderlink.it/v1/user/token?username=SHANGPIN&password=12345678",false);System.out.println("content = " + kk);
+		    System.out.println("kk = " + kk);
+        } catch (Exception e) {
 			e.printStackTrace();
 		}
-	}*/
+	}
 }

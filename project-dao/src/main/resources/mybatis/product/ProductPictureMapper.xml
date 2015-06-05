@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shangpin.iog.product.dao.ProductPictureMapper">
 
-	<resultMap id="ProductsResultMap" type="iog_product_pic">
+	<resultMap id="PictureResultMap" type="iog_product_pic">
 		<id column="ID" property="id" />
 		<result column="SUPPLIER_ID" property="supplierId"  />
 		<result column="SKU_ID" property="skuId"  />
@@ -54,6 +54,18 @@
         </foreach>
 
     </insert>
+
+    <select id="findBySupplierAndSku"  resultMap="PictureResultMap">
+        select
+        <include refid="all_picture_column"></include>
+
+        from SKU_PICTURE
+        where
+                sku.SUPPLIER_ID = #{supplier}
+
+                and SKU_ID = #{sku}
+
+    </select>
 	
 
 	
