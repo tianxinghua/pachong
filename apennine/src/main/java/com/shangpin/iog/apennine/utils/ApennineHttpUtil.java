@@ -6,7 +6,10 @@ import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil;
 import com.shangpin.iog.dto.ApennineProductDTO;
+import com.shangpin.iog.dto.ProductPictureDTO;
+import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
+import com.thoughtworks.xstream.XStream;
 import org.apache.commons.httpclient.NameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -45,20 +48,21 @@ public class ApennineHttpUtil {
         }
         return objs;
     }
-    private  List<ApennineProductDTO>getProductsByUrl(String url){
+    private List<ApennineProductDTO>getAllProducts(String url){
         List<ApennineProductDTO>list=new ArrayList<>();
         try {
-            String jsonStr=httpUtilService.getData(url,false);
+            String jsonStr=httpUtilService.getData(url, false);
             list=this.getObjectsByJsonString(jsonStr);
         } catch (ServiceException e) {
             e.printStackTrace();
         }
         return list;
     }
+
     private  List<ApennineProductDTO>getProductsByUrlAndParam(String url,NameValuePair[] data){
         List<ApennineProductDTO>list=new ArrayList<>();
         try {
-            String jsonStr=httpUtilService.postData(url, data,false);
+            String jsonStr=httpUtilService.getData(url, false);
             list=this.getObjectsByJsonString(jsonStr);
         } catch (ServiceException e) {
             e.printStackTrace();
@@ -73,8 +77,66 @@ public class ApennineHttpUtil {
             spuDTO.setSeasonId(dto.getCat1());
             spuDTO.setBrandName(dto.getCat());
             spuDTO.setSpuId(dto.getScode());
+            spuDTO.setSupplierId("1");
             spuList.add(spuDTO);
         }
         return spuList;
     }
+    private List<SkuDTO>formatToSku(List<ApennineProductDTO>list){
+        List<SkuDTO>skuList=new ArrayList<>();
+        SkuDTO skuDTO=new SkuDTO();
+        for (int i=0;i<list.size();i++){
+            ApennineProductDTO dto=list.get(i);
+            skuDTO.setProductCode(dto.getScode());
+            skuDTO.setProductSize(dto.getSize());
+            skuDTO.setColor(dto.getColor());
+            skuDTO.setProductName(dto.getCdescript());
+            skuDTO.setSupplierPrice(dto.getPricec());
+            skuDTO.setSkuId(dto.getScode());
+            skuDTO.setSpuId(dto.getScode());
+            skuDTO.setSupplierId("1");
+            skuList.add(skuDTO);
+        }
+        return skuList;
+    }
+    private List<ProductPictureDTO> formatToPic(List<ApennineProductDTO>list){
+        List<ProductPictureDTO>picList=new ArrayList<>();
+        ProductPictureDTO picDTO=new ProductPictureDTO();
+        for (int i=0;i<list.size();i++) {
+            ApennineProductDTO dto = list.get(i);
+            picDTO.setSupplierId("1");
+            picDTO.setSkuId(dto.getScode());
+            picDTO.setPicUrl("");
+            picList.add(picDTO);
+        }
+        return picList;
+    }
+   /* public static void main(String args[]) {
+
+        String url = "http://112.74.74.98:8082/api/GetProductDetails?userName=spin&userPwd=spin112233";
+        NameValuePair[] data = {
+                new NameValuePair("access_token", "6c9ade4c5fea79a5c0b060c67b55f4a2a59316dff3a18f047990484b8cc74d8c6ecddbbbb03139211f017ee9ea983f908ae5a46cf087294ccfdb46a78107fd01c51b13b2dc624f8496fc85de3a7f6ce72554196bc78f1e0a0c78dfe433c1ace4"),
+                new NameValuePair("page", "10"),
+                new NameValuePair("limit", "100")
+
+
+        };
+        try {
+//          String kk= HttpUtil.getData("https://api.orderlink.it/v1/products?access_token=6c9ade4c5fea79a5c0b060c67b55f4a2a59316dff3a18f047990484b8cc74d8c6ecddbbbb03139211f017ee9ea983f908ae5a46cf087294ccfdb46a78107fd010da5437c42e13b17de93a90c3fa2bee5e11d1723eb68026b1bc26f37152c8a38&page=10&limit=100",false);// HttpUtil.getData(url,false,true,"SHANGPIN","12345678");
+//            String kk = HttpUtil.postData(url, null, false, true, "SHANGPIN", "12345678");
+            String kk=HttpUtil.getData(url,false);
+            String str="";
+            List<ApennineProductDTO>list=new ArrayList<>();
+            Gson gson = new Gson();
+            list = gson.fromJson(kk, new TypeToken<List<ApennineProductDTO>>(){}.getType());
+            for (int i=0;i<list.size();i++){
+                ApennineProductDTO dto = list.get(i);
+                str=dto.getCat();
+                System.out.println("cat = " + str);
+            }
+           // System.out.println("content = " + kk);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+    }*/
 }

@@ -10,20 +10,20 @@ import lombok.Setter;
 @Setter
 public class ApennineProductDTO {
     private Long id;//代理主键
-    private String cat;  // 品牌
-    private String cat1;//季节
-    private String cat2;//类别
-    private String cdescript;//产品中文名称
-    private String color;//颜色
-    private String createdate;//时间
-    private String descript;//产品英文名称
-    private String model;//型号
-    private String pricea;//吊牌价
-    private String priceb;//零售价
-    private String pricec;//供货价（此价格为提供给你们的价格）
-    private String scode;//货号 skuId
-    private String size;//尺寸
-    private String style;//款号
+    private String Cat;  // 品牌
+    private String Cat1;//季节
+    private String Cat2;//类别
+    private String Cdescript;//产品中文名称
+    private String Color;//颜色
+    private String Createdate;//时间
+    private String Descript;//产品英文名称
+    private String Model;//型号
+    private String Pricea;//吊牌价
+    private String Priceb;//零售价
+    private String Pricec;//供货价（此价格为提供给你们的价格）
+    private String Scode;//货号 skuId
+    private String Size;//尺寸
+    private String Style;//款号
 
     public Long getId() {
         return id;
@@ -34,114 +34,114 @@ public class ApennineProductDTO {
     }
 
     public String getCat() {
-        return cat;
+        return Cat;
     }
 
     public void setCat(String cat) {
-        this.cat = cat;
+        Cat = cat;
     }
 
     public String getCat1() {
-        return cat1;
+        return Cat1;
     }
 
     public void setCat1(String cat1) {
-        this.cat1 = cat1;
+        Cat1 = cat1;
     }
 
     public String getCat2() {
-        return cat2;
+        return Cat2;
     }
 
     public void setCat2(String cat2) {
-        this.cat2 = cat2;
+        Cat2 = cat2;
     }
 
     public String getCdescript() {
-        return cdescript;
+        return Cdescript;
     }
 
     public void setCdescript(String cdescript) {
-        this.cdescript = cdescript;
+        Cdescript = cdescript;
     }
 
     public String getColor() {
-        return color;
+        return Color;
     }
 
     public void setColor(String color) {
-        this.color = color;
+        Color = color;
     }
 
     public String getCreatedate() {
-        return createdate;
+        return Createdate;
     }
 
     public void setCreatedate(String createdate) {
-        this.createdate = createdate;
+        Createdate = createdate;
     }
 
     public String getDescript() {
-        return descript;
+        return Descript;
     }
 
     public void setDescript(String descript) {
-        this.descript = descript;
+        Descript = descript;
     }
 
     public String getModel() {
-        return model;
+        return Model;
     }
 
     public void setModel(String model) {
-        this.model = model;
+        Model = model;
     }
 
     public String getPricea() {
-        return pricea;
+        return Pricea;
     }
 
     public void setPricea(String pricea) {
-        this.pricea = pricea;
+        Pricea = pricea;
     }
 
     public String getPriceb() {
-        return priceb;
+        return Priceb;
     }
 
     public void setPriceb(String priceb) {
-        this.priceb = priceb;
+        Priceb = priceb;
     }
 
     public String getPricec() {
-        return pricec;
+        return Pricec;
     }
 
     public void setPricec(String pricec) {
-        this.pricec = pricec;
+        Pricec = pricec;
     }
 
     public String getScode() {
-        return scode;
+        return Scode;
     }
 
     public void setScode(String scode) {
-        this.scode = scode;
+        Scode = scode;
     }
 
     public String getSize() {
-        return size;
+        return Size;
     }
 
     public void setSize(String size) {
-        this.size = size;
+        Size = size;
     }
 
     public String getStyle() {
-        return style;
+        return Style;
     }
 
     public void setStyle(String style) {
-        this.style = style;
+        Style = style;
     }
 }
