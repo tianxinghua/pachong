@@ -37,7 +37,7 @@
         BARCODE,
         PRODUCT_CODE,
         COLOR,
-        PRODUCT_DESCRIBE,SALE_CURRENCY,
+        PRODUCT_DESCRIPTION,SALE_CURRENCY,
         PRODUCT_SIZE,STOCK,CREATE_TIME,LAST_TIME
 	</sql>
 
@@ -46,15 +46,15 @@
 
 
 
-        insert into sku(
+        insert into SKU(
 
         <include refid="all_sku_column"></include>
         )
         values(
-            #{item.id}, #{item.supplierId}, #{item.spuId}, #{item.skuId},
-            #{item.productName}, #{item.supplierPrice}, #{item.barcode}, #{item.productCode},
-            #{item.color} , #{item.productDescribe}, #{item.saleCurrency}, #{item.productSize}, #{item.stock},
-            #{item.createTime}, #{item.lastTime}
+            #{id}, #{supplierId}, #{spuId}, #{skuId},
+            #{productName}, #{supplierPrice}, #{barcode}, #{productCode},
+            #{color} , #{productDescription}, #{saleCurrency}, #{productSize}, #{stock},
+            #{createTime}, #{lastTime}
         )
 
 
@@ -64,7 +64,7 @@
 
 
 
-        insert into sku(
+        insert into SKU(
 
         <include refid="all_sku_column"></include>
         )

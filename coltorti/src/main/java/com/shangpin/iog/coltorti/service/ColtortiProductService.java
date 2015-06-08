@@ -128,7 +128,7 @@ public class ColtortiProductService{
 			String scalarkey="";
 			//如果只有一个尺码那么不用去取?
 			if(scalars!=null && scalars.size()>0){
-				stocks=getStock(pid,prd.getSkuId());
+				stocks=null;//getStock(pid,prd.getSkuId());
 				scalarkey=scalars.entrySet().iterator().next().getValue();
 			}
 			if(stocks!=null && stocks.size()>0){

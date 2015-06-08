@@ -58,12 +58,15 @@ public class Startup {
 				SkuDTO sk=ColtortiProductConvert.product2sku(product);
 				SpuDTO spu = ColtortiProductConvert.product2spu(product);
 				skus.add(sk);spus.add(spu);
+				pfs.saveSKU(sk);
+				pfs.saveSPU(spu);
 				Set<ProductPictureDTO> ppcs=ColtortiProductConvert.productPic(product);
 				productPics.put(product.getSkuId(), ppcs);
 			}
 			logger.info("转换spu数：{},sku数{}",spus.size(),skus.size());
 			// 保存数据
 			pfs.saveSKU(skus);pfs.saveSPU(spus);
+			
 			Set<String> picSku=productPics.keySet();
 			for (String sku : picSku) {
 				Set<ProductPictureDTO> pcs=productPics.get(sku);

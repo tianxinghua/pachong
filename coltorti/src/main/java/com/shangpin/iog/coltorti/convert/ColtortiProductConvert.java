@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.shangpin.iog.coltorti.dto.ColtortiProduct;
+import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -23,6 +24,7 @@ public class ColtortiProductConvert {
 	static String supplier="Coltorti";
 	public static SkuDTO product2sku(ColtortiProduct p){
 		SkuDTO dto = new SkuDTO();
+		dto.setId(UUIDGenerator.getUUID());
 		dto.setSupplierId(supplier);
 		dto.setProductName(p.getName());
 		dto.setProductCode(p.getSkuId());
@@ -45,6 +47,7 @@ public class ColtortiProductConvert {
 	
 	public static SpuDTO product2spu(ColtortiProduct p){
 		SpuDTO dto = new SpuDTO();
+		dto.setId(UUIDGenerator.getUUID());
 		dto.setSpuId(p.getProductId());
 		if(p.getBrand()!=null){
 			Entry<String, String> entry=p.getBrand().entrySet().iterator().next();
@@ -73,6 +76,7 @@ public class ColtortiProductConvert {
 		for (List<String> list : imgurls) {
 			for (String string : list) {
 				ProductPictureDTO pc= new ProductPictureDTO();
+				pc.setId(UUIDGenerator.getUUID());
 				pc.setSkuId(p.getSkuId());pc.setSupplierId(supplier);
 				pc.setPicUrl(string);
 				ppc.add(pc);

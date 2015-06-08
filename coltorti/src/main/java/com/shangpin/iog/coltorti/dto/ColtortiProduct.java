@@ -50,6 +50,7 @@ public class ColtortiProduct implements Serializable{
 	Map<String,String> macroCategory;*/
 	Map<String,Map<String,Object>> attributes;
 	Date updatedAt;
+	
 	Integer stock;
 	
 	/**
