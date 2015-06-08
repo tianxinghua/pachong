@@ -24,7 +24,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.shangpin.iog.coach.dto.Product;
+import com.shangpin.iog.coltorti.dto.ColtortiProduct;
 
 /**
  * @description 
@@ -72,7 +72,7 @@ public class AnyTest {
 		for (Entry<String, JsonElement> entry : ks) {
 			JsonElement je=entry.getValue();
 			JsonObject jop=je.getAsJsonObject();
-			Product p=toObj(jop,Product.class);
+			ColtortiProduct p=toObj(jop,ColtortiProduct.class);
 			System.out.println(g.toJson(p));
 		}
 		

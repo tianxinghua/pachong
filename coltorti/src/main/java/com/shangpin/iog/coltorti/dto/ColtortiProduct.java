@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.shangpin.iog.coach.dto;
+package com.shangpin.iog.coltorti.dto;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -25,7 +25,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Product implements Serializable{
+public class ColtortiProduct implements Serializable{
 	/**
 	 * 
 	 */

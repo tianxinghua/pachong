@@ -7,5 +7,6 @@ dependencies{
 	compile project(":iog-service")
 	compile project(":iog-common-product")
 	compile project(":project-common")
+	compile project(":project-dao")
 	compile project(":project-framework")
 }

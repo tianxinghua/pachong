@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.shangpin.iog.coach.dto;
+package com.shangpin.iog.coltorti.dto;
 
 import java.util.Map;
 
@@ -12,15 +12,13 @@ import lombok.Setter;
 /**
  * @description 
  * @author 陈小峰
- * <br/>2015年6月5日
+ * <br/>2015年6月4日
  */
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class Stock {
-
-	private String id;
-	private String total;
-	Map<String,Map<String,String>> scalars;
-	String deposit_id;
+public class ColtortiAttributes {
+	String description;
+	Map<String,String> values;
 }

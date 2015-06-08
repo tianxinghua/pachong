@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.shangpin.iog.coach.service;
+package com.shangpin.iog.coltorti.service;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -29,12 +29,11 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.coach.conf.ApiURL;
-import com.shangpin.iog.coach.convert.ProductConvert;
-import com.shangpin.iog.coach.dto.Attributes;
-import com.shangpin.iog.coach.dto.Product;
-import com.shangpin.iog.coach.dto.Stock;
-import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.coltorti.conf.ApiURL;
+import com.shangpin.iog.coltorti.convert.ColtortiProductConvert;
+import com.shangpin.iog.coltorti.dto.ColtortiAttributes;
+import com.shangpin.iog.coltorti.dto.ColtortiProduct;
+import com.shangpin.iog.coltorti.dto.ColtortiStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
@@ -45,9 +44,10 @@ import com.shangpin.iog.dto.SpuDTO;
  * @author 陈小峰
  * <br/>2015年6月4日
  */
-public class ProductService {
-	static Logger logger =LoggerFactory.getLogger(ProductService.class);
+public class ColtortiProductService{
+	static Logger logger =LoggerFactory.getLogger(ColtortiProductService.class);
 	static final Map<String,Field[]> classField = new HashMap<>();
+	
 	/**
 	 * 
 	 * @param page
@@ -56,43 +56,52 @@ public class ProductService {
 	 * @throws ServiceException
 	 */
 	public static String requestAttribute(int page,int size) throws ServiceException{
-		Map<String,String> param = CommonUtil.getCommonParam(page,size);
-		String url=CommonUtil.paramGetUrl(ApiURL.ATTRIBUTES,param);
+		Map<String,String> param = ColtortiUtil.getCommonParam(page,size);
+		String url=ColtortiUtil.paramGetUrl(ApiURL.ATTRIBUTES,param);
 		String body=HttpUtils.get(url);
-		CommonUtil.check(body);
+		ColtortiUtil.check(body);
 		Gson gson = new Gson();
-		logger.info("request attribute result:\r\n"+body);
-		Map<String,Attributes> attriMap=gson.fromJson(body, new TypeToken<Map<String,Attributes>>(){}.getType());
+		//logger.info("request attribute result:\r\n"+body);
+		Map<String,ColtortiAttributes> attriMap=gson.fromJson(body, new TypeToken<Map<String,ColtortiAttributes>>(){}.getType());
 		logger.info("getAttribute result:\r\n"+gson.toJson(attriMap));
 		return body;
 	}
+	
+	public static List<ColtortiProduct> findProduct(String start,String end) throws ServiceException{
+		return findProduct(0,0,start,end,null);
+	}
+	public static List<ColtortiProduct> findProduct(String productId) throws ServiceException{
+		return findProduct(0,0,null,null,productId);
+	}
 	/**
 	 * 获取产品，但无库存
-	 * @param page
-	 * @param size
-	 * @param productId
+	 * @param page 页码 无则为0
+	 * @param size 页大小 无则为0
+	 * @param dateStart 开始时间段
+	 * @param dateEnd 结束时间段
+	 * @param productId 相当spuid
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static List<Product> findProduct(int page,int size,String productId) throws ServiceException{
-		Map<String,String> param=CommonUtil.getCommonParam(page,size);
+	public static List<ColtortiProduct> findProduct(int page,int size,String dateStart,String dateEnd,String productId) throws ServiceException{
+		Map<String,String> param=ColtortiUtil.getCommonParam(page,size);
 		param.put("fields", "id,name,product_id,variant,description,price,scalars,"
 				+ "ms5_group,ms5_subgroup,ms5_category,brand,season,images,"
 				+ "macro_category,group,family,line,subgroup,category,attributes,updated_at");
 		if(productId!=null) param.put("product_id", productId);
-		param.put("since_updated_at", "2015-06-01");
-		param.put("until_updated_at", DateTimeUtil.getShortCurrentDate());
-		String body=HttpUtils.get(CommonUtil.paramGetUrl(ApiURL.PRODUCT,param));
-		CommonUtil.check(body);
+		if(dateStart!=null)param.put("since_updated_at", dateStart);
+		if(dateEnd!=null)param.put("until_updated_at", dateEnd);
+		String body=HttpUtils.get(ColtortiUtil.paramGetUrl(ApiURL.PRODUCT,param));
+		ColtortiUtil.check(body);
 		JsonObject jo =new JsonParser().parse(body).getAsJsonObject();
-		logger.info("request product result:\r\n"+body);
+		//logger.info("request product result:\r\n"+body);
 		Set<Entry<String,JsonElement>> ks=jo.entrySet();
-		List<Product> pros = new ArrayList<>(ks.size()); 
+		List<ColtortiProduct> pros = new ArrayList<>(ks.size()); 
 		for (Entry<String, JsonElement> entry : ks) {
 			JsonElement je=entry.getValue();
 			JsonObject jop=je.getAsJsonObject();
 			try {
-				Product p=toObj(jop,Product.class);
+				ColtortiProduct p=toObj(jop,ColtortiProduct.class);
 				p.setSkuId(entry.getKey());
 				pros.add(p);
 			} catch (InstantiationException | IllegalAccessException e) {
@@ -109,10 +118,10 @@ public class ProductService {
 	 * @param pros
 	 * @throws ServiceException
 	 */
-	public static List<Product> product2sku(List<Product> pros) throws ServiceException{
-		List<Product> newProducts = new ArrayList<>(pros.size());
-		for (Iterator<Product> iterator = pros.iterator(); iterator.hasNext();) {
-			Product prd = iterator.next();
+	public static List<ColtortiProduct> product2sku(List<ColtortiProduct> pros) throws ServiceException{
+		List<ColtortiProduct> newProducts = new ArrayList<>(pros.size());
+		for (Iterator<ColtortiProduct> iterator = pros.iterator(); iterator.hasNext();) {
+			ColtortiProduct prd = iterator.next();
 			String pid=prd.getProductId();
 			Map<String,String> scalars=prd.getScalars();
 			Map<String,Map<String,Integer>> stocks=null;
@@ -146,8 +155,8 @@ public class ProductService {
 	 * @param stock
 	 * @return
 	 */
-	private static Product convertProduct(Product prd,String scalarKey,Integer stock) {
-		Product newp = new Product();
+	private static ColtortiProduct convertProduct(ColtortiProduct prd,String scalarKey,Integer stock) {
+		ColtortiProduct newp = new ColtortiProduct();
 		try {
 			BeanUtils.copyProperties(newp,prd);
 		} catch (IllegalAccessException | InvocationTargetException e) {
@@ -245,36 +254,36 @@ public class ProductService {
 	 * @throws ServiceException
 	 */
 	public static Map<String, Map<String, Integer>> getStock(String productId,String recordId) throws ServiceException{
-		Map<String,String> param=CommonUtil.getCommonParam(1,10);
+		Map<String,String> param=ColtortiUtil.getCommonParam(1,10);
 		if(productId!=null) param.put("product_id", productId);
 		if(recordId!=null) param.put("id", recordId);
-		String body=HttpUtils.get(CommonUtil.paramGetUrl(ApiURL.STOCK,param));
+		String body=HttpUtils.get(ColtortiUtil.paramGetUrl(ApiURL.STOCK,param));
 		try{
-			CommonUtil.check(body);
+			ColtortiUtil.check(body);
 		}catch(ServiceException e){
-			if(CommonUtil.isNotResultError(e)){
+			if(ColtortiUtil.isNotResultError(e)){
 				return null;
 			}
 		}
 		//logger.info("request stock result:\r\n"+body);
 		Gson gson = new Gson();
-		Map<String,List<Stock>> mp=gson.fromJson(body, new TypeToken<Map<String,List<Stock>>>(){}.getType());
+		Map<String,List<ColtortiStock>> mp=gson.fromJson(body, new TypeToken<Map<String,List<ColtortiStock>>>(){}.getType());
 		Map<String,Map<String,Integer>> rtnScalar=null;
 		if(mp!=null && mp.size()>0){
-			Set<Map.Entry<String,List<Stock>>> eset=mp.entrySet();
-			Iterator<Entry<String, List<Stock>>> it=eset.iterator();
+			Set<Map.Entry<String,List<ColtortiStock>>> eset=mp.entrySet();
+			Iterator<Entry<String, List<ColtortiStock>>> it=eset.iterator();
 			//是产品id：（尺码：数量）
 			rtnScalar=new HashMap<String, Map<String,Integer>>();
 			while(it.hasNext()){//不同产品
-				Entry<String, List<Stock>> etry=it.next();
+				Entry<String, List<ColtortiStock>> etry=it.next();
 				String skuid=etry.getKey();//唯一记录id（可能是skuid，可能不是）
-				List<Stock> stock=etry.getValue();//每个仓库的库存
+				List<ColtortiStock> stock=etry.getValue();//每个仓库的库存
 				Map<String, Integer> scalarDetail=rtnScalar.get(skuid);
 				if(scalarDetail==null){
 					scalarDetail=new HashMap<String, Integer>();
 					rtnScalar.put(skuid, scalarDetail);
 				}
-				for (Stock s : stock) {//不同仓库
+				for (ColtortiStock s : stock) {//不同仓库
 					Map<String,Map<String,String>> scalars=s.getScalars();
 					if(scalars!=null && scalars.size()>0){
 						Set<String> ks=scalars.keySet();
@@ -308,17 +317,17 @@ public class ProductService {
 		//requestAttribute(1, 100);
 		//findProduct(1,40,"152790AAV000001");
 		//getStock("152790AAV000001","152790AAV000001-PINxRU");//"152790FCR000005-SADMA"
-		List<Product> ps=product2sku(findProduct(1, 4, null));
+		List<ColtortiProduct> ps=product2sku(findProduct(null));
 		logger.info("-----new products -----\r\n"+new Gson().toJson(ps));
 		List<SkuDTO> skus=new ArrayList<>(ps.size());
 		List<SpuDTO> spus=new ArrayList<>(ps.size());
 		Map<String,Set<ProductPictureDTO>> mpccs=new HashMap<String, Set<ProductPictureDTO>>();
-		for (Product product : ps) {
-			SkuDTO sk=ProductConvert.product2sku(product);
-			SpuDTO spu = ProductConvert.product2spu(product);
+		for (ColtortiProduct product : ps) {
+			SkuDTO sk=ColtortiProductConvert.product2sku(product);
+			SpuDTO spu = ColtortiProductConvert.product2spu(product);
 			skus.add(sk);
 			spus.add(spu);
-			Set<ProductPictureDTO> ppcs=ProductConvert.productPic(product);
+			Set<ProductPictureDTO> ppcs=ColtortiProductConvert.productPic(product);
 			mpccs.put(product.getSkuId(), ppcs);
 		}
 		logger.info("-----after convert skus-----\r\n"+new Gson().toJson(skus));

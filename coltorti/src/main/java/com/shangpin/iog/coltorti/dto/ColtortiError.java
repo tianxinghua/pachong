@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.shangpin.iog.coach.dto;
+package com.shangpin.iog.coltorti.dto;
 
 import java.io.Serializable;
 import java.util.List;
@@ -29,12 +29,12 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class CoachError implements Serializable{
+public class ColtortiError implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 107874728206901221L;
 	String message;
-	List<CoachError> errors;
+	List<ColtortiError> errors;
 }
