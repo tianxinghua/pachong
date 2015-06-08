@@ -33,6 +33,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     @Autowired
     ProductPictureMapper pictureDAO;
 
+
     @Override
     public void saveSPU(List<SpuDTO> spuDTOList) throws ServiceException {
         try {

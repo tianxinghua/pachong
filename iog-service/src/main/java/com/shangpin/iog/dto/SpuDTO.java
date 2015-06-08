@@ -25,8 +25,8 @@ public class SpuDTO {
     private String picUrl;//图片地址
     private String material;//材质
     private String productOrigin;//产地
-    private Date createTime;
-    private Date lastTime;//修改时间
+    private Date createTime= new Date();
+    private Date lastTime= new Date();//修改时间
 
 
 

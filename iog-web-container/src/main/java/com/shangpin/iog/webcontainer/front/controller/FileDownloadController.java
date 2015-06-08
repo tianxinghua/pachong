@@ -39,41 +39,7 @@ public class FileDownloadController {
     }
 
 
-    @RequestMapping(value = "spinnaker")
-    public void download(HttpServletRequest request,
-                                 HttpServletResponse response,
-                                 String queryJson) throws Exception {
 
-        ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);;
-        if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
-
-
-        String realPath = request.getSession().getServletContext().getRealPath("/template/common.xls");
-
-        Date startDate  =null;
-        if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
-            startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
-        }
-
-        Date endDate = null;
-        if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
-            endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
-        }
-
-        AccountsExcelTemplate template =   productService.exportProduct(realPath ,productSearchDTO.getCategory(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize());
-
-
-
-        response.reset();
-        response.setContentType("application/x-download;charset=UTF-8");//GBK
-        response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("product" + System.currentTimeMillis() + ".xls", "UTF-8"));
-        template.getWorkbook().write(response.getOutputStream());
-
-
-        response.getOutputStream().flush();
-        response.getOutputStream().close();
-
-    }
 
 
     @RequestMapping(value = "csv")
