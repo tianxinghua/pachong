@@ -29,7 +29,7 @@ public class TokenService {
 
 	public static String getToken() throws ServiceException {
 		// 测试
-		if (token == null)		return "6c9ade4c5fea79a5c0b060c67b55f4a2a59316dff3a18f047990484b8cc74d8c6ecddbbbb03139211f017ee9ea983f908ae5a46cf087294ccfdb46a78107fd012cb646e27919cb0ab2780a5d8046b189bbb076ecdfaa56e2d1045c011adf0cdb";
+		//if (token == null)		return "6c9ade4c5fea79a5c0b060c67b55f4a2a59316dff3a18f047990484b8cc74d8c6ecddbbbb03139211f017ee9ea983f908ae5a46cf087294ccfdb46a78107fd012cb646e27919cb0ab2780a5d8046b189bbb076ecdfaa56e2d1045c011adf0cdb";
 		lock.lock();
 		if (token == null
 				|| System.currentTimeMillis() - tokenCreate > tokenExpire) {
