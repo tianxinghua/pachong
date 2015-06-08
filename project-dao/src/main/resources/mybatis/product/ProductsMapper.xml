@@ -78,7 +78,7 @@
 
 
 
-		from sku sku left join spu spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
         <where>
           <if test="null!=supplier">
               sku.SUPPLIER_ID = #{supplier}
