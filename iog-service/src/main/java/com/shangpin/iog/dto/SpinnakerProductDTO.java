@@ -1,11 +1,9 @@
 package com.shangpin.iog.dto;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * Created by loyalty on 15/5/25.
@@ -14,7 +12,12 @@ import java.util.Date;
 @Setter
 public class SpinnakerProductDTO implements Serializable{
 
-    private Long id;//代理主键
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2044914964452258193L;
+
+	private Long id;//代理主键
 
     //SPU ID;
     private String  productId;

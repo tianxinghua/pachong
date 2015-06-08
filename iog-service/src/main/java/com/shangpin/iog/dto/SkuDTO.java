@@ -98,8 +98,6 @@ public class SkuDTO {
         this.color = color;
     }
 
-
-
     public String getSaleCurrency() {
         return saleCurrency;
     }
@@ -138,13 +136,5 @@ public class SkuDTO {
 
     public void setLastTime(Date lastTime) {
         this.lastTime = lastTime;
-    }
-
-    public String getProductDescription() {
-        return productDescription;
-    }
-
-    public void setProductDescription(String productDescription) {
-        this.productDescription = productDescription;
     }
 }
