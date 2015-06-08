@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @Mapper
-public interface ProductsMapper extends IBaseDao<SpinnakerProductDTO> {
+public interface ProductsMapper extends IBaseDao<ProductDTO> {
 
 
     /**

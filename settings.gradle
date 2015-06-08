@@ -1,4 +1,3 @@
-include "project-common"
 
 rootProject.name = 'iog'
 
@@ -19,4 +18,6 @@ include 'apennine'
 include 'iog-common-product'
 
 include 'acanfora'
+
+include 'project-common'
 

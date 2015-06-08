@@ -9,8 +9,6 @@ import java.util.Date;
  * Created by loyalty on 15/6/3.
  * SPU对象
  */
-@Getter
-@Setter
 public class SkuDTO {
     private String id;
     private String supplierId;
@@ -100,13 +98,7 @@ public class SkuDTO {
         this.color = color;
     }
 
-    public String getProductDescribe() {
-        return productDescribe;
-    }
 
-    public void setProductDescribe(String productDescribe) {
-        this.productDescribe = productDescribe;
-    }
 
     public String getSaleCurrency() {
         return saleCurrency;
@@ -146,5 +138,13 @@ public class SkuDTO {
 
     public void setLastTime(Date lastTime) {
         this.lastTime = lastTime;
+    }
+
+    public String getProductDescription() {
+        return productDescription;
+    }
+
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
     }
 }
