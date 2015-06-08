@@ -2,10 +2,11 @@ apply plugin: 'java'
 dependencies{
 	compile(
 		"com.google.code.gson:gson:2.3.1",
-		"com.alibaba:fastjson:1.2.6"		
+		"com.alibaba:fastjson:1.2.6",
 		)
 	compile project(":iog-service")
 	compile project(":iog-common-product")
 	compile project(":project-common")
+	compile project(":project-dao")
 	compile project(":project-framework")
 }

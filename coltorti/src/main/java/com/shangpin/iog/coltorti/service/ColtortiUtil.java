@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.shangpin.iog.coach.service;
+package com.shangpin.iog.coltorti.service;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,14 +14,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
-import com.shangpin.iog.coach.dto.CoachError;
+import com.shangpin.iog.coltorti.dto.ColtortiError;
 
 /**
  * @description 
  * @author 陈小峰
  * <br/>2015年6月5日
  */
-public class CommonUtil {
+public class ColtortiUtil {
 
 	static String tokenExpire="token has expired";
 	static String notResult="no results found";
@@ -31,7 +31,7 @@ public class CommonUtil {
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static CoachError check(String responseBody) throws ServiceException{
+	public static ColtortiError check(String responseBody) throws ServiceException{
 		if(StringUtils.isEmpty(responseBody))
 			throw new ServiceMessageException("无返回信息");
 		JsonElement je=new JsonParser().parse(responseBody);
@@ -39,7 +39,7 @@ public class CommonUtil {
 		if(msg!=null){
 			String m=msg.getAsString();
 			if(tokenExpire.equals(m))
-				TokenService.initToken();
+				ColtortiTokenService.initToken();
 			throw new ServiceMessageException(m);
 		}
 		return null;
@@ -70,8 +70,8 @@ public class CommonUtil {
 	 */
 	public static Map<String, String> getCommonParam(int page, int size) throws ServiceException {
 		Map<String,String> param = new HashMap<String, String>();
-		param.put("page", page+"");param.put("limit", size+"");
-		param.put("access_token", TokenService.getToken());
+		if(page>0) param.put("page", page+"");if(size>0) param.put("limit", size+"");
+		param.put("access_token", ColtortiTokenService.getToken());
 		return param;
 	}
 

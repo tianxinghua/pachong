@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.shangpin.iog.coach.conf;
+package com.shangpin.iog.coltorti.conf;
 
 /**
  * @description 

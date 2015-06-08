@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.shangpin.iog.coach.convert;
+package com.shangpin.iog.coltorti.convert;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.shangpin.iog.coach.dto.Product;
+import com.shangpin.iog.coltorti.dto.ColtortiProduct;
+import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -19,10 +20,11 @@ import com.shangpin.iog.dto.SpuDTO;
  * @author 陈小峰
  * <br/>2015年6月5日
  */
-public class ProductConvert {
+public class ColtortiProductConvert {
 	static String supplier="Coltorti";
-	public static SkuDTO product2sku(Product p){
+	public static SkuDTO product2sku(ColtortiProduct p){
 		SkuDTO dto = new SkuDTO();
+		dto.setId(UUIDGenerator.getUUID());
 		dto.setSupplierId(supplier);
 		dto.setProductName(p.getName());
 		dto.setProductCode(p.getSkuId());
@@ -43,8 +45,9 @@ public class ProductConvert {
 		return dto;
 	}
 	
-	public static SpuDTO product2spu(Product p){
+	public static SpuDTO product2spu(ColtortiProduct p){
 		SpuDTO dto = new SpuDTO();
+		dto.setId(UUIDGenerator.getUUID());
 		dto.setSpuId(p.getProductId());
 		if(p.getBrand()!=null){
 			Entry<String, String> entry=p.getBrand().entrySet().iterator().next();
@@ -67,12 +70,13 @@ public class ProductConvert {
 		return dto;
 	}
 	
-	public static Set<ProductPictureDTO> productPic(Product p){
+	public static Set<ProductPictureDTO> productPic(ColtortiProduct p){
 		List<List<String>> imgurls=p.getImages();
 		Set<ProductPictureDTO> ppc = new HashSet<>(imgurls.size());
 		for (List<String> list : imgurls) {
 			for (String string : list) {
 				ProductPictureDTO pc= new ProductPictureDTO();
+				pc.setId(UUIDGenerator.getUUID());
 				pc.setSkuId(p.getSkuId());pc.setSupplierId(supplier);
 				pc.setPicUrl(string);
 				ppc.add(pc);
