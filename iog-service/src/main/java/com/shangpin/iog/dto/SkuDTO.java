@@ -100,14 +100,6 @@ public class SkuDTO {
         this.color = color;
     }
 
-    public String getProductDescribe() {
-        return productDescribe;
-    }
-
-    public void setProductDescribe(String productDescribe) {
-        this.productDescribe = productDescribe;
-    }
-
     public String getSaleCurrency() {
         return saleCurrency;
     }

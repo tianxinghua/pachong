@@ -1,19 +1,58 @@
 package com.shangpin.iog.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Date;
+import java.io.Serializable;
 
 /**
  * Created by loyalty on 15/6/3.
  * SPU对象
  */
-public class ProductPictureDTO {
-    private String id;
+public class ProductPictureDTO implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4890916950574974903L;
+	private String id;
     private String supplierId;
     private String skuId;
     private String picUrl;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((picUrl == null) ? 0 : picUrl.hashCode());
+		result = prime * result + ((skuId == null) ? 0 : skuId.hashCode());
+		result = prime * result
+				+ ((supplierId == null) ? 0 : supplierId.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProductPictureDTO other = (ProductPictureDTO) obj;
+		if (picUrl == null) {
+			if (other.picUrl != null)
+				return false;
+		} else if (!picUrl.equals(other.picUrl))
+			return false;
+		if (skuId == null) {
+			if (other.skuId != null)
+				return false;
+		} else if (!skuId.equals(other.skuId))
+			return false;
+		if (supplierId == null) {
+			if (other.supplierId != null)
+				return false;
+		} else if (!supplierId.equals(other.supplierId))
+			return false;
+		return true;
+	}
+
+
 
     public String getId() {
         return id;
@@ -46,4 +85,5 @@ public class ProductPictureDTO {
     public void setPicUrl(String picUrl) {
         this.picUrl = picUrl;
     }
+    
 }
