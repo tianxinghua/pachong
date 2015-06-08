@@ -40,7 +40,7 @@ public class Startup {
 		if(args.length>1){
 			dateStart=args[0];dateEnd=args[1];
 		}else{
-			dateStart="2015-06-01";
+			dateStart="2015-06-03";
 			dateEnd=DateTimeUtil.getShortCurrentDate();
 		}
 		
@@ -58,8 +58,16 @@ public class Startup {
 				SkuDTO sk=ColtortiProductConvert.product2sku(product);
 				SpuDTO spu = ColtortiProductConvert.product2spu(product);
 				skus.add(sk);spus.add(spu);
-				pfs.saveSKU(sk);
-				pfs.saveSPU(spu);
+				try{
+					pfs.saveSKU(sk);
+				}catch(Exception e){
+					logger.error("保存sku:{}失败,错误：{},",new Gson().toJson(sk),e.getMessage());
+				}
+				try{
+					pfs.saveSPU(spu);
+				}catch(Exception e){
+					logger.error("保存spu:{}失败,错误：{},",new Gson().toJson(sk),e.getMessage());
+				}
 				Set<ProductPictureDTO> ppcs=ColtortiProductConvert.productPic(product);
 				productPics.put(product.getSkuId(), ppcs);
 			}
