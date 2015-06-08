@@ -4,6 +4,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 

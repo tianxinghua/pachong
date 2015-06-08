@@ -1,19 +1,20 @@
 package com.shangpin.iog.apennine.service.impl;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.apennine.utils.ApennineHttpUtil;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ApennineProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.shangpin.iog.service.ProductFetchService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * Created by sunny on 2015/6/5.
  */
+@Service
 public class ApennineProductServiceImpl implements ApennineProductService{
     @Autowired
     ProductFetchService fetchService;
