@@ -89,10 +89,14 @@
             <tr>
                 <td >选择供应商</td>
                 <td colspan="3">
-                    <form:select path="supplier">
-                        <option value="-1">请选择</option>
-                        <form:options items="${supplierList}"  />
-                    </form:select>
+                   <select id="supplier">
+                       <option value="-1">请选择</option>
+                       <c:forEach var="supplier" items="${supplierDTOList}">
+                           <option value="${supplier.supplierId}">${supplier.supplierName}</option>
+
+                       </c:forEach>
+
+                   </select>
                 </td>
             </tr>
             <tr>

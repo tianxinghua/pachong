@@ -4,11 +4,20 @@
 package com.shangpin.iog.coltorti.service;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
+import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.coltorti.convert.ColtortiProductConvert;
+import com.shangpin.iog.coltorti.dto.ColtortiProduct;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -29,8 +38,50 @@ public class InsertDataBaseService {
 		super();
 		this.pfs=fetchServ;
 	}
-
-	public void insertSku(Collection<SkuDTO> skus){
+	/**
+	 * 抓取数据
+	 * @param dateStart 
+	 * @param dateEnd
+	 */
+	public void grabProduct(String dateStart,String dateEnd){
+		try {
+			logger.info("抓取Coltorti数据开始，开始时间：{},结束时间:{}",dateStart,dateEnd);
+			List<ColtortiProduct> coltorProds=ColtortiProductService.findProduct(dateStart, dateEnd);
+			logger.info("抓取Coltorti数据成功，抓取到{}条,数据如下：\r\n{}",coltorProds.size(),new Gson().toJson(coltorProds));
+			//拆分spu
+			Set<SpuDTO> spus=new HashSet<>(coltorProds.size());
+			for (ColtortiProduct product : coltorProds) {
+				SpuDTO spu = ColtortiProductConvert.product2spu(product);
+				spus.add(spu);
+			}
+			//拆分sku和图片
+			coltorProds=ColtortiProductService.divideSku4Size(coltorProds);
+			Set<SkuDTO> skus=new HashSet<>(coltorProds.size());
+			Map<String,Set<ProductPictureDTO>> productPics=new HashMap<String, Set<ProductPictureDTO>>();
+			for (ColtortiProduct product : coltorProds) {
+				SkuDTO sk=ColtortiProductConvert.product2sku(product);
+				skus.add(sk);
+				Set<ProductPictureDTO> ppcs=ColtortiProductConvert.productPic(product);
+				productPics.put(product.getSkuId(), ppcs);
+			}
+			//开始保存
+			if(CollectionUtils.isNotEmpty(skus)) insertSku(skus);
+			if(CollectionUtils.isNotEmpty(spus)) insertSpu(spus);
+			
+			Set<String> picSku=productPics.keySet();
+			for (String sku : picSku) {
+				Set<ProductPictureDTO> pcs=productPics.get(sku);
+				if(CollectionUtils.isNotEmpty(pcs)){
+					insertSkuPic(pcs);
+				}
+			}
+		} catch (ServiceException e) {
+			logger.error("抓取Coltorti数据失败。",e);
+		}
+	}
+	
+	
+	private void insertSku(Collection<SkuDTO> skus){
 		int failCnt=0;int total=skus.size();
 		logger.info("-----开始保存SKU-----");
 		for (SkuDTO sk : skus) {
@@ -43,7 +94,7 @@ public class InsertDataBaseService {
 		}
 		logger.info("-----SkU保存结束，spu总数：{},成功数{}",total,total-failCnt);
 	}
-	public void insertSpu(Collection<SpuDTO> spus){
+	private void insertSpu(Collection<SpuDTO> spus){
 		int failCnt=0;int total=spus.size();
 		logger.info("-----开始保存SPU-----");
 		for (SpuDTO spu : spus) {
@@ -56,7 +107,7 @@ public class InsertDataBaseService {
 		}
 		logger.info("-----SPU保存结束，spu总数：{},成功数{}",total,total-failCnt);
 	}
-	public void insertSkuPic(Collection<ProductPictureDTO> skuPics){
+	private void insertSkuPic(Collection<ProductPictureDTO> skuPics){
 		int failCnt=0;int total=skuPics.size();
 		logger.info("-----开始保存SKUPIC-----");
 		for (ProductPictureDTO pic : skuPics) {
