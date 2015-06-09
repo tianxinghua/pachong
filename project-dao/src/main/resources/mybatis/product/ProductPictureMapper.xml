@@ -28,12 +28,13 @@
 
 
 
-        insert into sku(
+        insert into SKU_PICTURE(
 
         <include refid="all_picture_column"></include>
         )
         values(
-        #{item.id}, #{item.supplierId}, #{item.skuId}, #{item.picUrl},
+        #{id}, #{supplierId}, #{skuId}, #{picUrl}
+        )
 
 
 
@@ -43,7 +44,7 @@
 
 
 
-        insert into sku(
+        insert into SKU_PICTURE(
 
         <include refid="all_picture_column"></include>
         )
