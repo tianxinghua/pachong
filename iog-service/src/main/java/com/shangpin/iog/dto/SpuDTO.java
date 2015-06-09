@@ -18,6 +18,8 @@ public class SpuDTO {
     private String spuName;
     private String categoryId;
     private String categoryName;
+    private String subCategoryId;
+    private String subCategoryName;
     private String brandId;
     private String seasonId;//上市季节ID
     private String brandName;

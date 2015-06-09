@@ -1,9 +1,9 @@
 package com.shangpin.iog.dto;
 
+import java.util.Date;
+
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Date;
 
 /**
  * Created by loyalty on 15/6/3.

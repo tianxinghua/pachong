@@ -1,7 +1,7 @@
 environments{
 	development{
         db {
-            driverClassName = 'org.mysql.jdbc.Driver'
+            driverClassName = 'com.mysql.jdbc.Driver'
             url ='jdbc:mysql://192.168.20.82:3306/iog?useUnicode=true&amp;characterEncoding=utf-8'
             username = 'root'
             password = '123456'

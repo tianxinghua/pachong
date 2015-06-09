@@ -11,7 +11,13 @@ jar {
     }
 }
 
-
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter(org.apache.tools.ant.filters.ReplaceTokens,
+                tokens: loadGroovy()
+        )
+    }
+}
 
 
 dependencies {
