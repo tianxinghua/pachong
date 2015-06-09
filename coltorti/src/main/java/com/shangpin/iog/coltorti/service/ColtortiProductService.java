@@ -122,16 +122,21 @@ public class ColtortiProductService{
 		List<ColtortiProduct> newProducts = new ArrayList<>(pros.size());
 		for (Iterator<ColtortiProduct> iterator = pros.iterator(); iterator.hasNext();) {
 			ColtortiProduct prd = iterator.next();
-			String pid=prd.getProductId();
 			Map<String,String> scalars=prd.getScalars();
-			Map<String,Map<String,Integer>> stocks=null;
-			String scalarkey="";
-			//如果只有一个尺码那么不用去取?
 			if(scalars!=null && scalars.size()>0){
-				stocks=null;//getStock(pid,prd.getSkuId());
-				scalarkey=scalars.entrySet().iterator().next().getValue();
+				//stocks=null;//getStock(pid,prd.getSkuId());
+				Set<String> scks=scalars.keySet();
+				for (String sck : scks) {
+					String sml=scalars.get(sck);//尺码字符
+					newProducts.add(convertProduct(prd, sml,0));
+				}
+				//scalarkey=scalars.entrySet().iterator().next().getValue();
 			}
-			if(stocks!=null && stocks.size()>0){
+			/*String pid=prd.getProductId();
+			Map<String,Map<String,Integer>> stocks=null;
+			String scalarkey="";*/
+			//如果只有一个尺码那么不用去取?
+			/*if(stocks!=null && stocks.size()>0){
 				Map<String, Integer> scalar=stocks.get(prd.getSkuId());
 				if(scalar!=null){
 					Set<String> smlx=scalar.keySet();
@@ -144,7 +149,7 @@ public class ColtortiProductService{
 				}
 			}else{
 				newProducts.add(convertProduct(prd, scalarkey,0));
-			}
+			}*/
 		}
 		return newProducts;
 	}
