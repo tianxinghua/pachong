@@ -75,8 +75,8 @@ public class Startup {
 			}
 			//开始保存
 			InsertDataBaseService dataSrv= new InsertDataBaseService(pfs);
-			//if(CollectionUtils.isNotEmpty(skus)) dataSrv.insertSku(skus);
-			//if(CollectionUtils.isNotEmpty(spus)) dataSrv.insertSpu(spus);
+			if(CollectionUtils.isNotEmpty(skus)) dataSrv.insertSku(skus);
+			if(CollectionUtils.isNotEmpty(spus)) dataSrv.insertSpu(spus);
 			
 			Set<String> picSku=productPics.keySet();
 			for (String sku : picSku) {
