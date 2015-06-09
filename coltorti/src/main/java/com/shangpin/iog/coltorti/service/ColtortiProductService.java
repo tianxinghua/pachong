@@ -118,7 +118,7 @@ public class ColtortiProductService{
 	 * @param pros
 	 * @throws ServiceException
 	 */
-	public static List<ColtortiProduct> product2sku(List<ColtortiProduct> pros) throws ServiceException{
+	public static List<ColtortiProduct> divideSku4Size(List<ColtortiProduct> pros) throws ServiceException{
 		List<ColtortiProduct> newProducts = new ArrayList<>(pros.size());
 		for (Iterator<ColtortiProduct> iterator = pros.iterator(); iterator.hasNext();) {
 			ColtortiProduct prd = iterator.next();
@@ -168,7 +168,7 @@ public class ColtortiProductService{
 			e.printStackTrace();
 		}
 		newp.setStock(stock);
-		newp.setSkuId(prd.getSkuId()+"-"+scalarKey);
+		newp.setSkuId(prd.getSkuId()+"#"+scalarKey);
 		newp.setScalars(null);
 		return newp;
 	}
@@ -189,8 +189,6 @@ public class ColtortiProductService{
 			Class<?> type = getProType(cls,pro);
 			if(type!=null){
 				try {
-					//Object obj=JSONObject.parseObject(js1, type);
-					//TypeToken.get(TypeToken.get(type).getType());
 					Object obj=g.fromJson(je, TypeToken.get(type).getType());
 					BeanUtils.setProperty(p, pro,obj);
 				} catch (JsonSyntaxException | InvocationTargetException e) {
@@ -253,20 +251,22 @@ public class ColtortiProductService{
 		return null;
 	}
 	/**
-	 * 返回 产品的记录id：（尺码：数量）<br/>库存信息
-	 * @param productId 货好，相当spu id<br/>一个product id包含多个sku<br/>
-	 * @return 返回 产品的记录id：（尺码：数量）<br/> 
+	 * 返回 产品的记录id：尺码：数量<br/>库存信息
+	 * @param productId 货号，相当spu id<br/>一个product id包含多个sku<br/>
+	 * @param recordId 未拆分尺码前的skuId，如果是拆分后的一般是skuId的'#'号前面部分<br/>
+	 * 务必排除该‘#’号及后面部分
+	 * @return 返回 每个sku不同尺码对应的数量；<br/>产品的记录id：（尺码：数量）<br/> 
 	 * @throws ServiceException
 	 */
 	public static Map<String, Map<String, Integer>> getStock(String productId,String recordId) throws ServiceException{
-		Map<String,String> param=ColtortiUtil.getCommonParam(1,10);
+		Map<String,String> param=ColtortiUtil.getCommonParam(0,0);
 		if(productId!=null) param.put("product_id", productId);
 		if(recordId!=null) param.put("id", recordId);
 		String body=HttpUtils.get(ColtortiUtil.paramGetUrl(ApiURL.STOCK,param));
 		try{
 			ColtortiUtil.check(body);
 		}catch(ServiceException e){
-			if(ColtortiUtil.isNotResultError(e)){
+			if(ColtortiUtil.isNoResultError(e)){
 				return null;
 			}
 		}
@@ -322,7 +322,7 @@ public class ColtortiProductService{
 		//requestAttribute(1, 100);
 		//findProduct(1,40,"152790AAV000001");
 		//getStock("152790AAV000001","152790AAV000001-PINxRU");//"152790FCR000005-SADMA"
-		List<ColtortiProduct> ps=product2sku(findProduct(null));
+		List<ColtortiProduct> ps=divideSku4Size(findProduct(null));
 		logger.info("-----new products -----\r\n"+new Gson().toJson(ps));
 		List<SkuDTO> skus=new ArrayList<>(ps.size());
 		List<SpuDTO> spus=new ArrayList<>(ps.size());

@@ -24,7 +24,7 @@ import com.shangpin.iog.coltorti.dto.ColtortiError;
 public class ColtortiUtil {
 
 	static String tokenExpire="token has expired";
-	static String notResult="no results found";
+	static String noResult="no results found";
 	/**
 	 * 判断返回的信息是否是出差信息
 	 * @param responseBody
@@ -80,9 +80,9 @@ public class ColtortiUtil {
 	 * @param e
 	 * @return
 	 */
-	public static boolean isNotResultError(ServiceException e) {
+	public static boolean isNoResultError(ServiceException e) {
 		String msg=e.getMessage();
-		if(notResult.equals(msg))
+		if(noResult.equals(msg))
 			return true;
 		return false;
 	}

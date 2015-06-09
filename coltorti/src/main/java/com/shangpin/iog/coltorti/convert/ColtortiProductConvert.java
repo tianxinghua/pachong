@@ -35,12 +35,13 @@ public class ColtortiProductConvert {
 		dto.setSupplierPrice(p.getPrice()==null?"0":""+p.getPrice());
 		dto.setSpuId(p.getProductId());
 		dto.setSaleCurrency("EUR");
+		dto.setProductDescription(p.getDescription());
 		dto.setStock(p.getStock().toString());
 		if(p.getScalars()!=null && p.getScalars().size()>0)
 			dto.setProductSize(p.getScalars().entrySet().iterator().next().getValue());
-		else if(p.getSkuId().lastIndexOf("#")>0){
+		else if(p.getSkuId().lastIndexOf("#")>0){//用于经过尺码拆分后的新产品
 			int idx=p.getSkuId().lastIndexOf("#");
-			dto.setProductSize(p.getSkuId().substring(idx));
+			dto.setProductSize(p.getSkuId().substring(idx+1));
 		}
 		return dto;
 	}
@@ -54,6 +55,10 @@ public class ColtortiProductConvert {
 			String brand=entry.getValue();
 			dto.setBrandName(brand);
 			dto.setBrandId(entry.getKey());
+		}
+		if(p.getFamily()!=null){
+			Entry<String, String> entry=p.getFamily().entrySet().iterator().next();
+			dto.setCategoryGender(entry.getValue());
 		}
 		dto.setCategoryName(p.getCategory());
 		dto.setSubCategoryName(p.getSubCategory());

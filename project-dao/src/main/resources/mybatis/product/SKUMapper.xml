@@ -16,8 +16,8 @@
         <result column="SALE_CURRENCY" property="saleCurrency"  />
         <result column="PRODUCT_SIZE" property="productSize" />
         <result column="STOCK" property="stock" />
-        <result column="CREATE_TIME" property="color" />
-        <result column="LAST_TIME" property="stock" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="LAST_TIME" property="lastTime" />
 
 
 

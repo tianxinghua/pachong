@@ -1,12 +1,11 @@
 package com.shangpin.iog.service;
 
+import java.util.List;
+
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-
-import java.util.List;
 
 /**
  * Created by loyalty on 15/6/4.
