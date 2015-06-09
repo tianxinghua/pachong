@@ -25,8 +25,8 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtils;
  * @author 陈小峰
  * <br/>2015年6月9日
  */
-public class ProductStockService {
-	static Logger logger =LoggerFactory.getLogger(ProductStockService.class);
+public class ColtortiStockService {
+	static Logger logger =LoggerFactory.getLogger(ColtortiStockService.class);
 	static int retry=0;
 	/**
 	 * 返回 产品的记录id：尺码：数量<br/>库存信息
