@@ -35,6 +35,7 @@ public class ColtortiProductConvert {
 		dto.setSupplierPrice(p.getPrice()==null?"0":""+p.getPrice());
 		dto.setSpuId(p.getProductId());
 		dto.setSaleCurrency("EUR");
+		dto.setProductDescription(p.getDescription());
 		dto.setStock(p.getStock().toString());
 		if(p.getScalars()!=null && p.getScalars().size()>0)
 			dto.setProductSize(p.getScalars().entrySet().iterator().next().getValue());
