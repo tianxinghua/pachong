@@ -16,9 +16,13 @@ public class SpuDTO {
     private String supplierId;
     private String spuId;
     private String spuName;
+    /**性别分类*/
+    private String categoryGender;
     private String categoryId;
+    /**大类*/
     private String categoryName;
     private String subCategoryId;
+    /**小类*/
     private String subCategoryName;
     private String brandId;
     private String seasonId;//上市季节ID
@@ -149,4 +153,37 @@ public class SpuDTO {
     public void setLastTime(Date lastTime) {
         this.lastTime = lastTime;
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((spuId == null) ? 0 : spuId.hashCode());
+		result = prime * result
+				+ ((supplierId == null) ? 0 : supplierId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SpuDTO other = (SpuDTO) obj;
+		if (spuId == null) {
+			if (other.spuId != null)
+				return false;
+		} else if (!spuId.equals(other.spuId))
+			return false;
+		if (supplierId == null) {
+			if (other.supplierId != null)
+				return false;
+		} else if (!supplierId.equals(other.supplierId))
+			return false;
+		return true;
+	}
+    
 }

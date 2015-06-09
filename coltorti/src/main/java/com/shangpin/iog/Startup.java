@@ -1,11 +1,12 @@
 package com.shangpin.iog;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -17,6 +18,7 @@ import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.coltorti.convert.ColtortiProductConvert;
 import com.shangpin.iog.coltorti.dto.ColtortiProduct;
 import com.shangpin.iog.coltorti.service.ColtortiProductService;
+import com.shangpin.iog.coltorti.service.InsertDataBaseService;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
@@ -31,56 +33,57 @@ public class Startup {
 
 		factory = new AnnotationConfigApplicationContext(AppContext.class);
 	}
-
+	/**
+	 * 抓取指定天数据，可传入两参数，开始时间，结束时间以：yyyy-MM-dd形式<br/>
+	 * 若没有则取前一天到今天1天的数据
+	 * @param args
+	 */
 	public static void main(String[] args) {
-
 		// 加载spring
 		loadSpringContext();
 		String dateStart="",dateEnd="";
 		if(args.length>1){
 			dateStart=args[0];dateEnd=args[1];
 		}else{
-			dateStart="2015-06-03";
+			dateStart=DateTimeUtil.getbeforeDay(1);
 			dateEnd=DateTimeUtil.getShortCurrentDate();
 		}
-		
-		ProductFetchService pfs=factory.getBean(ProductFetchService.class);
+		Map<String,ProductFetchService> fetchsrvs=factory.getBeansOfType(ProductFetchService.class);
+		ProductFetchService pfs=null;
+		if(fetchsrvs!=null && fetchsrvs.size()>0)
+			pfs=fetchsrvs.entrySet().iterator().next().getValue();
 		if(pfs==null) return ;
 		try {
 			logger.info("抓取Coltorti数据开始，开始时间：{},结束时间:{}",dateStart,dateEnd);
 			List<ColtortiProduct> coltorProds=ColtortiProductService.findProduct(dateStart, dateEnd);
 			logger.info("抓取Coltorti数据成功，抓取到{},数据如下：\r\n{}",coltorProds.size(),new Gson().toJson(coltorProds));
-			coltorProds=ColtortiProductService.product2sku(coltorProds);
-			List<SkuDTO> skus=new ArrayList<>(coltorProds.size());
-			List<SpuDTO> spus=new ArrayList<>(coltorProds.size());
+			//拆分spu
+			Set<SpuDTO> spus=new HashSet<>(coltorProds.size());
+			for (ColtortiProduct product : coltorProds) {
+				SpuDTO spu = ColtortiProductConvert.product2spu(product);
+				spus.add(spu);
+			}
+			//拆分sku和图片
+			coltorProds=ColtortiProductService.divideSku4Size(coltorProds);
+			Set<SkuDTO> skus=new HashSet<>(coltorProds.size());
 			Map<String,Set<ProductPictureDTO>> productPics=new HashMap<String, Set<ProductPictureDTO>>();
 			for (ColtortiProduct product : coltorProds) {
 				SkuDTO sk=ColtortiProductConvert.product2sku(product);
-				SpuDTO spu = ColtortiProductConvert.product2spu(product);
-				skus.add(sk);spus.add(spu);
-				try{
-					pfs.saveSKU(sk);
-				}catch(Exception e){
-					logger.error("保存sku:{}失败,错误：{},",new Gson().toJson(sk),e.getMessage());
-				}
-				try{
-					pfs.saveSPU(spu);
-				}catch(Exception e){
-					logger.error("保存spu:{}失败,错误：{},",new Gson().toJson(sk),e.getMessage());
-				}
+				skus.add(sk);
 				Set<ProductPictureDTO> ppcs=ColtortiProductConvert.productPic(product);
 				productPics.put(product.getSkuId(), ppcs);
 			}
-			logger.info("转换spu数：{},sku数{}",spus.size(),skus.size());
-			// 保存数据
-			pfs.saveSKU(skus);pfs.saveSPU(spus);
+			//开始保存
+			InsertDataBaseService dataSrv= new InsertDataBaseService(pfs);
+			if(CollectionUtils.isNotEmpty(skus)) dataSrv.insertSku(skus);
+			if(CollectionUtils.isNotEmpty(spus)) dataSrv.insertSpu(spus);
 			
 			Set<String> picSku=productPics.keySet();
 			for (String sku : picSku) {
 				Set<ProductPictureDTO> pcs=productPics.get(sku);
-				List<ProductPictureDTO> imgUrl=new ArrayList<>(pcs.size());
-				imgUrl.addAll(pcs);
-				pfs.savePicture(imgUrl);
+				if(CollectionUtils.isNotEmpty(pcs)){
+					dataSrv.insertSkuPic(pcs);
+				}
 			}
 		} catch (ServiceException e) {
 			logger.error("抓取Coltorti数据失败。",e);

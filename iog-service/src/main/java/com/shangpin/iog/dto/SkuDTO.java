@@ -139,4 +139,37 @@ public class SkuDTO {
     public void setLastTime(Date lastTime) {
         this.lastTime = lastTime;
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((skuId == null) ? 0 : skuId.hashCode());
+		result = prime * result
+				+ ((supplierId == null) ? 0 : supplierId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SkuDTO other = (SkuDTO) obj;
+		if (skuId == null) {
+			if (other.skuId != null)
+				return false;
+		} else if (!skuId.equals(other.skuId))
+			return false;
+		if (supplierId == null) {
+			if (other.supplierId != null)
+				return false;
+		} else if (!supplierId.equals(other.supplierId))
+			return false;
+		return true;
+	}
+    
 }
