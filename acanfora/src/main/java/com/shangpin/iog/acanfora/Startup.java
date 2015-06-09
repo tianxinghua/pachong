@@ -19,6 +19,7 @@ public class Startup
 	{
 
         //加载spring
+
 		loadSpringContext();
         //拉取数据
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("acanfora");

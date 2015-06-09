@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
     String bathPath = request.getContextPath();
 %>
@@ -88,9 +89,9 @@
             <tr>
                 <td >选择供应商</td>
                 <td colspan="3">
-                    <form:select path="favoriteBall">
-                        <option>请选择</option>
-                        <form:options items="${supplierMap}"/>
+                    <form:select path="supplier">
+                        <option value="-1">请选择</option>
+                        <form:options items="${supplierList}"  />
                     </form:select>
                 </td>
             </tr>

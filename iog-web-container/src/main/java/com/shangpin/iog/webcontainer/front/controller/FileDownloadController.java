@@ -43,17 +43,33 @@ public class FileDownloadController {
     public ModelAndView viewPage() throws Exception {
         ModelAndView mv = new ModelAndView("iog");
         List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
-        Map<String, String> supplierMap = new HashMap<String, String>();
-        for(SupplierDTO supplierDTO:supplierDTOList){
-            supplierMap.put(supplierDTO.getSupplierId(),supplierDTO.getSupplierName()) ;
-        }
-
-
-        mv.addObject("supplierMap",supplierMap);
+//        Map<Integer, String> supplierMap = new HashMap<Integer, String>();
+//        for(SupplierDTO supplierDTO:supplierDTOList){
+//            supplierMap.put(supplierDTO.getSupplierId(),supplierDTO.getSupplierName()) ;
+//        }
+//         supplierMap.put(1,"lzr");
+//        supplierMap.put(2,"lzr2");
+//        SupplierDTO supplierDTO =new SupplierDTO();
+//        supplierDTO.setSupplierId("-1");
+//        supplierDTO.setSupplierName("");
+//        mv.addObject("supplier",supplierDTO);
+        mv.addObject("supplierList", supplierDTOList);
         return mv;
     }
 
+    @RequestMapping("view2")
+    public String listEmployees(Map<String, Object> map)  throws Exception {
 
+        List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
+
+        SupplierDTO supplierDTO =new SupplierDTO();
+        supplierDTO.setSupplierId("-1");
+        supplierDTO.setSupplierName("");
+        map.put("supplier", supplierDTO);
+        map.put("supplierList", supplierDTOList);
+
+        return "iog";
+    }
 
 
 

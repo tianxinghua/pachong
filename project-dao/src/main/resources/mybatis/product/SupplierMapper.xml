@@ -6,7 +6,7 @@
 
   <result column="SUPPLIER_ID" property="supplierId" />
   <result column="SUPPLIER_NAME" property="supplierName" />
-  <result column="SUPPLIER_STATE" property="picUrl" />
+  <result column="SUPPLIER_STATE" property="state" />
 
 
 
