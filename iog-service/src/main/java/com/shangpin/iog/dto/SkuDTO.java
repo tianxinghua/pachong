@@ -171,5 +171,12 @@ public class SkuDTO {
 			return false;
 		return true;
 	}
-    
+
+    public String getProductDescription() {
+        return productDescription;
+    }
+
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
+    }
 }

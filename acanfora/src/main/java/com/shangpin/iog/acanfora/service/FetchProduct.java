@@ -34,6 +34,7 @@ public class FetchProduct {
 
         try {
             String result =  HttpUtils.get(url);
+            System.out.println(result);
             Products products= ObjectXMLUtil.xml2Obj(Products.class, result);
             List<Product> productList = products.getProducts();
             for(Product product:productList){
@@ -46,18 +47,23 @@ public class FetchProduct {
                 }
 
                 List<Item> itemList = items.getItems();
-                for(Item item:itemList){
-                    SkuDTO sku  = new SkuDTO();
-                    try {
-                        sku.setId(UUIDGenerator.getUUID());
-                        sku.setSupplierId("00000001");
-                        sku.setSpuId(product.getProductId());
-                        sku.setSkuId(item.getItem_id());
-                        productFetchService.saveSKU(sku);
-                    } catch (ServiceException e) {
-                        e.printStackTrace();
-                    }
-                }
+//                for(Item item:itemList){
+//                    SkuDTO sku  = new SkuDTO();
+//                    try {
+//                        sku.setId(UUIDGenerator.getUUID());
+//                        sku.setSupplierId("00000001");
+//                        sku.setSpuId(product.getProductId());
+//                        sku.setSkuId(item.getItem_id());
+//                        sku.setProductSize(item.getItem_size());
+//                        sku.setSupplierPrice(item.getSupply_price());
+//                        sku.setColor(item.getColor());
+//                        sku.setProductDescription(item.getDescription());
+//                        sku.setStock(item.getStock());
+//                        productFetchService.saveSKU(sku);
+//                    } catch (ServiceException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
 
                 try {
                     spu.setId(UUIDGenerator.getUUID());
@@ -65,7 +71,11 @@ public class FetchProduct {
                     spu.setSpuId(product.getProductId());
                     spu.setBrandName(product.getProduct_brand());
                     spu.setCategoryName(product.getCategory());
-
+                    spu.setSpuName(product.getProduct_name());
+                    spu.setSeasonId(product.getSeason_code());
+                    spu.setMaterial(product.getProduct_material());
+                    spu.setPicUrl(product.getUrl());
+                    spu.setSupplierId(product.getProducer_id());
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
                     e.printStackTrace();
