@@ -44,6 +44,11 @@ public class Startup {
 		String dateStart="",dateEnd="";
 		if(args.length>1){
 			dateStart=args[0];dateEnd=args[1];
+			if(null==DateTimeUtil.parse(dateStart,"yyyy-MM-dd") 
+					||null==DateTimeUtil.parse(dateEnd,"yyyy-MM-dd")){
+				logger.error("拉取时间参数错误,start:{},end:{}",dateStart,dateEnd);
+				return ;
+			}
 		}else{
 			dateStart=DateTimeUtil.getbeforeDay(1);
 			dateEnd=DateTimeUtil.getShortCurrentDate();
@@ -56,7 +61,7 @@ public class Startup {
 		try {
 			logger.info("抓取Coltorti数据开始，开始时间：{},结束时间:{}",dateStart,dateEnd);
 			List<ColtortiProduct> coltorProds=ColtortiProductService.findProduct(dateStart, dateEnd);
-			logger.info("抓取Coltorti数据成功，抓取到{},数据如下：\r\n{}",coltorProds.size(),new Gson().toJson(coltorProds));
+			logger.info("抓取Coltorti数据成功，抓取到{}条,数据如下：\r\n{}",coltorProds.size(),new Gson().toJson(coltorProds));
 			//拆分spu
 			Set<SpuDTO> spus=new HashSet<>(coltorProds.size());
 			for (ColtortiProduct product : coltorProds) {
