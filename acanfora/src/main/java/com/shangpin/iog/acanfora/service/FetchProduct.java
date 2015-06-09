@@ -56,6 +56,7 @@ public class FetchProduct {
                         productFetchService.saveSKU(sku);
                     } catch (ServiceException e) {
                         e.printStackTrace();
+                        continue;
                     }
                 }
 

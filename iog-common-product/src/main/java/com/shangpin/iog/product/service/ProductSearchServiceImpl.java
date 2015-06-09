@@ -11,6 +11,7 @@ import com.shangpin.iog.product.dao.ProductsMapper;
 import com.shangpin.iog.product.dao.SkuMapper;
 import com.shangpin.iog.product.dao.SpuMapper;
 import com.shangpin.iog.service.ProductSearchService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,81 +105,68 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 " type ,"+
                 "SopProductName商品名称,BarCode条形码,ProductColor颜色,ProductSize尺码,Materia材质,ProductOrigin产地,productUrl1," +
                 "productUrl2,productUrl3,productUrl4,productUrl5,productUrl6,productUrl7,productUrl8,productUrl9," +
-                "PcDesc PC端描述,MDesc 手机端描述,Stock 库存,Price 进货价,Currency 币种,上市季节").append("\r\n");
+                "PcDesc 描述,Stock 库存,Price 进货价,Currency 币种,上市季节").append("\r\n");
         Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize);
         String productSize,season="", productDetail="",brandId="";
+
+        String separator="";
         for(ProductDTO dto:page.getItems()){
 
-//            try {
-//                //处理图片
-//                dto.setItemPic();
-//                buffer.append(dto.getCategory()).append(",").append("品类编号").append(",");
-//                //品牌
-//                brandId=dto.getProducerId().trim();
-////                if(brandMap.containsKey(brandId)){
-////                    brandId=brandMap.get(brandId);
-////                }else{
-////                    brandId ="";
-////                }
-//                buffer.append(brandId).append(",");
-//                buffer.append(dto.getProducerId()).append(",");
-//                //货号
-//                buffer.append(dto.getProductName() + " " + dto.getColor()).append(",").append(dto.getItemId()).append(",");
-//                //欧洲习惯 第一个先看 男女
+            try {
+
+                buffer.append(dto.getCategoryName()).append(",").append(StringUtils.isNotBlank(dto.getCategoryId())?dto.getCategoryId() :"品类编号").append(",");
+                //品牌
+                brandId=dto.getBrandName().trim();
+//                if(brandMap.containsKey(brandId)){
+//                    brandId=brandMap.get(brandId);
+//                }else{
+//                    brandId ="";
+//                }
+                buffer.append(StringUtils.isNotBlank(dto.getBrandId())?dto.getBrandId() :"品类编号").append(",");
+                buffer.append(dto.getBrandName()).append(",");
+                //货号
+                buffer.append(dto.getProductCode()).append(",").append(dto.getSkuId()).append(",");
+                //欧洲习惯 第一个先看 男女
 //                buffer.append(dto.getType()).append(",");
-//                //产品名称
-//                buffer.append(dto.getDescription()).append(",");
-//                buffer.append("\"\t" + dto.getBarcode() + "\"").append(",").append(dto.getColor()).append(",");
-//                //获取尺码
-//                productSize=dto.getItemSize();
-//                if(StringUtils.isNotBlank(productSize)){
-//                    productSize=productSize.substring(0,dto.getItemSize().length()-4);
-//                    if(productSize.indexOf("+")>0){
-//                        productSize=productSize.replace("+",".5");
-//                    }
-//
-//                }else{
-//                    productSize="";
-//                }
-//
-//                buffer.append(productSize).append(",");
-//
-//
-//                //明细描述
-//                productDetail = dto.getProductDetail();
-//                if(StringUtils.isNotBlank(productDetail)&&productDetail.indexOf(",")>0){
-//                    productDetail = productDetail.replace(",",".");
-//                }
-//
-//
-//                buffer.append(productDetail).append(",")
-//                        .append(productDetail).append(",").append(dto.getUrl()).append(",");
-//                buffer.append(dto.getItemPictureUrl1()).append(",").append(dto.getItemPictureUrl2()).append(",").append(dto.getItemPictureUrl3()).append(",")
-//                        .append(dto.getItemPictureUrl4()).append(",").append(dto.getItemPictureUrl5()).append(",")
-//                        .append(dto.getItemPictureUrl6()).append(",").append(dto.getItemPictureUrl7()).append(",")
-//                        .append(dto.getItemPictureUrl8()).append(",").append(dto.getDescription()).append(",");
-//
-//                buffer.append(productDetail).append(",");
-//                buffer.append(dto.getStock()).append(",")
-//                        .append(dto.getSupplyPrice()).append(",").append("").append(",");
-//                //季节
-//
-//                if(StringUtils.isNotBlank(dto.getSeason())){
-////                    if(seasonMap.containsKey(dto.getSeason())){
-////                        season = seasonMap.get(dto.getSeason());
-////                    }else{
-////                        season = "";
-////                    }
-//                }else{
-//                    season = "";
-//                }
-//                buffer.append(season);
-//
-//                buffer.append("\r\n");
-//            } catch (Exception e) {
-//                logger.debug(dto.getItemId()+"拉取失败"+  e.getMessage());
-//                continue;
-//            }
+                //产品名称
+                buffer.append(dto.getProductName()).append(",");
+                buffer.append("\"\t" + dto.getBarcode() + "\"").append(",").append(dto.getColor()).append(",");
+                //获取尺码
+
+
+                buffer.append(dto.getSize()).append(",");
+
+
+
+
+
+                buffer.append(dto.getMaterial()).append(",")
+                        .append(dto.getProductOrigin()).append(",").append(dto.getPicUrl()).append(",");
+                buffer.append(dto.getItemPictureUrl1()).append(",").append(dto.getItemPictureUrl2()).append(",").append(dto.getItemPictureUrl3()).append(",")
+                        .append(dto.getItemPictureUrl4()).append(",").append(dto.getItemPictureUrl5()).append(",")
+                        .append(dto.getItemPictureUrl6()).append(",").append(dto.getItemPictureUrl7()).append(",")
+                        .append(dto.getItemPictureUrl8()).append(",");
+                //明细描述
+                productDetail = dto.getProductDescription();
+                if(StringUtils.isNotBlank(productDetail)&&productDetail.indexOf(",")>0){
+                    productDetail = productDetail.replace(",","...");
+                }
+
+                buffer.append(productDetail).append(",");
+
+
+                buffer.append(dto.getStock()).append(",")
+                        .append(dto.getSupplierPrice()).append(",").append("").append(",");
+                //季节
+
+
+                buffer.append(dto.getSeasonName());
+
+                buffer.append("\r\n");
+            } catch (Exception e) {
+                logger.debug(dto.getSkuId()+"拉取失败"+  e.getMessage());
+                continue;
+            }
 
         }
         return buffer ;

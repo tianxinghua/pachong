@@ -10,13 +10,16 @@ import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.excel.AccountsExcelTemplate;
 import com.shangpin.iog.common.utils.json.JsonUtil;
 import com.shangpin.iog.dto.ProductSearchDTO;
+import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.service.ProductSearchService;
+import com.shangpin.iog.service.SupplierService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,9 +36,21 @@ public class FileDownloadController {
     @Autowired
     ProductSearchService productService;
 
+    @Autowired
+    SupplierService supplierService;
+
     @RequestMapping(value = "view")
-    public String  viewPage() throws Exception {
-        return "spinnaker";
+    public ModelAndView viewPage() throws Exception {
+        ModelAndView mv = new ModelAndView("iog");
+        List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
+        Map<String, String> supplierMap = new HashMap<String, String>();
+        for(SupplierDTO supplierDTO:supplierDTOList){
+            supplierMap.put(supplierDTO.getSupplierId(),supplierDTO.getSupplierName()) ;
+        }
+
+
+        mv.addObject("supplierMap",supplierMap);
+        return mv;
     }
 
 
@@ -72,7 +87,7 @@ public class FileDownloadController {
 
             response.setContentType("text/csv;charset=gb2312");
 
-            response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("spinnaker_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+            response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplier()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 
 //            System.out.print("kk ----------------- " + productBuffer.toString());
 //            in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("UTF-8")));
