@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.httpclient.NameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +32,7 @@ import com.shangpin.iog.service.ProductFetchService;
 public class ApennineHttpUtil {
     @Autowired
     ProductFetchService fetchService;
+    static Logger logger =LoggerFactory.getLogger(ApennineHttpUtil.class);
     private ApennineProductDTO getObjectByJsonString(String jsonStr) {
         ApennineProductDTO obj =null;
         Gson gson = new Gson();
@@ -37,6 +40,7 @@ public class ApennineHttpUtil {
             obj=gson.fromJson(jsonStr, ApennineProductDTO.class);
         } catch (Exception e) {
             e.printStackTrace();
+            logger.info("get ApennineProduct fail :"+e);
         }
         return obj;
     }
@@ -53,6 +57,7 @@ public class ApennineHttpUtil {
             objs = gson.fromJson(jsonStr, new TypeToken<List<ApennineProductDTO>>(){}.getType());
         } catch (Exception e) {
             e.printStackTrace();
+            logger.info("get List<ApennineProductDTO> fail :"+e);
         }
         return objs;
     }
@@ -63,6 +68,7 @@ public class ApennineHttpUtil {
             objs = gson.fromJson(jsonStr, new TypeToken<List<ApennineProductPictureDTO>>(){}.getType());
         } catch (Exception e) {
             e.printStackTrace();
+            logger.info("get List<ApennineProductPictureDTO> fail :"+e);
         }
         return objs;
     }
@@ -84,9 +90,15 @@ public class ApennineHttpUtil {
             list=this.getObjectsByJsonString(jsonStr);
         } catch (ServiceException e) {
             e.printStackTrace();
+            logger.info("get List<ApennineProduct> fail :"+e);
         }
         return list;
     }
+    /**
+     * 产品实体转为SPU实体
+     * @param list
+     * @return
+     */
     private List<SpuDTO> formatToSpu(List<ApennineProductDTO>list){
         List<SpuDTO>spuList=new ArrayList<>();
         for (int i = 0;i<list.size();i++){
@@ -101,6 +113,11 @@ public class ApennineHttpUtil {
         }
         return spuList;
     }
+    /**
+     * 产品实体转为SKU实体
+     * @param list
+     * @return
+     */
     private List<SkuDTO>formatToSku(List<ApennineProductDTO>list){
         List<SkuDTO>skuList=new ArrayList<>();
         for (int i=0;i<list.size();i++){
@@ -119,6 +136,11 @@ public class ApennineHttpUtil {
         }
         return skuList;
     }
+    /**
+     * 产品实体转为商品图片实体
+     * @param list
+     * @return
+     */
     private List<ProductPictureDTO> formatToPic(List<ApennineProductDTO>list){
         List<ProductPictureDTO>picList=new ArrayList<>();
         for (int i=0;i<list.size();i++) {
@@ -141,6 +163,11 @@ public class ApennineHttpUtil {
     	list= this.getPicsByjsonString(jsonStr);
     	return list;
     }
+    /**
+     * 插入所有商品信息
+     * @param url
+     * @throws ServiceException
+     */
     public void insertApennineProducts(String url) throws ServiceException {
         List<ApennineProductDTO>dtos = getAllProducts(url);
         List<SkuDTO>skuDTOList=formatToSku(dtos);
