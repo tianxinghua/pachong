@@ -33,7 +33,6 @@ import com.shangpin.iog.coltorti.conf.ApiURL;
 import com.shangpin.iog.coltorti.convert.ColtortiProductConvert;
 import com.shangpin.iog.coltorti.dto.ColtortiAttributes;
 import com.shangpin.iog.coltorti.dto.ColtortiProduct;
-import com.shangpin.iog.coltorti.dto.ColtortiStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
@@ -250,14 +249,14 @@ public class ColtortiProductService{
 		}
 		return null;
 	}
-	/**
+	/*
 	 * 返回 产品的记录id：尺码：数量<br/>库存信息
 	 * @param productId 货号，相当spu id<br/>一个product id包含多个sku<br/>
 	 * @param recordId 未拆分尺码前的skuId，如果是拆分后的一般是skuId的'#'号前面部分<br/>
 	 * 务必排除该‘#’号及后面部分
 	 * @return 返回 每个sku不同尺码对应的数量；<br/>产品的记录id：（尺码：数量）<br/> 
 	 * @throws ServiceException
-	 */
+	 *
 	public static Map<String, Map<String, Integer>> getStock(String productId,String recordId) throws ServiceException{
 		Map<String,String> param=ColtortiUtil.getCommonParam(0,0);
 		if(productId!=null) param.put("product_id", productId);
@@ -316,7 +315,7 @@ public class ColtortiProductService{
 			logger.info("new stocks result："+gson.toJson(rtnScalar));
 		}
 		return rtnScalar;
-	}
+	}*/
 	
 	public static void main(String[] args) throws ServiceException, IOException {
 		//requestAttribute(1, 100);
