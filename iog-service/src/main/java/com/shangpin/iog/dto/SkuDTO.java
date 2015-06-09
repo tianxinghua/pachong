@@ -17,7 +17,8 @@ public class SkuDTO {
     private String skuId;
     private String spuId;
     private String productName;
-    private String supplierPrice;
+    private String salePrice;//销售价格
+    private String supplierPrice;//供货商价格
     private String barcode;//条形码
     private String productCode;//货号
     private String color;
