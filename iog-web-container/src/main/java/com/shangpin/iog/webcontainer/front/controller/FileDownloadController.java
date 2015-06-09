@@ -43,13 +43,10 @@ public class FileDownloadController {
     public ModelAndView viewPage() throws Exception {
         ModelAndView mv = new ModelAndView("iog");
         List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
-        Map<String, String> supplierMap = new HashMap<String, String>();
-        for(SupplierDTO supplierDTO:supplierDTOList){
-            supplierMap.put(supplierDTO.getSupplierId(),supplierDTO.getSupplierName()) ;
-        }
 
 
-        mv.addObject("supplierMap",supplierMap);
+
+        mv.addObject("supplierDTOList",supplierDTOList);
         return mv;
     }
 
