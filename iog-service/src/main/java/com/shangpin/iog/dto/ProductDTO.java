@@ -14,8 +14,20 @@ public class ProductDTO {
     private String spuName;
     private String skuId;
     private String productName;
+
+    /**性别分类*/
+    private String categoryGender;
+    /**大类*/
     private String categoryId;
     private String categoryName;
+
+
+    /**小类*/
+    private String subCategoryId;
+    private String subCategoryName;
+
+
+
     private String brandId;
     private String seasonId;//上市季节ID
     private String brandName;

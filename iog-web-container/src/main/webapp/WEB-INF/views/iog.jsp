@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
     String bathPath = request.getContextPath();
 %>
@@ -85,12 +87,25 @@
     <form action="" id="brandForm">
         <table>
             <tr>
+                <td >选择供应商</td>
+                <td colspan="3">
+                   <select id="supplier">
+                       <option value="-1">请选择</option>
+                       <c:forEach var="supplier" items="${supplierDTOList}">
+                           <option value="${supplier.supplierId}">${supplier.supplierName}</option>
+
+                       </c:forEach>
+
+                   </select>
+                </td>
+            </tr>
+            <tr>
 
                 <td>导出时间:</td>
-                <td><input id="startDate" name="startDate" style="width: 130px;" onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}',minDate:'#F{$dp.$D(\'endDate\',{M:-1})}'})">
+                <td colspan="3"><input id="startDate" name="startDate" style="width: 130px;" onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}',minDate:'#F{$dp.$D(\'endDate\',{M:-1})}'})">
 
                 <input id="endDate" name="endDate" style="width: 130px;" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDate\')}',maxDate:'#F{$dp.$D(\'startDate\',{M:+1})}'})"></td>
-                <td></td><td></td>
+
             </tr>
             <tr>
                 <td>页码</td><td><input type="text" id="pageIndex" name="pageIndex"/> </td>

@@ -8,4 +8,5 @@ dependencies{
 	compile project(":project-common")
 	compile project(":project-dao")
 	compile project(":project-framework")
+	compile project(":openapi-ice")
 }

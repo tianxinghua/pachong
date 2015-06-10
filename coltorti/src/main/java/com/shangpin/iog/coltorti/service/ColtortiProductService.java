@@ -33,7 +33,6 @@ import com.shangpin.iog.coltorti.conf.ApiURL;
 import com.shangpin.iog.coltorti.convert.ColtortiProductConvert;
 import com.shangpin.iog.coltorti.dto.ColtortiAttributes;
 import com.shangpin.iog.coltorti.dto.ColtortiProduct;
-import com.shangpin.iog.coltorti.dto.ColtortiStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
@@ -61,29 +60,51 @@ public class ColtortiProductService{
 		String body=HttpUtils.get(url);
 		ColtortiUtil.check(body);
 		Gson gson = new Gson();
-		//logger.info("request attribute result:\r\n"+body);
 		Map<String,ColtortiAttributes> attriMap=gson.fromJson(body, new TypeToken<Map<String,ColtortiAttributes>>(){}.getType());
 		logger.info("getAttribute result:\r\n"+gson.toJson(attriMap));
 		return body;
 	}
-	
+	/**
+	 * 获取供应商产品数据
+	 * @param start 供应商数据更新开始时间段
+	 * @param end 供应商数据更新结束时间段
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<ColtortiProduct> findProduct(String start,String end) throws ServiceException{
-		return findProduct(0,0,start,end,null);
+		return findProduct(0,0,start,end,null,null);
 	}
-	public static List<ColtortiProduct> findProduct(String productId) throws ServiceException{
-		return findProduct(0,0,null,null,productId);
+	/**
+	 * 获取供应商产品数据
+	 * @param productId 相当spuId，一个productId下有多个产品
+	 * @return
+	 * @throws ServiceException
+	 */
+	public static List<ColtortiProduct> findProductByProductId(String productId) throws ServiceException{
+		return findProduct(0,0,null,null,productId,null);
+	}
+	/**
+	 * 获取记录id指定的唯一产品id
+	 * @param recordId 相当skuid，供应商的产品记录id
+	 * @return 最多只有一个产品
+	 * @throws ServiceException
+	 */
+	public static List<ColtortiProduct> findProductBySkuId(String recordId) throws ServiceException{
+		return findProduct(0,0,null,null,null,recordId);
 	}
 	/**
 	 * 获取产品，但无库存
 	 * @param page 页码 无则为0
 	 * @param size 页大小 无则为0
-	 * @param dateStart 开始时间段
-	 * @param dateEnd 结束时间段
+	 * @param dateStart 供应商数据更新开始时间段
+	 * @param dateEnd 供应商数据更新结束时间段
 	 * @param productId 相当spuid
+	 * @param recordId 相当skuid
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static List<ColtortiProduct> findProduct(int page,int size,String dateStart,String dateEnd,String productId) throws ServiceException{
+	public static List<ColtortiProduct> findProduct(int page,int size,String dateStart,
+			String dateEnd,String productId,String recordId) throws ServiceException{
 		Map<String,String> param=ColtortiUtil.getCommonParam(page,size);
 		param.put("fields", "id,name,product_id,variant,description,price,scalars,"
 				+ "ms5_group,ms5_subgroup,ms5_category,brand,season,images,"
@@ -91,10 +112,11 @@ public class ColtortiProductService{
 		if(productId!=null) param.put("product_id", productId);
 		if(dateStart!=null)param.put("since_updated_at", dateStart);
 		if(dateEnd!=null)param.put("until_updated_at", dateEnd);
+		if(recordId!=null)param.put("id", recordId);
 		String body=HttpUtils.get(ColtortiUtil.paramGetUrl(ApiURL.PRODUCT,param));
 		ColtortiUtil.check(body);
 		JsonObject jo =new JsonParser().parse(body).getAsJsonObject();
-		//logger.info("request product result:\r\n"+body);
+		logger.info("request product result:\r\n"+body);
 		Set<Entry<String,JsonElement>> ks=jo.entrySet();
 		List<ColtortiProduct> pros = new ArrayList<>(ks.size()); 
 		for (Entry<String, JsonElement> entry : ks) {
@@ -108,7 +130,6 @@ public class ColtortiProductService{
 				logger.warn("convert product fail Json："+jop.toString());
 			}
 		}
-		//logger.info(new Gson().toJson(pros));
 		return pros;
 	}
 	/**
@@ -250,14 +271,14 @@ public class ColtortiProductService{
 		}
 		return null;
 	}
-	/**
+	/*
 	 * 返回 产品的记录id：尺码：数量<br/>库存信息
 	 * @param productId 货号，相当spu id<br/>一个product id包含多个sku<br/>
 	 * @param recordId 未拆分尺码前的skuId，如果是拆分后的一般是skuId的'#'号前面部分<br/>
 	 * 务必排除该‘#’号及后面部分
 	 * @return 返回 每个sku不同尺码对应的数量；<br/>产品的记录id：（尺码：数量）<br/> 
 	 * @throws ServiceException
-	 */
+	 *
 	public static Map<String, Map<String, Integer>> getStock(String productId,String recordId) throws ServiceException{
 		Map<String,String> param=ColtortiUtil.getCommonParam(0,0);
 		if(productId!=null) param.put("product_id", productId);
@@ -316,13 +337,13 @@ public class ColtortiProductService{
 			logger.info("new stocks result："+gson.toJson(rtnScalar));
 		}
 		return rtnScalar;
-	}
+	}*/
 	
 	public static void main(String[] args) throws ServiceException, IOException {
 		//requestAttribute(1, 100);
 		//findProduct(1,40,"152790AAV000001");
 		//getStock("152790AAV000001","152790AAV000001-PINxRU");//"152790FCR000005-SADMA"
-		List<ColtortiProduct> ps=divideSku4Size(findProduct(null));
+		List<ColtortiProduct> ps=divideSku4Size(findProductByProductId(null));
 		logger.info("-----new products -----\r\n"+new Gson().toJson(ps));
 		List<SkuDTO> skus=new ArrayList<>(ps.size());
 		List<SpuDTO> spus=new ArrayList<>(ps.size());

@@ -33,6 +33,7 @@
 		SPU_ID,
 		SKU_ID,
         PRODUCT_NAME,
+        SALE_PRICE,
         SUPPLIER_PRICE,
         BARCODE,
         PRODUCT_CODE,
@@ -52,7 +53,7 @@
         )
         values(
             #{id}, #{supplierId}, #{spuId}, #{skuId},
-            #{productName}, #{supplierPrice}, #{barcode}, #{productCode},
+            #{productName},#{salePrice}, #{supplierPrice}, #{barcode}, #{productCode},
             #{color} , #{productDescription}, #{saleCurrency}, #{productSize}, #{stock},
             #{createTime}, #{lastTime}
         )
@@ -71,7 +72,7 @@
         values
         <foreach collection="list" index="index" item="item" separator=",">
             (#{item.id}, #{item.supplierId}, #{item.spuId}, #{item.skuId},
-            #{item.productName}, #{item.supplierPrice}, #{item.barcode}, #{item.productCode},
+            #{item.productName},#{item.salePrice}, #{item.supplierPrice}, #{item.barcode}, #{item.productCode},
             #{item.color} , #{item.productDescribe}, #{item.saleCurrency}, #{item.productSize}, #{item.stock},
             #{item.createTime}, #{item.lastTime})
         </foreach>
