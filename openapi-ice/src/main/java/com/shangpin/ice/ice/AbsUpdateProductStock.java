@@ -28,8 +28,6 @@ import com.shangpin.framework.ServiceException;
  */
 public abstract class AbsUpdateProductStock {
 	static Logger logger = LoggerFactory.getLogger(AbsUpdateProductStock.class);
-	static int pageIndex=1;
-	static int pageSize=50;
 	/**
 	 * 抓取供应商库存数据 
 	 * @param skuNo 供应商的每个产品的唯一编号：sku
@@ -48,6 +46,7 @@ public abstract class AbsUpdateProductStock {
 	 * @throws Exception
 	 */
 	private Collection<String> grabProduct(String supplier,String start,String end) throws Exception{
+		int pageIndex=1,pageSize=100;
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		boolean hasNext=true;
 		Set<String> skuIds = new HashSet<String>();
@@ -62,7 +61,7 @@ public abstract class AbsUpdateProductStock {
 				}
 			}
 			pageIndex++;
-			hasNext=products.Total>pageSize;
+			hasNext=(pageSize==products.Total);
 		}
 		return skuIds;
 	}
