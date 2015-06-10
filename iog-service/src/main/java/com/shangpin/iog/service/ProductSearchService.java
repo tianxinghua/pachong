@@ -4,7 +4,6 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.common.utils.excel.AccountsExcelTemplate;
 import com.shangpin.iog.dto.ProductDTO;
-import com.shangpin.iog.dto.SpinnakerProductDTO;
 
 import java.util.Date;
 import java.util.List;

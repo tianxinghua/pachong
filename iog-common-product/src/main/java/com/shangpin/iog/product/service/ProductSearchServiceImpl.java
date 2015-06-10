@@ -5,7 +5,6 @@ import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
-import com.shangpin.iog.dto.SpinnakerProductDTO;
 import com.shangpin.iog.product.dao.ProductPictureMapper;
 import com.shangpin.iog.product.dao.ProductsMapper;
 import com.shangpin.iog.product.dao.SkuMapper;
@@ -109,12 +108,19 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize);
         String productSize,season="", productDetail="",brandId="";
 
-        String separator="";
+        String categoryId="";
         for(ProductDTO dto:page.getItems()){
 
             try {
 
-                buffer.append(dto.getCategoryName()).append(",").append(StringUtils.isNotBlank(dto.getCategoryId())?dto.getCategoryId() :"品类编号").append(",");
+                buffer.append(null!=dto.getSubCategoryName()?dto.getSubCategoryName():null==dto.getCategoryName()?"":dto.getCategoryName()).append(",");
+
+                categoryId = dto.getSubCategoryId();
+                if(StringUtils.isBlank(categoryId)){
+                    categoryId = dto.getCategoryId();
+                }
+
+                buffer.append(StringUtils.isNotBlank(categoryId)?categoryId :"品类编号").append(",");
                 //品牌
 //                brandId=dto.getBrandName().trim();
 //                if(brandMap.containsKey(brandId)){

@@ -4,7 +4,6 @@ package com.shangpin.iog.product.dao;
 import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.dto.ProductDTO;
-import com.shangpin.iog.dto.SpinnakerProductDTO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
