@@ -116,7 +116,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 buffer.append(dto.getCategoryName()).append(",").append(StringUtils.isNotBlank(dto.getCategoryId())?dto.getCategoryId() :"品类编号").append(",");
                 //品牌
-                brandId=dto.getBrandName().trim();
+//                brandId=dto.getBrandName().trim();
 //                if(brandMap.containsKey(brandId)){
 //                    brandId=brandMap.get(brandId);
 //                }else{
@@ -127,7 +127,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //货号
                 buffer.append(dto.getProductCode()).append(",").append(dto.getSkuId()).append(",");
                 //欧洲习惯 第一个先看 男女
-//                buffer.append(dto.getType()).append(",");
+                buffer.append(dto.getCategoryGender()).append(",");
                 //产品名称
                 buffer.append(dto.getProductName()).append(",");
                 buffer.append("\"\t" + dto.getBarcode() + "\"").append(",").append(dto.getColor()).append(",");
