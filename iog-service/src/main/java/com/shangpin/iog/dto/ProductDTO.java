@@ -14,6 +14,7 @@ public class ProductDTO {
     private String id;
     private String supplierId;
     private String spuId;
+
     private String spuName;
     private String skuId;
     private String productName;
@@ -85,6 +86,8 @@ public class ProductDTO {
     public void setSupplierId(String supplierId) {
         this.supplierId = supplierId;
     }
+
+
 
     public String getSpuId() {
         return spuId;
