@@ -2,6 +2,7 @@ package com.shangpin.iog.apennine.utils;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.apennine.conf.ApiUrl;
 import com.shangpin.iog.apennine.domain.ApennineProductDTO;
 import com.shangpin.iog.apennine.domain.ApennineProductPictureDTO;
 import com.shangpin.iog.common.utils.UUIDGenerator;
@@ -78,8 +80,9 @@ public class ApennineHttpUtil {
         list=this.getObjectsByJsonString(jsonStr);
         return list;
     }
-    private int getHkstockByScode(String url, String Scode) throws Exception{
-    	Map<String,String> param = new HashedMap();
+    public int getHkstockByScode(String url, String Scode) throws Exception{
+    	Map<String,String> param = new HashMap<String, String>();
+    	param = formatParam(param,Scode);
     	String jsonStr = HttpUtils.post(url, param);
     	return Integer.parseInt(jsonStr);
     }
@@ -184,7 +187,12 @@ public class ApennineHttpUtil {
         	 fetchService.savePicture(picList.get(i));
 		}
     }
-
+    private Map<String,String> formatParam(Map<String,String> param,String scode){
+    	param.put("ScodeAll", scode);
+    	param.put("UserName", ApiUrl.userName);
+    	param.put("UserPwd", ApiUrl.password);
+    	return param;
+    }
     /* public static void main(String args[]) {
 
          String url = "http://112.74.74.98:8082/api/GetProductDetails?userName=spin&userPwd=spin112233";
