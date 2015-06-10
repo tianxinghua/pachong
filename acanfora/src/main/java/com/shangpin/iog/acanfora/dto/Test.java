@@ -150,6 +150,7 @@ public class Test {
                 "</product>" ;
         try {
 //           Products product= ObjectXMLUtil.xml2Obj(Products.class,xml);
+
             String kk=    HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");
                 Products products= ObjectXMLUtil.xml2Obj(Products.class, kk);
                 List<Product> p=  products.getProducts();
