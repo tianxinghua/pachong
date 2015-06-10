@@ -1,4 +1,4 @@
-package com.shangpin.iog.apennine.service.impl;
+package com.shangpin.iog.apennine.service;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.ProductPictureDTO;

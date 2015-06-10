@@ -1,4 +1,4 @@
-package com.shangpin.iog.dto;
+package com.shangpin.iog.apennine.domain;
 
 import java.io.Serializable;
 

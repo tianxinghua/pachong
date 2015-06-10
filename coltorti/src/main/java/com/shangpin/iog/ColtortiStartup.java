@@ -10,13 +10,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.coltorti.service.ColtortiUtil;
 import com.shangpin.iog.coltorti.service.InsertDataBaseService;
 import com.shangpin.iog.coltorti.service.UpdateStockService;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.service.ProductFetchService;
 
-public class Startup {
-	private static Logger logger = LoggerFactory.getLogger(Startup.class);
+public class ColtortiStartup {
+	private static Logger logger = LoggerFactory.getLogger(ColtortiStartup.class);
 	private static ApplicationContext factory;
 
 	private static void loadSpringContext() {
@@ -31,17 +32,20 @@ public class Startup {
 	static void grabProduct(ProductFetchService fetchSrv,Date dateStart,Date dateEnd){
 		InsertDataBaseService dataSrv= new InsertDataBaseService(fetchSrv);
 		String isoFmt="yyyy-MM-dd'T'HH:mm:ssZ";
-		dataSrv.grabProduct(DateTimeUtil.convertFormat(dateStart,isoFmt), 
-				DateTimeUtil.convertFormat(dateEnd,isoFmt));
+		String s=DateTimeUtil.convertFormat(dateStart,isoFmt);
+		String e=DateTimeUtil.convertFormat(dateEnd,isoFmt);
+		dataSrv.grabProduct(s, e);
 	}
 	/**
 	 * 更新库存
 	 * @param dateStart
 	 * @param dateEnd
+	 * @throws Exception 
 	 */
-	static void updateStock(Date dateStart,Date dateEnd){
+	static void updateStock(Date dateStart,Date dateEnd) throws Exception{
 		String fmt="yyyy-MM-dd HH:mm";
-		UpdateStockService.updateStock(DateTimeUtil.convertFormat(dateStart, fmt), 
+		UpdateStockService uss=new UpdateStockService();
+		uss.updateProductStock(ColtortiUtil.supplier,DateTimeUtil.convertFormat(dateStart, fmt), 
 				DateTimeUtil.convertFormat(dateEnd, fmt));
 	}
 	
@@ -62,8 +66,8 @@ public class Startup {
 		}
 		Date ds=null;Date de=null;
 		if(args!=null && args.length>2){
-			ds=DateTimeUtil.parse(args[0],"yyyyMMddHH");
-			de=DateTimeUtil.parse(args[1],"yyyyMMddHH");
+			ds=DateTimeUtil.parse(args[1],"yyyyMMddHH");
+			de=DateTimeUtil.parse(args[2],"yyyyMMddHH");
 			if(ds==null ||de==null){
 				logger.error("拉取时间参数错误,start:{},end:{}",args[0],args[1]);
 				return ;
@@ -87,7 +91,11 @@ public class Startup {
 			grabProduct(pfs, ds, de);
 		}else{
 			logger.info("执行更新库存------");
-			updateStock(ds, de);
+			try {
+				updateStock(ds, de);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}

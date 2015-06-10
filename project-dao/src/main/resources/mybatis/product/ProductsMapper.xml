@@ -4,8 +4,11 @@
 
 	<resultMap id="ProductsResultMap" type="iog_product">
 		<id column="id" property="id" />
-		<result column="spu_id" property="spuId"  />
+
+        <result column="supplier_id" property="supplierId"/>
+
         <result column="spu_name" property="spuName" />
+        <result column="spu_id" property="spuId"/>
 
 		<result column="product_code" property="productCode"  />
 
@@ -64,7 +67,9 @@
 
 	<select id="findListBySupplierAndLastDate"  resultMap="ProductsResultMap">
 		select
-          sku.ID as id,  sku.SPU_ID  as spu_id,
+          sku.ID as id,
+        sku.SUPPLIER_ID  as supplier_id,
+        sku.SPU_ID  as spu_id,
         sku.SKU_ID as sku_id,spu.SPU_NAME as spu_name,
 
           sku.PRODUCT_NAME as product_name,

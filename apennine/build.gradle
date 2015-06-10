@@ -19,7 +19,8 @@ dependencies {
             project(':project-common'),
             project(':iog-service'),
             project(':project-dao'),
-            project(':iog-common-product')
+            project(':iog-common-product'),
+            project(':openapi-ice')
             /*project(':iog-web-container')*/
     )
 

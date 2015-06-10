@@ -15,11 +15,11 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.apennine.domain.ApennineProductDTO;
+import com.shangpin.iog.apennine.domain.ApennineProductPictureDTO;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
-import com.shangpin.iog.dto.ApennineProductDTO;
-import com.shangpin.iog.dto.ApennineProductPictureDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -108,7 +108,8 @@ public class ApennineHttpUtil {
             spuDTO.setSeasonId(dto.getCat1());
             spuDTO.setBrandName(dto.getCat());
             spuDTO.setSpuId(dto.getScode());
-            spuDTO.setSupplierId("1");
+            spuDTO.setSupplierId("00000003");
+            spuDTO.setCategoryName(dto.getCat2());
             spuList.add(spuDTO);
         }
         return spuList;
@@ -131,7 +132,7 @@ public class ApennineHttpUtil {
             skuDTO.setSupplierPrice(dto.getPricec());
             skuDTO.setSkuId(dto.getScode());
             skuDTO.setSpuId(dto.getScode());
-            skuDTO.setSupplierId("1");
+            skuDTO.setSupplierId("00000003");
             skuList.add(skuDTO);
         }
         return skuList;
@@ -149,7 +150,7 @@ public class ApennineHttpUtil {
             for (int j = 0; j < picurlList.size(); j++) {
             	 ProductPictureDTO picDTO=new ProductPictureDTO();
                  picDTO.setId(UUIDGenerator.getUUID());
-                 picDTO.setSupplierId("1");
+                 picDTO.setSupplierId("00000003");
                  picDTO.setSkuId(dto.getScode());
                  picDTO.setPicUrl(picurlList.get(j).getScodePicSrc());
                  picList.add(picDTO);

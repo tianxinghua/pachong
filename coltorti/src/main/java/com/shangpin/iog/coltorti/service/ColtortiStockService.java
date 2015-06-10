@@ -27,36 +27,20 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtils;
  */
 public class ColtortiStockService {
 	static Logger logger =LoggerFactory.getLogger(ColtortiStockService.class);
-	static int retry=0;
 	/**
 	 * 返回 产品的记录id：尺码：数量<br/>库存信息
 	 * @param productId 货号，相当spu id<br/>一个product id包含多个sku<br/>
 	 * @param recordId 未拆分尺码前的skuId，如果是拆分后的一般是skuId的'#'号前面部分<br/>
 	 * 务必排除该‘#’号及后面部分
 	 * @return 返回 每个sku不同尺码对应的数量；<br/>产品的记录id：（尺码：数量）<br/> 
-	 * @throws ServiceException
+	 * @throws ServiceException 没有数据，或者token过期了
 	 */
 	public static Map<String, Map<String, Integer>> getStock(String productId,String recordId) throws ServiceException{
 		Map<String,String> param=ColtortiUtil.getCommonParam(0,0);
 		if(productId!=null) param.put("product_id", productId);
 		if(recordId!=null) param.put("id", recordId);
 		String body=HttpUtils.get(ColtortiUtil.paramGetUrl(ApiURL.STOCK,param));
-		try{
-			ColtortiUtil.check(body);
-		}catch(ServiceException e){
-			logger.error(e.getMessage());
-			if(ColtortiUtil.isNoResultError(e)){
-				return null;
-			}else if(ColtortiUtil.isTokenExpire(e)){
-				logger.warn("重新获取token执行!");
-				if(retry<1) 
-					return getStock(productId, recordId);
-				else {
-					retry++;
-					return null; 
-				}
-			}
-		}
+		ColtortiUtil.check(body);
 		logger.info("request stock result:\r\n"+body);
 		Gson gson = new Gson();
 		Map<String,List<ColtortiStock>> mp=gson.fromJson(body, new TypeToken<Map<String,List<ColtortiStock>>>(){}.getType());
@@ -98,9 +82,6 @@ public class ColtortiStockService {
 				}
 			}
 		}
-		/*if(rtnScalar!=null){
-			logger.info("new stocks result："+gson.toJson(rtnScalar));
-		}*/
 		return rtnScalar;
 	}
 	public static void main(String[] args) throws ServiceException {
