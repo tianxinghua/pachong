@@ -5,7 +5,6 @@ import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
-import com.shangpin.iog.dto.SpinnakerProductDTO;
 import com.shangpin.iog.product.dao.ProductPictureMapper;
 import com.shangpin.iog.product.dao.ProductsMapper;
 import com.shangpin.iog.product.dao.SkuMapper;
@@ -102,19 +101,26 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     public StringBuffer exportProduct(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
         StringBuffer buffer = new StringBuffer("CategoryName品类名称," +
                 "CategroyNo品类编号,BrandNo品牌编号,BrandName品牌,ProductModel货号,SupplierSkuNo供应商SkuNo," +
-                " type ,"+
-                "SopProductName商品名称,BarCode条形码,ProductColor颜色,ProductSize尺码,Materia材质,ProductOrigin产地,productUrl1," +
+                " 性别 ,"+
+                "SopProductName 商品名称,BarCode 条形码,ProductColor 颜色,ProductSize 尺码,material 材质,ProductOrigin 产地,productUrl1," +
                 "productUrl2,productUrl3,productUrl4,productUrl5,productUrl6,productUrl7,productUrl8,productUrl9," +
                 "PcDesc 描述,Stock 库存,Price 进货价,Currency 币种,上市季节").append("\r\n");
         Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize);
         String productSize,season="", productDetail="",brandId="";
 
-        String separator="";
+        String categoryId="";
         for(ProductDTO dto:page.getItems()){
 
             try {
 
-                buffer.append(dto.getCategoryName()).append(",").append(StringUtils.isNotBlank(dto.getCategoryId())?dto.getCategoryId() :"品类编号").append(",");
+                buffer.append(null!=dto.getSubCategoryName()?dto.getSubCategoryName():null==dto.getCategoryName()?"":dto.getCategoryName()).append(",");
+
+                categoryId = dto.getSubCategoryId();
+                if(StringUtils.isBlank(categoryId)){
+                    categoryId = dto.getCategoryId();
+                }
+
+                buffer.append(StringUtils.isNotBlank(categoryId)?categoryId :"品类编号").append(",");
                 //品牌
 //                brandId=dto.getBrandName().trim();
 //                if(brandMap.containsKey(brandId)){
@@ -133,8 +139,19 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 buffer.append("\"\t" + dto.getBarcode() + "\"").append(",").append(dto.getColor()).append(",");
                 //获取尺码
 
+                productSize=dto.getSize();
+                if(StringUtils.isNotBlank(productSize)){
 
-                buffer.append(dto.getSize()).append(",");
+                    if(productSize.indexOf("+")>0){
+                        productSize=productSize.replace("+",".5");
+                    }
+
+                }else{
+                    productSize="";
+                }
+
+
+                buffer.append(productSize).append(",");
 
 
 
@@ -175,31 +192,70 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
     private void setPic(ProductDTO dto,List<ProductPictureDTO> picList){
         if(null!=picList&&!picList.isEmpty()){
+            Boolean isHavePic=true;
+            //如果原始无图片  则从picUrl开始赋值 赋值为picList的第一张图片
+            if(StringUtils.isBlank(dto.getPicUrl())){
+                isHavePic=false;
+            }
             for(int i=0;i<picList.size();i++){
                 switch (i){
                     case 0:
-                        dto.setItemPictureUrl1(picList.get(i).getPicUrl());
+                        if(isHavePic){
+                            dto.setItemPictureUrl1(picList.get(i).getPicUrl());
+                        }else{
+                            dto.setPicUrl(picList.get(i).getPicUrl());
+                        }
                         break;
                     case 1:
-                        dto.setItemPictureUrl2(picList.get(i).getPicUrl());
+
+                        if(isHavePic){
+                            dto.setItemPictureUrl2(picList.get(i).getPicUrl());
+                        }else{
+                            dto.setItemPictureUrl1(picList.get(i).getPicUrl()) ;
+                        }
+
                         break;
                     case 2:
-                        dto.setItemPictureUrl3(picList.get(i).getPicUrl());
+                        if(isHavePic){
+                            dto.setItemPictureUrl3(picList.get(i).getPicUrl());
+                        }else{
+                            dto.setItemPictureUrl2(picList.get(i).getPicUrl()) ;
+                        }
                         break;
                     case 3:
-                        dto.setItemPictureUrl4(picList.get(i).getPicUrl());
+                        if(isHavePic){
+                            dto.setItemPictureUrl4(picList.get(i).getPicUrl());
+                        }else{
+                            dto.setItemPictureUrl3(picList.get(i).getPicUrl()) ;
+                        }
                         break;
                     case 4:
-                        dto.setItemPictureUrl5(picList.get(i).getPicUrl());
+                        if(isHavePic){
+                            dto.setItemPictureUrl5(picList.get(i).getPicUrl());
+                        }else{
+                            dto.setItemPictureUrl4(picList.get(i).getPicUrl()) ;
+                        }
                         break;
                     case 5:
-                        dto.setItemPictureUrl6(picList.get(i).getPicUrl());
+                        if(isHavePic){
+                            dto.setItemPictureUrl6(picList.get(i).getPicUrl());
+                        }else{
+                            dto.setItemPictureUrl5(picList.get(i).getPicUrl()) ;
+                        }
                         break;
                     case 6:
-                        dto.setItemPictureUrl7(picList.get(i).getPicUrl());
+                        if(isHavePic){
+                            dto.setItemPictureUrl7(picList.get(i).getPicUrl());
+                        }else{
+                            dto.setItemPictureUrl6(picList.get(i).getPicUrl()) ;
+                        }
                         break;
                     case 7:
-                        dto.setItemPictureUrl8(picList.get(i).getPicUrl());
+                        if(isHavePic){
+                            dto.setItemPictureUrl8(picList.get(i).getPicUrl());
+                        }else{
+                            dto.setItemPictureUrl7(picList.get(i).getPicUrl()) ;
+                        };
                         break;
 
 

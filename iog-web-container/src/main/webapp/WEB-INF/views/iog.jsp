@@ -92,11 +92,8 @@
 
                    <select id="supplier">
                        <option value="-1">请选择</option>
-                       <option value="00000001" >acanfaro</option>
                        <c:forEach var="supplier" items="${supplierDTOList}">
                            <option value="${supplier.supplierId}">${supplier.supplierName}</option>
-
-
                        </c:forEach>
 
                    </select>
