@@ -34,7 +34,6 @@ public class FetchProduct {
 
         try {
             String result =  HttpUtils.get(url);
-            System.out.println(result);
             Products products= ObjectXMLUtil.xml2Obj(Products.class, result);
             List<Product> productList = products.getProducts();
             for(Product product:productList){
@@ -75,7 +74,6 @@ public class FetchProduct {
                     spu.setSeasonId(product.getSeason_code());
                     spu.setMaterial(product.getProduct_material());
                     spu.setPicUrl(product.getUrl());
-                    spu.setSupplierId(product.getProducer_id());
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
                     e.printStackTrace();
