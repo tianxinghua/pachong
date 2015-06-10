@@ -20,6 +20,8 @@ import ShangPin.SOP.Servant.OpenApiServantPrx;
 import com.shangpin.framework.ServiceException;
 
 /**
+ * 更新主站库存的抽象类<br/>
+ * 各供应商模块，只要实现{@link #grabStock(Collection) "根据sku拿库存"}就行
  * @description 
  * @author 陈小峰
  * <br/>2015年6月10日
@@ -31,7 +33,7 @@ public abstract class AbsUpdateProductStock {
 	/**
 	 * 抓取供应商库存数据 
 	 * @param skuNo 供应商的每个产品的唯一编号：sku
-	 * @see #grabProduct() 抓取主站SKU
+	 * @see #grabProduct(String, String, String) 抓取主站SKU
 	 * @return 每个sku对应的库存数
 	 * @throws ServiceException 
 	 */
@@ -39,8 +41,11 @@ public abstract class AbsUpdateProductStock {
 	/**
 	 * 抓取主站商品SKU信息，等待更新库存<br/>
 	 * @see #updateProduct(String, Map) 更新库存
+	 * @param supplier 供应商id
+	 * @param start 主站数据开始时间
+	 * @param end 主站数据结束时间
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private Collection<String> grabProduct(String supplier,String start,String end) throws Exception{
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
