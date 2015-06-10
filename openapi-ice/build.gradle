@@ -9,6 +9,7 @@ repositories {
 
 dependencies {
     compile(
-            "ZeroC:Ice:3.5.1"
+            "ZeroC:Ice:3.5.1",
+			project(":project-framework")
     )
 }

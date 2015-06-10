@@ -1,4 +1,4 @@
-package com.shangpin.iog.product.service;
+package com.shangpin.ice.ice;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,7 +18,6 @@ import ShangPin.SOP.Entity.Api.Product.SopSkuIce;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.IcePrxHelper;
 
 /**
  * @description 
