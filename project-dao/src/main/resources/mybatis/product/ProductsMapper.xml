@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.shangpin.iog.spinnaker.dao.ProductsMapper">
+<mapper namespace="com.shangpin.iog.product.dao.ProductsMapper">
 
 	<resultMap id="ProductsResultMap" type="iog_product">
 		<id column="id" property="id" />
@@ -12,10 +12,11 @@
 		<result column="season_id" property="seasonId"  />
         <result column="season_name" property="seasonName"  />
 
-
+        <result column="category_gender" property="categoryGender"  />
 
 		<result column="category_id" property="categoryId"  />
         <result column="category_name" property="categoryName"  />
+
 
         <result column="brand_id" property="brandId"  />
         <result column="brand_name" property="brandName"  />
@@ -74,7 +75,8 @@
         sku.STOCK as stock ,spu.CATEGORY_ID as category_id, spu.CATEGORY_NAME as category_name,
         spu.BRAND_ID as brand_id,spu.BRAND_NAME as brand_name,
         spu.SEASON_ID as season_id,spu.SEASON_NAME as season_name,
-        spu.PIC_URL as pic_url,spu.MATERIAL as material,spu.PRODUCT_ORIGIN as product_origin
+        spu.PIC_URL as pic_url,spu.MATERIAL as material,spu.PRODUCT_ORIGIN as product_origin ,
+        spu.CATEGORY_GENDER as category_gender
 
 
 
@@ -84,18 +86,18 @@
               sku.SUPPLIER_ID = #{supplier}
           </if>
             <if test="null!=startDate">
-                and lastTime >= #{startDate}
+                and sku.LAST_TIME >= #{startDate}
             </if>
            <if test="endDate!=null">
 
-                <![CDATA[ and lastTime <= #{endDate}    ]]>
+                <![CDATA[ and sku.LAST_TIME <= #{endDate}    ]]>
 
             </if>
 
 
 
         </where>
-        order by producer_id , category
+        order by sku_id
 
 
 	</select>

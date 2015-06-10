@@ -1,5 +1,8 @@
 package com.shangpin.iog.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
 /**
@@ -329,6 +332,30 @@ public class ProductDTO {
 
     public void setLastTime(Date lastTime) {
         this.lastTime = lastTime;
+    }
+
+    public String getCategoryGender() {
+        return categoryGender;
+    }
+
+    public void setCategoryGender(String categoryGender) {
+        this.categoryGender = categoryGender;
+    }
+
+    public String getSubCategoryId() {
+        return subCategoryId;
+    }
+
+    public void setSubCategoryId(String subCategoryId) {
+        this.subCategoryId = subCategoryId;
+    }
+
+    public String getSubCategoryName() {
+        return subCategoryName;
+    }
+
+    public void setSubCategoryName(String subCategoryName) {
+        this.subCategoryName = subCategoryName;
     }
 
     public  void setItemPic(){
