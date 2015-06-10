@@ -22,7 +22,7 @@ import com.shangpin.iog.coltorti.dto.ColtortiError;
  * <br/>2015年6月5日
  */
 public class ColtortiUtil {
-	public static String supplier="Coltorti";
+	public static String supplier="00000002";
 	static String tokenExpire="token has expired";
 	static String noResult="no results found";
 	/**
@@ -37,10 +37,7 @@ public class ColtortiUtil {
 		JsonElement je=new JsonParser().parse(responseBody);
 		JsonElement msg=je.getAsJsonObject().get("message");
 		if(msg!=null){
-			String m=msg.getAsString();
-			if(tokenExpire.equals(m))
-				ColtortiTokenService.initToken();
-			throw new ServiceMessageException(m);
+			throw new ServiceMessageException(msg.getAsString());
 		}
 		return null;
 	}

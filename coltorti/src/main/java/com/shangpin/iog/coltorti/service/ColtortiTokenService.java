@@ -28,8 +28,8 @@ public class ColtortiTokenService {
 	private static final ReentrantLock lock = new ReentrantLock();
 
 	public static String getToken() throws ServiceException {
-		// 测试 6c9ade4c5fea79a5c0b060c67b55f4a2a59316dff3a18f047990484b8cc74d8c6ecddbbbb03139211f017ee9ea983f908ae5a46cf087294ccfdb46a78107fd01364c54071129f02b65aeb251b208cc65784d2137b90d0673bd878e87c88c1826
-		//if (token == null)		return "6c9ade4c5fea79a5c0b060c67b55f4a2a59316dff3a18f047990484b8cc74d8c6ecddbbbb03139211f017ee9ea983f908ae5a46cf087294ccfdb46a78107fd013fe4c7fd5426da1caf75be101627cb79ac91421658e74f01f262ffc5493e9e04";
+		//测试
+		if (token == null)		return "6c9ade4c5fea79a5c0b060c67b55f4a2a59316dff3a18f047990484b8cc74d8c6ecddbbbb03139211f017ee9ea983f908ae5a46cf087294ccfdb46a78107fd0119f8a126811556b62224e3e567eae79ccfa4231b5b5c191f0ccadea82ff03fb3";
 		lock.lock();
 		if (token == null
 				|| System.currentTimeMillis() - tokenCreate > tokenExpire) {
