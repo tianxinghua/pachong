@@ -46,7 +46,7 @@ import com.shangpin.iog.dto.SpuDTO;
 public class ColtortiProductService{
 	static Logger logger =LoggerFactory.getLogger(ColtortiProductService.class);
 	static final Map<String,Field[]> classField = new HashMap<>();
-	
+	private static final int defaultSize=100; 
 	/**
 	 * 
 	 * @param page
@@ -72,8 +72,9 @@ public class ColtortiProductService{
 	 * @throws ServiceException
 	 */
 	public static List<ColtortiProduct> findProduct(String start,String end) throws ServiceException{
-		return findProduct(0,0,start,end,null,null);
+		return hasMore(start, end, null, null);
 	}
+	 
 	/**
 	 * 获取供应商产品数据
 	 * @param productId 相当spuId，一个productId下有多个产品
@@ -81,7 +82,7 @@ public class ColtortiProductService{
 	 * @throws ServiceException
 	 */
 	public static List<ColtortiProduct> findProductByProductId(String productId) throws ServiceException{
-		return findProduct(0,0,null,null,productId,null);
+		return hasMore(null, null, productId, null);
 	}
 	/**
 	 * 获取记录id指定的唯一产品id
@@ -90,8 +91,42 @@ public class ColtortiProductService{
 	 * @throws ServiceException
 	 */
 	public static List<ColtortiProduct> findProductBySkuId(String recordId) throws ServiceException{
-		return findProduct(0,0,null,null,null,recordId);
+		return hasMore(null,null,null,recordId);
 	}
+	/**
+	 * 分页默认一次一页
+	 * @param dateStart
+	 * @param dateEnd
+	 * @param productId
+	 * @param recordId
+	 * @return
+	 * @throws ServiceException
+	 */
+	private static List<ColtortiProduct> hasMore(String dateStart,
+			String dateEnd,String productId,String recordId) throws ServiceException{
+		List<ColtortiProduct> rs= new ArrayList<>(defaultSize);
+		boolean hasMore=true;
+		int pg=1;
+		while(hasMore){
+			List<ColtortiProduct> r1=null;
+			try{
+					r1=findProduct(pg,defaultSize,dateStart,dateEnd,productId,recordId);
+			}catch(ServiceException e){
+				if(ColtortiUtil.isTokenExpire(e)){//如果是过期的话重新获取token
+					logger.warn(e.getMessage());
+					ColtortiTokenService.initToken();
+					continue;
+				}else
+					throw e;
+			}
+			rs.addAll(r1);
+			if(r1.size()<100)
+				hasMore=false;
+			pg++;
+		}
+		return rs;
+	}
+	
 	/**
 	 * 获取产品，但无库存
 	 * @param page 页码 无则为0
@@ -116,7 +151,7 @@ public class ColtortiProductService{
 		String body=HttpUtils.get(ColtortiUtil.paramGetUrl(ApiURL.PRODUCT,param));
 		ColtortiUtil.check(body);
 		JsonObject jo =new JsonParser().parse(body).getAsJsonObject();
-		logger.info("request product result:\r\n"+body);
+		//logger.info("request product result:\r\n"+body);
 		Set<Entry<String,JsonElement>> ks=jo.entrySet();
 		List<ColtortiProduct> pros = new ArrayList<>(ks.size()); 
 		for (Entry<String, JsonElement> entry : ks) {

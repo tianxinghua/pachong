@@ -3,7 +3,8 @@ dependencies {
     compile(
             project(':project-common'),
             project(':iog-service'),
-            project(':project-dao')
+            project(':project-dao'),
+            project(':openapi-ice')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
