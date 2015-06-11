@@ -108,7 +108,7 @@
 
             </tr>
             <tr>
-                <td>页码</td><td><input type="text" id="pageIndex" name="pageIndex"/> </td>
+                <td>开始行数</td><td><input type="text" id="pageIndex" name="pageIndex"/> </td>
                 <td>导出行数</td><td><input type="text" id="pageSize" name="pageSize"/> </td>
             </tr>
         </table>

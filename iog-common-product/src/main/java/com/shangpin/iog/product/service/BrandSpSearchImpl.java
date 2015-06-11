@@ -10,10 +10,8 @@ import com.shangpin.iog.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * Created by huxia on 15/6/9.
@@ -28,7 +26,12 @@ public class BrandSpSearchImpl implements BrandSpSearchService {
     @Override
     public List<BrandSpDTO> findAll() throws ServiceException {
 
-        List<BrandSpDTO> BrandSpDTOList = brandSpDAO.findAll();
+        List<BrandSpDTO> BrandSpDTOList = new ArrayList<>();
+        try {
+            BrandSpDTOList = brandSpDAO.findAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return BrandSpDTOList;
     }
 }
