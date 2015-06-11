@@ -3,21 +3,20 @@ package com.shangpin.iog.product.dao;
 
 import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
-import com.shangpin.iog.dto.SupplierDTO;
-import org.apache.ibatis.annotations.Param;
+import com.shangpin.iog.dto.BrandSpDTO;
+
 
 import java.util.List;
 
 @Mapper
-public interface BrandSpMapper extends IBaseDao<SupplierDTO> {
+public interface BrandSpMapper extends IBaseDao<BrandSpDTO> {
 
     /**
-     * 获取所有供货商信息
-     * @param state 状态编码
+     * 获取所有品牌信息
      * @return 供货商列表
      */
 
-    List<SupplierDTO> findByState(@Param("state") String state);
+    List<BrandSpDTO> findAll();
 
 
 }
