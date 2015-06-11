@@ -28,7 +28,7 @@ public class ColtortiProductConvert {
 		dto.setId(UUIDGenerator.getUUID());
 		dto.setSupplierId(ColtortiUtil.supplier);
 		dto.setProductName(p.getName());
-		dto.setProductCode(p.getSkuId());
+		dto.setProductCode(p.getProductId());
 		dto.setColor(p.getColor());
 		dto.setCreateTime(new Date());
 		dto.setLastTime(p.getUpdatedAt());
