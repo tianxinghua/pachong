@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
@@ -65,60 +66,77 @@ public class InsertDataBaseService {
 				productPics.put(product.getSkuId(), ppcs);
 			}
 			//开始保存
-			if(CollectionUtils.isNotEmpty(skus)) insertSku(skus);
-			if(CollectionUtils.isNotEmpty(spus)) insertSpu(spus);
-			
+			if(CollectionUtils.isNotEmpty(skus)) {
+				logger.info("-----开始保存SKU-----");
+				int failCnt=insertSku(skus);
+				logger.info("-----SKU保存结束，sku总数：{},成功数{}",skus.size(),skus.size()-failCnt);
+			}
+			if(CollectionUtils.isNotEmpty(spus)){
+				logger.info("-----开始保存SPU-----");
+				int failCnt = insertSpu(spus);
+				logger.info("-----SPU保存结束，spu总数：{},成功数{}",spus.size(),spus.size()-failCnt);
+			}
+			logger.info("-----开始保存SKUPIC-----");
 			Set<String> picSku=productPics.keySet();
+			int failCnt=0;int total=0;
 			for (String sku : picSku) {
 				Set<ProductPictureDTO> pcs=productPics.get(sku);
 				if(CollectionUtils.isNotEmpty(pcs)){
-					insertSkuPic(pcs);
+					total+=pcs.size();
+					failCnt+=insertSkuPic(pcs);
 				}
 			}
+			logger.info("-----SKUPIC保存结束，SKUPIC总数：{},成功数{}",total,total-failCnt);
 		} catch (ServiceException e) {
 			logger.error("抓取Coltorti数据失败。",e);
 		}
 	}
 	
 	
-	private void insertSku(Collection<SkuDTO> skus){
-		int failCnt=0;int total=skus.size();
-		logger.info("-----开始保存SKU-----");
+	private int insertSku(Collection<SkuDTO> skus){
+		int failCnt=0;
 		for (SkuDTO sk : skus) {
 			try{
 				pfs.saveSKU(sk);
 			}catch(Exception e){
 				failCnt++;
+				if(e.getClass().equals(DuplicateKeyException.class)){
+					continue;
+				}
 				logger.error("保存sku:{}失败,错误信息：{},",new Gson().toJson(sk),e.getMessage());
 			}
 		}
-		logger.info("-----SkU保存结束，spu总数：{},成功数{}",total,total-failCnt);
+		return failCnt;
 	}
-	private void insertSpu(Collection<SpuDTO> spus){
-		int failCnt=0;int total=spus.size();
-		logger.info("-----开始保存SPU-----");
+	private int insertSpu(Collection<SpuDTO> spus){
+		int failCnt=0;
 		for (SpuDTO spu : spus) {
 			try{
 				pfs.saveSPU(spu);
 			}catch(Exception e){
 				failCnt++;
+				if(e.getClass().equals(DuplicateKeyException.class)){
+					continue;
+				}
 				logger.error("保存spu:{}失败,错误信息：{},",new Gson().toJson(spu),e.getMessage());
 			}
 		}
-		logger.info("-----SPU保存结束，spu总数：{},成功数{}",total,total-failCnt);
+		return failCnt;
 	}
-	private void insertSkuPic(Collection<ProductPictureDTO> skuPics){
-		int failCnt=0;int total=skuPics.size();
-		logger.info("-----开始保存SKUPIC-----");
+	private int insertSkuPic(Collection<ProductPictureDTO> skuPics){
+		int failCnt=0;
 		for (ProductPictureDTO pic : skuPics) {
 			try{
 				pfs.savePicture(pic);
 			}catch(Exception e){
 				failCnt++;
-				logger.error("保存SKUPIC:{}失败,错误信息：{},",new Gson().toJson(pic),e.getMessage());
+				if(e.getClass().equals(DuplicateKeyException.class)){
+					continue;
+				}
+				logger.error("保存SKU:{} PIC:{}失败,错误信息：{}",new Object[]{pic.getSkuId(),pic.getPicUrl(),e.getMessage()});
 			}
 		}
-		logger.info("-----SKUPIC保存结束，SKUPIC总数：{},成功数{}",total,total-failCnt);
+		return failCnt;
 	}
 	
 }
