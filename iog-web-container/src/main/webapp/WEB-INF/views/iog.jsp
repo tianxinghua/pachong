@@ -53,7 +53,11 @@
             }
         }
 
+        if("-1"== $('#supplier').val()){
+            alert("请选择供应商");
 
+            return;
+        }
 
         var search = {
             supplier:   $('#supplier').val(),
@@ -67,6 +71,7 @@
     }
 
     function clearText(){
+        $('#supplier').val('-1');
         $('#pageIndex').val('');
         $('#pageSize').val('');
         $('#startDate').val('');
