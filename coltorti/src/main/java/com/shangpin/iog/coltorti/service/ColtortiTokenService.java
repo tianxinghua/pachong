@@ -28,7 +28,7 @@ public class ColtortiTokenService {
 	private static final ReentrantLock lock = new ReentrantLock();
 
 	public static String getToken() throws ServiceException {
-		//测试
+		//TODO 测试
 		if (token == null)		return "6c9ade4c5fea79a5c0b060c67b55f4a2a59316dff3a18f047990484b8cc74d8c6ecddbbbb03139211f017ee9ea983f908ae5a46cf087294ccfdb46a78107fd0119f8a126811556b62224e3e567eae79ccfa4231b5b5c191f0ccadea82ff03fb3";
 		lock.lock();
 		if (token == null
