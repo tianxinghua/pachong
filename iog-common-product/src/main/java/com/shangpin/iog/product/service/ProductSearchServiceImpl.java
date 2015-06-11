@@ -3,12 +3,10 @@ package com.shangpin.iog.product.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.framework.page.Page;
+import com.shangpin.iog.dto.BrandSpDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
-import com.shangpin.iog.product.dao.ProductPictureMapper;
-import com.shangpin.iog.product.dao.ProductsMapper;
-import com.shangpin.iog.product.dao.SkuMapper;
-import com.shangpin.iog.product.dao.SpuMapper;
+import com.shangpin.iog.product.dao.*;
 import com.shangpin.iog.service.ProductSearchService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.RowBounds;
@@ -17,7 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +40,13 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     @Autowired
     ProductsMapper productDAO;
 
+    @Autowired
+    BrandSpMapper brandSpDAO;
+
+
+
+
+    private static     Map<String,String> spBrandMap = new HashMap<>();
 
 
 
@@ -106,7 +113,11 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 "productUrl2,productUrl3,productUrl4,productUrl5,productUrl6,productUrl7,productUrl8,productUrl9," +
                 "PcDesc 描述,Stock 库存,Price 进货价,Currency 币种,上市季节").append("\r\n");
         Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize);
-        String productSize,season="", productDetail="",brandId="";
+
+        //设置尚品网品牌
+        this.setBrandMap();
+
+        String productSize,season="", productDetail="",brandName="",brandId="";
 
         String categoryId="";
         for(ProductDTO dto:page.getItems()){
@@ -122,13 +133,13 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 buffer.append(StringUtils.isNotBlank(categoryId)?categoryId :"品类编号").append(",");
                 //品牌
-//                brandId=dto.getBrandName().trim();
-//                if(brandMap.containsKey(brandId)){
-//                    brandId=brandMap.get(brandId);
-//                }else{
-//                    brandId ="";
-//                }
-                buffer.append(StringUtils.isNotBlank(dto.getBrandId())?dto.getBrandId() :"品类编号").append(",");
+                brandName=dto.getBrandName().trim();
+                if(spBrandMap.containsKey(brandName)){
+                    brandId=spBrandMap.get(brandName);
+                }else{
+                    brandId ="";
+                }
+                buffer.append(!"".equals(brandId)?brandId :"品牌编号").append(",");
                 buffer.append(dto.getBrandName()).append(",");
                 //货号
                 buffer.append(dto.getProductCode()).append(",").append(dto.getSkuId()).append(",");
@@ -189,7 +200,36 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         return buffer ;
     }
 
+    /**
+     * 设置map
+     */
+    private  void setBrandMap(){
 
+            int num = brandSpDAO.findCount();
+            if(spBrandMap.size() < num){
+                List<BrandSpDTO> brandSpDTOList = null;
+                try {
+                    brandSpDTOList = brandSpDAO.findAll();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                for(BrandSpDTO dto:brandSpDTOList){
+                    spBrandMap.put(dto.getBrandName(),dto.getBrandId());
+                }
+            }
+
+
+
+
+    }
+
+
+    /**
+     * 图片赋值
+     * @param dto
+     * @param picList
+     */
     private void setPic(ProductDTO dto,List<ProductPictureDTO> picList){
         if(null!=picList&&!picList.isEmpty()){
             Boolean isHavePic=true;

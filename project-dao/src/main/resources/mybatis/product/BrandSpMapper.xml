@@ -15,6 +15,10 @@
 		BRAND_NAME
 	</sql>
 
+    <select id="findCount" resultType="java.lang.Integer">
+        SELECT  COUNT(BRAND_ID) from BRAND_SP
+    </select>
+
     <select id="findAll" resultMap="BrandSpResultMap">
         select
         <include refid="all_BrandSp_column"></include>
