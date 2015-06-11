@@ -8,15 +8,19 @@ import com.shangpin.iog.acanfora.dto.Products;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
+import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,9 +35,9 @@ public class FetchProduct {
 
     public void fetchProductAndSave(String url){
 
-
+        String supplierId = "00000001";
         try {
-            String result =  HttpUtils.get(url);
+            String result =  HttpUtils.get(url,false,240000);
             Products products= ObjectXMLUtil.xml2Obj(Products.class, result);
             List<Product> productList = products.getProducts();
             for(Product product:productList){
@@ -46,34 +50,54 @@ public class FetchProduct {
                 }
 
                 List<Item> itemList = items.getItems();
-//                for(Item item:itemList){
-//                    SkuDTO sku  = new SkuDTO();
-//                    try {
-//                        sku.setId(UUIDGenerator.getUUID());
-//                        sku.setSupplierId("00000001");
-//                        sku.setSpuId(product.getProductId());
-//                        sku.setSkuId(item.getItem_id());
-//                        sku.setProductSize(item.getItem_size());
-//                        sku.setSupplierPrice(item.getSupply_price());
-//                        sku.setColor(item.getColor());
-//                        sku.setProductDescription(item.getDescription());
-//                        sku.setStock(item.getStock());
-//                        productFetchService.saveSKU(sku);
-//                    } catch (ServiceException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
+                for(Item item:itemList){
+                    SkuDTO sku  = new SkuDTO();
+                    try {
+                        sku.setId(UUIDGenerator.getUUID());
+                        sku.setSupplierId(supplierId);
+                        sku.setSpuId(product.getProductId());
+                        sku.setSkuId(item.getItem_id());
+                        sku.setProductSize(item.getItem_size());
+                        sku.setSupplierPrice(item.getSupply_price());
+                        sku.setColor(item.getColor());
+                        sku.setProductDescription(item.getDescription());
+                        sku.setStock(item.getStock());
+                        productFetchService.saveSKU(sku);
+
+                        if(StringUtils.isNotBlank(item.getPicture())){
+                            String[] picArray = item.getPicture().split("|");
+
+//                            List<String> picUrlList = Arrays.asList(picArray);
+                            for(String picUrl :picArray){
+                                ProductPictureDTO dto  = new ProductPictureDTO();
+                                dto.setPicUrl(picUrl);
+                                dto.setSupplierId(supplierId);
+                                dto.setId(UUIDGenerator.getUUID());
+                                dto.setSkuId(item.getItem_id());
+                                try {
+                                    productFetchService.savePicture(dto);
+                                } catch (ServiceException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+
+                        }
+
+                    } catch (ServiceException e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 try {
                     spu.setId(UUIDGenerator.getUUID());
-                    spu.setSupplierId("00000001");
+                    spu.setSupplierId(supplierId);
                     spu.setSpuId(product.getProductId());
                     spu.setBrandName(product.getProduct_brand());
                     spu.setCategoryName(product.getCategory());
                     spu.setSpuName(product.getProduct_name());
                     spu.setSeasonId(product.getSeason_code());
                     spu.setMaterial(product.getProduct_material());
-                    spu.setPicUrl(product.getUrl());
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
                     e.printStackTrace();
