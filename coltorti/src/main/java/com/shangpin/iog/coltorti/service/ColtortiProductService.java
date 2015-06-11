@@ -3,7 +3,6 @@
  */
 package com.shangpin.iog.coltorti.service;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -30,13 +29,9 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.coltorti.conf.ApiURL;
-import com.shangpin.iog.coltorti.convert.ColtortiProductConvert;
 import com.shangpin.iog.coltorti.dto.ColtortiAttributes;
 import com.shangpin.iog.coltorti.dto.ColtortiProduct;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
-import com.shangpin.iog.dto.ProductPictureDTO;
-import com.shangpin.iog.dto.SkuDTO;
-import com.shangpin.iog.dto.SpuDTO;
 
 /**
  * @description 
@@ -46,7 +41,7 @@ import com.shangpin.iog.dto.SpuDTO;
 public class ColtortiProductService{
 	static Logger logger =LoggerFactory.getLogger(ColtortiProductService.class);
 	static final Map<String,Field[]> classField = new HashMap<>();
-	private static final int defaultSize=100; 
+	private static final int defaultSize=500; 
 	/**
 	 * 
 	 * @param page
@@ -116,11 +111,14 @@ public class ColtortiProductService{
 					logger.warn(e.getMessage());
 					ColtortiTokenService.initToken();
 					continue;
+				}else if(ColtortiUtil.isNoResultError(e)){
+					hasMore=false;
+					continue;
 				}else
 					throw e;
 			}
 			rs.addAll(r1);
-			if(r1.size()<100)
+			if(r1.size()<defaultSize)
 				hasMore=false;
 			pg++;
 		}
@@ -186,26 +184,8 @@ public class ColtortiProductService{
 					String sml=scalars.get(sck);//尺码字符
 					newProducts.add(convertProduct(prd, sml,0));
 				}
-				//scalarkey=scalars.entrySet().iterator().next().getValue();
 			}
-			/*String pid=prd.getProductId();
-			Map<String,Map<String,Integer>> stocks=null;
-			String scalarkey="";*/
-			//如果只有一个尺码那么不用去取?
-			/*if(stocks!=null && stocks.size()>0){
-				Map<String, Integer> scalar=stocks.get(prd.getSkuId());
-				if(scalar!=null){
-					Set<String> smlx=scalar.keySet();
-					for (String key : smlx) {
-						Integer size=scalar.get(key);
-						newProducts.add(convertProduct(prd, key,size));
-					}
-				}else{
-					newProducts.add(convertProduct(prd, scalarkey,0));
-				}
-			}else{
-				newProducts.add(convertProduct(prd, scalarkey,0));
-			}*/
+			
 		}
 		return newProducts;
 	}
@@ -221,7 +201,7 @@ public class ColtortiProductService{
 		try {
 			BeanUtils.copyProperties(newp,prd);
 		} catch (IllegalAccessException | InvocationTargetException e) {
-			e.printStackTrace();
+			return null;
 		}
 		newp.setStock(stock);
 		newp.setSkuId(prd.getSkuId()+"#"+scalarKey);
@@ -374,7 +354,7 @@ public class ColtortiProductService{
 		return rtnScalar;
 	}*/
 	
-	public static void main(String[] args) throws ServiceException, IOException {
+	/*public static void main(String[] args) throws ServiceException, IOException {
 		//requestAttribute(1, 100);
 		//findProduct(1,40,"152790AAV000001");
 		//getStock("152790AAV000001","152790AAV000001-PINxRU");//"152790FCR000005-SADMA"
@@ -396,6 +376,6 @@ public class ColtortiProductService{
 		logger.info("-----after convert image-----\r\n"+new Gson().toJson(mpccs));
 		System.in.read();
 	}
-	
+	*/
 	
 }
