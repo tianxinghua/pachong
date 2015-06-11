@@ -65,7 +65,7 @@ public class FetchProduct {
                         productFetchService.saveSKU(sku);
 
                         if(StringUtils.isNotBlank(item.getPicture())){
-                            String[] picArray = item.getPicture().split("|");
+                            String[] picArray = item.getPicture().split("\\|");
 
 //                            List<String> picUrlList = Arrays.asList(picArray);
                             for(String picUrl :picArray){

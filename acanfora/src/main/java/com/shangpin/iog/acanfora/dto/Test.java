@@ -148,14 +148,19 @@ public class Test {
                 "</item>\n" +
                 "</items>\n" +
                 "</product>" ;
-        try {
-//           Products product= ObjectXMLUtil.xml2Obj(Products.class,xml);
-            String kk=    HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");
-                Products products= ObjectXMLUtil.xml2Obj(Products.class, kk);
-                List<Product> p=  products.getProducts();
-            System.out.print("kk ========"+p.get(0).getProductId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+////           Products product= ObjectXMLUtil.xml2Obj(Products.class,xml);
+//            String kk=    HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");
+//                Products products= ObjectXMLUtil.xml2Obj(Products.class, kk);
+//                List<Product> p=  products.getProducts();
+//            System.out.print("kk ========"+p.get(0).getProductId());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+            String url = "http://localhost/lzr/lzr.jpg|";
+            String[] array = url.split("\\|");
+            for(String ul:array){
+                    System.out.println("----"+ul);
+            }
     }
 }
