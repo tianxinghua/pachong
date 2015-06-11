@@ -49,12 +49,12 @@ public class UpdateStockService extends AbsUpdateProductStock{
 		}
 		return skuStock;
 	}
-	
+	/*
 	public static void main(String[] args) {
 		String skuNo="152790FCR000002-MIDBL#m";
 		String recordId=skuNo.substring(0, skuNo.lastIndexOf("#"));
 		String scalarNo=skuNo.substring(skuNo.lastIndexOf("#")+1);
 		String productId=skuNo.substring(0, skuNo.lastIndexOf("-"));
 		System.out.println(recordId+","+scalarNo+","+productId);
-	}
+	}*/
 }

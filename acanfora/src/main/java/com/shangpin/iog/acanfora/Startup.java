@@ -10,6 +10,7 @@ public class Startup
 
 	private static ApplicationContext factory;
 	private static void loadSpringContext()
+
 	{
 
         factory = new AnnotationConfigApplicationContext(AppContext.class);

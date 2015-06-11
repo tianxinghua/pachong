@@ -141,6 +141,8 @@ public class SkuDTO {
         this.lastTime = lastTime;
     }
 
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
