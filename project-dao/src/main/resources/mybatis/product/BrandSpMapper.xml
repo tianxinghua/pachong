@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.ProductsMapper">
+
+	<resultMap id="ProductsResultMap" type="iog_product">
+		<id column="id" property="id" />
+
+        <result column="supplier_id" property="supplierId"/>
+
+        <result column="spu_name" property="spuName" />
+        <result column="spu_id" property="spuId"/>
+
+		<result column="product_code" property="productCode"  />
+
+		<result column="season_id" property="seasonId"  />
+        <result column="season_name" property="seasonName"  />
+
+        <result column="category_gender" property="categoryGender"  />
+
+		<result column="category_id" property="categoryId"  />
+        <result column="category_name" property="categoryName"  />
+
+        <result column="sub_category_id" property="subCategoryId"/>
+        <result column="sub_category_name" property="subCategoryName" />
+
+
+        <result column="brand_id" property="brandId"  />
+        <result column="brand_name" property="brandName"  />
+
+
+
+		<result column="pic_url" property="picUrl"  />
+        <result column="material" property="material"/>
+        <result column="product_origin" property="productOrigin"/>
+
+
+
+        <result column="sku_id" property="skuId"  />
+        <result column="product_name" property="productName" />
+        <result column="supplier_price" property="supplierPrice"/>
+        <result column="sale_currency" property="saleCurrency"/>
+        <result column="product_description" property="productDescription"  />
+        <result column="barcode" property="barcode" />
+        <result column="product_size" property="size" />
+        <result column="color" property="color" />
+        <result column="stock" property="stock" />
+
+
+
+	</resultMap>
+	
+
+
+	
+	
+	<sql id="all_products_column">
+		id ,
+		product_id ,
+		producer_id,
+		p_type,
+        season,
+        product_name,
+        description,
+        category,
+        url,
+        supply_price,
+        item_id,barcode,item_size,color,stock,pictures,product_detail
+	</sql>
+	
+
+	<select id="findListBySupplierAndLastDate"  resultMap="ProductsResultMap">
+		select
+          sku.ID as id,
+        sku.SUPPLIER_ID  as supplier_id,
+        sku.SPU_ID  as spu_id,
+        sku.SKU_ID as sku_id,spu.SPU_NAME as spu_name,
+
+          sku.PRODUCT_NAME as product_name,
+          sku.SUPPLIER_PRICE as supplier_price,sku.BARCODE as barcode,
+          sku.PRODUCT_CODE as product_code,sku.COLOR as color,
+          sku.PRODUCT_DESCRIPTION as product_description,
+          sku.SALE_CURRENCY as sale_currency,sku.PRODUCT_SIZE as product_size,
+        sku.STOCK as stock ,spu.CATEGORY_ID as category_id, spu.CATEGORY_NAME as category_name,
+        spu.BRAND_ID as brand_id,spu.BRAND_NAME as brand_name,
+        spu.SEASON_ID as season_id,spu.SEASON_NAME as season_name,
+        spu.PIC_URL as pic_url,spu.MATERIAL as material,spu.PRODUCT_ORIGIN as product_origin ,
+        spu.CATEGORY_GENDER as category_gender,
+        spu.SUB_CATEGORY_ID  as  sub_category_id,
+        spu.SUB_CATEGORY_NAME  as  sub_category_name
+
+
+
+		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+        <where>
+          <if test="null!=supplier">
+              sku.SUPPLIER_ID = #{supplier}
+          </if>
+            <if test="null!=startDate">
+                and sku.LAST_TIME >= #{startDate}
+            </if>
+           <if test="endDate!=null">
+
+                <![CDATA[ and sku.LAST_TIME <= #{endDate}    ]]>
+
+            </if>
+
+
+
+        </where>
+        order by sku_id
+
+
+	</select>
+	
+
+	
+	
+
+	
+
+
+	
+</mapper>
