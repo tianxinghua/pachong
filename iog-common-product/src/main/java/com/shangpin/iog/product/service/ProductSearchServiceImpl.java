@@ -188,7 +188,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //季节
 
 
-                buffer.append(dto.getSeasonName());
+                buffer.append(null==dto.getSeasonName()?dto.getSeasonId():dto.getSeasonName());
 
                 buffer.append("\r\n");
             } catch (Exception e) {
