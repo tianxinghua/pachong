@@ -23,7 +23,6 @@ import com.shangpin.iog.coltorti.service.InsertDataBaseService;
 import com.shangpin.iog.coltorti.service.UpdateStockService;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.service.ProductFetchService;
-import com.shangpin.test.AnyTest;
 
 public class ColtortiStartup {
 	/**
@@ -57,8 +56,7 @@ public class ColtortiStartup {
 	}
 	/**
 	 * 更新库存
-	 * @param dateStart
-	 * @param dateEnd
+
 	 * @throws Exception 
 	 */
 	static void updateStock() throws Exception{
@@ -120,7 +118,7 @@ public class ColtortiStartup {
 	}
 	
 	private static File getConfFile() throws IOException{
-		String realPath = AnyTest.class.getClassLoader().getResource("").getFile();
+		String realPath = ColtortiStartup.class.getClassLoader().getResource("").getFile();
 		realPath= URLDecoder.decode(realPath,"utf-8");
 		File df = new File(realPath+"conf.ini");
 		if(!df.exists()){
