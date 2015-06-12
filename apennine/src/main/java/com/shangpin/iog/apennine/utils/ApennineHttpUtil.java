@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.apennine.conf.ApiUrl;
+import com.shangpin.iog.apennine.convert.ApennineProductConvert;
 import com.shangpin.iog.apennine.domain.ApennineProductDTO;
 import com.shangpin.iog.apennine.domain.ApennineProductPictureDTO;
 import com.shangpin.iog.common.utils.UUIDGenerator;
@@ -106,13 +107,7 @@ public class ApennineHttpUtil {
         List<SpuDTO>spuList=new ArrayList<>();
         for (int i = 0;i<list.size();i++){
             ApennineProductDTO dto=list.get(i);
-            SpuDTO spuDTO=new SpuDTO();
-            spuDTO.setId(UUIDGenerator.getUUID());
-            spuDTO.setSeasonId(dto.getCat1());
-            spuDTO.setBrandName(dto.getCat());
-            spuDTO.setSpuId(dto.getScode());
-            spuDTO.setSupplierId("00000003");
-            spuDTO.setCategoryName(dto.getCat2());
+            SpuDTO spuDTO = ApennineProductConvert.product2spu(dto);
             spuList.add(spuDTO);
         }
         return spuList;
@@ -126,16 +121,7 @@ public class ApennineHttpUtil {
         List<SkuDTO>skuList=new ArrayList<>();
         for (int i=0;i<list.size();i++){
             ApennineProductDTO dto=list.get(i);
-            SkuDTO skuDTO=new SkuDTO();
-            skuDTO.setId(UUIDGenerator.getUUID());
-            skuDTO.setProductCode(dto.getScode());
-            skuDTO.setProductSize(dto.getSize());
-            skuDTO.setColor(dto.getColor());
-            skuDTO.setProductName(dto.getCdescript());
-            skuDTO.setSupplierPrice(dto.getPricec());
-            skuDTO.setSkuId(dto.getScode());
-            skuDTO.setSpuId(dto.getScode());
-            skuDTO.setSupplierId("00000003");
+            SkuDTO skuDTO=ApennineProductConvert.product2sku(dto);
             skuList.add(skuDTO);
         }
         return skuList;
@@ -219,8 +205,8 @@ public class ApennineHttpUtil {
             e.printStackTrace();
         }
     }*/
-    /*public static void main(String[] args) {
-    	String url = "http://112.74.74.98:8082/api/GetProductImg?userName=spin&userPwd=spin112233&scode=EMBASSYGREYF";
+   /* public static void main(String[] args) {
+    	String url = "http://112.74.74.98:8082/api/GetProductPorperty?userName=spin&userPwd=spin112233&scode=EMBASSYGREYF";
     	NameValuePair[] data = {
                 new NameValuePair("scode", "")
         };
@@ -229,9 +215,9 @@ public class ApennineHttpUtil {
     	map.put("UserName", "spin");
     	map.put("UserPwd", "spin112233");
     	try {
-			String kk = HttpUtils.post(url,map);
+			//String kk = HttpUtils.post(url,map);
     		String kk = HttpUtils.get(url);
-			System.out.println("图片地址"+kk);
+			System.out.println("商品属性"+kk);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
