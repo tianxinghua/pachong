@@ -134,7 +134,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 buffer.append(StringUtils.isNotBlank(categoryId)?categoryId :"品类编号").append(",");
                 //品牌
                 brandName=dto.getBrandName().trim();
-                if(spBrandMap.containsKey(brandName)){
+                if(spBrandMap.containsKey(brandName.toLowerCase())){
                     brandId=spBrandMap.get(brandName);
                 }else{
                     brandId ="";
@@ -215,7 +215,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     return;
                 }
                 for(BrandSpDTO dto:brandSpDTOList){
-                    spBrandMap.put(dto.getBrandName(),dto.getBrandId());
+                    spBrandMap.put(dto.getBrandName().toLowerCase(),dto.getBrandId());
                 }
             }
 
