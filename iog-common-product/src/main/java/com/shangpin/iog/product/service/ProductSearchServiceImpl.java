@@ -3,10 +3,7 @@ package com.shangpin.iog.product.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.framework.page.Page;
-import com.shangpin.iog.dto.BrandSpDTO;
-import com.shangpin.iog.dto.ColorContrastDTO;
-import com.shangpin.iog.dto.ProductDTO;
-import com.shangpin.iog.dto.ProductPictureDTO;
+import com.shangpin.iog.dto.*;
 import com.shangpin.iog.product.dao.*;
 import com.shangpin.iog.service.ProductSearchService;
 import org.apache.commons.lang.StringUtils;
@@ -46,6 +43,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
     @Autowired
     ColorContrastMapper colorContrastDAO;
+    @Autowired
+   MaterialContrastMapper materialContrastDAO;
 
 
 
@@ -53,6 +52,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     private static     Map<String,String> spBrandMap = new HashMap<>();
     private static     Map<String,String> colorContrastMap = new HashMap<>();
 
+    private static     Map<String,String> materialContrastMap = new HashMap<>();
 
 
     @Override
@@ -178,6 +178,15 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 buffer.append(productSize).append(",");
 
+                //获取材质
+                material =dto.getMaterial().trim();
+                if(materialContrastMap.containsKey(material.toLowerCase())){
+                    material=materialContrastMap.get(material);
+                }
+                buffer.append(!"".equals(material)?material :"品牌颜色").append(",");
+
+
+
                 buffer.append(dto.getMaterial()).append(",")
                         .append(dto.getProductOrigin()).append(",").append(dto.getPicUrl()).append(",");
                 buffer.append(dto.getItemPictureUrl1()).append(",").append(dto.getItemPictureUrl2()).append(",").append(dto.getItemPictureUrl3()).append(",")
@@ -250,6 +259,24 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             }
         }
     }
+
+
+    /**
+     * 设置materialContrastMap
+     */
+    private  void setMaterialContrastMap() {
+        int num =materialContrastDAO.findCount();
+        if(materialContrastMap.size() < num){
+            List<MaterialContrastDTO> materialContrastDTOList = null;
+
+            materialContrastDTOList = materialContrastDAO.findAll();
+
+            for(MaterialContrastDTO dto:materialContrastDTOList){
+                materialContrastMap.put(dto.getMaterial().toLowerCase(),dto.getMaterialCh());
+            }
+        }
+    }
+
 
     /**
      * 图片赋值
