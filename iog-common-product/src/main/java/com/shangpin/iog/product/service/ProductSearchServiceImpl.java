@@ -135,12 +135,12 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //品牌
                 brandName=dto.getBrandName().trim();
                 if(spBrandMap.containsKey(brandName.toLowerCase())){
-                    brandId=spBrandMap.get(brandName);
+                    brandId=spBrandMap.get(brandName.toLowerCase());
                 }else{
                     brandId ="";
                 }
                 buffer.append(!"".equals(brandId)?brandId :"品牌编号").append(",");
-                buffer.append(dto.getBrandName()).append(",");
+                buffer.append(brandName).append(",");
                 //货号
                 buffer.append(dto.getProductCode()).append(",").append(dto.getSkuId()).append(",");
                 //欧洲习惯 第一个先看 男女
