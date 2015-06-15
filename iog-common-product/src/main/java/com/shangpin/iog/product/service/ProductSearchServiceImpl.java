@@ -54,6 +54,13 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
     private static     Map<String,String> materialContrastMap = new HashMap<>();
 
+    //key 均为小写 以便匹配
+    private static Map<String,String>  cityMap= new HashMap<String,String>(){
+        {
+            put("italy","意大利");
+        }
+    };
+
 
     @Override
     public Page<ProductDTO> findProductPageBySupplierAndTime(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
@@ -120,8 +127,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
         //设置尚品网品牌
         this.setBrandMap();
-        //颜色赋值
+        //颜色Map赋值
         this.setColorContrastMap();
+        //材质Map 赋值
+        this.setMaterialContrastMap();
 
         String productSize,season="", productDetail="",brandName="",brandId="",color="",material="";
 
@@ -181,9 +190,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //获取材质
                 material =dto.getMaterial().trim();
                 if(materialContrastMap.containsKey(material.toLowerCase())){
-                    material=materialContrastMap.get(material);
+                    material=materialContrastMap.get(material.toLowerCase());
                 }
-                buffer.append(!"".equals(material)?material :"品牌颜色").append(",");
+                buffer.append(material).append(",");
 
 
 
@@ -269,7 +278,12 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         if(materialContrastMap.size() < num){
             List<MaterialContrastDTO> materialContrastDTOList = null;
 
-            materialContrastDTOList = materialContrastDAO.findAll();
+            try {
+                materialContrastDTOList = materialContrastDAO.findAll();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ;
+            }
 
             for(MaterialContrastDTO dto:materialContrastDTOList){
                 materialContrastMap.put(dto.getMaterial().toLowerCase(),dto.getMaterialCh());
