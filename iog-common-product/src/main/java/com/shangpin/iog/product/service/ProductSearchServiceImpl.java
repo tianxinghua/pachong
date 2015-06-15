@@ -3,10 +3,7 @@ package com.shangpin.iog.product.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.framework.page.Page;
-import com.shangpin.iog.dto.BrandSpDTO;
-import com.shangpin.iog.dto.ColorContrastDTO;
-import com.shangpin.iog.dto.ProductDTO;
-import com.shangpin.iog.dto.ProductPictureDTO;
+import com.shangpin.iog.dto.*;
 import com.shangpin.iog.product.dao.*;
 import com.shangpin.iog.service.ProductSearchService;
 import org.apache.commons.lang.StringUtils;
@@ -47,7 +44,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     @Autowired
     ColorContrastMapper colorContrastDAO;
     @Autowired
-    ColorContrastMapper materialContrastDAO;
+   MaterialContrastMapper materialContrastDAO;
 
 
 
@@ -272,10 +269,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         if(materialContrastMap.size() < num){
             List<MaterialContrastDTO> materialContrastDTOList = null;
 
-            materialContrastDTOList = MaterialContrastDAO.findAll();
+            materialContrastDTOList = materialContrastDAO.findAll();
 
             for(MaterialContrastDTO dto:materialContrastDTOList){
-                materialContrastMap.put(dto.getMaterial().toLowerCase(),dto.getMaterial_ch());
+                materialContrastMap.put(dto.getMaterial().toLowerCase(),dto.getMaterialCh());
             }
         }
     }
