@@ -25,7 +25,7 @@ public interface IBaseDao<T> {
 
 	T findById(Serializable id) throws SQLException;
 	
-	List<T> findAll() throws SQLException; 
+	List<T> findAll() throws SQLException;
 
 	List<T> findAll(Map<String, Object> params) throws SQLException;
 
