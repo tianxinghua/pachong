@@ -9,8 +9,9 @@
         <typeAlias alias="iog_spu" type="com.shangpin.iog.dto.SpuDTO" />
         <typeAlias alias="iog_sku" type="com.shangpin.iog.dto.SkuDTO" />
         <typeAlias alias="iog_product_pic" type="com.shangpin.iog.dto.ProductPictureDTO" />
-
-
+        <typeAlias alias="iog_supplier" type="com.shangpin.iog.dto.SupplierDTO"/>
+		<typeAlias alias="iog_brand_sp" type="com.shangpin.iog.dto.BrandSpDTO"/>
+		<typeAlias alias="iog_color_contrast" type="com.shangpin.iog.dto.ColorContrastDTO"/>
 
 
 	</typeAliases>

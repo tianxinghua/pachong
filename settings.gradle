@@ -21,3 +21,7 @@ include 'iog-common-product'
 include 'acanfora'
 
 include 'coltorti'
+include 'acanfora-stock'
+
+include 'openapi-ice'
+

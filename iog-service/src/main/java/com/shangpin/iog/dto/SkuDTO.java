@@ -17,7 +17,8 @@ public class SkuDTO {
     private String skuId;
     private String spuId;
     private String productName;
-    private String supplierPrice;
+    private String salePrice;//销售价格
+    private String supplierPrice;//供货商价格
     private String barcode;//条形码
     private String productCode;//货号
     private String color;
@@ -140,6 +141,8 @@ public class SkuDTO {
         this.lastTime = lastTime;
     }
 
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -171,5 +174,12 @@ public class SkuDTO {
 			return false;
 		return true;
 	}
-    
+
+    public String getProductDescription() {
+        return productDescription;
+    }
+
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
+    }
 }

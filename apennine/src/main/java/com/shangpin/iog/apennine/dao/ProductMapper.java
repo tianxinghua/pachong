@@ -1,13 +1,14 @@
 package com.shangpin.iog.apennine.dao;
 
-import com.shangpin.iog.dao.base.IBaseDao;
-import com.shangpin.iog.dao.base.Mapper;
-import com.shangpin.iog.dto.ApennineProductDTO;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
-import java.util.Date;
-import java.util.List;
+import com.shangpin.iog.apennine.domain.ApennineProductDTO;
+import com.shangpin.iog.dao.base.IBaseDao;
+import com.shangpin.iog.dao.base.Mapper;
 
 /**
  * Created by sunny on 2015/6/3.

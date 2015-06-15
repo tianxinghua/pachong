@@ -1,32 +1,41 @@
 package com.shangpin.iog.apennine.utils;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.httpclient.NameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.apennine.service.impl.ApennineProductServiceImpl;
+import com.shangpin.iog.apennine.conf.ApiUrl;
+import com.shangpin.iog.apennine.convert.ApennineProductConvert;
+import com.shangpin.iog.apennine.domain.ApennineProductDTO;
+import com.shangpin.iog.apennine.domain.ApennineProductPictureDTO;
+import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
-import com.shangpin.iog.dto.ApennineProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.service.ApennineProductService;
 import com.shangpin.iog.service.ProductFetchService;
-import org.apache.commons.httpclient.NameValuePair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by sunny on 2015/6/2.
  */
-@Component
+@Component("apennine")
 public class ApennineHttpUtil {
     @Autowired
     ProductFetchService fetchService;
+    static Logger logger =LoggerFactory.getLogger(ApennineHttpUtil.class);
     private ApennineProductDTO getObjectByJsonString(String jsonStr) {
         ApennineProductDTO obj =null;
         Gson gson = new Gson();
@@ -34,6 +43,7 @@ public class ApennineHttpUtil {
             obj=gson.fromJson(jsonStr, ApennineProductDTO.class);
         } catch (Exception e) {
             e.printStackTrace();
+            logger.info("get ApennineProduct fail :"+e);
         }
         return obj;
     }
@@ -50,6 +60,18 @@ public class ApennineHttpUtil {
             objs = gson.fromJson(jsonStr, new TypeToken<List<ApennineProductDTO>>(){}.getType());
         } catch (Exception e) {
             e.printStackTrace();
+            logger.info("get List<ApennineProductDTO> fail :"+e);
+        }
+        return objs;
+    }
+    private List<ApennineProductPictureDTO> getPicsByjsonString(String jsonStr){
+    	Gson gson = new Gson();
+    	List<ApennineProductPictureDTO>objs=new ArrayList<ApennineProductPictureDTO>();
+    	try {
+            objs = gson.fromJson(jsonStr, new TypeToken<List<ApennineProductPictureDTO>>(){}.getType());
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("get List<ApennineProductPictureDTO> fail :"+e);
         }
         return objs;
     }
@@ -59,7 +81,12 @@ public class ApennineHttpUtil {
         list=this.getObjectsByJsonString(jsonStr);
         return list;
     }
-
+    public int getHkstockByScode(String url, String Scode) throws Exception{
+    	Map<String,String> param = new HashMap<String, String>();
+    	param = formatParam(param,Scode);
+    	String jsonStr = HttpUtils.post(url, param);
+    	return Integer.parseInt(jsonStr);
+    }
     private  List<ApennineProductDTO>getProductsByUrlAndParam(String url,NameValuePair[] data){
         List<ApennineProductDTO>list=new ArrayList<>();
         try {
@@ -67,70 +94,91 @@ public class ApennineHttpUtil {
             list=this.getObjectsByJsonString(jsonStr);
         } catch (ServiceException e) {
             e.printStackTrace();
+            logger.info("get List<ApennineProduct> fail :"+e);
         }
         return list;
     }
-    private static List<SpuDTO> formatToSpu(List<ApennineProductDTO>list){
+    /**
+     * 产品实体转为SPU实体
+     * @param list
+     * @return
+     */
+    private List<SpuDTO> formatToSpu(List<ApennineProductDTO>list){
         List<SpuDTO>spuList=new ArrayList<>();
-        SpuDTO spuDTO=new SpuDTO();
-        String id="";
         for (int i = 0;i<list.size();i++){
             ApennineProductDTO dto=list.get(i);
-            id=UUID.randomUUID().toString();
-            spuDTO.setId(id.substring(0,8)+id.substring(9,13)+id.substring(14,18)+id.substring(19,23)+id.substring(24));
-            spuDTO.setSeasonId(dto.getCat1());
-            spuDTO.setBrandName(dto.getCat());
-            spuDTO.setSpuId(dto.getScode());
-            spuDTO.setSupplierId("1");
+            SpuDTO spuDTO = ApennineProductConvert.product2spu(dto);
             spuList.add(spuDTO);
         }
         return spuList;
     }
-    private static List<SkuDTO>formatToSku(List<ApennineProductDTO>list){
+    /**
+     * 产品实体转为SKU实体
+     * @param list
+     * @return
+     */
+    private List<SkuDTO>formatToSku(List<ApennineProductDTO>list){
         List<SkuDTO>skuList=new ArrayList<>();
-        SkuDTO skuDTO=new SkuDTO();
-        String id="";
         for (int i=0;i<list.size();i++){
             ApennineProductDTO dto=list.get(i);
-            id=UUID.randomUUID().toString();
-            skuDTO.setId(id.substring(0,8)+id.substring(9,13)+id.substring(14,18)+id.substring(19,23)+id.substring(24));
-            skuDTO.setProductCode(dto.getScode());
-            skuDTO.setProductSize(dto.getSize());
-            skuDTO.setColor(dto.getColor());
-            skuDTO.setProductName(dto.getCdescript());
-            skuDTO.setSupplierPrice(dto.getPricec());
-            skuDTO.setSkuId(dto.getScode());
-            skuDTO.setSpuId(dto.getScode());
-            skuDTO.setSupplierId("1");
+            SkuDTO skuDTO=ApennineProductConvert.product2sku(dto);
             skuList.add(skuDTO);
         }
         return skuList;
     }
-    private static List<ProductPictureDTO> formatToPic(List<ApennineProductDTO>list){
+    /**
+     * 产品实体转为商品图片实体
+     * @param list
+     * @return
+     */
+    private List<ProductPictureDTO> formatToPic(List<ApennineProductDTO>list){
         List<ProductPictureDTO>picList=new ArrayList<>();
-        ProductPictureDTO picDTO=new ProductPictureDTO();
-        String id="";
         for (int i=0;i<list.size();i++) {
             ApennineProductDTO dto = list.get(i);
-            id=UUID.randomUUID().toString();
-            picDTO.setId(id.substring(0,8)+id.substring(9,13)+id.substring(14,18)+id.substring(19,23)+id.substring(24));
-            picDTO.setSupplierId("1");
-            picDTO.setSkuId(dto.getScode());
-            picDTO.setPicUrl("");
-            picList.add(picDTO);
+            List<ApennineProductPictureDTO> picurlList = this.getPictureUrlsByScode("http://112.74.74.98:8082/api/GetProductImg?userName=spin&userPwd=spin112233&scode="+dto.getScode());
+            for (int j = 0; j < picurlList.size(); j++) {
+            	 ProductPictureDTO picDTO=new ProductPictureDTO();
+                 picDTO.setId(UUIDGenerator.getUUID());
+                 picDTO.setSupplierId("00000003");
+                 picDTO.setSkuId(dto.getScode());
+                 picDTO.setPicUrl(picurlList.get(j).getScodePicSrc());
+                 picList.add(picDTO);
+			}
         }
         return picList;
     }
+    public List<ApennineProductPictureDTO> getPictureUrlsByScode(String url){
+    	String jsonStr=HttpUtils.get(url);
+    	List<ApennineProductPictureDTO> list=new ArrayList<>();
+    	list= this.getPicsByjsonString(jsonStr);
+    	return list;
+    }
+    /**
+     * 插入所有商品信息
+     * @param url
+     * @throws ServiceException
+     */
     public void insertApennineProducts(String url) throws ServiceException {
         List<ApennineProductDTO>dtos = getAllProducts(url);
         List<SkuDTO>skuDTOList=formatToSku(dtos);
         List<SpuDTO>spuDTOList=formatToSpu(dtos);
         List<ProductPictureDTO>picList=formatToPic(dtos);
-        fetchService.saveSKU(skuDTOList);
-        fetchService.saveSPU(spuDTOList);
-        fetchService.savePicture(picList);
+        for (int i = 0; i < skuDTOList.size(); i++) {
+        	fetchService.saveSKU(skuDTOList.get(i));
+		}
+        for (int i = 0; i < spuDTOList.size(); i++) {
+        	fetchService.saveSPU(spuDTOList.get(i));
+		}
+        for (int i = 0; i < picList.size(); i++) {
+        	 fetchService.savePicture(picList.get(i));
+		}
     }
-
+    private Map<String,String> formatParam(Map<String,String> param,String scode){
+    	param.put("ScodeAll", scode);
+    	param.put("UserName", ApiUrl.userName);
+    	param.put("UserPwd", ApiUrl.password);
+    	return param;
+    }
     /* public static void main(String args[]) {
 
          String url = "http://112.74.74.98:8082/api/GetProductDetails?userName=spin&userPwd=spin112233";
@@ -157,15 +205,21 @@ public class ApennineHttpUtil {
             e.printStackTrace();
         }
     }*/
-   /* private static ApplicationContext factory;
-    private static void loadSpringContext()
-    {
-        factory = new AnnotationConfigApplicationContext(AppContext.class);
-    }
-    public static void main(String[] args)
-    {
-        System.out.println("test start");
-        loadSpringContext();
-        System.out.println("test end");
-    }*/
+   /* public static void main(String[] args) {
+    	String url = "http://112.74.74.98:8082/api/GetProductPorperty?userName=spin&userPwd=spin112233&scode=EMBASSYGREYF";
+    	NameValuePair[] data = {
+                new NameValuePair("scode", "")
+        };
+    	Map<String,String>map = new HashMap();
+    	map.put("ScodeAll", "TUSKBLKF");
+    	map.put("UserName", "spin");
+    	map.put("UserPwd", "spin112233");
+    	try {
+			//String kk = HttpUtils.post(url,map);
+    		String kk = HttpUtils.get(url);
+			System.out.println("商品属性"+kk);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}*/
 }

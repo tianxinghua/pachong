@@ -22,25 +22,22 @@ import com.shangpin.iog.coltorti.dto.ColtortiError;
  * <br/>2015年6月5日
  */
 public class ColtortiUtil {
-
+	public static String supplier="00000002";
 	static String tokenExpire="token has expired";
 	static String noResult="no results found";
 	/**
-	 * 判断返回的信息是否是出差信息
+	 * 判断返回的信息是否是token过期信息 ，并重新初始化token
 	 * @param responseBody
 	 * @return
 	 * @throws ServiceException
 	 */
 	public static ColtortiError check(String responseBody) throws ServiceException{
 		if(StringUtils.isEmpty(responseBody))
-			throw new ServiceMessageException("无返回信息");
+			throw new ServiceMessageException(noResult);
 		JsonElement je=new JsonParser().parse(responseBody);
 		JsonElement msg=je.getAsJsonObject().get("message");
 		if(msg!=null){
-			String m=msg.getAsString();
-			if(tokenExpire.equals(m))
-				ColtortiTokenService.initToken();
-			throw new ServiceMessageException(m);
+			throw new ServiceMessageException(msg.getAsString());
 		}
 		return null;
 	}
@@ -83,6 +80,18 @@ public class ColtortiUtil {
 	public static boolean isNoResultError(ServiceException e) {
 		String msg=e.getMessage();
 		if(noResult.equals(msg))
+			return true;
+		return false;
+	}
+
+	/**
+	 * 是否token过期异常提示
+	 * @param e
+	 * @return
+	 */
+	public static boolean isTokenExpire(ServiceException e) {
+		String msg=e.getMessage();
+		if(tokenExpire.equals(msg))
 			return true;
 		return false;
 	}

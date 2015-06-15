@@ -1,5 +1,8 @@
 package com.shangpin.iog.common.utils.httpclient;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -23,6 +26,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -40,6 +44,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 
 /**
@@ -123,10 +129,14 @@ public class HttpUtils {
 	public static String get(String url) {
 		HttpGet getMethod = new HttpGet(url);
 		String result = "{\"error\":\"发生异常错误\"}";
+
 		try {
 			CloseableHttpClient httpclient = getSSLClient(false);
+
 			HttpResponse response = httpclient.execute(getMethod);
+
 			HttpEntity entity = response.getEntity();
+
 			result = EntityUtils.toString(entity);
 			EntityUtils.consume(entity);
 		} catch (Exception e) {
@@ -137,6 +147,46 @@ public class HttpUtils {
 		return result;
 
 	}
+
+    /**
+     * GET 方式获取信息
+     * @param url 地址
+     * @param isProxy   是否使用代理
+     * @param socketTimeout  传输超时时间  null 或 0 给默认时间 6苗
+     * @return
+     */
+    public static String get(String url,Boolean isProxy,Integer socketTimeout) {
+        if(null==socketTimeout||0==socketTimeout)  socketTimeout=6000;
+        HttpGet getMethod = new HttpGet(url);
+        String result = "{\"error\":\"发生异常错误\"}";
+        CloseableHttpClient httpClient =  null;
+        CloseableHttpResponse response = null;
+                StringBuffer buffer = new StringBuffer();
+        try {
+
+            httpClient = getSSLClient(isProxy);
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(socketTimeout).setConnectTimeout(2000).build();//设置请求和传输超时时间
+            getMethod.setConfig(requestConfig);
+
+             response = httpClient.execute(getMethod);
+
+            HttpEntity entity = response.getEntity();
+            result = EntityUtils.toString(entity);
+			EntityUtils.consume(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(null!=response) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return result;
+
+    }
 	/**
 	 * 创建httpclient 上下文<br/>
 	 * 根据url是否https,http来设置ssl认证<br/>
@@ -236,7 +286,7 @@ public class HttpUtils {
 		String rs="";
 		try {
 
-			String kk=HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");//.getData("https://api.orderlink.it/v1/user/token?username=SHANGPIN&password=12345678",false);System.out.println("content = " + kk);
+			String kk=HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx",false,240000);//.getData("https://api.orderlink.it/v1/user/token?username=SHANGPIN&password=12345678",false);System.out.println("content = " + kk);
 		    System.out.println("kk = " + kk);
         } catch (Exception e) {
 			e.printStackTrace();

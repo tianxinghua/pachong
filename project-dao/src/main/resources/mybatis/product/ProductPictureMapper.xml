@@ -59,7 +59,7 @@
 
   from SKU_PICTURE
   where
-  sku.SUPPLIER_ID = #{supplier}
+  SUPPLIER_ID = #{supplier}
 
   and SKU_ID = #{sku}
 

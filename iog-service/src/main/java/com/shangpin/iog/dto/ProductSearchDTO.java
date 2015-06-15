@@ -14,6 +14,7 @@ public class ProductSearchDTO {
     private Integer pageIndex;
     private Integer pageSize;
     private String category;
+    private String  supplier;
 
     public String getStartDate() {
         return startDate;
@@ -54,4 +55,6 @@ public class ProductSearchDTO {
     public void setCategory(String category) {
         this.category = category;
     }
+
+
 }

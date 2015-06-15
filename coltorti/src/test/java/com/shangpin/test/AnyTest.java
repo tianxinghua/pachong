@@ -3,9 +3,12 @@
  */
 package com.shangpin.test;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.net.URLDecoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,6 +20,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 import com.google.gson.Gson;
@@ -25,6 +29,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.shangpin.iog.coltorti.dto.ColtortiProduct;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 
 /**
  * @description 
@@ -37,6 +42,12 @@ public class AnyTest {
 	static final Map<String,Field[]> classField = new HashMap<>();
 	@Test
 	public void testXmlBean(){
+		Date de=DateTimeUtil.convertDateFormat(new Date(), "yyyyMMdd");
+		Date ds=DateUtils.addDays(de, -1);
+		System.out.println(de+"|"+ds);
+		String isoFmt="yyyy-MM-dd'T'HH:mm:ss'Z'";
+		System.out.println(DateTimeUtil.convertFormat(de,isoFmt)); 
+		System.out.println(DateTimeUtil.convertFormat(ds,isoFmt)); 
 	}
 	@Test
 	public void testJson(){
@@ -162,5 +173,27 @@ public class AnyTest {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@Test
+	public void testSameDate(){
+		Date ds=null;Date de=null;
+		String YYYY_MMDD_HH="yyyyMMddHH";
+		ds=DateTimeUtil.parse("2015050312",YYYY_MMDD_HH);
+		de=DateTimeUtil.parse("201505031214",YYYY_MMDD_HH);
+		System.out.println(ds.equals(de));
+	}
+	
+	public static void main(String[] args) {
+		String path=AnyTest.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+		String realPath = AnyTest.class.getClassLoader().getResource("").getFile();
+		try {
+			path= URLDecoder.decode(path,"utf-8");
+			realPath= URLDecoder.decode(realPath,"utf-8");
+			System.out.println(path);//jar文件路径|classpath根目录
+			System.out.println(realPath);//jar目录|classpath根目录
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.shangpin.iog.coltorti.dto.ColtortiProduct;
+import com.shangpin.iog.coltorti.service.ColtortiUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
@@ -21,13 +22,13 @@ import com.shangpin.iog.dto.SpuDTO;
  * <br/>2015年6月5日
  */
 public class ColtortiProductConvert {
-	static String supplier="Coltorti";
+	
 	public static SkuDTO product2sku(ColtortiProduct p){
 		SkuDTO dto = new SkuDTO();
 		dto.setId(UUIDGenerator.getUUID());
-		dto.setSupplierId(supplier);
+		dto.setSupplierId(ColtortiUtil.supplier);
 		dto.setProductName(p.getName());
-		dto.setProductCode(p.getSkuId());
+		dto.setProductCode(p.getProductId());
 		dto.setColor(p.getColor());
 		dto.setCreateTime(new Date());
 		dto.setLastTime(p.getUpdatedAt());
@@ -69,7 +70,7 @@ public class ColtortiProductConvert {
 			dto.setSeasonName(entry.getValue());
 			dto.setSeasonId(entry.getKey());
 		}
-		dto.setSupplierId(supplier);
+		dto.setSupplierId(ColtortiUtil.supplier);
 		dto.setProductOrigin(p.getMadIn());
 		dto.setMaterial(p.getMaterial());
 		return dto;
@@ -82,7 +83,7 @@ public class ColtortiProductConvert {
 			for (String string : list) {
 				ProductPictureDTO pc= new ProductPictureDTO();
 				pc.setId(UUIDGenerator.getUUID());
-				pc.setSkuId(p.getSkuId());pc.setSupplierId(supplier);
+				pc.setSkuId(p.getSkuId());pc.setSupplierId(ColtortiUtil.supplier);
 				pc.setPicUrl(string);
 				ppc.add(pc);
 			}
