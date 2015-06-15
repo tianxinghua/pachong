@@ -120,6 +120,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
         //设置尚品网品牌
         this.setBrandMap();
+        //颜色赋值
+        this.setColorContrastMap();
 
         String productSize,season="", productDetail="",brandName="",brandId="",color="",material="";
 
@@ -139,13 +141,13 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //品牌
                 brandName=dto.getBrandName().trim();
                 if(spBrandMap.containsKey(brandName.toLowerCase())){
-                    brandId=spBrandMap.get(brandName);
+                    brandId=spBrandMap.get(brandName.toLowerCase());
                 }else{
                     brandId ="";
                 }
 
                 buffer.append(!"".equals(brandId)?brandId :"品牌编号").append(",");
-                buffer.append(dto.getBrandName()).append(",");
+                buffer.append(brandName).append(",");
                 //货号
                 buffer.append(dto.getProductCode()).append(",").append(dto.getSkuId()).append(",");
                 //欧洲习惯 第一个先看 男女
@@ -157,11 +159,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //获取颜色
                 color =dto.getColor().trim();
                 if(colorContrastMap.containsKey(color.toLowerCase())){
-                    color=colorContrastMap.get(color);
-                }else{
-                    color ="";
+                    color=colorContrastMap.get(color.toLowerCase());
                 }
-                buffer.append(!"".equals(color)?color :"品牌颜色").append(",");
+                buffer.append(color).append(",");
 
                 //获取尺码
                 productSize=dto.getSize();
@@ -177,10 +177,6 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 
                 buffer.append(productSize).append(",");
-
-
-
-
 
                 buffer.append(dto.getMaterial()).append(",")
                         .append(dto.getProductOrigin()).append(",").append(dto.getPicUrl()).append(",");
@@ -237,12 +233,17 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     /**
      * 设置colorContrastMap
      */
-    private void setColorContrastMap() throws SQLException {
+    private void setColorContrastMap() {
         int num = colorContrastDAO.findCount();
         if(colorContrastMap.size() < num){
             List<ColorContrastDTO> colorContrastDTOList = null;
 
-            colorContrastDTOList = colorContrastDAO.findAll();
+            try {
+                colorContrastDTOList = colorContrastDAO.findAll();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ;
+            }
 
             for(ColorContrastDTO dto:colorContrastDTOList){
                 colorContrastMap.put(dto.getColor().toLowerCase(),dto.getColorCh());
