@@ -12,11 +12,7 @@ import java.util.*;
 
 @Mapper
 public interface ColorContrastMapper extends IBaseDao<ColorContrastDTO> {
-    /**
-     * 获取颜色信息
-     * @return  颜色列表
-     * @throws ServiceException
-     */
+
     List<ColorContrastDTO> findAll() ;
 
     public int findCount();
