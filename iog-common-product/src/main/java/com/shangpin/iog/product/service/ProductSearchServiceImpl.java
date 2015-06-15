@@ -4,6 +4,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.dto.BrandSpDTO;
+import com.shangpin.iog.dto.ColorContrastDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.product.dao.*;
@@ -43,11 +44,14 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     @Autowired
     BrandSpMapper brandSpDAO;
 
+    @Autowired
+    ColorContrastMapper colorContrastDAO;
+
 
 
 
     private static     Map<String,String> spBrandMap = new HashMap<>();
-
+    private static     Map<String,String> colorContrastMap = new HashMap<>();
 
 
 
@@ -117,7 +121,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         //设置尚品网品牌
         this.setBrandMap();
 
-        String productSize,season="", productDetail="",brandName="",brandId="";
+        String productSize,season="", productDetail="",brandName="",brandId="",color="",material="";
 
         String categoryId="";
         for(ProductDTO dto:page.getItems()){
@@ -139,6 +143,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 }else{
                     brandId ="";
                 }
+
                 buffer.append(!"".equals(brandId)?brandId :"品牌编号").append(",");
                 buffer.append(dto.getBrandName()).append(",");
                 //货号
@@ -148,8 +153,17 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //产品名称
                 buffer.append(dto.getProductName()).append(",");
                 buffer.append("\"\t" + dto.getBarcode() + "\"").append(",").append(dto.getColor()).append(",");
-                //获取尺码
 
+                //获取颜色
+                color =dto.getColor().trim();
+                if(colorContrastMap.containsKey(color.toLowerCase())){
+                    color=colorContrastMap.get(color);
+                }else{
+                    color ="";
+                }
+                buffer.append(!"".equals(color)?color :"品牌颜色").append(",");
+
+                //获取尺码
                 productSize=dto.getSize();
                 if(StringUtils.isNotBlank(productSize)){
 
@@ -218,12 +232,23 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     spBrandMap.put(dto.getBrandName().toLowerCase(),dto.getBrandId());
                 }
             }
-
-
-
-
     }
 
+    /**
+     * 设置colorContrastMap
+     */
+    private void setColorContrastMap() throws SQLException {
+        int num = colorContrastDAO.findCount();
+        if(colorContrastMap.size() < num){
+            List<ColorContrastDTO> colorContrastDTOList = null;
+
+            colorContrastDTOList = colorContrastDAO.findAll();
+
+            for(ColorContrastDTO dto:colorContrastDTOList){
+                spBrandMap.put(dto.getColor().toLowerCase(),dto.getColorCh());
+            }
+        }
+    }
 
     /**
      * 图片赋值
