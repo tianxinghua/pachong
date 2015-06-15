@@ -40,6 +40,8 @@ public class Startup
 //			e.printStackTrace();
 //		}
 //		System.out.println(list.size());
+
+
 		System.out.println("-------fetch end---------");
 
 	}

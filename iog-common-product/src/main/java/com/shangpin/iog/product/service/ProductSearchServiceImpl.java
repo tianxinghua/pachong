@@ -245,7 +245,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             colorContrastDTOList = colorContrastDAO.findAll();
 
             for(ColorContrastDTO dto:colorContrastDTOList){
-                spBrandMap.put(dto.getColor().toLowerCase(),dto.getColorCh());
+                colorContrastMap.put(dto.getColor().toLowerCase(),dto.getColorCh());
             }
         }
     }

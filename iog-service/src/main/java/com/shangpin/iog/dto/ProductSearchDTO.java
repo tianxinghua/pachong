@@ -57,4 +57,7 @@ public class ProductSearchDTO {
     }
 
 
+    public String getSupplier() { return supplier; }
+
+    public void setSupplier(String supplier) { this.supplier = supplier; }
 }
