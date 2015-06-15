@@ -87,6 +87,7 @@ public class ColtortiStartup {
 			grabProduct();
 		}else{
 			try {
+				
 				updateStock();
 			} catch (Exception e) {
 				logger.error("更新库存异常",e);
@@ -106,13 +107,19 @@ public class ColtortiStartup {
 				logger.error("拉取时间参数错误,start:{},end:{}",args[0],args[1]);
 			}
 		}else{
-			String lastDate=getLastGrapDate();
 			endDate = DateTimeUtil.convertDateFormat(new Date(), YYYY_MMDD_HH);
-			startDate=StringUtils.isNotEmpty(lastDate) ? DateTimeUtil.convertFormat(lastDate,
-					YYYY_MMDD_HH) : DateUtils.addDays(endDate, -5);
+			if("s".equals(args[1]))
+				startDate=DateTimeUtil.parse("2015061500",YYYY_MMDD_HH);
+			else{
+				String lastDate=getLastGrapDate();
+				startDate=StringUtils.isNotEmpty(lastDate) ? DateTimeUtil.convertFormat(lastDate,
+						YYYY_MMDD_HH) : DateUtils.addDays(endDate, -5);
+			}
 		}
-		writeGrapDate(endDate);
-		/*if(DateTimeUtil.LongFmt(ds).equals(DateTimeUtil.LongFmt(de))){
+		if("s".equals(args[0])){
+			writeGrapDate(endDate);			
+		}
+		/*if(DateTimeUtil.LongFmt(endDate).equals(DateTimeUtil.LongFmt(startDate))){
 			logger.warn("抓取开始时间，结束时间一致!");
 		}*/
 	}
