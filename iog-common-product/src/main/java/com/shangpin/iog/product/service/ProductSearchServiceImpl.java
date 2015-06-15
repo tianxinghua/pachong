@@ -46,6 +46,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
     @Autowired
     ColorContrastMapper colorContrastDAO;
+    @Autowired
+    ColorContrastMapper materialContrastDAO;
 
 
 
@@ -53,6 +55,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     private static     Map<String,String> spBrandMap = new HashMap<>();
     private static     Map<String,String> colorContrastMap = new HashMap<>();
 
+    private static     Map<String,String> materialContrastMap = new HashMap<>();
 
 
     @Override
@@ -178,6 +181,15 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 buffer.append(productSize).append(",");
 
+                //获取材质
+                material =dto.getMaterial().trim();
+                if(materialContrastMap.containsKey(material.toLowerCase())){
+                    material=materialContrastMap.get(material);
+                }
+                buffer.append(!"".equals(material)?material :"品牌颜色").append(",");
+
+
+
                 buffer.append(dto.getMaterial()).append(",")
                         .append(dto.getProductOrigin()).append(",").append(dto.getPicUrl()).append(",");
                 buffer.append(dto.getItemPictureUrl1()).append(",").append(dto.getItemPictureUrl2()).append(",").append(dto.getItemPictureUrl3()).append(",")
@@ -250,6 +262,24 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             }
         }
     }
+
+
+    /**
+     * 设置materialContrastMap
+     */
+    private  void setMaterialContrastMap() {
+        int num =materialContrastDAO.findCount();
+        if(materialContrastMap.size() < num){
+            List<MaterialContrastDTO> materialContrastDTOList = null;
+
+            materialContrastDTOList = MaterialContrastDAO.findAll();
+
+            for(MaterialContrastDTO dto:materialContrastDTOList){
+                materialContrastMap.put(dto.getMaterial().toLowerCase(),dto.getMaterial_ch());
+            }
+        }
+    }
+
 
     /**
      * 图片赋值
