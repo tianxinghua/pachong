@@ -196,8 +196,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 
 
-                buffer.append(dto.getMaterial()).append(",")
-                        .append(dto.getProductOrigin()).append(",").append(dto.getPicUrl()).append(",");
+                buffer.append(dto.getProductOrigin()).append(",").append(dto.getPicUrl()).append(",");
                 buffer.append(dto.getItemPictureUrl1()).append(",").append(dto.getItemPictureUrl2()).append(",").append(dto.getItemPictureUrl3()).append(",")
                         .append(dto.getItemPictureUrl4()).append(",").append(dto.getItemPictureUrl5()).append(",")
                         .append(dto.getItemPictureUrl6()).append(",").append(dto.getItemPictureUrl7()).append(",")
