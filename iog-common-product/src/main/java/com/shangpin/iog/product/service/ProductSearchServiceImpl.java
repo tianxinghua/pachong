@@ -131,7 +131,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
         String productSize,season="", productDetail="",brandName="",brandId="",color="",material="";
 
-        String categoryId="",categoryName="";
+        String categoryId="",categoryName="",productName="";
         for(ProductDTO dto:page.getItems()){
 
             try {
@@ -170,7 +170,13 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //欧洲习惯 第一个先看 男女
                 buffer.append(dto.getCategoryGender()).append(",");
                 //产品名称
-                buffer.append(dto.getProductName()).append(",");
+                productName =   dto.getProductName();
+                if(StringUtils.isBlank(productName)){
+                    productName = dto.getSpuName();
+                }
+                buffer.append(productName).append(",");
+
+
                 buffer.append("\"\t" + dto.getBarcode() + "\"").append(",");
 
                 //获取颜色
@@ -209,10 +215,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 }
 
-
                 buffer.append(material).append(",");
-
-
 
                 buffer.append(dto.getProductOrigin()).append(",").append(dto.getPicUrl()).append(",");
                 buffer.append(dto.getItemPictureUrl1()).append(",").append(dto.getItemPictureUrl2()).append(",").append(dto.getItemPictureUrl3()).append(",")
