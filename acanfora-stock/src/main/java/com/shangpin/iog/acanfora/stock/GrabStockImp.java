@@ -18,7 +18,7 @@ import java.util.*;
 public class GrabStockImp extends AbsUpdateProductStock {
 
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
-        Map<String, Integer> skustock = new HashMap<String, Integer>(skuNo.size());
+        Map<String, Integer> skustock = new HashMap<>(skuNo.size());
         List<Item> itemList = new ArrayList<>() ;
 
         String kk = HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");
@@ -38,15 +38,10 @@ public class GrabStockImp extends AbsUpdateProductStock {
             itemList.containsAll(items.getItems());
         }
 
-//        Map<String,itemList> maplist  = new HashMap<String,itemList>();
-//        for (String skuno : skuNo) {
-//                 Item item = maplist.get(skuno);
-//                 skustock.put(skuno,item.getStock());
-//        }
-
         for (String skuno : skuNo) {
             for (Item item : itemList) {
                 if (skuno.equals(item.getItem_id())) {
+                    skustock.put(skuno, Integer.valueOf(item.getStock()));
                     break;
                 }
             }

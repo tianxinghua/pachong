@@ -3,9 +3,7 @@ package com.shangpin.iog.product.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.framework.page.Page;
-import com.shangpin.iog.dto.BrandSpDTO;
-import com.shangpin.iog.dto.ProductDTO;
-import com.shangpin.iog.dto.ProductPictureDTO;
+import com.shangpin.iog.dto.*;
 import com.shangpin.iog.product.dao.*;
 import com.shangpin.iog.service.ProductSearchService;
 import org.apache.commons.lang.StringUtils;
@@ -43,12 +41,25 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     @Autowired
     BrandSpMapper brandSpDAO;
 
+    @Autowired
+    ColorContrastMapper colorContrastDAO;
+    @Autowired
+   MaterialContrastMapper materialContrastDAO;
+
 
 
 
     private static     Map<String,String> spBrandMap = new HashMap<>();
+    private static     Map<String,String> colorContrastMap = new HashMap<>();
 
+    private static     Map<String,String> materialContrastMap = new HashMap<>();
 
+    //key 均为小写 以便匹配
+    private static Map<String,String>  cityMap= new HashMap<String,String>(){
+        {
+            put("italy","意大利");
+        }
+    };
 
 
     @Override
@@ -116,8 +127,12 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
         //设置尚品网品牌
         this.setBrandMap();
+        //颜色Map赋值
+        this.setColorContrastMap();
+        //材质Map 赋值
+        this.setMaterialContrastMap();
 
-        String productSize,season="", productDetail="",brandName="",brandId="";
+        String productSize,season="", productDetail="",brandName="",brandId="",color="",material="";
 
         String categoryId="";
         for(ProductDTO dto:page.getItems()){
@@ -134,13 +149,14 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 buffer.append(StringUtils.isNotBlank(categoryId)?categoryId :"品类编号").append(",");
                 //品牌
                 brandName=dto.getBrandName().trim();
-                if(spBrandMap.containsKey(brandName)){
-                    brandId=spBrandMap.get(brandName);
+                if(spBrandMap.containsKey(brandName.toLowerCase())){
+                    brandId=spBrandMap.get(brandName.toLowerCase());
                 }else{
                     brandId ="";
                 }
+
                 buffer.append(!"".equals(brandId)?brandId :"品牌编号").append(",");
-                buffer.append(dto.getBrandName()).append(",");
+                buffer.append(brandName).append(",");
                 //货号
                 buffer.append(dto.getProductCode()).append(",").append(dto.getSkuId()).append(",");
                 //欧洲习惯 第一个先看 男女
@@ -148,8 +164,15 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //产品名称
                 buffer.append(dto.getProductName()).append(",");
                 buffer.append("\"\t" + dto.getBarcode() + "\"").append(",").append(dto.getColor()).append(",");
-                //获取尺码
 
+                //获取颜色
+                color =dto.getColor().trim();
+                if(colorContrastMap.containsKey(color.toLowerCase())){
+                    color=colorContrastMap.get(color.toLowerCase());
+                }
+                buffer.append(color).append(",");
+
+                //获取尺码
                 productSize=dto.getSize();
                 if(StringUtils.isNotBlank(productSize)){
 
@@ -164,12 +187,16 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 buffer.append(productSize).append(",");
 
+                //获取材质
+                material =dto.getMaterial().trim();
+                if(materialContrastMap.containsKey(material.toLowerCase())){
+                    material=materialContrastMap.get(material.toLowerCase());
+                }
+                buffer.append(material).append(",");
 
 
 
-
-                buffer.append(dto.getMaterial()).append(",")
-                        .append(dto.getProductOrigin()).append(",").append(dto.getPicUrl()).append(",");
+                buffer.append(dto.getProductOrigin()).append(",").append(dto.getPicUrl()).append(",");
                 buffer.append(dto.getItemPictureUrl1()).append(",").append(dto.getItemPictureUrl2()).append(",").append(dto.getItemPictureUrl3()).append(",")
                         .append(dto.getItemPictureUrl4()).append(",").append(dto.getItemPictureUrl5()).append(",")
                         .append(dto.getItemPictureUrl6()).append(",").append(dto.getItemPictureUrl7()).append(",")
@@ -188,7 +215,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //季节
 
 
-                buffer.append(dto.getSeasonName());
+                buffer.append(null==dto.getSeasonName()?dto.getSeasonId():dto.getSeasonName());
 
                 buffer.append("\r\n");
             } catch (Exception e) {
@@ -215,13 +242,52 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     return;
                 }
                 for(BrandSpDTO dto:brandSpDTOList){
-                    spBrandMap.put(dto.getBrandName(),dto.getBrandId());
+                    spBrandMap.put(dto.getBrandName().toLowerCase(),dto.getBrandId());
                 }
             }
+    }
+
+    /**
+     * 设置colorContrastMap
+     */
+    private void setColorContrastMap() {
+        int num = colorContrastDAO.findCount();
+        if(colorContrastMap.size() < num){
+            List<ColorContrastDTO> colorContrastDTOList = null;
+
+            try {
+                colorContrastDTOList = colorContrastDAO.findAll();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ;
+            }
+
+            for(ColorContrastDTO dto:colorContrastDTOList){
+                colorContrastMap.put(dto.getColor().toLowerCase(),dto.getColorCh());
+            }
+        }
+    }
 
 
+    /**
+     * 设置materialContrastMap
+     */
+    private  void setMaterialContrastMap() {
+        int num =materialContrastDAO.findCount();
+        if(materialContrastMap.size() < num){
+            List<MaterialContrastDTO> materialContrastDTOList = null;
 
+            try {
+                materialContrastDTOList = materialContrastDAO.findAll();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ;
+            }
 
+            for(MaterialContrastDTO dto:materialContrastDTOList){
+                materialContrastMap.put(dto.getMaterial().toLowerCase(),dto.getMaterialCh());
+            }
+        }
     }
 
 

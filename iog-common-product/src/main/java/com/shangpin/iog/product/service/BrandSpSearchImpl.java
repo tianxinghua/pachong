@@ -2,11 +2,8 @@ package com.shangpin.iog.product.service;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.BrandSpDTO;
-import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.product.dao.BrandSpMapper;
-import com.shangpin.iog.product.dao.SupplierMapper;
 import com.shangpin.iog.service.BrandSpSearchService;
-import com.shangpin.iog.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

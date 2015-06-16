@@ -23,7 +23,6 @@ import com.shangpin.iog.coltorti.service.InsertDataBaseService;
 import com.shangpin.iog.coltorti.service.UpdateStockService;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.service.ProductFetchService;
-import com.shangpin.test.AnyTest;
 
 public class ColtortiStartup {
 	/**
@@ -57,8 +56,7 @@ public class ColtortiStartup {
 	}
 	/**
 	 * 更新库存
-	 * @param dateStart
-	 * @param dateEnd
+
 	 * @throws Exception 
 	 */
 	static void updateStock() throws Exception{
@@ -89,6 +87,7 @@ public class ColtortiStartup {
 			grabProduct();
 		}else{
 			try {
+				
 				updateStock();
 			} catch (Exception e) {
 				logger.error("更新库存异常",e);
@@ -108,19 +107,25 @@ public class ColtortiStartup {
 				logger.error("拉取时间参数错误,start:{},end:{}",args[0],args[1]);
 			}
 		}else{
-			String lastDate=getLastGrapDate();
 			endDate = DateTimeUtil.convertDateFormat(new Date(), YYYY_MMDD_HH);
-			startDate=StringUtils.isNotEmpty(lastDate) ? DateTimeUtil.convertFormat(lastDate,
-					YYYY_MMDD_HH) : DateUtils.addDays(endDate, -5);
+			if("s".equals(args[1]))
+				startDate=DateTimeUtil.parse("2015061500",YYYY_MMDD_HH);
+			else{
+				String lastDate=getLastGrapDate();
+				startDate=StringUtils.isNotEmpty(lastDate) ? DateTimeUtil.convertFormat(lastDate,
+						YYYY_MMDD_HH) : DateUtils.addDays(endDate, -5);
+			}
 		}
-		writeGrapDate(endDate);
-		/*if(DateTimeUtil.LongFmt(ds).equals(DateTimeUtil.LongFmt(de))){
+		if("s".equals(args[0])){
+			writeGrapDate(endDate);			
+		}
+		/*if(DateTimeUtil.LongFmt(endDate).equals(DateTimeUtil.LongFmt(startDate))){
 			logger.warn("抓取开始时间，结束时间一致!");
 		}*/
 	}
 	
 	private static File getConfFile() throws IOException{
-		String realPath = AnyTest.class.getClassLoader().getResource("").getFile();
+		String realPath = ColtortiStartup.class.getClassLoader().getResource("").getFile();
 		realPath= URLDecoder.decode(realPath,"utf-8");
 		File df = new File(realPath+"conf.ini");
 		if(!df.exists()){

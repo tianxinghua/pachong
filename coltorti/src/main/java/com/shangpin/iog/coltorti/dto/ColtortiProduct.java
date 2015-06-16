@@ -31,6 +31,7 @@ public class ColtortiProduct implements Serializable{
 	 */
 	private static final long serialVersionUID = 6274901727751290321L;
 	String skuId;//产品唯一id
+	String sizeKeyValue;
 	String productId;//产品相当spuid，列如iphone6的id，
 	Map<String,String> variant;//变种
 	String name;//名字

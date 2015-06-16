@@ -22,5 +22,7 @@ include 'acanfora'
 
 include 'coltorti'
 
+include 'acanfora-stock'
+
 include 'openapi-ice'
 
