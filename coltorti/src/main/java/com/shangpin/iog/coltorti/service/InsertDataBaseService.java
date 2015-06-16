@@ -103,7 +103,10 @@ public class InsertDataBaseService {
 				if(e.getClass().equals(DuplicateKeyException.class)){
 					continue;
 				}
-				logger.error("保存sku:{}失败,错误信息：{},",new Gson().toJson(sk),e.getMessage());
+				if(failCnt==10){
+					e.printStackTrace();
+					logger.error("保存sku:{}失败,错误信息：{},",new Gson().toJson(sk),e.getMessage());
+				}
 			}
 		}
 		return failCnt;
