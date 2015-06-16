@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by loyalty on 15/5/20.
@@ -155,12 +152,23 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
         String productSize,season="", productDetail="",brandName="",brandId="",color="",material="",productOrigin="";
 
-        String categoryId="";
+        String categoryId="",categoryName="";
         for(ProductDTO dto:page.getItems()){
 
             try {
+                //品类名称
+                categoryName= dto.getSubCategoryName();
+                if(StringUtils.isBlank(categoryName)){
+                    categoryName = dto.getCategoryName();
+                }
+                if(StringUtils.isBlank(categoryName)){
+                    categoryName= "";
+                }else{
+                    categoryName= categoryName.replace(",","... ");
+                }
 
-                buffer.append(null!=dto.getSubCategoryName()?dto.getSubCategoryName():null==dto.getCategoryName()?"":dto.getCategoryName()).append(",");
+
+                buffer.append(categoryName).append(",");
 
                 categoryId = dto.getSubCategoryId();
                 if(StringUtils.isBlank(categoryId)){
@@ -169,7 +177,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 buffer.append(StringUtils.isNotBlank(categoryId)?categoryId :"品类编号").append(",");
                 //品牌
-                brandName=dto.getBrandName().trim();
+                brandName=dto.getBrandName();
                 if(spBrandMap.containsKey(brandName.toLowerCase())){
                     brandId=spBrandMap.get(brandName.toLowerCase());
                 }else{
@@ -184,10 +192,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 buffer.append(dto.getCategoryGender()).append(",");
                 //产品名称
                 buffer.append(dto.getProductName()).append(",");
-                buffer.append("\"\t" + dto.getBarcode() + "\"").append(",").append(dto.getColor()).append(",");
+                buffer.append("\"\t" + dto.getBarcode() + "\"").append(",");
 
                 //获取颜色
-                color =dto.getColor().trim();
+                color =dto.getColor();
                 if(colorContrastMap.containsKey(color.toLowerCase())){
                     color=colorContrastMap.get(color.toLowerCase());
                 }
@@ -209,10 +217,20 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 buffer.append(productSize).append(",");
 
                 //获取材质
-                material =dto.getMaterial().trim();
-                if(materialContrastMap.containsKey(material.toLowerCase())){
-                    material=materialContrastMap.get(material.toLowerCase());
+                material =dto.getMaterial();
+                if(null==material) {
+                    material="";
+                }else{
+
+                     Set<Map.Entry<String,String>> materialSet =  materialContrastMap.entrySet();
+                    for(Map.Entry<String,String> entry:materialSet) {
+
+                        material = material.toLowerCase().replaceAll(entry.getKey(), entry.getValue()).replaceAll(",", "...");
+                    }
+
                 }
+
+
                 buffer.append(material).append(",");
 
                 //获取产地
