@@ -108,7 +108,7 @@ public class ColtortiStartup {
 			}
 		}else{
 			endDate = DateTimeUtil.convertDateFormat(new Date(), YYYY_MMDD_HH);
-			if("s".equals(args[1]))
+			if("s".equals(args[0]))
 				startDate=DateTimeUtil.parse("2015061500",YYYY_MMDD_HH);
 			else{
 				String lastDate=getLastGrapDate();
@@ -116,7 +116,7 @@ public class ColtortiStartup {
 						YYYY_MMDD_HH) : DateUtils.addDays(endDate, -5);
 			}
 		}
-		if("s".equals(args[0])){
+		if("p".equals(args[0])){
 			writeGrapDate(endDate);			
 		}
 		/*if(DateTimeUtil.LongFmt(endDate).equals(DateTimeUtil.LongFmt(startDate))){
