@@ -43,6 +43,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
     @Autowired
     ColorContrastMapper colorContrastDAO;
+
     @Autowired
    MaterialContrastMapper materialContrastDAO;
 
@@ -58,6 +59,26 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     private static Map<String,String>  cityMap= new HashMap<String,String>(){
         {
             put("italy","意大利");
+            put("america","美国");
+            put("england","英国");
+            put("canada","加拿大");
+            put("brazil","巴西");
+            put("argentina","阿根廷");
+            put("mexico","墨西哥");
+            put("germany","德国");
+            put("france","法国");
+            put("russia","俄罗斯");
+            put("japan","日本");
+            put("australia","澳大利亚");
+            put("korea","韩国");
+            put("china","中国");
+            put("finland","芬兰");
+            put("switzerland","瑞士");
+            put("sweden","瑞典");
+            put("singapore","新加坡");
+            put("thailand","泰国");
+            put("new Zealand","新西兰");
+            put("ireland","爱尔兰");
         }
     };
 
@@ -132,7 +153,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         //材质Map 赋值
         this.setMaterialContrastMap();
 
-        String productSize,season="", productDetail="",brandName="",brandId="",color="",material="";
+        String productSize,season="", productDetail="",brandName="",brandId="",color="",material="",productOrigin="";
 
         String categoryId="";
         for(ProductDTO dto:page.getItems()){
@@ -194,9 +215,14 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 }
                 buffer.append(material).append(",");
 
+                //获取产地
+                productOrigin = dto.getProductOrigin();
+                if (cityMap.containsKey(productOrigin.toLowerCase())){
+                    productOrigin=cityMap.get(productOrigin.toLowerCase());
+                }
+                buffer.append(productOrigin).append(",");
 
-
-                buffer.append(dto.getProductOrigin()).append(",").append(dto.getPicUrl()).append(",");
+                buffer.append(dto.getPicUrl()).append(",");
                 buffer.append(dto.getItemPictureUrl1()).append(",").append(dto.getItemPictureUrl2()).append(",").append(dto.getItemPictureUrl3()).append(",")
                         .append(dto.getItemPictureUrl4()).append(",").append(dto.getItemPictureUrl5()).append(",")
                         .append(dto.getItemPictureUrl6()).append(",").append(dto.getItemPictureUrl7()).append(",")
