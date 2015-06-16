@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.shangpin.iog.coltorti.dto.ColtortiProduct;
 import com.shangpin.iog.coltorti.service.ColtortiUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
@@ -40,9 +42,9 @@ public class ColtortiProductConvert {
 		dto.setStock(p.getStock().toString());
 		if(p.getScalars()!=null && p.getScalars().size()>0)
 			dto.setProductSize(p.getScalars().entrySet().iterator().next().getValue());
-		else if(p.getSkuId().lastIndexOf("#")>0){//用于经过尺码拆分后的新产品
-			int idx=p.getSkuId().lastIndexOf("#");
-			dto.setProductSize(p.getSkuId().substring(idx+1));
+		else if(StringUtils.isNotEmpty(p.getSizeKeyValue())){//用于经过尺码拆分后的新产品
+			int idx=p.getSizeKeyValue().lastIndexOf("#");
+			dto.setProductSize(p.getSizeKeyValue().substring(idx+1));
 		}
 		return dto;
 	}

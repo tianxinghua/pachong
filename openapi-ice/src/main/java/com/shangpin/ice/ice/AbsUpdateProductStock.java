@@ -45,7 +45,7 @@ public abstract class AbsUpdateProductStock {
 	 * @return
 	 * @throws Exception
 	 */
-	public Collection<String> grabProduct(String supplier,String start,String end) throws Exception{
+	private Collection<String> grabProduct(String supplier,String start,String end) throws Exception{
 		int pageIndex=1,pageSize=100;
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		boolean hasNext=true;
