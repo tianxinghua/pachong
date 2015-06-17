@@ -74,7 +74,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             put("sweden","瑞典");
             put("singapore","新加坡");
             put("thailand","泰国");
-            put("new Zealand","新西兰");
+            put("new zealand","新西兰");
             put("ireland","爱尔兰");
         }
     };
@@ -242,9 +242,14 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 //获取产地
                 productOrigin = dto.getProductOrigin();
-                if (cityMap.containsKey(productOrigin.toLowerCase())){
-                    productOrigin=cityMap.get(productOrigin.toLowerCase());
+                if(StringUtils.isNotBlank(productOrigin)){
+                    if (cityMap.containsKey(productOrigin.toLowerCase())){
+                        productOrigin=cityMap.get(productOrigin.toLowerCase());
+                    }
+                }else{
+                    productOrigin="";
                 }
+
                 buffer.append(productOrigin).append(",");
 
                 //图片
