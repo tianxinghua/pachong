@@ -149,7 +149,6 @@ public class ColtortiProductService{
 		String body=HttpUtils.get(ColtortiUtil.paramGetUrl(ApiURL.PRODUCT,param));
 		ColtortiUtil.check(body);
 		JsonObject jo =new JsonParser().parse(body).getAsJsonObject();
-		//logger.info("request product result:\r\n"+body);
 		Set<Entry<String,JsonElement>> ks=jo.entrySet();
 		List<ColtortiProduct> pros = new ArrayList<>(ks.size()); 
 		for (Entry<String, JsonElement> entry : ks) {
