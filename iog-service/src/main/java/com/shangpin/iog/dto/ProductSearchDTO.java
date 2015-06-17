@@ -64,13 +64,7 @@ public class ProductSearchDTO {
         this.supplierName = supplierName;
     }
 
-    public String getSupplier() {
-        return supplier;
-    }
 
-    public void setSupplier(String supplier) {
-        this.supplier = supplier;
-    }
 
 
     public String getSupplier() { return supplier; }
