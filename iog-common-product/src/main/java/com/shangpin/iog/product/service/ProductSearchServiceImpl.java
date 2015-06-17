@@ -135,8 +135,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
     @Override
     public StringBuffer exportProduct(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
-        StringBuffer buffer = new StringBuffer("CategoryName品类名称," +
-                "CategroyNo品类编号,BrandNo品牌编号,BrandName品牌,ProductModel货号,SupplierSkuNo供应商SkuNo," +
+        StringBuffer buffer = new StringBuffer("CategoryName 品类名称," +
+                "Category_No 品类编号,BrandNo 品牌编号,BrandName 品牌,ProductModel 货号,SupplierSkuNo 供应商SkuNo," +
                 " 性别 ,"+
                 "SopProductName 商品名称,BarCode 条形码,ProductColor 颜色,ProductSize 尺码,material 材质,ProductOrigin 产地,productUrl1," +
                 "productUrl2,productUrl3,productUrl4,productUrl5,productUrl6,productUrl7,productUrl8,productUrl9," +
@@ -245,8 +245,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 if (cityMap.containsKey(productOrigin.toLowerCase())){
                     productOrigin=cityMap.get(productOrigin.toLowerCase());
                 }
-            
-                buffer.append(productOrigin).append(",").append(dto.getPicUrl()).append(",");
+                buffer.append(productOrigin).append(",");
+
+                //图片
+                buffer.append(dto.getPicUrl()).append(",");
                 buffer.append(dto.getItemPictureUrl1()).append(",").append(dto.getItemPictureUrl2()).append(",").append(dto.getItemPictureUrl3()).append(",")
                         .append(dto.getItemPictureUrl4()).append(",").append(dto.getItemPictureUrl5()).append(",")
                         .append(dto.getItemPictureUrl6()).append(",").append(dto.getItemPictureUrl7()).append(",")
