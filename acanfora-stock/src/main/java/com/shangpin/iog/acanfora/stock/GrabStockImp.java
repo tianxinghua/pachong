@@ -19,7 +19,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
         Map<String, Integer> skustock = new HashMap<>(skuNo.size());
-        List<Item> itemList = new ArrayList<>() ;
+        List<Item> itemList = new ArrayList<>();
 
         String kk = HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");
         Products products = null;
@@ -32,7 +32,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
         for (Product product : productList) {
 
             Items items = product.getItems();
-            if (null == items) {//ÎÞSKU
+            if (null == items) {
                 continue;
             }
             itemList.containsAll(items.getItems());
@@ -48,4 +48,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
         }
         return skustock;
     }
+
+    public static void main(String[] args) throws Exception {
+
+        GrabStockImp grabStockImp = new GrabStockImp();
+        grabStockImp.updateProductStock("00000001","","");
+    }
+
 }
