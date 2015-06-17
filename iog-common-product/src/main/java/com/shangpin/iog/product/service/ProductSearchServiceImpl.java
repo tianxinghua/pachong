@@ -55,16 +55,16 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     //key 均为小写 以便匹配
     private static Map<String,String>  cityMap= new HashMap<String,String>(){
         {
-            put("italy","意大�?");
+            put("italy","意大利");
             put("america","美国");
             put("england","英国");
-            put("canada","加拿�?");
+            put("canada","加拿大");
             put("brazil","巴西");
-            put("argentina","阿根�?");
-            put("mexico","墨西�?");
+            put("argentina","阿根廷");
+            put("mexico","墨西哥");
             put("germany","德国");
             put("france","法国");
-            put("russia","俄罗�?");
+            put("russia","俄罗斯");
             put("japan","日本");
             put("australia","澳大利亚");
             put("korea","韩国");
@@ -72,10 +72,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             put("finland","芬兰");
             put("switzerland","瑞士");
             put("sweden","瑞典");
-            put("singapore","新加�?");
+            put("singapore","新加坡");
             put("thailand","泰国");
-            put("new Zealand","新西�?");
-            put("ireland","爱尔�?");
+            put("new Zealand","新西兰");
+            put("ireland","爱尔兰");
         }
     };
 
@@ -138,16 +138,16 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         StringBuffer buffer = new StringBuffer("CategoryName品类名称," +
                 "CategroyNo品类编号,BrandNo品牌编号,BrandName品牌,ProductModel货号,SupplierSkuNo供应商SkuNo," +
                 " 性别 ,"+
-                "SopProductName 商品名称,BarCode 条形�?,ProductColor 颜色,ProductSize 尺码,material 材质,ProductOrigin 产地,productUrl1," +
+                "SopProductName 商品名称,BarCode 条形码,ProductColor 颜色,ProductSize 尺码,material 材质,ProductOrigin 产地,productUrl1," +
                 "productUrl2,productUrl3,productUrl4,productUrl5,productUrl6,productUrl7,productUrl8,productUrl9," +
-                "PcDesc 描述,Stock 库存,Price 进货�?,Currency 币种,上市季节").append("\r\n");
+                "PcDesc 描述,Stock 库存,Price 进货价,Currency 币种,上市季节").append("\r\n");
         Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize);
 
-        //设置尚品网品�?
+        //设置尚品网品牌
         this.setBrandMap();
-        //颜色Map赋�?
+        //颜色Map赋值
         this.setColorContrastMap();
-        //材质Map 赋�?
+        //材质Map 赋值
         this.setMaterialContrastMap();
 
         String productSize,season="", productDetail="",brandName="",brandId="",color="",material="",productOrigin="";
@@ -188,7 +188,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 buffer.append(brandName).append(",");
                 //货号
                 buffer.append(dto.getProductCode()).append(",").append(dto.getSkuId()).append(",");
-                //欧洲习惯 第一个先�? 男女
+              //  欧洲习惯 第一个先看 男女
                 buffer.append(dto.getCategoryGender()).append(",");
                 //产品名称
                 productName =   dto.getProductName();
@@ -342,14 +342,14 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 
     /**
-     * 图片赋�?
+     * 图片赋值
      * @param dto
      * @param picList
      */
     private void setPic(ProductDTO dto,List<ProductPictureDTO> picList){
         if(null!=picList&&!picList.isEmpty()){
             Boolean isHavePic=true;
-            //如果原始无图�?  则从picUrl开始赋�? 赋值为picList的第一张图�?
+            //如果原始无图片  则从picUrl开始赋值 赋值为picList的第一张图片
             if(StringUtils.isBlank(dto.getPicUrl())){
                 isHavePic=false;
             }
@@ -411,7 +411,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                             dto.setItemPictureUrl8(picList.get(i).getPicUrl());
                         }else{
                             dto.setItemPictureUrl7(picList.get(i).getPicUrl()) ;
-                        };
+                        }
                         break;
 
 
