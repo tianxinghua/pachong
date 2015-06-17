@@ -71,6 +71,9 @@
         window.open('csv?queryJson='+$.toJSON(search), '','');
     }
 
+
+
+
     function clearText(){
         $('#supplier').val('-1');
         $('#pageIndex').val('');
