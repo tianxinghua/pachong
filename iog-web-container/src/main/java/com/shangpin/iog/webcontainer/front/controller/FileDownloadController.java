@@ -56,13 +56,13 @@ public class FileDownloadController {
     public void downloadCsv(
                          HttpServletResponse response,
                          String queryJson) throws Exception {
-//        BufferedInputStream in = null;
-//        BufferedOutputStream out = null;
+        BufferedInputStream in = null;
+        BufferedOutputStream out = null;
         try {
 
 
             ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
-            ;
+
             if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
 
 
@@ -82,32 +82,32 @@ public class FileDownloadController {
 
             response.setContentType("text/csv;charset=gb2312");
 
-            response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplier()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+            response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 
 //            System.out.print("kk ----------------- " + productBuffer.toString());
-//            in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("UTF-8")));
-//
-//            out = new BufferedOutputStream(response.getOutputStream());
-//            byte[] data = new byte[1024];
-//            int len = 0;
-//            while (-1 != (len=in.read(data, 0, data.length))) {
-//                out.write(data, 0, len);
-//            }
+            in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("gb2312")));
 
-            response.getOutputStream().write(productBuffer.toString().getBytes("gb2312"));
-            response.getOutputStream().flush();
-            response.getOutputStream().close();
+            out = new BufferedOutputStream(response.getOutputStream());
+            byte[] data = new byte[1024];
+            int len = 0;
+            while (-1 != (len=in.read(data, 0, data.length))) {
+                out.write(data, 0, len);
+            }
+
+//            response.getOutputStream().write(productBuffer.toString().getBytes("gb2312"));
+//            response.getOutputStream().flush();
+//            response.getOutputStream().close();
         } catch (ServiceException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
-//            if (in != null) {
-//                in.close();
-//            }
-//            if (out != null) {
-//                out.close();
-//            }
+            if (in != null) {
+                in.close();
+            }
+            if (out != null) {
+                out.close();
+            }
         }
 
 

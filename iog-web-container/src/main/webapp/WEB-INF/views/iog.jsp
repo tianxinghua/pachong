@@ -53,20 +53,29 @@
             }
         }
 
+        if("-1"== $('#supplier').val()){
+            alert("请选择供应商");
 
+            return;
+        }
 
         var search = {
             supplier:   $('#supplier').val(),
             startDate:    $('#startDate').val(),
             endDate:      $('#endDate').val(),
             pageIndex: $('#pageIndex').val(),
-            pageSize:$('#pageSize').val()
+            pageSize:$('#pageSize').val(),
+            supplierName:$ ('#supplier').find("option:selected").text()
 
         };
         window.open('csv?queryJson='+$.toJSON(search), '','');
     }
 
+
+
+
     function clearText(){
+        $('#supplier').val('-1');
         $('#pageIndex').val('');
         $('#pageSize').val('');
         $('#startDate').val('');
@@ -108,7 +117,7 @@
 
             </tr>
             <tr>
-                <td>页码</td><td><input type="text" id="pageIndex" name="pageIndex"/> </td>
+                <td>开始行数</td><td><input type="text" id="pageIndex" name="pageIndex"/> </td>
                 <td>导出行数</td><td><input type="text" id="pageSize" name="pageSize"/> </td>
             </tr>
         </table>

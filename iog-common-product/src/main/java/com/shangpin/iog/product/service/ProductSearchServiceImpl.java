@@ -3,9 +3,7 @@ package com.shangpin.iog.product.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.framework.page.Page;
-import com.shangpin.iog.dto.BrandSpDTO;
-import com.shangpin.iog.dto.ProductDTO;
-import com.shangpin.iog.dto.ProductPictureDTO;
+import com.shangpin.iog.dto.*;
 import com.shangpin.iog.product.dao.*;
 import com.shangpin.iog.service.ProductSearchService;
 import org.apache.commons.lang.StringUtils;
@@ -16,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by loyalty on 15/5/20.
@@ -43,12 +38,46 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     @Autowired
     BrandSpMapper brandSpDAO;
 
+    @Autowired
+    ColorContrastMapper colorContrastDAO;
+
+    @Autowired
+   MaterialContrastMapper materialContrastDAO;
+
 
 
 
     private static     Map<String,String> spBrandMap = new HashMap<>();
+    private static     Map<String,String> colorContrastMap = new HashMap<>();
 
+    private static     Map<String,String> materialContrastMap = new HashMap<>();
 
+    //key 均为小写 以便匹配
+    private static Map<String,String>  cityMap= new HashMap<String,String>(){
+        {
+            put("italy","意大利");
+            put("america","美国");
+            put("england","英国");
+            put("canada","加拿大");
+            put("brazil","巴西");
+            put("argentina","阿根廷");
+            put("mexico","墨西哥");
+            put("germany","德国");
+            put("france","法国");
+            put("russia","俄罗斯");
+            put("japan","日本");
+            put("australia","澳大利亚");
+            put("korea","韩国");
+            put("china","中国");
+            put("finland","芬兰");
+            put("switzerland","瑞士");
+            put("sweden","瑞典");
+            put("singapore","新加坡");
+            put("thailand","泰国");
+            put("new Zealand","新西兰");
+            put("ireland","爱尔兰");
+        }
+    };
 
 
     @Override
@@ -116,15 +145,30 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
         //设置尚品网品牌
         this.setBrandMap();
+        //颜色Map赋值
+        this.setColorContrastMap();
+        //材质Map 赋值
+        this.setMaterialContrastMap();
 
-        String productSize,season="", productDetail="",brandName="",brandId="";
+        String productSize,season="", productDetail="",brandName="",brandId="",color="",material="",productOrigin="";
 
-        String categoryId="";
+        String categoryId="",categoryName="",productName="";
         for(ProductDTO dto:page.getItems()){
 
             try {
+                //品类名称
+                categoryName= dto.getSubCategoryName();
+                if(StringUtils.isBlank(categoryName)){
+                    categoryName = dto.getCategoryName();
+                }
+                if(StringUtils.isBlank(categoryName)){
+                    categoryName= "";
+                }else{
+                    categoryName= categoryName.replace(",","... ");
+                }
 
-                buffer.append(null!=dto.getSubCategoryName()?dto.getSubCategoryName():null==dto.getCategoryName()?"":dto.getCategoryName()).append(",");
+
+                buffer.append(categoryName).append(",");
 
                 categoryId = dto.getSubCategoryId();
                 if(StringUtils.isBlank(categoryId)){
@@ -133,23 +177,37 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 buffer.append(StringUtils.isNotBlank(categoryId)?categoryId :"品类编号").append(",");
                 //品牌
-                brandName=dto.getBrandName().trim();
-                if(spBrandMap.containsKey(brandName)){
-                    brandId=spBrandMap.get(brandName);
+                brandName=dto.getBrandName();
+                if(spBrandMap.containsKey(brandName.toLowerCase())){
+                    brandId=spBrandMap.get(brandName.toLowerCase());
                 }else{
                     brandId ="";
                 }
+
                 buffer.append(!"".equals(brandId)?brandId :"品牌编号").append(",");
-                buffer.append(dto.getBrandName()).append(",");
+                buffer.append(brandName).append(",");
                 //货号
                 buffer.append(dto.getProductCode()).append(",").append(dto.getSkuId()).append(",");
-                //欧洲习惯 第一个先看 男女
+              //  欧洲习惯 第一个先看 男女
                 buffer.append(dto.getCategoryGender()).append(",");
                 //产品名称
-                buffer.append(dto.getProductName()).append(",");
-                buffer.append("\"\t" + dto.getBarcode() + "\"").append(",").append(dto.getColor()).append(",");
-                //获取尺码
+                productName =   dto.getProductName();
+                if(StringUtils.isBlank(productName)){
+                    productName = dto.getSpuName();
+                }
+                buffer.append(productName).append(",");
 
+
+                buffer.append("\"\t" + dto.getBarcode() + "\"").append(",");
+
+                //获取颜色
+                color =dto.getColor();
+                if(colorContrastMap.containsKey(color.toLowerCase())){
+                    color=colorContrastMap.get(color.toLowerCase());
+                }
+                buffer.append(color).append(",");
+
+                //获取尺码
                 productSize=dto.getSize();
                 if(StringUtils.isNotBlank(productSize)){
 
@@ -164,12 +222,31 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 buffer.append(productSize).append(",");
 
+                //获取材质
+                material =dto.getMaterial();
+                if(null==material) {
+                    material="";
+                }else{
+
+                     Set<Map.Entry<String,String>> materialSet =  materialContrastMap.entrySet();
+                    for(Map.Entry<String,String> entry:materialSet) {
+
+                        material = material.toLowerCase().replaceAll(entry.getKey(), entry.getValue()).replaceAll(",", "...");
+                    }
+
+                }
+
+                buffer.append(material).append(",");
 
 
 
-
-                buffer.append(dto.getMaterial()).append(",")
-                        .append(dto.getProductOrigin()).append(",").append(dto.getPicUrl()).append(",");
+                //获取产地
+                productOrigin = dto.getProductOrigin();
+                if (cityMap.containsKey(productOrigin.toLowerCase())){
+                    productOrigin=cityMap.get(productOrigin.toLowerCase());
+                }
+            
+                buffer.append(productOrigin).append(",").append(dto.getPicUrl()).append(",");
                 buffer.append(dto.getItemPictureUrl1()).append(",").append(dto.getItemPictureUrl2()).append(",").append(dto.getItemPictureUrl3()).append(",")
                         .append(dto.getItemPictureUrl4()).append(",").append(dto.getItemPictureUrl5()).append(",")
                         .append(dto.getItemPictureUrl6()).append(",").append(dto.getItemPictureUrl7()).append(",")
@@ -188,7 +265,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //季节
 
 
-                buffer.append(dto.getSeasonName());
+                buffer.append(null==dto.getSeasonName()?dto.getSeasonId():dto.getSeasonName());
 
                 buffer.append("\r\n");
             } catch (Exception e) {
@@ -215,13 +292,52 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     return;
                 }
                 for(BrandSpDTO dto:brandSpDTOList){
-                    spBrandMap.put(dto.getBrandName(),dto.getBrandId());
+                    spBrandMap.put(dto.getBrandName().toLowerCase(),dto.getBrandId());
                 }
             }
+    }
+
+    /**
+     * 设置colorContrastMap
+     */
+    private void setColorContrastMap() {
+        int num = colorContrastDAO.findCount();
+        if(colorContrastMap.size() < num){
+            List<ColorContrastDTO> colorContrastDTOList = null;
+
+            try {
+                colorContrastDTOList = colorContrastDAO.findAll();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ;
+            }
+
+            for(ColorContrastDTO dto:colorContrastDTOList){
+                colorContrastMap.put(dto.getColor().toLowerCase(),dto.getColorCh());
+            }
+        }
+    }
 
 
+    /**
+     * 设置materialContrastMap
+     */
+    private  void setMaterialContrastMap() {
+        int num =materialContrastDAO.findCount();
+        if(materialContrastMap.size() < num){
+            List<MaterialContrastDTO> materialContrastDTOList = null;
 
+            try {
+                materialContrastDTOList = materialContrastDAO.findAll();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ;
+            }
 
+            for(MaterialContrastDTO dto:materialContrastDTOList){
+                materialContrastMap.put(dto.getMaterial().toLowerCase(),dto.getMaterialCh());
+            }
+        }
     }
 
 
@@ -295,7 +411,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                             dto.setItemPictureUrl8(picList.get(i).getPicUrl());
                         }else{
                             dto.setItemPictureUrl7(picList.get(i).getPicUrl()) ;
-                        };
+                        }
                         break;
 
 

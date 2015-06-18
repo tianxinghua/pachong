@@ -3,9 +3,11 @@
  */
 package com.shangpin.test;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +28,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.coltorti.dto.ColtortiProduct;
+import com.shangpin.iog.coltorti.service.ColtortiStockService;
+import com.shangpin.iog.coltorti.service.ColtortiTokenService;
+import com.shangpin.iog.coltorti.service.ColtortiUtil;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 
 /**
@@ -173,5 +179,36 @@ public class AnyTest {
 		return null;
 	}
 	
+	@Test
+	public void testSameDate(){
+		Date ds=null;Date de=null;
+		String YYYY_MMDD_HH="yyyyMMddHH";
+		ds=DateTimeUtil.parse("2015050312",YYYY_MMDD_HH);
+		de=DateTimeUtil.parse("201505031214",YYYY_MMDD_HH);
+		System.out.println(ds.equals(de));
+	}
+	@Test
+	public void testStock(){
+		try {
+			Map<String, Map<String, Integer>> map = ColtortiStockService.getStock("152582DCP000001", "152582DCP000001-001");
+			System.out.println(new Gson().toJson(map));
+		} catch (ServiceException e) {
+			if(ColtortiUtil.isTokenExpire(e)){
+				//ColtortiTokenService.getToken()
+			}
+		}
+	}
 	
+	public static void main(String[] args) {
+		String path=AnyTest.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+		String realPath = AnyTest.class.getClassLoader().getResource("").getFile();
+		try {
+			path= URLDecoder.decode(path,"utf-8");
+			realPath= URLDecoder.decode(realPath,"utf-8");
+			System.out.println(path);//jar文件路径|classpath根目录
+			System.out.println(realPath);//jar目录|classpath根目录
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
 }

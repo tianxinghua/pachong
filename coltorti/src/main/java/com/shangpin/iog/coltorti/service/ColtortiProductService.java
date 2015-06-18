@@ -149,7 +149,6 @@ public class ColtortiProductService{
 		String body=HttpUtils.get(ColtortiUtil.paramGetUrl(ApiURL.PRODUCT,param));
 		ColtortiUtil.check(body);
 		JsonObject jo =new JsonParser().parse(body).getAsJsonObject();
-		//logger.info("request product result:\r\n"+body);
 		Set<Entry<String,JsonElement>> ks=jo.entrySet();
 		List<ColtortiProduct> pros = new ArrayList<>(ks.size()); 
 		for (Entry<String, JsonElement> entry : ks) {
@@ -182,7 +181,10 @@ public class ColtortiProductService{
 				Set<String> scks=scalars.keySet();
 				for (String sck : scks) {
 					String sml=scalars.get(sck);//尺码字符
-					newProducts.add(convertProduct(prd, sml,0));
+					//TODO 尺码key;sck;
+					ColtortiProduct pt = convertProduct(prd,sck,0);
+					pt.setSizeKeyValue(sck+"#"+sml);
+					newProducts.add(pt);
 				}
 			}
 			
@@ -192,11 +194,11 @@ public class ColtortiProductService{
 	/**
 	 *  没有库存数据情况 默认为0
 	 * @param prd
-	 * @param scalarKey
+	 * @param scalarCode
 	 * @param stock
 	 * @return
 	 */
-	private static ColtortiProduct convertProduct(ColtortiProduct prd,String scalarKey,Integer stock) {
+	private static ColtortiProduct convertProduct(ColtortiProduct prd,String scalarCode,Integer stock) {
 		ColtortiProduct newp = new ColtortiProduct();
 		try {
 			BeanUtils.copyProperties(newp,prd);
@@ -204,7 +206,7 @@ public class ColtortiProductService{
 			return null;
 		}
 		newp.setStock(stock);
-		newp.setSkuId(prd.getSkuId()+"#"+scalarKey);
+		newp.setSkuId(prd.getSkuId()+"#"+scalarCode);
 		newp.setScalars(null);
 		return newp;
 	}

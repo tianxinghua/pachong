@@ -46,9 +46,10 @@ public class InsertDataBaseService {
 	 */
 	public void grabProduct(String dateStart,String dateEnd){
 		try {
-			logger.info("抓取Coltorti数据开始，开始时间：{},结束时间:{}",dateStart,dateEnd);
+			logger.info("抓取数据开始，开始时间：{},结束时间:{}",dateStart,dateEnd);
 			List<ColtortiProduct> coltorProds=ColtortiProductService.findProduct(dateStart, dateEnd);
-			logger.info("抓取Coltorti数据成功，抓取到{}条,数据如下：\r\n{}",coltorProds.size(),new Gson().toJson(coltorProds));
+			logger.info("抓取数据成功，抓取到{}条.",coltorProds.size());
+			//logger.warn("抓取数据成功，抓取到{}条,数据如下：\r\n{}",coltorProds.size(),new Gson().toJson(coltorProds));
 			//拆分spu
 			Set<SpuDTO> spus=new HashSet<>(coltorProds.size());
 			for (ColtortiProduct product : coltorProds) {
@@ -67,12 +68,12 @@ public class InsertDataBaseService {
 			}
 			//开始保存
 			if(CollectionUtils.isNotEmpty(skus)) {
-				logger.info("-----开始保存SKU-----");
+				logger.info("-----开始保存SKU-----总数：{}",skus.size());
 				int failCnt=insertSku(skus);
 				logger.info("-----SKU保存结束，sku总数：{},成功数{}",skus.size(),skus.size()-failCnt);
 			}
 			if(CollectionUtils.isNotEmpty(spus)){
-				logger.info("-----开始保存SPU-----");
+				logger.info("-----开始保存SPU-----总数：{}",spus.size());
 				int failCnt = insertSpu(spus);
 				logger.info("-----SPU保存结束，spu总数：{},成功数{}",spus.size(),spus.size()-failCnt);
 			}
@@ -103,7 +104,10 @@ public class InsertDataBaseService {
 				if(e.getClass().equals(DuplicateKeyException.class)){
 					continue;
 				}
-				logger.error("保存sku:{}失败,错误信息：{},",new Gson().toJson(sk),e.getMessage());
+				if(failCnt==10){
+					e.printStackTrace();
+					logger.error("保存sku:{}失败,错误信息：{},",new Gson().toJson(sk),e.getMessage());
+				}
 			}
 		}
 		return failCnt;
