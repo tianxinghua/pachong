@@ -68,13 +68,13 @@ public class ColtortiStockService {
 								Set<String> sks=sizes.keySet();
 								for (String sk : sks) {//不同尺码
 									String sizeNum=sizes.get(sk);
-									Integer sizeValue=scalarDetail.get(sk);
+									Integer sizeValue=scalarDetail.get(unk);
 									if(sizeValue==null){
 										sizeValue=0;
 									}
 									Integer v=Integer.parseInt(sizeNum);
 									Integer newNum=(v<0?0:v)+sizeValue;
-									scalarDetail.put(sk, newNum);
+									scalarDetail.put(unk, newNum);
 								}
 							}							
 						}

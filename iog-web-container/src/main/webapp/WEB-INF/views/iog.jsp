@@ -64,11 +64,15 @@
             startDate:    $('#startDate').val(),
             endDate:      $('#endDate').val(),
             pageIndex: $('#pageIndex').val(),
-            pageSize:$('#pageSize').val()
+            pageSize:$('#pageSize').val(),
+            supplierName:$ ('#supplier').find("option:selected").text()
 
         };
         window.open('csv?queryJson='+$.toJSON(search), '','');
     }
+
+
+
 
     function clearText(){
         $('#supplier').val('-1');

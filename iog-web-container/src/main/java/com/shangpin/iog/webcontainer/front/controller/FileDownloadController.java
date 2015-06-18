@@ -82,7 +82,7 @@ public class FileDownloadController {
 
             response.setContentType("text/csv;charset=gb2312");
 
-            response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplier()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+            response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 
 //            System.out.print("kk ----------------- " + productBuffer.toString());
             in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("gb2312")));

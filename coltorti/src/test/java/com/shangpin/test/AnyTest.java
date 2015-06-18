@@ -28,7 +28,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.coltorti.dto.ColtortiProduct;
+import com.shangpin.iog.coltorti.service.ColtortiStockService;
+import com.shangpin.iog.coltorti.service.ColtortiTokenService;
+import com.shangpin.iog.coltorti.service.ColtortiUtil;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 
 /**
@@ -182,6 +186,17 @@ public class AnyTest {
 		ds=DateTimeUtil.parse("2015050312",YYYY_MMDD_HH);
 		de=DateTimeUtil.parse("201505031214",YYYY_MMDD_HH);
 		System.out.println(ds.equals(de));
+	}
+	@Test
+	public void testStock(){
+		try {
+			Map<String, Map<String, Integer>> map = ColtortiStockService.getStock("152582DCP000001", "152582DCP000001-001");
+			System.out.println(new Gson().toJson(map));
+		} catch (ServiceException e) {
+			if(ColtortiUtil.isTokenExpire(e)){
+				//ColtortiTokenService.getToken()
+			}
+		}
 	}
 	
 	public static void main(String[] args) {

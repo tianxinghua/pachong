@@ -48,7 +48,8 @@ public class InsertDataBaseService {
 		try {
 			logger.info("抓取数据开始，开始时间：{},结束时间:{}",dateStart,dateEnd);
 			List<ColtortiProduct> coltorProds=ColtortiProductService.findProduct(dateStart, dateEnd);
-			logger.info("抓取数据成功，抓取到{}条,数据如下：\r\n{}",coltorProds.size(),new Gson().toJson(coltorProds));
+			logger.info("抓取数据成功，抓取到{}条.",coltorProds.size());
+			//logger.warn("抓取数据成功，抓取到{}条,数据如下：\r\n{}",coltorProds.size(),new Gson().toJson(coltorProds));
 			//拆分spu
 			Set<SpuDTO> spus=new HashSet<>(coltorProds.size());
 			for (ColtortiProduct product : coltorProds) {
@@ -103,7 +104,10 @@ public class InsertDataBaseService {
 				if(e.getClass().equals(DuplicateKeyException.class)){
 					continue;
 				}
-				logger.error("保存sku:{}失败,错误信息：{},",new Gson().toJson(sk),e.getMessage());
+				if(failCnt==10){
+					e.printStackTrace();
+					logger.error("保存sku:{}失败,错误信息：{},",new Gson().toJson(sk),e.getMessage());
+				}
 			}
 		}
 		return failCnt;

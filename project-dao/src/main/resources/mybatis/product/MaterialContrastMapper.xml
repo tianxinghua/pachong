@@ -20,7 +20,7 @@
     </select>
 
 
-    <select id="findAll" resultMap="ColorContrastResultMap">
+    <select id="findAll" resultMap="MaterialContrastResultMap">
         select
         <include refid="all_MaterialContrast_column"></include>
 
