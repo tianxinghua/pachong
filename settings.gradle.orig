@@ -1,0 +1,32 @@
+include "project-common"
+
+rootProject.name = 'iog'
+
+include 'project-framework'
+
+include 'spinnaker'
+
+include 'iog-facade'
+
+include 'project-dao'
+
+include 'iog-service'
+
+include 'iog-web-container'
+
+include 'apennine'
+
+include 'iog-common-product'
+
+include 'acanfora'
+
+include 'coltorti'
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5c44c17ded359fa6661e86aa59d457d7a3509a82
+include 'acanfora-stock'
+
+include 'openapi-ice'
+include 'oupaiguoji'
+
