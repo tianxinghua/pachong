@@ -96,12 +96,9 @@ public class UpdateApennineStockService extends AbsUpdateProductStock{
 	public static void main(String[] args) throws Exception {
 		Map<String,Integer>map=new HashMap<>();
 		UpdateApennineStockService stockService = new UpdateApennineStockService() ;
-		Collection<String> skuNo=stockService.grabProduct("00000003","","");
-		try {
-			map=grabStock1(skuNo);
-			System.out.println("COSEPIAF 的库存为"+map.get("COSEPIAF"));
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
+		/*Collection<String> skuNo=stockService.grabProduct("00000003","","");*/
+		int stock = stockService.updateProductStock("00000003","","");
+		//map=grabStock1(skuNo);
+		System.out.println("更新失败 "+stock);//COSEPIAF
 	}
 }

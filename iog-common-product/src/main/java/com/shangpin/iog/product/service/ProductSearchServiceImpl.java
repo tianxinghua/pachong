@@ -74,7 +74,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             put("sweden","瑞典");
             put("singapore","新加坡");
             put("thailand","泰国");
-            put("new Zealand","新西兰");
+            put("new zealand","新西兰");
             put("ireland","爱尔兰");
         }
     };
@@ -135,10 +135,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
     @Override
     public StringBuffer exportProduct(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
-        StringBuffer buffer = new StringBuffer("CategoryName品类名称," +
-                "CategroyNo品类编号,BrandNo品牌编号,BrandName品牌,ProductModel货号,SupplierSkuNo供应商SkuNo," +
+        StringBuffer buffer = new StringBuffer("CategoryName 品类名称," +
+                "Category_No 品类编号,BrandNo 品牌编号,BrandName 品牌,ProductModel 货号,SupplierSkuNo 供应商SkuNo," +
                 " 性别 ,"+
-                "SopProductName 商品名称,BarCode 条形码,ProductColor 颜色,ProductSize 尺码,material 材质,ProductOrigin 产地,productUrl1," +
+                "SopProductName 商品名称,BarCode 条形码,ProductColor 颜色,color 中文,ProductSize 尺码,material 材质,ProductOrigin 产地,productUrl1," +
                 "productUrl2,productUrl3,productUrl4,productUrl5,productUrl6,productUrl7,productUrl8,productUrl9," +
                 "PcDesc 描述,Stock 库存,Price 进货价,Currency 币种,上市季节").append("\r\n");
         Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize);
@@ -176,12 +176,17 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 }
 
                 buffer.append(StringUtils.isNotBlank(categoryId)?categoryId :"品类编号").append(",");
-                //品牌
+                //品牌  不需要供货商的品牌编号 对尚品网无意义
+
                 brandName=dto.getBrandName();
-                if(spBrandMap.containsKey(brandName.toLowerCase())){
-                    brandId=spBrandMap.get(brandName.toLowerCase());
+                if(StringUtils.isNotBlank(brandName)){
+                    if(spBrandMap.containsKey(brandName.toLowerCase())){
+                        brandId=spBrandMap.get(brandName.toLowerCase());
+                    }else{
+                        brandId="";
+                    }
                 }else{
-                    brandId ="";
+                    brandId="";
                 }
 
                 buffer.append(!"".equals(brandId)?brandId :"品牌编号").append(",");
@@ -194,6 +199,11 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 productName =   dto.getProductName();
                 if(StringUtils.isBlank(productName)){
                     productName = dto.getSpuName();
+                    if(StringUtils.isNotBlank(productName)){
+                        productName = productName.replaceAll(","," ");
+                    }
+                }else{
+                    productName = productName.replaceAll(","," ");
                 }
                 buffer.append(productName).append(",");
 
@@ -202,9 +212,16 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 //获取颜色
                 color =dto.getColor();
-                if(colorContrastMap.containsKey(color.toLowerCase())){
-                    color=colorContrastMap.get(color.toLowerCase());
+                buffer.append(null==color?"":color).append(",");
+                //翻译中文
+                if(StringUtils.isNotBlank(color)){
+                    if(colorContrastMap.containsKey(color.toLowerCase())){
+                        color=colorContrastMap.get(color.toLowerCase());
+                    }
+                }else{
+                    color="";
                 }
+
                 buffer.append(color).append(",");
 
                 //获取尺码
@@ -224,16 +241,16 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 //获取材质
                 material =dto.getMaterial();
-                if(null==material) {
+                if(StringUtils.isBlank(material)) {
                     material="";
                 }else{
 
                      Set<Map.Entry<String,String>> materialSet =  materialContrastMap.entrySet();
                     for(Map.Entry<String,String> entry:materialSet) {
 
-                        material = material.toLowerCase().replaceAll(entry.getKey(), entry.getValue()).replaceAll(",", "...");
+                        material = material.toLowerCase().replaceAll(entry.getKey(), entry.getValue());
                     }
-
+                    material= material.replaceAll(",", "...");
                 }
 
                 buffer.append(material).append(",");
@@ -242,11 +259,18 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 //获取产地
                 productOrigin = dto.getProductOrigin();
-                if (cityMap.containsKey(productOrigin.toLowerCase())){
-                    productOrigin=cityMap.get(productOrigin.toLowerCase());
+                if(StringUtils.isNotBlank(productOrigin)){
+                    if (cityMap.containsKey(productOrigin.toLowerCase())){
+                        productOrigin=cityMap.get(productOrigin.toLowerCase());
+                    }
+                }else{
+                    productOrigin="";
                 }
-            
-                buffer.append(productOrigin).append(",").append(dto.getPicUrl()).append(",");
+
+                buffer.append(productOrigin).append(",");
+
+                //图片
+                buffer.append(dto.getPicUrl()).append(",");
                 buffer.append(dto.getItemPictureUrl1()).append(",").append(dto.getItemPictureUrl2()).append(",").append(dto.getItemPictureUrl3()).append(",")
                         .append(dto.getItemPictureUrl4()).append(",").append(dto.getItemPictureUrl5()).append(",")
                         .append(dto.getItemPictureUrl6()).append(",").append(dto.getItemPictureUrl7()).append(",")

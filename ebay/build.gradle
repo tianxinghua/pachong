@@ -1,7 +1,6 @@
 apply plugin: 'java'
-dependencies{
-	compile(
-		"com.google.code.gson:gson:2.3.1",
+dependencies {
+    compile(
 		project(":iog-service"),
 		project(":iog-common-product"),
 		project(":project-common"),
@@ -9,4 +8,6 @@ dependencies{
 		project(":project-framework"),
 		project(":openapi-ice"),
 		)
+    testCompile group: 'junit', name: 'junit', version: '4.+'
 }
+
