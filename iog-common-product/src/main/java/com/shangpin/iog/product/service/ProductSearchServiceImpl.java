@@ -138,7 +138,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         StringBuffer buffer = new StringBuffer("CategoryName 品类名称," +
                 "Category_No 品类编号,BrandNo 品牌编号,BrandName 品牌,ProductModel 货号,SupplierSkuNo 供应商SkuNo," +
                 " 性别 ,"+
-                "SopProductName 商品名称,BarCode 条形码,ProductColor 颜色,color 中文,ProductSize 尺码,material 材质,ProductOrigin 产地,productUrl1," +
+                "SopProductName 商品名称,BarCode 条形码,ProductColor 颜色,color 中文,ProductSize 尺码,material 材质,material 中文材质,ProductOrigin 产地,productUrl1," +
                 "productUrl2,productUrl3,productUrl4,productUrl5,productUrl6,productUrl7,productUrl8,productUrl9," +
                 "PcDesc 描述,Stock 库存,Price 进货价,Currency 币种,上市季节").append("\r\n");
         Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize);
@@ -244,13 +244,20 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 if(StringUtils.isBlank(material)) {
                     material="";
                 }else{
+                    material= material.replaceAll(",", " ");
+                }
+                buffer.append(material).append(",");
+                //材质 中文
+                if(!"".equals(material)) {
+
+
 
                      Set<Map.Entry<String,String>> materialSet =  materialContrastMap.entrySet();
                     for(Map.Entry<String,String> entry:materialSet) {
 
                         material = material.toLowerCase().replaceAll(entry.getKey(), entry.getValue());
                     }
-                    material= material.replaceAll(",", "...");
+                    material= material.replaceAll(",", " ");
                 }
 
                 buffer.append(material).append(",");
@@ -278,7 +285,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //明细描述
                 productDetail = dto.getProductDescription();
                 if(StringUtils.isNotBlank(productDetail)&&productDetail.indexOf(",")>0){
-                    productDetail = productDetail.replace(",","...");
+                    productDetail = productDetail.replace(","," ");
                 }
 
                 buffer.append(productDetail).append(",");
