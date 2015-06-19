@@ -52,7 +52,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
     public static void main(String[] args) throws Exception {
 
         GrabStockImp grabStockImp = new GrabStockImp();
-        grabStockImp.updateProductStock("00000001","","");
+        grabStockImp.updateProductStock("00000002","","");
     }
 
 }
