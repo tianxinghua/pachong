@@ -61,8 +61,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             put("svizzera","瑞士");put("sweden","瑞典");put("singapore","新加坡");put("tailandia","泰国");put("new zealand","新西兰");
             put("ireland","爱尔兰");put("arabia Saudita","沙特阿拉伯");put("armenia","亚美尼亚");put("belgio","比利时");put("bosnia-Erzegovina","波斯尼亚-黑塞哥维那");
             put("bulgaria","保加利亚");put("cambogia","柬埔寨");put("croazia","克罗地亚");put("filippine","菲律宾");put("georgia","格鲁吉亚");
-            put("hongkong","香港");put("India","印度");put("Indonesia","印度尼西亚");put("kenya","肯尼亚");put("lituania","立陶宛");put("madagascar","马达加斯加");
-            put("marocco","摩洛哥");put("Mauritius","毛里求斯");put("moldavia","摩尔多瓦共和国");put("myanmar(Unione)","缅甸");put("polonia","波兰");
+            put("hongkong","香港");put("india","印度");put("indonesia","印度尼西亚");put("kenya","肯尼亚");put("lituania","立陶宛");put("madagascar","马达加斯加");
+            put("marocco","摩洛哥");put("mauritius","毛里求斯");put("moldavia","摩尔多瓦共和国");put("myanmar(Unione)","缅甸");put("polonia","波兰");
             put("portogallo","葡萄牙");put("romania","罗马尼亚");put("serbia","塞尔维亚");put("slovacca","斯洛伐克");put("spagna","西班牙");put("sri Lanka","斯里兰卡");
             put("tunisia","突尼斯");put("turchia","土耳其");put("ucraina","乌克兰");put("ungheria","匈牙利");put("vietnam","越南");
         }
