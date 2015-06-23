@@ -13,6 +13,8 @@ import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 
 import javax.xml.bind.JAXBException;
 import java.lang.String;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class GrabStockImp extends AbsUpdateProductStock {
@@ -51,8 +53,10 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
     public static void main(String[] args) throws Exception {
 
-        GrabStockImp grabStockImp = new GrabStockImp();
-        grabStockImp.updateProductStock("00000002","","");
+        AbsUpdateProductStock grabStockImp = new GrabStockImp();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+        grabStockImp.updateProductStock("S0000197","2015-01-01 00:00",format.format(new Date()));
     }
 
 }
