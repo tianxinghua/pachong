@@ -4,10 +4,11 @@
 package com.shangpin.iog.acanfora.stock;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.acanfora.dto.Item;
-import com.shangpin.iog.acanfora.dto.Items;
-import com.shangpin.iog.acanfora.dto.Product;
-import com.shangpin.iog.acanfora.dto.Products;
+
+import com.shangpin.iog.acanfora.stock.dto.Item;
+import com.shangpin.iog.acanfora.stock.dto.Items;
+import com.shangpin.iog.acanfora.stock.dto.Product;
+import com.shangpin.iog.acanfora.stock.dto.Products;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 
