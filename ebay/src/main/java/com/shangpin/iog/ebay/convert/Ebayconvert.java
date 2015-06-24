@@ -10,4 +10,5 @@ package com.shangpin.iog.ebay.convert;
  */
 public class Ebayconvert {
 
+
 }
