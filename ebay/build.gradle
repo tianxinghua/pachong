@@ -1,7 +1,7 @@
 apply plugin: 'java'
 dependencies {
     compile(
-		project(":iog-service"),
+		'org.apache.xmlbeans:xmlbeans:2.6.0',
 		project(":iog-common-product"),
 		project(":project-common"),
 		project(":project-dao"),
