@@ -28,3 +28,5 @@ include 'openapi-ice'
 include 'oupaiguoji'
 include 'galiano'
 
+
+include 'ebay'

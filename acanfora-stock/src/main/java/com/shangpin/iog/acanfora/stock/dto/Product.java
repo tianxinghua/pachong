@@ -1,11 +1,6 @@
-package com.shangpin.iog.oupaiguoji.dto;
+package com.shangpin.iog.acanfora.stock.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
 
 /**
  * Created by loyalty on 15/6/5.

@@ -1,4 +1,4 @@
-package com.shangpin.iog.oupaiguoji.dto;
+package com.shangpin.iog.acanfora.stock.dto;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

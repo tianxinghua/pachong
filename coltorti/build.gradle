@@ -2,11 +2,11 @@ apply plugin: 'java'
 dependencies{
 	compile(
 		"com.google.code.gson:gson:2.3.1",
+		project(":iog-service"),
+		project(":iog-common-product"),
+		project(":project-common"),
+		project(":project-dao"),
+		project(":project-framework"),
+		project(":openapi-ice"),
 		)
-	compile project(":iog-service")
-	compile project(":iog-common-product")
-	compile project(":project-common")
-	compile project(":project-dao")
-	compile project(":project-framework")
-	compile project(":openapi-ice")
 }
