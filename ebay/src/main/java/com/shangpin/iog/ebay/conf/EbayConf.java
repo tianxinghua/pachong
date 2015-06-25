@@ -7,6 +7,7 @@ import com.ebay.sdk.ApiAccount;
 import com.ebay.sdk.ApiContext;
 import com.ebay.sdk.ApiCredential;
 
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -26,7 +27,7 @@ public class EbayConf {
     private static String signUrl;
 
     static {
-
+       // Locale locale = new Locale("zh","CN");
         ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("conf");
         devKey = RESOURCE_BUNDLE.getString("DeveloperKey");
         appKey = RESOURCE_BUNDLE.getString("ApplicationKey");
@@ -36,6 +37,7 @@ public class EbayConf {
         apiUrl = RESOURCE_BUNDLE.getString("apiUrl");
         epsUrl = RESOURCE_BUNDLE.getString("epsUrl");
         signUrl = RESOURCE_BUNDLE.getString("signUrl");
+
     }
     public EbayConf() {
     }
