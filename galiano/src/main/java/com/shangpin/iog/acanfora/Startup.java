@@ -1,9 +1,13 @@
-package com.shangpin.iog.oupaiguoji;
+package com.shangpin.iog.acanfora;
 
+import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.acanfora.service.FetchProduct;
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.oupaiguoji.service.FetchProduct;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Startup
 {
@@ -23,10 +27,13 @@ public class Startup
 
 		loadSpringContext();
         //拉取数据
-        FetchProduct fetchProduct =(FetchProduct)factory.getBean("acanfora");
-        fetchProduct.fetchProductAndSave("http://www.acanfora.it/api_ecommerce_v2.aspx");
+        FetchProduct fetchProduct =(FetchProduct)factory.getBean("galiano");
+        fetchProduct.fetchProductAndSave("http://www.galianostore.com/shangpin.xml");
 
-        System.out.println("-------fetch end---------");
+
+
+
+		System.out.println("-------fetch end---------");
 
 	}
 

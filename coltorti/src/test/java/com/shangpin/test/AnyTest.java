@@ -8,14 +8,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URLDecoder;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.shangpin.iog.coltorti.service.ColtortiProductService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -190,8 +188,9 @@ public class AnyTest {
 	@Test
 	public void testStock(){
 		try {
-			Map<String, Map<String, Integer>> map = ColtortiStockService.getStock("152582DCP000001", "152582DCP000001-001");
-			System.out.println(new Gson().toJson(map));
+			List<ColtortiProduct> list = ColtortiProductService.findProductByProductId("152479UCW000001");
+//		Map<String, Map<String, Integer>> map =			ColtortiStockService.getStock("152582DCP000001", "152582DCP000001-001");
+			System.out.println(new Gson().toJson(list));
 		} catch (ServiceException e) {
 			if(ColtortiUtil.isTokenExpire(e)){
 				//ColtortiTokenService.getToken()

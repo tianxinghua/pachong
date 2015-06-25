@@ -1,17 +1,16 @@
-package com.shangpin.iog.oupaiguoji.service;
+package com.shangpin.iog.acanfora.service;
 
 import com.shangpin.framework.ServiceException;
-
+import com.shangpin.iog.acanfora.dto.Item;
+import com.shangpin.iog.acanfora.dto.Items;
+import com.shangpin.iog.acanfora.dto.Product;
+import com.shangpin.iog.acanfora.dto.Products;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.oupaiguoji.dto.Item;
-import com.shangpin.iog.oupaiguoji.dto.Items;
-import com.shangpin.iog.oupaiguoji.dto.Product;
-import com.shangpin.iog.oupaiguoji.dto.Products;
 import com.shangpin.iog.service.ProductFetchService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -27,7 +26,7 @@ import java.util.List;
 /**
  * Created by loyalty on 15/6/8.
  */
-@Component("acanfora")
+@Component("galiano")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
 
