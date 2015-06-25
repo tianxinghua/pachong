@@ -1,4 +1,4 @@
-package com.shangpin.iog.ebay;
+package com.shangpin.igo.ebay.test;
 
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 
