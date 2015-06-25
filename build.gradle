@@ -25,6 +25,9 @@ allprojects {
         maven {
             url "http://192.168.1.110:8888/nexus/content/groups/public/"
         }
+        maven {
+        	url "http://192.168.1.212:8081/nexus/content/groups/public/"
+        }
         mavenCentral()
     }
 

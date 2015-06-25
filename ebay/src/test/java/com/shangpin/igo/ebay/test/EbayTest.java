@@ -14,11 +14,10 @@ import com.ebay.sdk.TimeFilter;
 import com.ebay.sdk.call.GetItemCall;
 import com.ebay.sdk.call.GetSellerListCall;
 import com.ebay.soap.eBLBaseComponents.ItemType;
+import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
+import com.shangpin.ebay.shoping.GetSingleItemResponseType;
+import com.shangpin.ebay.shoping.NameValueListType;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
-
-import ebayApisEBLBaseComponents.GetSingleItemResponseDocument;
-import ebayApisEBLBaseComponents.GetSingleItemResponseType;
-import ebayApisEBLBaseComponents.NameValueListType;
 
 /**
  * @description 
@@ -176,8 +175,6 @@ public class EbayTest {
 		} catch (XmlException e) {
 			e.printStackTrace();
 		}
-		
-		//GetSingleItemResponseType rst=(GetSingleItemResponseType) xs.fromXML(xml);
 	}
 	
 	@Test
