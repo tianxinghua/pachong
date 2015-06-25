@@ -1,12 +1,16 @@
 apply plugin: 'java'
 dependencies {
     compile(
-		project(":iog-service"),
+		'org.apache.xmlbeans:xmlbeans:2.6.0',
+		"com.sun.xml.ws:jaxws-rt:2.2.10",
+		"xalan:xalan:2.7.2",
+		"com.shangpin:ebay-shoping:1.0",
+		"com.ebay.sdk:attributes:1.0",
+		"com.ebay.sdk:ebaycalls:1.0",
+		"com.ebay.sdk:helper:1.0",
+		"com.ebay.sdk:ebaysdkcore:1.0",
+		"org.apache.servicemix.bundles:org.apache.servicemix.bundles.oro:2.0.8_6",
 		project(":iog-common-product"),
-		project(":project-common"),
-		project(":project-dao"),
-		project(":project-framework"),
-		project(":openapi-ice"),
 		)
     testCompile group: 'junit', name: 'junit', version: '4.+'
 }
