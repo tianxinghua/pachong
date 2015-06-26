@@ -2,6 +2,9 @@ package com.shangpin.igo.ebay.test;
 
 import java.util.Calendar;
 
+import com.ebay.soap.eBLBaseComponents.DetailLevelCodeType;
+import com.ebay.soap.eBLBaseComponents.VariationType;
+import com.shangpin.iog.dto.SkuDTO;
 import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 
@@ -25,6 +28,14 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtils;
  * <br/>2015年6月23日
  */
 public class EbayTest {
+	private SkuDTO[] skuDTO;
+	public SkuDTO[] getSkuDTO() {
+		return skuDTO;
+	}
+
+	public void setSkuDTO(SkuDTO[] skuDTO) {
+		this.skuDTO = skuDTO;
+	}
 
 	@Test
 	public void testDF(){
@@ -39,7 +50,17 @@ public class EbayTest {
 		String itemId="331449399948";
 		ApiContext api = getProApiContext();
 		GetItemCall call=new GetItemCall(api);
+		call.setIncludeItemSpecifics(true);
+		call.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES,DetailLevelCodeType.RETURN_ALL});
 		ItemType it=call.getItem(itemId);
+		VariationType[] variationType = it.getVariations().getVariation();
+		  skuDTO= new SkuDTO[variationType.length];
+		for(int i=0;i<variationType.length;i++){
+			skuDTO[i]=new SkuDTO();
+			skuDTO[i].setSkuId(variationType[i].getSKU());
+			System.out.println(skuDTO[i].getSkuId());
+		}
+
 		String uid=it.getSeller().getUserID();
 		System.out.println(uid);
 	}
@@ -102,6 +123,15 @@ public class EbayTest {
 		System.out.println(url);
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
+//		try{
+//			FindItemsIneBayStoresResponseDocument doc=FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
+//			FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
+//			SearchItem[] type = rt.getSearchResult().getItemArray();
+//
+//			//System.out.println(rt.getItem().getTitle());
+//		} catch (XmlException e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 	@Test
