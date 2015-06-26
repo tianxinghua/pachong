@@ -25,7 +25,7 @@ include 'coltorti'
 include 'acanfora-stock'
 
 include 'openapi-ice'
-include 'oupaiguoji'
+
 include 'galiano'
 
 

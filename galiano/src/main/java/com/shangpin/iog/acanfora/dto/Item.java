@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Item {
     private String item_id;
     private String item_size;
+    private String barcode;//条形码
     private String market_price;
     private String sell_price;
     private String supply_price;
@@ -19,6 +20,7 @@ public class Item {
     private String description;
     private String item_detail;
     private String stock;
+    private String designCode;//货号
     private String picture;
 
 
@@ -104,5 +106,21 @@ public class Item {
 
     public Item() {
         super();
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public String getDesignCode() {
+        return designCode;
+    }
+
+    public void setDesignCode(String designCode) {
+        this.designCode = designCode;
     }
 }

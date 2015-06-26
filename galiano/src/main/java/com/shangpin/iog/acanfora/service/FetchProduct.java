@@ -37,7 +37,7 @@ public class FetchProduct {
 
         String supplierId = "00000001";
         try {
-            String result =  HttpUtils.get(url,false,240000);
+            String result =  HttpUtils.get(url,false,360000);
             Products products= ObjectXMLUtil.xml2Obj(Products.class, result);
             List<Product> productList = products.getProducts();
             for(Product product:productList){
