@@ -7,14 +7,16 @@ import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 
 import com.ebay.sdk.ApiAccount;
+import com.ebay.sdk.ApiCall;
 import com.ebay.sdk.ApiContext;
 import com.ebay.sdk.ApiCredential;
 import com.ebay.sdk.ApiException;
 import com.ebay.sdk.SdkException;
-import com.ebay.sdk.TimeFilter;
-import com.ebay.sdk.call.GetItemCall;
-import com.ebay.sdk.call.GetSellerListCall;
 import com.ebay.soap.eBLBaseComponents.DetailLevelCodeType;
+import com.ebay.soap.eBLBaseComponents.GetItemRequestType;
+import com.ebay.soap.eBLBaseComponents.GetItemResponseType;
+import com.ebay.soap.eBLBaseComponents.GetSellerListRequestType;
+import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
 import com.ebay.soap.eBLBaseComponents.GranularityLevelCodeType;
 import com.ebay.soap.eBLBaseComponents.ItemType;
 import com.ebay.soap.eBLBaseComponents.PaginationType;
@@ -22,7 +24,6 @@ import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
 import com.shangpin.ebay.shoping.GetSingleItemResponseType;
 import com.shangpin.ebay.shoping.NameValueListType;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
-import com.shangpin.iog.ebay.conf.EbayConf;
 
 /**
  * @description 
@@ -39,49 +40,44 @@ public class EbayTest {
 		System.out.println(da+":"+fa);
 	}
 	
-	@Test
-	public void testGetItem() throws ApiException, SdkException, Exception{
-		String itemId="331449399948";
-		ApiContext api = getProApiContext();
-		GetItemCall call=new GetItemCall(api);
-		call.setIncludeItemSpecifics(true);
-		call.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES});
-		ItemType it=call.getItem(itemId);
-		String uid=it.getSeller().getUserID();
-		System.out.println(uid);
-	}
+	
 	
 	@Test
-	public void testGetItemXml(){
-		String itemId="331449399948";
-		String url=EbayConf.getTradeCallUrl("GetItem");
-		url+="&ItemID="+itemId;
-		String xml=HttpUtils.get(url);
-		System.out.println(xml);
+	public void testGetItem() throws Exception{
+		String itemId="131523279309";
+		ApiContext api = getProApiContext();
+		ApiCall call = new ApiCall(api);
+		GetItemRequestType type=new GetItemRequestType();
+		type.setItemID(itemId);
+		GetItemResponseType resp=(GetItemResponseType) call.execute(type);
+		resp.getItem().getItemSpecifics();
+		
 	}
 	@Test
 	public void getSellerList() throws ApiException, SdkException, Exception{
 		ApiContext api = getProApiContext();
-		GetSellerListCall call=new GetSellerListCall(api);
-		call.setUserID("buydig");
+		ApiCall call = new ApiCall(api);
+		GetSellerListRequestType req = new GetSellerListRequestType();
+		req.setUserID("buydig");
 		Calendar t1 = Calendar.getInstance();
 		t1.setTime(new Date());
+		Calendar t2 = Calendar.getInstance();t2.set(Calendar.MONTH, 4);
+		req.setEndTimeFrom(t1);
+		req.setStartTimeFrom(t2);
 		PaginationType pg =new PaginationType();
 		pg.setPageNumber(1);pg.setEntriesPerPage(1);
-		call.setPagination(pg);
-		call.setAdminEndedItemsOnly(false);
-		//call.setStartTimeFilter(startTimeFilter);
-		Calendar t2 = Calendar.getInstance();t2.set(Calendar.MONTH, 4);
-		call.setIncludeVariations(true);
-		//call.setOutputSelector(new String[]{});
-		/*call.setDetailLevel(new DetailLevelCodeType[]{
+		req.setPagination(pg);
+		req.setIncludeVariations(true);
+		req.setDetailLevel(new DetailLevelCodeType[]{
 				DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES,
 				DetailLevelCodeType.ITEM_RETURN_CATEGORIES,
 				DetailLevelCodeType.RETURN_HEADERS
-				});*/
-		call.setGranularityLevel(GranularityLevelCodeType.FINE);
-		call.setEndTimeFilter(new TimeFilter(t2, t1));
-		ItemType[] tps=call.getSellerList();
+				});
+		//call.setStartTimeFilter(startTimeFilter);
+		//call.setOutputSelector(new String[]{});
+		req.setGranularityLevel(GranularityLevelCodeType.FINE);
+		GetSellerListResponseType resp = (GetSellerListResponseType) call.execute(req);
+		ItemType[] tps = resp.getItemArray().getItem();
 		System.out.println(tps[0]);
 	}
 	

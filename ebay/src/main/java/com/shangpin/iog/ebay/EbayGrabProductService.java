@@ -1,20 +1,10 @@
 package com.shangpin.iog.ebay;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.ebay.sdk.ApiContext;
-import com.ebay.sdk.TimeFilter;
-import com.ebay.sdk.call.GetItemCall;
-import com.ebay.sdk.call.GetSellerListCall;
-import com.ebay.soap.eBLBaseComponents.DetailLevelCodeType;
-import com.ebay.soap.eBLBaseComponents.ItemType;
-import com.ebay.soap.eBLBaseComponents.NameValueListType;
-import com.ebay.soap.eBLBaseComponents.PaginationType;
-import com.ebay.soap.eBLBaseComponents.VariationType;
-import com.ebay.soap.eBLBaseComponents.VariationsType;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
 import com.shangpin.iog.ebay.conf.EbayConf;
 
@@ -32,8 +22,8 @@ public class EbayGrabProductService {
 	 */
 	public Map<String,List<?>> grabProduct(String seller,Date start,Date end){
 		ApiContext context=EbayConf.getApiContext();
-		GetSellerListCall call = new GetSellerListCall(context);
-		call.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES,DetailLevelCodeType.ITEM_RETURN_CATEGORIES});
+		//GetSellerListCall call = new GetSellerListCall(context);
+		/*call.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES,DetailLevelCodeType.ITEM_RETURN_CATEGORIES});
 		PaginationType pg=new PaginationType();
 		//TODO 动态指定分页
 		pg.setEntriesPerPage(pageSize);pg.setPageNumber(1);
@@ -42,7 +32,7 @@ public class EbayGrabProductService {
 		Calendar timeTo=Calendar.getInstance();timeFrom.setTime(end);
 		call.setEndTimeFilter(new TimeFilter(timeFrom, timeTo));
 		ItemType[] items=call.getReturnedItems();//获取item
-		for (ItemType item : items) {
+*/		/*for (ItemType item : items) {
 			item.getItemID();//itemId
 			VariationsType vt=item.getVariations();//获取item的变种
 			VariationType[] vtps=vt.getVariation();
@@ -54,7 +44,7 @@ public class EbayGrabProductService {
 				nv.getName();//属性名
 				nv.getValue();//属性值
 			}
-		}
+		}*/
         return null;
     }
 	
@@ -70,9 +60,7 @@ public class EbayGrabProductService {
     
     public int getStock(String itemId) throws Exception {
         ApiContext contxt=EbayConf.getApiContext();
-        GetItemCall call = new GetItemCall(contxt);
-        ItemType o = call.getItem(itemId);
-        return o.getQuantity();
+        return 0;
     }
    
 
