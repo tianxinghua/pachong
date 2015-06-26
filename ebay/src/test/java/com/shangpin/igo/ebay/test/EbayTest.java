@@ -1,19 +1,33 @@
 package com.shangpin.igo.ebay.test;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 
 import com.ebay.sdk.ApiAccount;
+import com.ebay.sdk.ApiCall;
 import com.ebay.sdk.ApiContext;
 import com.ebay.sdk.ApiCredential;
 import com.ebay.sdk.ApiException;
 import com.ebay.sdk.SdkException;
-import com.ebay.sdk.TimeFilter;
-import com.ebay.sdk.call.GetItemCall;
-import com.ebay.sdk.call.GetSellerListCall;
+import com.ebay.soap.eBLBaseComponents.DetailLevelCodeType;
+import com.ebay.soap.eBLBaseComponents.GetItemRequestType;
+import com.ebay.soap.eBLBaseComponents.GetItemResponseType;
+import com.ebay.soap.eBLBaseComponents.GetSellerListRequestType;
+import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
+import com.ebay.soap.eBLBaseComponents.GranularityLevelCodeType;
 import com.ebay.soap.eBLBaseComponents.ItemType;
+import com.ebay.soap.eBLBaseComponents.PaginationType;
+import com.shangpin.ebay.finding.FindItemsIneBayStoresRequest;
+import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
+import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
+import com.shangpin.ebay.finding.ItemFilter;
+import com.shangpin.ebay.finding.ItemFilterType;
+import com.shangpin.ebay.finding.PaginationInput;
 import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
 import com.shangpin.ebay.shoping.GetSingleItemResponseType;
 import com.shangpin.ebay.shoping.NameValueListType;
@@ -34,26 +48,46 @@ public class EbayTest {
 		System.out.println(da+":"+fa);
 	}
 	
+	
+	
 	@Test
-	public void testGetItem() throws ApiException, SdkException, Exception{
+	public void testGetItem() throws Exception{
 		String itemId="331449399948";
 		ApiContext api = getProApiContext();
-		GetItemCall call=new GetItemCall(api);
-		ItemType it=call.getItem(itemId);
-		String uid=it.getSeller().getUserID();
-		System.out.println(uid);
+		ApiCall call = new ApiCall(api);
+		GetItemRequestType type=new GetItemRequestType();
+		type.setItemID(itemId);
+		GetItemResponseType resp=(GetItemResponseType) call.execute(type);
+		resp.getItem().getItemSpecifics();
+		
 	}
 	@Test
 	public void getSellerList() throws ApiException, SdkException, Exception{
-		ApiContext api = getApiContext();
-		GetSellerListCall call=new GetSellerListCall(api);
-		call.setUserID("agnes");
+		ApiContext api = getProApiContext();
+		ApiCall call = new ApiCall(api);
+		GetSellerListRequestType req = new GetSellerListRequestType();
+		req.setUserID("buydig");
 		Calendar t1 = Calendar.getInstance();
-		Calendar t2 = Calendar.getInstance();
-		call.setStartTimeFilter(new TimeFilter(t1, t2));
-		ItemType[] tps=call.getSellerList();
-		System.out.println(call.hasError());
+		t1.setTime(new Date());
+		Calendar t2 = Calendar.getInstance();t2.set(Calendar.MONTH, 4);
+		req.setEndTimeFrom(t1);
+		req.setStartTimeFrom(t2);
+		PaginationType pg =new PaginationType();
+		pg.setPageNumber(1);pg.setEntriesPerPage(1);
+		req.setPagination(pg);
+		req.setIncludeVariations(true);
+		req.setDetailLevel(new DetailLevelCodeType[]{
+				DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES,
+				DetailLevelCodeType.ITEM_RETURN_CATEGORIES,
+				DetailLevelCodeType.RETURN_HEADERS
+				});
+		req.setGranularityLevel(GranularityLevelCodeType.FINE);
+		GetSellerListResponseType resp = (GetSellerListResponseType) call.execute(req);
+		ItemType[] tps = resp.getItemArray().getItem();
+		System.out.println(tps[0]);
 	}
+	
+	
 
 	/**
 	 * @return
@@ -96,14 +130,42 @@ public class EbayTest {
 	@Test
 	public void testFindItemInStore(){
 		String url=findCommonUrl("findItemsIneBayStores");
-		url+="storeName=%s&paginationInput.entriesPerPage=10&paginationInput.pageNumber=1";
-		String storeName="pumaboxstore";
+		url+="storeName=%s&paginationInput.entriesPerPage=3&paginationInput.pageNumber=1&"
+				+ "outputSelector(0)=PictureURLSuperSize&"
+				+ "outputSelector(1)=UnitPriceInfo&"
+				+ "outputSelector(2)=GalleryInfo&"
+				+ "outputSelector(3)=PictureURLSuperSize&";
+				
+				
+		String storeName="inzara.store";
 		url=String.format(url,storeName);
-		System.out.println(url);
+		
 		String xml=HttpUtils.get(url);
+		FindItemsIneBayStoresResponseDocument doc;
+		try {
+			doc = FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
+			FindItemsIneBayStoresRequest req = createFindRequest();
+			System.out.println(req.toString());
+			FindItemsIneBayStoresResponse resp = doc.getFindItemsIneBayStoresResponse();
+			resp.getErrorMessage();
+		} catch (XmlException e) {
+			e.printStackTrace();
+		}
 		System.out.println(xml);
 	}
-	
+	private FindItemsIneBayStoresRequest createFindRequest(){
+		FindItemsIneBayStoresRequest req = FindItemsIneBayStoresRequest.Factory.newInstance();
+		ItemFilter ifa = ItemFilter.Factory.newInstance();
+		ifa.setName(ItemFilterType.HIDE_DUPLICATE_ITEMS);ifa.addValue("true");
+		List<ItemFilter> ifaList = new ArrayList<>();
+		ifaList.add(ifa);
+		req.setItemFilterArray(ifaList.toArray(new ItemFilter[ifaList.size()]));
+		PaginationInput pg = PaginationInput.Factory.newInstance();
+		pg.setPageNumber(1);pg.setEntriesPerPage(10);
+		req.setPaginationInput(pg);
+		req.setStoreName("buydig");
+		return req;
+	}
 	@Test
 	public void findItemsByProduct(){
 		String url=findCommonUrl("findItemsByProduct");
@@ -153,8 +215,8 @@ public class EbayTest {
 		String url="http://svcs.ebay.com/services/marketplacecatalog/ProductMetadataService/v1?OPERATION-NAME=getProductMetadataBulk&SERVICE-VERSION=1.0.0&"
 				+"SECURITY-APPNAME=%s&GLOBAL-ID=EBAY-US&RESPONSE-DATA-FORMAT=XML&REST-PAYLOAD&productMetadataRequest.categoryId=%s";
 		String appid="vanskydba-8e2b-46af-adc1-58cae63bf2e";
-		String storeName="156955";
-		url=String.format(url, appid,storeName);
+		String cateId="53159";
+		url=String.format(url, appid,cateId);
 		System.out.println(url);
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
@@ -171,6 +233,9 @@ public class EbayTest {
 			GetSingleItemResponseDocument doc=GetSingleItemResponseDocument.Factory.parse(xml);
 			GetSingleItemResponseType rt=doc.getGetSingleItemResponse();
 			NameValueListType[] type=rt.getItem().getItemSpecifics().getNameValueListArray();
+			for (NameValueListType nv : type) {
+				nv.getName();
+			}
 			System.out.println(rt.getItem().getTitle());
 		} catch (XmlException e) {
 			e.printStackTrace();
@@ -178,7 +243,12 @@ public class EbayTest {
 	}
 	
 	@Test
-	public void findProducts(){
+	public void GetCategoryInfo(){
+		String url=shopingCommon("GetCategoryInfo");
+		url+="ItemID=331449399948&IncludeSelector=Variations,ItemSpecifics";
+		String xml=HttpUtils.get(url);
+		//XStream xs=new XStream(new DomDriver());
+		System.out.println(xml);
 	}
 	
 	private String shopingCommon(String callName){
