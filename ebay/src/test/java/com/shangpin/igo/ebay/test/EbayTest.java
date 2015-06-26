@@ -6,24 +6,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.ebay.sdk.*;
-import com.ebay.soap.eBLBaseComponents.DetailLevelCodeType;
-import com.ebay.soap.eBLBaseComponents.GetSellerListRequestType;
-import com.ebay.soap.eBLBaseComponents.VariationType;
+import com.ebay.soap.eBLBaseComponents.*;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
 import com.shangpin.ebay.finding.SearchItem;
 
-import com.shangpin.ebay.trading.GetSellerListResponseType;
-import com.shangpin.ebay.trading.GranularityLevelCodeType;
-import com.shangpin.ebay.trading.PaginationType;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.ebay.conf.EbayConf;
 import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 
-import com.ebay.sdk.call.GetItemCall;
-import com.ebay.sdk.call.GetSellerListCall;
-import com.ebay.soap.eBLBaseComponents.ItemType;
 import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
 import com.shangpin.ebay.shoping.GetSingleItemResponseType;
 import com.shangpin.ebay.shoping.NameValueListType;
@@ -66,10 +58,13 @@ public class EbayTest {
 		SkuDTO sku=null;
 		String itemId="331449399948";
 		ApiContext api = getProApiContext();
-		GetItemCall call=new GetItemCall(api);
-		call.setIncludeItemSpecifics(true);
-		call.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES});
-		ItemType it=call.getItem(itemId);
+		ApiCall call = new ApiCall(api);
+		GetItemRequestType req=new GetItemRequestType();
+		req.setIncludeItemSpecifics(true);
+		req.setItemID(itemId);
+		req.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES});
+		GetItemResponseType resp=(GetItemResponseType)call.execute(req);
+		ItemType it=resp.getItem();
 		VariationType[] variationType = it.getVariations().getVariation();
 		for(int i=0;i<variationType.length;i++){
 			sku=new SkuDTO();

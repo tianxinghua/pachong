@@ -1,11 +1,7 @@
 package com.shangpin.iog.ebay;
 
-import com.ebay.sdk.ApiContext;
-import com.ebay.sdk.call.GetItemCall;
-import com.ebay.sdk.call.GetSellerListCall;
-import com.ebay.soap.eBLBaseComponents.ItemType;
 import com.shangpin.iog.dto.SkuDTO;
-import com.shangpin.iog.ebay.conf.EbayConf;
+
 
 import java.util.List;
 
