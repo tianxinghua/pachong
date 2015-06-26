@@ -35,7 +35,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     @Autowired
     ProductPictureMapper picDAO;
 
-    @Deprecated
+    @Autowired
     PictureDAO pictureDAO;
 
     @Autowired
