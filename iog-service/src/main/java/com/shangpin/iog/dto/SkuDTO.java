@@ -182,4 +182,12 @@ public class SkuDTO {
     public void setProductDescription(String productDescription) {
         this.productDescription = productDescription;
     }
+
+    public String getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(String salePrice) {
+        this.salePrice = salePrice;
+    }
 }
