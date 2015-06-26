@@ -55,6 +55,11 @@ public interface ProductFetchService {
      */
     public void savePicture(List<ProductPictureDTO> pictureDTOList) throws ServiceException;
 
-
+    /**
+     * 保存照片到mongodb中
+     * @param productPictureDTO
+     * @throws ServiceException
+     */
+    public void savePictureForMongo(ProductPictureDTO productPictureDTO) throws ServiceException;
 
 }

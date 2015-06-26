@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by fanhaiying on 15/6/15.
  */
-@Service("MaterialContrastFindService")
+@Service("materialContrastFindService")
 public class MaterialContrastFindServiceImpl implements MaterialContrastFindService {
 
 

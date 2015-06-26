@@ -3,7 +3,10 @@ package com.shangpin.iog.product.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.framework.page.Page;
+import com.shangpin.iog.common.utils.InVoke;
 import com.shangpin.iog.dto.*;
+import com.shangpin.iog.mongodao.PictureDAO;
+import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.product.dao.*;
 import com.shangpin.iog.service.ProductSearchService;
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +35,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     @Autowired
     ProductPictureMapper picDAO;
 
+    @Deprecated
+    PictureDAO pictureDAO;
+
     @Autowired
     ProductsMapper productDAO;
 
@@ -43,6 +49,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
     @Autowired
    MaterialContrastMapper materialContrastDAO;
+
+
 
 
 
@@ -87,7 +95,15 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             for(ProductDTO dto :productList){
 
                 if(null!=dto.getSupplierId()&&null!=dto.getSkuId()) {
-                    List<ProductPictureDTO> picList = picDAO.findBySupplierAndSku(dto.getSupplierId(), dto.getSkuId());
+                    List<ProductPicture> productPictureList = pictureDAO.findBySupplierIdAndSkuId(dto.getSupplierId(),dto.getSkuId());
+                    List<ProductPictureDTO> picList = new ArrayList<>();
+                    for(ProductPicture productPicture:productPictureList){
+                        ProductPictureDTO productPictureDTO = new ProductPictureDTO();
+                        InVoke.setValue(productPicture,productPictureDTO,null,null);
+                        picList.add(productPictureDTO);
+                    }
+
+                    // List<ProductPictureDTO> picList = picDAO.findBySupplierAndSku(dto.getSupplierId(), dto.getSkuId());
                     this.setPic(dto,picList);
                 }
 
@@ -192,7 +208,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                         productName = productName.replaceAll(","," ");
                     }
                 }else{
-                    productName = productName.replaceAll(","," ");
+                    productName = productName.replaceAll(",", " ");
                 }
                 buffer.append(productName).append(",");
 

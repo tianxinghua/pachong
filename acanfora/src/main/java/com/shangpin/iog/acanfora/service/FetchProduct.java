@@ -35,7 +35,7 @@ public class FetchProduct {
 
     public void fetchProductAndSave(String url){
 
-        String supplierId = "S0000197";
+        String supplierId = "00000197";//S0000197
         try {
             String result =  HttpUtils.get(url,false,240000);
             Products products= ObjectXMLUtil.xml2Obj(Products.class, result);
@@ -75,7 +75,9 @@ public class FetchProduct {
                                 dto.setId(UUIDGenerator.getUUID());
                                 dto.setSkuId(item.getItem_id());
                                 try {
-                                    productFetchService.savePicture(dto);
+
+//                                    productFetchService.savePicture(dto);
+                                    productFetchService.savePictureForMongo(dto);
                                 } catch (ServiceException e) {
                                     e.printStackTrace();
                                 }

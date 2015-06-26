@@ -160,7 +160,7 @@ public class EbayTest {
 		System.out.println(xml);
 	}
 //shopping api
-	@Test
+//	@Test
 	public void getSingleItem(){
 		String url=shopingCommon("GetSingleItem");
 		url+="ItemID=331449399948&IncludeSelector=Variations,ItemSpecifics";

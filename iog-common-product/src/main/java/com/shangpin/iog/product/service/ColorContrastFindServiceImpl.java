@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by huxia on 15/6/15.
  */
-@Service("ColorContrastFindService")
+@Service("colorContrastFindService")
 public class ColorContrastFindServiceImpl implements ColorContrastFindService {
 
 

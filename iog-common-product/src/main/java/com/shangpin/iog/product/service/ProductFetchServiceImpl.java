@@ -2,9 +2,12 @@ package com.shangpin.iog.product.service;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
+import com.shangpin.iog.common.utils.InVoke;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.iog.mongodao.PictureDAO;
+import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.product.dao.ProductPictureMapper;
 import com.shangpin.iog.product.dao.SkuMapper;
 import com.shangpin.iog.product.dao.SpuMapper;
@@ -31,7 +34,10 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     SpuMapper spuDAO;
 
     @Autowired
-    ProductPictureMapper pictureDAO;
+    ProductPictureMapper productPictureMapper;
+
+    @Autowired
+    PictureDAO pictureDAO;
 
 
     @Override
@@ -77,7 +83,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     @Override
     public void savePicture(ProductPictureDTO pictureDTO) throws ServiceException {
         try {
-            pictureDAO.save(pictureDTO);
+            productPictureMapper.save(pictureDTO);
         } catch (SQLException e) {
             throw new ServiceMessageException("数据插入失败");
         }
@@ -87,10 +93,23 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     @Override
     public void savePicture(List<ProductPictureDTO> pictureDTOList) throws ServiceException {
         try {
-            pictureDAO.saveList(pictureDTOList);
+            productPictureMapper.saveList(pictureDTOList);
         } catch (SQLException e) {
             throw new ServiceMessageException("数据插入失败");
         }
 
+    }
+
+    @Override
+    public void savePictureForMongo(ProductPictureDTO productPictureDTO) throws ServiceException {
+        ProductPicture productPicture = new ProductPicture();
+        if(null!=productPictureDTO) {
+            try {
+                InVoke.setValue(productPictureDTO,productPicture,null,null);
+                pictureDAO.save(productPicture);
+            } catch (ServiceException e) {
+                throw new ServiceMessageException("数据插入失败");
+            }
+        }
     }
 }
