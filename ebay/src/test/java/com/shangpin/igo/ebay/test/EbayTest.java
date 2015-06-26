@@ -1,6 +1,7 @@
 package com.shangpin.igo.ebay.test;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
@@ -13,11 +14,15 @@ import com.ebay.sdk.SdkException;
 import com.ebay.sdk.TimeFilter;
 import com.ebay.sdk.call.GetItemCall;
 import com.ebay.sdk.call.GetSellerListCall;
+import com.ebay.soap.eBLBaseComponents.DetailLevelCodeType;
+import com.ebay.soap.eBLBaseComponents.GranularityLevelCodeType;
 import com.ebay.soap.eBLBaseComponents.ItemType;
+import com.ebay.soap.eBLBaseComponents.PaginationType;
 import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
 import com.shangpin.ebay.shoping.GetSingleItemResponseType;
 import com.shangpin.ebay.shoping.NameValueListType;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
+import com.shangpin.iog.ebay.conf.EbayConf;
 
 /**
  * @description 
@@ -39,21 +44,48 @@ public class EbayTest {
 		String itemId="331449399948";
 		ApiContext api = getProApiContext();
 		GetItemCall call=new GetItemCall(api);
+		call.setIncludeItemSpecifics(true);
+		call.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES});
 		ItemType it=call.getItem(itemId);
 		String uid=it.getSeller().getUserID();
 		System.out.println(uid);
 	}
+	
+	@Test
+	public void testGetItemXml(){
+		String itemId="331449399948";
+		String url=EbayConf.getTradeCallUrl("GetItem");
+		url+="&ItemID="+itemId;
+		String xml=HttpUtils.get(url);
+		System.out.println(xml);
+	}
 	@Test
 	public void getSellerList() throws ApiException, SdkException, Exception{
-		ApiContext api = getApiContext();
+		ApiContext api = getProApiContext();
 		GetSellerListCall call=new GetSellerListCall(api);
-		call.setUserID("agnes");
+		call.setUserID("buydig");
 		Calendar t1 = Calendar.getInstance();
-		Calendar t2 = Calendar.getInstance();
-		call.setStartTimeFilter(new TimeFilter(t1, t2));
+		t1.setTime(new Date());
+		PaginationType pg =new PaginationType();
+		pg.setPageNumber(1);pg.setEntriesPerPage(1);
+		call.setPagination(pg);
+		call.setAdminEndedItemsOnly(false);
+		//call.setStartTimeFilter(startTimeFilter);
+		Calendar t2 = Calendar.getInstance();t2.set(Calendar.MONTH, 4);
+		call.setIncludeVariations(true);
+		//call.setOutputSelector(new String[]{});
+		/*call.setDetailLevel(new DetailLevelCodeType[]{
+				DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES,
+				DetailLevelCodeType.ITEM_RETURN_CATEGORIES,
+				DetailLevelCodeType.RETURN_HEADERS
+				});*/
+		call.setGranularityLevel(GranularityLevelCodeType.FINE);
+		call.setEndTimeFilter(new TimeFilter(t2, t1));
 		ItemType[] tps=call.getSellerList();
-		System.out.println(call.hasError());
+		System.out.println(tps[0]);
 	}
+	
+	
 
 	/**
 	 * @return
@@ -96,8 +128,8 @@ public class EbayTest {
 	@Test
 	public void testFindItemInStore(){
 		String url=findCommonUrl("findItemsIneBayStores");
-		url+="storeName=%s&paginationInput.entriesPerPage=10&paginationInput.pageNumber=1";
-		String storeName="pumaboxstore";
+		url+="storeName=%s&paginationInput.entriesPerPage=3&paginationInput.pageNumber=1";
+		String storeName="buydig";
 		url=String.format(url,storeName);
 		System.out.println(url);
 		String xml=HttpUtils.get(url);
@@ -153,8 +185,8 @@ public class EbayTest {
 		String url="http://svcs.ebay.com/services/marketplacecatalog/ProductMetadataService/v1?OPERATION-NAME=getProductMetadataBulk&SERVICE-VERSION=1.0.0&"
 				+"SECURITY-APPNAME=%s&GLOBAL-ID=EBAY-US&RESPONSE-DATA-FORMAT=XML&REST-PAYLOAD&productMetadataRequest.categoryId=%s";
 		String appid="vanskydba-8e2b-46af-adc1-58cae63bf2e";
-		String storeName="156955";
-		url=String.format(url, appid,storeName);
+		String cateId="53159";
+		url=String.format(url, appid,cateId);
 		System.out.println(url);
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
@@ -171,6 +203,9 @@ public class EbayTest {
 			GetSingleItemResponseDocument doc=GetSingleItemResponseDocument.Factory.parse(xml);
 			GetSingleItemResponseType rt=doc.getGetSingleItemResponse();
 			NameValueListType[] type=rt.getItem().getItemSpecifics().getNameValueListArray();
+			for (NameValueListType nv : type) {
+				nv.getName();
+			}
 			System.out.println(rt.getItem().getTitle());
 		} catch (XmlException e) {
 			e.printStackTrace();

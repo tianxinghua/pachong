@@ -5,6 +5,8 @@ dependencies {
 		"com.sun.xml.ws:jaxws-rt:2.2.10",
 		"xalan:xalan:2.7.2",
 		"com.shangpin:ebay-shoping:1.0",
+		"com.shangpin:ebay-finding:1.0",
+		"com.shangpin:ebay-trading:1.0",
 		"com.ebay.sdk:attributes:1.0",
 		"com.ebay.sdk:ebaycalls:1.0",
 		"com.ebay.sdk:helper:1.0",
