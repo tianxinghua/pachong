@@ -26,5 +26,7 @@ include 'acanfora-stock'
 
 include 'openapi-ice'
 
+include 'galiano'
+
 
 include 'ebay'
