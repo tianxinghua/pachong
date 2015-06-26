@@ -23,7 +23,6 @@ dependencies {
             project(':project-framework'),
             "com.github.pagehelper:pagehelper:3.7.3",
             "com.github.jsqlparser:jsqlparser:0.9.1",
-
             "org.springframework.data:spring-data-mongodb:1.7.0.RELEASE",
             "org.mongodb:mongo-java-driver:3.0.2",
     )
