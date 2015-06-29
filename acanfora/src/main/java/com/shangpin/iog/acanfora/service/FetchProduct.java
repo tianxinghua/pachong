@@ -35,7 +35,7 @@ public class FetchProduct {
 
     public void fetchProductAndSave(String url){
 
-        String supplierId = "00000197";//S0000197
+        String supplierId = "S0000197";
         try {
             String result =  HttpUtils.get(url,false,240000);
             Products products= ObjectXMLUtil.xml2Obj(Products.class, result);
