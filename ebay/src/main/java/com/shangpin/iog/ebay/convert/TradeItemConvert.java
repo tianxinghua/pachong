@@ -4,6 +4,7 @@
 package com.shangpin.iog.ebay.convert;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +39,7 @@ public class TradeItemConvert {
 	 * @param userType 
 	 * @return
 	 */
-	public static Map<String, List<?>> convert2SKuAndSpu(ItemType[] tps, UserType userType) {
+	public static Map<String, ? extends Collection<? extends Object>> convert2SKuAndSpu(ItemType[] tps, UserType userType) {
 		Map<String,List<?>> sksp=new HashMap<>();
 		List<SkuDTO> skus = new ArrayList<>();
 		List<SpuDTO> spus = new ArrayList<>();

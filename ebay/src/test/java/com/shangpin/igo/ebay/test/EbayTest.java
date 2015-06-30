@@ -1,9 +1,9 @@
 package com.shangpin.igo.ebay.test;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -139,8 +139,8 @@ public class EbayTest {
 		req.setOutputSelector(new String[]{"ItemArray"});
 		GetSellerListResponseType resp = (GetSellerListResponseType) call.execute(req);
 		ItemType[] tps = resp.getItemArray().getItem();
-		Map<String,List<?>> skuAndSpu=TradeItemConvert.convert2SKuAndSpu(tps,resp.getSeller());
-		System.out.println(tps[0]);
+		Map<String,? extends Collection<?>> skuAndSpu=TradeItemConvert.convert2SKuAndSpu(tps,resp.getSeller());
+		System.out.println(tps[0]+" "+skuAndSpu);
 	}
 
 	/**

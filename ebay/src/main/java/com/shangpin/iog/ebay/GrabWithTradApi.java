@@ -4,6 +4,7 @@
 package com.shangpin.iog.ebay;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -61,16 +62,17 @@ public class GrabWithTradApi {
 				});*/
 		req.setGranularityLevel(GranularityLevelCodeType.FINE);
 		boolean hasMore=false;
-		Map<String, List<? extends Object>> skuAndSpu=new HashMap<String, List<?>>();
+		Map<String, ? extends Collection> skuAndSpu=new HashMap<String, Collection<?>>();
 		do{
 			GetSellerListResponseType resp = (GetSellerListResponseType) call.execute(req);
 			if(AckCodeType.FAILURE.equals(resp.getAck())){
 				hasMore=resp.isHasMoreItems();
 				ItemType[] tps = resp.getItemArray().getItem();
-				Map<String, List<? extends Object>> kpp=TradeItemConvert.convert2SKuAndSpu(tps,resp.getSeller());
+				Map<String, ? extends Collection<?>> kpp=TradeItemConvert.convert2SKuAndSpu(tps,resp.getSeller());
 				if(skuAndSpu==null){
 					skuAndSpu=kpp;
 				}else{
+					kpp.get("sku");
 					skuAndSpu.get("sku").addAll(kpp.get("sku"));
 					skuAndSpu.get("spu").addAll(kpp.get("spu"));
 					skuAndSpu.get("pic").addAll(kpp.get("pic"));
