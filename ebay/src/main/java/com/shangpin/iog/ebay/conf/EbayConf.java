@@ -60,7 +60,6 @@ public class EbayConf {
         ac.setApiAccount(act);
         context.setRuName(ruName);
         context.setApiCredential(ac);
-        context.getApiCredential();
         return context;
     }
     /**
