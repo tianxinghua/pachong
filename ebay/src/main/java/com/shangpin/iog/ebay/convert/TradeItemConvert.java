@@ -17,7 +17,6 @@ import com.ebay.soap.eBLBaseComponents.ItemType;
 import com.ebay.soap.eBLBaseComponents.NameValueListArrayType;
 import com.ebay.soap.eBLBaseComponents.NameValueListType;
 import com.ebay.soap.eBLBaseComponents.PictureDetailsType;
-import com.ebay.soap.eBLBaseComponents.UserType;
 import com.ebay.soap.eBLBaseComponents.VariationProductListingDetailsType;
 import com.ebay.soap.eBLBaseComponents.VariationType;
 import com.ebay.soap.eBLBaseComponents.VariationsType;
@@ -39,7 +38,7 @@ public class TradeItemConvert {
 	 * @param userType 
 	 * @return
 	 */
-	public static Map<String, ? extends Collection<? extends Object>> convert2SKuAndSpu(ItemType[] tps, UserType userType) {
+	public static Map<String, ? extends Collection<? extends Object>> convert2SKuAndSpu(ItemType[] tps, String userType) {
 		Map<String,List<?>> sksp=new HashMap<>();
 		List<SkuDTO> skus = new ArrayList<>();
 		List<SpuDTO> spus = new ArrayList<>();
@@ -62,23 +61,24 @@ public class TradeItemConvert {
 	 * @param userType 
 	 * @return
 	 */
-	public static List<SkuDTO> toSku(ItemType itemType, UserType userType) {
+	public static List<SkuDTO> toSku(ItemType itemType, String userType) {
 		List<SkuDTO> skus=new ArrayList<>();
 		VariationsType vst=itemType.getVariations();
 		if( vst!= null && vst.getVariation()!=null && vst.getVariation().length>0){
 			SkuDTO sku = new SkuDTO();
-			setCommon(sku,itemType,userType.getUserID());
+			setCommon(sku,itemType,userType);
 			VariationType[] vr=vst.getVariation();
 			for (int i = 0; i < vr.length; i++) {
-				String skstr=getSkuStr(vr[i],itemType);
+				String skstr=getSkuIdStr(vr[i],itemType);//以#号分隔itemId,skuId 默认itemId
 				sku.setSkuId(skstr);
 				setVariationPrice(sku, vr[i]);//设置金额
 				setStock(sku,vr[i]);//设置库存
-				setSKUAttr(sku,vr[i].getVariationSpecifics());//设置一些属性
+				setSKUAttr(sku,vr[i].getVariationSpecifics());//设置一些属性,条码等
 				if(sku.getProductCode()==null){//设置产品条码
 					VariationProductListingDetailsType vpd=vr[i].getVariationProductListingDetails();
 					if(vpd!=null){
-						String upc=vpd.getUPC();String ean=vpd.getEAN();String isbn=vpd.getISBN();
+						String upc=vpd.getUPC();
+						String ean=vpd.getEAN();String isbn=vpd.getISBN();
 						String code=(upc==null?(ean==null?(isbn==null?null:isbn):ean):upc);
 						sku.setProductCode(code);sku.setBarcode(code);
 					}			
@@ -87,11 +87,11 @@ public class TradeItemConvert {
 			skus.add(sku);
 		}else{
 			SkuDTO sku = new SkuDTO();
-			setCommon(sku,itemType,userType.getUserID());
-			itemType.getItemSpecifics();
+			setCommon(sku,itemType,userType);
+			setSKUAttr(sku, itemType.getItemSpecifics());
 			skus.add(sku);
 		}
-		return null;
+		return skus;
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class TradeItemConvert {
 	 * @param userType
 	 * @return 
 	 */
-	private static List<ProductPictureDTO> toPic(ItemType itemType, UserType userType) {
+	private static List<ProductPictureDTO> toPic(ItemType itemType, String userType) {
 		PictureDetailsType pdt=itemType.getPictureDetails();
 		List<ProductPictureDTO> pics = new ArrayList<>();
 		if(pdt!=null){
@@ -107,7 +107,7 @@ public class TradeItemConvert {
 			for (String string : urls) {
 				ProductPictureDTO pic = new ProductPictureDTO();
 				pic.setPicUrl(string);
-				pic.setSupplierId(EBAY+"#"+userType.getUserID());
+				pic.setSupplierId(EBAY+"#"+userType);
 			}
 		}
 		return pics;
@@ -125,6 +125,7 @@ public class TradeItemConvert {
 	}
 
 	/**
+	 * TODO spu属性，需要获取item的ItemSpecifics
 	 * @param spu
 	 * @param itemType
 	 */
@@ -150,6 +151,7 @@ public class TradeItemConvert {
 	}
 
 	/**
+	 * TODO 设置sku属性，这些怕是需要再次拉取数据
 	 * @param sku
 	 * @param vr
 	 */
@@ -177,6 +179,12 @@ public class TradeItemConvert {
 	 * @param itemType
 	 */
 	private static void setCategory(SpuDTO spu, ItemType itemType) {
+		String title=itemType.getTitle().toLowerCase();
+		if(title.contains("women")||title.contains("femal")){
+			spu.setCategoryGender("F");
+		}else if(title.contains("man")||title.contains("male")){
+			spu.setCategoryGender("M");
+		}
 		spu.setCategoryId(itemType.getPrimaryCategory().getCategoryID());
 		spu.setCategoryName(itemType.getPrimaryCategory().getCategoryName());
 		if(itemType.getSecondaryCategory()!=null){
@@ -208,14 +216,14 @@ public class TradeItemConvert {
 	 * @param itemType 
 	 * @return
 	 */
-	private static String getSkuStr(VariationType vt, ItemType itemType) {
+	private static String getSkuIdStr(VariationType vt, ItemType itemType) {
 		if(vt==null)
 			return itemType.getItemID();
 		String skst =vt.getSKU();
 		//itemType 还有一个sku
 		if(StringUtils.isNotBlank(skst))
 			return itemType.getItemID()+"#"+skst;
-		return null;
+		return itemType.getItemID();
 	}
 
 	/**

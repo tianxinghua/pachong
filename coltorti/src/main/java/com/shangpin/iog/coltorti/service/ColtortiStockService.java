@@ -41,7 +41,7 @@ public class ColtortiStockService {
 		if(recordId!=null) param.put("id", recordId);
 		String body=HttpUtils.get(ColtortiUtil.paramGetUrl(ApiURL.STOCK,param));
 		ColtortiUtil.check(body);
-		logger.info("request stock result:\r\n"+body);
+		//logger.info("request stock result:\r\n"+body);
 		Gson gson = new Gson();
 		Map<String,List<ColtortiStock>> mp=gson.fromJson(body, new TypeToken<Map<String,List<ColtortiStock>>>(){}.getType());
 		Map<String,Map<String,Integer>> rtnScalar=null;
@@ -59,6 +59,13 @@ public class ColtortiStockService {
 					rtnScalar.put(skuid, scalarDetail);
 				}
 				for (ColtortiStock s : stock) {//不同仓库
+					/* scalars": {
+				        "1": {
+			                "XXS": 0
+			            },
+			            "3": {
+			                "XS": 0
+			            }*/
 					Map<String,Map<String,String>> scalars=s.getScalars();
 					if(scalars!=null && scalars.size()>0){
 						Set<String> ks=scalars.keySet();
@@ -84,7 +91,7 @@ public class ColtortiStockService {
 		}
 		return rtnScalar;
 	}
-	public static void main(String[] args) throws ServiceException {
+	/*public static void main(String[] args) throws ServiceException {
 		getStock("152790AAV000001","152790AAV000001-YELW");
-	}
+	}*/
 }

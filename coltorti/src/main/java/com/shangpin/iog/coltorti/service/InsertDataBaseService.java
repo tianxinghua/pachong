@@ -66,6 +66,7 @@ public class InsertDataBaseService {
 				Set<ProductPictureDTO> ppcs=ColtortiProductConvert.productPic(product);
 				productPics.put(product.getSkuId(), ppcs);
 			}
+			logger.warn("抓取到sku:\r\n"+new Gson().toJson(skus));
 			//开始保存
 			if(CollectionUtils.isNotEmpty(skus)) {
 				logger.info("-----开始保存SKU-----总数：{}",skus.size());
