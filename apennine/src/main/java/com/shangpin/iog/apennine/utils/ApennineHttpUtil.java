@@ -170,7 +170,7 @@ public class ApennineHttpUtil {
         	fetchService.saveSPU(spuDTOList.get(i));
 		}
         for (int i = 0; i < picList.size(); i++) {
-        	 fetchService.savePicture(picList.get(i));
+        	 fetchService.savePictureForMongo(picList.get(i));
 		}
     }
     private Map<String,String> formatParam(Map<String,String> param,String scode){
