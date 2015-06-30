@@ -1,25 +1,40 @@
 package com.shangpin.igo.ebay.test;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import com.ebay.sdk.*;
-import com.ebay.soap.eBLBaseComponents.*;
-import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
-import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
-import com.shangpin.ebay.finding.SearchItem;
-
-import com.shangpin.iog.dto.SkuDTO;
-import com.shangpin.iog.ebay.conf.EbayConf;
 import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 
+import com.ebay.sdk.ApiAccount;
+import com.ebay.sdk.ApiCall;
+import com.ebay.sdk.ApiContext;
+import com.ebay.sdk.ApiCredential;
+import com.ebay.sdk.ApiException;
+import com.ebay.sdk.SdkException;
+import com.ebay.soap.eBLBaseComponents.DetailLevelCodeType;
+import com.ebay.soap.eBLBaseComponents.GetItemRequestType;
+import com.ebay.soap.eBLBaseComponents.GetItemResponseType;
+import com.ebay.soap.eBLBaseComponents.GetSellerListRequestType;
+import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
+import com.ebay.soap.eBLBaseComponents.GranularityLevelCodeType;
+import com.ebay.soap.eBLBaseComponents.ItemType;
+import com.ebay.soap.eBLBaseComponents.PaginationType;
+import com.ebay.soap.eBLBaseComponents.VariationType;
+import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
+import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
+import com.shangpin.ebay.finding.SearchItem;
 import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
 import com.shangpin.ebay.shoping.GetSingleItemResponseType;
 import com.shangpin.ebay.shoping.NameValueListType;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
+import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.ebay.conf.EbayConf;
+import com.shangpin.iog.ebay.convert.TradeItemConvert;
 
 /**
  * @description 
@@ -56,15 +71,17 @@ public class EbayTest {
 	@Test
 	public void testGetItem() throws ApiException, SdkException, Exception{
 		SkuDTO sku=null;
-		String itemId="331449399948";
+		String itemId="331519382281";
 		ApiContext api = getProApiContext();
 		ApiCall call = new ApiCall(api);
 		GetItemRequestType req=new GetItemRequestType();
 		req.setIncludeItemSpecifics(true);
 		req.setItemID(itemId);
-		req.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES});
+		req.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_DESCRIPTION});
 		GetItemResponseType resp=(GetItemResponseType)call.execute(req);
 		ItemType it=resp.getItem();
+		String[] pics=it.getPictureDetails().getPictureURL();
+		String[] pics2=it.getVariations().getPictures()[0].getVariationSpecificPictureSet()[0].getPictureURL();
 		VariationType[] variationType = it.getVariations().getVariation();
 		for(int i=0;i<variationType.length;i++){
 			sku=new SkuDTO();
@@ -78,7 +95,6 @@ public class EbayTest {
 			sku.setCreateTime(it.getListingDetails().getStartTime().getTime());
 			sku.setLastTime(it.getListingDetails().getEndTime().getTime());
 			skuDTO.add(sku);
-
 			System.out.println(sku.getProductName());
 		}
 		String uid=it.getSeller().getUserID();
@@ -98,25 +114,33 @@ public class EbayTest {
 		ApiContext api = getProApiContext();
 		ApiCall call = new ApiCall(api);
 		GetSellerListRequestType req = new GetSellerListRequestType();
-		req.setUserID("buydig");
+		req.setUserID("inzara.store");//pumaboxstore buydig inzara.store happynewbaby2011
+		/*
+		 */
 		Calendar t1 = Calendar.getInstance();
 		t1.setTime(new Date());
-		Calendar t2 = Calendar.getInstance();t2.set(Calendar.MONTH, 4);
+		Calendar t2 = Calendar.getInstance();t2.set(Calendar.MONTH, 8);
+		/*req.setStartTimeFrom(t2);
+		req.setStartTimeTo(t1);*/
 		req.setEndTimeFrom(t1);
-		req.setStartTimeFrom(t2);
+		req.setEndTimeTo(t2);
+		
 		PaginationType pg =new PaginationType();
 		pg.setPageNumber(1);pg.setEntriesPerPage(1);
 		req.setPagination(pg);
 		req.setIncludeVariations(true);
-		req.setDetailLevel(new DetailLevelCodeType[]{
+		/*req.setDetailLevel(new DetailLevelCodeType[]{
 				DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES,
 				DetailLevelCodeType.ITEM_RETURN_CATEGORIES,
-				DetailLevelCodeType.RETURN_HEADERS
-				});
+				DetailLevelCodeType.RETURN_HEADERS,
+				DetailLevelCodeType.RETURN_ALL
+				});*/
 		req.setGranularityLevel(GranularityLevelCodeType.FINE);
+		req.setOutputSelector(new String[]{"ItemArray"});
 		GetSellerListResponseType resp = (GetSellerListResponseType) call.execute(req);
 		ItemType[] tps = resp.getItemArray().getItem();
-		System.out.println(tps[0]);
+		Map<String,? extends Collection<?>> skuAndSpu=TradeItemConvert.convert2SKuAndSpu(tps,resp.getSeller());
+		System.out.println(tps[0]+" "+skuAndSpu);
 	}
 
 	/**
@@ -170,13 +194,11 @@ public class EbayTest {
 			FindItemsIneBayStoresResponseDocument doc=FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
 			FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
 			SearchItem[] type = rt.getSearchResult().getItemArray();
-
 			for (int i=0;i<type.length;i++){
-//				spuDTO[i]=new SpuDTO();
-				//System.out.println(type[i].getProductId().getStringValue());
-				//spuDTO[i].setSpuId(type[i].getProductId().getStringValue());
+				type[i].getItemId();
+				SkuDTO sku = new SkuDTO();
+				
 			}
-			//System.out.println(rt.getSearchResult().getItemArray()[0].getProductId().get);
 
 		} catch (XmlException e) {
 			e.printStackTrace();
@@ -239,12 +261,11 @@ public class EbayTest {
 		System.out.println(xml);
 	}
 //shopping api
-//	@Test
+	@Test
 	public void getSingleItem(){
 		String url=shopingCommon("GetSingleItem");
-		url+="ItemID=331449399948&IncludeSelector=Variations,ItemSpecifics";
+		url+="ItemID=331519382281&IncludeSelector=Variations,ItemSpecifics";
 		String xml=HttpUtils.get(url);
-		//XStream xs=new XStream(new DomDriver());
 		System.out.println(xml);
 		try {
 			GetSingleItemResponseDocument doc=GetSingleItemResponseDocument.Factory.parse(xml);
@@ -258,6 +279,8 @@ public class EbayTest {
 	
 	@Test
 	public void findProducts(){
+		String str="this is a size. test";
+		System.out.println(str.matches("(size)"));
 	}
 	
 	private String shopingCommon(String callName){

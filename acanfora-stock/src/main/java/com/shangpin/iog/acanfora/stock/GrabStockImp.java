@@ -11,6 +11,7 @@ import com.shangpin.iog.acanfora.stock.dto.Product;
 import com.shangpin.iog.acanfora.stock.dto.Products;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
+import org.apache.commons.lang.StringUtils;
 
 import javax.xml.bind.JAXBException;
 import java.lang.String;
@@ -23,6 +24,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
         Map<String, Integer> skustock = new HashMap<>(skuNo.size());
         List<Item> itemList = new ArrayList<>();
+        Map<String,String> stockMap = new HashMap<>();
 
         String kk = HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");
         Products products = null;
@@ -38,15 +40,23 @@ public class GrabStockImp extends AbsUpdateProductStock {
             if (null == items) {
                 continue;
             }
-            itemList.containsAll(items.getItems());
+            for(Item item:items.getItems()){
+                if(StringUtils.isNotBlank(item.getStock()) ){
+                     stockMap.put(item.getItem_id(),item.getStock());
+                }
+            }
+//            itemList.containsAll(items.getItems());
         }
 
         for (String skuno : skuNo) {
-            for (Item item : itemList) {
-                if (skuno.equals(item.getItem_id())) {
-                    skustock.put(skuno, Integer.valueOf(item.getStock()));
-                    break;
-                }
+//            for (Item item : itemList) {
+//                if (skuno.equals(item.getItem_id())) {
+//                    skustock.put(skuno, Integer.valueOf(item.getStock()));
+//                    break;
+//                }
+//            }
+            if(stockMap.containsKey(skuno)){
+                skustock.put(skuno, Integer.valueOf(stockMap.get(skuno)));
             }
         }
         return skustock;
@@ -57,7 +67,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
         AbsUpdateProductStock grabStockImp = new GrabStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-        grabStockImp.updateProductStock("S0000197","2015-01-01 00:00",format.format(new Date()));
+        grabStockImp.updateProductStock("2015050800242","2015-01-01 00:00",format.format(new Date()));
     }
 
 }

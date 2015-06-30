@@ -13,3 +13,21 @@ dependencies {
 			project(":project-framework")
     )
 }
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter(org.apache.tools.ant.filters.ReplaceTokens,
+                tokens: loadGroovy()
+        )
+    }
+}
+
+
+task copyResources( type: Copy ) {
+    into "$buildDir/classes/main"
+    from "$buildDir/resources/main"
+}
+
+jar{
+    dependsOn copyResources
+}
