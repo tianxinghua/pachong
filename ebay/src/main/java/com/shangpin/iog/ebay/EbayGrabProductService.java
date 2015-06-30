@@ -1,11 +1,7 @@
 package com.shangpin.iog.ebay;
 
-import com.ebay.sdk.ApiContext;
-import com.ebay.sdk.call.GetItemCall;
-import com.ebay.sdk.call.GetSellerListCall;
-import com.ebay.soap.eBLBaseComponents.ItemType;
 import com.shangpin.iog.dto.SkuDTO;
-import com.shangpin.iog.ebay.conf.EbayConf;
+
 
 import java.util.List;
 
@@ -18,7 +14,7 @@ public class EbayGrabProductService {
         return null;
     }
 
-    public int getStock(String itemId) throws Exception {
+    /*public int getStock(String itemId) throws Exception {
         ApiContext contxt=EbayConf.getApiContext();
         GetItemCall call = new GetItemCall(contxt);
         ItemType o = call.getItem(itemId);
@@ -30,6 +26,6 @@ public class EbayGrabProductService {
         GetSellerListCall call = new GetSellerListCall(contxt);
         ItemType[] array= call.getSellerList();
         return array;
-    }
+    }*/
 
 }

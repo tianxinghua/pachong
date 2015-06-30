@@ -1,19 +1,21 @@
 package com.shangpin.igo.ebay.test;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.ebay.sdk.*;
+import com.ebay.soap.eBLBaseComponents.*;
+import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
+import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
+import com.shangpin.ebay.finding.SearchItem;
+
+import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.ebay.conf.EbayConf;
 import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 
-import com.ebay.sdk.ApiAccount;
-import com.ebay.sdk.ApiContext;
-import com.ebay.sdk.ApiCredential;
-import com.ebay.sdk.ApiException;
-import com.ebay.sdk.SdkException;
-import com.ebay.sdk.TimeFilter;
-import com.ebay.sdk.call.GetItemCall;
-import com.ebay.sdk.call.GetSellerListCall;
-import com.ebay.soap.eBLBaseComponents.ItemType;
 import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
 import com.shangpin.ebay.shoping.GetSingleItemResponseType;
 import com.shangpin.ebay.shoping.NameValueListType;
@@ -25,6 +27,23 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtils;
  * <br/>2015年6月23日
  */
 public class EbayTest {
+	private Set skuDTO=new HashSet();
+	private Set spuDTO=new HashSet();
+
+	public void setSpuDTO(Set spuDTO) {
+		this.spuDTO = spuDTO;
+	}
+
+
+	public Set getSkuDTO() {
+		return skuDTO;
+	}
+
+	public void setSkuDTO(Set skuDTO) {
+		this.skuDTO = skuDTO;
+	}
+
+
 
 	@Test
 	public void testDF(){
@@ -36,23 +55,68 @@ public class EbayTest {
 	
 	@Test
 	public void testGetItem() throws ApiException, SdkException, Exception{
+		SkuDTO sku=null;
 		String itemId="331449399948";
 		ApiContext api = getProApiContext();
-		GetItemCall call=new GetItemCall(api);
-		ItemType it=call.getItem(itemId);
+		ApiCall call = new ApiCall(api);
+		GetItemRequestType req=new GetItemRequestType();
+		req.setIncludeItemSpecifics(true);
+		req.setItemID(itemId);
+		req.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES});
+		GetItemResponseType resp=(GetItemResponseType)call.execute(req);
+		ItemType it=resp.getItem();
+		VariationType[] variationType = it.getVariations().getVariation();
+		for(int i=0;i<variationType.length;i++){
+			sku=new SkuDTO();
+			sku.setStock(variationType[i].getQuantity().toString());
+			sku.setProductName(it.getTitle());
+			sku.setSaleCurrency(variationType[i].getStartPrice().getCurrencyID().toString());
+			sku.setSalePrice(String.valueOf(variationType[i].getStartPrice().getValue()));
+			sku.setSupplierPrice(String.valueOf(variationType[i].getStartPrice().getValue()));
+			sku.setColor(variationType[i].getVariationSpecifics().getNameValueList()[0].getValue(0));
+			sku.setProductSize(variationType[i].getVariationSpecifics().getNameValueList()[1].getValue(0));
+			sku.setCreateTime(it.getListingDetails().getStartTime().getTime());
+			sku.setLastTime(it.getListingDetails().getEndTime().getTime());
+			skuDTO.add(sku);
+
+			System.out.println(sku.getProductName());
+		}
 		String uid=it.getSeller().getUserID();
 		System.out.println(uid);
 	}
+	
+	@Test
+	public void testGetItemXml(){
+		String itemId="331449399948";
+		String url= EbayConf.getTradeCallUrl("GetItem");
+		url+="&ItemID="+itemId;
+		String xml=HttpUtils.get(url);
+		System.out.println(xml);
+	}
 	@Test
 	public void getSellerList() throws ApiException, SdkException, Exception{
-		ApiContext api = getApiContext();
-		GetSellerListCall call=new GetSellerListCall(api);
-		call.setUserID("agnes");
+		ApiContext api = getProApiContext();
+		ApiCall call = new ApiCall(api);
+		GetSellerListRequestType req = new GetSellerListRequestType();
+		req.setUserID("buydig");
 		Calendar t1 = Calendar.getInstance();
-		Calendar t2 = Calendar.getInstance();
-		call.setStartTimeFilter(new TimeFilter(t1, t2));
-		ItemType[] tps=call.getSellerList();
-		System.out.println(call.hasError());
+		t1.setTime(new Date());
+		Calendar t2 = Calendar.getInstance();t2.set(Calendar.MONTH, 4);
+		req.setEndTimeFrom(t1);
+		req.setStartTimeFrom(t2);
+		PaginationType pg =new PaginationType();
+		pg.setPageNumber(1);pg.setEntriesPerPage(1);
+		req.setPagination(pg);
+		req.setIncludeVariations(true);
+		req.setDetailLevel(new DetailLevelCodeType[]{
+				DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES,
+				DetailLevelCodeType.ITEM_RETURN_CATEGORIES,
+				DetailLevelCodeType.RETURN_HEADERS
+				});
+		req.setGranularityLevel(GranularityLevelCodeType.FINE);
+		GetSellerListResponseType resp = (GetSellerListResponseType) call.execute(req);
+		ItemType[] tps = resp.getItemArray().getItem();
+		System.out.println(tps[0]);
 	}
 
 	/**
@@ -102,6 +166,21 @@ public class EbayTest {
 		System.out.println(url);
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
+		try{
+			FindItemsIneBayStoresResponseDocument doc=FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
+			FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
+			SearchItem[] type = rt.getSearchResult().getItemArray();
+
+			for (int i=0;i<type.length;i++){
+//				spuDTO[i]=new SpuDTO();
+				//System.out.println(type[i].getProductId().getStringValue());
+				//spuDTO[i].setSpuId(type[i].getProductId().getStringValue());
+			}
+			//System.out.println(rt.getSearchResult().getItemArray()[0].getProductId().get);
+
+		} catch (XmlException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
