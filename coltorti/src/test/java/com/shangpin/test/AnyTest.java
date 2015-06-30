@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.shangpin.iog.coltorti.service.ColtortiProductService;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -27,11 +28,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.coltorti.convert.ColtortiProductConvert;
 import com.shangpin.iog.coltorti.dto.ColtortiProduct;
 import com.shangpin.iog.coltorti.service.ColtortiStockService;
 import com.shangpin.iog.coltorti.service.ColtortiTokenService;
 import com.shangpin.iog.coltorti.service.ColtortiUtil;
 import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.dto.SkuDTO;
 
 /**
  * @description 
@@ -188,9 +191,11 @@ public class AnyTest {
 	@Test
 	public void testStock(){
 		try {
-			List<ColtortiProduct> list = ColtortiProductService.findProductByProductId("152479UCW000001");
+			List<ColtortiProduct> list = ColtortiProductService.findProductByProductId("151510ABS000008");
 //		Map<String, Map<String, Integer>> map =			ColtortiStockService.getStock("152582DCP000001", "152582DCP000001-001");
 			System.out.println(new Gson().toJson(list));
+			SkuDTO sk=ColtortiProductConvert.product2sku(list.get(0));
+			System.out.println(new Gson().toJson(sk));
 		} catch (ServiceException e) {
 			if(ColtortiUtil.isTokenExpire(e)){
 				//ColtortiTokenService.getToken()

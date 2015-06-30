@@ -87,7 +87,6 @@ public class ColtortiStartup {
 			grabProduct();
 		}else{
 			try {
-				
 				updateStock();
 			} catch (Exception e) {
 				logger.error("更新库存异常",e);
@@ -109,11 +108,11 @@ public class ColtortiStartup {
 		}else{
 			endDate = DateTimeUtil.convertDateFormat(new Date(), YYYY_MMDD_HH);
 			if("s".equals(args[0]))
-				startDate=DateTimeUtil.parse("2015061500",YYYY_MMDD_HH);
+				startDate=DateTimeUtil.parse("2015011500",YYYY_MMDD_HH);
 			else{
 				String lastDate=getLastGrapDate();
 				startDate=StringUtils.isNotEmpty(lastDate) ? DateTimeUtil.convertFormat(lastDate,
-						YYYY_MMDD_HH) : DateUtils.addDays(endDate, -5);
+						YYYY_MMDD_HH) : DateUtils.addDays(endDate, -180);
 			}
 		}
 		if("p".equals(args[0])){

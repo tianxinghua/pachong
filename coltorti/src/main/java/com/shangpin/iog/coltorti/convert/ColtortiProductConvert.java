@@ -30,7 +30,7 @@ public class ColtortiProductConvert {
 		dto.setId(UUIDGenerator.getUUID());
 		dto.setSupplierId(ColtortiUtil.supplier);
 		dto.setProductName(p.getName());
-		dto.setProductCode(p.getProductId());
+		dto.setProductCode(p.getProductCode());
 		dto.setColor(p.getColor());
 		dto.setCreateTime(new Date());
 		dto.setLastTime(p.getUpdatedAt());
@@ -39,7 +39,7 @@ public class ColtortiProductConvert {
 		dto.setSpuId(p.getProductId());
 		dto.setSaleCurrency("EUR");
 		dto.setProductDescription(p.getDescription());
-		dto.setStock(p.getStock().toString());
+		dto.setStock(p.getStock()==null?"0":p.getStock().toString());
 		if(p.getScalars()!=null && p.getScalars().size()>0)
 			dto.setProductSize(p.getScalars().entrySet().iterator().next().getValue());
 		else if(StringUtils.isNotEmpty(p.getSizeKeyValue())){//用于经过尺码拆分后的新产品

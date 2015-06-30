@@ -190,4 +190,17 @@ public class SkuDTO {
     public void setSalePrice(String salePrice) {
         this.salePrice = salePrice;
     }
+
+	@Override
+	public String toString() {
+		return "SkuDTO [id=" + id + ", supplierId=" + supplierId + ", skuId="
+				+ skuId + ", spuId=" + spuId + ", productName=" + productName
+				+ ", salePrice=" + salePrice + ", supplierPrice="
+				+ supplierPrice + ", barcode=" + barcode + ", productCode="
+				+ productCode + ", color=" + color + ", productDescription="
+				+ productDescription + ", saleCurrency=" + saleCurrency
+				+ ", productSize=" + productSize + ", stock=" + stock
+				+ ", createTime=" + createTime + ", lastTime=" + lastTime + "]";
+	}
+    
 }
