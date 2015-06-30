@@ -67,7 +67,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
         AbsUpdateProductStock grabStockImp = new GrabStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-        grabStockImp.updateProductStock("S0000197","2015-01-01 00:00",format.format(new Date()));
+        grabStockImp.updateProductStock("2015050800242","2015-01-01 00:00",format.format(new Date()));
     }
 
 }
