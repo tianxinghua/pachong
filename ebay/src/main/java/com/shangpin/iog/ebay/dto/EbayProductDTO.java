@@ -10,4 +10,5 @@ package com.shangpin.iog.ebay.dto;
  */
 public class EbayProductDTO {
 
+
 }
