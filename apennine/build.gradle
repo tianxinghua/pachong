@@ -27,3 +27,29 @@ dependencies {
 
 
 }
+
+task copyToLib( type: Copy ) {
+    into "$buildDir/libs/lib"
+    from configurations.compile
+}
+
+
+jar {
+
+    dependsOn copyToLib
+//    from {
+//        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+
+//    }
+
+    def manifestCp = configurations.compile.files.collect  {
+        File file = it
+        "lib/${file.name}"
+    }.join(' ')
+
+    manifest {
+        attributes 'Main-Class': 'com.shangpin.iog.apennine.Startup'
+//        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
+        attributes 'Class-Path': '. ' +  manifestCp
+    }
+}

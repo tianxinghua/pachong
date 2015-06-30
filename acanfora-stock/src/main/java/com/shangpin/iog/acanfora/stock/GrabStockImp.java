@@ -11,6 +11,9 @@ import com.shangpin.iog.acanfora.stock.dto.Product;
 import com.shangpin.iog.acanfora.stock.dto.Products;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.bind.JAXBException;
 import java.lang.String;
@@ -19,15 +22,18 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class GrabStockImp extends AbsUpdateProductStock {
-
+    static final Log log = LogFactory.getLog(GrabStockImp.class);
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
         Map<String, Integer> skustock = new HashMap<>(skuNo.size());
         List<Item> itemList = new ArrayList<>();
+        Map<String,String> stockMap = new HashMap<>();
 
         String kk = HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");
         Products products = null;
         try {
+            log.info("拉取ACANFORA数据开始");
             products = ObjectXMLUtil.xml2Obj(Products.class, kk);
+            log.info("拉取ACANFORA数据成功");
         } catch (JAXBException e) {
             e.printStackTrace();
         }
@@ -38,17 +44,26 @@ public class GrabStockImp extends AbsUpdateProductStock {
             if (null == items) {
                 continue;
             }
-            itemList.containsAll(items.getItems());
+            for(Item item:items.getItems()){
+                if(StringUtils.isNotBlank(item.getStock()) ){
+                     stockMap.put(item.getItem_id(),item.getStock());
+                }
+            }
+//            itemList.containsAll(items.getItems());
         }
 
         for (String skuno : skuNo) {
-            for (Item item : itemList) {
-                if (skuno.equals(item.getItem_id())) {
-                    skustock.put(skuno, Integer.valueOf(item.getStock()));
-                    break;
-                }
+//            for (Item item : itemList) {
+//                if (skuno.equals(item.getItem_id())) {
+//                    skustock.put(skuno, Integer.valueOf(item.getStock()));
+//                    break;
+//                }
+//            }
+            if(stockMap.containsKey(skuno)){
+                skustock.put(skuno, Integer.valueOf(stockMap.get(skuno)));
             }
         }
+        log.info("ACANFORA赋值库存数据成功");
         return skustock;
     }
 
@@ -56,8 +71,10 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
         AbsUpdateProductStock grabStockImp = new GrabStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        log.info("ACANFORA更新数据库开始");
+        grabStockImp.updateProductStock("2015050800242","2015-01-01 00:00",format.format(new Date()));
+        log.info("ACANFORA更新数据库结束");
 
-        grabStockImp.updateProductStock("S0000197","2015-01-01 00:00",format.format(new Date()));
     }
 
 }

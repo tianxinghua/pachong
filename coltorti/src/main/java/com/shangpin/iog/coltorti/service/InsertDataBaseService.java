@@ -131,7 +131,7 @@ public class InsertDataBaseService {
 		int failCnt=0;
 		for (ProductPictureDTO pic : skuPics) {
 			try{
-				pfs.savePicture(pic);
+				pfs.savePictureForMongo(pic);
 			}catch(Exception e){
 				failCnt++;
 				if(e.getClass().equals(DuplicateKeyException.class)){
