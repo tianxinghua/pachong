@@ -92,7 +92,8 @@ logger.warn("拉取库存完毕："+iceStock.size());
 			String skuId = iterator.next();
 			Integer stock=supplierStock.get(skuId);//库存
 			String skuNo=skuRelation4iceAndSupplier.get(skuId);//skuNo
-			iceStock.put(skuNo, stock);
+			if(skuNo!=null)
+				iceStock.put(skuNo, stock);
 		}
 		
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
