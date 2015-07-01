@@ -58,8 +58,8 @@ public abstract class AbsUpdateProductStock {
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
 				for (SopSkuIce ice : skuIces) {
-					skuIds.add(ice.BarCode);
-					stocks.put(ice.BarCode,ice.SkuNo);
+					skuIds.add(ice.SupplierSkuNo);
+					stocks.put(ice.SupplierSkuNo,ice.SkuNo);
 //System.out.println("BarCode:"+ice.BarCode+",skuNo:"+ice.SkuNo+",SupplierSkuNO:"+ice.SupplierSkuNo);
 				}
 			}
