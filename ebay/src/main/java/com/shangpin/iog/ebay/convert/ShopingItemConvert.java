@@ -50,9 +50,9 @@ public class ShopingItemConvert {
 	public static Map<String, ? extends Collection<?>> convert2kpp(
 			SimpleItemType[] itemTypes, String userId) {
 		Map<String, ? extends Collection<?>> map=new HashMap<String, Collection<?>>();
-		Set<ProductPictureDTO> rtnPic=new HashSet<>();
-		Set<SkuDTO> rtnSku=new HashSet<>();
-		Set<SpuDTO> rtnSpu=new HashSet<>();
+		Set<ProductPictureDTO> rtnPic=new HashSet<>(itemTypes.length*2);
+		Set<SkuDTO> rtnSku=new HashSet<>(itemTypes.length);
+		Set<SpuDTO> rtnSpu=new HashSet<>(itemTypes.length);
 		for (SimpleItemType sit : itemTypes) {
 			Object[] obj=convertSku(userId,sit);
 			rtnSku.addAll((Set<SkuDTO>)obj[0]);

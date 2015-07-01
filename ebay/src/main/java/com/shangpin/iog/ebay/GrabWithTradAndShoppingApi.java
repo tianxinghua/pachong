@@ -36,11 +36,11 @@ public class GrabWithTradAndShoppingApi {
 	static Logger logger = LoggerFactory.getLogger(GrabWithTradAndShoppingApi.class);
 	static int pageSize=300;
 	/**
-	 * 抓取ebay商户的数据
+	 * 抓取ebay商户的数据,封装好spu,sku,pic
 	 * @param userId 商户id
 	 * @param endStart 产品的结束时间 开始日期，一般以大于当前时间为好
 	 * @param endEnd 产品的结束时间 终止日期
-	 * @return 
+	 * @return  封装好的sku,spu,pic，各键代表对应的数据集合
 	 * @throws ApiException 
 	 * @throws SdkSoapException
 	 * @throws SdkException
@@ -73,6 +73,8 @@ public class GrabWithTradAndShoppingApi {
 					skuSpuAndPic.get("pic").addAll(kpp.get("pic"));
 				}
 				page++;
+			}else{
+				logger.warn("拉取数据失败，第{}页,错误信息：{}",page,resp.getErrors(0).getLongMessage());
 			}
 		}while(hasMore);
 		
@@ -87,11 +89,11 @@ public class GrabWithTradAndShoppingApi {
 	public Map<String,Integer> getStock(Collection<String> itemIds){
 		GetMultipleItemsResponseType resp=GrabEbayApiService.shoppingGetMultipleItems4Stock(itemIds);
 		if(AckCodeType.FAILURE.value().equals(resp.getAck().toString())){
-			logger.warn("获取库存失败:"+resp.getErrorsArray(0).toString());
+			logger.warn("获取库存失败，错误码：{}，错误信息{}:",resp.getErrorsArray(0).getErrorCode(),resp.getErrorsArray(0).getLongMessage());
 			return null;
 		}
 		SimpleItemType[] sits=resp.getItemArray();
-		Map<String,Integer> rtnMap=new HashMap<>();
+		Map<String,Integer> rtnMap=new HashMap<>(sits.length);
 		for (SimpleItemType sit : sits) {
 			VariationsType vta=sit.getVariations();
 			if(vta!=null && vta.getVariationArray()!=null){
