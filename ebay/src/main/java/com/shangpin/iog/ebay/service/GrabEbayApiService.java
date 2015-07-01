@@ -18,7 +18,6 @@ import com.ebay.soap.eBLBaseComponents.GetItemRequestType;
 import com.ebay.soap.eBLBaseComponents.GetItemResponseType;
 import com.ebay.soap.eBLBaseComponents.GetSellerListRequestType;
 import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
-import com.ebay.soap.eBLBaseComponents.GranularityLevelCodeType;
 import com.ebay.soap.eBLBaseComponents.PaginationType;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseDocument;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
@@ -36,8 +35,7 @@ public class GrabEbayApiService {
 	static Logger log = LoggerFactory.getLogger(GrabEbayApiService.class);
 	/**
 	 * 获取ebay商铺销售的产品<br/>
-	 * 获取item,ListingDetails,PrimaryCategory,SellingStatus<br/>
-	 * ShippingDetails,Storefront,PictureDetails,Variations<br/>
+	 * 只获取itemId,seller信息，通过itemId再去调用{@link #tradeGetItem(String)}完善信息
 	 * @see #shoppingSingleItem(String) 获取单个item
 	 * @see #shoppingGetMultipleItems(List) 获取多个item
 	 * @param userId 商铺id
@@ -61,7 +59,10 @@ public class GrabEbayApiService {
 		pg.setPageNumber(page);pg.setEntriesPerPage(pageSize);
 		req.setPagination(pg);
 		req.setIncludeVariations(true);
-		req.setGranularityLevel(GranularityLevelCodeType.CUSTOM_CODE);
+		req.setDetailLevel(new DetailLevelCodeType[]{
+				DetailLevelCodeType.ITEM_RETURN_DESCRIPTION
+				});
+		//req.setGranularityLevel(GranularityLevelCodeType.CUSTOM_CODE);
 		GetSellerListResponseType resp = (GetSellerListResponseType) call.execute(req);
 		return resp;
 	}
@@ -107,7 +108,7 @@ public class GrabEbayApiService {
 		return null;
 	}
 	/**
-	 * 
+	 * Variations,ItemSpecifics,Quantity
 	 * @param itemIds ebay的itemId集合
 	 * @return
 	 */
@@ -119,7 +120,7 @@ public class GrabEbayApiService {
 			String itemId = iterator.next();
 			sb.append(itemId).append(",");
 		}
-		sb.append("&IncludeSelector=Variations,ItemSpecifics");
+		sb.append("&IncludeSelector=Details,Variations,ItemSpecifics");
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
 		try {

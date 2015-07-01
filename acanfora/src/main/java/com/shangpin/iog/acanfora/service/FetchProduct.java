@@ -75,7 +75,6 @@ public class FetchProduct {
                                 dto.setId(UUIDGenerator.getUUID());
                                 dto.setSkuId(item.getItem_id());
                                 try {
-
 //                                    productFetchService.savePicture(dto);
                                     productFetchService.savePictureForMongo(dto);
                                 } catch (ServiceException e) {

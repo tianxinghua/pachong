@@ -3,6 +3,7 @@ package com.shangpin.iog.common.utils.httpclient;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.*;
 import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -16,37 +17,60 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.*;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
 
 /**
  * httpcomponents-client-4.4.x的工具类
@@ -276,10 +300,266 @@ public class HttpUtils {
 		bd.setSSLSocketFactory(sslf);
 		if(proxy) 
 			bd.setRoutePlanner(getProxHost());
-		return bd.build();
+		return bd.setKeepAliveStrategy(getKeepAliveHttpClient()).build();
+		//.setConnectionManager(getPoolingConnectionManager(null))
 	}
-	
-	
+
+
+	/**
+	 * 使用长连接
+	 * 使用方法
+	 *
+	 *  CloseableHttpClient client = HttpClients.custom().setKeepAliveStrategy(myStrategy).build();
+	 *
+	 */
+	private static  ConnectionKeepAliveStrategy getKeepAliveHttpClient() {
+
+		ConnectionKeepAliveStrategy strategy = new DefaultConnectionKeepAliveStrategy() {
+
+			/**
+			 * 服务器端配置（以tomcat为例）：keepAliveTimeout=60000，表示在60s内内，服务器会一直保持连接状态。
+			 * 也就是说，如果客户端一直请求服务器，且间隔未超过60s，则该连接将一直保持，如果60s内未请求，则超时。
+			 *
+			 * getKeepAliveDuration返回超时时间；
+			 */
+			@Override
+			public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+
+
+				//如果服务器指定了超时时间，则以服务器的超时时间为准
+				HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+				while (it.hasNext()) {
+					HeaderElement he = it.nextElement();
+					String param = he.getName();
+					String value = he.getValue();
+					if (value != null && param.equalsIgnoreCase("timeout")) {
+						try {
+//							System.out.println("服务器指定的超时时间：" + value + " 秒");
+							return Long.parseLong(value) * 1000;
+						} catch (NumberFormatException ignore) {
+							ignore.printStackTrace();
+						}
+					}
+				}
+
+
+				long keepAlive = super.getKeepAliveDuration(response, context);
+
+				// 如果服务器未指定超时时间，则客户端默认30s超时
+				if (keepAlive == -1) {
+					keepAlive = 30 * 1000;
+				}
+
+				return keepAlive;
+
+                /*  单独设置 某个网址的时间
+                如果访问A.com.cn主机，则超时时间5秒，其他主机超时时间30秒
+                HttpHost host = (HttpHost) context.getAttribute(HttpClientContext.HTTP_TARGET_HOST);
+                if ("A.com.cn".equalsIgnoreCase(host.getHostName())) {
+                    keepAlive =  10 * 1000;
+                } else {
+                    keepAlive =  30 * 1000;
+                }*/
+
+
+			}
+		};
+
+		return strategy;
+
+
+
+	}
+
+	/**
+	 *  异常恢复机制：
+	 *
+	 *  HttpRequestRetryHandler连接失败后，可以针对相应的异常进行相应的处理措施；
+	 *  HttpRequestRetryHandler接口须要用户自己实现；
+	 *
+	 *  使用方法
+	 *
+	 *  CloseableHttpClient client = HttpClients.custom().setRetryHandler(retryHandler).build()
+	 *
+	 */
+	private HttpRequestRetryHandler getRetryHandler(){
+
+		HttpRequestRetryHandler retryHandler = new HttpRequestRetryHandler() {
+
+			/**
+			 * exception异常信息；
+			 * executionCount：重连次数；
+			 * context：上下文
+			 */
+			@Override
+			public boolean retryRequest(IOException exception, int executionCount,HttpContext context) {
+
+				System.out.println("重连接次数："+executionCount);
+
+				if (executionCount >= 5) {//如果连接次数超过5次，就不进行重复连接
+					return false;
+				}
+				if (exception instanceof InterruptedIOException) {//io操作中断
+					return false;
+				}
+				if (exception instanceof UnknownHostException) {//未找到主机
+					// Unknown host
+					return false;
+				}
+				if (exception instanceof ConnectTimeoutException) {//连接超时
+					return true;
+				}
+				if (exception instanceof SSLException) {
+					// SSL handshake exception
+					return false;
+				}
+				HttpClientContext clientContext = HttpClientContext.adapt(context);
+
+				HttpRequest request = clientContext.getRequest();
+
+				boolean idempotent = !(request instanceof HttpEntityEnclosingRequest);
+
+				if (idempotent) {
+					// Retry if the request is considered idempotent
+					return true;
+				}
+				return false;
+			}
+		};
+		return  retryHandler;
+
+	}
+
+	/**
+	 * 设置并发管理
+	 * @param urlHost  连接域名
+	 * 使用方法
+	 *
+	 *
+	 * @return
+	 */
+	private static PoolingHttpClientConnectionManager getPoolingConnectionManager(String urlHost){
+
+		PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
+		connManager.setMaxTotal(200);//设置最大连接数200
+		connManager.setDefaultMaxPerRoute(3);//设置每个路由默认连接数
+		if(StringUtils.isNotBlank(urlHost)){
+			HttpHost host = new HttpHost(urlHost);//针对的主机
+			connManager.setMaxPerRoute(new HttpRoute(host), 5);//每个路由器对每个服务器允许最大5个并发访问
+		}
+
+		return connManager;
+
+	}
+
+
+	//
+
+	/**
+	 *
+	 * 这个线程负责使用连接管理器清空失效连接和过长连接
+	 *
+	 * 使用方法
+	 *
+	 *
+	 *  HttpClientConnectionManager manager = new BasicHttpClientConnectionManager();
+
+	 new IdleConnectionMonitorThread(manager).start();//启动线程，5秒钟清空一次失效连接
+
+	 CloseableHttpClient client = HttpClients.custom().setConnectionManager(manager).build();
+	 *
+	 */
+
+
+	private static class IdleConnectionMonitorThread extends Thread {
+
+		private final HttpClientConnectionManager connMgr;
+		private volatile boolean shutdown;
+
+		public IdleConnectionMonitorThread(HttpClientConnectionManager connMgr) {
+			super();
+			this.connMgr = connMgr;
+		}
+
+		@Override
+		public void run() {
+			try {
+				while (!shutdown) {
+					synchronized (this) {
+						wait(5000);
+						System.out.println("清空失效连接...");
+						// 关闭失效连接
+						connMgr.closeExpiredConnections();
+						//关闭空闲超过30秒的连接
+						connMgr.closeIdleConnections(30, TimeUnit.SECONDS);
+					}
+				}
+			} catch (InterruptedException ex) {
+			}
+		}
+
+		public void shutdown() {
+			shutdown = true;
+			synchronized (this) {
+				notifyAll();
+			}
+		}
+	}
+
+
+	/**
+	 * Http连接使用java.net.Socket类来传输数据。这依赖于ConnectionSocketFactory接口来创建、初始化和连接socket。
+	 * 预留用
+	 */
+	private  void test12() throws IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+
+
+		HttpClientContext clientContext = HttpClientContext.create();
+		PlainConnectionSocketFactory sf = PlainConnectionSocketFactory.getSocketFactory();//Plain：简洁的
+		Socket socket = sf.createSocket(clientContext);
+		HttpHost target = new HttpHost("localhost");
+		InetSocketAddress remoteAddress = new InetSocketAddress(InetAddress.getByAddress(new byte[]{127, 0, 0, 1}), 80);
+		sf.connectSocket(1000, socket, target, remoteAddress, null,clientContext);
+
+
+		//创建通用socket工厂
+		ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
+
+		//Creates default SSL context based on system properties(HttpClient没有自定义任何加密算法。它完全依赖于Java加密标准)
+		SSLContext sslcontext = SSLContexts.createSystemDefault();
+
+		//创建ssl socket工厂
+		LayeredConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+				sslcontext,
+				SSLConnectionSocketFactory.STRICT_HOSTNAME_VERIFIER);
+
+		//自定义的socket工厂类可以和指定的协议（Http、Https）联系起来，用来创建自定义的连接管理器。
+		Registry<ConnectionSocketFactory> r = RegistryBuilder.<ConnectionSocketFactory>create()
+				.register("http", plainsf)
+				.register("https", sslsf)
+				.build();
+		HttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(r);
+		CloseableHttpClient client = HttpClients.
+				custom().
+				setConnectionManager(cm).
+				build();
+
+
+		////////////////////////////////////////////////////////////
+		//自定义SSLContext
+//      KeyStore myTrustStore = null;
+//      SSLContext sslContext = SSLContexts.custom()
+//              .useTLS()   //安全传输层协议（TLS）用于在两个通信应用程序之间提供保密性和数据完整性。该协议由两层组成： TLS 记录协议（TLS Record）和 TLS 握手协议（TLS Handshake）。
+//              .useSSL()
+//              .loadTrustMaterial(myTrustStore)
+//              .build();
+//      SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext);
+		////////////////////////////////////////////////////////////////////
+
+
+	}
+
+
 	public static void main(String[] args) {
 		String url = "https://api.orderlink.it/v1/user/token";
 		String user="SHANGPIN";String pwd="12345678";

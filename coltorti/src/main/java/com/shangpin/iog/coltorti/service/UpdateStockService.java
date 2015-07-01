@@ -5,8 +5,10 @@ package com.shangpin.iog.coltorti.service;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,7 @@ public class UpdateStockService extends AbsUpdateProductStock{
 
 	public Map<String, Integer> grabStock(Collection<String> skuNos) throws ServiceException{
 		Map<String, Integer> skuStock= new HashMap<>(skuNos.size());
+		Set<String> productIdSet=new HashSet<>();
 		for (Iterator<String> iterator = skuNos.iterator(); iterator
 				.hasNext();) {
 			String skuNo = iterator.next();
@@ -34,7 +37,14 @@ public class UpdateStockService extends AbsUpdateProductStock{
 			String scalarNo=skuNo.substring(scalarIdx+1);//尺寸编号
 			Map<String, Map<String, Integer>> stoks=null;
 			try{
-				stoks=ColtortiStockService.getStock(productId, recordId);
+				if(!productIdSet.contains(productId)){
+					stoks=ColtortiStockService.getStock(productId, null);
+					productIdSet.add(productId);
+					if(stoks!=null && stoks.size()>0){
+						int quantity=stoks.get(recordId).get(scalarNo);
+						skuStock.put(skuNo, quantity);
+					}
+				}
 			logger.warn(recordId+",拉取库存成功:"+new Gson().toJson(stoks));
 			}catch(ServiceException e){
 				if(ColtortiUtil.isTokenExpire(e)){
@@ -43,10 +53,6 @@ public class UpdateStockService extends AbsUpdateProductStock{
 				}else{
 					continue;						
 				}
-			}
-			if(stoks!=null && stoks.size()>0){
-				int quantity=stoks.get(recordId).get(scalarNo);
-				skuStock.put(skuNo, quantity);
 			}
 		}
 		return skuStock;

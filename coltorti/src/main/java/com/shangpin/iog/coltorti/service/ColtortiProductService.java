@@ -103,6 +103,7 @@ public class ColtortiProductService{
 		boolean hasMore=true;
 		int pg=1;
 		while(hasMore){
+			System.out.println("Page =  "+pg);
 			List<ColtortiProduct> r1=null;
 			try{
 					r1=findProduct(pg,defaultSize,dateStart,dateEnd,productId,recordId);
@@ -154,21 +155,21 @@ public class ColtortiProductService{
 		List<ColtortiProduct> pros = new ArrayList<>(ks.size()); 
 		for (Entry<String, JsonElement> entry : ks) {
 			JsonElement je=entry.getValue();
-			JsonObject jop=je.getAsJsonObject();
 			try {
+				JsonObject jop=je.getAsJsonObject();
 				ColtortiProduct p=toObj(jop,ColtortiProduct.class);
 				p.setSkuId(entry.getKey());//skuId就是recordId暂时的..#@see convertProduct
 				//获取库存
-				setStock(entry.getKey(), p);
+				//setStock(entry.getKey(), p);
 				pros.add(p);
 			} catch (InstantiationException | IllegalAccessException e) {
-				logger.warn("convert product fail Json："+jop.toString());
+				logger.warn("convert product fail Json："+je.toString());
 			}
 		}
 		return pros;
 	}
 	/**
-	 * @param entry
+	 * @param recordId
 	 * @param p
 	 * @throws ServiceException
 	 */
