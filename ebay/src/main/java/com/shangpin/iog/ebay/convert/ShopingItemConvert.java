@@ -50,9 +50,9 @@ public class ShopingItemConvert {
 	public static Map<String, ? extends Collection<?>> convert2kpp(
 			SimpleItemType[] itemTypes, String userId) {
 		Map<String, ? extends Collection<?>> map=new HashMap<String, Collection<?>>();
-		Set<ProductPictureDTO> rtnPic=new HashSet<>();
-		Set<SkuDTO> rtnSku=new HashSet<>();
-		Set<SpuDTO> rtnSpu=new HashSet<>();
+		Set<ProductPictureDTO> rtnPic=new HashSet<>(itemTypes.length*2);
+		Set<SkuDTO> rtnSku=new HashSet<>(itemTypes.length);
+		Set<SpuDTO> rtnSpu=new HashSet<>(itemTypes.length);
 		for (SimpleItemType sit : itemTypes) {
 			Object[] obj=convertSku(userId,sit);
 			rtnSku.addAll((Set<SkuDTO>)obj[0]);
@@ -144,12 +144,12 @@ public class ShopingItemConvert {
 			for (VariationType vt : vrts) {
 				SkuDTO sku = new SkuDTO();
 				setSkuCommon(userId, createDate, sit, sku);
-				sku.setStock(""+(vt.getQuantity()-vt.getQuantitySold()));
+				sku.setStock(""+(vt.getQuantity()-vt.getSellingStatus().getQuantitySold()));
 				sku.setSaleCurrency(vt.getStartPrice().getCurrencyID().toString());
 				sku.setSalePrice(""+vt.getStartPrice().getDoubleValue());
 				sku.setSupplierPrice(sku.getSalePrice());
 				setSkuAtt(sku,sit.getItemSpecifics().getNameValueListArray());
-				String skuId=sit.getItemID()+"#"+(vt.getSKU()==null?"":vt.getSKU());
+				String skuId=getSkuId(sit,vt);
 				sku.setSkuId(skuId);
 				//sit.getVariations().getPicturesArray();//for pic
 				getVariationPic(sit.getVariations().getPicturesArray(),rtnPic,skuId,sku.getSupplierId());
@@ -162,12 +162,27 @@ public class ShopingItemConvert {
 			sku.setSalePrice(""+sit.getCurrentPrice().getDoubleValue());
 			sku.setSaleCurrency(sit.getCurrentPrice().getCurrencyID().toString());
 			sku.setSupplierPrice(sku.getSalePrice());
-			sku.setSkuId(sit.getItemID());
+			sku.setSkuId(getSkuId(sit,null));
 			//sit.getPictureURLArray();
 			url2Pic(sit.getItemID(), sku.getSupplierId(), rtnPic, sit.getPictureURLArray());
 			rtnSku.add(sku);
 		}
 		return picAndSku;
+	}
+
+	/**
+	 * 设置skuId，无变种的就是sit的itemId<br/>
+	 * 有变种的则是:itemId#变种sku;<br/>
+	 * 注意：如果变种sku没有，那么就是：itemId#（会导致重复，覆盖）<br/>
+	 * @param sit shopping接口拉取的的item
+	 * @param vt item变种数据  nullable
+	 * @return 变换的skuId
+	 */
+	public static String getSkuId(SimpleItemType sit, VariationType vt) {
+		if(vt!=null)
+			return sit.getItemID()+"#"+(vt.getSKU()==null?"":vt.getSKU());
+		else 
+			return sit.getItemID();
 	}
 
 	/**

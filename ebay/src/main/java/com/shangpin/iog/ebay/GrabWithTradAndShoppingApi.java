@@ -1,5 +1,5 @@
 /**
- *
+ * 
  */
 package com.shangpin.iog.ebay;
 
@@ -8,8 +8,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ebay.sdk.ApiException;
 import com.ebay.sdk.SdkException;
@@ -23,6 +27,8 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.ebay.shoping.VariationType;
+import com.shangpin.ebay.shoping.VariationsType;
 import com.shangpin.iog.ebay.convert.ShopingItemConvert;
 import com.shangpin.iog.ebay.service.GrabEbayApiService;
 import com.shangpin.iog.service.ProductFetchService;
@@ -30,14 +36,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * @description
+ * @description 
  * @author 陈小峰
  * <br/>2015年6月30日
  */
 @Component
 public class GrabWithTradAndShoppingApi {
 	@Autowired
-	ProductFetchService productFetchService;
+	ProductFetchService productFetchService
+	static Logger logger = LoggerFactory.getLogger(GrabWithTradAndShoppingApi.class);
 	static int pageSize=200;
 	/**
 	 * 抓取ebay商户的数据
@@ -46,6 +53,8 @@ public class GrabWithTradAndShoppingApi {
 	 * @param endEnd 产品的结束时间 终止日期
 	 * @return
 	 * @throws ApiException
+	 * @return  封装好的sku,spu,pic，各键代表对应的数据集合
+	 * @throws ApiException 
 	 * @throws SdkSoapException
 	 * @throws SdkException
 	 */
@@ -55,11 +64,9 @@ public class GrabWithTradAndShoppingApi {
 		boolean hasMore=false;
 		Map<String, ? extends Collection> skuSpuAndPic=null;
 		do{
-			GetSellerListResponseType resp = GrabEbayApiService.tradeSellerList(userId,
+			GetSellerListResponseType resp = GrabEbayApiService.tradeSellerList(userId, 
 					getCalendar(endStart), getCalendar(endEnd),page,pageSize);
-            System.out.println("nihao");
-			if(!AckCodeType.FAILURE.equals(resp.getAck())){
-                System.out.println("nihaoaaaaaa");
+			if(AckCodeType.FAILURE.equals(resp.getAck())){
 				hasMore=resp.isHasMoreItems();
 				ItemType[] tps = resp.getItemArray().getItem();
 				List<String> itemIds = new ArrayList<>(tps.length);//1.得到id
@@ -72,7 +79,6 @@ public class GrabWithTradAndShoppingApi {
 				SimpleItemType[] itemTypes=multResp.getItemArray();
 				//Map<String, ? extends Collection<?>> kpp=TradeItemConvert.convert2SKuAndSpu(tps,userId);
 				Map<String, ? extends Collection<?>> kpp=ShopingItemConvert.convert2kpp(itemTypes,userId);
-				System.out.println(kpp.size()+"nihao");
 				if(skuSpuAndPic==null){
 					skuSpuAndPic=kpp;
 				}else{
@@ -83,7 +89,7 @@ public class GrabWithTradAndShoppingApi {
 				page++;
 			}
 		}while(hasMore);
-
+		
 		return skuSpuAndPic;
 	}
 
@@ -110,6 +116,36 @@ public class GrabWithTradAndShoppingApi {
 //		}
 	}
 	/**
+	 * 根据itemId获取item及变种的库存<br/>
+	 * @param itemIds ebay的itemId
+	 * @return skuId:stock的键值对
+	 * @see ShopingItemConvert#getSkuId(SimpleItemType, VariationType) 产品skuId
+	 */
+	public Map<String,Integer> getStock(Collection<String> itemIds){
+		GetMultipleItemsResponseType resp=GrabEbayApiService.shoppingGetMultipleItems4Stock(itemIds);
+		if(AckCodeType.FAILURE.value().equals(resp.getAck().toString())){
+			logger.warn("获取库存失败，错误码：{}，错误信息{}:",resp.getErrorsArray(0).getErrorCode(),resp.getErrorsArray(0).getLongMessage());
+			return null;
+		}
+		SimpleItemType[] sits=resp.getItemArray();
+		Map<String,Integer> rtnMap=new HashMap<>(sits.length);
+		for (SimpleItemType sit : sits) {
+			VariationsType vta=sit.getVariations();
+			if(vta!=null && vta.getVariationArray()!=null){
+				VariationType[] vts=vta.getVariationArray();
+				for (VariationType vt : vts) {
+					int quantity=vt.getQuantity()-vt.getSellingStatus().getQuantitySold();
+					rtnMap.put(ShopingItemConvert.getSkuId(sit,vt),quantity);
+				}
+			}else{
+				int quantity=sit.getQuantity()-sit.getQuantitySold();
+				rtnMap.put(ShopingItemConvert.getSkuId(sit,null), quantity);
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * @param date
 	 * @return
 	 */
@@ -118,5 +154,5 @@ public class GrabWithTradAndShoppingApi {
 		ca.setTime(date);
 		return ca;
 	}
-
+	
 }

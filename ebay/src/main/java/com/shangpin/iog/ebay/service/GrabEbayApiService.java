@@ -1,6 +1,7 @@
 package com.shangpin.iog.ebay.service;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -112,7 +113,24 @@ public class GrabEbayApiService {
 	 * @param itemIds ebay的itemId集合
 	 * @return
 	 */
-	public static GetMultipleItemsResponseType shoppingGetMultipleItems(List<String> itemIds){
+	public static GetMultipleItemsResponseType shoppingGetMultipleItems(Collection<String> itemIds){
+		return shopingGetMultipleItem(itemIds,"Details,Variations,ItemSpecifics");
+	}
+	/**
+	 * 获取库存信息，不包括itemSpecifics
+	 * @see #shoppingGetMultipleItems(List) 获取详细信息
+	 * @param itemIds
+	 * @return
+	 */
+	public static GetMultipleItemsResponseType shoppingGetMultipleItems4Stock(Collection<String> itemIds){
+		return shopingGetMultipleItem(itemIds,"Details,Variations");
+	}
+	/**
+	 * @param itemIds
+	 * @return
+	 */
+	private static GetMultipleItemsResponseType shopingGetMultipleItem(
+			Collection<String> itemIds,String includeSelector) {
 		String url=EbayConf.getShopingCallUrl("GetMultipleItems");
 		StringBuffer sb = new StringBuffer(url);
 		sb.append("&ItemID=");
@@ -120,7 +138,7 @@ public class GrabEbayApiService {
 			String itemId = iterator.next();
 			sb.append(itemId).append(",");
 		}
-		sb.append("&IncludeSelector=Details,Variations,ItemSpecifics");
+		sb.append("&IncludeSelector="+includeSelector);
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
 		try {
@@ -132,5 +150,6 @@ public class GrabEbayApiService {
 		}
 		return null;
 	}
+	
 	
 }
