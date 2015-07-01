@@ -10,6 +10,7 @@ import com.shangpin.ebay.finding.SearchResult;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
+import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
@@ -28,7 +29,6 @@ import java.util.Set;
 @Component("ebay")
 public class FetchEbayProduct {
     final Logger logger = Logger.getLogger(this.getClass());
-
 
     public Set getSkuDTO() {
         return skuDTO;
@@ -53,9 +53,11 @@ public class FetchEbayProduct {
     @Autowired
     ProductFetchService productFetchService;
 
-    public void FetchSkuAndSave(String itemID) throws ApiException, SdkException, ServiceException, XmlException {
-
+    public void FetchSkuAndSave(String itemID) throws Exception {
+        System.out.println("dasd");
+        ProductPictureDTO productPicture = null;
         SkuDTO sku = null;
+        String picUrl=getPicUrl(itemID);
         ApiContext api = getProApiContext();
         ApiCall call = new ApiCall(api);
         GetItemRequestType req = new GetItemRequestType();
@@ -67,14 +69,31 @@ public class FetchEbayProduct {
         VariationType[] variationType = it.getVariations().getVariation();
         SearchResult searchResult = testFindItemInEbayStore();
         SearchItem[] type = null;
+        String spuId=null;
         if (searchResult != null) {
             type = searchResult.getItemArray();
-        }
-        if (type != null) {
-            for (SearchItem t : type) {
-                if (it.getListingDetails().getEndTime().getTime().before(Calendar.getInstance().getTime())) {
+            if (type != null) {
+                for (SearchItem t : type) {
+                    if (t.getItemId().equals(itemID)) {
+                        if (t.getProductId() != null) {
+                            System.out.println("zhengsini" + t.getProductId().getStringValue());
+                            spuId = t.getProductId().getStringValue();
+                            break;
+                        } else {
+                            spuId = t.getItemId();
+                            System.out.println("nihao" + t.getItemId());
+                            break;
+                        }
+                    }
+                }
+                if (it.getListingDetails().getEndTime().getTime().after(Calendar.getInstance().getTime())) {
                     for (VariationType variationtype : variationType) {
                         sku = new SkuDTO();
+                        productPicture = new ProductPictureDTO();
+                        productPicture.setId(UUIDGenerator.getUUID());
+                        productPicture.setSkuId(variationtype.getSKU());
+                        productPicture.setSupplierId("ebay#" + it.getSeller().getUserID());
+                        productPicture.setPicUrl(picUrl);
                         sku.setId(UUIDGenerator.getUUID());
                         sku.setSkuId(variationtype.getSKU());
                         sku.setSupplierId("ebay#" + it.getSeller().getUserID());
@@ -101,16 +120,9 @@ public class FetchEbayProduct {
                         }
                         sku.setCreateTime(it.getListingDetails().getStartTime().getTime());
                         sku.setLastTime(it.getListingDetails().getEndTime().getTime());
-                        if (t.getItemId().equals(itemID)) {
-                            if (t.getProductId() != null) {
-                                sku.setSpuId(t.getProductId().getStringValue());
-                                break;
-                            } else {
-                                sku.setSpuId(t.getItemId());
-                                break;
-                            }
-                        }
+                        sku.setSpuId(spuId);
                         productFetchService.saveSKU(sku);
+                        productFetchService.savePictureForMongo(productPicture);
                         skuDTO.add(sku);
                     }
                 }
@@ -153,14 +165,13 @@ public class FetchEbayProduct {
                     for (SearchItem t : type) {
                         spu = new SpuDTO();
                         ItemType item = testGetItem(t.getItemId());
-
                         spu.setId(UUIDGenerator.getUUID());
                         if (t.getProductId() != null) {
                             spu.setSpuId(t.getProductId().getStringValue());
-                        }else {
+                        } else {
                             spu.setSpuId(t.getItemId());
                         }
-                        if(item.getSeller().getUserID()!=null) {
+                        if (item.getSeller().getUserID() != null) {
                             spu.setSupplierId("ebay#" + item.getSeller().getUserID());
                         }
                         spu.setSpuName(t.getTitle());
@@ -208,6 +219,7 @@ public class FetchEbayProduct {
                         spu.setLastTime(t.getListingInfo().getEndTime().getTime());
                         spuDTO.add(spu);
                         productFetchService.saveSPU(spu);
+
                     }
                 }
             }
@@ -250,4 +262,25 @@ public class FetchEbayProduct {
         return searchResult;
     }
 
+    public String getPicUrl(String itemId) throws Exception {
+
+        StringBuilder picUrl = new StringBuilder();
+        ItemType item = testGetItem(itemId);
+        //将两处的图片加在一个String中，获取所有图片
+        if (item.getPictureDetails().getPictureURL() != null) {
+            for (int m = 0; m < item.getPictureDetails().getPictureURL().length; m++) {
+                picUrl.append(item.getPictureDetails().getPictureURL()[m]).append(";");
+            }
+        }
+        if (item.getVariations() != null) {
+            if (item.getVariations().getPictures() != null) {
+                VariationSpecificPictureSetType[] variationSpecificPictureSetType = item.getVariations().getPictures()[0].getVariationSpecificPictureSet();
+                if (variationSpecificPictureSetType != null)
+                    for (VariationSpecificPictureSetType var : variationSpecificPictureSetType) {
+                        picUrl.append(var.getPictureURL()).append(";");
+                    }
+            }
+        }
+        return picUrl.toString();
+    }
 }

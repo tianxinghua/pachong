@@ -391,7 +391,7 @@ public class EbayTest {
 	@Test
 	public void GetMultipleItems(){
 		String url=shopingCommon("GetMultipleItems");
-		url+="ItemID=131503285055,221288382861&IncludeSelector=Variations,ItemSpecifics";
+		url+="ItemID=131503285055,221288382861&IncludeSelector=Details";
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
 		try {
