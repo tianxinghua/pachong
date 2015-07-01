@@ -37,6 +37,7 @@ public class ColtortiProduct implements Serializable{
 	String name;//名字
 	String description;//描述
 	Float price;//价格
+	String[] alternativeIds;
 	Map<String,String> scalars; //
 	Map<String,String> brand;
 	Map<String,String> season;
@@ -53,6 +54,7 @@ public class ColtortiProduct implements Serializable{
 	Date updatedAt;
 	
 	Integer stock;
+	Map<String,Integer> sizeStockMap;
 	
 	/**
 	 * 获取类别分别是大、小类，以','号分隔，没有的用括号中的代替：<br/>
@@ -143,6 +145,20 @@ public class ColtortiProduct implements Serializable{
 			if(mat!=null) return mat;
 			mat=getAttributeValues("000003");
 			return mat;
+		}
+		return null;
+	}
+	/**
+	 * 拿货号
+	 * @return
+	 */
+	public String getProductCode() {
+		if(alternativeIds!=null && alternativeIds.length>0){
+			for (String pcode : alternativeIds) {
+				if(!pcode.equals(productId)){
+					return pcode;
+				}
+			}
 		}
 		return null;
 	}

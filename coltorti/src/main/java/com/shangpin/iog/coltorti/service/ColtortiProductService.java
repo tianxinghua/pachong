@@ -41,7 +41,7 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 public class ColtortiProductService{
 	static Logger logger =LoggerFactory.getLogger(ColtortiProductService.class);
 	static final Map<String,Field[]> classField = new HashMap<>();
-	private static final int defaultSize=500; 
+	private static final int defaultSize=100; 
 	/**
 	 * 
 	 * @param page
@@ -140,30 +140,57 @@ public class ColtortiProductService{
 			String dateEnd,String productId,String recordId) throws ServiceException{
 		Map<String,String> param=ColtortiUtil.getCommonParam(page,size);
 		param.put("fields", "id,name,product_id,variant,description,price,scalars,"
-				+ "ms5_group,ms5_subgroup,ms5_category,brand,season,images,"
+				+ "ms5_group,ms5_subgroup,ms5_category,brand,season,images,alternative_ids,"
 				+ "macro_category,group,family,line,subgroup,category,attributes,updated_at");
 		if(productId!=null) param.put("product_id", productId);
 		if(dateStart!=null)param.put("since_updated_at", dateStart);
 		if(dateEnd!=null)param.put("until_updated_at", dateEnd);
 		if(recordId!=null)param.put("id", recordId);
 		String body=HttpUtils.get(ColtortiUtil.paramGetUrl(ApiURL.PRODUCT,param));
+		//logger.error(body);
 		ColtortiUtil.check(body);
 		JsonObject jo =new JsonParser().parse(body).getAsJsonObject();
 		Set<Entry<String,JsonElement>> ks=jo.entrySet();
 		List<ColtortiProduct> pros = new ArrayList<>(ks.size()); 
 		for (Entry<String, JsonElement> entry : ks) {
 			JsonElement je=entry.getValue();
-			JsonObject jop=je.getAsJsonObject();
 			try {
+				JsonObject jop=je.getAsJsonObject();
 				ColtortiProduct p=toObj(jop,ColtortiProduct.class);
-				p.setSkuId(entry.getKey());
+				p.setSkuId(entry.getKey());//skuId就是recordId暂时的..#@see convertProduct
+				//获取库存
+				//setStock(entry.getKey(), p);
 				pros.add(p);
 			} catch (InstantiationException | IllegalAccessException e) {
-				logger.warn("convert product fail Json："+jop.toString());
+				logger.warn("convert product fail Json："+je.toString());
 			}
 		}
 		return pros;
 	}
+	/**
+	 * @param entry
+	 * @param p
+	 * @throws ServiceException
+	 */
+	private static void setStock(String recordId,
+			ColtortiProduct p) {
+		try{
+			p.setSizeStockMap(ColtortiStockService.getStock(p.getProductId(), recordId).get(recordId));
+		}catch(Exception e){
+			if(e instanceof ServiceException){
+				if(ColtortiUtil.isTokenExpire((ServiceException) e)){
+					try {
+						ColtortiTokenService.initToken();
+					} catch (ServiceException e1) {
+						logger.error("拉库存更新token错误",e1);
+					}
+				}
+			}else{
+				logger.error("拉库存错误",e);				
+			}
+		}
+	}
+	
 	/**
 	 * 根据产品的尺码，拆分成sku，并返回一个新的product集合<br/>
 	 * 新的product 的sku是,原sku+#+尺码编号，如：151828DGN000001-MULTI#M<br/>
@@ -182,7 +209,8 @@ public class ColtortiProductService{
 				for (String sck : scks) {
 					String sml=scalars.get(sck);//尺码字符
 					//TODO 尺码key;sck;
-					ColtortiProduct pt = convertProduct(prd,sck,0);
+					ColtortiProduct pt = convertProduct(prd,sck);
+					pt.setStock(prd.getSizeStockMap()==null?0:prd.getSizeStockMap().get(sck));
 					pt.setSizeKeyValue(sck+"#"+sml);
 					newProducts.add(pt);
 				}
@@ -198,14 +226,13 @@ public class ColtortiProductService{
 	 * @param stock
 	 * @return
 	 */
-	private static ColtortiProduct convertProduct(ColtortiProduct prd,String scalarCode,Integer stock) {
+	private static ColtortiProduct convertProduct(ColtortiProduct prd,String scalarCode) {
 		ColtortiProduct newp = new ColtortiProduct();
 		try {
 			BeanUtils.copyProperties(newp,prd);
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			return null;
 		}
-		newp.setStock(stock);
 		newp.setSkuId(prd.getSkuId()+"#"+scalarCode);
 		newp.setScalars(null);
 		return newp;

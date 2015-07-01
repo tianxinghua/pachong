@@ -1,6 +1,7 @@
 package com.shangpin.ice.ice;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -45,7 +46,7 @@ public abstract class AbsUpdateProductStock {
 	 * @return
 	 * @throws Exception
 	 */
-	private Collection<String> grabProduct(String supplier,String start,String end) throws Exception{
+	private Collection<String> grabProduct(String supplier,String start,String end,Map<String,String> stocks) throws Exception{
 		int pageIndex=1,pageSize=100;
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		boolean hasNext=true;
@@ -57,7 +58,9 @@ public abstract class AbsUpdateProductStock {
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
 				for (SopSkuIce ice : skuIces) {
-					skuIds.add(ice.SkuNo);
+					skuIds.add(ice.BarCode);
+					stocks.put(ice.BarCode,ice.SkuNo);
+//System.out.println("BarCode:"+ice.BarCode+",skuNo:"+ice.SkuNo+",SupplierSkuNO:"+ice.SupplierSkuNo);
 				}
 			}
 			pageIndex++;
@@ -65,6 +68,7 @@ public abstract class AbsUpdateProductStock {
 		}
 		return skuIds;
 	}
+	
 	/**
 	 * 更新主站库存
 	 * @param supplier 供应商id
@@ -75,15 +79,29 @@ public abstract class AbsUpdateProductStock {
 	 * @throws Exception 
 	 */
 	public int updateProductStock(String supplier,String start,String end) throws Exception{
-		Collection<String> skuNoSet=grabProduct(supplier, start, end);
+		//ice的skuid与本地库拉到的skuId的关系，key是本地库中skuId
+		Map<String,String> skuRelation4iceAndSupplier=new HashMap<String, String>();
+		Collection<String> skuNoSet=grabProduct(supplier, start, end,skuRelation4iceAndSupplier);
+logger.warn("待更新库存数据总数："+skuNoSet.size());
 		//拿库存
-		Map<String, Integer> stoks=grabStock(skuNoSet);
+		Map<String, Integer> supplierStock=grabStock(skuNoSet);		
+		Map<String, Integer> iceStock=new HashMap<String, Integer>(supplierStock.size());
+logger.warn("拉取库存完毕："+iceStock.size());
+		Set<String> skuSet=supplierStock.keySet();
+		for (Iterator<String> iterator = skuSet.iterator(); iterator.hasNext();) {
+			String skuId = iterator.next();
+			Integer stock=supplierStock.get(skuId);//库存
+			String skuNo=skuRelation4iceAndSupplier.get(skuId);//skuNo
+			iceStock.put(skuNo, stock);
+		}
+		
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		int failCount=0;
-		if(stoks!=null && stoks.size()>0){
-			Iterator<Entry<String, Integer>> iter=stoks.entrySet().iterator();
+		if(supplierStock!=null && supplierStock.size()>0){
+			Iterator<Entry<String, Integer>> iter=iceStock.entrySet().iterator();
 			while (iter.hasNext()) {
 				Entry<String, Integer> entry = iter.next();
+logger.warn("更新库存sku,stock="+entry.getKey()+":"+ entry.getValue());
 				Boolean result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());
 				if(!result){
 					failCount++;

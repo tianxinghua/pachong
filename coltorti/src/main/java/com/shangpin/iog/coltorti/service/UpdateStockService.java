@@ -11,6 +11,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 
@@ -34,12 +35,13 @@ public class UpdateStockService extends AbsUpdateProductStock{
 			Map<String, Map<String, Integer>> stoks=null;
 			try{
 				stoks=ColtortiStockService.getStock(productId, recordId);
+			logger.warn(recordId+",拉取库存成功:"+new Gson().toJson(stoks));
 			}catch(ServiceException e){
 				if(ColtortiUtil.isTokenExpire(e)){
 					ColtortiTokenService.initToken();
 					stoks=ColtortiStockService.getStock(productId, recordId);
 				}else{
-					continue;								
+					continue;						
 				}
 			}
 			if(stoks!=null && stoks.size()>0){
@@ -49,6 +51,7 @@ public class UpdateStockService extends AbsUpdateProductStock{
 		}
 		return skuStock;
 	}
+	
 	/*
 	public static void main(String[] args) {
 		String skuNo="152790FCR000002-MIDBL#m";

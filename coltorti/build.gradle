@@ -33,6 +33,6 @@ jar {
     manifest {
         attributes 'Main-Class': 'com.shangpin.iog.ColtortiStartup'
 //        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
-        attributes 'Class-Path': manifestCp
+        attributes 'Class-Path': '. '+ manifestCp
     }
 }
