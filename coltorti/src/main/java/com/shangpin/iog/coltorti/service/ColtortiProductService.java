@@ -42,6 +42,7 @@ public class ColtortiProductService{
 	static Logger logger =LoggerFactory.getLogger(ColtortiProductService.class);
 	static final Map<String,Field[]> classField = new HashMap<>();
 	private static final int defaultSize=100; 
+	private static Map<String,Map<String,Map<String,Integer>>> stocks=new HashMap<>();
 	/**
 	 * 
 	 * @param page
@@ -103,7 +104,6 @@ public class ColtortiProductService{
 		boolean hasMore=true;
 		int pg=1;
 		while(hasMore){
-			System.out.println("Page =  "+pg);
 			List<ColtortiProduct> r1=null;
 			try{
 					r1=findProduct(pg,defaultSize,dateStart,dateEnd,productId,recordId);
@@ -123,6 +123,7 @@ public class ColtortiProductService{
 				hasMore=false;
 			pg++;
 		}
+		stocks.clear();
 		return rs;
 	}
 	
@@ -160,7 +161,7 @@ public class ColtortiProductService{
 				ColtortiProduct p=toObj(jop,ColtortiProduct.class);
 				p.setSkuId(entry.getKey());//skuId就是recordId暂时的..#@see convertProduct
 				//获取库存
-				//setStock(entry.getKey(), p);
+				setStock(entry.getKey(), p);
 				pros.add(p);
 			} catch (InstantiationException | IllegalAccessException e) {
 				logger.warn("convert product fail Json："+je.toString());
@@ -169,14 +170,22 @@ public class ColtortiProductService{
 		return pros;
 	}
 	/**
-	 * @param recordId
-	 * @param p
+	 * @param entry
+	 * @param productId
 	 * @throws ServiceException
 	 */
-	private static void setStock(String recordId,
-			ColtortiProduct p) {
+	private static void setStock(String recordId,ColtortiProduct p) {
 		try{
-			p.setSizeStockMap(ColtortiStockService.getStock(p.getProductId(), recordId).get(recordId));
+			String productId=p.getProductId();
+			Map<String,Integer> stockMap =null;
+			if(!stocks.containsKey(productId)){
+				Map<String, Map<String, Integer>> tmap = ColtortiStockService.getStock(productId, null);
+				stockMap= tmap.get(recordId);
+				stocks.put(productId, tmap);
+			}else{
+				stockMap=stocks.get(productId).get(recordId);
+			}
+			p.setSizeStockMap(stockMap);
 		}catch(Exception e){
 			if(e instanceof ServiceException){
 				if(ColtortiUtil.isTokenExpire((ServiceException) e)){

@@ -144,7 +144,7 @@ public class ShopingItemConvert {
 			for (VariationType vt : vrts) {
 				SkuDTO sku = new SkuDTO();
 				setSkuCommon(userId, createDate, sit, sku);
-				sku.setStock(""+(vt.getQuantity()-vt.getQuantitySold()));
+				sku.setStock(""+(vt.getQuantity()-vt.getSellingStatus().getQuantitySold()));
 				sku.setSaleCurrency(vt.getStartPrice().getCurrencyID().toString());
 				sku.setSalePrice(""+vt.getStartPrice().getDoubleValue());
 				sku.setSupplierPrice(sku.getSalePrice());
