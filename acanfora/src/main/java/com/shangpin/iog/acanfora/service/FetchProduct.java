@@ -62,6 +62,7 @@ public class FetchProduct {
                         sku.setColor(item.getColor());
                         sku.setProductDescription(item.getDescription());
                         sku.setStock(item.getStock());
+                        sku.setProductCode(product.getProducer_id());
                         productFetchService.saveSKU(sku);
 
                         if(StringUtils.isNotBlank(item.getPicture())){
