@@ -8,12 +8,12 @@ import java.util.Map;
 import java.util.Set;
 
 
+
 import com.ebay.sdk.*;
 import com.ebay.soap.eBLBaseComponents.*;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
 import com.shangpin.ebay.finding.SearchItem;
-
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.ebay.conf.EbayConf;
@@ -39,6 +39,7 @@ import com.ebay.soap.eBLBaseComponents.VariationType;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
 import com.shangpin.ebay.finding.SearchItem;
+import com.shangpin.ebay.shoping.CurrencyCodeType;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseDocument;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
@@ -79,19 +80,26 @@ public class EbayTest {
 		String mnt="1999.00";
 		double  da    = Double.parseDouble(mnt);
 		float fa=Float.parseFloat(mnt);
+		System.out.println(CurrencyCodeType.CNY.toString());
 		System.out.println(da+":"+fa);
 	}
 	
 	@Test
 	public void testGetItem() throws ApiException, SdkException, Exception{
 		SkuDTO sku=null;
-		String itemId="321410678740";
+		String itemId="221288382861";
 		ApiContext api = getProApiContext();
 		ApiCall call = new ApiCall(api);
 		GetItemRequestType req=new GetItemRequestType();
 		req.setIncludeItemSpecifics(true);
 		req.setItemID(itemId);
-		req.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.RETURN_ALL});
+		/*req.setOutputSelector(new String[]{
+			"ListingDetails","PrimaryCategory","SellingStatus",
+			"PictureDetails","ItemSpecifics","Variations","VariationSpecificsSet",
+			
+				
+		});*/
+		req.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES});
 		GetItemResponseType resp=(GetItemResponseType)call.execute(req);
 		ItemType it=resp.getItem();
 		String[] pics=it.getPictureDetails().getPictureURL();
@@ -166,13 +174,13 @@ public class EbayTest {
 		req.setEndTimeTo(t2);
 		
 		PaginationType pg =new PaginationType();
-		pg.setPageNumber(1);pg.setEntriesPerPage(1);
+		pg.setPageNumber(1);pg.setEntriesPerPage(8);
 		req.setPagination(pg);
 		req.setIncludeVariations(true);
 		req.setDetailLevel(new DetailLevelCodeType[]{
 				DetailLevelCodeType.ITEM_RETURN_DESCRIPTION
 				});
-		req.setGranularityLevel(GranularityLevelCodeType.MEDIUM);
+//		req.setGranularityLevel(GranularityLevelCodeType.MEDIUM);
 		req.setOutputSelector(new String[]{"ItemArray"});
 		GetSellerListResponseType resp = (GetSellerListResponseType) call.execute(req);
 		ItemType[] tps = resp.getItemArray().getItem();
@@ -222,8 +230,8 @@ public class EbayTest {
 	public void testFindItemInStore() throws ApiException, SdkException, Exception{
 		SpuDTO spu=null;
 		String url=findCommonUrl("findItemsIneBayStores");
-		url+="storeName=%s&paginationInput.entriesPerPage=300&paginationInput.pageNumber=1";
-		String storeName="inzara.store";
+		url+="storeName=%s&paginationInput.entriesPerPage=10&paginationInput.pageNumber=1";
+		String storeName="pumaboxstore";
 		url=String.format(url,storeName);
 		System.out.println(url);
 		String xml=HttpUtils.get(url);
@@ -236,6 +244,7 @@ public class EbayTest {
 				SearchItem[] type = rt.getSearchResult().getItemArray();
 				if (type != null) {
 					for (SearchItem t : type) {
+						System.out.println(t.getPictureURLSuperSize());
 						spu = new SpuDTO();
 						ItemType item = testGetItem(t.getItemId());
 						itemArray.add(t.getItemId());
@@ -357,9 +366,9 @@ public class EbayTest {
 		String url="http://svcs.ebay.com/services/marketplacecatalog/ProductMetadataService/v1?OPERATION-NAME=getProductMetadataBulk&SERVICE-VERSION=1.0.0&"
 				+"SECURITY-APPNAME=%s&GLOBAL-ID=EBAY-US&RESPONSE-DATA-FORMAT=XML&REST-PAYLOAD&productMetadataRequest.categoryId=%s";
 		String appid="vanskydba-8e2b-46af-adc1-58cae63bf2e";
-		String storeName="156955";
-		url=String.format(url, appid,storeName);
-		System.out.println(url);
+		String category="156955";
+		url=String.format(url, appid,category);
+		//System.out.println(url);
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
 	}
@@ -382,7 +391,7 @@ public class EbayTest {
 	@Test
 	public void GetMultipleItems(){
 		String url=shopingCommon("GetMultipleItems");
-		url+="ItemID=331519382281,231520688479&IncludeSelector=Variations,ItemSpecifics";
+		url+="ItemID=131503285055,221288382861&IncludeSelector=Variations,ItemSpecifics";
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
 		try {

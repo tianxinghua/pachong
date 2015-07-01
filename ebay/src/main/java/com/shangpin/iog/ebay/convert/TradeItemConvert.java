@@ -20,9 +20,11 @@ import com.ebay.soap.eBLBaseComponents.PictureDetailsType;
 import com.ebay.soap.eBLBaseComponents.VariationProductListingDetailsType;
 import com.ebay.soap.eBLBaseComponents.VariationType;
 import com.ebay.soap.eBLBaseComponents.VariationsType;
+import com.shangpin.ebay.shoping.SimpleItemType;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.iog.ebay.conf.EbayConf;
 
 /**
  * @description 
@@ -31,7 +33,6 @@ import com.shangpin.iog.dto.SpuDTO;
  */
 public class TradeItemConvert {
 
-	private static final String EBAY = "ebay";
 
 	/**
 	 * @param tps
@@ -107,7 +108,7 @@ public class TradeItemConvert {
 			for (String string : urls) {
 				ProductPictureDTO pic = new ProductPictureDTO();
 				pic.setPicUrl(string);
-				pic.setSupplierId(EBAY+"#"+userType);
+				pic.setSupplierId(EbayConf.EBAY+userType);
 			}
 		}
 		return pics;
@@ -200,7 +201,7 @@ public class TradeItemConvert {
 	 */
 	private static void setCommon(SkuDTO sku, ItemType itemType, String userId) {
 		sku.setProductName(itemType.getTitle());
-		sku.setSupplierId(EBAY+"#"+userId);
+		sku.setSupplierId(EbayConf.EBAY+userId);
 		sku.setSupplierPrice(""+itemType.getSellingStatus().getCurrentPrice().getValue());
 		sku.setSalePrice(""+itemType.getSellingStatus().getCurrentPrice().getValue());
 		sku.setSaleCurrency(itemType.getSellingStatus().getCurrentPrice().getCurrencyID().value());
@@ -249,6 +250,7 @@ public class TradeItemConvert {
 		sku.setSalePrice(amt.getValue()+"");
 		sku.setSaleCurrency(amt.getCurrencyID().value());
 	}
+
 
 
 }

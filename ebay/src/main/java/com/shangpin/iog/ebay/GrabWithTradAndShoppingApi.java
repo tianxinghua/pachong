@@ -3,25 +3,22 @@
  */
 package com.shangpin.iog.ebay;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import com.ebay.sdk.ApiCall;
-import com.ebay.sdk.ApiContext;
 import com.ebay.sdk.ApiException;
 import com.ebay.sdk.SdkException;
 import com.ebay.sdk.SdkSoapException;
 import com.ebay.soap.eBLBaseComponents.AckCodeType;
-import com.ebay.soap.eBLBaseComponents.GetSellerListRequestType;
 import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
-import com.ebay.soap.eBLBaseComponents.GranularityLevelCodeType;
 import com.ebay.soap.eBLBaseComponents.ItemType;
-import com.ebay.soap.eBLBaseComponents.PaginationType;
-import com.shangpin.iog.ebay.conf.EbayConf;
-import com.shangpin.iog.ebay.convert.TradeItemConvert;
+import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
+import com.shangpin.ebay.shoping.SimpleItemType;
+import com.shangpin.iog.ebay.convert.ShopingItemConvert;
 import com.shangpin.iog.ebay.service.GrabEbayApiService;
 
 /**
@@ -29,7 +26,7 @@ import com.shangpin.iog.ebay.service.GrabEbayApiService;
  * @author 陈小峰
  * <br/>2015年6月30日
  */
-public class GrabWithTradApi {
+public class GrabWithTradAndShoppingApi {
 	
 	static int pageSize=300;
 	/**
@@ -53,7 +50,16 @@ public class GrabWithTradApi {
 			if(AckCodeType.FAILURE.equals(resp.getAck())){
 				hasMore=resp.isHasMoreItems();
 				ItemType[] tps = resp.getItemArray().getItem();
-				Map<String, ? extends Collection<?>> kpp=TradeItemConvert.convert2SKuAndSpu(tps,userId);
+				List<String> itemIds = new ArrayList<>(tps.length);//1.得到id
+				for (ItemType itemType : tps) {
+					itemIds.add(itemType.getItemID());
+				}
+				//2.得到item
+				GetMultipleItemsResponseType multResp=GrabEbayApiService.shoppingGetMultipleItems(itemIds);
+				//3.转换sku,spu
+				SimpleItemType[] itemTypes=multResp.getItemArray();
+				//Map<String, ? extends Collection<?>> kpp=TradeItemConvert.convert2SKuAndSpu(tps,userId);
+				Map<String, ? extends Collection<?>> kpp=ShopingItemConvert.convert2kpp(itemTypes,userId);
 				if(skuSpuAndPic==null){
 					skuSpuAndPic=kpp;
 				}else{
