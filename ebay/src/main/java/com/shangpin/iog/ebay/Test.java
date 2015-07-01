@@ -19,19 +19,18 @@ public class Test {
         factory = new AnnotationConfigApplicationContext(AppContext.class);
     }
 
-
     public static void main(String args[]) throws Exception {
-        String id = "231601700139";
+        String id = "231359724482";
         String storeName = "inzara.store";
-        log.info("----拉取acanfora数据开始----");
+        log.info("----拉取ebay数据开始----");
         loadSpringContext();
         log.info("----初始SPRING成功----");
         //拉取数据
         FetchEbayProduct fetchProduct =(FetchEbayProduct)factory.getBean("ebay");
-        fetchProduct.FetchSkuAndSave(id);
-        fetchProduct.FetchSpuAndSave(storeName);
+        //fetchProduct.FetchSkuAndSave(id);
+        //fetchProduct.FetchSpuAndSave(storeName);
 
-        log.info("----拉取acanfora数据完成----");
+        log.info("----拉取ebay数据完成----");
 
     }
 }

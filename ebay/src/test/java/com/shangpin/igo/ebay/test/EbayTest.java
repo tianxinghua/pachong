@@ -223,8 +223,8 @@ public class EbayTest {
 	public void testFindItemInStore() throws ApiException, SdkException, Exception{
 		SpuDTO spu=null;
 		String url=findCommonUrl("findItemsIneBayStores");
-		url+="storeName=%s&paginationInput.entriesPerPage=300&paginationInput.pageNumber=1";
-		String storeName="inzara.store";
+		url+="storeName=%s&paginationInput.entriesPerPage=10&paginationInput.pageNumber=1";
+		String storeName="pumaboxstore";
 		url=String.format(url,storeName);
 		System.out.println(url);
 		String xml=HttpUtils.get(url);
@@ -237,6 +237,7 @@ public class EbayTest {
 				SearchItem[] type = rt.getSearchResult().getItemArray();
 				if (type != null) {
 					for (SearchItem t : type) {
+						System.out.println(t.getPictureURLSuperSize());
 						spu = new SpuDTO();
 						ItemType item = testGetItem(t.getItemId());
 						itemArray.add(t.getItemId());
