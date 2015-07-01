@@ -34,9 +34,10 @@ import com.shangpin.iog.ebay.service.GrabEbayApiService;
  */
 public class GrabWithTradAndShoppingApi {
 	static Logger logger = LoggerFactory.getLogger(GrabWithTradAndShoppingApi.class);
-	static int pageSize=300;
+	static int pageSize=200;
 	/**
-	 * 抓取ebay商户的数据,封装好spu,sku,pic
+	 * 抓取ebay商户的数据,封装好spu,sku,pic<br/>
+	 * 注意：开始，结束时间不能超过120天
 	 * @param userId 商户id
 	 * @param endStart 产品的结束时间 开始日期，一般以大于当前时间为好
 	 * @param endEnd 产品的结束时间 终止日期
