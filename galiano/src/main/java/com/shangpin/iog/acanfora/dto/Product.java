@@ -16,6 +16,7 @@ public class Product {
     private String productId;
     private String product_name;
     private String season_code;
+    private String season_name;
     private String description;
     private String category;
     private String product_brand;
@@ -131,6 +132,15 @@ public class Product {
 //    public void setItems(List<Item> items) {
 //        this.items = items;
 //    }
+
+
+    public String getSeason_name() {
+        return season_name;
+    }
+
+    public void setSeason_name(String season_name) {
+        this.season_name = season_name;
+    }
 
     public Product(){
         super();
