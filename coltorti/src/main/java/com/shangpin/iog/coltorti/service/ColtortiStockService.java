@@ -3,12 +3,8 @@
  */
 package com.shangpin.iog.coltorti.service;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +35,11 @@ public class ColtortiStockService {
 		Map<String,String> param=ColtortiUtil.getCommonParam(0,0);
 		if(productId!=null) param.put("product_id", productId);
 		if(recordId!=null) param.put("id", recordId);
+		Date startDate= new  Date();
 		String body=HttpUtils.get(ColtortiUtil.paramGetUrl(ApiURL.STOCK,param));
+		System.out.println("productId =" + productId);
+		System.out.println("recordId =" + recordId);
+		System.out.println("  抓取库存需要的时间 =" + String.valueOf(System.currentTimeMillis()-startDate.getTime()));
 		ColtortiUtil.check(body);
 		//logger.info("request stock result:\r\n"+body);
 		Gson gson = new Gson();
@@ -89,6 +89,7 @@ public class ColtortiStockService {
 				}
 			}
 		}
+		System.out.println("  抓取库存加转换需要的时间 =" + String.valueOf(System.currentTimeMillis()-startDate.getTime()));
 		return rtnScalar;
 	}
 	/*public static void main(String[] args) throws ServiceException {

@@ -103,6 +103,7 @@ public class ColtortiProductService{
 		boolean hasMore=true;
 		int pg=1;
 		while(hasMore){
+			System.out.println("Page =  "+pg);
 			List<ColtortiProduct> r1=null;
 			try{
 					r1=findProduct(pg,defaultSize,dateStart,dateEnd,productId,recordId);
@@ -168,7 +169,7 @@ public class ColtortiProductService{
 		return pros;
 	}
 	/**
-	 * @param entry
+	 * @param recordId
 	 * @param p
 	 * @throws ServiceException
 	 */

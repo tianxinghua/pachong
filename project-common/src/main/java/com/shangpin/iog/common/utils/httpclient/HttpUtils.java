@@ -300,7 +300,8 @@ public class HttpUtils {
 		bd.setSSLSocketFactory(sslf);
 		if(proxy) 
 			bd.setRoutePlanner(getProxHost());
-		return bd.build();
+		return bd.setKeepAliveStrategy(getKeepAliveHttpClient()).build();
+		//.setConnectionManager(getPoolingConnectionManager(null))
 	}
 
 
@@ -311,7 +312,7 @@ public class HttpUtils {
 	 *  CloseableHttpClient client = HttpClients.custom().setKeepAliveStrategy(myStrategy).build();
 	 *
 	 */
-	private  ConnectionKeepAliveStrategy getKeepAliveHttpClient() {
+	private static  ConnectionKeepAliveStrategy getKeepAliveHttpClient() {
 
 		ConnectionKeepAliveStrategy strategy = new DefaultConnectionKeepAliveStrategy() {
 
@@ -333,7 +334,7 @@ public class HttpUtils {
 					String value = he.getValue();
 					if (value != null && param.equalsIgnoreCase("timeout")) {
 						try {
-							System.out.println("服务器指定的超时时间：" + value + " 秒");
+//							System.out.println("服务器指定的超时时间：" + value + " 秒");
 							return Long.parseLong(value) * 1000;
 						} catch (NumberFormatException ignore) {
 							ignore.printStackTrace();
@@ -437,7 +438,7 @@ public class HttpUtils {
 	 *
 	 * @return
 	 */
-	private PoolingHttpClientConnectionManager getPoolingConnectionManager(String urlHost){
+	private static PoolingHttpClientConnectionManager getPoolingConnectionManager(String urlHost){
 
 		PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
 		connManager.setMaxTotal(200);//设置最大连接数200

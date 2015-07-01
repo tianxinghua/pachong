@@ -47,8 +47,10 @@ public class InsertDataBaseService {
 	public void grabProduct(String dateStart,String dateEnd){
 		try {
 			logger.info("抓取数据开始，开始时间：{},结束时间:{}",dateStart,dateEnd);
+			System.out.println("抓取数据开始，开始时间：" + dateStart +" 结束时间:"+dateEnd);
 			List<ColtortiProduct> coltorProds=ColtortiProductService.findProduct(dateStart, dateEnd);
 			logger.info("抓取数据成功，抓取到{}条.",coltorProds.size());
+			System.out.println("抓取数据成功，抓取到{}条."+coltorProds.size());
 			//logger.warn("抓取数据成功，抓取到{}条,数据如下：\r\n{}",coltorProds.size(),new Gson().toJson(coltorProds));
 			//拆分spu
 			Set<SpuDTO> spus=new HashSet<>(coltorProds.size());
@@ -67,6 +69,7 @@ public class InsertDataBaseService {
 				productPics.put(product.getSkuId(), ppcs);
 			}
 			logger.warn("抓取到sku:\r\n"+new Gson().toJson(skus));
+
 			//开始保存
 			if(CollectionUtils.isNotEmpty(skus)) {
 				logger.info("-----开始保存SKU-----总数：{}",skus.size());
