@@ -41,8 +41,9 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 public class ColtortiProductService{
 	static Logger logger =LoggerFactory.getLogger(ColtortiProductService.class);
 	static final Map<String,Field[]> classField = new HashMap<>();
-	private static final int defaultSize=100; 
+	private static final int defaultSize=500; 
 	private static Map<String,Map<String,Map<String,Integer>>> stocks=new HashMap<>();
+	static int cnt=0;
 	/**
 	 * 
 	 * @param page
@@ -182,8 +183,10 @@ public class ColtortiProductService{
 				Map<String, Map<String, Integer>> tmap = ColtortiStockService.getStock(productId, null);
 				stockMap= tmap.get(recordId);
 				stocks.put(productId, tmap);
+				cnt++;
 			}else{
 				stockMap=stocks.get(productId).get(recordId);
+System.out.println(productId+"存在,不存在的数:"+cnt);				
 			}
 			p.setSizeStockMap(stockMap);
 		}catch(Exception e){

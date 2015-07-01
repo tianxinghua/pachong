@@ -7,8 +7,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ebay.sdk.ApiException;
 import com.ebay.sdk.SdkException;
@@ -18,6 +22,8 @@ import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
 import com.ebay.soap.eBLBaseComponents.ItemType;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.SimpleItemType;
+import com.shangpin.ebay.shoping.VariationType;
+import com.shangpin.ebay.shoping.VariationsType;
 import com.shangpin.iog.ebay.convert.ShopingItemConvert;
 import com.shangpin.iog.ebay.service.GrabEbayApiService;
 
@@ -27,12 +33,12 @@ import com.shangpin.iog.ebay.service.GrabEbayApiService;
  * <br/>2015年6月30日
  */
 public class GrabWithTradAndShoppingApi {
-	
+	static Logger logger = LoggerFactory.getLogger(GrabWithTradAndShoppingApi.class);
 	static int pageSize=300;
 	/**
 	 * 抓取ebay商户的数据
 	 * @param userId 商户id
-	 * @param endStart 产品的结束时间 开始日期
+	 * @param endStart 产品的结束时间 开始日期，一般以大于当前时间为好
 	 * @param endEnd 产品的结束时间 终止日期
 	 * @return 
 	 * @throws ApiException 
@@ -58,7 +64,6 @@ public class GrabWithTradAndShoppingApi {
 				GetMultipleItemsResponseType multResp=GrabEbayApiService.shoppingGetMultipleItems(itemIds);
 				//3.转换sku,spu
 				SimpleItemType[] itemTypes=multResp.getItemArray();
-				//Map<String, ? extends Collection<?>> kpp=TradeItemConvert.convert2SKuAndSpu(tps,userId);
 				Map<String, ? extends Collection<?>> kpp=ShopingItemConvert.convert2kpp(itemTypes,userId);
 				if(skuSpuAndPic==null){
 					skuSpuAndPic=kpp;
@@ -73,7 +78,36 @@ public class GrabWithTradAndShoppingApi {
 		
 		return skuSpuAndPic;
 	}
-
+	/**
+	 * 根据itemId获取item及变种的库存<br/>
+	 * @param itemIds ebay的itemId
+	 * @return skuId:stock的键值对
+	 * @see ShopingItemConvert#getSkuId(SimpleItemType, VariationType) 产品skuId
+	 */
+	public Map<String,Integer> getStock(Collection<String> itemIds){
+		GetMultipleItemsResponseType resp=GrabEbayApiService.shoppingGetMultipleItems4Stock(itemIds);
+		if(AckCodeType.FAILURE.value().equals(resp.getAck().toString())){
+			logger.warn("获取库存失败:"+resp.getErrorsArray(0).toString());
+			return null;
+		}
+		SimpleItemType[] sits=resp.getItemArray();
+		Map<String,Integer> rtnMap=new HashMap<>();
+		for (SimpleItemType sit : sits) {
+			VariationsType vta=sit.getVariations();
+			if(vta!=null && vta.getVariationArray()!=null){
+				VariationType[] vts=vta.getVariationArray();
+				for (VariationType vt : vts) {
+					int quantity=vt.getQuantity()-vt.getSellingStatus().getQuantitySold();
+					rtnMap.put(ShopingItemConvert.getSkuId(sit,vt),quantity);
+				}
+			}else{
+				int quantity=sit.getQuantity()-sit.getQuantitySold();
+				rtnMap.put(ShopingItemConvert.getSkuId(sit,null), quantity);
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * @param date
 	 * @return
