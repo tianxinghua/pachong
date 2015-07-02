@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GrabWithTradAndShoppingApi {
 	@Autowired
-	ProductFetchService productFetchService
+	ProductFetchService productFetchService ;
 	static Logger logger = LoggerFactory.getLogger(GrabWithTradAndShoppingApi.class);
 	static int pageSize=200;
 	/**
