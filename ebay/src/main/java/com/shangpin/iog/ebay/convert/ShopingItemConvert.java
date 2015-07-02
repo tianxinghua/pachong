@@ -47,9 +47,9 @@ public class ShopingItemConvert {
 	sit.getVariations().getVariationSpecificsSet().getNameValueListArray();//for sku varia
 	 */	
 	@SuppressWarnings("unchecked")
-	public static Map<String, ? extends Collection<?>> convert2kpp(
+	public static Map<String,  Collection> convert2kpp(
 			SimpleItemType[] itemTypes, String userId) {
-		Map<String, ? extends Collection<?>> map=new HashMap<String, Collection<?>>();
+		Map<String,  Collection> map=new HashMap<String, Collection>();
 		Set<ProductPictureDTO> rtnPic=new HashSet<>(itemTypes.length*2);
 		Set<SkuDTO> rtnSku=new HashSet<>(itemTypes.length);
 		Set<SpuDTO> rtnSpu=new HashSet<>(itemTypes.length);
@@ -60,6 +60,9 @@ public class ShopingItemConvert {
 			SpuDTO spu = convertSpu(sit,userId);
 			rtnSpu.add(spu);
 		}
+		map.put("sku",rtnSku);
+		map.put("spu",rtnSpu);
+		map.put("pic",rtnPic);
 		return map;
 	}
 

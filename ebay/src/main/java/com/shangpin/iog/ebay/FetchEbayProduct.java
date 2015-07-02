@@ -53,84 +53,83 @@ public class FetchEbayProduct {
     @Autowired
     ProductFetchService productFetchService;
 
-    public void FetchSkuAndSave(String itemID) throws Exception {
-        System.out.println("dasd");
+    public void fetchSkuAndSave(String itemID) throws Exception {
+
         ProductPictureDTO productPicture = null;
         SkuDTO sku = null;
-        String picUrl=getPicUrl(itemID);
-        ApiContext api = getProApiContext();
-        ApiCall call = new ApiCall(api);
-        GetItemRequestType req = new GetItemRequestType();
-        req.setIncludeItemSpecifics(true);
-        req.setItemID(itemID);
-        req.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES});
-        GetItemResponseType resp = (GetItemResponseType) call.execute(req);
-        ItemType it = resp.getItem();
+        String picUrl = getPicUrl(itemID);
+        ItemType it = testGetItem(itemID);
         VariationType[] variationType = it.getVariations().getVariation();
-        SearchResult searchResult = testFindItemInEbayStore();
-        SearchItem[] type = null;
-        String spuId=null;
-        if (searchResult != null) {
-            type = searchResult.getItemArray();
-            if (type != null) {
-                for (SearchItem t : type) {
-                    if (t.getItemId().equals(itemID)) {
-                        if (t.getProductId() != null) {
-                            System.out.println("zhengsini" + t.getProductId().getStringValue());
-                            spuId = t.getProductId().getStringValue();
-                            break;
-                        } else {
-                            spuId = t.getItemId();
-                            System.out.println("nihao" + t.getItemId());
-                            break;
+        if (it.getListingDetails().getEndTime().getTime().after(Calendar.getInstance().getTime())) {
+            if (variationType != null) {
+                for (VariationType variationtype : variationType) {
+                    sku = new SkuDTO();
+                    productPicture = new ProductPictureDTO();
+                    productPicture.setId(UUIDGenerator.getUUID());
+                    productPicture.setSkuId(itemID + "#" + variationtype.getSKU());
+                    productPicture.setSupplierId("ebay#" + it.getSeller().getUserID());
+                    productPicture.setPicUrl(picUrl);
+                    sku.setId(UUIDGenerator.getUUID());
+                    sku.setSkuId(itemID + "#" + variationtype.getSKU());
+                    sku.setSupplierId("ebay#" + it.getSeller().getUserID());
+                    sku.setStock(String.valueOf(variationtype.getQuantity() - variationtype.getSellingStatus().getQuantitySold()));
+                    sku.setProductName(it.getTitle());
+                    AmountType amountType = variationtype.getStartPrice();
+                    sku.setSaleCurrency(amountType.getCurrencyID().toString());
+                    if (!String.valueOf(amountType.getValue()).equals("")) {
+                        sku.setSalePrice(String.valueOf(amountType.getValue()));
+                        sku.setSupplierPrice(String.valueOf(amountType.getValue()));
+                    } else {
+                        sku.setSalePrice(it.getListingDetails().getConvertedStartPrice().toString());
+                        sku.setSupplierPrice(it.getListingDetails().getConvertedStartPrice().toString());
+                    }
+                    com.ebay.soap.eBLBaseComponents.NameValueListType[] nameValueListTypes = variationtype.getVariationSpecifics().getNameValueList();
+                    for (com.ebay.soap.eBLBaseComponents.NameValueListType nameValueListType : nameValueListTypes) {
+                        if (nameValueListType.getName().contains("Color")) {
+                            sku.setColor(nameValueListType.getValue(0));
+                        }
+                        if (nameValueListType.getName().contains("Size")) {
+                            sku.setProductSize(nameValueListType.getValue(0));
+                        }
+                    }
+                    sku.setSpuId(itemID);
+                }
+                    skuDTO.add(sku);
+            }else {
+                sku = new SkuDTO();
+                sku.setId(UUIDGenerator.getUUID());
+                sku.setSkuId(itemID);
+                sku.setSpuId(itemID);
+                sku.setSupplierId("ebay#" + it.getSeller().getUserID());
+                sku.setProductName(it.getTitle());
+                sku.setStock(String.valueOf(it.getQuantity() - it.getSellingStatus().getQuantitySold()));
+                if (it.getItemSpecifics() != null) {
+                    com.ebay.soap.eBLBaseComponents.NameValueListType[] nameValueListType = it.getItemSpecifics().getNameValueList();
+                    if (nameValueListType != null) {
+                        for (com.ebay.soap.eBLBaseComponents.NameValueListType nameValueList : nameValueListType) {
+                            if (nameValueList.getName().contains("Color")) {
+                                sku.setColor(nameValueList.getValue(0));
+                            }
+                            if (nameValueList.getName().contains("Size")) {
+                                sku.setProductSize(nameValueList.getValue(0));
+                            }
                         }
                     }
                 }
-                if (it.getListingDetails().getEndTime().getTime().after(Calendar.getInstance().getTime())) {
-                    for (VariationType variationtype : variationType) {
-                        sku = new SkuDTO();
-                        productPicture = new ProductPictureDTO();
-                        productPicture.setId(UUIDGenerator.getUUID());
-                        productPicture.setSkuId(variationtype.getSKU());
-                        productPicture.setSupplierId("ebay#" + it.getSeller().getUserID());
-                        productPicture.setPicUrl(picUrl);
-                        sku.setId(UUIDGenerator.getUUID());
-                        sku.setSkuId(variationtype.getSKU());
-                        sku.setSupplierId("ebay#" + it.getSeller().getUserID());
-                        sku.setStock(String.valueOf(variationtype.getQuantity() - variationtype.getSellingStatus().getQuantitySold()));
-                        sku.setProductName(it.getTitle());
-                        AmountType amountType = variationtype.getStartPrice();
-                        sku.setSaleCurrency(amountType.getCurrencyID().toString());
-                        if (!String.valueOf(amountType.getValue()).equals("")) {
-                            sku.setSalePrice(String.valueOf(amountType.getValue()));
-                            sku.setSupplierPrice(String.valueOf(amountType.getValue()));
-                        } else {
-                            sku.setSalePrice(it.getListingDetails().getConvertedStartPrice().toString());
-                            sku.setSupplierPrice(it.getListingDetails().getConvertedStartPrice().toString());
-                        }
-                        com.ebay.soap.eBLBaseComponents.NameValueListType[] nameValueListTypes = variationtype.getVariationSpecifics().getNameValueList();
-                        for (com.ebay.soap.eBLBaseComponents.NameValueListType nameValueListType : nameValueListTypes) {
-                            // System.out.println(nameValueListType.getName()+"dha");
-                            if (nameValueListType.getName().contains("Color")) {
-                                sku.setColor(nameValueListType.getValue(0));
-                            }
-                            if (nameValueListType.getName().contains("Size")) {
-                                sku.setProductSize(nameValueListType.getValue(0));
-                            }
-                        }
-                        sku.setCreateTime(it.getListingDetails().getStartTime().getTime());
-                        sku.setLastTime(it.getListingDetails().getEndTime().getTime());
-                        sku.setSpuId(spuId);
-                        productFetchService.saveSKU(sku);
-                        productFetchService.savePictureForMongo(productPicture);
-                        skuDTO.add(sku);
-                    }
-                }
+                sku.setSaleCurrency(it.getListingDetails().getConvertedStartPrice().getCurrencyID().toString());
+                sku.setSalePrice(it.getListingDetails().getConvertedStartPrice().toString());
+                sku.setSupplierPrice(it.getListingDetails().getConvertedStartPrice().toString());
+                sku.setCreateTime(it.getListingDetails().getStartTime().getTime());
+                sku.setLastTime(it.getListingDetails().getEndTime().getTime());
+                skuDTO.add(sku);
             }
+            productFetchService.saveSKU(sku);
+            productFetchService.savePictureForMongo(productPicture);
         }
     }
 
-    private ApiContext getProApiContext() {
+
+    private static ApiContext getProApiContext() {
         ApiContext api = new ApiContext();
         String apiUrl = "https://api.ebay.com/wsapi";
         api.setApiServerUrl(apiUrl);
@@ -146,19 +145,13 @@ public class FetchEbayProduct {
         return api;
     }
 
-    public void FetchSpuAndSave(String storeName) throws Exception {
+    public void fetchSpuAndSave(String storeName) throws Exception {
 
         SpuDTO spu = null;
-        String url = findCommonUrl("findItemsIneBayStores");
-        url += "storeName=%s&paginationInput.entriesPerPage=300&paginationInput.pageNumber=1";
-        url = String.format(url, storeName);
-        System.out.println(url);
-        String xml = HttpUtils.get(url);
-        System.out.println(xml);
+        String xml = HttpUtils.get(getUrl(storeName));
         try {
             FindItemsIneBayStoresResponseDocument doc = FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
             FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
-            StringBuilder picUrl = new StringBuilder();
             if (rt.getSearchResult() != null) {
                 SearchItem[] type = rt.getSearchResult().getItemArray();
                 if (type != null) {
@@ -199,22 +192,8 @@ public class FetchEbayProduct {
                                 }
                             }
                         }
-                        //将两处的图片加在一个String中，获取所有图片
-                        if (item.getPictureDetails().getPictureURL() != null) {
-                            for (int m = 0; m < item.getPictureDetails().getPictureURL().length; m++) {
-                                picUrl.append(item.getPictureDetails().getPictureURL()[m]).append(";");
-                            }
-                        }
-                        if (item.getVariations() != null) {
-                            if (item.getVariations().getPictures() != null) {
-                                VariationSpecificPictureSetType[] variationSpecificPictureSetType = item.getVariations().getPictures()[0].getVariationSpecificPictureSet();
-                                if (variationSpecificPictureSetType != null)
-                                    for (VariationSpecificPictureSetType var : variationSpecificPictureSetType) {
-                                        picUrl.append(var.getPictureURL()).append(";");
-                                    }
-                            }
-                        }
-                        spu.setPicUrl(picUrl.toString());
+                        //调用getPicUrl方法来获得图片地址
+                        spu.setPicUrl(getPicUrl(t.getItemId()));
                         spu.setCreateTime(t.getListingInfo().getStartTime().getTime());
                         spu.setLastTime(t.getListingInfo().getEndTime().getTime());
                         spuDTO.add(spu);
@@ -248,18 +227,12 @@ public class FetchEbayProduct {
         return item;
     }
 
-    public SearchResult testFindItemInEbayStore() throws XmlException {
+    public String getUrl(String storeName) {
         String url = findCommonUrl("findItemsIneBayStores");
         url += "storeName=%s&paginationInput.entriesPerPage=300&paginationInput.pageNumber=1";
-        String storeName = "inzara.store";
         url = String.format(url, storeName);
-        System.out.println(url);
-        String xml = HttpUtils.get(url);
-        System.out.println(xml);
-        FindItemsIneBayStoresResponseDocument doc = FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
-        FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
-        SearchResult searchResult = rt.getSearchResult();
-        return searchResult;
+
+        return url;
     }
 
     public String getPicUrl(String itemId) throws Exception {

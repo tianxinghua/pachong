@@ -154,6 +154,10 @@ public class SpuDTO {
         this.lastTime = lastTime;
     }
 
+    public String getCategoryGender() { return categoryGender; }
+
+    public void setCategoryGender(String categoryGender) { this.categoryGender = categoryGender; }
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
