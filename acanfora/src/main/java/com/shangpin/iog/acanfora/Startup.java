@@ -7,6 +7,7 @@ import com.shangpin.iog.dto.ColorContrastDTO;
 import com.shangpin.iog.product.service.ColorContrastFindServiceImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -15,9 +16,9 @@ import java.util.List;
 
 public class Startup
 {
+    private static Logger log = Logger.getLogger("info");
 
-    static final Log log = LogFactory.getLog(Startup.class);
-	private static ApplicationContext factory;
+    private static ApplicationContext factory;
 	private static void loadSpringContext()
 
 	{

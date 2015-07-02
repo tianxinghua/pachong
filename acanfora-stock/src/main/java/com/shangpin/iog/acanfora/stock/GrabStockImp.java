@@ -14,6 +14,7 @@ import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import javax.xml.bind.JAXBException;
 import java.lang.String;
@@ -22,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class GrabStockImp extends AbsUpdateProductStock {
-    static final Log log = LogFactory.getLog(GrabStockImp.class);
+    private static Logger logger = Logger.getLogger("info");
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
         Map<String, Integer> skustock = new HashMap<>(skuNo.size());
         List<Item> itemList = new ArrayList<>();
@@ -31,9 +32,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
         String kk = HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");
         Products products = null;
         try {
-            log.info("拉取ACANFORA数据开始");
+            logger.info("拉取ACANFORA数据开始");
             products = ObjectXMLUtil.xml2Obj(Products.class, kk);
-            log.info("拉取ACANFORA数据成功");
+            logger.info("拉取ACANFORA数据成功");
         } catch (JAXBException e) {
             e.printStackTrace();
         }
@@ -63,7 +64,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
                 skustock.put(skuno, Integer.valueOf(stockMap.get(skuno)));
             }
         }
-        log.info("ACANFORA赋值库存数据成功");
+        logger.info("ACANFORA赋值库存数据成功");
         return skustock;
     }
 
@@ -71,9 +72,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
         AbsUpdateProductStock grabStockImp = new GrabStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        log.info("ACANFORA更新数据库开始");
+        logger.info("ACANFORA更新数据库开始");
         grabStockImp.updateProductStock("2015050800242","2015-01-01 00:00",format.format(new Date()));
-        log.info("ACANFORA更新数据库结束");
+        logger.info("ACANFORA更新数据库结束");
 
     }
 

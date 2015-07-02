@@ -63,6 +63,7 @@ public class ColtortiStartup {
 		logger.info("执行更新库存------");
 		String fmt="yyyy-MM-dd HH:mm";
 		UpdateStockService uss=new UpdateStockService();
+		uss.setUseThread(true);//uss.setSkuCount4Thread(100);
 		uss.updateProductStock(ColtortiUtil.supplier,DateTimeUtil.convertFormat(startDate, fmt), 
 				DateTimeUtil.convertFormat(endDate, fmt));
 	}

@@ -75,7 +75,7 @@ public class FetchProduct {
                                 dto.setId(UUIDGenerator.getUUID());
                                 dto.setSkuId(item.getItem_id());
                                 try {
-                                    productFetchService.savePicture(dto);
+                                    productFetchService.savePictureForMongo(dto);
                                 } catch (ServiceException e) {
                                     e.printStackTrace();
                                 }
@@ -96,7 +96,7 @@ public class FetchProduct {
                     spu.setBrandName(product.getProduct_brand());
                     spu.setCategoryName(product.getCategory());
                     spu.setSpuName(product.getProduct_name());
-                    spu.setSeasonId(product.getSeason_code());
+                    spu.setSeasonId(product.getSeason_name());
                     spu.setMaterial(product.getProduct_material());
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {

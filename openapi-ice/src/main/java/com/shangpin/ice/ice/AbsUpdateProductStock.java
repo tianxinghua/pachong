@@ -1,5 +1,6 @@
 package com.shangpin.ice.ice;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,10 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ShangPin.SOP.Api.ApiException;
 import ShangPin.SOP.Entity.Api.Product.SopProductSkuIce;
 import ShangPin.SOP.Entity.Api.Product.SopProductSkuPage;
 import ShangPin.SOP.Entity.Api.Product.SopProductSkuPageQuery;
@@ -29,6 +33,38 @@ import com.shangpin.framework.ServiceException;
  */
 public abstract class AbsUpdateProductStock {
 	static Logger logger = LoggerFactory.getLogger(AbsUpdateProductStock.class);
+	private boolean useThread=false;
+	private int skuCount4Thread=100;
+	/**
+	 * 多少个sku启动一个线程,默认100
+	 * @return
+	 */
+	public int getSkuCount4Thread() {
+		if(skuCount4Thread<=0)
+			return 100;
+		return skuCount4Thread;
+	}
+	/**
+	 * 多少个sku启动一个线程进行数据拉取，默认100
+	 * @param skuCount4Thread
+	 */
+	public void setSkuCount4Thread(int skuCount4Thread) {
+		this.skuCount4Thread = skuCount4Thread;
+	}
+	/**
+	 * 是否使用多线程
+	 * @return
+	 */
+	public boolean isUseThread() {
+		return useThread;
+	}
+	/**
+	 * 是否使用多线程
+	 * @param useThread
+	 */
+	public void setUseThread(boolean useThread) {
+		this.useThread = useThread;
+	}
 	/**
 	 * 抓取供应商库存数据 
 	 * @param skuNo 供应商的每个产品的唯一编号：sku
@@ -58,8 +94,8 @@ public abstract class AbsUpdateProductStock {
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
 				for (SopSkuIce ice : skuIces) {
-					skuIds.add(ice.BarCode);
-					stocks.put(ice.BarCode,ice.SkuNo);
+					skuIds.add(ice.SupplierSkuNo);
+					stocks.put(ice.SupplierSkuNo,ice.SkuNo);
 //System.out.println("BarCode:"+ice.BarCode+",skuNo:"+ice.SkuNo+",SupplierSkuNO:"+ice.SupplierSkuNo);
 				}
 			}
@@ -79,15 +115,85 @@ public abstract class AbsUpdateProductStock {
 	 * @return 更新失败数
 	 * @throws Exception 
 	 */
-	public int updateProductStock(String supplier,String start,String end) throws Exception{
+	public int updateProductStock(final String supplier,String start,String end) throws Exception{
 		//ice的skuid与本地库拉到的skuId的关系，key是本地库中skuId
-		Map<String,String> skuRelation4iceAndSupplier=new HashMap<String, String>();
-		Collection<String> skuNoSet=grabProduct(supplier, start, end,skuRelation4iceAndSupplier);
+		final Map<String,String> skuRelation4iceAndSupplier=new HashMap<String, String>();
+		final Collection<String> skuNoSet=grabProduct(supplier, start, end,skuRelation4iceAndSupplier);
 logger.warn("待更新库存数据总数："+skuNoSet.size());
+		final List<Integer> totoalFailCnt=new ArrayList<>();
+		if(useThread){
+			int poolCnt=skuNoSet.size()/getSkuCount4Thread();
+			ExecutorService exe=Executors.newFixedThreadPool(poolCnt/4+1);//相当于跑4遍
+			final List<Collection<String>> subSkuNos=subCollection(skuNoSet);
+			logger.warn("线程池数："+(poolCnt/4+1)+",sku子集合数："+subSkuNos.size());
+			for(int i = 0 ; i <subSkuNos.size();i++){
+				final int cnt=i;
+				exe.execute(new Thread(){
+					@Override
+					public void run() {
+						int size=subSkuNos.get(cnt).size();
+						try {
+							logger.warn(Thread.currentThread().getName()+"处理开始，数："+size);
+							int failCnt = updateStock(supplier, skuRelation4iceAndSupplier,
+									subSkuNos.get(cnt));
+							totoalFailCnt.add(failCnt);
+							logger.warn(Thread.currentThread().getName()+"完成，失败数:"+failCnt);
+						} catch (Exception e) {
+							logger.warn(Thread.currentThread().getName()+"处理出错",e);
+						}
+					}
+				});
+			}		
+			int fct=0;
+			for(int k=0;k<totoalFailCnt.size();k++){
+				fct+=totoalFailCnt.get(k);
+			}
+			return fct;
+		}else{
+			return updateStock(supplier, skuRelation4iceAndSupplier, skuNoSet);
+		}
+	}
+	/**
+	 * @param skuNoSet
+	 * @param thd
+	 * @return
+	 */
+	private List<Collection<String>> subCollection(Collection<String> skuNoSet) {
+		int thcnt = getSkuCount4Thread();
+		List<Collection<String>> list=new ArrayList<>();
+		int count=0;int currentSet=0;
+		for (Iterator<String> iterator = skuNoSet.iterator(); iterator
+				.hasNext();) {
+			String skuNo = iterator.next();
+			if(count==thcnt)
+				count=0;
+			if(count==0){
+				Collection<String> e = new ArrayList<>();
+				list.add(e);				
+				currentSet++;
+			}
+			list.get(currentSet-1).add(skuNo);
+			count++;
+
+		}
+		return list;
+	}
+	/**
+	 * @param supplier
+	 * @param skuRelation4iceAndSupplier
+	 * @param skuNoSet
+	 * @return
+	 * @throws ServiceException
+	 * @throws Exception
+	 * @throws ApiException
+	 */
+	private int updateStock(String supplier,
+			Map<String, String> skuRelation4iceAndSupplier,
+			Collection<String> skuNoSet) throws ServiceException, Exception,
+			ApiException {
 		//拿库存
 		Map<String, Integer> supplierStock=grabStock(skuNoSet);		
 		Map<String, Integer> iceStock=new HashMap<String, Integer>(supplierStock.size());
-logger.warn("拉取库存完毕："+iceStock.size());
 		Set<String> skuSet=supplierStock.keySet();
 		for (Iterator<String> iterator = skuSet.iterator(); iterator.hasNext();) {
 			String skuId = iterator.next();
@@ -96,6 +202,7 @@ logger.warn("拉取库存完毕："+iceStock.size());
 			if(skuNo!=null)
 				iceStock.put(skuNo, stock);
 		}
+logger.warn("拉取库存完毕,iceStock："+iceStock.size());
 		
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		int failCount=0;
