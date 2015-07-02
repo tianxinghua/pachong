@@ -52,6 +52,10 @@ public abstract class AbsUpdateProductStock {
 	public boolean isUseThread() {
 		return useThread;
 	}
+	/**
+	 * 是否使用多线程
+	 * @param useThread
+	 */
 	public void setUseThread(boolean useThread) {
 		this.useThread = useThread;
 	}
