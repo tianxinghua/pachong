@@ -92,8 +92,8 @@ public class ColtortiStockService {
 		//System.out.println("  抓取库存加转换需要的时间 =" + String.valueOf(System.currentTimeMillis()-startDate.getTime()));
 		return rtnScalar;
 	}
-	public static void main(String[] args) throws ServiceException {
+	/*public static void main(String[] args) throws ServiceException {
 		Map<String, Map<String, Integer>> stok = getStock("151578DGH000006",null);
 		System.out.println(new Gson().toJson(stok));
-	}
+	}*/
 }
