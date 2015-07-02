@@ -50,13 +50,19 @@ public class FetchProduct {
                 }
 
                 List<Item> itemList = items.getItems();
+                String skuId = "";
                 for(Item item:itemList){
                     SkuDTO sku  = new SkuDTO();
                     try {
                         sku.setId(UUIDGenerator.getUUID());
                         sku.setSupplierId(supplierId);
+
                         sku.setSpuId(product.getProductId());
-                        sku.setSkuId(item.getItem_id());
+                        skuId = item.getItem_id();
+                        if(skuId.indexOf("½")>0){
+                            skuId = skuId.replace("½","+");
+                        }
+                        sku.setSkuId(skuId);
                         sku.setProductSize(item.getItem_size());
                         sku.setSupplierPrice(item.getSupply_price());
                         sku.setColor(item.getColor());

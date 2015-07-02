@@ -39,6 +39,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
             e.printStackTrace();
         }
         List<Product> productList = products.getProducts();
+        String skuId = "";
         for (Product product : productList) {
 
             Items items = product.getItems();
@@ -47,7 +48,12 @@ public class GrabStockImp extends AbsUpdateProductStock {
             }
             for(Item item:items.getItems()){
                 if(StringUtils.isNotBlank(item.getStock()) ){
-                     stockMap.put(item.getItem_id(),item.getStock());
+
+                    skuId = item.getItem_id();
+                    if(skuId.indexOf("½")>0){
+                        skuId = skuId.replace("½","+");
+                    }
+                     stockMap.put(skuId,item.getStock());
                 }
             }
 //            itemList.containsAll(items.getItems());
