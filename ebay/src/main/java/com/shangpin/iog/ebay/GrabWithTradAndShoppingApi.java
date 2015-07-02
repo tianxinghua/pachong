@@ -41,7 +41,7 @@ import com.shangpin.iog.service.ProductFetchService;
 public class GrabWithTradAndShoppingApi {
 	static Logger logger = LoggerFactory.getLogger(GrabWithTradAndShoppingApi.class);
 	@Autowired
-	ProductFetchService productFetchService
+	ProductFetchService productFetchService;
 	static int pageSize=200;
 	/**
 	 * 抓取ebay商户的数据
