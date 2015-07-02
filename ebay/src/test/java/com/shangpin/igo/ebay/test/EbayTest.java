@@ -231,7 +231,7 @@ public class EbayTest {
 		SpuDTO spu=null;
 		String url=findCommonUrl("findItemsIneBayStores");
 		url+="storeName=%s&paginationInput.entriesPerPage=10&paginationInput.pageNumber=1";
-		String storeName="pumaboxstore";
+		String storeName="inzara.store";
 		url=String.format(url,storeName);
 		System.out.println(url);
 		String xml=HttpUtils.get(url);
@@ -299,15 +299,6 @@ public class EbayTest {
 					}
 				}
 			}
-
-			SearchItem[] type = rt.getSearchResult().getItemArray();
-			for (int i=0;i<type.length;i++){
-				type[i].getItemId();
-				SkuDTO sku = new SkuDTO();
-				
-			}
-
-
 		} catch (XmlException e) {
 			e.printStackTrace();
 		}

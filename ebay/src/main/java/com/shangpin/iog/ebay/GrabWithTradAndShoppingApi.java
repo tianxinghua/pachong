@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GrabWithTradAndShoppingApi {
 	@Autowired
-	ProductFetchService productFetchService
+	ProductFetchService productFetchService;
 	static Logger logger = LoggerFactory.getLogger(GrabWithTradAndShoppingApi.class);
 	static int pageSize=200;
 	/**
@@ -59,14 +59,14 @@ public class GrabWithTradAndShoppingApi {
 	 * @throws SdkException
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Map<String, ? extends Collection> getSellerList(String userId,Date endStart,Date endEnd) throws ApiException, SdkSoapException, SdkException{
+	public Map<String,Collection> getSellerList(String userId,Date endStart,Date endEnd) throws ApiException, SdkSoapException, SdkException{
 		int page=1;
 		boolean hasMore=false;
-		Map<String, ? extends Collection> skuSpuAndPic=null;
+		Map<String, Collection> skuSpuAndPic=null;
 		do{
 			GetSellerListResponseType resp = GrabEbayApiService.tradeSellerList(userId, 
 					getCalendar(endStart), getCalendar(endEnd),page,pageSize);
-			if(AckCodeType.FAILURE.equals(resp.getAck())){
+			if(!AckCodeType.FAILURE.equals(resp.getAck())){
 				hasMore=resp.isHasMoreItems();
 				ItemType[] tps = resp.getItemArray().getItem();
 				List<String> itemIds = new ArrayList<>(tps.length);//1.得到id
@@ -78,7 +78,7 @@ public class GrabWithTradAndShoppingApi {
 				//3.转换sku,spu
 				SimpleItemType[] itemTypes=multResp.getItemArray();
 				//Map<String, ? extends Collection<?>> kpp=TradeItemConvert.convert2SKuAndSpu(tps,userId);
-				Map<String, ? extends Collection<?>> kpp=ShopingItemConvert.convert2kpp(itemTypes,userId);
+				Map<String, Collection> kpp=ShopingItemConvert.convert2kpp(itemTypes,userId);
 				if(skuSpuAndPic==null){
 					skuSpuAndPic=kpp;
 				}else{
@@ -100,20 +100,19 @@ public class GrabWithTradAndShoppingApi {
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.MONTH, 1);
 		date2=c.getTime();
-		Map<String, ? extends Collection> skuSpuAndPic=getSellerList("inzara.store",date,date2);
-		//Collection<SkuDTO>  skus= skuSpuAndPic.get("sku");
-		//System.out.println(skus.size()+"nihaoma");
-//		for(SkuDTO sku:skus) {
-//			productFetchService.saveSKU(sku);
-//		}
-//		Collection<SpuDTO> spuDTOs = skuSpuAndPic.get("spu");
-//		for(SpuDTO spu:spuDTOs){
-//			productFetchService.saveSPU(spu);
-//		}
-//		Collection<ProductPictureDTO> picUrl = skuSpuAndPic.get("pic");
-//		for(ProductPictureDTO picurl:picUrl){
-//			productFetchService.savePictureForMongo(picurl);
-//		}
+		Map<String, Collection> skuSpuAndPic=getSellerList("inzara.store",date,date2);
+		Collection<SkuDTO>  skus= skuSpuAndPic.get("sku");
+		for(SkuDTO sku:skus) {
+			productFetchService.saveSKU(sku);
+		}
+		Collection<SpuDTO> spuDTOs = skuSpuAndPic.get("spu");
+		for(SpuDTO spu:spuDTOs){
+			productFetchService.saveSPU(spu);
+		}
+		Collection<ProductPictureDTO> picUrl = skuSpuAndPic.get("pic");
+		for(ProductPictureDTO picurl:picUrl){
+			productFetchService.savePictureForMongo(picurl);
+		}
 	}
 	/**
 	 * 根据itemId获取item及变种的库存<br/>

@@ -36,7 +36,7 @@ public abstract class AbsUpdateProductStock {
 	 * @return 每个sku对应的库存数
 	 * @throws ServiceException 
 	 */
-	public abstract Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException;
+	public abstract Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception;
 	/**
 	 * 抓取主站商品SKU信息，等待更新库存<br/>
 	 * @see #updateProduct(String, Map) 更新库存
@@ -73,7 +73,8 @@ public abstract class AbsUpdateProductStock {
 	 * 更新主站库存
 	 * @param supplier 供应商id
 	 * @param start 主站产品数据时间开始 yyyy-MM-dd HH:mm
-	 * @param end 主站产品数据时间结束 yyyy-MM-dd HH:mm
+	 * @param end 主站产品数据时间结束 yyyy
+	 *            +   -MM-dd HH:mm
 	 * @see {@link #grabStock(List) 抓取库存 }
 	 * @return 更新失败数
 	 * @throws Exception 
