@@ -29,6 +29,32 @@ import com.shangpin.framework.ServiceException;
  */
 public abstract class AbsUpdateProductStock {
 	static Logger logger = LoggerFactory.getLogger(AbsUpdateProductStock.class);
+	private boolean useThread=false;
+	private int skuCount4Thread=100;
+	/**
+	 * 多少个sku启动一个线程
+	 * @return
+	 */
+	public int getSkuCount4Thread() {
+		return skuCount4Thread;
+	}
+	/**
+	 * 多少个sku启动一个线程进行数据拉取，默认100
+	 * @param skuCount4Thread
+	 */
+	public void setSkuCount4Thread(int skuCount4Thread) {
+		this.skuCount4Thread = skuCount4Thread;
+	}
+	/**
+	 * 是否使用多线程
+	 * @return
+	 */
+	public boolean isUseThread() {
+		return useThread;
+	}
+	public void setUseThread(boolean useThread) {
+		this.useThread = useThread;
+	}
 	/**
 	 * 抓取供应商库存数据 
 	 * @param skuNo 供应商的每个产品的唯一编号：sku
