@@ -100,7 +100,7 @@ public abstract class AbsUpdateProductStock {
 				}
 			}
 			pageIndex++;
-			hasNext=(pageSize==products.Total);
+			hasNext=(pageSize==skus.size());
 		}
 		return skuIds;
 	}
