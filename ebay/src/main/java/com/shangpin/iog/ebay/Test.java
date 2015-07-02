@@ -27,7 +27,7 @@ public class Test {
           log.info("----初始SPRING成功----");
           //拉取数据
         FetchEbayProduct fetchProduct =(FetchEbayProduct)factory.getBean("ebay");
-        fetchProduct.FetchSkuAndSave(id);
+        fetchProduct.fetchSkuAndSave(id);
 //        //fetchProduct.FetchSpuAndSave(storeName);
 
 //        GrabWithTradAndShoppingApi egProduct = (GrabWithTradAndShoppingApi)factory.getBean(GrabWithTradAndShoppingApi.class);
