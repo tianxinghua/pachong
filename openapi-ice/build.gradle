@@ -10,6 +10,7 @@ repositories {
 dependencies {
     compile(
             "ZeroC:Ice:3.5.1",
+			"commons-collections:commons-collections:3.2.1",
 			project(":project-framework")
     )
 }

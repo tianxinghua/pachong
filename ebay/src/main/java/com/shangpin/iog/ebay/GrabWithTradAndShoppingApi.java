@@ -14,6 +14,8 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.ebay.sdk.ApiException;
 import com.ebay.sdk.SdkException;
@@ -23,17 +25,12 @@ import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
 import com.ebay.soap.eBLBaseComponents.ItemType;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.SimpleItemType;
-import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.dto.ProductPictureDTO;
-import com.shangpin.iog.dto.SkuDTO;
-import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.ebay.shoping.VariationType;
 import com.shangpin.ebay.shoping.VariationsType;
+import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.ebay.convert.ShopingItemConvert;
 import com.shangpin.iog.ebay.service.GrabEbayApiService;
 import com.shangpin.iog.service.ProductFetchService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * @description 
@@ -42,9 +39,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class GrabWithTradAndShoppingApi {
-	@Autowired
-	ProductFetchService productFetchService ;
 	static Logger logger = LoggerFactory.getLogger(GrabWithTradAndShoppingApi.class);
+	@Autowired
+	ProductFetchService productFetchService
 	static int pageSize=200;
 	/**
 	 * 抓取ebay商户的数据

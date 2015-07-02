@@ -41,11 +41,16 @@ public class UpdateStockService extends AbsUpdateProductStock{
 					stoks=ColtortiStockService.getStock(productId, null);
 					productIdSet.add(productId);
 					if(stoks!=null && stoks.size()>0){
-						int quantity=stoks.get(recordId).get(scalarNo);
-						skuStock.put(skuNo, quantity);
+						if(stoks.get(recordId)!=null){
+							Integer qnt=stoks.get(recordId).get(scalarNo);
+							int quantity=qnt==null?0:qnt;
+							skuStock.put(skuNo, quantity);
+						}else{							
+							skuStock.put(skuNo, 0);
+						}
 					}
+					logger.warn(skuNo+",拉取库存成功:"+new Gson().toJson(stoks));
 				}
-			logger.warn(recordId+",拉取库存成功:"+new Gson().toJson(stoks));
 			}catch(ServiceException e){
 				if(ColtortiUtil.isTokenExpire(e)){
 					ColtortiTokenService.initToken();
