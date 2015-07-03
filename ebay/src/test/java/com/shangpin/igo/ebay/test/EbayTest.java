@@ -87,7 +87,7 @@ public class EbayTest {
 	@Test
 	public void testGetItem() throws ApiException, SdkException, Exception{
 		SkuDTO sku=null;
-		String itemId="221288382861";
+		String itemId="252005767578";
 		ApiContext api = getProApiContext();
 		ApiCall call = new ApiCall(api);
 		GetItemRequestType req=new GetItemRequestType();
@@ -102,8 +102,8 @@ public class EbayTest {
 		req.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES});
 		GetItemResponseType resp=(GetItemResponseType)call.execute(req);
 		ItemType it=resp.getItem();
-		String[] pics=it.getPictureDetails().getPictureURL();
-		String[] pics2=it.getVariations().getPictures()[0].getVariationSpecificPictureSet()[0].getPictureURL();
+		//String[] pics=it.getPictureDetails().getPictureURL();
+		//String[] pics2=it.getVariations().getPictures()[0].getVariationSpecificPictureSet()[0].getPictureURL();
 		VariationType[] variationType = it.getVariations().getVariation();
 		for(VariationType variationtype:variationType){
 			sku=new SkuDTO();
@@ -150,7 +150,7 @@ public class EbayTest {
 
 	@Test
 	public void testGetItemXml(){
-		String itemId="331449399948";
+		String itemId="252005767578";
 		String url= EbayConf.getTradeCallUrl("GetItem");
 		url+="&ItemID="+itemId;
 		String xml=HttpUtils.get(url);
@@ -230,8 +230,8 @@ public class EbayTest {
 	public void testFindItemInStore() throws ApiException, SdkException, Exception{
 		SpuDTO spu=null;
 		String url=findCommonUrl("findItemsIneBayStores");
-		url+="storeName=%s&paginationInput.entriesPerPage=10&paginationInput.pageNumber=1";
-		String storeName="inzara.store";
+		url+="storeName=%s&paginationInput.entriesPerPage=300&paginationInput.pageNumber=1";
+		String storeName="seanhkg";
 		url=String.format(url,storeName);
 		System.out.println(url);
 		String xml=HttpUtils.get(url);
@@ -244,7 +244,7 @@ public class EbayTest {
 				SearchItem[] type = rt.getSearchResult().getItemArray();
 				if (type != null) {
 					for (SearchItem t : type) {
-						System.out.println(t.getPictureURLSuperSize());
+						System.out.println("dygr"+t.getItemId());
 						spu = new SpuDTO();
 						ItemType item = testGetItem(t.getItemId());
 						itemArray.add(t.getItemId());
@@ -328,7 +328,7 @@ public class EbayTest {
 	private String findCommonUrl(String operName){
 		String url="http://svcs.ebay.com/services/search/FindingService/v1?OPERATION-NAME=%s&"
 				+"SECURITY-APPNAME=%s&RESPONSE-DATA-FORMAT=XML&REST-PAYLOAD&";
-		String appid="vanskydba-8e2b-46af-adc1-58cae63bf2e";
+		String appid="shangpin-8ce3-4e36-8082-464c90ad53bc";
 		return url=String.format(url, operName,appid);
 	}
 	

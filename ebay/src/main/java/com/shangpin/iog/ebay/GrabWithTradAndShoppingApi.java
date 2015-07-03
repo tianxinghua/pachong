@@ -81,7 +81,7 @@ public class GrabWithTradAndShoppingApi {
 				//3.转换sku,spu
 				SimpleItemType[] itemTypes=multResp.getItemArray();
 				//Map<String, ? extends Collection<?>> kpp=TradeItemConvert.convert2SKuAndSpu(tps,userId);
-				Map<String, ? extends Collection<?>> kpp=ShopingItemConvert.convert2kpp(itemTypes,userId);
+				Map<String,Collection> kpp=ShopingItemConvert.convert2kpp(itemTypes,userId);
 				if(skuSpuAndPic==null){
 					skuSpuAndPic=kpp;
 				}else{
