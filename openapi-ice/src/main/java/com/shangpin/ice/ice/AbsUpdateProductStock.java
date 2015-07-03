@@ -79,6 +79,7 @@ public abstract class AbsUpdateProductStock {
 	 * @param supplier 供应商id
 	 * @param start 主站数据开始时间
 	 * @param end 主站数据结束时间
+	 * @param stocks ice与本地sku编号键值对
 	 * @return
 	 * @throws Exception
 	 */
@@ -95,8 +96,7 @@ public abstract class AbsUpdateProductStock {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
 				for (SopSkuIce ice : skuIces) {
 					skuIds.add(ice.SupplierSkuNo);
-					stocks.put(ice.SupplierSkuNo,ice.SkuNo);
-//System.out.println("BarCode:"+ice.BarCode+",skuNo:"+ice.SkuNo+",SupplierSkuNO:"+ice.SupplierSkuNo);
+					stocks.put(ice.SkuNo,ice.SupplierSkuNo);
 				}
 			}
 			pageIndex++;
@@ -116,9 +116,9 @@ public abstract class AbsUpdateProductStock {
 	 * @throws Exception 
 	 */
 	public int updateProductStock(final String supplier,String start,String end) throws Exception{
-		//ice的skuid与本地库拉到的skuId的关系，key是本地库中skuId
-		final Map<String,String> skuRelation4iceAndSupplier=new HashMap<String, String>();
-		final Collection<String> skuNoSet=grabProduct(supplier, start, end,skuRelation4iceAndSupplier);
+		//ice的skuid与本地库拉到的skuId的关系，value是本地库中skuId,key是ice中的skuNo
+		final Map<String,String> iceAndLocalSku=new HashMap<String, String>();
+		final Collection<String> skuNoSet=grabProduct(supplier, start, end,iceAndLocalSku);
 logger.warn("待更新库存数据总数："+skuNoSet.size());
 		final List<Integer> totoalFailCnt=new ArrayList<>();
 		if(useThread){
@@ -134,7 +134,7 @@ logger.warn("待更新库存数据总数："+skuNoSet.size());
 						int size=subSkuNos.get(cnt).size();
 						try {
 							logger.warn(Thread.currentThread().getName()+"处理开始，数："+size);
-							int failCnt = updateStock(supplier, skuRelation4iceAndSupplier,
+							int failCnt = updateStock(supplier, iceAndLocalSku,
 									subSkuNos.get(cnt));
 							totoalFailCnt.add(failCnt);
 							logger.warn(Thread.currentThread().getName()+"完成，失败数:"+failCnt);
@@ -150,7 +150,7 @@ logger.warn("待更新库存数据总数："+skuNoSet.size());
 			}
 			return fct;
 		}else{
-			return updateStock(supplier, skuRelation4iceAndSupplier, skuNoSet);
+			return updateStock(supplier, iceAndLocalSku, skuNoSet);
 		}
 	}
 	/**
@@ -180,7 +180,7 @@ logger.warn("待更新库存数据总数："+skuNoSet.size());
 	}
 	/**
 	 * @param supplier
-	 * @param skuRelation4iceAndSupplier
+	 * @param iceAndLocalSku key是ice的skuNo,value是本地skuId
 	 * @param skuNoSet
 	 * @return
 	 * @throws ServiceException
@@ -188,36 +188,45 @@ logger.warn("待更新库存数据总数："+skuNoSet.size());
 	 * @throws ApiException
 	 */
 	private int updateStock(String supplier,
-			Map<String, String> skuRelation4iceAndSupplier,
+			Map<String, String> iceAndLocalSku,
 			Collection<String> skuNoSet) throws ServiceException, Exception,
 			ApiException {
-		//拿库存
-		Map<String, Integer> supplierStock=grabStock(skuNoSet);		
+		//拉库存
+		Map<String, Integer> supplierStock=grabStock(skuNoSet);
+		logger.warn("拉取库存完毕,supplier Stock："+supplierStock.size());
+		Set<String> iceSkuSet=iceAndLocalSku.keySet();
 		Map<String, Integer> iceStock=new HashMap<String, Integer>(supplierStock.size());
-		Set<String> skuSet=supplierStock.keySet();
+		for (String iceSKU : iceSkuSet) {
+			String skuId=iceAndLocalSku.get(iceSKU);//本地skuId
+			Integer stock=supplierStock.get(skuId);//本地skuId库存
+			if(stock==null){
+				stock=0;
+			}
+			iceStock.put(iceSKU, stock);//供应商skuId
+		}
+		/*Set<String> skuSet=supplierStock.keySet();
 		for (Iterator<String> iterator = skuSet.iterator(); iterator.hasNext();) {
 			String skuId = iterator.next();
 			Integer stock=supplierStock.get(skuId);//库存
 			String skuNo=skuRelation4iceAndSupplier.get(skuId);//skuNo
 			if(skuNo!=null)
 				iceStock.put(skuNo, stock);
-		}
-logger.warn("拉取库存完毕,iceStock："+iceStock.size());
+		}*/
 		
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		int failCount=0;
-		if(supplierStock!=null && supplierStock.size()>0){
-			Iterator<Entry<String, Integer>> iter=iceStock.entrySet().iterator();
-			while (iter.hasNext()) {
-				Entry<String, Integer> entry = iter.next();
-logger.warn("更新库存sku,stock="+entry.getKey()+":"+ entry.getValue());
-				Boolean result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());
-				if(!result){
-					failCount++;
-					logger.warn("更新SKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
-				}				
-			}
+		Iterator<Entry<String, Integer>> iter=iceStock.entrySet().iterator();
+		while (iter.hasNext()) {
+			Entry<String, Integer> entry = iter.next();
+			//logger.warn("更新库存ice sku,stock="+entry.getKey()+":"+ entry.getValue());
+			Boolean result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());
+			if(!result){
+				failCount++;
+				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
+			}				
 		}
+		/*if(supplierStock!=null && supplierStock.size()>0){
+		}*/
 		return failCount;
 	}
 }

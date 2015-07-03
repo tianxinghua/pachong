@@ -48,6 +48,8 @@ public class UpdateStockService extends AbsUpdateProductStock{
 						}else{							
 							skuStock.put(skuNo, 0);
 						}
+					}else{
+						skuStock.put(skuNo, 0);						
 					}
 					logger.warn(skuNo+",拉取库存成功:"+new Gson().toJson(stoks));
 				}
