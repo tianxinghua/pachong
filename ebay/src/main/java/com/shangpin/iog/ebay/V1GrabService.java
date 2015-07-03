@@ -3,7 +3,6 @@
  */
 package com.shangpin.iog.ebay;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -14,7 +13,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ebay.sdk.ApiException;
@@ -27,10 +25,8 @@ import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.SimpleItemType;
 import com.shangpin.ebay.shoping.VariationType;
 import com.shangpin.ebay.shoping.VariationsType;
-import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.ebay.convert.ShopingItemConvert;
 import com.shangpin.iog.ebay.service.GrabEbayApiService;
-import com.shangpin.iog.service.ProductFetchService;
 
 /**
  * @description 
@@ -38,10 +34,8 @@ import com.shangpin.iog.service.ProductFetchService;
  * <br/>2015年6月30日
  */
 @Component
-public class GrabWithTradAndShoppingApi {
-	static Logger logger = LoggerFactory.getLogger(GrabWithTradAndShoppingApi.class);
-	@Autowired
-	ProductFetchService productFetchService;
+public class V1GrabService {
+	static Logger logger = LoggerFactory.getLogger(V1GrabService.class);
 	static int pageSize=200;
 	/**
 	 * 抓取ebay商户的数据
@@ -88,29 +82,6 @@ public class GrabWithTradAndShoppingApi {
 		}while(hasMore);
 		
 		return skuSpuAndPic;
-	}
-
-    public void FetchAndSave() throws SdkException, ServiceException {
-		Date date=Calendar.getInstance().getTime();
-		Date date2=null;
-		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.MONTH, 1);
-		date2=c.getTime();
-		Map<String, ? extends Collection> skuSpuAndPic=getSellerList("inzara.store",date,date2);
-		//Collection<SkuDTO>  skus= skuSpuAndPic.get("sku");
-		//System.out.println(skus.size()+"nihaoma");
-//		for(SkuDTO sku:skus) {
-//			productFetchService.saveSKU(sku);
-//		}
-//		Collection<SpuDTO> spuDTOs = skuSpuAndPic.get("spu");
-//		for(SpuDTO spu:spuDTOs){
-//			productFetchService.saveSPU(spu);
-//		}
-//		Collection<ProductPictureDTO> picUrl = skuSpuAndPic.get("pic");
-//		for(ProductPictureDTO picurl:picUrl){
-//			productFetchService.savePictureForMongo(picurl);
-//		}
 	}
 	/**
 	 * 根据itemId获取item及变种的库存<br/>
