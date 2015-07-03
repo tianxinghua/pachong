@@ -210,6 +210,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 }else{
                     productName = productName.replaceAll(",", " ");
                 }
+                productName = productName.replaceAll("\\r","").replaceAll("\\n","");
                 buffer.append(productName).append(",");
 
 
@@ -290,7 +291,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //明细描述
                 productDetail = dto.getProductDescription();
                 if(StringUtils.isNotBlank(productDetail)&&productDetail.indexOf(",")>0){
-                    productDetail = productDetail.replace(","," ");
+                    productDetail = productDetail.replace(",","...  ");
                 }
 
                 buffer.append(productDetail).append(",");
