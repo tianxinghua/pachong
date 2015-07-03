@@ -29,9 +29,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
         String kk = HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");
         Products products = null;
         try {
-            logger.info("拉取ACANFORA数据开始");
+            logger.info("拉取galiano数据开始");
             products = ObjectXMLUtil.xml2Obj(Products.class, kk);
-            logger.info("拉取ACANFORA数据成功");
+            logger.info("拉取galiano数据成功");
         } catch (JAXBException e) {
             e.printStackTrace();
         }
@@ -53,21 +53,18 @@ public class GrabStockImp extends AbsUpdateProductStock {
                      stockMap.put(skuId,item.getStock());
                 }
             }
-//            itemList.containsAll(items.getItems());
+
         }
 
         for (String skuno : skuNo) {
-//            for (Item item : itemList) {
-//                if (skuno.equals(item.getItem_id())) {
-//                    skustock.put(skuno, Integer.valueOf(item.getStock()));
-//                    break;
-//                }
-//            }
+
             if(stockMap.containsKey(skuno)){
                 skustock.put(skuno, Integer.valueOf(stockMap.get(skuno)));
+            }else{
+                skustock.put(skuno,0);
             }
         }
-        logger.info("ACANFORA赋值库存数据成功");
+        logger.info("galiano赋值库存数据成功");
         return skustock;
     }
 
@@ -75,9 +72,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
         AbsUpdateProductStock grabStockImp = new GrabStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("ACANFORA更新数据库开始");
-        grabStockImp.updateProductStock("2015050800242","2015-01-01 00:00",format.format(new Date()));
-        logger.info("ACANFORA更新数据库结束");
+        logger.info("galiano更新数据库开始");
+        grabStockImp.updateProductStock("2015070301312","2015-01-01 00:00",format.format(new Date()));
+        logger.info("galiano更新数据库结束");
 
     }
 

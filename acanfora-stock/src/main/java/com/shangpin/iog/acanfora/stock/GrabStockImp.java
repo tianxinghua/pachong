@@ -68,6 +68,8 @@ public class GrabStockImp extends AbsUpdateProductStock {
 //            }
             if(stockMap.containsKey(skuno)){
                 skustock.put(skuno, Integer.valueOf(stockMap.get(skuno)));
+            } else{
+                skustock.put(skuno, 0);
             }
         }
         logger.info("ACANFORA赋值库存数据成功");

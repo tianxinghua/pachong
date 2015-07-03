@@ -35,7 +35,7 @@ public class FetchProduct {
 
     public void fetchProductAndSave(String url){
 
-        String supplierId = "00000001";
+        String supplierId = "2015070301312";
         try {
             String result =  HttpUtils.get(url,false,360000);
             Products products= ObjectXMLUtil.xml2Obj(Products.class, result);
@@ -50,6 +50,7 @@ public class FetchProduct {
                 }
 
                 List<Item> itemList = items.getItems();
+                if(null==itemList) continue;
                 for(Item item:itemList){
                     SkuDTO sku  = new SkuDTO();
                     try {
