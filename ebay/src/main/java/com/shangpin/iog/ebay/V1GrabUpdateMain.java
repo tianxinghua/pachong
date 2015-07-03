@@ -55,7 +55,7 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 		Date date = Calendar.getInstance().getTime();
 		Date date2 = null;
 		Calendar c = Calendar.getInstance();
-		c.add(Calendar.MONTH, 4);
+		c.add(Calendar.MONTH, 4);c.add(Calendar.DATE, -2);
 		date2 = c.getTime();
 		Map<String, ? extends Collection> skuSpuAndPic = null;
 		try {
