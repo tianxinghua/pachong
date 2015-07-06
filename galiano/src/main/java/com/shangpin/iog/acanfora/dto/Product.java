@@ -19,6 +19,7 @@ public class Product {
     private String season_name;
     private String description;
     private String category;
+    private String gender;//性别
     private String product_brand;
     private String product_detail;
     private String product_material;
@@ -142,8 +143,18 @@ public class Product {
         this.season_name = season_name;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
     public Product(){
         super();
     }
+
+
 
 }

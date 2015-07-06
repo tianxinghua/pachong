@@ -172,6 +172,29 @@ public class HttpUtils {
 
 	}
 
+
+    public static String getWithConnectManager(String url) {
+        HttpGet getMethod = new HttpGet(url);
+        String result = "{\"error\":\"发生异常错误\"}";
+
+        try {
+            CloseableHttpClient httpclient = getSSLClient(false,url);
+
+            HttpResponse response = httpclient.execute(getMethod);
+
+            HttpEntity entity = response.getEntity();
+
+            result = EntityUtils.toString(entity);
+            EntityUtils.consume(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+        }
+        return result;
+
+    }
+
     /**
      * GET 方式获取信息
      * @param url 地址
@@ -285,27 +308,55 @@ public class HttpUtils {
 	private static CloseableHttpClient getSSLClient(Boolean proxy)
 			throws KeyManagementException, NoSuchAlgorithmException,
 			KeyStoreException {
-		SSLContextBuilder sslContextBuilder = SSLContexts.custom()
-				.loadTrustMaterial(null, new TrustStrategy() {
-					@Override
-					public boolean isTrusted(X509Certificate[] chain,
-							String authType) throws CertificateException {
-						return true;
-					}
-				});
-		SSLConnectionSocketFactory sslf = new SSLConnectionSocketFactory(
-				sslContextBuilder.build(),
-				SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        SSLConnectionSocketFactory sslf = getSslConnectionSocketFactory();
 		HttpClientBuilder bd=HttpClients.custom();
 		bd.setSSLSocketFactory(sslf);
 		if(proxy) 
 			bd.setRoutePlanner(getProxHost());
 		return bd.setKeepAliveStrategy(getKeepAliveHttpClient()).build();
-		//.setConnectionManager(getPoolingConnectionManager(null))
 	}
 
+    /***
+     * 获取链接
+     * @param proxy  ：是否使用代理
+     * @param url    ：需要链接的域 例如 http://www.baidu.com/a/b  需要填入  www.baidu.com
+     * @return
+     * @throws KeyManagementException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     */
+    private static CloseableHttpClient getSSLClient(Boolean proxy,String url)
+            throws KeyManagementException, NoSuchAlgorithmException,
+            KeyStoreException {
+        SSLConnectionSocketFactory sslf = getSslConnectionSocketFactory();
+        HttpClientBuilder bd=HttpClients.custom();
+        bd.setSSLSocketFactory(sslf);
+        if(proxy)
+            bd.setRoutePlanner(getProxHost());
+         bd.setKeepAliveStrategy(getKeepAliveHttpClient());
+        if(url.startsWith("http")){
+                bd.setConnectionManager(getPoolingConnectionManager(url)) ;
+        }
+        return bd.build();
 
-	/**
+        //
+    }
+
+    private static SSLConnectionSocketFactory getSslConnectionSocketFactory() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        SSLContextBuilder sslContextBuilder = SSLContexts.custom()
+                .loadTrustMaterial(null, new TrustStrategy() {
+                    @Override
+                    public boolean isTrusted(X509Certificate[] chain,
+                                             String authType) throws CertificateException {
+                        return true;
+                    }
+                });
+        return new SSLConnectionSocketFactory(
+                sslContextBuilder.build(),
+                SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+    }
+
+    /**
 	 * 使用长连接
 	 * 使用方法
 	 *
@@ -432,20 +483,26 @@ public class HttpUtils {
 
 	/**
 	 * 设置并发管理
-	 * @param urlHost  连接域名
+	 * @param url  链接地址
 	 * 使用方法
 	 *
 	 *
 	 * @return
 	 */
-	private static PoolingHttpClientConnectionManager getPoolingConnectionManager(String urlHost){
+	private static PoolingHttpClientConnectionManager getPoolingConnectionManager(String url){
 
 		PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
 		connManager.setMaxTotal(200);//设置最大连接数200
 		connManager.setDefaultMaxPerRoute(3);//设置每个路由默认连接数
-		if(StringUtils.isNotBlank(urlHost)){
-			HttpHost host = new HttpHost(urlHost);//针对的主机
-			connManager.setMaxPerRoute(new HttpRoute(host), 5);//每个路由器对每个服务器允许最大5个并发访问
+		if(StringUtils.isNotBlank(url)){
+            try {
+                URL urlObj = new URL(url);
+                HttpHost host = new HttpHost(urlObj.getHost(),-1==urlObj.getPort()?80:urlObj.getPort());//针对的主机
+                connManager.setMaxPerRoute(new HttpRoute(host), 50);//每个路由器对每个服务器允许最大50个并发访问
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
 		}
 
 		return connManager;
@@ -561,15 +618,23 @@ public class HttpUtils {
 
 
 	public static void main(String[] args) {
-		String url = "https://api.orderlink.it/v1/user/token";
-		String user="SHANGPIN";String pwd="12345678";
-		String rs="";
-		try {
+//		String url = "https://api.orderlink.it/v1/user/token";
+//		String user="SHANGPIN";String pwd="12345678";
+//		String rs="";
+//		try {
+//
+//			String kk=HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx",false,240000);//.getData("https://api.orderlink.it/v1/user/token?username=SHANGPIN&password=12345678",false);System.out.println("content = " + kk);
+//		    System.out.println("kk = " + kk);
+//        } catch (Exception e) {
+//			e.printStackTrace();
+//		}
 
-			String kk=HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx",false,240000);//.getData("https://api.orderlink.it/v1/user/token?username=SHANGPIN&password=12345678",false);System.out.println("content = " + kk);
-		    System.out.println("kk = " + kk);
-        } catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            URL urlObj = new URL("https://www.tianma.com/sss");
+            System.out.println("host= "+urlObj.getHost());
+            System.out.println("port= "+urlObj.getPort());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
 }
