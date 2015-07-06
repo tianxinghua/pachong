@@ -87,7 +87,7 @@ public class EbayTest {
 	@Test
 	public void testGetItem() throws ApiException, SdkException, Exception{
 		SkuDTO sku=null;
-		String itemId="221288382861";
+		String itemId="252005767578";
 		ApiContext api = getProApiContext();
 		ApiCall call = new ApiCall(api);
 		GetItemRequestType req=new GetItemRequestType();
@@ -102,8 +102,8 @@ public class EbayTest {
 		req.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES});
 		GetItemResponseType resp=(GetItemResponseType)call.execute(req);
 		ItemType it=resp.getItem();
-		String[] pics=it.getPictureDetails().getPictureURL();
-		String[] pics2=it.getVariations().getPictures()[0].getVariationSpecificPictureSet()[0].getPictureURL();
+		//String[] pics=it.getPictureDetails().getPictureURL();
+		//String[] pics2=it.getVariations().getPictures()[0].getVariationSpecificPictureSet()[0].getPictureURL();
 		VariationType[] variationType = it.getVariations().getVariation();
 		for(VariationType variationtype:variationType){
 			sku=new SkuDTO();
@@ -150,7 +150,7 @@ public class EbayTest {
 
 	@Test
 	public void testGetItemXml(){
-		String itemId="331449399948";
+		String itemId="252005767578";
 		String url= EbayConf.getTradeCallUrl("GetItem");
 		url+="&ItemID="+itemId;
 		String xml=HttpUtils.get(url);
@@ -188,6 +188,26 @@ public class EbayTest {
 		System.out.println(tps[0]+" "+skuAndSpu);
 	}
 
+	@Test
+	public void testPlaceOffer() throws SdkException {
+		ApiContext api = getApiContext();
+		ApiCall apiCall = new ApiCall(api);
+		PlaceOfferRequestType req = new PlaceOfferRequestType();
+		String itemID = "110164552173";
+		req.setItemID(itemID);
+		req.setEndUserIP("www.shangpin.com");
+		OfferType offerType = new OfferType();
+		offerType.setAction(BidActionCodeType.PURCHASE);
+		offerType.setQuantity(1);
+		AmountType maxBid = new AmountType();
+		maxBid.setCurrencyID(com.ebay.soap.eBLBaseComponents.CurrencyCodeType.USD);
+		maxBid.setValue(20.0);
+		offerType.setMaxBid(maxBid);
+		req.setOffer(offerType);
+		PlaceOfferResponseType resp = (PlaceOfferResponseType) apiCall.execute(req);
+		System.out.println(resp);
+	}
+
 	/**
 	 * @return
 	 */
@@ -197,13 +217,13 @@ public class EbayTest {
 		api.setApiServerUrl(apiUrl);
 		ApiCredential apiCred = new ApiCredential();
 		ApiAccount ac = new ApiAccount();
-		ac.setApplication("vansky891-1d37-41f3-b3ba-1806062c992");
-		ac.setDeveloper("6ff7eee5-cfdf-49f9-a8ba-be9dbffe0574");
-		ac.setCertificate("38011760-86a2-4437-b734-4a2f8e7791a3");
-		apiCred.seteBayToken("AgAAAA**AQAAAA**aAAAAA**n8l/VQ**nY+sHZ2PrBmdj6wVnY+sEZ2PrA2dj6wFk4GhDZeLqQSdj6x9nY+seQ**BnwDAA**AAMAAA**D0Omb5k0heLQrEV7cZioL7QRV36eylegxZIUISST2LX9O+u9TMYaXNrsNzHHBoNvv4TDtDj6vsmZGOOCx3ud4V60ggeuissigSC1V6/+T2F7BmdxODsNmb51aPbmmaM0RJdo0yG94slE2AP6M2jC7TMpH/5zzfc0Ut39pzfKr8JDmbOzcCIK6nXtrZicn30bQbfuFaE2IQJC29ag2QDDJFKzTvof3lNaokUfITay5HeHvV/uQjQIkhd765PEAxT0tqxuOahosilJ9uKVk5/4I+p3I817zvPZbmf+/cE4kfPhX22EPSajm6cDR9iYNfc4wzb4REbAv9NQuKCTRG2DpqB+gMVtK+H+JuMGxQv0M5w8qFIvkKdqYeUt5R3m4pcluWD0cL+kY9gmuAeyiZJ0c5b7itdeVCOB+LnrWp4QynzlB+FBJxy3n9IJKWi7Xy9Cg2ALyjy+nmMf7kXIyw+AEd32GjNScwGydA+3V/UAp5NRghFo2SuM7HbnY+qGF3Irx9B2K9cCc/W3ssdo+EYmPKPQI6wqUCWht3yryu+GETm+P/NjRQJPbBs/Ok0R9OAU1UQvqejUve+DWYU7JNtPfbCieG8M9rJ0IVnnM5PsD2/BVJUQBFCXXGKDe1aAziFUzV1523P7ep6fCMn84cQW03T6fGWV+wljFTLAhIVqNb2nB0VW4tqsWkEY/UuaFbuhQvR6hVNmtTTBzgGOGMH9z9bwfbT4y7sYh/mb6HoMVUpmSXbPUMgXERkRxQ7/NGvR");
+		ac.setApplication("shangpin-eedd-49f1-9034-cb33bb4cba53");
+		ac.setDeveloper("7e934edc-e8b1-440d-989c-313c183aae5f");
+		ac.setCertificate("6e10c597-d13f-47eb-a883-a373179989a6");
+		apiCred.seteBayToken("AgAAAA**AQAAAA**aAAAAA**CFSWVQ**nY+sHZ2PrBmdj6wVnY+sEZ2PrA2dj6wFk4GhDZiHpAudj6x9nY+seQ**AoADAA**AAMAAA**Rft3eglzujrpsuAdak5NhVMnFV+h1aIRXyvOP28YVdAJpv0znzV23WptVYqfMCwGVVpawiSJf1t8A7ZrnUw8ZHWJ/rkCGra2ii18tZK1A8nv3pBysKzpxALnurUMsj1BPqy2wFgs5B8yqytDzBiWhTPbV4oi/o6SI1eAyooj9Z1koxiynsESQ4zFj1MNUJKz4Mm8l4HXjq7Oh0rNBrOyVeUJvtYFz0UBdPiIqzZDi57c9TmuKgJLm4Ya/tJe63wNR6WvL2NCjWkPtWLRM9NArG2FWQIJKGBtxqRKkT6riCvc2J5cGbhgiaWIR6kF9x/4vkNCqASAb4mdS/D6/RGkxpaB5C/nZOzbkQG9JesvRRpGITeQRGKRL4OhQN7qR4X7Km3HykQckaoPaiK0ijalVTnkSIFNh6+cecAdADad/ERb+8/yvl4DsqHTmEZeZmqhbz/TFJhW4UpHbq7XJZKselI+I6LZtEo8oxFEPae3fNAFZUetUg3ah5pcIsf68aKaKzwlz2tlwDw6fAFHalQvcDBkVwd3ijLDV7+36eOod+q0vnz4kDbnueowh4m2UoRNBdECLpJq1uYKZir9ZGGSOubXOgzkSAykmdtZJWSudHs7I5h1bVliiucUfosBpoEAMh1nt1LSbkkqEa5fNrYwDEYBfuOUQJfhbgguIMgzHvDXEhDvZdPITT+uoGcyQUlOy8vtX3QikrbHRFvlxhd64RNTPKqm34Up6q3lmuV9U9WdTu/aklmE/xnC1ObPAeNq");
 	    apiCred.setApiAccount(ac);
 		api.setApiCredential(apiCred);
-		api.setRuName("vansky-vansky891-1d37--qzptrxv");
+		api.setRuName("shangpin-shangpin-8ce3-4-vsffif");
 		return api;
 	}
 	
@@ -230,8 +250,8 @@ public class EbayTest {
 	public void testFindItemInStore() throws ApiException, SdkException, Exception{
 		SpuDTO spu=null;
 		String url=findCommonUrl("findItemsIneBayStores");
-		url+="storeName=%s&paginationInput.entriesPerPage=10&paginationInput.pageNumber=1";
-		String storeName="inzara.store";
+		url+="storeName=%s&paginationInput.entriesPerPage=300&paginationInput.pageNumber=1";
+		String storeName="seanhkg";
 		url=String.format(url,storeName);
 		System.out.println(url);
 		String xml=HttpUtils.get(url);
@@ -244,7 +264,7 @@ public class EbayTest {
 				SearchItem[] type = rt.getSearchResult().getItemArray();
 				if (type != null) {
 					for (SearchItem t : type) {
-						System.out.println(t.getPictureURLSuperSize());
+						System.out.println("dygr"+t.getItemId());
 						spu = new SpuDTO();
 						ItemType item = testGetItem(t.getItemId());
 						itemArray.add(t.getItemId());
@@ -303,10 +323,6 @@ public class EbayTest {
 			e.printStackTrace();
 		}
 	}
-
-//	public String testGetPicUrl(){
-//
-//	}
 	
 	@Test
 	public void findItemsByProduct(){
@@ -328,7 +344,7 @@ public class EbayTest {
 	private String findCommonUrl(String operName){
 		String url="http://svcs.ebay.com/services/search/FindingService/v1?OPERATION-NAME=%s&"
 				+"SECURITY-APPNAME=%s&RESPONSE-DATA-FORMAT=XML&REST-PAYLOAD&";
-		String appid="vanskydba-8e2b-46af-adc1-58cae63bf2e";
+		String appid="shangpin-8ce3-4e36-8082-464c90ad53bc";
 		return url=String.format(url, operName,appid);
 	}
 	
