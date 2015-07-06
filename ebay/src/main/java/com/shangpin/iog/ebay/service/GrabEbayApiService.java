@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +93,7 @@ public class GrabEbayApiService {
 	 * 查询item的变体，属性非常适合，当然包含每个变体的图片<br/>
 	 * ItemSpecifics、Variations，Pictures，VariationSpecificsSet
 	 * @see #shoppingGetMultipleItems(List) 获取多个item
+	 * @see #shoppingSingleItemVariation(String, String) 获取指定item变体 
 	 * @param itemId ebay的itemId
 	 * @return
 	 */
@@ -150,6 +152,29 @@ public class GrabEbayApiService {
 		}
 		return null;
 	}
-	
+	/**
+	 * 只获取Variations，下单是后有用
+	 * @see #shoppingSingleItem(String) 拉产品获取单个item
+	 * @param itemId 产品ItemId
+	 * @param variationSKU 变体的sku nullable
+	 * @return
+	 */
+	public GetSingleItemResponseType shoppingSingleItemVariation(String itemId,String variationSKU){
+		String url=EbayConf.getShopingCallUrl("GetSingleItem");
+		url+="&ItemID="+itemId+"&IncludeSelector=Variations";
+		if(StringUtils.isNotBlank(variationSKU)){
+			url+="&VariationSKU="+variationSKU;
+		}
+		String xml=HttpUtils.get(url);
+		System.out.println(xml);
+		try {
+			GetSingleItemResponseDocument doc=GetSingleItemResponseDocument.Factory.parse(xml);
+			GetSingleItemResponseType rt=doc.getGetSingleItemResponse();
+			return rt;
+		} catch (XmlException e) {
+			log.error("",e);
+		}
+		return null;
+	}
 	
 }

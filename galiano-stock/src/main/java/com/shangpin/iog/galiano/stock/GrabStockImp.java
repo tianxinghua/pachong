@@ -1,24 +1,21 @@
 /**
  * Created by huxia on 2015/6/10.
  */
-package com.shangpin.iog.acanfora.stock;
+package com.shangpin.iog.galiano.stock;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 
-import com.shangpin.iog.acanfora.stock.dto.Item;
-import com.shangpin.iog.acanfora.stock.dto.Items;
-import com.shangpin.iog.acanfora.stock.dto.Product;
-import com.shangpin.iog.acanfora.stock.dto.Products;
+import com.shangpin.iog.galiano.stock.dto.Item;
+import com.shangpin.iog.galiano.stock.dto.Items;
+import com.shangpin.iog.galiano.stock.dto.Product;
+import com.shangpin.iog.galiano.stock.dto.Products;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 
 import javax.xml.bind.JAXBException;
 import java.lang.String;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -32,9 +29,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
         String kk = HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");
         Products products = null;
         try {
-            logger.info("拉取ACANFORA数据开始");
+            logger.info("拉取galiano数据开始");
             products = ObjectXMLUtil.xml2Obj(Products.class, kk);
-            logger.info("拉取ACANFORA数据成功");
+            logger.info("拉取galiano数据成功");
         } catch (JAXBException e) {
             e.printStackTrace();
         }
@@ -56,23 +53,18 @@ public class GrabStockImp extends AbsUpdateProductStock {
                      stockMap.put(skuId,item.getStock());
                 }
             }
-//            itemList.containsAll(items.getItems());
+
         }
 
         for (String skuno : skuNo) {
-//            for (Item item : itemList) {
-//                if (skuno.equals(item.getItem_id())) {
-//                    skustock.put(skuno, Integer.valueOf(item.getStock()));
-//                    break;
-//                }
-//            }
+
             if(stockMap.containsKey(skuno)){
                 skustock.put(skuno, Integer.valueOf(stockMap.get(skuno)));
-            } else{
-                skustock.put(skuno, 0);
+            }else{
+                skustock.put(skuno,0);
             }
         }
-        logger.info("ACANFORA赋值库存数据成功");
+        logger.info("galiano赋值库存数据成功");
         return skustock;
     }
 
@@ -80,10 +72,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
         AbsUpdateProductStock grabStockImp = new GrabStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("ACANFORA更新数据库开始");
-        grabStockImp.updateProductStock("2015050800242","2015-01-01 00:00",format.format(new Date()));
-        logger.info("ACANFORA更新数据库结束");
-        System.exit(0);
+        logger.info("galiano更新数据库开始");
+        grabStockImp.updateProductStock("2015070301312","2015-01-01 00:00",format.format(new Date()));
+        logger.info("galiano更新数据库结束");
 
     }
 

@@ -31,3 +31,5 @@ include 'galiano'
 
 include 'ebay'
 
+include 'galiano-stock'
+

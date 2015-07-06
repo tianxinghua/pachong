@@ -44,7 +44,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     public void saveSPU(List<SpuDTO> spuDTOList) throws ServiceException {
         try {
             spuDAO.saveList(spuDTOList);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ServiceMessageException("数据插入失败");
         }
     }
@@ -53,7 +53,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     public void saveSPU(SpuDTO spuDTO) throws ServiceException {
         try {
             spuDAO.save(spuDTO);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ServiceMessageException("数据插入失败");
         }
 
@@ -64,7 +64,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 
         try {
             skuDAO.saveList(skuDTOList);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ServiceMessageException("数据插入失败");
         }
 
@@ -75,7 +75,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 
         try {
             skuDAO.save(skuDTO);
-        } catch (SQLException e) {
+        } catch ( Exception e) {
             throw new ServiceMessageException("数据插入失败");
         }
     }
@@ -84,7 +84,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     public void savePicture(ProductPictureDTO pictureDTO) throws ServiceException {
         try {
             productPictureMapper.save(pictureDTO);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ServiceMessageException("数据插入失败");
         }
 
@@ -94,7 +94,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     public void savePicture(List<ProductPictureDTO> pictureDTOList) throws ServiceException {
         try {
             productPictureMapper.saveList(pictureDTOList);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ServiceMessageException("数据插入失败");
         }
 
@@ -107,7 +107,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             try {
                 InVoke.setValue(productPictureDTO,productPicture,null,null);
                 pictureDAO.save(productPicture);
-            } catch (ServiceException e) {
+            } catch (Exception e) {
                 throw new ServiceMessageException("数据插入失败");
             }
         }
