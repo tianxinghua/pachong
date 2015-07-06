@@ -44,8 +44,8 @@ import org.springframework.stereotype.Component;
  * <br/>2015年6月30日
  */
 @Component
-public class GrabWithTradAndShoppingApi {
-	static Logger logger = LoggerFactory.getLogger(GrabWithTradAndShoppingApi.class);
+public class V1GrabService {
+	static Logger logger = LoggerFactory.getLogger(V1GrabService.class);
 	@Autowired
 	ProductFetchService productFetchService;
 	static int pageSize=200;

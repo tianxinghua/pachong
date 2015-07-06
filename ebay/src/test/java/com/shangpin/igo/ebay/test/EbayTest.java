@@ -188,6 +188,26 @@ public class EbayTest {
 		System.out.println(tps[0]+" "+skuAndSpu);
 	}
 
+	@Test
+	public void testPlaceOffer() throws SdkException {
+		ApiContext api = getApiContext();
+		ApiCall apiCall = new ApiCall(api);
+		PlaceOfferRequestType req = new PlaceOfferRequestType();
+		String itemID = "110164552173";
+		req.setItemID(itemID);
+		req.setEndUserIP("www.shangpin.com");
+		OfferType offerType = new OfferType();
+		offerType.setAction(BidActionCodeType.PURCHASE);
+		offerType.setQuantity(1);
+		AmountType maxBid = new AmountType();
+		maxBid.setCurrencyID(com.ebay.soap.eBLBaseComponents.CurrencyCodeType.USD);
+		maxBid.setValue(20.0);
+		offerType.setMaxBid(maxBid);
+		req.setOffer(offerType);
+		PlaceOfferResponseType resp = (PlaceOfferResponseType) apiCall.execute(req);
+		System.out.println(resp);
+	}
+
 	/**
 	 * @return
 	 */
@@ -197,13 +217,13 @@ public class EbayTest {
 		api.setApiServerUrl(apiUrl);
 		ApiCredential apiCred = new ApiCredential();
 		ApiAccount ac = new ApiAccount();
-		ac.setApplication("vansky891-1d37-41f3-b3ba-1806062c992");
-		ac.setDeveloper("6ff7eee5-cfdf-49f9-a8ba-be9dbffe0574");
-		ac.setCertificate("38011760-86a2-4437-b734-4a2f8e7791a3");
-		apiCred.seteBayToken("AgAAAA**AQAAAA**aAAAAA**n8l/VQ**nY+sHZ2PrBmdj6wVnY+sEZ2PrA2dj6wFk4GhDZeLqQSdj6x9nY+seQ**BnwDAA**AAMAAA**D0Omb5k0heLQrEV7cZioL7QRV36eylegxZIUISST2LX9O+u9TMYaXNrsNzHHBoNvv4TDtDj6vsmZGOOCx3ud4V60ggeuissigSC1V6/+T2F7BmdxODsNmb51aPbmmaM0RJdo0yG94slE2AP6M2jC7TMpH/5zzfc0Ut39pzfKr8JDmbOzcCIK6nXtrZicn30bQbfuFaE2IQJC29ag2QDDJFKzTvof3lNaokUfITay5HeHvV/uQjQIkhd765PEAxT0tqxuOahosilJ9uKVk5/4I+p3I817zvPZbmf+/cE4kfPhX22EPSajm6cDR9iYNfc4wzb4REbAv9NQuKCTRG2DpqB+gMVtK+H+JuMGxQv0M5w8qFIvkKdqYeUt5R3m4pcluWD0cL+kY9gmuAeyiZJ0c5b7itdeVCOB+LnrWp4QynzlB+FBJxy3n9IJKWi7Xy9Cg2ALyjy+nmMf7kXIyw+AEd32GjNScwGydA+3V/UAp5NRghFo2SuM7HbnY+qGF3Irx9B2K9cCc/W3ssdo+EYmPKPQI6wqUCWht3yryu+GETm+P/NjRQJPbBs/Ok0R9OAU1UQvqejUve+DWYU7JNtPfbCieG8M9rJ0IVnnM5PsD2/BVJUQBFCXXGKDe1aAziFUzV1523P7ep6fCMn84cQW03T6fGWV+wljFTLAhIVqNb2nB0VW4tqsWkEY/UuaFbuhQvR6hVNmtTTBzgGOGMH9z9bwfbT4y7sYh/mb6HoMVUpmSXbPUMgXERkRxQ7/NGvR");
+		ac.setApplication("shangpin-eedd-49f1-9034-cb33bb4cba53");
+		ac.setDeveloper("7e934edc-e8b1-440d-989c-313c183aae5f");
+		ac.setCertificate("6e10c597-d13f-47eb-a883-a373179989a6");
+		apiCred.seteBayToken("AgAAAA**AQAAAA**aAAAAA**CFSWVQ**nY+sHZ2PrBmdj6wVnY+sEZ2PrA2dj6wFk4GhDZiHpAudj6x9nY+seQ**AoADAA**AAMAAA**Rft3eglzujrpsuAdak5NhVMnFV+h1aIRXyvOP28YVdAJpv0znzV23WptVYqfMCwGVVpawiSJf1t8A7ZrnUw8ZHWJ/rkCGra2ii18tZK1A8nv3pBysKzpxALnurUMsj1BPqy2wFgs5B8yqytDzBiWhTPbV4oi/o6SI1eAyooj9Z1koxiynsESQ4zFj1MNUJKz4Mm8l4HXjq7Oh0rNBrOyVeUJvtYFz0UBdPiIqzZDi57c9TmuKgJLm4Ya/tJe63wNR6WvL2NCjWkPtWLRM9NArG2FWQIJKGBtxqRKkT6riCvc2J5cGbhgiaWIR6kF9x/4vkNCqASAb4mdS/D6/RGkxpaB5C/nZOzbkQG9JesvRRpGITeQRGKRL4OhQN7qR4X7Km3HykQckaoPaiK0ijalVTnkSIFNh6+cecAdADad/ERb+8/yvl4DsqHTmEZeZmqhbz/TFJhW4UpHbq7XJZKselI+I6LZtEo8oxFEPae3fNAFZUetUg3ah5pcIsf68aKaKzwlz2tlwDw6fAFHalQvcDBkVwd3ijLDV7+36eOod+q0vnz4kDbnueowh4m2UoRNBdECLpJq1uYKZir9ZGGSOubXOgzkSAykmdtZJWSudHs7I5h1bVliiucUfosBpoEAMh1nt1LSbkkqEa5fNrYwDEYBfuOUQJfhbgguIMgzHvDXEhDvZdPITT+uoGcyQUlOy8vtX3QikrbHRFvlxhd64RNTPKqm34Up6q3lmuV9U9WdTu/aklmE/xnC1ObPAeNq");
 	    apiCred.setApiAccount(ac);
 		api.setApiCredential(apiCred);
-		api.setRuName("vansky-vansky891-1d37--qzptrxv");
+		api.setRuName("shangpin-shangpin-8ce3-4-vsffif");
 		return api;
 	}
 	
@@ -303,10 +323,6 @@ public class EbayTest {
 			e.printStackTrace();
 		}
 	}
-
-//	public String testGetPicUrl(){
-//
-//	}
 	
 	@Test
 	public void findItemsByProduct(){
