@@ -1,0 +1,25 @@
+
+dependencies{
+        compile(
+                "com.alibaba:dubbo:2.8.4",
+                "org.springframework:spring-core:4.1.6.RELEASE",
+                "org.springframework:spring-web:4.1.6.RELEASE",
+                "org.javassist:javassist:3.18.1-GA",
+                "org.jboss.resteasy:resteasy-jaxrs:3.0.7.Final",
+                "org.jboss.resteasy:resteasy-client:3.0.7.Final",
+                "javax.validation:validation-api:1.0.0.GA",
+                "org.jboss.resteasy:resteasy-jackson-provider:3.0.7.Final",
+                "org.jboss.resteasy:resteasy-jaxb-provider:3.0.7.Final",
+                "org.jboss.resteasy:resteasy-netty:3.0.7.Final",
+                "org.jboss.resteasy:resteasy-jdk-http:3.0.7.Final",
+                "org.apache.zookeeper:zookeeper:3.4.6",
+                "com.github.sgroschupf:zkclient:0.1",
+                project(':iog-facade'),
+                project(':iog-common-product')
+
+
+
+        )
+        providedCompile ("javax.servlet:javax.servlet-api:3.1.0")
+}
+
