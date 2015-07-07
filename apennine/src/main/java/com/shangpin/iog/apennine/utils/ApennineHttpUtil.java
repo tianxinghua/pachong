@@ -1,11 +1,13 @@
 package com.shangpin.iog.apennine.utils;
 
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.iog.apennine.domain.StockDTO;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
@@ -47,6 +49,18 @@ public class ApennineHttpUtil {
         }
         return obj;
     }
+    private StockDTO getStockByJsonString(String jsonStr){
+        StockDTO obj=null;
+        Gson gson = new Gson();
+        try {
+            jsonStr=jsonStr.substring(1, jsonStr.length()-1);
+            obj=gson.fromJson(jsonStr, StockDTO.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("get Stock fail :"+e);
+        }
+        return obj;
+    }
     /**
      * JSON发序列化为Java对象集合
      * @param jsonStr
@@ -85,9 +99,21 @@ public class ApennineHttpUtil {
     	Map<String,String> param = new HashMap<String, String>();
     	param = formatParam(param,Scode);
     	String jsonStr = HttpUtils.post(url, param);
-    	return Integer.parseInt(jsonStr);
+        StockDTO dto = getStockByJsonString(jsonStr);
+    	return dto.getHkstock();
     }
-    private  List<ApennineProductDTO>getProductsByUrlAndParam(String url,NameValuePair[] data){
+    public List<ApennineProductDTO>getProductsByUrlAndParam(String url, NameValuePair[] data){
+        List<ApennineProductDTO>list=new ArrayList<>();
+        try {
+            String jsonStr=HttpUtil.getData(url, false);
+            list=this.getObjectsByJsonString(jsonStr);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            logger.info("get List<ApennineProduct> fail :"+e);
+        }
+        return list;
+    }
+    public List<ApennineProductDTO>getProductsDetailsByUrl(String url){
         List<ApennineProductDTO>list=new ArrayList<>();
         try {
             String jsonStr=HttpUtil.getData(url, false);
@@ -103,7 +129,7 @@ public class ApennineHttpUtil {
      * @param list
      * @return
      */
-    private List<SpuDTO> formatToSpu(List<ApennineProductDTO>list){
+    private List<SpuDTO> formatToSpu(List<ApennineProductDTO>list) throws Exception {
         List<SpuDTO>spuList=new ArrayList<>();
         for (int i = 0;i<list.size();i++){
             ApennineProductDTO dto=list.get(i);
@@ -117,7 +143,7 @@ public class ApennineHttpUtil {
      * @param list
      * @return
      */
-    private List<SkuDTO>formatToSku(List<ApennineProductDTO>list){
+    private List<SkuDTO>formatToSku(List<ApennineProductDTO>list) throws Exception {
         List<SkuDTO>skuList=new ArrayList<>();
         for (int i=0;i<list.size();i++){
             ApennineProductDTO dto=list.get(i);
@@ -139,7 +165,7 @@ public class ApennineHttpUtil {
             for (int j = 0; j < picurlList.size(); j++) {
             	 ProductPictureDTO picDTO=new ProductPictureDTO();
                  picDTO.setId(UUIDGenerator.getUUID());
-                 picDTO.setSupplierId("00000003");
+                 picDTO.setSupplierId("2015070701319 ");
                  picDTO.setSkuId(dto.getScode());
                  picDTO.setPicUrl(picurlList.get(j).getScodePicSrc());
                  picList.add(picDTO);
@@ -158,7 +184,7 @@ public class ApennineHttpUtil {
      * @param url
      * @throws ServiceException
      */
-    public void insertApennineProducts(String url) throws ServiceException {
+    public void insertApennineProducts(String url) throws Exception {
         List<ApennineProductDTO>dtos = getAllProducts(url);
         List<SkuDTO>skuDTOList=formatToSku(dtos);
         List<SpuDTO>spuDTOList=formatToSpu(dtos);

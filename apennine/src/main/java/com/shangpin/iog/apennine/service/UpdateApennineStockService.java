@@ -97,7 +97,7 @@ public class UpdateApennineStockService extends AbsUpdateProductStock{
 		Map<String,Integer>map=new HashMap<>();
 		UpdateApennineStockService stockService = new UpdateApennineStockService() ;
 		/*Collection<String> skuNo=stockService.grabProduct("00000003","","");*/
-		int stock = stockService.updateProductStock("00000003","","");
+		int stock = stockService.updateProductStock("2015070701319","","");
 		//map=grabStock1(skuNo);
 		System.out.println("更新失败 "+stock);//COSEPIAF
 	}

@@ -2,6 +2,7 @@ package com.shangpin.ice.ice;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -120,30 +121,16 @@ public abstract class AbsUpdateProductStock {
 		final Map<String,String> iceAndLocalSku=new HashMap<String, String>();
 		final Collection<String> skuNoSet=grabProduct(supplier, start, end,iceAndLocalSku);
 logger.warn("待更新库存数据总数："+skuNoSet.size());
-		final List<Integer> totoalFailCnt=new ArrayList<>();
+		final List<Integer> totoalFailCnt=Collections.synchronizedList(new ArrayList<Integer>());
 		if(useThread){
 			int poolCnt=skuNoSet.size()/getSkuCount4Thread();
 			ExecutorService exe=Executors.newFixedThreadPool(poolCnt/4+1);//相当于跑4遍
 			final List<Collection<String>> subSkuNos=subCollection(skuNoSet);
 			logger.warn("线程池数："+(poolCnt/4+1)+",sku子集合数："+subSkuNos.size());
 			for(int i = 0 ; i <subSkuNos.size();i++){
-				final int cnt=i;
-				exe.execute(new Thread(){
-					@Override
-					public void run() {
-						int size=subSkuNos.get(cnt).size();
-						try {
-							logger.warn(Thread.currentThread().getName()+"处理开始，数："+size);
-							int failCnt = updateStock(supplier, iceAndLocalSku,
-									subSkuNos.get(cnt));
-							totoalFailCnt.add(failCnt);
-							logger.warn(Thread.currentThread().getName()+"完成，失败数:"+failCnt);
-						} catch (Exception e) {
-							logger.warn(Thread.currentThread().getName()+"处理出错",e);
-						}
-					}
-				});
-			}		
+				exe.execute(new UpdateThread(subSkuNos.get(i),supplier,iceAndLocalSku,totoalFailCnt));
+			}
+			exe.shutdown();
 			int fct=0;
 			for(int k=0;k<totoalFailCnt.size();k++){
 				fct+=totoalFailCnt.get(k);
@@ -228,5 +215,38 @@ logger.warn("待更新库存数据总数："+skuNoSet.size());
 		/*if(supplierStock!=null && supplierStock.size()>0){
 		}*/
 		return failCount;
+	}
+	
+	class UpdateThread extends Thread{
+
+		private Collection<String> skuNos;
+		private Map<String, String> iceAndLocalSku;
+		private String supplier;
+		private List<Integer> totoalFailCnt;
+		/**
+		 * @param iceAndLocalSku 
+		 * @param totoalFailCnt 
+		 * @param collection
+		 */
+		public UpdateThread(Collection<String> skuNos,String supplier, Map<String, String> iceAndLocalSku, List<Integer> totoalFailCnt ) {
+			this.skuNos=skuNos;
+			this.supplier=supplier;
+			this.iceAndLocalSku=iceAndLocalSku;
+			this.totoalFailCnt=totoalFailCnt;
+		}
+		@Override
+		public void run() {
+			int size=skuNos.size();
+			try {
+				logger.warn(Thread.currentThread().getName()+"处理开始，数："+size);
+				int failCnt = updateStock(supplier, iceAndLocalSku,
+						skuNos);
+				totoalFailCnt.add(failCnt);
+				logger.warn(Thread.currentThread().getName()+"完成，失败数:"+failCnt);
+			} catch (Exception e) {
+				logger.warn(Thread.currentThread().getName()+"处理出错",e);
+			}
+		}
+		
 	}
 }
