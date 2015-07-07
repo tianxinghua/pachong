@@ -618,23 +618,23 @@ public class HttpUtils {
 
 
 	public static void main(String[] args) {
-//		String url = "https://api.orderlink.it/v1/user/token";
-//		String user="SHANGPIN";String pwd="12345678";
-//		String rs="";
-//		try {
-//
-//			String kk=HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx",false,240000);//.getData("https://api.orderlink.it/v1/user/token?username=SHANGPIN&password=12345678",false);System.out.println("content = " + kk);
-//		    System.out.println("kk = " + kk);
-//        } catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		String url = "https://api.orderlink.it/v1/user/token";
+		String user="SHANGPIN";String pwd="12345678";
+		String rs="";
+		try {
 
-        try {
-            URL urlObj = new URL("https://www.tianma.com/sss");
-            System.out.println("host= "+urlObj.getHost());
-            System.out.println("port= "+urlObj.getPort());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+			String kk=HttpUtils.getWithConnectManager("http://www.acanfora.it/api_ecommerce_v2.aspx");//.getData("https://api.orderlink.it/v1/user/token?username=SHANGPIN&password=12345678",false);System.out.println("content = " + kk);
+		    System.out.println("kk = " + kk);
+        } catch (Exception e) {
+			e.printStackTrace();
+		}
+
+//        try {
+//            URL urlObj = new URL("https://www.tianma.com/sss");
+//            System.out.println("host= "+urlObj.getHost());
+//            System.out.println("port= "+urlObj.getPort());
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
     }
 }
