@@ -39,6 +39,9 @@ public class ColtortiUtil {
 		if(msg!=null){
 			throw new ServiceMessageException(msg.getAsString());
 		}
+		if("{\"error\":\"发生异常错误\"}".equals(msg)){
+			throw new ServiceMessageException("http访问错误！");			
+		}
 		return null;
 	}
 	
