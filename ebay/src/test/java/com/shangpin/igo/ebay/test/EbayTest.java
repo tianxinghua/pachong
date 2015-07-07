@@ -192,10 +192,11 @@ public class EbayTest {
 	public void testPlaceOffer() throws SdkException {
 		ApiContext api = getApiContext();
 		ApiCall apiCall = new ApiCall(api);
+		apiCall.setEndUserIP("www.shangpin.com");
 		PlaceOfferRequestType req = new PlaceOfferRequestType();
-		String itemID = "110164552173";
+		String itemID = "110164674132";
 		req.setItemID(itemID);
-		req.setEndUserIP("www.shangpin.com");
+		req.setEndUserIP("211.151.168.182");
 		OfferType offerType = new OfferType();
 		offerType.setAction(BidActionCodeType.PURCHASE);
 		offerType.setQuantity(1);
