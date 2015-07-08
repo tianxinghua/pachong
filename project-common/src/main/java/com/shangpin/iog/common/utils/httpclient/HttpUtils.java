@@ -2,10 +2,7 @@ package com.shangpin.iog.common.utils.httpclient;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
