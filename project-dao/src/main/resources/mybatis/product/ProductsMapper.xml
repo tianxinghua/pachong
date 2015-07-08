@@ -78,7 +78,9 @@
         sku.SKU_ID as sku_id,spu.SPU_NAME as spu_name,
 
 
-          sku.PRODUCT_NAME as product_name,sku.MARKET_PRICE  as marketPrice , sku.SALE_PRICE  as  salePrice  ,
+          sku.PRODUCT_NAME as product_name,
+          sku.MARKET_PRICE  as market_price,
+          sku.SALE_PRICE  as  sale_price,
           sku.SUPPLIER_PRICE as supplier_price,sku.BARCODE as barcode,
           sku.PRODUCT_CODE as product_code,sku.COLOR as color,
           sku.PRODUCT_DESCRIPTION as product_description,

@@ -145,7 +145,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 " 性别 ,"+
                 "SopProductName 商品名称,BarCode 条形码,ProductColor 颜色,color 中文,ProductSize 尺码,material 材质,material 中文材质,ProductOrigin 产地,productUrl1," +
                 "productUrl2,productUrl3,productUrl4,productUrl5,productUrl6,productUrl7,productUrl8,productUrl9," +
-                "PcDesc 描述,Stock 库存,Price 进货价,Currency 币种,上市季节").append("\r\n");
+                "PcDesc 描述,Stock 库存,markerPrice ,sallPrice,Price 进货价,Currency 币种,上市季节").append("\r\n");
         Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize);
 
         //设置尚品网品牌
@@ -297,8 +297,11 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 buffer.append(productDetail).append(",");
 
 
-                buffer.append(dto.getStock()).append(",")
-                        .append(dto.getSupplierPrice()).append(",").append("").append(",");
+                buffer.append(dto.getStock()).append(",") ;
+                //价格
+                buffer.append(null==dto.getMarketPrice()?" ":dto.getMarketPrice()).append(",")
+                  .append(null==dto.getSalePrice()?" ":dto.getSalePrice()).append(",")
+                .append(dto.getSupplierPrice()).append(",").append("").append(",");
                 //季节
 
 

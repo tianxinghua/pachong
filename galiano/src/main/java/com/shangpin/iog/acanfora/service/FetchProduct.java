@@ -64,7 +64,10 @@ public class FetchProduct {
                         }
                         sku.setSkuId(skuId);
                         sku.setProductSize(item.getItem_size());
+                        sku.setMarketPrice(item.getMarket_price());
+                        sku.setSalePrice(item.getSell_price());
                         sku.setSupplierPrice(item.getSupply_price());
+
                         sku.setColor(item.getColor());
                         sku.setProductDescription(item.getDescription());
                         sku.setStock(item.getStock());
@@ -104,7 +107,7 @@ public class FetchProduct {
                     spu.setCategoryName(product.getCategory());
                     spu.setSpuName(product.getProduct_name());
                     spu.setSeasonId(product.getSeason_name());
-                    spu.setMaterial(product.getProduct_material());
+                    spu.setMaterial(StringUtils.isBlank(product.getProduct_material())?product.getDescription():product.getProduct_material());
                     spu.setCategoryGender(product.getGender());
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
