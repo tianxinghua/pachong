@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,6 +132,9 @@ logger.warn("待更新库存数据总数："+skuNoSet.size());
 				exe.execute(new UpdateThread(subSkuNos.get(i),supplier,iceAndLocalSku,totoalFailCnt));
 			}
 			exe.shutdown();
+			while (!exe.awaitTermination(10, TimeUnit.SECONDS)) {
+				
+			}
 			int fct=0;
 			for(int k=0;k<totoalFailCnt.size();k++){
 				fct+=totoalFailCnt.get(k);
@@ -206,7 +210,13 @@ logger.warn("待更新库存数据总数："+skuNoSet.size());
 		while (iter.hasNext()) {
 			Entry<String, Integer> entry = iter.next();
 			//logger.warn("更新库存ice sku,stock="+entry.getKey()+":"+ entry.getValue());
-			Boolean result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());
+			Boolean result =true;
+			try{
+				result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());				
+			}catch(Exception e){
+				result=false;
+				logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+			}
 			if(!result){
 				failCount++;
 				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());

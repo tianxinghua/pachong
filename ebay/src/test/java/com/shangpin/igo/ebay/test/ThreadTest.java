@@ -22,13 +22,18 @@ public class ThreadTest {
 		}
 		
 		exe.shutdown();
+		/*while(!exe.isTerminated()){
+			System.out.println("undo");
+			TimeUnit.SECONDS.sleep(1);			
+		}*/
 		//List<Runnable> runnables = exe.shutdownNow();  
 		
-		while (!exe.awaitTermination(1, TimeUnit.SECONDS)) {  
+		while (!exe.awaitTermination(10, TimeUnit.SECONDS)) {  
 			System.out.println("线程池没有关闭");  
 		}  
-		System.out.println("线程池已经close");  
+		System.exit(0);
 		
+		System.out.println("线程池已经close");  
 	}
 	public static void main(String[] args) throws InterruptedException {
 		ThreadTest r = new ThreadTest();

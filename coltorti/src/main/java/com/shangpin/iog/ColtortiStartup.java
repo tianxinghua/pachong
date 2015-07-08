@@ -94,6 +94,7 @@ public class ColtortiStartup {
 			}
 		}
 		
+		System.exit(0);
 	}
 	/**
 	 * @param args
