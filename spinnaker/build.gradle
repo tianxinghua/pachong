@@ -9,8 +9,9 @@ dependencies {
             "commons-dbcp:commons-dbcp:1.4",
             "org.springframework:spring-jdbc:${springVersion}",
             "com.github.pagehelper:pagehelper:3.7.3",
+            "com.google.code.gson:gson:2.3.1",
             project(':project-common'),
-            project(':iog-service'),
+            project(':iog-common-product'),
             project(':project-dao')
     )
 
