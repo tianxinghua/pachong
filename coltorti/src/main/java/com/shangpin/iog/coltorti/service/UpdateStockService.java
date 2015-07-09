@@ -28,13 +28,20 @@ public class UpdateStockService extends AbsUpdateProductStock{
 	public Map<String, Integer> grabStock(Collection<String> skuNos) throws ServiceException{
 		Map<String, Integer> skuStock= new HashMap<>(skuNos.size());
 		Set<String> productIdSet=new HashSet<>();
+		String productId=null,recordId=null,scalarNo=null;
 		for (Iterator<String> iterator = skuNos.iterator(); iterator
 				.hasNext();) {
 			String skuNo = iterator.next();
-			int scalarIdx=skuNo.lastIndexOf("#");//尺寸标志开始位置
-			String productId=skuNo.substring(0, skuNo.lastIndexOf("-"));//产品id
-			String recordId=skuNo.substring(0,scalarIdx);//记录id
-			String scalarNo=skuNo.substring(scalarIdx+1);//尺寸编号
+			try{
+				int scalarIdx=skuNo.lastIndexOf("#");//尺寸标志开始位置
+				productId=skuNo.substring(0, skuNo.lastIndexOf("-"));//产品id
+				recordId=skuNo.substring(0,scalarIdx);//记录id
+				scalarNo=skuNo.substring(scalarIdx+1);//尺寸编号
+			}catch(Exception e){
+				logger.error(skuNo+"截取失败.",e);
+				skuStock.put(skuNo, 0);
+				continue;
+			}
 			Map<String, Map<String, Integer>> stoks=null;
 			try{
 				if(!productIdSet.contains(productId)){

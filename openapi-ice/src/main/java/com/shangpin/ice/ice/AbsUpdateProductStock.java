@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,6 +213,7 @@ public abstract class AbsUpdateProductStock {
 	 * @throws ApiException
 	 */
 	private void removeNoChangeStockRecord(String supplier, Map<String, Integer> iceStock, OpenApiServantPrx servant, List<String> skuNoShangpinList) throws ApiException {
+		if(CollectionUtils.isEmpty(skuNoShangpinList)) return ;
 		SopSkuInventoryIce[] skuIceArray =servant.FindStockInfo(supplier, skuNoShangpinList);
 		//排除无用的库存
 		for(SopSkuInventoryIce skuIce:skuIceArray){
