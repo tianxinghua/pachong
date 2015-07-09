@@ -26,7 +26,7 @@ public class SkuDTO {
     private String productDescription;//描述
     private String saleCurrency;//币种
     private String productSize;//尺码
-    private String stock;//库存
+    private int stock;//库存
     private Date createTime = new Date();
     private Date lastTime= new Date();//修改时间
 
@@ -118,11 +118,11 @@ public class SkuDTO {
         this.productSize = productSize;
     }
 
-    public String getStock() {
+    public int getStock() {
         return stock;
     }
 
-    public void setStock(String stock) {
+    public void setStock(int stock) {
         this.stock = stock;
     }
 

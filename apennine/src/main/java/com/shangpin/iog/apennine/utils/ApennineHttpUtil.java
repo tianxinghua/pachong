@@ -145,9 +145,12 @@ public class ApennineHttpUtil {
      */
     private List<SkuDTO>formatToSku(List<ApennineProductDTO>list) throws Exception {
         List<SkuDTO>skuList=new ArrayList<>();
+        int stock=0;
         for (int i=0;i<list.size();i++){
             ApennineProductDTO dto=list.get(i);
             SkuDTO skuDTO=ApennineProductConvert.product2sku(dto);
+            stock = this.getHkstockByScode(ApiUrl.STOCK,skuDTO.getSkuId());
+            skuDTO.setStock(stock);
             skuList.add(skuDTO);
         }
         return skuList;
