@@ -6,6 +6,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.util.ResourceBundle;
+
 /**
  * Created by huxia on 2015/7/2.
  */
@@ -19,8 +21,11 @@ public class FetchEbayAndSave {
     }
 
     public static void main(String args[]) throws Exception {
-        //String id = "231359724482";
-        String storeName = "seanhkg";
+        //String id = "281082188156";
+        ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("store-brand");
+        String[] storeName = RESOURCE_BUNDLE.getString("MOSCHINO").split("`");
+        //String storeName = "mlg_fashion";
+        String keywords = "GAP";
         log.info("----拉取ebay数据开始----");
         System.out.println("----拉取ebay数据开始----");
         loadSpringContext();
@@ -28,9 +33,12 @@ public class FetchEbayAndSave {
         log.info("----初始SPRING成功----");
         //拉取数据
         FetchEbayProduct fetchProduct =(FetchEbayProduct)factory.getBean("ebay");
-        //fetchProduct.FetchSkuAndSave(id);
-        fetchProduct.fetchSpuAndSave(storeName);
-
+        //fetchProduct.fetchSkuAndSave(id);
+       /* for(String store:storeName) {
+            fetchProduct.fetchSpuAndSave(store,keywords);
+            System.out.println("商店"+store+"商店");
+        }*/
+        fetchProduct.fetchSpuAndSave("Vanessa-Lus-Shop",keywords.trim());
 //      GrabWithTradAndShoppingApi egProduct = (GrabWithTradAndShoppingApi)factory.getBean(GrabWithTradAndShoppingApi.class);
 //      egProduct.FetchAndSave();
         System.out.println("jmdkjdk");

@@ -50,6 +50,9 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.ebay.conf.EbayConf;
 import com.shangpin.iog.ebay.convert.TradeItemConvert;
 
+import static com.ebay.soap.eBLBaseComponents.ReturnsAcceptedOptionsCodeType.*;
+import static com.shangpin.ebay.shoping.CurrencyCodeType.*;
+
 /**
  * @description 
  * @author 陈小峰
