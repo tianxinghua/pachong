@@ -5,10 +5,7 @@ task copyToLib( type: Copy ) {
     from configurations.compile
 }
 
-task copyResources( type: Copy ) {
-    into "$buildDir/libs/conf"
-    from "$buildDir/resources/main"
-}
+
 
 dependencies {
     compile(
@@ -27,8 +24,8 @@ dependencies {
 
 jar {
 
-    dependsOn copyToLib , copyResources
-    exclude ("**/*.properties")
+    dependsOn copyToLib
+//    exclude ("**/*.properties")
 //    from {
 //        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 

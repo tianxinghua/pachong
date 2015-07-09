@@ -1,4 +1,4 @@
-package com.shangpin.iog.acanfora.dto;
+package com.shangpin.iog.galiano.dto;
 
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;

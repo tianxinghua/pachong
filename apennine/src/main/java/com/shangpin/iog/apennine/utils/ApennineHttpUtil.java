@@ -150,7 +150,7 @@ public class ApennineHttpUtil {
             ApennineProductDTO dto=list.get(i);
             SkuDTO skuDTO=ApennineProductConvert.product2sku(dto);
             stock = this.getHkstockByScode(ApiUrl.STOCK,skuDTO.getSkuId());
-            skuDTO.setStock(stock);
+            skuDTO.setStock(String.valueOf(stock));
             skuList.add(skuDTO);
         }
         return skuList;

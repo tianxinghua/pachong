@@ -1,4 +1,4 @@
-package com.shangpin.iog.acanfora.dto;
+package com.shangpin.iog.galiano.dto;
 
 import lombok.Getter;
 import lombok.Setter;
