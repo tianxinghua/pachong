@@ -34,3 +34,5 @@ include 'ebay'
 include 'galiano-stock'
 include 'iog-facade-impl'
 
+include 'spinnaker-stock'
+

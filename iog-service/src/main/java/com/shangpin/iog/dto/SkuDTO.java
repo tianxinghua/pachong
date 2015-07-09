@@ -17,6 +17,7 @@ public class SkuDTO {
     private String skuId;
     private String spuId;
     private String productName;
+    private String marketPrice;//市场价
     private String salePrice;//销售价格
     private String supplierPrice;//供货商价格
     private String barcode;//条形码
@@ -143,6 +144,7 @@ public class SkuDTO {
 
 
 
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -190,6 +192,8 @@ public class SkuDTO {
     public void setSalePrice(String salePrice) {
         this.salePrice = salePrice;
     }
+
+
 
 	@Override
 	public String toString() {

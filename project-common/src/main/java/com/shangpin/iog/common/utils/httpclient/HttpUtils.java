@@ -1,8 +1,7 @@
 package com.shangpin.iog.common.utils.httpclient;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
 import java.net.*;
 import java.nio.charset.Charset;
 import java.security.KeyManagementException;
@@ -15,26 +14,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.*;
+import org.apache.http.HeaderElement;
+import org.apache.http.HeaderElementIterator;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
@@ -43,7 +41,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectTimeoutException;
@@ -58,19 +55,19 @@ import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.*;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLException;
 
 /**
  * httpcomponents-client-4.4.x的工具类
@@ -171,6 +168,29 @@ public class HttpUtils {
 		return result;
 
 	}
+
+
+    public static String getWithConnectManager(String url) {
+        HttpGet getMethod = new HttpGet(url);
+        String result = "{\"error\":\"发生异常错误\"}";
+
+        try {
+            CloseableHttpClient httpclient = getSSLClient(false,url);
+
+            HttpResponse response = httpclient.execute(getMethod);
+
+            HttpEntity entity = response.getEntity();
+
+            result = EntityUtils.toString(entity);
+            EntityUtils.consume(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+        }
+        return result;
+
+    }
 
     /**
      * GET 方式获取信息
@@ -285,27 +305,55 @@ public class HttpUtils {
 	private static CloseableHttpClient getSSLClient(Boolean proxy)
 			throws KeyManagementException, NoSuchAlgorithmException,
 			KeyStoreException {
-		SSLContextBuilder sslContextBuilder = SSLContexts.custom()
-				.loadTrustMaterial(null, new TrustStrategy() {
-					@Override
-					public boolean isTrusted(X509Certificate[] chain,
-							String authType) throws CertificateException {
-						return true;
-					}
-				});
-		SSLConnectionSocketFactory sslf = new SSLConnectionSocketFactory(
-				sslContextBuilder.build(),
-				SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        SSLConnectionSocketFactory sslf = getSslConnectionSocketFactory();
 		HttpClientBuilder bd=HttpClients.custom();
 		bd.setSSLSocketFactory(sslf);
 		if(proxy) 
 			bd.setRoutePlanner(getProxHost());
 		return bd.setKeepAliveStrategy(getKeepAliveHttpClient()).build();
-		//.setConnectionManager(getPoolingConnectionManager(null))
 	}
 
+    /***
+     * 获取链接
+     * @param proxy  ：是否使用代理
+     * @param url    ：需要链接的域 例如 http://www.baidu.com/a/b  需要填入  www.baidu.com
+     * @return
+     * @throws KeyManagementException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     */
+    private static CloseableHttpClient getSSLClient(Boolean proxy,String url)
+            throws KeyManagementException, NoSuchAlgorithmException,
+            KeyStoreException {
+        SSLConnectionSocketFactory sslf = getSslConnectionSocketFactory();
+        HttpClientBuilder bd=HttpClients.custom();
+        bd.setSSLSocketFactory(sslf);
+        if(proxy)
+            bd.setRoutePlanner(getProxHost());
+         bd.setKeepAliveStrategy(getKeepAliveHttpClient());
+        if(url.startsWith("http")){
+                bd.setConnectionManager(getPoolingConnectionManager(url)) ;
+        }
+        return bd.build();
 
-	/**
+        //
+    }
+
+    private static SSLConnectionSocketFactory getSslConnectionSocketFactory() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        SSLContextBuilder sslContextBuilder = SSLContexts.custom()
+                .loadTrustMaterial(null, new TrustStrategy() {
+                    @Override
+                    public boolean isTrusted(X509Certificate[] chain,
+                                             String authType) throws CertificateException {
+                        return true;
+                    }
+                });
+        return new SSLConnectionSocketFactory(
+                sslContextBuilder.build(),
+                SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+    }
+
+    /**
 	 * 使用长连接
 	 * 使用方法
 	 *
@@ -432,20 +480,26 @@ public class HttpUtils {
 
 	/**
 	 * 设置并发管理
-	 * @param urlHost  连接域名
+	 * @param url  链接地址
 	 * 使用方法
 	 *
 	 *
 	 * @return
 	 */
-	private static PoolingHttpClientConnectionManager getPoolingConnectionManager(String urlHost){
+	private static PoolingHttpClientConnectionManager getPoolingConnectionManager(String url){
 
 		PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
 		connManager.setMaxTotal(200);//设置最大连接数200
 		connManager.setDefaultMaxPerRoute(3);//设置每个路由默认连接数
-		if(StringUtils.isNotBlank(urlHost)){
-			HttpHost host = new HttpHost(urlHost);//针对的主机
-			connManager.setMaxPerRoute(new HttpRoute(host), 5);//每个路由器对每个服务器允许最大5个并发访问
+		if(StringUtils.isNotBlank(url)){
+            try {
+                URL urlObj = new URL(url);
+                HttpHost host = new HttpHost(urlObj.getHost(),-1==urlObj.getPort()?80:urlObj.getPort());//针对的主机
+                connManager.setMaxPerRoute(new HttpRoute(host), 50);//每个路由器对每个服务器允许最大50个并发访问
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
 		}
 
 		return connManager;
@@ -566,10 +620,18 @@ public class HttpUtils {
 		String rs="";
 		try {
 
-			String kk=HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx",false,240000);//.getData("https://api.orderlink.it/v1/user/token?username=SHANGPIN&password=12345678",false);System.out.println("content = " + kk);
+			String kk=HttpUtils.getWithConnectManager("http://www.acanfora.it/api_ecommerce_v2.aspx");//.getData("https://api.orderlink.it/v1/user/token?username=SHANGPIN&password=12345678",false);System.out.println("content = " + kk);
 		    System.out.println("kk = " + kk);
         } catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
+
+//        try {
+//            URL urlObj = new URL("https://www.tianma.com/sss");
+//            System.out.println("host= "+urlObj.getHost());
+//            System.out.println("port= "+urlObj.getPort());
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
+    }
 }
