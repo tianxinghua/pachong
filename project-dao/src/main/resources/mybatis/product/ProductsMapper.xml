@@ -37,6 +37,8 @@
 
         <result column="sku_id" property="skuId"  />
         <result column="product_name" property="productName" />
+        <result column="market_price" property="marketPrice"/>
+        <result column="sale_price" property="salePrice"/>
         <result column="supplier_price" property="supplierPrice"/>
         <result column="sale_currency" property="saleCurrency"/>
         <result column="product_description" property="productDescription"  />
@@ -75,7 +77,10 @@
         sku.SPU_ID  as spu_id,
         sku.SKU_ID as sku_id,spu.SPU_NAME as spu_name,
 
+
           sku.PRODUCT_NAME as product_name,
+          sku.MARKET_PRICE  as market_price,
+          sku.SALE_PRICE  as  sale_price,
           sku.SUPPLIER_PRICE as supplier_price,sku.BARCODE as barcode,
           sku.PRODUCT_CODE as product_code,sku.COLOR as color,
           sku.PRODUCT_DESCRIPTION as product_description,

@@ -30,19 +30,21 @@ public class GrabStockWithFindingApi extends AbsUpdateProductStock {
        for(String skuId:skuNo) {
            skuid = skuId.split("#")[1];
            item = product.testGetItem(skuId.split("#")[0]);
-           VariationType[] variationTypes = item.getVariations().getVariation();
-           if (variationTypes != null) {
-               for (VariationType var : variationTypes) {
-                   if (skuid.equals(var.getSKU())) {
-                       skuStock.put(skuId, (var.getQuantity() - var.getSellingStatus().getQuantitySold()));
-                       break;
+           if (item.getListingDetails().getEndTime().getTime().after(Calendar.getInstance().getTime())) {
+               VariationType[] variationTypes = item.getVariations().getVariation();
+               if (variationTypes != null) {
+                   for (VariationType var : variationTypes) {
+                       if (skuid.equals(var.getSKU())) {
+                           skuStock.put(skuId, (var.getQuantity() - var.getSellingStatus().getQuantitySold()));
+                           break;
+                       }
                    }
+               } else {
+                   skuStock.put(skuId, item.getQuantity());
                }
-           }else{
-               skuStock.put(skuId,item.getQuantity());
            }
        }
-        return  skuStock;
+           return skuStock;
     }
 
    public static void main(String args[]) throws Exception {

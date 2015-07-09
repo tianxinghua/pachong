@@ -12,15 +12,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
+import ShangPin.SOP.Entity.Api.Product.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ShangPin.SOP.Api.ApiException;
-import ShangPin.SOP.Entity.Api.Product.SopProductSkuIce;
-import ShangPin.SOP.Entity.Api.Product.SopProductSkuPage;
-import ShangPin.SOP.Entity.Api.Product.SopProductSkuPageQuery;
-import ShangPin.SOP.Entity.Api.Product.SopSkuIce;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
 
 import com.shangpin.framework.ServiceException;
@@ -131,6 +129,9 @@ logger.warn("待更新库存数据总数："+skuNoSet.size());
 				exe.execute(new UpdateThread(subSkuNos.get(i),supplier,iceAndLocalSku,totoalFailCnt));
 			}
 			exe.shutdown();
+			while (!exe.awaitTermination(10, TimeUnit.SECONDS)) {
+				
+			}
 			int fct=0;
 			for(int k=0;k<totoalFailCnt.size();k++){
 				fct+=totoalFailCnt.get(k);
@@ -201,12 +202,35 @@ logger.warn("待更新库存数据总数："+skuNoSet.size());
 		}*/
 		
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+		//获取尚品库存
+		Set<String> skuNoShangpinSet = iceStock.keySet();
+		int skuNum = 1;
+		List<String> skuNoShangpinList = new ArrayList<>();
+		for(Iterator<String> itor =skuNoShangpinSet.iterator();itor.hasNext();){
+			if(skuNum%200==0){
+				//调用接口 查找库存
+				removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList);
+				skuNoShangpinList = new ArrayList<>();
+			}
+			skuNoShangpinList.add(itor.next());
+			skuNum++;
+		}
+		//排除最后一次
+		removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList);
+
+
 		int failCount=0;
 		Iterator<Entry<String, Integer>> iter=iceStock.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<String, Integer> entry = iter.next();
 			//logger.warn("更新库存ice sku,stock="+entry.getKey()+":"+ entry.getValue());
-			Boolean result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());
+			Boolean result =true;
+			try{
+				result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());				
+			}catch(Exception e){
+				result=false;
+				logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+			}
 			if(!result){
 				failCount++;
 				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
@@ -216,7 +240,27 @@ logger.warn("待更新库存数据总数："+skuNoSet.size());
 		}*/
 		return failCount;
 	}
-	
+
+	/**
+	 * 移除库存没有变化的商品 不做更新
+	 * @param supplier
+	 * @param iceStock
+	 * @param servant
+	 * @param skuNoShangpinList
+	 * @throws ApiException
+	 */
+	private void removeNoChangeStockRecord(String supplier, Map<String, Integer> iceStock, OpenApiServantPrx servant, List<String> skuNoShangpinList) throws ApiException {
+		SopSkuInventoryIce[] skuIceArray =servant.FindStockInfo(supplier, skuNoShangpinList);
+		//排除无用的库存
+		for(SopSkuInventoryIce skuIce:skuIceArray){
+            if(iceStock.containsKey(skuIce.SkuNo)){
+                if(iceStock.get(skuIce.SkuNo)==skuIce.InventoryQuantity){
+                    iceStock.remove(skuIce.SkuNo);
+                }
+            }
+        }
+	}
+
 	class UpdateThread extends Thread{
 
 		private Collection<String> skuNos;

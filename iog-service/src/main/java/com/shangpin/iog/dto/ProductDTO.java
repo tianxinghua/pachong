@@ -39,6 +39,8 @@ public class ProductDTO {
     private String productCode;//货号
     private String skuUrl;//供应商产品地址
     private String picUrl;//图片地址
+    private String marketPrice;//市场价
+    private String salePrice;//销售价
     private String supplierPrice;//供货价
     private String saleCurrency;//币种
     private String productDescription;//描述
@@ -407,5 +409,21 @@ public class ProductDTO {
 
     public void setSkuUrl(String skuUrl) {
         this.skuUrl = skuUrl;
+    }
+
+    public String getMarketPrice() {
+        return marketPrice;
+    }
+
+    public void setMarketPrice(String marketPrice) {
+        this.marketPrice = marketPrice;
+    }
+
+    public String getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(String salePrice) {
+        this.salePrice = salePrice;
     }
 }
