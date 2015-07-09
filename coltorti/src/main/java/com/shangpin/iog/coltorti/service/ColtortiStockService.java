@@ -93,7 +93,7 @@ public class ColtortiStockService {
 		return rtnScalar;
 	}
 	/*public static void main(String[] args) throws ServiceException {
-		Map<String, Map<String, Integer>> stok = getStock("151578DGH000006",null);
+		Map<String, Map<String, Integer>> stok = getStock("151405ABS000035","151405ABS000035-F0V2Z");
 		System.out.println(new Gson().toJson(stok));
 	}*/
 }

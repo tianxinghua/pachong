@@ -17,6 +17,7 @@ public class SkuDTO {
     private String skuId;
     private String spuId;
     private String productName;
+    private String marketPrice;//市场价
     private String salePrice;//销售价格
     private String supplierPrice;//供货商价格
     private String barcode;//条形码
@@ -143,6 +144,7 @@ public class SkuDTO {
 
 
 
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -191,7 +193,15 @@ public class SkuDTO {
         this.salePrice = salePrice;
     }
 
-	@Override
+    public String getMarketPrice() {
+        return marketPrice;
+    }
+
+    public void setMarketPrice(String marketPrice) {
+        this.marketPrice = marketPrice;
+    }
+
+    @Override
 	public String toString() {
 		return "SkuDTO [id=" + id + ", supplierId=" + supplierId + ", skuId="
 				+ skuId + ", spuId=" + spuId + ", productName=" + productName

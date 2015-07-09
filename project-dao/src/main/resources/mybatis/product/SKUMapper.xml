@@ -14,6 +14,7 @@
 		<result column="COLOR" property="color"  />
         <result column="PRODUCT_DESCRIPTION" property="productDescription"/>
         <result column="SALE_CURRENCY" property="saleCurrency"  />
+
         <result column="PRODUCT_SIZE" property="productSize" />
         <result column="STOCK" property="stock" />
         <result column="CREATE_TIME" property="createTime" />
@@ -33,6 +34,7 @@
 		SPU_ID,
 		SKU_ID,
         PRODUCT_NAME,
+        MARKET_PRICE,
         SALE_PRICE,
         SUPPLIER_PRICE,
         BARCODE,
@@ -53,7 +55,7 @@
         )
         values(
             #{id}, #{supplierId}, #{spuId}, #{skuId},
-            #{productName},#{salePrice}, #{supplierPrice}, #{barcode}, #{productCode},
+            #{productName},#{marketPrice},#{salePrice}, #{supplierPrice}, #{barcode}, #{productCode},
             #{color} , #{productDescription}, #{saleCurrency}, #{productSize}, #{stock},
             #{createTime}, #{lastTime}
         )
@@ -72,7 +74,7 @@
         values
         <foreach collection="list" index="index" item="item" separator=",">
             (#{item.id}, #{item.supplierId}, #{item.spuId}, #{item.skuId},
-            #{item.productName},#{item.salePrice}, #{item.supplierPrice}, #{item.barcode}, #{item.productCode},
+            #{item.productName},#{item.marketPrice},#{item.salePrice}, #{item.supplierPrice}, #{item.barcode}, #{item.productCode},
             #{item.color} , #{item.productDescribe}, #{item.saleCurrency}, #{item.productSize}, #{item.stock},
             #{item.createTime}, #{item.lastTime})
         </foreach>
