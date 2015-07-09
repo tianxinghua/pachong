@@ -193,9 +193,15 @@ public class SkuDTO {
         this.salePrice = salePrice;
     }
 
+    public String getMarketPrice() {
+        return marketPrice;
+    }
 
+    public void setMarketPrice(String marketPrice) {
+        this.marketPrice = marketPrice;
+    }
 
-	@Override
+    @Override
 	public String toString() {
 		return "SkuDTO [id=" + id + ", supplierId=" + supplierId + ", skuId="
 				+ skuId + ", spuId=" + spuId + ", productName=" + productName
