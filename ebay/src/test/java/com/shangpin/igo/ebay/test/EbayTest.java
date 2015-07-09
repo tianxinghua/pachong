@@ -50,6 +50,9 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.ebay.conf.EbayConf;
 import com.shangpin.iog.ebay.convert.TradeItemConvert;
 
+import static com.ebay.soap.eBLBaseComponents.ReturnsAcceptedOptionsCodeType.*;
+import static com.shangpin.ebay.shoping.CurrencyCodeType.*;
+
 /**
  * @description 
  * @author 陈小峰
@@ -80,7 +83,7 @@ public class EbayTest {
 		String mnt="1999.00";
 		double  da    = Double.parseDouble(mnt);
 		float fa=Float.parseFloat(mnt);
-		System.out.println(CurrencyCodeType.CNY.toString());
+		System.out.println(CNY.toString());
 		System.out.println(da+":"+fa);
 	}
 	
@@ -150,7 +153,7 @@ public class EbayTest {
 
 	@Test
 	public void testGetItemXml(){
-		String itemId="252005767578";
+		String itemId="281082188156";
 		String url= EbayConf.getTradeCallUrl("GetItem");
 		url+="&ItemID="+itemId;
 		String xml=HttpUtils.get(url);
@@ -192,19 +195,81 @@ public class EbayTest {
 	public void testPlaceOffer() throws SdkException {
 		ApiContext api = getApiContext();
 		ApiCall apiCall = new ApiCall(api);
+		apiCall.setEndUserIP("www.shangpin.com");
 		PlaceOfferRequestType req = new PlaceOfferRequestType();
-		String itemID = "110164552173";
+		String itemID = "110164676141";
 		req.setItemID(itemID);
-		req.setEndUserIP("www.shangpin.com");
 		OfferType offerType = new OfferType();
 		offerType.setAction(BidActionCodeType.PURCHASE);
 		offerType.setQuantity(1);
 		AmountType maxBid = new AmountType();
 		maxBid.setCurrencyID(com.ebay.soap.eBLBaseComponents.CurrencyCodeType.USD);
-		maxBid.setValue(20.0);
+		maxBid.setValue(18.00);
 		offerType.setMaxBid(maxBid);
+		NameValueListArrayType variation = new NameValueListArrayType();
+		com.ebay.soap.eBLBaseComponents.NameValueListType nv1=new com.ebay.soap.eBLBaseComponents.NameValueListType();nv1.setName("Color");nv1.setValue(new String[]{"White"});
+		com.ebay.soap.eBLBaseComponents.NameValueListType nv2=new com.ebay.soap.eBLBaseComponents.NameValueListType();nv2.setName("Size");nv2.setValue(new String[]{"L"});
+		com.ebay.soap.eBLBaseComponents.NameValueListType[] nvs = new com.ebay.soap.eBLBaseComponents.NameValueListType[]{
+				nv1,nv2
+		};
+		variation.setNameValueList(nvs);
 		req.setOffer(offerType);
+		req.setVariationSpecifics(variation);
 		PlaceOfferResponseType resp = (PlaceOfferResponseType) apiCall.execute(req);
+		System.out.println(resp);
+	}
+
+	@Test
+	public void testAddItem() throws SdkException {
+		ApiContext api = getApiContext();
+		ApiCall apiCall = new ApiCall(api);
+		AddItemRequestType req = new AddItemRequestType();
+		ItemType item = new ItemType();
+		item.setTitle("Ebay Goods");
+		item.setDescription("This is a excellent good");
+		AmountType startPrice = new AmountType();
+		startPrice.setValue(0.99);
+		startPrice.setCurrencyID(com.ebay.soap.eBLBaseComponents.CurrencyCodeType.USD);
+		item.setStartPrice(startPrice);
+		AmountType buyPrice = new AmountType();
+		buyPrice.setCurrencyID(com.ebay.soap.eBLBaseComponents.CurrencyCodeType.USD);
+		buyPrice.setValue(15.00);
+		CategoryType category = new CategoryType();
+		category.setCategoryID("279");
+		item.setPrimaryCategory(category);
+		item.setBuyItNowPrice(buyPrice);
+		item.setCountry(CountryCodeType.CN);
+		item.setCurrency(com.ebay.soap.eBLBaseComponents.CurrencyCodeType.USD);
+		System.out.println(String.valueOf(ListingDurationCodeType.DAYS_7)+"huxia");
+		item.setListingDuration(String.valueOf(ListingDurationCodeType.DAYS_7));
+		item.setListingType(ListingTypeCodeType.CHINESE);
+		item.setPaymentMethods(new BuyerPaymentMethodCodeType[]{BuyerPaymentMethodCodeType.PAY_PAL});
+		item.setPayPalEmailAddress("magicalbookseller@yahoo.com");
+		PictureDetailsType picture = new PictureDetailsType();
+		picture.setGalleryType(GalleryTypeCodeType.GALLERY);
+		picture.setGalleryURL("http://i16.ebayimg.com/01/c/03/c2/9d/d5_6.JPG");
+		picture.setPictureURL(new String[]{"http://i16.ebayimg.com/01/c/03/c2/9d/d5_7.JPG","http://i8.ebayimg.com/04/c/05/a7/ca/f2_7.JPG"});
+		item.setPictureDetails(picture);
+		item.setQuantity(1);
+		item.setPostalCode("95125");
+//		ReturnPolicyType policyDetails  = new ReturnPolicyType();
+//		policyDetails.setReturnsAcceptedOption(String.valueOf(ReturnsAcceptedOptionsCodeType.RETURNS_ACCEPTED));
+//        policyDetails.setRefundOption(String.valueOf(RefundOptionsCodeType.MONEY_BACK));
+//		policyDetails.setReturnsWithinOption(String.valueOf(ReturnsWithinOptionsCodeType.DAYS_7));
+//		policyDetails.setShippingCostPaidByOption(String.valueOf(ShippingCostPaidByOptionsCodeType.BUYER));
+//		item.setReturnPolicy(policyDetails);
+//		ShippingDetailsType shipping = new ShippingDetailsType();
+//		shipping.setShippingType(ShippingTypeCodeType.FLAT);
+//		ShippingServiceOptionsType shippingService = new ShippingServiceOptionsType();
+//		shippingService.setShippingServicePriority(1);
+//		shippingService.setShippingService(String.valueOf(ShippingServiceCodeType.USPS_MEDIA));
+//		AmountType cost = new AmountType();cost.setValue(2.50);
+//		shippingService.setShippingServiceCost(cost);
+//		shipping.setShippingServiceOptions(new ShippingServiceOptionsType[]{shippingService});
+//		item.setShippingDetails(shipping);
+		item.setSite(SiteCodeType.fromValue("US"));
+		req.setItem(item);
+		AddItemResponseType resp = (AddItemResponseType)apiCall.execute(req);
 		System.out.println(resp);
 	}
 
@@ -250,9 +315,10 @@ public class EbayTest {
 	public void testFindItemInStore() throws ApiException, SdkException, Exception{
 		SpuDTO spu=null;
 		String url=findCommonUrl("findItemsIneBayStores");
-		url+="storeName=%s&paginationInput.entriesPerPage=300&paginationInput.pageNumber=1";
+		url+="storeName=%s&paginationInput.entriesPerPage=3&paginationInput.pageNumber=1&keywords=%s";
 		String storeName="seanhkg";
-		url=String.format(url,storeName);
+		String keywords="Swarovski";
+		url=String.format(url,storeName,keywords);
 		System.out.println(url);
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);

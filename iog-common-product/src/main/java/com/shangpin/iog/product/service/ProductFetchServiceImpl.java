@@ -54,7 +54,8 @@ public class ProductFetchServiceImpl implements ProductFetchService {
         try {
             spuDAO.save(spuDTO);
         } catch (Exception e) {
-            throw new ServiceMessageException("数据插入失败");
+             e.printStackTrace();
+           // throw new ServiceMessageException("数据插入失败");
         }
 
     }
@@ -85,7 +86,8 @@ public class ProductFetchServiceImpl implements ProductFetchService {
         try {
             productPictureMapper.save(pictureDTO);
         } catch (Exception e) {
-            throw new ServiceMessageException("数据插入失败");
+
+           throw new ServiceMessageException("数据插入失败");
         }
 
     }
