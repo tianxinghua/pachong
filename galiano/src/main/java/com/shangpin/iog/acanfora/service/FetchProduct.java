@@ -51,7 +51,7 @@ public class FetchProduct {
 
                 List<Item> itemList = items.getItems();
                 if(null==itemList) continue;
-                String skuId="";
+                String skuId="",size="";
                 for(Item item:itemList){
                     SkuDTO sku  = new SkuDTO();
                     try {
@@ -59,11 +59,15 @@ public class FetchProduct {
                         sku.setSupplierId(supplierId);
                         sku.setSpuId(product.getProductId());
                         skuId = item.getItem_id();
-                        if(skuId.indexOf("½")>0){
+                        if(StringUtils.isNotBlank(skuId)&&skuId.indexOf("½")>0){
                             skuId = skuId.replace("½","+");
                         }
                         sku.setSkuId(skuId);
-                        sku.setProductSize(item.getItem_size());
+                        size = item.getItem_size();
+                        if(StringUtils.isNotBlank(size)&&size.indexOf("½")>0){
+                            size = size.replace("½","+");
+                        }
+                        sku.setProductSize(size);
                         sku.setMarketPrice(item.getMarket_price());
                         sku.setSalePrice(item.getSell_price());
                         sku.setSupplierPrice(item.getSupply_price());

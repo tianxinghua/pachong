@@ -251,7 +251,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     material="";
                 }else{
                     material= material.replaceAll(",", " ");
+                    material = material.replaceAll("\\r","").replaceAll("\\n","");
                 }
+
                 buffer.append(material).append(",");
                 //材质 中文
                 if(!"".equals(material)) {
@@ -263,7 +265,6 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                         material = material.toLowerCase().replaceAll(entry.getKey(), entry.getValue());
                     }
-                    material= material.replaceAll(",", " ");
                 }
 
                 buffer.append(material).append(",");
