@@ -6,6 +6,7 @@ package com.shangpin.iog.coltorti.service;
 import java.util.*;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,8 @@ public class ColtortiStockService {
 					rtnScalar.put(skuid, scalarDetail);
 				}
 				for (ColtortiStock s : stock) {//不同仓库
+					if("0".equals(s.getTotal()) || StringUtils.isBlank(s.getTotal()))
+						continue;
 					/* scalars": {
 				        "1": {
 			                "XXS": 0
