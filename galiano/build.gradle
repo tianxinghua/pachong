@@ -39,9 +39,10 @@ jar {
         "lib/${file.name}"
     }.join(' ')
 
+
     manifest {
         attributes 'Main-Class': 'com.shangpin.iog.galiano.Startup'
 //        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
-        attributes 'Class-Path': '. ' + manifestCp
+        attributes 'Class-Path': '. ' + manifestCp + new File("$buildDir/libs/conf").list().collect { "conf/$it" }.join(' ')
     }
 }
