@@ -23,9 +23,9 @@ public class FetchEbayAndSave {
     public static void main(String args[]) throws Exception {
         //String id = "281082188156";
         ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("store-brand");
-        String[] storeName = RESOURCE_BUNDLE.getString("MOSCHINO").split("`");
+        String[] storeName = RESOURCE_BUNDLE.getString("JessicaSimpson").split("`");
         //String storeName = "mlg_fashion";
-        String keywords = "GAP";
+        String keywords = "TommyHilfiger";
         log.info("----拉取ebay数据开始----");
         System.out.println("----拉取ebay数据开始----");
         loadSpringContext();
@@ -34,11 +34,11 @@ public class FetchEbayAndSave {
         //拉取数据
         FetchEbayProduct fetchProduct =(FetchEbayProduct)factory.getBean("ebay");
         //fetchProduct.fetchSkuAndSave(id);
-       /* for(String store:storeName) {
+        /*for(String store:storeName) {
             fetchProduct.fetchSpuAndSave(store,keywords);
             System.out.println("商店"+store+"商店");
         }*/
-        fetchProduct.fetchSpuAndSave("Vanessa-Lus-Shop",keywords.trim());
+        fetchProduct.fetchSpuAndSave("DYK-Group-for-Hilfiger",keywords.trim());
 //      GrabWithTradAndShoppingApi egProduct = (GrabWithTradAndShoppingApi)factory.getBean(GrabWithTradAndShoppingApi.class);
 //      egProduct.FetchAndSave();
         System.out.println("jmdkjdk");
