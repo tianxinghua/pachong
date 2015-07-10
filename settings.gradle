@@ -34,4 +34,5 @@ include 'ebay'
 include 'galiano-stock'
 
 include 'spinnaker-stock'
+include 'brunarosso'
 
