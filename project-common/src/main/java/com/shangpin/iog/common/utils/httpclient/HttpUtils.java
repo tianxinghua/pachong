@@ -159,6 +159,7 @@ public class HttpUtils {
 			HttpEntity entity = response.getEntity();
 
 			result = EntityUtils.toString(entity);
+
 			EntityUtils.consume(entity);
 		} catch (Exception e) {
 			e.printStackTrace();

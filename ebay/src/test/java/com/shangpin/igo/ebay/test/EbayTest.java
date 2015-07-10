@@ -254,13 +254,14 @@ public class EbayTest {
 	public void testFindItemInStore() throws ApiException, SdkException, Exception{
 		SpuDTO spu=null;
 		String url=findCommonUrl("findItemsIneBayStores");
-		url+="storeName=%s&paginationInput.entriesPerPage=300&paginationInput.pageNumber=1";
-		String storeName="seanhkg";
-		url=String.format(url,storeName);
+		url+="storeName=%s&keywords%s";
+		String storeName="Galindas-Boutique";
+		String keywords = "PoloRalph";
+		url=String.format(url,storeName,keywords);
 		System.out.println(url);
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
-		try{
+		/*try{
 			FindItemsIneBayStoresResponseDocument doc=FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
 			FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
 			StringBuilder picUrl =new StringBuilder();
@@ -325,7 +326,7 @@ public class EbayTest {
 			}
 		} catch (XmlException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	@Test

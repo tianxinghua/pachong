@@ -6,6 +6,7 @@ package com.shangpin.iog.coltorti.service;
 import java.util.*;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +41,8 @@ public class ColtortiStockService {
 		/*System.out.println("productId =" + productId);
 		System.out.println("recordId =" + recordId);
 		System.out.println("  抓取库存需要的时间 =" + String.valueOf(System.currentTimeMillis()-startDate.getTime()));*/
-		ColtortiUtil.check(body);
 		//logger.info("request stock result:\r\n"+body);
+		ColtortiUtil.check(body);
 		Gson gson = new Gson();
 		Map<String,List<ColtortiStock>> mp=gson.fromJson(body, new TypeToken<Map<String,List<ColtortiStock>>>(){}.getType());
 		Map<String,Map<String,Integer>> rtnScalar=null;
@@ -59,6 +60,8 @@ public class ColtortiStockService {
 					rtnScalar.put(skuid, scalarDetail);
 				}
 				for (ColtortiStock s : stock) {//不同仓库
+					if("0".equals(s.getTotal()) || StringUtils.isBlank(s.getTotal()))
+						continue;
 					/* scalars": {
 				        "1": {
 			                "XXS": 0
@@ -93,7 +96,17 @@ public class ColtortiStockService {
 		return rtnScalar;
 	}
 	/*public static void main(String[] args) throws ServiceException {
-		Map<String, Map<String, Integer>> stok = getStock("151405ABS000035","151405ABS000035-F0V2Z");
-		System.out.println(new Gson().toJson(stok));
+		String[] x={"151001LCX000007-P31","151400NCX000003-NERO","151481ASC000001-2310C",
+				"151481DPL000003-00100","151481DCW000008-2720C"
+		};
+		for (String record : x) {
+			try{
+				Map<String, Map<String, Integer>> stok = getStock(null,record);
+				System.out.println(new Gson().toJson(stok));
+			}catch(Exception e){
+				
+			}
+			
+		}
 	}*/
 }
