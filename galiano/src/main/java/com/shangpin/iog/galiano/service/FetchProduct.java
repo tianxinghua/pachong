@@ -1,10 +1,10 @@
-package com.shangpin.iog.acanfora.service;
+package com.shangpin.iog.galiano.service;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.acanfora.dto.Item;
-import com.shangpin.iog.acanfora.dto.Items;
-import com.shangpin.iog.acanfora.dto.Product;
-import com.shangpin.iog.acanfora.dto.Products;
+import com.shangpin.iog.galiano.dto.Item;
+import com.shangpin.iog.galiano.dto.Items;
+import com.shangpin.iog.galiano.dto.Product;
+import com.shangpin.iog.galiano.dto.Products;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
