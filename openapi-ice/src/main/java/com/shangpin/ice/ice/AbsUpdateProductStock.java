@@ -62,6 +62,7 @@ public abstract class AbsUpdateProductStock {
 		int pageIndex=1,pageSize=100;
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		boolean hasNext=true;
+		logger.warn("获取icesku 开始");
 		Set<String> skuIds = new HashSet<String>();
 		while(hasNext){
 			SopProductSkuPageQuery query = new SopProductSkuPageQuery(start,end,pageIndex,pageSize);
@@ -77,6 +78,7 @@ public abstract class AbsUpdateProductStock {
 			pageIndex++;
 			hasNext=(pageSize==skus.size());
 		}
+		logger.warn("获取icesku 结束");
 		return skuIds;
 	}
 	
@@ -168,26 +170,27 @@ public abstract class AbsUpdateProductStock {
 	private int updateIceStock(String supplier, Map<String, Integer> iceStock)
 			throws Exception {
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
-		
+		//logger.warn("{}---更新ice--,数量：{}",Thread.currentThread().getName(),iceStock.size());
 		//获取尚品库存
 		Set<String> skuNoShangpinSet = iceStock.keySet();
 		int skuNum = 1;
 		List<String> skuNoShangpinList = new ArrayList<>();
+		Map<String,Integer> toUpdateIce=new HashMap<>();
 		for(Iterator<String> itor =skuNoShangpinSet.iterator();itor.hasNext();){
 			if(skuNum%200==0){
 				//调用接口 查找库存
-				removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList);
+				removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList,toUpdateIce);
 				skuNoShangpinList = new ArrayList<>();
 			}
 			skuNoShangpinList.add(itor.next());
 			skuNum++;
 		}
 		//排除最后一次
-		removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList);
+		removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList,toUpdateIce);
 		
 		
 		int failCount=0;
-		Iterator<Entry<String, Integer>> iter=iceStock.entrySet().iterator();
+		Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<String, Integer> entry = iter.next();
 			Boolean result =true;
@@ -210,16 +213,17 @@ public abstract class AbsUpdateProductStock {
 	 * @param iceStock
 	 * @param servant
 	 * @param skuNoShangpinList
+	 * @param toUpdateIce 
 	 * @throws ApiException
 	 */
-	private void removeNoChangeStockRecord(String supplier, Map<String, Integer> iceStock, OpenApiServantPrx servant, List<String> skuNoShangpinList) throws ApiException {
+	private void removeNoChangeStockRecord(String supplier, Map<String, Integer> iceStock, OpenApiServantPrx servant, List<String> skuNoShangpinList, Map<String, Integer> toUpdateIce) throws ApiException {
 		if(CollectionUtils.isEmpty(skuNoShangpinList)) return ;
 		SopSkuInventoryIce[] skuIceArray =servant.FindStockInfo(supplier, skuNoShangpinList);
 		//排除无用的库存
 		for(SopSkuInventoryIce skuIce:skuIceArray){
 	        if(iceStock.containsKey(skuIce.SkuNo)){
-	            if(iceStock.get(skuIce.SkuNo)==skuIce.InventoryQuantity){
-	                iceStock.remove(skuIce.SkuNo);
+	            if(iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
+	                toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
 	            }
 	        }
 		}
@@ -248,7 +252,7 @@ public abstract class AbsUpdateProductStock {
 	}
 
 	class UpdateThread extends Thread{
-
+		final Logger logger = LoggerFactory.getLogger(UpdateThread.class);
 		private Collection<String> skuNos;
 		private Map<String, String> localAndIceSkuId;
 		private String supplier;
@@ -266,13 +270,12 @@ public abstract class AbsUpdateProductStock {
 		}
 		@Override
 		public void run() {
-			int size=skuNos.size();
 			Map<String, Integer> iceStock = grab4Icestock(skuNos,localAndIceSkuId);
 			try {
-				logger.warn(Thread.currentThread().getName()+"处理开始，数："+size);
+				logger.warn(Thread.currentThread().getName()+"ice更新处理开始，数："+iceStock.size());
 				int failCnt = updateIceStock(supplier, iceStock);
 				totoalFailCnt.add(failCnt);
-				logger.warn(Thread.currentThread().getName()+"完成，失败数:"+failCnt);
+				logger.warn(Thread.currentThread().getName()+"ice更新完成，失败数:"+failCnt);
 			} catch (Exception e) {
 				logger.warn(Thread.currentThread().getName()+"处理出错",e);
 			}
