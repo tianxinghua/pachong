@@ -202,10 +202,12 @@ public class GrabEbayApiService {
 	 * @return
 	 * @throws XmlException
 	 */
-	public FindItemsIneBayStoresResponse findItemsIneBayStores(
+	public static FindItemsIneBayStoresResponse findItemsIneBayStores(
 			String storeName, String keywords, int page, int pageSize) throws XmlException {
 		String url = EbayConf.getFindCallUrl("findItemsIneBayStores");
 		url += "&storeName=%s&paginationInput.entriesPerPage=%d&paginationInput.pageNumber=%d&keywords=%s";
+		String filter="&outputSelector[0]=searchResult.item.sellingStatus.sellingState&outputSelector[1]=searchResult.item.itemId";
+		url+=filter;
 		url = String.format(url, storeName, page,pageSize,keywords);
 		String xml=HttpUtil45.get(url, null, null);
 		log.debug("查询商铺：{}，关键词：{},结果：{}",storeName,keywords,xml);
@@ -229,9 +231,14 @@ public class GrabEbayApiService {
 		try {
 			//tradeSellerList("pumaboxstore", t1, t2, 1, 8);
 			//tradeGetItem("251485222300");
-		} catch (SdkException e) {
+			FindItemsIneBayStoresResponse resp=findItemsIneBayStores("Toms-Home-Treasures","dalia",1,10);
+			if(AckValue.SUCCESS.equals(resp.getAck())){
+				System.out.println("success");
+			}
+			System.out.println(resp.xmlText());
+		} catch (XmlException e) {
 			e.printStackTrace();
 		}
-		shoppingGetMultipleItems4Stock(itemIds);
+		//shoppingGetMultipleItems4Stock(itemIds);
 	}*/
 }

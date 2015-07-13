@@ -31,7 +31,7 @@ import com.shangpin.iog.service.ProductFetchService;
 @Component
 public class V1GrabUpdateMain extends AbsUpdateProductStock{
 	@Autowired
-	V1GrabService grab;
+	V1GrabService grabSrv;
 	static Logger logger = LoggerFactory.getLogger(V1GrabUpdateMain.class);
 	@Autowired
 	public ProductFetchService fetchSrv;
@@ -44,11 +44,11 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 			String skuId = iterator.next();
 			itemIds.add(skuId.split("#")[0]);
 		}
-		return grab.getStock(itemIds);
+		return grabSrv.getStock(itemIds);
 	}
 	/**
 	 * 抓取供应商数据并保存
-	 * @param sellerId ebay供应商id
+	 * @param sellerId ebay供应商卖家id
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void grabSaveProduct(String sellerId) {
@@ -59,7 +59,7 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 		date2 = c.getTime();
 		Map<String, ? extends Collection> skuSpuAndPic = null;
 		try {
-			skuSpuAndPic = grab.getSellerList(sellerId, date, date2);
+			skuSpuAndPic = grabSrv.getSellerList(sellerId, date, date2);
 		} catch (SdkException e1) {
 			logger.error("抓取数据失败", e1);
 			return;
@@ -71,6 +71,23 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 		Collection<ProductPictureDTO> picUrls = skuSpuAndPic.get("pic");
 		savePic(picUrls);
 	}
+	/**
+	 * 通过find接口查询供应商店铺销售的item
+	 * @param storeName 店铺名字
+	 * @param brandName 品牌名字
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void grabSaveProduct4Find(String storeName,String brand){
+	
+		Map<String,? extends Collection> skuSpuAndPic=grabSrv.findStoreBrand(storeName,brand);
+		Collection<SkuDTO> skus = skuSpuAndPic.get("sku");
+		saveSku(skus);
+		Collection<SpuDTO> spuDTOs = skuSpuAndPic.get("spu");
+		saveSpu(spuDTOs);
+		Collection<ProductPictureDTO> picUrls = skuSpuAndPic.get("pic");
+		savePic(picUrls);
+	}
+	
 
 	/**
 	 * @param picUrls

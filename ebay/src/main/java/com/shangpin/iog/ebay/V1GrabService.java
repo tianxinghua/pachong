@@ -3,7 +3,6 @@
  */
 package com.shangpin.iog.ebay;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -14,7 +13,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ebay.sdk.ApiException;
@@ -24,14 +22,15 @@ import com.ebay.soap.eBLBaseComponents.AckCodeType;
 import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
 import com.ebay.soap.eBLBaseComponents.ItemType;
 import com.ebay.soap.eBLBaseComponents.ListingStatusCodeType;
+import com.shangpin.ebay.finding.AckValue;
+import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
+import com.shangpin.ebay.finding.SearchItem;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.SimpleItemType;
 import com.shangpin.ebay.shoping.VariationType;
 import com.shangpin.ebay.shoping.VariationsType;
-import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.ebay.convert.ShopingItemConvert;
 import com.shangpin.iog.ebay.service.GrabEbayApiService;
-import com.shangpin.iog.service.ProductFetchService;
 
 /**
  * ebay数据抓取服务，数据库存抓取服务
@@ -42,8 +41,6 @@ import com.shangpin.iog.service.ProductFetchService;
 @Component
 public class V1GrabService {
 	static Logger logger = LoggerFactory.getLogger(V1GrabService.class);
-	@Autowired
-	ProductFetchService productFetchService;
 	static int pageSize=200;
 	/**
 	 * 抓取ebay商户的数据
@@ -65,7 +62,7 @@ public class V1GrabService {
 		do{
 			GetSellerListResponseType resp = GrabEbayApiService.tradeSellerList(userId, 
 					getCalendar(endStart), getCalendar(endEnd),page,pageSize);
-			if(AckCodeType.FAILURE.equals(resp.getAck())){
+			if(!AckCodeType.FAILURE.equals(resp.getAck())){
 				hasMore=resp.isHasMoreItems();
 				ItemType[] tps = resp.getItemArray().getItem();
 				List<String> itemIds = new ArrayList<>(tps.length);//1.得到id
@@ -89,34 +86,17 @@ public class V1GrabService {
 					skuSpuAndPic.get("pic").addAll(kpp.get("pic"));
 				}
 				page++;
+			}else{
+				logger.warn("获取商户{}产品失败，错误码：{}，错误信息{}:",userId,
+						resp.getErrors(0).getErrorCode(),
+						resp.getErrors(0).getLongMessage());
+				hasMore=false;
 			}
 		}while(hasMore);
 		
 		return skuSpuAndPic;
 	}
 
-    public void FetchAndSave() throws SdkException, ServiceException {
-		Date date=Calendar.getInstance().getTime();
-		Date date2=null;
-		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.MONTH, 1);
-		date2=c.getTime();
-		Map<String, ? extends Collection> skuSpuAndPic=getSellerList("inzara.store",date,date2);
-		//Collection<SkuDTO>  skus= skuSpuAndPic.get("sku");
-		//System.out.println(skus.size()+"nihaoma");
-//		for(SkuDTO sku:skus) {
-//			productFetchService.saveSKU(sku);
-//		}
-//		Collection<SpuDTO> spuDTOs = skuSpuAndPic.get("spu");
-//		for(SpuDTO spu:spuDTOs){
-//			productFetchService.saveSPU(spu);
-//		}
-//		Collection<ProductPictureDTO> picUrl = skuSpuAndPic.get("pic");
-//		for(ProductPictureDTO picurl:picUrl){
-//			productFetchService.savePictureForMongo(picurl);
-//		}
-	}
 	/**
 	 * 根据itemId获取item及变种的库存<br/>
 	 * @param itemIds ebay的itemId
@@ -133,18 +113,23 @@ public class V1GrabService {
 		Map<String,Integer> rtnMap=new HashMap<>(sits.length);
 		for (SimpleItemType sit : sits) {
 			VariationsType vta=sit.getVariations();
+			//如果结束了那么库存为null
+			boolean isEnd=false;
+			if(sit.getListingStatus()!=null && !ListingStatusCodeType.ACTIVE.value().equalsIgnoreCase(sit.getListingStatus().toString())){
+				isEnd=true;
+			}
 			if(vta!=null && vta.getVariationArray()!=null){
 				VariationType[] vts=vta.getVariationArray();
 				for (VariationType vt : vts) {
 					int quantity=vt.getQuantity()-vt.getSellingStatus().getQuantitySold();
-					rtnMap.put(ShopingItemConvert.getSkuId(sit,vt),quantity);
+					rtnMap.put(ShopingItemConvert.getSkuId(sit,vt),isEnd?0:quantity);
 				}
 			}else{
 				int quantity=sit.getQuantity()-sit.getQuantitySold();
-				rtnMap.put(ShopingItemConvert.getSkuId(sit,null), quantity);
+				rtnMap.put(ShopingItemConvert.getSkuId(sit,null), isEnd?0:quantity);
 			}
 		}
-		return null;
+		return rtnMap;
 	}
 	
 	/**
@@ -156,5 +141,85 @@ public class V1GrabService {
 		ca.setTime(date);
 		return ca;
 	}
+
+	/**
+	 * 通过find接口查询供应商店铺销售的item
+	 * @param storeName 店铺名字
+	 * @param brandName 品牌名字
+	 * @return  封装好的sku,spu,pic，各键代表对应的数据集合
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Map<String, ? extends Collection> findStoreBrand(String storeName,
+			String brand){
+		int page=1;
+		Map<String, ? extends Collection> skuSpuAndPic=null;
+		boolean hasMore=false;
+		FindItemsIneBayStoresResponse resp =null;
+		GetMultipleItemsResponseType multResp=null;
+		do{
+			try {
+				resp = GrabEbayApiService.findItemsIneBayStores(storeName,brand,page,pageSize);
+				if(!AckValue.SUCCESS.equals(resp.getAck())){
+					logger.warn("查询{},brand:{}失败，错误码：{}，错误信息{}:",storeName,brand,
+							resp.getErrorMessage().getErrorArray(0).getErrorId(),
+							resp.getErrorMessage().getErrorArray(0).getMessage());
+					hasMore=false;
+					return skuSpuAndPic;
+				}
+			}catch(Exception e){
+				logger.error("findStoreBrand异常，storeName:"+storeName+",brand:"+brand,e);
+				hasMore=false;
+				return skuSpuAndPic;
+			}
+			int totalPage=resp.getPaginationOutput().getTotalPages();
+			if(totalPage>resp.getPaginationOutput().getPageNumber()){
+				page++;
+				hasMore=true;
+			}
+			logger.info("search:{},page:{},resultCount:{},totalPage:{}",storeName+brand,page,
+					resp.getSearchResult().getCount(),totalPage);
+			SearchItem[] items=resp.getSearchResult().getItemArray();
+			boolean isActive=false;
+			List<String> itemIds=new ArrayList<>();
+			//1得到id
+			for (SearchItem item : items) {
+				isActive=ListingStatusCodeType.ACTIVE.value().equalsIgnoreCase(item.getSellingStatus().getSellingState());
+				if(isActive){
+					itemIds.add(item.getItemId());
+				}
+			}
+			try{
+				//2getMutilItem
+				multResp=GrabEbayApiService.shoppingGetMultipleItems(itemIds);
+				//3.转换sku,spu
+				SimpleItemType[] itemTypes=multResp.getItemArray();
+				//Map<String, ? extends Collection<?>> kpp=TradeItemConvert.convert2SKuAndSpu(tps,userId);
+				Map<String, Collection> kpp=ShopingItemConvert.convert2kpp(itemTypes,storeName);
+				if(skuSpuAndPic==null){
+					skuSpuAndPic=kpp;
+				}else{
+					skuSpuAndPic.get("sku").addAll(kpp.get("sku"));
+					skuSpuAndPic.get("spu").addAll(kpp.get("spu"));
+					skuSpuAndPic.get("pic").addAll(kpp.get("pic"));
+				}				
+			}catch(Exception e){
+				logger.error("查询店铺、品牌，getMultipleItem异常，storeName:"+storeName+",brand:"+brand,e);
+			}
+		}while(hasMore);
+		
+		return skuSpuAndPic;
+	}
 	
+	/*public static void main(String[] args) {
+		List<String> itemIds=new ArrayList<>();
+		itemIds.add("251485222300");
+		itemIds.add("251674833689");//过期的
+		Calendar t1 = Calendar.getInstance();
+		t1.setTime(new Date());
+		Calendar t2 = Calendar.getInstance();t2.set(Calendar.MONTH, 8);
+		V1GrabService srv=new V1GrabService();
+		srv.getStock(itemIds);
+		//tradeSellerList("pumaboxstore", t1, t2, 1, 8);
+		//tradeGetItem("251485222300");
+	}*/
 }
