@@ -32,7 +32,6 @@ public class EbayConf {
     private static String shopingApi;
     private static String findApi;
     static {
-       // Locale locale = new Locale("zh","CN");
         ResourceBundle bdl = ResourceBundle.getBundle("conf-pro");
         devKey = bdl.getString("DeveloperKey");
         appKey = bdl.getString("ApplicationKey");
