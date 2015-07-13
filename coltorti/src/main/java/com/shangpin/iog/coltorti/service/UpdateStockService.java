@@ -45,6 +45,7 @@ public class UpdateStockService extends AbsUpdateProductStock{
 			Map<String, Map<String, Integer>> stoks=null;
 			try{
 				if(!productIdSet.contains(productId)){
+					//logger.warn("拉取productId:{}的库存",productId);
 					stoks=ColtortiStockService.getStock(productId, null);
 					productIdSet.add(productId);
 					if(stoks!=null && stoks.size()>0){
@@ -61,6 +62,7 @@ public class UpdateStockService extends AbsUpdateProductStock{
 					logger.warn(skuNo+",拉取库存成功:"+new Gson().toJson(stoks));
 				}
 			}catch(ServiceException e){
+				logger.error("拉取skuNO{}库存失败{}",skuNo,e.getMessage());
 				if(ColtortiUtil.isTokenExpire(e)){
 					ColtortiTokenService.initToken();
 					stoks=ColtortiStockService.getStock(productId, recordId);
