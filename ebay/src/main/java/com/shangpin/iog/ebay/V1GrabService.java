@@ -23,6 +23,7 @@ import com.ebay.sdk.SdkSoapException;
 import com.ebay.soap.eBLBaseComponents.AckCodeType;
 import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
 import com.ebay.soap.eBLBaseComponents.ItemType;
+import com.ebay.soap.eBLBaseComponents.ListingStatusCodeType;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.SimpleItemType;
 import com.shangpin.ebay.shoping.VariationType;
@@ -68,6 +69,9 @@ public class V1GrabService {
 				ItemType[] tps = resp.getItemArray().getItem();
 				List<String> itemIds = new ArrayList<>(tps.length);//1.得到id
 				for (ItemType itemType : tps) {
+					boolean active=ListingStatusCodeType.ACTIVE.equals(itemType.getSellingStatus().getListingStatus());
+					if(!active)
+						continue;
 					itemIds.add(itemType.getItemID());
 				}
 				//2.得到item

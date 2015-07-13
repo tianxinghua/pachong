@@ -177,7 +177,7 @@ public abstract class AbsUpdateProductStock {
 		List<String> skuNoShangpinList = new ArrayList<>();
 		Map<String,Integer> toUpdateIce=new HashMap<>();
 		for(Iterator<String> itor =skuNoShangpinSet.iterator();itor.hasNext();){
-			if(skuNum%200==0){
+			if(skuNum%100==0){
 				//调用接口 查找库存
 				removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList,toUpdateIce);
 				skuNoShangpinList = new ArrayList<>();
