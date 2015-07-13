@@ -29,12 +29,6 @@ import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
 import com.shangpin.ebay.shoping.GetSingleItemResponseType;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.ebay.conf.EbayConf;
-import org.apache.commons.lang.StringUtils;
-import org.apache.xmlbeans.XmlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 /**
  * @description 
@@ -127,8 +121,9 @@ public class GrabEbayApiService {
 	 * <b/>请根据ListingStatus来判断产品是否下架,状态Active才是销售中的</b>
 	 * @param itemIds ebay的itemId集合
 	 * @return
+	 * @throws XmlException 
 	 */
-	public static GetMultipleItemsResponseType shoppingGetMultipleItems(Collection<String> itemIds){
+	public static GetMultipleItemsResponseType shoppingGetMultipleItems(Collection<String> itemIds) throws XmlException{
 		return shopingGetMultipleItem(itemIds,"Details,Variations,ItemSpecifics");
 	}
 	/**
@@ -137,16 +132,18 @@ public class GrabEbayApiService {
 	 * @see #shoppingGetMultipleItems(List) 获取详细信息
 	 * @param itemIds
 	 * @return
+	 * @throws XmlException 
 	 */
-	public static GetMultipleItemsResponseType shoppingGetMultipleItems4Stock(Collection<String> itemIds){
+	public static GetMultipleItemsResponseType shoppingGetMultipleItems4Stock(Collection<String> itemIds) throws XmlException{
 		return shopingGetMultipleItem(itemIds,"Details,Variations");
 	}
 	/**
 	 * @param itemIds
 	 * @return
+	 * @throws XmlException 
 	 */
 	private static GetMultipleItemsResponseType shopingGetMultipleItem(
-			Collection<String> itemIds,String includeSelector) {
+			Collection<String> itemIds,String includeSelector) throws XmlException {
 		String url=EbayConf.getShopingCallUrl("GetMultipleItems");
 		StringBuffer sb = new StringBuffer(url);
 		sb.append("&ItemID=");
@@ -158,14 +155,14 @@ public class GrabEbayApiService {
 		
 		String xml=HttpUtil45.get(sb.toString(),null,null);
 		log.debug("url:{},结果：{}",sb.toString(),xml);
-		try {
+		//try {
 			GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
 			GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();
 			return rt;
-		} catch (XmlException e) {
+		/*} catch (XmlException e) {
 			log.error("getMultipleItem error",e);
 		}
-		return null;
+		return null;*/
 	}
 	/**
 	 * 只获取Variations，下单的时候有用<br/>
@@ -211,14 +208,9 @@ public class GrabEbayApiService {
 		url = String.format(url, storeName, page,pageSize,keywords);
 		String xml=HttpUtil45.get(url, null, null);
 		log.debug("查询商铺：{}，关键词：{},结果：{}",storeName,keywords,xml);
-		try{
-			FindItemsIneBayStoresResponseDocument doc = FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
-			FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();			
-			return rt;
-		}catch(Exception e){
-			log.error("findItemsIneBayStores 错误，storeName:"+storeName+",keyWords:"+keywords,e);
-		}
-		return null;
+		FindItemsIneBayStoresResponseDocument doc = FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
+		FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();			
+		return rt;
 	}
 	
 	/*public static void main(String[] args) {

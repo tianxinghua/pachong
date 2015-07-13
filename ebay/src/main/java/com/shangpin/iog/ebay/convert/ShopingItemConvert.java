@@ -33,7 +33,7 @@ public class ShopingItemConvert {
 	/**
 	 * 转换sku，spu,pic
 	 * @param itemTypes
-	 * @param userId
+	 * @param supplerKey
 	 * @return
 	 */
 	/*sit.getItemSpecifics();//for spu || sku attr
@@ -46,18 +46,18 @@ public class ShopingItemConvert {
 	sit.getVariations().getVariationArray(0).getQuantity();//for sku quantity
 	sit.getVariations().getVariationSpecificsSet().getNameValueListArray();//for sku varia
 	 */	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Map<String,  Collection> convert2kpp(
-			SimpleItemType[] itemTypes, String userId) {
+			SimpleItemType[] itemTypes, String supplerKey) {
 		Map<String,  Collection> map=new HashMap<String, Collection>();
 		Set<ProductPictureDTO> rtnPic=new HashSet<>(itemTypes.length*2);
 		Set<SkuDTO> rtnSku=new HashSet<>(itemTypes.length);
 		Set<SpuDTO> rtnSpu=new HashSet<>(itemTypes.length);
 		for (SimpleItemType sit : itemTypes) {
-			Object[] obj=convertSku(userId,sit);
+			Object[] obj=convertSku(supplerKey,sit);
 			rtnSku.addAll((Set<SkuDTO>)obj[0]);
 			rtnPic.addAll((Set<ProductPictureDTO>)obj[1]);
-			SpuDTO spu = convertSpu(sit,userId);
+			SpuDTO spu = convertSpu(sit,supplerKey);
 			rtnSpu.add(spu);
 		}
 		map.put("sku",rtnSku);
@@ -69,17 +69,17 @@ public class ShopingItemConvert {
 	/**
 	 * 转换spu
 	 * @param sit
-	 * @param userId
+	 * @param supplierKey
 	 * @return 
 	 */
-	private static SpuDTO convertSpu(SimpleItemType sit, String userId) {
+	private static SpuDTO convertSpu(SimpleItemType sit, String supplierKey) {
 		SpuDTO spu = new SpuDTO();
 		setSpuCategory(sit, spu);
 		spu.setId(UUIDGenerator.getUUID());
 		spu.setSpuId(sit.getItemID());
 		NameValueListArrayType nv=sit.getItemSpecifics();
 		setSpuAttr(spu,nv.getNameValueListArray());
-		spu.setSupplierId(EbayConf.EBAY+userId);
+		spu.setSupplierId(EbayConf.EBAY+supplierKey);
 		spu.setSpuName(sit.getTitle());
 		return spu;
 	}
