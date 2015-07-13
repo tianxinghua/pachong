@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * Created by huxia on 2015/7/2.
@@ -57,10 +58,22 @@ public class FetchEbayAndSave extends Thread{
         System.out.println("----初始SPRING成功----");
         log.info("----初始SPRING成功----");
         //拉取数据
+        ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("store-brand");
         FetchEbayProduct fetchProduct = (FetchEbayProduct) factory.getBean("ebay");
-        try {
-            fetchProduct.fetchSpuAndSave(storeName.trim(), keyWords.trim());
-        } catch (Exception e) {
+        Set<String> keys=RESOURCE_BUNDLE.keySet();
+        for(String key:keys)
+        {
+            String[] storeName = RESOURCE_BUNDLE.getString(key).split("`");
+
+            for(String store:storeName) {
+                try {
+                    fetchProduct.fetchSpuAndSave(store.trim(), key.trim());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+               // System.out.println("商店"+store+"商店");
+            }
         }
         System.out.println("jmdkjdk");
         log.info("----拉取ebay数据完成----");

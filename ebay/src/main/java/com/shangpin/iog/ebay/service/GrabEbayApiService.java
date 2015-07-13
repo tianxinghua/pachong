@@ -129,7 +129,7 @@ public class GrabEbayApiService {
 		}
 		sb.append("&IncludeSelector="+includeSelector);
 		String xml=HttpUtils.get(sb.toString());
-		System.out.println("haha"+xml+"nihao");
+		//System.out.println("haha"+xml+"nihao");
 		try {
 			GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
 			GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();

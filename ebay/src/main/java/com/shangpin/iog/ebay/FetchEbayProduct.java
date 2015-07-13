@@ -45,7 +45,7 @@ public class FetchEbayProduct {
         this.skuDTO = skuDTO;
     }
 
-    private Set<SkuDTO> skuDTO=new HashSet<SkuDTO>();
+    private Set<SkuDTO> skuDTO = new HashSet<SkuDTO>();
 
     public Set<SpuDTO> getSpuDTO() {
         return spuDTO;
@@ -55,7 +55,7 @@ public class FetchEbayProduct {
         this.spuDTO = spuDTO;
     }
 
-    private Set<SpuDTO> spuDTO = new HashSet<SpuDTO> ();
+    private Set<SpuDTO> spuDTO = new HashSet<SpuDTO>();
 
     @Autowired
     ProductFetchService productFetchService;
@@ -99,9 +99,9 @@ public class FetchEbayProduct {
                             if (nameValueListType.getName().toLowerCase().contains("size")) {
                                 sku.setProductSize(nameValueListType.getValue(0));
                             }
-                            if(nameValueListType.getName().toLowerCase().contains("upc")
-                                    ||nameValueListType.getName().toLowerCase().contains("ean")
-                                    ||nameValueListType.getName().toLowerCase().contains("isbn")){
+                            if (nameValueListType.getName().toLowerCase().contains("upc")
+                                    || nameValueListType.getName().toLowerCase().contains("ean")
+                                    || nameValueListType.getName().toLowerCase().contains("isbn")) {
                                 sku.setBarcode(nameValueListType.getValue(0));
                                 sku.setProductCode(nameValueListType.getValue(0));
                             }
@@ -170,102 +170,154 @@ public class FetchEbayProduct {
         return api;
     }
 
-    public GetMultipleItemsResponseType getItems(SearchItem[] type) throws Exception{
+    public GetMultipleItemsResponseType getItems(SearchItem[] type) throws Exception {
 
         Collection<String> itemIds = new HashSet<>();
         for (SearchItem t : type) {
             itemIds.add(t.getItemId());
+            break;
+            //System.out.println(t.getItemId());
         }
         return GrabEbayApiService.shoppingGetMultipleItems(itemIds);
     }
 
-    public void  saveSpu(FindItemsIneBayStoresResponse rt) throws Exception {
+    public void saveSpu(FindItemsIneBayStoresResponse rt) throws Exception {
 
+        Collection<String> itemIds = new HashSet<>();
         SpuDTO spu = null;
-        if (rt.getSearchResult()!= null) {
+        if (rt.getSearchResult() != null) {
             SearchItem[] type = rt.getSearchResult().getItemArray();
             if (type != null) {
-                GetMultipleItemsResponseType result = getItems(type);
-                SimpleItemType[] itemTypes = result.getItemArray();
-                SimpleItemType item=null;
+                GetMultipleItemsResponseType result = null;
+                SimpleItemType[] itemTypes = new SimpleItemType[type.length];
+                SimpleItemType[] itemType = new SimpleItemType[20];
+                int i = 0, j = 0, k = type.length / 20 * 20;
+                if (type.length < 20) {
+                    for (SearchItem t : type) {
+                        itemIds.add(t.getItemId());
+                    }
+                    result = GrabEbayApiService.shoppingGetMultipleItems(itemIds);
+                    itemTypes = result.getItemArray();
+                }
+
+                int o = 0;
+                for (SearchItem t : type) {
+                    itemIds.add(t.getItemId());
+                    ++j;
+                    // System.out.println(itemIds.size()+"geshu"+j+"jshiduoshao");
+                    if (itemIds.size() == 20) {
+
+                        System.out.println(itemIds.size() + "数量");
+                        result = GrabEbayApiService.shoppingGetMultipleItems(itemIds);
+                        itemType = result.getItemArray();
+                        System.arraycopy(itemType, 0, itemTypes, 20 * i, 20);
+
+                        //System.out.println(itemTypes.length + "dashuzu");
+                        itemIds.clear();
+                        i++;
+                        continue;
+                    }
+                    if (j == k) {
+                        itemIds.clear();
+                        j = 0;
+                        continue;
+                    }
+                }
+                for (SimpleItemType l : itemTypes) {
+                    System.out.println(++o + "dddd");
+                }
+                if (type.length % 20 != 0) {
+                    int p = 0;
+                    result = GrabEbayApiService.shoppingGetMultipleItems(itemIds);
+                    itemType = result.getItemArray();
+                    System.out.println("haha" + i);
+                    System.arraycopy(itemType, 0, itemTypes, k, type.length % 20);
+                    for (SimpleItemType l : itemTypes) {
+                        System.out.println("nihao" + l.getItemID());
+                        System.out.println(++p + "dddd");
+                    }
+                }
                 for (SearchItem t : type) {
                     spu = new SpuDTO();
-                    for(SimpleItemType i:itemTypes){
-                        if(i.getItemID().equals(t.getItemId())){
-                            item=i;
-                            break;
+                    for (SimpleItemType item : itemTypes) {
+
+                        spu.setId(UUIDGenerator.getUUID());
+                        spu.setSpuId(t.getItemId());
+                        // System.out.println(t.getItemId()+"zjk。。。。"+ item.getSeller().getUserID()+"huaxiahuaxiahuaxia");
+                        if (item.getSeller() != null) {
+                            if (item.getSeller().getUserID() != null) {
+                                spu.setSupplierId("ebay#" + item.getSeller().getUserID());
+                            }
                         }
-                    }
-                    spu.setId(UUIDGenerator.getUUID());
-                    spu.setSpuId(t.getItemId());
-                    System.out.println(t.getItemId()+"zjk。。。。"+ item.getSeller().getUserID()+"huaxiahuaxiahuaxia");
-                    if (item.getSeller().getUserID() != null) {
-                        spu.setSupplierId("ebay#" + item.getSeller().getUserID());
-                    }
-                    spu.setSpuName(t.getTitle());
-                    if(t.getTitle().toLowerCase().contains("women")
-                            ||t.getTitle().toLowerCase().contains("female")
-                            ||t.getTitle().toLowerCase().contains("lady")){
-                        spu.setCategoryGender("Woman");
-                    }else if(t.getTitle().toLowerCase().contains("men")||t.getTitle().toLowerCase().contains("male")){
-                        spu.setCategoryGender("Man");
-                    }
-                    spu.setCategoryId(t.getPrimaryCategory().getCategoryId());
-                    spu.setCategoryName(t.getPrimaryCategory().getCategoryName());
-                    //获取二级category
-                    if(item.getSecondaryCategoryID()!=null) {
-                        spu.setSubCategoryId(item.getSecondaryCategoryID());
-                        spu.setSubCategoryName(item.getSecondaryCategoryName());
-                    }
-                    //判断和获取品牌、材质、产地
-                    if (item.getItemSpecifics() != null) {
-                        com.shangpin.ebay.shoping.NameValueListType[] nameValueListType = item.getItemSpecifics().getNameValueListArray();
-                        if (nameValueListType != null) {
-                            for (com.shangpin.ebay.shoping.NameValueListType nameValueList : nameValueListType) {
-                                if (nameValueList.getName().toLowerCase().contains("brand")) {
-                                    spu.setBrandName(nameValueList.getValueArray(0));
-                                }
-                                if (nameValueList.getName().toLowerCase().contains("material")) {
-                                    spu.setMaterial(nameValueList.getValueArray(0));
-                                }
-                                if (nameValueList.getName().toLowerCase().contains("manufacture")) {
-                                    spu.setProductOrigin(nameValueList.getValueArray(0));
+                        spu.setSpuName(t.getTitle());
+                        if (t.getTitle().toLowerCase().contains("women")
+                                || t.getTitle().toLowerCase().contains("female")
+                                || t.getTitle().toLowerCase().contains("lady")) {
+                            spu.setCategoryGender("Woman");
+                        } else if (t.getTitle().toLowerCase().contains("men") || t.getTitle().toLowerCase().contains("male")) {
+                            spu.setCategoryGender("Man");
+                        }
+                        spu.setCategoryId(t.getPrimaryCategory().getCategoryId());
+                        spu.setCategoryName(t.getPrimaryCategory().getCategoryName());
+                        //获取二级category
+                        if (item.getSecondaryCategoryID() != null) {
+                            spu.setSubCategoryId(item.getSecondaryCategoryID());
+                            spu.setSubCategoryName(item.getSecondaryCategoryName());
+                        }
+                        //判断和获取品牌、材质、产地
+                        if (item.getItemSpecifics() != null) {
+                            com.shangpin.ebay.shoping.NameValueListType[] nameValueListType = item.getItemSpecifics().getNameValueListArray();
+                            if (nameValueListType != null) {
+                                for (com.shangpin.ebay.shoping.NameValueListType nameValueList : nameValueListType) {
+                                    if (nameValueList.getName().toLowerCase().contains("brand")) {
+                                        spu.setBrandName(nameValueList.getValueArray(0));
+                                    }
+                                    if (nameValueList.getName().toLowerCase().contains("material")) {
+                                        spu.setMaterial(nameValueList.getValueArray(0));
+                                    }
+                                    if (nameValueList.getName().toLowerCase().contains("manufacture")) {
+                                        spu.setProductOrigin(nameValueList.getValueArray(0));
+                                    }
                                 }
                             }
                         }
-                    }
-                    //调用getPicUrl方法来获得图片地址
-                    spu.setPicUrl(getPicUrl(t.getItemId()));
-                    spu.setCreateTime(t.getListingInfo().getStartTime().getTime());
-                    spu.setLastTime(t.getListingInfo().getEndTime().getTime());
-                    spuDTO.add(spu);
-                    try {
-                        productFetchService.saveSPU(spu);
-                    }catch (DuplicateKeyException e){
-                        e.printStackTrace();
+                        //调用getPicUrl方法来获得图片地址
+                        spu.setPicUrl(getPicUrl(t.getItemId()));
+                        spu.setCreateTime(t.getListingInfo().getStartTime().getTime());
+                        spu.setLastTime(t.getListingInfo().getEndTime().getTime());
+                        spuDTO.add(spu);
+                        try {
+                            productFetchService.saveSPU(spu);
+                        } catch (DuplicateKeyException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-                System.out.println(spuDTO.size()+"huaxiahuaxiahuaxia");
             }
         }
     }
 
-    public void fetchSpuAndSave(String storeName,String keywords) throws Exception {
+
+    public void fetchSpuAndSave(String storeName, String keywords) throws Exception {
 
         try {
-            for(int i=26;i<=100;i++){
-                String xml = HttpUtils.get(getUrl(storeName, keywords,i));
-                System.out.println(xml);
+            for (int i = 1; i <= 100; i++) {
+                String xml = HttpUtils.get(getUrl(storeName, keywords, i));
+                //System.out.println(xml);
                 FindItemsIneBayStoresResponseDocument doc = FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
                 FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
                 if (rt.getAck().equals("Failure")) {
                     continue;
-                }
-                else {
-                    if(i>rt.getPaginationOutput().getTotalPages()) {
-                        break;
+                } else {
+                    //System.out.println(storeName+rt.getPaginationOutput().getTotalPages());
+                    try {
+                        if (i > rt.getPaginationOutput().getTotalPages()) {
+                            break;
+                        }
+                    } catch (NullPointerException e) {
+
                     }
-                   saveSpu(rt);
+                    saveSpu(rt);
                     //getItems(rt);
                 }
             }
@@ -281,7 +333,7 @@ public class FetchEbayProduct {
         return url = String.format(url, operName, appid);
     }
 
-    public ItemType testGetItem(String itemId) throws com.ebay.sdk.ApiException,SdkSoapException, SdkException{
+    public ItemType testGetItem(String itemId) throws com.ebay.sdk.ApiException, SdkSoapException, SdkException {
 
         ApiContext api = getProApiContext();
         ApiCall call = new ApiCall(api);
@@ -294,11 +346,11 @@ public class FetchEbayProduct {
         return item;
     }
 
-    public String getUrl(String storeName,String keywords,int i) {
+    public String getUrl(String storeName, String keywords, int i) {
         String url = findCommonUrl("findItemsIneBayStores");
 
-        url += "storeName=%s&paginationInput.entriesPerPage=100&paginationInput.pageNumber="+i+"&keywords=%s";
-        url = String.format(url, storeName,keywords);
+        url += "storeName=%s&paginationInput.entriesPerPage=100&paginationInput.pageNumber=" + i + "&keywords=%s";
+        url = String.format(url, storeName, keywords);
 
         return url;
     }
@@ -315,7 +367,7 @@ public class FetchEbayProduct {
         }
         if (item.getVariations() != null) {
             if (item.getVariations().getPictures() != null) {
-                if(item.getVariations().getPictures().length>0) {
+                if (item.getVariations().getPictures().length > 0) {
                     VariationSpecificPictureSetType[] variationSpecificPictureSetType = item.getVariations().getPictures()[0].getVariationSpecificPictureSet();
                     if (variationSpecificPictureSetType != null)
                         for (VariationSpecificPictureSetType var : variationSpecificPictureSetType) {
