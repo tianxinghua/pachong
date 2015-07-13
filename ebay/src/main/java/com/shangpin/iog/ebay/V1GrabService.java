@@ -34,6 +34,7 @@ import com.shangpin.iog.ebay.service.GrabEbayApiService;
 import com.shangpin.iog.service.ProductFetchService;
 
 /**
+ * ebay数据抓取服务，数据库存抓取服务
  * @description 
  * @author 陈小峰
  * <br/>2015年6月30日
