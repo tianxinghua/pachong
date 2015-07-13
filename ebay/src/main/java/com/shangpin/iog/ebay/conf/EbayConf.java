@@ -27,7 +27,7 @@ public class EbayConf {
     private static String signUrl;
     private static String shopingApi;
     private static String findApi;
-    static {
+    /*static {
        // Locale locale = new Locale("zh","CN");
         ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("conf-pro");
         devKey = RESOURCE_BUNDLE.getString("DeveloperKey");
@@ -42,7 +42,7 @@ public class EbayConf {
         findApi = RESOURCE_BUNDLE.getString("findApi");
         tradeApi =RESOURCE_BUNDLE.getString("tradeApi");
         
-    }
+    }*/
     /**
      * 获取trading service api的上下文
      * @return
@@ -69,7 +69,7 @@ public class EbayConf {
      * @return
      */
     public static String getShopingCallUrl(String callName){
-    	return String.format(shopingApi, appKey,callName);
+    	return String.format("http://open.api.ebay.com/shopping?responseencoding=XMl&appid=%s&callname=%s&siteid=0&version=897", "shangpin-8ce3-4e36-8082-464c90ad53bc",callName);
     }
     /**
      * 获取调用find service api方法的url<br/>

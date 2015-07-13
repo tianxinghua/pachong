@@ -1,32 +1,19 @@
 package com.shangpin.iog.ebay.service;
 
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.xmlbeans.XmlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.ebay.sdk.ApiCall;
-import com.ebay.sdk.ApiContext;
-import com.ebay.sdk.ApiException;
-import com.ebay.sdk.SdkException;
-import com.ebay.sdk.SdkSoapException;
-import com.ebay.soap.eBLBaseComponents.DetailLevelCodeType;
-import com.ebay.soap.eBLBaseComponents.GetItemRequestType;
-import com.ebay.soap.eBLBaseComponents.GetItemResponseType;
-import com.ebay.soap.eBLBaseComponents.GetSellerListRequestType;
-import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
-import com.ebay.soap.eBLBaseComponents.PaginationType;
+import com.ebay.sdk.*;
+import com.ebay.soap.eBLBaseComponents.*;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseDocument;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
 import com.shangpin.ebay.shoping.GetSingleItemResponseType;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.ebay.conf.EbayConf;
+import org.apache.commons.lang.StringUtils;
+import org.apache.xmlbeans.XmlException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * @description 
@@ -141,8 +128,8 @@ public class GrabEbayApiService {
 			sb.append(itemId).append(",");
 		}
 		sb.append("&IncludeSelector="+includeSelector);
-		String xml=HttpUtils.get(url);
-		System.out.println(xml);
+		String xml=HttpUtils.get(sb.toString());
+		System.out.println("haha"+xml+"nihao");
 		try {
 			GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
 			GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();
@@ -176,5 +163,11 @@ public class GrabEbayApiService {
 		}
 		return null;
 	}
-	
+
+	public static void main(String[] args){
+		Collection<String> items = new ArrayList<>();
+		items.add("181652058055");
+		GetMultipleItemsResponseType x = shoppingGetMultipleItems(items);
+		System.out.println(x.xmlText());
+	}
 }
