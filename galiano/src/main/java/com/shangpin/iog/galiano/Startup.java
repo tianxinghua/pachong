@@ -1,7 +1,7 @@
-package com.shangpin.iog.acanfora;
+package com.shangpin.iog.galiano;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.acanfora.service.FetchProduct;
+import com.shangpin.iog.galiano.service.FetchProduct;
 import com.shangpin.iog.app.AppContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

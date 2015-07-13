@@ -28,16 +28,24 @@ public class UpdateStockService extends AbsUpdateProductStock{
 	public Map<String, Integer> grabStock(Collection<String> skuNos) throws ServiceException{
 		Map<String, Integer> skuStock= new HashMap<>(skuNos.size());
 		Set<String> productIdSet=new HashSet<>();
+		String productId=null,recordId=null,scalarNo=null;
 		for (Iterator<String> iterator = skuNos.iterator(); iterator
 				.hasNext();) {
 			String skuNo = iterator.next();
-			int scalarIdx=skuNo.lastIndexOf("#");//尺寸标志开始位置
-			String productId=skuNo.substring(0, skuNo.lastIndexOf("-"));//产品id
-			String recordId=skuNo.substring(0,scalarIdx);//记录id
-			String scalarNo=skuNo.substring(scalarIdx+1);//尺寸编号
+			try{
+				int scalarIdx=skuNo.lastIndexOf("#");//尺寸标志开始位置
+				productId=skuNo.substring(0, skuNo.lastIndexOf("-"));//产品id
+				recordId=skuNo.substring(0,scalarIdx);//记录id
+				scalarNo=skuNo.substring(scalarIdx+1);//尺寸编号
+			}catch(Exception e){
+				logger.error(skuNo+"截取失败.",e);
+				skuStock.put(skuNo, 0);
+				continue;
+			}
 			Map<String, Map<String, Integer>> stoks=null;
 			try{
 				if(!productIdSet.contains(productId)){
+					//logger.warn("拉取productId:{}的库存",productId);
 					stoks=ColtortiStockService.getStock(productId, null);
 					productIdSet.add(productId);
 					if(stoks!=null && stoks.size()>0){
@@ -54,6 +62,7 @@ public class UpdateStockService extends AbsUpdateProductStock{
 					logger.warn(skuNo+",拉取库存成功:"+new Gson().toJson(stoks));
 				}
 			}catch(ServiceException e){
+				logger.error("拉取skuNO{}库存失败{}",skuNo,e.getMessage());
 				if(ColtortiUtil.isTokenExpire(e)){
 					ColtortiTokenService.initToken();
 					stoks=ColtortiStockService.getStock(productId, recordId);

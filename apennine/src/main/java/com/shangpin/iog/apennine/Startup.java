@@ -28,7 +28,6 @@ public class Startup {
 
 		loadSpringContext();
         //拉取数据
-		System.out.print("ooooo");
         ApennineHttpUtil apennineService =(ApennineHttpUtil)factory.getBean("apennine");
 		System.out.println("-------apennine start---------");
 		try {
@@ -38,16 +37,16 @@ public class Startup {
 		}
 
 			/*String url= ApiUrl.STOCK;*/
-			List<ApennineProductDTO>list=apennineService. getProductsDetailsByUrl("http://112.74.74.98:8082/api/GetProductDetails?userName=spin&userPwd=spin112233");
-			ApennineProductDTO dto = list.get(0);
+			/*List<ApennineProductDTO>list=apennineService. getProductsDetailsByUrl("http://112.74.74.98:8082/api/GetProductDetails?userName=spin&userPwd=spin112233");
+			ApennineProductDTO dto = list.get(0);*/
 		/*int stock=-1;
 		try {
 			stock = apennineService.getHkstockByScode(url,"SAILIVORYF");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
-		System.out.println("这件商品的cat是"+dto.getCat());
-
+		/*System.out.println("这件商品的scode是"+dto.getScode());*/
+		System.out.println("成功插入数据库");
         System.out.println("-------apennine end---------");
 
 	}

@@ -23,22 +23,18 @@ import com.ebay.sdk.SdkSoapException;
 import com.ebay.soap.eBLBaseComponents.AckCodeType;
 import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
 import com.ebay.soap.eBLBaseComponents.ItemType;
+import com.ebay.soap.eBLBaseComponents.ListingStatusCodeType;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.SimpleItemType;
-import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.dto.ProductPictureDTO;
-import com.shangpin.iog.dto.SkuDTO;
-import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.ebay.shoping.VariationType;
 import com.shangpin.ebay.shoping.VariationsType;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.ebay.convert.ShopingItemConvert;
 import com.shangpin.iog.ebay.service.GrabEbayApiService;
 import com.shangpin.iog.service.ProductFetchService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
+ * ebay数据抓取服务，数据库存抓取服务
  * @description 
  * @author 陈小峰
  * <br/>2015年6月30日
@@ -74,6 +70,9 @@ public class V1GrabService {
 				ItemType[] tps = resp.getItemArray().getItem();
 				List<String> itemIds = new ArrayList<>(tps.length);//1.得到id
 				for (ItemType itemType : tps) {
+					boolean active=ListingStatusCodeType.ACTIVE.equals(itemType.getSellingStatus().getListingStatus());
+					if(!active)
+						continue;
 					itemIds.add(itemType.getItemID());
 				}
 				//2.得到item

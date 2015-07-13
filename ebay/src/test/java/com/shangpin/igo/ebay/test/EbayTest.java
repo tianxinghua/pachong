@@ -50,6 +50,9 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.ebay.conf.EbayConf;
 import com.shangpin.iog.ebay.convert.TradeItemConvert;
 
+import static com.ebay.soap.eBLBaseComponents.ReturnsAcceptedOptionsCodeType.*;
+import static com.shangpin.ebay.shoping.CurrencyCodeType.*;
+
 /**
  * @description 
  * @author 陈小峰
@@ -161,15 +164,14 @@ public class EbayTest {
 		ApiContext api = getProApiContext();
 		ApiCall call = new ApiCall(api);
 		GetSellerListRequestType req = new GetSellerListRequestType();
-		String userId="guess_outlet";
+		String userId="pumaboxstore";
 		req.setUserID(userId);//pumaboxstore buydig inzara.store happynewbaby2011 guess_outlet
+		
 		/*
 		 */
 		Calendar t1 = Calendar.getInstance();
 		t1.setTime(new Date());
-		Calendar t2 = Calendar.getInstance();t2.set(Calendar.MONTH, 8);
-		/*req.setStartTimeFrom(t2);
-		req.setStartTimeTo(t1);*/
+		Calendar t2 = Calendar.getInstance();t1.set(Calendar.MONTH, 5);
 		req.setEndTimeFrom(t1);
 		req.setEndTimeTo(t2);
 		
@@ -177,11 +179,13 @@ public class EbayTest {
 		pg.setPageNumber(1);pg.setEntriesPerPage(8);
 		req.setPagination(pg);
 		req.setIncludeVariations(true);
-		req.setDetailLevel(new DetailLevelCodeType[]{
-				DetailLevelCodeType.ITEM_RETURN_DESCRIPTION
+		req.setGranularityLevel(GranularityLevelCodeType.FINE);
+		//call.setDetailLevel(detailLevel);
+		call.setDetailLevel(new DetailLevelCodeType[]{
+				DetailLevelCodeType.ITEM_RETURN_DESCRIPTION,DetailLevelCodeType.RETURN_ALL
 				});
 //		req.setGranularityLevel(GranularityLevelCodeType.MEDIUM);
-		req.setOutputSelector(new String[]{"ItemArray"});
+		//req.setOutputSelector(new String[]{"ItemArray"});
 		GetSellerListResponseType resp = (GetSellerListResponseType) call.execute(req);
 		ItemType[] tps = resp.getItemArray().getItem();
 		Map<String,? extends Collection<?>> skuAndSpu=TradeItemConvert.convert2SKuAndSpu(tps,userId);
@@ -251,13 +255,14 @@ public class EbayTest {
 	public void testFindItemInStore() throws ApiException, SdkException, Exception{
 		SpuDTO spu=null;
 		String url=findCommonUrl("findItemsIneBayStores");
-		url+="storeName=%s&paginationInput.entriesPerPage=300&paginationInput.pageNumber=1";
-		String storeName="seanhkg";
-		url=String.format(url,storeName);
+		url+="storeName=%s&keywords%s";
+		String storeName="Galindas-Boutique";
+		String keywords = "PoloRalph";
+		url=String.format(url,storeName,keywords);
 		System.out.println(url);
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
-		try{
+		/*try{
 			FindItemsIneBayStoresResponseDocument doc=FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
 			FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
 			StringBuilder picUrl =new StringBuilder();
@@ -322,7 +327,7 @@ public class EbayTest {
 			}
 		} catch (XmlException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	@Test
