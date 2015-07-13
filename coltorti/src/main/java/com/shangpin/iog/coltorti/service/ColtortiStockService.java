@@ -42,6 +42,7 @@ public class ColtortiStockService {
 		System.out.println("recordId =" + recordId);
 		System.out.println("  抓取库存需要的时间 =" + String.valueOf(System.currentTimeMillis()-startDate.getTime()));*/
 		//logger.info("request stock result:\r\n"+body);
+		System.out.println("request stock result:\r\n"+body);
 		ColtortiUtil.check(body);
 		Gson gson = new Gson();
 		Map<String,List<ColtortiStock>> mp=gson.fromJson(body, new TypeToken<Map<String,List<ColtortiStock>>>(){}.getType());
@@ -95,9 +96,8 @@ public class ColtortiStockService {
 		//System.out.println("  抓取库存加转换需要的时间 =" + String.valueOf(System.currentTimeMillis()-startDate.getTime()));
 		return rtnScalar;
 	}
-	/*public static void main(String[] args) throws ServiceException {
-		String[] x={"151001LCX000007-P31","151400NCX000003-NERO","151481ASC000001-2310C",
-				"151481DPL000003-00100","151481DCW000008-2720C"
+	public static void main(String[] args) throws ServiceException {
+		String[] x={"151151NCX000014-F0009","151001ABS000045-0NO" ,"151400ABS000013-NEIR","151516ABS000015-BLACK"
 		};
 		for (String record : x) {
 			try{
@@ -108,5 +108,5 @@ public class ColtortiStockService {
 			}
 			
 		}
-	}*/
+	}
 }
