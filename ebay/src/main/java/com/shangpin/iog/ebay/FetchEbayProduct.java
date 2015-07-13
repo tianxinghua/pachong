@@ -1,34 +1,41 @@
 package com.shangpin.iog.ebay;
 
-import com.ebay.sdk.*;
-import com.ebay.soap.eBLBaseComponents.*;
-import com.ebay.soap.eBLBaseComponents.AmountType;
-import com.ebay.soap.eBLBaseComponents.NameValueListType;
-import com.ebay.soap.eBLBaseComponents.VariationSpecificPictureSetType;
-import com.ebay.soap.eBLBaseComponents.VariationType;
-import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
-import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
-import com.shangpin.ebay.finding.SearchItem;
-import com.shangpin.ebay.finding.SearchResult;
-import com.shangpin.ebay.shoping.*;
-import com.shangpin.iog.common.utils.UUIDGenerator;
-import com.shangpin.iog.common.utils.httpclient.HttpUtils;
-import com.shangpin.iog.dto.ProductPictureDTO;
-import com.shangpin.iog.dto.SkuDTO;
-import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.ebay.service.GrabEbayApiService;
-import com.shangpin.iog.service.ProductFetchService;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import com.ebay.sdk.ApiAccount;
+import com.ebay.sdk.ApiCall;
+import com.ebay.sdk.ApiContext;
+import com.ebay.sdk.ApiCredential;
+import com.ebay.sdk.SdkException;
+import com.ebay.sdk.SdkSoapException;
+import com.ebay.soap.eBLBaseComponents.AmountType;
+import com.ebay.soap.eBLBaseComponents.DetailLevelCodeType;
+import com.ebay.soap.eBLBaseComponents.GetItemRequestType;
+import com.ebay.soap.eBLBaseComponents.GetItemResponseType;
+import com.ebay.soap.eBLBaseComponents.ItemType;
+import com.ebay.soap.eBLBaseComponents.VariationSpecificPictureSetType;
+import com.ebay.soap.eBLBaseComponents.VariationType;
+import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
+import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
+import com.shangpin.ebay.finding.SearchItem;
+import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
+import com.shangpin.ebay.shoping.SimpleItemType;
+import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.dto.ProductPictureDTO;
+import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.iog.ebay.service.GrabEbayApiService;
+import com.shangpin.iog.service.ProductFetchService;
 
 /**
  * Created by huxia on 2015/6/30.
@@ -59,7 +66,7 @@ public class FetchEbayProduct {
 
     @Autowired
     ProductFetchService productFetchService;
-
+    //TODO 如果没实际用途，没有其他扩展用途，移除
     public void fetchSkuAndSave(String itemID) throws Exception {
 
         ProductPictureDTO productPicture = null;
@@ -153,7 +160,7 @@ public class FetchEbayProduct {
             }
         }
     }
-
+    //TODO 移除，统一从配置类中获取
     private static ApiContext getProApiContext() {
         ApiContext api = new ApiContext();
         String apiUrl = "https://api.ebay.com/wsapi";
@@ -169,7 +176,7 @@ public class FetchEbayProduct {
         api.setRuName("shangpin-shangpin-8ce3-4-xpmdteex");
         return api;
     }
-
+    //TODO 有用吗？
     public GetMultipleItemsResponseType getItems(SearchItem[] type) throws Exception {
 
         Collection<String> itemIds = new HashSet<>();
@@ -180,7 +187,7 @@ public class FetchEbayProduct {
         }
         return GrabEbayApiService.shoppingGetMultipleItems(itemIds);
     }
-
+    //TODO 这里不只是spu，方法需要顾名思义；方法体太长考虑拆分成小功能；没有考虑到下架的情况
     public void saveSpu(FindItemsIneBayStoresResponse rt) throws Exception {
 
         Collection<String> itemIds = new HashSet<>();
@@ -223,6 +230,7 @@ public class FetchEbayProduct {
                         continue;
                     }
                 }
+                //TODO 请移除测试
                 for (SimpleItemType l : itemTypes) {
                     System.out.println(++o + "dddd");
                 }
@@ -282,6 +290,7 @@ public class FetchEbayProduct {
                             }
                         }
                         //调用getPicUrl方法来获得图片地址
+                        //TODO 239行中的调用是否能取到？这里不能为了一个url调用一次api，考虑从已有的图片拿一张就行
                         spu.setPicUrl(getPicUrl(t.getItemId()));
                         spu.setCreateTime(t.getListingInfo().getStartTime().getTime());
                         spu.setLastTime(t.getListingInfo().getEndTime().getTime());
@@ -302,7 +311,7 @@ public class FetchEbayProduct {
 
         try {
             for (int i = 1; i <= 100; i++) {
-                String xml = HttpUtils.get(getUrl(storeName, keywords, i));
+                String xml = HttpUtil45.get(getUrl(storeName, keywords, i),null,null);
                 //System.out.println(xml);
                 FindItemsIneBayStoresResponseDocument doc = FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
                 FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
@@ -325,14 +334,14 @@ public class FetchEbayProduct {
             e.printStackTrace();
         }
     }
-
+    //TODO 移除
     private String findCommonUrl(String operName) {
         String url = "http://svcs.ebay.com/services/search/FindingService/v1?OPERATION-NAME=%s&"
                 + "SECURITY-APPNAME=%s&RESPONSE-DATA-FORMAT=XML&REST-PAYLOAD&";
         String appid = "shangpin-8ce3-4e36-8082-464c90ad53bc";
         return url = String.format(url, operName, appid);
     }
-
+    //TODO 命名！！
     public ItemType testGetItem(String itemId) throws com.ebay.sdk.ApiException, SdkSoapException, SdkException {
 
         ApiContext api = getProApiContext();
@@ -345,7 +354,7 @@ public class FetchEbayProduct {
         ItemType item = resp.getItem();
         return item;
     }
-
+    //TODO 使用配置类！
     public String getUrl(String storeName, String keywords, int i) {
         String url = findCommonUrl("findItemsIneBayStores");
 

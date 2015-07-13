@@ -54,10 +54,12 @@ public class FetchEbayAndSave extends Thread{
 
         log.info("----拉取ebay数据开始----");
         System.out.println("----拉取ebay数据开始----");
+        //TODO 此处请在主线程中初始化，只初始化一遍就行
         loadSpringContext();
         System.out.println("----初始SPRING成功----");
         log.info("----初始SPRING成功----");
         //拉取数据
+        //TODO 这些也在主线程中加载一遍就行，传入到子线程处理；已经EbayConf已经写好
         ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("store-brand");
         FetchEbayProduct fetchProduct = (FetchEbayProduct) factory.getBean("ebay");
         Set<String> keys=RESOURCE_BUNDLE.keySet();

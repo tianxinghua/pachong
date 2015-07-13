@@ -13,6 +13,7 @@ import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 
 /**
+ * ebay抓取，更新启动类，用于选择是更新还是抓取
  * @description 
  * @author 陈小峰
  * <br/>2015年7月3日
