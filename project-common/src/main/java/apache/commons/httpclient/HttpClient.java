@@ -30,14 +30,14 @@
 
 package apache.commons.httpclient;
 
+import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.IOException;
 import java.security.Provider;
 import java.security.Security;
 import java.util.ResourceBundle;
-
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>
