@@ -18,7 +18,7 @@ import com.ebay.sdk.ApiCredential;
  * <br/>2015年6月18日
  */
 public class EbayConf {
-	public static final String EBAY="ebay-sports#";
+	public static final String EBAY="ebaySports#";
 	//private static Map<String,String> brandStore = null; 
     private static String tradeApi = null;
 	private static String devKey;

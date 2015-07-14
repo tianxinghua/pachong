@@ -83,7 +83,7 @@ public class EbayTest {
 	@Test
 	public void testGetItem() throws ApiException, SdkException, Exception{
 		SkuDTO sku=null;
-		String itemId="252005767578";
+		String itemId="181259794817";
 		ApiContext api = getProApiContext();
 		ApiCall call = new ApiCall(api);
 		GetItemRequestType req=new GetItemRequestType();

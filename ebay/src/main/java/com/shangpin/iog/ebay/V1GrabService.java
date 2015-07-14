@@ -42,7 +42,7 @@ import com.shangpin.iog.ebay.service.GrabEbayApiService;
 @Component
 public class V1GrabService {
 	static Logger logger = LoggerFactory.getLogger(V1GrabService.class);
-	static int pageSize=200;
+	static int pageSize=100;
 	/**
 	 * 抓取ebay商户的数据
 	 * @param userId 商户id
@@ -75,7 +75,8 @@ public class V1GrabService {
 					itemIds.add(itemType.getItemID());
 				}
 				try {
-					skuSpuAndPic = findDetailKPP(userId, skuSpuAndPic, itemIds);
+					skuSpuAndPic = getItemDetail(userId, skuSpuAndPic, itemIds);
+					//skuSpuAndPic = findDetailKPP(userId, skuSpuAndPic, itemIds);
 				} catch (XmlException e) {
 					logger.error("查询item明细异常，supplierId:"+userId,e);
 					page++;
@@ -178,7 +179,7 @@ public class V1GrabService {
 	public Map<String, ? extends Collection> findStoreBrand(String storeName,
 			String brand){
 		int page=1;
-		Map<String, ? extends Collection> skuSpuAndPic=null;
+		Map<String, ? extends Collection> skuSpuAndPic=null;//new HashMap<>();
 		boolean hasMore=false;
 		FindItemsIneBayStoresResponse resp =null;
 		do{//分页循环取
@@ -225,17 +226,7 @@ public class V1GrabService {
 				}
 			}
 			try{
-				int idLen=itemIds.size();
-				if(idLen>20){
-					int p1=0;int p2=20;
-					do{
-						p2=p1+20;if(p2>idLen) p2=idLen;
-						findDetailKPP(storeName,skuSpuAndPic,itemIds.subList(p1, p2));
-						p1=p2;
-					}while(p1<idLen);
-				}else{
-					findDetailKPP(storeName,skuSpuAndPic,itemIds);					
-				}
+				skuSpuAndPic = getItemDetail(storeName, skuSpuAndPic, itemIds);
 				//TODO 此处应该过滤目标品牌的
 				//filterBrand()
 			}catch(Exception e){
@@ -243,6 +234,32 @@ public class V1GrabService {
 			}
 		}while(hasMore);
 		
+		return skuSpuAndPic;
+	}
+
+	/**
+	 * 循环调用获取item的变体明细
+	 * @param supplierKey
+	 * @param skuSpuAndPic
+	 * @param itemIds
+	 * @return
+	 * @throws XmlException
+	 */
+	@SuppressWarnings("rawtypes")
+	private Map<String, ? extends Collection> getItemDetail(String supplierKey,
+			Map<String, ? extends Collection> skuSpuAndPic, List<String> itemIds)
+			throws XmlException {
+		int idLen=itemIds.size();
+		if(idLen>20){
+			int p1=0;int p2=20;
+			do{
+				p2=p1+20;if(p2>idLen) p2=idLen;
+				skuSpuAndPic=findDetailKPP(supplierKey,skuSpuAndPic,itemIds.subList(p1, p2));
+				p1=p2;
+			}while(p1<idLen);
+		}else{
+			skuSpuAndPic=findDetailKPP(supplierKey,skuSpuAndPic,itemIds);					
+		}
 		return skuSpuAndPic;
 	}
 	/**

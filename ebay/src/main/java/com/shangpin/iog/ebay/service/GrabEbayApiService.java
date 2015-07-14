@@ -207,10 +207,10 @@ public class GrabEbayApiService {
 			String storeName, String keywords, int page, int pageSize) throws XmlException {
 		String url = EbayConf.getFindCallUrl("findItemsIneBayStores");
 		url+="&storeName=%s&paginationInput.entriesPerPage=%d&paginationInput.pageNumber=%d&keywords=%s";
+		url+="&itemFilter[0].name=HideDuplicateItems&itemFilter[0].value=true";//隐藏相同的,很重要
 		/*url+="&itemFilter[0].name=Condition&itemFilter[0].value=New";
 		url+="&itemFilter[0].name=ListedIn&itemFilter[0].value=EBAY-US";//美国站点
 		url+="&itemFilter[0].name=LocatedIn&itemFilter[0].value=US";//物品所在地
-		url+="&itemFilter[0].name=HideDuplicateItems&itemFilter[0].value=true";//隐藏相同的
 		url+="&itemFilter[0].name=ReturnsAcceptedOnly&itemFilter[0].value=true";//接受退货的
 		url+="&itemFilter[0].name=ListingType&itemFilter[0].value=FixedPrice";//定价的buyItnow
 		 */

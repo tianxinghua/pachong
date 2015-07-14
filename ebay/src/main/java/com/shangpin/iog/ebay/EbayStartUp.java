@@ -68,7 +68,7 @@ public class EbayStartUp {
 		}
 		exe.shutdown();
 		try {
-			while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
+			while (!exe.awaitTermination(10, TimeUnit.SECONDS)) {
 				
 			}
 		} catch (InterruptedException e) {
