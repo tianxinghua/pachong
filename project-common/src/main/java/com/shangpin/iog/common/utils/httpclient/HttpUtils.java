@@ -2,7 +2,12 @@ package com.shangpin.iog.common.utils.httpclient;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.Socket;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -43,6 +48,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.HttpClientConnectionManager;
@@ -68,14 +74,25 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * httpcomponents-client-4.4.x的工具类
+ * @see HttpUtil45
  * @description 
  * @author 陈小峰
  * <br/>2015年6月3日
  */
+@Deprecated 
 public class HttpUtils {
+	static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
+	static int requestOutTime=6000;
+	static int connectOutTime=2000;
+	static int socketOutTime=6000;
+	
+	static PoolingHttpClientConnectionManager connManager=null; 
+	static boolean poolShutDown=false;
 	/**
 	 *
 	 * @param url
@@ -112,7 +129,12 @@ public class HttpUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			response.close();
+			try{
+				if(response!=null)
+					response.close();
+			}catch(Exception e){
+				
+			}
 		}
 		return result;
 	}
@@ -150,21 +172,19 @@ public class HttpUtils {
 	public static String get(String url) {
 		HttpGet getMethod = new HttpGet(url);
 		String result = "{\"error\":\"发生异常错误\"}";
-
+		CloseableHttpClient httpclient = null;
 		try {
-			CloseableHttpClient httpclient = getSSLClient(false);
-
+			httpclient=getSSLClient(false);
+			logger.error(Thread.currentThread().getName()+"getstart---:"+url);
 			HttpResponse response = httpclient.execute(getMethod);
-
+			logger.error(Thread.currentThread().getName()+"getEnd---");
 			HttpEntity entity = response.getEntity();
-
 			result = EntityUtils.toString(entity);
-
 			EntityUtils.consume(entity);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-
+			
 		}
 		return result;
 
@@ -174,11 +194,12 @@ public class HttpUtils {
     public static String getWithConnectManager(String url) {
         HttpGet getMethod = new HttpGet(url);
         String result = "{\"error\":\"发生异常错误\"}";
-
+        
+        CloseableHttpClient httpclient = null; 
         try {
-            CloseableHttpClient httpclient = getSSLClient(false,url);
+            httpclient = getSSLClient(false,url);
 
-            HttpResponse response = httpclient.execute(getMethod);
+            HttpResponse response = httpclient.execute(getMethod,createDefaultContext());
 
             HttpEntity entity = response.getEntity();
 
@@ -187,7 +208,6 @@ public class HttpUtils {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-
         }
         return result;
 
@@ -201,19 +221,20 @@ public class HttpUtils {
      * @return
      */
     public static String get(String url,Boolean isProxy,Integer socketTimeout) {
-        if(null==socketTimeout||0==socketTimeout)  socketTimeout=6000;
+        if(null==socketTimeout||0==socketTimeout)  socketTimeout=requestOutTime;
         HttpGet getMethod = new HttpGet(url);
+        /*RequestConfig config = RequestConfig.custom()
+				.setConnectionRequestTimeout(2000).setConnectTimeout(1000)
+				.build();
+        getMethod.setConfig(config);*/
         String result = "{\"error\":\"发生异常错误\"}";
         CloseableHttpClient httpClient =  null;
         CloseableHttpResponse response = null;
-                StringBuffer buffer = new StringBuffer();
         try {
 
             httpClient = getSSLClient(isProxy);
-            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(socketTimeout).setConnectTimeout(2000).build();//设置请求和传输超时时间
-            getMethod.setConfig(requestConfig);
 
-             response = httpClient.execute(getMethod);
+             response = httpClient.execute(getMethod,createDefaultContext());
 
             HttpEntity entity = response.getEntity();
             result = EntityUtils.toString(entity);
@@ -221,13 +242,13 @@ public class HttpUtils {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if(null!=response) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        	try {
+        		if(null!=response) 
+        			response.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            
         }
         return result;
 
@@ -254,6 +275,18 @@ public class HttpUtils {
 			context.setCredentialsProvider(creds);
 			context.setAuthCache(authCache);
 		}
+		/*RequestConfig config = RequestConfig.custom()
+				.setConnectionRequestTimeout(requestOutTime).setConnectTimeout(connectOutTime).setSocketTimeout(socketOutTime)
+				.build();
+		context.setRequestConfig(config);*/
+		return context;
+	}
+	private static HttpClientContext createDefaultContext(){
+		RequestConfig config = RequestConfig.custom()
+				.setConnectionRequestTimeout(requestOutTime).setConnectTimeout(connectOutTime).setSocketTimeout(socketOutTime)
+				.build();
+		HttpClientContext context=HttpClientContext.create();
+		context.setRequestConfig(config);
 		return context;
 	}
 
@@ -309,9 +342,10 @@ public class HttpUtils {
         SSLConnectionSocketFactory sslf = getSslConnectionSocketFactory();
 		HttpClientBuilder bd=HttpClients.custom();
 		bd.setSSLSocketFactory(sslf);
+		bd.setConnectionManager(getPoolingConnectionManager(null));
 		if(proxy) 
 			bd.setRoutePlanner(getProxHost());
-		return bd.setKeepAliveStrategy(getKeepAliveHttpClient()).build();
+		return bd.build();
 	}
 
     /***
@@ -331,7 +365,7 @@ public class HttpUtils {
         bd.setSSLSocketFactory(sslf);
         if(proxy)
             bd.setRoutePlanner(getProxHost());
-         bd.setKeepAliveStrategy(getKeepAliveHttpClient());
+        // bd.setKeepAliveStrategy(getKeepAliveHttpClient());
         if(url.startsWith("http")){
                 bd.setConnectionManager(getPoolingConnectionManager(url)) ;
         }
@@ -488,25 +522,34 @@ public class HttpUtils {
 	 * @return
 	 */
 	private static PoolingHttpClientConnectionManager getPoolingConnectionManager(String url){
+		if(connManager ==null || poolShutDown){
+			connManager = new PoolingHttpClientConnectionManager();
+			connManager.setMaxTotal(200);//设置最大连接数200
+			connManager.setDefaultMaxPerRoute(3);//设置每个路由默认连接数
+			SocketConfig socketConfig = SocketConfig.custom()
+					.setSoTimeout(socketOutTime).build();
+			connManager.setDefaultSocketConfig(socketConfig);
+			if(StringUtils.isNotBlank(url)){
+	            try {
+	                URL urlObj = new URL(url);
+	                HttpHost host = new HttpHost(urlObj.getHost(),-1==urlObj.getPort()?80:urlObj.getPort());//针对的主机
+	                connManager.setMaxPerRoute(new HttpRoute(host), 50);//每个路由器对每个服务器允许最大50个并发访问
+	            } catch (MalformedURLException e) {
+	                e.printStackTrace();
+	            }
 
-		PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
-		connManager.setMaxTotal(200);//设置最大连接数200
-		connManager.setDefaultMaxPerRoute(3);//设置每个路由默认连接数
-		if(StringUtils.isNotBlank(url)){
-            try {
-                URL urlObj = new URL(url);
-                HttpHost host = new HttpHost(urlObj.getHost(),-1==urlObj.getPort()?80:urlObj.getPort());//针对的主机
-                connManager.setMaxPerRoute(new HttpRoute(host), 50);//每个路由器对每个服务器允许最大50个并发访问
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-
+			}
+			return connManager;
 		}
-
-		return connManager;
+		else
+			return connManager;
 
 	}
 
+	public static void closePool(){
+		poolShutDown=true;
+		connManager.close();
+	}
 
 	//
 
@@ -560,7 +603,7 @@ public class HttpUtils {
 			}
 		}
 	}
-
+	
 
 	/**
 	 * Http连接使用java.net.Socket类来传输数据。这依赖于ConnectionSocketFactory接口来创建、初始化和连接socket。

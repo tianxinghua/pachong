@@ -1,5 +1,5 @@
 /*
- * $Header: /home/jerenkrantz/tmp/commons/commons-convert/cvs/home/cvs/jakarta-commons//httpclient/src/java/org/org.apache/commons/httpclient/HttpClient.java,v 1.98 2004/10/07 16:14:15 olegk Exp $
+ * $Header: /home/jerenkrantz/tmp/commons/commons-convert/cvs/home/cvs/jakarta-commons//httpclient/src/java/org/apache/commons/httpclient/HttpClient.java,v 1.98 2004/10/07 16:14:15 olegk Exp $
  * $Revision: 509577 $
  * $Date: 2007-02-20 15:28:18 +0100 (Tue, 20 Feb 2007) $
  *
@@ -12,7 +12,7 @@
  *  (the "License"); you may not use this file except in compliance with
  *  the License.  You may obtain a copy of the License at
  *
- *      http://www.org.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,20 +24,20 @@
  * This software consists of voluntary contributions made by many
  * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
- * <http://www.org.apache.org/>.
+ * <http://www.apache.org/>.
  *
  */
 
-package org.apache.commons.httpclient;
-
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+package apache.commons.httpclient;
 
 import java.io.IOException;
 import java.security.Provider;
 import java.security.Security;
 import java.util.ResourceBundle;
+
+import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>
@@ -45,10 +45,10 @@ import java.util.ResourceBundle;
  * one or more {@link HttpConnection HTTP connections}, to which
  * {@link HttpMethod HTTP methods} can be applied.
  * </p>
- * @author <a href="mailto:remm@org.apache.org">Remy Maucherat</a>
- * @author <a href="mailto:rwaldhoff@org.apache.org">Rodney Waldhoff</a>
+ * @author <a href="mailto:remm@apache.org">Remy Maucherat</a>
+ * @author <a href="mailto:rwaldhoff@apache.org">Rodney Waldhoff</a>
  * @author Sean C. Sullivan
- * @author <a href="mailto:dion@org.apache.org">dIon Gillard</a>
+ * @author <a href="mailto:dion@apache.org">dIon Gillard</a>
  * @author Ortwin Gl?ck
  * @author <a href="mailto:becke@u.washington.edu">Michael Becke</a>
  * @author <a href="mailto:mbowler@GargoyleSoftware.com">Mike Bowler</a>
@@ -103,7 +103,7 @@ public class HttpClient {
             String proxyAddress = bundle.getString("proxy.address");
             Integer proxyPort = Integer.parseInt(bundle.getString("proxy.port"));
             if(!proxyAddress.isEmpty()&&proxyPort!=null){
-                this.getHostConfiguration().setProxy(proxyAddress, proxyPort);
+                this.getHostConfiguration().setProxy(proxyAddress,proxyPort);
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -284,7 +284,7 @@ public class HttpClient {
      * @see #setStrictMode(boolean)
      *
      * @deprecated Use
-     * {@link org.apache.commons.httpclient.params.HttpClientParams#getParameter(String)} 
+     * {@link org.apache.commons.httpclient.params.HttpClientParams#getParameter(String)}
      * to exercise a more granular control over HTTP protocol strictness.
      */
     public synchronized boolean isStrictMode() {
@@ -325,7 +325,7 @@ public class HttpClient {
     }
 
     /**
-     * Sets the timeout until a connection is etablished. A value of zero
+     * Sets the timeout until a connection is etablished. A value of zero 
      * means the timeout is not used. The default value is zero.
      *
      * @see HttpConnection#setConnectionTimeout(int)
@@ -347,13 +347,13 @@ public class HttpClient {
      * @param method the {@link HttpMethod HTTP method} to execute.
      * @return the method's response code
      *
-     * @throws java.io.IOException If an I/O (transport) error occurs. Some transport exceptions
-     *                     can be recovered from.
-     * @throws HttpException  If a protocol exception occurs. Usually protocol exceptions
+     * @throws IOException If an I/O (transport) error occurs. Some transport exceptions
+     *                     can be recovered from.      
+     * @throws HttpException  If a protocol exception occurs. Usually protocol exceptions 
      *                    cannot be recovered from.
      */
     public int executeMethod(HttpMethod method)
-            throws IOException, HttpException {
+            throws IOException, HttpException  {
 
         LOG.trace("enter HttpClient.executeMethod(HttpMethod)");
         // execute this method and use its host configuration, if it has one
@@ -369,7 +369,7 @@ public class HttpClient {
      * @param method the {@link HttpMethod HTTP method} to execute.
      * @return the method's response code
      *
-     * @throws java.io.IOException If an I/O (transport) error occurs. Some transport exceptions
+     * @throws IOException If an I/O (transport) error occurs. Some transport exceptions
      *                     can be recovered from.
      * @throws HttpException  If a protocol exception occurs. Usually protocol exceptions
      *                    cannot be recovered from.
@@ -386,8 +386,8 @@ public class HttpClient {
 
 
     /**
-     * Executes the given {@link HttpMethod HTTP method} using the given custom
-     * {@link HostConfiguration host configuration} with the given custom
+     * Executes the given {@link HttpMethod HTTP method} using the given custom 
+     * {@link HostConfiguration host configuration} with the given custom 
      * {@link HttpState HTTP state}.
      *
      * @param hostconfig The {@link HostConfiguration host configuration} to use.
@@ -398,7 +398,7 @@ public class HttpClient {
      *
      * @return the method's response code
      *
-     * @throws java.io.IOException If an I/O (transport) error occurs. Some transport exceptions
+     * @throws IOException If an I/O (transport) error occurs. Some transport exceptions
      *                     can be recovered from.
      * @throws HttpException  If a protocol exception occurs. Usually protocol exceptions 
      *                    cannot be recovered from.

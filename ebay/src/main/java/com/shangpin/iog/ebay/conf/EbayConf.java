@@ -3,6 +3,9 @@
  */
 package com.shangpin.iog.ebay.conf;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import com.ebay.sdk.ApiAccount;
@@ -15,7 +18,8 @@ import com.ebay.sdk.ApiCredential;
  * <br/>2015年6月18日
  */
 public class EbayConf {
-	public static final String EBAY="ebay#"; 
+	public static final String EBAY="ebay#";
+	private static Map<String,String> brandStore = null; 
     private static String tradeApi = null;
 	private static String devKey;
     private static String appKey;
@@ -29,18 +33,18 @@ public class EbayConf {
     private static String findApi;
     static {
        // Locale locale = new Locale("zh","CN");
-        ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("conf-pro");
-        devKey = RESOURCE_BUNDLE.getString("DeveloperKey");
-        appKey = RESOURCE_BUNDLE.getString("ApplicationKey");
-        cerKey = RESOURCE_BUNDLE.getString("CertificateKey");
-        ruName = RESOURCE_BUNDLE.getString("ruName");
-        token = RESOURCE_BUNDLE.getString("token");
-        apiUrl = RESOURCE_BUNDLE.getString("apiUrl");
-        epsUrl = RESOURCE_BUNDLE.getString("epsUrl");
-        signUrl = RESOURCE_BUNDLE.getString("signUrl");
-        shopingApi = RESOURCE_BUNDLE.getString("shopingApi");
-        findApi = RESOURCE_BUNDLE.getString("findApi");
-        tradeApi =RESOURCE_BUNDLE.getString("tradeApi");
+        ResourceBundle bdl = ResourceBundle.getBundle("conf-pro");
+        devKey = bdl.getString("DeveloperKey");
+        appKey = bdl.getString("ApplicationKey");
+        cerKey = bdl.getString("CertificateKey");
+        ruName = bdl.getString("ruName");
+        token = bdl.getString("token");
+        apiUrl = bdl.getString("apiUrl");
+        epsUrl = bdl.getString("epsUrl");
+        signUrl = bdl.getString("signUrl");
+        shopingApi = bdl.getString("shopingApi");
+        findApi = bdl.getString("findApi");
+        tradeApi =bdl.getString("tradeApi");
         
     }
     /**
@@ -83,5 +87,23 @@ public class EbayConf {
     
     public static String getTradeCallUrl(String callName){
     	return String.format(tradeApi, appKey,callName);
+    }
+    /**
+     * 获取store-brand.properties文件中配置的brand，store<br/>
+     * 用于find指定商铺的品牌的item
+     * @return key：brand，value：`后分隔的storeName
+     */
+    public static Map<String,String> getStoreBrand(){
+    	if(brandStore==null){
+    		brandStore=new HashMap<>();    		
+    		ResourceBundle bdl=ResourceBundle.getBundle("store-brand");
+    		Enumeration<String> brands=bdl.getKeys();
+    		while(brands.hasMoreElements()){
+    			String brand=brands.nextElement();
+    			String stores=bdl.getString(brand);
+    			brandStore.put(brand, stores);
+    		}
+    	}
+    	return brandStore;
     }
 }

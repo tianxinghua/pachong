@@ -31,7 +31,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.coltorti.conf.ApiURL;
 import com.shangpin.iog.coltorti.dto.ColtortiAttributes;
 import com.shangpin.iog.coltorti.dto.ColtortiProduct;
-import com.shangpin.iog.common.utils.httpclient.HttpUtils;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 
 /**
  * @description 
@@ -54,7 +54,7 @@ public class ColtortiProductService{
 	public static String requestAttribute(int page,int size) throws ServiceException{
 		Map<String,String> param = ColtortiUtil.getCommonParam(page,size);
 		String url=ColtortiUtil.paramGetUrl(ApiURL.ATTRIBUTES,param);
-		String body=HttpUtils.get(url);
+		String body=HttpUtil45.get(url,null,null);
 		ColtortiUtil.check(body);
 		Gson gson = new Gson();
 		Map<String,ColtortiAttributes> attriMap=gson.fromJson(body, new TypeToken<Map<String,ColtortiAttributes>>(){}.getType());
@@ -149,7 +149,7 @@ public class ColtortiProductService{
 		if(dateStart!=null)param.put("since_updated_at", dateStart);
 		if(dateEnd!=null)param.put("until_updated_at", dateEnd);
 		if(recordId!=null)param.put("id", recordId);
-		String body=HttpUtils.get(ColtortiUtil.paramGetUrl(ApiURL.PRODUCT,param));
+		String body=HttpUtil45.get(ColtortiUtil.paramGetUrl(ApiURL.PRODUCT,param),null,null);
 		//logger.error(body);
 		ColtortiUtil.check(body);
 		JsonObject jo =new JsonParser().parse(body).getAsJsonObject();
