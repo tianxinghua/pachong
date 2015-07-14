@@ -45,10 +45,10 @@ ext {
         profile = "development"
     }
     springVersion='4.1.4.RELEASE'
-    slf4jversion='1.6.6'
+    slf4jversion='1.7.12'
     codehaus_jackson_version='1.9.13'
     fasterxml_jackson_version='2.4.4'
-    slf4j_version='1.6.6'
+    slf4j_version='1.7.12'
     log4j_version='1.2.17'
     jedis_version='2.6.2'
 }

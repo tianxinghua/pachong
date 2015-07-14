@@ -11,10 +11,12 @@ import java.util.Set;
 import org.springframework.util.StringUtils;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.coltorti.dto.ColtortiError;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 
 /**
  * @description 
@@ -33,13 +35,18 @@ public class ColtortiUtil {
 	 */
 	public static ColtortiError check(String responseBody) throws ServiceException{
 		if(StringUtils.isEmpty(responseBody))
-			throw new ServiceMessageException(noResult);
+			throw new ServiceMessageException("http 返回空"+noResult);
 		JsonElement je=new JsonParser().parse(responseBody);
-		JsonElement msg=je.getAsJsonObject().get("message");
+		JsonObject jo=je.getAsJsonObject();
+		
+		JsonElement msg=jo.get("message");
 		if(msg!=null){
 			throw new ServiceMessageException(msg.getAsString());
 		}
-		if("{\"error\":\"发生异常错误\"}".equals(msg)){
+		/*msg=jo.get("access_token");
+		if(tokenExpire.equals(msg))
+			throw new ServiceMessageException(msg.getAsString());	*/		
+		if(HttpUtil45.errorResult.equals(msg)){
 			throw new ServiceMessageException("http访问错误！");			
 		}
 		return null;

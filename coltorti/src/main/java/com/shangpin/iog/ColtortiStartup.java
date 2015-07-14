@@ -18,10 +18,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.coltorti.service.ColtortiTokenService;
 import com.shangpin.iog.coltorti.service.ColtortiUtil;
 import com.shangpin.iog.coltorti.service.InsertDataBaseService;
 import com.shangpin.iog.coltorti.service.UpdateStockService;
 import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.service.ProductFetchService;
 
 public class ColtortiStartup {
@@ -63,7 +65,7 @@ public class ColtortiStartup {
 		logger.info("执行更新库存------");
 		String fmt="yyyy-MM-dd HH:mm";
 		UpdateStockService uss=new UpdateStockService();
-		uss.setUseThread(true);//uss.setSkuCount4Thread(100);
+		uss.setUseThread(true);uss.setSkuCount4Thread(1000);
 		uss.updateProductStock(ColtortiUtil.supplier,DateTimeUtil.convertFormat(startDate, fmt), 
 				DateTimeUtil.convertFormat(endDate, fmt));
 	}
@@ -88,12 +90,14 @@ public class ColtortiStartup {
 			grabProduct();
 		}else{
 			try {
+				ColtortiTokenService.initToken();
 				updateStock();
+				logger.warn("==========更新库存完成========");
 			} catch (Exception e) {
 				logger.error("更新库存异常",e);
 			}
 		}
-		
+		HttpUtil45.closePool();
 		System.exit(0);
 	}
 	/**

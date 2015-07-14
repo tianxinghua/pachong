@@ -20,7 +20,6 @@ import com.ebay.soap.eBLBaseComponents.PictureDetailsType;
 import com.ebay.soap.eBLBaseComponents.VariationProductListingDetailsType;
 import com.ebay.soap.eBLBaseComponents.VariationType;
 import com.ebay.soap.eBLBaseComponents.VariationsType;
-import com.shangpin.ebay.shoping.SimpleItemType;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;

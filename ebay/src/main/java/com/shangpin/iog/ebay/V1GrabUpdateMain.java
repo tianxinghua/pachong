@@ -24,6 +24,7 @@ import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 
 /**
+ * ebay数据抓取，库存更新服务主入口，数据保存入口
  * @description 
  * @author 陈小峰
  * <br/>2015年7月3日
@@ -31,7 +32,7 @@ import com.shangpin.iog.service.ProductFetchService;
 @Component
 public class V1GrabUpdateMain extends AbsUpdateProductStock{
 	@Autowired
-	V1GrabService grab;
+	V1GrabService grabSrv;
 	static Logger logger = LoggerFactory.getLogger(V1GrabUpdateMain.class);
 	@Autowired
 	public ProductFetchService fetchSrv;
@@ -44,11 +45,11 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 			String skuId = iterator.next();
 			itemIds.add(skuId.split("#")[0]);
 		}
-		return grab.getStock(itemIds);
+		return grabSrv.getStock(itemIds);
 	}
 	/**
 	 * 抓取供应商数据并保存
-	 * @param sellerId ebay供应商id
+	 * @param sellerId ebay供应商卖家id
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void grabSaveProduct(String sellerId) {
@@ -59,7 +60,7 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 		date2 = c.getTime();
 		Map<String, ? extends Collection> skuSpuAndPic = null;
 		try {
-			skuSpuAndPic = grab.getSellerList(sellerId, date, date2);
+			skuSpuAndPic = grabSrv.getSellerList(sellerId, date, date2);
 		} catch (SdkException e1) {
 			logger.error("抓取数据失败", e1);
 			return;
@@ -71,6 +72,31 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 		Collection<ProductPictureDTO> picUrls = skuSpuAndPic.get("pic");
 		savePic(picUrls);
 	}
+	/**
+	 * 通过find接口查询供应商店铺销售的item
+	 * @param storeName 店铺名字
+	 * @param brandName 品牌名字
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void grabSaveProduct4Find(String storeName,String brandName){
+	
+		Map<String,? extends Collection> skuSpuAndPic=grabSrv.findStoreBrand(storeName,brandName);
+		String threadName = Thread.currentThread().getName();
+		if(skuSpuAndPic==null) {
+			logger.warn("线程{}没有抓取到数据",threadName);
+			return ;
+		}
+		Collection<SkuDTO> skus = skuSpuAndPic.get("sku");
+		logger.info("线程{}抓取到sku数{}",threadName,skus.size());
+		saveSku(skus);
+		Collection<SpuDTO> spuDTOs = skuSpuAndPic.get("spu");
+		logger.info("线程{}抓取到spu数{}",threadName,spuDTOs.size());
+		saveSpu(spuDTOs);
+		Collection<ProductPictureDTO> picUrls = skuSpuAndPic.get("pic");
+		logger.info("线程{}抓取到pic数{}",threadName,picUrls.size());
+		savePic(picUrls);
+	}
+	
 
 	/**
 	 * @param picUrls
@@ -93,7 +119,7 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 	 * @param spuDTOs
 	 */
 	private void saveSpu(Collection<SpuDTO> spuDTOs) {
-		logger.info("spu数：{}", spuDTOs.size());
+		//logger.info("spu数：{}", spuDTOs.size());
 		int failCnt = 0;
 		for (SpuDTO spu : spuDTOs) {
 			try {
@@ -110,7 +136,7 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 	 * @param skus
 	 */
 	private void saveSku(Collection<SkuDTO> skus) {
-		logger.info("sku数：{}", skus.size());
+		//logger.info("sku数：{}", skus.size());
 		int failCnt = 0;
 		for (SkuDTO sku : skus) {
 			try {

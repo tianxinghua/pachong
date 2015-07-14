@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.shangpin.ebay.shoping.AmountType;
+import com.shangpin.ebay.shoping.DiscountPriceInfoType;
 import com.shangpin.ebay.shoping.NameValueListArrayType;
 import com.shangpin.ebay.shoping.NameValueListType;
 import com.shangpin.ebay.shoping.PicturesType;
@@ -33,31 +35,21 @@ public class ShopingItemConvert {
 	/**
 	 * 转换sku，spu,pic
 	 * @param itemTypes
-	 * @param userId
+	 * @param supplerKey
 	 * @return
 	 */
-	/*sit.getItemSpecifics();//for spu || sku attr
-	sit.getVariations();//for sku 
-	sit.getQuantity();//for sku item quantity
-	sit.getQuantitySold();//for sku item quantity
-	sit.getPictureURLArray();//for pic
-	sit.getVariations().getPicturesArray();//for pic
-	sit.getVariations().getVariationArray(0).getVariationSpecifics();//for sku attr
-	sit.getVariations().getVariationArray(0).getQuantity();//for sku quantity
-	sit.getVariations().getVariationSpecificsSet().getNameValueListArray();//for sku varia
-	 */	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Map<String,  Collection> convert2kpp(
-			SimpleItemType[] itemTypes, String userId) {
+			SimpleItemType[] itemTypes, String supplerKey) {
 		Map<String,  Collection> map=new HashMap<String, Collection>();
 		Set<ProductPictureDTO> rtnPic=new HashSet<>(itemTypes.length*2);
 		Set<SkuDTO> rtnSku=new HashSet<>(itemTypes.length);
 		Set<SpuDTO> rtnSpu=new HashSet<>(itemTypes.length);
 		for (SimpleItemType sit : itemTypes) {
-			Object[] obj=convertSku(userId,sit);
+			Object[] obj=convertSku(supplerKey,sit);
 			rtnSku.addAll((Set<SkuDTO>)obj[0]);
 			rtnPic.addAll((Set<ProductPictureDTO>)obj[1]);
-			SpuDTO spu = convertSpu(sit,userId);
+			SpuDTO spu = convertSpu(sit,supplerKey);
 			rtnSpu.add(spu);
 		}
 		map.put("sku",rtnSku);
@@ -69,17 +61,17 @@ public class ShopingItemConvert {
 	/**
 	 * 转换spu
 	 * @param sit
-	 * @param userId
+	 * @param supplierKey
 	 * @return 
 	 */
-	private static SpuDTO convertSpu(SimpleItemType sit, String userId) {
+	private static SpuDTO convertSpu(SimpleItemType sit, String supplierKey) {
 		SpuDTO spu = new SpuDTO();
 		setSpuCategory(sit, spu);
 		spu.setId(UUIDGenerator.getUUID());
 		spu.setSpuId(sit.getItemID());
 		NameValueListArrayType nv=sit.getItemSpecifics();
 		setSpuAttr(spu,nv.getNameValueListArray());
-		spu.setSupplierId(EbayConf.EBAY+userId);
+		spu.setSupplierId(EbayConf.EBAY+supplierKey);
 		spu.setSpuName(sit.getTitle());
 		return spu;
 	}
@@ -125,9 +117,6 @@ public class ShopingItemConvert {
 				spu.setSeasonName(value); continue;
 			}
 		}
-		/*spu.setBrandId(brandId);spu.setBrandName(brandName);
-		spu.setMaterial(material);spu.setPicUrl(picUrl);
-		spu.setProductOrigin(productOrigin);*/
 	}
 
 	/**
@@ -154,6 +143,7 @@ public class ShopingItemConvert {
 				setSkuAtt(sku,sit.getItemSpecifics().getNameValueListArray());
 				String skuId=getSkuId(sit,vt);
 				sku.setSkuId(skuId);
+				setMarketPrice(vt.getDiscountPriceInfo(),sku);
 				//sit.getVariations().getPicturesArray();//for pic
 				getVariationPic(sit.getVariations().getPicturesArray(),rtnPic,skuId,sku.getSupplierId());
 				rtnSku.add(sku);
@@ -166,11 +156,26 @@ public class ShopingItemConvert {
 			sku.setSaleCurrency(sit.getCurrentPrice().getCurrencyID().toString());
 			sku.setSupplierPrice(sku.getSalePrice());
 			sku.setSkuId(getSkuId(sit,null));
+			setMarketPrice(sit.getDiscountPriceInfo(), sku);
 			//sit.getPictureURLArray();
 			url2Pic(sit.getItemID(), sku.getSupplierId(), rtnPic, sit.getPictureURLArray());
 			rtnSku.add(sku);
 		}
 		return picAndSku;
+	}
+
+	/**
+	 * 市场价，就是标价吧
+	 * @param discountPriceInfo
+	 */
+	private static void setMarketPrice(
+			DiscountPriceInfoType discountPriceInfo,SkuDTO sku) {
+		if(discountPriceInfo!=null){//折扣前的价格
+			AmountType amt=discountPriceInfo.getOriginalRetailPrice();
+			if(amt!=null){
+				sku.setMarketPrice(amt.getDoubleValue()+"");
+			}
+		}
 	}
 
 	/**
@@ -239,9 +244,12 @@ public class ShopingItemConvert {
 				sku.setColor(value);
 				continue;
 			}
-			if(name.equalsIgnoreCase("UPC")||name.equalsIgnoreCase("EAN")
-					||name.equalsIgnoreCase("ISBN")||name.equals("MPN")||name.equals("Manufacturer Part Number")){
+			if(name.equals("MPN")||name.equals("Manufacturer Part Number")||
+					name.equalsIgnoreCase("UPC")||name.equalsIgnoreCase("ISBN")){
 				sku.setProductCode(value);
+				continue;
+			}
+			if(name.equalsIgnoreCase("EAN")){
 				sku.setBarcode(value);
 				continue;
 			}
