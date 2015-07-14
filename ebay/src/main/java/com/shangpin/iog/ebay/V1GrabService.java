@@ -184,8 +184,8 @@ public class V1GrabService {
 		do{//分页循环取
 			try {
 				resp = GrabEbayApiService.findItemsIneBayStores(storeName,brand,page,pageSize);
-				if(!AckValue.SUCCESS.equals(resp.getAck())){//返回错误了则直接返回
-					logger.warn("查询store:{},brand:{}失败，错误码：{}，错误信息{}:",storeName,brand,
+				if(!AckValue.SUCCESS.equals(resp.getAck()) && !AckValue.WARNING.equals(resp.getAck())){//返回错误了则直接返回
+					logger.warn("find store:{},brand:{}失败，错误码：{}，错误信息{}:",storeName,brand,
 							resp.getErrorMessage().getErrorArray(0).getErrorId(),
 							resp.getErrorMessage().getErrorArray(0).getMessage());
 					hasMore=false;
@@ -198,7 +198,7 @@ public class V1GrabService {
 			}
 			//TODO 如果没找到数据，那么返回null
 			if(resp.getPaginationOutput().getTotalEntries()==0){
-				logger.warn("没有找到storeName:{},brand:{}的产品",storeName,brand);
+				logger.warn("没有找到storeName:{},brand:{}的产品,page:{}",storeName,brand,page);
 				return skuSpuAndPic;
 			}
 			int totalPage=resp.getPaginationOutput().getTotalPages();
@@ -209,7 +209,7 @@ public class V1GrabService {
 				hasMore=false;
 			}
 			//TODO 查询结果resp.getSearchResult().getCount(),还是resp.getPaginationOutput().getTotalEntries())值得商榷
-			if(page==1)
+			if(page==2)
 				logger.debug(
 						"search store:{},brand:{} Result,resultCount:{},totalPage:{},totalCount:{}",
 						storeName, brand,resp.getSearchResult().getCount(), 
@@ -225,7 +225,17 @@ public class V1GrabService {
 				}
 			}
 			try{
-				findDetailKPP(storeName,skuSpuAndPic,itemIds);
+				int idLen=itemIds.size();
+				if(idLen>20){
+					int p1=0;int p2=20;
+					do{
+						p2=p1+20;if(p2>idLen) p2=idLen;
+						findDetailKPP(storeName,skuSpuAndPic,itemIds.subList(p1, p2));
+						p1=p2;
+					}while(p1<idLen);
+				}else{
+					findDetailKPP(storeName,skuSpuAndPic,itemIds);					
+				}
 				//TODO 此处应该过滤目标品牌的
 				//filterBrand()
 			}catch(Exception e){
@@ -257,7 +267,21 @@ public class V1GrabService {
 	private Map<String, ? extends Collection> findDetailKPP(String supplierKey,
 			Map<String, ? extends Collection> skuSpuAndPic, List<String> itemIds) throws XmlException {
 		//2.得到item
-		GetMultipleItemsResponseType multResp= GrabEbayApiService.shoppingGetMultipleItems(itemIds);
+		GetMultipleItemsResponseType multResp=null;
+		try{
+			multResp= GrabEbayApiService.shoppingGetMultipleItems(itemIds);
+		}catch(Exception e){
+			logger.error(supplierKey,e);
+			return skuSpuAndPic;
+		}
+		if(AckValue.FAILURE.equals(multResp.getAck())||
+				AckValue.PARTIAL_FAILURE.equals(multResp.getAck())){
+			logger.warn("GetMultipleItems Fail::supplierKey{},itemIds len:{}，错误码：{}，错误信息{}:",supplierKey,itemIds.size(),
+					multResp.getErrorsArray(0).getErrorCode(),
+					multResp.getErrorsArray(0).getLongMessage()
+					);
+			return skuSpuAndPic;
+		}
 		//3.转换sku,spu
 		SimpleItemType[] itemTypes=multResp.getItemArray();
 		Map<String, Collection> kpp=ShopingItemConvert.convert2kpp(itemTypes,supplierKey);

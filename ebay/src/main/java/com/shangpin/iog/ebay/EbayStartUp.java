@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,15 +36,21 @@ public class EbayStartUp {
         grabSrv=factory.getBean(V1GrabUpdateMain.class);
     }
 	public static void main(String[] args) {
-		if(args!=null &&args.length>0){
+		System.out.println("参数：u表示更新库存，其他表示拉取数据");
+		if(args!=null){
 			loadSpringContext();
-			if("u".equals(args[0])){//更新库存
-				updateStock();
-			}else{				
-				grabProduct();
+			if(args.length>0 && "u".equals(args[0])){//更新库存
+					logger.info("-----------开始更新库存---------");
+					updateStock();
+					logger.info("-----------更新库存完成---------");
+					return ;
 			}
-		}else{
-			System.out.println("参数：u表示更新库存，其他表示拉取数据");
+			//默认拉取
+			logger.info("-----------开始抓取数据---------");
+			grabProduct();
+			//HttpUtil45.closePool();
+			logger.info("-----------抓取数据完成---------");
+			
 		}
 	}
 	
@@ -58,6 +65,14 @@ public class EbayStartUp {
 			for (String storeName : storeNames) {
 				exe.execute(new GrabEbayItemThread(storeName, entry.getKey()));				
 			}
+		}
+		exe.shutdown();
+		try {
+			while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
+				
+			}
+		} catch (InterruptedException e) {
+			logger.error("关闭线程池异常-------",e);
 		}
 	}
 	

@@ -417,10 +417,11 @@ public class EbayTest {
 	}
 	@Test
 	public void getStoreName(){
-		String itemId="381328819362,361186823193";
+		String itemId="360797516456";
 		String url=shopingCommon("GetMultipleItems");
-		url+="ItemID="+itemId+"&IncludeSelector=Details";//Variations,ItemSpecifics
+		url+="ItemID="+itemId+"&IncludeSelector=Details";//,Variations,ItemSpecifics";
 		String xml=HttpUtil45.get(url,null,null);
+		System.out.println(xml);
 		try {
 			GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
 			GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();
@@ -441,7 +442,7 @@ public class EbayTest {
 	
 	private String shopingCommon(String callName){
 		String url="http://open.api.ebay.com/shopping?callname="+callName+"&responseencoding=XMl&"
-				+ "appid=vanskydba-8e2b-46af-adc1-58cae63bf2e&siteid=0&version=515&";
+				+ "appid=vanskydba-8e2b-46af-adc1-58cae63bf2e&siteid=0&version=905&";
 		return url;
 	}
 
