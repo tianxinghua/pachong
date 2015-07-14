@@ -1,5 +1,7 @@
 package com.shangpin.iog.ebay.service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
@@ -156,9 +158,9 @@ public class GrabEbayApiService {
 		String xml=HttpUtil45.get(sb.toString(),null,null);
 		log.debug("url:{},结果：{}",sb.toString(),xml);
 		//try {
-			GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
-			GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();
-			return rt;
+		GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
+		GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();
+		return rt;
 		/*} catch (XmlException e) {
 			log.error("getMultipleItem error",e);
 		}
@@ -191,7 +193,8 @@ public class GrabEbayApiService {
 		return null;
 	}
 	/**
-	 * 调用find接口，查询店铺关键词的item
+	 * 调用find接口，查询店铺关键词的item<br/>
+	 * 如果返回的paginationOutput.pageNumber==totalPages则表示已经到页尾了
 	 * @param storeName 店铺名
 	 * @param keywords item的关键词
 	 * @param page 页码
@@ -202,10 +205,20 @@ public class GrabEbayApiService {
 	public static FindItemsIneBayStoresResponse findItemsIneBayStores(
 			String storeName, String keywords, int page, int pageSize) throws XmlException {
 		String url = EbayConf.getFindCallUrl("findItemsIneBayStores");
-		url += "&storeName=%s&paginationInput.entriesPerPage=%d&paginationInput.pageNumber=%d&keywords=%s";
-		String filter="&outputSelector[0]=searchResult.item.sellingStatus.sellingState&outputSelector[1]=searchResult.item.itemId";
-		url+=filter;
-		url = String.format(url, storeName, page,pageSize,keywords);
+		url+="&storeName=%s&paginationInput.entriesPerPage=%d&paginationInput.pageNumber=%d&keywords=%s";
+		/*url+="&itemFilter[0].name=Condition&itemFilter[0].value=New";
+		url+="&itemFilter[0].name=ListedIn&itemFilter[0].value=EBAY-US";//美国站点
+		url+="&itemFilter[0].name=LocatedIn&itemFilter[0].value=US";//物品所在地
+		url+="&itemFilter[0].name=HideDuplicateItems&itemFilter[0].value=true";//隐藏相同的
+		url+="&itemFilter[0].name=ReturnsAcceptedOnly&itemFilter[0].value=true";//接受退货的
+		url+="&itemFilter[0].name=ListingType&itemFilter[0].value=FixedPrice";//定价的buyItnow
+		 */
+		try {
+			url= String.format(url, URLEncoder.encode(storeName,"UTF-8"), page,pageSize,URLEncoder.encode(keywords,"UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		System.out.println(url);
 		String xml=HttpUtil45.get(url, null, null);
 		log.debug("查询商铺：{}，关键词：{},结果：{}",storeName,keywords,xml);
 		FindItemsIneBayStoresResponseDocument doc = FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
@@ -223,7 +236,7 @@ public class GrabEbayApiService {
 		try {
 			//tradeSellerList("pumaboxstore", t1, t2, 1, 8);
 			//tradeGetItem("251485222300");
-			FindItemsIneBayStoresResponse resp=findItemsIneBayStores("Toms-Home-Treasures","dalia",1,10);
+			FindItemsIneBayStoresResponse resp=findItemsIneBayStores("The Run Store","ASICS",1,10);
 			if(AckValue.SUCCESS.equals(resp.getAck())){
 				System.out.println("success");
 			}

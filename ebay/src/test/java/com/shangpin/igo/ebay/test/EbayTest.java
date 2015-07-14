@@ -389,7 +389,7 @@ public class EbayTest {
 	@Test
 	public void getSingleItem(){
 		String url=shopingCommon("GetSingleItem");
-		url+="ItemID=400896098536&IncludeSelector=Variations&VariationSKU=13031929";
+		url+="ItemID=181704370061&IncludeSelector=Variations";
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
 		try {
@@ -404,7 +404,8 @@ public class EbayTest {
 	@Test
 	public void GetMultipleItems(){
 		String url=shopingCommon("GetMultipleItems");
-		url+="ItemID=131503285055,221288382861&IncludeSelector=Details";
+		url+="ItemID=181704370061,141485558178&IncludeSelector=Details,Variations,ItemSpecifics";
+//				+ "&ItemFilter[0].name=Condition&ItemFilter[0].value=New";
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
 		try {

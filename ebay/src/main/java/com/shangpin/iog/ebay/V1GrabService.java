@@ -60,10 +60,11 @@ public class V1GrabService {
 		int page=1;
 		boolean hasMore=false;
 		Map<String, ? extends Collection> skuSpuAndPic=null;
-		do{
-			GetSellerListResponseType resp = GrabEbayApiService.tradeSellerList(userId, 
+		GetSellerListResponseType resp =null;
+		do{//分页循环取
+			resp = GrabEbayApiService.tradeSellerList(userId, 
 					getCalendar(endStart), getCalendar(endEnd),page,pageSize);
-			if(!AckCodeType.FAILURE.equals(resp.getAck())){
+			if(!AckCodeType.FAILURE.equals(resp.getAck())){//失败的则不处理
 				hasMore=resp.isHasMoreItems();
 				ItemType[] tps = resp.getItemArray().getItem();
 				List<String> itemIds = new ArrayList<>(tps.length);//1.得到id
@@ -132,7 +133,73 @@ public class V1GrabService {
 		}
 		return rtnMap;
 	}
-	
+	/**
+	 * 通过find接口查询供应商店铺销售的item
+	 * @param storeName 店铺名字
+	 * @param brandName 品牌名字
+	 * @return  封装好的sku,spu,pic，各键代表对应的数据集合;<br/>如果没有数据或者查找失败返回null
+	 */
+	@SuppressWarnings({ "rawtypes" })
+	public Map<String, ? extends Collection> findStoreBrand(String storeName,
+			String brand){
+		int page=1;
+		Map<String, ? extends Collection> skuSpuAndPic=null;
+		boolean hasMore=false;
+		FindItemsIneBayStoresResponse resp =null;
+		do{//分页循环取
+			try {
+				resp = GrabEbayApiService.findItemsIneBayStores(storeName,brand,page,pageSize);
+				if(!AckValue.SUCCESS.equals(resp.getAck())){//返回错误了则直接返回
+					logger.warn("查询store:{},brand:{}失败，错误码：{}，错误信息{}:",storeName,brand,
+							resp.getErrorMessage().getErrorArray(0).getErrorId(),
+							resp.getErrorMessage().getErrorArray(0).getMessage());
+					hasMore=false;
+					return skuSpuAndPic;
+				}
+			}catch(Exception e){
+				logger.error("findStoreBrand异常，storeName:"+storeName+",brand:"+brand,e);
+				hasMore=false;
+				return skuSpuAndPic;
+			}
+			//TODO 如果没找到数据，那么返回null
+			if(resp.getPaginationOutput().getTotalEntries()==0){
+				logger.warn("没有找到storeName:{},brand:{}的产品",storeName,brand);
+				return skuSpuAndPic;
+			}
+			int totalPage=resp.getPaginationOutput().getTotalPages();
+			if(totalPage>resp.getPaginationOutput().getPageNumber()){
+				page++;
+				hasMore=true;
+			}else{
+				hasMore=false;
+			}
+			//TODO 查询结果resp.getSearchResult().getCount(),还是resp.getPaginationOutput().getTotalEntries())值得商榷
+			if(page==1)
+				logger.debug(
+						"search store:{},brand:{} Result,resultCount:{},totalPage:{},totalCount:{}",
+						storeName, brand,resp.getSearchResult().getCount(), 
+						totalPage, resp.getPaginationOutput().getTotalEntries());
+			SearchItem[] items=resp.getSearchResult().getItemArray();
+			boolean isActive=false;
+			List<String> itemIds=new ArrayList<>();
+			//1得到id
+			for (SearchItem item : items) {
+				isActive=ListingStatusCodeType.ACTIVE.value().equalsIgnoreCase(item.getSellingStatus().getSellingState());
+				if(isActive){
+					itemIds.add(item.getItemId());
+				}
+			}
+			try{
+				findDetailKPP(storeName,skuSpuAndPic,itemIds);
+				//TODO 此处应该过滤目标品牌的
+				//filterBrand()
+			}catch(Exception e){
+				logger.error("查询店铺、品牌，getMultipleItem异常，storeName:"+storeName+",brand:"+brand,e);
+			}
+		}while(hasMore);
+		
+		return skuSpuAndPic;
+	}
 	/**
 	 * @param date
 	 * @return
@@ -142,6 +209,7 @@ public class V1GrabService {
 		ca.setTime(date);
 		return ca;
 	}
+	
 	/**
 	 * 根据itemIds获取sku，spu，pic信息
 	 * @param supplierKey 供应商id，（商铺id，用户id）
@@ -167,63 +235,6 @@ public class V1GrabService {
 		}
 		return skuSpuAndPic;
 	}
-	/**
-	 * 通过find接口查询供应商店铺销售的item
-	 * @param storeName 店铺名字
-	 * @param brandName 品牌名字
-	 * @return  封装好的sku,spu,pic，各键代表对应的数据集合
-	 */
-	@SuppressWarnings({ "rawtypes" })
-	public Map<String, ? extends Collection> findStoreBrand(String storeName,
-			String brand){
-		int page=1;
-		Map<String, ? extends Collection> skuSpuAndPic=null;
-		boolean hasMore=false;
-		FindItemsIneBayStoresResponse resp =null;
-		do{
-			try {
-				resp = GrabEbayApiService.findItemsIneBayStores(storeName,brand,page,pageSize);
-				if(!AckValue.SUCCESS.equals(resp.getAck())){
-					logger.warn("查询{},brand:{}失败，错误码：{}，错误信息{}:",storeName,brand,
-							resp.getErrorMessage().getErrorArray(0).getErrorId(),
-							resp.getErrorMessage().getErrorArray(0).getMessage());
-					hasMore=false;
-					return skuSpuAndPic;
-				}
-			}catch(Exception e){
-				logger.error("findStoreBrand异常，storeName:"+storeName+",brand:"+brand,e);
-				hasMore=false;
-				return skuSpuAndPic;
-			}
-			int totalPage=resp.getPaginationOutput().getTotalPages();
-			if(totalPage>resp.getPaginationOutput().getPageNumber()){
-				page++;
-				hasMore=true;
-			}else{
-				hasMore=false;
-			}
-			logger.debug("search Result:{},page:{},resultCount:{},totalPage:{}",storeName+brand,page,
-					resp.getSearchResult().getCount(),totalPage);
-			SearchItem[] items=resp.getSearchResult().getItemArray();
-			boolean isActive=false;
-			List<String> itemIds=new ArrayList<>();
-			//1得到id
-			for (SearchItem item : items) {
-				isActive=ListingStatusCodeType.ACTIVE.value().equalsIgnoreCase(item.getSellingStatus().getSellingState());
-				if(isActive){
-					itemIds.add(item.getItemId());
-				}
-			}
-			try{
-				findDetailKPP(storeName,skuSpuAndPic,itemIds);
-			}catch(Exception e){
-				logger.error("查询店铺、品牌，getMultipleItem异常，storeName:"+storeName+",brand:"+brand,e);
-			}
-		}while(hasMore);
-		
-		return skuSpuAndPic;
-	}
-	
 	/*public static void main(String[] args) {
 		List<String> itemIds=new ArrayList<>();
 		itemIds.add("251485222300");
