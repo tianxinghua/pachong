@@ -78,14 +78,22 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 	 * @param brandName 品牌名字
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void grabSaveProduct4Find(String storeName,String brand){
+	public void grabSaveProduct4Find(String storeName,String brandName){
 	
-		Map<String,? extends Collection> skuSpuAndPic=grabSrv.findStoreBrand(storeName,brand);
+		Map<String,? extends Collection> skuSpuAndPic=grabSrv.findStoreBrand(storeName,brandName);
+		String threadName = Thread.currentThread().getName();
+		if(skuSpuAndPic==null) {
+			logger.warn("线程{}没有抓取到数据",threadName);
+			return ;
+		}
 		Collection<SkuDTO> skus = skuSpuAndPic.get("sku");
+		logger.info("线程{}抓取到sku数{}",threadName,skus.size());
 		saveSku(skus);
 		Collection<SpuDTO> spuDTOs = skuSpuAndPic.get("spu");
+		logger.info("线程{}抓取到spu数{}",threadName,spuDTOs.size());
 		saveSpu(spuDTOs);
 		Collection<ProductPictureDTO> picUrls = skuSpuAndPic.get("pic");
+		logger.info("线程{}抓取到pic数{}",threadName,picUrls.size());
 		savePic(picUrls);
 	}
 	
@@ -111,7 +119,7 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 	 * @param spuDTOs
 	 */
 	private void saveSpu(Collection<SpuDTO> spuDTOs) {
-		logger.info("spu数：{}", spuDTOs.size());
+		//logger.info("spu数：{}", spuDTOs.size());
 		int failCnt = 0;
 		for (SpuDTO spu : spuDTOs) {
 			try {
@@ -128,7 +136,7 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 	 * @param skus
 	 */
 	private void saveSku(Collection<SkuDTO> skus) {
-		logger.info("sku数：{}", skus.size());
+		//logger.info("sku数：{}", skus.size());
 		int failCnt = 0;
 		for (SkuDTO sku : skus) {
 			try {
