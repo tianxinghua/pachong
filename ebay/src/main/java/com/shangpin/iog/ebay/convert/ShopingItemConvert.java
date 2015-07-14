@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.shangpin.ebay.shoping.AmountType;
+import com.shangpin.ebay.shoping.DiscountPriceInfoType;
 import com.shangpin.ebay.shoping.NameValueListArrayType;
 import com.shangpin.ebay.shoping.NameValueListType;
 import com.shangpin.ebay.shoping.PicturesType;
@@ -36,16 +38,6 @@ public class ShopingItemConvert {
 	 * @param supplerKey
 	 * @return
 	 */
-	/*sit.getItemSpecifics();//for spu || sku attr
-	sit.getVariations();//for sku 
-	sit.getQuantity();//for sku item quantity
-	sit.getQuantitySold();//for sku item quantity
-	sit.getPictureURLArray();//for pic
-	sit.getVariations().getPicturesArray();//for pic
-	sit.getVariations().getVariationArray(0).getVariationSpecifics();//for sku attr
-	sit.getVariations().getVariationArray(0).getQuantity();//for sku quantity
-	sit.getVariations().getVariationSpecificsSet().getNameValueListArray();//for sku varia
-	 */	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Map<String,  Collection> convert2kpp(
 			SimpleItemType[] itemTypes, String supplerKey) {
@@ -125,9 +117,6 @@ public class ShopingItemConvert {
 				spu.setSeasonName(value); continue;
 			}
 		}
-		/*spu.setBrandId(brandId);spu.setBrandName(brandName);
-		spu.setMaterial(material);spu.setPicUrl(picUrl);
-		spu.setProductOrigin(productOrigin);*/
 	}
 
 	/**
@@ -154,6 +143,7 @@ public class ShopingItemConvert {
 				setSkuAtt(sku,sit.getItemSpecifics().getNameValueListArray());
 				String skuId=getSkuId(sit,vt);
 				sku.setSkuId(skuId);
+				setMarketPrice(vt.getDiscountPriceInfo(),sku);
 				//sit.getVariations().getPicturesArray();//for pic
 				getVariationPic(sit.getVariations().getPicturesArray(),rtnPic,skuId,sku.getSupplierId());
 				rtnSku.add(sku);
@@ -166,11 +156,26 @@ public class ShopingItemConvert {
 			sku.setSaleCurrency(sit.getCurrentPrice().getCurrencyID().toString());
 			sku.setSupplierPrice(sku.getSalePrice());
 			sku.setSkuId(getSkuId(sit,null));
+			setMarketPrice(sit.getDiscountPriceInfo(), sku);
 			//sit.getPictureURLArray();
 			url2Pic(sit.getItemID(), sku.getSupplierId(), rtnPic, sit.getPictureURLArray());
 			rtnSku.add(sku);
 		}
 		return picAndSku;
+	}
+
+	/**
+	 * 市场价，就是标价吧
+	 * @param discountPriceInfo
+	 */
+	private static void setMarketPrice(
+			DiscountPriceInfoType discountPriceInfo,SkuDTO sku) {
+		if(discountPriceInfo!=null){//折扣前的价格
+			AmountType amt=discountPriceInfo.getOriginalRetailPrice();
+			if(amt!=null){
+				sku.setMarketPrice(amt.getDoubleValue()+"");
+			}
+		}
 	}
 
 	/**
@@ -239,9 +244,12 @@ public class ShopingItemConvert {
 				sku.setColor(value);
 				continue;
 			}
-			if(name.equalsIgnoreCase("UPC")||name.equalsIgnoreCase("EAN")
-					||name.equalsIgnoreCase("ISBN")||name.equals("MPN")||name.equals("Manufacturer Part Number")){
+			if(name.equals("MPN")||name.equals("Manufacturer Part Number")||
+					name.equalsIgnoreCase("UPC")||name.equalsIgnoreCase("ISBN")){
 				sku.setProductCode(value);
+				continue;
+			}
+			if(name.equalsIgnoreCase("EAN")){
 				sku.setBarcode(value);
 				continue;
 			}

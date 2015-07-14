@@ -60,10 +60,11 @@ public class V1GrabService {
 		int page=1;
 		boolean hasMore=false;
 		Map<String, ? extends Collection> skuSpuAndPic=null;
-		do{
-			GetSellerListResponseType resp = GrabEbayApiService.tradeSellerList(userId, 
+		GetSellerListResponseType resp =null;
+		do{//分页循环取
+			resp = GrabEbayApiService.tradeSellerList(userId, 
 					getCalendar(endStart), getCalendar(endEnd),page,pageSize);
-			if(!AckCodeType.FAILURE.equals(resp.getAck())){
+			if(!AckCodeType.FAILURE.equals(resp.getAck())){//失败的则不处理
 				hasMore=resp.isHasMoreItems();
 				ItemType[] tps = resp.getItemArray().getItem();
 				List<String> itemIds = new ArrayList<>(tps.length);//1.得到id
@@ -82,9 +83,9 @@ public class V1GrabService {
 				}
 				page++;
 			}else{
-				/*logger.warn("获取商户{}产品失败，错误码：{}，错误信息{}:",userId,
+				logger.warn("获取商户{}产品失败，错误码：{}，错误信息{}:",userId,
 						resp.getErrors(0).getErrorCode(),
-						resp.getErrors(0).getLongMessage());*/
+						resp.getErrors(0).getLongMessage());
 				hasMore=false;
 			}
 		}while(hasMore);
@@ -180,19 +181,24 @@ public class V1GrabService {
 		Map<String, ? extends Collection> skuSpuAndPic=null;
 		boolean hasMore=false;
 		FindItemsIneBayStoresResponse resp =null;
-		do{
+		do{//分页循环取
 			try {
 				resp = GrabEbayApiService.findItemsIneBayStores(storeName,brand,page,pageSize);
-				if(!AckValue.SUCCESS.equals(resp.getAck())){
-					/*logger.warn("查询{},brand:{}失败，错误码：{}，错误信息{}:",storeName,brand,
+				if(!AckValue.SUCCESS.equals(resp.getAck())){//返回错误了则直接返回
+					logger.warn("查询store:{},brand:{}失败，错误码：{}，错误信息{}:",storeName,brand,
 							resp.getErrorMessage().getErrorArray(0).getErrorId(),
-							resp.getErrorMessage().getErrorArray(0).getMessage());*/
+							resp.getErrorMessage().getErrorArray(0).getMessage());
 					hasMore=false;
 					return skuSpuAndPic;
 				}
 			}catch(Exception e){
 				logger.error("findStoreBrand异常，storeName:"+storeName+",brand:"+brand,e);
 				hasMore=false;
+				return skuSpuAndPic;
+			}
+			//TODO 如果没找到数据，那么返回null
+			if(resp.getPaginationOutput().getTotalEntries()==0){
+				logger.warn("没有找到storeName:{},brand:{}的产品",storeName,brand);
 				return skuSpuAndPic;
 			}
 			int totalPage=resp.getPaginationOutput().getTotalPages();
@@ -202,8 +208,12 @@ public class V1GrabService {
 			}else{
 				hasMore=false;
 			}
-			/*logger.debug("search Result:{},page:{},resultCount:{},totalPage:{}",storeName+brand,page,
-					resp.getSearchResult().getCount(),totalPage);*/
+			//TODO 查询结果resp.getSearchResult().getCount(),还是resp.getPaginationOutput().getTotalEntries())值得商榷
+			if(page==1)
+				logger.debug(
+						"search store:{},brand:{} Result,resultCount:{},totalPage:{},totalCount:{}",
+						storeName, brand,resp.getSearchResult().getCount(), 
+						totalPage, resp.getPaginationOutput().getTotalEntries());
 			SearchItem[] items=resp.getSearchResult().getItemArray();
 			boolean isActive=false;
 			List<String> itemIds=new ArrayList<>();
@@ -216,6 +226,8 @@ public class V1GrabService {
 			}
 			try{
 				findDetailKPP(storeName,skuSpuAndPic,itemIds);
+				//TODO 此处应该过滤目标品牌的
+				//filterBrand()
 			}catch(Exception e){
 				logger.error("查询店铺、品牌，getMultipleItem异常，storeName:"+storeName+",brand:"+brand,e);
 			}
@@ -223,7 +235,41 @@ public class V1GrabService {
 		
 		return skuSpuAndPic;
 	}
+	/**
+	 * @param date
+	 * @return
+	 */
+	private Calendar getCalendar(Date date) {
+		Calendar ca=Calendar.getInstance();
+		ca.setTime(date);
+		return ca;
+	}
 	
+	/**
+	 * 根据itemIds获取sku，spu，pic信息
+	 * @param supplierKey 供应商id，（商铺id，用户id）
+	 * @param skuSpuAndPic 
+	 * @param itemIds item id
+	 * @return
+	 * @throws XmlException 
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private Map<String, ? extends Collection> findDetailKPP(String supplierKey,
+			Map<String, ? extends Collection> skuSpuAndPic, List<String> itemIds) throws XmlException {
+		//2.得到item
+		GetMultipleItemsResponseType multResp= GrabEbayApiService.shoppingGetMultipleItems(itemIds);
+		//3.转换sku,spu
+		SimpleItemType[] itemTypes=multResp.getItemArray();
+		Map<String, Collection> kpp=ShopingItemConvert.convert2kpp(itemTypes,supplierKey);
+		if(skuSpuAndPic==null){
+			skuSpuAndPic=kpp;
+		}else{
+			skuSpuAndPic.get("sku").addAll(kpp.get("sku"));
+			skuSpuAndPic.get("spu").addAll(kpp.get("spu"));
+			skuSpuAndPic.get("pic").addAll(kpp.get("pic"));
+		}
+		return skuSpuAndPic;
+	}
 	/*public static void main(String[] args) {
 		List<String> itemIds=new ArrayList<>();
 		itemIds.add("251485222300");

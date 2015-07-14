@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.coltorti.service.ColtortiTokenService;
 import com.shangpin.iog.coltorti.service.ColtortiUtil;
 import com.shangpin.iog.coltorti.service.InsertDataBaseService;
 import com.shangpin.iog.coltorti.service.UpdateStockService;
@@ -89,6 +90,7 @@ public class ColtortiStartup {
 			grabProduct();
 		}else{
 			try {
+				ColtortiTokenService.initToken();
 				updateStock();
 				logger.warn("==========更新库存完成========");
 			} catch (Exception e) {

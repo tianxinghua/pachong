@@ -1,9 +1,6 @@
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    /*compile project(':project-framework')
-    compile project(':project-common')
-    compile project(':iog-service')
-    compile project(':project-dao')*/
+
     compile(
             "commons-httpclient:commons-httpclient:3.1",
             "org.apache.httpcomponents:httpclient:4.1.1",
@@ -13,6 +10,7 @@ dependencies {
             "org.projectlombok:lombok:1.14.8",
             "redis.clients:jedis:${jedis_version}",
             "com.thoughtworks.xstream:xstream:1.4.7",
+            "commons-net:commons-net:1.4.1",
             project(':project-framework'),
             project(':project-common'),
             project(':iog-service'),
