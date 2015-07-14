@@ -12,6 +12,7 @@ dependencies {
 		"com.ebay.sdk:ebaysdkcore:1.0",
 		"org.apache.servicemix.bundles:org.apache.servicemix.bundles.oro:2.0.8_6",
 		project(":iog-common-product"),
+			project(":project-dao"),
 		)
     testCompile (
 		'junit:junit:4.+',

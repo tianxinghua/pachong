@@ -82,9 +82,9 @@ public class V1GrabService {
 				}
 				page++;
 			}else{
-				logger.warn("获取商户{}产品失败，错误码：{}，错误信息{}:",userId,
+				/*logger.warn("获取商户{}产品失败，错误码：{}，错误信息{}:",userId,
 						resp.getErrors(0).getErrorCode(),
-						resp.getErrors(0).getLongMessage());
+						resp.getErrors(0).getLongMessage());*/
 				hasMore=false;
 			}
 		}while(hasMore);
@@ -184,9 +184,9 @@ public class V1GrabService {
 			try {
 				resp = GrabEbayApiService.findItemsIneBayStores(storeName,brand,page,pageSize);
 				if(!AckValue.SUCCESS.equals(resp.getAck())){
-					logger.warn("查询{},brand:{}失败，错误码：{}，错误信息{}:",storeName,brand,
+					/*logger.warn("查询{},brand:{}失败，错误码：{}，错误信息{}:",storeName,brand,
 							resp.getErrorMessage().getErrorArray(0).getErrorId(),
-							resp.getErrorMessage().getErrorArray(0).getMessage());
+							resp.getErrorMessage().getErrorArray(0).getMessage());*/
 					hasMore=false;
 					return skuSpuAndPic;
 				}
@@ -202,8 +202,8 @@ public class V1GrabService {
 			}else{
 				hasMore=false;
 			}
-			logger.debug("search Result:{},page:{},resultCount:{},totalPage:{}",storeName+brand,page,
-					resp.getSearchResult().getCount(),totalPage);
+			/*logger.debug("search Result:{},page:{},resultCount:{},totalPage:{}",storeName+brand,page,
+					resp.getSearchResult().getCount(),totalPage);*/
 			SearchItem[] items=resp.getSearchResult().getItemArray();
 			boolean isActive=false;
 			List<String> itemIds=new ArrayList<>();

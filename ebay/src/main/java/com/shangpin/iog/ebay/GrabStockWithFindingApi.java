@@ -37,7 +37,7 @@ public class GrabStockWithFindingApi extends AbsUpdateProductStock {
 		String skuid = null;
 		for (String skuId : skuNo) {
 			skuid = skuId.split("#")[1];
-			item = product.testGetItem(skuId.split("#")[0]);
+			//item = product.testGetItem(skuId.split("#")[0]);
 			if (item.getListingDetails().getEndTime().getTime()
 					.after(Calendar.getInstance().getTime())) {
 				if (item.getVariations() != null) {

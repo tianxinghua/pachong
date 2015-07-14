@@ -77,7 +77,8 @@ public class ProductFetchServiceImpl implements ProductFetchService {
         try {
             skuDAO.save(skuDTO);
         } catch ( Exception e) {
-            throw new ServiceMessageException("数据插入失败");
+            e.printStackTrace();
+           // throw new ServiceMessageException("数据插入失败");
         }
     }
 
