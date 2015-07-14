@@ -28,7 +28,7 @@
  *
  */
 
-package apache.commons.httpclient;
+package com.apache.commons.httpclient;
 
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.params.HttpClientParams;
