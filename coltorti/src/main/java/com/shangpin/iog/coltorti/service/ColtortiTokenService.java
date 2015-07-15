@@ -3,6 +3,7 @@
  */
 package com.shangpin.iog.coltorti.service;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
@@ -46,7 +47,11 @@ public class ColtortiTokenService {
 	 * @return 获取到的token
 	 */
 	public static String initToken() throws ServiceException {
-		lock.lock();
+		try {
+			lock.tryLock(5,TimeUnit.SECONDS);
+		} catch (InterruptedException e1) {
+			lock.unlock();
+		}
 		logger.info("初始化token......");
 		try {
 			token = null;

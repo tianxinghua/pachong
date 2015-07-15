@@ -251,8 +251,8 @@ public class EbayTest {
 		SpuDTO spu=null;
 		String url=findCommonUrl("findItemsIneBayStores");
 		url+="storeName=%s&keywords=%s";
-		String storeName="Odd Mod and More Store";
-		String keywords = "Extreme Pak";
+		String storeName="Enduro-Sport";
+		String keywords = "Saucony";
 		url=String.format(url,URLEncoder.encode(storeName,"UTF-8"),URLEncoder.encode(keywords,"UTF-8"));
 		String xml=HttpUtil45.get(url,null,null);
 		System.out.println(xml);
@@ -263,7 +263,7 @@ public class EbayTest {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < rs.length; i++) {
 			sb.append(rs[i].getItemId()).append(",");
-			if(i%20==0){
+			if(i!=0 && i%20==0){
 				System.out.println(sb.toString());
 				sb = new StringBuffer();
 			}
@@ -409,7 +409,8 @@ public class EbayTest {
 	}
 	@Test
 	public void GetMultipleItems(){
-		String itemId="161556540700";
+		String itemId="181789534083,181789630092,181789534119,171842899940,181789534121,181789630072,171842899968,171842899951,181789534099,181789534101,181789534113,181789630083,181789630071,181789630074,181789630085,171843018035,171843018045,171842899942,181789534084,171842899970";
+		//171842899950,171843018026,181789630075
 		String url=shopingCommon("GetMultipleItems");
 		url+="ItemID="+itemId+"&IncludeSelector=Details,Variations,ItemSpecifics";
 //				+ "&ItemFilter[0].name=Condition&ItemFilter[0].value=New";
@@ -455,7 +456,7 @@ public class EbayTest {
 	
 	private String shopingCommon(String callName){
 		String url="http://open.api.ebay.com/shopping?callname="+callName+"&responseencoding=XMl&"
-				+ "appid=vanskydba-8e2b-46af-adc1-58cae63bf2e&siteid=0&version=905&";
+				+ "appid=vanskydba-8e2b-46af-adc1-58cae63bf2e&siteid=0&version=897&";
 		return url;
 	}
 

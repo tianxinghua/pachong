@@ -18,7 +18,7 @@ import com.ebay.sdk.ApiCredential;
  * <br/>2015年6月18日
  */
 public class EbayConf {
-	public static final String EBAY="ebaySports#";
+	public static final String EBAY="2015071301325";
 	//private static Map<String,String> brandStore = null; 
     private static String tradeApi = null;
 	private static String devKey;
@@ -32,7 +32,7 @@ public class EbayConf {
     private static String shopingApi;
     private static String findApi;
     static {
-        ResourceBundle bdl = ResourceBundle.getBundle("conf-pro");
+        ResourceBundle bdl = ResourceBundle.getBundle("conf-pro2");
         devKey = bdl.getString("DeveloperKey");
         appKey = bdl.getString("ApplicationKey");
         cerKey = bdl.getString("CertificateKey");

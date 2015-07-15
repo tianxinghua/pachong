@@ -78,7 +78,7 @@ public class ShopingItemConvert {
 		setSpuCategory(sit, spu);
 		spu.setId(UUIDGenerator.getUUID());
 		spu.setSpuId(sit.getItemID());
-		spu.setSupplierId(EbayConf.EBAY+supplierKey);
+		spu.setSupplierId(EbayConf.EBAY);
 		spu.setSpuName(sit.getTitle());
 		NameValueListArrayType nv=sit.getItemSpecifics();
 		if(nv!=null)
@@ -358,7 +358,8 @@ public class ShopingItemConvert {
 		sku.setSpuId(sit.getItemID());
 		sku.setId(UUIDGenerator.getUUID());
 		sku.setCreateTime(createDate);
-		sku.setSupplierId(EbayConf.EBAY+userId);
+		sku.setSupplierId(EbayConf.EBAY);
+		sku.setMemo("storeName:"+userId);
 		sku.setLastTime(sit.getEndTime().getTime());
 	}
 }
