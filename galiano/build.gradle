@@ -29,8 +29,9 @@ dependencies {
 
 jar {
 
-    dependsOn copyToLib , copyResources
-    exclude ("**/*.properties")
+    dependsOn copyToLib
+//    , copyResources
+//    exclude ("**/*.properties")
 //    from {
 //        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 
@@ -42,16 +43,16 @@ jar {
         "lib/${file.name}"
     }.join(' ')
 
-    def mainfestPropertyCp = new File(propertyPath).listFiles().collect {
-        File file = it
-        println it.name
-        "conf/${file.name}"
-    }.join(' ')
+//    def mainfestPropertyCp = new File(propertyPath).listFiles().collect {
+//        File file = it
+//        println it.name
+//        "conf/${file.name}"
+//    }.join(' ')
 
     manifest {
         attributes 'Main-Class': 'com.shangpin.iog.galiano.Startup'
 //        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
 
-        attributes 'Class-Path': '. ' + manifestCp +  ' ' + mainfestPropertyCp
+        attributes 'Class-Path': '. ' + manifestCp
     }
 }

@@ -28,9 +28,8 @@
  *
  */
 
-package com.apache.commons.httpclient;
+package org.apache.commons.httpclient;
 
-import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
