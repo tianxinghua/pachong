@@ -25,7 +25,7 @@ public class FetchEbayPool {
         loadSpringContext();
         //FetchEbayProduct fetchProduct=new FetchEbayProduct();
        FetchEbayProduct fetchProduct = (FetchEbayProduct) factory.getBean("ebay");
-        Map<String,String> storeBrand= EbayConf.getStoreBrand();
+        Map<String,String> storeBrand= EbayConf.getStoreBrand("store-brand");
         Set<String> keys=storeBrand.keySet();
         log.info("----拉取ebay数据开始----");
         System.out.println("----拉取ebay数据开始----");

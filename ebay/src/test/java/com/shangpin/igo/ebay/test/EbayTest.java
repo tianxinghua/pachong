@@ -396,12 +396,12 @@ public class EbayTest {
 	}
 	@Test
 	public void GetMultipleItems(){
-		String itemId="381328819362,361186823193";
+		String itemId="151018288222";
 		String url=shopingCommon("GetMultipleItems");
-		url+="ItemID="+itemId+"&IncludeSelector=Details";//Variations,ItemSpecifics
+		url+="ItemID="+itemId+"&IncludeSelector=Details,Variations,ItemSpecifics";
 //				+ "&ItemFilter[0].name=Condition&ItemFilter[0].value=New";
 		String xml=HttpUtil45.get(url,null,null);
-		//System.out.println(xml);
+		System.out.println(xml);
 		try {
 			GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
 			GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();
