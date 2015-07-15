@@ -83,7 +83,11 @@ public class EbayInit {
         shopingApi=bdl.getString("shopingApi");
         findApi=bdl.getString("findApi");
         tradeApi=bdl.getString("tradeApi");
-		String profile=bdl.getString("includeProfile");
+        String profile=null;
+		try{
+			profile=bdl.getString("includeProfile");
+		}catch(Exception e){
+		}
 		if(StringUtils.isNotBlank(profile)){
 			String[] fileName=profile.split(",");
 			for (String fn : fileName) {
@@ -95,11 +99,15 @@ public class EbayInit {
 			throw new RuntimeException("初始化app key失败！至少需要配置一个App");
 		}
 	}
-	
+	/**
+	 * 循环获取配置的app
+	 * @return
+	 */
 	private static EbayAppConf getAppKey(){
 		if(idx>=confs.size())
 			idx=0;
 		idx++;
+		System.out.println(idx-1);
 		return confs.get(idx-1); 
 	}
 	/**

@@ -82,6 +82,13 @@ public class ThreadTest {
 		//System.out.println("Saucony Men's ProGrid Echelon 2 - White/Silver (20070-1)".length());
 		
 		System.out.println(EbayInit.getFindCallUrl("ok"));
+		System.out.println(EbayInit.getFindCallUrl("ok"));
+		System.out.println(EbayInit.getFindCallUrl("ok"));
+		System.out.println(EbayInit.getFindCallUrl("ok"));
+		System.out.println(EbayInit.getFindCallUrl("ok"));
+		System.out.println(EbayInit.getFindCallUrl("ok"));
+		System.out.println(EbayInit.getFindCallUrl("ok"));
+		System.out.println(EbayInit.getFindCallUrl("ok"));
 			
 	}
 
