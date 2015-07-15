@@ -7,6 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
+import com.shangpin.iog.ebay.conf.EbayInit;
+
 /**
  * @description 
  * @author 陈小峰
@@ -77,7 +79,10 @@ public class ThreadTest {
 	}
 	@Test
 	public void testLen(){
-		System.out.println("Saucony Men's ProGrid Echelon 2 - White/Silver (20070-1)".length());
+		//System.out.println("Saucony Men's ProGrid Echelon 2 - White/Silver (20070-1)".length());
+		
+		System.out.println(EbayInit.getFindCallUrl("ok"));
+			
 	}
 
 }

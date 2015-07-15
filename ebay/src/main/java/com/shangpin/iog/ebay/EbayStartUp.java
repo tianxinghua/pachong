@@ -19,7 +19,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.DateTimeUtil;
-import com.shangpin.iog.ebay.conf.EbayConf;
+import com.shangpin.iog.ebay.conf.EbayInit;
 
 /**
  * ebay抓取，更新启动类，用于选择是更新还是抓取
@@ -56,7 +56,7 @@ public class EbayStartUp {
 	
 	private static void grabProduct(){
 		//grabSrv.grabSaveProduct(supplier);
-		Map<String, String> storeBrand=EbayConf.getStoreBrand("store-brand-sports");
+		Map<String, String> storeBrand=EbayInit.getStoreBrand("store-brand-sports");
 		Set<Entry<String, String>> kvs=storeBrand.entrySet();
 		ExecutorService exe=Executors.newFixedThreadPool(20);//相当于跑10遍
 		for (Entry<String, String> entry : kvs) {

@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.shangpin.ebay.shoping.NameValueListType;
-import com.shangpin.iog.ebay.conf.EbayConf;
+import com.shangpin.iog.ebay.conf.EbayInit;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.springframework.beans.factory.annotation.Autowired;

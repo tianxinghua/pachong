@@ -1,7 +1,7 @@
 package com.shangpin.iog.ebay;
 
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.ebay.conf.EbayConf;
+import com.shangpin.iog.ebay.conf.EbayInit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
@@ -25,7 +25,7 @@ public class FetchEbayPool {
         loadSpringContext();
         //FetchEbayProduct fetchProduct=new FetchEbayProduct();
        FetchEbayProduct fetchProduct = (FetchEbayProduct) factory.getBean("ebay");
-        Map<String,String> storeBrand= EbayConf.getStoreBrand("store-brand");
+        Map<String,String> storeBrand= EbayInit.getStoreBrand("store-brand");
         Set<String> keys=storeBrand.keySet();
         log.info("----拉取ebay数据开始----");
         System.out.println("----拉取ebay数据开始----");

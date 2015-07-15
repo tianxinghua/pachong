@@ -45,7 +45,7 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.ebay.conf.EbayConf;
+import com.shangpin.iog.ebay.conf.EbayInit;
 import com.shangpin.iog.ebay.convert.TradeItemConvert;
 
 /**
@@ -149,7 +149,7 @@ public class EbayTest {
 	@Test
 	public void testGetItemXml(){
 		String itemId="252005767578";
-		String url= EbayConf.getTradeCallUrl("GetItem");
+		String url= EbayInit.getTradeCallUrl("GetItem");
 		url+="&ItemID="+itemId;
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);

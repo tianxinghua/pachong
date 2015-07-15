@@ -25,7 +25,7 @@ import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.ebay.conf.EbayConf;
+import com.shangpin.iog.ebay.conf.EbayInit;
 
 /**
  * @description 
@@ -176,7 +176,7 @@ public class TradeItemConvert {
 			for (String string : urls) {
 				ProductPictureDTO pic = new ProductPictureDTO();
 				pic.setPicUrl(string);
-				pic.setSupplierId(EbayConf.EBAY);
+				pic.setSupplierId(EbayInit.EBAY);
 			}
 		}
 		return pics;
@@ -191,7 +191,7 @@ public class TradeItemConvert {
 		SpuDTO spu = new SpuDTO();
 		spu.setId(UUIDGenerator.getUUID());
 		spu.setSpuId(itemType.getItemID());
-		spu.setSupplierId(EbayConf.EBAY);
+		spu.setSupplierId(EbayInit.EBAY);
 		spu.setSpuName(itemType.getTitle());
 		setCategory(spu,itemType);
 		if(itemType.getItemSpecifics()!=null)
@@ -285,7 +285,7 @@ public class TradeItemConvert {
 	 */
 	private static void setSKUCommon(SkuDTO sku, ItemType itemType, String userId) {
 		sku.setProductName(itemType.getTitle());
-		sku.setSupplierId(EbayConf.EBAY);
+		sku.setSupplierId(EbayInit.EBAY);
 		sku.setMemo("storeName:"+userId);
 		sku.setSupplierPrice(""+itemType.getSellingStatus().getCurrentPrice().getValue());
 		sku.setSalePrice(""+itemType.getSellingStatus().getCurrentPrice().getValue());

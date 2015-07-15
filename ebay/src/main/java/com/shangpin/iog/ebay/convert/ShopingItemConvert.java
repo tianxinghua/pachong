@@ -26,7 +26,7 @@ import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.ebay.conf.EbayConf;
+import com.shangpin.iog.ebay.conf.EbayInit;
 
 /**
  * 根据item的id，调用shopping的GetMultipleItems返回来的结果组装sku,spu,pic
@@ -78,7 +78,7 @@ public class ShopingItemConvert {
 		setSpuCategory(sit, spu);
 		spu.setId(UUIDGenerator.getUUID());
 		spu.setSpuId(sit.getItemID());
-		spu.setSupplierId(EbayConf.EBAY);
+		spu.setSupplierId(EbayInit.EBAY);
 		spu.setSpuName(sit.getTitle());
 		NameValueListArrayType nv=sit.getItemSpecifics();
 		if(nv!=null)
@@ -358,7 +358,7 @@ public class ShopingItemConvert {
 		sku.setSpuId(sit.getItemID());
 		sku.setId(UUIDGenerator.getUUID());
 		sku.setCreateTime(createDate);
-		sku.setSupplierId(EbayConf.EBAY);
+		sku.setSupplierId(EbayInit.EBAY);
 		sku.setMemo("storeName:"+userId);
 		sku.setLastTime(sit.getEndTime().getTime());
 	}
