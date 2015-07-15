@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.shangpin.ebay.shoping.AmountType;
 import com.shangpin.ebay.shoping.DiscountPriceInfoType;
@@ -33,7 +35,7 @@ import com.shangpin.iog.ebay.conf.EbayConf;
  * <br/>2015年7月1日
  */
 public class ShopingItemConvert {
-
+	static Logger logger = LoggerFactory.getLogger(ShopingItemConvert.class);
 	/**
 	 * 转换sku，spu,pic
 	 * @param itemTypes
@@ -48,11 +50,16 @@ public class ShopingItemConvert {
 		Set<SkuDTO> rtnSku=new HashSet<>(itemTypes.length);
 		Set<SpuDTO> rtnSpu=new HashSet<>(itemTypes.length);
 		for (SimpleItemType sit : itemTypes) {
-			Object[] obj=convertSku(supplerKey,sit);
-			rtnSku.addAll((Set<SkuDTO>)obj[0]);
-			rtnPic.addAll((Set<ProductPictureDTO>)obj[1]);
-			SpuDTO spu = convertSpu(sit,supplerKey);
-			rtnSpu.add(spu);
+			try{
+				Object[] obj=convertSku(supplerKey,sit);
+				rtnSku.addAll((Set<SkuDTO>)obj[0]);
+				rtnPic.addAll((Set<ProductPictureDTO>)obj[1]);
+				SpuDTO spu = convertSpu(sit,supplerKey);
+				rtnSpu.add(spu);
+			}catch(Exception e){
+				logger.error("convert sku,spu,pic Error,xml:{},errMsg:{}",sit.toString(),e.getMessage());
+				continue;
+			}
 		}
 		map.put("sku",rtnSku);
 		map.put("spu",rtnSpu);

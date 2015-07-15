@@ -1,5 +1,6 @@
 package com.shangpin.igo.ebay.test;
 
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -32,6 +33,7 @@ import com.ebay.soap.eBLBaseComponents.PlaceOfferResponseType;
 import com.ebay.soap.eBLBaseComponents.VariationType;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
+import com.shangpin.ebay.finding.SearchItem;
 import com.shangpin.ebay.shoping.CurrencyCodeType;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseDocument;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
@@ -248,14 +250,25 @@ public class EbayTest {
 	public void testFindItemInStore() throws ApiException, SdkException, Exception{
 		SpuDTO spu=null;
 		String url=findCommonUrl("findItemsIneBayStores");
-		url+="storeName=%s&keywords%s";
-		String storeName="Animo%20Boxing";
-		String keywords = "Everlast";
-		url=String.format(url,storeName,keywords);
-		String xml=HttpUtils.get(url);
+		url+="storeName=%s&keywords=%s";
+		String storeName="Odd Mod and More Store";
+		String keywords = "Extreme Pak";
+		url=String.format(url,URLEncoder.encode(storeName,"UTF-8"),URLEncoder.encode(keywords,"UTF-8"));
+		String xml=HttpUtil45.get(url,null,null);
+		System.out.println(xml);
 		System.out.println(url);
 		FindItemsIneBayStoresResponseDocument doc=FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
 		FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
+		SearchItem[] rs= rt.getSearchResult().getItemArray();
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < rs.length; i++) {
+			sb.append(rs[i].getItemId()).append(",");
+			if(i%20==0){
+				System.out.println(sb.toString());
+				sb = new StringBuffer();
+			}
+		}
+		System.out.println(sb.toString());
 		System.out.println(rt.getItemSearchURL());
 		/*try{
 			StringBuilder picUrl =new StringBuilder();
