@@ -32,7 +32,7 @@ public class EbayConf {
     private static String shopingApi;
     private static String findApi;
     static {
-        ResourceBundle bdl = ResourceBundle.getBundle("conf-pro2");
+        ResourceBundle bdl = ResourceBundle.getBundle("conf-pro3");
         devKey = bdl.getString("DeveloperKey");
         appKey = bdl.getString("ApplicationKey");
         cerKey = bdl.getString("CertificateKey");

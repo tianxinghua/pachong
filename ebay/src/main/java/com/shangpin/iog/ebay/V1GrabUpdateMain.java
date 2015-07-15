@@ -109,11 +109,11 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 			try {
 				fetchSrv.savePictureForMongo(picurl);
 			} catch (ServiceException e) {
-				logger.error("保存sku图片失败", e);
+				logger.error("保存图片{}失败,error:{}", JsonUtil.getJsonString4JavaPOJO(picurl), e.getMessage());
 				failCnt++;
 			}
 		}
-		logger.info("保存sku成功，失败数：{}", failCnt);
+		logger.info("保存pic数：{}成功，失败数：{}", picUrls.size(),failCnt);
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 				failCnt++;
 			}
 		}
-		logger.info("保存sku数：{}成功，失败数：{}", spuDTOs.size(),failCnt);
+		logger.info("保存spu数：{}成功，失败数：{}", spuDTOs.size(),failCnt);
 	}
 
 	/**

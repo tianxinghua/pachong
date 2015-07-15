@@ -5,6 +5,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Test;
+
 /**
  * @description 
  * @author 陈小峰
@@ -72,6 +74,10 @@ public class ThreadTest {
 			System.out.println(name+"short....");
 		}
 		
+	}
+	@Test
+	public void testLen(){
+		System.out.println("Saucony Men's ProGrid Echelon 2 - White/Silver (20070-1)".length());
 	}
 
 }
