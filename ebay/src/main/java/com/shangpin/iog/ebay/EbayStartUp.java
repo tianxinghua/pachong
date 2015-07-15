@@ -18,7 +18,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.DateTimeUtil;
-import com.shangpin.iog.ebay.conf.EbayConf;
 
 /**
  * ebay抓取，更新启动类，用于选择是更新还是抓取
@@ -62,6 +61,7 @@ public class EbayStartUp {
 	}
 	
 	private static void updateStock(){
+		V1GrabUpdateMain grab=factory.getBean(V1GrabUpdateMain.class);
 		String supplier="";
 		String start=DateTimeUtil.LongFmt(new Date());
 		Calendar c=Calendar.getInstance();c.add(Calendar.MONTH, -3);

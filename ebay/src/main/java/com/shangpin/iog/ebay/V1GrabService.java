@@ -133,46 +133,11 @@ public class V1GrabService {
 		}
 		return rtnMap;
 	}
-	
-	/**
-	 * @param date
-	 * @return
-	 */
-	private Calendar getCalendar(Date date) {
-		Calendar ca=Calendar.getInstance();
-		ca.setTime(date);
-		return ca;
-	}
-	/**
-	 * 根据itemIds获取sku，spu，pic信息
-	 * @param supplierKey 供应商id，（商铺id，用户id）
-	 * @param skuSpuAndPic 
-	 * @param itemIds item id
-	 * @return
-	 * @throws XmlException 
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private Map<String, ? extends Collection> findDetailKPP(String supplierKey,
-			Map<String, ? extends Collection> skuSpuAndPic, List<String> itemIds) throws XmlException {
-		//2.得到item
-		GetMultipleItemsResponseType multResp= GrabEbayApiService.shoppingGetMultipleItems(itemIds);
-		//3.转换sku,spu
-		SimpleItemType[] itemTypes=multResp.getItemArray();
-		Map<String, Collection> kpp=ShopingItemConvert.convert2kpp(itemTypes,supplierKey);
-		if(skuSpuAndPic==null){
-			skuSpuAndPic=kpp;
-		}else{
-			skuSpuAndPic.get("sku").addAll(kpp.get("sku"));
-			skuSpuAndPic.get("spu").addAll(kpp.get("spu"));
-			skuSpuAndPic.get("pic").addAll(kpp.get("pic"));
-		}
-		return skuSpuAndPic;
-	}
 	/**
 	 * 通过find接口查询供应商店铺销售的item
 	 * @param storeName 店铺名字
 	 * @param brandName 品牌名字
-	 * @return  封装好的sku,spu,pic，各键代表对应的数据集合
+	 * @return  封装好的sku,spu,pic，各键代表对应的数据集合;<br/>如果没有数据或者查找失败返回null
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	public Map<String, ? extends Collection> findStoreBrand(String storeName,
