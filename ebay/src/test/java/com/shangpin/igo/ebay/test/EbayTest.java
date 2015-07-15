@@ -409,7 +409,7 @@ public class EbayTest {
 	}
 	@Test
 	public void GetMultipleItems(){
-		String itemId="151018288222";
+		String itemId="161556540700";
 		String url=shopingCommon("GetMultipleItems");
 		url+="ItemID="+itemId+"&IncludeSelector=Details,Variations,ItemSpecifics";
 //				+ "&ItemFilter[0].name=Condition&ItemFilter[0].value=New";

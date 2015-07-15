@@ -78,10 +78,11 @@ public class ShopingItemConvert {
 		setSpuCategory(sit, spu);
 		spu.setId(UUIDGenerator.getUUID());
 		spu.setSpuId(sit.getItemID());
-		NameValueListArrayType nv=sit.getItemSpecifics();
-		setSpuAttr(spu,nv.getNameValueListArray());
 		spu.setSupplierId(EbayConf.EBAY+supplierKey);
 		spu.setSpuName(sit.getTitle());
+		NameValueListArrayType nv=sit.getItemSpecifics();
+		if(nv!=null)
+			setSpuAttr(spu,nv.getNameValueListArray());
 		return spu;
 	}
 
@@ -151,9 +152,12 @@ public class ShopingItemConvert {
 				sku.setSupplierPrice(sku.getSalePrice());
 				String skuId=getSkuId(sit,vt);
 				sku.setSkuId(skuId);
-				setSkuAtt(sku, vt.getVariationSpecifics().getNameValueListArray());
+				if(vt.getVariationSpecifics()!=null){
+					setSkuAtt(sku, vt.getVariationSpecifics().getNameValueListArray());
+				}
 				//TODO 补救一些空的属性
-				setItemAtt(sku,sit.getItemSpecifics().getNameValueListArray());
+				if(sit.getItemSpecifics()!=null)
+					setItemAtt(sku,sit.getItemSpecifics().getNameValueListArray());					
 				setMarketPrice(vt.getDiscountPriceInfo(),sku);
 				//sit.getVariations().getPicturesArray();//for pic
 				getVariationPic(sit.getVariations().getPicturesArray(),rtnPic,skuId,sku.getSupplierId());
@@ -162,7 +166,9 @@ public class ShopingItemConvert {
 		}else{
 			SkuDTO sku = new SkuDTO();
 			setSkuCommon(userId, createDate, sit, sku);
-			setSkuAtt(sku,sit.getItemSpecifics().getNameValueListArray());
+			if(sit.getItemSpecifics()!=null){
+				setSkuAtt(sku,sit.getItemSpecifics().getNameValueListArray());				
+			}
 			sku.setStock(""+(sit.getQuantity()-sit.getQuantitySold()));
 			sku.setSalePrice(""+sit.getCurrentPrice().getDoubleValue());
 			sku.setSaleCurrency(sit.getCurrentPrice().getCurrencyID().toString());
@@ -190,8 +196,11 @@ public class ShopingItemConvert {
 		if(StringUtils.isBlank(sku.getProductSize())){
 			sku.setProductSize(getNVAttrValue("size",nvs));
 		}
-		if(StringUtils.isBlank(sku.getProductSize())){
+		if(StringUtils.isBlank(sku.getBarcode())){
 			sku.setBarcode(getNVAttrValue("ean",nvs));
+			if(sku.getBarcode()==null){
+				sku.setBarcode(getNVAttrValue("upc", nvs));
+			}
 		}
 		if(StringUtils.isBlank(sku.getProductCode())){
 			sku.setProductCode(getNVAttrValue("mpn", nvs));
@@ -317,12 +326,12 @@ public class ShopingItemConvert {
 				continue;
 			}
 			if(name.equals("mpn")||(name.contains("manufacturer") && name
-					.contains("number"))||
-					name.equalsIgnoreCase("upc")||name.equalsIgnoreCase("isbn")){
+					.contains("number"))||name.equalsIgnoreCase("isbn")){
 				sku.setProductCode(value);
 				continue;
 			}
-			if(name.equalsIgnoreCase("ean")){
+			if(name.equalsIgnoreCase("ean")||
+					name.equalsIgnoreCase("upc")){
 				sku.setBarcode(value);
 				continue;
 			}
