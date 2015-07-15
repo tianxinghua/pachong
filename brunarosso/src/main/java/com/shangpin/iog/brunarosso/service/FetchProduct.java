@@ -25,7 +25,6 @@ public class FetchProduct {
     ProductFetchService productFetchService;
     public void fetchProductAndSave(String url) {
         String supplierId = "2015070301312";
-
         String result = HttpUtils.get(url, false, 360000);
         try {
             Products products = ObjectXMLUtil.xml2Obj(Products.class, result);
@@ -35,11 +34,27 @@ public class FetchProduct {
                 SkuDTO sku = new SkuDTO();
                 spu.setId(UUIDGenerator.getUUID());
                 spu.setBrandName(product.getBRAND());
+                spu.setMaterial(product.getCOMPOSIZIONE_DETTAGLIATA());
                 spu.setCategoryGender(product.getSETTORE());
                 spu.setSpuId(product.getCODICE_MODELLO());
                 spu.setSeasonId(product.getSIGLA_STAGIONE());
                 spu.setSeasonName(product.getTIPO_STAGIONE());
-
+                spu.setCategoryName(product.getGRUPPO_SUPER());
+                spu.setSubCategoryId(product.getGRUPPO());
+                sku.setId(UUIDGenerator.getUUID());
+                sku.setProductSize(product.getSIZE_AND_FIT());
+                sku.setColor(product.getCOLORE());
+                sku.setSupplierPrice(product.getPREZZO_VENDITA_SENZA_IVA());
+                sku.setSkuId(product.getID_ARTICOLO());
+                sku.setSpuId(product.getCODICE_MODELLO());
+                sku.setProductCode(product.getCODICE_MODELLO()+" "+product.getCODICE_VARIANTE());
+               // sku.setSupplierId("2015070701319");
+                try {
+                    productFetchService.saveSKU(sku);
+                    productFetchService.saveSPU(spu);
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (JAXBException e) {
             e.printStackTrace();

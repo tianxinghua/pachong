@@ -1,22 +1,12 @@
 package com.shangpin.igo.ebay.test;
 
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-
-
-import com.ebay.sdk.*;
-import com.ebay.soap.eBLBaseComponents.*;
-import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
-import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
-import com.shangpin.ebay.finding.SearchItem;
-import com.shangpin.iog.dto.SkuDTO;
-import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.ebay.conf.EbayConf;
 
 import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
@@ -27,6 +17,8 @@ import com.ebay.sdk.ApiContext;
 import com.ebay.sdk.ApiCredential;
 import com.ebay.sdk.ApiException;
 import com.ebay.sdk.SdkException;
+import com.ebay.soap.eBLBaseComponents.AmountType;
+import com.ebay.soap.eBLBaseComponents.BidActionCodeType;
 import com.ebay.soap.eBLBaseComponents.DetailLevelCodeType;
 import com.ebay.soap.eBLBaseComponents.GetItemRequestType;
 import com.ebay.soap.eBLBaseComponents.GetItemResponseType;
@@ -34,7 +26,10 @@ import com.ebay.soap.eBLBaseComponents.GetSellerListRequestType;
 import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
 import com.ebay.soap.eBLBaseComponents.GranularityLevelCodeType;
 import com.ebay.soap.eBLBaseComponents.ItemType;
+import com.ebay.soap.eBLBaseComponents.OfferType;
 import com.ebay.soap.eBLBaseComponents.PaginationType;
+import com.ebay.soap.eBLBaseComponents.PlaceOfferRequestType;
+import com.ebay.soap.eBLBaseComponents.PlaceOfferResponseType;
 import com.ebay.soap.eBLBaseComponents.VariationType;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
@@ -45,13 +40,13 @@ import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
 import com.shangpin.ebay.shoping.GetSingleItemResponseType;
 import com.shangpin.ebay.shoping.NameValueListType;
+import com.shangpin.ebay.shoping.SimpleItemType;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.ebay.conf.EbayConf;
 import com.shangpin.iog.ebay.convert.TradeItemConvert;
-
-import static com.ebay.soap.eBLBaseComponents.ReturnsAcceptedOptionsCodeType.*;
-import static com.shangpin.ebay.shoping.CurrencyCodeType.*;
 
 /**
  * @description 
@@ -90,7 +85,7 @@ public class EbayTest {
 	@Test
 	public void testGetItem() throws ApiException, SdkException, Exception{
 		SkuDTO sku=null;
-		String itemId="252005767578";
+		String itemId="181259794817";
 		ApiContext api = getProApiContext();
 		ApiCall call = new ApiCall(api);
 		GetItemRequestType req=new GetItemRequestType();
@@ -255,16 +250,27 @@ public class EbayTest {
 	public void testFindItemInStore() throws ApiException, SdkException, Exception{
 		SpuDTO spu=null;
 		String url=findCommonUrl("findItemsIneBayStores");
-		url+="storeName=%s&keywords%s";
-		String storeName="Galindas-Boutique";
-		String keywords = "PoloRalph";
-		url=String.format(url,storeName,keywords);
-		System.out.println(url);
-		String xml=HttpUtils.get(url);
+		url+="storeName=%s&keywords=%s";
+		String storeName="Odd Mod and More Store";
+		String keywords = "Extreme Pak";
+		url=String.format(url,URLEncoder.encode(storeName,"UTF-8"),URLEncoder.encode(keywords,"UTF-8"));
+		String xml=HttpUtil45.get(url,null,null);
 		System.out.println(xml);
+		System.out.println(url);
+		FindItemsIneBayStoresResponseDocument doc=FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
+		FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
+		SearchItem[] rs= rt.getSearchResult().getItemArray();
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < rs.length; i++) {
+			sb.append(rs[i].getItemId()).append(",");
+			if(i%20==0){
+				System.out.println(sb.toString());
+				sb = new StringBuffer();
+			}
+		}
+		System.out.println(sb.toString());
+		System.out.println(rt.getItemSearchURL());
 		/*try{
-			FindItemsIneBayStoresResponseDocument doc=FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
-			FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
 			StringBuilder picUrl =new StringBuilder();
 			if(rt.getSearchResult()!=null) {
 				SearchItem[] type = rt.getSearchResult().getItemArray();
@@ -389,7 +395,7 @@ public class EbayTest {
 	@Test
 	public void getSingleItem(){
 		String url=shopingCommon("GetSingleItem");
-		url+="ItemID=400896098536&IncludeSelector=Variations&VariationSKU=13031929";
+		url+="ItemID=231270973070&IncludeSelector=Variations";
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
 		try {
@@ -403,20 +409,44 @@ public class EbayTest {
 	}
 	@Test
 	public void GetMultipleItems(){
+		String itemId="161556540700";
 		String url=shopingCommon("GetMultipleItems");
-		url+="ItemID=131503285055,221288382861&IncludeSelector=Details";
-		String xml=HttpUtils.get(url);
+		url+="ItemID="+itemId+"&IncludeSelector=Details,Variations,ItemSpecifics";
+//				+ "&ItemFilter[0].name=Condition&ItemFilter[0].value=New";
+		String xml=HttpUtil45.get(url,null,null);
 		System.out.println(xml);
 		try {
 			GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
 			GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();
-			
+			//获取storeName
+			for(SimpleItemType x:rt.getItemArray()){
+				System.out.println(x.getStorefront().getStoreName());				
+			}
+			//System.out.println(rt.getItemArray(1).getStorefront().getStoreName());
 		} catch (XmlException e) {
 			e.printStackTrace();
 		}
 		
 	}
-	
+	@Test
+	public void getStoreName(){
+		String itemId="360797516456";
+		String url=shopingCommon("GetMultipleItems");
+		url+="ItemID="+itemId+"&IncludeSelector=Details";//,Variations,ItemSpecifics";
+		String xml=HttpUtil45.get(url,null,null);
+		System.out.println(xml);
+		try {
+			GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
+			GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();
+			//获取storeName
+			for(SimpleItemType x:rt.getItemArray()){
+				System.out.println(x.getItemID()+":"+x.getStorefront().getStoreName());				
+			}
+		} catch (XmlException e) {
+			
+		}
+		
+	}
 	@Test
 	public void findProducts(){
 		String str="this is a size. test";
@@ -425,7 +455,7 @@ public class EbayTest {
 	
 	private String shopingCommon(String callName){
 		String url="http://open.api.ebay.com/shopping?callname="+callName+"&responseencoding=XMl&"
-				+ "appid=vanskydba-8e2b-46af-adc1-58cae63bf2e&siteid=0&version=515&";
+				+ "appid=vanskydba-8e2b-46af-adc1-58cae63bf2e&siteid=0&version=905&";
 		return url;
 	}
 

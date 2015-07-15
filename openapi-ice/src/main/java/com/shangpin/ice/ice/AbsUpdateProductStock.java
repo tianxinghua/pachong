@@ -107,7 +107,7 @@ public abstract class AbsUpdateProductStock {
 				exe.execute(new UpdateThread(subSkuNos.get(i),supplier,localAndIceSku,totoalFailCnt));
 			}
 			exe.shutdown();
-			while (!exe.awaitTermination(10, TimeUnit.SECONDS)) {
+			while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
 				
 			}
 			int fct=0;

@@ -18,8 +18,8 @@ import com.ebay.sdk.ApiCredential;
  * <br/>2015年6月18日
  */
 public class EbayConf {
-	public static final String EBAY="ebay#";
-	private static Map<String,String> brandStore = null; 
+	public static final String EBAY="ebaySports#";
+	//private static Map<String,String> brandStore = null; 
     private static String tradeApi = null;
 	private static String devKey;
     private static String appKey;
@@ -32,7 +32,6 @@ public class EbayConf {
     private static String shopingApi;
     private static String findApi;
     static {
-       // Locale locale = new Locale("zh","CN");
         ResourceBundle bdl = ResourceBundle.getBundle("conf-pro");
         devKey = bdl.getString("DeveloperKey");
         appKey = bdl.getString("ApplicationKey");
@@ -93,17 +92,16 @@ public class EbayConf {
      * 用于find指定商铺的品牌的item
      * @return key：brand，value：`后分隔的storeName
      */
-    public static Map<String,String> getStoreBrand(){
-    	if(brandStore==null){
-    		brandStore=new HashMap<>();    		
-    		ResourceBundle bdl=ResourceBundle.getBundle("store-brand");
-    		Enumeration<String> brands=bdl.getKeys();
-    		while(brands.hasMoreElements()){
-    			String brand=brands.nextElement();
-    			String stores=bdl.getString(brand);
-    			brandStore.put(brand, stores);
-    		}
-    	}
+    public static Map<String,String> getStoreBrand(String fileName){
+    	Map<String,String> brandStore=new HashMap<>();    		
+		ResourceBundle bdl=ResourceBundle.getBundle(fileName);
+		Enumeration<String> brands=bdl.getKeys();
+		while(brands.hasMoreElements()){
+			String brand=brands.nextElement();
+			String stores=bdl.getString(brand);
+			brandStore.put(brand, stores);
+		}
     	return brandStore;
     }
+    
 }
