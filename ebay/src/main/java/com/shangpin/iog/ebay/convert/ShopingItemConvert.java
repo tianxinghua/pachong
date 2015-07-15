@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.shangpin.ebay.shoping.AmountType;
 import com.shangpin.ebay.shoping.DiscountPriceInfoType;
 import com.shangpin.ebay.shoping.NameValueListArrayType;
@@ -82,7 +84,7 @@ public class ShopingItemConvert {
 	 * @param spu
 	 */
 	private static void setSpuCategory(SimpleItemType sit, SpuDTO spu) {
-		String title=sit.getTitle();
+		String title=sit.getTitle().toLowerCase();
 		spu.setCategoryId(sit.getPrimaryCategoryID());
 		spu.setCategoryName(sit.getPrimaryCategoryName());
 		spu.setSubCategoryId(sit.getSecondaryCategoryID());
@@ -110,7 +112,7 @@ public class ShopingItemConvert {
 			if(name.contains("material")){
 				spu.setMaterial(value);continue;
 			}
-			if(name.contains("manufacturer")){
+			if(name.contains("manufacturer") && !name.contains("number")){
 				spu.setProductOrigin(value);continue;
 			}
 			if(name.contains("season")){
@@ -140,9 +142,11 @@ public class ShopingItemConvert {
 				sku.setSaleCurrency(vt.getStartPrice().getCurrencyID().toString());
 				sku.setSalePrice(""+vt.getStartPrice().getDoubleValue());
 				sku.setSupplierPrice(sku.getSalePrice());
-				setSkuAtt(sku,sit.getItemSpecifics().getNameValueListArray());
 				String skuId=getSkuId(sit,vt);
 				sku.setSkuId(skuId);
+				setSkuAtt(sku, vt.getVariationSpecifics().getNameValueListArray());
+				//TODO 补救一些空的属性
+				setItemAtt(sku,sit.getItemSpecifics().getNameValueListArray());
 				setMarketPrice(vt.getDiscountPriceInfo(),sku);
 				//sit.getVariations().getPicturesArray();//for pic
 				getVariationPic(sit.getVariations().getPicturesArray(),rtnPic,skuId,sku.getSupplierId());
@@ -151,6 +155,7 @@ public class ShopingItemConvert {
 		}else{
 			SkuDTO sku = new SkuDTO();
 			setSkuCommon(userId, createDate, sit, sku);
+			setSkuAtt(sku,sit.getItemSpecifics().getNameValueListArray());
 			sku.setStock(""+(sit.getQuantity()-sit.getQuantitySold()));
 			sku.setSalePrice(""+sit.getCurrentPrice().getDoubleValue());
 			sku.setSaleCurrency(sit.getCurrentPrice().getCurrencyID().toString());
@@ -162,6 +167,49 @@ public class ShopingItemConvert {
 			rtnSku.add(sku);
 		}
 		return picAndSku;
+	}
+
+	/**
+	 * 主要是color，size的属性补充
+	 * @see #setSkuAtt(SkuDTO, NameValueListType[])
+	 * @param sku
+	 * @param nvs
+	 */
+	private static void setItemAtt(SkuDTO sku,
+			NameValueListType[] nvs) {
+		if(StringUtils.isBlank(sku.getColor())){
+			sku.setColor(getNVAttrValue("color",nvs));
+		}
+		if(StringUtils.isBlank(sku.getProductSize())){
+			sku.setProductSize(getNVAttrValue("size",nvs));
+		}
+		if(StringUtils.isBlank(sku.getProductSize())){
+			sku.setBarcode(getNVAttrValue("ean",nvs));
+		}
+		if(StringUtils.isBlank(sku.getProductCode())){
+			sku.setProductCode(getNVAttrValue("mpn", nvs));
+		}
+	}
+
+	/**
+	 * 获取包含指定属性名的 值<br/>
+	 * "Manufacturer Part Number" 也是mpn
+	 * @param name 小写的属性名字符串
+	 * @param nvs 属性键值对
+	 * @return
+	 */
+	private static String getNVAttrValue(String name, NameValueListType[] nvs) {
+		String nName=null;
+		for (NameValueListType nv : nvs) {
+			nName = nv.getName().toLowerCase();
+			if (name.equals("mpn")
+					&& (nName.contains(name) || (nName.contains("manufacturer") && nName
+							.contains("number"))))
+				return nv.getValueArray(0);			
+			if(nName.contains(name))
+				return nv.getValueArray(0);
+		}
+		return null;
 	}
 
 	/**
@@ -181,14 +229,31 @@ public class ShopingItemConvert {
 	/**
 	 * 设置skuId，无变种的就是sit的itemId<br/>
 	 * 有变种的则是:itemId#变种sku;<br/>
+	 * 若是没有变种sku,则是变种属性键值对如下：<br/>
+	 * itemId#color:blue@size:m@width:medium<br/>
 	 * 注意：如果变种sku没有，那么就是：itemId#（会导致重复，覆盖）<br/>
 	 * @param sit shopping接口拉取的的item
 	 * @param vt item变种数据  nullable
 	 * @return 变换的skuId
 	 */
 	public static String getSkuId(SimpleItemType sit, VariationType vt) {
-		if(vt!=null)
-			return sit.getItemID()+"#"+(vt.getSKU()==null?"":vt.getSKU());
+		if(vt!=null){
+			if(vt.getSKU()==null){
+				StringBuffer skuId=new StringBuffer();
+				NameValueListType[] skuNvs=vt.getVariationSpecifics().getNameValueListArray();
+				NameValueListType[] itemNvs=sit.getVariations().getVariationSpecificsSet().getNameValueListArray();
+				for (NameValueListType itemNv : itemNvs) {//item所有的可选项
+					for (NameValueListType skuNv : skuNvs) {
+						if(itemNv.getName().equals(skuNv.getName())){//变种的值
+							skuId.append(itemNv.getName()).append(":").append(skuNv.getValueArray(0)).append("@");//键值
+							break;
+						}
+					}
+				}
+				return sit.getItemID()+"#"+skuId.toString();
+			}
+			return sit.getItemID()+"#"+vt.getSKU();
+		}
 		else 
 			return sit.getItemID();
 	}
@@ -238,22 +303,23 @@ public class ShopingItemConvert {
 	private static void setSkuAtt(SkuDTO sku,
 			NameValueListType[] nameValueListArray) {
 		for (NameValueListType nv : nameValueListArray) {
-			String name=nv.getName().toUpperCase();
+			String name=nv.getName().toLowerCase();
 			String value = nv.getValueArray(0);
-			if(name.contains("COLOR") && sku.getColor()!=null){
+			if(name.contains("color") && sku.getColor()==null){
 				sku.setColor(value);
 				continue;
 			}
-			if(name.equals("MPN")||name.equals("Manufacturer Part Number")||
-					name.equalsIgnoreCase("UPC")||name.equalsIgnoreCase("ISBN")){
+			if(name.equals("mpn")||(name.contains("manufacturer") && name
+					.contains("number"))||
+					name.equalsIgnoreCase("upc")||name.equalsIgnoreCase("isbn")){
 				sku.setProductCode(value);
 				continue;
 			}
-			if(name.equalsIgnoreCase("EAN")){
+			if(name.equalsIgnoreCase("ean")){
 				sku.setBarcode(value);
 				continue;
 			}
-			if(name.contains("SIZE")){
+			if(name.contains("size") && sku.getProductSize()==null){
 				sku.setProductSize(value);
 				continue;
 			}

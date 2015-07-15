@@ -120,6 +120,7 @@ public class GrabEbayApiService {
 	}
 	/**
 	 * Variations,ItemSpecifics,Quantity<br/>
+	 * itemId，最多20个<br/>
 	 * <b/>请根据ListingStatus来判断产品是否下架,状态Active才是销售中的</b>
 	 * @param itemIds ebay的itemId集合
 	 * @return
@@ -130,6 +131,7 @@ public class GrabEbayApiService {
 	}
 	/**
 	 * 获取库存信息，不包括itemSpecifics<br/>
+	 * itemId，最多20个<br/>
 	 * <b>注意：请根据ListingStatus来判断产品是否下架,状态Active才是销售中的</b>
 	 * @see #shoppingGetMultipleItems(List) 获取详细信息
 	 * @param itemIds
@@ -140,7 +142,7 @@ public class GrabEbayApiService {
 		return shopingGetMultipleItem(itemIds,"Details,Variations");
 	}
 	/**
-	 * @param itemIds
+	 * @param itemIds itemId，最多20个
 	 * @return
 	 * @throws XmlException 
 	 */
@@ -150,11 +152,10 @@ public class GrabEbayApiService {
 		StringBuffer sb = new StringBuffer(url);
 		sb.append("&ItemID=");
 		for (Iterator<String> iterator = itemIds.iterator(); iterator.hasNext();) {
-			String itemId = iterator.next();
-			sb.append(itemId).append(",");
+			sb.append(iterator.next()).append(",");
 		}
 		sb.append("&IncludeSelector="+includeSelector);
-		
+		//System.out.println(sb.toString());
 		String xml=HttpUtil45.get(sb.toString(),null,null);
 		log.debug("url:{},结果：{}",sb.toString(),xml);
 		//try {
@@ -206,19 +207,18 @@ public class GrabEbayApiService {
 			String storeName, String keywords, int page, int pageSize) throws XmlException {
 		String url = EbayConf.getFindCallUrl("findItemsIneBayStores");
 		url+="&storeName=%s&paginationInput.entriesPerPage=%d&paginationInput.pageNumber=%d&keywords=%s";
+		url+="&itemFilter[0].name=HideDuplicateItems&itemFilter[0].value=true";//隐藏相同的,很重要
 		/*url+="&itemFilter[0].name=Condition&itemFilter[0].value=New";
 		url+="&itemFilter[0].name=ListedIn&itemFilter[0].value=EBAY-US";//美国站点
 		url+="&itemFilter[0].name=LocatedIn&itemFilter[0].value=US";//物品所在地
-		url+="&itemFilter[0].name=HideDuplicateItems&itemFilter[0].value=true";//隐藏相同的
 		url+="&itemFilter[0].name=ReturnsAcceptedOnly&itemFilter[0].value=true";//接受退货的
 		url+="&itemFilter[0].name=ListingType&itemFilter[0].value=FixedPrice";//定价的buyItnow
 		 */
 		try {
-			url= String.format(url, URLEncoder.encode(storeName,"UTF-8"), page,pageSize,URLEncoder.encode(keywords,"UTF-8"));
+			url= String.format(url, URLEncoder.encode(storeName,"UTF-8"), pageSize,page,URLEncoder.encode(keywords,"UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		System.out.println(url);
 		String xml=HttpUtil45.get(url, null, null);
 		log.debug("查询商铺：{}，关键词：{},结果：{}",storeName,keywords,xml);
 		FindItemsIneBayStoresResponseDocument doc = FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
