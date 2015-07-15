@@ -291,9 +291,9 @@ public class TradeItemConvert {
 		sku.setSalePrice(""+itemType.getSellingStatus().getCurrentPrice().getValue());
 		sku.setSaleCurrency(itemType.getSellingStatus().getCurrentPrice().getCurrencyID().value());
 		sku.setStock(""+(itemType.getQuantity()-itemType.getSellingStatus().getQuantitySold()));
-		sku.setCreateTime(new Date());
+		sku.setLastTime(new Date());
 		if(itemType.getListingDetails()!=null)
-			sku.setLastTime(itemType.getListingDetails().getEndTime().getTime());
+			sku.setCreateTime(itemType.getListingDetails().getEndTime().getTime());
 		//TODO 
 		sku.setSpuId(itemType.getItemID());
 	}

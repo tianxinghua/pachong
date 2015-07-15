@@ -58,7 +58,8 @@ public class EbayStartUp {
 		//grabSrv.grabSaveProduct(supplier);
 		Map<String, String> storeBrand=EbayInit.getStoreBrand("store-brand-sports");
 		Set<Entry<String, String>> kvs=storeBrand.entrySet();
-		ExecutorService exe=Executors.newFixedThreadPool(20);//相当于跑10遍
+		//ebay是说不要超过20个并发跑
+		ExecutorService exe=Executors.newFixedThreadPool(18);//相当于跑10遍
 		for (Entry<String, String> entry : kvs) {
 			String st=entry.getValue();//storeName
 			String[] storeNames=st.split("`");

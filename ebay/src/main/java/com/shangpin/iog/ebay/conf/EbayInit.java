@@ -107,7 +107,6 @@ public class EbayInit {
 		if(idx>=confs.size())
 			idx=0;
 		idx++;
-		System.out.println(idx-1);
 		return confs.get(idx-1); 
 	}
 	/**

@@ -357,9 +357,9 @@ public class ShopingItemConvert {
 		sku.setProductName(sit.getTitle());
 		sku.setSpuId(sit.getItemID());
 		sku.setId(UUIDGenerator.getUUID());
-		sku.setCreateTime(createDate);
 		sku.setSupplierId(EbayInit.EBAY);
 		sku.setMemo("storeName:"+userId);
-		sku.setLastTime(sit.getEndTime().getTime());
+		sku.setCreateTime(sit.getEndTime().getTime());
+		sku.setLastTime(createDate);
 	}
 }
