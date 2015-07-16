@@ -15,6 +15,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
@@ -186,13 +187,10 @@ public class V1GrabService {
 	public Map<String, ? extends Collection> findStoreBrand(String storeName,
 			String brand){
 		int page=1;
-		Map<String, Collection> skuSpuAndPic=new HashMap<>();
-		skuSpuAndPic.put("sku", new HashSet<SkuDTO>());
-		skuSpuAndPic.put("spu", new HashSet<SpuDTO>());
-		skuSpuAndPic.put("pic", new HashSet<ProductPictureDTO>());
+		Map<String, Collection> skuSpuAndPic = initResultMap();
 		boolean hasMore=false;
 		FindItemsIneBayStoresResponse resp =null;
-		ExecutorService exe = null;
+		ExecutorService exe = null;List<Future<Map<String, Collection>>> fu = null;
 		do{//分页循环取
 			try {
 				resp = GrabEbayApiService.findItemsIneBayStores(storeName,brand,page,pageSize);
@@ -242,10 +240,12 @@ public class V1GrabService {
 			}
 			try{
 				if(totalPage>4){//考虑通过线程去处理了
-					if(exe!=null)
+					if(exe==null){
 						exe = Executors.newFixedThreadPool(totalPage);//每页一个线程去跑
+						fu=new ArrayList<>();
+					}
 					Future<Map<String, Collection>> rs=exe.submit(new GetDetailThread(storeName,itemIds));
-					combine(rs.get(),skuSpuAndPic);
+					fu.add(rs);
 				}else{
 					combine(getMoreDetail(storeName,itemIds),skuSpuAndPic);					
 				}
@@ -255,7 +255,31 @@ public class V1GrabService {
 				logger.error("查询店铺、品牌，getMultipleItem异常，storeName:"+storeName+",brand:"+brand,e);
 			}
 		}while(hasMore);
-		
+		if(exe!=null){
+			exe.shutdown();
+			try{
+				while(!exe.awaitTermination(1, TimeUnit.MINUTES)){//1分钟查询一次有无完成
+				}
+				//线程完毕之后开始得到结果合并
+				for (Future<Map<String, Collection>> future : fu) {
+					combine(future.get(),skuSpuAndPic);
+				}				
+			}catch(Exception e){
+				logger.warn("获取itemIds的明细信息异常",e);
+			}
+		}
+		return skuSpuAndPic;
+	}
+
+	/**
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private static Map<String, Collection> initResultMap() {
+		Map<String, Collection> skuSpuAndPic=new HashMap<>();
+		skuSpuAndPic.put("sku", new HashSet<SkuDTO>());
+		skuSpuAndPic.put("spu", new HashSet<SpuDTO>());
+		skuSpuAndPic.put("pic", new HashSet<ProductPictureDTO>());
 		return skuSpuAndPic;
 	}
 	@SuppressWarnings("rawtypes")
@@ -275,8 +299,8 @@ public class V1GrabService {
 
 		@Override
 		public Map<String, Collection> call() throws Exception {
-			getMoreDetail(storeName,itemIds);
-			return null;
+			logger.info("获取itemIds明细线程启动,itemId size:"+itemIds.size());
+			return (Map<String, Collection>) getMoreDetail(storeName,itemIds);
 		}
 		
 	}
@@ -291,18 +315,18 @@ public class V1GrabService {
 	private static Map<String, ? extends Collection> getMoreDetail(String supplierKey,List<String> itemIds)
 			throws XmlException {
 		int idLen=itemIds.size();
-		Map<String, ? extends Collection> skuSpuAndPic=new HashMap<>();
+		Map<String, ? extends Collection> kpp=initResultMap();
 		if(idLen>20){
 			int p1=0;int p2=20;
 			do{
 				p2=p1+20;if(p2>idLen) p2=idLen;
-				combine(findDetailKPP(supplierKey,itemIds.subList(p1, p2)),skuSpuAndPic);
+				combine(findDetailKPP(supplierKey,itemIds.subList(p1, p2)),kpp);
 				p1=p2;
 			}while(p1<idLen);
 		}else{
-			combine(findDetailKPP(supplierKey,itemIds),skuSpuAndPic);					
+			combine(findDetailKPP(supplierKey,itemIds),kpp);					
 		}
-		return skuSpuAndPic;
+		return kpp;
 	}
 	/**
 	 * @param date
@@ -359,13 +383,6 @@ public class V1GrabService {
 		//3.转换sku,spu
 		SimpleItemType[] itemTypes=multResp.getItemArray();
 		Map<String, Collection> kpp=ShopingItemConvert.convert2kpp(itemTypes,supplierKey);
-		/*if(skuSpuAndPic==null){
-			skuSpuAndPic=kpp;
-		}else{
-			skuSpuAndPic.get("sku").addAll(kpp.get("sku"));
-			skuSpuAndPic.get("spu").addAll(kpp.get("spu"));
-			skuSpuAndPic.get("pic").addAll(kpp.get("pic"));
-		}*/
 		return kpp;
 	}
 	/*public static void main(String[] args) {
