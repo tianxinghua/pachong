@@ -68,7 +68,6 @@ public class EbayTest {
 		this.spuDTO = spuDTO;
 	}
 
-
 	public Set getSkuDTO() {
 		return skuDTO;
 	}
@@ -76,8 +75,6 @@ public class EbayTest {
 	public void setSkuDTO(Set skuDTO) {
 		this.skuDTO = skuDTO;
 	}
-
-
 
 	@Test
 	public void testDF(){
@@ -100,8 +97,6 @@ public class EbayTest {
 		/*req.setOutputSelector(new String[]{
 			"ListingDetails","PrimaryCategory","SellingStatus",
 			"PictureDetails","ItemSpecifics","Variations","VariationSpecificsSet",
-			
-				
 		});*/
 		req.setDetailLevel(new DetailLevelCodeType[]{DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES});
 		GetItemResponseType resp=(GetItemResponseType)call.execute(req);

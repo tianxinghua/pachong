@@ -1,7 +1,7 @@
 package com.shangpin.iog.ebay;
 
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.ebay.conf.EbayConf;
+import com.shangpin.iog.ebay.conf.EbayInit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
