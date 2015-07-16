@@ -1,4 +1,4 @@
-package com.shangpin.iog.spinnaker.stock.dto;
+package com.shangpin.iog.vela.dto;
 
 
 import com.shangpin.iog.dao.serialize.StringSerializer;
