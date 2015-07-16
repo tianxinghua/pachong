@@ -12,7 +12,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import com.shangpin.iog.ebay.conf.EbayConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -20,6 +19,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.ebay.conf.EbayInit;
 
 /**
  * ebay抓取，更新启动类，用于选择是更新还是抓取
@@ -56,9 +56,10 @@ public class EbayStartUp {
 	
 	private static void grabProduct(){
 		//grabSrv.grabSaveProduct(supplier);
-		Map<String, String> storeBrand= EbayConf.getStoreBrand("store-brand-sports");
+		Map<String, String> storeBrand=EbayInit.getStoreBrand("store-brand-sports");
 		Set<Entry<String, String>> kvs=storeBrand.entrySet();
-		ExecutorService exe=Executors.newFixedThreadPool(10);//相当于跑10遍
+		//ebay是说不要超过20个并发跑
+		ExecutorService exe=Executors.newFixedThreadPool(18);//相当于跑10遍
 		for (Entry<String, String> entry : kvs) {
 			String st=entry.getValue();//storeName
 			String[] storeNames=st.split("`");
@@ -77,7 +78,6 @@ public class EbayStartUp {
 	}
 	
 	private static void updateStock(){
-		V1GrabUpdateMain grab=factory.getBean(V1GrabUpdateMain.class);
 		String supplier="";
 		String start=DateTimeUtil.LongFmt(new Date());
 		Calendar c=Calendar.getInstance();c.add(Calendar.MONTH, -3);

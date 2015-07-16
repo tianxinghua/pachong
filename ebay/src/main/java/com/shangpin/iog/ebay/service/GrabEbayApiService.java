@@ -30,7 +30,7 @@ import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
 import com.shangpin.ebay.shoping.GetSingleItemResponseType;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.ebay.conf.EbayConf;
+import com.shangpin.iog.ebay.conf.EbayInit;
 
 /**
  * @description 
@@ -56,7 +56,7 @@ public class GrabEbayApiService {
 	 * @throws SdkException
 	 */
 	public static GetSellerListResponseType tradeSellerList(String userId,Calendar endStart,Calendar endTime,int page,int pageSize) throws ApiException, SdkSoapException, SdkException{
-		ApiContext api = EbayConf.getApiContext();
+		ApiContext api = EbayInit.getApiContext();
 		ApiCall call = new ApiCall(api);
 		GetSellerListRequestType req = new GetSellerListRequestType();
 		req.setUserID(userId);//pumaboxstore buydig inzara.store happynewbaby2011 guess_outlet
@@ -85,7 +85,7 @@ public class GrabEbayApiService {
 	 * @throws SdkException
 	 */
 	public static GetItemResponseType tradeGetItem(String itemId) throws ApiException, SdkSoapException, SdkException{
-		ApiContext api = EbayConf.getApiContext();
+		ApiContext api = EbayInit.getApiContext();
 		ApiCall call = new ApiCall(api);
 		GetItemRequestType req=new GetItemRequestType();
 		req.setIncludeItemSpecifics(true);
@@ -105,7 +105,7 @@ public class GrabEbayApiService {
 	 * @return
 	 */
 	public static GetSingleItemResponseType shoppingSingleItem(String itemId){
-		String url=EbayConf.getShopingCallUrl("GetSingleItem");
+		String url=EbayInit.getShopingCallUrl("GetSingleItem");
 		url+="&ItemID="+itemId+"&IncludeSelector=Variations,ItemSpecifics";
 		String xml=HttpUtil45.get(url,null,null);
 		log.debug("itemId:{},结果：{}",itemId,xml);
@@ -148,7 +148,7 @@ public class GrabEbayApiService {
 	 */
 	private static GetMultipleItemsResponseType shopingGetMultipleItem(
 			Collection<String> itemIds,String includeSelector) throws XmlException {
-		String url=EbayConf.getShopingCallUrl("GetMultipleItems");
+		String url=EbayInit.getShopingCallUrl("GetMultipleItems");
 		StringBuffer sb = new StringBuffer(url);
 		sb.append("&ItemID=");
 		for (Iterator<String> iterator = itemIds.iterator(); iterator.hasNext();) {
@@ -177,7 +177,7 @@ public class GrabEbayApiService {
 	 * @return
 	 */
 	public GetSingleItemResponseType shoppingSingleItemVariation(String itemId,String variationSKU){
-		String url=EbayConf.getShopingCallUrl("GetSingleItem");
+		String url=EbayInit.getShopingCallUrl("GetSingleItem");
 		url+="&ItemID="+itemId+"&IncludeSelector=Variations";
 		if(StringUtils.isNotBlank(variationSKU)){
 			url+="&VariationSKU="+variationSKU;
@@ -205,7 +205,7 @@ public class GrabEbayApiService {
 	 */
 	public static FindItemsIneBayStoresResponse findItemsIneBayStores(
 			String storeName, String keywords, int page, int pageSize) throws XmlException {
-		String url = EbayConf.getFindCallUrl("findItemsIneBayStores");
+		String url = EbayInit.getFindCallUrl("findItemsIneBayStores");
 		url+="&storeName=%s&paginationInput.entriesPerPage=%d&paginationInput.pageNumber=%d&keywords=%s";
 		url+="&itemFilter[0].name=HideDuplicateItems&itemFilter[0].value=true";//隐藏相同的,很重要
 		/*url+="&itemFilter[0].name=Condition&itemFilter[0].value=New";

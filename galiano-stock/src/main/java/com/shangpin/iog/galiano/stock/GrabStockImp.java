@@ -27,6 +27,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
         Map<String,String> stockMap = new HashMap<>();
 
         String kk = HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");
+        HttpUtils.closePool();
         Products products = null;
         try {
             logger.info("拉取galiano数据开始");

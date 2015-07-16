@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import com.ebay.sdk.SdkException;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.common.utils.json.JsonUtil;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -82,7 +83,7 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 	
 		Map<String,? extends Collection> skuSpuAndPic=grabSrv.findStoreBrand(storeName,brandName);
 		String threadName = Thread.currentThread().getName();
-		if(skuSpuAndPic==null) {
+		if(skuSpuAndPic==null ||skuSpuAndPic.size()==0) {
 			logger.warn("线程{}没有抓取到数据",threadName);
 			return ;
 		}
@@ -108,11 +109,11 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 			try {
 				fetchSrv.savePictureForMongo(picurl);
 			} catch (ServiceException e) {
-				logger.error("保存sku图片失败", e);
+				logger.error("保存图片{}失败,error:{}", JsonUtil.getJsonString4JavaPOJO(picurl), e.getMessage());
 				failCnt++;
 			}
 		}
-		logger.info("保存sku成功，失败数：{}", failCnt);
+		logger.info("保存pic数：{}成功，失败数：{}", picUrls.size(),failCnt);
 	}
 
 	/**
@@ -125,11 +126,11 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 			try {
 				fetchSrv.saveSPU(spu);
 			} catch (ServiceException e) {
-				logger.error("保存spu失败失败", e);
+				logger.error("保存spu:{}失败,error:{}",JsonUtil.getJsonString4JavaPOJO(spu), e.getMessage());
 				failCnt++;
 			}
 		}
-		logger.info("保存sku成功，失败数：{}", failCnt);
+		logger.info("保存spu数：{}成功，失败数：{}", spuDTOs.size(),failCnt);
 	}
 
 	/**
@@ -142,10 +143,10 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 			try {
 				fetchSrv.saveSKU(sku);
 			} catch (ServiceException e) {
-				logger.error("保存sku失败", e);
+				logger.error("保存sku:{}失败,error:{}", JsonUtil.getJsonString4JavaPOJO(sku),e.getMessage());
 				failCnt++;
 			}
 		}
-		logger.info("保存sku成功，失败数：{}", failCnt);
+		logger.info("保存sku数：{}成功，失败数：{}", skus.size(),failCnt);
 	}
 }

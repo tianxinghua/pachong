@@ -1,5 +1,6 @@
 package com.shangpin.igo.ebay.test;
 
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -34,6 +35,7 @@ import com.ebay.soap.eBLBaseComponents.PlaceOfferResponseType;
 import com.ebay.soap.eBLBaseComponents.VariationType;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
+import com.shangpin.ebay.finding.SearchItem;
 import com.shangpin.ebay.shoping.CurrencyCodeType;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseDocument;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
@@ -45,7 +47,7 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.ebay.conf.EbayConf;
+import com.shangpin.iog.ebay.conf.EbayInit;
 import com.shangpin.iog.ebay.convert.TradeItemConvert;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -181,7 +183,7 @@ public class EbayTest {
 	@Test
 	public void testGetItemXml(){
 		String itemId="252005767578";
-		String url= EbayConf.getTradeCallUrl("GetItem");
+		String url= EbayInit.getTradeCallUrl("GetItem");
 		url+="&ItemID="+itemId;
 		String xml=HttpUtils.get(url);
 		System.out.println(xml);
@@ -282,14 +284,25 @@ public class EbayTest {
 	public void testFindItemInStore() throws ApiException, SdkException, Exception{
 		SpuDTO spu=null;
 		String url=findCommonUrl("findItemsIneBayStores");
-		url+="storeName=%s&keywords%s";
-		String storeName="Animo%20Boxing";
-		String keywords = "Everlast";
-		url=String.format(url,storeName,keywords);
-		String xml=HttpUtils.get(url);
+		url+="storeName=%s&keywords=%s";
+		String storeName="Enduro-Sport";
+		String keywords = "Saucony";
+		url=String.format(url,URLEncoder.encode(storeName,"UTF-8"),URLEncoder.encode(keywords,"UTF-8"));
+		String xml=HttpUtil45.get(url,null,null);
+		System.out.println(xml);
 		System.out.println(url);
 		FindItemsIneBayStoresResponseDocument doc=FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
 		FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
+		SearchItem[] rs= rt.getSearchResult().getItemArray();
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < rs.length; i++) {
+			sb.append(rs[i].getItemId()).append(",");
+			if(i!=0 && i%20==0){
+				System.out.println(sb.toString());
+				sb = new StringBuffer();
+			}
+		}
+		System.out.println(sb.toString());
 		System.out.println(rt.getItemSearchURL());
 		/*try{
 			StringBuilder picUrl =new StringBuilder();
@@ -430,7 +443,8 @@ public class EbayTest {
 	}
 	@Test
 	public void GetMultipleItems(){
-		String itemId="151018288222";
+		String itemId="181789534083,181789630092,181789534119,171842899940,181789534121,181789630072,171842899968,171842899951,181789534099,181789534101,181789534113,181789630083,181789630071,181789630074,181789630085,171843018035,171843018045,171842899942,181789534084,171842899970";
+		//171842899950,171843018026,181789630075
 		String url=shopingCommon("GetMultipleItems");
 		url+="ItemID="+itemId+"&IncludeSelector=Details,Variations,ItemSpecifics";
 //				+ "&ItemFilter[0].name=Condition&ItemFilter[0].value=New";

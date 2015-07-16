@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.shangpin.ebay.shoping.AmountType;
 import com.shangpin.ebay.shoping.DiscountPriceInfoType;
@@ -24,7 +26,7 @@ import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.ebay.conf.EbayConf;
+import com.shangpin.iog.ebay.conf.EbayInit;
 
 /**
  * 根据item的id，调用shopping的GetMultipleItems返回来的结果组装sku,spu,pic
@@ -33,7 +35,7 @@ import com.shangpin.iog.ebay.conf.EbayConf;
  * <br/>2015年7月1日
  */
 public class ShopingItemConvert {
-
+	static Logger logger = LoggerFactory.getLogger(ShopingItemConvert.class);
 	/**
 	 * 转换sku，spu,pic
 	 * @param itemTypes
@@ -48,11 +50,16 @@ public class ShopingItemConvert {
 		Set<SkuDTO> rtnSku=new HashSet<>(itemTypes.length);
 		Set<SpuDTO> rtnSpu=new HashSet<>(itemTypes.length);
 		for (SimpleItemType sit : itemTypes) {
-			Object[] obj=convertSku(supplerKey,sit);
-			rtnSku.addAll((Set<SkuDTO>)obj[0]);
-			rtnPic.addAll((Set<ProductPictureDTO>)obj[1]);
-			SpuDTO spu = convertSpu(sit,supplerKey);
-			rtnSpu.add(spu);
+			try{
+				Object[] obj=convertSku(supplerKey,sit);
+				rtnSku.addAll((Set<SkuDTO>)obj[0]);
+				rtnPic.addAll((Set<ProductPictureDTO>)obj[1]);
+				SpuDTO spu = convertSpu(sit,supplerKey);
+				rtnSpu.add(spu);
+			}catch(Exception e){
+				logger.error("convert sku,spu,pic Error,xml:{},errMsg:{}",sit.toString(),e.getMessage());
+				continue;
+			}
 		}
 		map.put("sku",rtnSku);
 		map.put("spu",rtnSpu);
@@ -71,10 +78,11 @@ public class ShopingItemConvert {
 		setSpuCategory(sit, spu);
 		spu.setId(UUIDGenerator.getUUID());
 		spu.setSpuId(sit.getItemID());
-		NameValueListArrayType nv=sit.getItemSpecifics();
-		setSpuAttr(spu,nv.getNameValueListArray());
-		spu.setSupplierId(EbayConf.EBAY+supplierKey);
+		spu.setSupplierId(EbayInit.EBAY);
 		spu.setSpuName(sit.getTitle());
+		NameValueListArrayType nv=sit.getItemSpecifics();
+		if(nv!=null)
+			setSpuAttr(spu,nv.getNameValueListArray());
 		return spu;
 	}
 
@@ -144,9 +152,12 @@ public class ShopingItemConvert {
 				sku.setSupplierPrice(sku.getSalePrice());
 				String skuId=getSkuId(sit,vt);
 				sku.setSkuId(skuId);
-				setSkuAtt(sku, vt.getVariationSpecifics().getNameValueListArray());
+				if(vt.getVariationSpecifics()!=null){
+					setSkuAtt(sku, vt.getVariationSpecifics().getNameValueListArray());
+				}
 				//TODO 补救一些空的属性
-				setItemAtt(sku,sit.getItemSpecifics().getNameValueListArray());
+				if(sit.getItemSpecifics()!=null)
+					setItemAtt(sku,sit.getItemSpecifics().getNameValueListArray());					
 				setMarketPrice(vt.getDiscountPriceInfo(),sku);
 				//sit.getVariations().getPicturesArray();//for pic
 				getVariationPic(sit.getVariations().getPicturesArray(),rtnPic,skuId,sku.getSupplierId());
@@ -155,7 +166,9 @@ public class ShopingItemConvert {
 		}else{
 			SkuDTO sku = new SkuDTO();
 			setSkuCommon(userId, createDate, sit, sku);
-			setSkuAtt(sku,sit.getItemSpecifics().getNameValueListArray());
+			if(sit.getItemSpecifics()!=null){
+				setSkuAtt(sku,sit.getItemSpecifics().getNameValueListArray());				
+			}
 			sku.setStock(""+(sit.getQuantity()-sit.getQuantitySold()));
 			sku.setSalePrice(""+sit.getCurrentPrice().getDoubleValue());
 			sku.setSaleCurrency(sit.getCurrentPrice().getCurrencyID().toString());
@@ -183,8 +196,11 @@ public class ShopingItemConvert {
 		if(StringUtils.isBlank(sku.getProductSize())){
 			sku.setProductSize(getNVAttrValue("size",nvs));
 		}
-		if(StringUtils.isBlank(sku.getProductSize())){
+		if(StringUtils.isBlank(sku.getBarcode())){
 			sku.setBarcode(getNVAttrValue("ean",nvs));
+			if(sku.getBarcode()==null){
+				sku.setBarcode(getNVAttrValue("upc", nvs));
+			}
 		}
 		if(StringUtils.isBlank(sku.getProductCode())){
 			sku.setProductCode(getNVAttrValue("mpn", nvs));
@@ -310,12 +326,12 @@ public class ShopingItemConvert {
 				continue;
 			}
 			if(name.equals("mpn")||(name.contains("manufacturer") && name
-					.contains("number"))||
-					name.equalsIgnoreCase("upc")||name.equalsIgnoreCase("isbn")){
+					.contains("number"))||name.equalsIgnoreCase("isbn")){
 				sku.setProductCode(value);
 				continue;
 			}
-			if(name.equalsIgnoreCase("ean")){
+			if(name.equalsIgnoreCase("ean")||
+					name.equalsIgnoreCase("upc")){
 				sku.setBarcode(value);
 				continue;
 			}
@@ -341,8 +357,9 @@ public class ShopingItemConvert {
 		sku.setProductName(sit.getTitle());
 		sku.setSpuId(sit.getItemID());
 		sku.setId(UUIDGenerator.getUUID());
-		sku.setCreateTime(createDate);
-		sku.setSupplierId(EbayConf.EBAY+userId);
-		sku.setLastTime(sit.getEndTime().getTime());
+		sku.setSupplierId(EbayInit.EBAY);
+		sku.setMemo("storeName:"+userId);
+		sku.setCreateTime(sit.getEndTime().getTime());
+		sku.setLastTime(createDate);
 	}
 }

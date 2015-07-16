@@ -69,6 +69,7 @@ public class FetchEbayProduct {
 
     @Autowired
     ProductFetchService productFetchService;
+    //TODO 如果没实际用途，没有其他扩展用途，移除
     public void fetchSkuAndSave(SimpleItemType it, StringBuffer pics) throws Exception {
 
         ProductPictureDTO productPicture = null;
@@ -235,6 +236,12 @@ public class FetchEbayProduct {
                             }
                         }
                     }
+                }*/
+                //获得图片地址
+                String[] picUrl = item.getPictureURLArray();
+                StringBuffer pics=new StringBuffer();
+                for(String pic:picUrl){
+                    pics.append(pic);
                 }
                try {
                        if(StringUtils.isNotBlank(spu.getBrandName())&&StringUtils.isNotBlank(spu.getCategoryName())) {
@@ -248,6 +255,7 @@ public class FetchEbayProduct {
                 }
             }
         }
+
     }
 
     public void fetchSpuAndSave(String storeName, String keywords) throws Exception {
