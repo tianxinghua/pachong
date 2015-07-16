@@ -35,4 +35,5 @@ include 'galiano-stock'
 
 include 'spinnaker-stock'
 include 'brunarosso'
+include 'vela'
 
