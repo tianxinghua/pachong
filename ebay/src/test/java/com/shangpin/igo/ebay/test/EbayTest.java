@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.product.service.ProductFetchServiceImpl;
 import com.shangpin.iog.service.ProductFetchService;
 import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
@@ -59,7 +60,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EbayTest {
 
 	@Autowired
-	ProductFetchService productFetchService;
+	ProductFetchService productFetchService ;
 	private Set skuDTO=new HashSet();
 	private Set spuDTO=new HashSet();
 	private Set itemArray = new HashSet();
@@ -87,6 +88,8 @@ public class EbayTest {
 	
 	@Test
 	public void testGetItem() throws ApiException, SdkException, Exception{
+
+		//productFetchService = new ProductFetchServiceImpl();
 		SkuDTO sku=null;
 		String itemId="131542476155";
 		ApiContext api = getProApiContext();
@@ -152,12 +155,16 @@ public class EbayTest {
 				}
 				if (nameValueListType.getName().toLowerCase().contains("size")) {
 					sku.setProductSize(nameValueListType.getValue(0));
-					System.out.println(nameValueListType.getValue(0));
+					System.out.println(sku.getProductSize());
 				}
 			}
 			skuDTO.add(sku);
 			System.out.println(sku.getSupplierId());
-			productFetchService.saveSKU(sku);
+			try {
+				productFetchService.saveSKU(sku);
+			}catch (Exception e){
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -460,11 +467,11 @@ public class EbayTest {
 	}
 	@Test
 	public void getStoreName(){
-		String itemId="131542476155";
+		String itemId="251923657070";
 		String url=shopingCommon("GetMultipleItems");
-		url+="ItemID="+itemId+"&IncludeSelector=Details,Variations,ItemSpecifics";//,Variations,ItemSpecifics";
+		url+="ItemID="+itemId+"&IncludeSelector=Details";//,Variations,ItemSpecifics";
 		String xml=HttpUtil45.get(url,null,null);
-		System.out.println(xml);
+		//System.out.println(xml);
 		try {
 			GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
 			GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();

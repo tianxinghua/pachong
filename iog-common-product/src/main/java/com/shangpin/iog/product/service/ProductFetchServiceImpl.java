@@ -85,7 +85,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             skuDAO.save(skuDTO);
         } catch ( Exception e) {
         	if(e instanceof DuplicateKeyException)
-        		throw new ServiceMessageException("数据插入失败键重复");
+        	throw new ServiceMessageException("数据插入失败键重复");
             throw new ServiceMessageException("数据插入失败"+e.getMessage());
         }
     }

@@ -32,7 +32,7 @@ public class FetchProduct {
 
     public void fetchProductAndSave() {
 
-        String  supplierId = "";
+        String  supplierId = "2015-9999";
 
         //首先获取季节码
         String season_json = HttpUtil45.get("http://185.58.119.177/velashopapi/Myapi/Productslist/GetAllSeasonCode?DBContext=Default&key=MPm32XJp7M",new OutTimeConfig(),null);
@@ -129,7 +129,5 @@ public class FetchProduct {
                 i += 100;
             }
         }
-
     }
-
 }
