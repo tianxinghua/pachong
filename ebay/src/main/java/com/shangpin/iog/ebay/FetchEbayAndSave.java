@@ -51,30 +51,15 @@ public class FetchEbayAndSave extends Thread{
         this.fetchProduct=fetchProduct;
     }
 
-
     @Override
     public void run() {
 
-
-        /*for(String key:keys)
-        {
-            String[] storeName = storeBrand.get(key).split("`");
-
-            for(String store:storeName) {
-                */
-         try{
-                   //for (int i=4;i<101;i++) {
-                        fetchProduct.fetchSpuAndSave(store.trim(), key.trim());
-                   // }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-               // System.out.println("商店"+store+"商店");
-          //  }
-        //}
-
+        try {
+            fetchProduct.fetchSpuAndSave(store.trim(), key.trim());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-
 }
 
 
