@@ -99,7 +99,7 @@ public class ShopingItemConvert {
 		spu.setSubCategoryName(sit.getSecondaryCategoryName());
 		if(title.contains("women")||title.contains("femal")){
 			spu.setCategoryGender("F");
-		}else if(title.contains("man")||title.contains("male")){
+		}else if(title.contains("man")||title.contains("male")||(!title.contains("women") && title.contains("men"))){
 			spu.setCategoryGender("M");
 		}
 		if(sit.getVariations()!=null && spu.getCategoryGender()==null){
@@ -237,7 +237,8 @@ public class ShopingItemConvert {
 			if(name.equals("_gender")){//如果是找性别的话
 				if(nName.contains("women")||nName.contains("femal")){
 					return "F";
-				}else if(nName.contains("man")||nName.contains("male")){
+				}else if(nName.contains("men")||nName.contains("male")
+						||(!nName.contains("women") && nName.contains("men"))){
 					return "M";
 				}
 			}
