@@ -197,7 +197,7 @@ public class FetchEbayProduct {
                     spu.setSubCategoryName(item.getSecondaryCategoryName());
                 }
                 
-                spu.setPicUrl(pics.toString());
+                //spu.setPicUrl(pics.toString());
                 spu.setCreateTime(t.getListingInfo().getStartTime().getTime());
                 spu.setLastTime(t.getListingInfo().getEndTime().getTime());
                 //判断和获取品牌、材质、产地
@@ -217,7 +217,7 @@ public class FetchEbayProduct {
                             }
                         }
                     }
-                }*/
+                }
                 //获得图片地址
                 String[] picUrl = item.getPictureURLArray();
                 StringBuffer pics=new StringBuffer();
