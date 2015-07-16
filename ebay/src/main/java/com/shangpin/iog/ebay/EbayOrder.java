@@ -114,8 +114,8 @@ public class EbayOrder {
         return api;
     }
     //main/java里的提交时移除，否则写在test包中
-    public static void main(String args[]) throws SdkException {
+   /* public static void main(String args[]) throws SdkException {
         EbayOrder ebayOrder = new EbayOrder();
         ebayOrder.AddOrder("251311485906#01.0741.102, 01.0741.103(var1)",1);
-    }
+    }*/
 }
