@@ -15,6 +15,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.xmlbeans.XmlException;
@@ -259,6 +260,8 @@ public class V1GrabService {
 			exe.shutdown();
 			try{
 				while(!exe.awaitTermination(1, TimeUnit.MINUTES)){//1分钟查询一次有无完成
+					ThreadPoolExecutor pool = (ThreadPoolExecutor)exe;
+					logger.info("item detail pool,总数：{}，当前活动线程数：{}",pool.getTaskCount(),pool.getActiveCount());
 				}
 				//线程完毕之后开始得到结果合并
 				for (Future<Map<String, Collection>> future : fu) {
