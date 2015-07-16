@@ -32,6 +32,7 @@ include 'galiano'
 include 'ebay'
 
 include 'galiano-stock'
+include 'iog-facade-impl'
 
 include 'spinnaker-stock'
 include 'brunarosso'

@@ -53,14 +53,14 @@ public class GrabStockWithFindingApi extends AbsUpdateProductStock {
 						}
 					}
 				} else {
-					skuStock.put(skuId, item.getQuantity());
+					skuStock.put(skuId, (item.getQuantity()-item.getSellingStatus().getQuantitySold()));
 				}
 			}
 		}
 		return skuStock;
 	}
 	//TODO 尽量放测试代码里面，如果写在main/java里面，提交的时候注释掉
-	public static void main(String args[]) throws Exception {
+	/*public static void main(String args[]) throws Exception {
 		System.out.println("dghfgh");
 		GrabStockWithFindingApi grabStockWithFindingApi = new GrabStockWithFindingApi();
 		Collection<String> sku = new HashSet<String>();
@@ -70,10 +70,11 @@ public class GrabStockWithFindingApi extends AbsUpdateProductStock {
 		System.out.println(skuStock.get("231359724482#A4150dh_XL@ZBU7"));
 		System.out.println("dgryt");
 		// SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		/*
-		 * log.info("eaby更新数据库开始");
-		 * //grabStockWithFindingApi.updateProductStock("ebay#inzara.store",
-		 * "2015-01-14 15:11","2015-07-11 15:11"); log.info("eaby更新数据库结束");
-		 */
-	}
+		*/
+	    /*
+		 log.info("eaby更新数据库开始");
+		 grabStockWithFindingApi.updateProductStock("ebay#inzara.store",
+		 "2015-01-14 15:11","2015-07-11 15:11"); log.info("eaby更新数据库结束");
+		 /*
+	}*/
 }

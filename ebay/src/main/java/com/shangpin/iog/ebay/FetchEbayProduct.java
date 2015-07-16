@@ -6,7 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.shangpin.ebay.shoping.NameValueListType;
-import com.shangpin.iog.ebay.conf.EbayInit;
+import com.shangpin.iog.ebay.conf.EbayConf;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,11 +83,11 @@ public class FetchEbayProduct {
                         productPicture = new ProductPictureDTO();
                         productPicture.setId(UUIDGenerator.getUUID());
                         productPicture.setSkuId(it.getItemID() + "#" + variationtype.getSKU());
-                        productPicture.setSupplierId("2015071301325");
+                        productPicture.setSupplierId("2015-071301325");
                         productPicture.setPicUrl(pics.toString());
                         sku.setId(UUIDGenerator.getUUID());
                         sku.setSkuId(it.getItemID() + "#" + variationtype.getSKU());
-                        sku.setSupplierId("2015071301325");
+                        sku.setSupplierId("2015-071301325");
                         sku.setStock(String.valueOf(variationtype.getQuantity() - variationtype.getSellingStatus().getQuantitySold()));
                         sku.setProductName(it.getTitle());
                         com.shangpin.ebay.shoping.AmountType amountType = variationtype.getStartPrice();
@@ -103,7 +104,10 @@ public class FetchEbayProduct {
                             if (nameValueListType.getName().toLowerCase().contains("color")) {
                                 sku.setColor(nameValueListType.getValueArray(0));
                             }
-                            if (nameValueListType.getName().toLowerCase().contains("size")) {
+                            if (nameValueListType.getName().toLowerCase().contains("size(")
+                                    || nameValueListType.getName().trim().toLowerCase().equals("size")
+                                    || nameValueListType.getName().toLowerCase().contains("size type")
+                                    ||nameValueListType.getName().toLowerCase().contains("length")) {
                                 sku.setProductSize(nameValueListType.getValueArray(0));
                             }
                             if (nameValueListType.getName().toLowerCase().contains("upc")
@@ -132,7 +136,7 @@ public class FetchEbayProduct {
                 sku.setId(UUIDGenerator.getUUID());
                 sku.setSkuId(it.getItemID());
                 sku.setSpuId(it.getItemID());
-                sku.setSupplierId("2015071301325");
+                sku.setSupplierId("2015-071301325");
                 sku.setProductName(it.getTitle());
                 sku.setStock(String.valueOf(it.getQuantity() - it.getQuantitySold()));
                 if (it.getItemSpecifics() != null) {
@@ -143,8 +147,9 @@ public class FetchEbayProduct {
                                 sku.setColor(nameValueList.getValueArray(0));
                             }
                             if (nameValueList.getName().toLowerCase().contains("size(")
-                                    || nameValueList.getName().toLowerCase().equals("size")
-                                    || nameValueList.getName().toLowerCase().contains("size type")) {
+                                    || nameValueList.getName().trim().toLowerCase().equals("size")
+                                    || nameValueList.getName().toLowerCase().contains("size type")
+                                    ||nameValueList.getName().toLowerCase().contains("length")) {
                                 sku.setProductSize(nameValueList.getValueArray(0));
                             }
                             if (nameValueList.getName().toLowerCase().contains("upc")
@@ -183,9 +188,9 @@ public class FetchEbayProduct {
         for (SearchItem t : type) {
             spu = new SpuDTO();
             for (SimpleItemType item : itemTypes) {
-                /*spu.setId(UUIDGenerator.getUUID());
+                spu.setId(UUIDGenerator.getUUID());
                 spu.setSpuId(t.getItemId());
-                spu.setSupplierId("2015071301325");
+                spu.setSupplierId("2015-071301325");
                 spu.setSpuName(t.getTitle());
                 if (t.getTitle().toLowerCase().contains("women")
                         || t.getTitle().toLowerCase().contains("female")
@@ -194,20 +199,34 @@ public class FetchEbayProduct {
                 } else if (t.getTitle().toLowerCase().contains("men") || t.getTitle().toLowerCase().contains("male")) {
                     spu.setCategoryGender("Man");
                 }
-                spu.setCategoryId(t.getPrimaryCategory().getCategoryId());
-                spu.setCategoryName(t.getPrimaryCategory().getCategoryName());
+                if(StringUtils.isBlank(t.getPrimaryCategory().getCategoryId())){ break;}
+                else {
+                    spu.setCategoryId(t.getPrimaryCategory().getCategoryId());
+                    spu.setCategoryName(t.getPrimaryCategory().getCategoryName());
+                }
                 //获取二级category
                 if (item.getSecondaryCategoryID() != null) {
                     spu.setSubCategoryId(item.getSecondaryCategoryID());
                     spu.setSubCategoryName(item.getSecondaryCategoryName());
                 }
+
+                //获得图片地址
+                String[] picUrl = item.getPictureURLArray();
+                StringBuffer pics=new StringBuffer();
+                for(String pic:picUrl){
+                    pics.append(pic);
+                }
+                spu.setPicUrl(pics.toString());
+                spu.setCreateTime(t.getListingInfo().getStartTime().getTime());
+                spu.setLastTime(t.getListingInfo().getEndTime().getTime());
                 //判断和获取品牌、材质、产地
+
                 if (item.getItemSpecifics() != null) {
                     com.shangpin.ebay.shoping.NameValueListType[] nameValueListType = item.getItemSpecifics().getNameValueListArray();
                     if (nameValueListType != null) {
                         for (com.shangpin.ebay.shoping.NameValueListType nameValueList : nameValueListType) {
                             if (nameValueList.getName().toLowerCase().contains("brand")) {
-                                spu.setBrandName(nameValueList.getValueArray(0));
+                                    spu.setBrandName(nameValueList.getValueArray(0));
                             }
                             if (nameValueList.getName().toLowerCase().contains("material")) {
                                 spu.setMaterial(nameValueList.getValueArray(0));
@@ -224,16 +243,16 @@ public class FetchEbayProduct {
                 for(String pic:picUrl){
                     pics.append(pic);
                 }
-                /*spu.setPicUrl(pics.toString());
-                spu.setCreateTime(t.getListingInfo().getStartTime().getTime());
-                spu.setLastTime(t.getListingInfo().getEndTime().getTime());
-                spuDTO.add(spu);*/
-               /* try {
-                    productFetchService.saveSPU(spu);
+               try {
+                       if(StringUtils.isNotBlank(spu.getBrandName())&&StringUtils.isNotBlank(spu.getCategoryName())) {
+                           spuDTO.add(spu);
+                           productFetchService.saveSPU(spu);
+                           fetchSkuAndSave(item, pics);
+                       }
+                     // System.out.println("品牌："+spu.getBrandName()+"     "+spu.getCategoryName());
                 } catch (DuplicateKeyException e) {
-                    e.printStackTrace();
-                }*/
-                fetchSkuAndSave(item,pics);
+                   // e.printStackTrace();
+                }
             }
         }
 
@@ -257,6 +276,7 @@ public class FetchEbayProduct {
                             SimpleItemType[] itemTypes = new SimpleItemType[type.length];
                             SimpleItemType[] itemType = new SimpleItemType[20];
                             int i = 0, j = 0, k = type.length / 20 * 20;
+                            //System.out.println("type的值："+type.length);
                             if (type.length < 20) {
                                 for (SearchItem t : type) {
                                     itemIds.add(t.getItemId());
@@ -284,7 +304,7 @@ public class FetchEbayProduct {
                             if (type.length % 20 != 0) {
                                 result = GrabEbayApiService.shoppingGetMultipleItems(itemIds);
                                 itemType = result.getItemArray();
-                                System.out.println("k的值："+k);
+                               // System.out.println("k的值："+k);
                                 System.arraycopy(itemType, 0, itemTypes, k, type.length % 20);
                             }
                             saveSpu(type,itemTypes);
