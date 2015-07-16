@@ -18,7 +18,7 @@ import com.ebay.soap.eBLBaseComponents.NameValueListArrayType;
 import com.ebay.soap.eBLBaseComponents.NameValueListType;
 import com.ebay.soap.eBLBaseComponents.OfferType;
 import com.ebay.soap.eBLBaseComponents.PlaceOfferRequestType;
-import com.shangpin.iog.ebay.conf.EbayConf;
+import com.shangpin.iog.ebay.conf.EbayInit;
 
 /**
  * @description 
@@ -50,7 +50,7 @@ public class PlaceOffer {
 		req.setOffer(offer);
 		req.setEndUserIP(spIp);
 		
-		ApiContext api=EbayConf.getApiContext();
+		ApiContext api=EbayInit.getApiContext();
 		ApiCall call = new ApiCall(api);
 		call.execute(req);
 	}
@@ -60,7 +60,7 @@ public class PlaceOffer {
 		AddItemRequestType req=new AddItemRequestType();
 		//TODO  添加商品内容....
 		
-		ApiContext api=EbayConf.getApiContext();
+		ApiContext api=EbayInit.getApiContext();
 		ApiCall call = new ApiCall(api);
 		call.execute(req);
 	}

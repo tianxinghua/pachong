@@ -12,10 +12,29 @@ dependencies {
 		"com.ebay.sdk:ebaysdkcore:1.0",
 		"org.apache.servicemix.bundles:org.apache.servicemix.bundles.oro:2.0.8_6",
 		project(":iog-common-product"),
+			project(":project-dao"),
 		)
     testCompile (
 		'junit:junit:4.+',
 		"com.google.code.gson:gson:2.3.1",
 		)
 }
+task copyToLib( type: Copy ) {
+	into "$buildDir/libs/lib"
+	from configurations.compile
+}
 
+jar {
+
+	dependsOn copyToLib
+
+	def manifestCp = configurations.compile.files.collect  {
+		File file = it
+		"lib/${file.name}"
+	}.join(' ')
+
+	manifest {
+		attributes 'Main-Class': 'com.shangpin.iog.ebay.EbayStartUp'
+		attributes 'Class-Path': '. '+ manifestCp
+	}
+}

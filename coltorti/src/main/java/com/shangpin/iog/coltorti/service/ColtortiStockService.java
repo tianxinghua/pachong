@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.shangpin.iog.coltorti.service;
 
@@ -22,7 +22,7 @@ import com.shangpin.iog.coltorti.dto.ColtortiStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 
 /**
- * @description 
+ * @description
  * @author 陈小峰
  * <br/>2015年6月9日
  */
@@ -90,7 +90,7 @@ public class ColtortiStockService {
 									Integer newNum=(v<0?0:v)+sizeValue;
 									scalarDetail.put(unk, newNum);
 								}
-							}							
+							}
 						}
 					}
 				}
@@ -117,7 +117,7 @@ public class ColtortiStockService {
 					}
 				}
 			}
-			
+
 		}
 	}
 }

@@ -16,7 +16,7 @@ public class Product {
     private String TIPO_STAGIONE;// 季节
     private String GRUPPO_SUPER;//一级品类
     private String GRUPPO;//二级品类
-    private String DESCRIZIONE_MODELLO;//描述
+    private String DESCRIZIONE_MODELLO;//商品名称
     private String COLORE;//颜色
     private String TESSUTO;//面料
     private String MOTIVO;//图案
@@ -48,7 +48,7 @@ public class Product {
     private String DESCRIZIONE_SPECIALE;//特别说明
     private String PAESE_PRODUZIONE;// 产地(国家)
     private String CODICE_MID_PRODUTTORE;// 制造商
-    private String COMPOSIZIONE_DETTAGLIATA;//详细构成
+    private String COMPOSIZIONE_DETTAGLIATA;//详细构成,材质
     private String TI_DES_ESTESA;//扩展
     private String TIPOLOGIA_TAGLIE;//尺寸类型
     private String BS_DES;//

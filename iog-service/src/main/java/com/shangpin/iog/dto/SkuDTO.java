@@ -27,6 +27,7 @@ public class SkuDTO {
     private String saleCurrency;//币种
     private String productSize;//尺码
     private String stock;//库存
+    private String memo;
     private Date createTime = new Date();
     private Date lastTime= new Date();//修改时间
 

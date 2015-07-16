@@ -81,7 +81,7 @@ public class EbayOrder {
         PlaceOfferResponseType resp = (PlaceOfferResponseType) apiCall.execute(req);
         System.out.println(resp);
     }
-
+    //TODO 从配置类取
     private ApiContext getApiContext() {
         ApiContext api = new ApiContext();
         String apiUrl="https://api.sandbox.ebay.com/wsapi";
@@ -97,7 +97,7 @@ public class EbayOrder {
         api.setRuName("shangpin-shangpin-8ce3-4-vsffif");
         return api;
     }
-
+    //TODO 从配置类取
     private ApiContext getProApiContext() {
         ApiContext api = new ApiContext();
         String apiUrl="https://api.ebay.com/wsapi";
@@ -113,7 +113,7 @@ public class EbayOrder {
         api.setRuName("vansky-vansky891-1d37--qzptrxv");
         return api;
     }
-
+    //main/java里的提交时移除，否则写在test包中
     public static void main(String args[]) throws SdkException {
         EbayOrder ebayOrder = new EbayOrder();
         ebayOrder.AddOrder("251311485906#01.0741.102, 01.0741.103(var1)",1);

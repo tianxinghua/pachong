@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import com.ebay.soap.eBLBaseComponents.AmountType;
+import com.ebay.soap.eBLBaseComponents.DiscountPriceInfoType;
 import com.ebay.soap.eBLBaseComponents.ItemType;
 import com.ebay.soap.eBLBaseComponents.NameValueListArrayType;
 import com.ebay.soap.eBLBaseComponents.NameValueListType;
@@ -20,11 +21,11 @@ import com.ebay.soap.eBLBaseComponents.PictureDetailsType;
 import com.ebay.soap.eBLBaseComponents.VariationProductListingDetailsType;
 import com.ebay.soap.eBLBaseComponents.VariationType;
 import com.ebay.soap.eBLBaseComponents.VariationsType;
-import com.shangpin.ebay.shoping.SimpleItemType;
+import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.ebay.conf.EbayConf;
+import com.shangpin.iog.ebay.conf.EbayInit;
 
 /**
  * @description 
@@ -36,19 +37,19 @@ public class TradeItemConvert {
 
 	/**
 	 * @param tps
-	 * @param userType 
+	 * @param supplierId 
 	 * @return
 	 */
-	public static Map<String, ? extends Collection<? extends Object>> convert2SKuAndSpu(ItemType[] tps, String userType) {
+	public static Map<String, ? extends Collection<? extends Object>> convert2SKuAndSpu(ItemType[] tps, String supplierId) {
 		Map<String,List<?>> sksp=new HashMap<>();
 		List<SkuDTO> skus = new ArrayList<>();
 		List<SpuDTO> spus = new ArrayList<>();
 		List<ProductPictureDTO> pictures = new ArrayList<>();
 		for (int i = 0; i < tps.length; i++) {
-			List<SkuDTO> skuts=toSku(tps[i],userType);
+			List<SkuDTO> skuts=toSku(tps[i],supplierId);
 			skus.addAll(skuts);
-			spus.add(toSpu(tps[i]));
-			List<ProductPictureDTO> pics=toPic(tps[i],userType);
+			spus.add(toSpu(tps[i],supplierId));
+			List<ProductPictureDTO> pics=toPic(tps[i],supplierId);
 			pictures.addAll(pics);
 		}
 		sksp.put("pic", pictures);
@@ -59,22 +60,27 @@ public class TradeItemConvert {
 
 	/**
 	 * @param itemType
-	 * @param userType 
+	 * @param supplierId 
 	 * @return
 	 */
-	public static List<SkuDTO> toSku(ItemType itemType, String userType) {
+	public static List<SkuDTO> toSku(ItemType itemType, String supplierId) {
 		List<SkuDTO> skus=new ArrayList<>();
 		VariationsType vst=itemType.getVariations();
 		if( vst!= null && vst.getVariation()!=null && vst.getVariation().length>0){
 			SkuDTO sku = new SkuDTO();
-			setCommon(sku,itemType,userType);
+			setSKUCommon(sku,itemType,supplierId);
 			VariationType[] vr=vst.getVariation();
 			for (int i = 0; i < vr.length; i++) {
 				String skstr=getSkuIdStr(vr[i],itemType);//以#号分隔itemId,skuId 默认itemId
 				sku.setSkuId(skstr);
 				setVariationPrice(sku, vr[i]);//设置金额
 				setStock(sku,vr[i]);//设置库存
-				setSKUAttr(sku,vr[i].getVariationSpecifics());//设置一些属性,条码等
+				if(vr[i].getVariationSpecifics()!=null)
+					setSKUAttr(sku,vr[i].getVariationSpecifics());//设置一些属性,条码等
+				if(itemType.getItemSpecifics()!=null){
+					//TODO 补救属性
+					setItemAttr(sku,itemType.getItemSpecifics().getNameValueList());
+				}
 				if(sku.getProductCode()==null){//设置产品条码
 					VariationProductListingDetailsType vpd=vr[i].getVariationProductListingDetails();
 					if(vpd!=null){
@@ -84,23 +90,85 @@ public class TradeItemConvert {
 						sku.setProductCode(code);sku.setBarcode(code);
 					}			
 				}
+				setMarketPrice(vr[i].getDiscountPriceInfo(), sku);
 			}
 			skus.add(sku);
 		}else{
 			SkuDTO sku = new SkuDTO();
-			setCommon(sku,itemType,userType);
-			setSKUAttr(sku, itemType.getItemSpecifics());
+			setSKUCommon(sku,itemType,supplierId);
+			if(itemType.getItemSpecifics()!=null)
+				setSKUAttr(sku, itemType.getItemSpecifics());
+			setMarketPrice(itemType.getDiscountPriceInfo(), sku);
 			skus.add(sku);
 		}
 		return skus;
 	}
 
 	/**
+	 * @param sku
+	 * @param nvs
+	 */
+	private static void setItemAttr(SkuDTO sku,
+			NameValueListType[] nvs) {
+		if(StringUtils.isBlank(sku.getColor())){
+			sku.setColor(getNVAttrValue("color",nvs));
+		}
+		if(StringUtils.isBlank(sku.getProductSize())){
+			sku.setProductSize(getNVAttrValue("size",nvs));
+		}
+		if(StringUtils.isBlank(sku.getBarcode())){
+			sku.setBarcode(getNVAttrValue("ean",nvs));
+			if(sku.getBarcode()==null){
+				sku.setBarcode(getNVAttrValue("upc", nvs));
+			}
+		}
+		if(StringUtils.isBlank(sku.getProductCode())){
+			sku.setProductCode(getNVAttrValue("mpn", nvs));
+		}
+	}
+	/**
+	 * 获取包含指定属性名的 值<br/>
+	 * "Manufacturer Part Number" 也是mpn
+	 * @param name 小写的属性名字符串
+	 * @param nvs 属性键值对
+	 * @return
+	 */
+	private static String getNVAttrValue(String name, NameValueListType[] nvs) {
+		String nName=null;
+		for (NameValueListType nv : nvs) {
+			nName = nv.getName().toLowerCase();
+			if (name.equals("mpn")
+					&& (nName.contains(name) || (nName.contains("manufacturer") && nName
+							.contains("number"))))
+				return nv.getValue(0);			
+			if(nName.contains(name))
+				return nv.getValue(0);
+		}
+		return null;
+	}
+	
+
+	/**
+	 * 设置折扣前价格
+	 * @param discountPriceInfo
+	 * @param sku
+	 */
+	private static void setMarketPrice(DiscountPriceInfoType discountPriceInfo,
+			SkuDTO sku) {
+		if(discountPriceInfo!=null){//折扣前的价格
+			AmountType amt=discountPriceInfo.getOriginalRetailPrice();
+			if(amt!=null){
+				sku.setMarketPrice(amt.getValue()+"");
+			}
+		}
+	}
+
+	/**
 	 * @param itemType
-	 * @param userType
+	 * @param supplierId
 	 * @return 
 	 */
-	private static List<ProductPictureDTO> toPic(ItemType itemType, String userType) {
+	private static List<ProductPictureDTO> toPic(ItemType itemType, String supplierId) {
 		PictureDetailsType pdt=itemType.getPictureDetails();
 		List<ProductPictureDTO> pics = new ArrayList<>();
 		if(pdt!=null){
@@ -108,7 +176,7 @@ public class TradeItemConvert {
 			for (String string : urls) {
 				ProductPictureDTO pic = new ProductPictureDTO();
 				pic.setPicUrl(string);
-				pic.setSupplierId(EbayConf.EBAY+userType);
+				pic.setSupplierId(EbayInit.EBAY);
 			}
 		}
 		return pics;
@@ -116,12 +184,18 @@ public class TradeItemConvert {
 
 	/**
 	 * @param itemType
+	 * @param supplierId 
 	 * @return 
 	 */
-	private static SpuDTO toSpu(ItemType itemType) {
+	private static SpuDTO toSpu(ItemType itemType, String supplierId) {
 		SpuDTO spu = new SpuDTO();
+		spu.setId(UUIDGenerator.getUUID());
+		spu.setSpuId(itemType.getItemID());
+		spu.setSupplierId(EbayInit.EBAY);
+		spu.setSpuName(itemType.getTitle());
 		setCategory(spu,itemType);
-		setSpuAttr(spu,itemType.getItemSpecifics());
+		if(itemType.getItemSpecifics()!=null)
+			setSpuAttr(spu,itemType.getItemSpecifics());
 		return spu;
 	}
 
@@ -134,13 +208,14 @@ public class TradeItemConvert {
 		if(itemSpecifics==null)
 			return ;
 		NameValueListType[] nvat=itemSpecifics.getNameValueList();
+		String nvName;
 		for (NameValueListType nv : nvat) {
-			String nvName=nv.getName().toLowerCase();
+			nvName=nv.getName().toLowerCase();
 			if(nvName.contains("brand")){
 				spu.setBrandName(nvName);
 				continue;
 			}
-			if(nvName.contains("manufacturer")){
+			if(nvName.contains("manufacturer") && !nvName.contains("number")){
 				spu.setProductOrigin(nvName);
 				continue;
 			}
@@ -159,18 +234,24 @@ public class TradeItemConvert {
 	private static void setSKUAttr(SkuDTO sku, NameValueListArrayType variationSpecifics) {
 		NameValueListType[] nvList=variationSpecifics.getNameValueList();
 		for (NameValueListType nv : nvList) {
-			String vname=nv.getName().toUpperCase();
-			if(vname.equalsIgnoreCase("UPC")||vname.equalsIgnoreCase("EAN")||vname.equalsIgnoreCase("ISBN")){
-				sku.setProductCode(nv.getValue(0));
-				sku.setBarcode(nv.getValue(0));
+			String vname=nv.getName().toLowerCase();
+			String value = nv.getValue(0);			
+			if(vname.equals("mpn")||(vname.contains("manufacturer") && vname
+					.contains("number"))||
+					vname.equalsIgnoreCase("isbn")){
+				sku.setProductCode(value);
 				continue;
 			}
-			if(vname.contains("SIZE")){
-				sku.setProductSize(nv.getValue(0));
+			if(vname.equalsIgnoreCase("ean")||vname.equalsIgnoreCase("upc")){
+				sku.setBarcode(value);
 				continue;
 			}
-			if(vname.contains("COLOR")){
-				sku.setColor(nv.getValue(0));
+			if(vname.contains("size") && sku.getProductSize()==null){
+				sku.setProductSize(value);
+				continue;
+			}
+			if(vname.contains("color") && sku.getColor()==null){
+				sku.setColor(value);
 			}
 		}
 	}
@@ -186,8 +267,10 @@ public class TradeItemConvert {
 		}else if(title.contains("man")||title.contains("male")){
 			spu.setCategoryGender("M");
 		}
-		spu.setCategoryId(itemType.getPrimaryCategory().getCategoryID());
-		spu.setCategoryName(itemType.getPrimaryCategory().getCategoryName());
+		if(itemType.getPrimaryCategory()!=null){
+			spu.setCategoryId(itemType.getPrimaryCategory().getCategoryID());
+			spu.setCategoryName(itemType.getPrimaryCategory().getCategoryName());			
+		}
 		if(itemType.getSecondaryCategory()!=null){
 			spu.setSubCategoryName(itemType.getSecondaryCategory().getCategoryName());
 			spu.setSubCategoryId(itemType.getSecondaryCategory().getCategoryID());
@@ -195,36 +278,56 @@ public class TradeItemConvert {
 	}
 
 	/**
+	 * 设置，产品名称、价格，库存，endTime
 	 * @param sku
 	 * @param itemType
 	 * @param userId 
 	 */
-	private static void setCommon(SkuDTO sku, ItemType itemType, String userId) {
+	private static void setSKUCommon(SkuDTO sku, ItemType itemType, String userId) {
 		sku.setProductName(itemType.getTitle());
-		sku.setSupplierId(EbayConf.EBAY+userId);
+		sku.setSupplierId(EbayInit.EBAY);
+		sku.setMemo("storeName:"+userId);
 		sku.setSupplierPrice(""+itemType.getSellingStatus().getCurrentPrice().getValue());
 		sku.setSalePrice(""+itemType.getSellingStatus().getCurrentPrice().getValue());
 		sku.setSaleCurrency(itemType.getSellingStatus().getCurrentPrice().getCurrencyID().value());
 		sku.setStock(""+(itemType.getQuantity()-itemType.getSellingStatus().getQuantitySold()));
-		sku.setCreateTime(new Date());
-		sku.setLastTime(itemType.getListingDetails().getEndTime().getTime());
+		sku.setLastTime(new Date());
+		if(itemType.getListingDetails()!=null)
+			sku.setCreateTime(itemType.getListingDetails().getEndTime().getTime());
 		//TODO 
 		sku.setSpuId(itemType.getItemID());
 	}
 
 	/**
-	 * @param vt nullable
-	 * @param itemType 
-	 * @return
+	 * 设置skuId，无变种的就是sit的itemId<br/>
+	 * 有变种的则是:itemId#变种sku;<br/>
+	 * 若是没有变种sku,则是变种属性键值对如下：<br/>
+	 * itemId#color:blue@size:m@width:medium<br/>
+	 * 注意：如果变种sku没有，那么就是：itemId#（会导致重复，覆盖）<br/>
+	 * @param itemType trading接口拉取的的item
+	 * @param vt item变种数据  nullable
+	 * @return 变换的skuId
 	 */
-	private static String getSkuIdStr(VariationType vt, ItemType itemType) {
-		if(vt==null)
+	public static String getSkuIdStr(VariationType vt, ItemType itemType) {
+		if(vt!=null){
+			if(vt.getSKU()==null){
+				StringBuffer skuId=new StringBuffer();
+				NameValueListType[] skuNvs=vt.getVariationSpecifics().getNameValueList();
+				NameValueListType[] itemNvs=itemType.getVariations().getVariationSpecificsSet().getNameValueList();
+				for (NameValueListType itemNv : itemNvs) {//item所有的可选项
+					for (NameValueListType skuNv : skuNvs) {
+						if(itemNv.getName().equals(skuNv.getName())){//变种的值
+							skuId.append(itemNv.getName()).append(":").append(skuNv.getValue(0)).append("@");//键值
+							break;
+						}
+					}
+				}
+				return itemType.getItemID()+"#"+skuId.toString();
+			}
+			return itemType.getItemID()+"#"+vt.getSKU();
+		}
+		else
 			return itemType.getItemID();
-		String skst =vt.getSKU();
-		//itemType 还有一个sku
-		if(StringUtils.isNotBlank(skst))
-			return itemType.getItemID()+"#"+skst;
-		return itemType.getItemID();
 	}
 
 	/**

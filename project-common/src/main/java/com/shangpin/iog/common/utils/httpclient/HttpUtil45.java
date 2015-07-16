@@ -1,6 +1,8 @@
 package com.shangpin.iog.common.utils.httpclient;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -17,15 +19,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -34,6 +40,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
@@ -46,6 +53,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
@@ -211,10 +219,55 @@ public class HttpUtil45 {
 				.setSSLSocketFactory(getSslConnectionSocketFactory())
 				//TODO 设置连接池
 				.setConnectionManager(getPoolingConnectionManager(url))
+				.setRetryHandler(getRetryHandler())
 				.build();
 		//httpclient =HttpClients.custom().build();
 		return httpclient;
 	}
+	/**
+	 * 重试次数handler
+	 * @return
+	 */
+	private static HttpRequestRetryHandler getRetryHandler() {
+		HttpRequestRetryHandler myRetryHandler = new HttpRequestRetryHandler() {
+		    public boolean retryRequest(
+		            IOException exception,
+		            int executionCount,
+		            HttpContext context) {
+		        if (executionCount >= 5) {
+		            // Do not retry if over max retry count
+		            return false;
+		        }
+		        if (exception instanceof InterruptedIOException) {
+		            // Timeout
+		            return false;
+		        }
+		        if (exception instanceof UnknownHostException) {
+		            // Unknown host
+		            return false;
+		        }
+		        if (exception instanceof ConnectTimeoutException) {
+		            // Connection refused
+		            return false;
+		        }
+		        if (exception instanceof SSLException) {
+		            // SSL handshake exception
+		            return false;
+		        }
+		        HttpClientContext clientContext = HttpClientContext.adapt(context);
+		        HttpRequest request = clientContext.getRequest();
+		        boolean idempotent = !(request instanceof HttpEntityEnclosingRequest);
+		        if (idempotent) {
+		            // Retry if the request is considered idempotent
+		            return true;
+		        }
+		        return false;
+		    }
+
+		};
+		return myRetryHandler;
+	}
+
 	/**
 	 * 获取连接池，管理,注册了http,https的信任所有连接<br/>
 	 * 默认策略，最大连接数200，每个路由默认连接数3

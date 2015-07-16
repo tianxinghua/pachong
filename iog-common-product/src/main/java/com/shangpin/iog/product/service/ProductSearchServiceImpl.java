@@ -197,7 +197,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 buffer.append(!"".equals(brandId)?brandId :"品牌编号").append(",");
                 buffer.append(brandName).append(",");
                 //货号
-                buffer.append(dto.getProductCode()).append(",").append(dto.getSkuId()).append(",");
+                buffer.append(dto.getProductCode()).append(",");
+                //    供应商SKUID
+
+                buffer.append("\"\t" + dto.getSkuId()+ "\"").append(",");
               //  欧洲习惯 第一个先看 男女
                 buffer.append(dto.getCategoryGender()).append(",");
                 //产品名称
@@ -398,60 +401,60 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 switch (i){
                     case 0:
                         if(isHavePic){
-                            dto.setItemPictureUrl1(picList.get(i).getPicUrl());
+                            dto.setItemPictureUrl1(picList.get(i).getPicUrl().replaceAll(",","++++"));
                         }else{
-                            dto.setPicUrl(picList.get(i).getPicUrl());
+                            dto.setPicUrl(picList.get(i).getPicUrl().replaceAll(",", "++++"));
                         }
                         break;
                     case 1:
 
                         if(isHavePic){
-                            dto.setItemPictureUrl2(picList.get(i).getPicUrl());
+                            dto.setItemPictureUrl2(picList.get(i).getPicUrl().replaceAll(",", "++++"));
                         }else{
-                            dto.setItemPictureUrl1(picList.get(i).getPicUrl()) ;
+                            dto.setItemPictureUrl1(picList.get(i).getPicUrl().replaceAll(",", "++++")) ;
                         }
 
                         break;
                     case 2:
                         if(isHavePic){
-                            dto.setItemPictureUrl3(picList.get(i).getPicUrl());
+                            dto.setItemPictureUrl3(picList.get(i).getPicUrl().replaceAll(",", "++++"));
                         }else{
-                            dto.setItemPictureUrl2(picList.get(i).getPicUrl()) ;
+                            dto.setItemPictureUrl2(picList.get(i).getPicUrl().replaceAll(",", "++++")) ;
                         }
                         break;
                     case 3:
                         if(isHavePic){
-                            dto.setItemPictureUrl4(picList.get(i).getPicUrl());
+                            dto.setItemPictureUrl4(picList.get(i).getPicUrl().replaceAll(",", "++++"));
                         }else{
-                            dto.setItemPictureUrl3(picList.get(i).getPicUrl()) ;
+                            dto.setItemPictureUrl3(picList.get(i).getPicUrl().replaceAll(",", "++++")) ;
                         }
                         break;
                     case 4:
                         if(isHavePic){
-                            dto.setItemPictureUrl5(picList.get(i).getPicUrl());
+                            dto.setItemPictureUrl5(picList.get(i).getPicUrl().replaceAll(",", "++++"));
                         }else{
-                            dto.setItemPictureUrl4(picList.get(i).getPicUrl()) ;
+                            dto.setItemPictureUrl4(picList.get(i).getPicUrl().replaceAll(",", "++++")) ;
                         }
                         break;
                     case 5:
                         if(isHavePic){
-                            dto.setItemPictureUrl6(picList.get(i).getPicUrl());
+                            dto.setItemPictureUrl6(picList.get(i).getPicUrl().replaceAll(",", "++++"));
                         }else{
-                            dto.setItemPictureUrl5(picList.get(i).getPicUrl()) ;
+                            dto.setItemPictureUrl5(picList.get(i).getPicUrl().replaceAll(",", "++++")) ;
                         }
                         break;
                     case 6:
                         if(isHavePic){
-                            dto.setItemPictureUrl7(picList.get(i).getPicUrl());
+                            dto.setItemPictureUrl7(picList.get(i).getPicUrl().replaceAll(",", "++++"));
                         }else{
-                            dto.setItemPictureUrl6(picList.get(i).getPicUrl()) ;
+                            dto.setItemPictureUrl6(picList.get(i).getPicUrl().replaceAll(",", "++++")) ;
                         }
                         break;
                     case 7:
                         if(isHavePic){
-                            dto.setItemPictureUrl8(picList.get(i).getPicUrl());
+                            dto.setItemPictureUrl8(picList.get(i).getPicUrl().replaceAll(",", "++++"));
                         }else{
-                            dto.setItemPictureUrl7(picList.get(i).getPicUrl()) ;
+                            dto.setItemPictureUrl7(picList.get(i).getPicUrl().replaceAll(",","++++")) ;
                         }
                         break;
 
