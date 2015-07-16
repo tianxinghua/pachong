@@ -84,9 +84,9 @@ public class V1GrabService {
 				}
 				page++;
 			}else{
-				logger.warn("获取商户{}产品失败，错误码：{}，错误信息{}:",userId,
+				/*logger.warn("获取商户{}产品失败，错误码：{}，错误信息{}:",userId,
 						resp.getErrors(0).getErrorCode(),
-						resp.getErrors(0).getLongMessage());
+						resp.getErrors(0).getLongMessage());*/
 				hasMore=false;
 			}
 		}while(hasMore);
@@ -138,12 +138,12 @@ public class V1GrabService {
 	/**
 	 * @param date
 	 * @return
-	 */
+	 *//*
 	private Calendar getCalendar(Date date) {
 		Calendar ca=Calendar.getInstance();
 		ca.setTime(date);
 		return ca;
-	}
+	}*/
 	/**
 	 * 根据itemIds获取sku，spu，pic信息
 	 * @param supplierKey 供应商id，（商铺id，用户id）
@@ -152,9 +152,8 @@ public class V1GrabService {
 	 * @return
 	 * @throws XmlException 
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private Map<String, ? extends Collection> findDetailKPP(String supplierKey,
-			Map<String, ? extends Collection> skuSpuAndPic, List<String> itemIds) throws XmlException {
+	/*@SuppressWarnings({ "rawtypes", "unchecked" })
+	private Map<String, ? extends Collection> findDetailKPP(String supplierKey,Map<String, ? extends Collection> skuSpuAndPic, List<String> itemIds) throws XmlException {
 		//2.得到item
 		GetMultipleItemsResponseType multResp= GrabEbayApiService.shoppingGetMultipleItems(itemIds);
 		//3.转换sku,spu
@@ -168,11 +167,11 @@ public class V1GrabService {
 			skuSpuAndPic.get("pic").addAll(kpp.get("pic"));
 		}
 		return skuSpuAndPic;
-	}
+	}*/
 	/**
 	 * 通过find接口查询供应商店铺销售的item
 	 * @param storeName 店铺名字
-	 * @param brandName 品牌名字
+	 * @param brand 品牌名字
 	 * @return  封装好的sku,spu,pic，各键代表对应的数据集合
 	 */
 	@SuppressWarnings({ "rawtypes" })
@@ -186,9 +185,9 @@ public class V1GrabService {
 			try {
 				resp = GrabEbayApiService.findItemsIneBayStores(storeName,brand,page,pageSize);
 				if(!AckValue.SUCCESS.equals(resp.getAck()) && !AckValue.WARNING.equals(resp.getAck())){//返回错误了则直接返回
-					logger.warn("find store:{},brand:{}失败，错误码：{}，错误信息{}:",storeName,brand,
+					/*logger.warn("find store:{},brand:{}失败，错误码：{}，错误信息{}:",storeName,brand,
 							resp.getErrorMessage().getErrorArray(0).getErrorId(),
-							resp.getErrorMessage().getErrorArray(0).getMessage());
+							resp.getErrorMessage().getErrorArray(0).getMessage());*/
 					hasMore=false;
 					return skuSpuAndPic;
 				}
@@ -199,7 +198,7 @@ public class V1GrabService {
 			}
 			//TODO 如果没找到数据，那么返回null
 			if(resp.getPaginationOutput().getTotalEntries()==0){
-				logger.warn("没有找到storeName:{},brand:{}的产品,page:{}",storeName,brand,page);
+				//logger.warn("没有找到storeName:{},brand:{}的产品,page:{}",storeName,brand,page);
 				return skuSpuAndPic;
 			}
 			int totalPage=resp.getPaginationOutput().getTotalPages();
@@ -210,11 +209,11 @@ public class V1GrabService {
 				hasMore=false;
 			}
 			//TODO 查询结果resp.getSearchResult().getCount(),还是resp.getPaginationOutput().getTotalEntries())值得商榷
-			if(page==2)
-				logger.debug(
+			//if(page==2)
+				/*logger.debug(
 						"search store:{},brand:{} Result,resultCount:{},totalPage:{},totalCount:{}",
 						storeName, brand,resp.getSearchResult().getCount(), 
-						totalPage, resp.getPaginationOutput().getTotalEntries());
+						totalPage, resp.getPaginationOutput().getTotalEntries());*/
 			SearchItem[] items=resp.getSearchResult().getItemArray();
 			boolean isActive=false;
 			List<String> itemIds=new ArrayList<>();
@@ -293,10 +292,10 @@ public class V1GrabService {
 		}
 		if(AckValue.FAILURE.equals(multResp.getAck())||
 				AckValue.PARTIAL_FAILURE.equals(multResp.getAck())){
-			logger.warn("GetMultipleItems Fail::supplierKey{},itemIds len:{}，错误码：{}，错误信息{}:",supplierKey,itemIds.size(),
+			/*logger.warn("GetMultipleItems Fail::supplierKey{},itemIds len:{}，错误码：{}，错误信息{}:",supplierKey,itemIds.size(),
 					multResp.getErrorsArray(0).getErrorCode(),
 					multResp.getErrorsArray(0).getLongMessage()
-					);
+					);*/
 			return skuSpuAndPic;
 		}
 		//3.转换sku,spu
