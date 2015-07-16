@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * Created by loyalty on 15/6/3.
- * SPU对象
+ * 图片对象
  */
 @Document(collection="product-picture")
 public class ProductPicture implements Serializable{
@@ -18,6 +18,7 @@ public class ProductPicture implements Serializable{
 	@Id
 	private String id;
     private String supplierId;
+	private String spuId;
     private String skuId;
     private String picUrl;
 	@Override
@@ -25,6 +26,7 @@ public class ProductPicture implements Serializable{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((picUrl == null) ? 0 : picUrl.hashCode());
+		result = prime * result + ((spuId == null) ? 0 : spuId.hashCode());
 		result = prime * result + ((skuId == null) ? 0 : skuId.hashCode());
 		result = prime * result
 				+ ((supplierId == null) ? 0 : supplierId.hashCode());
@@ -44,6 +46,13 @@ public class ProductPicture implements Serializable{
 				return false;
 		} else if (!picUrl.equals(other.picUrl))
 			return false;
+
+		if (spuId == null) {
+			if (other.spuId != null)
+				return false;
+		} else if (!spuId.equals(other.spuId))
+			return false;
+
 		if (skuId == null) {
 			if (other.skuId != null)
 				return false;
@@ -90,5 +99,13 @@ public class ProductPicture implements Serializable{
     public void setPicUrl(String picUrl) {
         this.picUrl = picUrl;
     }
-    
+
+
+	public String getSpuId() {
+		return spuId;
+	}
+
+	public void setSpuId(String spuId) {
+		this.spuId = spuId;
+	}
 }
