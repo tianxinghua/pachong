@@ -104,7 +104,7 @@ public class ShopingItemConvert {
 		}
 		if(sit.getVariations()!=null && spu.getCategoryGender()==null){
 			NameValueListType[] nvs=sit.getVariations().getVariationSpecificsSet().getNameValueListArray();
-			getNVAttrValue("_gender",nvs);
+			spu.setCategoryGender(getNVAttrValue("_gender",nvs));
 		}
 	}
 

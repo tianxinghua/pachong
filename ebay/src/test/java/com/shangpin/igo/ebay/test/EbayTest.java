@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.service.ProductFetchService;
+
 import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 
@@ -45,10 +46,13 @@ import com.shangpin.ebay.shoping.NameValueListType;
 import com.shangpin.ebay.shoping.SimpleItemType;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
+import com.shangpin.iog.common.utils.json.JsonUtil;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.ebay.conf.EbayInit;
+import com.shangpin.iog.ebay.convert.ShopingItemConvert;
 import com.shangpin.iog.ebay.convert.TradeItemConvert;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -438,7 +442,7 @@ public class EbayTest {
 	}
 	@Test
 	public void GetMultipleItems(){
-		String itemId="111180794134";
+		String itemId="111477491549";
 		//171842899950,171843018026,181789630075
 		String url=shopingCommon("GetMultipleItems");
 		url+="ItemID="+itemId+"&IncludeSelector=Details,Variations,ItemSpecifics";
@@ -448,6 +452,8 @@ public class EbayTest {
 		try {
 			GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
 			GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();
+			Map<String, Collection> kpps=ShopingItemConvert.convert2kpp(rt.getItemArray(), "kkkkk");
+			System.out.println(JsonUtil.getJsonString4JavaPOJO(kpps));
 			//获取storeName
 			for(SimpleItemType x:rt.getItemArray()){
 				System.out.println(x.getStorefront().getStoreName());				

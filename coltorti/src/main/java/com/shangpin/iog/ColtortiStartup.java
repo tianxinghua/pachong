@@ -90,7 +90,7 @@ public class ColtortiStartup {
 			grabProduct();
 		}else{
 			try {
-				ColtortiTokenService.initToken();
+				//ColtortiTokenService.initToken();
 				updateStock();
 				logger.warn("==========更新库存完成========");
 			} catch (Exception e) {
