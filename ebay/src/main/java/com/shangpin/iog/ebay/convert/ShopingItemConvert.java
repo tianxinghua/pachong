@@ -102,6 +102,10 @@ public class ShopingItemConvert {
 		}else if(title.contains("man")||title.contains("male")){
 			spu.setCategoryGender("M");
 		}
+		if(sit.getVariations()!=null && spu.getCategoryGender()==null){
+			NameValueListType[] nvs=sit.getVariations().getVariationSpecificsSet().getNameValueListArray();
+			getNVAttrValue("_gender",nvs);
+		}
 	}
 
 	/**
@@ -143,6 +147,7 @@ public class ShopingItemConvert {
 		Object[] picAndSku=new Object[]{rtnSku,rtnPic};
 		if(sit.getVariations()!=null && sit.getVariations().getVariationArray()!=null){
 			VariationType[] vrts=sit.getVariations().getVariationArray();
+			boolean hasGetVaritionPic=false;
 			for (VariationType vt : vrts) {
 				SkuDTO sku = new SkuDTO();
 				setSkuCommon(userId, createDate, sit, sku);
@@ -160,9 +165,12 @@ public class ShopingItemConvert {
 					setItemAtt(sku,sit.getItemSpecifics().getNameValueListArray());					
 				setMarketPrice(vt.getDiscountPriceInfo(),sku);
 				//sit.getVariations().getPicturesArray();//for pic
-				getVariationPic(sit.getVariations().getPicturesArray(),rtnPic,skuId,sku.getSupplierId());
+				if(!hasGetVaritionPic)//每个sku变种只拉取一遍变体图片
+					getVariationPic(sit.getVariations().getPicturesArray(),rtnPic,skuId,sku.getSupplierId());
+				hasGetVaritionPic=true;
 				rtnSku.add(sku);
 			}
+			//url2Pic(sit.getItemID(),rtnPic, sit.getPictureURLArray());
 		}else{
 			SkuDTO sku = new SkuDTO();
 			setSkuCommon(userId, createDate, sit, sku);
@@ -176,9 +184,9 @@ public class ShopingItemConvert {
 			sku.setSkuId(getSkuId(sit,null));
 			setMarketPrice(sit.getDiscountPriceInfo(), sku);
 			//sit.getPictureURLArray();
-			url2Pic(sit.getItemID(), sku.getSupplierId(), rtnPic, sit.getPictureURLArray());
 			rtnSku.add(sku);
 		}
+		url2Pic(sit.getItemID(),rtnPic, sit.getPictureURLArray());
 		return picAndSku;
 	}
 
@@ -209,7 +217,8 @@ public class ShopingItemConvert {
 
 	/**
 	 * 获取包含指定属性名的 值<br/>
-	 * "Manufacturer Part Number" 也是mpn
+	 * "Manufacturer Part Number" 也是mpn<br/>
+	 * 性别传：_gender，会提取其中的womon|femal,man|male;返回F,M
 	 * @param name 小写的属性名字符串
 	 * @param nvs 属性键值对
 	 * @return
@@ -224,6 +233,13 @@ public class ShopingItemConvert {
 				return nv.getValueArray(0);			
 			if(nName.contains(name))
 				return nv.getValueArray(0);
+			if(name.equals("_gender")){//如果是找性别的话
+				if(nName.contains("women")||nName.contains("femal")){
+					return "F";
+				}else if(nName.contains("man")||nName.contains("male")){
+					return "M";
+				}
+			}
 		}
 		return null;
 	}
@@ -286,8 +302,9 @@ public class ShopingItemConvert {
 			for (PicturesType picturesType : picturesTypes) {//颜色图片、尺码图片等
 				VariationSpecificPictureSetType[] vsps=picturesType.getVariationSpecificPictureSetArray();
 				for (VariationSpecificPictureSetType vsp : vsps) {//不同颜色值，尺码值的图片
+					//vsp.getVariationSpecificValue(),颜色值、尺码值
 					String[] urls=vsp.getPictureURLArray();
-					url2Pic(skuId, supperlierId, rtnPic, urls);
+					url2Pic(skuId,rtnPic, urls);
 				}			
 			}
 		}
@@ -299,14 +316,15 @@ public class ShopingItemConvert {
 	 * @param set
 	 * @param urls
 	 */
-	private static void url2Pic(String skuId, String supperlierId,
+	private static void url2Pic(String skuId,
 			Set<ProductPictureDTO> set, String[] urls) {
+		if(urls==null || urls.length<1) return ;
 		for (String url : urls) {//每个图片url
 			ProductPictureDTO pic=new ProductPictureDTO();
 			pic.setId(UUIDGenerator.getUUID());
 			pic.setPicUrl(url);
 			pic.setSkuId(skuId);
-			pic.setSupplierId(supperlierId);
+			pic.setSupplierId(EbayInit.EBAY);
 			set.add(pic);
 		}
 	}

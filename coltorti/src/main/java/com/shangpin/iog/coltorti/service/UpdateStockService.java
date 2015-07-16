@@ -64,7 +64,12 @@ public class UpdateStockService extends AbsUpdateProductStock{
 			}catch(ServiceException e){
 				logger.error("拉取skuNO{}库存失败{}",skuNo,e.getMessage());
 				if(ColtortiUtil.isTokenExpire(e)){
-					ColtortiTokenService.initToken();
+					try{
+						ColtortiTokenService.initToken();
+					}catch(Exception e1){
+						skuStock.put(skuNo, 0);	
+						continue;
+					}
 					stoks=ColtortiStockService.getStock(productId, recordId);
 				}else{
 					continue;						

@@ -33,7 +33,14 @@ public class ColtortiTokenService {
 		//System.out.println(tokenCreate+":"+tokenExpire+":"+token);
 		lock.lock();
 		if (isTokenExpire()) {
-			token = initToken();
+			try{
+				token = initToken();
+			}catch(ServiceMessageException e){
+				retryToken=0;
+				throw e;
+			}finally{
+				lock.unlock();
+			}
 		}			
 		lock.unlock();
 		return token;
@@ -55,12 +62,14 @@ public class ColtortiTokenService {
 			if(!isTokenExpire())
 				return token;
 			if(retryToken>10){
+				retryToken=0;
 				logger.error("获取token失败次数过多，系统退出");
-				System.exit(0);
+				throw new ServiceMessageException("获取token失败次数超过10次");
 			}
 			token = null;
 			logger.info("初始化token......");
 			String body = HttpUtil45.postAuth(ApiURL.AUTH, null,null,ApiURL.userName, ApiURL.password);
+			logger.info("获取token成功......");
 			logger.info("token:" + body);
 			ColtortiUtil.check(body);
 			JsonObject jo = new JsonParser().parse(body).getAsJsonObject();
