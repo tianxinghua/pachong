@@ -147,7 +147,6 @@ public class ShopingItemConvert {
 		Object[] picAndSku=new Object[]{rtnSku,rtnPic};
 		if(sit.getVariations()!=null && sit.getVariations().getVariationArray()!=null){
 			VariationType[] vrts=sit.getVariations().getVariationArray();
-			boolean hasGetVaritionPic=false;
 			for (VariationType vt : vrts) {
 				SkuDTO sku = new SkuDTO();
 				setSkuCommon(userId, createDate, sit, sku);
@@ -165,11 +164,12 @@ public class ShopingItemConvert {
 					setItemAtt(sku,sit.getItemSpecifics().getNameValueListArray());					
 				setMarketPrice(vt.getDiscountPriceInfo(),sku);
 				//sit.getVariations().getPicturesArray();//for pic
-				if(!hasGetVaritionPic)//每个sku变种只拉取一遍变体图片
-					getVariationPic(sit.getVariations().getPicturesArray(),rtnPic,skuId,sku.getSupplierId());
-				hasGetVaritionPic=true;
 				rtnSku.add(sku);
 			}
+			//所有sku变种只拉取一遍变体图片
+			getVariationPic(sit.getVariations().getPicturesArray(),sit.getItemID(),rtnPic);
+			//总是保存item的图片
+			url2Pic(null,sit.getItemID(),rtnPic, sit.getPictureURLArray());
 			//url2Pic(sit.getItemID(),rtnPic, sit.getPictureURLArray());
 		}else{
 			SkuDTO sku = new SkuDTO();
@@ -185,8 +185,9 @@ public class ShopingItemConvert {
 			setMarketPrice(sit.getDiscountPriceInfo(), sku);
 			//sit.getPictureURLArray();
 			rtnSku.add(sku);
+			//总是保存item的图片
+			url2Pic(sit.getItemID(),sit.getItemID(),rtnPic, sit.getPictureURLArray());
 		}
-		url2Pic(sit.getItemID(),rtnPic, sit.getPictureURLArray());
 		return picAndSku;
 	}
 
@@ -293,18 +294,17 @@ public class ShopingItemConvert {
 	/**
 	 * 
 	 * @param picturesTypes
+	 * @param spuId 
 	 * @param rtnPic
-	 * @param skuId
-	 * @param supperlierId
 	 */
-	private static void getVariationPic(PicturesType[] picturesTypes,Set<ProductPictureDTO> rtnPic, String skuId,String supperlierId) {
+	private static void getVariationPic(PicturesType[] picturesTypes,String spuId, Set<ProductPictureDTO> rtnPic) {
 		if(picturesTypes!=null && picturesTypes.length>0){
 			for (PicturesType picturesType : picturesTypes) {//颜色图片、尺码图片等
 				VariationSpecificPictureSetType[] vsps=picturesType.getVariationSpecificPictureSetArray();
 				for (VariationSpecificPictureSetType vsp : vsps) {//不同颜色值，尺码值的图片
 					//vsp.getVariationSpecificValue(),颜色值、尺码值
 					String[] urls=vsp.getPictureURLArray();
-					url2Pic(skuId,rtnPic, urls);
+					url2Pic(null,spuId,rtnPic, urls);
 				}			
 			}
 		}
@@ -312,20 +312,22 @@ public class ShopingItemConvert {
 
 	/**
 	 * @param skuId
+	 * @param spuId
 	 * @param supperlierId
-	 * @param set
+	 * @param picSet
 	 * @param urls
 	 */
-	private static void url2Pic(String skuId,
-			Set<ProductPictureDTO> set, String[] urls) {
+	private static void url2Pic(String skuId,String spuId,
+			Set<ProductPictureDTO> picSet, String[] urls) {
 		if(urls==null || urls.length<1) return ;
 		for (String url : urls) {//每个图片url
 			ProductPictureDTO pic=new ProductPictureDTO();
 			pic.setId(UUIDGenerator.getUUID());
 			pic.setPicUrl(url);
 			pic.setSkuId(skuId);
+			pic.setSpuId(spuId);
 			pic.setSupplierId(EbayInit.EBAY);
-			set.add(pic);
+			picSet.add(pic);
 		}
 	}
 

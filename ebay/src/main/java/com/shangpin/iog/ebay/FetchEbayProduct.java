@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.shangpin.ebay.shoping.NameValueListType;
-import com.shangpin.iog.ebay.conf.EbayConf;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
@@ -14,26 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
-import com.ebay.sdk.ApiAccount;
-import com.ebay.sdk.ApiCall;
-import com.ebay.sdk.ApiContext;
-import com.ebay.sdk.ApiCredential;
-import com.ebay.sdk.SdkException;
-import com.ebay.sdk.SdkSoapException;
-import com.ebay.soap.eBLBaseComponents.AmountType;
-import com.ebay.soap.eBLBaseComponents.DetailLevelCodeType;
-import com.ebay.soap.eBLBaseComponents.GetItemRequestType;
-import com.ebay.soap.eBLBaseComponents.GetItemResponseType;
-import com.ebay.soap.eBLBaseComponents.ItemType;
-import com.ebay.soap.eBLBaseComponents.VariationSpecificPictureSetType;
-import com.ebay.soap.eBLBaseComponents.VariationType;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
-import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
 import com.shangpin.ebay.finding.SearchItem;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
+import com.shangpin.ebay.shoping.NameValueListType;
 import com.shangpin.ebay.shoping.SimpleItemType;
 import com.shangpin.iog.common.utils.UUIDGenerator;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -236,10 +220,10 @@ public class FetchEbayProduct {
                             }
                         }
                     }
-                }*/
+                }
                 //获得图片地址
-                String[] picUrl = item.getPictureURLArray();
-                StringBuffer pics=new StringBuffer();
+                //String[] picUrl = item.getPictureURLArray();
+                //StringBuffer pics=new StringBuffer();
                 for(String pic:picUrl){
                     pics.append(pic);
                 }
