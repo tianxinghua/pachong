@@ -95,7 +95,18 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             for(ProductDTO dto :productList){
 
                 if(null!=dto.getSupplierId()&&null!=dto.getSkuId()) {
-                    List<ProductPicture> productPictureList = pictureDAO.findBySupplierIdAndSkuId(dto.getSupplierId(),dto.getSkuId());
+                    List<ProductPicture> productPictureList = new ArrayList<>();
+                    //查询公共的图片
+                    List<ProductPicture> spuPictureList = pictureDAO.findBySupplierIdAndSpuId(dto.getSupplierId(), dto.getSpuId());
+                    if(!spuPictureList.isEmpty()){
+                        productPictureList.addAll(spuPictureList);
+                    }
+                    //查询个性图片
+                    List<ProductPicture> skuPictureList = pictureDAO.findBySupplierIdAndSkuId(dto.getSupplierId(),dto.getSkuId());
+                    if(!skuPictureList.isEmpty()){
+                        productPictureList.addAll(skuPictureList);
+                    }
+
                     List<ProductPictureDTO> picList = new ArrayList<>();
                     for(ProductPicture productPicture:productPictureList){
                         ProductPictureDTO productPictureDTO = new ProductPictureDTO();
