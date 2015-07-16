@@ -36,7 +36,7 @@ public class EbayInit {
     static{
     	init();
     }
-    public static EbayAppConf initConf(ResourceBundle bdl){
+    private static EbayAppConf initConf(ResourceBundle bdl){
     	EbayAppConf conf = new EbayAppConf();
     	try{
     		String token=bdl.getString("token");
@@ -57,7 +57,7 @@ public class EbayInit {
      * @param propFileName
      * @return 如果没有配置token则为null
      */
-    public static EbayAppConf initConf(String propFileName){
+    private static EbayAppConf initConf(String propFileName){
     	try{
     		bdl=ResourceBundle.getBundle(propFileName);
     	}catch(Exception e){

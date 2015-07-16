@@ -11,6 +11,7 @@ import java.util.Set;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.product.service.ProductFetchServiceImpl;
 import com.shangpin.iog.service.ProductFetchService;
+
 import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 
@@ -46,10 +47,13 @@ import com.shangpin.ebay.shoping.NameValueListType;
 import com.shangpin.ebay.shoping.SimpleItemType;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
+import com.shangpin.iog.common.utils.json.JsonUtil;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.ebay.conf.EbayInit;
+import com.shangpin.iog.ebay.convert.ShopingItemConvert;
 import com.shangpin.iog.ebay.convert.TradeItemConvert;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -445,7 +449,7 @@ public class EbayTest {
 	}
 	@Test
 	public void GetMultipleItems(){
-		String itemId="181789534083,181789630092,181789534119,171842899940,181789534121,181789630072,171842899968,171842899951,181789534099,181789534101,181789534113,181789630083,181789630071,181789630074,181789630085,171843018035,171843018045,171842899942,181789534084,171842899970";
+		String itemId="111477491549";
 		//171842899950,171843018026,181789630075
 		String url=shopingCommon("GetMultipleItems");
 		url+="ItemID="+itemId+"&IncludeSelector=Details,Variations,ItemSpecifics";
@@ -455,6 +459,8 @@ public class EbayTest {
 		try {
 			GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
 			GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();
+			Map<String, Collection> kpps=ShopingItemConvert.convert2kpp(rt.getItemArray(), "kkkkk");
+			System.out.println(JsonUtil.getJsonString4JavaPOJO(kpps));
 			//获取storeName
 			for(SimpleItemType x:rt.getItemArray()){
 				System.out.println(x.getStorefront().getStoreName());				

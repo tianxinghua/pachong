@@ -12,10 +12,12 @@ import org.apache.xmlbeans.XmlException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
+
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponseDocument;
 import com.shangpin.ebay.finding.SearchItem;
 import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
+import com.shangpin.ebay.shoping.NameValueListType;
 import com.shangpin.ebay.shoping.SimpleItemType;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
@@ -194,16 +196,12 @@ public class FetchEbayProduct {
                     spu.setSubCategoryId(item.getSecondaryCategoryID());
                     spu.setSubCategoryName(item.getSecondaryCategoryName());
                 }
-                //获得图片地址
-                String[] picUrl = item.getPictureURLArray();
-                StringBuffer pics=new StringBuffer();
-                for(String pic:picUrl){
-                    pics.append(pic);
-                }
+                
                 spu.setPicUrl(pics.toString());
                 spu.setCreateTime(t.getListingInfo().getStartTime().getTime());
                 spu.setLastTime(t.getListingInfo().getEndTime().getTime());
                 //判断和获取品牌、材质、产地
+
                 if (item.getItemSpecifics() != null) {
                     com.shangpin.ebay.shoping.NameValueListType[] nameValueListType = item.getItemSpecifics().getNameValueListArray();
                     if (nameValueListType != null) {
@@ -219,6 +217,12 @@ public class FetchEbayProduct {
                             }
                         }
                     }
+                }*/
+                //获得图片地址
+                String[] picUrl = item.getPictureURLArray();
+                StringBuffer pics=new StringBuffer();
+                for(String pic:picUrl){
+                    pics.append(pic);
                 }
                try {
                        if(StringUtils.isNotBlank(spu.getBrandName())&&StringUtils.isNotBlank(spu.getCategoryName())) {
@@ -232,6 +236,7 @@ public class FetchEbayProduct {
                 }
             }
         }
+
     }
 
     public void fetchSpuAndSave(String storeName, String keywords) throws Exception {
@@ -293,4 +298,5 @@ public class FetchEbayProduct {
             pageSize++;
         }while(pageSize<=rt.getPaginationOutput().getTotalPages());
     }
+
 }

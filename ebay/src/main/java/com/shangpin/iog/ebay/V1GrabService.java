@@ -8,8 +8,15 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
@@ -30,6 +37,9 @@ import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.SimpleItemType;
 import com.shangpin.ebay.shoping.VariationType;
 import com.shangpin.ebay.shoping.VariationsType;
+import com.shangpin.iog.dto.ProductPictureDTO;
+import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.ebay.convert.ShopingItemConvert;
 import com.shangpin.iog.ebay.service.GrabEbayApiService;
 
@@ -59,7 +69,7 @@ public class V1GrabService {
 	public Map<String, ? extends Collection> getSellerList(String userId,Date endStart,Date endEnd) throws ApiException, SdkSoapException, SdkException{
 		int page=1;
 		boolean hasMore=false;
-		Map<String, ? extends Collection> skuSpuAndPic=null;
+		Map<String,  ? extends Collection> skuSpuAndPic=null;
 		GetSellerListResponseType resp =null;
 		do{//分页循环取
 			resp = GrabEbayApiService.tradeSellerList(userId, 
@@ -75,7 +85,7 @@ public class V1GrabService {
 					itemIds.add(itemType.getItemID());
 				}
 				try {
-					skuSpuAndPic = getItemDetail(userId, skuSpuAndPic, itemIds);
+					skuSpuAndPic = getMoreDetail(userId, itemIds);
 					//skuSpuAndPic = findDetailKPP(userId, skuSpuAndPic, itemIds);
 				} catch (XmlException e) {
 					logger.error("查询item明细异常，supplierId:"+userId,e);
@@ -178,9 +188,10 @@ public class V1GrabService {
 	public Map<String, ? extends Collection> findStoreBrand(String storeName,
 			String brand){
 		int page=1;
-		Map<String, ? extends Collection> skuSpuAndPic=null;//new HashMap<>();
+		Map<String, Collection> skuSpuAndPic = initResultMap();
 		boolean hasMore=false;
 		FindItemsIneBayStoresResponse resp =null;
+		ExecutorService exe = null;List<Future<Map<String, Collection>>> fu = null;
 		do{//分页循环取
 			try {
 				resp = GrabEbayApiService.findItemsIneBayStores(storeName,brand,page,pageSize);
@@ -209,11 +220,15 @@ public class V1GrabService {
 				hasMore=false;
 			}
 			//TODO 查询结果resp.getSearchResult().getCount(),还是resp.getPaginationOutput().getTotalEntries())值得商榷
-			//if(page==2)
-				/*logger.debug(
+			if(page==2){
+				logger.info(
 						"search store:{},brand:{} Result,resultCount:{},totalPage:{},totalCount:{}",
 						storeName, brand,resp.getSearchResult().getCount(), 
-						totalPage, resp.getPaginationOutput().getTotalEntries());*/
+						totalPage, resp.getPaginationOutput().getTotalEntries());
+				if(totalPage>4){
+					logger.warn("store:{},brand:{}的item超过了500个，总共：{}，获取sku,spu,pic需要时间",storeName,brand,resp.getPaginationOutput().getTotalEntries());
+				}
+			}
 			SearchItem[] items=resp.getSearchResult().getItemArray();
 			boolean isActive=false;
 			List<String> itemIds=new ArrayList<>();
@@ -225,41 +240,96 @@ public class V1GrabService {
 				}
 			}
 			try{
-				skuSpuAndPic = getItemDetail(storeName, skuSpuAndPic, itemIds);
+				if(totalPage>4){//考虑通过线程去处理了
+					if(exe==null){
+						exe = Executors.newFixedThreadPool(totalPage);//每页一个线程去跑
+						fu=new ArrayList<>();
+					}
+					Future<Map<String, Collection>> rs=exe.submit(new GetDetailThread(storeName,itemIds));
+					fu.add(rs);
+				}else{
+					combine(getMoreDetail(storeName,itemIds),skuSpuAndPic);					
+				}
 				//TODO 此处应该过滤目标品牌的
 				//filterBrand()
 			}catch(Exception e){
 				logger.error("查询店铺、品牌，getMultipleItem异常，storeName:"+storeName+",brand:"+brand,e);
 			}
 		}while(hasMore);
-		
+		if(exe!=null){
+			exe.shutdown();
+			try{
+				while(!exe.awaitTermination(1, TimeUnit.MINUTES)){//1分钟查询一次有无完成
+					ThreadPoolExecutor pool = (ThreadPoolExecutor)exe;
+					logger.info("item detail pool,总数：{}，当前活动线程数：{}",pool.getTaskCount(),pool.getActiveCount());
+				}
+				//线程完毕之后开始得到结果合并
+				for (Future<Map<String, Collection>> future : fu) {
+					combine(future.get(),skuSpuAndPic);
+				}				
+			}catch(Exception e){
+				logger.warn("获取itemIds的明细信息异常",e);
+			}
+		}
 		return skuSpuAndPic;
 	}
 
 	/**
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private static Map<String, Collection> initResultMap() {
+		Map<String, Collection> skuSpuAndPic=new HashMap<>();
+		skuSpuAndPic.put("sku", new HashSet<SkuDTO>());
+		skuSpuAndPic.put("spu", new HashSet<SpuDTO>());
+		skuSpuAndPic.put("pic", new HashSet<ProductPictureDTO>());
+		return skuSpuAndPic;
+	}
+	@SuppressWarnings("rawtypes")
+	static class GetDetailThread implements Callable<Map<String,Collection>>{
+
+		private String storeName;
+		private List<String> itemIds;
+
+		/**
+		 * @param storeName
+		 * @param itemIds
+		 */
+		public GetDetailThread(String storeName, List<String> itemIds) {
+			this.storeName=storeName;
+			this.itemIds=itemIds;
+		}
+
+		@Override
+		public Map<String, Collection> call() throws Exception {
+			logger.info("获取itemIds明细线程启动,itemId size:"+itemIds.size());
+			return (Map<String, Collection>) getMoreDetail(storeName,itemIds);
+		}
+		
+	}
+	/**
 	 * 循环调用获取item的变体明细
 	 * @param supplierKey
-	 * @param skuSpuAndPic
 	 * @param itemIds
-	 * @return
+	 * @return 
 	 * @throws XmlException
 	 */
 	@SuppressWarnings("rawtypes")
-	private Map<String, ? extends Collection> getItemDetail(String supplierKey,
-			Map<String, ? extends Collection> skuSpuAndPic, List<String> itemIds)
+	private static Map<String, ? extends Collection> getMoreDetail(String supplierKey,List<String> itemIds)
 			throws XmlException {
 		int idLen=itemIds.size();
+		Map<String, ? extends Collection> kpp=initResultMap();
 		if(idLen>20){
 			int p1=0;int p2=20;
 			do{
 				p2=p1+20;if(p2>idLen) p2=idLen;
-				skuSpuAndPic=findDetailKPP(supplierKey,skuSpuAndPic,itemIds.subList(p1, p2));
+				combine(findDetailKPP(supplierKey,itemIds.subList(p1, p2)),kpp);
 				p1=p2;
 			}while(p1<idLen);
 		}else{
-			skuSpuAndPic=findDetailKPP(supplierKey,skuSpuAndPic,itemIds);					
+			combine(findDetailKPP(supplierKey,itemIds),kpp);					
 		}
-		return skuSpuAndPic;
+		return kpp;
 	}
 	/**
 	 * @param date
@@ -270,25 +340,40 @@ public class V1GrabService {
 		ca.setTime(date);
 		return ca;
 	}
-	
+	/**
+	 * 将src中的sku,spu,pic合并到target的sku,spu,pic中
+	 * @param src 需要合并的
+	 * @param target 合并到目的map
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static void combine(Map<String, ? extends Collection> src,Map<String, ? extends Collection> target){
+		if(src==null){
+			return ;
+		}else{
+			if(src.get("sku")!=null)
+				target.get("sku").addAll(src.get("sku"));
+			if(src.get("spu")!=null)
+				target.get("spu").addAll(src.get("spu"));
+			if(src.get("pic")!=null)
+				target.get("pic").addAll(src.get("pic"));
+		}
+	}
 	/**
 	 * 根据itemIds获取sku，spu，pic信息
 	 * @param supplierKey 供应商id，（商铺id，用户id）
-	 * @param skuSpuAndPic 
 	 * @param itemIds item id
 	 * @return
 	 * @throws XmlException 
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private Map<String, ? extends Collection> findDetailKPP(String supplierKey,
-			Map<String, ? extends Collection> skuSpuAndPic, List<String> itemIds) throws XmlException {
+	@SuppressWarnings({ "rawtypes"})
+	private static Map<String, ? extends Collection> findDetailKPP(String supplierKey,List<String> itemIds) throws XmlException {
 		//2.得到item
 		GetMultipleItemsResponseType multResp=null;
 		try{
 			multResp= GrabEbayApiService.shoppingGetMultipleItems(itemIds);
 		}catch(Exception e){
 			logger.error(supplierKey,e);
-			return skuSpuAndPic;
+			return null;
 		}
 		if(AckValue.FAILURE.equals(multResp.getAck())||
 				AckValue.PARTIAL_FAILURE.equals(multResp.getAck())){
@@ -296,19 +381,12 @@ public class V1GrabService {
 					multResp.getErrorsArray(0).getErrorCode(),
 					multResp.getErrorsArray(0).getLongMessage()
 					);*/
-			return skuSpuAndPic;
+			return null;
 		}
 		//3.转换sku,spu
 		SimpleItemType[] itemTypes=multResp.getItemArray();
 		Map<String, Collection> kpp=ShopingItemConvert.convert2kpp(itemTypes,supplierKey);
-		if(skuSpuAndPic==null){
-			skuSpuAndPic=kpp;
-		}else{
-			skuSpuAndPic.get("sku").addAll(kpp.get("sku"));
-			skuSpuAndPic.get("spu").addAll(kpp.get("spu"));
-			skuSpuAndPic.get("pic").addAll(kpp.get("pic"));
-		}
-		return skuSpuAndPic;
+		return kpp;
 	}
 	/*public static void main(String[] args) {
 		List<String> itemIds=new ArrayList<>();
