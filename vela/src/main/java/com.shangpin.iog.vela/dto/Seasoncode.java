@@ -1,4 +1,4 @@
-package com.shangpin.iog.spinnaker.stock.dto;
+package com.shangpin.iog.vela.dto;
 
 /**
  * Created by Administrator on 2015/7/8.
