@@ -102,12 +102,12 @@ public class FtpApche {
             String port="";
             //String userName="1504604@aruba.it";
             //String pwd="7efd422f35";
-            String userName="sunny";
-            String pwd="123456";
+            String userName="1504604@aruba.it";
+            String pwd="7efd422f35";
            /* boolean flag = downFile("127.0.0.1", 21, "zlb",
                     "123", "/", "哈哈.txt", "D:/");*/
             boolean flag=downFile(url, 21, userName,
-                    pwd, "E:\\MailDoc\\firma", "Prodotti.xml", "D:/");
+                    pwd, "/", "Prodotti.xml", "D:/");
             System.out.println(flag);
         } catch (Exception e) {
             e.printStackTrace();
