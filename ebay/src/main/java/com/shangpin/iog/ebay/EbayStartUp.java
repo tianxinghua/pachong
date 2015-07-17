@@ -78,7 +78,7 @@ public class EbayStartUp {
 	}
 	
 	private static void updateStock(){
-		String supplier="";
+		String supplier=EbayInit.EBAY.substring(3);
 		String start=DateTimeUtil.LongFmt(new Date());
 		Calendar c=Calendar.getInstance();c.add(Calendar.MONTH, -3);
 		String end=DateTimeUtil.LongFmt(c.getTime());

@@ -1,22 +1,23 @@
-package com.shangpin.iog.vela.service;
+package com.shangpin.iog.vela.stock;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
-import com.shangpin.iog.spinnaker.stock.dto.Quantity;
+import com.shangpin.iog.vela.stock.dto.Quantity;
 import org.apache.log4j.Logger;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by huxia on 2015/7/16.
+ * Created by huxia on 2015/7/17.
  */
-public class GrabStockImp extends AbsUpdateProductStock{
-
+public class VelaStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
 
     private Map<String,String> barcode_map = new HashMap<>();
@@ -53,6 +54,15 @@ public class GrabStockImp extends AbsUpdateProductStock{
             }
         }
         return stock_map;
+    }
+
+    public static void main(String[] args) throws Exception {
+        AbsUpdateProductStock velaStockImp = new VelaStockImp();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        logger.info("VELA更新数据库开始");
+        velaStockImp.updateProductStock("2015071701343","2015-01-01 00:00",format.format(new Date()));
+        logger.info("VELA更新数据库结束");
+        System.exit(0);
     }
 
 }

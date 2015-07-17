@@ -197,7 +197,6 @@ public class FetchEbayProduct {
                     spu.setSubCategoryName(item.getSecondaryCategoryName());
                 }
                 
-                //spu.setPicUrl(pics.toString());
                 spu.setCreateTime(t.getListingInfo().getStartTime().getTime());
                 spu.setLastTime(t.getListingInfo().getEndTime().getTime());
                 //判断和获取品牌、材质、产地
