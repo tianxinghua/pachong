@@ -17,4 +17,5 @@ public class EbayAppConf {
     private String cerKey;
     private String ruName;
     private String token;
+
 }

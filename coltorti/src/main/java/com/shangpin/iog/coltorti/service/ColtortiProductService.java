@@ -111,7 +111,10 @@ public class ColtortiProductService{
 			}catch(ServiceException e){
 				if(ColtortiUtil.isTokenExpire(e)){//如果是过期的话重新获取token
 					logger.warn(e.getMessage());
-					ColtortiTokenService.initToken();
+					try{
+						ColtortiTokenService.initToken();
+					}catch(Exception e1){
+					}
 					continue;
 				}else if(ColtortiUtil.isNoResultError(e)){
 					hasMore=false;

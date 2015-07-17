@@ -99,8 +99,12 @@ public class ShopingItemConvert {
 		spu.setSubCategoryName(sit.getSecondaryCategoryName());
 		if(title.contains("women")||title.contains("femal")){
 			spu.setCategoryGender("F");
-		}else if(title.contains("man")||title.contains("male")){
+		}else if(title.contains("man")||title.contains("male")||(!title.contains("women") && title.contains("men"))){
 			spu.setCategoryGender("M");
+		}
+		if(sit.getVariations()!=null && spu.getCategoryGender()==null){
+			NameValueListType[] nvs=sit.getVariations().getVariationSpecificsSet().getNameValueListArray();
+			spu.setCategoryGender(getNVAttrValue("_gender",nvs));
 		}
 	}
 
@@ -160,9 +164,13 @@ public class ShopingItemConvert {
 					setItemAtt(sku,sit.getItemSpecifics().getNameValueListArray());					
 				setMarketPrice(vt.getDiscountPriceInfo(),sku);
 				//sit.getVariations().getPicturesArray();//for pic
-				getVariationPic(sit.getVariations().getPicturesArray(),rtnPic,skuId,sku.getSupplierId());
 				rtnSku.add(sku);
 			}
+			//所有sku变种只拉取一遍变体图片
+			getVariationPic(sit.getVariations().getPicturesArray(),sit.getItemID(),rtnPic);
+			//总是保存item的图片
+			url2Pic(null,sit.getItemID(),rtnPic, sit.getPictureURLArray());
+			//url2Pic(sit.getItemID(),rtnPic, sit.getPictureURLArray());
 		}else{
 			SkuDTO sku = new SkuDTO();
 			setSkuCommon(userId, createDate, sit, sku);
@@ -176,8 +184,9 @@ public class ShopingItemConvert {
 			sku.setSkuId(getSkuId(sit,null));
 			setMarketPrice(sit.getDiscountPriceInfo(), sku);
 			//sit.getPictureURLArray();
-			url2Pic(sit.getItemID(), sku.getSupplierId(), rtnPic, sit.getPictureURLArray());
 			rtnSku.add(sku);
+			//总是保存item的图片
+			url2Pic(sit.getItemID(),sit.getItemID(),rtnPic, sit.getPictureURLArray());
 		}
 		return picAndSku;
 	}
@@ -209,7 +218,8 @@ public class ShopingItemConvert {
 
 	/**
 	 * 获取包含指定属性名的 值<br/>
-	 * "Manufacturer Part Number" 也是mpn
+	 * "Manufacturer Part Number" 也是mpn<br/>
+	 * 性别传：_gender，会提取其中的womon|femal,man|male;返回F,M
 	 * @param name 小写的属性名字符串
 	 * @param nvs 属性键值对
 	 * @return
@@ -224,6 +234,14 @@ public class ShopingItemConvert {
 				return nv.getValueArray(0);			
 			if(nName.contains(name))
 				return nv.getValueArray(0);
+			if(name.equals("_gender")){//如果是找性别的话
+				if(nName.contains("women")||nName.contains("femal")){
+					return "F";
+				}else if(nName.contains("men")||nName.contains("male")
+						||(!nName.contains("women") && nName.contains("men"))){
+					return "M";
+				}
+			}
 		}
 		return null;
 	}
@@ -277,17 +295,17 @@ public class ShopingItemConvert {
 	/**
 	 * 
 	 * @param picturesTypes
+	 * @param spuId 
 	 * @param rtnPic
-	 * @param skuId
-	 * @param supperlierId
 	 */
-	private static void getVariationPic(PicturesType[] picturesTypes,Set<ProductPictureDTO> rtnPic, String skuId,String supperlierId) {
+	private static void getVariationPic(PicturesType[] picturesTypes,String spuId, Set<ProductPictureDTO> rtnPic) {
 		if(picturesTypes!=null && picturesTypes.length>0){
 			for (PicturesType picturesType : picturesTypes) {//颜色图片、尺码图片等
 				VariationSpecificPictureSetType[] vsps=picturesType.getVariationSpecificPictureSetArray();
 				for (VariationSpecificPictureSetType vsp : vsps) {//不同颜色值，尺码值的图片
+					//vsp.getVariationSpecificValue(),颜色值、尺码值
 					String[] urls=vsp.getPictureURLArray();
-					url2Pic(skuId, supperlierId, rtnPic, urls);
+					url2Pic(null,spuId,rtnPic, urls);
 				}			
 			}
 		}
@@ -295,19 +313,22 @@ public class ShopingItemConvert {
 
 	/**
 	 * @param skuId
+	 * @param spuId
 	 * @param supperlierId
-	 * @param set
+	 * @param picSet
 	 * @param urls
 	 */
-	private static void url2Pic(String skuId, String supperlierId,
-			Set<ProductPictureDTO> set, String[] urls) {
+	private static void url2Pic(String skuId,String spuId,
+			Set<ProductPictureDTO> picSet, String[] urls) {
+		if(urls==null || urls.length<1) return ;
 		for (String url : urls) {//每个图片url
 			ProductPictureDTO pic=new ProductPictureDTO();
 			pic.setId(UUIDGenerator.getUUID());
 			pic.setPicUrl(url);
 			pic.setSkuId(skuId);
-			pic.setSupplierId(supperlierId);
-			set.add(pic);
+			pic.setSpuId(spuId);
+			pic.setSupplierId(EbayInit.EBAY);
+			picSet.add(pic);
 		}
 	}
 

@@ -28,6 +28,7 @@ import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.ebay.conf.EbayInit;
 
 /**
+ * ------待完善------------
  * @description 
  * @author 陈小峰
  * <br/>2015年6月29日
@@ -179,6 +180,7 @@ public class TradeItemConvert {
 				pic.setSupplierId(EbayInit.EBAY);
 			}
 		}
+		itemType.getVariations().getPictures();
 		return pics;
 	}
 
