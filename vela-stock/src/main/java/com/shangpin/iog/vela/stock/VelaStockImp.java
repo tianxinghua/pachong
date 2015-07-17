@@ -33,10 +33,10 @@ public class VelaStockImp extends AbsUpdateProductStock {
                 barcode_map.put(skuno, null);
             }
 
-            String barcode = skuno;
+            String itemId = skuno;
             //根据供应商skuno获取库存，并更新我方sop库存
-            String url = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=Default&barcode=[[barcode]]&key=MPm32XJp7M";
-            url = url.replaceAll("\\[\\[barcode\\]\\]", barcode);
+            String url = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetQuantityByItemID?DBContext=Default&ItemID=[[itemId]]&key=MPm32XJp7M";
+            url = url.replaceAll("\\[\\[barcode\\]\\]", itemId);
             String json = null;
             try {
                 json = HttpUtils.get(url);
