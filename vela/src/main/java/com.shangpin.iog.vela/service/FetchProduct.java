@@ -32,7 +32,7 @@ public class FetchProduct {
 
     public void fetchProductAndSave() {
 
-        String  supplierId = "2015-9999";
+        String  supplierId = "2015071701343";
 
         //首先获取季节码
         String season_json = HttpUtil45.get("http://185.58.119.177/velashopapi/Myapi/Productslist/GetAllSeasonCode?DBContext=Default&key=MPm32XJp7M",new OutTimeConfig(),null);
@@ -92,8 +92,10 @@ public class FetchProduct {
                                 skudto.setProductCode(spu.getProduct_name());
                                 skudto.setProductDescription(spu.getProduct_detail());
                                 skudto.setProductName(spu.getDescription());
-                                skudto.setProductSize(sku.getItem_size());
-                                skudto.setSalePrice(spu.getSupply_price());
+                                if(sku.getItem_size().contains(",")) {
+                                    skudto.setProductSize(sku.getItem_size().replaceAll(".",","));
+                                }
+                                skudto.setSupplierPrice(spu.getSupply_price());
                                 skudto.setSkuId(sku.getBarcode());
                                 skudto.setSpuId(spu.getProduct_id());
                                 skudto.setStock(sku.getStock());
