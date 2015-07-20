@@ -76,11 +76,11 @@ public class FetchProduct {
                             spudto.setMaterial(spu.getProduct_detail());
                             spudto.setPicUrl(spu.getUrl());
                             spudto.setSpuName(spu.getDescription());
-                            /*try {
+                            try {
                                 pfs.saveSPU(spudto);
                             } catch (ServiceException e) {
                                 e.printStackTrace();
-                            }*/
+                            }
 
                             for (Sku sku : spu.getItems().getItem()) {
                                 //sku入库操作
@@ -112,11 +112,11 @@ public class FetchProduct {
                                     pic.setId(UUIDGenerator.getUUID());
                                     pic.setSkuId(sku.getItem_id());
                                     pic.setSupplierId(supplierId);
-                                   /* try {
+                                    try {
                                         pfs.savePicture(pic);
                                     } catch (ServiceException e) {
                                         e.printStackTrace();
-                                    }*/
+                                    }
                                 }
                             }
                         }
