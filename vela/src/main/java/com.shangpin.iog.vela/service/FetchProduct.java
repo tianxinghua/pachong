@@ -32,7 +32,7 @@ public class FetchProduct {
 
     public void fetchProductAndSave() {
 
-        String  supplierId = "2015071701343";
+        String  supplierId = "NEW2015071701343";
 
         //首先获取季节码
         String season_json = HttpUtil45.get("http://185.58.119.177/velashopapi/Myapi/Productslist/GetAllSeasonCode?DBContext=Default&key=MPm32XJp7M",new OutTimeConfig(),null);
@@ -76,11 +76,11 @@ public class FetchProduct {
                             spudto.setMaterial(spu.getProduct_detail());
                             spudto.setPicUrl(spu.getUrl());
                             spudto.setSpuName(spu.getDescription());
-                            try {
+                            /*try {
                                 pfs.saveSPU(spudto);
                             } catch (ServiceException e) {
                                 e.printStackTrace();
-                            }
+                            }*/
 
                             for (Sku sku : spu.getItems().getItem()) {
                                 //sku入库操作
@@ -89,14 +89,14 @@ public class FetchProduct {
                                 skudto.setBarcode(sku.getBarcode());
                                 skudto.setColor(sku.getColor());
                                 skudto.setId(UUIDGenerator.getUUID());
-                                skudto.setProductCode(spu.getProduct_name());
+                                skudto.setProductCode(spu.getProduct_name()+"-"+sku.getColor());
                                 skudto.setProductDescription(spu.getProduct_detail());
                                 skudto.setProductName(spu.getDescription());
                                 if(sku.getItem_size().contains(",")) {
                                     skudto.setProductSize(sku.getItem_size().replaceAll(".",","));
                                 }
                                 skudto.setSupplierPrice(spu.getSupply_price());
-                                skudto.setSkuId(sku.getBarcode());
+                                skudto.setSkuId(sku.getItem_id());
                                 skudto.setSpuId(spu.getProduct_id());
                                 skudto.setStock(sku.getStock());
                                 skudto.setSupplierId(supplierId);
@@ -110,13 +110,13 @@ public class FetchProduct {
                                     ProductPictureDTO pic = new ProductPictureDTO();
                                     pic.setPicUrl(image);
                                     pic.setId(UUIDGenerator.getUUID());
-                                    pic.setSkuId(sku.getBarcode());
+                                    pic.setSkuId(sku.getItem_id());
                                     pic.setSupplierId(supplierId);
-                                    try {
+                                   /* try {
                                         pfs.savePicture(pic);
                                     } catch (ServiceException e) {
                                         e.printStackTrace();
-                                    }
+                                    }*/
                                 }
                             }
                         }
