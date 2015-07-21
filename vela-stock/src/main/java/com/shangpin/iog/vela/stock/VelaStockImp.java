@@ -9,10 +9,7 @@ import com.shangpin.iog.vela.stock.dto.Quantity;
 import org.apache.log4j.Logger;
 
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by huxia on 2015/7/17.
@@ -36,7 +33,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
             String itemId = skuno;
             //根据供应商skuno获取库存，并更新我方sop库存
             String url = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetQuantityByItemID?DBContext=Default&ItemID=[[itemId]]&key=MPm32XJp7M";
-            url = url.replaceAll("\\[\\[barcode\\]\\]", itemId);
+            url = url.replaceAll("\\[\\[itemId\\]\\]", itemId);
             String json = null;
             try {
                 json = HttpUtils.get(url);
@@ -62,6 +59,12 @@ public class VelaStockImp extends AbsUpdateProductStock {
         logger.info("VELA更新数据库开始");
         velaStockImp.updateProductStock("2015071701343","2015-01-01 00:00",format.format(new Date()));
         logger.info("VELA更新数据库结束");
+        /*VelaStockImp velaStockImp = new VelaStockImp();
+        Collection<String> sku = new HashSet<>();
+        sku.add("75901");
+        Map<String,Integer> stock = new HashMap<>();
+        stock = velaStockImp.grabStock(sku);
+        System.out.println(stock.get("75901"));*/
         System.exit(0);
     }
 
