@@ -186,12 +186,14 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 buffer.append(categoryName).append(",");
 
-                categoryId = dto.getSubCategoryId();
-                if(StringUtils.isBlank(categoryId)){
-                    categoryId = dto.getCategoryId();
-                }
+                buffer.append("尚品网品类编号").append(",");
 
-                buffer.append(StringUtils.isNotBlank(categoryId)?categoryId :"品类编号").append(",");
+//                categoryId = dto.getSubCategoryId();
+//                if(StringUtils.isBlank(categoryId)){
+//                    categoryId = dto.getCategoryId();
+//                }
+//
+//                buffer.append(StringUtils.isNotBlank(categoryId)?categoryId :"品类编号").append(",");
                 //品牌  不需要供货商的品牌编号 对尚品网无意义
 
                 brandName=dto.getBrandName();
@@ -205,7 +207,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     brandId="";
                 }
 
-                buffer.append(!"".equals(brandId)?brandId :"品牌编号").append(",");
+                buffer.append(!"".equals(brandId)?brandId :"尚品网品牌编号").append(",");
                 buffer.append(brandName).append(",");
                 //货号
                 buffer.append(dto.getProductCode()).append(",");
