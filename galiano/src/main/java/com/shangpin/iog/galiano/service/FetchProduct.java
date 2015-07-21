@@ -29,7 +29,7 @@ import java.util.*;
 @Component("galiano")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
-    private static Logger logMongo = Logger.getLogger("MongoDB");
+    private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
 
@@ -132,5 +132,6 @@ public class FetchProduct {
         }
 
     }
+
 
 }

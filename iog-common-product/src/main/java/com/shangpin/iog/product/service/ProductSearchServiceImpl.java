@@ -220,11 +220,16 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     productName = dto.getSpuName();
                     if(StringUtils.isNotBlank(productName)){
                         productName = productName.replaceAll(","," ");
+                    }else{
+                        productName="";
                     }
                 }else{
                     productName = productName.replaceAll(",", " ");
                 }
-                productName = productName.replaceAll("\\r","").replaceAll("\\n","");
+                if(StringUtils.isNotBlank(productName)){
+                    productName = productName.replaceAll("\\r","").replaceAll("\\n","");
+                }
+
                 buffer.append(productName).append(",");
 
 
@@ -251,6 +256,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     if(productSize.indexOf("+")>0){
                         productSize=productSize.replace("+",".5");
                     }
+                    productSize = productSize.replaceAll(",", " ");
 
                 }else{
                     productSize="";
