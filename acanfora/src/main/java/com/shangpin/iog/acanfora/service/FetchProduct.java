@@ -6,8 +6,10 @@ import com.shangpin.iog.acanfora.dto.Items;
 import com.shangpin.iog.acanfora.dto.Product;
 import com.shangpin.iog.acanfora.dto.Products;
 import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -19,9 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by loyalty on 15/6/8.
@@ -29,7 +29,7 @@ import java.util.List;
 @Component("acanfora")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
-
+    private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
 
@@ -37,7 +37,15 @@ public class FetchProduct {
 
         String supplierId = "2015050800242";
         try {
-            String result =  HttpUtils.get(url,false,240000);
+            Map<String,String> mongMap = new HashMap<>();
+            OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
+            timeConfig.confRequestOutTime(360000);
+            String result = HttpUtil45.get(url, timeConfig, null);
+            HttpUtil45.closePool();
+            mongMap.put("supplierId",supplierId);
+            mongMap.put("supplierName","acanfora");
+            mongMap.put("result",result) ;
+            logMongo.info(mongMap);
             Products products= ObjectXMLUtil.xml2Obj(Products.class, result);
             List<Product> productList = products.getProducts();
             for(Product product:productList){

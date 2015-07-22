@@ -1,6 +1,8 @@
 package com.shangpin.iog.galiano.service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.galiano.dto.Item;
 import com.shangpin.iog.galiano.dto.Items;
 import com.shangpin.iog.galiano.dto.Product;
@@ -19,9 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by loyalty on 15/6/8.
@@ -29,7 +29,7 @@ import java.util.List;
 @Component("galiano")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
-
+    private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
 
@@ -37,7 +37,14 @@ public class FetchProduct {
 
         String supplierId = "2015070301312";
         try {
-            String result =  HttpUtils.get(url,false,360000);
+            Map<String,String> mongMap = new HashMap<>();
+            OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
+            timeConfig.confRequestOutTime(360000);
+            String result = HttpUtil45.get(url,timeConfig,null);
+            mongMap.put("supplierId",supplierId);
+            mongMap.put("supplierName","galiano");
+            mongMap.put("result",result) ;
+            logMongo.info(mongMap);
             Products products= ObjectXMLUtil.xml2Obj(Products.class, result);
             List<Product> productList = products.getProducts();
             for(Product product:productList){
@@ -124,8 +131,11 @@ public class FetchProduct {
 
         } catch (JAXBException e) {
             e.printStackTrace();
+        }finally {
+            HttpUtil45.closePool();
         }
 
     }
+
 
 }

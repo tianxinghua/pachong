@@ -3,8 +3,11 @@
  */
 package com.shangpin.iog.galiano.stock;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.galiano.stock.dto.Item;
 import com.shangpin.iog.galiano.stock.dto.Items;
 import com.shangpin.iog.galiano.stock.dto.Product;
@@ -21,20 +24,36 @@ import java.util.*;
 
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
+    private static Logger logMongo = Logger.getLogger("mongodb");
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
         Map<String, Integer> skustock = new HashMap<>(skuNo.size());
         List<Item> itemList = new ArrayList<>();
         Map<String,String> stockMap = new HashMap<>();
 
-        String kk = HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");
-        HttpUtils.closePool();
+        String supplierId = "2015070301312";
+
+
+
         Products products = null;
         try {
             logger.info("拉取galiano数据开始");
-            products = ObjectXMLUtil.xml2Obj(Products.class, kk);
+            Map<String,String> mongMap = new HashMap<>();
+            OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
+            timeConfig.confRequestOutTime(360000);
+            String result = HttpUtil45.get("http://www.galianostore.com/shangpin.xml", timeConfig, null);
+
+            mongMap.put("supplierId",supplierId);
+            mongMap.put("supplierName","galiano");
+            mongMap.put("result",result) ;
+            logMongo.info(mongMap);
+            products = ObjectXMLUtil.xml2Obj(Products.class, result);
             logger.info("拉取galiano数据成功");
-        } catch (JAXBException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            logger.info("拉取galiano数据失败");
+            throw new ServiceMessageException("拉取galiano数据失败");
+        }finally {
+            HttpUtil45.closePool();
         }
         List<Product> productList = products.getProducts();
         String skuId = "";
@@ -70,12 +89,13 @@ public class GrabStockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args) throws Exception {
-
+        String supplierId = "2015070301312";
         AbsUpdateProductStock grabStockImp = new GrabStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("galiano更新数据库开始");
-        grabStockImp.updateProductStock("2015070301312","2015-01-01 00:00",format.format(new Date()));
+        grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
         logger.info("galiano更新数据库结束");
+        System.exit(0);
 
     }
 
