@@ -41,6 +41,8 @@ public class FetchProduct {
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
             timeConfig.confRequestOutTime(360000);
             String result = HttpUtil45.get(url,timeConfig,null);
+            mongMap.put("supplierId",supplierId);
+            mongMap.put("supplierName","galiano");
             mongMap.put("result",result) ;
             logMongo.info(mongMap);
             Products products= ObjectXMLUtil.xml2Obj(Products.class, result);
@@ -129,6 +131,8 @@ public class FetchProduct {
 
         } catch (JAXBException e) {
             e.printStackTrace();
+        }finally {
+            HttpUtil45.closePool();
         }
 
     }

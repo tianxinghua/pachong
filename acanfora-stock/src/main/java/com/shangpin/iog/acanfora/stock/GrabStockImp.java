@@ -3,14 +3,17 @@
  */
 package com.shangpin.iog.acanfora.stock;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 
 import com.shangpin.iog.acanfora.stock.dto.Item;
 import com.shangpin.iog.acanfora.stock.dto.Items;
 import com.shangpin.iog.acanfora.stock.dto.Product;
 import com.shangpin.iog.acanfora.stock.dto.Products;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,20 +27,36 @@ import java.util.*;
 
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
+    private static Logger logMongo = Logger.getLogger("mongodb");
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
         Map<String, Integer> skustock = new HashMap<>(skuNo.size());
         List<Item> itemList = new ArrayList<>();
         Map<String,String> stockMap = new HashMap<>();
 
-        String kk = HttpUtils.get("http://www.acanfora.it/api_ecommerce_v2.aspx");
-        HttpUtils.closePool();
+
         Products products = null;
         try {
             logger.info("拉取ACANFORA数据开始");
-            products = ObjectXMLUtil.xml2Obj(Products.class, kk);
+
+
+            Map<String,String> mongMap = new HashMap<>();
+            OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
+            timeConfig.confRequestOutTime(360000);
+            String result = HttpUtil45.get("http://www.acanfora.it/api_ecommerce_v2.aspx", timeConfig, null);
+
+            mongMap.put("supplierId","2015050800242");
+            mongMap.put("supplierName","acanfora");
+            mongMap.put("result",result) ;
+            logMongo.info(mongMap);
+            products = ObjectXMLUtil.xml2Obj(Products.class, result);
             logger.info("拉取ACANFORA数据成功");
-        } catch (JAXBException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            logger.info("拉取ACANFORA数据失败");
+            throw new ServiceMessageException("拉取ACANFORA数据失败");
+
+        } finally {
+            HttpUtil45.closePool();
         }
         List<Product> productList = products.getProducts();
         String skuId = "";
