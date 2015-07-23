@@ -30,7 +30,6 @@ public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logMongo = Logger.getLogger("mongodb");
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
         Map<String, Integer> skustock = new HashMap<>(skuNo.size());
-        List<Item> itemList = new ArrayList<>();
         Map<String,String> stockMap = new HashMap<>();
 
 
@@ -66,6 +65,8 @@ public class GrabStockImp extends AbsUpdateProductStock {
             if (null == items) {
                 continue;
             }
+            List<Item> itemList = items.getItems();
+            if(null==itemList) continue;
             for(Item item:items.getItems()){
                 if(StringUtils.isNotBlank(item.getStock()) ){
 
