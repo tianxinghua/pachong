@@ -62,6 +62,7 @@ public class FetchProduct {
                         e.printStackTrace();
                     }
                     if (list != null && list.getProduct() != null) {
+                        String priceUrl;
                         for (Spu spu : list.getProduct()) {
                             //spu入库
                             SpuDTO spudto = new SpuDTO();
@@ -89,14 +90,30 @@ public class FetchProduct {
                                 skudto.setBarcode(sku.getBarcode());
                                 skudto.setColor(sku.getColor());
                                 skudto.setId(UUIDGenerator.getUUID());
-                                skudto.setProductCode(spu.getProduct_name()+"-"+sku.getColor());
+                                skudto.setProductCode(spu.getProduct_name());
                                 skudto.setProductDescription(spu.getProduct_detail());
                                 skudto.setProductName(spu.getDescription());
-                                if(sku.getItem_size().contains(",")) {
-                                    skudto.setProductSize(sku.getItem_size().replaceAll(".",","));
+                                if(sku.getItem_size().length()>4) {
+                                    skudto.setProductSize(sku.getItem_size().substring(0,sku.getItem_size().length()-4));
+                                }else{
+                                    skudto.setProductSize(sku.getItem_size());
                                 }
-                                skudto.setSupplierPrice(spu.getSupply_price());
                                 skudto.setSkuId(sku.getItem_id());
+                                String itemID = sku.getItem_id();
+                                priceUrl = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetPriceByItemID?DBContext=Default&ItemID="+itemID+"&key=MPm32XJp7M";
+                                try {
+                                    json = HttpUtil45.get(priceUrl, new OutTimeConfig(), null);
+                                }catch (IllegalArgumentException e){
+                                    e.printStackTrace();
+                                }
+                                if(json != null && !json.isEmpty()){
+                                    Price price = null;
+                                    price = gson.fromJson(json,new TypeToken<Price>() {}.getType());
+                                    if(price!=null&&price.getMarket_price()!=null||price.getSuply_price()!=null){
+                                        skudto.setMarketPrice(price.getMarket_price());
+                                        skudto.setSupplierPrice(price.getSuply_price());
+                                    }
+                                }
                                 skudto.setSpuId(spu.getProduct_id());
                                 skudto.setStock(sku.getStock());
                                 skudto.setSupplierId(supplierId);
@@ -113,7 +130,7 @@ public class FetchProduct {
                                     pic.setSkuId(sku.getItem_id());
                                     pic.setSupplierId(supplierId);
                                     try {
-                                        pfs.savePicture(pic);
+                                        pfs.savePictureForMongo(pic);
                                     } catch (ServiceException e) {
                                         e.printStackTrace();
                                     }
