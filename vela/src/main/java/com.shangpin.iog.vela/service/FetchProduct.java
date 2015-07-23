@@ -111,7 +111,7 @@ public class FetchProduct {
                                     price = gson.fromJson(json,new TypeToken<Price>() {}.getType());
                                     if(price!=null&&price.getMarket_price()!=null||price.getSuply_price()!=null){
                                         skudto.setMarketPrice(price.getMarket_price());
-                                        skudto.setSupplierPrice(price.getSuply_price());
+                                        skudto.setSupplierPrice(price.getSuply_price().replace(",","."));
                                     }
                                 }
                                 skudto.setSpuId(spu.getProduct_id());
@@ -148,5 +148,7 @@ public class FetchProduct {
                 i += 100;
             }
         }
+
+        HttpUtil45.closePool();
     }
 }
