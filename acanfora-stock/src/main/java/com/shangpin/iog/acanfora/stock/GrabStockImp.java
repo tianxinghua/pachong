@@ -76,16 +76,10 @@ public class GrabStockImp extends AbsUpdateProductStock {
                      stockMap.put(skuId,item.getStock());
                 }
             }
-//            itemList.containsAll(items.getItems());
         }
 
         for (String skuno : skuNo) {
-//            for (Item item : itemList) {
-//                if (skuno.equals(item.getItem_id())) {
-//                    skustock.put(skuno, Integer.valueOf(item.getStock()));
-//                    break;
-//                }
-//            }
+
             if(stockMap.containsKey(skuno)){
                 skustock.put(skuno, Integer.valueOf(stockMap.get(skuno)));
             } else{

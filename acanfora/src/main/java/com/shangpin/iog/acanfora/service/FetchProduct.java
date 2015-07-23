@@ -58,6 +58,7 @@ public class FetchProduct {
                 }
 
                 List<Item> itemList = items.getItems();
+                if(null==itemList) continue;
                 String skuId = "";
                 for(Item item:itemList){
                     SkuDTO sku  = new SkuDTO();

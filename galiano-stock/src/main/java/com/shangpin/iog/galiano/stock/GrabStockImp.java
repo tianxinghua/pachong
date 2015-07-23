@@ -27,7 +27,6 @@ public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logMongo = Logger.getLogger("mongodb");
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
         Map<String, Integer> skustock = new HashMap<>(skuNo.size());
-        List<Item> itemList = new ArrayList<>();
         Map<String,String> stockMap = new HashMap<>();
 
         String supplierId = "2015070301312";
@@ -57,20 +56,28 @@ public class GrabStockImp extends AbsUpdateProductStock {
         }
         List<Product> productList = products.getProducts();
         String skuId = "";
+
         for (Product product : productList) {
 
             Items items = product.getItems();
             if (null == items) {
                 continue;
             }
-            for(Item item:items.getItems()){
-                if(StringUtils.isNotBlank(item.getStock()) ){
+            List<Item>  itemList = items.getItems();
+            if(null==itemList) continue;
+            for(Item item:itemList){
+                try {
+                    if(StringUtils.isNotBlank(item.getStock()) ){
 
-                    skuId = item.getItem_id();
-                    if(skuId.indexOf("½")>0){
-                        skuId = skuId.replace("½","+");
+                        skuId = item.getItem_id();
+                        if(skuId.indexOf("½")>0){
+                            skuId = skuId.replace("½","+");
+                        }
+                         stockMap.put(skuId,item.getStock());
                     }
-                     stockMap.put(skuId,item.getStock());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    continue;
                 }
             }
 
@@ -84,6 +91,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
                 skustock.put(skuno,0);
             }
         }
+
         logger.info("galiano赋值库存数据成功");
         return skustock;
     }
