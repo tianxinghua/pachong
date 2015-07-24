@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.vela.stock.dto.Quantity;
 import org.apache.log4j.Logger;
 
@@ -36,7 +38,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
             url = url.replaceAll("\\[\\[itemId\\]\\]", itemId);
             String json = null;
             try {
-                json = HttpUtils.get(url);
+                json = HttpUtil45.get(url, new OutTimeConfig(), null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -50,6 +52,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
                 }
             }
         }
+        HttpUtil45.closePool();
         return stock_map;
     }
 
