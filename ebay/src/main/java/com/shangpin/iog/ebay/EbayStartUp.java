@@ -42,6 +42,7 @@ public class EbayStartUp {
 					logger.info("-----------开始更新库存---------");
 					updateStock();
 					logger.info("-----------更新库存完成---------");
+					System.exit(0);
 					return ;
 			}
 			loadSpringContext();
