@@ -1,22 +1,20 @@
-package com.shangpin.iog.vela.service;
+package com.shangpin.iog.vela.stock;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
-import com.shangpin.iog.spinnaker.stock.dto.Quantity;
+import com.shangpin.iog.vela.stock.dto.Quantity;
 import org.apache.log4j.Logger;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
- * Created by huxia on 2015/7/16.
+ * Created by huxia on 2015/7/17.
  */
-public class GrabStockImp extends AbsUpdateProductStock{
-
+public class VelaStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
 
     private Map<String,String> barcode_map = new HashMap<>();
@@ -32,10 +30,10 @@ public class GrabStockImp extends AbsUpdateProductStock{
                 barcode_map.put(skuno, null);
             }
 
-            String barcode = skuno;
+            String itemId = skuno;
             //根据供应商skuno获取库存，并更新我方sop库存
-            String url = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=Default&barcode=[[barcode]]&key=MPm32XJp7M";
-            url = url.replaceAll("\\[\\[barcode\\]\\]", barcode);
+            String url = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetQuantityByItemID?DBContext=Default&ItemID=[[itemId]]&key=MPm32XJp7M";
+            url = url.replaceAll("\\[\\[itemId\\]\\]", itemId);
             String json = null;
             try {
                 json = HttpUtils.get(url);
@@ -53,6 +51,21 @@ public class GrabStockImp extends AbsUpdateProductStock{
             }
         }
         return stock_map;
+    }
+
+    public static void main(String[] args) throws Exception {
+        AbsUpdateProductStock velaStockImp = new VelaStockImp();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        logger.info("VELA更新数据库开始");
+        velaStockImp.updateProductStock("2015071701343","2015-01-01 00:00",format.format(new Date()));
+        logger.info("VELA更新数据库结束");
+        /*VelaStockImp velaStockImp = new VelaStockImp();
+        Collection<String> sku = new HashSet<>();
+        sku.add("75901");
+        Map<String,Integer> stock = new HashMap<>();
+        stock = velaStockImp.grabStock(sku);
+        System.out.println(stock.get("75901"));*/
+        System.exit(0);
     }
 
 }
