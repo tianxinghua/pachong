@@ -39,6 +39,10 @@ public abstract class AbsUpdateProductStock {
 	static Logger logger = LoggerFactory.getLogger(AbsUpdateProductStock.class);
 	private boolean useThread=false;
 	private int skuCount4Thread=100;
+
+    //  true :已供应商提供的SKU为主 不更新未提供的库存
+    //  false:已尚品的SKU为主 未查到的一律赋值为0
+    public static boolean supplierSkuIdMain=false;
 	
 	/**
 	 * 抓取供应商库存数据 
@@ -119,6 +123,9 @@ public abstract class AbsUpdateProductStock {
 			return updateStock(supplier, localAndIceSku, skuNoSet);
 		}
 	}
+
+
+
 	/**
 	 * @param skuNoSet
 	 * @param thd
@@ -219,6 +226,25 @@ public abstract class AbsUpdateProductStock {
 	private void removeNoChangeStockRecord(String supplier, Map<String, Integer> iceStock, OpenApiServantPrx servant, List<String> skuNoShangpinList, Map<String, Integer> toUpdateIce) throws ApiException {
 		if(CollectionUtils.isEmpty(skuNoShangpinList)) return ;
 		SopSkuInventoryIce[] skuIceArray =servant.FindStockInfo(supplier, skuNoShangpinList);
+
+        //查找未维护库存的SKU
+        if(null!=skuIceArray&&skuIceArray.length!=skuNoShangpinList.size()){
+            Map<String,String> sopSkuMap = new HashMap();
+            for(SopSkuInventoryIce skuIce:skuIceArray){
+                sopSkuMap.put(skuIce.SkuNo,"");
+            }
+            String sopSku="";
+           for(Iterator<String> itor =  skuNoShangpinList.iterator();itor.hasNext();){
+               sopSku = itor.next();
+
+                  if(!sopSkuMap.containsKey(sopSku)){
+                      if(iceStock.containsKey(sopSku)){
+                          toUpdateIce.put(sopSku, iceStock.get(sopSku));
+                      }
+                  }
+           }
+        }
+
 		//排除无用的库存
 		for(SopSkuInventoryIce skuIce:skuIceArray){
 	        if(iceStock.containsKey(skuIce.SkuNo)){
@@ -238,14 +264,26 @@ public abstract class AbsUpdateProductStock {
 		Map<String, Integer> iceStock=new HashMap<>();
 		try {
 			Map<String, Integer> supplierStock=grabStock(skuNos);
-			for (String skuNo : skuNos) {
-				Integer stock=supplierStock.get(skuNo);
-				String iceSku=localAndIceSkuId.get(skuNo);
-				if(stock==null)
-					stock=0;
-				iceStock.put(iceSku, stock);
-			}
-		} catch (Exception e1) {
+
+
+                for (String skuNo : skuNos) {
+                    Integer stock=supplierStock.get(skuNo);
+                    String iceSku=localAndIceSkuId.get(skuNo);
+                    if(this.supplierSkuIdMain){  // 已供应商提供的SKU为主 不更新未提供的库存
+                        if(null!=stock){
+                            iceStock.put(iceSku, stock);
+                        }
+
+                    }else{
+                        if(stock==null)
+                            stock=0;
+                        iceStock.put(iceSku, stock);
+                    }
+
+                }
+
+
+        } catch (Exception e1) {
 			logger.error("抓取库存失败:",e1);
 		}
 		return iceStock;
