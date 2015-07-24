@@ -79,9 +79,9 @@ public class EbayStartUp {
 	
 	private static void updateStock(){
 		String supplier=EbayInit.EBAY.substring(3);
-		String start=DateTimeUtil.LongFmt(new Date());
+		String end=DateTimeUtil.LongFmt(new Date());
 		Calendar c=Calendar.getInstance();c.add(Calendar.MONTH, -3);
-		String end=DateTimeUtil.LongFmt(c.getTime());
+		String start=DateTimeUtil.LongFmt(c.getTime());
 		try {
 			grabSrv.setUseThread(true);
 			grabSrv.setSkuCount4Thread(20);
