@@ -83,6 +83,8 @@ public class EbayStartUp {
 		Calendar c=Calendar.getInstance();c.add(Calendar.MONTH, -3);
 		String end=DateTimeUtil.LongFmt(c.getTime());
 		try {
+			grabSrv.setUseThread(true);
+			grabSrv.setSkuCount4Thread(20);
 			grabSrv.updateProductStock(supplier, start, end);
 		} catch (Exception e) {
 			e.printStackTrace();

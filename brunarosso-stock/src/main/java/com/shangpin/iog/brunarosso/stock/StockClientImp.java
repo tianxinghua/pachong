@@ -6,6 +6,7 @@ package com.shangpin.iog.brunarosso.stock;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.brunarosso.utils.XmlReader;
+import com.shangpin.iog.common.utils.ftp.ReconciliationFtpUtil;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -67,7 +68,7 @@ public class StockClientImp extends AbsUpdateProductStock{
 
     @Override
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-
+        ReconciliationFtpUtil.download("","","E:\\brunarosso",false);
         Map<String, Integer> skuStock= new HashMap<>(skuNo.size());
         Map<String,List<String>> map = XmlReader.getSizeByPath("");
         for (Iterator<String> it=skuNo.iterator();it.hasNext();){
