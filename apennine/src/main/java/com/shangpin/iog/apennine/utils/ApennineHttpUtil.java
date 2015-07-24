@@ -234,8 +234,8 @@ public class ApennineHttpUtil {
             e.printStackTrace();
         }
     }*/
-   /* public static void main(String[] args) {
-    	String url = "http://112.74.74.98:8082/api/GetProductPorperty?userName=spin&userPwd=spin112233&scode=EMBASSYGREYF";
+  /*public static void main(String[] args) {
+    	String url = "http://112.74.74.98:8082/api/GetProductPorperty?userName=spin&userPwd=spin112233&scode=COSEPIAF";
     	NameValuePair[] data = {
                 new NameValuePair("scode", "")
         };
