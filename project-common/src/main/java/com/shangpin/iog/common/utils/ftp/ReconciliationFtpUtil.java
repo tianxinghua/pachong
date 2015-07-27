@@ -4,11 +4,18 @@ import com.enterprisedt.net.ftp.FTPClient;
 import com.enterprisedt.net.ftp.FTPConnectMode;
 import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FTPTransferType;
+import com.shangpin.iog.brunarosso.utils.XmlReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 /**
  *
@@ -18,7 +25,7 @@ import java.io.IOException;
  */
 public class ReconciliationFtpUtil {
     private static Log log = LogFactory.getLog(ReconciliationFtpUtil.class);
-
+    //private static ResourceBundle bundle =ResourceBundle.getBundle("param", Locale.ENGLISH) ;
     private static String HOST="ftp.teenfashion.it",PORT="21",USER="1504604@aruba.it",PASSWORD="7efd422f35",FILE_PATH="/teenfashion.it/public/stockftp";
 
 //    static {
@@ -109,16 +116,42 @@ public class ReconciliationFtpUtil {
             }else{//ftp上已解压后的目录
                 files = ftp.dir(remoteFilePath);
                 File attachments = new File(localFilePath+"/"+ subLocalfilePath);
+                String procontent = XmlReader.readTxt("E:/latestProXml.txt");
+                String disContent = XmlReader.readTxt("E:/latestXml.txt");
                 /** 如果文件夹不存在，则创建 */
                 if (!attachments.exists())
                 {
                     attachments.mkdir();
                 }
-
                 for (int i=0;i<files.length;i++) {
+                    if(files[i].indexOf("Prodotti")>0){
+                        //content=XmlReader.readTxt("E:/latestProXml.txt");
+                        try {
+                            if(files[i].compareTo(procontent)>0){
+                                ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
+                                procontent=files[i];
+                            }
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }else if(files[i].indexOf("Disponibilita")>0){
+                        try {
+                            if(files[i].compareTo(disContent)>0){
+                                ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
+                                disContent=files[i];
+                            }
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
                     ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
                 }
-
+                XmlReader.deleteTxtContent("E:/latestProXml.txt");
+                XmlReader.saveAsFileWriter("E:/latestProXml.txt",procontent);
+                XmlReader.deleteTxtContent("E:/latestXml.txt");
+                XmlReader.saveAsFileWriter("E:/latestXml.txt",disContent);
             }
 
 

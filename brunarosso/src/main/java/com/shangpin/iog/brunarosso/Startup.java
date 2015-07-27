@@ -38,7 +38,7 @@ public class Startup {
             if (s.isDirectory()) {
                 getFileList(s);
             } else {
-                if (-1 != s.getName().lastIndexOf(".xml")&&-1!=s.getName().indexOf("Prodotti")) {
+                if (-1 != s.getName().lastIndexOf(".xml")&&-1!=s.getName().indexOf("Riferimenti")) {
                     filePathsList.add(s);
                 }
             }
@@ -52,7 +52,18 @@ public class Startup {
         loadSpringContext();
         //拉取数据
         FetchProduct fetchService = (FetchProduct)factory.getBean("brunarosso");
-        Map<String,List<String>> map = XmlReader.getSizeByPath("");
+        List<File>list=read();
+        for (int i = 0; i < list.size(); i++) {
+            File file = list.get(i);
+            try {
+                System.out.println("正在读取的文件: " + file.getName());
+                fetchService.savePic(path + file.getName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        //fetchService.savePic("E:\\brunarosso"+"Riferimenti.xml");
+       /* Map<String,List<String>> map = XmlReader.getSizeByPath("");
         System.out.println("-------brunarosso start---------");
         try {
             List<File> list=read();
@@ -69,7 +80,7 @@ public class Startup {
 
         }catch (Exception e){
             e.printStackTrace();
-        }
+        }*/
         System.out.println("成功插入数据库");
        /* System.out.println(map.get("77007").get(1));*/
         System.out.println("-------brunarosso end---------");

@@ -18,6 +18,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.jdom2.input.SAXBuilder;
 
 
 import javax.xml.bind.JAXBException;
@@ -68,14 +69,52 @@ public class StockClientImp extends AbsUpdateProductStock{
 
     @Override
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        ReconciliationFtpUtil.download("","","E:\\brunarosso",false);
+        /*ReconciliationFtpUtil.download("","","E:\\brunarosso",false);
         Map<String, Integer> skuStock= new HashMap<>(skuNo.size());
         Map<String,List<String>> map = XmlReader.getSizeByPath("");
         for (Iterator<String> it=skuNo.iterator();it.hasNext();){
             String[] skuAndSize=it.next().split(",");
             String skuId = skuAndSize[0];
+        }*/
 
-        }
         return null;
+    }
+    public Collection<String> grabProduct(String supplier,String start,String end,Map<String,String> stocks) throws Exception{
+
+        //Map<String,List<String>>map=getSizeByPath("");
+        return null;
+    }
+    public static Map<String,Integer> getSizeByPath(String url){
+        Map<String,Integer>map = new HashMap();
+            //File file=list.get(i);
+            try {
+                System.out.println("正在读取的尺寸文件: " + url);
+                getMap("E:\\brunarosso" + url, map);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        return map;
+    }
+    public static Map<String,Integer> getMap(String url, Map<String, Integer> map){
+        List<org.jdom2.Element> allChildren = new ArrayList();
+        try {
+            SAXBuilder builder = new SAXBuilder();
+            org.jdom2.Document doc = builder.build(new File(url));//"E:/MailDoc/firma/Disponibilita.xml"
+            org.jdom2.Element foo =doc.getRootElement();
+            allChildren = foo.getChildren();
+            for (org.jdom2.Element element:allChildren){
+               /* if (map.containsKey(element.getChildText("ID_ARTICOLO"))){
+                   // map.get(element.getChildText("ID_ARTICOLO")).add(element.getChildText("MM_TAGLIA"));
+                }else{
+                    List<String> valueList = new ArrayList();
+                    valueList.add(element.getChildText("MM_TAGLIA"));
+                   // map.put(element.getChildText("ID_ARTICOLO"),valueList);
+                }*/
+                map.put(element.getChildText("ID_ARTICOLO")+","+element.getChildText("MM_TAGLIA"),Integer.parseInt(element.getChildText("MM_TAGLIA")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 }
