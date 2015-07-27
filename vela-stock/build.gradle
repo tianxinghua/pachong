@@ -1,17 +1,42 @@
-version '1.0'
-
-apply plugin: 'java'
 
 
-repositories {
-    mavenCentral()
+
+
+task copyToLib( type: Copy ) {
+    into "$buildDir/libs/lib"
+    from configurations.compile
 }
+
 
 dependencies {
     compile(
             "com.google.code.gson:gson:2.3.1",
             project(':project-common'),
+
             project(':openapi-ice')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
+
+
 }
+
+jar {
+
+    dependsOn copyToLib
+
+
+    def manifestCp = configurations.compile.files.collect  {
+        File file = it
+        "lib/${file.name}"
+    }.join(' ')
+
+    manifest {
+        attributes 'Main-Class': 'com.shangpin.iog.vela.stock.VelaStockImp'
+//        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
+        attributes 'Class-Path': '. ' +  manifestCp
+    }
+}
+
+
+
+

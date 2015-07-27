@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.vela.stock.dto.Quantity;
 import org.apache.log4j.Logger;
 
@@ -36,7 +38,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
             url = url.replaceAll("\\[\\[itemId\\]\\]", itemId);
             String json = null;
             try {
-                json = HttpUtils.get(url);
+                json = HttpUtil45.get(url, new OutTimeConfig(), null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -44,17 +46,25 @@ public class VelaStockImp extends AbsUpdateProductStock {
                 try {
                     Quantity result = gson.fromJson(json, new TypeToken<Quantity>() {
                     }.getType());
-                    stock_map.put(skuno, Integer.valueOf(result.getResult()));
+                    if("No Record Found".equals(result.getResult())){
+
+                        stock_map.put(skuno, 0);
+                    }else{
+                        stock_map.put(skuno, Integer.valueOf(result.getResult()));
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
+        HttpUtil45.closePool();
         return stock_map;
     }
 
     public static void main(String[] args) throws Exception {
         AbsUpdateProductStock velaStockImp = new VelaStockImp();
+        velaStockImp.setUseThread(true);velaStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("VELA更新数据库开始");
         velaStockImp.updateProductStock("2015071701343","2015-01-01 00:00",format.format(new Date()));

@@ -18,7 +18,8 @@ dependencies {
             project(':project-dao'),
             project(':iog-common-product'),
             project(':openapi-ice'),
-            project(':brunarosso-stock')
+            project(':brunarosso-stock'),
+            project(':openapi-ice')
             /*project(':iog-web-container')*/
     )
 
