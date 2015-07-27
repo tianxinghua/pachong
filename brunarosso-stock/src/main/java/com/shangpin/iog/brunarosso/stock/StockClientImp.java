@@ -5,8 +5,6 @@ package com.shangpin.iog.brunarosso.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.brunarosso.utils.XmlReader;
-import com.shangpin.iog.common.utils.ftp.ReconciliationFtpUtil;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -19,12 +17,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.jdom2.input.SAXBuilder;
-
-
-import javax.xml.bind.JAXBException;
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
+
 
 
 import java.util.*;
@@ -63,26 +57,12 @@ public class StockClientImp extends AbsUpdateProductStock{
         Element element=doc.getRootElement();
         return element.getText();
     }
-    public static void main(String[] args) throws Exception {
-        getStock("-1058993","35");
-    }
-
     @Override
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        /*ReconciliationFtpUtil.download("","","E:\\brunarosso",false);
-        Map<String, Integer> skuStock= new HashMap<>(skuNo.size());
-        Map<String,List<String>> map = XmlReader.getSizeByPath("");
-        for (Iterator<String> it=skuNo.iterator();it.hasNext();){
-            String[] skuAndSize=it.next().split(",");
-            String skuId = skuAndSize[0];
-        }*/
-
-        return null;
-    }
-    public Collection<String> grabProduct(String supplier,String start,String end,Map<String,String> stocks) throws Exception{
-
-        //Map<String,List<String>>map=getSizeByPath("");
-        return null;
+        String url="";
+        Map<String,Integer>map=getSizeByPath(url);
+        map=getMap(url,map);
+        return map;
     }
     public static Map<String,Integer> getSizeByPath(String url){
         Map<String,Integer>map = new HashMap();
@@ -103,18 +83,15 @@ public class StockClientImp extends AbsUpdateProductStock{
             org.jdom2.Element foo =doc.getRootElement();
             allChildren = foo.getChildren();
             for (org.jdom2.Element element:allChildren){
-               /* if (map.containsKey(element.getChildText("ID_ARTICOLO"))){
-                   // map.get(element.getChildText("ID_ARTICOLO")).add(element.getChildText("MM_TAGLIA"));
-                }else{
-                    List<String> valueList = new ArrayList();
-                    valueList.add(element.getChildText("MM_TAGLIA"));
-                   // map.put(element.getChildText("ID_ARTICOLO"),valueList);
-                }*/
-                map.put(element.getChildText("ID_ARTICOLO")+","+element.getChildText("MM_TAGLIA"),Integer.parseInt(element.getChildText("MM_TAGLIA")));
+                map.put(element.getChildText("ID_ARTICOLO")+"—"+element.getChildText("MM_TAGLIA"),Integer.parseInt(element.getChildText("MM_TAGLIA")));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return map;
+    }
+    public static void main(String[] args) throws Exception {
+        StockClientImp impl = new StockClientImp();
+
     }
 }
