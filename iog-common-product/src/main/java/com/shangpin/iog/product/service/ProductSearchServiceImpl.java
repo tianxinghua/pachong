@@ -92,17 +92,28 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 page = new Page<>(1,productList.size());
             }
 
+            String supplierId="",skuId="";
             for(ProductDTO dto :productList){
 
                 if(null!=dto.getSupplierId()&&null!=dto.getSkuId()) {
+                    supplierId = dto.getSupplierId();
                     List<ProductPicture> productPictureList = new ArrayList<>();
                     //查询公共的图片
-                    List<ProductPicture> spuPictureList = pictureDAO.findBySupplierIdAndSpuId(dto.getSupplierId(), dto.getSpuId());
+                    List<ProductPicture> spuPictureList = pictureDAO.findBySupplierIdAndSpuId(supplierId, dto.getSpuId());
                     if(!spuPictureList.isEmpty()){
                         productPictureList.addAll(spuPictureList);
                     }
                     //查询个性图片
-                    List<ProductPicture> skuPictureList = pictureDAO.findBySupplierIdAndSkuId(dto.getSupplierId(),dto.getSkuId());
+                    //处理特殊供应商的SKUID
+                    skuId = dto.getSkuId();
+                    if("2015071701342".equals(supplierId)){//brunarosso
+                         if(skuId.indexOf("-")>0){
+                             skuId = skuId.substring(0,skuId.indexOf("-"));
+                         }
+                    }
+
+
+                    List<ProductPicture> skuPictureList = pictureDAO.findBySupplierIdAndSkuId(supplierId,skuId);
                     if(!skuPictureList.isEmpty()){
                         productPictureList.addAll(skuPictureList);
                     }
