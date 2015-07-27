@@ -83,7 +83,7 @@ public class StockClientImp extends AbsUpdateProductStock{
             org.jdom2.Element foo =doc.getRootElement();
             allChildren = foo.getChildren();
             for (org.jdom2.Element element:allChildren){
-                map.put(element.getChildText("ID_ARTICOLO")+"—"+element.getChildText("MM_TAGLIA"),Integer.parseInt(element.getChildText("MM_TAGLIA")));
+                map.put(element.getChildText("ID_ARTICOLO")+"-"+element.getChildText("MM_TAGLIA"),Integer.parseInt(element.getChildText("MM_TAGLIA")));
             }
         } catch (Exception e) {
             e.printStackTrace();

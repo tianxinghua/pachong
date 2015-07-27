@@ -32,14 +32,14 @@ public class FetchProduct {
 
     @Autowired
     ProductFetchService productFetchService;
-
+    String supplierId = "new20150727";//2015071701342
     /**
      *
      * @param map 尺寸集合,key是sku，value是尺寸list
      * @param url
      */
     public void fetchProductAndSave(Map<String,List<String>>map,String url) {
-        String supplierId = "";
+
         //String result = HttpUtils.get(url, false, 360000);
         try {
             /*Products products = ObjectXMLUtil.xml2Obj(Products.class, result);
@@ -58,7 +58,7 @@ public class FetchProduct {
                     spu.setCategoryName(element.getChildText("GRUPPO_SUPER"));
                     spu.setSubCategoryId(element.getChildText("GRUPPO"));
                     spu.setProductOrigin(element.getChildText("PAESE_PRODUZIONE"));
-                    spu.setSupplierId("2015071701342");//2015071701342
+                    spu.setSupplierId(supplierId);//2015071701342
                     try{
                         productFetchService.saveSPU(spu);
                     }catch (ServiceException e) {
@@ -74,7 +74,7 @@ public class FetchProduct {
                             sku.setId(UUIDGenerator.getUUID());
                             key=element.getChildText("ID_ARTICOLO");
                             value = map.get(key).get(j);
-                            skuId=key+"—"+value;
+                            skuId=key+"-"+value;
                             sku.setSkuId(skuId);
                             sku.setColor(element.getChildText("COLORE"));
                             sku.setSupplierPrice(element.getChildText("PREZZO_VENDITA_SENZA_IVA"));
@@ -84,10 +84,10 @@ public class FetchProduct {
                             sku.setProductCode(element.getChildText("CODICE_MODELLO")+" "+element.getChildText("CODICE_VARIANTE"));
                             sku.setProductName(element.getChildText("DESCRIZIONE_MODELLO"));
                             sku.setSalePrice(element.getChildText("PREZZO_VENDITA"));
-                            sku.setProductDescription(element.getChildText("DESCRIZIONE_SPECIALE"));
+                            sku.setProductDescription(element.getChildText("DESCRIZIONE"));
                             String stock ="";// StockClientImp.getStock(key,value);
-                            sku.setStock(stock);
-                            sku.setSupplierId("2015071701342");
+                            sku.setStock("1");
+                            sku.setSupplierId(supplierId);
                             try {
                                 productFetchService.saveSKU(sku);
                             }catch (Exception e){
@@ -107,8 +107,8 @@ public class FetchProduct {
                         sku.setSalePrice(element.getChildText("PREZZO_VENDITA"));
                         sku.setProductDescription(element.getChildText("DESCRIZIONE_SPECIALE"));
                         String stock = "";//StockClientImp.getStock(element.getChildText("ID_ARTICOLO"), "");
-                        sku.setStock(stock);
-                        sku.setSupplierId("2015071701342");
+                        sku.setStock("1");
+                        sku.setSupplierId(supplierId);
                         try {
                             productFetchService.saveSKU(sku);
                         }catch (Exception e){
@@ -127,7 +127,7 @@ public class FetchProduct {
             ProductPictureDTO dto  = new ProductPictureDTO();
             dto.setPicUrl(element.getChildText("RIFERIMENTO"));
             dto.setId(UUIDGenerator.getUUID());
-            dto.setSupplierId("2015071701342");
+            dto.setSupplierId(supplierId);
             dto.setSkuId(element.getChildText("RF_RECORD_ID"));
             dto.setSpuId("");
             try {

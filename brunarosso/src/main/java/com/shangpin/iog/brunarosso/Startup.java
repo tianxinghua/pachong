@@ -74,6 +74,7 @@ public class Startup {
         System.out.println("-------brunarosso start---------");
         List<File>list=readPicPath();
         for (int i = 0; i < list.size(); i++) {
+            System.out.println(i);
             File file = list.get(i);
             try {
                 System.out.println("正在读取的文件: " + file.getName());
