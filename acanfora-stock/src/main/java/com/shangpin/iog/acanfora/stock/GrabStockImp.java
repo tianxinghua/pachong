@@ -93,7 +93,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
     public static void main(String[] args) throws Exception {
 
-        AbsUpdateProductStock grabStockImp = new GrabStockImp();
+        AbsUpdateProductStock grabStockImp = new GrabStockImp();grabStockImp.supplierSkuIdMain=true;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("ACANFORA更新数据库开始");
         grabStockImp.updateProductStock("2015050800242","2015-01-01 00:00",format.format(new Date()));

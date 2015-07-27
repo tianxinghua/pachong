@@ -57,6 +57,7 @@ public class FetchProduct {
                     spu.setSeasonName(element.getChildText("TIPO_STAGIONE"));
                     spu.setCategoryName(element.getChildText("GRUPPO_SUPER"));
                     spu.setSubCategoryId(element.getChildText("GRUPPO"));
+                    spu.setProductOrigin(element.getChildText("PAESE_PRODUZIONE"));
                     spu.setSupplierId("2015071701342");//2015071701342
                     try{
                         productFetchService.saveSPU(spu);
@@ -82,6 +83,8 @@ public class FetchProduct {
                             sku.setProductSize(value);
                             sku.setProductCode(element.getChildText("CODICE_MODELLO")+" "+element.getChildText("CODICE_VARIANTE"));
                             sku.setProductName(element.getChildText("DESCRIZIONE_MODELLO"));
+                            sku.setSalePrice(element.getChildText("PREZZO_VENDITA"));
+                            sku.setProductDescription(element.getChildText("DESCRIZIONE_SPECIALE"));
                             String stock ="";// StockClientImp.getStock(key,value);
                             sku.setStock(stock);
                             sku.setSupplierId("2015071701342");
@@ -101,6 +104,8 @@ public class FetchProduct {
                         sku.setSpuId(element.getChildText("CODICE_MODELLO"));
                         sku.setProductCode(element.getChildText("CODICE_MODELLO")+" "+element.getChildText("CODICE_VARIANTE"));
                         sku.setProductName(element.getChildText("DESCRIZIONE_MODELLO"));
+                        sku.setSalePrice(element.getChildText("PREZZO_VENDITA"));
+                        sku.setProductDescription(element.getChildText("DESCRIZIONE_SPECIALE"));
                         String stock = "";//StockClientImp.getStock(element.getChildText("ID_ARTICOLO"), "");
                         sku.setStock(stock);
                         sku.setSupplierId("2015071701342");
@@ -112,7 +117,6 @@ public class FetchProduct {
 
                     }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
