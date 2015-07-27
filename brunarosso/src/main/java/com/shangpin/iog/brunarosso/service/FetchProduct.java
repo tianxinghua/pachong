@@ -3,7 +3,6 @@ package com.shangpin.iog.brunarosso.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.brunarosso.dto.Product;
 import com.shangpin.iog.brunarosso.dto.Products;
-import com.shangpin.iog.brunarosso.stock.StockClientImp;
 import com.shangpin.iog.brunarosso.utils.XmlReader;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
@@ -83,7 +82,7 @@ public class FetchProduct {
                             sku.setProductSize(value);
                             sku.setProductCode(element.getChildText("CODICE_MODELLO")+" "+element.getChildText("CODICE_VARIANTE"));
                             sku.setProductName(element.getChildText("DESCRIZIONE_MODELLO"));
-                            String stock = StockClientImp.getStock(key,value);
+                            String stock ="";// StockClientImp.getStock(key,value);
                             sku.setStock(stock);
                             sku.setSupplierId("2015071701342");
                             try {
@@ -102,7 +101,7 @@ public class FetchProduct {
                         sku.setSpuId(element.getChildText("CODICE_MODELLO"));
                         sku.setProductCode(element.getChildText("CODICE_MODELLO")+" "+element.getChildText("CODICE_VARIANTE"));
                         sku.setProductName(element.getChildText("DESCRIZIONE_MODELLO"));
-                        String stock = StockClientImp.getStock(element.getChildText("ID_ARTICOLO"),"");
+                        String stock = "";//StockClientImp.getStock(element.getChildText("ID_ARTICOLO"), "");
                         sku.setStock(stock);
                         sku.setSupplierId("2015071701342");
                         try {
