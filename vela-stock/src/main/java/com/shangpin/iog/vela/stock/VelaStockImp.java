@@ -46,7 +46,13 @@ public class VelaStockImp extends AbsUpdateProductStock {
                 try {
                     Quantity result = gson.fromJson(json, new TypeToken<Quantity>() {
                     }.getType());
-                    stock_map.put(skuno, Integer.valueOf(result.getResult()));
+                    if("No Record Found".equals(result.getResult())){
+
+                        stock_map.put(skuno, 0);
+                    }else{
+                        stock_map.put(skuno, Integer.valueOf(result.getResult()));
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -58,6 +64,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
 
     public static void main(String[] args) throws Exception {
         AbsUpdateProductStock velaStockImp = new VelaStockImp();
+        velaStockImp.setUseThread(true);velaStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("VELA更新数据库开始");
         velaStockImp.updateProductStock("2015071701343","2015-01-01 00:00",format.format(new Date()));
