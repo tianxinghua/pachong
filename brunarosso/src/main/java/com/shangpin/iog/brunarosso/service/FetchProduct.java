@@ -74,7 +74,7 @@ public class FetchProduct {
                             sku.setId(UUIDGenerator.getUUID());
                             key=element.getChildText("ID_ARTICOLO");
                             value = map.get(key).get(j);
-                            skuId=key+","+value;
+                            skuId=key+"—"+value;
                             sku.setSkuId(skuId);
                             sku.setColor(element.getChildText("COLORE"));
                             sku.setSupplierPrice(element.getChildText("PREZZO_VENDITA_SENZA_IVA"));
