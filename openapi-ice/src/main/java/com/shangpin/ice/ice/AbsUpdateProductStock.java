@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import ShangPin.SOP.Api.ApiException;
 import ShangPin.SOP.Entity.Api.Product.SopProductSkuIce;
@@ -97,6 +98,7 @@ public abstract class AbsUpdateProductStock {
 		final Map<String,String> localAndIceSku=new HashMap<String, String>();
 		final Collection<String> skuNoSet=grabProduct(supplier, start, end,localAndIceSku);
 		logger.warn("待更新库存数据总数："+skuNoSet.size());
+		//logger.warn("需要更新ice,supplier sku关系是："+JSON.serialize(localAndIceSku));
 		final List<Integer> totoalFailCnt=Collections.synchronizedList(new ArrayList<Integer>());
 		if(useThread){
 			int poolCnt=skuNoSet.size()/getSkuCount4Thread();
@@ -191,10 +193,12 @@ public abstract class AbsUpdateProductStock {
 		
 		int failCount=0;
 		Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
+		logger.warn("待更新的数据：--------"+toUpdateIce.size());
 		while (iter.hasNext()) {
 			Entry<String, Integer> entry = iter.next();
 			Boolean result =true;
 			try{
+				logger.warn("待更新的数据：--------"+entry.getKey()+":"+entry.getValue());
 				result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());				
 			}catch(Exception e){
 				result=false;
@@ -238,12 +242,14 @@ public abstract class AbsUpdateProductStock {
 		Map<String, Integer> iceStock=new HashMap<>();
 		try {
 			Map<String, Integer> supplierStock=grabStock(skuNos);
+			
 			for (String skuNo : skuNos) {
 				Integer stock=supplierStock.get(skuNo);
 				String iceSku=localAndIceSkuId.get(skuNo);
 				if(stock==null)
 					stock=0;
-				iceStock.put(iceSku, stock);
+				if(!StringUtils.isEmpty(iceSku))
+					iceStock.put(iceSku, stock);
 			}
 		} catch (Exception e1) {
 			logger.error("抓取库存失败:",e1);

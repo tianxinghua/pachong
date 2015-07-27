@@ -38,13 +38,14 @@ public class EbayStartUp {
 	public static void main(String[] args) {
 		System.out.println("参数：u表示更新库存，其他表示拉取数据");
 		if(args!=null){
-			loadSpringContext();
 			if(args.length>0 && "u".equals(args[0])){//更新库存
 					logger.info("-----------开始更新库存---------");
 					updateStock();
 					logger.info("-----------更新库存完成---------");
+					System.exit(0);
 					return ;
 			}
+			loadSpringContext();
 			//默认拉取
 			logger.info("-----------开始抓取数据---------");
 			grabProduct();
@@ -79,13 +80,14 @@ public class EbayStartUp {
 	
 	private static void updateStock(){
 		String supplier=EbayInit.EBAY.substring(3);
-		String start=DateTimeUtil.LongFmt(new Date());
+		String end=DateTimeUtil.LongFmt(new Date());
 		Calendar c=Calendar.getInstance();c.add(Calendar.MONTH, -3);
-		String end=DateTimeUtil.LongFmt(c.getTime());
+		String start=DateTimeUtil.LongFmt(c.getTime());
+		V1UpdateStock vs = new V1UpdateStock();
 		try {
-			grabSrv.setUseThread(true);
-			grabSrv.setSkuCount4Thread(20);
-			grabSrv.updateProductStock(supplier, start, end);
+			vs.setUseThread(true);
+			vs.setSkuCount4Thread(20);
+			vs.updateProductStock(supplier, start, end);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

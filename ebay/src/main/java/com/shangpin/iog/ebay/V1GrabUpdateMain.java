@@ -6,8 +6,6 @@ package com.shangpin.iog.ebay;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -17,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.ebay.sdk.SdkException;
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.json.JsonUtil;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
@@ -31,14 +28,14 @@ import com.shangpin.iog.service.ProductFetchService;
  * <br/>2015年7月3日
  */
 @Component
-public class V1GrabUpdateMain extends AbsUpdateProductStock{
+public class V1GrabUpdateMain{
 	@Autowired
 	V1GrabService grabSrv;
 	static Logger logger = LoggerFactory.getLogger(V1GrabUpdateMain.class);
 	@Autowired
 	public ProductFetchService fetchSrv;
 	
-	@Override
+	/*@Override
 	public Map<String, Integer> grabStock(Collection<String> skuNo)
 			throws ServiceException, Exception {
 		Collection<String> itemIds=new HashSet<>(skuNo.size());
@@ -47,7 +44,7 @@ public class V1GrabUpdateMain extends AbsUpdateProductStock{
 			itemIds.add(skuId.split("#")[0]);
 		}
 		return grabSrv.getStock(itemIds);
-	}
+	}*/
 	/**
 	 * 抓取供应商数据并保存
 	 * @param sellerId ebay供应商卖家id
