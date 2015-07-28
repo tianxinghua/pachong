@@ -34,35 +34,44 @@ public class ProductPicture implements Serializable{
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ProductPicture other = (ProductPicture) obj;
-		if (picUrl == null) {
-			if (other.picUrl != null)
-				return false;
-		} else if (!picUrl.equals(other.picUrl))
-			return false;
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ProductPicture other = (ProductPicture) obj;
 
-		if (spuId == null) {
-			if (other.spuId != null)
-				return false;
-		} else if (!spuId.equals(other.spuId))
-			return false;
 
-		if (skuId == null) {
-			if (other.skuId != null)
-				return false;
-		} else if (!skuId.equals(other.skuId))
-			return false;
-		if (supplierId == null) {
-			if (other.supplierId != null)
-				return false;
-		} else if (!supplierId.equals(other.supplierId))
-			return false;
+        if (spuId == null) {
+            if (other.spuId != null)
+                return false;
+        } else if (!spuId.equals(other.spuId))
+            return false;
+
+        if (skuId == null) {
+            if (other.skuId != null)
+                return false;
+        } else if (!skuId.equals(other.skuId))
+            return false;
+
+        if (supplierId == null) {
+            if (other.supplierId != null)
+                return false;
+        } else if (!supplierId.equals(other.supplierId))
+            return false;
+
+
+        if (picUrl == null) {
+            if (other.picUrl != null)
+                return false;
+        } else if (picUrl.equals(other.picUrl)){
+            return true;
+        }else  {
+            return false;
+        }
+
+
 		return true;
 	}
 

@@ -19,7 +19,7 @@ public interface PictureDAO extends BaseMongodbDAO<ProductPicture,String> {
      * @return
      * @throws ServiceException
      */
-    public List<ProductPicture> findBySupplierIdAndSkuId(String supplierId,String skuId) throws ServiceException;
+    public List<ProductPicture> findDistinctProductPictureBySupplierIdAndSkuId(String supplierId,String skuId) throws ServiceException;
 
     /**
      * 根据供货商ID和SKUID获取图片
@@ -28,5 +28,5 @@ public interface PictureDAO extends BaseMongodbDAO<ProductPicture,String> {
      * @return
      * @throws ServiceException
      */
-    public List<ProductPicture> findBySupplierIdAndSpuId(String supplierId,String spuId) throws ServiceException;
+    public List<ProductPicture> findDistinctProductPictureBySupplierIdAndSpuId(String supplierId,String spuId) throws ServiceException;
 }
