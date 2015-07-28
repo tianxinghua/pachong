@@ -17,49 +17,18 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.jdom2.input.SAXBuilder;
-import java.io.File;
+
+import java.io.*;
 
 
-
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class StockClientImp extends AbsUpdateProductStock{
     private static Logger logger = Logger.getLogger("info");
-    public static void grabStockDynamic() throws ServiceException {
-        //Map<String, Integer> skustock = new HashMap<>(skuNo.size());
-        String wsdlUrl="http://85.159.181.250/ws_sito/ws_sito.asmx";//DisponibilitaVarianteTaglia
-        JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
-        org.apache.cxf.endpoint.Client client = dcf.createClient(wsdlUrl+"?wsdl");
-        try {
-            Object[]obj=client.invoke("DisponibilitaVarianteTaglia", "6759079","");
-            System.out.println(obj.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-       // return skustock;
-    }
-    public Map<String,Integer>getStockStatic(Collection<String> skuNo)throws ServiceException{
-        Map<String, Integer> skustock = new HashMap<>(skuNo.size());
-        JaxWsProxyFactoryBean svr = new JaxWsProxyFactoryBean();
-        String realUrl="http://85.159.181.250/ws_sito/ws_sito.asmx";
-       /* svr.setServiceClass(HelloWorld.class);*/
-        svr.setAddress(realUrl);
-        return skustock;
-    }
-    public static String getStock(String id,String size) throws DocumentException {
-        String url="http://85.159.181.250/ws_sito/ws_sito.asmx/DisponibilitaVarianteTaglia";
-        Map<String,String> param = new HashMap<>();
-        param.put("ID_ARTICOLO",id);
-        param.put("TAGLIA",size);
-        OutTimeConfig outTimeConf = new OutTimeConfig();
-        String result = HttpUtil45.post(url,param,outTimeConf);
-        Document doc = DocumentHelper.parseText(result);
-        Element element=doc.getRootElement();
-        return element.getText();
-    }
     @Override
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        String url="";
+        String url="E:\\brunarosso";
         Map<String,Integer>map=getSizeByPath(url);
         map=getMap(url,map);
         return map;
@@ -83,15 +52,78 @@ public class StockClientImp extends AbsUpdateProductStock{
             org.jdom2.Element foo =doc.getRootElement();
             allChildren = foo.getChildren();
             for (org.jdom2.Element element:allChildren){
-                map.put(element.getChildText("ID_ARTICOLO")+"-"+element.getChildText("MM_TAGLIA"),Integer.parseInt(element.getChildText("MM_TAGLIA")));
+                map.put(element.getChildText("ID_ARTICOLO")+"-"+element.getChildText("MM_TAGLIA"),Integer.parseInt(element.getChildText("ESI")));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return map;
     }
+    public static String  readTxt(String path){
+        String endcode = "GBK";
+        File file = new File(path);
+        InputStreamReader in = null;
+        StringBuffer pzFile = new StringBuffer();
+        String lineText = null;
+        try{
+            if(file.isFile() && file.exists()){//判断是否有文件
+                in = new InputStreamReader(new FileInputStream(file) , endcode);
+                BufferedReader buffer = new BufferedReader(in);
+                while((lineText = buffer.readLine()) != null){
+                    pzFile.append(lineText);
+                }
+                System.out.println(pzFile);
+            }else{
+                System.out.println("抱歉哦，没有找到txt文件");
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return lineText;
+    }
+    public static void deleteTxtContent(String file)throws IOException {
+        //String file="E:/latestXml.txt";
+        FileReader read = new FileReader(file);
+        BufferedReader br = new BufferedReader(read);
+        StringBuilder con = new StringBuilder();
+
+        while(br.ready() != false){
+            con.append(br.readLine());
+            con.append("\r\n");
+        }
+        System.out.println(con.toString());
+        con.delete(0, con.length());
+        System.out.println("当前内容："+con.toString());
+        br.close();
+        read.close();
+        FileOutputStream fs = new FileOutputStream(file);
+        fs.write(con.toString().getBytes());
+        fs.close();
+    }
+    public static void saveAsFileWriter(String file,String content) throws IOException {
+        //String file="E:/latestXml.txt";
+        FileWriter fwriter = null;
+        try {
+            fwriter = new FileWriter(file);
+            deleteTxtContent(file);
+            fwriter.write(content);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                fwriter.flush();
+                fwriter.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
     public static void main(String[] args) throws Exception {
         StockClientImp impl = new StockClientImp();
-
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        logger.info("ACANFORA更新数据库开始");
+        impl.updateProductStock("2015050800242","2015-01-01 00:00",format.format(new Date()));
+        logger.info("ACANFORA更新数据库结束");
+        System.exit(0);
     }
 }

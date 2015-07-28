@@ -72,7 +72,9 @@ public class Startup {
         //拉取数据
         FetchProduct fetchService = (FetchProduct)factory.getBean("brunarosso");
         System.out.println("-------brunarosso start---------");
-        List<File>list=readPicPath();
+        String latest=XmlReader.readTxt("E:\\latestXml.txt");
+        String latestPro=XmlReader.readTxt("E:\\latestProXml.txt");
+        List<File> list=readPicPath();
         for (int i = 0; i < list.size(); i++) {
             System.out.println(i);
             File file = list.get(i);

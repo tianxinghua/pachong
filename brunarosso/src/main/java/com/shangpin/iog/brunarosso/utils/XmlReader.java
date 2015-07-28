@@ -61,10 +61,10 @@ public class XmlReader {
             allChildren = foo.getChildren();
             for (org.jdom2.Element element:allChildren){
                 if (map.containsKey(element.getChildText("ID_ARTICOLO"))){
-                    map.get(element.getChildText("ID_ARTICOLO")).add(element.getChildText("MM_TAGLIA"));
+                    map.get(element.getChildText("ID_ARTICOLO")).add(element.getChildText("MM_TAGLIA")+","+element.getChildText("BARCODEEAN")+","+element.getChildText("ESI"));
                 }else{
                     List<String> valueList = new ArrayList();
-                    valueList.add(element.getChildText("MM_TAGLIA"));
+                    valueList.add(element.getChildText("MM_TAGLIA")+","+element.getChildText("BARCODEEAN")+","+element.getChildText("ESI"));
                     map.put(element.getChildText("ID_ARTICOLO"),valueList);
                 }
             }
@@ -97,11 +97,9 @@ public class XmlReader {
         List<String> list=read();
         Set<org.jdom2.Element> set = new HashSet();
         for (int i = 0; i < list.size(); i++) {
-            //File file=list.get(i);
             try {
                 System.out.println("正在读取的尺寸文件: " + list.get(i));
                 getProductSize(path +list.get(i),map);
-                //set.addAll(list1);
             } catch (Exception e) {
                 e.printStackTrace();
             }
