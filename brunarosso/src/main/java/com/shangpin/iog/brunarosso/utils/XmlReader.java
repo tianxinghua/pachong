@@ -106,25 +106,6 @@ public class XmlReader {
         }
         return map;
     }
-    /*public static void main(String args[]){
-        List allChildren = new ArrayList();
-        //String str = "HORO24KT abbigliamento Disponibile su BRUNAROSSO.COM. Sul nostro negozio on line puoi trovare numerosi altri modelli";
-        try {
-            SAXBuilder builder = new SAXBuilder();
-            org.jdom2.Document doc = builder.build(new File("E:/MailDoc/firma/Prodotti.xml"));
-            org.jdom2.Element foo =doc.getRootElement();
-            allChildren = foo.getChildren();
-            for (int i = 0; i < allChildren.size(); i++) {
-                org.jdom2.Element element = (org.jdom2.Element) allChildren.get(i);
-                String text = element.getChildText("BRAND");
-                String spu = element.getChildText("CODICE_MODELLO");
-                System.out.println("品牌名称:" + text);
-                System.out.println("SPU：" + text);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
     public static String  readTxt(String path){
         String endcode = "GBK";
         File file = new File(path);
@@ -185,9 +166,6 @@ public class XmlReader {
         }
     }
     public static void main(String args[]){
-      /* String url="E:/MailDoc/firma/Disponibilita.xml";
-        Map<String,List<String>> map = getSizeByPath(url);
-       System.out.println("map数据："+map.get("7731").get(1));*/
 
     }
 }

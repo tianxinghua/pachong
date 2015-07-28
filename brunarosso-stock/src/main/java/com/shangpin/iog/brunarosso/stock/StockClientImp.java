@@ -26,22 +26,69 @@ import java.util.*;
 
 public class StockClientImp extends AbsUpdateProductStock{
     private static Logger logger = Logger.getLogger("info");
+    public static final String PROPERTIES_FILE_NAME = "param";
+    static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
+    private static String path = bundle.getString("path");
     @Override
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        String url="E:\\brunarosso";
-        Map<String,Integer>map=getSizeByPath(url);
-        map=getMap(url,map);
+        //String url="E:\\brunarosso"+"Disponibilita.xml";
+        Map<String,Integer>map=getSizeByPath("");
+        Set<String>set=map.keySet();
+        Iterator<String> iterator=set.iterator();
+        while (iterator.hasNext()){
+            String key = iterator.next();
+            for(String skuno:skuNo){
+                if(skuno.indexOf("+")>0){
+                    skuno=skuno.replace("+","½");
+                }
+                if(key.equals(skuno)){
+                    String id = skuno.replace("½","+");
+                    map.put(id,map.get(id));
+                }
+            }
+        }
         return map;
+    }
+    private static List<File> read() {
+        File f = new File(path);
+        List<File>list=getFileList(f);
+        return list;
+    }
+    private static List<File> getFileList(File f) {
+        File[] filePaths = f.listFiles();
+        List<File> filePathsList = new ArrayList<File>();
+        String latest=readTxt("E:\\latestXml.txt");
+        //String latestPro = readTxt("E:\\latestProXml.txt");
+        String updateStock="";
+        for (File s : filePaths) {
+            if (s.isDirectory()) {
+                getFileList(s);
+            } else {
+                if (s.getName().equals("Disponibilita.xml")||s.getName().compareTo(latest)>0) {
+                        filePathsList.add(s);
+                        updateStock=s.getName();
+                }
+            }
+        }
+        try {
+            deleteTxtContent(latest);
+            saveAsFileWriter("E:\\latestXml.txt",updateStock);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return filePathsList;
     }
     public static Map<String,Integer> getSizeByPath(String url){
         Map<String,Integer>map = new HashMap();
-            //File file=list.get(i);
+        List<File> list=read();
+        for (int i = 0; i < list.size(); i++) {
             try {
-                System.out.println("正在读取的尺寸文件: " + url);
-                getMap("E:\\brunarosso" + url, map);
+                System.out.println("正在读取的尺寸文件: " + list.get(i));
+                getMap(path + list.get(i),map);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
         return map;
     }
     public static Map<String,Integer> getMap(String url, Map<String, Integer> map){
