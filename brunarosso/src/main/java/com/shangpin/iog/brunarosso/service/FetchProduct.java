@@ -32,14 +32,14 @@ public class FetchProduct {
 
     @Autowired
     ProductFetchService productFetchService;
-
+    String supplierId = "new20150727";//2015071701342
     /**
      *
      * @param map 尺寸集合,key是sku，value是尺寸list
      * @param url
      */
     public void fetchProductAndSave(Map<String,List<String>>map,String url) {
-        String supplierId = "";
+
         //String result = HttpUtils.get(url, false, 360000);
         try {
             /*Products products = ObjectXMLUtil.xml2Obj(Products.class, result);
@@ -57,7 +57,8 @@ public class FetchProduct {
                     spu.setSeasonName(element.getChildText("TIPO_STAGIONE"));
                     spu.setCategoryName(element.getChildText("GRUPPO_SUPER"));
                     spu.setSubCategoryId(element.getChildText("GRUPPO"));
-                    spu.setSupplierId("2015071701342");//2015071701342
+                    spu.setProductOrigin(element.getChildText("PAESE_PRODUZIONE"));
+                    spu.setSupplierId(supplierId);//2015071701342
                     try{
                         productFetchService.saveSPU(spu);
                     }catch (ServiceException e) {
@@ -68,12 +69,21 @@ public class FetchProduct {
                         String key ="";
                         String value="";
                         String skuId="";
+                        String barcode="";
+                        String stock="";
                         for (int j = 0;j<map.get(element.getChildText("ID_ARTICOLO")).size();j++){
                             SkuDTO sku = new SkuDTO();
                             sku.setId(UUIDGenerator.getUUID());
                             key=element.getChildText("ID_ARTICOLO");
                             value = map.get(key).get(j);
-                            skuId=key+"—"+value;
+                            String[]str= value.split(",");
+                            value=str[0];
+                            barcode=str[1];
+                            stock=str[2];
+                            if(value.indexOf("½")>0){
+                                value=value.replace("½","+");
+                            }
+                            skuId=key+"-"+value;
                             sku.setSkuId(skuId);
                             sku.setColor(element.getChildText("COLORE"));
                             sku.setSupplierPrice(element.getChildText("PREZZO_VENDITA_SENZA_IVA"));
@@ -82,9 +92,12 @@ public class FetchProduct {
                             sku.setProductSize(value);
                             sku.setProductCode(element.getChildText("CODICE_MODELLO")+" "+element.getChildText("CODICE_VARIANTE"));
                             sku.setProductName(element.getChildText("DESCRIZIONE_MODELLO"));
-                            String stock ="";// StockClientImp.getStock(key,value);
+                            sku.setSalePrice(element.getChildText("PREZZO_VENDITA"));
+                            sku.setProductDescription(element.getChildText("DESCRIZIONE"));
+                            sku.setBarcode(barcode);
+                            // StockClientImp.getStock(key,value);
                             sku.setStock(stock);
-                            sku.setSupplierId("2015071701342");
+                            sku.setSupplierId(supplierId);
                             try {
                                 productFetchService.saveSKU(sku);
                             }catch (Exception e){
@@ -99,11 +112,13 @@ public class FetchProduct {
                         sku.setSupplierPrice(element.getChildText("PREZZO_VENDITA_SENZA_IVA"));
                         sku.setSkuId(element.getChildText("ID_ARTICOLO"));
                         sku.setSpuId(element.getChildText("CODICE_MODELLO"));
-                        sku.setProductCode(element.getChildText("CODICE_MODELLO")+" "+element.getChildText("CODICE_VARIANTE"));
+                        sku.setProductCode(element.getChildText("CODICE_MODELLO") + " " + element.getChildText("CODICE_VARIANTE"));
                         sku.setProductName(element.getChildText("DESCRIZIONE_MODELLO"));
-                        String stock = "";//StockClientImp.getStock(element.getChildText("ID_ARTICOLO"), "");
-                        sku.setStock(stock);
-                        sku.setSupplierId("2015071701342");
+                        sku.setSalePrice(element.getChildText("PREZZO_VENDITA"));
+                        sku.setProductDescription(element.getChildText("DESCRIZIONE_SPECIALE"));
+                        //StockClientImp.getStock(element.getChildText("ID_ARTICOLO"), "");
+                        sku.setStock("0");
+                        sku.setSupplierId(supplierId);
                         try {
                             productFetchService.saveSKU(sku);
                         }catch (Exception e){
@@ -112,7 +127,6 @@ public class FetchProduct {
 
                     }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -123,7 +137,7 @@ public class FetchProduct {
             ProductPictureDTO dto  = new ProductPictureDTO();
             dto.setPicUrl(element.getChildText("RIFERIMENTO"));
             dto.setId(UUIDGenerator.getUUID());
-            dto.setSupplierId("2015071701342");
+            dto.setSupplierId(supplierId);
             dto.setSkuId(element.getChildText("RF_RECORD_ID"));
             dto.setSpuId("");
             try {

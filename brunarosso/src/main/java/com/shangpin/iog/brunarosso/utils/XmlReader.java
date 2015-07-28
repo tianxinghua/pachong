@@ -18,56 +18,6 @@ public class XmlReader {
     public static final String PROPERTIES_FILE_NAME = "param";
     static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
     private static String path = bundle.getString("path");
-    /*public static void main(String args[]) {
-        Element element = null;
-        // 可以使用绝对路径
-        File f = new File("E:/MailDoc/firma/Prodotti.xml");
-        // documentBuilder为抽象不能直接实例化(将XML文件转换为DOM文件)
-        DocumentBuilder db = null;
-        DocumentBuilderFactory dbf = null;
-        try {
-            // 返回documentBuilderFactory对象
-            dbf = DocumentBuilderFactory.newInstance();
-            // 返回db对象用documentBuilderFatory对象获得返回documentBuildr对象
-            db = dbf.newDocumentBuilder();
-            // 得到一个DOM并返回给document对象
-            Document dt = db.parse(f);
-            // 得到一个elment根元素
-            element = dt.getDocumentElement();
-            // 获得根节点
-            System.out.println("根元素：" + element.getNodeName());
-            // 获得根元素下的子节点
-            NodeList childNodes = element.getChildNodes();
-            // 遍历这些子节点
-            for (int i = 0; i < childNodes.getLength(); i++) {
-                // 获得每个对应位置i的结点
-                Node node1 = childNodes.item(i);
-                if ("Prodotti".equals(node1.getNodeName())) {
-                    // 如果节点的名称为"Prodotti"，则输出Prodotti元素属性type
-                    //System.out.println("\r\n找到一篇账号. 所属区域: " + node1.getAttributes().getNamedItem("type").getNodeValue() + ". ");
-                    // 获得<Prodotti>下的节点
-                    NodeList nodeDetail = node1.getChildNodes();
-                    //String resutl=nodeDetail.toString();
-                    // 遍历<Prodotti>下的节点
-                    for (int j = 0; j < nodeDetail.getLength(); j++) {
-                        // 获得<Prodotti>元素每一个节点
-                        Node detail = nodeDetail.item(j);
-                        if ("ID_ARTICOLO".equals(detail.getNodeName())) // 输出sku
-                            System.out.println("sku: " + detail.getTextContent());
-                        else if ("SIGLA_STAGIONE".equals(detail.getNodeName())) // 输出SIGLA_STAGIONE
-                            System.out.println("季节编码: " + detail.getTextContent());
-                        else if ("BRAND".equals(detail.getNodeName())) // 输出BRAND
-                            System.out.println("品牌: " + detail.getTextContent());
-                        else if ("CODICE_MODELLO".equals(detail.getNodeName())) // 输出spu
-                            System.out.println("spu: " + detail.getTextContent());
-                    }
-                }
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
     public static List<org.jdom2.Element> getProductElement(String path){
        // long lasting = System.currentTimeMillis();
         List allChildren = new ArrayList();
@@ -111,10 +61,10 @@ public class XmlReader {
             allChildren = foo.getChildren();
             for (org.jdom2.Element element:allChildren){
                 if (map.containsKey(element.getChildText("ID_ARTICOLO"))){
-                    map.get(element.getChildText("ID_ARTICOLO")).add(element.getChildText("MM_TAGLIA"));
+                    map.get(element.getChildText("ID_ARTICOLO")).add(element.getChildText("MM_TAGLIA")+","+element.getChildText("BARCODEEAN")+","+element.getChildText("ESI"));
                 }else{
                     List<String> valueList = new ArrayList();
-                    valueList.add(element.getChildText("MM_TAGLIA"));
+                    valueList.add(element.getChildText("MM_TAGLIA")+","+element.getChildText("BARCODEEAN")+","+element.getChildText("ESI"));
                     map.put(element.getChildText("ID_ARTICOLO"),valueList);
                 }
             }
@@ -147,11 +97,9 @@ public class XmlReader {
         List<String> list=read();
         Set<org.jdom2.Element> set = new HashSet();
         for (int i = 0; i < list.size(); i++) {
-            //File file=list.get(i);
             try {
                 System.out.println("正在读取的尺寸文件: " + list.get(i));
                 getProductSize(path +list.get(i),map);
-                //set.addAll(list1);
             } catch (Exception e) {
                 e.printStackTrace();
             }

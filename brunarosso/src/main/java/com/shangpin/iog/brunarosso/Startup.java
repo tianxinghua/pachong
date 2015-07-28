@@ -31,7 +31,12 @@ public class Startup {
         List<File>list=getFileList(f);
         return list;
     }
-    private static List<File> getFileList(File f) {
+    private static List<File>readPicPath(){
+        File f = new File(path);
+        List<File>list = getPicList(f);
+        return list;
+    }
+    private static List<File>getPicList(File f){
         File[] filePaths = f.listFiles();
         List<File> filePathsList = new ArrayList<File>();
         for (File s : filePaths) {
@@ -45,6 +50,20 @@ public class Startup {
         }
         return filePathsList;
     }
+    private static List<File> getFileList(File f) {
+        File[] filePaths = f.listFiles();
+        List<File> filePathsList = new ArrayList<File>();
+        for (File s : filePaths) {
+            if (s.isDirectory()) {
+                getFileList(s);
+            } else {
+                if (-1 != s.getName().lastIndexOf(".xml")&&-1!=s.getName().indexOf("Prodotti")) {
+                    filePathsList.add(s);
+                }
+            }
+        }
+        return filePathsList;
+    }
     public static void main(String[] args)
     {
         //加载spring
@@ -52,8 +71,12 @@ public class Startup {
         loadSpringContext();
         //拉取数据
         FetchProduct fetchService = (FetchProduct)factory.getBean("brunarosso");
-        List<File>list=read();
+        System.out.println("-------brunarosso start---------");
+        String latest=XmlReader.readTxt("E:\\latestXml.txt");
+        String latestPro=XmlReader.readTxt("E:\\latestProXml.txt");
+        List<File> list=readPicPath();
         for (int i = 0; i < list.size(); i++) {
+            System.out.println(i);
             File file = list.get(i);
             try {
                 System.out.println("正在读取的文件: " + file.getName());
@@ -63,12 +86,11 @@ public class Startup {
             }
         }
         //fetchService.savePic("E:\\brunarosso"+"Riferimenti.xml");
-       /* Map<String,List<String>> map = XmlReader.getSizeByPath("");
-        System.out.println("-------brunarosso start---------");
+        Map<String,List<String>> map = XmlReader.getSizeByPath("");
         try {
-            List<File> list=read();
-            for (int i = 0; i < list.size(); i++) {
-                File file=list.get(i);
+            List<File> list1=read();
+            for (int i = 0; i < list1.size(); i++) {
+                File file=list1.get(i);
                 try {
                     System.out.println("正在读取的文件: "+file.getName());
                     fetchService.fetchProductAndSave(map,path+file.getName());
@@ -80,7 +102,7 @@ public class Startup {
 
         }catch (Exception e){
             e.printStackTrace();
-        }*/
+        }
         System.out.println("成功插入数据库");
        /* System.out.println(map.get("77007").get(1));*/
         System.out.println("-------brunarosso end---------");
