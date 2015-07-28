@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,14 +54,23 @@ public class Startup {
     private static List<File> getFileList(File f) {
         File[] filePaths = f.listFiles();
         List<File> filePathsList = new ArrayList<File>();
+        String latestPro=XmlReader.readTxt("E:\\latestProXml.txt");
+        String updatePro="";
         for (File s : filePaths) {
             if (s.isDirectory()) {
                 getFileList(s);
             } else {
-                if (-1 != s.getName().lastIndexOf(".xml")&&-1!=s.getName().indexOf("Prodotti")) {
+                if (s.getName().equals("Prodotti.xml")||s.getName().compareTo(latestPro)>0) {
                     filePathsList.add(s);
+                    updatePro=s.getName();
                 }
             }
+        }
+        try {
+            XmlReader.deleteTxtContent(latestPro);
+            XmlReader.saveAsFileWriter("E:\\latestProXml.txt", updatePro);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return filePathsList;
     }
@@ -72,8 +82,8 @@ public class Startup {
         //拉取数据
         FetchProduct fetchService = (FetchProduct)factory.getBean("brunarosso");
         System.out.println("-------brunarosso start---------");
-        String latest=XmlReader.readTxt("E:\\latestXml.txt");
-        String latestPro=XmlReader.readTxt("E:\\latestProXml.txt");
+       /* String latest=XmlReader.readTxt("E:\\latestXml.txt");
+        String latestPro=XmlReader.readTxt("E:\\latestProXml.txt");*/
         List<File> list=readPicPath();
         for (int i = 0; i < list.size(); i++) {
             System.out.println(i);
@@ -89,6 +99,7 @@ public class Startup {
         Map<String,List<String>> map = XmlReader.getSizeByPath("");
         try {
             List<File> list1=read();
+
             for (int i = 0; i < list1.size(); i++) {
                 File file=list1.get(i);
                 try {
