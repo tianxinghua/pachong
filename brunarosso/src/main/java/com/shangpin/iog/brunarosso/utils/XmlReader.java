@@ -18,6 +18,7 @@ public class XmlReader {
     public static final String PROPERTIES_FILE_NAME = "param";
     static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
     private static String path = bundle.getString("path");
+    static String testFilePath = bundle.getString("testFilePath");
     public static List<org.jdom2.Element> getProductElement(String path){
        // long lasting = System.currentTimeMillis();
         List allChildren = new ArrayList();
@@ -74,7 +75,7 @@ public class XmlReader {
        // return allChildren;
     }
     private static List<String> read() {
-        File f = new File(path);
+        File f = new File(testFilePath);
         List<String>list=getFileList(f);
         return list;
     }
@@ -99,7 +100,7 @@ public class XmlReader {
         for (int i = 0; i < list.size(); i++) {
             try {
                 System.out.println("正在读取的尺寸文件: " + list.get(i));
-                getProductSize(path +list.get(i),map);
+                getProductSize(testFilePath +list.get(i),map);
             } catch (Exception e) {
                 e.printStackTrace();
             }

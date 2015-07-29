@@ -5,17 +5,8 @@ package com.shangpin.iog.brunarosso.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 import org.apache.log4j.Logger;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.jdom2.input.SAXBuilder;
 
 import java.io.*;
@@ -29,6 +20,7 @@ public class StockClientImp extends AbsUpdateProductStock{
     public static final String PROPERTIES_FILE_NAME = "param";
     static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
     private static String path = bundle.getString("path");
+    static String testFilePath = bundle.getString("testFilePath");
     @Override
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //String url="E:\\brunarosso"+"Disponibilita.xml";
@@ -57,25 +49,25 @@ public class StockClientImp extends AbsUpdateProductStock{
     private static List<File> getFileList(File f) {
         File[] filePaths = f.listFiles();
         List<File> filePathsList = new ArrayList<File>();
-        String latest=readTxt("E:\\latestXml.txt");
+       /* String latest=readTxt("E:\\latestXml.txt");
         //String latestPro = readTxt("E:\\latestProXml.txt");
-        String updateStock="";
+        String updateStock="";*/
         for (File s : filePaths) {
             if (s.isDirectory()) {
                 getFileList(s);
             } else {
-                if (s.getName().equals("Disponibilita.xml")||s.getName().compareTo(latest)>0) {
+                if (-1 != s.getName().lastIndexOf(".xml")&&-1!=s.getName().indexOf("Disponibilita")) {//Disponibilita
                         filePathsList.add(s);
-                        updateStock=s.getName();
+                        /*updateStock=s.getName();*/
                 }
             }
         }
-        try {
-            deleteTxtContent(latest);
-            saveAsFileWriter("E:\\latestXml.txt",updateStock);
+        /*try {
+            *//*deleteTxtContent(latest);
+            saveAsFileWriter("E:\\latestXml.txt",updateStock);*//*
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         return filePathsList;
     }
     public static Map<String,Integer> getSizeByPath(String url){

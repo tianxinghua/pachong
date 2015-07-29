@@ -1,13 +1,11 @@
 package com.shangpin.iog.brunarosso.service;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.brunarosso.dto.Product;
-import com.shangpin.iog.brunarosso.dto.Products;
+
 import com.shangpin.iog.brunarosso.utils.XmlReader;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.HttpUtils;
-import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
+
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
@@ -16,9 +14,6 @@ import com.shangpin.iog.service.ProductFetchService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.xml.bind.JAXBException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +33,8 @@ public class FetchProduct {
      * @param map 尺寸集合,key是sku，value是尺寸list
      * @param url
      */
-    public void fetchProductAndSave(Map<String,List<String>>map,String url) {
-
+    public Map<String,String> fetchProductAndSave(Map<String,List<String>>map,String url) {
+        Map<String,String>returnMap=new HashMap<>();
         //String result = HttpUtils.get(url, false, 360000);
         try {
             /*Products products = ObjectXMLUtil.xml2Obj(Products.class, result);
@@ -100,6 +95,7 @@ public class FetchProduct {
                             sku.setSupplierId(supplierId);
                             try {
                                 productFetchService.saveSKU(sku);
+                                returnMap.put(key,"");
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
@@ -121,6 +117,7 @@ public class FetchProduct {
                         sku.setSupplierId(supplierId);
                         try {
                             productFetchService.saveSKU(sku);
+                            returnMap.put(element.getChildText("ID_ARTICOLO"),"");
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -130,20 +127,23 @@ public class FetchProduct {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return  returnMap;
     }
-    public void savePic(String url){
+    public void savePic(String url,Map<String,String>returnMap){
         List<org.jdom2.Element>picList = XmlReader.getPictureElement(url);
         for (org.jdom2.Element element:picList){
-            ProductPictureDTO dto  = new ProductPictureDTO();
-            dto.setPicUrl(element.getChildText("RIFERIMENTO"));
-            dto.setId(UUIDGenerator.getUUID());
-            dto.setSupplierId(supplierId);
-            dto.setSkuId(element.getChildText("RF_RECORD_ID"));
-            dto.setSpuId("");
-            try {
-                productFetchService.savePictureForMongo(dto);
-            } catch (ServiceException e) {
-                e.printStackTrace();
+            if(returnMap.containsKey(element.getChildText("RF_RECORD_ID"))){
+                ProductPictureDTO dto  = new ProductPictureDTO();
+                dto.setPicUrl(element.getChildText("RIFERIMENTO"));
+                dto.setId(UUIDGenerator.getUUID());
+                dto.setSupplierId(supplierId);
+                dto.setSkuId(element.getChildText("RF_RECORD_ID"));
+                dto.setSpuId("");
+                try {
+                    productFetchService.savePictureForMongo(dto);
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
