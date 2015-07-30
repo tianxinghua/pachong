@@ -130,7 +130,7 @@ public class Startup {
             for (int i = 0; i < list1.size(); i++) {
                 File file=list1.get(i);
                 try {
-                    System.out.println("正在读取的文件: "+file.getName());
+                    //System.out.println("正在读取的文件: "+file.getName());
                     returnMap=fetchService.fetchProductAndSave(map,testFilePath+file.getName());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -147,16 +147,16 @@ public class Startup {
             System.out.println(i);
             File file = list.get(i);
             try {
-                System.out.println("正在读取的文件: " + file.getName());
+                //System.out.println("正在读取的文件: " + file.getName());
                 fetchService.savePic(testFilePath + file.getName(),returnMap);
             } catch (Exception e) {
                 e.printStackTrace();
                 flag=false;
             }
         }
-        if(flag){
+        /*if(flag){
             flag=deleteFile();
-        }
+        }*/
         System.out.println("执行成功："+flag);
         System.out.println("成功插入数据库");
 
