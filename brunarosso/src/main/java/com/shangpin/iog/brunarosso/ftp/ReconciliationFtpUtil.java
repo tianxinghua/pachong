@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.ResourceBundle;
 
 
 /**
@@ -27,7 +28,10 @@ public class ReconciliationFtpUtil {
     private static Log log = LogFactory.getLog(ReconciliationFtpUtil.class);
     //private static ResourceBundle bundle =ResourceBundle.getBundle("param", Locale.ENGLISH) ;
     private static String HOST="ftp.teenfashion.it",PORT="21",USER="1504604@aruba.it",PASSWORD="7efd422f35",FILE_PATH="/teenfashion.it/public/stockftp";
-
+    public static final String PROPERTIES_FILE_NAME = "param";
+    static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
+    static String latestProPath = bundle.getString("latestProPath");
+    static String latestStockPath = bundle.getString("latestStockPath");
 //    static {
 //        ResourceBundle bundle= ResourceBundle.getBundle("reconciliationFtp");
 //        HOST = bundle.getString("IP");
@@ -114,10 +118,15 @@ public class ReconciliationFtpUtil {
                 }
                 ftp.get(localFilePath+"/"+remoteFileName,"/".equals(remoteFilePath)?remoteFilePath+  remoteFileName:remoteFilePath+ "/"+  remoteFileName);
             }else{//ftp上已解压后的目录
-                files = ftp.dir(remoteFilePath);
+                try {
+                    files = ftp.dir(remoteFilePath);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
                 File attachments = new File(localFilePath+"/"+ subLocalfilePath);
-                String procontent = XmlReader.readTxt("E:/latestProXml.txt");
-                String disContent = XmlReader.readTxt("E:/latestXml.txt");
+                String procontent = XmlReader.readTxt(latestProPath);
+                String disContent = XmlReader.readTxt(latestStockPath);
                 /** 如果文件夹不存在，则创建 */
                 if (!attachments.exists())
                 {
@@ -127,7 +136,7 @@ public class ReconciliationFtpUtil {
                     if(files[i].indexOf("Prodotti")>0){
                         //content=XmlReader.readTxt("E:/latestProXml.txt");
                         try {
-                            if(files[i].compareTo(procontent)>0){
+                            if(files[i].compareTo(procontent)>0||files[i].equals("Prodotti.xml")) {
                                 ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
                                 procontent=files[i];
                             }
@@ -137,7 +146,7 @@ public class ReconciliationFtpUtil {
                         }
                     }else if(files[i].indexOf("Disponibilita")>0){
                         try {
-                            if(files[i].compareTo(disContent)>0){
+                            if(files[i].compareTo(disContent)>0||files[i].equals("Disponibilita.xml")){
                                 ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
                                 disContent=files[i];
                             }
@@ -145,8 +154,17 @@ public class ReconciliationFtpUtil {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
+                    }else if(files[i].indexOf("Riferimenti")>0){
+                        try {
+                            if(files[i].equals("Riferimenti.xml")){
+                                ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
+                            }
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
                     }
-                    ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
+                    //ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
                 }
                 XmlReader.deleteTxtContent("E:/latestProXml.txt");
                 XmlReader.saveAsFileWriter("E:/latestProXml.txt",procontent);
