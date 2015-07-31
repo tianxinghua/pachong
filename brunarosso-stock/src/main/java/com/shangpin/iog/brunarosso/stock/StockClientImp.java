@@ -85,7 +85,7 @@ public class StockClientImp extends AbsUpdateProductStock{
         for (int i = 0; i < list.size(); i++) {
             try {
                 System.out.println("正在读取的尺寸文件: " + list.get(i));
-                getMap(path + list.get(i),map);
+                getMap(localFilePath + list.get(i),map);
             } catch (Exception e) {
                 e.printStackTrace();
             }
