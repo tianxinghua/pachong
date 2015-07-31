@@ -265,10 +265,10 @@ public class StockClientImp extends AbsUpdateProductStock{
     public static void main(String[] args) throws Exception {
         StockClientImp impl = new StockClientImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("ACANFORA更新数据库开始");
+        logger.info("BRUNAROSSO更新数据库开始");
         downloadStock("","",localFilePath,false);
         impl.updateProductStock("2015071701342", "2015-01-01 00:00", format.format(new Date()));
-        logger.info("ACANFORA更新数据库结束");
+        logger.info("BRUNAROSSO更新数据库结束");
         System.exit(0);
     }
 }
