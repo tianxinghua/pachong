@@ -30,6 +30,7 @@ public class StockClientImp extends AbsUpdateProductStock{
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //String url="E:\\brunarosso"+"Disponibilita.xml";
         Map<String,Integer>map=getSizeByPath("");
+        Map<String,Integer>returnMap=new HashMap<>();
         Set<String>set=map.keySet();
         Iterator<String> iterator=set.iterator();
         while (iterator.hasNext()){
@@ -40,11 +41,14 @@ public class StockClientImp extends AbsUpdateProductStock{
                 }
                 if(key.equals(skuno)){
                     String id = skuno.replace("½","+");
-                    map.put(id,map.get(id));
+                    returnMap.put(id,map.get(id));
+                }else {
+                    String id = skuno.replace("½","+");
+                    returnMap.put(id,0);
                 }
             }
         }
-        return map;
+        return returnMap;
     }
     private static List<File> read() {
         File f = new File(localFilePath);
