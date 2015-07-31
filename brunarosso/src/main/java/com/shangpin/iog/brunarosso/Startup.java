@@ -154,9 +154,9 @@ public class Startup {
                 flag=false;
             }
         }
-        /*if(flag){
+        if(flag){
             flag=deleteFile();
-        }*/
+        }
         System.out.println("执行成功："+flag);
         System.out.println("成功插入数据库");
 
