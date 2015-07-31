@@ -127,7 +127,7 @@ public class XmlReader {
         }catch (Exception e) {
             e.printStackTrace();
         }
-        return lineText;
+        return pzFile.toString();
     }
     public static void deleteTxtContent(String file)throws IOException{
         //String file="E:/latestXml.txt";
