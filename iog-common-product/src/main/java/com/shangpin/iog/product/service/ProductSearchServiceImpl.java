@@ -327,9 +327,13 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                         .append(dto.getItemPictureUrl8()).append(",");
                 //明细描述
                 productDetail = dto.getProductDescription();
-                if(StringUtils.isNotBlank(productDetail)&&productDetail.indexOf(",")>0){
-                    productDetail = productDetail.replace(",","...").replaceAll("\\r", "").replaceAll("\\n","");
+                if(StringUtils.isNotBlank(productDetail))  {
+                    if(productDetail.indexOf(",")>0) {
+                        productDetail = productDetail.replace(",", "...");
+                    }
+                    productDetail = productDetail.replaceAll("\\r", "").replaceAll("\\n", "");
                 }
+
 
                 buffer.append(productDetail).append(",");
 

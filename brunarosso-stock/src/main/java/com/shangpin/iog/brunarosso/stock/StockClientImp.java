@@ -23,7 +23,7 @@ public class StockClientImp extends AbsUpdateProductStock{
     private static Logger logger = Logger.getLogger("info");
     public static final String PROPERTIES_FILE_NAME = "param";
     static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
-    private static String path = bundle.getString("path");
+//    private static String path = bundle.getString("path");
     private static String HOST="ftp.teenfashion.it",PORT="21",USER="1504604@aruba.it",PASSWORD="7efd422f35",FILE_PATH="/teenfashion.it/public/stockftp";
     static String localFilePath = bundle.getString("localFilePath");
     @Override
@@ -270,7 +270,7 @@ public class StockClientImp extends AbsUpdateProductStock{
         StockClientImp impl = new StockClientImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("BRUNAROSSO更新数据库开始");
-        downloadStock("","",localFilePath,false);
+        downloadStock("","Disponibilita.xml",localFilePath,true);
         impl.updateProductStock("2015071701342", "2015-01-01 00:00", format.format(new Date()));
         logger.info("BRUNAROSSO更新数据库结束");
         System.exit(0);
