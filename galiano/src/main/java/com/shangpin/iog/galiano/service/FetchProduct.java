@@ -106,7 +106,18 @@ public class FetchProduct {
                         }
 
                     } catch (ServiceException e) {
-                        e.printStackTrace();
+                        try {
+                            if(e.getMessage().equals("数据插入失败键重复")){
+                                //更新价格和库存
+                                sku.setLastTime(new Date());
+                                productFetchService.updatePriceAndStock(sku);
+                            } else{
+                                e.printStackTrace();
+                            }
+
+                        } catch (ServiceException e1) {
+                            e1.printStackTrace();
+                        }
                     }
                 }
 

@@ -64,6 +64,22 @@
 
     </insert>
 
+    <update id="updatePriceAndStock" parameterType="iog_sku" >
+          update SKU
+          <set>
+              <if test="marketPrice != null"> MARKET_PRICE = #{marketPrice}, </if>
+              <if test="salePrice != null"> SALE_PRICE = #{salePrice}, </if>
+              <if test="supplierPrice != null"> SUPPLIER_PRICE = #{supplierPrice},</if>
+              <if test="stock != null"> STOCK = #{stock},</if>
+              <if test="lastTime != null"> LAST_TIME = #{lastTime}</if>
+
+          </set>
+
+
+          where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
+
+    </update>
+
     <insert id="saveList"  parameterType="java.util.List" >
 
 

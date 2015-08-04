@@ -22,6 +22,7 @@ import java.util.Date;
 @Component("spinnaker")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
+    String supplierId = "2015051300260";
 
     @Autowired
     private ProductFetchService pfs;
@@ -64,7 +65,7 @@ public class FetchProduct {
                             spudto.setCategoryName(spu.getCategory());
                             spudto.setCreateTime(new Date());
                             spudto.setSeasonId(obj.getSeasonCode());
-                            spudto.setSupplierId("2015051300260");
+                            spudto.setSupplierId(supplierId);
                             spudto.setSpuId(spu.getProduct_id());
                             spudto.setId(UUIDGenerator.getUUID());
                             spudto.setMaterial(spu.getProduct_detail());
@@ -91,11 +92,21 @@ public class FetchProduct {
                                 skudto.setSkuId(sku.getBarcode());
                                 skudto.setSpuId(spu.getProduct_id());
                                 skudto.setStock(sku.getStock());
-                                skudto.setSupplierId("2015051300260");
+                                skudto.setSupplierId(supplierId);
                                 try {
                                     pfs.saveSKU(skudto);
                                 } catch (ServiceException e) {
-                                    e.printStackTrace();
+                                    try {
+                                        if(e.getMessage().equals("数据插入失败键重复")){
+                                            pfs.updatePriceAndStock(skudto);
+                                        } else{
+                                            e.printStackTrace();
+                                        }
+
+                                    } catch (ServiceException e1) {
+                                        e1.printStackTrace();
+                                    }
+
                                 }
 
                                 for(String image : sku.getPictures()){
@@ -103,7 +114,7 @@ public class FetchProduct {
                                     pic.setPicUrl(image);
                                     pic.setId(UUIDGenerator.getUUID());
                                     pic.setSkuId(sku.getBarcode());
-                                    pic.setSupplierId("2015051300260");
+                                    pic.setSupplierId(supplierId);
                                     try {
                                         pfs.savePicture(pic);
                                     } catch (ServiceException e) {

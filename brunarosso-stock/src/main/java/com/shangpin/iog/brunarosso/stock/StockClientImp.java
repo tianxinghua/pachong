@@ -34,6 +34,7 @@ public class StockClientImp extends AbsUpdateProductStock{
         Set<String>set=map.keySet();
         Iterator<String> iterator=set.iterator();
         while (iterator.hasNext()){
+
             String key = iterator.next();
             for(String skuno:skuNo){
                 if(skuno.indexOf("+")>0){
@@ -200,7 +201,7 @@ public class StockClientImp extends AbsUpdateProductStock{
 
 
             String[]  files = null;
-            ftp.chdir(remoteFilePath);
+//            ftp.chdir(remoteFilePath);
 
             /** 切换到主目录，并枚举主目录的所有文件及文件夹
              * 包括日期、文件大小等详细信息
@@ -221,6 +222,7 @@ public class StockClientImp extends AbsUpdateProductStock{
                     attachments.mkdir();
                 }
                 ftp.get(localFilePath+"/"+remoteFileName,"/".equals(remoteFilePath)?remoteFilePath+  remoteFileName:remoteFilePath+ "/"+  remoteFileName);
+                logger.info("文件下载成功");
             }else{//ftp上已解压后的目录
                 try {
                     files = ftp.dir(remoteFilePath);
@@ -238,11 +240,13 @@ public class StockClientImp extends AbsUpdateProductStock{
                     System.out.println("正在循环的文件"+files[i]);
                     if(files[i].equals("Disponibilita.xml")){
                         ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
+                        logger.info("文件下载成功");
 
                     }
                     //ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
                 }
                 System.out.println("下载完成");
+
             }
 
 
@@ -252,7 +256,7 @@ public class StockClientImp extends AbsUpdateProductStock{
 
         } catch (Exception e)
         {
-            logger.error("Demo failed", e);
+            logger.error("文件下载失败", e);
 
         }finally {
             /** 断开连接   */
