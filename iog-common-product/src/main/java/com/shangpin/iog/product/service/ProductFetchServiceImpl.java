@@ -91,6 +91,16 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     }
 
     @Override
+    public void updatePriceAndStock(SkuDTO skuDTO) throws ServiceException {
+        try {
+            skuDAO.updatePriceAndStock(skuDTO);
+        } catch ( Exception e) {
+
+            throw new ServiceMessageException("数据更新失败"+e.getMessage());
+        }
+    }
+
+    @Override
     public void savePicture(ProductPictureDTO pictureDTO) throws ServiceException {
         try {
             productPictureMapper.save(pictureDTO);

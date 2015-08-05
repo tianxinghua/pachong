@@ -26,6 +26,9 @@ public interface ProductFetchService {
      */
     public void saveSPU(SpuDTO spuDTO) throws ServiceException;
 
+
+
+
     /**
      * 保存SKU列表
      * @param skuDTOList  sku对象列表
@@ -40,6 +43,14 @@ public interface ProductFetchService {
      * @throws ServiceException
      */
     public void saveSKU(SkuDTO skuDTO) throws ServiceException;
+
+    /**
+     * 更新价格和库存
+     * @param skuDTO
+     * @throws ServiceException
+     */
+    public void updatePriceAndStock(SkuDTO skuDTO) throws ServiceException;
+
 
     /**
      * 保存照片
@@ -61,5 +72,7 @@ public interface ProductFetchService {
      * @throws ServiceException
      */
     public void savePictureForMongo(ProductPictureDTO productPictureDTO) throws ServiceException;
+
+
 
 }
