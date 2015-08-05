@@ -70,8 +70,8 @@
               <if test="marketPrice != null"> MARKET_PRICE = #{marketPrice}, </if>
               <if test="salePrice != null"> SALE_PRICE = #{salePrice}, </if>
               <if test="supplierPrice != null"> SUPPLIER_PRICE = #{supplierPrice},</if>
-              <if test="stock != null"> STOCK = #{stock},</if>
-              <if test="lastTime != null"> LAST_TIME = #{lastTime}</if>
+              <if test="stock != null"> STOCK = #{stock}</if>
+              <!--<if test="lastTime != null"> LAST_TIME = #{lastTime}</if>-->
 
           </set>
 

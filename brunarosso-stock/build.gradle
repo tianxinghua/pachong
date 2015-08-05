@@ -13,6 +13,7 @@ dependencies {
             /*"com.thoughtworks.xstream:xstream:1.4.7",*/
             "commons-net:commons-net:1.4.1",
             "org.jdom:jdom:2.0.2",
+
             project(':project-common'),
             "org.apache.cxf:cxf-rt-frontend-jaxws:3.0.1",
             project(':project-common'),

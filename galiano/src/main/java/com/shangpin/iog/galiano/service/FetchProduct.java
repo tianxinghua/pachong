@@ -109,7 +109,6 @@ public class FetchProduct {
                         try {
                             if(e.getMessage().equals("数据插入失败键重复")){
                                 //更新价格和库存
-                                sku.setLastTime(new Date());
                                 productFetchService.updatePriceAndStock(sku);
                             } else{
                                 e.printStackTrace();

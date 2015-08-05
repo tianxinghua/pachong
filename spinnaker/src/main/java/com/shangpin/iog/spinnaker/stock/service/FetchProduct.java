@@ -95,6 +95,18 @@ public class FetchProduct {
                                 skudto.setSupplierId(supplierId);
                                 try {
                                     pfs.saveSKU(skudto);
+                                    for(String image : sku.getPictures()){
+                                        ProductPictureDTO pic = new ProductPictureDTO();
+                                        pic.setPicUrl(image);
+                                        pic.setId(UUIDGenerator.getUUID());
+                                        pic.setSkuId(sku.getBarcode());
+                                        pic.setSupplierId(supplierId);
+                                        try {
+                                            pfs.savePicture(pic);
+                                        } catch (ServiceException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
                                 } catch (ServiceException e) {
                                     try {
                                         if(e.getMessage().equals("数据插入失败键重复")){
@@ -109,18 +121,7 @@ public class FetchProduct {
 
                                 }
 
-                                for(String image : sku.getPictures()){
-                                    ProductPictureDTO pic = new ProductPictureDTO();
-                                    pic.setPicUrl(image);
-                                    pic.setId(UUIDGenerator.getUUID());
-                                    pic.setSkuId(sku.getBarcode());
-                                    pic.setSupplierId(supplierId);
-                                    try {
-                                        pfs.savePicture(pic);
-                                    } catch (ServiceException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
+
                             }
                         }
                     } else {
