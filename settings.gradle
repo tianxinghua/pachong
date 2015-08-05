@@ -39,4 +39,5 @@ include 'brunarosso'
 include 'vela'
 include 'vela-stock'
 include 'brunarosso-stock'
+include 'gilt'
 
