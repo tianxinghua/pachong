@@ -128,35 +128,57 @@ public class HttpUtil45 {
 	 * @see OutTimeConfig 超时设置
 	 */
 	public static String get(String url,OutTimeConfig outTimeConf,Map<String,String> param){
-		String urlStr=paramGetUrl(url, param);
-		HttpGet get = new HttpGet(urlStr);
-		String result=null;
-		CloseableHttpResponse resp=null;
-		try {
-			CloseableHttpClient ht=null;
-			ht=getHttpClient(null);//HttpClients.createDefault();
-			HttpClientContext localContext = getPlainContext(url);//HttpClientContext.create();
-			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
-			resp=ht.execute(get);
-			HttpEntity entity=resp.getEntity();
-			result=EntityUtils.toString(entity);
-			EntityUtils.consume(entity);
-		}catch(Exception e){
-			e.printStackTrace();
-		}finally{
-				try {
-					if(resp!=null)
-						resp.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-		}
-		return result==null?errorResult:result;
+        return getResult(url, outTimeConf, param,null);
 	}
-	
-	/*public void get(String url,Map<String,String> param,OutTimeConfig outTimeConf){
-		
-	}*/
+
+    private static String getResult(String url, OutTimeConfig outTimeConf, Map<String, String> param,HttpClientContext localContext) {
+        String urlStr=paramGetUrl(url, param);
+        HttpGet get = new HttpGet(urlStr);
+        String result=null;
+        CloseableHttpResponse resp=null;
+        try {
+            CloseableHttpClient ht=null;
+            ht=getHttpClient(null);
+            if(null==localContext) localContext = getPlainContext(url);
+            localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
+            resp=ht.execute(get,localContext);
+            HttpEntity entity=resp.getEntity();
+            result= EntityUtils.toString(entity);
+            EntityUtils.consume(entity);
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+                try {
+                    if(resp!=null)
+                        resp.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+        return result==null?errorResult:result;
+    }
+
+
+    /**
+     * get请求
+     * @param url 请求url
+     * @param outTimeConf 请求超时时间设置 nullable
+     * @param param 请求参数 nullable
+     * @param username 认证用户
+     * @param password 认证密码
+     * @return 请求结果，若由异常为null
+     * @see OutTimeConfig 超时设置
+     */
+    public static String get(String url,OutTimeConfig outTimeConf,Map<String,String> param,String username,String password){
+        HttpClientContext localContext =null;
+        if(StringUtils.isNotBlank(username)){
+            localContext = getAuthContext(url, username, password);
+        }else{
+            localContext = getPlainContext(url);
+        }
+
+        return getResult(url, outTimeConf, param,localContext);
+    }
 	
 	/**
 	 * 关闭连接池

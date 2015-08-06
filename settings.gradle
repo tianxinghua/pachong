@@ -40,4 +40,6 @@ include 'vela'
 include 'vela-stock'
 include 'brunarosso-stock'
 include 'gilt'
+include 'lino'
+include 'lino-stock'
 

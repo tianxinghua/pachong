@@ -161,22 +161,20 @@ public class HttpUtil {
         if(isAuthentication){//需要验证
 
 
-//            getMethod.setDoAuthentication(true);
-//
-//
-//
-//            httpClient.getParams().setAuthenticationPreemptive(true);
+            getMethod.setDoAuthentication(true);
+
+            httpClient.getParams().setAuthenticationPreemptive(true);
 
             UsernamePasswordCredentials creds = new UsernamePasswordCredentials(user, password);
 
             httpClient.getState().setCredentials(new AuthScope(null, 443, AuthScope.ANY_REALM), creds);
 
 
-            List<String> authPrefs = new ArrayList<String>(3);
-            authPrefs.add(AuthPolicy.BASIC);
-            authPrefs.add(AuthPolicy.NTLM);
-            authPrefs.add(AuthPolicy.DIGEST);
-            httpClient.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY, authPrefs);
+//            List<String> authPrefs = new ArrayList<String>(3);
+//            authPrefs.add(AuthPolicy.BASIC);
+//            authPrefs.add(AuthPolicy.NTLM);
+//            authPrefs.add(AuthPolicy.DIGEST);
+//            httpClient.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY, authPrefs);
         }
 
 
