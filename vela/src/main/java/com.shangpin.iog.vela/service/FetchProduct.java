@@ -119,22 +119,35 @@ public class FetchProduct {
                                 skudto.setSupplierId(supplierId);
                                 try {
                                     pfs.saveSKU(skudto);
+                                    for(String image : sku.getPictures()){
+                                        ProductPictureDTO pic = new ProductPictureDTO();
+                                        pic.setPicUrl(image);
+                                        pic.setId(UUIDGenerator.getUUID());
+                                        pic.setSkuId(sku.getItem_id());
+                                        pic.setSupplierId(supplierId);
+                                        try {
+                                            pfs.savePictureForMongo(pic);
+                                        } catch (ServiceException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
                                 } catch (ServiceException e) {
-                                    e.printStackTrace();
+                                    try {
+                                        if(e.getMessage().equals("数据插入失败键重复")){
+                                            //更新价格和库存
+                                            pfs.updatePriceAndStock(skudto);
+                                        } else{
+                                            e.printStackTrace();
+                                        }
+
+                                    } catch (ServiceException e1) {
+                                        e1.printStackTrace();
+                                    }
+
+
                                 }
 
-                                for(String image : sku.getPictures()){
-                                    ProductPictureDTO pic = new ProductPictureDTO();
-                                    pic.setPicUrl(image);
-                                    pic.setId(UUIDGenerator.getUUID());
-                                    pic.setSkuId(sku.getItem_id());
-                                    pic.setSupplierId(supplierId);
-                                    try {
-                                        pfs.savePictureForMongo(pic);
-                                    } catch (ServiceException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
+
                             }
                         }
                     } else {

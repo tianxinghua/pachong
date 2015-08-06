@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -14,6 +16,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 
 /**
@@ -22,6 +26,7 @@ import java.util.Date;
 @Component("spinnaker")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
+    String supplierId = "2015051300260";
 
     @Autowired
     private ProductFetchService pfs;
@@ -29,7 +34,7 @@ public class FetchProduct {
     public void fetchProductAndSave() {
 
         //首先获取季节码  http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetAllSeasonCode?DBContext=Default&key=8IZk2x5tVN
-        String season_json = HttpUtils.get("http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetAllSeasonCode?DBContext=Default&key=8IZk2x5tVN");
+        String season_json = HttpUtil45.get("http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetAllSeasonCode?DBContext=Default&key=8IZk2x5tVN",new OutTimeConfig(),null);
         Gson gson = new Gson();
         SeasoncodeList season_list = gson.fromJson(season_json, new TypeToken<SeasoncodeList>(){}.getType());
 
@@ -38,13 +43,19 @@ public class FetchProduct {
             while (true){
                 //然后根据季节码抓取sku  http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetProducts?DBContext=Default&CategoryId=&BrandId=&SeasonCode=[[seasoncode]]&StartIndex=[[startindex]]&EndIndex=[[endindex]]&key=8IZk2x5tVN
                 String producturl = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetProducts?DBContext=Default&CategoryId=&BrandId=&SeasonCode=[[seasoncode]]&StartIndex=[[startindex]]&EndIndex=[[endindex]]&key=8IZk2x5tVN";
-                String url = producturl.replaceAll("\\[\\[seasoncode\\]\\]", obj.getSeasonCode())
-                        .replaceAll("\\[\\[startindex\\]\\]", "" + i)
-                        .replaceAll("\\[\\[endindex\\]\\]","" + (i + 100));
+                String url = null;
+                try {
+                    url = producturl.replaceAll("\\[\\[seasoncode\\]\\]", URLEncoder.encode(obj.getSeasonCode(), "UTF-8"))
+                            .replaceAll("\\[\\[startindex\\]\\]", "" + i)
+                            .replaceAll("\\[\\[endindex\\]\\]", "" + (i + 100));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
 
                 String json = null;
                 try {
-                    json = HttpUtils.get(url);
+
+                    json = HttpUtil45.get(url,new OutTimeConfig(),null);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -56,6 +67,8 @@ public class FetchProduct {
                         e.printStackTrace();
                     }
                     if (list != null && list.getProduct() != null) {
+                        String priceUrl;
+                        String itemID;
                         for (Spu spu : list.getProduct()) {
                             //spu入库
                             SpuDTO spudto = new SpuDTO();
@@ -64,7 +77,7 @@ public class FetchProduct {
                             spudto.setCategoryName(spu.getCategory());
                             spudto.setCreateTime(new Date());
                             spudto.setSeasonId(obj.getSeasonCode());
-                            spudto.setSupplierId("2015051300260");
+                            spudto.setSupplierId(supplierId);
                             spudto.setSpuId(spu.getProduct_id());
                             spudto.setId(UUIDGenerator.getUUID());
                             spudto.setMaterial(spu.getProduct_detail());
@@ -86,30 +99,61 @@ public class FetchProduct {
                                 skudto.setProductCode(spu.getProduct_name());
                                 skudto.setProductDescription(spu.getProduct_detail());
                                 skudto.setProductName(spu.getDescription());
-                                skudto.setProductSize(sku.getItem_size());
-                                skudto.setSalePrice(spu.getSupply_price());
-                                skudto.setSkuId(sku.getBarcode());
-                                skudto.setSpuId(spu.getProduct_id());
-                                skudto.setStock(sku.getStock());
-                                skudto.setSupplierId("2015051300260");
+
+                                if(sku.getItem_size().length()>4) {
+                                    skudto.setProductSize(sku.getItem_size().substring(0,sku.getItem_size().length()-4));
+                                }else{
+                                    skudto.setProductSize(sku.getItem_size());
+                                }
+                                skudto.setSkuId(sku.getItem_id());
+                                itemID = sku.getItem_id();
+                                priceUrl = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetPriceByItemID?DBContext=Default&ItemID="+itemID+"&key=8IZk2x5tVN";
                                 try {
-                                    pfs.saveSKU(skudto);
-                                } catch (ServiceException e) {
+                                    json = HttpUtil45.get(priceUrl, new OutTimeConfig(), null);
+                                }catch (IllegalArgumentException e){
                                     e.printStackTrace();
                                 }
-
-                                for(String image : sku.getPictures()){
-                                    ProductPictureDTO pic = new ProductPictureDTO();
-                                    pic.setPicUrl(image);
-                                    pic.setId(UUIDGenerator.getUUID());
-                                    pic.setSkuId(sku.getBarcode());
-                                    pic.setSupplierId("2015051300260");
-                                    try {
-                                        pfs.savePicture(pic);
-                                    } catch (ServiceException e) {
-                                        e.printStackTrace();
+                                if(json != null && !json.isEmpty()){
+                                    Price price = null;
+                                    price = gson.fromJson(json,new TypeToken<Price>() {}.getType());
+                                    if(price!=null&&price.getMarket_price()!=null||price.getSuply_price()!=null){
+                                        skudto.setMarketPrice(price.getMarket_price());
+                                        skudto.setSupplierPrice(price.getSuply_price().replace(",","."));
                                     }
                                 }
+
+                                skudto.setSpuId(spu.getProduct_id());
+                                skudto.setStock(sku.getStock());
+                                skudto.setSupplierId(supplierId);
+                                try {
+                                    pfs.saveSKU(skudto);
+                                    for(String image : sku.getPictures()){
+                                        ProductPictureDTO pic = new ProductPictureDTO();
+                                        pic.setPicUrl(image);
+                                        pic.setId(UUIDGenerator.getUUID());
+                                        pic.setSkuId(sku.getBarcode());
+                                        pic.setSupplierId(supplierId);
+                                        try {
+                                            pfs.savePictureForMongo(pic);
+                                        } catch (ServiceException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                } catch (ServiceException e) {
+                                    try {
+                                        if(e.getMessage().equals("数据插入失败键重复")){
+                                            pfs.updatePriceAndStock(skudto);
+                                        } else{
+                                            e.printStackTrace();
+                                        }
+
+                                    } catch (ServiceException e1) {
+                                        e1.printStackTrace();
+                                    }
+
+                                }
+
+
                             }
                         }
                     } else {

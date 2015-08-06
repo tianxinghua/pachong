@@ -4,22 +4,20 @@ dependencies {
     compile(
             "commons-httpclient:commons-httpclient:3.1",
             "org.apache.httpcomponents:httpclient:4.1.1",
+            /*"org.apache.poi:poi:3.0.1-FINAL",*/
             "net.sf.json-lib:json-lib:2.2:jdk15",
             "org.apache.poi:poi:3.0.1-FINAL",
             "com.google.code.gson:gson:2.2.2",
             "org.projectlombok:lombok:1.14.8",
-            "redis.clients:jedis:${jedis_version}",
-            "com.thoughtworks.xstream:xstream:1.4.7",
+            /*"redis.clients:jedis:${jedis_version}",*/
+            /*"com.thoughtworks.xstream:xstream:1.4.7",*/
             "commons-net:commons-net:1.4.1",
-            "dom4j:dom4j:1.6.1",
             "org.jdom:jdom:2.0.2",
-            "org.apache.cxf:cxf-rt-frontend-jaxws:3.0.1",
-            project(':project-framework'),
+
             project(':project-common'),
-            project(':iog-service'),
-            project(':iog-common-product'),
+            "org.apache.cxf:cxf-rt-frontend-jaxws:3.0.1",
+            project(':project-common'),
             project(':openapi-ice')
-            /*project(':iog-web-container')*/
     )
 
 
@@ -46,7 +44,7 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.brunarosso.Startup'
+        attributes 'Main-Class': 'com.shangpin.iog.brunarosso.stock.StockClientImp'
 //        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
         attributes 'Class-Path': '. ' +  manifestCp
     }

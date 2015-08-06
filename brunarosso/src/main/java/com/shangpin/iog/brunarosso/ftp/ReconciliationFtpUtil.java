@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.ResourceBundle;
 
 
 /**
@@ -27,7 +28,10 @@ public class ReconciliationFtpUtil {
     private static Log log = LogFactory.getLog(ReconciliationFtpUtil.class);
     //private static ResourceBundle bundle =ResourceBundle.getBundle("param", Locale.ENGLISH) ;
     private static String HOST="ftp.teenfashion.it",PORT="21",USER="1504604@aruba.it",PASSWORD="7efd422f35",FILE_PATH="/teenfashion.it/public/stockftp";
-
+    public static final String PROPERTIES_FILE_NAME = "param";
+    static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
+    static String latestProPath = bundle.getString("latestProPath");
+    static String latestStockPath = bundle.getString("latestStockPath");
 //    static {
 //        ResourceBundle bundle= ResourceBundle.getBundle("reconciliationFtp");
 //        HOST = bundle.getString("IP");
@@ -114,39 +118,66 @@ public class ReconciliationFtpUtil {
                 }
                 ftp.get(localFilePath+"/"+remoteFileName,"/".equals(remoteFilePath)?remoteFilePath+  remoteFileName:remoteFilePath+ "/"+  remoteFileName);
             }else{//ftp上已解压后的目录
-                files = ftp.dir(remoteFilePath);
+                try {
+                    files = ftp.dir(remoteFilePath);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
                 File attachments = new File(localFilePath+"/"+ subLocalfilePath);
-                String procontent = XmlReader.readTxt("E:/latestProXml.txt");
-                String disContent = XmlReader.readTxt("E:/latestXml.txt");
+                String procontent = XmlReader.readTxt(latestProPath);
+                String disContent = XmlReader.readTxt(latestStockPath);
                 /** 如果文件夹不存在，则创建 */
                 if (!attachments.exists())
                 {
                     attachments.mkdir();
                 }
                 for (int i=0;i<files.length;i++) {
-                    if(files[i].indexOf("Prodotti")>0){
+                    System.out.println("正在循环的文件"+files[i]);
+                    if(files[i].indexOf("Prodotti")>=0&&files[i].indexOf(".txt")<0){
                         //content=XmlReader.readTxt("E:/latestProXml.txt");
                         try {
-                            if(files[i].compareTo(procontent)>0){
+                            if(files[i].compareTo(procontent)>0||files[i].equals("Prodotti.xml")) {
                                 ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
-                                procontent=files[i];
+                                if(files[i].compareTo(procontent)>0){
+                                    procontent=files[i];
+                                }
+                                System.out.println("下载的产品文件"+files[i]);
+                            }
+                            else{
+                                System.out.println("跳过的产品文件" + files[i]);
                             }
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
-                    }else if(files[i].indexOf("Disponibilita")>0){
+                    }else if(files[i].indexOf("Disponibilita")>=0&&files[i].indexOf(".txt")<0){
                         try {
-                            if(files[i].compareTo(disContent)>0){
+                            if(files[i].compareTo(disContent)>0||files[i].equals("Disponibilita.xml")){
                                 ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
-                                disContent=files[i];
+                                if(files[i].compareTo(disContent)>0){
+                                    disContent=files[i];
+                                }
+                                System.out.println("下载的库存文件"+files[i]);
+                            }else{
+                                System.out.println("跳过的库存文件"+files[i]);
+                            }
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }else if(files[i].indexOf("Riferimenti")>=0&&files[i].indexOf(".txt")<0){
+                        try {
+                            if(files[i].equals("Riferimenti.xml")){
+                                ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
+                                System.out.println("下载的图片文件"+files[i]);
                             }
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
-                    ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
+                    //ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
                 }
                 XmlReader.deleteTxtContent("E:/latestProXml.txt");
                 XmlReader.saveAsFileWriter("E:/latestProXml.txt",procontent);
@@ -175,7 +206,123 @@ public class ReconciliationFtpUtil {
         }
 
     }
+    public static void downloadStock(String remoteFilePath,String remoteFileName,String localFilePath,Boolean isFile){
+        /** 定义FTPClient便利 */
+        FTPClient ftp = null;
+        String subLocalfilePath = remoteFilePath;
+        try
+        {
+            /** 创建FTPClient */
+            ftp = new FTPClient();
+            /** 连接服务器 */
+            ftp.setRemoteHost(HOST);
 
+            ftp.setRemotePort(Integer.parseInt(PORT));
+            ftp.setTimeout(3600000);
+            ftp.connect();
+
+            /** 登陆 */
+            ftp.login(USER, PASSWORD);
+
+            /** 连接模式 */
+            ftp.setConnectMode(FTPConnectMode.PASV);      //
+
+            /** ASCII方式：只能传输一些如txt文本文件，
+             * zip、jpg等文件需要使用BINARY方式
+             * */
+            //ftp.setType(FTPTransferType.ASCII);
+            ftp.setType(FTPTransferType.BINARY);
+            if("".equals(remoteFilePath)){
+                remoteFilePath = FILE_PATH;
+            }else{
+                remoteFilePath = FILE_PATH+"/" + remoteFilePath;
+            }
+
+
+            String[]  files = null;
+            ftp.chdir(remoteFilePath);
+
+            /** 切换到主目录，并枚举主目录的所有文件及文件夹
+             * 包括日期、文件大小等详细信息
+             * files = ftp.dir(".")，则只有文件名
+             */
+//            String[] files = ftp.dir(".", true);
+
+
+
+            log.error("file="+remoteFilePath+"/" +  remoteFileName);
+            /** 下载文件 */
+
+            if(isFile){//单个文件 zip
+                File attachments = new File(localFilePath);
+                /** 如果文件夹不存在，则创建 */
+                if (!attachments.exists())
+                {
+                    attachments.mkdir();
+                }
+                ftp.get(localFilePath+"/"+remoteFileName,"/".equals(remoteFilePath)?remoteFilePath+  remoteFileName:remoteFilePath+ "/"+  remoteFileName);
+            }else{//ftp上已解压后的目录
+                try {
+                    files = ftp.dir(remoteFilePath);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                File attachments = new File(localFilePath+"/"+ subLocalfilePath);
+                String procontent = XmlReader.readTxt(latestProPath);
+                String disContent = XmlReader.readTxt(latestStockPath);
+                /** 如果文件夹不存在，则创建 */
+                if (!attachments.exists())
+                {
+                    attachments.mkdir();
+                }
+                for (int i=0;i<files.length;i++) {
+                    System.out.println("正在循环的文件"+files[i]);
+                    if(files[i].indexOf("Disponibilita")>=0&&files[i].indexOf(".txt")<0){
+                        try {
+                            if(files[i].compareTo(disContent)>0||files[i].equals("Disponibilita.xml")){
+                                ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
+                                if(files[i].compareTo(disContent)>0){
+                                    disContent=files[i];
+                                }
+                                System.out.println("下载的库存文件"+files[i]);
+                            }else{
+                                System.out.println("跳过的库存文件"+files[i]);
+                            }
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                    //ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
+                }
+                System.out.println("下载完成");
+                XmlReader.deleteTxtContent("E:/latestProXml.txt");
+                XmlReader.saveAsFileWriter("E:/latestProXml.txt",procontent);
+                XmlReader.deleteTxtContent("E:/latestXml.txt");
+                XmlReader.saveAsFileWriter("E:/latestXml.txt",disContent);
+            }
+
+
+            log.error("success");
+
+
+
+        } catch (Exception e)
+        {
+            log.error("Demo failed", e);
+
+        }finally {
+            /** 断开连接   */
+            try {
+                if(null!=ftp) ftp.quit();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (FTPException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     public static void  main(String[] args) throws Exception{
         ReconciliationFtpUtil.download("", "", "e://tmp", false);
     }
