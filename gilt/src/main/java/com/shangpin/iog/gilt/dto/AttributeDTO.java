@@ -5,9 +5,9 @@ package com.shangpin.iog.gilt.dto;
  */
 public class AttributeDTO {
     private ColorDTO color;
-    private String style;
+    private StyleDTO style;
     private SizeDTO size;
-    private String material;
+    private MaterialDTO material;
 
     public ColorDTO getColor() {
         return color;
@@ -17,11 +17,11 @@ public class AttributeDTO {
         this.color = color;
     }
 
-    public String getStyle() {
+    public StyleDTO getStyle() {
         return style;
     }
 
-    public void setStyle(String style) {
+    public void setStyle(StyleDTO style) {
         this.style = style;
     }
 
@@ -33,11 +33,11 @@ public class AttributeDTO {
         this.size = size;
     }
 
-    public String getMaterial() {
+    public MaterialDTO getMaterial() {
         return material;
     }
 
-    public void setMaterial(String material) {
+    public void setMaterial(MaterialDTO material) {
         this.material = material;
     }
 }

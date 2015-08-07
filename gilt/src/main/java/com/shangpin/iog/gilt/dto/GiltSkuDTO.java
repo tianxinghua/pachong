@@ -5,17 +5,17 @@ import java.util.List;
 /**
  * Created by sunny on 2015/8/5.
  */
-public class SkuDTO {
+public class GiltSkuDTO {
     private String id;
     private String product_id;
     private String product_look_id;
     private String locale;
     private String name;
-    private List<ImageDTO> imageDTOs;
+    private List<ImageDTO> images;
     private List<AttributeDTO> attributes;
     private BrandDTO brand;
     private String country_code;
-    private String product_codes;
+    private String[] product_codes;
     private String description;
     private String timestamp;
     private PricesDTO prices;
@@ -61,14 +61,6 @@ public class SkuDTO {
         this.name = name;
     }
 
-    public List<ImageDTO> getImageDTOs() {
-        return imageDTOs;
-    }
-
-    public void setImageDTOs(List<ImageDTO> imageDTOs) {
-        this.imageDTOs = imageDTOs;
-    }
-
     public List<AttributeDTO> getAttributes() {
         return attributes;
     }
@@ -93,11 +85,15 @@ public class SkuDTO {
         this.country_code = country_code;
     }
 
-    public String getProduct_codes() {
+    public void setImages(List<ImageDTO> images) {
+        this.images = images;
+    }
+
+    public String[] getProduct_codes() {
         return product_codes;
     }
 
-    public void setProduct_codes(String product_codes) {
+    public void setProduct_codes(String[] product_codes) {
         this.product_codes = product_codes;
     }
 

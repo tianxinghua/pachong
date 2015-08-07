@@ -4,31 +4,31 @@ package com.shangpin.iog.gilt.dto;
  * Created by sunny on 2015/8/6.
  */
 public class PricesDTO {
-    private String retail;
-    private String sale;
-    private String cost;
+    private MoneyDTO retail;
+    private MoneyDTO sale;
+    private MoneyDTO cost;
 
-    public String getRetail() {
+    public MoneyDTO getRetail() {
         return retail;
     }
 
-    public void setRetail(String retail) {
+    public void setRetail(MoneyDTO retail) {
         this.retail = retail;
     }
 
-    public String getSale() {
+    public MoneyDTO getSale() {
         return sale;
     }
 
-    public void setSale(String sale) {
+    public void setSale(MoneyDTO sale) {
         this.sale = sale;
     }
 
-    public String getCost() {
+    public MoneyDTO getCost() {
         return cost;
     }
 
-    public void setCost(String cost) {
+    public void setCost(MoneyDTO cost) {
         this.cost = cost;
     }
 }
