@@ -16,6 +16,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 
 /**
@@ -44,9 +46,13 @@ public class FetchProduct {
             while (true){
                 //然后根据季节码抓取sku
                 String producturl = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetProducts?DBContext=Default&CategoryId=&BrandId=&SeasonCode=[[seasoncode]]&StartIndex=[[startindex]]&EndIndex=[[endindex]]&key=MPm32XJp7M";
-                url = producturl.replaceAll("\\[\\[seasoncode\\]\\]", obj.getSeasonCode())
-                        .replaceAll("\\[\\[startindex\\]\\]", "" + i)
-                        .replaceAll("\\[\\[endindex\\]\\]","" + (i + 100));
+                try {
+                    url = producturl.replaceAll("\\[\\[seasoncode\\]\\]", URLEncoder.encode(obj.getSeasonCode(), "UTF-8"))
+                            .replaceAll("\\[\\[startindex\\]\\]", "" + i)
+                            .replaceAll("\\[\\[endindex\\]\\]","" + (i + 100));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
 
                 String json = null;
                 try {
