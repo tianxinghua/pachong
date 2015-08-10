@@ -128,4 +128,8 @@ public class GiltSkuDTO {
     public void setCategories(List<CategoryDTO> categories) {
         this.categories = categories;
     }
+
+    public List<ImageDTO> getImages() {
+        return images;
+    }
 }
