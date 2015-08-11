@@ -1,22 +1,38 @@
 package com.shangpin.iog.gilt;
 
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.gilt.service.FetchProduct;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * Created by sunny on 2015/8/5.
  */
 public class Startup {
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
 
-    public  static void main(String[] args) throws  Exception{
-      String kk =   HttpUtil45.get("https://api-sandbox.gilt.com/global/skus", new OutTimeConfig(),null,"fb8ea6839b486dba8c5cabb374c03d9d","");
-        System.out.println("kk = "+ kk);
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
 
-       String post  =  HttpUtil45.postAuth("https://api-sandbox.gilt.com/global/skus",null, new OutTimeConfig(),"fb8ea6839b486dba8c5cabb374c03d9d","") ;
-        System.out.println("post = "+ post);
-        String kkk =  HttpUtil.getData("https://api-sandbox.gilt.com/global/skus",false,true,"fb8ea6839b486dba8c5cabb374c03d9d","");
-        System.out.println("kkk = "+ kkk);
+    public static void main(String[] args)
+    {
+        //加载spring
+        loadSpringContext();
+        //拉取数据
+        FetchProduct fetchProductService =(FetchProduct)factory.getBean("gilt");
+        System.out.println("-------gilt start---------");
+        try {
+            fetchProductService.fetchProductAndSave("https://api-sandbox.gilt.com/global/skus");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("成功插入数据库");
+        System.out.println("-------gilt end---------");
 
     }
 
