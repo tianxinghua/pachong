@@ -1,0 +1,11 @@
+
+
+dependencies {
+    compile(
+      "org.apache.cxf:cxf-rt-frontend-jaxws:3.1.2"  ,
+            "org.apache.cxf:cxf-rt-transports-http:3.1.2" ,
+            "org.apache.axis2:axis2:1.6.3",
+            "org.apache.ws.commons.axiom:axiom-api:1.2.15"
+    )
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
