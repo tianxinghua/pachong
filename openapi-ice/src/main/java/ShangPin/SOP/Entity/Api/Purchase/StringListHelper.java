@@ -23,7 +23,7 @@ package ShangPin.SOP.Entity.Api.Purchase;
 public final class StringListHelper
 {
     public static void
-    write(IceInternal.BasicStream __os, java.util.List<String> __v)
+    write(IceInternal.BasicStream __os, java.util.List<java.lang.String> __v)
     {
         if(__v == null)
         {
@@ -39,10 +39,10 @@ public final class StringListHelper
         }
     }
 
-    public static java.util.List<String>
+    public static java.util.List<java.lang.String>
     read(IceInternal.BasicStream __is)
     {
-        java.util.List<String> __v;
+        java.util.List<java.lang.String> __v;
         __v = new java.util.LinkedList();
         final int __len0 = __is.readAndCheckSeqSize(1);
         for(int __i0 = 0; __i0 < __len0; __i0++)

@@ -26,7 +26,7 @@ public class PurchaseOrderQueryDto extends Ice.ObjectImpl
     {
     }
 
-    public PurchaseOrderQueryDto(String UpdateTimeBegin, String UpdateTimeEnd, java.util.List<Integer> DetailStatus, int PageIndex, int PageSize)
+    public PurchaseOrderQueryDto(String UpdateTimeBegin, String UpdateTimeEnd, java.util.List<java.lang.Integer> DetailStatus, int PageIndex, int PageSize)
     {
         this.UpdateTimeBegin = UpdateTimeBegin;
         this.UpdateTimeEnd = UpdateTimeEnd;
@@ -122,7 +122,7 @@ public class PurchaseOrderQueryDto extends Ice.ObjectImpl
 
     public String UpdateTimeEnd;
 
-    public java.util.List<Integer> DetailStatus;
+    public java.util.List<java.lang.Integer> DetailStatus;
 
     public int PageIndex;
 

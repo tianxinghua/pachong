@@ -26,7 +26,7 @@ public class DeliveryOrder extends Ice.ObjectImpl
     {
     }
 
-    public DeliveryOrder(String SopDeliveryOrderNo, String LogisticsName, String LogisticsOrderNo, String DateDeliver, int EstimateArrivedTime, int DeliveryStatus, String DeliveryContacts, String DeliveryContactsPhone, String DeliveryAddress, String DeliveryMemo, String WarehouseNo, String WarehouseName, java.util.List<String> SopPurchaseOrderDetailNo, int DeliveryType, int PrintStatus)
+    public DeliveryOrder(String SopDeliveryOrderNo, String LogisticsName, String LogisticsOrderNo, String DateDeliver, int EstimateArrivedTime, int DeliveryStatus, String DeliveryContacts, String DeliveryContactsPhone, String DeliveryAddress, String DeliveryMemo, String WarehouseNo, String WarehouseName, java.util.List<java.lang.String> SopPurchaseOrderDetailNo, int DeliveryType, int PrintStatus)
     {
         this.SopDeliveryOrderNo = SopDeliveryOrderNo;
         this.LogisticsName = LogisticsName;
@@ -172,7 +172,7 @@ public class DeliveryOrder extends Ice.ObjectImpl
 
     public String WarehouseName;
 
-    public java.util.List<String> SopPurchaseOrderDetailNo;
+    public java.util.List<java.lang.String> SopPurchaseOrderDetailNo;
 
     public int DeliveryType;
 

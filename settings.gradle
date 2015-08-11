@@ -43,4 +43,5 @@ include 'gilt'
 include 'lino'
 include 'lino-stock'
 include 'ostore'
+include 'channeladvisor'
 

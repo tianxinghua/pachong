@@ -28,10 +28,10 @@ public final class StringArrayHolder
     }
 
     public
-    StringArrayHolder(java.util.List<String> value)
+    StringArrayHolder(java.util.List<java.lang.String> value)
     {
         this.value = value;
     }
 
-    public java.util.List<String> value;
+    public java.util.List<java.lang.String> value;
 }

@@ -30,7 +30,7 @@ public interface _OpenApiServantDel extends Ice._ObjectDel
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException;
 
-    ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindStockInfo(String supplierId, java.util.List<String> SkuNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+    ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException;
 
@@ -38,7 +38,7 @@ public interface _OpenApiServantDel extends Ice._ObjectDel
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException;
 
-    ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+    ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException;
 
@@ -50,11 +50,11 @@ public interface _OpenApiServantDel extends Ice._ObjectDel
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException;
 
-    java.util.Map<String, String> FindSuppliersById(String Id, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+    java.util.Map<java.lang.String, java.lang.String> FindSuppliersById(String Id, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException;
 
-    java.util.Map<String, String> FindSuppliersByName(String Name, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+    java.util.Map<java.lang.String, java.lang.String> FindSuppliersByName(String Name, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException;
 
@@ -62,7 +62,7 @@ public interface _OpenApiServantDel extends Ice._ObjectDel
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException;
 
-    boolean AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+    boolean AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException;
 
@@ -91,6 +91,42 @@ public interface _OpenApiServantDel extends Ice._ObjectDel
                ShangPin.SOP.Api.ApiException;
 
     boolean FindDeliveryOrderSend(String supplierId, ShangPin.SOP.Entity.Api.Purchase.DeliveryOrderSend deliveryOrderSend, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SpCategoryPage FindSpCategoryPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SpBrandPage FindSpBrandPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SpSizeTmpIce FindSpSizeTmp(String supplierId, String SizeTmpNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SpfProductAttributeInfoIce[] FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SopAreaPage FindAreaPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SpCategorySizeStandard[] FindSpCategorySizeStandard(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SpfProductMainColor[] FindSpfProductMainColor(String supplierId, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    int AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    boolean AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException;
 }

@@ -23,7 +23,7 @@ package ShangPin.SOP.Servant;
 public final class SuppliersMapHelper
 {
     public static void
-    write(IceInternal.BasicStream __os, java.util.Map<String, String> __v)
+    write(IceInternal.BasicStream __os, java.util.Map<java.lang.String, java.lang.String> __v)
     {
         if(__v == null)
         {
@@ -32,7 +32,7 @@ public final class SuppliersMapHelper
         else
         {
             __os.writeSize(__v.size());
-            for(java.util.Map.Entry<String, String> __e : __v.entrySet())
+            for(java.util.Map.Entry<java.lang.String, java.lang.String> __e : __v.entrySet())
             {
                 __os.writeString(__e.getKey());
                 __os.writeString(__e.getValue());
@@ -40,11 +40,11 @@ public final class SuppliersMapHelper
         }
     }
 
-    public static java.util.Map<String, String>
+    public static java.util.Map<java.lang.String, java.lang.String>
     read(IceInternal.BasicStream __is)
     {
-        java.util.Map<String, String> __v;
-        __v = new java.util.HashMap<String, String>();
+        java.util.Map<java.lang.String, java.lang.String> __v;
+        __v = new java.util.HashMap<java.lang.String, java.lang.String>();
         int __sz0 = __is.readSize();
         for(int __i0 = 0; __i0 < __sz0; __i0++)
         {

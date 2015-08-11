@@ -26,7 +26,7 @@ public class DeliveryOrderQueryDto extends Ice.ObjectImpl
     {
     }
 
-    public DeliveryOrderQueryDto(String UpdateTimeBegin, String UpdateTimeEnd, java.util.List<Integer> DeliveryStatus, int PageIndex, int PageSize)
+    public DeliveryOrderQueryDto(String UpdateTimeBegin, String UpdateTimeEnd, java.util.List<java.lang.Integer> DeliveryStatus, int PageIndex, int PageSize)
     {
         this.UpdateTimeBegin = UpdateTimeBegin;
         this.UpdateTimeEnd = UpdateTimeEnd;
@@ -122,7 +122,7 @@ public class DeliveryOrderQueryDto extends Ice.ObjectImpl
 
     public String UpdateTimeEnd;
 
-    public java.util.List<Integer> DeliveryStatus;
+    public java.util.List<java.lang.Integer> DeliveryStatus;
 
     public int PageIndex;
 

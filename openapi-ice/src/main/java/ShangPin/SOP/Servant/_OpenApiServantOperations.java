@@ -28,13 +28,13 @@ public interface _OpenApiServantOperations
     boolean UpdateSupplyPrice(String supplierId, ShangPin.SOP.Entity.Api.Product.SupplyPriceInfo price, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
 
-    ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindStockInfo(String supplierId, java.util.List<String> SkuNos, Ice.Current __current)
+    ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
 
     boolean UpdateStock(String supplierId, String SkuNo, int InventoryQuantity, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
 
-    ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos, Ice.Current __current)
+    ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
 
     ShangPin.SOP.Entity.Api.Product.SopProductSkuPage FindCommodityInfoPage(String supplierId, ShangPin.SOP.Entity.Api.Product.SopProductSkuPageQuery query, Ice.Current __current)
@@ -43,16 +43,16 @@ public interface _OpenApiServantOperations
     ShangPin.SOP.Entity.Api.BaseDatas.SopCurrencyIce[] FindMoneyInfo(Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
 
-    java.util.Map<String, String> FindSuppliersById(String Id, Ice.Current __current)
+    java.util.Map<java.lang.String, java.lang.String> FindSuppliersById(String Id, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
 
-    java.util.Map<String, String> FindSuppliersByName(String Name, Ice.Current __current)
+    java.util.Map<java.lang.String, java.lang.String> FindSuppliersByName(String Name, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
 
     String CreateDeliveryOrder(String supplierId, ShangPin.SOP.Entity.Api.Purchase.DeliveryOrderAdd deliverOrder, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
 
-    boolean AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos, Ice.Current __current)
+    boolean AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
 
     ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage FindPurchaseOrderDetailPaged(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto queryDto, Ice.Current __current)
@@ -74,5 +74,32 @@ public interface _OpenApiServantOperations
         throws ShangPin.SOP.Api.ApiException;
 
     boolean FindDeliveryOrderSend(String supplierId, ShangPin.SOP.Entity.Api.Purchase.DeliveryOrderSend deliveryOrderSend, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SpCategoryPage FindSpCategoryPage(String supplierId, int pageIndex, int pageSize, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SpBrandPage FindSpBrandPage(String supplierId, int pageIndex, int pageSize, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SpSizeTmpIce FindSpSizeTmp(String supplierId, String SizeTmpNo, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SpfProductAttributeInfoIce[] FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SopAreaPage FindAreaPage(String supplierId, int pageIndex, int pageSize, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SpCategorySizeStandard[] FindSpCategorySizeStandard(String supplierId, String CategoryNo, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SpfProductMainColor[] FindSpfProductMainColor(String supplierId, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    int AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    boolean AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
 }
