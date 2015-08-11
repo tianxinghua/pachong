@@ -28,10 +28,10 @@ public final class DeliveryStatusListHolder
     }
 
     public
-    DeliveryStatusListHolder(java.util.List<Integer> value)
+    DeliveryStatusListHolder(java.util.List<java.lang.Integer> value)
     {
         this.value = value;
     }
 
-    public java.util.List<Integer> value;
+    public java.util.List<java.lang.Integer> value;
 }

@@ -22,13 +22,13 @@ package ShangPin.SOP.Servant;
 
 public abstract class Callback_OpenApiServant_FindSuppliersByName extends Ice.TwowayCallback
 {
-    public abstract void response(java.util.Map<String, String> __ret);
+    public abstract void response(java.util.Map<java.lang.String, java.lang.String> __ret);
     public abstract void exception(Ice.UserException __ex);
 
     public final void __completed(Ice.AsyncResult __result)
     {
         OpenApiServantPrx __proxy = (OpenApiServantPrx)__result.getProxy();
-        java.util.Map<String, String> __ret = null;
+        java.util.Map<java.lang.String, java.lang.String> __ret = null;
         try
         {
             __ret = __proxy.end_FindSuppliersByName(__result);

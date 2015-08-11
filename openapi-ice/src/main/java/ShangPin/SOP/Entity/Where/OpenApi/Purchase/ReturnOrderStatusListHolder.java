@@ -28,10 +28,10 @@ public final class ReturnOrderStatusListHolder
     }
 
     public
-    ReturnOrderStatusListHolder(java.util.List<Integer> value)
+    ReturnOrderStatusListHolder(java.util.List<java.lang.Integer> value)
     {
         this.value = value;
     }
 
-    public java.util.List<Integer> value;
+    public java.util.List<java.lang.Integer> value;
 }

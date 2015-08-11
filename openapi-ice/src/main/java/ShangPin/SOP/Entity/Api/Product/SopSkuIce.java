@@ -26,7 +26,7 @@ public class SopSkuIce extends Ice.ObjectImpl
     {
     }
 
-    public SopSkuIce(String BarCode, String Material, String PlaceOrigin, String ProductColor, String ProductSizeText, String SkuName, String SkuNo, String SupplierSkuNo, String UpdateTime)
+    public SopSkuIce(String BarCode, String Material, String PlaceOrigin, String ProductColor, String ProductSizeText, String SkuName, String SkuNo, String SupplierSkuNo, String UpdateTime, int SopSkuNo, int SkuStatus, int IsDeleted)
     {
         this.BarCode = BarCode;
         this.Material = Material;
@@ -37,6 +37,9 @@ public class SopSkuIce extends Ice.ObjectImpl
         this.SkuNo = SkuNo;
         this.SupplierSkuNo = SupplierSkuNo;
         this.UpdateTime = UpdateTime;
+        this.SopSkuNo = SopSkuNo;
+        this.SkuStatus = SkuStatus;
+        this.IsDeleted = IsDeleted;
     }
 
     private static class __F implements Ice.ObjectFactory
@@ -112,6 +115,9 @@ public class SopSkuIce extends Ice.ObjectImpl
         __os.writeString(SkuNo);
         __os.writeString(SupplierSkuNo);
         __os.writeString(UpdateTime);
+        __os.writeInt(SopSkuNo);
+        __os.writeInt(SkuStatus);
+        __os.writeInt(IsDeleted);
         __os.endWriteSlice();
     }
 
@@ -127,6 +133,9 @@ public class SopSkuIce extends Ice.ObjectImpl
         SkuNo = __is.readString();
         SupplierSkuNo = __is.readString();
         UpdateTime = __is.readString();
+        SopSkuNo = __is.readInt();
+        SkuStatus = __is.readInt();
+        IsDeleted = __is.readInt();
         __is.endReadSlice();
     }
 
@@ -148,5 +157,11 @@ public class SopSkuIce extends Ice.ObjectImpl
 
     public String UpdateTime;
 
-    public static final long serialVersionUID = 1189405279L;
+    public int SopSkuNo;
+
+    public int SkuStatus;
+
+    public int IsDeleted;
+
+    public static final long serialVersionUID = 1880363974L;
 }

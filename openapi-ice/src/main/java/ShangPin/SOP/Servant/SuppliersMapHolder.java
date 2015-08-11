@@ -28,10 +28,10 @@ public final class SuppliersMapHolder
     }
 
     public
-    SuppliersMapHolder(java.util.Map<String, String> value)
+    SuppliersMapHolder(java.util.Map<java.lang.String, java.lang.String> value)
     {
         this.value = value;
     }
 
-    public java.util.Map<String, String> value;
+    public java.util.Map<java.lang.String, java.lang.String> value;
 }

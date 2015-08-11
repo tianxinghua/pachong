@@ -22,8 +22,118 @@ package ShangPin.SOP.Servant;
 
 public final class _OpenApiServantDelM extends Ice._ObjectDelM implements _OpenApiServantDel
 {
+    public int
+    AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        IceInternal.Outgoing __og = __handler.getOutgoing("AddCommodity", Ice.OperationMode.Idempotent, __ctx, __observer);
+        try
+        {
+            try
+            {
+                IceInternal.BasicStream __os = __og.startWriteParams(Ice.FormatType.DefaultFormat);
+                __os.writeString(supplierId);
+                __os.writeObject(productAdd);
+                __os.writePendingObjects();
+                __og.endWriteParams();
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __og.abort(__ex);
+            }
+            boolean __ok = __og.invoke();
+            try
+            {
+                if(!__ok)
+                {
+                    try
+                    {
+                        __og.throwUserException();
+                    }
+                    catch(ShangPin.SOP.Api.ApiException __ex)
+                    {
+                        throw __ex;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                    }
+                }
+                IceInternal.BasicStream __is = __og.startReadParams();
+                int __ret;
+                __ret = __is.readInt();
+                __og.endReadParams();
+                return __ret;
+            }
+            catch(Ice.LocalException __ex)
+            {
+                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+            }
+        }
+        finally
+        {
+            __handler.reclaimOutgoing(__og);
+        }
+    }
+
     public boolean
-    AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+    AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        IceInternal.Outgoing __og = __handler.getOutgoing("AddCommodityPic", Ice.OperationMode.Idempotent, __ctx, __observer);
+        try
+        {
+            try
+            {
+                IceInternal.BasicStream __os = __og.startWriteParams(Ice.FormatType.DefaultFormat);
+                __os.writeString(supplierId);
+                __os.writeObject(ProductPicIce);
+                __os.writePendingObjects();
+                __og.endWriteParams();
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __og.abort(__ex);
+            }
+            boolean __ok = __og.invoke();
+            try
+            {
+                if(!__ok)
+                {
+                    try
+                    {
+                        __og.throwUserException();
+                    }
+                    catch(ShangPin.SOP.Api.ApiException __ex)
+                    {
+                        throw __ex;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                    }
+                }
+                IceInternal.BasicStream __is = __og.startReadParams();
+                boolean __ret;
+                __ret = __is.readBool();
+                __og.endReadParams();
+                return __ret;
+            }
+            catch(Ice.LocalException __ex)
+            {
+                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+            }
+        }
+        finally
+        {
+            __handler.reclaimOutgoing(__og);
+        }
+    }
+
+    public boolean
+    AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException
     {
@@ -132,8 +242,64 @@ public final class _OpenApiServantDelM extends Ice._ObjectDelM implements _OpenA
         }
     }
 
+    public ShangPin.SOP.Entity.Api.Product.SopAreaPage
+    FindAreaPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        IceInternal.Outgoing __og = __handler.getOutgoing("FindAreaPage", Ice.OperationMode.Idempotent, __ctx, __observer);
+        try
+        {
+            try
+            {
+                IceInternal.BasicStream __os = __og.startWriteParams(Ice.FormatType.DefaultFormat);
+                __os.writeString(supplierId);
+                __os.writeInt(pageIndex);
+                __os.writeInt(pageSize);
+                __og.endWriteParams();
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __og.abort(__ex);
+            }
+            boolean __ok = __og.invoke();
+            try
+            {
+                if(!__ok)
+                {
+                    try
+                    {
+                        __og.throwUserException();
+                    }
+                    catch(ShangPin.SOP.Api.ApiException __ex)
+                    {
+                        throw __ex;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                    }
+                }
+                IceInternal.BasicStream __is = __og.startReadParams();
+                ShangPin.SOP.Entity.Api.Product.SopAreaPageHolder __ret = new ShangPin.SOP.Entity.Api.Product.SopAreaPageHolder();
+                __is.readObject(__ret);
+                __is.readPendingObjects();
+                __og.endReadParams();
+                return __ret.value;
+            }
+            catch(Ice.LocalException __ex)
+            {
+                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+            }
+        }
+        finally
+        {
+            __handler.reclaimOutgoing(__og);
+        }
+    }
+
     public ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[]
-    FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+    FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException
     {
@@ -678,8 +844,339 @@ public final class _OpenApiServantDelM extends Ice._ObjectDelM implements _OpenA
         }
     }
 
+    public ShangPin.SOP.Entity.Api.Product.SpBrandPage
+    FindSpBrandPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        IceInternal.Outgoing __og = __handler.getOutgoing("FindSpBrandPage", Ice.OperationMode.Idempotent, __ctx, __observer);
+        try
+        {
+            try
+            {
+                IceInternal.BasicStream __os = __og.startWriteParams(Ice.FormatType.DefaultFormat);
+                __os.writeString(supplierId);
+                __os.writeInt(pageIndex);
+                __os.writeInt(pageSize);
+                __og.endWriteParams();
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __og.abort(__ex);
+            }
+            boolean __ok = __og.invoke();
+            try
+            {
+                if(!__ok)
+                {
+                    try
+                    {
+                        __og.throwUserException();
+                    }
+                    catch(ShangPin.SOP.Api.ApiException __ex)
+                    {
+                        throw __ex;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                    }
+                }
+                IceInternal.BasicStream __is = __og.startReadParams();
+                ShangPin.SOP.Entity.Api.Product.SpBrandPageHolder __ret = new ShangPin.SOP.Entity.Api.Product.SpBrandPageHolder();
+                __is.readObject(__ret);
+                __is.readPendingObjects();
+                __og.endReadParams();
+                return __ret.value;
+            }
+            catch(Ice.LocalException __ex)
+            {
+                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+            }
+        }
+        finally
+        {
+            __handler.reclaimOutgoing(__og);
+        }
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpCategoryPage
+    FindSpCategoryPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        IceInternal.Outgoing __og = __handler.getOutgoing("FindSpCategoryPage", Ice.OperationMode.Idempotent, __ctx, __observer);
+        try
+        {
+            try
+            {
+                IceInternal.BasicStream __os = __og.startWriteParams(Ice.FormatType.DefaultFormat);
+                __os.writeString(supplierId);
+                __os.writeInt(pageIndex);
+                __os.writeInt(pageSize);
+                __og.endWriteParams();
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __og.abort(__ex);
+            }
+            boolean __ok = __og.invoke();
+            try
+            {
+                if(!__ok)
+                {
+                    try
+                    {
+                        __og.throwUserException();
+                    }
+                    catch(ShangPin.SOP.Api.ApiException __ex)
+                    {
+                        throw __ex;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                    }
+                }
+                IceInternal.BasicStream __is = __og.startReadParams();
+                ShangPin.SOP.Entity.Api.Product.SpCategoryPageHolder __ret = new ShangPin.SOP.Entity.Api.Product.SpCategoryPageHolder();
+                __is.readObject(__ret);
+                __is.readPendingObjects();
+                __og.endReadParams();
+                return __ret.value;
+            }
+            catch(Ice.LocalException __ex)
+            {
+                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+            }
+        }
+        finally
+        {
+            __handler.reclaimOutgoing(__og);
+        }
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpCategorySizeStandard[]
+    FindSpCategorySizeStandard(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        IceInternal.Outgoing __og = __handler.getOutgoing("FindSpCategorySizeStandard", Ice.OperationMode.Idempotent, __ctx, __observer);
+        try
+        {
+            try
+            {
+                IceInternal.BasicStream __os = __og.startWriteParams(Ice.FormatType.DefaultFormat);
+                __os.writeString(supplierId);
+                __os.writeString(CategoryNo);
+                __og.endWriteParams();
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __og.abort(__ex);
+            }
+            boolean __ok = __og.invoke();
+            try
+            {
+                if(!__ok)
+                {
+                    try
+                    {
+                        __og.throwUserException();
+                    }
+                    catch(ShangPin.SOP.Api.ApiException __ex)
+                    {
+                        throw __ex;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                    }
+                }
+                IceInternal.BasicStream __is = __og.startReadParams();
+                ShangPin.SOP.Entity.Api.Product.SpCategorySizeStandard[] __ret;
+                __ret = RSpCategorySizeStandardListHelper.read(__is);
+                __is.readPendingObjects();
+                __og.endReadParams();
+                return __ret;
+            }
+            catch(Ice.LocalException __ex)
+            {
+                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+            }
+        }
+        finally
+        {
+            __handler.reclaimOutgoing(__og);
+        }
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpSizeTmpIce
+    FindSpSizeTmp(String supplierId, String SizeTmpNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        IceInternal.Outgoing __og = __handler.getOutgoing("FindSpSizeTmp", Ice.OperationMode.Idempotent, __ctx, __observer);
+        try
+        {
+            try
+            {
+                IceInternal.BasicStream __os = __og.startWriteParams(Ice.FormatType.DefaultFormat);
+                __os.writeString(supplierId);
+                __os.writeString(SizeTmpNo);
+                __og.endWriteParams();
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __og.abort(__ex);
+            }
+            boolean __ok = __og.invoke();
+            try
+            {
+                if(!__ok)
+                {
+                    try
+                    {
+                        __og.throwUserException();
+                    }
+                    catch(ShangPin.SOP.Api.ApiException __ex)
+                    {
+                        throw __ex;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                    }
+                }
+                IceInternal.BasicStream __is = __og.startReadParams();
+                ShangPin.SOP.Entity.Api.Product.SpSizeTmpIceHolder __ret = new ShangPin.SOP.Entity.Api.Product.SpSizeTmpIceHolder();
+                __is.readObject(__ret);
+                __is.readPendingObjects();
+                __og.endReadParams();
+                return __ret.value;
+            }
+            catch(Ice.LocalException __ex)
+            {
+                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+            }
+        }
+        finally
+        {
+            __handler.reclaimOutgoing(__og);
+        }
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpfProductAttributeInfoIce[]
+    FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        IceInternal.Outgoing __og = __handler.getOutgoing("FindSpSpfProductAttributeInfo", Ice.OperationMode.Idempotent, __ctx, __observer);
+        try
+        {
+            try
+            {
+                IceInternal.BasicStream __os = __og.startWriteParams(Ice.FormatType.DefaultFormat);
+                __os.writeString(supplierId);
+                __os.writeString(CategoryNo);
+                __og.endWriteParams();
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __og.abort(__ex);
+            }
+            boolean __ok = __og.invoke();
+            try
+            {
+                if(!__ok)
+                {
+                    try
+                    {
+                        __og.throwUserException();
+                    }
+                    catch(ShangPin.SOP.Api.ApiException __ex)
+                    {
+                        throw __ex;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                    }
+                }
+                IceInternal.BasicStream __is = __og.startReadParams();
+                ShangPin.SOP.Entity.Api.Product.SpfProductAttributeInfoIce[] __ret;
+                __ret = RSpfProductAttributeInfoIceListHelper.read(__is);
+                __is.readPendingObjects();
+                __og.endReadParams();
+                return __ret;
+            }
+            catch(Ice.LocalException __ex)
+            {
+                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+            }
+        }
+        finally
+        {
+            __handler.reclaimOutgoing(__og);
+        }
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpfProductMainColor[]
+    FindSpfProductMainColor(String supplierId, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        IceInternal.Outgoing __og = __handler.getOutgoing("FindSpfProductMainColor", Ice.OperationMode.Idempotent, __ctx, __observer);
+        try
+        {
+            try
+            {
+                IceInternal.BasicStream __os = __og.startWriteParams(Ice.FormatType.DefaultFormat);
+                __os.writeString(supplierId);
+                __og.endWriteParams();
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __og.abort(__ex);
+            }
+            boolean __ok = __og.invoke();
+            try
+            {
+                if(!__ok)
+                {
+                    try
+                    {
+                        __og.throwUserException();
+                    }
+                    catch(ShangPin.SOP.Api.ApiException __ex)
+                    {
+                        throw __ex;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                    }
+                }
+                IceInternal.BasicStream __is = __og.startReadParams();
+                ShangPin.SOP.Entity.Api.Product.SpfProductMainColor[] __ret;
+                __ret = RSpfProductMainColorListHelper.read(__is);
+                __is.readPendingObjects();
+                __og.endReadParams();
+                return __ret;
+            }
+            catch(Ice.LocalException __ex)
+            {
+                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+            }
+        }
+        finally
+        {
+            __handler.reclaimOutgoing(__og);
+        }
+    }
+
     public ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[]
-    FindStockInfo(String supplierId, java.util.List<String> SkuNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+    FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException
     {
@@ -733,7 +1230,7 @@ public final class _OpenApiServantDelM extends Ice._ObjectDelM implements _OpenA
         }
     }
 
-    public java.util.Map<String, String>
+    public java.util.Map<java.lang.String, java.lang.String>
     FindSuppliersById(String Id, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException
@@ -770,7 +1267,7 @@ public final class _OpenApiServantDelM extends Ice._ObjectDelM implements _OpenA
                     }
                 }
                 IceInternal.BasicStream __is = __og.startReadParams();
-                java.util.Map<String, String> __ret;
+                java.util.Map<java.lang.String, java.lang.String> __ret;
                 __ret = SuppliersMapHelper.read(__is);
                 __og.endReadParams();
                 return __ret;
@@ -786,7 +1283,7 @@ public final class _OpenApiServantDelM extends Ice._ObjectDelM implements _OpenA
         }
     }
 
-    public java.util.Map<String, String>
+    public java.util.Map<java.lang.String, java.lang.String>
     FindSuppliersByName(String Name, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException
@@ -823,7 +1320,7 @@ public final class _OpenApiServantDelM extends Ice._ObjectDelM implements _OpenA
                     }
                 }
                 IceInternal.BasicStream __is = __og.startReadParams();
-                java.util.Map<String, String> __ret;
+                java.util.Map<java.lang.String, java.lang.String> __ret;
                 __ret = SuppliersMapHelper.read(__is);
                 __og.endReadParams();
                 return __ret;
