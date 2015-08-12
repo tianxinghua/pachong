@@ -31,6 +31,7 @@ public class FetchProduct {
     public void fetchProductAndSave(String url){
         /*String jsonStr = getSkus(url);*/
         //List<String>mlist=new ArrayList<>();
+        String supplierId="201508081715";
         List<GiltSkuDTO> list = this.getSkus(url);
         for(int i =0;i<list.size();i++){
             SkuDTO dto = new SkuDTO();
@@ -42,7 +43,7 @@ public class FetchProduct {
                 System.out.println(test);
             }*/
             dto.setId(UUIDGenerator.getUUID());
-            dto.setSupplierId("201508081715");
+            dto.setSupplierId(supplierId);
             dto.setProductDescription(giltSkuDTO.getDescription());
             dto.setSkuId(giltSkuDTO.getId());
             dto.setSpuId(giltSkuDTO.getProduct_id());
@@ -57,7 +58,7 @@ public class FetchProduct {
             dto.setProductSize(giltSkuDTO.getAttributes().get(3).getSize().getValue());
             dto.setStock(getInventory(giltSkuDTO.getId()));
             spuDTO.setId(UUIDGenerator.getUUID());
-            spuDTO.setSupplierId("201508081715");
+            spuDTO.setSupplierId(supplierId);
             spuDTO.setSpuId(giltSkuDTO.getProduct_id());
             spuDTO.setMaterial(giltSkuDTO.getAttributes().get(2).getMaterial().getValue());
             spuDTO.setCategoryId(giltSkuDTO.getCategories().get(0).getId());
@@ -80,7 +81,7 @@ public class FetchProduct {
                 productPictureDTO.setPicUrl(picUrl);
                 productPictureDTO.setSkuId(giltSkuDTO.getId());
                 productPictureDTO.setSpuId("");
-                productPictureDTO.setSupplierId("201508081715");
+                productPictureDTO.setSupplierId(supplierId);
                 try{
                     productFetchService.savePictureForMongo(productPictureDTO);
                 }catch (ServiceException e){
