@@ -28,15 +28,17 @@ public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
     private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
-    ProductFetchService productFetchService;
+    private ProductFetchService productFetchService;
 
     public void fetchProductAndSave(String url){
 
-        String supplierId = "2015050800242";
+        String supplierId = "201508111742";
         try {
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
             timeConfig.confRequestOutTime(360000);
+            timeConfig.confConnectOutTime(36000);
+            timeConfig.confSocketOutTime(360000);
             List<String> resultList = HttpUtil45.getContentListByInputSteam(url, timeConfig, null, null, null);
             HttpUtil45.closePool();
             mongMap.put("supplierId",supplierId);
@@ -47,7 +49,10 @@ public class FetchProduct {
             String stock="",size ="";
             String skuId = "";
             for(String content:resultList){
-                if(i==0) continue;
+                if(i==0){
+                    i++;
+                    continue;
+                }
                 i++;
                 //SKU;Brand;ModelName;Color;ColorFilter;Description;Materials;Sex;Category;Season;Price;Discount;Images;SizesFormat;Sizes
                // 0 ;  1   ;  2      ;3    ;   4       ;    5      ;6        ;7  ;  8     ;  9   ;10   ; 11     ;  12  ;  13       ; 14
@@ -63,14 +68,17 @@ public class FetchProduct {
                     spu.setSpuName(contentArray[2]);
                     spu.setSeasonId(contentArray[9]);
                     spu.setMaterial(contentArray[6]);
-                    productFetchService.saveSPU(spu);
+                    //productFetchService.saveSPU(spu);
 
                     String[] sizeArray = contentArray[14].split(",");
 
 
                     for(String sizeAndStock:sizeArray){
-                        size = sizeAndStock.substring(0,sizeAndStock.indexOf("("));
-                        stock = sizeAndStock.substring(sizeAndStock.indexOf("("),sizeAndStock.length()-1);
+                        if(sizeAndStock.contains("(")&&sizeAndStock.length()>1) {
+                            size = sizeAndStock.substring(0, sizeAndStock.indexOf("("));
+                            stock = sizeAndStock.substring(sizeAndStock.indexOf("(")+1, sizeAndStock.length() - 1);
+                            System.out.println("库存"+stock);
+                        }
                         SkuDTO sku  = new SkuDTO();
                         try {
                             sku.setId(UUIDGenerator.getUUID());
@@ -88,7 +96,7 @@ public class FetchProduct {
                             sku.setProductDescription(contentArray[5]);
                             sku.setStock(stock);
 //                            sku.setProductCode(product.getProducer_id());
-                            productFetchService.saveSKU(sku);
+                            //productFetchService.saveSKU(sku);
 
 
                             String[] picArray = contentArray[12].split(",");
@@ -99,22 +107,22 @@ public class FetchProduct {
                                 dto.setSupplierId(supplierId);
                                 dto.setId(UUIDGenerator.getUUID());
                                 dto.setSkuId(skuId);
-                                try {
+                                /*try {
 //                                    productFetchService.savePicture(dto);
                                     productFetchService.savePictureForMongo(dto);
                                 } catch (ServiceException e) {
                                     e.printStackTrace();
-                                }
+                                }*/
 
                             }
 
 
 
-                        } catch (ServiceException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                } catch (ServiceException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
