@@ -1,9 +1,6 @@
 package com.shangpin.iog.gilt;
 
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.gilt.service.FetchProduct;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
