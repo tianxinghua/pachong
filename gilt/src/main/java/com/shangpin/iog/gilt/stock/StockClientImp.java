@@ -6,7 +6,6 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.gilt.dto.GiltSkuDTO;
 import com.shangpin.iog.gilt.dto.InventoryDTO;
 import org.apache.log4j.Logger;
