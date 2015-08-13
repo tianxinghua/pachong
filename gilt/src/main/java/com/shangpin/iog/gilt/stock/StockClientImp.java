@@ -9,8 +9,6 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.gilt.dto.GiltSkuDTO;
 import com.shangpin.iog.gilt.dto.InventoryDTO;
 import org.apache.log4j.Logger;
-
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -28,8 +26,20 @@ public class StockClientImp extends AbsUpdateProductStock {
             logger.info("拉取gilt数据开始");
             Map<String,String> param = new HashMap<>();
             OutTimeConfig outTimeConf = new OutTimeConfig();
-            String result= HttpUtil45.get(stockUrl, outTimeConf, param, "fb8ea6839b486dba8c5cabb374c03d9d", "");
-            List<InventoryDTO> list  = getObjectsByJsonString(result);
+            List<InventoryDTO>list=new ArrayList<>();
+            StringBuffer str = new StringBuffer();
+            int limit = 50;
+            int offset = 0;
+            param.put("","");
+            String result="";
+            do{
+                param.put("offset",offset+"");
+                result=HttpUtil45.get(stockUrl, outTimeConf, param,"fb8ea6839b486dba8c5cabb374c03d9d","");
+                list = getObjectsByJsonString(result);
+                offset = offset+50;
+                str.append(result);
+            }while (list.size()==limit);
+            list  = getObjectsByJsonString(str.toString());
             for (InventoryDTO dto:list){
                 skustock.put(dto.getSku_id(),Integer.parseInt(dto.getQuantity()));
             }
@@ -51,7 +61,6 @@ public class StockClientImp extends AbsUpdateProductStock {
             objs = gson.fromJson(jsonStr, new TypeToken<List<InventoryDTO>>(){}.getType());
         } catch (Exception e) {
             e.printStackTrace();
-            //logger.info("get List<ApennineProductDTO> fail :"+e);
         }
         return objs;
     }
@@ -77,22 +86,36 @@ public class StockClientImp extends AbsUpdateProductStock {
         return objs;
     }
     public static void main(String[] args) throws Exception {
-      /*  String url = "https://api-sandbox.gilt.com/global/inventory/";
+        String url = "https://api-sandbox.gilt.com/global/inventory";
         String skuUrl="https://api-sandbox.gilt.com/global/skus/";
         Map<String,String> param = new HashMap<>();
         OutTimeConfig outTimeConf = new OutTimeConfig();
-
-        param.put("sku_id","144740");//197672
-        String result= HttpUtil45.get(skuUrl+"197672", outTimeConf, param, "fb8ea6839b486dba8c5cabb374c03d9d", "");
-        System.out.println(result);
-        GiltSkuDTO dto  =getObject(result);
+        //param.put("offset","50");
+       /* String result=HttpUtil45.get(url, outTimeConf, param,"fb8ea6839b486dba8c5cabb374c03d9d","");
+        System.out.println(result);*/
+        List<InventoryDTO>list=new ArrayList<>();
+        StringBuffer str = new StringBuffer();
+        int limit = 50;
+        int offset = 0;
+        param.put("","");
+        String result="";
+        do{
+            param.put("offset",offset+"");
+            result=HttpUtil45.get(url, outTimeConf, param,"fb8ea6839b486dba8c5cabb374c03d9d","");
+            list = getObjectsByJsonString(result);
+            offset = offset+50;
+            str.append(result);
+        }while (list.size()==50);
+        System.out.println("sku的index:"+offset);
+        System.out.println("所有的产品库存"+str.toString());
+        /*GiltSkuDTO dto  =getObject(result);
         System.out.println(dto.getAttributes().get(3).getSize().getValue());*/
-        String supplierId = "201508081715";
+        /*String supplierId = "201508081715";
         AbsUpdateProductStock giltStockImp = new StockClientImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("gilt更新数据库开始");
         giltStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
         logger.info("gilt更新数据库结束");
-        System.exit(0);
+        System.exit(0);*/
     }
 }
