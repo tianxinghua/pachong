@@ -26,7 +26,7 @@ public class SopProductSkuIce extends Ice.ObjectImpl
     {
     }
 
-    public SopProductSkuIce(String BrandENName, String CategoryName, String GrossWeight, String Heigth, String Length, String MarketSeason, String MarketTime, String PackingList, String ProductModel, String ProductNo, String ProductSex, String ProductSlogan, String ProductUnit, String SopProductName, String UpdateTime, String Width, java.util.List<SopSkuIce> SopSkuIces)
+    public SopProductSkuIce(String BrandENName, String CategoryName, String GrossWeight, String Heigth, String Length, String MarketSeason, String MarketTime, String PackingList, String ProductModel, String ProductNo, String ProductSex, String ProductSlogan, String ProductUnit, String SopProductName, String UpdateTime, String Width, int SopProductNo, java.util.List<SopSkuIce> SopSkuIces)
     {
         this.BrandENName = BrandENName;
         this.CategoryName = CategoryName;
@@ -44,6 +44,7 @@ public class SopProductSkuIce extends Ice.ObjectImpl
         this.SopProductName = SopProductName;
         this.UpdateTime = UpdateTime;
         this.Width = Width;
+        this.SopProductNo = SopProductNo;
         this.SopSkuIces = SopSkuIces;
     }
 
@@ -127,6 +128,7 @@ public class SopProductSkuIce extends Ice.ObjectImpl
         __os.writeString(SopProductName);
         __os.writeString(UpdateTime);
         __os.writeString(Width);
+        __os.writeInt(SopProductNo);
         SopSkuIceListHelper.write(__os, SopSkuIces);
         __os.endWriteSlice();
     }
@@ -150,6 +152,7 @@ public class SopProductSkuIce extends Ice.ObjectImpl
         SopProductName = __is.readString();
         UpdateTime = __is.readString();
         Width = __is.readString();
+        SopProductNo = __is.readInt();
         SopSkuIces = SopSkuIceListHelper.read(__is);
         __is.endReadSlice();
     }
@@ -186,7 +189,9 @@ public class SopProductSkuIce extends Ice.ObjectImpl
 
     public String Width;
 
+    public int SopProductNo;
+
     public java.util.List<SopSkuIce> SopSkuIces;
 
-    public static final long serialVersionUID = 1328908427L;
+    public static final long serialVersionUID = 1468097226L;
 }

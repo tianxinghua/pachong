@@ -3,6 +3,7 @@ package com.shangpin.iog.common.utils.httpclient;
 import java.io.*;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -21,11 +22,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
@@ -45,6 +42,7 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
@@ -52,10 +50,13 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
+import org.apache.http.util.Args;
+import org.apache.http.util.CharArrayBuffer;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,30 +128,140 @@ public class HttpUtil45 {
 	 * @see OutTimeConfig 超时设置
 	 */
 	public static String get(String url,OutTimeConfig outTimeConf,Map<String,String> param){
+        return getResult(url, outTimeConf, param,null);
+	}
+
+    private static String getResult(String url, OutTimeConfig outTimeConf, Map<String, String> param,HttpClientContext localContext) {
+        String urlStr=paramGetUrl(url, param);
+        HttpGet get = new HttpGet(urlStr);
+        String result=null;
+        CloseableHttpResponse resp=null;
+        try {
+            CloseableHttpClient ht=null;
+            ht=getHttpClient(null);
+            if(null==localContext) localContext = getPlainContext(url);
+            localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
+            resp=ht.execute(get,localContext);
+            HttpEntity entity=resp.getEntity();
+            result= EntityUtils.toString(entity);
+            EntityUtils.consume(entity);
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+                try {
+                    if(resp!=null)
+                        resp.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+        return result==null?errorResult:result;
+    }
+
+
+    /**
+     * get请求
+     * @param url 请求url
+     * @param outTimeConf 请求超时时间设置 nullable
+     * @param param 请求参数 nullable
+     * @param username 认证用户
+     * @param password 认证密码
+     * @return 请求结果，若由异常为null
+     * @see OutTimeConfig 超时设置
+     */
+    public static String get(String url,OutTimeConfig outTimeConf,Map<String,String> param,String username,String password){
+        HttpClientContext localContext =null;
+        if(StringUtils.isNotBlank(username)){
+            localContext = getAuthContext(url, username, password);
+        }else{
+            localContext = getPlainContext(url);
+        }
+
+        return getResult(url, outTimeConf, param,localContext);
+    }
+
+	/**
+	 * 获取流 分解每行数据
+	 * @param url      请求地址
+	 * @param outTimeConf    超时时间设置
+	 * @param param          请求参数
+	 * @param username      用户名
+	 * @param password       密码
+	 * @return      字符串内容列表
+	 */
+	public static List<String> getContentListByInputSteam(String url,OutTimeConfig outTimeConf,Map<String,String> param,String username,String password){
+		HttpClientContext localContext =null;
+		List<String> contentList = new ArrayList<>();
+		if(StringUtils.isNotBlank(username)){
+			localContext = getAuthContext(url, username, password);
+		}else{
+			localContext = getPlainContext(url);
+		}
+
 		String urlStr=paramGetUrl(url, param);
 		HttpGet get = new HttpGet(urlStr);
 		String result=null;
 		CloseableHttpResponse resp=null;
 		try {
 			CloseableHttpClient ht=null;
-			ht=getHttpClient(null);//HttpClients.createDefault();
-			HttpClientContext localContext = getPlainContext(url);//HttpClientContext.create();
+			ht=getHttpClient(null);
+			if(null==localContext) localContext = getPlainContext(url);
 			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
-			resp=ht.execute(get);
+			resp=ht.execute(get,localContext);
 			HttpEntity entity=resp.getEntity();
-			result=EntityUtils.toString(entity);
-			EntityUtils.consume(entity);
+			final InputStream instream = entity.getContent();
+			if (instream == null) {
+				return contentList;
+			}
+			try {
+				Args.check(entity.getContentLength() <= Integer.MAX_VALUE,
+						"HTTP entity too large to be buffered in memory");
+				int i = (int)entity.getContentLength();
+				if (i < 0) {
+					i = 4096;
+				}
+				Charset charset = null;
+				Charset defaultCharset = Consts.UTF_8;
+				try {
+					final ContentType contentType = ContentType.get(entity);
+					if (contentType != null) {
+						charset = contentType.getCharset();
+					}
+				} catch (final UnsupportedCharsetException ex) {
+					if (defaultCharset == null) {
+						throw new UnsupportedEncodingException(ex.getMessage());
+					}
+				}
+				if (charset == null) {
+					charset = defaultCharset;
+				}
+				if (charset == null) {
+					charset = HTTP.DEF_CONTENT_CHARSET;
+				}
+				final BufferedReader reader = new BufferedReader(new InputStreamReader(instream, charset));
+			    String value="";
+				int count = 0;
+				while((value = reader.readLine()) != null) {
+					contentList.add(value);
+					count++;
+					System.out.println("ddgg"+count);
+				}
+			} finally {
+				if (instream != null) {
+					instream.close();
+				}
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{
-				try {
-					if(resp!=null)
-						resp.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			try {
+				if(resp!=null)
+					resp.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		return result==null?errorResult:result;
+		return contentList;
 	}
 
 	/**
@@ -234,16 +345,12 @@ public class HttpUtil45 {
 		}
 	}
 	
-	/*public void get(String url,Map<String,String> param,OutTimeConfig outTimeConf){
-		
-	}*/
-	
 	/**
 	 * 关闭连接池
 	 */
 	public static void closePool(){
 		poolShutDown=true;
-		connManager.close();
+		if(null!=connManager) connManager.close();
 	}
 	private static String post(String url,Map<String,String> param,OutTimeConfig outTimeConf
 			,HttpClientContext localContext ){

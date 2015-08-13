@@ -28,10 +28,10 @@ public final class DetailStatusListHolder
     }
 
     public
-    DetailStatusListHolder(java.util.List<Integer> value)
+    DetailStatusListHolder(java.util.List<java.lang.Integer> value)
     {
         this.value = value;
     }
 
-    public java.util.List<Integer> value;
+    public java.util.List<java.lang.Integer> value;
 }

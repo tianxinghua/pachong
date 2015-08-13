@@ -22,21 +22,309 @@ package ShangPin.SOP.Servant;
 
 public final class OpenApiServantPrxHelper extends Ice.ObjectPrxHelperBase implements OpenApiServantPrx
 {
+    private static final String __AddCommodity_name = "AddCommodity";
+
+    public int AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return AddCommodity(supplierId, productAdd, null, false);
+    }
+
+    public int AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd, java.util.Map<String, String> __ctx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return AddCommodity(supplierId, productAdd, __ctx, true);
+    }
+
+    private int AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        final Ice.Instrumentation.InvocationObserver __observer = IceInternal.ObserverHelper.get(this, "AddCommodity", __ctx);
+        int __cnt = 0;
+        try
+        {
+            while(true)
+            {
+                Ice._ObjectDel __delBase = null;
+                try
+                {
+                    __checkTwowayOnly("AddCommodity");
+                    __delBase = __getDelegate(false);
+                    _OpenApiServantDel __del = (_OpenApiServantDel)__delBase;
+                    return __del.AddCommodity(supplierId, productAdd, __ctx, __observer);
+                }
+                catch(IceInternal.LocalExceptionWrapper __ex)
+                {
+                    __cnt = __handleExceptionWrapperRelaxed(__delBase, __ex, null, __cnt, __observer);
+                }
+                catch(Ice.LocalException __ex)
+                {
+                    __cnt = __handleException(__delBase, __ex, null, __cnt, __observer);
+                }
+            }
+        }
+        finally
+        {
+            if(__observer != null)
+            {
+                __observer.detach();
+            }
+        }
+    }
+
+    public Ice.AsyncResult begin_AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd)
+    {
+        return begin_AddCommodity(supplierId, productAdd, null, false, null);
+    }
+
+    public Ice.AsyncResult begin_AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd, java.util.Map<String, String> __ctx)
+    {
+        return begin_AddCommodity(supplierId, productAdd, __ctx, true, null);
+    }
+
+    public Ice.AsyncResult begin_AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd, Ice.Callback __cb)
+    {
+        return begin_AddCommodity(supplierId, productAdd, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    {
+        return begin_AddCommodity(supplierId, productAdd, __ctx, true, __cb);
+    }
+
+    public Ice.AsyncResult begin_AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd, Callback_OpenApiServant_AddCommodity __cb)
+    {
+        return begin_AddCommodity(supplierId, productAdd, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd, java.util.Map<String, String> __ctx, Callback_OpenApiServant_AddCommodity __cb)
+    {
+        return begin_AddCommodity(supplierId, productAdd, __ctx, true, __cb);
+    }
+
+    private Ice.AsyncResult begin_AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
+    {
+        __checkAsyncTwowayOnly(__AddCommodity_name);
+        IceInternal.OutgoingAsync __result = new IceInternal.OutgoingAsync(this, __AddCommodity_name, __cb);
+        try
+        {
+            __result.__prepare(__AddCommodity_name, Ice.OperationMode.Idempotent, __ctx, __explicitCtx);
+            IceInternal.BasicStream __os = __result.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(supplierId);
+            __os.writeObject(productAdd);
+            __os.writePendingObjects();
+            __result.__endWriteParams();
+            __result.__send(true);
+        }
+        catch(Ice.LocalException __ex)
+        {
+            __result.__exceptionAsync(__ex);
+        }
+        return __result;
+    }
+
+    public int end_AddCommodity(Ice.AsyncResult __result)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        Ice.AsyncResult.__check(__result, this, __AddCommodity_name);
+        boolean __ok = __result.__wait();
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __result.__throwUserException();
+                }
+                catch(ShangPin.SOP.Api.ApiException __ex)
+                {
+                    throw __ex;
+                }
+                catch(Ice.UserException __ex)
+                {
+                    throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                }
+            }
+            IceInternal.BasicStream __is = __result.__startReadParams();
+            int __ret;
+            __ret = __is.readInt();
+            __result.__endReadParams();
+            return __ret;
+        }
+        catch(Ice.LocalException ex)
+        {
+            Ice.Instrumentation.InvocationObserver __obsv = __result.__getObserver();
+            if(__obsv != null)
+            {
+                __obsv.failed(ex.ice_name());
+            }
+            throw ex;
+        }
+    }
+
+    private static final String __AddCommodityPic_name = "AddCommodityPic";
+
+    public boolean AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return AddCommodityPic(supplierId, ProductPicIce, null, false);
+    }
+
+    public boolean AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce, java.util.Map<String, String> __ctx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return AddCommodityPic(supplierId, ProductPicIce, __ctx, true);
+    }
+
+    private boolean AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        final Ice.Instrumentation.InvocationObserver __observer = IceInternal.ObserverHelper.get(this, "AddCommodityPic", __ctx);
+        int __cnt = 0;
+        try
+        {
+            while(true)
+            {
+                Ice._ObjectDel __delBase = null;
+                try
+                {
+                    __checkTwowayOnly("AddCommodityPic");
+                    __delBase = __getDelegate(false);
+                    _OpenApiServantDel __del = (_OpenApiServantDel)__delBase;
+                    return __del.AddCommodityPic(supplierId, ProductPicIce, __ctx, __observer);
+                }
+                catch(IceInternal.LocalExceptionWrapper __ex)
+                {
+                    __cnt = __handleExceptionWrapperRelaxed(__delBase, __ex, null, __cnt, __observer);
+                }
+                catch(Ice.LocalException __ex)
+                {
+                    __cnt = __handleException(__delBase, __ex, null, __cnt, __observer);
+                }
+            }
+        }
+        finally
+        {
+            if(__observer != null)
+            {
+                __observer.detach();
+            }
+        }
+    }
+
+    public Ice.AsyncResult begin_AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce)
+    {
+        return begin_AddCommodityPic(supplierId, ProductPicIce, null, false, null);
+    }
+
+    public Ice.AsyncResult begin_AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce, java.util.Map<String, String> __ctx)
+    {
+        return begin_AddCommodityPic(supplierId, ProductPicIce, __ctx, true, null);
+    }
+
+    public Ice.AsyncResult begin_AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce, Ice.Callback __cb)
+    {
+        return begin_AddCommodityPic(supplierId, ProductPicIce, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    {
+        return begin_AddCommodityPic(supplierId, ProductPicIce, __ctx, true, __cb);
+    }
+
+    public Ice.AsyncResult begin_AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce, Callback_OpenApiServant_AddCommodityPic __cb)
+    {
+        return begin_AddCommodityPic(supplierId, ProductPicIce, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce, java.util.Map<String, String> __ctx, Callback_OpenApiServant_AddCommodityPic __cb)
+    {
+        return begin_AddCommodityPic(supplierId, ProductPicIce, __ctx, true, __cb);
+    }
+
+    private Ice.AsyncResult begin_AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
+    {
+        __checkAsyncTwowayOnly(__AddCommodityPic_name);
+        IceInternal.OutgoingAsync __result = new IceInternal.OutgoingAsync(this, __AddCommodityPic_name, __cb);
+        try
+        {
+            __result.__prepare(__AddCommodityPic_name, Ice.OperationMode.Idempotent, __ctx, __explicitCtx);
+            IceInternal.BasicStream __os = __result.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(supplierId);
+            __os.writeObject(ProductPicIce);
+            __os.writePendingObjects();
+            __result.__endWriteParams();
+            __result.__send(true);
+        }
+        catch(Ice.LocalException __ex)
+        {
+            __result.__exceptionAsync(__ex);
+        }
+        return __result;
+    }
+
+    public boolean end_AddCommodityPic(Ice.AsyncResult __result)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        Ice.AsyncResult.__check(__result, this, __AddCommodityPic_name);
+        boolean __ok = __result.__wait();
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __result.__throwUserException();
+                }
+                catch(ShangPin.SOP.Api.ApiException __ex)
+                {
+                    throw __ex;
+                }
+                catch(Ice.UserException __ex)
+                {
+                    throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                }
+            }
+            IceInternal.BasicStream __is = __result.__startReadParams();
+            boolean __ret;
+            __ret = __is.readBool();
+            __result.__endReadParams();
+            return __ret;
+        }
+        catch(Ice.LocalException ex)
+        {
+            Ice.Instrumentation.InvocationObserver __obsv = __result.__getObserver();
+            if(__obsv != null)
+            {
+                __obsv.failed(ex.ice_name());
+            }
+            throw ex;
+        }
+    }
+
     private static final String __AddPurchaseDetailToDeliveryOrder_name = "AddPurchaseDetailToDeliveryOrder";
 
-    public boolean AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos)
+    public boolean AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos)
         throws ShangPin.SOP.Api.ApiException
     {
         return AddPurchaseDetailToDeliveryOrder(supplierId, deliveryOrderNo, purchaseOrderDetailNos, null, false);
     }
 
-    public boolean AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx)
+    public boolean AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx)
         throws ShangPin.SOP.Api.ApiException
     {
         return AddPurchaseDetailToDeliveryOrder(supplierId, deliveryOrderNo, purchaseOrderDetailNos, __ctx, true);
     }
 
-    private boolean AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    private boolean AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx, boolean __explicitCtx)
         throws ShangPin.SOP.Api.ApiException
     {
         if(__explicitCtx && __ctx == null)
@@ -76,37 +364,37 @@ public final class OpenApiServantPrxHelper extends Ice.ObjectPrxHelperBase imple
         }
     }
 
-    public Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos)
+    public Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos)
     {
         return begin_AddPurchaseDetailToDeliveryOrder(supplierId, deliveryOrderNo, purchaseOrderDetailNos, null, false, null);
     }
 
-    public Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx)
+    public Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx)
     {
         return begin_AddPurchaseDetailToDeliveryOrder(supplierId, deliveryOrderNo, purchaseOrderDetailNos, __ctx, true, null);
     }
 
-    public Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos, Ice.Callback __cb)
+    public Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos, Ice.Callback __cb)
     {
         return begin_AddPurchaseDetailToDeliveryOrder(supplierId, deliveryOrderNo, purchaseOrderDetailNos, null, false, __cb);
     }
 
-    public Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    public Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx, Ice.Callback __cb)
     {
         return begin_AddPurchaseDetailToDeliveryOrder(supplierId, deliveryOrderNo, purchaseOrderDetailNos, __ctx, true, __cb);
     }
 
-    public Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos, Callback_OpenApiServant_AddPurchaseDetailToDeliveryOrder __cb)
+    public Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos, Callback_OpenApiServant_AddPurchaseDetailToDeliveryOrder __cb)
     {
         return begin_AddPurchaseDetailToDeliveryOrder(supplierId, deliveryOrderNo, purchaseOrderDetailNos, null, false, __cb);
     }
 
-    public Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx, Callback_OpenApiServant_AddPurchaseDetailToDeliveryOrder __cb)
+    public Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx, Callback_OpenApiServant_AddPurchaseDetailToDeliveryOrder __cb)
     {
         return begin_AddPurchaseDetailToDeliveryOrder(supplierId, deliveryOrderNo, purchaseOrderDetailNos, __ctx, true, __cb);
     }
 
-    private Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
+    private Ice.AsyncResult begin_AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
     {
         __checkAsyncTwowayOnly(__AddPurchaseDetailToDeliveryOrder_name);
         IceInternal.OutgoingAsync __result = new IceInternal.OutgoingAsync(this, __AddPurchaseDetailToDeliveryOrder_name, __cb);
@@ -310,21 +598,166 @@ public final class OpenApiServantPrxHelper extends Ice.ObjectPrxHelperBase imple
         }
     }
 
+    private static final String __FindAreaPage_name = "FindAreaPage";
+
+    public ShangPin.SOP.Entity.Api.Product.SopAreaPage FindAreaPage(String supplierId, int pageIndex, int pageSize)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindAreaPage(supplierId, pageIndex, pageSize, null, false);
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SopAreaPage FindAreaPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindAreaPage(supplierId, pageIndex, pageSize, __ctx, true);
+    }
+
+    private ShangPin.SOP.Entity.Api.Product.SopAreaPage FindAreaPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        final Ice.Instrumentation.InvocationObserver __observer = IceInternal.ObserverHelper.get(this, "FindAreaPage", __ctx);
+        int __cnt = 0;
+        try
+        {
+            while(true)
+            {
+                Ice._ObjectDel __delBase = null;
+                try
+                {
+                    __checkTwowayOnly("FindAreaPage");
+                    __delBase = __getDelegate(false);
+                    _OpenApiServantDel __del = (_OpenApiServantDel)__delBase;
+                    return __del.FindAreaPage(supplierId, pageIndex, pageSize, __ctx, __observer);
+                }
+                catch(IceInternal.LocalExceptionWrapper __ex)
+                {
+                    __cnt = __handleExceptionWrapperRelaxed(__delBase, __ex, null, __cnt, __observer);
+                }
+                catch(Ice.LocalException __ex)
+                {
+                    __cnt = __handleException(__delBase, __ex, null, __cnt, __observer);
+                }
+            }
+        }
+        finally
+        {
+            if(__observer != null)
+            {
+                __observer.detach();
+            }
+        }
+    }
+
+    public Ice.AsyncResult begin_FindAreaPage(String supplierId, int pageIndex, int pageSize)
+    {
+        return begin_FindAreaPage(supplierId, pageIndex, pageSize, null, false, null);
+    }
+
+    public Ice.AsyncResult begin_FindAreaPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx)
+    {
+        return begin_FindAreaPage(supplierId, pageIndex, pageSize, __ctx, true, null);
+    }
+
+    public Ice.AsyncResult begin_FindAreaPage(String supplierId, int pageIndex, int pageSize, Ice.Callback __cb)
+    {
+        return begin_FindAreaPage(supplierId, pageIndex, pageSize, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindAreaPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    {
+        return begin_FindAreaPage(supplierId, pageIndex, pageSize, __ctx, true, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindAreaPage(String supplierId, int pageIndex, int pageSize, Callback_OpenApiServant_FindAreaPage __cb)
+    {
+        return begin_FindAreaPage(supplierId, pageIndex, pageSize, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindAreaPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindAreaPage __cb)
+    {
+        return begin_FindAreaPage(supplierId, pageIndex, pageSize, __ctx, true, __cb);
+    }
+
+    private Ice.AsyncResult begin_FindAreaPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
+    {
+        __checkAsyncTwowayOnly(__FindAreaPage_name);
+        IceInternal.OutgoingAsync __result = new IceInternal.OutgoingAsync(this, __FindAreaPage_name, __cb);
+        try
+        {
+            __result.__prepare(__FindAreaPage_name, Ice.OperationMode.Idempotent, __ctx, __explicitCtx);
+            IceInternal.BasicStream __os = __result.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(supplierId);
+            __os.writeInt(pageIndex);
+            __os.writeInt(pageSize);
+            __result.__endWriteParams();
+            __result.__send(true);
+        }
+        catch(Ice.LocalException __ex)
+        {
+            __result.__exceptionAsync(__ex);
+        }
+        return __result;
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SopAreaPage end_FindAreaPage(Ice.AsyncResult __result)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        Ice.AsyncResult.__check(__result, this, __FindAreaPage_name);
+        boolean __ok = __result.__wait();
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __result.__throwUserException();
+                }
+                catch(ShangPin.SOP.Api.ApiException __ex)
+                {
+                    throw __ex;
+                }
+                catch(Ice.UserException __ex)
+                {
+                    throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                }
+            }
+            IceInternal.BasicStream __is = __result.__startReadParams();
+            ShangPin.SOP.Entity.Api.Product.SopAreaPageHolder __ret = new ShangPin.SOP.Entity.Api.Product.SopAreaPageHolder();
+            __is.readObject(__ret);
+            __is.readPendingObjects();
+            __result.__endReadParams();
+            return __ret.value;
+        }
+        catch(Ice.LocalException ex)
+        {
+            Ice.Instrumentation.InvocationObserver __obsv = __result.__getObserver();
+            if(__obsv != null)
+            {
+                __obsv.failed(ex.ice_name());
+            }
+            throw ex;
+        }
+    }
+
     private static final String __FindCommodityInfo_name = "FindCommodityInfo";
 
-    public ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos)
+    public ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos)
         throws ShangPin.SOP.Api.ApiException
     {
         return FindCommodityInfo(supplierId, Starttime, Endtime, ProductNos, null, false);
     }
 
-    public ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos, java.util.Map<String, String> __ctx)
+    public ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.Map<String, String> __ctx)
         throws ShangPin.SOP.Api.ApiException
     {
         return FindCommodityInfo(supplierId, Starttime, Endtime, ProductNos, __ctx, true);
     }
 
-    private ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    private ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.Map<String, String> __ctx, boolean __explicitCtx)
         throws ShangPin.SOP.Api.ApiException
     {
         if(__explicitCtx && __ctx == null)
@@ -364,37 +797,37 @@ public final class OpenApiServantPrxHelper extends Ice.ObjectPrxHelperBase imple
         }
     }
 
-    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos)
+    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos)
     {
         return begin_FindCommodityInfo(supplierId, Starttime, Endtime, ProductNos, null, false, null);
     }
 
-    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos, java.util.Map<String, String> __ctx)
+    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.Map<String, String> __ctx)
     {
         return begin_FindCommodityInfo(supplierId, Starttime, Endtime, ProductNos, __ctx, true, null);
     }
 
-    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos, Ice.Callback __cb)
+    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, Ice.Callback __cb)
     {
         return begin_FindCommodityInfo(supplierId, Starttime, Endtime, ProductNos, null, false, __cb);
     }
 
-    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.Map<String, String> __ctx, Ice.Callback __cb)
     {
         return begin_FindCommodityInfo(supplierId, Starttime, Endtime, ProductNos, __ctx, true, __cb);
     }
 
-    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos, Callback_OpenApiServant_FindCommodityInfo __cb)
+    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, Callback_OpenApiServant_FindCommodityInfo __cb)
     {
         return begin_FindCommodityInfo(supplierId, Starttime, Endtime, ProductNos, null, false, __cb);
     }
 
-    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindCommodityInfo __cb)
+    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindCommodityInfo __cb)
     {
         return begin_FindCommodityInfo(supplierId, Starttime, Endtime, ProductNos, __ctx, true, __cb);
     }
 
-    private Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
+    private Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
     {
         __checkAsyncTwowayOnly(__FindCommodityInfo_name);
         IceInternal.OutgoingAsync __result = new IceInternal.OutgoingAsync(this, __FindCommodityInfo_name, __cb);
@@ -1753,21 +2186,886 @@ public final class OpenApiServantPrxHelper extends Ice.ObjectPrxHelperBase imple
         }
     }
 
+    private static final String __FindSpBrandPage_name = "FindSpBrandPage";
+
+    public ShangPin.SOP.Entity.Api.Product.SpBrandPage FindSpBrandPage(String supplierId, int pageIndex, int pageSize)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpBrandPage(supplierId, pageIndex, pageSize, null, false);
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpBrandPage FindSpBrandPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpBrandPage(supplierId, pageIndex, pageSize, __ctx, true);
+    }
+
+    private ShangPin.SOP.Entity.Api.Product.SpBrandPage FindSpBrandPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        final Ice.Instrumentation.InvocationObserver __observer = IceInternal.ObserverHelper.get(this, "FindSpBrandPage", __ctx);
+        int __cnt = 0;
+        try
+        {
+            while(true)
+            {
+                Ice._ObjectDel __delBase = null;
+                try
+                {
+                    __checkTwowayOnly("FindSpBrandPage");
+                    __delBase = __getDelegate(false);
+                    _OpenApiServantDel __del = (_OpenApiServantDel)__delBase;
+                    return __del.FindSpBrandPage(supplierId, pageIndex, pageSize, __ctx, __observer);
+                }
+                catch(IceInternal.LocalExceptionWrapper __ex)
+                {
+                    __cnt = __handleExceptionWrapperRelaxed(__delBase, __ex, null, __cnt, __observer);
+                }
+                catch(Ice.LocalException __ex)
+                {
+                    __cnt = __handleException(__delBase, __ex, null, __cnt, __observer);
+                }
+            }
+        }
+        finally
+        {
+            if(__observer != null)
+            {
+                __observer.detach();
+            }
+        }
+    }
+
+    public Ice.AsyncResult begin_FindSpBrandPage(String supplierId, int pageIndex, int pageSize)
+    {
+        return begin_FindSpBrandPage(supplierId, pageIndex, pageSize, null, false, null);
+    }
+
+    public Ice.AsyncResult begin_FindSpBrandPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx)
+    {
+        return begin_FindSpBrandPage(supplierId, pageIndex, pageSize, __ctx, true, null);
+    }
+
+    public Ice.AsyncResult begin_FindSpBrandPage(String supplierId, int pageIndex, int pageSize, Ice.Callback __cb)
+    {
+        return begin_FindSpBrandPage(supplierId, pageIndex, pageSize, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpBrandPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    {
+        return begin_FindSpBrandPage(supplierId, pageIndex, pageSize, __ctx, true, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpBrandPage(String supplierId, int pageIndex, int pageSize, Callback_OpenApiServant_FindSpBrandPage __cb)
+    {
+        return begin_FindSpBrandPage(supplierId, pageIndex, pageSize, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpBrandPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindSpBrandPage __cb)
+    {
+        return begin_FindSpBrandPage(supplierId, pageIndex, pageSize, __ctx, true, __cb);
+    }
+
+    private Ice.AsyncResult begin_FindSpBrandPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
+    {
+        __checkAsyncTwowayOnly(__FindSpBrandPage_name);
+        IceInternal.OutgoingAsync __result = new IceInternal.OutgoingAsync(this, __FindSpBrandPage_name, __cb);
+        try
+        {
+            __result.__prepare(__FindSpBrandPage_name, Ice.OperationMode.Idempotent, __ctx, __explicitCtx);
+            IceInternal.BasicStream __os = __result.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(supplierId);
+            __os.writeInt(pageIndex);
+            __os.writeInt(pageSize);
+            __result.__endWriteParams();
+            __result.__send(true);
+        }
+        catch(Ice.LocalException __ex)
+        {
+            __result.__exceptionAsync(__ex);
+        }
+        return __result;
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpBrandPage end_FindSpBrandPage(Ice.AsyncResult __result)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        Ice.AsyncResult.__check(__result, this, __FindSpBrandPage_name);
+        boolean __ok = __result.__wait();
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __result.__throwUserException();
+                }
+                catch(ShangPin.SOP.Api.ApiException __ex)
+                {
+                    throw __ex;
+                }
+                catch(Ice.UserException __ex)
+                {
+                    throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                }
+            }
+            IceInternal.BasicStream __is = __result.__startReadParams();
+            ShangPin.SOP.Entity.Api.Product.SpBrandPageHolder __ret = new ShangPin.SOP.Entity.Api.Product.SpBrandPageHolder();
+            __is.readObject(__ret);
+            __is.readPendingObjects();
+            __result.__endReadParams();
+            return __ret.value;
+        }
+        catch(Ice.LocalException ex)
+        {
+            Ice.Instrumentation.InvocationObserver __obsv = __result.__getObserver();
+            if(__obsv != null)
+            {
+                __obsv.failed(ex.ice_name());
+            }
+            throw ex;
+        }
+    }
+
+    private static final String __FindSpCategoryPage_name = "FindSpCategoryPage";
+
+    public ShangPin.SOP.Entity.Api.Product.SpCategoryPage FindSpCategoryPage(String supplierId, int pageIndex, int pageSize)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpCategoryPage(supplierId, pageIndex, pageSize, null, false);
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpCategoryPage FindSpCategoryPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpCategoryPage(supplierId, pageIndex, pageSize, __ctx, true);
+    }
+
+    private ShangPin.SOP.Entity.Api.Product.SpCategoryPage FindSpCategoryPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        final Ice.Instrumentation.InvocationObserver __observer = IceInternal.ObserverHelper.get(this, "FindSpCategoryPage", __ctx);
+        int __cnt = 0;
+        try
+        {
+            while(true)
+            {
+                Ice._ObjectDel __delBase = null;
+                try
+                {
+                    __checkTwowayOnly("FindSpCategoryPage");
+                    __delBase = __getDelegate(false);
+                    _OpenApiServantDel __del = (_OpenApiServantDel)__delBase;
+                    return __del.FindSpCategoryPage(supplierId, pageIndex, pageSize, __ctx, __observer);
+                }
+                catch(IceInternal.LocalExceptionWrapper __ex)
+                {
+                    __cnt = __handleExceptionWrapperRelaxed(__delBase, __ex, null, __cnt, __observer);
+                }
+                catch(Ice.LocalException __ex)
+                {
+                    __cnt = __handleException(__delBase, __ex, null, __cnt, __observer);
+                }
+            }
+        }
+        finally
+        {
+            if(__observer != null)
+            {
+                __observer.detach();
+            }
+        }
+    }
+
+    public Ice.AsyncResult begin_FindSpCategoryPage(String supplierId, int pageIndex, int pageSize)
+    {
+        return begin_FindSpCategoryPage(supplierId, pageIndex, pageSize, null, false, null);
+    }
+
+    public Ice.AsyncResult begin_FindSpCategoryPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx)
+    {
+        return begin_FindSpCategoryPage(supplierId, pageIndex, pageSize, __ctx, true, null);
+    }
+
+    public Ice.AsyncResult begin_FindSpCategoryPage(String supplierId, int pageIndex, int pageSize, Ice.Callback __cb)
+    {
+        return begin_FindSpCategoryPage(supplierId, pageIndex, pageSize, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpCategoryPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    {
+        return begin_FindSpCategoryPage(supplierId, pageIndex, pageSize, __ctx, true, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpCategoryPage(String supplierId, int pageIndex, int pageSize, Callback_OpenApiServant_FindSpCategoryPage __cb)
+    {
+        return begin_FindSpCategoryPage(supplierId, pageIndex, pageSize, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpCategoryPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindSpCategoryPage __cb)
+    {
+        return begin_FindSpCategoryPage(supplierId, pageIndex, pageSize, __ctx, true, __cb);
+    }
+
+    private Ice.AsyncResult begin_FindSpCategoryPage(String supplierId, int pageIndex, int pageSize, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
+    {
+        __checkAsyncTwowayOnly(__FindSpCategoryPage_name);
+        IceInternal.OutgoingAsync __result = new IceInternal.OutgoingAsync(this, __FindSpCategoryPage_name, __cb);
+        try
+        {
+            __result.__prepare(__FindSpCategoryPage_name, Ice.OperationMode.Idempotent, __ctx, __explicitCtx);
+            IceInternal.BasicStream __os = __result.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(supplierId);
+            __os.writeInt(pageIndex);
+            __os.writeInt(pageSize);
+            __result.__endWriteParams();
+            __result.__send(true);
+        }
+        catch(Ice.LocalException __ex)
+        {
+            __result.__exceptionAsync(__ex);
+        }
+        return __result;
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpCategoryPage end_FindSpCategoryPage(Ice.AsyncResult __result)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        Ice.AsyncResult.__check(__result, this, __FindSpCategoryPage_name);
+        boolean __ok = __result.__wait();
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __result.__throwUserException();
+                }
+                catch(ShangPin.SOP.Api.ApiException __ex)
+                {
+                    throw __ex;
+                }
+                catch(Ice.UserException __ex)
+                {
+                    throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                }
+            }
+            IceInternal.BasicStream __is = __result.__startReadParams();
+            ShangPin.SOP.Entity.Api.Product.SpCategoryPageHolder __ret = new ShangPin.SOP.Entity.Api.Product.SpCategoryPageHolder();
+            __is.readObject(__ret);
+            __is.readPendingObjects();
+            __result.__endReadParams();
+            return __ret.value;
+        }
+        catch(Ice.LocalException ex)
+        {
+            Ice.Instrumentation.InvocationObserver __obsv = __result.__getObserver();
+            if(__obsv != null)
+            {
+                __obsv.failed(ex.ice_name());
+            }
+            throw ex;
+        }
+    }
+
+    private static final String __FindSpCategorySizeStandard_name = "FindSpCategorySizeStandard";
+
+    public ShangPin.SOP.Entity.Api.Product.SpCategorySizeStandard[] FindSpCategorySizeStandard(String supplierId, String CategoryNo)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpCategorySizeStandard(supplierId, CategoryNo, null, false);
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpCategorySizeStandard[] FindSpCategorySizeStandard(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpCategorySizeStandard(supplierId, CategoryNo, __ctx, true);
+    }
+
+    private ShangPin.SOP.Entity.Api.Product.SpCategorySizeStandard[] FindSpCategorySizeStandard(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        final Ice.Instrumentation.InvocationObserver __observer = IceInternal.ObserverHelper.get(this, "FindSpCategorySizeStandard", __ctx);
+        int __cnt = 0;
+        try
+        {
+            while(true)
+            {
+                Ice._ObjectDel __delBase = null;
+                try
+                {
+                    __checkTwowayOnly("FindSpCategorySizeStandard");
+                    __delBase = __getDelegate(false);
+                    _OpenApiServantDel __del = (_OpenApiServantDel)__delBase;
+                    return __del.FindSpCategorySizeStandard(supplierId, CategoryNo, __ctx, __observer);
+                }
+                catch(IceInternal.LocalExceptionWrapper __ex)
+                {
+                    __cnt = __handleExceptionWrapperRelaxed(__delBase, __ex, null, __cnt, __observer);
+                }
+                catch(Ice.LocalException __ex)
+                {
+                    __cnt = __handleException(__delBase, __ex, null, __cnt, __observer);
+                }
+            }
+        }
+        finally
+        {
+            if(__observer != null)
+            {
+                __observer.detach();
+            }
+        }
+    }
+
+    public Ice.AsyncResult begin_FindSpCategorySizeStandard(String supplierId, String CategoryNo)
+    {
+        return begin_FindSpCategorySizeStandard(supplierId, CategoryNo, null, false, null);
+    }
+
+    public Ice.AsyncResult begin_FindSpCategorySizeStandard(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx)
+    {
+        return begin_FindSpCategorySizeStandard(supplierId, CategoryNo, __ctx, true, null);
+    }
+
+    public Ice.AsyncResult begin_FindSpCategorySizeStandard(String supplierId, String CategoryNo, Ice.Callback __cb)
+    {
+        return begin_FindSpCategorySizeStandard(supplierId, CategoryNo, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpCategorySizeStandard(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    {
+        return begin_FindSpCategorySizeStandard(supplierId, CategoryNo, __ctx, true, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpCategorySizeStandard(String supplierId, String CategoryNo, Callback_OpenApiServant_FindSpCategorySizeStandard __cb)
+    {
+        return begin_FindSpCategorySizeStandard(supplierId, CategoryNo, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpCategorySizeStandard(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindSpCategorySizeStandard __cb)
+    {
+        return begin_FindSpCategorySizeStandard(supplierId, CategoryNo, __ctx, true, __cb);
+    }
+
+    private Ice.AsyncResult begin_FindSpCategorySizeStandard(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
+    {
+        __checkAsyncTwowayOnly(__FindSpCategorySizeStandard_name);
+        IceInternal.OutgoingAsync __result = new IceInternal.OutgoingAsync(this, __FindSpCategorySizeStandard_name, __cb);
+        try
+        {
+            __result.__prepare(__FindSpCategorySizeStandard_name, Ice.OperationMode.Idempotent, __ctx, __explicitCtx);
+            IceInternal.BasicStream __os = __result.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(supplierId);
+            __os.writeString(CategoryNo);
+            __result.__endWriteParams();
+            __result.__send(true);
+        }
+        catch(Ice.LocalException __ex)
+        {
+            __result.__exceptionAsync(__ex);
+        }
+        return __result;
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpCategorySizeStandard[] end_FindSpCategorySizeStandard(Ice.AsyncResult __result)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        Ice.AsyncResult.__check(__result, this, __FindSpCategorySizeStandard_name);
+        boolean __ok = __result.__wait();
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __result.__throwUserException();
+                }
+                catch(ShangPin.SOP.Api.ApiException __ex)
+                {
+                    throw __ex;
+                }
+                catch(Ice.UserException __ex)
+                {
+                    throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                }
+            }
+            IceInternal.BasicStream __is = __result.__startReadParams();
+            ShangPin.SOP.Entity.Api.Product.SpCategorySizeStandard[] __ret;
+            __ret = RSpCategorySizeStandardListHelper.read(__is);
+            __is.readPendingObjects();
+            __result.__endReadParams();
+            return __ret;
+        }
+        catch(Ice.LocalException ex)
+        {
+            Ice.Instrumentation.InvocationObserver __obsv = __result.__getObserver();
+            if(__obsv != null)
+            {
+                __obsv.failed(ex.ice_name());
+            }
+            throw ex;
+        }
+    }
+
+    private static final String __FindSpSizeTmp_name = "FindSpSizeTmp";
+
+    public ShangPin.SOP.Entity.Api.Product.SpSizeTmpIce FindSpSizeTmp(String supplierId, String SizeTmpNo)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpSizeTmp(supplierId, SizeTmpNo, null, false);
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpSizeTmpIce FindSpSizeTmp(String supplierId, String SizeTmpNo, java.util.Map<String, String> __ctx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpSizeTmp(supplierId, SizeTmpNo, __ctx, true);
+    }
+
+    private ShangPin.SOP.Entity.Api.Product.SpSizeTmpIce FindSpSizeTmp(String supplierId, String SizeTmpNo, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        final Ice.Instrumentation.InvocationObserver __observer = IceInternal.ObserverHelper.get(this, "FindSpSizeTmp", __ctx);
+        int __cnt = 0;
+        try
+        {
+            while(true)
+            {
+                Ice._ObjectDel __delBase = null;
+                try
+                {
+                    __checkTwowayOnly("FindSpSizeTmp");
+                    __delBase = __getDelegate(false);
+                    _OpenApiServantDel __del = (_OpenApiServantDel)__delBase;
+                    return __del.FindSpSizeTmp(supplierId, SizeTmpNo, __ctx, __observer);
+                }
+                catch(IceInternal.LocalExceptionWrapper __ex)
+                {
+                    __cnt = __handleExceptionWrapperRelaxed(__delBase, __ex, null, __cnt, __observer);
+                }
+                catch(Ice.LocalException __ex)
+                {
+                    __cnt = __handleException(__delBase, __ex, null, __cnt, __observer);
+                }
+            }
+        }
+        finally
+        {
+            if(__observer != null)
+            {
+                __observer.detach();
+            }
+        }
+    }
+
+    public Ice.AsyncResult begin_FindSpSizeTmp(String supplierId, String SizeTmpNo)
+    {
+        return begin_FindSpSizeTmp(supplierId, SizeTmpNo, null, false, null);
+    }
+
+    public Ice.AsyncResult begin_FindSpSizeTmp(String supplierId, String SizeTmpNo, java.util.Map<String, String> __ctx)
+    {
+        return begin_FindSpSizeTmp(supplierId, SizeTmpNo, __ctx, true, null);
+    }
+
+    public Ice.AsyncResult begin_FindSpSizeTmp(String supplierId, String SizeTmpNo, Ice.Callback __cb)
+    {
+        return begin_FindSpSizeTmp(supplierId, SizeTmpNo, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpSizeTmp(String supplierId, String SizeTmpNo, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    {
+        return begin_FindSpSizeTmp(supplierId, SizeTmpNo, __ctx, true, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpSizeTmp(String supplierId, String SizeTmpNo, Callback_OpenApiServant_FindSpSizeTmp __cb)
+    {
+        return begin_FindSpSizeTmp(supplierId, SizeTmpNo, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpSizeTmp(String supplierId, String SizeTmpNo, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindSpSizeTmp __cb)
+    {
+        return begin_FindSpSizeTmp(supplierId, SizeTmpNo, __ctx, true, __cb);
+    }
+
+    private Ice.AsyncResult begin_FindSpSizeTmp(String supplierId, String SizeTmpNo, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
+    {
+        __checkAsyncTwowayOnly(__FindSpSizeTmp_name);
+        IceInternal.OutgoingAsync __result = new IceInternal.OutgoingAsync(this, __FindSpSizeTmp_name, __cb);
+        try
+        {
+            __result.__prepare(__FindSpSizeTmp_name, Ice.OperationMode.Idempotent, __ctx, __explicitCtx);
+            IceInternal.BasicStream __os = __result.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(supplierId);
+            __os.writeString(SizeTmpNo);
+            __result.__endWriteParams();
+            __result.__send(true);
+        }
+        catch(Ice.LocalException __ex)
+        {
+            __result.__exceptionAsync(__ex);
+        }
+        return __result;
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpSizeTmpIce end_FindSpSizeTmp(Ice.AsyncResult __result)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        Ice.AsyncResult.__check(__result, this, __FindSpSizeTmp_name);
+        boolean __ok = __result.__wait();
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __result.__throwUserException();
+                }
+                catch(ShangPin.SOP.Api.ApiException __ex)
+                {
+                    throw __ex;
+                }
+                catch(Ice.UserException __ex)
+                {
+                    throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                }
+            }
+            IceInternal.BasicStream __is = __result.__startReadParams();
+            ShangPin.SOP.Entity.Api.Product.SpSizeTmpIceHolder __ret = new ShangPin.SOP.Entity.Api.Product.SpSizeTmpIceHolder();
+            __is.readObject(__ret);
+            __is.readPendingObjects();
+            __result.__endReadParams();
+            return __ret.value;
+        }
+        catch(Ice.LocalException ex)
+        {
+            Ice.Instrumentation.InvocationObserver __obsv = __result.__getObserver();
+            if(__obsv != null)
+            {
+                __obsv.failed(ex.ice_name());
+            }
+            throw ex;
+        }
+    }
+
+    private static final String __FindSpSpfProductAttributeInfo_name = "FindSpSpfProductAttributeInfo";
+
+    public ShangPin.SOP.Entity.Api.Product.SpfProductAttributeInfoIce[] FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpSpfProductAttributeInfo(supplierId, CategoryNo, null, false);
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpfProductAttributeInfoIce[] FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpSpfProductAttributeInfo(supplierId, CategoryNo, __ctx, true);
+    }
+
+    private ShangPin.SOP.Entity.Api.Product.SpfProductAttributeInfoIce[] FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        final Ice.Instrumentation.InvocationObserver __observer = IceInternal.ObserverHelper.get(this, "FindSpSpfProductAttributeInfo", __ctx);
+        int __cnt = 0;
+        try
+        {
+            while(true)
+            {
+                Ice._ObjectDel __delBase = null;
+                try
+                {
+                    __checkTwowayOnly("FindSpSpfProductAttributeInfo");
+                    __delBase = __getDelegate(false);
+                    _OpenApiServantDel __del = (_OpenApiServantDel)__delBase;
+                    return __del.FindSpSpfProductAttributeInfo(supplierId, CategoryNo, __ctx, __observer);
+                }
+                catch(IceInternal.LocalExceptionWrapper __ex)
+                {
+                    __cnt = __handleExceptionWrapperRelaxed(__delBase, __ex, null, __cnt, __observer);
+                }
+                catch(Ice.LocalException __ex)
+                {
+                    __cnt = __handleException(__delBase, __ex, null, __cnt, __observer);
+                }
+            }
+        }
+        finally
+        {
+            if(__observer != null)
+            {
+                __observer.detach();
+            }
+        }
+    }
+
+    public Ice.AsyncResult begin_FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo)
+    {
+        return begin_FindSpSpfProductAttributeInfo(supplierId, CategoryNo, null, false, null);
+    }
+
+    public Ice.AsyncResult begin_FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx)
+    {
+        return begin_FindSpSpfProductAttributeInfo(supplierId, CategoryNo, __ctx, true, null);
+    }
+
+    public Ice.AsyncResult begin_FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo, Ice.Callback __cb)
+    {
+        return begin_FindSpSpfProductAttributeInfo(supplierId, CategoryNo, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    {
+        return begin_FindSpSpfProductAttributeInfo(supplierId, CategoryNo, __ctx, true, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo, Callback_OpenApiServant_FindSpSpfProductAttributeInfo __cb)
+    {
+        return begin_FindSpSpfProductAttributeInfo(supplierId, CategoryNo, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindSpSpfProductAttributeInfo __cb)
+    {
+        return begin_FindSpSpfProductAttributeInfo(supplierId, CategoryNo, __ctx, true, __cb);
+    }
+
+    private Ice.AsyncResult begin_FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
+    {
+        __checkAsyncTwowayOnly(__FindSpSpfProductAttributeInfo_name);
+        IceInternal.OutgoingAsync __result = new IceInternal.OutgoingAsync(this, __FindSpSpfProductAttributeInfo_name, __cb);
+        try
+        {
+            __result.__prepare(__FindSpSpfProductAttributeInfo_name, Ice.OperationMode.Idempotent, __ctx, __explicitCtx);
+            IceInternal.BasicStream __os = __result.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(supplierId);
+            __os.writeString(CategoryNo);
+            __result.__endWriteParams();
+            __result.__send(true);
+        }
+        catch(Ice.LocalException __ex)
+        {
+            __result.__exceptionAsync(__ex);
+        }
+        return __result;
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpfProductAttributeInfoIce[] end_FindSpSpfProductAttributeInfo(Ice.AsyncResult __result)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        Ice.AsyncResult.__check(__result, this, __FindSpSpfProductAttributeInfo_name);
+        boolean __ok = __result.__wait();
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __result.__throwUserException();
+                }
+                catch(ShangPin.SOP.Api.ApiException __ex)
+                {
+                    throw __ex;
+                }
+                catch(Ice.UserException __ex)
+                {
+                    throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                }
+            }
+            IceInternal.BasicStream __is = __result.__startReadParams();
+            ShangPin.SOP.Entity.Api.Product.SpfProductAttributeInfoIce[] __ret;
+            __ret = RSpfProductAttributeInfoIceListHelper.read(__is);
+            __is.readPendingObjects();
+            __result.__endReadParams();
+            return __ret;
+        }
+        catch(Ice.LocalException ex)
+        {
+            Ice.Instrumentation.InvocationObserver __obsv = __result.__getObserver();
+            if(__obsv != null)
+            {
+                __obsv.failed(ex.ice_name());
+            }
+            throw ex;
+        }
+    }
+
+    private static final String __FindSpfProductMainColor_name = "FindSpfProductMainColor";
+
+    public ShangPin.SOP.Entity.Api.Product.SpfProductMainColor[] FindSpfProductMainColor(String supplierId)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpfProductMainColor(supplierId, null, false);
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpfProductMainColor[] FindSpfProductMainColor(String supplierId, java.util.Map<String, String> __ctx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpfProductMainColor(supplierId, __ctx, true);
+    }
+
+    private ShangPin.SOP.Entity.Api.Product.SpfProductMainColor[] FindSpfProductMainColor(String supplierId, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        final Ice.Instrumentation.InvocationObserver __observer = IceInternal.ObserverHelper.get(this, "FindSpfProductMainColor", __ctx);
+        int __cnt = 0;
+        try
+        {
+            while(true)
+            {
+                Ice._ObjectDel __delBase = null;
+                try
+                {
+                    __checkTwowayOnly("FindSpfProductMainColor");
+                    __delBase = __getDelegate(false);
+                    _OpenApiServantDel __del = (_OpenApiServantDel)__delBase;
+                    return __del.FindSpfProductMainColor(supplierId, __ctx, __observer);
+                }
+                catch(IceInternal.LocalExceptionWrapper __ex)
+                {
+                    __cnt = __handleExceptionWrapperRelaxed(__delBase, __ex, null, __cnt, __observer);
+                }
+                catch(Ice.LocalException __ex)
+                {
+                    __cnt = __handleException(__delBase, __ex, null, __cnt, __observer);
+                }
+            }
+        }
+        finally
+        {
+            if(__observer != null)
+            {
+                __observer.detach();
+            }
+        }
+    }
+
+    public Ice.AsyncResult begin_FindSpfProductMainColor(String supplierId)
+    {
+        return begin_FindSpfProductMainColor(supplierId, null, false, null);
+    }
+
+    public Ice.AsyncResult begin_FindSpfProductMainColor(String supplierId, java.util.Map<String, String> __ctx)
+    {
+        return begin_FindSpfProductMainColor(supplierId, __ctx, true, null);
+    }
+
+    public Ice.AsyncResult begin_FindSpfProductMainColor(String supplierId, Ice.Callback __cb)
+    {
+        return begin_FindSpfProductMainColor(supplierId, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpfProductMainColor(String supplierId, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    {
+        return begin_FindSpfProductMainColor(supplierId, __ctx, true, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpfProductMainColor(String supplierId, Callback_OpenApiServant_FindSpfProductMainColor __cb)
+    {
+        return begin_FindSpfProductMainColor(supplierId, null, false, __cb);
+    }
+
+    public Ice.AsyncResult begin_FindSpfProductMainColor(String supplierId, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindSpfProductMainColor __cb)
+    {
+        return begin_FindSpfProductMainColor(supplierId, __ctx, true, __cb);
+    }
+
+    private Ice.AsyncResult begin_FindSpfProductMainColor(String supplierId, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
+    {
+        __checkAsyncTwowayOnly(__FindSpfProductMainColor_name);
+        IceInternal.OutgoingAsync __result = new IceInternal.OutgoingAsync(this, __FindSpfProductMainColor_name, __cb);
+        try
+        {
+            __result.__prepare(__FindSpfProductMainColor_name, Ice.OperationMode.Idempotent, __ctx, __explicitCtx);
+            IceInternal.BasicStream __os = __result.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(supplierId);
+            __result.__endWriteParams();
+            __result.__send(true);
+        }
+        catch(Ice.LocalException __ex)
+        {
+            __result.__exceptionAsync(__ex);
+        }
+        return __result;
+    }
+
+    public ShangPin.SOP.Entity.Api.Product.SpfProductMainColor[] end_FindSpfProductMainColor(Ice.AsyncResult __result)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        Ice.AsyncResult.__check(__result, this, __FindSpfProductMainColor_name);
+        boolean __ok = __result.__wait();
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __result.__throwUserException();
+                }
+                catch(ShangPin.SOP.Api.ApiException __ex)
+                {
+                    throw __ex;
+                }
+                catch(Ice.UserException __ex)
+                {
+                    throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                }
+            }
+            IceInternal.BasicStream __is = __result.__startReadParams();
+            ShangPin.SOP.Entity.Api.Product.SpfProductMainColor[] __ret;
+            __ret = RSpfProductMainColorListHelper.read(__is);
+            __is.readPendingObjects();
+            __result.__endReadParams();
+            return __ret;
+        }
+        catch(Ice.LocalException ex)
+        {
+            Ice.Instrumentation.InvocationObserver __obsv = __result.__getObserver();
+            if(__obsv != null)
+            {
+                __obsv.failed(ex.ice_name());
+            }
+            throw ex;
+        }
+    }
+
     private static final String __FindStockInfo_name = "FindStockInfo";
 
-    public ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindStockInfo(String supplierId, java.util.List<String> SkuNos)
+    public ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos)
         throws ShangPin.SOP.Api.ApiException
     {
         return FindStockInfo(supplierId, SkuNos, null, false);
     }
 
-    public ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindStockInfo(String supplierId, java.util.List<String> SkuNos, java.util.Map<String, String> __ctx)
+    public ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos, java.util.Map<String, String> __ctx)
         throws ShangPin.SOP.Api.ApiException
     {
         return FindStockInfo(supplierId, SkuNos, __ctx, true);
     }
 
-    private ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindStockInfo(String supplierId, java.util.List<String> SkuNos, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    private ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos, java.util.Map<String, String> __ctx, boolean __explicitCtx)
         throws ShangPin.SOP.Api.ApiException
     {
         if(__explicitCtx && __ctx == null)
@@ -1807,37 +3105,37 @@ public final class OpenApiServantPrxHelper extends Ice.ObjectPrxHelperBase imple
         }
     }
 
-    public Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<String> SkuNos)
+    public Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos)
     {
         return begin_FindStockInfo(supplierId, SkuNos, null, false, null);
     }
 
-    public Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<String> SkuNos, java.util.Map<String, String> __ctx)
+    public Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos, java.util.Map<String, String> __ctx)
     {
         return begin_FindStockInfo(supplierId, SkuNos, __ctx, true, null);
     }
 
-    public Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<String> SkuNos, Ice.Callback __cb)
+    public Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos, Ice.Callback __cb)
     {
         return begin_FindStockInfo(supplierId, SkuNos, null, false, __cb);
     }
 
-    public Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<String> SkuNos, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    public Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos, java.util.Map<String, String> __ctx, Ice.Callback __cb)
     {
         return begin_FindStockInfo(supplierId, SkuNos, __ctx, true, __cb);
     }
 
-    public Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<String> SkuNos, Callback_OpenApiServant_FindStockInfo __cb)
+    public Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos, Callback_OpenApiServant_FindStockInfo __cb)
     {
         return begin_FindStockInfo(supplierId, SkuNos, null, false, __cb);
     }
 
-    public Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<String> SkuNos, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindStockInfo __cb)
+    public Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindStockInfo __cb)
     {
         return begin_FindStockInfo(supplierId, SkuNos, __ctx, true, __cb);
     }
 
-    private Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<String> SkuNos, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
+    private Ice.AsyncResult begin_FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
     {
         __checkAsyncTwowayOnly(__FindStockInfo_name);
         IceInternal.OutgoingAsync __result = new IceInternal.OutgoingAsync(this, __FindStockInfo_name, __cb);
@@ -1899,19 +3197,19 @@ public final class OpenApiServantPrxHelper extends Ice.ObjectPrxHelperBase imple
 
     private static final String __FindSuppliersById_name = "FindSuppliersById";
 
-    public java.util.Map<String, String> FindSuppliersById(String Id)
+    public java.util.Map<java.lang.String, java.lang.String> FindSuppliersById(String Id)
         throws ShangPin.SOP.Api.ApiException
     {
         return FindSuppliersById(Id, null, false);
     }
 
-    public java.util.Map<String, String> FindSuppliersById(String Id, java.util.Map<String, String> __ctx)
+    public java.util.Map<java.lang.String, java.lang.String> FindSuppliersById(String Id, java.util.Map<String, String> __ctx)
         throws ShangPin.SOP.Api.ApiException
     {
         return FindSuppliersById(Id, __ctx, true);
     }
 
-    private java.util.Map<String, String> FindSuppliersById(String Id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    private java.util.Map<java.lang.String, java.lang.String> FindSuppliersById(String Id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
         throws ShangPin.SOP.Api.ApiException
     {
         if(__explicitCtx && __ctx == null)
@@ -2000,7 +3298,7 @@ public final class OpenApiServantPrxHelper extends Ice.ObjectPrxHelperBase imple
         return __result;
     }
 
-    public java.util.Map<String, String> end_FindSuppliersById(Ice.AsyncResult __result)
+    public java.util.Map<java.lang.String, java.lang.String> end_FindSuppliersById(Ice.AsyncResult __result)
         throws ShangPin.SOP.Api.ApiException
     {
         Ice.AsyncResult.__check(__result, this, __FindSuppliersById_name);
@@ -2023,7 +3321,7 @@ public final class OpenApiServantPrxHelper extends Ice.ObjectPrxHelperBase imple
                 }
             }
             IceInternal.BasicStream __is = __result.__startReadParams();
-            java.util.Map<String, String> __ret;
+            java.util.Map<java.lang.String, java.lang.String> __ret;
             __ret = SuppliersMapHelper.read(__is);
             __result.__endReadParams();
             return __ret;
@@ -2041,19 +3339,19 @@ public final class OpenApiServantPrxHelper extends Ice.ObjectPrxHelperBase imple
 
     private static final String __FindSuppliersByName_name = "FindSuppliersByName";
 
-    public java.util.Map<String, String> FindSuppliersByName(String Name)
+    public java.util.Map<java.lang.String, java.lang.String> FindSuppliersByName(String Name)
         throws ShangPin.SOP.Api.ApiException
     {
         return FindSuppliersByName(Name, null, false);
     }
 
-    public java.util.Map<String, String> FindSuppliersByName(String Name, java.util.Map<String, String> __ctx)
+    public java.util.Map<java.lang.String, java.lang.String> FindSuppliersByName(String Name, java.util.Map<String, String> __ctx)
         throws ShangPin.SOP.Api.ApiException
     {
         return FindSuppliersByName(Name, __ctx, true);
     }
 
-    private java.util.Map<String, String> FindSuppliersByName(String Name, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    private java.util.Map<java.lang.String, java.lang.String> FindSuppliersByName(String Name, java.util.Map<String, String> __ctx, boolean __explicitCtx)
         throws ShangPin.SOP.Api.ApiException
     {
         if(__explicitCtx && __ctx == null)
@@ -2142,7 +3440,7 @@ public final class OpenApiServantPrxHelper extends Ice.ObjectPrxHelperBase imple
         return __result;
     }
 
-    public java.util.Map<String, String> end_FindSuppliersByName(Ice.AsyncResult __result)
+    public java.util.Map<java.lang.String, java.lang.String> end_FindSuppliersByName(Ice.AsyncResult __result)
         throws ShangPin.SOP.Api.ApiException
     {
         Ice.AsyncResult.__check(__result, this, __FindSuppliersByName_name);
@@ -2165,7 +3463,7 @@ public final class OpenApiServantPrxHelper extends Ice.ObjectPrxHelperBase imple
                 }
             }
             IceInternal.BasicStream __is = __result.__startReadParams();
-            java.util.Map<String, String> __ret;
+            java.util.Map<java.lang.String, java.lang.String> __ret;
             __ret = SuppliersMapHelper.read(__is);
             __result.__endReadParams();
             return __ret;

@@ -26,7 +26,7 @@ public class ReturnOrderQueryDto extends Ice.ObjectImpl
     {
     }
 
-    public ReturnOrderQueryDto(String UpdateTimeBegin, String UpdateTimeEnd, java.util.List<Integer> ReturnOrderStatus, int PageIndex, int PageSize)
+    public ReturnOrderQueryDto(String UpdateTimeBegin, String UpdateTimeEnd, java.util.List<java.lang.Integer> ReturnOrderStatus, int PageIndex, int PageSize)
     {
         this.UpdateTimeBegin = UpdateTimeBegin;
         this.UpdateTimeEnd = UpdateTimeEnd;
@@ -122,7 +122,7 @@ public class ReturnOrderQueryDto extends Ice.ObjectImpl
 
     public String UpdateTimeEnd;
 
-    public java.util.List<Integer> ReturnOrderStatus;
+    public java.util.List<java.lang.Integer> ReturnOrderStatus;
 
     public int PageIndex;
 

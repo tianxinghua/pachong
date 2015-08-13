@@ -55,7 +55,7 @@ public class FetchProduct {
                 String json = null;
                 try {
 
-                    json = HttpUtil45.get(url,new OutTimeConfig(),null);
+                    json = HttpUtil45.get(url,new OutTimeConfig(3000,4000,4000),null);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -131,7 +131,7 @@ public class FetchProduct {
                                         ProductPictureDTO pic = new ProductPictureDTO();
                                         pic.setPicUrl(image);
                                         pic.setId(UUIDGenerator.getUUID());
-                                        pic.setSkuId(sku.getBarcode());
+                                        pic.setSkuId(sku.getItem_id());
                                         pic.setSupplierId(supplierId);
                                         try {
                                             pfs.savePictureForMongo(pic);

@@ -40,6 +40,7 @@ public class FetchProduct {
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
             timeConfig.confRequestOutTime(360000);
+            timeConfig.confSocketOutTime(360000);
             String result = HttpUtil45.get(url,timeConfig,null);
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","galiano");

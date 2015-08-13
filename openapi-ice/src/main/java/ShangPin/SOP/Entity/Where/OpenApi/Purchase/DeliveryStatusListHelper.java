@@ -23,7 +23,7 @@ package ShangPin.SOP.Entity.Where.OpenApi.Purchase;
 public final class DeliveryStatusListHelper
 {
     public static void
-    write(IceInternal.BasicStream __os, java.util.List<Integer> __v)
+    write(IceInternal.BasicStream __os, java.util.List<java.lang.Integer> __v)
     {
         if(__v == null)
         {
@@ -39,10 +39,10 @@ public final class DeliveryStatusListHelper
         }
     }
 
-    public static java.util.List<Integer>
+    public static java.util.List<java.lang.Integer>
     read(IceInternal.BasicStream __is)
     {
-        java.util.List<Integer> __v;
+        java.util.List<java.lang.Integer> __v;
         __v = new java.util.LinkedList();
         final int __len0 = __is.readAndCheckSeqSize(4);
         for(int __i0 = 0; __i0 < __len0; __i0++)

@@ -24,9 +24,9 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
 {
     protected void
     ice_copyStateFrom(Ice.Object __obj)
-        throws CloneNotSupportedException
+        throws java.lang.CloneNotSupportedException
     {
-        throw new CloneNotSupportedException();
+        throw new java.lang.CloneNotSupportedException();
     }
 
     public static final String[] __ids =
@@ -70,7 +70,19 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         return __ids[1];
     }
 
-    public final boolean AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<String> purchaseOrderDetailNos)
+    public final int AddCommodity(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductAddIce productAdd)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return AddCommodity(supplierId, productAdd, null);
+    }
+
+    public final boolean AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return AddCommodityPic(supplierId, ProductPicIce, null);
+    }
+
+    public final boolean AddPurchaseDetailToDeliveryOrder(String supplierId, String deliveryOrderNo, java.util.List<java.lang.String> purchaseOrderDetailNos)
         throws ShangPin.SOP.Api.ApiException
     {
         return AddPurchaseDetailToDeliveryOrder(supplierId, deliveryOrderNo, purchaseOrderDetailNos, null);
@@ -82,7 +94,13 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         return CreateDeliveryOrder(supplierId, deliverOrder, null);
     }
 
-    public final ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<String> ProductNos)
+    public final ShangPin.SOP.Entity.Api.Product.SopAreaPage FindAreaPage(String supplierId, int pageIndex, int pageSize)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindAreaPage(supplierId, pageIndex, pageSize, null);
+    }
+
+    public final ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos)
         throws ShangPin.SOP.Api.ApiException
     {
         return FindCommodityInfo(supplierId, Starttime, Endtime, ProductNos, null);
@@ -142,19 +160,55 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         return FindReturnOrderPaged(supplierId, queryDto, null);
     }
 
-    public final ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindStockInfo(String supplierId, java.util.List<String> SkuNos)
+    public final ShangPin.SOP.Entity.Api.Product.SpBrandPage FindSpBrandPage(String supplierId, int pageIndex, int pageSize)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpBrandPage(supplierId, pageIndex, pageSize, null);
+    }
+
+    public final ShangPin.SOP.Entity.Api.Product.SpCategoryPage FindSpCategoryPage(String supplierId, int pageIndex, int pageSize)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpCategoryPage(supplierId, pageIndex, pageSize, null);
+    }
+
+    public final ShangPin.SOP.Entity.Api.Product.SpCategorySizeStandard[] FindSpCategorySizeStandard(String supplierId, String CategoryNo)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpCategorySizeStandard(supplierId, CategoryNo, null);
+    }
+
+    public final ShangPin.SOP.Entity.Api.Product.SpSizeTmpIce FindSpSizeTmp(String supplierId, String SizeTmpNo)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpSizeTmp(supplierId, SizeTmpNo, null);
+    }
+
+    public final ShangPin.SOP.Entity.Api.Product.SpfProductAttributeInfoIce[] FindSpSpfProductAttributeInfo(String supplierId, String CategoryNo)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpSpfProductAttributeInfo(supplierId, CategoryNo, null);
+    }
+
+    public final ShangPin.SOP.Entity.Api.Product.SpfProductMainColor[] FindSpfProductMainColor(String supplierId)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSpfProductMainColor(supplierId, null);
+    }
+
+    public final ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos)
         throws ShangPin.SOP.Api.ApiException
     {
         return FindStockInfo(supplierId, SkuNos, null);
     }
 
-    public final java.util.Map<String, String> FindSuppliersById(String Id)
+    public final java.util.Map<java.lang.String, java.lang.String> FindSuppliersById(String Id)
         throws ShangPin.SOP.Api.ApiException
     {
         return FindSuppliersById(Id, null);
     }
 
-    public final java.util.Map<String, String> FindSuppliersByName(String Name)
+    public final java.util.Map<java.lang.String, java.lang.String> FindSuppliersByName(String Name)
         throws ShangPin.SOP.Api.ApiException
     {
         return FindSuppliersByName(Name, null);
@@ -234,7 +288,7 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         __checkMode(Ice.OperationMode.Idempotent, __current.mode);
         IceInternal.BasicStream __is = __inS.startReadParams();
         String supplierId;
-        java.util.List<String> SkuNos;
+        java.util.List<java.lang.String> SkuNos;
         supplierId = __is.readString();
         SkuNos = StringListHelper.read(__is);
         __inS.endReadParams();
@@ -287,7 +341,7 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         String supplierId;
         String Starttime;
         String Endtime;
-        java.util.List<String> ProductNos;
+        java.util.List<java.lang.String> ProductNos;
         supplierId = __is.readString();
         Starttime = __is.readString();
         Endtime = __is.readString();
@@ -364,7 +418,7 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         __inS.endReadParams();
         try
         {
-            java.util.Map<String, String> __ret = __obj.FindSuppliersById(Id, __current);
+            java.util.Map<java.lang.String, java.lang.String> __ret = __obj.FindSuppliersById(Id, __current);
             IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
             SuppliersMapHelper.write(__os, __ret);
             __inS.__endWriteParams(true);
@@ -386,7 +440,7 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         __inS.endReadParams();
         try
         {
-            java.util.Map<String, String> __ret = __obj.FindSuppliersByName(Name, __current);
+            java.util.Map<java.lang.String, java.lang.String> __ret = __obj.FindSuppliersByName(Name, __current);
             IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
             SuppliersMapHelper.write(__os, __ret);
             __inS.__endWriteParams(true);
@@ -430,7 +484,7 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         IceInternal.BasicStream __is = __inS.startReadParams();
         String supplierId;
         String deliveryOrderNo;
-        java.util.List<String> purchaseOrderDetailNos;
+        java.util.List<java.lang.String> purchaseOrderDetailNos;
         supplierId = __is.readString();
         deliveryOrderNo = __is.readString();
         purchaseOrderDetailNos = StringListHelper.read(__is);
@@ -628,10 +682,242 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         }
     }
 
+    public static Ice.DispatchStatus ___FindSpCategoryPage(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        int pageIndex;
+        int pageSize;
+        supplierId = __is.readString();
+        pageIndex = __is.readInt();
+        pageSize = __is.readInt();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Product.SpCategoryPage __ret = __obj.FindSpCategoryPage(supplierId, pageIndex, pageSize, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeObject(__ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___FindSpBrandPage(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        int pageIndex;
+        int pageSize;
+        supplierId = __is.readString();
+        pageIndex = __is.readInt();
+        pageSize = __is.readInt();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Product.SpBrandPage __ret = __obj.FindSpBrandPage(supplierId, pageIndex, pageSize, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeObject(__ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___FindSpSizeTmp(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        String SizeTmpNo;
+        supplierId = __is.readString();
+        SizeTmpNo = __is.readString();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Product.SpSizeTmpIce __ret = __obj.FindSpSizeTmp(supplierId, SizeTmpNo, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeObject(__ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___FindSpSpfProductAttributeInfo(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        String CategoryNo;
+        supplierId = __is.readString();
+        CategoryNo = __is.readString();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Product.SpfProductAttributeInfoIce[] __ret = __obj.FindSpSpfProductAttributeInfo(supplierId, CategoryNo, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            RSpfProductAttributeInfoIceListHelper.write(__os, __ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___FindAreaPage(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        int pageIndex;
+        int pageSize;
+        supplierId = __is.readString();
+        pageIndex = __is.readInt();
+        pageSize = __is.readInt();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Product.SopAreaPage __ret = __obj.FindAreaPage(supplierId, pageIndex, pageSize, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeObject(__ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___FindSpCategorySizeStandard(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        String CategoryNo;
+        supplierId = __is.readString();
+        CategoryNo = __is.readString();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Product.SpCategorySizeStandard[] __ret = __obj.FindSpCategorySizeStandard(supplierId, CategoryNo, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            RSpCategorySizeStandardListHelper.write(__os, __ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___FindSpfProductMainColor(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        supplierId = __is.readString();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Product.SpfProductMainColor[] __ret = __obj.FindSpfProductMainColor(supplierId, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            RSpfProductMainColorListHelper.write(__os, __ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___AddCommodity(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Api.Product.ProductAddIceHolder productAdd = new ShangPin.SOP.Entity.Api.Product.ProductAddIceHolder();
+        supplierId = __is.readString();
+        __is.readObject(productAdd);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            int __ret = __obj.AddCommodity(supplierId, productAdd.value, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeInt(__ret);
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___AddCommodityPic(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Api.Product.ProductPicIceHolder ProductPicIce = new ShangPin.SOP.Entity.Api.Product.ProductPicIceHolder();
+        supplierId = __is.readString();
+        __is.readObject(ProductPicIce);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            boolean __ret = __obj.AddCommodityPic(supplierId, ProductPicIce.value, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeBool(__ret);
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
     private final static String[] __all =
     {
+        "AddCommodity",
+        "AddCommodityPic",
         "AddPurchaseDetailToDeliveryOrder",
         "CreateDeliveryOrder",
+        "FindAreaPage",
         "FindCommodityInfo",
         "FindCommodityInfoPage",
         "FindDeliveryOrder",
@@ -642,6 +928,12 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         "FindPurchaseOrderDetailPaged",
         "FindReturnOrder",
         "FindReturnOrderPaged",
+        "FindSpBrandPage",
+        "FindSpCategoryPage",
+        "FindSpCategorySizeStandard",
+        "FindSpSizeTmp",
+        "FindSpSpfProductAttributeInfo",
+        "FindSpfProductMainColor",
         "FindStockInfo",
         "FindSuppliersById",
         "FindSuppliersByName",
@@ -666,89 +958,125 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         {
             case 0:
             {
-                return ___AddPurchaseDetailToDeliveryOrder(this, in, __current);
+                return ___AddCommodity(this, in, __current);
             }
             case 1:
             {
-                return ___CreateDeliveryOrder(this, in, __current);
+                return ___AddCommodityPic(this, in, __current);
             }
             case 2:
             {
-                return ___FindCommodityInfo(this, in, __current);
+                return ___AddPurchaseDetailToDeliveryOrder(this, in, __current);
             }
             case 3:
             {
-                return ___FindCommodityInfoPage(this, in, __current);
+                return ___CreateDeliveryOrder(this, in, __current);
             }
             case 4:
             {
-                return ___FindDeliveryOrder(this, in, __current);
+                return ___FindAreaPage(this, in, __current);
             }
             case 5:
             {
-                return ___FindDeliveryOrderPaged(this, in, __current);
+                return ___FindCommodityInfo(this, in, __current);
             }
             case 6:
             {
-                return ___FindDeliveryOrderSend(this, in, __current);
+                return ___FindCommodityInfoPage(this, in, __current);
             }
             case 7:
             {
-                return ___FindMoneyInfo(this, in, __current);
+                return ___FindDeliveryOrder(this, in, __current);
             }
             case 8:
             {
-                return ___FindPurchaseOrderDetail(this, in, __current);
+                return ___FindDeliveryOrderPaged(this, in, __current);
             }
             case 9:
             {
-                return ___FindPurchaseOrderDetailPaged(this, in, __current);
+                return ___FindDeliveryOrderSend(this, in, __current);
             }
             case 10:
             {
-                return ___FindReturnOrder(this, in, __current);
+                return ___FindMoneyInfo(this, in, __current);
             }
             case 11:
             {
-                return ___FindReturnOrderPaged(this, in, __current);
+                return ___FindPurchaseOrderDetail(this, in, __current);
             }
             case 12:
             {
-                return ___FindStockInfo(this, in, __current);
+                return ___FindPurchaseOrderDetailPaged(this, in, __current);
             }
             case 13:
             {
-                return ___FindSuppliersById(this, in, __current);
+                return ___FindReturnOrder(this, in, __current);
             }
             case 14:
             {
-                return ___FindSuppliersByName(this, in, __current);
+                return ___FindReturnOrderPaged(this, in, __current);
             }
             case 15:
             {
-                return ___FindSupplyInfo(this, in, __current);
+                return ___FindSpBrandPage(this, in, __current);
             }
             case 16:
             {
-                return ___UpdateStock(this, in, __current);
+                return ___FindSpCategoryPage(this, in, __current);
             }
             case 17:
             {
-                return ___UpdateSupplyPrice(this, in, __current);
+                return ___FindSpCategorySizeStandard(this, in, __current);
             }
             case 18:
             {
-                return ___ice_id(this, in, __current);
+                return ___FindSpSizeTmp(this, in, __current);
             }
             case 19:
             {
-                return ___ice_ids(this, in, __current);
+                return ___FindSpSpfProductAttributeInfo(this, in, __current);
             }
             case 20:
             {
-                return ___ice_isA(this, in, __current);
+                return ___FindSpfProductMainColor(this, in, __current);
             }
             case 21:
+            {
+                return ___FindStockInfo(this, in, __current);
+            }
+            case 22:
+            {
+                return ___FindSuppliersById(this, in, __current);
+            }
+            case 23:
+            {
+                return ___FindSuppliersByName(this, in, __current);
+            }
+            case 24:
+            {
+                return ___FindSupplyInfo(this, in, __current);
+            }
+            case 25:
+            {
+                return ___UpdateStock(this, in, __current);
+            }
+            case 26:
+            {
+                return ___UpdateSupplyPrice(this, in, __current);
+            }
+            case 27:
+            {
+                return ___ice_id(this, in, __current);
+            }
+            case 28:
+            {
+                return ___ice_ids(this, in, __current);
+            }
+            case 29:
+            {
+                return ___ice_isA(this, in, __current);
+            }
+            case 30:
             {
                 return ___ice_ping(this, in, __current);
             }

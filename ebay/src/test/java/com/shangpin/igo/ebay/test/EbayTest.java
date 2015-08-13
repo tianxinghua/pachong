@@ -473,7 +473,7 @@ public class EbayTest {
 	}
 	@Test
 	public void getStoreName(){
-		String itemId="251923657070";
+		String itemId="301703104953";
 		String url=shopingCommon("GetMultipleItems");
 		url+="ItemID="+itemId+"&IncludeSelector=Details";//,Variations,ItemSpecifics";
 		String xml=HttpUtil45.get(url,null,null);
