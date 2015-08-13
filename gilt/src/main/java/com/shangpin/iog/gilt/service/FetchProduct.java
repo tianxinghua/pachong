@@ -30,13 +30,20 @@ public class FetchProduct {
     String skusUrl="https://api-sandbox.gilt.com/global/skus";
     public void fetchProductAndSave(String url){
         /*String jsonStr = getSkus(url);*/
+        //List<String>mlist=new ArrayList<>();
+        String supplierId="201508081715";
         List<GiltSkuDTO> list = this.getSkus(url);
         for(int i =0;i<list.size();i++){
             SkuDTO dto = new SkuDTO();
             SpuDTO spuDTO = new SpuDTO();
             GiltSkuDTO giltSkuDTO=list.get(i);
+            /*String test=giltSkuDTO.getId()+"-"+giltSkuDTO.getAttributes().get(3).getSize().getValue();
+            if(!mlist.contains(test)){
+                mlist.add(test);
+                System.out.println(test);
+            }*/
             dto.setId(UUIDGenerator.getUUID());
-            dto.setSupplierId("201508081715");
+            dto.setSupplierId(supplierId);
             dto.setProductDescription(giltSkuDTO.getDescription());
             dto.setSkuId(giltSkuDTO.getId());
             dto.setSpuId(giltSkuDTO.getProduct_id());
@@ -51,13 +58,13 @@ public class FetchProduct {
             dto.setProductSize(giltSkuDTO.getAttributes().get(3).getSize().getValue());
             dto.setStock(getInventory(giltSkuDTO.getId()));
             spuDTO.setId(UUIDGenerator.getUUID());
-            spuDTO.setSupplierId("201508081715");
+            spuDTO.setSupplierId(supplierId);
             spuDTO.setSpuId(giltSkuDTO.getProduct_id());
             spuDTO.setMaterial(giltSkuDTO.getAttributes().get(2).getMaterial().getValue());
             spuDTO.setCategoryId(giltSkuDTO.getCategories().get(0).getId());
             spuDTO.setCategoryName(giltSkuDTO.getCategories().get(0).getName());
-            spuDTO.setSubCategoryId(giltSkuDTO.getCategories().get(3).getId());
-            spuDTO.setSubCategoryName(giltSkuDTO.getCategories().get(3).getName());
+            spuDTO.setSubCategoryId(giltSkuDTO.getCategories().get(giltSkuDTO.getCategories().size()-1).getId());
+            spuDTO.setSubCategoryName(giltSkuDTO.getCategories().get(giltSkuDTO.getCategories().size()-1).getName());
             spuDTO.setBrandId(giltSkuDTO.getBrand().getId());
             spuDTO.setBrandName(giltSkuDTO.getBrand().getName());
             spuDTO.setProductOrigin(giltSkuDTO.getCountry_code());
@@ -74,15 +81,15 @@ public class FetchProduct {
                 productPictureDTO.setPicUrl(picUrl);
                 productPictureDTO.setSkuId(giltSkuDTO.getId());
                 productPictureDTO.setSpuId("");
-                productPictureDTO.setSupplierId("201508081715");
+                productPictureDTO.setSupplierId(supplierId);
                 try{
                     productFetchService.savePictureForMongo(productPictureDTO);
                 }catch (ServiceException e){
                     e.printStackTrace();
                 }
-
             }
         }
+        //System.out.println("不重复的ID:"+mlist.size());
     }
     private static String getInventory(String skuId){
         String url = "https://api-sandbox.gilt.com/global/inventory/";
@@ -97,11 +104,12 @@ public class FetchProduct {
         StringBuffer str=new StringBuffer();
         List<GiltSkuDTO>list = new ArrayList<>();
         List<GiltSkuDTO>returnList = new ArrayList<>();
+        int limit = 50;
         try {
             Map<String,String> param = new HashMap<>();
        // param.put("since","");
             //param.put("sku_ids","144740");
-        int offset = 1;
+        int offset = 0;
         OutTimeConfig outTimeConf = new OutTimeConfig();
         do {
             param.put("limit","50");
@@ -111,7 +119,7 @@ public class FetchProduct {
             returnList.addAll(list);
             offset++;
             str.append(result);
-        }while (list.size()<50);
+        }while (list.size()==limit);
             System.out.println("总页数："+offset);
         } catch (Exception e) {
             e.printStackTrace();
@@ -146,18 +154,39 @@ public class FetchProduct {
         return objs;
     }
     public static void main(String[] args) {
-        /*String url = "https://api-sandbox.gilt.com/global/skus";
+        String url = "https://api-sandbox.gilt.com/global/skus";
+        List<GiltSkuDTO>list = new ArrayList<>();
+        List<GiltSkuDTO>returnList = new ArrayList<>();
+        List<String>testList=new ArrayList<>();
         try {
             Map<String,String> param = new HashMap<>();
             param.put("sku_id","144740");
             OutTimeConfig outTimeConf = new OutTimeConfig();
-            String result=HttpUtil45.get(url, outTimeConf, param,"fb8ea6839b486dba8c5cabb374c03d9d","");
-            List<GiltSkuDTO> list  = getObjectsByJsonString(result);
-            System.out.println("商品分类ID：" + list.get(0).getCategories().get(0).getId());
+            String result=""/*HttpUtil45.get(url, outTimeConf, param,"fb8ea6839b486dba8c5cabb374c03d9d","")*/;
+            int offset=0;
+            int limit=50;
+            do {
+                param.put("limit","50");
+                param.put("offset",offset+"");
+                result=HttpUtil45.get(url, outTimeConf, param,"fb8ea6839b486dba8c5cabb374c03d9d","");
+                list=getObjectsByJsonString(result);
+                returnList.addAll(list);
+                offset++;
+            }while (list.size()==limit);
+            for (int i =0;i<returnList.size();i++){
+                if(!testList.contains(returnList.get(i).getId())){
+                    testList.add(returnList.get(i).getId());
+                }
+            }
+            System.out.println("不重复的ID有："+testList.size());
+            for(int i=0;i<testList.size();i++){
+                System.out.println(testList.get(i));
+            }
+            //System.out.println(result);
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
-        String inven = getInventoryByJsonString(getInventory("144740"));
-        System.out.println("库存"+inven);
+        }
+       /* String inven = getInventoryByJsonString(getInventory("144740"));
+        System.out.println("库存"+inven);*/
     }
 }
