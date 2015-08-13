@@ -266,7 +266,7 @@ public class HttpUtil45 {
 	 */
 	public static void closePool(){
 		poolShutDown=true;
-		connManager.close();
+		if(null!=connManager) connManager.close();
 	}
 	private static String post(String url,Map<String,String> param,OutTimeConfig outTimeConf
 			,HttpClientContext localContext ){

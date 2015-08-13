@@ -1,6 +1,5 @@
-package com.shangpin.iog.channeladvisor.service;
+package com.shangpin.iog.channeladvisor.service.cxf;
 
-import com.sun.org.apache.xml.internal.security.utils.XMLUtils;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;

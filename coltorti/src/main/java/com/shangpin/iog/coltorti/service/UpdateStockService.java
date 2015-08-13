@@ -29,6 +29,7 @@ public class UpdateStockService extends AbsUpdateProductStock{
 		Map<String, Integer> skuStock= new HashMap<>(skuNos.size());
 		Set<String> productIdSet=new HashSet<>();
 		String productId=null,recordId=null,scalarNo=null;
+		
 		for (Iterator<String> iterator = skuNos.iterator(); iterator
 				.hasNext();) {
 			String skuNo = iterator.next();
@@ -45,20 +46,26 @@ public class UpdateStockService extends AbsUpdateProductStock{
 			Map<String, Map<String, Integer>> stoks=null;
 			try{
 				if(!productIdSet.contains(productId)){
-					//logger.warn("拉取productId:{}的库存",productId);
 					stoks=ColtortiStockService.getStock(productId, null);
-					productIdSet.add(productId);
+
 					if(stoks!=null && stoks.size()>0){
-						if(stoks.get(recordId)!=null){
-							Integer qnt=stoks.get(recordId).get(scalarNo);
-							int quantity=qnt==null?0:qnt;
-							skuStock.put(skuNo, quantity);
-						}else{							
-							skuStock.put(skuNo, 0);
+						Set<Map.Entry<String, Map<String, Integer>>> entrySet = stoks.entrySet();
+						for (Map.Entry<String, Map<String, Integer>> entry : entrySet) {
+							String rcdId=entry.getKey();
+							Map<String,Integer> kvs=entry.getValue();
+							Set<Map.Entry<String, Integer>> kvEntrySet = kvs.entrySet();
+							for (Map.Entry<String, Integer> entry2 : kvEntrySet) {
+								String scalar=entry2.getKey();
+								Integer qnt=entry2.getValue();
+								int quantity=qnt==null?0:qnt;
+								skuStock.put(rcdId+"#"+scalar, quantity);
+							}
 						}
+						productIdSet.add(productId);
 					}else{
-						skuStock.put(skuNo, 0);						
+						skuStock.put(skuNo, 0);
 					}
+
 					logger.warn(skuNo+",拉取库存成功:"+new Gson().toJson(stoks));
 				}
 			}catch(ServiceException e){
@@ -79,12 +86,12 @@ public class UpdateStockService extends AbsUpdateProductStock{
 		return skuStock;
 	}
 	
-	/*
+
 	public static void main(String[] args) {
 		String skuNo="152790FCR000002-MIDBL#m";
 		String recordId=skuNo.substring(0, skuNo.lastIndexOf("#"));
 		String scalarNo=skuNo.substring(skuNo.lastIndexOf("#")+1);
 		String productId=skuNo.substring(0, skuNo.lastIndexOf("-"));
 		System.out.println(recordId+","+scalarNo+","+productId);
-	}*/
+	}
 }

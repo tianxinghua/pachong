@@ -46,7 +46,7 @@ public class AxisClient {
         //1、根据服务地址，创建一个发送消息的客户端。
         try
         {
-            clientStub = new AdminServiceStub(serviceAddress);
+            clientStub = new AdminServiceStub();
         }
         catch (AxisFault e1)
         {
@@ -55,12 +55,20 @@ public class AxisClient {
         }
 
         //2、创建一个发送消息的请求消息体。
-        AdminServiceStub.Ping ping = new
+
 
         //3、根据请求消息体，发送消息并获取响应。
         try
         {
-            response = clientStub.ping();
+            AdminServiceStub.Ping ping =new AdminServiceStub.Ping();
+            AdminServiceStub.APICredentialsE apiCredentialsE = new AdminServiceStub.APICredentialsE();
+            AdminServiceStub.APICredentials credentials = new  AdminServiceStub.APICredentials();
+            credentials.setDeveloperKey("537c99a8-e3d6-4788-9296-029420540832");
+            credentials.setPassword("L1zhongren!");
+            apiCredentialsE.setAPICredentials(credentials);
+            response = clientStub.ping(ping,apiCredentialsE);
+//            AdminServiceStub.GetAuthorizationList getAuthorizationList = new   AdminServiceStub.GetAuthorizationList();
+//            AdminServiceStub.GetAuthorizationListResponse authorizationListResponse = clientStub.getAuthorizationList(getAuthorizationList, apiCredentialsE);
         }
         catch (RemoteException e)
         {
@@ -71,7 +79,7 @@ public class AxisClient {
         //4、如果获取的响应不为空，获取响应的字符串内容。
         if(response != null)
         {
-            result = response.get_return();
+            AdminServiceStub.APIResultOfString apiResultOfString= response.getPingResult();
         }
 
     }
