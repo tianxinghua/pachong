@@ -5,6 +5,7 @@ package com.shangpin.iog.coltorti.service;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +42,10 @@ public class ColtortiTokenService {
 			}finally{
 				lock.unlock();
 			}
-		}			
-		lock.unlock();
+		}else{
+			lock.unlock();
+		}
+
 		return token;
 	}
 
@@ -68,7 +71,7 @@ public class ColtortiTokenService {
 			}
 			token = null;
 			logger.info("初始化token......");
-			String body = HttpUtil45.postAuth(ApiURL.AUTH, null,null,ApiURL.userName, ApiURL.password);
+			String body = HttpUtil45.postAuth(ApiURL.AUTH, null,new OutTimeConfig(10000,10000,10000),ApiURL.userName, ApiURL.password);
 			logger.info("获取token成功......");
 			logger.info("token:" + body);
 			ColtortiUtil.check(body);

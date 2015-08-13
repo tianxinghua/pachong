@@ -41,6 +41,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
             timeConfig.confRequestOutTime(360000);
+            timeConfig.confSocketOutTime(360000);
             String result = HttpUtil45.get("http://www.acanfora.it/api_ecommerce_v2.aspx", timeConfig, null);
 
             mongMap.put("supplierId","2015050800242");
