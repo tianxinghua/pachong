@@ -3,12 +3,7 @@
  */
 package com.shangpin.iog.coltorti.service;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,10 +83,20 @@ public class UpdateStockService extends AbsUpdateProductStock{
 	
 
 	public static void main(String[] args) {
-		String skuNo="152790FCR000002-MIDBL#m";
-		String recordId=skuNo.substring(0, skuNo.lastIndexOf("#"));
-		String scalarNo=skuNo.substring(skuNo.lastIndexOf("#")+1);
-		String productId=skuNo.substring(0, skuNo.lastIndexOf("-"));
-		System.out.println(recordId+","+scalarNo+","+productId);
+//		String skuNo="152790FCR000002-MIDBL#m";
+//		String recordId=skuNo.substring(0, skuNo.lastIndexOf("#"));
+//		String scalarNo=skuNo.substring(skuNo.lastIndexOf("#")+1);
+//		String productId=skuNo.substring(0, skuNo.lastIndexOf("-"));
+//		System.out.println(recordId+","+scalarNo+","+productId);
+		UpdateStockService updateStockService = new UpdateStockService();
+		Collection<String> skuList= new ArrayList<>();
+		skuList.add("151431DAB000003-303");
+
+		try {
+			updateStockService.grabStock(skuList);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+
 	}
 }

@@ -104,11 +104,11 @@ public class ColtortiStockService {
 		return rtnScalar;
 	}
 	public static void main(String[] args) throws ServiceException {
-		String[] x={"152151DCW000003-F0136"
+		String[] x={"151431DAB000003-303"
 		};
 		for (String record : x) {
 			try{
-				Map<String, Map<String, Integer>> stok = getStock("152151DCW000003","152151DCW000003-F0136");
+				Map<String, Map<String, Integer>> stok = getStock("151431DAB000003",null);
 				System.out.println(new Gson().toJson(stok));
 			}catch(Exception e){
 				if(e instanceof ServiceException){
