@@ -68,10 +68,14 @@ public class FetchProduct {
                     spu.setSpuName(contentArray[2]);
                     spu.setSeasonId(contentArray[9]);
                     spu.setMaterial(contentArray[6]);
-                    //productFetchService.saveSPU(spu);
+                    try{
+                        productFetchService.saveSPU(spu);
+                    }catch (ServiceException e){
+                        e.printStackTrace();
+                    }
+
 
                     String[] sizeArray = contentArray[14].split(",");
-
 
                     for(String sizeAndStock:sizeArray){
                         if(sizeAndStock.contains("(")&&sizeAndStock.length()>1) {
@@ -96,8 +100,11 @@ public class FetchProduct {
                             sku.setProductDescription(contentArray[5]);
                             sku.setStock(stock);
 //                            sku.setProductCode(product.getProducer_id());
-                            //productFetchService.saveSKU(sku);
-
+                            if(Integer.valueOf(stock)!=0){
+                                productFetchService.saveSKU(sku);
+                            }else {
+                                continue;
+                            }
 
                             String[] picArray = contentArray[12].split(",");
 
@@ -107,33 +114,31 @@ public class FetchProduct {
                                 dto.setSupplierId(supplierId);
                                 dto.setId(UUIDGenerator.getUUID());
                                 dto.setSkuId(skuId);
-                                /*try {
+                                try {
 //                                    productFetchService.savePicture(dto);
                                     productFetchService.savePictureForMongo(dto);
                                 } catch (ServiceException e) {
                                     e.printStackTrace();
-                                }*/
-
+                                }
                             }
-
-
-
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            try {
+                                if(e.getMessage().equals("数据插入失败键重复")){
+                                    productFetchService.updatePriceAndStock(sku);
+                                } else{
+                                    e.printStackTrace();
+                                }
+                            } catch (ServiceException e1) {
+                                e1.printStackTrace();
+                            }
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
-
 }

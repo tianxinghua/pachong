@@ -165,12 +165,16 @@ public class ShopingItemConvert {
 				setMarketPrice(vt.getDiscountPriceInfo(),sku);
 				//sit.getVariations().getPicturesArray();//for pic
 				rtnSku.add(sku);
+				getVariationPic(sit.getVariations().getPicturesArray(),sit.getItemID(),rtnPic,sku);
 			}
-			//所有sku变种只拉取一遍变体图片
-			getVariationPic(sit.getVariations().getPicturesArray(),sit.getItemID(),rtnPic);
-			//总是保存item的图片
+			//所有sku变种只拉取一遍变体图片 sku
+			//getVariationPic(sit.getVariations().getPicturesArray(),sit.getItemID(),rtnPic);
+			//总是保存item的图片 spu
 			url2Pic(null,sit.getItemID(),rtnPic, sit.getPictureURLArray());
 			//url2Pic(sit.getItemID(),rtnPic, sit.getPictureURLArray());
+			//
+			String skuId=rtnSku.iterator().next().getColor();
+
 		}else{
 			SkuDTO sku = new SkuDTO();
 			setSkuCommon(userId, createDate, sit, sku);
@@ -298,15 +302,36 @@ public class ShopingItemConvert {
 	 * @param spuId 
 	 * @param rtnPic
 	 */
-	private static void getVariationPic(PicturesType[] picturesTypes,String spuId, Set<ProductPictureDTO> rtnPic) {
+	private static void getVariationPic(PicturesType[] picturesTypes,String spuId, Set<ProductPictureDTO> rtnPic,SkuDTO sku) {
 		if(picturesTypes!=null && picturesTypes.length>0){
 			for (PicturesType picturesType : picturesTypes) {//颜色图片、尺码图片等
+				String specName=picturesType.getVariationSpecificName().toLowerCase();
 				VariationSpecificPictureSetType[] vsps=picturesType.getVariationSpecificPictureSetArray();
 				for (VariationSpecificPictureSetType vsp : vsps) {//不同颜色值，尺码值的图片
-					//vsp.getVariationSpecificValue(),颜色值、尺码值
-					String[] urls=vsp.getPictureURLArray();
-					url2Pic(null,spuId,rtnPic, urls);
-				}			
+					String colorAndSize=vsp.getVariationSpecificValue();//,颜色值、尺码值
+					String color = sku.getColor();
+					String size = sku.getProductSize();
+					String skuId1=null;
+					if(color!=null && specName.contains("color")){
+						skuId1=sku.getSkuId();
+						if(colorAndSize.equals(color)){
+							String[] urls=vsp.getPictureURLArray();
+							url2Pic(skuId1,spuId,rtnPic, urls);
+							break;
+						}
+					}
+					if(size!=null && specName.contains("size")){
+						skuId1 = sku.getSkuId();
+						if(colorAndSize.equals(size)){
+							String[] urls=vsp.getPictureURLArray();
+							url2Pic(skuId1,spuId,rtnPic, urls);
+							break;
+						}
+					}else{
+						String[] urls=vsp.getPictureURLArray();
+						url2Pic(skuId1,spuId,rtnPic, urls);
+					}
+				}
 			}
 		}
 	}

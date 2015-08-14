@@ -18,17 +18,16 @@ public class Startup {
     }
 
     public static void main(String[] args) throws Exception{
-        loadSpringContext();
-        log.info("----³õÊ¼SPRING³É¹¦----");
-        //À­È¡Êı¾İ
-        log.info("----À­È¡ostoreÊı¾İ¿ªÊ¼----");
 
+        log.info("----æ‹‰å–ostoreæ•°æ®å¼€å§‹----");
+        loadSpringContext();
+        log.info("----åˆå§‹SPRINGæˆåŠŸ----");
+        //æ‹‰å–æ•°æ®
         FetchProduct fetchProduct = (FetchProduct)factory.getBean("ostore");
         fetchProduct.fetchProductAndSave("http://b2b.officinastore.com/shangpin.asp");
 
-        log.info("----À­È¡ostoreÊı¾İÍê³É----");
+        log.info("----æ‹‰å–ostoreæ•°æ®å®Œæˆ----");
         System.out.println("-------fetch end---------");
         System.exit(0);
-
     }
 }
