@@ -44,6 +44,7 @@ public class FetchProduct {
             }*/
             String inventory=getInventory(giltSkuDTO.getId());
             if(!"0".equals(inventory)){
+                String productCode="";
                 dto.setId(UUIDGenerator.getUUID());
                 dto.setSupplierId(supplierId);
                 dto.setProductDescription(giltSkuDTO.getDescription());
@@ -55,7 +56,11 @@ public class FetchProduct {
                 dto.setSalePrice(giltSkuDTO.getPrices().getSale().getValue());
                 dto.setSaleCurrency(giltSkuDTO.getPrices().getSale().getCurrency());
                 dto.setSupplierPrice(giltSkuDTO.getPrices().getCost().getValue());
-                dto.setProductCode(giltSkuDTO.getProduct_codes().toString());
+                String[]str=giltSkuDTO.getProduct_codes();
+                for (int j=0;j<str.length;j++){
+                    productCode+=str[j]+",";
+                }
+                dto.setProductCode(productCode.substring(0,productCode.length()-1));
                 dto.setProductName(giltSkuDTO.getName());
                 dto.setProductSize(giltSkuDTO.getAttributes().get(3).getSize().getValue());
                 dto.setStock(inventory);
@@ -122,7 +127,7 @@ public class FetchProduct {
             offset=offset+50;
             str.append(result);
         }while (list.size()==50);
-            System.out.println("总页数："+offset);
+            System.out.println("sku的index："+offset);
         } catch (Exception e) {
             e.printStackTrace();
         }
