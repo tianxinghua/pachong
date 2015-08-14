@@ -39,7 +39,8 @@ public class FetchProduct {
         try {
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-            timeConfig.confRequestOutTime(360000);
+            timeConfig.confRequestOutTime(600000);
+            timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get(url, timeConfig, null);
             HttpUtil45.closePool();
             mongMap.put("supplierId",supplierId);
@@ -73,6 +74,8 @@ public class FetchProduct {
                         }
                         sku.setSkuId(skuId);
                         sku.setProductSize(item.getItem_size());
+                        sku.setMarketPrice(item.getMarket_price());
+                        sku.setSalePrice(item.getSell_price());
                         sku.setSupplierPrice(item.getSupply_price());
                         sku.setColor(item.getColor());
                         sku.setProductDescription(item.getDescription());
@@ -102,7 +105,17 @@ public class FetchProduct {
                         }
 
                     } catch (ServiceException e) {
-                        e.printStackTrace();
+                        try {
+                            if(e.getMessage().equals("数据插入失败键重复")){
+                                //更新价格和库存
+                                productFetchService.updatePriceAndStock(sku);
+                            } else{
+                                e.printStackTrace();
+                            }
+
+                        } catch (ServiceException e1) {
+                            e1.printStackTrace();
+                        }
                     }
                 }
 

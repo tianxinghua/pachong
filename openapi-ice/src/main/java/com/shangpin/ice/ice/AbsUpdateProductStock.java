@@ -70,20 +70,34 @@ public abstract class AbsUpdateProductStock {
 		logger.warn("获取icesku 开始");
 		Set<String> skuIds = new HashSet<String>();
 		while(hasNext){
-			SopProductSkuPageQuery query = new SopProductSkuPageQuery(start,end,pageIndex,pageSize);
-			SopProductSkuPage products = servant.FindCommodityInfoPage(supplier, query);
-			List<SopProductSkuIce> skus = products.SopProductSkuIces;
+			List<SopProductSkuIce> skus = null;
+			try {
+				SopProductSkuPageQuery query = new SopProductSkuPageQuery(start,end,pageIndex,pageSize);
+				SopProductSkuPage products = servant.FindCommodityInfoPage(supplier, query);
+				skus = products.SopProductSkuIces;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
 				for (SopSkuIce ice : skuIces) {
-					skuIds.add(ice.SupplierSkuNo);
-					stocks.put(ice.SupplierSkuNo,ice.SkuNo);
+
+
+					if(1!=ice.IsDeleted){
+						skuIds.add(ice.SupplierSkuNo);
+						stocks.put(ice.SupplierSkuNo,ice.SkuNo);
+					}
+
+
+
 				}
 			}
 			pageIndex++;
 			hasNext=(pageSize==skus.size());
+
 		}
 		logger.warn("获取icesku 结束");
+
 		return skuIds;
 	}
 	
@@ -203,7 +217,7 @@ public abstract class AbsUpdateProductStock {
 			Boolean result =true;
 			try{
 				logger.warn("待更新的数据：--------"+entry.getKey()+":"+entry.getValue());
-				result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());				
+				result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());
 			}catch(Exception e){
 				result=false;
 				logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
@@ -240,7 +254,9 @@ public abstract class AbsUpdateProductStock {
 
                   if(!sopSkuMap.containsKey(sopSku)){
                       if(iceStock.containsKey(sopSku)){
-                          toUpdateIce.put(sopSku, iceStock.get(sopSku));
+//						  logger.warn("skuNo ：--------"+sopSku +"supplier quantity =" + iceStock.get(sopSku) + " shangpin quantity = null" );
+//						  System.out.println("skuNo ：--------"+sopSku +"supplier quantity =" + iceStock.get(sopSku) + " shangpin quantity = null");
+								  toUpdateIce.put(sopSku, iceStock.get(sopSku));
                       }
                   }
            }
@@ -249,6 +265,8 @@ public abstract class AbsUpdateProductStock {
 		//排除无用的库存
 		for(SopSkuInventoryIce skuIce:skuIceArray){
 	        if(iceStock.containsKey(skuIce.SkuNo)){
+//				logger.warn("skuNo ：--------"+skuIce.SkuNo +"supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity );
+//				System.out.println("skuNo ：--------"+skuIce.SkuNo +"supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity);
 	            if(iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
 	                toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
 	            }
@@ -286,7 +304,7 @@ public abstract class AbsUpdateProductStock {
 
 
         } catch (Exception e1) {
-			logger.error("抓取库存失败:",e1);
+			logger.error("抓取库存失败:", e1);
 		}
 		return iceStock;
 	}
@@ -317,7 +335,7 @@ public abstract class AbsUpdateProductStock {
 				totoalFailCnt.add(failCnt);
 				logger.warn(Thread.currentThread().getName()+"ice更新完成，失败数:"+failCnt);
 			} catch (Exception e) {
-				logger.warn(Thread.currentThread().getName()+"处理出错",e);
+				logger.warn(Thread.currentThread().getName() + "处理出错", e);
 			}
 		}
 		
