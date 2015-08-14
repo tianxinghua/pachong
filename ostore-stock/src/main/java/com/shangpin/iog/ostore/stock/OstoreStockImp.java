@@ -66,15 +66,16 @@ public class
             }
 
             for(String skuno:skuNo){
-                if(stock_map.containsKey(skuno)){
-                    skuStock.put(skuno,Integer.valueOf(stock_map.get(skuno)));
-                }else {
-                    skuStock.put(skuno,0);
-                }
+                    if (stock_map.containsKey(skuno)) {
+                        skuStock.put(skuno, Integer.valueOf(stock_map.get(skuno)));
+                    }else{
+                        skuStock.put(skuno,0);
+                    }
             }
         }catch (Exception e){
             e.printStackTrace();
         }
+        logger.info("Ostore赋值库存数据成功");
         return skuStock;
     }
 

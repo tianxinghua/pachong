@@ -241,7 +241,7 @@ public class HttpUtil45 {
 				final BufferedReader reader = new BufferedReader(new InputStreamReader(instream, charset));
 			    String value="";
 				int count = 0;
-				while((value = reader.readLine()) != null) {
+			    while((value = reader.readLine()) != null) {
 					contentList.add(value);
 					count++;
 					System.out.println("ddgg"+count);
