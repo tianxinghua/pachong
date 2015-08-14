@@ -90,7 +90,7 @@ public class UpdateStockService extends AbsUpdateProductStock{
 //		System.out.println(recordId+","+scalarNo+","+productId);
 		UpdateStockService updateStockService = new UpdateStockService();
 		Collection<String> skuList= new ArrayList<>();
-		skuList.add("151431DAB000003-303");
+		skuList.add("151431DAB000003-303#3");
 
 		try {
 			updateStockService.grabStock(skuList);
