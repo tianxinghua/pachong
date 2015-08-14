@@ -12,6 +12,7 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.spinnaker.stock.dto.*;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -69,6 +70,7 @@ public class FetchProduct {
                     if (list != null && list.getProduct() != null) {
                         String priceUrl;
                         String itemID;
+                        String stock;
                         for (Spu spu : list.getProduct()) {
                             //spu入库
                             SpuDTO spudto = new SpuDTO();
@@ -91,6 +93,14 @@ public class FetchProduct {
 
                             for (Sku sku : spu.getItems().getItem()) {
                                 //sku入库操作
+                                stock = sku.getStock();
+                                if(StringUtils.isBlank(stock)){
+                                  continue;
+                                }else{
+                                    if(Integer.valueOf(stock)<=0){
+                                        continue;
+                                    }
+                                }
                                 SkuDTO skudto = new SkuDTO();
                                 skudto.setCreateTime(new Date());
                                 skudto.setBarcode(sku.getBarcode());
@@ -109,7 +119,7 @@ public class FetchProduct {
                                 itemID = sku.getItem_id();
                                 priceUrl = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetPriceByItemID?DBContext=Default&ItemID="+itemID+"&key=8IZk2x5tVN";
                                 try {
-                                    json = HttpUtil45.get(priceUrl, new OutTimeConfig(), null);
+                                    json = HttpUtil45.get(priceUrl, new OutTimeConfig(3000,4000,4000), null);
                                 }catch (IllegalArgumentException e){
                                     e.printStackTrace();
                                 }
