@@ -11,7 +11,8 @@ import java.util.*;
 /**
  * Created by huxia on 2015/8/12.
  */
-public class OstoreStockImp extends AbsUpdateProductStock {
+public class
+        OstoreStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger logMongo = Logger.getLogger("mongodb");
 
