@@ -86,7 +86,7 @@ public class FetchProduct {
                         if(sizeAndStock.contains("(")&&sizeAndStock.length()>1) {
                             size = sizeAndStock.substring(0, sizeAndStock.indexOf("("));
                             stock = sizeAndStock.substring(sizeAndStock.indexOf("(")+1, sizeAndStock.length() - 1);
-                            System.out.println("库存"+stock);
+                            //System.out.println("库存"+stock);
                         }
                         SkuDTO sku  = new SkuDTO();
                         try {
