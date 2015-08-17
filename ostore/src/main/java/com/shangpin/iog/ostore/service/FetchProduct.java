@@ -32,7 +32,7 @@ public class FetchProduct {
 
     public void fetchProductAndSave(String url){
 
-        String supplierId = "201508111742";
+        String supplierId = "2015081401431";
         try {
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
@@ -44,7 +44,11 @@ public class FetchProduct {
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","acanfora");
             mongMap.put("result",resultList.toString()) ;
-            logMongo.info(mongMap);
+            try {
+                logMongo.info(mongMap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             int i=0;
             String stock="",size ="";
             String skuId = "";
@@ -68,6 +72,7 @@ public class FetchProduct {
                     spu.setSpuName(contentArray[2]);
                     spu.setSeasonId(contentArray[9]);
                     spu.setMaterial(contentArray[6]);
+                    spu.setCategoryGender(contentArray[7]);
                     try{
                         productFetchService.saveSPU(spu);
                     }catch (ServiceException e){
@@ -95,10 +100,11 @@ public class FetchProduct {
                             }
                             sku.setSkuId(skuId);
                             sku.setProductSize(size);
-                            sku.setSalePrice(contentArray[10]);
+                            sku.setMarketPrice(contentArray[10]);
                             sku.setColor(contentArray[3]);
                             sku.setProductDescription(contentArray[5]);
                             sku.setStock(stock);
+
 //                            sku.setProductCode(product.getProducer_id());
                             if(Integer.valueOf(stock)!=0){
                                 productFetchService.saveSKU(sku);
