@@ -73,6 +73,7 @@ public class FetchProduct {
                     spu.setSeasonId(contentArray[9]);
                     spu.setMaterial(contentArray[6]);
                     spu.setCategoryGender(contentArray[7]);
+                    System.out.println(spu.getCategoryGender());
                     try{
                         productFetchService.saveSPU(spu);
                     }catch (ServiceException e){
