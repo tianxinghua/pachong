@@ -8,7 +8,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -173,7 +175,7 @@ public class ShopingItemConvert {
 			url2Pic(null,sit.getItemID(),rtnPic, sit.getPictureURLArray());
 			//url2Pic(sit.getItemID(),rtnPic, sit.getPictureURLArray());
 			//
-			String skuId=rtnSku.iterator().next().getColor();
+			//String skuId=rtnSku.iterator().next().getColor();
 
 		}else{
 			SkuDTO sku = new SkuDTO();
@@ -277,16 +279,22 @@ public class ShopingItemConvert {
 	public static String getSkuId(SimpleItemType sit, VariationType vt) {
 		if(vt!=null){
 			if(vt.getSKU()==null){
-				StringBuffer skuId=new StringBuffer();
 				NameValueListType[] skuNvs=vt.getVariationSpecifics().getNameValueListArray();
 				NameValueListType[] itemNvs=sit.getVariations().getVariationSpecificsSet().getNameValueListArray();
+				Map<String,String> map = new TreeMap<String, String>();
 				for (NameValueListType itemNv : itemNvs) {//item所有的可选项
 					for (NameValueListType skuNv : skuNvs) {
 						if(itemNv.getName().equals(skuNv.getName())){//变种的值
-							skuId.append(itemNv.getName()).append(":").append(skuNv.getValueArray(0)).append("@");//键值
+							//skuId.append(itemNv.getName()).append(":").append(skuNv.getValue(0)).append("@");//键值
+							map.put(itemNv.getName(), skuNv.getValueArray(0));
 							break;
 						}
 					}
+				}
+				//排序处理sku id
+				StringBuffer skuId=new StringBuffer();
+				for(Entry<String,String> entry:map.entrySet()){
+					skuId.append(entry.getKey()).append(":").append(entry.getValue()).append("@");//键值
 				}
 				return sit.getItemID()+"#"+skuId.toString();
 			}
