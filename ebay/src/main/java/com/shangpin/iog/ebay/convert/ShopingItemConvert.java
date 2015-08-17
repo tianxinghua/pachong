@@ -51,11 +51,13 @@ public class ShopingItemConvert {
 		Set<SpuDTO> rtnSpu=new HashSet<>(itemTypes.length);
 		for (SimpleItemType sit : itemTypes) {
 			try{
-				Object[] obj=convertSku(supplerKey,sit);
-				rtnSku.addAll((Set<SkuDTO>)obj[0]);
-				rtnPic.addAll((Set<ProductPictureDTO>)obj[1]);
-				SpuDTO spu = convertSpu(sit,supplerKey);
-				rtnSpu.add(spu);
+				SpuDTO spu = convertSpu(sit, supplerKey);
+				if(StringUtils.isNotBlank(spu.getMaterial())) {
+					Object[] obj = convertSku(supplerKey, sit);
+					rtnSku.addAll((Set<SkuDTO>) obj[0]);
+					rtnPic.addAll((Set<ProductPictureDTO>) obj[1]);
+					rtnSpu.add(spu);
+				}
 			}catch(Exception e){
 				logger.error("convert sku,spu,pic Error,xml:{},errMsg:{}",sit.toString(),e.getMessage());
 				continue;
