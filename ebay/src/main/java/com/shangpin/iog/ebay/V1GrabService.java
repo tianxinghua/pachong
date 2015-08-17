@@ -30,6 +30,7 @@ import com.ebay.soap.eBLBaseComponents.AckCodeType;
 import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
 import com.ebay.soap.eBLBaseComponents.ItemType;
 import com.ebay.soap.eBLBaseComponents.ListingStatusCodeType;
+import com.google.gson.Gson;
 import com.shangpin.ebay.finding.AckValue;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
 import com.shangpin.ebay.finding.SearchItem;
@@ -373,6 +374,9 @@ public class V1GrabService {
 			multResp= GrabEbayApiService.shoppingGetMultipleItems(itemIds);
 		}catch(Exception e){
 			logger.error(supplierKey,e);
+			return null;
+		}
+		if(multResp==null){
 			return null;
 		}
 		if(AckValue.FAILURE.equals(multResp.getAck())||
