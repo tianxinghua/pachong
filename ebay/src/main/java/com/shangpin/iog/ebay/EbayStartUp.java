@@ -3,6 +3,8 @@
  */
 package com.shangpin.iog.ebay;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -57,6 +59,9 @@ public class EbayStartUp {
 	
 	private static void grabProduct(){
 		//grabSrv.grabSaveProduct(supplier);
+		/*Date date1 = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String d = format.format(new Date());*/
 		Map<String, String> storeBrand=EbayInit.getStoreBrand("store-brand-sports");
 		Set<Entry<String, String>> kvs=storeBrand.entrySet();
 		//ebay是说不要超过20个并发跑
