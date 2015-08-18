@@ -97,8 +97,11 @@
 
 		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
         <where>
+
+            sku.STOCK >0
+
           <if test="null!=supplier">
-              sku.SUPPLIER_ID = #{supplier}
+            and   sku.SUPPLIER_ID = #{supplier}
           </if>
             <if test="null!=startDate">
                 and sku.LAST_TIME >= #{startDate}
