@@ -298,8 +298,7 @@ public class PageGrabService {
 		try{
 			multResp= GrabEbayApiService.shoppingGetMultipleItems(itemIds);
 		}catch(Exception e){
-			logger.error(supplierKey,e);
-			return null;
+			throw new XmlException(e.getMessage());
 		}
 		if(multResp==null){
 			return null;
@@ -372,4 +371,5 @@ public class PageGrabService {
 		}
 		logger.info("保存sku数：{}成功，失败数：{}", skus.size(),failCnt);
 	}
+	
 }

@@ -315,7 +315,7 @@ public class ShopingItemConvert {
 					}					
 				}*/
 				if(skuId.length()>0)
-					return sit.getItemID()+"#"+skuId.substring(0, skuId.length()-1);
+					return sit.getItemID()+"#"+skuId.toString();
 				else
 					return sit.getItemID();
 			}

@@ -36,7 +36,7 @@ public class V1UpdateStock  extends AbsUpdateProductStock{
 		}
 		Map<String, Integer> rtn = grabItmStock(itemIds);
 		int retry=0;
-		while(getErrItemId().size()>0 && retry<10){//失败的重取，errItemId得清空
+		while(getErrItemId()!=null && getErrItemId().size()>0 && retry<10){//失败的重取，errItemId得清空
 			retry++;
 			logger.info("拉取失败的重拉第{}次，大小：{}",retry,getErrItemId().size());
 			Set<String> itms=getErrItemId();
@@ -86,13 +86,7 @@ public class V1UpdateStock  extends AbsUpdateProductStock{
 		}
 		return rtn;
 	}
-	
-	/**
-	 * @param itemIds
-	 */
-	private void addErrorItem(Collection<String> itemIds) {
-		errItemId.get().addAll(itemIds);
-	}
+
 
 	/**
 	 * @param rtn
@@ -104,15 +98,65 @@ public class V1UpdateStock  extends AbsUpdateProductStock{
 			rtn.put(entry.getKey(), entry.getValue());
 		}
 	}
+	
+	/**
+	 * @param itemIds
+	 */
+	private void addErrorItem(Collection<String> itemIds) {
+		if(errItemId.get()==null)
+			errItemId.set(new HashSet<String>());
+		errItemId.get().addAll(itemIds);
+	}
 	/**
 	 * 添加获取错误的item
 	 * @param itemId
 	 */
 	public static void addErrorItem(String itemId){
+		if(errItemId.get()==null)
+			errItemId.set(new HashSet<String>());
 		errItemId.get().add(itemId);
 	}
 	public static Set<String> getErrItemId() {
 		return errItemId.get();
 	}
-	
+	/*
+	public static void main(String[] args) {
+		V1UpdateStock us = new V1UpdateStock();
+		Gson g = new Gson();
+		Type typeOfT = new TypeToken<TreeSet<String>>(){}.getType();
+		Reader json = null;
+		Reader json2 = null;
+		try {
+			json = new FileReader(new File("D:/tmp/ebayjson.txt"));
+			json2 = new FileReader(new File("D:/tmp/ebayjson2.txt"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		Collection<String> skuNo=g.fromJson(json, typeOfT);//300多个没获取到的
+		for (String string : skuNo) {
+			System.out.println(string);
+		}
+		
+		System.out.println("------------------------");
+		Collection<String> skuNo2=g.fromJson(json2, typeOfT);//真正拉到的数据
+		for (String string : skuNo2) {
+			System.out.println(string);
+		}
+		
+		System.out.println(skuNo2.size());
+		Set<String> exists=new TreeSet<String>();
+		for (String string : skuNo) {
+			if(skuNo2.contains(string)){
+				exists.add(string);
+			}
+		}
+		System.out.println(exists.size());
+		
+		try {
+			Map<String, Integer> m = us.grabStock(skuNo);
+			System.out.println(g.toJson(m.keySet()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}*/
 }

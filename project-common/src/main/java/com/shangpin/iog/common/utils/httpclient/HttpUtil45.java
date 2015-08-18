@@ -160,7 +160,6 @@ public class HttpUtil45 {
             result= EntityUtils.toString(entity);
             EntityUtils.consume(entity);
         }catch(Exception e){
-        	e.printStackTrace();
             logger.error("--------------httpError:"+e.getMessage());
         }finally{
                 try {

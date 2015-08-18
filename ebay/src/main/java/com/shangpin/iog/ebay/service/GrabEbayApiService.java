@@ -249,7 +249,7 @@ public class GrabEbayApiService {
 		try {
 			//tradeSellerList("pumaboxstore", t1, t2, 1, 8);
 			//tradeGetItem("251485222300");
-			FindItemsIneBayStoresResponse resp=findItemsIneBayStores("The Run Store","ASICS",1,10);
+			FindItemsIneBayStoresResponse resp=findItemsIneBayStores("Respro Medical","CW-X",1,10);
 			if(AckValue.SUCCESS.equals(resp.getAck())){
 				System.out.println("success");
 			}
