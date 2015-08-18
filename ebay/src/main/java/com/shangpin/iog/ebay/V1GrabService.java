@@ -116,7 +116,7 @@ public class V1GrabService {
 		try {
 			resp = GrabEbayApiService.shoppingGetMultipleItems4Stock(itemIds);
 		} catch (XmlException e) {
-			logger.error("getMultipleItem error:",e);
+			logger.error("getMultipleItem 错误:",e);
 			throw e;
 		}
 		if(AckCodeType.FAILURE.value().equals(resp.getAck().toString())){
