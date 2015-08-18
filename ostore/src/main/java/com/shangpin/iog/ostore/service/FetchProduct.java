@@ -42,7 +42,7 @@ public class FetchProduct {
             List<String> resultList = HttpUtil45.getContentListByInputSteam(url, timeConfig, null, null, null);
             HttpUtil45.closePool();
             mongMap.put("supplierId",supplierId);
-            mongMap.put("supplierName","acanfora");
+            mongMap.put("supplierName","ostore");
             mongMap.put("result",resultList.toString()) ;
             try {
                 logMongo.info(mongMap);
@@ -100,7 +100,7 @@ public class FetchProduct {
                                 skuId = skuId.replace("½","+");
                             }
                             sku.setSkuId(skuId);
-                            sku.setProductSize(size);
+                            sku.setProductSize(size.replace("½","+"));
                             sku.setMarketPrice(contentArray[10]);
                             sku.setColor(contentArray[3]);
                             sku.setProductDescription(contentArray[5]);
