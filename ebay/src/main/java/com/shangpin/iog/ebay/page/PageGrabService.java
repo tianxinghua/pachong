@@ -4,9 +4,7 @@
 package com.shangpin.iog.ebay.page;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -114,8 +112,13 @@ public class PageGrabService {
 					hasMore=false;
 					return ;
 				}
+			}catch(XmlException e){
+				//TODO 考虑重试！
+				logger.error("findStoreBrand xml转换异常，storeName:"+storeName+",brand:"+brand,e);
+				hasMore=false;
+				return ;
 			}catch(Exception e){
-				logger.error("findStoreBrand异常，storeName:"+storeName+",brand:"+brand,e);
+				logger.error("findStoreBrand未知异常，storeName:"+storeName+",brand:"+brand,e);				
 				hasMore=false;
 				return ;
 			}
@@ -162,7 +165,7 @@ public class PageGrabService {
 					kpp = getMoreDetail(storeName,itemIds);
 					saveData(kpp);
 				} catch (XmlException e) {
-					logger.error("{}获取detail，第{}页错误:{}",storeName,page,e.getMessage());
+					logger.error("{}获取品牌{}detail，第{}页错误:{}",storeName,brand,page,e.getMessage());
 				}
 			}
 			//保存
@@ -257,15 +260,7 @@ public class PageGrabService {
 		}
 		return kpp;
 	}
-	/**
-	 * @param date
-	 * @return
-	 */
-	private Calendar getCalendar(Date date) {
-		Calendar ca=Calendar.getInstance();
-		ca.setTime(date);
-		return ca;
-	}
+	
 	/**
 	 * 将src中的sku,spu,pic合并到target的sku,spu,pic中
 	 * @param src 需要合并的

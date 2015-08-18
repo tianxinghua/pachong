@@ -233,7 +233,10 @@ public class GrabEbayApiService {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		String xml=HttpUtil45.get(url, null, null);
+		String xml=HttpUtil45.get(url, new OutTimeConfig(10000,10000,60000), null);
+		if(HttpUtil45.errorResult.equals(xml)){
+			throw new XmlException(xml);
+		}
 		log.debug("查询商铺：{}，关键词：{},结果：{}",storeName,keywords,xml);
 		FindItemsIneBayStoresResponseDocument doc = FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
 		FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();			
