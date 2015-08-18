@@ -26,7 +26,7 @@ public class ApennineProductConvert {
          skuDTO.setColor(dto.getColor());
          skuDTO.setProductName(dto.getCdescript());
          skuDTO.setSupplierPrice(dto.getPricec());
-         skuDTO.setSkuId(dto.getScode());
+         skuDTO.setSkuId(dto.getScode()+"-"+dto.getSize()+"-"+dto.getColor());
          skuDTO.setSpuId(dto.getScode());
          skuDTO.setCreateTime(createTime);
          skuDTO.setSupplierId("2015070701319");

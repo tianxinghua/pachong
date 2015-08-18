@@ -66,7 +66,7 @@ public class UpdateApennineStockService extends AbsUpdateProductStock{
 		while (it.hasNext()) {
 			String skuId = it.next();
 			try {
-				stock=ApennineService.getHkstockByScode(ApiUrl.STOCK,skuId);
+				stock=ApennineService.getHkstockByScode(ApiUrl.STOCK,skuId.split("-")[0]);
 				map.put(skuId, stock);
 			} catch (Exception e) {
 				logger.error("-------- getHKstockByScode fail--------");
