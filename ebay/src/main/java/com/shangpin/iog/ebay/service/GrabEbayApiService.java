@@ -31,6 +31,7 @@ import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
 import com.shangpin.ebay.shoping.GetSingleItemResponseType;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.ebay.conf.EbayInit;
 
 /**
@@ -157,7 +158,7 @@ public class GrabEbayApiService {
 		}
 		sb.append("&IncludeSelector="+includeSelector);
 		//System.out.println(sb.toString());
-		String xml=HttpUtil45.get(sb.toString(),null,null);
+		String xml=HttpUtil45.get(sb.toString(),new OutTimeConfig(10000,10000,60000),null);
 		if(HttpUtil45.errorResult.equals(xml)){
 			throw new XmlException(xml);
 		}
