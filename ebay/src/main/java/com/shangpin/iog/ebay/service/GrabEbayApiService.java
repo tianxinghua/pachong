@@ -31,6 +31,7 @@ import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
 import com.shangpin.ebay.shoping.GetSingleItemResponseType;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.ebay.conf.EbayInit;
 
 /**
@@ -157,7 +158,7 @@ public class GrabEbayApiService {
 		}
 		sb.append("&IncludeSelector="+includeSelector);
 		//System.out.println(sb.toString());
-		String xml=HttpUtil45.get(sb.toString(),null,null);
+		String xml=HttpUtil45.get(sb.toString(),new OutTimeConfig(10000,10000,60000),null);
 		if(HttpUtil45.errorResult.equals(xml)){
 			throw new XmlException(xml);
 		}
@@ -232,7 +233,10 @@ public class GrabEbayApiService {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		String xml=HttpUtil45.get(url, null, null);
+		String xml=HttpUtil45.get(url, new OutTimeConfig(10000,10000,60000), null);
+		if(HttpUtil45.errorResult.equals(xml)){
+			throw new XmlException(xml);
+		}
 		log.debug("查询商铺：{}，关键词：{},结果：{}",storeName,keywords,xml);
 		FindItemsIneBayStoresResponseDocument doc = FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
 		FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();			
@@ -249,7 +253,7 @@ public class GrabEbayApiService {
 		try {
 			//tradeSellerList("pumaboxstore", t1, t2, 1, 8);
 			//tradeGetItem("251485222300");
-			FindItemsIneBayStoresResponse resp=findItemsIneBayStores("The Run Store","ASICS",1,10);
+			FindItemsIneBayStoresResponse resp=findItemsIneBayStores("Respro Medical","CW-X",1,10);
 			if(AckValue.SUCCESS.equals(resp.getAck())){
 				System.out.println("success");
 			}

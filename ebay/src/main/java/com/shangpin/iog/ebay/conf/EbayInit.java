@@ -23,7 +23,7 @@ import com.ebay.sdk.ApiCredential;
  * <br/>2015年6月18日
  */
 public class EbayInit {
-	public static final String EBAY="WWW2015071301325";
+	public static final String EBAY="NNN2015071301325";
 	//public static final String EBAY="TestEbay";
 	private static String tradeApi;
     private static String apiUrl;
