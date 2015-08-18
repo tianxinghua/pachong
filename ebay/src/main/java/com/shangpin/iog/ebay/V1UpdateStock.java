@@ -25,7 +25,7 @@ import com.shangpin.ice.ice.AbsUpdateProductStock;
 public class V1UpdateStock  extends AbsUpdateProductStock{
 	static Logger logger = LoggerFactory.getLogger(V1UpdateStock.class);
 	V1GrabService grabSrv = new V1GrabService();
-	static ThreadLocal<Set<String>> errItemId=new ThreadLocal<Set<String>>();
+	ThreadLocal<Set<String>> errItemId=new ThreadLocal<Set<String>>();
 	@Override
 	public Map<String, Integer> grabStock(Collection<String> skuNo)
 			throws ServiceException, Exception {
@@ -111,12 +111,12 @@ public class V1UpdateStock  extends AbsUpdateProductStock{
 	 * 添加获取错误的item
 	 * @param itemId
 	 */
-	public static void addErrorItem(String itemId){
+	public void addErrorItem(String itemId){
 		if(errItemId.get()==null)
 			errItemId.set(new HashSet<String>());
 		errItemId.get().add(itemId);
 	}
-	public static Set<String> getErrItemId() {
+	public Set<String> getErrItemId() {
 		return errItemId.get();
 	}
 	/*
