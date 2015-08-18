@@ -3,6 +3,8 @@
  */
 package com.shangpin.iog.ebay.convert;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,11 +53,17 @@ public class ShopingItemConvert {
 		Set<SpuDTO> rtnSpu=new HashSet<>(itemTypes.length);
 		for (SimpleItemType sit : itemTypes) {
 			try{
-				Object[] obj=convertSku(supplerKey,sit);
-				rtnSku.addAll((Set<SkuDTO>)obj[0]);
-				rtnPic.addAll((Set<ProductPictureDTO>)obj[1]);
-				SpuDTO spu = convertSpu(sit,supplerKey);
-				rtnSpu.add(spu);
+				SpuDTO spu = convertSpu(sit, supplerKey);
+				if(StringUtils.isNotBlank(spu.getMaterial())) {
+					Object[] obj = convertSku(supplerKey, sit);
+                    if(((Set<SkuDTO>) obj[0]).size()>0) {
+						rtnSku.addAll((Set<SkuDTO>) obj[0]);
+						rtnPic.addAll((Set<ProductPictureDTO>) obj[1]);
+						rtnSpu.add(spu);
+					}else {
+						logger.info("库存太少！不予保存:{}",spu.getSpuId());
+					}
+				}
 			}catch(Exception e){
 				logger.error("convert sku,spu,pic Error,xml:{},errMsg:{}",sit.toString(),e.getMessage());
 				continue;
@@ -148,9 +156,13 @@ public class ShopingItemConvert {
 		if(sit.getVariations()!=null && sit.getVariations().getVariationArray()!=null){
 			VariationType[] vrts=sit.getVariations().getVariationArray();
 			for (VariationType vt : vrts) {
+				int stock = vt.getQuantity()-vt.getSellingStatus().getQuantitySold();
+				if(stock<=3) {
+					continue;
+				}
 				SkuDTO sku = new SkuDTO();
+				sku.setStock("" + (stock));
 				setSkuCommon(userId, createDate, sit, sku);
-				sku.setStock(""+(vt.getQuantity()-vt.getSellingStatus().getQuantitySold()));
 				sku.setSaleCurrency(vt.getStartPrice().getCurrencyID().toString());
 				sku.setSalePrice(""+vt.getStartPrice().getDoubleValue());
 				sku.setSupplierPrice(sku.getSalePrice());
@@ -170,27 +182,32 @@ public class ShopingItemConvert {
 			//所有sku变种只拉取一遍变体图片 sku
 			//getVariationPic(sit.getVariations().getPicturesArray(),sit.getItemID(),rtnPic);
 			//总是保存item的图片 spu
-			url2Pic(null,sit.getItemID(),rtnPic, sit.getPictureURLArray());
+			if(rtnSku.size()>0) {
+				url2Pic(null, sit.getItemID(), rtnPic, sit.getPictureURLArray());
+			}
 			//url2Pic(sit.getItemID(),rtnPic, sit.getPictureURLArray());
 			//
-			String skuId=rtnSku.iterator().next().getColor();
+			//String skuId=rtnSku.iterator().next().getColor();
 
 		}else{
-			SkuDTO sku = new SkuDTO();
-			setSkuCommon(userId, createDate, sit, sku);
-			if(sit.getItemSpecifics()!=null){
-				setSkuAtt(sku,sit.getItemSpecifics().getNameValueListArray());				
+			int stock = sit.getQuantity()-sit.getQuantitySold();
+			if(stock>3) {
+				SkuDTO sku = new SkuDTO();
+				setSkuCommon(userId, createDate, sit, sku);
+				if(sit.getItemSpecifics()!=null){
+					setSkuAtt(sku,sit.getItemSpecifics().getNameValueListArray());
+				}
+				sku.setStock(""+(stock));
+				sku.setSalePrice(""+sit.getCurrentPrice().getDoubleValue());
+				sku.setSaleCurrency(sit.getCurrentPrice().getCurrencyID().toString());
+				sku.setSupplierPrice(sku.getSalePrice());
+				sku.setSkuId(getSkuId(sit,null));
+				setMarketPrice(sit.getDiscountPriceInfo(), sku);
+				//sit.getPictureURLArray();
+				rtnSku.add(sku);
+				//总是保存item的图片
+				url2Pic(sit.getItemID(),sit.getItemID(),rtnPic, sit.getPictureURLArray());
 			}
-			sku.setStock(""+(sit.getQuantity()-sit.getQuantitySold()));
-			sku.setSalePrice(""+sit.getCurrentPrice().getDoubleValue());
-			sku.setSaleCurrency(sit.getCurrentPrice().getCurrencyID().toString());
-			sku.setSupplierPrice(sku.getSalePrice());
-			sku.setSkuId(getSkuId(sit,null));
-			setMarketPrice(sit.getDiscountPriceInfo(), sku);
-			//sit.getPictureURLArray();
-			rtnSku.add(sku);
-			//总是保存item的图片
-			url2Pic(sit.getItemID(),sit.getItemID(),rtnPic, sit.getPictureURLArray());
 		}
 		return picAndSku;
 	}
@@ -277,18 +294,30 @@ public class ShopingItemConvert {
 	public static String getSkuId(SimpleItemType sit, VariationType vt) {
 		if(vt!=null){
 			if(vt.getSKU()==null){
-				StringBuffer skuId=new StringBuffer();
 				NameValueListType[] skuNvs=vt.getVariationSpecifics().getNameValueListArray();
 				NameValueListType[] itemNvs=sit.getVariations().getVariationSpecificsSet().getNameValueListArray();
+				//Map<String,String> map = new TreeMap<String, String>();
+				StringBuffer skuId=new StringBuffer();
 				for (NameValueListType itemNv : itemNvs) {//item所有的可选项
 					for (NameValueListType skuNv : skuNvs) {
 						if(itemNv.getName().equals(skuNv.getName())){//变种的值
 							skuId.append(itemNv.getName()).append(":").append(skuNv.getValueArray(0)).append("@");//键值
+							//map.put(itemNv.getName(), skuNv.getValueArray(0));
 							break;
 						}
 					}
 				}
-				return sit.getItemID()+"#"+skuId.toString();
+				/*if(System.currentTimeMillis()>1438768800000L){//2015-08-05 18点之后拉的数据用这个作为skuId
+					skuId=new StringBuffer();
+					//排序处理sku id
+					for(Entry<String,String> entry:map.entrySet()){
+						skuId.append(entry.getKey()).append(":").append(entry.getValue()).append("@");//键值
+					}					
+				}*/
+				if(skuId.length()>0)
+					return sit.getItemID()+"#"+skuId.toString();
+				else
+					return sit.getItemID();
 			}
 			return sit.getItemID()+"#"+vt.getSKU();
 		}
@@ -381,7 +410,7 @@ public class ShopingItemConvert {
 				sku.setBarcode(value);
 				continue;
 			}
-			if(name.contains("size") && sku.getProductSize()==null){
+			if(!name.equals("size type") && name.contains("size") && sku.getProductSize()==null){
 				sku.setProductSize(value);
 				continue;
 			}
@@ -407,5 +436,15 @@ public class ShopingItemConvert {
 		sku.setMemo("storeName:"+userId);
 		sku.setCreateTime(sit.getEndTime().getTime());
 		sku.setLastTime(createDate);
+	}
+	public static void main(String[] args) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
+		Date d=null;
+		try {
+			d = sdf.parse("2015-08-05 18");
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		System.out.println(d.getTime());
 	}
 }

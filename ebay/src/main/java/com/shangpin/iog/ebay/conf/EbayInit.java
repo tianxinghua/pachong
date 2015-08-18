@@ -24,6 +24,7 @@ import com.ebay.sdk.ApiCredential;
  */
 public class EbayInit {
 	public static final String EBAY="NNN2015071301325";
+	//public static final String EBAY="TestEbay";
 	private static String tradeApi;
     private static String apiUrl;
     private static String epsUrl;
