@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,11 +158,23 @@ public class GrabEbayApiService {
 		sb.append("&IncludeSelector="+includeSelector);
 		//System.out.println(sb.toString());
 		String xml=HttpUtil45.get(sb.toString(),null,null);
+		if(HttpUtil45.errorResult.equals(xml)){
+			throw new XmlException(xml);
+		}
 		log.debug("url:{},结果：{}",sb.toString(),xml);
-		//try {
+		XmlOptions option= new XmlOptions();option.setLoadStripComments();
+		option.setLoadTrimTextBuffer();
+		GetMultipleItemsResponseDocument.Factory.newInstance(option);
 		GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
 		GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();
 		return rt;
+		/*if(!HttpUtil45.errorResult.equals(xml)){
+		}else{
+			log.error("http获取itm错误："+xml);
+			return null;
+		}*/
+		//try {
+		//setLoadStripComments
 		/*} catch (XmlException e) {
 			log.error("getMultipleItem error",e);
 		}

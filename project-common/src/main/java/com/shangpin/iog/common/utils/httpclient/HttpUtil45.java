@@ -1,6 +1,12 @@
 package com.shangpin.iog.common.utils.httpclient;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
+import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
@@ -22,7 +28,12 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.*;
+import org.apache.http.Consts;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
@@ -36,7 +47,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
@@ -56,7 +69,6 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.Args;
-import org.apache.http.util.CharArrayBuffer;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +86,10 @@ public class HttpUtil45 {
 	static volatile PoolingHttpClientConnectionManager connManager=null; 
 	static volatile boolean poolShutDown=false;
 	private static SSLConnectionSocketFactory socketFactory=null;
+	private static CloseableHttpClient httpClient=null;
+	static{
+		init();
+	}
 	public static String errorResult = "{\"error\":\"发生异常错误\"}";
 	/**
 	 * 请求需要认证的url
@@ -137,16 +153,15 @@ public class HttpUtil45 {
         String result=null;
         CloseableHttpResponse resp=null;
         try {
-            CloseableHttpClient ht=null;
-            ht=getHttpClient(null);
             if(null==localContext) localContext = getPlainContext(url);
             localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
-            resp=ht.execute(get,localContext);
+            resp=httpClient.execute(get,localContext);
             HttpEntity entity=resp.getEntity();
             result= EntityUtils.toString(entity);
             EntityUtils.consume(entity);
         }catch(Exception e){
-            e.printStackTrace();
+        	e.printStackTrace();
+            logger.error("--------------httpError:"+e.getMessage());
         }finally{
                 try {
                     if(resp!=null)
@@ -200,14 +215,11 @@ public class HttpUtil45 {
 
 		String urlStr=paramGetUrl(url, param);
 		HttpGet get = new HttpGet(urlStr);
-		String result=null;
 		CloseableHttpResponse resp=null;
 		try {
-			CloseableHttpClient ht=null;
-			ht=getHttpClient(null);
 			if(null==localContext) localContext = getPlainContext(url);
 			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
-			resp=ht.execute(get,localContext);
+			resp=httpClient.execute(get,localContext);
 			HttpEntity entity=resp.getEntity();
 			final InputStream instream = entity.getContent();
 			if (instream == null) {
@@ -282,10 +294,8 @@ public class HttpUtil45 {
 		String result=null;
 		CloseableHttpResponse resp=null;
 		try {
-			CloseableHttpClient ht=null;
-			ht=getHttpClient(url);
 			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
-			resp=ht.execute(post, localContext);
+			resp=httpClient.execute(post, localContext);
 			HttpEntity entity=resp.getEntity();
 			result=EntityUtils.toString(entity);
 			EntityUtils.consume(entity);
@@ -311,20 +321,31 @@ public class HttpUtil45 {
 		.setSocketTimeout(outCnf.getSocketOutTime())
 		.build();
 	}
+	
+	public static void init(){
+		try {
+			connManager=getPoolingConnectionManager(null);
+			httpClient=getHttpClient(connManager);
+		} catch (KeyManagementException | NoSuchAlgorithmException
+				| KeyStoreException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * 获取http请求的client<br/>连接池方式<br/>如果client不用了方可关闭，否则再次获取会出现异常
-	 * @param url 请求的url nullable
+	 * @param connManager2 请求的url nullable
 	 * @return  httpClient
 	 * @throws KeyManagementException
 	 * @throws NoSuchAlgorithmException
 	 * @throws KeyStoreException
 	 */
-	private static CloseableHttpClient getHttpClient(String url) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException{
+	private static CloseableHttpClient getHttpClient(PoolingHttpClientConnectionManager connManager2) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException{
 		CloseableHttpClient httpclient = HttpClients.custom()
 				//.setDefaultCredentialsProvider(createCredentials(url))
 				.setSSLSocketFactory(getSslConnectionSocketFactory())
 				//TODO 设置连接池
-				.setConnectionManager(getPoolingConnectionManager(url))
+				.setConnectionManager(connManager2)
 				.setRetryHandler(getRetryHandler())
 				.build();
 		//httpclient =HttpClients.custom().build();
@@ -340,7 +361,7 @@ public class HttpUtil45 {
 		            IOException exception,
 		            int executionCount,
 		            HttpContext context) {
-		        if (executionCount >= 5) {
+		        if (executionCount >= 3) {
 		            // Do not retry if over max retry count
 		            return false;
 		        }
@@ -354,11 +375,17 @@ public class HttpUtil45 {
 		        }
 		        if (exception instanceof ConnectTimeoutException) {
 		            // Connection refused
-		            return false;
+		            return true;
 		        }
 		        if (exception instanceof SSLException) {
 		            // SSL handshake exception
 		            return false;
+		        }
+		        if(exception instanceof ConnectionPoolTimeoutException){
+		        	return true;
+		        }
+		        if(exception instanceof SocketTimeoutException){
+		        	return true;
 		        }
 		        HttpClientContext clientContext = HttpClientContext.adapt(context);
 		        HttpRequest request = clientContext.getRequest();
@@ -388,9 +415,9 @@ public class HttpUtil45 {
 			//TODO 注册socket连接策略，http,https认证方式
 			connManager = new PoolingHttpClientConnectionManager(getDefaultRegistry());
 			connManager.setMaxTotal(200);//设置最大连接数200
-			connManager.setDefaultMaxPerRoute(3);//设置每个路由默认连接数
-			/*SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(socketOutTime).build();
-			connManager.setDefaultSocketConfig(socketConfig);*/
+			connManager.setDefaultMaxPerRoute(50);//设置每个路由默认连接数
+			SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(10000).build();
+			connManager.setDefaultSocketConfig(socketConfig);
 			if(StringUtils.isNotBlank(url)){
 	            HttpHost host = url2Host(url);
 				connManager.setMaxPerRoute(new HttpRoute(host), 50);//每个路由器对每个服务器允许最大50个并发访问
@@ -435,11 +462,6 @@ public class HttpUtil45 {
 	 * @return
 	 */
 	private static HttpClientContext getPlainContext(String url){
-		/*HttpHost target = url2Host(url);
-		AuthCache authCache = new BasicAuthCache();
-		BasicScheme basicAuth = new BasicScheme();
-		authCache.put(target, basicAuth);
-		localContext.setAuthCache(authCache);*/
 		HttpClientContext localContext = HttpClientContext.create();
 		return localContext;
 	}
@@ -553,39 +575,4 @@ public class HttpUtil45 {
 	private static boolean isSSL(String url) {
 		return url.startsWith("https");
 	}
-	
-	/*@Test
-	public void testAuthPost() {
-		String userName = "SHANGPIN";
-		String password = "12345678";
-		String AUTH = "https://api.orderlink.it/v1/user/token";
-		String rs=postAuth(AUTH, null, null, userName, password);
-		System.out.println(rs);
-	}
-	@Test
-	public void testGet(){
-		Map<String,String> param = new HashMap<String, String>();
-		param.put("page", "1");param.put("limit", "20");
-		String token="6c9ade4c5fea79a5c0b060c67b55f4a2a59316dff3a18f047990484b8cc74d8c6ecddbbbb03139211f017ee9ea983f908ae5a46cf087294ccfdb46a78107fd01ec280b64e9fd7ccfd09864f93a4c46b181ffead68b644604efe5cc5f903a9954";
-		param.put("access_token", token);
-		String productId=null,recordId=null;
-		if(productId!=null) param.put("product_id", productId);
-		if(recordId!=null) param.put("id", recordId);
-		
-		String[] x={"151001LCX000007-P31","151400NCX000003-NERO","151481ASC000001-2310C",
-				"151481DPL000003-00100","151481DCW000008-2720C"
-		};
-		String url="https://api.orderlink.it/v1/stocks";
-		for (String record : x) {
-			try{
-				param.put("id", record);
-				String url1=paramGetUrl(url, param);
-				String rrs=get(url1, null,null);
-				System.out.println(rrs);
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-			
-		}
-	}*/
 }

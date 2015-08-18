@@ -3,14 +3,14 @@
  */
 package com.shangpin.iog.ebay.convert;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -296,22 +296,28 @@ public class ShopingItemConvert {
 			if(vt.getSKU()==null){
 				NameValueListType[] skuNvs=vt.getVariationSpecifics().getNameValueListArray();
 				NameValueListType[] itemNvs=sit.getVariations().getVariationSpecificsSet().getNameValueListArray();
-				Map<String,String> map = new TreeMap<String, String>();
+				//Map<String,String> map = new TreeMap<String, String>();
+				StringBuffer skuId=new StringBuffer();
 				for (NameValueListType itemNv : itemNvs) {//item所有的可选项
 					for (NameValueListType skuNv : skuNvs) {
 						if(itemNv.getName().equals(skuNv.getName())){//变种的值
-							//skuId.append(itemNv.getName()).append(":").append(skuNv.getValue(0)).append("@");//键值
-							map.put(itemNv.getName(), skuNv.getValueArray(0));
+							skuId.append(itemNv.getName()).append(":").append(skuNv.getValueArray(0)).append("@");//键值
+							//map.put(itemNv.getName(), skuNv.getValueArray(0));
 							break;
 						}
 					}
 				}
-				//排序处理sku id
-				StringBuffer skuId=new StringBuffer();
-				for(Entry<String,String> entry:map.entrySet()){
-					skuId.append(entry.getKey()).append(":").append(entry.getValue()).append("@");//键值
-				}
-				return sit.getItemID()+"#"+skuId.toString();
+				/*if(System.currentTimeMillis()>1438768800000L){//2015-08-05 18点之后拉的数据用这个作为skuId
+					skuId=new StringBuffer();
+					//排序处理sku id
+					for(Entry<String,String> entry:map.entrySet()){
+						skuId.append(entry.getKey()).append(":").append(entry.getValue()).append("@");//键值
+					}					
+				}*/
+				if(skuId.length()>0)
+					return sit.getItemID()+"#"+skuId.substring(0, skuId.length()-1);
+				else
+					return sit.getItemID();
 			}
 			return sit.getItemID()+"#"+vt.getSKU();
 		}
@@ -404,7 +410,7 @@ public class ShopingItemConvert {
 				sku.setBarcode(value);
 				continue;
 			}
-			if(name.contains("size") && sku.getProductSize()==null){
+			if(!name.equals("size type") && name.contains("size") && sku.getProductSize()==null){
 				sku.setProductSize(value);
 				continue;
 			}
@@ -430,5 +436,15 @@ public class ShopingItemConvert {
 		sku.setMemo("storeName:"+userId);
 		sku.setCreateTime(sit.getEndTime().getTime());
 		sku.setLastTime(createDate);
+	}
+	public static void main(String[] args) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
+		Date d=null;
+		try {
+			d = sdf.parse("2015-08-05 18");
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		System.out.println(d.getTime());
 	}
 }

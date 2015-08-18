@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.shangpin.iog.ebay;
+package com.shangpin.iog.ebay.page;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -11,24 +11,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ebay.sdk.ApiException;
-import com.ebay.sdk.SdkException;
-import com.ebay.sdk.SdkSoapException;
 import com.ebay.soap.eBLBaseComponents.AckCodeType;
-import com.ebay.soap.eBLBaseComponents.GetSellerListResponseType;
-import com.ebay.soap.eBLBaseComponents.ItemType;
 import com.ebay.soap.eBLBaseComponents.ListingStatusCodeType;
 import com.shangpin.ebay.finding.AckValue;
 import com.shangpin.ebay.finding.FindItemsIneBayStoresResponse;
@@ -37,11 +30,14 @@ import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.SimpleItemType;
 import com.shangpin.ebay.shoping.VariationType;
 import com.shangpin.ebay.shoping.VariationsType;
+import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.json.JsonUtil;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.ebay.convert.ShopingItemConvert;
 import com.shangpin.iog.ebay.service.GrabEbayApiService;
+import com.shangpin.iog.service.ProductFetchService;
 
 /**
  * ebay数据抓取服务，数据库存抓取服务
@@ -50,74 +46,27 @@ import com.shangpin.iog.ebay.service.GrabEbayApiService;
  * <br/>2015年6月30日
  */
 @Component
-public class V1GrabService {
-	static Logger logger = LoggerFactory.getLogger(V1GrabService.class);
+public class PageGrabService {
+	static Logger logger = LoggerFactory.getLogger(PageGrabService.class);
 	static int pageSize=100;
-	/**
-	 * 抓取ebay商户的数据
-	 * @param userId 商户id
-	 * @param endStart 产品的结束时间 开始日期
-	 * @param endEnd 产品的结束时间 终止日期
-	 * @return
-	 * @throws ApiException
-	 * @return  封装好的sku,spu,pic，各键代表对应的数据集合
-	 * @throws ApiException 
-	 * @throws SdkSoapException
-	 * @throws SdkException
-	 */
-	@SuppressWarnings({ "rawtypes" })
-	public Map<String, ? extends Collection> getSellerList(String userId,Date endStart,Date endEnd) throws ApiException, SdkSoapException, SdkException{
-		int page=1;
-		boolean hasMore=false;
-		Map<String,  ? extends Collection> skuSpuAndPic=null;
-		GetSellerListResponseType resp =null;
-		do{//分页循环取
-			resp = GrabEbayApiService.tradeSellerList(userId, 
-					getCalendar(endStart), getCalendar(endEnd),page,pageSize);
-			if(!AckCodeType.FAILURE.equals(resp.getAck())){//失败的则不处理
-				hasMore=resp.isHasMoreItems();
-				ItemType[] tps = resp.getItemArray().getItem();
-				List<String> itemIds = new ArrayList<>(tps.length);//1.得到id
-				for (ItemType itemType : tps) {
-					boolean active=ListingStatusCodeType.ACTIVE.equals(itemType.getSellingStatus().getListingStatus());
-					if(!active)
-						continue;
-					itemIds.add(itemType.getItemID());
-				}
-				try {
-					skuSpuAndPic = getMoreDetail(userId, itemIds);
-					//skuSpuAndPic = findDetailKPP(userId, skuSpuAndPic, itemIds);
-				} catch (XmlException e) {
-					logger.error("查询item明细异常，supplierId:"+userId,e);
-					page++;
-					continue ;
-				}
-				page++;
-			}else{
-				/*logger.warn("获取商户{}产品失败，错误码：{}，错误信息{}:",userId,
-						resp.getErrors(0).getErrorCode(),
-						resp.getErrors(0).getLongMessage());*/
-				hasMore=false;
-			}
-		}while(hasMore);
-		
-		return skuSpuAndPic;
+	public static ProductFetchService fetchSrv;
+	@Autowired
+	public void setFetchSrv(ProductFetchService fetchSrv) {
+		PageGrabService.fetchSrv = fetchSrv;
 	}
-
 	/**
 	 * 根据itemId获取item及变种的库存<br/>
 	 * @param itemIds ebay的itemId
 	 * @return skuId:stock的键值对
-	 * @throws XmlException 
 	 * @see ShopingItemConvert#getSkuId(SimpleItemType, VariationType) 产品skuId
 	 */
-	public Map<String,Integer> getStock(Collection<String> itemIds) throws XmlException{
+	public Map<String,Integer> getStock(Collection<String> itemIds){
 		GetMultipleItemsResponseType resp;
 		try {
 			resp = GrabEbayApiService.shoppingGetMultipleItems4Stock(itemIds);
 		} catch (XmlException e) {
-			logger.error("getMultipleItem error:",e);
-			throw e;
+			logger.error("getMultipleItem error",e);
+			return null;
 		}
 		if(AckCodeType.FAILURE.value().equals(resp.getAck().toString())){
 			logger.warn("获取库存失败，错误码：{}，错误信息{}:",resp.getErrorsArray(0).getErrorCode(),resp.getErrorsArray(0).getLongMessage());
@@ -145,73 +94,35 @@ public class V1GrabService {
 		}
 		return rtnMap;
 	}
-	
-	/**
-	 * @param date
-	 * @return
-	 *//*
-	private Calendar getCalendar(Date date) {
-		Calendar ca=Calendar.getInstance();
-		ca.setTime(date);
-		return ca;
-	}*/
-	/**
-	 * 根据itemIds获取sku，spu，pic信息
-	 * @param supplierKey 供应商id，（商铺id，用户id）
-	 * @param skuSpuAndPic 
-	 * @param itemIds item id
-	 * @return
-	 * @throws XmlException 
-	 */
-	/*@SuppressWarnings({ "rawtypes", "unchecked" })
-	private Map<String, ? extends Collection> findDetailKPP(String supplierKey,Map<String, ? extends Collection> skuSpuAndPic, List<String> itemIds) throws XmlException {
-		//2.得到item
-		GetMultipleItemsResponseType multResp= GrabEbayApiService.shoppingGetMultipleItems(itemIds);
-		//3.转换sku,spu
-		SimpleItemType[] itemTypes=multResp.getItemArray();
-		Map<String, Collection> kpp=ShopingItemConvert.convert2kpp(itemTypes,supplierKey);
-		if(skuSpuAndPic==null){
-			skuSpuAndPic=kpp;
-		}else{
-			skuSpuAndPic.get("sku").addAll(kpp.get("sku"));
-			skuSpuAndPic.get("spu").addAll(kpp.get("spu"));
-			skuSpuAndPic.get("pic").addAll(kpp.get("pic"));
-		}
-		return skuSpuAndPic;
-	}*/
 	/**
 	 * 通过find接口查询供应商店铺销售的item
 	 * @param storeName 店铺名字
 	 * @param brand 品牌名字
 	 * @return  封装好的sku,spu,pic，各键代表对应的数据集合
 	 */
-	@SuppressWarnings({ "rawtypes" })
-	public Map<String, ? extends Collection> findStoreBrand(String storeName,
+	@SuppressWarnings("rawtypes")
+	public void findStoreBrand(String storeName,
 			String brand){
 		int page=1;
-		Map<String, Collection> skuSpuAndPic = initResultMap();
 		boolean hasMore=false;
 		FindItemsIneBayStoresResponse resp =null;
-		ExecutorService exe = null;List<Future<Map<String, Collection>>> fu = null;
+		ExecutorService exe = null;
 		do{//分页循环取
 			try {
 				resp = GrabEbayApiService.findItemsIneBayStores(storeName,brand,page,pageSize);
 				if(!AckValue.SUCCESS.equals(resp.getAck()) && !AckValue.WARNING.equals(resp.getAck())){//返回错误了则直接返回
-					/*logger.warn("find store:{},brand:{}失败，错误码：{}，错误信息{}:",storeName,brand,
-							resp.getErrorMessage().getErrorArray(0).getErrorId(),
-							resp.getErrorMessage().getErrorArray(0).getMessage());*/
 					hasMore=false;
-					return skuSpuAndPic;
+					return ;
 				}
 			}catch(Exception e){
 				logger.error("findStoreBrand异常，storeName:"+storeName+",brand:"+brand,e);
 				hasMore=false;
-				return skuSpuAndPic;
+				return ;
 			}
 			//TODO 如果没找到数据，那么返回null
 			if(resp.getPaginationOutput().getTotalEntries()==0){
 				//logger.warn("没有找到storeName:{},brand:{}的产品,page:{}",storeName,brand,page);
-				return skuSpuAndPic;
+				return ;
 			}
 			int totalPage=resp.getPaginationOutput().getTotalPages();
 			if(totalPage>resp.getPaginationOutput().getPageNumber()){
@@ -220,7 +131,6 @@ public class V1GrabService {
 			}else{
 				hasMore=false;
 			}
-			//TODO 查询结果resp.getSearchResult().getCount(),还是resp.getPaginationOutput().getTotalEntries())值得商榷
 			if(page==2){
 				logger.info(
 						"search store:{},brand:{} Result,resultCount:{},totalPage:{},totalCount:{}",
@@ -240,41 +150,43 @@ public class V1GrabService {
 					itemIds.add(item.getItemId());
 				}
 			}
-			try{
-				if(totalPage>4){//考虑通过线程去处理了
-					if(exe==null){
-						exe = Executors.newFixedThreadPool(totalPage);//每页一个线程去跑
-						fu=new ArrayList<>();
-					}
-					Future<Map<String, Collection>> rs=exe.submit(new GetDetailThread(storeName,itemIds));
-					fu.add(rs);
-				}else{
-					combine(getMoreDetail(storeName,itemIds),skuSpuAndPic);					
+			//2.正式拉取并保存每一页
+			if(totalPage>4){//考虑通过线程去处理了
+				if(exe==null){
+					exe = Executors.newFixedThreadPool(totalPage);//每页一个线程去跑
 				}
-				//TODO 此处应该过滤目标品牌的
-				//filterBrand()
-			}catch(Exception e){
-				logger.error("查询店铺、品牌，getMultipleItem异常，storeName:"+storeName+",brand:"+brand,e);
+				exe.execute(new GetDetailThread(storeName,itemIds,page));
+			}else{
+				Map<String, ? extends Collection> kpp;
+				try {
+					kpp = getMoreDetail(storeName,itemIds);
+					saveData(kpp);
+				} catch (XmlException e) {
+					logger.error("{}获取detail，第{}页错误:{}",storeName,page,e.getMessage());
+				}
 			}
+			//保存
 		}while(hasMore);
-		if(exe!=null){
-			exe.shutdown();
-			try{
-				while(!exe.awaitTermination(1, TimeUnit.MINUTES)){//1分钟查询一次有无完成
-					ThreadPoolExecutor pool = (ThreadPoolExecutor)exe;
-					logger.info("item detail pool,总数：{}，当前活动线程数：{}",pool.getTaskCount(),pool.getActiveCount());
-				}
-				//线程完毕之后开始得到结果合并
-				for (Future<Map<String, Collection>> future : fu) {
-					combine(future.get(),skuSpuAndPic);
-				}				
-			}catch(Exception e){
-				logger.warn("获取itemIds的明细信息异常",e);
-			}
-		}
-		return skuSpuAndPic;
+		
+		return ;
 	}
 
+	/**
+	 * 保存每页的结果
+	 * @param skuSpuAndPic
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static void saveData(Map<String, ? extends Collection> skuSpuAndPic) {
+		Collection<SkuDTO> skus = skuSpuAndPic.get("sku");
+		logger.info("线程{}抓取到sku数{}",Thread.currentThread().getName(),skus.size());
+		saveSku(skus);
+		Collection<SpuDTO> spuDTOs = skuSpuAndPic.get("spu");
+		logger.info("线程{}抓取到spu数{}",Thread.currentThread().getName(),spuDTOs.size());
+		saveSpu(spuDTOs);
+		Collection<ProductPictureDTO> picUrls = skuSpuAndPic.get("pic");
+		logger.info("线程{}抓取到pic数{}",Thread.currentThread().getName(),picUrls.size());
+		savePic(picUrls);
+	}
 	/**
 	 * @return
 	 */
@@ -287,24 +199,37 @@ public class V1GrabService {
 		return skuSpuAndPic;
 	}
 	@SuppressWarnings("rawtypes")
-	static class GetDetailThread implements Callable<Map<String,Collection>>{
+	static class GetDetailThread implements  Runnable{
 
 		private String storeName;
 		private List<String> itemIds;
+		private int page;
 
 		/**
 		 * @param storeName
 		 * @param itemIds
+		 * @param page 
 		 */
-		public GetDetailThread(String storeName, List<String> itemIds) {
+		public GetDetailThread(String storeName, List<String> itemIds, int page) {
 			this.storeName=storeName;
 			this.itemIds=itemIds;
+			this.page=page;
 		}
 
-		@Override
+		/*@Override
 		public Map<String, Collection> call() throws Exception {
 			logger.info("获取itemIds明细线程启动,itemId size:"+itemIds.size());
 			return (Map<String, Collection>) getMoreDetail(storeName,itemIds);
+		}
+*/
+		@Override
+		public void run() {
+			try {
+				Map<String, ? extends Collection> kpp = getMoreDetail(storeName,itemIds);
+				saveData(kpp);
+			} catch (XmlException e) {
+				logger.error("{}线程获取detail第{}页错误:{}",storeName,page,e.getMessage());
+			}
 		}
 		
 	}
@@ -392,53 +317,59 @@ public class V1GrabService {
 		Map<String, Collection> kpp=ShopingItemConvert.convert2kpp(itemTypes,supplierKey);
 		return kpp;
 	}
-	/*@SuppressWarnings({ "rawtypes", "static-access" })
-	public static void main(String[] args) {
-		List<String> itemIds=new ArrayList<>();
-		itemIds.add("251485222300");
-		itemIds.add("251674833689");//过期的
-		Calendar t1 = Calendar.getInstance();
-		t1.setTime(new Date());
-		Calendar t2 = Calendar.getInstance();t2.set(Calendar.MONTH, 8);
-		
-		List<String> list=new ArrayList<>();
-		try(BufferedReader br = new BufferedReader(new FileReader(new File("D:/tmp/spu.txt")))){
-			String tmp=null;
-			while((tmp=br.readLine())!=null){
-				list.add(tmp);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		V1GrabService srv=new V1GrabService();
-		int idx=0;
-		Map<String, ? extends Collection> kpp=initResultMap();
-		try {
-			kpp=srv.getMoreDetail("ebay",list.subList(idx, idx+20));
-		} catch (XmlException e) {
-			e.printStackTrace();
-		}
-		Gson g = new Gson();
-		System.out.println(kpp.get("spu").size());
-		System.out.println(kpp.get("sku").size());
-		System.out.println(kpp.get("pic").size());
-		System.out.println(g.toJson(kpp));
-		while(idx<size){
+
+
+	/**
+	 * @param picUrls
+	 */
+	private static void savePic(Collection<ProductPictureDTO> picUrls) {
+		logger.info("pic数：{}", picUrls.size());
+		int failCnt = 0;
+		for (ProductPictureDTO picurl : picUrls) {
 			try {
-				idx=idx+20;
-			} catch (XmlException e) {
-				e.printStackTrace();
+				fetchSrv.savePictureForMongo(picurl);
+			} catch (ServiceException e) {
+				logger.error("保存图片{}失败,error:{}", JsonUtil.getJsonString4JavaPOJO(picurl), e.getMessage());
+				failCnt++;
 			}
 		}
-		if(idx-size>0){
+		logger.info("保存pic数：{}成功，失败数：{}", picUrls.size(),failCnt);
+	}
+
+	/**
+	 * @param spuDTOs
+	 */
+	private static void saveSpu(Collection<SpuDTO> spuDTOs) {
+		//logger.info("spu数：{}", spuDTOs.size());
+		int failCnt = 0;
+		for (SpuDTO spu : spuDTOs) {
 			try {
-				srv.getMoreDetail("ebay", list.subList(idx-20, size));
-			} catch (XmlException e) {
-				e.printStackTrace();
+				if(StringUtils.isNotBlank(spu.getMaterial())) {
+					fetchSrv.saveSPU(spu);
+				}
+			} catch (ServiceException e) {
+				logger.error("保存spu:{}失败,error:{}",JsonUtil.getJsonString4JavaPOJO(spu), e.getMessage());
+				failCnt++;
 			}
 		}
-		//srv.getStock(itemIds);
-		//tradeSellerList("pumaboxstore", t1, t2, 1, 8);
-		//tradeGetItem("251485222300");
-	}*/
+		logger.info("保存spu数：{}成功，失败数：{}", spuDTOs.size(),failCnt);
+	}
+
+	/**
+	 * @param skus
+	 */
+	private static void saveSku(Collection<SkuDTO> skus) {
+		//logger.info("sku数：{}", skus.size());
+		int failCnt = 0;
+		for (SkuDTO sku : skus) {
+			try {
+				fetchSrv.saveSKU(sku);
+			} catch (ServiceException e) {
+				if(!"数据插入失败键重复".equals(e.getMessage()))
+				logger.error("保存sku:{}失败,error:{}", JsonUtil.getJsonString4JavaPOJO(sku),e.getMessage());
+				failCnt++;
+			}
+		}
+		logger.info("保存sku数：{}成功，失败数：{}", skus.size(),failCnt);
+	}
 }

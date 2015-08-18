@@ -51,7 +51,7 @@ public class V1GrabUpdateMain{
 	 * @param sellerId ebay供应商卖家id
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void grabSaveProduct(String sellerId) {
+	private void grabSaveProduct(String sellerId) {
 		Date date = Calendar.getInstance().getTime();
 		Date date2 = null;
 		Calendar c = Calendar.getInstance();
@@ -149,4 +149,5 @@ public class V1GrabUpdateMain{
 		}
 		logger.info("保存sku数：{}成功，失败数：{}", skus.size(),failCnt);
 	}
+	
 }

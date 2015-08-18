@@ -1,15 +1,5 @@
 package com.shangpin.iog.ebay;
 
-import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.ebay.conf.EbayInit;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
 
 /**
  * Created by huxia on 2015/7/2.

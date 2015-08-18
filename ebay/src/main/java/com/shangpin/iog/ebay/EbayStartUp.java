@@ -3,8 +3,6 @@
  */
 package com.shangpin.iog.ebay;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -22,6 +20,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.ebay.conf.EbayInit;
+import com.shangpin.iog.ebay.page.PageGrabService;
 
 /**
  * ebay抓取，更新启动类，用于选择是更新还是抓取
@@ -33,9 +32,11 @@ public class EbayStartUp {
 	static Logger logger = LoggerFactory.getLogger(EbayStartUp.class);
 	private static ApplicationContext factory;
 	static V1GrabUpdateMain grabSrv=null;
+	static PageGrabService pgGrabSrv;
     private static void loadSpringContext(){
         factory = new AnnotationConfigApplicationContext(AppContext.class);
         grabSrv=factory.getBean(V1GrabUpdateMain.class);
+        pgGrabSrv=factory.getBean(PageGrabService.class);
     }
 	public static void main(String[] args) {
 		System.out.println("参数：u表示更新库存，其他表示拉取数据");
@@ -115,9 +116,12 @@ public class EbayStartUp {
 		@Override
 		public void run() {		
 			logger.info("线程 {} 开始抓取",getName());
-			grabSrv.grabSaveProduct4Find(storeName, brand);
+			//grabSrv.grabSaveProduct4Find(storeName, brand);
+			//使用分页保存拉取
+			pgGrabSrv.findStoreBrand(storeName,brand);
 			logger.info("线程 {} 抓取保存完成",getName());
 		}
 		
 	}
+	
 }
