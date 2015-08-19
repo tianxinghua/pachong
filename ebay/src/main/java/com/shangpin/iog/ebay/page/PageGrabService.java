@@ -181,14 +181,15 @@ public class PageGrabService {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static void saveData(Map<String, ? extends Collection> skuSpuAndPic) {
 		Collection<SkuDTO> skus = skuSpuAndPic.get("sku");
+		Collection<String> skuIds = null;
 		logger.info("线程{}抓取到sku数{}",Thread.currentThread().getName(),skus.size());
-		saveSku(skus);
+		skuIds = saveSku(skus);
+		Collection<ProductPictureDTO> picUrls = skuSpuAndPic.get("pic");
+		logger.info("线程{}抓取到pic数{}",Thread.currentThread().getName(),picUrls.size());
+		savePic(picUrls,skuIds);
 		Collection<SpuDTO> spuDTOs = skuSpuAndPic.get("spu");
 		logger.info("线程{}抓取到spu数{}",Thread.currentThread().getName(),spuDTOs.size());
 		saveSpu(spuDTOs);
-		Collection<ProductPictureDTO> picUrls = skuSpuAndPic.get("pic");
-		logger.info("线程{}抓取到pic数{}",Thread.currentThread().getName(),picUrls.size());
-		savePic(picUrls);
 	}
 	/**
 	 * @return
@@ -316,15 +317,19 @@ public class PageGrabService {
 	/**
 	 * @param picUrls
 	 */
-	private static void savePic(Collection<ProductPictureDTO> picUrls) {
+	private static void savePic(Collection<ProductPictureDTO> picUrls,Collection<String> skuIds) {
 		logger.info("pic数：{}", picUrls.size());
 		int failCnt = 0;
 		for (ProductPictureDTO picurl : picUrls) {
-			try {
-				fetchSrv.savePictureForMongo(picurl);
-			} catch (ServiceException e) {
-				logger.error("保存图片{}失败,error:{}", JsonUtil.getJsonString4JavaPOJO(picurl), e.getMessage());
-				failCnt++;
+			for(String  skuid:skuIds) {
+				if(!picurl.getSkuId().equals(skuid)) {
+					try {
+						fetchSrv.savePictureForMongo(picurl);
+					} catch (ServiceException e) {
+						logger.error("保存图片{}失败,error:{}", JsonUtil.getJsonString4JavaPOJO(picurl), e.getMessage());
+						failCnt++;
+					}
+				}
 			}
 		}
 		logger.info("保存pic数：{}成功，失败数：{}", picUrls.size(),failCnt);
@@ -352,19 +357,23 @@ public class PageGrabService {
 	/**
 	 * @param skus
 	 */
-	private static void saveSku(Collection<SkuDTO> skus) {
+	private static Collection<String> saveSku(Collection<SkuDTO> skus) {
 		//logger.info("sku数：{}", skus.size());
 		int failCnt = 0;
+		Collection<String> skuIds = new HashSet<>();
 		for (SkuDTO sku : skus) {
 			try {
 				fetchSrv.saveSKU(sku);
 			} catch (ServiceException e) {
-				if(!"数据插入失败键重复".equals(e.getMessage()))
+				skuIds.add(sku.getSkuId());
+				if(!"数据插入失败键重复".equals(e.getMessage())){
 					logger.error("保存sku:{}失败,error:{}", JsonUtil.getJsonString4JavaPOJO(sku),e.getMessage());
-				failCnt++;
+					failCnt++;
+				}
 			}
 		}
 		logger.info("保存sku数：{}成功，失败数：{}", skus.size(),failCnt);
+		return skuIds;
 	}
 
 }

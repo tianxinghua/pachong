@@ -63,7 +63,7 @@ public class FetchProduct {
                 }
                 i++;
                 //SKU;Brand;ModelName;Color;ColorFilter;Description;Materials;Sex;Category;Season;Price;Discount;Images;SizesFormat;Sizes
-               // 0 ;  1   ;  2      ;3    ;   4       ;    5      ;6        ;7  ;  8     ;  9   ;10   ; 11     ;  12  ;  13       ; 14
+                // 0 ;  1   ;  2      ;3    ;   4       ;    5      ;6        ;7  ;  8     ;  9   ;10   ; 11     ;  12  ;  13       ; 14
                 String[] contentArray = content.split(";");
                 if(null==contentArray||contentArray.length<15) continue;
                 try {

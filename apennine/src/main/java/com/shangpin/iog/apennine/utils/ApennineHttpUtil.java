@@ -193,7 +193,12 @@ public class ApennineHttpUtil {
         List<SpuDTO>spuDTOList=formatToSpu(dtos);
         List<ProductPictureDTO>picList=formatToPic(dtos);
        for (int i = 0; i < skuDTOList.size(); i++) {
-        	fetchService.saveSKU(skuDTOList.get(i));
+           try{
+               fetchService.saveSKU(skuDTOList.get(i));
+           }catch (Exception e){
+               e.printStackTrace();
+           }
+
 		}
         for (int i = 0; i < spuDTOList.size(); i++) {
         	fetchService.saveSPU(spuDTOList.get(i));
