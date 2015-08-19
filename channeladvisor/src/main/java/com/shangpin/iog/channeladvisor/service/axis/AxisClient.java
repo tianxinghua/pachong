@@ -42,6 +42,7 @@ public class AxisClient {
     {
         String result = null;
         AdminServiceStub.PingResponse response = null;
+        AdminServiceStub.RequestAccessResponse requestAccessResponse = null;
 
         //1、根据服务地址，创建一个发送消息的客户端。
         try
@@ -66,7 +67,10 @@ public class AxisClient {
             credentials.setDeveloperKey("537c99a8-e3d6-4788-9296-029420540832");
             credentials.setPassword("L1zhongren!");
             apiCredentialsE.setAPICredentials(credentials);
-            response = clientStub.ping(ping,apiCredentialsE);
+            AdminServiceStub.RequestAccess requestAccess  = new    AdminServiceStub.RequestAccess();
+            requestAccess.setLocalID(12018111);
+            requestAccessResponse =clientStub.requestAccess(requestAccess, apiCredentialsE);
+//            response = clientStub.ping(ping,apiCredentialsE);
 //            AdminServiceStub.GetAuthorizationList getAuthorizationList = new   AdminServiceStub.GetAuthorizationList();
 //            AdminServiceStub.GetAuthorizationListResponse authorizationListResponse = clientStub.getAuthorizationList(getAuthorizationList, apiCredentialsE);
         }
@@ -77,9 +81,9 @@ public class AxisClient {
         }
 
         //4、如果获取的响应不为空，获取响应的字符串内容。
-        if(response != null)
+        if(requestAccessResponse != null)
         {
-            AdminServiceStub.APIResultOfString apiResultOfString= response.getPingResult();
+            AdminServiceStub.APIResultOfBoolean resultOfBoolean= requestAccessResponse.getRequestAccessResult();
         }
 
     }

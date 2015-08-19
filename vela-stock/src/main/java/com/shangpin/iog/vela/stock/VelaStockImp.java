@@ -25,6 +25,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         Map<String, Integer> stock_map = new HashMap<String, Integer>();
         Gson gson = new Gson();
+        int i=0;
         for (String skuno : skuNo) {
             if (barcode_map.containsKey(skuno)) {
                 continue;
@@ -38,11 +39,29 @@ public class VelaStockImp extends AbsUpdateProductStock {
             url = url.replaceAll("\\[\\[itemId\\]\\]", itemId);
             String json = null;
             try {
-                json = HttpUtil45.get(url, new OutTimeConfig(), null);
+                json = HttpUtil45.get(url, new OutTimeConfig(10000,10000,10000), null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
             if (json != null && !json.isEmpty()) {
+                if(json.equals("{\"error\":\"发生异常错误\"}")){
+                    //重复调用5次
+                     while(i<5){
+                         json = HttpUtil45.get(url, new OutTimeConfig(10000,10000,10000), null);
+                         if(json.equals("{\"error\":\"发生异常错误\"}")){
+                             i++;
+                         }else{
+                             i=0;
+                             break;
+                         }
+
+                     }
+                    if(json.equals("{\"error\":\"发生异常错误\"}")){
+                        stock_map.put(skuno, 0);
+                        i=0;
+                        continue;
+                    }
+                }
                 try {
                     Quantity result = gson.fromJson(json, new TypeToken<Quantity>() {
                     }.getType());
@@ -58,7 +77,6 @@ public class VelaStockImp extends AbsUpdateProductStock {
                 }
             }
         }
-        HttpUtil45.closePool();
         return stock_map;
     }
 

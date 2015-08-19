@@ -92,7 +92,7 @@ public class V1UpdateStock  extends AbsUpdateProductStock{
 	 * @param rtn
 	 * @param stock
 	 */
-	private static void combine(Map<String, Integer> rtn, Map<String, Integer> stock) {
+	private static void combine(Map<String, Integer> rtn, Map<String, Integer> stock)  {
 		Set<Entry<String, Integer>> entrySet = stock.entrySet();
 		for (Entry<String, Integer> entry : entrySet) {
 			rtn.put(entry.getKey(), entry.getValue());

@@ -37,13 +37,17 @@ public class FetchProduct {
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
             timeConfig.confRequestOutTime(360000);
-            timeConfig.confConnectOutTime(36000);
+            timeConfig.confConnectOutTime(360000);
             timeConfig.confSocketOutTime(360000);
             List<String> resultList = HttpUtil45.getContentListByInputSteam(url, timeConfig, null, null, null);
             HttpUtil45.closePool();
+            StringBuffer buffer =new StringBuffer();
+            for(String content:resultList){
+                buffer.append(content).append("|||");
+            }
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","acanfora");
-            mongMap.put("result",resultList.toString()) ;
+            mongMap.put("result", buffer.toString()) ;
             try {
                 logMongo.info(mongMap);
             } catch (Exception e) {
