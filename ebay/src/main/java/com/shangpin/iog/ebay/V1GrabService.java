@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.shangpin.iog.ebay;
 
@@ -45,7 +45,7 @@ import com.shangpin.iog.ebay.service.GrabEbayApiService;
 
 /**
  * ebay数据抓取服务，数据库存抓取服务
- * @description 
+ * @description
  * @author 陈小峰
  * <br/>2015年6月30日
  */
@@ -61,7 +61,7 @@ public class V1GrabService {
 	 * @return
 	 * @throws ApiException
 	 * @return  封装好的sku,spu,pic，各键代表对应的数据集合
-	 * @throws ApiException 
+	 * @throws ApiException
 	 * @throws SdkSoapException
 	 * @throws SdkException
 	 */
@@ -72,7 +72,7 @@ public class V1GrabService {
 		Map<String,  ? extends Collection> skuSpuAndPic=null;
 		GetSellerListResponseType resp =null;
 		do{//分页循环取
-			resp = GrabEbayApiService.tradeSellerList(userId, 
+			resp = GrabEbayApiService.tradeSellerList(userId,
 					getCalendar(endStart), getCalendar(endEnd),page,pageSize);
 			if(!AckCodeType.FAILURE.equals(resp.getAck())){//失败的则不处理
 				hasMore=resp.isHasMoreItems();
@@ -100,7 +100,7 @@ public class V1GrabService {
 				hasMore=false;
 			}
 		}while(hasMore);
-		
+
 		return skuSpuAndPic;
 	}
 
@@ -108,15 +108,16 @@ public class V1GrabService {
 	 * 根据itemId获取item及变种的库存<br/>
 	 * @param itemIds ebay的itemId
 	 * @return skuId:stock的键值对
+	 * @throws XmlException
 	 * @see ShopingItemConvert#getSkuId(SimpleItemType, VariationType) 产品skuId
 	 */
-	public Map<String,Integer> getStock(Collection<String> itemIds){
+	public Map<String,Integer> getStock(Collection<String> itemIds) throws XmlException{
 		GetMultipleItemsResponseType resp;
 		try {
 			resp = GrabEbayApiService.shoppingGetMultipleItems4Stock(itemIds);
 		} catch (XmlException e) {
-			logger.error("getMultipleItem error",e);
-			return null;
+			logger.error("getMultipleItem 错误:",e);
+			throw e;
 		}
 		if(AckCodeType.FAILURE.value().equals(resp.getAck().toString())){
 			logger.warn("获取库存失败，错误码：{}，错误信息{}:",resp.getErrorsArray(0).getErrorCode(),resp.getErrorsArray(0).getLongMessage());
@@ -144,7 +145,7 @@ public class V1GrabService {
 		}
 		return rtnMap;
 	}
-	
+
 	/**
 	 * @param date
 	 * @return
@@ -157,10 +158,10 @@ public class V1GrabService {
 	/**
 	 * 根据itemIds获取sku，spu，pic信息
 	 * @param supplierKey 供应商id，（商铺id，用户id）
-	 * @param skuSpuAndPic 
+	 * @param skuSpuAndPic
 	 * @param itemIds item id
 	 * @return
-	 * @throws XmlException 
+	 * @throws XmlException
 	 */
 	/*@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Map<String, ? extends Collection> findDetailKPP(String supplierKey,Map<String, ? extends Collection> skuSpuAndPic, List<String> itemIds) throws XmlException {
@@ -186,7 +187,7 @@ public class V1GrabService {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	public Map<String, ? extends Collection> findStoreBrand(String storeName,
-			String brand){
+															String brand){
 		int page=1;
 		Map<String, Collection> skuSpuAndPic = initResultMap();
 		boolean hasMore=false;
@@ -223,7 +224,7 @@ public class V1GrabService {
 			if(page==2){
 				logger.info(
 						"search store:{},brand:{} Result,resultCount:{},totalPage:{},totalCount:{}",
-						storeName, brand,resp.getSearchResult().getCount(), 
+						storeName, brand,resp.getSearchResult().getCount(),
 						totalPage, resp.getPaginationOutput().getTotalEntries());
 				if(totalPage>4){
 					logger.warn("store:{},brand:{}的item超过了500个，总共：{}，获取sku,spu,pic需要时间",storeName,brand,resp.getPaginationOutput().getTotalEntries());
@@ -248,7 +249,7 @@ public class V1GrabService {
 					Future<Map<String, Collection>> rs=exe.submit(new GetDetailThread(storeName,itemIds));
 					fu.add(rs);
 				}else{
-					combine(getMoreDetail(storeName,itemIds),skuSpuAndPic);					
+					combine(getMoreDetail(storeName,itemIds),skuSpuAndPic);
 				}
 				//TODO 此处应该过滤目标品牌的
 				//filterBrand()
@@ -266,7 +267,7 @@ public class V1GrabService {
 				//线程完毕之后开始得到结果合并
 				for (Future<Map<String, Collection>> future : fu) {
 					combine(future.get(),skuSpuAndPic);
-				}				
+				}
 			}catch(Exception e){
 				logger.warn("获取itemIds的明细信息异常",e);
 			}
@@ -305,13 +306,13 @@ public class V1GrabService {
 			logger.info("获取itemIds明细线程启动,itemId size:"+itemIds.size());
 			return (Map<String, Collection>) getMoreDetail(storeName,itemIds);
 		}
-		
+
 	}
 	/**
 	 * 循环调用获取item的变体明细
 	 * @param supplierKey
 	 * @param itemIds
-	 * @return 
+	 * @return
 	 * @throws XmlException
 	 */
 	@SuppressWarnings("rawtypes")
@@ -327,7 +328,7 @@ public class V1GrabService {
 				p1=p2;
 			}while(p1<idLen);
 		}else{
-			combine(findDetailKPP(supplierKey,itemIds),kpp);					
+			combine(findDetailKPP(supplierKey,itemIds),kpp);
 		}
 		return kpp;
 	}
@@ -363,16 +364,19 @@ public class V1GrabService {
 	 * @param supplierKey 供应商id，（商铺id，用户id）
 	 * @param itemIds item id
 	 * @return
-	 * @throws XmlException 
+	 * @throws XmlException
 	 */
 	@SuppressWarnings({ "rawtypes"})
-	private static Map<String, ? extends Collection> findDetailKPP(String supplierKey,List<String> itemIds) throws XmlException {
+	public static Map<String, ? extends Collection> findDetailKPP(String supplierKey,List<String> itemIds) throws XmlException {
 		//2.得到item
 		GetMultipleItemsResponseType multResp=null;
 		try{
 			multResp= GrabEbayApiService.shoppingGetMultipleItems(itemIds);
 		}catch(Exception e){
 			logger.error(supplierKey,e);
+			return null;
+		}
+		if(multResp==null){
 			return null;
 		}
 		if(AckValue.FAILURE.equals(multResp.getAck())||
@@ -388,15 +392,52 @@ public class V1GrabService {
 		Map<String, Collection> kpp=ShopingItemConvert.convert2kpp(itemTypes,supplierKey);
 		return kpp;
 	}
-	/*public static void main(String[] args) {
+	/*@SuppressWarnings({ "rawtypes", "static-access" })
+	public static void main(String[] args) {
 		List<String> itemIds=new ArrayList<>();
 		itemIds.add("251485222300");
 		itemIds.add("251674833689");//过期的
 		Calendar t1 = Calendar.getInstance();
 		t1.setTime(new Date());
 		Calendar t2 = Calendar.getInstance();t2.set(Calendar.MONTH, 8);
+		
+		List<String> list=new ArrayList<>();
+		try(BufferedReader br = new BufferedReader(new FileReader(new File("D:/tmp/spu.txt")))){
+			String tmp=null;
+			while((tmp=br.readLine())!=null){
+				list.add(tmp);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		V1GrabService srv=new V1GrabService();
-		srv.getStock(itemIds);
+		int idx=0;
+		Map<String, ? extends Collection> kpp=initResultMap();
+		try {
+			kpp=srv.getMoreDetail("ebay",list.subList(idx, idx+20));
+		} catch (XmlException e) {
+			e.printStackTrace();
+		}
+		Gson g = new Gson();
+		System.out.println(kpp.get("spu").size());
+		System.out.println(kpp.get("sku").size());
+		System.out.println(kpp.get("pic").size());
+		System.out.println(g.toJson(kpp));
+		while(idx<size){
+			try {
+				idx=idx+20;
+			} catch (XmlException e) {
+				e.printStackTrace();
+			}
+		}
+		if(idx-size>0){
+			try {
+				srv.getMoreDetail("ebay", list.subList(idx-20, size));
+			} catch (XmlException e) {
+				e.printStackTrace();
+			}
+		}
+		//srv.getStock(itemIds);
 		//tradeSellerList("pumaboxstore", t1, t2, 1, 8);
 		//tradeGetItem("251485222300");
 	}*/
