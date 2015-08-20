@@ -366,10 +366,9 @@ public class PageGrabService {
 				fetchSrv.saveSKU(sku);
 			} catch (ServiceException e) {
 				skuIds.add(sku.getSkuId());
-				if(!"数据插入失败键重复".equals(e.getMessage())){
+				if(!"数据插入失败键重复".equals(e.getMessage()))
 					logger.error("保存sku:{}失败,error:{}", JsonUtil.getJsonString4JavaPOJO(sku),e.getMessage());
 					failCnt++;
-				}
 			}
 		}
 		logger.info("保存sku数：{}成功，失败数：{}", skus.size(),failCnt);
