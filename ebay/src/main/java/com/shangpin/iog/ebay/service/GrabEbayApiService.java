@@ -35,7 +35,7 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.ebay.conf.EbayInit;
 
 /**
- * @description 
+ * @description
  * @author 陈小峰
  * <br/>2015年6月30日
  */
@@ -126,7 +126,7 @@ public class GrabEbayApiService {
 	 * <b/>请根据ListingStatus来判断产品是否下架,状态Active才是销售中的</b>
 	 * @param itemIds ebay的itemId集合
 	 * @return
-	 * @throws XmlException 
+	 * @throws XmlException
 	 */
 	public static GetMultipleItemsResponseType shoppingGetMultipleItems(Collection<String> itemIds) throws XmlException{
 		return shopingGetMultipleItem(itemIds,"Details,Variations,ItemSpecifics");
@@ -138,7 +138,7 @@ public class GrabEbayApiService {
 	 * @see #shoppingGetMultipleItems(List) 获取详细信息
 	 * @param itemIds
 	 * @return
-	 * @throws XmlException 
+	 * @throws XmlException
 	 */
 	public static GetMultipleItemsResponseType shoppingGetMultipleItems4Stock(Collection<String> itemIds) throws XmlException{
 		return shopingGetMultipleItem(itemIds,"Details,Variations");
@@ -146,7 +146,7 @@ public class GrabEbayApiService {
 	/**
 	 * @param itemIds itemId，最多20个
 	 * @return
-	 * @throws XmlException 
+	 * @throws XmlException
 	 */
 	private static GetMultipleItemsResponseType shopingGetMultipleItem(
 			Collection<String> itemIds,String includeSelector) throws XmlException {
@@ -239,7 +239,7 @@ public class GrabEbayApiService {
 		}
 		log.debug("查询商铺：{}，关键词：{},结果：{}",storeName,keywords,xml);
 		FindItemsIneBayStoresResponseDocument doc = FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
-		FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();			
+		FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
 		return rt;
 	}
 	

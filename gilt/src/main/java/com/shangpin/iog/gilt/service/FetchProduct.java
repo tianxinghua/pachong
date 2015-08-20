@@ -26,7 +26,7 @@ public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
     @Autowired
     ProductFetchService productFetchService;
-    String supplierId = "";//
+    //String supplierId = "";//
     String skusUrl="https://api-sandbox.gilt.com/global/skus";
     public void fetchProductAndSave(String url){
         /*String jsonStr = getSkus(url);*/

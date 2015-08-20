@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.shangpin.iog.ebay.page;
 
@@ -39,7 +39,7 @@ import com.shangpin.iog.service.ProductFetchService;
 
 /**
  * ebay数据抓取服务，数据库存抓取服务
- * @description 
+ * @description
  * @author 陈小峰
  * <br/>2015年6月30日
  */
@@ -100,7 +100,7 @@ public class PageGrabService {
 	 */
 	@SuppressWarnings("rawtypes")
 	public void findStoreBrand(String storeName,
-			String brand){
+							   String brand){
 		int page=1;
 		boolean hasMore=false;
 		FindItemsIneBayStoresResponse resp =null;
@@ -118,7 +118,7 @@ public class PageGrabService {
 				hasMore=false;
 				return ;
 			}catch(Exception e){
-				logger.error("findStoreBrand未知异常，storeName:"+storeName+",brand:"+brand,e);				
+				logger.error("findStoreBrand未知异常，storeName:"+storeName+",brand:"+brand,e);
 				hasMore=false;
 				return ;
 			}
@@ -137,7 +137,7 @@ public class PageGrabService {
 			if(page==2){
 				logger.info(
 						"search store:{},brand:{} Result,resultCount:{},totalPage:{},totalCount:{}",
-						storeName, brand,resp.getSearchResult().getCount(), 
+						storeName, brand,resp.getSearchResult().getCount(),
 						totalPage, resp.getPaginationOutput().getTotalEntries());
 				if(totalPage>4){
 					logger.warn("store:{},brand:{}的item超过了500个，总共：{}，获取sku,spu,pic需要时间",storeName,brand,resp.getPaginationOutput().getTotalEntries());
@@ -170,7 +170,7 @@ public class PageGrabService {
 			}
 			//保存
 		}while(hasMore);
-		
+
 		return ;
 	}
 
@@ -212,7 +212,7 @@ public class PageGrabService {
 		/**
 		 * @param storeName
 		 * @param itemIds
-		 * @param page 
+		 * @param page
 		 */
 		public GetDetailThread(String storeName, List<String> itemIds, int page) {
 			this.storeName=storeName;
@@ -235,13 +235,13 @@ public class PageGrabService {
 				logger.error("{}线程获取detail第{}页错误:{}",storeName,page,e.getMessage());
 			}
 		}
-		
+
 	}
 	/**
 	 * 循环调用获取item的变体明细
 	 * @param supplierKey
 	 * @param itemIds
-	 * @return 
+	 * @return
 	 * @throws XmlException
 	 */
 	@SuppressWarnings("rawtypes")
@@ -257,11 +257,11 @@ public class PageGrabService {
 				p1=p2;
 			}while(p1<idLen);
 		}else{
-			combine(findDetailKPP(supplierKey,itemIds),kpp);					
+			combine(findDetailKPP(supplierKey,itemIds),kpp);
 		}
 		return kpp;
 	}
-	
+
 	/**
 	 * 将src中的sku,spu,pic合并到target的sku,spu,pic中
 	 * @param src 需要合并的
@@ -285,7 +285,7 @@ public class PageGrabService {
 	 * @param supplierKey 供应商id，（商铺id，用户id）
 	 * @param itemIds item id
 	 * @return
-	 * @throws XmlException 
+	 * @throws XmlException
 	 */
 	@SuppressWarnings({ "rawtypes"})
 	public static Map<String, ? extends Collection> findDetailKPP(String supplierKey,List<String> itemIds) throws XmlException {
@@ -374,5 +374,5 @@ public class PageGrabService {
 		logger.info("保存sku数：{}成功，失败数：{}", skus.size(),failCnt);
 		return skuIds;
 	}
-	
+
 }

@@ -40,6 +40,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
+            timeConfig.confConnectOutTime(360000);
             timeConfig.confRequestOutTime(360000);
             timeConfig.confSocketOutTime(360000);
             String result = HttpUtil45.get("http://www.acanfora.it/api_ecommerce_v2.aspx", timeConfig, null);
@@ -97,7 +98,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
         AbsUpdateProductStock grabStockImp = new GrabStockImp();grabStockImp.supplierSkuIdMain=true;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("ACANFORA更新数据库开始");
-        grabStockImp.updateProductStock("2015071701342","2015-01-01 00:00",format.format(new Date()));
+        grabStockImp.updateProductStock("2015050800242","2015-01-01 00:00",format.format(new Date()));
         logger.info("ACANFORA更新数据库结束");
         System.exit(0);
 

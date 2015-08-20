@@ -37,13 +37,17 @@ public class FetchProduct {
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
             timeConfig.confRequestOutTime(360000);
-            timeConfig.confConnectOutTime(36000);
+            timeConfig.confConnectOutTime(360000);
             timeConfig.confSocketOutTime(360000);
             List<String> resultList = HttpUtil45.getContentListByInputSteam(url, timeConfig, null, null, null);
             HttpUtil45.closePool();
+            StringBuffer buffer =new StringBuffer();
+            for(String content:resultList){
+                buffer.append(content).append("|||");
+            }
             mongMap.put("supplierId",supplierId);
-            mongMap.put("supplierName","ostore");
-            mongMap.put("result",resultList.toString()) ;
+            mongMap.put("supplierName","acanfora");
+            mongMap.put("result", buffer.toString()) ;
             try {
                 logMongo.info(mongMap);
             } catch (Exception e) {
@@ -59,7 +63,7 @@ public class FetchProduct {
                 }
                 i++;
                 //SKU;Brand;ModelName;Color;ColorFilter;Description;Materials;Sex;Category;Season;Price;Discount;Images;SizesFormat;Sizes
-               // 0 ;  1   ;  2      ;3    ;   4       ;    5      ;6        ;7  ;  8     ;  9   ;10   ; 11     ;  12  ;  13       ; 14
+                // 0 ;  1   ;  2      ;3    ;   4       ;    5      ;6        ;7  ;  8     ;  9   ;10   ; 11     ;  12  ;  13       ; 14
                 String[] contentArray = content.split(";");
                 if(null==contentArray||contentArray.length<15) continue;
                 try {

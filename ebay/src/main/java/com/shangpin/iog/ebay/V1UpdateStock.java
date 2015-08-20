@@ -18,7 +18,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 
 /**
- * @description 
+ * @description
  * @author 陈小峰
  * <br/>2015年7月24日
  */
@@ -50,7 +50,7 @@ public class V1UpdateStock  extends AbsUpdateProductStock{
 	 * @param itemIds
 	 * @param rtn
 	 * @return
-	 * @throws XmlException 
+	 * @throws XmlException
 	 */
 	private Map<String, Integer> grabItmStock(Set<String> itemIds){
 		Map<String, Integer> rtn = new HashMap<String, Integer>();
@@ -92,13 +92,13 @@ public class V1UpdateStock  extends AbsUpdateProductStock{
 	 * @param rtn
 	 * @param stock
 	 */
-	private static void combine(Map<String, Integer> rtn, Map<String, Integer> stock) {
+	private static void combine(Map<String, Integer> rtn, Map<String, Integer> stock)  {
 		Set<Entry<String, Integer>> entrySet = stock.entrySet();
 		for (Entry<String, Integer> entry : entrySet) {
 			rtn.put(entry.getKey(), entry.getValue());
 		}
 	}
-	
+
 	/**
 	 * @param itemIds
 	 */

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.shangpin.iog.ebay;
 
@@ -45,7 +45,7 @@ import com.shangpin.iog.ebay.service.GrabEbayApiService;
 
 /**
  * ebay数据抓取服务，数据库存抓取服务
- * @description 
+ * @description
  * @author 陈小峰
  * <br/>2015年6月30日
  */
@@ -61,7 +61,7 @@ public class V1GrabService {
 	 * @return
 	 * @throws ApiException
 	 * @return  封装好的sku,spu,pic，各键代表对应的数据集合
-	 * @throws ApiException 
+	 * @throws ApiException
 	 * @throws SdkSoapException
 	 * @throws SdkException
 	 */
@@ -72,7 +72,7 @@ public class V1GrabService {
 		Map<String,  ? extends Collection> skuSpuAndPic=null;
 		GetSellerListResponseType resp =null;
 		do{//分页循环取
-			resp = GrabEbayApiService.tradeSellerList(userId, 
+			resp = GrabEbayApiService.tradeSellerList(userId,
 					getCalendar(endStart), getCalendar(endEnd),page,pageSize);
 			if(!AckCodeType.FAILURE.equals(resp.getAck())){//失败的则不处理
 				hasMore=resp.isHasMoreItems();
@@ -100,7 +100,7 @@ public class V1GrabService {
 				hasMore=false;
 			}
 		}while(hasMore);
-		
+
 		return skuSpuAndPic;
 	}
 
@@ -108,7 +108,7 @@ public class V1GrabService {
 	 * 根据itemId获取item及变种的库存<br/>
 	 * @param itemIds ebay的itemId
 	 * @return skuId:stock的键值对
-	 * @throws XmlException 
+	 * @throws XmlException
 	 * @see ShopingItemConvert#getSkuId(SimpleItemType, VariationType) 产品skuId
 	 */
 	public Map<String,Integer> getStock(Collection<String> itemIds) throws XmlException{
@@ -145,7 +145,7 @@ public class V1GrabService {
 		}
 		return rtnMap;
 	}
-	
+
 	/**
 	 * @param date
 	 * @return
@@ -158,10 +158,10 @@ public class V1GrabService {
 	/**
 	 * 根据itemIds获取sku，spu，pic信息
 	 * @param supplierKey 供应商id，（商铺id，用户id）
-	 * @param skuSpuAndPic 
+	 * @param skuSpuAndPic
 	 * @param itemIds item id
 	 * @return
-	 * @throws XmlException 
+	 * @throws XmlException
 	 */
 	/*@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Map<String, ? extends Collection> findDetailKPP(String supplierKey,Map<String, ? extends Collection> skuSpuAndPic, List<String> itemIds) throws XmlException {
@@ -187,7 +187,7 @@ public class V1GrabService {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	public Map<String, ? extends Collection> findStoreBrand(String storeName,
-			String brand){
+															String brand){
 		int page=1;
 		Map<String, Collection> skuSpuAndPic = initResultMap();
 		boolean hasMore=false;
@@ -224,7 +224,7 @@ public class V1GrabService {
 			if(page==2){
 				logger.info(
 						"search store:{},brand:{} Result,resultCount:{},totalPage:{},totalCount:{}",
-						storeName, brand,resp.getSearchResult().getCount(), 
+						storeName, brand,resp.getSearchResult().getCount(),
 						totalPage, resp.getPaginationOutput().getTotalEntries());
 				if(totalPage>4){
 					logger.warn("store:{},brand:{}的item超过了500个，总共：{}，获取sku,spu,pic需要时间",storeName,brand,resp.getPaginationOutput().getTotalEntries());
@@ -249,7 +249,7 @@ public class V1GrabService {
 					Future<Map<String, Collection>> rs=exe.submit(new GetDetailThread(storeName,itemIds));
 					fu.add(rs);
 				}else{
-					combine(getMoreDetail(storeName,itemIds),skuSpuAndPic);					
+					combine(getMoreDetail(storeName,itemIds),skuSpuAndPic);
 				}
 				//TODO 此处应该过滤目标品牌的
 				//filterBrand()
@@ -267,7 +267,7 @@ public class V1GrabService {
 				//线程完毕之后开始得到结果合并
 				for (Future<Map<String, Collection>> future : fu) {
 					combine(future.get(),skuSpuAndPic);
-				}				
+				}
 			}catch(Exception e){
 				logger.warn("获取itemIds的明细信息异常",e);
 			}
@@ -306,13 +306,13 @@ public class V1GrabService {
 			logger.info("获取itemIds明细线程启动,itemId size:"+itemIds.size());
 			return (Map<String, Collection>) getMoreDetail(storeName,itemIds);
 		}
-		
+
 	}
 	/**
 	 * 循环调用获取item的变体明细
 	 * @param supplierKey
 	 * @param itemIds
-	 * @return 
+	 * @return
 	 * @throws XmlException
 	 */
 	@SuppressWarnings("rawtypes")
@@ -328,7 +328,7 @@ public class V1GrabService {
 				p1=p2;
 			}while(p1<idLen);
 		}else{
-			combine(findDetailKPP(supplierKey,itemIds),kpp);					
+			combine(findDetailKPP(supplierKey,itemIds),kpp);
 		}
 		return kpp;
 	}
@@ -364,7 +364,7 @@ public class V1GrabService {
 	 * @param supplierKey 供应商id，（商铺id，用户id）
 	 * @param itemIds item id
 	 * @return
-	 * @throws XmlException 
+	 * @throws XmlException
 	 */
 	@SuppressWarnings({ "rawtypes"})
 	public static Map<String, ? extends Collection> findDetailKPP(String supplierKey,List<String> itemIds) throws XmlException {

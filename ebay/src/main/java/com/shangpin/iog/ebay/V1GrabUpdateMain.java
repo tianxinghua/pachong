@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +50,7 @@ public class V1GrabUpdateMain{
 	 * @param sellerId ebay供应商卖家id
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void grabSaveProduct(String sellerId) {
+	public void grabSaveProduct(String sellerId) {
 		Date date = Calendar.getInstance().getTime();
 		Date date2 = null;
 		Calendar c = Calendar.getInstance();
@@ -122,9 +121,7 @@ public class V1GrabUpdateMain{
 		int failCnt = 0;
 		for (SpuDTO spu : spuDTOs) {
 			try {
-				if(StringUtils.isNotBlank(spu.getMaterial())) {
-					fetchSrv.saveSPU(spu);
-				}
+				fetchSrv.saveSPU(spu);
 			} catch (ServiceException e) {
 				logger.error("保存spu:{}失败,error:{}",JsonUtil.getJsonString4JavaPOJO(spu), e.getMessage());
 				failCnt++;
@@ -149,5 +146,4 @@ public class V1GrabUpdateMain{
 		}
 		logger.info("保存sku数：{}成功，失败数：{}", skus.size(),failCnt);
 	}
-	
 }

@@ -83,7 +83,7 @@ import com.shangpin.framework.ServiceException;
  */
 public class HttpUtil45 {
 	static final Logger logger = LoggerFactory.getLogger(HttpUtil45.class);
-	static volatile PoolingHttpClientConnectionManager connManager=null; 
+	static volatile PoolingHttpClientConnectionManager connManager=null;
 	static volatile boolean poolShutDown=false;
 	private static SSLConnectionSocketFactory socketFactory=null;
 	private static CloseableHttpClient httpClient=null;
@@ -109,11 +109,11 @@ public class HttpUtil45 {
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{
-			
+
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 无参数post请求
 	 * @param url 请求url
@@ -132,7 +132,7 @@ public class HttpUtil45 {
 	 * @return 请求结果数据
 	 * @see OutTimeConfig 超时设置
 	 */
-	public static String post(String url,Map<String,String> param,OutTimeConfig outTimeConf){		
+	public static String post(String url,Map<String,String> param,OutTimeConfig outTimeConf){
 		return post(url,param,outTimeConf,getPlainContext(url));
 	}
 	/**
@@ -144,55 +144,55 @@ public class HttpUtil45 {
 	 * @see OutTimeConfig 超时设置
 	 */
 	public static String get(String url,OutTimeConfig outTimeConf,Map<String,String> param){
-        return getResult(url, outTimeConf, param,null);
+		return getResult(url, outTimeConf, param, null);
 	}
 
-    private static String getResult(String url, OutTimeConfig outTimeConf, Map<String, String> param,HttpClientContext localContext) {
-        String urlStr=paramGetUrl(url, param);
-        HttpGet get = new HttpGet(urlStr);
-        String result=null;
-        CloseableHttpResponse resp=null;
-        try {
-            if(null==localContext) localContext = getPlainContext(url);
-            localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
-            resp=httpClient.execute(get,localContext);
-            HttpEntity entity=resp.getEntity();
-            result= EntityUtils.toString(entity);
-            EntityUtils.consume(entity);
-        }catch(Exception e){
-            logger.error("--------------httpError:"+e.getMessage());
-        }finally{
-                try {
-                    if(resp!=null)
-                        resp.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-        }
-        return result==null?errorResult:result;
-    }
+	private static String getResult(String url, OutTimeConfig outTimeConf, Map<String, String> param,HttpClientContext localContext) {
+		String urlStr=paramGetUrl(url, param);
+		HttpGet get = new HttpGet(urlStr);
+		String result=null;
+		CloseableHttpResponse resp=null;
+		try {
+			if(null==localContext) localContext = getPlainContext(url);
+			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
+			resp=httpClient.execute(get,localContext);
+			HttpEntity entity=resp.getEntity();
+			result= EntityUtils.toString(entity);
+			EntityUtils.consume(entity);
+		}catch(Exception e){
+			logger.error("--------------httpError:"+e.getMessage());
+		}finally{
+			try {
+				if(resp!=null)
+					resp.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return result==null?errorResult:result;
+	}
 
 
-    /**
-     * get请求
-     * @param url 请求url
-     * @param outTimeConf 请求超时时间设置 nullable
-     * @param param 请求参数 nullable
-     * @param username 认证用户
-     * @param password 认证密码
-     * @return 请求结果，若由异常为null
-     * @see OutTimeConfig 超时设置
-     */
-    public static String get(String url,OutTimeConfig outTimeConf,Map<String,String> param,String username,String password){
-        HttpClientContext localContext =null;
-        if(StringUtils.isNotBlank(username)){
-            localContext = getAuthContext(url, username, password);
-        }else{
-            localContext = getPlainContext(url);
-        }
+	/**
+	 * get请求
+	 * @param url 请求url
+	 * @param outTimeConf 请求超时时间设置 nullable
+	 * @param param 请求参数 nullable
+	 * @param username 认证用户
+	 * @param password 认证密码
+	 * @return 请求结果，若由异常为null
+	 * @see OutTimeConfig 超时设置
+	 */
+	public static String get(String url,OutTimeConfig outTimeConf,Map<String,String> param,String username,String password){
+		HttpClientContext localContext =null;
+		if(StringUtils.isNotBlank(username)){
+			localContext = getAuthContext(url, username, password);
+		}else{
+			localContext = getPlainContext(url);
+		}
 
-        return getResult(url, outTimeConf, param,localContext);
-    }
+		return getResult(url, outTimeConf, param,localContext);
+	}
 
 	/**
 	 * 获取流 分解每行数据
@@ -250,9 +250,9 @@ public class HttpUtil45 {
 					charset = HTTP.DEF_CONTENT_CHARSET;
 				}
 				final BufferedReader reader = new BufferedReader(new InputStreamReader(instream, charset));
-			    String value="";
+				String value="";
 				int count = 0;
-			    while((value = reader.readLine()) != null) {
+				while((value = reader.readLine()) != null) {
 					contentList.add(value);
 					count++;
 					System.out.println("ddgg"+count);
@@ -274,7 +274,7 @@ public class HttpUtil45 {
 		}
 		return contentList;
 	}
-	
+
 	/**
 	 * 关闭连接池
 	 */
@@ -288,7 +288,7 @@ public class HttpUtil45 {
 		if(param!=null){
 			Iterable<? extends NameValuePair> nvs = map2NameValuePair(param);
 			post.setEntity(new UrlEncodedFormEntity(nvs, Charset
-					.forName("UTF-8")));			
+					.forName("UTF-8")));
 		}
 		String result=null;
 		CloseableHttpResponse resp=null;
@@ -310,17 +310,17 @@ public class HttpUtil45 {
 		}
 		return result==null?errorResult:result;
 	}
-	
+
 	private static RequestConfig defaultRequestConfig(OutTimeConfig outTimeConf){
 		OutTimeConfig outCnf=outTimeConf;
 		if(outTimeConf==null) outCnf=OutTimeConfig.defaultOutTimeConfig();
 		return RequestConfig.custom()
-		.setConnectionRequestTimeout(outCnf.getConnectOutTime())
-		.setConnectTimeout(outCnf.getConnectOutTime())
-		.setSocketTimeout(outCnf.getSocketOutTime())
-		.build();
+				.setConnectionRequestTimeout(outCnf.getConnectOutTime())
+				.setConnectTimeout(outCnf.getConnectOutTime())
+				.setSocketTimeout(outCnf.getSocketOutTime())
+				.build();
 	}
-	
+
 	public static void init(){
 		try {
 			connManager=getPoolingConnectionManager(null);
@@ -330,7 +330,7 @@ public class HttpUtil45 {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * 获取http请求的client<br/>连接池方式<br/>如果client不用了方可关闭，否则再次获取会出现异常
 	 * @param connManager2 请求的url nullable
@@ -343,7 +343,7 @@ public class HttpUtil45 {
 		CloseableHttpClient httpclient = HttpClients.custom()
 				//.setDefaultCredentialsProvider(createCredentials(url))
 				.setSSLSocketFactory(getSslConnectionSocketFactory())
-				//TODO 设置连接池
+						//TODO 设置连接池
 				.setConnectionManager(connManager2)
 				.setRetryHandler(getRetryHandler())
 				.build();
@@ -356,45 +356,45 @@ public class HttpUtil45 {
 	 */
 	private static HttpRequestRetryHandler getRetryHandler() {
 		HttpRequestRetryHandler myRetryHandler = new HttpRequestRetryHandler() {
-		    public boolean retryRequest(
-		            IOException exception,
-		            int executionCount,
-		            HttpContext context) {
-		        if (executionCount >= 3) {
-		            // Do not retry if over max retry count
-		            return false;
-		        }
-		        if (exception instanceof InterruptedIOException) {
-		            // Timeout
-		            return false;
-		        }
-		        if (exception instanceof UnknownHostException) {
-		            // Unknown host
-		            return false;
-		        }
-		        if (exception instanceof ConnectTimeoutException) {
-		            // Connection refused
-		            return true;
-		        }
-		        if (exception instanceof SSLException) {
-		            // SSL handshake exception
-		            return false;
-		        }
-		        if(exception instanceof ConnectionPoolTimeoutException){
-		        	return true;
-		        }
-		        if(exception instanceof SocketTimeoutException){
-		        	return true;
-		        }
-		        HttpClientContext clientContext = HttpClientContext.adapt(context);
-		        HttpRequest request = clientContext.getRequest();
-		        boolean idempotent = !(request instanceof HttpEntityEnclosingRequest);
-		        if (idempotent) {
-		            // Retry if the request is considered idempotent
-		            return true;
-		        }
-		        return false;
-		    }
+			public boolean retryRequest(
+					IOException exception,
+					int executionCount,
+					HttpContext context) {
+				if (executionCount >= 3) {
+					// Do not retry if over max retry count
+					return false;
+				}
+				if (exception instanceof InterruptedIOException) {
+					// Timeout
+					return false;
+				}
+				if (exception instanceof UnknownHostException) {
+					// Unknown host
+					return false;
+				}
+				if (exception instanceof ConnectTimeoutException) {
+					// Connection refused
+					return true;
+				}
+				if (exception instanceof SSLException) {
+					// SSL handshake exception
+					return false;
+				}
+				if(exception instanceof ConnectionPoolTimeoutException){
+					return true;
+				}
+				if(exception instanceof SocketTimeoutException){
+					return true;
+				}
+				HttpClientContext clientContext = HttpClientContext.adapt(context);
+				HttpRequest request = clientContext.getRequest();
+				boolean idempotent = !(request instanceof HttpEntityEnclosingRequest);
+				if (idempotent) {
+					// Retry if the request is considered idempotent
+					return true;
+				}
+				return false;
+			}
 
 		};
 		return myRetryHandler;
@@ -405,9 +405,9 @@ public class HttpUtil45 {
 	 * 默认策略，最大连接数200，每个路由默认连接数3
 	 * @param url  链接地址 nullable
 	 * @return httpClient连接池
-	 * @throws KeyStoreException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+	 * @throws KeyStoreException
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
 	 */
 	private static PoolingHttpClientConnectionManager getPoolingConnectionManager(String url) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException{
 		if(connManager ==null || poolShutDown){
@@ -418,7 +418,7 @@ public class HttpUtil45 {
 			SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(10000).build();
 			connManager.setDefaultSocketConfig(socketConfig);
 			if(StringUtils.isNotBlank(url)){
-	            HttpHost host = url2Host(url);
+				HttpHost host = url2Host(url);
 				connManager.setMaxPerRoute(new HttpRoute(host), 50);//每个路由器对每个服务器允许最大50个并发访问
 			}
 			return connManager;
@@ -429,11 +429,11 @@ public class HttpUtil45 {
 	}
 
 	private static Registry<ConnectionSocketFactory> getDefaultRegistry() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-        return RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", PlainConnectionSocketFactory.getSocketFactory())
-                .register("https", getSslConnectionSocketFactory())
-                .build();
-    }
+		return RegistryBuilder.<ConnectionSocketFactory>create()
+				.register("http", PlainConnectionSocketFactory.getSocketFactory())
+				.register("https", getSslConnectionSocketFactory())
+				.build();
+	}
 	/**
 	 * 请求url需要认证的上下文
 	 * @param url 请求url
@@ -504,12 +504,12 @@ public class HttpUtil45 {
 				new TrustStrategy() {
 					@Override
 					public boolean isTrusted(X509Certificate[] chain,
-							String authType) throws CertificateException {
+											 String authType) throws CertificateException {
 						return true;
 					}
 				});
 		SSLContext sslcontext = sb.build();
-		SSLConnectionSocketFactory sslsf =null; 
+		SSLConnectionSocketFactory sslsf =null;
 		sslsf= new SSLConnectionSocketFactory(sslcontext,new NoopHostnameVerifier());
 		socketFactory=sslsf;
 		return socketFactory;
@@ -520,7 +520,7 @@ public class HttpUtil45 {
 	 * @param url 请求url
 	 * @param param get参数
 	 * @return
-	 * @throws ServiceException 
+	 * @throws ServiceException
 	 */
 	private static String paramGetUrl(String url, Map<String, String> param) {
 		if(param==null) return url;
@@ -532,10 +532,10 @@ public class HttpUtil45 {
 		}
 		return sb.toString();
 	}
-	
+
 	/**
 	 * 根据url获取主机
-	 * 
+	 *
 	 * @param url
 	 * @return
 	 */
@@ -567,7 +567,7 @@ public class HttpUtil45 {
 
 	/**
 	 * 判断是否走https的
-	 * 
+	 *
 	 * @param url
 	 * @return
 	 */
