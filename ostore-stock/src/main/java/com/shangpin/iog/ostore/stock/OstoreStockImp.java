@@ -14,6 +14,7 @@ import java.util.*;
  */
 public class OstoreStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
 
     @Override
@@ -43,6 +44,7 @@ public class OstoreStockImp extends AbsUpdateProductStock {
                 logMongo.info(mongMap);
             } catch (Exception e) {
                 e.printStackTrace();
+                loggerError.error("存入mongodb失败"+buffer.toString());
             }
 
             int i=0;
@@ -83,6 +85,7 @@ public class OstoreStockImp extends AbsUpdateProductStock {
             }
         }catch (Exception e){
             e.printStackTrace();
+            loggerError.error(e.getMessage());
         }
         logger.info("Ostore赋值库存数据成功");
         return skuStock;
