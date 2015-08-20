@@ -18,6 +18,8 @@ import java.util.*;
  */
 public class VelaStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
+    private static Logger logMongo = Logger.getLogger("mongodb");
 
     private Map<String,String> barcode_map = new HashMap<>();
 
@@ -26,6 +28,10 @@ public class VelaStockImp extends AbsUpdateProductStock {
         Map<String, Integer> stock_map = new HashMap<String, Integer>();
         Gson gson = new Gson();
         int i=0;
+        Map<String,String> mongMap = new HashMap<>();
+        mongMap.put("supplierId","2015071701343");
+        mongMap.put("supplierName","galiano");
+        StringBuffer buffer = new StringBuffer();
         for (String skuno : skuNo) {
             if (barcode_map.containsKey(skuno)) {
                 continue;
@@ -40,6 +46,8 @@ public class VelaStockImp extends AbsUpdateProductStock {
             String json = null;
             try {
                 json = HttpUtil45.get(url, new OutTimeConfig(10000,10000,10000), null);
+                buffer.append(json).append("|||");
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -77,6 +85,8 @@ public class VelaStockImp extends AbsUpdateProductStock {
                 }
             }
         }
+        mongMap.put("result",buffer.toString());
+        logMongo.info(mongMap);
         return stock_map;
     }
 

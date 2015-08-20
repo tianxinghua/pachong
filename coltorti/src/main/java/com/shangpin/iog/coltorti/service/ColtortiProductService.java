@@ -322,7 +322,8 @@ System.out.println(productId+"存在,不存在的数:"+cnt);
 				fds=class1.getDeclaredFields();
 				classField.put(class1.getName(), fds);
 			}
-			
+
+
 			for (Field m : fds) {				
 				if(m.getName().equals(pro) &&
 						!(Modifier.isStatic(m.getModifiers()) &&

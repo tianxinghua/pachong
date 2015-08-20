@@ -32,10 +32,19 @@ public class OstoreStockImp extends AbsUpdateProductStock {
             timeConfig.confSocketOutTime(360000);
             List<String> resultList = HttpUtil45.getContentListByInputSteam(url, timeConfig, null, null, null);
             HttpUtil45.closePool();
+            StringBuffer buffer =new StringBuffer();
+            for(String content:resultList){
+                buffer.append(content).append("|||");
+            }
             mongMap.put("supplierId",supplierId);
-            mongMap.put("supplierName","ostore");
-            mongMap.put("result",resultList.toString()) ;
-            logMongo.info(mongMap);
+            mongMap.put("supplierName","acanfora");
+            mongMap.put("result", buffer.toString()) ;
+            try {
+                logMongo.info(mongMap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             int i=0;
             String stock="",size ="";
             String skuId = "";
@@ -58,8 +67,8 @@ public class OstoreStockImp extends AbsUpdateProductStock {
                     }
 
                     skuId = contentArray[0] + "-"+size;
-                    if(skuId.indexOf("?")>0){
-                        skuId = skuId.replace("?","+");
+                    if(skuId.indexOf("½")>0){
+                        skuId = skuId.replace("½","+");
                     }
                     stock_map.put(skuId,stock);
                 }
