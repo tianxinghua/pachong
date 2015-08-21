@@ -395,7 +395,7 @@ public class V1GrabService {
 	/*@SuppressWarnings({ "rawtypes", "static-access" })
 	public static void main(String[] args) {
 		List<String> itemIds=new ArrayList<>();
-		itemIds.add("251485222300");
+		itemIds.add("331533278186");
 		itemIds.add("251674833689");//过期的
 		Calendar t1 = Calendar.getInstance();
 		t1.setTime(new Date());
