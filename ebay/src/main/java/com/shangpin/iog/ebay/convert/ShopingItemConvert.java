@@ -3,8 +3,6 @@
  */
 package com.shangpin.iog.ebay.convert;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -333,13 +331,13 @@ public class ShopingItemConvert {
 	 */
 	private static void getVariationPic(PicturesType[] picturesTypes,String spuId, Set<ProductPictureDTO> rtnPic,SkuDTO sku) {
 		if(picturesTypes!=null && picturesTypes.length>0){
+			String color = sku.getColor();
+			String size = sku.getProductSize();
 			for (PicturesType picturesType : picturesTypes) {//颜色图片、尺码图片等
 				String specName=picturesType.getVariationSpecificName().toLowerCase();
 				VariationSpecificPictureSetType[] vsps=picturesType.getVariationSpecificPictureSetArray();
 				for (VariationSpecificPictureSetType vsp : vsps) {//不同颜色值，尺码值的图片
 					String colorAndSize=vsp.getVariationSpecificValue();//,颜色值、尺码值
-					String color = sku.getColor();
-					String size = sku.getProductSize();
 					String skuId1=null;
 					if(color!=null && specName.contains("color")){
 						skuId1=sku.getSkuId();
@@ -356,10 +354,11 @@ public class ShopingItemConvert {
 							url2Pic(skuId1,spuId,rtnPic, urls);
 							break;
 						}
-					}else{
+					}
+					/*else{
 						String[] urls=vsp.getPictureURLArray();
 						url2Pic(skuId1,spuId,rtnPic, urls);
-					}
+					}*/
 				}
 			}
 		}
@@ -436,15 +435,5 @@ public class ShopingItemConvert {
 		sku.setMemo("storeName:"+userId);
 		sku.setCreateTime(sit.getEndTime().getTime());
 		sku.setLastTime(createDate);
-	}
-	public static void main(String[] args) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
-		Date d=null;
-		try {
-			d = sdf.parse("2015-08-05 18");
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		System.out.println(d.getTime());
 	}
 }
