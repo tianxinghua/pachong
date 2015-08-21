@@ -321,14 +321,14 @@ public class PageGrabService {
 		logger.info("pic数：{}", picUrls.size());
 		int failCnt = 0;
 		for (ProductPictureDTO picurl : picUrls) {
-			for(String  skuid:skuIds) {
-				if(!picurl.getSkuId().equals(skuid)) {
-					try {
-						fetchSrv.savePictureForMongo(picurl);
-					} catch (ServiceException e) {
-						logger.error("保存图片{}失败,error:{}", JsonUtil.getJsonString4JavaPOJO(picurl), e.getMessage());
-						failCnt++;
-					}
+			/*for(String  skuid:skuIds) {
+			}*/
+			if(!skuIds.contains(picurl.getSkuId())) {
+				try {
+					fetchSrv.savePictureForMongo(picurl);
+				} catch (ServiceException e) {
+					logger.error("保存图片{}失败,error:{}", JsonUtil.getJsonString4JavaPOJO(picurl), e.getMessage());
+					failCnt++;
 				}
 			}
 		}

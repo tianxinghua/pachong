@@ -27,6 +27,7 @@ import java.util.*;
 
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
         Map<String, Integer> skustock = new HashMap<>(skuNo.size());
@@ -48,12 +49,16 @@ public class GrabStockImp extends AbsUpdateProductStock {
             mongMap.put("supplierId","2015050800242");
             mongMap.put("supplierName","acanfora");
             mongMap.put("result",result) ;
-            logMongo.info(mongMap);
+            try {
+                logMongo.info(mongMap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             products = ObjectXMLUtil.xml2Obj(Products.class, result);
             logger.info("拉取ACANFORA数据成功");
         } catch (Exception e) {
             e.printStackTrace();
-            logger.info("拉取ACANFORA数据失败");
+            loggerError.error("拉取ACANFORA数据失败---" + e.getMessage());
             throw new ServiceMessageException("拉取ACANFORA数据失败");
 
         } finally {

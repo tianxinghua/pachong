@@ -41,14 +41,17 @@ import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.ebay.convert.ShopingItemConvert;
+import com.shangpin.iog.ebay.page.PageGrabService;
 import com.shangpin.iog.ebay.service.GrabEbayApiService;
 
 /**
  * ebay数据抓取服务，数据库存抓取服务
  * @description
  * @author 陈小峰
- * <br/>2015年6月30日
+ * @see PageGrabService 
+ * @date 2015年6月30日
  */
+@Deprecated
 @Component
 public class V1GrabService {
 	static Logger logger = LoggerFactory.getLogger(V1GrabService.class);
@@ -395,7 +398,7 @@ public class V1GrabService {
 	/*@SuppressWarnings({ "rawtypes", "static-access" })
 	public static void main(String[] args) {
 		List<String> itemIds=new ArrayList<>();
-		itemIds.add("251485222300");
+		itemIds.add("331533278186");
 		itemIds.add("251674833689");//过期的
 		Calendar t1 = Calendar.getInstance();
 		t1.setTime(new Date());

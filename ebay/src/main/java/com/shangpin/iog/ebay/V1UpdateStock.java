@@ -119,44 +119,4 @@ public class V1UpdateStock  extends AbsUpdateProductStock{
 	public Set<String> getErrItemId() {
 		return errItemId.get();
 	}
-	/*
-	public static void main(String[] args) {
-		V1UpdateStock us = new V1UpdateStock();
-		Gson g = new Gson();
-		Type typeOfT = new TypeToken<TreeSet<String>>(){}.getType();
-		Reader json = null;
-		Reader json2 = null;
-		try {
-			json = new FileReader(new File("D:/tmp/ebayjson.txt"));
-			json2 = new FileReader(new File("D:/tmp/ebayjson2.txt"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		Collection<String> skuNo=g.fromJson(json, typeOfT);//300多个没获取到的
-		for (String string : skuNo) {
-			System.out.println(string);
-		}
-		
-		System.out.println("------------------------");
-		Collection<String> skuNo2=g.fromJson(json2, typeOfT);//真正拉到的数据
-		for (String string : skuNo2) {
-			System.out.println(string);
-		}
-		
-		System.out.println(skuNo2.size());
-		Set<String> exists=new TreeSet<String>();
-		for (String string : skuNo) {
-			if(skuNo2.contains(string)){
-				exists.add(string);
-			}
-		}
-		System.out.println(exists.size());
-		
-		try {
-			Map<String, Integer> m = us.grabStock(skuNo);
-			System.out.println(g.toJson(m.keySet()));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}*/
 }
