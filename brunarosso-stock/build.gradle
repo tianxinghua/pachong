@@ -13,7 +13,7 @@ dependencies {
             /*"com.thoughtworks.xstream:xstream:1.4.7",*/
             "commons-net:commons-net:1.4.1",
             "org.jdom:jdom:2.0.2",
-            "com.enterprisedt:edtftp:1.0",
+            "com.enterprisedt:edtFTPj:1.5.3",
             project(':project-common'),
 
             project(':openapi-ice')

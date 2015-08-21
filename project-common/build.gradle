@@ -8,7 +8,7 @@ dependencies {
             "org.apache.httpcomponents:httpclient:4.5",
             "net.sf.json-lib:json-lib:2.2:jdk15",
             "org.apache.poi:poi:3.0.1-FINAL",
-//            "com.enterprisedt:edtftpj:1.5.3",
+            "com.enterprisedt:edtFTPj:1.5.3",
             "redis.clients:jedis:${jedis_version}"
     )
 

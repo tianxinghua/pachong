@@ -62,7 +62,7 @@ public class EbayStartUp {
 		/*Date date1 = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String d = format.format(new Date());*/
-		Map<String, String> storeBrand=EbayInit.getStoreBrand("store-brand-sports");
+		Map<String, String> storeBrand=EbayInit.getStoreBrand("store-brand");
 		Set<Entry<String, String>> kvs=storeBrand.entrySet();
 		//ebay是说不要超过20个并发跑
 		ExecutorService exe=Executors.newFixedThreadPool(18);//相当于跑10遍
