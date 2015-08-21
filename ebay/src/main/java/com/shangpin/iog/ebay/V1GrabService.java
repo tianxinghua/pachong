@@ -41,14 +41,17 @@ import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.ebay.convert.ShopingItemConvert;
+import com.shangpin.iog.ebay.page.PageGrabService;
 import com.shangpin.iog.ebay.service.GrabEbayApiService;
 
 /**
  * ebay数据抓取服务，数据库存抓取服务
  * @description
  * @author 陈小峰
- * <br/>2015年6月30日
+ * @see PageGrabService 
+ * @date 2015年6月30日
  */
+@Deprecated
 @Component
 public class V1GrabService {
 	static Logger logger = LoggerFactory.getLogger(V1GrabService.class);
