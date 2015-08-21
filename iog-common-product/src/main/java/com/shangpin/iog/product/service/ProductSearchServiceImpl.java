@@ -99,27 +99,27 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     supplierId = dto.getSupplierId();
 //                    List<ProductPicture> productPictureList = new ArrayList<>();
                     Set<ProductPicture>  pictureSet = new HashSet<>();
-                    //查询公共的图片
-                    List<ProductPicture> spuPictureList = pictureDAO.findDistinctProductPictureBySupplierIdAndSpuId(supplierId, dto.getSpuId());
-                    if(!spuPictureList.isEmpty()){
-//                        productPictureList.addAll(spuPictureList);
-                        pictureSet.addAll(spuPictureList) ;
-                    }
                     //查询个性图片
                     //处理特殊供应商的SKUID
                     skuId = dto.getSkuId();
                     if("new20150727".equals(supplierId)){//brunarosso
-                         if(skuId.indexOf("-")>0){
-                             skuId = skuId.substring(0,skuId.indexOf("-"));
-                         }
+                        if(skuId.indexOf("-")>0){
+                            skuId = skuId.substring(0,skuId.indexOf("-"));
+                        }
                     }
-
-
                     List<ProductPicture> skuPictureList = pictureDAO.findDistinctProductPictureBySupplierIdAndSkuId(supplierId, skuId);
                     if(!skuPictureList.isEmpty()){
 //                        productPictureList.addAll(skuPictureList);
                         pictureSet.addAll(skuPictureList) ;
                     }
+                    //查询公共的图片
+                    List<ProductPicture> spuPictureList = pictureDAO.findDistinctProductPictureBySupplierIdAndSpuIdAndSkuIdNull(supplierId, dto.getSpuId());
+                    if(!spuPictureList.isEmpty()){
+//                        productPictureList.addAll(spuPictureList);
+                        pictureSet.addAll(spuPictureList) ;
+                    }
+
+
 
                     List<ProductPictureDTO> picList = new ArrayList<>();
                     for(ProductPicture productPicture:pictureSet){
