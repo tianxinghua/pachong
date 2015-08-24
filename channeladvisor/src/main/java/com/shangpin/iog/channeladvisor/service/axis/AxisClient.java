@@ -1,8 +1,19 @@
 package com.shangpin.iog.channeladvisor.service.axis;
 
 import com.channeladvisor.api.webservices.AdminServiceStub;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.rpc.client.RPCServiceClient;
 
+import javax.xml.namespace.QName;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPHeaderElement;
 import java.rmi.RemoteException;
 
 /**
@@ -86,5 +97,65 @@ public class AxisClient {
             AdminServiceStub.APIResultOfBoolean resultOfBoolean= requestAccessResponse.getRequestAccessResult();
         }
 
+    }
+
+
+    public static OMElement createHeaderOMElement(){
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+        OMNamespace SecurityElementNamespace = factory.createOMNamespace("http://api.channeladvisor.com/webservices/","");
+        OMElement authenticationOM = factory.createOMElement("APICredentials",
+                SecurityElementNamespace);
+        OMElement usernameOM = factory.createOMElement("DeveloperKey",
+                SecurityElementNamespace);
+        OMElement passwordOM = factory.createOMElement("Password",
+                SecurityElementNamespace);
+        usernameOM.setText("537c99a8-e3d6-4788-9296-029420540832");
+        passwordOM.setText("L1zhongren!");
+        authenticationOM.addChild(usernameOM);
+        authenticationOM.addChild(passwordOM);
+        return authenticationOM;
+    }
+
+    public static void main(String[] args){
+
+        String url = "https://api.channeladvisor.com/ChannelAdvisorAPI/v7/AdminService.asmx?WSDL";
+
+        Options options = new Options();
+        // 指定调用WebService的URL
+        EndpointReference targetEPR = new EndpointReference(url);
+        options.setTo(targetEPR);
+        options.setAction("web:Ping");
+
+        ServiceClient client = null;
+        try {
+            client = new ServiceClient();
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
+        }
+        client.setOptions(options);
+
+
+        // 向Soap Header中添加校验信息
+        client.addHeader(createHeaderOMElement());
+
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        String tns = "http://api.channeladvisor.com/webservices/";
+        // 命名空间，有时命名空间不增加没事，不过最好加上，因为有时有事，你懂的
+        OMNamespace omNs = fac.createOMNamespace(tns, "");
+
+        OMElement method = fac.createOMElement("Ping", omNs);
+//        OMElement symbol = fac.createOMElement("symbol", omNs);
+//        symbol.addChild(fac.createOMText(symbol, "Axis2 Echo String "));
+//        method.addChild(symbol);
+        method.build();
+
+        OMElement result = null;
+        try {
+            result = client.sendReceive(method);
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
+        }
+
+        System.out.println(result);
     }
 }
