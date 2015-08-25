@@ -23,7 +23,7 @@ import com.ebay.sdk.ApiCredential;
  * <br/>2015年6月18日
  */
 public class EbayInit {
-	public static final String EBAY="NNN2015071301325";
+	public static final String EBAY="NEW2015071301325";
 	//public static final String EBAY="TestEbay";
 	private static String tradeApi;
     private static String apiUrl;
@@ -31,6 +31,9 @@ public class EbayInit {
     private static String signUrl;
     private static String shopingApi;
     private static String findApi;
+	private static String host;
+	private static String app_Key;
+	private static String app_Secret;
     private static volatile int idx=0;
 	static List<EbayAppConf> confs=new ArrayList<>();
     static ResourceBundle bdl = null;
@@ -46,7 +49,8 @@ public class EbayInit {
     		conf.setDevKey(bdl.getString("DeveloperKey"));
     		conf.setAppKey(bdl.getString("ApplicationKey"));
     		conf.setCerKey(bdl.getString("CertificateKey"));
-    		conf.setRuName(bdl.getString("ruName")); 		
+    		conf.setRuName(bdl.getString("ruName"));
+
     	}catch(Exception e){
     		return null;
     	}
@@ -84,6 +88,9 @@ public class EbayInit {
         shopingApi=bdl.getString("shopingApi");
         findApi=bdl.getString("findApi");
         tradeApi=bdl.getString("tradeApi");
+		host = bdl.getString("HOST");
+		app_Key=bdl.getString("APP_KEY");
+		app_Secret=bdl.getString("APP_SECRET");
         String profile=null;
 		try{
 			profile=bdl.getString("includeProfile");
@@ -168,6 +175,25 @@ public class EbayInit {
 		}
     	return brandStore;
     }
-    
-    
+
+	public static String getEBAY() {
+		return EBAY;
+	}
+
+	public static String getHost() {
+		return host;
+	}
+
+
+	public static String getApp_Key() {
+		return app_Key;
+	}
+
+
+
+	public static String getApp_Secret() {
+		return app_Secret;
+	}
+
+
 }

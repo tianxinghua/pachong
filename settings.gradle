@@ -46,4 +46,5 @@ include 'ostore'
 include 'channeladvisor'
 include 'ostore-stock'
 include 'leam'
+include 'iog-sop'
 

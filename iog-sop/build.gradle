@@ -9,10 +9,11 @@ repositories {
 
 dependencies {
     compile(
-            "ZeroC:Ice:3.5.1",
-			"commons-collections:commons-collections:3.2.1",
+            "com.alibaba:fastjson:1.1.39",
+            "commons-collections:commons-collections:3.2.1",
+            "com.shangpin:openapi-api-sdk:3.0",
 
-			project(":project-framework")
+            project(":project-framework")
     )
 }
 

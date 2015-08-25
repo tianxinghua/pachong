@@ -18,4 +18,9 @@ public class EbayAppConf {
     private String ruName;
     private String token;
 
+//    //尚品分配给供应商的信息
+//    private String host;
+//    private String app_Key;
+//    private String app_Secret;
+
 }

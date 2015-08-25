@@ -30,6 +30,8 @@ import com.shangpin.iog.ebay.page.PageGrabService;
  */
 public class EbayStartUp {
 	static Logger logger = LoggerFactory.getLogger(EbayStartUp.class);
+
+
 	private static ApplicationContext factory;
 	//static V1GrabUpdateMain grabSrv=null;
 	static PageGrabService pgGrabSrv=null; 
@@ -93,7 +95,7 @@ public class EbayStartUp {
 		try {
 			vs.setUseThread(true);
 			vs.setSkuCount4Thread(20);
-			vs.updateProductStock(supplier, start, end);
+			vs.updateProductStock(EbayInit.getHost(),EbayInit.getApp_Key(),EbayInit.getApp_Secret(), start, end);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

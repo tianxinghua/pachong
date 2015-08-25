@@ -3,11 +3,12 @@ package com.shangpin.iog.vela.stock;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.vela.stock.dto.Quantity;
+import com.shangpin.sop.AbsUpdateProductStock;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.text.SimpleDateFormat;
@@ -22,6 +23,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
     private static Logger logMongo = Logger.getLogger("mongodb");
 
     private Map<String,String> barcode_map = new HashMap<>();
+    private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
 
     @Override
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
@@ -91,11 +93,20 @@ public class VelaStockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args) throws Exception {
+        String host = bundle.getString("HOST");
+        String app_key = bundle.getString("APP_KEY");
+        String app_secret= bundle.getString("APP_SECRET");
+
+        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
+            logger.error("参数错误，无法执行更新库存");
+        }
+
         AbsUpdateProductStock velaStockImp = new VelaStockImp();
         velaStockImp.setUseThread(true);velaStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("VELA更新数据库开始");
-        velaStockImp.updateProductStock("2015071701343","2015-01-01 00:00",format.format(new Date()));
+        //   2015071701343
+        velaStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
         logger.info("VELA更新数据库结束");
         /*VelaStockImp velaStockImp = new VelaStockImp();
         Collection<String> sku = new HashSet<>();
