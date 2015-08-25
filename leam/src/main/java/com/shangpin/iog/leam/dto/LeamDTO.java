@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by sunny on 2015/8/17.
  */
-public class SkuDTO {
+public class LeamDTO {
     private String stock_id;//Product code of Leam
     private String supplier_sku;//Supplier Code
     private String brand;//Name Brand / Designer
@@ -21,7 +21,7 @@ public class SkuDTO {
     private String composition;//Composition of the head
     private String nomenclature;//Data on nomenclature
     private String description;//Description
-    private List<String> image;// Array - List List of available images
+    //private List<String> image;// Array - List List of available images
 
     public String getStock_id() {
         return stock_id;

@@ -28,13 +28,13 @@ public class Startup {
         String password="PA#=k2xU^ddUc6Jm";
         Map<String,String> param = new HashMap<>();
         OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10);
-        /*param.put("user",user);
+        param.put("user",user);
         param.put("password",password);//exp836shang*/
         //String result= HttpUtil45.get(tokenUrl, outTimeConf, param, "", "");
         //String token = HttpUtil45.post(tokenUrl,param,outTimeConf);
        // param.put("t","e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d");
-        //String result=HttpUtil45.post(url/*+"/?t="+token*/, param, outTimeConf);//e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d
-        String result= HttpUtil45.get(url+"?t=e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d"+"&limit=1",outTimeConf,param);
+        String result=HttpUtil45.post(url+"?t=e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d", param, outTimeConf);//e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d
+        //String result= HttpUtil45.get(url+"?t=e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d"/*+"&limit=1"*/,outTimeConf,null);
         //System.out.println("token:"+token);
         System.out.println("result: "+result);
     }
