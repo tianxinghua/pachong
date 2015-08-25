@@ -42,7 +42,7 @@ environments{
 
             MongoDB.hostname='172.20.30.215'
 
-            SOP.HOST='http://192.168.20.83:9090/'
+            SOP.HOST='http://open.shangpin.com:8080'
 
 
 

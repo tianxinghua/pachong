@@ -252,9 +252,10 @@ public abstract class AbsUpdateProductStock {
 		ApiResponse<List<SopSkuInventory>> result = null;
 		Date timestamp = new Date();//时间戳
 		try {
-			 result = SpClient.FindStock(host, app_key, app_secret, timestamp, (String[])skuNoShangpinList.toArray());
+			 String[] skuNoShangpinArray = new String[skuNoShangpinList.size()];
+			 result = SpClient.FindStock(host, app_key, app_secret, timestamp, (String[]) skuNoShangpinList.toArray(skuNoShangpinArray));
 			 if(null==result) return ;
-			skuArray =(SopSkuInventory[]) result.getResponse().toArray();
+			skuArray =(SopSkuInventory[]) result.getResponse().toArray(new SopSkuInventory[0]);
 
 		} catch (Exception e) {
 			e.printStackTrace();
