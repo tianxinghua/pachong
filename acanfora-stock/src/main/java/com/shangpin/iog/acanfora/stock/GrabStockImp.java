@@ -29,6 +29,15 @@ public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
+    private static ResourceBundle bdl=null;
+    private static String supplierId;
+
+    static {
+        if(null==bdl)
+         bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
+
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
         Map<String, Integer> skustock = new HashMap<>(skuNo.size());
         Map<String,String> stockMap = new HashMap<>();
@@ -46,7 +55,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
             timeConfig.confSocketOutTime(360000);
             String result = HttpUtil45.get("http://www.acanfora.it/api_ecommerce_v2.aspx", timeConfig, null);
 
-            mongMap.put("supplierId","2015050800242");
+            mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","acanfora");
             mongMap.put("result",result) ;
             try {
@@ -103,7 +112,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
         AbsUpdateProductStock grabStockImp = new GrabStockImp();grabStockImp.supplierSkuIdMain=true;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("ACANFORA更新数据库开始");
-        grabStockImp.updateProductStock("2015050800242","2015-01-01 00:00",format.format(new Date()));
+        grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
         logger.info("ACANFORA更新数据库结束");
         System.exit(0);
 
