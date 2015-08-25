@@ -3,6 +3,7 @@ package com.shangpin.iog.mongodao;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.mongobase.BaseMongodbDAO;
 import com.shangpin.iog.mongodomain.ProductPicture;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,11 +23,13 @@ public interface PictureDAO extends BaseMongodbDAO<ProductPicture,String> {
     public List<ProductPicture> findDistinctProductPictureBySupplierIdAndSkuId(String supplierId,String skuId) throws ServiceException;
 
     /**
-     * 根据供货商ID和SKUID获取图片
+     * 根据供货商ID和SPUID获取图片
      * @param supplierId 供货商ID
      * @param spuId  spuId
      * @return
      * @throws ServiceException
      */
-    public List<ProductPicture> findDistinctProductPictureBySupplierIdAndSpuId(String supplierId,String spuId) throws ServiceException;
+    public List<ProductPicture> findDistinctProductPictureBySupplierIdAndSpuIdAndSkuIdNull(String supplierId,String spuId) throws ServiceException;
+
+
 }
