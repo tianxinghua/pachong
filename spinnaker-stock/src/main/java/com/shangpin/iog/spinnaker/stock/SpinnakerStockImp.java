@@ -4,15 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.spinnaker.stock.dto.Quantity;
 import org.apache.log4j.Logger;
 
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Administrator on 2015/7/8.
@@ -20,6 +19,16 @@ import java.util.Map;
 public class SpinnakerStockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
+
+    private static ResourceBundle bdl=null;
+    private static String supplierId;
+
+    static {
+        if(null==bdl)
+            bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
 
     private Map<String,String> barcode_map = new HashMap<>();
 
@@ -40,7 +49,7 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
             url = url.replaceAll("\\[\\[barcode\\]\\]", barcode);
             String json = null;
             try {
-                json = HttpUtils.get(url);
+                json = HttpUtil45.get(url, new OutTimeConfig(10000, 10000, 10000), null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -60,9 +69,10 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
 
     public static void main(String[] args) throws Exception {
         AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
+        grabStockImp.setUseThread(true);grabStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("SPINNAKER更新数据库开始");
-        grabStockImp.updateProductStock("2015050800242","2015-01-01 00:00",format.format(new Date()));
+        grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
         logger.info("SPINNAKER更新数据库结束");
         System.exit(0);
 

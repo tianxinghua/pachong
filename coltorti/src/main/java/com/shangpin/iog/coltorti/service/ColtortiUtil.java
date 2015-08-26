@@ -3,10 +3,7 @@
  */
 package com.shangpin.iog.coltorti.service;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.util.StringUtils;
 
@@ -24,7 +21,16 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
  * <br/>2015年6月5日
  */
 public class ColtortiUtil {
-	public static String supplier="2015061901300";
+
+	private static ResourceBundle bdl=null;
+	public static String supplier;
+
+	static {
+		if(null==bdl)
+			bdl=ResourceBundle.getBundle("conf");
+		supplier = bdl.getString("supplierId");
+	}
+
 	static String tokenExpire="token has expired";
 	static String noResult="no results found";
 	/**

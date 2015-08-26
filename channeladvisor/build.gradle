@@ -1,8 +1,4 @@
 
-task copyToLib( type: Copy ) {
-    into "$buildDir/libs/lib"
-    from configurations.compile
-}
 dependencies {
     compile(
       "org.apache.cxf:cxf-rt-frontend-jaxws:3.1.2"  ,

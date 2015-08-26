@@ -71,6 +71,16 @@ subprojects {
     apply plugin: 'groovy'
     [compileJava, compileTestJava, compileGroovy, compileTestGroovy]*.options*.encoding = 'UTF-8'
 
+    task copyToLib( type: Copy ) {
+        into "$buildDir/libs/lib"
+        from configurations.compile
+    }
+
+    task copyResources( type: Copy ) {
+        into "$buildDir/libs/conf"
+        from "$buildDir/resources/main"
+    }
+
     dependencies {
         compile(
                 "org.projectlombok:lombok:1.14.8",
@@ -101,6 +111,8 @@ subprojects {
             )
         }
     }
+
+
 
 
 }

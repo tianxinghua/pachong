@@ -54,11 +54,16 @@ public class AxisClient {
         String result = null;
         AdminServiceStub.PingResponse response = null;
         AdminServiceStub.RequestAccessResponse requestAccessResponse = null;
-
+        ServiceClient client =null;
         //1、根据服务地址，创建一个发送消息的客户端。
         try
         {
             clientStub = new AdminServiceStub();
+            client = clientStub._getServiceClient();
+            client.getOptions().setSoapVersionURI("http://schemas.xmlsoap.org/soap/envelope/");
+
+
+
         }
         catch (AxisFault e1)
         {
@@ -76,11 +81,13 @@ public class AxisClient {
             AdminServiceStub.APICredentialsE apiCredentialsE = new AdminServiceStub.APICredentialsE();
             AdminServiceStub.APICredentials credentials = new  AdminServiceStub.APICredentials();
             credentials.setDeveloperKey("537c99a8-e3d6-4788-9296-029420540832");
-            credentials.setPassword("L1zhongren!");
+            credentials.setPassword("ChannelAdvisor15");
             apiCredentialsE.setAPICredentials(credentials);
             AdminServiceStub.RequestAccess requestAccess  = new    AdminServiceStub.RequestAccess();
             requestAccess.setLocalID(12018111);
+
             requestAccessResponse =clientStub.requestAccess(requestAccess, apiCredentialsE);
+
 //            response = clientStub.ping(ping,apiCredentialsE);
 //            AdminServiceStub.GetAuthorizationList getAuthorizationList = new   AdminServiceStub.GetAuthorizationList();
 //            AdminServiceStub.GetAuthorizationListResponse authorizationListResponse = clientStub.getAuthorizationList(getAuthorizationList, apiCredentialsE);
@@ -95,6 +102,7 @@ public class AxisClient {
         if(requestAccessResponse != null)
         {
             AdminServiceStub.APIResultOfBoolean resultOfBoolean= requestAccessResponse.getRequestAccessResult();
+            System.out.println("date  = "+ resultOfBoolean.getData() + "  message = " + resultOfBoolean.getMessage());
         }
 
     }
@@ -102,7 +110,7 @@ public class AxisClient {
 
     public static OMElement createHeaderOMElement(){
         OMFactory factory = OMAbstractFactory.getOMFactory();
-        OMNamespace SecurityElementNamespace = factory.createOMNamespace("http://api.channeladvisor.com/webservices/","");
+        OMNamespace SecurityElementNamespace = factory.createOMNamespace("http://api.channeladvisor.com/webservices/","requestAccess");
         OMElement authenticationOM = factory.createOMElement("APICredentials",
                 SecurityElementNamespace);
         OMElement usernameOM = factory.createOMElement("DeveloperKey",
@@ -110,7 +118,7 @@ public class AxisClient {
         OMElement passwordOM = factory.createOMElement("Password",
                 SecurityElementNamespace);
         usernameOM.setText("537c99a8-e3d6-4788-9296-029420540832");
-        passwordOM.setText("L1zhongren!");
+        passwordOM.setText("ChannelAdvisor15");  //      L1zhongren!
         authenticationOM.addChild(usernameOM);
         authenticationOM.addChild(passwordOM);
         return authenticationOM;

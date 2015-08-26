@@ -20,6 +20,14 @@ public class VelaStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
+    private static ResourceBundle bdl=null;
+    private static String supplierId;
+
+    static {
+        if(null==bdl)
+            bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
 
     private Map<String,String> barcode_map = new HashMap<>();
 
@@ -29,7 +37,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
         Gson gson = new Gson();
         int i=0;
         Map<String,String> mongMap = new HashMap<>();
-        mongMap.put("supplierId","2015071701343");
+        mongMap.put("supplierId",supplierId);
         mongMap.put("supplierName","galiano");
         StringBuffer buffer = new StringBuffer();
         for (String skuno : skuNo) {
@@ -49,6 +57,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
                 buffer.append(json).append("|||");
 
             } catch (Exception e) {
+                loggerError.error("拉取数据失败---" + e.getMessage());
                 e.printStackTrace();
             }
             if (json != null && !json.isEmpty()) {
@@ -95,7 +104,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
         velaStockImp.setUseThread(true);velaStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("VELA更新数据库开始");
-        velaStockImp.updateProductStock("2015071701343","2015-01-01 00:00",format.format(new Date()));
+        velaStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
         logger.info("VELA更新数据库结束");
         /*VelaStockImp velaStockImp = new VelaStockImp();
         Collection<String> sku = new HashSet<>();

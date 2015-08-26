@@ -16,7 +16,14 @@ public class OstoreStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
+    private static ResourceBundle bdl=null;
+    private static String supplierId;
 
+    static {
+        if(null==bdl)
+            bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
     @Override
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
 
@@ -24,7 +31,6 @@ public class OstoreStockImp extends AbsUpdateProductStock {
         Map<String,String> stock_map = new HashMap<>();
 
         String url = "http://b2b.officinastore.com/shangpin.asp?mode=stock_only";
-        String supplierId = "2015081401431";
         try{
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
@@ -97,7 +103,7 @@ public class OstoreStockImp extends AbsUpdateProductStock {
         ostoreStockImp.setUseThread(true);ostoreStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("OSTORE更新数据库开始");
-        ostoreStockImp.updateProductStock("2015081401431","2015-01-01 00:00",format.format(new Date()));
+        ostoreStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
         logger.info("OSTORE更新数据库结束");
         System.exit(0);
 
