@@ -9,6 +9,7 @@ import com.shangpin.iog.leam.dto.LeamDTO;
 import com.shangpin.iog.leam.dto.TokenDTO;
 import org.apache.log4j.Logger;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -18,11 +19,11 @@ public class StockClientImp  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     String user="shamping";
     String password="PA#=k2xU^ddUc6Jm";
+    String supplierId = "201508081715";
     @Override
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         Map<String, Integer> skustock = new HashMap<>(skuNo.size());
         Map<String,String> stockMap = new HashMap<>();
-        String supplierId = "201508081715";
         String stockUrl="http://188.226.153.91/modules/api/v2/stock/id/";
         String tokenUrl="http://188.226.153.91/modules/api/v2/getToken/";
         String token ="";
@@ -75,5 +76,13 @@ public class StockClientImp  extends AbsUpdateProductStock {
             e.printStackTrace();
         }
         return obj;
+    }
+    public static void main(String[] args) throws Exception {
+        StockClientImp impl = new StockClientImp();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        logger.info("LEAM更新数据库开始");
+        impl.updateProductStock("201508081715", "2015-01-01 00:00", format.format(new Date()));
+        logger.info("LEAM更新数据库结束");
+        System.exit(0);
     }
 }
