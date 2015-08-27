@@ -26,7 +26,7 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.spinnaker.stock.SpinnakerStockImp'
+        attributes 'Main-Class': 'com.shangpin.iog.sanremo.stock.StockImp'
 //        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
         attributes 'Class-Path': '. ./conf/ ' +  manifestCp
     }

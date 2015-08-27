@@ -36,6 +36,8 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         Map<String, Integer> stock_map = new HashMap<String, Integer>();
         Gson gson = new Gson();
+        String barcode="" ,url="",json="";
+
         for (String skuno : skuNo) {
 //            if (barcode_map.containsKey(skuno)) {
 //                continue;
@@ -43,25 +45,58 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
 //                barcode_map.put(skuno, null);
 //            }
 
-            String barcode = skuno;
+             barcode = skuno;
             //根据供应商skuno获取库存，并更新我方sop库存
-            String url = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=Default&barcode=[[barcode]]&key=8IZk2x5tVN";
+             url = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=Default&barcode=[[barcode]]&key=8IZk2x5tVN";
             url = url.replaceAll("\\[\\[barcode\\]\\]", barcode);
-            String json = null;
+             json = null;
             try {
                 json = HttpUtil45.get(url, new OutTimeConfig(10000, 10000, 10000), null);
             } catch (Exception e) {
+                stock_map.put(skuno, 0);  //读取失败的时候赋值为0
                 loggerError.error("拉取失败 "+e.getMessage());
                 e.printStackTrace();
+                continue;
             }
             if (json != null && !json.isEmpty()) {
-                try {
-                    Quantity result = gson.fromJson(json, new TypeToken<Quantity>() {
-                    }.getType());
-                    stock_map.put(skuno, Integer.valueOf(result.getResult()));
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+                if(json.equals("{\"Result\":\"No Record Found\"}")) {    //未找到 ，去查找另外一个店铺
+                    url = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=sanremo&barcode=[[barcode]]&key=8IZk2x5tVN";
+                    url = url.replaceAll("\\[\\[barcode\\]\\]", barcode);
+                    json = null;
+                    try {
+                        json = HttpUtil45.get(url, new OutTimeConfig(10000, 10000, 10000), null);
+                    } catch (Exception e) {
+                        stock_map.put(skuno, 0);
+                        loggerError.error("拉取失败 "+e.getMessage());
+                        e.printStackTrace();
+                        continue;
+                    }
+                    if (json != null && !json.isEmpty()) {
+                        if(json.equals("{\"Result\":\"No Record Found\"}")) {//店铺返回无记录 赋值为0
+                            stock_map.put(skuno, 0);
+                        }else{
+
+                            try {
+                                Quantity result = gson.fromJson(json, new TypeToken<Quantity>() {
+                                }.getType());
+                                stock_map.put(skuno, Integer.valueOf(result.getResult()));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }else{//找到赋值
+                    try {
+                        Quantity result = gson.fromJson(json, new TypeToken<Quantity>() {
+                        }.getType());
+                        stock_map.put(skuno, Integer.valueOf(result.getResult()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
+
+
             }
         }
 

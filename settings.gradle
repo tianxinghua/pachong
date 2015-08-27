@@ -46,4 +46,6 @@ include 'ostore'
 include 'channeladvisor'
 include 'ostore-stock'
 include 'leam'
+include 'sanremo'
+include 'sanremo-stock'
 
