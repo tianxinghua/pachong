@@ -37,11 +37,11 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
         Map<String, Integer> stock_map = new HashMap<String, Integer>();
         Gson gson = new Gson();
         for (String skuno : skuNo) {
-            if (barcode_map.containsKey(skuno)) {
-                continue;
-            } else {
-                barcode_map.put(skuno, null);
-            }
+//            if (barcode_map.containsKey(skuno)) {
+//                continue;
+//            } else {
+//                barcode_map.put(skuno, null);
+//            }
 
             String barcode = skuno;
             //根据供应商skuno获取库存，并更新我方sop库存
@@ -51,6 +51,7 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
             try {
                 json = HttpUtil45.get(url, new OutTimeConfig(10000, 10000, 10000), null);
             } catch (Exception e) {
+                loggerError.error("拉取失败 "+e.getMessage());
                 e.printStackTrace();
             }
             if (json != null && !json.isEmpty()) {

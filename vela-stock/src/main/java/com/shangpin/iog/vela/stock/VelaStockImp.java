@@ -41,11 +41,11 @@ public class VelaStockImp extends AbsUpdateProductStock {
         mongMap.put("supplierName","galiano");
         StringBuffer buffer = new StringBuffer();
         for (String skuno : skuNo) {
-            if (barcode_map.containsKey(skuno)) {
-                continue;
-            } else {
-                barcode_map.put(skuno, null);
-            }
+//            if (barcode_map.containsKey(skuno)) {
+//                continue;
+//            } else {
+//                barcode_map.put(skuno, null);
+//            }
 
             String itemId = skuno;
             //根据供应商skuno获取库存，并更新我方sop库存
