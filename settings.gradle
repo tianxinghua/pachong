@@ -45,4 +45,5 @@ include 'lino-stock'
 include 'ostore'
 include 'channeladvisor'
 include 'ostore-stock'
+include 'leam'
 

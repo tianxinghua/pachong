@@ -1,14 +1,6 @@
 
 
-task copyToLib( type: Copy ) {
-    into "$buildDir/libs/lib"
-    from configurations.compile
-}
 
-task copyResources( type: Copy ) {
-    into "$buildDir/libs/conf"
-    from "$buildDir/resources/main"
-}
 
 def propertyPath =    "$buildDir/libs/conf"
 

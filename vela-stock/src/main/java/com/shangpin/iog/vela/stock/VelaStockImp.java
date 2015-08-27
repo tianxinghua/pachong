@@ -18,6 +18,16 @@ import java.util.*;
  */
 public class VelaStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
+    private static Logger logMongo = Logger.getLogger("mongodb");
+    private static ResourceBundle bdl=null;
+    private static String supplierId;
+
+    static {
+        if(null==bdl)
+            bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
 
     private Map<String,String> barcode_map = new HashMap<>();
 
@@ -25,12 +35,17 @@ public class VelaStockImp extends AbsUpdateProductStock {
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         Map<String, Integer> stock_map = new HashMap<String, Integer>();
         Gson gson = new Gson();
+        int i=0;
+        Map<String,String> mongMap = new HashMap<>();
+        mongMap.put("supplierId",supplierId);
+        mongMap.put("supplierName","galiano");
+        StringBuffer buffer = new StringBuffer();
         for (String skuno : skuNo) {
-            if (barcode_map.containsKey(skuno)) {
-                continue;
-            } else {
-                barcode_map.put(skuno, null);
-            }
+//            if (barcode_map.containsKey(skuno)) {
+//                continue;
+//            } else {
+//                barcode_map.put(skuno, null);
+//            }
 
             String itemId = skuno;
             //根据供应商skuno获取库存，并更新我方sop库存
@@ -38,11 +53,32 @@ public class VelaStockImp extends AbsUpdateProductStock {
             url = url.replaceAll("\\[\\[itemId\\]\\]", itemId);
             String json = null;
             try {
-                json = HttpUtil45.get(url, new OutTimeConfig(), null);
+                json = HttpUtil45.get(url, new OutTimeConfig(10000,10000,10000), null);
+                buffer.append(json).append("|||");
+
             } catch (Exception e) {
+                loggerError.error("拉取数据失败---" + e.getMessage());
                 e.printStackTrace();
             }
             if (json != null && !json.isEmpty()) {
+                if(json.equals("{\"error\":\"发生异常错误\"}")){
+                    //重复调用5次
+                     while(i<5){
+                         json = HttpUtil45.get(url, new OutTimeConfig(10000,10000,10000), null);
+                         if(json.equals("{\"error\":\"发生异常错误\"}")){
+                             i++;
+                         }else{
+                             i=0;
+                             break;
+                         }
+
+                     }
+                    if(json.equals("{\"error\":\"发生异常错误\"}")){
+                        stock_map.put(skuno, 0);
+                        i=0;
+                        continue;
+                    }
+                }
                 try {
                     Quantity result = gson.fromJson(json, new TypeToken<Quantity>() {
                     }.getType());
@@ -58,7 +94,8 @@ public class VelaStockImp extends AbsUpdateProductStock {
                 }
             }
         }
-        HttpUtil45.closePool();
+        mongMap.put("result",buffer.toString());
+        logMongo.info(mongMap);
         return stock_map;
     }
 
@@ -67,7 +104,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
         velaStockImp.setUseThread(true);velaStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("VELA更新数据库开始");
-        velaStockImp.updateProductStock("2015071701343","2015-01-01 00:00",format.format(new Date()));
+        velaStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
         logger.info("VELA更新数据库结束");
         /*VelaStockImp velaStockImp = new VelaStockImp();
         Collection<String> sku = new HashSet<>();

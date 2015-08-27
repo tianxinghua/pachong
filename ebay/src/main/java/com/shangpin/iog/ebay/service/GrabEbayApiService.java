@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,10 +31,11 @@ import com.shangpin.ebay.shoping.GetMultipleItemsResponseType;
 import com.shangpin.ebay.shoping.GetSingleItemResponseDocument;
 import com.shangpin.ebay.shoping.GetSingleItemResponseType;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.ebay.conf.EbayInit;
 
 /**
- * @description 
+ * @description
  * @author 陈小峰
  * <br/>2015年6月30日
  */
@@ -124,7 +126,7 @@ public class GrabEbayApiService {
 	 * <b/>请根据ListingStatus来判断产品是否下架,状态Active才是销售中的</b>
 	 * @param itemIds ebay的itemId集合
 	 * @return
-	 * @throws XmlException 
+	 * @throws XmlException
 	 */
 	public static GetMultipleItemsResponseType shoppingGetMultipleItems(Collection<String> itemIds) throws XmlException{
 		return shopingGetMultipleItem(itemIds,"Details,Variations,ItemSpecifics");
@@ -136,7 +138,7 @@ public class GrabEbayApiService {
 	 * @see #shoppingGetMultipleItems(List) 获取详细信息
 	 * @param itemIds
 	 * @return
-	 * @throws XmlException 
+	 * @throws XmlException
 	 */
 	public static GetMultipleItemsResponseType shoppingGetMultipleItems4Stock(Collection<String> itemIds) throws XmlException{
 		return shopingGetMultipleItem(itemIds,"Details,Variations");
@@ -144,7 +146,7 @@ public class GrabEbayApiService {
 	/**
 	 * @param itemIds itemId，最多20个
 	 * @return
-	 * @throws XmlException 
+	 * @throws XmlException
 	 */
 	private static GetMultipleItemsResponseType shopingGetMultipleItem(
 			Collection<String> itemIds,String includeSelector) throws XmlException {
@@ -156,12 +158,24 @@ public class GrabEbayApiService {
 		}
 		sb.append("&IncludeSelector="+includeSelector);
 		//System.out.println(sb.toString());
-		String xml=HttpUtil45.get(sb.toString(),null,null);
+		String xml=HttpUtil45.get(sb.toString(),new OutTimeConfig(10000,10000,60000),null);
+		if(HttpUtil45.errorResult.equals(xml)){
+			throw new XmlException(xml);
+		}
 		log.debug("url:{},结果：{}",sb.toString(),xml);
-		//try {
+		XmlOptions option= new XmlOptions();option.setLoadStripComments();
+		option.setLoadTrimTextBuffer();
+		GetMultipleItemsResponseDocument.Factory.newInstance(option);
 		GetMultipleItemsResponseDocument doc=GetMultipleItemsResponseDocument.Factory.parse(xml);
 		GetMultipleItemsResponseType rt=doc.getGetMultipleItemsResponse();
 		return rt;
+		/*if(!HttpUtil45.errorResult.equals(xml)){
+		}else{
+			log.error("http获取itm错误："+xml);
+			return null;
+		}*/
+		//try {
+		//setLoadStripComments
 		/*} catch (XmlException e) {
 			log.error("getMultipleItem error",e);
 		}
@@ -219,10 +233,13 @@ public class GrabEbayApiService {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		String xml=HttpUtil45.get(url, null, null);
+		String xml=HttpUtil45.get(url, new OutTimeConfig(10000,10000,60000), null);
+		if(HttpUtil45.errorResult.equals(xml)){
+			throw new XmlException(xml);
+		}
 		log.debug("查询商铺：{}，关键词：{},结果：{}",storeName,keywords,xml);
 		FindItemsIneBayStoresResponseDocument doc = FindItemsIneBayStoresResponseDocument.Factory.parse(xml);
-		FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();			
+		FindItemsIneBayStoresResponse rt = doc.getFindItemsIneBayStoresResponse();
 		return rt;
 	}
 	
@@ -236,7 +253,7 @@ public class GrabEbayApiService {
 		try {
 			//tradeSellerList("pumaboxstore", t1, t2, 1, 8);
 			//tradeGetItem("251485222300");
-			FindItemsIneBayStoresResponse resp=findItemsIneBayStores("The Run Store","ASICS",1,10);
+			FindItemsIneBayStoresResponse resp=findItemsIneBayStores("Respro Medical","CW-X",1,10);
 			if(AckValue.SUCCESS.equals(resp.getAck())){
 				System.out.println("success");
 			}

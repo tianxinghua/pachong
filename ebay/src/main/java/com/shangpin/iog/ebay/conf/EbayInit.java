@@ -23,7 +23,10 @@ import com.ebay.sdk.ApiCredential;
  * <br/>2015年6月18日
  */
 public class EbayInit {
-	public static final String EBAY="NNN2015071301325";
+
+
+	public static  String EBAY;
+	//public static final String EBAY="TestEbay";
 	private static String tradeApi;
     private static String apiUrl;
     private static String epsUrl;
@@ -83,6 +86,7 @@ public class EbayInit {
         shopingApi=bdl.getString("shopingApi");
         findApi=bdl.getString("findApi");
         tradeApi=bdl.getString("tradeApi");
+		EBAY = bdl.getString("supplierId");
         String profile=null;
 		try{
 			profile=bdl.getString("includeProfile");

@@ -1,14 +1,10 @@
 package com.shangpin.igo.ebay.test;
 
 import java.net.URLEncoder;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.ebay.page.PageGrabService;
 import com.shangpin.iog.product.service.ProductFetchServiceImpl;
 import com.shangpin.iog.service.ProductFetchService;
 

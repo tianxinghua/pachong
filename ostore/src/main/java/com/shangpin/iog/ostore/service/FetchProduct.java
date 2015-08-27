@@ -32,19 +32,27 @@ public class FetchProduct {
 
     public void fetchProductAndSave(String url){
 
-        String supplierId = "201508111742";
+        String supplierId = "2015081401431";
         try {
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
             timeConfig.confRequestOutTime(360000);
-            timeConfig.confConnectOutTime(36000);
+            timeConfig.confConnectOutTime(360000);
             timeConfig.confSocketOutTime(360000);
             List<String> resultList = HttpUtil45.getContentListByInputSteam(url, timeConfig, null, null, null);
             HttpUtil45.closePool();
+            StringBuffer buffer =new StringBuffer();
+            for(String content:resultList){
+                buffer.append(content).append("|||");
+            }
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","acanfora");
-            mongMap.put("result",resultList.toString()) ;
-            logMongo.info(mongMap);
+            mongMap.put("result", buffer.toString()) ;
+            try {
+                logMongo.info(mongMap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             int i=0;
             String stock="",size ="";
             String skuId = "";
@@ -55,7 +63,7 @@ public class FetchProduct {
                 }
                 i++;
                 //SKU;Brand;ModelName;Color;ColorFilter;Description;Materials;Sex;Category;Season;Price;Discount;Images;SizesFormat;Sizes
-               // 0 ;  1   ;  2      ;3    ;   4       ;    5      ;6        ;7  ;  8     ;  9   ;10   ; 11     ;  12  ;  13       ; 14
+                // 0 ;  1   ;  2      ;3    ;   4       ;    5      ;6        ;7  ;  8     ;  9   ;10   ; 11     ;  12  ;  13       ; 14
                 String[] contentArray = content.split(";");
                 if(null==contentArray||contentArray.length<15) continue;
                 try {
@@ -68,6 +76,8 @@ public class FetchProduct {
                     spu.setSpuName(contentArray[2]);
                     spu.setSeasonId(contentArray[9]);
                     spu.setMaterial(contentArray[6]);
+                    spu.setCategoryGender(contentArray[7]);
+                    System.out.println(spu.getCategoryGender());
                     try{
                         productFetchService.saveSPU(spu);
                     }catch (ServiceException e){
@@ -81,7 +91,7 @@ public class FetchProduct {
                         if(sizeAndStock.contains("(")&&sizeAndStock.length()>1) {
                             size = sizeAndStock.substring(0, sizeAndStock.indexOf("("));
                             stock = sizeAndStock.substring(sizeAndStock.indexOf("(")+1, sizeAndStock.length() - 1);
-                            System.out.println("库存"+stock);
+                            //System.out.println("库存"+stock);
                         }
                         SkuDTO sku  = new SkuDTO();
                         try {
@@ -94,11 +104,12 @@ public class FetchProduct {
                                 skuId = skuId.replace("½","+");
                             }
                             sku.setSkuId(skuId);
-                            sku.setProductSize(size);
-                            sku.setSalePrice(contentArray[10]);
+                            sku.setProductSize(size.replace("½","+"));
+                            sku.setMarketPrice(contentArray[10]);
                             sku.setColor(contentArray[3]);
                             sku.setProductDescription(contentArray[5]);
                             sku.setStock(stock);
+
 //                            sku.setProductCode(product.getProducer_id());
                             if(Integer.valueOf(stock)!=0){
                                 productFetchService.saveSKU(sku);

@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import IceUtilInternal.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,12 +82,14 @@ public abstract class AbsUpdateProductStock {
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
 				for (SopSkuIce ice : skuIces) {
-
-
-					if(1!=ice.IsDeleted){
-						skuIds.add(ice.SupplierSkuNo);
-						stocks.put(ice.SupplierSkuNo,ice.SkuNo);
+					if(null!=ice.SkuNo&&!"".equals(ice.SkuNo)&&null!=ice.SupplierSkuNo&&!"".equals(ice.SupplierSkuNo)){
+						if(1!=ice.IsDeleted){
+							skuIds.add(ice.SupplierSkuNo);
+							stocks.put(ice.SupplierSkuNo,ice.SkuNo);
+						}
 					}
+
+
 
 
 

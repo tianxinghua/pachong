@@ -20,6 +20,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.ebay.conf.EbayInit;
+import com.shangpin.iog.ebay.page.PageGrabService;
 
 /**
  * ebay抓取，更新启动类，用于选择是更新还是抓取
@@ -30,10 +31,12 @@ import com.shangpin.iog.ebay.conf.EbayInit;
 public class EbayStartUp {
 	static Logger logger = LoggerFactory.getLogger(EbayStartUp.class);
 	private static ApplicationContext factory;
-	static V1GrabUpdateMain grabSrv=null;
+	//static V1GrabUpdateMain grabSrv=null;
+	static PageGrabService pgGrabSrv=null; 
     private static void loadSpringContext(){
         factory = new AnnotationConfigApplicationContext(AppContext.class);
-        grabSrv=factory.getBean(V1GrabUpdateMain.class);
+        //grabSrv=factory.getBean(V1GrabUpdateMain.class);
+        pgGrabSrv = factory.getBean(PageGrabService.class);
     }
 	public static void main(String[] args) {
 		System.out.println("参数：u表示更新库存，其他表示拉取数据");
@@ -57,7 +60,10 @@ public class EbayStartUp {
 	
 	private static void grabProduct(){
 		//grabSrv.grabSaveProduct(supplier);
-		Map<String, String> storeBrand=EbayInit.getStoreBrand("store-brand-sports");
+		/*Date date1 = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String d = format.format(new Date());*/
+		Map<String, String> storeBrand=EbayInit.getStoreBrand("store-brand");
 		Set<Entry<String, String>> kvs=storeBrand.entrySet();
 		//ebay是说不要超过20个并发跑
 		ExecutorService exe=Executors.newFixedThreadPool(18);//相当于跑10遍
@@ -110,7 +116,9 @@ public class EbayStartUp {
 		@Override
 		public void run() {		
 			logger.info("线程 {} 开始抓取",getName());
-			grabSrv.grabSaveProduct4Find(storeName, brand);
+            //使用分页保存拉取
+            pgGrabSrv.findStoreBrand(storeName,brand);
+			//grabSrv.grabSaveProduct4Find(storeName, brand);
 			logger.info("线程 {} 抓取保存完成",getName());
 		}
 		

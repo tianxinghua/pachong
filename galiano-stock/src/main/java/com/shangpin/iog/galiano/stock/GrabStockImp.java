@@ -24,12 +24,22 @@ import java.util.*;
 
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
+
+    private static ResourceBundle bdl=null;
+    private static String supplierId;
+
+    static {
+        if(null==bdl)
+            bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
+
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
         Map<String, Integer> skustock = new HashMap<>(skuNo.size());
         Map<String,String> stockMap = new HashMap<>();
 
-        String supplierId = "2015070301312";
 
 
 
@@ -45,12 +55,16 @@ public class GrabStockImp extends AbsUpdateProductStock {
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","galiano");
             mongMap.put("result",result) ;
-            logMongo.info(mongMap);
+            try {
+                logMongo.info(mongMap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             products = ObjectXMLUtil.xml2Obj(Products.class, result);
             logger.info("拉取galiano数据成功");
         } catch (Exception e) {
             e.printStackTrace();
-            logger.info("拉取galiano数据失败");
+            loggerError.error("拉取galiano数据失败---" + e.getMessage());
             throw new ServiceMessageException("拉取galiano数据失败");
         }finally {
             HttpUtil45.closePool();
@@ -98,7 +112,6 @@ public class GrabStockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args) throws Exception {
-        String supplierId = "2015070301312";
         AbsUpdateProductStock grabStockImp = new GrabStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("galiano更新数据库开始");

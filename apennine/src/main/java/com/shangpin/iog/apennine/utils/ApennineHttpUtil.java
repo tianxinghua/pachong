@@ -149,7 +149,7 @@ public class ApennineHttpUtil {
         for (int i=0;i<list.size();i++){
             ApennineProductDTO dto=list.get(i);
             SkuDTO skuDTO=ApennineProductConvert.product2sku(dto);
-            stock = this.getHkstockByScode(ApiUrl.STOCK,skuDTO.getSkuId());
+            stock = this.getHkstockByScode(ApiUrl.STOCK,skuDTO.getSkuId().split("-")[0]);
             skuDTO.setStock(stock+"");
             skuList.add(skuDTO);
         }
@@ -192,8 +192,13 @@ public class ApennineHttpUtil {
         List<SkuDTO>skuDTOList=formatToSku(dtos);
         List<SpuDTO>spuDTOList=formatToSpu(dtos);
         List<ProductPictureDTO>picList=formatToPic(dtos);
-        for (int i = 0; i < skuDTOList.size(); i++) {
-        	fetchService.saveSKU(skuDTOList.get(i));
+       for (int i = 0; i < skuDTOList.size(); i++) {
+           try{
+               fetchService.saveSKU(skuDTOList.get(i));
+           }catch (Exception e){
+               e.printStackTrace();
+           }
+
 		}
         for (int i = 0; i < spuDTOList.size(); i++) {
         	fetchService.saveSPU(spuDTOList.get(i));

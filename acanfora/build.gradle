@@ -1,15 +1,6 @@
 
 
 
-task copyToLib( type: Copy ) {
-    into "$buildDir/libs/lib"
-    from configurations.compile
-}
-
-task copyResources( type: Copy ) {
-    into "$buildDir/libs/conf"
-    from "$buildDir/resources/main"
-}
 
 
 
@@ -45,7 +36,7 @@ jar {
     manifest {
         attributes 'Main-Class': 'com.shangpin.iog.acanfora.Startup'
 //        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
-        attributes 'Class-Path': '.  ' +  manifestCp
+        attributes 'Class-Path': '. ' +  manifestCp
     }
 }
 

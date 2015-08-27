@@ -13,9 +13,9 @@ dependencies {
             /*"com.thoughtworks.xstream:xstream:1.4.7",*/
             "commons-net:commons-net:1.4.1",
             "org.jdom:jdom:2.0.2",
+            "com.enterprisedt:edtFTPj:1.5.3",
+            project(':project-common'),
 
-            project(':project-common'),
-            project(':project-common'),
             project(':openapi-ice')
     )
 
@@ -23,10 +23,6 @@ dependencies {
 
 }
 
-task copyToLib( type: Copy ) {
-    into "$buildDir/libs/lib"
-    from configurations.compile
-}
 
 
 jar {

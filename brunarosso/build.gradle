@@ -27,10 +27,6 @@ dependencies {
 
 }
 
-task copyToLib( type: Copy ) {
-    into "$buildDir/libs/lib"
-    from configurations.compile
-}
 
 
 jar {

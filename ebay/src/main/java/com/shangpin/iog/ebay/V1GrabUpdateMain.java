@@ -19,15 +19,18 @@ import com.shangpin.iog.common.utils.json.JsonUtil;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.iog.ebay.page.PageGrabService;
 import com.shangpin.iog.service.ProductFetchService;
 
 /**
  * ebay数据抓取，库存更新服务主入口，数据保存入口
  * @description 
  * @author 陈小峰
+ * @see PageGrabService 分页抓取保存 
  * <br/>2015年7月3日
  */
 @Component
+@Deprecated
 public class V1GrabUpdateMain{
 	@Autowired
 	V1GrabService grabSrv;
