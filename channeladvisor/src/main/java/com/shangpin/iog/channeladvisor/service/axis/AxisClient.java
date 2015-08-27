@@ -14,6 +14,7 @@ import org.apache.axis2.rpc.client.RPCServiceClient;
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPHeaderElement;
+import java.math.BigInteger;
 import java.rmi.RemoteException;
 
 /**
@@ -54,6 +55,7 @@ public class AxisClient {
         String result = null;
         AdminServiceStub.PingResponse response = null;
         AdminServiceStub.RequestAccessResponse requestAccessResponse = null;
+        AdminServiceStub.GetAuthorizationListResponse auListResponse =null;
         ServiceClient client =null;
         //1、根据服务地址，创建一个发送消息的客户端。
         try
@@ -86,7 +88,12 @@ public class AxisClient {
             AdminServiceStub.RequestAccess requestAccess  = new    AdminServiceStub.RequestAccess();
             requestAccess.setLocalID(12018111);
 
-            requestAccessResponse =clientStub.requestAccess(requestAccess, apiCredentialsE);
+//            requestAccessResponse =clientStub.requestAccess(requestAccess, apiCredentialsE);
+
+            AdminServiceStub.GetAuthorizationList getAuthorizationList;
+            getAuthorizationList = new AdminServiceStub.GetAuthorizationList();
+            getAuthorizationList.setLocalID(new BigInteger("12018111"));
+             auListResponse =  clientStub.getAuthorizationList(getAuthorizationList, apiCredentialsE);
 
 //            response = clientStub.ping(ping,apiCredentialsE);
 //            AdminServiceStub.GetAuthorizationList getAuthorizationList = new   AdminServiceStub.GetAuthorizationList();
@@ -99,10 +106,17 @@ public class AxisClient {
         }
 
         //4、如果获取的响应不为空，获取响应的字符串内容。
-        if(requestAccessResponse != null)
+        if(auListResponse != null)
         {
-            AdminServiceStub.APIResultOfBoolean resultOfBoolean= requestAccessResponse.getRequestAccessResult();
-            System.out.println("date  = "+ resultOfBoolean.getData() + "  message = " + resultOfBoolean.getMessage());
+            AdminServiceStub.APIResultOfArrayOfAuthorizationResponse apiArrayAuthorizationResonse= auListResponse.getGetAuthorizationListResult();
+            AdminServiceStub.ArrayOfAuthorizationResponse arrayOfAuthorizationResponse  =  apiArrayAuthorizationResonse.getResultData();
+            for (AdminServiceStub.AuthorizationResponse authorizationResponse : arrayOfAuthorizationResponse.getAuthorizationResponse()) {
+                    System.out.println(" authorizationResponse.getAccountID() =" + authorizationResponse.getAccountID() + " authorizationResponse.getAccountName() " +
+                    authorizationResponse.getAccountName() + " authorizationResponse.getAccountType() " + authorizationResponse.getAccountType() +
+                            " authorizationResponse.getResourceName() = " + authorizationResponse.getResourceName()
+                    + " authorizationResponse.getStatus() = " + authorizationResponse.getStatus() );
+            }
+            ;
         }
 
     }
