@@ -37,7 +37,7 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
         Map<String, Integer> stock_map = new HashMap<String, Integer>();
         Gson gson = new Gson();
         String barcode="" ,url="",json="";
-
+        OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60,1000*60,1000*60);
         for (String skuno : skuNo) {
 //            if (barcode_map.containsKey(skuno)) {
 //                continue;
@@ -51,7 +51,7 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
             url = url.replaceAll("\\[\\[barcode\\]\\]", barcode);
              json = null;
             try {
-                json = HttpUtil45.get(url, new OutTimeConfig(10000, 10000, 10000), null);
+                json = HttpUtil45.get(url, outTimeConfig, null);
             } catch (Exception e) {
                 stock_map.put(skuno, 0);  //读取失败的时候赋值为0
                 loggerError.error("拉取失败 "+e.getMessage());

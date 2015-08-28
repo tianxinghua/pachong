@@ -40,6 +40,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
         mongMap.put("supplierId",supplierId);
         mongMap.put("supplierName","vela");
         StringBuffer buffer = new StringBuffer();
+        OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60,1000*60,1000*60);
         for (String skuno : skuNo) {
 //            if (barcode_map.containsKey(skuno)) {
 //                continue;
@@ -53,7 +54,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
             url = url.replaceAll("\\[\\[itemId\\]\\]", itemId);
             String json = null;
             try {
-                json = HttpUtil45.get(url, new OutTimeConfig(10000,10000,10000), null);
+                json = HttpUtil45.get(url, outTimeConfig, null);
                 buffer.append(json).append("|||");
 
             } catch (Exception e) {
@@ -64,7 +65,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
                 if(json.equals("{\"error\":\"发生异常错误\"}")){
                     //重复调用5次
                      while(i<5){
-                         json = HttpUtil45.get(url, new OutTimeConfig(10000,10000,10000), null);
+                         json = HttpUtil45.get(url, outTimeConfig, null);
                          if(json.equals("{\"error\":\"发生异常错误\"}")){
                              i++;
                          }else{
