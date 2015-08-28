@@ -27,7 +27,7 @@ import java.util.Date;
 @Component("spinnaker")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
-    String supplierId = "2015051300260";
+    String supplierId = "2015081701439";
 
     @Autowired
     private ProductFetchService pfs;
@@ -40,9 +40,10 @@ public class FetchProduct {
 
         Gson gson = new Gson();
 
-        String[]  databaseArray = new String[] {"sanremo","Default"}; //
+        String[]  databaseArray = new String[] {"Default"}; //
+        OutTimeConfig outTimeConfig  = new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2);
         for(String database:databaseArray){
-            String season_json = HttpUtil45.get("http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetAllSeasonCode?DBContext="+database+"&key=8IZk2x5tVN",new OutTimeConfig(4000,5000,5000),null);
+            String season_json = HttpUtil45.get("http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetAllSeasonCode?DBContext="+database+"&key=8IZk2x5tVN",outTimeConfig,null);
 
             SeasoncodeList season_list = gson.fromJson(season_json, new TypeToken<SeasoncodeList>() {
             }.getType());
@@ -66,7 +67,7 @@ public class FetchProduct {
                     String json = null;
                     try {
 
-                        json = HttpUtil45.get(url,new OutTimeConfig(4000,5000,5000),null);
+                        json = HttpUtil45.get(url,outTimeConfig,null);
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -129,7 +130,7 @@ public class FetchProduct {
                                     itemID = sku.getItem_id();
                                     priceUrl = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetPriceByItemID?DBContext="+database+"&ItemID="+itemID+"&key=8IZk2x5tVN";
                                     try {
-                                        json = HttpUtil45.get(priceUrl, new OutTimeConfig(4000,5000,5000), null);
+                                        json = HttpUtil45.get(priceUrl, outTimeConfig, null);
                                     }catch (IllegalArgumentException e){
                                         e.printStackTrace();
                                     }

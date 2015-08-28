@@ -70,7 +70,7 @@ public class FetchProduct {
             Map<String, String> param = new HashMap<>();
             param.put("user",user);
             param.put("password",password);
-            OutTimeConfig outTimeConf = new OutTimeConfig();
+            OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*5,1000*60*5,1000*60*5);
             result= HttpUtil45.post(url+"?t="+token, param, outTimeConf);
             list = getObjectsByJsonString(result);
         }catch (Exception e){

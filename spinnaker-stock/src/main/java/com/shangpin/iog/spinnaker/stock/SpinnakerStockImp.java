@@ -60,33 +60,13 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
             }
             if (json != null && !json.isEmpty()) {
 
-                if(json.equals("{\"Result\":\"No Record Found\"}")) {    //未找到 ，去查找另外一个店铺
-                    url = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=sanremo&barcode=[[barcode]]&key=8IZk2x5tVN";
-                    url = url.replaceAll("\\[\\[barcode\\]\\]", barcode);
-                    json = null;
-                    try {
-                        json = HttpUtil45.get(url, new OutTimeConfig(10000, 10000, 10000), null);
-                    } catch (Exception e) {
-                        stock_map.put(skuno, 0);
-                        loggerError.error("拉取失败 "+e.getMessage());
-                        e.printStackTrace();
-                        continue;
-                    }
-                    if (json != null && !json.isEmpty()) {
-                        if(json.equals("{\"Result\":\"No Record Found\"}")) {//店铺返回无记录 赋值为0
-                            stock_map.put(skuno, 0);
-                        }else{
+                if(json.equals("{\"Result\":\"No Record Found\"}")) {    //未找到
 
-                            try {
-                                Quantity result = gson.fromJson(json, new TypeToken<Quantity>() {
-                                }.getType());
-                                stock_map.put(skuno, Integer.valueOf(result.getResult()));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
+                            stock_map.put(skuno, 0);
+
+
                 }else{//找到赋值
+
                     try {
                         Quantity result = gson.fromJson(json, new TypeToken<Quantity>() {
                         }.getType());

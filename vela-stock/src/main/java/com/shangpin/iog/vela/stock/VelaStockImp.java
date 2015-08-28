@@ -38,7 +38,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
         int i=0;
         Map<String,String> mongMap = new HashMap<>();
         mongMap.put("supplierId",supplierId);
-        mongMap.put("supplierName","galiano");
+        mongMap.put("supplierName","vela");
         StringBuffer buffer = new StringBuffer();
         for (String skuno : skuNo) {
 //            if (barcode_map.containsKey(skuno)) {
