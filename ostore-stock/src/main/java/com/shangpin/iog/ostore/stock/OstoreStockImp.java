@@ -16,7 +16,7 @@ import java.util.*;
 public class OstoreStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
+//    private static Logger logMongo = Logger.getLogger("mongodb");
 
     private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
 
@@ -27,7 +27,7 @@ public class OstoreStockImp extends AbsUpdateProductStock {
         Map<String,String> stock_map = new HashMap<>();
 
         String url = "http://b2b.officinastore.com/shangpin.asp?mode=stock_only";
-        String supplierId = "2015081401431";
+        String supplierId = "2015082701461";
         try{
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
@@ -36,19 +36,19 @@ public class OstoreStockImp extends AbsUpdateProductStock {
             timeConfig.confSocketOutTime(360000);
             List<String> resultList = HttpUtil45.getContentListByInputSteam(url, timeConfig, null, null, null);
             HttpUtil45.closePool();
-            StringBuffer buffer =new StringBuffer();
-            for(String content:resultList){
-                buffer.append(content).append("|||");
-            }
-            mongMap.put("supplierId",supplierId);
-            mongMap.put("supplierName","acanfora");
-            mongMap.put("result", buffer.toString()) ;
-            try {
-                logMongo.info(mongMap);
-            } catch (Exception e) {
-                e.printStackTrace();
-                loggerError.error("存入mongodb失败"+buffer.toString());
-            }
+//            StringBuffer buffer =new StringBuffer();
+//            for(String content:resultList){
+//                buffer.append(content).append("|||");
+//            }
+//            mongMap.put("supplierId",supplierId);
+//            mongMap.put("supplierName","acanfora");
+//            mongMap.put("result", buffer.toString()) ;
+//            try {
+//                logMongo.info(mongMap);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                loggerError.error("存入mongodb失败"+buffer.toString());
+//            }
 
             int i=0;
             String stock="",size ="";
@@ -103,7 +103,7 @@ public class OstoreStockImp extends AbsUpdateProductStock {
         }
 
         AbsUpdateProductStock ostoreStockImp = new OstoreStockImp();
-        ostoreStockImp.setUseThread(true);ostoreStockImp.setSkuCount4Thread(500);
+
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("OSTORE更新数据库开始");
         //2015081401431
