@@ -115,7 +115,7 @@
 
 
         </where>
-        order by sku_id
+        order by brand_name, category_name
 
 
 	</select>

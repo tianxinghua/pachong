@@ -30,6 +30,10 @@ public class SkuDTO {
     private String memo;
     private Date createTime = new Date();
     private Date lastTime= new Date();//修改时间
+    private String newMarketPrice; //新的市场价
+    private String newSalePrice;
+    private String newSupplierPrice;
+    private Date updateTime;
 
     public String getId() {
         return id;

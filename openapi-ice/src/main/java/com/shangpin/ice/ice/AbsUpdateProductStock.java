@@ -1,5 +1,6 @@
 package com.shangpin.ice.ice;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,17 +16,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import IceUtilInternal.StringUtil;
+import ShangPin.SOP.Entity.Api.Product.*;
+import com.shangpin.iog.dto.SkuPriceDTO;
+import com.shangpin.iog.service.SkuPriceService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import ShangPin.SOP.Api.ApiException;
-import ShangPin.SOP.Entity.Api.Product.SopProductSkuIce;
-import ShangPin.SOP.Entity.Api.Product.SopProductSkuPage;
-import ShangPin.SOP.Entity.Api.Product.SopProductSkuPageQuery;
-import ShangPin.SOP.Entity.Api.Product.SopSkuIce;
-import ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
 
 import com.shangpin.framework.ServiceException;
@@ -37,6 +37,7 @@ import com.shangpin.framework.ServiceException;
  * @author 陈小峰
  * <br/>2015年6月10日
  */
+
 public abstract class AbsUpdateProductStock {
 	static Logger logger = LoggerFactory.getLogger(AbsUpdateProductStock.class);
 	private boolean useThread=false;
@@ -45,7 +46,12 @@ public abstract class AbsUpdateProductStock {
     //  true :已供应商提供的SKU为主 不更新未提供的库存
     //  false:已尚品的SKU为主 未查到的一律赋值为0
     public static boolean supplierSkuIdMain=false;
-	
+
+	private String  splitSing="|||||";
+
+	@Autowired
+	public SkuPriceService skuPriceService;
+
 	/**
 	 * 抓取供应商库存数据 
 	 * @param skuNo 供应商的每个产品的唯一编号：sku
@@ -53,7 +59,32 @@ public abstract class AbsUpdateProductStock {
 	 * @return 每个sku对应的库存数
 	 * @throws ServiceException 
 	 */
-	public abstract Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception;
+	public abstract Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception;
+
+
+
+	/**
+	 * 更新市场价进入中间库存
+	 * @param supplierPriceMap
+	 * @throws ServiceException
+	 */
+	public  void updateMarketPrice(Map<String,String> supplierPriceMap,String supplieId) throws ServiceException{
+		Set<Entry<String, String>> supplierPriceSet = supplierPriceMap.entrySet();
+		String supplierSku="",price = "",newPrice="",oldPrice="";
+		for(Entry<String, String> entry:supplierPriceSet){
+			supplierSku =entry.getKey();
+			price = entry.getValue();
+			newPrice= price.substring(0,price.indexOf(","));
+			oldPrice=price.substring(price.indexOf(",")+1);
+			SkuPriceDTO dto = new SkuPriceDTO();
+			dto.setMarketPrice(newPrice);
+			dto.setSkuId(supplierSku);
+			dto.setSupplierId(supplieId);
+			skuPriceService.updatePrice(dto);
+		}
+
+	}
+
 	/**
 	 * 抓取主站商品SKU信息，等待更新库存<br/>
 	 * @see #updateProduct(String, Map) 更新库存
@@ -61,6 +92,7 @@ public abstract class AbsUpdateProductStock {
 	 * @param start 主站数据开始时间
 	 * @param end 主站数据结束时间
 	 * @param stocks 本地sku编号与ice的sku键值对
+	 * @param sopSkuAndSupplierSku   ice的sku与本地sku编号键值对
 	 * @return 供应商skuNo
 	 * @throws Exception
 	 */
@@ -117,6 +149,7 @@ public abstract class AbsUpdateProductStock {
 	public int updateProductStock(final String supplier,String start,String end) throws Exception{
 		//ice的skuid与本地库拉到的skuId的关系，value是ice中skuId,key是本地中的skuId
 		final Map<String,String> localAndIceSku=new HashMap<String, String>();
+		final Map<String,String> sopSkuAndSupplierSku =new HashMap<>();
 		final Collection<String> skuNoSet=grabProduct(supplier, start, end,localAndIceSku);
 		logger.warn("待更新库存数据总数："+skuNoSet.size());
 		//logger.warn("需要更新ice,supplier sku关系是："+JSON.serialize(localAndIceSku));
@@ -127,7 +160,8 @@ public abstract class AbsUpdateProductStock {
 			final List<Collection<String>> subSkuNos=subCollection(skuNoSet);
 			logger.warn("线程池数："+(poolCnt/4+1)+",sku子集合数："+subSkuNos.size());
 			for(int i = 0 ; i <subSkuNos.size();i++){
-				exe.execute(new UpdateThread(subSkuNos.get(i),supplier,localAndIceSku,totoalFailCnt));
+				Map<String,String> sopPriceMap = new HashMap<>();
+				exe.execute(new UpdateThread(subSkuNos.get(i),supplier,localAndIceSku,totoalFailCnt,sopPriceMap));
 			}
 			exe.shutdown();
 			while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
@@ -139,12 +173,12 @@ public abstract class AbsUpdateProductStock {
 			}
 			return fct;
 		}else{
-			return updateStock(supplier, localAndIceSku, skuNoSet);
+			Map<String,String> sopPriceMap = new HashMap<>();
+			return updateStock(supplier, localAndIceSku, skuNoSet,sopPriceMap);
 		}
 	}
 	/**
 	 * @param skuNoSet
-	 * @param thd
 	 * @return
 	 */
 	private List<Collection<String>> subCollection(Collection<String> skuNoSet) {
@@ -177,10 +211,10 @@ public abstract class AbsUpdateProductStock {
 	 */
 	private int updateStock(String supplier,
 			Map<String, String> localAndIceSkuId,
-			Collection<String> skuNoSet) throws ServiceException, Exception,
+			Collection<String> skuNoSet,Map<String,String> sopPriceMap) throws ServiceException, Exception,
 			ApiException {
-		Map<String, Integer> iceStock = grab4Icestock(skuNoSet,localAndIceSkuId);
-		int failCount = updateIceStock(supplier, iceStock);
+		Map<String, Integer> iceStock = grab4Icestock(skuNoSet,localAndIceSkuId,sopPriceMap);
+		int failCount = updateIceStock(supplier, iceStock,sopPriceMap);
 		return failCount;
 	}
 	/**
@@ -190,7 +224,7 @@ public abstract class AbsUpdateProductStock {
 	 * @return 更新失败的数目
 	 * @throws Exception
 	 */
-	private int updateIceStock(String supplier, Map<String, Integer> iceStock)
+	private int updateIceStock(String supplier, Map<String, Integer> iceStock,Map<String,String> sopPriceMap)
 			throws Exception {
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		//logger.warn("{}---更新ice--,数量：{}",Thread.currentThread().getName(),iceStock.size());
@@ -203,6 +237,8 @@ public abstract class AbsUpdateProductStock {
 			if(skuNum%100==0){
 				//调用接口 查找库存
 				removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList,toUpdateIce);
+				//更新价格
+				updateChangePriceRecord(supplier,sopPriceMap,servant,skuNoShangpinList);
 				skuNoShangpinList = new ArrayList<>();
 			}
 			skuNoShangpinList.add(itor.next());
@@ -210,8 +246,12 @@ public abstract class AbsUpdateProductStock {
 		}
 		//排除最后一次
 		removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList,toUpdateIce);
-		
-		
+
+		//更新价格
+		updateChangePriceRecord(supplier,sopPriceMap,servant,skuNoShangpinList);
+
+
+		//更新库存
 		int failCount=0;
 		Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
 		logger.warn("待更新的数据：--------"+toUpdateIce.size());
@@ -259,6 +299,7 @@ public abstract class AbsUpdateProductStock {
                       if(iceStock.containsKey(sopSku)){
 //						  logger.warn("skuNo ：--------"+sopSku +"supplier quantity =" + iceStock.get(sopSku) + " shangpin quantity = null" );
 //						  System.out.println("skuNo ：--------"+sopSku +"supplier quantity =" + iceStock.get(sopSku) + " shangpin quantity = null");
+
 								  toUpdateIce.put(sopSku, iceStock.get(sopSku));
                       }
                   }
@@ -266,41 +307,154 @@ public abstract class AbsUpdateProductStock {
         }
 
 		//排除无用的库存
+
 		for(SopSkuInventoryIce skuIce:skuIceArray){
 	        if(iceStock.containsKey(skuIce.SkuNo)){
 //				logger.warn("skuNo ：--------"+skuIce.SkuNo +"supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity );
 //				System.out.println("skuNo ：--------"+skuIce.SkuNo +"supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity);
-	            if(iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
+	             if( iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
 	                toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
 	            }
 	        }
 		}
     }
+
+
+
+	/**
+	 * 更改价格     有查询限制 过滤
+	 * @param supplier
+	 * @param sopPriceMap 价格变化的MAP
+	 * @param servant
+	 * @param skuNoShangpinList
+	 * @throws ApiException
+	 */
+	private void updateChangePriceRecord(String supplier, Map<String, String> sopPriceMap,  OpenApiServantPrx servant, List<String> skuNoShangpinList) throws ApiException {
+		if(CollectionUtils.isEmpty(skuNoShangpinList)) return ;
+
+
+
+		Set<String>  sopSkuIdSet = new HashSet<>();//  sopPriceMap.keySet();
+		for(String skuNo:skuNoShangpinList){
+			if(sopPriceMap.containsKey(skuNo)){
+				sopSkuIdSet.add(skuNo);
+			}
+		}
+
+
+		if(sopSkuIdSet.size()>0){
+			StringBuffer buffer = new StringBuffer();
+			for(String skuId:sopSkuIdSet){
+				buffer.append(skuId).append(",");
+			}
+
+			String skuIdValue = buffer.toString();
+			Supply supply = new Supply();
+			supply.SkuNos =skuIdValue;
+			SopSkuPriceApplyIce[] skuPriceApplyIceArray =servant.FindSupplyInfo(supplier, supply);
+
+			String price="",newPrice="",oldPrice="";
+			Map<String,String>  supplierPriceMap = new HashMap<>();
+			String result = "",supplierSku="";
+			for(SopSkuPriceApplyIce skuPriceIce:skuPriceApplyIceArray){
+				if(sopPriceMap.containsKey(skuPriceIce.SkuNo)){
+					result = sopPriceMap.get(skuPriceIce.SkuNo);
+					supplierSku = result.substring(0,result.indexOf(splitSing));
+					price = result.substring(result.indexOf(splitSing)+splitSing.length());
+					newPrice=price.substring(0,price.indexOf(","));
+					oldPrice=price.substring(price.indexOf(",")+1);
+					BigDecimal newSupplierPrice =	new BigDecimal(newPrice)
+							.multiply(new BigDecimal(skuPriceIce.SupplyPrice)).divide(new BigDecimal(oldPrice)).setScale(2,BigDecimal.ROUND_HALF_UP);
+					SupplyPriceInfo priceInfo = new SupplyPriceInfo();
+					priceInfo.SkuNo=skuPriceIce.SkuNo;
+					priceInfo.MarkePrice=skuPriceIce.MarketPrice;
+					priceInfo.MarketPriceCurrency= skuPriceIce.MarketPriceCurrency;
+
+					priceInfo.SupplyPrice= newSupplierPrice.toString();
+					priceInfo.SupplyCurrency = skuPriceIce.SupplyCurrency;
+
+
+					priceInfo.PriceEffectDate=skuPriceIce.PriceEffectDate;
+					priceInfo.PriceFailureDate=skuPriceIce.PriceFailureDate;
+
+					priceInfo.StagePrice=skuPriceIce.StagePrice;
+					//TODO 未找到
+					priceInfo.StagePriceCurrency=skuPriceIce.SellPriceCurrency;
+					priceInfo.StagePriceEffectDate=skuPriceIce.StagePriceEffectDate;
+					priceInfo.StagePriceFailureDate=skuPriceIce.StagePriceFailureDate;
+
+
+					try {
+						logger.info("待更新的数据：--------" + skuPriceIce.SkuNo + ":" + price);
+
+						if(servant.UpdateSupplyPrice(supplier,priceInfo)){
+							//价格更新成功 ，则中间库也需要更新
+							supplierPriceMap.put(supplierSku,price);
+						}
+					} catch (ApiException e) {
+
+						e.printStackTrace();
+					}
+				}
+			}
+			//更新中间库
+			try {
+				updateMarketPrice(supplierPriceMap,supplier);
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+		}
+
+
+	}
+
+
+
 	/**
 	 * 拉取供应商库存，并返回ice中对应的sku的库存
 	 * @param skuNos 供应商sku编号，从ice中获取到的
 	 * @param localAndIceSkuId 供应商sku编号与icesku编号的关系
 	 * @return 供应商sku对应的icesku编号的库存，key是ice的sku编号，值是库存
 	 */
-	private Map<String, Integer> grab4Icestock(Collection<String> skuNos,Map<String, String> localAndIceSkuId) {
-		Map<String, Integer> iceStock=new HashMap<>();
+	private Map<String, String> grab4Icestock(Collection<String> skuNos,Map<String, String> localAndIceSkuId
+											  ) {
+		Map<String, String> iceStock=new HashMap<>();
 		try {
-			Map<String, Integer> supplierStock=grabStock(skuNos);
+			Map<String, String> supplierStock=grabStock(skuNos);  //返回库存|零售价
 
 
+			    String result = "",stockTemp="",price="",returnReslut="";
                 for (String skuNo : skuNos) {
-                    Integer stock=supplierStock.get(skuNo);
+					stockTemp ="";
+					result =  supplierStock.get(skuNo);
+					if(!StringUtils.isEmpty(result)){
+						if(result.indexOf("|")>=0){//增加验证 放置后续出现错误
+							stockTemp=  result.substring(0,result.indexOf("|"));
+							if(StringUtils.isEmpty(stockTemp)){
+								stockTemp="0";
+								returnReslut=stockTemp+result.substring(result.indexOf("|"));
+							}else{
+								returnReslut = result;
+							}
+						}else{
+							stockTemp=result;
+							returnReslut = result+"|";
+						}
+
+					}else{
+						returnReslut="0|";
+					}
+
+
                     String iceSku=localAndIceSkuId.get(skuNo);
                     if(this.supplierSkuIdMain){  // 已供应商提供的SKU为主 不更新未提供的库存
-                        if(null!=stock){
-                            iceStock.put(iceSku, stock);
-                        }
-
+						    if(!StringUtils.isEmpty(stockTemp)){
+								iceStock.put(iceSku, returnReslut);
+							}
                     }else{
-                        if(stock==null)
-                            stock=0;
+
                         if(!StringUtils.isEmpty(iceSku))
-                            iceStock.put(iceSku, stock);
+                            iceStock.put(iceSku, returnReslut);
                     }
 
                 }
@@ -312,12 +466,87 @@ public abstract class AbsUpdateProductStock {
 		return iceStock;
 	}
 
+
+	/**
+	 * 拉取供应商库存，并返回ice中对应的sku的库存
+	 * @param skuNos 供应商sku编号，从ice中获取到的
+	 * @param localAndIceSkuId 供应商sku编号与icesku编号的关系
+	 * @return 供应商sku对应的icesku编号的库存，key是ice的sku编号，值是库存
+	 */
+	private Map<String, Integer> grab4Icestock(Collection<String> skuNos,Map<String, String> localAndIceSkuId,
+											  Map<String,String> sopPriceMap) {
+		Map<String, Integer> iceStock=new HashMap<>();
+		try {
+			Map<String, String> supplierStock=grabStock(skuNos);  //返回库存|新的市场价，老的市场价
+			int stockResult=0;
+			String result = "",stockTemp="",priceResult="";
+			for (String skuNo : skuNos) {
+				stockTemp ="";
+				result =  supplierStock.get(skuNo);
+				if(!StringUtils.isEmpty(result)){
+					if(result.indexOf("|")>=0){//有价格变动的
+						stockTemp=  result.substring(0,result.indexOf("|"));
+						if(StringUtils.isEmpty(stockTemp)){
+							stockResult=0;
+						}else{
+							try {
+								stockResult = Integer.valueOf(stockTemp);
+							} catch (NumberFormatException e) {
+								stockResult=0;
+							}
+						}
+						priceResult=result.substring(result.indexOf("|")+1);
+
+						sopPriceMap.put(skuNo,priceResult) ;
+					}else{ //无价格变动
+
+						try {
+							stockResult = Integer.valueOf(result);
+						} catch (NumberFormatException e) {
+							stockResult=0;
+						}
+					}
+
+
+				}else{
+					stockResult=0;
+				}
+
+
+				String iceSku=localAndIceSkuId.get(skuNo);
+				if(this.supplierSkuIdMain){  // 已供应商提供的SKU为主 不更新未提供的库存
+					if(!StringUtils.isEmpty(stockTemp)){
+						iceStock.put(iceSku, stockResult);
+					}
+				}else{
+
+					if(!StringUtils.isEmpty(iceSku))	iceStock.put(iceSku, stockResult);
+
+				}
+
+
+				if(sopPriceMap.containsKey(skuNo)){
+					sopPriceMap.put(iceSku,skuNo+splitSing+sopPriceMap.get(skuNo));
+					sopPriceMap.remove(skuNo);
+				}
+
+			}
+
+
+		} catch (Exception e1) {
+			logger.error("抓取库存失败:", e1);
+		}
+		return iceStock;
+	}
+
 	class UpdateThread extends Thread{
 		final Logger logger = LoggerFactory.getLogger(UpdateThread.class);
 		private Collection<String> skuNos;
 		private Map<String, String> localAndIceSkuId;
 		private String supplier;
 		private List<Integer> totoalFailCnt;
+		private Map<String,String> sopPriceMap;
+
 		/**
 		 * @param localAndIceSku 所有主站skuId,供应商skuNo关系,key：供应商skuId,value:ice的skuNo
 		 * @param totoalFailCnt 
@@ -329,12 +558,22 @@ public abstract class AbsUpdateProductStock {
 			this.localAndIceSkuId=localAndIceSku;
 			this.totoalFailCnt=totoalFailCnt;
 		}
+
+
+		public UpdateThread(Collection<String> skuNos,String supplier, Map<String, String> localAndIceSku, List<Integer> totoalFailCnt ,
+							Map<String,String> sopPriceMap	) {
+			this.skuNos=skuNos;
+			this.supplier=supplier;
+			this.localAndIceSkuId=localAndIceSku;
+			this.totoalFailCnt=totoalFailCnt;
+			this.sopPriceMap=sopPriceMap;
+		}
 		@Override
 		public void run() {
-			Map<String, Integer> iceStock = grab4Icestock(skuNos,localAndIceSkuId);
+			Map<String, Integer> iceStock = grab4Icestock(skuNos,localAndIceSkuId,sopPriceMap);
 			try {
 				logger.warn(Thread.currentThread().getName()+"ice更新处理开始，数："+iceStock.size());
-				int failCnt = updateIceStock(supplier, iceStock);
+				int failCnt = updateIceStock(supplier, iceStock,sopPriceMap);
 				totoalFailCnt.add(failCnt);
 				logger.warn(Thread.currentThread().getName()+"ice更新完成，失败数:"+failCnt);
 			} catch (Exception e) {

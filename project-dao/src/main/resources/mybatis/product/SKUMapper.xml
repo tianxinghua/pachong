@@ -42,7 +42,10 @@
         PRODUCT_CODE,
         COLOR,
         PRODUCT_DESCRIPTION,SALE_CURRENCY,
-        PRODUCT_SIZE,STOCK,MEMO,CREATE_TIME,LAST_TIME
+        PRODUCT_SIZE,STOCK,MEMO,CREATE_TIME,LAST_TIME,
+        NEW_MARKET_PRICE,
+        NEW_SALE_PRICE,
+        NEW_SUPPLIER_PRICE,UPDATE_TIME
 	</sql>
 
 
@@ -58,7 +61,8 @@
             #{id}, #{supplierId}, #{spuId}, #{skuId},
             #{productName},#{marketPrice},#{salePrice}, #{supplierPrice}, #{barcode}, #{productCode},
             #{color} , #{productDescription}, #{saleCurrency}, #{productSize}, #{stock},#{memo},
-            #{createTime}, #{lastTime}
+            #{createTime}, #{lastTime}, #{newMarketPrice} , #{newSalePrice} , #{newSupplierPrice} ,
+        #{updateTime}
         )
 
 
@@ -67,11 +71,11 @@
     <update id="updatePriceAndStock" parameterType="iog_sku" >
           update SKU
           <set>
-              <if test="marketPrice != null"> MARKET_PRICE = #{marketPrice}, </if>
-              <if test="salePrice != null"> SALE_PRICE = #{salePrice}, </if>
-              <if test="supplierPrice != null"> SUPPLIER_PRICE = #{supplierPrice},</if>
+              <if test="marketPrice != null"> NEW_MARKET_PRICE = #{marketPrice}, </if>
+              <if test="salePrice != null"> NEW_SALE_PRICE = #{salePrice}, </if>
+              <if test="supplierPrice != null"> NEW_SUPPLIER_PRICE = #{supplierPrice},</if>
               <if test="stock != null"> STOCK = #{stock}</if>
-              <!--<if test="lastTime != null"> LAST_TIME = #{lastTime}</if>-->
+              <if test="updateTime != null"> UPDATE_TIME = #{updateTime}</if>
 
           </set>
 

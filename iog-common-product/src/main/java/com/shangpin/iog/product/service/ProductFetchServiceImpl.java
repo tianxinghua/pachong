@@ -13,6 +13,7 @@ import com.shangpin.iog.product.dao.SkuMapper;
 import com.shangpin.iog.product.dao.SpuMapper;
 import com.shangpin.iog.service.ProductFetchService;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -69,6 +71,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     public void saveSKU(List<SkuDTO> skuDTOList) throws ServiceException {
 
         try {
+
             skuDAO.saveList(skuDTOList);
         } catch (Exception e) {
         	if(e instanceof DuplicateKeyException)
@@ -82,6 +85,9 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     public void saveSKU(SkuDTO skuDTO) throws ServiceException {
 
         try {
+            if(StringUtils.isBlank(skuDTO.getNewMarketPrice())) skuDTO.setNewMarketPrice(skuDTO.getMarketPrice());
+            if(StringUtils.isBlank(skuDTO.getNewSalePrice())) skuDTO.setNewSalePrice(skuDTO.getSalePrice());
+            if(StringUtils.isBlank(skuDTO.getNewSupplierPrice())) skuDTO.setNewSupplierPrice(skuDTO.getSupplierPrice());
             skuDAO.save(skuDTO);
         } catch ( Exception e) {
         	if(e instanceof DuplicateKeyException)
@@ -93,6 +99,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     @Override
     public void updatePriceAndStock(SkuDTO skuDTO) throws ServiceException {
         try {
+            if(null==skuDTO.getUpdateTime()) skuDTO.setUpdateTime(new Date());
             skuDAO.updatePriceAndStock(skuDTO);
         } catch ( Exception e) {
 
