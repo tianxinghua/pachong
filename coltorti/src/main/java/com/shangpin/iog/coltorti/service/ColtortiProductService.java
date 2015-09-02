@@ -120,10 +120,14 @@ public class ColtortiProductService{
 					}
 					continue;
 				}else if(ColtortiUtil.isNoResultError(e)){
-					hasMore=false;
+//					hasMore=false;
 					continue;
-				}else
-					throw e;
+
+				}else{
+					continue;
+//					throw e;
+				}
+
 			}
 			rs.addAll(r1);
 			if(r1.size()<defaultSize)
@@ -155,7 +159,7 @@ public class ColtortiProductService{
 		if(dateStart!=null)param.put("since_updated_at", dateStart);
 		if(dateEnd!=null)param.put("until_updated_at", dateEnd);
 		if(recordId!=null)param.put("id", recordId);
-		String body=HttpUtil45.get(ColtortiUtil.paramGetUrl(ApiURL.PRODUCT,param),null,null);
+		String body=HttpUtil45.get(ColtortiUtil.paramGetUrl(ApiURL.PRODUCT,param),new OutTimeConfig(1000*10,1000*10,1000*10),null);
 		//logger.error(body);
 		ColtortiUtil.check(body);
 		JsonObject jo =new JsonParser().parse(body).getAsJsonObject();
@@ -169,6 +173,33 @@ public class ColtortiProductService{
 				p.setSkuId(entry.getKey());//skuId就是recordId暂时的..#@see convertProduct
 				//获取库存
 				setStock(entry.getKey(), p);
+				pros.add(p);
+			} catch (InstantiationException | IllegalAccessException e) {
+				logger.warn("convert product fail Json："+je.toString());
+			}
+		}
+		return pros;
+	}
+
+
+	public static List<ColtortiProduct> findSingleProduct(String productId,String recordId) throws ServiceException{
+		Map<String,String> param=ColtortiUtil.getCommonParam(-1,-1);
+		param.put("fields", "id,name,product_id,price");
+		if(productId!=null) param.put("product_id", productId);
+		if(recordId!=null)param.put("id", recordId);
+		String body=HttpUtil45.get(ColtortiUtil.paramGetUrl(ApiURL.PRODUCT,param),new OutTimeConfig(1000*10,1000*10,1000*10),null);
+		//logger.error(body);
+		ColtortiUtil.check(body);
+		JsonObject jo =new JsonParser().parse(body).getAsJsonObject();
+		Set<Entry<String,JsonElement>> ks=jo.entrySet();
+		List<ColtortiProduct> pros = new ArrayList<>(ks.size());
+		for (Entry<String, JsonElement> entry : ks) {
+			JsonElement je=entry.getValue();
+			try {
+				JsonObject jop=je.getAsJsonObject();
+				ColtortiProduct p=toObj(jop,ColtortiProduct.class);
+				p.setSkuId(entry.getKey());//skuId就是recordId暂时的..#@see convertProduct
+
 				pros.add(p);
 			} catch (InstantiationException | IllegalAccessException e) {
 				logger.warn("convert product fail Json："+je.toString());

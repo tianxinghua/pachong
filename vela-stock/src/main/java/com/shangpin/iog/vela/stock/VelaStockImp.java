@@ -19,17 +19,19 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by huxia on 2015/7/17.
  */
-@Component("vela")
+@Component("velaStock")
 public class VelaStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
     private static String supplierId;
+
 
 
 
@@ -46,7 +48,8 @@ public class VelaStockImp extends AbsUpdateProductStock {
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
 
-        Map<String,String> supplierPirceMap = skuPriceService.getSkuPriceMap(supplierId);
+
+
         Map<String, String> stock_map = new HashMap<>();
         Gson gson = new Gson();
         int i=0;
@@ -55,7 +58,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
         mongMap.put("supplierName","vela");
         StringBuffer buffer = new StringBuffer();
         OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60,1000*60,1000*60);
-        String url="",priceUrl="",priceJson="",itemId="";
+        String url="",priceUrl="",priceJson="",itemId="",sopPrice="";
         for (String skuno : skuNo) {
 //            if (barcode_map.containsKey(skuno)) {
 //                continue;
@@ -64,6 +67,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
 //            }
 
              itemId = skuno;
+            sopPrice="";
             //根据供应商skuno获取库存，并更新我方sop库存
             url = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetQuantityByItemID?DBContext=Default&ItemID=[[itemId]]&key=MPm32XJp7M";
             url = url.replaceAll("\\[\\[itemId\\]\\]", itemId);
@@ -72,9 +76,11 @@ public class VelaStockImp extends AbsUpdateProductStock {
             String json = null;
             try {
                 json = HttpUtil45.get(url, outTimeConfig, null);
+                //存入mongodb
                 buffer.append(json).append("|||");
 
             } catch (Exception e) {
+                //如果 httpUtil45 发生错误 返回  {"error":"发生异常错误"}
                 loggerError.error("拉取数据失败---" + e.getMessage());
                 e.printStackTrace();
             }
@@ -92,7 +98,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
 
                      }
                     if(json.equals("{\"error\":\"发生异常错误\"}")){
-                        stock_map.put(skuno, "0|");
+                        stock_map.put(skuno, "0");
                         i=0;
                         continue;
                     }
@@ -103,35 +109,45 @@ public class VelaStockImp extends AbsUpdateProductStock {
 
 
                     if("No Record Found".equals(result.getResult())){
-
+                        stock_map.put(skuno, "0");
 
                     }else{
-                        stock_map.put(skuno, result.getResult());
+                        //获取价格
+                        try {
+                            priceJson = HttpUtil45.get(priceUrl, new OutTimeConfig(), null);
+                        }catch (IllegalArgumentException e){
+                            e.printStackTrace();
+                        }
+                        if(priceJson != null && !priceJson.isEmpty()){
+                            Price price = null;
+                            price = gson.fromJson(priceJson,new TypeToken<Price>() {}.getType());
+                            if(price!=null&&price.getMarket_price()!=null){
+                                if(sopMarketPriceMap.containsKey(skuno)){
+                                    if(!price.getMarket_price().equals(sopMarketPriceMap.get(skuno))){
+                                        sopPrice="|" + price.getMarket_price()+","+sopMarketPriceMap.get(skuno);
+                                        logger.info("sku stock and prince= "+ skuno +":" + result.getResult()+"|"+sopPrice);
+                                        System.out.println("sku stock and prince= "+ skuno  +":"  + result.getResult()+"|"+sopPrice);
+                                    }
+                                }
+
+                            }
+                        }
+
+                        stock_map.put(skuno, result.getResult()+sopPrice);
+
                     }
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
-            //获取价格
-            priceUrl = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetPriceByItemID?DBContext=Default&ItemID="+itemID+"&key=MPm32XJp7M";
-            try {
-                priceJson = HttpUtil45.get(priceUrl, new OutTimeConfig(), null);
-            }catch (IllegalArgumentException e){
-                e.printStackTrace();
-            }
-            if(priceJson != null && !priceJson.isEmpty()){
-                Price price = null;
-                price = gson.fromJson(json,new TypeToken<Price>() {}.getType());
-                if(price!=null&&price.getMarket_price()!=null||price.getSuply_price()!=null){
 
-                }
-            }
 
         }
         mongMap.put("result",buffer.toString());
-        logMongo.info(mongMap);
+//        logMongo.info(mongMap);
         return stock_map;
     }
 
@@ -151,5 +167,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
         System.out.println(stock.get("75901"));*/
         System.exit(0);
     }
+
+
 
 }

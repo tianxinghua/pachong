@@ -5,11 +5,22 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.ResourceBundle;
+
 /**
  * Created by lizhongren on 2015/8/29.
  */
 public class StartSkuJob {
-    private static Logger log = Logger.getLogger("info");
+    private static Logger logger = Logger.getLogger("info");
+    private static ResourceBundle bdl=null;
+    private static String supplierId;
+    static {
+        if(null==bdl)
+            bdl= ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
 
     private static ApplicationContext factory;
     private static void loadSpringContext() {
@@ -19,14 +30,16 @@ public class StartSkuJob {
     public static void main(String[] args) throws Exception {
         //加载spring
         loadSpringContext();
-        log.info("----初始SPRING成功----");
-        //拉取数据
-        log.info("----拉取vela数据开始----");
+        logger.info("----初始SPRING成功----");
 
-        FetchProduct fetchProduct =(FetchProduct)factory.getBean("vela");
-        fetchProduct.fetchProductAndSave();
-        log.info("----拉取vela数据完成----");
-        System.out.println("-------fetch end---------");
+        VelaStockImp velaStockImp =(VelaStockImp)factory.getBean("velaStock");
+        velaStockImp.setUseThread(true);velaStockImp.setSkuCount4Thread(500);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        logger.info("VELA更新数据库开始");
+        velaStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        logger.info("VELA更新数据库结束");
+
+
         System.exit(0);
     }
 }

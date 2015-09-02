@@ -18,6 +18,10 @@ public class SkuPriceDTO {
     private String marketPrice;//市场价
     private String supplierPrice;//供货商价格
 
+    private Date createTime=new Date();//创建时间
+
+    private Date updateTime;
+
 
 
     

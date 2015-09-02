@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.shangpin.iog.product.dao.SkuMapper">
+<mapper namespace="com.shangpin.iog.product.dao.SkuPriceMapper">
 
 	<resultMap id="skuPriceMap" type="iog_sku_price">
 		<result column="SUPPLIER_ID" property="supplierId"  />
@@ -21,7 +21,8 @@
 		SUPPLIER_ID ,
 		SKU_ID,
         MARKET_PRICE,
-        SUPPLIER_PRICE
+        SUPPLIER_PRICE,
+        CREATE_TIME
 	</sql>
 
 
@@ -32,7 +33,7 @@
         )
         values(
              #{supplierId}, #{skuId},
-           #{marketPrice}, #{supplierPrice}
+           #{marketPrice}, #{supplierPrice} ,#{createTime}
         )
 
 
@@ -42,7 +43,8 @@
           update SKU_PRICE
           <set>
               <if test="marketPrice != null"> MARKET_PRICE = #{marketPrice}, </if>
-              <if test="supplierPrice != null"> SUPPLIER_PRICE = #{supplierPrice}</if>
+              <if test="supplierPrice != null"> SUPPLIER_PRICE = #{supplierPrice},</if>
+              <if test="updateTime != null"> UPDATE_TIME = #{updateTime}</if>
          </set>
           where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
 
@@ -71,7 +73,7 @@
 
     <select id="getSkuPrice"  resultMap="skuPriceMap" >
         select
-        *
+        SUPPLIER_ID,SKU_ID,MARKET_PRICE,SUPPLIER_PRICE
         from SKU_PRICE
         <where>
 

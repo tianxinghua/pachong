@@ -299,7 +299,7 @@ public final class _OpenApiServantDelM extends Ice._ObjectDelM implements _OpenA
     }
 
     public ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[]
-    FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+    FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.List<java.lang.String> ProductModels, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException
     {
@@ -313,6 +313,7 @@ public final class _OpenApiServantDelM extends Ice._ObjectDelM implements _OpenA
                 __os.writeString(Starttime);
                 __os.writeString(Endtime);
                 StringListHelper.write(__os, ProductNos);
+                StringListHelper.write(__os, ProductModels);
                 __og.endWriteParams();
             }
             catch(Ice.LocalException __ex)

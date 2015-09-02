@@ -100,10 +100,10 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         return FindAreaPage(supplierId, pageIndex, pageSize, null);
     }
 
-    public final ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos)
+    public final ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.List<java.lang.String> ProductModels)
         throws ShangPin.SOP.Api.ApiException
     {
-        return FindCommodityInfo(supplierId, Starttime, Endtime, ProductNos, null);
+        return FindCommodityInfo(supplierId, Starttime, Endtime, ProductNos, ProductModels, null);
     }
 
     public final ShangPin.SOP.Entity.Api.Product.SopProductSkuPage FindCommodityInfoPage(String supplierId, ShangPin.SOP.Entity.Api.Product.SopProductSkuPageQuery query)
@@ -342,14 +342,16 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         String Starttime;
         String Endtime;
         java.util.List<java.lang.String> ProductNos;
+        java.util.List<java.lang.String> ProductModels;
         supplierId = __is.readString();
         Starttime = __is.readString();
         Endtime = __is.readString();
         ProductNos = StringListHelper.read(__is);
+        ProductModels = StringListHelper.read(__is);
         __inS.endReadParams();
         try
         {
-            ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] __ret = __obj.FindCommodityInfo(supplierId, Starttime, Endtime, ProductNos, __current);
+            ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] __ret = __obj.FindCommodityInfo(supplierId, Starttime, Endtime, ProductNos, ProductModels, __current);
             IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
             SopProductSkuIceListHelper.write(__os, __ret);
             __os.writePendingObjects();

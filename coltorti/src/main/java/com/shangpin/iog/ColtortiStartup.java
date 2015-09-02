@@ -41,7 +41,7 @@ public class ColtortiStartup {
 	 * 抓取数据
 	 */
 	static void grabProduct(){
-		loadSpringContext();
+
 		Map<String,ProductFetchService> fetchsrvs=factory.getBeansOfType(ProductFetchService.class);
 		ProductFetchService pfs=null;
 		if(fetchsrvs!=null && fetchsrvs.size()>0)
@@ -64,7 +64,10 @@ public class ColtortiStartup {
 	static void updateStock() throws Exception{
 		logger.info("执行更新库存------");
 		String fmt="yyyy-MM-dd HH:mm";
-		UpdateStockService uss=new UpdateStockService();
+
+
+
+		UpdateStockService uss =(UpdateStockService)factory.getBean("updateStockService");
 		uss.setUseThread(true);uss.setSkuCount4Thread(1000);
 		uss.updateProductStock(ColtortiUtil.supplier,DateTimeUtil.convertFormat(startDate, fmt), 
 				DateTimeUtil.convertFormat(endDate, fmt));
@@ -86,6 +89,8 @@ public class ColtortiStartup {
 			return ;
 		}
 		initDate(args);
+		//初始化spring
+		loadSpringContext();
 		if("p".equals(action)){
 			grabProduct();
 		}else{

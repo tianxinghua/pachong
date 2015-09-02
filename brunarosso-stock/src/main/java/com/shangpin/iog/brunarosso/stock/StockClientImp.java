@@ -27,10 +27,10 @@ public class StockClientImp extends AbsUpdateProductStock{
     private static String HOST="ftp.teenfashion.it",PORT="21",USER="1504604@aruba.it",PASSWORD="7efd422f35",FILE_PATH="/teenfashion.it/public/stockftp";
     static String localFilePath = bundle.getString("localFilePath");
     @Override
-    public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+    public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //String url="E:\\brunarosso"+"Disponibilita.xml";
         Map<String,Integer>map=getSizeByPath("");
-        Map<String,Integer>returnMap=new HashMap<>();
+        Map<String,String>returnMap=new HashMap<>();
         Set<String>set=map.keySet();
         Iterator<String> iterator=set.iterator();
         while (iterator.hasNext()){
@@ -42,10 +42,10 @@ public class StockClientImp extends AbsUpdateProductStock{
                 }
                 if(key.equals(skuno)){
                     String id = skuno.replace("½","+");
-                    returnMap.put(id,map.get(id));
+                    returnMap.put(id,String.valueOf(map.get(id)));
                 }else {
                     String id = skuno.replace("½","+");
-                    returnMap.put(id,0);
+                    returnMap.put(id,"0");
                 }
             }
         }

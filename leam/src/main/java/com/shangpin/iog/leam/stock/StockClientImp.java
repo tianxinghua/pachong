@@ -21,8 +21,8 @@ public class StockClientImp  extends AbsUpdateProductStock {
     String password="PA#=k2xU^ddUc6Jm";
     String supplierId = "201508081715";
     @Override
-    public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        Map<String, Integer> skustock = new HashMap<>(skuNo.size());
+    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+        Map<String, String> skustock = new HashMap<>(skuNo.size());
         Map<String,String> stockMap = new HashMap<>();
         String stockUrl="http://188.226.153.91/modules/api/v2/stock/id/";
         String tokenUrl="http://188.226.153.91/modules/api/v2/getToken/";
@@ -41,7 +41,7 @@ public class StockClientImp  extends AbsUpdateProductStock {
                 String skuno=it.next();
                 result = HttpUtil45.post(stockUrl+skuno+"/?t="+token,param,outTimeConf);
                 dto=getObjectByjsonstr(result);
-                skustock.put(skuno,Integer.parseInt(dto.getQty()));
+                skustock.put(skuno,dto.getQty());
             }
         }catch (Exception e){
             e.printStackTrace();

@@ -28,7 +28,7 @@ public class ColtortiProductConvert {
 	public static SkuDTO product2sku(ColtortiProduct p){
 		SkuDTO dto = new SkuDTO();
 		dto.setId(UUIDGenerator.getUUID());
-		dto.setSupplierId(ColtortiUtil.supplier);
+		dto.setSupplierId(ColtortiUtil.productSupplierId);
 		dto.setProductName(p.getName());
 		dto.setProductCode(p.getProductCode());
 		dto.setColor(p.getColor());
@@ -72,7 +72,7 @@ public class ColtortiProductConvert {
 			dto.setSeasonName(entry.getValue());
 			dto.setSeasonId(entry.getKey());
 		}
-		dto.setSupplierId(ColtortiUtil.supplier);
+		dto.setSupplierId(ColtortiUtil.productSupplierId);
 		dto.setProductOrigin(p.getMadIn());
 		dto.setMaterial(p.getMaterial());
 		return dto;
@@ -85,7 +85,7 @@ public class ColtortiProductConvert {
 			for (String string : list) {
 				ProductPictureDTO pc= new ProductPictureDTO();
 				pc.setId(UUIDGenerator.getUUID());
-				pc.setSkuId(p.getSkuId());pc.setSupplierId(ColtortiUtil.supplier);
+				pc.setSkuId(p.getSkuId());pc.setSupplierId(ColtortiUtil.productSupplierId);
 				pc.setPicUrl(string);
 				ppc.add(pc);
 			}

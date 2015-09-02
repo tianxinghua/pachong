@@ -36,8 +36,8 @@ public class GrabStockImp extends AbsUpdateProductStock {
         supplierId = bdl.getString("supplierId");
     }
 
-    public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
-        Map<String, Integer> skustock = new HashMap<>(skuNo.size());
+    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException {
+        Map<String, String> skustock = new HashMap<>(skuNo.size());
         Map<String,String> stockMap = new HashMap<>();
 
 
@@ -101,9 +101,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
         for (String skuno : skuNo) {
 
             if(stockMap.containsKey(skuno)){
-                skustock.put(skuno, Integer.valueOf(stockMap.get(skuno)));
+                skustock.put(skuno, stockMap.get(skuno));
             }else{
-                skustock.put(skuno,0);
+                skustock.put(skuno,"0");
             }
         }
 

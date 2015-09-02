@@ -106,23 +106,23 @@ public interface OpenApiServantPrx extends Ice.ObjectPrx
     public boolean end_UpdateStock(Ice.AsyncResult __result)
         throws ShangPin.SOP.Api.ApiException;
 
-    public ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos)
+    public ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.List<java.lang.String> ProductModels)
         throws ShangPin.SOP.Api.ApiException;
 
-    public ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.Map<String, String> __ctx)
+    public ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.List<java.lang.String> ProductModels, java.util.Map<String, String> __ctx)
         throws ShangPin.SOP.Api.ApiException;
 
-    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos);
+    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.List<java.lang.String> ProductModels);
 
-    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.Map<String, String> __ctx);
+    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.List<java.lang.String> ProductModels, java.util.Map<String, String> __ctx);
 
-    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, Ice.Callback __cb);
+    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.List<java.lang.String> ProductModels, Ice.Callback __cb);
 
-    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.Map<String, String> __ctx, Ice.Callback __cb);
+    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.List<java.lang.String> ProductModels, java.util.Map<String, String> __ctx, Ice.Callback __cb);
 
-    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, Callback_OpenApiServant_FindCommodityInfo __cb);
+    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.List<java.lang.String> ProductModels, Callback_OpenApiServant_FindCommodityInfo __cb);
 
-    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindCommodityInfo __cb);
+    public Ice.AsyncResult begin_FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.List<java.lang.String> ProductModels, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindCommodityInfo __cb);
 
     public ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] end_FindCommodityInfo(Ice.AsyncResult __result)
         throws ShangPin.SOP.Api.ApiException;

@@ -34,7 +34,7 @@ public interface _OpenApiServantOperations
     boolean UpdateStock(String supplierId, String SkuNo, int InventoryQuantity, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
 
-    ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, Ice.Current __current)
+    ShangPin.SOP.Entity.Api.Product.SopProductSkuIce[] FindCommodityInfo(String supplierId, String Starttime, String Endtime, java.util.List<java.lang.String> ProductNos, java.util.List<java.lang.String> ProductModels, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
 
     ShangPin.SOP.Entity.Api.Product.SopProductSkuPage FindCommodityInfoPage(String supplierId, ShangPin.SOP.Entity.Api.Product.SopProductSkuPageQuery query, Ice.Current __current)

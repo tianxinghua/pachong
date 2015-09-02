@@ -17,8 +17,8 @@ import java.util.*;
 public class StockClientImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     @Override
-    public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        Map<String, Integer> skustock = new HashMap<>(skuNo.size());
+    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+        Map<String, String> skustock = new HashMap<>(skuNo.size());
         Map<String,String> stockMap = new HashMap<>();
         String supplierId = "201508081715";
         String stockUrl="https://api-sandbox.gilt.com/global/inventory";
@@ -41,7 +41,7 @@ public class StockClientImp extends AbsUpdateProductStock {
             }while (list.size()==limit);
             list  = getObjectsByJsonString(str.toString());
             for (InventoryDTO dto:list){
-                skustock.put(dto.getSku_id(),Integer.parseInt(dto.getQuantity()));
+                skustock.put(dto.getSku_id(),dto.getQuantity());
             }
         }catch (Exception e){
             e.printStackTrace();

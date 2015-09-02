@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,8 @@ public class SkuPriceServiceImpl implements SkuPriceService {
 
     private void getResultMap(Map<String, String> resultMap, List<SkuPriceDTO> list) {
         for(SkuPriceDTO skuPriceDTO:list){
-            resultMap.put(skuPriceDTO.getSkuId(),skuPriceDTO.getMarketPrice()+"|"+null==skuPriceDTO.getSupplierPrice()?"":skuPriceDTO.getSupplierPrice()) ;
+//            resultMap.put(skuPriceDTO.getSkuId(),skuPriceDTO.getMarketPrice()+"|"+null==skuPriceDTO.getSupplierPrice()?"":skuPriceDTO.getSupplierPrice()) ;
+            resultMap.put(skuPriceDTO.getSkuId(),skuPriceDTO.getMarketPrice()) ;
         }
     }
 
@@ -66,6 +68,7 @@ public class SkuPriceServiceImpl implements SkuPriceService {
     @Override
     public void updatePrice(SkuPriceDTO skuPriceDTO) throws ServiceException {
         try {
+            if(null==skuPriceDTO.getUpdateTime()) skuPriceDTO.setUpdateTime(new Date());
             skuPriceDAO.updatePrice(skuPriceDTO);
         } catch (ServiceException e) {
             logger.error("更新失败 "+e.getMessage());

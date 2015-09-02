@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import IceUtilInternal.StringUtil;
 import ShangPin.SOP.Entity.Api.Product.*;
@@ -42,12 +43,30 @@ public abstract class AbsUpdateProductStock {
 	static Logger logger = LoggerFactory.getLogger(AbsUpdateProductStock.class);
 	private boolean useThread=false;
 	private int skuCount4Thread=100;
+	private static ReentrantLock lock = new ReentrantLock();
 
     //  true :已供应商提供的SKU为主 不更新未提供的库存
     //  false:已尚品的SKU为主 未查到的一律赋值为0
     public static boolean supplierSkuIdMain=false;
 
 	private String  splitSing="|||||";
+
+	public static Map<String,String>   sopMarketPriceMap = null;
+
+
+	private  void  getSopMarketPriceMap(String supplierId) throws ServiceException {
+		//TODO 测试
+		try{
+			lock.lock();
+			if(null==sopMarketPriceMap){//第一次初始化
+				sopMarketPriceMap =skuPriceService.getSkuPriceMap(supplierId);
+			}
+
+		}finally{
+			if(lock.isLocked())	lock.unlock();
+		}
+
+	}
 
 	@Autowired
 	public SkuPriceService skuPriceService;
@@ -147,7 +166,11 @@ public abstract class AbsUpdateProductStock {
 	 * @throws Exception 
 	 */
 	public int updateProductStock(final String supplier,String start,String end) throws Exception{
+		//初始化 sopMarketPriceMap
+		getSopMarketPriceMap(supplier);
+
 		//ice的skuid与本地库拉到的skuId的关系，value是ice中skuId,key是本地中的skuId
+
 		final Map<String,String> localAndIceSku=new HashMap<String, String>();
 		final Map<String,String> sopSkuAndSupplierSku =new HashMap<>();
 		final Collection<String> skuNoSet=grabProduct(supplier, start, end,localAndIceSku);
@@ -238,7 +261,7 @@ public abstract class AbsUpdateProductStock {
 				//调用接口 查找库存
 				removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList,toUpdateIce);
 				//更新价格
-				updateChangePriceRecord(supplier,sopPriceMap,servant,skuNoShangpinList);
+//				updateChangePriceRecord(supplier,sopPriceMap,servant,skuNoShangpinList);
 				skuNoShangpinList = new ArrayList<>();
 			}
 			skuNoShangpinList.add(itor.next());
@@ -248,7 +271,7 @@ public abstract class AbsUpdateProductStock {
 		removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList,toUpdateIce);
 
 		//更新价格
-		updateChangePriceRecord(supplier,sopPriceMap,servant,skuNoShangpinList);
+//		updateChangePriceRecord(supplier,sopPriceMap,servant,skuNoShangpinList);
 
 
 		//更新库存
@@ -348,7 +371,7 @@ public abstract class AbsUpdateProductStock {
 				buffer.append(skuId).append(",");
 			}
 
-			String skuIdValue = buffer.toString();
+			String skuIdValue = buffer.toString().substring(0,buffer.toString().length()-1);
 			Supply supply = new Supply();
 			supply.SkuNos =skuIdValue;
 			SopSkuPriceApplyIce[] skuPriceApplyIceArray =servant.FindSupplyInfo(supplier, supply);
@@ -358,17 +381,26 @@ public abstract class AbsUpdateProductStock {
 			String result = "",supplierSku="";
 			for(SopSkuPriceApplyIce skuPriceIce:skuPriceApplyIceArray){
 				if(sopPriceMap.containsKey(skuPriceIce.SkuNo)){
+					if(skuPriceIce.PriceStatus!=1){
+						 continue;
+					}
 					result = sopPriceMap.get(skuPriceIce.SkuNo);
-					supplierSku = result.substring(0,result.indexOf(splitSing));
-					price = result.substring(result.indexOf(splitSing)+splitSing.length());
-					newPrice=price.substring(0,price.indexOf(","));
-					oldPrice=price.substring(price.indexOf(",")+1);
+					try {
+						supplierSku = result.substring(0,result.indexOf(splitSing));
+						price = result.substring(result.indexOf(splitSing)+splitSing.length());
+						newPrice=price.substring(0,price.indexOf(","));
+						oldPrice=price.substring(price.indexOf(",")+1);
+
+					} catch (Exception e) {
+						continue;
+					}
 					BigDecimal newSupplierPrice =	new BigDecimal(newPrice)
-							.multiply(new BigDecimal(skuPriceIce.SupplyPrice)).divide(new BigDecimal(oldPrice)).setScale(2,BigDecimal.ROUND_HALF_UP);
+							.multiply(new BigDecimal(skuPriceIce.SupplyPrice)).divide(new BigDecimal(oldPrice),2,BigDecimal.ROUND_HALF_UP);
 					SupplyPriceInfo priceInfo = new SupplyPriceInfo();
 					priceInfo.SkuNo=skuPriceIce.SkuNo;
 					priceInfo.MarkePrice=skuPriceIce.MarketPrice;
 					priceInfo.MarketPriceCurrency= skuPriceIce.MarketPriceCurrency;
+
 
 					priceInfo.SupplyPrice= newSupplierPrice.toString();
 					priceInfo.SupplyCurrency = skuPriceIce.SupplyCurrency;
@@ -379,13 +411,22 @@ public abstract class AbsUpdateProductStock {
 
 					priceInfo.StagePrice=skuPriceIce.StagePrice;
 					//TODO 未找到
-					priceInfo.StagePriceCurrency=skuPriceIce.SellPriceCurrency;
+//					priceInfo.StagePriceCurrency=;
 					priceInfo.StagePriceEffectDate=skuPriceIce.StagePriceEffectDate;
 					priceInfo.StagePriceFailureDate=skuPriceIce.StagePriceFailureDate;
 
+					//测试使用  todo 删除
+					if(priceInfo.StagePriceEffectDate.equals(priceInfo.StagePriceFailureDate)){
+						priceInfo.StagePriceFailureDate ="2016/1/1 0:00:00";
+					}
+
+					if(priceInfo.PriceEffectDate.equals(priceInfo.PriceFailureDate)){
+						priceInfo.PriceFailureDate ="2016/1/1 0:00:00";
+					}
+
 
 					try {
-						logger.info("待更新的数据：--------" + skuPriceIce.SkuNo + ":" + price);
+						logger.warn("待更新的数据：--------" + skuPriceIce.SkuNo + ":" + price);
 
 						if(servant.UpdateSupplyPrice(supplier,priceInfo)){
 							//价格更新成功 ，则中间库也需要更新
@@ -398,11 +439,14 @@ public abstract class AbsUpdateProductStock {
 				}
 			}
 			//更新中间库
-			try {
-				updateMarketPrice(supplierPriceMap,supplier);
-			} catch (ServiceException e) {
-				e.printStackTrace();
+			if(supplierPriceMap.size()>0){
+				try {
+					updateMarketPrice(supplierPriceMap,supplier);
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
 			}
+
 		}
 
 
@@ -477,7 +521,7 @@ public abstract class AbsUpdateProductStock {
 											  Map<String,String> sopPriceMap) {
 		Map<String, Integer> iceStock=new HashMap<>();
 		try {
-			Map<String, String> supplierStock=grabStock(skuNos);  //返回库存|新的市场价，老的市场价
+			Map<String, String> supplierStock=grabStock(skuNos);  //  价格发生变化  返回库存|新的市场价，老的市场价 否则返回库存
 			int stockResult=0;
 			String result = "",stockTemp="",priceResult="";
 			for (String skuNo : skuNos) {
@@ -524,7 +568,7 @@ public abstract class AbsUpdateProductStock {
 
 				}
 
-
+				//转化 把SOP SKUID 和 SUPPLIER SKUID 都加入 以便换算
 				if(sopPriceMap.containsKey(skuNo)){
 					sopPriceMap.put(iceSku,skuNo+splitSing+sopPriceMap.get(skuNo));
 					sopPriceMap.remove(skuNo);

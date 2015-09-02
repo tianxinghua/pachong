@@ -24,11 +24,13 @@ public class ColtortiUtil {
 
 	private static ResourceBundle bdl=null;
 	public static String supplier;
+	public static String productSupplierId;//拉取产品和线上的SUPPLIER_ID 分开
 
 	static {
 		if(null==bdl)
 			bdl=ResourceBundle.getBundle("conf");
 		supplier = bdl.getString("supplierId");
+		productSupplierId = bdl.getString("productSupplierId");
 	}
 
 	static String tokenExpire="token has expired";
@@ -42,6 +44,7 @@ public class ColtortiUtil {
 	public static ColtortiError check(String responseBody) throws ServiceException{
 		if(StringUtils.isEmpty(responseBody))
 			throw new ServiceMessageException("http 返回空"+noResult);
+
 		JsonElement je=new JsonParser().parse(responseBody);
 		JsonObject jo=je.getAsJsonObject();
 		
@@ -51,9 +54,14 @@ public class ColtortiUtil {
 		}
 		/*msg=jo.get("access_token");
 		if(tokenExpire.equals(msg))
-			throw new ServiceMessageException(msg.getAsString());	*/		
+			throw new ServiceMessageException(msg.getAsString());	*/
+
+		if(HttpUtil45.errorResult.equals(responseBody)){
+			throw new ServiceMessageException("http访问错误！");
+		}
+
 		if(HttpUtil45.errorResult.equals(msg)){
-			throw new ServiceMessageException("http访问错误！");			
+			throw new ServiceMessageException("http访问错误！");
 		}
 		return null;
 	}

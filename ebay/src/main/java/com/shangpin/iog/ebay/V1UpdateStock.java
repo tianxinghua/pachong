@@ -27,14 +27,14 @@ public class V1UpdateStock  extends AbsUpdateProductStock{
 	V1GrabService grabSrv = new V1GrabService();
 	ThreadLocal<Set<String>> errItemId=new ThreadLocal<Set<String>>();
 	@Override
-	public Map<String, Integer> grabStock(Collection<String> skuNo)
+	public Map<String, String> grabStock(Collection<String> skuNo)
 			throws ServiceException, Exception {
 		Set<String> itemIds=new HashSet<>(skuNo.size());
 		for (Iterator<String> iterator = skuNo.iterator(); iterator.hasNext();) {
 			String skuId = iterator.next();
 			itemIds.add(skuId.split("#")[0]);
 		}
-		Map<String, Integer> rtn = grabItmStock(itemIds);
+		Map<String, String> rtn = grabItmStock(itemIds);
 		int retry=0;
 		while(getErrItemId()!=null && getErrItemId().size()>0 && retry<10){//失败的重取，errItemId得清空
 			retry++;
@@ -52,8 +52,8 @@ public class V1UpdateStock  extends AbsUpdateProductStock{
 	 * @return
 	 * @throws XmlException
 	 */
-	private Map<String, Integer> grabItmStock(Set<String> itemIds){
-		Map<String, Integer> rtn = new HashMap<String, Integer>();
+	private Map<String, String> grabItmStock(Set<String> itemIds){
+		Map<String, String> rtn = new HashMap<String, String>();
 		if(itemIds.size()>20){
 			List<String> pageItem = new ArrayList<>(20);
 			for (String id : itemIds) {
@@ -92,9 +92,9 @@ public class V1UpdateStock  extends AbsUpdateProductStock{
 	 * @param rtn
 	 * @param stock
 	 */
-	private static void combine(Map<String, Integer> rtn, Map<String, Integer> stock)  {
-		Set<Entry<String, Integer>> entrySet = stock.entrySet();
-		for (Entry<String, Integer> entry : entrySet) {
+	private static void combine(Map<String, String> rtn, Map<String, String> stock)  {
+		Set<Entry<String, String>> entrySet = stock.entrySet();
+		for (Entry<String, String> entry : entrySet) {
 			rtn.put(entry.getKey(), entry.getValue());
 		}
 	}

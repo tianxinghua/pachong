@@ -72,6 +72,7 @@ public class FetchProduct {
             param.put("password",password);
             OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*5,1000*60*5,1000*60*5);
             result= HttpUtil45.post(url+"?t="+token, param, outTimeConf);
+            System.out.println(" result = "+ result);
             list = getObjectsByJsonString(result);
         }catch (Exception e){
             e.printStackTrace();
@@ -115,6 +116,11 @@ public class FetchProduct {
     }
     public static void main(String[] args){
         List<LeamDTO>list=getSkus(skuUrl);
+        for(LeamDTO leamDTO:list){
+            if(null!=leamDTO.getImage()&&leamDTO.getImage().size()>0) {
+                 System.out.println("image size " + leamDTO.getSupplier_sku()+" " + leamDTO.getImage().size());
+            }
+        }
         System.out.println("品牌是"+list.get(0).getBrand());
     }
 }

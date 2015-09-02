@@ -33,8 +33,8 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
     private Map<String,String> barcode_map = new HashMap<>();
 
     @Override
-    public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        Map<String, Integer> stock_map = new HashMap<String, Integer>();
+    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+        Map<String, String> stock_map = new HashMap<String, String>();
         Gson gson = new Gson();
         String barcode="" ,url="",json="";
         OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60,1000*60,1000*60);
@@ -53,7 +53,7 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
             try {
                 json = HttpUtil45.get(url, outTimeConfig, null);
             } catch (Exception e) {
-                stock_map.put(skuno, 0);  //读取失败的时候赋值为0
+                stock_map.put(skuno, "0");  //读取失败的时候赋值为0
                 loggerError.error("拉取失败 "+e.getMessage());
                 e.printStackTrace();
                 continue;
@@ -62,7 +62,7 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
 
                 if(json.equals("{\"Result\":\"No Record Found\"}")) {    //未找到
 
-                            stock_map.put(skuno, 0);
+                            stock_map.put(skuno, "0");
 
 
                 }else{//找到赋值
@@ -70,7 +70,7 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
                     try {
                         Quantity result = gson.fromJson(json, new TypeToken<Quantity>() {
                         }.getType());
-                        stock_map.put(skuno, Integer.valueOf(result.getResult()));
+                        stock_map.put(skuno, result.getResult());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

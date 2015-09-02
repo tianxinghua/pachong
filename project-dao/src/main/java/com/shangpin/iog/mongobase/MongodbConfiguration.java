@@ -30,7 +30,7 @@ public class MongodbConfiguration extends AbstractMongoConfiguration {
 
     @Override
     public Mongo mongo() throws Exception {
-        return new Mongo("192.168.20.112",27017);
+        return new Mongo("192.168.20.112",27017);   //192.168.20.112     49.213.13.167
     }
 
 

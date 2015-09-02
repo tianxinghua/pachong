@@ -105,6 +105,15 @@ public class InsertDataBaseService {
 				pfs.saveSKU(sk);
 			}catch(Exception e){
 				failCnt++;
+
+				if(e.getMessage().equals("数据插入失败键重复")) {
+					try {
+						pfs.updatePriceAndStock(sk);
+					} catch (ServiceException e1) {
+						e1.printStackTrace();
+						logger.error("保存sku:{}失败,错误信息：{},",new Gson().toJson(sk),e.getMessage());
+					}
+				}
 				if(e.getClass().equals(DuplicateKeyException.class)){
 					continue;
 				}

@@ -25,9 +25,9 @@ public class OstoreStockImp extends AbsUpdateProductStock {
         supplierId = bdl.getString("supplierId");
     }
     @Override
-    public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
 
-        Map<String, Integer> skuStock = new HashMap<>();
+        Map<String, String> skuStock = new HashMap<>();
         Map<String,String> stock_map = new HashMap<>();
 
         String url = "http://b2b.officinastore.com/shangpin.asp?mode=stock_only";
@@ -84,9 +84,9 @@ public class OstoreStockImp extends AbsUpdateProductStock {
 
             for(String skuno:skuNo){
                     if (stock_map.containsKey(skuno)) {
-                        skuStock.put(skuno, Integer.valueOf(stock_map.get(skuno)));
+                        skuStock.put(skuno, stock_map.get(skuno));
                     }else{
-                        skuStock.put(skuno,0);
+                        skuStock.put(skuno,"0");
                     }
             }
         }catch (Exception e){

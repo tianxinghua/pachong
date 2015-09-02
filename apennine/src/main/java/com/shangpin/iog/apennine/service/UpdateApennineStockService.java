@@ -58,16 +58,16 @@ public class UpdateApennineStockService extends AbsUpdateProductStock{
 	 * @return 每个sku对应的库存数
 	 * @throws ServiceException 
 	 */
-	public Map<String, Integer> grabStock(Collection<String> skuNo)
+	public Map<String, String> grabStock(Collection<String> skuNo)
 			throws ServiceException {
 		Iterator<String> it = skuNo.iterator();
-		Map<String ,Integer>map=new HashMap<>();
+		Map<String ,String>map=new HashMap<>();
 		int stock = 0;
 		while (it.hasNext()) {
 			String skuId = it.next();
 			try {
 				stock=ApennineService.getHkstockByScode(ApiUrl.STOCK,skuId.split("-")[0]);
-				map.put(skuId, stock);
+				map.put(skuId, String.valueOf(stock));
 			} catch (Exception e) {
 				logger.error("-------- getHKstockByScode fail--------");
 				e.printStackTrace();

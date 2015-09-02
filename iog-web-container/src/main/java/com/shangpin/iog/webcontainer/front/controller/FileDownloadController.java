@@ -49,6 +49,13 @@ public class FileDownloadController {
     }
 
 
+    @RequestMapping(value = "code")
+    public void setCode(HttpServletRequest request) throws Exception {
+        String code =   request.getParameter("code");
+        System.out.println("code = " +code );
+        log.error("code =" + code);
+
+    }
 
 
 

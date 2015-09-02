@@ -108,13 +108,14 @@ public class V1GrabService {
 	}
 
 	/**
+	 * TODO 增加价格查询
 	 * 根据itemId获取item及变种的库存<br/>
 	 * @param itemIds ebay的itemId
 	 * @return skuId:stock的键值对
 	 * @throws XmlException
 	 * @see ShopingItemConvert#getSkuId(SimpleItemType, VariationType) 产品skuId
 	 */
-	public Map<String,Integer> getStock(Collection<String> itemIds) throws XmlException{
+	public Map<String,String> getStock(Collection<String> itemIds) throws XmlException{
 		GetMultipleItemsResponseType resp;
 		try {
 			resp = GrabEbayApiService.shoppingGetMultipleItems4Stock(itemIds);
@@ -127,7 +128,7 @@ public class V1GrabService {
 			return null;
 		}
 		SimpleItemType[] sits=resp.getItemArray();
-		Map<String,Integer> rtnMap=new HashMap<>(sits.length);
+		Map<String,String> rtnMap=new HashMap<>(sits.length);
 		for (SimpleItemType sit : sits) {
 			VariationsType vta=sit.getVariations();
 			//如果结束了那么库存为null
@@ -139,11 +140,11 @@ public class V1GrabService {
 				VariationType[] vts=vta.getVariationArray();
 				for (VariationType vt : vts) {
 					int quantity=vt.getQuantity()-vt.getSellingStatus().getQuantitySold();
-					rtnMap.put(ShopingItemConvert.getSkuId(sit,vt),isEnd?0:quantity);
+					rtnMap.put(ShopingItemConvert.getSkuId(sit,vt),String.valueOf(isEnd?0:quantity));
 				}
 			}else{
 				int quantity=sit.getQuantity()-sit.getQuantitySold();
-				rtnMap.put(ShopingItemConvert.getSkuId(sit,null), isEnd?0:quantity);
+				rtnMap.put(ShopingItemConvert.getSkuId(sit,null), String.valueOf(isEnd?0:quantity));
 			}
 		}
 		return rtnMap;

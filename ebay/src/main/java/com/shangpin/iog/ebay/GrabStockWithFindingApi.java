@@ -29,9 +29,9 @@ public class GrabStockWithFindingApi extends AbsUpdateProductStock {
 	 * @return 每个sku对应的库存数
 	 * @throws ServiceException
 	 */
-	public Map<String, Integer> grabStock(Collection<String> skuNo)
+	public Map<String, String> grabStock(Collection<String> skuNo)
 			throws Exception {
-		Map<String, Integer> skuStock = new HashMap<String, Integer>();
+		Map<String, String> skuStock = new HashMap<String, String>();
 		FetchEbayProduct product = new FetchEbayProduct();
 		ItemType item = null;
 		String skuid = null;
@@ -46,14 +46,14 @@ public class GrabStockWithFindingApi extends AbsUpdateProductStock {
 					if (variationTypes != null) {
 						for (VariationType var : variationTypes) {
 							if (skuid.equals(var.getSKU())) {
-								skuStock.put(skuId, (var.getQuantity() - var
-										.getSellingStatus().getQuantitySold()));
+								skuStock.put(skuId, String.valueOf((var.getQuantity() - var
+										.getSellingStatus().getQuantitySold())));
 								break;
 							}
 						}
 					}
 				} else {
-					skuStock.put(skuId, (item.getQuantity()-item.getSellingStatus().getQuantitySold()));
+					skuStock.put(skuId, String.valueOf((item.getQuantity()-item.getSellingStatus().getQuantitySold())));
 				}
 			}
 		}
