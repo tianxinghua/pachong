@@ -5,7 +5,7 @@ dependencies {
     compile(
             project(':project-common'),
 
-            project(':openapi-ice')
+            project(':iog-sop')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 

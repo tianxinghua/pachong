@@ -13,6 +13,7 @@ dependencies {
 		"org.apache.servicemix.bundles:org.apache.servicemix.bundles.oro:2.0.8_6",
 		project(":iog-common-product"),
 			project(':openapi-ice')
+			
 		)
     testCompile (
 		'junit:junit:4.+',

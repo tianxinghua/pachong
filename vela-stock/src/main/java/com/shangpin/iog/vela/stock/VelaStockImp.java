@@ -3,7 +3,6 @@ package com.shangpin.iog.vela.stock;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
@@ -11,6 +10,8 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.vela.stock.dto.Price;
 import com.shangpin.iog.vela.stock.dto.Quantity;
+import com.shangpin.sop.AbsUpdateProductStock;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -44,6 +45,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
     }
 
     private Map<String,String> barcode_map = new HashMap<>();
+   
 
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
@@ -77,7 +79,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
             try {
                 json = HttpUtil45.get(url, outTimeConfig, null);
                 //存入mongodb
-                buffer.append(json).append("|||");
+//                buffer.append(json).append("|||");
 
             } catch (Exception e) {
                 //如果 httpUtil45 发生错误 返回  {"error":"发生异常错误"}
@@ -153,6 +155,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
 
 
     public static void main(String[] args) throws Exception {
+      
         AbsUpdateProductStock velaStockImp = new VelaStockImp();
         velaStockImp.setUseThread(true);velaStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");

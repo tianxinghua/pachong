@@ -33,6 +33,7 @@ public class EbayInit {
     private static String signUrl;
     private static String shopingApi;
     private static String findApi;
+
     private static volatile int idx=0;
 	static List<EbayAppConf> confs=new ArrayList<>();
     static ResourceBundle bdl = null;
@@ -48,7 +49,8 @@ public class EbayInit {
     		conf.setDevKey(bdl.getString("DeveloperKey"));
     		conf.setAppKey(bdl.getString("ApplicationKey"));
     		conf.setCerKey(bdl.getString("CertificateKey"));
-    		conf.setRuName(bdl.getString("ruName")); 		
+    		conf.setRuName(bdl.getString("ruName"));
+
     	}catch(Exception e){
     		return null;
     	}
@@ -171,6 +173,8 @@ public class EbayInit {
 		}
     	return brandStore;
     }
-    
-    
+
+	
+
+
 }

@@ -10,19 +10,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.shangpin.sop.AbsUpdateProductStock;
 import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 
 /**
  * @description
  * @author 陈小峰
  * <br/>2015年7月24日
  */
-public class V1UpdateStock  extends AbsUpdateProductStock{
+public class V1UpdateStock  extends AbsUpdateProductStock {
 	static Logger logger = LoggerFactory.getLogger(V1UpdateStock.class);
 	V1GrabService grabSrv = new V1GrabService();
 	ThreadLocal<Set<String>> errItemId=new ThreadLocal<Set<String>>();

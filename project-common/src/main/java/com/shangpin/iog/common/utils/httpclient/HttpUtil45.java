@@ -255,7 +255,6 @@ public class HttpUtil45 {
 				while((value = reader.readLine()) != null) {
 					contentList.add(value);
 					count++;
-					System.out.println("ddgg"+count);
 				}
 			} finally {
 				if (instream != null) {

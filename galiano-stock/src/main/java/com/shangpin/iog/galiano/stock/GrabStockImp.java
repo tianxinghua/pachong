@@ -4,7 +4,6 @@
 package com.shangpin.iog.galiano.stock;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -14,6 +13,7 @@ import com.shangpin.iog.galiano.stock.dto.Product;
 import com.shangpin.iog.galiano.stock.dto.Products;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
+import com.shangpin.sop.AbsUpdateProductStock;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -116,6 +116,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("galiano更新数据库开始");
         grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        
         logger.info("galiano更新数据库结束");
         System.exit(0);
 

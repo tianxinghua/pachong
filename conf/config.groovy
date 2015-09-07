@@ -12,6 +12,8 @@ environments{
 //            password = 'write@520'
             Ice.Default.Locator='SPIceGrid/Locator:default -h 192.168.20.204 -p 12000:default -h 192.168.20.205 -p 12000'
             MongoDB.hostname='192.168.20.112'
+            SOP.HOST='http://192.168.20.83:9090/'
+
         }
     }
 	test{
@@ -24,6 +26,8 @@ environments{
 
             Ice.Default.Locator='SPIceGrid/Locator:default -h 192.168.20.204 -p 12000:default -h 192.168.20.205 -p 12000'
             MongoDB.hostname='192.168.20.112'
+            SOP.HOST='http://192.168.20.83:9090/'
+
         }
     }
 	production{
@@ -42,6 +46,9 @@ environments{
             Ice.Default.Locator='SPIceGrid/Locator:default -h 172.20.10.242 -p 12000:default -h 172.20.10.246 -p 12000'
 
             MongoDB.hostname='172.20.30.215'
+
+            SOP.HOST='http://open.shangpin.com:8080'
+
 
 
 

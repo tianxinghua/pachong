@@ -1,9 +1,10 @@
 package com.shangpin.iog.ostore.stock;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.sop.AbsUpdateProductStock;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.text.SimpleDateFormat;
@@ -15,15 +16,10 @@ import java.util.*;
 public class OstoreStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
-    private static ResourceBundle bdl=null;
-    private static String supplierId;
+//    private static Logger logMongo = Logger.getLogger("mongodb");
+  
+    private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
 
-    static {
-        if(null==bdl)
-            bdl=ResourceBundle.getBundle("conf");
-        supplierId = bdl.getString("supplierId");
-    }
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
 
@@ -31,6 +27,7 @@ public class OstoreStockImp extends AbsUpdateProductStock {
         Map<String,String> stock_map = new HashMap<>();
 
         String url = "http://b2b.officinastore.com/shangpin.asp?mode=stock_only";
+        String supplierId = "2015082701461";
         try{
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
@@ -39,19 +36,19 @@ public class OstoreStockImp extends AbsUpdateProductStock {
             timeConfig.confSocketOutTime(360000);
             List<String> resultList = HttpUtil45.getContentListByInputSteam(url, timeConfig, null, null, null);
             HttpUtil45.closePool();
-            StringBuffer buffer =new StringBuffer();
-            for(String content:resultList){
-                buffer.append(content).append("|||");
-            }
-            mongMap.put("supplierId",supplierId);
-            mongMap.put("supplierName","acanfora");
-            mongMap.put("result", buffer.toString()) ;
-            try {
-                logMongo.info(mongMap);
-            } catch (Exception e) {
-                e.printStackTrace();
-                loggerError.error("存入mongodb失败"+buffer.toString());
-            }
+//            StringBuffer buffer =new StringBuffer();
+//            for(String content:resultList){
+//                buffer.append(content).append("|||");
+//            }
+//            mongMap.put("supplierId",supplierId);
+//            mongMap.put("supplierName","acanfora");
+//            mongMap.put("result", buffer.toString()) ;
+//            try {
+//                logMongo.info(mongMap);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                loggerError.error("存入mongodb失败"+buffer.toString());
+//            }
 
             int i=0;
             String stock="",size ="";
@@ -98,12 +95,19 @@ public class OstoreStockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String args[]) throws Exception {
+        String host = bundle.getString("HOST");
+        String app_key = bundle.getString("APP_KEY");
+        String app_secret= bundle.getString("APP_SECRET");
+        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
+            logger.error("参数错误，无法执行更新库存");
+        }
 
         AbsUpdateProductStock ostoreStockImp = new OstoreStockImp();
-        ostoreStockImp.setUseThread(true);ostoreStockImp.setSkuCount4Thread(500);
+
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("OSTORE更新数据库开始");
-        ostoreStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        //2015081401431
+        ostoreStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
         logger.info("OSTORE更新数据库结束");
         System.exit(0);
 
