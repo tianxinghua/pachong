@@ -115,12 +115,24 @@ public class FetchProduct {
         return obj.getToken();
     }
     public static void main(String[] args){
-        List<LeamDTO>list=getSkus(skuUrl);
-        for(LeamDTO leamDTO:list){
-            if(null!=leamDTO.getImage()&&leamDTO.getImage().size()>0) {
-                 System.out.println("image size " + leamDTO.getSupplier_sku()+" " + leamDTO.getImage().size());
-            }
-        }
-        System.out.println("品牌是"+list.get(0).getBrand());
+//        List<LeamDTO>list=getSkus(skuUrl);
+//        for(LeamDTO leamDTO:list){
+//            if(null!=leamDTO.getImage()&&leamDTO.getImage().size()>0) {
+//                 System.out.println("image size " + leamDTO.getSupplier_sku()+" " + leamDTO.getImage().size());
+//            }
+//        }
+//        System.out.println("品牌是"+list.get(0).getBrand());
+      String kk =   HttpUtil45.get("https://api.channeladvisor.com/oauth2/authorize?" +
+                "client_id=qwmmx12wu7ug39a97uter3dz29jbij3j&response_type=code&scope=orders%20inventory" +
+                "&redirect_uri=https://49.213.13.167:8443/iog/download/code",new OutTimeConfig(1000*60,1000*60,1000*60),null);
+        System.out.println("kk = " + kk);
+
+        String kkk =   HttpUtil45.get("https://api.channeladvisor.com/oauth2/authorize ?\n" +
+                "    client_id = qwmmx12wu7ug39a97uter3dz29jbij3j &\n" +
+                "    response_type = code &\n" +
+                "    scope = orders inventory &\n" +
+                "    redirect_uri = https://49.213.13.167:8443/iog/download/code",new OutTimeConfig(1000*60,1000*60,1000*60),null);
+        System.out.println("kkk = " + kkk);
     }
+
 }
