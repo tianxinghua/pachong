@@ -14,6 +14,8 @@
 		<typeAlias alias="iog_brand_sp" type="com.shangpin.iog.dto.BrandSpDTO"/>
 		<typeAlias alias="iog_color_contrast" type="com.shangpin.iog.dto.ColorContrastDTO"/>
 		<typeAlias alias="iog_material_contrast" type="com.shangpin.iog.dto.MaterialContrastDTO"/>
+		<typeAlias alias="iog_discount" type="com.shangpin.iog.dto.DiscountDTO"/>
+		<typeAlias alias="iog_discount_history" type="com.shangpin.iog.dto.DiscountHistoryDTO"/>
 
 
 	</typeAliases>
