@@ -26,10 +26,7 @@ processResources {
 }
 
 
-task copyResources( type: Copy ) {
-    into "$buildDir/classes/main"
-    from "$buildDir/resources/main"
-}
+
 
 jar{
     dependsOn copyResources
