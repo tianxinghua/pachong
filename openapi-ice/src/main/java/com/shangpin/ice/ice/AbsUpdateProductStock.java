@@ -34,7 +34,7 @@ import com.shangpin.framework.ServiceException;
 /**
  * 更新主站库存的抽象类<br/>
  * 各供应商模块，只要实现{@link #grabStock(Collection) "根据sku拿库存"}就行
- * @description 
+ * @description
  * @author 陈小峰
  * <br/>2015年6月10日
  */
@@ -76,7 +76,7 @@ public abstract class AbsUpdateProductStock {
 	 * @param skuNo 供应商的每个产品的唯一编号：sku
 	 * @see #grabProduct(String, String, String) 抓取主站SKU
 	 * @return 每个sku对应的库存数
-	 * @throws ServiceException 
+	 * @throws ServiceException
 	 */
 	public abstract Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception;
 
@@ -154,7 +154,7 @@ public abstract class AbsUpdateProductStock {
 
 		return skuIds;
 	}
-	
+
 	/**
 	 * 更新主站库存
 	 * @param supplier 供应商id
@@ -163,7 +163,7 @@ public abstract class AbsUpdateProductStock {
 	 *            +   -MM-dd HH:mm
 	 * @see {@link #grabStock(List) 抓取库存 }
 	 * @return 更新失败数
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public int updateProductStock(final String supplier,String start,String end) throws Exception{
 		//初始化 sopMarketPriceMap
@@ -188,7 +188,7 @@ public abstract class AbsUpdateProductStock {
 			}
 			exe.shutdown();
 			while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
-				
+
 			}
 			int fct=0;
 			for(int k=0;k<totoalFailCnt.size();k++){
@@ -215,7 +215,7 @@ public abstract class AbsUpdateProductStock {
 				count=0;
 			if(count==0){
 				Collection<String> e = new ArrayList<>();
-				list.add(e);				
+				list.add(e);
 				currentSet++;
 			}
 			list.get(currentSet-1).add(skuNo);
@@ -291,7 +291,7 @@ public abstract class AbsUpdateProductStock {
 			if(!result){
 				failCount++;
 				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
-			}				
+			}
 		}
 		return failCount;
 	}
@@ -301,7 +301,7 @@ public abstract class AbsUpdateProductStock {
 	 * @param iceStock
 	 * @param servant
 	 * @param skuNoShangpinList
-	 * @param toUpdateIce 
+	 * @param toUpdateIce
 	 * @throws ApiException
 	 */
 	private void removeNoChangeStockRecord(String supplier, Map<String, Integer> iceStock, OpenApiServantPrx servant, List<String> skuNoShangpinList, Map<String, Integer> toUpdateIce) throws ApiException {
@@ -593,7 +593,7 @@ public abstract class AbsUpdateProductStock {
 
 		/**
 		 * @param localAndIceSku 所有主站skuId,供应商skuNo关系,key：供应商skuId,value:ice的skuNo
-		 * @param totoalFailCnt 
+		 * @param totoalFailCnt
 		 * @param skuNos 供应商skuNo集合
 		 */
 		public UpdateThread(Collection<String> skuNos,String supplier, Map<String, String> localAndIceSku, List<Integer> totoalFailCnt ) {
@@ -624,10 +624,10 @@ public abstract class AbsUpdateProductStock {
 				logger.warn(Thread.currentThread().getName() + "处理出错", e);
 			}
 		}
-		
+
 	}
-	
-	
+
+
 	/**
 	 * 多少个sku启动一个线程,默认100
 	 * @return

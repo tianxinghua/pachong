@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.shangpin.iog.apennine.domain.StockDTO;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
@@ -23,7 +25,6 @@ import com.shangpin.iog.apennine.convert.ApennineProductConvert;
 import com.shangpin.iog.apennine.domain.ApennineProductDTO;
 import com.shangpin.iog.apennine.domain.ApennineProductPictureDTO;
 import com.shangpin.iog.common.utils.UUIDGenerator;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
@@ -105,9 +106,9 @@ public class ApennineHttpUtil {
     public List<ApennineProductDTO>getProductsByUrlAndParam(String url, NameValuePair[] data){
         List<ApennineProductDTO>list=new ArrayList<>();
         try {
-            String jsonStr=HttpUtil.getData(url, false);
+            String jsonStr= HttpUtil45.get(url, new OutTimeConfig(), null);
             list=this.getObjectsByJsonString(jsonStr);
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             logger.info("get List<ApennineProduct> fail :"+e);
         }
@@ -116,9 +117,9 @@ public class ApennineHttpUtil {
     public List<ApennineProductDTO>getProductsDetailsByUrl(String url){
         List<ApennineProductDTO>list=new ArrayList<>();
         try {
-            String jsonStr=HttpUtil.getData(url, false);
+            String jsonStr=HttpUtil45.get(url, new OutTimeConfig(), null);
             list=this.getObjectsByJsonString(jsonStr);
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             logger.info("get List<ApennineProduct> fail :"+e);
         }

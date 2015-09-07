@@ -95,7 +95,7 @@ public class EbayStartUp {
 		try {
 			vs.setUseThread(true);
 			vs.setSkuCount4Thread(20);
-			vs.updateProductStock(EbayInit.getHost(),EbayInit.getApp_Key(),EbayInit.getApp_Secret(), start, end);
+			vs.updateProductStock(supplier, start, end);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

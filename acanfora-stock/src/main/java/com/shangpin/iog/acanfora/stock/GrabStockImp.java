@@ -5,6 +5,7 @@ package com.shangpin.iog.acanfora.stock;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 
+import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.acanfora.stock.dto.Item;
 import com.shangpin.iog.acanfora.stock.dto.Items;
 import com.shangpin.iog.acanfora.stock.dto.Product;
@@ -13,7 +14,6 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.sop.AbsUpdateProductStock;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
