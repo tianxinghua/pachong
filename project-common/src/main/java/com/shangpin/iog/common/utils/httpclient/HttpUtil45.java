@@ -27,23 +27,19 @@ import java.util.regex.Pattern;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 
+import com.shangpin.framework.ServiceMessageException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -56,11 +52,9 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.*;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
@@ -114,6 +108,31 @@ public class HttpUtil45 {
 		return result;
 	}
 
+
+	/**
+	 * 请求需要认证的带参数,带请求头参数url
+	 * @param url url
+	 * @param param 请求参数 nullable
+	 * @param headerMap  请求头参数
+	 * @param outTimeConf 超时时间设置，nullable
+	 * @param userName 认证用户名
+	 * @param password 认证密码
+	 * @return 请求结果的字符串
+	 * @see OutTimeConfig 超时设置
+	 */
+	public static String postAuth(String url,Map<String,String> param,Map<String,String> headerMap,OutTimeConfig outTimeConf,String userName,String password){
+		String result=null;
+		try {
+			HttpClientContext localContext = getAuthContext(url,userName,password);
+			result=post(url,param,headerMap,outTimeConf,localContext);
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+
+		}
+		return result;
+	}
+
 	/**
 	 * 无参数post请求
 	 * @param url 请求url
@@ -135,6 +154,21 @@ public class HttpUtil45 {
 	public static String post(String url,Map<String,String> param,OutTimeConfig outTimeConf){
 		return post(url,param,outTimeConf,getPlainContext(url));
 	}
+
+	/**
+	 * 带参数,带请求头参数post请求
+	 * @param url 请求url
+	 * @param param 请求参数
+	 * @param headerMap  请求头参数
+	 * @param outTimeConf 超时时间设置 nullable
+	 * @return 请求结果数据
+	 * @see OutTimeConfig 超时设置
+	 */
+	public static String post(String url,Map<String,String> param,Map<String,String> headerMap,OutTimeConfig outTimeConf){
+		return post(url,param,headerMap,outTimeConf,getPlainContext(url));
+	}
+
+
 	/**
 	 * get请求
 	 * @param url 请求url
@@ -147,6 +181,79 @@ public class HttpUtil45 {
 		return getResult(url, outTimeConf, param, null);
 	}
 
+	/**
+	 * 操作数据
+	 * @param operatorType 操作类型  get put patch delete
+	 * @param transParaType 传递参数类型  json
+	 * @param url
+	 * @param outTimeConf
+	 * @param param
+	 * @param username
+	 * @param password
+	 * @return
+	 */
+	public static  String operateData(String operatorType,String transParaType ,String url,OutTimeConfig outTimeConf,Map<String,String> param,String jsonValue ,String username,String password) throws ServiceException{
+		HttpClientContext localContext =null;
+		//验证
+		if(StringUtils.isNotBlank(username)){
+			localContext = getAuthContext(url, username, password);
+		}else{
+			localContext = getPlainContext(url);
+		}
+
+		HttpUriRequest request = null;
+		if("get".equals(operatorType.toLowerCase())){
+			String urlStr=paramGetUrl(url, param);
+			request  = new HttpGet(urlStr);
+		}else if("put".equals(operatorType.toLowerCase())){
+
+			HttpPut putMothod = new HttpPut(url);
+			if("json".equals(transParaType.toLowerCase())){
+				if(StringUtils.isNotBlank(jsonValue)){
+					StringEntity s = null;
+					try {
+						s = new StringEntity(jsonValue);
+						s.setContentEncoding("UTF-8");
+						s.setContentType("application/json");//发送json数据需要设置contentType
+						putMothod.setEntity(s);
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}else{
+				if(param!=null){
+					Iterable<? extends NameValuePair> nvs = map2NameValuePair(param);
+					putMothod.setEntity(new UrlEncodedFormEntity(nvs, Charset
+							.forName("UTF-8")));
+				}
+
+			}
+
+
+
+
+			return getResult(putMothod, outTimeConf,localContext);
+
+
+		}else if("patch".equals(operatorType.toLowerCase())){
+			String urlStr=paramGetUrl(url, param);
+			request  = new HttpPatch(urlStr);
+
+		}else if("delete".equals(operatorType.toLowerCase())){
+			String urlStr=paramGetUrl(url, param);
+            request = new HttpDelete(urlStr);
+		}else{
+		    throw new ServiceMessageException("无此操作方法");
+		}
+
+
+		return getResult(request, outTimeConf,localContext);
+
+	}
+
+
+
 	private static String getResult(String url, OutTimeConfig outTimeConf, Map<String, String> param,HttpClientContext localContext) {
 		String urlStr=paramGetUrl(url, param);
 		HttpGet get = new HttpGet(urlStr);
@@ -155,6 +262,7 @@ public class HttpUtil45 {
 		try {
 			if(null==localContext) localContext = getPlainContext(url);
 			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
+
 			resp=httpClient.execute(get,localContext);
 			HttpEntity entity=resp.getEntity();
 			result= EntityUtils.toString(entity);
@@ -172,6 +280,31 @@ public class HttpUtil45 {
 		return result==null?errorResult:result;
 	}
 
+
+	private static String getResult(HttpUriRequest request, OutTimeConfig outTimeConf, HttpClientContext localContext) {
+
+		String result=null;
+		CloseableHttpResponse resp=null;
+		try {
+
+			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
+
+			resp=httpClient.execute(request,localContext);
+			HttpEntity entity=resp.getEntity();
+			result= EntityUtils.toString(entity);
+			EntityUtils.consume(entity);
+		}catch(Exception e){
+			logger.error("--------------httpError:"+e.getMessage());
+		}finally{
+			try {
+				if(resp!=null)
+					resp.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return result==null?errorResult:result;
+	}
 
 	/**
 	 * get请求
@@ -289,13 +422,17 @@ public class HttpUtil45 {
 			post.setEntity(new UrlEncodedFormEntity(nvs, Charset
 					.forName("UTF-8")));
 		}
+		return getPostResult(url, outTimeConf, localContext, post);
+	}
+
+	private static String getPostResult(String url, OutTimeConfig outTimeConf, HttpClientContext localContext, HttpPost post) {
 		String result=null;
 		CloseableHttpResponse resp=null;
 		try {
 			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
 			resp=httpClient.execute(post, localContext);
 			HttpEntity entity=resp.getEntity();
-			result=EntityUtils.toString(entity);
+			result= EntityUtils.toString(entity);
 			EntityUtils.consume(entity);
 		}catch(Exception e){
 			logger.error("请求url：{}错误{}",url,e.getMessage());
@@ -309,6 +446,30 @@ public class HttpUtil45 {
 		}
 		return result==null?errorResult:result;
 	}
+
+
+	private static String post(String url,Map<String,String> param,Map<String,String> headerParam,OutTimeConfig outTimeConf
+			,HttpClientContext localContext ){
+		HttpPost post=new HttpPost(url);
+		if(param!=null){
+			Iterable<? extends NameValuePair> nvs = map2NameValuePair(param);
+			post.setEntity(new UrlEncodedFormEntity(nvs, Charset
+					.forName("UTF-8")));
+		}
+
+		if(null!=headerParam&&headerParam.size()>0){
+			for(Iterator<Map.Entry<String,String>> itor =  headerParam.entrySet().iterator();itor.hasNext();){
+				Map.Entry<String,String>  entry = itor.next();
+				post.addHeader(entry.getKey(),entry.getValue());
+			}
+		}
+
+
+		return getPostResult(url, outTimeConf, localContext, post);
+	}
+
+
+
 
 	private static RequestConfig defaultRequestConfig(OutTimeConfig outTimeConf){
 		OutTimeConfig outCnf=outTimeConf;
@@ -572,5 +733,28 @@ public class HttpUtil45 {
 	 */
 	private static boolean isSSL(String url) {
 		return url.startsWith("https");
+	}
+
+
+	public  static void main(String[] args){
+
+		HttpGet request = new HttpGet("https://api.channeladvisor.com/oauth2/token?client_id=qwmmx12wu7ug39a97uter3dz29jbij3j&" +
+				"grant_type=soap&scope=inventory&developer_key=537c99a8-e3d6-4788-9296-029420540832&password=ChannelAdvisor15&account_id=12018111");
+		String auth = "qwmmx12wu7ug39a97uter3dz29jbij3j" + ":" + "TqMSdN6-LkCFA0n7g7DWuQ";
+		byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("US-ASCII")));
+		String authHeader = "Basic " + new String(encodedAuth);
+		request.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
+
+		HttpClient client = HttpClientBuilder.create().build();
+		HttpResponse response = null;
+		try {
+			response = client.execute(request);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		int statusCode = response.getStatusLine().getStatusCode();
+		System.out.println("status = " + statusCode);
+
 	}
 }
