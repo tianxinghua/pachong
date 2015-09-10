@@ -21,15 +21,13 @@ import java.util.List;
 @Component("bagheera")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
-
-    @Autowired
-    DownloadAndReadExcel excelHelper ;
+    /*DownloadAndReadExcel excelHelper ;*/
     @Autowired
     ProductFetchService productFetchService;
     String supplierId = "201509091712";
     public void fetchProductAndSave(){
         try {
-            List<BagheeraDTO> list=excelHelper.readLocalExcel();
+            List<BagheeraDTO> list=DownloadAndReadExcel.readLocalExcel();
             for (BagheeraDTO dto:list){
                 SpuDTO spu = new SpuDTO();
                 SkuDTO sku = new SkuDTO();
