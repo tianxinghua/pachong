@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.OrderMapper">
+
+	<resultMap id="OrderResultMap" type="iog_brand_sp">
+
+        <id column="ID" property="id" />
+        <result column="SUPPLIER_ID" property="supplierId"  />
+        <result column="UUID" property="uuId"  />
+        <result column="SP_ORDER_ID" property="spOrderId"  />
+        <result column="DETAIL" property="detail"  />
+        <result column="CREATE_TIME" property="createTime"  />
+
+	</resultMap>
+
+	<sql id="all_Order_column">
+		ID,
+		SUPPLIER_ID,
+		UUID,
+		SP_ORDER_ID,
+		DETAIL,
+		CREATE_TIME
+	</sql>
+
+    <insert id="save"  parameterType="iog_order" >
+        insert into ORDER (
+
+        <include refid="all_Order_column"></include>
+        )
+        values(
+        #{id}, #{supplierId}, #{uuId}, #{spOrderId},
+        #{detail},#{createTime}
+        )
+    </insert>
+	
+</mapper>
