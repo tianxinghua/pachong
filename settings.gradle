@@ -50,4 +50,7 @@ include 'sanremo'
 include 'sanremo-stock'
 include 'iog-web-tmp'
 include 'iog-sop'
+include 'iog-facade-dubbo'
+include 'gilt-order'
+include 'bagheera'
 

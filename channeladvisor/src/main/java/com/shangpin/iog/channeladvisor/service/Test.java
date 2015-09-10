@@ -38,12 +38,19 @@ public class Test {
         map.put("password","ChannelAdvisor15");
         map.put("account_id","12018111");
 
-        String s =  (new sun.misc.BASE64Encoder()).encode( "qwmmx12wu7ug39a97uter3dz29jbij3j-:TqMSdN6-LkCFA0n7g7DWuQ".getBytes() );
+        String s =  (new sun.misc.BASE64Encoder()).encode( "qwmmx12wu7ug39a97uter3dz29jbij3j:TqMSdN6-LkCFA0n7g7DWuQ".getBytes() );
 
         System.out.println("s = " + s);
-        String kk = HttpUtil45.postAuth("https://api.channeladvisor.com/oauth2/token", map, new OutTimeConfig(),
-                s, "");
 
+        Map<String,String> headerMap = new HashMap<>();
+        headerMap.put("Authorization"," Basic "+s);
+//        String kk = HttpUtil45.post("https://api.channeladvisor.com/oauth2/token", map, headerMap, new OutTimeConfig()
+//        );
+
+//
+        String kk = HttpUtil45.postAuth("https://api.channeladvisor.com/oauth2/token", map,null, new OutTimeConfig()
+                , "qwmmx12wu7ug39a97uter3dz29jbij3j","TqMSdN6-LkCFA0n7g7DWuQ"
+        );
 //        String  kk = (new sun.misc.BASE64Encoder()).encode( "12345:abcde".getBytes());
                 System.out.println("kk = "  + kk);
 
