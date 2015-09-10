@@ -56,20 +56,21 @@ public abstract class AbsUpdateProductStock {
 
 	private  void  getSopMarketPriceMap(String supplierId) throws ServiceException {
 		//TODO 测试
-		try{
-			lock.lock();
-			if(null==sopMarketPriceMap){//第一次初始化
-				sopMarketPriceMap =skuPriceService.getSkuPriceMap(supplierId);
-			}
-
-		}finally{
-			if(lock.isLocked())	lock.unlock();
-		}
+//		try{
+//			lock.lock();
+//			if(null==sopMarketPriceMap){//第一次初始化
+//				sopMarketPriceMap =skuPriceService.getSkuPriceMap(supplierId);
+//			}
+//
+//		}finally{
+//			if(lock.isLocked())	lock.unlock();
+//		}
+		sopMarketPriceMap = new HashMap<>();
 
 	}
-
-	@Autowired
-	public SkuPriceService skuPriceService;
+//
+//	@Autowired
+//	public SkuPriceService skuPriceService;
 
 	/**
 	 * 抓取供应商库存数据 
@@ -99,7 +100,7 @@ public abstract class AbsUpdateProductStock {
 			dto.setMarketPrice(newPrice);
 			dto.setSkuId(supplierSku);
 			dto.setSupplierId(supplieId);
-			skuPriceService.updatePrice(dto);
+//			skuPriceService.updatePrice(dto);
 		}
 
 	}
@@ -111,7 +112,6 @@ public abstract class AbsUpdateProductStock {
 	 * @param start 主站数据开始时间
 	 * @param end 主站数据结束时间
 	 * @param stocks 本地sku编号与ice的sku键值对
-	 * @param sopSkuAndSupplierSku   ice的sku与本地sku编号键值对
 	 * @return 供应商skuNo
 	 * @throws Exception
 	 */
@@ -428,24 +428,28 @@ public abstract class AbsUpdateProductStock {
 					try {
 						logger.warn("待更新的数据：--------" + skuPriceIce.SkuNo + ":" + price);
 
-						if(servant.UpdateSupplyPrice(supplier,priceInfo)){
-							//价格更新成功 ，则中间库也需要更新
-							supplierPriceMap.put(supplierSku,price);
-						}
+//						if(servant.UpdateSupplyPrice(supplier,priceInfo)){
+//							//价格更新成功 ，则中间库也需要更新
+//							supplierPriceMap.put(supplierSku,price);
+//						}
+
+
+						servant.UpdateSupplyPrice(supplier,priceInfo);
 					} catch (ApiException e) {
 
 						e.printStackTrace();
 					}
 				}
 			}
-			//更新中间库
-			if(supplierPriceMap.size()>0){
-				try {
-					updateMarketPrice(supplierPriceMap,supplier);
-				} catch (ServiceException e) {
-					e.printStackTrace();
-				}
-			}
+
+//			//更新中间库
+//			if(supplierPriceMap.size()>0){
+//				try {
+//					updateMarketPrice(supplierPriceMap,supplier);
+//				} catch (ServiceException e) {
+//					e.printStackTrace();
+//				}
+//			}
 
 		}
 
