@@ -28,7 +28,7 @@ public class DownloadAndReadExcel {
      * http下载excel文件到本地路径
      * @throws MalformedURLException
      */
-    public  void downloadNet() throws MalformedURLException {
+    public static void downloadNet() throws MalformedURLException {
         int bytesum = 0;
         int byteread = 0;
 
@@ -52,7 +52,7 @@ public class DownloadAndReadExcel {
             e.printStackTrace();
         }
     }
-    public List<BagheeraDTO> readLocalExcel() throws IOException {
+    public static List<BagheeraDTO> readLocalExcel() throws IOException {
         HSSFWorkbook wb=null;
         HSSFSheet sheet=null;
         FileInputStream fw=null;
@@ -100,7 +100,7 @@ public class DownloadAndReadExcel {
         }
         return dataList;
     }
-    public String getStrinCellValue(HSSFCell cell){
+    public static String getStrinCellValue(HSSFCell cell){
 
         if(cell==null){
             return "";
