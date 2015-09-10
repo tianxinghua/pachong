@@ -53,6 +53,7 @@ public class DownloadAndReadExcel {
         }
     }
     public static List<BagheeraDTO> readLocalExcel() throws IOException {
+        downloadNet();
         HSSFWorkbook wb=null;
         HSSFSheet sheet=null;
         FileInputStream fw=null;
