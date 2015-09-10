@@ -50,4 +50,5 @@ include 'sanremo'
 include 'sanremo-stock'
 include 'iog-web-tmp'
 include 'iog-sop'
+include 'bagheera'
 
