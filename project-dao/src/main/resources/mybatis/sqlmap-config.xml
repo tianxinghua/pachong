@@ -16,7 +16,7 @@
 		<typeAlias alias="iog_material_contrast" type="com.shangpin.iog.dto.MaterialContrastDTO"/>
 		<typeAlias alias="iog_discount" type="com.shangpin.iog.dto.DiscountDTO"/>
 		<typeAlias alias="iog_discount_history" type="com.shangpin.iog.dto.DiscountHistoryDTO"/>
-
+		<typeAlias alias="iog_order" type="com.shangpin.iog.dto.OrderDTO"/>
 
 	</typeAliases>
 </configuration>
