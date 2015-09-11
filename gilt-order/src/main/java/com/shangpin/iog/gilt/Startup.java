@@ -12,7 +12,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import java.io.*;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -25,7 +27,7 @@ public class Startup {
     private static Logger logMongo = Logger.getLogger("mongodb");
 
     private static final String YYYY_MMDD_HH = "yyyy-MM-dd HH:mm:ss";
-    private static Date startDate=null,endDate=null;
+    private static String  startDate=null,endDate=null;
     private static ResourceBundle bdl=null;
     private static String supplierId;
 
@@ -52,7 +54,9 @@ public class Startup {
         OrderServiceImpl orderService =(OrderServiceImpl)factory.getBean("giltOrder");
         System.out.println("-------gilt start---------");
         try {
-//           orderService.purOrder(supplierId,);
+            List<Integer> status = new ArrayList<>();
+            status.add(1);
+           orderService.purOrder(supplierId,startDate,endDate,status);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,12 +67,12 @@ public class Startup {
 
 
     private static void initDate() {
+        Date tempDate = new Date();
 
-        endDate = DateTimeUtil.convertDateFormat(new Date(), YYYY_MMDD_HH);
+        endDate = DateTimeUtil.convertFormat(tempDate, YYYY_MMDD_HH);
 
         String lastDate=getLastGrapDate();
-        startDate= StringUtils.isNotEmpty(lastDate) ? DateTimeUtil.convertFormat(lastDate,
-                YYYY_MMDD_HH) : DateUtils.addDays(endDate, -180);
+        startDate= StringUtils.isNotEmpty(lastDate) ? lastDate: DateTimeUtil.convertFormat(DateUtils.addDays(tempDate, -180), YYYY_MMDD_HH);
 
 
 
@@ -100,13 +104,13 @@ public class Startup {
         return dstr;
     }
 
-    private static void writeGrapDate(Date d){
+    private static void writeGrapDate(String date){
         File df;
         try {
             df = getConfFile();
-            String dstr=DateTimeUtil.convertFormat(d, YYYY_MMDD_HH);
+
             try(BufferedWriter bw = new BufferedWriter(new FileWriter(df))){
-                bw.write(dstr);
+                bw.write(date);
             }
         } catch (IOException e) {
             logger.error("写入日期配置文件错误");

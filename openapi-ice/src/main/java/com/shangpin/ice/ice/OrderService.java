@@ -23,6 +23,9 @@ public class OrderService {
 
     /**
      * 获取采购单
+     * 需要注意
+     * SOP处理采购单 一条记录代表一个库存  同样的产品 购买两件 生成两条记录
+     *
      * @return
      */
     public Map<String,List<PurchaseOrderDetail>> geturchaseOrder(String supplierId,String startTime ,String endTime,List<Integer> statusList) throws Exception{
@@ -51,6 +54,8 @@ public class OrderService {
             for (PurchaseOrderDetail orderDetail : orderDetails) {
                 sopPurchaseOrderNo  = orderDetail.SopPurchaseOrderNo;
                 if(purchaseOrderMap.containsKey(sopPurchaseOrderNo)){
+                    //
+
                     purchaseOrderMap.get(sopPurchaseOrderNo).add(orderDetail);
                 }else{
                     List<PurchaseOrderDetail> orderList = new ArrayList<>();

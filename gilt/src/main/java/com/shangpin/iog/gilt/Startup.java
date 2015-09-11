@@ -24,7 +24,7 @@ public class Startup {
         FetchProduct fetchProductService =(FetchProduct)factory.getBean("gilt");
         System.out.println("-------gilt start---------");
         try {
-            fetchProductService.fetchProductAndSave("https://api-sandbox.gilt.com/global/skus");
+            fetchProductService.fetchProductAndSave();
         } catch (Exception e) {
             e.printStackTrace();
         }
