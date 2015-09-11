@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,14 +34,18 @@ public class FetchProduct {
                 SpuDTO spu = new SpuDTO();
                 SkuDTO sku = new SkuDTO();
                 ProductPictureDTO picture = new ProductPictureDTO();
+                String size = dto.getSIZE();
+                if(size.indexOf("½")>0){
+                    size=size.replace("½","+");
+                }
                 sku.setId(UUIDGenerator.getUUID());
-                sku.setProductCode(dto.getCODE());
+                sku.setProductCode(dto.getCODE().substring(0,dto.getCODE().length()-2));
                 sku.setSupplierId(supplierId);
-                sku.setSkuId(dto.getSUPPLIER_CODE()+"-"+dto.getSIZE());
+                sku.setSkuId(dto.getSUPPLIER_CODE()+"-"+size);
                 sku.setSpuId(dto.getSUPPLIER_CODE());
                 sku.setProductDescription(dto.getDESCRIPTION());
                 sku.setColor(dto.getCOLOR());
-                sku.setProductSize(dto.getSIZE());
+                sku.setProductSize(size);
                 sku.setSupplierPrice(dto.getLASO_Price());
                 sku.setSaleCurrency(dto.getCURRENCY());
                 sku.setMarketPrice(dto.getLIST_PRICE());
@@ -73,4 +79,11 @@ public class FetchProduct {
             e.printStackTrace();
         }
     }
+    /*public static void main(String[] args) {
+        Date dt=new Date();
+        SimpleDateFormat matter1=new SimpleDateFormat("yyyy-MM-ddHH");
+        String date=matter1.format(dt).replaceAll("-","").trim();
+        System.out.println(date);
+        *//*System.out.println(System.currentTimeMillis());*//*
+    }*/
 }
