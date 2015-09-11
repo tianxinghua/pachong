@@ -11,7 +11,9 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -28,16 +30,17 @@ public class DownloadAndReadExcel {
      * http下载excel文件到本地路径
      * @throws MalformedURLException
      */
-    public static void downloadNet() throws MalformedURLException {
+    public static String downloadNet() throws MalformedURLException {
         int bytesum = 0;
         int byteread = 0;
 
         URL url = new URL(httpurl);
-
+        String realPath="";
         try {
             URLConnection conn = url.openConnection();
             InputStream inStream = conn.getInputStream();
-            FileOutputStream fs = new FileOutputStream(path);
+            realPath = getPath(path);
+            FileOutputStream fs = new FileOutputStream(realPath);
 
             byte[] buffer = new byte[1204];
             int length;
@@ -51,9 +54,10 @@ public class DownloadAndReadExcel {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return  realPath;
     }
     public static List<BagheeraDTO> readLocalExcel() throws IOException {
-        downloadNet();
+        String realPath=downloadNet();
         HSSFWorkbook wb=null;
         HSSFSheet sheet=null;
         FileInputStream fw=null;
@@ -61,7 +65,7 @@ public class DownloadAndReadExcel {
         * javabean中的属性个数要与excel中的列数一样，不然可能报错,属性顺序与列的顺序也要一样
         * */
         try{
-            fw=new FileInputStream(path);
+            fw=new FileInputStream(realPath);
             POIFSFileSystem fs=new POIFSFileSystem(fw);
             wb=new HSSFWorkbook(fs);
             fw.close();
@@ -128,13 +132,20 @@ public class DownloadAndReadExcel {
         }
         return strCell;
     }
-    public static void main(String[] args) {
-        /*try {
+    public static String getPath(String realpath){
+        Date dt=new Date();
+        SimpleDateFormat matter1=new SimpleDateFormat("yyyy-MM-ddHH");
+        String date=matter1.format(dt).replaceAll("-","").trim();
+        realpath = realpath+"_"+date+".xls";
+        return realpath;
+    }
+    /*public static void main(String[] args) {
+        try {
             readLocalExcel();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
-    }
+        }
+    }*/
 }
