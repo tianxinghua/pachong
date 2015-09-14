@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shangpin.iog.product.dao.OrderMapper">
 
-	<resultMap id="OrderResultMap" type="iog_brand_sp">
+	<resultMap id="OrderResultMap" type="iog_order">
 
         <id column="ID" property="id" />
         <result column="SUPPLIER_ID" property="supplierId"  />
@@ -32,5 +32,16 @@
         #{detail},#{createTime}
         )
     </insert>
+
+    <update id="updateOrderStatus" parameterType="Map" >
+        update ORDER
+        SET STATUS = #{status}
+        where UUID IN
+        <foreach collection="uuid" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+    </update>
+
 	
 </mapper>
