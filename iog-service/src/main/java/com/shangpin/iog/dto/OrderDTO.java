@@ -14,8 +14,10 @@ import java.util.Date;
 public class OrderDTO {
     private BigInt id;
     private String supplierId;
-    private String uuId;
+    private String uuId;  //和供货商公用的订单唯一标识
     private String spOrderId;
-    private String detail;
+    private String detail;//
+    private String status;//订单状态
     private Date createTime;
+    private Date updateTime;
 }
