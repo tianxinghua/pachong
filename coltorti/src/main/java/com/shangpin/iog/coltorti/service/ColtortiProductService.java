@@ -438,7 +438,7 @@ System.out.println(productId+"存在,不存在的数:"+cnt);
 		//requestAttribute(1, 100);
 		//findProduct(1,40,"152790AAV000001");
 		//getStock("152790AAV000001","152790AAV000001-PINxRU");//"152790FCR000005-SADMA"
-		List<ColtortiProduct> ps=divideSku4Size(findProductByProductId("152197APG000007"));
+		List<ColtortiProduct> ps=divideSku4Size(findProductByProductId("151481DCW000007"));
 		logger.info("-----new products -----\r\n"+new Gson().toJson(ps));
 		List<SkuDTO> skus=new ArrayList<>(ps.size());
 		List<SpuDTO> spus=new ArrayList<>(ps.size());
