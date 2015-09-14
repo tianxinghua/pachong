@@ -53,4 +53,5 @@ include 'iog-sop'
 include 'iog-facade-dubbo'
 include 'gilt-order'
 include 'bagheera'
+include 'gilt-purchase'
 
