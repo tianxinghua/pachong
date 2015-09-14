@@ -31,6 +31,8 @@ import java.util.List;
 public class ProductFetchServiceImpl implements ProductFetchService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public static String  REPEAT_MESSAGE="数据插入失败键重复";
+
     @Autowired
     SkuMapper skuDAO;
 
@@ -50,7 +52,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             spuDAO.saveList(spuDTOList);
         } catch (Exception e) {
         	if(e instanceof DuplicateKeyException)
-        		throw new ServiceMessageException("数据插入失败键重复");
+        		throw new ServiceMessageException(REPEAT_MESSAGE);
             throw new ServiceMessageException("数据插入失败"+e.getMessage());
         }
     }
@@ -61,7 +63,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             spuDAO.save(spuDTO);
         } catch (Exception e) {
         	if(e instanceof DuplicateKeyException)
-        		throw new ServiceMessageException("数据插入失败键重复");
+        		throw new ServiceMessageException(REPEAT_MESSAGE);
         	throw new ServiceMessageException("数据插入失败"+e.getMessage());
         }
 
@@ -75,7 +77,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             skuDAO.saveList(skuDTOList);
         } catch (Exception e) {
         	if(e instanceof DuplicateKeyException)
-        		throw new ServiceMessageException("数据插入失败键重复");
+        		throw new ServiceMessageException(REPEAT_MESSAGE);
             throw new ServiceMessageException("数据插入失败"+e.getMessage());
         }
 
@@ -91,7 +93,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             skuDAO.save(skuDTO);
         } catch ( Exception e) {
         	if(e instanceof DuplicateKeyException)
-        	throw new ServiceMessageException("数据插入失败键重复");
+        	throw new ServiceMessageException(REPEAT_MESSAGE);
             throw new ServiceMessageException("数据插入失败"+e.getMessage());
         }
     }
@@ -113,7 +115,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             productPictureMapper.save(pictureDTO);
         } catch (Exception e) {
         	if(e instanceof DuplicateKeyException)
-        		throw new ServiceMessageException("数据插入失败键重复");
+        		throw new ServiceMessageException(REPEAT_MESSAGE);
         	throw new ServiceMessageException("数据插入失败"+e.getMessage());
         }
 
@@ -125,7 +127,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             productPictureMapper.saveList(pictureDTOList);
         } catch (Exception e) {
         	if(e instanceof DuplicateKeyException)
-        		throw new ServiceMessageException("数据插入失败键重复");
+        		throw new ServiceMessageException(REPEAT_MESSAGE);
             throw new ServiceMessageException("数据插入失败"+e.getMessage());
         }
 
@@ -140,7 +142,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
                 pictureDAO.save(productPicture);
             } catch (Exception e) {
             	if(e instanceof DuplicateKeyException)
-            		throw new ServiceMessageException("数据插入失败键重复");
+            		throw new ServiceMessageException(REPEAT_MESSAGE);
                 throw new ServiceMessageException("数据插入失败"+e.getMessage());
             }
         }
