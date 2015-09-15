@@ -65,11 +65,11 @@ public class StringUtil {
      */
     public static String getStockAndSupplyPrice(String item){
 
-        System.out.println("item==="+item);
+        System.out.println("item=="+item);
         String rtnStr = new StringBuffer(item.substring(item.indexOf("<stock>")+7,item.indexOf("</stock>")))
                 .append("/")
                 .append(item.substring(item.indexOf("<supply_price>")+14, item.indexOf("</supply_price>"))).toString();
-        System.out.println("rtnStr-----"+rtnStr);
+        System.out.println("rtnStr=="+rtnStr);
         return rtnStr;
     }
 }
