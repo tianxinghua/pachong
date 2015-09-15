@@ -31,19 +31,27 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
         Iterator<String> iterator=skuNo.iterator();
         while (iterator.hasNext()){
             String itemId = iterator.next().replace("+", "½");
-            returnMap.put( itemId,StringUtil.getStockAndSupplyPrice(localFile.substring(
-                    localFile.indexOf(itemId),localFile.indexOf(itemId)+ Constant.ITEM_LENTH)));
+            System.out.println("itemId============"+itemId);
+                    returnMap.put(itemId, StringUtil.getStockAndSupplyPrice(localFile.substring(
+                            localFile.indexOf(itemId), localFile.indexOf(itemId) + Constant.ITEM_LENTH)));
         }
         return returnMap;
     }
 
     public static void main(String[] args) throws Exception {
         TessabitStockImp impl = new TessabitStockImp();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    /*    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("BRUNAROSSO更新数据库开始");
         impl.updateProductStock("2015071701342", "2015-01-01 00:00", format.format(new Date()));
         logger.info("BRUNAROSSO更新数据库结束");
-        System.exit(0);
+        System.exit(0);*/
+
+
+        List<String> skuNo = new ArrayList<>();
+        skuNo.add("1986242872_10");
+        Map returnMap = impl.grabStock(skuNo);
+        System.out.println("test return size is "+returnMap.keySet().size());
+        System.out.println("test return value is "+returnMap.get("1986242872_10"));
 
     }
 }
