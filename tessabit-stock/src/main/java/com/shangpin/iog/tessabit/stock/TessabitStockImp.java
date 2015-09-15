@@ -25,18 +25,18 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
     private static Logger logger = Logger.getLogger("info");
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        //构造返回集合
-        Map returnMap = new HashMap();
         //拉取FTP文件
         FtpUtil.downLoad();
         //FTP文件转换成字符串
         String localFile = StringUtil.parseXml2Str();
+        //构造返回集合
+        Map returnMap = new HashMap();
         Iterator<String> iterator=skuNo.iterator();
+        //为供应商循环赋值
         while (iterator.hasNext()){
             String itemId = iterator.next().replace("+", "½");
-            System.out.println("itemId============"+itemId);
-                    returnMap.put(itemId, StringUtil.getStockAndSupplyPrice(localFile.substring(
-                            localFile.indexOf(itemId), localFile.indexOf(itemId) + Constant.ITEM_LENTH)));
+            returnMap.put(itemId, StringUtil.getStockAndSupplyPrice(localFile.substring(
+                    localFile.indexOf(itemId), localFile.indexOf(itemId) + Constant.ITEM_LENTH)));
         }
         return returnMap;
     }
