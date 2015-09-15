@@ -9,6 +9,7 @@ import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.tessabit.stock.common.Constant;
+import com.shangpin.iog.tessabit.stock.common.FtpUtil;
 import com.shangpin.iog.tessabit.stock.common.StringUtil;
 import org.apache.log4j.Logger;
 import org.jdom2.input.SAXBuilder;
@@ -26,7 +27,9 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //构造返回集合
         Map returnMap = new HashMap();
-        //获取本地FTP文件
+        //拉取FTP文件
+        FtpUtil.downLoad();
+        //FTP文件转换成字符串
         String localFile = StringUtil.parseXml2Str();
         Iterator<String> iterator=skuNo.iterator();
         while (iterator.hasNext()){
@@ -40,18 +43,20 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
 
     public static void main(String[] args) throws Exception {
         TessabitStockImp impl = new TessabitStockImp();
-    /*    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("BRUNAROSSO更新数据库开始");
-        impl.updateProductStock("2015071701342", "2015-01-01 00:00", format.format(new Date()));
-        logger.info("BRUNAROSSO更新数据库结束");
-        System.exit(0);*/
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        logger.info("TESSABIT更新数据库开始");
+        impl.updateProductStock("2015091501331", "2015-01-01 00:00", format.format(new Date()));
+        logger.info("TESSABIT更新数据库结束");
+        System.exit(0);
 
+/*
 
         List<String> skuNo = new ArrayList<>();
         skuNo.add("1986242872_10");
         Map returnMap = impl.grabStock(skuNo);
         System.out.println("test return size is "+returnMap.keySet().size());
         System.out.println("test return value is "+returnMap.get("1986242872_10"));
+*/
 
     }
 }
