@@ -25,4 +25,11 @@ public class Constant {
     public static String LOCAL_FILE = bundle.getString("localFile");
     //item在ftp文本中所占字符串长度
     public static int ITEM_LENTH = 600;
+    /**
+     * test
+     * @param args
+     */
+    public static void main(String[] args) {
+         System.out.println("Constant.URL=" + Constant.URL);
+    }
 }
