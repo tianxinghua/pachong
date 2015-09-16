@@ -43,15 +43,16 @@ public class FetchProducts {
 
         //入库处理
         logger.info("save products into DB begin......");
+        Products products = null;
         try {
             // 将FTP拉取到的xml文件转换成模型数据
-            Products products = ObjectXMLUtil.xml2Obj(Products.class, StringUtil.parseXml2Str());
+            products = ObjectXMLUtil.xml2Obj(Products.class, StringUtil.parseXml2Str());
             System.out.println(products.getProducts().size());
-            //映射数据并保存
-            //messMappingAndSave(products);
         } catch(  JAXBException e  )  {
             e.printStackTrace();
         }
+        //映射数据并保存
+        messMappingAndSave(products);
         logger.info("save products into DB end......");
 
     }
