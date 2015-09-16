@@ -18,7 +18,10 @@ public class StringUtil {
      * @param args
      */
     public static void main(String[] args) {
-        StringUtil.parseXml2Str();
+        String localFile = StringUtil.parseXml2Str();
+        //System.out.println(localFile);
+        System.out.println("00000000000000000000000000000");
+        System.out.println(StringUtil.getSubBySub(localFile,"1984127411_12","1984127411_12",1500));
     }
 
     /**
@@ -42,7 +45,8 @@ public class StringUtil {
         }  catch (Exception e) {
             System.out.println(e);
         }
-        return sb.toString().substring(1,sb.toString().indexOf("</products>")+11);
+        System.out.println(sb.toString().length());
+        return sb.toString();
     }
 
     /**
@@ -69,7 +73,17 @@ public class StringUtil {
         String rtnStr = new StringBuffer(item.substring(item.indexOf("<stock>")+7,item.indexOf("</stock>")))
                 .append("/")
                 .append(item.substring(item.indexOf("<supply_price>")+14, item.indexOf("</supply_price>"))).toString();
-        System.out.println("rtnStr=="+rtnStr);
+        //System.out.println("rtnStr=="+rtnStr);
         return rtnStr;
+    }
+    /**
+     *获取单品数量
+     */
+    public static String getSubBySub(String str,String begin,String end,int eAdd){
+        str = str.substring(str.indexOf(begin)+begin.length(),str.indexOf(end)+eAdd);
+        if(str.contains("stock")){
+            str = getSubBySub(str,"<stock>","</stock>",0);
+        }
+        return str;
     }
 }
