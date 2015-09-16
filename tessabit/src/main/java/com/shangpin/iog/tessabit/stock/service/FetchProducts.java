@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -29,7 +31,7 @@ import java.util.List;
 @Component("tessabit")
 public class FetchProducts {
 
-    final Logger logger = Logger.getLogger(this.getClass().getName());
+    final Logger logger = Logger.getLogger("info");
     @Autowired
     ProductFetchService productFetchService;
     /**
@@ -46,9 +48,11 @@ public class FetchProducts {
         Products products = null;
         try {
             // 将FTP拉取到的xml文件转换成模型数据
-            products = ObjectXMLUtil.xml2Obj(Products.class, StringUtil.parseXml2Str());
+            products = ObjectXMLUtil.xml2Obj(Products.class, new File(Constant.LOCAL_FILE));
             System.out.println(products.getProducts().size());
         } catch(  JAXBException e  )  {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         //映射数据并保存
