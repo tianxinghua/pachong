@@ -1,6 +1,5 @@
 package com.shangpin.iog.tessabit.stock.service;
 
-import com.enterprisedt.net.ftp.FTPClient;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
@@ -9,8 +8,6 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.tessabit.stock.common.Constant;
-import com.shangpin.iog.tessabit.stock.common.FtpUtil;
-import com.shangpin.iog.tessabit.stock.common.StringUtil;
 import com.shangpin.iog.tessabit.stock.dto.Item;
 import com.shangpin.iog.tessabit.stock.dto.Items;
 import com.shangpin.iog.tessabit.stock.dto.Product;
@@ -29,7 +26,7 @@ import java.util.List;
  * Created by wangyuzhi on 2015/9/10.
  */
 @Component("tessabit")
-public class FetchProducts {
+public class FetchProduct {
 
     final Logger logger = Logger.getLogger("info");
     @Autowired
@@ -37,7 +34,7 @@ public class FetchProducts {
     /**
      * 主处理
      */
-    public void process() {
+    public void fetchProductAndSave() {
         //拉取FTP文件
         logger.info("downLoad ftpFile begin......");
         //FtpUtil.downLoad();
@@ -154,7 +151,7 @@ public class FetchProducts {
      * @param args
      */
     public static void main(String[] args){
-        new FetchProducts().process();
+        new FetchProduct().fetchProductAndSave();
     }
 
 }
