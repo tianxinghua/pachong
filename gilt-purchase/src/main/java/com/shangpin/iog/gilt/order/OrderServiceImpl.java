@@ -84,7 +84,9 @@ public class OrderServiceImpl {
 
             String result =  HttpUtil45.operateData("put", "json", url + UUIDGenerator.getUUID(), timeConfig, null, param, key, "");
             //TODO  存储
-
+            /**
+             * 日志存储，数据库存储
+             */
 
         }
     }
