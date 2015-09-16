@@ -53,7 +53,7 @@ public class FtpLoad {
      * @param args
      */
     public static void main(String[] args) {
-        System.out.println("Constant.URL=" + Constant.URL);
+       // System.out.println("Constant.URL=" + Constant.URL);
         FtpLoad.downFile();
     }
 }

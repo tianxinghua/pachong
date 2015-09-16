@@ -43,14 +43,6 @@ public class FetchProducts {
 
         //入库处理
         logger.info("save products into DB begin......");
-        saveDbProcess();
-        logger.info("save products into DB end......");
-
-    }
-    /**
-     * 入库处理
-     */
-    public void saveDbProcess() {
         try {
             // 将FTP拉取到的xml文件转换成模型数据
             Products products = ObjectXMLUtil.xml2Obj(Products.class, StringUtil.parseXml2Str());
@@ -60,6 +52,8 @@ public class FetchProducts {
         } catch(  JAXBException e  )  {
             e.printStackTrace();
         }
+        logger.info("save products into DB end......");
+
     }
 
     /**

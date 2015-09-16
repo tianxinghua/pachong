@@ -24,9 +24,7 @@ public class StartSkuJob {
         //拉取数据
         log.info("----拉取tessabit数据开始----");
         FetchProducts fetchProducts =(FetchProducts)factory.getBean("tessabit");
-        //fetchProducts.process();
-        //单独测试数据入库处理
-        fetchProducts.saveDbProcess();
+        fetchProducts.process();
         log.info("----拉取tessabit数据完成----");
         System.out.println("-------fetch end---------");
         System.exit(0);
