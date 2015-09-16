@@ -38,7 +38,7 @@ public class FetchProducts {
     public void process() {
         //拉取FTP文件
         logger.info("downLoad ftpFile begin......");
-        FtpUtil.downLoad();
+        //FtpUtil.downLoad();
         logger.info("downLoad ftpFile end......");
 
         //入库处理
@@ -48,7 +48,7 @@ public class FetchProducts {
             Products products = ObjectXMLUtil.xml2Obj(Products.class, StringUtil.parseXml2Str());
             System.out.println(products.getProducts().size());
             //映射数据并保存
-            messMappingAndSave(products);
+            //messMappingAndSave(products);
         } catch(  JAXBException e  )  {
             e.printStackTrace();
         }
@@ -143,5 +143,14 @@ public class FetchProducts {
             }
         }
     }
+
+    /**
+     * test
+     * @param args
+     */
+    public static void main(String[] args){
+        new FetchProducts().process();
+    }
+
 }
 
