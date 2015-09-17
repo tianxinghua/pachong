@@ -54,6 +54,7 @@ public class Schedule {
                 result = HttpUtil45.post(url+uuid,param,timeConfig);
                 OrderDTO dto=gson.fromJson(result,OrderDTO.class);
                 if(/*!"confirmed".equals(dto.getStatus())||*/"shipped".equals(dto.getStatus())){
+
                     Map<String,String >map=new HashMap<>();
                     map.put(uuid,"shipped");
                     orderService.updateOrderStatus(map);

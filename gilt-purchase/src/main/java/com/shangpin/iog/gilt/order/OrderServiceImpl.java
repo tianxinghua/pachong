@@ -29,12 +29,12 @@ public class OrderServiceImpl {
     private String key = "fb8ea6839b486dba8c5cabb374c03d9d";
 
     public void purOrder(String supplierId,String startTime ,String endTime,List<Integer> statusList){
-        OrderService orderService = new OrderService();
+        OrderService purchaseService = new OrderService();
         try {
             //获取订单数组
 
             String url = "https://api-sandbox.gilt.com/global/orders/";
-            Map<String,List<PurchaseOrderDetail>> orderMap =  orderService.geturchaseOrder(supplierId, startTime, endTime, statusList);
+            Map<String,List<PurchaseOrderDetail>> orderMap =  purchaseService.geturchaseOrder(supplierId, startTime, endTime, statusList);
             transData( url, supplierId,orderMap);
 
         } catch (Exception e) {
