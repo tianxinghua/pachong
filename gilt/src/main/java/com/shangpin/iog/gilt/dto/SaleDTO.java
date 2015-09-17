@@ -17,8 +17,8 @@ public class SaleDTO {
     String name ;
     String  description;
     List<ImageDTO> editorial;
-    Date start_datetime;
-    Date end_datetime;
+    String start_datetime;
+    String  end_datetime;
     List<String> sku_ids;
 
 }

@@ -2,7 +2,6 @@ package com.shangpin.iog.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import sun.security.util.BigInt;
 
 import java.math.BigInteger;
 import java.util.Date;
