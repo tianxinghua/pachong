@@ -55,7 +55,9 @@ public class StockClientImp extends AbsUpdateProductStock {
         OutTimeConfig outTimeConf = new OutTimeConfig(1000*3,1000*3,1000*3);
         String jsonStr = HttpUtil45.get(url+skuId,outTimeConf,null,key,"");
         logger.info("get skuId :"+skuId +" 库存返回值为："+jsonStr );
-
+        if(HttpUtil45.errorResult.equals(jsonStr)){    //链接异常
+            return  "0";
+        }
         return getInventoryByJsonString(jsonStr);
 
 
@@ -116,6 +118,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 
 
         AbsUpdateProductStock giltStockImp = new StockClientImp();
+        giltStockImp.setUseThread(true);giltStockImp.setSkuCount4Thread(100);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("gilt更新库存开始");
         giltStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
