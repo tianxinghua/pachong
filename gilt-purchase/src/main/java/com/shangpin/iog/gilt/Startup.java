@@ -56,12 +56,12 @@ public class Startup {
         try {
             List<Integer> status = new ArrayList<>();
             status.add(1);
-           orderService.purOrder(supplierId,startDate,endDate,status);
+            orderService.purOrder(supplierId,startDate,endDate,status);
+            System.out.println("成功插入数据库");
+            System.out.println("-------gilt end---------");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("成功插入数据库");
-        System.out.println("-------gilt end---------");
 
     }
 
