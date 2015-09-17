@@ -18,46 +18,61 @@ import java.util.*;
  */
 public class StockClientImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
+    private static Logger logMongo = Logger.getLogger("mongodb");
 
     private static ResourceBundle bdl=null;
     private static String supplierId;
+    private static String key ;
 
+    private static String url = "https://api-sandbox.gilt.com/global/realtime-inventory/";
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        key = bdl.getString("key");
     }
 
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        Map<String, String> skustock = new HashMap<>(skuNo.size());
         Map<String,String> stockMap = new HashMap<>();
-        String stockUrl="https://api-sandbox.gilt.com/global/realtime-inventory";
         try{
-            logger.info("拉取gilt数据开始");
-            Map<String,String> param = new HashMap<>();
-            OutTimeConfig outTimeConf = new OutTimeConfig();
-            List<InventoryDTO>list=new ArrayList<>();
-            StringBuffer str = new StringBuffer();
-            int limit = 50;
-            int offset = 0;
-            param.put("","");
-            String result="";
-            do{
-                param.put("offset",offset+"");
-                result=HttpUtil45.get(stockUrl, outTimeConf, param,"fb8ea6839b486dba8c5cabb374c03d9d","");
-                list = getObjectsByJsonString(result);
-                offset = offset+50;
-                str.append(result);
-            }while (list.size()==limit);
-            list  = getObjectsByJsonString(str.toString());
-            for (InventoryDTO dto:list){
-                skustock.put(dto.getSku_id(),dto.getQuantity());
+            logger.info("拉取gilt数据库存开始");
+
+            for (String skuno : skuNo) {
+                stockMap.put(skuno,this.getInventory(skuno));
             }
+
         }catch (Exception e){
             e.printStackTrace();
         }
-        return skustock;
+        return stockMap;
+    }
+
+
+    private static String getInventory(String skuId){
+
+        OutTimeConfig outTimeConf = new OutTimeConfig(1000*3,1000*3,1000*3);
+        String jsonStr = HttpUtil45.get(url+skuId,outTimeConf,null,key,"");
+        logger.info("get skuId :"+skuId +" 库存返回值为："+jsonStr );
+
+        return getInventoryByJsonString(jsonStr);
+
+
+    }
+
+
+    private static String getInventoryByJsonString(String jsonStr){
+        InventoryDTO obj=null;
+        Gson gson = new Gson();
+        try {
+            obj=gson.fromJson(jsonStr, InventoryDTO.class);
+        } catch (Exception e) {
+            loggerError.error("转化 :"+jsonStr +" 到库存对象失败 :" +e.getMessage());
+            e.printStackTrace();
+            return "0";
+        }
+        return obj.getQuantity();
     }
     /**
      * JSON发序列化为Java对象集合

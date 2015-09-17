@@ -14,9 +14,7 @@ import ShangPin.SOP.Entity.Api.Product.*;
 import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
 import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
 import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
-import com.shangpin.iog.common.utils.DateTimeUtil;
-import com.shangpin.iog.dto.SkuPriceDTO;
-import com.shangpin.iog.service.SkuPriceService;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,22 +87,22 @@ public abstract class AbsUpdateProductStock {
 	 * @param supplierPriceMap
 	 * @throws ServiceException
 	 */
-	public  void updateMarketPrice(Map<String,String> supplierPriceMap,String supplieId) throws ServiceException{
-		Set<Entry<String, String>> supplierPriceSet = supplierPriceMap.entrySet();
-		String supplierSku="",price = "",newPrice="",oldPrice="";
-		for(Entry<String, String> entry:supplierPriceSet){
-			supplierSku =entry.getKey();
-			price = entry.getValue();
-			newPrice= price.substring(0,price.indexOf(","));
-			oldPrice=price.substring(price.indexOf(",")+1);
-			SkuPriceDTO dto = new SkuPriceDTO();
-			dto.setMarketPrice(newPrice);
-			dto.setSkuId(supplierSku);
-			dto.setSupplierId(supplieId);
-//			skuPriceService.updatePrice(dto);
-		}
-
-	}
+//	public  void updateMarketPrice(Map<String,String> supplierPriceMap,String supplieId) throws ServiceException{
+//		Set<Entry<String, String>> supplierPriceSet = supplierPriceMap.entrySet();
+//		String supplierSku="",price = "",newPrice="",oldPrice="";
+//		for(Entry<String, String> entry:supplierPriceSet){
+//			supplierSku =entry.getKey();
+//			price = entry.getValue();
+//			newPrice= price.substring(0,price.indexOf(","));
+//			oldPrice=price.substring(price.indexOf(",")+1);
+//			SkuPriceDTO dto = new SkuPriceDTO();
+//			dto.setMarketPrice(newPrice);
+//			dto.setSkuId(supplierSku);
+//			dto.setSupplierId(supplieId);
+////			skuPriceService.updatePrice(dto);
+//		}
+//
+//	}
 
 	/**
 	 * 抓取主站商品SKU信息，等待更新库存<br/>
@@ -636,7 +634,7 @@ public abstract class AbsUpdateProductStock {
 		Date endDate = new Date();
 		String endTime = format.format(endDate);
 
-		String startTime = format.format(DateTimeUtil.getAppointDayFromSpecifiedDay(endDate, -2, "M"));
+		String startTime = format.format(getAppointDayFromSpecifiedDay(endDate, -2, "M"));
 		List<java.lang.Integer> statusList = new ArrayList<>();
 		statusList.add(1);
 		while(hasNext){
@@ -676,6 +674,25 @@ public abstract class AbsUpdateProductStock {
 		return sopPurchaseMap;
 
 
+	}
+	//时间处理
+	private  Date getAppointDayFromSpecifiedDay(Date today,int num,String type){
+		Calendar c   =   Calendar.getInstance();
+		c.setTime(today);
+
+		if("Y".equals(type)){
+			c.add(Calendar.YEAR, num);
+		}else if("M".equals(type)){
+			c.add(Calendar.MONTH, num);
+		}else if(null==type||"".equals(type)||"D".equals(type))
+			c.add(Calendar.DAY_OF_YEAR, num);
+		else if("H".equals(type))
+			c.add(Calendar.HOUR_OF_DAY,num);
+		else if("m".equals(type))
+			c.add(Calendar.MINUTE,num);
+		else if("S".equals(type))
+			c.add(Calendar.SECOND,num);
+		return c.getTime();
 	}
 
 	class UpdateThread extends Thread{
