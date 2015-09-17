@@ -1,8 +1,8 @@
 package com.shangpin.iog.gilt;
 
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.gilt.order.OrderServiceImpl;
+import com.shangpin.iog.gilt.schedule.AppContext;
 import com.shangpin.iog.gilt.service.FetchProduct;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -47,74 +47,11 @@ public class Startup {
     {
         //加载spring
         loadSpringContext();
-        //初始化时间
-        initDate();
-
-        //拉取数据
-        OrderServiceImpl orderService =(OrderServiceImpl)factory.getBean("giltOrder");
-        System.out.println("-------gilt start---------");
-        try {
-            List<Integer> status = new ArrayList<>();
-            status.add(1);
-           orderService.purOrder(supplierId,startDate,endDate,status);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("成功插入数据库");
-        System.out.println("-------gilt end---------");
-
-    }
-
-
-    private static void initDate() {
-        Date tempDate = new Date();
-
-        endDate = DateTimeUtil.convertFormat(tempDate, YYYY_MMDD_HH);
-
-        String lastDate=getLastGrapDate();
-        startDate= StringUtils.isNotEmpty(lastDate) ? lastDate: DateTimeUtil.convertFormat(DateUtils.addDays(tempDate, -180), YYYY_MMDD_HH);
-
-
-
-        writeGrapDate(endDate);
 
 
     }
 
-    private static File getConfFile() throws IOException {
-        String realPath = Startup.class.getClassLoader().getResource("").getFile();
-        realPath= URLDecoder.decode(realPath, "utf-8");
-        File df = new File(realPath+"date.ini");
-        if(!df.exists()){
-            df.createNewFile();
-        }
-        return df;
-    }
-    private static String getLastGrapDate(){
-        File df;
-        String dstr=null;
-        try {
-            df = getConfFile();
-            try(BufferedReader br = new BufferedReader(new FileReader(df))){
-                dstr=br.readLine();
-            }
-        } catch (IOException e) {
-            logger.error("读取日期配置文件错误");
-        }
-        return dstr;
-    }
 
-    private static void writeGrapDate(String date){
-        File df;
-        try {
-            df = getConfFile();
 
-            try(BufferedWriter bw = new BufferedWriter(new FileWriter(df))){
-                bw.write(date);
-            }
-        } catch (IOException e) {
-            logger.error("写入日期配置文件错误");
-        }
-    }
 
 }

@@ -29,7 +29,7 @@ public class OrderService {
      * @return
      */
     public Map<String,List<PurchaseOrderDetail>> geturchaseOrder(String supplierId,String startTime ,String endTime,List<Integer> statusList) throws Exception{
-        int pageIndex=1,pageSize=100;
+        int pageIndex=1,pageSize=20;
         OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
         boolean hasNext=true;
         logger.warn("获取ice采购单 开始");
