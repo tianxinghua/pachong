@@ -1,4 +1,7 @@
-package com.shangpin.iog.tessabit.stock.dto;
+package com.shangpin.iog.marylou.stock.dto;
+
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,23 +12,15 @@ import java.util.List;
 /**
  * Created by wangyuzhi on 2015/9/10.
  */
+@Getter
+@Setter
 @XmlRootElement(name="products")
 @XmlAccessorType(XmlAccessType.NONE)
 public class Products {
-
-    @XmlElement(name="product")
-    private List<Product> products;
-
-
     public List<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
-
-    public Products(){
-        super();
-    }
+    @XmlElement(name="product")
+    private List<Product> products;
 }
