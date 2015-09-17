@@ -243,7 +243,7 @@ public class FetchProduct {
         return obj.getQuantity();
     }
     /**
-     * JSON发序列化为Java对象集合
+     * JSON反序列化为Java对象集合
      * @param jsonStr
      * @return
      */

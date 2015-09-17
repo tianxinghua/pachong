@@ -1,6 +1,6 @@
 package com.shangpin.iog.tessabit.stock;
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.tessabit.stock.service.FetchProducts;
+import com.shangpin.iog.tessabit.stock.service.FetchProduct;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -23,10 +23,8 @@ public class StartSkuJob {
         log.info("----初始SPRING成功--1--");
         //拉取数据
         log.info("----拉取tessabit数据开始----");
-        FetchProducts fetchProducts =(FetchProducts)factory.getBean("tessabit");
-        //fetchProducts.process();
-        //单独测试数据入库处理
-        fetchProducts.saveDbProcess();
+        FetchProduct fetchProduct =(FetchProduct)factory.getBean("tessabit");
+        fetchProduct.fetchProductAndSave();
         log.info("----拉取tessabit数据完成----");
         System.out.println("-------fetch end---------");
         System.exit(0);

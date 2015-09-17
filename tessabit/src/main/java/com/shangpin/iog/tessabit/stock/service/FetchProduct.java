@@ -1,6 +1,5 @@
 package com.shangpin.iog.tessabit.stock.service;
 
-import com.enterprisedt.net.ftp.FTPClient;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
@@ -9,8 +8,6 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.tessabit.stock.common.Constant;
-import com.shangpin.iog.tessabit.stock.common.FtpUtil;
-import com.shangpin.iog.tessabit.stock.common.StringUtil;
 import com.shangpin.iog.tessabit.stock.dto.Item;
 import com.shangpin.iog.tessabit.stock.dto.Items;
 import com.shangpin.iog.tessabit.stock.dto.Product;
@@ -21,45 +18,44 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
  * Created by wangyuzhi on 2015/9/10.
  */
 @Component("tessabit")
-public class FetchProducts {
+public class FetchProduct {
 
-    final Logger logger = Logger.getLogger(this.getClass().getName());
+    final Logger logger = Logger.getLogger("info");
     @Autowired
     ProductFetchService productFetchService;
     /**
      * 主处理
      */
-    public void process() {
+    public void fetchProductAndSave() {
         //拉取FTP文件
         logger.info("downLoad ftpFile begin......");
-        FtpUtil.downLoad();
+        //FtpUtil.downLoad();
         logger.info("downLoad ftpFile end......");
 
         //入库处理
         logger.info("save products into DB begin......");
-        saveDbProcess();
-        logger.info("save products into DB end......");
-
-    }
-    /**
-     * 入库处理
-     */
-    public void saveDbProcess() {
+        Products products = null;
         try {
             // 将FTP拉取到的xml文件转换成模型数据
-            Products products = ObjectXMLUtil.xml2Obj(Products.class, StringUtil.parseXml2Str());
+            products = ObjectXMLUtil.xml2Obj(Products.class, new File(Constant.LOCAL_FILE));
             System.out.println(products.getProducts().size());
-            //映射数据并保存
-            messMappingAndSave(products);
         } catch(  JAXBException e  )  {
             e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
+        //映射数据并保存
+        messMappingAndSave(products);
+        logger.info("save products into DB end......");
+
     }
 
     /**
@@ -149,5 +145,14 @@ public class FetchProducts {
             }
         }
     }
+
+    /**
+     * test
+     * @param args
+     */
+    public static void main(String[] args){
+        new FetchProduct().fetchProductAndSave();
+    }
+
 }
 

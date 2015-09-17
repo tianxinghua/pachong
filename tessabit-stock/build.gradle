@@ -5,9 +5,6 @@ dependencies {
             "commons-httpclient:commons-httpclient:3.1",
             "org.apache.httpcomponents:httpclient:4.1.1",
             /*"org.apache.poi:poi:3.0.1-FINAL",*/
-            "net.sf.json-lib:json-lib:2.2:jdk15",
-            "org.apache.poi:poi:3.0.1-FINAL",
-            "com.google.code.gson:gson:2.2.2",
             "org.projectlombok:lombok:1.14.8",
             /*"redis.clients:jedis:${jedis_version}",*/
             /*"com.thoughtworks.xstream:xstream:1.4.7",*/
