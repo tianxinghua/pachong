@@ -56,7 +56,7 @@ public class Startup {
         try {
             List<Integer> status = new ArrayList<>();
             status.add(1);
-            orderService.purOrder(supplierId,startDate,endDate,status);
+            orderService.purOrder(supplierId,"2015-09-17 14:00:13","2015-09-17 17:00:13",status);
             System.out.println("成功插入数据库");
             System.out.println("-------gilt end---------");
         } catch (Exception e) {

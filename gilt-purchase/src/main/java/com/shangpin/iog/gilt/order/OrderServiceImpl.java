@@ -68,44 +68,40 @@ public class OrderServiceImpl {
                 }
 
             }
-
+            List<OrderDetailDTO>list=new ArrayList<>();
             for(PurchaseOrderDetail purchaseOrderDetail:entry.getValue()){
 
                if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
                    OrderDetailDTO detailDTO = new OrderDetailDTO();
                    detailDTO.setSku_id(purchaseOrderDetail.SupplierSkuNo);
                    detailDTO.setQuantity(String.valueOf(stockMap.get(purchaseOrderDetail.SupplierSkuNo)));
+                   list.add(detailDTO);
                    stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
                }
 
-
-
             }
+            orderDTO.setOrder_items(list);
+            orderDTO.setId(UUIDGenerator.getUUID());
+            orderDTO.setStatus("confirmed");
             String param = gson.toJson(orderDTO,new TypeToken<OrderDTO>(){}.getType());
 
-            /*String result =  HttpUtil45.operateData("put", "json", url + UUIDGenerator.getUUID(), timeConfig, null, param, key, "");*/
+            String result =  HttpUtil45.operateData("put", "json", url + UUIDGenerator.getUUID(), timeConfig, null, param, key, "");
             //TODO  存储
             /**
              * 日志存储，数据库存储
              */
-            /*OrderDTO dto= getObjectByJsonString(result);*/
-            OrderDTO dto= new OrderDTO();
-            OrderDetailDTO detailDTO=new OrderDetailDTO();
-            List<OrderDetailDTO>order_items=new ArrayList<>();
-            detailDTO.setSku_id("2506624");
-            detailDTO.setQuantity("1");
-            order_items.add(detailDTO);
-            dto.setId(UUIDGenerator.getUUID());
-            dto.setStatus("confirmed");
-            dto.setOrder_items(order_items);
+            OrderDTO dto= getObjectByJsonString(result);
             com.shangpin.iog.dto.OrderDTO order=new com.shangpin.iog.dto.OrderDTO();
             /*order.setId();*/
-            order.setUuId(dto.getId());
-            order.setSupplierId(supplierId);
-            order.setStatus(dto.getStatus());
-            order.setSpOrderId(entry.getKey());
-            order.setDetail(dto.getOrder_items().get(0).getSku_id()+"-"+dto.getOrder_items().get(0).getQuantity());
-            orderService.saveOrder(order);
+            for(int i=0;i<dto.getOrder_items().size();i++){
+                order.setUuId(dto.getId());
+                order.setSupplierId(supplierId);
+                order.setStatus(dto.getStatus());
+                order.setSpOrderId(entry.getKey());
+                order.setDetail(dto.getOrder_items().get(i).getSku_id()+"-"+dto.getOrder_items().get(i).getQuantity());
+                order.setCreateTime(new Date());
+                orderService.saveOrder(order);
+            }
             logger.info("----gilt 订单存储完成----");
         }
     }
