@@ -38,7 +38,7 @@ public class FetchProduct {
     public void fetchProductAndSave() {
         //拉取FTP文件
         logger.info("downLoad ftpFile begin......");
-        FtpUtil.downLoad();
+        //FtpUtil.downLoad();
         logger.info("downLoad ftpFile end......");
 
         //入库处理
@@ -96,6 +96,7 @@ public class FetchProduct {
                     sku.setStock(item.getStock());
                     sku.setBarcode(item.getBarcode());
                     sku.setProductCode(product.getProducer_id());
+                    sku.setMemo(product.getGender());
                     productFetchService.saveSKU(sku);
 
                     if(StringUtils.isNotBlank(item.getPicture())){
