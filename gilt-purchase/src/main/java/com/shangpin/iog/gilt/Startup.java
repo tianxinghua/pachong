@@ -6,7 +6,8 @@ import com.shangpin.iog.gilt.schedule.AppContext;
 import com.shangpin.iog.gilt.service.FetchProduct;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -22,9 +23,8 @@ import java.util.ResourceBundle;
  */
 public class Startup {
 
-    private static Logger logger = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
+    private static   Logger logger = LoggerFactory.getLogger(Startup.class);
+
 
 
 
@@ -39,8 +39,7 @@ public class Startup {
     {
         //加载spring
         loadSpringContext();
-
-
+        logger.info(" schedule start  ");
 
     }
 

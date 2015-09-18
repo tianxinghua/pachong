@@ -73,25 +73,7 @@ public class FetchProduct {
             saleId = saleDTO.getId();
             saleInventoryUrl = sale + "/" + saleId+"/inventory";
             saleSkuUrl = sale + "/" + saleId + "/skus";
-            //page call inventory ,and put map
-             do {
-                param.put("offset",offset+"");
-                inventoryMsg=HttpUtil45.get(saleInventoryUrl, outTimeConf, param,key,"");
-                logger.info("sale id : " + saleId +" inventory value =" + inventoryMsg);
-                System.out.println("sale id : " + saleId +" inventory value =" + inventoryMsg);
-                try {
-                    saleInventoryList=gson.fromJson(inventoryMsg, new TypeToken<List<InventoryDTO>>() {
-                    }.getType());
 
-                    for(InventoryDTO inventoryDTO:saleInventoryList){
-                        inventoryMap.put(inventoryDTO.getSku_id(),inventoryDTO.getQuantity()) ;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                offset=offset+50;
-
-            }while (saleInventoryList.size()==50);
 
             //page call sku message ,and get inventory from map
             offset=0;

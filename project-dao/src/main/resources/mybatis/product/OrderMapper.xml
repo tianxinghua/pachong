@@ -43,10 +43,10 @@
     <update id="updateOrderStatus" parameterType="Map" >
         update `ORDER`
         SET STATUS = #{status}
-        where UUID IN
-        <foreach collection="uuid" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+        where UUID = #{uuid}
+        <!--<foreach collection="uuid" index="index" item="item" open="(" separator="," close=")">-->
+            <!--#{item}-->
+        <!--</foreach>-->
 
     </update>
 

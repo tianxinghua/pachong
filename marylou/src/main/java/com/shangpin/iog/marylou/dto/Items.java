@@ -1,5 +1,4 @@
-package com.shangpin.iog.marylou.stock.dto;
-
+package com.shangpin.iog.marylou.dto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,17 +9,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
- * Created by wangyuzhi on 2015/9/10.
+ * Created by Administrator on 2015/9/10.
  */
 @Getter
 @Setter
-@XmlRootElement(name="products")
+@XmlRootElement(name="items")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Products {
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    @XmlElement(name="product")
-    private List<Product> products;
+public class Items {
+    @XmlElement(name="item")
+    private List<Item> items;
 }
