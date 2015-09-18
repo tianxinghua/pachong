@@ -45,7 +45,7 @@ public class OrderServiceImpl  {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
-
+    private static String url="https://api-sandbox.gilt.com/global/orders/";
 
     public void purchaseOrder(){
 
@@ -65,6 +65,28 @@ public class OrderServiceImpl  {
             e.printStackTrace();
         }
 
+    }
+    public void getStatus(){
+        try {
+            //获取已提交的产品信息
+            List<String> uuidList =  productOrderService.getOrderIdBySupplierIdAndOrderStatus(supplierId, "confirmed");
+            List<String> uuidlist =  productOrderService.getOrderIdBySupplierIdAndOrderStatus(supplierId, "NOWAIT");
+            uuidList.addAll(uuidlist);
+            Gson gson =new Gson();
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
+            Map<String,String> param =new HashMap<>();
+            String UID ="";
+            String result ="";
+            for(String uuid:uuidList){
+                result = HttpUtil45.post(url+uuid,param,timeConfig);
+                OrderDTO dto=gson.fromJson(result,OrderDTO.class);
+                if(/*!"confirmed".equals(dto.getStatus())||*/"shipped".equals(dto.getStatus())){
+
+                }
+            }
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

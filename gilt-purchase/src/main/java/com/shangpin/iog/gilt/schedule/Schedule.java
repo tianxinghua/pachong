@@ -43,11 +43,23 @@ public class Schedule {
         }
 
     }
+    @Scheduled(cron="0 0/15 * * * ? ")
+    public void updateStatus(){
+        System.out.println("-------updatestatus start---------");
+        try {
+            orderService.getStatus();
+            System.out.println("成功插入数据库");
+            System.out.println("-------updatestatus end---------");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
     public static void main(String[] args){
         Gson gson =new Gson();
         OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
         Map<String,String> param =new HashMap<>();
-        String result = HttpUtil45.post(url+"e3eb4b7d-d1bc-4d33-bfe5-4a095485b6b9",param,timeConfig);
+        String result = HttpUtil45.post(url+"2f4772df-2981-4bc3-859b-02b51870a563",param,timeConfig);
         OrderDTO dto=gson.fromJson(result,OrderDTO.class);
         System.out.println("返回结果："+result);
     }
