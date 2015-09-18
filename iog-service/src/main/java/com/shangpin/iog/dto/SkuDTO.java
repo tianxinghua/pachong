@@ -9,8 +9,8 @@ import lombok.Setter;
  * Created by loyalty on 15/6/3.
  * SPU对象
  */
-@Getter
-@Setter
+/*@Getter
+@Setter*/
 public class SkuDTO {
     private String id;
     private String supplierId;
@@ -147,10 +147,47 @@ public class SkuDTO {
         this.lastTime = lastTime;
     }
 
+    public String getMemo() {
+        return memo;
+    }
 
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
 
+    public String getNewMarketPrice() {
+        return newMarketPrice;
+    }
 
-	@Override
+    public void setNewMarketPrice(String newMarketPrice) {
+        this.newMarketPrice = newMarketPrice;
+    }
+
+    public String getNewSalePrice() {
+        return newSalePrice;
+    }
+
+    public void setNewSalePrice(String newSalePrice) {
+        this.newSalePrice = newSalePrice;
+    }
+
+    public String getNewSupplierPrice() {
+        return newSupplierPrice;
+    }
+
+    public void setNewSupplierPrice(String newSupplierPrice) {
+        this.newSupplierPrice = newSupplierPrice;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

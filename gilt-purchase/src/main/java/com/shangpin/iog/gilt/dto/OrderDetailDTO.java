@@ -9,6 +9,22 @@ import lombok.Setter;
 @Setter
 @Getter
 public class OrderDetailDTO {
-    private String sku_id;
-    private String quantity;
+    private int sku_id;
+    private int quantity;
+
+//    public String getSku_id() {
+//        return sku_id;
+//    }
+//
+//    public void setSku_id(String sku_id) {
+//        this.sku_id = sku_id;
+//    }
+//
+//    public String getQuantity() {
+//        return quantity;
+//    }
+//
+//    public void setQuantity(String quantity) {
+//        this.quantity = quantity;
+//    }
 }

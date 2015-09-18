@@ -1,4 +1,4 @@
 OpenApiServant.Proxy=OpenApiServant
 
-#Ice.Default.Locator=@Ice.Default.Locator@
-Ice.Default.Locator=SPIceGrid/Locator:default -h 172.20.10.242 -p 12000:default -h 172.20.10.246 -p 12000
+Ice.Default.Locator=@db.Ice.Default.Locator@
+#Ice.Default.Locator=SPIceGrid/Locator:default -h 172.20.10.242 -p 12000:default -h 172.20.10.246 -p 12000
