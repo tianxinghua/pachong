@@ -59,9 +59,9 @@ public class ProductDTO {
 
     private String size;//尺码 必须
 
-    private SpuPictureDTO spuPictureDTO;//商品的公共图片
+    private String  spuPicture;//商品的公共图片
 
-    private SkuPictureDTO skuPictureDTO;//SKU的个性图片
+    private String skuPicture;//SKU的个性图片
 
 
 
@@ -91,8 +91,9 @@ public class ProductDTO {
                 ", productDescription='" + productDescription + '\'' +
                 ", saleCurrency='" + saleCurrency + '\'' +
                 ", productSize='" + size + '\'' +
-                ", imageUrl='" + (null!=spuPictureDTO?spuPictureDTO.toString():"") + "---" +
-                (null!=skuPictureDTO?skuPictureDTO.toString():"") + '\'' +
+                ", spuPicture='" + spuPicture + '\'' +
+
+                ", skuPicture='" + skuPicture + '\'' +
 
                 '}';
     }

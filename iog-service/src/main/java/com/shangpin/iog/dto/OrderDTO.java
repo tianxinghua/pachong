@@ -84,4 +84,18 @@ public class OrderDTO {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
+    @Override
+    public String toString() {
+        return "OrderDTO{" +
+                "id=" + id +
+                ", supplierId='" + supplierId + '\'' +
+                ", uuId='" + uuId + '\'' +
+                ", spOrderId='" + spOrderId + '\'' +
+                ", detail='" + detail + '\'' +
+                ", status='" + status + '\'' +
+                ", createTime=" + createTime +
+
+                '}';
+    }
 }

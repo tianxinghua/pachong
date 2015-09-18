@@ -111,15 +111,14 @@ public class ProductionServiceImpl implements  ProductionService {
             e.printStackTrace();
         }
 
-        SpuPictureDTO spuPictureDTO =  productDTO.getSpuPictureDTO();
-        String imgUrl =spuPictureDTO.getImageUrl();
+        String imgUrl =productDTO.getSpuPicture();
         String[] imageUrlArray = imgUrl.split("||");
 
         for(String  imageUrl:imageUrlArray){
             ProductPictureDTO pictureDTO = new ProductPictureDTO();
             pictureDTO.setSupplierId(productDTO.getSupplierId());
             pictureDTO.setPicUrl(imageUrl);
-            pictureDTO.setSpuId(spuPictureDTO.getSpuId());
+            pictureDTO.setSpuId(productDTO.getSpuId());
             try {
                 productFetchService.savePictureForMongo(pictureDTO);
             } catch (com.shangpin.framework.ServiceException e) {
@@ -128,14 +127,13 @@ public class ProductionServiceImpl implements  ProductionService {
         }
 
 
-        SkuPictureDTO skuPictureDTO = productDTO.getSkuPictureDTO();
-        String skuImgUrl =skuPictureDTO.getImageUrl();
+        String skuImgUrl =productDTO.getSkuPicture();
         String[] skuImageUrlArray = skuImgUrl.split("||");
         for(String  imageUrl:skuImageUrlArray){
             ProductPictureDTO pictureDTO = new ProductPictureDTO();
             pictureDTO.setSupplierId(productDTO.getSupplierId());
             pictureDTO.setPicUrl(imageUrl);
-            pictureDTO.setSkuId(skuPictureDTO.getSkuId());
+            pictureDTO.setSkuId(productDTO.getSkuId());
             try {
                 productFetchService.savePictureForMongo(pictureDTO);
             } catch (com.shangpin.framework.ServiceException e) {
@@ -198,13 +196,8 @@ public class ProductionServiceImpl implements  ProductionService {
             throw new ServiceMessageException("material not allow zero length");
         }
 
-        if(null==productDTO.getSkuPictureDTO()&&null==productDTO.getSpuPictureDTO()){
+        if(StringUtils.isBlank(productDTO.getSpuPicture())&&StringUtils.isBlank(productDTO.getSkuPicture())){
             throw new ServiceMessageException("imageUrl not allow null");
-        }else if(null!=productDTO.getSkuPictureDTO()&&StringUtils.isBlank(productDTO.getSkuPictureDTO().getImageUrl())){
-            throw new ServiceMessageException("if SkuPictureDTO object is not null,imageUrl property not allow zero length");
-
-        }else if(null!=productDTO.getSpuPictureDTO()&&StringUtils.isBlank(productDTO.getSpuPictureDTO().getImageUrl())){
-            throw new ServiceMessageException("if SpuPictureDTO object is not null,imageUrl property not allow zero length");
         }
 
         if(null==productDTO.getSupplierPrice()){
