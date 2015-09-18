@@ -1,4 +1,4 @@
-package com.shangpin.iog.marylou.stock.dto;
+package com.shangpin.iog.marylou.dto;
 
 import lombok.Getter;
 import lombok.Setter;
