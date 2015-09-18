@@ -96,7 +96,6 @@ public class FetchProduct {
                     sku.setStock(item.getStock());
                     sku.setBarcode(item.getBarcode());
                     sku.setProductCode(product.getProducer_id());
-                    sku.setMemo(product.getGender());
                     productFetchService.saveSKU(sku);
 
                     if(StringUtils.isNotBlank(item.getPicture())){
@@ -142,6 +141,7 @@ public class FetchProduct {
                 spu.setSpuName(product.getProduct_name());
                 spu.setSeasonId(product.getSeason_code());
                 spu.setMaterial(product.getProduct_material());
+                spu.setCategoryGender(product.getGender());
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
                 e.printStackTrace();
