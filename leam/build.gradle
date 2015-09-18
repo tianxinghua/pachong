@@ -6,7 +6,7 @@ dependencies {
             "net.sf.json-lib:json-lib:2.2:jdk15",
             "com.google.code.gson:gson:2.2.2",
             project(':project-common'),
-
+            project(':project-dao'),
             project(':iog-common-product') ,
             project(':iog-sop')
     )
