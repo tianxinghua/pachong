@@ -8,6 +8,7 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.tessabit.stock.common.Constant;
+import com.shangpin.iog.tessabit.stock.common.FtpUtil;
 import com.shangpin.iog.tessabit.stock.dto.Item;
 import com.shangpin.iog.tessabit.stock.dto.Items;
 import com.shangpin.iog.tessabit.stock.dto.Product;
@@ -37,7 +38,7 @@ public class FetchProduct {
     public void fetchProductAndSave() {
         //拉取FTP文件
         logger.info("downLoad ftpFile begin......");
-        //FtpUtil.downLoad();
+        FtpUtil.downLoad();
         logger.info("downLoad ftpFile end......");
 
         //入库处理
