@@ -32,11 +32,12 @@ public class OrderServiceImpl  {
 
     private static ResourceBundle bdl=null;
     private static String supplierId;
-
+    private static String key ;
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        key = bdl.getString("key");
     }
 
     @Autowired
@@ -44,7 +45,6 @@ public class OrderServiceImpl  {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
-    private String key = "fb8ea6839b486dba8c5cabb374c03d9d";
 
 
     public void purchaseOrder(){

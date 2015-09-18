@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
 
-@ComponentScan(basePackages={"com.shangpin.shop.iog"}
+@ComponentScan(basePackages={"com.shangpin.iog"}
 )
 @EnableScheduling
 @Import({com.shangpin.iog.app.AppContext.class})
