@@ -42,6 +42,7 @@ public class OrderServiceImpl  {
 
     @Autowired
     com.shangpin.iog.service.OrderService productOrderService;
+
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
@@ -76,11 +77,11 @@ public class OrderServiceImpl  {
     public void transData(String url,String supplierId, Map<String, List<PurchaseOrderDetail>> orderMap) throws ServiceException {
         Gson gson = new Gson();
         OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
+        String orderDetail = "";
         for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();){
             Map.Entry<String,List<PurchaseOrderDetail>> entry = itor.next();
             OrderDTO orderDTO = new OrderDTO();
             Map<String,Integer> stockMap = new HashMap<>();
-            List<OrderDetailDTO> detailDTOs = new ArrayList<>();
             //获取同一产品的数量
 
             for(PurchaseOrderDetail purchaseOrderDetail:entry.getValue()){
@@ -93,42 +94,106 @@ public class OrderServiceImpl  {
 
             }
             List<OrderDetailDTO>list=new ArrayList<>();
+            StringBuffer buffer = new StringBuffer();
             for(PurchaseOrderDetail purchaseOrderDetail:entry.getValue()){
 
                if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
                    OrderDetailDTO detailDTO = new OrderDetailDTO();
-                   detailDTO.setSku_id(purchaseOrderDetail.SupplierSkuNo);
-                   detailDTO.setQuantity(String.valueOf(stockMap.get(purchaseOrderDetail.SupplierSkuNo)));
+                   detailDTO.setSku_id(Integer.valueOf(purchaseOrderDetail.SupplierSkuNo));
+                   detailDTO.setQuantity(stockMap.get(purchaseOrderDetail.SupplierSkuNo));
+                   buffer.append("'").append(detailDTO.getSku_id()).append("'").append(":").append(detailDTO.getQuantity()).append(",");
                    list.add(detailDTO);
                    stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
                }
 
             }
-            orderDTO.setOrder_items(list);
-            orderDTO.setId(UUIDGenerator.getUUID());
-            orderDTO.setStatus("confirmed");
-            String param = gson.toJson(orderDTO,new TypeToken<OrderDTO>(){}.getType());
 
-            String result =  HttpUtil45.operateData("put", "json", url + UUIDGenerator.getUUID(), timeConfig, null, param, key, "");
-            //TODO  存储
-            /**
-             * 日志存储，数据库存储
-             */
-            OrderDTO dto= getObjectByJsonString(result);
-            com.shangpin.iog.dto.OrderDTO order=new com.shangpin.iog.dto.OrderDTO();
-            /*order.setId();*/
-            for(int i=0;i<dto.getOrder_items().size();i++){
-                order.setUuId(dto.getId());
-                order.setSupplierId(supplierId);
-                order.setStatus(dto.getStatus());
-                order.setSpOrderId(entry.getKey());
-                order.setDetail(dto.getOrder_items().get(i).getSku_id()+"-"+dto.getOrder_items().get(i).getQuantity());
-                order.setCreateTime(new Date());
-                productOrderService.saveOrder(order);
+            orderDTO.setOrder_items(list);
+            orderDTO.setId(UUID.randomUUID().toString());
+            orderDTO.setStatus("confirmed");
+
+
+
+
+
+            //存储
+            com.shangpin.iog.dto.OrderDTO spOrder =new com.shangpin.iog.dto.OrderDTO();
+            spOrder.setUuId(orderDTO.getId());
+            spOrder.setSupplierId(supplierId);
+            spOrder.setStatus("NOWAIT");
+            spOrder.setSpOrderId(entry.getKey());
+            spOrder.setDetail(buffer.toString());
+            spOrder.setCreateTime(new Date());
+            try {
+                logger.info("采购单信息转化订单后信息："+spOrder.toString());
+                System.out.println("采购单信息转化订单后信息："+spOrder.toString());
+                productOrderService.saveOrder(spOrder);
+
+                String param = gson.toJson(orderDTO,new TypeToken<OrderDTO>(){}.getType());
+                logger.info("传入订单内容 ：" + param);
+                System.out.println("传入订单内容 ：" + param);
+                String result =  HttpUtil45.operateData("put", "json", url + orderDTO.getId(), timeConfig, null, param, key, "");
+                if(HttpUtil45.errorResult.equals(result)){  //链接异常
+                    loggerError.error("采购单："+spOrder.getSpOrderId()+" 链接异常 无法处理");
+                }else{
+                    logger.info("订单处理结果 ：" + result);
+                    System.out.println("订单处理结果 ：" + result);
+                    //更新      日志存储，数据库更新
+
+                    try {
+                        if(result.indexOf("message")>0&&result.indexOf("type")>0){ //  失败
+                            loggerError.error("采购单："+spOrder.getSpOrderId()+" 下单返回转化失败");
+                            System.out.println("采购单：" + spOrder.getSpOrderId() + " 下单返回转化失败");
+                            continue;
+                        }
+                        OrderDTO dto= getObjectByJsonString(result);
+                        if(null==dto){
+                            loggerError.error("采购单："+spOrder.getSpOrderId()+" 下单返回转化失败");
+                            System.out.println("采购单：" + spOrder.getSpOrderId() + " 下单返回转化失败");
+                            continue;
+                        }
+                        //
+                        //更新订单状态
+                        Map<String,String> map = new HashMap<>();
+                        map.put("status",dto.getStatus());
+                        map.put("uuid",dto.getId());
+                        try {
+                            productOrderService.updateOrderStatus(map);
+                        } catch (ServiceException e) {
+                            loggerError.error("采购单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");
+                            System.out.println("采购单：" + spOrder.getSpOrderId() + " 下单成功。但更新订单状态失败");
+                            e.printStackTrace();
+                        }
+                    } catch (Exception e) {
+                        //下单失败
+                        loggerError.error("采购单："+spOrder.getSpOrderId()+" 下单返回转化失败");
+                        System.out.println("采购单：" + spOrder.getSpOrderId() + " 下单返回转化失败");
+                        e.printStackTrace();
+                    }
+                }
+
+
+
+            } catch (ServiceException e) {
+                loggerError.error("采购单 ："+ spOrder.getSpOrderId() + "失败,失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
+                System.out.println("采购单 ："+ spOrder.getSpOrderId() + "失败,失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage());
+                e.printStackTrace();
+            } catch (Exception e){
+                loggerError.error("下单错误 " + e.getMessage());
+                e.printStackTrace();
             }
+
+
+
+
+
+
+
             logger.info("----gilt 订单存储完成----");
         }
     }
+
+
     private static List<OrderDTO> getObjectsByJsonString(String jsonStr){
         Gson gson = new Gson();
         List<OrderDTO> objs = new ArrayList<OrderDTO>();
@@ -206,13 +271,15 @@ public class OrderServiceImpl  {
     public static void main(String[] args) throws  Exception{
         OrderServiceImpl  orderService = new OrderServiceImpl();
 
-        Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
-        List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
-        PurchaseOrderDetail  purchaseOrderDetail = new PurchaseOrderDetail();
-        purchaseOrderDetails.add(purchaseOrderDetail);
-        orderMap.put("",purchaseOrderDetails);
+        orderService.purchaseOrder();
 
-        orderService.transData("https://api-sandbox.gilt.com/global/orders/","",orderMap);
+//        Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
+//        List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
+//        PurchaseOrderDetail  purchaseOrderDetail = new PurchaseOrderDetail();
+//        purchaseOrderDetails.add(purchaseOrderDetail);
+//        orderMap.put("",purchaseOrderDetails);
+//
+//        orderService.transData("https://api-sandbox.gilt.com/global/orders/","",orderMap);
 
 
     }
