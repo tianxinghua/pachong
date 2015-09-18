@@ -9,6 +9,7 @@
         <result column="UUID" property="uuId"  />
         <result column="SP_ORDER_ID" property="spOrderId"  />
         <result column="DETAIL" property="detail"  />
+        <result column="STATUS" property="status"/>
         <result column="CREATE_TIME" property="createTime"  />
 
 	</resultMap>
@@ -21,20 +22,26 @@
 		DETAIL,
 		CREATE_TIME
 	</sql>
-
+    <sql id="id_out_column">
+        SUPPLIER_ID,
+		UUID,
+		SP_ORDER_ID,
+		DETAIL,
+		STATUS,
+		CREATE_TIME
+    </sql>
     <insert id="save"  parameterType="iog_order" >
-        insert into ORDER (
-
-        <include refid="all_Order_column"></include>
+        insert into `ORDER` (
+        <include refid="id_out_column"></include>
         )
         values(
-        #{id}, #{supplierId}, #{uuId}, #{spOrderId},
-        #{detail},#{createTime}
+        #{supplierId}, #{uuId}, #{spOrderId},
+        #{detail},#{status},#{createTime}
         )
     </insert>
 
     <update id="updateOrderStatus" parameterType="Map" >
-        update ORDER
+        update `ORDER`
         SET STATUS = #{status}
         where UUID IN
         <foreach collection="uuid" index="index" item="item" open="(" separator="," close=")">

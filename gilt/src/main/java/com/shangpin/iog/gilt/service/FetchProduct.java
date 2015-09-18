@@ -50,11 +50,9 @@ public class FetchProduct {
         /*String jsonStr = getSkus(url);*/
         //List<String>mlist=new ArrayList<>();
 
-        //获取做活动的产品信息
-        String skusUrl="https://api-sandbox.gilt.com/global/skus/";
+        //sale url
         String  sale = "https://api-sandbox.gilt.com/global/sales";
-        String  singleSku = "https://api-sandbox.gilt.com/global/skus/";
-        //获取活动信息
+        //get sale message
         List<SaleDTO>  saleList = this.getSaleMessage(sale);
 
 
@@ -75,9 +73,8 @@ public class FetchProduct {
             saleId = saleDTO.getId();
             saleInventoryUrl = sale + "/" + saleId+"/inventory";
             saleSkuUrl = sale + "/" + saleId + "/skus";
-            //分页获取库存 存入Map中
-
-            do {
+            //page call inventory ,and put map
+             do {
                 param.put("offset",offset+"");
                 inventoryMsg=HttpUtil45.get(saleInventoryUrl, outTimeConf, param,key,"");
                 logger.info("sale id : " + saleId +" inventory value =" + inventoryMsg);
@@ -96,10 +93,9 @@ public class FetchProduct {
 
             }while (saleInventoryList.size()==50);
 
-            //分页获取产品
+            //page call sku message ,and get inventory from map
             offset=0;
-
-            do {
+             do {
                 param.put("offset",offset+"");
                 skuMsg=HttpUtil45.get(saleSkuUrl, outTimeConf, param,key,"");
 
@@ -116,8 +112,7 @@ public class FetchProduct {
                     e.printStackTrace();
                 }
                 offset=offset+50;
-
-            }while (saleInventoryList.size()==50);
+             }while (saleInventoryList.size()==50);
 
 
 
@@ -272,7 +267,7 @@ public class FetchProduct {
         String result="";
         StringBuffer str=new StringBuffer();
         List<SaleDTO> returnList = new ArrayList<>();
-        int limit = 50;
+
         try {
 
             OutTimeConfig outTimeConf = new OutTimeConfig(1000*5,1000*5,1000*5);

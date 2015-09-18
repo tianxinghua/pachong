@@ -8,9 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * @description 父上下文，主要扫描服务层，数据库成，缓存
- * @author 陈小峰
- * <br/>2015年1月24日
+ *
  */
 
 @Configuration
