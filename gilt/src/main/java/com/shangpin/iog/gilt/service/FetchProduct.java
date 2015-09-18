@@ -11,6 +11,7 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.iog.gilt.dto.AttributeDTO;
 import com.shangpin.iog.gilt.dto.GiltSkuDTO;
 import com.shangpin.iog.gilt.dto.InventoryDTO;
 import com.shangpin.iog.gilt.dto.SaleDTO;
@@ -76,9 +77,12 @@ public class FetchProduct {
              do {
                 param.put("offset",offset+"");
                 inventoryMsg=HttpUtil45.get(saleInventoryUrl, outTimeConf, param,key,"");
+                logger.info("sale id : " + saleId +" inventory value =" + inventoryMsg);
+                System.out.println("sale id : " + saleId +" inventory value =" + inventoryMsg);
                 try {
                     saleInventoryList=gson.fromJson(inventoryMsg, new TypeToken<List<InventoryDTO>>() {
                     }.getType());
+
                     for(InventoryDTO inventoryDTO:saleInventoryList){
                         inventoryMap.put(inventoryDTO.getSku_id(),inventoryDTO.getQuantity()) ;
                     }
@@ -94,7 +98,11 @@ public class FetchProduct {
              do {
                 param.put("offset",offset+"");
                 skuMsg=HttpUtil45.get(saleSkuUrl, outTimeConf, param,key,"");
+
+                logger.info("sale id : " + saleId +" skuMsg value =" + skuMsg);
+                System.out.println("sale id : " + saleId +" skuMsg value =" + skuMsg);
                 try {
+
                     saleSkuList=gson.fromJson(skuMsg, new TypeToken<List<GiltSkuDTO>>() {
                     }.getType());
                     for(GiltSkuDTO giltSkuDTO:saleSkuList){
@@ -159,11 +167,30 @@ public class FetchProduct {
         if(!"0".equals(inventory)){
 
             String productCode="";
+            String color ="",material="",size="",style="";
+            List<AttributeDTO> attributes = giltSkuDTO.getAttributes();
+            for(AttributeDTO attributeDTO:attributes){
+                if(null!=attributeDTO.getColor()){
+                    color= attributeDTO.getColor().getName();
+                }
+                if(null!=attributeDTO.getMaterial()) {
+                    material = attributeDTO.getMaterial().getValue();
+                }
+                if(null!=attributeDTO.getSize()){
+                    size = attributeDTO.getSize().getValue();
+                }
+
+
+
+
+
+
+            }
 
             spuDTO.setId(UUIDGenerator.getUUID());
             spuDTO.setSupplierId(supplierId);
             spuDTO.setSpuId(giltSkuDTO.getProduct_id());
-            spuDTO.setMaterial(giltSkuDTO.getAttributes().get(2).getMaterial().getValue());
+            spuDTO.setMaterial(material);
             spuDTO.setCategoryId(giltSkuDTO.getCategories().get(0).getId());
             spuDTO.setCategoryName(giltSkuDTO.getCategories().get(0).getName());
             spuDTO.setSubCategoryId(giltSkuDTO.getCategories().get(giltSkuDTO.getCategories().size()-1).getId());
@@ -188,7 +215,7 @@ public class FetchProduct {
                 dto.setSkuId(giltSkuDTO.getId());
                 dto.setSpuId(giltSkuDTO.getProduct_id());
                 dto.setBarcode(giltSkuDTO.getProduct_look_id());
-                dto.setColor(giltSkuDTO.getAttributes().get(0).getColor().getName());
+                dto.setColor(color);
                 dto.setMarketPrice(giltSkuDTO.getPrices().getRetail().getValue());
                 dto.setSalePrice(giltSkuDTO.getPrices().getSale().getValue());
                 dto.setSaleCurrency(giltSkuDTO.getPrices().getSale().getCurrency());
@@ -199,7 +226,7 @@ public class FetchProduct {
                 }
                 dto.setProductCode(productCode.substring(0,productCode.length()-1));
                 dto.setProductName(giltSkuDTO.getName());
-                dto.setProductSize(giltSkuDTO.getAttributes().get(3).getSize().getValue());
+                dto.setProductSize(size);
                 dto.setStock(inventory);
                 productFetchService.saveSKU(dto);
                 for(int j =0;j<giltSkuDTO.getImages().size();j++){
@@ -270,6 +297,7 @@ public class FetchProduct {
         OutTimeConfig outTimeConf = new OutTimeConfig(1000*3,1000*3,1000*3);
         String jsonStr = HttpUtil45.get(url+skuId,outTimeConf,param,key,"");
         logger.info("get skuId :"+skuId +" 库存返回值为："+jsonStr );
+        System.out.println("get skuId :"+skuId +" 库存返回值为："+jsonStr );
         String inventory = null;
         try {
             inventory = getInventoryByJsonString(jsonStr);
