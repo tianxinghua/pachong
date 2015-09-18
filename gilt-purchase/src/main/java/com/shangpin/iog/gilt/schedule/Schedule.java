@@ -29,7 +29,7 @@ public class Schedule {
     @Autowired
     OrderServiceImpl orderService;
 
-    @Scheduled(cron="0 0/15 * * * ? ")
+    @Scheduled(cron="0 0/3 * * * ? ")
     public void setUserLevel(){
 
         //拉取数据
