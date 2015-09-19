@@ -12,19 +12,19 @@ public class OrderDetailDTO {
     private int sku_id;
     private int quantity;
 
-//    public String getSku_id() {
-//        return sku_id;
-//    }
-//
-//    public void setSku_id(String sku_id) {
-//        this.sku_id = sku_id;
-//    }
-//
-//    public String getQuantity() {
-//        return quantity;
-//    }
-//
-//    public void setQuantity(String quantity) {
-//        this.quantity = quantity;
-//    }
+    public int getSku_id() {
+        return sku_id;
+    }
+
+    public void setSku_id(int sku_id) {
+        this.sku_id = sku_id;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 }

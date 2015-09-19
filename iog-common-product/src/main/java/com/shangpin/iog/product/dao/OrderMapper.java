@@ -20,7 +20,7 @@ public interface OrderMapper extends IBaseDao<OrderDTO> {
 
 
 
-    public int updateOrderStatus(Map<String,Object> paraMap);
+    public int updateOrderStatus(Map<String,String> paraMap);
 
 
 }

@@ -21,7 +21,7 @@ public class LeamDTO {
     private String composition;//Composition of the head
     private String nomenclature;//Data on nomenclature
     private String description;//Description
-    private List<String> image;// Array - List List of available images
+    private List<String> images;// Array - List List of available images
 
     public String getStock_id() {
         return stock_id;
@@ -143,11 +143,8 @@ public class LeamDTO {
         this.description = description;
     }
 
-    public List<String> getImage() {
-        return image;
-    }
+    public List<String> getImages() { return images; }
 
-    public void setImage(List<String> image) {
-        this.image = image;
-    }
+    public void setImages(List<String> images) { this.images = images; }
+
 }
