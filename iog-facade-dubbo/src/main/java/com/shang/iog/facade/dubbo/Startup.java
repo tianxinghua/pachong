@@ -21,7 +21,12 @@ public class Startup
 	{
         logger.info(" dubbo init start");
 		loadSpringContext();
-        logger.info(" dubbo init end");
+		try {
+			Thread.currentThread().join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		logger.info(" dubbo init end");
 	}
 
 }

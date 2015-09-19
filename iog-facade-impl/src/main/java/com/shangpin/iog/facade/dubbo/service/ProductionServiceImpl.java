@@ -29,10 +29,10 @@ import java.util.Map;
 @Service("productionFacadeServiceImpl")
 public class ProductionServiceImpl implements  ProductionService {
 
-    Logger logger = LoggerFactory.getLogger(ProductionServiceImpl.class);
 
     private static org.apache.log4j.Logger logMongo = org.apache.log4j.Logger.getLogger("mongodb");
-
+    private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
+    private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
 
 
     @Autowired
@@ -41,6 +41,9 @@ public class ProductionServiceImpl implements  ProductionService {
     @Override
     @Transactional(rollbackFor = {ServiceException.class})
     public Boolean saveProduct(ProductDTO productDTO) throws ServiceException {
+
+        logger.info(" transfer object message = " + productDTO.toString());
+
         //验证产品信息
         filter(productDTO);
 
@@ -79,14 +82,15 @@ public class ProductionServiceImpl implements  ProductionService {
 
             productFetchService.saveSPU(spuDTO);
 
-        } catch (com.shangpin.framework.ServiceException e) {
+        } catch (Exception e) {
 
             if(ProductFetchServiceImpl.REPEAT_MESSAGE.equals(e.getMessage())){
               //重复插入不做处理
-
+                loggerError.error("spu :" + spuDTO.getSpuId() + " 重复保存" );
             }else{
+                loggerError.error("spu :" + spuDTO.getSpuId() + " 保存失败。失败原因：" + e.getMessage() );
                 e.printStackTrace();
-                throw new ServiceMessageException("save failed");
+                throw new ServiceMessageException("save spu failed. please contact IT" );
             }
 
         }
@@ -107,8 +111,12 @@ public class ProductionServiceImpl implements  ProductionService {
         skuDTO.setSaleCurrency(productDTO.getSaleCurrency());
         try {
             productFetchService.saveSKU(skuDTO);
-        } catch (com.shangpin.framework.ServiceException e) {
+
+
+        } catch (Exception e) {
+            loggerError.error("sku:" + skuDTO.getSkuId() + " 保存失败。失败原因: " + e.getMessage());
             e.printStackTrace();
+            throw new ServiceMessageException("save sku failed. please contact IT" );
         }
 
         String imgUrl =productDTO.getSpuPicture();
@@ -121,8 +129,10 @@ public class ProductionServiceImpl implements  ProductionService {
             pictureDTO.setSpuId(productDTO.getSpuId());
             try {
                 productFetchService.savePictureForMongo(pictureDTO);
-            } catch (com.shangpin.framework.ServiceException e) {
+            } catch (Exception e) {
+                loggerError.error("spu : " +  productDTO.getSpuId() + " 图片保存失败。失败原因: " + e.getMessage());
                 e.printStackTrace();
+                throw new ServiceMessageException("save spu(common) picture failed. please contact IT" );
             }
         }
 
@@ -136,8 +146,10 @@ public class ProductionServiceImpl implements  ProductionService {
             pictureDTO.setSkuId(productDTO.getSkuId());
             try {
                 productFetchService.savePictureForMongo(pictureDTO);
-            } catch (com.shangpin.framework.ServiceException e) {
+            } catch (Exception e) {
+                loggerError.error("sku :" + productDTO.getSkuId() + " 图片保存失败。失败原因: " + e.getMessage());
                 e.printStackTrace();
+                throw new ServiceMessageException("save sku  picture failed. please contact IT" );
             }
         }
 

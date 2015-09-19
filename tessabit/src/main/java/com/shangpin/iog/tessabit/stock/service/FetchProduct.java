@@ -8,6 +8,7 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.tessabit.stock.common.Constant;
+import com.shangpin.iog.tessabit.stock.common.FtpUtil;
 import com.shangpin.iog.tessabit.stock.dto.Item;
 import com.shangpin.iog.tessabit.stock.dto.Items;
 import com.shangpin.iog.tessabit.stock.dto.Product;
@@ -93,6 +94,7 @@ public class FetchProduct {
                     sku.setColor(item.getColor());
                     sku.setProductDescription(item.getDescription());
                     sku.setStock(item.getStock());
+                    sku.setBarcode(item.getBarcode());
                     sku.setProductCode(product.getProducer_id());
                     productFetchService.saveSKU(sku);
 
@@ -139,6 +141,7 @@ public class FetchProduct {
                 spu.setSpuName(product.getProduct_name());
                 spu.setSeasonId(product.getSeason_code());
                 spu.setMaterial(product.getProduct_material());
+                spu.setCategoryGender(product.getGender());
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
                 e.printStackTrace();

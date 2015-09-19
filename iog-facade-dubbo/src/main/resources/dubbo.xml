@@ -12,11 +12,11 @@
 
     <dubbo:application name="shangpin-iog-dubbo"  />
 
-    <dubbo:registry address="${zookeeper.address}" />
+    <dubbo:registry protocol="zookeeper" address="${zookeeper.address}" />
 
     <dubbo:protocol name="dubbo" port="20880" threadpool="fixed" threads="200" dispatcher="message"  />
 
-    <dubbo:service interface="com.shangpin.iog.facade.dubbo.service.ProductionService" ref="userFacadeService" version="1.0.0" group="iog" retries="1" cluster="failover"/>
+    <dubbo:service interface="com.shangpin.iog.facade.dubbo.service.ProductionService" ref="productionFacadeServiceImpl" version="1.0.0" group="iog-facade" retries="1" cluster="failover"/>
 
 
 </beans>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.ReturnOrderMapper">
+
+    <resultMap id="OrderResultMap" type="iog_order">
+
+        <id column="ID" property="id" />
+        <result column="SUPPLIER_ID" property="supplierId"  />
+        <result column="UUID" property="uuId"  />
+        <result column="SP_ORDER_ID" property="spOrderId"  />
+        <result column="DETAIL" property="detail"  />
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_TIME" property="createTime"  />
+
+    </resultMap>
+    <sql id="id_out_column">
+        SUPPLIER_ID,
+        UUID,
+        SP_ORDER_ID,
+        DETAIL,
+        STATUS,
+        CREATE_TIME
+    </sql>
+    <insert id="save"  parameterType="iog_order" >
+        insert into RETURN_ORDER (
+        <include refid="id_out_column"></include>
+        )
+        values(
+        #{supplierId}, #{uuId}, #{spOrderId},
+        #{detail},#{status},#{createTime}
+        )
+    </insert>
+    <update id="updateReturnOrderStatus" parameterType="Map" >
+        update RETURN_ORDER
+        SET STATUS = #{status}
+        where UUID = #{uuid}
+        <!--<foreach collection="uuid" index="index" item="item" open="(" separator="," close=")">-->
+        <!--#{item}-->
+        <!--</foreach>-->
+
+    </update>
+</mapper>

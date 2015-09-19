@@ -205,6 +205,34 @@ public class HttpUtil45 {
 		if("get".equals(operatorType.toLowerCase())){
 			String urlStr=paramGetUrl(url, param);
 			request  = new HttpGet(urlStr);
+		}else if("post".equals(operatorType.toLowerCase())){
+
+			HttpPost post=new HttpPost(url);
+			if("json".equals(transParaType.toLowerCase())){
+				if(StringUtils.isNotBlank(jsonValue)){
+					StringEntity s = null;
+					try {
+						s = new StringEntity(jsonValue);
+						s.setContentEncoding("UTF-8");
+						s.setContentType("application/json");//发送json数据需要设置contentType
+						post.setEntity(s);
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}else{
+				if(param!=null){
+					Iterable<? extends NameValuePair> nvs = map2NameValuePair(param);
+					post.setEntity(new UrlEncodedFormEntity(nvs, Charset
+							.forName("UTF-8")));
+				}
+
+			}
+
+			return getResult(post, outTimeConf,localContext);
+
+
 		}else if("put".equals(operatorType.toLowerCase())){
 
 			HttpPut putMothod = new HttpPut(url);
