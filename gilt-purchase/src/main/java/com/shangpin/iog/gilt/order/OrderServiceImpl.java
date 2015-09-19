@@ -215,9 +215,20 @@ public class OrderServiceImpl  {
                             if("placed".equals(dto.getStatus())){
                                 map.put("status","confirmed");
                             }
+                            param="";
                             String returnStr=HttpUtil45.operateData("patch", "json", url + uuid, timeConfig, map, param, key, "");
-                            logger.info("更新gilt端订单状态："+returnStr);
-                            productOrderService.updateOrderStatus(map);
+                            if(HttpUtil45.errorResult.equals(returnStr)){  //链接异常
+                                loggerError.error("支付下单-链接异常");
+                            }else{
+                                if(result.indexOf("message")>0&&returnStr.indexOf("type")>0){
+                                    loggerError.error("支付下单 失败");
+                                    //TODO 是否更新订单异常状态.
+                                    continue;
+                                }else{
+                                    logger.info("更新gilt端订单状态："+returnStr);
+                                    productOrderService.updateOrderStatus(map);
+                                }
+                            }
                         } catch (ServiceException e) {
                             loggerError.error("采购单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");
                             System.out.println("采购单：" + spOrder.getSpOrderId() + " 下单成功。但更新订单状态失败");

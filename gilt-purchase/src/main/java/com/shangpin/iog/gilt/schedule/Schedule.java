@@ -78,8 +78,14 @@ public class Schedule {
         OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
         Gson gson =new Gson();
         Map<String,String> param =new HashMap<>();
-        String result=HttpUtil45.get(url +"1adc7865-7aa0-4afb-b22c-1e99736ab0ad", timeConfig, param, key, "");
-        OrderDTO dto = gson.fromJson(result, OrderDTO.class);
-        System.out.println(dto.getId());
+        //String result=HttpUtil45.get(url +"1adc7865-7aa0-4afb-b22c-1e99736ab0ad", timeConfig, param, key, "");
+        try {
+            String str = HttpUtil45.operateData("patch","json",url+"1adc7865-7aa0-4afb-b22c-1e99736ab0ad", timeConfig,param,"",key,"");
+            System.out.println(str);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        //OrderDTO dto = gson.fromJson(result, OrderDTO.class);
+        //System.out.println(dto.getId());
     }
 }
