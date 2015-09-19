@@ -75,14 +75,11 @@ public class Schedule {
         }
         OrderDTO dto=gson.fromJson(result,OrderDTO.class);
         System.out.println("返回结果 1："+result1);*/
-        Map<String,String> map = new HashMap<>();
-        map.put("status","shipped");
-        map.put("uuid","2e701f4e-4438-4f62-bd5c-da3d486525b8");
-        com.shangpin.iog.service.OrderService productOrderService=new com.shangpin.iog.product.service.OrderServiceImpl();
-        try {
-            productOrderService.updateOrderStatus(map);
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
+        OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
+        Gson gson =new Gson();
+        Map<String,String> param =new HashMap<>();
+        String result=HttpUtil45.get(url +"1adc7865-7aa0-4afb-b22c-1e99736ab0ad", timeConfig, param, key, "");
+        OrderDTO dto = gson.fromJson(result, OrderDTO.class);
+        System.out.println(dto.getId());
     }
 }

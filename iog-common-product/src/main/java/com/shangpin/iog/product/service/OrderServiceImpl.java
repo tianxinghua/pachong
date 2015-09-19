@@ -58,9 +58,8 @@ public class OrderServiceImpl implements OrderService {
     public void updateOrderStatus(Map<String, String> statusMap) throws ServiceException {
 
         try {
-            updateOrderStatus(statusMap);
-        } catch (ServiceException e) {
-
+            orderDAO.updateOrderStatus(statusMap);
+        } catch (Exception e) {
             logger.error(UPDATE_ERROR);
             e.printStackTrace();
         }

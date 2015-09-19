@@ -67,7 +67,7 @@ public class OrderServiceImpl  {
         }
 
     }
-    public void getStatus(){
+    public void updateStatus(){
         try {
             //获取已提交的产品信息
             List<String> uuidList =  productOrderService.getOrderIdBySupplierIdAndOrderStatus(supplierId, "confirmed");
@@ -79,14 +79,22 @@ public class OrderServiceImpl  {
             String UID ="";
             String result ="";
             for(String uuid:uuidList){
-                result = HttpUtil45.post(url+uuid,param,timeConfig);
-                OrderDTO dto=gson.fromJson(result,OrderDTO.class);
-                if(/*!"confirmed".equals(dto.getStatus())||*/"shipped".equals(dto.getStatus())){
-
+                result=HttpUtil45.get(url +uuid, timeConfig, param, key, "");
+                if(HttpUtil45.errorResult.equals(result)){  //链接异常
+                    loggerError.error("获取采购单商品发货状态链接异常："+uuid);
+                }else {
+                    OrderDTO dto = gson.fromJson(result, OrderDTO.class);
+                    if (/*!"confirmed".equals(dto.getStatus())||*/null!=dto&&"shipped".equals(dto.getStatus())) {
+                        Map<String,String> map = new HashMap<>();
+                        map.put("status",dto.getStatus());
+                        map.put("uuid",dto.getId());
+                        productOrderService.updateOrderStatus(map);
+                    }
                 }
             }
         } catch (ServiceException e) {
             e.printStackTrace();
+            loggerError.error("获得gilt采购单状态更改失败");
         }
     }
 
