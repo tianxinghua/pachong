@@ -58,13 +58,24 @@ public class OrderServiceImpl implements OrderService {
     public void updateOrderStatus(Map<String, String> statusMap) throws ServiceException {
 
         try {
-            updateOrderStatus(statusMap);
-        } catch (ServiceException e) {
-
+            orderDAO.updateOrderStatus(statusMap);
+        } catch (Exception e) {
             logger.error(UPDATE_ERROR);
             e.printStackTrace();
         }
 
 
+    }
+
+    @Override
+    public String getUuIdByspOrderId(String spOrderId) throws ServiceException {
+        String uuid="";
+        try{
+            OrderDTO dto = orderDAO.findBySpOrderId(spOrderId);
+            uuid=dto.getUuId();
+        }catch (Exception e){
+
+        }
+        return uuid;
     }
 }

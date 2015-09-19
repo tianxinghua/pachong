@@ -22,5 +22,5 @@ public interface OrderMapper extends IBaseDao<OrderDTO> {
 
     public int updateOrderStatus(Map<String,String> paraMap);
 
-
+    public OrderDTO findBySpOrderId(@Param("spOrderId")String spOrderId);
 }
