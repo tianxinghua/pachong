@@ -129,7 +129,7 @@ public class OrderServiceImpl  {
     public void transData(String url,String supplierId, Map<String, List<PurchaseOrderDetail>> orderMap) throws ServiceException {
         Gson gson = new Gson();
         OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
-        String orderDetail = "";
+        String orderDetail = "",uuid="";
         for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();){
             Map.Entry<String,List<PurchaseOrderDetail>> entry = itor.next();
             OrderDTO orderDTO = new OrderDTO();
@@ -161,8 +161,9 @@ public class OrderServiceImpl  {
             }
 
             orderDTO.setOrder_items(list);
-            orderDTO.setId(UUID.randomUUID().toString());
-            orderDTO.setStatus("confirmed");
+            uuid=UUID.randomUUID().toString();
+            /*orderDTO.setId(UUID.randomUUID().toString());
+            orderDTO.setStatus("confirmed");*/
 
 
 
@@ -170,7 +171,7 @@ public class OrderServiceImpl  {
 
             //存储
             com.shangpin.iog.dto.OrderDTO spOrder =new com.shangpin.iog.dto.OrderDTO();
-            spOrder.setUuId(orderDTO.getId());
+            spOrder.setUuId(uuid);
             spOrder.setSupplierId(supplierId);
             spOrder.setStatus("NOWAIT");
             spOrder.setSpOrderId(entry.getKey());
@@ -184,7 +185,7 @@ public class OrderServiceImpl  {
                 String param = gson.toJson(orderDTO,new TypeToken<OrderDTO>(){}.getType());
                 logger.info("传入订单内容 ：" + param);
                 System.out.println("传入订单内容 ：" + param);
-                String result =  HttpUtil45.operateData("put", "json", url + orderDTO.getId(), timeConfig, null, param, key, "");
+                String result =  HttpUtil45.operateData("put", "json", url + uuid, timeConfig, null, param, key, "");
                 if(HttpUtil45.errorResult.equals(result)){  //链接异常
                     loggerError.error("采购单："+spOrder.getSpOrderId()+" 链接异常 无法处理");
                 }else{
@@ -210,6 +211,12 @@ public class OrderServiceImpl  {
                         map.put("status",dto.getStatus());
                         map.put("uuid",dto.getId());
                         try {
+                            //
+                            if("placed".equals(dto.getStatus())){
+                                map.put("status","confirmed");
+                            }
+                            String returnStr=HttpUtil45.operateData("patch", "json", url + uuid, timeConfig, map, param, key, "");
+                            logger.info("更新gilt端订单状态："+returnStr);
                             productOrderService.updateOrderStatus(map);
                         } catch (ServiceException e) {
                             loggerError.error("采购单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");
