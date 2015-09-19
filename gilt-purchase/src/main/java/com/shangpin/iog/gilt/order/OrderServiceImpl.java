@@ -271,10 +271,7 @@ public class OrderServiceImpl  {
             StringBuffer buffer = new StringBuffer();
             for (PurchaseOrderDetail purchaseOrderDetail : entry.getValue()) {
                 if (stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)) {
-                    OrderDetailDTO detailDTO = new OrderDetailDTO();
-                    detailDTO.setSku_id(Integer.valueOf(purchaseOrderDetail.SupplierSkuNo));
-                    detailDTO.setQuantity(stockMap.get(purchaseOrderDetail.SupplierSkuNo));
-                    buffer.append("'").append(detailDTO.getSku_id()).append("'").append(":").append(detailDTO.getQuantity()).append(",");
+                    buffer.append("'").append(Integer.valueOf(purchaseOrderDetail.SupplierSkuNo)).append("'").append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
                     stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
                 }
             }
@@ -291,20 +288,20 @@ public class OrderServiceImpl  {
             deleteOrder.setDetail(buffer.toString());
             deleteOrder.setCreateTime(new Date());
             try{
-                logger.info("采购单信息转化订单后信息："+deleteOrder.toString());
-                System.out.println("采购单信息转化订单后信息："+deleteOrder.toString());
+                logger.info("采购单信息转化退单后信息："+deleteOrder.toString());
+                System.out.println("采购单信息转化退单后信息："+deleteOrder.toString());
                 returnOrderService.saveOrder(deleteOrder);
                 Map<String,String>pramap=new HashMap<>();
                 String param ="";
                 pramap.put("status","cancelled");
-                logger.info("传入订单内容 ：" + param);
-                System.out.println("传入订单内容 ：" + param);
+                logger.info("传入退单内容 ：" + param);
+                System.out.println("传入退单内容 ：" + param);
                 String result =  HttpUtil45.operateData("delete", "json", url + deleteOrder.getUuId(), timeConfig, pramap, param, key, "");
                 if(HttpUtil45.errorResult.equals(result)){  //链接异常
                     loggerError.error("采购单："+deleteOrder.getSpOrderId()+" 链接异常 无法处理");
                 }else{
-                    logger.info("订单处理结果 ：" + result);
-                    System.out.println("订单处理结果 ：" + result);
+                    logger.info("退单处理结果 ：" + result);
+                    System.out.println("退单处理结果 ：" + result);
                     //更新      日志存储，数据库更新
 
                     try {
