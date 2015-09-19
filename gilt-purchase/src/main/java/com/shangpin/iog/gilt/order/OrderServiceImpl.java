@@ -60,7 +60,7 @@ public class OrderServiceImpl  {
             List<Integer> status = new ArrayList<>();
             status.add(1);
             Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.geturchaseOrder(supplierId, startDate, endDate, status);
-           //  下单
+            //  下单
             String url = "https://api-sandbox.gilt.com/global/orders/";
             transData( url, supplierId,orderMap);
 
@@ -131,7 +131,7 @@ public class OrderServiceImpl  {
         OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
         String orderDetail = "",uuid="";
         for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();){
-            Map.Entry<String,List<PurchaseOrderDetail>> entry = itor.next();
+            Map.Entry<String, List<PurchaseOrderDetail>> entry = itor.next();
             OrderDTO orderDTO = new OrderDTO();
             Map<String,Integer> stockMap = new HashMap<>();
             //获取同一产品的数量
@@ -139,9 +139,9 @@ public class OrderServiceImpl  {
             for(PurchaseOrderDetail purchaseOrderDetail:entry.getValue()){
 
                 if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
-                    stockMap.put(purchaseOrderDetail.SupplierSkuNo,stockMap.get(purchaseOrderDetail.SupplierSkuNo)+1);
+                    stockMap.put(purchaseOrderDetail.SupplierSkuNo, stockMap.get(purchaseOrderDetail.SupplierSkuNo)+1);
                 }else{
-                    stockMap.put(purchaseOrderDetail.SupplierSkuNo,1);
+                    stockMap.put(purchaseOrderDetail.SupplierSkuNo, 1);
                 }
 
             }
@@ -149,14 +149,14 @@ public class OrderServiceImpl  {
             StringBuffer buffer = new StringBuffer();
             for(PurchaseOrderDetail purchaseOrderDetail:entry.getValue()){
 
-               if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
-                   OrderDetailDTO detailDTO = new OrderDetailDTO();
-                   detailDTO.setSku_id(Integer.valueOf(purchaseOrderDetail.SupplierSkuNo));
-                   detailDTO.setQuantity(stockMap.get(purchaseOrderDetail.SupplierSkuNo));
-                   buffer.append("'").append(detailDTO.getSku_id()).append("'").append(":").append(detailDTO.getQuantity()).append(",");
-                   list.add(detailDTO);
-                   stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
-               }
+                if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
+                    OrderDetailDTO detailDTO = new OrderDetailDTO();
+                    detailDTO.setSku_id(Integer.valueOf(purchaseOrderDetail.SupplierSkuNo));
+                    detailDTO.setQuantity(stockMap.get(purchaseOrderDetail.SupplierSkuNo));
+                    buffer.append("'").append(detailDTO.getSku_id()).append("'").append(":").append(detailDTO.getQuantity()).append(",");
+                    list.add(detailDTO);
+                    stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
+                }
 
             }
 
