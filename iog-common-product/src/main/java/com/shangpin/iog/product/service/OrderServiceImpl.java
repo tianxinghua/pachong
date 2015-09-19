@@ -66,4 +66,16 @@ public class OrderServiceImpl implements OrderService {
 
 
     }
+
+    @Override
+    public String getUuIdByspOrderId(String spOrderId) throws ServiceException {
+        String uuid="";
+        try{
+            OrderDTO dto = orderDAO.findBySpOrderId(spOrderId);
+            uuid=dto.getUuId();
+        }catch (Exception e){
+
+        }
+        return uuid;
+    }
 }

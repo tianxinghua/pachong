@@ -51,6 +51,24 @@
 
 
     </select>
+    <select id="findBySpOrderId"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        SUPPLIER_ID as SUPPLIER_ID,
+        UUID as UUID,
+        SP_ORDER_ID as SP_ORDER_ID,
+        STATUS as STATUS,
+        DETAIL as DETAIL,
+        CREATE_TIME as CREATE_TIME
+
+        from `ORDER`
+        <where>
+            SP_ORDER_ID=#{spOrderId}
+
+        </where>
+
+
+    </select>
     <insert id="save"  parameterType="iog_order" >
         insert into `ORDER` (
         <include refid="id_out_column"></include>
