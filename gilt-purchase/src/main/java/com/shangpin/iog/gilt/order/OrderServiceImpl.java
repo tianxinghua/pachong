@@ -67,7 +67,8 @@ public class OrderServiceImpl  {
         }
 
     }
-    public void getStatus(){
+
+    public void updateStatus(){
         try {
             //获取已提交的产品信息
             List<String> uuidList =  productOrderService.getOrderIdBySupplierIdAndOrderStatus(supplierId, "confirmed");
