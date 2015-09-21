@@ -2,9 +2,11 @@ package com.shangpin.iog.leam.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.leam.dto.LeamDTO;
@@ -32,32 +34,67 @@ public class FetchProduct {
     static String password="PA#=k2xU^ddUc6Jm";
     public void fetchProductAndSave(String url){
         List<LeamDTO>list=getSkus(skuUrl);
-        for(int i =0;i<list.size();i++){
+        for(int i =0;i<list.size();i++) {
             SkuDTO dto = new SkuDTO();
             SpuDTO spuDTO = new SpuDTO();
-            LeamDTO leamDTO=list.get(i);
-            dto.setId(UUIDGenerator.getUUID());
-            dto.setSupplierId(supplierId);
-            dto.setSkuId(leamDTO.getStock_id());
-            dto.setColor(leamDTO.getColor());
-            dto.setSupplierPrice(leamDTO.getPrice());
-            dto.setProductDescription(leamDTO.getDescription());
-            dto.setProductSize(leamDTO.getSize());
-            dto.setStock(leamDTO.getQty());
-            spuDTO.setId(UUIDGenerator.getUUID());
-            spuDTO.setSpuId(leamDTO.getSupplier_sku());
-            spuDTO.setCategoryGender(leamDTO.getNomenclature());
-            spuDTO.setCategoryName(leamDTO.getCategory());
-            spuDTO.setSubCategoryName(leamDTO.getSubcategory());
-            spuDTO.setBrandName(leamDTO.getBrand());
-            spuDTO.setMaterial(leamDTO.getComposition());
-            spuDTO.setProductOrigin(leamDTO.getMadein());
-            spuDTO.setSeasonName(leamDTO.getSeason());
-            try{
-                productFetchService.saveSKU(dto);
-                productFetchService.saveSPU(spuDTO);
-            }catch (Exception e){
-                e.printStackTrace();
+            ProductPictureDTO pictureDTO = new ProductPictureDTO();
+            StringBuffer sb = new StringBuffer();
+            LeamDTO leamDTO = list.get(i);
+            List<String> imageList = new ArrayList<>();
+            imageList = leamDTO.getImages();
+
+            if (imageList!=null&&imageList.size()>0) {
+                dto.setId(UUIDGenerator.getUUID());
+                dto.setSupplierId(supplierId);
+                dto.setSkuId(leamDTO.getStock_id());
+                dto.setSpuId(leamDTO.getSupplier_sku());
+                dto.setColor(leamDTO.getColor());
+                dto.setSupplierPrice(leamDTO.getPrice());
+                dto.setProductDescription(leamDTO.getDescription());
+                dto.setProductSize(leamDTO.getSize());
+                dto.setStock(leamDTO.getQty());
+                spuDTO.setId(UUIDGenerator.getUUID());
+                spuDTO.setSpuId(leamDTO.getSupplier_sku());
+                spuDTO.setSupplierId(supplierId);
+                spuDTO.setCategoryGender(leamDTO.getNomenclature());
+                spuDTO.setCategoryName(leamDTO.getCategory());
+                spuDTO.setSubCategoryName(leamDTO.getSubcategory());
+                spuDTO.setBrandName(leamDTO.getBrand());
+                spuDTO.setMaterial(leamDTO.getComposition());
+                spuDTO.setProductOrigin(leamDTO.getMadein());
+                spuDTO.setSeasonName(leamDTO.getSeason());
+                pictureDTO.setId(UUIDGenerator.getUUID());
+                pictureDTO.setSkuId(leamDTO.getStock_id());
+                pictureDTO.setSupplierId(supplierId);
+                for(String image:imageList){
+                    sb.append(image);
+                }
+                pictureDTO.setPicUrl(sb.toString());
+                try {
+                    productFetchService.saveSPU(spuDTO);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    productFetchService.saveSKU(dto);
+                } catch (ServiceException e) {
+                    try {
+                        if (e.getMessage().equals("数据插入失败键重复")) {
+                            productFetchService.updatePriceAndStock(dto);
+                        } else {
+                            e.printStackTrace();
+                        }
+                    } catch (ServiceException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
+                try{
+                    productFetchService.savePictureForMongo(pictureDTO);
+                }catch (ServiceException e){
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -115,24 +152,24 @@ public class FetchProduct {
         return obj.getToken();
     }
     public static void main(String[] args){
-//        List<LeamDTO>list=getSkus(skuUrl);
-//        for(LeamDTO leamDTO:list){
-//            if(null!=leamDTO.getImage()&&leamDTO.getImage().size()>0) {
-//                 System.out.println("image size " + leamDTO.getSupplier_sku()+" " + leamDTO.getImage().size());
-//            }
-//        }
+        /*List<LeamDTO>list=getSkus(skuUrl);
+        for(LeamDTO leamDTO:list){
+            if(null!=leamDTO.getImage()&&leamDTO.getImage().size()>0) {
+                 System.out.println("image size " + leamDTO.getSupplier_sku()+" " + leamDTO.getImage().size());
+            }
+        }*/
 //        System.out.println("品牌是"+list.get(0).getBrand());
-      String kk =   HttpUtil45.get("https://api.channeladvisor.com/oauth2/authorize?" +
+      /*String kk =   HttpUtil45.get("https://api.channeladvisor.com/oauth2/authorize?" +
                 "client_id=qwmmx12wu7ug39a97uter3dz29jbij3j&response_type=code&scope=orders%20inventory" +
                 "&redirect_uri=https://49.213.13.167:8443/iog/download/code",new OutTimeConfig(1000*60,1000*60,1000*60),null);
-        System.out.println("kk = " + kk);
+        System.out.println("kk = " + kk);*/
 
-        String kkk =   HttpUtil45.get("https://api.channeladvisor.com/oauth2/authorize ?\n" +
+        /*String kkk =   HttpUtil45.get("https://api.channeladvisor.com/oauth2/authorize ?\n" +
                 "    client_id = qwmmx12wu7ug39a97uter3dz29jbij3j &\n" +
                 "    response_type = code &\n" +
                 "    scope = orders inventory &\n" +
                 "    redirect_uri = https://49.213.13.167:8443/iog/download/code",new OutTimeConfig(1000*60,1000*60,1000*60),null);
-        System.out.println("kkk = " + kkk);
+        System.out.println("kkk = " + kkk);*/
     }
 
 }

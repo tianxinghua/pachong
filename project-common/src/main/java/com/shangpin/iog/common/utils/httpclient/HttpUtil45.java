@@ -205,40 +205,32 @@ public class HttpUtil45 {
 		if("get".equals(operatorType.toLowerCase())){
 			String urlStr=paramGetUrl(url, param);
 			request  = new HttpGet(urlStr);
+		}else if("post".equals(operatorType.toLowerCase())){
+
+			HttpPost post=new HttpPost(url);
+			setTransParam(transParaType, param, jsonValue, post);
+
+			return getResult(post, outTimeConf,localContext);
+
+
 		}else if("put".equals(operatorType.toLowerCase())){
 
 			HttpPut putMothod = new HttpPut(url);
-			if("json".equals(transParaType.toLowerCase())){
-				if(StringUtils.isNotBlank(jsonValue)){
-					StringEntity s = null;
-					try {
-						s = new StringEntity(jsonValue);
-						s.setContentEncoding("UTF-8");
-						s.setContentType("application/json");//发送json数据需要设置contentType
-						putMothod.setEntity(s);
-					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
-					}
-				}
-
-			}else{
-				if(param!=null){
-					Iterable<? extends NameValuePair> nvs = map2NameValuePair(param);
-					putMothod.setEntity(new UrlEncodedFormEntity(nvs, Charset
-							.forName("UTF-8")));
-				}
-
-			}
-
-
+			setTransParam(transParaType, param, jsonValue, putMothod);
 
 
 			return getResult(putMothod, outTimeConf,localContext);
 
 
 		}else if("patch".equals(operatorType.toLowerCase())){
-			String urlStr=paramGetUrl(url, param);
-			request  = new HttpPatch(urlStr);
+
+			HttpPatch patch  = new HttpPatch(url);
+
+			setTransParam(transParaType, param, jsonValue, patch);
+
+
+			return getResult(patch, outTimeConf,localContext);
+
 
 		}else if("delete".equals(operatorType.toLowerCase())){
 			String urlStr=paramGetUrl(url, param);
@@ -251,6 +243,32 @@ public class HttpUtil45 {
 		return getResult(request, outTimeConf,localContext);
 
 	}
+
+    //设置传递参数
+	private static void setTransParam(String transParaType, Map<String, String> param, String jsonValue, HttpEntityEnclosingRequestBase method) {
+		if("json".equals(transParaType.toLowerCase())){
+            if(StringUtils.isNotBlank(jsonValue)){
+                StringEntity s = null;
+                try {
+                    s = new StringEntity(jsonValue);
+                    s.setContentEncoding("UTF-8");
+                    s.setContentType("application/json");//发送json数据需要设置contentType
+					method.setEntity(s);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }else{
+            if(param!=null){
+                Iterable<? extends NameValuePair> nvs = map2NameValuePair(param);
+				method.setEntity(new UrlEncodedFormEntity(nvs, Charset
+                        .forName("UTF-8")));
+            }
+
+        }
+	}
+
 
 
 

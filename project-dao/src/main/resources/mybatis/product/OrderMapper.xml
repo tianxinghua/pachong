@@ -11,7 +11,8 @@
         <result column="DETAIL" property="detail"  />
         <result column="STATUS" property="status"/>
         <result column="CREATE_TIME" property="createTime"  />
-
+        <result column="EXC_STATE" property="excState"  />
+        <result column="EXC_DESC" property="excDesc"  />
 	</resultMap>
 
 	<sql id="all_Order_column">
@@ -28,15 +29,60 @@
 		SP_ORDER_ID,
 		DETAIL,
 		STATUS,
-		CREATE_TIME
+		CREATE_TIME,
+		EXC_STATE,
+		EXC_DESC
     </sql>
+    <select id="findBySupplierIdAndStatus"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        SUPPLIER_ID as SUPPLIER_ID,
+        UUID as UUID,
+        SP_ORDER_ID as SP_ORDER_ID,
+        STATUS as STATUS,
+        DETAIL as DETAIL,
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC
+
+
+        from `ORDER`
+        <where>
+          SUPPLIER_ID=#{supplierId}
+            <if test="null!=status">
+                and  STATUS = #{status}
+            </if>
+        </where>
+
+
+    </select>
+    <select id="findBySpOrderId"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        SUPPLIER_ID as SUPPLIER_ID,
+        UUID as UUID,
+        SP_ORDER_ID as SP_ORDER_ID,
+        STATUS as STATUS,
+        DETAIL as DETAIL,
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC
+
+        from `ORDER`
+        <where>
+            SP_ORDER_ID=#{spOrderId}
+
+        </where>
+
+
+    </select>
     <insert id="save"  parameterType="iog_order" >
         insert into `ORDER` (
         <include refid="id_out_column"></include>
         )
         values(
         #{supplierId}, #{uuId}, #{spOrderId},
-        #{detail},#{status},#{createTime}
+        #{detail},#{status},#{createTime},#{excState},#{excDesc}
         )
     </insert>
 

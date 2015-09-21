@@ -34,5 +34,11 @@ public interface OrderService {
      */
     public void updateOrderStatus(Map<String,String> statusMap) throws ServiceException;
 
-
+    /**
+     * 获取UUID 根据采购单ID
+     * @param spOrderId
+     * @return
+     * @throws ServiceException
+     */
+    public String getUuIdByspOrderId(String spOrderId)throws ServiceException;
 }

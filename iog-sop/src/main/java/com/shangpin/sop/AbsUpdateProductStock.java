@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
@@ -30,6 +31,8 @@ public abstract class AbsUpdateProductStock {
     //  true :已供应商提供的SKU为主 不更新未提供的库存
     //  false:已尚品的SKU为主 未查到的一律赋值为0
     public static boolean supplierSkuIdMain=false;
+
+	public  static boolean ORDER=false;
 	
 	/**
 	 * 抓取供应商库存数据 
@@ -177,7 +180,7 @@ public abstract class AbsUpdateProductStock {
 			Map<String, String> localAndIceSkuId,
 			Collection<String> skuNoSet) throws ServiceException, Exception
 			 {
-		Map<String, Integer> iceStock = grab4Icestock(skuNoSet,localAndIceSkuId);
+		Map<String, Integer> iceStock = grab4Icestock(host,app_key,app_secret,skuNoSet,localAndIceSkuId);
 		int failCount = updateIceStock(host,app_key,app_secret, iceStock);
 		return failCount;
 	}
@@ -297,14 +300,36 @@ public abstract class AbsUpdateProductStock {
 	 * @param localAndIceSkuId 供应商sku编号与icesku编号的关系
 	 * @return 供应商sku对应的icesku编号的库存，key是ice的sku编号，值是库存
 	 */
-	private Map<String, Integer> grab4Icestock(Collection<String> skuNos,Map<String, String> localAndIceSkuId) {
+	private Map<String, Integer> grab4Icestock(String host,String app_key,
+											   String app_secret,Collection<String> skuNos,Map<String, String> localAndIceSkuId) {
 		Map<String, Integer> iceStock=new HashMap<>();
+
+		Map<String,Integer>  sopPurchaseMap = new HashMap<>();
+		try {
+			if(!ORDER)	sopPurchaseMap = this.getPurchaseOrder(host,app_key,app_secret);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		try {
 			Map<String, Integer> supplierStock=grabStock(skuNos);
 
 
                 for (String skuNo : skuNos) {
                     Integer stock=supplierStock.get(skuNo);
+
+					if(!ORDER){
+						if(sopPurchaseMap.containsKey(skuNo)){
+							if(stock==null)
+								stock=0;
+							logger.error("采购单："+skuNo +" ; 数量 : " + sopPurchaseMap.get(skuNo));
+							stock =  stock - sopPurchaseMap.get(skuNo);
+							logger.error("最终库存 ：" + logger);
+							if(stock<0) stock=0;
+
+						}
+					}
+
                     String iceSku=localAndIceSkuId.get(skuNo);
                     if(this.supplierSkuIdMain){  // 已供应商提供的SKU为主 不更新未提供的库存
                         if(null!=stock){
@@ -350,7 +375,7 @@ public abstract class AbsUpdateProductStock {
 		}
 		@Override
 		public void run() {
-			Map<String, Integer> iceStock = grab4Icestock(skuNos,localAndIceSkuId);
+			Map<String, Integer> iceStock = grab4Icestock(host,app_key,app_secret,skuNos,localAndIceSkuId);
 			try {
 				logger.warn(Thread.currentThread().getName()+"ice更新处理开始，数："+iceStock.size());
 				int failCnt = updateIceStock(host,app_key,app_secret, iceStock);
@@ -362,6 +387,102 @@ public abstract class AbsUpdateProductStock {
 		}
 		
 	}
+
+
+
+	public static Date getAppointDayFromSpecifiedDay(Date today,int num,String type){
+		Calendar c   =   Calendar.getInstance();
+		c.setTime(today);
+
+		if("Y".equals(type)){
+			c.add(Calendar.YEAR, num);
+		}else if("M".equals(type)){
+			c.add(Calendar.MONTH, num);
+		}else if(null==type||"".equals(type)||"D".equals(type))
+			c.add(Calendar.DAY_OF_YEAR, num);
+		else if("H".equals(type))
+			c.add(Calendar.HOUR_OF_DAY,num);
+		else if("m".equals(type))
+			c.add(Calendar.MINUTE,num);
+		else if("S".equals(type))
+			c.add(Calendar.SECOND,num);
+		return c.getTime();
+	}
+
+	/**
+	 * 获取采购单
+	 * @param host
+	 * @param app_key
+	 * @param app_secret
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String,Integer> getPurchaseOrder(String host,String app_key,
+												String app_secret) throws Exception{
+		int pageIndex=1,pageSize=20;
+		boolean hasNext=true;
+		logger.warn("获取SOP采购单 开始");
+		Set<String> skuIds = new HashSet<String>();
+		Map<String,Integer>  purchaseOrderMap = new HashMap<>();
+		String supplierSkuNo = "";
+		String startTime="" , endTime="";
+
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		Date endDate = new Date();
+		endTime = format.format(endDate);
+
+		startTime = format.format(this.getAppointDayFromSpecifiedDay(endDate,-2,"M"));
+
+		List<Integer> detailStatus = new ArrayList<>();
+		ApiResponse<PurchaseOrderDetailPage> response = null;
+		while(hasNext){
+			List<PurchaseOrderDetail> orderDetails = null;
+			try {
+				PurchaseOrderQueryDto queryDto = new PurchaseOrderQueryDto();
+
+				queryDto.setUpdateTimeBegin(startTime);
+				queryDto.setUpdateTimeEnd(endTime);
+				queryDto.setPageIndex(pageIndex);
+				queryDto.setPageSize(pageSize);
+				detailStatus.add(1);
+				queryDto.setDetailStatus(detailStatus);
+
+
+				response =  SpClient.FindPOrderByPage(host, app_key, app_secret, new Date(), queryDto);
+
+				PurchaseOrderDetailPage orderDetailPage = response.getResponse();
+
+				orderDetails=orderDetailPage.getPurchaseOrderDetails();
+
+				for (PurchaseOrderDetail orderDetail : orderDetails) {
+					supplierSkuNo  = orderDetail.getSupplierSkuNo();
+					if(purchaseOrderMap.containsKey(supplierSkuNo)){
+
+						purchaseOrderMap.put(supplierSkuNo, purchaseOrderMap.get(supplierSkuNo)+ 1);
+						;
+					}else{
+
+						purchaseOrderMap.put(supplierSkuNo,1);
+					}
+
+
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			pageIndex++;
+			hasNext=(pageSize==orderDetails.size());
+
+		}
+
+		logger.warn("获取SOP采购单 结束");
+
+		return purchaseOrderMap;
+
+	}
+
 	
 	
 	/**
