@@ -3,6 +3,8 @@ package com.shangpin.iog.facade.dubbo.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 /**
  * Created by loyalty on 15/9/15.
  * 产品信息
@@ -10,7 +12,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class ProductUpdateDTO {
+public class ProductUpdateDTO implements Serializable {
 
 
 

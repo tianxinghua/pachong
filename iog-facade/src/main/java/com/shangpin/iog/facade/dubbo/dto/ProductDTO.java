@@ -3,6 +3,7 @@ package com.shangpin.iog.facade.dubbo.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -12,7 +13,7 @@ import java.util.Date;
  */
 @Setter
 @Getter
-public class ProductDTO {
+public class ProductDTO implements Serializable{
 
     private String supplierId;//供货商门户编号
 
