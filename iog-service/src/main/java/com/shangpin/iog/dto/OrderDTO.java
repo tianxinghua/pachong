@@ -20,7 +20,8 @@ public class OrderDTO {
     private String status;//订单状态
     private Date createTime;
     private Date updateTime;
-
+    private String excState;
+    private String excDesc;
     public BigInteger getId() {
         return id;
     }
@@ -83,6 +84,22 @@ public class OrderDTO {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getExcState() {
+        return excState;
+    }
+
+    public void setExcState(String excState) {
+        this.excState = excState;
+    }
+
+    public String getExcDesc() {
+        return excDesc;
+    }
+
+    public void setExcDesc(String excDesc) {
+        this.excDesc = excDesc;
     }
 
     @Override
