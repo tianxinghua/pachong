@@ -1,17 +1,12 @@
 package com.shangpin.iog.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.math.BigInteger;
 import java.util.Date;
 
 /**
- * Created by huxia on 2015/9/10.
+ * Created by sunny on 2015/9/19.
  */
-/*@Getter
-@Setter*/
-public class OrderDTO {
+public class ReturnOrderDTO {
     private BigInteger id;
     private String supplierId;
     private String uuId;  //和供货商公用的订单唯一标识
@@ -19,7 +14,6 @@ public class OrderDTO {
     private String detail;//
     private String status;//订单状态
     private Date createTime;
-    private Date updateTime;
     private String excState;
     private String excDesc;
     public BigInteger getId() {
@@ -78,14 +72,6 @@ public class OrderDTO {
         this.createTime = createTime;
     }
 
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
     public String getExcState() {
         return excState;
     }
@@ -100,19 +86,5 @@ public class OrderDTO {
 
     public void setExcDesc(String excDesc) {
         this.excDesc = excDesc;
-    }
-
-    @Override
-    public String toString() {
-        return "OrderDTO{" +
-                "id=" + id +
-                ", supplierId='" + supplierId + '\'' +
-                ", uuId='" + uuId + '\'' +
-                ", spOrderId='" + spOrderId + '\'' +
-                ", detail='" + detail + '\'' +
-                ", status='" + status + '\'' +
-                ", createTime=" + createTime +
-
-                '}';
     }
 }

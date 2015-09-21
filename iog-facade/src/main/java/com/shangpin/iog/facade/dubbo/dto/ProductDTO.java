@@ -70,13 +70,13 @@ public class ProductDTO {
     @Override
     public String toString() {
         return "ProductDTO{" +
-                "spuId='" + spuId + '\'' +
-                ", skuId='" + skuId + '\'' +
-                ", categoryGender='" + categoryGender + '\'' +
-                ", categoryName='" + categoryName + '\'' +
-                ", subCategoryName='" + subCategoryName + '\'' +
+                "spuId='" + null==spuId?"":spuId + '\'' +
+                ", skuId='" + null==skuId?"":skuId + '\'' +
+                ", categoryGender='" + null==categoryGender?"":categoryGender + '\'' +
+                ", categoryName='" + null==categoryName?"":categoryName + '\'' +
+                ", subCategoryName='" + null==subCategoryName?"":subCategoryName + '\'' +
 
-                ", seasonName='" + seasonName + '\'' +
+                ", seasonName='" + null==seasonName?"":seasonName + '\'' +
                 ", brandName='" + brandName + '\'' +
                 ", material='" + material + '\'' +
                 ", productOrigin='" + productOrigin + '\'' +

@@ -29,7 +29,11 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
+task copyResourcesToClasses( type: Copy ) {
+    into "$buildDir/classes/main"
+    from "$buildDir/resources/main"
+}
 
 jar{
-    dependsOn copyResources
+    dependsOn copyResources  , copyResourcesToClasses
 }
