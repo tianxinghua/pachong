@@ -12,7 +12,7 @@ public class HTTPClient {
         this.URL = URL;
     }
     /**
-     * 建立链接获取字符串返回值
+     * create conection and get json
      */
     public String fetchProductJson(){
         String json = null;

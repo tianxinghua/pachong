@@ -39,7 +39,9 @@ public class FetchProduct {
     public void fetchProductAndSave(){
 
         //获取产品信息
+        logMongo.info("get product starting....");
         String json = new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
+        logMongo.info("get product over");
         //解析产品信息
         Products products = null;
         try {
@@ -49,7 +51,9 @@ public class FetchProduct {
         }
         System.out.println(products.getProducts().size());
         //映射数据并保存
+        logMongo.info("save product into DB begin");
         messMappingAndSave(products);
+        logMongo.info("save product into DB success");
 
         //System.out.println(json);
     }
