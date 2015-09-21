@@ -11,7 +11,8 @@
         <result column="DETAIL" property="detail"  />
         <result column="STATUS" property="status"/>
         <result column="CREATE_TIME" property="createTime"  />
-
+        <result column="EXC_STATE" property="excState"  />
+        <result column="EXC_DESC" property="excDesc"  />
 	</resultMap>
 
 	<sql id="all_Order_column">
@@ -28,7 +29,9 @@
 		SP_ORDER_ID,
 		DETAIL,
 		STATUS,
-		CREATE_TIME
+		CREATE_TIME,
+		EXC_STATE,
+		EXC_DESC
     </sql>
     <select id="findBySupplierIdAndStatus"  resultMap="OrderResultMap">
         select
@@ -38,7 +41,9 @@
         SP_ORDER_ID as SP_ORDER_ID,
         STATUS as STATUS,
         DETAIL as DETAIL,
-        CREATE_TIME as CREATE_TIME
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC
 
 
         from `ORDER`
@@ -59,7 +64,9 @@
         SP_ORDER_ID as SP_ORDER_ID,
         STATUS as STATUS,
         DETAIL as DETAIL,
-        CREATE_TIME as CREATE_TIME
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC
 
         from `ORDER`
         <where>
@@ -75,7 +82,7 @@
         )
         values(
         #{supplierId}, #{uuId}, #{spOrderId},
-        #{detail},#{status},#{createTime}
+        #{detail},#{status},#{createTime},#{excState},#{excDesc}
         )
     </insert>
 
