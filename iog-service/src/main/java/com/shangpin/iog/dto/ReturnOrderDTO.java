@@ -14,7 +14,8 @@ public class ReturnOrderDTO {
     private String detail;//
     private String status;//订单状态
     private Date createTime;
-
+    private String excState;
+    private String excDesc;
     public BigInteger getId() {
         return id;
     }
@@ -69,5 +70,21 @@ public class ReturnOrderDTO {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getExcState() {
+        return excState;
+    }
+
+    public void setExcState(String excState) {
+        this.excState = excState;
+    }
+
+    public String getExcDesc() {
+        return excDesc;
+    }
+
+    public void setExcDesc(String excDesc) {
+        this.excDesc = excDesc;
     }
 }

@@ -30,7 +30,7 @@ dependencies {
 }
 
 task copyResourcesToClasses( type: Copy ) {
-    into "$buildDir/classes"
+    into "$buildDir/classes/main"
     from "$buildDir/resources/main"
 }
 

@@ -11,7 +11,8 @@
         <result column="DETAIL" property="detail"  />
         <result column="STATUS" property="status"/>
         <result column="CREATE_TIME" property="createTime"  />
-
+        <result column="EXC_STATE" property="excState"  />
+        <result column="EXC_DESC" property="excDesc"  />
     </resultMap>
     <sql id="id_out_column">
         SUPPLIER_ID,
@@ -19,7 +20,9 @@
         SP_ORDER_ID,
         DETAIL,
         STATUS,
-        CREATE_TIME
+        CREATE_TIME,
+        EXC_STATE,
+		EXC_DESC
     </sql>
     <insert id="save"  parameterType="iog_order" >
         insert into RETURN_ORDER (
@@ -27,7 +30,7 @@
         )
         values(
         #{supplierId}, #{uuId}, #{spOrderId},
-        #{detail},#{status},#{createTime}
+        #{detail},#{status},#{createTime},#{excState},#{excDesc}
         )
     </insert>
     <update id="updateReturnOrderStatus" parameterType="Map" >
