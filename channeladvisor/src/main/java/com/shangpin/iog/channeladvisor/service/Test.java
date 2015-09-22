@@ -31,16 +31,16 @@ public class Test {
 //        client.ping();
 
         Map<String,String> map = new HashMap<>();
-        map.put("client_id","qwmmx12wu7ug39a97uter3dz29jbij3j");
-        map.put("grant_type","soap");
-        map.put("scope","orders inventory");
-        map.put("developer_key","537c99a8-e3d6-4788-9296-029420540832");
-        map.put("password","ChannelAdvisor15");
-        map.put("account_id","12018111");
+//        map.put("client_id","qwmmx12wu7ug39a97uter3dz29jbij3j");
+//        map.put("grant_type","soap");
+//        map.put("scope","orders inventory");
+//        map.put("developer_key","537c99a8-e3d6-4788-9296-029420540832");
+//        map.put("password","ChannelAdvisor15");
+//        map.put("account_id","12018111");
 
-//        map.put("grant_type","authorization_code");
-//        map.put("code","vMcF1gsaHocfTOdPLyNL-TWK4oM1a_5-YvAey40IlFw");//vMcF1gsaHocfTOdPLyNL-TWK4oM1a_5-YvAey40IlFw
-//        map.put("redirect_uri","https://49.213.13.167:8443/iog/download/code");
+        map.put("grant_type","authorization_code");
+        map.put("code","vMcF1gsaHocfTOdPLyNL-TWK4oM1a_5-YvAey40IlFw");//vMcF1gsaHocfTOdPLyNL-TWK4oM1a_5-YvAey40IlFw
+        map.put("redirect_uri","https://49.213.13.167:8443/iog/download/code");
 
 
         String s =  (new sun.misc.BASE64Encoder()).encode( "qwmmx12wu7ug39a97uter3dz29jbij3j:TqMSdN6-LkCFA0n7g7DWuQ".getBytes() );

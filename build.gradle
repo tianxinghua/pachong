@@ -81,6 +81,12 @@ subprojects {
         from "$buildDir/resources/main"
     }
 
+    task copyResourcesToClasses( type: Copy ) {
+        into "$buildDir/classes/main"
+        from "$buildDir/resources/main"
+    }
+
+
     dependencies {
         compile(
                 "org.projectlombok:lombok:1.14.8",
