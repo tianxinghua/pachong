@@ -28,7 +28,7 @@ public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
     /**
-     * Ö÷´¦Àí
+     * fetch product and save into db
      */
     public void fetchProductAndSave() {
         //get tony return date
@@ -39,7 +39,7 @@ public class FetchProduct {
         messMappingAndSave(array);
     }
     /**
-     * Ó³ÉäÊý¾Ý²¢±£´æ
+     * message mapping and save into DB
      */
     private void messMappingAndSave(Items[] array) {
         //get tony Category data
@@ -51,8 +51,13 @@ public class FetchProduct {
                 spu.setSupplierId(Constant.SUPP_ID_TONY);
                 spu.setSpuId(item.getCode());
                 spu.setBrandName(item.getBrand());
+                String categoryId = StringUtil.getCategoryID(item.getCat_id().toString());
+                System.out.println("================================");
+                System.out.println(item.getCat_id().toString());
+                System.out.println(categoryId);
                 spu.setCategoryId(item.getCat_id().toString());
-                spu.setCategoryName(StringUtil.getCategoryNameByID(item.getCat_id().toString(),categoriesJson));
+                spu.setCategoryName(StringUtil.getCategoryNameByID(categoryId,categoriesJson));
+                System.out.println(spu.getCategoryName());
                 spu.setSpuName(item.getTitle_en());
                 spu.setSeasonId(item.getSeason());
                 spu.setMaterial(item.getMaterial_en());
@@ -97,8 +102,8 @@ public class FetchProduct {
 
             } catch (ServiceException e) {
                 try {
-                    if(e.getMessage().equals("Êý¾Ý²åÈëÊ§°Ü¼üÖØ¸´")){
-                        //¸üÐÂ¼Û¸ñºÍ¿â´æ
+                    if(e.getMessage().equals("ï¿½ï¿½Ý²ï¿½ï¿½ï¿½Ê§ï¿½Ü¼ï¿½ï¿½Ø¸ï¿½")){
+                        //update
                         productFetchService.updatePriceAndStock(sku);
                     } else{
                         e.printStackTrace();
