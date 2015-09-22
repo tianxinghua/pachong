@@ -78,6 +78,7 @@ public class FetchProduct {
                 sku.setStock(item.getQty());
                 sku.setBarcode(item.getBarcode());
                 sku.setProductCode(item.getCode());
+                sku.setSaleCurrency(item.getCur());
                 productFetchService.saveSKU(sku);
 
                 if(StringUtils.isNotBlank(item.getImages()[0])){
