@@ -18,7 +18,7 @@ public class MyJsonUtil {
         } catch (ServiceException e) {
             e.printStackTrace();
         }
-        System.out.println(json);
+       // System.out.println(json);
         return  json.substring(json.indexOf("["), json.length() - 2).replaceAll("\\$", "");
     }
     /**
@@ -36,7 +36,7 @@ public class MyJsonUtil {
         return json;
     }
     public static void main(String[] args){
-        //MyJsonUtil.getTonyJson();
-        MyJsonUtil.getTonyCategoriesJson();
+        MyJsonUtil.getTonyJson();
+        //MyJsonUtil.getTonyCategoriesJson();
     }
 }
