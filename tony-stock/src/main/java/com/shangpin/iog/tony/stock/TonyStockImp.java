@@ -3,9 +3,7 @@ package com.shangpin.iog.tony.stock;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.onsite.base.utils.MyJsonUtil;
-import com.shangpin.iog.tessabit.stock.common.Constant;
-import com.shangpin.iog.tessabit.stock.common.FtpUtil;
-import com.shangpin.iog.tessabit.stock.common.StringUtil;
+import com.shangpin.iog.onsite.base.utils.StringUtil;
 import org.apache.log4j.Logger;
 
 import java.util.*;
@@ -26,7 +24,7 @@ public class TonyStockImp extends AbsUpdateProductStock{
         //为供应商循环赋值
         while (iterator.hasNext()){
             itemId = iterator.next();
-            returnMap.put(itemId, StringUtil.getTonyByQty(json,itemId,itemId,Constant.ITEM_LENTH));
+            returnMap.put(itemId, StringUtil.getTonyQty(itemId, json));
         }
         return returnMap;
     }
@@ -40,10 +38,10 @@ public class TonyStockImp extends AbsUpdateProductStock{
         System.exit(0);*/
 
         List<String> skuNo = new ArrayList<>();
-        skuNo.add("1986242872_10");
+        skuNo.add("M4004574_001-40");
         Map returnMap = impl.grabStock(skuNo);
         System.out.println("test return size is "+returnMap.keySet().size());
-        System.out.println("test return value is "+returnMap.get("1986242872_10"));
+        System.out.println("test return value is "+returnMap.get("M4004574_001-40"));
 
     }
 }
