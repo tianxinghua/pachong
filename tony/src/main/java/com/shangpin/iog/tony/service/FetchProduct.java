@@ -52,12 +52,8 @@ public class FetchProduct {
                 spu.setSpuId(item.getCode());
                 spu.setBrandName(item.getBrand());
                 String categoryId = StringUtil.getCategoryID(item.getCat_id().toString());
-                System.out.println("================================");
-                System.out.println(item.getCat_id().toString());
-                System.out.println(categoryId);
-                spu.setCategoryId(item.getCat_id().toString());
+                spu.setCategoryId(categoryId);
                 spu.setCategoryName(StringUtil.getCategoryNameByID(categoryId,categoriesJson));
-                System.out.println(spu.getCategoryName());
                 spu.setSpuName(item.getTitle_en());
                 spu.setSeasonId(item.getSeason());
                 spu.setMaterial(item.getMaterial_en());
