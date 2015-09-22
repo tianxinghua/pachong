@@ -38,7 +38,7 @@ public class FetchProduct {
     public void fetchProductAndSave() {
         //拉取FTP文件
         logger.info("downLoad ftpFile begin......");
-        //FtpUtil.downLoad();
+        FtpUtil.downLoad();
         logger.info("downLoad ftpFile end......");
 
         //入库处理
