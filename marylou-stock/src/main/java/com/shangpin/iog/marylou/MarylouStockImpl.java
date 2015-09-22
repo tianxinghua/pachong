@@ -17,18 +17,18 @@ public class MarylouStockImpl  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        //»ñÈ¡²úÆ·ĞÅÏ¢
+        //ï¿½ï¿½È¡ï¿½ï¿½Æ·ï¿½ï¿½Ï¢
         String json = new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
-        //·µ»ØĞèÒª¸üĞÂµÄĞÅÏ¢
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½Ï¢
         return MapUtil.grabStock(skuNo,json);
     }
 
     public static void main(String[] args) throws Exception {
         MarylouStockImpl impl = new MarylouStockImpl();
 /*        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("TESSABIT¸üĞÂÊı¾İ¿â¿ªÊ¼");
+        logger.info("TESSABITæ›´æ–°æ•°æ®åº“å¼€å§‹");
         impl.updateProductStock("2015091501331", "2015-01-01 00:00", format.format(new Date()));
-        logger.info("TESSABIT¸üĞÂÊı¾İ¿â½áÊø");
+        logger.info("TESSABITæ›´æ–°æ•°æ®åº“ç»“æŸ");
         System.exit(0);*/
 
         List<String> skuNo = new ArrayList<>();
