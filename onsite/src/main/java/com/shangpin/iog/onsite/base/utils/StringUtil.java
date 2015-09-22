@@ -27,9 +27,17 @@ public class StringUtil {
     /**
      *get tony Category Name by id
      */
-    public static String getCategoryNameByID(String categoryId,String categoryJson){
-        return  categoryJson.substring(categoryJson.indexOf(categoryId),
-                categoryJson.indexOf(categoryId)+50).split(",")[1].replaceAll("\"","").replaceAll("name:","");
+    public static String getCategoryID(String categoryId){
+        return categoryId.substring(4,28);
+    }
+        /**
+         *get tony Category Name by id
+         */
+        public static String getCategoryNameByID(String categoryId,String categoryJson){
+        String str = categoryJson.substring(categoryJson.indexOf(categoryId),categoryJson.indexOf(categoryId)+50);
+        System.out.println("==========str==========");
+        System.out.println(str);
+        return  str .split(",")[1].replaceAll("\"","").replaceAll("name:","");
     }
 
     /**
