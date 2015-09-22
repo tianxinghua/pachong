@@ -44,14 +44,14 @@ public class FetchProduct {
             SpuDTO spu = new SpuDTO();
             try {
                 spu.setId(UUIDGenerator.getUUID());
-                spu.setSupplierId("");
-                spu.setSpuId(item.getAge());
-                spu.setBrandName(item.getAge());
+                spu.setSupplierId("555555");
+                spu.setSpuId(item.getCode());
+                spu.setBrandName(item.getBrand());
                 spu.setCategoryName(item.getAge());
-                spu.setSpuName(item.getAge());
-                spu.setSeasonId(item.getAge());
-                spu.setMaterial(item.getAge());
-                spu.setCategoryGender(item.getAge());
+                spu.setSpuName(item.getTitle_en());
+                spu.setSeasonId(item.getSeason());
+                spu.setMaterial(item.getMaterial_en());
+                spu.setCategoryGender(item.getSex());
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
                 e.printStackTrace();
@@ -63,22 +63,20 @@ public class FetchProduct {
                 sku.setSupplierId("");
 
                 sku.setSpuId(item.getAge());
-                sku.setSkuId("");
-                sku.setProductSize(item.getAge());
-                sku.setMarketPrice(item.getAge());
-                sku.setSalePrice(item.getAge());
-                sku.setSupplierPrice(item.getAge());
+                sku.setSkuId(item.getSku());
+                sku.setProductSize(item.getSize());
+                sku.setMarketPrice(item.getStock_price());
+                //sku.setSalePrice(item.getPurchase_price());
+                //sku.setSupplierPrice(item.getAge());
                 sku.setColor(item.getColor());
-                sku.setProductDescription(item.getAge());
-                sku.setStock(item.getAge());
+                sku.setProductDescription(item.getDesc());
+                sku.setStock(item.getQty());
                 sku.setBarcode(item.getBarcode());
-                sku.setProductCode(item.getAge());
+                sku.setProductCode(item.getCode());
                 productFetchService.saveSKU(sku);
 
-                if(StringUtils.isNotBlank(item.getRemote_images()[0])){
-                    String[] picArray = item.getRemote_images();
-
-//                            List<String> picUrlList = Arrays.asList(picArray);
+                if(StringUtils.isNotBlank(item.getImages()[0])){
+                    String[] picArray = item.getImages();
                     for(String picUrl :picArray){
                         ProductPictureDTO dto  = new ProductPictureDTO();
                         dto.setPicUrl(picUrl);
@@ -86,7 +84,6 @@ public class FetchProduct {
                         dto.setId(UUIDGenerator.getUUID());
                         dto.setSkuId("");
                         try {
-//                                    productFetchService.savePicture(dto);
                             productFetchService.savePictureForMongo(dto);
                         } catch (ServiceException e) {
                             e.printStackTrace();

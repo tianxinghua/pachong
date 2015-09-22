@@ -12,7 +12,6 @@ public class Items {
     private String title;
     private String brand;
     private String size;
-
     private String barcode;
     private String code;
     private String color_code;
@@ -28,11 +27,45 @@ public class Items {
     private String material_en;
     private String care;
     private String care_en;
-    private String[] remote_images;
     private Object cat_id;
     private String desc;
     private String cur;
-    private Object ap;
+    private String season;
+    private String qty;
+    private String stock_price;
+    private String[] images;
+
+    public String getSeason() {
+        return season;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
+    }
+
+    public String getQty() {
+        return qty;
+    }
+
+    public void setQty(String qty) {
+        this.qty = qty;
+    }
+
+    public String getStock_price() {
+        return stock_price;
+    }
+
+    public void setStock_price(String stock_price) {
+        this.stock_price = stock_price;
+    }
+
+    public String[] getImages() {
+        return images;
+    }
+
+    public void setImages(String[] images) {
+        this.images = images;
+    }
 
     public Object get_id() {
         return _id;
@@ -194,14 +227,6 @@ public class Items {
         this.care_en = care_en;
     }
 
-    public String[] getRemote_images() {
-        return remote_images;
-    }
-
-    public void setRemote_images(String[] remote_images) {
-        this.remote_images = remote_images;
-    }
-
     public Object getCat_id() {
         return cat_id;
     }
@@ -224,14 +249,6 @@ public class Items {
 
     public void setCur(String cur) {
         this.cur = cur;
-    }
-
-    public Object getAp() {
-        return ap;
-    }
-
-    public void setAp(Object ap) {
-        this.ap = ap;
     }
 
 }
