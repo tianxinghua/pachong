@@ -6,8 +6,15 @@ import lombok.Setter;
 /**
  * Created by loyalty on 15/9/19.
  */
-@Getter
-@Setter
+
 public class SkuParam extends CommonParam {
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
     String sku;
 }

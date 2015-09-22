@@ -6,8 +6,15 @@ import lombok.Setter;
 /**
  * Created by loyalty on 15/9/19.
  */
-@Getter
-@Setter
+
 public class ItemListParm extends CommonParam {
+    public String getAp() {
+        return ap;
+    }
+
+    public void setAp(String ap) {
+        this.ap = ap;
+    }
+
     String ap;
 }

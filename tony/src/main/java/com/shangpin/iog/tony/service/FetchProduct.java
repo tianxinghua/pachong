@@ -1,7 +1,7 @@
 package com.shangpin.iog.tony.service;
 
 /**
- * Created by Administrator on 2015/9/21.
+ * Created by wang on 2015/9/21.
  */
 
 import com.google.gson.Gson;
@@ -11,7 +11,9 @@ import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.iog.onsite.base.constance.Constant;
 import com.shangpin.iog.onsite.base.utils.MyJsonUtil;
+import com.shangpin.iog.onsite.base.utils.StringUtil;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.tony.dto.Items;
 import org.apache.commons.lang.StringUtils;
@@ -40,14 +42,17 @@ public class FetchProduct {
      * 映射数据并保存
      */
     private void messMappingAndSave(Items[] array) {
+        //get tony Category data
+        String categoriesJson = MyJsonUtil.getTonyCategoriesJson();
         for(Items item:array){
             SpuDTO spu = new SpuDTO();
             try {
                 spu.setId(UUIDGenerator.getUUID());
-                spu.setSupplierId("555555");
+                spu.setSupplierId(Constant.SUPP_ID_TONY);
                 spu.setSpuId(item.getCode());
                 spu.setBrandName(item.getBrand());
-                spu.setCategoryName(item.getAge());
+                spu.setCategoryId(item.getCat_id().toString());
+                spu.setCategoryName(StringUtil.getCategoryNameByID(item.getCat_id().toString(),categoriesJson));
                 spu.setSpuName(item.getTitle_en());
                 spu.setSeasonId(item.getSeason());
                 spu.setMaterial(item.getMaterial_en());
@@ -60,9 +65,8 @@ public class FetchProduct {
             SkuDTO sku  = new SkuDTO();
             try {
                 sku.setId(UUIDGenerator.getUUID());
-                sku.setSupplierId("");
-
-                sku.setSpuId(item.getAge());
+                sku.setSupplierId(Constant.SUPP_ID_TONY);
+                sku.setSpuId(item.getCode());
                 sku.setSkuId(item.getSku());
                 sku.setProductSize(item.getSize());
                 sku.setMarketPrice(item.getStock_price());
@@ -80,9 +84,9 @@ public class FetchProduct {
                     for(String picUrl :picArray){
                         ProductPictureDTO dto  = new ProductPictureDTO();
                         dto.setPicUrl(picUrl);
-                        dto.setSupplierId("");
+                        dto.setSupplierId(Constant.SUPP_ID_TONY);
                         dto.setId(UUIDGenerator.getUUID());
-                        dto.setSkuId("");
+                        dto.setSkuId(item.getSku());
                         try {
                             productFetchService.savePictureForMongo(dto);
                         } catch (ServiceException e) {

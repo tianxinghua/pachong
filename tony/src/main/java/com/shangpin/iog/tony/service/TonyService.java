@@ -77,8 +77,7 @@ public class TonyService {
         Items items = array[0];
 
         System.out.println("age "+items.getAge());
-        System.out.println("image "+items.getRemote_images().length);
-        System.out.println("Ap "+items.getAp().toString());
+        System.out.println("image "+items.getImages().length);
         System.out.println("cat-id " + items.getCat_id().toString());
         System.out.println("size " + items.get_id().toString());
 
