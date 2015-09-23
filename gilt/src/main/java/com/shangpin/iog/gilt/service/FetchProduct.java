@@ -94,7 +94,7 @@ public class FetchProduct {
                     e.printStackTrace();
                 }
                 offset=offset+50;
-             }while (saleInventoryList.size()==50);
+             }while (null!=saleInventoryList&&saleInventoryList.size()==50);
 
 
 
@@ -252,7 +252,7 @@ public class FetchProduct {
 
         try {
 
-            OutTimeConfig outTimeConf = new OutTimeConfig(1000*5,1000*5,1000*5);
+            OutTimeConfig outTimeConf = new OutTimeConfig(1000*20,1000*20,1000*20);
 
             result=HttpUtil45.get(saleUrl, outTimeConf, null,key,"");
             logger.info("get result = " + result);

@@ -85,8 +85,6 @@ public class HttpUtil45 {
 		init();
 	}
 	public static String errorResult = "{\"error\":\"发生异常错误\"}";
-
-
 	/**
 	 * 请求需要认证的url
 	 * @param url url
@@ -145,6 +143,29 @@ public class HttpUtil45 {
 	public static String post(String url,OutTimeConfig outTimeConf){
 		return post(url,null,outTimeConf,getPlainContext(url));
 	}
+
+
+	/**
+	 * get请求
+	 * @param url 请求url
+	 * @param outTimeConf 请求超时时间设置 nullable
+	 * @param param 请求参数 nullable
+	 * @param headMap  header 请求参数 设置header
+	 * @param username 认证用户 如果没有 请不要填写
+	 * @param password 认证密码
+	 * @return 请求结果，若由异常为null
+	 * @see OutTimeConfig 超时设置
+	 */
+	public static String get(String url,OutTimeConfig outTimeConf,Map<String,String> param,Map<String,String> headMap ,String username,String password){
+		HttpClientContext localContext =null;
+		if(StringUtils.isNotBlank(username)){
+			localContext = getAuthContext(url, username, password);
+		}else{
+			localContext = getPlainContext(url);
+		}
+
+		return getResult(url, outTimeConf, param,headMap,localContext);
+	}
 	/**
 	 * 带参数post请求
 	 * @param url 请求url
@@ -180,7 +201,7 @@ public class HttpUtil45 {
 	 * @see OutTimeConfig 超时设置
 	 */
 	public static String get(String url,OutTimeConfig outTimeConf,Map<String,String> param){
-		return getResult(url, outTimeConf, param, null);
+		return getResult(url, outTimeConf, param,null, null);
 	}
 
 	/**
@@ -213,7 +234,7 @@ public class HttpUtil45 {
 			HttpPost post=new HttpPost(url);
 			setTransParam(transParaType, param, jsonValue, post);
 
-			return getResult(post, outTimeConf,localContext);
+			return getResult(post, outTimeConf,null,localContext);
 
 
 		}else if("put".equals(operatorType.toLowerCase())){
@@ -222,7 +243,7 @@ public class HttpUtil45 {
 			setTransParam(transParaType, param, jsonValue, putMothod);
 
 
-			return getResult(putMothod, outTimeConf,localContext);
+			return getResult(putMothod, outTimeConf,null,localContext);
 
 
 		}else if("patch".equals(operatorType.toLowerCase())){
@@ -232,7 +253,7 @@ public class HttpUtil45 {
 			setTransParam(transParaType, param, jsonValue, patch);
 
 
-			return getResult(patch, outTimeConf,localContext);
+			return getResult(patch, outTimeConf,null,localContext);
 
 
 		}else if("delete".equals(operatorType.toLowerCase())){
@@ -243,7 +264,7 @@ public class HttpUtil45 {
 		}
 
 
-		return getResult(request, outTimeConf,localContext);
+		return getResult(request, outTimeConf,null,localContext);
 
 	}
 
@@ -275,9 +296,12 @@ public class HttpUtil45 {
 
 
 
-	private static String getResult(String url, OutTimeConfig outTimeConf, Map<String, String> param,HttpClientContext localContext) {
+	private static String getResult(String url, OutTimeConfig outTimeConf, Map<String, String> param,Map<String,String> headMap,HttpClientContext localContext) {
 		String urlStr=paramGetUrl(url, param);
 		HttpGet get = new HttpGet(urlStr);
+
+		setHeader(headMap, get);
+
 		String result=null;
 		CloseableHttpResponse resp=null;
 		try {
@@ -301,21 +325,31 @@ public class HttpUtil45 {
 		return result==null?errorResult:result;
 	}
 
+	/**
+	 * 设置header
+	 * @param headMap
+	 * @param request
+	 */
+	private static void  setHeader(Map<String,String> headMap,HttpUriRequest request ){
+		if(null!=headMap&&headMap.size()>0){
 
+			for(Iterator<Map.Entry<String,String>> itor = headMap.entrySet().iterator();itor.hasNext();){
+				Map.Entry<String,String> entry = itor.next();
+				request.setHeader(entry.getKey(),entry.getValue());
+			}
+		}
 
+	}
 
-
-	private static String getResult(HttpUriRequest request, OutTimeConfig outTimeConf, HttpClientContext localContext) {
+	private static String getResult(HttpUriRequest request, OutTimeConfig outTimeConf,Map<String,String> headMap, HttpClientContext localContext) {
 
 		String result=null;
 		CloseableHttpResponse resp=null;
 		try {
-
+			 setHeader(headMap,request);
 			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
 
 			resp=httpClient.execute(request,localContext);
-
-
 			HttpEntity entity=resp.getEntity();
 			result= EntityUtils.toString(entity);
 			EntityUtils.consume(entity);
@@ -359,7 +393,7 @@ public class HttpUtil45 {
 			localContext = getPlainContext(url);
 		}
 
-		return getResult(url, outTimeConf, param,localContext);
+		return getResult(url, outTimeConf, param,null,localContext);
 	}
 
 	/**
@@ -492,12 +526,7 @@ public class HttpUtil45 {
 					.forName("UTF-8")));
 		}
 
-		if(null!=headerParam&&headerParam.size()>0){
-			for(Iterator<Map.Entry<String,String>> itor =  headerParam.entrySet().iterator();itor.hasNext();){
-				Map.Entry<String,String>  entry = itor.next();
-				post.addHeader(entry.getKey(),entry.getValue());
-			}
-		}
+	    setHeader(headerParam,post);
 
 
 		return getPostResult(url, outTimeConf, localContext, post);

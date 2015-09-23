@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -223,5 +224,30 @@ public class ProductionServiceImpl implements  ProductionService {
     @Override
     public Boolean updateProduct(ProductUpdateDTO productUpdateDTO) throws ServiceException {
         return null;
+    }
+
+    public static void main(String[] args){
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setSupplierId("1234567890");
+        productDTO.setSkuId("4107222");
+        productDTO.setBarcode("1100219805");
+        productDTO.setBrandName("Good Charma");
+        productDTO.setCategoryGender("");
+        productDTO.setColor("gold");
+        productDTO.setCategoryName("Jewelry");
+        productDTO.setMarketPrice(new BigDecimal("270.0"));
+        productDTO.setSalePrice(new BigDecimal("99.0"));
+        productDTO.setSupplierPrice(new BigDecimal("51.0"));
+        productDTO.setMaterial("22K yellow gold-plated sterling silver and gold vermeil");
+        productDTO.setProductCode("1000041072225");
+        productDTO.setProductDescription("22K yellow gold-plated sterling silver pendant necklace with gold vermeil heart and hamsa pendant details<br>* Spring clasp closure<br><b><br>**Measurements:**</b> 18\" long, 0.5\" pendant drop");
+        productDTO.setProductOrigin("USA");
+        productDTO.setSaleCurrency("USD");
+        productDTO.setProductName("Heart & Hamsa Pendant Necklace ");
+        productDTO.setSeasonName("");
+        productDTO.setSize("No size");
+        productDTO.setSpuPicture("http;//www.shangpin.com/1.jpg||http://www.shangpincom/2.jpg");
+        productDTO.setStock(10);
+        productDTO.setSkuPicture("http;//www.shangpin.com/3.jpg");
     }
 }
