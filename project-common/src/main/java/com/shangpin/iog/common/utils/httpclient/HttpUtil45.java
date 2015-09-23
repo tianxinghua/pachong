@@ -85,6 +85,8 @@ public class HttpUtil45 {
 		init();
 	}
 	public static String errorResult = "{\"error\":\"发生异常错误\"}";
+
+
 	/**
 	 * 请求需要认证的url
 	 * @param url url
@@ -184,11 +186,12 @@ public class HttpUtil45 {
 	/**
 	 * 操作数据
 	 * @param operatorType 操作类型  get put patch delete
-	 * @param transParaType 传递参数类型  json
+	 * @param transParaType 传递参数类型  json  无值 代表非JSON
 	 * @param url
 	 * @param outTimeConf
-	 * @param param
-	 * @param username
+	 * @param param     参数（非json类型时传入 ，json时 不做处理)
+	 * @param jsonValue   json类型时 需要传入的参数
+	 * @param username  如果需要验证 需要填写 无值或为空 则认为不需要验证
 	 * @param password
 	 * @return
 	 */
@@ -299,6 +302,9 @@ public class HttpUtil45 {
 	}
 
 
+
+
+
 	private static String getResult(HttpUriRequest request, OutTimeConfig outTimeConf, HttpClientContext localContext) {
 
 		String result=null;
@@ -308,6 +314,8 @@ public class HttpUtil45 {
 			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
 
 			resp=httpClient.execute(request,localContext);
+
+
 			HttpEntity entity=resp.getEntity();
 			result= EntityUtils.toString(entity);
 			EntityUtils.consume(entity);
@@ -323,6 +331,15 @@ public class HttpUtil45 {
 		}
 		return result==null?errorResult:result;
 	}
+
+
+     private static int getResponseStatus(CloseableHttpResponse resp) throws ServiceException{
+		 int stateCode = resp.getStatusLine().getStatusCode();
+		 if(200!=stateCode){
+			 throw new ServiceMessageException("状态码:"+stateCode);
+		 }
+		 return stateCode;
+	 }
 
 	/**
 	 * get请求
