@@ -32,8 +32,8 @@ public class TonyService {
         //String test = "{\"ap\":\"55547b77b49dbb81156e71df\",\"merchantId\":\"55f707f6b49dbbe14ec6354d\",\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"}";
         String test = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\",\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"}";
         Map<String,String> map = new HashMap<>();
-            map.put("merchantId","55f707f6b49dbbe14ec6354d");
-            map.put("token","d355cd8701b2ebc54d6c8811e03a3229");
+        map.put("merchantId","55f707f6b49dbbe14ec6354d");
+        map.put("token","d355cd8701b2ebc54d6c8811e03a3229");
         map.put("ap","55547b77b49dbb81156e71df");
 
         SkuParam param = new SkuParam();
