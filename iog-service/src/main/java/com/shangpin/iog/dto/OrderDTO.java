@@ -9,8 +9,8 @@ import java.util.Date;
 /**
  * Created by huxia on 2015/9/10.
  */
-/*@Getter
-@Setter*/
+@Getter
+@Setter
 public class OrderDTO {
     private BigInteger id;
     private String supplierId;
@@ -18,10 +18,13 @@ public class OrderDTO {
     private String spOrderId;
     private String detail;//
     private String status;//订单状态
+    private String memo;//备注
+    private String deliveryNo;//发货单
     private Date createTime;
     private Date updateTime;
     private String excState;
     private String excDesc;
+    private Date excTime;
     public BigInteger getId() {
         return id;
     }
@@ -112,7 +115,10 @@ public class OrderDTO {
                 ", detail='" + detail + '\'' +
                 ", status='" + status + '\'' +
                 ", createTime=" + createTime +
-
+                ", updateTime=" + updateTime +
+                ", excState='" + excState + '\'' +
+                ", excDesc='" + excDesc + '\'' +
+                ", excTime=" + excTime +
                 '}';
     }
 }

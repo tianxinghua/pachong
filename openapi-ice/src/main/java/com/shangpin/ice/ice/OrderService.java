@@ -12,7 +12,9 @@ import ShangPin.SOP.Servant.OpenApiServantPrx;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -21,6 +23,7 @@ import java.util.*;
 public class OrderService {
 
     static Logger logger = LoggerFactory.getLogger(OrderService.class);
+    private static final String YYYY_MMDD_HH = "yyyy-MM-dd HH:mm:ss";
     static String url="/purchase/createdeliveryorder";
     /**
      * 获取采购单
@@ -29,7 +32,7 @@ public class OrderService {
      *
      * @return
      */
-    public Map<String,List<PurchaseOrderDetail>> geturchaseOrder(String supplierId,String startTime ,String endTime,List<Integer> statusList) throws Exception{
+    public Map<String,List<PurchaseOrderDetail>> getPurchaseOrder(String supplierId,String startTime ,String endTime,List<Integer> statusList) throws Exception{
         int pageIndex=1,pageSize=20;
         OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
         boolean hasNext=true;
@@ -84,23 +87,39 @@ public class OrderService {
 
     /**
      *获取发货单编号
+     * 首先推送发货单
      * @return
      * @throws Exception
      */
-    public static String getLogistics(String supplierId,String LogisticsName, String LogisticsOrderNo, String DateDeliver, int EstimateArrivedTime, String DeliveryContacts, String DeliveryContactsPhone, String DeliveryAddress, String DeliveryMemo, String WarehouseNo, String WarehouseName, java.util.List<java.lang.String> SopPurchaseOrderDetailNo, int PrintStatus) throws Exception{
+    public  String getPurchaseDeliveryOrderNo(String supplierId,String logisticsName, String logisticsOrderNo,
+                                                    String dateDeliver, int estimateArrivedTime, String deliveryContacts,
+                                                    String deliveryContactsPhone, String deliveryAddress,
+                                                    String deliveryMemo, String warehouseNo, String warehouseName,
+                                                    java.util.List<java.lang.String> sopPurchaseOrderDetailNo, int printStatus) throws Exception{
         OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        if(StringUtils.isEmpty(logisticsName)) logisticsName = "顺丰";
+        if(StringUtils.isEmpty(logisticsOrderNo)) logisticsOrderNo = getRandomNum();
+        if(StringUtils.isEmpty(dateDeliver)) dateDeliver = convertFormat(new Date(),YYYY_MMDD_HH);
+        if(StringUtils.isEmpty(deliveryContacts)) deliveryContacts = "尼古拉斯";
+        if(StringUtils.isEmpty(deliveryContactsPhone)) deliveryContactsPhone = "18547477474";
+        if(StringUtils.isEmpty(deliveryAddress)) deliveryAddress = "北京市通州区马驹桥物流基地兴贸一街 11号华润物流园区5号库";
+        if(StringUtils.isEmpty(deliveryMemo)) deliveryMemo = "贵重物品，轻拿轻放";
+        if(StringUtils.isEmpty(warehouseNo)) warehouseNo = "B";
+        if(StringUtils.isEmpty(warehouseName)) warehouseName = "北京代销实体仓";
         boolean hasNext=true;
-        logger.warn("获取ice采购单 开始");
         Set<String> skuIds = new HashSet<String>();
         Map<String,List<PurchaseOrderDetail>>  purchaseOrderMap = new HashMap<>();
-        SopPurchaseOrderDetailNo.add("2015040800001");
-        LogisticsOrderNo = getRandomNum();
-        DeliveryOrderAdd deliveryOrderAdd= new DeliveryOrderAdd("顺丰",LogisticsOrderNo,"2015-03-19 17:00",5,"尼古拉斯"
-        ,"18547477474","北京市通州区马驹桥物流基地兴贸一街 11号华润物流园区5号库","贵重物品，轻拿轻放","B"
-                ,"北京代销实体仓", SopPurchaseOrderDetailNo,1);
+
+
+        DeliveryOrderAdd deliveryOrderAdd= new DeliveryOrderAdd(logisticsName,logisticsOrderNo,dateDeliver,
+                estimateArrivedTime,deliveryContacts
+        ,deliveryContactsPhone,deliveryAddress,deliveryMemo,warehouseNo
+                ,warehouseName, sopPurchaseOrderDetailNo,0);
         String sopLogisticsOrderNo= servant.CreateDeliveryOrder(supplierId, deliveryOrderAdd);
         return sopLogisticsOrderNo;
     }
+
+
     public static String getRandomNum() {
         Random random = new Random();
         String num="";
@@ -114,10 +133,19 @@ public class OrderService {
     {
         java.util.List<java.lang.String> SopPurchaseOrderDetailNo=new ArrayList<>();
         try {
-            String no=getLogistics("2015090900158","","","",0,"","","","","","",SopPurchaseOrderDetailNo,1);
-            System.out.println("发货单编号"+no);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static String convertFormat(Date date ,String format){
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(date);
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+
+        return (sdf.format(date));
+
     }
 }

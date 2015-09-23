@@ -10,9 +10,15 @@
         <result column="SP_ORDER_ID" property="spOrderId"  />
         <result column="DETAIL" property="detail"  />
         <result column="STATUS" property="status"/>
+
+        <result column="MEMO" property="memo"  />
+        <result column="DELIVERY_NO" property="deliveryNo"/>
+
         <result column="CREATE_TIME" property="createTime"  />
+
         <result column="EXC_STATE" property="excState"  />
         <result column="EXC_DESC" property="excDesc"  />
+        <result column="EXC_TIME" property="excTime" />
 	</resultMap>
 
 	<sql id="all_Order_column">
@@ -23,15 +29,15 @@
 		DETAIL,
 		CREATE_TIME
 	</sql>
-    <sql id="id_out_column">
+    <sql id="save_column">
         SUPPLIER_ID,
 		UUID,
 		SP_ORDER_ID,
 		DETAIL,
 		STATUS,
-		CREATE_TIME,
-		EXC_STATE,
-		EXC_DESC
+
+		CREATE_TIME
+
     </sql>
     <select id="findBySupplierIdAndStatus"  resultMap="OrderResultMap">
         select
@@ -76,25 +82,112 @@
 
 
     </select>
+
+
+    <select id="findExceptionOrder"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        SUPPLIER_ID,
+        UUID ,
+        SP_ORDER_ID,
+        STATUS ,
+        DETAIL ,
+        CREATE_TIME ,
+        EXC_STATE ,
+        EXC_DESC ,EXC_TIME
+
+        from `ORDER`
+        WHERE EXC_STATE is not null
+
+
+    </select>
+
+
+
     <insert id="save"  parameterType="iog_order" >
         insert into `ORDER` (
-        <include refid="id_out_column"></include>
+        <include refid="save_column"></include>
         )
         values(
         #{supplierId}, #{uuId}, #{spOrderId},
-        #{detail},#{status},#{createTime},#{excState},#{excDesc}
+        #{detail},#{status},
+
+        #{createTime}
         )
     </insert>
 
     <update id="updateOrderStatus" parameterType="Map" >
         update `ORDER`
-        SET STATUS = #{status}
+
+
+        <set>
+            <if test="status != null"> STATUS = #{status}, </if>
+            <if test="updateTime != null"> UPDATE_TIME = #{updateTime} </if>
+
+
+
+        </set>
         where UUID = #{uuid}
         <!--<foreach collection="uuid" index="index" item="item" open="(" separator="," close=")">-->
             <!--#{item}-->
         <!--</foreach>-->
 
     </update>
+
+
+    <update id="updateDeliveryNo" parameterType="Map" >
+        update `ORDER`
+
+
+        <set>
+            <if test="status != null"> STATUS = #{status}, </if>
+            <if test="updateTime != null"> UPDATE_TIME = #{updateTime}, </if>
+            <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo}</if>
+
+
+        </set>
+        where UUID = #{uuid}
+        <!--<foreach collection="uuid" index="index" item="item" open="(" separator="," close=")">-->
+        <!--#{item}-->
+        <!--</foreach>-->
+
+    </update>
+
+
+    <update id="updateOrderExceptionMsg" parameterType="Map" >
+        update `ORDER`
+        <set>
+            <if test="excState != null"> EXC_STATE = #{excState}, </if>
+            <if test="excDesc != null"> EXC_DESC = #{excDesc}, </if>
+            <if test="excTime != null"> EXC_TIME = #{excTime}</if>
+
+
+        </set>
+        where UUID = #{uuid}
+
+
+    </update>
+
+
+    <update id="updateOrderMsg" parameterType="Map" >
+        update `ORDER`
+        <set>
+            <if test="status != null"> STATUS = #{status}, </if>
+            <if test="memo != null"> MEMO = #{memo}, </if>
+            <if test="updateTime != null"> UPDATE_TIME = #{updateTime}, </if>
+            <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo},</if>
+            <if test="excState != null"> EXC_STATE = #{excState}, </if>
+            <if test="excDesc != null"> EXC_DESC = #{excDesc}, </if>
+            <if test="excTime != null"> EXC_TIME = #{excTime}</if>
+
+
+
+        </set>
+        where UUID = #{uuid}
+
+
+    </update>
+
 
 	
 </mapper>

@@ -7,12 +7,14 @@ import com.shangpin.iog.service.ReturnOrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 /**
  * Created by sunny on 2015/9/19.
  */
+@Service
 public class ReturnOrderServiceImpl implements ReturnOrderService{
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
