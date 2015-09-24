@@ -283,7 +283,7 @@ public class HttpUtil45 {
 
 			resp=httpClient.execute(get,localContext);
 			HttpEntity entity=resp.getEntity();
-			result= EntityUtils.toString(entity);
+			result= EntityUtils.toString(entity, "UTF-8");
 			EntityUtils.consume(entity);
 		}catch(Exception e){
 			logger.error("--------------httpError:"+e.getMessage());

@@ -1,6 +1,8 @@
 package com.shangpin.iog.dante5.dto;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Shipping

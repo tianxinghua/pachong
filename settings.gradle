@@ -19,7 +19,7 @@ include 'apennine'
 include 'iog-common-product'
 
 include 'acanfora'
-include 'dante5'
+
 include 'coltorti'
 
 include 'acanfora-stock'
@@ -56,4 +56,9 @@ include 'bagheera'
 include 'gilt-stock'
 include 'gilt-purchase'
 include 'tony'
+include 'dante5'
+include 'dellogliostore'
+include 'giglio'
+include 'giglio-stock'
+include 'dante5-stock'
 

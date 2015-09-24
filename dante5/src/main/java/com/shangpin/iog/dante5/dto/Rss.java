@@ -1,6 +1,7 @@
 package com.shangpin.iog.dante5.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Rss

@@ -1,7 +1,7 @@
-package com.shangpin.iog.dante5;
+package com.shangpin.iog.giglio;
 
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.dante5.service.FetchProduct;
+import com.shangpin.iog.giglio.service.FetchProduct;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -20,15 +20,16 @@ public class Startup
 	public static void main(String[] args)
 	{
         //加载spring
-        log.info("----拉取dante5数据开始----");
-		loadSpringContext();
+        log.info("----拉取giglio数据开始----");
+        System.out.println("----拉取giglio数据开始----");
+        loadSpringContext();
         log.info("----初始SPRING成功----");
+        System.out.println("----初始SPRING成功----");
         //拉取数据
-        FetchProduct fetchProduct =(FetchProduct)factory.getBean("dante5");
-        fetchProduct.fetchProductAndSave("https://www.dante5.com/en-US/home/feedShangpin");
-
-        log.info("----拉取dante5数据完成----");
-		System.out.println("-------fetch end---------");
+        FetchProduct fetchProduct =(FetchProduct)factory.getBean("giglio");
+        fetchProduct.fetchProductAndSave("http://www.giglio.com/feeds/shangpin.csv");
+        log.info("----拉取giglio数据完成----");
+        System.out.println("----拉取giglio数据完成----");
 
 	}
 

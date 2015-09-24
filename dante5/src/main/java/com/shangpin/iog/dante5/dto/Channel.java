@@ -1,13 +1,8 @@
 package com.shangpin.iog.dante5.dto;
 
-import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlList;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
@@ -21,37 +16,6 @@ public class Channel {
     String description;
     List<Item> item;
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<Item> getItem() {
-        return item;
-    }
-
-    public void setItem(List<Item> item) {
-        this.item = item;
-    }
 
     @Override
     public String toString() {
@@ -59,7 +23,7 @@ public class Channel {
                 "title='" + title + '\'' +
                 ", link='" + link + '\'' +
                 ", description='" + description + '\'' +
-                ", items=" + item +
+                ", item=" + item +
                 '}';
     }
 }

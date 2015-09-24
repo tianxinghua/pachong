@@ -1,7 +1,7 @@
-package com.shangpin.iog.dante5;
+package com.shangpin.iog.dellogliostore;
 
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.dante5.service.FetchProduct;
+import com.shangpin.iog.dellogliostore.service.FetchProduct;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -24,8 +24,8 @@ public class Startup
 		loadSpringContext();
         log.info("----初始SPRING成功----");
         //拉取数据
-        FetchProduct fetchProduct =(FetchProduct)factory.getBean("dante5");
-        fetchProduct.fetchProductAndSave("https://www.dante5.com/en-US/home/feedShangpin");
+        FetchProduct fetchProduct =(FetchProduct)factory.getBean("dellogliostore");
+        fetchProduct.fetchProductAndSave("https://www.dellogliostore.com/public/merchant/feedDNT5US.xml");
 
         log.info("----拉取dante5数据完成----");
 		System.out.println("-------fetch end---------");
