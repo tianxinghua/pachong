@@ -52,6 +52,190 @@ public class Item {
     @SerializedName("g:tax")
     Tax tax;
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getComposition() {
+        return composition;
+    }
+
+    public void setComposition(String composition) {
+        this.composition = composition;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getMpn() {
+        return mpn;
+    }
+
+    public void setMpn(String mpn) {
+        this.mpn = mpn;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    public ImageLinks getImageLinks() {
+        return imageLinks;
+    }
+
+    public void setImageLinks(ImageLinks imageLinks) {
+        this.imageLinks = imageLinks;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
+    }
+
+    public String getGoogleProductCategory() {
+        return googleProductCategory;
+    }
+
+    public void setGoogleProductCategory(String googleProductCategory) {
+        this.googleProductCategory = googleProductCategory;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getAgeGroup() {
+        return ageGroup;
+    }
+
+    public void setAgeGroup(String ageGroup) {
+        this.ageGroup = ageGroup;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getCustomLabel0() {
+        return customLabel0;
+    }
+
+    public void setCustomLabel0(String customLabel0) {
+        this.customLabel0 = customLabel0;
+    }
+
+    public String getCustomLabel2() {
+        return customLabel2;
+    }
+
+    public void setCustomLabel2(String customLabel2) {
+        this.customLabel2 = customLabel2;
+    }
+
+    public String getCustomLabel3() {
+        return customLabel3;
+    }
+
+    public void setCustomLabel3(String customLabel3) {
+        this.customLabel3 = customLabel3;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(String availability) {
+        this.availability = availability;
+    }
+
+    public String getItemGroupId() {
+        return itemGroupId;
+    }
+
+    public void setItemGroupId(String itemGroupId) {
+        this.itemGroupId = itemGroupId;
+    }
+
+    public Shipping getShipping() {
+        return shipping;
+    }
+
+    public void setShipping(Shipping shipping) {
+        this.shipping = shipping;
+    }
+
+    public Tax getTax() {
+        return tax;
+    }
+
+    public void setTax(Tax tax) {
+        this.tax = tax;
+    }
+
     @Override
     public String toString() {
         return "Item{" +
