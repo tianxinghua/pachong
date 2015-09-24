@@ -63,6 +63,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderDTO> getExceptionOrder() throws ServiceException {
+
+        return null;
+    }
+
+    @Override
     public void updateOrderMsg(Map<String, String> statusMap) throws ServiceException {
         judgeMapParam(statusMap);
         try {
