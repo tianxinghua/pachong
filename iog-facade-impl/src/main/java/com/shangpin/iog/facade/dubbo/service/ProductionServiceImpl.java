@@ -103,7 +103,10 @@ public class ProductionServiceImpl implements  ProductionService {
         skuDTO.setSkuId(productDTO.getSkuId());
         skuDTO.setColor(productDTO.getColor());
         skuDTO.setMarketPrice(productDTO.getMarketPrice().toString());
-        skuDTO.setSalePrice(productDTO.getSalePrice().toString());
+        BigDecimal salePrice = productDTO.getSalePrice();
+        if(StringUtils.isNotBlank(String.valueOf(salePrice))) {
+            skuDTO.setSalePrice(String.valueOf(salePrice));
+        }
         skuDTO.setSupplierPrice(productDTO.getSupplierPrice().toString());
         skuDTO.setProductDescription(productDTO.getProductDescription());
         skuDTO.setProductName(productDTO.getProductName());
@@ -121,7 +124,7 @@ public class ProductionServiceImpl implements  ProductionService {
         }
 
         String imgUrl =productDTO.getSpuPicture();
-        String[] imageUrlArray = imgUrl.split("||");
+        String[] imageUrlArray = imgUrl.split("\\|\\|");
 
         for(String  imageUrl:imageUrlArray){
             ProductPictureDTO pictureDTO = new ProductPictureDTO();
@@ -139,7 +142,7 @@ public class ProductionServiceImpl implements  ProductionService {
 
 
         String skuImgUrl =productDTO.getSkuPicture();
-        String[] skuImageUrlArray = skuImgUrl.split("||");
+        String[] skuImageUrlArray = skuImgUrl.split("\\|\\|");
         for(String  imageUrl:skuImageUrlArray){
             ProductPictureDTO pictureDTO = new ProductPictureDTO();
             pictureDTO.setSupplierId(productDTO.getSupplierId());
@@ -215,6 +218,10 @@ public class ProductionServiceImpl implements  ProductionService {
 
         if(null==productDTO.getSupplierPrice()){
             throw new ServiceMessageException("supplierPrice not allow null");
+        }
+
+        if(null==productDTO.getMarketPrice()){
+            throw new ServiceMessageException("marketPrice not allow null");
         }
 
 
