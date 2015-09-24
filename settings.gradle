@@ -68,4 +68,5 @@ include 'marylou'
 include 'marylou-stock'
 include 'onsite'
 include 'tony-stock'
-
+include 'stefaniamode'
+include 'stefaniamode-stock'
