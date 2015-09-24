@@ -15,10 +15,8 @@ import com.shangpin.iog.service.ProductFetchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Created by sunny on 2015/8/18.
@@ -27,11 +25,20 @@ import java.util.Map;
 public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
-    static String supplierId = "2015082511263";//供应商ID
+    private static Logger logger = Logger.getLogger("info");
+    private static Logger logMongo = Logger.getLogger("mongodb");
     static String skuUrl="http://188.226.153.91/modules/api/v2/stock/";//请求sku地址
     static String tokenUrl="http://188.226.153.91/modules/api/v2/getToken/";
     static String user="shamping";
     static String password="PA#=k2xU^ddUc6Jm";
+    private static ResourceBundle bdl=null;
+    private static String supplierId;
+
+    static {
+        if(null==bdl)
+            bdl=ResourceBundle.getBundle("conf");
+            supplierId = bdl.getString("supplierId");
+    }
     public void fetchProductAndSave(String url){
         List<LeamDTO>list=getSkus(skuUrl);
         for(int i =0;i<list.size();i++) {
@@ -56,7 +63,7 @@ public class FetchProduct {
                 spuDTO.setId(UUIDGenerator.getUUID());
                 spuDTO.setSpuId(leamDTO.getSupplier_sku());
                 spuDTO.setSupplierId(supplierId);
-                spuDTO.setCategoryGender(leamDTO.getNomenclature());
+                //spuDTO.setCategoryGender(leamDTO.getNomenclature());
                 spuDTO.setCategoryName(leamDTO.getCategory());
                 spuDTO.setSubCategoryName(leamDTO.getSubcategory());
                 spuDTO.setBrandName(leamDTO.getBrand());

@@ -12,14 +12,14 @@ import java.util.Map;
  */
 public class MapUtil {
     /**
-     *更新库存用
+     *update stock
      */
     public static Map<String,String> grabStock(Collection<String> skuNo,String json){
-        //定义三方
+        //definition
         Map returnMap = new HashMap();
         String itemId = "";
         Iterator<String> iterator=skuNo.iterator();
-        //为供应商循环赋值
+        //put value into map
         while (iterator.hasNext()){
             itemId = iterator.next();
             returnMap.put(itemId, StringUtil.getSubBySub(json, itemId, itemId, Constant.ITEM_LENTH));
