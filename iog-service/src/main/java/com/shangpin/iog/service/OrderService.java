@@ -37,6 +37,13 @@ public interface OrderService {
     public List<OrderDTO> getOrderBySupplierIdAndOrderStatus(String supplierId,String status) throws ServiceException;
 
     /**
+     * 获取异常订单信息
+     * @return
+     * @throws ServiceException
+     */
+    public List<OrderDTO> getExceptionOrder() throws ServiceException;
+
+    /**
      * 更改订单信息
      * @param statusMap 比较全的信息
      *   <set>

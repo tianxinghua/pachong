@@ -18,6 +18,9 @@ public interface OrderMapper extends IBaseDao<OrderDTO> {
     public List<OrderDTO> findBySupplierIdAndStatus(@Param("supplierId") String supplierId,
                                                     @Param("status") String status) ;
 
+
+
+
     /**
      * 更新订单状态
      * @param paraMap

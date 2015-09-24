@@ -114,7 +114,7 @@ public class OrderService {
         DeliveryOrderAdd deliveryOrderAdd= new DeliveryOrderAdd(logisticsName,logisticsOrderNo,dateDeliver,
                 estimateArrivedTime,deliveryContacts
         ,deliveryContactsPhone,deliveryAddress,deliveryMemo,warehouseNo
-                ,warehouseName, sopPurchaseOrderDetailNo,0);
+                ,warehouseName, sopPurchaseOrderDetailNo,printStatus);
         String sopLogisticsOrderNo= servant.CreateDeliveryOrder(supplierId, deliveryOrderAdd);
         return sopLogisticsOrderNo;
     }

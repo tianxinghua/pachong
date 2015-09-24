@@ -653,6 +653,27 @@ public static Date getPreviousFourWeek(Date date) {
         return new  Long(l/(1000*60*60*24)).intValue();
 
     }
+
+    /**
+     * 返回时间差 毫秒级
+     * @param startDate 开始时间
+     * @param endDate   结束时间
+     * @return
+     */
+    public static long getTimeDifference(Date startDate,Date endDate){
+        Date tempStartDate =  DateTimeUtil.convertDateFormat(startDate, "yyyy-MM-dd HH:mm:ss");
+        Date tempEndDate =  DateTimeUtil.convertDateFormat(endDate, "yyyy-MM-dd HH:mm:ss");
+
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(tempEndDate);
+        long  endTime = calendar.getTimeInMillis();
+        calendar.setTime(tempStartDate);
+
+        return endTime-calendar.getTimeInMillis();
+    }
+
+
+
     //按给定的格式转化给定的日期
     public static String convertFormat(Date date ,String format){
         Calendar calendar=Calendar.getInstance();
