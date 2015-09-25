@@ -34,15 +34,15 @@ public class FetchProduct {
     private ProductFetchService productFetchService;
 
     /**
-     * µÃµ½²úÆ·ĞÅÏ¢²¢´¢´æ
+     * å¾—åˆ°äº§å“ä¿¡æ¯å¹¶å‚¨å­˜
      */
     public void fetchProductAndSave(){
 
-        //»ñÈ¡²úÆ·ĞÅÏ¢
+        //è·å–äº§å“ä¿¡æ¯
         logMongo.info("get product starting....");
         String json = new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
         logMongo.info("get product over");
-        //½âÎö²úÆ·ĞÅÏ¢
+        //è§£æäº§å“ä¿¡æ¯
         Products products = null;
         try {
             products = ObjectXMLUtil.xml2Obj(Products.class, json);
@@ -50,7 +50,7 @@ public class FetchProduct {
             e.printStackTrace();
         }
         System.out.println(products.getProducts().size());
-        //Ó³ÉäÊı¾İ²¢±£´æ
+        //æ˜ å°„æ•°æ®å¹¶ä¿å­˜
         logMongo.info("save product into DB begin");
         messMappingAndSave(products);
         logMongo.info("save product into DB success");
@@ -58,7 +58,7 @@ public class FetchProduct {
         //System.out.println(json);
     }
     /**
-     * Ó³ÉäÊı¾İ²¢±£´æ
+     * æ˜ å°„æ•°æ®å¹¶ä¿å­˜
      */
     private void messMappingAndSave(Products products) {
         List<Product> productList = products.getProducts();
@@ -66,7 +66,7 @@ public class FetchProduct {
             SpuDTO spu = new SpuDTO();
 
             Items items = product.getItems();
-            if (null == items) {//ÅĞ¶ÏSKU
+            if (null == items) {//åˆ¤æ–­SKU
                 continue;
             }
 
@@ -81,11 +81,16 @@ public class FetchProduct {
 
                     sku.setSpuId(product.getProductId());
                     skuId = item.getItemId();
-                    if (skuId.indexOf("?") > 0) {
-                        skuId = skuId.replace("?", "+");
+                    if(skuId.indexOf("Â½")>0){
+                        skuId = skuId.replace("Â½","+");
                     }
                     sku.setSkuId(skuId);
-                    sku.setProductSize(item.getItem_size());
+                    
+                    String itemSize = item.getItem_size();
+                    if(itemSize.indexOf("Â½")>0){
+                    	itemSize = itemSize.replace("Â½","+");
+                    }
+                    sku.setProductSize(itemSize);
                     sku.setSalePrice(item.getPrice_currency());
                     sku.setSupplierPrice(item.getSupply_price());
                     sku.setColor(product.getColor());
@@ -113,8 +118,8 @@ public class FetchProduct {
 
                 } catch (ServiceException e) {
                     try {
-                        if (e.getMessage().equals("Êı¾İ²åÈëÊ§°Ü¼üÖØ¸´")) {
-                            //¸üĞÂ¼Û¸ñºÍ¿â´æ
+                        if (e.getMessage().equals("æ•°æ®æ’å…¥å¤±è´¥é”®é‡å¤")) {
+                            //æ›´æ–°ä»·æ ¼å’Œåº“å­˜
                             productFetchService.updatePriceAndStock(sku);
                         } else {
                             e.printStackTrace();
@@ -135,6 +140,7 @@ public class FetchProduct {
                 spu.setSpuName(product.getName());
                 spu.setSeasonId(product.getSeason());
                 spu.setMaterial(product.getMaterial());
+                spu.setCategoryGender(product.getGender());
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
                 e.printStackTrace();
