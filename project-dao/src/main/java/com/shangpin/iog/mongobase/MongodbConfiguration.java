@@ -27,7 +27,7 @@ public class MongodbConfiguration extends AbstractMongoConfiguration {
 
     static {
         if(null==bdl)
-            bdl=ResourceBundle.getBundle("mongodb");
+            bdl=ResourceBundle.getBundle("mongo");
         mongodbAddress = bdl.getString("Mongodb.Address");
         port = Integer.valueOf(bdl.getString("MongoDB.Port"));
     }
