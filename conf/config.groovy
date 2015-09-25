@@ -15,7 +15,7 @@ environments{
 
         }
     }
-    production-down{
+    prodown{
         db {
             driverClassName = 'com.mysql.jdbc.Driver'
             url ='jdbc:mysql://192.168.20.82:3306/iog?useUnicode=true&amp;characterEncoding=utf-8'

@@ -54,7 +54,7 @@ public class FetchProduct {
         logMongo.info("save product into DB begin");
         messMappingAndSave(products);
         logMongo.info("save product into DB success");
-
+ 
         //System.out.println(json);
     }
     /**
@@ -86,6 +86,7 @@ public class FetchProduct {
                     }
 
                     sku.setSkuId(skuId);
+
                     String itemSize = item.getItem_size();
                     if(itemSize.indexOf("½")>0){
                     	itemSize = itemSize.replace("½","+");
@@ -141,6 +142,7 @@ public class FetchProduct {
                 spu.setSeasonId(product.getSeason());
                 spu.setCategoryGender(product.getGender());
                 spu.setMaterial(product.getMaterial());
+                spu.setCategoryGender(product.getGender());
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
                 e.printStackTrace();
