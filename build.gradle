@@ -1,0 +1,134 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+version = '1.0'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+
+
+
+allprojects {
+    apply plugin: 'idea'
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
+    idea {
+        module {
+            inheritOutputDirs = false
+            outputDir = file("$buildDir/classes/main/")
+        }
+    }
+	eclipse.project {
+		natures 'org.springsource.ide.eclipse.gradle.core.nature'
+	}
+    repositories {
+        mavenLocal()
+        maven {
+            url "http://192.168.1.110:8888/nexus/content/groups/public/"
+        }
+        maven {
+        	url "http://192.168.1.212:8081/nexus/content/groups/public/"
+        }
+        mavenCentral()
+    }
+
+
+}
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+}
+
+ext {
+    if (project.hasProperty('profile')) {
+        profile = project['profile']
+    } else {
+        profile = "development"
+    }
+    springVersion='4.1.4.RELEASE'
+    slf4jversion='1.7.12'
+    codehaus_jackson_version='1.9.13'
+    fasterxml_jackson_version='2.4.4'
+    slf4j_version='1.7.12'
+    log4j_version='1.2.17'
+    jedis_version='2.6.2'
+}
+
+
+
+def loadGroovy(){
+    def configFile = file('conf/config.groovy')
+
+    new ConfigSlurper(profile).parse(configFile.toURL()).toProperties()
+}
+
+
+
+
+
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+    [compileJava, compileTestJava, compileGroovy, compileTestGroovy]*.options*.encoding = 'UTF-8'
+
+    task copyToLib( type: Copy ) {
+        into "$buildDir/libs/lib"
+        from configurations.compile
+    }
+
+    task copyResources( type: Copy ) {
+        into "$buildDir/libs/conf"
+        from "$buildDir/resources/main"
+    }
+
+    task copyResourcesToClasses( type: Copy ) {
+        into "$buildDir/classes/main"
+        from "$buildDir/resources/main"
+    }
+
+
+    dependencies {
+        compile(
+                "org.projectlombok:lombok:1.14.8",
+                "org.springframework:spring-context:${springVersion}",
+                "org.codehaus.groovy:groovy-all:2.3.10",
+                "org.slf4j:slf4j-api:${slf4j_version}",
+                "org.slf4j:slf4j-log4j12:${slf4j_version}",
+                "org.mongodb:mongo-java-driver:3.0.0-rc1",
+                "org.log4mongo:log4mongo-java:0.7.4"
+        )
+        testCompile (
+                'junit:junit:4.11'
+        )
+    }
+
+    repositories {
+        mavenLocal()
+        maven {
+            url "http://192.168.1.110:8888/nexus/content/groups/public/"
+        }
+        mavenCentral()
+    }
+
+    processResources {
+        from(sourceSets.main.resources.srcDirs) {
+            filter(org.apache.tools.ant.filters.ReplaceTokens,
+                    tokens: loadGroovy()
+            )
+        }
+    }
+
+
+
+
+}
+
+
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+    //2.2.1
+//    archiveBase = 'PROJECT'
+//    archivePath = 'gradle/dists'
+}

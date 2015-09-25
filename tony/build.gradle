@@ -1,0 +1,11 @@
+
+
+dependencies {
+    compile(
+            project(':project-common'),
+            project(':iog-common-product'),
+            project(':onsite'),
+            "com.google.code.gson:gson:2.3.1",
+    )
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}

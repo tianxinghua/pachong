@@ -1,0 +1,74 @@
+include "project-common"
+
+rootProject.name = 'iog'
+
+include 'project-framework'
+
+include 'spinnaker'
+
+include 'iog-facade'
+
+include 'project-dao'
+
+include 'iog-service'
+
+include 'iog-web-container'
+
+include 'apennine'
+
+include 'iog-common-product'
+
+include 'acanfora'
+
+include 'coltorti'
+
+include 'acanfora-stock'
+
+include 'openapi-ice'
+
+include 'galiano'
+
+
+include 'ebay'
+
+include 'galiano-stock'
+include 'iog-facade-impl'
+
+include 'spinnaker-stock'
+include 'brunarosso'
+include 'vela'
+include 'vela-stock'
+include 'brunarosso-stock'
+include 'gilt'
+include 'lino'
+include 'lino-stock'
+include 'ostore'
+include 'channeladvisor'
+include 'ostore-stock'
+include 'leam'
+include 'sanremo'
+include 'sanremo-stock'
+include 'iog-web-tmp'
+include 'iog-sop'
+include 'iog-facade-dubbo'
+include 'gilt-order'
+include 'bagheera'
+include 'gilt-stock'
+include 'gilt-purchase'
+include 'tony'
+include 'dante5'
+include 'dellogliostore'
+include 'giglio'
+include 'giglio-stock'
+include 'dante5-stock'
+include 'tessabit'
+include 'tessabit-stock'
+include 'Test'
+include 'marylou'
+include 'marylou-stock'
+include 'onsite'
+include 'tony-stock'
+include 'stefaniamode'
+include 'stefaniamode-stock'
+include 'leam-stock'
+

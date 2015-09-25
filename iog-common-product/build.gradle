@@ -1,0 +1,10 @@
+
+dependencies {
+    compile(
+            project(':project-common'),
+            project(':iog-service'),
+            project(':project-dao')
+
+    )
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}

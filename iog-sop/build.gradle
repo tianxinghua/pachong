@@ -1,0 +1,33 @@
+
+repositories {
+    mavenLocal()
+    maven {
+        url "http://192.168.4.203:8181/nexus/content/groups/public/"
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile(
+            "com.alibaba:fastjson:1.1.39",
+            "commons-collections:commons-collections:3.2.1",
+            "com.shangpin:openapi-api-sdk:3.0",
+
+            project(":project-framework")
+    )
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter(org.apache.tools.ant.filters.ReplaceTokens,
+                tokens: loadGroovy()
+        )
+    }
+}
+
+
+
+
+jar{
+    dependsOn copyResources
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- 实体别名设置 -->
+	<typeAliases>
+		<!-- promotion database -->
+		<typeAlias alias="iog_product" type="com.shangpin.iog.dto.ProductDTO" />
+        <typeAlias alias="iog_spu" type="com.shangpin.iog.dto.SpuDTO" />
+        <typeAlias alias="iog_sku" type="com.shangpin.iog.dto.SkuDTO" />
+		<typeAlias alias="iog_sku_price" type="com.shangpin.iog.dto.SkuPriceDTO" />
+        <typeAlias alias="iog_product_pic" type="com.shangpin.iog.dto.ProductPictureDTO" />
+        <typeAlias alias="iog_supplier" type="com.shangpin.iog.dto.SupplierDTO"/>
+		<typeAlias alias="iog_brand_sp" type="com.shangpin.iog.dto.BrandSpDTO"/>
+		<typeAlias alias="iog_color_contrast" type="com.shangpin.iog.dto.ColorContrastDTO"/>
+		<typeAlias alias="iog_material_contrast" type="com.shangpin.iog.dto.MaterialContrastDTO"/>
+		<typeAlias alias="iog_discount" type="com.shangpin.iog.dto.DiscountDTO"/>
+		<typeAlias alias="iog_discount_history" type="com.shangpin.iog.dto.DiscountHistoryDTO"/>
+		<typeAlias alias="iog_order" type="com.shangpin.iog.dto.OrderDTO"/>
+
+	</typeAliases>
+</configuration>
