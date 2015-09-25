@@ -64,8 +64,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDTO> getExceptionOrder() throws ServiceException {
-
-        return null;
+    	return orderDAO.findExceptionOrder();
     }
 
     @Override
