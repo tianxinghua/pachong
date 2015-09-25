@@ -12,11 +12,12 @@ import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.leam.dto.LeamDTO;
 import com.shangpin.iog.leam.dto.TokenDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.logging.Logger;
+
 
 /**
  * Created by sunny on 2015/8/18.
@@ -26,6 +27,7 @@ public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
     static String skuUrl="http://188.226.153.91/modules/api/v2/stock/";//请求sku地址
     static String tokenUrl="http://188.226.153.91/modules/api/v2/getToken/";
@@ -36,19 +38,17 @@ public class FetchProduct {
 
     static {
         if(null==bdl)
-            bdl=ResourceBundle.getBundle("conf");
+            bdl= ResourceBundle.getBundle("conf");
             supplierId = bdl.getString("supplierId");
     }
     public void fetchProductAndSave(String url){
-        List<LeamDTO>list=getSkus(skuUrl);
+        List<LeamDTO> list=getSkus(skuUrl);
         for(int i =0;i<list.size();i++) {
             SkuDTO dto = new SkuDTO();
             SpuDTO spuDTO = new SpuDTO();
-            ProductPictureDTO pictureDTO = new ProductPictureDTO();
-            StringBuffer sb = new StringBuffer();
+
             LeamDTO leamDTO = list.get(i);
-            List<String> imageList = new ArrayList<>();
-            imageList = leamDTO.getImages();
+            List<String> imageList = leamDTO.getImages();
 
             if (imageList!=null&&imageList.size()>0) {
                 dto.setId(UUIDGenerator.getUUID());
@@ -60,31 +60,22 @@ public class FetchProduct {
                 dto.setProductDescription(leamDTO.getDescription());
                 dto.setProductSize(leamDTO.getSize());
                 dto.setStock(leamDTO.getQty());
-                spuDTO.setId(UUIDGenerator.getUUID());
-                spuDTO.setSpuId(leamDTO.getSupplier_sku());
-                spuDTO.setSupplierId(supplierId);
-                //spuDTO.setCategoryGender(leamDTO.getNomenclature());
-                spuDTO.setCategoryName(leamDTO.getCategory());
-                spuDTO.setSubCategoryName(leamDTO.getSubcategory());
-                spuDTO.setBrandName(leamDTO.getBrand());
-                spuDTO.setMaterial(leamDTO.getComposition());
-                spuDTO.setProductOrigin(leamDTO.getMadein());
-                spuDTO.setSeasonName(leamDTO.getSeason());
-                pictureDTO.setId(UUIDGenerator.getUUID());
-                pictureDTO.setSkuId(leamDTO.getStock_id());
-                pictureDTO.setSupplierId(supplierId);
-                for(String image:imageList){
-                    sb.append(image);
-                }
-                pictureDTO.setPicUrl(sb.toString());
-                try {
-                    productFetchService.saveSPU(spuDTO);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
                 try {
                     productFetchService.saveSKU(dto);
+                    for(String imgUrl:imageList){
+                        ProductPictureDTO pictureDTO = new ProductPictureDTO();
+                        pictureDTO.setId(UUIDGenerator.getUUID());
+                        pictureDTO.setSkuId(leamDTO.getStock_id());
+                        pictureDTO.setSupplierId(supplierId);
+                        pictureDTO.setPicUrl(imgUrl);
+                        try {
+                            productFetchService.savePictureForMongo(pictureDTO);
+                        } catch (ServiceException e) {
+                            loggerError.error("sku " + leamDTO.getStock_id() + " 保存图片失败 ");
+                            e.printStackTrace();
+                        }
+                    }
+
                 } catch (ServiceException e) {
                     try {
                         if (e.getMessage().equals("数据插入失败键重复")) {
@@ -97,11 +88,26 @@ public class FetchProduct {
                     }
                 }
 
-                try{
-                    productFetchService.savePictureForMongo(pictureDTO);
-                }catch (ServiceException e){
+                spuDTO.setId(UUIDGenerator.getUUID());
+                spuDTO.setSpuId(leamDTO.getSupplier_sku());
+                spuDTO.setSupplierId(supplierId);
+                //spuDTO.setCategoryGender(leamDTO.getNomenclature());
+                spuDTO.setCategoryName(leamDTO.getCategory());
+                spuDTO.setSubCategoryName(leamDTO.getSubcategory());
+                spuDTO.setBrandName(leamDTO.getBrand());
+                spuDTO.setMaterial(leamDTO.getComposition());
+                spuDTO.setProductOrigin(leamDTO.getMadein());
+                spuDTO.setSeasonName(leamDTO.getSeason());
+
+                try {
+                    productFetchService.saveSPU(spuDTO);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+
+
+
             }
         }
     }

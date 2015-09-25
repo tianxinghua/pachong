@@ -234,7 +234,7 @@ public class HttpUtil45 {
 			HttpPost post=new HttpPost(url);
 			setTransParam(transParaType, param, jsonValue, post);
 
-			return getResult(post, outTimeConf,null,localContext);
+			return getResultWithStatusCode(post, outTimeConf,null,localContext);
 
 
 		}else if("put".equals(operatorType.toLowerCase())){
@@ -243,7 +243,7 @@ public class HttpUtil45 {
 			setTransParam(transParaType, param, jsonValue, putMothod);
 
 
-			return getResult(putMothod, outTimeConf,null,localContext);
+			return getResultWithStatusCode(putMothod, outTimeConf, null, localContext);
 
 
 		}else if("patch".equals(operatorType.toLowerCase())){
@@ -253,7 +253,7 @@ public class HttpUtil45 {
 			setTransParam(transParaType, param, jsonValue, patch);
 
 
-			return getResult(patch, outTimeConf,null,localContext);
+			return getResultWithStatusCode(patch, outTimeConf, null,localContext);
 
 
 		}else if("delete".equals(operatorType.toLowerCase())){
@@ -264,7 +264,7 @@ public class HttpUtil45 {
 		}
 
 
-		return getResult(request, outTimeConf,null,localContext);
+		return getResultWithStatusCode(request, outTimeConf, null,localContext);
 
 	}
 
@@ -309,8 +309,9 @@ public class HttpUtil45 {
 			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
 
 			resp=httpClient.execute(get,localContext);
+
 			HttpEntity entity=resp.getEntity();
-			result= EntityUtils.toString(entity);
+			result= EntityUtils.toString(entity, "UTF-8");
 			EntityUtils.consume(entity);
 		}catch(Exception e){
 			logger.error("--------------httpError:"+e.getMessage());
@@ -341,6 +342,40 @@ public class HttpUtil45 {
 
 	}
 
+
+	private static String getResultWithStatusCode(HttpUriRequest request, OutTimeConfig outTimeConf,Map<String,String> headMap, HttpClientContext localContext) throws ServiceException{
+
+		String result=null;
+		CloseableHttpResponse resp=null;
+		try {
+			setHeader(headMap,request);
+			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
+
+			resp=httpClient.execute(request,localContext);
+
+			getResponseStatus(resp);
+
+			HttpEntity entity=resp.getEntity();
+			result= EntityUtils.toString(entity,"UTF-8");
+			EntityUtils.consume(entity);
+		}catch(ServiceException e){
+			logger.error("响应码非200,响应码为 : "+e.getMessage());
+			throw e;
+
+		}catch(Exception e){
+			logger.error("--------------httpError:"+e.getMessage());
+		}finally{
+			try {
+				if(resp!=null)
+					resp.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return result==null?errorResult:result;
+	}
+
+
 	private static String getResult(HttpUriRequest request, OutTimeConfig outTimeConf,Map<String,String> headMap, HttpClientContext localContext) {
 
 		String result=null;
@@ -350,8 +385,11 @@ public class HttpUtil45 {
 			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
 
 			resp=httpClient.execute(request,localContext);
+
+			getResponseStatus(resp);
+
 			HttpEntity entity=resp.getEntity();
-			result= EntityUtils.toString(entity);
+			result= EntityUtils.toString(entity,"UTF-8");
 			EntityUtils.consume(entity);
 		}catch(Exception e){
 			logger.error("--------------httpError:"+e.getMessage());
@@ -369,6 +407,7 @@ public class HttpUtil45 {
 
      private static int getResponseStatus(CloseableHttpResponse resp) throws ServiceException{
 		 int stateCode = resp.getStatusLine().getStatusCode();
+		 System.out.println("返回状态码：" + stateCode);
 		 if(200!=stateCode){
 			 throw new ServiceMessageException("状态码:"+stateCode);
 		 }
@@ -421,6 +460,7 @@ public class HttpUtil45 {
 			if(null==localContext) localContext = getPlainContext(url);
 			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
 			resp=httpClient.execute(get,localContext);
+			getResponseStatus(resp);
 			HttpEntity entity=resp.getEntity();
 			final InputStream instream = entity.getContent();
 			if (instream == null) {
@@ -500,8 +540,10 @@ public class HttpUtil45 {
 		try {
 			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
 			resp=httpClient.execute(post, localContext);
+			getResponseStatus(resp);
 			HttpEntity entity=resp.getEntity();
-			result= EntityUtils.toString(entity);
+
+			result= EntityUtils.toString(entity,"UTF-8");
 			EntityUtils.consume(entity);
 		}catch(Exception e){
 			logger.error("请求url：{}错误{}",url,e.getMessage());

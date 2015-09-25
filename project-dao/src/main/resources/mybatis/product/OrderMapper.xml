@@ -54,7 +54,10 @@
 
         from `ORDER`
         <where>
-          SUPPLIER_ID=#{supplierId}
+
+            <if test="null!=supplierId">
+                SUPPLIER_ID=#{supplierId}
+            </if>
             <if test="null!=status">
                 and  STATUS = #{status}
             </if>
@@ -97,10 +100,12 @@
         EXC_DESC ,EXC_TIME
 
         from `ORDER`
-        WHERE EXC_STATE is not null
+        WHERE EXC_STATE='1'
 
 
     </select>
+
+
 
 
 
