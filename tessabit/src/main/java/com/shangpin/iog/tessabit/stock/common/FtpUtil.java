@@ -12,6 +12,7 @@ import java.io.IOException;
  * Created by wangyuzhi on 2015/9/11.
  */
 public class FtpUtil {
+    private static Logger loggerError = Logger.getLogger("error");
     /**
      * test
      * @param args
@@ -51,6 +52,7 @@ public class FtpUtil {
             e.printStackTrace();
         }  finally {
             FtpUtil.close(ftp);
+            loggerError.error("下载TESSABIT数据失败，退出");
             return;
         }
     }
