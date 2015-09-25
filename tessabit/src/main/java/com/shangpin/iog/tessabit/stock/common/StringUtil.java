@@ -1,5 +1,6 @@
 package com.shangpin.iog.tessabit.stock.common;
 
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -12,6 +13,7 @@ import java.util.List;
  * Created by wangyuzhi on 2015/9/10.
  */
 public class StringUtil {
+    private static Logger loggerError = Logger.getLogger("error");
 
     /**
      * test
@@ -43,9 +45,11 @@ public class StringUtil {
             // 关闭输入流
             is.close();
         }  catch (Exception e) {
-            System.out.println(e);
+            System.out.println("e=="+e);
+            loggerError.error("解析TESSABIT数据失败，返回空串");
+            return "";
         }
-        System.out.println(sb.toString().length());
+        System.out.println("output io string==="+sb.toString().length());
         return sb.toString();
     }
 
@@ -80,9 +84,13 @@ public class StringUtil {
      *获取单品数量
      */
     public static String getSubBySub(String str,String begin,String end,int eAdd){
+        if("".equals(str)){
+            System.out.println("file is null,stock changed into 0");
+            return "0";
+        }
         str = str.substring(str.indexOf(begin)+begin.length(),str.indexOf(end)+eAdd);
         if(str.contains("stock")){
-            str = getSubBySub(str,"<stock>","</stock>",0);
+            str = getSubBySub(str, "<stock>", "</stock>", 0);
         }
         return str;
     }
