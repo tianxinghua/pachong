@@ -54,7 +54,7 @@ public class FetchProduct {
         logMongo.info("save product into DB begin");
         messMappingAndSave(products);
         logMongo.info("save product into DB success");
-
+ 
         //System.out.println(json);
     }
     /**
@@ -85,6 +85,7 @@ public class FetchProduct {
                         skuId = skuId.replace("½","+");
                     }
                     sku.setSkuId(skuId);
+                    
                     
                     String itemSize = item.getItem_size();
                     if(itemSize.indexOf("½")>0){
