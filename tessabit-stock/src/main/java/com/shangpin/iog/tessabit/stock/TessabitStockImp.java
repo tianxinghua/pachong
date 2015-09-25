@@ -26,17 +26,21 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //拉取FTP文件
+        logger.info("拉取TESSABIT数据开始");
         FtpUtil.downLoad();
+        logger.info("拉取TESSABIT数据结束");
         //FTP文件转换成字符串
+        logger.info("解析TESSABIT数据开始");
         String localFile = StringUtil.parseXml2Str();
+        logger.info("解析TESSABIT数据开始");
         //定义三方
         Map returnMap = new HashMap();
         String itemId = "";
         Iterator<String> iterator=skuNo.iterator();
         //为供应商循环赋值
+        logger.info("为供应商循环赋值");
         while (iterator.hasNext()){
             itemId = iterator.next();
-            System.out.println("-------2-----------------");
             returnMap.put(itemId, StringUtil.getSubBySub(localFile,itemId,itemId,Constant.ITEM_LENTH));
         }
         return returnMap;
@@ -44,18 +48,18 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
 
     public static void main(String[] args) throws Exception {
         TessabitStockImp impl = new TessabitStockImp();
-/*        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("TESSABIT更新数据库开始");
-        impl.updateProductStock("2015091501331", "2015-01-01 00:00", format.format(new Date()));
+        impl.updateProductStock(Constant.SUPPLIER_ID, "2015-01-01 00:00", format.format(new Date()));
         logger.info("TESSABIT更新数据库结束");
-        System.exit(0);*/
+        System.exit(0);
 
-        List<String> skuNo = new ArrayList<>();
+/*        List<String> skuNo = new ArrayList<>();
         skuNo.add("1986242872_10");
         Map returnMap = impl.grabStock(skuNo);
         System.out.println("test return size is "+returnMap.keySet().size());
         System.out.println("test return value is "+returnMap.get("1986242872_10"));;
-        System.out.println("test return value is ");
+        System.out.println("test return value is ");*/
 
     }
 }
