@@ -26,7 +26,7 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //拉取FTP文件
-        FtpUtil.downLoad();
+        //FtpUtil.downLoad();
         //FTP文件转换成字符串
         String localFile = StringUtil.parseXml2Str();
         //定义三方
@@ -36,6 +36,7 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
         //为供应商循环赋值
         while (iterator.hasNext()){
             itemId = iterator.next();
+            System.out.println("-------2-----------------");
             returnMap.put(itemId, StringUtil.getSubBySub(localFile,itemId,itemId,Constant.ITEM_LENTH));
         }
         return returnMap;
@@ -53,7 +54,8 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
         skuNo.add("1986242872_10");
         Map returnMap = impl.grabStock(skuNo);
         System.out.println("test return size is "+returnMap.keySet().size());
-        System.out.println("test return value is "+returnMap.get("1986242872_10"));
+        System.out.println("test return value is "+returnMap.get("1986242872_10"));;
+        System.out.println("test return value is ");
 
     }
 }
