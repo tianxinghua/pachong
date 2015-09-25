@@ -84,9 +84,9 @@ public class FetchProduct {
                     if(skuId.indexOf("½")>0){
                         skuId = skuId.replace("½","+");
                     }
+
                     sku.setSkuId(skuId);
-                    
-                    
+
                     String itemSize = item.getItem_size();
                     if(itemSize.indexOf("½")>0){
                     	itemSize = itemSize.replace("½","+");
