@@ -51,6 +51,7 @@ public class FtpUtil {
             e.printStackTrace();
         }  finally {
             FtpUtil.close(ftp);
+            return;
         }
     }
 

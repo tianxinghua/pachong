@@ -13,27 +13,27 @@ public class FtpLoad {
 
     final Logger logger = Logger.getLogger(this.getClass());
     /**
-     * Description: 下载文件
+     * Description: 锟斤拷锟斤拷锟侥硷拷
      */
     public static void downFile() {
-        // 定义FTPClient便利
+        // defined FTPClient
         com.enterprisedt.net.ftp.FTPClient ftp = null;
         try {
-            //创建FTPClient
+            //creat FTPClient
             ftp = new com.enterprisedt.net.ftp.FTPClient();
-            // 连接服务器
+            // set value
             ftp.setRemoteHost(Constant.URL);
             ftp.setRemotePort(Integer.parseInt(Constant.PORT));
             ftp.setTimeout(3600000);
             ftp.connect();
 
-            //登陆
+            //login
             ftp.login(Constant.USER, Constant.PASSWORD);
 
-            //连接模式
+            //set mode
             ftp.setConnectMode(FTPConnectMode.PASV);      //
 
-            //ASCII方式：传输xml文本文件
+            //set type
             ftp.setType(FTPTransferType.ASCII);
 
             ftp.get(Constant.LOCAL_FILE, Constant.SERVER_FILE);
