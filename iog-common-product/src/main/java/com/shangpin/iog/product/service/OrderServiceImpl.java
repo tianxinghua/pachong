@@ -1,6 +1,7 @@
 package com.shangpin.iog.product.service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.product.dao.OrderMapper;
 import com.shangpin.iog.service.OrderService;
@@ -23,6 +24,8 @@ public class OrderServiceImpl implements OrderService {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private  final  static String UPDATE_ERROR = "更新订单状态失败";
+
+    private  final  static  String UPDATE_EXCEPTON_MSG_ERROR="更新订单异常信息时失败";
 
     @Autowired
     OrderMapper orderDAO;
@@ -55,8 +58,30 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateOrderStatus(Map<String, String> statusMap) throws ServiceException {
+    public List<OrderDTO> getOrderBySupplierIdAndOrderStatus(String supplierId, String status) throws ServiceException {
+        return  orderDAO.findBySupplierIdAndStatus(supplierId, status);
+    }
 
+    @Override
+    public List<OrderDTO> getExceptionOrder() throws ServiceException {
+
+        return null;
+    }
+
+    @Override
+    public void updateOrderMsg(Map<String, String> statusMap) throws ServiceException {
+        judgeMapParam(statusMap);
+        try {
+            orderDAO.updateOrderMsg(statusMap);
+        } catch (Exception e) {
+            logger.error("更改订单 ： " + statusMap.get("uuid") + "失败" );
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateOrderStatus(Map<String, String> statusMap) throws ServiceException {
+        judgeMapParam(statusMap);
         try {
             orderDAO.updateOrderStatus(statusMap);
         } catch (Exception e) {
@@ -64,6 +89,34 @@ public class OrderServiceImpl implements OrderService {
             e.printStackTrace();
         }
 
+
+    }
+
+    @Override
+    public void updateExceptionMsg(Map<String, String> exceptionMap) throws ServiceException {
+        judgeMapParam(exceptionMap);
+        try {
+            orderDAO.updateOrderExceptionMsg(exceptionMap);
+        } catch (Exception e) {
+            logger.error(UPDATE_EXCEPTON_MSG_ERROR);
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateDeliveryNo(Map<String, String> exceptionMap) throws ServiceException {
+        judgeMapParam(exceptionMap);
+
+        try {
+            orderDAO.updateDeliveryNo(exceptionMap);
+        } catch (Exception e) {
+            logger.error(exceptionMap.get("uuid")+"更改发货单失败");
+            e.printStackTrace();
+        }
+    }
+
+    private void judgeMapParam(Map<String, String> exceptionMap) throws ServiceMessageException {
+        if(null==exceptionMap||exceptionMap.size()==0) throw new ServiceMessageException("参数传入错误");
 
     }
 

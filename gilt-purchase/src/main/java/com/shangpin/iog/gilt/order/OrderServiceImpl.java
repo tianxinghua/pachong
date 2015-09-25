@@ -9,6 +9,7 @@ import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.gilt.dto.ErrorDTO;
 import com.shangpin.iog.gilt.dto.OrderDTO;
 import com.shangpin.iog.gilt.dto.OrderDetailDTO;
 import com.shangpin.iog.service.ReturnOrderService;
@@ -50,34 +51,124 @@ public class OrderServiceImpl  {
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static String url="https://api-sandbox.gilt.com/global/orders/";
 
+    /**
+     * 下订单
+     */
     public void purchaseOrder(){
 
         //初始化时间
-        initDate();
+        initDate("date.ini");
         OrderService iceOrderService = new OrderService();
         try {
             //获取订单数组
             List<Integer> status = new ArrayList<>();
             status.add(1);
-            Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.geturchaseOrder(supplierId, startDate, endDate, status);
-            //  下单
+            Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.getPurchaseOrder(supplierId, startDate, endDate, status);
+            //  正常下单
             String url = "https://api-sandbox.gilt.com/global/orders/";
             transData( url, supplierId,orderMap);
+            //下单异常 再次下单
+            handlePurchaseOrderException();
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
+    /**
+     * 支付确认
+     */
+    public void confirmOrder(){
+        //1 、 获取已下单的订单信息
+        //TODO  下单成功（尚品网支付成功） ，但支付时如果链接不上网  超过两个小时
+
+        List<String>  uuidList= null;
+        try {
+            uuidList  =productOrderService.getOrderIdBySupplierIdAndOrderStatus(supplierId,"placed");
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+
+        //2、向gilt 确认支付成功
+        String param="{\"status\" : \"confirmed\"}";
+        String returnStr="";
+        if(null!=uuidList){
+            Gson gson = new Gson();
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
+            for(String uuid :uuidList){
+                try {
+                    returnStr=HttpUtil45.operateData("patch", "json", url + uuid, timeConfig, null, param, key, "");
+                    logger.info("更新gilt端订单状态返回信息："+returnStr);
+                } catch (ServiceException e) {
+
+                    e.printStackTrace();
+                }
+                if(HttpUtil45.errorResult.equals(returnStr)){  //链接异常
+                    loggerError.error("支付下单编号 ："+uuid+" -链接异常");
+                    setConnectionError(uuid);
+                    continue;
+
+                }else{
+                    if(returnStr.indexOf("message")>0&&returnStr.indexOf("type")>0){//处理失败
+
+                        loggerError.error("支付下单 失败:"+returnStr);
+
+                        ErrorDTO errorDTO = gson.fromJson(returnStr, ErrorDTO.class);
+                        Map<String,String> map = new HashMap<>();
+                        map.put("excDesc",null!=errorDTO?(" 订单号 "+ uuid + " 商品 " + (null!=errorDTO.getSku_id()?errorDTO.getSku_id():" ") + ":"+errorDTO.getType()):(uuid + "确认异常"));
+                        setErrorMsg(uuid, map);
+                        continue;
+                    }else{
+
+                        //更新订单状态
+                        Map<String,String> map = new HashMap<>();
+                        map.put("status","confirmed");
+                        map.put("uuid",uuid);
+                        try {
+                            productOrderService.updateOrderStatus(map);
+                        } catch (ServiceException e) {
+                            loggerError.error("订单："+uuid+" gilt支付确认成功，但更新订单状态失败时失败");
+                            System.out.println("订单："+uuid+" gilt支付确认成功，但更新订单状态失败时失败");
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            }
+
+        }
+
+
+
+
+    }
+
+    private void setErrorMsg(String uuid, Map<String, String> map) {
+        map.put("uuid",uuid);
+        map.put("excState","1");
+
+        map.put("excTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
+        try {
+            productOrderService.updateExceptionMsg(map);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 取消订单
+     */
     public void deleteOrder(){
         //初始化时间
-        initDate();
+        initDate("cancel.ini");
         OrderService iceOrderService = new OrderService();
         try {
             //获取订单数组
             List<Integer> status = new ArrayList<>();
             status.add(5);
-            Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.geturchaseOrder(supplierId, startDate, endDate, status);
+            Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.getPurchaseOrder(supplierId, startDate, endDate, status);
             //  下单
             String url = "https://api-sandbox.gilt.com/global/orders/";
             cancelData(url, supplierId, orderMap);
@@ -86,32 +177,83 @@ public class OrderServiceImpl  {
             e.printStackTrace();
         }
     }
+
+
     /**
-     * 更新订单商品的状态
+     * 设置发货单
      */
-    public void updateStatus(){
+    public void deliveryOrder(){
         try {
             //获取已提交的产品信息
-            List<String> uuidList =  productOrderService.getOrderIdBySupplierIdAndOrderStatus(supplierId, "confirmed");
-            List<String> uuidlist =  productOrderService.getOrderIdBySupplierIdAndOrderStatus(supplierId, "NOWAIT");
-            uuidList.addAll(uuidlist);
+            List<com.shangpin.iog.dto.OrderDTO> uuidList =  productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, "confirmed");
             Gson gson =new Gson();
             OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
             Map<String,String> param =new HashMap<>();
-            String UID ="";
+            String uuid ="";
             String result ="";
-            for(String uuid:uuidList){
+            OrderService iceOrderService = new OrderService();
+            for(com.shangpin.iog.dto.OrderDTO orderDTO:uuidList){
+                uuid=orderDTO.getUuId();
                 result=HttpUtil45.get(url +uuid, timeConfig, param, key, "");
+                logger.info("查询是否发货："+result);
                 if(HttpUtil45.errorResult.equals(result)){  //链接异常
                     loggerError.error("获取采购单商品发货状态链接异常："+uuid);
+                    // 是否更新订单异常状态.
+                    setConnectionError(uuid);
+                    continue;
                 }else {
+
                     OrderDTO dto = gson.fromJson(result, OrderDTO.class);
-                    if (/*!"confirmed".equals(dto.getStatus())||*/null!=dto&&"shipped".equals(dto.getStatus())) {
-                        Map<String,String> map = new HashMap<>();
-                        map.put("status",dto.getStatus());
-                        map.put("uuid",dto.getId());
-                        productOrderService.updateOrderStatus(map);
+
+                    if (null != dto && "shipped".equals(dto.getStatus())) {
+                        //通知SOP已发货
+                        List<String> purchaseOrderIdList = new ArrayList<>();
+                        purchaseOrderIdList.add(orderDTO.getSpOrderId());
+                        try {
+                            String  deliverNo=  iceOrderService.getPurchaseDeliveryOrderNo(supplierId,
+                                    "","","",5,"","","", "","","",purchaseOrderIdList,0);
+                            //更新海外对接库
+                            Map<String, String> map = new HashMap<>();
+                            map.put("status", dto.getStatus());
+                            map.put("uuid", dto.getId());
+                            map.put("updateTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
+                            map.put("deliveryNo",deliverNo);
+                            try {
+                                productOrderService.updateDeliveryNo(map);
+                            } catch (Exception e) {
+                                //增加异常信息
+                                loggerError.error("订单:" + orderDTO.getUuId() + " 已发货。"
+                                        + " 采购单：" + orderDTO.getSpOrderId() + " 推送发货单信息成功 " + " 但保存推送信息时失败 ");
+                                e.printStackTrace();
+                            }
+                        } catch (Exception e) {
+
+
+                            loggerError.error("订单:" + orderDTO.getUuId() + " 已发货。" + " 采购单：" + orderDTO.getSpOrderId() + "推送发货单信息失败");
+                            //增加异常信息
+
+                            String date =DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH) ;
+                            Map<String, String> map = new HashMap<>();
+//                            map.put("status", dto.getStatus());
+                            map.put("uuid", dto.getId());
+                            map.put("updateTime", date);
+                            map.put("excState","1");
+                            map.put("excDesc","订单:" + orderDTO.getUuId() + "已发货，但推送发货单信息时失败" );
+                            map.put("excTime", date);
+                            try {
+                                productOrderService.updateOrderMsg(map);
+                            } catch (ServiceException e1) {
+                                loggerError.error("订单:" + orderDTO.getUuId() + " 已发货。" + " 采购单：" + orderDTO.getSpOrderId() + " 推送发货单信息失败。 保存信息失败");
+                            }
+
+
+                        }
+
+
+                    }else{
+                        loggerError.error("订单:" + uuid + "获取订单信息失败。可能被gilt删除。");
                     }
+
                 }
             }
         } catch (ServiceException e) {
@@ -121,7 +263,24 @@ public class OrderServiceImpl  {
     }
 
     /**
-     * 传输库存
+     * 设置链接异常
+     * @param uuid
+     */
+    private void setConnectionError(String uuid) {
+        Map<String,String> map = new HashMap<>();
+        map.put("uuid",uuid);
+        map.put("excState","1");
+        map.put("excDesc","链接异常，无法下单");
+        map.put("excTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
+        try {
+            productOrderService.updateExceptionMsg(map);
+        } catch (ServiceException e) {
+            loggerError.error("支付下单编号 ：" + uuid + " -链接异常。更新异常信息时失败");
+        }
+    }
+
+    /**
+     * 下单 先存入本地库 去通知gilt 更改本地库状态
      * @param url
      * @param orderMap
      * @throws ServiceException
@@ -129,7 +288,7 @@ public class OrderServiceImpl  {
     public void transData(String url,String supplierId, Map<String, List<PurchaseOrderDetail>> orderMap) throws ServiceException {
         Gson gson = new Gson();
         OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
-        String orderDetail = "",uuid="";
+        String uuid="";
         for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();){
             Map.Entry<String, List<PurchaseOrderDetail>> entry = itor.next();
             OrderDTO orderDTO = new OrderDTO();
@@ -153,7 +312,7 @@ public class OrderServiceImpl  {
                     OrderDetailDTO detailDTO = new OrderDetailDTO();
                     detailDTO.setSku_id(Integer.valueOf(purchaseOrderDetail.SupplierSkuNo));
                     detailDTO.setQuantity(stockMap.get(purchaseOrderDetail.SupplierSkuNo));
-                    buffer.append("'").append(detailDTO.getSku_id()).append("'").append(":").append(detailDTO.getQuantity()).append(",");
+                    buffer.append(detailDTO.getSku_id()).append(":").append(detailDTO.getQuantity()).append(",");
                     list.add(detailDTO);
                     stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
                 }
@@ -162,18 +321,12 @@ public class OrderServiceImpl  {
 
             orderDTO.setOrder_items(list);
             uuid=UUID.randomUUID().toString();
-            /*orderDTO.setId(UUID.randomUUID().toString());
-            orderDTO.setStatus("confirmed");*/
-
-
-
-
 
             //存储
             com.shangpin.iog.dto.OrderDTO spOrder =new com.shangpin.iog.dto.OrderDTO();
             spOrder.setUuId(uuid);
             spOrder.setSupplierId(supplierId);
-            spOrder.setStatus("NOWAIT");
+            spOrder.setStatus("WAITING");
             spOrder.setSpOrderId(entry.getKey());
             spOrder.setDetail(buffer.toString());
             spOrder.setCreateTime(new Date());
@@ -185,63 +338,7 @@ public class OrderServiceImpl  {
                 String param = gson.toJson(orderDTO,new TypeToken<OrderDTO>(){}.getType());
                 logger.info("传入订单内容 ：" + param);
                 System.out.println("传入订单内容 ：" + param);
-                String result =  HttpUtil45.operateData("put", "json", url + uuid, timeConfig, null, param, key, "");
-                if(HttpUtil45.errorResult.equals(result)){  //链接异常
-                    loggerError.error("采购单："+spOrder.getSpOrderId()+" 链接异常 无法处理");
-                }else{
-                    logger.info("订单处理结果 ：" + result);
-                    System.out.println("订单处理结果 ：" + result);
-                    //更新      日志存储，数据库更新
-
-                    try {
-                        if(result.indexOf("message")>0&&result.indexOf("type")>0){ //  失败
-                            loggerError.error("采购单："+spOrder.getSpOrderId()+" 下单返回转化失败");
-                            System.out.println("采购单：" + spOrder.getSpOrderId() + " 下单返回转化失败");
-                            continue;
-                        }
-                        OrderDTO dto= getObjectByJsonString(result);
-                        if(null==dto){
-                            loggerError.error("采购单："+spOrder.getSpOrderId()+" 下单返回转化失败");
-                            System.out.println("采购单：" + spOrder.getSpOrderId() + " 下单返回转化失败");
-                            continue;
-                        }
-                        //
-                        //更新订单状态
-                        Map<String,String> map = new HashMap<>();
-                        map.put("status",dto.getStatus());
-                        map.put("uuid",dto.getId());
-                        try {
-                            //
-                            if("placed".equals(dto.getStatus())){
-                                map.put("status","confirmed");
-                            }
-                            param="";
-                            String returnStr=HttpUtil45.operateData("patch", "json", url + uuid, timeConfig, map, param, key, "");
-                            if(HttpUtil45.errorResult.equals(returnStr)){  //链接异常
-                                loggerError.error("支付下单-链接异常");
-                            }else{
-                                if(result.indexOf("message")>0&&returnStr.indexOf("type")>0){
-                                    loggerError.error("支付下单 失败");
-                                    //TODO 是否更新订单异常状态.
-                                    continue;
-                                }else{
-                                    logger.info("更新gilt端订单状态："+returnStr);
-                                    productOrderService.updateOrderStatus(map);
-                                }
-                            }
-                        } catch (ServiceException e) {
-                            loggerError.error("采购单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");
-                            System.out.println("采购单：" + spOrder.getSpOrderId() + " 下单成功。但更新订单状态失败");
-                            e.printStackTrace();
-                        }
-                    } catch (Exception e) {
-                        //下单失败
-                        loggerError.error("采购单："+spOrder.getSpOrderId()+" 下单返回转化失败");
-                        System.out.println("采购单：" + spOrder.getSpOrderId() + " 下单返回转化失败");
-                        e.printStackTrace();
-                    }
-                }
-
+                if (informOrderForGilt(url, gson, timeConfig, uuid, spOrder, param,"")) continue;
 
 
             } catch (ServiceException e) {
@@ -262,6 +359,151 @@ public class OrderServiceImpl  {
             logger.info("----gilt 订单存储完成----");
         }
     }
+
+    private boolean informOrderForGilt(String url, Gson gson, OutTimeConfig timeConfig, String uuid, com.shangpin.iog.dto.OrderDTO spOrder, String param,String errorType) throws ServiceException {
+        String result = null;
+        try {
+            result = HttpUtil45.operateData("put", "json", url + uuid, timeConfig, null, param, key, "");
+        } catch (ServiceException e) {
+            //非200返回
+            Map<String,String> map = new HashMap<>();
+            String reason ="";
+            if("状态码:422".equals(e.getMessage())){
+                reason ="sku are sold out ";
+            }else{
+                reason ="code = " +  e.getMessage();
+            }
+            map.put("uuid",uuid);
+            map.put("excDesc",reason);
+            map.put("excState","1");
+            map.put("excTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
+            if(StringUtils.isNotBlank(errorType)){//已发生过异常
+               if(DateTimeUtil.getTimeDifference(spOrder.getCreateTime(),new Date())/(1000*60*60*24)>0){
+                   //超过一天 不需要在做处理 订单状态改为其它状体
+                   map.put("status","NOHANDLE");
+
+               }
+            }
+
+
+            productOrderService.updateOrderMsg(map);
+            return  true;
+
+        }
+
+        String spOrderId = spOrder.getSpOrderId();
+
+        if(HttpUtil45.errorResult.equals(result)){  //链接异常
+
+            this.setConnectionError(uuid);
+            loggerError.error("采购单："+spOrderId+" 链接异常 无法处理");
+
+
+
+        }else{
+            logger.info("订单处理结果 ：" + result);
+            System.out.println("订单处理结果 ：" + result);
+            //更新      日志存储，数据库更新
+
+            try {
+                if(result.indexOf("message")>0&&result.indexOf("type")>0){ //  失败
+                    loggerError.error("采购单："+spOrderId+" gilt 处理时有异常。异常信息 ：" + result);
+                    System.out.println("采购单：" + spOrderId + " gilt 处理时有异常。异常信息 ：" + result);
+
+                    loggerError.error("支付下单 失败:"+result);
+
+                    ErrorDTO errorDTO = gson.fromJson(result, ErrorDTO.class);
+                    Map<String,String> map = new HashMap<>();
+                    map.put("excDesc",null!=errorDTO?(" 订单号 "+ uuid + " 商品 " + (null!=errorDTO.getSku_id()?errorDTO.getSku_id():" ") + ":"+errorDTO.getType()):(uuid + "下单异常"));
+                    setErrorMsg(uuid, map);
+                    return true;
+                }
+                OrderDTO dto= getObjectByJsonString(result);
+                if(null==dto){
+                    loggerError.error("采购单："+spOrderId+" 下单返回转化失败");
+                    System.out.println("采购单：" + spOrderId + " 下单返回转化失败");
+                    return true;
+                }
+
+                //
+                //更新订单状态
+                Map<String,String> map = new HashMap<>();
+                map.put("status",dto.getStatus());
+                map.put("uuid",dto.getId());
+                if(StringUtils.isNotBlank(errorType)){
+                    map.put("excState","0");
+                }
+                try {
+
+                    productOrderService.updateOrderMsg(map);
+                } catch (ServiceException e) {
+                    loggerError.error("采购单："+spOrderId+" 下单成功。但更新订单状态失败");
+                    System.out.println("采购单：" + spOrderId + " 下单成功。但更新订单状态失败");
+                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                //下单失败
+                loggerError.error("采购单："+spOrderId+" 下单返回转化失败");
+                System.out.println("采购单：" + spOrderId + " 下单返回转化失败");
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * 处理异常订单
+     */
+
+    private void handlePurchaseOrderException(){
+        //拉取采购单存入本地库，产生订单 但通知gilt时 失败
+        List<com.shangpin.iog.dto.OrderDTO>  orderDTOList= null;
+        try {
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, "WAITING");
+            if(null!=orderDTOList){
+                String orderDetail = "",orderMsg="";
+                Gson gson = new Gson();
+                OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
+                for(com.shangpin.iog.dto.OrderDTO orderDTO:orderDTOList){
+                    orderDetail = orderDTO.getDetail().substring(0,orderDTO.getDetail().length()-1);
+                    String[] orderDetailArray = orderDetail.split(",");
+                    if(null!=orderDetailArray){
+                        StringBuffer buffer = new StringBuffer("{\"order_items\":[");
+                        int i =0;
+                        for(String detail:orderDetailArray){
+                            i++;
+                           if(i==orderDetailArray.length) {
+                               buffer.append("{\"sku_id\":").append(detail.substring(0,detail.indexOf(":"))).append(",\"quantity\":")
+                                       .append(detail.substring(detail.indexOf(":")+1)).append("}");
+                           }else{
+                               buffer.append("{\"sku_id\":").append(detail.substring(0,detail.indexOf(":"))).append(",\"quantity\":")
+                                       .append(detail.substring(detail.indexOf(":")+1)).append("},");
+                           }
+
+
+                        }
+                        buffer.append("]}");
+
+
+                        orderMsg = buffer.toString();
+                        //异常订单通知下单
+                        informOrderForGilt(url, gson, timeConfig, orderDTO.getUuId(), orderDTO, orderMsg,"exception");
+
+                    }
+
+
+
+                }
+            }
+
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
 
     /**
      * 取消订单
@@ -309,14 +551,14 @@ public class OrderServiceImpl  {
                 logger.info("采购单信息转化退单后信息："+deleteOrder.toString());
                 System.out.println("采购单信息转化退单后信息："+deleteOrder.toString());
                 returnOrderService.saveOrder(deleteOrder);
-                Map<String,String>pramap=new HashMap<>();
                 String param ="";
-                pramap.put("status","cancelled");
-                logger.info("传入退单内容 ：" + param);
-                System.out.println("传入退单内容 ：" + param);
-                String result =  HttpUtil45.operateData("delete", "json", url + deleteOrder.getUuId(), timeConfig, pramap, param, key, "");
+
+
+                String result =  HttpUtil45.operateData("patch", "json", url + deleteOrder.getUuId(), timeConfig, null, param, key, "");
                 if(HttpUtil45.errorResult.equals(result)){  //链接异常
                     loggerError.error("采购单："+deleteOrder.getSpOrderId()+" 链接异常 无法处理");
+
+
                 }else{
                     logger.info("退单处理结果 ：" + result);
                     System.out.println("退单处理结果 ：" + result);
@@ -328,24 +570,7 @@ public class OrderServiceImpl  {
                             System.out.println("采购单：" + deleteOrder.getSpOrderId() + " 退单返回转化失败");
                             continue;
                         }
-                       /* OrderDTO dto= getObjectByJsonString(result);
-                        if(null==dto){
-                            loggerError.error("采购单："+deleteOrder.getSpOrderId()+" 退单返回转化失败");
-                            System.out.println("采购单：" + deleteOrder.getSpOrderId() + " 退单返回转化失败");
-                            continue;
-                        }
-                        //
-                        //更新退单状态
-                        Map<String,String> map = new HashMap<>();
-                        map.put("status",dto.getStatus());
-                        map.put("uuid",dto.getId());
-                        try {
-                            productOrderService.updateOrderStatus(map);
-                        } catch (ServiceException e) {
-                            loggerError.error("采购单："+deleteOrder.getSpOrderId()+" 退单成功。但更新退单状态失败");
-                            System.out.println("采购单：" + deleteOrder.getSpOrderId() + " 退单成功。但更新退单状态失败");
-                            e.printStackTrace();
-                        }*/
+
                     } catch (Exception e) {
                         //下单失败
                         loggerError.error("采购单："+deleteOrder.getSpOrderId()+" 退单返回转化失败");
@@ -387,35 +612,35 @@ public class OrderServiceImpl  {
         return obj;
     }
 
-    private  static void initDate() {
+    private  static void initDate(String  fileName) {
         Date tempDate = new Date();
 
         endDate = DateTimeUtil.convertFormat(tempDate, YYYY_MMDD_HH);
 
-        String lastDate=getLastGrapDate();
+        String lastDate=getLastGrapDate(fileName);
         startDate= StringUtils.isNotEmpty(lastDate) ? lastDate: DateTimeUtil.convertFormat(DateUtils.addDays(tempDate, -180), YYYY_MMDD_HH);
 
 
 
-        writeGrapDate(endDate);
+        writeGrapDate(endDate,fileName);
 
 
     }
 
-    private static File getConfFile() throws IOException {
+    private static File getConfFile(String fileName) throws IOException {
         String realPath = OrderServiceImpl.class.getClassLoader().getResource("").getFile();
         realPath= URLDecoder.decode(realPath, "utf-8");
-        File df = new File(realPath+"date.ini");
+        File df = new File(realPath+fileName);//"date.ini"
         if(!df.exists()){
             df.createNewFile();
         }
         return df;
     }
-    private static String getLastGrapDate(){
+    private static String getLastGrapDate(String fileName){
         File df;
         String dstr=null;
         try {
-            df = getConfFile();
+            df = getConfFile(fileName);
             try(BufferedReader br = new BufferedReader(new FileReader(df))){
                 dstr=br.readLine();
             }
@@ -425,10 +650,10 @@ public class OrderServiceImpl  {
         return dstr;
     }
 
-    private static void writeGrapDate(String date){
+    private static void writeGrapDate(String date,String fileName){
         File df;
         try {
-            df = getConfFile();
+            df = getConfFile(fileName);
 
             try(BufferedWriter bw = new BufferedWriter(new FileWriter(df))){
                 bw.write(date);

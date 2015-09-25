@@ -14,12 +14,23 @@ import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Controller;
 
+import java.util.ResourceBundle;
+
 @Configurable
 
 @EnableMongoRepositories(basePackages= "com.shangpin.iog.mongodao")
 public class MongodbConfiguration extends AbstractMongoConfiguration {
     Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static ResourceBundle bdl=null;
+    private static String mongodbAddress;
+    private static  int port;
 
+    static {
+        if(null==bdl)
+            bdl=ResourceBundle.getBundle("mongodb");
+        mongodbAddress = bdl.getString("Mongodb.Address");
+        port = Integer.valueOf(bdl.getString("MongoDB.Port"));
+    }
 
 
 
@@ -30,7 +41,7 @@ public class MongodbConfiguration extends AbstractMongoConfiguration {
 
     @Override
     public Mongo mongo() throws Exception {
-        return new Mongo("192.168.20.112",27017);   //192.168.20.112     49.213.13.167
+        return new Mongo(mongodbAddress,port);   //192.168.20.112     49.213.13.167
     }
 
 

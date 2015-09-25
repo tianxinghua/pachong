@@ -34,8 +34,10 @@ public class Schedule {
 
     @Autowired
     OrderServiceImpl orderService;
-   /* @Scheduled(cron="0 0/3 * * * ? ")*/
-    public void setUserLevel(){
+
+    //下单
+    @Scheduled(cron="0 0/3 * * * ? ")
+    public void putOrder(){
 
         //拉取数据
         System.out.println("-------gilt start---------");
@@ -48,17 +50,32 @@ public class Schedule {
         }
 
     }
-    @Scheduled(cron="0 0/3 * * * ? ")
-    public void updateStatus(){
-        System.out.println("-------updatestatus start---------");
+
+    //确认支付
+//    @Scheduled(cron="0 0/3 * * * ? ")
+    public  void confirmOrder(){
         try {
-            orderService.updateStatus();
-            System.out.println("-------updatestatus end---------");
+            orderService.confirmOrder();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //确认发货
+  //  @Scheduled(cron="0 0/3 * * * ? ")
+    public void deliveryOrder(){
+        System.out.println("-------deliveryOrder start---------");
+        try {
+            orderService.deliveryOrder();
+            System.out.println("-------deliveryOrder end---------");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
+
+
     public static void main(String[] args){
        /* Gson gson =new Gson();
         OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
