@@ -1,4 +1,4 @@
-
+dependencies
 dependencies {
     compile(
             "org.mybatis:mybatis:3.2.2",
