@@ -140,8 +140,8 @@ public class FetchProduct {
                 spu.setCategoryName(product.getCategory());
                 spu.setSpuName(product.getName());
                 spu.setSeasonId(product.getSeason());
-                spu.setMaterial(product.getMaterial());
                 spu.setCategoryGender(product.getGender());
+                spu.setMaterial(product.getMaterial());
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
                 e.printStackTrace();

@@ -53,4 +53,15 @@ public interface ProductSearchService {
      * @throws ServiceException
      */
     public StringBuffer exportProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+    /**
+     * 获取产品id
+     * @param supplier  供货商
+     * @param startDate 开始日期
+     * @param endDate   结束日期
+     * @return  String
+     * @throws ServiceException
+     */
+    public String exportSkuId(String supplier,Date startDate,Date endDate) throws ServiceException;
+    
+    
 }

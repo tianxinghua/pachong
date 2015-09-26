@@ -37,4 +37,17 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     List<ProductDTO> findListBySupplierAndLastDate(@Param("supplier") String supplier,
                                                             @Param("startDate") Date startDate,
                                                             @Param("endDate") Date endDate);
+    
+    /**
+     * 根据供货商标识和修改时间获取所有产品的ID
+     * @param supplier   供货商ID或NO 唯一标示
+     * @param startDate  开始时间
+     * @param endDate    结束时间
+     * @return
+     */
+    List<ProductDTO> findSkuIdbySupplier(@Param("supplier") String supplier,
+    							@Param("startDate") Date startDate,
+    							@Param("endDate") Date endDate);
+    
+    
 }
