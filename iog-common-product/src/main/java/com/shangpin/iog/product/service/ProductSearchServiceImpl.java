@@ -9,6 +9,7 @@ import com.shangpin.iog.mongodao.PictureDAO;
 import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.product.dao.*;
 import com.shangpin.iog.service.ProductSearchService;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
@@ -501,5 +502,21 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         }
 
     }
+
+	@Override
+	public String exportSkuId(String supplier, Date startDate, Date endDate)
+			throws ServiceException {
+		List<ProductDTO> productList = productDAO.findSkuIdbySupplier(supplier, startDate, endDate);
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < productList.size(); i++) {
+				if (i!=productList.size()-1) {
+					sb.append(productList.get(i).getSkuId()).append(",");
+				}else {
+					sb.append(productList.get(i).getSkuId());
+				}
+		}
+
+		return sb.toString();
+	}
 
 }
