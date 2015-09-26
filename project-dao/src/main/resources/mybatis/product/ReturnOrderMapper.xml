@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shangpin.iog.product.dao.ReturnOrderMapper">
 
-    <resultMap id="OrderResultMap" type="iog_order">
+    <resultMap id="OrderResultMap" type="iog_returnOrder">
 
         <id column="ID" property="id" />
         <result column="SUPPLIER_ID" property="supplierId"  />
@@ -13,6 +13,7 @@
         <result column="CREATE_TIME" property="createTime"  />
         <result column="EXC_STATE" property="excState"  />
         <result column="EXC_DESC" property="excDesc"  />
+        <result column="EXC_TIME" property="" />
     </resultMap>
     <sql id="id_out_column">
         SUPPLIER_ID,
@@ -24,7 +25,7 @@
         EXC_STATE,
 		EXC_DESC
     </sql>
-    <insert id="save"  parameterType="iog_order" >
+    <insert id="save"  parameterType="iog_returnOrder" >
         insert into RETURN_ORDER (
         <include refid="id_out_column"></include>
         )
@@ -35,11 +36,36 @@
     </insert>
     <update id="updateReturnOrderStatus" parameterType="Map" >
         update RETURN_ORDER
-        SET STATUS = #{status}
+        <set>
+            <if test="status != null"> STATUS = #{status}, </if>
+            <if test="updateTime != null"> UPDATE_TIME = #{updateTime} </if>
+
+        </set>
+
         where UUID = #{uuid}
         <!--<foreach collection="uuid" index="index" item="item" open="(" separator="," close=")">-->
         <!--#{item}-->
         <!--</foreach>-->
+
+    </update>
+
+
+    <update id="updateReturnOrderMsg" parameterType="Map" >
+        update RETURN_ORDER
+        <set>
+            <if test="status != null"> STATUS = #{status}, </if>
+            <if test="memo != null"> MEMO = #{memo}, </if>
+            <if test="updateTime != null"> UPDATE_TIME = #{updateTime}, </if>
+            <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo},</if>
+            <if test="excState != null"> EXC_STATE = #{excState}, </if>
+            <if test="excDesc != null"> EXC_DESC = #{excDesc}, </if>
+            <if test="excTime != null"> EXC_TIME = #{excTime}</if>
+
+
+
+        </set>
+        where UUID = #{uuid}
+
 
     </update>
 </mapper>

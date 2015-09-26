@@ -8,6 +8,7 @@
         <result column="SUPPLIER_ID" property="supplierId"  />
         <result column="UUID" property="uuId"  />
         <result column="SP_ORDER_ID" property="spOrderId"  />
+        <result column="SP_PURCHASE_DETAIL_NO" property="spPurchaseDetailNo" />
         <result column="DETAIL" property="detail"  />
         <result column="STATUS" property="status"/>
 
@@ -33,6 +34,7 @@
         SUPPLIER_ID,
 		UUID,
 		SP_ORDER_ID,
+		SP_PURCHASE_DETAIL_NO,
 		DETAIL,
 		STATUS,
 
@@ -45,6 +47,7 @@
         SUPPLIER_ID as SUPPLIER_ID,
         UUID as UUID,
         SP_ORDER_ID as SP_ORDER_ID,
+        SP_PURCHASE_DETAIL_NO,
         STATUS as STATUS,
         DETAIL as DETAIL,
         CREATE_TIME as CREATE_TIME,
@@ -71,6 +74,7 @@
         SUPPLIER_ID as SUPPLIER_ID,
         UUID as UUID,
         SP_ORDER_ID as SP_ORDER_ID,
+        SP_PURCHASE_DETAIL_NO,
         STATUS as STATUS,
         DETAIL as DETAIL,
         CREATE_TIME as CREATE_TIME,
@@ -114,7 +118,7 @@
         <include refid="save_column"></include>
         )
         values(
-        #{supplierId}, #{uuId}, #{spOrderId},
+        #{supplierId}, #{uuId}, #{spOrderId},#{spPurchaseDetailNo},
         #{detail},#{status},
 
         #{createTime}

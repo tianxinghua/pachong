@@ -16,6 +16,7 @@ public class OrderDTO {
     private String supplierId;
     private String uuId;  //和供货商公用的订单唯一标识
     private String spOrderId;
+    private String spPurchaseDetailNo;
     private String detail;//
     private String status;//订单状态
     private String memo;//备注
@@ -112,8 +113,11 @@ public class OrderDTO {
                 ", supplierId='" + supplierId + '\'' +
                 ", uuId='" + uuId + '\'' +
                 ", spOrderId='" + spOrderId + '\'' +
+                ", spPurchaseDetailNo='" + spPurchaseDetailNo + '\'' +
                 ", detail='" + detail + '\'' +
                 ", status='" + status + '\'' +
+                ", memo='" + memo + '\'' +
+                ", deliveryNo='" + deliveryNo + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 ", excState='" + excState + '\'' +
