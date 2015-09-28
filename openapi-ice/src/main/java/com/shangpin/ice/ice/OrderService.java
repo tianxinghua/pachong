@@ -14,13 +14,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import java.io.*;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
  * Created by loyalty on 15/9/9.
  */
-public class OrderService {
+public  class OrderService {
 
     static Logger logger = LoggerFactory.getLogger(OrderService.class);
     private static final String YYYY_MMDD_HH = "yyyy-MM-dd HH:mm:ss";
@@ -120,6 +122,31 @@ public class OrderService {
     }
 
 
+//    public abstract void  placeOrder();
+
+
+//    public void purchaseOrder(String supplierId,String startDate,String endDate){
+//
+//
+//        try {
+//            //获取订单数组
+//            List<Integer> status = new ArrayList<>();
+//            status.add(1);
+//            Map<String,List<PurchaseOrderDetail>> orderMap =  getPurchaseOrder(supplierId, startDate, endDate, status);
+//            //  正常下单
+//            String url = "https://api-sandbox.gilt.com/global/orders/";
+//            transData( url, supplierId,orderMap);
+//            //下单异常 再次下单
+//            handlePurchaseOrderException();
+//
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+
+
     public static String getRandomNum() {
         Random random = new Random();
         String num="";
@@ -148,4 +175,7 @@ public class OrderService {
         return (sdf.format(date));
 
     }
+
+
+
 }

@@ -26,7 +26,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService{
         try{
             returnOrderDao.save(returnOrderDTO);
         }catch (Exception e){
-            logger.error("退单保存失败："+ e.getMessage());
+            logger.error(UPDATE_ERROR+ e.getMessage());
             e.printStackTrace();
         }
     }
@@ -36,8 +36,19 @@ public class ReturnOrderServiceImpl implements ReturnOrderService{
         try {
             returnOrderDao.updateReturnOrderStatus(statusMap);
         } catch (Exception e) {
-            logger.error(UPDATE_ERROR);
+            logger.error(UPDATE_ERROR + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void updateReturnOrderMsg(Map<String, String> statusMap) throws ServiceException {
+        try {
+            returnOrderDao.updateReturnOrderMsg(statusMap);
+        } catch (Exception e) {
+            logger.error("更新退单信息失败" + e.getMessage());
+            e.printStackTrace();
+        }
+
     }
 }

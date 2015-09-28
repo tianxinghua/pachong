@@ -234,7 +234,7 @@ public class HttpUtil45 {
 			HttpPost post=new HttpPost(url);
 			setTransParam(transParaType, param, jsonValue, post);
 
-			return getResultWithStatusCode(post, outTimeConf,null,localContext);
+			return getResultWithStatusCode(post, outTimeConf, null, localContext);
 
 
 		}else if("put".equals(operatorType.toLowerCase())){
@@ -407,8 +407,11 @@ public class HttpUtil45 {
 
      private static int getResponseStatus(CloseableHttpResponse resp) throws ServiceException{
 		 int stateCode = resp.getStatusLine().getStatusCode();
+		 logger.info("链接返回状态码：" + stateCode);
 		 System.out.println("返回状态码：" + stateCode);
-		 if(200!=stateCode){
+		 if(200==stateCode||201==stateCode||202==stateCode){
+
+		 }else{
 			 throw new ServiceMessageException("状态码:"+stateCode);
 		 }
 		 return stateCode;
