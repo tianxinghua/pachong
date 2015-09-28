@@ -39,7 +39,7 @@ public class FetchProduct {
             in.read(ims);
             String s = new String(ims);
             System.out.println("s======"+s);
-            OutputStream out=new FileOutputStream(new File("c:\\longcxm3.gif"));
+            OutputStream out=new FileOutputStream(new File("E:\\atelier.xml"));
             out.write(ims);
             in.close();
             out.close();
