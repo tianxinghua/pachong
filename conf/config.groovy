@@ -8,7 +8,7 @@ environments{
 
 
             Ice.Default.Locator='SPIceGrid/Locator:default -h 192.168.20.204 -p 12000:default -h 192.168.20.205 -p 12000'
-            MongoDB.hostname='192.168.20.112'
+            MongoDB.hostname='192.168.20.82'
             SOP.HOST='http://192.168.20.83:9090/'
             MongoDB.port='27017'
             zookeeper.address='192.168.20.40:2181,192.168.20.41:2181,192.168.20.42:2181'
