@@ -92,9 +92,10 @@ public class FetchProduct {
                     	itemSize = itemSize.replace("½","+");
                     }
                     sku.setProductSize(itemSize);
-                    sku.setSalePrice(item.getPrice_currency());
+                    sku.setSaleCurrency(item.getPrice_currency());
                     sku.setSupplierPrice(item.getSupply_price());
                     sku.setColor(product.getColor());
+                    sku.setProductDescription(product.getDescription());
                     sku.setStock(item.getStock());
                     productFetchService.saveSKU(sku);
 
