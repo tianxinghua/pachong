@@ -90,7 +90,10 @@ public class DownloadAndReadCSV {
 				product.setColor(colValueList.get(colNameList.indexOf("color")));
 				product.setDescription(colValueList.get(colNameList.indexOf("description")));
 				product.setGender(colValueList.get(colNameList.indexOf("gender")));
-				product.setImage_url(colValueList.get(colNameList.indexOf("image")));
+				String[] img = new String[2];
+				img[0] = colValueList.get(colNameList.indexOf("image"));
+				img[1] = colValueList.get(colNameList.indexOf("small_image"));
+				product.setImage_url(img);
 				product.setMade(colValueList.get(colNameList.indexOf("country_of_origin")));
 				sb.append(colValueList.get(colNameList.indexOf("material1")));
 				if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("material2")))) {

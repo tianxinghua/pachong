@@ -13,7 +13,7 @@ public class Product {
 	private String color;//sku:color
 	private String material;//spu:material
 
-	private String image_url;//image->spu:picUrl
+	private String[] image_url;//image->spu:picUrl
 	private String made;//country_of_origin
 	
 	
@@ -91,11 +91,11 @@ public class Product {
 		this.material = material;
 	}
 
-	public String getImage_url() {
+	public String[] getImage_url() {
 		return image_url;
 	}
 
-	public void setImage_url(String image_url) {
+	public void setImage_url(String[] image_url) {
 		this.image_url = image_url;
 	}
 
@@ -105,7 +105,6 @@ public class Product {
 
 	public void setMade(String made) {
 		this.made = made;
-	}
-	
+	}	
 	
 }
