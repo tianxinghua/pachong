@@ -13,7 +13,16 @@ public class CreateOrderDTO {
     private String status;
     private String statusDate;
     private String orderDate;
-    private List<ItemDTO> items;
+    private ItemDTO[] items;
+
+    public ItemDTO[] getItems() {
+        return items;
+    }
+
+    public void setItems(ItemDTO[] items) {
+        this.items = items;
+    }
+
     private String orderTotalPrice;
     private ShippingInfoDTO shippingInfo;
     private BillingInfoDTO billingInfo;
@@ -64,14 +73,6 @@ public class CreateOrderDTO {
 
     public void setOrderDate(String orderDate) {
         this.orderDate = orderDate;
-    }
-
-    public List<ItemDTO> getItems() {
-        return items;
-    }
-
-    public void setItems(List<ItemDTO> items) {
-        this.items = items;
     }
 
     public String getOrderTotalPrice() {

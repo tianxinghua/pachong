@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -68,45 +69,22 @@ public class OrderServiceImpl {
             handlePurchaseOrderException();*/
             System.out.println(orderMap.size());
             //defination
-            ShippingInfoDTO shippingInfo = new ShippingInfoDTO();
-            ShippingAddressDTO address = new ShippingAddressDTO();
-            shippingInfo.setAddress(address);
-            shippingInfo.setFees("0");
-            BillingInfoDTO billingInfo = new BillingInfoDTO();
-            billingInfo.setPaymentMethod("7");
-            BillingAddressDTO billingAddress = new BillingAddressDTO();
-            billingInfo.setAddress(billingAddress);
-            List<ItemDTO> items = new ArrayList<>();
-            ItemDTO item = new ItemDTO();
-            items.add(item);
-            CreateOrderDTO order = new CreateOrderDTO();
-            order.setMerchantId("55f707f6b49dbbe14ec6354d");
-            order.setToken("d355cd8701b2ebc54d6c8811e03a3229");
-            order.setShopOrderId("11");
-            order.setStatus("111");
-            order.setStatusDate("111");
-            order.setOrderDate("111");
-            order.setItems(items);
-            order.setOrderTotalPrice("12344");
-            order.setShippingInfo(shippingInfo);
-            order.setBillingInfo(billingInfo);
+            CreateOrderDTO order = getOrder();
+
 
             for (String key:orderMap.keySet()){
                 System.out.println(key);
                 List<PurchaseOrderDetail> list = orderMap.get(key);
                 System.out.println("list.size()=="+list.size());
                 for(PurchaseOrderDetail pur:list){
-                    billingInfo.setTotal(pur.SkuPrice);
+                    order.getBillingInfo().setTotal(pur.SkuPrice);
                     order.setShopOrderId(pur.SopPurchaseOrderDetailNo);
-                    order.setStatus("111");
-                    order.setStatusDate("111");
-                    order.setOrderDate("111");
                     order.setOrderTotalPrice(pur.SkuPrice);
-                    item.setSku(pur.SkuNo);
-                    item.setQty("1");
-                    item.setPrice(pur.SkuPrice);
-                    item.setCur(pur.SkuPriceCurrency);
+                    order.getItems()[0].setSku(pur.SkuNo);
+                    order.getItems()[0].setPrice(pur.SkuPrice);
+                    order.getItems()[0].setCur(pur.SkuPriceCurrency);
                     createOrder(order);
+                    /////////////////////////////////////////////////////////////////////////////
                     System.out.println(pur.SopPurchaseOrderNo);
                     System.out.println(pur.SopPurchaseOrderDetailNo);
                     System.out.println(pur.SkuNo);
@@ -130,6 +108,33 @@ public class OrderServiceImpl {
             e.printStackTrace();
         }
 
+    }
+    /**
+     * 获取订单信息
+     */
+    private CreateOrderDTO getOrder(){
+        ShippingInfoDTO shippingInfo = new ShippingInfoDTO();
+        ShippingAddressDTO address = new ShippingAddressDTO();
+        shippingInfo.setAddress(address);
+        shippingInfo.setFees("0");
+        BillingInfoDTO billingInfo = new BillingInfoDTO();
+        billingInfo.setPaymentMethod("7");
+        BillingAddressDTO billingAddress = new BillingAddressDTO();
+        billingInfo.setAddress(billingAddress);
+        ItemDTO[] itemsArr = new ItemDTO[1];
+        ItemDTO item = new ItemDTO();
+        item.setQty("1");
+        itemsArr[0] = item;
+        CreateOrderDTO order = new CreateOrderDTO();
+        order.setMerchantId("55f707f6b49dbbe14ec6354d");
+        order.setToken("d355cd8701b2ebc54d6c8811e03a3229");
+        order.setStatus("CONFIRMED");
+        order.setStatusDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+        order.setOrderDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+        order.setItems(itemsArr);
+        order.setShippingInfo(shippingInfo);
+        order.setBillingInfo(billingInfo);
+        return  order;
     }
     /**
      * 在线推送订单
