@@ -119,8 +119,14 @@ public class ProductionServiceImpl implements  ProductionService {
 
         } catch (Exception e) {
             loggerError.error("sku:" + skuDTO.getSkuId() + " 保存失败。失败原因: " + e.getMessage());
-            e.printStackTrace();
-            throw new ServiceMessageException("save sku failed. please contact IT" );
+            if(ProductFetchServiceImpl.REPEAT_MESSAGE.equals(e.getMessage())){
+                throw new ServiceMessageException("repeat save sku." );
+            }else{
+                e.printStackTrace();
+                throw new ServiceMessageException("save sku failed. please contact IT" );
+            }
+
+
         }
 
         String imgUrl =productDTO.getSpuPicture();

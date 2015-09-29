@@ -120,6 +120,28 @@
 
 	</select>
 	
+	<select id="findSkuIdbySupplier"  resultMap="ProductsResultMap">
+		select
+           sku.SKU_ID as sku_id
+		from SKU sku
+        <where>
+          <if test="null!=supplier">
+            and  SUPPLIER_ID = #{supplier}
+          </if>
+            <if test="null!=startDate">
+                and LAST_TIME >= #{startDate}
+            </if>
+           <if test="endDate!=null">
+
+                <![CDATA[ and LAST_TIME <= #{endDate}    ]]>
+
+            </if>
+        </where>
+  
+
+
+	</select>
+	
 
 	
 	

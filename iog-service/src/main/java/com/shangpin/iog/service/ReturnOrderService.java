@@ -21,4 +21,26 @@ public interface ReturnOrderService {
      * @throws ServiceException
      */
     public void updateReturnOrderStatus(Map<String,String> statusMap) throws ServiceException;
+
+
+    /**
+     * 更改订单信息
+     * @param statusMap 比较全的信息
+     *   <set>
+    <if test="status != null"> STATUS = #{status}, </if>
+    <if test="memo != null"> MEMO = #{memo}, </if>
+    <if test="updateTime != null"> UPDATE_TIME = #{updateTime}, </if>
+    <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo},</if>
+    <if test="excState != null"> EXC_STATE = #{excState}, </if>
+    <if test="excDesc != null"> EXC_DESC = #{excDesc}, </if>
+    <if test="excTime != null"> EXC_TIME = #{excTime}</if>
+
+
+
+    </set>
+    where UUID = #{uuid}
+     *
+     * @throws ServiceException
+     */
+    public void updateReturnOrderMsg(Map<String,String> statusMap) throws ServiceException;
 }

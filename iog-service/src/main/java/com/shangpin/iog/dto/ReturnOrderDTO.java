@@ -1,11 +1,16 @@
 package com.shangpin.iog.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigInteger;
 import java.util.Date;
 
 /**
  * Created by sunny on 2015/9/19.
  */
+@Getter
+@Setter
 public class ReturnOrderDTO {
     private BigInteger id;
     private String supplierId;
@@ -16,6 +21,7 @@ public class ReturnOrderDTO {
     private Date createTime;
     private String excState;
     private String excDesc;
+    private Date excTime;
     public BigInteger getId() {
         return id;
     }
@@ -86,5 +92,21 @@ public class ReturnOrderDTO {
 
     public void setExcDesc(String excDesc) {
         this.excDesc = excDesc;
+    }
+
+    @Override
+    public String toString() {
+        return "ReturnOrderDTO{" +
+                "id=" + id +
+                ", supplierId='" + supplierId + '\'' +
+                ", uuId='" + uuId + '\'' +
+                ", spOrderId='" + spOrderId + '\'' +
+                ", detail='" + detail + '\'' +
+                ", status='" + status + '\'' +
+                ", createTime=" + createTime +
+                ", excState='" + excState + '\'' +
+                ", excDesc='" + excDesc + '\'' +
+                ", excTime=" + excTime +
+                '}';
     }
 }

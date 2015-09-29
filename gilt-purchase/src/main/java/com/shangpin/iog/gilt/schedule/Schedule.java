@@ -35,8 +35,8 @@ public class Schedule {
     @Autowired
     OrderServiceImpl orderService;
 
-    //下单
-    @Scheduled(cron="0 0/3 * * * ? ")
+    //下单 退单 异常
+//    @Scheduled(cron="0 0/3 * * * ? ")
     public void putOrder(){
 
         //拉取数据
@@ -62,7 +62,7 @@ public class Schedule {
     }
 
     //确认发货
-  //  @Scheduled(cron="0 0/3 * * * ? ")
+    @Scheduled(cron="0 0/3 * * * ? ")
     public void deliveryOrder(){
         System.out.println("-------deliveryOrder start---------");
         try {
@@ -73,6 +73,9 @@ public class Schedule {
         }
 
     }
+
+
+
 
 
 

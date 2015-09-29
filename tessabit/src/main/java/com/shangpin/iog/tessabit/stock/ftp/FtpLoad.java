@@ -13,20 +13,27 @@ public class FtpLoad {
 
     final Logger logger = Logger.getLogger(this.getClass());
     /**
+     * Description: �����ļ�
      */
     public static void downFile() {
+        // defined FTPClient
         com.enterprisedt.net.ftp.FTPClient ftp = null;
         try {
+            //creat FTPClient
             ftp = new com.enterprisedt.net.ftp.FTPClient();
+            // set value
             ftp.setRemoteHost(Constant.URL);
             ftp.setRemotePort(Integer.parseInt(Constant.PORT));
             ftp.setTimeout(3600000);
             ftp.connect();
 
+            //login
             ftp.login(Constant.USER, Constant.PASSWORD);
 
+            //set mode
             ftp.setConnectMode(FTPConnectMode.PASV);      //
 
+            //set type
             ftp.setType(FTPTransferType.ASCII);
 
             ftp.get(Constant.LOCAL_FILE, Constant.SERVER_FILE);

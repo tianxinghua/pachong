@@ -11,5 +11,14 @@ import java.util.Map;
  */
 @Mapper
 public interface ReturnOrderMapper extends IBaseDao<ReturnOrderDTO> {
+
     public int updateReturnOrderStatus(Map<String,String> paraMap);
+
+
+    /**
+     * 更新退单信息 任意信息
+     * @param paraMap
+     * @return
+     */
+    public int updateReturnOrderMsg(Map<String,String> paraMap);
 }
