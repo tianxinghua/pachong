@@ -25,10 +25,11 @@ public class Startup
         log.info("----初始SPRING成功----");
         //拉取数据
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("dellogliostore");
-        fetchProduct.fetchProductAndSave("https://www.dellogliostore.com/public/merchant/feedDNT5US.xml");
+//        fetchProduct.fetchProductAndSave("http://www.dellogliostore.com/admin/temp/xi125.xml");
+        fetchProduct.fetchProductAndSave("http://127.0.0.1:8080/test_dell.xml");
 
         log.info("----拉取dante5数据完成----");
-		System.out.println("-------fetch end---------");
+        System.out.println("-------fetch end---------");
 
 	}
 

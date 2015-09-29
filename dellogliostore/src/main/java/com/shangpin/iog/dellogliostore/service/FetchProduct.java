@@ -1,16 +1,13 @@
 package com.shangpin.iog.dellogliostore.service;
 
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.dellogliostore.dto.Feed;
 import com.shangpin.iog.service.ProductFetchService;
-import com.stanfy.gsonxml.GsonXml;
-import com.stanfy.gsonxml.GsonXmlBuilder;
-import com.stanfy.gsonxml.XmlParserCreator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +24,7 @@ public class FetchProduct {
 
     public void fetchProductAndSave(String url) {
 
-        String supplierId = "2015091801508";
+        String supplierId = "2015092501047";
         try {
             Map<String, String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
@@ -35,21 +32,22 @@ public class FetchProduct {
             timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get(url, timeConfig, null);
 
-            XmlParserCreator parserCreator = new XmlParserCreator() {
-                @Override
-                public XmlPullParser createParser() {
-                    try {
-                        return XmlPullParserFactory.newInstance().newPullParser();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            };
+            Feed feed = ObjectXMLUtil.xml2Obj(Feed.class, result);
+            System.out.println(feed);
 
-            GsonXml gsonXml = new GsonXmlBuilder()
-                    .setSameNameLists(true)
-                    .setXmlParserCreator(parserCreator)
-                    .create();
+//            if (feed == null || feed.getItems() == null) {
+//                return;
+//            }
+//
+//            int count = 0;
+//            for (SpuItem spuItem : feed.getItems()) {
+//                if (spuItem == null) {
+//                    continue;
+//                }
+//                System.out.println("count : " + ++count);
+//                System.out.println("spuItem : " + spuItem);
+//            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

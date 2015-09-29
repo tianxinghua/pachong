@@ -70,3 +70,5 @@ include 'onsite'
 include 'tony-stock'
 include 'stefaniamode'
 include 'stefaniamode-stock'
+include 'dellogliostore-stock'
+
