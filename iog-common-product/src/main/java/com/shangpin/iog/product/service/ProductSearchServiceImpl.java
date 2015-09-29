@@ -61,6 +61,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
     private static     Map<String,String> materialContrastMap = new HashMap<>();
 
+    String splitSign=";";
+
     //key 均为小写 以便匹配
     private static Map<String,String>  cityMap= new HashMap<String,String>(){
         {
@@ -166,12 +168,15 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
     @Override
     public StringBuffer exportProduct(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
-        StringBuffer buffer = new StringBuffer("CategoryName 品类名称," +
-                "Category_No 品类编号,BrandNo 品牌编号,BrandName 品牌,ProductModel 货号,SupplierSkuNo 供应商SkuNo," +
-                " 性别 ,"+
-                "SopProductName 商品名称,BarCode 条形码,ProductColor 颜色,color 中文,ProductSize 尺码,material 材质,material 中文材质,ProductOrigin 产地,productUrl1," +
-                "productUrl2,productUrl3,productUrl4,productUrl5,productUrl6,productUrl7,productUrl8,productUrl9," +
-                "PcDesc 描述,Stock 库存,markerPrice ,sallPrice,Price 进货价,Currency 币种,上市季节").append("\r\n");
+
+        StringBuffer buffer = new StringBuffer("CategoryName 品类名称" +   splitSign +
+                "Category_No 品类编号"+ splitSign + "BrandNo 品牌编号" + splitSign + "BrandName 品牌" + splitSign + "ProductModel 货号" + splitSign +
+                "SupplierSkuNo 供应商SkuNo"+ splitSign + " 性别 "+splitSign +  "SopProductName 商品名称"  + splitSign + "BarCode 条形码" + splitSign +
+                "ProductColor 颜色" + splitSign + "color 中文" + splitSign + "ProductSize 尺码" + splitSign + "material 材质" + splitSign + "material 中文材质" + splitSign+
+                "ProductOrigin 产地" + splitSign+"productUrl1" + splitSign+ "productUrl2" + splitSign + "productUrl3" + splitSign + "productUrl4"+ splitSign + "productUrl5" + splitSign +
+                "productUrl6" + splitSign + "productUrl7"  + splitSign + "productUrl8" + splitSign + "productUrl9" + splitSign +
+                "PcDesc 描述" +  splitSign + "Stock 库存" + splitSign + "markerPrice" + splitSign  + "sallPrice" +  splitSign  + "supplier Price 进货价" + splitSign+
+                "Currency 币种" + splitSign + "上市季节").append("\r\n");
         Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize);
 
         //设置尚品网品牌
@@ -190,26 +195,13 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //品类名称
                 categoryName= dto.getSubCategoryName();
                 if(StringUtils.isBlank(categoryName)){
-                    categoryName = dto.getCategoryName();
-                }
-                if(StringUtils.isBlank(categoryName)){
-                    categoryName= "";
-                }else{
-                    categoryName= categoryName.replace(",","... ");
+                    categoryName =StringUtils.isBlank(dto.getCategoryName())?"":dto.getCategoryName();
                 }
 
+                buffer.append(categoryName).append(splitSign);
 
-                buffer.append(categoryName).append(",");
+                buffer.append("尚品网品类编号").append(splitSign);
 
-                buffer.append("尚品网品类编号").append(",");
-
-//                categoryId = dto.getSubCategoryId();
-//                if(StringUtils.isBlank(categoryId)){
-//                    categoryId = dto.getCategoryId();
-//                }
-//
-//                buffer.append(StringUtils.isNotBlank(categoryId)?categoryId :"品类编号").append(",");
-                //品牌  不需要供货商的品牌编号 对尚品网无意义
 
                 brandName=dto.getBrandName();
                 if(StringUtils.isNotBlank(brandName)){
@@ -222,39 +214,32 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     brandId="";
                 }
 
-                buffer.append(!"".equals(brandId)?brandId :"尚品网品牌编号").append(",");
-                buffer.append(brandName).append(",");
+                buffer.append(!"".equals(brandId)?brandId :"尚品网品牌编号").append(splitSign);
+                buffer.append(brandName).append(splitSign);
                 //货号
-                buffer.append(dto.getProductCode()).append(",");
+                buffer.append(dto.getProductCode()).append(splitSign);
                 //    供应商SKUID
 
-                buffer.append("\"\t" + dto.getSkuId()+ "\"").append(",");
+                buffer.append("\"\t" + dto.getSkuId()+ "\"").append(splitSign);
               //  欧洲习惯 第一个先看 男女
-                buffer.append(dto.getCategoryGender()).append(",");
+                buffer.append(dto.getCategoryGender()).append(splitSign);
                 //产品名称
                 productName =   dto.getProductName();
                 if(StringUtils.isBlank(productName)){
                     productName = dto.getSpuName();
-                    if(StringUtils.isNotBlank(productName)){
-                        productName = productName.replaceAll(","," ");
-                    }else{
-                        productName="";
-                    }
-                }else{
-                    productName = productName.replaceAll(",", " ");
                 }
                 if(StringUtils.isNotBlank(productName)){
                     productName = productName.replaceAll("\\r","").replaceAll("\\n","");
                 }
 
-                buffer.append(productName).append(",");
+                buffer.append(productName).append(splitSign);
 
 
-                buffer.append("\"\t" + dto.getBarcode() + "\"").append(",");
+                buffer.append("\"\t" + dto.getBarcode() + "\"").append(splitSign);
 
                 //获取颜色
                 color =dto.getColor();
-                buffer.append(null==color?"":color).append(",");
+                buffer.append(null==color?"":color).append(splitSign);
                 //翻译中文
                 if(StringUtils.isNotBlank(color)){
                     if(colorContrastMap.containsKey(color.toLowerCase())){
@@ -264,7 +249,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     color="";
                 }
 
-                buffer.append(color).append(",");
+                buffer.append(color).append(splitSign);
 
                 //获取尺码
                 productSize=dto.getSize();
@@ -273,25 +258,24 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     if(productSize.indexOf("+")>0){
                         productSize=productSize.replace("+",".5");
                     }
-                    productSize = productSize.replaceAll(",", " ");
 
                 }else{
                     productSize="";
                 }
 
 
-                buffer.append(productSize).append(",");
+                buffer.append(productSize).append(splitSign);
 
                 //获取材质
                 material =dto.getMaterial();
                 if(StringUtils.isBlank(material)) {
                     material="";
                 }else{
-                    material= material.replaceAll(",", " ");
+
                     material = material.replaceAll("\\r","").replaceAll("\\n","");
                 }
 
-                buffer.append(material).append(",");
+                buffer.append(material).append(splitSign);
                 //材质 中文
                 if(!"".equals(material)) {
 
@@ -304,7 +288,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     }
                 }
 
-                buffer.append(material).append(",");
+                buffer.append(material).append(splitSign);
 
 
 
@@ -318,36 +302,36 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     productOrigin="";
                 }
 
-                buffer.append(productOrigin).append(",");
+                buffer.append(productOrigin).append(splitSign);
 
                 //图片
-                buffer.append(dto.getPicUrl()).append(",");
-                buffer.append(dto.getItemPictureUrl1()).append(",").append(dto.getItemPictureUrl2()).append(",").append(dto.getItemPictureUrl3()).append(",")
-                        .append(dto.getItemPictureUrl4()).append(",").append(dto.getItemPictureUrl5()).append(",")
-                        .append(dto.getItemPictureUrl6()).append(",").append(dto.getItemPictureUrl7()).append(",")
-                        .append(dto.getItemPictureUrl8()).append(",");
+                buffer.append(dto.getPicUrl()).append(splitSign);
+                buffer.append(dto.getItemPictureUrl1()).append(splitSign).append(dto.getItemPictureUrl2()).append(splitSign).append(dto.getItemPictureUrl3()).append(splitSign)
+                        .append(dto.getItemPictureUrl4()).append(splitSign).append(dto.getItemPictureUrl5()).append(splitSign)
+                        .append(dto.getItemPictureUrl6()).append(splitSign).append(dto.getItemPictureUrl7()).append(splitSign)
+                        .append(dto.getItemPictureUrl8()).append(splitSign);
                 //明细描述
                 productDetail = dto.getProductDescription();
                 if(StringUtils.isNotBlank(productDetail))  {
-                    if(productDetail.indexOf(",")>0) {
-                        productDetail = productDetail.replace(",", "...");
+                    if(productDetail.indexOf(splitSign)>0) {
+                        productDetail = productDetail.replace(splitSign, "  ");
                     }
                     productDetail = productDetail.replaceAll("\\r", "").replaceAll("\\n", "");
                 }
 
 
-                buffer.append(productDetail).append(",");
+                buffer.append(productDetail).append(splitSign);
 
 
-                buffer.append(dto.getStock()).append(",") ;
+                buffer.append(dto.getStock()).append(splitSign) ;
                 //价格
-                buffer.append(null==dto.getMarketPrice()?" ":dto.getMarketPrice()).append(",")
-                  .append(null==dto.getSalePrice()?" ":dto.getSalePrice()).append(",")
-                .append(dto.getSupplierPrice()).append(",").append("").append(",");
+                buffer.append(null==dto.getMarketPrice()?" ":dto.getMarketPrice()).append(splitSign)
+                  .append(null==dto.getSalePrice()?" ":dto.getSalePrice()).append(splitSign)
+                .append(dto.getSupplierPrice()).append(splitSign).append(dto.getSaleCurrency()).append(splitSign);
                 //季节
 
 
-                buffer.append(null==dto.getSeasonName()?dto.getSeasonId():dto.getSeasonName());
+                buffer.append(null == dto.getSeasonName() ? dto.getSeasonId() : dto.getSeasonName());
 
                 buffer.append("\r\n");
             } catch (Exception e) {
@@ -439,60 +423,60 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 switch (i){
                     case 0:
                         if(isHavePic){
-                            dto.setItemPictureUrl1(picList.get(i).getPicUrl().replaceAll(",","++++"));
+                            dto.setItemPictureUrl1(picList.get(i).getPicUrl().replaceAll(splitSign,"++++"));
                         }else{
-                            dto.setPicUrl(picList.get(i).getPicUrl().replaceAll(",", "++++"));
+                            dto.setPicUrl(picList.get(i).getPicUrl().replaceAll(splitSign, "++++"));
                         }
                         break;
                     case 1:
 
                         if(isHavePic){
-                            dto.setItemPictureUrl2(picList.get(i).getPicUrl().replaceAll(",", "++++"));
+                            dto.setItemPictureUrl2(picList.get(i).getPicUrl().replaceAll(splitSign, "++++"));
                         }else{
-                            dto.setItemPictureUrl1(picList.get(i).getPicUrl().replaceAll(",", "++++")) ;
+                            dto.setItemPictureUrl1(picList.get(i).getPicUrl().replaceAll(splitSign, "++++")) ;
                         }
 
                         break;
                     case 2:
                         if(isHavePic){
-                            dto.setItemPictureUrl3(picList.get(i).getPicUrl().replaceAll(",", "++++"));
+                            dto.setItemPictureUrl3(picList.get(i).getPicUrl().replaceAll(splitSign, "++++"));
                         }else{
-                            dto.setItemPictureUrl2(picList.get(i).getPicUrl().replaceAll(",", "++++")) ;
+                            dto.setItemPictureUrl2(picList.get(i).getPicUrl().replaceAll(splitSign, "++++")) ;
                         }
                         break;
                     case 3:
                         if(isHavePic){
-                            dto.setItemPictureUrl4(picList.get(i).getPicUrl().replaceAll(",", "++++"));
+                            dto.setItemPictureUrl4(picList.get(i).getPicUrl().replaceAll(splitSign, "++++"));
                         }else{
-                            dto.setItemPictureUrl3(picList.get(i).getPicUrl().replaceAll(",", "++++")) ;
+                            dto.setItemPictureUrl3(picList.get(i).getPicUrl().replaceAll(splitSign, "++++")) ;
                         }
                         break;
                     case 4:
                         if(isHavePic){
-                            dto.setItemPictureUrl5(picList.get(i).getPicUrl().replaceAll(",", "++++"));
+                            dto.setItemPictureUrl5(picList.get(i).getPicUrl().replaceAll(splitSign, "++++"));
                         }else{
-                            dto.setItemPictureUrl4(picList.get(i).getPicUrl().replaceAll(",", "++++")) ;
+                            dto.setItemPictureUrl4(picList.get(i).getPicUrl().replaceAll(splitSign, "++++")) ;
                         }
                         break;
                     case 5:
                         if(isHavePic){
-                            dto.setItemPictureUrl6(picList.get(i).getPicUrl().replaceAll(",", "++++"));
+                            dto.setItemPictureUrl6(picList.get(i).getPicUrl().replaceAll(splitSign, "++++"));
                         }else{
-                            dto.setItemPictureUrl5(picList.get(i).getPicUrl().replaceAll(",", "++++")) ;
+                            dto.setItemPictureUrl5(picList.get(i).getPicUrl().replaceAll(splitSign, "++++")) ;
                         }
                         break;
                     case 6:
                         if(isHavePic){
-                            dto.setItemPictureUrl7(picList.get(i).getPicUrl().replaceAll(",", "++++"));
+                            dto.setItemPictureUrl7(picList.get(i).getPicUrl().replaceAll(splitSign, "++++"));
                         }else{
-                            dto.setItemPictureUrl6(picList.get(i).getPicUrl().replaceAll(",", "++++")) ;
+                            dto.setItemPictureUrl6(picList.get(i).getPicUrl().replaceAll(splitSign, "++++")) ;
                         }
                         break;
                     case 7:
                         if(isHavePic){
-                            dto.setItemPictureUrl8(picList.get(i).getPicUrl().replaceAll(",", "++++"));
+                            dto.setItemPictureUrl8(picList.get(i).getPicUrl().replaceAll(splitSign, "++++"));
                         }else{
-                            dto.setItemPictureUrl7(picList.get(i).getPicUrl().replaceAll(",","++++")) ;
+                            dto.setItemPictureUrl7(picList.get(i).getPicUrl().replaceAll(splitSign,"++++")) ;
                         }
                         break;
 
