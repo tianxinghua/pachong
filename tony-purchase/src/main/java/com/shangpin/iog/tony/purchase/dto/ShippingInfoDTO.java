@@ -6,11 +6,11 @@ package com.shangpin.iog.tony.purchase.dto;
 public class ShippingInfoDTO {
     private String fees;
 
-    public ShippingAddressDTO getAddress() {
+    public AddressDTO getAddress() {
         return address;
     }
 
-    public void setAddress(ShippingAddressDTO address) {
+    public void setAddress(AddressDTO address) {
         this.address = address;
     }
 
@@ -22,5 +22,5 @@ public class ShippingInfoDTO {
         this.fees = fees;
     }
 
-    private ShippingAddressDTO address;
+    private AddressDTO address;
 }

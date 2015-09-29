@@ -23,14 +23,14 @@ public class BillingInfoDTO {
     }
 
     private String paymentMethod;
-    private BillingAddressDTO address;
+    private AddressDTO address;
 
 
-    public BillingAddressDTO getAddress() {
+    public AddressDTO getAddress() {
         return address;
     }
 
-    public void setAddress(BillingAddressDTO address) {
+    public void setAddress(AddressDTO address) {
         this.address = address;
     }
 }
