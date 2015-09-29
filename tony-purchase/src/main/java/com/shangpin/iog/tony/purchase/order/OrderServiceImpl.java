@@ -71,7 +71,6 @@ public class OrderServiceImpl {
             //defination
             CreateOrderDTO order = getOrder();
 
-
             for (String key:orderMap.keySet()){
                 System.out.println(key);
                 List<PurchaseOrderDetail> list = orderMap.get(key);
@@ -160,11 +159,13 @@ public class OrderServiceImpl {
                 "\"street\":\"2\", \"hn\":\"2\", \"zip\":\"2\", \"city\":\"2\", " +
                 "\"province\":\"2\" ,\"state\":\"2\" }}}";*/
         System.out.println("request json == "+json);
+        String rtnData = null;
         try {
-            String rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/createOrder", null, null, json, "", "");
+            rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/createOrder", null, null, json, "", "");
             System.out.println("rtnData=="+rtnData);
+            logger.info("Response ：" + rtnData + ", shopOrderId:"+order.getShopOrderId());
         } catch (ServiceException e) {
-            e.printStackTrace();
+            loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
         }
     }
     /**
