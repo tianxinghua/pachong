@@ -12,17 +12,101 @@ import java.io.*;
  */
 public class FetchProduct {
     public static String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-            "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
-            "  <soap12:Body>\n" +
-            "    <GetAllItems xmlns=\"http://tempuri.org/\" />\n" +
-            "  </soap12:Body>\n" +
-            "</soap12:Envelope>";
+            "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+            "  <soap:Body>\n" +
+            "    <GetAllItemsMarketplace xmlns=\"http://tempuri.org/\" />\n" +
+            "  </soap:Body>\n" +
+            "</soap:Envelope>";
 
 
+
+    public void newOrder(){
+        String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+                "  <soap:Body>\n" +
+                "    <NewOrder xmlns=\"http://tempuri.org/\">\n" +
+                "      <ID_ORDER_WEB>123</ID_ORDER_WEB>\n" +
+                "      <ID_CLIENTE_WEB>456</ID_CLIENTE_WEB>\n" +
+                "      <DESTINATIONROW1>address</DESTINATIONROW1>\n" +
+                "      <DESTINATIONROW2>address</DESTINATIONROW2>\n" +
+                "      <DESTINATIONROW3>address</DESTINATIONROW3>\n" +
+                "      <BARCODE>string</BARCODE>\n" +
+                "      <QTY>9</QTY>\n" +
+                "      <PRICE>11.11</PRICE>\n" +
+                "    </NewOrder>\n" +
+                "  </soap:Body>\n" +
+                "</soap:Envelope>";
+        System.out.println("soapRequestData=="+soapRequestData);
+        HttpClient httpClient = new HttpClient();
+        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=NewOrder";
+        PostMethod postMethod = new PostMethod(uri);
+        postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/NewOrder");
+        postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
+
+        StringRequestEntity requestEntity=new StringRequestEntity(soapRequestData);
+        postMethod.setRequestEntity(requestEntity);
+
+        int returnCode=0;
+        try {
+            returnCode = httpClient.executeMethod(postMethod);
+            System.out.println("returnCode=="+returnCode);
+            InputStream in=postMethod.getResponseBodyAsStream();
+            byte[] ims=new byte[(int)postMethod.getResponseContentLength()];
+            in.read(ims);
+            String s = new String(ims);
+            System.out.println("return data ======"+s);
+            OutputStream out=new FileOutputStream(new File("E:\\atelier.xml"));
+            out.write(ims);
+            in.close();
+            out.close();
+        } catch (HttpException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void getAllPricelistMarketplace(){
+        String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+                "  <soap:Body>\n" +
+                "    <GetAllImageMarketplace xmlns=\"http://tempuri.org/\" />\n" +
+                "  </soap:Body>\n" +
+                "</soap:Envelope>";
+        HttpClient httpClient = new HttpClient();
+        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=GetAllImageMarketplace";
+        PostMethod postMethod = new PostMethod(uri);
+        postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/GetAllImageMarketplace");
+        postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
+
+        StringRequestEntity requestEntity=new StringRequestEntity(soapRequestData);
+        postMethod.setRequestEntity(requestEntity);
+
+        int returnCode=0;
+        try {
+            returnCode = httpClient.executeMethod(postMethod);
+            System.out.println("returnCode=11="+returnCode);
+            InputStream in=postMethod.getResponseBodyAsStream();
+            byte[] ims=new byte[(int)postMethod.getResponseContentLength()];
+            in.read(ims);
+            String s = new String(ims);
+            System.out.println("s======"+s);
+            OutputStream out=new FileOutputStream(new File("E:\\atelier.xml"));
+            out.write(ims);
+            in.close();
+            out.close();
+        } catch (HttpException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void test(){
         HttpClient httpClient = new HttpClient();
-        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=GetAllItems";
+        //String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=GetAllItems";
+        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=GetAllItemsMarketplace";
         PostMethod postMethod = new PostMethod(uri);
         postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/GetAllItemsMarketplace");
         postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
@@ -84,6 +168,6 @@ public class FetchProduct {
     public static void main(String[] args) throws IOException {
         //new FetchProduct().returnRe();
         System.out.println("------------------------");
-        new FetchProduct().test();
+        new FetchProduct().newOrder();
     }
 }

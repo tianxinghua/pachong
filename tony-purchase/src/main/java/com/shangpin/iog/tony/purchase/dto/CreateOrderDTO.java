@@ -23,7 +23,7 @@ public class CreateOrderDTO {
         this.items = items;
     }
 
-    private String orderTotalPrice;
+    private double orderTotalPrice;
     private ShippingInfoDTO shippingInfo;
     private BillingInfoDTO billingInfo;
 
@@ -75,12 +75,17 @@ public class CreateOrderDTO {
         this.orderDate = orderDate;
     }
 
-    public String getOrderTotalPrice() {
+    public double getOrderTotalPrice() {
         return orderTotalPrice;
     }
 
-    public void setOrderTotalPrice(String orderTotalPrice) {
+    public void setOrderTotalPrice(double orderTotalPrice) {
         this.orderTotalPrice = orderTotalPrice;
+    }
+    public void setOrderTotalPrice(String orderTotalPrice) {
+        if(orderTotalPrice == null || "".equals(orderTotalPrice.trim()))
+            this.orderTotalPrice = 0;
+        this.orderTotalPrice = Double.parseDouble(orderTotalPrice);
     }
 
     public ShippingInfoDTO getShippingInfo() {

@@ -4,25 +4,30 @@ package com.shangpin.iog.tony.purchase.dto;
  * Created by Administrator on 2015/9/28.
  */
 public class BillingInfoDTO {
-    private String total;
+    private double total;
 
-    public String getPaymentMethod() {
+    public Integer getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
+    public void setPaymentMethod(Integer paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
-    public String getTotal() {
+    public double getTotal() {
         return total;
     }
 
-    public void setTotal(String total) {
+    public void setTotal(double total) {
         this.total = total;
     }
+    public void setTotal(String total) {
+        if(total == null || "".equals(total.trim()))
+            this.total = 0;
+        this.total = Double.parseDouble(total);
+    }
 
-    private String paymentMethod;
+    private Integer paymentMethod;
     private AddressDTO address;
 
 
