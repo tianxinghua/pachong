@@ -70,7 +70,7 @@ public class FetchProduct {
 						sku.setSpuId(product.getProductCode());
 
 						sku.setColor(product.getColor());
-						sku.setSaleCurrency("Euro");
+						sku.setSaleCurrency("EURO");
 						sku.setMarketPrice(item.getPrice());
 						sku.setSupplierPrice(item.getSpecial_price());
 						sku.setStock(item.getStock());
