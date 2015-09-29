@@ -5,6 +5,20 @@ public class Item {
 	private String itemCode;//sku->skuid
 	private String size;//size->sku:size
 	private String stock;//qty->stock
+	private String price;//sku
+	private String special_price;//sku
+	public String getPrice() {
+		return price;
+	}
+	public void setPrice(String price) {
+		this.price = price;
+	}
+	public String getSpecial_price() {
+		return special_price;
+	}
+	public void setSpecial_price(String special_price) {
+		this.special_price = special_price;
+	}
 	public String getItemCode() {
 		return itemCode;
 	}

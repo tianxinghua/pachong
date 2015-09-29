@@ -1,7 +1,8 @@
 package com.shangpin.iog.fashionesta.utils;
 
 import com.csvreader.CsvReader;
-import com.shangpin.iog.fashionesta.dto.FashionestaDTO;
+import com.shangpin.iog.fashionesta.dto.Item;
+import com.shangpin.iog.fashionesta.dto.Product;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -55,52 +56,66 @@ public class DownloadAndReadCSV {
         }
         return  realPath;
     }
-    public static List<FashionestaDTO> readLocalCSV() throws Exception {
+    public static List<Product> readLocalCSV() throws Exception {
         
     	String realPath=downloadNet();
         String rowString = null;
-        List<FashionestaDTO> dtoList = new ArrayList<FashionestaDTO>();
+        List<Product> dtoList = new ArrayList<Product>();
     	String[] split = null;
     	List<String> colValueList = null;
-    	StringBuffer sb = null;
+    	StringBuffer sb = new StringBuffer();
         //解析csv文件
         CsvReader cr = new CsvReader(new FileReader(realPath));
         System.out.println("创建cr对象成功");
         //得到列名集合
         cr.readRecord();
         rowString = cr.getRawRecord();
-        split = rowString.split(";");
+        split = rowString.split("\";\"");
 		List<String> colNameList = Arrays.asList(split);
 		//读取每一行，把对应列名的数据填充到FashionestaDTO对象中，放入list集合返回
-		//TODO 读取每一行信息解析，根据type判断是否是product(configable,simple),分别存入product和item,最后返回List<Product>
-		//TODO 两次判断
+		//读取每一行信息解析，根据type判断是否是product(configable,simple),分别存入product和item,最后返回List<Product>
+		//两次判断
+		Product product = null;
 		while(cr.readRecord()){
 			rowString = cr.getRawRecord();
-			split = rowString.split(";");
+			split = rowString.split("\";\"");
 			colValueList = Arrays.asList(split);
-			if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("\"qty\"")))&& StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("\"material1\"")))) {
-				FashionestaDTO fashionestaDTO = new FashionestaDTO();
-				fashionestaDTO.setBRAND(colValueList.get(colNameList.indexOf("\"brand\"")));
-				fashionestaDTO.setCATEGORY(colValueList.get(colNameList.indexOf("\"Im_type\"")));
-				fashionestaDTO.setCOLOR(colValueList.get(colNameList.indexOf("\"color\"")));
-				fashionestaDTO.setCURRENCY("Euro");
-				fashionestaDTO.setDESCRIPTION(colValueList.get(colNameList.indexOf("\"description\"")));
-				fashionestaDTO.setGENDER(colValueList.get(colNameList.indexOf("\"gender\"")));
-				fashionestaDTO.setIMAGE_URL(colValueList.get(colNameList.indexOf("\"image\"")));
-				fashionestaDTO.setSIMAGE_URL(colValueList.get(colNameList.indexOf("\"small_image\"")));
-				fashionestaDTO.setMADE(colValueList.get(colNameList.indexOf("\"country_of_origin\"")));
+			//是product
+			if (colValueList.get(colNameList.indexOf("type")).equals("configurable")/*&&StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("material1")))*/) {
+				product = new Product();
+				product.setProductCode(colValueList.get(colNameList.indexOf("\"sku")).replace("\"", ""));
+				product.setProductName(colValueList.get(colNameList.indexOf("name")));
+				product.setBrand(colValueList.get(colNameList.indexOf("brand")));
+				product.setCategory(colValueList.get(colNameList.indexOf("Im_type")));
+				product.setColor(colValueList.get(colNameList.indexOf("color")));
+				product.setDescription(colValueList.get(colNameList.indexOf("description")));
+				product.setGender(colValueList.get(colNameList.indexOf("gender")));
+				product.setImage_url(colValueList.get(colNameList.indexOf("image")));
+				product.setMade(colValueList.get(colNameList.indexOf("country_of_origin")));
+				sb.append(colValueList.get(colNameList.indexOf("material1")));
+				if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("material2")))) {
+					sb.append(",").append(colValueList.get(colNameList.indexOf("material2")));
+				}
+				if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("material3")))) {
+					sb.append(",").append(colValueList.get(colNameList.indexOf("material3")));
+				}
+				if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("material4")))) {
+					sb.append(",").append(colValueList.get(colNameList.indexOf("material4")));
+				}
+				product.setMaterial(sb.toString());
+				dtoList.add(product);
+				sb.setLength(0);
+			}else {
+				if (!colValueList.get(colNameList.indexOf("qty")).equals("0")) {
+					Item item = new Item();
+					item.setItemCode(colValueList.get(colNameList.indexOf("\"sku")).replace("\"", ""));
+					item.setPrice(colValueList.get(colNameList.indexOf("price")));
+					item.setSpecial_price(colValueList.get(colNameList.indexOf("special_price")));
+					item.setSize(colValueList.get(colNameList.indexOf("size")));
+					item.setStock(colValueList.get(colNameList.indexOf("qty")));
+					product.getItems().add(item);
+				}
 				
-				fashionestaDTO.setMATERIAL1(colValueList.get(colNameList.indexOf("\"material1\"")));
-				fashionestaDTO.setMATERIAL2(colValueList.get(colNameList.indexOf("\"material2\"")));
-				fashionestaDTO.setMATERIAL3(colValueList.get(colNameList.indexOf("\"material3\"")));
-				fashionestaDTO.setMATERIAL4(colValueList.get(colNameList.indexOf("\"material4\"")));
-				fashionestaDTO.setPRICE(colValueList.get(colNameList.indexOf("\"price\"")));
-				fashionestaDTO.setSPECIAL_PRICE(colValueList.get(colNameList.indexOf("\"special_price\"")));
-				fashionestaDTO.setPRODUCT_NAME(colValueList.get(colNameList.indexOf("\"name\"")));
-				fashionestaDTO.setSIZE(colValueList.get(colNameList.indexOf("\"size\"")));
-				fashionestaDTO.setSTOCK(colValueList.get(colNameList.indexOf("\"qty\"")));
-				fashionestaDTO.setSUPPLIER_CODE(colValueList.get(colNameList.indexOf("\"sku\"")));
-				dtoList.add(fashionestaDTO);
 			}
 		}
         return dtoList;

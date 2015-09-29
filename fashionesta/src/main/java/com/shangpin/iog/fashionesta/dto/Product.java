@@ -12,8 +12,7 @@ public class Product {
 	private String gender;//gender->spu:categoryGender
 	private String color;//sku:color
 	private String material;//spu:material
-	private String price;//sku
-	private String special_price;//sku
+
 	private String image_url;//image->spu:picUrl
 	private String made;//country_of_origin
 	
@@ -90,22 +89,6 @@ public class Product {
 
 	public void setMaterial(String material) {
 		this.material = material;
-	}
-
-	public String getPrice() {
-		return price;
-	}
-
-	public void setPrice(String price) {
-		this.price = price;
-	}
-
-	public String getSpecial_price() {
-		return special_price;
-	}
-
-	public void setSpecial_price(String special_price) {
-		this.special_price = special_price;
 	}
 
 	public String getImage_url() {
