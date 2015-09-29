@@ -113,12 +113,30 @@ public class OrderServiceImpl {
      */
     private CreateOrderDTO getOrder(){
         ShippingInfoDTO shippingInfo = new ShippingInfoDTO();
-        ShippingAddressDTO address = new ShippingAddressDTO();
-        shippingInfo.setAddress(address);
+        AddressDTO shippingAddress = new AddressDTO();
+        shippingAddress.setFirstname("Filippo ");
+        shippingAddress.setLastname("Troina ");
+        shippingAddress.setCompanyname("Genertec Italia S.r.l. ");
+        shippingAddress.setStreet("111 ");
+        shippingAddress.setHn("11 ");
+        shippingAddress.setZip("11 ");
+        shippingAddress.setCity("11 ");
+        shippingAddress.setProvince("11 ");
+        shippingAddress.setState("11 ");
+        shippingInfo.setAddress(shippingAddress);
         shippingInfo.setFees("0");
         BillingInfoDTO billingInfo = new BillingInfoDTO();
         billingInfo.setPaymentMethod("7");
-        BillingAddressDTO billingAddress = new BillingAddressDTO();
+        AddressDTO billingAddress = new AddressDTO();
+        billingAddress.setFirstname("Filippo");
+        shippingAddress.setLastname("Troina ");
+        billingAddress.setCompanyname("Genertec Italia S.r.l. ");
+        billingAddress.setStreet("111 ");
+        billingAddress.setHn("11 ");
+        billingAddress.setZip("11 ");
+        billingAddress.setCity("11 ");
+        billingAddress.setProvince("11 ");
+        billingAddress.setState("11 ");
         billingInfo.setAddress(billingAddress);
         ItemDTO[] itemsArr = new ItemDTO[1];
         ItemDTO item = new ItemDTO();
