@@ -61,7 +61,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
     private static     Map<String,String> materialContrastMap = new HashMap<>();
 
-    String splitSign=";";
+    String splitSign=",";
 
     //key 均为小写 以便匹配
     private static Map<String,String>  cityMap= new HashMap<String,String>(){
@@ -196,6 +196,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 categoryName= dto.getSubCategoryName();
                 if(StringUtils.isBlank(categoryName)){
                     categoryName =StringUtils.isBlank(dto.getCategoryName())?"":dto.getCategoryName();
+                    categoryName.replaceAll(splitSign," ");
                 }
 
                 buffer.append(categoryName).append(splitSign);
@@ -228,8 +229,11 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 if(StringUtils.isBlank(productName)){
                     productName = dto.getSpuName();
                 }
+
+
                 if(StringUtils.isNotBlank(productName)){
-                    productName = productName.replaceAll("\\r","").replaceAll("\\n","");
+
+                    productName = productName.replaceAll(splitSign," ").replaceAll("\\r", "").replaceAll("\\n","");
                 }
 
                 buffer.append(productName).append(splitSign);
@@ -258,6 +262,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     if(productSize.indexOf("+")>0){
                         productSize=productSize.replace("+",".5");
                     }
+                    productSize = productSize.replaceAll(splitSign," ");
 
                 }else{
                     productSize="";
@@ -272,7 +277,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     material="";
                 }else{
 
-                    material = material.replaceAll("\\r","").replaceAll("\\n","");
+                    material = material.replaceAll(splitSign," ").replaceAll("\\r","").replaceAll("\\n","");
                 }
 
                 buffer.append(material).append(splitSign);
@@ -316,6 +321,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     if(productDetail.indexOf(splitSign)>0) {
                         productDetail = productDetail.replace(splitSign, "  ");
                     }
+
                     productDetail = productDetail.replaceAll("\\r", "").replaceAll("\\n", "");
                 }
 
@@ -420,6 +426,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 isHavePic=false;
             }
             for(int i=0;i<picList.size();i++){
+                if(null==picList.get(i).getPicUrl()) continue;
                 switch (i){
                     case 0:
                         if(isHavePic){
