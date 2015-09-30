@@ -91,7 +91,7 @@ public class FetchProduct {
 							ProductPictureDTO picture = new ProductPictureDTO();
 							picture.setSupplierId(supplierId);
 							picture.setId(UUIDGenerator.getUUID());
-							picture.setSkuId(item.getItemCode());
+							//picture.setSkuId(item.getItemCode());
 							picture.setSpuId(product.getProductCode());
 							picture.setPicUrl(image);
 							try {
@@ -125,7 +125,6 @@ public class FetchProduct {
 					spu.setCategoryName(product.getCategory());
 					spu.setCategoryGender(product.getGender());
 					spu.setMaterial(product.getMaterial());
-					spu.setPicUrl(product.getImage_url()[0]);
 					spu.setProductOrigin(product.getMade());
 					productFetchService.saveSPU(spu);
 				} catch (ServiceException e) {
