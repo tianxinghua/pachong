@@ -1,32 +1,52 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
 
-sourceCompatibility = 1.5
-version = '1.0'
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'Gradle Quickstart',
-                   'Implementation-Version': version
-    }
-}
 
-repositories {
-    mavenCentral()
-}
+
+
+def propertyPath =    "$buildDir/libs/conf"
 
 dependencies {
-    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
-    testCompile group: 'junit', name: 'junit', version: '4.+'
+    compile(
+            "org.mybatis:mybatis:3.2.2",
+            "org.mybatis:mybatis-spring:1.2.0",
+            "mysql:mysql-connector-java:5.1.21",
+            "commons-dbcp:commons-dbcp:1.4",
+            "net.sourceforge.javacsv:javacsv:2.0",
+            project(':project-common'),
+            project(':project-dao'),
+            project(':iog-common-product')
+            project(':openapi-ice')
+    )
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+
 }
 
-test {
-    systemProperties 'property': 'value'
-}
+jar {
 
-uploadArchives {
-    repositories {
-       flatDir {
-           dirs 'repos'
-       }
+    dependsOn copyToLib
+//    , copyResources
+//    exclude ("**/*.properties")
+//    from {
+//        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+
+//    }
+
+    def manifestCp = configurations.compile.files.collect  {
+
+        File file = it
+        "lib/${file.name}"
+    }.join(' ')
+
+//    def mainfestPropertyCp = new File(propertyPath).listFiles().collect {
+//        File file = it
+//        println it.name
+//        "conf/${file.name}"
+//    }.join(' ')
+
+    manifest {
+        attributes 'Main-Class': 'com.shangpin.iog.galiano.Startup'
+//        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
+
+        attributes 'Class-Path': '. ' + manifestCp
     }
 }
