@@ -51,6 +51,10 @@ public class OrderServiceImpl  {
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static String url="https://api-sandbox.gilt.com/global/orders/";
 
+    private String  placedStatus="placed";
+    private String  confirmedStatus="confirmed";
+
+
     /**
      * 下订单
      */
@@ -84,7 +88,7 @@ public class OrderServiceImpl  {
 
         List<com.shangpin.iog.dto.OrderDTO>  orderDTOList= null;
         try {
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId,"placed");
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId,placedStatus);
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -149,7 +153,7 @@ public class OrderServiceImpl  {
 
                         //更新订单状态
                         Map<String,String> map = new HashMap<>();
-                        map.put("status","confirmed");
+                        map.put("status",confirmedStatus);
                         map.put("uuid",orderDTO.getUuId());
                         map.put("updateTime",DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
                         try {
@@ -222,9 +226,9 @@ public class OrderServiceImpl  {
     public void deliveryOrder(){
         try {
             //获取已提交的产品信息
-            List<com.shangpin.iog.dto.OrderDTO> uuidList =  productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, "confirmed");
+            List<com.shangpin.iog.dto.OrderDTO> uuidList =  productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, confirmedStatus);
             Gson gson =new Gson();
-            OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*15,1000*15,1000*15);
             Map<String,String> param =new HashMap<>();
             String uuid ="";
             String result ="";
@@ -248,9 +252,9 @@ public class OrderServiceImpl  {
                         if(StringUtils.isBlank(purchaseDetailNo)) continue;
                         List<String> purchaseOrderIdList = new ArrayList<>();
                         String[] purchaseDetailNoArray = purchaseDetailNo.split(";");
-                        if(null==purchaseDetailNoArray){
+                        if(null!=purchaseDetailNoArray){
                             for(String purchaseDetailNO:purchaseDetailNoArray){
-                                purchaseOrderIdList.add(orderDTO.getSpOrderId());
+                                purchaseOrderIdList.add(purchaseDetailNO);
                             }
 
                         }
