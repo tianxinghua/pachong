@@ -1,0 +1,38 @@
+package com.shangpin.iog.itemInfo;
+
+import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+
+
+import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.itemInfo.service.FetchProduct;
+
+public class Startup {
+
+	private static Logger log = Logger.getLogger("info");
+
+    private static ApplicationContext factory;
+	private static void loadSpringContext()
+
+	{
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+	}
+	
+	public static void main(String[] args)
+	{
+
+        //加载spring
+		loadSpringContext();
+		System.out.println("初始化Spring成功");
+        //拉取数据
+        FetchProduct fetchProduct =(FetchProduct)factory.getBean("itemInfo");
+        fetchProduct.fetchProductAndSave("E:\\testBuffer.xml");
+
+		System.out.println("-------fetch end---------");
+
+	}
+
+}
