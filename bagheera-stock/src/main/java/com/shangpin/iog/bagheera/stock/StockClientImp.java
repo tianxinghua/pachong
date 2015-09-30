@@ -2,8 +2,9 @@ package com.shangpin.iog.bagheera.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.bagheera.dto.BagheeraDTO;
-import com.shangpin.iog.bagheera.utils.DownloadAndReadExcel;
+import com.shangpin.iog.bagheera.stock.dto.BagheeraDTO;
+import com.shangpin.iog.bagheera.stock.utils.DownloadAndReadExcel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
