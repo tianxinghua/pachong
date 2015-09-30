@@ -85,17 +85,20 @@ public class FetchProduct {
 						sku.setProductSize(size);
 						sku.setProductName(product.getProductName());
 						productFetchService.saveSKU(sku);
-
-						ProductPictureDTO picture = new ProductPictureDTO();
-						picture.setSupplierId(supplierId);
-						picture.setId(UUIDGenerator.getUUID());
-						picture.setPicUrl(product.getImage_url());
-						picture.setSkuId(item.getItemCode());
-						picture.setSpuId(product.getProductCode());
-						try {
-							productFetchService.savePictureForMongo(picture);
-						} catch (ServiceException e) {
-							e.printStackTrace();
+						
+						String[] images = product.getImage_url();
+						for (String image : images) {
+							ProductPictureDTO picture = new ProductPictureDTO();
+							picture.setSupplierId(supplierId);
+							picture.setId(UUIDGenerator.getUUID());
+							//picture.setSkuId(item.getItemCode());
+							picture.setSpuId(product.getProductCode());
+							picture.setPicUrl(image);
+							try {
+								productFetchService.savePictureForMongo(picture);
+							} catch (ServiceException e) {
+								e.printStackTrace();
+							}
 						}
 
 					} catch (ServiceException e) {
@@ -122,7 +125,6 @@ public class FetchProduct {
 					spu.setCategoryName(product.getCategory());
 					spu.setCategoryGender(product.getGender());
 					spu.setMaterial(product.getMaterial());
-					spu.setPicUrl(product.getImage_url());
 					spu.setProductOrigin(product.getMade());
 					productFetchService.saveSPU(spu);
 				} catch (ServiceException e) {

@@ -2,8 +2,9 @@ package com.shangpin.iog.bagheera.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.bagheera.dto.BagheeraDTO;
-import com.shangpin.iog.bagheera.utils.DownloadAndReadExcel;
+import com.shangpin.iog.bagheera.stock.dto.BagheeraDTO;
+import com.shangpin.iog.bagheera.stock.utils.DownloadAndReadExcel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -17,8 +18,6 @@ public class StockClientImp extends AbsUpdateProductStock{
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         Map<String, String> skustock = new HashMap<>(skuNo.size());
-        Map<String,String> stockMap = new HashMap<>();
-        String supplierId = "201509091712";
         List<BagheeraDTO> list=excelHelper.readLocalExcel();
         Iterator<String> it = skuNo.iterator();
         while (it.hasNext()) {

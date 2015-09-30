@@ -1,8 +1,8 @@
-package com.shangpin.iog.fashionesta.utils;
+package com.shangpin.iog.fashionesta.stock.utils;
 
 import com.csvreader.CsvReader;
-import com.shangpin.iog.fashionesta.dto.Item;
-import com.shangpin.iog.fashionesta.dto.Product;
+import com.shangpin.iog.fashionesta.stock.dto.Item;
+import com.shangpin.iog.fashionesta.stock.dto.Product;
 
 import java.io.*;
 import java.net.MalformedURLException;

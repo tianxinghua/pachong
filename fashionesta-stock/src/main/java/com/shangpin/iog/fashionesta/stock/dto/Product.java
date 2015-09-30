@@ -1,4 +1,4 @@
-package com.shangpin.iog.fashionesta.dto;
+package com.shangpin.iog.fashionesta.stock.dto;
 
 import java.util.ArrayList;
 import java.util.List;
