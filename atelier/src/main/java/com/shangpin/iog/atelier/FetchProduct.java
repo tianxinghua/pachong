@@ -348,7 +348,7 @@ public class FetchProduct {
      * test
      * */
     public static void main(String[] args) throws IOException {
-        new FetchProduct().fetchProductAndSave();
-        //new FetchProduct().testPost();
+//        new FetchProduct().fetchProductAndSave();
+        new FetchProduct().testPost();
     }
 }
