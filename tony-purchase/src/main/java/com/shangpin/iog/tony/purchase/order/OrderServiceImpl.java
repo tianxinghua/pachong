@@ -61,8 +61,17 @@ public class OrderServiceImpl {
             //获取订单数组
             List<Integer> status = new ArrayList<>();
             status.add(1);
-            Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.getPurchaseOrder(supplierId, startDate, endDate, status);
-/*            //  正常下单
+            //Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.getPurchaseOrder(supplierId, startDate, endDate, status);
+            Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
+            List<PurchaseOrderDetail> dlist = new ArrayList<>();
+            PurchaseOrderDetail de = new PurchaseOrderDetail();
+            de.SopPurchaseOrderDetailNo = "123";
+            de.SkuPrice = "123";
+            de.SkuNo = "123";
+            de.SkuPriceCurrency = "123";
+            dlist.add(de);
+            orderMap.put("1111",dlist);
+            /*            //  正常下单
             String url = "https://api-sandbox.gilt.com/global/orders/";
             transData( url, supplierId,orderMap);
             //下单异常 再次下单
@@ -84,7 +93,7 @@ public class OrderServiceImpl {
                     order.getItems()[0].setCur(pur.SkuPriceCurrency);
                     createOrder(order);
                     /////////////////////////////////////////////////////////////////////////////
-                    System.out.println(pur.SopPurchaseOrderNo);
+/*                    System.out.println(pur.SopPurchaseOrderNo);
                     System.out.println(pur.SopPurchaseOrderDetailNo);
                     System.out.println(pur.SkuNo);
                     System.out.println(pur.SupplierSkuNo);
@@ -98,8 +107,8 @@ public class OrderServiceImpl {
                     System.out.println(pur.WarehouseAddress);
                     System.out.println(pur.WarehousePost);
                     System.out.println(pur.WarehouseContactPerson);
-                    System.out.println(pur.WarehouseContactMobile);
-                    System.out.println("--------------------------------------");
+                    System.out.println(pur.WarehouseContactMobile);*/
+                    System.out.println("-------------------444-------------------");
                 }
             }
 
@@ -126,10 +135,11 @@ public class OrderServiceImpl {
         shippingInfo.setAddress(shippingAddress);
         shippingInfo.setFees("0");
         BillingInfoDTO billingInfo = new BillingInfoDTO();
-        billingInfo.setPaymentMethod("7");
+        billingInfo.setTotal(99);
+        billingInfo.setPaymentMethod(7);
         AddressDTO billingAddress = new AddressDTO();
         billingAddress.setFirstname("Filippo");
-        shippingAddress.setLastname("Troina ");
+        billingAddress.setLastname("Troina ");
         billingAddress.setCompanyname("Genertec Italia S.r.l. ");
         billingAddress.setStreet("111 ");
         billingAddress.setHn("11 ");
@@ -140,11 +150,16 @@ public class OrderServiceImpl {
         billingInfo.setAddress(billingAddress);
         ItemDTO[] itemsArr = new ItemDTO[1];
         ItemDTO item = new ItemDTO();
-        item.setQty("1");
+        item.setQty(1);
+        item.setSku("test");
+        item.setPrice(11.00);
+        item.setCur(12);
         itemsArr[0] = item;
         CreateOrderDTO order = new CreateOrderDTO();
         order.setMerchantId("55f707f6b49dbbe14ec6354d");
         order.setToken("d355cd8701b2ebc54d6c8811e03a3229");
+        order.setShopOrderId("test1");
+        order.setOrderTotalPrice("test2");
         order.setStatus("CONFIRMED");
         order.setStatusDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
         order.setOrderDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));

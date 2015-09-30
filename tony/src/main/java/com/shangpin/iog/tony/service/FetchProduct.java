@@ -99,7 +99,7 @@ public class FetchProduct {
 
             } catch (ServiceException e) {
                 try {
-                    if(e.getMessage().equals("��ݲ���ʧ�ܼ��ظ�")){
+                    if(e.getMessage().equals("数据插入失败键重复")){
                         //update
                         productFetchService.updatePriceAndStock(sku);
                     } else{

@@ -5,9 +5,9 @@ package com.shangpin.iog.tony.purchase.dto;
  */
 public class ItemDTO {
     private String sku;
-    private String qty;
-    private String price;
-    private String cur;
+    private Integer qty;
+    private double price;
+    private Integer cur;
 
     public String getSku() {
         return sku;
@@ -17,27 +17,37 @@ public class ItemDTO {
         this.sku = sku;
     }
 
-    public String getQty() {
+    public Integer getQty() {
         return qty;
     }
 
-    public void setQty(String qty) {
+    public void setQty(Integer qty) {
         this.qty = qty;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
+    public void setPrice(String price) {
+        if(price == null || "".equals(price.trim()))
+            this.price = 0;
+        this.price = Double.parseDouble(price);
+    }
 
-    public String getCur() {
+    public Integer getCur() {
         return cur;
     }
 
-    public void setCur(String cur) {
+    public void setCur(Integer cur) {
         this.cur = cur;
+    }
+    public void setCur(String cur) {
+        if(cur == null || "".equals(cur.trim()))
+            this.cur = 0;
+        this.cur = Integer.parseInt(cur);
     }
 }

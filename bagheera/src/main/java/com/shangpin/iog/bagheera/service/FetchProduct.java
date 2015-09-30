@@ -51,6 +51,8 @@ public class FetchProduct {
                 sku.setMarketPrice(dto.getLIST_PRICE());
                 sku.setStock(dto.getSTOCK());
                 sku.setProductName(dto.getITEM_GROUP());
+                
+                spu.setCategoryName(dto.getCATEGORY());
                 spu.setId(UUIDGenerator.getUUID());
                 spu.setSpuId(dto.getSUPPLIER_CODE());
                 spu.setSupplierId(supplierId);
