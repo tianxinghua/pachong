@@ -228,7 +228,7 @@ public class OrderServiceImpl  {
             //获取已提交的产品信息
             List<com.shangpin.iog.dto.OrderDTO> uuidList =  productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, confirmedStatus);
             Gson gson =new Gson();
-            OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*15,1000*15,1000*15);
             Map<String,String> param =new HashMap<>();
             String uuid ="";
             String result ="";
@@ -252,9 +252,9 @@ public class OrderServiceImpl  {
                         if(StringUtils.isBlank(purchaseDetailNo)) continue;
                         List<String> purchaseOrderIdList = new ArrayList<>();
                         String[] purchaseDetailNoArray = purchaseDetailNo.split(";");
-                        if(null==purchaseDetailNoArray){
+                        if(null!=purchaseDetailNoArray){
                             for(String purchaseDetailNO:purchaseDetailNoArray){
-                                purchaseOrderIdList.add(orderDTO.getSpOrderId());
+                                purchaseOrderIdList.add(purchaseDetailNO);
                             }
 
                         }
