@@ -72,3 +72,6 @@ include 'bagheera-stock'
 
 include 'itemInfo'
 
+include 'giglio'
+include 'giglio-stock'
+
