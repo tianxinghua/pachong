@@ -4,10 +4,13 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.bagheera.dto.BagheeraDTO;
 import com.shangpin.iog.bagheera.utils.DownloadAndReadExcel;
 import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,19 +18,40 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by sunny on 2015/9/8.
  */
 @Component("bagheera")
 public class FetchProduct {
-    final Logger logger = Logger.getLogger(this.getClass());
-    /*DownloadAndReadExcel excelHelper ;*/
-    @Autowired
-    ProductFetchService productFetchService;
-    String supplierId = "201509091712";
+	private static Logger logger = Logger.getLogger("info");
+	private static Logger loggerError = Logger.getLogger("error");
+	private static Logger logMongo = Logger.getLogger("mongodb");
+	private static ResourceBundle bdl = null;
+	private static String supplierId;
+	private static String url;
+	static {
+		if (null == bdl)
+			bdl = ResourceBundle.getBundle("param");
+		supplierId = bdl.getString("supplierId");
+		url = bdl.getString("url");
+	}
+	@Autowired
+	private ProductFetchService productFetchService;
     public void fetchProductAndSave(){
+    	Map<String, String> mongMap = new HashMap<>();
+		OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
+		timeConfig.confRequestOutTime(360000);
+		timeConfig.confSocketOutTime(360000);
+		String result = HttpUtil45.get(url, timeConfig, null);
+		mongMap.put("supplierId", supplierId);
+		mongMap.put("supplierName", "galiano");
+		mongMap.put("result", result);
+		logMongo.info(mongMap);
         try {
             List<BagheeraDTO> list=DownloadAndReadExcel.readLocalExcel();
             for (BagheeraDTO dto:list){
@@ -73,7 +97,16 @@ public class FetchProduct {
                     productFetchService.saveSKU(sku);
                     productFetchService.savePictureForMongo(picture);
                 } catch (ServiceException e) {
-                    e.printStackTrace();
+                	try {
+						if (e.getMessage().equals("数据插入失败键重复")) {
+							// 更新价格和库存
+							productFetchService.updatePriceAndStock(sku);
+						} else {
+							e.printStackTrace();
+						}
+					} catch (ServiceException e1) {
+						e1.printStackTrace();
+					}
                 }
 
             }

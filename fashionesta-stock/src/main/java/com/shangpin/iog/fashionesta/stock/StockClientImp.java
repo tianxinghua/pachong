@@ -2,9 +2,9 @@ package com.shangpin.iog.fashionesta.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.fashionesta.dto.Item;
-import com.shangpin.iog.fashionesta.dto.Product;
-import com.shangpin.iog.fashionesta.utils.DownloadAndReadCSV;
+import com.shangpin.iog.fashionesta.stock.dto.Item;
+import com.shangpin.iog.fashionesta.stock.dto.Product;
+import com.shangpin.iog.fashionesta.stock.utils.DownloadAndReadCSV;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

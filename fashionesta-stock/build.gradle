@@ -14,7 +14,7 @@ dependencies {
             project(':project-common'),
             project(':project-dao'),
             project(':iog-common-product'),
-            project(':fashionesta-stock')
+            project(':openapi-ice')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 
