@@ -65,13 +65,13 @@ include 'tony-stock'
 include 'tony-purchase'
 include 'atelier'
 include 'alducadaosta'
-include 'fashionesta'
-include 'fashionesta-stock'
 
 include 'bagheera-stock'
 
 include 'itemInfo'
+include 'atelier-stock'
 
 include 'giglio'
 include 'giglio-stock'
+include 'atelier-purchase'
 
