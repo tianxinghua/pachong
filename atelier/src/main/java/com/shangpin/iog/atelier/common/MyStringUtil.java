@@ -48,9 +48,9 @@ public class MyStringUtil {
             // 关闭输入流
             is.close();
         }  catch (Exception e) {
-            System.out.println("e=="+e);
+            System.out.println("parseFile2Str获取文件字符串失败");
         }
-        System.out.println("output io string==="+sb.toString().length());
+        //System.out.println("output io string==="+sb.toString().length());
         return sb.toString();
     }
 }

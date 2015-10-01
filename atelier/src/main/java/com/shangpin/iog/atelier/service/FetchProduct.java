@@ -33,9 +33,9 @@ public class FetchProduct {
      */
     public void fetchProductAndSave() {
         //fetch product
-        String items = atelier.getAllItemsMarketplace();
+        atelier.fetchProduct();
         //save into DB
-        messMappingAndSave(items.split("\\n"));
+        messMappingAndSave(atelier.getAllItemsStr().split("\\n"));
 
     }
 
@@ -44,16 +44,16 @@ public class FetchProduct {
      * save items into DB
      * **/
     private void messMappingAndSave(String[] items) {
-        String stocks = atelier.getAllAvailabilityMarketplace();
-        String pictrues = atelier.getAllImageMarketplace();
+        String stocks = atelier.getAllAvailabilityStr();
+        String pictrues = atelier.getAllImageStr();
 
-        for (String item : items) {
+/*        for (String item : items) {
             String[] fields = item.split(";");
             System.out.println();
             for (int i = 0; i < fields.length; i++) {
                 System.out.print("; fields[" + i + "]=" + fields[i]);
             }
-        }
+        }*/
 
         //items = new String[0];
         for (String item : items) {
