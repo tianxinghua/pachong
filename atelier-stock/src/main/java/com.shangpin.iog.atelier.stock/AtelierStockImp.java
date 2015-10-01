@@ -24,7 +24,8 @@ public class AtelierStockImp  extends AbsUpdateProductStock {
     }
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        String stocks = new WS_Sito_P15().getAllAvailabilityMarketplace();
+        new WS_Sito_P15().getAllAvailabilityMarketplaceBySoap();
+        String stocks = new WS_Sito_P15().getAllAvailabilityStr();
         //定义三方
         Map returnMap = new HashMap();
         String itemId = "";
