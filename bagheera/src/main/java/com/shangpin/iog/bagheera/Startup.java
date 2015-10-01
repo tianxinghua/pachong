@@ -1,3 +1,5 @@
+package com.shangpin.iog.bagheera;
+
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.bagheera.service.FetchProduct;
 import org.springframework.context.ApplicationContext;
