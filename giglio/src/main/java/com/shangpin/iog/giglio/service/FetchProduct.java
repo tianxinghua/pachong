@@ -54,6 +54,7 @@ public class FetchProduct {
             timeConfig.confRequestOutTime(600000);
             timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get(url, timeConfig, null);
+            HttpUtil45.closePool();
 
 //            mongMap.put("supplierId", supplierId);
 //            mongMap.put("supplierName", "giglio");
@@ -181,6 +182,7 @@ public class FetchProduct {
                     spu.setSpuId(spuId);
                     spu.setBrandName(brand);
                     spu.setCategoryName(cate);
+                    spu.setCategoryGender(sex);
                     spu.setSpuName(name);
                     spu.setSeasonId(season);
                     spu.setMaterial(material);

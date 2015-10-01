@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Created by kelseo on 15/9/25.
  */
 @XmlRootElement(name="item")
-public class SizeItem {
+public class SkuItem {
 
     String size;
     String stock;
@@ -30,7 +30,7 @@ public class SizeItem {
 
     @Override
     public String toString() {
-        return "SizeItem{" +
+        return "SkuItem{" +
                 "size='" + size + '\'' +
                 ", stock='" + stock + '\'' +
                 '}';

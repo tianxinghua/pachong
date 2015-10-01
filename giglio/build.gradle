@@ -14,7 +14,7 @@ dependencies {
 }
 
 jar {
-    dependsOn copyToLib
+    dependsOn copyToLib , copyResources
 
     def manifestCp = configurations.compile.files.collect  {
         File file = it
@@ -22,7 +22,7 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.dellogliostore.Startup'
+        attributes 'Main-Class': 'com.shangpin.iog.giglio.Startup'
         attributes 'Class-Path': '. ' +  manifestCp
     }
 }

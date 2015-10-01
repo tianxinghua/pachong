@@ -51,7 +51,7 @@ public class FetchProduct {
             List<Product> productList = products.getProducts();
             for(Product product:productList){
                 SpuDTO spu = new SpuDTO();
-
+                System.out.println(product);
 
                 Items items = product.getItems();
                 if(null==items){//无SKU
@@ -62,76 +62,76 @@ public class FetchProduct {
                 if(null==itemList) continue;
                 String skuId = "";
                 for(Item item:itemList){
-                    SkuDTO sku  = new SkuDTO();
-                    try {
-                        sku.setId(UUIDGenerator.getUUID());
-                        sku.setSupplierId(supplierId);
-
-                        sku.setSpuId(product.getProductId());
-                        skuId = item.getItem_id();
-                        if(skuId.indexOf("½")>0){
-                            skuId = skuId.replace("½","+");
-                        }
-                        sku.setSkuId(skuId);
-                        sku.setProductSize(item.getItem_size());
-                        sku.setMarketPrice(item.getMarket_price());
-                        sku.setSalePrice(item.getSell_price());
-                        sku.setSupplierPrice(item.getSupply_price());
-                        sku.setColor(item.getColor());
-                        sku.setProductDescription(item.getDescription());
-                        sku.setStock(item.getStock());
-                        sku.setProductCode(product.getProducer_id());
-                        productFetchService.saveSKU(sku);
-
-                        if(StringUtils.isNotBlank(item.getPicture())){
-                            String[] picArray = item.getPicture().split("\\|");
-
-//                            List<String> picUrlList = Arrays.asList(picArray);
-                            for(String picUrl :picArray){
-                                ProductPictureDTO dto  = new ProductPictureDTO();
-                                dto.setPicUrl(picUrl);
-                                dto.setSupplierId(supplierId);
-                                dto.setId(UUIDGenerator.getUUID());
-                                dto.setSkuId(item.getItem_id());
-                                try {
-//                                    productFetchService.savePicture(dto);
-                                    productFetchService.savePictureForMongo(dto);
-                                } catch (ServiceException e) {
-                                    e.printStackTrace();
-                                }
-
-                            }
-
-                        }
-
-                    } catch (ServiceException e) {
-                        try {
-                            if(e.getMessage().equals("数据插入失败键重复")){
-                                //更新价格和库存
-                                productFetchService.updatePriceAndStock(sku);
-                            } else{
-                                e.printStackTrace();
-                            }
-
-                        } catch (ServiceException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
+//                    SkuDTO sku  = new SkuDTO();
+//                    try {
+//                        sku.setId(UUIDGenerator.getUUID());
+//                        sku.setSupplierId(supplierId);
+//
+//                        sku.setSpuId(product.getProductId());
+//                        skuId = item.getItem_id();
+//                        if(skuId.indexOf("½")>0){
+//                            skuId = skuId.replace("½","+");
+//                        }
+//                        sku.setSkuId(skuId);
+//                        sku.setProductSize(item.getItem_size());
+//                        sku.setMarketPrice(item.getMarket_price());
+//                        sku.setSalePrice(item.getSell_price());
+//                        sku.setSupplierPrice(item.getSupply_price());
+//                        sku.setColor(item.getColor());
+//                        sku.setProductDescription(item.getDescription());
+//                        sku.setStock(item.getStock());
+//                        sku.setProductCode(product.getProducer_id());
+//                        productFetchService.saveSKU(sku);
+//
+//                        if(StringUtils.isNotBlank(item.getPicture())){
+//                            String[] picArray = item.getPicture().split("\\|");
+//
+////                            List<String> picUrlList = Arrays.asList(picArray);
+//                            for(String picUrl :picArray){
+//                                ProductPictureDTO dto  = new ProductPictureDTO();
+//                                dto.setPicUrl(picUrl);
+//                                dto.setSupplierId(supplierId);
+//                                dto.setId(UUIDGenerator.getUUID());
+//                                dto.setSkuId(item.getItem_id());
+//                                try {
+////                                    productFetchService.savePicture(dto);
+//                                    productFetchService.savePictureForMongo(dto);
+//                                } catch (ServiceException e) {
+//                                    e.printStackTrace();
+//                                }
+//
+//                            }
+//
+//                        }
+//
+//                    } catch (ServiceException e) {
+//                        try {
+//                            if(e.getMessage().equals("数据插入失败键重复")){
+//                                //更新价格和库存
+//                                productFetchService.updatePriceAndStock(sku);
+//                            } else{
+//                                e.printStackTrace();
+//                            }
+//
+//                        } catch (ServiceException e1) {
+//                            e1.printStackTrace();
+//                        }
+//                    }
                 }
 
-                try {
-                    spu.setId(UUIDGenerator.getUUID());
-                    spu.setSupplierId(supplierId);
-                    spu.setSpuId(product.getProductId());
-                    spu.setBrandName(product.getProduct_brand());
-                    spu.setCategoryName(product.getCategory());
-                    spu.setSpuName(product.getProduct_name());
-                    spu.setSeasonId(product.getSeason_code());
-                    spu.setMaterial(product.getProduct_material());
-                    productFetchService.saveSPU(spu);
-                } catch (ServiceException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    spu.setId(UUIDGenerator.getUUID());
+//                    spu.setSupplierId(supplierId);
+//                    spu.setSpuId(product.getProductId());
+//                    spu.setBrandName(product.getProduct_brand());
+//                    spu.setCategoryName(product.getCategory());
+//                    spu.setSpuName(product.getProduct_name());
+//                    spu.setSeasonId(product.getSeason_code());
+//                    spu.setMaterial(product.getProduct_material());
+//                    productFetchService.saveSPU(spu);
+//                } catch (ServiceException e) {
+//                    e.printStackTrace();
+//                }
 
 
             }

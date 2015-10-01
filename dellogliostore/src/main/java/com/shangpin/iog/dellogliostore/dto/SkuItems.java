@@ -12,23 +12,23 @@ import java.util.List;
  */
 @XmlRootElement(name="items")
 @XmlAccessorType(XmlAccessType.NONE)
-public class SizeItems {
+public class SkuItems {
 
     @XmlElement(name="item")
-    List<SizeItem> sizeItems;
+    List<SkuItem> skuItems;
 
-    public List<SizeItem> getSizeItems() {
-        return sizeItems;
+    public List<SkuItem> getSkuItems() {
+        return skuItems;
     }
 
-    public void setSizeItems(List<SizeItem> sizeItems) {
-        this.sizeItems = sizeItems;
+    public void setSkuItems(List<SkuItem> skuItems) {
+        this.skuItems = skuItems;
     }
 
     @Override
     public String toString() {
-        return "SizeItems{" +
-                "sizeItems=" + sizeItems +
+        return "SkuItems{" +
+                "skuItems=" + skuItems +
                 '}';
     }
 }

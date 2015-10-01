@@ -1,7 +1,5 @@
 package com.shangpin.iog.dellogliostore.dto;
 
-import com.google.gson.annotations.SerializedName;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -12,20 +10,28 @@ import java.util.List;
  * SpuItem
  * Created by kelseo on 15/9/25.
  */
-@XmlRootElement(name="item")
+@XmlRootElement(name = "item")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SpuItem {
 
     String name;
+    @XmlElement(name = "SKU")
     String spuId;
     String price;
     String stock;
+    @XmlElement(name = "product_detail")
     String description;
+    @XmlElement(name = "photos")
     List<Photo> photos;
     String sex;
+    String category;
+    @XmlElement(name = "product_brand")
+    String brand;
+    @XmlElement(name = "product_material")
+    String material;
     String discount;
-    @XmlElement(name="items")
-    SizeItems sizeItems;
+    @XmlElement(name = "items")
+    SkuItems skuItems;
 
     public String getName() {
         return name;
@@ -91,12 +97,36 @@ public class SpuItem {
         this.discount = discount;
     }
 
-    public SizeItems getSizeItems() {
-        return sizeItems;
+    public SkuItems getSkuItems() {
+        return skuItems;
     }
 
-    public void setSizeItems(SizeItems sizeItems) {
-        this.sizeItems = sizeItems;
+    public void setSkuItems(SkuItems skuItems) {
+        this.skuItems = skuItems;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(String material) {
+        this.material = material;
     }
 
     @Override
@@ -110,7 +140,10 @@ public class SpuItem {
                 ", photos=" + photos +
                 ", sex='" + sex + '\'' +
                 ", discount='" + discount + '\'' +
-                ", sizeItems=" + sizeItems +
+                ", category='" + category + '\'' +
+                ", brand='" + brand + '\'' +
+                ", material='" + material + '\'' +
+                ", skuItems=" + skuItems +
                 '}';
     }
 }
