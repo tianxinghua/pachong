@@ -33,7 +33,7 @@ public class FetchProduct {
      */
     public void fetchProductAndSave() {
         //fetch product
-        atelier.fetchProduct();
+        //atelier.fetchProduct();
         //save into DB
         messMappingAndSave(atelier.getAllItemsStr().split("\\n"));
 
@@ -46,6 +46,7 @@ public class FetchProduct {
     private void messMappingAndSave(String[] items) {
         String stocks = atelier.getAllAvailabilityStr();
         String pictrues = atelier.getAllImageStr();
+       // System.out.println(pictrues);
 
 /*        for (String item : items) {
             String[] fields = item.split(";");
@@ -59,22 +60,6 @@ public class FetchProduct {
         for (String item : items) {
             String[] fields = item.split(";");
             String skuId = fields[0];
-            SpuDTO spu = new SpuDTO();
-            try {
-                spu.setId(UUIDGenerator.getUUID());
-                spu.setSupplierId(supplierId);
-                spu.setSpuId(skuId);
-                spu.setBrandName(fields[2]);
-                spu.setCategoryName(fields[13]);
-                //spu.setSpuName(fields[0]);
-                spu.setSeasonId(fields[6]);
-                spu.setMaterial(fields[11]);
-                spu.setCategoryGender(fields[5]);
-                spu.setProductOrigin(fields[13]);
-                productFetchService.saveSPU(spu);
-            } catch (ServiceException e) {
-                e.printStackTrace();
-            }
 
             SkuDTO sku = new SkuDTO();
             try {
@@ -108,9 +93,9 @@ public class FetchProduct {
                 if (StringUtils.isNotBlank(skuPic)) {
                     String[] picArray = MyStringUtil.getPicUrl(skuId,skuPic);
 //                            List<String> picUrlList = Arrays.asList(picArray);
-                    for (String picUrl : picArray) {
+                    for (int i = 1; i < picArray.length; i++) {
                         ProductPictureDTO dto = new ProductPictureDTO();
-                        dto.setPicUrl(picUrl.split(";")[0]);
+                        dto.setPicUrl(picArray[i].split(";")[0]);
                         dto.setSupplierId(supplierId);
                         dto.setId(UUIDGenerator.getUUID());
                         dto.setSkuId(skuId);
@@ -121,7 +106,6 @@ public class FetchProduct {
                         }
                     }
                 }
-
             } catch (ServiceException e) {
                 try {
                     if (e.getMessage().equals("数据插入失败键重复")) {
@@ -134,6 +118,23 @@ public class FetchProduct {
                 } catch (ServiceException e1) {
                     e1.printStackTrace();
                 }
+            }
+
+            SpuDTO spu = new SpuDTO();
+            try {
+                spu.setId(UUIDGenerator.getUUID());
+                spu.setSupplierId(supplierId);
+                spu.setSpuId(skuId);
+                spu.setBrandName(fields[2]);
+                spu.setCategoryName(fields[13]);
+                //spu.setSpuName(fields[0]);
+                spu.setSeasonId(fields[6]);
+                spu.setMaterial(fields[11]);
+                spu.setCategoryGender(fields[5]);
+                spu.setProductOrigin(fields[13]);
+                productFetchService.saveSPU(spu);
+            } catch (ServiceException e) {
+                e.printStackTrace();
             }
         }
     }
