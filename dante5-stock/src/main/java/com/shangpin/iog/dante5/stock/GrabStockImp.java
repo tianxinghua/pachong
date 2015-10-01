@@ -43,6 +43,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
         timeConfig.confSocketOutTime(600000);
         String url = "https://www.dante5.com/en-US/home/feedShangpin";
         String result = HttpUtil45.get(url, timeConfig, null);
+        HttpUtil45.closePool();
 
         if (result == null || "".equals(result)) {
             logger.error("从接口未取到数据. url : " + url);
