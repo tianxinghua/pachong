@@ -55,7 +55,7 @@ public class FetchProduct {
             }
         }
 
-        items = new String[0];
+        //items = new String[0];
         for (String item : items) {
             String[] fields = item.split(";");
             String skuId = fields[0];
