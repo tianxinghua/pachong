@@ -36,23 +36,15 @@ public class FetchProduct {
     ProductFetchService productFetchService;
 
     private static ResourceBundle bdl=null;
-    private static String supplierId;
-
-    static {
-        if(null==bdl)
-            bdl= ResourceBundle.getBundle("conf");
-        supplierId = bdl.getString("supplierId");
-    }
-
+    private static String supplierId = "2015091801508";
 
 
     public void fetchProductAndSave(final String url) {
 
         try {
             Map<String,String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-            timeConfig.confRequestOutTime(600000);
-            timeConfig.confSocketOutTime(600000);
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
+
             String result = HttpUtil45.get(url, timeConfig, null);
             HttpUtil45.closePool();
 
