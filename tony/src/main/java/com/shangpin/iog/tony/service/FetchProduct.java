@@ -13,7 +13,7 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.tony.common.Constant;
-import com.shangpin.iog.tony.common.MyJsonUtil;
+import com.shangpin.iog.tony.common.MyJsonClient;
 import com.shangpin.iog.tony.common.StringUtil;
 import com.shangpin.iog.tony.dto.Items;
 import org.apache.commons.lang.StringUtils;
@@ -27,12 +27,14 @@ import org.springframework.stereotype.Component;
 public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
+
+    private MyJsonClient jsonClient = new MyJsonClient();
     /**
      * fetch product and save into db
      */
     public void fetchProductAndSave() {
         //get tony return date
-        String json = MyJsonUtil.getTonyJson();
+        String json = jsonClient.getTonyJson();
         //formart data
         Items[] array = new Gson().fromJson(json,new TypeToken<Items[]>() {}.getType());
         //message mapping and save into DB
@@ -43,7 +45,7 @@ public class FetchProduct {
      */
     private void messMappingAndSave(Items[] array) {
         //get tony Category data
-        String categoriesJson = MyJsonUtil.getTonyCategoriesJson();
+        String categoriesJson = jsonClient.getTonyCategoriesJson();
         for(Items item:array){
             SpuDTO spu = new SpuDTO();
             try {
