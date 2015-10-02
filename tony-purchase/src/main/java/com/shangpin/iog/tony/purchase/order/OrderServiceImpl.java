@@ -34,12 +34,16 @@ public class OrderServiceImpl {
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static String key ;
+    private static String merchantId ;
+    private static String token ;
     private static int period ;
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         key = bdl.getString("key");
+        merchantId = bdl.getString("merchantId");
+        token = bdl.getString("token");
         period = Integer.parseInt(bdl.getString("period"));
     }
 
@@ -88,8 +92,8 @@ public class OrderServiceImpl {
             CreateOrderDTO order = getOrder();
             //获取取消订单信息
             UpdateOrderStatusDTO updateOrder = new UpdateOrderStatusDTO();
-            updateOrder.setMerchantId("55f707f6b49dbbe14ec6354d");
-            updateOrder.setToken("d355cd8701b2ebc54d6c8811e03a3229");
+            updateOrder.setMerchantId(merchantId);
+            updateOrder.setToken(token);
             updateOrder.setStatus("CANCELED");
             updateOrder.setStatusDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
 
@@ -176,8 +180,8 @@ public class OrderServiceImpl {
         item.setCur(12);
         itemsArr[0] = item;
         CreateOrderDTO order = new CreateOrderDTO();
-        order.setMerchantId("55f707f6b49dbbe14ec6354d");
-        order.setToken("d355cd8701b2ebc54d6c8811e03a3229");
+        order.setMerchantId(merchantId);
+        order.setToken(token);
         order.setShopOrderId("test1");
         order.setOrderTotalPrice("test2");
         order.setStatus("CONFIRMED");
@@ -227,12 +231,12 @@ public class OrderServiceImpl {
      */
     public void updateOrderStatus(UpdateOrderStatusDTO order){
         Gson gson = new Gson();
-        //String json = gson.toJson(order,UpdateOrderStatusDTO.class);
-        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
+        String json = gson.toJson(order,UpdateOrderStatusDTO.class);
+/*        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
                 "\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"," +
                 "\"shopOrderId\":\"aaa\"," +
                 "\"status\":\"CANCELED\"," +
-                "\"statusDate\":\"2015/01/31 09:01:00\"}";
+                "\"statusDate\":\"2015/01/31 09:01:00\"}";*/
         System.out.println("request json == "+json);
         String rtnData = null;
         try {
