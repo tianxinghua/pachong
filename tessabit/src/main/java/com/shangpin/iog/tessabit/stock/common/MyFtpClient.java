@@ -18,7 +18,6 @@ public class MyFtpClient {
      * @param args
      */
     public static void main(String[] args) {
-        System.out.println("Constant.URL=" + Constant.URL);
         try {
             new MyFtpClient().downLoad();
         } catch (Exception e) {
@@ -45,11 +44,13 @@ public class MyFtpClient {
             //ASCII方式：传输xml文本文件
             ftp.setType(FTPTransferType.ASCII);
             // 获取 XML文件到本地
-            ftp.get(StringUtil.getLocalFileName(), Constant.SERVER_FILE);
+            ftp.get(new StringUtil().getLocalFileName(), Constant.SERVER_FILE);
         } catch (IOException e) {
+            System.out.println("IOException"+e.getMessage());
             e.printStackTrace();
         } catch (FTPException e) {
-            e.printStackTrace();
+            System.out.println("FTPException"+e.getMessage());
+                    e.printStackTrace();
         }  finally {
             close(ftp);
             loggerError.error("下载TESSABIT数据失败，退出");

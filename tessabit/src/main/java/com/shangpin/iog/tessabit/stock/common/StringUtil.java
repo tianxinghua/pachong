@@ -56,7 +56,7 @@ public class StringUtil {
     /**
      *获取本地FTP空文件，如果没有则创建
      */
-    public static String getLocalFileName(){
+    public String getLocalFileName(){
         File file = new File(Constant.LOCAL_FILE);
         if (!file.exists()){
             try {
