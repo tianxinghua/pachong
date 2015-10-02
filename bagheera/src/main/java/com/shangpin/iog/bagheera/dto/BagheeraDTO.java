@@ -13,6 +13,7 @@ public class BagheeraDTO {
     private String SUPPLIER_CODE;
     private String CODE;
     private String DEPT;
+    private String CATEGORY;
     private String ITEM_GROUP;
     private String MATERIAL;
     private String SIZE_AND_FIT;
@@ -28,7 +29,7 @@ public class BagheeraDTO {
     private String LASO_Price;
     private String CURRENCY;
     private String IMAGE_URL;
-
+    
     public String getLAST_UPDATE() {
         return LAST_UPDATE;
     }
@@ -180,4 +181,13 @@ public class BagheeraDTO {
     public void setIMAGE_URL(String IMAGE_URL) {
         this.IMAGE_URL = IMAGE_URL;
     }
+
+	public String getCATEGORY() {
+		return CATEGORY;
+	}
+
+	public void setCATEGORY(String cATEGORY) {
+		CATEGORY = cATEGORY;
+	}
+    
 }

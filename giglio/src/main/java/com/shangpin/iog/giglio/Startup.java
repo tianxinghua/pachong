@@ -23,8 +23,8 @@ public class Startup
         log.info("----拉取giglio数据开始----");
         System.out.println("----拉取giglio数据开始----");
         loadSpringContext();
-        log.info("----初始SPRING成功----");
-        System.out.println("----初始SPRING成功----");
+        log.info("----初始giglio成功----");
+        System.out.println("----初始giglio成功----");
         //拉取数据
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("giglio");
         fetchProduct.fetchProductAndSave("http://www.giglio.com/feeds/shangpin.csv");

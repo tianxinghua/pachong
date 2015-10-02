@@ -1,0 +1,30 @@
+
+dependencies {
+    compile(
+            "org.mybatis:mybatis:3.2.2",
+            "org.mybatis:mybatis-spring:1.2.0",
+            "mysql:mysql-connector-java:5.1.21",
+            project(':project-common'),
+            project(':project-dao'),
+            project(':iog-common-product')
+    )
+    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
+    compile 'org.apache.commons:commons-csv:1.2'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+jar {
+    dependsOn copyToLib , copyResources
+
+    def manifestCp = configurations.compile.files.collect  {
+        File file = it
+        "lib/${file.name}"
+    }.join(' ')
+
+    manifest {
+        attributes 'Main-Class': 'com.shangpin.iog.cirillomoda.Startup'
+        attributes 'Class-Path': '. ' +  manifestCp
+    }
+}
+
+

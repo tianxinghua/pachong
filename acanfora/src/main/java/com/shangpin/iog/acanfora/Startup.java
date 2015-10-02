@@ -35,7 +35,8 @@ public class Startup
         log.info("----初始SPRING成功----");
         //拉取数据
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("acanfora");
-        fetchProduct.fetchProductAndSave("http://www.acanfora.it/api_ecommerce_v2.aspx");
+//        fetchProduct.fetchProductAndSave("http://www.acanfora.it/api_ecommerce_v2.aspx");
+        fetchProduct.fetchProductAndSave("http://127.0.0.1:8081/api_ecommerce_v2.xml");
 
         log.info("----拉取acanfora数据完成----");
 

@@ -20,15 +20,18 @@ public class Startup
 	public static void main(String[] args)
 	{
         //加载spring
-        log.info("----拉取dante5数据开始----");
+        log.info("----拉取dellogliostore数据开始----");
 		loadSpringContext();
         log.info("----初始SPRING成功----");
         //拉取数据
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("dellogliostore");
-        fetchProduct.fetchProductAndSave("https://www.dellogliostore.com/public/merchant/feedDNT5US.xml");
+        //需要翻墙
+        fetchProduct.fetchProductAndSave("http://www.dellogliostore.com/admin/temp/xi125.xml");
+        //本地地址
+//        fetchProduct.fetchProductAndSave("http://127.0.0.1:8080/xi125.xml");
 
-        log.info("----拉取dante5数据完成----");
-		System.out.println("-------fetch end---------");
+        log.info("----拉取dellogliostore数据完成----");
+        System.out.println("-------fetch end---------");
 
 	}
 
