@@ -188,6 +188,9 @@ public class FetchProduct {
      * test
      * */
     public static void main(String[] args) throws IOException {
+        String kk = "263816;FW15;Givenchy;BB05253004;001;Woman;Fall Winter;Bags;Shoulder Bags;Pandora Mini;Black;;;;Mini black washed leather Pandora bag:     detachable leather shoulder strap one leather handle  double closure with zipper  inside pocket with zipper cotton cloth lining;Givenchy: Black Washed Leather Mini Pandora Bag;792;792;;792;;NO;1;Blacks and greys;;0;Height;Width;Depth;Shoulder strap;Handles;;;;;01/01/1998 00:00:00;;;0;;;;;;Completa;NC;Main;Bags";
+        String[] array = kk.split(";");
+        System.out.println("   " + array.length);
 
     }
 }

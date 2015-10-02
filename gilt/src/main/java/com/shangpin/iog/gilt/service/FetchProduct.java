@@ -56,7 +56,7 @@ public class FetchProduct {
         List<SaleDTO>  saleList = this.getSaleMessage(sale);
 
 
-        OutTimeConfig outTimeConf = new OutTimeConfig(1000*5,1000*5,1000*5);
+        OutTimeConfig outTimeConf = new OutTimeConfig(1000*20,1000*20,1000*20);
 
         //获取产品的信息
         String skuMsg = "",saleInventoryUrl="",saleSkuUrl="";
