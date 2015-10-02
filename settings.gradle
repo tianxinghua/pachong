@@ -86,3 +86,6 @@ include 'atelier-stock'
 
 include 'atelier-purchase'
 
+include 'fashionesta'
+include 'fashionesta-stock'
+
