@@ -2,7 +2,7 @@ package com.shangpin.iog.tony.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.tony.common.MyJsonUtil;
+import com.shangpin.iog.tony.common.MyJsonClient;
 import com.shangpin.iog.tony.common.StringUtil;
 import org.apache.log4j.Logger;
 
@@ -16,7 +16,7 @@ public class TonyStockImp extends AbsUpdateProductStock{
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //get 20 events per call
-        String json = MyJsonUtil.getEvents();
+        String json = new MyJsonClient().getEvents();
         //定义三方
         Map returnMap = new HashMap();
         String itemId = "";
