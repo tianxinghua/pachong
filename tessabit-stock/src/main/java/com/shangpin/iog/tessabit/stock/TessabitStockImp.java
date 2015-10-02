@@ -41,7 +41,7 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
         logger.info("为供应商循环赋值");
         while (iterator.hasNext()){
             itemId = iterator.next();
-            returnMap.put(itemId, StringUtil.getSubBySub(localFile,itemId,itemId,Constant.ITEM_LENTH));
+            returnMap.put(itemId, StringUtil.getSubBySub(localFile,itemId,itemId, Constant.ITEM_LENTH));
         }
         return returnMap;
     }
@@ -49,19 +49,19 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
     public static void main(String[] args) throws Exception {
         TessabitStockImp impl = new TessabitStockImp();
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+/*        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("TESSABIT更新数据库开始");
         impl.updateProductStock(Constant.SUPPLIER_ID, "2015-01-01 00:00", format.format(new Date()));
         logger.info("TESSABIT更新数据库结束");
-        System.exit(0);
+        System.exit(0);*/
 
 
-/*        List<String> skuNo = new ArrayList<>();
+        List<String> skuNo = new ArrayList<>();
         skuNo.add("1986242872_10");
         Map returnMap = impl.grabStock(skuNo);
         System.out.println("test return size is "+returnMap.keySet().size());
         System.out.println("test return value is "+returnMap.get("1986242872_10"));;
-        System.out.println("test return value is ");*/
+        System.out.println("test return value is ");
 
     }
 }
