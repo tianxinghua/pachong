@@ -20,6 +20,7 @@ public class Product {
     private String supply_price;
     private String producer_id;
 
+    private String main_category;
     private Items items;
 
 
@@ -130,5 +131,13 @@ public class Product {
     public Product(){
         super();
     }
+
+	public String getMain_category() {
+		return main_category;
+	}
+
+	public void setMain_category(String main_category) {
+		this.main_category = main_category;
+	}
 
 }
