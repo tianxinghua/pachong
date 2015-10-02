@@ -3,6 +3,7 @@ package com.shangpin.iog.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -11,8 +12,9 @@ import java.util.Date;
  */
 @Getter
 @Setter
-public class SpuDTO {
-    private String id;
+public class SpuDTO implements Serializable {
+	private static final long serialVersionUID = 261446265179578739L;
+	private String id;
     private String supplierId;//供货商ID 必填
     private String spuId;//SPUID  必填
     private String spuName;

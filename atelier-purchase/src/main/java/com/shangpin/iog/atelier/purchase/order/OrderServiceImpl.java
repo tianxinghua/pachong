@@ -69,7 +69,8 @@ public class OrderServiceImpl {
         //获取条形码
         WS_Sito_P15 atelier = new WS_Sito_P15();
         //atelier.getAllAvailabilityMarketplace();
-        String barCodeStr = atelier.getAllAvailabilityStr();
+        String barCodeAll = atelier.getAllAvailabilityStr();
+        String barCode = "";
         CreateOrderDTO order = new CreateOrderDTO();
         order.setID_CLIENTE_WEB("45");
         order.setDESTINATIONROW1("----------------");
@@ -80,7 +81,10 @@ public class OrderServiceImpl {
         try {
             //获取订单数组
             List<Integer> status = new ArrayList<>();
+            //1=待处理
             status.add(1);
+            //5=已取消
+            status.add(5);
            // Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.getPurchaseOrder(supplierId, startDate, endDate, status);
 
             Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
@@ -105,10 +109,15 @@ public class OrderServiceImpl {
                 List<PurchaseOrderDetail> list = orderMap.get(key);
                 System.out.println("list.size()=="+list.size());
                 for(PurchaseOrderDetail pur:list){
+                    barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
+                            barCodeAll.indexOf(pur.SupplierSkuNo),barCodeAll.indexOf(pur.SupplierSkuNo)+50));
                     order.setID_ORDER_WEB(pur.SopPurchaseOrderNo);
                     order.setPRICE(pur.SkuPrice);
-                    order.setBARCODE(MyStringUtil.getBarcodeBySkuId(barCodeStr.substring(
-                            barCodeStr.indexOf(pur.SupplierSkuNo),barCodeStr.indexOf(pur.SupplierSkuNo)+50)));
+                    order.setBARCODE(barCode);
+                    //取消订单
+                    if (pur.DetailStatus == 5){
+                        orderAmendment(order);
+                    }
                     //开始下单
                     newOrder(order);
                 }
@@ -143,6 +152,52 @@ public class OrderServiceImpl {
         String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=NewOrder";
         PostMethod postMethod = new PostMethod(uri);
         postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/NewOrder");
+        postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
+
+        StringRequestEntity requestEntity=new StringRequestEntity(soapRequestData);
+        postMethod.setRequestEntity(requestEntity);
+
+        int returnCode=0;
+        try {
+            returnCode = httpClient.executeMethod(postMethod);
+            System.out.println("returnCode=="+returnCode);
+/*            BufferedOutputStream out=new BufferedOutputStream(new FileOutputStream(new File(orderFile)));
+            BufferedInputStream in=new BufferedInputStream(postMethod.getResponseBodyAsStream());
+            int length = 0;
+            byte[] b = new byte[10240];
+            while((length = in.read(b,0,10240)) != -1)
+            {
+                out.write(b, 0, length);
+            }
+            in.close();
+            out.flush();
+            out.close();*/
+        } catch (HttpException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * 在线取消订单
+     */
+    public void orderAmendment(CreateOrderDTO order){
+        String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+                "  <soap:Body>\n" +
+                "    <OrderAmendment xmlns=\"http://tempuri.org/\">\n" +
+                "      <ID_ORDER_WEB>" + order.getID_ORDER_WEB() + "</ID_ORDER_WEB>\n" +
+                "      <ID_CLIENTE_WEB>" + order.getID_CLIENTE_WEB() + "</ID_CLIENTE_WEB>\n" +
+                "      <BARCODE>" + order.getBARCODE() + "</BARCODE>\n" +
+                "      <QTY>0</QTY>\n" +
+                "    </OrderAmendment>\n" +
+                "  </soap:Body>\n" +
+                "</soap:Envelope>";
+        System.out.println("soapRequestData=="+soapRequestData);
+        HttpClient httpClient = new HttpClient();
+        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=OrderAmendment";
+        PostMethod postMethod = new PostMethod(uri);
+        postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/OrderAmendment");
         postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
 
         StringRequestEntity requestEntity=new StringRequestEntity(soapRequestData);

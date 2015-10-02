@@ -20,7 +20,7 @@ public class StringUtil {
      * @param args
      */
     public static void main(String[] args) {
-        String localFile = StringUtil.parseXml2Str();
+        String localFile = new StringUtil().parseXml2Str();
         //System.out.println(localFile);
         System.out.println("00000000000000000000000000000");
         System.out.println(StringUtil.getSubBySub(localFile,"1984127411_12","1984127411_12",1500));
@@ -29,7 +29,7 @@ public class StringUtil {
     /**
      *字节流方式读取本地ftp方式获取的xml文件
      */
-    public static  String parseXml2Str() {
+    public  String parseXml2Str() {
 
         StringBuffer sb = new StringBuffer();
         try {
