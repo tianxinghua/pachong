@@ -8,7 +8,7 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.tessabit.stock.common.Constant;
-import com.shangpin.iog.tessabit.stock.common.FtpUtil;
+import com.shangpin.iog.tessabit.stock.common.MyFtpClient;
 import com.shangpin.iog.tessabit.stock.dto.Item;
 import com.shangpin.iog.tessabit.stock.dto.Items;
 import com.shangpin.iog.tessabit.stock.dto.Product;
@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import sun.net.ftp.FtpClient;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -38,7 +39,7 @@ public class FetchProduct {
     public void fetchProductAndSave() {
         //拉取FTP文件
         logger.info("downLoad ftpFile begin......");
-        FtpUtil.downLoad();
+        new MyFtpClient().downLoad();
         logger.info("downLoad ftpFile end......");
 
         //入库处理

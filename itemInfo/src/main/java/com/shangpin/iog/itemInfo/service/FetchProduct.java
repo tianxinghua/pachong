@@ -166,6 +166,11 @@ public class FetchProduct {
 							spu.setProductOrigin(elementSku.getValue());
 						}
 					}
+					else if(nodeName.equals("suitable")){
+						if(elementSku.getValue() != null){
+							spu.setCategoryGender(elementSku.getValue());
+						}
+					}
 					/**********保存sku***********/
 					else if(nodeName.equals("sku_id")){  //必填
 						if(elementSku.getValue() != null){
@@ -218,6 +223,16 @@ public class FetchProduct {
 							sku.setProductDescription(elementSku.getValue());
 						}
 					}
+					else if(nodeName.equals("model")){
+						if(elementSku.getValue() != null){
+							sku.setProductCode(elementSku.getValue());
+						}
+					}
+					else if(nodeName.equals("title")){
+						if(elementSku.getValue() != null){
+							sku.setProductName(elementSku.getValue());
+						}
+					}
 					/*************图片*****************/
 					else if(nodeName.equals("item_imgs")){
 						if(elementSku.getValue() != null){
@@ -231,7 +246,7 @@ public class FetchProduct {
 					}
 					
 				}
-				/*try{
+				try{
 					//保存sku
 					productFetchService.saveSKU(sku);
 					
@@ -254,7 +269,7 @@ public class FetchProduct {
 					productFetchService.saveSPU(spu);
 				}catch(Exception e){
 					e.printStackTrace();
-				}*/
+				}
 				
 				try{
 					if(spuId.length()>0 && skuId.length()>0 && picList.size()>0){

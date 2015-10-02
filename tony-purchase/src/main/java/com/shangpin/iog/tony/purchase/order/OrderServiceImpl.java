@@ -10,6 +10,7 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.service.ReturnOrderService;
 import com.shangpin.iog.tony.purchase.dto.*;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
@@ -33,11 +34,17 @@ public class OrderServiceImpl {
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static String key ;
+    private static String merchantId ;
+    private static String token ;
+    private static int period ;
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         key = bdl.getString("key");
+        merchantId = bdl.getString("merchantId");
+        token = bdl.getString("token");
+        period = Integer.parseInt(bdl.getString("period"));
     }
 
     @Autowired
@@ -60,9 +67,13 @@ public class OrderServiceImpl {
         try {
             //获取订单数组
             List<Integer> status = new ArrayList<>();
+            //1=待处理
             status.add(1);
-            //Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.getPurchaseOrder(supplierId, startDate, endDate, status);
-            Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
+            //5=已取消
+            status.add(5);
+            Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.getPurchaseOrder(supplierId, startDate, endDate, status);
+           //模拟采购单信息
+           // Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
             List<PurchaseOrderDetail> dlist = new ArrayList<>();
             PurchaseOrderDetail de = new PurchaseOrderDetail();
             de.SopPurchaseOrderDetailNo = "123";
@@ -77,20 +88,33 @@ public class OrderServiceImpl {
             //下单异常 再次下单
             handlePurchaseOrderException();*/
             System.out.println(orderMap.size());
-            //defination
+            //获取订单信息
             CreateOrderDTO order = getOrder();
+            //获取取消订单信息
+            UpdateOrderStatusDTO updateOrder = new UpdateOrderStatusDTO();
+            updateOrder.setMerchantId(merchantId);
+            updateOrder.setToken(token);
+            updateOrder.setStatus("CANCELED");
+            updateOrder.setStatusDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
 
             for (String key:orderMap.keySet()){
                 System.out.println(key);
                 List<PurchaseOrderDetail> list = orderMap.get(key);
                 System.out.println("list.size()=="+list.size());
                 for(PurchaseOrderDetail pur:list){
+                    //在线取消订单
+                    if (pur.DetailStatus == 5){
+                        updateOrder.setShopOrderId(pur.SopPurchaseOrderDetailNo);
+                        updateOrderStatus(updateOrder);
+                    }
+                    //在线推送订单赋值
                     order.getBillingInfo().setTotal(pur.SkuPrice);
                     order.setShopOrderId(pur.SopPurchaseOrderDetailNo);
                     order.setOrderTotalPrice(pur.SkuPrice);
                     order.getItems()[0].setSku(pur.SkuNo);
                     order.getItems()[0].setPrice(pur.SkuPrice);
                     order.getItems()[0].setCur(pur.SkuPriceCurrency);
+                    //订单在线推送
                     createOrder(order);
                     /////////////////////////////////////////////////////////////////////////////
 /*                    System.out.println(pur.SopPurchaseOrderNo);
@@ -124,14 +148,14 @@ public class OrderServiceImpl {
         ShippingInfoDTO shippingInfo = new ShippingInfoDTO();
         AddressDTO shippingAddress = new AddressDTO();
         shippingAddress.setFirstname("Filippo ");
-        shippingAddress.setLastname("Troina ");
-        shippingAddress.setCompanyname("Genertec Italia S.r.l. ");
-        shippingAddress.setStreet("111 ");
-        shippingAddress.setHn("11 ");
-        shippingAddress.setZip("11 ");
-        shippingAddress.setCity("11 ");
-        shippingAddress.setProvince("11 ");
-        shippingAddress.setState("11 ");
+        shippingAddress.setLastname("Troina");
+        shippingAddress.setCompanyname("Genertec Italia S.r.l.");
+        shippingAddress.setStreet("VIA G.LEOPARDI 27");
+        shippingAddress.setHn("22075 ");
+        shippingAddress.setZip("22075");
+        shippingAddress.setCity("LURATE CACCIVIO ");
+        shippingAddress.setProvince("como");
+        shippingAddress.setState("Italy");
         shippingInfo.setAddress(shippingAddress);
         shippingInfo.setFees("0");
         BillingInfoDTO billingInfo = new BillingInfoDTO();
@@ -139,14 +163,14 @@ public class OrderServiceImpl {
         billingInfo.setPaymentMethod(7);
         AddressDTO billingAddress = new AddressDTO();
         billingAddress.setFirstname("Filippo");
-        billingAddress.setLastname("Troina ");
-        billingAddress.setCompanyname("Genertec Italia S.r.l. ");
-        billingAddress.setStreet("111 ");
+        billingAddress.setLastname("Troina");
+        billingAddress.setCompanyname("Genertec Italia S.r.l.");
+        billingAddress.setStreet("VIA G.LEOPARDI 27");
         billingAddress.setHn("11 ");
-        billingAddress.setZip("11 ");
-        billingAddress.setCity("11 ");
-        billingAddress.setProvince("11 ");
-        billingAddress.setState("11 ");
+        billingAddress.setZip("22075 ");
+        billingAddress.setCity("LURATE CACCIVIO");
+        billingAddress.setProvince("como");
+        billingAddress.setState("Italy");
         billingInfo.setAddress(billingAddress);
         ItemDTO[] itemsArr = new ItemDTO[1];
         ItemDTO item = new ItemDTO();
@@ -156,8 +180,8 @@ public class OrderServiceImpl {
         item.setCur(12);
         itemsArr[0] = item;
         CreateOrderDTO order = new CreateOrderDTO();
-        order.setMerchantId("55f707f6b49dbbe14ec6354d");
-        order.setToken("d355cd8701b2ebc54d6c8811e03a3229");
+        order.setMerchantId(merchantId);
+        order.setToken(token);
         order.setShopOrderId("test1");
         order.setOrderTotalPrice("test2");
         order.setStatus("CONFIRMED");
@@ -195,6 +219,28 @@ public class OrderServiceImpl {
         String rtnData = null;
         try {
             rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/createOrder", null, null, json, "", "");
+            System.out.println("rtnData=="+rtnData);
+            logger.info("Response ：" + rtnData + ", shopOrderId:"+order.getShopOrderId());
+        } catch (ServiceException e) {
+            loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
+        }
+    }
+
+    /**
+     * 在线取消订单
+     */
+    public void updateOrderStatus(UpdateOrderStatusDTO order){
+        Gson gson = new Gson();
+        String json = gson.toJson(order,UpdateOrderStatusDTO.class);
+/*        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
+                "\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"," +
+                "\"shopOrderId\":\"aaa\"," +
+                "\"status\":\"CANCELED\"," +
+                "\"statusDate\":\"2015/01/31 09:01:00\"}";*/
+        System.out.println("request json == "+json);
+        String rtnData = null;
+        try {
+            rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/updateOrderStatus", null, null, json, "", "");
             System.out.println("rtnData=="+rtnData);
             logger.info("Response ：" + rtnData + ", shopOrderId:"+order.getShopOrderId());
         } catch (ServiceException e) {
@@ -789,7 +835,8 @@ public class OrderServiceImpl {
     public static void main(String[] args) throws  Exception{
         OrderServiceImpl  orderService = new OrderServiceImpl();
 
-        orderService.purchaseOrder();
+        //orderService.purchaseOrder();
+        orderService.updateOrderStatus(null);
 
 //        Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
 //        List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
