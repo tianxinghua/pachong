@@ -33,11 +33,13 @@ public class OrderServiceImpl {
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static String key ;
+    private static int period ;
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         key = bdl.getString("key");
+        period = Integer.parseInt(bdl.getString("period"));
     }
 
     @Autowired
@@ -60,9 +62,12 @@ public class OrderServiceImpl {
         try {
             //获取订单数组
             List<Integer> status = new ArrayList<>();
+            //1=待处理
             status.add(1);
-            //Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.getPurchaseOrder(supplierId, startDate, endDate, status);
-            Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
+            //5=已取消
+            status.add(1);
+            Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.getPurchaseOrder(supplierId, startDate, endDate, status);
+           // Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
             List<PurchaseOrderDetail> dlist = new ArrayList<>();
             PurchaseOrderDetail de = new PurchaseOrderDetail();
             de.SopPurchaseOrderDetailNo = "123";
@@ -77,20 +82,33 @@ public class OrderServiceImpl {
             //下单异常 再次下单
             handlePurchaseOrderException();*/
             System.out.println(orderMap.size());
-            //defination
+            //获取订单信息
             CreateOrderDTO order = getOrder();
+            //获取取消订单信息
+            UpdateOrderStatusDTO updateOrder = new UpdateOrderStatusDTO();
+            updateOrder.setMerchantId("55f707f6b49dbbe14ec6354d");
+            updateOrder.setToken("d355cd8701b2ebc54d6c8811e03a3229");
+            updateOrder.setStatus("CANCELED");
+            updateOrder.setStatusDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
 
             for (String key:orderMap.keySet()){
                 System.out.println(key);
                 List<PurchaseOrderDetail> list = orderMap.get(key);
                 System.out.println("list.size()=="+list.size());
                 for(PurchaseOrderDetail pur:list){
+                    //在线取消订单
+                    if (pur.DetailStatus == 5){
+                        updateOrder.setShopOrderId(pur.SopPurchaseOrderDetailNo);
+                        updateOrderStatus(updateOrder);
+                    }
+                    //在线推送订单
                     order.getBillingInfo().setTotal(pur.SkuPrice);
                     order.setShopOrderId(pur.SopPurchaseOrderDetailNo);
                     order.setOrderTotalPrice(pur.SkuPrice);
                     order.getItems()[0].setSku(pur.SkuNo);
                     order.getItems()[0].setPrice(pur.SkuPrice);
                     order.getItems()[0].setCur(pur.SkuPriceCurrency);
+                    //订单在线推送
                     createOrder(order);
                     /////////////////////////////////////////////////////////////////////////////
 /*                    System.out.println(pur.SopPurchaseOrderNo);
@@ -124,14 +142,14 @@ public class OrderServiceImpl {
         ShippingInfoDTO shippingInfo = new ShippingInfoDTO();
         AddressDTO shippingAddress = new AddressDTO();
         shippingAddress.setFirstname("Filippo ");
-        shippingAddress.setLastname("Troina ");
-        shippingAddress.setCompanyname("Genertec Italia S.r.l. ");
-        shippingAddress.setStreet("111 ");
-        shippingAddress.setHn("11 ");
-        shippingAddress.setZip("11 ");
-        shippingAddress.setCity("11 ");
-        shippingAddress.setProvince("11 ");
-        shippingAddress.setState("11 ");
+        shippingAddress.setLastname("Troina");
+        shippingAddress.setCompanyname("Genertec Italia S.r.l.");
+        shippingAddress.setStreet("VIA G.LEOPARDI 27");
+        shippingAddress.setHn("22075 ");
+        shippingAddress.setZip("22075");
+        shippingAddress.setCity("LURATE CACCIVIO ");
+        shippingAddress.setProvince("como");
+        shippingAddress.setState("Italy");
         shippingInfo.setAddress(shippingAddress);
         shippingInfo.setFees("0");
         BillingInfoDTO billingInfo = new BillingInfoDTO();
@@ -139,14 +157,14 @@ public class OrderServiceImpl {
         billingInfo.setPaymentMethod(7);
         AddressDTO billingAddress = new AddressDTO();
         billingAddress.setFirstname("Filippo");
-        billingAddress.setLastname("Troina ");
-        billingAddress.setCompanyname("Genertec Italia S.r.l. ");
-        billingAddress.setStreet("111 ");
+        billingAddress.setLastname("Troina");
+        billingAddress.setCompanyname("Genertec Italia S.r.l.");
+        billingAddress.setStreet("VIA G.LEOPARDI 27");
         billingAddress.setHn("11 ");
-        billingAddress.setZip("11 ");
-        billingAddress.setCity("11 ");
-        billingAddress.setProvince("11 ");
-        billingAddress.setState("11 ");
+        billingAddress.setZip("22075 ");
+        billingAddress.setCity("LURATE CACCIVIO");
+        billingAddress.setProvince("como");
+        billingAddress.setState("Italy");
         billingInfo.setAddress(billingAddress);
         ItemDTO[] itemsArr = new ItemDTO[1];
         ItemDTO item = new ItemDTO();
@@ -195,6 +213,40 @@ public class OrderServiceImpl {
         String rtnData = null;
         try {
             rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/createOrder", null, null, json, "", "");
+            System.out.println("rtnData=="+rtnData);
+            logger.info("Response ：" + rtnData + ", shopOrderId:"+order.getShopOrderId());
+        } catch (ServiceException e) {
+            loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
+        }
+    }
+
+    /**
+     * 在线推送订单
+     */
+    public void updateOrderStatus(UpdateOrderStatusDTO order){
+        Gson gson = new Gson();
+        String json = gson.toJson(order,UpdateOrderStatusDTO.class);
+/*        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
+                "\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"," +
+                "\"shopOrderId\":\"aaa\"," +
+                "\"status\":\"CONFIRMED\"," +
+                "\"statusDate\":\"2015/01/31 09:01:00\"," +
+                "\"orderDate\":\"2015/01/31 09:01:00\"," +
+                "\"items\":[{ \"sku\":\"123\" , \"qty\":1 ," + "\"price\":1 ,\"cur\":135 }]," +
+                "\"orderTotalPrice\":555.00," +
+                "\"shippingInfo\":{ \"fees\":1 , " +
+                "\"address\":{\"firstname\":\"2\", \"lastname\":\"2\"," + " \"companyname\":\"2\"," +
+                " \"street\":\"2\", \"hn\":\"2\", \"zip\":\"2\", \"city\":\"2\"," + " \"province\":\"2\" ," +
+                "\"state\":\"2\" }}," +
+                "\"billingInfo\":{ \"total\":1.00 ," +
+                "\"paymentMethod\":1 ," +
+                "\"address\":{ \"firstname\":\"2\", \"lastname\":\"2\"," + " \"companyname\":\"2\", " +
+                "\"street\":\"2\", \"hn\":\"2\", \"zip\":\"2\", \"city\":\"2\", " +
+                "\"province\":\"2\" ,\"state\":\"2\" }}}";*/
+        System.out.println("request json == "+json);
+        String rtnData = null;
+        try {
+            rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/updateOrderStatus", null, null, json, "", "");
             System.out.println("rtnData=="+rtnData);
             logger.info("Response ：" + rtnData + ", shopOrderId:"+order.getShopOrderId());
         } catch (ServiceException e) {
