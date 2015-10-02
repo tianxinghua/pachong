@@ -10,6 +10,7 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.service.ReturnOrderService;
 import com.shangpin.iog.tony.purchase.dto.*;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
@@ -65,7 +66,7 @@ public class OrderServiceImpl {
             //1=待处理
             status.add(1);
             //5=已取消
-            status.add(1);
+            status.add(5);
             Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.getPurchaseOrder(supplierId, startDate, endDate, status);
            // Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
             List<PurchaseOrderDetail> dlist = new ArrayList<>();
@@ -101,7 +102,7 @@ public class OrderServiceImpl {
                         updateOrder.setShopOrderId(pur.SopPurchaseOrderDetailNo);
                         updateOrderStatus(updateOrder);
                     }
-                    //在线推送订单
+                    //在线推送订单赋值
                     order.getBillingInfo().setTotal(pur.SkuPrice);
                     order.setShopOrderId(pur.SopPurchaseOrderDetailNo);
                     order.setOrderTotalPrice(pur.SkuPrice);
@@ -225,24 +226,12 @@ public class OrderServiceImpl {
      */
     public void updateOrderStatus(UpdateOrderStatusDTO order){
         Gson gson = new Gson();
-        String json = gson.toJson(order,UpdateOrderStatusDTO.class);
-/*        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
+        //String json = gson.toJson(order,UpdateOrderStatusDTO.class);
+        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
                 "\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"," +
                 "\"shopOrderId\":\"aaa\"," +
-                "\"status\":\"CONFIRMED\"," +
-                "\"statusDate\":\"2015/01/31 09:01:00\"," +
-                "\"orderDate\":\"2015/01/31 09:01:00\"," +
-                "\"items\":[{ \"sku\":\"123\" , \"qty\":1 ," + "\"price\":1 ,\"cur\":135 }]," +
-                "\"orderTotalPrice\":555.00," +
-                "\"shippingInfo\":{ \"fees\":1 , " +
-                "\"address\":{\"firstname\":\"2\", \"lastname\":\"2\"," + " \"companyname\":\"2\"," +
-                " \"street\":\"2\", \"hn\":\"2\", \"zip\":\"2\", \"city\":\"2\"," + " \"province\":\"2\" ," +
-                "\"state\":\"2\" }}," +
-                "\"billingInfo\":{ \"total\":1.00 ," +
-                "\"paymentMethod\":1 ," +
-                "\"address\":{ \"firstname\":\"2\", \"lastname\":\"2\"," + " \"companyname\":\"2\", " +
-                "\"street\":\"2\", \"hn\":\"2\", \"zip\":\"2\", \"city\":\"2\", " +
-                "\"province\":\"2\" ,\"state\":\"2\" }}}";*/
+                "\"status\":\"CANCELED\"," +
+                "\"statusDate\":\"2015/01/31 09:01:00\"}";
         System.out.println("request json == "+json);
         String rtnData = null;
         try {
@@ -841,7 +830,8 @@ public class OrderServiceImpl {
     public static void main(String[] args) throws  Exception{
         OrderServiceImpl  orderService = new OrderServiceImpl();
 
-        orderService.purchaseOrder();
+        //orderService.purchaseOrder();
+        orderService.updateOrderStatus(null);
 
 //        Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
 //        List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
