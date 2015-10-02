@@ -72,6 +72,10 @@ include 'itemInfo'
 include 'atelier-stock'
 
 include 'giglio'
-include 'giglio-stock'
+
 include 'atelier-purchase'
+include 'prodottimonti'
+include 'prodottimonti-stock'
+include 'levelgroup'
+include 'levelgroup-stock'
 
