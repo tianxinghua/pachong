@@ -68,6 +68,7 @@ public class OrderServiceImpl {
             //5=已取消
             status.add(5);
             Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.getPurchaseOrder(supplierId, startDate, endDate, status);
+           //模拟采购单信息
            // Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
             List<PurchaseOrderDetail> dlist = new ArrayList<>();
             PurchaseOrderDetail de = new PurchaseOrderDetail();
@@ -222,7 +223,7 @@ public class OrderServiceImpl {
     }
 
     /**
-     * 在线推送订单
+     * 在线取消订单
      */
     public void updateOrderStatus(UpdateOrderStatusDTO order){
         Gson gson = new Gson();
