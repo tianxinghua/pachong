@@ -9,9 +9,9 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 
 /**
- * Created by wangyuzhi on 2015/9/11.
+ * Created by Administrator on 2015/10/2.
  */
-public class FtpUtil {
+public class MyFtpClient {
     private static Logger loggerError = Logger.getLogger("error");
     /**
      * test
@@ -20,7 +20,7 @@ public class FtpUtil {
     public static void main(String[] args) {
         System.out.println("Constant.URL=" + Constant.URL);
         try {
-            FtpUtil.downLoad();
+            new MyFtpClient().downLoad();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -29,14 +29,14 @@ public class FtpUtil {
     /**
      * Description: 下载文件
      */
-    public static void downLoad() {
+    public  void downLoad() {
         //创建FTPClient
         FTPClient ftp = new com.enterprisedt.net.ftp.FTPClient();
         // 连接服务器
         try {
             ftp.setRemoteHost(Constant.URL);
             ftp.setRemotePort(Integer.parseInt(Constant.PORT));
-            ftp.setTimeout(3600000);
+            ftp.setTimeout(1000*60*30);
             ftp.connect();
             //登陆
             ftp.login(Constant.USER, Constant.PASSWORD);
@@ -51,7 +51,7 @@ public class FtpUtil {
         } catch (FTPException e) {
             e.printStackTrace();
         }  finally {
-            FtpUtil.close(ftp);
+            close(ftp);
             loggerError.error("下载TESSABIT数据失败，退出");
             return;
         }
@@ -61,7 +61,7 @@ public class FtpUtil {
      *断开连接
      * @param ftp 客户端
      */
-    public static void close(FTPClient ftp){
+    public void close(FTPClient ftp){
         try {
             if (null != ftp)
                 ftp.quit();
@@ -72,3 +72,4 @@ public class FtpUtil {
         }
     }
 }
+
