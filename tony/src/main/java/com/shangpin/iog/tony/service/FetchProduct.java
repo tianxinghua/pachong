@@ -11,10 +11,10 @@ import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.onsite.base.constance.Constant;
-import com.shangpin.iog.onsite.base.utils.MyJsonUtil;
-import com.shangpin.iog.onsite.base.utils.StringUtil;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.tony.common.Constant;
+import com.shangpin.iog.tony.common.MyJsonClient;
+import com.shangpin.iog.tony.common.StringUtil;
 import com.shangpin.iog.tony.dto.Items;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +27,14 @@ import org.springframework.stereotype.Component;
 public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
+
+    private MyJsonClient jsonClient = new MyJsonClient();
     /**
      * fetch product and save into db
      */
     public void fetchProductAndSave() {
         //get tony return date
-        String json = MyJsonUtil.getTonyJson();
+        String json = jsonClient.getTonyJson();
         //formart data
         Items[] array = new Gson().fromJson(json,new TypeToken<Items[]>() {}.getType());
         //message mapping and save into DB
@@ -43,17 +45,17 @@ public class FetchProduct {
      */
     private void messMappingAndSave(Items[] array) {
         //get tony Category data
-        String categoriesJson = MyJsonUtil.getTonyCategoriesJson();
+        String categoriesJson = jsonClient.getTonyCategoriesJson();
         for(Items item:array){
             SpuDTO spu = new SpuDTO();
             try {
                 spu.setId(UUIDGenerator.getUUID());
-                spu.setSupplierId(Constant.SUPP_ID_TONY);
+                spu.setSupplierId(Constant.SUPPLIER_ID);
                 spu.setSpuId(item.getCode());
                 spu.setBrandName(item.getBrand());
                 String categoryId = StringUtil.getCategoryID(item.getCat_id().toString());
                 spu.setCategoryId(categoryId);
-                spu.setCategoryName(StringUtil.getCategoryNameByID(categoryId,categoriesJson));
+                spu.setCategoryName(StringUtil.getCategoryNameByID(categoryId, categoriesJson));
                 spu.setSpuName(item.getTitle_en());
                 spu.setSeasonId(item.getSeason());
                 spu.setMaterial(item.getMaterial_en());
@@ -66,7 +68,7 @@ public class FetchProduct {
             SkuDTO sku  = new SkuDTO();
             try {
                 sku.setId(UUIDGenerator.getUUID());
-                sku.setSupplierId(Constant.SUPP_ID_TONY);
+                sku.setSupplierId(Constant.SUPPLIER_ID);
                 sku.setSpuId(item.getCode());
                 sku.setSkuId(item.getSku());
                 sku.setProductSize(item.getSize());
@@ -86,7 +88,7 @@ public class FetchProduct {
                     for(String picUrl :picArray){
                         ProductPictureDTO dto  = new ProductPictureDTO();
                         dto.setPicUrl(picUrl);
-                        dto.setSupplierId(Constant.SUPP_ID_TONY);
+                        dto.setSupplierId(Constant.SUPPLIER_ID);
                         dto.setId(UUIDGenerator.getUUID());
                         dto.setSkuId(item.getSku());
                         try {

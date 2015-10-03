@@ -35,8 +35,14 @@ public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
 
-    private static ResourceBundle bdl=null;
-    private static String supplierId = "2015091801508";
+    private static ResourceBundle bdl = null;
+    private static String supplierId;
+
+    static {
+        if (bdl == null)
+            bdl = ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
 
 
     public void fetchProductAndSave(final String url) {

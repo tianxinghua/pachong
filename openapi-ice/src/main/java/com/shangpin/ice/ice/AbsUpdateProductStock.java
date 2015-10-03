@@ -15,6 +15,7 @@ import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
 import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
 import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 
+import com.shangpin.iog.service.SkuPriceService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,8 +69,8 @@ public abstract class AbsUpdateProductStock {
 
 	}
 //
-//	@Autowired
-//	public SkuPriceService skuPriceService;
+	@Autowired
+	public SkuPriceService skuPriceService;
 
 	/**
 	 * 抓取供应商库存数据 

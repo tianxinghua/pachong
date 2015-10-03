@@ -27,7 +27,6 @@ public class WS_Sito_P15 {
             itemsFile = bdl.getString("items");
             availabilityFile = bdl.getString("availability");
             imageFile = bdl.getString("image");
-            System.out.println(imageFile);
     }
     /**
      * fetch product from atelier to local

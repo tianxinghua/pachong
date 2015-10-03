@@ -62,8 +62,8 @@ environments{
         db {
             driverClassName = 'com.mysql.jdbc.Driver'
             url ='jdbc:mysql://49.213.13.167:3306/iog?useUnicode=true&amp;characterEncoding=utf-8'
-            username = 'reader'
-            password = 'rd@sp520'
+            username = 'shangpin'
+            password = 'shangpin@123'
 
 
 
