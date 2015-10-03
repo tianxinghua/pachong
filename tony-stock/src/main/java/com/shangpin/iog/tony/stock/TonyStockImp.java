@@ -17,6 +17,7 @@ public class TonyStockImp extends AbsUpdateProductStock{
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //get 20 events per call
         String json = new MyJsonClient().getEvents();
+        String stock = null;
         //定义三方
         Map returnMap = new HashMap();
         String itemId = "";
@@ -24,7 +25,10 @@ public class TonyStockImp extends AbsUpdateProductStock{
         //为供应商循环赋值
         while (iterator.hasNext()){
             itemId = iterator.next();
-            returnMap.put(itemId, StringUtil.getStockById(json.substring(json.indexOf(itemId),json.indexOf(itemId)+50)));
+            if (json.contains(itemId)){
+                stock = StringUtil.getStockById(json.substring(json.indexOf(itemId),json.indexOf(itemId)+50));
+            }
+            returnMap.put(itemId, stock );
         }
         return returnMap;
     }
