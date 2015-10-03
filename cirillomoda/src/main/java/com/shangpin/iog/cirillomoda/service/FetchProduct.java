@@ -30,21 +30,20 @@ import java.util.regex.Pattern;
  */
 @Component("cirillomoda")
 public class FetchProduct {
-    final Logger logger = Logger.getLogger(this.getClass());
+//    final Logger logger = Logger.getLogger(this.getClass());
 //    private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
 
-    private static ResourceBundle bdl=null;
-    private static String supplierId = "201510011827";
+//    private static ResourceBundle bdl=null;
+    private static String supplierId = "201510031117"; //测试
+//    private static String supplierId = ""; //正式
 
 //    static {
 //        if(null==bdl)
 //            bdl= ResourceBundle.getBundle("conf");
 //        supplierId = bdl.getString("supplierId");
 //    }
-
-
 
     public void fetchProductAndSave(final String url) {
 
@@ -61,12 +60,12 @@ public class FetchProduct {
 //            mongMap.put("result", "stream data.") ;
 //            logMongo.info(mongMap);
 
+            System.out.println(result);
+
             CSVFormat csvFileFormat = CSVFormat.EXCEL.withHeader().withDelimiter(';');
             final Reader reader = new InputStreamReader(IOUtils.toInputStream(result, "UTF-8"), "UTF-8");
 
             int count = 0;
-            Pattern pss = Pattern.compile("(.+)\\((\\d+)\\)");
-
             String spuId = "";
             String title = "";
             String brand = "";
@@ -79,7 +78,6 @@ public class FetchProduct {
                     if (record.size() <= 1) {
                         continue;
                     }
-                    System.out.println("count : " + ++count);
 
                     String type = record.get("parent/child");
 
@@ -92,15 +90,29 @@ public class FetchProduct {
                         description = record.get("description_it_it");
                         status = record.get("Stato");
 
-                        System.out.println("spuId : " + spuId);
-                        System.out.println("title : " + title);
-                        System.out.println("brand : " + brand);
-                        System.out.println("price : " + price);
-                        System.out.println("category : " + category);
-                        System.out.println("description : " + description);
-                        System.out.println("status : " + status);
+                        //保存SPU
+                        SpuDTO spu = new SpuDTO();
+                        //SPU 必填
+                        spu.setId(spuId);
+                        spu.setSpuId(spuId);
+                        spu.setSupplierId(supplierId);
+                        spu.setCategoryName(category);
+                        spu.setBrandName(brand);
+                        spu.setMaterial(description);
+
+                        //SPU 选填
+                        spu.setSpuName(title);
+
+                        try {
+                            productFetchService.saveSPU(spu);
+                        } catch (ServiceException e) {
+                            e.printStackTrace();
+                        }
 
                     } else if ("child".equals(type)) { //SKU
+                        System.out.println("count : " + ++count);
+                        System.out.println("------------------");
+
                         String size = record.get("attribute_size");
                         String stock = record.get("attribute_size:quantity");
                         String skuId = spuId + size;
@@ -138,23 +150,57 @@ public class FetchProduct {
                             pics.add(photo8);
                         }
 
+                        System.out.println("spuId : " + spuId);
+                        System.out.println("title : " + title);
+                        System.out.println("brand : " + brand);
+                        System.out.println("price : " + price);
+                        System.out.println("category : " + category);
+                        System.out.println("description : " + description);
+                        System.out.println("status : " + status);
                         System.out.println("size : " + size);
                         System.out.println("stock : " + stock);
                         System.out.println("skuId : " + skuId);
                         System.out.println("pics : " + pics);
 
-//                        for (String pic : pics) {
-//                            ProductPictureDTO dto = new ProductPictureDTO();
-//                            dto.setPicUrl(pic);
-//                            dto.setSupplierId(supplierId);
-//                            dto.setId(UUIDGenerator.getUUID());
-//                            dto.setSkuId(skuId);
-//                            try {
-//                                productFetchService.savePictureForMongo(dto);
-//                            } catch (ServiceException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
+                        SkuDTO sku = new SkuDTO();
+                        //SKU 必填
+                        sku.setId(UUIDGenerator.getUUID());
+                        sku.setSupplierId(supplierId);
+                        sku.setSkuId(skuId);
+                        sku.setSpuId(spuId);
+                        sku.setMarketPrice(price);
+//                        sku.setColor(); //没有颜色
+                        sku.setProductSize(size);
+                        sku.setStock(stock);
+                        sku.setProductDescription(description);
+
+                        try {
+                            productFetchService.saveSKU(sku);
+                        } catch (ServiceException e) {
+                            try {
+                                if (e.getMessage().equals("数据插入失败键重复")) {
+                                    //更新价格和库存
+                                    productFetchService.updatePriceAndStock(sku);
+                                } else {
+                                    e.printStackTrace();
+                                }
+                            } catch (ServiceException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+
+                        for (String pic : pics) {
+                            ProductPictureDTO dto = new ProductPictureDTO();
+                            dto.setPicUrl(pic);
+                            dto.setSupplierId(supplierId);
+                            dto.setId(UUIDGenerator.getUUID());
+                            dto.setSkuId(skuId);
+                            try {
+                                productFetchService.savePictureForMongo(dto);
+                            } catch (ServiceException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
             } catch (Exception e) {
