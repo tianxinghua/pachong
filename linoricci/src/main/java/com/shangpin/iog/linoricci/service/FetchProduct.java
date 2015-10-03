@@ -11,6 +11,8 @@ import com.shangpin.iog.linoricci.common.MyFtpClient;
 import com.shangpin.iog.linoricci.common.MyStringUtil;
 import com.shangpin.iog.linoricci.dto.Prodotti;
 import com.shangpin.iog.linoricci.dto.Prodottis;
+import com.shangpin.iog.linoricci.dto.Riferimenti;
+import com.shangpin.iog.linoricci.dto.Riferimentis;
 import com.shangpin.iog.service.ProductFetchService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -40,8 +42,10 @@ public class FetchProduct {
         //new MyFtpClient().downLoad();
         logger.info("downLoad ftpFile end......");
         Prodottis prodottis = null;
+        Riferimentis riferimentis = null;
         try {
             prodottis = ObjectXMLUtil.xml2Obj(Prodottis.class, new File(Constant.LOCAL_ITEMS_FILE));
+            riferimentis = ObjectXMLUtil.xml2Obj(Riferimentis.class, new File(Constant.LOCAL_IMAGE_FILE));
         } catch (JAXBException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
@@ -52,9 +56,29 @@ public class FetchProduct {
         //String items = util.parseXml2Str(Constant.LOCAL_ITEMS_FILE);
         //save items into DB
         messMappingAndSave(prodottis);
+        picMappingAndSave(riferimentis);
 
     }
 
+    /**
+     * save items into DB
+     * **/
+    private void picMappingAndSave(Riferimentis riferimentis) {
+
+        for (Riferimenti riferimenti: riferimentis.getRiferimentiList()) {
+            ProductPictureDTO dto = new ProductPictureDTO();
+            dto.setPicUrl(riferimenti.getRIFERIMENTO());
+            dto.setSupplierId(Constant.SUPPLIER_ID);
+            dto.setId(UUIDGenerator.getUUID());
+            dto.setSkuId(riferimenti.getRF_RECORD_ID());
+            try {
+                productFetchService.savePictureForMongo(dto);
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
     /**
      * save items into DB
      * **/
@@ -72,43 +96,28 @@ public class FetchProduct {
         }*/
 
         //items = new String[0];
+
         for (Prodotti prodotti : prodottis.getProdottiList()) {
             SkuDTO sku = new SkuDTO();
             try {
                 sku.setId(UUIDGenerator.getUUID());
                 sku.setSupplierId(Constant.SUPPLIER_ID);
-                sku.setSpuId(prodotti.getID_ARTICOLO());
+                sku.setSpuId(prodotti.getCODICE_MODELLO());
                 sku.setSkuId(prodotti.getID_ARTICOLO());
                 sku.setProductSize(prodotti.getID_ARTICOLO());
-                sku.setMarketPrice(prodotti.getID_ARTICOLO());
-                sku.setSalePrice(prodotti.getID_ARTICOLO());
-                sku.setSupplierPrice(prodotti.getID_ARTICOLO());
-                sku.setColor(prodotti.getID_ARTICOLO());
-                sku.setProductDescription(prodotti.getID_ARTICOLO());
+                sku.setMarketPrice(prodotti.getPREZZO_VENDITA());
+                sku.setSalePrice(prodotti.getPREZZO_VENDITA());
+                sku.setSupplierPrice(prodotti.getPREZZO_VENDITA());
+                sku.setColor(prodotti.getCOLORE());
+                sku.setProductDescription(prodotti.getDESCRIZIONE());
                 sku.setStock(prodotti.getID_ARTICOLO());
                 sku.setBarcode(prodotti.getID_ARTICOLO());
-                sku.setProductCode(prodotti.getID_ARTICOLO());
-                sku.setProductName(prodotti.getID_ARTICOLO());
+                sku.setProductCode(prodotti.getCODICE_MODELLO());
+                sku.setProductName(prodotti.getDESCRIZIONE_MODELLO());
                 productFetchService.saveSKU(sku);
 
                 String skuPic = null;
                 if (pictrues.contains(prodotti.getID_ARTICOLO())) {
-                }
-                if (StringUtils.isNotBlank(skuPic)) {
-                    String[] picArray = MyStringUtil.getPicUrl(prodotti.getID_ARTICOLO(), skuPic);
-//                            List<String> picUrlList = Arrays.asList(picArray);
-                    for (int i = 1; i < picArray.length; i++) {
-                        ProductPictureDTO dto = new ProductPictureDTO();
-                        dto.setPicUrl(picArray[i].split(";")[0]);
-                        dto.setSupplierId(Constant.SUPPLIER_ID);
-                        dto.setId(UUIDGenerator.getUUID());
-                        dto.setSkuId(prodotti.getID_ARTICOLO());
-                        try {
-                            productFetchService.savePictureForMongo(dto);
-                        } catch (ServiceException e) {
-                            e.printStackTrace();
-                        }
-                    }
                 }
             } catch (ServiceException e) {
                 try {
@@ -128,14 +137,14 @@ public class FetchProduct {
             try {
                 spu.setId(UUIDGenerator.getUUID());
                 spu.setSupplierId(Constant.SUPPLIER_ID);
-                spu.setSpuId(prodotti.getID_ARTICOLO());
-                spu.setBrandName(prodotti.getID_ARTICOLO());
-                spu.setCategoryName(prodotti.getID_ARTICOLO());
+                spu.setSpuId(prodotti.getCODICE_MODELLO());
+                spu.setBrandName(prodotti.getBRAND());
+                spu.setCategoryName(prodotti.getSETTORE());
                 //spu.setSpuName(fields[0]);
-                spu.setSeasonId(prodotti.getID_ARTICOLO());
-                spu.setMaterial(prodotti.getID_ARTICOLO());
-                spu.setCategoryGender(prodotti.getID_ARTICOLO());
-                spu.setProductOrigin(prodotti.getID_ARTICOLO());
+                spu.setSeasonId(prodotti.getSIGLA_STAGIONE());
+                spu.setMaterial(prodotti.getCOMPOSIZIONE_DETTAGLIATA());
+                spu.setCategoryGender(prodotti.getSETTORE());
+                spu.setProductOrigin(prodotti.getPAESE_PRODUZIONE());
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
                 e.printStackTrace();
