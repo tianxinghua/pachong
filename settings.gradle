@@ -74,11 +74,17 @@ include 'atelier-stock'
 include 'giglio'
 
 include 'atelier-purchase'
-include 'prodottimonti'
-include 'prodottimonti-stock'
+//include 'prodottimonti'
+//include 'prodottimonti-stock'
 include 'levelgroup'
 include 'levelgroup-stock'
 
 include 'fashionesta'
 include 'fashionesta-stock'
+
+include 'stefaniamode'
+include 'stefaniamode-stock'
+
+include 'dante5'
+include 'dante5-stock'
 
