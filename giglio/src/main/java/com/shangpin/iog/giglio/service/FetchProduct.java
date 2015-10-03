@@ -134,7 +134,7 @@ public class FetchProduct {
                     sku.setProductDescription(desc);
                     sku.setSaleCurrency("EUR");
                     sku.setStock(stock);
-                    sku.setMemo(picsStr); //临时保存图片
+//                    sku.setMemo(picsStr); //临时保存图片
 
                     //保存SKU
                     try {
