@@ -90,4 +90,6 @@ include 'levelgroup-stock'
 
 include 'fashionesta'
 include 'fashionesta-stock'
+include 'linoricci'
+include 'linoricci-stock'
 
