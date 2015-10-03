@@ -2,17 +2,23 @@ package com.shangpin.iog.linoricci.service;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.linoricci.common.Constant;
 import com.shangpin.iog.linoricci.common.MyFtpClient;
 import com.shangpin.iog.linoricci.common.MyStringUtil;
+import com.shangpin.iog.linoricci.dto.Prodottis;
 import com.shangpin.iog.service.ProductFetchService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * Created by wangyuzhi on 2015/9/10.
@@ -30,12 +36,21 @@ public class FetchProduct {
     public void fetchProductAndSave() {
         //拉取FTP文件
         logger.info("downLoad ftpFile begin......");
-        new MyFtpClient().downLoad();
+        //new MyFtpClient().downLoad();
         logger.info("downLoad ftpFile end......");
-        //get items string
+        Prodottis prodottis = null;
+        try {
+            prodottis = ObjectXMLUtil.xml2Obj(Prodottis.class, new File("E:/linoricci/Prodotti_EN.xml"));
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        System.out.println(prodottis.getProdottiList().size());
+/*        //get items string
         String items = util.parseXml2Str(Constant.LOCAL_ITEMS_FILE);
         //save items into DB
-        messMappingAndSave(items.split("\\n"));
+        messMappingAndSave(items.split("\\n"));*/
 
     }
 

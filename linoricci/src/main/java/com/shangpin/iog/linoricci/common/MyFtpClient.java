@@ -47,8 +47,8 @@ public class MyFtpClient {
             ftp.chdir(Constant.REMOTE_PATH);
             // 获取 XML文件到本地
             ftp.get(Constant.LOCAL_ITEMS_FILE, Constant.SERVER_ITEMS_FILE);
-            ftp.get(Constant.LOCAL_IMAGE_FILE, Constant.SERVER_IMAGE_FILE);
-            ftp.get(Constant.LOCAL_STOCK_FILE, Constant.LOCAL_STOCK_FILE);
+/*            ftp.get(Constant.LOCAL_IMAGE_FILE, Constant.SERVER_IMAGE_FILE);
+            ftp.get(Constant.LOCAL_STOCK_FILE, Constant.SERVER_STOCK_FILE);*/
         } catch (IOException e) {
             System.out.println("IOException"+e.getMessage());
             e.printStackTrace();
