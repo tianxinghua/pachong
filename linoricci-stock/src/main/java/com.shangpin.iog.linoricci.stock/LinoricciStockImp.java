@@ -1,21 +1,12 @@
 package com.shangpin.iog.linoricci.stock;
 
-import com.enterprisedt.net.ftp.FTPClient;
-import com.enterprisedt.net.ftp.FTPConnectMode;
-import com.enterprisedt.net.ftp.FTPException;
-import com.enterprisedt.net.ftp.FTPTransferType;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.linoricci.stock.common.Constant;
 import com.shangpin.iog.linoricci.stock.common.MyFtpClient;
 import com.shangpin.iog.linoricci.stock.common.MyStringUtil;
 import org.apache.log4j.Logger;
-import org.jdom2.input.SAXBuilder;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
