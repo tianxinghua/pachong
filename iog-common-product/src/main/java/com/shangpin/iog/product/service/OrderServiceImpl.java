@@ -5,6 +5,7 @@ import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.product.dao.OrderMapper;
 import com.shangpin.iog.service.OrderService;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String getUuIdByspOrderId(String spOrderId) throws ServiceException {
+    public String getUuIdBySpOrderId(String spOrderId) throws ServiceException {
         String uuid="";
         try{
             OrderDTO dto = orderDAO.findBySpOrderId(spOrderId);
@@ -129,5 +130,17 @@ public class OrderServiceImpl implements OrderService {
 
         }
         return uuid;
+    }
+
+    @Override
+    public OrderDTO getOrderByPurchaseNo(String purchaseNo) throws ServiceException {
+        if(StringUtils.isBlank(purchaseNo)) throw new ServiceMessageException("采购单参数为空");
+        return orderDAO.findByPurchaseNo(purchaseNo);
+    }
+
+    @Override
+    public OrderDTO getOrderByOrderNo(String orderNo) throws ServiceException {
+        if(StringUtils.isBlank(orderNo)) throw new ServiceMessageException("订单编号参数为空");
+        return orderDAO.findBySpOrderId(orderNo);
     }
 }

@@ -9,14 +9,14 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ICEOrderDetailDTO {
-    private int sku_id;
+    private String  sku_id;
     private int quantity;
 
-    public int getSku_id() {
+    public String getSku_id() {
         return sku_id;
     }
 
-    public void setSku_id(int sku_id) {
+    public void setSku_id(String sku_id) {
         this.sku_id = sku_id;
     }
 

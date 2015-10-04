@@ -12,6 +12,7 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.gilt.dto.ErrorDTO;
 import com.shangpin.iog.gilt.dto.OrderDTO;
 import com.shangpin.iog.gilt.dto.OrderDetailDTO;
+import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.service.ReturnOrderService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -51,8 +52,8 @@ public class OrderServiceImpl  {
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static String url="https://api-sandbox.gilt.com/global/orders/";
 
-    private String  placedStatus="placed";
-    private String  confirmedStatus="confirmed";
+    private String  placedStatus= OrderStatus.PLACED;
+    private String  confirmedStatus=OrderStatus.CONFIRMED;
 
 
     /**
@@ -615,7 +616,7 @@ public class OrderServiceImpl  {
             /**
              * 根据sp_order_id查询UUID
              */
-            String uuid = productOrderService.getUuIdByspOrderId(entry.getKey());
+            String uuid = productOrderService.getUuIdBySpOrderId(entry.getKey());
             //存储
             if(StringUtils.isBlank(uuid)){//采购单已到退款状态  未有已支付状态
                 continue;
