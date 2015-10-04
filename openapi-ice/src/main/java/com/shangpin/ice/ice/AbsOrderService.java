@@ -67,6 +67,7 @@ public abstract class AbsOrderService {
     /**
      * 处理供货商订单信息
      * @param orderDTO
+     * 订单状态需求参是 orderDTO 里的状态
      * @throws ServiceException
      */
     abstract  public void handleSupplierOrder(OrderDTO orderDTO) ;
@@ -262,7 +263,7 @@ public abstract class AbsOrderService {
             spOrder.setUuId(uuid);
             spOrder.setSupplierId(supplierId);
             spOrder.setSupplierNo(supplierNo);
-            spOrder.setStatus("WAITING");
+            spOrder.setStatus(OrderStatus.WAITPLACED);
             spOrder.setSpPurchaseNo(entry.getKey());
             spOrder.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString());
             spOrder.setDetail(buffer.toString());
@@ -370,7 +371,7 @@ public abstract class AbsOrderService {
         if(null!=spOrder.getExcState()&&"1".equals(spOrder.getExcState())){
             map.put("excTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
         }else{
-            map.put("status",OrderStatus.PLACED);
+            map.put("status",spOrder.getStatus());
             map.put("updateTime",DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
         }
         try {
@@ -445,7 +446,7 @@ public abstract class AbsOrderService {
     private void updateRefundOrderMsg( ReturnOrderDTO deleteOrder) {
         try {
             Map<String,String> map = new HashMap<>();
-            map.put("status","cancelled");
+            map.put("status",deleteOrder.getStatus());
             map.put("uuid",deleteOrder.getUuId());
             map.put("excState",deleteOrder.getExcState());
             map.put("excDesc",deleteOrder.getExcDesc());
@@ -470,12 +471,9 @@ public abstract class AbsOrderService {
             List<Integer> status = new ArrayList<>();
             status.add(5);
             Map<String,List<PurchaseOrderDetail>> orderMap =  this.getPurchaseOrder(supplierId, startDate, endDate, status);
-            Gson gson = new Gson();
-            OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
-            String orderDetail = "",operateTime="";
+
             for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();) {
                 Map.Entry<String, List<PurchaseOrderDetail>> entry = itor.next();
-                OrderDTO orderDTO = new OrderDTO();
                 Map<String, Integer> stockMap = new HashMap<>();
                 for (PurchaseOrderDetail purchaseOrderDetail : entry.getValue()) {
                     if (stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)) {
@@ -506,9 +504,9 @@ public abstract class AbsOrderService {
                 deleteOrder.setSupplierId(supplierId);
                 deleteOrder.setSupplierNo(supplierNo);
                 if(handleCancel){
-                    deleteOrder.setStatus("WAITCANCEL");
+                    deleteOrder.setStatus(OrderStatus.WAITCANCEL);
                 }else{
-                    deleteOrder.setStatus("NOHANDLE");
+                    deleteOrder.setStatus(OrderStatus.NOHANDLE);
                     deleteOrder.setMemo("退单不做处理只做记录");
                 }
 
