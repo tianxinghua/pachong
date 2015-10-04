@@ -4,7 +4,6 @@ import com.enterprisedt.net.ftp.FTPClient;
 import com.enterprisedt.net.ftp.FTPConnectMode;
 import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FTPTransferType;
-import com.shangpin.iog.linoricci.stock.common.Constant;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -34,6 +33,7 @@ public class MyFtpClient {
         FTPClient ftp = new com.enterprisedt.net.ftp.FTPClient();
         // 连接服务器
         try {
+            System.out.println(Constant.URL);
             ftp.setRemoteHost(Constant.URL);
             ftp.setRemotePort(Integer.parseInt(Constant.PORT));
             ftp.setTimeout(1000*60*30);
