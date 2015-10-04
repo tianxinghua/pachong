@@ -24,7 +24,7 @@ public class AtelierStockImp  extends AbsUpdateProductStock {
     }
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        new WS_Sito_P15().getAllAvailabilityMarketplaceBySoap();
+        //new WS_Sito_P15().getAllAvailabilityMarketplaceBySoap();
         String stocks = new WS_Sito_P15().getAllAvailabilityStr();
         //定义三方
         Map returnMap = new HashMap();
@@ -34,7 +34,11 @@ public class AtelierStockImp  extends AbsUpdateProductStock {
         logger.info("为供应商循环赋值");
         while (iterator.hasNext()){
             itemId = iterator.next();
-            returnMap.put(itemId, MyStringUtil.getStockBySkuId(stocks.substring(stocks.indexOf(itemId), stocks.indexOf(itemId) + 20)));
+            String stock = "0";
+            if (stocks.contains(itemId)){
+                stock = MyStringUtil.getStockBySkuId(stocks.substring(stocks.indexOf(itemId), stocks.indexOf(itemId) + 20));
+            }
+            returnMap.put(itemId, stock);
         }
         return returnMap;
     }
@@ -42,19 +46,24 @@ public class AtelierStockImp  extends AbsUpdateProductStock {
     public static void main(String[] args) throws Exception {
         AtelierStockImp impl = new AtelierStockImp();
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+/*        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("ATELIER更新数据库开始");
         impl.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
         logger.info("ATELIER更新数据库结束");
-        System.exit(0);
+        System.exit(0);*/
 
 
-/*        List<String> skuNo = new ArrayList<>();
-        skuNo.add("1986242872_10");
+        List<String> skuNo = new ArrayList<>();
+        skuNo.add("446703");
+        skuNo.add("448277");
+        skuNo.add("443636");
+        skuNo.add("443636");
+        skuNo.add("888888");
         Map returnMap = impl.grabStock(skuNo);
         System.out.println("test return size is "+returnMap.keySet().size());
-        System.out.println("test return value is "+returnMap.get("1986242872_10"));;
-        System.out.println("test return value is ");*/
+        for(Object key: returnMap.keySet()) {
+            System.out.println(key+" test return value is " + returnMap.get(key));
+        }
 
     }
 }

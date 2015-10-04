@@ -194,6 +194,34 @@ public class WS_Sito_P15 {
     /**
      * get all images
      * */
+    public void getUpdateItemsMarketplace(){
+        System.out.println("GetUpdateItemsMarketplace---------------------------------------");
+        String allImages = "";
+        try{
+            allImages = HttpUtil45.post("http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx/GetUpdateItemsMarketplace",
+                    new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10, 1000 * 60 * 10));
+        }catch (Exception e){
+            System.out.println("GetUpdateItemsMarketplace-failed--------------------------------------");
+        }finally {
+            HttpUtil45.closePool();
+        }
+        try {
+            File newTextFile = new File("E:/aa.xml");
+            if (!newTextFile.exists())
+                newTextFile.createNewFile();
+            FileWriter fw;
+            fw = new FileWriter(newTextFile);
+            fw.write(allImages);
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(allImages);
+        //return allImages;
+    }
+    /**
+     * get all images
+     * */
     public void getAllImageMarketplaceBySoap(){
         System.out.println("getAllImageMarketplaceBySoap--------------------------------");
         String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
@@ -315,9 +343,13 @@ public class WS_Sito_P15 {
      * test
      * */
     public static void main(String[] args) throws IOException {
-        new WS_Sito_P15().fetchProduct();
+        //new WS_Sito_P15().fetchProduct();
         //new WS_Sito_P15().getAllAvailabilityMarketplace();
         //new WS_Sito_P15().getAllImageMarketplace();
        //new WS_Sito_P15().getAllItemsMarketplace();
+/*        String str = HttpUtil45.post("http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx/GetUpdatePricelistMarketplace",
+                new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10, 1000 * 60 * 10));*/
+        String str = "2142744378;P8;CAVALLI;CVL600;100;Donna;Primavera/Estate;Abbigliamento;Abito;Abito con stampa Miami;Celeste/blu;Seta/cr阷e;;;<P>Abito in seta multicolor con stampa Miami con fascia nera sotto il seno e fermaglio a forma di serpente su entrambe le spalle. Scollo a V sulla schiena. 100% seta. Lavare a secco.</P>;<P>Abito babydoll firmato Roberto Cavalli idelale per la sera.</P>;3633;1700;;1416,67;ITALY;NO;0;BLU E VERDI;0080C0;0;Lunghezza;Busto;Manica;Circonferenza;Fianchi;;;;<P>Taglia&nbsp;italiana. Veste la taglia corretta. Il manichino veste la 42 ed ?alto 179 cm.</P>;;;;0;<P>Abito con stampa Miami</P>;;;;L'azienda viene fondata a Firenze nei primi anni sessanta dallo stilista fiorentino Roberto Cavalli. La popolarit?per il marchio Cavalli arriva intorno agli anni settanta, quando la scena della moda internazionale si accorge dei suoi celebri patchwork. Nel 1970 sfila a Parigi, presso il Salon du Pr阾-?Porter la prima collezione moda col nome Roberto Cavalli. Segue l'affermazione sulle passerelle italiane. Da met?anni novanta il marchio Cavalli comincia a diffondersi in tutto il mondo, grazie all'apertura di numerose boutique monomarca. Il brand Roberto Cavalli, spesso abbreviato in RC ?il principale brand dell'azienda. Il marchio propone due linee moda principali, una maschile ed una femminile, di pret-a-porter di fascia medio-alta, accostando alla produzione dell'abbigliamento, anche accessori, occhiali (Cavalli Eyewear), orologi, scarpe, gioielleria (Cavalli Jewelry), biancheria intima (Cavalli Underwear) ed una linea di profumi (Cavalli profumi).;Donna;";
+               System.out.println(str.split(";").length);
     }
 }

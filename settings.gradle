@@ -65,20 +65,8 @@ include 'tony-stock'
 include 'tony-purchase'
 include 'atelier'
 include 'alducadaosta'
-
-include 'bagheera-stock'
-
-include 'itemInfo'
-include 'atelier-stock'
-
-include 'giglio'
-
-include 'atelier-purchase'
-include 'prodottimonti'
-include 'prodottimonti-stock'
-include 'levelgroup'
-include 'levelgroup-stock'
-
 include 'fashionesta'
 include 'fashionesta-stock'
-
+include 'itemInfo'
+include 'itemInfo-stock'
+//include 'itemInfo-purchase'
