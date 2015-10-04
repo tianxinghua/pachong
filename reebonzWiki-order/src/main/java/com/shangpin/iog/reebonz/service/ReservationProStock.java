@@ -20,7 +20,6 @@ import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.dto.ProductPictureDTO;
-import com.shangpin.iog.reebonz.dto.Items;
 import com.shangpin.iog.reebonz.dto.OAuth;
 import com.shangpin.iog.reebonz.dto.Order;
 import com.shangpin.iog.reebonz.dto.RequestObject;
