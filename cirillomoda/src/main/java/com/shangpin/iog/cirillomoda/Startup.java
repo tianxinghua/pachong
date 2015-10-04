@@ -27,7 +27,7 @@ public class Startup
         System.out.println("----初始SPRING成功----");
         //拉取数据
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("cirillomoda");
-        fetchProduct.fetchProductAndSave("http://www.cirillomoda.com/feeds/shangpin.csv");
+        fetchProduct.fetchProductAndSave("http://127.0.0.1:8080/cirillo_maxpho.csv");
         log.info("----拉取cirillomoda数据完成----");
         System.out.println("----拉取cirillomoda数据完成----");
 
