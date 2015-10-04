@@ -43,11 +43,19 @@ public class FetchProduct {
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
     private static String supplierId;
+    private static int rows = 10;
+    private static String eventUrl=null;
+    private static String productUrl=null;
+    private static String stockUrl=null;
 
     static {
         if(null==bdl)
          bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        rows = Integer.parseInt(bdl.getString("rows"));
+        eventUrl = bdl.getString("eventUrl");
+        productUrl = bdl.getString("productUrl");
+        stockUrl = bdl.getString("stockUrl");
     }
     
 	/**
@@ -57,21 +65,19 @@ public class FetchProduct {
 		
 		// 第一步：获取活动信息
 		logger.info("拉取活动数据开始");
-		List<Item> eventList = getReebonzEventList();
+		List<Item> eventList = getReebonzEventList(eventUrl);
 		for (Item item : eventList) {
 			// 第二步：根据活动获取商品信息
 			logger.info("拉取某一活动下的商品数据");
 			//获取商品总数量
-			String productNum = getProductNum(item
+			String productNum = getProductNum(productUrl,item
 					.getEvent_id());
-			for(int i=0;i<Integer.parseInt(productNum);i+=3){
-				List<Item> eventSpuList = getReebonzSpuJsonByEventId(item
-						.getEvent_id(),i);
+			for(int start=0;start<Integer.parseInt(productNum);start+=rows){
+				List<Item> eventSpuList = getReebonzSpuJsonByEventId(productUrl,item
+						.getEvent_id(),start,rows);
 				//保存入库
 				messMappingAndSave(eventSpuList);
 			}
-			
-			
 		}
 
 	}
@@ -81,7 +87,6 @@ public class FetchProduct {
 	 */
 	private void messMappingAndSave(List<Item> array) {
 
-		if(array!=null){
 			for (Item item : array) {
 				SpuDTO spu = new SpuDTO();
 				try {
@@ -116,16 +121,33 @@ public class FetchProduct {
 					spu.setCategoryGender(tempGender.toString());
 				
 					productFetchService.saveSPU(spu);
-				} catch (ServiceException e) {
+					
+					 if(StringUtils.isNotBlank(item.getImages()[0])){
+		                    String[] picArray = item.getImages();
+		                    for(String picUrl :picArray){
+		                        ProductPictureDTO dto  = new ProductPictureDTO();
+		                        dto.setPicUrl(picUrl);
+		                        dto.setSupplierId(supplierId);
+		                        dto.setId(UUIDGenerator.getUUID());
+		                        dto.setSpuId(item.getSku());
+		                        try {
+		                            productFetchService.savePictureForMongo(dto);
+		                            System.out.println("图片保存success");
+		                        } catch (ServiceException e) {
+		                            e.printStackTrace();
+		                        }
+		                    }
+		                }
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				//
 				// 第三步：根据skuId与eventId获取商品的库存跟尺码
-				List<Item> skuScokeList = getSkuScokeJson(item.getEvent_id(),
+				List<Item> skuScokeList = getSkuScokeJson(stockUrl,item.getEvent_id(),
 						item.getSku());
 				if(skuScokeList!=null){
 					for (Item stock : skuScokeList) {
-						if("no-size".equals(stock)){
+						
 							SkuDTO sku = new SkuDTO();
 							try {
 								sku.setId(UUIDGenerator.getUUID());
@@ -136,9 +158,9 @@ public class FetchProduct {
 								sku.setProductSize(stock.getOption_name());
 								sku.setStock(stock.getTotal_stock_qty());
 								sku.setSalePrice(item.getFinal_selling_price());
-								
-								float marketPrice = Float.parseFloat(item.getFinal_selling_price())*(1-Float.parseFloat(item.getWholesale_percentage()));
-								sku.setMarketPrice(String.valueOf(marketPrice));
+								sku.setMarketPrice(item.getRetail_price());
+//								float marketPrice = Float.parseFloat(item.getFinal_selling_price())*(1-Float.parseFloat(item.getWholesale_percentage()));
+//								sku.setMarketPrice(String.valueOf(marketPrice));
 								// sku.setSalePrice(item.getPurchase_price());
 								// sku.setSupplierPrice(item.getAge());
 								if(item.getColor()!=null){
@@ -154,23 +176,7 @@ public class FetchProduct {
 								sku.setEventEndDate(item.getEvent_end_date());
 								productFetchService.saveSKU(sku);
 								
-								 if(StringUtils.isNotBlank(item.getImages()[0])){
-					                    String[] picArray = item.getImages();
-					                    for(String picUrl :picArray){
-					                        ProductPictureDTO dto  = new ProductPictureDTO();
-					                        dto.setPicUrl(picUrl);
-					                        dto.setSupplierId(supplierId);
-					                        dto.setId(UUIDGenerator.getUUID());
-					                        sku.setSkuId(item.getSku() + "|" + item.getEvent_id() + "|"
-													+ stock.getOption_name());
-					                        try {
-					                            productFetchService.savePictureForMongo(dto);
-					                            System.out.println("图片保存success");
-					                        } catch (ServiceException e) {
-					                            e.printStackTrace();
-					                        }
-					                    }
-					                }
+								
 							} catch (ServiceException e) {
 								try {
 									if (e.getMessage().equals("数据插入失败键重复")) {
@@ -187,14 +193,12 @@ public class FetchProduct {
 					}
 				}
 				
-			}
-		}
 	}
 
 	// 第一步：获取供应商所有的活动
-	private List<Item> getReebonzEventList() {
+	private List<Item> getReebonzEventList(String eventUrl) {
 		
-		String eventJson = MyJsonUtil.getReebonzEventJson();
+		String eventJson = MyJsonUtil.getReebonzEventJson(eventUrl);
 		if(eventJson!=null){
 			ResponseObject obj = new Gson().fromJson(eventJson, ResponseObject.class);
 			Object o = obj.getResponse();
@@ -208,10 +212,10 @@ public class FetchProduct {
 	}
 
 	// 第二步：根据活动获取商品
-	private List<Item> getReebonzSpuJsonByEventId(String eventId,int i) {
+	private List<Item> getReebonzSpuJsonByEventId(String productUrl,String eventId,int i,int rows) {
 		
 		
-		String spuJson = MyJsonUtil.getReebonzSpuJsonByEventId(eventId,i);
+		String spuJson = MyJsonUtil.getReebonzSpuJsonByEventId(productUrl,eventId,i,rows);
 		if(spuJson!=null){
 			ResponseObject obj = new Gson().fromJson(spuJson, ResponseObject.class);
 			Object o = obj.getResponse();
@@ -223,8 +227,8 @@ public class FetchProduct {
 		}
 	}
 
-	private String getProductNum(String eventId) {
-		String spuJson = MyJsonUtil.getProductNum(eventId);
+	private String getProductNum(String productUrl,String eventId) {
+		String spuJson = MyJsonUtil.getProductNum(productUrl,eventId);
 		if(spuJson!=null){
 			ResponseObject obj = new Gson().fromJson(spuJson, ResponseObject.class);
 			Object o = obj.getResponse();
@@ -237,9 +241,9 @@ public class FetchProduct {
 	}
 
 	// 第三步：根据eventId和skuId获取库存以及编码尺寸
-	private List<Item> getSkuScokeJson(String eventId, String skuId) {
+	private List<Item> getSkuScokeJson(String stockUrl,String eventId, String skuId) {
 		
-		String skuScokeJson = MyJsonUtil.getSkuScokeJson(eventId, skuId);
+		String skuScokeJson = MyJsonUtil.getSkuScokeJson(stockUrl,eventId, skuId);
 		if(skuScokeJson!=null){
 			ResponseObject obj = new Gson().fromJson(skuScokeJson,
 					ResponseObject.class);

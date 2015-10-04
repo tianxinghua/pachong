@@ -13,7 +13,6 @@ import java.net.URLConnection;
 import java.util.Scanner;
 
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.reebonz.service.FetchProduct;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -35,14 +34,7 @@ public class StartSkuJob {
         //加载spring
         loadSpringContext();
         log.info("----初始SPRING成功--1--");
-        //拉取数据
-        log.info("----拉取tony数据开始----");              
-        System.out.println("-------fetch start---------");
-        FetchProduct fetchProduct =(FetchProduct)factory.getBean("reebonzWiki");
-        fetchProduct.fetchProductAndSave();
-        log.info("----拉取tony数据完成----");
-        System.out.println("-------fetch end---------");
-        System.exit(0);
+    
     }
     
 }

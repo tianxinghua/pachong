@@ -15,18 +15,13 @@ public class MyJsonUtil {
 	/**
 	 * 第一步：获取活动信息
 	 * */
-	public static String getReebonzEventJson() {
+	public static String getReebonzEventJson(String eventUrl) {
 		String json = null;
 		try {
 			json = HttpUtil45
-					.get("http://hps.sit.titan.reebonz-dev.com/api/shangpin/event_list?start=2&rows=1",
+					.get(eventUrl,
 							new OutTimeConfig(1000 * 20, 1000 * 20, 1000 * 20),
 							null);
-
-			if (json.equals("{\"error\":\"发生异常错误\"}")) {
-				System.out.println("连接超时");
-				throw  new  ServiceMessageException("1");
-			} 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -35,53 +30,34 @@ public class MyJsonUtil {
 	}
 
 	/**
-	 * get tony data
+	 * 第二步：根据活动获取商品信息
 	 * */
-	public static String getReebonzSpuJsonByEventId(String eventId,int num) {
+	public static String getReebonzSpuJsonByEventId(String productUrl,String eventId,int start,int rows) {
 		
-		
-
-
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("event_id", eventId);
-//		map.put("start",String.valueOf(num));
-//		map.put("rows", "3");
+		map.put("start",String.valueOf(start));
+		map.put("rows", String.valueOf(rows));
 		String json = null;
 		try {
 			json = HttpUtil45
-					.get("http://hps.sit.titan.reebonz-dev.com/api/shangpin/product_list",
+					.get(productUrl,
 							new OutTimeConfig(1000 * 60, 1000 * 120, 1000 * 60),
 							map);
-//			if (json.equals("{\"error\":\"发生异常错误\"}")) {
-//				// 重复调用5次
-//				int i=0;
-//				while(true){
-//					json = HttpUtil45
-//							.get("http://hps.sit.titan.reebonz-dev.com/api/shangpin/product_list",
-//									new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
-//									map);
-//					if (json.equals("{\"error\":\"发生异常错误\"}")){
-//						i++;
-//					}else{
-//						continue;
-//					}
-//					if(i==5){
-//						break;
-//					}
-//				}
-//			
-//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		System.out.println("抓取的活动"+eventId+"的商品列表："+json);
+		if("{\"error\":\"发生异常错误\"}".equals(json)){
+			json = null;
+		}
 		return json;
 	}
 
 	/**
-	 * get tony data
+	 * 第三步：根据活动Id和skuId获取库存以及尺码
 	 * */
-	public static String getSkuScokeJson(String eventId, String skuId) {
+	public static String getSkuScokeJson(String stockUrl,String eventId, String skuId) {
 
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("event_id", eventId);
@@ -89,8 +65,8 @@ public class MyJsonUtil {
 		String json = null;
 		try {
 			json = HttpUtil45
-					.get("http://hps.sit.titan.reebonz-dev.com/api/shangpin/product_qty",
-							new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
+					.get(stockUrl,
+							new OutTimeConfig(1000 * 120, 1000 * 120, 1000 * 120),
 							map);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -99,10 +75,10 @@ public class MyJsonUtil {
 		return json;
 	}
 
-	public static void main(String[] args) {
-	}
-
-	public static String getProductNum(String eventId) {
+	/**
+	 *  获取参加某一活动的商品总数
+	 * */
+	public static String getProductNum(String productUrl,String eventId) {
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("event_id", eventId);
 		map.put("start","0");
@@ -110,16 +86,60 @@ public class MyJsonUtil {
 		String json = null;
 		try {
 			json = HttpUtil45
-					.get("http://hps.sit.titan.reebonz-dev.com/api/shangpin/product_list",
+					.get(productUrl,
 							new OutTimeConfig(1000 * 600, 1000 * 60, 1000 * 600),
 							map);
 			
 		} catch (Exception e) {
-			json = null;
-			System.out.println("连接超时");
 			e.printStackTrace();
 		}
-		System.out.println("抓取的活动"+eventId+"的商品列表："+json);
+		System.out.println("抓取的活动"+eventId+"的商品总数："+json);
 		return json;
 	}
+
+	/*
+	 * 下订单锁库存
+	 * */
+	public static String lockStock(String order_id, String order_site, String data) {
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("order_id", order_id);
+		map.put("order_site",order_site);
+		map.put("data", data);
+		String json = null;
+		try {
+			json = HttpUtil45
+					.post("http://ladon.sit.titan.reebonz-dev.com",map,
+							new OutTimeConfig(1000 * 600,1000 * 60, 1000 * 600));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("锁库存的返回结果："+json);
+		return json;
+	}
+
+	/*
+	 * 解开锁库存
+	 * */
+	public static String unlockStock(String reservation_id, String order_id,
+			String user_id, String confirmation_code) {
+		
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("reservation_id", reservation_id);
+		map.put("order_id", order_id);
+		map.put("user_id",user_id);
+		map.put("confirmation_code", confirmation_code);
+		String json = null;
+		try {
+			json = HttpUtil45
+					.post("http://ladon.sit.titan.reebonz-dev.com",map,
+							new OutTimeConfig(1000 * 600,1000 * 60, 1000 * 600));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("锁库存的返回结果："+json);
+		return json;
+	}
+	
 }

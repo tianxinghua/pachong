@@ -1,18 +1,23 @@
 package com.shangpin.iog.reebonz.dto;
 
-public class ResponseObject {
+public class OAuth {
 	
+	private String access_token;
+	private String refresh_token;
 	private String return_code;
 	private String error_code;
 	private String error_msg;
-	private Object response;
-	private String reservation_id;
-	
-	public String getReservation_id() {
-		return reservation_id;
+	public String getAccess_token() {
+		return access_token;
 	}
-	public void setReservation_id(String reservation_id) {
-		this.reservation_id = reservation_id;
+	public void setAccess_token(String access_token) {
+		this.access_token = access_token;
+	}
+	public String getRefresh_token() {
+		return refresh_token;
+	}
+	public void setRefresh_token(String refresh_token) {
+		this.refresh_token = refresh_token;
 	}
 	public String getReturn_code() {
 		return return_code;
@@ -32,12 +37,6 @@ public class ResponseObject {
 	public void setError_msg(String error_msg) {
 		this.error_msg = error_msg;
 	}
-	public Object getResponse() {
-		return response;
-	}
-	public void setResponse(Object response) {
-		this.response = response;
-	}
 	
-	
+
 }
