@@ -42,17 +42,17 @@ public class ReservationProStock {
 	private static String username = "uat_client_3";
 	private static String password = "ZeNsTH3iAUoz5wjrtqGBIQ==";
 	private static OAuth oauth = null;
-	// static {
-	// if(null==bdl)
-		// bdl=ResourceBundle.getBundle("conf");
-		// lockStockUrl = bdl.getString("eventUrl");
-		// unlockStockUrl = bdl.getString("productUrl");
-		// access_token = bdl.getString("access_token");
-		// refresh_token = bdl.getString("refresh_token");
-		// client_id = bdl.getString("client_id");
-		// client_secret = bdl.getString("client_secret");
-		// pushOrderUrl = bdl.getString("pushOrderUrl");
-	// }
+	 static {
+	 if(null==bdl)
+		 bdl=ResourceBundle.getBundle("conf");
+		 lockStockUrl = bdl.getString("eventUrl");
+		 unlockStockUrl = bdl.getString("productUrl");
+		 access_token = bdl.getString("access_token");
+		 refresh_token = bdl.getString("refresh_token");
+		 client_id = bdl.getString("client_id");
+		 client_secret = bdl.getString("client_secret");
+		 pushOrderUrl = bdl.getString("pushOrderUrl");
+	 }
 
 	/*
 	 * 锁库存

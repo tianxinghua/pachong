@@ -56,7 +56,23 @@ public class TonyService {
         }
     }
     public void createOrder(){
-        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\",\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\",\"shopOrderId\":\"aaa\",\"status\":\"CONFIRMED\",\"statusDate\":\"2015/01/31 09:01:00\",\"orderDate\":\"2015/01/31 09:01:00\",\"items\":[{ \"sku\":\"123\" , \"qty\":\"1\" ,\"price\":\"1\" ,\"cur\":\"135\" },{ \"sku\":\"123\" , \"qty\":\"1\" ,\"price\":\"1\" ,\"cur\":\"135\" }],\"orderTotalPrice\":\"555.00\",\"shippingInfo\":{ \"fees\":\"1\" , \"address\":{\"firstname\":\"2\", \"lastname\":\"2\", \"companyname\":\"2\", \"street\":\"2\", \"hn\":\"2\", \"zip\":\"2\", \"city\":\"2\", \"province\":\"2\" ,\"state\":\"2\" }},\"billingInfo\":{ \"total\":\"1.00\" ,\"paymentMethod\":\"2\" ,\"address\":{ \"firstname\":\"2\", \"lastname\":\"2\", \"companyname\":\"2\", \"street\":\"2\", \"hn\":\"2\", \"zip\":\"2\", \"city\":\"2\", \"province\":\"2\" ,\"state\":\"2\" }}}";
+        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
+                "\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"," +
+                "\"shopOrderId\":\"aaa\"," +
+                "\"status\":\"CONFIRMED\"," +
+                "\"statusDate\":\"2015/01/31 09:01:00\"," +
+                "\"orderDate\":\"2015/01/31 09:01:00\"," +
+                "\"items\":[{ \"sku\":\"123\" , \"qty\":1 ," + "\"price\":1 ,\"cur\":135 }]," +
+                "\"orderTotalPrice\":555.00," +
+                "\"shippingInfo\":{ \"fees\":1 , " +
+                "\"address\":{\"firstname\":\"2\", \"lastname\":\"2\"," + " \"companyname\":\"2\"," +
+                " \"street\":\"2\", \"hn\":\"2\", \"zip\":\"2\", \"city\":\"2\"," + " \"province\":\"2\" ," +
+                "\"state\":\"2\" }}," +
+                "\"billingInfo\":{ \"total\":1.00 ," +
+                "\"paymentMethod\":1 ," +
+                "\"address\":{ \"firstname\":\"2\", \"lastname\":\"2\"," + " \"companyname\":\"2\", " +
+                "\"street\":\"2\", \"hn\":\"2\", \"zip\":\"2\", \"city\":\"2\", " +
+                "\"province\":\"2\" ,\"state\":\"2\" }}}";
         System.out.println("request json == "+json);
         try {
             String rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/createOrder", null, null, json, "", "");
@@ -65,10 +81,25 @@ public class TonyService {
             e.printStackTrace();
         }
     }
+    public void updateOrderStatus(){
+        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
+                "\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"," +
+                "\"shopOrderId\":\"aaa\"," +
+                "\"status\":\"OTHER\"," +
+                "\"statusDate\":\"2015/01/31 09:01:00\"}";
+        System.out.println("request json == "+json);
+        try {
+            String rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/updateOrderStatus", null, null, json, "", "");
+            System.out.println("rtnData=="+rtnData);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+    }
     public static void main(String[] args){
-        //new TonyService().getEvents();
+        new TonyService().getEvents();
         //new TonyService().getItem();
-        new TonyService().createOrder();
+       // new TonyService().createOrder();
+       // new TonyService().updateOrderStatus();
 /*
 
         //String test = "{\"ap\":\"55547b77b49dbb81156e71df\",\"merchantId\":\"55f707f6b49dbbe14ec6354d\",\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"}";
