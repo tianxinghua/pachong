@@ -90,7 +90,7 @@ public class OrderServiceImpl {
             Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
             List<PurchaseOrderDetail> dlist = new ArrayList<>();
             PurchaseOrderDetail de = new PurchaseOrderDetail();
-            de.SopPurchaseOrderNo = "123";
+            de.SopPurchaseOrderDetailNo = "123";
             de.SkuPrice = "123";
             de.SupplierSkuNo = "327922";
             dlist.add(de);
@@ -111,7 +111,7 @@ public class OrderServiceImpl {
                 for(PurchaseOrderDetail pur:list){
                     barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
                             barCodeAll.indexOf(pur.SupplierSkuNo),barCodeAll.indexOf(pur.SupplierSkuNo)+50));
-                    order.setID_ORDER_WEB(pur.SopPurchaseOrderNo);
+                    order.setID_ORDER_WEB(pur.SopPurchaseOrderDetailNo);
                     order.setPRICE(pur.SkuPrice);
                     order.setBARCODE(barCode);
                     //取消订单
