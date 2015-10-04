@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
  * Created by wangyuzhi on 2015/9/11.
  */
 public class Constant {
-    public static ResourceBundle bundle = ResourceBundle.getBundle("conf");
+    public static ResourceBundle bundle = ResourceBundle.getBundle("confs");
     //供应商ID
     public static String SUPPLIER_ID = bundle.getString("supplierId");
     //FTP服务器hostname
