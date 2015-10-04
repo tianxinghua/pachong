@@ -6,8 +6,10 @@
 
         <id column="ID" property="id" />
         <result column="SUPPLIER_ID" property="supplierId"  />
+        <result column="SUPPLIER_NO" property="supplierNo"  />
         <result column="UUID" property="uuId"  />
         <result column="SP_ORDER_ID" property="spOrderId"  />
+        <result column="SP_PURCHASE_NO" property="spPurchaseNo" />
         <result column="SP_PURCHASE_DETAIL_NO" property="spPurchaseDetailNo" />
         <result column="DETAIL" property="detail"  />
         <result column="STATUS" property="status"/>
@@ -32,10 +34,13 @@
 	</sql>
     <sql id="save_column">
         SUPPLIER_ID,
+        SUPPLIER_NO,
 		UUID,
 		SP_ORDER_ID,
+		SP_PURCHASE_NO,
 		SP_PURCHASE_DETAIL_NO,
 		DETAIL,
+		MEMO,
 		STATUS,
 
 		CREATE_TIME
@@ -118,9 +123,8 @@
         <include refid="save_column"></include>
         )
         values(
-        #{supplierId}, #{uuId}, #{spOrderId},#{spPurchaseDetailNo},
-        #{detail},#{status},
-
+        #{supplierId},#{supplierNo}, #{uuId}, #{spOrderId},#{spPurchaseNo},#{spPurchaseDetailNo},
+        #{detail},#{memo},#{status},
         #{createTime}
         )
     </insert>

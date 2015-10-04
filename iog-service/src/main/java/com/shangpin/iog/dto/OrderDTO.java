@@ -13,9 +13,11 @@ import java.util.Date;
 @Setter
 public class OrderDTO {
     private BigInteger id;
-    private String supplierId;
+    private String supplierId; //供货商门户编号
+    private String supplierNo;//供货商编号
     private String uuId;  //和供货商公用的订单唯一标识
-    private String spOrderId;
+    private String spOrderId;    //订单编号
+    private String spPurchaseNo; //采购单编号
     private String spPurchaseDetailNo;
     private String detail;//
     private String status;//订单状态

@@ -6,6 +6,8 @@ import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
 import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.*;
 import com.shangpin.iog.common.utils.DateTimeUtil;
@@ -13,10 +15,14 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
+import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.ice.dto.ICEOrderDTO;
 import com.shangpin.iog.ice.dto.ICEOrderDetailDTO;
+import com.shangpin.iog.ice.dto.ICEWMSOrderDTO;
+import com.shangpin.iog.ice.dto.ICEWMSOrderRequestDTO;
 import com.shangpin.iog.service.ReturnOrderService;
 import com.shangpin.iog.service.SkuPriceService;
+import com.shangpin.iog.service.SkuRelationService;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +40,9 @@ import java.util.*;
 public abstract class AbsOrderService {
 
     private static String  startDate=null,endDate=null;
+    private static String  startDateOfWMS=null,endDateOfWMS=null;
     private static final String YYYY_MMDD_HH = "yyyy-MM-dd HH:mm:ss";
+    private static final String YYYY_MMDD_HH_WMS = "yyyy-MM-ddTHH:mm:ss";
 
     static Logger log = LoggerFactory.getLogger(AbsOrderService.class);
 
@@ -55,6 +63,9 @@ public abstract class AbsOrderService {
     @Autowired
     ReturnOrderService returnOrderService;
 
+    @Autowired
+    SkuRelationService skuRelationService;
+
 
     /**
      * 处理供货商的信息
@@ -70,7 +81,15 @@ public abstract class AbsOrderService {
     abstract  public void handleCancelOrder(ReturnOrderDTO deleteOrder) throws ServiceException;
 
     /**
-     * 用户下单
+     * 获取真正的供货商编号
+     * @param skuMap  key skuNo ,value supplerSkuNo
+     * @return
+     * @throws ServiceException
+     */
+    abstract public void getSupplierSkuId(Map<String,String> skuMap) throws ServiceException;
+
+    /**
+     * 用户下单 通过采购单
      * @param supplierId
      */
     public  void  checkoutOrderFromSOP(String supplierId){
@@ -176,7 +195,112 @@ public abstract class AbsOrderService {
         }
     }
 
+    public  void  checkoutOrderFromWMS(String supplierNo,String supplierId){
 
+        //初始化时间
+        initWMSDate("dateWMS.ini");
+        //获取订单数组
+
+        Gson gson = new Gson();
+        ICEWMSOrderRequestDTO  dto = new ICEWMSOrderRequestDTO();
+        dto.setBeginTime(startDateOfWMS);
+        dto.setEndTime(endDateOfWMS);
+        dto.setSupplierNo(supplierNo);
+
+        String jsonParameter= "="+ gson.toJson(dto);
+        String result ="";
+        try {
+            result =  HttpUtil45.operateData("post","form","http://wmsinventory.liantiao.com/Api/StockQuery/SupplierInventoryLogQuery",new OutTimeConfig(1000*5,1000*5,1000*5),null,
+                    jsonParameter,"","");
+            logger.info("获取的订单信息为:" + result);
+            System.out.println("kk = " + result);
+            result =  result.substring(1,result.length()-1).replace("\\","");
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        List<ICEWMSOrderDTO> orderDTOList  = null;
+        try {
+            orderDTOList = gson.fromJson(result,new TypeToken<List<ICEWMSOrderDTO>>(){}.getType());
+        } catch (JsonSyntaxException e) {
+           loggerError.error("订单转化异常,退出");
+            return;
+        }
+
+
+        String uuid="",skuNo="";
+        //由于拉取时可能更改供货商的SKU的编号需要 继承者确认
+        Map<String,String> skuMap = new HashMap<>();
+        for(ICEWMSOrderDTO icewmsOrderDTO:orderDTOList){
+            SkuRelationDTO skuRelationDTO= null;
+            try {
+                skuRelationDTO=  skuRelationService.getSkuRelationBySkuId(icewmsOrderDTO.getSkuNo());
+                if(null!=skuRelationDTO){
+                    skuMap.put(skuRelationDTO.getSopSkuId(), skuRelationDTO.getSupplierSkuId());
+                }else{   //获取供货商的SKU编号
+
+                }
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            //获取真正的供货商SKUID
+            this.getSupplierSkuId(skuMap);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+
+        for(ICEWMSOrderDTO icewmsOrderDTO:orderDTOList){
+            if(!skuMap.containsKey(icewmsOrderDTO.getSkuNo()))
+                continue;
+
+            uuid=UUID.randomUUID().toString();
+
+            //存储
+            OrderDTO spOrder =new OrderDTO();
+            spOrder.setUuId(uuid);
+            spOrder.setSupplierId(supplierId);
+            spOrder.setSupplierNo(supplierNo);
+            spOrder.setStatus("WAITING");
+            spOrder.setSpOrderId(icewmsOrderDTO.getFormNo());
+            spOrder.setDetail(skuMap.containsKey(icewmsOrderDTO.getSkuNo())+":"+icewmsOrderDTO.getChangeForOrderQuantity());
+            spOrder.setMemo(icewmsOrderDTO.getSkuNo()+":"+icewmsOrderDTO.getChangeForOrderQuantity());
+            spOrder.setCreateTime(new Date());
+            try {
+                logger.info("采购单信息转化订单后信息："+spOrder.toString());
+                System.out.println("采购单信息转化订单后信息："+spOrder.toString());
+                productOrderService.saveOrder(spOrder);
+
+                try {
+                    //处理供货商订单
+                    handleSupplierOrder(spOrder);
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                    loggerError.error("采购单 ："+ spOrder.getSpOrderId() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
+
+                    Map<String,String> map = new HashMap<>();
+                    map.put("excDesc",e.getMessage());
+
+                    setErrorMsg(spOrder.getUuId(),map);
+
+
+
+                }
+
+            } catch (ServiceException e) {
+                loggerError.error("采购单 ："+ spOrder.getSpOrderId() + "失败,失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
+                System.out.println("采购单 ："+ spOrder.getSpOrderId() + "失败,失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage());
+                e.printStackTrace();
+            } catch (Exception e){
+                loggerError.error("下单错误 " + e.getMessage());
+                e.printStackTrace();
+            }
+
+
+            logger.info("----gilt 订单存储完成----");
+        }
+    }
 
     public void cancelOrderFromSOP(String supplierId){
 
@@ -419,6 +543,22 @@ public abstract class AbsOrderService {
 
 
         writeGrapDate(endDate,fileName);
+
+
+    }
+
+
+    private  static void initWMSDate(String  fileName) {
+        Date tempDate = new Date();
+
+        endDateOfWMS = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(tempDate, YYYY_MMDD_HH_WMS);
+
+        String lastDate=getLastGrapDate(fileName);
+        startDateOfWMS= org.apache.commons.lang.StringUtils.isNotEmpty(lastDate) ? lastDate: com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(DateUtils.addDays(tempDate, -180), YYYY_MMDD_HH_WMS);
+
+
+
+        writeGrapDate(endDateOfWMS,fileName);
 
 
     }
