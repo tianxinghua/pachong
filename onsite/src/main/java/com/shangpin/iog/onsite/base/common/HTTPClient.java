@@ -26,7 +26,7 @@ public class HTTPClient {
         }finally {
             HttpUtil45.closePool();
         }
-        System.out.println("----------"+json.substring(0,200));
+
         return json.substring(json.indexOf("<products>"));
     }
 }
