@@ -147,6 +147,7 @@ public class OrderServiceImpl extends AbsOrderService {
         try {
             returnCode = httpClient.executeMethod(postMethod);
             System.out.println("returnCode=="+returnCode);
+            logger.info("returnCode=="+returnCode+","+skuNo);
 /*            BufferedOutputStream out=new BufferedOutputStream(new FileOutputStream(new File(orderFile)));
             BufferedInputStream in=new BufferedInputStream(postMethod.getResponseBodyAsStream());
             int length = 0;
@@ -159,15 +160,15 @@ public class OrderServiceImpl extends AbsOrderService {
             out.flush();
             out.close();*/
         } catch (HttpException e) {
-            e.printStackTrace();
+            loggerError.error(skuNo+":"+e.getMessage());
             excCode = "1";
             excDes = e.getMessage();
         } catch (IOException e) {
-            e.printStackTrace();
+            loggerError.error(skuNo + ":" + e.getMessage());
             excCode = "1";
             excDes = e.getMessage();
         } catch (Exception e) {
-            e.printStackTrace();
+            loggerError.error(skuNo+":"+e.getMessage());
             excCode = "1";
             excDes = e.getMessage();
         }
