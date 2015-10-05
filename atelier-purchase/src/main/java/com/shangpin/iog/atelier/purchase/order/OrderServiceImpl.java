@@ -36,26 +36,22 @@ import java.util.*;
 @Component("atelierOrder")
 public class OrderServiceImpl extends AbsOrderService {
 
-    private static String  startDate=null,endDate=null;
-    private static final String YYYY_MMDD_HH = "yyyy-MM-dd HH:mm:ss";
-
+    private  String soapRequestData;
+    private String opName;
+    private String skuNo;
+    private String excCode;
+    private String excDes;
     private static ResourceBundle bdl=null;
     private static String supplierId;
-    private static String key ;
-    private static String orderFile ;
-    private static int period ;
+
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
-        key = bdl.getString("key");
-        orderFile = bdl.getString("newOrder");
-        period = Integer.parseInt(bdl.getString("period"));
     }
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
 
     /**
      * 在线推送订单:未支付
@@ -71,13 +67,14 @@ public class OrderServiceImpl extends AbsOrderService {
     public void handleConfirmOrder(OrderDTO orderDTO) {
         //订单支付确认
         confirmOrder(supplierId);
+
         //获取条形码
         WS_Sito_P15 atelier = new WS_Sito_P15();
         String barCodeAll = atelier.getAllAvailabilityStr();
         String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
                 barCodeAll.indexOf(orderDTO.getSupplierOrderNo()),barCodeAll.indexOf(orderDTO.getSupplierOrderNo())+50));
         //推送订单
-        String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+        this.soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
                 "  <soap:Body>\n" +
                 "    <NewOrder xmlns=\"http://tempuri.org/\">\n" +
@@ -93,35 +90,11 @@ public class OrderServiceImpl extends AbsOrderService {
                 "  </soap:Body>\n" +
                 "</soap:Envelope>";
         System.out.println("soapRequestData=="+soapRequestData);
-        HttpClient httpClient = new HttpClient();
-        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=NewOrder";
-        PostMethod postMethod = new PostMethod(uri);
-        postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/NewOrder");
-        postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
-
-        StringRequestEntity requestEntity=new StringRequestEntity(soapRequestData);
-        postMethod.setRequestEntity(requestEntity);
-
-        int returnCode=0;
-        try {
-            returnCode = httpClient.executeMethod(postMethod);
-            System.out.println("returnCode=="+returnCode);
-/*            BufferedOutputStream out=new BufferedOutputStream(new FileOutputStream(new File(orderFile)));
-            BufferedInputStream in=new BufferedInputStream(postMethod.getResponseBodyAsStream());
-            int length = 0;
-            byte[] b = new byte[10240];
-            while((length = in.read(b,0,10240)) != -1)
-            {
-                out.write(b, 0, length);
-            }
-            in.close();
-            out.flush();
-            out.close();*/
-        } catch (HttpException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.skuNo = orderDTO.getSupplierOrderNo();
+        this.opName = "NewOrder";
+        sendOrder();
+        orderDTO.setExcState(this.excCode);
+        orderDTO.setExcDesc(this.excDes);
     }
     /**
      * 在线取消订单
@@ -133,7 +106,7 @@ public class OrderServiceImpl extends AbsOrderService {
         String barCodeAll = atelier.getAllAvailabilityStr();
         String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
                 barCodeAll.indexOf(deleteOrder.getSupplierOrderNo()),barCodeAll.indexOf(deleteOrder.getSupplierOrderNo())+50));
-        String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+        this.soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
                 "  <soap:Body>\n" +
                 "    <OrderAmendment xmlns=\"http://tempuri.org/\">\n" +
@@ -145,10 +118,26 @@ public class OrderServiceImpl extends AbsOrderService {
                 "  </soap:Body>\n" +
                 "</soap:Envelope>";
         System.out.println("soapRequestData=="+soapRequestData);
+        this.skuNo = deleteOrder.getSupplierOrderNo();
+        this.opName = "OrderAmendment";
+        sendOrder();
+        deleteOrder.setExcState(this.excCode);
+        deleteOrder.setExcDesc(this.excDes);
+    }
+    /**
+     * 在线推送订单/取消订单
+     */
+    private void sendOrder(){
+        //获取条形码
+        WS_Sito_P15 atelier = new WS_Sito_P15();
+        String barCodeAll = atelier.getAllAvailabilityStr();
+        String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
+                barCodeAll.indexOf(skuNo),barCodeAll.indexOf(skuNo)+50));
+        System.out.println("soapRequestData=="+soapRequestData);
         HttpClient httpClient = new HttpClient();
-        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=OrderAmendment";
+        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op="+opName;
         PostMethod postMethod = new PostMethod(uri);
-        postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/OrderAmendment");
+        postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/"+opName);
         postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
 
         StringRequestEntity requestEntity=new StringRequestEntity(soapRequestData);
@@ -158,6 +147,7 @@ public class OrderServiceImpl extends AbsOrderService {
         try {
             returnCode = httpClient.executeMethod(postMethod);
             System.out.println("returnCode=="+returnCode);
+            logger.info("returnCode=="+returnCode+","+skuNo);
 /*            BufferedOutputStream out=new BufferedOutputStream(new FileOutputStream(new File(orderFile)));
             BufferedInputStream in=new BufferedInputStream(postMethod.getResponseBodyAsStream());
             int length = 0;
@@ -170,9 +160,17 @@ public class OrderServiceImpl extends AbsOrderService {
             out.flush();
             out.close();*/
         } catch (HttpException e) {
-            e.printStackTrace();
+            loggerError.error(skuNo+":"+e.getMessage());
+            excCode = "1";
+            excDes = e.getMessage();
         } catch (IOException e) {
-            e.printStackTrace();
+            loggerError.error(skuNo + ":" + e.getMessage());
+            excCode = "1";
+            excDes = e.getMessage();
+        } catch (Exception e) {
+            loggerError.error(skuNo+":"+e.getMessage());
+            excCode = "1";
+            excDes = e.getMessage();
         }
     }
     /**
