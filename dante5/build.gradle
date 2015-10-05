@@ -1,11 +1,9 @@
 
 dependencies {
     compile(
-            "org.mybatis:mybatis:3.2.2",
-            "org.mybatis:mybatis-spring:1.2.0",
-            "mysql:mysql-connector-java:5.1.21",
+
             project(':project-common'),
-            project(':project-dao'),
+
             project(':iog-common-product')
     )
     compile 'com.stanfy:gson-xml-java:0.1.+'
@@ -15,7 +13,8 @@ dependencies {
 }
 
 jar {
-    dependsOn copyToLib
+    dependsOn copyToLib , copyResources  , copyResourcesToClasses
+    exclude ("**/*.properties")
 
     def manifestCp = configurations.compile.files.collect  {
         File file = it
@@ -23,8 +22,8 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.dellogliostore.Startup'
-        attributes 'Class-Path': '. ' +  manifestCp
+        attributes 'Main-Class': 'com.shangpin.iog.dante5.Startup'
+        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }
 
