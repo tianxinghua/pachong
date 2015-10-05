@@ -28,6 +28,19 @@ include 'openapi-ice'
 
 include 'galiano'
 
+include 'dante5'
+include 'dante5-stock'
+include 'giglio'
+include 'giglio-stock'
+include 'dellogliostore'
+include 'dellogliostore-stock'
+include 'eleonorabonucci'
+include 'eleonorabonucci-stock'
+include 'cirillomoda'
+include 'cirillomoda-stock'
+
+include 'bagheera'
+include 'bagheera-stock'
 
 include 'ebay'
 

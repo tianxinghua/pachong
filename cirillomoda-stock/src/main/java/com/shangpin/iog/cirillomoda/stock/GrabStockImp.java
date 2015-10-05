@@ -13,16 +13,12 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.input.BOMInputStream;
 import org.apache.log4j.Logger;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
@@ -64,26 +60,27 @@ public class GrabStockImp extends AbsUpdateProductStock {
             final Reader reader = new InputStreamReader(IOUtils.toInputStream(result, "UTF-8"), "UTF-8");
 
             int count = 0;
-            Pattern pss = Pattern.compile("(.+)\\((\\d+)\\)");
+            String spuId = "";
+
             try (CSVParser parser = new CSVParser(reader, csvFileFormat)) {
                 for (final CSVRecord record : parser) {
                     if (record.size() <= 1) {
                         continue;
                     }
-                    System.out.println("count : " + ++count);
-                    final String skuId = record.get("idSKU");
-                    final String sizeStr = record.get("Taglie"); // 尺码(库存)
 
-                    Matcher m = pss.matcher(sizeStr);
-                    String stock = null;
-                    while (m.find()) {
-                        if (m.groupCount() > 1) {
-                            stock = m.group(2);
-                        }
+                    String type = record.get("parent/child");
+
+                    if ("parent".equals(type)) { //SPU
+                        spuId = record.get("SKU");
+                    } else if ("child".equals(type)) { //SKU
+                        System.out.println("count : " + ++count);
+                        String size = record.get("attribute_size");
+                        String stock = record.get("attribute_size:quantity");
+                        String skuId = spuId + size;
+                        stockMap.put(skuId, stock);
                     }
-                    stockMap.put(skuId, stock);
-                    System.out.println("skuId : " + skuId + ", stock : " + stock);
                 }
+
             } finally {
                 reader.close();
             }
