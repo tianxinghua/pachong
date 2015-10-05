@@ -10,6 +10,7 @@ import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 
+import com.shangpin.iog.gherardi.dto.*;
 import com.shangpin.iog.prodottimonti.dto.*;
 import com.shangpin.iog.service.ProductFetchService;
 import net.sf.json.JSONObject;
