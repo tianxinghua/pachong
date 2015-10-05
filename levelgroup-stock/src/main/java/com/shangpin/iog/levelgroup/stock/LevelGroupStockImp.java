@@ -58,9 +58,9 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
         String jsonstr = HttpUtil45.get(url,timeConfig,null,null,null);
         if( jsonstr != null && jsonstr.length() >0){
             JSONObject json = JSONObject.fromObject(jsonstr);
-            if (json.isNullObject() && !json.containsKey("fault")) {
+            if (!json.isNullObject() && !json.containsKey("fault")) {
                 JSONObject inventObj = json.getJSONObject("inventory");
-                if (inventObj.isNullObject() && !inventObj.isEmpty()){
+                if (!inventObj.isNullObject() && !inventObj.isEmpty()){
                     int instock = inventObj.getInt("stock_level");
                     return instock+"";
                 }
