@@ -26,7 +26,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService{
         try{
             returnOrderDao.save(returnOrderDTO);
         }catch (Exception e){
-            logger.error(UPDATE_ERROR+ e.getMessage());
+            logger.error("保存订单信息失败"+ e.getMessage());
             e.printStackTrace();
         }
     }

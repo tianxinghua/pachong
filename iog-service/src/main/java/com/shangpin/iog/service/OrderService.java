@@ -50,6 +50,7 @@ public interface OrderService {
     <if test="status != null"> STATUS = #{status}, </if>
     <if test="memo != null"> MEMO = #{memo}, </if>
     <if test="updateTime != null"> UPDATE_TIME = #{updateTime}, </if>
+    <if test="supplierOrderNo != null"> SUPPLIER_ORDER_NO = #{supplierOrderNo}, </if>
     <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo},</if>
     <if test="excState != null"> EXC_STATE = #{excState}, </if>
     <if test="excDesc != null"> EXC_DESC = #{excDesc}, </if>
@@ -98,10 +99,27 @@ public interface OrderService {
 
 
     /**
-     * 获取UUID 根据采购单ID
+     * 获取UUID 根据订单ID
      * @param spOrderId
      * @return
      * @throws ServiceException
      */
-    public String getUuIdByspOrderId(String spOrderId)throws ServiceException;
+    public String getUuIdBySpOrderId(String spOrderId)throws ServiceException;
+
+    /**
+     * 根据采购单获取订单信息
+     * @param purchaseNo ：采购单编号
+     * @return
+     * @throws ServiceException
+     */
+    public OrderDTO getOrderByPurchaseNo(String purchaseNo) throws ServiceException;
+
+    /**
+     * 根据订单号获取订单信息
+     * @param orderNo  :订单编号
+     * @return
+     * @throws ServiceException
+     */
+    public OrderDTO getOrderByOrderNo(String orderNo) throws ServiceException;
+
 }

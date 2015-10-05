@@ -25,9 +25,11 @@ public class Startup
         loadSpringContext();
         log.info("----初始SPRING成功----");
         System.out.println("----初始SPRING成功----");
-        //拉取数据
+        //拉取数据, 需要翻墙
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("cirillomoda");
-        fetchProduct.fetchProductAndSave("http://www.cirillomoda.com/feeds/shangpin.csv");
+
+        fetchProduct.fetchProductAndSave("http://www.cirillomoda.com/maxpho/cirillo_maxpho.csv");
+//        fetchProduct.fetchProductAndSave("http://127.0.0.1:8080/cirillo_maxpho.csv");
         log.info("----拉取cirillomoda数据完成----");
         System.out.println("----拉取cirillomoda数据完成----");
 

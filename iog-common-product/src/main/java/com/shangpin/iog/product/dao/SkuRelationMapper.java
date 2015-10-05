@@ -1,0 +1,40 @@
+package com.shangpin.iog.product.dao;
+
+
+import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.dao.base.IBaseDao;
+import com.shangpin.iog.dao.base.Mapper;
+import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.dto.SkuRelationDTO;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
+import java.util.List;
+
+@Mapper
+public interface SkuRelationMapper extends IBaseDao<SkuRelationDTO> {
+
+
+    /**
+     * 获取供货商队对应的  关系列表
+     * @param supplier 供货商门户ID
+     * @param rowBounds 分页对象
+     * @return
+     */
+    public List<SkuRelationDTO>  getSkuRelationListBySupplierId(@Param("supplier") String supplier,RowBounds rowBounds);
+
+
+    /**
+     * 获取供货商队对应的  关系列表
+     * @param supplier 供货商门户ID
+     * @return
+     */
+    public List<SkuRelationDTO>  getSkuRelationListBySupplierId(@Param("supplier") String supplier);
+    /**
+     * 根据尚品的SKUID获取对照关系
+     * @param sopSkuId
+     * @return
+     */
+    public SkuRelationDTO getSkuRelationBySopSkuId(@Param("sopSkuId") String sopSkuId);
+
+}

@@ -51,8 +51,20 @@ public interface OrderMapper extends IBaseDao<OrderDTO> {
     public int updateOrderMsg(Map<String,String> paraMap);
 
 
-
+    /**
+     * 根据订单获取信息
+     * @param spOrderId 订单编号
+     * @return
+     */
     public OrderDTO findBySpOrderId(@Param("spOrderId")String spOrderId);
+
+
+    /**
+     * 根据采购单编号获取信息
+     * @param purchaseNo  采购单
+     * @return
+     */
+    public OrderDTO findByPurchaseNo(@Param("purchaseNo")String purchaseNo);
 
     /**
      * 获取异常订单信息

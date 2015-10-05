@@ -6,8 +6,10 @@
 
         <id column="ID" property="id" />
         <result column="SUPPLIER_ID" property="supplierId"  />
+        <result column="SUPPLIER_NO" property="supplierNo"  />
         <result column="UUID" property="uuId"  />
         <result column="SP_ORDER_ID" property="spOrderId"  />
+        <result column="SP_PURCHASE_NO" property="spPurchaseNo" />
         <result column="SP_PURCHASE_DETAIL_NO" property="spPurchaseDetailNo" />
         <result column="DETAIL" property="detail"  />
         <result column="STATUS" property="status"/>
@@ -32,10 +34,13 @@
 	</sql>
     <sql id="save_column">
         SUPPLIER_ID,
+        SUPPLIER_NO,
 		UUID,
 		SP_ORDER_ID,
+		SP_PURCHASE_NO,
 		SP_PURCHASE_DETAIL_NO,
 		DETAIL,
+		MEMO,
 		STATUS,
 
 		CREATE_TIME
@@ -71,12 +76,15 @@
     <select id="findBySpOrderId"  resultMap="OrderResultMap">
         select
         ID as ID,
-        SUPPLIER_ID as SUPPLIER_ID,
+        SUPPLIER_ID ,
+        SUPPLIER_NO,
         UUID as UUID,
-        SP_ORDER_ID as SP_ORDER_ID,
+        SP_ORDER_ID ,
+        SP_PURCHASE_NO,
         SP_PURCHASE_DETAIL_NO,
         STATUS as STATUS,
         DETAIL as DETAIL,
+        MEMO,
         CREATE_TIME as CREATE_TIME,
         EXC_STATE as EXC_STATE,
         EXC_DESC  as EXC_DESC
@@ -85,6 +93,31 @@
         <where>
             SP_ORDER_ID=#{spOrderId}
 
+        </where>
+
+
+    </select>
+
+
+    <select id="findByPurchaseNo"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        SUPPLIER_ID ,
+        SUPPLIER_NO,
+        UUID as UUID,
+        SP_ORDER_ID ,
+        SP_PURCHASE_NO,
+        SP_PURCHASE_DETAIL_NO,
+        STATUS as STATUS,
+        DETAIL as DETAIL,
+        MEMO,
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC
+
+        from `ORDER`
+        <where>
+            SP_PURCHASE_NO=#{purchaseNo}
         </where>
 
 
@@ -118,9 +151,8 @@
         <include refid="save_column"></include>
         )
         values(
-        #{supplierId}, #{uuId}, #{spOrderId},#{spPurchaseDetailNo},
-        #{detail},#{status},
-
+        #{supplierId},#{supplierNo}, #{uuId}, #{spOrderId},#{spPurchaseNo},#{spPurchaseDetailNo},
+        #{detail},#{memo},#{status},
         #{createTime}
         )
     </insert>
@@ -184,6 +216,7 @@
             <if test="status != null"> STATUS = #{status}, </if>
             <if test="memo != null"> MEMO = #{memo}, </if>
             <if test="updateTime != null"> UPDATE_TIME = #{updateTime}, </if>
+            <if test="supplierOrderNo != null"> SUPPLIER_ORDER_NO = #{supplierOrderNo}, </if>
             <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo},</if>
             <if test="excState != null"> EXC_STATE = #{excState}, </if>
             <if test="excDesc != null"> EXC_DESC = #{excDesc}, </if>

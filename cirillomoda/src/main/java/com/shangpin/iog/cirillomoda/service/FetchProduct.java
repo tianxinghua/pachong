@@ -30,21 +30,20 @@ import java.util.regex.Pattern;
  */
 @Component("cirillomoda")
 public class FetchProduct {
-    final Logger logger = Logger.getLogger(this.getClass());
+//    final Logger logger = Logger.getLogger(this.getClass());
 //    private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
 
-    private static ResourceBundle bdl=null;
-    private static String supplierId;
+//    private static ResourceBundle bdl=null;
+    private static String supplierId = "201510031117"; //测试
+//    private static String supplierId = ""; //正式
 
-    static {
-        if(null==bdl)
-            bdl= ResourceBundle.getBundle("conf");
-        supplierId = bdl.getString("supplierId");
-    }
-
-
+//    static {
+//        if(null==bdl)
+//            bdl= ResourceBundle.getBundle("conf");
+//        supplierId = bdl.getString("supplierId");
+//    }
 
     public void fetchProductAndSave(final String url) {
 
@@ -61,12 +60,12 @@ public class FetchProduct {
 //            mongMap.put("result", "stream data.") ;
 //            logMongo.info(mongMap);
 
+            System.out.println(result);
+
             CSVFormat csvFileFormat = CSVFormat.EXCEL.withHeader().withDelimiter(';');
             final Reader reader = new InputStreamReader(IOUtils.toInputStream(result, "UTF-8"), "UTF-8");
 
             int count = 0;
-            Pattern pss = Pattern.compile("(.+)\\((\\d+)\\)");
-
             String spuId = "";
             String title = "";
             String brand = "";
@@ -79,7 +78,6 @@ public class FetchProduct {
                     if (record.size() <= 1) {
                         continue;
                     }
-                    System.out.println("count : " + ++count);
 
                     String type = record.get("parent/child");
 
@@ -92,15 +90,29 @@ public class FetchProduct {
                         description = record.get("description_it_it");
                         status = record.get("Stato");
 
-                        System.out.println("spuId : " + spuId);
-                        System.out.println("title : " + title);
-                        System.out.println("brand : " + brand);
-                        System.out.println("price : " + price);
-                        System.out.println("category : " + category);
-                        System.out.println("description : " + description);
-                        System.out.println("status : " + status);
+                        //保存SPU
+                        SpuDTO spu = new SpuDTO();
+                        //SPU 必填
+                        spu.setId(spuId);
+                        spu.setSpuId(spuId);
+                        spu.setSupplierId(supplierId);
+                        spu.setCategoryName(category);
+                        spu.setBrandName(brand);
+                        spu.setMaterial(description);
+
+                        //SPU 选填
+                        spu.setSpuName(title);
+
+                        try {
+                            productFetchService.saveSPU(spu);
+                        } catch (ServiceException e) {
+                            e.printStackTrace();
+                        }
 
                     } else if ("child".equals(type)) { //SKU
+                        System.out.println("count : " + ++count);
+//                        System.out.println("------------------");
+
                         String size = record.get("attribute_size");
                         String stock = record.get("attribute_size:quantity");
                         String skuId = spuId + size;
@@ -122,7 +134,7 @@ public class FetchProduct {
                             pics.add(photo4);
                         }
                         String photo5 = record.get("Photo 5");
-                        if (photo1 != null && !"".equals(photo1)) {
+                        if (photo5 != null && !"".equals(photo5)) {
                             pics.add(photo1);
                         }
                         String photo6 = record.get("Photo 6");
@@ -138,11 +150,44 @@ public class FetchProduct {
                             pics.add(photo8);
                         }
 
-                        System.out.println("size : " + size);
-                        System.out.println("stock : " + stock);
-                        System.out.println("skuId : " + skuId);
-                        System.out.println("pics : " + pics);
+//                        System.out.println("spuId : " + spuId);
+//                        System.out.println("title : " + title);
+//                        System.out.println("brand : " + brand);
+//                        System.out.println("price : " + price);
+//                        System.out.println("category : " + category);
+//                        System.out.println("description : " + description);
+//                        System.out.println("status : " + status);
+//                        System.out.println("size : " + size);
+//                        System.out.println("stock : " + stock);
+//                        System.out.println("skuId : " + skuId);
+//                        System.out.println("pics : " + pics);
 
+                        SkuDTO sku = new SkuDTO();
+                        //SKU 必填
+                        sku.setId(UUIDGenerator.getUUID());
+                        sku.setSupplierId(supplierId);
+                        sku.setSkuId(skuId);
+                        sku.setSpuId(spuId);
+                        sku.setMarketPrice(price);
+//                        sku.setColor(); //没有颜色
+                        sku.setProductSize(size);
+                        sku.setStock(stock);
+                        sku.setProductDescription(description);
+
+                        try {
+                            productFetchService.saveSKU(sku);
+                        } catch (ServiceException e) {
+                            try {
+                                if (e.getMessage().equals("数据插入失败键重复")) {
+                                    //更新价格和库存
+                                    productFetchService.updatePriceAndStock(sku);
+                                } else {
+                                    e.printStackTrace();
+                                }
+                            } catch (ServiceException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
 
                         for (String pic : pics) {
                             ProductPictureDTO dto = new ProductPictureDTO();
@@ -157,116 +202,6 @@ public class FetchProduct {
                             }
                         }
                     }
-
-
-
-
-
-
-
-
-
-//                    final String skuId = record.get("idSKU");
-//                    final String productCode = record.get("Codice Prodotto"); //货号
-//                    final String brand = record.get("Marca"); //品牌
-//                    final String name = record.get("Nome Modello"); // 产品名称
-//                    final String color = record.get("Colore ENG"); // 颜色
-//                    final String desc = record.get("Descrizione ENG"); // 描述
-//                    final String material = record.get("Materiale ENG"); // 材质
-//                    final String sex = record.get("Sesso(unisex, uomo, donna)"); // 性别
-//                    final String cate = record.get("Categoria"); // 类目
-//                    final String season = record.get("Collezione / Anno"); //上市季节
-//                    final String localPrice = record.get("Prezzo Et (€)"); // 当地价格(欧元)
-//                    final String supplierPrice = record.get("Price to WS (€)"); // 供应商价格
-//                    final String sizeStr = record.get("Taglie"); // 尺码(库存)
-//                    final String picsStr = record.get("Foto"); // 图片
-//                    String[] pics;
-//                    List<String> picsList = null;
-//                    if (picsStr != null && !"".equals(picsStr)) {
-//                        pics = picsStr.split(";");
-//                        picsList = Arrays.asList(pics);
-//                    }
-//
-//                    Matcher m = pss.matcher(sizeStr);
-//                    String size = null, stock = null;
-//                    while (m.find()) {
-//                        if (m.groupCount() > 0) {
-//                            size = m.group(1);
-//                        }
-//                        if (m.groupCount() > 1) {
-//                            stock = m.group(2);
-//                        }
-//                    }
-
-//                    System.out.println("supplierId : " + supplierId);
-//                    System.out.println("skuId : " + skuId);
-//                    System.out.println("spuId : " + spuId);
-//                    System.out.println("productCode : " + productCode);
-//                    System.out.println("brand : " + brand);
-//                    System.out.println("name : " + name);
-//                    System.out.println("color : " + color);
-//                    System.out.println("desc : " + desc);
-//                    System.out.println("material : " + material);
-//                    System.out.println("sex : " + sex);
-//                    System.out.println("cate : " + cate);
-//                    System.out.println("season : " + season);
-//                    System.out.println("localPrice : " + localPrice);
-//                    System.out.println("supplierPrice : " + supplierPrice);
-//                    System.out.println("size : " + size);
-//                    System.out.println("stock : " + stock);
-//                    System.out.println("picsList : " + picsList);
-
-                    //SKU
-//                    SkuDTO sku = new SkuDTO();
-//                    sku.setProductName(name);
-//                    sku.setId(UUIDGenerator.getUUID());
-//                    sku.setSpuId(spuId);
-//                    sku.setSupplierId(supplierId);
-//                    sku.setSkuId(skuId);
-//                    sku.setProductSize(size);
-//                    sku.setMarketPrice(localPrice);
-//                    sku.setSupplierPrice(supplierPrice);
-//                    sku.setProductCode(productCode);
-//                    sku.setColor(color);
-//                    sku.setProductDescription(desc);
-//                    sku.setSaleCurrency("EUR");
-//                    sku.setStock(stock);
-//                    sku.setMemo(picsStr); //临时保存图片
-
-                    //保存SKU
-//                    try {
-//                        productFetchService.saveSKU(sku);
-//                    } catch (ServiceException e) {
-//                        try {
-//                            if (e.getMessage().equals("数据插入失败键重复")) {
-//                                productFetchService.updatePriceAndStock(sku);
-//                            } else {
-//                                e.printStackTrace();
-//                            }
-//                        } catch (ServiceException e1) {
-//                            e1.printStackTrace();
-//                        }
-//                    }
-
-                    //保存SKU的图片
-
-
-                    //SPU
-//                    SpuDTO spu = new SpuDTO();
-//                    spu.setId(UUIDGenerator.getUUID());
-//                    spu.setSupplierId(supplierId);
-//                    spu.setSpuId(spuId);
-//                    spu.setBrandName(brand);
-//                    spu.setCategoryName(cate);
-//                    spu.setCategoryGender(sex);
-//                    spu.setSpuName(name);
-//                    spu.setSeasonId(season);
-//                    spu.setMaterial(material);
-//                    try {
-//                        productFetchService.saveSPU(spu);
-//                    } catch (ServiceException e) {
-//                        e.printStackTrace();
-//                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();

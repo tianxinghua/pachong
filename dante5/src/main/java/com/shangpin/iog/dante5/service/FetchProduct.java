@@ -101,6 +101,7 @@ public class FetchProduct {
                 //SKU 选填
                 sku.setProductName(item.getTitle());
                 sku.setProductDescription(item.getDescription());
+                sku.setProductCode(item.getMpn());
 
                 try {
                     productFetchService.saveSKU(sku);
@@ -144,6 +145,9 @@ public class FetchProduct {
                 spu.setCategoryName(item.getProductType());
                 spu.setBrandName(item.getBrand());
                 spu.setMaterial(item.getComposition());
+
+                //SPU选填
+                spu.setCategoryGender(item.getGender());
 
                 try {
                     productFetchService.saveSPU(spu);

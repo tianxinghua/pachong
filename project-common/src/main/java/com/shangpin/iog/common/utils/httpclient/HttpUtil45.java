@@ -269,12 +269,12 @@ public class HttpUtil45 {
 	}
 
     //设置传递参数
-	private static void setTransParam(String transParaType, Map<String, String> param, String jsonValue, HttpEntityEnclosingRequestBase method) {
+	private static void setTransParam(String transParaType, Map<String, String> param, String value, HttpEntityEnclosingRequestBase method) {
 		if("json".equals(transParaType.toLowerCase())){
-            if(StringUtils.isNotBlank(jsonValue)){
+            if(StringUtils.isNotBlank(value)){
                 StringEntity s = null;
                 try {
-                    s = new StringEntity(jsonValue);
+                    s = new StringEntity(value);
                     s.setContentEncoding("UTF-8");
                     s.setContentType("application/json");//发送json数据需要设置contentType
 					method.setEntity(s);
@@ -283,7 +283,20 @@ public class HttpUtil45 {
                 }
             }
 
-        }else{
+        }else if("form".equals(transParaType.toLowerCase())){
+			if(StringUtils.isNotBlank(value)){
+				StringEntity s = null;
+				try {
+					s = new StringEntity(value);
+					s.setContentEncoding("UTF-8");
+					s.setContentType("application/x-www-form-urlencoded");//发送json数据需要设置contentType
+					method.setEntity(s);
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}else{
             if(param!=null){
                 Iterable<? extends NameValuePair> nvs = map2NameValuePair(param);
 				method.setEntity(new UrlEncodedFormEntity(nvs, Charset
