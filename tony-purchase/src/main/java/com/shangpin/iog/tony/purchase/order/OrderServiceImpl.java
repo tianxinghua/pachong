@@ -27,13 +27,19 @@ public class OrderServiceImpl extends AbsOrderService {
     ReturnOrderService returnOrderService;
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
+/**
+ * main
+ * */
+    public void start(){
+        //通过采购单处理下单 包括下单和退单
+        this.checkoutOrderFromWMS(Constant.SUPPLIER_ID,"",true);
+    }
+
     /**
      * 在线推送订单：未支付
      */
     @Override
     public void handleSupplierOrder(OrderDTO orderDTO) {
-        //订单未支付确认
-        checkoutOrderFromWMS(Constant.SUPPLIER_ID,Constant.SUPPLIER_ID,true);
         //在线推送订单
         createOrder("PENDING");
         //设置异常信息
