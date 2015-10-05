@@ -1,33 +1,19 @@
 package com.shangpin.iog.atelier.purchase.order;
 
-import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
-import com.shangpin.ice.ice.OrderService;
 import com.shangpin.iog.atelier.common.MyStringUtil;
 import com.shangpin.iog.atelier.common.WS_Sito_P15;
-import com.shangpin.iog.atelier.purchase.dto.*;
-import com.shangpin.iog.common.utils.DateTimeUtil;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.*;
 import com.shangpin.iog.dto.OrderDTO;
-import com.shangpin.iog.service.ReturnOrderService;
+import com.shangpin.iog.ice.dto.OrderStatus;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.io.*;
-import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -36,6 +22,7 @@ import java.util.*;
 @Component("atelierOrder")
 public class OrderServiceImpl extends AbsOrderService {
 
+    private String barCodeAll;
     private  String soapRequestData;
     private String opName;
     private String skuNo;
@@ -52,25 +39,24 @@ public class OrderServiceImpl extends AbsOrderService {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-
     /**
-     * 在线推送订单:未支付
+     * main
      */
-    @Override
-    public void handleSupplierOrder(OrderDTO orderDTO) {
-
+    public void start(){
+        //获取条形码
+        this.barCodeAll = new WS_Sito_P15().getAllAvailabilityStr();
+        //通过采购单处理下单 包括下单和退单
+        this.confirmOrder(supplierId);
     }
+
+
+
     /**
      * 在线推送订单：已支付
      */
     @Override
     public void handleConfirmOrder(OrderDTO orderDTO) {
-        //订单支付确认
-        confirmOrder(supplierId);
 
-        //获取条形码
-        WS_Sito_P15 atelier = new WS_Sito_P15();
-        String barCodeAll = atelier.getAllAvailabilityStr();
         String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
                 barCodeAll.indexOf(orderDTO.getSupplierOrderNo()),barCodeAll.indexOf(orderDTO.getSupplierOrderNo())+50));
         //推送订单
@@ -124,6 +110,16 @@ public class OrderServiceImpl extends AbsOrderService {
         deleteOrder.setExcState(this.excCode);
         deleteOrder.setExcDesc(this.excDes);
     }
+
+
+    /**
+     * 在线推送订单:未支付
+     */
+    @Override
+    public void handleSupplierOrder(OrderDTO orderDTO) {
+orderDTO.setStatus(OrderStatus.PLACED);
+    }
+
     /**
      * 在线推送订单/取消订单
      */
@@ -168,7 +164,7 @@ public class OrderServiceImpl extends AbsOrderService {
             excCode = "1";
             excDes = e.getMessage();
         } catch (Exception e) {
-            loggerError.error(skuNo+":"+e.getMessage());
+            loggerError.error(skuNo + ":" + e.getMessage());
             excCode = "1";
             excDes = e.getMessage();
         }
