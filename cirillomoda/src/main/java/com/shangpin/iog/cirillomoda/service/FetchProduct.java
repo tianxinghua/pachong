@@ -35,15 +35,15 @@ public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
 
-//    private static ResourceBundle bdl=null;
-    private static String supplierId = "201510031117"; //测试
+    private static ResourceBundle bdl=null;
+    private static String supplierId; //测试
 //    private static String supplierId = ""; //正式
 
-//    static {
-//        if(null==bdl)
-//            bdl= ResourceBundle.getBundle("conf");
-//        supplierId = bdl.getString("supplierId");
-//    }
+    static {
+        if(null==bdl)
+            bdl= ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
 
     public void fetchProductAndSave(final String url) {
 
@@ -111,7 +111,7 @@ public class FetchProduct {
 
                     } else if ("child".equals(type)) { //SKU
                         System.out.println("count : " + ++count);
-                        System.out.println("------------------");
+//                        System.out.println("------------------");
 
                         String size = record.get("attribute_size");
                         String stock = record.get("attribute_size:quantity");
@@ -150,17 +150,17 @@ public class FetchProduct {
                             pics.add(photo8);
                         }
 
-                        System.out.println("spuId : " + spuId);
-                        System.out.println("title : " + title);
-                        System.out.println("brand : " + brand);
-                        System.out.println("price : " + price);
-                        System.out.println("category : " + category);
-                        System.out.println("description : " + description);
-                        System.out.println("status : " + status);
-                        System.out.println("size : " + size);
-                        System.out.println("stock : " + stock);
-                        System.out.println("skuId : " + skuId);
-                        System.out.println("pics : " + pics);
+//                        System.out.println("spuId : " + spuId);
+//                        System.out.println("title : " + title);
+//                        System.out.println("brand : " + brand);
+//                        System.out.println("price : " + price);
+//                        System.out.println("category : " + category);
+//                        System.out.println("description : " + description);
+//                        System.out.println("status : " + status);
+//                        System.out.println("size : " + size);
+//                        System.out.println("stock : " + stock);
+//                        System.out.println("skuId : " + skuId);
+//                        System.out.println("pics : " + pics);
 
                         SkuDTO sku = new SkuDTO();
                         //SKU 必填

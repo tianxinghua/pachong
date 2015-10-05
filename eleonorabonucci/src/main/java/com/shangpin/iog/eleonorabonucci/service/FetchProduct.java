@@ -23,6 +23,7 @@ import javax.xml.bind.JAXBException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by loyalty on 15/6/8.
@@ -34,10 +35,17 @@ public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
 
+    private static ResourceBundle bdl=null;
+    private static String supplierId;
+
+    static {
+        if(null==bdl)
+            bdl= ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
+
     public void fetchProductAndSave(String url) {
 
-        //测试
-        String supplierId = "201510011047";
         try {
             Map<String, String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
@@ -50,6 +58,13 @@ public class FetchProduct {
 //            mongMap.put("supplierName","acanfora");
 //            mongMap.put("result",result) ;
 //            logMongo.info(mongMap);
+
+            System.out.println("result : " + result);
+
+            //Remove BOM from String
+            if (result != null && !"".equals(result)) {
+                result = result.replace("\uFEFF", "");
+            }
 
             Products products = ObjectXMLUtil.xml2Obj(Products.class, result);
             List<Product> productList = products.getProducts();

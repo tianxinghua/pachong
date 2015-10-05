@@ -32,12 +32,31 @@ public class SkuDTO implements Serializable {
     private String memo;  //备注
     private Date createTime = new Date();
     private Date lastTime= new Date();//修改时间
+     
     private String newMarketPrice; //新的市场价
     private String newSalePrice;
     private String newSupplierPrice;
     private Date updateTime;
+    private String eventStartDate;
+    private String eventEndDate;
 
-    public String getId() {
+	public String getEventStartDate() {
+		return eventStartDate;
+	}
+
+	public void setEventStartDate(String eventStartDate) {
+		this.eventStartDate = eventStartDate;
+	}
+
+	public String getEventEndDate() {
+		return eventEndDate;
+	}
+
+	public void setEventEndDate(String eventEndDate) {
+		this.eventEndDate = eventEndDate;
+	}
+
+	public String getId() {
         return id;
     }
 
