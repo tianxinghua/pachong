@@ -28,19 +28,6 @@ include 'openapi-ice'
 
 include 'galiano'
 
-include 'dante5'
-include 'dante5-stock'
-include 'giglio'
-include 'giglio-stock'
-include 'dellogliostore'
-include 'dellogliostore-stock'
-include 'eleonorabonucci'
-include 'eleonorabonucci-stock'
-include 'cirillomoda'
-include 'cirillomoda-stock'
-
-include 'bagheera'
-include 'bagheera-stock'
 
 include 'ebay'
 
@@ -64,7 +51,7 @@ include 'sanremo-stock'
 include 'iog-web-tmp'
 include 'iog-sop'
 include 'iog-facade-dubbo'
-
+include 'gilt-order'
 include 'bagheera'
 include 'gilt-stock'
 include 'gilt-purchase'
@@ -77,15 +64,18 @@ include 'onsite'
 include 'tony-stock'
 include 'tony-purchase'
 include 'atelier'
-
-include 'reebonzWiki'
-include 'reebonzWiki-stock'
-include 'reebonzWiki-order'
-
 include 'alducadaosta'
-include 'fashionesta'
-include 'fashionesta-stock'
+
+include 'bagheera-stock'
+
 include 'itemInfo'
-include 'itemInfo-stock'
-//include 'itemInfo-purchase'
+include 'atelier-stock'
+
+include 'giglio'
+
+include 'atelier-purchase'
+include 'prodottimonti'
+include 'prodottimonti-stock'
+include 'levelgroup'
+include 'levelgroup-stock'
 
