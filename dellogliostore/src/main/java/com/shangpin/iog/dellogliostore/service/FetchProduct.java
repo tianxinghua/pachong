@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -29,10 +30,17 @@ public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
 
+    private static ResourceBundle bdl=null;
+    private static String supplierId;
+
+    static {
+        if(null==bdl)
+            bdl= ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
+
     public void fetchProductAndSave(String url) {
 
-//        String supplierId = "2015092501047"; //测试
-        String supplierId = "2015092401530"; //正式
         try {
             Map<String, String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
@@ -40,6 +48,13 @@ public class FetchProduct {
             timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get(url, timeConfig, null);
             HttpUtil45.closePool();
+
+            System.out.println("result : " + result);
+
+            //Remove BOM from String
+            if (result != null && !"".equals(result)) {
+                result = result.replace("\uFEFF", "");
+            }
 
             Feed feed = ObjectXMLUtil.xml2Obj(Feed.class, result);
             System.out.println(feed);

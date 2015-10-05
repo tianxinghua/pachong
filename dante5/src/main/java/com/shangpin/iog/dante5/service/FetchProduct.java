@@ -51,6 +51,8 @@ public class FetchProduct {
             String result = HttpUtil45.get(url, timeConfig, null);
             HttpUtil45.closePool();
 
+            System.out.println("result : " + result);
+
             if (result == null || "".equals(result)) {
                 return;
             }

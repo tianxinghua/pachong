@@ -35,15 +35,15 @@ public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
 
-//    private static ResourceBundle bdl=null;
-    private static String supplierId = "201510031117"; //测试
+    private static ResourceBundle bdl=null;
+    private static String supplierId; //测试
 //    private static String supplierId = ""; //正式
 
-//    static {
-//        if(null==bdl)
-//            bdl= ResourceBundle.getBundle("conf");
-//        supplierId = bdl.getString("supplierId");
-//    }
+    static {
+        if(null==bdl)
+            bdl= ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
 
     public void fetchProductAndSave(final String url) {
 
