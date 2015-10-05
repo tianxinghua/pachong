@@ -56,7 +56,7 @@ public class FetchProduct {
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
             List<String> list = HttpUtil45.getContentListByInputSteam(url,timeConfig,null,null,null);
-
+            HttpUtil45.closePool();
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","levelgroup");
 
@@ -83,6 +83,8 @@ public class FetchProduct {
                     SkuDTO sku  = new SkuDTO();
                     try {
                         sku.setId(UUIDGenerator.getUUID());
+
+
                         sku.setSupplierId(supplierId);
                         sku.setSpuId(product.getProductId());
                         sku.setSkuId(item.getItem_id());
@@ -169,28 +171,24 @@ public class FetchProduct {
         for (String row : rowlist){
             String[] rows = row.split("[\n]");
             for (String obj : rows){
-                if (obj.indexOf("id") != 0){
-                    String[] p = obj.split("[\t]");
-
-                    String pic = "";
-                    if (p.length > 8){
-                        pic = p[8];
+                String[] p = obj.split("[\t]");
+                String pic = "";
+                if (p.length > 8){
+                    pic = p[8];
+                }
+                if (p.length > 21) {
+                    for (int i=21;i<p.length;i++){
+                        pic = pic + p[i];
                     }
-                    if (p.length > 21) {
-                        for (int i=21;i<p.length;i++){
-                            pic = pic + p[i];
-                        }
-                    }
-
-                    if (p.length > 11){
-                        Map<String,String> map = new LinkedHashMap<>();
-                        map.put("id", p[0]);
-                        map.put("price", p[11]);
-                        map.put("saleprice", p[12]);
-                        map.put("c_title",  p[16]);
-                        map.put("picture", pic);
-                        list.add(map);
-                    }
+                }
+                if (p[0].length() != 3 && p.length > 11){
+                    Map<String,String> map = new LinkedHashMap<>();
+                    map.put("id", p[0]);
+                    map.put("price", p[11]);
+                    map.put("saleprice", p[12]);
+                    map.put("c_title", p[16]);
+                    map.put("picture", pic);
+                    list.add(map);
                 }
             }
         }
@@ -203,24 +201,26 @@ public class FetchProduct {
         Products products = new Products();
         List<Product> plist = new ArrayList<Product>();
 
-        System.out.println("list="+list.size());
-        for (Map<String, String> map : list) {
 
+        for (Map<String, String> map : list) {
             String url = "http://www.ln-cc.com/dw/shop/v15_8/products/"+map.get("id")+"/availability?inventory_ids=09&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
             OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
             String jsonstr = HttpUtils.get(url,3);
+                    //(url,timeConfig,null,null,null);
             if( jsonstr != null && jsonstr.length() >0){
                 JSONObject json = JSONObject.fromObject(jsonstr);
-                if (json.isNullObject() && !json.containsKey("fault")) {
+                if (!json.isNullObject() && !json.containsKey("fault")) {
                     JSONObject inveObj = json.getJSONObject("inventory");
                     int instock = 0;
                     boolean orderable = false;
-                    if (inveObj.isNullObject()){
+                    if (!inveObj.isNullObject()){
                         instock = inveObj.getInt(
                                 "stock_level");
                         orderable = inveObj.getBoolean("orderable");
                     }
+
                     if (instock > 0 && orderable) {
+                        System.out.println(instock);
                         Item item = new Item();
                         Product product = new Product();
                         List<Item> itemslist = new ArrayList<Item>();
