@@ -1,4 +1,4 @@
-package com.shangpin.iog.levelgroup.stock.dto;
+package com.shangpin.iog.gherardi.stock.dto;
 
 /**
  * Created by loyalty on 15/6/5.

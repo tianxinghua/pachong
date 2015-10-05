@@ -1,13 +1,11 @@
-package com.shangpin.iog.levelgroup;
+package com.shangpin.iog.gherardi;
 
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.levelgroup.service.FetchProduct;
+import com.shangpin.iog.prodottimonti.service.FetchProduct;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 /**
  * Created by sunny on 2015/8/17.
  */
@@ -24,14 +22,14 @@ public class Startup {
     public static void main(String[] args)
     {
         //加载spring
-        log.info("----拉取levelgroup数据开始----");
+        log.info("----拉取gherardi数据开始----");
         loadSpringContext();
         log.info("----初始SPRING成功----");
         //拉取数据
-        FetchProduct fetchProduct =(FetchProduct)factory.getBean("levelgroup");
+        FetchProduct fetchProduct =(FetchProduct)factory.getBean("gherardi");
 //        fetchProduct.fetchProductAndSave("http://www.thelevelgroup-ftp.com/uploads/TLG_GooglePLA_lncc_GB.txt");
-        fetchProduct.fetchProductAndSave("http://222.186.51.135:8080/trident/public/TLG_GooglePLA_lncc_GB.txt");
-        log.info("----拉取levelgroup数据完成----");
+        fetchProduct.fetchProductAndSave("http://www.communicationislife.com/shanping/prodotti/");
+        log.info("----拉取prodottimonti数据完成----");
 
 
         System.out.println("-------fetch end---------");
