@@ -30,28 +30,26 @@ public class ReservationProStock {
 
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger loggerError = Logger.getLogger("error");
-	private static Logger logMongo = Logger.getLogger("mongodb");
 	private static ResourceBundle bdl = null;
-	private static String lockStockUrl = "http://ladon.sit.titan.reebonz-dev.com/api/eps_product_reservation";
-	private static String unlockStockUrl = "http://ladon.sit.titan.reebonz-dev.com/api/eps_product_reservation_confirmation";
-	private static String pushOrderUrl = "http://www.reebonz-dev.com/eps/api/order";
-	private static String access_token = null;
-	private static String refresh_token = null;
-	private static String client_id = "qo+cOYWsSfWi8WxFKo66bA==";
-	private static String client_secret = "pIJ+ch5ZFnVd1ckrLoNl6Fbf6FtqK1bDOciwq4UYOC8OhY9AnzpyqU8Q1tbu9VBcdTu+PRgR81cgLE1lGoglFQ==";
-	private static String username = "uat_client_3";
-	private static String password = "ZeNsTH3iAUoz5wjrtqGBIQ==";
+	private static String lockStockUrl = null;
+	private static String unlockStockUrl = null;
+	private static String pushOrderUrl = null;
+	private static String client_id = null;
+	private static String client_secret = null;
+	private static String username = null;
+	private static String password = null;
 	private static OAuth oauth = null;
-	 static {
-	 if(null==bdl)
-		 bdl=ResourceBundle.getBundle("conf");
+	static {
+		 if(null==bdl){
+			 bdl=ResourceBundle.getBundle("conf");
+		 }
 		 lockStockUrl = bdl.getString("eventUrl");
 		 unlockStockUrl = bdl.getString("productUrl");
-		 access_token = bdl.getString("access_token");
-		 refresh_token = bdl.getString("refresh_token");
+		 pushOrderUrl = bdl.getString("pushOrderUrl");
 		 client_id = bdl.getString("client_id");
 		 client_secret = bdl.getString("client_secret");
-		 pushOrderUrl = bdl.getString("pushOrderUrl");
+		 username = bdl.getString("username");
+		 password = bdl.getString("password");
 	 }
 
 	/*
@@ -60,6 +58,7 @@ public class ReservationProStock {
 	public static void lockStock(String order_id, String order_site, String data)
 			throws ServiceException {
 
+		logger.info("商家授权");
 		oauth = authApi();
 		// ---------------------准备的临时数据start-------------------------------
 		order_id = "987654321";
@@ -85,10 +84,12 @@ public class ReservationProStock {
 		String reservationId = null;
 		if ("1".equals(obj.getReturn_code())) {
 			reservationId = obj.getReservation_id();
+			logger.info("锁库存success");
 			System.out.println("锁库存success:" + reservationId);
 			//推送订单
 			pushOrder(reservationId);
 		} else {
+			logger.info("锁库存失败"+obj.getError_msg());
 			System.out.println("锁库存fail:" + obj.getError_msg());
 		}
 
@@ -224,8 +225,9 @@ public class ReservationProStock {
 				oauth.setAccess_token(obj.getAccess_token());
 				oauth.setRefresh_token(obj.getRefresh_token());
 				System.out.println("刷新授权success");
-			} else if ("0".equals(obj.getReturn_code())) {
-				System.out.println("刷新授权fail:" + obj.getError_msg());
+			} else if ("INV_REFRESH_TOKEN".equals(obj.getError_code())) {
+				System.out.println("重新授权");
+				authApi();
 			}
 		}
 	}
