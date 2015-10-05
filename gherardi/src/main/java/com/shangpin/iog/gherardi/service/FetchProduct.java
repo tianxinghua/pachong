@@ -1,4 +1,4 @@
-package com.shangpin.iog.prodottimonti.service;
+package com.shangpin.iog.gherardi.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * Created by loyalty on 15/9/22.
  */
-@Component("erminiomonti")
+@Component("gherardi")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
     private static Logger logMongo = Logger.getLogger("mongodb");
@@ -33,7 +33,7 @@ public class FetchProduct {
 
     public void fetchProductAndSave(String url){
 
-        String supplierId = "2015092910000";
+        String supplierId = "201509291000";
         try {
 
             Map<String,String> mongMap = new HashMap<>();
@@ -43,7 +43,7 @@ public class FetchProduct {
             String jsonstr = HttpUtil45.get(url,timeConfig,null);
 
             mongMap.put("supplierId", supplierId);
-            mongMap.put("supplierName","erminiomonti");
+            mongMap.put("supplierName","gherardi");
             if (jsonstr == null) {
                 logMongo.info("获取供应商商品列表失败");
                 return;
@@ -162,7 +162,7 @@ public class FetchProduct {
                     item.setColor(itemsTmp.getColor());
                     item.setDescription(itemsTmp.getDescription());
                     item.setItem_size(itemsTmp.getProduct_size());
-                    item.setPicture("http://www.communicationislife.com/shanping/image/"+itemsTmp.getImagelink());
+                    item.setPicture(itemsTmp.getImagelink());
                     item.setStock(itemsTmp.getStock());
                     item.setSaleCurrency(itemsTmp.getSaleCurrency());
                     itemsList.add(item);
@@ -176,7 +176,7 @@ public class FetchProduct {
                     item.setColor(itemsTmp.getColor());
                     item.setDescription(itemsTmp.getDescription());
                     item.setItem_size(itemsTmp.getProduct_size());
-                    item.setPicture("http://www.communicationislife.com/shanping/image/"+itemsTmp.getImagelink());
+                    item.setPicture(itemsTmp.getImagelink());
                     item.setStock(itemsTmp.getStock());
                     item.setSell_price(itemsTmp.getSell_price());
                     item.setSaleCurrency(itemsTmp.getSaleCurrency());

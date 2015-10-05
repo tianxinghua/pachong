@@ -1,4 +1,4 @@
-package com.shangpin.iog.prodottimonti.stock;
+package com.shangpin.gherardi.stock;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -9,7 +9,6 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -20,7 +19,7 @@ import java.util.*;
 /**
  * Created by huxia on 2015/8/12.
  */
-public class ProdottimontiStockImp extends AbsUpdateProductStock {
+class ProdottimontiStockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
@@ -34,8 +33,8 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
         supplierId = "2015092910000";
     }
 
-
-    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException {
+    @Override
+    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         Map<String, String> skustock = new HashMap<>(skuNo.size());
         Map<String,String> stockMap = new HashMap<>();
 
@@ -43,7 +42,7 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
         try{
 
             mongMap.put("supplierId",supplierId);
-            mongMap.put("supplierName","erminiomonti");
+            mongMap.put("supplierName","gherardi-stock");
             logMongo.info("获取供应商商品列表失败");
 
             for (String skuno : skuNo) {
@@ -59,7 +58,6 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
         } finally {
             HttpUtil45.closePool();
         }
-        logger.info("erminiomonti赋值库存数据成功");
         return skustock;
     }
 
@@ -86,10 +84,13 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
         AbsUpdateProductStock levelGroupStockImp = new ProdottimontiStockImp();
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("erminiomonti更新数据库开始");
+        logger.info("gherardi-stock更新数据库开始");
         //2015081401431
         levelGroupStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
-        logger.info("erminiomonti更新数据库结束");
+        logger.info("gherardi-stock更新数据库结束");
         System.exit(0);
     }
+
+
+
 }

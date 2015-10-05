@@ -1,4 +1,4 @@
-package com.shangpin.iog.prodottimonti.stock.dto;
+package com.shangpin.iog.gherardi.dto;
 
 /**
  * Created by loyalty on 15/6/5.
