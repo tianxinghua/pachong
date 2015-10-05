@@ -44,7 +44,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
             timeConfig.confRequestOutTime(600000);
             timeConfig.confSocketOutTime(600000);
-            String result = HttpUtil45.get("http://www.cirillomoda.com/feeds/shangpin.csv", timeConfig, null);
+            String result = HttpUtil45.get("http://www.cirillomoda.com/maxpho/cirillo_maxpho.csv", timeConfig, null);
             HttpUtil45.closePool();
 
 //            mongMap.put("supplierId", supplierId);
