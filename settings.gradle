@@ -88,3 +88,6 @@ include 'prodottimonti-stock'
 include 'levelgroup'
 include 'levelgroup-stock'
 
+include 'fashionesta'
+include 'fashionesta-stock'
+
