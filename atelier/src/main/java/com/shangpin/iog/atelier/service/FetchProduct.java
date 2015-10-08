@@ -48,15 +48,15 @@ public class FetchProduct {
         String pictrues = atelier.getAllImageStr();
        // System.out.println(pictrues);
 
-        for (String item : items) {
+/*        for (String item : items) {
             String[] fields = item.split(";");
             System.out.println();
             for (int i = 0; i < fields.length; i++) {
                 System.out.print("; fields[" + i + "]=" + fields[i]);
             }
-        }
+        }*/
 
-        items = new String[0];
+        //items = new String[0];
         for (String item : items) {
             String[] fields = item.split(";");
             String skuId = fields[0];
@@ -83,7 +83,7 @@ public class FetchProduct {
                 sku.setStock(stock);
                 sku.setBarcode(barCode);
                 sku.setProductCode(fields[0]);
-                sku.setProductName(fields[14]);
+               // sku.setProductName(fields[14]);
                 productFetchService.saveSKU(sku);
 
                 String skuPic = null;
@@ -126,7 +126,7 @@ public class FetchProduct {
                 spu.setSupplierId(supplierId);
                 spu.setSpuId(skuId);
                 spu.setBrandName(fields[2]);
-                spu.setCategoryName(fields[47]);
+                spu.setCategoryName(fields[8]);
                 //spu.setSpuName(fields[0]);
                 spu.setSeasonId(fields[6]);
                 spu.setMaterial(fields[11]);
