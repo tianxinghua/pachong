@@ -69,6 +69,8 @@ include 'alducadaosta'
 include 'bagheera-stock'
 
 include 'itemInfo'
+include 'itemInfo-stock'
+include 'itemInfo-purchase'
 include 'atelier-stock'
 
 include 'dante5'

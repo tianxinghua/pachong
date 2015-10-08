@@ -88,8 +88,6 @@ public class OrderServiceImpl extends AbsOrderService {
     @Override
     public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
         //获取条形码
-        WS_Sito_P15 atelier = new WS_Sito_P15();
-        String barCodeAll = atelier.getAllAvailabilityStr();
         String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
                 barCodeAll.indexOf(deleteOrder.getSupplierOrderNo()),barCodeAll.indexOf(deleteOrder.getSupplierOrderNo())+50));
         this.soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
@@ -117,18 +115,28 @@ public class OrderServiceImpl extends AbsOrderService {
      */
     @Override
     public void handleSupplierOrder(OrderDTO orderDTO) {
-orderDTO.setStatus(OrderStatus.PLACED);
+        this.soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+                "  <soap:Body>\n" +
+                "    <SetStatusOrder xmlns=\"http://tempuri.org/\">\n" +
+                "      <CODICE>"+orderDTO.getSupplierOrderNo()+"</CODICE>\n" +
+                "      <ID_CLIENTE>12345</ID_CLIENTE>\n" +
+                "      <ID_STATUS>1</ID_STATUS>\n" +
+                "    </SetStatusOrder>\n" +
+                "  </soap:Body>\n" +
+                "</soap:Envelope>";
+        System.out.println("soapRequestData=="+soapRequestData);
+        this.skuNo = orderDTO.getSupplierOrderNo();
+        this.opName = "SetStatusOrder";
+        sendOrder();
+        orderDTO.setExcState(this.excCode);
+        orderDTO.setExcDesc(this.excDes);
     }
 
     /**
      * 在线推送订单/取消订单
      */
     private void sendOrder(){
-        //获取条形码
-        WS_Sito_P15 atelier = new WS_Sito_P15();
-        String barCodeAll = atelier.getAllAvailabilityStr();
-        String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
-                barCodeAll.indexOf(skuNo),barCodeAll.indexOf(skuNo)+50));
         System.out.println("soapRequestData=="+soapRequestData);
         HttpClient httpClient = new HttpClient();
         String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op="+opName;
@@ -140,8 +148,10 @@ orderDTO.setStatus(OrderStatus.PLACED);
         postMethod.setRequestEntity(requestEntity);
 
         int returnCode=0;
+        String rtnData = "";
         try {
             returnCode = httpClient.executeMethod(postMethod);
+            rtnData = postMethod.getResponseBodyAsString();
             System.out.println("returnCode=="+returnCode);
             logger.info("returnCode=="+returnCode+","+skuNo);
 /*            BufferedOutputStream out=new BufferedOutputStream(new FileOutputStream(new File(orderFile)));
@@ -167,6 +177,14 @@ orderDTO.setStatus(OrderStatus.PLACED);
             loggerError.error(skuNo + ":" + e.getMessage());
             excCode = "1";
             excDes = e.getMessage();
+        } finally {
+            if (!"200".equals(returnCode)){
+                excCode = "1";
+                excDes = "returnCode is" + returnCode;
+            }else if (!rtnData.contains("OK")){
+                excCode = "1";
+                excDes = opName +" is ER!";
+            }
         }
     }
     /**
