@@ -104,7 +104,7 @@ public class FetchProduct {
                 sku.setSupplierId(Constant.SUPPLIER_ID);
                 sku.setSpuId(prodotti.getCODICE_MODELLO());
                 sku.setSkuId(prodotti.getID_ARTICOLO());
-                sku.setProductSize(prodotti.getID_ARTICOLO());
+                sku.setProductSize(prodotti.getSIZE_AND_FIT());
                 sku.setMarketPrice(prodotti.getPREZZO_VENDITA());
                 sku.setSalePrice(prodotti.getPREZZO_VENDITA());
                 sku.setSupplierPrice(prodotti.getPREZZO_VENDITA());
