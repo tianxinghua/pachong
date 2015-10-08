@@ -72,7 +72,10 @@ public abstract class AbsOrderService {
      */
     abstract  public void handleSupplierOrder(OrderDTO orderDTO) ;
 
-
+    /**
+     * 订单从下单到支付后的处理
+     * @param orderDTO  订单信息
+     */
     abstract public void handleConfirmOrder(OrderDTO orderDTO);
 
     /**
@@ -181,6 +184,28 @@ public abstract class AbsOrderService {
     }
 
     /**
+     * 检查订单是否支付
+     * @param supplierId
+     */
+    public void checkPayed(String supplierId){
+        //获取订单数组
+        List<Integer> status = new ArrayList<>();
+        status.add(1);
+
+        Map<String,List<PurchaseOrderDetail>> orderMap = null;
+        try {
+            orderMap = this.getPurchaseOrder(supplierId, startDate, endDate, status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //获取采购单  获取订单信息
+
+
+
+    }
+
+
+    /**
      * 订单确认
      * @param supplierId
      */
@@ -188,18 +213,15 @@ public abstract class AbsOrderService {
 
         List<com.shangpin.iog.dto.OrderDTO>  orderDTOList= null;
         try {
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId,OrderStatus.PLACED);
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId,OrderStatus.PAYED);
         } catch (ServiceException e) {
             e.printStackTrace();
         }
-
-
-
         if(null!=orderDTOList){
             for(OrderDTO orderDTO :orderDTOList){
-
-
-
+                //订单支付后的处理
+                handleConfirmOrder(orderDTO);
+                updateOrderMsg(orderDTO);
             }
 
         }

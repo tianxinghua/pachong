@@ -45,9 +45,9 @@ public class FetchProduct {
     public void fetchProductAndSave(String url) {
         try {
             Map<String, String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-            timeConfig.confRequestOutTime(600000);
-            timeConfig.confSocketOutTime(600000);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*60, 1000*60*20,1000*60*20);
+//            timeConfig.confRequestOutTime(600000);
+//            timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get(url, timeConfig, null);
             HttpUtil45.closePool();
 
@@ -95,7 +95,12 @@ public class FetchProduct {
                 sku.setSupplierId(supplierId);
                 sku.setSkuId(skuId);
                 sku.setSpuId(spuId);
-                sku.setMarketPrice(item.getPrice());
+                String price = item.getPrice();
+                if (price != null && !"".equals(price)) {
+                    price = price.replace("USD", "").trim();
+                }
+                sku.setSaleCurrency("USD");
+                sku.setMarketPrice(price);
                 sku.setColor(item.getColor());
                 sku.setProductSize(item.getSize());
                 sku.setStock(item.getAvailability());
@@ -104,6 +109,8 @@ public class FetchProduct {
                 sku.setProductName(item.getTitle());
                 sku.setProductDescription(item.getDescription());
                 sku.setProductCode(item.getMpn());
+
+                System.out.println("sku : " + sku);
 
                 try {
                     productFetchService.saveSKU(sku);
