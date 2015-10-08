@@ -29,11 +29,11 @@ public class StockImp extends AbsUpdateProductStock {
     private static ResourceBundle bdl=null;
     private static String supplierId;
 
-//    static {
-//        if(null==bdl)
-//            bdl=ResourceBundle.getBundle("conf");
-//        supplierId = bdl.getString("supplierId");
-//    }
+    static {
+        if(null==bdl)
+            bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
     public static void main(String[] args) throws Exception {
     	System.out.println(getInventory("A62053E003193906|250|no-size"));;
     }
