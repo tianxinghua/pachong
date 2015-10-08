@@ -39,7 +39,7 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
         Iterator<String> iterator=skuNo.iterator();
         //为供应商循环赋值
         logger.info("为供应商产品库存循环赋值");
-        String stock = "";
+        String stock = null;
         while (iterator.hasNext()){
             itemId = iterator.next();
             stock = StringUtil.getSubBySub(localFile,itemId,itemId, Constant.ITEM_LENTH);
