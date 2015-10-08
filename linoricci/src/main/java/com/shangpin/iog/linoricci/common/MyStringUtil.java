@@ -1,9 +1,15 @@
 package com.shangpin.iog.linoricci.common;
 
+import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
+import com.shangpin.iog.linoricci.dto.Disponibilita;
+import com.shangpin.iog.linoricci.dto.Disponibilitas;
+import com.shangpin.iog.linoricci.dto.Riferimentis;
 import org.apache.log4j.Logger;
 
+import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -71,20 +77,35 @@ public class MyStringUtil {
         String[] images = itemImages.split(skuId+";");
         return images;
     }
+    /**
+     *get local stock file string
+     * */
+    public static String getStockByFile(String localStockFile){
+        Disponibilitas disponibilits = null;
+        try {
+            disponibilits = ObjectXMLUtil.xml2Obj(Disponibilitas.class, new File(Constant.LOCAL_STOCK_FILE));
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        StringBuffer sb = new StringBuffer();
+        for (Disponibilita disponibilita: disponibilits.getDisponibilitaList()){
+            sb.append(disponibilita.getID_ARTICOLO()).append(disponibilita.getBARCODEEAN()).append(":").
+                    append(disponibilita.getESI()).append(";");
+        }
+        return sb.toString();
+    }
+    /**
+     *get   stock by sku id
+     * */
+    public static String getStockBySkuId(String skuId,String stockFileStr){
+        if (stockFileStr.contains(skuId)){
+            return stockFileStr.substring(stockFileStr.indexOf(skuId)).split(";")[0].split(":")[1];
 
-    /**
-     * get stock
-     * ex:457904;2;1;0;;2113409332486;;;;;;;;
-     * */
-    public static String getStockBySkuId(String item){
-        return item.split(";")[2];
+        }
+        return "0";
     }
-    /**
-     * get stock
-     * ex:457904;2;1;0;;2113409332486;;;;;;;;
-     * */
-    public static String getBarcodeBySkuId(String item){
-        return item.split(";")[5];
-    }
+
 
 }
