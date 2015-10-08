@@ -27,7 +27,7 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //拉取FTP文件
         logger.info("拉取TESSABIT数据开始");
-        //new MyFtpClient().downLoad();
+        new MyFtpClient().downLoad();
         logger.info("拉取TESSABIT数据结束");
         //FTP文件转换成字符串
         logger.info("解析TESSABIT数据开始");
