@@ -30,125 +30,112 @@ public class ReservationProStock {
 
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger loggerError = Logger.getLogger("error");
-	private static Logger logMongo = Logger.getLogger("mongodb");
 	private static ResourceBundle bdl = null;
-	private static String lockStockUrl = "http://ladon.sit.titan.reebonz-dev.com/api/eps_product_reservation";
-	private static String unlockStockUrl = "http://ladon.sit.titan.reebonz-dev.com/api/eps_product_reservation_confirmation";
-	private static String pushOrderUrl = "http://www.reebonz-dev.com/eps/api/order";
-	private static String access_token = null;
-	private static String refresh_token = null;
-	private static String client_id = "qo+cOYWsSfWi8WxFKo66bA==";
-	private static String client_secret = "pIJ+ch5ZFnVd1ckrLoNl6Fbf6FtqK1bDOciwq4UYOC8OhY9AnzpyqU8Q1tbu9VBcdTu+PRgR81cgLE1lGoglFQ==";
-	private static String username = "uat_client_3";
-	private static String password = "ZeNsTH3iAUoz5wjrtqGBIQ==";
+	private static String lockStockUrl = null;
+	private static String unlockStockUrl = null;
+	private static String pushOrderUrl = null;
+	private static String client_id = null;
+	private static String client_secret = null;
+	private static String username = null;
+	private static String password = null;
 	private static OAuth oauth = null;
-	 static {
-	 if(null==bdl)
-		 bdl=ResourceBundle.getBundle("conf");
+	static {
+		 if(null==bdl){
+			 bdl=ResourceBundle.getBundle("conf");
+		 }
 		 lockStockUrl = bdl.getString("eventUrl");
 		 unlockStockUrl = bdl.getString("productUrl");
-		 access_token = bdl.getString("access_token");
-		 refresh_token = bdl.getString("refresh_token");
+		 pushOrderUrl = bdl.getString("pushOrderUrl");
 		 client_id = bdl.getString("client_id");
 		 client_secret = bdl.getString("client_secret");
-		 pushOrderUrl = bdl.getString("pushOrderUrl");
+		 username = bdl.getString("username");
+		 password = bdl.getString("password");
+
+			if(oauth==null){
+				logger.info("商家授权");
+				oauth = authApi();
+			}	
+			
 	 }
 
 	/*
 	 * 锁库存
 	 */
-	public static void lockStock(String order_id, String order_site, String data)
-			throws ServiceException {
-
-		oauth = authApi();
-		// ---------------------准备的临时数据start-------------------------------
-		order_id = "987654321";
-		order_site = "shangpin";
-
-		List<RequestObject> list = new ArrayList<RequestObject>();
-		RequestObject obj1 = new RequestObject();
-		obj1.setEvent_id("250");
-		obj1.setSku("A62002T620593905");
-		obj1.setOption_code("");
-		obj1.setQty("1");
-		list.add(obj1);
-		JSONArray array = JSONArray.fromObject(list);
-		// ---------------------准备的临时数据end-------------------------------
-
+	public  Map<String,String> lockStock(String order_id, String order_site, String data) {
+		
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("order_id", order_id);
 		map.put("order_site", order_site);
-		map.put("data", array.toString());
+		map.put("data", data);
 		map.put("api_url", lockStockUrl);
 		// 请求url
 		ResponseObject obj = requestSource(map);
-		String reservationId = null;
+		Map<String,String> returnMap = new HashMap<String,String>();
 		if ("1".equals(obj.getReturn_code())) {
-			reservationId = obj.getReservation_id();
-			System.out.println("锁库存success:" + reservationId);
-			//推送订单
-			pushOrder(reservationId);
+			returnMap.put("0",obj.getReservation_id());
+			logger.info("锁库存success");
 		} else {
-			System.out.println("锁库存fail:" + obj.getError_msg());
+			logger.info("锁库存失败"+obj.getError_msg());
+			returnMap.put("1",obj.getError_msg());
 		}
-
+		return returnMap;
 	}
 
 	/*
 	 * 推送订单
 	 */
-	public static void pushOrder(String reservationId) {
-
-		/*---------------------准备的临时数据end-------------------------------*/
-//		reservationId = "2564";
-		List<RequestObject> list = new ArrayList<RequestObject>();
-		RequestObject obj = new RequestObject();
-		obj.setEvent_id("1000");
-		obj.setSku("XXM0GW05470RE0C407");
-		obj.setOption_code("SH2090");
-		obj.setQty("1");
-		list.add(obj);
-		JSONArray array = JSONArray.fromObject(list);
-		/*---------------------准备的临时数据end-------------------------------*/
+	public  Map<String,String> pushOrder(String reservationId,String order_id,String purchaseNo,String data) {
+           
+//		/*---------------------准备的临时数据end-------------------------------*/
+////		reservationId = "2564";
+//		List<RequestObject> list = new ArrayList<RequestObject>();
+//		RequestObject obj = new RequestObject();
+//		obj.setEvent_id("1000");
+//		obj.setSku("XXM0GW05470RE0C407");
+//		obj.setOption_code("SH2090");
+//		obj.setQty("1");
+//		list.add(obj);
+//		JSONArray array = JSONArray.fromObject(list);
+//		/*---------------------准备的临时数据end-------------------------------*/
 
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("email", "reebonz@shangpin.com");
+		map.put("email", "reebonz@shangpin.com"); 
 		map.put("order_site", "shangpin");
-		map.put("eps_order_id", "SHANGPIN:123456");
-		map.put("delivery_first_name", "1");
-		map.put("delivery_last_name", "2");
-		map.put("delivery_street1", "3");
-		map.put("delivery_street2", "4");
-		map.put("delivery_country_code", "5");
-		map.put("delivery_city", "6");
-		map.put("delivery_postal_code", "7");
-		map.put("delivery_phone", "8");
-		map.put("billing_first_name", "9");
-		map.put("billing_last_name", "10");
-		map.put("billing_street1", "11");
-		map.put("billing_street2", "12");
-		map.put("billing_country_code", "13");
-		map.put("billing_city", "14");
-		map.put("billing_postal_code", "15");
-		map.put("billing_phone", "16");
-		map.put("payment_method", "17");
+		map.put("eps_order_id", "SHANGPIN_OrderId:"+order_id+";SHANGPIN_PurchaseNo:"+purchaseNo);
+		map.put("delivery_first_name", "shangpin");
+		map.put("delivery_last_name", "shangpin");
+		map.put("delivery_street1", "shangpin");
+		map.put("delivery_street2", "shangpin");
+		map.put("delivery_country_code", "1");
+		map.put("delivery_city", "china");
+		map.put("delivery_postal_code", "100000");
+		map.put("delivery_phone", "1");
+		map.put("billing_first_name", "shangpin");
+		map.put("billing_last_name", "shangpin");
+		map.put("billing_street1", "shangpin");
+		map.put("billing_street2", "shangpin");
+		map.put("billing_country_code", "1");
+		map.put("billing_city", "china");
+		map.put("billing_postal_code", "100000");
+		map.put("billing_phone", "1");
+		map.put("payment_method", "xx");
 		map.put("reservation_id", reservationId);
-		map.put("bags", array.toString());
-
+		map.put("bags", data);
 		map.put("api_url", pushOrderUrl);
 		ResponseObject returnObj = requestSource(map);
-
+		map = null;
 		if (returnObj != null) {
 			String result = returnObj.getReturn_code();
 			if ("1".equals(result)) {
-				System.out
-						.println("推送订单success：" + returnObj.getOrder_id());
-				unlockStock("reservationId", "", "","");
+				map.put("0",returnObj.getOrder_id());
+				logger.info("推送订单success：" + returnObj.getOrder_id());
+//				unlockStock("reservationId", order_id, order_id,"");
 			} else if ("0".equals(result)) {
-				System.out.println("推送订单fail：" + returnObj.getError_msg());
+				map.put("1",returnObj.getError_msg());
+				logger.info("推送订单fail：" + returnObj.getError_msg());
 			}
 		}
-
+		return map;
 	}
 
 	/*
@@ -156,16 +143,18 @@ public class ReservationProStock {
 	 * id. (mandatory) 3. user_id - Order id. (optional) 4. confirmation_code -
 	 * "deducted"(确认)或 "voided"(放弃)
 	 */
-	public static void unlockStock(String reservation_id, String order_id,
+	public   Map<String,String> unlockStock(String reservation_id, String order_id,
 			String user_id, String confirmation_code){
 
 		/*---------------------准备的临时数据start-------------------------------*/
 		reservation_id = "2566";
 		order_id = "123456";
 		user_id = "123456";
-		confirmation_code = "deducted";// voided
+		confirmation_code = "voided";// voided
+		unlockStockUrl ="http://ladon.sit.titan.reebonz-dev.com/api/eps_product_reservation_confirmation";
+		MyJsonUtil.unlockStock(reservation_id, order_id, user_id, confirmation_code);
 		/*---------------------准备的临时数据end-------------------------------*/
-
+		
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("reservation_id", reservation_id);
 		map.put("order_id", order_id);
@@ -175,17 +164,20 @@ public class ReservationProStock {
 
 		// 请求url
 		ResponseObject obj = requestSource(map);
+		Map<String,String> returnMap = new HashMap<String,String>();
 		if ("1".equals(obj.getReturn_code())) {
 			System.out.println("解锁success");
 		} else {
+			returnMap.put("1",obj.getError_msg());
 			System.out.println("锁库存fail:" + obj.getError_msg());
 		}
+		return returnMap;
 	}
 
 	/*
 	 * 授权
 	 */
-	public static OAuth authApi() {
+	public  static OAuth authApi() {
 		
 		Map<String, String> map = new HashMap<String,String>();
 		map.put("client_id",client_id);
@@ -193,16 +185,15 @@ public class ReservationProStock {
 		map.put("username", username);
 		map.put("password", password);
 		String json = MyJsonUtil.getAccessTokenJson(map);
-		OAuth oauth = null;
 		OAuth obj = new Gson().fromJson(json, OAuth.class);
 		if (obj != null) {
 			if ("1".equals(obj.getReturn_code())) {
 				oauth = new OAuth();
 				oauth.setAccess_token(obj.getAccess_token());
 				oauth.setRefresh_token(obj.getRefresh_token());
-				System.out.println("授权success");
+				logger.info("授权success");
 			} else if ("0".equals(obj.getReturn_code())) {
-				System.out.println("授权fail:" + obj.getError_msg());
+				logger.info("授权fail:" + obj.getError_msg());
 			}
 		}
 		return oauth;
@@ -211,7 +202,7 @@ public class ReservationProStock {
 	/*
 	 * refresh授权
 	 */
-	public static void refreshToken() {
+	public  void refreshToken() {
 		Map<String, String> map = new HashMap<String,String>();
 	
 		map.put("client_id",client_id);
@@ -224,8 +215,10 @@ public class ReservationProStock {
 				oauth.setAccess_token(obj.getAccess_token());
 				oauth.setRefresh_token(obj.getRefresh_token());
 				System.out.println("刷新授权success");
-			} else if ("0".equals(obj.getReturn_code())) {
-				System.out.println("刷新授权fail:" + obj.getError_msg());
+			} else if ("INV_REFRESH_TOKEN".equals(obj.getError_code())) {
+				System.out.println("重新授权");
+				authApi();
+				refreshToken();
 			}
 		}
 	}
@@ -233,7 +226,7 @@ public class ReservationProStock {
 	/*
 	 * 请求url资源
 	 */
-	public static ResponseObject requestSource(Map<String, String> map) {
+	public  ResponseObject requestSource(Map<String, String> map) {
 
 		ResponseObject obj = null;
 		// Authentication API 授权
@@ -253,8 +246,10 @@ public class ReservationProStock {
 	}
 
 	public static void main(String[] args) throws Exception {
-//		 lockStock("","","");
-//		unlockStock("", "", "", "");
+
+		ReservationProStock p = new ReservationProStock();
+		p.unlockStock("", "", "", "");
+//		p.lockStock("","","");
 		// pushOrder(null);
 		// refreshToken();
 		// authApi();
