@@ -67,21 +67,23 @@ public class OrderServiceImpl extends AbsOrderService {
         UpdateOrderStatusDTO updateOrder = new UpdateOrderStatusDTO();
         updateOrder.setMerchantId(Constant.MERCHANT_ID);
         updateOrder.setToken(Constant.TOKEN);
-        updateOrder.setShopOrderId(deleteOrder.getSupplierOrderNo());
+/*        updateOrder.setShopOrderId(deleteOrder.getSupplierOrderNo());*/
         updateOrder.setStatus("CANCELED");
         updateOrder.setStatusDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
         Gson gson = new Gson();
-        String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);
-/*        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
+/*        String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);*/
+        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
                 "\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"," +
                 "\"shopOrderId\":\"aaa\"," +
                 "\"status\":\"CANCELED\"," +
-                "\"statusDate\":\"2015/01/31 09:01:00\"}";*/
+                "\"statusDate\":\"2015/01/31 09:01:00\"}";
         System.out.println("request json == "+json);
         String rtnData = null;
         try {
             rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/updateOrderStatus", null, null, json, "", "");
             System.out.println("rtnData=="+rtnData);
+            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+            System.out.println("------------"+returnDataDTO.getStatus());
             logger.info("Response ：" + rtnData + ", shopOrderId:"+updateOrder.getShopOrderId());
         } catch (ServiceException e) {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+updateOrder.getShopOrderId());
@@ -91,6 +93,38 @@ public class OrderServiceImpl extends AbsOrderService {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+updateOrder.getShopOrderId());
             deleteOrder.setExcState("1");
             deleteOrder.setExcDesc(e.getMessage());
+        } finally {
+            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+            if ("ko".equals(returnDataDTO.getStatus())){
+                deleteOrder.setExcState("1");
+                deleteOrder.setExcDesc(returnDataDTO.getMessages().toString());
+            }
+            System.out.println("------------"+returnDataDTO.getStatus());
+        }
+    }
+    public void test(ReturnOrderDTO deleteOrder) {
+        Gson gson = new Gson();
+/*        String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);*/
+        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
+                "\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"," +
+                "\"shopOrderId\":\"aaa\"," +
+                "\"status\":\"CANCELED\"," +
+                "\"statusDate\":\"2015/01/31 09:01:00\"}";
+        System.out.println("request json == "+json);
+        String rtnData = null;
+        try {
+            rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/updateOrderStatus", null, null, json, "", "");
+            System.out.println("rtnData=="+rtnData);
+         } catch (ServiceException e) {
+           deleteOrder.setExcState("1");
+            deleteOrder.setExcDesc(e.getMessage());
+        } catch (Exception e) {
+            deleteOrder.setExcState("1");
+            deleteOrder.setExcDesc(e.getMessage());
+        } finally {
+            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+            System.out.println("------------"+returnDataDTO.getStatus());
+            System.out.println("------------"+returnDataDTO.getMessages());
         }
     }
     /**
@@ -188,10 +222,13 @@ public class OrderServiceImpl extends AbsOrderService {
                 "\"province\":\"2\" ,\"state\":\"2\" }}}";*/
         System.out.println("request json == "+json);
         String rtnData = null;
+        int qty = Integer.parseInt(orderDTO.getDetail().split(":")[1]);
         try {
-            rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/createOrder", null, null, json, "", "");
-            System.out.println("rtnData=="+rtnData);
-            logger.info("Response ：" + rtnData + ", shopOrderId:"+order.getShopOrderId());
+            for(int i = 0; i < qty; i++){
+                rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/createOrder", null, null, json, "", "");
+                System.out.println("rtnData=="+rtnData);
+                logger.info("Response ：" + rtnData + ", shopOrderId:"+order.getShopOrderId());
+            }
         } catch (ServiceException e) {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
             orderDTO.setExcState("1");
@@ -200,12 +237,19 @@ public class OrderServiceImpl extends AbsOrderService {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
             orderDTO.setExcState("1");
             orderDTO.setExcDesc(e.getMessage());
+        } finally {
+            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+            if ("ko".equals(returnDataDTO.getStatus())){
+                orderDTO.setExcState("1");
+                orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
+            }
+            System.out.println("------------"+returnDataDTO.getStatus());
         }
     }
     public static void main(String[] args){
         OrderServiceImpl  orderService = new OrderServiceImpl();
 
-        //orderService.purchaseOrder();
+        orderService.test(new ReturnOrderDTO());
 
 //        Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
 //        List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
