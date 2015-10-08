@@ -1,4 +1,4 @@
-package com.shangpin.iog.prodottimonti.stock.dto;
+package com.shangpin.iog.gherardi.dto;
 import java.util.List;
 
 /**

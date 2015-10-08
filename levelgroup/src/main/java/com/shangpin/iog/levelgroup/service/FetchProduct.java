@@ -54,8 +54,9 @@ public class FetchProduct {
         try {
 
             Map<String,String> mongMap = new HashMap<>();
-            List<String> list = HttpUtils.getContentListByInputSteam(url,null,"UTF-8",0);
-
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
+            List<String> list = HttpUtil45.getContentListByInputSteam(url,timeConfig,null,null,null);
+            HttpUtil45.closePool();
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","levelgroup");
 
@@ -82,6 +83,8 @@ public class FetchProduct {
                     SkuDTO sku  = new SkuDTO();
                     try {
                         sku.setId(UUIDGenerator.getUUID());
+
+
                         sku.setSupplierId(supplierId);
                         sku.setSpuId(product.getProductId());
                         sku.setSkuId(item.getItem_id());
@@ -168,27 +171,24 @@ public class FetchProduct {
         for (String row : rowlist){
             String[] rows = row.split("[\n]");
             for (String obj : rows){
-                if (obj.indexOf("id") != 0){
-                    String[] p = obj.split("[\t]");
-
-                    String pic = "";
-                    if (p.length > 8){
-                        pic = p[8];
+                String[] p = obj.split("[\t]");
+                String pic = "";
+                if (p.length > 8){
+                    pic = p[8];
+                }
+                if (p.length > 21) {
+                    for (int i=21;i<p.length;i++){
+                        pic = pic + p[i];
                     }
-                    if (p.length > 21) {
-                        for (int i=21;i<p.length;i++){
-                            pic = pic + p[i];
-                        }
-                    }
-
-                    if (p.length > 11){
-                        Map<String,String> map = new LinkedHashMap<>();
-                        map.put("id", p[0]);
-                        map.put("price", p[11]);
-                        map.put("saleprice", p[12]);
-                        map.put("picture", pic);
-                        list.add(map);
-                    }
+                }
+                if (p[0].length() != 3 && p.length > 11){
+                    Map<String,String> map = new LinkedHashMap<>();
+                    map.put("id", p[0]);
+                    map.put("price", p[11]);
+                    map.put("saleprice", p[12]);
+                    map.put("c_title", p[16]);
+                    map.put("picture", pic);
+                    list.add(map);
                 }
             }
         }
@@ -200,49 +200,73 @@ public class FetchProduct {
         if (list == null || list.size() == 0) return null;
         Products products = new Products();
         List<Product> plist = new ArrayList<Product>();
+
+
         for (Map<String, String> map : list) {
-            String url = "http://www.ln-cc.com/dw/shop/v15_8/products/"
-                    + map.get("id") + "/availability";
-            Header[] header = new Header[1];
-            Header h = new Header();
-            h.setName("x-dw-client-id");
-            h.setValue("8b29abea-8177-4fd9-ad79-2871a4b06658");
-            header[0] = h;
-            String jsonstr = HttpUtils.get(url, header,0);
-            if( jsonstr != null){
+            String url = "http://www.ln-cc.com/dw/shop/v15_8/products/"+map.get("id")+"/availability?inventory_ids=09&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
+            String jsonstr = HttpUtils.get(url,3);
+                    //(url,timeConfig,null,null,null);
+            if( jsonstr != null && jsonstr.length() >0){
                 JSONObject json = JSONObject.fromObject(jsonstr);
-                if (!json.containsKey("fault")) {
-                    int instock = json.getJSONObject("inventory").getInt(
-                            "stock_level");
-                    boolean orderable = json.getJSONObject("inventory").getBoolean("orderable");
+                if (!json.isNullObject() && !json.containsKey("fault")) {
+                    JSONObject inveObj = json.getJSONObject("inventory");
+                    int instock = 0;
+                    boolean orderable = false;
+                    if (!inveObj.isNullObject()){
+                        instock = inveObj.getInt(
+                                "stock_level");
+                        orderable = inveObj.getBoolean("orderable");
+                    }
+
                     if (instock > 0 && orderable) {
+                        System.out.println(instock);
                         Item item = new Item();
                         Product product = new Product();
                         List<Item> itemslist = new ArrayList<Item>();
                         Items items = new Items();
                         product.setProducer_id(map.get("id"));
                         product.setProductId(map.get("id"));
+                        if (!json.has("brand"))
+                            continue;
                         product.setProduct_brand(json.getString("brand"));
-                        product.setProduct_name(json.getString("c_title"));
-                        product.setCategory(json
-                                .getString("c_categoryName"));
+
+                        product.setProduct_name(map.get("c_title"));
+                        if (!json.has("c_categoryName"))
+                            continue;
+                        product.setCategory(json.getString("c_categoryName"));
+                        if (!json.has("c_material"))
+                            continue;
                         product.setProduct_material(json
                                 .getString("c_material"));
+                        if (!json.has("long_description"))
+                            continue;
                         product.setDescription(json
                                 .getString("long_description"));
+                        if (!json.has("c_season"))
+                            continue;
                         product.setSeason_code(json.getString("c_season"));
+                        if (!json.has("c_colorDescription"))
+                            continue;
                         item.setColor(json.getString("c_colorDescription"));
+
+                        if (!json.has("long_description"))
+                            continue;
                         item.setDescription(json
                                 .getString("long_description"));
 
                         item.setPicture(map.get("picture"));
-
+                        if (!json.has("c_size"))
+                            continue;
                         item.setItem_size(json.getString("c_size"));
+                        if (!json.has("ean"))
+                            continue;
                         item.setItem_id(json.getString("ean"));
                         String price_f = map.get("price");
                         String saleprice_f = map.get("saleprice");
+                        item.setStock(instock+"");
                         //解析货币单位和价格
-                        item.setSaleCurrency(map.get("price").substring(price_f.indexOf(" ")+1, price_f.length()));
+                        item.setSaleCurrency(map.get("price").substring(price_f.indexOf(" ") + 1, price_f.length()));
                         item.setMarket_price(map.get("price").substring(0,price_f.indexOf(" ")+1));
                         item.setSupply_price(map.get("saleprice").substring(0,saleprice_f.indexOf(" ")+1));
                         itemslist.add(item);

@@ -1,4 +1,4 @@
-package com.shangpin.iog.prodottimonti.stock.dto;
+package com.shangpin.iog.gherardi.dto;
 
 
 
@@ -15,7 +15,6 @@ public class Product {
     private String product_brand;
     private String product_detail;
     private String product_material;
-    private String url;
     private String supply_price;
     private String producer_id;
 
@@ -84,14 +83,6 @@ public class Product {
 
     public void setProduct_material(String product_material) {
         this.product_material = product_material;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public String getSupply_price() {
