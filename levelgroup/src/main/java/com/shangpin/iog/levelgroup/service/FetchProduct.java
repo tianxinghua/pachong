@@ -179,7 +179,7 @@ public class FetchProduct {
                 }
                 if (p.length > 21) {
                     for (int i=21;i<p.length;i++){
-                        pic = pic + p[i];
+                        pic = pic +"|"+ p[i];
                     }
                 }
                 if (p[0].length() != 3 && p.length > 11){
