@@ -5,6 +5,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.dto.*;
+import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.service.ReturnOrderService;
 import com.shangpin.iog.tony.purchase.common.Constant;
 import com.shangpin.iog.tony.purchase.dto.*;
@@ -98,6 +99,8 @@ public class OrderServiceImpl extends AbsOrderService {
             if ("ko".equals(returnDataDTO.getStatus())){
                 deleteOrder.setExcState("1");
                 deleteOrder.setExcDesc(returnDataDTO.getMessages().toString());
+            } else {
+                orderDTO.setStatus(OrderStatus.CANCELLED);
             }
             System.out.println("------------"+returnDataDTO.getStatus());
         }
@@ -242,6 +245,10 @@ public class OrderServiceImpl extends AbsOrderService {
             if ("ko".equals(returnDataDTO.getStatus())){
                 orderDTO.setExcState("1");
                 orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
+            } else if ("PENDING".equals(status)){
+                orderDTO.setStatus(OrderStatus.PLACED);
+            } else if ("CONFIRMED".equals(status)){
+                orderDTO.setStatus(OrderStatus.PAYED);
             }
             System.out.println("------------"+returnDataDTO.getStatus());
         }
