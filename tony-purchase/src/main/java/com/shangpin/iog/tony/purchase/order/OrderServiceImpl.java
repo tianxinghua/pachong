@@ -100,7 +100,7 @@ public class OrderServiceImpl extends AbsOrderService {
                 deleteOrder.setExcState("1");
                 deleteOrder.setExcDesc(returnDataDTO.getMessages().toString());
             } else {
-                orderDTO.setStatus(OrderStatus.CANCELLED);
+                deleteOrder.setStatus(OrderStatus.CANCELLED);
             }
             System.out.println("------------"+returnDataDTO.getStatus());
         }
