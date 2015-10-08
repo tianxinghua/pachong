@@ -137,11 +137,6 @@ public class OrderServiceImpl extends AbsOrderService {
      * 在线推送订单/取消订单
      */
     private void sendOrder(){
-        //获取条形码
-        WS_Sito_P15 atelier = new WS_Sito_P15();
-        String barCodeAll = atelier.getAllAvailabilityStr();
-        String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
-                barCodeAll.indexOf(skuNo),barCodeAll.indexOf(skuNo)+50));
         System.out.println("soapRequestData=="+soapRequestData);
         HttpClient httpClient = new HttpClient();
         String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op="+opName;
@@ -183,7 +178,10 @@ public class OrderServiceImpl extends AbsOrderService {
             excCode = "1";
             excDes = e.getMessage();
         } finally {
-            if (!rtnData.contains("OK")){
+            if (!"200".equals(returnCode)){
+                excCode = "1";
+                excDes = "returnCode is" + returnCode;
+            }else if (!rtnData.contains("OK")){
                 excCode = "1";
                 excDes = opName +" is ER!";
             }
