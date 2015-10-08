@@ -17,20 +17,16 @@ public class LinoricciStockImp  extends AbsUpdateProductStock{
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         new MyFtpClient().downLoad();
-        String stocks = new MyStringUtil().parseXml2Str(Constant.LOCAL_STOCK_FILE);
+        String stocks = MyStringUtil.getStockByFile(Constant.LOCAL_STOCK_FILE);
         //定义三方
         Map returnMap = new HashMap();
         String itemId = "";
         Iterator<String> iterator=skuNo.iterator();
-        //为供应商循环赋值
-        logger.info("为供应商循环赋值");
+        //为产品库存循环赋值
+        logger.info("为产品库存循环赋值");
         while (iterator.hasNext()){
             itemId = iterator.next();
-            String stock = "0";
-            if (stocks.contains(itemId)){
-                stock = MyStringUtil.getStockBySkuId(stocks.substring(stocks.indexOf(itemId), stocks.indexOf(itemId) + 20));
-            }
-            returnMap.put(itemId, stock);
+            returnMap.put(itemId,  MyStringUtil.getStockBySkuId(itemId,stocks));
         }
         return returnMap;
     }

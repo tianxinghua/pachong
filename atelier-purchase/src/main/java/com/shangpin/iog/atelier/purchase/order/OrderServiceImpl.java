@@ -1,11 +1,16 @@
 package com.shangpin.iog.atelier.purchase.order;
 
+import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.atelier.common.MyStringUtil;
 import com.shangpin.iog.atelier.common.WS_Sito_P15;
+import com.shangpin.iog.atelier.purchase.dto.AtelierOrder;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.*;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.ice.dto.ICEWMSOrderRequestDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -17,17 +22,18 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Created by loyalty on 15/9/9.
+ * Created by wangyuzhi on 15/10/08.
  */
 @Component("atelierOrder")
 public class OrderServiceImpl extends AbsOrderService {
 
-    private String barCodeAll;
+    private AtelierOrder atelierOrder = new AtelierOrder();
+/*    private String barCodeAll;
     private  String soapRequestData;
     private String opName;
     private String skuNo;
     private String excCode;
-    private String excDes;
+    private String excDes;*/
     private static ResourceBundle bdl=null;
     private static String supplierId;
 
@@ -42,11 +48,17 @@ public class OrderServiceImpl extends AbsOrderService {
     /**
      * main
      */
-    public void start(){
+    public void startWMS(){
         //获取条形码
-        this.barCodeAll = new WS_Sito_P15().getAllAvailabilityStr();
+        atelierOrder.setBarCodeAll(new WS_Sito_P15().getAllAvailabilityStr());
         //通过采购单处理下单 包括下单和退单
-        this.confirmOrder(supplierId);
+        this.checkoutOrderFromWMS(supplierId, "", true);
+    }
+    public void startSOP(){
+        //获取条形码
+        atelierOrder.setBarCodeAll(new WS_Sito_P15().getAllAvailabilityStr());
+        //通过采购单处理下单 包括下单和退单
+        this.checkoutOrderFromSOP(supplierId, "", true);
     }
 
 
@@ -57,10 +69,11 @@ public class OrderServiceImpl extends AbsOrderService {
     @Override
     public void handleConfirmOrder(OrderDTO orderDTO) {
 
+        String barCodeAll = atelierOrder.getBarCodeAll();
         String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
                 barCodeAll.indexOf(orderDTO.getSupplierOrderNo()),barCodeAll.indexOf(orderDTO.getSupplierOrderNo())+50));
         //推送订单
-        this.soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+        atelierOrder.setSoapRequestData( "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
                 "  <soap:Body>\n" +
                 "    <NewOrder xmlns=\"http://tempuri.org/\">\n" +
@@ -74,13 +87,13 @@ public class OrderServiceImpl extends AbsOrderService {
                 "      <PRICE>" + "111" + "</PRICE>\n" +
                 "    </NewOrder>\n" +
                 "  </soap:Body>\n" +
-                "</soap:Envelope>";
-        System.out.println("soapRequestData=="+soapRequestData);
-        this.skuNo = orderDTO.getSupplierOrderNo();
-        this.opName = "NewOrder";
+                "</soap:Envelope>");
+        System.out.println("soapRequestData=="+atelierOrder.getSoapRequestData());
+        atelierOrder.setSkuNo(orderDTO.getSupplierOrderNo());
+        atelierOrder.setOpName("NewOrder");
         sendOrder();
-        orderDTO.setExcState(this.excCode);
-        orderDTO.setExcDesc(this.excDes);
+        orderDTO.setExcState(atelierOrder.getExcCode());
+        orderDTO.setExcDesc(atelierOrder.getExcDes());
     }
     /**
      * 在线取消订单
@@ -88,11 +101,10 @@ public class OrderServiceImpl extends AbsOrderService {
     @Override
     public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
         //获取条形码
-        WS_Sito_P15 atelier = new WS_Sito_P15();
-        String barCodeAll = atelier.getAllAvailabilityStr();
+        String barCodeAll = atelierOrder.getBarCodeAll();
         String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
                 barCodeAll.indexOf(deleteOrder.getSupplierOrderNo()),barCodeAll.indexOf(deleteOrder.getSupplierOrderNo())+50));
-        this.soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+        atelierOrder.setSoapRequestData( "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
                 "  <soap:Body>\n" +
                 "    <OrderAmendment xmlns=\"http://tempuri.org/\">\n" +
@@ -102,13 +114,13 @@ public class OrderServiceImpl extends AbsOrderService {
                 "      <QTY>0</QTY>\n" +
                 "    </OrderAmendment>\n" +
                 "  </soap:Body>\n" +
-                "</soap:Envelope>";
-        System.out.println("soapRequestData=="+soapRequestData);
-        this.skuNo = deleteOrder.getSupplierOrderNo();
-        this.opName = "OrderAmendment";
+                "</soap:Envelope>");
+        System.out.println("soapRequestData=="+atelierOrder.getSoapRequestData());
+        atelierOrder.setSkuNo(deleteOrder.getSupplierOrderNo());
+        atelierOrder.setOpName("OrderAmendment");
         sendOrder();
-        deleteOrder.setExcState(this.excCode);
-        deleteOrder.setExcDesc(this.excDes);
+        deleteOrder.setExcState(atelierOrder.getExcCode());
+        deleteOrder.setExcDesc(atelierOrder.getExcDes());
     }
 
 
@@ -117,33 +129,46 @@ public class OrderServiceImpl extends AbsOrderService {
      */
     @Override
     public void handleSupplierOrder(OrderDTO orderDTO) {
-orderDTO.setStatus(OrderStatus.PLACED);
+        atelierOrder.setSoapRequestData( "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+                "  <soap:Body>\n" +
+                "    <SetStatusOrder xmlns=\"http://tempuri.org/\">\n" +
+                "      <CODICE>"+orderDTO.getSupplierOrderNo()+"</CODICE>\n" +
+                "      <ID_CLIENTE>12345</ID_CLIENTE>\n" +
+                "      <ID_STATUS>1</ID_STATUS>\n" +
+                "    </SetStatusOrder>\n" +
+                "  </soap:Body>\n" +
+                "</soap:Envelope>");
+        System.out.println("soapRequestData=="+atelierOrder.getSoapRequestData());
+        atelierOrder.setSkuNo(orderDTO.getSupplierOrderNo());
+        atelierOrder.setOpName("SetStatusOrder");
+        sendOrder();
+        orderDTO.setExcState(atelierOrder.getExcCode());
+        orderDTO.setExcDesc(atelierOrder.getExcDes());
+        orderDTO.setStatus(atelierOrder.getStatus());
     }
 
     /**
      * 在线推送订单/取消订单
      */
     private void sendOrder(){
-        //获取条形码
-        WS_Sito_P15 atelier = new WS_Sito_P15();
-        String barCodeAll = atelier.getAllAvailabilityStr();
-        String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
-                barCodeAll.indexOf(skuNo),barCodeAll.indexOf(skuNo)+50));
-        System.out.println("soapRequestData=="+soapRequestData);
+        System.out.println("soapRequestData=="+atelierOrder.getSoapRequestData());
         HttpClient httpClient = new HttpClient();
-        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op="+opName;
+        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op="+atelierOrder.getOpName();
         PostMethod postMethod = new PostMethod(uri);
-        postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/"+opName);
+        postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/"+atelierOrder.getOpName());
         postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
 
-        StringRequestEntity requestEntity=new StringRequestEntity(soapRequestData);
+        StringRequestEntity requestEntity=new StringRequestEntity(atelierOrder.getSoapRequestData());
         postMethod.setRequestEntity(requestEntity);
 
         int returnCode=0;
+        String rtnData = "";
         try {
             returnCode = httpClient.executeMethod(postMethod);
+            rtnData = postMethod.getResponseBodyAsString();
             System.out.println("returnCode=="+returnCode);
-            logger.info("returnCode=="+returnCode+","+skuNo);
+            logger.info("returnCode=="+returnCode+","+atelierOrder.getSkuNo());
 /*            BufferedOutputStream out=new BufferedOutputStream(new FileOutputStream(new File(orderFile)));
             BufferedInputStream in=new BufferedInputStream(postMethod.getResponseBodyAsStream());
             int length = 0;
@@ -156,17 +181,31 @@ orderDTO.setStatus(OrderStatus.PLACED);
             out.flush();
             out.close();*/
         } catch (HttpException e) {
-            loggerError.error(skuNo+":"+e.getMessage());
-            excCode = "1";
-            excDes = e.getMessage();
+            loggerError.error(atelierOrder.getSkuNo()+":"+e.getMessage());
+            atelierOrder.setExcCode("1");
+            atelierOrder.setExcDes(e.getMessage());
         } catch (IOException e) {
-            loggerError.error(skuNo + ":" + e.getMessage());
-            excCode = "1";
-            excDes = e.getMessage();
+            loggerError.error(atelierOrder.getSkuNo() + ":" + e.getMessage());
+            atelierOrder.setExcCode("1");
+            atelierOrder.setExcDes(e.getMessage());
         } catch (Exception e) {
-            loggerError.error(skuNo + ":" + e.getMessage());
-            excCode = "1";
-            excDes = e.getMessage();
+            loggerError.error(atelierOrder.getSkuNo() + ":" + e.getMessage());
+            atelierOrder.setExcCode("1");
+            atelierOrder.setExcDes(e.getMessage());
+        } finally {
+            if (!"200".equals(returnCode)){
+                atelierOrder.setExcCode("1");
+                atelierOrder.setExcDes("returnCode is" + returnCode);
+            }else if (!rtnData.contains("OK")){
+                atelierOrder.setExcCode("1");
+                atelierOrder.setExcDes(atelierOrder.getOpName() +" is ER!");
+            } else if("NewOrder".equals(atelierOrder.getOpName())){
+                atelierOrder.setStatus(OrderStatus.PAYED);
+            } else if("OrderAmendment".equals(atelierOrder.getOpName())){
+                atelierOrder.setStatus(OrderStatus.CANCELLED);
+            } else if("SetStatusOrder".equals(atelierOrder.getOpName())){
+                atelierOrder.setStatus(OrderStatus.PLACED);
+            }
         }
     }
     /**
@@ -189,6 +228,18 @@ orderDTO.setStatus(OrderStatus.PLACED);
 //
 //        orderService.transData("https://api-sandbox.gilt.com/global/orders/","",orderMap);
 
-
+        Gson gson = new Gson();
+        ICEWMSOrderRequestDTO dto = new ICEWMSOrderRequestDTO();
+        dto.setBeginTime("2015-12-23 11:11:11");
+        dto.setEndTime("2015-09-23 11:11:11");
+        dto.setSupplierNo("200520155");
+        String jsonParameter= "="+ gson.toJson(dto);
+        try {
+            String   result =  HttpUtil45.operateData("post", "form", "http://wmsinventory.liantiao.com/Api/StockQuery/SupplierInventoryLogQuery", new OutTimeConfig(1000 * 5, 1000 * 5, 1000 * 5), null,
+                    jsonParameter, "", "");
+            System.out.println(result);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
     }
 }

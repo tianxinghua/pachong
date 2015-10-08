@@ -85,6 +85,7 @@ public class StringUtil {
      */
     public static String getSubBySub(String str,String begin,String end,int eAdd){
         if("".equals(str)){
+            loggerError.error("tessabit file is null,stock changed into 0");
             System.out.println("file is null,stock changed into 0");
             return "0";
         }

@@ -4,6 +4,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.tony.common.MyJsonClient;
 import com.shangpin.iog.tony.common.StringUtil;
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
 import java.util.*;
@@ -11,15 +12,20 @@ import java.util.*;
 /**
  * Created by wangyuzhi on 2015/9/14.
  */
-public class TonyStockImp extends AbsUpdateProductStock{
+//public class TonyStockImp extends AbsUpdateProductStock{
+    public class TonyStockImp extends TimerTask{
     private static Logger logger = Logger.getLogger("info");
-    @Override
+   // @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //get 20 events per call
+        logger.info("Tony get json begin...");
         String json = new MyJsonClient().getEvents();
+        logger.info("Tony get json end...");
         //定义三方
         Map returnMap = new HashMap();
-        String itemId = "";
+        String[] fields = null;
+        String key = "";
+/*        String itemId = "";
         Iterator<String> iterator=skuNo.iterator();
         //为供应商循环赋值
         while (iterator.hasNext()){
@@ -27,6 +33,19 @@ public class TonyStockImp extends AbsUpdateProductStock{
             if (json.contains(itemId)){
                 returnMap.put(itemId, StringUtil.getStockById(json.substring(json.indexOf(itemId),json.indexOf(itemId)+50)) );
             }
+        }*/
+         String[] strArr = json.split("additional_info");
+        System.out.println(strArr.length);
+        for (String item:strArr){
+            if (item.contains("sku")){
+                fields = item.split(",");
+                key = fields[0].substring(10);
+                returnMap.put(key.substring(0,key.length()-1),fields[1].split(":")[1].replace("}}",""));
+            }
+        }
+        //记录日志
+        for (Object logKey:returnMap.keySet()){
+            logger.info("Sku ID is "+logKey+",stock is "+returnMap.get(logKey));
         }
         return returnMap;
     }
@@ -43,7 +62,18 @@ public class TonyStockImp extends AbsUpdateProductStock{
         skuNo.add("M4004574_001-40");
         Map returnMap = impl.grabStock(skuNo);
         System.out.println("test return size is "+returnMap.keySet().size());
-        System.out.println("test return value is "+returnMap.get("M4004574_001-40"));
+        for (Object key:returnMap.keySet()){
+            System.out.print("key is " + key);
+            System.out.println(",value is "+returnMap.get(key));
+        }
+
+            Timer timer = new Timer();
+            timer.schedule(null, 1000, 1000);
+
+    }
+
+    @Override
+    public void run() {
 
     }
 }
