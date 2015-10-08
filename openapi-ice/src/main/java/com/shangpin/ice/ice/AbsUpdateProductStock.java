@@ -128,11 +128,11 @@ public abstract class AbsUpdateProductStock {
 		Set<String> skuIds = new HashSet<String>();
 
 		//获取已有的SPSKUID
-		List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
-		Map<String,String> map = new HashMap<>();
-		for(SkuRelationDTO skuRelationDTO:skuRelationDTOList){
-			map.put(skuRelationDTO.getSopSkuId(),null);
-		}
+//		List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
+//		Map<String,String> map = new HashMap<>();
+//		for(SkuRelationDTO skuRelationDTO:skuRelationDTOList){
+//			map.put(skuRelationDTO.getSopSkuId(),null);
+//		}
 		Date date  = new Date();
 		while(hasNext){
 			List<SopProductSkuIce> skus = null;
@@ -147,14 +147,14 @@ public abstract class AbsUpdateProductStock {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
 				for (SopSkuIce ice : skuIces) {
 
-					if (!map.containsKey(ice.SkuNo)){
-						SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
-						skuRelationDTO.setSupplierId(supplier);
-						skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
-						skuRelationDTO.setSopSkuId(ice.SkuNo);
-						skuRelationDTO.setCreateTime(date);
-						skuRelationService.saveSkuRelateion(skuRelationDTO);
-					}
+//					if (!map.containsKey(ice.SkuNo)){
+//						SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
+//						skuRelationDTO.setSupplierId(supplier);
+//						skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
+//						skuRelationDTO.setSopSkuId(ice.SkuNo);
+//						skuRelationDTO.setCreateTime(date);
+//						skuRelationService.saveSkuRelateion(skuRelationDTO);
+//					}
 
 					if(null!=ice.SkuNo&&!"".equals(ice.SkuNo)&&null!=ice.SupplierSkuNo&&!"".equals(ice.SupplierSkuNo)){
 						if(1!=ice.IsDeleted){
