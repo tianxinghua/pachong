@@ -89,4 +89,6 @@ include 'prodottimonti'
 include 'prodottimonti-stock'
 include 'levelgroup'
 include 'levelgroup-stock'
-
+include 'reebonzWiki'
+include 'reebonzWiki-order'
+include 'reebonzWiki-stock'
