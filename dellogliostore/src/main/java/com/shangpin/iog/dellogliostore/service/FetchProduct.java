@@ -114,6 +114,9 @@ public class FetchProduct {
                     sku.setStock(skuItem.getStock());
                     sku.setProductDescription(spuItem.getDescription());
 
+                    //SKU 选填
+                    sku.setProductCode(spuItem.getProductCode());
+
                     try {
                         productFetchService.saveSKU(sku);
                     } catch (ServiceException e) {
