@@ -13,6 +13,10 @@ public class Constant {
     public static String MERCHANT_ID = bundle.getString("merchantId");
     //供应商ID
     public static String TOKEN = bundle.getString("token");
+    //订单状态
+    public static String CANCELED = "CANCELED";
+    public static String PENDING = "PENDING";
+    public static String CONFIRMED = "CONFIRMED";
 
     /**
      * test
