@@ -17,6 +17,8 @@ public class SpuItem {
     String name;
     @XmlElement(name = "SKU")
     String spuId;
+    @XmlElement(name = "producer_id")
+    String productCode;
     String price;
     String stock;
     @XmlElement(name = "product_detail")
@@ -129,11 +131,20 @@ public class SpuItem {
         this.material = material;
     }
 
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
     @Override
     public String toString() {
         return "SpuItem{" +
                 "name='" + name + '\'' +
                 ", spuId='" + spuId + '\'' +
+                ", productCode='" + productCode + '\'' +
                 ", price='" + price + '\'' +
                 ", stock='" + stock + '\'' +
                 ", description='" + description + '\'' +
