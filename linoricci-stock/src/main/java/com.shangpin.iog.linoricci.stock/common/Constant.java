@@ -20,13 +20,9 @@ public class Constant {
     //密码
     public static String PASSWORD = bundle.getString("password");
     //服务器端文件名(包括完整路径)
-    public static String SERVER_ITEMS_FILE = bundle.getString("serverItemsFile");
     public static String SERVER_STOCK_FILE = bundle.getString("serverStockFile");
-    public static String SERVER_IMAGE_FILE = bundle.getString("serverImageFile");
     //本地文件名(包括完整路径)
-    public static String LOCAL_ITEMS_FILE = bundle.getString("localItemsFile");
     public static String LOCAL_STOCK_FILE = bundle.getString("localStockFile");
-    public static String LOCAL_IMAGE_FILE = bundle.getString("localImageFile");
     //item在ftp文本中所占字符串长度
     public static int ITEM_LENTH = 1500;
     /**

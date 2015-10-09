@@ -72,10 +72,6 @@ public class MyJsonUtil {
 	 */
 	public static String pushOrder(Map<String, String> map) {
 
-	
-
-		
-
 		String json = null;
 		try {
 			json = HttpUtil45.post("",
@@ -118,14 +114,10 @@ public class MyJsonUtil {
 					.post("http://oauth.uat.titan.reebonz-dev.com/api/refresh_token.json",
 							map, new OutTimeConfig(1000 * 20, 1000 * 20,
 									1000 * 20));
-
-			if (json.equals("{\"error\":\"发生异常错误\"}")) {
-				System.out.println("连接超时");
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("授权返回的结果：" + json);
+		System.out.println("刷新授权返回的结果：" + json);
 		return json;
 	}
 	
