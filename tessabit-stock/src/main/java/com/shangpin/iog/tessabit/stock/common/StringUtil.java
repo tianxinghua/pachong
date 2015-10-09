@@ -88,7 +88,7 @@ public class StringUtil {
         if (file.contains(itemId)){
             String itemStr = file.substring(file.indexOf(itemId),file.indexOf(itemId)+Constant.ITEM_LENTH);
             if(itemStr.contains("</stock>")){
-                qty = itemStr.substring(itemStr.indexOf("<stock>"),itemStr.indexOf("</stock>"));
+                qty = itemStr.substring(itemStr.indexOf("<stock>")+7,itemStr.indexOf("</stock>"));
             }
         }
         return qty;
