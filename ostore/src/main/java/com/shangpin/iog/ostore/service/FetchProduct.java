@@ -36,9 +36,9 @@ public class FetchProduct {
         try {
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-            timeConfig.confRequestOutTime(360000);
-            timeConfig.confConnectOutTime(360000);
-            timeConfig.confSocketOutTime(360000);
+            timeConfig.confRequestOutTime(10*60*1000);
+            timeConfig.confConnectOutTime(10*60*1000);
+            timeConfig.confSocketOutTime(10*60*1000);
             List<String> resultList = HttpUtil45.getContentListByInputSteam(url, timeConfig, null, null, null);
             HttpUtil45.closePool();
             StringBuffer buffer =new StringBuffer();

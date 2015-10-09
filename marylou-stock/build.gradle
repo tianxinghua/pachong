@@ -4,13 +4,11 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 
     compile(
-            "commons-httpclient:commons-httpclient:3.1",
-            "org.apache.httpcomponents:httpclient:4.1.1",
-            "org.projectlombok:lombok:1.14.8",
+
             "commons-net:commons-net:1.4.1",
             "org.jdom:jdom:2.0.2",
             "com.enterprisedt:edtFTPj:1.5.3",
             project(':onsite'),
-            project(':openapi-ice')
+            project(':iog-sop')
     )
 }

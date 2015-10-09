@@ -43,7 +43,7 @@ public class FetchProduct {
 
         try {
             Map<String, String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = new OutTimeConfig(1000*60, 1000*60*20,1000*60*20);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*20, 1000*60*20,1000*60*20);
 //            timeConfig.confRequestOutTime(600000);
 //            timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get(url, timeConfig, null);
@@ -113,6 +113,9 @@ public class FetchProduct {
                     sku.setProductSize(skuItem.getSize());
                     sku.setStock(skuItem.getStock());
                     sku.setProductDescription(spuItem.getDescription());
+
+                    //SKU 选填
+                    sku.setProductCode(spuItem.getProductCode());
 
                     try {
                         productFetchService.saveSKU(sku);

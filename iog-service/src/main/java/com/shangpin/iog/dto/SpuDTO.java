@@ -19,7 +19,7 @@ public class SpuDTO implements Serializable {
     private String spuId;//SPUID  必填
     private String spuName;
     /**性别分类*/
-    private String categoryGender;
+    private String categoryGender;//必填
     private String categoryId;
     /**大类*/
     private String categoryName;//必填

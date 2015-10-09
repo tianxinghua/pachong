@@ -207,7 +207,8 @@ public class FetchProduct {
 
 	public void fetchProductAndSave(String supplierId, String[] brandArray) {
 		String url = "http://www.julian-fashion.com/eu/woman?sortby=newIn&page=";
-//		url = "http://www.julian-fashion.com/eu/woman/bags/?sortby=newIn&page=";
+		// url =
+		// "http://www.julian-fashion.com/eu/woman/bags/?sortby=newIn&page=";
 		ListSPUTASK task = new ListSPUTASK("woman", url, 1, productFetchService);
 		FetchProduct.listManager.delayTask(new DelayTask(task, new Date()));
 
@@ -332,51 +333,51 @@ public class FetchProduct {
 					}
 				}
 			}
-			for (SkuDTO sku : skuMap.values()) {
-				sku.setSupplierId(supplierId);
-				if (!spuIdSet.contains(sku.getSpuId())) {
-					continue;
-				}
-				sku.setProductName(sku.getProductName().split("\r")[0]);
-				sku.setSpuId(sku.getSpuId().trim());
-				sku.setSkuId(sku.getSkuId().trim());
-				sku.setSalePrice(sku.getSalePrice().replaceAll("\\.", "").replaceAll(",", "\\."));
-				sku.setMarketPrice(sku.getMarketPrice().replaceAll("\\.", "").replaceAll(",", "\\."));
-				skuIdSet.add(sku.getSkuId());
-				try {
-					productFetchService.saveSKU(sku);
-				} catch (ServiceException e) {
-					try {
-						if (e.getMessage().equals("数据插入失败键重复")) {
-							// 更新价格和库存
-							productFetchService.updatePriceAndStock(sku);
-						} else {
-							e.printStackTrace();
-						}
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-				}
+		}
+		for (SkuDTO sku : skuMap.values()) {
+			sku.setSupplierId(supplierId);
+			if (!spuIdSet.contains(sku.getSpuId())) {
+				continue;
 			}
-
-			for (Map.Entry<String, Set<String>> entry : imageMap.entrySet()) {
-				String skuId = entry.getKey().trim();;
-				if (!skuIdSet.contains(skuId)) {
-					continue;
-				}
-
-				for (String imageUrl : entry.getValue()) {
-					ProductPictureDTO pictureDTO = new ProductPictureDTO();
-					pictureDTO.setPicUrl(imageUrl);
-					pictureDTO.setSupplierId(supplierId);
-					pictureDTO.setId(UUIDGenerator.getUUID());
-					pictureDTO.setSkuId(skuId);
-					try {
-						productFetchService.savePicture(pictureDTO);
-						productFetchService.savePictureForMongo(pictureDTO);
-					} catch (ServiceException e) {
+			sku.setProductName(sku.getProductName().split("\r")[0]);
+			sku.setSpuId(sku.getSpuId().trim());
+			sku.setSkuId(sku.getSkuId().trim());
+			sku.setSalePrice(sku.getSalePrice().replaceAll("\\.", "").replaceAll(",", "\\."));
+			sku.setMarketPrice(sku.getMarketPrice().replaceAll("\\.", "").replaceAll(",", "\\."));
+			skuIdSet.add(sku.getSkuId());
+			try {
+				productFetchService.saveSKU(sku);
+			} catch (ServiceException e) {
+				try {
+					if (e.getMessage().equals("数据插入失败键重复")) {
+						// 更新价格和库存
+						productFetchService.updatePriceAndStock(sku);
+					} else {
 						e.printStackTrace();
 					}
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+
+		for (Map.Entry<String, Set<String>> entry : imageMap.entrySet()) {
+			String skuId = entry.getKey().trim();
+			if (!skuIdSet.contains(skuId)) {
+				continue;
+			}
+
+			for (String imageUrl : entry.getValue()) {
+				ProductPictureDTO pictureDTO = new ProductPictureDTO();
+				pictureDTO.setPicUrl(imageUrl);
+				pictureDTO.setSupplierId(supplierId);
+				pictureDTO.setId(UUIDGenerator.getUUID());
+				pictureDTO.setSkuId(skuId);
+				try {
+					productFetchService.savePicture(pictureDTO);
+					productFetchService.savePictureForMongo(pictureDTO);
+				} catch (ServiceException e) {
+					e.printStackTrace();
 				}
 			}
 		}

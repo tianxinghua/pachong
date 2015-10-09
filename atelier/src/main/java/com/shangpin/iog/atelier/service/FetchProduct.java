@@ -54,9 +54,9 @@ public class FetchProduct {
             for (int i = 0; i < fields.length; i++) {
                 System.out.print("; fields[" + i + "]=" + fields[i]);
             }
-        }*/
+        }
 
-        //items = new String[0];
+        items = new String[0];*/
         for (String item : items) {
             String[] fields = item.split(";");
             String skuId = fields[0];
@@ -131,7 +131,7 @@ public class FetchProduct {
                 spu.setSeasonId(fields[6]);
                 spu.setMaterial(fields[11]);
                 spu.setCategoryGender(fields[5]);
-                spu.setProductOrigin(fields[13]);
+                spu.setProductOrigin(fields[40]);
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
                 e.printStackTrace();

@@ -11,12 +11,16 @@
         <result column="SP_ORDER_ID" property="spOrderId"  />
         <result column="SP_PURCHASE_NO" property="spPurchaseNo" />
         <result column="SP_PURCHASE_DETAIL_NO" property="spPurchaseDetailNo" />
+
+        <result column="SUPPLIER_ORDER_NO" property="supplierOrderNo" />
+       
         <result column="DETAIL" property="detail"  />
         <result column="STATUS" property="status"/>
 
         <result column="MEMO" property="memo"  />
         <result column="DELIVERY_NO" property="deliveryNo"/>
-
+		
+        <result column="UPDATE_TIME" property="updateTime"/>
         <result column="CREATE_TIME" property="createTime"  />
 
         <result column="EXC_STATE" property="excState"  />
@@ -39,6 +43,7 @@
 		SP_ORDER_ID,
 		SP_PURCHASE_NO,
 		SP_PURCHASE_DETAIL_NO,
+		SUPPLIER_ORDER_NO,
 		DETAIL,
 		MEMO,
 		STATUS,
@@ -53,12 +58,14 @@
         UUID as UUID,
         SP_ORDER_ID as SP_ORDER_ID,
         SP_PURCHASE_DETAIL_NO,
+        SUPPLIER_ORDER_NO as SUPPLIER_ORDER_NO,
         STATUS as STATUS,
         DETAIL as DETAIL,
+        UPDATE_TIME as UPDATE_TIME,
         CREATE_TIME as CREATE_TIME,
         EXC_STATE as EXC_STATE,
         EXC_DESC  as EXC_DESC
-
+		
 
         from `ORDER`
         <where>
@@ -82,9 +89,11 @@
         SP_ORDER_ID ,
         SP_PURCHASE_NO,
         SP_PURCHASE_DETAIL_NO,
+        SUPPLIER_ORDER_NO as SUPPLIER_ORDER_NO,
         STATUS as STATUS,
         DETAIL as DETAIL,
         MEMO,
+        UPDATE_TIME as UPDATE_TIME,
         CREATE_TIME as CREATE_TIME,
         EXC_STATE as EXC_STATE,
         EXC_DESC  as EXC_DESC
@@ -108,9 +117,11 @@
         SP_ORDER_ID ,
         SP_PURCHASE_NO,
         SP_PURCHASE_DETAIL_NO,
+        SUPPLIER_ORDER_NO as SUPPLIER_ORDER_NO,
         STATUS as STATUS,
         DETAIL as DETAIL,
         MEMO,
+        UPDATE_TIME as UPDATE_TIME,
         CREATE_TIME as CREATE_TIME,
         EXC_STATE as EXC_STATE,
         EXC_DESC  as EXC_DESC
@@ -152,6 +163,7 @@
         )
         values(
         #{supplierId},#{supplierNo}, #{uuId}, #{spOrderId},#{spPurchaseNo},#{spPurchaseDetailNo},
+       	#{supplierOrderNo},
         #{detail},#{memo},#{status},
         #{createTime}
         )
