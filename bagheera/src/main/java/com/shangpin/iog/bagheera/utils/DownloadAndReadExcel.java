@@ -133,10 +133,11 @@ public class DownloadAndReadExcel {
         return strCell;
     }
     public static String getPath(String realpath){
-        Date dt=new Date();
-        SimpleDateFormat matter1=new SimpleDateFormat("yyyy-MM-ddHH");
-        String date=matter1.format(dt).replaceAll("-","").trim();
-        realpath = realpath+"_"+date+".xls";
+        //Date dt=new Date();
+        //SimpleDateFormat matter1=new SimpleDateFormat("yyyy-MM-ddHH");
+        //String date=matter1.format(dt).replaceAll("-","").trim();
+        //realpath = realpath+"_"+date+".xls";
+        realpath = realpath+".xls";
         return realpath;
     }
     /*public static void main(String[] args) {
