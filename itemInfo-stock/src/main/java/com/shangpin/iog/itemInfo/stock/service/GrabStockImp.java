@@ -15,11 +15,13 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.itemInfo.utils.SoapXmlUtil;
 
+@Component("amandaStock")
 public class GrabStockImp extends AbsUpdateProductStock {
 
 	private static Logger logger = Logger.getLogger("info");

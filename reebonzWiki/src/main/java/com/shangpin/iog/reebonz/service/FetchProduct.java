@@ -153,9 +153,17 @@ public class FetchProduct {
 								sku.setId(UUIDGenerator.getUUID());
 								sku.setSupplierId(supplierId);
 								sku.setSpuId(item.getSku());
-								sku.setSkuId(item.getSku() + "|" + item.getEvent_id() + "|"
-										+ stock.getOption_name());
-								sku.setProductSize(stock.getOption_name());
+								
+								String proSize = stock.getOption_name();
+								if("no-size".equals(proSize)){
+									sku.setProductSize(proSize);
+									sku.setSkuId(item.getSku() + "|" + item.getEvent_id() + "|"
+											+ stock.getOption_code());
+								}else{
+									sku.setProductSize("A");
+									sku.setSkuId(item.getSku() + "|" + item.getEvent_id() + "|A");
+								}
+								
 								sku.setStock(stock.getTotal_stock_qty());
 								sku.setSalePrice(item.getFinal_selling_price());
 								sku.setMarketPrice(item.getRetail_price());

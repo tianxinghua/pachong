@@ -55,6 +55,7 @@ public class FetchProduct {
                 dto.setSupplierId(supplierId);
                 dto.setSkuId(leamDTO.getStock_id());
                 dto.setSpuId(leamDTO.getSupplier_sku());
+                dto.setProductCode(leamDTO.getSupplier_sku());
                 dto.setColor(leamDTO.getColor());
                 dto.setSupplierPrice(leamDTO.getPrice());
                 dto.setProductDescription(leamDTO.getDescription());

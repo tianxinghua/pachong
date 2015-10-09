@@ -23,7 +23,7 @@ public class StringUtil {
         String localFile = new StringUtil().parseXml2Str();
         //System.out.println(localFile);
         System.out.println("00000000000000000000000000000");
-        System.out.println(StringUtil.getSubBySub(localFile,"1984127411_12","1984127411_12",1500));
+        System.out.println(StringUtil.getStockById("1984127411_12",localFile));
     }
 
     /**
@@ -83,15 +83,14 @@ public class StringUtil {
     /**
      *获取单品数量
      */
-    public static String getSubBySub(String str,String begin,String end,int eAdd){
-        if("".equals(str)){
-            System.out.println("file is null,stock changed into 0");
-            return "0";
+    public static String getStockById(String itemId,String file){
+        String qty = null;
+        if (file.contains(itemId)){
+            String itemStr = file.substring(file.indexOf(itemId),file.indexOf(itemId)+Constant.ITEM_LENTH);
+            if(itemStr.contains("stock")){
+                qty = itemStr.substring(itemStr.indexOf("stock"),itemStr.indexOf("/stock"));
+            }
         }
-        str = str.substring(str.indexOf(begin)+begin.length(),str.indexOf(end)+eAdd);
-        if(str.contains("stock")){
-            str = getSubBySub(str, "<stock>", "</stock>", 0);
-        }
-        return str;
+        return qty;
     }
 }

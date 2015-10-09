@@ -13,6 +13,7 @@ import java.io.IOException;
  */
 public class MyFtpClient {
     private static Logger loggerError = Logger.getLogger("error");
+    private int i = 0;
     /**
      * test
      * @param args
@@ -46,15 +47,21 @@ public class MyFtpClient {
             // 获取 XML文件到本地
             ftp.get(new StringUtil().getLocalFileName(), Constant.SERVER_FILE);
         } catch (IOException e) {
-            System.out.println("IOException"+e.getMessage());
-            e.printStackTrace();
+            System.out.println("IOException:"+e.getMessage());
+            if (i++<5){
+                downLoad();
+            }
         } catch (FTPException e) {
-            System.out.println("FTPException"+e.getMessage());
-                    e.printStackTrace();
-        }  finally {
+            System.out.println("FTPException:"+e.getMessage());
+            if (i++<5){
+                downLoad();
+            }
+        } catch (Exception e){
+            if (i++<5){
+                downLoad();
+            }
+        } finally {
             close(ftp);
-            loggerError.error("下载TESSABIT数据失败，退出");
-            return;
         }
     }
 
