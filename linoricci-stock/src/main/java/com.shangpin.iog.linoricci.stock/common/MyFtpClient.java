@@ -46,14 +46,12 @@ public class MyFtpClient {
             ftp.setType(FTPTransferType.ASCII);
             //定位
             ftp.chdir(Constant.REMOTE_PATH);
-            String[] str = ftp.dir();
-            for (String s : str){
-                System.out.println(s);
-            }
+            String[] fileArr = ftp.dir("Disponibilita_*",true);
+
             // 获取 XML文件到本地
-           // ftp.get(Constant.LOCAL_ITEMS_FILE, Constant.SERVER_ITEMS_FILE);
-/*            ftp.get(Constant.LOCAL_IMAGE_FILE, Constant.SERVER_IMAGE_FILE);
-            ftp.get(Constant.LOCAL_STOCK_FILE, Constant.SERVER_STOCK_FILE);*/
+/*           ftp.get(Constant.LOCAL_ITEMS_FILE, Constant.SERVER_ITEMS_FILE);
+            ftp.get(Constant.LOCAL_IMAGE_FILE, Constant.SERVER_IMAGE_FILE);*/
+            ftp.get(Constant.LOCAL_STOCK_FILE, lastName(lastName(fileArr).split(" ")));
         } catch (IOException e) {
             System.out.println("IOException"+e.getMessage());
             e.printStackTrace();
@@ -80,6 +78,12 @@ public class MyFtpClient {
         } catch (FTPException e) {
             e.printStackTrace();
         }
+    }
+    /**
+     *获取数组最后一位元素
+     */
+    private String lastName(String[] strArr){
+        return strArr[strArr.length - 1];
     }
 }
 
