@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created by loyalty on 15/9/9.
+ * Created by wangyuzhi on 15/10/9.
  */
 @Component("tonyOrder")
 public class OrderServiceImpl extends AbsOrderService {
@@ -28,12 +28,17 @@ public class OrderServiceImpl extends AbsOrderService {
     ReturnOrderService returnOrderService;
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-/**
- * main
- * */
-    public void start(){
+    /**
+     * main
+     * */
+    public void startWMS(){
         //通过采购单处理下单 包括下单和退单
         this.checkoutOrderFromWMS(Constant.SUPPLIER_ID,"",true);
+    }
+
+    public void startSOP(){
+        //通过采购单处理下单 包括下单和退单
+        this.checkoutOrderFromSOP(Constant.SUPPLIER_ID,"",true);
     }
 
     /**
@@ -41,8 +46,9 @@ public class OrderServiceImpl extends AbsOrderService {
      */
     @Override
     public void handleSupplierOrder(OrderDTO orderDTO) {
+        this.orderDTO = orderDTO;
         //在线推送订单
-        createOrder("PENDING");
+        createOrder(Constant.PENDING);
         //设置异常信息
         orderDTO = this.orderDTO;
     }
@@ -52,10 +58,8 @@ public class OrderServiceImpl extends AbsOrderService {
     @Override
     public void handleConfirmOrder(OrderDTO orderDTO) {
         this.orderDTO = orderDTO;
-        //订单支付确认
-        confirmOrder(Constant.SUPPLIER_ID);
         //在线推送订单
-        createOrder("CONFIRMED");
+        createOrder(Constant.CONFIRMED);
         //设置异常信息
         orderDTO = this.orderDTO;
     }
@@ -69,8 +73,8 @@ public class OrderServiceImpl extends AbsOrderService {
         updateOrder.setMerchantId(Constant.MERCHANT_ID);
         updateOrder.setToken(Constant.TOKEN);
 /*        updateOrder.setShopOrderId(deleteOrder.getSupplierOrderNo());*/
-        updateOrder.setStatus("CANCELED");
-        updateOrder.setStatusDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+        updateOrder.setStatus(Constant.CANCELED);
+                updateOrder.setStatusDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
         Gson gson = new Gson();
 /*        String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);*/
         String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
@@ -245,12 +249,12 @@ public class OrderServiceImpl extends AbsOrderService {
             if ("ko".equals(returnDataDTO.getStatus())){
                 orderDTO.setExcState("1");
                 orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
-            } else if ("PENDING".equals(status)){
+            } else if (Constant.PENDING.equals(status)){
                 orderDTO.setStatus(OrderStatus.PLACED);
-            } else if ("CONFIRMED".equals(status)){
+            } else if (Constant.CONFIRMED.equals(status)){
                 orderDTO.setStatus(OrderStatus.PAYED);
             }
-            System.out.println("------------"+returnDataDTO.getStatus());
+            System.out.println("------------" + returnDataDTO.getStatus());
         }
     }
     public static void main(String[] args){

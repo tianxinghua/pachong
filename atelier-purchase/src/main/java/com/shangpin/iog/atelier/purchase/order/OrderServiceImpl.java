@@ -48,11 +48,17 @@ public class OrderServiceImpl extends AbsOrderService {
     /**
      * main
      */
-    public void start(){
+    public void startWMS(){
         //获取条形码
         atelierOrder.setBarCodeAll(new WS_Sito_P15().getAllAvailabilityStr());
         //通过采购单处理下单 包括下单和退单
         this.checkoutOrderFromWMS(supplierId, "", true);
+    }
+    public void startSOP(){
+        //获取条形码
+        atelierOrder.setBarCodeAll(new WS_Sito_P15().getAllAvailabilityStr());
+        //通过采购单处理下单 包括下单和退单
+        this.checkoutOrderFromSOP(supplierId, "", true);
     }
 
 
