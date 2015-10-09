@@ -43,6 +43,7 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
         while (iterator.hasNext()){
             itemId = iterator.next();
             stock = StringUtil.getSubBySub(localFile,itemId,itemId, Constant.ITEM_LENTH);
+            System.out.println("SkuId is " +itemId + ",stock is " +stock);
             logger.info("SkuId is " +itemId + ",stock is " +stock);
             returnMap.put(itemId, stock);
         }
@@ -52,25 +53,25 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
     public static void main(String[] args) throws Exception {
         TessabitStockImp impl = new TessabitStockImp();
 
-/*        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+      SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("TESSABIT更新数据库开始");
         impl.updateProductStock(Constant.SUPPLIER_ID, "2015-01-01 00:00", format.format(new Date()));
         logger.info("TESSABIT更新数据库结束");
-        System.exit(0);*/
+        System.exit(0);
 
 
-        List<String> skuNo = new ArrayList<>();
-        skuNo.add("1983991600_12");
-        skuNo.add("1983991600_11");
-        skuNo.add("1983991600_10");
-        skuNo.add("1983904634_11");
-        skuNo.add("1983904634_12");
-        skuNo.add("1983933587_1985020934");
-        skuNo.add("1983933587_1985020935");
-        Map returnMap = impl.grabStock(skuNo);
-        System.out.println("test return size is "+returnMap.keySet().size());
-        for(Object key: returnMap.keySet()){
-            System.out.println("skuId is "+key+",stock is "+returnMap.get(key));;
-        }
+//        List<String> skuNo = new ArrayList<>();
+//        skuNo.add("1983991600_12");
+//        skuNo.add("1983991600_11");
+//        skuNo.add("1983991600_10");
+//        skuNo.add("1983904634_11");
+//        skuNo.add("1983904634_12");
+//        skuNo.add("1983933587_1985020934");
+//        skuNo.add("1983933587_1985020935");
+//        Map returnMap = impl.grabStock(skuNo);
+//        System.out.println("test return size is "+returnMap.keySet().size());
+//        for(Object key: returnMap.keySet()){
+//            System.out.println("skuId is "+key+",stock is "+returnMap.get(key));;
+//        }
     }
 }

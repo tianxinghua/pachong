@@ -42,6 +42,7 @@ public class MarylouStockImpl  extends AbsUpdateProductStock {
         }
 
 
+
         MarylouStockImpl impl = new MarylouStockImpl();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("更新数据库开始");
