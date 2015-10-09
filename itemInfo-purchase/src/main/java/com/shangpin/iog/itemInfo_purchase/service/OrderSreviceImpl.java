@@ -123,14 +123,14 @@ public class OrderSreviceImpl extends AbsOrderService {
 							logger.info("下单失败："+retMessage);
 						}
 					}else{
-						spOrder.setExcState(OrderStatus.PLACED);
+						spOrder.setExcState("1");
 						spOrder.setExcDesc("采购单："+order+" 在请求验证时发生错误，未返回响应信息");
 						loggerError.error("采购单："+order+" 在请求验证时发生错误，未返回响应信息");
 					}
 					
 				}catch(Exception e){
 					//下单失败
-					spOrder.setExcState(OrderStatus.PLACED);
+					spOrder.setExcState("1");
 					spOrder.setExcDesc("未知错误...\n"+e.getMessage());
 		            loggerError.error("采购单："+order+" 下单返回转化失败");
 		            e.printStackTrace();
@@ -139,7 +139,7 @@ public class OrderSreviceImpl extends AbsOrderService {
 			
 		}catch(Exception ex){
 			//下单失败
-			spOrder.setExcState(OrderStatus.PLACED);
+			spOrder.setExcState("1");
 			spOrder.setExcDesc("未知错误...\n"+ex.getMessage());
             loggerError.error("采购单："+order+" 下单返回转化失败");
             ex.printStackTrace();
