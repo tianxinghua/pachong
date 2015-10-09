@@ -44,9 +44,6 @@ public class MyFtpClient {
             ftp.setConnectMode(FTPConnectMode.PASV);
             //ASCII方式：传输xml文本文件
             ftp.setType(FTPTransferType.ASCII);
-            if (true){
-                throw new IOException();
-            }
             // 获取 XML文件到本地
             ftp.get(new StringUtil().getLocalFileName(), Constant.SERVER_FILE);
         } catch (IOException e) {
