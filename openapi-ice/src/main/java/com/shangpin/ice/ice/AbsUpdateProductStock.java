@@ -15,6 +15,9 @@ import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
 import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
 import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 
+import com.shangpin.iog.dto.SkuRelationDTO;
+import com.shangpin.iog.service.SkuPriceService;
+import com.shangpin.iog.service.SkuRelationService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,8 +71,11 @@ public abstract class AbsUpdateProductStock {
 
 	}
 //
-//	@Autowired
-//	public SkuPriceService skuPriceService;
+	@Autowired
+	public SkuPriceService skuPriceService;
+
+	@Autowired
+	SkuRelationService skuRelationService;
 
 	/**
 	 * 抓取供应商库存数据 
@@ -120,6 +126,14 @@ public abstract class AbsUpdateProductStock {
 		boolean hasNext=true;
 		logger.warn("获取icesku 开始");
 		Set<String> skuIds = new HashSet<String>();
+
+		//获取已有的SPSKUID
+//		List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
+//		Map<String,String> map = new HashMap<>();
+//		for(SkuRelationDTO skuRelationDTO:skuRelationDTOList){
+//			map.put(skuRelationDTO.getSopSkuId(),null);
+//		}
+		Date date  = new Date();
 		while(hasNext){
 			List<SopProductSkuIce> skus = null;
 			try {
@@ -132,6 +146,16 @@ public abstract class AbsUpdateProductStock {
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
 				for (SopSkuIce ice : skuIces) {
+
+//					if (!map.containsKey(ice.SkuNo)){
+//						SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
+//						skuRelationDTO.setSupplierId(supplier);
+//						skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
+//						skuRelationDTO.setSopSkuId(ice.SkuNo);
+//						skuRelationDTO.setCreateTime(date);
+//						skuRelationService.saveSkuRelateion(skuRelationDTO);
+//					}
+
 					if(null!=ice.SkuNo&&!"".equals(ice.SkuNo)&&null!=ice.SupplierSkuNo&&!"".equals(ice.SupplierSkuNo)){
 						if(1!=ice.IsDeleted){
 							skuIds.add(ice.SupplierSkuNo);
@@ -153,6 +177,8 @@ public abstract class AbsUpdateProductStock {
 
 		return skuIds;
 	}
+
+
 
 	/**
 	 * 更新主站库存

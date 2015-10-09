@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.soap.MessageFactory;
@@ -79,17 +80,19 @@ public class SoapXmlUtil {
         postMethod.setRequestEntity(requestEntity);
         
         int returnCode=0;
+        BufferedInputStream bufferedInputStream = null;
+        BufferedOutputStream bufferedOutputStream = null;
         try {
 
             returnCode = httpClient.executeMethod(postMethod);
             System.out.println("returnCode=="+returnCode);
             
             if(returnCode == 200){
-            	BufferedInputStream bufferedInputStream = 
+            	bufferedInputStream = 
                 		new BufferedInputStream(postMethod.getResponseBodyAsStream());
             	System.out.println(postMethod.getResponseContentLength());
                 byte[] ims=new byte[1024*1024*100];                
-                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(localUrl)) );
+                bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(localUrl)) );
                 int i = -1;
                 while((i=bufferedInputStream.read(ims)) != -1){
                 	System.out.println(i+ "正在读取...");
@@ -106,6 +109,14 @@ public class SoapXmlUtil {
             
         } catch (Exception e) {
         	e.printStackTrace();
+        }finally{
+        	try {
+				bufferedOutputStream.close();
+				bufferedInputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+            
         }
 		
 		return null;

@@ -67,7 +67,7 @@ public class FetchProduct {
                 sku.setSupplierId(supplierId);
                 sku.setSpuId(skuId);
                 sku.setSkuId(skuId);
-                sku.setProductSize(fields[4]);
+                sku.setProductSize(fields[34]);
                 sku.setMarketPrice(fields[16]);
                 sku.setSalePrice(fields[16]);
                 sku.setSupplierPrice(fields[16]);
@@ -83,7 +83,7 @@ public class FetchProduct {
                 sku.setStock(stock);
                 sku.setBarcode(barCode);
                 sku.setProductCode(fields[0]);
-                sku.setProductName(fields[15]);
+               // sku.setProductName(fields[14]);
                 productFetchService.saveSKU(sku);
 
                 String skuPic = null;
@@ -126,7 +126,7 @@ public class FetchProduct {
                 spu.setSupplierId(supplierId);
                 spu.setSpuId(skuId);
                 spu.setBrandName(fields[2]);
-                spu.setCategoryName(fields[13]);
+                spu.setCategoryName(fields[8]);
                 //spu.setSpuName(fields[0]);
                 spu.setSeasonId(fields[6]);
                 spu.setMaterial(fields[11]);
@@ -188,6 +188,8 @@ public class FetchProduct {
      * test
      * */
     public static void main(String[] args) throws IOException {
-
+/*        String kk = "263816;FW15;Givenchy;BB05253004;001;Woman;Fall Winter;Bags;Shoulder Bags;Pandora Mini;Black;;;;Mini black washed leather Pandora bag:     detachable leather shoulder strap one leather handle  double closure with zipper  inside pocket with zipper cotton cloth lining;Givenchy: Black Washed Leather Mini Pandora Bag;792;792;;792;;NO;1;Blacks and greys;;0;Height;Width;Depth;Shoulder strap;Handles;;;;;01/01/1998 00:00:00;;;0;;;;;;Completa;NC;Main;Bags";
+        String[] array = kk.split(";");
+        System.out.println("   " + array.length);*/
     }
 }

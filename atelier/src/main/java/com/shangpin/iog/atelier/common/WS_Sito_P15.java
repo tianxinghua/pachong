@@ -194,6 +194,34 @@ public class WS_Sito_P15 {
     /**
      * get all images
      * */
+    public void getUpdateItemsMarketplace(){
+        System.out.println("GetUpdateItemsMarketplace---------------------------------------");
+        String allImages = "";
+        try{
+            allImages = HttpUtil45.post("http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx/GetUpdateItemsMarketplace",
+                    new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10, 1000 * 60 * 10));
+        }catch (Exception e){
+            System.out.println("GetUpdateItemsMarketplace-failed--------------------------------------");
+        }finally {
+            HttpUtil45.closePool();
+        }
+        try {
+            File newTextFile = new File("E:/aa.xml");
+            if (!newTextFile.exists())
+                newTextFile.createNewFile();
+            FileWriter fw;
+            fw = new FileWriter(newTextFile);
+            fw.write(allImages);
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(allImages);
+        //return allImages;
+    }
+    /**
+     * get all images
+     * */
     public void getAllImageMarketplaceBySoap(){
         System.out.println("getAllImageMarketplaceBySoap--------------------------------");
         String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
@@ -248,7 +276,7 @@ public class WS_Sito_P15 {
                 "      <DESTINATIONROW1>address</DESTINATIONROW1>\n" +
                 "      <DESTINATIONROW2>address</DESTINATIONROW2>\n" +
                 "      <DESTINATIONROW3>address</DESTINATIONROW3>\n" +
-                "      <BARCODE>789</BARCODE>\n" +
+                "      <BARCODE>2004962616130</BARCODE>\n" +
                 "      <QTY>9</QTY>\n" +
                 "      <PRICE>11.11</PRICE>\n" +
                 "    </NewOrder>\n" +
@@ -260,6 +288,156 @@ public class WS_Sito_P15 {
         String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=NewOrder";
         PostMethod postMethod = new PostMethod(uri);
         postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/NewOrder");
+        postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
+
+        StringRequestEntity requestEntity=new StringRequestEntity(soapRequestData);
+        postMethod.setRequestEntity(requestEntity);
+
+        int returnCode=0;
+        try {
+            returnCode = httpClient.executeMethod(postMethod);
+            System.out.println("returnCode=="+returnCode);
+            BufferedOutputStream out=new BufferedOutputStream(new FileOutputStream(new File(file)));
+            String rtnData = postMethod.getResponseBodyAsString();
+            System.out.println("======"+rtnData);
+            BufferedInputStream in=new BufferedInputStream(postMethod.getResponseBodyAsStream());
+
+            int length = 0;
+            byte[] b = new byte[10240];
+            System.out.println("44444");
+            while((length = in.read(b,0,10240)) != -1)
+            {
+                out.write(b, 0, length);
+            }
+            in.close();
+            out.flush();
+            out.close();
+        } catch (HttpException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Order Amendment
+     * */
+    public void orderAmendment(){
+        String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+                "  <soap:Body>\n" +
+                "    <OrderAmendment xmlns=\"http://tempuri.org/\">\n" +
+                "      <ID_ORDER_WEB>123</ID_ORDER_WEB>\n" +
+                "      <ID_CLIENTE_WEB>456</ID_CLIENTE_WEB>\n" +
+                "      <BARCODE>2004962616130</BARCODE>\n" +
+                "      <QTY>0</QTY>\n" +
+                "    </OrderAmendment>\n" +
+                "  </soap:Body>\n" +
+                "</soap:Envelope>";
+        System.out.println("soapRequestData=="+soapRequestData);
+        String file = "E:\\OrderAmendment.xml";
+        HttpClient httpClient = new HttpClient();
+        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=OrderAmendment";
+        PostMethod postMethod = new PostMethod(uri);
+        postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/OrderAmendment");
+        postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
+
+        StringRequestEntity requestEntity=new StringRequestEntity(soapRequestData);
+        postMethod.setRequestEntity(requestEntity);
+
+        int returnCode=0;
+        try {
+            returnCode = httpClient.executeMethod(postMethod);
+            System.out.println("returnCode=="+returnCode);
+            BufferedOutputStream out=new BufferedOutputStream(new FileOutputStream(new File(file)));
+            String rtnData = postMethod.getResponseBodyAsString();
+            System.out.println("======"+rtnData);
+            BufferedInputStream in=new BufferedInputStream(postMethod.getResponseBodyAsStream());
+
+            int length = 0;
+            byte[] b = new byte[10240];
+            System.out.println("44444");
+            while((length = in.read(b,0,10240)) != -1)
+            {
+                out.write(b, 0, length);
+            }
+            in.close();
+            out.flush();
+            out.close();
+        } catch (HttpException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get Status Order
+     * */
+    public void getStatusOrder(){
+        String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+                "  <soap:Body>\n" +
+                "    <GetStatusOrder xmlns=\"http://tempuri.org/\">\n" +
+                "      <CODICE>123</CODICE>\n" +
+                "      <ID_CLIENTE>4567</ID_CLIENTE>\n" +
+                "    </GetStatusOrder>\n" +
+                "  </soap:Body>\n" +
+                "</soap:Envelope>";
+        System.out.println("soapRequestData=="+soapRequestData);
+        String file = "E:\\GetStatusOrder.xml";
+        HttpClient httpClient = new HttpClient();
+        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=GetStatusOrder";
+        PostMethod postMethod = new PostMethod(uri);
+        postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/GetStatusOrder");
+        postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
+
+        StringRequestEntity requestEntity=new StringRequestEntity(soapRequestData);
+        postMethod.setRequestEntity(requestEntity);
+
+        int returnCode=0;
+        try {
+            returnCode = httpClient.executeMethod(postMethod);
+            System.out.println("returnCode=="+returnCode);
+            BufferedOutputStream out=new BufferedOutputStream(new FileOutputStream(new File(file)));
+            BufferedInputStream in=new BufferedInputStream(postMethod.getResponseBodyAsStream());
+            int length = 0;
+            byte[] b = new byte[10240];
+            System.out.println("44444");
+            while((length = in.read(b,0,10240)) != -1)
+            {
+                out.write(b, 0, length);
+            }
+            in.close();
+            out.flush();
+            out.close();
+        } catch (HttpException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Set Status Order
+     * */
+    public void setStatusOrder(){
+        String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+                "  <soap:Body>\n" +
+                "    <SetStatusOrder xmlns=\"http://tempuri.org/\">\n" +
+                "      <CODICE>123</CODICE>\n" +
+                "      <ID_CLIENTE>4567</ID_CLIENTE>\n" +
+                "      <ID_STATUS>3</ID_STATUS>\n" +
+                "    </SetStatusOrder>\n" +
+                "  </soap:Body>\n" +
+                "</soap:Envelope>";
+        System.out.println("soapRequestData=="+soapRequestData);
+        String file = "E:\\SetStatusOrder.xml";
+        HttpClient httpClient = new HttpClient();
+        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=SetStatusOrder";
+        PostMethod postMethod = new PostMethod(uri);
+        postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/SetStatusOrder");
         postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
 
         StringRequestEntity requestEntity=new StringRequestEntity(soapRequestData);
@@ -315,9 +493,16 @@ public class WS_Sito_P15 {
      * test
      * */
     public static void main(String[] args) throws IOException {
-        new WS_Sito_P15().fetchProduct();
+        //new WS_Sito_P15().fetchProduct();
+        //new WS_Sito_P15().setStatusOrder();
+       // new WS_Sito_P15().getStatusOrder();
+        //new WS_Sito_P15().newOrder();
+        new WS_Sito_P15().orderAmendment();
         //new WS_Sito_P15().getAllAvailabilityMarketplace();
         //new WS_Sito_P15().getAllImageMarketplace();
        //new WS_Sito_P15().getAllItemsMarketplace();
+/*        String str = HttpUtil45.post("http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx/GetUpdatePricelistMarketplace",
+                new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10, 1000 * 60 * 10));*/
+
     }
 }

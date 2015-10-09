@@ -19,6 +19,7 @@ public class StringUtil {
        String id = "55fab44028499f25010041a7";
         //System.out.println(localFile);
         System.out.println("00000000000000000000000000000");
+        System.out.println(s);
         System.out.println(StringUtil.getCategoryNameByID(id, s));
     }
 

@@ -17,9 +17,13 @@
     </resultMap>
     <sql id="id_out_column">
         SUPPLIER_ID,
+        SUPPLIER_NO,
         UUID,
         SP_ORDER_ID,
+        SUPPLIER_ORDER_NO,
+        SP_PURCHASE_NO,
         DETAIL,
+        MEMO,
         STATUS,
         CREATE_TIME,
         EXC_STATE,
@@ -30,8 +34,8 @@
         <include refid="id_out_column"></include>
         )
         values(
-        #{supplierId}, #{uuId}, #{spOrderId},
-        #{detail},#{status},#{createTime},#{excState},#{excDesc}
+        #{supplierId},#{supplierNo}, #{uuId}, #{spOrderId},#{supplierOrderNo},#{spPurchaseNo},
+        #{detail},#{memo},#{status},#{createTime},#{excState},#{excDesc}
         )
     </insert>
     <update id="updateReturnOrderStatus" parameterType="Map" >

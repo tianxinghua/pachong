@@ -14,94 +14,32 @@ import java.util.Date;
 public class ReturnOrderDTO {
     private BigInteger id;
     private String supplierId;
+    private String supplierNo;
     private String uuId;  //和供货商公用的订单唯一标识
-    private String spOrderId;
-    private String detail;//
+    private String spOrderId;//尚品退单编号
+    private String supplierOrderNo;//供货商的订单编号
+    private String spPurchaseNo; //采购单编号
+    private String detail;//订单明细  供货商skuId:数量,
+    private String memo;//   订单明细  尚品skuId:数量,
     private String status;//订单状态
     private Date createTime;
+    private Date updateTime;
     private String excState;
     private String excDesc;
     private Date excTime;
-    public BigInteger getId() {
-        return id;
-    }
 
-    public void setId(BigInteger id) {
-        this.id = id;
-    }
-
-    public String getSupplierId() {
-        return supplierId;
-    }
-
-    public void setSupplierId(String supplierId) {
-        this.supplierId = supplierId;
-    }
-
-    public String getUuId() {
-        return uuId;
-    }
-
-    public void setUuId(String uuId) {
-        this.uuId = uuId;
-    }
-
-    public String getSpOrderId() {
-        return spOrderId;
-    }
-
-    public void setSpOrderId(String spOrderId) {
-        this.spOrderId = spOrderId;
-    }
-
-    public String getDetail() {
-        return detail;
-    }
-
-    public void setDetail(String detail) {
-        this.detail = detail;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getExcState() {
-        return excState;
-    }
-
-    public void setExcState(String excState) {
-        this.excState = excState;
-    }
-
-    public String getExcDesc() {
-        return excDesc;
-    }
-
-    public void setExcDesc(String excDesc) {
-        this.excDesc = excDesc;
-    }
 
     @Override
     public String toString() {
         return "ReturnOrderDTO{" +
                 "id=" + id +
                 ", supplierId='" + supplierId + '\'' +
+                ", supplierNo='" + supplierNo + '\'' +
                 ", uuId='" + uuId + '\'' +
                 ", spOrderId='" + spOrderId + '\'' +
+                ", spPurchaseNo='" + spPurchaseNo + '\'' +
                 ", detail='" + detail + '\'' +
+                ", memo='" + memo + '\'' +
                 ", status='" + status + '\'' +
                 ", createTime=" + createTime +
                 ", excState='" + excState + '\'' +

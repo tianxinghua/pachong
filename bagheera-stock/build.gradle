@@ -25,6 +25,6 @@ jar {
 
     manifest {
         attributes 'Main-Class': 'com.shangpin.iog.gilt.Startup'
-        attributes 'Class-Path': '. ' +  manifestCp
+        attributes 'Class-Path': '. ./conf/ ' +  manifestCp
     }
 }
