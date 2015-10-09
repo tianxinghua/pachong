@@ -10,8 +10,8 @@ dependencies {
             "com.enterprisedt:edtFTPj:1.5.3",
             "org.jdom:jdom:2.0.2",
             "dom4j:dom4j:1.6.1",
-            project(':openapi-ice'),
             project(':project-common'),
+            project(':iog-sop'),
             project(':iog-common-product')
     )
 
