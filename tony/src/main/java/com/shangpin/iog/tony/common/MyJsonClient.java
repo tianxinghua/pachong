@@ -20,7 +20,7 @@ public class MyJsonClient {
         } finally {
             HttpUtil45.closePool();
         }
-       // System.out.println(json);
+        System.out.println(json);
         return  json.substring(json.indexOf("["), json.length() - 2).replaceAll("\\$", "");
     }
     /**

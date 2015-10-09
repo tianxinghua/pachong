@@ -46,8 +46,12 @@ public class MyFtpClient {
             ftp.setType(FTPTransferType.ASCII);
             //定位
             ftp.chdir(Constant.REMOTE_PATH);
+            String[] str = ftp.dir();
+            for (String s : str){
+                System.out.println(s);
+            }
             // 获取 XML文件到本地
-            ftp.get(Constant.LOCAL_ITEMS_FILE, Constant.SERVER_ITEMS_FILE);
+           // ftp.get(Constant.LOCAL_ITEMS_FILE, Constant.SERVER_ITEMS_FILE);
 /*            ftp.get(Constant.LOCAL_IMAGE_FILE, Constant.SERVER_IMAGE_FILE);
             ftp.get(Constant.LOCAL_STOCK_FILE, Constant.SERVER_STOCK_FILE);*/
         } catch (IOException e) {
