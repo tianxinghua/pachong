@@ -39,8 +39,6 @@ public class FetchProduct {
 	@Autowired
 	ProductFetchService productFetchService;
     private static Logger logger = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static int rows;
@@ -65,15 +63,17 @@ public class FetchProduct {
 		
 		// 第一步：获取活动信息
 		logger.info("拉取活动数据开始");
-		List<Item> eventList = getReebonzEventList(eventUrl);
+		List<Item> eventList = MyJsonUtil.getReebonzEventJson(eventUrl);
 		for (Item item : eventList) {
 			// 第二步：根据活动获取商品信息
-			logger.info("拉取某一活动下的商品数据");
+			logger.info("拉取活动"+item.getEvent_id()+"下的商品总数");
 			//获取商品总数量
 			String productNum = getProductNum(productUrl,item
 					.getEvent_id());
+			logger.info("拉取活动"+item.getEvent_id()+"下的商品数据");
+			//rows代表每次请求的数据行数，默认10
 			for(int start=0;start<Integer.parseInt(productNum);start+=rows){
-				List<Item> eventSpuList = getReebonzSpuJsonByEventId(productUrl,item
+				List<Item> eventSpuList = MyJsonUtil.getReebonzSpuJsonByEventId(productUrl,item
 						.getEvent_id(),start,rows);
 				//保存入库
 				messMappingAndSave(eventSpuList);
@@ -143,7 +143,7 @@ public class FetchProduct {
 				}
 				//
 				// 第三步：根据skuId与eventId获取商品的库存跟尺码
-				List<Item> skuScokeList = getSkuScokeJson(stockUrl,item.getEvent_id(),
+				List<Item> skuScokeList = MyJsonUtil.getSkuScokeJson(stockUrl,item.getEvent_id(),
 						item.getSku());
 				if(skuScokeList!=null){
 					for (Item stock : skuScokeList) {
@@ -153,24 +153,19 @@ public class FetchProduct {
 								sku.setId(UUIDGenerator.getUUID());
 								sku.setSupplierId(supplierId);
 								sku.setSpuId(item.getSku());
-								
 								String proSize = stock.getOption_name();
 								if("no-size".equals(proSize)){
+									sku.setProductSize("A");
+									sku.setSkuId(item.getSku() + "|" + item.getEvent_id() + "|A");
+								}else{
 									sku.setProductSize(proSize);
 									sku.setSkuId(item.getSku() + "|" + item.getEvent_id() + "|"
 											+ stock.getOption_code());
-								}else{
-									sku.setProductSize("A");
-									sku.setSkuId(item.getSku() + "|" + item.getEvent_id() + "|A");
 								}
 								
 								sku.setStock(stock.getTotal_stock_qty());
 								sku.setSalePrice(item.getFinal_selling_price());
 								sku.setMarketPrice(item.getRetail_price());
-//								float marketPrice = Float.parseFloat(item.getFinal_selling_price())*(1-Float.parseFloat(item.getWholesale_percentage()));
-//								sku.setMarketPrice(String.valueOf(marketPrice));
-								// sku.setSalePrice(item.getPurchase_price());
-								// sku.setSupplierPrice(item.getAge());
 								if(item.getColor()!=null){
 									if (item.getColor().length > 0) {
 										sku.setColor(item.getColor()[0]);
@@ -202,39 +197,7 @@ public class FetchProduct {
 				}
 				
 	}
-
-	// 第一步：获取供应商所有的活动
-	private List<Item> getReebonzEventList(String eventUrl) {
-		
-		String eventJson = MyJsonUtil.getReebonzEventJson(eventUrl);
-		if(eventJson!=null){
-			ResponseObject obj = new Gson().fromJson(eventJson, ResponseObject.class);
-			Object o = obj.getResponse();
-			JSONObject jsonObject = JSONObject.fromObject(o); 
-			Items array = new Gson().fromJson(jsonObject.toString(), Items.class);
-			return array.getDocs();
-		}else{
-			return null;
-		}
-		
-	}
-
-	// 第二步：根据活动获取商品
-	private List<Item> getReebonzSpuJsonByEventId(String productUrl,String eventId,int i,int rows) {
-		
-		
-		String spuJson = MyJsonUtil.getReebonzSpuJsonByEventId(productUrl,eventId,i,rows);
-		if(spuJson!=null){
-			ResponseObject obj = new Gson().fromJson(spuJson, ResponseObject.class);
-			Object o = obj.getResponse();
-			JSONObject jsonObject = JSONObject.fromObject(o); 
-			Items eventSpuList = new Gson().fromJson(jsonObject.toString(), Items.class);
-			return eventSpuList.getDocs();
-		}else{
-			return null;
-		}
-	}
-
+	
 	private String getProductNum(String productUrl,String eventId) {
 		String spuJson = MyJsonUtil.getProductNum(productUrl,eventId);
 		if(spuJson!=null){
@@ -247,22 +210,4 @@ public class FetchProduct {
 			return null;
 		}
 	}
-
-	// 第三步：根据eventId和skuId获取库存以及编码尺寸
-	private List<Item> getSkuScokeJson(String stockUrl,String eventId, String skuId) {
-		
-		String skuScokeJson = MyJsonUtil.getSkuScokeJson(stockUrl,eventId, skuId);
-		if(skuScokeJson!=null){
-			ResponseObject obj = new Gson().fromJson(skuScokeJson,
-					ResponseObject.class);
-			Object jj = obj.getResponse();
-			JSONObject jsonObject = JSONObject.fromObject(jj);
-			Items array = new Gson().fromJson(jsonObject.toString(), Items.class);
-
-			return array.getDocs();
-		}else{
-			return null;
-		}
-	}
-	
 }

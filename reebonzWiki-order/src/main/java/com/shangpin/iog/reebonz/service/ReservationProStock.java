@@ -42,8 +42,8 @@ public class ReservationProStock {
 		 if(null==bdl){
 			 bdl=ResourceBundle.getBundle("conf");
 		 }
-		 lockStockUrl = bdl.getString("eventUrl");
-		 unlockStockUrl = bdl.getString("productUrl");
+		 lockStockUrl = bdl.getString("lockStockUrl");
+		 unlockStockUrl = bdl.getString("unlockStockUrl");
 		 pushOrderUrl = bdl.getString("pushOrderUrl");
 		 client_id = bdl.getString("client_id");
 		 client_secret = bdl.getString("client_secret");
@@ -54,7 +54,6 @@ public class ReservationProStock {
 			logger.info("商家授权");
 			oauth = authApi();
 		}	
-			
 	 }
 
 	/*
@@ -110,18 +109,18 @@ public class ReservationProStock {
 		map.put("bags", data);
 		map.put("api_url", pushOrderUrl);
 		ResponseObject returnObj = requestSource(map);
-		map.clear();
+		Map<String,String> returnMap = new HashMap<String,String>();
 		if (returnObj != null) {
 			String result = returnObj.getReturn_code();
 			if ("1".equals(result)) {
-				map.put("0",returnObj.getOrder_id());
+				returnMap.put("0",returnObj.getOrder_id());
 				logger.info("推送订单success：" + returnObj.getOrder_id());
 			} else if ("0".equals(result)) {
-				map.put("1",returnObj.getError_msg());
+				returnMap.put("1",returnObj.getError_msg());
 				logger.info("推送订单fail：" + returnObj.getError_msg());
 			}
 		}
-		return map;
+		return returnMap;
 	}
 
 	/*
@@ -178,8 +177,8 @@ public class ReservationProStock {
 	 * refresh授权
 	 */
 	public  void refreshToken() {
+		
 		Map<String, String> map = new HashMap<String,String>();
-	
 		map.put("client_id",client_id);
 		map.put("client_secret",client_secret);
 		map.put("refresh_token", oauth.getRefresh_token());
@@ -191,9 +190,8 @@ public class ReservationProStock {
 				oauth.setRefresh_token(obj.getRefresh_token());
 				logger.info("刷新授权success");
 			} else if ("INV_REFRESH_TOKEN".equals(obj.getError_code())) {
-				logger.info("重新授权");
+				logger.info("授权已过期，重新授权");
 				authApi();
-				refreshToken();
 			}
 		}
 	}
@@ -204,9 +202,7 @@ public class ReservationProStock {
 	public  ResponseObject requestSource(Map<String, String> map) {
 
 		ResponseObject obj = null;
-		// Authentication API 授权
 		map.put("client_id", client_id);
-		// Request Resource API
 		map.put("access_token", oauth.getAccess_token());
 		map.put("response_type", "json");
 		// 请求API的返回结果
@@ -214,7 +210,9 @@ public class ReservationProStock {
 		obj = new Gson().fromJson(json, ResponseObject.class);
 		if("INV_TOKEN".equals(obj.getError_code())){
 			logger.info("无效的token:"+oauth.getAccess_token());
+			//token可能已过期，刷新token延长周期
 			refreshToken();
+			//重新请求url资源
 			requestSource(map);
 		}
 		return obj;
