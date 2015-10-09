@@ -1,5 +1,7 @@
 package com.shangpin.iog.itemInfo.stock.service;
 
+import java.io.File;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -28,7 +30,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
-    private static String supplierId = "201509301515";
+    private static String supplierId = "";
     private static String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
 								            "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
 								            "  <soap12:Body>\n" +
@@ -38,7 +40,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
     private static String serviceUrl = "http://service.alducadaosta.com/EcSrv/Services.asmx?op=GetItem4Platform";
     private static String soapAction = "http://service.alducadaosta.com/EcSrv/GetItem4Platform";
     private static String contentType = "text/xml; charset=utf-8";
-    private static String localPath = "D:\\soapxml.xml";
+    private static String localPath = "";
     
     static {
         if(null==bdl)
@@ -60,6 +62,16 @@ public class GrabStockImp extends AbsUpdateProductStock {
             logMongo.info(mongMap);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        //获取本类class文件所在目录，作为localPath的值
+        try{
+        	
+        	localPath = URLDecoder.decode((GrabStockImp.class.getClassLoader().getResource("").getFile()), "utf-8");
+        	localPath = localPath+"soapml.xml";
+        	
+        }catch(Exception e){
+        	e.printStackTrace();
+        	localPath = "C:\\soapxml.xml";
         }
 		String filePath = null;
 		try{
@@ -147,6 +159,13 @@ public class GrabStockImp extends AbsUpdateProductStock {
         grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
         logger.info("alduca daosta更新数据库结束");
         System.exit(0);
+		
+//		String ss = URLDecoder.decode((GrabStockImp.class.getClassLoader().getResource("").getFile()), "utf-8")+"soap.xml";
+//		File ff = new File(ss);
+//		if(!ff.exists()){
+//			ff.createNewFile();
+//		}
+//		System.out.println(ss);
 	} 
 
 }
