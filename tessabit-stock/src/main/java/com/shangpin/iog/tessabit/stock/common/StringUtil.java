@@ -84,15 +84,18 @@ public class StringUtil {
      *获取单品数量
      */
     public static String getSubBySub(String str,String begin,String end,int eAdd){
+        String qty = null;
         if("".equals(str)){
             loggerError.error("tessabit file is null,stock changed into 0");
             System.out.println("file is null,stock changed into 0");
-            return "0";
+            return qty;
         }
-        str = str.substring(str.indexOf(begin)+begin.length(),str.indexOf(end)+eAdd);
+        if (str.contains(begin)&&str.contains(end)){
+            qty = str.substring(str.indexOf(begin)+begin.length(),str.indexOf(end) + eAdd);
+        }
         if(str.contains("stock")){
-            str = getSubBySub(str, "<stock>", "</stock>", 0);
+            qty = getSubBySub(str, "<stock>", "</stock>", 0);
         }
-        return str;
+        return qty;
     }
 }
