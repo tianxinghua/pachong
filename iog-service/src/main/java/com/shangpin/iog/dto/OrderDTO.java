@@ -16,6 +16,7 @@ import java.util.Date;
  * 订单状态
  *
  public static String PLACED="placed";
+
  public static String CONFIRMED="confirmed";
  public static String CANCELLED="cancelled";
  public static String PROCESSING="processing";
@@ -23,6 +24,8 @@ import java.util.Date;
  public static String NOHANDLE="nohandle";
  public static String WAITCANCEL="waitcancel";
  public static String WAITPLACED="waitplaced";
+
+ 状态请参考
  */
 public class OrderDTO {
     private BigInteger id;
@@ -39,8 +42,8 @@ public class OrderDTO {
     private String deliveryNo;//发货单
     private Date createTime;
     private Date updateTime;
-    private String excState;
-    private String excDesc;
+    private String excState;  //异常标记 发生错误 赋值为 1
+    private String excDesc;  //错误描述
     private Date excTime;
 
 

@@ -105,11 +105,14 @@ public abstract class AbsOrderService {
         //初始化时间
         initDate("date.ini");
 
-        String uuid="";
+
         //处理订单
         handleOrderOfSOP(supplierId, supplierNo);
         //处理下单
         cancelOrderFromSOP(supplierNo,supplierId,handleCancel);
+
+        //处理异常
+        handlePurchaseOrderException(supplierId);
     }
 
 
@@ -176,6 +179,8 @@ public abstract class AbsOrderService {
             e.printStackTrace();
         }
 
+        // 检查订单是否已经被支付
+        checkPayed(supplierId);
         //处理订单
         handleOrderOfWMS(supplierNo, supplierId, skuMap, orderList);
 
@@ -184,7 +189,7 @@ public abstract class AbsOrderService {
     }
 
     /**
-     * 检查订单是否支付
+     * TODO 检查订单是否支付
      * @param supplierId
      */
     public void checkPayed(String supplierId){
@@ -194,16 +199,47 @@ public abstract class AbsOrderService {
 
         Map<String,List<PurchaseOrderDetail>> orderMap = null;
         try {
-            orderMap = this.getPurchaseOrder(supplierId, startDate, endDate, status);
+            orderMap = this.getPurchaseOrder(supplierId, startDateOfWMS, endDateOfWMS, status);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //获取采购单  获取订单信息
+        //TODO 获取采购单  获取订单信息  更新订单状态
 
 
 
     }
 
+
+
+    private void handlePurchaseOrderException(String supplierId){
+        //拉取采购单存入本地库
+        List<OrderDTO>  orderDTOList= null;
+        try {
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED);
+            if(null!=orderDTOList){
+
+                for(OrderDTO orderDTO:orderDTOList){
+
+                    try {
+                        //处理供货商订单
+                        handleSupplierOrder(orderDTO);
+                        //更新海外购订单信息
+                        updateOrderMsg(orderDTO);
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        loggerError.error("订单处理失败。失败信息 " + orderDTO.toString()+" 原因 ：" + e.getMessage() );
+
+                    }
+                }
+            }
+
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     /**
      * 订单确认

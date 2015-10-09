@@ -98,6 +98,11 @@ public class MyStringUtil {
         }
         return "0";
     }
-
+    /**
+     *get lase array
+     * */
+    public static String getLastArray(String[] strArr){
+        return strArr[strArr.length - 1];
+    }
 
 }

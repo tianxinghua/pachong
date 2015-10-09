@@ -102,4 +102,16 @@ public interface _OpenApiServantOperations
 
     boolean AddCommodityPic(String supplierId, ShangPin.SOP.Entity.Api.Product.ProductPicIce ProductPicIce, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
+
+    String PurchaseDetailEx(ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx purchaseOrderEx, String supplierId, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    String FindCategoryBrandAgreement(String supplierId, String categoryNo, String brandNo, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    boolean UpdateSupplyPriceSpecial(String supplierId, ShangPin.SOP.Entity.Api.Product.SupplyPriceInfo price, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailSpecialPage FindPurchaseOrderDetailSpecial(String supplierId, String purchaseOrderNo, String orderNo, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
 }

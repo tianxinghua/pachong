@@ -223,7 +223,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 buffer.append("\"\t" + dto.getSkuId()+ "\"").append(splitSign);
               //  欧洲习惯 第一个先看 男女
-                buffer.append(dto.getCategoryGender()).append(splitSign);
+                buffer.append(null==dto.getCategoryGender()?"":dto.getCategoryGender().replaceAll(splitSign," ")).append(splitSign);
                 //产品名称
                 productName =   dto.getProductName();
                 if(StringUtils.isBlank(productName)){

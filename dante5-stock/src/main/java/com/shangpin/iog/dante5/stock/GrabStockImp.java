@@ -38,9 +38,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
         Map<String, String> skuStock = new HashMap<>(skuNos.size());
         Map<String, String> stockMap = new HashMap<>();
 
-        OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-        timeConfig.confRequestOutTime(600000);
-        timeConfig.confSocketOutTime(600000);
+        OutTimeConfig timeConfig = new OutTimeConfig(1000*60, 1000*60*20,1000*60*20);
+/*        timeConfig.confRequestOutTime(600000);
+        timeConfig.confSocketOutTime(600000);*/
         String url = "https://www.dante5.com/en-US/home/feedShangpin";
         String result = HttpUtil45.get(url, timeConfig, null);
         HttpUtil45.closePool();
