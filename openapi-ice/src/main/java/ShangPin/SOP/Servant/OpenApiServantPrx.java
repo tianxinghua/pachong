@@ -588,4 +588,88 @@ public interface OpenApiServantPrx extends Ice.ObjectPrx
 
     public boolean end_AddCommodityPic(Ice.AsyncResult __result)
         throws ShangPin.SOP.Api.ApiException;
+
+    public String PurchaseDetailEx(ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx purchaseOrderEx, String supplierId)
+        throws ShangPin.SOP.Api.ApiException;
+
+    public String PurchaseDetailEx(ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx purchaseOrderEx, String supplierId, java.util.Map<String, String> __ctx)
+        throws ShangPin.SOP.Api.ApiException;
+
+    public Ice.AsyncResult begin_PurchaseDetailEx(ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx purchaseOrderEx, String supplierId);
+
+    public Ice.AsyncResult begin_PurchaseDetailEx(ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx purchaseOrderEx, String supplierId, java.util.Map<String, String> __ctx);
+
+    public Ice.AsyncResult begin_PurchaseDetailEx(ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx purchaseOrderEx, String supplierId, Ice.Callback __cb);
+
+    public Ice.AsyncResult begin_PurchaseDetailEx(ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx purchaseOrderEx, String supplierId, java.util.Map<String, String> __ctx, Ice.Callback __cb);
+
+    public Ice.AsyncResult begin_PurchaseDetailEx(ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx purchaseOrderEx, String supplierId, Callback_OpenApiServant_PurchaseDetailEx __cb);
+
+    public Ice.AsyncResult begin_PurchaseDetailEx(ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx purchaseOrderEx, String supplierId, java.util.Map<String, String> __ctx, Callback_OpenApiServant_PurchaseDetailEx __cb);
+
+    public String end_PurchaseDetailEx(Ice.AsyncResult __result)
+        throws ShangPin.SOP.Api.ApiException;
+
+    public String FindCategoryBrandAgreement(String supplierId, String categoryNo, String brandNo)
+        throws ShangPin.SOP.Api.ApiException;
+
+    public String FindCategoryBrandAgreement(String supplierId, String categoryNo, String brandNo, java.util.Map<String, String> __ctx)
+        throws ShangPin.SOP.Api.ApiException;
+
+    public Ice.AsyncResult begin_FindCategoryBrandAgreement(String supplierId, String categoryNo, String brandNo);
+
+    public Ice.AsyncResult begin_FindCategoryBrandAgreement(String supplierId, String categoryNo, String brandNo, java.util.Map<String, String> __ctx);
+
+    public Ice.AsyncResult begin_FindCategoryBrandAgreement(String supplierId, String categoryNo, String brandNo, Ice.Callback __cb);
+
+    public Ice.AsyncResult begin_FindCategoryBrandAgreement(String supplierId, String categoryNo, String brandNo, java.util.Map<String, String> __ctx, Ice.Callback __cb);
+
+    public Ice.AsyncResult begin_FindCategoryBrandAgreement(String supplierId, String categoryNo, String brandNo, Callback_OpenApiServant_FindCategoryBrandAgreement __cb);
+
+    public Ice.AsyncResult begin_FindCategoryBrandAgreement(String supplierId, String categoryNo, String brandNo, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindCategoryBrandAgreement __cb);
+
+    public String end_FindCategoryBrandAgreement(Ice.AsyncResult __result)
+        throws ShangPin.SOP.Api.ApiException;
+
+    public boolean UpdateSupplyPriceSpecial(String supplierId, ShangPin.SOP.Entity.Api.Product.SupplyPriceInfo price)
+        throws ShangPin.SOP.Api.ApiException;
+
+    public boolean UpdateSupplyPriceSpecial(String supplierId, ShangPin.SOP.Entity.Api.Product.SupplyPriceInfo price, java.util.Map<String, String> __ctx)
+        throws ShangPin.SOP.Api.ApiException;
+
+    public Ice.AsyncResult begin_UpdateSupplyPriceSpecial(String supplierId, ShangPin.SOP.Entity.Api.Product.SupplyPriceInfo price);
+
+    public Ice.AsyncResult begin_UpdateSupplyPriceSpecial(String supplierId, ShangPin.SOP.Entity.Api.Product.SupplyPriceInfo price, java.util.Map<String, String> __ctx);
+
+    public Ice.AsyncResult begin_UpdateSupplyPriceSpecial(String supplierId, ShangPin.SOP.Entity.Api.Product.SupplyPriceInfo price, Ice.Callback __cb);
+
+    public Ice.AsyncResult begin_UpdateSupplyPriceSpecial(String supplierId, ShangPin.SOP.Entity.Api.Product.SupplyPriceInfo price, java.util.Map<String, String> __ctx, Ice.Callback __cb);
+
+    public Ice.AsyncResult begin_UpdateSupplyPriceSpecial(String supplierId, ShangPin.SOP.Entity.Api.Product.SupplyPriceInfo price, Callback_OpenApiServant_UpdateSupplyPriceSpecial __cb);
+
+    public Ice.AsyncResult begin_UpdateSupplyPriceSpecial(String supplierId, ShangPin.SOP.Entity.Api.Product.SupplyPriceInfo price, java.util.Map<String, String> __ctx, Callback_OpenApiServant_UpdateSupplyPriceSpecial __cb);
+
+    public boolean end_UpdateSupplyPriceSpecial(Ice.AsyncResult __result)
+        throws ShangPin.SOP.Api.ApiException;
+
+    public ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailSpecialPage FindPurchaseOrderDetailSpecial(String supplierId, String purchaseOrderNo, String orderNo)
+        throws ShangPin.SOP.Api.ApiException;
+
+    public ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailSpecialPage FindPurchaseOrderDetailSpecial(String supplierId, String purchaseOrderNo, String orderNo, java.util.Map<String, String> __ctx)
+        throws ShangPin.SOP.Api.ApiException;
+
+    public Ice.AsyncResult begin_FindPurchaseOrderDetailSpecial(String supplierId, String purchaseOrderNo, String orderNo);
+
+    public Ice.AsyncResult begin_FindPurchaseOrderDetailSpecial(String supplierId, String purchaseOrderNo, String orderNo, java.util.Map<String, String> __ctx);
+
+    public Ice.AsyncResult begin_FindPurchaseOrderDetailSpecial(String supplierId, String purchaseOrderNo, String orderNo, Ice.Callback __cb);
+
+    public Ice.AsyncResult begin_FindPurchaseOrderDetailSpecial(String supplierId, String purchaseOrderNo, String orderNo, java.util.Map<String, String> __ctx, Ice.Callback __cb);
+
+    public Ice.AsyncResult begin_FindPurchaseOrderDetailSpecial(String supplierId, String purchaseOrderNo, String orderNo, Callback_OpenApiServant_FindPurchaseOrderDetailSpecial __cb);
+
+    public Ice.AsyncResult begin_FindPurchaseOrderDetailSpecial(String supplierId, String purchaseOrderNo, String orderNo, java.util.Map<String, String> __ctx, Callback_OpenApiServant_FindPurchaseOrderDetailSpecial __cb);
+
+    public ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailSpecialPage end_FindPurchaseOrderDetailSpecial(Ice.AsyncResult __result)
+        throws ShangPin.SOP.Api.ApiException;
 }
