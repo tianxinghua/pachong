@@ -35,15 +35,14 @@ public class TessabitStockImp  extends AbsUpdateProductStock{
         logger.info("解析TESSABIT数据开始");
         //定义三方
         Map returnMap = new HashMap();
+        String itemStr = "";
         String itemId = "";
         Iterator<String> iterator=skuNo.iterator();
         //为供应商循环赋值
         logger.info("为供应商产品库存循环赋值");
-        String stock = "";
         while (iterator.hasNext()){
             itemId = iterator.next();
-            stock = StringUtil.getSubBySub(localFile,itemId,itemId, Constant.ITEM_LENTH);
-            System.out.println("SkuId is " +itemId + ",stock is " +stock);
+            String stock = StringUtil.getStockById(itemId,localFile);
             logger.info("SkuId is " +itemId + ",stock is " +stock);
             returnMap.put(itemId, stock);
         }
