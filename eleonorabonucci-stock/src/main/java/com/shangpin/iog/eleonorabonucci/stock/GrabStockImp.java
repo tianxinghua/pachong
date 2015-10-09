@@ -55,6 +55,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
             timeConfig.confSocketOutTime(360000);
             String result = HttpUtil45.get("http://www.eleonorabonucci.com/rss/demo.aspx", timeConfig, null);
 
+            //Remove BOM from String
+            if (result != null && !"".equals(result)) {
+                result = result.replace("\uFEFF", "");
+            }
+
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","eleonorabonucci");
             mongMap.put("result",result) ;
