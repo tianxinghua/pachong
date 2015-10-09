@@ -43,7 +43,7 @@ public class FetchProduct {
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
     private static String supplierId;
-    private static int rows = 10;
+    private static int rows;
     private static String eventUrl=null;
     private static String productUrl=null;
     private static String stockUrl=null;

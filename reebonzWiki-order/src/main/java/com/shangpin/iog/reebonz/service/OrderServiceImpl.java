@@ -33,12 +33,9 @@ public class OrderServiceImpl extends AbsOrderService{
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		
-		// ---------------------准备的数据start-------------------------------
-		
 		String order_id = orderDTO.getSpOrderId();
 		String order_site = "shangpin";
 		String data = getJsonData(orderDTO.getDetail());
-		// ---------------------准备的数据end-------------------------------
 		
 		Map<String,String> map = stock.lockStock(order_id,order_site,data);
 		if(map.get("1")!=null){ 
