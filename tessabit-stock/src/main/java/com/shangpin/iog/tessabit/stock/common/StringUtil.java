@@ -86,10 +86,8 @@ public class StringUtil {
     public static String getStockById(String itemId,String file){
         String qty = null;
         if (file.contains(itemId)){
-            System.out.println("-----"+itemId);
             String itemStr = file.substring(file.indexOf(itemId),file.indexOf(itemId)+Constant.ITEM_LENTH);
             if(itemStr.contains("</stock>")){
-                System.out.println("---222--");
                 qty = itemStr.substring(itemStr.indexOf("<stock>")+7,itemStr.indexOf("</stock>"));
             }
         }
