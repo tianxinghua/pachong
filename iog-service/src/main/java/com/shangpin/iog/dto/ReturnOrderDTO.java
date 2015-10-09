@@ -22,6 +22,7 @@ public class ReturnOrderDTO {
     private String detail;//订单明细  供货商skuId:数量,
     private String memo;//   订单明细  尚品skuId:数量,
     private String status;//订单状态
+    private String deliveryNo;
     private Date createTime;
     private Date updateTime;
     private String excState;

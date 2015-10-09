@@ -6,14 +6,20 @@
 
         <id column="ID" property="id" />
         <result column="SUPPLIER_ID" property="supplierId"  />
+        <result column="SUPPLIER_NO" property="supplierNo"  />
         <result column="UUID" property="uuId"  />
         <result column="SP_ORDER_ID" property="spOrderId"  />
+        <result column="SUPPLIER_ORDER_NO" property="supplierOrderNo"  />
+        <result column="SP_PURCHASE_NO" property="spPurchaseNo"  />
         <result column="DETAIL" property="detail"  />
         <result column="STATUS" property="status"/>
+        <result column="MEMO" property="memo"/>
+        <result column="DELIVERY_NO" property="deliveryNo"/>
         <result column="CREATE_TIME" property="createTime"  />
+        <result column="UPDATE_TIME" property="updateTime"  />
         <result column="EXC_STATE" property="excState"  />
         <result column="EXC_DESC" property="excDesc"  />
-        <result column="EXC_TIME" property="" />
+        <result column="EXC_TIME" property="excTime" />
     </resultMap>
     <sql id="id_out_column">
         SUPPLIER_ID,
