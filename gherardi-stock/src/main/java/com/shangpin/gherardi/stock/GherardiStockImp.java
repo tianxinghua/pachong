@@ -19,7 +19,7 @@ import java.util.*;
 /**
  * Created by huxia on 2015/8/12.
  */
-class ProdottimontiStockImp extends AbsUpdateProductStock {
+class GherardiStockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
@@ -30,7 +30,7 @@ class ProdottimontiStockImp extends AbsUpdateProductStock {
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
-        supplierId = "2015092910000";
+        supplierId = bdl.getString("supplierId");
     }
 
     @Override
@@ -81,12 +81,12 @@ class ProdottimontiStockImp extends AbsUpdateProductStock {
 
     public static void main(String args[]) throws Exception {
 
-        AbsUpdateProductStock levelGroupStockImp = new ProdottimontiStockImp();
+        AbsUpdateProductStock gherardiStockImp = new GherardiStockImp();
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("gherardi-stock更新数据库开始");
         //2015081401431
-        levelGroupStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        gherardiStockImp.updateProductStock(supplierId,"2015-10-01 00:00",format.format(new Date()));
         logger.info("gherardi-stock更新数据库结束");
         System.exit(0);
     }
