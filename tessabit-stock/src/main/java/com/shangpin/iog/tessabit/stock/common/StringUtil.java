@@ -49,7 +49,6 @@ public class StringUtil {
             loggerError.error("解析TESSABIT数据失败，返回空串");
             return "";
         }
-        System.out.println("output io string==="+sb.toString().length());
         return sb.toString();
     }
 

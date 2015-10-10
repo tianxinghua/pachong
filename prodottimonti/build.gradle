@@ -14,8 +14,8 @@ dependencies {
 
 jar {
 
-    dependsOn copyToLib
-//    exclude ("**/*.properties")
+    dependsOn copyToLib,copyResources, copyResourcesToClasses
+    exclude ("**/*.properties")
 //    from {
 //        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 
@@ -29,6 +29,6 @@ jar {
     manifest {
         attributes 'Main-Class': 'com.shangpin.iog.prodottimonti.Startup'
 //        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
-        attributes 'Class-Path': '. ' + manifestCp
+        attributes 'Class-Path': '. ./conf/  ' + manifestCp
     }
 }
