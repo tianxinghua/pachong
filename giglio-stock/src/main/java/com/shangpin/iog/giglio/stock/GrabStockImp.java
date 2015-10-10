@@ -47,7 +47,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 //            Map<String, String> mongMap = new HashMap<>();
 
 
-            OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
             String result = HttpUtil45.get("http://www.giglio.com/feeds/shangpin.csv", timeConfig, null);
             HttpUtil45.closePool();
 
