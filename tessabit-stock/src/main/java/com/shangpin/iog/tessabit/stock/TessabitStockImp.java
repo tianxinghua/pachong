@@ -16,8 +16,12 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
-    private long start = 0;
-    private long end = 0;
+    private long start = 0;//计时开始时间
+    private long end = 0;//计时结束时间
+    private String localFile = "";//需要解析的文件
+    private String itemId = "";//单个skuId
+    private Integer stock = null;//单个skuId的库存数
+
     @Override
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法开始！");
@@ -26,7 +30,6 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
         boolean flg = new MyFtpClient().downLoad();
         end = System.currentTimeMillis();
         logger.info("下载TESSABIT文件结果"+flg+"，耗时："+(end-start)/1000+"秒");
-        String localFile = "";
         if (flg){
             start = System.currentTimeMillis();
             localFile = new StringUtil().parseXml2Str();
@@ -34,13 +37,12 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
             logger.info("解析TESSABIT文件耗时："+(end-start)/1000+"秒");
         }
         Map<String,Integer> returnMap = new HashMap();
-        String itemId = "";
         Iterator<String> iterator=skuNo.iterator();
         logger.info("为TESSABIT供应商产品库存循环赋值");
         start = System.currentTimeMillis();
         while (iterator.hasNext()){
             itemId = iterator.next();
-            Integer stock = StringUtil.getStockById(itemId,localFile);
+            stock = StringUtil.getStockById(itemId,localFile);
             //logger.info("SkuId is " +itemId + ",stock is " +stock);
             try {
                 returnMap.put(itemId, stock);
