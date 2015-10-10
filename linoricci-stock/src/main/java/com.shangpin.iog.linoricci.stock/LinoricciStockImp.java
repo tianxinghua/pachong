@@ -14,23 +14,27 @@ import java.util.*;
  */
 public class LinoricciStockImp  extends AbsUpdateProductStock{
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        new MyFtpClient().downLoad();
-        String stocks = MyStringUtil.getStockByFile(Constant.LOCAL_STOCK_FILE);
-        System.out.println(stocks);
+
+        logger.info("down load stock file... ");
+        boolean isOK = new MyFtpClient().downLoad();
+        Map<String,Integer> stockMap = null;
+        if (isOK){
+            logger.info("down load stock file success,convert file into string ");
+            stockMap = MyStringUtil.getStockByFile(Constant.LOCAL_STOCK_FILE);
+        };
         //定义三方
         Map returnMap = new HashMap();
         String itemId = "";
         Iterator<String> iterator=skuNo.iterator();
         //为产品库存循环赋值
-        logger.info("为产品库存循环赋值");
+        logger.info("为产品库存循环赋值===========================");
         while (iterator.hasNext()){
             itemId = iterator.next();
-            String stock = MyStringUtil.getStockBySkuId(itemId, stocks);
-            logger.info("SkuId is " + itemId + ", stock is " + stock);
-            System.out.println(itemId + " : " + stock);
-            returnMap.put(itemId, stock);
+            logger.info("SkuId is " + itemId + ", stock is " + stockMap.get(itemId));
+            returnMap.put(itemId, stockMap.get(itemId));
         }
         return returnMap;
     }
