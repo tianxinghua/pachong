@@ -47,8 +47,8 @@ public class FetchProduct {
     private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
-    @Autowired
-    private static ResourceBundle bdl=ResourceBundle.getBundle("conf");;
+
+    private ResourceBundle bdl = ResourceBundle.getBundle("conf");;
 
     public void fetchProductAndSave(String url){
 
