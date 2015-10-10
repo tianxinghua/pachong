@@ -8,7 +8,6 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.linoricci.common.Constant;
 import com.shangpin.iog.linoricci.common.MyFtpClient;
-import com.shangpin.iog.linoricci.common.MyStringUtil;
 import com.shangpin.iog.linoricci.dto.*;
 import com.shangpin.iog.service.ProductFetchService;
 import org.apache.log4j.Logger;
@@ -135,14 +134,5 @@ public class FetchProduct {
             }
         }
     }
-
-    /**
-     * test
-     * @param args
-     */
-    public static void main(String[] args){
-        new FetchProduct().fetchProductAndSave();
-    }
-
 }
 
