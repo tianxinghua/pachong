@@ -54,9 +54,9 @@ public class StockImp extends AbsUpdateProductStock {
     	String []array = skuIds.split("\\|");
     	String skuNo = array[0];
     	String eventId = array[1];
-    	String size = null;
-    	if(array.length==3){
-    		size = array[2];
+    	String size = array[2];
+    	if("A".equals(size)){
+    		size = "";
     	}
     	Map<String,String> map = new HashMap<String,String>();
 		map.put("event_id", eventId);
@@ -74,7 +74,6 @@ public class StockImp extends AbsUpdateProductStock {
 
     private static String getInventoryByJsonString(String jsonStr,String size){
     	ResponseObject obj=null;
-        Gson gson = new Gson();
         String returnSize = "0";
         try {
         	obj = new Gson().fromJson(jsonStr, ResponseObject.class);
@@ -91,8 +90,7 @@ public class StockImp extends AbsUpdateProductStock {
 		
         } catch (Exception e) {
             loggerError.error("转化 :"+jsonStr +" 到库存对象失败 :" +e.getMessage());
-           
-            e.printStackTrace(); return "0";
+            e.printStackTrace(); 
         }
 		return returnSize;
     }

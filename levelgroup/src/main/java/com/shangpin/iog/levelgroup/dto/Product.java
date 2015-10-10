@@ -18,6 +18,7 @@ public class Product {
     private String url;
     private String supply_price;
     private String producer_id;
+    private String categoryGender;
 
     private Items items;
 
@@ -130,4 +131,11 @@ public class Product {
         super();
     }
 
+    public String getCategoryGender() {
+        return categoryGender;
+    }
+
+    public void setCategoryGender(String categoryGender) {
+        this.categoryGender = categoryGender;
+    }
 }
