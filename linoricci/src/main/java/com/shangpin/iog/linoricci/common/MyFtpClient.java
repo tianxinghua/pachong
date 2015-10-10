@@ -12,6 +12,7 @@ import java.io.IOException;
  * Created by Administrator on 2015/10/2.
  */
 public class MyFtpClient {
+    private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     /**
      * test
@@ -28,7 +29,8 @@ public class MyFtpClient {
     /**
      * Description: 下载文件
      */
-    public  void downLoad() {
+    public  boolean downLoad() {
+        boolean isOk = true;
         //创建FTPClient
         FTPClient ftp = new com.enterprisedt.net.ftp.FTPClient();
         // 连接服务器
@@ -46,20 +48,22 @@ public class MyFtpClient {
             //定位
             ftp.chdir(Constant.REMOTE_PATH);
             // 获取 XML文件到本地
+            logger.info("get server file "+Constant.SERVER_ITEMS_FILE+" to local:"+Constant.LOCAL_ITEMS_FILE);
             ftp.get(Constant.LOCAL_ITEMS_FILE, Constant.SERVER_ITEMS_FILE);
-/*            ftp.get(Constant.LOCAL_IMAGE_FILE, Constant.SERVER_IMAGE_FILE);
-            ftp.get(Constant.LOCAL_STOCK_FILE, Constant.SERVER_STOCK_FILE);*/
+            logger.info("get server file "+Constant.SERVER_IMAGE_FILE+" to local:"+Constant.LOCAL_IMAGE_FILE);
+            ftp.get(Constant.LOCAL_IMAGE_FILE, Constant.SERVER_IMAGE_FILE);
+            logger.info("get server file "+Constant.SERVER_STOCK_FILE+" to local:"+Constant.LOCAL_STOCK_FILE);
+            ftp.get(Constant.LOCAL_STOCK_FILE, Constant.SERVER_STOCK_FILE);
         } catch (IOException e) {
-            System.out.println("IOException"+e.getMessage());
-            e.printStackTrace();
+            loggerError.error("IOException"+e.getMessage());
+            isOk = false;
         } catch (FTPException e) {
-            System.out.println("FTPException"+e.getMessage());
-                    e.printStackTrace();
+            loggerError.error("FTPException" + e.getMessage());
+            isOk = false;
         }  finally {
             close(ftp);
-            loggerError.error("下载linoricci数据失败，退出");
-            return;
         }
+        return isOk;
     }
 
     /**
@@ -71,9 +75,9 @@ public class MyFtpClient {
             if (null != ftp)
                 ftp.quit();
         } catch (IOException e) {
-            e.printStackTrace();
+            loggerError.error("IOException" + e.getMessage());
         } catch (FTPException e) {
-            e.printStackTrace();
+            loggerError.error("FTPException" + e.getMessage());
         }
     }
 }
