@@ -25,7 +25,7 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
-        supplierId = "2015092901551";
+        supplierId = bdl.getString("supplierId");
     }
 
 

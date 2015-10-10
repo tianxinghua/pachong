@@ -29,7 +29,6 @@ import com.shangpin.iog.reebonz.util.MyJsonUtil;
 public class ReservationProStock {
 
 	private static Logger logger = Logger.getLogger("info");
-	private static Logger loggerError = Logger.getLogger("error");
 	private static ResourceBundle bdl = null;
 	private static String lockStockUrl = null;
 	private static String unlockStockUrl = null;
@@ -43,19 +42,18 @@ public class ReservationProStock {
 		 if(null==bdl){
 			 bdl=ResourceBundle.getBundle("conf");
 		 }
-		 lockStockUrl = bdl.getString("eventUrl");
-		 unlockStockUrl = bdl.getString("productUrl");
+		 lockStockUrl = bdl.getString("lockStockUrl");
+		 unlockStockUrl = bdl.getString("unlockStockUrl");
 		 pushOrderUrl = bdl.getString("pushOrderUrl");
 		 client_id = bdl.getString("client_id");
 		 client_secret = bdl.getString("client_secret");
 		 username = bdl.getString("username");
 		 password = bdl.getString("password");
 
-			if(oauth==null){
-				logger.info("商家授权");
-				oauth = authApi();
-			}	
-			
+		if(oauth==null){
+			logger.info("商家授权");
+			oauth = authApi();
+		}	
 	 }
 
 	/*
@@ -85,18 +83,6 @@ public class ReservationProStock {
 	 * 推送订单
 	 */
 	public  Map<String,String> pushOrder(String reservationId,String order_id,String purchaseNo,String data) {
-           
-//		/*---------------------准备的临时数据end-------------------------------*/
-////		reservationId = "2564";
-//		List<RequestObject> list = new ArrayList<RequestObject>();
-//		RequestObject obj = new RequestObject();
-//		obj.setEvent_id("1000");
-//		obj.setSku("XXM0GW05470RE0C407");
-//		obj.setOption_code("SH2090");
-//		obj.setQty("1");
-//		list.add(obj);
-//		JSONArray array = JSONArray.fromObject(list);
-//		/*---------------------准备的临时数据end-------------------------------*/
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("email", "reebonz@shangpin.com"); 
@@ -123,37 +109,25 @@ public class ReservationProStock {
 		map.put("bags", data);
 		map.put("api_url", pushOrderUrl);
 		ResponseObject returnObj = requestSource(map);
-		map = null;
+		Map<String,String> returnMap = new HashMap<String,String>();
 		if (returnObj != null) {
 			String result = returnObj.getReturn_code();
 			if ("1".equals(result)) {
-				map.put("0",returnObj.getOrder_id());
+				returnMap.put("0",returnObj.getOrder_id());
 				logger.info("推送订单success：" + returnObj.getOrder_id());
-//				unlockStock("reservationId", order_id, order_id,"");
 			} else if ("0".equals(result)) {
-				map.put("1",returnObj.getError_msg());
+				returnMap.put("1",returnObj.getError_msg());
 				logger.info("推送订单fail：" + returnObj.getError_msg());
 			}
 		}
-		return map;
+		return returnMap;
 	}
 
 	/*
-	 * 解库存锁 1. reservation_id - Reservation id. (mandatory) 2. order_id - Order
-	 * id. (mandatory) 3. user_id - Order id. (optional) 4. confirmation_code -
-	 * "deducted"(确认)或 "voided"(放弃)
+	 * 解库存锁 
 	 */
 	public   Map<String,String> unlockStock(String reservation_id, String order_id,
 			String user_id, String confirmation_code){
-
-		/*---------------------准备的临时数据start-------------------------------*/
-		reservation_id = "2566";
-		order_id = "123456";
-		user_id = "123456";
-		confirmation_code = "voided";// voided
-		unlockStockUrl ="http://ladon.sit.titan.reebonz-dev.com/api/eps_product_reservation_confirmation";
-		MyJsonUtil.unlockStock(reservation_id, order_id, user_id, confirmation_code);
-		/*---------------------准备的临时数据end-------------------------------*/
 		
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("reservation_id", reservation_id);
@@ -166,10 +140,10 @@ public class ReservationProStock {
 		ResponseObject obj = requestSource(map);
 		Map<String,String> returnMap = new HashMap<String,String>();
 		if ("1".equals(obj.getReturn_code())) {
-			System.out.println("解锁success");
+			logger.info("解锁success");
 		} else {
 			returnMap.put("1",obj.getError_msg());
-			System.out.println("锁库存fail:" + obj.getError_msg());
+			logger.info("锁库存fail:" + obj.getError_msg());
 		}
 		return returnMap;
 	}
@@ -192,7 +166,7 @@ public class ReservationProStock {
 				oauth.setAccess_token(obj.getAccess_token());
 				oauth.setRefresh_token(obj.getRefresh_token());
 				logger.info("授权success");
-			} else if ("0".equals(obj.getReturn_code())) {
+			} else {
 				logger.info("授权fail:" + obj.getError_msg());
 			}
 		}
@@ -203,8 +177,8 @@ public class ReservationProStock {
 	 * refresh授权
 	 */
 	public  void refreshToken() {
+		
 		Map<String, String> map = new HashMap<String,String>();
-	
 		map.put("client_id",client_id);
 		map.put("client_secret",client_secret);
 		map.put("refresh_token", oauth.getRefresh_token());
@@ -214,11 +188,10 @@ public class ReservationProStock {
 			if ("1".equals(obj.getReturn_code())) {
 				oauth.setAccess_token(obj.getAccess_token());
 				oauth.setRefresh_token(obj.getRefresh_token());
-				System.out.println("刷新授权success");
+				logger.info("刷新授权success");
 			} else if ("INV_REFRESH_TOKEN".equals(obj.getError_code())) {
-				System.out.println("重新授权");
+				logger.info("授权已过期，重新授权");
 				authApi();
-				refreshToken();
 			}
 		}
 	}
@@ -229,31 +202,20 @@ public class ReservationProStock {
 	public  ResponseObject requestSource(Map<String, String> map) {
 
 		ResponseObject obj = null;
-		// Authentication API 授权
 		map.put("client_id", client_id);
-		// Request Resource API
 		map.put("access_token", oauth.getAccess_token());
 		map.put("response_type", "json");
 		// 请求API的返回结果
 		String json = MyJsonUtil.getRequestSourceJson(map);
 		obj = new Gson().fromJson(json, ResponseObject.class);
 		if("INV_TOKEN".equals(obj.getError_code())){
-			System.out.println("无效的token:"+oauth.getAccess_token());
+			logger.info("无效的token:"+oauth.getAccess_token());
+			//token可能已过期，刷新token延长周期
 			refreshToken();
+			//重新请求url资源
 			requestSource(map);
 		}
 		return obj;
-	}
-
-	public static void main(String[] args) throws Exception {
-
-		ReservationProStock p = new ReservationProStock();
-		p.unlockStock("", "", "", "");
-//		p.lockStock("","","");
-		// pushOrder(null);
-		// refreshToken();
-		// authApi();
-		// requestSource();
 	}
 
 }
