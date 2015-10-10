@@ -100,6 +100,8 @@ public class FetchProduct {
                         spu.setBrandName(brand);
                         spu.setMaterial(description);
 
+                        spu.setCategoryGender(category);
+
                         //SPU 选填
                         spu.setSpuName(title);
 
