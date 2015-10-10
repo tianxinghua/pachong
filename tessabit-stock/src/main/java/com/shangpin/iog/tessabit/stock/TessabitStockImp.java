@@ -44,12 +44,7 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
             itemId = iterator.next();
             stock = StringUtil.getStockById(itemId,localFile);
             //logger.info("SkuId is " +itemId + ",stock is " +stock);
-            try {
-                returnMap.put(itemId, stock);
-            } catch (NumberFormatException e) {
-                loggerError.error("skuId: " + itemId + " 库存数量" + stock+"转化异常，赋值为0");
-                returnMap.put(itemId, 0);
-            }
+            returnMap.put(itemId, stock);
         }
         end = System.currentTimeMillis();
         logger.info("为TESSABIT产品库存赋值总共耗时："+(end-start)/1000+"秒");
