@@ -72,7 +72,10 @@ public abstract class AbsOrderService {
      */
     abstract  public void handleSupplierOrder(OrderDTO orderDTO) ;
 
-
+    /**
+     * 订单从下单到支付后的处理
+     * @param orderDTO  订单信息
+     */
     abstract public void handleConfirmOrder(OrderDTO orderDTO);
 
     /**
@@ -102,11 +105,14 @@ public abstract class AbsOrderService {
         //初始化时间
         initDate("date.ini");
 
-        String uuid="";
+
         //处理订单
         handleOrderOfSOP(supplierId, supplierNo);
         //处理下单
         cancelOrderFromSOP(supplierNo,supplierId,handleCancel);
+
+        //处理异常
+        handlePurchaseOrderException(supplierId);
     }
 
 
@@ -173,11 +179,66 @@ public abstract class AbsOrderService {
             e.printStackTrace();
         }
 
+        // 检查订单是否已经被支付
+        checkPayed(supplierId);
         //处理订单
         handleOrderOfWMS(supplierNo, supplierId, skuMap, orderList);
 
         //处理退单
         handleRefundOrderOfWMS(supplierNo, supplierId, skuMap, refundList,handleCancel);
+    }
+
+    /**
+     * TODO 检查订单是否支付
+     * @param supplierId
+     */
+    public void checkPayed(String supplierId){
+        //获取订单数组
+        List<Integer> status = new ArrayList<>();
+        status.add(1);
+
+        Map<String,List<PurchaseOrderDetail>> orderMap = null;
+        try {
+            orderMap = this.getPurchaseOrder(supplierId, startDateOfWMS, endDateOfWMS, status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //TODO 获取采购单  获取订单信息  更新订单状态
+
+
+
+    }
+
+
+
+    private void handlePurchaseOrderException(String supplierId){
+        //拉取采购单存入本地库
+        List<OrderDTO>  orderDTOList= null;
+        try {
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED);
+            if(null!=orderDTOList){
+
+                for(OrderDTO orderDTO:orderDTOList){
+
+                    try {
+                        //处理供货商订单
+                        handleSupplierOrder(orderDTO);
+                        //更新海外购订单信息
+                        updateOrderMsg(orderDTO);
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        loggerError.error("订单处理失败。失败信息 " + orderDTO.toString()+" 原因 ：" + e.getMessage() );
+
+                    }
+                }
+            }
+
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -188,18 +249,15 @@ public abstract class AbsOrderService {
 
         List<com.shangpin.iog.dto.OrderDTO>  orderDTOList= null;
         try {
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId,OrderStatus.PLACED);
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId,OrderStatus.PAYED);
         } catch (ServiceException e) {
             e.printStackTrace();
         }
-
-
-
         if(null!=orderDTOList){
             for(OrderDTO orderDTO :orderDTOList){
-
-
-
+                //订单支付后的处理
+                handleConfirmOrder(orderDTO);
+                updateOrderMsg(orderDTO);
             }
 
         }

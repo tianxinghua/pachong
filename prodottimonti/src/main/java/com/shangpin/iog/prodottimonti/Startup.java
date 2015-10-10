@@ -22,14 +22,14 @@ public class Startup {
     public static void main(String[] args)
     {
         //加载spring
-        log.info("----拉取prodottimonti数据开始----");
+        log.info("----拉取erminiomonti数据开始----");
         loadSpringContext();
         log.info("----初始SPRING成功----");
         //拉取数据
-        FetchProduct fetchProduct =(FetchProduct)factory.getBean("prodottimonti");
+        FetchProduct fetchProduct =(FetchProduct)factory.getBean("erminiomonti");
 //        fetchProduct.fetchProductAndSave("http://www.thelevelgroup-ftp.com/uploads/TLG_GooglePLA_lncc_GB.txt");
         fetchProduct.fetchProductAndSave("http://www.communicationislife.com/shanping/prodotti/");
-        log.info("----拉取prodottimonti数据完成----");
+        log.info("----拉取erminiomonti数据完成----");
 
 
         System.out.println("-------fetch end---------");

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -29,17 +30,31 @@ public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
 
+    private static ResourceBundle bdl=null;
+    private static String supplierId;
+
+    static {
+        if(null==bdl)
+            bdl= ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
+
     public void fetchProductAndSave(String url) {
 
-//        String supplierId = "2015092501047"; //测试
-        String supplierId = "2015092401530"; //正式
         try {
             Map<String, String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-            timeConfig.confRequestOutTime(600000);
-            timeConfig.confSocketOutTime(600000);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*20, 1000*60*20,1000*60*20);
+//            timeConfig.confRequestOutTime(600000);
+//            timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get(url, timeConfig, null);
             HttpUtil45.closePool();
+
+            System.out.println("result : " + result);
+
+            //Remove BOM from String
+            if (result != null && !"".equals(result)) {
+                result = result.replace("\uFEFF", "");
+            }
 
             Feed feed = ObjectXMLUtil.xml2Obj(Feed.class, result);
             System.out.println(feed);
@@ -98,6 +113,9 @@ public class FetchProduct {
                     sku.setProductSize(skuItem.getSize());
                     sku.setStock(skuItem.getStock());
                     sku.setProductDescription(spuItem.getDescription());
+
+                    //SKU 选填
+                    sku.setProductCode(spuItem.getProductCode());
 
                     try {
                         productFetchService.saveSKU(sku);

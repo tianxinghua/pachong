@@ -24,6 +24,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import com.shangpin.iog.app.AppContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -36,7 +37,11 @@ import com.shangpin.iog.stefaniamode.stock.dto.Item;
 import com.shangpin.iog.stefaniamode.stock.dto.Items;
 import com.shangpin.iog.stefaniamode.stock.dto.Product;
 import com.shangpin.iog.stefaniamode.stock.dto.Products;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
+@Component("stefaniamodeStock")
 public class GrabStockImp extends AbsUpdateProductStock {
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger loggerError = Logger.getLogger("error");
@@ -195,7 +200,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		return skustock;
 	}
 
+
+
 	public static void main(String[] args) throws Exception {
+
+
 
 		AbsUpdateProductStock grabStockImp = new GrabStockImp();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");

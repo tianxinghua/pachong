@@ -49,6 +49,8 @@ public class HttpUtils {
 		HttpClient httpclient = new HttpClient();
 		httpclient.getHttpConnectionManager().getParams().setSoTimeout(SO_TIMEOUT);
 		httpclient.getHttpConnectionManager().getParams().setConnectionTimeout(CONNECTION_TIMEOUT);
+		httpclient.getHttpConnectionManager().getParams().setMaxTotalConnections(32);
+		httpclient.getHttpConnectionManager().getParams().setDefaultMaxConnectionsPerHost(256);
 		try {
 			httpclient.executeMethod(getMethod);
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(getMethod.getResponseBodyAsStream(), Consts.UTF_8));
@@ -108,6 +110,8 @@ public class HttpUtils {
 		// timeout
 		httpclient.getHttpConnectionManager().getParams().setSoTimeout(SO_TIMEOUT);
 		httpclient.getHttpConnectionManager().getParams().setConnectionTimeout(CONNECTION_TIMEOUT);
+		httpclient.getHttpConnectionManager().getParams().setMaxTotalConnections(32);
+		httpclient.getHttpConnectionManager().getParams().setDefaultMaxConnectionsPerHost(256);
 		try {
 			int status = httpclient.executeMethod(getMethod);
 			response = new String(getMethod.getResponseBody(), "utf-8");

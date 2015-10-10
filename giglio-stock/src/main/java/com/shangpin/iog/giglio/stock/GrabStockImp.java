@@ -45,9 +45,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
             logger.info("拉取GIGLIO数据开始");
 
 //            Map<String, String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-            timeConfig.confRequestOutTime(600000);
-            timeConfig.confSocketOutTime(600000);
+
+
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
             String result = HttpUtil45.get("http://www.giglio.com/feeds/shangpin.csv", timeConfig, null);
             HttpUtil45.closePool();
 

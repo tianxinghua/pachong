@@ -37,8 +37,9 @@ public class FetchProduct {
         String json = jsonClient.getTonyJson();
         //formart data
         Items[] array = new Gson().fromJson(json,new TypeToken<Items[]>() {}.getType());
+        System.out.println("tony qty is "+array.length);
         //message mapping and save into DB
-        messMappingAndSave(array);
+       // messMappingAndSave(array);
     }
     /**
      * message mapping and save into DB
