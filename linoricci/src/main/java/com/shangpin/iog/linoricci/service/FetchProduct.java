@@ -8,7 +8,6 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.linoricci.common.Constant;
 import com.shangpin.iog.linoricci.common.MyFtpClient;
-import com.shangpin.iog.linoricci.common.MyStringUtil;
 import com.shangpin.iog.linoricci.dto.*;
 import com.shangpin.iog.service.ProductFetchService;
 import org.apache.log4j.Logger;
@@ -81,11 +80,9 @@ public class FetchProduct {
      * **/
     private void messMappingAndSave(Prodottis prodottis) {
         List<Disponibilita> dList = disponibilits.getDisponibilitaList();
-        //items = new String[0];
         for (Prodotti prodotti : prodottis.getProdottiList()) {
             SkuDTO sku = new SkuDTO();
             try {
-                sku.setId(UUIDGenerator.getUUID());
                 sku.setSupplierId(Constant.SUPPLIER_ID);
                 sku.setSpuId(prodotti.getID_ARTICOLO());
                 sku.setMarketPrice(prodotti.getPREZZO_VENDITA());
@@ -93,18 +90,18 @@ public class FetchProduct {
                 sku.setSupplierPrice(prodotti.getPREZZO_VENDITA());
                 sku.setColor(prodotti.getCOLORE());
                 sku.setProductDescription(prodotti.getDESCRIZIONE());
-                sku.setProductCode(prodotti.getCODICE_MODELLO());
+                sku.setProductCode(prodotti.getCODICE_MODELLO());//code
                 sku.setProductName(prodotti.getDESCRIZIONE_MODELLO());
                 for (Disponibilita disponibilita : dList){
                     if (sku.getSpuId().equals(disponibilita.getID_ARTICOLO())){
-                        sku.setSkuId(new StringBuffer().append(disponibilita.getMM_TAGLIA())
-                                .append(disponibilita.getID_ARTICOLO()).append(disponibilita.getNE_SIGLA()).toString());
+                        sku.setId(UUIDGenerator.getUUID());
+                        sku.setSkuId(new StringBuffer().append(disponibilita.getMM_TAGLIA()).append("Y")
+                                .append(disponibilita.getID_ARTICOLO()).append("Y").append(disponibilita.getNE_SIGLA()).toString());
                         sku.setBarcode(disponibilita.getBARCODEEAN());
                         sku.setStock(disponibilita.getESI());
-                        sku.setProductSize(disponibilita.getMM_TAGLIA());
+                        sku.setProductSize(disponibilita.getMM_TAGLIA());//size
                         productFetchService.saveSKU(sku);
                     }
-
                 }
             } catch (ServiceException e) {
                 try {
@@ -125,10 +122,10 @@ public class FetchProduct {
                 spu.setSupplierId(Constant.SUPPLIER_ID);
                 spu.setSpuId(prodotti.getID_ARTICOLO());
                 spu.setBrandName(prodotti.getBRAND());
-                spu.setCategoryName(prodotti.getSETTORE());
+                spu.setCategoryName(prodotti.getCATEGORIA());
                 spu.setSpuName(prodotti.getDESCRIZIONE_MODELLO());
                 spu.setSeasonId(prodotti.getSIGLA_STAGIONE());
-                spu.setMaterial(prodotti.getCOMPOSIZIONE_DETTAGLIATA());
+                spu.setMaterial(prodotti.getDESCRIZIONE_BREVE());
                 spu.setCategoryGender(prodotti.getSETTORE());
                 spu.setProductOrigin(prodotti.getPAESE_PRODUZIONE());
                 productFetchService.saveSPU(spu);
@@ -137,14 +134,5 @@ public class FetchProduct {
             }
         }
     }
-
-    /**
-     * test
-     * @param args
-     */
-    public static void main(String[] args){
-        new FetchProduct().fetchProductAndSave();
-    }
-
 }
 

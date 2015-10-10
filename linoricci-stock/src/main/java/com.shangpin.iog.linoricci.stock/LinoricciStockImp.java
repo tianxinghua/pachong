@@ -28,13 +28,19 @@ public class LinoricciStockImp  extends AbsUpdateProductStock{
         //定义三方
         Map returnMap = new HashMap();
         String itemId = "";
+        Integer value = null;
         Iterator<String> iterator=skuNo.iterator();
         //为产品库存循环赋值
         logger.info("为产品库存循环赋值===========================");
         while (iterator.hasNext()){
             itemId = iterator.next();
-            logger.info("SkuId is " + itemId + ", stock is " + stockMap.get(itemId));
-            returnMap.put(itemId, stockMap.get(itemId));
+            value = stockMap.get(itemId);
+            if (value == null){
+                logger.info("Item id is "+itemId+", stock is null,remove");
+                continue;
+            }
+            logger.info("SkuId is " + itemId + ", stock is " + value);
+            returnMap.put(itemId, value);
         }
         return returnMap;
     }
