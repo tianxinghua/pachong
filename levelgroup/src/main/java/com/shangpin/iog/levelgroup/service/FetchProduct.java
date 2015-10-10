@@ -47,10 +47,12 @@ public class FetchProduct {
     private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
+    @Autowired
+    private static ResourceBundle bdl=ResourceBundle.getBundle("conf");;
 
     public void fetchProductAndSave(String url){
 
-        String supplierId = "2015092901551";
+        String supplierId = bdl.getString("supplierId");
         try {
 
             Map<String,String> mongMap = new HashMap<>();
