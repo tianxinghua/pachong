@@ -48,11 +48,11 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
         logger.info("为供应商产品库存循环赋值");
         while (iterator.hasNext()){
             itemId = iterator.next();
-            String stock = StringUtil.getStockById(itemId,localFile);
+            Integer stock = StringUtil.getStockById(itemId,localFile);
             logger.info("SkuId is " +itemId + ",stock is " +stock);
 
             try {
-                returnMap.put(itemId, Integer.valueOf(stock));
+                returnMap.put(itemId, stock);
             } catch (NumberFormatException e) {
                 loggerError.error("skuId: " + itemId + " 库存数量" + stock+"转化异常，赋值为0");
                 returnMap.put(itemId, 0);

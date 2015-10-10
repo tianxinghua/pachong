@@ -91,8 +91,8 @@ public class StringUtil {
             if(itemStr.contains("</stock>")){
                 try{
                     qty = Integer.parseInt(itemStr.substring(itemStr.indexOf("<stock>")+7,itemStr.indexOf("</stock>")));
-                }catch (Exception e){
-                    loggerError.error("get stock failed："+itemId);
+                }catch (NumberFormatException e){
+                    loggerError.error("skuId: " + itemId + " 库存数量转化异常");
                     return null;
                 }
             }
