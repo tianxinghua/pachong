@@ -101,28 +101,29 @@ public class FetchProduct {
                             }
 
                         }
-                    }else{
-                        SkuDTO sku = new SkuDTO();
-                        sku.setId(UUIDGenerator.getUUID());
-                        sku.setColor(element.getChildText("COLORE"));
-                        sku.setSupplierPrice(element.getChildText("PREZZO_VENDITA_SENZA_IVA"));
-                        sku.setSkuId(element.getChildText("ID_ARTICOLO"));
-                        sku.setSpuId(element.getChildText("CODICE_MODELLO"));
-                        sku.setProductCode(element.getChildText("CODICE_MODELLO") + " " + element.getChildText("CODICE_VARIANTE"));
-                        sku.setProductName(element.getChildText("DESCRIZIONE_MODELLO"));
-                        sku.setSalePrice(element.getChildText("PREZZO_VENDITA"));
-                        sku.setProductDescription(element.getChildText("DESCRIZIONE_SPECIALE"));
-                        //StockClientImp.getStock(element.getChildText("ID_ARTICOLO"), "");
-                        sku.setStock("0");
-                        sku.setSupplierId(supplierId);
-                        try {
-                            productFetchService.saveSKU(sku);
-                            returnMap.put(element.getChildText("ID_ARTICOLO"),"");
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-
                     }
+//                    else{
+//                        SkuDTO sku = new SkuDTO();
+//                        sku.setId(UUIDGenerator.getUUID());
+//                        sku.setColor(element.getChildText("COLORE"));
+//                        sku.setSupplierPrice(element.getChildText("PREZZO_VENDITA_SENZA_IVA"));
+//                        sku.setSkuId(element.getChildText("ID_ARTICOLO"));
+//                        sku.setSpuId(element.getChildText("CODICE_MODELLO"));
+//                        sku.setProductCode(element.getChildText("CODICE_MODELLO") + " " + element.getChildText("CODICE_VARIANTE"));
+//                        sku.setProductName(element.getChildText("DESCRIZIONE_MODELLO"));
+//                        sku.setSalePrice(element.getChildText("PREZZO_VENDITA"));
+//                        sku.setProductDescription(element.getChildText("DESCRIZIONE_SPECIALE"));
+//                        //StockClientImp.getStock(element.getChildText("ID_ARTICOLO"), "");
+//                        sku.setStock("0");
+//                        sku.setSupplierId(supplierId);
+//                        try {
+//                            productFetchService.saveSKU(sku);
+//                            returnMap.put(element.getChildText("ID_ARTICOLO"),"");
+//                        }catch (Exception e){
+//                            e.printStackTrace();
+//                        }
+//
+//                    }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -137,8 +138,8 @@ public class FetchProduct {
                 dto.setPicUrl(element.getChildText("RIFERIMENTO"));
                 dto.setId(UUIDGenerator.getUUID());
                 dto.setSupplierId(supplierId);
-                dto.setSkuId(element.getChildText("RF_RECORD_ID"));
-                dto.setSpuId("");
+                dto.setSpuId(element.getChildText("RF_RECORD_ID"));
+                //dto.setSpuId("");
                 try {
                     productFetchService.savePictureForMongo(dto);
                 } catch (ServiceException e) {
