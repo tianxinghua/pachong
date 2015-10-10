@@ -98,5 +98,8 @@ include 'linoricci'
 include 'linoricci-stock'
 include 'fashionesta'
 include 'fashionesta-stock'
+include 'monnierfreres'
+include 'monnierfreres-stock'
+
 include 'julian-fashion'
 include 'vinicco'

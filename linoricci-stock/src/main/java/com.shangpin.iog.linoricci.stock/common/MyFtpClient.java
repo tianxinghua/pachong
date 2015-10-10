@@ -35,18 +35,14 @@ public class MyFtpClient {
         FTPClient ftp = new com.enterprisedt.net.ftp.FTPClient();
         // 连接服务器
         try {
-            System.out.println(Constant.URL);
             ftp.setRemoteHost(Constant.URL);
             ftp.setRemotePort(Integer.parseInt(Constant.PORT));
             ftp.setTimeout(1000*60*30);
             ftp.connect();
             //登陆
             ftp.login(Constant.USER, Constant.PASSWORD);
-            //连接模式
             ftp.setConnectMode(FTPConnectMode.PASV);
-            //ASCII方式：传输xml文本文件
             ftp.setType(FTPTransferType.ASCII);
-            //定位
             ftp.chdir(Constant.REMOTE_PATH);
             String[] fileArr = ftp.dir("Disponibilita_*",true);
             // 获取 XML库存文件到本地
@@ -60,7 +56,7 @@ public class MyFtpClient {
             loggerError.error("load linoriccii data fail,FTPException："+e.getMessage());
             isOK = false;
         }  catch (Exception e) {
-            loggerError.error("load linoriccii data fail,Exception："+e.getMessage());
+            loggerError.error("load linoricci数据失败Exception："+e.getMessage());
             isOK = false;
         }  finally {
             close(ftp);

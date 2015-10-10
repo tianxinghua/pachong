@@ -49,11 +49,17 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
 
             Map<String,String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-            timeConfig.confConnectOutTime(360000);
-            timeConfig.confRequestOutTime(360000);
-            timeConfig.confSocketOutTime(360000);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*20, 1000*60*20,1000*60*20);
+//            timeConfig.confRequestOutTime(600000);
+//            timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get("http://www.eleonorabonucci.com/rss/demo.aspx", timeConfig, null);
+            HttpUtil45.closePool();
+
+
+            //Remove BOM from String
+            if (result != null && !"".equals(result)) {
+                result = result.replace("\uFEFF", "");
+            }
 
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","eleonorabonucci");
