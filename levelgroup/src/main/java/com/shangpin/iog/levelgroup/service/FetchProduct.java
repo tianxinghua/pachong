@@ -56,7 +56,7 @@ public class FetchProduct {
         try {
 
             Map<String,String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*60,1000*60*60,1000*60*60);
             List<String> list = HttpUtil45.getContentListByInputSteam(url,timeConfig,null,null,null);
             HttpUtil45.closePool();
             mongMap.put("supplierId",supplierId);
@@ -208,7 +208,7 @@ public class FetchProduct {
 
         for (Map<String, String> map : list) {
             String url = "http://www.ln-cc.com/dw/shop/v15_8/products/"+map.get("id")+"/availability?inventory_ids=09&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
-            OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*5,1000*60*5,1000*60*5);
             String jsonstr = HttpUtils.get(url,3);
                     //(url,timeConfig,null,null,null);
             if( jsonstr != null && jsonstr.length() >0){
