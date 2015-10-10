@@ -56,7 +56,7 @@ public class FetchProduct {
         try {
 
             Map<String,String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
             List<String> list = HttpUtil45.getContentListByInputSteam(url,timeConfig,null,null,null);
             HttpUtil45.closePool();
             mongMap.put("supplierId",supplierId);
