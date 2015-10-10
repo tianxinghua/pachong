@@ -22,6 +22,8 @@ public class Startup {
     private static String path = bundle.getString("path");
     static String localFilePath = bundle.getString("localFilePath");
     static String testFilePath = bundle.getString("testFilePath");
+    static String supplierId = bundle.getString("supplierId");
+    
     private static void loadSpringContext()
     {
 

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by sunny on 2015/7/10.
@@ -27,7 +28,12 @@ public class FetchProduct {
 
     @Autowired
     ProductFetchService productFetchService;
-    String supplierId = "new20150727";//2015071701342
+    //String supplierId = "2015091801507";//2015071701342  new20150727
+    
+    public static final String PROPERTIES_FILE_NAME = "param";
+    static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
+    
+    static String supplierId = bundle.getString("supplierId");
     /**
      *
      * @param map 尺寸集合,key是sku，value是尺寸list
@@ -86,8 +92,9 @@ public class FetchProduct {
                             sku.setSpuId(element.getChildText("CODICE_MODELLO"));
                             sku.setProductSize(value);
                             sku.setProductCode(element.getChildText("CODICE_MODELLO")+" "+element.getChildText("CODICE_VARIANTE"));
-                            sku.setProductName(element.getChildText("DESCRIZIONE_MODELLO"));
+                            sku.setProductName(element.getChildText("BRAND")+" "+element.getChildText("COLORE")+" "+element.getChildText("GRUPPO"));
                             sku.setSalePrice(element.getChildText("PREZZO_VENDITA"));
+                            sku.setMarketPrice(element.getChildText("PREZZO_VENDITA"));
                             sku.setProductDescription(element.getChildText("DESCRIZIONE"));
                             sku.setBarcode(barcode);
                             // StockClientImp.getStock(key,value);
