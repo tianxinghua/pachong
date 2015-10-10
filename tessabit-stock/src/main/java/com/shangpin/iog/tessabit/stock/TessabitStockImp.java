@@ -30,6 +30,7 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
     private long end = 0;
     @Override
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+        logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法开始！");
         logger.info("TESSABIT Sku 条数："+skuNo.size());
         start = System.currentTimeMillis();
         boolean flg = new MyFtpClient().downLoad();
@@ -62,6 +63,7 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
         end = System.currentTimeMillis();
         logger.info("为TESSABIT产品库存赋值总共耗时："+(end-start)/1000+"秒");
         System.out.println("为产品库存赋值总共耗时："+(end-start)/1000+"秒");
+        logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法结束！");
         return returnMap;
     }
 
