@@ -5,6 +5,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.dto.*;
+import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.service.ReturnOrderService;
 import com.shangpin.iog.tony.purchase.common.Constant;
 import com.shangpin.iog.tony.purchase.dto.*;
@@ -15,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created by loyalty on 15/9/9.
+ * Created by wangyuzhi on 15/10/9.
  */
 @Component("tonyOrder")
 public class OrderServiceImpl extends AbsOrderService {
@@ -27,12 +28,17 @@ public class OrderServiceImpl extends AbsOrderService {
     ReturnOrderService returnOrderService;
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-/**
- * main
- * */
-    public void start(){
+    /**
+     * main
+     * */
+    public void startWMS(){
         //通过采购单处理下单 包括下单和退单
         this.checkoutOrderFromWMS(Constant.SUPPLIER_ID,"",true);
+    }
+
+    public void startSOP(){
+        //通过采购单处理下单 包括下单和退单
+        this.checkoutOrderFromSOP(Constant.SUPPLIER_ID,"",true);
     }
 
     /**
@@ -40,8 +46,9 @@ public class OrderServiceImpl extends AbsOrderService {
      */
     @Override
     public void handleSupplierOrder(OrderDTO orderDTO) {
+        this.orderDTO = orderDTO;
         //在线推送订单
-        createOrder("PENDING");
+        createOrder(Constant.PENDING);
         //设置异常信息
         orderDTO = this.orderDTO;
     }
@@ -51,10 +58,8 @@ public class OrderServiceImpl extends AbsOrderService {
     @Override
     public void handleConfirmOrder(OrderDTO orderDTO) {
         this.orderDTO = orderDTO;
-        //订单支付确认
-        confirmOrder(Constant.SUPPLIER_ID);
         //在线推送订单
-        createOrder("CONFIRMED");
+        createOrder(Constant.CONFIRMED);
         //设置异常信息
         orderDTO = this.orderDTO;
     }
@@ -67,21 +72,23 @@ public class OrderServiceImpl extends AbsOrderService {
         UpdateOrderStatusDTO updateOrder = new UpdateOrderStatusDTO();
         updateOrder.setMerchantId(Constant.MERCHANT_ID);
         updateOrder.setToken(Constant.TOKEN);
-        updateOrder.setShopOrderId(deleteOrder.getSupplierOrderNo());
-        updateOrder.setStatus("CANCELED");
-        updateOrder.setStatusDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+/*        updateOrder.setShopOrderId(deleteOrder.getSupplierOrderNo());*/
+        updateOrder.setStatus(Constant.CANCELED);
+                updateOrder.setStatusDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
         Gson gson = new Gson();
-        String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);
-/*        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
+/*        String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);*/
+        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
                 "\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"," +
                 "\"shopOrderId\":\"aaa\"," +
                 "\"status\":\"CANCELED\"," +
-                "\"statusDate\":\"2015/01/31 09:01:00\"}";*/
+                "\"statusDate\":\"2015/01/31 09:01:00\"}";
         System.out.println("request json == "+json);
         String rtnData = null;
         try {
             rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/updateOrderStatus", null, null, json, "", "");
             System.out.println("rtnData=="+rtnData);
+            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+            System.out.println("------------"+returnDataDTO.getStatus());
             logger.info("Response ：" + rtnData + ", shopOrderId:"+updateOrder.getShopOrderId());
         } catch (ServiceException e) {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+updateOrder.getShopOrderId());
@@ -91,6 +98,40 @@ public class OrderServiceImpl extends AbsOrderService {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+updateOrder.getShopOrderId());
             deleteOrder.setExcState("1");
             deleteOrder.setExcDesc(e.getMessage());
+        } finally {
+            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+            if ("ko".equals(returnDataDTO.getStatus())){
+                deleteOrder.setExcState("1");
+                deleteOrder.setExcDesc(returnDataDTO.getMessages().toString());
+            } else {
+                deleteOrder.setStatus(OrderStatus.CANCELLED);
+            }
+            System.out.println("------------"+returnDataDTO.getStatus());
+        }
+    }
+    public void test(ReturnOrderDTO deleteOrder) {
+        Gson gson = new Gson();
+/*        String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);*/
+        String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\"," +
+                "\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"," +
+                "\"shopOrderId\":\"aaa\"," +
+                "\"status\":\"CANCELED\"," +
+                "\"statusDate\":\"2015/01/31 09:01:00\"}";
+        System.out.println("request json == "+json);
+        String rtnData = null;
+        try {
+            rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/updateOrderStatus", null, null, json, "", "");
+            System.out.println("rtnData=="+rtnData);
+         } catch (ServiceException e) {
+           deleteOrder.setExcState("1");
+            deleteOrder.setExcDesc(e.getMessage());
+        } catch (Exception e) {
+            deleteOrder.setExcState("1");
+            deleteOrder.setExcDesc(e.getMessage());
+        } finally {
+            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+            System.out.println("------------"+returnDataDTO.getStatus());
+            System.out.println("------------"+returnDataDTO.getMessages());
         }
     }
     /**
@@ -188,10 +229,13 @@ public class OrderServiceImpl extends AbsOrderService {
                 "\"province\":\"2\" ,\"state\":\"2\" }}}";*/
         System.out.println("request json == "+json);
         String rtnData = null;
+        int qty = Integer.parseInt(orderDTO.getDetail().split(":")[1]);
         try {
-            rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/createOrder", null, null, json, "", "");
-            System.out.println("rtnData=="+rtnData);
-            logger.info("Response ：" + rtnData + ", shopOrderId:"+order.getShopOrderId());
+            for(int i = 0; i < qty; i++){
+                rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/createOrder", null, null, json, "", "");
+                System.out.println("rtnData=="+rtnData);
+                logger.info("Response ：" + rtnData + ", shopOrderId:"+order.getShopOrderId());
+            }
         } catch (ServiceException e) {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
             orderDTO.setExcState("1");
@@ -200,12 +244,23 @@ public class OrderServiceImpl extends AbsOrderService {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
             orderDTO.setExcState("1");
             orderDTO.setExcDesc(e.getMessage());
+        } finally {
+            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+            if ("ko".equals(returnDataDTO.getStatus())){
+                orderDTO.setExcState("1");
+                orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
+            } else if (Constant.PENDING.equals(status)){
+                orderDTO.setStatus(OrderStatus.PLACED);
+            } else if (Constant.CONFIRMED.equals(status)){
+                orderDTO.setStatus(OrderStatus.PAYED);
+            }
+            System.out.println("------------" + returnDataDTO.getStatus());
         }
     }
     public static void main(String[] args){
         OrderServiceImpl  orderService = new OrderServiceImpl();
 
-        //orderService.purchaseOrder();
+        orderService.test(new ReturnOrderDTO());
 
 //        Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
 //        List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();

@@ -17,19 +17,19 @@ public class LinoricciStockImp  extends AbsUpdateProductStock{
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         new MyFtpClient().downLoad();
-        String stocks = new MyStringUtil().parseXml2Str(Constant.LOCAL_STOCK_FILE);
+        String stocks = MyStringUtil.getStockByFile(Constant.LOCAL_STOCK_FILE);
+        System.out.println(stocks);
         //定义三方
         Map returnMap = new HashMap();
         String itemId = "";
         Iterator<String> iterator=skuNo.iterator();
-        //为供应商循环赋值
-        logger.info("为供应商循环赋值");
+        //为产品库存循环赋值
+        logger.info("为产品库存循环赋值");
         while (iterator.hasNext()){
             itemId = iterator.next();
-            String stock = "0";
-            if (stocks.contains(itemId)){
-                stock = MyStringUtil.getStockBySkuId(stocks.substring(stocks.indexOf(itemId), stocks.indexOf(itemId) + 20));
-            }
+            String stock = MyStringUtil.getStockBySkuId(itemId, stocks);
+            logger.info("SkuId is " + itemId + ", stock is " + stock);
+            System.out.println(itemId + " : " + stock);
             returnMap.put(itemId, stock);
         }
         return returnMap;
@@ -43,5 +43,15 @@ public class LinoricciStockImp  extends AbsUpdateProductStock{
         impl.updateProductStock(Constant.SUPPLIER_ID, "2015-01-01 00:00", format.format(new Date()));
         logger.info("TESSABIT更新数据库结束");
         System.exit(0);*/
+
+        List<String> skuNo = new ArrayList<>();
+        skuNo.add("46347062113323105203");
+        skuNo.add("46347062110248785299");
+        skuNo.add("194032109501461360");
+        Map returnMap = impl.grabStock(skuNo);
+        System.out.println("test return size is "+returnMap.keySet().size());
+        for(Object key: returnMap.keySet()){
+            System.out.println("skuId is "+key+",stock is "+returnMap.get(key));;
+        }
     }
 }

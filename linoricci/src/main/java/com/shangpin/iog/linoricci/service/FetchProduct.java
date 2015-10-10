@@ -83,8 +83,9 @@ public class FetchProduct {
      * save items into DB
      * **/
     private void messMappingAndSave(Prodottis prodottis) {
-        String stocks = util.parseXml2Str(Constant.LOCAL_STOCK_FILE);
+        String stocks = util.getStockByFile(Constant.LOCAL_STOCK_FILE);
         String pictrues = util.parseXml2Str(Constant.LOCAL_IMAGE_FILE);
+        String skuId = "";
         // System.out.println(pictrues);
 
 /*        for (String item : items) {
@@ -98,19 +99,20 @@ public class FetchProduct {
         //items = new String[0];
 
         for (Prodotti prodotti : prodottis.getProdottiList()) {
+            skuId = prodotti.getID_ARTICOLO();
             SkuDTO sku = new SkuDTO();
             try {
                 sku.setId(UUIDGenerator.getUUID());
                 sku.setSupplierId(Constant.SUPPLIER_ID);
-                sku.setSpuId(prodotti.getCODICE_MODELLO());
-                sku.setSkuId(prodotti.getID_ARTICOLO());
-                sku.setProductSize(prodotti.getID_ARTICOLO());
+                sku.setSpuId(prodotti.getID_ARTICOLO());
+                sku.setSkuId(skuId);
+                sku.setProductSize(prodotti.getSIZE_AND_FIT());
                 sku.setMarketPrice(prodotti.getPREZZO_VENDITA());
                 sku.setSalePrice(prodotti.getPREZZO_VENDITA());
                 sku.setSupplierPrice(prodotti.getPREZZO_VENDITA());
                 sku.setColor(prodotti.getCOLORE());
                 sku.setProductDescription(prodotti.getDESCRIZIONE());
-                sku.setStock(prodotti.getID_ARTICOLO());
+                sku.setStock(MyStringUtil.getStockBySkuId(skuId,stocks));
                 sku.setBarcode(prodotti.getID_ARTICOLO());
                 sku.setProductCode(prodotti.getCODICE_MODELLO());
                 sku.setProductName(prodotti.getDESCRIZIONE_MODELLO());

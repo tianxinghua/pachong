@@ -84,6 +84,7 @@ public class FetchProduct {
                 spu.setProductOrigin(dto.getMADE());
                 spu.setBrandName(dto.getITEM_GROUP());
                 spu.setSeasonName(dto.getCOLLECTION());
+                spu.setCategoryGender(dto.getDEPT().substring(0, dto.getDEPT().indexOf(" ")));
                 picture.setSupplierId(supplierId);
                 picture.setId(UUIDGenerator.getUUID());
                 picture.setSkuId(dto.getSUPPLIER_CODE()+"-"+dto.getSIZE());

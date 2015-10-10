@@ -13,6 +13,7 @@ import java.io.IOException;
  */
 public class MyFtpClient {
     private static Logger loggerError = Logger.getLogger("error");
+    private int i = 0;
     /**
      * test
      * @param args
@@ -28,7 +29,7 @@ public class MyFtpClient {
     /**
      * Description: 下载文件
      */
-    public  void downLoad() {
+    public  boolean downLoad() {
         //创建FTPClient
         FTPClient ftp = new com.enterprisedt.net.ftp.FTPClient();
         // 连接服务器
@@ -46,16 +47,29 @@ public class MyFtpClient {
             // 获取 XML文件到本地
             ftp.get(new StringUtil().getLocalFileName(), Constant.SERVER_FILE);
         } catch (IOException e) {
-            System.out.println("IOException"+e.getMessage());
-            e.printStackTrace();
+            System.out.println("IOException:"+e.getMessage());
+            loggerError.error("IOException:"+e.getMessage());
+            if (i++<5){
+                downLoad();
+            }
+            return false;
         } catch (FTPException e) {
-            System.out.println("FTPException"+e.getMessage());
-                    e.printStackTrace();
-        }  finally {
+            System.out.println("FTPException:"+e.getMessage());
+            loggerError.error("FTPException:"+e.getMessage());
+            if (i++<5){
+                downLoad();
+            }
+            return false;
+        } catch (Exception e){
+            loggerError.error("Exception:"+e.getMessage());
+            if (i++<5){
+                downLoad();
+            }
+            return false;
+        } finally {
             close(ftp);
-            loggerError.error("下载TESSABIT数据失败，退出");
-            return;
         }
+        return true;
     }
 
     /**
@@ -67,9 +81,9 @@ public class MyFtpClient {
             if (null != ftp)
                 ftp.quit();
         } catch (IOException e) {
-            e.printStackTrace();
+            loggerError.error("IOException:" + e.getMessage());
         } catch (FTPException e) {
-            e.printStackTrace();
+            loggerError.error("FTPException:" + e.getMessage());
         }
     }
 }
