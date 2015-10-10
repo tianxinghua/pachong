@@ -18,7 +18,8 @@ public class LinoricciStockImp  extends AbsUpdateProductStock{
     private long endTime = 0;
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        logger.info("LINORICCI Sku 条数："+skuNo.size());
+        logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法开始！");
+        logger.info("计划更新库存的 Sku 条数："+skuNo.size());
         startTime = System.currentTimeMillis();
         boolean isOK = new MyFtpClient().downLoad();
         endTime = System.currentTimeMillis();
@@ -41,14 +42,16 @@ public class LinoricciStockImp  extends AbsUpdateProductStock{
             itemId = iterator.next();
             value = stockMap.get(itemId);
             if (value == null){
-                logger.info("Item id is "+itemId+", stock is null,remove");
+                //logger.info("Item id is "+itemId+", stock is null,remove");
                 continue;
             }
-            logger.info("SkuId is " + itemId + ", stock is " + value);
+            //logger.info("SkuId is " + itemId + ", stock is " + value);
             returnMap.put(itemId, value);
         }
         endTime = System.currentTimeMillis();
         logger.info("为产品库存循环赋值耗时："+(endTime-startTime)/1000+"秒");
+        logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法结束！");
+        logger.info("返回需要更新库存的 Sku 条数："+returnMap.size());
         return returnMap;
     }
 
