@@ -60,7 +60,7 @@ public class Test {
 		
 	}
 	
-	public void getResAsStream(String url,String sopAction,String contentType){
+	public void getResAsStream(String url,String sopAction,String contentType,String localPath){
 		HttpClient httpClient = new HttpClient();
 		PostMethod postMethod = new PostMethod(url);
         postMethod.setRequestHeader("SOAPAction", sopAction);
@@ -80,7 +80,11 @@ public class Test {
             
             System.out.println(postMethod.getResponseContentLength());
             
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File("E:\\testBuffer.xml")) );
+            File file = new File(localPath);
+            if(!file.exists()){
+            	file.createNewFile();
+            }
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(localPath)) );
             int i = -1;
             while((i=bufferedInputStream.read(ims)) != -1){
             	System.out.println(i+"----------------------------");
