@@ -117,6 +117,12 @@ public class FetchProduct {
 
                         String size = record.get("attribute_size");
                         String stock = record.get("attribute_size:quantity");
+
+                        //库存为0不进行入库
+                        if (stock == null || "".equals(stock.trim()) || "0".equals(stock.trim())) {
+                            continue;
+                        }
+
                         String skuId = spuId + size;
                         List<String> pics = new ArrayList<>();
                         String photo1 = record.get("Photo 1");

@@ -48,7 +48,7 @@ public class FetchProduct {
 
         try {
             Map<String, String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = new OutTimeConfig(1000*60, 1000*60*20,1000*60*20);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*20, 1000*60*20,1000*60*20);
 //            timeConfig.confRequestOutTime(600000);
 //            timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get(url, timeConfig, null);
@@ -83,6 +83,12 @@ public class FetchProduct {
                 if (null == itemList) continue;
                 String skuId = "";
                 for (Item item : itemList) {
+
+                    //库存为0不进行入库
+                    if (item.getStock() == null || "".equals(item.getStock().trim()) || "0".equals(item.getStock().trim())) {
+                        continue;
+                    }
+
                     SkuDTO sku = new SkuDTO();
                     try {
                         sku.setId(UUIDGenerator.getUUID());
@@ -111,7 +117,6 @@ public class FetchProduct {
                         sku.setProductDescription(item.getDescription());
                         sku.setStock(item.getStock());
                         sku.setProductCode(product.getProducer_id());
-
                         sku.setProductDescription(product.getDescription());
 
                         if (item.getStock() != null && !"".equals(item.getStock()) && Integer.valueOf(item.getStock()) > 0) {
