@@ -14,24 +14,29 @@ import java.util.*;
  */
 public class LinoricciStockImp  extends AbsUpdateProductStock{
     private static Logger logger = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
+    private long startTime = 0;
+    private long endTime = 0;
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-
-        logger.info("down load stock file... ");
+        logger.info("LINORICCI Sku 条数："+skuNo.size());
+        startTime = System.currentTimeMillis();
         boolean isOK = new MyFtpClient().downLoad();
+        endTime = System.currentTimeMillis();
+        logger.info("下载LINORICCI文件结果"+isOK+"，耗时："+(endTime-startTime)/1000+"秒");
         Map<String,Integer> stockMap = null;
         if (isOK){
-            logger.info("down load stock file success,convert file into string ");
+            startTime = System.currentTimeMillis();
             stockMap = MyStringUtil.getStockByFile(Constant.LOCAL_STOCK_FILE);
+            endTime = System.currentTimeMillis();
+            logger.info("解析LINORICCI文件耗时："+(endTime-startTime)/1000+"秒");
         };
-        //定义三方
+        //defination
         Map returnMap = new HashMap();
         String itemId = "";
         Integer value = null;
         Iterator<String> iterator=skuNo.iterator();
-        //为产品库存循环赋值
-        logger.info("为产品库存循环赋值===========================");
+        logger.info("set stock for loop===========================");
+        startTime = System.currentTimeMillis();
         while (iterator.hasNext()){
             itemId = iterator.next();
             value = stockMap.get(itemId);
@@ -42,6 +47,8 @@ public class LinoricciStockImp  extends AbsUpdateProductStock{
             logger.info("SkuId is " + itemId + ", stock is " + value);
             returnMap.put(itemId, value);
         }
+        endTime = System.currentTimeMillis();
+        logger.info("为产品库存循环赋值耗时："+(endTime-startTime)/1000+"秒");
         return returnMap;
     }
 
