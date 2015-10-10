@@ -47,10 +47,12 @@ public class FetchProduct {
     private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
+    @Autowired
+    private static ResourceBundle bdl=ResourceBundle.getBundle("conf");;
 
     public void fetchProductAndSave(String url){
 
-        String supplierId = "2015092901551";
+        String supplierId = bdl.getString("supplierId");
         try {
 
             Map<String,String> mongMap = new HashMap<>();
@@ -141,6 +143,7 @@ public class FetchProduct {
                     spu.setSpuName(product.getProduct_name());
                     spu.setSeasonId(product.getSeason_code());
                     spu.setMaterial(product.getProduct_material());
+                    spu.setCategoryGender(product.getCategoryGender());
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
                     e.printStackTrace();
@@ -178,7 +181,7 @@ public class FetchProduct {
                 }
                 if (p.length > 21) {
                     for (int i=21;i<p.length;i++){
-                        pic = pic + p[i];
+                        pic = pic +"|"+ p[i];
                     }
                 }
                 if (p[0].length() != 3 && p.length > 11){
@@ -187,6 +190,7 @@ public class FetchProduct {
                     map.put("price", p[11]);
                     map.put("saleprice", p[12]);
                     map.put("c_title", p[16]);
+                    map.put("gender", p[18]);
                     map.put("picture", pic);
                     list.add(map);
                 }
@@ -220,13 +224,13 @@ public class FetchProduct {
                     }
 
                     if (instock > 0 && orderable) {
-                        System.out.println(instock);
                         Item item = new Item();
                         Product product = new Product();
                         List<Item> itemslist = new ArrayList<Item>();
                         Items items = new Items();
                         product.setProducer_id(map.get("id"));
                         product.setProductId(map.get("id"));
+                        product.setCategoryGender(map.get("gender"));
                         if (!json.has("brand"))
                             continue;
                         product.setProduct_brand(json.getString("brand"));
