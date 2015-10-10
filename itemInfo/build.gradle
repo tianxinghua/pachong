@@ -17,7 +17,7 @@ dependencies {
 
 jar {
 
-    dependsOn copyToLib
+    dependsOn copyToLib,copyResources
     exclude ("**/*.properties")
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
