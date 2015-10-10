@@ -1,21 +1,11 @@
 package com.shangpin.iog.tessabit.stock;
 
-import com.enterprisedt.net.ftp.FTPClient;
-import com.enterprisedt.net.ftp.FTPConnectMode;
-import com.enterprisedt.net.ftp.FTPException;
-import com.enterprisedt.net.ftp.FTPTransferType;
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.tessabit.stock.common.Constant;
 import com.shangpin.iog.tessabit.stock.common.MyFtpClient;
 import com.shangpin.iog.tessabit.stock.common.StringUtil;
 import com.shangpin.sop.AbsUpdateProductStock;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.jdom2.input.SAXBuilder;
-
-import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -43,7 +33,6 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
             end = System.currentTimeMillis();
             logger.info("解析TESSABIT文件耗时："+(end-start)/1000+"秒");
         }
-        //defination
         Map<String,Integer> returnMap = new HashMap();
         String itemId = "";
         Iterator<String> iterator=skuNo.iterator();
