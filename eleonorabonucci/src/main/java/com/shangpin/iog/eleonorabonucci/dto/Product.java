@@ -19,6 +19,7 @@ public class Product {
     private String url;
     private String supply_price;
     private String producer_id;
+    private String gender;
 
     private Items items;
 
@@ -119,7 +120,16 @@ public class Product {
         this.items = items;
     }
 
-    //    public List<Item> getItems() {
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+
+//    public List<Item> getItems() {
 //        return items;
 //    }
 //
@@ -143,6 +153,7 @@ public class Product {
                 ", product_detail='" + product_detail + '\'' +
                 ", product_material='" + product_material + '\'' +
                 ", url='" + url + '\'' +
+                ", gender='" + gender + '\'' +
                 ", supply_price='" + supply_price + '\'' +
                 ", producer_id='" + producer_id + '\'' +
                 ", items=" + items +

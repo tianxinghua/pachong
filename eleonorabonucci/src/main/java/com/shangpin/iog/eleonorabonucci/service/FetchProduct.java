@@ -48,7 +48,7 @@ public class FetchProduct {
 
         try {
             Map<String, String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = new OutTimeConfig(1000*60, 1000*60*20,1000*60*20);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*20, 1000*60*20,1000*60*20);
 //            timeConfig.confRequestOutTime(600000);
 //            timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get(url, timeConfig, null);
@@ -83,6 +83,12 @@ public class FetchProduct {
                 if (null == itemList) continue;
                 String skuId = "";
                 for (Item item : itemList) {
+
+                    //库存为0不进行入库
+                    if (item.getStock() == null || "".equals(item.getStock().trim()) || "0".equals(item.getStock().trim())) {
+                        continue;
+                    }
+
                     SkuDTO sku = new SkuDTO();
                     try {
                         sku.setId(UUIDGenerator.getUUID());
@@ -95,32 +101,44 @@ public class FetchProduct {
                         }
                         sku.setSkuId(skuId);
                         sku.setProductSize(item.getItem_size());
-                        sku.setMarketPrice(item.getMarket_price());
-                        sku.setSalePrice(item.getSell_price());
-                        sku.setSupplierPrice(item.getSupply_price());
+                        if(item.getMarket_price() != null) {
+                            sku.setMarketPrice(item.getMarket_price().replaceAll(",", "."));
+                        }
+
+                        if (item.getSell_price() != null) {
+                            sku.setSalePrice(item.getSell_price().replaceAll(",", "."));
+                        }
+
+                        if (item.getSupply_price() != null) {
+                            sku.setSupplierPrice(item.getSupply_price().replaceAll(",", "."));
+                        }
+
                         sku.setColor(item.getColor());
                         sku.setProductDescription(item.getDescription());
                         sku.setStock(item.getStock());
                         sku.setProductCode(product.getProducer_id());
-                        productFetchService.saveSKU(sku);
+                        sku.setProductDescription(product.getDescription());
 
-                        if (StringUtils.isNotBlank(item.getPicture())) {
-                            String[] picArray = item.getPicture().split("\\|");
-                            for (String picUrl : picArray) {
-                                ProductPictureDTO dto = new ProductPictureDTO();
-                                dto.setPicUrl(picUrl);
-                                dto.setSupplierId(supplierId);
-                                dto.setId(UUIDGenerator.getUUID());
-                                dto.setSkuId(item.getItem_id());
-                                try {
-                                    productFetchService.savePictureForMongo(dto);
-                                } catch (ServiceException e) {
-                                    e.printStackTrace();
+                        if (item.getStock() != null && !"".equals(item.getStock()) && Integer.valueOf(item.getStock()) > 0) {
+                            productFetchService.saveSKU(sku);
+                            if (StringUtils.isNotBlank(item.getPicture())) {
+                                String[] picArray = item.getPicture().split("\\|");
+                                for (String picUrl : picArray) {
+                                    ProductPictureDTO dto = new ProductPictureDTO();
+                                    dto.setPicUrl(picUrl);
+                                    dto.setSupplierId(supplierId);
+                                    dto.setId(UUIDGenerator.getUUID());
+                                    dto.setSkuId(item.getItem_id());
+                                    try {
+                                        productFetchService.savePictureForMongo(dto);
+                                    } catch (ServiceException e) {
+                                        e.printStackTrace();
+                                    }
+
                                 }
-
                             }
-
                         }
+
 
                     } catch (ServiceException e) {
                         try {
@@ -146,6 +164,9 @@ public class FetchProduct {
                     spu.setSpuName(product.getProduct_name());
                     spu.setSeasonId(product.getSeason_code());
                     spu.setMaterial(product.getProduct_material());
+
+
+                    spu.setCategoryGender(product.getGender());
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
                     e.printStackTrace();
