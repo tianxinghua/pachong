@@ -19,7 +19,7 @@ public class Product {
     private String producer_id;
 
     private Items items;
-
+    private String categoryGender;
 
     public String getProductId() {
         return productId;
@@ -116,6 +116,14 @@ public class Product {
 //    public void setItems(List<Item> items) {
 //        this.items = items;
 //    }
+
+    public String getCategoryGender() {
+        return categoryGender;
+    }
+
+    public void setCategoryGender(String categoryGender) {
+        this.categoryGender = categoryGender;
+    }
 
     public Product(){
         super();
