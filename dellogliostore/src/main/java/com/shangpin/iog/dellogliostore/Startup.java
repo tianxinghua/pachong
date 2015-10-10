@@ -28,7 +28,7 @@ public class Startup
         //需要翻墙
         fetchProduct.fetchProductAndSave("http://www.dellogliostore.com/admin/temp/xi125.xml");
         //本地地址
-//        fetchProduct.fetchProductAndSave("http://127.0.0.1:8080/xi125.xml");
+//        fetchProduct.fetchProductAndSave("httwep://127.0.0.1:8080/xi125.xml");
 
         log.info("----拉取dellogliostore数据完成----");
         System.out.println("-------fetch end---------");

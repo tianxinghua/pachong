@@ -82,20 +82,4 @@ public class MyStringUtil {
         }
         return map;
     }
-    /**
-     *get   stock by sku id
-     * */
-    public static String getStockBySkuId(String skuId,String stockFileStr){
-        if (stockFileStr.contains(skuId)){
-            return stockFileStr.substring(stockFileStr.indexOf(skuId)).split(";")[0].split(":")[1];
-        }
-        return "0";
-    }
-    /**
-     *get lase array
-     * */
-    public static String getLastArray(String[] strArr){
-        return strArr[strArr.length - 1];
-    }
-
 }

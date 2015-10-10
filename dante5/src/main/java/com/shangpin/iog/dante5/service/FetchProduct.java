@@ -84,6 +84,12 @@ public class FetchProduct {
                 if (item == null) {
                     continue;
                 }
+
+                //库存为0不进行入库
+                if (item.getAvailability() == null || "".equals(item.getAvailability().trim()) || "0".equals(item.getAvailability().trim())) {
+                    continue;
+                }
+
                 System.out.println("count : " + ++count);
 
                 String skuId = item.getId() + item.getSize(); //接口中g:id是spuId,对应不同尺码
