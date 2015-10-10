@@ -53,6 +53,7 @@ include 'iog-sop'
 include 'iog-facade-dubbo'
 
 include 'bagheera'
+include 'bagheera-stock'
 include 'gilt-stock'
 include 'gilt-purchase'
 include 'tony'

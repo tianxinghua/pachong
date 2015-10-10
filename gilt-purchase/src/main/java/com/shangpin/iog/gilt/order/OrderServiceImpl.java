@@ -55,6 +55,10 @@ public class OrderServiceImpl  {
     private String  placedStatus= OrderStatus.PLACED;
     private String  confirmedStatus=OrderStatus.CONFIRMED;
 
+    private String payStatus = OrderStatus.PAYED;
+
+
+
 
     /**
      * 下订单
@@ -65,10 +69,12 @@ public class OrderServiceImpl  {
         initDate("date.ini");
 
         try {
-           //  正常下单
-            transData();
+
             //下单异常 再次下单
             handlePurchaseOrderException();
+
+            //  正常下单
+            transData();
             //取消订单
             deleteOrder();
 
@@ -89,7 +95,7 @@ public class OrderServiceImpl  {
 
         List<com.shangpin.iog.dto.OrderDTO>  orderDTOList= null;
         try {
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId,placedStatus);
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId,payStatus);
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -364,8 +370,19 @@ public class OrderServiceImpl  {
             e.printStackTrace();
         }
 
-        Gson gson = new Gson();
         OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
+        if(null!=orderMap&&orderMap.size()==0){
+            //无值 测试下状态
+            try {
+              String healstatus =   HttpUtil45.get("https://api-sandbox.gilt.com/global/healthchecks/status",timeConfig,null);
+                logger.info("服务器状态:"+healstatus);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        Gson gson = new Gson();
+
         String uuid="";
         for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();){
             Map.Entry<String, List<PurchaseOrderDetail>> entry = itor.next();
@@ -408,8 +425,9 @@ public class OrderServiceImpl  {
             com.shangpin.iog.dto.OrderDTO spOrder =new com.shangpin.iog.dto.OrderDTO();
             spOrder.setUuId(uuid);
             spOrder.setSupplierId(supplierId);
-            spOrder.setStatus("WAITING");
+            spOrder.setStatus(OrderStatus.WAITPLACED);
             spOrder.setSpOrderId(entry.getKey());
+            spOrder.setSpPurchaseNo(entry.getKey());
             spOrder.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString());
             spOrder.setDetail(buffer.toString());
             spOrder.setCreateTime(new Date());
@@ -506,7 +524,7 @@ public class OrderServiceImpl  {
                 //
                 //更新订单状态
                 Map<String,String> map = new HashMap<>();
-                map.put("status",dto.getStatus());
+                map.put("status",OrderStatus.PAYED);
                 map.put("uuid",dto.getId());
                 if(StringUtils.isNotBlank(errorType)){
                     map.put("excState","0");
@@ -538,7 +556,7 @@ public class OrderServiceImpl  {
         //拉取采购单存入本地库，产生订单 但通知gilt时 失败
         List<com.shangpin.iog.dto.OrderDTO>  orderDTOList= null;
         try {
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, "WAITING");
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED);
             if(null!=orderDTOList){
                 String orderDetail = "",orderMsg="";
                 Gson gson = new Gson();
@@ -625,7 +643,7 @@ public class OrderServiceImpl  {
             com.shangpin.iog.dto.ReturnOrderDTO deleteOrder =new com.shangpin.iog.dto.ReturnOrderDTO();
             deleteOrder.setUuId(uuid);
             deleteOrder.setSupplierId(supplierId);
-            deleteOrder.setStatus("WAITCANCEL");
+            deleteOrder.setStatus(OrderStatus.WAITCANCEL);
             deleteOrder.setSpOrderId(entry.getKey());
             deleteOrder.setDetail(buffer.toString());
             deleteOrder.setCreateTime(new Date());
