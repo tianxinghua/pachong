@@ -25,7 +25,7 @@ public class Startup {
         //拉取数据
         log.info("----拉取ostore数据开始----");
         FetchProduct fetchProduct = (FetchProduct)factory.getBean("ostore");
-        fetchProduct.fetchProductAndSave("http://b2b.officinastore.com/shangpin.asp");
+        fetchProduct.fetchProductAndSave("http://b2b.officinastore.com/Scambio/Atelier/Shangpin/shangpin.csv");
 
         log.info("----拉取ostore数据完成----");
         System.out.println("-------fetch end---------");

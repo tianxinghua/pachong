@@ -47,9 +47,8 @@ public class GrabStockImp extends AbsUpdateProductStock {
         try {
             logger.info("拉取galiano数据开始");
             Map<String,String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-            timeConfig.confRequestOutTime(360000);
-            timeConfig.confSocketOutTime(360000);
+
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*15,1000*60*15,1000*60*15);
             String result = HttpUtil45.get("http://www.galianostore.com/shangpin.xml", timeConfig, null);
 
             mongMap.put("supplierId",supplierId);
