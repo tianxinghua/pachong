@@ -45,10 +45,10 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
         logger.info("为供应商产品库存循环赋值");
         while (iterator.hasNext()){
             itemId = iterator.next();
-            String stock = StringUtil.getStockById(itemId,localFile);
+            Integer stock = StringUtil.getStockById(itemId,localFile);
             logger.info("SkuId is " +itemId + ",stock is " +stock);
 
-            returnMap.put(itemId, Integer.valueOf(stock));
+            returnMap.put(itemId, stock);
         }
         return returnMap;
     }

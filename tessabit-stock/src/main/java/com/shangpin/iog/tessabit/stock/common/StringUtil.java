@@ -80,15 +80,21 @@ public class StringUtil {
         //System.out.println("rtnStr=="+rtnStr);
         return rtnStr;
     }
+
     /**
      *获取单品数量
      */
-    public static String getStockById(String itemId,String file){
-        String qty = null;
+    public static Integer getStockById(String itemId,String file){
+        Integer qty = null;
         if (file.contains(itemId)){
             String itemStr = file.substring(file.indexOf(itemId),file.indexOf(itemId)+Constant.ITEM_LENTH);
             if(itemStr.contains("</stock>")){
-                qty = itemStr.substring(itemStr.indexOf("<stock>")+7,itemStr.indexOf("</stock>"));
+                try{
+                    qty = Integer.parseInt(itemStr.substring(itemStr.indexOf("<stock>")+7,itemStr.indexOf("</stock>")));
+                }catch (Exception e){
+                    loggerError.error("get stock failed："+itemId);
+                    return null;
+                }
             }
         }
         return qty;
