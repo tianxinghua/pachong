@@ -97,13 +97,17 @@ public class DownloadAndReadCSV {
 				product.setMade(colValueList.get(colNameList.indexOf("country_of_origin")));
 				sb.append(colValueList.get(colNameList.indexOf("material1")));
 				if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("material2")))) {
-					sb.append(",").append(colValueList.get(colNameList.indexOf("material2")));
+					sb.append(":").append(colValueList.get(colNameList.indexOf("material_1_percent")))
+					  .append(",").append(colValueList.get(colNameList.indexOf("material2")))
+					  .append(":").append(colValueList.get(colNameList.indexOf("material_2_percent")));
 				}
 				if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("material3")))) {
-					sb.append(",").append(colValueList.get(colNameList.indexOf("material3")));
+					sb.append(",").append(colValueList.get(colNameList.indexOf("material3")))
+					  .append(":").append(colValueList.get(colNameList.indexOf("material_3_percent")));
 				}
 				if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("material4")))) {
-					sb.append(",").append(colValueList.get(colNameList.indexOf("material4")));
+					sb.append(",").append(colValueList.get(colNameList.indexOf("material4")))
+					  .append(":").append(colValueList.get(colNameList.indexOf("material_4_percent")));
 				}
 				product.setMaterial(sb.toString());
 				dtoList.add(product);
