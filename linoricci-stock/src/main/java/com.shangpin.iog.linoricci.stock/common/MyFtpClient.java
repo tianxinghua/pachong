@@ -12,6 +12,7 @@ import java.io.IOException;
  * Created by wangyuzhi on 2015/10/2.
  */
 public class MyFtpClient {
+    private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     /**
      * test
@@ -28,39 +29,39 @@ public class MyFtpClient {
     /**
      * Description: 下载文件
      */
-    public  void downLoad() {
+    public  boolean downLoad() {
+        boolean isOK = true;
         //创建FTPClient
         FTPClient ftp = new com.enterprisedt.net.ftp.FTPClient();
         // 连接服务器
         try {
-            System.out.println(Constant.URL);
             ftp.setRemoteHost(Constant.URL);
             ftp.setRemotePort(Integer.parseInt(Constant.PORT));
             ftp.setTimeout(1000*60*30);
             ftp.connect();
             //登陆
             ftp.login(Constant.USER, Constant.PASSWORD);
-            //连接模式
             ftp.setConnectMode(FTPConnectMode.PASV);
-            //ASCII方式：传输xml文本文件
             ftp.setType(FTPTransferType.ASCII);
-            //定位
             ftp.chdir(Constant.REMOTE_PATH);
             String[] fileArr = ftp.dir("Disponibilita_*",true);
             // 获取 XML库存文件到本地
-            ftp.get(Constant.LOCAL_STOCK_FILE, lastName(lastName(fileArr).split(" ")));
+            String serFile = lastName(lastName(fileArr).split(" "));
+            logger.info("down load server file "+ serFile +" to local:"+Constant.LOCAL_STOCK_FILE);
+            ftp.get(Constant.LOCAL_STOCK_FILE, serFile);
         } catch (IOException e) {
-            System.out.println("IOException："+e.getMessage());
-            loggerError.error("下载linoricci数据失败IOException："+e.getMessage());
+            loggerError.error("load linoricci data fail,IOException："+e.getMessage());
+            isOK = false;
         } catch (FTPException e) {
-            System.out.println("FTPException："+e.getMessage());
-            loggerError.error("下载linoricci数据失败FTPException："+e.getMessage());
+            loggerError.error("load linoriccii data fail,FTPException："+e.getMessage());
+            isOK = false;
         }  catch (Exception e) {
-            System.out.println("Exception："+e.getMessage());
-            loggerError.error("下载linoricci数据失败Exception："+e.getMessage());
+            loggerError.error("load linoricci数据失败Exception："+e.getMessage());
+            isOK = false;
         }  finally {
             close(ftp);
         }
+        return isOK;
     }
 
     /**

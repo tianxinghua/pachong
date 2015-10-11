@@ -17,7 +17,7 @@ public class Product {
     private String product_material;
     private String supply_price;
     private String producer_id;
-
+    private String categoryGender;
     private Items items;
 
 
@@ -117,6 +117,14 @@ public class Product {
 //        this.items = items;
 //    }
 
+    public String getCategoryGender() {
+        return categoryGender;
+    }
+
+    public void setCategoryGender(String categoryGender) {
+        this.categoryGender = categoryGender;
+    }
+    
     public Product(){
         super();
     }

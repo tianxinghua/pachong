@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by wangyuzhi on 2015/9/10.
@@ -47,8 +49,7 @@ public class MyStringUtil {
             // 关闭输入流
             is.close();
         }  catch (Exception e) {
-            System.out.println("e=="+e);
-            loggerError.error("解析LINORICCI数据失败，返回空串");
+            loggerError.error("解析LINORICCI数据失败，返回空串"+e.getMessage());
             return "";
         }
         System.out.println("output io string==="+sb.toString().length());
@@ -56,53 +57,29 @@ public class MyStringUtil {
     }
 
     /**
-     *获取本地FTP空文件，如果没有则创建
-     */
-    public String getLocalFileName(){
-        File file = new File(Constant.LOCAL_ITEMS_FILE);
-        if (!file.exists()){
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return Constant.LOCAL_ITEMS_FILE;
-    }
-
-    /**
      *get local stock file string
      * */
-    public static String getStockByFile(String localStockFile){
+    public static Map<String,Integer> getStockByFile(String localStockFile){
         Disponibilitas disponibilits = null;
+        Map<String,Integer> map = new HashMap<>();
         try {
             disponibilits = ObjectXMLUtil.xml2Obj(Disponibilitas.class, new File(Constant.LOCAL_STOCK_FILE));
         } catch (JAXBException e) {
-            e.printStackTrace();
+            loggerError.error("JAXBException" + e.getMessage());
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            loggerError.error("FileNotFoundException"+e.getMessage());
         }
         StringBuffer sb = new StringBuffer();
-        for (Disponibilita disponibilita: disponibilits.getDisponibilitaList()){
-            sb.append(disponibilita.getID_ARTICOLO()).append(disponibilita.getBARCODEEAN()).append(":").
-                    append(disponibilita.getESI()).append(";");
+        String key = "";
+        try {
+            for (Disponibilita disponibilita: disponibilits.getDisponibilitaList()){
+                key = sb.append(disponibilita.getMM_TAGLIA()).append(disponibilita.getID_ARTICOLO())
+                        .append(disponibilita.getNE_SIGLA()).toString();
+                map.put(key,Integer.parseInt(disponibilita.getESI()));
+            }
+        }catch (NumberFormatException e){
+            loggerError.error("NumberFormatException"+e.getMessage());
         }
-        return sb.toString();
+        return map;
     }
-    /**
-     *get   stock by sku id
-     * */
-    public static String getStockBySkuId(String skuId,String stockFileStr){
-        if (stockFileStr.contains(skuId)){
-            return stockFileStr.substring(stockFileStr.indexOf(skuId)).split(";")[0].split(":")[1];
-        }
-        return "0";
-    }
-    /**
-     *get lase array
-     * */
-    public static String getLastArray(String[] strArr){
-        return strArr[strArr.length - 1];
-    }
-
 }

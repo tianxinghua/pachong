@@ -1,21 +1,11 @@
 package com.shangpin.iog.tessabit.stock;
 
-import com.enterprisedt.net.ftp.FTPClient;
-import com.enterprisedt.net.ftp.FTPConnectMode;
-import com.enterprisedt.net.ftp.FTPException;
-import com.enterprisedt.net.ftp.FTPTransferType;
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.tessabit.stock.common.Constant;
 import com.shangpin.iog.tessabit.stock.common.MyFtpClient;
 import com.shangpin.iog.tessabit.stock.common.StringUtil;
 import com.shangpin.sop.AbsUpdateProductStock;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.jdom2.input.SAXBuilder;
-
-import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -26,38 +16,40 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
+    private long start = 0;//计时开始时间
+    private long end = 0;//计时结束时间
+    private String localFile = "";//需要解析的文件
+    private String itemId = "";//单个skuId
+    private Integer stock = null;//单个skuId的库存数
+
     @Override
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        //拉取FTP文件
-        logger.info("拉取TESSABIT数据开始");
+        logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法开始！");
+        logger.info("TESSABIT Sku 条数："+skuNo.size());
+        start = System.currentTimeMillis();
         boolean flg = new MyFtpClient().downLoad();
-        logger.info("拉取TESSABIT数据结束");
-        //FTP文件转换成字符串
-        String localFile = "";
-        System.out.println("拉取数据是否成功：" + flg);
+        end = System.currentTimeMillis();
+        logger.info("下载TESSABIT文件结果"+flg+"，耗时："+(end-start)/1000+"秒");
         if (flg){
-            logger.info("解析TESSABIT数据开始");
+            start = System.currentTimeMillis();
             localFile = new StringUtil().parseXml2Str();
-            logger.info("解析TESSABIT数据开始");
+            end = System.currentTimeMillis();
+            logger.info("解析TESSABIT文件耗时："+(end-start)/1000+"秒");
         }
-        //定义三方
         Map<String,Integer> returnMap = new HashMap();
-        String itemId = "";
         Iterator<String> iterator=skuNo.iterator();
-        //为供应商循环赋值
-        logger.info("为供应商产品库存循环赋值");
+        logger.info("为TESSABIT供应商产品库存循环赋值");
+        start = System.currentTimeMillis();
         while (iterator.hasNext()){
             itemId = iterator.next();
-            Integer stock = StringUtil.getStockById(itemId,localFile);
-            logger.info("SkuId is " +itemId + ",stock is " +stock);
-
-            try {
-                returnMap.put(itemId, stock);
-            } catch (NumberFormatException e) {
-                loggerError.error("skuId: " + itemId + " 库存数量" + stock+"转化异常，赋值为0");
-                returnMap.put(itemId, 0);
-            }
+            stock = StringUtil.getStockById(itemId,localFile);
+            //logger.info("SkuId is " +itemId + ",stock is " +stock);
+            returnMap.put(itemId, stock);
         }
+        end = System.currentTimeMillis();
+        logger.info("为TESSABIT产品库存赋值总共耗时："+(end-start)/1000+"秒");
+        System.out.println("为产品库存赋值总共耗时："+(end-start)/1000+"秒");
+        logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法结束！");
         return returnMap;
     }
 
@@ -85,11 +77,18 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
         skuNo.add("1983904634_12");
         skuNo.add("1983933587_1985020934");
         skuNo.add("1983933587_1985020935");
+        skuNo.add("1983933587_1985020936");
+        skuNo.add("1983933587_1985020937");
+        skuNo.add("1983933587_1985020938");
+        for (int i = 0;i<5000;i++){
+            skuNo.add(i+"1983933587_1985020936");
+        }
         Map returnMap = impl.grabStock(skuNo);
         System.out.println("test return size is "+returnMap.keySet().size());
         for(Object key: returnMap.keySet()){
-            System.out.println("skuId is "+key+",stock is "+returnMap.get(key));;
-        }*/
+           // System.out.println("skuId is "+key+",stock is "+returnMap.get(key));;
+        }
+*/
 
 
     }

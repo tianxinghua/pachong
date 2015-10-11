@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 @Component("giglio")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
-//    private static Logger logMongo = Logger.getLogger("mongodb");
+    //    private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
 
