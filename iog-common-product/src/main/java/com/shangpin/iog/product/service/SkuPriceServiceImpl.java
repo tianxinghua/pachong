@@ -26,6 +26,8 @@ public class SkuPriceServiceImpl implements SkuPriceService {
     @Autowired
     SkuPriceMapper skuPriceDAO;
 
+    private String noPirce="-1";
+
     @Override
     public Map<String, String> getSkuPriceMap(String supplierId) throws ServiceException {
         Map<String,Object> searchMap = new HashMap<>();
@@ -45,8 +47,8 @@ public class SkuPriceServiceImpl implements SkuPriceService {
 
     private void getResultMap(Map<String, String> resultMap, List<SkuPriceDTO> list) {
         for(SkuPriceDTO skuPriceDTO:list){
-//            resultMap.put(skuPriceDTO.getSkuId(),skuPriceDTO.getMarketPrice()+"|"+null==skuPriceDTO.getSupplierPrice()?"":skuPriceDTO.getSupplierPrice()) ;
-            resultMap.put(skuPriceDTO.getSkuId(),skuPriceDTO.getMarketPrice()) ;
+            resultMap.put(skuPriceDTO.getSkuId(),null==skuPriceDTO.getMarketPrice()?noPirce:skuPriceDTO.getMarketPrice()+"|"+null==skuPriceDTO.getSupplierPrice()?noPirce:skuPriceDTO.getSupplierPrice()) ;
+//            resultMap.put(skuPriceDTO.getSkuId(),skuPriceDTO.getMarketPrice()) ;
         }
     }
 
@@ -56,7 +58,7 @@ public class SkuPriceServiceImpl implements SkuPriceService {
         try {
             SkuPriceDTO skuPriceDTO = skuPriceDAO.getSkuPrice(supplierId,skuId);
             if(null!=skuPriceDTO){
-                reslut = skuPriceDTO.getMarketPrice()+"|"+null==skuPriceDTO.getSupplierPrice()?"":skuPriceDTO.getSupplierPrice();
+                reslut = null==skuPriceDTO.getMarketPrice()?noPirce:skuPriceDTO.getMarketPrice()+"|"+null==skuPriceDTO.getSupplierPrice()?noPirce:skuPriceDTO.getSupplierPrice();
             }
         } catch (Exception e) {
             logger.error("获取失败 "+e.getMessage());

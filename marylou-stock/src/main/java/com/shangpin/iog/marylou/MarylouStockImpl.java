@@ -37,26 +37,26 @@ public class MarylouStockImpl  extends AbsUpdateProductStock {
 
     public static void main(String[] args) throws Exception {
 //
-//        String host = bundle.getString("HOST");
-//        String app_key = bundle.getString("APP_KEY");
-//        String app_secret= bundle.getString("APP_SECRET");
-//        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
-//            logger.error("参数错误，无法执行更新库存");
-//        }
+        String host = bundle.getString("HOST");
+        String app_key = bundle.getString("APP_KEY");
+        String app_secret= bundle.getString("APP_SECRET");
+        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
+            logger.error("参数错误，无法执行更新库存");
+        }
 
 
 
         MarylouStockImpl impl = new MarylouStockImpl();
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//        logger.info("更新数据库开始");
-//        impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
-//        logger.info("更新数据库结束");
-//        System.exit(0);
-        List<String> skuNo = new ArrayList<>();
-        skuNo.add("1986242872_10");
-        Map returnMap = impl.grabStock(skuNo);
-        System.out.println("test return size is "+returnMap.keySet().size());
-        System.out.println("test return value is "+returnMap.get("1986242872_10"));
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        logger.info("更新数据库开始");
+        impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
+        logger.info("更新数据库结束");
+        System.exit(0);
+//        List<String> skuNo = new ArrayList<>();
+//        skuNo.add("1986242872_10");
+//        Map returnMap = impl.grabStock(skuNo);
+//        System.out.println("test return size is "+returnMap.keySet().size());
+//        System.out.println("test return value is "+returnMap.get("1986242872_10"));
 
     }
 }

@@ -6,7 +6,13 @@ import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
 import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
 import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.dto.SkuPriceDTO;
+import com.shangpin.iog.dto.SkuRelationDTO;
+import com.shangpin.iog.ice.dto.CategoryBrandDiscountDTO;
+import com.shangpin.iog.ice.dto.ResMessage;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.SkuRelationService;
 import org.apache.commons.collections.CollectionUtils;
@@ -34,33 +40,25 @@ public abstract class AbsPriceService {
     private int skuCount4Thread=100;
     private static ReentrantLock lock = new ReentrantLock();
 
-    //  true :已供应商提供的SKU为主 不更新未提供的库存
-    //  false:已尚品的SKU为主 未查到的一律赋值为0
-    public static boolean supplierSkuIdMain=false;
+    //使用MarketPrice 计算进货价
+    public static boolean PurchasePriceUseMarketPriceCalculate = true;
 
-    public static boolean ORDER= false;
+    //不使用品牌品类折扣
+    public static boolean NoUseDiscount = false;
 
-    private String  splitSing="|||||";
+    public static BigDecimal DefaultCommission=new BigDecimal(1);
+
+    private String  splitSign="|";
 
     public static Map<String,String>   sopMarketPriceMap = null;
 
+    public static Map<String,BigDecimal> discountMap = null;
 
 
 
-    private  void  getSopMarketPriceMap(String supplierId) throws ServiceException {
-        //TODO 测试
-//		try{
-//			lock.lock();
-//			if(null==sopMarketPriceMap){//第一次初始化
-//				sopMarketPriceMap =skuPriceService.getSkuPriceMap(supplierId);
-//			}
-//
-//		}finally{
-//			if(lock.isLocked())	lock.unlock();
-//		}
-        sopMarketPriceMap = new HashMap<>();
 
-    }
+
+
     //
     @Autowired
     public SkuPriceService skuPriceService;
@@ -69,41 +67,141 @@ public abstract class AbsPriceService {
     SkuRelationService skuRelationService;
 
     /**
-     * 抓取供应商库存数据
+     * 抓取供应商价格
      * @param skuNo 供应商的每个产品的唯一编号：sku
-     * @see #grabProduct(String, String, String) 抓取主站SKU
-     * @return 每个sku对应的库存数
+
+     * @return 每个sku对应的价格  市场价 | 供货价
      * @throws ServiceException
      */
-    public abstract Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception;
-
+    public abstract Map<String,String> getPriceOfSupplier(Collection<String> skuNo) throws ServiceException, Exception;
 
 
     /**
-     * 更新市场价进入中间库存
-     * @param supplierPriceMap
+     * 更新主站库存
+     * @param supplier 供应商id
+     * @param start 主站产品数据时间开始 yyyy-MM-dd HH:mm
+     * @param end 主站产品数据时间结束 yyyy
+     *            +   -MM-dd HH:mm
+     * @return 更新失败数
+     * @throws Exception
+     */
+    public int updatePirce(final String supplier,String start,String end) throws Exception{
+        //初始化 sopMarketPriceMap
+        getSopMarketPriceMap(supplier);
+
+        //ice的skuid与本地库拉到的skuId的关系，value是ice中skuId,key是本地中的skuId
+
+        final Map<String,String> localAndIceSku=new HashMap<String, String>();
+        final Collection<String> skuNoSet=grabProduct(supplier, start, end,localAndIceSku);
+        logger.warn("待更新数据总数："+skuNoSet.size());
+        //logger.warn("需要更新ice,supplier sku关系是："+JSON.serialize(localAndIceSku));
+        final List<Integer> totoalFailCnt=Collections.synchronizedList(new ArrayList<Integer>());
+        if(useThread){
+            int poolCnt=skuNoSet.size()/getSkuCount4Thread();
+            ExecutorService exe=Executors.newFixedThreadPool(poolCnt/4+1);//相当于跑4遍
+            final List<Collection<String>> subSkuNos=subCollection(skuNoSet);
+            logger.warn("线程池数："+(poolCnt/4+1)+",sku子集合数："+subSkuNos.size());
+            for(int i = 0 ; i <subSkuNos.size();i++){
+                exe.execute(new UpdateThread(subSkuNos.get(i),supplier,localAndIceSku,totoalFailCnt));
+            }
+            exe.shutdown();
+            while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
+
+            }
+            int fct=0;
+            for(int k=0;k<totoalFailCnt.size();k++){
+                fct+=totoalFailCnt.get(k);
+            }
+            return fct;
+        }else{
+            return updatePrice(supplier, localAndIceSku, skuNoSet);
+        }
+    }
+
+    /**
+     * 获取本地价格数据
+     * @param supplierId
      * @throws ServiceException
      */
-//	public  void updateMarketPrice(Map<String,String> supplierPriceMap,String supplieId) throws ServiceException{
-//		Set<Entry<String, String>> supplierPriceSet = supplierPriceMap.entrySet();
-//		String supplierSku="",price = "",newPrice="",oldPrice="";
-//		for(Entry<String, String> entry:supplierPriceSet){
-//			supplierSku =entry.getKey();
-//			price = entry.getValue();
-//			newPrice= price.substring(0,price.indexOf(","));
-//			oldPrice=price.substring(price.indexOf(",")+1);
-//			SkuPriceDTO dto = new SkuPriceDTO();
-//			dto.setMarketPrice(newPrice);
-//			dto.setSkuId(supplierSku);
-//			dto.setSupplierId(supplieId);
-////			skuPriceService.updatePrice(dto);
-//		}
-//
-//	}
+    private  void  getSopMarketPriceMap(String supplierId) throws ServiceException {
+        //TODO 测试
+        try{
+            lock.lock();
+            if(null==sopMarketPriceMap){//第一次初始化
+                sopMarketPriceMap =skuPriceService.getSkuPriceMap(supplierId);
+            }
+
+        }finally{
+            if(lock.isLocked())	lock.unlock();
+        }
+
+
+    }
+
+    /**
+     * 赋值sku对应的折扣
+     * @param supplierId
+     * @param skuBrandCategoryMap    skuNO 对应的品牌和品类组合值
+     * @param brandMap                 品牌map
+     * @param servant
+     * @throws ServiceException
+     */
+    private void getDiscountMap(String supplierId,Map<String,String> skuBrandCategoryMap, Map<String,String> brandMap,OpenApiServantPrx servant) throws  ServiceException{
+        try{
+            lock.lock();
+            if(null==discountMap){//第一次初始化
+                String brandNo="", result="",skuId="" ;
+                Gson gson = new Gson();
+                Map<String,BigDecimal> tempMap = new HashMap<>();
+                for(Iterator<Map.Entry<String,String>> itor=brandMap.entrySet().iterator();itor.hasNext();){
+                    brandNo = itor.next().getKey();
+                    try {
+                        result =  servant.FindCategoryBrandAgreement(supplierId,"",brandNo);
+                        ResMessage message = gson.fromJson(result,ResMessage.class);
+                        if(null!=message){
+                            logger.error("拉取品牌品类折扣错误,返回信息为NULL");
+                             //TODO 邮件通知
+                        }else{
+                            if(200==message.getResCode()){
+                                 List<CategoryBrandDiscountDTO> discountDTOList = gson.fromJson( message.getMessageRes(), new TypeToken<List<CategoryBrandDiscountDTO>>(){}.getType());
+                                 for(CategoryBrandDiscountDTO discountDTO:discountDTOList){
+                                     try {
+                                         tempMap.put(discountDTO.getBrandNo()+"|"+discountDTO.getCategoryNo(),new BigDecimal(discountDTO.getDiscountRate()));
+                                     } catch (Exception e) {
+                                        logger.error("折扣赋值错误");
+                                     }
+                                 }
+                            }else {//错误
+                                logger.error("拉取品牌品类折扣错误，错误原因:" + message.getMessageRes());
+                            }
+                        }
+
+                    } catch (ApiException e) {
+                        e.printStackTrace();
+                    }
+                }
+                // discountMap  赋值  skuId,discount
+                Map.Entry<String,String> skuEntry = null;
+                for(Iterator<Map.Entry<String,String>> itor=skuBrandCategoryMap.entrySet().iterator();itor.hasNext();){
+                    skuEntry = itor.next();
+                    result = skuEntry.getValue();
+                    if(tempMap.containsKey(result)){
+                        discountMap.put( skuEntry.getKey(),tempMap.get(result));
+                    }
+                }
+
+
+            }
+
+
+        }finally{
+            if(lock.isLocked())	lock.unlock();
+        }
+    }
+
 
     /**
      * 抓取主站商品SKU信息，等待更新库存<br/>
-     * @see #updateProduct(String, Map) 更新库存
      * @param supplier 供应商id
      * @param start 主站数据开始时间
      * @param end 主站数据结束时间
@@ -117,13 +215,9 @@ public abstract class AbsPriceService {
         boolean hasNext=true;
         logger.warn("获取icesku 开始");
         Set<String> skuIds = new HashSet<String>();
+         Map<String,String> brandMap = new HashMap<>();
+        Map<String,String> skuBrandCategoryMap = new HashMap<>();
 
-        //获取已有的SPSKUID
-//		List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
-//		Map<String,String> map = new HashMap<>();
-//		for(SkuRelationDTO skuRelationDTO:skuRelationDTOList){
-//			map.put(skuRelationDTO.getSopSkuId(),null);
-//		}
         Date date  = new Date();
         while(hasNext){
             List<SopProductSkuIce> skus = null;
@@ -135,28 +229,18 @@ public abstract class AbsPriceService {
                 e.printStackTrace();
             }
             for (SopProductSkuIce sku : skus) {
+                brandMap.put(sku.BrandENName,"");
                 List<SopSkuIce> skuIces = sku.SopSkuIces;
                 for (SopSkuIce ice : skuIces) {
-
-//					if (!map.containsKey(ice.SkuNo)){
-//						SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
-//						skuRelationDTO.setSupplierId(supplier);
-//						skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
-//						skuRelationDTO.setSopSkuId(ice.SkuNo);
-//						skuRelationDTO.setCreateTime(date);
-//						skuRelationService.saveSkuRelateion(skuRelationDTO);
-//					}
 
                     if(null!=ice.SkuNo&&!"".equals(ice.SkuNo)&&null!=ice.SupplierSkuNo&&!"".equals(ice.SupplierSkuNo)){
                         if(1!=ice.IsDeleted){
                             skuIds.add(ice.SupplierSkuNo);
                             stocks.put(ice.SupplierSkuNo,ice.SkuNo);
+                            //TODO  品牌和品类应该为编号
+                            skuBrandCategoryMap.put(ice.SkuNo,sku.BrandENName+"|"+sku.CategoryName);
                         }
                     }
-
-
-
-
 
                 }
             }
@@ -166,55 +250,36 @@ public abstract class AbsPriceService {
         }
         logger.warn("获取icesku 结束");
 
+        //获取品牌品类折扣
+        getDiscountMap(supplier,skuBrandCategoryMap,brandMap,servant);
+
         return skuIds;
     }
-
-
-
     /**
-     * 更新主站库存
-     * @param supplier 供应商id
-     * @param start 主站产品数据时间开始 yyyy-MM-dd HH:mm
-     * @param end 主站产品数据时间结束 yyyy
-     *            +   -MM-dd HH:mm
-     * @see {@link #grabStock(List) 抓取库存 }
-     * @return 更新失败数
-     * @throws Exception
+     * 更新市场价进入中间库存
+     * @param supplierPriceMap
+     * @throws ServiceException
      */
-    public int updateProductStock(final String supplier,String start,String end) throws Exception{
-        //初始化 sopMarketPriceMap
-        getSopMarketPriceMap(supplier);
-
-        //ice的skuid与本地库拉到的skuId的关系，value是ice中skuId,key是本地中的skuId
-
-        final Map<String,String> localAndIceSku=new HashMap<String, String>();
-        final Map<String,String> sopSkuAndSupplierSku =new HashMap<>();
-        final Collection<String> skuNoSet=grabProduct(supplier, start, end,localAndIceSku);
-        logger.warn("待更新库存数据总数："+skuNoSet.size());
-        //logger.warn("需要更新ice,supplier sku关系是："+JSON.serialize(localAndIceSku));
-        final List<Integer> totoalFailCnt=Collections.synchronizedList(new ArrayList<Integer>());
-        if(useThread){
-            int poolCnt=skuNoSet.size()/getSkuCount4Thread();
-            ExecutorService exe=Executors.newFixedThreadPool(poolCnt/4+1);//相当于跑4遍
-            final List<Collection<String>> subSkuNos=subCollection(skuNoSet);
-            logger.warn("线程池数："+(poolCnt/4+1)+",sku子集合数："+subSkuNos.size());
-            for(int i = 0 ; i <subSkuNos.size();i++){
-                Map<String,String> sopPriceMap = new HashMap<>();
-                exe.execute(new UpdateThread(subSkuNos.get(i),supplier,localAndIceSku,totoalFailCnt,sopPriceMap));
+    private void updateMiddleDB(Map<String,String> supplierPriceMap,String supplieId) throws ServiceException{
+        Set<Map.Entry<String, String>> supplierPriceSet = supplierPriceMap.entrySet();
+        String skuNo="",price = "",marketPrice="",supplierPrice="";
+        for(Map.Entry<String, String> entry:supplierPriceSet){
+            skuNo =entry.getKey();
+            price = entry.getValue();
+            marketPrice= price.substring(0,price.indexOf(splitSign));
+            supplierPrice=price.substring(price.indexOf(splitSign)+1);
+            SkuPriceDTO dto = new SkuPriceDTO();
+            dto.setMarketPrice(marketPrice);
+            dto.setSupplierPrice(supplierPrice);
+            dto.setSkuId(skuNo);
+            dto.setSupplierId(supplieId);
+            try {
+                skuPriceService.updatePrice(dto);
+            } catch (ServiceException e) {
+                logger.error("skuId :" + skuNo + "sop更新价格成功，但中间库保存失败" );
             }
-            exe.shutdown();
-            while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
-
-            }
-            int fct=0;
-            for(int k=0;k<totoalFailCnt.size();k++){
-                fct+=totoalFailCnt.get(k);
-            }
-            return fct;
-        }else{
-            Map<String,String> sopPriceMap = new HashMap<>();
-            return updateStock(supplier, localAndIceSku, skuNoSet,sopPriceMap);
         }
+
     }
     /**
      * @param skuNoSet
@@ -248,115 +313,28 @@ public abstract class AbsPriceService {
      * @throws Exception
      * @throws ApiException
      */
-    private int updateStock(String supplier,
+    private int updatePrice(String supplier,
                             Map<String, String> localAndIceSkuId,
-                            Collection<String> skuNoSet,Map<String,String> sopPriceMap) throws ServiceException, Exception,
+                            Collection<String> skuNoSet) throws ServiceException, Exception,
             ApiException {
-        Map<String, Integer> iceStock = grab4Icestock(skuNoSet,localAndIceSkuId,sopPriceMap,supplier);
-        int failCount = updateIceStock(supplier, iceStock,sopPriceMap);
-        return failCount;
+        Map<String, String> icePriceMap = grab4IcePrice(skuNoSet, localAndIceSkuId);
+        updateIcePrice(supplier, icePriceMap);
+        return 0;
     }
     /**
-     * 更新ice的库存
+     * 更新ice的价格
      * @param supplier 供应商
-     * @param iceStock ice的skuNo,与对应的库存关系
+     * @param icePrice ice的skuNo,与对应的价格
      * @return 更新失败的数目
      * @throws Exception
      */
-    private int updateIceStock(String supplier, Map<String, Integer> iceStock,Map<String,String> sopPriceMap)
+    private int  updateIcePrice(String supplier, Map<String, String> icePrice)
             throws Exception {
         OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
-        //logger.warn("{}---更新ice--,数量：{}",Thread.currentThread().getName(),iceStock.size());
-        //获取尚品库存
-        Set<String> skuNoShangpinSet = iceStock.keySet();
-        int skuNum = 1;
-        List<String> skuNoShangpinList = new ArrayList<>();
-        Map<String,Integer> toUpdateIce=new HashMap<>();
-        for(Iterator<String> itor =skuNoShangpinSet.iterator();itor.hasNext();){
-            if(skuNum%100==0){
-                //调用接口 查找库存
-                removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList,toUpdateIce);
-                //更新价格
-//				updateChangePriceRecord(supplier,sopPriceMap,servant,skuNoShangpinList);
-                skuNoShangpinList = new ArrayList<>();
-            }
-            skuNoShangpinList.add(itor.next());
-            skuNum++;
-        }
-        //排除最后一次
-        removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList,toUpdateIce);
-
         //更新价格
-//		updateChangePriceRecord(supplier,sopPriceMap,servant,skuNoShangpinList);
-
-
-        //更新库存
-        int failCount=0;
-        Iterator<Map.Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
-        logger.warn("待更新的数据：--------"+toUpdateIce.size());
-        while (iter.hasNext()) {
-            Map.Entry<String, Integer> entry = iter.next();
-            Boolean result =true;
-            try{
-                logger.warn("待更新的数据：--------"+entry.getKey()+":"+entry.getValue());
-                result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());
-            }catch(Exception e){
-                result=false;
-                logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
-            }
-            if(!result){
-                failCount++;
-                logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
-            }
-        }
-        return failCount;
+        return   updateChangePriceRecord(supplier,icePrice,servant);
     }
-    /**
-     * 移除库存没有变化的商品 不做更新
-     * @param supplier
-     * @param iceStock
-     * @param servant
-     * @param skuNoShangpinList
-     * @param toUpdateIce
-     * @throws ApiException
-     */
-    private void removeNoChangeStockRecord(String supplier, Map<String, Integer> iceStock, OpenApiServantPrx servant, List<String> skuNoShangpinList, Map<String, Integer> toUpdateIce) throws ApiException {
-        if(CollectionUtils.isEmpty(skuNoShangpinList)) return ;
-        SopSkuInventoryIce[] skuIceArray =servant.FindStockInfo(supplier, skuNoShangpinList);
 
-        //查找未维护库存的SKU
-        if(null!=skuIceArray&&skuIceArray.length!=skuNoShangpinList.size()){
-            Map<String,String> sopSkuMap = new HashMap();
-            for(SopSkuInventoryIce skuIce:skuIceArray){
-                sopSkuMap.put(skuIce.SkuNo,"");
-            }
-            String sopSku="";
-            for(Iterator<String> itor =  skuNoShangpinList.iterator();itor.hasNext();){
-                sopSku = itor.next();
-
-                if(!sopSkuMap.containsKey(sopSku)){
-                    if(iceStock.containsKey(sopSku)){
-//						  logger.warn("skuNo ：--------"+sopSku +"supplier quantity =" + iceStock.get(sopSku) + " shangpin quantity = null" );
-//						  System.out.println("skuNo ：--------"+sopSku +"supplier quantity =" + iceStock.get(sopSku) + " shangpin quantity = null");
-
-                        toUpdateIce.put(sopSku, iceStock.get(sopSku));
-                    }
-                }
-            }
-        }
-
-        //排除无用的库存
-
-        for(SopSkuInventoryIce skuIce:skuIceArray){
-            if(iceStock.containsKey(skuIce.SkuNo)){
-//				logger.warn("skuNo ：--------"+skuIce.SkuNo +"supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity );
-//				System.out.println("skuNo ：--------"+skuIce.SkuNo +"supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity);
-                if( iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
-                    toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
-                }
-            }
-        }
-    }
 
 
 
@@ -365,19 +343,83 @@ public abstract class AbsPriceService {
      * @param supplier
      * @param sopPriceMap 价格变化的MAP
      * @param servant
-     * @param skuNoShangpinList
      * @throws ApiException
      */
-    private void updateChangePriceRecord(String supplier, Map<String, String> sopPriceMap,  OpenApiServantPrx servant, List<String> skuNoShangpinList) throws ApiException {
-        if(CollectionUtils.isEmpty(skuNoShangpinList)) return ;
+    private int updateChangePriceRecord(String supplier, Map<String, String> sopPriceMap,  OpenApiServantPrx servant) throws ApiException {
+
+         //查找价格变化的sku 信息
+        String skuNo="",price = "",marketPrice="",supplierPrice="";
+        String dbMarketPrice ="",dbSupplierPrice="";
+        BigDecimal purchasePrice =null;
+        Set<String> sopSkuIdSet = new HashSet<>();
+        int failCount =0;
+        Map<String,String>  supplierPriceMap = new HashMap<>();//保存需要更新的价格信息
+        for(Map.Entry<String, String> entry:sopPriceMap.entrySet()){
+            skuNo = entry.getKey();
+            price = entry.getValue();
+            String[] priceArray = price.split("|");
+            if(null!=priceArray&&2==priceArray.length){
+                marketPrice = priceArray[0];
+                supplierPrice = priceArray[1];
+                if(PurchasePriceUseMarketPriceCalculate){ //使用市场价计算供货价
+
+                    if("-1".equals(marketPrice)){//无市场价
+                        failCount++;
+                        continue;
+                    }else{
+                        if(discountMap.containsKey(skuNo)){//有折扣
+                            purchasePrice = new BigDecimal(marketPrice).multiply(discountMap.get(skuNo)).multiply(DefaultCommission).setScale(2,BigDecimal.ROUND_HALF_UP);
+
+                        }else{//无折扣 不做处理
+                            failCount++;
+                            continue;
+                        }
+
+                    }
+
+                }else{ //直接使用供货价
+                   if("-1".equals(supplierPrice)){ //无供货价
+                       failCount++;
+                       continue;
+                   }else{
+                       if(NoUseDiscount){ //不使用品牌品类折扣
+                           purchasePrice = new BigDecimal(supplierPrice).multiply(DefaultCommission).setScale(2,BigDecimal.ROUND_HALF_UP);
+                       }else{ //使用品牌品类折扣
+                           if(discountMap.containsKey(skuNo)){//有折扣
+                               purchasePrice = new BigDecimal(supplierPrice).multiply(discountMap.get(skuNo)).multiply(DefaultCommission).setScale(2,BigDecimal.ROUND_HALF_UP);
+                           }else{//无折扣 不做处理
+                               failCount++;
+                               continue;
+                           }
+                       }
 
 
+                   }
+                }
+            }else{
+                failCount++;
+                continue;
+            }
+            //排除价格没有变化的
+            if(sopMarketPriceMap.containsKey(skuNo)){
+                String[] dbPriceArray = sopMarketPriceMap.get(skuNo).split("|");
+                if(null!=dbPriceArray&&2==dbPriceArray.length) {
+                    dbMarketPrice = dbPriceArray[0];
+                    dbSupplierPrice = dbPriceArray[1];
+                    if(!dbMarketPrice.equals(marketPrice)||!dbSupplierPrice.equals(supplierPrice)){
+                        supplierPriceMap.put(skuNo,marketPrice+splitSign+purchasePrice.toString());
+                        sopSkuIdSet.add(skuNo);
+                    }
+                }else{
+                    failCount++;
+                    continue;
+                }
 
-        Set<String>  sopSkuIdSet = new HashSet<>();//  sopPriceMap.keySet();
-        for(String skuNo:skuNoShangpinList){
-            if(sopPriceMap.containsKey(skuNo)){
+            }else{ //未找到记录
+                supplierPriceMap.put(skuNo,marketPrice+splitSign+purchasePrice.toString());
                 sopSkuIdSet.add(skuNo);
             }
+
         }
 
 
@@ -392,33 +434,32 @@ public abstract class AbsPriceService {
             supply.SkuNos =skuIdValue;
             SopSkuPriceApplyIce[] skuPriceApplyIceArray =servant.FindSupplyInfo(supplier, supply);
 
-            String price="",newPrice="",oldPrice="";
-            Map<String,String>  supplierPriceMap = new HashMap<>();
-            String result = "",supplierSku="";
+
+
+            String supplierSku="";
             for(SopSkuPriceApplyIce skuPriceIce:skuPriceApplyIceArray){
-                if(sopPriceMap.containsKey(skuPriceIce.SkuNo)){
+                if(supplierPriceMap.containsKey(skuPriceIce.SkuNo)){
                     if(skuPriceIce.PriceStatus!=1){
                         continue;
                     }
-                    result = sopPriceMap.get(skuPriceIce.SkuNo);
+                    price = supplierPriceMap.get(skuPriceIce.SkuNo);
                     try {
-                        supplierSku = result.substring(0,result.indexOf(splitSing));
-                        price = result.substring(result.indexOf(splitSing)+splitSing.length());
-                        newPrice=price.substring(0,price.indexOf(","));
-                        oldPrice=price.substring(price.indexOf(",")+1);
+
+
+                        marketPrice=price.substring(0,price.indexOf(splitSign));
+                        supplierPrice=price.substring(price.indexOf(splitSign)+1);
 
                     } catch (Exception e) {
                         continue;
                     }
-                    BigDecimal newSupplierPrice =	new BigDecimal(newPrice)
-                            .multiply(new BigDecimal(skuPriceIce.SupplyPrice)).divide(new BigDecimal(oldPrice),2,BigDecimal.ROUND_HALF_UP);
+
                     SupplyPriceInfo priceInfo = new SupplyPriceInfo();
                     priceInfo.SkuNo=skuPriceIce.SkuNo;
                     priceInfo.MarkePrice=skuPriceIce.MarketPrice;
                     priceInfo.MarketPriceCurrency= skuPriceIce.MarketPriceCurrency;
 
 
-                    priceInfo.SupplyPrice= newSupplierPrice.toString();
+                    priceInfo.SupplyPrice= supplierPrice;
                     priceInfo.SupplyCurrency = skuPriceIce.SupplyCurrency;
 
 
@@ -444,13 +485,14 @@ public abstract class AbsPriceService {
                     try {
                         logger.warn("待更新的数据：--------" + skuPriceIce.SkuNo + ":" + price);
 
-//						if(servant.UpdateSupplyPrice(supplier,priceInfo)){
-//							//价格更新成功 ，则中间库也需要更新
-//							supplierPriceMap.put(supplierSku,price);
-//						}
+						if(!servant.UpdateSupplyPriceSpecial(supplier, priceInfo)){
+							//移除价格更新失败的信息
+                            failCount++;
+							supplierPriceMap.remove(skuPriceIce.SkuNo);
+						}
 
 
-                        servant.UpdateSupplyPrice(supplier,priceInfo);
+
                     } catch (ApiException e) {
 
                         e.printStackTrace();
@@ -458,170 +500,49 @@ public abstract class AbsPriceService {
                 }
             }
 
-//			//更新中间库
-//			if(supplierPriceMap.size()>0){
-//				try {
-//					updateMarketPrice(supplierPriceMap,supplier);
-//				} catch (ServiceException e) {
-//					e.printStackTrace();
-//				}
-//			}
+			//更新中间库
+			if(supplierPriceMap.size()>0){
+				try {
+                    updateMiddleDB(supplierPriceMap, supplier);
+                } catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
 
         }
 
+        return  failCount;
 
     }
 
 
 
+
+
+
     /**
-     * 拉取供应商库存，并返回ice中对应的sku的库存
+     * 拉取供应商价格，并返回ice中对应的sku的价格
      * @param skuNos 供应商sku编号，从ice中获取到的
      * @param localAndIceSkuId 供应商sku编号与icesku编号的关系
      * @return 供应商sku对应的icesku编号的库存，key是ice的sku编号，值是库存
      */
-    private Map<String, String> grab4Icestock(Collection<String> skuNos,Map<String, String> localAndIceSkuId
-    ) {
-        Map<String, String> iceStock=new HashMap<>();
+    private Map<String, String> grab4IcePrice(Collection<String> skuNos,Map<String, String> localAndIceSkuId ) {
+        Map<String, String> icePriceMap=new HashMap<>();
         try {
-            Map<String, String> supplierStock=grabStock(skuNos);  //返回库存|零售价
-
-
-            String result = "",stockTemp="",price="",returnReslut="";
+            Map<String, String> supplierPriceMap=getPriceOfSupplier(skuNos);  //  市场价|供货价
+            //
             for (String skuNo : skuNos) {
-                stockTemp ="";
-                result =  supplierStock.get(skuNo);
-                if(!StringUtils.isEmpty(result)){
-                    if(result.indexOf("|")>=0){//增加验证 放置后续出现错误
-                        stockTemp=  result.substring(0,result.indexOf("|"));
-                        if(StringUtils.isEmpty(stockTemp)){
-                            stockTemp="0";
-                            returnReslut=stockTemp+result.substring(result.indexOf("|"));
-                        }else{
-                            returnReslut = result;
-                        }
-                    }else{
-                        stockTemp=result;
-                        returnReslut = result+"|";
-                    }
-
-                }else{
-                    returnReslut="0|";
-                }
-
 
                 String iceSku=localAndIceSkuId.get(skuNo);
-                if(this.supplierSkuIdMain){  // 已供应商提供的SKU为主 不更新未提供的库存
-                    if(!StringUtils.isEmpty(stockTemp)){
-                        iceStock.put(iceSku, returnReslut);
-                    }
-                }else{
-
-                    if(!StringUtils.isEmpty(iceSku))
-                        iceStock.put(iceSku, returnReslut);
+                if(supplierPriceMap.containsKey(skuNo)){
+                    if(!StringUtils.isEmpty(iceSku))	icePriceMap.put(iceSku, supplierPriceMap.get(skuNo));
                 }
-
             }
-
 
         } catch (Exception e1) {
-            logger.error("抓取库存失败:", e1);
+            logger.error("抓取库存失败:", e1.getMessage());
         }
-        return iceStock;
-    }
-
-
-    /**
-     * 拉取供应商库存，并返回ice中对应的sku的库存
-     * @param skuNos 供应商sku编号，从ice中获取到的
-     * @param localAndIceSkuId 供应商sku编号与icesku编号的关系
-     * @return 供应商sku对应的icesku编号的库存，key是ice的sku编号，值是库存
-     */
-    private Map<String, Integer> grab4Icestock(Collection<String> skuNos,Map<String, String> localAndIceSkuId,
-                                               Map<String,String> sopPriceMap,String supplierId) {
-        Map<String, Integer> iceStock=new HashMap<>();
-        try {
-            Map<String, String> supplierStock=grabStock(skuNos);  //  价格发生变化  返回库存|新的市场价，老的市场价 否则返回库存
-            int stockResult=0;
-
-            Map<String,Integer> sopPurchaseMap = new HashMap<>();
-            if(!ORDER){
-                sopPurchaseMap = this.getSopPuchase(supplierId);
-            }
-
-            String result = "",stockTemp="",priceResult="";
-            for (String skuNo : skuNos) {
-                stockTemp ="";
-                result =  supplierStock.get(skuNo);
-                if(!StringUtils.isEmpty(result)){
-                    if(result.indexOf("|")>=0){//有价格变动的
-                        stockTemp=  result.substring(0,result.indexOf("|"));
-                        if(StringUtils.isEmpty(stockTemp)){
-                            stockResult=0;
-                        }else{
-                            try {
-                                stockResult = Integer.valueOf(stockTemp);
-                            } catch (NumberFormatException e) {
-                                stockResult=0;
-                            }
-                        }
-                        priceResult=result.substring(result.indexOf("|")+1);
-
-                        sopPriceMap.put(skuNo,priceResult) ;
-                    }else{ //无价格变动
-
-                        try {
-                            stockResult = Integer.valueOf(result);
-                        } catch (NumberFormatException e) {
-                            stockResult=0;
-                        }
-                    }
-
-
-                }else{
-                    stockResult=0;
-                }
-
-
-
-                if(!ORDER){
-
-                    if(sopPurchaseMap.containsKey(skuNo)){
-
-                        logger.error("采购单supplierId："+skuNo +" ; 数量 : " + sopPurchaseMap.get(skuNo));
-                        stockResult =  stockResult - sopPurchaseMap.get(skuNo);
-                        logger.error("最终库存 ：" + stockResult);
-                        if(stockResult<0) stockResult=0;
-
-                    }
-                }
-
-
-
-                String iceSku=localAndIceSkuId.get(skuNo);
-                if(this.supplierSkuIdMain){  // 已供应商提供的SKU为主 不更新未提供的库存
-                    if(!StringUtils.isEmpty(stockTemp)){
-                        iceStock.put(iceSku, stockResult);
-                    }
-                }else{
-
-                    if(!StringUtils.isEmpty(iceSku))	iceStock.put(iceSku, stockResult);
-
-                }
-
-                //转化 把SOP SKUID 和 SUPPLIER SKUID 都加入 以便换算
-                if(sopPriceMap.containsKey(skuNo)){
-                    sopPriceMap.put(iceSku,skuNo+splitSing+sopPriceMap.get(skuNo));
-                    sopPriceMap.remove(skuNo);
-                }
-
-            }
-
-
-        } catch (Exception e1) {
-            logger.error("抓取库存失败:", e1);
-        }
-        return iceStock;
+        return icePriceMap;
     }
 
 
@@ -718,7 +639,6 @@ public abstract class AbsPriceService {
         private Map<String, String> localAndIceSkuId;
         private String supplier;
         private List<Integer> totoalFailCnt;
-        private Map<String,String> sopPriceMap;
 
         /**
          * @param localAndIceSku 所有主站skuId,供应商skuNo关系,key：供应商skuId,value:ice的skuNo
@@ -733,20 +653,13 @@ public abstract class AbsPriceService {
         }
 
 
-        public UpdateThread(Collection<String> skuNos,String supplier, Map<String, String> localAndIceSku, List<Integer> totoalFailCnt ,
-                            Map<String,String> sopPriceMap	) {
-            this.skuNos=skuNos;
-            this.supplier=supplier;
-            this.localAndIceSkuId=localAndIceSku;
-            this.totoalFailCnt=totoalFailCnt;
-            this.sopPriceMap=sopPriceMap;
-        }
+
         @Override
         public void run() {
-            Map<String, Integer> iceStock = grab4Icestock(skuNos,localAndIceSkuId,sopPriceMap,supplier);
+            Map<String, String> iceStock = grab4IcePrice(skuNos, localAndIceSkuId);
             try {
                 logger.warn(Thread.currentThread().getName()+"ice更新处理开始，数："+iceStock.size());
-                int failCnt = updateIceStock(supplier, iceStock,sopPriceMap);
+                int failCnt =  updateIcePrice(supplier, iceStock);
                 totoalFailCnt.add(failCnt);
                 logger.warn(Thread.currentThread().getName()+"ice更新完成，失败数:"+failCnt);
             } catch (Exception e) {
