@@ -76,6 +76,27 @@ public class FetchProduct {
 
 
             //page call sku message ,and get inventory from map
+
+
+            do {
+                param.put("offset",offset+"");
+                inventoryMsg=HttpUtil45.get(saleInventoryUrl, outTimeConf, param,key,"");
+                try {
+                    saleInventoryList=gson.fromJson(inventoryMsg, new TypeToken<List<InventoryDTO>>() {
+                    }.getType());
+                    for(InventoryDTO inventoryDTO:saleInventoryList){
+                        inventoryMap.put(inventoryDTO.getSku_id(),inventoryDTO.getQuantity()) ;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                offset=offset+50;
+
+            }while (saleInventoryList.size()==50);
+
+
+
+
             offset=0;
              do {
                 param.put("offset",offset+"");
