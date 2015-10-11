@@ -126,6 +126,8 @@ include 'dante5-stock'
 include 'itemInfo'
 include 'itemInfo-stock'
 //include 'itemInfo-purchase'
+include 'monnierfreres'
+include 'monnierfreres-stock'
 
 include 'julian-fashion'
 include 'vinicco'

@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 @Component("giglio")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
-//    private static Logger logMongo = Logger.getLogger("mongodb");
+    //    private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
 
@@ -49,7 +49,7 @@ public class FetchProduct {
 
         try {
             Map<String,String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*60,1000*60*60,1000*60*60);
 
             String result = HttpUtil45.get(url, timeConfig, null);
             HttpUtil45.closePool();

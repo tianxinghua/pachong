@@ -321,8 +321,7 @@ public class FetchProduct {
 		Set<String> skuIdSet = new HashSet<String>();
 		for (SpuDTO spu : spuMap.values()) {
 			spu.setSupplierId(supplierId);
-			if (brandSet.contains(spu.getBrandName().toUpperCase())
-					&& (spu.getCategoryName().equalsIgnoreCase("BAGS") || spu.getCategoryName().equalsIgnoreCase("ACCESSORIES"))) {
+			if (brandSet.contains(spu.getBrandName().toUpperCase())) {
 				if (true) {
 					spu.setSpuName(spu.getSpuName().split("\r")[0]);
 					spu.setSpuId(spu.getSpuId().trim());

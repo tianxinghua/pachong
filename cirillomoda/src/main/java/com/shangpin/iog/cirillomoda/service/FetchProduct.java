@@ -49,7 +49,7 @@ public class FetchProduct {
 
         try {
             Map<String,String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = new OutTimeConfig(1000*60, 1000*60*20,1000*60*20);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*20, 1000*60*20,1000*60*20);
 //            timeConfig.confRequestOutTime(600000);
 //            timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get(url, timeConfig, null);
@@ -100,6 +100,8 @@ public class FetchProduct {
                         spu.setBrandName(brand);
                         spu.setMaterial(description);
 
+                        spu.setCategoryGender(category);
+
                         //SPU 选填
                         spu.setSpuName(title);
 
@@ -115,6 +117,12 @@ public class FetchProduct {
 
                         String size = record.get("attribute_size");
                         String stock = record.get("attribute_size:quantity");
+
+                        //库存为0不进行入库
+                        if (stock == null || "".equals(stock.trim()) || "0".equals(stock.trim())) {
+                            continue;
+                        }
+
                         String skuId = spuId + size;
                         List<String> pics = new ArrayList<>();
                         String photo1 = record.get("Photo 1");

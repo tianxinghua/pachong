@@ -32,9 +32,11 @@ public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
 
+    private ResourceBundle bdl = ResourceBundle.getBundle("conf");;
+
     public void fetchProductAndSave(String url){
 
-        String supplierId = "201509291000";
+        String supplierId = bdl.getString("supplierId");
         try {
 
             Map<String,String> mongMap = new HashMap<>();
@@ -42,7 +44,7 @@ public class FetchProduct {
             timeConfig.confRequestOutTime(3600000);
             timeConfig.confSocketOutTime(3600000);
             String jsonstr = HttpUtil45.get(url,timeConfig,null);
-
+            HttpUtil45.closePool();
             mongMap.put("supplierId", supplierId);
             mongMap.put("supplierName","gherardi");
             if (jsonstr == null) {
@@ -125,6 +127,7 @@ public class FetchProduct {
                     spu.setSpuName(product.getProduct_name());
                     spu.setSeasonId(product.getSeason_code());
                     spu.setMaterial(product.getProduct_material());
+                    spu.setCategoryGender(product.getCategoryGender());
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
                     e.printStackTrace();

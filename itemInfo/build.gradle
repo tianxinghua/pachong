@@ -17,12 +17,12 @@ dependencies {
 
 jar {
 
-    dependsOn copyToLib
-//    exclude ("**/*.properties")
-//    from {
-//        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    dependsOn copyToLib,copyResources
+    exclude ("**/*.properties")
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 
-//    }
+    }
 
     def manifestCp = configurations.compile.files.collect  {
         File file = it

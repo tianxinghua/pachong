@@ -31,7 +31,7 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
-        supplierId = "2015092910000";
+        supplierId = bdl.getString("supplierId");
     }
 
 
@@ -83,12 +83,12 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
 
     public static void main(String args[]) throws Exception {
 
-        AbsUpdateProductStock levelGroupStockImp = new ProdottimontiStockImp();
+        AbsUpdateProductStock prodottimontiStockImp = new ProdottimontiStockImp();
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("erminiomonti更新数据库开始");
         //2015081401431
-        levelGroupStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        prodottimontiStockImp.updateProductStock(supplierId,"2015-10-01 00:00",format.format(new Date()));
         logger.info("erminiomonti更新数据库结束");
         System.exit(0);
     }
