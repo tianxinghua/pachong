@@ -11,7 +11,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.junit.Test;
+
 
 public class SendMail {
 
@@ -64,7 +64,7 @@ public class SendMail {
         System.out.println("message yes");  
     }  
   
-	@Test
+
     public static void main(String[] args) {
         try {  
             SendMail.sendMessage("smtp.shangpin.com", "lubaijiang@shangpin.com",  
