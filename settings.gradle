@@ -53,7 +53,7 @@ include 'sanremo-stock'
 include 'iog-web-tmp'
 include 'iog-sop'
 include 'iog-facade-dubbo'
-include 'gilt-order'
+
 include 'bagheera'
 include 'gilt-stock'
 include 'gilt-purchase'
@@ -66,7 +66,7 @@ include 'onsite'
 include 'tony-stock'
 include 'tony-purchase'
 include 'atelier'
-include 'alducadaosta'
+
 
 include 'bagheera-stock'
 
@@ -100,3 +100,5 @@ include 'fashionesta'
 include 'fashionesta-stock'
 include 'julian-fashion'
 include 'vinicco'
+include 'monnierfreres'
+include 'monnierfreres-stock'
