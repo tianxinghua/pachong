@@ -68,7 +68,7 @@ public class SendMail {
     public static void main(String[] args) {
         try {  
             SendMail.sendMessage("smtp.shangpin.com", "lubaijiang@shangpin.com",  
-                    "shangpin001", "lubaijiang@vansky.cn", "hello",  
+                    "*********", "lubaijiang@vansky.cn", "hello",  
                     "测试中文测试connect",  
                     "text/html;charset=utf-8");  
         } catch (Exception e) {  
