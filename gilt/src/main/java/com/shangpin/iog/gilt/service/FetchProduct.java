@@ -109,7 +109,7 @@ public class FetchProduct {
                     saleSkuList=gson.fromJson(skuMsg, new TypeToken<List<GiltSkuDTO>>() {
                     }.getType());
                     for(GiltSkuDTO giltSkuDTO:saleSkuList){
-                        this.saveProduct(spuMap,giltSkuDTO,inventoryMap);
+                        this.saveProduct(spuMap,giltSkuDTO,inventoryMap,saleDTO);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -157,7 +157,7 @@ public class FetchProduct {
 //        }
     }
 
-    private void saveProduct(Map<String,String> spuMap, GiltSkuDTO giltSkuDTO,Map<String,String> inventoryMap) {
+    private void saveProduct(Map<String,String> spuMap, GiltSkuDTO giltSkuDTO,Map<String,String> inventoryMap,SaleDTO saleDTO) {
         SkuDTO dto = new SkuDTO();
         SpuDTO spuDTO = new SpuDTO();
         String inventory="";
@@ -227,6 +227,8 @@ public class FetchProduct {
                 dto.setProductName(giltSkuDTO.getName());
                 dto.setProductSize(size);
                 dto.setStock(inventory);
+                dto.setEventStartDate(saleDTO.getStart_datetime());
+                dto.setEventEndDate(saleDTO.getEnd_datetime());
                 productFetchService.saveSKU(dto);
                 for(int j =0;j<giltSkuDTO.getImages().size();j++){
                     ProductPictureDTO productPictureDTO= new ProductPictureDTO();
