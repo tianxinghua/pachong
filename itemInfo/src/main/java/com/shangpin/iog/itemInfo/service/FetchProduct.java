@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -29,7 +30,7 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 
-@Component("amanda")
+@Component("itemInfo")
 public class FetchProduct {
 
 	public static String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
@@ -40,11 +41,18 @@ public class FetchProduct {
 	public static String errRet = "error";
 	final Logger logger = Logger.getLogger(this.getClass());
 	private static Logger logMongo = Logger.getLogger("mongodb");
-	private static String supplierId = "201509291400";
+	private static String supplierId = "";
+	private static ResourceBundle bdl=null;
 	
 	@Autowired
 	public ProductFetchService productFetchService;
 
+	static {
+        if(null==bdl)
+         bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
+	
 	/**
 	 * 
 	 * @param url
@@ -336,5 +344,5 @@ public class FetchProduct {
 		}
 		return errRet;
 	}
-
+	
 }
