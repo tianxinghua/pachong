@@ -77,7 +77,8 @@
               <if test="supplierPrice != null"> NEW_SUPPLIER_PRICE = #{supplierPrice},</if>
               <if test="stock != null"> STOCK = #{stock},</if>
               <if test="updateTime != null"> UPDATE_TIME = #{updateTime}</if>
-
+              <if test="eventStartDate != null"> SKUEVENT_START_DATE = #{eventStartDate}</if>
+              <if test="eventEndDate != null"> EVENT_END_DATE = #{eventEndDate}</if>
           </set>
 
 
