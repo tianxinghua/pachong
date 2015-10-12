@@ -1,6 +1,7 @@
 package com.shangpin.iog.product.service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.product.dao.ReturnOrderMapper;
 import com.shangpin.iog.service.ReturnOrderService;
@@ -56,7 +57,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService{
             returnOrderDao.updateReturnOrderMsg(statusMap);
         } catch (Exception e) {
             logger.error("更新退单信息失败" + e.getMessage());
-            e.printStackTrace();
+            throw new ServiceMessageException("保存失败。"+e.getMessage());
         }
 
     }
