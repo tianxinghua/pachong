@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +30,14 @@ public class ReturnOrderServiceImpl implements ReturnOrderService{
             logger.error("保存订单信息失败"+ e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<ReturnOrderDTO> getReturnOrderBySupplierIdAndOrderStatus(String supplierId, String status) throws ServiceException {
+
+        return  returnOrderDao.findBySupplierIdAndStatus(supplierId,status);
+
+
     }
 
     @Override

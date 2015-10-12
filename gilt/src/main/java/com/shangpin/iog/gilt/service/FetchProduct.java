@@ -71,7 +71,7 @@ public class FetchProduct {
         List<GiltSkuDTO> saleSkuList = null;
         for(SaleDTO saleDTO:saleList){
             saleId = saleDTO.getId();
-            saleInventoryUrl = sale + "/" + saleId+"/inventory";
+            saleInventoryUrl = sale + "/" + saleId+"/realtime-inventory";
             saleSkuUrl = sale + "/" + saleId + "/skus";
 
 
@@ -90,9 +90,9 @@ public class FetchProduct {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                offset=offset+50;
+                offset=offset+100;
 
-            }while (saleInventoryList.size()==50);
+            }while (null!=saleInventoryList&&saleInventoryList.size()==100);
 
 
 
@@ -115,7 +115,7 @@ public class FetchProduct {
                     e.printStackTrace();
                 }
                 offset=offset+100;
-             }while (null!=saleInventoryList&&saleInventoryList.size()==100);
+             }while (null!=saleSkuList&&saleSkuList.size()==100);
 
 
 

@@ -7,6 +7,7 @@ import ShangPin.SOP.Entity.Api.Product.SopSkuIce;
 import ShangPin.SOP.Entity.Api.Purchase.DeliveryOrderAdd;
 import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
 import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
+import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx;
 import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
 
@@ -89,6 +90,35 @@ public  class OrderService {
 
         return purchaseOrderMap;
 
+    }
+
+    /**
+     * 采购异常 推送采购单下单异常
+     * @param purchaseDetail 采购单明细编号
+     */
+    public  void  cancelPurchaseOrder(String purchaseDetail,String memo ,String supplierId){
+        try {
+            List<Long> sopPurchaseOrderDetailNos = new ArrayList<>();
+            String[] purchaseOrderDetailArray = purchaseDetail.split(";");
+            if(null!=purchaseOrderDetailArray){
+                for(String purchaseDetailNo:purchaseOrderDetailArray){
+                    if(org.apache.commons.lang.StringUtils.isNotBlank(purchaseDetailNo)){
+                        try {
+                            sopPurchaseOrderDetailNos.add(Long.valueOf(purchaseDetailNo));
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+                PurchaseOrderEx purchaseOrderEx = new PurchaseOrderEx(sopPurchaseOrderDetailNos,memo);
+                String  result = servant.PurchaseDetailEx(purchaseOrderEx,supplierId);
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

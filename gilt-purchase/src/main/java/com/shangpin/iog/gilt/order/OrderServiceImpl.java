@@ -72,11 +72,11 @@ public class OrderServiceImpl  {
 
             //下单异常 再次下单
             handlePurchaseOrderException();
-
-            //  正常下单
-            transData();
             //取消订单
             deleteOrder();
+            //  正常下单
+            transData();
+
 
 
 
@@ -91,7 +91,6 @@ public class OrderServiceImpl  {
      */
     public void confirmOrder(){
         //1 、 获取已下单的订单信息
-        //TODO  下单成功（尚品网支付成功） ，但支付时如果链接不上网  超过两个小时
 
         List<com.shangpin.iog.dto.OrderDTO>  orderDTOList= null;
         try {
@@ -127,14 +126,19 @@ public class OrderServiceImpl  {
 
                     if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(1000*60*60*24)>0){
                             //超过一天 不需要在做处理 订单状态改为其它状体
-                            map.put("status","NOHANDLE");
+                        map.put("status",OrderStatus.NOHANDLE);
 
                     }
 
-
-
                     try {
                         productOrderService.updateOrderMsg(map);
+
+                        if(OrderStatus.NOHANDLE.equals(map.get("status"))){
+                             //采购异常
+                            OrderService iceOrderService = new OrderService();
+                            iceOrderService.cancelPurchaseOrder(orderDTO.getSpPurchaseDetailNo(),"",supplierId);
+                        }
+
                     } catch (ServiceException e1) {
                         loggerError.error("订单 :" + orderDTO.getUuId() + " 更新 confirmed 状态失败");
                         e1.printStackTrace();
@@ -627,7 +631,7 @@ public class OrderServiceImpl  {
             StringBuffer buffer = new StringBuffer();
             for (PurchaseOrderDetail purchaseOrderDetail : entry.getValue()) {
                 if (stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)) {
-                    buffer.append("'").append(Integer.valueOf(purchaseOrderDetail.SupplierSkuNo)).append("'").append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
+                    buffer.append(purchaseOrderDetail.SupplierSkuNo).append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
                     stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
                 }
             }
@@ -742,7 +746,7 @@ public class OrderServiceImpl  {
 
                                         try {
                                             Map<String,String> map = new HashMap<>();
-                                            map.put("status","cancelled");
+                                            map.put("status",OrderStatus.CANCELLED);
                                             map.put("uuid",uuid);
                                             map.put("updateTime",operateTime);
 
