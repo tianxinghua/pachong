@@ -24,9 +24,6 @@ import com.shangpin.iog.service.ProductFetchService;
 @Component("monnierfreres")
 public class FetchProduct {
 
-	private static Logger logger = Logger.getLogger("info");
-	private static Logger loggerError = Logger.getLogger("error");
-	private static Logger logMongo = Logger.getLogger("mongodb");
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
 	private static String url;

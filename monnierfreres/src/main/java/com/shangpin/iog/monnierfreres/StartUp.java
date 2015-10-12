@@ -28,7 +28,6 @@ public class StartUp {
 	        //拉取数据
 	        FetchProduct fetchProduct =(FetchProduct)factory.getBean("monnierfreres");
 	        fetchProduct.fetchProductAndSave();
-
 	        log.info("----拉取fashionesta数据完成----");
 
 
