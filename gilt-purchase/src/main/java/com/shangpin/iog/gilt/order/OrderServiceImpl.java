@@ -75,6 +75,8 @@ public class OrderServiceImpl  {
 
             //下单异常 再次下单
             handlePurchaseOrderException();
+
+            handleCancelPurchaseOrderException();
             //取消订单
             deleteOrder();
             //  正常下单
@@ -235,7 +237,7 @@ public class OrderServiceImpl  {
             status.add(5);
             Map<String,List<PurchaseOrderDetail>> orderMap =  iceOrderService.getPurchaseOrder(supplierId, startDate, endDate, status);
             //  下单
-            cancelData(url, supplierId, orderMap);
+            cancelData( orderMap);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -632,14 +634,13 @@ public class OrderServiceImpl  {
 
     /**
      * 取消订单
-     * @param url
-     * @param supplierId
+
      * @param orderMap
      * @throws ServiceException
      */
-    public void cancelData(String url,String supplierId, Map<String, List<PurchaseOrderDetail>> orderMap) throws ServiceException {
+    public void cancelData( Map<String, List<PurchaseOrderDetail>> orderMap) throws ServiceException {
 
-        OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
+
 
 
         for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();) {
@@ -677,7 +678,7 @@ public class OrderServiceImpl  {
                 logger.info("采购单信息转化退单后信息："+deleteOrder.toString());
                 System.out.println("采购单信息转化退单后信息："+deleteOrder.toString());
                 returnOrderService.saveOrder(deleteOrder);
-                if (confirmCancelOrder(url, supplierId,  timeConfig, orderDTO, deleteOrder)) continue;
+                if (confirmCancelOrder(  orderDTO, deleteOrder)) continue;
 
             } catch (ServiceException e) {
                 loggerError.error("采购单 ："+ deleteOrder.getSpOrderId() + "失败,失败信息 " + deleteOrder.toString()+" 原因 ：" + e.getMessage() );
@@ -694,17 +695,15 @@ public class OrderServiceImpl  {
 
     /**
      * 通知供货商取消订单
-     * @param url
-     * @param supplierId
-     * @param timeConfig
-     * @param orderDTO
+      * @param orderDTO
      * @param deleteOrder
      * @return
      */
-    private boolean confirmCancelOrder(String url, String supplierId,  OutTimeConfig timeConfig, com.shangpin.iog.dto.OrderDTO orderDTO, ReturnOrderDTO deleteOrder) {
+    private boolean confirmCancelOrder(  com.shangpin.iog.dto.OrderDTO orderDTO, ReturnOrderDTO deleteOrder) {
         String errorMsg;
         String operateTime;
         String result = "";
+        OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
         try {
 
             OrderDTO dto = null;
@@ -717,7 +716,7 @@ public class OrderServiceImpl  {
             }
 
             if(HttpUtil45.errorResult.equals(result)){  //链接异常
-                loggerError.error("采购单："+deleteOrder.getSpOrderId()+" 链接异常 无法处理");
+                loggerError.error("退单："+orderDTO.getUuId()+" 链接异常 无法处理");
                 setConnectionErrorForReturnOrder(orderDTO.getUuId());
 
             }else{
@@ -741,7 +740,7 @@ public class OrderServiceImpl  {
                     try {
                         iceOrderService.cancelPurchaseOrder(orderDTO.getSpPurchaseDetailNo(), "", supplierId);
                         returnMap.put("status",OrderStatus.SHIPPED);
-                        returnMap.put("excDesc","已发货不能退款");
+                        returnMap.put("excDesc","已发货不能取消订单");
 
                         errorMsg = " 通知SOP取消采购单成功";
 
@@ -845,9 +844,9 @@ public class OrderServiceImpl  {
 
     /**
      * 处理尚未有退单操作记录的异常
-     * @param supplierId
+
      */
-    private void handleCancelPurchaseOrderException(String supplierId){
+    private void handleCancelPurchaseOrderException(){
         //拉取采购单存入本地库
         List<ReturnOrderDTO>  orderDTOList= null;
         try {
@@ -858,8 +857,8 @@ public class OrderServiceImpl  {
 
                     try {
                         //处理取消订单
-
-
+                        com.shangpin.iog.dto.OrderDTO orderDTO =   productOrderService.getOrderByUuId(deleteOrder.getUuId());
+                        confirmCancelOrder(orderDTO,deleteOrder);
 
                     } catch (Exception e) {
                         e.printStackTrace();
