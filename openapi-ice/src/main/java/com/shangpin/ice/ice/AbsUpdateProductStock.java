@@ -466,10 +466,10 @@ public abstract class AbsUpdateProductStock {
 
 			}
 			if(sendMail){ //发送邮件
-				SendMail.sendMessage("smtp.shangpin.com", "chengxu@shangpin.com",
-						"shangpin001", "sopApi@shangpin.com", "海外对接供货商无法链接",
-						"门户编号：" + supplierId +"，链接异常。请手工拉取库存",
-						"text/html;charset=utf-8");
+//				SendMail.sendMessage("smtp.shangpin.com", "chengxu@shangpin.com",
+//						"shangpin001", "sopApi@shangpin.com", "海外对接供货商无法链接",
+//						"门户编号：" + supplierId +"，链接异常。请手工拉取库存",
+//						"text/html;charset=utf-8");
 
 			}
 
