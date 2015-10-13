@@ -77,6 +77,8 @@ public abstract class AbsUpdateProductStock {
 	@Autowired
 	SkuRelationService skuRelationService;
 
+
+
 	/**
 	 * 抓取供应商库存数据 
 	 * @param skuNo 供应商的每个产品的唯一编号：sku
@@ -128,11 +130,11 @@ public abstract class AbsUpdateProductStock {
 		Set<String> skuIds = new HashSet<String>();
 
 		//获取已有的SPSKUID
-		List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
-		Map<String,String> map = new HashMap<>();
-		for(SkuRelationDTO skuRelationDTO:skuRelationDTOList){
-			map.put(skuRelationDTO.getSopSkuId(),null);
-		}
+//		List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
+//		Map<String,String> map = new HashMap<>();
+//		for(SkuRelationDTO skuRelationDTO:skuRelationDTOList){
+//			map.put(skuRelationDTO.getSopSkuId(),null);
+//		}
 		Date date  = new Date();
 		while(hasNext){
 			List<SopProductSkuIce> skus = null;
@@ -147,14 +149,14 @@ public abstract class AbsUpdateProductStock {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
 				for (SopSkuIce ice : skuIces) {
 
-					if (!map.containsKey(ice.SkuNo)){
-						SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
-						skuRelationDTO.setSupplierId(supplier);
-						skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
-						skuRelationDTO.setSopSkuId(ice.SkuNo);
-						skuRelationDTO.setCreateTime(date);
-						skuRelationService.saveSkuRelateion(skuRelationDTO);
-					}
+//					if (!map.containsKey(ice.SkuNo)){
+//						SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
+//						skuRelationDTO.setSupplierId(supplier);
+//						skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
+//						skuRelationDTO.setSopSkuId(ice.SkuNo);
+//						skuRelationDTO.setCreateTime(date);
+//						skuRelationService.saveSkuRelateion(skuRelationDTO);
+//					}
 
 					if(null!=ice.SkuNo&&!"".equals(ice.SkuNo)&&null!=ice.SupplierSkuNo&&!"".equals(ice.SupplierSkuNo)){
 						if(1!=ice.IsDeleted){
@@ -550,7 +552,8 @@ public abstract class AbsUpdateProductStock {
 											  Map<String,String> sopPriceMap,String supplierId) {
 		Map<String, Integer> iceStock=new HashMap<>();
 		try {
-			Map<String, String> supplierStock=grabStock(skuNos);  //  价格发生变化  返回库存|新的市场价，老的市场价 否则返回库存
+			Map<String, String> supplierStock=grabStock(skuNos);  //
+
 			int stockResult=0;
 
 			Map<String,Integer> sopPurchaseMap = new HashMap<>();
@@ -559,6 +562,7 @@ public abstract class AbsUpdateProductStock {
 			}
 
 			String result = "",stockTemp="",priceResult="";
+			boolean sendMail=true;
 			for (String skuNo : skuNos) {
 				stockTemp ="";
 				result =  supplierStock.get(skuNo);
@@ -591,7 +595,9 @@ public abstract class AbsUpdateProductStock {
 					stockResult=0;
 				}
 
-
+				if(stockResult>0){ //判断是否发邮件
+					sendMail = false;
+				}
 
 				if(!ORDER){
 
@@ -627,11 +633,15 @@ public abstract class AbsUpdateProductStock {
 				}
 
 			}
+			if(sendMail){ //发送邮件
 
+
+			}
 
 		} catch (Exception e1) {
 			logger.error("抓取库存失败:", e1);
 		}
+
 		return iceStock;
 	}
 
