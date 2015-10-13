@@ -43,6 +43,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public void update(OrderDTO orderDTO) throws ServiceException {
+        try {
+            orderDAO.update(orderDTO);
+        } catch (SQLException e) {
+            logger.error("订单"+ orderDTO.getSpOrderId() +"更新失败："+ e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
     public List<String> getOrderIdBySupplierIdAndOrderStatus(String supplierId, String status) throws ServiceException {
         List<String>  uuIdList = new ArrayList<>();
         try {
@@ -143,4 +154,12 @@ public class OrderServiceImpl implements OrderService {
         if(StringUtils.isBlank(orderNo)) throw new ServiceMessageException("订单编号参数为空");
         return orderDAO.findBySpOrderId(orderNo);
     }
+
+    @Override
+    public OrderDTO getOrderByUuId(String uuid) throws ServiceException {
+        if(StringUtils.isBlank(uuid)) throw new ServiceMessageException("唯一编号参数为空");
+        return orderDAO.findByUuId(uuid);
+    }
+
+
 }

@@ -7,9 +7,14 @@ import ShangPin.SOP.Entity.Api.Product.SopSkuIce;
 import ShangPin.SOP.Entity.Api.Purchase.DeliveryOrderAdd;
 import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
 import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
+import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx;
 import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
 
+import com.google.gson.Gson;
+import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
+import com.shangpin.iog.ice.dto.ResMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -88,6 +93,52 @@ public  class OrderService {
         logger.warn("获取ice采购单 结束");
 
         return purchaseOrderMap;
+
+    }
+
+
+
+
+    /**
+     * 采购异常 推送采购单下单异常
+     * @param purchaseDetail 采购单明细编号
+     */
+    public  void  cancelPurchaseOrder(String purchaseDetail,String memo ,String supplierId) throws ServiceException{
+        try {
+            List<Long> sopPurchaseOrderDetailNos = new ArrayList<>();
+            String[] purchaseOrderDetailArray = purchaseDetail.split(";");
+            if(null!=purchaseOrderDetailArray){
+                for(String purchaseDetailNo:purchaseOrderDetailArray){
+                    if(org.apache.commons.lang.StringUtils.isNotBlank(purchaseDetailNo)){
+                        try {
+                            sopPurchaseOrderDetailNos.add(Long.valueOf(purchaseDetailNo));
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+                PurchaseOrderEx purchaseOrderEx = new PurchaseOrderEx(sopPurchaseOrderDetailNos,memo);
+                String  result = servant.PurchaseDetailEx(purchaseOrderEx,supplierId);
+                Gson gson = new Gson();
+                ResMessage message = gson.fromJson(result,ResMessage.class);
+                if(null==message){
+                    logger.error("推送取消采购单失败，无信息返回。");
+                    //TODO 邮件通知
+                }else {
+                    if (200 != message.getResCode()) {
+                      throw  new ServiceMessageException(message.getMessageRes());
+                    }
+                }
+
+            }
+
+        }catch(ServiceException e){
+            throw  e;
+        }
+        catch (Exception e) {
+            throw  new ServiceMessageException("处理失败。原因："+ e.getMessage());
+        }
 
     }
 

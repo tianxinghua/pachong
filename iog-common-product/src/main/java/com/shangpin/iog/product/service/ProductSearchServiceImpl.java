@@ -196,9 +196,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 categoryName= dto.getSubCategoryName();
                 if(StringUtils.isBlank(categoryName)){
                     categoryName =StringUtils.isBlank(dto.getCategoryName())?"":dto.getCategoryName();
-                    categoryName.replaceAll(splitSign," ");
-                }
 
+                }
+                categoryName.replaceAll(splitSign," ");
                 buffer.append(categoryName).append(splitSign);
 
                 buffer.append("尚品网品类编号").append(splitSign);
