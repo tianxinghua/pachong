@@ -53,7 +53,6 @@ public class MyFtpClient {
                     e.printStackTrace();
         }  finally {
             close(ftp);
-            loggerError.error("下载TESSABIT数据失败，退出");
             return;
         }
     }
