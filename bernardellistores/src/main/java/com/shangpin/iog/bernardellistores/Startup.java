@@ -67,7 +67,6 @@ public class Startup {
 		brandMap.get("WOMAN-BAGS").add("ISSEY MIYAKE");
 		brandMap.get("WOMAN-BAGS").add("VERSACE COLLECTION");
 		brandMap.put("MAN-BAGS", new HashSet<String>());
-		brandMap.put("MAN-BAGS", new HashSet<String>());
 		brandMap.get("MAN-BAGS").add("CELINE");
 		brandMap.get("MAN-BAGS").add("BURBERRY");
 		brandMap.get("MAN-BAGS").add("DSQUARED2");
@@ -76,6 +75,37 @@ public class Startup {
 		brandMap.get("MAN-BAGS").add("SAINT LAURENT");
 		brandMap.get("MAN-BAGS").add("STELLA JEAN");
 		brandMap.get("MAN-BAGS").add("LOVE MOSCHINO");
+		brandMap.put("WOMAN-CLOTHING", new HashSet<String>());
+		brandMap.get("WOMAN-CLOTHING").add("ANN DEMEULEMEESTER");
+		brandMap.get("WOMAN-CLOTHING").add("GIANLUCA CAPANNOLO");
+		brandMap.get("WOMAN-CLOTHING").add("HAIDER ACKERMANN");
+		brandMap.get("WOMAN-CLOTHING").add("ARMY BY YVES SALOMON");
+		brandMap.get("WOMAN-CLOTHING").add("AVANT TOI");
+		brandMap.get("WOMAN-CLOTHING").add("BETTA CORRADI");
+		brandMap.get("WOMAN-CLOTHING").add("BULLY");
+		brandMap.get("WOMAN-CLOTHING").add("C/MEO");
+		brandMap.get("WOMAN-CLOTHING").add("DESA COLLECTION");
+		brandMap.get("WOMAN-CLOTHING").add("DUVETICA");
+		brandMap.get("WOMAN-CLOTHING").add("DUSAN");
+		brandMap.get("WOMAN-CLOTHING").add("FALCON & BLOOM");
+		brandMap.get("WOMAN-CLOTHING").add("ERIKA CAVALLINI SEMI COUTURE");
+		brandMap.get("WOMAN-CLOTHING").add("GIORGIO BRATO");
+		brandMap.get("WOMAN-CLOTHING").add("JOSEPH");
+		brandMap.get("WOMAN-CLOTHING").add("KNIT KNIT");
+		brandMap.get("WOMAN-CLOTHING").add("LA PETITE ROBE DI CHIARA BONI");
+		brandMap.get("WOMAN-CLOTHING").add("MARCO BOLOGNA");
+		brandMap.get("WOMAN-CLOTHING").add("METEO BY YVES SALOMON");
+		brandMap.get("WOMAN-CLOTHING").add("MARY KATRANTZOU");
+		brandMap.get("WOMAN-CLOTHING").add("NEPAL DOWNTOWN");
+		brandMap.get("WOMAN-CLOTHING").add("N_8");
+		brandMap.get("WOMAN-CLOTHING").add("NEIL BARRETT");
+		brandMap.get("WOMAN-CLOTHING").add("PIERANTONIOGASPARI");
+		brandMap.get("WOMAN-CLOTHING").add("RICK OWENS");
+		brandMap.get("WOMAN-CLOTHING").add("RALPH LAUREN BLACK LABEL");
+		brandMap.get("WOMAN-CLOTHING").add("SEVENTY");
+		brandMap.get("WOMAN-CLOTHING").add("T BY ALEXANDER WANG	");
+		brandMap.get("WOMAN-CLOTHING").add("VERSUS");
+		brandMap.get("WOMAN-CLOTHING").add("LIVIANA CONTI");
 	}
 
 	private static void loadSpringContext() {
