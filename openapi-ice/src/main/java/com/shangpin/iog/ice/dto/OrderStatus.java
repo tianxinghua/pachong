@@ -15,4 +15,5 @@ public class OrderStatus {
     public static String WAITCANCEL="waitcancel";
     public static String WAITPLACED="waitplaced";
 
+
 }

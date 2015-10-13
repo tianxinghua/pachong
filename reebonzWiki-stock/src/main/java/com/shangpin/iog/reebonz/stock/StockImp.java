@@ -41,8 +41,7 @@ public class StockImp extends AbsUpdateProductStock {
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //get tony return date
         //定义三方
-    	 Map<String,String> stockMap = new HashMap<>();
-    	 stockMap.put("supplierId",supplierId);
+    	Map<String,String> stockMap = new HashMap<>();
         for (String skuno : skuNo) {
             stockMap.put(skuno,getInventory(skuno));
         }
@@ -87,7 +86,6 @@ public class StockImp extends AbsUpdateProductStock {
 					}
 				}
 			}
-		
         } catch (Exception e) {
             loggerError.error("转化 :"+jsonStr +" 到库存对象失败 :" +e.getMessage());
             e.printStackTrace(); 

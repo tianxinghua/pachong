@@ -73,7 +73,10 @@ public class ProductDTO {
 
     private Date createTime;
     private Date lastTime;//修改时间
-
+    //活动时间添加
+    private Date eventStartTime;
+    private Date eventEndTime;
+    
     public String getId() {
         return id;
     }
@@ -426,4 +429,21 @@ public class ProductDTO {
     public void setSalePrice(String salePrice) {
         this.salePrice = salePrice;
     }
+
+	public Date getEventStartTime() {
+		return eventStartTime;
+	}
+
+	public void setEventStartTime(Date eventStartTime) {
+		this.eventStartTime = eventStartTime;
+	}
+
+	public Date getEventEndTime() {
+		return eventEndTime;
+	}
+
+	public void setEventEndTime(Date eventEndTime) {
+		this.eventEndTime = eventEndTime;
+	}
+    
 }

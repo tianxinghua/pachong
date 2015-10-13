@@ -19,6 +19,13 @@ public interface OrderService {
     public void saveOrder(OrderDTO orderDTO ) throws ServiceException;
 
     /**
+     * 更新订单信息
+     * @param orderDTO
+     * @throws ServiceException
+     */
+    public void update(OrderDTO orderDTO) throws ServiceException;
+
+    /**
      * 获取订单状态 根据订单ID 和 订单状态
      * @param supplierId 供货商ID
      * @param status 状态码
@@ -121,5 +128,13 @@ public interface OrderService {
      * @throws ServiceException
      */
     public OrderDTO getOrderByOrderNo(String orderNo) throws ServiceException;
+
+    /**
+     * 根据唯一编号获取订单信息
+     * @param uuid
+     * @return
+     * @throws ServiceException
+     */
+    public OrderDTO getOrderByUuId(String uuid) throws ServiceException;
 
 }
