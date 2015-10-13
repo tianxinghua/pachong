@@ -24,7 +24,8 @@ import java.util.ResourceBundle;
  */
 @Component("brunarosso")
 public class FetchProduct {
-    final Logger logger = Logger.getLogger(this.getClass());
+	 private static Logger logger = Logger.getLogger("info");
+	private static Logger loggerError = Logger.getLogger("error");
 
     @Autowired
     ProductFetchService productFetchService;
@@ -39,8 +40,7 @@ public class FetchProduct {
      * @param map 尺寸集合,key是sku，value是尺寸list
      * @param url
      */
-    public Map<String,String> fetchProductAndSave(Map<String,List<String>>map,String url) {
-        Map<String,String>returnMap=new HashMap<>();
+    public void fetchProductAndSave(Map<String,List<String>>map,Map<String,String> spuMap,String url) {
         //String result = HttpUtils.get(url, false, 360000);
         try {
             /*Products products = ObjectXMLUtil.xml2Obj(Products.class, result);
@@ -102,9 +102,20 @@ public class FetchProduct {
                             sku.setSupplierId(supplierId);
                             try {
                                 productFetchService.saveSKU(sku);
-                                returnMap.put(key,"");
-                            }catch (Exception e){
-                                e.printStackTrace();
+                                spuMap.put(key,"");
+                                logger.info("key"+key);
+                            }catch (Exception e) {
+                                try {
+                                    if(e.getMessage().equals("数据插入失败键重复")){
+                                        //更新价格和库存
+                                        productFetchService.updatePriceAndStock(sku);
+                                    } else{
+                                        e.printStackTrace();
+                                    }
+
+                                } catch (ServiceException e1) {
+                                    e1.printStackTrace();
+                                }
                             }
 
                         }
@@ -135,12 +146,15 @@ public class FetchProduct {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  returnMap;
+       
     }
     public void savePic(String url,Map<String,String>returnMap){
         List<org.jdom2.Element>picList = XmlReader.getPictureElement(url);
         for (org.jdom2.Element element:picList){
+        	
+        	logger.info( " RF_RECORD_ID = " + element.getChildText("RF_RECORD_ID"));
             if(returnMap.containsKey(element.getChildText("RF_RECORD_ID"))){
+            	logger.info( "contain key  RF_RECORD_ID = " + element.getChildText("RF_RECORD_ID"));
                 ProductPictureDTO dto  = new ProductPictureDTO();
                 dto.setPicUrl(element.getChildText("RIFERIMENTO"));
                 dto.setId(UUIDGenerator.getUUID());
