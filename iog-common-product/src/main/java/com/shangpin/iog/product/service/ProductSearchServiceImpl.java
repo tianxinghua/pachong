@@ -330,6 +330,24 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 
                 buffer.append(dto.getStock()).append(splitSign) ;
+                String marketPrice = dto.getMarketPrice();
+                String salePrice = dto.getSalePrice();
+                String supplierPrice = dto.getSupplierPrice();
+                if(marketPrice!=null){
+                	marketPrice = marketPrice.replace(",",".");
+                }else{
+                	marketPrice ="";
+                }
+                if(salePrice!=null){
+                	salePrice = salePrice.replace(",",".");
+                }else{
+                	salePrice ="";
+                }
+                if(supplierPrice!=null){
+                	supplierPrice = supplierPrice.replace(",",".");
+                }else{
+                	supplierPrice ="";
+                }
                 //价格
                 buffer.append(null==dto.getMarketPrice()?" ":dto.getMarketPrice()).append(splitSign)
                   .append(null==dto.getSalePrice()?" ":dto.getSalePrice()).append(splitSign)
