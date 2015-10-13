@@ -143,35 +143,34 @@ public class FetchProduct {
                     sku.setProductDescription(description);
                     sku.setProductCode(spuId);
 
-
                     //保存SKU
-//                    try {
-//                        productFetchService.saveSKU(sku);
-//                    } catch (ServiceException e) {
-//                        try {
-//                            if (e.getMessage().equals("数据插入失败键重复")) {
-//                                productFetchService.updatePriceAndStock(sku);
-//                            } else {
-//                                e.printStackTrace();
-//                            }
-//                        } catch (ServiceException e1) {
-//                            e1.printStackTrace();
-//                        }
-//                    }
+                    try {
+                        productFetchService.saveSKU(sku);
+                    } catch (ServiceException e) {
+                        try {
+                            if (e.getMessage().equals("数据插入失败键重复")) {
+                                productFetchService.updatePriceAndStock(sku);
+                            } else {
+                                e.printStackTrace();
+                            }
+                        } catch (ServiceException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
 
                     //保存SKU的图片
-//                    for (String pic : picsList) {
-//                        ProductPictureDTO dto = new ProductPictureDTO();
-//                        dto.setPicUrl(pic);
-//                        dto.setSupplierId(supplierId);
-//                        dto.setId(UUIDGenerator.getUUID());
-//                        dto.setSkuId(skuId);
-//                        try {
-//                            productFetchService.savePictureForMongo(dto);
-//                        } catch (ServiceException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
+                    for (String pic : picsList) {
+                        ProductPictureDTO dto = new ProductPictureDTO();
+                        dto.setPicUrl(pic);
+                        dto.setSupplierId(supplierId);
+                        dto.setId(UUIDGenerator.getUUID());
+                        dto.setSkuId(skuId);
+                        try {
+                            productFetchService.savePictureForMongo(dto);
+                        } catch (ServiceException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                     //SPU
                     SpuDTO spu = new SpuDTO();
@@ -181,7 +180,14 @@ public class FetchProduct {
                     spu.setSupplierId(supplierId);
                     spu.setCategoryName(category);
                     spu.setBrandName(brand);
-                    spu.setMaterial(material);
+
+                    //如果材质为空,保存描述,描述中可能会有材质信息
+                    if (material != null && !"".equals(material.trim())) {
+                        spu.setMaterial(material);
+                    } else {
+                        spu.setMaterial(description);
+                    }
+
                     //全部为女,刘芳已确认
                     spu.setCategoryGender("female");
 
@@ -190,11 +196,11 @@ public class FetchProduct {
                     //全部2015,刘芳已确认
                     spu.setSeasonName("2015");
 
-//                    try {
-//                        productFetchService.saveSPU(spu);
-//                    } catch (ServiceException e) {
-//                        e.printStackTrace();
-//                    }
+                    try {
+                        productFetchService.saveSPU(spu);
+                    } catch (ServiceException e) {
+                        e.printStackTrace();
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
