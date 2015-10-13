@@ -20,14 +20,16 @@
         <result column="STOCK" property="stock" />
         <result column="CREATE_TIME" property="createTime" />
         <result column="LAST_TIME" property="lastTime" />
-
-
 	</resultMap>
 	
+	<resultMap type="iog_newPrice" id="priceMap">
+		<result column="skuId" property="skuId"  />
+		<result column="supplierPrice" property="supplierPrice" />
+		<result column="marketPrice" property="marketPrice" />
+		<result column="newMarketPrice" property="newMarketPrice" />
+		<result column="newSupplierPrice" property="newSupplierPrice" />
+	</resultMap>
 
-
-	
-	
 	<sql id="all_sku_column">
 		ID ,
 		SUPPLIER_ID ,
@@ -105,11 +107,15 @@
 
     </insert>
 
-	
-	
-
-	
-
-
-	
+	<select id="findNewPrice" parameterType="java.lang.String" resultMap="priceMap">
+			select SKU_ID as skuId,
+				MARKET_PRICE as marketPrice,
+				SUPPLIER_PRICE as supplierPrice,
+			    NEW_MARKET_PRICE as newMarketPrice,
+      	 	  	NEW_SUPPLIER_PRICE as newSupplierPrice
+      	 	  	from SKU sku
+        <where>
+	         and  SUPPLIER_ID = #{supplierId}
+        </where>
+	</select>
 </mapper>
