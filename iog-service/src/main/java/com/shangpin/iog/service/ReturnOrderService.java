@@ -3,6 +3,7 @@ package com.shangpin.iog.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,6 +16,16 @@ public interface ReturnOrderService {
      * @throws ServiceException
      */
     public void saveOrder(ReturnOrderDTO returnOrderDTO ) throws ServiceException;
+
+    /**
+     * 获取退单信息 根据供货商编号和状态
+     * @param supplierId
+     * @param status
+     * @return
+     * @throws ServiceException
+     */
+    public List<ReturnOrderDTO> getReturnOrderBySupplierIdAndOrderStatus(String supplierId,String status ) throws ServiceException;
+
     /**
      * 修改退单状态
      * @param statusMap 状态信息  ORDERID(UUID),STATUS
