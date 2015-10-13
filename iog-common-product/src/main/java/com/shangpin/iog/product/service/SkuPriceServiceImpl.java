@@ -2,9 +2,13 @@ package com.shangpin.iog.product.service;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
+import com.shangpin.iog.dto.NewPriceDTO;
 import com.shangpin.iog.dto.SkuPriceDTO;
+import com.shangpin.iog.product.dao.SkuMapper;
 import com.shangpin.iog.product.dao.SkuPriceMapper;
 import com.shangpin.iog.service.SkuPriceService;
+
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +29,8 @@ public class SkuPriceServiceImpl implements SkuPriceService {
 
     @Autowired
     SkuPriceMapper skuPriceDAO;
-
+    @Autowired
+    SkuMapper skuDAO;
     private String noPirce="-1";
 
     @Override
@@ -77,6 +82,32 @@ public class SkuPriceServiceImpl implements SkuPriceService {
             throw new ServiceMessageException("更新失败");
         }
     }
-
-
+    public Map<String,Map<String,String>> getNewSkuPrice(String supplierId) throws ServiceException {
+    	StringBuffer sb = new StringBuffer();
+    	Map<String,Map<String,String>> supMap = new HashMap<String,Map<String,String>>();
+    	Map<String,String> skuMap = new HashMap<String, String>();
+    	List<NewPriceDTO> skuList = null;
+		try {
+			skuList = skuDAO.findNewPrice(supplierId);
+		} catch (Exception e) {
+            logger.error("获取失败 "+e.getMessage());
+			e.printStackTrace();
+		}
+    	for (NewPriceDTO newPriceDTO : skuList) {
+    		if (null!=newPriceDTO.getNewMarketPrice()) {
+				sb.append(newPriceDTO.getNewMarketPrice()).append("|");
+			}else {
+				sb.append(newPriceDTO.getMarketPrice()==null?"-1":newPriceDTO.getMarketPrice()).append("|");
+			}
+    		if (null!=newPriceDTO.getNewSupplierPrice()) {
+    			sb.append(newPriceDTO.getNewSupplierPrice()).append("|");
+    		}else {
+    			sb.append(newPriceDTO.getSupplierPrice()==null?"-1":newPriceDTO.getSupplierPrice());
+    		}
+			skuMap.put(newPriceDTO.getSkuId(), sb.toString());
+			sb.setLength(0);
+		}
+    	supMap.put(supplierId, skuMap);
+    	return supMap;
+    }
 }

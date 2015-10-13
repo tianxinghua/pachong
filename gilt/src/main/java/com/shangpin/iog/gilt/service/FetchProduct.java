@@ -71,7 +71,7 @@ public class FetchProduct {
         List<GiltSkuDTO> saleSkuList = null;
         for(SaleDTO saleDTO:saleList){
             saleId = saleDTO.getId();
-            saleInventoryUrl = sale + "/" + saleId+"/inventory";
+            saleInventoryUrl = sale + "/" + saleId+"/realtime-inventory";
             saleSkuUrl = sale + "/" + saleId + "/skus";
 
 
@@ -90,9 +90,9 @@ public class FetchProduct {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                offset=offset+50;
+                offset=offset+100;
 
-            }while (saleInventoryList.size()==50);
+            }while (null!=saleInventoryList&&saleInventoryList.size()==100);
 
 
 
@@ -109,13 +109,13 @@ public class FetchProduct {
                     saleSkuList=gson.fromJson(skuMsg, new TypeToken<List<GiltSkuDTO>>() {
                     }.getType());
                     for(GiltSkuDTO giltSkuDTO:saleSkuList){
-                        this.saveProduct(spuMap,giltSkuDTO,inventoryMap);
+                        this.saveProduct(spuMap,giltSkuDTO,inventoryMap,saleDTO);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 offset=offset+100;
-             }while (null!=saleInventoryList&&saleInventoryList.size()==100);
+             }while (null!=saleSkuList&&saleSkuList.size()==100);
 
 
 
@@ -157,7 +157,7 @@ public class FetchProduct {
 //        }
     }
 
-    private void saveProduct(Map<String,String> spuMap, GiltSkuDTO giltSkuDTO,Map<String,String> inventoryMap) {
+    private void saveProduct(Map<String,String> spuMap, GiltSkuDTO giltSkuDTO,Map<String,String> inventoryMap,SaleDTO saleDTO) {
         SkuDTO dto = new SkuDTO();
         SpuDTO spuDTO = new SpuDTO();
         String inventory="";
@@ -227,6 +227,8 @@ public class FetchProduct {
                 dto.setProductName(giltSkuDTO.getName());
                 dto.setProductSize(size);
                 dto.setStock(inventory);
+                dto.setEventStartDate(saleDTO.getStart_datetime());
+                dto.setEventEndDate(saleDTO.getEnd_datetime());
                 productFetchService.saveSKU(dto);
                 for(int j =0;j<giltSkuDTO.getImages().size();j++){
                     ProductPictureDTO productPictureDTO= new ProductPictureDTO();
