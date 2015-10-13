@@ -7,7 +7,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.monnierfreres.service.FetchProduct;
 
-public class StartUp {
+public class Startup {
 	 private static Logger log = Logger.getLogger("info");
 
 	    private static ApplicationContext factory;
