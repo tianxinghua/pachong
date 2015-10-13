@@ -66,11 +66,11 @@ public class SendMail {
   
 
     public static void main(String[] args) {
-        try {  
-            SendMail.sendMessage("smtp.shangpin.com", "lubaijiang@shangpin.com",  
-                    "*********", "lubaijiang@vansky.cn", "hello",  
-                    "测试中文测试connect",  
-                    "text/html;charset=utf-8");  
+        try {
+            SendMail.sendMessage("smtp.shangpin.com", "chengxu@shangpin.com",
+                    "lzr0lzr", "openapi.list@shangpin.com", "测试 ，不要关心。海外对接供货商无法链接",
+                    "门户编号：" + "lzr" +"，链接异常。请手工拉取库存",
+                    "text/html;charset=utf-8");
         } catch (Exception e) {  
             // TODO Auto-generated catch block  
             e.printStackTrace();  
