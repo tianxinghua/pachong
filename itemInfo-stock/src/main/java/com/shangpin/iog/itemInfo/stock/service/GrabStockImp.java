@@ -41,11 +41,13 @@ public class GrabStockImp extends AbsUpdateProductStock {
     private static String soapAction = "http://service.alducadaosta.com/EcSrv/GetItem4Platform";
     private static String contentType = "text/xml; charset=utf-8";
     private static String localPath = "";
+    private static String localPathDefault = "";
     
     static {
         if(null==bdl)
          bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        localPathDefault = bdl.getString("localPathDefualt");
     }
 
 	@Override
@@ -71,7 +73,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
         	
         }catch(Exception e){
         	e.printStackTrace();
-        	localPath = "C:\\soapxml.xml";
+        	localPath = localPathDefault;
         }
 		String filePath = null;
 		try{
