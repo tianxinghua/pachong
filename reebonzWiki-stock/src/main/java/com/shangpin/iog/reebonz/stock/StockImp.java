@@ -24,16 +24,8 @@ public class StockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
 
-    private static ResourceBundle bdl=null;
-    private static String supplierId;
 
-    static {
-        if(null==bdl)
-            bdl=ResourceBundle.getBundle("conf");
-        supplierId = bdl.getString("supplierId");
-    }
     public static void main(String[] args) throws Exception {
     	System.out.println(getInventory("A62053E003193906|250|no-size"));;
     }
