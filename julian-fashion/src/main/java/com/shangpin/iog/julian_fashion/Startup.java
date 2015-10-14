@@ -20,8 +20,9 @@ public class Startup {
 
 	private static String[] brandArray = { "Alexander Mcqueen".toUpperCase(), "BOTTEGA VENETA".toUpperCase(),
 			"CHARLOTTE OLYMPIA".toUpperCase(), "DOLCE & GABBANA".toUpperCase(), "GIVENCHY".toUpperCase(), "KENZO".toUpperCase(),
-			"MICHAEL KORS".toUpperCase(), "MIU MIU".toUpperCase(), "PRADA".toUpperCase(), "MOSCHINO".toUpperCase(),
-			"STELLA".toUpperCase(), "Lavin".toUpperCase(), "Tory burch".toUpperCase()};
+			"MICHAEL KORS".toUpperCase(), "MIU MIU".toUpperCase(), "PRADA".toUpperCase(), "MOSCHINO".toUpperCase(), "STELLA".toUpperCase(),
+			"Lavin".toUpperCase(), "Tory burch".toUpperCase(), "bottega veneta".toUpperCase(), "michael kors".toUpperCase(),
+			"miu miu".toUpperCase(), "prada".toUpperCase() , "stella".toUpperCase() };
 
 	static {
 		if (null == bdl)
