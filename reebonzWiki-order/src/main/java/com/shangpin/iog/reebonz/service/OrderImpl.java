@@ -48,9 +48,6 @@ public class OrderImpl extends AbsOrderService {
 		this.confirmOrder(supplierId);
 		
 	}
-	public void handleCancelPurchaseOrderException() {
-		// TODO Auto-generated method stub
-	}
 	/**
 	 * 锁库存
 	 */

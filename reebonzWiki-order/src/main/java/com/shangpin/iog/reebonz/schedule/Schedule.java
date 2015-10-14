@@ -23,11 +23,6 @@ public class Schedule {
 	public void confirmOrder() {
 		orderService.confirmOrder();
 	}
-	@Scheduled(cron = "0 0/2 * * * ? ")
-	public void handleCancelPurchaseOrderException() {
-		orderService.handleCancelPurchaseOrderException();
-	}
-	
 	//confirmOrder
 
 }
