@@ -131,3 +131,5 @@ include 'tizianafausti'
 include 'bernardellistores'
 include 'monnierfreres'
 include 'monnierfreres-stock'
+
+include 'iog-price'
