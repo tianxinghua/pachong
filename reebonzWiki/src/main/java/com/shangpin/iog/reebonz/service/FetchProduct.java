@@ -47,18 +47,12 @@ public class FetchProduct {
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static int rows;
-    private static String eventUrl=null;
-    private static String productUrl=null;
-    private static String stockUrl=null;
 
     static {
         if(null==bdl)
-         bdl=ResourceBundle.getBundle("conf");
+        	bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         rows = Integer.parseInt(bdl.getString("rows"));
-        eventUrl = bdl.getString("eventUrl");
-        productUrl = bdl.getString("productUrl");
-        stockUrl = bdl.getString("stockUrl");
     }
     
 	/**
@@ -68,21 +62,23 @@ public class FetchProduct {
 		
 		// 第一步：获取活动信息
 		logger.info("拉取活动数据开始");
-		List<Item> eventList = MyJsonUtil.getReebonzEventJson(eventUrl);
+		List<Item> eventList = MyJsonUtil.getReebonzEventJson();
+		logger.info("拉取活动数据结束");
 		for (Item item : eventList) {
 			// 第二步：根据活动获取商品信息
-			logger.info("拉取活动"+item.getEvent_id()+"下的商品总数");
 			//获取商品总数量
-			String productNum = getProductNum(productUrl,item
+			String productNum = getProductNum(item
 					.getEvent_id());
-			logger.info("拉取活动"+item.getEvent_id()+"下的商品数据");
+			logger.info("获得活动"+item.getEvent_id()+"下的商品总数为："+productNum);
 			//rows代表每次请求的数据行数，默认10
 			for(int start=0;start<Integer.parseInt(productNum);start+=rows){
-				List<Item> eventSpuList = MyJsonUtil.getReebonzSpuJsonByEventId(productUrl,item
+				List<Item> eventSpuList = MyJsonUtil.getReebonzSpuJsonByEventId(item
 						.getEvent_id(),start,rows);
+				logger.info("已拉取活动"+item.getEvent_id()+"下的商品总数为："+start+rows);
 				//保存入库
 				messMappingAndSave(eventSpuList);
 			}
+			logger.info("活动"+item.getEvent_id()+"下的所有商品拉取完成");
 		}
 
 	}
@@ -168,7 +164,7 @@ public class FetchProduct {
 				
 				//
 				// 第三步：根据skuId与eventId获取商品的库存跟尺码
-				List<Item> skuScokeList = MyJsonUtil.getSkuScokeJson(stockUrl,item.getEvent_id(),
+				List<Item> skuScokeList = MyJsonUtil.getSkuScokeJson(item.getEvent_id(),
 						item.getSku());
 				if(skuScokeList!=null){
 					for (Item stock : skuScokeList) {
@@ -222,8 +218,8 @@ public class FetchProduct {
 				
 	}
 	
-	private String getProductNum(String productUrl,String eventId) {
-		String spuJson = MyJsonUtil.getProductNum(productUrl,eventId);
+	private String getProductNum(String eventId) {
+		String spuJson = MyJsonUtil.getProductNum(eventId);
 		if(spuJson!=null){
 			ResponseObject obj = new Gson().fromJson(spuJson, ResponseObject.class);
 			Object o = obj.getResponse();

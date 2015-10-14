@@ -21,4 +21,6 @@ public interface EventProductService {
      */
     public void saveEventProduct(EventProductDTO eventDTO) throws ServiceException;
 
+	public String selectEventIdBySku(String skuNo,String supplierId) throws ServiceException;
+
 }

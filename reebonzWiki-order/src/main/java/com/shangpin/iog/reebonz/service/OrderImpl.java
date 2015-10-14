@@ -85,8 +85,7 @@ public class OrderImpl extends AbsOrderService {
 		Map<String, String> map = null;
 		map = stock.unlockStock(deleteOrder.getSupplierOrderNo(),
 				deleteOrder.getSpOrderId(), deleteOrder.getSpOrderId(),
-				"voided");// deducted" (for confirmation) "voided" (for
-							// reversal)
+				"voided");// deducted" (for confirmation) "voided" (for reversal)
 		if (map.get("1") != null) {
 			deleteOrder.setExcDesc(map.get("1"));
 			deleteOrder.setExcState("1");

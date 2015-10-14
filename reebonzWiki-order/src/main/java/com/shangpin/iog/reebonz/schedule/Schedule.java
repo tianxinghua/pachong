@@ -15,7 +15,7 @@ import java.util.*;
 public class Schedule {
 	
 	com.shangpin.iog.reebonz.service.OrderImpl orderService = new OrderImpl();
-
+	
 	@Scheduled(cron = "0 0/1 * * * ? ")
 	public void start() {
 		orderService.loopExecute();

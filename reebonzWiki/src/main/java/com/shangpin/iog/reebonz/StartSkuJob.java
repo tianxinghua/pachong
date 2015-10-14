@@ -36,11 +36,11 @@ public class StartSkuJob {
         loadSpringContext();
         log.info("----初始SPRING成功--1--");
         //拉取数据
-        log.info("----拉取tony数据开始----");              
+        log.info("----拉取数据开始----");              
         System.out.println("-------fetch start---------");
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("reebonzWiki");
         fetchProduct.fetchProductAndSave();
-        log.info("----拉取tony数据完成----");
+        log.info("----拉取数据完成----");
         System.out.println("-------fetch end---------");
         System.exit(0);
     }
