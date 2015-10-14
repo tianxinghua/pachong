@@ -16,12 +16,12 @@
         CREATE_TIME
 	</sql>
 
-    <select id="findAllOfAvailabled"  resultMap="countPriceMap" parameterType="java.util.Map">
+    <select id="findAllOfAvailabled"  resultMap="countPriceMap" parameterType="java.lang.String">
         select
         *
         from PRICE_COUNT_DETAIL
         <where>
-                FLAG = #{flag}
+                STATE = #{state}
         </where>
 
     </select>
