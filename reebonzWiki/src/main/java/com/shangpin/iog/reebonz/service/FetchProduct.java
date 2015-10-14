@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.dto.EventProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -21,6 +22,7 @@ import com.shangpin.iog.reebonz.dto.Item;
 import com.shangpin.iog.reebonz.dto.Items;
 import com.shangpin.iog.reebonz.dto.ResponseObject;
 import com.shangpin.iog.reebonz.util.MyJsonUtil;
+import com.shangpin.iog.service.EventProductService;
 import com.shangpin.iog.service.ProductFetchService;
 
 import net.sf.json.JSONObject;
@@ -38,6 +40,9 @@ public class FetchProduct {
 
 	@Autowired
 	ProductFetchService productFetchService;
+	
+	@Autowired
+	EventProductService eventProductService;
     private static Logger logger = Logger.getLogger("info");
     private static ResourceBundle bdl=null;
     private static String supplierId;
@@ -88,6 +93,25 @@ public class FetchProduct {
 	private void messMappingAndSave(List<Item> array) {
 
 			for (Item item : array) {
+				
+				//把新活动保存入库到EVENT_PRODUCT表中
+				EventProductDTO event = new EventProductDTO();
+				try{
+					event.setEventId(item.getEvent_id());
+					event.setSkuId(item.getSku());
+					event.setSupplierId(supplierId);
+					event.setStartDate(item.getEvent_start_date());
+					event.setEndDate(item.getEvent_end_date());
+					eventProductService.saveEventProduct(event);
+				} catch (ServiceException e) {
+					if (e.getMessage().equals("活动数据重复,插入失败键")) {
+						System.out.println("数据插入失败键重复");
+					} else {
+						e.printStackTrace();
+					}
+				}
+				
+				
 				SpuDTO spu = new SpuDTO();
 				try {
 					spu.setId(UUIDGenerator.getUUID());
@@ -119,8 +143,8 @@ public class FetchProduct {
 						}
 					}
 					spu.setCategoryGender(tempGender.toString());
-				
 					productFetchService.saveSPU(spu);
+					
 					
 					 if(StringUtils.isNotBlank(item.getImages()[0])){
 		                    String[] picArray = item.getImages();
@@ -141,6 +165,7 @@ public class FetchProduct {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				
 				//
 				// 第三步：根据skuId与eventId获取商品的库存跟尺码
 				List<Item> skuScokeList = MyJsonUtil.getSkuScokeJson(stockUrl,item.getEvent_id(),
@@ -156,10 +181,10 @@ public class FetchProduct {
 								String proSize = stock.getOption_name();
 								if("no-size".equals(proSize)){
 									sku.setProductSize("A");
-									sku.setSkuId(item.getSku() + "|" + item.getEvent_id() + "|A");
+									sku.setSkuId(item.getSku() + "|A");
 								}else{
 									sku.setProductSize(proSize);
-									sku.setSkuId(item.getSku() + "|" + item.getEvent_id() + "|"
+									sku.setSkuId(item.getSku() + "|"
 											+ stock.getOption_code());
 								}
 								
@@ -178,7 +203,6 @@ public class FetchProduct {
 								sku.setEventStartDate(item.getEvent_start_date());
 								sku.setEventEndDate(item.getEvent_end_date());
 								productFetchService.saveSKU(sku);
-								
 								
 							} catch (ServiceException e) {
 								try {
