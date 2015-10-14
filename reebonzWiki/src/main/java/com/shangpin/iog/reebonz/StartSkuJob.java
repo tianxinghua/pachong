@@ -20,7 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
- * Created by 赵根春 on 2015/9/25.
+ * Created by zhaogenchun on 2015/9/25.
  */
 public class StartSkuJob {
 
@@ -32,6 +32,11 @@ public class StartSkuJob {
     }
 
     public static void main(String[] args) throws Exception {
+    	
+    	String s ="1.0";
+    	if(Double.parseDouble(s)==1){
+    		s="2";
+    	}
         //加载spring
         loadSpringContext();
         log.info("----初始SPRING成功--1--");

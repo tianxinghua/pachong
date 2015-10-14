@@ -313,7 +313,7 @@ public class OrderServiceImpl  {
                             map.put("uuid", dto.getId());
                             map.put("updateTime", date);
                             map.put("excState","1");
-                            map.put("excDesc","订单:" + orderDTO.getUuId() + "已发货，但推送发货单信息时失败" );
+                            map.put("excDesc","订单:" + orderDTO.getUuId() + "已发货，但推送发货单信息时失败");
                             map.put("excTime", date);
                             try {
                                 productOrderService.updateOrderMsg(map);

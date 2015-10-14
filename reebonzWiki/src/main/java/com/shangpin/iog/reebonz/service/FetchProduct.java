@@ -187,6 +187,14 @@ public class FetchProduct {
 								sku.setStock(stock.getTotal_stock_qty());
 								sku.setSalePrice(item.getFinal_selling_price());
 								sku.setMarketPrice(item.getRetail_price());
+								String discount = item.getPartner_discount();
+								if(Double.parseDouble(discount)==1){
+									sku.setSupplierPrice(item.getFinal_selling_price());
+								}else{
+									double price = Double.parseDouble(item.getFinal_selling_price())*(1-Double.parseDouble(discount));
+									sku.setSupplierPrice(String.valueOf(price));
+								}
+								
 								if(item.getColor()!=null){
 									if (item.getColor().length > 0) {
 										sku.setColor(item.getColor()[0]);

@@ -1,9 +1,9 @@
 package com.shangpin.iog.reebonz.stock;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.product.service.EventProductServiceImpl;
@@ -16,6 +16,9 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -23,10 +26,18 @@ import java.util.*;
 /**
  * Created by Administrator on 2015/7/8.
  */
+@Component("reebonz")
 public class StockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
+    
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
 
     @Autowired
 	EventProductService eventProductService;
@@ -70,43 +81,58 @@ public class StockImp extends AbsUpdateProductStock {
 			e.printStackTrace();
 		}
     	Map<String,String> map = new HashMap<String,String>();
-		map.put("event_id", eventId);
-		map.put("sku", skuNo);
-    	String jsonStr =  HttpUtil45
-				.get(stockUrl,
-						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
-						map);;
-        logger.info("get skuId :"+skuNo +" 库存返回值为："+jsonStr );
-        if(HttpUtil45.errorResult.equals(jsonStr)){    //链接异常
-            return  "0";
-        }
-        return getInventoryByJsonString(jsonStr,size);
+    	String jsonStr = null;
+    	if(eventId!=null){
+    		map.put("event_id", eventId+"1");
+    		map.put("sku", skuNo);
+    		jsonStr =  HttpUtil45
+    				.get(stockUrl,
+    						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
+    						map);;
+            logger.info("get skuId :"+skuNo +" 库存返回值为："+jsonStr );
+           
+    	}
+    	 if(HttpUtil45.errorResult.equals(jsonStr)){    //链接异常
+             return  "0";
+         }else{
+        	 return getInventoryByJsonString(jsonStr,size);
+         }
     }
 
     private static String getInventoryByJsonString(String jsonStr,String size){
     	ResponseObject obj=null;
         String returnSize = "0";
-        try {
-        	obj = new Gson().fromJson(jsonStr, ResponseObject.class);
-			Object o = obj.getResponse();
-			JSONObject jsonObject = JSONObject.fromObject(o); 
-			List<Item> array = new Gson().fromJson(jsonObject.toString(), Items.class).getDocs();
-			if(array.size()>0){
-				for(Item item:array){
-					if(size.equals(item.getOption_name())){
-						returnSize = item.getTotal_stock_qty();
-					}
-				}
-			}
-        } catch (Exception e) {
-            loggerError.error("转化 :"+jsonStr +" 到库存对象失败 :" +e.getMessage());
-            e.printStackTrace(); 
+        if(jsonStr!=null){
+        	  try {
+              	obj = new Gson().fromJson(jsonStr, ResponseObject.class);
+      			Object o = obj.getResponse();
+      			JSONObject jsonObject = JSONObject.fromObject(o); 
+      			List<Item> array = new Gson().fromJson(jsonObject.toString(), Items.class).getDocs();
+      			if(array.size()>0){
+      				for(Item item:array){
+      					if(size.equals(item.getOption_name())){
+      						returnSize = item.getTotal_stock_qty();
+      					}
+      				}
+      			}
+              } catch (Exception e) {
+                  loggerError.error("转化 :"+jsonStr +" 到库存对象失败 :" +e.getMessage());
+                  e.printStackTrace(); 
+              }
         }
 		return returnSize;
     }
     
     public static void main(String[] args) throws Exception {
-    	StockImp m = new StockImp();
-    	System.out.println(m.getInventory("05229RJ2T|A"));
+    
+    	//加载spring
+        loadSpringContext();
+        //拉取数据
+        StockImp stockImp =(StockImp)factory.getBean("reebonz");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        logger.info("reebonz更新库存开始");
+        stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        logger.info("reebonz更新库存结束");
+        System.exit(0);
     }
 }

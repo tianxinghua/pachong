@@ -62,6 +62,11 @@ public class EventProductServiceImpl implements EventProductService {
 	        		throw new ServiceMessageException(REPEAT_MESSAGE);
 	        	throw new ServiceMessageException("数据插入失败"+e.getMessage());
 	        }
-		 return event.getEventId();
+		 if(event!=null){
+			 return event.getEventId();
+		 }else{
+			 return null;
+		 }
+		
 	}
 }

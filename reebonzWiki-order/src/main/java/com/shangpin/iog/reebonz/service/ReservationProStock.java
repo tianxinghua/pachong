@@ -150,6 +150,7 @@ public class ReservationProStock {
 			String result = returnObj.getReturn_code();
 			if ("1".equals(result)) {
 				returnMap.put("0", returnObj.getOrder_id());
+				returnMap.put("return_orderID",returnObj.getOrder_id());
 				logger.info("推送订单success：" + returnObj.getOrder_id());
 			} else if ("0".equals(result)) {
 				returnMap.put("1", returnObj.getError_msg());

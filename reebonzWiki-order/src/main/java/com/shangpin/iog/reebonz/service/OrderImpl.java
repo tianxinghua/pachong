@@ -21,29 +21,42 @@ import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.reebonz.dto.Order;
 import com.shangpin.iog.reebonz.dto.RequestObject;
+import com.shangpin.iog.service.EventProductService;
 import com.shangpin.iog.service.ProductFetchService;
 
+@Component
 public class OrderImpl extends AbsOrderService {
+	@Autowired
+	EventProductService eventProductService;
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
+	private static String supplierNo = null;
 	private ReservationProStock stock = new ReservationProStock();
 	static {
 		 if(null==bdl){
 			 bdl=ResourceBundle.getBundle("conf");
 		 }
 		 supplierId = bdl.getString("supplierId");
+		 supplierNo = bdl.getString("supplierNo");
 	}
 	
 	public void loopExecute() {
-		this.checkoutOrderFromWMS(supplierId, "", false);
+		this.checkoutOrderFromWMS(supplierNo, supplierId, false);
 	}
 
+	public void confirmOrder() {
+		this.confirmOrder(supplierId);
+		
+	}
+	public void handleCancelPurchaseOrderException() {
+		// TODO Auto-generated method stub
+	}
 	/**
 	 * 锁库存
 	 */
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
-
+		orderDTO.setExcState("0");
 		String order_id = orderDTO.getSpOrderId();
 		String order_site = "shangpin";
 		String data = getJsonData(orderDTO.getDetail());
@@ -74,6 +87,7 @@ public class OrderImpl extends AbsOrderService {
 			orderDTO.setExcState("1");
 		} else {
 			orderDTO.setStatus(OrderStatus.CONFIRMED);
+			orderDTO.setSupplierOrderNo(map.get("return_orderID"));
 		}
 	}
 
@@ -105,7 +119,6 @@ public class OrderImpl extends AbsOrderService {
 	@Override
 	public void getSupplierSkuId(Map<String, String> skuMap)
 			throws ServiceException {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -127,8 +140,15 @@ public class OrderImpl extends AbsOrderService {
 
 				RequestObject obj = new RequestObject();
 				obj.setSku(skuIDs[0]);
-				obj.setEvent_id(skuIDs[1]);
-				String code = skuIDs[2];
+				try {
+					String eventId = eventProductService.selectEventIdBySku(skuIDs[0], "201509261518");
+					obj.setEvent_id(eventId);
+				} catch (ServiceException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+//				obj.setEvent_id(skuIDs[1]);
+				String code = skuIDs[1];
 				if ("A".equals(code)) {
 					obj.setOption_code("");
 				} else {
@@ -141,5 +161,8 @@ public class OrderImpl extends AbsOrderService {
 		JSONArray array = JSONArray.fromObject(list);
 		return array.toString();
 	}
+
+
+
 
 }

@@ -49,7 +49,7 @@ public class MyJsonUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		logger.info("抓取的活动列表："+json);
+		System.out.println("抓取的活动列表："+json);
 		return getProductList(json);
 	}
 
