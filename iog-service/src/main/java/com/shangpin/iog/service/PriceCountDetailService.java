@@ -20,6 +20,6 @@ public interface PriceCountDetailService {
      * 查询所有可用供应商计算价格的标示(1代表市场价、2代表供货价)
      * @param flag(1代表可用，0代表不可用)
      */
-    List<PriceCountDetailDTO> findAllByFlag(String flag) throws ServiceException;
+    List<PriceCountDetailDTO> findAllByFlag(String state) throws ServiceException;
 
 }

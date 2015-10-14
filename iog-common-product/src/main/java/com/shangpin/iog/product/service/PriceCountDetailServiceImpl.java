@@ -21,11 +21,11 @@ public class PriceCountDetailServiceImpl implements PriceCountDetailService{
     PriceCountDetailMapper countPriceDAO;
 
 	@Override
-	public List<PriceCountDetailDTO> findAllByFlag(String flag)
+	public List<PriceCountDetailDTO> findAllByFlag(String state)
 			throws ServiceException {
 		
 		  List<PriceCountDetailDTO> countPriceDTOList = new ArrayList<>();
-		  countPriceDTOList = countPriceDAO.findAllOfAvailabled(flag);
+		  countPriceDTOList = countPriceDAO.findAllOfAvailabled(state);
 	      return countPriceDTOList;
 	}
 
