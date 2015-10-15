@@ -30,7 +30,7 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 
-@Component("amanda")
+@Component("itemInfo")
 public class FetchProduct {
 
 	public static String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"

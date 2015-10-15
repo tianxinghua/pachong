@@ -20,14 +20,16 @@
         <result column="STOCK" property="stock" />
         <result column="CREATE_TIME" property="createTime" />
         <result column="LAST_TIME" property="lastTime" />
-
-
 	</resultMap>
 	
+	<resultMap type="iog_newPrice" id="priceMap">
+		<result column="skuId" property="skuId"  />
+		<result column="supplierPrice" property="supplierPrice" />
+		<result column="marketPrice" property="marketPrice" />
+		<result column="newMarketPrice" property="newMarketPrice" />
+		<result column="newSupplierPrice" property="newSupplierPrice" />
+	</resultMap>
 
-
-	
-	
 	<sql id="all_sku_column">
 		ID ,
 		SUPPLIER_ID ,
@@ -44,7 +46,7 @@
         PRODUCT_SIZE,STOCK,MEMO,CREATE_TIME,LAST_TIME,
         NEW_MARKET_PRICE,
         NEW_SALE_PRICE,
-        NEW_SUPPLIER_PRICE,UPDATE_TIME
+        NEW_SUPPLIER_PRICE,UPDATE_TIME ,   EVENT_START_DATE,EVENT_END_DATE
 
 	</sql>
 
@@ -62,7 +64,7 @@
             #{productName},#{marketPrice},#{salePrice}, #{supplierPrice}, #{barcode}, #{productCode},
             #{color} , #{productDescription}, #{saleCurrency}, #{productSize}, #{stock},#{memo},
             #{createTime}, #{lastTime}, #{newMarketPrice} , #{newSalePrice} , #{newSupplierPrice} ,
-        #{updateTime}
+        #{updateTime},#{eventStartDate},#{eventEndDate}
 
         )
 
@@ -76,8 +78,9 @@
               <if test="salePrice != null"> NEW_SALE_PRICE = #{salePrice}, </if>
               <if test="supplierPrice != null"> NEW_SUPPLIER_PRICE = #{supplierPrice},</if>
               <if test="stock != null"> STOCK = #{stock},</if>
-              <if test="updateTime != null"> UPDATE_TIME = #{updateTime}</if>
-
+              <if test="updateTime != null"> UPDATE_TIME = #{updateTime},</if>
+              <if test="eventStartDate != null"> EVENT_START_DATE = #{eventStartDate},</if>
+              <if test="eventEndDate != null"> EVENT_END_DATE = #{eventEndDate}</if>
           </set>
 
 
@@ -98,16 +101,21 @@
             (#{item.id}, #{item.supplierId}, #{item.spuId}, #{item.skuId},
             #{item.productName},#{item.marketPrice},#{item.salePrice}, #{item.supplierPrice}, #{item.barcode}, #{item.productCode},
             #{item.color} , #{item.productDescribe}, #{item.saleCurrency}, #{item.productSize}, #{item.stock},#{item.memo},
-            #{item.createTime}, #{item.lastTime})
+            #{createTime}, #{lastTime}, #{newMarketPrice} , #{newSalePrice} , #{newSupplierPrice} ,
+            #{updateTime},#{eventStartDate},#{eventEndDate})
         </foreach>
 
     </insert>
 
-	
-	
-
-	
-
-
-	
+	<select id="findNewPrice" parameterType="java.lang.String" resultMap="priceMap">
+			select SKU_ID as skuId,
+				MARKET_PRICE as marketPrice,
+				SUPPLIER_PRICE as supplierPrice,
+			    NEW_MARKET_PRICE as newMarketPrice,
+      	 	  	NEW_SUPPLIER_PRICE as newSupplierPrice
+      	 	  	from SKU sku
+        <where>
+	           SUPPLIER_ID = #{supplierId}
+        </where>
+	</select>
 </mapper>

@@ -33,4 +33,10 @@ public interface SkuPriceService {
      * @throws ServiceException
      */
     public void updatePrice(SkuPriceDTO skuPriceDTO) throws ServiceException;
+    /**
+     * 获取最新价格
+     * @param supplierId 
+     * @throws ServiceException
+     */
+    public Map<String,Map<String,String>> getNewSkuPrice(String supplierId) throws ServiceException;
 }

@@ -1,8 +1,6 @@
 package com.shangpin.ice.ice;
 
-import ShangPin.SOP.Entity.Api.Purchase.DeliveryOrderAdd;
-import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
-import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
+import ShangPin.SOP.Entity.Api.Purchase.*;
 import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
 import com.google.gson.Gson;
@@ -39,7 +37,7 @@ public abstract class AbsOrderService {
     private static String  startDate=null,endDate=null;
     private static String  startDateOfWMS=null,endDateOfWMS=null;
     private static final String YYYY_MMDD_HH = "yyyy-MM-dd HH:mm:ss";
-    private static final String YYYY_MMDD_HH_WMS = "yyyy-MM-ddTHH:mm:ss";
+    private static final String YYYY_MMDD_HH_WMS = "yyyy-MM-dd 'T' HH:mm:ss";
 
     static Logger log = LoggerFactory.getLogger(AbsOrderService.class);
 
@@ -105,14 +103,17 @@ public abstract class AbsOrderService {
         //初始化时间
         initDate("date.ini");
 
+        //处理异常
+        handlePurchaseOrderException(supplierId);
+
+        handleCancelPurchaseOrderException(supplierId);
 
         //处理订单
         handleOrderOfSOP(supplierId, supplierNo);
-        //处理下单
+        //处理退单
         cancelOrderFromSOP(supplierNo,supplierId,handleCancel);
 
-        //处理异常
-        handlePurchaseOrderException(supplierId);
+
     }
 
 
@@ -179,8 +180,14 @@ public abstract class AbsOrderService {
             e.printStackTrace();
         }
 
-        // 检查订单是否已经被支付
+        // 检查订单是否已经被支付  若支付修改其状态
         checkPayed(supplierId);
+
+        //处理异常
+        handlePurchaseOrderException(supplierId);
+
+        handleCancelPurchaseOrderException(supplierId);
+
         //处理订单
         handleOrderOfWMS(supplierNo, supplierId, skuMap, orderList);
 
@@ -188,29 +195,71 @@ public abstract class AbsOrderService {
         handleRefundOrderOfWMS(supplierNo, supplierId, skuMap, refundList,handleCancel);
     }
 
+
+
     /**
-     * TODO 检查订单是否支付
+     * 订单确认
      * @param supplierId
      */
-    public void checkPayed(String supplierId){
-        //获取订单数组
-        List<Integer> status = new ArrayList<>();
-        status.add(1);
+    public void confirmOrder(String supplierId){
 
-        Map<String,List<PurchaseOrderDetail>> orderMap = null;
+        List<com.shangpin.iog.dto.OrderDTO>  orderDTOList= null;
         try {
-            orderMap = this.getPurchaseOrder(supplierId, startDateOfWMS, endDateOfWMS, status);
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId,OrderStatus.PAYED);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        if(null!=orderDTOList){
+            for(OrderDTO orderDTO :orderDTOList){
+                //订单支付后的处理
+                handleConfirmOrder(orderDTO);
+                updateOrderMsg(orderDTO);
+            }
+
+        }
+
+    }
+
+    /**
+     * 检查订单是否支付
+     * @param supplierId
+     */
+    private  void checkPayed(String supplierId){
+
+
+        List<OrderDTO>  orderDTOList= null;
+
+        try {
+            //获取已下单的订单信息
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        try {
+            // 获取采购单    更新订单状态
+            OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+            for(OrderDTO orderDTO:orderDTOList){
+
+                PurchaseOrderDetailSpecialPage  orderDetailSpecialPage = servant.FindPurchaseOrderDetailSpecial(supplierId,"",orderDTO.getSpOrderId());
+                if(null!=orderDetailSpecialPage&&null!=orderDetailSpecialPage.PurchaseOrderDetails&&orderDetailSpecialPage.PurchaseOrderDetails.size()>0){  //存在采购单 就代表已支付
+                   //更新其已支付状态
+                    orderDTO.setStatus(OrderStatus.PAYED);
+
+                    productOrderService.update(orderDTO);
+
+                }
+
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //TODO 获取采购单  获取订单信息  更新订单状态
-
-
 
     }
 
 
-
+    /*
+    处理发生错误的订单
+     */
     private void handlePurchaseOrderException(String supplierId){
         //拉取采购单存入本地库
         List<OrderDTO>  orderDTOList= null;
@@ -242,27 +291,41 @@ public abstract class AbsOrderService {
     }
 
     /**
-     * 订单确认
+     * 处理尚未有退单操作记录的异常
      * @param supplierId
      */
-    public void confirmOrder(String supplierId){
-
-        List<com.shangpin.iog.dto.OrderDTO>  orderDTOList= null;
+    private void handleCancelPurchaseOrderException(String supplierId){
+        //拉取采购单存入本地库
+        List<ReturnOrderDTO>  orderDTOList= null;
         try {
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId,OrderStatus.PAYED);
+            orderDTOList  =returnOrderService.getReturnOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITCANCEL);
+            if(null!=orderDTOList){
+
+                for(ReturnOrderDTO deleteOrder:orderDTOList){
+
+                    try {
+                        //处理取消订单
+                        handleCancelOrder(deleteOrder);
+                        //更改退单状态无论成功或失败 还需要更改订单状态
+
+                        updateRefundOrderMsg(deleteOrder);
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        loggerError.error("退单处理失败。失败信息 " + deleteOrder.toString()+" 原因 ：" + e.getMessage() );
+
+                    }
+                }
+            }
+
         } catch (ServiceException e) {
             e.printStackTrace();
         }
-        if(null!=orderDTOList){
-            for(OrderDTO orderDTO :orderDTOList){
-                //订单支付后的处理
-                handleConfirmOrder(orderDTO);
-                updateOrderMsg(orderDTO);
-            }
-
-        }
 
     }
+
+
 
     private void handleOrderOfSOP(String supplierId, String supplierNo) {
         //获取订单数组
@@ -386,7 +449,7 @@ public abstract class AbsOrderService {
             spOrder.setSupplierNo(supplierNo);
             spOrder.setStatus(OrderStatus.WAITPLACED);
             spOrder.setSpOrderId(icewmsOrderDTO.getFormNo());
-            spOrder.setDetail(skuMap.containsKey(icewmsOrderDTO.getSkuNo())+":"+Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
+            spOrder.setDetail(skuMap.get(icewmsOrderDTO.getSkuNo())+":"+Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
             spOrder.setMemo(icewmsOrderDTO.getSkuNo()+":"+icewmsOrderDTO.getChangeForOrderQuantity());
             spOrder.setCreateTime(new Date());
             try {
@@ -422,7 +485,7 @@ public abstract class AbsOrderService {
         //更新订单状态
         Map<String,String> map = new HashMap<>();
 
-        map.put("uuid", spOrder.getUuId());
+        map.put("uuId", spOrder.getUuId());
         map.put("supplierOrderNo",spOrder.getSupplierOrderNo());
         map.put("excState",spOrder.getExcState());
         map.put("excDesc",spOrder.getExcDesc());
@@ -459,7 +522,7 @@ public abstract class AbsOrderService {
             }
 
             ReturnOrderDTO deleteOrder =new ReturnOrderDTO();
-            deleteOrder.setUuId(uuid);
+            deleteOrder.setUuId(order.getUuId());
             deleteOrder.setSupplierId(supplierId);
             deleteOrder.setSupplierNo(supplierNo);
             deleteOrder.setSupplierOrderNo(order.getSupplierOrderNo());
@@ -469,7 +532,7 @@ public abstract class AbsOrderService {
                 deleteOrder.setStatus(OrderStatus.NOHANDLE);
             }
             deleteOrder.setSpOrderId(refundOrder.getFormNo());
-            deleteOrder.setDetail(skuMap.containsKey(refundOrder.getSkuNo())+":"+refundOrder.getChangeForOrderQuantity());
+            deleteOrder.setDetail(skuMap.get(refundOrder.getSkuNo())+":"+refundOrder.getChangeForOrderQuantity());
             deleteOrder.setMemo(refundOrder.getSkuNo()+":"+refundOrder.getChangeForOrderQuantity());
             deleteOrder.setCreateTime(new Date());
             try{
@@ -519,8 +582,34 @@ public abstract class AbsOrderService {
             loggerError.error("退单："+deleteOrder.getUuId()+" 操作成功。但更新订单状态失败 原因:" +e.getMessage());
             System.out.println("退单：" + deleteOrder.getUuId() + " 操作成功。但更新订单状态失败  原因:" +e.getMessage());
             e.printStackTrace();
+
+        }
+        /**
+         * 退单成功时修改订单状态
+         */
+        if(null!=deleteOrder.getExcState()&&"1".equals(deleteOrder.getExcState())){//通知供货商退款异常
+
+        }else{
+            this.updateOrderMsgOnCancelOrder(deleteOrder.getUuId());
+        }
+
+    }
+
+    /**
+     * 当取消订单时 更改订单状态
+     * @param uuId 订单编号
+     */
+    private void updateOrderMsgOnCancelOrder(String uuId){
+        OrderDTO order = null;
+        try {
+            order = productOrderService.getOrderByUuId(uuId);
+            order.setStatus(OrderStatus.CANCELLED);
+            productOrderService.update(order);
+        } catch (ServiceException e) {
+            e.printStackTrace();
         }
     }
+
 
     public void cancelOrderFromSOP(String supplierNo,String supplierId,boolean handleCancel){
 
@@ -544,7 +633,7 @@ public abstract class AbsOrderService {
                 StringBuffer buffer = new StringBuffer();
                 for (PurchaseOrderDetail purchaseOrderDetail : entry.getValue()) {
                     if (stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)) {
-                        buffer.append("'").append(Integer.valueOf(purchaseOrderDetail.SupplierSkuNo)).append("'").append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
+                        buffer.append(purchaseOrderDetail.SupplierSkuNo).append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
                         stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
                     }
                 }
@@ -552,8 +641,8 @@ public abstract class AbsOrderService {
                  * 根据sp_order_id查询UUID
                  */
                 String uuid = productOrderService.getUuIdBySpOrderId(entry.getKey());
-                //存储
-                if(org.apache.commons.lang.StringUtils.isBlank(uuid)){//采购单已到退款状态  未有已支付状态
+
+                if(org.apache.commons.lang.StringUtils.isBlank(uuid)){//采购单已到退款状态  未有已支付状态 为下单 不做存储
                     continue;
                 }
 
@@ -582,7 +671,8 @@ public abstract class AbsOrderService {
                     try {
                         //处理取消订单
                         handleCancelOrder(deleteOrder);
-                        //更改退单状态无论成功或失败
+                        //更改退单状态无论成功或失败 还需要更改订单状态
+
                         updateRefundOrderMsg( deleteOrder);
 
                     } catch (Exception e) {

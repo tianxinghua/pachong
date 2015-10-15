@@ -176,7 +176,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 "ProductOrigin 产地" + splitSign+"productUrl1" + splitSign+ "productUrl2" + splitSign + "productUrl3" + splitSign + "productUrl4"+ splitSign + "productUrl5" + splitSign +
                 "productUrl6" + splitSign + "productUrl7"  + splitSign + "productUrl8" + splitSign + "productUrl9" + splitSign +
                 "PcDesc 描述" +  splitSign + "Stock 库存" + splitSign + "markerPrice" + splitSign  + "sallPrice" +  splitSign  + "supplier Price 进货价" + splitSign+
-                "Currency 币种" + splitSign + "上市季节").append("\r\n");
+                "Currency 币种" + splitSign + "上市季节"+splitSign+"活动开始时间"+splitSign+"活动结束时间").append("\r\n");
         Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize);
 
         //设置尚品网品牌
@@ -196,9 +196,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 categoryName= dto.getSubCategoryName();
                 if(StringUtils.isBlank(categoryName)){
                     categoryName =StringUtils.isBlank(dto.getCategoryName())?"":dto.getCategoryName();
-                    categoryName.replaceAll(splitSign," ");
-                }
 
+                }
+                categoryName.replaceAll(splitSign," ");
                 buffer.append(categoryName).append(splitSign);
 
                 buffer.append("尚品网品类编号").append(splitSign);
@@ -218,7 +218,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 buffer.append(!"".equals(brandId)?brandId :"尚品网品牌编号").append(splitSign);
                 buffer.append(brandName).append(splitSign);
                 //货号
-                buffer.append(dto.getProductCode()).append(splitSign);
+                buffer.append(null==dto.getProductCode()?"":dto.getProductCode().replaceAll(","," ")).append(splitSign);
                 //    供应商SKUID
 
                 buffer.append("\"\t" + dto.getSkuId()+ "\"").append(splitSign);
@@ -330,6 +330,24 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 
                 buffer.append(dto.getStock()).append(splitSign) ;
+                String marketPrice = dto.getMarketPrice();
+                String salePrice = dto.getSalePrice();
+                String supplierPrice = dto.getSupplierPrice();
+                if(marketPrice!=null){
+                	marketPrice = marketPrice.replace(",",".");
+                }else{
+                	marketPrice ="";
+                }
+                if(salePrice!=null){
+                	salePrice = salePrice.replace(",",".");
+                }else{
+                	salePrice ="";
+                }
+                if(supplierPrice!=null){
+                	supplierPrice = supplierPrice.replace(",",".");
+                }else{
+                	supplierPrice ="";
+                }
                 //价格
                 buffer.append(null==dto.getMarketPrice()?" ":dto.getMarketPrice()).append(splitSign)
                   .append(null==dto.getSalePrice()?" ":dto.getSalePrice()).append(splitSign)
@@ -337,8 +355,11 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //季节
 
 
-                buffer.append(null == dto.getSeasonName() ? dto.getSeasonId() : dto.getSeasonName());
-
+                buffer.append(null == dto.getSeasonName() ? dto.getSeasonId() : dto.getSeasonName()).append(splitSign);
+                //活动开始时间
+                buffer.append(null == dto.getEventStartTime() ? " ": dto.getEventStartTime()).append(splitSign);
+                //活动结束时间
+                buffer.append(null == dto.getEventEndTime() ? " ": dto.getEventEndTime());
                 buffer.append("\r\n");
             } catch (Exception e) {
                 logger.debug(dto.getSkuId()+"拉取失败"+  e.getMessage());

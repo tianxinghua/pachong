@@ -74,8 +74,7 @@ public class FetchProduct {
 				Map<String, SpuDTO> spuMap = (Map<String, SpuDTO>) objectIntputStream.readObject();
 				for (SpuDTO dto : spuMap.values()) {
 					dto.setSupplierId(supplierId);
-					if (brandSet.contains(dto.getBrandName().toUpperCase())
-							&& (dto.getCategoryName().equalsIgnoreCase("BAGS") || dto.getCategoryName().equalsIgnoreCase("ACCESSORIES"))) {
+					if (brandSet.contains(dto.getBrandName().toUpperCase())) {
 						dto.setSpuName(dto.getSpuName().split("\r")[0]);
 						dto.setSpuId(dto.getSpuId().trim());
 						spuIdSet.add(dto.getSpuId());

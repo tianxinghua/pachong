@@ -3,6 +3,7 @@ package com.shangpin.iog.reebonz.util;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 
@@ -23,10 +24,22 @@ import com.shangpin.iog.reebonz.dto.ResponseObject;
 public class MyJsonUtil {
 	
 	private static Logger logger = Logger.getLogger("info");
+    private static ResourceBundle bdl=null;
+    private static String eventUrl=null;
+    private static String productUrl=null;
+    private static String stockUrl=null;
+    static {
+        if(null==bdl)
+        	bdl=ResourceBundle.getBundle("conf");
+        eventUrl = bdl.getString("eventUrl");
+        productUrl = bdl.getString("productUrl");
+        stockUrl = bdl.getString("stockUrl");
+    }
+    
 	/**
 	 * 第一步：获取活动信息
 	 * */
-	public static List<Item> getReebonzEventJson(String eventUrl) {
+	public static List<Item> getReebonzEventJson() {
 		String json = null;
 		try {
 			json = HttpUtil45
@@ -43,7 +56,7 @@ public class MyJsonUtil {
 	/**
 	 * 第二步：根据活动获取商品信息
 	 * */
-	public static List<Item> getReebonzSpuJsonByEventId(String productUrl,String eventId,int start,int rows) {
+	public static List<Item> getReebonzSpuJsonByEventId(String eventId,int start,int rows) {
 		
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("event_id", eventId);
@@ -66,7 +79,7 @@ public class MyJsonUtil {
 	/**
 	 * 第三步：根据活动Id和skuId获取库存以及尺码
 	 * */
-	public static List<Item> getSkuScokeJson(String stockUrl,String eventId, String skuId) {
+	public static List<Item> getSkuScokeJson(String eventId, String skuId) {
 
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("event_id", eventId);
@@ -87,7 +100,7 @@ public class MyJsonUtil {
 	/**
 	 *  获取参加某一活动的商品总数
 	 * */
-	public static String getProductNum(String productUrl,String eventId) {
+	public static String getProductNum(String eventId) {
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("event_id", eventId);
 		map.put("start","0");

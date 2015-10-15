@@ -19,7 +19,8 @@
 		<typeAlias alias="iog_discount_history" type="com.shangpin.iog.dto.DiscountHistoryDTO"/>
 		<typeAlias alias="iog_order" type="com.shangpin.iog.dto.OrderDTO"/>
 		<typeAlias alias="iog_returnOrder" type="com.shangpin.iog.dto.ReturnOrderDTO"/>
-
-
+		<typeAlias alias="iog_newPrice" type="com.shangpin.iog.dto.NewPriceDTO"/>
+		<typeAlias alias="iog_count_price" type="com.shangpin.iog.dto.PriceCountDetailDTO"/>
+		<typeAlias alias="iog_event" type="com.shangpin.iog.dto.EventProductDTO"/>
 	</typeAliases>
 </configuration>

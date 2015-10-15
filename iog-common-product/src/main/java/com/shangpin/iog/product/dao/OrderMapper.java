@@ -52,11 +52,19 @@ public interface OrderMapper extends IBaseDao<OrderDTO> {
 
 
     /**
-     * 根据订单获取信息
+     * 根据订单编号获取信息
      * @param spOrderId 订单编号
      * @return
      */
     public OrderDTO findBySpOrderId(@Param("spOrderId")String spOrderId);
+
+
+    /**
+     * 根据订单唯一编号获取信息
+     * @param uuId 订单唯一编号
+     * @return
+     */
+    public OrderDTO findByUuId(@Param("uuId")String uuId);
 
 
     /**

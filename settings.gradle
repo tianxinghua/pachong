@@ -67,7 +67,10 @@ include 'onsite'
 include 'tony-stock'
 include 'tony-purchase'
 include 'atelier'
-include 'alducadaosta'
+include 'atelier-stock'
+include 'atelier-purchase'
+include 'linoricci'
+include 'linoricci-stock'
 
 include 'bagheera-stock'
 
@@ -131,6 +134,12 @@ include 'monnierfreres-stock'
 
 include 'julian-fashion'
 include 'vinicco'
+include 'tizianafausti'
+include 'bernardellistores'
+include 'monnierfreres'
+include 'monnierfreres-stock'
+
+include 'iog-price'
 include 'articoli'
 include 'articoli-stock'
 

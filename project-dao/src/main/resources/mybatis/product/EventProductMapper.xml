@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.EventProductMapper">
+
+	<resultMap id="eventMap" type="iog_event">
+		<result column="SUPPLIER_ID" property="supplierId"  />
+		<result column="SKU_ID" property="skuId"  />
+		<result column="EVENT_ID" property="eventId"  />
+		<result column="END_DATE" property="endDate"  />
+		<result column="START_DATE" property="startDate"  />
+	</resultMap>
+	
+
+    <insert id="save"  parameterType="iog_event" >
+
+        insert into EVENT_PRODUCT(
+        SUPPLIER_ID ,
+        SKU_ID,EVENT_ID,START_DATE,END_DATE,
+        CREATE_DATE)
+        values(
+             #{supplierId}, #{skuId}, #{eventId},#{startDate},#{endDate},
+            #{createTime}
+        )
+    </insert>
+    
+    <select id="selectEventIdBySku" parameterType="java.lang.String" resultMap="eventMap">
+			select EVENT_ID 
+      	 	  	from EVENT_PRODUCT 
+        <where>
+	       SKU_ID =#{skuId}  and SUPPLIER_ID = #{supplierId} order by CREATE_DATE desc limit 1
+        </where>
+	</select>
+	 
+    <select id="checkEventSku" parameterType="java.lang.String" resultMap="eventMap">
+			select END_DATE 
+      	 	  	from EVENT_PRODUCT 
+        <where>
+	       SUPPLIER_ID = #{supplierId} and  SKU_ID =#{sku} order by CREATE_DATE desc limit 1
+        </where>
+	</select>
+	
+	
+</mapper>
