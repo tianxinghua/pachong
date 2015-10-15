@@ -471,6 +471,7 @@ public abstract class AbsUpdateProductStock {
 //						"门户编号：" + supplierId +"，链接异常。请手工拉取库存",
 //						"text/html;charset=utf-8");
 
+
 			}
 
 		} catch (Exception e1) {

@@ -123,6 +123,7 @@ public class StockClientImp extends AbsUpdateProductStock {
         logger.info("gilt更新库存开始");
         giltStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
         logger.info("gilt更新库存结束");
+        HttpUtil45.closePool();
         System.exit(0);
 
     }
