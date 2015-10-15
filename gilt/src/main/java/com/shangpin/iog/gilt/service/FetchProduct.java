@@ -95,6 +95,7 @@ public class FetchProduct {
                 //未包含的不执行
                 if(!map.containsKey(saleId)) continue;
             }
+            System.out.println("sale id " + saleId);
             saleInventoryUrl = sale + "/" + saleId+"/realtime-inventory";
             saleSkuUrl = sale + "/" + saleId + "/skus";
 
@@ -132,6 +133,8 @@ public class FetchProduct {
 
                     saleSkuList=gson.fromJson(skuMsg, new TypeToken<List<GiltSkuDTO>>() {
                     }.getType());
+                    System.out.println(saleId + " quantity = " + saleSkuList.size());
+
                     for(GiltSkuDTO giltSkuDTO:saleSkuList){
                         this.saveProduct(spuMap,giltSkuDTO,inventoryMap,saleDTO);
                     }
@@ -187,8 +190,10 @@ public class FetchProduct {
         String inventory="";
         if(null==inventoryMap||inventoryMap.size()==0) {
              inventory = getInventory(giltSkuDTO.getId());
+             System.out.println(giltSkuDTO.getId() + " ------include " + inventory);
         }else{
             inventory = inventoryMap.containsKey(giltSkuDTO.getId())?inventoryMap.get(giltSkuDTO.getId()):"0";
+            System.out.println(giltSkuDTO.getId() + " no include " + inventory);
         }
 
         if(!"0".equals(inventory)){
