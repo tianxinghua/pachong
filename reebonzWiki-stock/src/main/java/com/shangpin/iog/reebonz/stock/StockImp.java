@@ -98,7 +98,6 @@ public class StockImp extends AbsUpdateProductStock {
         	 return getInventoryByJsonString(jsonStr,size);
          }
     }
-
     private static String getInventoryByJsonString(String jsonStr,String size){
     	ResponseObject obj=null;
         String returnSize = "0";
@@ -110,7 +109,7 @@ public class StockImp extends AbsUpdateProductStock {
       			List<Item> array = new Gson().fromJson(jsonObject.toString(), Items.class).getDocs();
       			if(array.size()>0){
       				for(Item item:array){
-      					if(size.equals(item.getOption_name())){
+      					if(size.equals(item.getOption_code())){
       						returnSize = item.getTotal_stock_qty();
       					}
       				}

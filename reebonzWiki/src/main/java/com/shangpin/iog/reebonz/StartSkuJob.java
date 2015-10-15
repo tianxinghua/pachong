@@ -34,7 +34,7 @@ public class StartSkuJob {
         factory = new AnnotationConfigApplicationContext(AppContext.class);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args){
     
         //加载spring
         loadSpringContext();

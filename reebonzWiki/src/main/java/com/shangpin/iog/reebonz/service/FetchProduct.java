@@ -114,6 +114,7 @@ public class FetchProduct {
 						}
 					} else {
 						// 已存在的活动更新产品
+						flag = false;
 					}
 				}else{
 					//新产品，且未参加过任何活动
