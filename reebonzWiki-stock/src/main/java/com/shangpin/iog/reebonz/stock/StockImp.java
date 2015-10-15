@@ -73,9 +73,6 @@ public class StockImp extends AbsUpdateProductStock {
     	//根据sku从数据库EVENT_PRODUCT查询最新的eventId
     	String eventId=null;
 		try {
-			if(eventProductService==null){
-				eventProductService = new EventProductServiceImpl();
-			}
 			eventId = eventProductService.selectEventIdBySku(skuNo,supplierId);
 		} catch (ServiceException e) {
 			e.printStackTrace();
@@ -111,6 +108,7 @@ public class StockImp extends AbsUpdateProductStock {
       				for(Item item:array){
       					if(size.equals(item.getOption_code())){
       						returnSize = item.getTotal_stock_qty();
+      						break;
       					}
       				}
       			}
