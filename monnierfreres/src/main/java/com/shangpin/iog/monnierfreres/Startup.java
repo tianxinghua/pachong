@@ -1,8 +1,12 @@
 package com.shangpin.iog.monnierfreres;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.apache.log4j.Logger;
+
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.monnierfreres.service.FetchProduct;
 
@@ -20,7 +24,7 @@ public class Startup {
     }
 
     public static void main(String[] args){
-    
+    	
         //加载spring
         loadSpringContext();
         log.info("----初始SPRING成功--1--");
