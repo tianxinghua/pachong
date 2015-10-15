@@ -53,18 +53,24 @@ public class OrderImpl extends AbsOrderService {
 	 */
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
-		orderDTO.setExcState("0");
-		String order_id = orderDTO.getSpOrderId();
-		String order_site = "shangpin";
-		String data = getJsonData(orderDTO.getDetail());
+		try{
+			orderDTO.setExcState("0");
+			String order_id = orderDTO.getSpOrderId();
+			String order_site = "shangpin";
+			String data = getJsonData(orderDTO.getDetail());
 
-		Map<String, String> map = stock.lockStock(order_id, order_site, data);
-		if (map.get("1") != null) {
-			orderDTO.setExcDesc(map.get("1"));
+			Map<String, String> map = stock.lockStock(order_id, order_site, data);
+			if (map.get("1") != null) {
+				orderDTO.setExcDesc(map.get("1"));
+				orderDTO.setExcState("1");
+			} else {
+				orderDTO.setSupplierOrderNo(map.get("0"));
+				orderDTO.setStatus(OrderStatus.PLACED);
+			}
+		}catch (Exception e) {
+			orderDTO.setExcDesc(e.getMessage());
 			orderDTO.setExcState("1");
-		} else {
-			orderDTO.setSupplierOrderNo(map.get("0"));
-			orderDTO.setStatus(OrderStatus.PLACED);
+			e.printStackTrace();
 		}
 	}
 
@@ -73,18 +79,24 @@ public class OrderImpl extends AbsOrderService {
 	 */
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
-
-		String data = getJsonData(orderDTO.getDetail());
-		Map<String, String> map = null;
-		map = stock.pushOrder(orderDTO.getSupplierOrderNo(),
-				orderDTO.getSpOrderId(), orderDTO.getSpPurchaseNo(), data);
-		// 1：代表发生了异常
-		if (map.get("1") != null) {
-			orderDTO.setExcDesc(map.get("1"));
+		
+		try{
+			String data = getJsonData(orderDTO.getDetail());
+			Map<String, String> map = null;
+			map = stock.pushOrder(orderDTO.getSupplierOrderNo(),
+					orderDTO.getSpOrderId(), orderDTO.getSpPurchaseNo(), data);
+			// 1：代表发生了异常
+			if (map.get("1") != null) {
+				orderDTO.setExcDesc(map.get("1"));
+				orderDTO.setExcState("1");
+			} else {
+				orderDTO.setStatus(OrderStatus.CONFIRMED);
+				orderDTO.setSupplierOrderNo(map.get("return_orderID"));
+			}
+		}catch(Exception e){
+			orderDTO.setExcDesc(e.getMessage());
 			orderDTO.setExcState("1");
-		} else {
-			orderDTO.setStatus(OrderStatus.CONFIRMED);
-			orderDTO.setSupplierOrderNo(map.get("return_orderID"));
+			e.printStackTrace();
 		}
 	}
 
@@ -93,15 +105,21 @@ public class OrderImpl extends AbsOrderService {
 	 */
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
-		Map<String, String> map = null;
-		map = stock.unlockStock(deleteOrder.getSupplierOrderNo(),
-				deleteOrder.getSpOrderId(), deleteOrder.getSpOrderId(),
-				"voided");// deducted" (for confirmation) "voided" (for reversal)
-		if (map.get("1") != null) {
-			deleteOrder.setExcDesc(map.get("1"));
+		try{
+			Map<String, String> map = null;
+			map = stock.unlockStock(deleteOrder.getSupplierOrderNo(),
+					deleteOrder.getSpOrderId(), deleteOrder.getSpOrderId(),
+					"voided");// deducted" (for confirmation) "voided" (for reversal)
+			if (map.get("1") != null) {
+				deleteOrder.setExcDesc(map.get("1"));
+				deleteOrder.setExcState("1");
+			} else {
+				deleteOrder.setStatus(OrderStatus.CANCELLED);
+			}
+		}catch(Exception e){
+			deleteOrder.setExcDesc(e.getMessage());
 			deleteOrder.setExcState("1");
-		} else {
-			deleteOrder.setStatus(OrderStatus.CANCELLED);
+			e.printStackTrace();
 		}
 	}
 
