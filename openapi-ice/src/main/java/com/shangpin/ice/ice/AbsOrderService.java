@@ -162,24 +162,27 @@ public abstract class AbsOrderService {
         Map<String,String> skuMap = new HashMap<>();
         List<ICEWMSOrderDTO> orderList = new ArrayList<>();
         List<ICEWMSOrderDTO> refundList = new ArrayList<>();
-        for(ICEWMSOrderDTO icewmsOrderDTO:orderDTOList){
-            SkuRelationDTO skuRelationDTO= null;
-            if(icewmsOrderDTO.getChangeForOrderQuantity()<0){   //订单
-                orderList.add(icewmsOrderDTO);
-            }else{
-                refundList.add(icewmsOrderDTO);
-            }
-            try {
-                skuRelationDTO=  skuRelationService.getSkuRelationBySkuId(icewmsOrderDTO.getSkuNo());
-                if(null!=skuRelationDTO){
-                    skuMap.put(skuRelationDTO.getSopSkuId(), skuRelationDTO.getSupplierSkuId());
-                }else{   //获取供货商的SKU编号
-
+        if(null!=orderDTOList) {
+            for(ICEWMSOrderDTO icewmsOrderDTO:orderDTOList){
+                SkuRelationDTO skuRelationDTO= null;
+                if(icewmsOrderDTO.getChangeForOrderQuantity()<0){   //订单
+                    orderList.add(icewmsOrderDTO);
+                }else{
+                    refundList.add(icewmsOrderDTO);
                 }
-            } catch (ServiceException e) {
-                e.printStackTrace();
+                try {
+                    skuRelationDTO=  skuRelationService.getSkuRelationBySkuId(icewmsOrderDTO.getSkuNo());
+                    if(null!=skuRelationDTO){
+                        skuMap.put(skuRelationDTO.getSopSkuId(), skuRelationDTO.getSupplierSkuId());
+                    }else{   //获取供货商的SKU编号
+
+                    }
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
         try {
             //获取真正的供货商SKUID
             this.getSupplierSkuId(skuMap);

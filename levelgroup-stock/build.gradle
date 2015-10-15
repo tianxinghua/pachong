@@ -22,7 +22,7 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.levelgroup.stock.LevelGroupStockImpl'
+        attributes 'Main-Class': 'com.shangpin.iog.levelgroup.stock.LevelGroupStockImp'
 //        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
         attributes 'Class-Path': '. ./conf/  ' + manifestCp
     }
