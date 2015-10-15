@@ -11,11 +11,10 @@ public class StringUtil {
      */
     public static void main(String[] args) {
 
-        String s = "{\"status\":\"ok\",\"data\":{\"categories\":[{\"_id\":{\"$id\":\"55fab44028499f25010041a7\"},\"name\":\"Clutch\",\"master\":true},{\"_id\":{\"$id\":\"55fab45d28499f55050041a7\"},\"name\":\"Valigeria\",\"master\":true},{\"_id\":{\"$id\":\"55fab46428499f55050041a8\"},\"name\":\"Borsa a tracolla\",\"parent\":{\"$id\":\"55fab45d28499f55050041a7\"}},{\"_id\":{\"$id\":\"55fab46e28499f55050041a9\"},\"name\":\"Zaino\",\"parent\":{\"$id\":\"55fab45d28499f55050041a7\"}},{\"_id\":{\"$id\":\"55fab47628499f25010041a8\"},\"name\":\"Borsa a mano\",\"parent\":{\"$id\":\"55fab45d28499f55050041a7\"}},{\"_id\":{\"$id\":\"55fab48428499f53050041a8\"},\"name\":\"Abbigliamento\",\"master\":true},{\"_id\":{\"$id\":\"55fab48a28499f54050041a7\"},\"name\":\"Accessori\",\"parent\":{\"$id\":\"55fab48428499f53050041a8\"}},{\"_id\":{\"$id\":\"55fab48e28499f54050041a8\"},\"name\":\"Cappello\",\"parent\":{\"$id\":\"55fab48a28499f54050041a7\"}},{\"_id\":{\"$id\":\"55fab49928499f57050041a7\"},\"name\":\"Maglia\",\"parent\":{\"$id\":\"55fab48428499f53050041a8\"}},{\"_id\":{\"$id\":\"55fab49e28499f55050041aa\"},\"name\":\"Abito\",\"parent\":{\"$id\":\"55fab48428499f53050041a8\"}},{\"_id\":{\"$id\":\"55fab4a828499f51050041a7\"},\"name\":\"Top\",\"parent\":{\"$id\":\"55fab48428499f53050041a8\"}},{\"_id\":{\"$id\":\"55fab4ae28499f51050041a8\"},\"name\":\"Scarpe\",\"master\":true},{\"_id\":{\"$id\":\"55fab4b528499f52050041a7\"},\"name\":\"Scarpe col tacco\",\"parent\":{\"$id\":\"55fab4ae28499f51050041a8\"}}]}}";
-       String id = "55fab44028499f25010041a7";
+        String id = "\"561ddae32ec771f6c9f23bf6\"}";
         //System.out.println(localFile);
         System.out.println("00000000000000000000000000000");
-        System.out.println(StringUtil.getCategoryNameByID(id, s));
+        System.out.println(StringUtil.getSkuID(id));
     }
 
 
@@ -26,10 +25,38 @@ public class StringUtil {
     public static String getCategoryID(String categoryId){
         return categoryId.substring(4,28);
     }
-        /**
-         *get tony Category Name by id
-         */
-        public static String getCategoryNameByID(String categoryId,String categoryJson){
+
+    /**
+     *get SKU ID
+     */
+    public static String getSkuID(Object skuId){
+        return skuId.toString().substring(1,25);
+    }
+
+    /**
+     *get Product Size
+     */
+    public static String getProductSize(String skuId){
+        if (!skuId.contains("_") || !skuId.contains("-"))
+            return "";
+        return skuId.split("_")[1].split("-")[1];
+    }
+
+    /**
+     *get Product Size
+     */
+    public static String getProductCode(String skuId){
+        if (!skuId.contains("_") || !skuId.contains("-"))
+            return "";
+        return skuId.split("_")[1].split("-")[0];
+    }
+    /**
+     *get tony Category Name by id
+     */
+    public static String getCategoryNameByID(String categoryId,String categoryJson){
+            if (!categoryJson.contains(categoryId)){
+                return "";
+            }
         String str = categoryJson.substring(categoryJson.indexOf(categoryId),categoryJson.indexOf(categoryId)+50);
         System.out.println("==========str==========");
         System.out.println(str);
@@ -74,4 +101,11 @@ public class StringUtil {
         }
         return str;
     }
+    /**
+     *截取标准产品字符串
+     */
+    public String getItemsArray(String json){
+        return  json.substring(json.indexOf("["), json.length() - 2).replaceAll("\\$", "");
+    }
+
 }
