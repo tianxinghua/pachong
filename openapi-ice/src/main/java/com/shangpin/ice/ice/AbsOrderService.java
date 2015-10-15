@@ -485,7 +485,7 @@ public abstract class AbsOrderService {
         //更新订单状态
         Map<String,String> map = new HashMap<>();
 
-        map.put("uuid", spOrder.getUuId());
+        map.put("uuId", spOrder.getUuId());
         map.put("supplierOrderNo",spOrder.getSupplierOrderNo());
         map.put("excState",spOrder.getExcState());
         map.put("excDesc",spOrder.getExcDesc());
