@@ -56,40 +56,6 @@ public class ReservationProStock {
 		}
 	}
 
-	public static void main(String[] args) {
-		String detail = "XXM0GW05470RE0C407|1000|SH2060:1";
-		List<RequestObject> list = null;
-		if (detail != null) {
-			list = new ArrayList<RequestObject>();
-			String[] details = detail.split(",");
-			for (int i = 0; i < details.length; i++) {
-				// detail[i]数据格式==>skuId:数量
-				String num = details[i].split(":")[1];
-				String skuNo = details[i].split(":")[0];
-				// skuNo数据格式：skuId|eventId|option_code
-				String skuIDs[] = skuNo.split("\\|");
-
-				RequestObject obj = new RequestObject();
-				obj.setSku(skuIDs[0]);
-				obj.setEvent_id(skuIDs[1]);
-				String code = skuIDs[2];
-				if ("A".equals(code)) {
-					obj.setOption_code("");
-				} else {
-					obj.setOption_code(code);
-				}
-				obj.setQty(num);
-				list.add(obj);
-			}
-		}
-		JSONArray array = JSONArray.fromObject(list);
-//
-		ReservationProStock m = new ReservationProStock();
-//		m.lockStock("123456", "shangpin", array.toString());
-//		m.unlockStock("2633","123456","","voided");
-//		m.pushOrder("2632","123456","",array.toString());
-	}
-
 	/*
 	 * 锁库存
 	 */

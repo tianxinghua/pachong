@@ -64,8 +64,7 @@ public class DownloadAndReadCSV {
     }
     public static List<Product> readLocalCSV() throws Exception {
         
-//    	String realPath=downloadNet();
-    	String realPath = "c:/lengow_feed(2).csv";
+    	String realPath=downloadNet();
         String rowString = null;
         List<Product> dtoList = new ArrayList<Product>();
     	String[] split = null;
@@ -100,7 +99,6 @@ public class DownloadAndReadCSV {
 			product.setSubCategory(colValueList.get(colNameList.indexOf("subtype")));
 			product.setColor(colValueList.get(colNameList.indexOf("color")));
 			product.setDescription(colValueList.get(colNameList.indexOf("description")));
-//			product.setGender(colValueList.get(colNameList.indexOf("gender")));
 			String[] img = new String[5];
 			if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("image_url_1")))) {
 				img[0] = colValueList.get(colNameList.indexOf("image_url_1"));
@@ -134,49 +132,12 @@ public class DownloadAndReadCSV {
 		}
         return dtoList;
     }
- private static List<Map<String,String>> list = new ArrayList<Map<String,String>>();
-    private static void writerJSON(List<String> colNameList,
-			List<String> colValueList) {
-    	
-    	Map<String,String> map = new HashMap<String,String>();
-    	
-    	for(int i=0;i<colNameList.size();i++){
-    		map.put(colNameList.get(i),colValueList.get(i));
-    	}
-    	list.add(map);
-	}
 	public static String getPath(String realpath){
-        //Date dt=new Date();
-        SimpleDateFormat matter1=new SimpleDateFormat("yyyy-MM-ddHH");
-        //String date=matter1.format(dt).replaceAll("-","").trim();
-        //realpath = realpath+"_"+date+".csv";
-        realpath = realpath+".csv";
+		   Date dt=new Date();
+	        SimpleDateFormat matter1=new SimpleDateFormat("yyyy-MM-ddHH");
+	        String date=matter1.format(dt).replaceAll("-","").trim();
+        realpath = realpath+"_"+date+".csv";
         return realpath;
     }
-   public static void main(String[] args) {
-        try {
-        	System.out.println("下载中");
-        	readLocalCSV();
-        	JSONArray jsonObject = JSONArray.fromObject(list);
-        	  //字符串保存到本地文件中
-        	String file = "C:/json.txt";
-            	FileWriter fwriter = null;
-            	   try {
-            	    fwriter = new FileWriter(file);
-            	    fwriter.write(jsonObject.toString());
-            	   } catch (Exception ex) {
-            	    ex.printStackTrace();
-            	   } finally {
-            	    try {
-            	     fwriter.flush();
-            	     fwriter.close();
-            	    } catch (Exception ex) {
-            	     ex.printStackTrace();
-            	    }
-            	   }
-            		System.out.println("下载wan");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	
 }

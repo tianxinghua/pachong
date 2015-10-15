@@ -3,6 +3,7 @@ package com.shangpin.ice.ice;
 import ShangPin.SOP.Entity.Api.Purchase.*;
 import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -18,6 +19,7 @@ import com.shangpin.iog.ice.dto.*;
 import com.shangpin.iog.service.ReturnOrderService;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.SkuRelationService;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -44,10 +46,15 @@ public abstract class AbsOrderService {
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
     private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
 
-    static String url="/purchase/createdeliveryorder";
-
-
-
+//    static String url="/purchase/createdeliveryorder";
+    private static ResourceBundle bdl = null;
+    private static  String url = null;
+	static {
+		 if(null==bdl){
+			 bdl=ResourceBundle.getBundle("conf");
+		 }
+		 url = bdl.getString("url");
+	}
 
     @Autowired
 	public SkuPriceService skuPriceService;
@@ -135,7 +142,7 @@ public abstract class AbsOrderService {
         String jsonParameter= "="+ gson.toJson(dto);
         String result ="";
         try {
-            result =  HttpUtil45.operateData("post","form","http://wmsinventory.liantiao.com/Api/StockQuery/SupplierInventoryLogQuery",new OutTimeConfig(1000*5,1000*5,1000*5),null,
+            result =  HttpUtil45.operateData("post","form",url+"/Api/StockQuery/SupplierInventoryLogQuery",new OutTimeConfig(1000*5,1000*5,1000*5),null,
                     jsonParameter,"","");
             logger.info("获取的订单信息为:" + result);
             System.out.println("kk = " + result);
@@ -485,7 +492,7 @@ public abstract class AbsOrderService {
         //更新订单状态
         Map<String,String> map = new HashMap<>();
 
-        map.put("uuid", spOrder.getUuId());
+        map.put("uuId", spOrder.getUuId());
         map.put("supplierOrderNo",spOrder.getSupplierOrderNo());
         map.put("excState",spOrder.getExcState());
         map.put("excDesc",spOrder.getExcDesc());
