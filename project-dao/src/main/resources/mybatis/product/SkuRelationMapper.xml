@@ -62,12 +62,16 @@
     </select>
 
 
-    <select id="getSkuRelationBySopSkuId"  resultType="iog_sku_relation">
+    <select id="getSkuRelationBySopSkuId"  resultMap="skuMap">
         select
-        <include refid="all_sku_column"></include>
+        SUPPLIER_ID ,
+		SOP_NO,
+		SOP_SKU_ID,
+		SUPPLIER_SKU_ID,
+        CREATE_TIME
         from SKU_RELATION
 
-        where        SOP_SKU_ID = #{sopSkuId}
+        where  SOP_SKU_ID=#{sopSkuId}
 
 
     </select>

@@ -37,7 +37,7 @@ public abstract class AbsOrderService {
     private static String  startDate=null,endDate=null;
     private static String  startDateOfWMS=null,endDateOfWMS=null;
     private static final String YYYY_MMDD_HH = "yyyy-MM-dd HH:mm:ss";
-    private static final String YYYY_MMDD_HH_WMS = "yyyy-MM-ddTHH:mm:ss";
+    private static final String YYYY_MMDD_HH_WMS = "yyyy-MM-dd 'T' HH:mm:ss";
 
     static Logger log = LoggerFactory.getLogger(AbsOrderService.class);
 
@@ -449,7 +449,7 @@ public abstract class AbsOrderService {
             spOrder.setSupplierNo(supplierNo);
             spOrder.setStatus(OrderStatus.WAITPLACED);
             spOrder.setSpOrderId(icewmsOrderDTO.getFormNo());
-            spOrder.setDetail(skuMap.containsKey(icewmsOrderDTO.getSkuNo())+":"+Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
+            spOrder.setDetail(skuMap.get(icewmsOrderDTO.getSkuNo())+":"+Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
             spOrder.setMemo(icewmsOrderDTO.getSkuNo()+":"+icewmsOrderDTO.getChangeForOrderQuantity());
             spOrder.setCreateTime(new Date());
             try {
@@ -532,7 +532,7 @@ public abstract class AbsOrderService {
                 deleteOrder.setStatus(OrderStatus.NOHANDLE);
             }
             deleteOrder.setSpOrderId(refundOrder.getFormNo());
-            deleteOrder.setDetail(skuMap.containsKey(refundOrder.getSkuNo())+":"+refundOrder.getChangeForOrderQuantity());
+            deleteOrder.setDetail(skuMap.get(refundOrder.getSkuNo())+":"+refundOrder.getChangeForOrderQuantity());
             deleteOrder.setMemo(refundOrder.getSkuNo()+":"+refundOrder.getChangeForOrderQuantity());
             deleteOrder.setCreateTime(new Date());
             try{

@@ -23,7 +23,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.itemInfo.utils.SoapXmlUtil;
 
-@Component("amandaStock")
+@Component("alducaStock")
 public class GrabStockImp extends AbsUpdateProductStock {
 
 	private static Logger logger = Logger.getLogger("info");
@@ -101,37 +101,8 @@ public class GrabStockImp extends AbsUpdateProductStock {
 				try {
 					body = soapMessage.getSOAPBody();
 					Iterator<SOAPElement> iterator = body.getChildElements();
-					while(iterator.hasNext()){
-						SOAPElement element = iterator.next();
-						if(element.getNodeName().equals("SkuStok") && element.getChildElements().hasNext()){
-							Iterator<SOAPElement> iteratorSku = element.getChildElements();
-							String skuId = "";
-							String stock = "";
-							while(iteratorSku.hasNext()){
-								SOAPElement elementSku = iteratorSku.next();
-								String nodeName = elementSku.getNodeName();
-								if(nodeName.equals("sku_id")){  //必填
-									if(elementSku.getValue() != null){
-										skuId = elementSku.getValue();
-									}else{
-										break;
-									}
-								}else if(nodeName.equals("stock")){  //必填
-									if(elementSku.getValue() != null){
-										stock = elementSku.getValue();
-									}else{
-										break;
-									}
-								}
-							}
-							if(StringUtils.isNotBlank(skuId) && StringUtils.isNotBlank(stock)){
-								stockMap.put(skuId, stock);
-							}
-							
-						}else if(element.getChildElements().hasNext()){
-							continue;
-						}
-					}
+					getSkuStockCollection(iterator,stockMap);
+					
 				} catch (SOAPException e) {
 					e.printStackTrace();
 				}
@@ -153,6 +124,46 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		return skustock;
 	}
 	
+	/**
+	 * 返回抓取的sku-stock map
+	 * @param iterator
+	 * @param stockMap
+	 */
+	public void getSkuStockCollection(Iterator<SOAPElement> iterator,Map<String,String> stockMap){
+		
+		while(iterator.hasNext()){
+			SOAPElement element = iterator.next();
+			if(element.getNodeName().equals("SkuStok") && element.getChildElements().hasNext()){
+				Iterator<SOAPElement> iteratorSku = element.getChildElements();
+				String skuId = "";
+				String stock = "";
+				while(iteratorSku.hasNext()){
+					SOAPElement elementSku = iteratorSku.next();
+					String nodeName = elementSku.getNodeName();
+					if(nodeName.equals("sku_id")){  //必填
+						if(elementSku.getValue() != null){
+							skuId = elementSku.getValue();
+						}else{
+							break;
+						}
+					}else if(nodeName.equals("stock")){  //必填
+						if(elementSku.getValue() != null){
+							stock = elementSku.getValue();
+						}else{
+							break;
+						}
+					}
+				}
+				if(StringUtils.isNotBlank(skuId) && StringUtils.isNotBlank(stock)){
+					stockMap.put(skuId, stock);
+				}
+				
+			}else if(element.getChildElements().hasNext()){
+				getSkuStockCollection(element.getChildElements(),stockMap);
+			}
+		}
+	}
+	
 	public static void main(String[] args) throws Exception{
 		
 		AbsUpdateProductStock grabStockImp = new GrabStockImp();
@@ -168,6 +179,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
 //			ff.createNewFile();
 //		}
 //		System.out.println(ss);
+//		GrabStockImp g = new GrabStockImp();
+//		g.grabStock(null);
+		
 	} 
 
 }
