@@ -138,7 +138,7 @@ public class OrderImpl extends AbsOrderService {
 				RequestObject obj = new RequestObject();
 				obj.setSku(skuIDs[0]);
 				try {
-					String eventId = eventProductService.selectEventIdBySku(skuIDs[0], "201509261518");
+					String eventId = eventProductService.selectEventIdBySku(skuIDs[0], supplierId);
 					obj.setEvent_id(eventId);
 				} catch (ServiceException e) {
 					// TODO Auto-generated catch block

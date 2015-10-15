@@ -23,4 +23,6 @@ public interface EventProductService {
 
 	public String selectEventIdBySku(String skuNo,String supplierId) throws ServiceException;
 
+	public EventProductDTO checkEventSku(String supplierId, String sku) throws ServiceException;
+
 }

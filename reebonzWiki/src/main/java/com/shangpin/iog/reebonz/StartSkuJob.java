@@ -10,7 +10,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
+import java.util.TimeZone;
 
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.reebonz.service.FetchProduct;
@@ -32,11 +35,7 @@ public class StartSkuJob {
     }
 
     public static void main(String[] args) throws Exception {
-    	
-    	String s ="1.0";
-    	if(Double.parseDouble(s)==1){
-    		s="2";
-    	}
+    
         //加载spring
         loadSpringContext();
         log.info("----初始SPRING成功--1--");

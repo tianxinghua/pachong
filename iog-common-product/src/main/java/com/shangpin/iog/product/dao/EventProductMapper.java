@@ -12,4 +12,6 @@ import com.shangpin.iog.dto.SpuDTO;
 public interface EventProductMapper extends IBaseDao<EventProductDTO> {
 
 	public EventProductDTO selectEventIdBySku(@Param("skuId")String skuId,@Param("supplierId")String supplierId);
+
+	public EventProductDTO checkEventSku(@Param("supplierId")String supplierId,@Param("sku")String sku);
 }

@@ -83,7 +83,7 @@ public class StockImp extends AbsUpdateProductStock {
     	Map<String,String> map = new HashMap<String,String>();
     	String jsonStr = null;
     	if(eventId!=null){
-    		map.put("event_id", eventId+"1");
+    		map.put("event_id", eventId);
     		map.put("sku", skuNo);
     		jsonStr =  HttpUtil45
     				.get(stockUrl,
