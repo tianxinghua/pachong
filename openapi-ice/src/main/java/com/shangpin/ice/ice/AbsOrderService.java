@@ -522,7 +522,7 @@ public abstract class AbsOrderService {
             }
 
             ReturnOrderDTO deleteOrder =new ReturnOrderDTO();
-            deleteOrder.setUuId(uuid);
+            deleteOrder.setUuId(order.getUuId());
             deleteOrder.setSupplierId(supplierId);
             deleteOrder.setSupplierNo(supplierNo);
             deleteOrder.setSupplierOrderNo(order.getSupplierOrderNo());

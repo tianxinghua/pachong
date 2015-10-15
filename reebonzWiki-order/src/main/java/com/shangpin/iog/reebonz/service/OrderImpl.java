@@ -41,7 +41,7 @@ public class OrderImpl extends AbsOrderService {
 	}
 	
 	public void loopExecute() {
-		this.checkoutOrderFromWMS(supplierNo, supplierId, false);
+		this.checkoutOrderFromWMS(supplierNo, supplierId, true);
 	}
 
 	public void confirmOrder() {
