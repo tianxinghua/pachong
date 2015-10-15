@@ -102,7 +102,12 @@ public class FetchProduct {
                             sku.setSupplierId(supplierId);
                             try {
                                 productFetchService.saveSKU(sku);
-                                spuMap.put(key,"");
+                                if(spuMap.containsKey(key)){
+                                	spuMap.put(key,spuMap.get(key)+","+ sku.getSkuId());
+                                }else{
+                                	spuMap.put(key,sku.getSkuId());
+                                }
+                                
                                 logger.info("key"+key);
                             }catch (Exception e) {
                                 try {
@@ -150,22 +155,31 @@ public class FetchProduct {
     }
     public void savePic(String url,Map<String,String>returnMap){
         List<org.jdom2.Element>picList = XmlReader.getPictureElement(url);
+        String skuId="";
         for (org.jdom2.Element element:picList){
         	
         	logger.info( " RF_RECORD_ID = " + element.getChildText("RF_RECORD_ID"));
             if(returnMap.containsKey(element.getChildText("RF_RECORD_ID"))){
-            	logger.info( "contain key  RF_RECORD_ID = " + element.getChildText("RF_RECORD_ID"));
-                ProductPictureDTO dto  = new ProductPictureDTO();
-                dto.setPicUrl(element.getChildText("RIFERIMENTO"));
-                dto.setId(UUIDGenerator.getUUID());
-                dto.setSupplierId(supplierId);
-                dto.setSpuId(element.getChildText("RF_RECORD_ID"));
-                //dto.setSpuId("");
-                try {
-                    productFetchService.savePictureForMongo(dto);
-                } catch (ServiceException e) {
-                    e.printStackTrace();
-                }
+//            	logger.info( "contain key  RF_RECORD_ID = " + element.getChildText("RF_RECORD_ID"));
+            	skuId = returnMap.get(element.getChildText("RF_RECORD_ID"));
+            	String[] skuArray = skuId.split(",");
+            	if(null!=skuArray){
+            		for(String sku :skuArray){
+                		ProductPictureDTO dto  = new ProductPictureDTO();
+                        dto.setPicUrl(element.getChildText("RIFERIMENTO"));
+                        dto.setId(UUIDGenerator.getUUID());
+                        dto.setSupplierId(supplierId);
+                        dto.setSkuId(sku);
+                        //dto.setSpuId("");
+                        try {
+                            productFetchService.savePictureForMongo(dto);
+                        } catch (ServiceException e) {
+                            e.printStackTrace();
+                        }
+                	}
+                    
+            	}
+            	
             }
         }
     }

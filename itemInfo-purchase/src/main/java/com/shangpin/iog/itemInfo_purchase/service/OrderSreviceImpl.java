@@ -33,7 +33,7 @@ import com.shangpin.iog.itemInfo.utils.SoapXmlUtil;
  * @author sunny
  *
  */
-@Component("amandaOrder")
+@Component("alducaOrder")
 public class OrderSreviceImpl extends AbsOrderService {
 	
 	@Autowired
@@ -75,7 +75,7 @@ public class OrderSreviceImpl extends AbsOrderService {
 									"  <soap12:Body>"+
 									"    <InsertOrder xmlns=\"http://service.alducadaosta.com/EcSrv\">"+
 									"      <Identifier>Mosu</Identifier>"+
-									"      <Order>"+order+"</Order>"+     //"+order+"
+									"      <Order>Mosu Test</Order>"+     //"+order+"
 									"      <SkuID>"+tem[0].trim()+"</SkuID>"+
 									"      <Quantity>"+tem[1].trim()+"</Quantity>"+  //
 									"    </InsertOrder>"+
@@ -87,28 +87,6 @@ public class OrderSreviceImpl extends AbsOrderService {
 					String str = SoapXmlUtil.getSoapXml(serviceUrl, sopAction, contentType, soapRequestData);
 					System.out.println("str=====" +str);
 					if(str != null){
-						/*SOAPMessage soapMessage = SoapXmlUtil.formatSoapString(str);
-						if(soapMessage != null){
-							NodeList nodeList = soapMessage.getSOAPBody().getChildNodes();
-							for(int i=0;i<nodeList.getLength();i++){
-								Node element = nodeList.item(i);
-								if(element.getNodeName().equals("InsertOrderResult")){
-									String retMessage = element.getNodeValue();
-									if(retMessage.equals("OK")){//下单成功
-										spOrder.setStatus(OrderStatus.PAYED);
-										System.out.println("下单成功*********");
-									}else if(retMessage.equals("Fail, No Stock!")){//下单失败，无库存
-										logger.info("下单失败：该商品没有库存");
-									}else if(retMessage.equals("OK, but only: 1")){//下单失败，库存不够
-										logger.info("下单失败：库存只有 1 件 ");
-									}else{
-										logger.info("下单失败："+retMessage);
-									}
-									break;
-								}
-							}
-						}*/
-						
 						String startStr = "<InsertOrderResult>";
 						String endStr = "</InsertOrderResult>";
 						String retMessage = str.substring(str.indexOf(startStr)+startStr.length(), str.indexOf(endStr));
@@ -116,9 +94,9 @@ public class OrderSreviceImpl extends AbsOrderService {
 							spOrder.setStatus(OrderStatus.PAYED);
 							System.out.println("下单成功*********");
 						}else if(retMessage.equals("Fail, No Stock!")){//下单失败，无库存
-							logger.info("下单失败：该商品没有库存");
+							logger.info("下单失败：该商品没有库存("+retMessage+") ");
 						}else if(retMessage.equals("OK, but only: 1")){//下单失败，库存不够
-							logger.info("下单失败：库存只有 1 件 ");
+							logger.info("下单失败：库存只有 1 件("+retMessage+") ");
 						}else{
 							logger.info("下单失败："+retMessage);
 						}
@@ -169,11 +147,12 @@ public class OrderSreviceImpl extends AbsOrderService {
 		
 	}
 	
-	public static void main(String[] args){
-		OrderSreviceImpl o = new OrderSreviceImpl();
-		OrderDTO spOrder = new OrderDTO();
-		spOrder.setSpOrderId("Mosu Test");
-		spOrder.setDetail("910042603901:1");
-		o.handleSupplierOrder(spOrder);
-	}
+//	public static void main(String[] args){
+//		OrderSreviceImpl o = new OrderSreviceImpl();
+//		OrderDTO spOrder = new OrderDTO();
+//		spOrder.setSpOrderId("Mosu Test");
+//		spOrder.setDetail("910042603901:1");
+//		o.handleSupplierOrder(spOrder);
+//		o.start();
+//	}
 }
