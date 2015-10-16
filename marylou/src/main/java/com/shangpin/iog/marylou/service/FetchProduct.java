@@ -94,6 +94,7 @@ public class FetchProduct {
                     sku.setProductSize(itemSize);
                     sku.setSaleCurrency(item.getPrice_currency());
                     sku.setSupplierPrice(item.getSupply_price());
+                    sku.setMarketPrice(item.getMarket_price());
                     sku.setColor(product.getColor());
                     sku.setProductDescription(product.getDescription());
                     sku.setStock(item.getStock());
