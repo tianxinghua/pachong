@@ -54,6 +54,7 @@ public class FetchProduct {
         //get tony Category data
         String skuId = "";
         String spuId = "";
+        String material = "";
         Map<String,String> map = new HashMap<>();
 
 /*        for(Items item:array){
@@ -64,7 +65,7 @@ public class FetchProduct {
 
         for(Items item:array){
             skuId = item.getSku();
-            spuId = spuId.split("_")[0];
+            spuId = StringUtil.getSpuId(skuId);
 
             //
             SkuDTO sku  = new SkuDTO();
@@ -114,6 +115,10 @@ public class FetchProduct {
                     e1.printStackTrace();
                 }
             }
+/*            if (StringUtil.getMaterial(item.getDesc()) == null || "".equals(StringUtil.getMaterial(item.getDesc()))){
+                System.out.println(skuId+"======================================================");
+                continue;
+            }*/
             //System.out.println(sku.getSupplierId()+"------------------------------------------");
             SpuDTO spu = new SpuDTO();
             try {
@@ -124,13 +129,20 @@ public class FetchProduct {
                 String categoryId = StringUtil.getCategoryID(item.getCat_id().toString());
                 spu.setCategoryId(categoryId);
                 spu.setCategoryName(StringUtil.getCategoryNameByID(categoryId, categoriesJson));
+
                 //spu.setSpuName(item.getTitle_en());
                 spu.setSeasonId(item.getSeason());
-                //spu.setMaterial(item.getMaterial_en());
+                material = StringUtil.getMaterial(item.getDesc());
+                if ("".equals(material)){
+                    material = StringUtil.getMaterial(item.getDesc_en());
+                }
+                spu.setMaterial(material);
                 spu.setCategoryGender(item.getSex());
                 //System.out.println(spuId+"======================================");
                 productFetchService.saveSPU(spu);
+
             } catch (ServiceException e) {
+                System.out.println(spu.getSpuId());
                 //e.printStackTrace();
             }
         }

@@ -13,16 +13,70 @@ public class Items {
     private String sex;
     private String title;
     private Object cat_ids;
+    private String shopCatId;
     private String season;
+    private String shopId;
     private String sku;
     private String brand;
     private String barcode;
     private String age;
     private String desc;
+    private String size;
+    private String desc_en;
+    private String title_en;
+    private String color_en;
     private String qty;
     private String stock_price;
     private String[] images;
     private Object cat_id;
+
+    public String getShopCatId() {
+        return shopCatId;
+    }
+
+    public void setShopCatId(String shopCatId) {
+        this.shopCatId = shopCatId;
+    }
+
+    public String getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(String shopId) {
+        this.shopId = shopId;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getDesc_en() {
+        return desc_en;
+    }
+
+    public void setDesc_en(String desc_en) {
+        this.desc_en = desc_en;
+    }
+
+    public String getTitle_en() {
+        return title_en;
+    }
+
+    public void setTitle_en(String title_en) {
+        this.title_en = title_en;
+    }
+
+    public String getColor_en() {
+        return color_en;
+    }
+
+    public void setColor_en(String color_en) {
+        this.color_en = color_en;
+    }
 
     public Object get_id() {
         return _id;

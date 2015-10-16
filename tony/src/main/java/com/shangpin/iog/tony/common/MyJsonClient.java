@@ -70,7 +70,7 @@ public class MyJsonClient {
         //System.out.println(response.toString());
         //返回响应JSON串
         String responseJson = getResponseAsString(response);
-        System.out.println(responseJson);
+       // System.out.println(responseJson);
         System.out.println("==========================================================");
 
         return  responseJson;
@@ -178,7 +178,8 @@ public class MyJsonClient {
         System.out.println("===================================");
         System.out.println(s2);*/
 
-        new MyJsonClient().getTonyJson();
+        new MyJsonClient().getEvents();
+        //new MyJsonClient().getTonyJson();
         //MyJsonClient.getTonyCategoriesJson();
     }
 }

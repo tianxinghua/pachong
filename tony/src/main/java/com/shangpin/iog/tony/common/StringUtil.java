@@ -27,6 +27,27 @@ public class StringUtil {
     }
 
     /**
+     *get Material from desc
+     */
+    public static String getMaterial(String desc){
+        String material = "";
+        String[] descArr = desc.split("<br>");
+        for (String s: descArr){
+            if (s.contains("%,")){
+                material = s;
+            } else if ( s.contains("Leather")){
+                System.out.println("=============================================");
+                material = s;
+            } else  if (s.contains("leather")){
+                material = "leather";
+            } else if (s.contains("Nylon")){
+                material = s;
+            }
+        }
+        return material;
+    }
+
+    /**
      *get SKU ID
      */
     public static String getSkuID(Object skuId){
@@ -40,6 +61,18 @@ public class StringUtil {
         if (!skuId.contains("_") || !skuId.contains("-"))
             return "";
         return skuId.split("_")[1].split("-")[1];
+    }
+
+    /**
+     *get spu id
+     */
+    public static String getSpuId(String skuId){
+        if (skuId.contains("_")){
+            return skuId.split("_")[0];
+        } else if (skuId.contains("-")){
+            return skuId.split("-")[0];
+        }
+        return skuId;
     }
 
     /**
@@ -58,8 +91,8 @@ public class StringUtil {
                 return "";
             }
         String str = categoryJson.substring(categoryJson.indexOf(categoryId),categoryJson.indexOf(categoryId)+50);
-        System.out.println("==========str==========");
-        System.out.println(str);
+/*        System.out.println("==========str==========");
+        System.out.println(str);*/
         return  str .split(",")[1].replaceAll("\"","").replaceAll("name:","");
     }
 
