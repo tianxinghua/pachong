@@ -56,7 +56,6 @@ public class ReservationProStock {
 			oauth = authApi();
 		}
 	}
-
 	/*
 	 * 锁库存
 	 */
@@ -227,7 +226,7 @@ public class ReservationProStock {
 				// token可能已过期，刷新token延长周期
 				// 重新请求url资源
 				refreshToken();
-				requestSource(map);
+				obj = requestSource(map);
 			}
 		} else {
 			obj = new ResponseObject();

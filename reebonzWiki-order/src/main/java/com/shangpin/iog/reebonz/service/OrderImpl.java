@@ -73,9 +73,8 @@ public class OrderImpl extends AbsOrderService {
 	 */
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
+		
 		try{
-			
-			
 			String order_id = orderDTO.getSpOrderId();
 			String order_site = "shangpin";
 			String data = getJsonData(orderDTO.getDetail());
@@ -114,6 +113,7 @@ public class OrderImpl extends AbsOrderService {
 				orderDTO.setExcDesc(map.get("1"));
 				orderDTO.setExcState("1");
 			} else {
+				orderDTO.setExcState("0");
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
 				orderDTO.setSupplierOrderNo(map.get("return_orderID"));
 			}
@@ -135,9 +135,24 @@ public class OrderImpl extends AbsOrderService {
 					deleteOrder.getSpOrderId(), deleteOrder.getSpOrderId(),
 					"voided");// deducted" (for confirmation) "voided" (for reversal)
 			if (map.get("1") != null) {
+				 if(DateTimeUtil.getTimeDifference(deleteOrder.getCreateTime(),new Date())/(Integer.parseInt(time))>0){
+			            //超过一天 不需要在做处理 订单状态改为其它状体
+					 deleteOrder.setStatus(OrderStatus.NOHANDLE);
+					 new Runnable() {
+							@Override
+							public void run() {
+								 try {
+									SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,messageText, messageType);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						};
+			     }
 				deleteOrder.setExcDesc(map.get("1"));
 				deleteOrder.setExcState("1");
 			} else {
+				deleteOrder.setExcState("0");
 				deleteOrder.setStatus(OrderStatus.CANCELLED);
 			}
 		}catch(Exception e){
@@ -209,16 +224,13 @@ public class OrderImpl extends AbsOrderService {
 					@Override
 					public void run() {
 						 try {
-							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject, messageText, messageType);
+							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,messageText, messageType);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					}
 				};
-
-			
         }
-		
 	}
 
 
