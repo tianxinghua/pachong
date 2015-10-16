@@ -56,7 +56,7 @@ public class FetchProduct {
         try {
 
             Map<String,String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*60,1000*60*60,1000*60*60);
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*100*60,1000*100*60,1000*100*60);
             List<String> list = HttpUtil45.getContentListByInputSteam(url,timeConfig,null,null,null);
             HttpUtil45.closePool();
             mongMap.put("supplierId",supplierId);
@@ -205,10 +205,10 @@ public class FetchProduct {
         Products products = new Products();
         List<Product> plist = new ArrayList<Product>();
 
-
+        int i = 0;
         for (Map<String, String> map : list) {
             String url = "http://www.ln-cc.com/dw/shop/v15_8/products/"+map.get("id")+"/availability?inventory_ids=09&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
-            OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*160,1000*160,1000*160);
             String jsonstr = HttpUtils.get(url,3);
                     //(url,timeConfig,null,null,null);
             if( jsonstr != null && jsonstr.length() >0){
@@ -228,14 +228,18 @@ public class FetchProduct {
                         Product product = new Product();
                         List<Item> itemslist = new ArrayList<Item>();
                         Items items = new Items();
-                        product.setProducer_id(map.get("id"));
                         product.setProductId(map.get("id"));
+
+                        product.setProducer_id(json.getString("c_model") + json.getString("c_fabric") + json.getString("c_color"));
                         product.setCategoryGender(map.get("gender"));
                         if (!json.has("brand"))
                             continue;
                         product.setProduct_brand(json.getString("brand"));
 
                         product.setProduct_name(map.get("c_title"));
+                        if (!json.has("c_madeIn"))
+                            continue;
+                        product.setProductOrigin(json.getString("c_madeIn"));
                         if (!json.has("c_categoryName"))
                             continue;
                         product.setCategory(json.getString("c_categoryName"));
@@ -265,6 +269,7 @@ public class FetchProduct {
                         item.setItem_size(json.getString("c_size"));
                         if (!json.has("ean"))
                             continue;
+
                         item.setItem_id(json.getString("ean"));
                         String price_f = map.get("price");
                         String saleprice_f = map.get("saleprice");
@@ -278,7 +283,9 @@ public class FetchProduct {
                         product.setItems(items);
                         plist.add(product);
                     }
+                    i++;
                 }
+                System.out.println(i);
             }
         }
         products.setProducts(plist);
