@@ -42,6 +42,18 @@ public class StringUtil {
                 material = "leather";
             } else if (s.contains("Nylon")){
                 material = s;
+            } else if (s.contains("brass")){
+                material = s;
+            } else if (s.contains("PVC")){
+                material = "PVC";
+            } else if (s.contains("fox")||s.contains("calfskin")){
+                material = s;
+            } else if (s.contains("Sheared fabric")){
+                material = "Sheared fabric";
+            } else if (s.contains("GG fabric")){
+                material = "GG fabric";
+            } else if (s.contains("Elaphe snakeskin")){
+                material = "Elaphe snakeskin";
             }
         }
         return material;
