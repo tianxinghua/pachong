@@ -51,9 +51,9 @@ public abstract class AbsOrderService {
     private static  String url = null;
 	static {
 		 if(null==bdl){
-			 bdl=ResourceBundle.getBundle("conf");
+			 bdl=ResourceBundle.getBundle("openice");
 		 }
-		 url = bdl.getString("url");
+		 url = bdl.getString("wmsUrl");
 	}
 
     @Autowired
@@ -506,6 +506,7 @@ public abstract class AbsOrderService {
             map.put("updateTime",DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
         }
         try {
+
             productOrderService.updateOrderMsg(map);
         } catch (ServiceException e) {
             loggerError.error("订单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");
