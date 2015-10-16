@@ -130,9 +130,10 @@ public class DownloadAndReadCSV {
 				item.setStock(colValueList.get(colNameList.indexOf("qty")));
 				item.setCurrency(colValueList.get(colNameList.indexOf("price_type")));
 				product.getItems().add(item);
+				//是product
+				dtoList.add(product);
 			}
-			//是product
-			dtoList.add(product);
+		
 
 		}
         return dtoList;
