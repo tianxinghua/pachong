@@ -1,4 +1,4 @@
-package com.shangpin.iog.reebonz;
+  package com.shangpin.iog.reebonz;
 
 
 import org.slf4j.Logger;
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import com.shangpin.iog.reebonz.schedule.AppContext;
 
 /**
- * Created by sunny on 2015/8/5.
+ * Created by zhaogenchun on 2015/8/5.
  */
 public class Startup {
 

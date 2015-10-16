@@ -115,7 +115,7 @@
       	 	  	NEW_SUPPLIER_PRICE as newSupplierPrice
       	 	  	from SKU sku
         <where>
-	         and  SUPPLIER_ID = #{supplierId}
+	           SUPPLIER_ID = #{supplierId}
         </where>
 	</select>
 </mapper>

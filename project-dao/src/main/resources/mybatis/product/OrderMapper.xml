@@ -210,7 +210,7 @@
             <if test="excDesc != null"> EXC_DESC = #{excDesc}, </if>
             <if test="excTime != null"> EXC_TIME = #{excTime}</if>
         </set>
-        where UUID = #{uuid}
+        where UUID = #{uuId}
     </update>
 
     <update id="updateOrderStatus" parameterType="Map" >
@@ -224,7 +224,7 @@
 
 
         </set>
-        where UUID = #{uuid}
+        where UUID = #{uuId}
         <!--<foreach collection="uuid" index="index" item="item" open="(" separator="," close=")">-->
             <!--#{item}-->
         <!--</foreach>-->
@@ -243,7 +243,7 @@
 
 
         </set>
-        where UUID = #{uuid}
+        where UUID = #{uuId}
         <!--<foreach collection="uuid" index="index" item="item" open="(" separator="," close=")">-->
         <!--#{item}-->
         <!--</foreach>-->
@@ -260,7 +260,7 @@
 
 
         </set>
-        where UUID = #{uuid}
+        where UUID = #{uuId}
 
 
     </update>
@@ -281,7 +281,7 @@
 
 
         </set>
-        where UUID = #{uuid}
+        where UUID = #{uuId}
 
 
     </update>

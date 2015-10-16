@@ -229,7 +229,7 @@ public abstract class AbsPriceService {
                 e.printStackTrace();
             }
             for (SopProductSkuIce sku : skus) {
-                brandMap.put(sku.BrandENName,"");
+                brandMap.put(sku.BrandNo,"");
                 List<SopSkuIce> skuIces = sku.SopSkuIces;
                 for (SopSkuIce ice : skuIces) {
 
@@ -237,8 +237,8 @@ public abstract class AbsPriceService {
                         if(1!=ice.IsDeleted){
                             skuIds.add(ice.SupplierSkuNo);
                             stocks.put(ice.SupplierSkuNo,ice.SkuNo);
-                            //TODO  品牌和品类应该为编号
-                            skuBrandCategoryMap.put(ice.SkuNo,sku.BrandENName+"|"+sku.CategoryName);
+
+                            skuBrandCategoryMap.put(ice.SkuNo,sku.BrandNo+"|"+sku.CategoryNo);
                         }
                     }
 

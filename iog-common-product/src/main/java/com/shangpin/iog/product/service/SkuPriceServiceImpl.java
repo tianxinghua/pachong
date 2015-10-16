@@ -100,7 +100,7 @@ public class SkuPriceServiceImpl implements SkuPriceService {
 				sb.append(newPriceDTO.getMarketPrice()==null?"-1":newPriceDTO.getMarketPrice()).append("|");
 			}
     		if (null!=newPriceDTO.getNewSupplierPrice()) {
-    			sb.append(newPriceDTO.getNewSupplierPrice()).append("|");
+    			sb.append(newPriceDTO.getNewSupplierPrice());
     		}else {
     			sb.append(newPriceDTO.getSupplierPrice()==null?"-1":newPriceDTO.getSupplierPrice());
     		}

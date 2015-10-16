@@ -3,6 +3,7 @@ package com.shangpin.ice.ice;
 import ShangPin.SOP.Entity.Api.Purchase.*;
 import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -18,6 +19,7 @@ import com.shangpin.iog.ice.dto.*;
 import com.shangpin.iog.service.ReturnOrderService;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.SkuRelationService;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -37,17 +39,22 @@ public abstract class AbsOrderService {
     private static String  startDate=null,endDate=null;
     private static String  startDateOfWMS=null,endDateOfWMS=null;
     private static final String YYYY_MMDD_HH = "yyyy-MM-dd HH:mm:ss";
-    private static final String YYYY_MMDD_HH_WMS = "yyyy-MM-ddTHH:mm:ss";
+    private static final String YYYY_MMDD_HH_WMS = "yyyy-MM-dd 'T' HH:mm:ss";
 
     static Logger log = LoggerFactory.getLogger(AbsOrderService.class);
 
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
     private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
 
-    static String url="/purchase/createdeliveryorder";
-
-
-
+//    static String url="/purchase/createdeliveryorder";
+    private static ResourceBundle bdl = null;
+    private static  String url = null;
+	static {
+		 if(null==bdl){
+			 bdl=ResourceBundle.getBundle("conf");
+		 }
+		 url = bdl.getString("url");
+	}
 
     @Autowired
 	public SkuPriceService skuPriceService;
@@ -135,7 +142,7 @@ public abstract class AbsOrderService {
         String jsonParameter= "="+ gson.toJson(dto);
         String result ="";
         try {
-            result =  HttpUtil45.operateData("post","form","http://wmsinventory.liantiao.com/Api/StockQuery/SupplierInventoryLogQuery",new OutTimeConfig(1000*5,1000*5,1000*5),null,
+            result =  HttpUtil45.operateData("post","form",url+"/Api/StockQuery/SupplierInventoryLogQuery",new OutTimeConfig(1000*5,1000*5,1000*5),null,
                     jsonParameter,"","");
             logger.info("获取的订单信息为:" + result);
             System.out.println("kk = " + result);
@@ -155,24 +162,27 @@ public abstract class AbsOrderService {
         Map<String,String> skuMap = new HashMap<>();
         List<ICEWMSOrderDTO> orderList = new ArrayList<>();
         List<ICEWMSOrderDTO> refundList = new ArrayList<>();
-        for(ICEWMSOrderDTO icewmsOrderDTO:orderDTOList){
-            SkuRelationDTO skuRelationDTO= null;
-            if(icewmsOrderDTO.getChangeForOrderQuantity()<0){   //订单
-                orderList.add(icewmsOrderDTO);
-            }else{
-                refundList.add(icewmsOrderDTO);
-            }
-            try {
-                skuRelationDTO=  skuRelationService.getSkuRelationBySkuId(icewmsOrderDTO.getSkuNo());
-                if(null!=skuRelationDTO){
-                    skuMap.put(skuRelationDTO.getSopSkuId(), skuRelationDTO.getSupplierSkuId());
-                }else{   //获取供货商的SKU编号
-
+        if(null!=orderDTOList) {
+            for(ICEWMSOrderDTO icewmsOrderDTO:orderDTOList){
+                SkuRelationDTO skuRelationDTO= null;
+                if(icewmsOrderDTO.getChangeForOrderQuantity()<0){   //订单
+                    orderList.add(icewmsOrderDTO);
+                }else{
+                    refundList.add(icewmsOrderDTO);
                 }
-            } catch (ServiceException e) {
-                e.printStackTrace();
+                try {
+                    skuRelationDTO=  skuRelationService.getSkuRelationBySkuId(icewmsOrderDTO.getSkuNo());
+                    if(null!=skuRelationDTO){
+                        skuMap.put(skuRelationDTO.getSopSkuId(), skuRelationDTO.getSupplierSkuId());
+                    }else{   //获取供货商的SKU编号
+
+                    }
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
         try {
             //获取真正的供货商SKUID
             this.getSupplierSkuId(skuMap);
@@ -449,7 +459,7 @@ public abstract class AbsOrderService {
             spOrder.setSupplierNo(supplierNo);
             spOrder.setStatus(OrderStatus.WAITPLACED);
             spOrder.setSpOrderId(icewmsOrderDTO.getFormNo());
-            spOrder.setDetail(skuMap.containsKey(icewmsOrderDTO.getSkuNo())+":"+Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
+            spOrder.setDetail(skuMap.get(icewmsOrderDTO.getSkuNo())+":"+Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
             spOrder.setMemo(icewmsOrderDTO.getSkuNo()+":"+icewmsOrderDTO.getChangeForOrderQuantity());
             spOrder.setCreateTime(new Date());
             try {
@@ -485,7 +495,7 @@ public abstract class AbsOrderService {
         //更新订单状态
         Map<String,String> map = new HashMap<>();
 
-        map.put("uuid", spOrder.getUuId());
+        map.put("uuId", spOrder.getUuId());
         map.put("supplierOrderNo",spOrder.getSupplierOrderNo());
         map.put("excState",spOrder.getExcState());
         map.put("excDesc",spOrder.getExcDesc());
@@ -522,7 +532,7 @@ public abstract class AbsOrderService {
             }
 
             ReturnOrderDTO deleteOrder =new ReturnOrderDTO();
-            deleteOrder.setUuId(uuid);
+            deleteOrder.setUuId(order.getUuId());
             deleteOrder.setSupplierId(supplierId);
             deleteOrder.setSupplierNo(supplierNo);
             deleteOrder.setSupplierOrderNo(order.getSupplierOrderNo());
@@ -532,7 +542,7 @@ public abstract class AbsOrderService {
                 deleteOrder.setStatus(OrderStatus.NOHANDLE);
             }
             deleteOrder.setSpOrderId(refundOrder.getFormNo());
-            deleteOrder.setDetail(skuMap.containsKey(refundOrder.getSkuNo())+":"+refundOrder.getChangeForOrderQuantity());
+            deleteOrder.setDetail(skuMap.get(refundOrder.getSkuNo())+":"+refundOrder.getChangeForOrderQuantity());
             deleteOrder.setMemo(refundOrder.getSkuNo()+":"+refundOrder.getChangeForOrderQuantity());
             deleteOrder.setCreateTime(new Date());
             try{

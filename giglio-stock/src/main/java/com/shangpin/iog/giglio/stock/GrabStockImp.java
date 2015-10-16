@@ -28,15 +28,10 @@ import java.util.regex.Pattern;
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
-    private static ResourceBundle bdl = null;
-    private static String supplierId;
 
-    static {
-        if (bdl == null)
-            bdl = ResourceBundle.getBundle("conf");
-        supplierId = bdl.getString("supplierId");
-    }
+
+
+
 
     private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
 
@@ -84,8 +79,10 @@ public class GrabStockImp extends AbsUpdateProductStock {
                             stock = m.group(2);
                         }
                     }
+                    logger.info("skuId : " + skuId + ", stock : " + stock);
                     stockMap.put(skuId, stock);
                     System.out.println("skuId : " + skuId + ", stock : " + stock);
+
                 }
             } finally {
                 reader.close();
@@ -93,7 +90,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
             for (String skuNo : skuNos) {
                 if (stockMap.containsKey(skuNo)) {
-                    skuStock.put(skuNo, Integer.valueOf(stockMap.get(skuNo)));
+                    try {
+                        skuStock.put(skuNo, Integer.valueOf(stockMap.get(skuNo)));
+                    } catch (NumberFormatException e) {
+                        skuStock.put(skuNo, 0);
+                    }
                 } else {
                     skuStock.put(skuNo, 0);
                 }
