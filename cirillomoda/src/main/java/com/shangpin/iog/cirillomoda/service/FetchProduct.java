@@ -99,6 +99,7 @@ public class FetchProduct {
                         spu.setCategoryName(category);
                         spu.setBrandName(brand);
                         spu.setMaterial(description);
+//                        spu.setProductOrigin(description);
 
                         spu.setCategoryGender(category);
 
@@ -178,6 +179,7 @@ public class FetchProduct {
                         sku.setSpuId(spuId);
                         sku.setMarketPrice(price);
 //                        sku.setColor(); //没有颜色
+
                         sku.setProductSize(size);
                         sku.setStock(stock);
                         sku.setProductDescription(description);
