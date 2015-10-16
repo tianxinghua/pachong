@@ -19,6 +19,7 @@ public class Product {
     private String supply_price;
     private String producer_id;
     private String categoryGender;
+    private String productOrigin;
 
     private Items items;
 
@@ -137,5 +138,13 @@ public class Product {
 
     public void setCategoryGender(String categoryGender) {
         this.categoryGender = categoryGender;
+    }
+
+    public String getProductOrigin() {
+        return productOrigin;
+    }
+
+    public void setProductOrigin(String productOrigin) {
+        this.productOrigin = productOrigin;
     }
 }
