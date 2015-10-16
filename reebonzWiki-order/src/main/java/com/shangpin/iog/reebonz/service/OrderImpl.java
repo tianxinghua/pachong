@@ -21,40 +21,56 @@ import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.reebonz.dto.Order;
 import com.shangpin.iog.reebonz.dto.RequestObject;
+import com.shangpin.iog.service.EventProductService;
 import com.shangpin.iog.service.ProductFetchService;
 
+@Component
 public class OrderImpl extends AbsOrderService {
+	@Autowired
+	EventProductService eventProductService;
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
+	private static String supplierNo = null;
 	private ReservationProStock stock = new ReservationProStock();
 	static {
 		 if(null==bdl){
 			 bdl=ResourceBundle.getBundle("conf");
 		 }
 		 supplierId = bdl.getString("supplierId");
+		 supplierNo = bdl.getString("supplierNo");
 	}
 	
 	public void loopExecute() {
-		this.checkoutOrderFromWMS(supplierId, "", false);
+		this.checkoutOrderFromWMS(supplierNo, supplierId, true);
 	}
 
+	public void confirmOrder() {
+		this.confirmOrder(supplierId);
+		
+	}
 	/**
 	 * 锁库存
 	 */
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
+		try{
+			orderDTO.setExcState("0");
+			String order_id = orderDTO.getSpOrderId();
+			String order_site = "shangpin";
+			String data = getJsonData(orderDTO.getDetail());
 
-		String order_id = orderDTO.getSpOrderId();
-		String order_site = "shangpin";
-		String data = getJsonData(orderDTO.getDetail());
-
-		Map<String, String> map = stock.lockStock(order_id, order_site, data);
-		if (map.get("1") != null) {
-			orderDTO.setExcDesc(map.get("1"));
+			Map<String, String> map = stock.lockStock(order_id, order_site, data);
+			if (map.get("1") != null) {
+				orderDTO.setExcDesc(map.get("1"));
+				orderDTO.setExcState("1");
+			} else {
+				orderDTO.setSupplierOrderNo(map.get("0"));
+				orderDTO.setStatus(OrderStatus.PLACED);
+			}
+		}catch (Exception e) {
+			orderDTO.setExcDesc(e.getMessage());
 			orderDTO.setExcState("1");
-		} else {
-			orderDTO.setSupplierOrderNo(map.get("0"));
-			orderDTO.setStatus(OrderStatus.PLACED);
+			e.printStackTrace();
 		}
 	}
 
@@ -63,17 +79,24 @@ public class OrderImpl extends AbsOrderService {
 	 */
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
-
-		String data = getJsonData(orderDTO.getDetail());
-		Map<String, String> map = null;
-		map = stock.pushOrder(orderDTO.getSupplierOrderNo(),
-				orderDTO.getSpOrderId(), orderDTO.getSpPurchaseNo(), data);
-		// 1：代表发生了异常
-		if (map.get("1") != null) {
-			orderDTO.setExcDesc(map.get("1"));
+		
+		try{
+			String data = getJsonData(orderDTO.getDetail());
+			Map<String, String> map = null;
+			map = stock.pushOrder(orderDTO.getSupplierOrderNo(),
+					orderDTO.getSpOrderId(), orderDTO.getSpPurchaseNo(), data);
+			// 1：代表发生了异常
+			if (map.get("1") != null) {
+				orderDTO.setExcDesc(map.get("1"));
+				orderDTO.setExcState("1");
+			} else {
+				orderDTO.setStatus(OrderStatus.CONFIRMED);
+				orderDTO.setSupplierOrderNo(map.get("return_orderID"));
+			}
+		}catch(Exception e){
+			orderDTO.setExcDesc(e.getMessage());
 			orderDTO.setExcState("1");
-		} else {
-			orderDTO.setStatus(OrderStatus.CONFIRMED);
+			e.printStackTrace();
 		}
 	}
 
@@ -82,16 +105,21 @@ public class OrderImpl extends AbsOrderService {
 	 */
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
-		Map<String, String> map = null;
-		map = stock.unlockStock(deleteOrder.getSupplierOrderNo(),
-				deleteOrder.getSpOrderId(), deleteOrder.getSpOrderId(),
-				"voided");// deducted" (for confirmation) "voided" (for
-							// reversal)
-		if (map.get("1") != null) {
-			deleteOrder.setExcDesc(map.get("1"));
+		try{
+			Map<String, String> map = null;
+			map = stock.unlockStock(deleteOrder.getSupplierOrderNo(),
+					deleteOrder.getSpOrderId(), deleteOrder.getSpOrderId(),
+					"voided");// deducted" (for confirmation) "voided" (for reversal)
+			if (map.get("1") != null) {
+				deleteOrder.setExcDesc(map.get("1"));
+				deleteOrder.setExcState("1");
+			} else {
+				deleteOrder.setStatus(OrderStatus.CANCELLED);
+			}
+		}catch(Exception e){
+			deleteOrder.setExcDesc(e.getMessage());
 			deleteOrder.setExcState("1");
-		} else {
-			deleteOrder.setStatus(OrderStatus.CANCELLED);
+			e.printStackTrace();
 		}
 	}
 
@@ -106,7 +134,6 @@ public class OrderImpl extends AbsOrderService {
 	@Override
 	public void getSupplierSkuId(Map<String, String> skuMap)
 			throws ServiceException {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -128,8 +155,15 @@ public class OrderImpl extends AbsOrderService {
 
 				RequestObject obj = new RequestObject();
 				obj.setSku(skuIDs[0]);
-				obj.setEvent_id(skuIDs[1]);
-				String code = skuIDs[2];
+				try {
+					String eventId = eventProductService.selectEventIdBySku(skuIDs[0], supplierId);
+					obj.setEvent_id(eventId);
+				} catch (ServiceException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+//				obj.setEvent_id(skuIDs[1]);
+				String code = skuIDs[1];
 				if ("A".equals(code)) {
 					obj.setOption_code("");
 				} else {
@@ -142,5 +176,8 @@ public class OrderImpl extends AbsOrderService {
 		JSONArray array = JSONArray.fromObject(list);
 		return array.toString();
 	}
+
+
+
 
 }

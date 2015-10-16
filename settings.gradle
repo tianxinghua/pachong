@@ -55,6 +55,7 @@ include 'iog-sop'
 include 'iog-facade-dubbo'
 include 'gilt-order'
 include 'bagheera'
+include 'bagheera-stock'
 include 'gilt-stock'
 include 'gilt-purchase'
 include 'tony'
@@ -66,7 +67,24 @@ include 'onsite'
 include 'tony-stock'
 include 'tony-purchase'
 include 'atelier'
-include 'alducadaosta'
+include 'atelier-stock'
+include 'atelier-purchase'
+include 'linoricci'
+include 'linoricci-stock'
+
+include 'bagheera-stock'
+
+include 'itemInfo'
+include 'atelier-stock'
+
+include 'giglio'
+
+include 'atelier-purchase'
+include 'prodottimonti'
+include 'prodottimonti-stock'
+include 'levelgroup'
+include 'levelgroup-stock'
+
 
 include 'bagheera-stock'
 
@@ -98,8 +116,30 @@ include 'linoricci'
 include 'linoricci-stock'
 include 'fashionesta'
 include 'fashionesta-stock'
+include 'itemInfo'
+include 'itemInfo-stock'
+
+include 'stefaniamode'
+include 'stefaniamode-stock'
+
+include 'dante5'
+include 'dante5-stock'
+
+
+include 'itemInfo'
+include 'itemInfo-stock'
+//include 'itemInfo-purchase'
 include 'monnierfreres'
 include 'monnierfreres-stock'
 
 include 'julian-fashion'
 include 'vinicco'
+include 'tizianafausti'
+include 'bernardellistores'
+include 'monnierfreres'
+include 'monnierfreres-stock'
+
+include 'iog-price'
+include 'articoli'
+include 'articoli-stock'
+

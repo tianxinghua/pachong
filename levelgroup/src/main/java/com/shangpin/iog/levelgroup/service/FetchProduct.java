@@ -48,7 +48,7 @@ public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
 
-    private ResourceBundle bdl = ResourceBundle.getBundle("conf");;
+    private static ResourceBundle bdl=ResourceBundle.getBundle("conf");;
 
     public void fetchProductAndSave(String url){
 
@@ -208,7 +208,7 @@ public class FetchProduct {
 
         for (Map<String, String> map : list) {
             String url = "http://www.ln-cc.com/dw/shop/v15_8/products/"+map.get("id")+"/availability?inventory_ids=09&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
-            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*5,1000*60*5,1000*60*5);
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
             String jsonstr = HttpUtils.get(url,3);
                     //(url,timeConfig,null,null,null);
             if( jsonstr != null && jsonstr.length() >0){

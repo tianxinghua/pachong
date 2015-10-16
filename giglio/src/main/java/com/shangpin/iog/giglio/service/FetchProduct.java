@@ -48,8 +48,8 @@ public class FetchProduct {
     public void fetchProductAndSave(final String url) {
 
         try {
-            Map<String, String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = new OutTimeConfig(1000 * 60 * 30, 1000 * 60 * 30, 1000 * 60 * 30);
+            Map<String,String> mongMap = new HashMap<>();
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*60,1000*60*60,1000*60*60);
 
             String result = HttpUtil45.get(url, timeConfig, null);
             HttpUtil45.closePool();

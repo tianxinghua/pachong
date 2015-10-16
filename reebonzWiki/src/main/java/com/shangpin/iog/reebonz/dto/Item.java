@@ -25,7 +25,7 @@ public class Item {
 	private String option_name;
 	private String total_stock_qty;
 	private String total_stock_allocated;
-	private String wholesale_percentage;
+	private String partner_discount;
 	
 	public String getRetail_price() {
 		return retail_price;
@@ -33,11 +33,12 @@ public class Item {
 	public void setRetail_price(String retail_price) {
 		this.retail_price = retail_price;
 	}
-	public String getWholesale_percentage() {
-		return wholesale_percentage;
+	
+	public String getPartner_discount() {
+		return partner_discount;
 	}
-	public void setWholesale_percentage(String wholesale_percentage) {
-		this.wholesale_percentage = wholesale_percentage;
+	public void setPartner_discount(String partner_discount) {
+		this.partner_discount = partner_discount;
 	}
 	public String[] getImages() {
 		return images;

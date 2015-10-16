@@ -1,7 +1,7 @@
 dependencies {
     compile(
             project(':project-common'),
-            project(':openapi-ice')
+            project(':iog-sop')
     )
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
     compile 'org.apache.commons:commons-csv:1.2'

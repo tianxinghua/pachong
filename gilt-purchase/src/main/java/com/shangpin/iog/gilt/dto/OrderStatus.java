@@ -6,6 +6,7 @@ package com.shangpin.iog.gilt.dto;
  */
 public class OrderStatus {
     public static String PLACED="placed";
+    public static String PAYED="payed";
     public static String CONFIRMED="confirmed";
     public static String CANCELLED="cancelled";
     public static String PROCESSING="processing";

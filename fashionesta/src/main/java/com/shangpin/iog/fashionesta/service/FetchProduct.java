@@ -20,6 +20,7 @@ import com.shangpin.iog.fashionesta.dto.Item;
 import com.shangpin.iog.fashionesta.dto.Product;
 import com.shangpin.iog.fashionesta.utils.DownloadAndReadCSV;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.SkuPriceService;
 
 @Component("fashionesta")
 public class FetchProduct {
@@ -38,7 +39,8 @@ public class FetchProduct {
 	}
 	@Autowired
 	private ProductFetchService productFetchService;
-
+	@Autowired
+	private SkuPriceService skuPriceService;
 	public void fetchProductAndSave() {
 		//更改状态存储，不要忘了填币种
 		try {

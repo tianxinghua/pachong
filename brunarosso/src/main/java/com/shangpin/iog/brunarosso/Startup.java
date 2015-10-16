@@ -16,12 +16,18 @@ import java.util.logging.Logger;
  * Created by sunny on 2015/7/10.
  */
 public class Startup {
+	
+	 private static Logger logger = Logger.getLogger("info");
+	    private static Logger loggerError = Logger.getLogger("error");
+	
     private static ApplicationContext factory;
     public static final String PROPERTIES_FILE_NAME = "param";
     static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
     private static String path = bundle.getString("path");
     static String localFilePath = bundle.getString("localFilePath");
     static String testFilePath = bundle.getString("testFilePath");
+    static String supplierId = bundle.getString("supplierId");
+    
     private static void loadSpringContext()
     {
 
@@ -124,14 +130,15 @@ public class Startup {
         System.out.println("-------brunarosso start---------");
         ReconciliationFtpUtil.download("","",testFilePath,false);
         Map<String,List<String>> map = XmlReader.getSizeByPath("");
-        Map<String,String>returnMap=new HashMap<>();
+       
+        Map<String,String> spuMap=new HashMap<>();
         try {
             List<File> list1=read();
             for (int i = 0; i < list1.size(); i++) {
                 File file=list1.get(i);
                 try {
                     //System.out.println("正在读取的文件: "+file.getName());
-                    returnMap=fetchService.fetchProductAndSave(map,testFilePath+file.getName());
+                    fetchService.fetchProductAndSave(map,spuMap,testFilePath+file.getName());
                 } catch (Exception e) {
                     e.printStackTrace();
                     flag=false;
@@ -142,13 +149,15 @@ public class Startup {
             e.printStackTrace();
             flag=false;
         }
+       
+        logger.info("　spu map size = 　"+spuMap.size());
         List<File> list=readPicPath();
         for (int i = 0; i < list.size(); i++) {
             System.out.println(i);
             File file = list.get(i);
             try {
                 //System.out.println("正在读取的文件: " + file.getName());
-                fetchService.savePic(testFilePath + file.getName(),returnMap);
+                fetchService.savePic(testFilePath + file.getName(),spuMap);
             } catch (Exception e) {
                 e.printStackTrace();
                 flag=false;

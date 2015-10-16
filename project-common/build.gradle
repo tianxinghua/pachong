@@ -9,7 +9,8 @@ dependencies {
             "net.sf.json-lib:json-lib:2.2:jdk15",
             "org.apache.poi:poi:3.0.1-FINAL",
             "com.enterprisedt:edtFTPj:1.5.3",
-            "redis.clients:jedis:${jedis_version}"
+            "redis.clients:jedis:${jedis_version}",
+            "javax.mail:mail:1.4.4"
     )
 
 

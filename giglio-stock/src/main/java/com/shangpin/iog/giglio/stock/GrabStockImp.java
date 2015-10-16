@@ -6,14 +6,15 @@ package com.shangpin.iog.giglio.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.sop.AbsUpdateProductStock;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.InputStreamReader;
@@ -27,18 +28,15 @@ import java.util.regex.Pattern;
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
-    private static ResourceBundle bdl = null;
-    private static String supplierId;
 
-    static {
-        if (bdl == null)
-            bdl = ResourceBundle.getBundle("conf");
-        supplierId = bdl.getString("supplierId");
-    }
 
-    public Map<String, String> grabStock(Collection<String> skuNos) throws ServiceException {
-        Map<String, String> skuStock = new HashMap<>(skuNos.size());
+
+
+
+    private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
+
+    public Map<String, Integer> grabStock(Collection<String> skuNos) throws ServiceException {
+        Map<String, Integer> skuStock = new HashMap<>(skuNos.size());
         Map<String, String> stockMap = new HashMap<>();
 
         try {
@@ -47,7 +45,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 //            Map<String, String> mongMap = new HashMap<>();
 
 
-            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
+            OutTimeConfig timeConfig =new OutTimeConfig(1000*60*60,1000*60*60,1000*60*60);
             String result = HttpUtil45.get("http://www.giglio.com/feeds/shangpin.csv", timeConfig, null);
             HttpUtil45.closePool();
 
@@ -81,8 +79,10 @@ public class GrabStockImp extends AbsUpdateProductStock {
                             stock = m.group(2);
                         }
                     }
+                    logger.info("skuId : " + skuId + ", stock : " + stock);
                     stockMap.put(skuId, stock);
                     System.out.println("skuId : " + skuId + ", stock : " + stock);
+
                 }
             } finally {
                 reader.close();
@@ -90,9 +90,13 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
             for (String skuNo : skuNos) {
                 if (stockMap.containsKey(skuNo)) {
-                    skuStock.put(skuNo, stockMap.get(skuNo));
+                    try {
+                        skuStock.put(skuNo, Integer.valueOf(stockMap.get(skuNo)));
+                    } catch (NumberFormatException e) {
+                        skuStock.put(skuNo, 0);
+                    }
                 } else {
-                    skuStock.put(skuNo, "0");
+                    skuStock.put(skuNo, 0);
                 }
             }
 
@@ -107,11 +111,29 @@ public class GrabStockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args) throws Exception {
-        AbsUpdateProductStock grabStockImp = new GrabStockImp();
+//        AbsUpdateProductStock grabStockImp = new GrabStockImp();
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("GIGLIO更新数据库开始");
+//        grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+//        logger.info("GIGLIO更新数据库结束");
+//        System.exit(0);
+
+
+
+        String host = bundle.getString("HOST");
+        String app_key = bundle.getString("APP_KEY");
+        String app_secret= bundle.getString("APP_SECRET");
+        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
+            logger.error("参数错误，无法执行更新库存");
+        }
+
+        AbsUpdateProductStock giglioStockImp = new GrabStockImp();
+
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("GIGLIO更新数据库开始");
-        grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
-        logger.info("GIGLIO更新数据库结束");
+        logger.info("giglio更新数据库开始");
+        //2015081401431
+        giglioStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+        logger.info("giglio更新数据库结束");
         System.exit(0);
     }
 
