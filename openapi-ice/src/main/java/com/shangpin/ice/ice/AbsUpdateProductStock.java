@@ -161,7 +161,11 @@ public abstract class AbsUpdateProductStock {
 						skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
 						skuRelationDTO.setSopSkuId(ice.SkuNo);
 						skuRelationDTO.setCreateTime(date);
-						skuRelationService.saveSkuRelateion(skuRelationDTO);
+						try {
+							skuRelationService.saveSkuRelateion(skuRelationDTO);
+						} catch (ServiceException e) {
+						    logger.error(skuRelationDTO.toString() + "保存失败");
+						}
 					}
 
 					if(null!=ice.SkuNo&&!"".equals(ice.SkuNo)&&null!=ice.SupplierSkuNo&&!"".equals(ice.SupplierSkuNo)){

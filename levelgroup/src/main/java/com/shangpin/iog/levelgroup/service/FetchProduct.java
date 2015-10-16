@@ -228,14 +228,18 @@ public class FetchProduct {
                         Product product = new Product();
                         List<Item> itemslist = new ArrayList<Item>();
                         Items items = new Items();
-                        product.setProducer_id(map.get("id"));
                         product.setProductId(map.get("id"));
+
+                        product.setProducer_id(json.getString("c_model") + json.getString("c_fabric") + json.getString("c_color"));
                         product.setCategoryGender(map.get("gender"));
                         if (!json.has("brand"))
                             continue;
                         product.setProduct_brand(json.getString("brand"));
 
                         product.setProduct_name(map.get("c_title"));
+                        if (!json.has("c_madeIn"))
+                            continue;
+                        product.setProductOrigin(json.getString("c_madeIn"));
                         if (!json.has("c_categoryName"))
                             continue;
                         product.setCategory(json.getString("c_categoryName"));
@@ -265,6 +269,7 @@ public class FetchProduct {
                         item.setItem_size(json.getString("c_size"));
                         if (!json.has("ean"))
                             continue;
+
                         item.setItem_id(json.getString("ean"));
                         String price_f = map.get("price");
                         String saleprice_f = map.get("saleprice");
