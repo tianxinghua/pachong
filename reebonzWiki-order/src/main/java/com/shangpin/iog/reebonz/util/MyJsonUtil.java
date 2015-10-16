@@ -43,8 +43,8 @@ public class MyJsonUtil {
 		try {
 			json = HttpUtil45
 					.post(accessTokenUrl,
-							map, new OutTimeConfig(1000 * 20, 1000 * 20,
-									1000 * 20));
+							map, new OutTimeConfig(1000 * 60, 1000 * 60,
+									1000 * 60));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -61,8 +61,8 @@ public class MyJsonUtil {
 		try {
 			json = HttpUtil45
 					.post(refreshTokenUrl,
-							map, new OutTimeConfig(1000 * 20, 1000 * 20,
-									1000 * 20));
+							map, new OutTimeConfig(1000 * 60, 1000 * 60,
+									1000 * 60));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -79,8 +79,8 @@ public class MyJsonUtil {
 		try {
 			json = HttpUtil45
 					.post(requestSourceUrl,
-							map, new OutTimeConfig(1000 * 20, 1000 * 20,
-									1000 * 20));
+							map, new OutTimeConfig(1000 * 60, 1000 * 60,
+									1000 * 60));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

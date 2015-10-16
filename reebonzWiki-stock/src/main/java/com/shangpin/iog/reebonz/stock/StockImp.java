@@ -74,6 +74,7 @@ public class StockImp extends AbsUpdateProductStock {
     	String eventId=null;
 		try {
 			eventId = eventProductService.selectEventIdBySku(skuNo,supplierId);
+			
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
