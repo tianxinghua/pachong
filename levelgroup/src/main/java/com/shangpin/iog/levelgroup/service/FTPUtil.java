@@ -17,6 +17,7 @@ import java.net.SocketException;
 public class FTPUtil {
 
 
+
     public static FTPClient getFTPClient(String ftpHost, String ftpPassword,
                                          String ftpUserName) throws SocketException,IOException {
 
@@ -37,4 +38,5 @@ public class FTPUtil {
 
         return ftpClient;
     }
+
 }
