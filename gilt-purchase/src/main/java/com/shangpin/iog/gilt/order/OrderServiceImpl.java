@@ -593,7 +593,7 @@ public class OrderServiceImpl  {
             if(null!=orderDTOList){
                 String orderDetail = "",orderMsg="";
                 Gson gson = new Gson();
-                OutTimeConfig timeConfig = new OutTimeConfig(1000*5,1000*5,1000*5);
+                OutTimeConfig timeConfig = new OutTimeConfig(1000*60,1000*60,1000*60);
                 for(com.shangpin.iog.dto.OrderDTO orderDTO:orderDTOList){
                     orderDetail = orderDTO.getDetail().substring(0,orderDTO.getDetail().length()-1);
                     String[] orderDetailArray = orderDetail.split(",");

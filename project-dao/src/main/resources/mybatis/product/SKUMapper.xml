@@ -50,7 +50,24 @@
 
 	</sql>
 
-
+	<select id="findSupplierPrice"  resultMap="skuMap" parameterType="java.lang.String">
+	        select
+	        SUPPLIER_PRICE
+	        from SKU
+	        <where>
+	            <if test="null!=supplierId">
+	                SUPPLIER_ID = #{supplierId}
+	            </if>
+	            <if test="null!=skuId">
+	                and SKU_ID = #{skuId}
+	            </if>
+	
+	
+	        </where>
+	
+	
+	
+	    </select>
     <insert id="save"  parameterType="iog_sku" >
 
 

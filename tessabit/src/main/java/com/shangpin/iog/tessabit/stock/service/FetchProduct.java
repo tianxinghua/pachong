@@ -9,6 +9,7 @@ import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.tessabit.stock.common.Constant;
 import com.shangpin.iog.tessabit.stock.common.MyFtpClient;
+import com.shangpin.iog.tessabit.stock.common.StringUtil;
 import com.shangpin.iog.tessabit.stock.dto.Item;
 import com.shangpin.iog.tessabit.stock.dto.Items;
 import com.shangpin.iog.tessabit.stock.dto.Product;
@@ -84,11 +85,8 @@ public class FetchProduct {
 
                     sku.setSpuId(product.getProductId());
                     skuId = item.getItem_id();
-                    if(skuId.indexOf("?")>0){
-                        skuId = skuId.replace("?","+");
-                    }
-                    sku.setSkuId(skuId);
-                    sku.setProductSize(item.getItem_size());
+                    sku.setSkuId(StringUtil.convertStr(skuId));
+                    sku.setProductSize(StringUtil.convertStr(item.getItem_size()));
                     sku.setMarketPrice(item.getMarket_price());
                     sku.setSalePrice(item.getSell_price());
                     sku.setSupplierPrice(item.getSupply_price());

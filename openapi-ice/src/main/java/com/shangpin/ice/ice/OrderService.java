@@ -14,6 +14,7 @@ import ShangPin.SOP.Servant.OpenApiServantPrx;
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
+import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.ice.dto.ResMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,14 @@ public  class OrderService {
     private static final String YYYY_MMDD_HH = "yyyy-MM-dd HH:mm:ss";
     static String url="/purchase/createdeliveryorder";
 
-
+    private static ResourceBundle bdl = null;
+    private static  String email = null;
+    static {
+        if(null==bdl){
+            bdl=ResourceBundle.getBundle("openice");
+        }
+        email = bdl.getString("email");
+    }
 
 
     /**
@@ -45,7 +53,14 @@ public  class OrderService {
      */
     public Map<String,List<PurchaseOrderDetail>> getPurchaseOrder(String supplierId,String startTime ,String endTime,List<Integer> statusList) throws Exception{
         int pageIndex=1,pageSize=20;
-        OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+
+
+        OpenApiServantPrx servant = null;
+        try {
+            servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         boolean hasNext=true;
         logger.warn("获取ice采购单 开始");
         Set<String> skuIds = new HashSet<String>();
@@ -124,7 +139,10 @@ public  class OrderService {
                 ResMessage message = gson.fromJson(result,ResMessage.class);
                 if(null==message){
                     logger.error("推送取消采购单失败，无信息返回。");
-                    //TODO 邮件通知
+                    Thread t = new Thread(new MailThread(supplierId,"gilt 线上发生错误","推送取消采购单失败，无信息返回。"));
+                    t.start();
+
+
                 }else {
                     if (200 != message.getResCode()) {
                       throw  new ServiceMessageException(message.getMessageRes());
@@ -231,6 +249,30 @@ public  class OrderService {
 
     }
 
+    //发邮件
+    class MailThread implements  Runnable{
 
+        String supplier = "";
+        String content="";
+        String title="";
+
+        public MailThread(String  supplierId,String title,String content){
+            this.supplier = supplierId;
+            this.title = title;
+            this.content = content;
+        }
+
+        @Override
+        public void run() {
+            try {
+                SendMail.sendGroupMail("smtp.shangpin.com", "chengxu@shangpin.com",
+                        "shangpin001", email, title,
+                        content,
+                        "text/html;charset=utf-8");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }

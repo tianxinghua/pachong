@@ -18,4 +18,5 @@ public class Item {
     private String price_currency;
     private String supply_price;
     private String picture;
+    private String market_price;
 }
