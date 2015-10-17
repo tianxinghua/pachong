@@ -39,12 +39,14 @@ public class OrderServiceImpl  {
     private static String key ;
     private static String confirmTime;
     private static String url;
+    private static String domain;
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         key = bdl.getString("key");
         confirmTime = bdl.getString("confirmTime");
+        domain =   bdl.getString("url");
         url = bdl.getString("url") + "/global/orders/";
     }
 
@@ -394,7 +396,7 @@ public class OrderServiceImpl  {
         if(null!=orderMap&&orderMap.size()==0){
             //无值 测试下状态
             try {
-              String healstatus =   HttpUtil45.get("https://api-sandbox.gilt.com/global/healthchecks/status",timeConfig,null);
+              String healstatus =   HttpUtil45.get( domain + "/global/healthchecks/status",timeConfig,null);
                 logger.info("服务器状态:"+healstatus);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -590,7 +592,7 @@ public class OrderServiceImpl  {
         List<com.shangpin.iog.dto.OrderDTO>  orderDTOList= null;
         try {
             orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED);
-            if(null!=orderDTOList){
+            if(null!=orderDTOList&&orderDTOList.size()>0){
                 String orderDetail = "",orderMsg="";
                 Gson gson = new Gson();
                 OutTimeConfig timeConfig = new OutTimeConfig(1000*60,1000*60,1000*60);
