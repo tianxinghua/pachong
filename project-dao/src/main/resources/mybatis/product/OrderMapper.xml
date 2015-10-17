@@ -49,10 +49,7 @@
 		DETAIL,
 		MEMO,
 		STATUS,
-		CREATE_TIME,
-
-		PURCHASE_PRICE_DETAIL
-
+		CREATE_TIME
     </sql>
     <select id="findBySupplierIdAndStatus"  resultMap="OrderResultMap">
         select
@@ -196,7 +193,7 @@
         #{supplierId},#{supplierNo}, #{uuId}, #{spOrderId},#{spPurchaseNo},#{spPurchaseDetailNo},
        	#{supplierOrderNo},
         #{detail},#{memo},#{status},
-        #{createTime},#{purchasePriceDetail}
+        #{createTime}
         )
     </insert>
 
@@ -212,7 +209,12 @@
             <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo},</if>
             <if test="excState != null"> EXC_STATE = #{excState}, </if>
             <if test="excDesc != null"> EXC_DESC = #{excDesc}, </if>
+            
+              <if test="purchasePriceDetail != null"> PURCHASE_PRICE_DETAIL = #{purchasePriceDetail}, </if>
+            
             <if test="excTime != null"> EXC_TIME = #{excTime}</if>
+
+		
         </set>
         where UUID = #{uuId}
     </update>
