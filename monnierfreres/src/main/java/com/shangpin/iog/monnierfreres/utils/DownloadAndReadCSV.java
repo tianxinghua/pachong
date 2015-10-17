@@ -89,45 +89,51 @@ public class DownloadAndReadCSV {
 			rowString = cr.getRawRecord();
 			split = rowString.split("\"\\|\"");
 			colValueList = Arrays.asList(split);
-//			writerJSON(colNameList,colValueList);
-			//是product
-			product = new Product();
-			product.setProductCode(colValueList.get(colNameList.indexOf("product_id")));
-			product.setProductName(colValueList.get(colNameList.indexOf("name")));
-			product.setBrand(colValueList.get(colNameList.indexOf("brand")));
-			product.setCategory(colValueList.get(colNameList.indexOf("type")));
-			product.setSubCategory(colValueList.get(colNameList.indexOf("subtype")));
-			product.setColor(colValueList.get(colNameList.indexOf("color")));
-			product.setDescription(colValueList.get(colNameList.indexOf("description")));
-			String[] img = new String[5];
-			if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("image_url_1")))) {
-				img[0] = colValueList.get(colNameList.indexOf("image_url_1"));
+			if(i==3746){
+				String d="s";
 			}
-			if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("image_url_2")))) {
-				img[1] = colValueList.get(colNameList.indexOf("image_url_2"));
+			if(colValueList.size()==colNameList.size()){
+				
+				product = new Product();
+				product.setProductCode(colValueList.get(colNameList.indexOf("product_id")));
+				product.setProductName(colValueList.get(colNameList.indexOf("name")));
+				product.setBrand(colValueList.get(colNameList.indexOf("brand")));
+				product.setCategory(colValueList.get(colNameList.indexOf("type")));
+				product.setSubCategory(colValueList.get(colNameList.indexOf("subtype")));
+				product.setColor(colValueList.get(colNameList.indexOf("color")));
+				product.setDescription(colValueList.get(colNameList.indexOf("description")));
+				String[] img = new String[5];
+				if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("image_url_1")))) {
+					img[0] = colValueList.get(colNameList.indexOf("image_url_1"));
+				}
+				if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("image_url_2")))) {
+					img[1] = colValueList.get(colNameList.indexOf("image_url_2"));
+				}
+				if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("image_url_3")))) {
+					img[2] = colValueList.get(colNameList.indexOf("image_url_3"));
+				}
+				if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("image_url_4")))) {
+					img[3] = colValueList.get(colNameList.indexOf("image_url_4"));
+				}
+				if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("image_url_5")))) {
+					img[4] = colValueList.get(colNameList.indexOf("image_url_5"));
+				}
+				product.setImage_url(img);
+				product.setMade(colValueList.get(colNameList.indexOf("manufacturer")));
+				product.setMaterial(colValueList.get(colNameList.indexOf("material")));
+				
+				Item item = new Item();
+				item.setItemCode(colValueList.get(colNameList.indexOf("\"sku")).replace("\"", ""));
+				item.setPrice(colValueList.get(colNameList.indexOf("price_before_discount")));
+				item.setSize(colValueList.get(colNameList.indexOf("size")));
+				item.setBarCode(colValueList.get(colNameList.indexOf("ean13")));
+				item.setStock(colValueList.get(colNameList.indexOf("qty")));
+				item.setCurrency(colValueList.get(colNameList.indexOf("price_type")));
+				product.getItems().add(item);
+				//是product
+				dtoList.add(product);
 			}
-			if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("image_url_3")))) {
-				img[2] = colValueList.get(colNameList.indexOf("image_url_3"));
-			}
-			if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("image_url_4")))) {
-				img[3] = colValueList.get(colNameList.indexOf("image_url_4"));
-			}
-			if (StringUtils.isNotBlank(colValueList.get(colNameList.indexOf("image_url_5")))) {
-				img[4] = colValueList.get(colNameList.indexOf("image_url_5"));
-			}
-			product.setImage_url(img);
-			product.setMade(colValueList.get(colNameList.indexOf("manufacturer")));
-			product.setMaterial(colValueList.get(colNameList.indexOf("material")));
-			
-			Item item = new Item();
-			item.setItemCode(colValueList.get(colNameList.indexOf("\"sku")).replace("\"", ""));
-			item.setPrice(colValueList.get(colNameList.indexOf("price_before_discount")));
-			item.setSize(colValueList.get(colNameList.indexOf("size")));
-			item.setBarCode(colValueList.get(colNameList.indexOf("ean13")));
-			item.setStock(colValueList.get(colNameList.indexOf("qty")));
-			item.setCurrency(colValueList.get(colNameList.indexOf("price_type")));
-			product.getItems().add(item);
-			dtoList.add(product);
+		
 
 		}
         return dtoList;

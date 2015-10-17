@@ -1,6 +1,8 @@
 package com.shangpin.iog.marylou;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.onsite.base.common.HTTPClient;
 import com.shangpin.iog.onsite.base.constance.Constant;
 import com.shangpin.iog.onsite.base.utils.StringUtil;
@@ -24,7 +26,8 @@ public class MarylouStockImpl  extends AbsUpdateProductStock {
     private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
     @Override
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        String json = new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
+//        String json = new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
+    	String json = HttpUtil45.get(Constant.URL_MARYLOU, new OutTimeConfig(1000*60*10,10*1000*60,10*1000*60), null);// new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
         Map<String ,String> tmpMap =  MapUtil.grabStock(skuNo,json);
         Map<String,Integer> stockMap= new HashMap<>();
         String key ="";
