@@ -110,7 +110,7 @@ public class ReservationProStock {
 		map.put("reservation_id", reservationId);
 		map.put("bags", data);
 		map.put("api_url", pushOrderUrl);
-		System.out.println("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId"+reservationId+",bags:"+data);
+		System.out.println("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:"+reservationId+",bags:"+data);
 		logger.info("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:"+reservationId+",bags:"+data);
 		ResponseObject returnObj = requestSource(map);
 		Map<String, String> returnMap = new HashMap<String, String>();
