@@ -3,6 +3,7 @@ package com.shangpin.iog.product.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.dto.NewPriceDTO;
+import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SkuPriceDTO;
 import com.shangpin.iog.product.dao.SkuMapper;
 import com.shangpin.iog.product.dao.SkuPriceMapper;
@@ -110,4 +111,18 @@ public class SkuPriceServiceImpl implements SkuPriceService {
     	supMap.put(supplierId, skuMap);
     	return supMap;
     }
+
+	@Override
+	public SkuDTO findSupplierPrice(String supplierId, String skuId)
+			throws ServiceException {
+		
+		SkuDTO sku = null;
+		try {
+			sku = skuDAO.findSupplierPrice(supplierId, skuId);
+		} catch (Exception e) {
+            logger.error("获取失败 "+e.getMessage());
+			e.printStackTrace();
+		}
+		return sku;
+	}
 }

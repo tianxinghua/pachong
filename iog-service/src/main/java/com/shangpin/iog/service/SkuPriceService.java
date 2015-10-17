@@ -1,9 +1,11 @@
 package com.shangpin.iog.service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SkuPriceDTO;
 
 import java.util.Map;
+
 
 /**
  * Created by lizhongren on 2015/8/29.
@@ -39,4 +41,11 @@ public interface SkuPriceService {
      * @throws ServiceException
      */
     public Map<String,Map<String,String>> getNewSkuPrice(String supplierId) throws ServiceException;
+    
+    /**
+     * 获取最新价格
+     * @param supplierId 
+     * @throws ServiceException
+     */
+    public SkuDTO findSupplierPrice(String supplierId,String skuId) throws ServiceException;
 }

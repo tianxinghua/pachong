@@ -43,7 +43,6 @@ public class SkuDTO implements Serializable {
 	public String getEventStartDate() {
 		return eventStartDate;
 	}
-
 	public void setEventStartDate(String eventStartDate) { this.eventStartDate = eventStartDate; }
 
 	public String getEventEndDate() {
