@@ -119,6 +119,7 @@ public class Item {
     private String description;
     private String item_detail;
     private String designCode;
+    private String farfetch_id;
     private String stock;
     private String picture;
 }
