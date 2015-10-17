@@ -57,6 +57,7 @@ public class FetchProduct {
 
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig =new OutTimeConfig(1000*100*60,1000*100*60,1000*100*60);
+
             List<String> list = HttpUtil45.getContentListByInputSteam(url,timeConfig,null,null,null);
             HttpUtil45.closePool();
             mongMap.put("supplierId",supplierId);
@@ -179,9 +180,10 @@ public class FetchProduct {
                 if (p.length > 8){
                     pic = p[8];
                 }
-                if (p.length > 21) {
-                    for (int i=21;i<p.length;i++){
-                        pic = pic +"|"+ p[i];
+                if (p.length > 23) {
+                    for (int i=24;i<p.length;i++){
+                        if (StringUtils.isNotEmpty(p[i]) && p[i].length() > 6)
+                            pic = pic +"|"+ p[i].replaceAll(",","|");
                     }
                 }
                 if (p[0].length() != 3 && p.length > 11){
@@ -229,7 +231,7 @@ public class FetchProduct {
                         List<Item> itemslist = new ArrayList<Item>();
                         Items items = new Items();
                         product.setProductId(map.get("id"));
-
+                        System.out.print(json.getString("c_model") + json.getString("c_fabric") + json.getString("c_color"));
                         product.setProducer_id(json.getString("c_model") + json.getString("c_fabric") + json.getString("c_color"));
                         product.setCategoryGender(map.get("gender"));
                         if (!json.has("brand"))
@@ -242,7 +244,8 @@ public class FetchProduct {
                         product.setProductOrigin(json.getString("c_madeIn"));
                         if (!json.has("c_categoryName"))
                             continue;
-                        product.setCategory(json.getString("c_categoryName"));
+                        product.setCategory(json.getString("c_categoryName").replace(",",""));
+                        System.out.println("category="+product.getCategory());
                         if (!json.has("c_material"))
                             continue;
                         product.setProduct_material(json
