@@ -6,7 +6,14 @@ public class RequestObject {
 	private String sku;
 	private String option_code;
 	private String qty;
+	private String payment_price;
 
+	public String getPayment_price() {
+		return payment_price;
+	}
+	public void setPayment_price(String payment_price) {
+		this.payment_price = payment_price;
+	}
 	public String getEvent_id() {
 		return event_id;
 	}

@@ -16,6 +16,8 @@ environments{
 
             zookeeper.address='192.168.20.40:2181,192.168.20.41:2181,192.168.20.42:2181'
 
+            wmsUrl='http://wmsinventory.liantiao.com'
+
         }
     }
 
@@ -35,6 +37,7 @@ environments{
             SOP.HOST='http://open.shangpin.com:8080'
             zookeeper.address='172.20.10.51:2181,172.20.10.52:2181,172.20.10.54:2181,172.20.10.55:2181,172.20.10.56:2181'
 
+            wmsUrl='http://spwmsinventory.spidc1.com'
         }
     }
 
@@ -53,6 +56,7 @@ environments{
             SOP.HOST='http://open.shangpin.com:8080'
             zookeeper.address='172.20.10.51:2181,172.20.10.52:2181,172.20.10.54:2181,172.20.10.55:2181,172.20.10.56:2181'
 
+            wmsUrl='http://spwmsinventory.spidc1.com'
         }
     }
 
@@ -75,7 +79,7 @@ environments{
 
             zookeeper.address='192.168.20.40:2181,192.168.20.41:2181,192.168.20.42:2181'
 
-
+            wmsUrl='http://spwmsinventory.spidc1.com'
 
         }
     }
