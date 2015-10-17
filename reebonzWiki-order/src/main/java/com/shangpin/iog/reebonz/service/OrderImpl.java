@@ -21,14 +21,19 @@ import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
+import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.reebonz.dto.Order;
 import com.shangpin.iog.reebonz.dto.RequestObject;
 import com.shangpin.iog.service.EventProductService;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.SkuPriceService;
 
 @Component
 public class OrderImpl extends AbsOrderService {
+	
+	@Autowired
+	SkuPriceService skuPriceService;
 	@Autowired
 	EventProductService eventProductService;
 	private static ResourceBundle bdl = null;
@@ -109,7 +114,7 @@ public class OrderImpl extends AbsOrderService {
 					orderDTO.getSpOrderId(), orderDTO.getSpPurchaseNo(), data);
 			// 1：代表发生了异常
 			if (map.get("1") != null) {
-				sendMail(orderDTO);
+//				sendMail(orderDTO);
 				orderDTO.setExcDesc(map.get("1"));
 				orderDTO.setExcState("1");
 			} else {
@@ -195,10 +200,16 @@ public class OrderImpl extends AbsOrderService {
 				RequestObject obj = new RequestObject();
 				obj.setSku(skuIDs[0]);
 				try {
+					SkuDTO sku = skuPriceService.findSupplierPrice(supplierId, skuIDs[0]);
+					if(sku!=null){
+						String supplierPrice = sku.getSupplierPrice();
+						System.out.println("获取的进货价："+supplierPrice);
+						obj.setPayment_price(supplierPrice);
+					}
 					String eventId = eventProductService.selectEventIdBySku(skuIDs[0], supplierId);
+					System.out.println("获取的活动Id："+eventId);
 					obj.setEvent_id(eventId);
 				} catch (ServiceException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 //				obj.setEvent_id(skuIDs[1]);
@@ -216,15 +227,15 @@ public class OrderImpl extends AbsOrderService {
 		return array.toString();
 	}
 
-	private void sendMail(OrderDTO orderDTO) {
-		 if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(Integer.parseInt(time))>0){
+	private void sendMail(final OrderDTO orderDTO) {
+		 if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(Long.parseLong(time))>0){
             //超过一天 不需要在做处理 订单状态改为其它状体
 			 orderDTO.setStatus(OrderStatus.NOHANDLE);
 			 new Runnable() {
 					@Override
 					public void run() {
 						 try {
-							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,messageText, messageType);
+							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单"+orderDTO.getSpOrderId()+"出现异常", messageType);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
