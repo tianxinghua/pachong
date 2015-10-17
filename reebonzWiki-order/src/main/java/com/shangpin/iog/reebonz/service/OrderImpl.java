@@ -234,7 +234,7 @@ public class OrderImpl extends AbsOrderService {
 	private void sendMail(final OrderDTO orderDTO) {
 		long tim = Long.parseLong(time);
 		 if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim)>1){
-            //超过一天 不需要在做处理 订单状态改为其它状体1445056582000
+            //超过一天 不需要在做处理 订单状态改为其它状体
 			 orderDTO.setExcState("0");
 			 orderDTO.setStatus(OrderStatus.NOHANDLE);
 			 Thread t = new Thread(	 new Runnable() {
@@ -242,7 +242,8 @@ public class OrderImpl extends AbsOrderService {
 					public void run() {
 						 try {
 							 System.out.println("email");
-							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单"+orderDTO.getSpOrderId()+"出现异常", messageType);
+							 
+							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单"+orderDTO.getSpOrderId()+"出现错误,已置为不做处理，原因："+orderDTO.getExcDesc(), messageType);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
