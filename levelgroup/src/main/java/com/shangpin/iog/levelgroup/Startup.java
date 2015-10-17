@@ -30,7 +30,7 @@ public class Startup {
         //拉取数据
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("levelgroup");
 //        fetchProduct.fetchProductAndSave("http://www.thelevelgroup-ftp.com/uploads/TLG_GooglePLA_lncc_GB.txt");
-        fetchProduct.fetchProductAndSave("http://222.186.51.135:8080/trident/public/TLG_GooglePLA_lncc_GB.txt");
+        fetchProduct.fetchProductAndSave("TLG_GooglePLA_lncc_IT.txt");
         log.info("----拉取levelgroup数据完成----");
 
 
