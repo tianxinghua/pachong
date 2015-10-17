@@ -31,6 +31,9 @@ public class StringUtil {
      */
     public static String getMaterial(String desc){
         String material = "";
+        if (desc == null){
+            return material;
+        }
         String[] descArr = desc.split("<br>");
         for (String s: descArr){
             if (s.contains("%,")){
