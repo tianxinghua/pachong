@@ -104,7 +104,7 @@ public class LevlelgroupFtpUtil {
         return contentList;
     }
     public static void  main(String[] args) throws Exception{
-        String FILE_PATH = "";
+        String FILE_PATH = "TLG_GooglePLA_lncc_IT.txt";
         List<String> list = LevlelgroupFtpUtil.readConfigFileForFTP( FILE_PATH);
 
         if (list != null){
