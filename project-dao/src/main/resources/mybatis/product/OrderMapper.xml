@@ -22,6 +22,8 @@
 		
         <result column="UPDATE_TIME" property="updateTime"/>
         <result column="CREATE_TIME" property="createTime"  />
+        
+        <result column="PURCHASE_PRICE_DETAIL" property="purchasePriceDetail"  />
 
         <result column="EXC_STATE" property="excState"  />
         <result column="EXC_DESC" property="excDesc"  />
@@ -47,8 +49,9 @@
 		DETAIL,
 		MEMO,
 		STATUS,
+		CREATE_TIME,
 
-		CREATE_TIME
+		PURCHASE_PRICE_DETAIL
 
     </sql>
     <select id="findBySupplierIdAndStatus"  resultMap="OrderResultMap">
@@ -193,7 +196,7 @@
         #{supplierId},#{supplierNo}, #{uuId}, #{spOrderId},#{spPurchaseNo},#{spPurchaseDetailNo},
        	#{supplierOrderNo},
         #{detail},#{memo},#{status},
-        #{createTime}
+        #{createTime},#{purchasePriceDetail}
         )
     </insert>
 
@@ -205,6 +208,7 @@
             <if test="memo != null"> MEMO = #{memo}, </if>
             <if test="updateTime != null"> UPDATE_TIME = #{updateTime}, </if>
             <if test="supplierOrderNo != null"> SUPPLIER_ORDER_NO = #{supplierOrderNo}, </if>
+         	<if test="spPurchaseNo != null"> SP_PURCHASE_NO = #{spPurchaseNo}, </if>    
             <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo},</if>
             <if test="excState != null"> EXC_STATE = #{excState}, </if>
             <if test="excDesc != null"> EXC_DESC = #{excDesc}, </if>

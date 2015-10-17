@@ -82,13 +82,12 @@ public class OrderImpl extends AbsOrderService {
 		try{
 			String order_id = orderDTO.getSpOrderId();
 			String order_site = "shangpin";
-			String data = getJsonData(orderDTO.getDetail());
+			String data = getJsonData(orderDTO.getDetail(),null);
 
 			Map<String, String> map = stock.lockStock(order_id, order_site, data);
 			if (map.get("1") != null) {
 				sendMail(orderDTO);
 				orderDTO.setExcDesc(map.get("1"));
-				orderDTO.setExcState("1");
 			} else {
 				orderDTO.setExcState("0");
 				orderDTO.setSupplierOrderNo(map.get("0"));
@@ -108,15 +107,14 @@ public class OrderImpl extends AbsOrderService {
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		
 		try{
-			String data = getJsonData(orderDTO.getDetail());
+			String data = getJsonData(orderDTO.getDetail(),orderDTO.getPurchasePriceDetail());
 			Map<String, String> map = null;
 			map = stock.pushOrder(orderDTO.getSupplierOrderNo(),
 					orderDTO.getSpOrderId(), orderDTO.getSpPurchaseNo(), data);
 			// 1：代表发生了异常
 			if (map.get("1") != null) {
-//				sendMail(orderDTO);
+				sendMail(orderDTO);
 				orderDTO.setExcDesc(map.get("1"));
-				orderDTO.setExcState("1");
 			} else {
 				orderDTO.setExcState("0");
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
@@ -141,6 +139,7 @@ public class OrderImpl extends AbsOrderService {
 					"voided");// deducted" (for confirmation) "voided" (for reversal)
 			if (map.get("1") != null) {
 				 if(DateTimeUtil.getTimeDifference(deleteOrder.getCreateTime(),new Date())/(Integer.parseInt(time))>0){
+					 deleteOrder.setExcState("0");
 			            //超过一天 不需要在做处理 订单状态改为其它状体
 					 deleteOrder.setStatus(OrderStatus.NOHANDLE);
 					 new Runnable() {
@@ -153,9 +152,11 @@ public class OrderImpl extends AbsOrderService {
 								}
 							}
 						};
+			     }else{
+			    	 deleteOrder.setExcState("1");
 			     }
 				deleteOrder.setExcDesc(map.get("1"));
-				deleteOrder.setExcState("1");
+				
 			} else {
 				deleteOrder.setExcState("0");
 				deleteOrder.setStatus(OrderStatus.CANCELLED);
@@ -184,7 +185,7 @@ public class OrderImpl extends AbsOrderService {
 	/*
 	 * detail数据格式： skuId:数量,skuId:数量
 	 */
-	private String getJsonData(String detail) {
+	private String getJsonData(String detail,String purchasePrice) {
 
 		List<RequestObject> list = null;
 		if (detail != null) {
@@ -194,17 +195,20 @@ public class OrderImpl extends AbsOrderService {
 				// detail[i]数据格式==>skuId:数量
 				String num = details[i].split(":")[1];
 				String skuNo = details[i].split(":")[0];
-				// skuNo数据格式：skuId|eventId|option_code
+				// skuNo数据格式：skuId|option_code
 				String skuIDs[] = skuNo.split("\\|");
 
 				RequestObject obj = new RequestObject();
 				obj.setSku(skuIDs[0]);
 				try {
-					SkuDTO sku = skuPriceService.findSupplierPrice(supplierId, skuIDs[0]);
-					if(sku!=null){
-						String supplierPrice = sku.getSupplierPrice();
-						System.out.println("获取的进货价："+supplierPrice);
-						obj.setPayment_price(supplierPrice);
+					if(purchasePrice!=null){
+						obj.setPayment_price(purchasePrice);
+//						SkuDTO sku = skuPriceService.findSupplierPrice(supplierId, skuNo);
+//						if(sku!=null){
+//							String supplierPrice = sku.getSupplierPrice();
+//							System.out.println("获取的进货价："+supplierPrice);
+//							
+//						}
 					}
 					String eventId = eventProductService.selectEventIdBySku(skuIDs[0], supplierId);
 					System.out.println("获取的活动Id："+eventId);
@@ -228,19 +232,26 @@ public class OrderImpl extends AbsOrderService {
 	}
 
 	private void sendMail(final OrderDTO orderDTO) {
-		 if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(Long.parseLong(time))>0){
-            //超过一天 不需要在做处理 订单状态改为其它状体
+		long tim = Long.parseLong(time);
+		 if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim)>1){
+            //超过一天 不需要在做处理 订单状态改为其它状体1445056582000
+			 orderDTO.setExcState("0");
 			 orderDTO.setStatus(OrderStatus.NOHANDLE);
-			 new Runnable() {
+			 Thread t = new Thread(	 new Runnable() {
 					@Override
 					public void run() {
 						 try {
+							 System.out.println("email");
 							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单"+orderDTO.getSpOrderId()+"出现异常", messageType);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					}
-				};
+				});  
+		        t.start();  
+		
+        }else{
+    		orderDTO.setExcState("1");
         }
 	}
 
