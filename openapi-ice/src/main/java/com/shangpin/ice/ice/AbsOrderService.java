@@ -247,15 +247,92 @@ public abstract class AbsOrderService {
         }
         try {
             // 获取采购单    更新订单状态
-            OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+            OpenApiServantPrx servant = null;
+            try {
+                servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            String sopPurchaseOrderNo ="";
+            Map<String,String> purchaseOrderMap = new HashMap<>();
+//
+//            List<String> orderIdList =  new ArrayList<>();
+//            int i = 1;
+//            String orders="";
+//            for(OrderDTO orderDTO:orderDTOList){
+//                orders = orders + orderDTO.getSpOrderId() +",";
+//                if(i%20==0) {
+//                     orderIdList.add(orders.substring(0,orders.length()-1));
+//                     i=1;
+//                     orders = "";
+//                    continue;
+//
+//                }
+//                i++;
+//            }
+//            if(!orders.equals("")){
+//                orderIdList.add(orders.substring(0,orders.length()-1));
+//            }
+//
+//            for(String someOrder:orderIdList){
+//                PurchaseOrderDetailSpecialPage  orderDetailSpecialPage = servant.FindPurchaseOrderDetailSpecial(supplierId,"",orderDTO.getSpOrderId());
+//                if(null!=orderDetailSpecialPage&&null!=orderDetailSpecialPage.PurchaseOrderDetails&&orderDetailSpecialPage.PurchaseOrderDetails.size()>0){  //存在采购单 就代表已支付
+//                    //更新其已支付状态
+//
+//                    for (PurchaseOrderDetailSpecial orderDetail : orderDetailSpecialPage.PurchaseOrderDetails) {
+//                        sopPurchaseOrderNo  = orderDetail.SopPurchaseOrderNo;
+//                        if(purchaseOrderMap.containsKey(sopPurchaseOrderNo)){
+//                            //
+//
+//
+//                        }else{
+//                            orderDTO.setSpPurchaseNo(sopPurchaseOrderNo);
+//                            purchaseOrderMap.put(sopPurchaseOrderNo,"");
+//                            if(5!=orderDetail.DetailStatus){ //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
+//                                orderDTO.setStatus(OrderStatus.PAYED);
+//                            }else{
+//                                orderDTO.setStatus(OrderStatus.CANCELLED);
+//                            }
+//                            productOrderService.update(orderDTO);
+//                        }
+//
+//
+//                    }
+//
+//
+//                }
+//            }
+
+
+
             for(OrderDTO orderDTO:orderDTOList){
 
                 PurchaseOrderDetailSpecialPage  orderDetailSpecialPage = servant.FindPurchaseOrderDetailSpecial(supplierId,"",orderDTO.getSpOrderId());
                 if(null!=orderDetailSpecialPage&&null!=orderDetailSpecialPage.PurchaseOrderDetails&&orderDetailSpecialPage.PurchaseOrderDetails.size()>0){  //存在采购单 就代表已支付
                    //更新其已支付状态
-                    orderDTO.setStatus(OrderStatus.PAYED);
 
-                    productOrderService.update(orderDTO);
+                    for (PurchaseOrderDetailSpecial orderDetail : orderDetailSpecialPage.PurchaseOrderDetails) {
+                        sopPurchaseOrderNo  = orderDetail.SopPurchaseOrderNo;
+                        if(purchaseOrderMap.containsKey(sopPurchaseOrderNo)){
+                            //
+
+
+                        }else{
+                            orderDTO.setSpPurchaseNo(sopPurchaseOrderNo);
+                            purchaseOrderMap.put(sopPurchaseOrderNo,"");
+                            if(5!=orderDetail.DetailStatus){ //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
+                                 orderDTO.setStatus(OrderStatus.PAYED);
+                            }else{
+                                orderDTO.setStatus(OrderStatus.CANCELLED);
+                            }
+                            productOrderService.update(orderDTO);
+                        }
+
+
+                    }
+
+
+
 
                 }
 
