@@ -55,7 +55,6 @@
 	        SUPPLIER_PRICE
 	        from SKU
 	        <where>
-	
 	            <if test="null!=supplierId">
 	                SUPPLIER_ID = #{supplierId}
 	            </if>

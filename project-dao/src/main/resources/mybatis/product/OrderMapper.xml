@@ -22,6 +22,8 @@
 		
         <result column="UPDATE_TIME" property="updateTime"/>
         <result column="CREATE_TIME" property="createTime"  />
+        
+        <result column="PURCHASE_PRICE_DETAIL" property="purchasePriceDetail"  />
 
         <result column="EXC_STATE" property="excState"  />
         <result column="EXC_DESC" property="excDesc"  />
@@ -47,9 +49,7 @@
 		DETAIL,
 		MEMO,
 		STATUS,
-
 		CREATE_TIME
-
     </sql>
     <select id="findBySupplierIdAndStatus"  resultMap="OrderResultMap">
         select
@@ -61,11 +61,12 @@
         SUPPLIER_ORDER_NO as SUPPLIER_ORDER_NO,
         STATUS as STATUS,
         DETAIL as DETAIL,
+        SP_PURCHASE_NO as SP_PURCHASE_NO,
         UPDATE_TIME as UPDATE_TIME,
         CREATE_TIME as CREATE_TIME,
         EXC_STATE as EXC_STATE,
-        EXC_DESC  as EXC_DESC
-		
+        EXC_DESC  as EXC_DESC,
+		PURCHASE_PRICE_DETAIL as PURCHASE_PRICE_DETAIL
 
         from `ORDER`
         <where>
@@ -205,10 +206,16 @@
             <if test="memo != null"> MEMO = #{memo}, </if>
             <if test="updateTime != null"> UPDATE_TIME = #{updateTime}, </if>
             <if test="supplierOrderNo != null"> SUPPLIER_ORDER_NO = #{supplierOrderNo}, </if>
+         	<if test="spPurchaseNo != null"> SP_PURCHASE_NO = #{spPurchaseNo}, </if>    
             <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo},</if>
             <if test="excState != null"> EXC_STATE = #{excState}, </if>
             <if test="excDesc != null"> EXC_DESC = #{excDesc}, </if>
+            
+              <if test="purchasePriceDetail != null"> PURCHASE_PRICE_DETAIL = #{purchasePriceDetail}, </if>
+            
             <if test="excTime != null"> EXC_TIME = #{excTime}</if>
+
+		
         </set>
         where UUID = #{uuId}
     </update>
