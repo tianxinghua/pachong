@@ -318,7 +318,7 @@ public abstract class AbsOrderService {
 
                         }else{
                             orderDTO.setSpPurchaseNo(sopPurchaseOrderNo);
-                            orderDTO.setPurchasePriceDetail(orderDetail.SupplierSkuNo+":"+orderDetail.SkuPrice);
+                            orderDTO.setPurchasePriceDetail(orderDetail.SkuPrice);
                             purchaseOrderMap.put(sopPurchaseOrderNo,"");
                             if(5!=orderDetail.DetailStatus){ //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
                                  orderDTO.setStatus(OrderStatus.PAYED);
