@@ -94,4 +94,14 @@ public class StringUtil {
         }
         return str;
     }
+
+    /**
+     *将数据中乱码替换为加号
+     */
+    public static  String convertStr(String str) {
+        if(str.indexOf("½")>0){
+            str = str.replace("½","+");
+        }
+        return str;
+    }
 }

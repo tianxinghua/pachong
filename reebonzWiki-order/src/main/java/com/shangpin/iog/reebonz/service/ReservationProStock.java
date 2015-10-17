@@ -19,6 +19,7 @@ import org.springframework.dao.DuplicateKeyException;
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.reebonz.dto.OAuth;
 import com.shangpin.iog.reebonz.dto.Order;
@@ -55,7 +56,6 @@ public class ReservationProStock {
 			oauth = authApi();
 		}
 	}
-
 	/*
 	 * 锁库存
 	 */
@@ -110,6 +110,8 @@ public class ReservationProStock {
 		map.put("reservation_id", reservationId);
 		map.put("bags", data);
 		map.put("api_url", pushOrderUrl);
+		System.out.println("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId"+reservationId+",bags:"+data);
+		logger.info("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId"+reservationId+",bags:"+data);
 		ResponseObject returnObj = requestSource(map);
 		Map<String, String> returnMap = new HashMap<String, String>();
 		if (returnObj != null) {
@@ -150,7 +152,10 @@ public class ReservationProStock {
 		}
 		return returnMap;
 	}
-
+public static void main(String[] args) {
+	ReservationProStock m = new ReservationProStock();
+	m.unlockStock("265","123456","","voided");
+}
 	/*
 	 * 授权
 	 */
@@ -214,13 +219,19 @@ public class ReservationProStock {
 			map.put("response_type", "json");
 			// 请求API的返回结果
 			String json = MyJsonUtil.getRequestSourceJson(map);
+			if(HttpUtil45.errorResult.equals(json)){
+				obj = new ResponseObject();
+				obj.setReturn_code("0");
+				obj.setError_msg(json);
+				return obj;
+			}
 			obj = new Gson().fromJson(json, ResponseObject.class);
 			if ("INV_TOKEN".equals(obj.getError_code())) {
 				logger.info("无效的token:" + oauth.getAccess_token());
 				// token可能已过期，刷新token延长周期
 				// 重新请求url资源
 				refreshToken();
-				requestSource(map);
+				obj = requestSource(map);
 			}
 		} else {
 			obj = new ResponseObject();

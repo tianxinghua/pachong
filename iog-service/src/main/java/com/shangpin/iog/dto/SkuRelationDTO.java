@@ -17,4 +17,15 @@ public class SkuRelationDTO {
     private String sopSkuId;//尚品的SKU
     private String supplierSkuId;
     private Date createTime;
+
+    @Override
+    public String toString() {
+        return "SkuRelationDTO{" +
+                "supplierId='" + supplierId + '\'' +
+                ", sopNo='" + sopNo + '\'' +
+                ", sopSkuId='" + sopSkuId + '\'' +
+                ", supplierSkuId='" + supplierSkuId + '\'' +
+                ", createTime=" + createTime +
+                '}';
+    }
 }

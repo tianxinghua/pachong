@@ -95,6 +95,7 @@ public class FetchProduct {
                 //未包含的不执行
                 if(!map.containsKey(saleId)) continue;
             }
+            System.out.println("sale id " + saleId);
             saleInventoryUrl = sale + "/" + saleId+"/realtime-inventory";
             saleSkuUrl = sale + "/" + saleId + "/skus";
 
@@ -108,6 +109,8 @@ public class FetchProduct {
                 try {
                     saleInventoryList=gson.fromJson(inventoryMsg, new TypeToken<List<InventoryDTO>>() {
                     }.getType());
+
+                    System.out.println("saleInventoryList size  " + saleInventoryList.size() );
                     for(InventoryDTO inventoryDTO:saleInventoryList){
                         inventoryMap.put(inventoryDTO.getSku_id(),inventoryDTO.getQuantity()) ;
                     }
@@ -118,7 +121,7 @@ public class FetchProduct {
 
             }while (null!=saleInventoryList&&saleInventoryList.size()==100);
 
-
+            System.out.println("inventoryMap size " + inventoryMap.size() );
 
 
             offset=0;
@@ -132,6 +135,8 @@ public class FetchProduct {
 
                     saleSkuList=gson.fromJson(skuMsg, new TypeToken<List<GiltSkuDTO>>() {
                     }.getType());
+                    System.out.println(saleId + " sku = " + saleSkuList.size());
+
                     for(GiltSkuDTO giltSkuDTO:saleSkuList){
                         this.saveProduct(spuMap,giltSkuDTO,inventoryMap,saleDTO);
                     }
@@ -295,7 +300,7 @@ public class FetchProduct {
 
         try {
 
-            OutTimeConfig outTimeConf = new OutTimeConfig(1000*60,1000*60,1000*60);
+            OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*5,1000*60*5,1000*60*5);
 
             result=HttpUtil45.get(saleUrl, outTimeConf, null,key,"");
             logger.info("get result = " + result);

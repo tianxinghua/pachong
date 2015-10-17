@@ -54,7 +54,14 @@ public abstract class AbsUpdateProductStock {
 
 	public static Map<String,String>   sopMarketPriceMap = null;
 
-
+	private static ResourceBundle bdl = null;
+	private static  String email = null;
+	static {
+		if(null==bdl){
+			bdl=ResourceBundle.getBundle("openice");
+		}
+		email = bdl.getString("email");
+	}
 
 
 	private  void  getSopMarketPriceMap(String supplierId) throws ServiceException {
@@ -161,7 +168,11 @@ public abstract class AbsUpdateProductStock {
 						skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
 						skuRelationDTO.setSopSkuId(ice.SkuNo);
 						skuRelationDTO.setCreateTime(date);
-						skuRelationService.saveSkuRelateion(skuRelationDTO);
+						try {
+							skuRelationService.saveSkuRelateion(skuRelationDTO);
+						} catch (ServiceException e) {
+						    logger.error(skuRelationDTO.toString() + "保存失败");
+						}
 					}
 
 					if(null!=ice.SkuNo&&!"".equals(ice.SkuNo)&&null!=ice.SupplierSkuNo&&!"".equals(ice.SupplierSkuNo)){
@@ -170,10 +181,6 @@ public abstract class AbsUpdateProductStock {
 							stocks.put(ice.SupplierSkuNo,ice.SkuNo);
 						}
 					}
-
-
-
-
 
 				}
 			}
@@ -381,7 +388,7 @@ public abstract class AbsUpdateProductStock {
 	 * @return 供应商sku对应的icesku编号的库存，key是ice的sku编号，值是库存
 	 */
 	private Map<String, Integer> grab4Icestock(Collection<String> skuNos,Map<String, String> localAndIceSkuId,
-											  Map<String,String> sopPriceMap,String supplierId) {
+											  Map<String,String> sopPriceMap, final String supplierId) {
 		Map<String, Integer> iceStock=new HashMap<>();
 		try {
 			Map<String, String> supplierStock=grabStock(skuNos);  //
@@ -443,8 +450,6 @@ public abstract class AbsUpdateProductStock {
 					}
 				}
 
-
-
 				String iceSku=localAndIceSkuId.get(skuNo);
 				if(this.supplierSkuIdMain){  // 已供应商提供的SKU为主 不更新未提供的库存
 
@@ -466,12 +471,9 @@ public abstract class AbsUpdateProductStock {
 
 			}
 			if(sendMail){ //发送邮件
-//				SendMail.sendMessage("smtp.shangpin.com", "chengxu@shangpin.com",
-//						"shangpin001", "sopApi@shangpin.com", "海外对接供货商无法链接",
-//						"门户编号：" + supplierId +"，链接异常。请手工拉取库存",
-//						"text/html;charset=utf-8");
 
-
+				Thread t = new Thread(new MailThread(supplierId));
+				t.start();
 			}
 
 		} catch (Exception e1) {
@@ -568,6 +570,29 @@ public abstract class AbsUpdateProductStock {
 			c.add(Calendar.SECOND,num);
 		return c.getTime();
 	}
+
+	//发邮件
+	class MailThread implements  Runnable{
+
+		String supplier = "";
+
+		public MailThread(String  supplierId){
+			this.supplier = supplierId;
+		}
+
+		@Override
+		public void run() {
+			try {
+				SendMail.sendGroupMail("smtp.shangpin.com", "chengxu@shangpin.com",
+						"shangpin001", email, "海外对接供货商无法链接",
+						"门户编号：" + supplier + "，链接异常。请手工拉取库存",
+						"text/html;charset=utf-8");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 
 	class UpdateThread extends Thread{
 		final Logger logger = LoggerFactory.getLogger(UpdateThread.class);
