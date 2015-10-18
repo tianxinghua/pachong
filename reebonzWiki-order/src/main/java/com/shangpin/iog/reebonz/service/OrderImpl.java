@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 
 import net.sf.json.JSONArray;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,7 @@ public class OrderImpl extends AbsOrderService {
 	SkuPriceService skuPriceService;
 	@Autowired
 	EventProductService eventProductService;
+	private static Logger logger = Logger.getLogger("info");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
 	private static String supplierNo = null;
@@ -83,15 +85,21 @@ public class OrderImpl extends AbsOrderService {
 			String order_id = orderDTO.getSpOrderId();
 			String order_site = "shangpin";
 			String data = getJsonData(orderDTO.getDetail(),null);
-
+			logger.info("锁库存推送的数据：data："+data+",order_id:"+order_id);
 			Map<String, String> map = stock.lockStock(order_id, order_site, data);
 			if (map.get("1") != null) {
-				sendMail(orderDTO);
-				orderDTO.setExcDesc(map.get("1"));
-			} else {
 				orderDTO.setExcState("0");
 				orderDTO.setSupplierOrderNo(map.get("0"));
 				orderDTO.setStatus(OrderStatus.PLACED);
+				
+			} else if(map.get("-1")!=null){
+				sendMail(orderDTO);
+				orderDTO.setExcDesc(map.get("-1"));
+			}else if(map.get("0")!=null){
+				orderDTO.setExcState("0");
+				orderDTO.setSupplierOrderNo(map.get("0"));
+				orderDTO.setStatus(OrderStatus.NOHANDLE);
+				
 			}
 		}catch (Exception e) {
 			orderDTO.setExcDesc(e.getMessage());
@@ -108,7 +116,9 @@ public class OrderImpl extends AbsOrderService {
 		
 		try{
 			String data = getJsonData(orderDTO.getDetail(),orderDTO.getPurchasePriceDetail());
+			
 			Map<String, String> map = null;
+			logger.info("推送订单的数据：data："+data+",SupplierOrderNo:"+orderDTO.getSupplierOrderNo()+",OrderId:"+orderDTO.getSpOrderId()+",SpPurchaseNo:"+ orderDTO.getSpPurchaseNo());
 			map = stock.pushOrder(orderDTO.getSupplierOrderNo(),
 					orderDTO.getSpOrderId(), orderDTO.getSpPurchaseNo(), data);
 			// 1：代表发生了异常
@@ -191,9 +201,11 @@ public class OrderImpl extends AbsOrderService {
 		if (detail != null) {
 			list = new ArrayList<RequestObject>();
 			String[] details = detail.split(",");
+			logger.info("detail数据格式:"+detail);
 			for (int i = 0; i < details.length; i++) {
 				// detail[i]数据格式==>skuId:数量
 				String num = details[i].split(":")[1];
+				
 				String skuNo = details[i].split(":")[0];
 				// skuNo数据格式：skuId|option_code
 				String skuIDs[] = skuNo.split("\\|");
@@ -212,6 +224,7 @@ public class OrderImpl extends AbsOrderService {
 					}
 					String eventId = eventProductService.selectEventIdBySku(skuIDs[0], supplierId);
 					System.out.println("获取的活动Id："+eventId);
+					logger.info("eventId"+eventId);
 					obj.setEvent_id(eventId);
 				} catch (ServiceException e) {
 					e.printStackTrace();
@@ -224,6 +237,7 @@ public class OrderImpl extends AbsOrderService {
 					obj.setOption_code(code);
 				}
 				obj.setQty(num);
+				logger.info(obj.toString());
 				list.add(obj);
 			}
 		}

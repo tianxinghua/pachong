@@ -71,11 +71,17 @@ public class ReservationProStock {
 		ResponseObject obj = requestSource(map);
 		Map<String, String> returnMap = new HashMap<String, String>();
 		if ("1".equals(obj.getReturn_code())) {
-			returnMap.put("0", obj.getReservation_id());
+			returnMap.put("1", obj.getReservation_id());
 			logger.info("锁库存success");
-		} else {
+		} else if("-1".equals(obj.getReturn_code())){
 			logger.info("锁库存失败" + obj.getError_msg());
-			returnMap.put("1", obj.getError_msg());
+			returnMap.put("0", obj.getError_msg());
+		}else if("0".equals(obj.getReturn_code())){
+			logger.info("锁库存失败" + obj.getError_msg());
+			returnMap.put("0", obj.getError_msg());
+		}else {
+			logger.info("锁库存失败" + obj.getError_msg());
+			returnMap.put("-1", obj.getError_msg());
 		}
 		return returnMap;
 	}
@@ -220,6 +226,7 @@ public static void main(String[] args) {
 			map.put("response_type", "json");
 			// 请求API的返回结果
 			String json = MyJsonUtil.getRequestSourceJson(map);
+			logger.info("通过授权请求url的返回结果：" + json);
 			if(HttpUtil45.errorResult.equals(json)){
 				obj = new ResponseObject();
 				obj.setReturn_code("0");
