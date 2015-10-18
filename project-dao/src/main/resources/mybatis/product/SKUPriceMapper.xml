@@ -13,8 +13,6 @@
 
 	</resultMap>
 	
-
-
 	
 	
 	<sql id="all_sku_price_column">
@@ -24,7 +22,7 @@
         SUPPLIER_PRICE,
         CREATE_TIME
 	</sql>
-
+	
 
     <insert id="save"  parameterType="iog_sku_price" >
         insert into SKU_PRICE(

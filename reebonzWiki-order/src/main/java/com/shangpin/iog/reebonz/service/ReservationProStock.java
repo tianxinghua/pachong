@@ -110,8 +110,8 @@ public class ReservationProStock {
 		map.put("reservation_id", reservationId);
 		map.put("bags", data);
 		map.put("api_url", pushOrderUrl);
-		System.out.println("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId"+reservationId+",bags:"+data);
-		logger.info("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId"+reservationId+",bags:"+data);
+		System.out.println("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:"+reservationId+",bags:"+data);
+		logger.info("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:"+reservationId+",bags:"+data);
 		ResponseObject returnObj = requestSource(map);
 		Map<String, String> returnMap = new HashMap<String, String>();
 		if (returnObj != null) {
@@ -202,6 +202,7 @@ public static void main(String[] args) {
 				logger.info("刷新授权success");
 			} else if ("INV_REFRESH_TOKEN".equals(obj.getError_code())) {
 				logger.info("授权已过期，重新授权");
+				System.out.println("授权已过期，重新授权");
 				authApi();
 			}
 		}
@@ -228,6 +229,7 @@ public static void main(String[] args) {
 			obj = new Gson().fromJson(json, ResponseObject.class);
 			if ("INV_TOKEN".equals(obj.getError_code())) {
 				logger.info("无效的token:" + oauth.getAccess_token());
+				System.out.println("无效的token:" + oauth.getAccess_token());
 				// token可能已过期，刷新token延长周期
 				// 重新请求url资源
 				refreshToken();

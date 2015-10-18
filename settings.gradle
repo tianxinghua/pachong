@@ -53,7 +53,7 @@ include 'sanremo-stock'
 include 'iog-web-tmp'
 include 'iog-sop'
 include 'iog-facade-dubbo'
-include 'gilt-order'
+
 include 'bagheera'
 include 'bagheera-stock'
 include 'gilt-stock'
@@ -72,6 +72,8 @@ include 'atelier-purchase'
 include 'linoricci'
 include 'linoricci-stock'
 
+//include 'alducadaosta'
+
 include 'bagheera-stock'
 
 include 'itemInfo'
@@ -80,6 +82,9 @@ include 'atelier-stock'
 include 'giglio'
 
 include 'atelier-purchase'
+include 'atelier-stock'
+include 'atelier-purchase'
+
 include 'prodottimonti'
 include 'prodottimonti-stock'
 include 'levelgroup'
@@ -91,7 +96,7 @@ include 'bagheera-stock'
 include 'itemInfo'
 include 'itemInfo-stock'
 include 'itemInfo-purchase'
-include 'atelier-stock'
+
 
 include 'dante5'
 include 'dante5-stock'
@@ -104,7 +109,7 @@ include 'eleonorabonucci-stock'
 include 'cirillomoda'
 include 'cirillomoda-stock'
 
-include 'atelier-purchase'
+
 include 'prodottimonti'
 include 'prodottimonti-stock'
 include 'levelgroup'
@@ -143,3 +148,5 @@ include 'iog-price'
 include 'articoli'
 include 'articoli-stock'
 
+include 'theclutcher'
+include 'theclutcher-stock'
