@@ -89,7 +89,7 @@ public class OrderImpl extends AbsOrderService {
 			Map<String, String> map = stock.lockStock(order_id, order_site, data);
 			if (map.get("1") != null) {
 				orderDTO.setExcState("0");
-				orderDTO.setSupplierOrderNo(map.get("0"));
+				orderDTO.setSupplierOrderNo(map.get("1"));
 				orderDTO.setStatus(OrderStatus.PLACED);
 
 			} else{
