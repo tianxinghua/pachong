@@ -229,7 +229,6 @@ public class OrderImpl extends AbsOrderService {
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
-//				obj.setEvent_id(skuIDs[1]);
 				String code = skuIDs[1];
 				if ("A".equals(code)) {
 					obj.setOption_code("");
