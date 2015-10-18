@@ -114,26 +114,26 @@ public class VelaStockImp extends AbsUpdateProductStock {
                         stock_map.put(skuno, "0");
 
                     }else{
-                        //获取价格
-                        try {
-                            priceJson = HttpUtil45.get(priceUrl, new OutTimeConfig(), null);
-                        }catch (IllegalArgumentException e){
-                            e.printStackTrace();
-                        }
-                        if(priceJson != null && !priceJson.isEmpty()){
-                            Price price = null;
-                            price = gson.fromJson(priceJson,new TypeToken<Price>() {}.getType());
-                            if(price!=null&&price.getMarket_price()!=null){
-                                if(sopMarketPriceMap.containsKey(skuno)){
-                                    if(!price.getMarket_price().equals(sopMarketPriceMap.get(skuno))){
-                                        sopPrice="|" + price.getMarket_price()+","+sopMarketPriceMap.get(skuno);
-                                        logger.info("sku stock and prince= "+ skuno +":" + result.getResult()+"|"+sopPrice);
-                                        System.out.println("sku stock and prince= "+ skuno  +":"  + result.getResult()+"|"+sopPrice);
-                                    }
-                                }
-
-                            }
-                        }
+//                        //获取价格
+//                        try {
+//                            priceJson = HttpUtil45.get(priceUrl, new OutTimeConfig(), null);
+//                        }catch (IllegalArgumentException e){
+//                            e.printStackTrace();
+//                        }
+//                        if(priceJson != null && !priceJson.isEmpty()){
+//                            Price price = null;
+//                            price = gson.fromJson(priceJson,new TypeToken<Price>() {}.getType());
+//                            if(price!=null&&price.getMarket_price()!=null){
+//                                if(sopMarketPriceMap.containsKey(skuno)){
+//                                    if(!price.getMarket_price().equals(sopMarketPriceMap.get(skuno))){
+//                                        sopPrice="|" + price.getMarket_price()+","+sopMarketPriceMap.get(skuno);
+//                                        logger.info("sku stock and prince= "+ skuno +":" + result.getResult()+"|"+sopPrice);
+//                                        System.out.println("sku stock and prince= "+ skuno  +":"  + result.getResult()+"|"+sopPrice);
+//                                    }
+//                                }
+//
+//                            }
+//                        }
 
                         stock_map.put(skuno, result.getResult()+sopPrice);
 

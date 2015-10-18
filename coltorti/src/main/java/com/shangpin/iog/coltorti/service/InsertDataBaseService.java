@@ -102,6 +102,7 @@ public class InsertDataBaseService {
 		int failCnt=0;
 		for (SkuDTO sk : skus) {
 			try{
+				sk.setMarketPrice(sk.getSupplierPrice());
 				pfs.saveSKU(sk);
 			}catch(Exception e){
 				failCnt++;
