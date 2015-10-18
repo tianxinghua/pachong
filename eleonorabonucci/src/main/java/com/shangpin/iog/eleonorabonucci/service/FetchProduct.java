@@ -48,7 +48,7 @@ public class FetchProduct {
 
         try {
             Map<String, String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*20, 1000*60*20,1000*60*20);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30, 1000*60*30,1000*60*30);
 //            timeConfig.confRequestOutTime(600000);
 //            timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get(url, timeConfig, null);
