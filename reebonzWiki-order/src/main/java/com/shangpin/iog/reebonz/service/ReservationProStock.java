@@ -81,7 +81,7 @@ public class ReservationProStock {
 			returnMap.put("0", obj.getError_msg());
 		}else {
 			logger.info("锁库存失败" + obj.getError_msg());
-			returnMap.put("-1", obj.getError_msg());
+			returnMap.put("0", obj.getError_msg());
 		}
 		return returnMap;
 	}
