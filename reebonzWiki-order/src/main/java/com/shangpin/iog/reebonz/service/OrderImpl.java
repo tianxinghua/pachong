@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 
 import net.sf.json.JSONArray;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -31,11 +32,12 @@ import com.shangpin.iog.service.SkuPriceService;
 
 @Component
 public class OrderImpl extends AbsOrderService {
-	
+
 	@Autowired
 	SkuPriceService skuPriceService;
 	@Autowired
 	EventProductService eventProductService;
+	private static Logger logger = Logger.getLogger("info");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
 	private static String supplierNo = null;
@@ -49,66 +51,76 @@ public class OrderImpl extends AbsOrderService {
 	private static String time = null;
 	private ReservationProStock stock = new ReservationProStock();
 	static {
-		 if(null==bdl){
-			 bdl=ResourceBundle.getBundle("conf");
-		 }
-		 supplierId = bdl.getString("supplierId");
-		 supplierNo = bdl.getString("supplierNo");
-		 smtpHost = bdl.getString("smtpHost");
-		 from = bdl.getString("from");
-		 
-		 fromUserPassword = bdl.getString("fromUserPassword");	 
-		 to = bdl.getString("to");
-		 subject = bdl.getString("subject");
-		 messageText = bdl.getString("messageText");
-		 messageType = bdl.getString("messageType");
-		 time = bdl.getString("time");
+		if(null==bdl){
+			bdl=ResourceBundle.getBundle("conf");
+		}
+		supplierId = bdl.getString("supplierId");
+		supplierNo = bdl.getString("supplierNo");
+		smtpHost = bdl.getString("smtpHost");
+		from = bdl.getString("from");
+
+		fromUserPassword = bdl.getString("fromUserPassword");
+		to = bdl.getString("to");
+		subject = bdl.getString("subject");
+		messageText = bdl.getString("messageText");
+		messageType = bdl.getString("messageType");
+		time = bdl.getString("time");
 	}
-	
+
 	public void loopExecute() {
 		this.checkoutOrderFromWMS(supplierNo, supplierId, true);
 	}
 
 	public void confirmOrder() {
- 		this.confirmOrder(supplierId);
-		
+		this.confirmOrder(supplierId);
+
 	}
 	/**
 	 * 锁库存
 	 */
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
-		
+
 		try{
 			String order_id = orderDTO.getSpOrderId();
 			String order_site = "shangpin";
 			String data = getJsonData(orderDTO.getDetail(),null);
-
+			logger.info("锁库存推送的数据：data："+data+",order_id:"+order_id);
 			Map<String, String> map = stock.lockStock(order_id, order_site, data);
 			if (map.get("1") != null) {
-				sendMail(orderDTO);
-				orderDTO.setExcDesc(map.get("1"));
-			} else {
 				orderDTO.setExcState("0");
-				orderDTO.setSupplierOrderNo(map.get("0"));
+				orderDTO.setSupplierOrderNo(map.get("1"));
 				orderDTO.setStatus(OrderStatus.PLACED);
+
+			} else{
+				sendMail(orderDTO);
+				orderDTO.setExcDesc(map.get("-1"));
 			}
+
+//			else if(map.get("0")!=null){
+//				orderDTO.setExcState("0");
+//				orderDTO.setSupplierOrderNo(map.get("0"));
+//				orderDTO.setStatus(OrderStatus.NOHANDLE);
+//
+//			}
 		}catch (Exception e) {
 			orderDTO.setExcDesc(e.getMessage());
 			orderDTO.setExcState("1");
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * 推送订单
 	 */
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
-		
+
 		try{
 			String data = getJsonData(orderDTO.getDetail(),orderDTO.getPurchasePriceDetail());
+
 			Map<String, String> map = null;
+			logger.info("推送订单的数据：data："+data+",SupplierOrderNo:"+orderDTO.getSupplierOrderNo()+",OrderId:"+orderDTO.getSpOrderId()+",SpPurchaseNo:"+ orderDTO.getSpPurchaseNo());
 			map = stock.pushOrder(orderDTO.getSupplierOrderNo(),
 					orderDTO.getSpOrderId(), orderDTO.getSpPurchaseNo(), data);
 			// 1：代表发生了异常
@@ -138,25 +150,25 @@ public class OrderImpl extends AbsOrderService {
 					deleteOrder.getSpOrderId(), deleteOrder.getSpOrderId(),
 					"voided");// deducted" (for confirmation) "voided" (for reversal)
 			if (map.get("1") != null) {
-				 if(DateTimeUtil.getTimeDifference(deleteOrder.getCreateTime(),new Date())/(Integer.parseInt(time))>0){
-					 deleteOrder.setExcState("0");
-			            //超过一天 不需要在做处理 订单状态改为其它状体
-					 deleteOrder.setStatus(OrderStatus.NOHANDLE);
-					 new Runnable() {
-							@Override
-							public void run() {
-								 try {
-									SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,messageText, messageType);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
+				if(DateTimeUtil.getTimeDifference(deleteOrder.getCreateTime(),new Date())/(Integer.parseInt(time))>0){
+					deleteOrder.setExcState("0");
+					//超过一天 不需要在做处理 订单状态改为其它状体
+					deleteOrder.setStatus(OrderStatus.NOHANDLE);
+					new Runnable() {
+						@Override
+						public void run() {
+							try {
+								SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,messageText, messageType);
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
-						};
-			     }else{
-			    	 deleteOrder.setExcState("1");
-			     }
+						}
+					};
+				}else{
+					deleteOrder.setExcState("1");
+				}
 				deleteOrder.setExcDesc(map.get("1"));
-				
+
 			} else {
 				deleteOrder.setExcState("0");
 				deleteOrder.setStatus(OrderStatus.CANCELLED);
@@ -170,7 +182,7 @@ public class OrderImpl extends AbsOrderService {
 
 	/**
 	 * 获取真正的供货商编号
-	 * 
+	 *
 	 * @param skuMap
 	 *            key skuNo ,value supplerSkuNo
 	 * @return
@@ -191,9 +203,11 @@ public class OrderImpl extends AbsOrderService {
 		if (detail != null) {
 			list = new ArrayList<RequestObject>();
 			String[] details = detail.split(",");
+			logger.info("detail数据格式:"+detail);
 			for (int i = 0; i < details.length; i++) {
 				// detail[i]数据格式==>skuId:数量
 				String num = details[i].split(":")[1];
+
 				String skuNo = details[i].split(":")[0];
 				// skuNo数据格式：skuId|option_code
 				String skuIDs[] = skuNo.split("\\|");
@@ -212,11 +226,11 @@ public class OrderImpl extends AbsOrderService {
 					}
 					String eventId = eventProductService.selectEventIdBySku(skuIDs[0], supplierId);
 					System.out.println("获取的活动Id："+eventId);
+					logger.info("eventId"+eventId);
 					obj.setEvent_id(eventId);
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
-//				obj.setEvent_id(skuIDs[1]);
 				String code = skuIDs[1];
 				if ("A".equals(code)) {
 					obj.setOption_code("");
@@ -224,6 +238,7 @@ public class OrderImpl extends AbsOrderService {
 					obj.setOption_code(code);
 				}
 				obj.setQty(num);
+				logger.info(" 推送参数 ：" + obj.toString());
 				list.add(obj);
 			}
 		}
@@ -233,27 +248,27 @@ public class OrderImpl extends AbsOrderService {
 
 	private void sendMail(final OrderDTO orderDTO) {
 		long tim = Long.parseLong(time);
-		 if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim)>1){
-            //超过一天 不需要在做处理 订单状态改为其它状体
-			 orderDTO.setExcState("0");
-			 orderDTO.setStatus(OrderStatus.NOHANDLE);
-			 Thread t = new Thread(	 new Runnable() {
-					@Override
-					public void run() {
-						 try {
-							 System.out.println("email");
-							 
-							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单"+orderDTO.getSpOrderId()+"出现错误,已置为不做处理，原因："+orderDTO.getExcDesc(), messageType);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+		if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim)>1){
+			//超过一天 不需要在做处理 订单状态改为其它状体
+			orderDTO.setExcState("0");
+			orderDTO.setStatus(OrderStatus.NOHANDLE);
+			Thread t = new Thread(	 new Runnable() {
+				@Override
+				public void run() {
+					try {
+						System.out.println("email");
+
+						SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单"+orderDTO.getSpOrderId()+"出现错误,已置为不做处理，原因："+orderDTO.getExcDesc(), messageType);
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				});  
-		        t.start();  
-		
-        }else{
-    		orderDTO.setExcState("1");
-        }
+				}
+			});
+			t.start();
+
+		}else{
+			orderDTO.setExcState("1");
+		}
 	}
 
 
