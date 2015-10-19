@@ -79,8 +79,8 @@ public class MyJsonUtil {
 		try {
 			json = HttpUtil45
 					.post(requestSourceUrl,
-							map, new OutTimeConfig(1000 * 60, 1000 * 60,
-									1000 * 60));
+							map, new OutTimeConfig(1000 * 60*5, 1000 * 60*5,
+									1000 * 60*5));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
