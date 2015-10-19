@@ -179,10 +179,10 @@ public class ReconciliationFtpUtil {
                     }
                     //ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
                 }
-                XmlReader.deleteTxtContent("E:/latestProXml.txt");
-                XmlReader.saveAsFileWriter("E:/latestProXml.txt",procontent);
-                XmlReader.deleteTxtContent("E:/latestXml.txt");
-                XmlReader.saveAsFileWriter("E:/latestXml.txt",disContent);
+                XmlReader.deleteTxtContent(latestProPath);
+                XmlReader.saveAsFileWriter(latestProPath,procontent);
+                XmlReader.deleteTxtContent(latestStockPath);
+                XmlReader.saveAsFileWriter(latestStockPath,disContent);
             }
 
 
