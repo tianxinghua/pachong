@@ -16,10 +16,9 @@ import java.net.SocketException;
  */
 public class FTPUtil {
 
+    private static String HOST="ftp://ftp.thelevelgroup-ftp.com",PORT="21",USER="googlepla@thelevelgroup-ftp.com",PASSWORD="tlg2014!",FILE_PATH="TLG_GooglePLA_lncc_IT.txt";
 
-
-    public static FTPClient getFTPClient(String ftpHost, String ftpPassword,
-                                         String ftpUserName) throws SocketException,IOException {
+    public static FTPClient getFTPClient() throws SocketException,IOException {
 
 
         FTPClient ftpClient = new FTPClient();
@@ -27,8 +26,8 @@ public class FTPUtil {
         ftpClient.setDefaultTimeout(60*80 * 1000);
         ftpClient.setConnectTimeout(0*80 * 1000);
         ftpClient.setDataTimeout(0*80 * 1000);
-        ftpClient.connect(ftpHost, 21);
-        ftpClient.login(ftpUserName, ftpPassword);
+        ftpClient.connect(HOST, 21);
+        ftpClient.login(USER, PASSWORD);
 
         if (!FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
             ftpClient.disconnect();

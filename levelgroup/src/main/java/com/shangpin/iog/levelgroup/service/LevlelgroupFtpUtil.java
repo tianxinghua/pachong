@@ -21,27 +21,25 @@ import java.util.List;
 public class LevlelgroupFtpUtil {
     private static Log log = LogFactory.getLog(LevlelgroupFtpUtil.class);
     //private static ResourceBundle bundle =ResourceBundle.getBundle("param", Locale.ENGLISH) ;
-    private static String HOST="ftp://ftp.thelevelgroup-ftp.com",PORT="21",USER="googlepla@thelevelgroup-ftp.com",PASSWORD="tlg2014!",FILE_PATH="TLG_GooglePLA_lncc_IT.txt";
+
 
 
     /**
      * 去 服务器的FTP路径下上读取文件
      *
-     * @param ftpUserName
-     * @param ftpPassword
      * @param
      * @return
      */
-    public static List<String> readConfigFileForFTP(String ftpUserName, String ftpPassword, String ftpHost, String fileName) {
+    public static List<String> readConfigFileForFTP(String fileName) {
         List<String> contentList = new ArrayList<>();
         FileInputStream inFile = null;
         InputStream in = null;
         FTPClient ftpClient = null;
         try {
-            ftpClient = FTPUtil.getFTPClient(ftpHost, ftpPassword, ftpUserName);
+            ftpClient = FTPUtil.getFTPClient();
             if (ftpClient == null || !ftpClient.isConnected()){
                 for(int i=0;i<3;i++){
-                    ftpClient = FTPUtil.getFTPClient(ftpHost, ftpPassword, ftpUserName);
+                    ftpClient = FTPUtil.getFTPClient();
                     if (ftpClient.isConnected()){
                         break;
                     }
@@ -54,7 +52,7 @@ public class LevlelgroupFtpUtil {
             if (ftpClient == null || !ftpClient.isConnected()){
                 for(int i=0;i<3;i++){
                     try {
-                        ftpClient = FTPUtil.getFTPClient(ftpHost, ftpPassword, ftpUserName);
+                        ftpClient = FTPUtil.getFTPClient();
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -106,7 +104,8 @@ public class LevlelgroupFtpUtil {
         return contentList;
     }
     public static void  main(String[] args) throws Exception{
-        List<String> list = LevlelgroupFtpUtil.readConfigFileForFTP(USER, PASSWORD, HOST, FILE_PATH);
+        String FILE_PATH = "TLG_GooglePLA_lncc_IT.txt";
+        List<String> list = LevlelgroupFtpUtil.readConfigFileForFTP( FILE_PATH);
 
         if (list != null){
             System.out.println("size================"+list.size());
