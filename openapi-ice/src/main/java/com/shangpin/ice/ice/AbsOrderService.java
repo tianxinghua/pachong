@@ -8,6 +8,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
+import com.shangpin.iog.common.utils.*;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -42,6 +44,8 @@ public abstract class AbsOrderService {
 
     static Logger log = LoggerFactory.getLogger(AbsOrderService.class);
 
+    private static String email;
+
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
     private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
 
@@ -53,6 +57,7 @@ public abstract class AbsOrderService {
 			 bdl=ResourceBundle.getBundle("openice");
 		 }
 		 url = bdl.getString("wmsUrl");
+         email = bdl.getString("email");
 	}
 
     @Autowired
@@ -230,6 +235,57 @@ public abstract class AbsOrderService {
     }
 
     /**
+     * 采购异常 推送采购单下单异常
+     * @param orderDTO 订单信息
+     */
+    public  void  setPurchaseOrderExc(OrderDTO orderDTO) {
+        try {
+            List<Long> sopPurchaseOrderDetailNos = new ArrayList<>();
+
+            if(null==orderDTO||StringUtils.isBlank(orderDTO.getSpPurchaseDetailNo())) return ;
+            String[] purchaseOrderDetailArray = orderDTO.getSpPurchaseDetailNo().split(";");
+            if(null!=purchaseOrderDetailArray){
+                for(String purchaseDetailNo:purchaseOrderDetailArray){
+                    if(org.apache.commons.lang.StringUtils.isNotBlank(purchaseDetailNo)){
+                        try {
+                            sopPurchaseOrderDetailNos.add(Long.valueOf(purchaseDetailNo));
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                OpenApiServantPrx servant = null;
+                try {
+                    servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                PurchaseOrderEx purchaseOrderEx = new PurchaseOrderEx(sopPurchaseOrderDetailNos,orderDTO.getExcDesc());
+                String  result = servant.PurchaseDetailEx(purchaseOrderEx,orderDTO.getSupplierId());
+                Gson gson = new Gson();
+                ResMessage message = gson.fromJson(result,ResMessage.class);
+                if(null==message){
+                    logger.error(orderDTO.getSpPurchaseNo()+"推送取消采购单失败，无信息返回。");
+                    Thread t = new Thread(new MailThread(orderDTO.getSupplierId(),orderDTO.getSupplierId()+" 线上发生错误","推送取消采购单失败，无信息返回。"));
+                    t.start();
+
+
+                }else {
+                    if (200 != message.getResCode()) {
+                        logger.error(orderDTO.getSpPurchaseNo()+"推送取消采购单失败");
+                    }
+                }
+
+            }
+
+        } catch (Exception e) {
+            loggerError.error(orderDTO.getSpPurchaseNo()+"推送取消采购单失败.原因："+e.getMessage());
+        }
+
+    }
+
+
+    /**
      * 检查订单是否支付
      * @param supplierId
      */
@@ -253,7 +309,6 @@ public abstract class AbsOrderService {
                 e.printStackTrace();
             }
             String sopPurchaseOrderNo ="";
-            Map<String,String> purchaseOrderMap = new HashMap<>();
 //
 //            List<String> orderIdList =  new ArrayList<>();
 //            int i = 1;
@@ -304,32 +359,46 @@ public abstract class AbsOrderService {
 
 
             for(OrderDTO orderDTO:orderDTOList){
+                Map<String,List<PurchaseOrderDetailSpecial>>  purchaseOrderMap = new HashMap<>();
 
                 PurchaseOrderDetailSpecialPage  orderDetailSpecialPage = servant.FindPurchaseOrderDetailSpecial(supplierId,"",orderDTO.getSpOrderId());
                 if(null!=orderDetailSpecialPage&&null!=orderDetailSpecialPage.PurchaseOrderDetails&&orderDetailSpecialPage.PurchaseOrderDetails.size()>0){  //存在采购单 就代表已支付
-                   //更新其已支付状态
 
                     for (PurchaseOrderDetailSpecial orderDetail : orderDetailSpecialPage.PurchaseOrderDetails) {
                         sopPurchaseOrderNo  = orderDetail.SopPurchaseOrderNo;
                         if(purchaseOrderMap.containsKey(sopPurchaseOrderNo)){
-                            //
-
-
+                            purchaseOrderMap.get(sopPurchaseOrderNo).add(orderDetail);
                         }else{
-                            orderDTO.setSpPurchaseNo(sopPurchaseOrderNo);
-                            orderDTO.setPurchasePriceDetail(orderDetail.SkuPrice);
-                            purchaseOrderMap.put(sopPurchaseOrderNo,"");
-                            if(5!=orderDetail.DetailStatus){ //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
-                                 orderDTO.setStatus(OrderStatus.PAYED);
-                            }else{
-                                orderDTO.setStatus(OrderStatus.CANCELLED);
-                            }
-                            productOrderService.update(orderDTO);
+                            List<PurchaseOrderDetailSpecial> orderList = new ArrayList<>();
+                            orderList.add(orderDetail);
+                            purchaseOrderMap.put(sopPurchaseOrderNo,orderList);
+
                         }
 
 
                     }
 
+                    for(Iterator<Map.Entry<String,List<PurchaseOrderDetailSpecial>>> itor = purchaseOrderMap.entrySet().iterator();itor.hasNext();) {
+                        Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();
+                        sopPurchaseOrderNo  = entry.getKey();
+                        StringBuffer purchaseOrderDetailbuffer =new StringBuffer();
+                        //获取同一产品的数量
+                        for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){
+                            purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
+                            //赋值状态 海外商品每个采购单 只有一种茶品
+                            orderDTO.setSpPurchaseNo(sopPurchaseOrderNo);
+                            orderDTO.setPurchasePriceDetail(purchaseOrderDetail.SkuPrice);
+                            if(5!=purchaseOrderDetail.DetailStatus){ //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
+                                orderDTO.setStatus(OrderStatus.PAYED);
+                            }else{
+                                orderDTO.setStatus(OrderStatus.CANCELLED);
+                            }
+
+                        }
+                        orderDTO.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString().substring(0,purchaseOrderDetailbuffer.toString().length()-1));
+                        productOrderService.update(orderDTO);
+
+                    }
 
 
 
@@ -849,7 +918,31 @@ public abstract class AbsOrderService {
     }
 
 
+    //发邮件
+    class MailThread implements  Runnable{
 
+        String supplier = "";
+        String content="";
+        String title="";
+
+        public MailThread(String  supplierId,String title,String content){
+            this.supplier = supplierId;
+            this.title = title;
+            this.content = content;
+        }
+
+        @Override
+        public void run() {
+            try {
+                SendMail.sendGroupMail("smtp.shangpin.com", "chengxu@shangpin.com",
+                        "shangpin001", email, title,
+                        content,
+                        "text/html;charset=utf-8");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 
     /**
