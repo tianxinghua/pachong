@@ -47,11 +47,12 @@ public class FetchProduct {
             mongMap.put("supplierName","levelgroup");
 
 
-            if (list == null) {
+            if (list == null || list.size() == 0) {
                 logMongo.info("获取供应商商品列表失败");
                 return;
             }
             Products products = txt2Ojb(list);
+
             List<Product> productList = products.getProducts();
             for(Product product:productList){
                 SpuDTO spu = new SpuDTO();
