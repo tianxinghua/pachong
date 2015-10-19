@@ -49,7 +49,7 @@ public class FetchProduct {
 		timeConfig.confSocketOutTime(360000);
 		String result = HttpUtil45.get(url, timeConfig, null);
 		mongMap.put("supplierId", supplierId);
-		mongMap.put("supplierName", "galiano");
+		mongMap.put("supplierName", "bagheera");
 		mongMap.put("result", result);
 		logMongo.info(mongMap);
         try {
