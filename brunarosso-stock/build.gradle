@@ -15,8 +15,8 @@ dependencies {
             "org.jdom:jdom:2.0.2",
             "com.enterprisedt:edtFTPj:1.5.3",
             project(':project-common'),
-            project(':project-common'),
-            project(':openapi-ice')
+           
+            project(':iog-sop')
     )
 
 

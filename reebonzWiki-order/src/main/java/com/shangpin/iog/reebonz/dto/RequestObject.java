@@ -38,4 +38,15 @@ public class RequestObject {
 	public void setQty(String qty) {
 		this.qty = qty;
 	}
+
+	@Override
+	public String toString() {
+		return "RequestObject{" +
+				"event_id='" + event_id + '\'' +
+				", sku='" + sku + '\'' +
+				", option_code='" + option_code + '\'' +
+				", qty='" + qty + '\'' +
+				", payment_price='" + payment_price + '\'' +
+				'}';
+	}
 }
