@@ -296,7 +296,8 @@ public abstract class AbsOrderService {
 
         try {
             //获取已下单的订单信息
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
+        	String nowDate = DateTimeUtil.getDateTime(); 
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED,nowDate);
         } catch (ServiceException e) {
             e.printStackTrace();
         }

@@ -268,16 +268,26 @@ public class FetchProduct {
 
 	private String getProductNum(String eventId) {
 		String spuJson = MyJsonUtil.getProductNum(eventId);
-		if (spuJson != null) {
+		if("{\"error\":\"发生异常错误\"}".equals(spuJson)){
+			logger.info("网络连接："+spuJson);
+			return null;
+		}else{
 			ResponseObject obj = new Gson().fromJson(spuJson,
 					ResponseObject.class);
-			Object o = obj.getResponse();
-			JSONObject jsonObject = JSONObject.fromObject(o);
-			Items eventSpuList = new Gson().fromJson(jsonObject.toString(),
-					Items.class);
-			return eventSpuList.getNumFound();
-		} else {
-			return null;
+			if(obj!=null){
+				Object o = obj.getResponse();
+				JSONObject jsonObject = JSONObject.fromObject(o);
+				Items eventSpuList = new Gson().fromJson(jsonObject.toString(),
+						Items.class);
+				if(eventSpuList!=null){
+					return eventSpuList.getNumFound();
+				}else{
+					return null;
+				}
+				
+			}else{
+				return null;
+			}
 		}
 	}
 

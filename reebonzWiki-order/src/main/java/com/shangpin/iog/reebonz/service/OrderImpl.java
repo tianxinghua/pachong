@@ -95,6 +95,7 @@ public class OrderImpl extends AbsOrderService {
 			} else{
 				sendMail(orderDTO);
 				orderDTO.setExcDesc(map.get("0"));
+				setPurchaseOrderExc(orderDTO);
 			}
 
 //			else if(map.get("0")!=null){
