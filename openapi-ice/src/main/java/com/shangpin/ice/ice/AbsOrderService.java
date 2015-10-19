@@ -296,11 +296,15 @@ public abstract class AbsOrderService {
     private  void checkPayed(String supplierId){
 
 
-        List<OrderDTO>  orderDTOList= null;
+        List<OrderDTO>  orderDTOList= new ArrayList<>();
 
         try {
             //获取已下单的订单信息
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
+        	String nowDate = DateTimeUtil.getDateTime(); 
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED,nowDate);
+            List<OrderDTO>  waitList = productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
+            orderDTOList.addAll(waitList);
+            
         } catch (ServiceException e) {
             e.printStackTrace();
         }

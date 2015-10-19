@@ -27,11 +27,8 @@ dependencies {
 
 jar {
 
-    dependsOn copyToLib
-//    from {
-//        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-
-//    }
+    dependsOn copyToLib , copyResources
+    exclude ("**/*.properties")
 
     def manifestCp = configurations.compile.files.collect  {
         File file = it
@@ -40,7 +37,6 @@ jar {
 
     manifest {
         attributes 'Main-Class': 'com.shangpin.iog.brunarosso.stock.StockClientImp'
-//        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
-        attributes 'Class-Path': '. ' +  manifestCp
+        attributes 'Class-Path': '. ./conf/ ' +  manifestCp
     }
 }
