@@ -32,7 +32,7 @@
 	</select>
 	 
     <select id="checkEventSku" parameterType="java.lang.String" resultMap="eventMap">
-			select END_DATE 
+			select END_DATE ,EVENT_ID
       	 	  	from EVENT_PRODUCT 
         <where>
 	       SUPPLIER_ID = #{supplierId} and  SKU_ID =#{sku} order by CREATE_DATE desc limit 1
