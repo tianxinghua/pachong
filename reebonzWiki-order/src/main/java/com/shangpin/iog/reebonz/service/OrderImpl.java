@@ -248,10 +248,10 @@ public class OrderImpl extends AbsOrderService {
 	}
 
 	private void sendMail(final OrderDTO orderDTO) {
+		
 		long tim = Long.parseLong(time);
-	
 		//判断有异常的订单如果处理超过两小时，依然没有解决，则把状态置为不处理，并发邮件
-		if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim)>1){
+		if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim*1000*60)>1){
 			
 			setPurchaseOrderExc(orderDTO);
 			//超过一天 不需要在做处理 订单状态改为其它状体
