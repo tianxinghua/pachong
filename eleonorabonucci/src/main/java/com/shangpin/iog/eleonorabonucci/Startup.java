@@ -26,7 +26,8 @@ public class Startup
         //拉取数据
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("eleonorabonucci");
         //需要翻墙
-        fetchProduct.fetchProductAndSave("http://www.eleonorabonucci.com/rss/demo.aspx");
+        //http://www.eleonorabonucci.com/rss/demo.aspx
+        fetchProduct.fetchProductAndSave("http://www.eleonorabonucci.com/FEED_PRODUCT/59950/HK");
 //        fetchProduct.fetchProductAndSave("http://127.0.0.1:8080/demo.aspx");
 
         log.info("----拉取dante5数据完成----");
