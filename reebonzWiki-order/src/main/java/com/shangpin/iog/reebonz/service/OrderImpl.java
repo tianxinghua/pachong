@@ -94,7 +94,7 @@ public class OrderImpl extends AbsOrderService {
 
 			} else{
 				sendMail(orderDTO);
-				orderDTO.setExcDesc(map.get("-1"));
+				orderDTO.setExcDesc(map.get("0"));
 			}
 
 //			else if(map.get("0")!=null){
