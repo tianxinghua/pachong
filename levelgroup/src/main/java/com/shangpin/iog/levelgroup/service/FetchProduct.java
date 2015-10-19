@@ -14,28 +14,10 @@ import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.entity.ContentType;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.Args;
 import org.apache.log4j.Logger;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import net.sf.json.JSONObject;
-import sun.awt.HeadlessToolkit;
-
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.*;
 
 /**
@@ -58,9 +40,9 @@ public class FetchProduct {
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig =new OutTimeConfig(1000*100*60,1000*100*60,1000*100*60);
 
-//            List<String> list = HttpUtil45.getContentListByInputSteam(url,timeConfig,null,null,null);
+//            List<String> list = HttpUtil45.getContentListByInputSteam(filepath,timeConfig,null,null,null);
             List<String> list = LevlelgroupFtpUtil.readConfigFileForFTP(filepath);
-            HttpUtil45.closePool();
+//            HttpUtil45.closePool();
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","levelgroup");
 
@@ -195,6 +177,7 @@ public class FetchProduct {
                     map.put("c_title", p[16]);
                     map.put("gender", p[18]);
                     map.put("picture", pic);
+                    map.put("sku", p[17].length() == 0 ? p[20] : p[17] );
                     list.add(map);
                 }
             }
@@ -232,8 +215,7 @@ public class FetchProduct {
                         List<Item> itemslist = new ArrayList<Item>();
                         Items items = new Items();
                         product.setProductId(map.get("id"));
-                        System.out.print(json.getString("c_model") + json.getString("c_fabric") + json.getString("c_color"));
-                        product.setProducer_id(json.getString("c_model") + json.getString("c_fabric") + json.getString("c_color"));
+                        product.setProducer_id(map.get("sku"));
                         product.setCategoryGender(map.get("gender"));
                         if (!json.has("brand"))
                             continue;
@@ -246,7 +228,6 @@ public class FetchProduct {
                         if (!json.has("c_categoryName"))
                             continue;
                         product.setCategory(json.getString("c_categoryName").replace(",",""));
-                        System.out.println("category="+product.getCategory());
                         if (!json.has("c_material"))
                             continue;
                         product.setProduct_material(json
@@ -279,9 +260,10 @@ public class FetchProduct {
                         String saleprice_f = map.get("saleprice");
                         item.setStock(instock+"");
                         //解析货币单位和价格
+
                         item.setSaleCurrency(map.get("price").substring(price_f.indexOf(" ") + 1, price_f.length()));
                         item.setMarket_price(map.get("price").substring(0,price_f.indexOf(" ")+1));
-                        item.setSupply_price(map.get("saleprice").substring(0,saleprice_f.indexOf(" ")+1));
+                        item.setSell_price(map.get("saleprice").length() > 0 ? map.get("saleprice").substring(0, saleprice_f.indexOf(" ") + 1) : map.get("price").substring(0, price_f.indexOf(" ") + 1));
                         itemslist.add(item);
                         items.setItems(itemslist);
                         product.setItems(items);
