@@ -109,7 +109,7 @@ public class FetchProduct {
 	                //SKU 选填
 	                sku.setProductName(item.getTitle());
 	                sku.setProductDescription(item.getDescription());
-	                sku.setProductCode(item.getMpn());
+	                sku.setProductCode(item.getMpn().replaceAll("," , "."));
 
 	                System.out.println("sku : " + sku);
 
