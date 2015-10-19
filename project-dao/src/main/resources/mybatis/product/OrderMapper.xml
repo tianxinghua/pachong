@@ -240,6 +240,7 @@
             <if test="memo != null"> MEMO = #{memo}, </if>
             <if test="updateTime != null"> UPDATE_TIME = #{updateTime}, </if>
             <if test="supplierOrderNo != null"> SUPPLIER_ORDER_NO = #{supplierOrderNo}, </if>
+                    <if test="spPurchaseDetailNo != null"> SP_PURCHASE_DETAIL_NO = #{spPurchaseDetailNo}, </if>
          	<if test="spPurchaseNo != null"> SP_PURCHASE_NO = #{spPurchaseNo}, </if>    
             <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo},</if>
             <if test="excState != null"> EXC_STATE = #{excState}, </if>
