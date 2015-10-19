@@ -240,6 +240,10 @@ public abstract class AbsOrderService {
      */
     public  void  setPurchaseOrderExc(OrderDTO orderDTO) {
         try {
+            if(!orderDTO.getStatus().equals(OrderStatus.PAYED)){
+                return;
+            }
+
             List<Long> sopPurchaseOrderDetailNos = new ArrayList<>();
 
             if(null==orderDTO||StringUtils.isBlank(orderDTO.getSpPurchaseDetailNo())) return ;

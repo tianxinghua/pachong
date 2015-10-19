@@ -332,9 +332,12 @@ public abstract class AbsUpdateProductStock {
 
                     String iceSku=localAndIceSkuId.get(skuNo);
                     if(this.supplierSkuIdMain){  // 已供应商提供的SKU为主 不更新未提供的库存
-                        if(null!=stock){
-                            iceStock.put(iceSku, stock);
-                        }
+						if(supplierStock.containsKey(skuNo)){
+							if(null!=stock){
+								iceStock.put(iceSku, stock);
+							}
+						}
+
 
                     }else{
                         if(stock==null)
