@@ -65,8 +65,14 @@ public class StockImp extends AbsUpdateProductStock {
     private  String getInventory(String skuIds){
     	
     	String []array = skuIds.split("\\|");
-    	String skuNo = array[0];
-    	String size = array[1];
+    	System.out.println(array);
+     	String skuNo = array[0];
+     	String size = null;
+    	if(skuIds.length()==2){
+    		size = array[1];
+    	}else{
+    		size ="A";
+    	}
     	if("A".equals(size)){
     		size = "";
     	}
@@ -85,7 +91,7 @@ public class StockImp extends AbsUpdateProductStock {
     		map.put("sku", skuNo);
     		jsonStr =  HttpUtil45
     				.get(stockUrl,
-    						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
+    						new OutTimeConfig(1000 * 60*2, 1000 * 60*2, 1000 * 60*2),
     						map);;
             logger.info("get skuId :"+skuNo +" 库存返回值为："+jsonStr );
            
