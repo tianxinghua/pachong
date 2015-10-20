@@ -33,25 +33,28 @@ public class StockClientImp extends AbsUpdateProductStock{
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //String url="E:\\brunarosso"+"Disponibilita.xml";
         Map<String,Integer>map=getSizeByPath("");
+        logger.info("供货商库存数量 =" + map.size());
         Map<String,Integer>returnMap=new HashMap<>();
-        Set<String>set=map.keySet();
-        Iterator<String> iterator=set.iterator();
-        while (iterator.hasNext()){
+//        Set<String>set=map.keySet();
+//        Iterator<String> iterator=set.iterator();
+//        while (iterator.hasNext()){
 
-            String key = iterator.next();
-            for(String skuno:skuNo){
+//            String key = iterator.next();
+
+        String id = "";
+        for(String skuno:skuNo){
                 if(skuno.indexOf("+")>0){
                     skuno=skuno.replace("+","½");
                 }
-                if(key.equals(skuno)){
-                    String id = skuno.replace("½","+");
-                    returnMap.put(id,(map.get(id)));
+                if(map.containsKey(skuno)){
+                     id = skuno.replace("½","+");
+                    returnMap.put(id,(map.get(skuno)<0?0:map.get(skuno)));
                 }else {
-                    String id = skuno.replace("½","+");
+                    id = skuno.replace("½","+");
                     returnMap.put(id,0);
                 }
             }
-        }
+//        }
         return returnMap;
     }
     private static List<File> read() {
@@ -88,7 +91,7 @@ public class StockClientImp extends AbsUpdateProductStock{
         List<File> list=read();
         for (int i = 0; i < list.size(); i++) {
             try {
-                System.out.println("正在读取的尺寸文件: " + list.get(i));
+                System.out.println("正在读取库存文件: " + list.get(i));
                 getMap(list.get(i).getAbsolutePath(),map);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -104,7 +107,8 @@ public class StockClientImp extends AbsUpdateProductStock{
             org.jdom2.Element foo =doc.getRootElement();
             allChildren = foo.getChildren();
             for (org.jdom2.Element element:allChildren){
-                map.put(element.getChildText("ID_ARTICOLO")+"-"+element.getChildText("MM_TAGLIA"),Integer.parseInt(element.getChildText("ESI")));
+                logger.info("sku = " + element.getChildText("ID_ARTICOLO") + "-" + element.getChildText("MM_TAGLIA") + " quantity =" + Integer.parseInt(element.getChildText("ESI")  ));
+                map.put(element.getChildText("ID_ARTICOLO") + "-" + element.getChildText("MM_TAGLIA"),Integer.parseInt(element.getChildText("ESI")));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -244,6 +248,7 @@ public class StockClientImp extends AbsUpdateProductStock{
                     if(files[i].equals("Disponibilita.xml")){
                         ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
                         logger.info("文件下载成功");
+                        break;
 
                     }
                     //ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
