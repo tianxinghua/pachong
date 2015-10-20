@@ -26,7 +26,7 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.monnierfreres.Startup'
+        attributes 'Main-Class': 'com.shangpin.iog.monnierfreres.StartSkuJob'
         attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 

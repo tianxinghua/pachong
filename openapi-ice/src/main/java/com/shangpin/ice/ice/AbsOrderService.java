@@ -264,8 +264,15 @@ public abstract class AbsOrderService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                String excDesc = orderDTO.getExcDesc();
+                if(excDesc!=null){
+                	if(excDesc.length()>100){
+                		excDesc = excDesc.substring(0,100);
+                	}
+                }
+                logger.info("推送取消采购单发生的参数：sopPurchaseOrderDetailNos："+sopPurchaseOrderDetailNos+"excDesc:"+orderDTO.getExcDesc());
                 PurchaseOrderEx purchaseOrderEx = new PurchaseOrderEx(sopPurchaseOrderDetailNos,orderDTO.getExcDesc());
-                String  result = servant.PurchaseDetailEx(purchaseOrderEx,orderDTO.getSupplierId());
+                String  result = servant.PurchaseDetailEx(purchaseOrderEx,orderDTO.getSupplierId()+"");
                 Gson gson = new Gson();
                 ResMessage message = gson.fromJson(result,ResMessage.class);
                 if(null==message){
