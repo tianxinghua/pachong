@@ -44,13 +44,12 @@ public class FetchProduct {
 	private ProductFetchService productFetchService;
     public void fetchProductAndSave(){
     	Map<String, String> mongMap = new HashMap<>();
-		OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-		timeConfig.confRequestOutTime(360000);
-		timeConfig.confSocketOutTime(360000);
-		String result = HttpUtil45.get(url, timeConfig, null);
+
+        OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
+//		String result = HttpUtil45.get(url, timeConfig, null);
 		mongMap.put("supplierId", supplierId);
 		mongMap.put("supplierName", "bagheera");
-		mongMap.put("result", result);
+//		mongMap.put("result", result);
 		logMongo.info(mongMap);
         try {
             List<BagheeraDTO> list=DownloadAndReadExcel.readLocalExcel();
@@ -72,7 +71,7 @@ public class FetchProduct {
                 sku.setProductSize(size);
                 sku.setSupplierPrice(dto.getLASO_Price());
                 sku.setSaleCurrency(dto.getCURRENCY());
-                sku.setMarketPrice(dto.getLIST_PRICE());
+                sku.setMarketPrice(dto.getRETAIL_PRICE());
                 sku.setStock(dto.getSTOCK());
                 sku.setProductName(dto.getITEM_GROUP());
                 
