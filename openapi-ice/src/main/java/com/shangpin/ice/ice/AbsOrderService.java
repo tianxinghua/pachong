@@ -271,7 +271,7 @@ public abstract class AbsOrderService {
                 	}
                 }
                 logger.info("推送取消采购单发生的参数：sopPurchaseOrderDetailNos："+sopPurchaseOrderDetailNos+"excDesc:"+orderDTO.getExcDesc());
-                PurchaseOrderEx purchaseOrderEx = new PurchaseOrderEx(sopPurchaseOrderDetailNos,orderDTO.getExcDesc());
+                PurchaseOrderEx purchaseOrderEx = new PurchaseOrderEx(sopPurchaseOrderDetailNos,excDesc);
                 String  result = servant.PurchaseDetailEx(purchaseOrderEx,orderDTO.getSupplierId()+"");
                 Gson gson = new Gson();
                 ResMessage message = gson.fromJson(result,ResMessage.class);
