@@ -1,6 +1,7 @@
 package theclutcher;
 
 import java.io.File;
+import java.math.BigDecimal;
 
 public class Test {
 
@@ -26,7 +27,8 @@ public class Test {
 //            e.printStackTrace();  
 //         }   
 //         sReturn=out.toString();   
-//         return sReturn;  
+//         return sReturn;
+		System.out.println("s =" +  new BigDecimal("1.0").intValue());
 		
 	}
 }
