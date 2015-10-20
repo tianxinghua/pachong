@@ -26,7 +26,7 @@ public class SopProductSkuIce extends Ice.ObjectImpl
     {
     }
 
-    public SopProductSkuIce(String BrandENName, String CategoryName, String GrossWeight, String Heigth, String Length, String MarketSeason, String MarketTime, String PackingList, String ProductModel, String ProductNo, String ProductSex, String ProductSlogan, String ProductUnit, String SopProductName, String UpdateTime, String Width, int SopProductNo, java.util.List<SopSkuIce> SopSkuIces)
+    public SopProductSkuIce(String BrandENName, String CategoryName, String GrossWeight, String Heigth, String Length, String MarketSeason, String MarketTime, String PackingList, String ProductModel, String ProductNo, String ProductSex, String ProductSlogan, String ProductUnit, String SopProductName, String UpdateTime, String Width, int SopProductNo, String CategoryNo, String BrandNo, java.util.List<SopSkuIce> SopSkuIces)
     {
         this.BrandENName = BrandENName;
         this.CategoryName = CategoryName;
@@ -45,6 +45,8 @@ public class SopProductSkuIce extends Ice.ObjectImpl
         this.UpdateTime = UpdateTime;
         this.Width = Width;
         this.SopProductNo = SopProductNo;
+        this.CategoryNo = CategoryNo;
+        this.BrandNo = BrandNo;
         this.SopSkuIces = SopSkuIces;
     }
 
@@ -129,6 +131,8 @@ public class SopProductSkuIce extends Ice.ObjectImpl
         __os.writeString(UpdateTime);
         __os.writeString(Width);
         __os.writeInt(SopProductNo);
+        __os.writeString(CategoryNo);
+        __os.writeString(BrandNo);
         SopSkuIceListHelper.write(__os, SopSkuIces);
         __os.endWriteSlice();
     }
@@ -153,6 +157,8 @@ public class SopProductSkuIce extends Ice.ObjectImpl
         UpdateTime = __is.readString();
         Width = __is.readString();
         SopProductNo = __is.readInt();
+        CategoryNo = __is.readString();
+        BrandNo = __is.readString();
         SopSkuIces = SopSkuIceListHelper.read(__is);
         __is.endReadSlice();
     }
@@ -191,7 +197,11 @@ public class SopProductSkuIce extends Ice.ObjectImpl
 
     public int SopProductNo;
 
+    public String CategoryNo;
+
+    public String BrandNo;
+
     public java.util.List<SopSkuIce> SopSkuIces;
 
-    public static final long serialVersionUID = 1468097226L;
+    public static final long serialVersionUID = -1126535007L;
 }

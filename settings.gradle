@@ -77,17 +77,26 @@ include 'linoricci-stock'
 include 'bagheera-stock'
 
 include 'itemInfo'
+include 'atelier-stock'
 
 include 'giglio'
+
+include 'atelier-purchase'
+include 'atelier-stock'
+include 'atelier-purchase'
 
 include 'prodottimonti'
 include 'prodottimonti-stock'
 include 'levelgroup'
 include 'levelgroup-stock'
+
+
 include 'bagheera-stock'
+
 include 'itemInfo'
 include 'itemInfo-stock'
 include 'itemInfo-purchase'
+
 
 include 'dante5'
 include 'dante5-stock'
@@ -100,6 +109,7 @@ include 'eleonorabonucci-stock'
 include 'cirillomoda'
 include 'cirillomoda-stock'
 
+
 include 'prodottimonti'
 include 'prodottimonti-stock'
 include 'levelgroup'
@@ -107,6 +117,8 @@ include 'levelgroup-stock'
 include 'reebonzWiki'
 include 'reebonzWiki-order'
 include 'reebonzWiki-stock'
+include 'linoricci'
+include 'linoricci-stock'
 include 'fashionesta'
 include 'fashionesta-stock'
 include 'itemInfo'
@@ -131,3 +143,10 @@ include 'tizianafausti'
 include 'bernardellistores'
 include 'monnierfreres'
 include 'monnierfreres-stock'
+
+include 'iog-price'
+include 'articoli'
+include 'articoli-stock'
+
+include 'theclutcher'
+include 'theclutcher-stock'

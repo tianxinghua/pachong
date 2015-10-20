@@ -45,6 +45,7 @@ public class OrderDTO {
     private String excState;  //异常标记 发生错误 赋值为 1
     private String excDesc;  //错误描述
     private Date excTime;
+    private String purchasePriceDetail; //采购价明细
 
 
     @Override
@@ -67,6 +68,7 @@ public class OrderDTO {
                 ", excState='" + excState + '\'' +
                 ", excDesc='" + excDesc + '\'' +
                 ", excTime=" + excTime +
+                ", purchasePriceDetail='" + purchasePriceDetail + '\'' +
                 '}';
     }
 }

@@ -28,8 +28,10 @@ public class Startup {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         System.out.println("成功插入数据库");
         System.out.println("-------gilt end---------");
+        System.exit(0);
 
     }
 

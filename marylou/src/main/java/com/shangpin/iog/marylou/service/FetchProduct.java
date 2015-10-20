@@ -40,7 +40,7 @@ public class FetchProduct {
 
         //获取产品信息
 //        logMongo.info("get product starting....");
-    	String json = HttpUtil45.get(Constant.URL_MARYLOU, new OutTimeConfig(1000*20,1000*20,1000*20), null);// new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
+    	String json = HttpUtil45.get(Constant.URL_MARYLOU, new OutTimeConfig(1000*60*10,10*1000*60,10*1000*60), null);// new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
         logMongo.info("get product over");
         //解析产品信息
         Products products = null;
@@ -94,6 +94,7 @@ public class FetchProduct {
                     sku.setProductSize(itemSize);
                     sku.setSaleCurrency(item.getPrice_currency());
                     sku.setSupplierPrice(item.getSupply_price());
+                    sku.setMarketPrice(item.getMarket_price());
                     sku.setColor(product.getColor());
                     sku.setProductDescription(product.getDescription());
                     sku.setStock(item.getStock());
