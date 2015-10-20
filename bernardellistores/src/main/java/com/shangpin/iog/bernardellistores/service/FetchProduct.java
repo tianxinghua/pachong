@@ -256,7 +256,10 @@ public class FetchProduct {
 					Element detailDoc = doc.select(".details").get(0);
 					String brandName = detailDoc.select("h1").get(0).select("a").get(0).text().trim();
 					String description = detailDoc.select("h2").get(0).text().trim();
+					// SPUID
+					//System.out.println(doc.select("#productErpID").get(0).attr("value"));
 					String spuId = detailDoc.select("h3").get(0).text().split(":")[1].trim();
+					spuId = doc.select("#productErpID").get(0).attr("value");
 					String price = detailDoc.select(".price").get(0).text().trim().replace("€", "").trim().replaceAll(",", "");
 					String marketPrice = null;
 					if (detailDoc.select(".discounted").size() != 0) {
