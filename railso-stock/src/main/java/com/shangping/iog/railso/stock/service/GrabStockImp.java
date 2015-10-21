@@ -6,10 +6,10 @@ package com.shangping.iog.railso.stock.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.railso.dao.Item;
-import com.shangpin.iog.railso.dao.Rss;
 import com.shangpin.iog.theclutcher.utils.DownloadFileFromNet;
 import com.shangpin.iog.theclutcher.utils.XMLUtil;
+import com.shangping.iog.railso.stock.dto.Item;
+import com.shangping.iog.railso.stock.dto.Rss;
 
 import org.apache.log4j.Logger;
 
@@ -51,17 +51,18 @@ public class GrabStockImp extends AbsUpdateProductStock {
 						String skuId = item.getId() +"-"+ size.toString(); // 接口中g:id是spuId,对应不同尺码
 						String stock = item.getAvailability();
 						stockMap.put(skuId, stock);
+						System.out.println(stockMap.toString());
 					}
 				}
-				System.out.println(stockMap.toString());
+				
 
-//				for (String skuNo : skuNos) {
-//					if (stockMap.containsKey(skuNo)) {
-//						skuStock.put(skuNo, stockMap.get(skuNo));
-//					} else {
-//						skuStock.put(skuNo, "0");
-//					}
-//				}
+				for (String skuNo : skuNos) {
+					if (stockMap.containsKey(skuNo)) {
+						skuStock.put(skuNo, stockMap.get(skuNo));
+					} else {
+						skuStock.put(skuNo, "0");
+					}
+				}
 				
 				logger.info("railso-stock赋值库存数据成功");
 				logger.info("拉取railso-stock数据成功");
@@ -81,15 +82,15 @@ public class GrabStockImp extends AbsUpdateProductStock {
 	}
 
 	public static void main(String[] args) throws Exception {
-//		AbsUpdateProductStock grabStockImp = new GrabStockImp();
-//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//		logger.info("railso-stock更新数据库开始");
-//		grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
-//				format.format(new Date()));
-//		logger.info("railso-stock更新数据库结束");
-//		System.exit(0);
-		GrabStockImp g = new GrabStockImp();
-		g.grabStock(null);
+		AbsUpdateProductStock grabStockImp = new GrabStockImp();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		logger.info("railso-stock更新数据库开始");
+		grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
+				format.format(new Date()));
+		logger.info("railso-stock更新数据库结束");
+		System.exit(0);
+//		GrabStockImp g = new GrabStockImp();
+//		g.grabStock(null);
 	}
 
 }
