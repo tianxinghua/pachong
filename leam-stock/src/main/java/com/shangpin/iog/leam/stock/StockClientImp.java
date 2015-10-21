@@ -58,11 +58,9 @@ public class StockClientImp  extends AbsUpdateProductStock {
                 for(String skuId:skuNo){
                     if(skuMap.containsKey(skuId)){
                         skustock.put(skuId,skuMap.get(skuId));
+                    }else{
+                        skustock.put(skuId,"0");
                     }
-
-//                    else{
-//                        skustock.put(skuId,"0");
-//                    }
                 }
             }
 
@@ -135,7 +133,7 @@ public class StockClientImp  extends AbsUpdateProductStock {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("LEAM更新数据库开始");
-        StockClientImp.supplierSkuIdMain=true;
+//        StockClientImp.supplierSkuIdMain=true;
         impl.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
 //        impl.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
         logger.info("LEAM更新数据库结束");
