@@ -135,3 +135,6 @@ include 'monnierfreres-stock'
 include 'iog-price'
 include 'theclutcher'
 include 'theclutcher-stock'
+
+include 'railso'
+include 'railso-stock'
