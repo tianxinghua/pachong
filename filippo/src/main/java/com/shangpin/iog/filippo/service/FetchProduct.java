@@ -64,9 +64,10 @@ public class FetchProduct {
 				//添加pic
 				if (csvSkuMaps.containsKey(key)) {
 					dto = csvSkuMaps.get(key);
-					dto.setIMG(dto.getIMG()+","+picurl+csvDTO.getIMG());
+					dto.setIMG(dto.getIMG()+";"+picurl+csvDTO.getIMG());
 				}else{
 					//不是一个sku key作为skuid
+					csvDTO.setIMG(picurl+csvDTO.getIMG());
 					csvSkuMaps.put(key, csvDTO);
 				}
 				//art作为spuid
@@ -94,6 +95,7 @@ public class FetchProduct {
 					size = "UNIQUE";
 				}
 				sku.setProductSize(size);
+				sku.setProductCode(skuEntry.getValue().getART().replace("\"", ""));
 				try {
 					productFetchService.saveSKU(sku);
 				} catch (ServiceException e1) {
@@ -109,8 +111,8 @@ public class FetchProduct {
 					}
 				}
 				//确定图片
-				if (!picMaps.containsKey(skuEntry.getValue().getVAR_ID().replace("\"", ""))) {
-					picMaps.put(skuEntry.getValue().getVAR_ID().replace("\"", ""), "");
+				//if (!picMaps.containsKey(skuEntry.getValue().getVAR_ID().replace("\"", ""))) {
+				//	picMaps.put(skuEntry.getValue().getVAR_ID().replace("\"", ""), "");
 					ProductPictureDTO picture = new ProductPictureDTO();
 					picture.setSupplierId(supplierId);
 					picture.setId(UUIDGenerator.getUUID());
@@ -122,7 +124,7 @@ public class FetchProduct {
 					} catch (ServiceException e) {
 						e.printStackTrace();
 					}
-				}
+			//	}
 			}
 			
 			for(Map.Entry<String, CsvDTO> spuEntry :csvSpuMaps.entrySet()){

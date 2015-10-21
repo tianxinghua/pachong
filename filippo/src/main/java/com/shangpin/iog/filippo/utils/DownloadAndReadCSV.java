@@ -87,7 +87,7 @@ public class DownloadAndReadCSV {
     	List<String> colValueList = null;
         //解析csv文件
     	CsvReader cr = new CsvReader(new FileReader(realPath));
-    	//CsvReader cr = new CsvReader(new FileReader("F:/fmdata.csv"));
+    	//CsvReader cr = new CsvReader(new FileReader("F:/filippo.csv"));
         System.out.println("创建cr对象成功");
         //得到列名集合
         cr.readRecord();
