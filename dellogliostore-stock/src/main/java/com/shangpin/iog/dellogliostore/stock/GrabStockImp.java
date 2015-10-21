@@ -80,11 +80,6 @@ public class GrabStockImp extends AbsUpdateProductStock {
                 }
 
                 for (SkuItem skuItem : skuItems.getSkuItems()) {
-                    //库存为0不进行入库
-                    if (skuItem.getStock() == null || "".equals(skuItem.getStock().trim()) || "0".equals(skuItem.getStock().trim())) {
-                        continue;
-                    }
-
                     String skuId = spuId + skuItem.getSize();
                     stockMap.put(skuId, skuItem.getStock());
                 }
