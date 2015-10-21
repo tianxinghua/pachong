@@ -67,7 +67,7 @@ public class StockImp extends AbsUpdateProductStock {
     	String []array = skuIds.split("\\|");
      	String skuNo = array[0];
      	String size = null;
-    	if(skuIds.length()==2){
+    	if(array.length==2){
     		size = array[1];
     	}else{
     		logger.info("sku为："+skuNo+"的商品尺码未获取到，更新库存失败，库存已置为0");
