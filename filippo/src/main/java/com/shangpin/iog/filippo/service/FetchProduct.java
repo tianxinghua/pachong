@@ -25,7 +25,7 @@ import com.shangpin.iog.service.SkuPriceService;
 public class FetchProduct {
 
 	private static Logger logger = Logger.getLogger("info");
-	private static Logger loggerError = Logger.getLogger("error");
+	//private static Logger loggerError = Logger.getLogger("error");
 	private static Logger logMongo = Logger.getLogger("mongodb");
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
@@ -46,13 +46,11 @@ public class FetchProduct {
 		//更改状态存储，不要忘了填币种
 		try {
 			Map<String, String> mongMap = new HashMap<>();
-			OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-			timeConfig.confRequestOutTime(360000);
-			timeConfig.confSocketOutTime(360000);
-			String result = HttpUtil45.get(url, timeConfig, null);
+			OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
+			//String result = HttpUtil45.get(url, timeConfig, null);
 			mongMap.put("supplierId", supplierId);
-			mongMap.put("supplierName", "fashionesta");
-			mongMap.put("result", result);
+			mongMap.put("supplierName", "filippo");
+			//mongMap.put("result", result);
 			logMongo.info(mongMap);
 			logger.info("开始抓取");
 			List<CsvDTO> csvLists = DownloadAndReadCSV.readLocalCSV(CsvDTO.class, "\\|");
@@ -103,12 +101,11 @@ public class FetchProduct {
 						if (e1.getMessage().equals("数据插入失败键重复")) {
 							// 更新价格和库存
 							productFetchService.updatePriceAndStock(sku);
-						} else {
 							e1.printStackTrace();
 						}
 
 					} catch (ServiceException e2) {
-						e1.printStackTrace();
+						e2.printStackTrace();
 					}
 				}
 				//确定图片
@@ -136,6 +133,7 @@ public class FetchProduct {
 					spu.setSupplierId(supplierId);
 					spu.setBrandName(spuEntry.getValue().getBND_NAME().replace("\"", ""));
 					spu.setCategoryName(spuEntry.getValue().getGRP_DES().replace("\"", ""));
+					spu.setSubCategoryName(spuEntry.getValue().getSUB_GRP_DES().replace("\"", ""));
 					spu.setCategoryGender(spuEntry.getValue().getSR_DES().replace("\"", ""));
 					spu.setMaterial(spuEntry.getValue().getCOMP().replace("\"", ""));
 					spu.setProductOrigin(spuEntry.getValue().getMADEIN().replace("\"", ""));
@@ -147,8 +145,6 @@ public class FetchProduct {
 			logger.info("抓取结束");
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			HttpUtil45.closePool();
 		}
 	}
 }

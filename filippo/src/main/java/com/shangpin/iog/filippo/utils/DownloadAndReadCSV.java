@@ -20,7 +20,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Created by monkey on 2015/9/28.
+ * Created by monkey on 2015/10/20.
  */
 public class DownloadAndReadCSV {
     public static final String PROPERTIES_FILE_NAME = "param";
@@ -79,15 +79,15 @@ public class DownloadAndReadCSV {
      */
     public static <T> List<T> readLocalCSV(Class<T> clazz,String sep) throws Exception {
         
-    	//--String realPath=downloadNet();
+    	String realPath=downloadNet();
         String rowString = null;
         List<T> dtoList = new ArrayList<T>();
         //Set<T> dtoSet = new HashSet<T>();
     	String[] split = null;
     	List<String> colValueList = null;
         //解析csv文件
-    	//--CsvReader cr = new CsvReader(new FileReader(realPath));
-    	CsvReader cr = new CsvReader(new FileReader("F:/fmdata.csv"));
+    	CsvReader cr = new CsvReader(new FileReader(realPath));
+    	//CsvReader cr = new CsvReader(new FileReader("F:/fmdata.csv"));
         System.out.println("创建cr对象成功");
         //得到列名集合
         cr.readRecord();
@@ -111,7 +111,7 @@ public class DownloadAndReadCSV {
         realpath = realpath+".csv";
         return realpath;
     }
-   public static void main(String[] args) {
+  /* public static void main(String[] args) {
         try {
         	System.out.println("下载中");
 			List<CsvDTO> lists = readLocalCSV(CsvDTO.class,"\\|");
@@ -119,5 +119,5 @@ public class DownloadAndReadCSV {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }
