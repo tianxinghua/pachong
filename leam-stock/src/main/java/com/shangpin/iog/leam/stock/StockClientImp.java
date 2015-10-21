@@ -87,7 +87,7 @@ public class StockClientImp  extends AbsUpdateProductStock {
             Map<String, String> param = new HashMap<>();
             param.put("user",user);
             param.put("password",password);
-            OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*15,1000*60*15,1000*60*15);
+            OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
             result= HttpUtil45.post(url+"?t="+token, param, outTimeConf);
             System.out.println(" result = "+ result);
             list = getObjectsByJsonString(result);
