@@ -89,7 +89,7 @@ public class DownloadFileFromNet {
 	 * @throws JDOMException 
 	 */
 	public static String file2Striing(File file) throws IOException{
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file),"utf-8"));
+		BufferedReader bufferedReader = new BufferedReader(new UnicodeReader(new FileInputStream(file),"utf-8"));
 		StringBuilder stringBuilder = new StringBuilder();
 		String content = "";
 		while ((content = bufferedReader.readLine()) != null) {

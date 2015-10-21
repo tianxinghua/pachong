@@ -16,7 +16,7 @@ import java.net.SocketException;
  */
 public class FTPUtil {
 
-    private static String HOST="ftp://ftp.thelevelgroup-ftp.com",PORT="21",USER="googlepla@thelevelgroup-ftp.com",PASSWORD="tlg2014!",FILE_PATH="TLG_GooglePLA_lncc_IT.txt";
+    private static String HOST="ftp.thelevelgroup-ftp.com",PORT="21",USER="googlepla@thelevelgroup-ftp.com",PASSWORD="tlg2014!",FILE_PATH="TLG_GooglePLA_lncc_IT.txt";
 
     public static FTPClient getFTPClient() throws SocketException,IOException {
 

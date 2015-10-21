@@ -5,6 +5,7 @@ import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.product.dao.OrderMapper;
 import com.shangpin.iog.service.OrderService;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +71,12 @@ public class OrderServiceImpl implements OrderService {
         return uuIdList;
     }
 
+	@Override
+	public List<OrderDTO>  getOrderBySupplierIdAndOrderStatus(String supplierId,
+			String status, String date) throws ServiceException {
+		
+		 return  orderDAO.findBySupplierIdAndStatusAndDate(supplierId, status,date);
+	}
     @Override
     public List<OrderDTO> getOrderBySupplierIdAndOrderStatus(String supplierId, String status) throws ServiceException {
         return  orderDAO.findBySupplierIdAndStatus(supplierId, status);
@@ -160,6 +168,7 @@ public class OrderServiceImpl implements OrderService {
         if(StringUtils.isBlank(uuid)) throw new ServiceMessageException("唯一编号参数为空");
         return orderDAO.findByUuId(uuid);
     }
+
 
 
 }
