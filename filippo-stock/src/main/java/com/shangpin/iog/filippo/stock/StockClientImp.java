@@ -47,9 +47,10 @@ public class StockClientImp extends AbsUpdateProductStock {
 			//添加pic
 			if (csvSkuMaps.containsKey(key)) {
 				dto = csvSkuMaps.get(key);
-				dto.setIMG(dto.getIMG()+","+picurl+csvDTO.getIMG());
+				dto.setIMG(dto.getIMG()+";"+picurl+csvDTO.getIMG());
 			}else{
 				//不是一个sku key作为skuid
+				csvDTO.setIMG(picurl+csvDTO.getIMG());
 				csvSkuMaps.put(key, csvDTO);
 			}
 		}

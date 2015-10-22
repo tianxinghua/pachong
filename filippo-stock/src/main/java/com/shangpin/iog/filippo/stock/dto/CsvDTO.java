@@ -1,4 +1,5 @@
 package com.shangpin.iog.filippo.stock.dto;
+
 public class CsvDTO {
 	private String ART_ID;
 	private String VAR_ID;
@@ -21,6 +22,7 @@ public class CsvDTO {
 	private String COL_ID;
 	private String COL_DES;
 	private String REF;
+	private String VSO;
 	private String EUR;
 	private String TG;
 	private String QTY;
@@ -231,6 +233,12 @@ public class CsvDTO {
 	}
 	public void setIMG(String iMG) {
 		IMG = iMG;
+	}
+	public String getVSO() {
+		return VSO;
+	}
+	public void setVSO(String vSO) {
+		VSO = vSO;
 	}
 	
 }
