@@ -76,7 +76,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
 					if (item == null) {
 						continue;
 					}
-					String skuId = item.getId() +"-"+ item.getSize(); // 接口中g:id是spuId,对应不同尺码
+					String size = item.getSize();
+	                if(size.indexOf("½")>0){
+	                	size = size.substring(0, size.indexOf("½")-1)+".5";
+	                }
+					String skuId = item.getId() +"-"+ size; // 接口中g:id是spuId,对应不同尺码
 					String stock = item.getAvailability();
 					stockMap.put(skuId, stock);
 				}
