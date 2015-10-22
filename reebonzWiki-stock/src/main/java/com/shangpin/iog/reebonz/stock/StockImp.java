@@ -67,7 +67,7 @@ public class StockImp extends AbsUpdateProductStock {
     	String []array = skuIds.split("\\|");
      	String skuNo = array[0];
      	String size = null;
-    	if(array.length==2){
+    	if(skuIds.length()==2){
     		size = array[1];
     	}else{
     		logger.info("sku为："+skuNo+"的商品尺码未获取到，更新库存失败，库存已置为0");
@@ -133,6 +133,7 @@ public class StockImp extends AbsUpdateProductStock {
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("reebonz");
+        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("reebonz更新库存开始");
         System.out.println("reebonz更新库存开始");
