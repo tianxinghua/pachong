@@ -44,7 +44,9 @@ public abstract class AbsOrderService {
 
     static Logger log = LoggerFactory.getLogger(AbsOrderService.class);
 
-    private static String email;
+    private static String toEmail;
+    private static String fromEmail;
+    private static String emailPass;
 
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
     private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
@@ -57,7 +59,9 @@ public abstract class AbsOrderService {
 			 bdl=ResourceBundle.getBundle("openice");
 		 }
 		 url = bdl.getString("wmsUrl");
-         email = bdl.getString("email");
+        toEmail = bdl.getString("email");
+        fromEmail = bdl.getString("fromEmail");
+        emailPass = bdl.getString("emailPass");
 	}
 
     @Autowired
@@ -139,6 +143,8 @@ public abstract class AbsOrderService {
         //获取订单数组
         Gson gson = new Gson();
         ICEWMSOrderRequestDTO  dto = new ICEWMSOrderRequestDTO();
+        logger.info("startDateOfWMS ="+startDateOfWMS);
+        logger.info("endDateOfWMS="+endDateOfWMS);
         dto.setBeginTime(startDateOfWMS);
         dto.setEndTime(endDateOfWMS);
         dto.setSupplierNo(supplierNo);
@@ -949,8 +955,8 @@ public abstract class AbsOrderService {
         @Override
         public void run() {
             try {
-                SendMail.sendGroupMail("smtp.shangpin.com", "chengxu@shangpin.com",
-                        "shangpin001", email, title,
+                SendMail.sendGroupMail("smtp.shangpin.com", fromEmail,
+                        emailPass, toEmail, title,
                         content,
                         "text/html;charset=utf-8");
             } catch (Exception e) {

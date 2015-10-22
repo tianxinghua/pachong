@@ -132,7 +132,12 @@ public  class OrderService {
                         }
                     }
                 }
-                OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+                OpenApiServantPrx servant = null;
+                try {
+                    servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 PurchaseOrderEx purchaseOrderEx = new PurchaseOrderEx(sopPurchaseOrderDetailNos,memo);
                 String  result = servant.PurchaseDetailEx(purchaseOrderEx,supplierId);
                 Gson gson = new Gson();
@@ -171,7 +176,12 @@ public  class OrderService {
                                                     String deliveryContactsPhone, String deliveryAddress,
                                                     String deliveryMemo, String warehouseNo, String warehouseName,
                                                     java.util.List<java.lang.String> sopPurchaseOrderDetailNo, int printStatus) throws Exception{
-        OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        OpenApiServantPrx servant = null;
+        try {
+            servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if(StringUtils.isEmpty(logisticsName)) logisticsName = "顺丰";
         if(StringUtils.isEmpty(logisticsOrderNo)) logisticsOrderNo = getRandomNum();
         if(StringUtils.isEmpty(dateDeliver)) dateDeliver = convertFormat(new Date(),YYYY_MMDD_HH);
