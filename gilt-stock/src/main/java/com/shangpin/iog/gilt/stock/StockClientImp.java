@@ -25,12 +25,13 @@ public class StockClientImp extends AbsUpdateProductStock {
     private static String supplierId;
     private static String key ;
 
-    private static String url = "https://api-sandbox.gilt.com/global/realtime-inventory/";
+    private static String url ;
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         key = bdl.getString("key");
+        url = bdl.getString("url") + "/global/realtime-inventory/";
     }
 
     @Override
@@ -52,7 +53,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 
     private static String getInventory(String skuId){
 
-        OutTimeConfig outTimeConf = new OutTimeConfig(1000*3,1000*3,1000*3);
+        OutTimeConfig outTimeConf = new OutTimeConfig(1000*30,1000*30,1000*30);
         String jsonStr = HttpUtil45.get(url+skuId,outTimeConf,null,key,"");
         logger.info("get skuId :"+skuId +" 库存返回值为："+jsonStr );
         if(HttpUtil45.errorResult.equals(jsonStr)){    //链接异常
@@ -123,6 +124,7 @@ public class StockClientImp extends AbsUpdateProductStock {
         logger.info("gilt更新库存开始");
         giltStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
         logger.info("gilt更新库存结束");
+
         System.exit(0);
 
     }

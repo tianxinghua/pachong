@@ -5,7 +5,7 @@ package com.shangpin.iog.eleonorabonucci.stock;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 
-import com.shangpin.ice.ice.AbsUpdateProductStock;
+
 import com.shangpin.iog.eleonorabonucci.dto.Item;
 import com.shangpin.iog.eleonorabonucci.dto.Items;
 import com.shangpin.iog.eleonorabonucci.dto.Product;
@@ -14,6 +14,7 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.sop.AbsUpdateProductStock;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,17 +30,18 @@ public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
-    private static ResourceBundle bdl=null;
+
     private static String supplierId;
 
+    private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
     static {
-        if(null==bdl)
-         bdl=ResourceBundle.getBundle("conf");
-        supplierId = bdl.getString("supplierId");
+
+        supplierId = bundle.getString("supplierId");
+
     }
 
-    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException {
-        Map<String, String> skustock = new HashMap<>(skuNo.size());
+    public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
+        Map<String, Integer> skustock = new HashMap<>(skuNo.size());
         Map<String,String> stockMap = new HashMap<>();
 
 
@@ -49,10 +51,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
 
             Map<String,String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*20, 1000*60*20,1000*60*20);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30, 1000*60*30,1000*60*30);
 //            timeConfig.confRequestOutTime(600000);
 //            timeConfig.confSocketOutTime(600000);
-            String result = HttpUtil45.get("http://www.eleonorabonucci.com/rss/demo.aspx", timeConfig, null);
+            // http://www.eleonorabonucci.com/rss/demo.aspx
+            String result = HttpUtil45.get("http://www.eleonorabonucci.com/FEED_PRODUCT/59950/HK", timeConfig, null);
             HttpUtil45.closePool();
 
 
@@ -104,9 +107,14 @@ public class GrabStockImp extends AbsUpdateProductStock {
         for (String skuno : skuNo) {
 
             if(stockMap.containsKey(skuno)){
-                skustock.put(skuno, stockMap.get(skuno));
+                try {
+                    skustock.put(skuno, Integer.valueOf(stockMap.get(skuno)));
+                } catch (Exception e) {
+                    skustock.put(skuno, 0);
+//                    e.printStackTrace();
+                }
             } else{
-                skustock.put(skuno, "0");
+                skustock.put(skuno, 0);
             }
         }
         logger.info("eleonorabonucci赋值库存数据成功");
@@ -114,11 +122,15 @@ public class GrabStockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args) throws Exception {
+
+        String host = bundle.getString("HOST");
+        String app_key = bundle.getString("APP_KEY");
+        String app_secret= bundle.getString("APP_SECRET");
        
         AbsUpdateProductStock grabStockImp = new GrabStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("eleonorabonucci更新数据库开始");
-        grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        grabStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
         logger.info("eleonorabonucci更新数据库结束");
         System.exit(0);
 

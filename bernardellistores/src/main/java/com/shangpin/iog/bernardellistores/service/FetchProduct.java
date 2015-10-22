@@ -53,18 +53,21 @@ public class FetchProduct {
 		// 男士包
 		ListSPUTASK task = new ListSPUTASK("MAN-BAGS", "http://shop.bernardellistores.com/en/man/-/bag-1/?f_p=", 1, productFetchService);
 		FetchProduct.listManager.delayTask(new DelayTask(task, new Date()));
-//		// 女鞋
+		// // 女鞋
 		task = new ListSPUTASK("WOMAN-SHOES", "http://shop.bernardellistores.com/en/woman/-/shoes/?f_p=", 1, productFetchService);
 		FetchProduct.listManager.delayTask(new DelayTask(task, new Date(System.currentTimeMillis() + 60000L)));
 		// 男鞋
 		task = new ListSPUTASK("MAN-SHOES", "http://shop.bernardellistores.com/en/man/-/shoes/?f_p=", 1, productFetchService);
 		FetchProduct.listManager.delayTask(new DelayTask(task, new Date(System.currentTimeMillis() + 120000L)));
-//		// 男装
+		// // 男装
 		task = new ListSPUTASK("MAN-CLOTHING", "http://shop.bernardellistores.com/en/man/-/n79/?f_p=", 1, productFetchService);
 		FetchProduct.listManager.delayTask(new DelayTask(task, new Date(System.currentTimeMillis() + 240000L)));
-//		// 女包
+		// // 女包
 		task = new ListSPUTASK("WOMAN-BAGS", "http://shop.bernardellistores.com/en/woman/-/bag-1/?f_p=", 1, productFetchService);
 		FetchProduct.listManager.delayTask(new DelayTask(task, new Date(System.currentTimeMillis() + 360000L)));
+		// 女装
+		task = new ListSPUTASK("WOMAN-CLOTHING", "http://shop.bernardellistores.com/en/woman/-/n79/?f_p=", 1, productFetchService);
+		FetchProduct.listManager.delayTask(new DelayTask(task, new Date(System.currentTimeMillis() + 420000L)));
 		try {
 			Thread.sleep(60000L);
 		} catch (InterruptedException e) {
@@ -253,8 +256,18 @@ public class FetchProduct {
 					Element detailDoc = doc.select(".details").get(0);
 					String brandName = detailDoc.select("h1").get(0).select("a").get(0).text().trim();
 					String description = detailDoc.select("h2").get(0).text().trim();
+					// SPUID
+					//System.out.println(doc.select("#productErpID").get(0).attr("value"));
 					String spuId = detailDoc.select("h3").get(0).text().split(":")[1].trim();
+					spuId = doc.select("#productErpID").get(0).attr("value");
 					String price = detailDoc.select(".price").get(0).text().trim().replace("€", "").trim().replaceAll(",", "");
+					String marketPrice = null;
+					if (detailDoc.select(".discounted").size() != 0) {
+						marketPrice = detailDoc.select(".discounted").get(0).text().trim().replace("€", "").trim().replaceAll(",", "");
+						price = detailDoc.select(".price").get(1).text().trim().replace("€", "").trim().replaceAll(",", "");
+					} else {
+						marketPrice = price;
+					}
 					String composition = compositionElement.get(0).text().trim();
 					String productOrigin = "待确认";
 					Set<String> sizes = new HashSet<String>();
@@ -300,7 +313,7 @@ public class FetchProduct {
 						sku.setSpuId(spuId);
 						sku.setSkuId(spuId + "_" + size);
 						sku.setProductSize(size);
-						sku.setMarketPrice(price);
+						sku.setMarketPrice(marketPrice);
 						sku.setSalePrice(price);
 						sku.setColor(color);
 						sku.setProductDescription(description);

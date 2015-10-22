@@ -101,12 +101,18 @@ public class FetchProduct {
                 sku.setSupplierId(supplierId);
                 sku.setSkuId(skuId);
                 sku.setSpuId(spuId);
-                String price = item.getPrice();
-                if (price != null && !"".equals(price)) {
-                    price = price.replace("USD", "").trim();
+                String marketPrice = item.getMarketPrice();
+                if (marketPrice != null && !"".equals(marketPrice)) {
+                    marketPrice = marketPrice.replace("EUR", "").replace(",", ".").trim();
                 }
-                sku.setSaleCurrency("USD");
-                sku.setMarketPrice(price);
+                String supplierPrice = item.getSupplierPrice();
+                if (supplierPrice != null && !"".equals(supplierPrice)) {
+                    supplierPrice = supplierPrice.replace("EUR", "").replace(",", ".").trim();
+                }
+
+                sku.setSaleCurrency("EUR");
+                sku.setMarketPrice(marketPrice);
+                sku.setSupplierPrice(supplierPrice);
                 sku.setColor(item.getColor());
                 sku.setProductSize(item.getSize());
                 sku.setStock(item.getAvailability());

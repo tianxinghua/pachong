@@ -7,3 +7,22 @@ dependencies {
             project(':openapi-ice')
 
     )
+}
+
+jar {
+
+    dependsOn copyToLib , copyResources
+    exclude ("**/*.properties")
+
+
+    def manifestCp = configurations.compile.files.collect  {
+        File file = it
+        "lib/${file.name}"
+    }.join(' ')
+
+    manifest {
+        attributes 'Main-Class': 'com.shangpin.iog.monnierfreres.stock.StockImp'
+        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+    }
+
+}

@@ -88,7 +88,7 @@ public class DownloadAndReadExcel {
                 row=sheet.getRow(j);
                 BagheeraDTO bagheeraDTO=new BagheeraDTO();
                 Field[] beanFiled=bagheeraDTO.getClass().getDeclaredFields();
-                for(int z=0;z<20;z++){
+                for(int z=0;z<21;z++){
                     //循环每一行中的所有列,就是得到单元格中的数据
                     try {
                         //强制反射,让private 的属性也可以访问

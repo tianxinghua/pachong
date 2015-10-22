@@ -36,7 +36,7 @@ public class Schedule {
     OrderServiceImpl orderService;
 
     //下单 退单 异常
-    @Scheduled(cron="0 0/15 * * * ? ")
+    @Scheduled(cron="0 0/3 * * * ? ")
     public void putOrder(){
 
         //拉取数据
@@ -52,7 +52,7 @@ public class Schedule {
     }
 
     //确认支付
-    @Scheduled(cron="0 0/15 * * * ? ")
+    @Scheduled(cron="0 0/5 * * * ? ")
     public  void confirmOrder(){
         try {
             orderService.confirmOrder();
@@ -62,7 +62,7 @@ public class Schedule {
     }
 
     //确认发货
-   @Scheduled(cron="0 0/15 * * * ? ")
+//   @Scheduled(cron="0 0/15 * * * ? ")
     public void deliveryOrder(){
         System.out.println("-------deliveryOrder start---------");
         try {

@@ -218,7 +218,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 buffer.append(!"".equals(brandId)?brandId :"尚品网品牌编号").append(splitSign);
                 buffer.append(brandName).append(splitSign);
                 //货号
-                buffer.append(dto.getProductCode()).append(splitSign);
+                buffer.append(null==dto.getProductCode()?"":dto.getProductCode().replaceAll(","," ")).append(splitSign);
                 //    供应商SKUID
 
                 buffer.append("\"\t" + dto.getSkuId()+ "\"").append(splitSign);
@@ -330,6 +330,24 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 
                 buffer.append(dto.getStock()).append(splitSign) ;
+                String marketPrice = dto.getMarketPrice();
+                String salePrice = dto.getSalePrice();
+                String supplierPrice = dto.getSupplierPrice();
+                if(marketPrice!=null){
+                	marketPrice = marketPrice.replace(",",".");
+                }else{
+                	marketPrice ="";
+                }
+                if(salePrice!=null){
+                	salePrice = salePrice.replace(",",".");
+                }else{
+                	salePrice ="";
+                }
+                if(supplierPrice!=null){
+                	supplierPrice = supplierPrice.replace(",",".");
+                }else{
+                	supplierPrice ="";
+                }
                 //价格
                 buffer.append(null==dto.getMarketPrice()?" ":dto.getMarketPrice()).append(splitSign)
                   .append(null==dto.getSalePrice()?" ":dto.getSalePrice()).append(splitSign)

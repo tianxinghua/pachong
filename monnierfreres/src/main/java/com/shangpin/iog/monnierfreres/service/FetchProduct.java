@@ -56,6 +56,7 @@ public class FetchProduct {
                         sku.setSkuId(item.getItemCode());
                         sku.setSupplierId(supplierId);
                         sku.setSpuId(product.getProductCode());
+                        sku.setProductCode(product.getProductCode());
                         sku.setColor(product.getColor());
                         sku.setSaleCurrency("USD");
                         sku.setMarketPrice(item.getPrice());

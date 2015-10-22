@@ -8,7 +8,10 @@ import com.enterprisedt.net.ftp.FTPConnectMode;
 import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FTPTransferType;
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
+//import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.sop.AbsUpdateProductStock;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.jdom2.input.SAXBuilder;
@@ -23,14 +26,14 @@ public class StockClientImp extends AbsUpdateProductStock{
     private static Logger logger = Logger.getLogger("info");
     public static final String PROPERTIES_FILE_NAME = "param";
     static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
-//    private static String path = bundle.getString("path");
-    private static String HOST="ftp.teenfashion.it",PORT="21",USER="1504604@aruba.it",PASSWORD="7efd422f35",FILE_PATH="/teenfashion.it/public/stockftp";
+    private  static  ResourceBundle sopBundle = ResourceBundle.getBundle("sop");
+    private static String HOST="ftp2.brunarosso.com",PORT="21",USER="brunarosso.com_shangpin",PASSWORD="1Lt53Vf6",FILE_PATH="/public/stockftp";
     static String localFilePath = bundle.getString("localFilePath");
     @Override
-    public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+    public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //String url="E:\\brunarosso"+"Disponibilita.xml";
         Map<String,Integer>map=getSizeByPath("");
-        Map<String,String>returnMap=new HashMap<>();
+        Map<String,Integer>returnMap=new HashMap<>();
         Set<String>set=map.keySet();
         Iterator<String> iterator=set.iterator();
         while (iterator.hasNext()){
@@ -42,10 +45,10 @@ public class StockClientImp extends AbsUpdateProductStock{
                 }
                 if(key.equals(skuno)){
                     String id = skuno.replace("½","+");
-                    returnMap.put(id,String.valueOf(map.get(id)));
+                    returnMap.put(id,(map.get(id)));
                 }else {
                     String id = skuno.replace("½","+");
-                    returnMap.put(id,"0");
+                    returnMap.put(id,0);
                 }
             }
         }
@@ -271,11 +274,17 @@ public class StockClientImp extends AbsUpdateProductStock{
     }
 
     public static void main(String[] args) throws Exception {
-        StockClientImp impl = new StockClientImp();
+    	String host = sopBundle.getString("HOST");
+        String app_key = sopBundle.getString("APP_KEY");
+        String app_secret= sopBundle.getString("APP_SECRET");
+        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
+            logger.error("参数错误，无法执行更新库存");
+        }
+        AbsUpdateProductStock impl = new StockClientImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("BRUNAROSSO更新数据库开始");
         downloadStock("","Disponibilita.xml",localFilePath,true);
-        impl.updateProductStock("2015071701342", "2015-01-01 00:00", format.format(new Date()));
+        impl.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
         logger.info("BRUNAROSSO更新数据库结束");
         System.exit(0);
     }

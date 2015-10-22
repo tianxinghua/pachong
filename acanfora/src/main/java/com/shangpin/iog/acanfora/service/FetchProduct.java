@@ -38,9 +38,8 @@ public class FetchProduct {
         String supplierId = "2015050800242";
         try {
             Map<String,String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-            timeConfig.confRequestOutTime(600000);
-            timeConfig.confSocketOutTime(600000);
+
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
             String result = HttpUtil45.get(url, timeConfig, null);
             HttpUtil45.closePool();
             mongMap.put("supplierId",supplierId);

@@ -17,6 +17,7 @@ import com.shangpin.iog.gilt.dto.InventoryDTO;
 import com.shangpin.iog.gilt.dto.SaleDTO;
 import com.shangpin.iog.product.service.ProductFetchServiceImpl;
 import com.shangpin.iog.service.ProductFetchService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,12 +36,15 @@ public class FetchProduct {
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static String key ;
+    private static String url;
+
 
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         key = bdl.getString("key");
+        url = bdl.getString("url");
     }
     @Autowired
     ProductFetchService productFetchService;
@@ -49,11 +53,27 @@ public class FetchProduct {
     public void fetchProductAndSave(){
         /*String jsonStr = getSkus(url);*/
         //List<String>mlist=new ArrayList<>();
+        String saleIds=bdl.getString("saleId");
+        boolean useSaleId = true;
+        Map<String,String> map=new HashMap<>();
+        if(StringUtils.isBlank(saleIds)){
+            useSaleId=false;
+        }else{
+            String[] saleIdArray = saleIds.split(",");
+            if(null!=saleIdArray||saleIdArray.length>0){
+                for(int i=0;i<saleIdArray.length;i++){
+                    map.put(saleIdArray[i],"");
+                }
+            }
+        }
+
+
 
         //sale url
-        String  sale = "https://api-sandbox.gilt.com/global/sales";
+        String  sale = url + "/global/sales";
         //get sale message
         List<SaleDTO>  saleList = this.getSaleMessage(sale);
+
 
 
         OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10);
@@ -71,6 +91,11 @@ public class FetchProduct {
         List<GiltSkuDTO> saleSkuList = null;
         for(SaleDTO saleDTO:saleList){
             saleId = saleDTO.getId();
+            if(useSaleId){  //使用过滤
+                //未包含的不执行
+                if(!map.containsKey(saleId)) continue;
+            }
+            System.out.println("sale id " + saleId);
             saleInventoryUrl = sale + "/" + saleId+"/realtime-inventory";
             saleSkuUrl = sale + "/" + saleId + "/skus";
 
@@ -84,6 +109,8 @@ public class FetchProduct {
                 try {
                     saleInventoryList=gson.fromJson(inventoryMsg, new TypeToken<List<InventoryDTO>>() {
                     }.getType());
+
+                    System.out.println("saleInventoryList size  " + saleInventoryList.size() );
                     for(InventoryDTO inventoryDTO:saleInventoryList){
                         inventoryMap.put(inventoryDTO.getSku_id(),inventoryDTO.getQuantity()) ;
                     }
@@ -94,7 +121,7 @@ public class FetchProduct {
 
             }while (null!=saleInventoryList&&saleInventoryList.size()==100);
 
-
+            System.out.println("inventoryMap size " + inventoryMap.size() );
 
 
             offset=0;
@@ -108,6 +135,8 @@ public class FetchProduct {
 
                     saleSkuList=gson.fromJson(skuMsg, new TypeToken<List<GiltSkuDTO>>() {
                     }.getType());
+                    System.out.println(saleId + " sku = " + saleSkuList.size());
+
                     for(GiltSkuDTO giltSkuDTO:saleSkuList){
                         this.saveProduct(spuMap,giltSkuDTO,inventoryMap,saleDTO);
                     }
@@ -196,6 +225,7 @@ public class FetchProduct {
             spuDTO.setBrandId(giltSkuDTO.getBrand().getId());
             spuDTO.setBrandName(giltSkuDTO.getBrand().getName());
             spuDTO.setProductOrigin(giltSkuDTO.getCountry_code());
+            spuDTO.setCategoryGender(giltSkuDTO.getCategories().get(0).getName());
 
             try{
                 if(!spuMap.containsKey("")){
@@ -270,7 +300,7 @@ public class FetchProduct {
 
         try {
 
-            OutTimeConfig outTimeConf = new OutTimeConfig(1000*20,1000*20,1000*20);
+            OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*5,1000*60*5,1000*60*5);
 
             result=HttpUtil45.get(saleUrl, outTimeConf, null,key,"");
             logger.info("get result = " + result);
@@ -292,10 +322,10 @@ public class FetchProduct {
 
 
     private static String getInventory(String skuId){
-        String url = "https://api-sandbox.gilt.com/global/realtime-inventory/";
+        String urlInventory = url+"/global/realtime-inventory/";
         Map<String,String> param = new HashMap<>();
-        OutTimeConfig outTimeConf = new OutTimeConfig(1000*3,1000*3,1000*3);
-        String jsonStr = HttpUtil45.get(url+skuId,outTimeConf,param,key,"");
+        OutTimeConfig outTimeConf = new OutTimeConfig(1000*10,1000*10,1000*10);
+        String jsonStr = HttpUtil45.get(urlInventory+skuId,outTimeConf,param,key,"");
         logger.info("get skuId :"+skuId +" 库存返回值为："+jsonStr );
         System.out.println("get skuId :"+skuId +" 库存返回值为："+jsonStr );
         String inventory = null;

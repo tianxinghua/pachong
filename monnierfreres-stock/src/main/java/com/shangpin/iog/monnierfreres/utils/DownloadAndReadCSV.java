@@ -46,7 +46,7 @@ public class DownloadAndReadCSV {
         try {
             URLConnection conn = url.openConnection();
             InputStream inStream = conn.getInputStream();
-//            realPath = getPath(path);
+            realPath = getPath(path);
             FileOutputStream fs = new FileOutputStream(realPath);
 
             byte[] buffer = new byte[1204];
@@ -65,8 +65,7 @@ public class DownloadAndReadCSV {
     }
     public static Map<String,String> readLocalCSV() throws Exception {
         
-//    	String realPath=downloadNet();
-    	String realPath = "c:/lengow_feed(2).csv";
+    	String realPath=downloadNet();
         String rowString = null;
     	String[] split = null;
     	List<String> colValueList = null;
@@ -79,18 +78,24 @@ public class DownloadAndReadCSV {
         rowString = cr.getRawRecord();
         split = rowString.split("\"\\|\"");
 		List<String> colNameList = Arrays.asList(split);
-		int i=0;
 		Map<String,String> map = new HashMap<String,String>();
 		while(cr.readRecord()){
-			System.out.println(i);
-			i++;
 			rowString = cr.getRawRecord();
 			split = rowString.split("\"\\|\"");
 			colValueList = Arrays.asList(split);
-			String skuId = colValueList.get(colNameList.indexOf("\"sku")).replace("\"", "");
-			String qty = colValueList.get(colNameList.indexOf("qty"));
-			map.put(skuId, qty);
+			if(colNameList.size()==colValueList.size()){
+				String skuId = colValueList.get(colNameList.indexOf("\"sku")).replace("\"", "");
+				String qty = colValueList.get(colNameList.indexOf("qty"));
+				map.put(skuId, qty);
+			}
 		}
 		return map;
     }
+    public static String getPath(String realpath){
+		   Date dt=new Date();
+	        SimpleDateFormat matter1=new SimpleDateFormat("yyyy-MM-ddHH");
+	        String date=matter1.format(dt).replaceAll("-","").trim();
+     realpath = realpath+"_"+date+".csv";
+     return realpath;
+ }
 }
