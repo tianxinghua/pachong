@@ -17,17 +17,3 @@ dependencies {
 
 }
 
-jar {
-    dependsOn copyToLib
-
-    def manifestCp = configurations.compile.files.collect  {
-        File file = it
-        "lib/${file.name}"
-    }.join(' ')
-
-    manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.common.utils.SendMail'
-//        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
-        attributes 'Class-Path': '.   ' +  manifestCp
-    }
-}
