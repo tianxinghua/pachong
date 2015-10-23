@@ -112,7 +112,7 @@ public class OrderImpl extends AbsOrderService {
 	 * 推送订单
 	 */
 	@Override
-	public void handleConfirmOrder(OrderDTO orderDTO) {
+	public void handleConfirmOrder(final OrderDTO orderDTO) {
 
 		try{
 			String data = getJsonData(orderDTO.getDetail(),orderDTO.getPurchasePriceDetail());
@@ -154,7 +154,7 @@ public class OrderImpl extends AbsOrderService {
 	 * 解除库存锁
 	 */
 	@Override
-	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
+	public void handleCancelOrder(final ReturnOrderDTO deleteOrder) {
 		try{
 			if(deleteOrder.getSupplierOrderNo()==null){
 				deleteOrder.setExcState("0");
