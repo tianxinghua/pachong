@@ -97,13 +97,6 @@ public class OrderImpl extends AbsOrderService {
 				orderDTO.setExcDesc(map.get("0"));
 				
 			}
-
-//			else if(map.get("0")!=null){
-//				orderDTO.setExcState("0");
-//				orderDTO.setSupplierOrderNo(map.get("0"));
-//				orderDTO.setStatus(OrderStatus.NOHANDLE);
-//
-//			}
 		}catch (Exception e) {
 			orderDTO.setExcDesc(e.getMessage());
 			orderDTO.setExcState("1");
@@ -119,15 +112,28 @@ public class OrderImpl extends AbsOrderService {
 
 		try{
 			String data = getJsonData(orderDTO.getDetail(),orderDTO.getPurchasePriceDetail());
-
 			Map<String, String> map = null;
 			logger.info("推送订单的数据：data："+data+",SupplierOrderNo:"+orderDTO.getSupplierOrderNo()+",OrderId:"+orderDTO.getSpOrderId()+",SpPurchaseNo:"+ orderDTO.getSpPurchaseNo());
 			map = stock.pushOrder(orderDTO.getSupplierOrderNo(),
 					orderDTO.getSpOrderId(), orderDTO.getSpPurchaseNo(), data);
 			// 1：代表发生了异常
 			if (map.get("1") != null) {
-				sendMail(orderDTO);
+				setPurchaseOrderExc(orderDTO);
+				//超过一天 不需要在做处理 订单状态改为其它状体
+				orderDTO.setExcState("1");
 				orderDTO.setExcDesc(map.get("1"));
+				orderDTO.setStatus(OrderStatus.NOHANDLE);
+				Thread t = new Thread(	 new Runnable() {
+					@Override
+					public void run() {
+						try {
+							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"推送reebonz订单"+orderDTO.getSpOrderId()+"出现错误,已置为不做处理，原因："+orderDTO.getExcDesc(), messageType);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				t.start();
 			} else {
 				orderDTO.setExcState("0");
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
@@ -159,7 +165,7 @@ public class OrderImpl extends AbsOrderService {
 						@Override
 						public void run() {
 							try {
-								SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,messageText, messageType);
+								SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单:"+deleteOrder.getSpOrderId()+"在线取消订单出现错误,已置为不做处理，原因："+deleteOrder.getExcDesc(), messageType);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
