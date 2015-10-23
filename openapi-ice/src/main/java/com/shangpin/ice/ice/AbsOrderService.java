@@ -44,7 +44,9 @@ public abstract class AbsOrderService {
 
     static Logger log = LoggerFactory.getLogger(AbsOrderService.class);
 
-    private static String email;
+    private static String toEmail;
+    private static String fromEmail;
+    private static String emailPass;
 
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
     private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
@@ -52,12 +54,16 @@ public abstract class AbsOrderService {
 //    static String url="/purchase/createdeliveryorder";
     private static ResourceBundle bdl = null;
     private static  String url = null;
+
+    public static boolean SENDMAIL = false;
 	static {
 		 if(null==bdl){
 			 bdl=ResourceBundle.getBundle("openice");
 		 }
 		 url = bdl.getString("wmsUrl");
-         email = bdl.getString("email");
+        toEmail = bdl.getString("email");
+        fromEmail = bdl.getString("fromEmail");
+        emailPass = bdl.getString("emailPass");
 	}
 
     @Autowired
@@ -88,10 +94,22 @@ public abstract class AbsOrderService {
     abstract public void handleConfirmOrder(OrderDTO orderDTO);
 
     /**
-     * 取消订单
+     * 取消订单 （未支付）
      * @throws ServiceException
      */
     abstract  public void handleCancelOrder(ReturnOrderDTO deleteOrder) ;
+
+    /**
+     * 退款
+     * @param deleteOrder
+     */
+    abstract  public void handleRefundlOrder(ReturnOrderDTO deleteOrder) ;
+
+    /**
+     * 发送邮件
+     * @param orderDTO
+     */
+    abstract public void handleEmail(OrderDTO orderDTO);
 
     /**
      * 获取真正的供货商编号
@@ -107,7 +125,7 @@ public abstract class AbsOrderService {
      *
      * @param supplierNo 供货商编号  S*****
      *
-     * @param handleCancel 是否处理退单
+     * @param handleCancel 是否处理退款
      */
     public  void  checkoutOrderFromSOP(String supplierId,String supplierNo,boolean handleCancel){
 
@@ -121,8 +139,8 @@ public abstract class AbsOrderService {
 
         //处理订单
         handleOrderOfSOP(supplierId, supplierNo);
-        //处理退单
-        cancelOrderFromSOP(supplierNo,supplierId,handleCancel);
+        //处理退款
+        refundOrderFromSOP(supplierNo, supplierId, handleCancel);
 
 
     }
@@ -139,6 +157,8 @@ public abstract class AbsOrderService {
         //获取订单数组
         Gson gson = new Gson();
         ICEWMSOrderRequestDTO  dto = new ICEWMSOrderRequestDTO();
+        logger.info("startDateOfWMS ="+startDateOfWMS);
+        logger.info("endDateOfWMS="+endDateOfWMS);
         dto.setBeginTime(startDateOfWMS);
         dto.setEndTime(endDateOfWMS);
         dto.setSupplierNo(supplierNo);
@@ -206,7 +226,10 @@ public abstract class AbsOrderService {
         handleOrderOfWMS(supplierNo, supplierId, skuMap, orderList);
 
         //处理退单
-        handleRefundOrderOfWMS(supplierNo, supplierId, skuMap, refundList,handleCancel);
+        handleCancelOfWMS(supplierNo, supplierId, skuMap, refundList,handleCancel);
+
+        //处理退款
+        handleRefundOrderAndEmailOfWMS(supplierNo, supplierId);
     }
 
 
@@ -240,6 +263,8 @@ public abstract class AbsOrderService {
      */
     public  void  setPurchaseOrderExc(OrderDTO orderDTO) {
         try {
+            logger.info("采购单 " + orderDTO.getSpPurchaseNo() +" 推送异常订单状态 " +
+                    ":"+ orderDTO.getStatus()+"----");
             if(!orderDTO.getStatus().equals(OrderStatus.PAYED)){
                 return;
             }
@@ -309,9 +334,8 @@ public abstract class AbsOrderService {
             //获取已下单的订单信息
         	String nowDate = DateTimeUtil.getDateTime(); 
             orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED,nowDate);
-            List<OrderDTO>  waitList = productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId+1, OrderStatus.WAITPLACED,nowDate);
+            List<OrderDTO>  waitList = productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
             orderDTOList.addAll(waitList);
-            
             
         } catch (ServiceException e) {
             e.printStackTrace();
@@ -676,8 +700,7 @@ public abstract class AbsOrderService {
         }
     }
 
-    private void handleRefundOrderOfWMS(String supplierNo,String supplierId,Map<String,String> skuMap,List<ICEWMSOrderDTO>  refundList,boolean handleCancel){
-
+    private void handleCancelOfWMS(String supplierNo,String supplierId,Map<String,String> skuMap,List<ICEWMSOrderDTO>  refundList,boolean handleCancel) {
         for(ICEWMSOrderDTO refundOrder:refundList) {
 
             String uuid = null;
@@ -736,6 +759,87 @@ public abstract class AbsOrderService {
         }
     }
 
+    /**
+     * 处理退款
+     * @param supplierNo
+     * @param supplierId
+     */
+    private void handleRefundOrderAndEmailOfWMS(String supplierNo,String supplierId){
+        //获取订单数组
+        List<Integer> status = new ArrayList<>();
+        status.add(5);
+        try {
+            Map<String,List<PurchaseOrderDetail>> orderMap =  this.getPurchaseOrder(supplierId, startDateOfWMS, endDateOfWMS, status);
+            for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();) {
+                Map.Entry<String, List<PurchaseOrderDetail>> entry = itor.next();
+                Map<String, Integer> stockMap = new HashMap<>();
+                for (PurchaseOrderDetail purchaseOrderDetail : entry.getValue()) {
+                    if (stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)) {
+                        stockMap.put(purchaseOrderDetail.SupplierSkuNo, stockMap.get(purchaseOrderDetail.SupplierSkuNo) + 1);
+                    } else {
+                        stockMap.put(purchaseOrderDetail.SupplierSkuNo, 1);
+                    }
+                }
+                List<ICEOrderDetailDTO> list = new ArrayList<>();
+                StringBuffer buffer = new StringBuffer();
+                for (PurchaseOrderDetail purchaseOrderDetail : entry.getValue()) {
+                    if (stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)) {
+                        buffer.append(purchaseOrderDetail.SupplierSkuNo).append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
+                        stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
+                    }
+                }
+                /**
+                 * 根据sp_order_id查询UUID
+                 */
+                OrderDTO orderDTO = null;
+                try {
+                    orderDTO = productOrderService.getOrderByUuId(entry.getKey());
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                }
+
+                if (null==orderDTO) {//采购单已到退款状态  未有已支付状态 为下单 不做存储
+                    continue;
+                }
+
+                ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
+                deleteOrder.setUuId(orderDTO.getUuId());
+                deleteOrder.setSupplierId(supplierId);
+                deleteOrder.setSupplierNo(supplierNo);
+                deleteOrder.setSpPurchaseNo(orderDTO.getSpPurchaseNo());
+                deleteOrder.setStatus(OrderStatus.WAITCANCEL);
+                deleteOrder.setSpOrderId(entry.getKey());
+                deleteOrder.setDetail(buffer.toString());
+                deleteOrder.setCreateTime(new Date());
+                try {
+                    logger.info("采购单信息转化退单后信息：" + deleteOrder.toString());
+                    System.out.println("采购单信息转化退单后信息：" + deleteOrder.toString());
+                    returnOrderService.saveOrder(deleteOrder);
+                    //处理退款
+                    handleRefundlOrder(deleteOrder);
+                    //更改退单状态无论成功或失败 还需要更改订单状态
+                    updateRefundOrderMsg(deleteOrder);
+
+                    if(SENDMAIL){
+                        handleEmail(orderDTO);
+                    }
+
+                } catch (ServiceException e) {
+
+                    e.printStackTrace();
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+
     private void updateRefundOrderMsg( ReturnOrderDTO deleteOrder) {
         try {
             Map<String,String> map = new HashMap<>();
@@ -783,7 +887,7 @@ public abstract class AbsOrderService {
     }
 
 
-    public void cancelOrderFromSOP(String supplierNo,String supplierId,boolean handleCancel){
+    private void refundOrderFromSOP(String supplierNo,String supplierId,boolean handleCancel){
 
         try {
             //获取订单数组
@@ -950,8 +1054,8 @@ public abstract class AbsOrderService {
         @Override
         public void run() {
             try {
-                SendMail.sendGroupMail("smtp.shangpin.com", "chengxu@shangpin.com",
-                        "shangpin001", email, title,
+                SendMail.sendGroupMail("smtp.shangpin.com", fromEmail,
+                        emailPass, toEmail, title,
                         content,
                         "text/html;charset=utf-8");
             } catch (Exception e) {
