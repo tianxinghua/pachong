@@ -120,7 +120,7 @@ public class OrderImpl extends AbsOrderService {
 			if (map.get("1") != null) {
 				setPurchaseOrderExc(orderDTO);
 				//超过一天 不需要在做处理 订单状态改为其它状体
-				orderDTO.setExcState("1");
+				orderDTO.setExcState("0");
 				orderDTO.setExcDesc(map.get("1"));
 				orderDTO.setStatus(OrderStatus.NOHANDLE);
 				Thread t = new Thread(	 new Runnable() {
@@ -152,34 +152,40 @@ public class OrderImpl extends AbsOrderService {
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
 		try{
-			Map<String, String> map = null;
-			map = stock.unlockStock(deleteOrder.getSupplierOrderNo(),
-					deleteOrder.getSpOrderId(), deleteOrder.getSpOrderId(),
-					"voided");// deducted" (for confirmation) "voided" (for reversal)
-			if (map.get("1") != null) {
-				if(DateTimeUtil.getTimeDifference(deleteOrder.getCreateTime(),new Date())/(Integer.parseInt(time))>0){
-					deleteOrder.setExcState("0");
-					//超过一天 不需要在做处理 订单状态改为其它状体
-					deleteOrder.setStatus(OrderStatus.NOHANDLE);
-					new Runnable() {
-						@Override
-						public void run() {
-							try {
-								SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单:"+deleteOrder.getSpOrderId()+"在线取消订单出现错误,已置为不做处理，原因："+deleteOrder.getExcDesc(), messageType);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					};
-				}else{
-					deleteOrder.setExcState("1");
-				}
-				deleteOrder.setExcDesc(map.get("1"));
-
-			} else {
+			if(deleteOrder.getSupplierOrderNo()==null){
 				deleteOrder.setExcState("0");
-				deleteOrder.setStatus(OrderStatus.CANCELLED);
+				//超过一天 不需要在做处理 订单状态改为其它状体
+				deleteOrder.setStatus(OrderStatus.NOHANDLE);
+				new Runnable() {
+					@Override
+					public void run() {
+						try {
+							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单:"+deleteOrder.getSpOrderId()+"在线取消订单出现错误,已置为不做处理，原因：Invalid Reservation ID", messageType);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				};
+			}else{
+				Map<String, String> map = null;
+				map = stock.unlockStock(deleteOrder.getSupplierOrderNo(),
+						deleteOrder.getSpOrderId(), deleteOrder.getSpOrderId(),
+						"voided");// deducted" (for confirmation) "voided" (for reversal)
+				if (map.get("1") != null) {
+					if(DateTimeUtil.getTimeDifference(deleteOrder.getCreateTime(),new Date())/(Integer.parseInt(time))>0){
+						
+					}else{
+						
+					}
+					deleteOrder.setExcState("1");
+					deleteOrder.setExcDesc(map.get("1"));
+
+				} else {
+					deleteOrder.setExcState("0");
+					deleteOrder.setStatus(OrderStatus.CANCELLED);
+				}
 			}
+			
 		}catch(Exception e){
 			deleteOrder.setExcDesc(e.getMessage());
 			deleteOrder.setExcState("1");
@@ -280,6 +286,18 @@ public class OrderImpl extends AbsOrderService {
 		}else{
 			orderDTO.setExcState("1");
 		}
+	}
+
+	@Override
+	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void handleEmail(OrderDTO orderDTO) {
+		// TODO Auto-generated method stub
+		
 	}
 
 
