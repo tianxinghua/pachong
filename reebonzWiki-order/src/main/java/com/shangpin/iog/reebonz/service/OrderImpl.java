@@ -122,10 +122,10 @@ public class OrderImpl extends AbsOrderService {
 					orderDTO.getSpOrderId(), orderDTO.getSpPurchaseNo(), data);
 			// 1：代表发生了异常
 			if (map.get("1") != null) {
-				setPurchaseOrderExc(orderDTO);
 				//超过一天 不需要在做处理 订单状态改为其它状体
 				orderDTO.setExcState("0");
 				orderDTO.setExcDesc(map.get("1"));
+				setPurchaseOrderExc(orderDTO);
 				orderDTO.setStatus(OrderStatus.NOHANDLE);
 				Thread t = new Thread(	 new Runnable() {
 					@Override
@@ -172,9 +172,7 @@ public class OrderImpl extends AbsOrderService {
 						public void run() {
 							try {
 								SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单:"+deleteOrder.getSpOrderId()+"取消订单解除库存出现错误,已置为不做处理，原因：Invalid Reservation ID", messageType);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
+							} catch (Exception e) {      }
 						}
 					};
 					deleteOrder.setStatus(OrderStatus.NOHANDLE);
