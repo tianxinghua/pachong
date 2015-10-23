@@ -138,7 +138,7 @@ public class OrderServiceImpl  {
                         map.put("excTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
 
                         if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(1000*60*60*24)>0){
-                            //超过一天 不需要在做处理 订单状态改为其它状体
+                            //超过一天 不需要在做处理 订单状态改为其它状态
                             map.put("status",OrderStatus.NOHANDLE);
 
                         }
@@ -149,7 +149,7 @@ public class OrderServiceImpl  {
                             if(OrderStatus.NOHANDLE.equals(map.get("status"))){
                                 //采购异常
 
-                                iceOrderService.cancelPurchaseOrder(orderDTO.getSpPurchaseDetailNo(),"",supplierId);
+                                iceOrderService.cancelPurchaseOrder(orderDTO.getSpPurchaseDetailNo(),map.get("excDesc"),supplierId);
                             }
 
                         } catch (ServiceException e1) {
@@ -493,8 +493,8 @@ public class OrderServiceImpl  {
                 reason ="已无此商品. ";
                 //处理采购异常
                 try {
-                    iceOrderService.cancelPurchaseOrder(spOrder.getSpPurchaseDetailNo(),"",supplierId);
-                    map.put("status",OrderStatus.NOHANDLE);
+                    iceOrderService.cancelPurchaseOrder(spOrder.getSpPurchaseDetailNo(),reason,supplierId);
+                    map.put("status", OrderStatus.NOHANDLE);
                 } catch (ServiceException e1) {
                     reason = reason + e1.getMessage();
                 }
@@ -742,7 +742,7 @@ public class OrderServiceImpl  {
                     //处理采购异常
 
                     try {
-                        iceOrderService.cancelPurchaseOrder(orderDTO.getSpPurchaseDetailNo(), "", supplierId);
+                        iceOrderService.cancelPurchaseOrder(orderDTO.getSpPurchaseDetailNo(), "已发货不能取消订单", supplierId);
                         returnMap.put("status",OrderStatus.SHIPPED);
                         returnMap.put("excDesc","已发货不能取消订单");
 
