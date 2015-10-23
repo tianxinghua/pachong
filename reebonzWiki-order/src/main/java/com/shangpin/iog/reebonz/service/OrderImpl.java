@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.mail.MessagingException;
+
 import net.sf.json.JSONArray;
 
 import org.apache.log4j.Logger;
@@ -45,6 +47,7 @@ public class OrderImpl extends AbsOrderService {
 	private static String from = null;
 	private static String fromUserPassword = null;
 	private static String to = null;
+	private static String toReebonz = null;
 	private static String subject = null;
 	private static String messageText = null;
 	private static String messageType = null;
@@ -61,6 +64,7 @@ public class OrderImpl extends AbsOrderService {
 
 		fromUserPassword = bdl.getString("fromUserPassword");
 		to = bdl.getString("to");
+		toReebonz = bdl.getString("toReebonz"); 
 		subject = bdl.getString("subject");
 		messageText = bdl.getString("messageText");
 		messageType = bdl.getString("messageType");
@@ -156,28 +160,25 @@ public class OrderImpl extends AbsOrderService {
 				deleteOrder.setExcState("0");
 				//超过一天 不需要在做处理 订单状态改为其它状体
 				deleteOrder.setStatus(OrderStatus.NOHANDLE);
-				new Runnable() {
-					@Override
-					public void run() {
-						try {
-							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单:"+deleteOrder.getSpOrderId()+"在线取消订单出现错误,已置为不做处理，原因：Invalid Reservation ID", messageType);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				};
+				
 			}else{
 				Map<String, String> map = null;
 				map = stock.unlockStock(deleteOrder.getSupplierOrderNo(),
 						deleteOrder.getSpOrderId(), deleteOrder.getSpOrderId(),
 						"voided");// deducted" (for confirmation) "voided" (for reversal)
 				if (map.get("1") != null) {
-					if(DateTimeUtil.getTimeDifference(deleteOrder.getCreateTime(),new Date())/(Integer.parseInt(time))>0){
-						
-					}else{
-						
-					}
-					deleteOrder.setExcState("1");
+					new Runnable() {
+						@Override
+						public void run() {
+							try {
+								SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单:"+deleteOrder.getSpOrderId()+"取消订单解除库存出现错误,已置为不做处理，原因：Invalid Reservation ID", messageType);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					};
+					deleteOrder.setStatus(OrderStatus.NOHANDLE);
+					deleteOrder.setExcState("0");
 					deleteOrder.setExcDesc(map.get("1"));
 
 				} else {
@@ -263,7 +264,7 @@ public class OrderImpl extends AbsOrderService {
 		
 		long tim = Long.parseLong(time);
 		//判断有异常的订单如果处理超过两小时，依然没有解决，则把状态置为不处理，并发邮件
-		if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim*1000*60)>1){
+		if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim*1000*60)>0){
 			
 			setPurchaseOrderExc(orderDTO);
 			//超过一天 不需要在做处理 订单状态改为其它状体
@@ -296,7 +297,12 @@ public class OrderImpl extends AbsOrderService {
 
 	@Override
 	public void handleEmail(OrderDTO orderDTO) {
-		// TODO Auto-generated method stub
+		
+		try {
+			SendMail.sendGroupMail(smtpHost, from, fromUserPassword, toReebonz, subject,"reebonz order has been cancelled : spPurchaseNo="+orderDTO.getSpPurchaseNo() +" , Reservation ID:"+orderDTO.getSpPurchaseNo(), messageType);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
