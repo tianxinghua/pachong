@@ -22,7 +22,7 @@ public class StockClientImp extends AbsUpdateProductStock{
 
     static {
         if(null==bdl)
-            bdl=ResourceBundle.getBundle("conf");
+            bdl=ResourceBundle.getBundle("param");
         supplierId = bdl.getString("supplierId");
     }
 

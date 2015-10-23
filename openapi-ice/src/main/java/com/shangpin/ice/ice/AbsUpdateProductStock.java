@@ -423,7 +423,7 @@ public abstract class AbsUpdateProductStock {
 					}else{ //无价格变动
 
 						try {
-							stockResult = Integer.valueOf(result);
+							stockResult = (new BigDecimal(result)).intValue();
 						} catch (NumberFormatException e) {
 							stockResult=0;
 						}

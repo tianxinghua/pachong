@@ -52,7 +52,15 @@ public class FetchProduct {
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
 	private static int rows;
-
+	//以下参数做统计用，无实际意义
+	private static int skuTotal=0;
+	private static int skuSaveAndUpdateTotal=0;
+	private static int sku=0;
+	private static int skuSaveTotal=0 ;
+	private static int updateTotal =0;
+	private static int skuPassTotal =0;
+	private static int allEventPassSkuTotal =0;
+	
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -66,29 +74,43 @@ public class FetchProduct {
 	public void fetchProductAndSave() {
 
 		// 第一步：获取活动信息
-		logger.info("拉取活动数据开始");
 		List<Item> eventList = MyJsonUtil.getReebonzEventJson();
+		int i=0;
 		if(eventList!=null){
-			logger.info("拉取活动数据结束");
 			for (Item item : eventList) {
+				logger.info("--------------活动"+(++i)+"---------------------");
 				// 第二步：根据活动获取商品信息
 				// 获取商品总数量
 				String productNum = getProductNum(item.getEvent_id());
-				logger.info("获得活动" + item.getEvent_id() + "下的商品总数为：" + productNum);
 				// rows代表每次请求的数据行数，默认10
 				if(productNum!=null){
 					for (int start = 0; start < Integer.parseInt(productNum); start += rows) {
 						List<Item> eventSpuList = MyJsonUtil
 								.getReebonzSpuJsonByEventId(item.getEvent_id(), start,
 										rows);
-						logger.info("已拉取活动" + item.getEvent_id() + "下的商品总数为：" + start
-								+ rows);
 						// 保存入库
 						messMappingAndSave(eventSpuList);
 					}
-					logger.info("活动" + item.getEvent_id() + "下的所有商品拉取完成");
 				}
+				logger.info("---拉取活动" + item.getEvent_id() + "下的sku总数为：" + sku);
+//				System.out.println("---拉取活动" + item.getEvent_id() + "下的sku总数为：" + sku);
+				skuTotal +=sku;
+				sku=0;
+				logger.info("-----sku保存总数："+skuSaveTotal);
+				logger.info("-----sku更新总数："+updateTotal);
+				logger.info("-----sku去重总数："+skuPassTotal);
+				skuSaveAndUpdateTotal+=skuSaveTotal+=updateTotal;
+				allEventPassSkuTotal+=skuPassTotal;
+				skuSaveTotal =0;
+				updateTotal =0;
+				skuPassTotal =0;
 			}
+			skuSaveTotal =0;
+			updateTotal =0;
+			logger.info("reebonz供应商拉取的所有活动总数："+i);
+			logger.info("reebonz供应商拉取所有活动下的商品总数："+skuTotal);
+			logger.info("reebonz总共更新和保存的sku总数："+skuSaveAndUpdateTotal);
+			logger.info("reebonz总共去重过滤掉总数："+allEventPassSkuTotal);
 		}
 	}
 
@@ -96,10 +118,13 @@ public class FetchProduct {
 	 * message mapping and save into DB
 	 */
 	private void messMappingAndSave(List<Item> array) {
+		
+	
 
 		if(array!=null){
 			for (Item item : array) {
 				boolean flag = false;
+				boolean f = false;
 				EventProductDTO eventDTO = null;
 				// 判断sku是否已存在,若存在再判断是否此活动已结束，如果已结束则入库，若未结束则跳过不保存
 				try {
@@ -115,6 +140,9 @@ public class FetchProduct {
 							if (before) {
 								// 旧活动已结束
 								flag = true;
+							}else{
+								// 旧活动未结束
+								f=true;
 							}
 						} else {
 							// 已存在的活动更新产品
@@ -181,7 +209,6 @@ public class FetchProduct {
 						}
 						spu.setCategoryGender(tempGender.toString());
 						productFetchService.saveSPU(spu);
-
 						if (StringUtils.isNotBlank(item.getImages()[0])) {
 							String[] picArray = item.getImages();
 							for (String picUrl : picArray) {
@@ -192,7 +219,7 @@ public class FetchProduct {
 								dto.setSpuId(item.getSku());
 								try {
 									productFetchService.savePictureForMongo(dto);
-									System.out.println("图片保存success");
+//									System.out.println("图片保存success");
 								} catch (ServiceException e) {
 									e.printStackTrace();
 								}
@@ -210,6 +237,7 @@ public class FetchProduct {
 				List<Item> skuScokeList = MyJsonUtil.getSkuScokeJson(
 						item.getEvent_id(), item.getSku());
 				if (skuScokeList != null) {
+					sku +=skuScokeList.size();
 					for (Item stock : skuScokeList) {
 						SkuDTO sku = new SkuDTO();
 						try {
@@ -252,13 +280,31 @@ public class FetchProduct {
 							sku.setEventEndDate(item.getEvent_end_date());
 							//新产品入库，旧产品只更新价格库存
 							if(flag){
+								skuSaveTotal+=1;
 								productFetchService.saveSKU(sku);
+								
 							}else{
-								System.out.println("------更新库存以及价格success："+stock.getTotal_stock_qty()+":"+item.getFinal_selling_price());
-								productFetchService.updatePriceAndStock(sku);
+								if(!f){
+									productFetchService.updatePriceAndStock(sku);
+									updateTotal+=1;
+								}else{
+									skuPassTotal +=1;
+								}
+							
+//								System.out.println("------更新库存以及价格success："+stock.getTotal_stock_qty()+":"+item.getFinal_selling_price());
+								
 							}
 						} catch (ServiceException e) {
-							e.printStackTrace();
+							if (e.getMessage().equals("数据插入失败键重复")) {
+								try {
+									productFetchService.updatePriceAndStock(sku);
+								} catch (ServiceException e1) {
+									e1.printStackTrace();
+								}
+							} else {
+								e.printStackTrace();
+							}
+							
 						}
 					}
 				}

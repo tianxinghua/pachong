@@ -86,8 +86,13 @@ public class FetchProduct {
 	                }
 
 	                System.out.println("count : " + ++count);
+	                
+	                String size = item.getSize();
+	                if(size.indexOf("½")>0){
+	                	size = size.substring(0, size.indexOf("½")-1)+".5";
+	                }
 
-	                String skuId = item.getId() +"-"+ item.getSize(); //接口中g:id是spuId,对应不同尺码
+	                String skuId = item.getId() +"-"+ size; //接口中g:id是spuId,对应不同尺码
 	                String spuId = item.getId();
 	                SkuDTO sku = new SkuDTO();
 
@@ -103,14 +108,14 @@ public class FetchProduct {
 	                sku.setSaleCurrency("USD");
 	                sku.setMarketPrice(price);
 	                sku.setColor(item.getColor());
-	                sku.setProductSize(item.getSize());
+	                sku.setProductSize(size);
 	                sku.setStock(item.getAvailability());
 
 	                //SKU 选填
 	                sku.setProductName(item.getTitle());
 	                sku.setProductDescription(item.getDescription());
 	                sku.setProductCode(item.getMpn().replaceAll("," , "."));
-
+	                
 	                System.out.println("sku : " + sku);
 
 	                try {

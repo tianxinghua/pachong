@@ -65,8 +65,14 @@ public class StockImp extends AbsUpdateProductStock {
     private  String getInventory(String skuIds){
     	
     	String []array = skuIds.split("\\|");
-    	String skuNo = array[0];
-    	String size = array[1];
+     	String skuNo = array[0];
+     	String size = null;
+    	if(array.length==2){
+    		size = array[1];
+    	}else{
+    		logger.info("sku为："+skuNo+"的商品尺码未获取到，更新库存失败，库存已置为0");
+    		size ="B";
+    	}
     	if("A".equals(size)){
     		size = "";
     	}
@@ -85,7 +91,7 @@ public class StockImp extends AbsUpdateProductStock {
     		map.put("sku", skuNo);
     		jsonStr =  HttpUtil45
     				.get(stockUrl,
-    						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
+    						new OutTimeConfig(1000 * 60*2, 1000 * 60*2, 1000 * 60*2),
     						map);;
             logger.info("get skuId :"+skuNo +" 库存返回值为："+jsonStr );
            
@@ -127,8 +133,10 @@ public class StockImp extends AbsUpdateProductStock {
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("reebonz");
+        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("reebonz更新库存开始");
+        System.out.println("reebonz更新库存开始");
         try {
 			stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
 		} catch (Exception e) {
@@ -136,6 +144,7 @@ public class StockImp extends AbsUpdateProductStock {
 			e.printStackTrace();
 		}
         logger.info("reebonz更新库存结束");
+        System.out.println("reebonz更新库存结束");
         System.exit(0);
     }
 }
