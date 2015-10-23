@@ -309,8 +309,9 @@ public abstract class AbsOrderService {
             //获取已下单的订单信息
         	String nowDate = DateTimeUtil.getDateTime(); 
             orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED,nowDate);
-            List<OrderDTO>  waitList = productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
+            List<OrderDTO>  waitList = productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId+1, OrderStatus.WAITPLACED,nowDate);
             orderDTOList.addAll(waitList);
+            
             
         } catch (ServiceException e) {
             e.printStackTrace();
