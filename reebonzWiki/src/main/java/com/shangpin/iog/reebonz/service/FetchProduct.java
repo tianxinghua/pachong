@@ -52,9 +52,10 @@ public class FetchProduct {
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
 	private static int rows;
-	private static int skuTotal;
-	private static int skuSaveAndUpdateTotal;
-	private static int sku;
+	//以下参数做统计用，无实际意义
+	private static int skuTotal=0;
+	private static int skuSaveAndUpdateTotal=0;
+	private static int sku=0;
 	private static int skuSaveTotal=0 ;
 	private static int updateTotal =0;
 	private static int skuPassTotal =0;
@@ -140,6 +141,7 @@ public class FetchProduct {
 								// 旧活动已结束
 								flag = true;
 							}else{
+								// 旧活动未结束
 								f=true;
 							}
 						} else {
@@ -280,6 +282,7 @@ public class FetchProduct {
 							if(flag){
 								skuSaveTotal+=1;
 								productFetchService.saveSKU(sku);
+								
 							}else{
 								if(!f){
 									productFetchService.updatePriceAndStock(sku);
@@ -292,7 +295,16 @@ public class FetchProduct {
 								
 							}
 						} catch (ServiceException e) {
-							e.printStackTrace();
+							if (e.getMessage().equals("数据插入失败键重复")) {
+								try {
+									productFetchService.updatePriceAndStock(sku);
+								} catch (ServiceException e1) {
+									e1.printStackTrace();
+								}
+							} else {
+								e.printStackTrace();
+							}
+							
 						}
 					}
 				}

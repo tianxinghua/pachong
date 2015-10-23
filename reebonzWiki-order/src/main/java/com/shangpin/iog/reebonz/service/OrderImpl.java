@@ -159,7 +159,7 @@ public class OrderImpl extends AbsOrderService {
 						@Override
 						public void run() {
 							try {
-								SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,messageText, messageType);
+								SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单:"+deleteOrder.getSpOrderId()+"在线取消订单出现错误,已置为不做处理，原因："+deleteOrder.getExcDesc(), messageType);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}

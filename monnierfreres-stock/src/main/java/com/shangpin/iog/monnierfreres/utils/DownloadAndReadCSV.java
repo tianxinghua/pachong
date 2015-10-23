@@ -86,7 +86,9 @@ public class DownloadAndReadCSV {
 			if(colNameList.size()==colValueList.size()){
 				String skuId = colValueList.get(colNameList.indexOf("\"sku")).replace("\"", "");
 				String qty = colValueList.get(colNameList.indexOf("qty"));
-				map.put(skuId, qty);
+				map.put(skuId,qty);
+				
+
 			}
 		}
 		return map;
