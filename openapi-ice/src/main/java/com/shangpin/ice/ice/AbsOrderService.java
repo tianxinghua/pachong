@@ -816,7 +816,7 @@ public abstract class AbsOrderService {
                 deleteOrder.setSupplierNo(supplierNo);
                 deleteOrder.setSpPurchaseNo(orderDTO.getSpPurchaseNo());
                 deleteOrder.setStatus(OrderStatus.WAITCANCEL);
-                deleteOrder.setSpOrderId(entry.getKey());
+                deleteOrder.setSpOrderId(orderDTO.getSpOrderId());
                 deleteOrder.setDetail(buffer.toString());
                 deleteOrder.setCreateTime(new Date());
                 try {

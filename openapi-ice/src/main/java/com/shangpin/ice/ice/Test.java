@@ -46,62 +46,69 @@ public class Test {
 //            e.printStackTrace();
 //        }
 
-        List<Integer> status = new ArrayList<>();
-        status.add(5);
-
-
-
-        int pageIndex=1,pageSize=20;
-        OpenApiServantPrx servant = null;
-        try {
-            servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        boolean hasNext=true;
-
-            Set<String> skuIds = new HashSet<String>();
-            Map<String,List<PurchaseOrderDetail>>  purchaseOrderMap = new HashMap<>();
-            String sopPurchaseOrderNo = "";
-
-            while(hasNext){
-                List<PurchaseOrderDetail> orderDetails = null;
-                try {
-
-                    PurchaseOrderQueryDto orderQueryDto = new PurchaseOrderQueryDto("2015-10-24 T 12:00:00","2015-10-24 T 12:44:00",status
-                            ,pageIndex,pageSize);
-                    PurchaseOrderDetailPage orderDetailPage=
-                            servant.FindPurchaseOrderDetailPaged("2015101001584", orderQueryDto);
-
-
-                    orderDetails = orderDetailPage.PurchaseOrderDetails;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                for (PurchaseOrderDetail orderDetail : orderDetails) {
-                    sopPurchaseOrderNo  = orderDetail.SopPurchaseOrderNo;
-                    if(purchaseOrderMap.containsKey(sopPurchaseOrderNo)){
-                        //
-
-                        purchaseOrderMap.get(sopPurchaseOrderNo).add(orderDetail);
-                    }else{
-                        List<PurchaseOrderDetail> orderList = new ArrayList<>();
-                        orderList.add(orderDetail);
-                        purchaseOrderMap.put(sopPurchaseOrderNo,orderList);
-                    }
-
-
-                }
-                pageIndex++;
-                hasNext=(pageSize==orderDetails.size());
-
-            }
+//        List<Integer> status = new ArrayList<>();
+//        status.add(5);
+//
+//
+//
+//        int pageIndex=1,pageSize=20;
+//        OpenApiServantPrx servant = null;
+//        try {
+//            servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        boolean hasNext=true;
+//
+//            Set<String> skuIds = new HashSet<String>();
+//            Map<String,List<PurchaseOrderDetail>>  purchaseOrderMap = new HashMap<>();
+//            String sopPurchaseOrderNo = "";
+//
+//            while(hasNext){
+//                List<PurchaseOrderDetail> orderDetails = null;
+//                try {
+//
+//                    PurchaseOrderQueryDto orderQueryDto = new PurchaseOrderQueryDto("2015-10-24 T 12:00:00","2015-10-24 T 12:44:00",status
+//                            ,pageIndex,pageSize);
+//                    PurchaseOrderDetailPage orderDetailPage=
+//                            servant.FindPurchaseOrderDetailPaged("2015101001584", orderQueryDto);
+//
+//
+//                    orderDetails = orderDetailPage.PurchaseOrderDetails;
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                for (PurchaseOrderDetail orderDetail : orderDetails) {
+//                    sopPurchaseOrderNo  = orderDetail.SopPurchaseOrderNo;
+//                    if(purchaseOrderMap.containsKey(sopPurchaseOrderNo)){
+//                        //
+//
+//                        purchaseOrderMap.get(sopPurchaseOrderNo).add(orderDetail);
+//                    }else{
+//                        List<PurchaseOrderDetail> orderList = new ArrayList<>();
+//                        orderList.add(orderDetail);
+//                        purchaseOrderMap.put(sopPurchaseOrderNo,orderList);
+//                    }
+//
+//
+//                }
+//                pageIndex++;
+//                hasNext=(pageSize==orderDetails.size());
+//
+//            }
 //        for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = purchaseOrderMap.entrySet().iterator();itor.hasNext();){
 //            Map.Entry<String,List<PurchaseOrderDetail>> entry = itor.next();
 //            List<PurchaseOrderDetail> orderDetailList = entry.getValue();
 //            gson.toJson(orderDetailList);
 //
 //        }
+
+        String kk="111";
+        if(kk.startsWith("1")){
+            System.out.println("true----" + kk.trim().startsWith("1"));
+        }else{
+            System.out.println(" false  ");
+        }
 
     }
 

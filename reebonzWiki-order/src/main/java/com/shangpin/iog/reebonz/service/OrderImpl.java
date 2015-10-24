@@ -9,8 +9,10 @@ import java.util.ResourceBundle;
 
 import javax.mail.MessagingException;
 
+import com.shangpin.iog.onsite.base.utils.StringUtil;
 import net.sf.json.JSONArray;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -302,7 +304,10 @@ public class OrderImpl extends AbsOrderService {
 	public void handleEmail(OrderDTO orderDTO) {
 		
 		try {
-			SendMail.sendGroupMail(smtpHost, from, fromUserPassword, toReebonz, subject,"reebonz order has been cancelled : spPurchaseNo="+orderDTO.getSpPurchaseNo() +" , Reservation ID:"+orderDTO.getSpPurchaseNo(), messageType);
+			if(StringUtils.isNotBlank(orderDTO.getSupplierOrderNo())&&orderDTO.getSupplierOrderNo().trim().startsWith("1")){
+
+				SendMail.sendGroupMail(smtpHost, from, fromUserPassword, toReebonz, subject,"reebonz order has been cancelled : spPurchaseNo="+orderDTO.getSpPurchaseNo() +" , Reservation ID:"+orderDTO.getSupplierOrderNo(), messageType);
+			}
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
