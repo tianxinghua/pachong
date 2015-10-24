@@ -66,6 +66,7 @@ public class FetchProduct {
 			File xmlFile = UNZIPFile.unZipFile(zipFile,localPath);//(new File("C:\\Users\\suny\\git\\iog\\theclutcher\\bin\\feedShangping.zip"), localPath);
 			//读取文件
 			String result = DownloadFileFromNet.file2Striing(xmlFile);//(new File("C:\\Users\\suny\\git\\iog\\theclutcher\\bin\\feedShangping.xml"));//+"</item></channel></rss>";
+
 			//字符串转对象
 			try {
 				

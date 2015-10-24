@@ -371,8 +371,8 @@ public abstract class AbsUpdateProductStock {
 
 		for(SopSkuInventoryIce skuIce:skuIceArray){
 	        if(iceStock.containsKey(skuIce.SkuNo)){
-//				logger.warn("skuNo ：--------"+skuIce.SkuNo +"supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity );
-//				System.out.println("skuNo ：--------"+skuIce.SkuNo +"supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity);
+				logger.warn("skuNo ：--------"+skuIce.SkuNo +"supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity );
+				System.out.println("skuNo ：--------"+skuIce.SkuNo +"supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity);
 	             if( iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
 	                toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
 	            }

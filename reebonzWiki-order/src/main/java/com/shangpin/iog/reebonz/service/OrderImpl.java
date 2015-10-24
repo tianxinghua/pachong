@@ -52,6 +52,7 @@ public class OrderImpl extends AbsOrderService {
 	private static String messageText = null;
 	private static String messageType = null;
 	private static String time = null;
+	private static String reebonzSendEmail;
 	private ReservationProStock stock = new ReservationProStock();
 	static {
 		if(null==bdl){
@@ -69,13 +70,17 @@ public class OrderImpl extends AbsOrderService {
 		messageText = bdl.getString("messageText");
 		messageType = bdl.getString("messageType");
 		time = bdl.getString("time");
+		reebonzSendEmail = bdl.getString("reebonzSendEmail");
+
 	}
 
 	public void loopExecute() {
+		if("1".equals(reebonzSendEmail)) SENDMAIL=true;
 		this.checkoutOrderFromWMS(supplierNo, supplierId, true);
 	}
 
 	public void confirmOrder() {
+		if("1".equals(reebonzSendEmail)) SENDMAIL=true;
 		this.confirmOrder(supplierId);
 
 	}

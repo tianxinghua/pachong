@@ -770,6 +770,12 @@ public abstract class AbsOrderService {
         status.add(5);
         try {
             Map<String,List<PurchaseOrderDetail>> orderMap =  this.getPurchaseOrder(supplierId, startDateOfWMS, endDateOfWMS, status);
+            if(null!=orderMap) {
+                logger.info("获取退款数量： " + orderMap.size());
+            }else {
+                logger.info("获取退款数量：无 " );
+            }
+            logger.info("sendmail = " + SENDMAIL );
             for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();) {
                 Map.Entry<String, List<PurchaseOrderDetail>> entry = itor.next();
                 Map<String, Integer> stockMap = new HashMap<>();
@@ -793,12 +799,14 @@ public abstract class AbsOrderService {
                  */
                 OrderDTO orderDTO = null;
                 try {
-                    orderDTO = productOrderService.getOrderByUuId(entry.getKey());
+                    logger.info("purchaseno =" + entry.getKey()+"---");
+                    orderDTO = productOrderService.getOrderByPurchaseNo(entry.getKey());
                 } catch (ServiceException e) {
                     e.printStackTrace();
                 }
 
                 if (null==orderDTO) {//采购单已到退款状态  未有已支付状态 为下单 不做存储
+                    logger.info("uuid = " + entry.getKey()+"未找到订单信息");
                     continue;
                 }
 
@@ -820,8 +828,12 @@ public abstract class AbsOrderService {
                     //更改退单状态无论成功或失败 还需要更改订单状态
                     updateRefundOrderMsg(deleteOrder);
 
+
                     if(SENDMAIL){
+                        logger.info("send email ");
                         handleEmail(orderDTO);
+                    }else{
+                        logger.info("not send email ");
                     }
 
                 } catch (ServiceException e) {
@@ -986,7 +998,13 @@ public abstract class AbsOrderService {
      */
     private Map<String,List<PurchaseOrderDetail>> getPurchaseOrder(String supplierId,String startTime ,String endTime,List<Integer> statusList) throws Exception{
         int pageIndex=1,pageSize=20;
-        OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        OpenApiServantPrx servant = null;
+        try {
+            servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        } catch (Exception e) {
+            loggerError.error("ICE  IcePrxHelper 初始化异常");
+            e.printStackTrace();
+        }
         boolean hasNext=true;
         logger.warn("获取ice采购单 开始");
         Set<String> skuIds = new HashSet<String>();
