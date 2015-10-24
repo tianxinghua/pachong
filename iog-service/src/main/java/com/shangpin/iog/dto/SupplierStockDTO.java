@@ -10,7 +10,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
-public class SupplierSTOCKDTO {
+public class SupplierStockDTO {
 
     private String id;
     private String supplierId;
