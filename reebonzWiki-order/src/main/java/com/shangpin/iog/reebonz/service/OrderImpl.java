@@ -220,81 +220,98 @@ public class OrderImpl extends AbsOrderService {
 	 * detail数据格式： skuId:数量,skuId:数量
 	 */
 	private String getJsonData(String detail,String purchasePrice) {
+		
+		JSONArray array = null;
+		try{
+			List<RequestObject> list = null;
+			if (detail != null) {
+				list = new ArrayList<RequestObject>();
+				String[] details = detail.split(",");
+				logger.info("detail数据格式:"+detail);
+				for (int i = 0; i < details.length; i++) {
+					// detail[i]数据格式==>skuId:数量
+					String num = details[i].split(":")[1];
 
-		List<RequestObject> list = null;
-		if (detail != null) {
-			list = new ArrayList<RequestObject>();
-			String[] details = detail.split(",");
-			logger.info("detail数据格式:"+detail);
-			for (int i = 0; i < details.length; i++) {
-				// detail[i]数据格式==>skuId:数量
-				String num = details[i].split(":")[1];
+					String skuNo = details[i].split(":")[0];
+					// skuNo数据格式：skuId|option_code
+					String skuIDs[] = skuNo.split("\\|");
 
-				String skuNo = details[i].split(":")[0];
-				// skuNo数据格式：skuId|option_code
-				String skuIDs[] = skuNo.split("\\|");
-
-				RequestObject obj = new RequestObject();
-				obj.setSku(skuIDs[0]);
-				try {
-					if(purchasePrice!=null){
-						obj.setPayment_price(purchasePrice);
-//						SkuDTO sku = skuPriceService.findSupplierPrice(supplierId, skuNo);
-//						if(sku!=null){
-//							String supplierPrice = sku.getSupplierPrice();
-//							System.out.println("获取的进货价："+supplierPrice);
-//							
-//						}
+					RequestObject obj = new RequestObject();
+					obj.setSku(skuIDs[0]);
+					try {
+						if(purchasePrice!=null){
+							obj.setPayment_price(purchasePrice);
+//							SkuDTO sku = skuPriceService.findSupplierPrice(supplierId, skuNo);
+//							if(sku!=null){
+//								String supplierPrice = sku.getSupplierPrice();
+//								System.out.println("获取的进货价："+supplierPrice);
+//								
+//							}
+						}
+						String eventId = eventProductService.selectEventIdBySku(skuIDs[0], supplierId);
+						System.out.println("获取的活动Id："+eventId);
+						logger.info("eventId"+eventId);
+						obj.setEvent_id(eventId);
+					} catch (ServiceException e) {
+						e.printStackTrace();
 					}
-					String eventId = eventProductService.selectEventIdBySku(skuIDs[0], supplierId);
-					System.out.println("获取的活动Id："+eventId);
-					logger.info("eventId"+eventId);
-					obj.setEvent_id(eventId);
-				} catch (ServiceException e) {
-					e.printStackTrace();
+					String code = skuIDs[1];
+					if ("A".equals(code)) {
+						obj.setOption_code("");
+					} else {
+						obj.setOption_code(code);
+					}
+					obj.setQty(num);
+					logger.info(" 推送参数 ：" + obj.toString());
+					list.add(obj);
 				}
-				String code = skuIDs[1];
-				if ("A".equals(code)) {
-					obj.setOption_code("");
-				} else {
-					obj.setOption_code(code);
-				}
-				obj.setQty(num);
-				logger.info(" 推送参数 ：" + obj.toString());
-				list.add(obj);
 			}
+			array = JSONArray.fromObject(list);
+		}catch(Exception ex){
+			
 		}
-		JSONArray array = JSONArray.fromObject(list);
-		return array.toString();
+		if(array!=null){
+			return array.toString();
+		}else{
+			return null;
+		}
+		
 	}
 
 	private void sendMail(final OrderDTO orderDTO) {
 		
-		long tim = Long.parseLong(time);
-		//判断有异常的订单如果处理超过两小时，依然没有解决，则把状态置为不处理，并发邮件
-		if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim*1000*60)>0){ 
-			
-			setPurchaseOrderExc(orderDTO);
-			//超过一天 不需要在做处理 订单状态改为其它状体
-			orderDTO.setExcState("0");
-			orderDTO.setStatus(OrderStatus.NOHANDLE);
-			Thread t = new Thread(	 new Runnable() {
-				@Override
-				public void run() {
-					try {
-						System.out.println("email");
+		try{
+			long tim = Long.parseLong(time);
+			//判断有异常的订单如果处理超过两小时，依然没有解决，则把状态置为不处理，并发邮件
+			if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim*1000*60)>0){ 
+				
+				setPurchaseOrderExc(orderDTO);
+				//超过一天 不需要在做处理 订单状态改为其它状体
+				orderDTO.setExcState("0");
+				orderDTO.setStatus(OrderStatus.NOHANDLE);
+				Thread t = new Thread(	 new Runnable() {
+					@Override
+					public void run() {
+						try {
+							System.out.println("email");
 
-						SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单"+orderDTO.getSpOrderId()+"出现错误,已置为不做处理，原因："+orderDTO.getExcDesc(), messageType);
-					} catch (Exception e) {
-						e.printStackTrace();
+							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单"+orderDTO.getSpOrderId()+"出现错误,已置为不做处理，原因："+orderDTO.getExcDesc(), messageType);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
-				}
-			});
-			t.start();
+				});
+				t.start();
 
-		}else{
-			orderDTO.setExcState("1");
+			}else{
+				orderDTO.setExcState("1");
+			}
+		}catch(Exception x){
+			logger.info(" 发邮件失败 ：" + x.getMessage());
+			System.out.println(" 发邮件失败 ：" + x.getMessage());
 		}
+		
+		
 	}
 
 	@Override
