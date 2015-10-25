@@ -57,6 +57,7 @@ public class TonyProductStockImp extends AbsUpdateProductStock {
             skuId = item.getSku();
             logger.info("sku = " + skuId + " quantity =  " + item.getQty());
             if(sopMap.containsKey(skuId)){
+                logger.info("sopMap contains sku = " + skuId + " quantity =  " + item.getQty());
                 map.put(skuId,item.getQty());
             }
 
@@ -68,9 +69,9 @@ public class TonyProductStockImp extends AbsUpdateProductStock {
     public static void main(String[] args) throws Exception {
         AbsUpdateProductStock impl = new TonyProductStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("TESSABIT更新数据库开始");
+        logger.info("tony 更新数据库开始");
         impl.updateProductStock(Constant.SUPPLIER_ID, "2015-01-01 00:00", format.format(new Date()));
-        logger.info("TESSABIT更新数据库结束");
+        logger.info("tony更新数据库结束");
         System.exit(0);
 
 
