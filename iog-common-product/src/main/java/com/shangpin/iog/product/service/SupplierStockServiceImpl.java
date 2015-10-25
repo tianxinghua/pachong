@@ -14,7 +14,9 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by loyalty on 15/6/9.
@@ -52,7 +54,10 @@ public class SupplierStockServiceImpl implements SupplierStockService {
 			String supplierId) throws ServiceMessageException {
 		SupplierStockDTO list = null;
 		try{
-			list = supplierStockDAO.findBySkuAndSupplier(supplierId,skuNo);
+			Map<String,String> map = new HashMap<String,String>();
+			map.put("supplierId", supplierId);
+			map.put("skuNo", skuNo);
+			list = supplierStockDAO.findBySkuAndSupplier(map);
 		}catch(Exception e){
 			e.printStackTrace();
 			throw new ServiceMessageException("数据查询失败"+e.getMessage());

@@ -2,6 +2,7 @@ package com.shangpin.iog.product.dao;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.repository.query.Param;
 
@@ -26,8 +27,10 @@ public interface SupplierStockMapper extends IBaseDao<SupplierStockDTO> {
 	 */
     int saveStock(SupplierStockDTO stockDTO);
     
-    public SupplierStockDTO findSingleStock(@Param("supplierId")  String supplierId );
+    public SupplierStockDTO findSingleStock(@Param(value="supplierId")  String supplierId );
    
+    public SupplierStockDTO findBySkuAndSupplier(Map<String,String> map);
+    
     
     
     public List<SupplierStockDTO> findAllSupplierStock();

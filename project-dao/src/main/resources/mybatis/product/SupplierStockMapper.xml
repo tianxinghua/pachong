@@ -39,6 +39,7 @@
    )
   </foreach>
  </insert>
+ 
  <update id="updateStock" parameterType="iog_supplierStock">
     update SUPPLIER_STOCK set QUANTITY=#{quantity}
     where SUPPLIER_ID=#{supplierId} and SUPPLIER_SKU_ID=#{supplierSkuId}
@@ -48,30 +49,22 @@
   select
     <include refid="all_column"></include>
        from SUPPLIER_STOCK 
-          <where>
-   
-    <if test="null!=supplierId">
-     SUPPLIER_ID = #{supplierId}
-   </if>
-<!--      <if test="null!=skuId"> -->
-<!--      and SUPPLIER_SKU_ID = #{skuId} -->
-<!--    </if> -->
-   
-
- 
-  </where> 
+         
 
  </select>
-
-
  
- 
-  <select id="findBySkuAndSupplier" resultMap="resultMap">
+  <select id="findBySkuAndSupplier" parameterType="map" resultMap="resultMap">
   select
     <include refid="all_column"></include>
-       from SUPPLIER_STOCK where  SUPPLIER_ID = #{supplier}
-  
-
+       from SUPPLIER_STOCK 
+   <where>
+	    <if test="null!=supplierId">
+	     SUPPLIER_ID = #{supplierId}
+	   </if>
+	     <if test="null!=skuNo">
+	     and SUPPLIER_SKU_ID = #{skuNo}
+	   </if>
+  </where> 
  </select>
 
  
@@ -81,10 +74,6 @@
   from SUPPLIER_STOCK
 
  </select>
-
-
-
-
 
 
 </mapper>
