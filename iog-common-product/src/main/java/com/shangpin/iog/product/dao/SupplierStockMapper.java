@@ -19,6 +19,16 @@ public interface SupplierStockMapper extends IBaseDao<SupplierStockDTO> {
 	 * @return
 	 */
     int updateStock(SupplierStockDTO stockDTO);
-
-    List<SupplierStockDTO> findBySkuNoAndSupplierId(@Param("skuNo")String skuNo,@Param("supplierId")String supplierId);
+    /**
+	 * 保存产品库存
+	 * @param stockDTO skuNo,suplierId,quantity必须有
+	 * @return
+	 */
+    int saveStock(SupplierStockDTO stockDTO);
+    
+    public SupplierStockDTO findSingleStock(@Param("supplierId")  String supplierId );
+   
+    
+    
+    public List<SupplierStockDTO> findAllSupplierStock();
 }
