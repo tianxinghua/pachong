@@ -105,12 +105,16 @@ public class ReservationProStock {
 			String result = returnObj.getReturn_code();
 			if ("1".equals(result)) {
 				returnMap = new HashMap<String, String>();
-				returnMap.put("0", returnObj.getOrder_id());
+				returnMap.put("0", returnObj.getOrder_id()); 
 				returnMap.put("return_orderID",returnObj.getOrder_id());
 				logger.info("推送订单success：" + returnObj.getOrder_id());
 			} else if ("0".equals(result)) {
 				if("INV_RESERVATION_ID".equals(returnObj.getError_code())){
 					returnMap = pushOrderAgain(order_id,purchaseNo,data);
+				}else if(HttpUtil45.errorResult.equals(returnObj.getError_msg())){
+					returnMap = new HashMap<String, String>();
+					returnMap.put("-1", returnObj.getError_msg());
+					logger.info("推送订单fail：" + returnObj.getError_msg());
 				}else{
 					returnMap = new HashMap<String, String>();
 					returnMap.put("1", returnObj.getError_msg());

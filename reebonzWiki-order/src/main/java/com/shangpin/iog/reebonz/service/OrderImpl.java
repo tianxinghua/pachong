@@ -145,6 +145,9 @@ public class OrderImpl extends AbsOrderService {
 					}
 				});
 				t.start();
+			}else if(map.get("-1") != null){
+				sendMail(orderDTO);
+				orderDTO.setExcDesc(map.get("-1"));
 			} else {
 				orderDTO.setExcState("0");
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
@@ -163,7 +166,7 @@ public class OrderImpl extends AbsOrderService {
 	@Override
 	public void handleCancelOrder(final ReturnOrderDTO deleteOrder) {
 		try{
-			if(deleteOrder.getSupplierOrderNo()==null){
+			if(deleteOrder.getSupplierOrderNo()==null){ 
 				deleteOrder.setExcState("0");
 				//超过一天 不需要在做处理 订单状态改为其它状体
 				deleteOrder.setStatus(OrderStatus.NOHANDLE);
@@ -269,7 +272,7 @@ public class OrderImpl extends AbsOrderService {
 		
 		long tim = Long.parseLong(time);
 		//判断有异常的订单如果处理超过两小时，依然没有解决，则把状态置为不处理，并发邮件
-		if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim*1000*60)>0){
+		if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim*1000*60)>0){ 
 			
 			setPurchaseOrderExc(orderDTO);
 			//超过一天 不需要在做处理 订单状态改为其它状体
