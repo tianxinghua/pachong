@@ -3,6 +3,9 @@ package com.shangpin.iog.tony.service;
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 
+import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.dto.SupplierStockDTO;
+import com.shangpin.iog.tony.common.Constant;
 import com.shangpin.iog.tony.common.MyJsonClient;
 
 import com.shangpin.iog.tony.dto.EventDTO;
@@ -42,15 +45,20 @@ public class TonyStockImp {
                          //3: the item was upserted. It means that the involved item was added to the inventory or updated. You can find the item directly in the event and you have to refresh the info on your selling channel
                     }else if(4==eventDTO.getType()){
                         // 4 the item changed quantity or the stock price. You can find in the event the sku attribute of the involved product, the qty attribute (that you have to display on your selling channel), the qty_diff attribute (not important in this case) and the stock price
-                        if(0==eventDTO.getAdditional_info().getStock_price()){//停止销售
-                            stockMap.put(eventDTO.getAdditional_info().getSku(),0);
-                        }else{
+//                        if(0==eventDTO.getAdditional_info().getStock_price()){//停止销售
+//                            stockMap.put(eventDTO.getAdditional_info().getSku(),0);
+//                        }else{
                             stockMap.put(eventDTO.getAdditional_info().getSku(),eventDTO.getAdditional_info().getQty());
-                        }
+//                        }
                     }
                 }
                 for(Iterator<Map.Entry<String,Integer>> itor= stockMap.entrySet().iterator();itor.hasNext();){
                     Map.Entry<String,Integer> entry  = itor.next();
+                    SupplierStockDTO supplierStockDTO = new SupplierStockDTO();
+                    supplierStockDTO.setSupplierId(Constant.SUPPLIER_ID);
+                    supplierStockDTO.setId(UUIDGenerator.getUUID());
+                    supplierStockDTO.setSupplierSkuNo(entry.getKey());
+                    supplierStockDTO.setQuantity(entry.getValue());
 
 
                 }
