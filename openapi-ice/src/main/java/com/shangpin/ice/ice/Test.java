@@ -5,9 +5,7 @@ import ShangPin.SOP.Entity.Api.Product.SopProductSkuIce;
 import ShangPin.SOP.Entity.Api.Product.SopProductSkuPage;
 import ShangPin.SOP.Entity.Api.Product.SopProductSkuPageQuery;
 import ShangPin.SOP.Entity.Api.Product.SopSkuIce;
-import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
-import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
-import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx;
+import ShangPin.SOP.Entity.Api.Purchase.*;
 import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
 import com.google.gson.Gson;
@@ -103,12 +101,90 @@ public class Test {
 //
 //        }
 
-        String kk="111";
-        if(kk.startsWith("1")){
-            System.out.println("true----" + kk.trim().startsWith("1"));
-        }else{
-            System.out.println(" false  ");
+
+
+        OpenApiServantPrx servant = null;
+        try {
+            servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        String sopPurchaseOrderNo ="";
+
+
+        List<OrderDTO>  orderDTOList= new ArrayList<>();
+//        OrderDTO orderDTO1 =new OrderDTO();
+//        orderDTO1.setSpOrderId("201510250199901");
+//
+//        orderDTOList.add(orderDTO1);
+//        OrderDTO orderDTO2 =new OrderDTO();
+//        orderDTO2.setSpOrderId("201510250199932");
+//
+//        orderDTOList.add(orderDTO2);
+
+        OrderDTO orderDTO3 =new OrderDTO();
+        orderDTO3.setSpOrderId("201510250196093");
+
+        orderDTOList.add(orderDTO3);
+
+        try{
+            for(OrderDTO orderDTO:orderDTOList){
+                Map<String,List<PurchaseOrderDetailSpecial>>  purchaseOrderMap = new HashMap<>();
+
+                PurchaseOrderDetailSpecialPage orderDetailSpecialPage = servant.FindPurchaseOrderDetailSpecial("2015101001584","",orderDTO.getSpOrderId());
+                if(null!=orderDetailSpecialPage&&null!=orderDetailSpecialPage.PurchaseOrderDetails&&orderDetailSpecialPage.PurchaseOrderDetails.size()>0){  //存在采购单 就代表已支付
+
+                    for (PurchaseOrderDetailSpecial orderDetail : orderDetailSpecialPage.PurchaseOrderDetails) {
+                        sopPurchaseOrderNo  = orderDetail.SopPurchaseOrderNo;
+                        if(purchaseOrderMap.containsKey(sopPurchaseOrderNo)){
+                            purchaseOrderMap.get(sopPurchaseOrderNo).add(orderDetail);
+                        }else{
+                            List<PurchaseOrderDetailSpecial> orderList = new ArrayList<>();
+                            orderList.add(orderDetail);
+                            purchaseOrderMap.put(sopPurchaseOrderNo,orderList);
+
+                        }
+
+
+                    }
+
+                    for(Iterator<Map.Entry<String,List<PurchaseOrderDetailSpecial>>> itor = purchaseOrderMap.entrySet().iterator();itor.hasNext();) {
+                        Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();
+                        sopPurchaseOrderNo  = entry.getKey();
+                        StringBuffer purchaseOrderDetailbuffer =new StringBuffer();
+                        //获取同一产品的数量
+                        for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){
+                            purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
+                            //赋值状态 海外商品每个采购单 只有一种茶品
+                            orderDTO.setSpPurchaseNo(sopPurchaseOrderNo);
+                            orderDTO.setPurchasePriceDetail(purchaseOrderDetail.SkuPrice);
+                            if(5!=purchaseOrderDetail.DetailStatus){ //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
+                                orderDTO.setStatus(OrderStatus.PAYED);
+                            }else{
+                                orderDTO.setStatus(OrderStatus.CANCELLED);
+                            }
+
+                        }
+                        orderDTO.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString().substring(0,purchaseOrderDetailbuffer.toString().length()-1));
+
+
+                    }
+
+
+
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+//        String kk="111";
+//        if(kk.startsWith("1")){
+//            System.out.println("true----" + kk.trim().startsWith("1"));
+//        }else{
+//            System.out.println(" false  ");
+//        }
 
     }
 
