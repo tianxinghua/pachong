@@ -14,7 +14,7 @@ public class SupplierStockDTO {
 
     private String id;
     private String supplierId;
-    private String supplierSkuNo;
+    private String supplierSkuId;
     private Integer quantity;
     private Date optTime;//操作时间
 
