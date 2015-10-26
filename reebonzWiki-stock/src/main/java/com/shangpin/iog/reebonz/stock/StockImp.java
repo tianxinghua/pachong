@@ -6,6 +6,7 @@ import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.dto.EventProductDTO;
 import com.shangpin.iog.product.service.EventProductServiceImpl;
 import com.shangpin.iog.reebonz.dto.Item;
 import com.shangpin.iog.reebonz.dto.Items;
@@ -20,6 +21,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -62,7 +64,7 @@ public class StockImp extends AbsUpdateProductStock {
         return stockMap;
     }
 
-    private  String getInventory(String skuIds){
+    private  String getInventory(String skuIds) throws ParseException{
     	
     	String []array = skuIds.split("\\|");
      	String skuNo = array[0];
@@ -77,17 +79,26 @@ public class StockImp extends AbsUpdateProductStock {
     		size = "";
     	}
     	//根据sku从数据库EVENT_PRODUCT查询最新的eventId
-    	String eventId=null;
+    	EventProductDTO event=null;
 		try {
-			eventId = eventProductService.selectEventIdBySku(skuNo,supplierId);
+			event = eventProductService.selectEventProductDTOBySku(skuNo,supplierId);
 			
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
     	Map<String,String> map = new HashMap<String,String>();
     	String jsonStr = null;
-    	if(eventId!=null){
-    		map.put("event_id", eventId);
+    	SimpleDateFormat sf = new SimpleDateFormat(
+				"yyyy-MM-dd HH:mm:ss");
+		Date endDate = sf.parse(getString(event.getEndDate()));
+		boolean before = endDate.before(new Date());
+		if (before) {
+			// 旧活动已结束
+			return "0";
+		}
+//    	if()
+    	if(event!=null){
+    		map.put("event_id", event.getEventId());
     		map.put("sku", skuNo);
     		jsonStr =  HttpUtil45
     				.get(stockUrl,
@@ -147,4 +158,24 @@ public class StockImp extends AbsUpdateProductStock {
         System.out.println("reebonz更新库存结束");
         System.exit(0);
     }
+    private static String getString(String ts) throws ParseException {
+		ts = ts.replace("Z", " UTC");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		Date dt = sdf.parse(ts);
+		TimeZone tz = sdf.getTimeZone();
+		Calendar c = sdf.getCalendar();
+		StringBuffer result = new StringBuffer();
+		result.append(c.get(Calendar.YEAR));
+		result.append("-");
+		result.append((c.get(Calendar.MONTH) + 1));
+		result.append("-");
+		result.append(c.get(Calendar.DAY_OF_MONTH));
+		result.append(" ");
+		result.append(c.get(Calendar.HOUR_OF_DAY));
+		result.append(":");
+		result.append(c.get(Calendar.MINUTE));
+		result.append(":");
+		result.append(c.get(Calendar.SECOND));
+		return result.toString();
+	}
 }
