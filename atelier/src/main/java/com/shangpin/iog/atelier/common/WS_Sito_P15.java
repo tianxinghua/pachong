@@ -76,6 +76,9 @@ public class WS_Sito_P15 {
         }
         try {
             File newTextFile = new File(availabilityFile);
+            if (!newTextFile.getParentFile().exists()) {
+				newTextFile.getParentFile().mkdirs();
+			}
             if (!newTextFile.exists())
                 newTextFile.createNewFile();
             FileWriter fw;
@@ -150,6 +153,9 @@ public class WS_Sito_P15 {
         }
         try {
             File newTextFile = new File(itemsFile);
+            if (!newTextFile.getParentFile().exists()) {
+				newTextFile.getParentFile().mkdirs();
+			}
             if (!newTextFile.exists()){
             	newTextFile.createNewFile();
             }
@@ -181,6 +187,9 @@ public class WS_Sito_P15 {
         }
         try {
             File newTextFile = new File(imageFile);
+            if (!newTextFile.getParentFile().exists()) {
+				newTextFile.getParentFile().mkdirs();
+			}
             if (!newTextFile.exists())
                 newTextFile.createNewFile();
             FileWriter fw;
@@ -209,6 +218,9 @@ public class WS_Sito_P15 {
         }
         try {
             File newTextFile = new File("E:/aa.xml");
+            if (!newTextFile.getParentFile().exists()) {
+				newTextFile.getParentFile().mkdirs();
+			}
             if (!newTextFile.exists())
                 newTextFile.createNewFile();
             FileWriter fw;
