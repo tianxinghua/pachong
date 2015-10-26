@@ -64,78 +64,87 @@ public class StockImp extends AbsUpdateProductStock {
         return stockMap;
     }
 
-    private  String getInventory(String skuIds) throws ParseException{
+    private  String getInventory(String skuIds){
     	
-    	String []array = skuIds.split("\\|");
-     	String skuNo = array[0];
-     	String size = null;
-    	if(array.length==2){
-    		size = array[1];
-    	}else{
-    		logger.info("sku为："+skuNo+"的商品尺码未获取到，更新库存失败，库存已置为0");
-    		size ="B";
+    	try{
+    		String []array = skuIds.split("\\|");
+         	String skuNo = array[0];
+         	String size = null;
+        	if(array.length==2){
+        		size = array[1];
+        	}else{
+        		logger.info("sku为："+skuNo+"的商品尺码未获取到，更新库存失败，库存已置为0");
+        		size ="B";
+        	}
+        	if("A".equals(size)){
+        		size = "";
+        	}
+        	//根据sku从数据库EVENT_PRODUCT查询最新的eventId
+        	EventProductDTO event=null;
+    		try {
+    			event = eventProductService.selectEventProductDTOBySku(skuNo,supplierId);
+    			
+    		} catch (ServiceException e) {
+    			e.printStackTrace();
+    		}
+        	Map<String,String> map = new HashMap<String,String>();
+        	String jsonStr = null;
+        	SimpleDateFormat sf = new SimpleDateFormat(
+    				"yyyy-MM-dd HH:mm:ss");
+    		Date endDate = sf.parse(getString(event.getEndDate()));
+    		boolean before = endDate.before(new Date());
+    		if (before) {
+    			// 旧活动已结束
+    			return "0";
+    		}
+//        	if()
+        	if(event!=null){
+        		map.put("event_id", event.getEventId());
+        		map.put("sku", skuNo);
+        		jsonStr =  HttpUtil45
+        				.get(stockUrl,
+        						new OutTimeConfig(1000 * 60*2, 1000 * 60*2, 1000 * 60*2),
+        						map);
+                logger.info("get skuId :"+skuNo +" 库存返回值为："+jsonStr );
+               
+        	}
+        	 if(HttpUtil45.errorResult.equals(jsonStr)){    //链接异常
+        		 return "0";
+             }else{
+            	 return getInventoryByJsonString(jsonStr,size);
+             }
+    	}catch(Exception e){
+    		return "0";
     	}
-    	if("A".equals(size)){
-    		size = "";
-    	}
-    	//根据sku从数据库EVENT_PRODUCT查询最新的eventId
-    	EventProductDTO event=null;
-		try {
-			event = eventProductService.selectEventProductDTOBySku(skuNo,supplierId);
-			
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-    	Map<String,String> map = new HashMap<String,String>();
-    	String jsonStr = null;
-    	SimpleDateFormat sf = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss");
-		Date endDate = sf.parse(getString(event.getEndDate()));
-		boolean before = endDate.before(new Date());
-		if (before) {
-			// 旧活动已结束
-			return "0";
-		}
-//    	if()
-    	if(event!=null){
-    		map.put("event_id", event.getEventId());
-    		map.put("sku", skuNo);
-    		jsonStr =  HttpUtil45
-    				.get(stockUrl,
-    						new OutTimeConfig(1000 * 60*2, 1000 * 60*2, 1000 * 60*2),
-    						map);;
-            logger.info("get skuId :"+skuNo +" 库存返回值为："+jsonStr );
-           
-    	}
-    	 if(HttpUtil45.errorResult.equals(jsonStr)){    //链接异常
-             return  "0";
-         }else{
-        	 return getInventoryByJsonString(jsonStr,size);
-         }
+    	
     }
     private static String getInventoryByJsonString(String jsonStr,String size){
-    	ResponseObject obj=null;
-        String returnSize = "0";
-        if(jsonStr!=null){
-        	  try {
-              	obj = new Gson().fromJson(jsonStr, ResponseObject.class);
-      			Object o = obj.getResponse();
-      			JSONObject jsonObject = JSONObject.fromObject(o); 
-      			List<Item> array = new Gson().fromJson(jsonObject.toString(), Items.class).getDocs();
-      			if(array.size()>0){
-      				for(Item item:array){
-      					if(size.equals(item.getOption_code())){
-      						returnSize = item.getTotal_stock_qty();
-      						break;
-      					}
-      				}
-      			}
-              } catch (Exception e) {
-                  loggerError.error("转化 :"+jsonStr +" 到库存对象失败 :" +e.getMessage());
-                  e.printStackTrace(); 
-              }
-        }
-		return returnSize;
+    	 String returnSize = "0";
+    	try{
+    		ResponseObject obj=null;
+         
+            if(jsonStr!=null){
+            	  try {
+                  	obj = new Gson().fromJson(jsonStr, ResponseObject.class);
+          			Object o = obj.getResponse();
+          			JSONObject jsonObject = JSONObject.fromObject(o); 
+          			List<Item> array = new Gson().fromJson(jsonObject.toString(), Items.class).getDocs();
+          			if(array.size()>0){
+          				for(Item item:array){
+          					if(size.equals(item.getOption_code())){
+          						returnSize = item.getTotal_stock_qty();
+          						break;
+          					}
+          				}
+          			}
+                  } catch (Exception e) {
+                      loggerError.error("转化 :"+jsonStr +" 到库存对象失败 :" +e.getMessage());
+                      e.printStackTrace(); 
+                  }
+            }
+    	}catch(Exception e){
+    	}
+    	return returnSize;
     }
     
     public static void main(String[] args) {
