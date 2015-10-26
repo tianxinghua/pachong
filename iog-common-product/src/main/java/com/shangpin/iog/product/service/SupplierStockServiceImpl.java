@@ -31,6 +31,7 @@ public class SupplierStockServiceImpl implements SupplierStockService {
 	@Override
 	public void updateStock(SupplierStockDTO stockDTO) throws ServiceMessageException {
 		try {
+			stockDTO.setOptTime(new Date());
             supplierStockDAO.updateStock(stockDTO);
         } catch ( Exception e) {
             throw new ServiceMessageException("数据更新失败"+e.getMessage());

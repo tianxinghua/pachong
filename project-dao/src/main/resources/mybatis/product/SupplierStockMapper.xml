@@ -41,7 +41,7 @@
  </insert>
  
  <update id="updateStock" parameterType="iog_supplierStock">
-    update SUPPLIER_STOCK set QUANTITY=#{quantity}
+    update SUPPLIER_STOCK set QUANTITY=#{quantity},OPT_TIME=#{optTime}
     where SUPPLIER_ID=#{supplierId} and SUPPLIER_SKU_ID=#{supplierSkuId}
  </update>
  
