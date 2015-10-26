@@ -25,9 +25,9 @@ public class WS_Sito_P15 {
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
-            itemsFile = bdl.getString("items");
-            availabilityFile = bdl.getString("availability");
-            imageFile = bdl.getString("image");
+        itemsFile = bdl.getString("items");
+        availabilityFile = bdl.getString("availability");
+        imageFile = bdl.getString("image");
     }
     /**
      * fetch product from atelier to local
