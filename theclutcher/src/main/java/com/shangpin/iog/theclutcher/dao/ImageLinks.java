@@ -14,15 +14,19 @@ import java.util.List;
  *
  * Created by kelseo on 15/9/24.
  */
+@Getter
+@Setter
 public class ImageLinks {
 
-    @SerializedName("g:image_link")
-    List links;
+    List image_link;
 
+//    @SerializedName("g:image_link")
+//    List links;
+//
     public List<String> getLinks() {
         List<String> pics = new ArrayList<>();
-        if (links != null && links.size() > 0) {
-            for (Object picObj : links) {
+        if (image_link != null && image_link.size() > 0) {
+            for (Object picObj : image_link) {
                 LinkedTreeMap picMap = (LinkedTreeMap)picObj;
                 Object urlObj = picMap.get("$");
                 if (urlObj != null) {
@@ -32,15 +36,15 @@ public class ImageLinks {
         }
         return pics;
     }
-
-    public void setLinks(List links) {
-        this.links = links;
-    }
-
-    @Override
-    public String toString() {
-        return "ImageLinks{" +
-                "links=" + links +
-                '}';
-    }
+//
+//    public void setLinks(List links) {
+//        this.links = links;
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return "ImageLinks{" +
+//                "links=" + links +
+//                '}';
+//    }
 }

@@ -67,31 +67,32 @@ public class GrabStockImp extends AbsUpdateProductStock {
         }
         //获取本类class文件所在目录，作为localPath的值
         try{
-        	
+
         	localPath = URLDecoder.decode((GrabStockImp.class.getClassLoader().getResource("").getFile()), "utf-8");
         	localPath = localPath+"soapml.xml";
-        	
+
         }catch(Exception e){
         	e.printStackTrace();
         	localPath = localPathDefault;
         }
 		String filePath = null;
 		try{
-			
+
 			filePath = SoapXmlUtil.downloadSoapXmlAsFile(serviceUrl,soapAction,contentType,soapRequestData,localPath);
-			
+
 		}catch(Exception ex){
 			ex.printStackTrace();
 			System.out.println("下载失败，正在重新下载...");
 			try{
-				
+
 				filePath = SoapXmlUtil.downloadSoapXmlAsFile(serviceUrl,soapAction,contentType,soapRequestData,localPath);
-				
+
 			}catch(Exception e){
 				e.printStackTrace();
 				loggerError.error("拉取alduca daosta数据失败---" + e.getMessage());
 			}
-		}	
+		}
+//		String filePath = "d:/soapml.xml";
 		if(filePath != null){
 			logger.info("拉取alduca daosta数据成功");
 			//获取更新文件信息

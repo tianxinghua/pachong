@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 public class MyStringUtil {
     private static Logger loggerError = Logger.getLogger("error");
     /**
-     *通过event事件获取SkuId
+     * 鑾峰彇sku淇℃伅
      */
     public static String getSkuId(String item){
         String skuId = null;
@@ -18,7 +18,7 @@ public class MyStringUtil {
         return  skuId;
     }
     /**
-     *通过event事件获取SkuId对应的库存信息
+     *鑾峰彇搴撳瓨鏁伴噺
      */
     public static Integer getQty(String item){
         Integer qty = null;
@@ -26,8 +26,8 @@ public class MyStringUtil {
             try{
                 qty = Integer.parseInt(item.split(",")[2].split(":")[1]);
             }catch (NumberFormatException e){
-                loggerError.error("库存类型转换异常,相关信息："+item);
-                return qty;
+                loggerError.error(item+",杞寲寮傚父.");
+                return 0;
             }
         }
         return  qty;

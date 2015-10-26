@@ -1,7 +1,12 @@
 package theclutcher;
 
+import com.shangpin.iog.common.utils.DateTimeUtil;
+
 import java.io.File;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Test {
 
@@ -28,7 +33,15 @@ public class Test {
 //         }   
 //         sReturn=out.toString();   
 //         return sReturn;
-		System.out.println("s =" +  new BigDecimal("1.0").intValue());
+	//	System.out.println("s =" +  new BigDecimal("1.0").intValue());
+
+//		Calendar calendar = Calendar.getInstance();
+//		calendar.setTime();
+//		SimpleDateFormat format =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = DateTimeUtil.convertFormat("2015-10-22 17:12:00","yyyy-MM-dd HH:mm:ss" );
+		Date date1 = DateTimeUtil.convertFormat("2015-10-22 20:12:03","yyyy-MM-dd HH:mm:ss" );
+		System.out.println("111 ssss"+ DateTimeUtil.getTimeDifference(date, date1)/(120*1000*60)+"---");
+		 ;
 		
 	}
 }
