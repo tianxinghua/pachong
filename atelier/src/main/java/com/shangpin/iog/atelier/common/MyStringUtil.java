@@ -10,7 +10,7 @@ public class MyStringUtil {
      *get pictrue url
      * ex:171003;http://image.atelieronweb.com/foto/thumbs2_P14\BURBERRY\171003.JPG;0
      * */
-     static String[] getPicUrl(String skuId,String itemImages){
+     public static String[] getPicUrl(String skuId,String itemImages){
         String[] images = itemImages.split(skuId+";");
         return images;
     }
