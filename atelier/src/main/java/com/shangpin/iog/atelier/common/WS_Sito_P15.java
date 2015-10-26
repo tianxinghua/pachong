@@ -2,6 +2,7 @@ package com.shangpin.iog.atelier.common;
 
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -149,8 +150,9 @@ public class WS_Sito_P15 {
         }
         try {
             File newTextFile = new File(itemsFile);
-            if (!newTextFile.exists())
-                newTextFile.createNewFile();
+            if (!newTextFile.exists()){
+            	newTextFile.createNewFile();
+            }
             FileWriter fw;
             fw = new FileWriter(newTextFile);
             fw.write(items.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").substring(77));
@@ -469,20 +471,26 @@ public class WS_Sito_P15 {
      *parse file to string
      */
     public  String parseFile2Str(String file) {
-
+    	String str = "";
         StringBuffer sb = new StringBuffer();
         try {
             // 创建文件输入流对象
-            FileInputStream is = new FileInputStream(file);
+//            FileInputStream is = new FileInputStream(file);
+            BufferedReader br = new  BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            
             // 设定读取的字节数
-            int n = 2048;
-            byte buffer[] = new byte[n];
+//            int n = 2048;
+//            byte buffer[] = new byte[n];
             // 读取输入流
-            while ((is.read(buffer, 0, n) != -1) && (n > 0)) {
-                sb.append(new String(buffer,"utf-8"));
-            }
+//            while ((is.read(buffer, 0, n) != -1) && (n > 0)) {
+//                sb.append(new String(buffer,"utf-8"));
+//            }
+            while ((str = br.readLine())!=null) {
+            	sb.append(str).append("\n");
+			}
             // 关闭输入流
-            is.close();
+//            is.close();
+            br.close();
         }  catch (Exception e) {
             System.out.println("parseFile 2Str获取文件字符串失败");
         }
@@ -493,11 +501,11 @@ public class WS_Sito_P15 {
      * test
      * */
     public static void main(String[] args) throws IOException {
-        //new WS_Sito_P15().fetchProduct();
+        new WS_Sito_P15().fetchProduct();
         //new WS_Sito_P15().setStatusOrder();
        // new WS_Sito_P15().getStatusOrder();
         //new WS_Sito_P15().newOrder();
-        new WS_Sito_P15().orderAmendment();
+        //new WS_Sito_P15().orderAmendment();
         //new WS_Sito_P15().getAllAvailabilityMarketplace();
         //new WS_Sito_P15().getAllImageMarketplace();
        //new WS_Sito_P15().getAllItemsMarketplace();
