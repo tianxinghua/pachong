@@ -55,25 +55,24 @@ public class AtelierStockImp  extends AbsUpdateProductStock {
 
     public static void main(String[] args) throws Exception {
         AtelierStockImp impl = new AtelierStockImp();
-
-/*        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("ATELIER更新数据库开始");
         impl.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
         logger.info("ATELIER更新数据库结束");
-        System.exit(0);*/
+        System.exit(0);
 
 
-        List<String> skuNo = new ArrayList<>();
-        skuNo.add("443602-");
-        skuNo.add("448277-2004952926232");
-        skuNo.add("443636-2100657478882");
-        skuNo.add("443650-2111110404812");
-        skuNo.add("443650-2004244214498");
-        Map returnMap = impl.grabStock(skuNo);
-        System.out.println("test return size is "+returnMap.keySet().size());
-        for(Object key: returnMap.keySet()) {
-            System.out.println(key+" test return value is " + returnMap.get(key));
-        }
+//        List<String> skuNo = new ArrayList<>();
+//        skuNo.add("443602-");
+//        skuNo.add("448277-2004952926232");
+//        skuNo.add("443636-2100657478882");
+//        skuNo.add("443650-2111110404812");
+//        skuNo.add("443650-2004244214498");
+//        Map returnMap = impl.grabStock(skuNo);
+//        System.out.println("test return size is "+returnMap.keySet().size());
+//        for(Object key: returnMap.keySet()) {
+//            System.out.println(key+" test return value is " + returnMap.get(key));
+//        }
 
     }
 }
