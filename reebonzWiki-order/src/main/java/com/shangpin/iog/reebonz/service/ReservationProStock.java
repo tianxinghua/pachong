@@ -92,10 +92,66 @@ public class ReservationProStock {
 	public Map<String, String> pushOrder(String reservationId, String order_id,
 										 String purchaseNo, String data) {
 
+		Map<String, String> map = getOrder();
+		map.put("eps_order_id", "SP_ID:" + order_id + ",SP_PO:" + purchaseNo);
+		map.put("reservation_id", reservationId);
+		map.put("bags", data);
+		System.out.println("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:"+reservationId+",bags:"+data);
+		logger.info("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:"+reservationId+",bags:"+data);
+		ResponseObject returnObj = requestSource(map);
+		Map<String, String> returnMap = null;
+		if (returnObj != null) {
+			
+			String result = returnObj.getReturn_code();
+			if ("1".equals(result)) {
+				returnMap = new HashMap<String, String>();
+				returnMap.put("0", returnObj.getOrder_id()); 
+				returnMap.put("return_orderID",returnObj.getOrder_id());
+				logger.info("推送订单success：" + returnObj.getOrder_id());
+			} else if ("0".equals(result)) {
+				if("INV_RESERVATION_ID".equals(returnObj.getError_code())){
+					returnMap = pushOrderAgain(order_id,purchaseNo,data);
+				}else if(HttpUtil45.errorResult.equals(returnObj.getError_msg())){
+					returnMap = new HashMap<String, String>();
+					returnMap.put("-1", returnObj.getError_msg());
+					logger.info("推送订单fail：" + returnObj.getError_msg());
+				}else{
+					returnMap = new HashMap<String, String>();
+					returnMap.put("1", returnObj.getError_msg());
+					logger.info("推送订单fail：" + returnObj.getError_msg());
+				}
+		
+			}
+		}
+		return returnMap;
+	}
+	public Map<String, String> pushOrderAgain(String order_id,
+			 String purchaseNo, String data) {
+		Map<String, String> map = getOrder();
+		map.put("eps_order_id", "SP_ID:" + order_id + ",SP_PO:" + purchaseNo);
+		map.put("reservation_id", null);
+		map.put("bags", data);
+		System.out.println("实时推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:null"+",bags:"+data);
+		logger.info("实时推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:null"+",bags:"+data);
+		ResponseObject returnObj = requestSource(map);
+		Map<String, String> returnMap = new HashMap<String, String>();
+		if (returnObj != null) {
+			String result = returnObj.getReturn_code();
+			if ("1".equals(result)) {
+				returnMap.put("0", returnObj.getOrder_id());
+				returnMap.put("return_orderID",returnObj.getOrder_id());
+				logger.info("实时推送订单success：" + returnObj.getOrder_id());
+			} else if ("0".equals(result)) {
+				returnMap.put("1", returnObj.getError_msg());
+				logger.info("实时推送订单fail：" + returnObj.getError_msg());
+			}
+		}
+		return returnMap;
+	}
+	private Map<String, String> getOrder(){
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("email", "reebonz@shangpin.com");
 		map.put("order_site", "shangpin");
-		map.put("eps_order_id", "SP_ID:" + order_id + ",SP_PO:" + purchaseNo);
 		map.put("delivery_first_name", "shangpin");
 		map.put("delivery_last_name", "shangpin");
 		map.put("delivery_street1", "shangpin");
@@ -113,27 +169,9 @@ public class ReservationProStock {
 		map.put("billing_postal_code", "100000");
 		map.put("billing_phone", "1");
 		map.put("payment_method", "xx");
-		map.put("reservation_id", reservationId);
-		map.put("bags", data);
 		map.put("api_url", pushOrderUrl);
-		System.out.println("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:"+reservationId+",bags:"+data);
-		logger.info("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:"+reservationId+",bags:"+data);
-		ResponseObject returnObj = requestSource(map);
-		Map<String, String> returnMap = new HashMap<String, String>();
-		if (returnObj != null) {
-			String result = returnObj.getReturn_code();
-			if ("1".equals(result)) {
-				returnMap.put("0", returnObj.getOrder_id());
-				returnMap.put("return_orderID",returnObj.getOrder_id());
-				logger.info("推送订单success：" + returnObj.getOrder_id());
-			} else if ("0".equals(result)) {
-				returnMap.put("1", returnObj.getError_msg());
-				logger.info("推送订单fail：" + returnObj.getError_msg());
-			}
-		}
-		return returnMap;
+		return map;
 	}
-
 	/*
 	 * 解库存锁
 	 */

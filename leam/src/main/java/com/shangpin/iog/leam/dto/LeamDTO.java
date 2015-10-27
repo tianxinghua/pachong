@@ -1,10 +1,15 @@
 package com.shangpin.iog.leam.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
 /**
  * Created by sunny on 2015/8/17.
  */
+@Getter
+@Setter
 public class LeamDTO {
     private String stock_id;//Product code of Leam
     private String supplier_sku;//Supplier Code
@@ -17,6 +22,7 @@ public class LeamDTO {
     private String qty;//Quantity available
     private String size;//Size
     private String price;//Price
+    private String default_price;//市场价
     private String madein;//Made in
     private String composition;//Composition of the head
     private String nomenclature;//Data on nomenclature

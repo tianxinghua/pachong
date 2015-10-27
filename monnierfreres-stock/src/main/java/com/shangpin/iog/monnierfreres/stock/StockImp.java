@@ -45,9 +45,14 @@ public class StockImp extends AbsUpdateProductStock {
         //定义三方
     	Map<String,String> stockMap = new HashMap<String,String>();
     	Map<String,String> map = DownloadAndReadCSV.readLocalCSV();
+    
     	for(String skuId:skuNo){
-    		if(skuId.equals(map.get("skuId"))){
-    			stockMap.put(skuId,map.get("qty"));
+    		System.out.println("skuID:"+skuId+";sku:"+skuId+";qty:"+map.get("qty"));
+    		logger.info("skuID:"+skuId+";sku:"+skuId+";qty:"+map.get("qty"));
+    		if(map.containsKey(skuId)){
+    			System.out.println("sku:"+skuId+";qty:"+map.get("qty"));
+    			logger.info("sku:"+skuId+";qty:"+map.get("qty"));
+    			stockMap.put(skuId,map.get(skuId));
     		}
     	}
         return stockMap;

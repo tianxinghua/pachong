@@ -1,5 +1,6 @@
 package com.shangpin.iog.atelier.service;
 
+import com.enterprisedt.net.ftp.test.TestPortRange;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.atelier.common.MyStringUtil;
 import com.shangpin.iog.atelier.common.WS_Sito_P15;
@@ -10,12 +11,14 @@ import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 /**
  * Created by wangyuzhi on 2015/9/30
@@ -24,8 +27,15 @@ import java.io.IOException;
 public class FetchProduct {
 
     private final Logger logger = Logger.getLogger("info");
-    private final String supplierId = "2015093001426";
+//    private final String supplierId = "2015093001426";
+    private static String supplierId;
     private WS_Sito_P15 atelier = new WS_Sito_P15();
+    private static ResourceBundle bdl=null;
+    static {
+        if(null==bdl)
+            bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+    }
     @Autowired
     ProductFetchService productFetchService;
     /**
@@ -33,7 +43,7 @@ public class FetchProduct {
      */
     public void fetchProductAndSave() {
         //fetch product
-        //atelier.fetchProduct();
+        atelier.fetchProduct();
         //save into DB
         messMappingAndSave(atelier.getAllItemsStr().split("\\n"));
 
@@ -46,6 +56,7 @@ public class FetchProduct {
     private void messMappingAndSave(String[] items) {
         String stocks = atelier.getAllAvailabilityStr();
         String pictrues = atelier.getAllImageStr();
+        String str = atelier.getAllItemsStr();
        // System.out.println(pictrues);
 
 /*        for (String item : items) {
@@ -55,10 +66,12 @@ public class FetchProduct {
                 System.out.print("; fields[" + i + "]=" + fields[i]);
             }
         }
-
+		
         items = new String[0];*/
+        int a = 0;
         for (String item : items) {
-            String[] fields = item.split(";");
+            a++;
+        	String[] fields = item.split(";");
             String skuId = fields[0];
 
             SkuDTO sku = new SkuDTO();
@@ -191,5 +204,6 @@ public class FetchProduct {
 /*        String kk = "263816;FW15;Givenchy;BB05253004;001;Woman;Fall Winter;Bags;Shoulder Bags;Pandora Mini;Black;;;;Mini black washed leather Pandora bag:     detachable leather shoulder strap one leather handle  double closure with zipper  inside pocket with zipper cotton cloth lining;Givenchy: Black Washed Leather Mini Pandora Bag;792;792;;792;;NO;1;Blacks and greys;;0;Height;Width;Depth;Shoulder strap;Handles;;;;;01/01/1998 00:00:00;;;0;;;;;;Completa;NC;Main;Bags";
         String[] array = kk.split(";");
         System.out.println("   " + array.length);*/
+    	new FetchProduct().testPost();
     }
 }

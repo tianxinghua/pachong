@@ -69,6 +69,19 @@ public class EventProductServiceImpl implements EventProductService {
 		 }
 		
 	}
+	@Override
+	public EventProductDTO selectEventProductDTOBySku(String skuNo,String supplierId) throws ServiceException {
+		
+		EventProductDTO event =null;
+		 try {
+			 event = eventDAO.selectEventIdBySku(skuNo,supplierId);
+	        } catch (Exception e) {
+	        	if(e instanceof DuplicateKeyException)
+	        		throw new ServiceMessageException(REPEAT_MESSAGE);
+	        	throw new ServiceMessageException("数据插入失败"+e.getMessage());
+	        }
+		return event;
+	}
 
 	@Override
 	public EventProductDTO checkEventSku(String supplierId,String sku) throws ServiceMessageException {

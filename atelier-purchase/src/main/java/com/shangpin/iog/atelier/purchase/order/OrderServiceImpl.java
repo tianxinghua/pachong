@@ -9,15 +9,16 @@ import com.shangpin.iog.atelier.purchase.dto.AtelierOrder;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.*;
-import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.ice.dto.ICEWMSOrderRequestDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
+
 import java.io.*;
 import java.util.*;
 
@@ -242,4 +243,14 @@ public class OrderServiceImpl extends AbsOrderService {
             e.printStackTrace();
         }
     }
+	@Override
+	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void handleEmail(OrderDTO orderDTO) {
+		// TODO Auto-generated method stub
+		
+	}
 }
