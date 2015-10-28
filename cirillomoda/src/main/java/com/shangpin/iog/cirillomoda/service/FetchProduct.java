@@ -124,7 +124,7 @@ public class FetchProduct {
                             continue;
                         }
 
-                        String skuId = spuId + size;
+                        String skuId = spuId + "-" + size;
                         List<String> pics = new ArrayList<>();
                         String photo1 = record.get("Photo 1");
                         if (photo1 != null && !"".equals(photo1)) {

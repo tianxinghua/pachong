@@ -12,8 +12,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -32,31 +34,37 @@ public class DownloadAndReadCSV {
      * http下载csv文件到本地路径
      * @throws MalformedURLException
      */
-    public static String downloadNet() throws MalformedURLException {
+    public static List<String> downloadNet() throws MalformedURLException {
         int bytesum = 0;
         int byteread = 0;
-
-        URL url = new URL(httpurl);
-        String realPath="";
+        int num = 0;
+        List<String> returnList = new ArrayList<String>();
+        String[] urls = httpurl.split(",");
         try {
-            URLConnection conn = url.openConnection();
-            InputStream inStream = conn.getInputStream();
-            realPath = getPath(path);
-            FileOutputStream fs = new FileOutputStream(realPath);
-
-            byte[] buffer = new byte[1204];
-            int length;
-            while ((byteread = inStream.read(buffer)) != -1) {
-                bytesum += byteread;
-                System.out.println(bytesum);
-                fs.write(buffer, 0, byteread);
-            }
+	        for (String hurl : urls) {
+	        	num++;
+	        	URL url = new URL(hurl);
+	        	String realPath="";
+	        	URLConnection conn = url.openConnection();
+	        	InputStream inStream = conn.getInputStream();
+	        	realPath = getPath(path+num);
+	        	FileOutputStream fs = new FileOutputStream(realPath);
+	        	
+	        	byte[] buffer = new byte[1204];
+	        	int length;
+	        	while ((byteread = inStream.read(buffer)) != -1) {
+	        		bytesum += byteread;
+	        		System.out.println(bytesum);
+	        		fs.write(buffer, 0, byteread);
+	        	}
+	        	returnList.add(realPath);
+			}
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return  realPath;
+        return  returnList;
     }
     public static <T> T fillDTO(T t,List<String> data){
     	try {
@@ -79,26 +87,29 @@ public class DownloadAndReadCSV {
      */
     public static <T> List<T> readLocalCSV(Class<T> clazz,String sep) throws Exception {
         
-    	String realPath=downloadNet();
+    	List<String> realPaths=downloadNet();
         String rowString = null;
         List<T> dtoList = new ArrayList<T>();
         //Set<T> dtoSet = new HashSet<T>();
     	String[] split = null;
     	List<String> colValueList = null;
-        //解析csv文件
-    	CsvReader cr = new CsvReader(new FileReader(realPath));
-    	//CsvReader cr = new CsvReader(new FileReader("F:/filippo.csv"));
-        System.out.println("创建cr对象成功");
-        //得到列名集合
-        cr.readRecord();
-		while(cr.readRecord()){
-			rowString = cr.getRawRecord();
-			split = rowString.split(sep);
-			colValueList = Arrays.asList(split);
-			T t = fillDTO(clazz.newInstance(),colValueList);
-			//过滤重复的dto。。。sku,
-			//dtoSet.add(t);
-			dtoList.add(t);
+    	CsvReader cr = null;
+    	for (String realPath : realPaths) {
+    		//解析csv文件
+    		cr = new CsvReader(new FileReader(realPath));
+    		//CsvReader cr = new CsvReader(new FileReader("F:/filippo.csv"));
+    		System.out.println("创建cr对象成功");
+    		//得到列名集合
+    		cr.readRecord();
+    		while(cr.readRecord()){
+    			rowString = cr.getRawRecord();
+    			split = rowString.split(sep);
+    			colValueList = Arrays.asList(split);
+    			T t = fillDTO(clazz.newInstance(),colValueList);
+    			//过滤重复的dto。。。sku,
+    			//dtoSet.add(t);
+    			dtoList.add(t);
+    		}
 		}
         return dtoList;
     }

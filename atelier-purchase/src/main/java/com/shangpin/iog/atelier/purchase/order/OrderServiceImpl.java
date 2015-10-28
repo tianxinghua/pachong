@@ -3,21 +3,21 @@ package com.shangpin.iog.atelier.purchase.order;
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
-import com.shangpin.iog.atelier.common.MyStringUtil;
 import com.shangpin.iog.atelier.common.WS_Sito_P15;
 import com.shangpin.iog.atelier.purchase.dto.AtelierOrder;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.*;
-import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.ice.dto.ICEWMSOrderRequestDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
+
 import java.io.*;
 import java.util.*;
 
@@ -69,9 +69,11 @@ public class OrderServiceImpl extends AbsOrderService {
     @Override
     public void handleConfirmOrder(OrderDTO orderDTO) {
 
-        String barCodeAll = atelierOrder.getBarCodeAll();
-        String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
-                barCodeAll.indexOf(orderDTO.getSupplierOrderNo()),barCodeAll.indexOf(orderDTO.getSupplierOrderNo())+50));
+//        String barCodeAll = atelierOrder.getBarCodeAll();
+//        String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
+//                barCodeAll.indexOf(orderDTO.getSupplierOrderNo()),barCodeAll.indexOf(orderDTO.getSupplierOrderNo())+50));
+        //得到barcode
+        String barCode = orderDTO.getDetail().split(",")[0].split(":")[0].split("-")[1];
         //推送订单
         atelierOrder.setSoapRequestData( "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
@@ -83,7 +85,7 @@ public class OrderServiceImpl extends AbsOrderService {
                 "      <DESTINATIONROW2>" + "" + "</DESTINATIONROW2>\n" +
                 "      <DESTINATIONROW3>" + "" + "</DESTINATIONROW3>\n" +
                 "      <BARCODE>" + barCode + "</BARCODE>\n" +
-                "      <QTY>" + orderDTO.getDetail().split(":")[1] + "</QTY>\n" +
+                "      <QTY>" + orderDTO.getDetail().split(",")[0].split(":")[1] + "</QTY>\n" +
                 "      <PRICE>" + "111" + "</PRICE>\n" +
                 "    </NewOrder>\n" +
                 "  </soap:Body>\n" +
@@ -101,9 +103,11 @@ public class OrderServiceImpl extends AbsOrderService {
     @Override
     public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
         //获取条形码
-        String barCodeAll = atelierOrder.getBarCodeAll();
-        String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
-                barCodeAll.indexOf(deleteOrder.getSupplierOrderNo()),barCodeAll.indexOf(deleteOrder.getSupplierOrderNo())+50));
+//        String barCodeAll = atelierOrder.getBarCodeAll();
+//        String barCode = MyStringUtil.getBarcodeBySkuId(barCodeAll.substring(
+//                barCodeAll.indexOf(deleteOrder.getSupplierOrderNo()),barCodeAll.indexOf(deleteOrder.getSupplierOrderNo())+50));
+      //得到barcode
+        String barCode = deleteOrder.getDetail().split(",")[0].split(":")[0].split("-")[1];
         atelierOrder.setSoapRequestData( "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
                 "  <soap:Body>\n" +
@@ -242,4 +246,14 @@ public class OrderServiceImpl extends AbsOrderService {
             e.printStackTrace();
         }
     }
+	@Override
+	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void handleEmail(OrderDTO orderDTO) {
+		// TODO Auto-generated method stub
+		
+	}
 }

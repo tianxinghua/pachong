@@ -76,7 +76,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
                         System.out.println("count : " + ++count);
                         String size = record.get("attribute_size");
                         String stock = record.get("attribute_size:quantity");
-                        String skuId = spuId + size;
+                        String skuId =  spuId + "-" + size;
                         stockMap.put(skuId, stock);
                     }
                 }
