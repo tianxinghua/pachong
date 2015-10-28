@@ -862,7 +862,7 @@ public abstract class AbsOrderService {
             if(null!=deleteOrder.getExcState()&&"1".equals(deleteOrder.getExcState())){
                 map.put("excTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
             }else{
-                map.put("status","cancelled");
+                map.put("status",OrderStatus.REFUNDED);
                 map.put("updateTime",DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
             }
             returnOrderService.updateReturnOrderMsg(map);
@@ -891,7 +891,7 @@ public abstract class AbsOrderService {
         OrderDTO order = null;
         try {
             order = productOrderService.getOrderByUuId(uuId);
-            order.setStatus(OrderStatus.CANCELLED);
+            order.setStatus(OrderStatus.REFUNDED);
             productOrderService.update(order);
         } catch (ServiceException e) {
             e.printStackTrace();

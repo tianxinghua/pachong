@@ -3,9 +3,9 @@ package com.shangpin.iog.tony.stock.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.dto.SupplierStockDTO;
-import com.shangpin.iog.tony.common.MyJsonClient;
-import com.shangpin.iog.tony.stock.common.MyStringUtil;
+import com.shangpin.iog.service.SupplierStockService;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -21,10 +21,19 @@ public class TonyStockImp extends AbsUpdateProductStock{
     private long end = 0;//计时结束时间
 
 
-   // @Override
+    public static ResourceBundle bundle = ResourceBundle.getBundle("conf");
+    //供应商ID
+    public static String SUPPLIER_ID = bundle.getString("supplierId");
+
+
+    @Autowired
+    SupplierStockService supplierStockService;
+
+    @Override
     public Map<String,String> grabStock(Collection<String> skuNos) throws ServiceException, Exception {
         logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法开始！");
         logger.info("Sku 条数："+skuNos.size());
+
 
         this.supplierSkuIdMain = true;//已供应商的SKUID为主 有什么更新什么  但尚品必须有此产品
         Map<String,String>  returnMap = new HashMap();
@@ -34,10 +43,10 @@ public class TonyStockImp extends AbsUpdateProductStock{
             skuNoMap.put(skuNo,"");
         }
 
-        List<SupplierStockDTO>  stockDTOList = new ArrayList<>();
+        List<SupplierStockDTO>  stockDTOList = supplierStockService.findBySupplierId(SUPPLIER_ID);
         for(SupplierStockDTO supplierStockDTO:stockDTOList){
-            if(skuNoMap.containsKey(supplierStockDTO.getSupplierSkuNo())){//SOP产品包含产品
-                returnMap.put(supplierStockDTO.getSupplierSkuNo(),supplierStockDTO.getQuantity().toString());
+            if(skuNoMap.containsKey(supplierStockDTO.getSupplierSkuId())){//SOP产品包含产品
+                returnMap.put(supplierStockDTO.getSupplierSkuId(),supplierStockDTO.getQuantity().toString());
             }
         }
 
@@ -45,9 +54,5 @@ public class TonyStockImp extends AbsUpdateProductStock{
         return  returnMap;
     }
 
-    public static void main(String[] args) throws Exception {
 
-
-
-    }
 }

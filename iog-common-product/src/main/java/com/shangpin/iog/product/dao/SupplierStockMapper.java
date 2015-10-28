@@ -27,7 +27,7 @@ public interface SupplierStockMapper extends IBaseDao<SupplierStockDTO> {
 	 */
     int saveStock(SupplierStockDTO stockDTO);
     
-    public SupplierStockDTO findSingleStock(@Param(value="supplierId")  String supplierId );
+    public List<SupplierStockDTO> findBySupplierId(@Param(value="supplierId")  String supplierId );
    
     public SupplierStockDTO findBySkuAndSupplier(Map<String,String> map);
     

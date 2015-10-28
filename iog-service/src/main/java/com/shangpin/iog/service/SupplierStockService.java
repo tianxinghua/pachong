@@ -24,6 +24,17 @@ public interface SupplierStockService {
 	 * @return
 	 */
 	void saveStock(SupplierStockDTO stockDTO) throws ServiceMessageException ;
+
     SupplierStockDTO findSingleStock(String skuNo,String supplierId) throws ServiceMessageException ;
+
+
     List<SupplierStockDTO> findAll() throws ServiceMessageException ;
+
+    /**
+     * 通过供应商ID获取库存
+     * @param supplierId
+     * @return
+     * @throws ServiceMessageException
+     */
+    List<SupplierStockDTO> findBySupplierId(String supplierId) throws ServiceMessageException ;
 }
