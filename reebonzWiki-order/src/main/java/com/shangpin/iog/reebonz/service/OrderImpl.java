@@ -132,8 +132,16 @@ public class OrderImpl extends AbsOrderService {
 				//超过一天 不需要在做处理 订单状态改为其它状体
 				orderDTO.setExcState("0");
 				orderDTO.setExcDesc(map.get("1"));
-				setPurchaseOrderExc(orderDTO);
-				orderDTO.setStatus(OrderStatus.NOHANDLE);
+				//-1:不做处理  1：成功  0：失败
+				String result = setPurchaseOrderExc(orderDTO);
+				if("-1".equals(result)){
+					orderDTO.setStatus(OrderStatus.NOHANDLE);
+				}else if("1".equals(result)){
+					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+				}else if("0".equals(result)){
+					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+				}
+				
 				Thread t = new Thread(	 new Runnable() {
 					@Override
 					public void run() {
