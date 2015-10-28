@@ -9,7 +9,7 @@ dependencies {
             "commons-net:commons-net:1.4.1",
             "org.jdom:jdom:2.0.2",
             "com.enterprisedt:edtFTPj:1.5.3",
-            project(':tony'),
+
             project(':openapi-ice')
     )
 }

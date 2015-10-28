@@ -21,5 +21,8 @@ public class Test {
        // param.put("token","d355cd8701b2ebc54d6c8811e03a3229");
        // String s = HttpUtil45.post("http://www.cs4b.eu/ws/getItem", param, new OutTimeConfig());
        // System.out.println("444444444"+s);
+       String kk = HttpUtil45.get("http://webserv.havok.it/stock/v1/style.php?k=033bd94b1168d7e4f0d644c3c95e35bf&f=shangpin",new OutTimeConfig(1000*60,1000*60,1000*60),
+                null);
+        System.out.println("kk =" + kk);
     }
 }

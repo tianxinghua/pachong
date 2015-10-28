@@ -152,4 +152,5 @@ include 'theclutcher'
 include 'theclutcher-stock'
 include 'filippo'
 include 'filippo-stock'
+include 'tony-fetchstock'
 

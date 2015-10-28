@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by loyalty on 15/6/9.
@@ -77,5 +74,16 @@ public class SupplierStockServiceImpl implements SupplierStockService {
 		return list;
 	}
 
-  
+	@Override
+	public List<SupplierStockDTO> findBySupplierId(String supplierId) throws ServiceMessageException {
+		List<SupplierStockDTO> list = new ArrayList<>();
+		try{
+			list = supplierStockDAO.findBySupplierId(supplierId);
+		}catch(Exception e){
+			throw new ServiceMessageException("数据查询失败"+e.getMessage());
+		}
+		return list;
+	}
+
+
 }

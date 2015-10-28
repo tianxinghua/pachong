@@ -45,11 +45,15 @@
     where SUPPLIER_ID=#{supplierId} and SUPPLIER_SKU_ID=#{supplierSkuId}
  </update>
  
- <select id="findSingleStock" resultMap="resultMap" parameterType="java.lang.String">
+ <select id="findBySupplierId" resultMap="resultMap" parameterType="java.lang.String">
   select
     <include refid="all_column"></include>
-       from SUPPLIER_STOCK 
-         
+       from SUPPLIER_STOCK
+     <where>
+         <if test="null!=supplierId">
+             SUPPLIER_ID =#{supplierId}
+          </if>
+     </where>
 
  </select>
  
