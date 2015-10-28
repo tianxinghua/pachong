@@ -260,18 +260,23 @@ public abstract class AbsOrderService {
     /**
      * 采购异常 推送采购单下单异常
      * @param orderDTO 订单信息
+     *                 @return -1:不做处理  1：成功  0：失败
      */
-    public  void  setPurchaseOrderExc(OrderDTO orderDTO) {
+    public  String   setPurchaseOrderExc(OrderDTO orderDTO) {
         try {
             logger.info("采购单 " + orderDTO.getSpPurchaseNo() +" 推送异常订单状态 " +
                     ":"+ orderDTO.getStatus()+"----");
             if(!orderDTO.getStatus().equals(OrderStatus.PAYED)){
-                return;
+                return "-1";
             }
 
             List<Long> sopPurchaseOrderDetailNos = new ArrayList<>();
 
-            if(null==orderDTO||StringUtils.isBlank(orderDTO.getSpPurchaseDetailNo())) return ;
+            if(null==orderDTO||StringUtils.isBlank(orderDTO.getSpPurchaseDetailNo())){
+                loggerError.error("采购单明细为空，无法设置采购异常");
+                return "0" ;
+
+            }
             String[] purchaseOrderDetailArray = orderDTO.getSpPurchaseDetailNo().split(";");
             if(null!=purchaseOrderDetailArray){
                 for(String purchaseDetailNo:purchaseOrderDetailArray){
@@ -280,6 +285,8 @@ public abstract class AbsOrderService {
                             sopPurchaseOrderDetailNos.add(Long.valueOf(purchaseDetailNo));
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
+                            loggerError.error("采购单明细转化数据类型时失败。");
+                            return "0" ;
                         }
                     }
                 }
@@ -309,6 +316,7 @@ public abstract class AbsOrderService {
                 }else {
                     if (200 != message.getResCode()) {
                         logger.error(orderDTO.getSpPurchaseNo()+"推送取消采购单失败");
+                        return "0";
                     }
                 }
 
@@ -316,7 +324,9 @@ public abstract class AbsOrderService {
 
         } catch (Exception e) {
             loggerError.error(orderDTO.getSpPurchaseNo()+"推送取消采购单失败.原因："+e.getMessage());
+            return "0";
         }
+        return "1";
 
     }
 
