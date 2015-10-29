@@ -65,17 +65,16 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
 
 
     private static Map<String,String> getStock(String sku){
-        String url = "http://www.communicationislife.com/shanping/slist/?pid="+sku;
+        String url = "http://www.3forb.it/webserver/prodotto/?pid="+sku;
 
         OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
         Map<String,String> map = new HashMap<>();
         String jsonstr = HttpUtil45.get(url,timeConfig,null,null,null);
         if( jsonstr != null){
-            Collection<JSONObject> jsonList = JSONObject.fromObject(jsonstr).values();
-            if (jsonList.size() >0){
-                for (JSONObject jsonObject: jsonList){
-                    map.put(jsonObject.getString("sku"), jsonObject.getString("stock"));
-                }
+            JSONObject obj = JSONObject.fromObject(jsonstr);
+            System.out.println("stock="+obj.has("stock"));
+            if (!obj.isNullObject() && obj.has("stock")){
+                map.put(obj.getString("sku"), obj.getString("stock"));
             }
         }
         return map;
