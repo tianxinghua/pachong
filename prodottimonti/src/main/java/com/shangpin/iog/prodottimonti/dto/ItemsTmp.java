@@ -7,8 +7,10 @@ public class ItemsTmp {
 	private String spu;
 	
 	private String sku;
-	
+
 	private String name;
+
+	private String category;
 	
 	private String brand;
 	
@@ -27,6 +29,8 @@ public class ItemsTmp {
 	private String sell_price;
 	
 	private String saleCurrency;
+
+	private String gender;
 
 	public String getSpu() {
 		return spu;
@@ -122,5 +126,21 @@ public class ItemsTmp {
 
 	public void setSaleCurrency(String saleCurrency) {
 		this.saleCurrency = saleCurrency;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 }

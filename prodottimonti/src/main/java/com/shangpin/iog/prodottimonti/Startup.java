@@ -28,7 +28,7 @@ public class Startup {
         //拉取数据
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("erminiomonti");
 //        fetchProduct.fetchProductAndSave("http://www.thelevelgroup-ftp.com/uploads/TLG_GooglePLA_lncc_GB.txt");
-        fetchProduct.fetchProductAndSave("http://www.communicationislife.com/shanping/prodotti/");
+        fetchProduct.fetchProductAndSave("http://www.3forb.it/webserver/prodotti/");
         log.info("----拉取erminiomonti数据完成----");
 
 
