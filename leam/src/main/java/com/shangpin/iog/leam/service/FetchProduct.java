@@ -95,7 +95,7 @@ public class FetchProduct {
                     for(String imgUrl:imageList){
                         ProductPictureDTO pictureDTO = new ProductPictureDTO();
                         pictureDTO.setId(UUIDGenerator.getUUID());
-                        pictureDTO.setSkuId(leamDTO.getStock_id());
+                        pictureDTO.setSkuId(leamDTO.getStock_id()+"-"+size);
                         pictureDTO.setSupplierId(supplierId);
                         pictureDTO.setPicUrl(imgUrl);
                         try {

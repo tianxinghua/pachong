@@ -27,7 +27,7 @@ public class StockClientImp extends AbsUpdateProductStock{
     public static final String PROPERTIES_FILE_NAME = "param";
     static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
     private  static  ResourceBundle sopBundle = ResourceBundle.getBundle("sop");
-    private static String HOST="ftp2.brunarosso.com",PORT="21",USER="brunarosso.com_shangpin",PASSWORD="1Lt53Vf6",FILE_PATH="/public/stockftp";
+    private static String HOST="ftp.backend.brunarosso.com",PORT="21",USER="backend.brunarosso.com_shang",PASSWORD="1Lt53Vf6",FILE_PATH="/public/stockftp";
     static String localFilePath = bundle.getString("localFilePath");
     @Override
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {

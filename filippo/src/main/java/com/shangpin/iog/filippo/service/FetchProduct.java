@@ -94,6 +94,9 @@ public class FetchProduct {
 				if (size.equals("-")) {
 					size = "UNIQUE";
 				}
+				if (size.substring(size.length()-1, size.length()).equals("-")) {
+					size = size.replace("-", ".5");
+				}
 				sku.setProductSize(size);
 				sku.setProductCode(skuEntry.getValue().getART().replace("\"", ""));
 				try {
