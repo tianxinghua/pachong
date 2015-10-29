@@ -343,7 +343,7 @@ public abstract class AbsOrderService {
         try {
             //获取已下单的订单信息
         	String nowDate = DateTimeUtil.getDateTime(); 
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED,nowDate);
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
             List<OrderDTO>  waitList = productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
             orderDTOList.addAll(waitList);
             
@@ -441,7 +441,7 @@ public abstract class AbsOrderService {
                             if(5!=purchaseOrderDetail.DetailStatus){ //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
                                 orderDTO.setStatus(OrderStatus.PAYED);
                             }else{
-                                orderDTO.setStatus(OrderStatus.CANCELLED);
+                                orderDTO.setStatus(OrderStatus.REFUNDED);
                             }
 
                         }
@@ -469,7 +469,8 @@ public abstract class AbsOrderService {
         //拉取采购单存入本地库
         List<OrderDTO>  orderDTOList= null;
         try {
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED);
+        	String nowDate = DateTimeUtil.getDateTime(); 
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
             if(null!=orderDTOList){
 
                 for(OrderDTO orderDTO:orderDTOList){

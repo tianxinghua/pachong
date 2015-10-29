@@ -9,8 +9,11 @@ import java.util.ResourceBundle;
 
 import javax.mail.MessagingException;
 
+import com.google.gson.Gson;
 import com.shangpin.iog.onsite.base.utils.StringUtil;
+
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -20,20 +23,26 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.SendMail;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.dto.EventProductDTO;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
+import com.shangpin.iog.reebonz.dto.Item;
+import com.shangpin.iog.reebonz.dto.Items;
 import com.shangpin.iog.reebonz.dto.Order;
 import com.shangpin.iog.reebonz.dto.RequestObject;
+import com.shangpin.iog.reebonz.dto.ResponseObject;
 import com.shangpin.iog.service.EventProductService;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.SkuPriceService;
-
 @Component
 public class OrderImpl extends AbsOrderService {
 
@@ -55,11 +64,13 @@ public class OrderImpl extends AbsOrderService {
 	private static String messageType = null;
 	private static String time = null;
 	private static String reebonzSendEmail;
+	private static String eventUrl;
 	private ReservationProStock stock = new ReservationProStock();
 	static {
 		if(null==bdl){
 			bdl=ResourceBundle.getBundle("conf");
 		}
+		eventUrl = bdl.getString("eventUrl");
 		supplierId = bdl.getString("supplierId");
 		supplierNo = bdl.getString("supplierNo");
 		smtpHost = bdl.getString("smtpHost");
@@ -104,9 +115,8 @@ public class OrderImpl extends AbsOrderService {
 				orderDTO.setStatus(OrderStatus.PLACED);
 
 			} else{
-				sendMail(orderDTO);
 				orderDTO.setExcDesc(map.get("0"));
-				
+				sendMail(orderDTO);
 			}
 		}catch (Exception e) {
 			orderDTO.setExcDesc(e.getMessage());
@@ -177,7 +187,7 @@ public class OrderImpl extends AbsOrderService {
 			if(deleteOrder.getSupplierOrderNo()==null){ 
 				deleteOrder.setExcState("0");
 				//超过一天 不需要在做处理 订单状态改为其它状体
-				deleteOrder.setStatus(OrderStatus.NOHANDLE);
+				deleteOrder.setStatus(OrderStatus.CANCELLED);
 				
 			}else{
 				Map<String, String> map = null;
@@ -193,7 +203,7 @@ public class OrderImpl extends AbsOrderService {
 							} catch (Exception e) {      }
 						}
 					};
-					deleteOrder.setStatus(OrderStatus.NOHANDLE);
+					deleteOrder.setStatus(OrderStatus.CANCELLED);
 					deleteOrder.setExcState("0");
 					deleteOrder.setExcDesc(map.get("1"));
 
@@ -293,7 +303,14 @@ public class OrderImpl extends AbsOrderService {
 			//判断有异常的订单如果处理超过两小时，依然没有解决，则把状态置为不处理，并发邮件
 			if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim*1000*60)>0){ 
 				
-				setPurchaseOrderExc(orderDTO);
+				String result = setPurchaseOrderExc(orderDTO);
+				if("-1".equals(result)){
+					orderDTO.setStatus(OrderStatus.NOHANDLE);
+				}else if("1".equals(result)){
+					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+				}else if("0".equals(result)){
+					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+				}
 				//超过一天 不需要在做处理 订单状态改为其它状体
 				orderDTO.setExcState("0");
 				orderDTO.setStatus(OrderStatus.NOHANDLE);
@@ -342,6 +359,57 @@ public class OrderImpl extends AbsOrderService {
 		
 	}
 
+	public void updateEvent(){
+   	 //拉取活动，更新活动结束时间
+       String json = null;
+		try {
+			json = HttpUtil45
+					.get(eventUrl,
+							new OutTimeConfig(1000 * 60*5, 1000 * 60*5, 1000 * 60*5),
+							null);
+		} catch (Exception e) {
+		}
+		logger.info("抓取的活动列表："+json);
+		System.out.println("抓取的活动列表："+json);
+		List<Item> list = getProductList(json);
+		for(Item item:list){
+			String eventId = item.getEvent_id();
+			String eventStart = item.getEvent_start_date();
+			String eventEnd = item.getEvent_end_date();
+			EventProductDTO dto = new EventProductDTO();
+			dto.setEventId(eventId);
+			dto.setStartDate(eventStart);
+			dto.setEndDate(eventEnd);
+			dto.setSupplierId(supplierId);
+			try {
+				eventProductService.updateEventDate(dto);
+			} catch (ServiceMessageException e) {
+			}
+		}
+   }
+   private static List<Item> getProductList(String json) {
+		
+		if("{\"error\":\"发生异常错误\"}".equals(json)){
+			logger.info("网络连接："+json);
+			return null;
+		}else{
+			ResponseObject obj = new Gson().fromJson(json, ResponseObject.class);
+			if(obj!=null){
+				if("1".equals(obj.getReturn_code())){
+					Object o = obj.getResponse();
+					JSONObject jsonObject = JSONObject.fromObject(o); 
+					Items list = new Gson().fromJson(jsonObject.toString(), Items.class);
+					return list.getDocs();
+				}else{
+					logger.info("发生异常："+obj.getError_msg());
+					return null;
+				}
+			}else{
+				return null;
+			}
+			
+		}
+   }
 
 
 }

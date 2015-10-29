@@ -23,6 +23,10 @@ public class Schedule {
 	public void confirmOrder() {
 		orderService.confirmOrder();
 	}
+	@Scheduled(cron = "0 0/8 * * * ? ")
+	public void updateEvent() {
+		orderService.updateEvent();
+	}
 	//confirmOrder
 
 }
