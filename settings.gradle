@@ -152,5 +152,6 @@ include 'theclutcher'
 include 'theclutcher-stock'
 include 'filippo'
 include 'filippo-stock'
+include 'hovok-stock'
 include 'tony-fetchstock'
 

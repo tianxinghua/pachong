@@ -24,22 +24,22 @@ public class Startup {
 
     public static void main(String[] args)
     {
-//        String tokenUrl = "http://188.226.153.91/modules/api/v2/getToken/";
-//        String url="http://188.226.153.91/modules/api/v2/stock/";
-//        String stockIdUrl="http://188.226.153.91/modules/api/v2/stock/id/";
-//        String user="shamping";
-//        String password="PA#=k2xU^ddUc6Jm";
-//        Map<String,String> param = new HashMap<>();
-//        OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*15,1000*60*15,1000*60*15);
-//        param.put("user",user);
-//        param.put("password",password);//exp836shang
-//        //String result= HttpUtil45.get(tokenUrl, outTimeConf, param, "", "");
-//        //String token = HttpUtil45.post(tokenUrl,param,outTimeConf);
-//       // param.put("t","e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d");
-//        String result=HttpUtil45.post(url+"?t=e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d", param, outTimeConf);//e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d
-//        //String result= HttpUtil45.get(url+"?t=e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d"+"&limit=1",outTimeConf,null);
-//        //System.out.println("token:"+token);
-//        System.out.println("result: "+result);
+        /*String tokenUrl = "http://188.226.153.91/modules/api/v2/getToken/";
+        String url="http://188.226.153.91/modules/api/v2/stock/";
+        String stockIdUrl="http://188.226.153.91/modules/api/v2/stock/id/";
+        String user="shamping";
+        String password="PA#=k2xU^ddUc6Jm";
+        Map<String,String> param = new HashMap<>();
+        OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*20,1000*60*20,1000*60*20);
+        param.put("user",user);
+        param.put("password",password);//exp836shang
+        //String result= HttpUtil45.get(tokenUrl, outTimeConf, param, "", "");
+        //String token = HttpUtil45.post(tokenUrl,param,outTimeConf);
+       // param.put("t","e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d");
+        String result=HttpUtil45.post(url+"?t=e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d", param, outTimeConf);//e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d
+        //String result= HttpUtil45.get(url+"?t=e1c3b10ca17299cfbdc8ed3ad2ea7bbd6781fe0d"+"&limit=1",outTimeConf,null);
+        //System.out.println("token:"+token);
+        System.out.println("result: "+result);*/
 
 
         loadSpringContext();

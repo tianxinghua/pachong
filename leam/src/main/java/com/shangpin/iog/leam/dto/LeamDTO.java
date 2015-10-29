@@ -8,8 +8,6 @@ import java.util.List;
 /**
  * Created by sunny on 2015/8/17.
  */
-@Getter
-@Setter
 public class LeamDTO {
     private String stock_id;//Product code of Leam
     private String supplier_sku;//Supplier Code
@@ -152,5 +150,9 @@ public class LeamDTO {
     public List<String> getImages() { return images; }
 
     public void setImages(List<String> images) { this.images = images; }
+
+    public String getDefault_price() { return default_price; }
+
+    public void setDefault_price(String default_price) { this.default_price = default_price; }
 
 }

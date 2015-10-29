@@ -1,7 +1,7 @@
-package com.shangpin.iog.articoli;
+package com.shangpin.iog.havok;
 
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.articoli.service.FetchProduct;
+import com.shangpin.iog.havok.service.FetchProduct;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -25,7 +25,7 @@ public class StartSkuJob {
         //拉取数据
         log.info("----拉取articoli数据开始----");
 
-        FetchProduct fetchProduct = (FetchProduct) factory.getBean("articoli");
+        FetchProduct fetchProduct = (FetchProduct) factory.getBean("havok");
         fetchProduct.fetchAndSave();
         log.info("----拉取articoli数据完成----");
         System.out.println("-------fetch end---------");

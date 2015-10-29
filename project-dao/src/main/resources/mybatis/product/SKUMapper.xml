@@ -94,6 +94,9 @@
               <if test="marketPrice != null"> NEW_MARKET_PRICE = #{marketPrice}, </if>
               <if test="salePrice != null"> NEW_SALE_PRICE = #{salePrice}, </if>
               <if test="supplierPrice != null"> NEW_SUPPLIER_PRICE = #{supplierPrice},</if>
+              <if test="marketPrice != null"> MARKET_PRICE = #{marketPrice}, </if>
+              <if test="salePrice != null"> SALE_PRICE = #{salePrice}, </if>
+              <if test="supplierPrice != null"> SUPPLIER_PRICE = #{supplierPrice},</if>
               <if test="stock != null"> STOCK = #{stock},</if>
               <if test="updateTime != null"> UPDATE_TIME = #{updateTime},</if>
               <if test="eventStartDate != null"> EVENT_START_DATE = #{eventStartDate},</if>

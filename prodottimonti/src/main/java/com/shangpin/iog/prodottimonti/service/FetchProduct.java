@@ -150,24 +150,27 @@ public class FetchProduct {
         String spu = "";
         for (ItemsTmp itemsTmp : list){
             if (StringUtils.isNotEmpty(itemsTmp.getStock()) && Integer.valueOf(itemsTmp.getStock()) > 0){
+                System.out.println("Sell_price="+itemsTmp.getSell_price());
                 if (!itemsTmp.getSpu().equals(spu)){
                     itemsList = new ArrayList<Item>();
                     items = new Items();
                     product = new Product();
-                    product.setCategory("");
+                    product.setCategory(itemsTmp.getCategory());
                     product.setDescription(itemsTmp.getDescription());
                     product.setProduct_brand(itemsTmp.getBrand());
                     product.setProductId(itemsTmp.getSpu());
                     product.setProduct_name(itemsTmp.getName());
+                    product.setCategoryGender(itemsTmp.getGender());
                     product.setProduct_material(itemsTmp.getFabric());
                     Item item = new Item();
-                    item.setItem_id(itemsTmp.getSku());
+                    item.setItem_id(itemsTmp.getSpu());
                     item.setColor(itemsTmp.getColor());
                     item.setDescription(itemsTmp.getDescription());
                     item.setItem_size(itemsTmp.getProduct_size());
-                    item.setPicture("http://www.communicationislife.com/shanping/image/"+itemsTmp.getImagelink());
+                    item.setPicture(itemsTmp.getImagelink().replaceAll(",","|"));
                     item.setStock(itemsTmp.getStock());
                     item.setSaleCurrency(itemsTmp.getSaleCurrency());
+                    item.setSell_price(itemsTmp.getSell_price());
                     itemsList.add(item);
                     items.setItems(itemsList);
                     product.setItems(items);
@@ -175,11 +178,11 @@ public class FetchProduct {
                     spu = itemsTmp.getSpu();
                 }else{
                     Item item = new Item();
-                    item.setItem_id(itemsTmp.getSku());
+                    item.setItem_id(itemsTmp.getSpu());
                     item.setColor(itemsTmp.getColor());
                     item.setDescription(itemsTmp.getDescription());
                     item.setItem_size(itemsTmp.getProduct_size());
-                    item.setPicture("http://www.communicationislife.com/shanping/image/"+itemsTmp.getImagelink());
+                    item.setPicture(itemsTmp.getImagelink().replaceAll(",","|"));
                     item.setStock(itemsTmp.getStock());
                     item.setSell_price(itemsTmp.getSell_price());
                     item.setSaleCurrency(itemsTmp.getSaleCurrency());
