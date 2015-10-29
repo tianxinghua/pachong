@@ -13,8 +13,11 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.json.JsonUtil;
 import com.shangpin.iog.dto.ProductSearchDTO;
 import com.shangpin.iog.dto.SupplierDTO;
+import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SupplierService;
+
+import net.sf.json.JSONObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,10 +40,10 @@ import java.util.*;
 @RequestMapping("/download")
 public class FileDownloadController {
 	private Logger log = LoggerFactory.getLogger(FileDownloadController.class) ;
-
+	
     @Autowired
     ProductSearchService productService;
-
+    
     @Autowired
     SupplierService supplierService;
 
@@ -55,7 +58,7 @@ public class FileDownloadController {
 
 
     @RequestMapping(value = "code")
-    public void setCode(HttpServletRequest request) throws Exception {
+    public void setCode(HttpServletRequest request,HttpServletResponse response) throws Exception {
         String code =   request.getParameter("code");
         System.out.println("code = " +code );
         log.error("code =" + code);
@@ -64,6 +67,7 @@ public class FileDownloadController {
         timeConfig.confRequestOutTime(1000*60);
         timeConfig.confSocketOutTime(1000*60);
         
+        //An access token is returned as a JSON response along with the time (in seconds) till expiration.
         String application_id = "qwmmx12wu7ug39a97uter3dz29jbij3j";
         String shared_secret = "TqMSdN6-LkCFA0n7g7DWuQ";
         Map<String,String> map = new HashMap<>();
@@ -73,24 +77,13 @@ public class FileDownloadController {
         String kk = HttpUtil45.postAuth("https://api.channeladvisor.com/oauth2/token", map, timeConfig,application_id,shared_secret);
         System.out.println("kk = "  + kk);
         log.error(kk);
-//        FileWriter  writer = null;
-//        try {
-//			writer = new FileWriter(new File("/channeladvisor.xml"));
-//			writer.write(kk);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}finally{
-//			try {
-//				writer.flush();
-//				writer.close();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}			
-//		}
         
+        PrintWriter out = response.getWriter();
+        out.println("GET ACCESS TOKEN SUCCESSFUL");
+        out.println("code=="+code);
+        out.println("token=="+kk);
     }
-
-
+    
 
     @RequestMapping(value = "csv")
     public void downloadCsv(

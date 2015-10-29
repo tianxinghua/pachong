@@ -40,9 +40,11 @@ public class TonyStockImp {
         String rtnData ="";
         try {
             rtnData = HttpUtil45.operateData("post", "json", Constant.EVENTS_URL,outTimeConfig, null, json, "", "");
+            logger.info("rtnData = " + rtnData);
             System.out.println("rtnData=="+rtnData);
         } catch (ServiceException e) {
             e.printStackTrace();
+            loggerError.error(" reason : " + e.getMessage());
         }
 
 
@@ -88,6 +90,7 @@ public class TonyStockImp {
                             if(e.getMessage().equals("数据插入失败键重复")){
                                 //update
                                 supplierStockService.updateStock(supplierStockDTO);
+                                logger.info(supplierStockDTO.getSupplierSkuId() + " : 更新库存" + supplierStockDTO.getQuantity());
 
                             } else{
                                 e.printStackTrace();

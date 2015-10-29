@@ -34,8 +34,8 @@ public class Test {
             e.printStackTrace();
         }
         List<Long> sopPurchaseOrderDetailNos =new ArrayList<>();
-        sopPurchaseOrderDetailNos.add(2015102501352L);
-        PurchaseOrderEx purchaseOrderEx = new PurchaseOrderEx(sopPurchaseOrderDetailNos,"ERROR! Item 204136001- has sold Out or the quantity is insufficient!");
+        sopPurchaseOrderDetailNos.add(2015102600421L);
+        PurchaseOrderEx purchaseOrderEx = new PurchaseOrderEx(sopPurchaseOrderDetailNos,"ERROR! Data or Order Id or Order Site can't be empty!");
         try {
             System.out.print("　开始处理");
             String  result = servant.PurchaseDetailEx(purchaseOrderEx,"2015101001584");
