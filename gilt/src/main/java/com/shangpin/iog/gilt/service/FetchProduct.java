@@ -187,7 +187,9 @@ public class FetchProduct {
     }
 
     private void saveProduct(Map<String,String> spuMap, GiltSkuDTO giltSkuDTO,Map<String,String> inventoryMap,SaleDTO saleDTO) {
-        SkuDTO dto = new SkuDTO();
+    	OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
+    	String fileName = "";
+    	SkuDTO dto = new SkuDTO();
         SpuDTO spuDTO = new SpuDTO();
         String inventory="";
         if(null==inventoryMap||inventoryMap.size()==0) {
@@ -269,6 +271,8 @@ public class FetchProduct {
                     productPictureDTO.setSupplierId(supplierId);
                     try{
                         productFetchService.savePictureForMongo(productPictureDTO);
+                        fileName = giltSkuDTO.getId()+"-"+String.valueOf(j)+".jpg";
+                        HttpUtil45.getPicture(picUrl, fileName, timeConfig, null);
                     }catch (ServiceException e){
                         e.printStackTrace();
                         loggerError.error("保存图片失败：" +  e.getMessage());

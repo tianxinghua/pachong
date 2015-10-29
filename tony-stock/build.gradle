@@ -9,7 +9,25 @@ dependencies {
             "commons-net:commons-net:1.4.1",
             "org.jdom:jdom:2.0.2",
             "com.enterprisedt:edtFTPj:1.5.3",
-            project(':tony'),
+
             project(':openapi-ice')
     )
+}
+
+
+jar {
+
+    dependsOn copyToLib , copyResources
+    exclude ("**/*.properties")
+
+    def manifestCp = configurations.compile.files.collect  {
+        File file = it
+        "lib/${file.name}"
+    }.join(' ')
+
+    manifest {
+        attributes 'Main-Class': 'com.shangpin.iog.tony.stock.TonyProductStockImp'
+
+        attributes 'Class-Path': '.  ./conf/ ' +  manifestCp
+    }
 }

@@ -23,19 +23,19 @@ public class OstoreStockImp extends AbsUpdateProductStock {
     @Override
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
 
-        Map<String, Integer> skuStock = new HashMap<>();
-        Map<String,String> stock_map = new HashMap<>();
+            Map<String, Integer> skuStock = new HashMap<>();
+            Map<String,String> stock_map = new HashMap<>();
 
-        String url = "http://b2b.officinastore.com/shangpin.asp?mode=stock_only";
-        String supplierId = "2015082701461";
-        try{
-            Map<String,String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-            timeConfig.confRequestOutTime(360000);
-            timeConfig.confConnectOutTime(36000);
-            timeConfig.confSocketOutTime(360000);
-            List<String> resultList = HttpUtil45.getContentListByInputSteam(url, timeConfig, null, null, null);
-            HttpUtil45.closePool();
+            String url = "http://b2b.officinastore.com/shangpin.asp?mode=stock_only";
+            String supplierId = "2015082701461";
+            try{
+                Map<String,String> mongMap = new HashMap<>();
+                OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
+                timeConfig.confRequestOutTime(360000);
+                timeConfig.confConnectOutTime(36000);
+                timeConfig.confSocketOutTime(360000);
+                List<String> resultList = HttpUtil45.getContentListByInputSteam(url, timeConfig, null, null, null);
+                HttpUtil45.closePool();
 //            StringBuffer buffer =new StringBuffer();
 //            for(String content:resultList){
 //                buffer.append(content).append("|||");
@@ -50,36 +50,36 @@ public class OstoreStockImp extends AbsUpdateProductStock {
 //                loggerError.error("存入mongodb失败"+buffer.toString());
 //            }
 
-            int i=0;
-            String stock="",size ="";
-            String skuId = "";
-            for(String content:resultList) {
-                if (i == 0) {
+                int i=0;
+                String stock="",size ="";
+                String skuId = "";
+                for(String content:resultList) {
+                    if (i == 0) {
+                        i++;
+                        continue;
+                    }
                     i++;
-                    continue;
-                }
-                i++;
-                //SKU;Season;Sizes
-                // 0 ;  1   ;  2
-                String[] contentArray = content.split(";");
-                if (null == contentArray || contentArray.length < 3) continue;
+                    //SKU;Season;Sizes
+                    // 0 ;  1   ;  2
+                    String[] contentArray = content.split(";");
+                    if (null == contentArray || contentArray.length < 3) continue;
 
-                String[] sizeArray = contentArray[2].split(",");
-                for(String sizeAndStock:sizeArray) {
-                    if(sizeAndStock.contains("(")&&sizeAndStock.length()>1) {
-                        size = sizeAndStock.substring(0, sizeAndStock.indexOf("("));
-                        stock = sizeAndStock.substring(sizeAndStock.indexOf("(")+1, sizeAndStock.length() - 1);
+                    String[] sizeArray = contentArray[2].split(",");
+                    for(String sizeAndStock:sizeArray) {
+                        if(sizeAndStock.contains("(")&&sizeAndStock.length()>1) {
+                            size = sizeAndStock.substring(0, sizeAndStock.indexOf("("));
+                            stock = sizeAndStock.substring(sizeAndStock.indexOf("(")+1, sizeAndStock.length() - 1);
+                        }
+
+                        skuId = contentArray[0] + "-"+size;
+                        if(skuId.indexOf("½")>0){
+                            skuId = skuId.replace("½","+");
+                        }
+                        stock_map.put(skuId,stock);
                     }
-
-                    skuId = contentArray[0] + "-"+size;
-                    if(skuId.indexOf("½")>0){
-                        skuId = skuId.replace("½","+");
-                    }
-                    stock_map.put(skuId,stock);
                 }
-            }
 
-            for(String skuno:skuNo){
+                for(String skuno:skuNo){
                     if (stock_map.containsKey(skuno)) {
                         try {
                             skuStock.put(skuno, Integer.valueOf(stock_map.get(skuno)));
@@ -90,12 +90,12 @@ public class OstoreStockImp extends AbsUpdateProductStock {
                     }else{
                         skuStock.put(skuno,0);
                     }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                loggerError.error(e.getMessage());
             }
-        }catch (Exception e){
-            e.printStackTrace();
-            loggerError.error(e.getMessage());
-        }
-        logger.info("Ostore赋值库存数据成功");
+            logger.info("Ostore赋值库存数据成功");
         return skuStock;
     }
 

@@ -8,7 +8,10 @@ import com.enterprisedt.net.ftp.FTPConnectMode;
 import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FTPTransferType;
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
+//import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.sop.AbsUpdateProductStock;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.jdom2.input.SAXBuilder;
@@ -23,32 +26,35 @@ public class StockClientImp extends AbsUpdateProductStock{
     private static Logger logger = Logger.getLogger("info");
     public static final String PROPERTIES_FILE_NAME = "param";
     static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
-//    private static String path = bundle.getString("path");
-    private static String HOST="ftp.teenfashion.it",PORT="21",USER="1504604@aruba.it",PASSWORD="7efd422f35",FILE_PATH="/teenfashion.it/public/stockftp";
+    private  static  ResourceBundle sopBundle = ResourceBundle.getBundle("sop");
+    private static String HOST="ftp.backend.brunarosso.com",PORT="21",USER="backend.brunarosso.com_shang",PASSWORD="1Lt53Vf6",FILE_PATH="/public/stockftp";
     static String localFilePath = bundle.getString("localFilePath");
     @Override
-    public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+    public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //String url="E:\\brunarosso"+"Disponibilita.xml";
         Map<String,Integer>map=getSizeByPath("");
-        Map<String,String>returnMap=new HashMap<>();
-        Set<String>set=map.keySet();
-        Iterator<String> iterator=set.iterator();
-        while (iterator.hasNext()){
+        logger.info("供货商库存数量 =" + map.size());
+        Map<String,Integer>returnMap=new HashMap<>();
+//        Set<String>set=map.keySet();
+//        Iterator<String> iterator=set.iterator();
+//        while (iterator.hasNext()){
 
-            String key = iterator.next();
-            for(String skuno:skuNo){
+//            String key = iterator.next();
+
+        String id = "";
+        for(String skuno:skuNo){
                 if(skuno.indexOf("+")>0){
                     skuno=skuno.replace("+","½");
                 }
-                if(key.equals(skuno)){
-                    String id = skuno.replace("½","+");
-                    returnMap.put(id,String.valueOf(map.get(id)));
+                if(map.containsKey(skuno)){
+                     id = skuno.replace("½","+");
+                    returnMap.put(id,(map.get(skuno)<0?0:map.get(skuno)));
                 }else {
-                    String id = skuno.replace("½","+");
-                    returnMap.put(id,"0");
+                    id = skuno.replace("½","+");
+                    returnMap.put(id,0);
                 }
             }
-        }
+//        }
         return returnMap;
     }
     private static List<File> read() {
@@ -85,7 +91,7 @@ public class StockClientImp extends AbsUpdateProductStock{
         List<File> list=read();
         for (int i = 0; i < list.size(); i++) {
             try {
-                System.out.println("正在读取的尺寸文件: " + list.get(i));
+                System.out.println("正在读取库存文件: " + list.get(i));
                 getMap(list.get(i).getAbsolutePath(),map);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -101,7 +107,8 @@ public class StockClientImp extends AbsUpdateProductStock{
             org.jdom2.Element foo =doc.getRootElement();
             allChildren = foo.getChildren();
             for (org.jdom2.Element element:allChildren){
-                map.put(element.getChildText("ID_ARTICOLO")+"-"+element.getChildText("MM_TAGLIA"),Integer.parseInt(element.getChildText("ESI")));
+                logger.info("sku = " + element.getChildText("ID_ARTICOLO") + "-" + element.getChildText("MM_TAGLIA") + " quantity =" + Integer.parseInt(element.getChildText("ESI")  ));
+                map.put(element.getChildText("ID_ARTICOLO") + "-" + element.getChildText("MM_TAGLIA"),Integer.parseInt(element.getChildText("ESI")));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -241,6 +248,7 @@ public class StockClientImp extends AbsUpdateProductStock{
                     if(files[i].equals("Disponibilita.xml")){
                         ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
                         logger.info("文件下载成功");
+                        break;
 
                     }
                     //ftp.get(localFilePath+"/"+ subLocalfilePath +"/"+files[i].substring(files[i].lastIndexOf("/")+1),files[i]);
@@ -271,11 +279,17 @@ public class StockClientImp extends AbsUpdateProductStock{
     }
 
     public static void main(String[] args) throws Exception {
-        StockClientImp impl = new StockClientImp();
+    	String host = sopBundle.getString("HOST");
+        String app_key = sopBundle.getString("APP_KEY");
+        String app_secret= sopBundle.getString("APP_SECRET");
+        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
+            logger.error("参数错误，无法执行更新库存");
+        }
+        AbsUpdateProductStock impl = new StockClientImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("BRUNAROSSO更新数据库开始");
         downloadStock("","Disponibilita.xml",localFilePath,true);
-        impl.updateProductStock("2015071701342", "2015-01-01 00:00", format.format(new Date()));
+        impl.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
         logger.info("BRUNAROSSO更新数据库结束");
         System.exit(0);
     }

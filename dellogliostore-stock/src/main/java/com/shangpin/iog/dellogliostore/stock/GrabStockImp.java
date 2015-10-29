@@ -7,8 +7,16 @@ package com.shangpin.iog.dellogliostore.stock;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.dellogliostore.dto.Feed;
+import com.shangpin.iog.dellogliostore.dto.SkuItem;
+import com.shangpin.iog.dellogliostore.dto.SkuItems;
+import com.shangpin.iog.dellogliostore.dto.SpuItem;
+import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.dto.SpuDTO;
 import org.apache.log4j.Logger;
 
 import java.text.SimpleDateFormat;
@@ -32,13 +40,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
         Map<String, String> stockMap = new HashMap<>();
 
         try {
-            logger.info("拉取GIGLIO数据开始");
+            logger.info("拉取dellogliostore数据开始");
 
 //            Map<String, String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-            timeConfig.confRequestOutTime(600000);
-            timeConfig.confSocketOutTime(600000);
-            String result = HttpUtil45.get("http://www.giglio.com/feeds/shangpin.csv", timeConfig, null);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*60, 1000*60*20,1000*60*20);
+            String result = HttpUtil45.get("http://www.dellogliostore.com/admin/temp/xi125.xml", timeConfig, null);
             HttpUtil45.closePool();
 
 //            mongMap.put("supplierId", supplierId);
@@ -49,6 +55,43 @@ public class GrabStockImp extends AbsUpdateProductStock {
 //            } catch (Exception e) {
 //                e.printStackTrace();
 //            }
+
+            //Remove BOM from String
+            if (result != null && !"".equals(result)) {
+                result = result.replace("\uFEFF", "");
+            }
+
+            Feed feed = ObjectXMLUtil.xml2Obj(Feed.class, result);
+
+            if (feed == null || feed.getSpuItems() == null) {
+                return stockMap;
+            }
+
+            for (SpuItem spuItem : feed.getSpuItems().getItems()) {
+                if (spuItem == null) {
+                    continue;
+                }
+
+                String spuId = spuItem.getSpuId();
+
+                SkuItems skuItems = spuItem.getSkuItems();
+                if (skuItems == null || skuItems.getSkuItems() == null) {
+                    continue;
+                }
+
+                for (SkuItem skuItem : skuItems.getSkuItems()) {
+                    String skuId = spuId + skuItem.getSize();
+                    stockMap.put(skuId, skuItem.getStock());
+                }
+
+                for (String skuNo : skuNos) {
+                    if (stockMap.containsKey(skuNo)) {
+                        skuStock.put(skuNo, stockMap.get(skuNo));
+                    } else {
+                        skuStock.put(skuNo, "0");
+                    }
+                }
+            }
 
             logger.info("dellogliostore赋值库存数据成功");
             logger.info("拉取dellogliostore数据成功");

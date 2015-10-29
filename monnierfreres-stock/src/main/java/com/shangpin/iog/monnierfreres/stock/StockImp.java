@@ -7,9 +7,11 @@ import com.shangpin.iog.monnierfreres.utils.DownloadAndReadCSV;
 
 
 
+
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -17,6 +19,7 @@ import java.util.*;
 /**
  * Created by 赵根春 on 2015/10/12.
  */
+@Component("monnierfreres")
 public class StockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
@@ -42,9 +45,14 @@ public class StockImp extends AbsUpdateProductStock {
         //定义三方
     	Map<String,String> stockMap = new HashMap<String,String>();
     	Map<String,String> map = DownloadAndReadCSV.readLocalCSV();
+    
     	for(String skuId:skuNo){
-    		if(skuId.equals(map.get("skuId"))){
-    			stockMap.put(skuId,map.get("qty"));
+    		System.out.println("skuID:"+skuId+";sku:"+skuId+";qty:"+map.get("qty"));
+    		logger.info("skuID:"+skuId+";sku:"+skuId+";qty:"+map.get("qty"));
+    		if(map.containsKey(skuId)){
+    			System.out.println("sku:"+skuId+";qty:"+map.get("qty"));
+    			logger.info("sku:"+skuId+";qty:"+map.get("qty"));
+    			stockMap.put(skuId,map.get(skuId));
     		}
     	}
         return stockMap;
@@ -61,7 +69,7 @@ public class StockImp extends AbsUpdateProductStock {
     	//加载spring
         loadSpringContext();
         //拉取数据
-        StockImp stockImp =(StockImp)factory.getBean("reebonz");
+        StockImp stockImp =(StockImp)factory.getBean("monnierfreres");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("reebonz更新库存开始");
         try {

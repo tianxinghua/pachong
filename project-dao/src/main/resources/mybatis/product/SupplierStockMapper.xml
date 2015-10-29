@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.SupplierStockMapper">
+
+ <resultMap id="resultMap" type="iog_supplierStock">
+  <id column="ID" property="id" />
+  <result column="SUPPLIER_ID" property="supplierId" />
+  <result column="SUPPLIER_SKU_ID" property="supplierSkuId" />
+  <result column="QUANTITY" property="quantity" />
+  <result column="OPT_TIME" property="optTime" />
+ </resultMap>
+ <sql id="all_column">
+  ID,SUPPLIER_ID , SUPPLIER_SKU_ID,QUANTITY,OPT_TIME
+ </sql>
+
+
+ <insert id="save" parameterType="iog_supplierStock">
+
+  insert into SUPPLIER_STOCK(
+
+  <include refid="all_column"></include>
+  )
+  values( #{id},#{supplierId}, #{supplierSkuId},
+  #{quantity},#{optTime})
+
+ </insert>
+
+ <insert id="saveList" parameterType="java.util.List">
+
+  insert into SUPPLIER_STOCK(
+
+  <include refid="all_column"></include>
+  )
+  values
+  <foreach collection="list" index="index" item="item"
+   separator=",">
+   ( #{item.id},#{item.supplierId}, #{item.supplierSkuId},
+   #{item.quantity},#{item.optTime}
+   )
+  </foreach>
+ </insert>
+ 
+ <update id="updateStock" parameterType="iog_supplierStock">
+    update SUPPLIER_STOCK set QUANTITY=#{quantity},OPT_TIME=#{optTime}
+    where SUPPLIER_ID=#{supplierId} and SUPPLIER_SKU_ID=#{supplierSkuId}
+ </update>
+ 
+ <select id="findBySupplierId" resultMap="resultMap" parameterType="java.lang.String">
+  select
+    <include refid="all_column"></include>
+       from SUPPLIER_STOCK
+     <where>
+         <if test="null!=supplierId">
+             SUPPLIER_ID =#{supplierId}
+          </if>
+     </where>
+
+ </select>
+ 
+  <select id="findBySkuAndSupplier" parameterType="map" resultMap="resultMap">
+  select
+    <include refid="all_column"></include>
+       from SUPPLIER_STOCK 
+   <where>
+	    <if test="null!=supplierId">
+	     SUPPLIER_ID = #{supplierId}
+	   </if>
+	     <if test="null!=skuNo">
+	     and SUPPLIER_SKU_ID = #{skuNo}
+	   </if>
+  </where> 
+ </select>
+
+ 
+ <select id="findAllSupplierStock" resultMap="resultMap">
+  select
+  <include refid="all_column"></include>
+  from SUPPLIER_STOCK
+
+ </select>
+
+
+</mapper>

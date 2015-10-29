@@ -17,6 +17,7 @@ public interface OrderService {
      * @throws ServiceException
      */
     public void saveOrder(OrderDTO orderDTO ) throws ServiceException;
+    
 
     /**
      * 更新订单信息
@@ -33,7 +34,11 @@ public interface OrderService {
      * @throws ServiceException
      */
     public List<String> getOrderIdBySupplierIdAndOrderStatus(String supplierId,String status) throws ServiceException;
-
+    
+    /*
+     * 判断时间是否超过一天
+     * */
+    public List<OrderDTO>  getOrderBySupplierIdAndOrderStatus(String supplierId,String status,String date) throws ServiceException;
     /**
      * 获取订单 根据订单ID 和 订单状态
      * @param supplierId 供货商ID

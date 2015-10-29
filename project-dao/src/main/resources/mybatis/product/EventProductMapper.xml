@@ -24,7 +24,7 @@
     </insert>
     
     <select id="selectEventIdBySku" parameterType="java.lang.String" resultMap="eventMap">
-			select EVENT_ID 
+			select EVENT_ID, END_DATE
       	 	  	from EVENT_PRODUCT 
         <where>
 	       SKU_ID =#{skuId}  and SUPPLIER_ID = #{supplierId} order by CREATE_DATE desc limit 1

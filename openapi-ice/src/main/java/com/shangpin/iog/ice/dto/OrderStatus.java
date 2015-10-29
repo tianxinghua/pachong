@@ -15,5 +15,11 @@ public class OrderStatus {
     public static String WAITCANCEL="waitcancel";
     public static String WAITPLACED="waitplaced";
 
+    public static String WAITREFUND="waitrefund";
+    public static String REFUNDED="refunded";
+
+    public static String PURCHASE_EXP_SUCCESS="purExpSuc";
+    public static String PURCHASE_EXP_ERROR="purExpErr";
+
 
 }

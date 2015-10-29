@@ -1,5 +1,8 @@
 package com.shangpin.iog.leam.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
 /**
@@ -17,6 +20,7 @@ public class LeamDTO {
     private String qty;//Quantity available
     private String size;//Size
     private String price;//Price
+    private String default_price;//市场价
     private String madein;//Made in
     private String composition;//Composition of the head
     private String nomenclature;//Data on nomenclature
@@ -146,5 +150,9 @@ public class LeamDTO {
     public List<String> getImages() { return images; }
 
     public void setImages(List<String> images) { this.images = images; }
+
+    public String getDefault_price() { return default_price; }
+
+    public void setDefault_price(String default_price) { this.default_price = default_price; }
 
 }

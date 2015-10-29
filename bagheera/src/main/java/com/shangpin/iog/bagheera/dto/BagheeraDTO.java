@@ -6,8 +6,8 @@ import lombok.Setter;
 /**
  * Created by sunny on 2015/9/9.
  */
-/*@Getter
-@Setter*/
+@Getter
+@Setter
 public class BagheeraDTO {
     private String LAST_UPDATE;
     private String SUPPLIER_CODE;
@@ -24,6 +24,7 @@ public class BagheeraDTO {
     private String STOCK;
     private String COLLECTION;
     private String LIST_PRICE;
+    private String RETAIL_PRICE;
     private String DISCOUNTED;
     private String DISCOUNT;
     private String LASO_Price;

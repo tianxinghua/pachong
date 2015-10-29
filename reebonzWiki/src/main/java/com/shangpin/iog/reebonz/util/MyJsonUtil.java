@@ -44,10 +44,9 @@ public class MyJsonUtil {
 		try {
 			json = HttpUtil45
 					.get(eventUrl,
-							new OutTimeConfig(1000 * 20, 1000 * 20, 1000 * 20),
+							new OutTimeConfig(1000 * 60*5, 1000 * 60*5, 1000 * 60*5),
 							null);
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		System.out.println("抓取的活动列表："+json);
 		return getProductList(json);
@@ -66,10 +65,9 @@ public class MyJsonUtil {
 		try {
 			json = HttpUtil45
 					.get(productUrl,
-							new OutTimeConfig(1000 * 60, 1000 * 120, 1000 * 60),
+							new OutTimeConfig(1000 * 60*5, 1000 * 60*5, 1000 * 60*5),
 							map);
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		System.out.println("抓取的活动"+eventId+"的商品列表："+json);
 	
@@ -91,7 +89,6 @@ public class MyJsonUtil {
 							new OutTimeConfig(1000 * 120, 1000 * 120, 1000 * 120),
 							map);
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		System.out.println("--抓取的活动:"+eventId+"以及skuId:"+skuId+"的商品库存："+json);
 		return getProductList(json);
@@ -109,11 +106,10 @@ public class MyJsonUtil {
 		try {
 			json = HttpUtil45
 					.get(productUrl,
-							new OutTimeConfig(1000 * 600, 1000 * 60, 1000 * 600),
+							new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
 							map);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		System.out.println("抓取的活动"+eventId+"的商品总数："+json);
 		return json;
@@ -126,16 +122,21 @@ public class MyJsonUtil {
 				return null;
 			}else{
 				ResponseObject obj = new Gson().fromJson(json, ResponseObject.class);
-				if("1".equals(obj.getReturn_code())){
-					Object o = obj.getResponse();
-					JSONObject jsonObject = JSONObject.fromObject(o); 
-					Items list = new Gson().fromJson(jsonObject.toString(), Items.class);
-					return list.getDocs();
+				if(obj!=null){
+					if("1".equals(obj.getReturn_code())){
+						Object o = obj.getResponse();
+						JSONObject jsonObject = JSONObject.fromObject(o); 
+						Items list = new Gson().fromJson(jsonObject.toString(), Items.class);
+						return list.getDocs();
+					}else{
+						logger.info("发生异常："+obj.getError_msg());
+						return null;
+					}
 				}else{
-					logger.info("发生异常："+obj.getError_msg());
 					return null;
 				}
+				
 			}
-		}
+	}
 	
 }
