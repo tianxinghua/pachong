@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by loyalty on 15/6/4.
@@ -91,6 +92,27 @@ public class EventProductServiceImpl implements EventProductService {
 	        } catch (Exception e) {
 	        	if(e instanceof DuplicateKeyException)
 	        		throw new ServiceMessageException(REPEAT_MESSAGE);
+	        	throw new ServiceMessageException("数据插入失败"+e.getMessage());
+	        }
+		 return event;
+	}
+
+	@Override
+	public void updateEventDate(EventProductDTO dto) throws ServiceMessageException{
+		EventProductDTO event =null;
+		 try {
+			 event = eventDAO.updateEvent(dto);
+	        } catch (Exception e) {
+	        	throw new ServiceMessageException("数据插入失败"+e.getMessage());
+	        }
+	}
+
+	@Override
+	public List<EventProductDTO> selectEventList() throws ServiceMessageException {
+		List<EventProductDTO> event =null;
+		 try {
+			 event = eventDAO.selectEventList();
+	        } catch (Exception e) {
 	        	throw new ServiceMessageException("数据插入失败"+e.getMessage());
 	        }
 		 return event;

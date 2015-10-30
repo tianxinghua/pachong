@@ -343,7 +343,7 @@ public abstract class AbsOrderService {
         try {
             //获取已下单的订单信息
         	String nowDate = DateTimeUtil.getDateTime(); 
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED,nowDate);
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
             List<OrderDTO>  waitList = productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
             orderDTOList.addAll(waitList);
             
@@ -441,7 +441,7 @@ public abstract class AbsOrderService {
                             if(5!=purchaseOrderDetail.DetailStatus){ //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
                                 orderDTO.setStatus(OrderStatus.PAYED);
                             }else{
-                                orderDTO.setStatus(OrderStatus.CANCELLED);
+                                orderDTO.setStatus(OrderStatus.REFUNDED);
                             }
 
                         }
@@ -469,7 +469,8 @@ public abstract class AbsOrderService {
         //拉取采购单存入本地库
         List<OrderDTO>  orderDTOList= null;
         try {
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED);
+        	String nowDate = DateTimeUtil.getDateTime(); 
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
             if(null!=orderDTOList){
 
                 for(OrderDTO orderDTO:orderDTOList){
@@ -750,7 +751,7 @@ public abstract class AbsOrderService {
                     //处理退单
                     handleCancelOrder(deleteOrder);
                     //更改退单状态无论成功或失败
-                    updateRefundOrderMsg( deleteOrder);
+                    updateCancelOrderMsg( deleteOrder);
 
 
                 } catch (Exception e) {
@@ -861,7 +862,48 @@ public abstract class AbsOrderService {
     }
 
 
+    /**
+     * 更新退单信息 同时更新订单信息
+     * @param deleteOrder
+     */
+    private void updateCancelOrderMsg( ReturnOrderDTO deleteOrder) {
+        try {
+            Map<String,String> map = new HashMap<>();
+            map.put("status",deleteOrder.getStatus());
+            map.put("uuid",deleteOrder.getUuId());
+            map.put("excState",deleteOrder.getExcState());
+            map.put("excDesc",deleteOrder.getExcDesc());
+            if(null!=deleteOrder.getExcState()&&"1".equals(deleteOrder.getExcState())){
+                map.put("excTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
+            }else{
+                map.put("status",OrderStatus.CANCELLED);
+                map.put("updateTime",DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
+            }
+            returnOrderService.updateReturnOrderMsg(map);
+        } catch (ServiceException e) {
+            loggerError.error("取消订单："+deleteOrder.getUuId()+" 操作成功。但更新退单状态失败 原因:" +e.getMessage());
+            System.out.println("取消订单：" + deleteOrder.getUuId() + " 操作成功。但更新退单状态失败  原因:" +e.getMessage());
+            e.printStackTrace();
 
+        }
+        /**
+         * 退单成功时修改订单状态
+         */
+        if(null!=deleteOrder.getExcState()&&"1".equals(deleteOrder.getExcState())){//通知供货商退款异常
+
+        }else{
+            this.updateOrderMsgOnCancelOrder(deleteOrder.getUuId());
+        }
+
+    }
+
+
+
+
+    /**
+     * 更新退款信息 同时更新订单信息
+     * @param deleteOrder
+     */
     private void updateRefundOrderMsg( ReturnOrderDTO deleteOrder) {
         try {
             Map<String,String> map = new HashMap<>();
@@ -888,7 +930,7 @@ public abstract class AbsOrderService {
         if(null!=deleteOrder.getExcState()&&"1".equals(deleteOrder.getExcState())){//通知供货商退款异常
 
         }else{
-            this.updateOrderMsgOnCancelOrder(deleteOrder.getUuId());
+            this.updateOrderMsgOnRefundOrder(deleteOrder.getUuId());
         }
 
     }
@@ -898,6 +940,22 @@ public abstract class AbsOrderService {
      * @param uuId 订单编号
      */
     private void updateOrderMsgOnCancelOrder(String uuId){
+        OrderDTO order = null;
+        try {
+            order = productOrderService.getOrderByUuId(uuId);
+            order.setStatus(OrderStatus.CANCELLED);
+            productOrderService.update(order);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 当退款时 更改订单状态
+     * @param uuId 订单编号
+     */
+    private void updateOrderMsgOnRefundOrder(String uuId){
         OrderDTO order = null;
         try {
             order = productOrderService.getOrderByUuId(uuId);

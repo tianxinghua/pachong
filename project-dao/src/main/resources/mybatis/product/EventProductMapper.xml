@@ -39,5 +39,14 @@
         </where>
 	</select>
 	
-	
+	 <update id="updateEvent" parameterType="iog_event" >
+          update EVENT_PRODUCT
+          <set>
+              <if test="endDate != null"> END_DATE = #{endDate},</if>
+              <if test="endDate != null"> END_DATE = #{endDate}</if>
+          </set>
+          where  SUPPLIER_ID = #{supplierId} and EVENT_ID = #{eventId}
+
+    </update>
+    
 </mapper>
