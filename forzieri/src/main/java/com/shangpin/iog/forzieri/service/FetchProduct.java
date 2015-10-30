@@ -123,7 +123,7 @@ public class FetchProduct {
 		//保存spu
 		CsvDTO spuDTO = null;
 		Set<Entry<String,CsvDTO>> entrySet = csvSpuMaps.entrySet();
-		Map<String, String> categoryMap = new CategoryMap().getCategoryMap();
+		Map<String, String> categoryMap = new CategoryMap(new HashMap<String,String>()).getCategoryMap();
 		for (Entry<String, CsvDTO> entry : entrySet) {
 			SpuDTO spu = new SpuDTO();
 			spuDTO = entry.getValue();
@@ -132,7 +132,8 @@ public class FetchProduct {
 				spu.setSpuId(spuDTO.getProduct_id());
 				spu.setSupplierId(supplierId);
 				spu.setBrandName(spuDTO.getBrand_name());
-				spu.setCategoryName(categoryMap.get(spuDTO.getCategory_ids().split("|")[0]));
+				String categoryid = spuDTO.getCategory_ids().split("\\|")[0];
+				spu.setCategoryName(categoryMap.get(categoryid));
 				spu.setCategoryGender(spuDTO.getGender());
 				spu.setMaterial(spuDTO.getMaterial());
 				productFetchService.saveSPU(spu);

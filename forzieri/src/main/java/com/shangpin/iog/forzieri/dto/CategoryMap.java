@@ -4,7 +4,8 @@ import java.util.Map;
 
 public class CategoryMap {
 	private Map<String,String> categoryMap;
-	public CategoryMap(){
+	public CategoryMap(Map<String,String> categoryMap){
+		this.categoryMap = categoryMap;
 		categoryMap.put("999903","Bags");
 		categoryMap.put("999904","Jewelry");
 		categoryMap.put("999905","Home Decor");

@@ -1,6 +1,7 @@
 package com.shangpin.iog.forzieri.utils;
 
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -46,7 +47,12 @@ public class DownloadAndReadCSV {
 	        	String realPath="";
 	        	URLConnection conn = url.openConnection();
 	        	InputStream inStream = conn.getInputStream();
+	        	
 	        	realPath = getPath(path+num);
+	        	File file = new File(realPath);
+	        	if (!file.getParentFile().exists()) {
+	        		file.getParentFile().mkdirs();
+				}
 	        	FileOutputStream fs = new FileOutputStream(realPath);
 	        	
 	        	byte[] buffer = new byte[1204];
@@ -86,17 +92,17 @@ public class DownloadAndReadCSV {
      */
     public static <T> List<T> readLocalCSV(Class<T> clazz,String sep) throws Exception {
         
-    	//--List<String> realPaths=downloadNet();
+    	List<String> realPaths=downloadNet();
         String rowString = null;
         List<T> dtoList = new ArrayList<T>();
         //Set<T> dtoSet = new HashSet<T>();
     	String[] split = null;
     	List<String> colValueList = null;
     	CsvReader cr = null;
-    	//--for (String realPath : realPaths) {
+    	for (String realPath : realPaths) {
     		//解析csv文件
-//--    		cr = new CsvReader(new FileReader(realPath));
-    		cr = new CsvReader(new FileReader("F:/forzieri1.csv"));//----
+        	cr = new CsvReader(new FileReader(realPath));
+//    		cr = new CsvReader(new FileReader("F:/forzieri1.csv"));
     		System.out.println("创建cr对象成功");
     		//得到列名集合
     		cr.readRecord();
@@ -114,7 +120,7 @@ public class DownloadAndReadCSV {
 				}
     			System.out.println(a);
     		}
-		//--}
+		}
         return dtoList;
     }
   
