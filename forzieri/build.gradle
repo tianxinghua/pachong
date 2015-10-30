@@ -7,7 +7,6 @@ dependencies {
             "net.sourceforge.javacsv:javacsv:2.0",
             project(':project-common'),
             project(':iog-common-product'),
-            project(':forzieri-stock')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 

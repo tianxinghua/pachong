@@ -79,7 +79,7 @@ public class FetchProduct {
 			skuDTO.setMarketPrice(csvDTO.getList_price());
 			skuDTO.setSupplierPrice(csvDTO.getCost_price());
 			skuDTO.setColor(csvDTO.getColor());
-//				skuDTO.setProductCode();
+			skuDTO.setProductCode(csvDTO.getSku());
 			skuDTO.setSaleCurrency("EURO");
 			skuDTO.setProductSize(csvDTO.getSize());
 			skuDTO.setStock(csvDTO.getQuantity());
