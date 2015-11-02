@@ -28,6 +28,7 @@ public class StartUp {
 	        //拉取数据
 	        FetchProduct fetchProduct =(FetchProduct)factory.getBean("forzieri");
 	        fetchProduct.fetchProductAndSave();
+//	        fetchProduct.testDAO();
 	        log.info("----拉取forzieri数据完成----");
 
 

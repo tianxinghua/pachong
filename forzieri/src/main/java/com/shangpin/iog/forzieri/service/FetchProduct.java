@@ -1,5 +1,6 @@
 package com.shangpin.iog.forzieri.service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,12 +19,14 @@ import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.iog.dto.TokenDTO;
 import com.shangpin.iog.forzieri.dto.CategoryMap;
 import com.shangpin.iog.forzieri.dto.CsvDTO;
 import com.shangpin.iog.forzieri.utils.DownloadAndReadCSV;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SkuPriceService;
+import com.shangpin.iog.service.TokenService;
 
 @Component("forzieri")
 public class FetchProduct {
@@ -46,7 +49,18 @@ public class FetchProduct {
 	private SkuPriceService skuPriceService;
 	@Autowired
 	private ProductSearchService productSearchService;
+/*	@Autowired
+	private TokenService tokenService;
 	
+	public void testDAO(){
+		TokenDTO findToken = null;
+		try {
+			findToken = tokenService.findToken("63dc27bb061f36cecaabf1014fb41d7fa42804d5");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		System.out.println(findToken.getRefreshToken());
+	}*/
 	public void fetchProductAndSave() {
 		Map<String, String> mongMap = new HashMap<>();
 		mongMap.put("supplierId", supplierId);
