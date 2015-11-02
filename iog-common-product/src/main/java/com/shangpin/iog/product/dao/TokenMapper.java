@@ -11,7 +11,7 @@ public interface TokenMapper extends IBaseDao<TokenDTO> {
 	
 	public Integer save(TokenDTO tokenDTO);
 	
-	public TokenDTO findToken(@Param("accessToken") String accessToken,@Param("supplierId") String supplierId);
+	public TokenDTO findToken(@Param("supplierId") String supplierId);
 	
 	public void updateToken(TokenDTO tokenDTO);
 }

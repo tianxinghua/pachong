@@ -6,7 +6,7 @@
 		<id column="ID" property="id" />
         <result column="REFRESH_TOKEN" property="refreshToken" />
         <result column="ACCESS_TOKEN" property="accessToken" />
-        <result column="CREATE_DATE" property="createDate" />
+        <result column="CREATETIME" property="createDate" />
         <result column="EXPIRETIME" property="expireTime" />
         <result column="SUPPLIERID" property="supplierId" />
 	</resultMap>
@@ -40,9 +40,6 @@
         REFRESH_TOKEN
         from TOKEN
         <where>
-            <if test="null!=accessToken">
-                ACCESS_TOKEN = #{accessToken}
-            </if>
             <if test="null!=supplierId">
                 SUPPLIERID = #{supplierId}
             </if>
@@ -53,7 +50,7 @@
           <set>
               <if test="refreshToken != null"> REFRESH_TOKEN = #{refreshToken}, </if>
               <if test="accessToken != null"> ACCESS_TOKEN = #{accessToken}, </if>
-              <if test="createDate != null"> CREATE_DATE = #{createDate},</if>
+              <if test="createDate != null"> CREATETIME = #{createDate},</if>
               <if test="expireTime != null"> EXPIRETIME = #{expireTime}, </if>
               <if test="supplierId != null"> SUPPLIERID = #{supplierId}, </if>
           </set>

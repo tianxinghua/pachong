@@ -20,8 +20,8 @@ public class TokenServiceImpl implements TokenService{
 	}
 
 	@Override
-	public TokenDTO findToken(String accessToken,String supplierId) throws SQLException {
-		return tokenDAO.findToken(accessToken, supplierId);
+	public TokenDTO findToken(String supplierId) throws SQLException {
+		return tokenDAO.findToken(supplierId);
 	}
 
 	@Override

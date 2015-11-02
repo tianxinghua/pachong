@@ -16,9 +16,9 @@ public interface TokenService {
 	public void saveToken(TokenDTO tokenDTO) throws SQLException;
 	/**
 	 * 查询
-	 * @param accessToken,supplierId
+	 * @param supplierId
 	 */
-	public TokenDTO findToken(String accessToken,String supplierId) throws SQLException;
+	public TokenDTO findToken(String supplierId) throws SQLException;
 	
 	/**
 	 * 更新Token

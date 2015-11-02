@@ -53,13 +53,13 @@ public class FetchProduct {
 	private TokenService tokenService;
 	
 	public void testDAO(){
-		TokenDTO findToken = null;
+		TokenDTO findToken = new TokenDTO();
+		findToken.setSupplierId(supplierId);
 		try {
-			findToken = tokenService.findToken("63dc27bb061f36cecaabf1014fb41d7fa42804d5");
+			tokenService.refreshToken(findToken);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println(findToken.getRefreshToken());
 	}*/
 	public void fetchProductAndSave() {
 		Map<String, String> mongMap = new HashMap<>();

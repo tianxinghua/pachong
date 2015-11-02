@@ -52,7 +52,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 	@Override
 	public Map<String, String> grabStock(Collection<String> skuNo)
 			throws ServiceException, Exception {
-		TokenDTO tokenDTO = tokenService.findToken(null, supplierId);
+		TokenDTO tokenDTO = tokenService.findToken(supplierId);
 		String accessToken = tokenDTO.getAccessToken();
 		String refreshToken = tokenDTO.getRefreshToken();
 		
