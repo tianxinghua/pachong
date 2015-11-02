@@ -23,5 +23,6 @@
 		<typeAlias alias="iog_newPrice" type="com.shangpin.iog.dto.NewPriceDTO"/>
 		<typeAlias alias="iog_count_price" type="com.shangpin.iog.dto.PriceCountDetailDTO"/>
 		<typeAlias alias="iog_event" type="com.shangpin.iog.dto.EventProductDTO"/>
+		<typeAlias alias="iog_token" type="com.shangpin.iog.dto.TokenDTO"/>
 	</typeAliases>
 </configuration>
