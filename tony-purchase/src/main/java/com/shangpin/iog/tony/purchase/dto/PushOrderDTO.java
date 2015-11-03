@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2015/9/28.
  */
-public class CreateOrderDTO {
+public class PushOrderDTO {
 
     private String merchantId;
     private String token;
@@ -15,6 +15,12 @@ public class CreateOrderDTO {
     private String orderDate;
     private ItemDTO[] items;
 
+    
+    private double orderTotalPrice;
+    private ShippingInfoDTO shippingInfo;
+    private BillingInfoDTO billingInfo;
+
+    
     public ItemDTO[] getItems() {
         return items;
     }
@@ -23,10 +29,7 @@ public class CreateOrderDTO {
         this.items = items;
     }
 
-    private double orderTotalPrice;
-    private ShippingInfoDTO shippingInfo;
-    private BillingInfoDTO billingInfo;
-
+    
     public String getMerchantId() {
         return merchantId;
     }
