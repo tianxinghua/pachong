@@ -7,6 +7,7 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.dto.*;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.service.ReturnOrderService;
+import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.tony.purchase.common.Constant;
 import com.shangpin.iog.tony.purchase.dto.*;
 
@@ -25,6 +26,8 @@ public class OrderImpl extends AbsOrderService {
 
     @Autowired
     com.shangpin.iog.service.OrderService productOrderService;
+    @Autowired
+    SkuPriceService skuPriceService;
     @Autowired
     ReturnOrderService returnOrderService;
     private static Logger logger = Logger.getLogger("info");
@@ -117,6 +120,7 @@ public class OrderImpl extends AbsOrderService {
      */
     private PushOrderDTO getOrder(String status,OrderDTO orderDTO){
         
+    	
         String detail = orderDTO.getDetail();
         
         String[] details = detail.split(",");
@@ -128,20 +132,30 @@ public class OrderImpl extends AbsOrderService {
 			num = Integer.parseInt(details[i].split(":")[1]);
 			skuNo = details[i].split(":")[0];
 		}
+		String markPrice = null;
+		try {
+			Map tempmap = skuPriceService.getNewSkuPriceBySku(Constant.SUPPLIER_ID, skuNo);
+			Map map =(Map) tempmap.get(Constant.SUPPLIER_ID);
+			markPrice =(String) map.get(skuNo);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 		
         ItemDTO[] itemsArr = new ItemDTO[1];
         ItemDTO item = new ItemDTO();
         item.setQty(num);
         item.setSku(skuNo);
-        item.setPrice(11.00);
+        double totalPrice = 0;
+        if(!"-1".equals(markPrice)){
+        	String price = markPrice.split("\\|")[0];
+        	item.setPrice(price);	
+        	totalPrice = (Double.parseDouble(price))*num;
+        }else{
+        	logger.info("没有市场价");
+        }
         item.setCur(1);
         itemsArr[0] = item;
-        double totalPrice = 0;
-        if(orderDTO.getPurchasePriceDetail()!=null){
-        	  double price = Double.parseDouble(orderDTO.getPurchasePriceDetail());
-        	  totalPrice = price*num;
-        }
-      
+        
         ShippingInfoDTO shippingInfo = new ShippingInfoDTO();
         //运费需要得到
         double fees = 0;
