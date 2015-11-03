@@ -2,7 +2,7 @@
 dependencies {
     compile(
             project(':project-common'),
-            project(':openapi-ice'),
+            project(':iog-sop'),
             project(':theclutcher')
     )
     compile 'com.stanfy:gson-xml-java:0.1.+'

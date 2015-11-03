@@ -6,14 +6,15 @@ package com.shangping.iog.theclutcher.stock.service;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.theclutcher.Startup;
 import com.shangpin.iog.theclutcher.dao.Item;
 import com.shangpin.iog.theclutcher.dao.Rss;
 import com.shangpin.iog.theclutcher.utils.DownloadFileFromNet;
 import com.shangpin.iog.theclutcher.utils.UNZIPFile;
 import com.shangpin.iog.theclutcher.utils.XMLUtil;
+import com.shangpin.sop.AbsUpdateProductStock;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -23,6 +24,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class GrabStockImp extends AbsUpdateProductStock {
+	
+	private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
+	
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger loggerError = Logger.getLogger("error");
 	private static Logger logMongo = Logger.getLogger("mongodb");
@@ -40,7 +44,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		localPathDefault = bdl.getString("local.filePath");
 	}
 
-	public Map<String, String> grabStock(Collection<String> skuNos)
+	public Map<String, Integer> grabStock(Collection<String> skuNos)
 			throws ServiceException {		
 
 		String localPath = "";// 存放下载的zip文件的本地目录
@@ -53,8 +57,8 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			e.printStackTrace();
 		}
 		
-		Map<String, String> skuStock = new HashMap<>();
-		Map<String, String> stockMap = new HashMap<>();
+		Map<String, Integer> skuStock = new HashMap<>();
+		Map<String, Integer> stockMap = new HashMap<>();
 		try {
 			// 下载
 			File zipFile = DownloadFileFromNet.downLoad(urlStr, fileName,
@@ -82,14 +86,14 @@ public class GrabStockImp extends AbsUpdateProductStock {
 	                }
 					String skuId = item.getId() +"-"+ size; // 接口中g:id是spuId,对应不同尺码
 					String stock = item.getAvailability();
-					stockMap.put(skuId, stock);
+					stockMap.put(skuId, Integer.parseInt(stock));
 				}
 
 				for (String skuNo : skuNos) {
 					if (stockMap.containsKey(skuNo)) {
 						skuStock.put(skuNo, stockMap.get(skuNo));
 					} else {
-						skuStock.put(skuNo, "0");
+						skuStock.put(skuNo, 0);
 					}
 				}
 				System.out.println(stockMap.toString());
@@ -112,15 +116,19 @@ public class GrabStockImp extends AbsUpdateProductStock {
 	}
 
 	public static void main(String[] args) throws Exception {
-		AbsUpdateProductStock grabStockImp = new GrabStockImp();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String host = bundle.getString("HOST");
+        String app_key = bundle.getString("APP_KEY");
+        String app_secret= bundle.getString("APP_SECRET");
+        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
+            logger.error("参数错误，无法执行更新库存");
+        }
+
+        AbsUpdateProductStock theclutcher = new GrabStockImp();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		logger.info("theclutcher-stock更新数据库开始");
-		grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
-				format.format(new Date()));
+		theclutcher.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
 		logger.info("theclutcher-stock更新数据库结束");
 		System.exit(0);
-//		GrabStockImp g = new GrabStockImp();
-//		g.grabStock(null);
 	}
 
 }
