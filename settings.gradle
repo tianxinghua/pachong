@@ -154,6 +154,7 @@ include 'filippo'
 include 'filippo-stock'
 include 'forzieri'
 include 'forzieri-stock'
+include 'forzieri-purchase'
 //include 'hovok-stock'
 include 'tony-fetchstock'
 
