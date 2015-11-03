@@ -37,7 +37,7 @@
 
 	<select id="findToken"  resultMap="tokenMap" parameterType="java.lang.String">
         select
-        REFRESH_TOKEN
+        REFRESH_TOKEN,ACCESS_TOKEN,CREATETIME,EXPIRETIME,SUPPLIERID
         from TOKEN
         <where>
             <if test="null!=supplierId">
