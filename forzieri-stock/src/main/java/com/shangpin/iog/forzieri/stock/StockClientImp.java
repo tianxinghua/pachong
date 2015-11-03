@@ -119,6 +119,10 @@ public class StockClientImp extends AbsUpdateProductStock {
 					// 产品未找到	
 						logger.info(skuId+"产品未找到");
 						skustock.put(skuId, "0");
+					}else{
+						//服务器错误
+						loggerError.error(skuId+"服务器错误");
+						System.out.println(skuId+"服务器错误"+httpCode);
 					}
 				}else{
 					loggerError.error(skuId+"刷新token错误"+getMethod.getResponseBodyAsString());
