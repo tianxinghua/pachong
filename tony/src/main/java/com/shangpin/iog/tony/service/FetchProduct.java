@@ -38,7 +38,7 @@ public class FetchProduct {
      */
     public void fetchProductAndSave() {
         //获取数据
-        itemsJson = jsonClient.httpPostOfJson(Constant.ITEMS_INPUT, Constant.ITEMS_URL);
+        itemsJson =       jsonClient.httpPostOfJson(Constant.ITEMS_INPUT, Constant.ITEMS_URL);
         categoriesJson = jsonClient.httpPostOfJson(Constant.CATEGORIES_INPUT, Constant.CATEGORIES_URL);
         //解析数据
         Items[] array = new Gson().fromJson(new StringUtil().getItemsArray(itemsJson),
@@ -86,7 +86,7 @@ public class FetchProduct {
                 sku.setSaleCurrency(item.getCur());
                 productFetchService.saveSKU(sku);
 
-                if(StringUtils.isNotBlank(item.getImages()[0])){
+                if(null!=item.getImages()&&StringUtils.isNotBlank(item.getImages()[0])){
                     String[] picArray = item.getImages();
                     for(String picUrl :picArray){
                         ProductPictureDTO dto  = new ProductPictureDTO();

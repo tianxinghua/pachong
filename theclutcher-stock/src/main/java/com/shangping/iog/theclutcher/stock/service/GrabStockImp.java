@@ -14,6 +14,7 @@ import com.shangpin.iog.theclutcher.utils.DownloadFileFromNet;
 import com.shangpin.iog.theclutcher.utils.UNZIPFile;
 import com.shangpin.iog.theclutcher.utils.XMLUtil;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -57,11 +58,14 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		Map<String, String> stockMap = new HashMap<>();
 		try {
 			// 下载
-			File zipFile = DownloadFileFromNet.downLoad(urlStr, fileName,
-					localPath);
-			// 解压
-			File xmlFile = UNZIPFile.unZipFile(zipFile, localPath);
+//			File zipFile = DownloadFileFromNet.downLoad(urlStr, fileName,
+//					localPath);
+//			// 解压
+//			File xmlFile = UNZIPFile.unZipFile(zipFile, localPath);
+
+
 			// 读取文件
+			File xmlFile =new File("e:/feedShanping.xml");
 			String result = DownloadFileFromNet.file2Striing(xmlFile);
 			Rss rss = XMLUtil.gsonXml2Obj(Rss.class, result);
 
@@ -77,18 +81,26 @@ public class GrabStockImp extends AbsUpdateProductStock {
 						continue;
 					}
 					String size = item.getSize();
-	                if(size.indexOf("½")>0){
-	                	size = size.substring(0, size.indexOf("½")-1)+".5";
-	                }
+					if(StringUtils.isNotBlank(size)){
+						if(size.indexOf("½")>0){
+							size = size.substring(0, size.indexOf("½")-1)+".5";
+						}
+					}else{
+						size="";
+					}
+
 					String skuId = item.getId() +"-"+ size; // 接口中g:id是spuId,对应不同尺码
 					String stock = item.getAvailability();
+					logger.info(" skuId =" + skuId + ",stock ="+stock );
 					stockMap.put(skuId, stock);
 				}
 
 				for (String skuNo : skuNos) {
 					if (stockMap.containsKey(skuNo)) {
+						logger.info(" containsKey  skuNo =" + skuNo );
 						skuStock.put(skuNo, stockMap.get(skuNo));
 					} else {
+						logger.info(" not containsKey  skuNo =" + skuNo );
 						skuStock.put(skuNo, "0");
 					}
 				}
@@ -119,8 +131,15 @@ public class GrabStockImp extends AbsUpdateProductStock {
 				format.format(new Date()));
 		logger.info("theclutcher-stock更新数据库结束");
 		System.exit(0);
-//		GrabStockImp g = new GrabStockImp();
-//		g.grabStock(null);
+
+
+
+//		File xmlFile =new File("e:/feedShanping.xml");
+//		String result = DownloadFileFromNet.file2Striing(xmlFile);
+//		Rss rss = XMLUtil.gsonXml2Obj(Rss.class, result);
+//		for (Item item : rss.getChannel().getItem()) {
+//
+//		}
 	}
 
 }

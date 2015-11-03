@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import javax.xml.bind.JAXBException;
 
 import com.shangpin.iog.theclutcher.dao.ImageLinks;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdom2.Element;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,9 +92,14 @@ public class FetchProduct {
 	                System.out.println("count : " + ++count);
 	                
 	                String size = item.getSize();
-	                if(size.indexOf("½")>0){
-	                	size = size.substring(0, size.indexOf("½")-1)+".5";
-	                }
+					if(StringUtils.isNotBlank(size)){
+						if(size.indexOf("½")>0){
+							size = size.substring(0, size.indexOf("½")-1)+".5";
+						}
+					}else {
+						size ="";
+					}
+
 
 	                String skuId = item.getId() +"-"+ size; //接口中g:id是spuId,对应不同尺码
 	                String spuId = item.getId();
