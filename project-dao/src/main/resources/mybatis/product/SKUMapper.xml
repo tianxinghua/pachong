@@ -138,4 +138,22 @@
 	           SUPPLIER_ID = #{supplierId}
         </where>
 	</select>
+
+	<select id="findNewPriceBySku" resultMap="priceMap">
+			select SKU_ID as skuId,
+				MARKET_PRICE as marketPrice,
+				SUPPLIER_PRICE as supplierPrice,
+			    NEW_MARKET_PRICE as newMarketPrice,
+      	 	  	NEW_SUPPLIER_PRICE as newSupplierPrice
+      	 	  	from SKU sku
+        <where>
+             <if test="null!=supplierId">
+                SUPPLIER_ID = #{supplierId}
+            </if>
+            <if test="null!=skuId">
+                and SKU_ID = #{skuId}
+            </if>
+        </where>
+	</select>
+	
 </mapper>

@@ -34,5 +34,10 @@ public interface SkuMapper extends IBaseDao<SkuDTO> {
      */
     public SkuDTO findSupplierPrice(@Param("supplierId") String supplierId,@Param("skuId") String skuId) throws ServiceException;
     
+    /**
+     * 通过supplierid和skuid查询最新价格
+     */
+    public NewPriceDTO findNewPriceBySku(@Param("supplierId") String supplierId,@Param("skuId") String skuId) throws ServiceException;
+    
     
 }
