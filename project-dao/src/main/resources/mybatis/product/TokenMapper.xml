@@ -3,7 +3,6 @@
 <mapper namespace="com.shangpin.iog.product.dao.TokenMapper">
 
 	<resultMap id="tokenMap" type="iog_token">
-		<id column="ID" property="id" />
         <result column="REFRESH_TOKEN" property="refreshToken" />
         <result column="ACCESS_TOKEN" property="accessToken" />
         <result column="CREATETIME" property="createDate" />
@@ -31,7 +30,7 @@
         ACCESS_TOKEN,
         CREATE_DATE,EXPIRETIME,SUPPLIERID)
         values(
-            #{id}, #{refreshToken}, #{accessToken}, #{createDate},#{expireTime},#{supplierId}
+            #{refreshToken}, #{accessToken}, #{createDate},#{expireTime},#{supplierId}
         )
     </insert>
 

@@ -5,13 +5,10 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.dto.TokenDTO;
-import com.shangpin.iog.forzieri.stock.dto.CsvDTO;
 import com.shangpin.iog.forzieri.stock.dto.NewAccessToken;
 import com.shangpin.iog.forzieri.stock.dto.RealStock;
-import com.shangpin.iog.forzieri.utils.DownloadAndReadCSV;
 import com.shangpin.iog.service.TokenService;
 
-import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -21,7 +18,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -74,7 +70,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 		Iterator<String> it = skuNo.iterator();
 		while (it.hasNext()) {
 			String skuId = it.next();
-			//TODO 用access_token 和 skuid获取实时数据 ，得到stock
+			// 用access_token 和 skuid获取实时数据 ，得到stock
 //			GetMethod getMethod = new GetMethod("https://api.forzieri.com/test/products/"+skuId);//测试
 			GetMethod getMethod = new GetMethod("https://api.forzieri.com/v2/products/"+skuId);
 			getMethod.setRequestHeader("Authorization", "Bearer "+accessToken);
@@ -93,7 +89,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 			}else if (httpCode==401) {
 				//access_token过期
 				//刷新Token,更改刷新后的数据库,
-				//TODO 存入map
+				// 存入map
 				logger.info("accessToken过期");
 //				PostMethod postMethod = new PostMethod("https://api.forzieri.com/test/oauth/token");//测试
 				PostMethod postMethod = new PostMethod("https://api.forzieri.com/v2/oauth/token");
