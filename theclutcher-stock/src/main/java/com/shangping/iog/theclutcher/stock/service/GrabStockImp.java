@@ -33,7 +33,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 	private static ResourceBundle bdl = null;
 	private static String supplierId = "";
 	private static String fileName = "feedShangpin.zip";
-	private static String urlStr = "https://www.theclutcher.com/en-US/home/feedShangpin";
+	private static String urlStr ;
 
 	private static String localPathDefault = ""; //
 
@@ -42,6 +42,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			bdl = ResourceBundle.getBundle("sop");
 		supplierId = bdl.getString("supplierId");
 		localPathDefault = bdl.getString("local.filePath");
+		urlStr = bdl.getString("url");
 	}
 
 	public Map<String, Integer> grabStock(Collection<String> skuNos)
@@ -62,24 +63,20 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		try {
 			
 			Rss rss = null;
-			try{
-				// 下载
-				File zipFile = DownloadFileFromNet.downLoad(urlStr, fileName,
-						localPath);
-				// 解压
-				File xmlFile = UNZIPFile.unZipFile(zipFile, localPath);
-				// 读取文件
-				String result = DownloadFileFromNet.file2Striing(xmlFile);
-				rss= XMLUtil.gsonXml2Obj(Rss.class, result);
+
+			// 下载
+			File zipFile = DownloadFileFromNet.downLoad(urlStr, fileName,
+					localPath);
+			// 解压
+			File xmlFile = UNZIPFile.unZipFile(zipFile, localPath);
+			// 读取文件
+			String result = DownloadFileFromNet.file2Striing(xmlFile);
+			rss= XMLUtil.gsonXml2Obj(Rss.class, result);
 				
-			}catch(Exception e){
-				loggerError.error(e.getMessage());
-				e.printStackTrace();
-				System.exit(0);
-			}
+
 			
 			if (rss == null || rss.getChannel() == null) {
-				System.exit(0);
+				return  skuStock;
 			}
 
 			try {
