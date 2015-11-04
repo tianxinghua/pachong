@@ -9,7 +9,9 @@ dependencies {
             "javax.mail:mail:1.4.7",
             "org.apache.ws.commons.axiom:axiom-api:1.2.15",
             "org.apache.ws.commons.axiom:axiom-impl:1.2.15",
-            project(':project-common')
+            "com.google.code.gson:gson:2.3.1",
+            project(':project-common'),
+            project(':iog-common-product')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
