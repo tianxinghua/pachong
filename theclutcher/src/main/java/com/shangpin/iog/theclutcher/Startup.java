@@ -33,7 +33,7 @@ public class Startup {
         //1.拉取数据
 		//2.获取文件内容，解析xml，并且将信息保存入库
 		FetchProduct fetchProduct = (FetchProduct)factory.getBean("theclutcher");
-		fetchProduct.fetchProductAndSave("http://www.theclutcher.com/en-US/home/feedShangpin",
+		fetchProduct.fetchProductAndSave("https://www.theclutcher.com/en-US/home/feedShangpin",
 										"feedShangpin.zip");
 		System.out.println("-------fetch end---------");
 

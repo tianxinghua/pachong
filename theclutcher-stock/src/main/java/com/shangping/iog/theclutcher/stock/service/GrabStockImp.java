@@ -33,7 +33,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 	private static ResourceBundle bdl = null;
 	private static String supplierId = "";
 	private static String fileName = "feedShangpin.zip";
-	private static String urlStr = "http://www.theclutcher.com/en-US/home/feedShangpin";
+	private static String urlStr = "https://www.theclutcher.com/en-US/home/feedShangpin";
 
 	private static String localPathDefault = ""; //
 
