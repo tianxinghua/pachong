@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,112 +54,116 @@ public class FechProduct {
 			JSONArray array = jsonObj.getJSONArray("value");
 			for(int i=0;i<array.size();i++){
 				JSONObject obj = array.getJSONObject(i);
-				
-				String categoryName = obj.getString("Classification");
-				String brandName = obj.getString("Brand");
-				String categoryGender = "";
-				String material = "";
-				
-				String skuId = obj.getString("Sku");
+				String marketPrice = obj.getString("BuyItNowPrice");
 				String stock = obj.getString("TotalAvailableQuantity");
-				String color = "";
-				String productName = "";
-				String productCode = "";
-				String productSize = "";
-				
-				String id = obj.getString("ID");
-				String attributeUrl = "https://api.channeladvisor.com/v1/Products("+id+")/Attributes?access_token="+access_token;
-				String attributes = HttpUtil45.get(attributeUrl, timeConfig, null);
-				JSONObject attrObj = JSONObject.fromObject(attributes);
-				JSONArray attrArr = attrObj.getJSONArray("value");
-				
-				for(int j=0;j<attrArr.size();j++){
-					JSONObject attr= attrArr.getJSONObject(j);
-					switch (attr.getString("Name")) {
-					case "Color":
-						color = attr.getString("Value");
-						break;
-					case "ebay title":
-						productName = attr.getString("Value");
-						break;
-					case "Size":
-						productSize = attr.getString("Value");
-						break;				
-					case "Gender":
-						categoryGender = attr.getString("Value");
-						break;
-					case "Material":
-						material = attr.getString("Value");
-						break;
-					case "UPC":
-						productCode = attr.getString("Value");
-					default:
-						break;
+				//只有BuyItNowPrice不为空以及TotalAvailableQuantity不为空时才能入库
+				if(!marketPrice.equals("null") && StringUtils.isNotBlank(marketPrice)&& !stock.equals("null") && StringUtils.isNotBlank(stock)){
+					String categoryName = obj.getString("Classification");
+					String brandName = obj.getString("Brand");
+					String categoryGender = "";
+					String material = "";
+					
+					String skuId = obj.getString("Sku");
+					String color = "";
+					String productName = "";
+					String productCode = "";
+					String productSize = "";
+					
+					String id = obj.getString("ID");
+					String attributeUrl = "https://api.channeladvisor.com/v1/Products("+id+")/Attributes?access_token="+access_token;
+					String attributes = HttpUtil45.get(attributeUrl, timeConfig, null);
+					JSONObject attrObj = JSONObject.fromObject(attributes);
+					JSONArray attrArr = attrObj.getJSONArray("value");
+					
+					for(int j=0;j<attrArr.size();j++){
+						JSONObject attr= attrArr.getJSONObject(j);
+						switch (attr.getString("Name")) {
+						case "Color":
+							color = attr.getString("Value");
+							break;
+						case "ebay title":
+							productName = attr.getString("Value");
+							break;
+						case "Size":
+							productSize = attr.getString("Value");
+							break;				
+						case "Gender":
+							categoryGender = attr.getString("Value");
+							break;
+						case "Material":
+							material = attr.getString("Value");
+							break;
+						case "UPC":
+							productCode = attr.getString("Value");
+						default:
+							break;
+						}
 					}
+					//图片
+					String picUrl = "https://api.channeladvisor.com/v1/Products("+id+")/Images?access_token="+access_token;
+					String pics = HttpUtil45.get(picUrl, timeConfig, null);
+					JSONArray picArr = JSONObject.fromObject(pics).getJSONArray("value");
+					for(int k=0;k<picArr.size();k++){
+						ProductPictureDTO dto = new ProductPictureDTO();
+						dto.setId(UUIDGenerator.getUUID());
+						dto.setPicUrl(picArr.getJSONObject(k).getString("Url"));
+						dto.setSkuId(skuId);
+						dto.setSpuId(id);
+						dto.setSupplierId(supplierId);
+						try {
+		                    productFetchService.savePictureForMongo(dto);
+		                } catch (ServiceException e) {
+		                	logError.error(e.getMessage());
+		                    e.printStackTrace();
+		                }
+					}
+					
+					//入库sku
+					SkuDTO sku = new SkuDTO();
+		            sku.setId(UUIDGenerator.getUUID());
+		            sku.setSupplierId(supplierId);
+		            sku.setSkuId(skuId);
+		            sku.setSpuId(id);
+		            sku.setColor(color);
+		            sku.setProductCode(productCode);
+		            sku.setProductName(productName);
+		            sku.setProductSize(productSize);
+		            sku.setStock(stock);
+		            sku.setSupplierId(supplierId);
+		            sku.setMarketPrice(marketPrice);
+		            sku.setSaleCurrency("USD");
+		            try {
+		                productFetchService.saveSKU(sku);
+		            } catch (ServiceException e) {
+		                try {
+		                    if (e.getMessage().equals("数据插入失败键重复")) {
+		                        //更新价格和库存
+		                        productFetchService.updatePriceAndStock(sku);
+		                    } else {
+		                        e.printStackTrace();
+		                    }
+		                } catch (ServiceException e1) {
+		                	logError.error(e1.getMessage());
+		                    e1.printStackTrace();
+		                }
+		            }
+		            
+		            //入库spu
+		            SpuDTO spu = new SpuDTO();
+		            spu.setId(UUIDGenerator.getUUID());
+		            spu.setSpuId(id);
+		            spu.setSupplierId(supplierId);
+		            spu.setBrandName(brandName);
+		            spu.setCategoryGender(categoryGender);
+		            spu.setCategoryName(categoryName);
+		            spu.setMaterial(material);
+		            try {
+		                productFetchService.saveSPU(spu);
+		            } catch (ServiceException e) {
+		            	logError.error(e.getMessage());
+		                e.printStackTrace();
+		            }
 				}
-				//图片
-				String picUrl = "https://api.channeladvisor.com/v1/Products("+id+")/Images?access_token="+access_token;
-				String pics = HttpUtil45.get(picUrl, timeConfig, null);
-				JSONArray picArr = JSONObject.fromObject(pics).getJSONArray("value");
-				for(int k=0;k<picArr.size();k++){
-					ProductPictureDTO dto = new ProductPictureDTO();
-					dto.setId(UUIDGenerator.getUUID());
-					dto.setPicUrl(picArr.getJSONObject(k).getString("Url"));
-					dto.setSkuId(skuId);
-					dto.setSpuId(id);
-					dto.setSupplierId(supplierId);
-					try {
-	                    productFetchService.savePictureForMongo(dto);
-	                } catch (ServiceException e) {
-	                    e.printStackTrace();
-	                }
-				}
-				
-				//入库sku
-				SkuDTO sku = new SkuDTO();
-	            sku.setId(UUIDGenerator.getUUID());
-	            sku.setSupplierId(supplierId);
-	            sku.setSkuId(skuId);
-	            sku.setSpuId(id);
-	            sku.setColor(color);
-	            sku.setProductCode(productCode);
-	            sku.setProductName(productName);
-	            sku.setProductSize(productSize);
-	            sku.setStock(stock);
-	            sku.setSupplierId(supplierId);
-	            sku.setSupplierPrice("");
-	            sku.setSaleCurrency("USD");
-	            try {
-	                productFetchService.saveSKU(sku);
-	            } catch (ServiceException e) {
-	                try {
-	                    if (e.getMessage().equals("数据插入失败键重复")) {
-	                        //更新价格和库存
-	                        productFetchService.updatePriceAndStock(sku);
-	                    } else {
-	                        e.printStackTrace();
-	                    }
-	                } catch (ServiceException e1) {
-	                	logError.error(e1.getMessage());
-	                    e1.printStackTrace();
-	                }
-	            }
-	            
-	            //入库spu
-	            SpuDTO spu = new SpuDTO();
-	            spu.setId(UUIDGenerator.getUUID());
-	            spu.setSpuId(id);
-	            spu.setSupplierId(supplierId);
-	            spu.setBrandName(brandName);
-	            spu.setCategoryGender(categoryGender);
-	            spu.setCategoryName(categoryName);
-	            spu.setMaterial(material);
-	            try {
-	                productFetchService.saveSPU(spu);
-	            } catch (ServiceException e) {
-	            	logError.error(e.getMessage());
-	                e.printStackTrace();
-	            }
 	            
 			}
 			
