@@ -87,6 +87,13 @@ public class OrderImpl extends AbsOrderService {
             if(HttpUtil45.errorResult.equals(rtnData)){
             	return ;
             }
+            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+            if ("ko".equals(returnDataDTO.getStatus())){
+                deleteOrder.setExcState("1");
+                deleteOrder.setExcDesc(returnDataDTO.getMessages().toString());
+            } else {
+                deleteOrder.setStatus(OrderStatus.CANCELLED);
+            }
         } catch (ServiceException e) {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+updateOrder.getShopOrderId());
             deleteOrder.setExcState("1");
@@ -95,14 +102,6 @@ public class OrderImpl extends AbsOrderService {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+updateOrder.getShopOrderId());
             deleteOrder.setExcState("1");
             deleteOrder.setExcDesc(e.getMessage());
-        } finally {
-            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
-            if ("ko".equals(returnDataDTO.getStatus())){
-                deleteOrder.setExcState("1");
-                deleteOrder.setExcDesc(returnDataDTO.getMessages().toString());
-            } else {
-                deleteOrder.setStatus(OrderStatus.CANCELLED);
-            }
         }
     }
    
@@ -201,8 +200,7 @@ public class OrderImpl extends AbsOrderService {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
             orderDTO.setExcState("1");
             orderDTO.setExcDesc(e.getMessage());
-        } finally {
-        }
+        } 
     }
     /**
      * 获取订单信息
