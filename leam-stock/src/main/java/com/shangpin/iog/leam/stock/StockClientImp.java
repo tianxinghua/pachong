@@ -130,7 +130,7 @@ public class StockClientImp  extends AbsUpdateProductStock {
     }
     public static void main(String[] args) throws Exception {
         StockClientImp impl = new StockClientImp();
-
+//
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("LEAM更新数据库开始");
 //        StockClientImp.supplierSkuIdMain=true;
@@ -138,5 +138,9 @@ public class StockClientImp  extends AbsUpdateProductStock {
 //        impl.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
         logger.info("LEAM更新数据库结束");
         System.exit(0);
+
+
+//        impl.getSkus("http://188.226.153.91/modules/api/v2/stock/");
+
     }
 }

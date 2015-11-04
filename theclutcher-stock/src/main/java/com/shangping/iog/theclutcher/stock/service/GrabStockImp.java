@@ -39,7 +39,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
 	static {
 		if (null == bdl)
-			bdl = ResourceBundle.getBundle("conf");
+			bdl = ResourceBundle.getBundle("sop");
 		supplierId = bdl.getString("supplierId");
 		localPathDefault = bdl.getString("local.filePath");
 	}
@@ -91,7 +91,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
 					String skuId = item.getId() +"-"+ size; // 接口中g:id是spuId,对应不同尺码
 					String stock = item.getAvailability();
-					stockMap.put(skuId, Integer.parseInt(stock));
+					try {
+						stockMap.put(skuId, Integer.parseInt(stock));
+					} catch (NumberFormatException e) {
+						stockMap.put(skuId, 0);
+					}
 					logger.info(" skuId =" + skuId + ",stock ="+stock );
 					
 				}
