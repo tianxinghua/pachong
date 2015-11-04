@@ -115,6 +115,54 @@ public class OrderImpl extends AbsOrderService {
 
     }
 
+  
+    /**
+     * 在线推送订单:
+     * status未支付：锁库存						
+     * status已支付：推单
+     */
+    private void createOrder(String status,OrderDTO orderDTO){
+    	
+        //获取订单信息
+        PushOrderDTO order = getOrder(status,orderDTO);
+        Gson gson = new Gson();
+        String json = gson.toJson(order,PushOrderDTO.class);
+        System.out.println("request json == "+json);
+        String rtnData = null;
+        logger.info("推送的数据："+json);
+        System.out.println("rtnData=="+json);
+        try {
+                rtnData = HttpUtil45.operateData("post", "json",  Constant.url+"createOrder", null, null, json, "", "");
+                //{"error":"发生异常错误"}
+                logger.info("推送"+status+"订单返回结果=="+rtnData);
+                System.out.println("推送订单返回结果=="+rtnData);
+                if(HttpUtil45.errorResult.equals(rtnData)){
+                	orderDTO.setExcState("1");
+                    orderDTO.setExcDesc(rtnData);
+                	return ;
+                }
+                logger.info("Response ：" + rtnData + ", shopOrderId:"+order.getShopOrderId());
+
+                ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+                if ("ko".equals(returnDataDTO.getStatus())){
+                    orderDTO.setExcState("1");
+                    orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
+                } else if (Constant.PENDING.equals(status)){
+                    orderDTO.setStatus(OrderStatus.PLACED);
+                } else if (Constant.CONFIRMED.equals(status)){
+                    orderDTO.setStatus(OrderStatus.CONFIRMED);
+                }
+        } catch (ServiceException e) {
+            loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
+            orderDTO.setExcState("1");
+            orderDTO.setExcDesc(e.getMessage());
+        } catch (Exception e) {
+            loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
+            orderDTO.setExcState("1");
+            orderDTO.setExcDesc(e.getMessage());
+        } finally {
+        }
+    }
     /**
      * 获取订单信息
      */
@@ -161,37 +209,24 @@ public class OrderImpl extends AbsOrderService {
         double fees = 0;
         shippingInfo.setFees(String.valueOf(fees));
         //地址写死就行
-        AddressDTO shippingAddress = new AddressDTO();
-        shippingAddress.setFirstname("Filippo ");
-        shippingAddress.setLastname("Troina");
-        shippingAddress.setCompanyname("Genertec Italia S.r.l.");
-        shippingAddress.setStreet("VIA G.LEOPARDI 27");	
-        shippingAddress.setHn("22075 ");
-        shippingAddress.setZip("22075");
-        shippingAddress.setCity("LURATE CACCIVIO ");
-        shippingAddress.setProvince("como");
-        shippingAddress.setState("Italy");
-        shippingInfo.setAddress(shippingAddress);
-        
+        AddressDTO address = new AddressDTO();
+        address.setFirstname("Filippo ");
+        address.setLastname("Troina");
+        address.setCompanyname("Genertec Italia S.r.l.");
+        address.setStreet("VIA G.LEOPARDI 27");	
+        address.setHn("22075 ");
+        address.setZip("22075");
+        address.setCity("LURATE CACCIVIO ");
+        address.setProvince("como");
+        address.setState("Italy");
+        shippingInfo.setAddress(address);
         
         BillingInfoDTO billingInfo = new BillingInfoDTO();
         //fees and the orderTotalPrice
         billingInfo.setTotal(totalPrice+fees);
         //1:PayPal,2:postal order,3:bank check,4:Visa / Mastercard credit card,5:American Express credit card,6:cash on delivery,7:bank transfer
         billingInfo.setPaymentMethod(7);
-        AddressDTO billingAddress = new AddressDTO();
-        billingAddress.setFirstname("Filippo");
-        billingAddress.setLastname("Troina");
-        billingAddress.setCompanyname("Genertec Italia S.r.l.");
-        billingAddress.setStreet("VIA G.LEOPARDI 27");
-        billingAddress.setHn("11 ");
-        billingAddress.setZip("22075 ");
-        billingAddress.setCity("LURATE CACCIVIO");
-        billingAddress.setProvince("como");
-        billingAddress.setState("Italy");
-        billingInfo.setAddress(billingAddress);
-        
-        
+        billingInfo.setAddress(address);
         
         PushOrderDTO order = new PushOrderDTO();
         order.setMerchantId(Constant.MERCHANT_ID); 
@@ -206,66 +241,6 @@ public class OrderImpl extends AbsOrderService {
         order.setBillingInfo(billingInfo);
         return  order;
     }
-    /**
-     * 在线推送订单:
-     * status未支付：锁库存						
-     * status已支付：推单
-     */
-    private void createOrder(String status,OrderDTO orderDTO){
-    	
-        //获取订单信息
-        PushOrderDTO order = getOrder(status,orderDTO);
-        Gson gson = new Gson();
-        String json = gson.toJson(order,PushOrderDTO.class);
-        System.out.println("request json == "+json);
-        String rtnData = null;
-        logger.info("推送的数据："+json);
-        System.out.println("rtnData=="+json);
-        try {
-                rtnData = HttpUtil45.operateData("post", "json", Constant.url+"createOrder", null, null, json, "", "");
-                //{"error":"发生异常错误"}
-                logger.info("推送"+status+"订单返回结果=="+rtnData);
-                System.out.println("推送订单返回结果=="+rtnData);
-                if(HttpUtil45.errorResult.equals(rtnData)){
-                	return ;
-                }
-                logger.info("Response ：" + rtnData + ", shopOrderId:"+order.getShopOrderId());
-        } catch (ServiceException e) {
-            loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
-            orderDTO.setExcState("1");
-            orderDTO.setExcDesc(e.getMessage());
-        } catch (Exception e) {
-            loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
-            orderDTO.setExcState("1");
-            orderDTO.setExcDesc(e.getMessage());
-        } finally {
-            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
-            if ("ko".equals(returnDataDTO.getStatus())){
-                orderDTO.setExcState("1");
-                orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
-            } else if (Constant.PENDING.equals(status)){
-                orderDTO.setStatus(OrderStatus.PLACED);
-            } else if (Constant.CONFIRMED.equals(status)){
-                orderDTO.setStatus(OrderStatus.CONFIRMED);
-            }
-        }
-    }
-    public static void main(String[] args){
-        OrderImpl  orderService = new OrderImpl();
-
-//        orderService.test(new ReturnOrderDTO());
-
-//        Map<String,List<PurchaseOrderDetail>> orderMap =  new HashMap<>();
-//        List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
-//        PurchaseOrderDetail  purchaseOrderDetail = new PurchaseOrderDetail();
-//        purchaseOrderDetails.add(purchaseOrderDetail);
-//        orderMap.put("",purchaseOrderDetails);
-//
-//        orderService.transData("https://api-sandbox.gilt.com/global/orders/","",null);
-
-
-    }
-
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
 		// TODO Auto-generated method stub
