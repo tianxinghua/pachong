@@ -1,4 +1,4 @@
-package com.shangpin.iog.tony.purchase.schedule;
+package com.shangpin.iog.forzieri.schedule;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,7 +6,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.stereotype.Component;
 
 /**
  *
@@ -22,6 +21,9 @@ import org.springframework.stereotype.Component;
 
 public class AppContext {
     final static Logger log = LoggerFactory.getLogger(AppContext.class);
+
+
+
 
 }
 

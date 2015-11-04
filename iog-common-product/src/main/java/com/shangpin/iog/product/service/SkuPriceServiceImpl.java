@@ -111,6 +111,33 @@ public class SkuPriceServiceImpl implements SkuPriceService {
     	supMap.put(supplierId, skuMap);
     	return supMap;
     }
+    @Override
+    public Map<String, Map<String, String>> getNewSkuPriceBySku(
+    		String supplierId, String skuId) throws ServiceException {
+    	StringBuffer sb = new StringBuffer();
+    	Map<String,Map<String,String>> supMap = new HashMap<String,Map<String,String>>();
+    	Map<String,String> skuMap = new HashMap<String, String>();
+    	NewPriceDTO newPriceDTO = null;
+		try {
+			newPriceDTO = skuDAO.findNewPriceBySku(supplierId, skuId);
+		} catch (Exception e) {
+            logger.error("获取失败 "+e.getMessage());
+			e.printStackTrace();
+		}
+		if (null!=newPriceDTO.getNewMarketPrice()) {
+			sb.append(newPriceDTO.getNewMarketPrice()).append("|");
+		}else {
+			sb.append(newPriceDTO.getMarketPrice()==null?"-1":newPriceDTO.getMarketPrice()).append("|");
+		}
+		if (null!=newPriceDTO.getNewSupplierPrice()) {
+			sb.append(newPriceDTO.getNewSupplierPrice());
+		}else {
+			sb.append(newPriceDTO.getSupplierPrice()==null?"-1":newPriceDTO.getSupplierPrice());
+		}
+		skuMap.put(newPriceDTO.getSkuId(), sb.toString());
+    	supMap.put(supplierId, skuMap);
+    	return supMap;
+    }
 
 	@Override
 	public SkuDTO findSupplierPrice(String supplierId, String skuId)
@@ -125,4 +152,5 @@ public class SkuPriceServiceImpl implements SkuPriceService {
 		}
 		return sku;
 	}
+
 }

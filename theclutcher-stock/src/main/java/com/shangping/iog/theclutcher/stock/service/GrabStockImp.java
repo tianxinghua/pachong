@@ -60,17 +60,26 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		Map<String, Integer> skuStock = new HashMap<>();
 		Map<String, Integer> stockMap = new HashMap<>();
 		try {
-			// 下载
-			File zipFile = DownloadFileFromNet.downLoad(urlStr, fileName,
-					localPath);
-			// 解压
-			File xmlFile = UNZIPFile.unZipFile(zipFile, localPath);
-			// 读取文件
-			String result = DownloadFileFromNet.file2Striing(xmlFile);
-			Rss rss = XMLUtil.gsonXml2Obj(Rss.class, result);
-
+			
+			Rss rss = null;
+			try{
+				// 下载
+				File zipFile = DownloadFileFromNet.downLoad(urlStr, fileName,
+						localPath);
+				// 解压
+				File xmlFile = UNZIPFile.unZipFile(zipFile, localPath);
+				// 读取文件
+				String result = DownloadFileFromNet.file2Striing(xmlFile);
+				rss= XMLUtil.gsonXml2Obj(Rss.class, result);
+				
+			}catch(Exception e){
+				loggerError.error(e.getMessage());
+				e.printStackTrace();
+				System.exit(0);
+			}
+			
 			if (rss == null || rss.getChannel() == null) {
-				return skuStock;
+				System.exit(0);
 			}
 
 			try {

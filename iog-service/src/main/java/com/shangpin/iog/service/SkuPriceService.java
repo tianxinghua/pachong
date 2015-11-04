@@ -48,4 +48,10 @@ public interface SkuPriceService {
      * @throws ServiceException
      */
     public SkuDTO findSupplierPrice(String supplierId,String skuId) throws ServiceException;
+    /**
+     *  通过sku，supplierid获取最新价格
+     */
+    public Map<String,Map<String,String>> getNewSkuPriceBySku(String supplierId,String skuId) throws ServiceException;
+    
+    
 }
