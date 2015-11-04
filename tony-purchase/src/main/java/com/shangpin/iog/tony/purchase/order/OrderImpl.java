@@ -106,6 +106,47 @@ public class OrderImpl extends AbsOrderService {
         }
     }
    
+	@Override
+	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
+		
+		UpdateOrderStatusDTO updateOrder = new UpdateOrderStatusDTO();
+        updateOrder.setMerchantId(Constant.MERCHANT_ID);
+        updateOrder.setToken(Constant.TOKEN);
+        updateOrder.setShopOrderId(deleteOrder.getSpOrderId());
+        updateOrder.setStatus(Constant.CANCELED);
+                updateOrder.setStatusDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+        Gson gson = new Gson();
+        String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);
+        System.out.println("退款订单推送的 json数据： "+json);
+        logger.info("退款订单推送的 json数据："+json);
+        String rtnData = null;
+        try {
+            rtnData = HttpUtil45.operateData("post", "json", Constant.url+"updateOrderStatus", null, null, json, "", "");
+            System.out.println("退款订单返回的结果："+rtnData);
+            logger.info("退款订单返回的结果："+rtnData);
+            if(HttpUtil45.errorResult.equals(rtnData)){
+            	return ;
+            }
+            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+            if ("ko".equals(returnDataDTO.getStatus())){
+                deleteOrder.setExcState("1");
+                deleteOrder.setExcDesc(returnDataDTO.getMessages().toString());
+            } else {
+            	deleteOrder.setExcState("0");
+                deleteOrder.setStatus(OrderStatus.REFUNDED);
+            }
+        } catch (ServiceException e) {
+            loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+updateOrder.getShopOrderId());
+            deleteOrder.setExcState("1");
+            deleteOrder.setExcDesc(e.getMessage());
+        } catch (Exception e) {
+            loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+updateOrder.getShopOrderId());
+            deleteOrder.setExcState("1");
+            deleteOrder.setExcDesc(e.getMessage());
+        } 
+		
+	}
+	 
     /**
      * String:尚品skuNo
      * String:组装后的skuNo
@@ -241,12 +282,7 @@ public class OrderImpl extends AbsOrderService {
         order.setBillingInfo(billingInfo);
         return  order;
     }
-	@Override
-	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
-		// TODO Auto-generated method stub
-		
-	}
-	 
+
 	@Override
 	public void handleEmail(OrderDTO orderDTO) {
 		// TODO Auto-generated method stub
