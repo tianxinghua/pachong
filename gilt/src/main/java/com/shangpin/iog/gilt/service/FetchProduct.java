@@ -37,6 +37,7 @@ public class FetchProduct {
     private static String supplierId;
     private static String key ;
     private static String url;
+    private static String downloadpic;
 
 
     static {
@@ -45,6 +46,7 @@ public class FetchProduct {
         supplierId = bdl.getString("supplierId");
         key = bdl.getString("key");
         url = bdl.getString("url");
+        downloadpic = bdl.getString("downloadpic");
     }
     @Autowired
     ProductFetchService productFetchService;
@@ -272,7 +274,9 @@ public class FetchProduct {
                     try{
                         productFetchService.savePictureForMongo(productPictureDTO);
                         fileName = giltSkuDTO.getId()+"-"+String.valueOf(j)+".jpg";
-                        HttpUtil45.getPicture(picUrl, fileName, timeConfig, null);
+                        if (downloadpic.equals("1")) {
+                        	HttpUtil45.getPicture(picUrl, fileName, timeConfig, null);
+						}
                     }catch (ServiceException e){
                         e.printStackTrace();
                         loggerError.error("保存图片失败：" +  e.getMessage());

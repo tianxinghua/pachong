@@ -22,7 +22,7 @@ public class CsvDTO {
 	private String COL_ID;
 	private String COL_DES;
 	private String REF;
-//	private String VSO;
+	private String VSO;
 	private String EUR;
 	private String TG;
 	private String QTY;
