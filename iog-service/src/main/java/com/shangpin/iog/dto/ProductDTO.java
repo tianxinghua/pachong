@@ -76,7 +76,10 @@ public class ProductDTO {
     //活动时间添加
     private Date eventStartTime;
     private Date eventEndTime;
-    
+    //新的市场价 销售价 供货价添加
+    private String newMarketPrice;
+    private String newSalePrice;
+    private String newSupplierPrice;
     public String getId() {
         return id;
     }
@@ -444,6 +447,30 @@ public class ProductDTO {
 
 	public void setEventEndTime(Date eventEndTime) {
 		this.eventEndTime = eventEndTime;
+	}
+
+	public String getNewMarketPrice() {
+		return newMarketPrice;
+	}
+
+	public void setNewMarketPrice(String newMarketPrice) {
+		this.newMarketPrice = newMarketPrice;
+	}
+
+	public String getNewSalePrice() {
+		return newSalePrice;
+	}
+
+	public void setNewSalePrice(String newSalePrice) {
+		this.newSalePrice = newSalePrice;
+	}
+
+	public String getNewSupplierPrice() {
+		return newSupplierPrice;
+	}
+
+	public void setNewSupplierPrice(String newSupplierPrice) {
+		this.newSupplierPrice = newSupplierPrice;
 	}
     
 }
