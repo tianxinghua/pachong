@@ -175,8 +175,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 "ProductColor 颜色" + splitSign + "color 中文" + splitSign + "ProductSize 尺码" + splitSign + "material 材质" + splitSign + "material 中文材质" + splitSign+
                 "ProductOrigin 产地" + splitSign+"productUrl1" + splitSign+ "productUrl2" + splitSign + "productUrl3" + splitSign + "productUrl4"+ splitSign + "productUrl5" + splitSign +
                 "productUrl6" + splitSign + "productUrl7"  + splitSign + "productUrl8" + splitSign + "productUrl9" + splitSign +
-                "PcDesc 描述" +  splitSign + "Stock 库存" + splitSign + "markerPrice" + splitSign  + "sallPrice" +  splitSign  + "supplier Price 进货价" + splitSign+
-                "Currency 币种" + splitSign + "上市季节"+splitSign+"活动开始时间"+splitSign+"活动结束时间"+splitSign+"新市场价"+splitSign+"新销售价"+splitSign+"新进货价").append("\r\n");
+                "PcDesc 描述" +  splitSign + "Stock 库存" +splitSign+"新市场价"+splitSign+"新销售价"+splitSign+"新进货价"+ splitSign + "markerPrice" + splitSign  + "sallPrice" +  splitSign  + "supplier Price 进货价" + splitSign+
+                "Currency 币种" + splitSign + "上市季节"+splitSign+"活动开始时间"+splitSign+"活动结束时间").append("\r\n");
         Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize);
 
         //设置尚品网品牌
@@ -330,6 +330,11 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 
                 buffer.append(dto.getStock()).append(splitSign) ;
+                //新的价格
+                buffer.append(null == dto.getNewMarketPrice() ? " ": dto.getNewMarketPrice()).append(splitSign);
+                buffer.append(null == dto.getNewSalePrice() ? " ": dto.getNewSalePrice()).append(splitSign);
+                buffer.append(null == dto.getNewSupplierPrice() ? " ": dto.getNewSupplierPrice()).append(splitSign);
+                
                 String marketPrice = dto.getMarketPrice();
                 String salePrice = dto.getSalePrice();
                 String supplierPrice = dto.getSupplierPrice();
@@ -359,11 +364,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 //活动开始时间
                 buffer.append(null == dto.getEventStartTime() ? " ": dto.getEventStartTime()).append(splitSign);
                 //活动结束时间
-                buffer.append(null == dto.getEventEndTime() ? " ": dto.getEventEndTime()).append(splitSign);
-                //新的价格
-                buffer.append(null == dto.getNewMarketPrice() ? " ": dto.getNewMarketPrice()).append(splitSign);
-                buffer.append(null == dto.getNewSalePrice() ? " ": dto.getNewSalePrice()).append(splitSign);
-                buffer.append(null == dto.getNewSupplierPrice() ? " ": dto.getNewSupplierPrice());
+                buffer.append(null == dto.getEventEndTime() ? " ": dto.getEventEndTime());
+             
                 buffer.append("\r\n");
             } catch (Exception e) {
                 logger.debug(dto.getSkuId()+"拉取失败"+  e.getMessage());
