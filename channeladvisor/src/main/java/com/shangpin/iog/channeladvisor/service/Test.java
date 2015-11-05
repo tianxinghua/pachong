@@ -86,6 +86,11 @@ public class Test {
 //			e.printStackTrace();
 //		}
 //	}
-	
+	@org.junit.Test
+	public void TTT(){
+		String url = "https://api.channeladvisor.com/v1/Products?access_token=rYCixQzMZEBEZMOtTUnnqYKu_A2Ef_x9Ch2CeO0m5uA&$skip=200";
+		url = url.replaceFirst(url.substring(url.indexOf("=")+1, url.indexOf("&")),"ppppppppppppppppp");
+		System.out.println(url);
+	}
 	
 }
