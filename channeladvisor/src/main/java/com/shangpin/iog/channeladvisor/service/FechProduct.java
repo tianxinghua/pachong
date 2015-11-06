@@ -200,10 +200,10 @@ public class FechProduct {
 				try{
 					url = jsonObj.getString("@odata.nextLink");
 					System.out.println(url);
-					System.out.println("------------------100------------------");
 				}catch(Exception ex){
 					logError.error(ex.getMessage());
 					System.out.println("-------------------最后一页啦-----------------");
+					break;
 				}
 				
 			}

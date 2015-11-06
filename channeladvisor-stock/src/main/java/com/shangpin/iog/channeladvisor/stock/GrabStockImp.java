@@ -61,7 +61,15 @@ public class GrabStockImp extends AbsUpdateProductStock{
 					stockMap.put(skuId, stock);
 				}
 			}
-			url = jsonObj.getString("@odata.nextLink");
+			try{
+				
+				url = jsonObj.getString("@odata.nextLink");
+			}catch(Exception ex){
+				logError.error(ex.getMessage());
+				System.out.println("--------------------最后一页------------------");
+				break;
+			}
+			
 		}
 		for (String skuno : skuNo) {
             if(stockMap.containsKey(skuno)){
