@@ -30,8 +30,8 @@ public class FetchProduct {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
-    static String skuUrl="http://188.226.153.91/modules/api/v2/stock/";//请求sku地址
-    static String tokenUrl="http://188.226.153.91/modules/api/v2/getToken/";
+    static String skuUrl="";//http://188.226.153.91/modules/api/v2/stock/";//请求sku地址
+    static String tokenUrl="";//http://188.226.153.91/modules/api/v2/getToken/";
     static String user="shamping";
     static String password="PA#=k2xU^ddUc6Jm";
     private static ResourceBundle bdl=null;
@@ -41,6 +41,8 @@ public class FetchProduct {
         if(null==bdl)
             bdl= ResourceBundle.getBundle("conf");
             supplierId = bdl.getString("supplierId");
+        tokenUrl = bdl.getString("token");
+        skuUrl=bdl.getString("skuUrl");
     }
     public void fetchProductAndSave(String url){
         List<LeamDTO> list=getSkus(skuUrl);
@@ -148,7 +150,7 @@ public class FetchProduct {
         logger.info("无库存数据 ="+ stockNum);
         logger.info("无图片数据 ="+ picNum);
     }
-    private static List<LeamDTO> getSkus(String url){
+    public  static List<LeamDTO> getSkus(String url){
         List<LeamDTO>list = new ArrayList<>();
         String result="";
         String token="";
@@ -220,6 +222,9 @@ public class FetchProduct {
                 "    scope = orders inventory &\n" +
                 "    redirect_uri = https://49.213.13.167:8443/iog/download/code",new OutTimeConfig(1000*60,1000*60,1000*60),null);
         System.out.println("kkk = " + kkk);*/
+        FetchProduct product = new FetchProduct();
+        product.getSkus(skuUrl);
+
     }
 
 }
