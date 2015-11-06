@@ -174,12 +174,22 @@ public class OrderImpl extends AbsOrderService {
             System.out.println("支付订单返回的结果："+rtnData);
             logger.info("支付订单返回的结果："+rtnData);
             if(HttpUtil45.errorResult.equals(rtnData)){
+            	orderDTO.setExcState("1");
+            	orderDTO.setExcDesc(rtnData);
             	return ;
             }
             ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
             if ("ko".equals(returnDataDTO.getStatus())){
-            	orderDTO.setExcState("1");
+            	orderDTO.setExcState("0");
             	orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
+            	String result = setPurchaseOrderExc(orderDTO);
+				if("-1".equals(result)){
+					orderDTO.setStatus(OrderStatus.NOHANDLE);
+				}else if("1".equals(result)){
+					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+				}else if("0".equals(result)){
+					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+				}
             } else {
             	orderDTO.setExcState("0");
             	orderDTO.setStatus(OrderStatus.CONFIRMED);
