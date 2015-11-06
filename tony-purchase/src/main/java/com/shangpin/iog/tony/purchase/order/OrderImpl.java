@@ -60,7 +60,8 @@ public class OrderImpl extends AbsOrderService {
     public void handleConfirmOrder(OrderDTO orderDTO) {
         //在线推送订单
     	orderDTO.setExcState("0");
-        createOrder(Constant.CONFIRMED,orderDTO);
+    	//createOrder(Constant.CONFIRMED,orderDTO);
+        updateOrder(Constant.CONFIRMED,orderDTO);
         //设置异常信息
     }
 
@@ -69,6 +70,7 @@ public class OrderImpl extends AbsOrderService {
      */
     @Override
     public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
+    	deleteOrder.setExcState("0");
         UpdateOrderStatusDTO updateOrder = new UpdateOrderStatusDTO();
         updateOrder.setMerchantId(Constant.MERCHANT_ID);
         updateOrder.setToken(Constant.TOKEN);
@@ -155,7 +157,43 @@ public class OrderImpl extends AbsOrderService {
 
     }
 
-  
+    private void updateOrder(String status,OrderDTO orderDTO){
+    	
+    	UpdateOrderStatusDTO updateOrder = new UpdateOrderStatusDTO();
+        updateOrder.setMerchantId(Constant.MERCHANT_ID);
+        updateOrder.setToken(Constant.TOKEN);
+        updateOrder.setShopOrderId(orderDTO.getSpOrderId());
+        updateOrder.setStatus(status);
+        updateOrder.setStatusDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+        Gson gson = new Gson();
+        String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);
+        logger.info("支付订单推送的 json数据："+json);
+        String rtnData = null;
+        try {
+            rtnData = HttpUtil45.operateData("post", "json", Constant.url+"updateOrderStatus", null, null, json, "", "");
+            System.out.println("支付订单返回的结果："+rtnData);
+            logger.info("支付订单返回的结果："+rtnData);
+            if(HttpUtil45.errorResult.equals(rtnData)){
+            	return ;
+            }
+            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+            if ("ko".equals(returnDataDTO.getStatus())){
+            	orderDTO.setExcState("1");
+            	orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
+            } else {
+            	orderDTO.setExcState("0");
+            	orderDTO.setStatus(OrderStatus.CONFIRMED);
+            }
+        } catch (ServiceException e) {
+            loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+updateOrder.getShopOrderId());
+            orderDTO.setExcState("1");
+            orderDTO.setExcDesc(e.getMessage());
+        } catch (Exception e) {
+            loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+updateOrder.getShopOrderId());
+            orderDTO.setExcState("1");
+            orderDTO.setExcDesc(e.getMessage());
+        } 
+    }
     /**
      * 在线推送订单:
      * status未支付：锁库存						
@@ -167,15 +205,14 @@ public class OrderImpl extends AbsOrderService {
         PushOrderDTO order = getOrder(status,orderDTO);
         Gson gson = new Gson();
         String json = gson.toJson(order,PushOrderDTO.class);
-        System.out.println("request json == "+json);
         String rtnData = null;
-        logger.info("推送的数据："+json);
-        System.out.println("rtnData=="+json);
+        logger.info("锁库存推送的数据："+json);
+        System.out.println("锁库存推送的数据=="+json);
         try {
                 rtnData = HttpUtil45.operateData("post", "json",  Constant.url+"createOrder", null, null, json, "", "");
                 //{"error":"发生异常错误"}
-                logger.info("推送"+status+"订单返回结果=="+rtnData);
-                System.out.println("推送订单返回结果=="+rtnData);
+                logger.info("锁库存推送"+status+"订单返回结果=="+rtnData);
+                System.out.println("锁库存推送订单返回结果=="+rtnData);
                 if(HttpUtil45.errorResult.equals(rtnData)){
                 	orderDTO.setExcState("1");
                     orderDTO.setExcDesc(rtnData);
