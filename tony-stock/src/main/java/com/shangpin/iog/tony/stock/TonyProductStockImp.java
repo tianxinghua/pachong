@@ -6,9 +6,12 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 
 
-
-
+//import com.shangpin.iog.tony.common.Constant;
+//import com.shangpin.iog.tony.common.MyJsonClient;
+//import com.shangpin.iog.tony.common.StringUtil;
+//import com.shangpin.iog.tony.dto.Items;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -16,6 +19,7 @@ import java.util.*;
 /**
  * Created by lizhongren on 2015/10/20.
  */
+@Service("tonyStockOld")
 public class TonyProductStockImp extends AbsUpdateProductStock {
 
 
@@ -28,7 +32,7 @@ public class TonyProductStockImp extends AbsUpdateProductStock {
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
 
 
-//        //获取数据
+        //获取数据
 //        String  itemsJson = jsonClient.httpPostOfJson(Constant.ITEMS_INPUT, Constant.ITEMS_URL);
 //        //解析数据
 //        Items[] array = new Gson().fromJson(new StringUtil().getItemsArray(itemsJson),
@@ -44,22 +48,23 @@ public class TonyProductStockImp extends AbsUpdateProductStock {
         //保存数据
         String skuId = "";
 
-        Map<String,String> map = new HashMap<>();
-        Map<String,String> sopMap =new HashMap<>();
-        for(String sku:skuNo){
-            sopMap.put(sku,"");
+        Map<String,String> stockmap = new HashMap<>();
+        Map<String,String> supplierMap =new HashMap<>();
 
-        }
 //        for(Items item:array){
-//            skuId = item.getSku();
-//            logger.info("sku = " + skuId + " quantity =  " + item.getQty());
-//            if(sopMap.containsKey(skuId)){
-//                logger.info("sopMap contains sku = " + skuId + " quantity =  " + item.getQty());
-//                map.put(skuId,item.getQty());
+//            supplierMap.put(item.getSku(),item.getQty());
+//        }
+//
+//        for(String sku:skuNo){
+//            if(supplierMap.containsKey(sku)){
+//                stockmap.put(sku,supplierMap.get(sku)) ;
+//            }else {
+//                stockmap.put(sku,"0");
 //            }
 //
+//
 //        }
-        return map;
+        return stockmap;
     }
 //
 //

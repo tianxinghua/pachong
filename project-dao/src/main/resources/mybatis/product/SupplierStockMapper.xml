@@ -71,6 +71,21 @@
   </where> 
  </select>
 
+ <select id="findByMap" parameterType="map" resultMap="resultMap">
+  select
+  <include refid="all_column"></include>
+  from SUPPLIER_STOCK
+  <where>
+   <if test="null!=supplierId">
+    SUPPLIER_ID = #{supplierId}
+   </if>
+   <if test="null!=skuNo">
+    and SUPPLIER_SKU_ID = #{skuNo}
+   </if>
+  </where>
+ </select>
+
+
  
  <select id="findAllSupplierStock" resultMap="resultMap">
   select

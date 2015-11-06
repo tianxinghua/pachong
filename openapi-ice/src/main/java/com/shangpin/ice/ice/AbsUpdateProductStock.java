@@ -402,6 +402,7 @@ public abstract class AbsUpdateProductStock {
 
 			String result = "",stockTemp="",priceResult="";
 			boolean sendMail=true;
+			logger.error("supplierSkuIdMain="+supplierSkuIdMain);
 			for (String skuNo : skuNos) {
 				stockTemp ="";
 				result =  supplierStock.get(skuNo);
@@ -479,7 +480,7 @@ public abstract class AbsUpdateProductStock {
 		} catch (Exception e1) {
 			logger.error("抓取库存失败:", e1);
 		}
-
+		logger.error("iceStock size =" + iceStock.size());
 		return iceStock;
 	}
 

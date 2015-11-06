@@ -78,8 +78,10 @@ public class SupplierStockServiceImpl implements SupplierStockService {
 	public List<SupplierStockDTO> findBySupplierId(String supplierId) throws ServiceMessageException {
 		List<SupplierStockDTO> list = new ArrayList<>();
 		try{
-			list = supplierStockDAO.findBySupplierId(supplierId);
-		}catch(Exception e){
+			Map<String,String> map= new HashMap<>();
+			map.put("supplierId",supplierId);
+			list = supplierStockDAO.findByMap(map);
+		}catch (Exception e){
 			throw new ServiceMessageException("数据查询失败"+e.getMessage());
 		}
 		return list;

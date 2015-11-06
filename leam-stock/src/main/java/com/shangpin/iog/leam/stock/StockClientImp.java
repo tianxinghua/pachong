@@ -26,15 +26,18 @@ public class StockClientImp  extends AbsUpdateProductStock {
 
     private static ResourceBundle bdl=null;
     private static String supplierId;
-
+    private static String tokenUrl;
+    private static String skuUrl;
     static {
         if(null==bdl)
             bdl= ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        tokenUrl = bdl.getString("token");
+        skuUrl=bdl.getString("skuUrl");
     }
 
-    String tokenUrl="http://188.226.153.91/modules/api/v2/getToken/";
-    String skuUrl="http://188.226.153.91/modules/api/v2/stock/";//请求sku地址
+//    String tokenUrl="http://188.226.153.91/modules/api/v2/getToken/";
+//    String skuUrl="http://188.226.153.91/modules/api/v2/stock/";//请求sku地址
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         Map<String, String> skustock = new HashMap<>(skuNo.size());
