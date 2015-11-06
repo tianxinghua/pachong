@@ -47,7 +47,6 @@ public class Test {
 		
 	}
 	
-	@org.junit.Test
 	public void refreshTocken(){
 //		String refresh_token = "6Rz4sozjjOFbdazaU_gjnnFwWvfG2VgG9L14kL9tB3w";
 //		String kk = HttpUtil45.get("https://api.channeladvisor.com/oauth2/token?grant_type=refresh_token&refresh_token="+refresh_token, null, null);
@@ -86,6 +85,10 @@ public class Test {
 //			e.printStackTrace();
 //		}
 //	}
-	
+	public void TTT(){
+		String url = "https://api.channeladvisor.com/v1/Products?access_token=rYCixQzMZEBEZMOtTUnnqYKu_A2Ef_x9Ch2CeO0m5uA&$skip=200";
+		url = url.replaceFirst(url.substring(url.indexOf("=")+1, url.indexOf("&")),"ppppppppppppppppp");
+		System.out.println(url);
+	}
 	
 }
