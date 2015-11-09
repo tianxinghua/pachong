@@ -112,7 +112,12 @@ public class GrabStockImp extends AbsUpdateProductStock {
         AbsUpdateProductStock grabStockImp = new GrabStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("ACANFORA更新数据库开始");
-        grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        try {
+            grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        } catch (Exception e) {
+            loggerError.error("ACANFORA 更新库存失败");
+            e.printStackTrace();
+        }
         logger.info("ACANFORA更新数据库结束");
         System.exit(0);
 

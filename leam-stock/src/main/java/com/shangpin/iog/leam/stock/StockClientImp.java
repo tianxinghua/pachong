@@ -20,6 +20,7 @@ import java.util.*;
  */
 public class StockClientImp  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
 
     String user="shamping";
     String password="PA#=k2xU^ddUc6Jm";
@@ -68,6 +69,7 @@ public class StockClientImp  extends AbsUpdateProductStock {
             }
 
         }catch (Exception e){
+            loggerError.error("leam 获取供应商的库存失败.--"+e.getMessage());
             e.printStackTrace();
         }
         return skustock;
@@ -90,7 +92,7 @@ public class StockClientImp  extends AbsUpdateProductStock {
             Map<String, String> param = new HashMap<>();
             param.put("user",user);
             param.put("password",password);
-            OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
+            OutTimeConfig outTimeConf = new OutTimeConfig(1000*60,1000*60*30,1000*60*30);
             result= HttpUtil45.post(url+"?t="+token, param, outTimeConf);
             System.out.println(" result = "+ result);
             list = getObjectsByJsonString(result);
@@ -137,7 +139,12 @@ public class StockClientImp  extends AbsUpdateProductStock {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("LEAM更新数据库开始");
 //        StockClientImp.supplierSkuIdMain=true;
-        impl.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+        try {
+            impl.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+        } catch (Exception e) {
+            loggerError.error("leam 更新库存失败."+e.getMessage());
+            e.printStackTrace();
+        }
 //        impl.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
         logger.info("LEAM更新数据库结束");
         System.exit(0);
