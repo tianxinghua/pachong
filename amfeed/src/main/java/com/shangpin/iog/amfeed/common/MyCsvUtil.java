@@ -1,12 +1,19 @@
 package com.shangpin.iog.amfeed.common;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import com.shangpin.iog.amfeed.dto.Product;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+
+import com.csvreader.CsvReader;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -15,15 +22,12 @@ import java.util.ResourceBundle;
 public class MyCsvUtil {
     private static ResourceBundle bdl = null;
     private static String httpurl;
-    private static String path;
+    private static String localPath;
     static {
         if (bdl == null)
             bdl = ResourceBundle.getBundle("conf");
-        System.out.println(bdl+"---");
-        httpurl = bdl.getString("product");
-        System.out.println(httpurl+"--33-");
-        httpurl = bdl.getString("url");
-            path = bdl.getString("path");
+            httpurl = bdl.getString("url");
+            localPath = bdl.getString("path");
     }
     /**
      * http下载csv文件到本地路径
@@ -34,7 +38,7 @@ public class MyCsvUtil {
         int byteread = 0;
 
         URL url = new URL(httpurl);
-        String realPath=path;
+        String realPath=localPath;
         try {
             URLConnection conn = url.openConnection();
             InputStream inStream = conn.getInputStream();
@@ -53,15 +57,48 @@ public class MyCsvUtil {
             e.printStackTrace();
         }
     }
+
+    /**
+     * http下载csv文件到本地路径
+     * @throws MalformedURLException
+     */
+    public static List<Product> readCSVFile() throws Exception {
+        //解析csv文件
+        CsvReader cr = new CsvReader(new FileReader(localPath));
+        System.out.println("创建cr对象成功");
+        //得到列名集合
+        cr.readRecord();
+        String rowString = cr.getRawRecord();
+        System.out.println(rowString);
+        List<Product> dtoList = new ArrayList<Product>();
+        Product product = null;
+        while(cr.readRecord()) {
+            product = new Product();
+            rowString = cr.getRawRecord();
+            Field[] fs = product.getClass().getDeclaredFields();
+            for (int i = 0; i < fs.length; i++){
+                String name = fs[i].getName(); // 获取属性的名字
+                name = name.substring(0, 1).toUpperCase() + name.substring(1);
+                Method m = product.getClass().getMethod("set"+name,String.class);
+                 m.invoke(product,rowString.split("\";\"")[i]);
+            }
+            dtoList.add(product);
+        }
+        return dtoList;
+    }
 /**
  * test
  * */
     public static void main(String[] args) {
         try {
-            System.out.println("下载中");
-            new MyCsvUtil().csvDownload();
+            new MyCsvUtil().readCSVFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+/*        String json = HttpUtil45.get(httpurl, new OutTimeConfig(1000 * 60 * 10, 10 * 1000 * 60, 10 * 1000 * 60), null);
+        System.out.println(json);*/
+
     }
 }
