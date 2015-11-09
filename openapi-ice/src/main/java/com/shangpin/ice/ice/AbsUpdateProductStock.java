@@ -40,6 +40,10 @@ import com.shangpin.framework.ServiceException;
 
 public abstract class AbsUpdateProductStock {
 	static Logger logger = LoggerFactory.getLogger(AbsUpdateProductStock.class);
+
+	private static org.apache.log4j.Logger loggerInfo = org.apache.log4j.Logger.getLogger("info");
+	private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
+
 	private boolean useThread=false;
 	private int skuCount4Thread=100;
 	private static ReentrantLock lock = new ReentrantLock();
@@ -132,7 +136,14 @@ public abstract class AbsUpdateProductStock {
 	 */
 	private Collection<String> grabProduct(String supplier,String start,String end,Map<String,String> stocks) throws Exception{
 		int pageIndex=1,pageSize=100;
-		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+		OpenApiServantPrx servant = null;
+		try {
+			servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+		} catch (Exception e) {
+			loggerError.error("ICE 代理失败");
+			e.printStackTrace();
+			throw e;
+		}
 		boolean hasNext=true;
 		logger.warn("获取icesku 开始");
 		Set<String> skuIds = new HashSet<String>();
@@ -289,7 +300,14 @@ public abstract class AbsUpdateProductStock {
 	 */
 	private int updateIceStock(String supplier, Map<String, Integer> iceStock,Map<String,String> sopPriceMap)
 			throws Exception {
-		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+		OpenApiServantPrx servant = null;
+		try {
+			servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+		} catch (Exception e) {
+			loggerError.error("Ice 代理失败");
+			e.printStackTrace();
+			throw e;
+		}
 		//logger.warn("{}---更新ice--,数量：{}",Thread.currentThread().getName(),iceStock.size());
 		//获取尚品库存
 		Set<String> skuNoShangpinSet = iceStock.keySet();
@@ -402,6 +420,7 @@ public abstract class AbsUpdateProductStock {
 
 			String result = "",stockTemp="",priceResult="";
 			boolean sendMail=true;
+			logger.error("supplierSkuIdMain="+supplierSkuIdMain);
 			for (String skuNo : skuNos) {
 				stockTemp ="";
 				result =  supplierStock.get(skuNo);
@@ -479,7 +498,7 @@ public abstract class AbsUpdateProductStock {
 		} catch (Exception e1) {
 			logger.error("抓取库存失败:", e1);
 		}
-
+		logger.error("iceStock size =" + iceStock.size());
 		return iceStock;
 	}
 
@@ -490,7 +509,7 @@ public abstract class AbsUpdateProductStock {
 	 * @return
 	 */
 
-	private Map<String,Integer> getSopPuchase(String supplierId){
+	private Map<String,Integer> getSopPuchase(String supplierId) throws  Exception{
 
 
 		int pageIndex=1,pageSize=20;
@@ -498,7 +517,10 @@ public abstract class AbsUpdateProductStock {
 		try {
 			servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		} catch (Exception e) {
+			loggerError.error("Ice 代理失败");
 			e.printStackTrace();
+			throw e;
+
 		}
 		boolean hasNext=true;
 		logger.warn("获取ice采购单 开始");

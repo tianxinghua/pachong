@@ -17,7 +17,7 @@ public class PriceCountDetailDTO {
 	@Override
 	public String toString() {
 		return "CountPriceDTO [supplierId=" + supplierId + ", supplierName="
-				+ supplierName + ", discount=" + discount + ", falg=" + flag
+				+ supplierName + ", discount=" + discount + ", flag=" + flag
 				+ ", state=" + state + "]";
 	}
 	

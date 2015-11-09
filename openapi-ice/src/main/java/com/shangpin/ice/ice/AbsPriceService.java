@@ -211,7 +211,12 @@ public abstract class AbsPriceService {
      */
     private Collection<String> grabProduct(String supplier,String start,String end,Map<String,String> stocks) throws Exception{
         int pageIndex=1,pageSize=100;
-        OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        OpenApiServantPrx servant = null;
+        try {
+            servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         boolean hasNext=true;
         logger.warn("获取icesku 开始");
         Set<String> skuIds = new HashSet<String>();

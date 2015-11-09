@@ -49,7 +49,10 @@
 
         <result column="eventStartTime" property="eventStartTime" />
         <result column="eventEndTime" property="eventEndTime" />
-		
+	
+        <result column="newMarketPrice" property="newMarketPrice" />
+        <result column="newSalePrice" property="newSalePrice" />
+        <result column="newSupplierPrice" property="newSupplierPrice" />
 
 
 	</resultMap>
@@ -91,6 +94,10 @@
           
           sku.EVENT_START_DATE as eventStartTime,
           sku.EVENT_END_DATE as eventEndTime,
+          
+          sku.NEW_MARKET_PRICE as newMarketPrice,
+          sku.NEW_SALE_PRICE as newSalePrice,
+          sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
           
           spu.CATEGORY_ID as category_id, 
           spu.CATEGORY_NAME as category_name,
