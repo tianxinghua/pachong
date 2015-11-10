@@ -1,9 +1,4 @@
 package com.shangpin.iog.tony.purchase;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -23,8 +18,7 @@ public class Startup {
        }
 
     public static void main(String[] args) throws  Exception{
-    	
-    	 loadSpringContext();
+    	loadSpringContext();
          logger.info(" schedule start  ");
     }
 }
