@@ -2,6 +2,7 @@ dependencies {
     compile(
 
             "com.google.code.gson:gson:2.2.2",
+            "org.apache.httpcomponents:httpclient:4.5",
             project(':project-common'),
             project(':openapi-ice'),
             project(':iog-common-product')

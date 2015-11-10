@@ -29,30 +29,28 @@ public class StockClientImp extends AbsUpdateProductStock {
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger loggerError = Logger.getLogger("error");
 	
-	 private static ApplicationContext factory;
-    private static void loadSpringContext()
-    {
-        factory = new AnnotationConfigApplicationContext(AppContext.class);
-    }
+//	 private static ApplicationContext factory;
+//    private static void loadSpringContext()
+//    {
+//        factory = new AnnotationConfigApplicationContext(AppContext.class);
+//    }
 
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
-	private static String url;
 	private static String clientId;
 	private static String clientsecret;
-	private static String username;
-	private static String password;
 	private static String accessToken;
 	private static String refreshToken;
+	private static String tokenurl;
+	private static String producturl;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("param");
 		supplierId = bdl.getString("supplierId");
-		url = bdl.getString("url");
 		clientId = bdl.getString("clientId");
 		clientsecret = bdl.getString("clientsecret");
-		username = bdl.getString("username");
-		password = bdl.getString("password");
+		tokenurl = bdl.getString("tokenurl");
+		producturl = bdl.getString("producturl");
 	}
 	@Autowired
 	TokenService tokenService;
@@ -72,7 +70,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 			String skuId = it.next();
 			// 用access_token 和 skuid获取实时数据 ，得到stock
 //			GetMethod getMethod = new GetMethod("https://api.forzieri.com/test/products/"+skuId);//测试
-			GetMethod getMethod = new GetMethod("https://api.forzieri.com/v2/products/"+skuId);
+			GetMethod getMethod = new GetMethod(producturl+"/"+skuId);
 			getMethod.setRequestHeader("Authorization", "Bearer "+accessToken);
 			
 			int httpCode = httpClient.executeMethod(getMethod);
@@ -92,7 +90,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 				// 存入map
 				logger.info("accessToken过期");
 //				PostMethod postMethod = new PostMethod("https://api.forzieri.com/test/oauth/token");//测试
-				PostMethod postMethod = new PostMethod("https://api.forzieri.com/v2/oauth/token");
+				PostMethod postMethod = new PostMethod(tokenurl);
 				postMethod.addParameter("grant_type", "refresh_token");
 				postMethod.addParameter("client_id", clientId);
 				postMethod.addParameter("client_secret", clientsecret);
@@ -141,7 +139,11 @@ public class StockClientImp extends AbsUpdateProductStock {
 		AbsUpdateProductStock stockImp = new StockClientImp();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		logger.info("forzieri更新数据库开始");
-		stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+		try {
+			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+		} catch (Exception e) {
+			logger.info("forzieri更新数据库异常"+e.toString());
+		}
 		logger.info("forzieri更新数据库结束");
 		System.exit(0);
 	}

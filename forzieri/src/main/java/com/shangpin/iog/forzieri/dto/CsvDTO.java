@@ -12,6 +12,7 @@ public class CsvDTO {
 	private String selling_price;
 	private String quantity;
 	private String ships_in_days;
+	private String preorder;
 	private String color;
 	private String size;
 	private String gender;
@@ -182,6 +183,13 @@ public class CsvDTO {
 	}
 	public void setProduct_detail(String product_detail) {
 		this.product_detail = product_detail;
+	}
+	
+	public String getPreorder() {
+		return preorder;
+	}
+	public void setPreorder(String preorder) {
+		this.preorder = preorder;
 	}
 	@Override
 	public int hashCode() {

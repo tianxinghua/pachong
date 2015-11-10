@@ -48,7 +48,11 @@ public class StockClientImp extends AbsUpdateProductStock{
         AbsUpdateProductStock grabStockImp = new StockClientImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("bagheera更新数据库开始");
-        grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        try {
+			grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+		} catch (Exception e) {
+			logger.info("bagheera更新数据库出错"+e.toString());
+		}
         logger.info("bagheera更新数据库结束");
         System.exit(0);
 
