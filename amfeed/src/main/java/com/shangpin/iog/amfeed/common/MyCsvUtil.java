@@ -48,7 +48,7 @@ public class MyCsvUtil {
             int length;
             while ((byteread = inStream.read(buffer)) != -1) {
                 bytesum += byteread;
-                System.out.println(bytesum);
+                //System.out.println(bytesum);
                 fs.write(buffer, 0, byteread);
             }
         } catch (FileNotFoundException e) {
@@ -62,25 +62,33 @@ public class MyCsvUtil {
      * http下载csv文件到本地路径
      * @throws MalformedURLException
      */
-    public static List<Product> readCSVFile() throws Exception {
+    public static List<Product> readCSVFile(String localPath) throws Exception {
         //解析csv文件
         CsvReader cr = new CsvReader(new FileReader(localPath));
         System.out.println("创建cr对象成功");
         //得到列名集合
         cr.readRecord();
         String rowString = cr.getRawRecord();
-        System.out.println(rowString);
+        //System.out.println(rowString);
         List<Product> dtoList = new ArrayList<Product>();
         Product product = null;
         while(cr.readRecord()) {
             product = new Product();
             rowString = cr.getRawRecord();
-            Field[] fs = product.getClass().getDeclaredFields();
-            for (int i = 0; i < fs.length; i++){
-                String name = fs[i].getName(); // 获取属性的名字
+            String[] from = rowString.split(",");
+            System.out.println(from.length + "--1--");
+            Field[] to = product.getClass().getDeclaredFields();
+            System.out.println(to.length + "--2--");
+            for (int i = 0; i < to.length; i++){
+                String name = to[i].getName(); // 获取属性的名字
                 name = name.substring(0, 1).toUpperCase() + name.substring(1);
                 Method m = product.getClass().getMethod("set"+name,String.class);
-                 m.invoke(product,rowString.split("\";\"")[i]);
+                String value = rowString.substring(0,rowString.indexOf("http:")).split(",\"")[i];
+                if (i>3)
+                    value = rowString.substring(rowString.indexOf("http:")).split(",")[i-4];
+                m.invoke(product,value);
+
+                System.out.println(name+"  :  "+value);
             }
             dtoList.add(product);
         }
@@ -90,12 +98,16 @@ public class MyCsvUtil {
  * test
  * */
     public static void main(String[] args) {
+        List<Product> list = null;
         try {
-            new MyCsvUtil().readCSVFile();
+            list = new MyCsvUtil().readCSVFile(localPath);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        System.out.println(list.size());
+        for (Product p:list){
+            //System.out.println(p.getQty());
+        }
 
 /*        String json = HttpUtil45.get(httpurl, new OutTimeConfig(1000 * 60 * 10, 10 * 1000 * 60, 10 * 1000 * 60), null);
         System.out.println(json);*/
