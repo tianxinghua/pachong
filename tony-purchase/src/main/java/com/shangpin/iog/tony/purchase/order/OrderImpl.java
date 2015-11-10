@@ -70,13 +70,15 @@ public class OrderImpl extends AbsOrderService {
      */
     @Override
     public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" );
+    	Date date = new Date();
     	deleteOrder.setExcState("0");
         UpdateOrderStatusDTO updateOrder = new UpdateOrderStatusDTO();
         updateOrder.setMerchantId(Constant.MERCHANT_ID);
         updateOrder.setToken(Constant.TOKEN);
         updateOrder.setShopOrderId(deleteOrder.getSpOrderId());
         updateOrder.setStatus(Constant.CANCELED);
-                updateOrder.setStatusDate(getUTCDate()+"");
+                updateOrder.setStatusDate(sdf.format(date));
         Gson gson = new Gson();
         String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);
         System.out.println("取消订单推送的 json数据： "+json);
@@ -115,7 +117,9 @@ public class OrderImpl extends AbsOrderService {
         updateOrder.setToken(Constant.TOKEN);
         updateOrder.setShopOrderId(deleteOrder.getSpOrderId());
         updateOrder.setStatus(Constant.CANCELED);
-                updateOrder.setStatusDate(getUTCDate()+"");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" );
+    	Date date = new Date();
+                updateOrder.setStatusDate(sdf.format(date));
         Gson gson = new Gson();
         String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);
         System.out.println("退款订单推送的 json数据： "+json);
@@ -164,7 +168,9 @@ public class OrderImpl extends AbsOrderService {
         updateOrder.setToken(Constant.TOKEN);
         updateOrder.setShopOrderId(orderDTO.getSpOrderId());
         updateOrder.setStatus(status);
-        updateOrder.setStatusDate(getUTCDate()+"");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" );
+    	Date date = new Date();
+        updateOrder.setStatusDate(sdf.format(date));
         Gson gson = new Gson();
         String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);
         logger.info("支付订单推送的 json数据："+json);
@@ -320,23 +326,16 @@ public class OrderImpl extends AbsOrderService {
         order.setShopOrderId(orderDTO.getSpOrderId());
         order.setOrderTotalPrice(totalPrice);
         order.setStatus(status);
-        
-        order.setStatusDate(getUTCDate()+"");
-        order.setOrderDate(getUTCDate()+"");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" );
+    	Date date = new Date();
+        order.setStatusDate(sdf.format(date));
+        order.setOrderDate(sdf.format(date));
         order.setItems(itemsArr);
         order.setShippingInfo(shippingInfo);
         order.setBillingInfo(billingInfo);
         return  order;
     }
 
-    private static Date getUTCDate(){
-    	Calendar cal = Calendar.getInstance();
-    	int zoneOffset = cal.get(Calendar.ZONE_OFFSET);
-    	int dstOffset = cal.get(Calendar.DST_OFFSET);
-    	cal.add(Calendar.MILLISECOND, -(zoneOffset + dstOffset));
-    	System.out.println("UTC:"+new Date(cal.getTimeInMillis()));
-    	return new Date(cal.getTimeInMillis());
-    }
 	@Override
 	public void handleEmail(OrderDTO orderDTO) {
 		// TODO Auto-generated method stub
