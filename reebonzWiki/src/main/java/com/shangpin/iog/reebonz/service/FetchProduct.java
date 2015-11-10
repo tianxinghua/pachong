@@ -273,7 +273,7 @@ public class FetchProduct {
 								}
 							}
 							sku.setProductName(item.getTitle());
-							sku.setProductDescription(item.getDescription());
+							sku.setProductDescription(item.getDescription()+","+item.getMeasurement());
 							sku.setProductCode(item.getSku());
 							sku.setSaleCurrency(item.getCurrency());
 							sku.setEventStartDate(item.getEvent_start_date());
