@@ -146,8 +146,7 @@ include 'monnierfreres'
 include 'monnierfreres-stock'
 
 include 'iog-price'
-include 'articoli'
-include 'articoli-stock'
+
 
 include 'theclutcher'
 include 'theclutcher-stock'
@@ -158,5 +157,5 @@ include 'forzieri-stock'
 include 'forzieri-purchase'
 //include 'hovok-stock'
 include 'tony-fetchstock'
-include 'amfeed'
-
+include 'railSoAtelier'
+include 'railSoAtelier-stock'
