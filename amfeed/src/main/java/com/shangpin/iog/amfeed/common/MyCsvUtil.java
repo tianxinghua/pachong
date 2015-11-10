@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2015/11/9.
@@ -72,23 +74,34 @@ public class MyCsvUtil {
         //System.out.println(rowString);
         List<Product> dtoList = new ArrayList<Product>();
         Product product = null;
+        //Pattern pCells = Pattern.compile("(\"[^\"]*(\"{2})*[^\"]*\")*[^,]*,");
         while(cr.readRecord()) {
             product = new Product();
             rowString = cr.getRawRecord();
             String[] from = rowString.split(",");
-            System.out.println(from.length + "--1--");
+            //System.out.println(from.length + "--1--");
             Field[] to = product.getClass().getDeclaredFields();
-            System.out.println(to.length + "--2--");
+            //System.out.println(to.length + "--2--");
             for (int i = 0; i < to.length; i++){
                 String name = to[i].getName(); // 获取属性的名字
                 name = name.substring(0, 1).toUpperCase() + name.substring(1);
                 Method m = product.getClass().getMethod("set"+name,String.class);
-                String value = rowString.substring(0,rowString.indexOf("http:")).split(",\"")[i];
-                if (i>3)
-                    value = rowString.substring(rowString.indexOf("http:")).split(",")[i-4];
+                String value = "";
+                if(i<2){
+                    value = from[i];
+                    rowString.replace(from[i],"");
+                }else if (i<4){
+                    value = rowString.substring(0,rowString.indexOf("http:"));
+                    rowString.replace(value,"");
+                    value = value.substring(value.length()/2);
+                }else {
+                    //System.out.println("=============");
+                    //System.out.println(rowString+"=============");
+                    String[] from2 = rowString.substring(rowString.indexOf("http:")).split(",");
+                    value = from2[i-4];
+                }
                 m.invoke(product,value);
-
-                System.out.println(name+"  :  "+value);
+                //System.out.println(name + " : " + value);
             }
             dtoList.add(product);
         }
@@ -106,7 +119,7 @@ public class MyCsvUtil {
         }
         System.out.println(list.size());
         for (Product p:list){
-            //System.out.println(p.getQty());
+            System.out.println(p.getQty());
         }
 
 /*        String json = HttpUtil45.get(httpurl, new OutTimeConfig(1000 * 60 * 10, 10 * 1000 * 60, 10 * 1000 * 60), null);

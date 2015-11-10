@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
- * Created by huxia on 2015/10/15.
+ * Created by wangyuzhi on 2015/11/10.
  */
 public class StartSkuJob {
     private static Logger log = Logger.getLogger("info");
