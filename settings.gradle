@@ -159,4 +159,4 @@ include 'forzieri-purchase'
 include 'tony-fetchstock'
 include 'railSoAtelier'
 include 'railSoAtelier-stock'
-
+include 'amfeed'

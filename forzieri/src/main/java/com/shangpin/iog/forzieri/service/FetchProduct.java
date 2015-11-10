@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -93,7 +94,11 @@ public class FetchProduct {
 			skuDTO.setMarketPrice(csvDTO.getList_price());
 			skuDTO.setSupplierPrice(csvDTO.getCost_price());
 			skuDTO.setColor(csvDTO.getColor());
-			skuDTO.setProductCode(csvDTO.getSku());
+			if (StringUtils.isNotBlank(csvDTO.getManufacturer_id())) {
+				skuDTO.setProductCode(csvDTO.getManufacturer_id());
+			}else{
+				skuDTO.setProductCode(csvDTO.getSku());
+			}
 			skuDTO.setSaleCurrency("EURO");
 			skuDTO.setProductSize(csvDTO.getSize());
 			skuDTO.setStock(csvDTO.getQuantity());
