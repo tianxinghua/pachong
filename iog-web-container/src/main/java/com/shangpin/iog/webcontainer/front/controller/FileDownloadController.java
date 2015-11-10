@@ -8,11 +8,17 @@ package com.shangpin.iog.webcontainer.front.controller;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.excel.AccountsExcelTemplate;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.json.JsonUtil;
 import com.shangpin.iog.dto.ProductSearchDTO;
 import com.shangpin.iog.dto.SupplierDTO;
+import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SupplierService;
+
+import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.*;
 import java.util.*;
 
@@ -33,10 +40,10 @@ import java.util.*;
 @RequestMapping("/download")
 public class FileDownloadController {
 	private Logger log = LoggerFactory.getLogger(FileDownloadController.class) ;
-
+	
     @Autowired
     ProductSearchService productService;
-
+    
     @Autowired
     SupplierService supplierService;
 
@@ -51,14 +58,32 @@ public class FileDownloadController {
 
 
     @RequestMapping(value = "code")
-    public void setCode(HttpServletRequest request) throws Exception {
+    public void setCode(HttpServletRequest request,HttpServletResponse response) throws Exception {
         String code =   request.getParameter("code");
         System.out.println("code = " +code );
         log.error("code =" + code);
 
+        OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
+        timeConfig.confRequestOutTime(1000*60);
+        timeConfig.confSocketOutTime(1000*60);
+        
+        //An access token is returned as a JSON response along with the time (in seconds) till expiration.
+        String application_id = "qwmmx12wu7ug39a97uter3dz29jbij3j";
+        String shared_secret = "TqMSdN6-LkCFA0n7g7DWuQ";
+        Map<String,String> map = new HashMap<>();
+        map.put("grant_type","authorization_code");
+        map.put("code",code);
+        map.put("redirect_uri","https://49.213.13.167:8443/iog/download/code");
+        String kk = HttpUtil45.postAuth("https://api.channeladvisor.com/oauth2/token", map, timeConfig,application_id,shared_secret);
+        System.out.println("kk = "  + kk);
+        log.error(kk);
+        
+        PrintWriter out = response.getWriter();
+        out.println("GET ACCESS TOKEN SUCCESSFUL");
+        out.println("code=="+code);
+        out.println("token=="+kk);
     }
-
-
+    
 
     @RequestMapping(value = "csv")
     public void downloadCsv(

@@ -14,28 +14,10 @@ import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.entity.ContentType;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.Args;
 import org.apache.log4j.Logger;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import net.sf.json.JSONObject;
-import sun.awt.HeadlessToolkit;
-
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.*;
 
 /**
@@ -50,24 +32,27 @@ public class FetchProduct {
 
     private static ResourceBundle bdl=ResourceBundle.getBundle("conf");;
 
-    public void fetchProductAndSave(String url){
+    public void fetchProductAndSave(String filepath){
 
         String supplierId = bdl.getString("supplierId");
         try {
 
             Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig =new OutTimeConfig(1000*100*60,1000*100*60,1000*100*60);
-            List<String> list = HttpUtil45.getContentListByInputSteam(url,timeConfig,null,null,null);
-            HttpUtil45.closePool();
+
+//            List<String> list = HttpUtil45.getContentListByInputSteam(filepath,timeConfig,null,null,null);
+            List<String> list = LevlelgroupFtpUtil.readConfigFileForFTP(filepath);
+//            HttpUtil45.closePool();
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","levelgroup");
 
 
-            if (list == null) {
+            if (list == null || list.size() == 0) {
                 logMongo.info("获取供应商商品列表失败");
                 return;
             }
             Products products = txt2Ojb(list);
+
             List<Product> productList = products.getProducts();
             for(Product product:productList){
                 SpuDTO spu = new SpuDTO();
@@ -179,9 +164,10 @@ public class FetchProduct {
                 if (p.length > 8){
                     pic = p[8];
                 }
-                if (p.length > 21) {
-                    for (int i=21;i<p.length;i++){
-                        pic = pic +"|"+ p[i];
+                if (p.length > 23) {
+                    for (int i=24;i<p.length;i++){
+                        if (StringUtils.isNotEmpty(p[i]) && p[i].length() > 6)
+                            pic = pic +"|"+ p[i].replaceAll(",","|");
                     }
                 }
                 if (p[0].length() != 3 && p.length > 11){
@@ -192,6 +178,7 @@ public class FetchProduct {
                     map.put("c_title", p[16]);
                     map.put("gender", p[18]);
                     map.put("picture", pic);
+                    map.put("sku", p[17].length() == 0 ? p[20] : p[17] );
                     list.add(map);
                 }
             }
@@ -229,8 +216,7 @@ public class FetchProduct {
                         List<Item> itemslist = new ArrayList<Item>();
                         Items items = new Items();
                         product.setProductId(map.get("id"));
-
-                        product.setProducer_id(json.getString("c_model") + json.getString("c_fabric") + json.getString("c_color"));
+                        product.setProducer_id(map.get("sku"));
                         product.setCategoryGender(map.get("gender"));
                         if (!json.has("brand"))
                             continue;
@@ -242,7 +228,7 @@ public class FetchProduct {
                         product.setProductOrigin(json.getString("c_madeIn"));
                         if (!json.has("c_categoryName"))
                             continue;
-                        product.setCategory(json.getString("c_categoryName"));
+                        product.setCategory(json.getString("c_categoryName").replace(",",""));
                         if (!json.has("c_material"))
                             continue;
                         product.setProduct_material(json
@@ -275,9 +261,10 @@ public class FetchProduct {
                         String saleprice_f = map.get("saleprice");
                         item.setStock(instock+"");
                         //解析货币单位和价格
+
                         item.setSaleCurrency(map.get("price").substring(price_f.indexOf(" ") + 1, price_f.length()));
                         item.setMarket_price(map.get("price").substring(0,price_f.indexOf(" ")+1));
-                        item.setSupply_price(map.get("saleprice").substring(0,saleprice_f.indexOf(" ")+1));
+                        item.setSell_price(map.get("saleprice").length() > 0 ? map.get("saleprice").substring(0, saleprice_f.indexOf(" ") + 1) : map.get("price").substring(0, price_f.indexOf(" ") + 1));
                         itemslist.add(item);
                         items.setItems(itemslist);
                         product.setItems(items);

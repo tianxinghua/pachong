@@ -10,6 +10,7 @@
         <typeAlias alias="iog_sku" type="com.shangpin.iog.dto.SkuDTO" />
 		<typeAlias alias="iog_sku_relation" type="com.shangpin.iog.dto.SkuRelationDTO" />
 		<typeAlias alias="iog_sku_price" type="com.shangpin.iog.dto.SkuPriceDTO" />
+		<typeAlias alias="iog_supplierStock" type="com.shangpin.iog.dto.SupplierStockDTO" />
         <typeAlias alias="iog_product_pic" type="com.shangpin.iog.dto.ProductPictureDTO" />
         <typeAlias alias="iog_supplier" type="com.shangpin.iog.dto.SupplierDTO"/>
 		<typeAlias alias="iog_brand_sp" type="com.shangpin.iog.dto.BrandSpDTO"/>
@@ -22,5 +23,6 @@
 		<typeAlias alias="iog_newPrice" type="com.shangpin.iog.dto.NewPriceDTO"/>
 		<typeAlias alias="iog_count_price" type="com.shangpin.iog.dto.PriceCountDetailDTO"/>
 		<typeAlias alias="iog_event" type="com.shangpin.iog.dto.EventProductDTO"/>
+		<typeAlias alias="iog_token" type="com.shangpin.iog.dto.TokenDTO"/>
 	</typeAliases>
 </configuration>

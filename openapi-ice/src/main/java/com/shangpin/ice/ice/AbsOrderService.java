@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.common.utils.*;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
@@ -43,17 +44,26 @@ public abstract class AbsOrderService {
 
     static Logger log = LoggerFactory.getLogger(AbsOrderService.class);
 
+    private static String toEmail;
+    private static String fromEmail;
+    private static String emailPass;
+
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
     private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
 
 //    static String url="/purchase/createdeliveryorder";
     private static ResourceBundle bdl = null;
     private static  String url = null;
+
+    public static boolean SENDMAIL = false;
 	static {
 		 if(null==bdl){
 			 bdl=ResourceBundle.getBundle("openice");
 		 }
 		 url = bdl.getString("wmsUrl");
+        toEmail = bdl.getString("email");
+        fromEmail = bdl.getString("fromEmail");
+        emailPass = bdl.getString("emailPass");
 	}
 
     @Autowired
@@ -84,10 +94,22 @@ public abstract class AbsOrderService {
     abstract public void handleConfirmOrder(OrderDTO orderDTO);
 
     /**
-     * 取消订单
+     * 取消订单 （未支付）
      * @throws ServiceException
      */
     abstract  public void handleCancelOrder(ReturnOrderDTO deleteOrder) ;
+
+    /**
+     * 退款
+     * @param deleteOrder
+     */
+    abstract  public void handleRefundlOrder(ReturnOrderDTO deleteOrder) ;
+
+    /**
+     * 发送邮件
+     * @param orderDTO
+     */
+    abstract public void handleEmail(OrderDTO orderDTO);
 
     /**
      * 获取真正的供货商编号
@@ -103,7 +125,7 @@ public abstract class AbsOrderService {
      *
      * @param supplierNo 供货商编号  S*****
      *
-     * @param handleCancel 是否处理退单
+     * @param handleCancel 是否处理退款
      */
     public  void  checkoutOrderFromSOP(String supplierId,String supplierNo,boolean handleCancel){
 
@@ -117,8 +139,8 @@ public abstract class AbsOrderService {
 
         //处理订单
         handleOrderOfSOP(supplierId, supplierNo);
-        //处理退单
-        cancelOrderFromSOP(supplierNo,supplierId,handleCancel);
+        //处理退款
+        refundOrderFromSOP(supplierNo, supplierId, handleCancel);
 
 
     }
@@ -135,6 +157,8 @@ public abstract class AbsOrderService {
         //获取订单数组
         Gson gson = new Gson();
         ICEWMSOrderRequestDTO  dto = new ICEWMSOrderRequestDTO();
+        logger.info("startDateOfWMS ="+startDateOfWMS);
+        logger.info("endDateOfWMS="+endDateOfWMS);
         dto.setBeginTime(startDateOfWMS);
         dto.setEndTime(endDateOfWMS);
         dto.setSupplierNo(supplierNo);
@@ -202,7 +226,10 @@ public abstract class AbsOrderService {
         handleOrderOfWMS(supplierNo, supplierId, skuMap, orderList);
 
         //处理退单
-        handleRefundOrderOfWMS(supplierNo, supplierId, skuMap, refundList,handleCancel);
+        handleCancelOfWMS(supplierNo, supplierId, skuMap, refundList,handleCancel);
+
+        //处理退款
+        handleRefundOrderAndEmailOfWMS(supplierNo, supplierId);
     }
 
 
@@ -231,17 +258,95 @@ public abstract class AbsOrderService {
     }
 
     /**
+     * 采购异常 推送采购单下单异常
+     * @param orderDTO 订单信息
+     *                 @return -1:不做处理  1：成功  0：失败
+     */
+    public  String   setPurchaseOrderExc(OrderDTO orderDTO) {
+        try {
+            logger.info("采购单 " + orderDTO.getSpPurchaseNo() +" 推送异常订单状态 " +
+                    ":"+ orderDTO.getStatus()+"----");
+            if(!orderDTO.getStatus().equals(OrderStatus.PAYED)){
+                return "-1";
+            }
+
+            List<Long> sopPurchaseOrderDetailNos = new ArrayList<>();
+
+            if(null==orderDTO||StringUtils.isBlank(orderDTO.getSpPurchaseDetailNo())){
+                loggerError.error("采购单明细为空，无法设置采购异常");
+                return "0" ;
+
+            }
+            String[] purchaseOrderDetailArray = orderDTO.getSpPurchaseDetailNo().split(";");
+            if(null!=purchaseOrderDetailArray){
+                for(String purchaseDetailNo:purchaseOrderDetailArray){
+                    if(org.apache.commons.lang.StringUtils.isNotBlank(purchaseDetailNo)){
+                        try {
+                            sopPurchaseOrderDetailNos.add(Long.valueOf(purchaseDetailNo));
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                            loggerError.error("采购单明细转化数据类型时失败。");
+                            return "0" ;
+                        }
+                    }
+                }
+                OpenApiServantPrx servant = null;
+                try {
+                    servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                String excDesc = orderDTO.getExcDesc();
+                if(excDesc!=null){
+                	if(excDesc.length()>100){
+                		excDesc = excDesc.substring(0,100);
+                	}
+                }
+                logger.info("推送取消采购单发生的参数：sopPurchaseOrderDetailNos："+sopPurchaseOrderDetailNos+"excDesc:"+orderDTO.getExcDesc());
+                PurchaseOrderEx purchaseOrderEx = new PurchaseOrderEx(sopPurchaseOrderDetailNos,sopPurchaseOrderDetailNos+":"+excDesc);
+                String  result = servant.PurchaseDetailEx(purchaseOrderEx,orderDTO.getSupplierId()+"");
+                Gson gson = new Gson();
+                ResMessage message = gson.fromJson(result,ResMessage.class);
+                if(null==message){
+                    logger.error(orderDTO.getSpPurchaseNo()+"推送取消采购单失败，无信息返回。");
+                    Thread t = new Thread(new MailThread(orderDTO.getSupplierId(),orderDTO.getSupplierId()+" 线上发生错误","推送取消采购单失败，无信息返回。"));
+                    t.start();
+
+
+                }else {
+                    if (200 != message.getResCode()) {
+                        logger.error(orderDTO.getSpPurchaseNo()+"推送取消采购单失败");
+                        return "0";
+                    }
+                }
+
+            }
+
+        } catch (Exception e) {
+            loggerError.error(orderDTO.getSpPurchaseNo()+"推送取消采购单失败.原因："+e.getMessage());
+            return "0";
+        }
+        return "1";
+
+    }
+
+
+    /**
      * 检查订单是否支付
      * @param supplierId
      */
     private  void checkPayed(String supplierId){
 
 
-        List<OrderDTO>  orderDTOList= null;
+        List<OrderDTO>  orderDTOList= new ArrayList<>();
 
         try {
             //获取已下单的订单信息
+        	String nowDate = DateTimeUtil.getDateTime(); 
             orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
+            List<OrderDTO>  waitList = productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
+            orderDTOList.addAll(waitList);
+            
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -254,7 +359,6 @@ public abstract class AbsOrderService {
                 e.printStackTrace();
             }
             String sopPurchaseOrderNo ="";
-            Map<String,String> purchaseOrderMap = new HashMap<>();
 //
 //            List<String> orderIdList =  new ArrayList<>();
 //            int i = 1;
@@ -304,33 +408,47 @@ public abstract class AbsOrderService {
 //            }
 
 
-
             for(OrderDTO orderDTO:orderDTOList){
+                Map<String,List<PurchaseOrderDetailSpecial>>  purchaseOrderMap = new HashMap<>();
 
                 PurchaseOrderDetailSpecialPage  orderDetailSpecialPage = servant.FindPurchaseOrderDetailSpecial(supplierId,"",orderDTO.getSpOrderId());
                 if(null!=orderDetailSpecialPage&&null!=orderDetailSpecialPage.PurchaseOrderDetails&&orderDetailSpecialPage.PurchaseOrderDetails.size()>0){  //存在采购单 就代表已支付
-                   //更新其已支付状态
 
                     for (PurchaseOrderDetailSpecial orderDetail : orderDetailSpecialPage.PurchaseOrderDetails) {
                         sopPurchaseOrderNo  = orderDetail.SopPurchaseOrderNo;
                         if(purchaseOrderMap.containsKey(sopPurchaseOrderNo)){
-                            //
-
-
+                            purchaseOrderMap.get(sopPurchaseOrderNo).add(orderDetail);
                         }else{
-                            orderDTO.setSpPurchaseNo(sopPurchaseOrderNo);
-                            purchaseOrderMap.put(sopPurchaseOrderNo,"");
-                            if(5!=orderDetail.DetailStatus){ //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
-                                 orderDTO.setStatus(OrderStatus.PAYED);
-                            }else{
-                                orderDTO.setStatus(OrderStatus.CANCELLED);
-                            }
-                            productOrderService.update(orderDTO);
+                            List<PurchaseOrderDetailSpecial> orderList = new ArrayList<>();
+                            orderList.add(orderDetail);
+                            purchaseOrderMap.put(sopPurchaseOrderNo,orderList);
+
                         }
 
 
                     }
 
+                    for(Iterator<Map.Entry<String,List<PurchaseOrderDetailSpecial>>> itor = purchaseOrderMap.entrySet().iterator();itor.hasNext();) {
+                        Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();
+                        sopPurchaseOrderNo  = entry.getKey();
+                        StringBuffer purchaseOrderDetailbuffer =new StringBuffer();
+                        //获取同一产品的数量
+                        for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){
+                            purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
+                            //赋值状态 海外商品每个采购单 只有一种茶品
+                            orderDTO.setSpPurchaseNo(sopPurchaseOrderNo);
+                            orderDTO.setPurchasePriceDetail(purchaseOrderDetail.SkuPrice);
+                            if(5!=purchaseOrderDetail.DetailStatus){ //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
+                                orderDTO.setStatus(OrderStatus.PAYED);
+                            }else{
+                                orderDTO.setStatus(OrderStatus.REFUNDED);
+                            }
+
+                        }
+                        orderDTO.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString().substring(0,purchaseOrderDetailbuffer.toString().length()-1));
+                        productOrderService.update(orderDTO);
+
+                    }
 
 
 
@@ -351,7 +469,8 @@ public abstract class AbsOrderService {
         //拉取采购单存入本地库
         List<OrderDTO>  orderDTOList= null;
         try {
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED);
+        	String nowDate = DateTimeUtil.getDateTime(); 
+            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
             if(null!=orderDTOList){
 
                 for(OrderDTO orderDTO:orderDTOList){
@@ -592,8 +711,7 @@ public abstract class AbsOrderService {
         }
     }
 
-    private void handleRefundOrderOfWMS(String supplierNo,String supplierId,Map<String,String> skuMap,List<ICEWMSOrderDTO>  refundList,boolean handleCancel){
-
+    private void handleCancelOfWMS(String supplierNo,String supplierId,Map<String,String> skuMap,List<ICEWMSOrderDTO>  refundList,boolean handleCancel) {
         for(ICEWMSOrderDTO refundOrder:refundList) {
 
             String uuid = null;
@@ -633,7 +751,7 @@ public abstract class AbsOrderService {
                     //处理退单
                     handleCancelOrder(deleteOrder);
                     //更改退单状态无论成功或失败
-                    updateRefundOrderMsg( deleteOrder);
+                    updateCancelOrderMsg( deleteOrder);
 
 
                 } catch (Exception e) {
@@ -652,6 +770,140 @@ public abstract class AbsOrderService {
         }
     }
 
+    /**
+     * 处理退款
+     * @param supplierNo
+     * @param supplierId
+     */
+    private void handleRefundOrderAndEmailOfWMS(String supplierNo,String supplierId){
+        //获取订单数组
+        List<Integer> status = new ArrayList<>();
+        status.add(5);
+        try {
+            Map<String,List<PurchaseOrderDetail>> orderMap =  this.getPurchaseOrder(supplierId, startDateOfWMS, endDateOfWMS, status);
+            if(null!=orderMap) {
+                logger.info("获取退款数量： " + orderMap.size());
+            }else {
+                logger.info("获取退款数量：无 " );
+            }
+            logger.info("sendmail = " + SENDMAIL );
+            for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();) {
+                Map.Entry<String, List<PurchaseOrderDetail>> entry = itor.next();
+                Map<String, Integer> stockMap = new HashMap<>();
+                for (PurchaseOrderDetail purchaseOrderDetail : entry.getValue()) {
+                    if (stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)) {
+                        stockMap.put(purchaseOrderDetail.SupplierSkuNo, stockMap.get(purchaseOrderDetail.SupplierSkuNo) + 1);
+                    } else {
+                        stockMap.put(purchaseOrderDetail.SupplierSkuNo, 1);
+                    }
+                }
+                List<ICEOrderDetailDTO> list = new ArrayList<>();
+                StringBuffer buffer = new StringBuffer();
+                for (PurchaseOrderDetail purchaseOrderDetail : entry.getValue()) {
+                    if (stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)) {
+                        buffer.append(purchaseOrderDetail.SupplierSkuNo).append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
+                        stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
+                    }
+                }
+                /**
+                 * 根据sp_order_id查询UUID
+                 */
+                OrderDTO orderDTO = null;
+                try {
+                    logger.info("purchaseno =" + entry.getKey()+"---");
+                    orderDTO = productOrderService.getOrderByPurchaseNo(entry.getKey());
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                }
+
+                if (null==orderDTO) {//采购单已到退款状态  未有已支付状态 为下单 不做存储
+                    logger.info("uuid = " + entry.getKey()+"未找到订单信息");
+                    continue;
+                }
+
+                ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
+                deleteOrder.setUuId(orderDTO.getUuId());
+                deleteOrder.setSupplierId(supplierId);
+                deleteOrder.setSupplierNo(supplierNo);
+                deleteOrder.setSpPurchaseNo(orderDTO.getSpPurchaseNo());
+                deleteOrder.setStatus(OrderStatus.WAITCANCEL);
+                deleteOrder.setSpOrderId(orderDTO.getSpOrderId());
+                deleteOrder.setDetail(buffer.toString());
+                deleteOrder.setCreateTime(new Date());
+                try {
+                    logger.info("采购单信息转化退单后信息：" + deleteOrder.toString());
+                    System.out.println("采购单信息转化退单后信息：" + deleteOrder.toString());
+                    returnOrderService.saveOrder(deleteOrder);
+                    //处理退款
+                    handleRefundlOrder(deleteOrder);
+                    //更改退单状态无论成功或失败 还需要更改订单状态
+                    updateRefundOrderMsg(deleteOrder);
+
+
+                    if(SENDMAIL){
+                        logger.info("send email ");
+                        handleEmail(orderDTO);
+                    }else{
+                        logger.info("not send email ");
+                    }
+
+                } catch (ServiceException e) {
+
+                    e.printStackTrace();
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+    /**
+     * 更新退单信息 同时更新订单信息
+     * @param deleteOrder
+     */
+    private void updateCancelOrderMsg( ReturnOrderDTO deleteOrder) {
+        try {
+            Map<String,String> map = new HashMap<>();
+            map.put("status",deleteOrder.getStatus());
+            map.put("uuid",deleteOrder.getUuId());
+            map.put("excState",deleteOrder.getExcState());
+            map.put("excDesc",deleteOrder.getExcDesc());
+            if(null!=deleteOrder.getExcState()&&"1".equals(deleteOrder.getExcState())){
+                map.put("excTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
+            }else{
+                map.put("status",OrderStatus.CANCELLED);
+                map.put("updateTime",DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
+            }
+            returnOrderService.updateReturnOrderMsg(map);
+        } catch (ServiceException e) {
+            loggerError.error("取消订单："+deleteOrder.getUuId()+" 操作成功。但更新退单状态失败 原因:" +e.getMessage());
+            System.out.println("取消订单：" + deleteOrder.getUuId() + " 操作成功。但更新退单状态失败  原因:" +e.getMessage());
+            e.printStackTrace();
+
+        }
+        /**
+         * 退单成功时修改订单状态
+         */
+        if(null!=deleteOrder.getExcState()&&"1".equals(deleteOrder.getExcState())){//通知供货商退款异常
+
+        }else{
+            this.updateOrderMsgOnCancelOrder(deleteOrder.getUuId());
+        }
+
+    }
+
+
+
+
+    /**
+     * 更新退款信息 同时更新订单信息
+     * @param deleteOrder
+     */
     private void updateRefundOrderMsg( ReturnOrderDTO deleteOrder) {
         try {
             Map<String,String> map = new HashMap<>();
@@ -662,7 +914,7 @@ public abstract class AbsOrderService {
             if(null!=deleteOrder.getExcState()&&"1".equals(deleteOrder.getExcState())){
                 map.put("excTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
             }else{
-                map.put("status","cancelled");
+                map.put("status",OrderStatus.REFUNDED);
                 map.put("updateTime",DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
             }
             returnOrderService.updateReturnOrderMsg(map);
@@ -678,7 +930,7 @@ public abstract class AbsOrderService {
         if(null!=deleteOrder.getExcState()&&"1".equals(deleteOrder.getExcState())){//通知供货商退款异常
 
         }else{
-            this.updateOrderMsgOnCancelOrder(deleteOrder.getUuId());
+            this.updateOrderMsgOnRefundOrder(deleteOrder.getUuId());
         }
 
     }
@@ -699,7 +951,23 @@ public abstract class AbsOrderService {
     }
 
 
-    public void cancelOrderFromSOP(String supplierNo,String supplierId,boolean handleCancel){
+    /**
+     * 当退款时 更改订单状态
+     * @param uuId 订单编号
+     */
+    private void updateOrderMsgOnRefundOrder(String uuId){
+        OrderDTO order = null;
+        try {
+            order = productOrderService.getOrderByUuId(uuId);
+            order.setStatus(OrderStatus.REFUNDED);
+            productOrderService.update(order);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void refundOrderFromSOP(String supplierNo,String supplierId,boolean handleCancel){
 
         try {
             //获取订单数组
@@ -798,7 +1066,13 @@ public abstract class AbsOrderService {
      */
     private Map<String,List<PurchaseOrderDetail>> getPurchaseOrder(String supplierId,String startTime ,String endTime,List<Integer> statusList) throws Exception{
         int pageIndex=1,pageSize=20;
-        OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        OpenApiServantPrx servant = null;
+        try {
+            servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        } catch (Exception e) {
+            loggerError.error("ICE  IcePrxHelper 初始化异常");
+            e.printStackTrace();
+        }
         boolean hasNext=true;
         logger.warn("获取ice采购单 开始");
         Set<String> skuIds = new HashSet<String>();
@@ -850,7 +1124,31 @@ public abstract class AbsOrderService {
     }
 
 
+    //发邮件
+    class MailThread implements  Runnable{
 
+        String supplier = "";
+        String content="";
+        String title="";
+
+        public MailThread(String  supplierId,String title,String content){
+            this.supplier = supplierId;
+            this.title = title;
+            this.content = content;
+        }
+
+        @Override
+        public void run() {
+            try {
+                SendMail.sendGroupMail("smtp.shangpin.com", fromEmail,
+                        emailPass, toEmail, title,
+                        content,
+                        "text/html;charset=utf-8");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 
     /**

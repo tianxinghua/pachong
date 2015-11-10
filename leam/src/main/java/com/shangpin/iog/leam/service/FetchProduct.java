@@ -15,6 +15,7 @@ import com.shangpin.iog.service.ProductFetchService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -45,30 +46,58 @@ public class FetchProduct {
     }
     public void fetchProductAndSave(String url){
         List<LeamDTO> list=getSkus(skuUrl);
+        logger.info("拉到的数据量是:"+list.size());
+        int rStock=0;
+        int stockNum = 0;
+        int picNum =0;
+//        Map<String,String> skuMap = new HashMap<>();
+        String size ="";
         for(int i =0;i<list.size();i++) {
+
             SkuDTO dto = new SkuDTO();
             SpuDTO spuDTO = new SpuDTO();
 
             LeamDTO leamDTO = list.get(i);
+
+            try {
+                if(Integer.valueOf(leamDTO.getQty())<=0){
+                    stockNum++;
+                    continue;
+                } else{
+                    rStock++;
+                }
+            } catch (NumberFormatException e) {
+                loggerError.error(leamDTO.getStock_id() + ":" + leamDTO.getQty());
+            }
+
             List<String> imageList = leamDTO.getImages();
 
             if (imageList!=null&&imageList.size()>0) {
+                size = leamDTO.getSize();
+                if(null==size) continue;
+                size= size.replace(",", ".");
                 dto.setId(UUIDGenerator.getUUID());
                 dto.setSupplierId(supplierId);
-                dto.setSkuId(leamDTO.getStock_id());
+                dto.setSkuId(leamDTO.getStock_id()+"-"+size);
                 dto.setSpuId(leamDTO.getSupplier_sku());
                 dto.setProductCode(leamDTO.getSupplier_sku());
                 dto.setColor(leamDTO.getColor());
+                dto.setMarketPrice(leamDTO.getDefault_price());
                 dto.setSupplierPrice(leamDTO.getPrice());
                 dto.setProductDescription(leamDTO.getDescription());
-                dto.setProductSize(leamDTO.getSize());
+                dto.setProductSize(size);
                 dto.setStock(leamDTO.getQty());
                 try {
+//                    if(skuMap.containsKey(dto.getSkuId())){
+//                        loggerError.error("sku :" + leamDTO.getStock_id() + ",尺码：" + leamDTO.getSize());
+//                        loggerError.error("sku :" + leamDTO.getStock_id() + ",原尺码：" +skuMap.get(leamDTO.getStock_id()));
+//                    }
                     productFetchService.saveSKU(dto);
+//                    skuMap.put(dto.getSkuId(),leamDTO.getSize());
                     for(String imgUrl:imageList){
                         ProductPictureDTO pictureDTO = new ProductPictureDTO();
                         pictureDTO.setId(UUIDGenerator.getUUID());
-                        pictureDTO.setSkuId(leamDTO.getStock_id());
+                        pictureDTO.setSkuId(leamDTO.getStock_id()+"-"+size);
                         pictureDTO.setSupplierId(supplierId);
                         pictureDTO.setPicUrl(imgUrl);
                         try {
@@ -105,14 +134,21 @@ public class FetchProduct {
                 try {
                     productFetchService.saveSPU(spuDTO);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    if (e.getMessage().equals("数据插入失败键重复")) {
+                        loggerError.error(leamDTO.getSupplier_sku()+"保存错误.原因重复。");
+                    } else {
+                        loggerError.error(leamDTO.getSupplier_sku()+"保存错误.原因："+e.getMessage());
+                    }
+
                 }
 
-
-
-
+            }else{
+                picNum++;
             }
         }
+        logger.info("正确的库存数据 = " + rStock);
+        logger.info("无库存数据 ="+ stockNum);
+        logger.info("无图片数据 ="+ picNum);
     }
     public  static List<LeamDTO> getSkus(String url){
         List<LeamDTO>list = new ArrayList<>();
@@ -123,7 +159,7 @@ public class FetchProduct {
             Map<String, String> param = new HashMap<>();
             param.put("user",user);
             param.put("password",password);
-            OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*5,1000*60*5,1000*60*5);
+            OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*15,1000*60*15,1000*60*15);
             result= HttpUtil45.post(url+"?t="+token, param, outTimeConf);
             System.out.println(" result = "+ result);
             list = getObjectsByJsonString(result);

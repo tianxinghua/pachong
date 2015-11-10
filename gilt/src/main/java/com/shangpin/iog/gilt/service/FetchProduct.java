@@ -37,6 +37,7 @@ public class FetchProduct {
     private static String supplierId;
     private static String key ;
     private static String url;
+    private static String downloadpic;
 
 
     static {
@@ -45,6 +46,7 @@ public class FetchProduct {
         supplierId = bdl.getString("supplierId");
         key = bdl.getString("key");
         url = bdl.getString("url");
+        downloadpic = bdl.getString("downloadpic");
     }
     @Autowired
     ProductFetchService productFetchService;
@@ -187,7 +189,9 @@ public class FetchProduct {
     }
 
     private void saveProduct(Map<String,String> spuMap, GiltSkuDTO giltSkuDTO,Map<String,String> inventoryMap,SaleDTO saleDTO) {
-        SkuDTO dto = new SkuDTO();
+    	OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
+    	String fileName = "";
+    	SkuDTO dto = new SkuDTO();
         SpuDTO spuDTO = new SpuDTO();
         String inventory="";
         if(null==inventoryMap||inventoryMap.size()==0) {
@@ -269,6 +273,10 @@ public class FetchProduct {
                     productPictureDTO.setSupplierId(supplierId);
                     try{
                         productFetchService.savePictureForMongo(productPictureDTO);
+                        fileName = giltSkuDTO.getId()+"-"+String.valueOf(j)+".jpg";
+                        if (downloadpic.equals("1")) {
+                        	HttpUtil45.getPicture(picUrl, fileName, timeConfig, null);
+						}
                     }catch (ServiceException e){
                         e.printStackTrace();
                         loggerError.error("保存图片失败：" +  e.getMessage());

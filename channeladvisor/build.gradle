@@ -9,19 +9,17 @@ dependencies {
             "javax.mail:mail:1.4.7",
             "org.apache.ws.commons.axiom:axiom-api:1.2.15",
             "org.apache.ws.commons.axiom:axiom-impl:1.2.15",
-            project(':project-common')
+            "com.google.code.gson:gson:2.3.1",
+            project(':project-common'),
+            project(':iog-common-product')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
 jar {
 
-    dependsOn copyToLib
+    dependsOn copyToLib , copyResources
     exclude ("**/*.properties")
-//    from {
-//        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-
-//    }
 
     def manifestCp = configurations.compile.files.collect  {
         File file = it
@@ -30,7 +28,6 @@ jar {
 
     manifest {
         attributes 'Main-Class': 'com.shangpin.iog.channeladvisor.service.Startup'
-//        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
-        attributes 'Class-Path': '.  ' +  manifestCp
+        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }

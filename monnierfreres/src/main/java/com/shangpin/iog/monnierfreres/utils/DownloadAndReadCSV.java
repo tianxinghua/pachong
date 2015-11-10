@@ -136,6 +136,14 @@ public class DownloadAndReadCSV {
 		
 
 		}
+		cr.close();
+		File flie = new File(realPath);
+		boolean falg = flie.delete();
+		if(falg){
+			System.out.println("文件删除success");
+		}else{
+			System.out.println("文件删除fail");
+		}
         return dtoList;
     }
 	public static String getPath(String realpath){

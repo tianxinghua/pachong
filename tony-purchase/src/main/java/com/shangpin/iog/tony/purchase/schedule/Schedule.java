@@ -3,7 +3,7 @@ package com.shangpin.iog.tony.purchase.schedule;
 import com.google.gson.Gson;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.tony.purchase.order.OrderServiceImpl;
+import com.shangpin.iog.tony.purchase.order.OrderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,34 +32,27 @@ public class Schedule {
     }
 
     @Autowired
-    OrderServiceImpl orderService;
-
-
-    //未支付订单推送
-    @Scheduled(cron="0 0/3 * * * ? ")
+    OrderImpl orderService;
+    //已支付订单推送
+    @Scheduled(cron="0 0/2 * * * ? ")
     public void checkoutOrderFromWMS(){
-        System.out.println("-------deliveryOrder start---------");
         try {
             orderService.startWMS();
-            System.out.println("-------deliveryOrder end---------");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
     //已支付订单推送
-    @Scheduled(cron="0 0/3 * * * ? ")
-    public void checkoutOrderFromSOP(){
-        System.out.println("-------deliveryOrder start---------");
+    @Scheduled(cron="0 0/2 * * * ? ")
+    public void confirmOrder(){
         try {
-            orderService.startSOP();
-            System.out.println("-------deliveryOrder end---------");
+            orderService.confirmOrder();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
-
 
     public static void main(String[] args){
        /* Gson gson =new Gson();

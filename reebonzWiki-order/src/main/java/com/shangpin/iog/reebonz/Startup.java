@@ -1,4 +1,4 @@
-  package com.shangpin.iog.reebonz;
+package com.shangpin.iog.reebonz;
 
 
 import java.util.Date;

@@ -1,12 +1,8 @@
 package com.shangpin.iog.common.utils.httpclient;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.SocketTimeoutException;
+import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
@@ -855,6 +851,99 @@ public class HttpUtil45 {
 	 */
 	private static boolean isSSL(String url) {
 		return url.startsWith("https");
+	}
+
+
+	/**
+	 * 获取图片
+	 * @param url 请求地址
+	 * @param fileName  保存的文件名称
+	 * @param outTimeConf  超时时间对象
+	 * @param param    请求参数
+	 */
+	public static void getPicture(String url,String fileName ,OutTimeConfig outTimeConf,Map<String,String> param){
+		String urlStr=paramGetUrl(url, param);
+		HttpGet get = new HttpGet(urlStr);
+		String result=null;
+		CloseableHttpResponse resp=null;
+		BufferedInputStream bis =null;
+		BufferedOutputStream bos =null;
+		FileOutputStream fos = null;
+
+
+		String realPath = HttpUtil45.class.getClassLoader().getResource("").getFile();
+
+		try {
+			realPath= URLDecoder.decode(realPath, "utf-8")+"downimage";
+			File filePath = new File(realPath);
+			if(!filePath.exists()){
+				filePath.mkdirs();
+			}
+			System.err.println("============================================================="+realPath);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+
+		try {
+			CloseableHttpClient ht=null;
+			ht=getHttpClient(null);//HttpClients.createDefault();
+			HttpClientContext localContext = getPlainContext(url);//HttpClientContext.create();
+			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
+			resp=ht.execute(get);
+			HttpEntity entity=resp.getEntity();
+//			InputStream instream = entity.getContent();
+
+			String file ="";
+//			if(url.indexOf(".JPG")>0){
+//				file = url.substring(0,url.indexOf(".JPG")+4);
+//				file = file.substring(file.lastIndexOf("/")+1)+".jpg";
+//			}else if(url.indexOf(".jpg")>0){
+//				file = url.substring(0,url.indexOf(".JPG")+4);
+//				file = file.substring(file.lastIndexOf("/")+1)+".jpg";
+//			}else if(url.indexOf("?")>0){
+//				file = url.substring(0,url.indexOf("?"));
+//				file = file.substring(file.lastIndexOf("/")+1)+".jpg";
+//			}
+			file = realPath+ "/" +fileName;
+			File writeFile = new File(file);
+			if(!writeFile.exists()){
+				try {
+					writeFile.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			fos = new FileOutputStream(writeFile,true);
+			//加入缓冲流，为了提高速度，可以把与buffer有管的语句删了，看看速度
+//				 bis = new BufferedInputStream(instream);
+			bos = new BufferedOutputStream(fos);
+//				byte b [] = new byte[1024];
+//				while(bis.read(b)!=-1){
+//					bis.read(b);
+//					bos.write(b);
+//					bos.flush();
+//				}
+			entity.writeTo(bos);
+
+
+
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			try {
+				if(resp!=null)
+					resp.close();
+				if(null!=bos) bos.close();
+				if(null!=bis) bis.close();
+				if(null!=fos) fos.close();
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 

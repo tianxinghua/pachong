@@ -41,8 +41,13 @@ public class Item {
     String customLabel2;
     @SerializedName("g:custom_label_3")
     String customLabel3;
-    @SerializedName("g:price")
-    String price;
+//    @SerializedName("g:price")
+//    String price;
+    @SerializedName("g:retail_price")
+    String marketPrice;
+    @SerializedName("g:supplier_price")
+    String supplierPrice;
+
     @SerializedName("g:availability")
     String availability;
     @SerializedName("g:item_group_id")
@@ -51,6 +56,7 @@ public class Item {
     Shipping shipping;
     @SerializedName("g:tax")
     Tax tax;
+
 
     public String getTitle() {
         return title;
@@ -196,13 +202,6 @@ public class Item {
         this.customLabel3 = customLabel3;
     }
 
-    public String getPrice() {
-        return price;
-    }
-
-    public void setPrice(String price) {
-        this.price = price;
-    }
 
     public String getAvailability() {
         return availability;
@@ -236,6 +235,22 @@ public class Item {
         this.tax = tax;
     }
 
+    public String getMarketPrice() {
+        return marketPrice;
+    }
+
+    public void setMarketPrice(String marketPrice) {
+        this.marketPrice = marketPrice;
+    }
+
+    public String getSupplierPrice() {
+        return supplierPrice;
+    }
+
+    public void setSupplierPrice(String supplierPrice) {
+        this.supplierPrice = supplierPrice;
+    }
+
     @Override
     public String toString() {
         return "Item{" +
@@ -257,7 +272,8 @@ public class Item {
                 ", customLabel0='" + customLabel0 + '\'' +
                 ", customLabel2='" + customLabel2 + '\'' +
                 ", customLabel3='" + customLabel3 + '\'' +
-                ", price='" + price + '\'' +
+                ", marketPrice='" + marketPrice + '\'' +
+                ", supplierPrice='" + supplierPrice + '\'' +
                 ", availability='" + availability + '\'' +
                 ", itemGroupId='" + itemGroupId + '\'' +
                 ", shipping=" + shipping +

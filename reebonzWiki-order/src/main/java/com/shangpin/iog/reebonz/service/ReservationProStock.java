@@ -60,7 +60,7 @@ public class ReservationProStock {
 	 * 锁库存
 	 */
 	public Map<String, String> lockStock(String order_id, String order_site,
-			String data) {
+										 String data) {
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("order_id", order_id);
@@ -71,11 +71,17 @@ public class ReservationProStock {
 		ResponseObject obj = requestSource(map);
 		Map<String, String> returnMap = new HashMap<String, String>();
 		if ("1".equals(obj.getReturn_code())) {
-			returnMap.put("0", obj.getReservation_id());
+			returnMap.put("1", obj.getReservation_id());
 			logger.info("锁库存success");
-		} else {
+		} else if("-1".equals(obj.getReturn_code())){
 			logger.info("锁库存失败" + obj.getError_msg());
-			returnMap.put("1", obj.getError_msg());
+			returnMap.put("0", obj.getError_msg());
+		}else if("0".equals(obj.getReturn_code())){
+			logger.info("锁库存失败" + obj.getError_msg());
+			returnMap.put("0", obj.getError_msg());
+		}else {
+			logger.info("锁库存失败" + obj.getError_msg());
+			returnMap.put("0", obj.getError_msg());
 		}
 		return returnMap;
 	}
@@ -84,12 +90,68 @@ public class ReservationProStock {
 	 * 推送订单
 	 */
 	public Map<String, String> pushOrder(String reservationId, String order_id,
-			String purchaseNo, String data) {
+										 String purchaseNo, String data) {
 
+		Map<String, String> map = getOrder();
+		map.put("eps_order_id", "SP_ID:" + order_id + ",SP_PO:" + purchaseNo);
+		map.put("reservation_id", reservationId);
+		map.put("bags", data);
+		System.out.println("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:"+reservationId+",bags:"+data);
+		logger.info("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:"+reservationId+",bags:"+data);
+		ResponseObject returnObj = requestSource(map);
+		Map<String, String> returnMap = null;
+		if (returnObj != null) {
+			
+			String result = returnObj.getReturn_code();
+			if ("1".equals(result)) {
+				returnMap = new HashMap<String, String>();
+				returnMap.put("0", returnObj.getOrder_id()); 
+				returnMap.put("return_orderID",returnObj.getOrder_id());
+				logger.info("推送订单success：" + returnObj.getOrder_id());
+			} else if ("0".equals(result)) {
+				if("INV_RESERVATION_ID".equals(returnObj.getError_code())){
+					returnMap = pushOrderAgain(order_id,purchaseNo,data);
+				}else if(HttpUtil45.errorResult.equals(returnObj.getError_msg())){
+					returnMap = new HashMap<String, String>();
+					returnMap.put("-1", returnObj.getError_msg());
+					logger.info("推送订单fail：" + returnObj.getError_msg());
+				}else{
+					returnMap = new HashMap<String, String>();
+					returnMap.put("1", returnObj.getError_msg());
+					logger.info("推送订单fail：" + returnObj.getError_msg());
+				}
+		
+			}
+		}
+		return returnMap;
+	}
+	public Map<String, String> pushOrderAgain(String order_id,
+			 String purchaseNo, String data) {
+		Map<String, String> map = getOrder();
+		map.put("eps_order_id", "SP_ID:" + order_id + ",SP_PO:" + purchaseNo);
+		map.put("reservation_id", null);
+		map.put("bags", data);
+		System.out.println("实时推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:null"+",bags:"+data);
+		logger.info("实时推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:null"+",bags:"+data);
+		ResponseObject returnObj = requestSource(map);
+		Map<String, String> returnMap = new HashMap<String, String>();
+		if (returnObj != null) {
+			String result = returnObj.getReturn_code();
+			if ("1".equals(result)) {
+				returnMap.put("0", returnObj.getOrder_id());
+				returnMap.put("return_orderID",returnObj.getOrder_id());
+				logger.info("实时推送订单success：" + returnObj.getOrder_id());
+			} else if ("0".equals(result)) {
+				returnMap.put("1", returnObj.getError_msg());
+				logger.info("实时推送订单fail：" + returnObj.getError_msg());
+			}
+		}
+		return returnMap;
+	}
+	private Map<String, String> getOrder(){
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("email", "reebonz@shangpin.com");
 		map.put("order_site", "shangpin");
-		map.put("eps_order_id", "SP_ID:" + order_id + ",SP_PO:" + purchaseNo);
 		map.put("delivery_first_name", "shangpin");
 		map.put("delivery_last_name", "shangpin");
 		map.put("delivery_street1", "shangpin");
@@ -107,32 +169,14 @@ public class ReservationProStock {
 		map.put("billing_postal_code", "100000");
 		map.put("billing_phone", "1");
 		map.put("payment_method", "xx");
-		map.put("reservation_id", reservationId);
-		map.put("bags", data);
 		map.put("api_url", pushOrderUrl);
-		System.out.println("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId"+reservationId+",bags:"+data);
-		logger.info("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId"+reservationId+",bags:"+data);
-		ResponseObject returnObj = requestSource(map);
-		Map<String, String> returnMap = new HashMap<String, String>();
-		if (returnObj != null) {
-			String result = returnObj.getReturn_code();
-			if ("1".equals(result)) {
-				returnMap.put("0", returnObj.getOrder_id());
-				returnMap.put("return_orderID",returnObj.getOrder_id());
-				logger.info("推送订单success：" + returnObj.getOrder_id());
-			} else if ("0".equals(result)) {
-				returnMap.put("1", returnObj.getError_msg());
-				logger.info("推送订单fail：" + returnObj.getError_msg());
-			}
-		}
-		return returnMap;
+		return map;
 	}
-
 	/*
 	 * 解库存锁
 	 */
 	public Map<String, String> unlockStock(String reservation_id,
-			String order_id, String user_id, String confirmation_code) {
+										   String order_id, String user_id, String confirmation_code) {
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("reservation_id", reservation_id);
@@ -152,10 +196,10 @@ public class ReservationProStock {
 		}
 		return returnMap;
 	}
-public static void main(String[] args) {
-	ReservationProStock m = new ReservationProStock();
-	m.unlockStock("265","123456","","voided");
-}
+	public static void main(String[] args) {
+		ReservationProStock m = new ReservationProStock();
+		m.unlockStock("265","123456","","voided");
+	}
 	/*
 	 * 授权
 	 */
@@ -202,6 +246,7 @@ public static void main(String[] args) {
 				logger.info("刷新授权success");
 			} else if ("INV_REFRESH_TOKEN".equals(obj.getError_code())) {
 				logger.info("授权已过期，重新授权");
+				System.out.println("授权已过期，重新授权");
 				authApi();
 			}
 		}
@@ -219,6 +264,7 @@ public static void main(String[] args) {
 			map.put("response_type", "json");
 			// 请求API的返回结果
 			String json = MyJsonUtil.getRequestSourceJson(map);
+			logger.info("通过授权请求url的返回结果：" + json);
 			if(HttpUtil45.errorResult.equals(json)){
 				obj = new ResponseObject();
 				obj.setReturn_code("0");
@@ -228,6 +274,7 @@ public static void main(String[] args) {
 			obj = new Gson().fromJson(json, ResponseObject.class);
 			if ("INV_TOKEN".equals(obj.getError_code())) {
 				logger.info("无效的token:" + oauth.getAccess_token());
+				System.out.println("无效的token:" + oauth.getAccess_token());
 				// token可能已过期，刷新token延长周期
 				// 重新请求url资源
 				refreshToken();

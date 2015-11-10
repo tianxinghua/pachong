@@ -39,12 +39,14 @@ public class OrderServiceImpl  {
     private static String key ;
     private static String confirmTime;
     private static String url;
+    private static String domain;
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         key = bdl.getString("key");
         confirmTime = bdl.getString("confirmTime");
+        domain =   bdl.getString("url");
         url = bdl.getString("url") + "/global/orders/";
     }
 
@@ -136,7 +138,7 @@ public class OrderServiceImpl  {
                         map.put("excTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
 
                         if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(1000*60*60*24)>0){
-                            //超过一天 不需要在做处理 订单状态改为其它状体
+                            //超过一天 不需要在做处理 订单状态改为其它状态
                             map.put("status",OrderStatus.NOHANDLE);
 
                         }
@@ -147,7 +149,7 @@ public class OrderServiceImpl  {
                             if(OrderStatus.NOHANDLE.equals(map.get("status"))){
                                 //采购异常
 
-                                iceOrderService.cancelPurchaseOrder(orderDTO.getSpPurchaseDetailNo(),"",supplierId);
+                                iceOrderService.cancelPurchaseOrder(orderDTO.getSpPurchaseDetailNo(),map.get("excDesc"),supplierId);
                             }
 
                         } catch (ServiceException e1) {
@@ -394,7 +396,7 @@ public class OrderServiceImpl  {
         if(null!=orderMap&&orderMap.size()==0){
             //无值 测试下状态
             try {
-              String healstatus =   HttpUtil45.get("https://api-sandbox.gilt.com/global/healthchecks/status",timeConfig,null);
+              String healstatus =   HttpUtil45.get( domain + "/global/healthchecks/status",timeConfig,null);
                 logger.info("服务器状态:"+healstatus);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -491,8 +493,8 @@ public class OrderServiceImpl  {
                 reason ="已无此商品. ";
                 //处理采购异常
                 try {
-                    iceOrderService.cancelPurchaseOrder(spOrder.getSpPurchaseDetailNo(),"",supplierId);
-                    map.put("status",OrderStatus.NOHANDLE);
+                    iceOrderService.cancelPurchaseOrder(spOrder.getSpPurchaseDetailNo(),reason,supplierId);
+                    map.put("status", OrderStatus.NOHANDLE);
                 } catch (ServiceException e1) {
                     reason = reason + e1.getMessage();
                 }
@@ -590,7 +592,7 @@ public class OrderServiceImpl  {
         List<com.shangpin.iog.dto.OrderDTO>  orderDTOList= null;
         try {
             orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED);
-            if(null!=orderDTOList){
+            if(null!=orderDTOList&&orderDTOList.size()>0){
                 String orderDetail = "",orderMsg="";
                 Gson gson = new Gson();
                 OutTimeConfig timeConfig = new OutTimeConfig(1000*60,1000*60,1000*60);
@@ -740,7 +742,7 @@ public class OrderServiceImpl  {
                     //处理采购异常
 
                     try {
-                        iceOrderService.cancelPurchaseOrder(orderDTO.getSpPurchaseDetailNo(), "", supplierId);
+                        iceOrderService.cancelPurchaseOrder(orderDTO.getSpPurchaseDetailNo(), "已发货不能取消订单", supplierId);
                         returnMap.put("status",OrderStatus.SHIPPED);
                         returnMap.put("excDesc","已发货不能取消订单");
 
