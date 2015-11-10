@@ -46,6 +46,7 @@ public class StockClientImp  extends AbsUpdateProductStock {
 //        String stockUrl="http://188.226.153.91/modules/api/v2/stock/id/";
 
         String token ="";
+        int i=0;
         try {
             List<LeamDTO> list=getSkus(skuUrl);
             logger.info("拉到的数据量是:"+list.size());
@@ -61,6 +62,7 @@ public class StockClientImp  extends AbsUpdateProductStock {
 
                 for(String skuId:skuNo){
                     if(skuMap.containsKey(skuId)){
+                        i++;
                         skustock.put(skuId,skuMap.get(skuId));
                     }else{
                         skustock.put(skuId,"0");
@@ -72,6 +74,7 @@ public class StockClientImp  extends AbsUpdateProductStock {
             loggerError.error("leam 获取供应商的库存失败.--"+e.getMessage());
             e.printStackTrace();
         }
+        logger.info("待更新的库存数是 :" + skustock.size()+" 相匹配的有:" + i);
         return skustock;
     }
     private  String getToken(String tokenUrl){
