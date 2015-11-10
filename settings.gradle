@@ -158,4 +158,5 @@ include 'forzieri-stock'
 include 'forzieri-purchase'
 //include 'hovok-stock'
 include 'tony-fetchstock'
+include 'amfeed'
 
