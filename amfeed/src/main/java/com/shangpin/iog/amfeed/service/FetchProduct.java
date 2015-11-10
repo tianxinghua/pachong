@@ -83,17 +83,11 @@ public class FetchProduct {
                 //
                 for(int i = 1;i<5;i++){
                     ProductPictureDTO dto  = new ProductPictureDTO();
-                    try {
-                        Method m = product.getClass().getMethod("getImage"+i,String.class);
-                        String picUrl = (String) m.invoke(product);
-                        dto.setPicUrl(picUrl);
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    }catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
+                    String picUrl = product.getImage1();
+                    if (i == 2) picUrl = product.getImage2();
+                    else if (i == 3) picUrl = product.getImage3();
+                    else if (i == 4) picUrl = product.getImage4();
+                    dto.setPicUrl(picUrl);
                     dto.setSupplierId(supplierId);
                     dto.setId(UUIDGenerator.getUUID());
                     dto.setSkuId(product.getSku());
@@ -104,19 +98,19 @@ public class FetchProduct {
                     }
                 }
 
-                } catch (ServiceException e) {
-                    try {
-                        if(e.getMessage().equals("数据插入失败键重复")){
-                            //更新价格和库存
-                            productFetchService.updatePriceAndStock(sku);
-                        } else{
-                            e.printStackTrace();
-                        }
-
-                    } catch (ServiceException e1) {
-                        e1.printStackTrace();
+            } catch (ServiceException e) {
+                try {
+                    if(e.getMessage().equals("数据插入失败键重复")){
+                        //更新价格和库存
+                        productFetchService.updatePriceAndStock(sku);
+                    } else{
+                        e.printStackTrace();
                     }
+
+                } catch (ServiceException e1) {
+                    e1.printStackTrace();
                 }
+            }
 
             try {
                 spu.setId(UUIDGenerator.getUUID());
