@@ -36,27 +36,21 @@ public class MyCsvUtil {
      * @throws MalformedURLException
      */
     public static void csvDownload() throws MalformedURLException {
-        int bytesum = 0;
-        int byteread = 0;
-
-        URL url = new URL(httpurl);
-        String realPath=localPath;
+        String csvFile = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null);
+        //System.out.println(csvFile);
+        FileWriter fwriter = null;
         try {
-            URLConnection conn = url.openConnection();
-            InputStream inStream = conn.getInputStream();
-            FileOutputStream fs = new FileOutputStream(realPath);
-
-            byte[] buffer = new byte[1204];
-            int length;
-            while ((byteread = inStream.read(buffer)) != -1) {
-                bytesum += byteread;
-                //System.out.println(bytesum);
-                fs.write(buffer, 0, byteread);
+            fwriter = new FileWriter(localPath);
+            fwriter.write(csvFile);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                fwriter.flush();
+                fwriter.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -64,7 +58,7 @@ public class MyCsvUtil {
      * http下载csv文件到本地路径
      * @throws MalformedURLException
      */
-    public static List<Product> readCSVFile(String localPath) throws Exception {
+    public static List<Product> readCSVFile2() throws Exception {
         //解析csv文件
         CsvReader cr = new CsvReader(new FileReader(localPath));
         System.out.println("创建cr对象成功");
@@ -107,19 +101,86 @@ public class MyCsvUtil {
         }
         return dtoList;
     }
-/**
+
+       /**
+          * 解析csv文件 到一个list中 每个单元个为一个String类型记录，每一行为一个list。 再将所有的行放到一个总list中
+          */
+        public static List<Product> readCSVFile() throws IOException {
+            InputStreamReader fr = new InputStreamReader(new FileInputStream(localPath));
+            BufferedReader br = null;
+
+            br = new BufferedReader(fr);
+            String rec = null;// 一行
+            String str;// 一个单元格
+            List<List<String>> listFile = new ArrayList<List<String>>();
+
+            List<Product> dtoList = new ArrayList<Product>();
+            Product product = null;
+            try {
+                // 读取一行
+                while ((rec = br.readLine()) != null) {
+                    product = new Product();
+                    Field[] copyTo = product.getClass().getDeclaredFields();
+                    Pattern pCells = Pattern.compile("(\"[^\"]*(\"{2})*[^\"]*\")*[^,]*,");
+                    Matcher mCells = pCells.matcher(rec);
+                    List<String> cells = new ArrayList<String>();// 每行记录一个list
+                    int i = 0;
+                    // 读取每个单元格
+                    while (mCells.find()) {
+                        str = mCells.group();
+                        str = str.replaceAll("(?sm)\"?([^\"]*(\"{2})*[^\"]*)\"?.*,", "$1");
+                        str = str.replaceAll("(?sm)(\"(\"))", "$2");
+                        //System.out.println(")(" + str + ")(");
+                        String name = copyTo[i++].getName(); // 获取属性的名字
+                        name = name.substring(0, 1).toUpperCase() + name.substring(1);
+                        Method m = product.getClass().getMethod("set"+name,String.class);
+                        m.invoke(product,str);
+                        System.out.println(name+" : "+str);
+                        cells.add(str);
+                        }
+                        listFile.add(cells);
+                    //手动设值
+                    product.setCategrory(getLastValue(rec.split(",")));
+                    dtoList.add(product);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (fr != null) {
+                            fr.close();
+                        }
+                    if (br != null) {
+                            br.close();
+                        }
+                 }
+                return dtoList;
+            }
+
+    private static String getLastValue(String[] strArr){
+        return strArr[strArr.length-1];
+    }
+    /**
  * test
  * */
     public static void main(String[] args) {
         List<Product> list = null;
         try {
-            list = new MyCsvUtil().readCSVFile(localPath);
+            list = MyCsvUtil.readCSVFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println(list.size());
         for (Product p:list){
-            System.out.println(p.getQty());
+            System.out.println(p.getImage1());
+        }
+        for (Product p:list){
+            System.out.println(p.getSku());
+        }
+        for (Product p:list){
+            System.out.println(p.getPrice());
+        }
+        for (Product p:list){
+            System.out.println(p.getCategrory());
         }
 
 /*        String json = HttpUtil45.get(httpurl, new OutTimeConfig(1000 * 60 * 10, 10 * 1000 * 60, 10 * 1000 * 60), null);
