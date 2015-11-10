@@ -70,15 +70,13 @@ public class OrderImpl extends AbsOrderService {
      */
     @Override
     public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
-    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" );
-    	Date date = new Date();
     	deleteOrder.setExcState("0");
         UpdateOrderStatusDTO updateOrder = new UpdateOrderStatusDTO();
         updateOrder.setMerchantId(Constant.MERCHANT_ID);
         updateOrder.setToken(Constant.TOKEN);
         updateOrder.setShopOrderId(deleteOrder.getSpOrderId());
         updateOrder.setStatus(Constant.CANCELED);
-                updateOrder.setStatusDate(sdf.format(date));
+                updateOrder.setStatusDate(getUTCTime());
         Gson gson = new Gson();
         String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);
         System.out.println("取消订单推送的 json数据： "+json);
@@ -96,6 +94,7 @@ public class OrderImpl extends AbsOrderService {
                 deleteOrder.setExcState("1");
                 deleteOrder.setExcDesc(returnDataDTO.getMessages().toString());
             } else {
+            	deleteOrder.setExcState("0");
                 deleteOrder.setStatus(OrderStatus.CANCELLED);
             }
         } catch (ServiceException e) {
@@ -117,9 +116,7 @@ public class OrderImpl extends AbsOrderService {
         updateOrder.setToken(Constant.TOKEN);
         updateOrder.setShopOrderId(deleteOrder.getSpOrderId());
         updateOrder.setStatus(Constant.CANCELED);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" );
-    	Date date = new Date();
-                updateOrder.setStatusDate(sdf.format(date));
+                updateOrder.setStatusDate(getUTCTime());
         Gson gson = new Gson();
         String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);
         System.out.println("退款订单推送的 json数据： "+json);
@@ -168,9 +165,7 @@ public class OrderImpl extends AbsOrderService {
         updateOrder.setToken(Constant.TOKEN);
         updateOrder.setShopOrderId(orderDTO.getSpOrderId());
         updateOrder.setStatus(status);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" );
-    	Date date = new Date();
-        updateOrder.setStatusDate(sdf.format(date));
+        updateOrder.setStatusDate(getUTCTime());
         Gson gson = new Gson();
         String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);
         logger.info("支付订单推送的 json数据："+json);
@@ -326,16 +321,27 @@ public class OrderImpl extends AbsOrderService {
         order.setShopOrderId(orderDTO.getSpOrderId());
         order.setOrderTotalPrice(totalPrice);
         order.setStatus(status);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" );
-    	Date date = new Date();
-        order.setStatusDate(sdf.format(date));
-        order.setOrderDate(sdf.format(date));
+    	order.setStatusDate(getUTCTime());
+        order.setOrderDate(getUTCTime());
         order.setItems(itemsArr);
         order.setShippingInfo(shippingInfo);
         order.setBillingInfo(billingInfo);
         return  order;
     }
 
+    private static String getUTCTime(){
+    	// 1、取得本地时间：  
+        Calendar cal = Calendar.getInstance() ;  
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss" );
+        // 2、取得时间偏移量：  
+        int zoneOffset = cal.get(java.util.Calendar.ZONE_OFFSET);  
+        // 3、取得夏令时差：  
+        int dstOffset = cal.get(java.util.Calendar.DST_OFFSET);  
+        // 4、从本地时间里扣除这些差量，即可以取得UTC时间：  
+        cal.add(java.util.Calendar.MILLISECOND, -(zoneOffset + dstOffset));  
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss" );
+        return sdf.format(cal.getTime());
+    }
 	@Override
 	public void handleEmail(OrderDTO orderDTO) {
 		// TODO Auto-generated method stub
