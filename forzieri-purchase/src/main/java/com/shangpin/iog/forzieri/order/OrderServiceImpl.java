@@ -200,16 +200,16 @@ public class OrderServiceImpl extends AbsOrderService{
 		refreshToken = tokenDTO.getRefreshToken();
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		CloseableHttpClient httpClient = httpClientBuilder.build();
-
-		HttpPut httpPut = new HttpPut("https://api.forzieri.com/test/orders");
-        httpPut.setHeader("Authorization", "Bearer "+accessToken);
-        httpPut.setHeader("X_HTTP_METHOD_OVERRIDE", "PUT");
-        httpPut.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-        StringEntity entity = new StringEntity("{\"id\":\""+orderNo+"\",\"status\":\""+oper+"\"}","utf-8");
+		
+		HttpPost httpPost = new HttpPost("https://api.forzieri.com/test/orders/"+orderNo);
+        httpPost.setHeader("Authorization", "Bearer "+accessToken);
+        httpPost.setHeader("X_HTTP_METHOD_OVERRIDE", "PUT");
+        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+        StringEntity entity = new StringEntity("{\"status\":\""+oper+"\"}","utf-8");
         entity.setContentType("application/json");
-        httpPut.setEntity(entity);
+        httpPost.setEntity(entity);
 		try {
-        	 response = httpClient.execute(httpPut);
+        	 response = httpClient.execute(httpPost);
         	 pushOrderData = gson.fromJson(EntityUtils.toString(response.getEntity()), PushOrderData.class);
         	 pushOrderData.setStatusCode(String.valueOf(response.getStatusLine().getStatusCode()));
         } catch (Exception e) {
@@ -269,7 +269,7 @@ public class OrderServiceImpl extends AbsOrderService{
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		CloseableHttpClient httpClient = httpClientBuilder.build();
 		HttpPost httpPost = new HttpPost("https://api.forzieri.com/test/orders");
-		httpPost.setHeader("Authorization", "Bearer 75c8f6e0a4411a551a5f388e88695317b41baf13");
+		httpPost.setHeader("Authorization", "Bearer ef197db73b29b7e9dde889dd7123b18451176fcc");
 		httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 		String sku = "fz181110-001-00";
 		String qty = "1";
@@ -281,7 +281,7 @@ public class OrderServiceImpl extends AbsOrderService{
          httpPost.setEntity(entity);
          try {
         	 response = httpClient.execute(httpPost);
-//        	 fromJson = gson.fromJson(EntityUtils.toString(response.getEntity()), PushOrderData.class);
+        	 fromJson = gson.fromJson(EntityUtils.toString(response.getEntity()), PushOrderData.class);
         	 System.out.println(response.getStatusLine().getStatusCode());
         } catch (ClientProtocolException e) {
 		e.printStackTrace();
@@ -289,15 +289,16 @@ public class OrderServiceImpl extends AbsOrderService{
 			e.printStackTrace();
 		}
          // approve order
-         HttpPut httpPut = new HttpPut("https://api.forzieri.com/test/orders");
-         httpPut.setHeader("Authorization", "Bearer 75c8f6e0a4411a551a5f388e88695317b41baf13");
-         httpPut.setHeader("X_HTTP_METHOD_OVERRIDE", "PUT");
-         httpPut.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-         StringEntity entity1 = new StringEntity("{\"id\":\""+fromJson.getData().getOrder_id()+"\",\"status\":\"approved\"}","utf-8");
+//         HttpPut httpPut = new HttpPut("https://api.forzieri.com/test/orders");
+         HttpPost httpPost2 = new HttpPost("https://api.forzieri.com/test/orders/"+fromJson.getData().getOrder_id());
+         httpPost2.setHeader("Authorization", "Bearer ef197db73b29b7e9dde889dd7123b18451176fcc");
+         httpPost2.setHeader("X_HTTP_METHOD_OVERRIDE", "PUT");
+         httpPost2.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+         StringEntity entity1 = new StringEntity("{\"status\":\"approved\"}","utf-8");
          entity1.setContentType("application/json");
-         httpPut.setEntity(entity1);
+         httpPost2.setEntity(entity1);
         try {
-        	 response = httpClient.execute(httpPut);
+        	 response = httpClient.execute(httpPost2);
         	 System.out.println(EntityUtils.toString(response.getEntity()));
         	 System.out.println(String.valueOf(response.getStatusLine().getStatusCode()));
         } catch (Exception e) {
