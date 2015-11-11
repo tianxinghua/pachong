@@ -1,19 +1,17 @@
-package com.shangpin.iog.amfeed.common;
-
-import com.shangpin.iog.amfeed.dto.Product;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+package com.shangpin.iog.amfeed.stock.util;
 
 import com.csvreader.CsvReader;
-import org.apache.log4j.Logger;
+import com.shangpin.iog.amfeed.stock.dto.Product;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,45 +19,40 @@ import java.util.regex.Pattern;
  * Created by Administrator on 2015/11/9.
  */
 public class MyCsvUtil {
-    private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl = null;
     private static String httpurl;
     private static String localPath;
-    private static String supplierId;
     static {
         if (bdl == null)
             bdl = ResourceBundle.getBundle("conf");
             httpurl = bdl.getString("url");
             localPath = bdl.getString("path");
-            supplierId = bdl.getString("supplierId");
     }
     /**
      * http下载csv文件到本地路径
      * @throws MalformedURLException
      */
-    public static void csvDownload() throws MalformedURLException {
+    public static boolean csvDownload() throws MalformedURLException {
+        boolean flag = true;
         String csvFile = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null);
-        //memo
-        Map<String, String> mongMap = new HashMap<>();
-        mongMap.put("supplierId", supplierId);
-        mongMap.put("supplierName", "amfeed");
- 		mongMap.put("result", csvFile);
-        logMongo.info(mongMap);
         //System.out.println(csvFile);
         FileWriter fwriter = null;
         try {
             fwriter = new FileWriter(localPath);
             fwriter.write(csvFile);
         } catch (IOException ex) {
+            flag = false;
             ex.printStackTrace();
         } finally {
             try {
                 fwriter.flush();
                 fwriter.close();
             } catch (IOException ex) {
+                flag = false;
                 ex.printStackTrace();
             }
         }
+        return flag;
     }
 
     /**
@@ -138,7 +131,6 @@ public class MyCsvUtil {
                         str = mCells.group();
                         str = str.replaceAll("(?sm)\"?([^\"]*(\"{2})*[^\"]*)\"?.*,", "$1");
                         str = str.replaceAll("(?sm)(\"(\"))", "$2");
-                        str = str.replace("\"","");
                         //System.out.println(")(" + str + ")(");
                         String name = copyTo[i++].getName(); // 获取属性的名字
                         name = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -179,7 +171,7 @@ public class MyCsvUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(list.size());
+/*        System.out.println(list.size());
         for (Product p:list){
             System.out.println(p.getImage1());
         }
@@ -191,7 +183,7 @@ public class MyCsvUtil {
         }
         for (Product p:list){
             System.out.println(p.getCategrory());
-        }
+        }*/
 
 /*        String json = HttpUtil45.get(httpurl, new OutTimeConfig(1000 * 60 * 10, 10 * 1000 * 60, 10 * 1000 * 60), null);
         System.out.println(json);*/
