@@ -258,15 +258,16 @@ System.out.println(productId+"存在,不存在的数:"+cnt);
 				Set<String> scks=scalars.keySet();
 				for (String sck : scks) {
 
-					if(!prd.getSizeStockMap().containsKey(sck)){
-						continue;
-					}
-
 					String sml=scalars.get(sck);//尺码字符
 					//TODO 尺码key;sck;
 					try {
 						ColtortiProduct pt = convertProduct(prd,sck);
-						pt.setStock(prd.getSizeStockMap()==null?0:prd.getSizeStockMap().get(sck));
+						if(prd.getSizeStockMap().containsKey(sck)){
+							pt.setStock(prd.getSizeStockMap()==null?0:prd.getSizeStockMap().get(sck));
+						}else{
+							pt.setStock(0);
+						}
+
 						pt.setSizeKeyValue(sck+"#"+sml);
 						newProducts.add(pt);
 					} catch (Exception e) {
