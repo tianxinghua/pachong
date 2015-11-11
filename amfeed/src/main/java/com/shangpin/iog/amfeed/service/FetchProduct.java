@@ -51,7 +51,7 @@ public class FetchProduct {
         //read .csv file
         List<Product> list = null;
         try {
-            list = MyCsvUtil.readCSVFile(localPath);
+            list = MyCsvUtil.readCSVFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
