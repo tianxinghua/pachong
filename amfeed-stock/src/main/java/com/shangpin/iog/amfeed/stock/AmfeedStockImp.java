@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created by wangyuzhi on 2015/9/14.
+ * Created by wangyuzhi on 2015/11/11.
  */
 public class AmfeedStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
@@ -20,53 +20,55 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
     private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
     private long start = 0;//计时开始时间
     private long end = 0;//计时结束时间
-    private String localFile = "";//需要解析的文件
-    private String itemId = "";//单个skuId
-    private Integer stock = null;//单个skuId的库存数
+    private String skuId = "";//单个skuId
 
     @Override
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法开始！");
-        logger.info("TESSABIT Sku 条数："+skuNo.size());
+        logger.info("AMFEED Sku 条数："+skuNo.size());
         start = System.currentTimeMillis();
+        boolean flag = false;
         try {
-            MyCsvUtil.csvDownload();
+            flag = MyCsvUtil.csvDownload();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         end = System.currentTimeMillis();
-        logger.info("下载TESSABIT文件结果"+true+"，耗时："+(end-start)/1000+"秒");
+        logger.info("下载AMFEED文件结果"+flag+"，耗时："+(end-start)/1000+"秒");
         List<Product> list = null;
-        if (true){
+        Map<String,Integer> map = new HashMap();
+        if (flag){
             start = System.currentTimeMillis();
             try {
                 list = MyCsvUtil.readCSVFile();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            for (Product p:list){
+                map.put(p.getSku(),Integer.parseInt(p.getQty()));
+            }
             end = System.currentTimeMillis();
-            logger.info("解析TESSABIT文件耗时："+(end-start)/1000+"秒");
-        }
-        Map<String,Integer> map = new HashMap();
-        for (Product p:list){
-            map.put(p.getSku(),Integer.parseInt(p.getQty()));
+            logger.info("解析AMFEED文件耗时："+(end-start)/1000+"秒");
         }
 
         Map<String,Integer> returnMap = new HashMap();
         Iterator<String> iterator=skuNo.iterator();
-        logger.info("为TESSABIT供应商产品库存循环赋值");
+        logger.info("为AMFEED供应商产品库存循环赋值");
         start = System.currentTimeMillis();
         while (iterator.hasNext()){
+            skuId = iterator.next();
             //logger.info("SkuId is " +itemId + ",stock is " +stock);
-            returnMap.put(itemId, map.get(iterator.next()));
+            returnMap.put(skuId, map.get(skuId));
         }
         end = System.currentTimeMillis();
-        logger.info("为TESSABIT产品库存赋值总共耗时："+(end-start)/1000+"秒");
-        System.out.println("为产品库存赋值总共耗时："+(end-start)/1000+"秒");
+        logger.info("为AMFEED产品库存赋值总共耗时："+(end-start)/1000+"秒");
         logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法结束！");
         return returnMap;
     }
 
+    /**
+     * test
+     * */
     public static void main(String[] args) throws Exception {
         String host = bundle.getString("HOST");
         String app_key = bundle.getString("APP_KEY");
@@ -77,9 +79,9 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
         AbsUpdateProductStock impl = new AmfeedStockImp();
 
       SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("TESSABIT更新数据库开始");
+        logger.info("AMFEED更新数据库开始");
         impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
-        logger.info("TESSABIT更新数据库结束");
+        logger.info("AMFEED更新数据库结束");
         System.exit(0);
 
 /*

@@ -32,7 +32,8 @@ public class MyCsvUtil {
      * http下载csv文件到本地路径
      * @throws MalformedURLException
      */
-    public static void csvDownload() throws MalformedURLException {
+    public static boolean csvDownload() throws MalformedURLException {
+        boolean flag = true;
         String csvFile = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null);
         //System.out.println(csvFile);
         FileWriter fwriter = null;
@@ -40,15 +41,18 @@ public class MyCsvUtil {
             fwriter = new FileWriter(localPath);
             fwriter.write(csvFile);
         } catch (IOException ex) {
+            flag = false;
             ex.printStackTrace();
         } finally {
             try {
                 fwriter.flush();
                 fwriter.close();
             } catch (IOException ex) {
+                flag = false;
                 ex.printStackTrace();
             }
         }
+        return flag;
     }
 
     /**
