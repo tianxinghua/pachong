@@ -162,4 +162,5 @@ include 'railSoAtelier'
 include 'railSoAtelier-stock'
 include 'amfeed'
 include 'amfeed-stock'
+include 'spinnaker-order'
 
