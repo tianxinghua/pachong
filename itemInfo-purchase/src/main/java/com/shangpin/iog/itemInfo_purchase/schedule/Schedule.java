@@ -15,7 +15,7 @@ public class Schedule {
 	com.shangpin.iog.itemInfo_purchase.service.OrderSreviceImpl orderService;
 	
 	
-	@Scheduled(cron="${jobs.schedule}")
+	@Scheduled(cron="${jobsSchedule}")
 	public void start(){
 		orderService.start();
 	}
