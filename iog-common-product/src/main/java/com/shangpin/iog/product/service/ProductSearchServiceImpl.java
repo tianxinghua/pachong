@@ -81,17 +81,24 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 
     @Override
-    public Page<ProductDTO> findProductPageBySupplierAndTime(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
+    public Page<ProductDTO> findProductPageBySupplierAndTime(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize,String flag) throws ServiceException {
         List<ProductDTO> productList = null;
         Page<ProductDTO> page  =  null;
         try {
             if(null!=pageIndex&&null!=pageSize){
                 page = new Page<>(pageIndex,pageSize);
-                productList = productDAO.findListBySupplierAndLastDate(supplier,startDate,endDate, new RowBounds(pageIndex, pageSize));
-
+                if (flag=="same") {
+                	productList = productDAO.findListBySupplierAndLastDate(supplier,startDate,endDate, new RowBounds(pageIndex, pageSize));
+				}else{
+					productList = productDAO.findDiffListBySupplierAndLastDate(supplier,startDate,endDate, new RowBounds(pageIndex, pageSize));
+				}
 
             }else{
-                productList = productDAO.findListBySupplierAndLastDate(supplier, startDate, endDate);
+            	if (flag=="same") {
+            		productList = productDAO.findListBySupplierAndLastDate(supplier, startDate, endDate);
+				} else {
+					productList = productDAO.findDiffListBySupplierAndLastDate(supplier, startDate, endDate);
+				}
                 page = new Page<>(1,productList.size());
             }
 
@@ -167,7 +174,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 
     @Override
-    public StringBuffer exportProduct(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException {
+    public StringBuffer exportProduct(String supplier, Date startDate, Date endDate, Integer pageIndex, Integer pageSize,String flag) throws ServiceException {
 
         StringBuffer buffer = new StringBuffer("CategoryName 品类名称" +   splitSign +
                 "Category_No 品类编号"+ splitSign + "BrandNo 品牌编号" + splitSign + "BrandName 品牌" + splitSign + "ProductModel 货号" + splitSign +
@@ -177,7 +184,13 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 "productUrl6" + splitSign + "productUrl7"  + splitSign + "productUrl8" + splitSign + "productUrl9" + splitSign +
                 "PcDesc 描述" +  splitSign + "Stock 库存" +splitSign+"新市场价"+splitSign+"新销售价"+splitSign+"新进货价"+ splitSign + "markerPrice" + splitSign  + "sallPrice" +  splitSign  + "supplier Price 进货价" + splitSign+
                 "Currency 币种" + splitSign + "上市季节"+splitSign+"活动开始时间"+splitSign+"活动结束时间").append("\r\n");
-        Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize);
+        Page<ProductDTO> page = null;
+        if (flag=="same") {
+        	page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize,"same");
+			
+		}else{
+			page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize,"diff");
+		}
 
         //设置尚品网品牌
         this.setBrandMap();
@@ -187,7 +200,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         this.setMaterialContrastMap();
 
         String productSize,season="", productDetail="",brandName="",brandId="",color="",material="",productOrigin="";
-
+        
         String categoryId="",categoryName="",productName="";
         for(ProductDTO dto:page.getItems()){
 
@@ -535,6 +548,81 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		}
 
 		return sb.toString();
+	}
+
+	@Override
+	public StringBuffer exportDiffProduct(String supplier, Date startDate,
+			Date endDate, Integer pageIndex, Integer pageSize, String flag)
+			throws ServiceException {
+		  StringBuffer buffer = new StringBuffer("供应商"+splitSign+"CategoryName 品类名称"  + splitSign + "ProductModel 货号" + splitSign +
+	                "SupplierSkuNo 供应商SkuNo"+ splitSign +  "Stock 库存" +splitSign+"新市场价"+splitSign+"新销售价"+splitSign+"新进货价"+ splitSign + "markerPrice" + splitSign  + "sallPrice" +  splitSign  + "supplier Price 进货价" + splitSign+
+	                "Currency 币种" ).append("\r\n");
+	        Page<ProductDTO> page = null;
+	        if (flag=="same") {
+	        	page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize,"same");
+				
+			}else{
+				page = this.findProductPageBySupplierAndTime(supplier, startDate, endDate, pageIndex, pageSize,"diff");
+			}
+	        String categoryName="";String supplierId="";
+	        for(ProductDTO dto:page.getItems()){
+
+	            try {
+	            	 //供应商
+	            	supplierId = dto.getSupplierId();
+	            	buffer.append("'"+supplierId).append(splitSign);
+	                //品类名称
+	                categoryName= dto.getSubCategoryName();
+	                if(StringUtils.isBlank(categoryName)){
+	                    categoryName =StringUtils.isBlank(dto.getCategoryName())?"":dto.getCategoryName();
+
+	                }
+	                categoryName.replaceAll(splitSign," ");
+	                buffer.append(categoryName).append(splitSign);
+
+	                //货号
+	                buffer.append(null==dto.getProductCode()?"":dto.getProductCode().replaceAll(","," ")).append(splitSign);
+	                //    供应商SKUID
+
+	                buffer.append("\"\t" + dto.getSkuId()+ "\"").append(splitSign);
+
+	                buffer.append(dto.getStock()).append(splitSign) ;
+	                //新的价格
+	                buffer.append(null == dto.getNewMarketPrice() ? " ": dto.getNewMarketPrice()).append(splitSign);
+	                buffer.append(null == dto.getNewSalePrice() ? " ": dto.getNewSalePrice()).append(splitSign);
+	                buffer.append(null == dto.getNewSupplierPrice() ? " ": dto.getNewSupplierPrice()).append(splitSign);
+	                
+	                String marketPrice = dto.getMarketPrice();
+	                String salePrice = dto.getSalePrice();
+	                String supplierPrice = dto.getSupplierPrice();
+	                if(marketPrice!=null){
+	                	marketPrice = marketPrice.replace(",",".");
+	                }else{
+	                	marketPrice ="";
+	                }
+	                if(salePrice!=null){
+	                	salePrice = salePrice.replace(",",".");
+	                }else{
+	                	salePrice ="";
+	                }
+	                if(supplierPrice!=null){
+	                	supplierPrice = supplierPrice.replace(",",".");
+	                }else{
+	                	supplierPrice ="";
+	                }
+	                //价格
+	                buffer.append(null==dto.getMarketPrice()?" ":dto.getMarketPrice()).append(splitSign)
+	                  .append(null==dto.getSalePrice()?" ":dto.getSalePrice()).append(splitSign)
+	                .append(dto.getSupplierPrice()).append(splitSign).append(dto.getSaleCurrency()).append(splitSign);
+	             
+	                buffer.append("\r\n");
+	            } catch (Exception e) {
+	                logger.debug(dto.getSkuId()+"拉取失败"+  e.getMessage());
+	                continue;
+	            }
+
+	        }
+	        return buffer ;
 	}
 
 }

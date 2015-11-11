@@ -48,6 +48,18 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     List<ProductDTO> findSkuIdbySupplier(@Param("supplier") String supplier,
     							@Param("startDate") Date startDate,
     							@Param("endDate") Date endDate);
-    
+    /**
+     * 根据供货商id查询价格变化的产品列表
+     */
+    List<ProductDTO> findDiffListBySupplierAndLastDate(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate);
+    /**
+     * 根据供货商id查询价格变化的产品列表
+     */
+    List<ProductDTO> findDiffListBySupplierAndLastDate(@Param("supplier") String supplier,
+    		@Param("startDate") Date startDate,
+    		@Param("endDate") Date endDate,
+    		RowBounds rowBounds);
     
 }
