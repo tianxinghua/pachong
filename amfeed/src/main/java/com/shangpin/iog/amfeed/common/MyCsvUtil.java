@@ -143,7 +143,7 @@ public class MyCsvUtil {
                         name = name.substring(0, 1).toUpperCase() + name.substring(1);
                         Method m = product.getClass().getMethod("set"+name,String.class);
                         m.invoke(product,str);
-                        System.out.println(name+" : "+str);
+                        //System.out.println(name+" : "+str);
                         cells.add(str);
                         }
                         listFile.add(cells);

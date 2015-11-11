@@ -48,11 +48,11 @@ public class FetchProduct {
      */
     public void fetchProductAndSave(){
         //download
-        try {
+/*        try {
             MyCsvUtil.csvDownload();
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        }
+        }*/
         //read .csv file
         List<Product> list = null;
         try {
@@ -69,6 +69,10 @@ public class FetchProduct {
     private void messMappingAndSave(List<Product> list) {
         for(Product product:list){
             SpuDTO spu = new SpuDTO();
+/*            //
+            if ("0388".equals(product.getSku())){
+                System.out.println();
+            }*/
             String spuId = product.getSku().split("-")[0];
             SkuDTO sku  = new SkuDTO();
             try {
@@ -123,10 +127,11 @@ public class FetchProduct {
                 spu.setSpuId(spuId);
                 spu.setBrandName(product.getBrand());
                 spu.setCategoryName(product.getCategrory());
-                //spu.setSpuName(spuId);
-                //spu.setSeasonId(spuId);
+                spu.setSpuName(product.getName());
+                spu.setSeasonId("2015 all seasons");
                 spu.setMaterial(product.getMaterials());
-                //spu.setCategoryGender(spuId);
+                spu.setCategoryGender("man");
+                spu.setProductOrigin("Italy");
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
                 e.printStackTrace();
