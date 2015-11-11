@@ -33,7 +33,7 @@ public class ColtortiProductConvert {
 		dto.setProductCode(p.getProductCode());
 		dto.setColor(p.getColor());
 		dto.setCreateTime(new Date());
-		dto.setLastTime(p.getUpdatedAt());
+		dto.setLastTime(new Date());   //p.getUpdatedAt()
 		dto.setSkuId(p.getSkuId());
 		dto.setSupplierPrice(p.getPrice()==null?"0":""+p.getPrice());
 		dto.setSpuId(p.getProductId());

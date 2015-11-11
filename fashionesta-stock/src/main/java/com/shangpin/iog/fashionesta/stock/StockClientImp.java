@@ -38,20 +38,34 @@ public class StockClientImp extends AbsUpdateProductStock {
 			throws ServiceException, Exception {
 
 		Map<String, String> skustock = new HashMap<>(skuNo.size());
-		List<Product> list = csvUtil.readLocalCSV();
-		Iterator<String> it = skuNo.iterator();
-		while (it.hasNext()) {
-			String skuId = it.next();
+		try {
+			List<Product> list = csvUtil.readLocalCSV();
+			Map<String,String> supplierStockMap = new HashMap<>();
 			for (Product product : list) {
-				List<Item> items = product.getItems();
-				if (items.size()>0) {
-					for (Item item : items) {
-						if (skuId.equals(item.getItemCode())) {
-							skustock.put(skuId, item.getStock());
-						}
-					}
-				}
-			}
+                List<Item> items = product.getItems();
+                if (items.size()>0) {
+                    for (Item item : items) {
+
+                        supplierStockMap.put(item.getItemCode(),item.getStock());
+                    }
+                }
+            }
+
+
+			Iterator<String> it = skuNo.iterator();
+			String skuId ="";
+			while (it.hasNext()) {
+                skuId = it.next();
+                if(supplierStockMap.containsKey(skuId)){
+                    skustock.put(skuId,supplierStockMap.get(skuId));
+                }else{
+                    skustock.put(skuId,"0");
+                }
+
+            }
+		} catch (Exception e) {
+			loggerError.error("获取库存失败。"+e.getMessage());
+			throw e;
 		}
 		return skustock;
 	}
