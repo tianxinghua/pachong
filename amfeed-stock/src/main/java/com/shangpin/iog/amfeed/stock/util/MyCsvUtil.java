@@ -1,18 +1,15 @@
-package com.shangpin.iog.amfeed.common;
+package com.shangpin.iog.amfeed.stock.util;
 
-import com.shangpin.iog.amfeed.dto.Product;
+import com.csvreader.CsvReader;
+import com.shangpin.iog.amfeed.stock.dto.Product;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 
-import com.csvreader.CsvReader;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -35,7 +32,8 @@ public class MyCsvUtil {
      * http下载csv文件到本地路径
      * @throws MalformedURLException
      */
-    public static void csvDownload() throws MalformedURLException {
+    public static boolean csvDownload() throws MalformedURLException {
+        boolean flag = true;
         String csvFile = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null);
         //System.out.println(csvFile);
         FileWriter fwriter = null;
@@ -43,15 +41,18 @@ public class MyCsvUtil {
             fwriter = new FileWriter(localPath);
             fwriter.write(csvFile);
         } catch (IOException ex) {
+            flag = false;
             ex.printStackTrace();
         } finally {
             try {
                 fwriter.flush();
                 fwriter.close();
             } catch (IOException ex) {
+                flag = false;
                 ex.printStackTrace();
             }
         }
+        return flag;
     }
 
     /**
