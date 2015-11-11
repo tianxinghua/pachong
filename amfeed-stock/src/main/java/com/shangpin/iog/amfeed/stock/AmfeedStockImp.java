@@ -27,7 +27,7 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
         logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法开始！");
         logger.info("AMFEED Sku 条数："+skuNo.size());
         start = System.currentTimeMillis();
-        boolean flag = false;
+        boolean flag = true;
         try {
             flag = MyCsvUtil.csvDownload();
         } catch (MalformedURLException e) {
@@ -44,8 +44,8 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            for (Product p:list){
-                map.put(p.getSku(),Integer.parseInt(p.getQty()));
+            for (int i = 1;i<list.size();i++){
+                map.put(list.get(i).getSku(),Integer.parseInt(list.get(i).getQty().trim()));
             }
             end = System.currentTimeMillis();
             logger.info("解析AMFEED文件耗时："+(end-start)/1000+"秒");
@@ -59,7 +59,7 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
         start = System.currentTimeMillis();
         while (iterator.hasNext()){
             skuId = iterator.next();
-            //logger.info("SkuId is " +itemId + ",stock is " +stock);
+            logger.info("SkuId is " +skuId + ",stock is " +map.get(skuId));
             returnMap.put(skuId, map.get(skuId));
         }
         end = System.currentTimeMillis();
@@ -72,7 +72,7 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
      * test
      * */
     public static void main(String[] args) throws Exception {
-        String host = bundle.getString("HOST");
+/*        String host = bundle.getString("HOST");
         String app_key = bundle.getString("APP_KEY");
         String app_secret= bundle.getString("APP_SECRET");
         if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
@@ -84,30 +84,23 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
         logger.info("AMFEED更新数据库开始");
         impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
         logger.info("AMFEED更新数据库结束");
-        System.exit(0);
+        System.exit(0);*/
 
-/*
+        AbsUpdateProductStock impl = new AmfeedStockImp();
         List<String> skuNo = new ArrayList<>();
-        skuNo.add("1983991600_12");
-        skuNo.add("1983991600_11");
-        skuNo.add("1983991600_10");
-        skuNo.add("1983904634_11");
-        skuNo.add("1983904634_12");
-        skuNo.add("1983933587_1985020934");
-        skuNo.add("1983933587_1985020935");
-        skuNo.add("1983933587_1985020936");
-        skuNo.add("1983933587_1985020937");
-        skuNo.add("1983933587_1985020938");
-        for (int i = 0;i<5000;i++){
+        skuNo.add("1054-S");
+        skuNo.add("1032-S");
+        skuNo.add("1076-M");
+        skuNo.add("1076-L");
+        skuNo.add("1092-XS");
+        skuNo.add("1150-8,5");
+/*        for (int i = 0;i<5000;i++){
             skuNo.add(i+"1983933587_1985020936");
-        }
+        }*/
         Map returnMap = impl.grabStock(skuNo);
         System.out.println("test return size is "+returnMap.keySet().size());
         for(Object key: returnMap.keySet()){
-           // System.out.println("skuId is "+key+",stock is "+returnMap.get(key));;
+           System.out.println("skuId is "+key+",stock is "+returnMap.get(key));;
         }
-*/
-
-
     }
 }
