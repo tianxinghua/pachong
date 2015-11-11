@@ -129,7 +129,9 @@ public class MyCsvUtil {
                 while ((rec = br.readLine()) != null) {
                     product = new Product();
                     Field[] copyTo = product.getClass().getDeclaredFields();
-                    Pattern pCells = Pattern.compile("(\"[^\"]*(\"{2})*[^\"]*\")*[^,]*,");
+                    //Pattern pCells = Pattern.compile("(\"[^\"]*(\"{2})*[^\"]*\")*[^,]*,");
+                    Pattern pCells = Pattern.compile("(\"[^\"]*+[^\"]*\")*[^,]*,");
+                    rec = rec.replaceAll("\"\"", "");
                     Matcher mCells = pCells.matcher(rec);
                     List<String> cells = new ArrayList<String>();// 每行记录一个list
                     int i = 0;
@@ -137,14 +139,15 @@ public class MyCsvUtil {
                     while (mCells.find()) {
                         str = mCells.group();
                         str = str.replaceAll("(?sm)\"?([^\"]*(\"{2})*[^\"]*)\"?.*,", "$1");
+                        str = str.replaceAll("(?sm)\"?([^\"]*+[^\"]*)\"?.*,", "$1");
                         str = str.replaceAll("(?sm)(\"(\"))", "$2");
-                        str = str.replace("\"","");
+                        str = str.replaceAll("\"", "");
                         //System.out.println(")(" + str + ")(");
                         String name = copyTo[i++].getName(); // 获取属性的名字
                         name = name.substring(0, 1).toUpperCase() + name.substring(1);
                         Method m = product.getClass().getMethod("set"+name,String.class);
                         m.invoke(product,str);
-                        //System.out.println(name+" : "+str);
+                        System.out.println(name+" : "+str);
                         cells.add(str);
                         }
                         listFile.add(cells);
