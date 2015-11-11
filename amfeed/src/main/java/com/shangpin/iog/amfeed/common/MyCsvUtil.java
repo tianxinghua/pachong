@@ -5,16 +5,15 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 
 import com.csvreader.CsvReader;
+import org.apache.log4j.Logger;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,14 +21,17 @@ import java.util.regex.Pattern;
  * Created by Administrator on 2015/11/9.
  */
 public class MyCsvUtil {
+    private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl = null;
     private static String httpurl;
     private static String localPath;
+    private static String supplierId;
     static {
         if (bdl == null)
             bdl = ResourceBundle.getBundle("conf");
             httpurl = bdl.getString("url");
             localPath = bdl.getString("path");
+            supplierId = bdl.getString("supplierId");
     }
     /**
      * http下载csv文件到本地路径
@@ -37,6 +39,12 @@ public class MyCsvUtil {
      */
     public static void csvDownload() throws MalformedURLException {
         String csvFile = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null);
+        //memo
+        Map<String, String> mongMap = new HashMap<>();
+        mongMap.put("supplierId", supplierId);
+        mongMap.put("supplierName", "amfeed");
+ 		mongMap.put("result", csvFile);
+        logMongo.info(mongMap);
         //System.out.println(csvFile);
         FileWriter fwriter = null;
         try {

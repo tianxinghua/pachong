@@ -49,6 +49,8 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
             }
             end = System.currentTimeMillis();
             logger.info("解析AMFEED文件耗时："+(end-start)/1000+"秒");
+        } else {
+            loggerError.error("下载AMFEED文件失败!");
         }
 
         Map<String,Integer> returnMap = new HashMap();

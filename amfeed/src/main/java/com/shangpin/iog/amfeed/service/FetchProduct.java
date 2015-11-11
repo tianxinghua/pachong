@@ -4,6 +4,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.amfeed.common.MyCsvUtil;
 import com.shangpin.iog.amfeed.dto.Product;
 import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -16,7 +17,9 @@ import com.shangpin.iog.service.ProductFetchService;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -24,7 +27,9 @@ import java.util.ResourceBundle;
  */
 @Component("amfeed")
 public class FetchProduct {
-    final Logger logger = Logger.getLogger(this.getClass());
+    private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
+    private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static String localPath;
@@ -72,9 +77,9 @@ public class FetchProduct {
                 sku.setSpuId(spuId);
                 sku.setSkuId(product.getSku());
                 sku.setProductSize(product.getSize());
-                sku.setMarketPrice(product.getPrice());//TODO
-                sku.setSalePrice(product.getPrice());//TODO
-                sku.setSupplierPrice(product.getPrice());//TODO
+                sku.setMarketPrice(product.getPrice());
+                sku.setSalePrice(product.getPrice());
+                sku.setSupplierPrice(product.getPrice());
                 sku.setColor(product.getColor());
                 sku.setProductDescription(product.getDescription());
                 sku.setStock(product.getQty());
