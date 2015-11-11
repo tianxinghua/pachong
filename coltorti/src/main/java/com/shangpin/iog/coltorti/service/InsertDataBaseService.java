@@ -104,11 +104,14 @@ public class InsertDataBaseService {
 			try{
 				sk.setMarketPrice(sk.getSupplierPrice());
 				pfs.saveSKU(sk);
-				logger.info("-----开始保存SKUPIC-----");
-				Set<ProductPictureDTO> pcs=picMap.get(sk.getSkuId());
-				if(CollectionUtils.isNotEmpty(pcs)){
-					insertSkuPic(pcs);
+				if(null!=picMap){
+					logger.info("-----开始保存SKUPIC-----");
+					Set<ProductPictureDTO> pcs=picMap.get(sk.getSkuId());
+					if(CollectionUtils.isNotEmpty(pcs)){
+						insertSkuPic(pcs);
+					}
 				}
+
 
 //			logger.info("-----SKUPIC保存结束，SKUPIC总数：{},成功数{}",total,total-failCnt);
 
