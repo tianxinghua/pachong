@@ -69,10 +69,6 @@ public class FetchProduct {
     private void messMappingAndSave(List<Product> list) {
         for(Product product:list){
             SpuDTO spu = new SpuDTO();
-/*            //
-            if ("0388".equals(product.getSku())){
-                System.out.println();
-            }*/
             String spuId = product.getSku().split("-")[0];
             SkuDTO sku  = new SkuDTO();
             try {

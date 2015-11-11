@@ -138,6 +138,7 @@ public class MyCsvUtil {
                         str = mCells.group();
                         str = str.replaceAll("(?sm)\"?([^\"]*(\"{2})*[^\"]*)\"?.*,", "$1");
                         str = str.replaceAll("(?sm)(\"(\"))", "$2");
+                        str = str.replace("\"","");
                         //System.out.println(")(" + str + ")(");
                         String name = copyTo[i++].getName(); // 获取属性的名字
                         name = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -178,7 +179,7 @@ public class MyCsvUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-/*        System.out.println(list.size());
+        System.out.println(list.size());
         for (Product p:list){
             System.out.println(p.getImage1());
         }
@@ -190,7 +191,7 @@ public class MyCsvUtil {
         }
         for (Product p:list){
             System.out.println(p.getCategrory());
-        }*/
+        }
 
 /*        String json = HttpUtil45.get(httpurl, new OutTimeConfig(1000 * 60 * 10, 10 * 1000 * 60, 10 * 1000 * 60), null);
         System.out.println(json);*/
