@@ -79,17 +79,21 @@ public class ColtortiProductConvert {
 	}
 	
 	public static Set<ProductPictureDTO> productPic(ColtortiProduct p){
-		List<List<String>> imgurls=p.getImages();
+//		List<List<String>> imgurls=p.getImages();
+		List<String> imgurls=p.getImages();
+		if(null==imgurls) return new HashSet<ProductPictureDTO>();
 		Set<ProductPictureDTO> ppc = new HashSet<>(imgurls.size());
-		for (List<String> list : imgurls) {
-			for (String string : list) {
-				ProductPictureDTO pc= new ProductPictureDTO();
-				pc.setId(UUIDGenerator.getUUID());
-				pc.setSkuId(p.getSkuId());pc.setSupplierId(ColtortiUtil.productSupplierId);
-				pc.setPicUrl(string);
-				ppc.add(pc);
-			}
+
+		for (String picUrl : imgurls) {
+			ProductPictureDTO pc= new ProductPictureDTO();
+			pc.setId(UUIDGenerator.getUUID());
+			pc.setSkuId(p.getSkuId());pc.setSupplierId(ColtortiUtil.productSupplierId);
+			pc.setPicUrl(picUrl);
+			ppc.add(pc);
 		}
+
 		return ppc;
+
+
 	}
 }

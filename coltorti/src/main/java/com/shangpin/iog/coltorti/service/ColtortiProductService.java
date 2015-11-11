@@ -16,7 +16,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.shangpin.iog.coltorti.convert.ColtortiProductConvert;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import org.apache.commons.beanutils.BeanUtils;
@@ -262,8 +264,8 @@ System.out.println(productId+"存在,不存在的数:"+cnt);
 					//TODO 尺码key;sck;
 					try {
 						ColtortiProduct pt = convertProduct(prd,sck);
-						if(prd.getSizeStockMap().containsKey(sck)){
-							pt.setStock(prd.getSizeStockMap()==null?0:prd.getSizeStockMap().get(sck));
+						if(null!=prd.getSizeStockMap()&&prd.getSizeStockMap().containsKey(sck)){
+							pt.setStock(prd.getSizeStockMap().get(sck));
 						}else{
 							pt.setStock(0);
 						}
@@ -449,19 +451,19 @@ System.out.println(productId+"存在,不存在的数:"+cnt);
 		//requestAttribute(1, 100);
 		//findProduct(1,40,"152790AAV000001");
 		//getStock("152790AAV000001","152790AAV000001-PINxRU");//"152790FCR000005-SADMA"
-		List<ColtortiProduct> ps=divideSku4Size(findProductByProductId("151481DCW000007"));
+		List<ColtortiProduct> ps=divideSku4Size(findProductByProductId("152510FPG000002"));
 		logger.info("-----new products -----\r\n"+new Gson().toJson(ps));
 		List<SkuDTO> skus=new ArrayList<>(ps.size());
 		List<SpuDTO> spus=new ArrayList<>(ps.size());
-//		Map<String,Set<ProductPictureDTO>> mpccs=new HashMap<String, Set<ProductPictureDTO>>();
-//		for (ColtortiProduct product : ps) {
-//			SkuDTO sk=ColtortiProductConvert.product2sku(product);
-//			SpuDTO spu = ColtortiProductConvert.product2spu(product);
-//			skus.add(sk);
-//			spus.add(spu);
-//			Set<ProductPictureDTO> ppcs=ColtortiProductConvert.productPic(product);
-//			mpccs.put(product.getSkuId(), ppcs);
-//		}
+		Map<String,Set<ProductPictureDTO>> mpccs=new HashMap<String, Set<ProductPictureDTO>>();
+		for (ColtortiProduct product : ps) {
+			SkuDTO sk= ColtortiProductConvert.product2sku(product);
+			SpuDTO spu = ColtortiProductConvert.product2spu(product);
+			skus.add(sk);
+			spus.add(spu);
+			Set<ProductPictureDTO> ppcs=ColtortiProductConvert.productPic(product);
+			mpccs.put(product.getSkuId(), ppcs);
+		}
 		logger.info("-----after convert skus-----\r\n"+new Gson().toJson(skus));
 		logger.info("-----after convert spus-----\r\n"+new Gson().toJson(spus));
 //		logger.info("-----after convert image-----\r\n"+new Gson().toJson(mpccs));
