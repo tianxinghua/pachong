@@ -85,12 +85,14 @@ public class TonyStockImp {
 
                     try {
                         supplierStockService.saveStock(supplierStockDTO);
+
                     } catch (ServiceMessageException e) {
                         try {
                             if(e.getMessage().equals("数据插入失败键重复")){
                                 //update
                                 supplierStockService.updateStock(supplierStockDTO);
                                 logger.info(supplierStockDTO.getSupplierSkuId() + " : 更新库存" + supplierStockDTO.getQuantity());
+                                //
 
                             } else{
                                 e.printStackTrace();
@@ -101,6 +103,9 @@ public class TonyStockImp {
                         }
                     }
 
+                    //实时更新库存
+
+
                 }
 
             }
@@ -108,6 +113,12 @@ public class TonyStockImp {
         }
     }
 
+    /**
+     * 更新库存数量
+     */
+    private void updateSOPInventory(){
+
+    }
 
     public static void main(String[] args) throws Exception {
 /*        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");

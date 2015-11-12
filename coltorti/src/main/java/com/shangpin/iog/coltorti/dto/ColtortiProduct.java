@@ -41,7 +41,8 @@ public class ColtortiProduct implements Serializable{
 	Map<String,String> scalars; //
 	Map<String,String> brand;
 	Map<String,String> season;
-	List<List<String>> images;
+//	List<List<String>> images;
+	List<String> images;
 	Map<String,String> family;//性别部分
 	Map<String,String> group; //分类部分 group(ms5Group)->ms5_category(subgroup)
 	Map<String,String> subgroup;

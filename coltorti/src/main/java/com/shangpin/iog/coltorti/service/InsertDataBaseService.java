@@ -73,7 +73,7 @@ public class InsertDataBaseService {
 			//开始保存
 			if(CollectionUtils.isNotEmpty(skus)) {
 				logger.info("-----开始保存SKU-----总数：{}",skus.size());
-				int failCnt=insertSku(skus);
+				int failCnt=insertSku(skus,productPics);
 				logger.info("-----SKU保存结束，sku总数：{},成功数{}",skus.size(),skus.size()-failCnt);
 			}
 			if(CollectionUtils.isNotEmpty(spus)){
@@ -81,29 +81,41 @@ public class InsertDataBaseService {
 				int failCnt = insertSpu(spus);
 				logger.info("-----SPU保存结束，spu总数：{},成功数{}",spus.size(),spus.size()-failCnt);
 			}
-			logger.info("-----开始保存SKUPIC-----");
-			Set<String> picSku=productPics.keySet();
-			int failCnt=0;int total=0;
-			for (String sku : picSku) {
-				Set<ProductPictureDTO> pcs=productPics.get(sku);
-				if(CollectionUtils.isNotEmpty(pcs)){
-					total+=pcs.size();
-					failCnt+=insertSkuPic(pcs);
-				}
-			}
-			logger.info("-----SKUPIC保存结束，SKUPIC总数：{},成功数{}",total,total-failCnt);
+//			logger.info("-----开始保存SKUPIC-----");
+//			Set<String> picSku=productPics.keySet();
+//			int failCnt=0;int total=0;
+//			for (String sku : picSku) {
+//				Set<ProductPictureDTO> pcs=productPics.get(sku);
+//				if(CollectionUtils.isNotEmpty(pcs)){
+//					total+=pcs.size();
+//					failCnt+=insertSkuPic(pcs);
+//				}
+//			}
+//			logger.info("-----SKUPIC保存结束，SKUPIC总数：{},成功数{}",total,total-failCnt);
 		} catch (ServiceException e) {
 			logger.error("抓取Coltorti数据失败。",e);
 		}
 	}
 	
 	
-	private int insertSku(Collection<SkuDTO> skus){
+	private int insertSku(Collection<SkuDTO> skus,Map<String,Set<ProductPictureDTO>> picMap){
 		int failCnt=0;
 		for (SkuDTO sk : skus) {
 			try{
 				sk.setMarketPrice(sk.getSupplierPrice());
 				pfs.saveSKU(sk);
+				if(null!=picMap){
+					logger.info("-----开始保存SKUPIC-----");
+					Set<ProductPictureDTO> pcs=picMap.get(sk.getSkuId());
+					if(CollectionUtils.isNotEmpty(pcs)){
+						insertSkuPic(pcs);
+					}
+				}
+
+
+//			logger.info("-----SKUPIC保存结束，SKUPIC总数：{},成功数{}",total,total-failCnt);
+
+
 			}catch(Exception e){
 				failCnt++;
 

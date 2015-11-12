@@ -75,7 +75,7 @@ public class OrderSreviceImpl extends AbsOrderService {
 									"  <soap12:Body>"+
 									"    <InsertOrder xmlns=\"http://service.alducadaosta.com/EcSrv\">"+
 									"      <Identifier>Mosu</Identifier>"+
-									"      <Order>Mosu Test</Order>"+     //"+order+"
+									"      <Order>"+order+"</Order>"+     //"+order+"
 									"      <SkuID>"+tem[0].trim()+"</SkuID>"+
 									"      <Quantity>"+tem[1].trim()+"</Quantity>"+  //
 									"    </InsertOrder>"+
@@ -143,6 +143,18 @@ public class OrderSreviceImpl extends AbsOrderService {
 	@Override
 	public void getSupplierSkuId(Map<String, String> skuMap)
 			throws ServiceException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void handleEmail(OrderDTO orderDTO) {
 		// TODO Auto-generated method stub
 		
 	}

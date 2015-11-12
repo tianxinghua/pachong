@@ -47,8 +47,6 @@ public class FetchProduct {
 	private static Logger logger = Logger.getLogger("info");
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
-	private static String productUrl;
-	private static String stockUrl;
 	private static String url;
     @Autowired
     private ProductFetchService productFetchService;
@@ -58,85 +56,40 @@ public class FetchProduct {
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
 		url = bdl.getString("url");
-		stockUrl = bdl.getString("stockUrl");
-		
 	}
-	 private static void readLine(String content){
-	    	File file = new File("C://product.json");
-	    	FileWriter fwriter = null;
-	    	   try {
-	    	    fwriter = new FileWriter(file);
-	    	    fwriter.write(content);
-	    	   } catch (Exception ex) {
-	    	    ex.printStackTrace();
-	    	   } finally {
-	    	    try {
-	    	     fwriter.flush();
-	    	     fwriter.close();
-	    	    } catch (Exception ex) {
-	    	     ex.printStackTrace();
-	    	    }
-	    	   }
-	    }
-	private static String getJson(String fileName) {
-
-		String fullFileName = "C:/" + fileName + ".json";
-		File file = new File(fullFileName);
-		Scanner scanner = null;
-		StringBuilder buffer = new StringBuilder();
-		try {
-			scanner = new Scanner(file, "utf-8");
-			while (scanner.hasNextLine()) {
-				buffer.append(scanner.nextLine());
-			}
-		} catch (Exception e) {
-
-		} finally {
-			if (scanner != null) {
-				scanner.close();
-			}
-		}
-		System.out.println(buffer.toString());
-		return buffer.toString();
-	}
-	 private static Map<String,Attributes> getStockMap() {
-		 
+	private static Map<String,Attributes> getStockMap() {
 		 Map<String,String> map = new HashMap<String,String>();
-	    	map.put("id","4");
-	    	map.put("password","JwqDZDF-5jk%YRH=");
-	    	map.put("affiliate","shangpin");
-	    	String json = HttpUtil45.post("http://www.railso.com/xml_feeds.php", map,new OutTimeConfig(1000*60*10,10*1000*60,10*1000*60));// new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
-//	    	String json = getJson("stock");
-	    	System.out.println("库存"+json);
-	    	logger.info(json);
-//	    	readLine(json);
-	    	Pattern patt =Pattern.compile("</attributes-\\d*>");
-			Pattern patt1 =Pattern.compile("<attributes-\\d*>");
-			Stocks stocks = null;
-			try {
-				String replaceAll = patt.matcher(json).replaceAll("</item>");
-				String replaceAll1 = patt1.matcher(replaceAll).replaceAll("<item>");
-				stocks = ObjectXMLUtil.xml2Obj(Stocks.class, replaceAll1.toString());
-			} catch (JAXBException e) {
-				e.printStackTrace();
-			}
-			List<Stock> list = stocks.getStocks();
-		    Map<String,Attributes> returnMap = new HashMap<String,Attributes>();
-			for(Stock stock:list){
-				Attributes att = stock.getAttributes();
-				String productId = stock.getProduct_id().trim();
-				returnMap.put(productId, att);
-			}
-			return returnMap;
+    	map.put("id","4");
+    	map.put("password","JwqDZDF-5jk%YRH=");
+    	map.put("affiliate","shangpin");
+    	String json = HttpUtil45.post(url, map,new OutTimeConfig(1000*60*10,10*1000*60,10*1000*60));// new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
+    	System.out.println("库存"+json);
+    	logger.info(json);
+    	Pattern patt =Pattern.compile("</attributes-\\d*>");
+		Pattern patt1 =Pattern.compile("<attributes-\\d*>");
+		Stocks stocks = null;
+		try {
+			String replaceAll = patt.matcher(json).replaceAll("</item>");
+			String replaceAll1 = patt1.matcher(replaceAll).replaceAll("<item>");
+			stocks = ObjectXMLUtil.xml2Obj(Stocks.class, replaceAll1.toString());
+		} catch (JAXBException e) {
+			e.printStackTrace();
 		}
+		List<Stock> list = stocks.getStocks();
+	    Map<String,Attributes> returnMap = new HashMap<String,Attributes>();
+		for(Stock stock:list){
+			Attributes att = stock.getAttributes();
+			String productId = stock.getProduct_id().trim();
+			returnMap.put(productId, att);
+		}
+		return returnMap;
+	}
 	 private static Products getProductList() {
 		 Map<String,String> map = new HashMap<String,String>();
     	map.put("id","3");
     	map.put("password","=eFf`khmbN:3Dfc");
     	map.put("affiliate","shangpin");
-    	String json = HttpUtil45.post("http://www.railso.com/xml_feeds.php", map,new OutTimeConfig(1000*60*10,10*1000*60,10*1000*60));// new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
-//    	String json = getJson("product");
-//    	readLine(json);
+    	String json = HttpUtil45.post(url, map,new OutTimeConfig(1000*60*10,10*1000*60,10*1000*60));// new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
     	System.out.println("商品"+json);
     	logger.info(json);
 		Products products = null;
@@ -153,7 +106,6 @@ public class FetchProduct {
     public void fetchProductAndSave(){
     	Map<String,Attributes> returnMap = getStockMap();
     	Products products = getProductList();
-     
         //映射数据并保存
         logger.info("save product into DB begin");
         messMappingAndSave(returnMap,products);

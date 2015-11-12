@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
- * Created by huxia on 2015/10/15.
+ * Created by wangyuzhi on 2015/11/10.
  */
 public class StartSkuJob {
     private static Logger log = Logger.getLogger("info");
@@ -23,11 +23,11 @@ public class StartSkuJob {
         loadSpringContext();
         log.info("----初始SPRING成功----");
         //拉取数据
-        log.info("----拉取articoli数据开始----");
+        log.info("----拉取amfeed数据开始----");
 
         FetchProduct fetchProduct = (FetchProduct) factory.getBean("amfeed");
         fetchProduct.fetchProductAndSave();
-        log.info("----拉取articoli数据完成----");
+        log.info("----拉取amfeed数据完成----");
         System.out.println("-------fetch end---------");
         System.exit(0);
     }
