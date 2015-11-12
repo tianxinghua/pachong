@@ -138,7 +138,7 @@ public class MyCsvUtil {
                     // 读取每个单元格
                     while (mCells.find()) {
                         str = mCells.group();
-                        str = str.replaceAll("(?sm)\"?([^\"]*(\"{2})*[^\"]*)\"?.*,", "$1");
+                        //str = str.replaceAll("(?sm)\"?([^\"]*(\"{2})*[^\"]*)\"?.*,", "$1");
                         str = str.replaceAll("(?sm)\"?([^\"]*+[^\"]*)\"?.*,", "$1");
                         str = str.replaceAll("(?sm)(\"(\"))", "$2");
                         str = str.replaceAll("\"", "");
@@ -147,7 +147,7 @@ public class MyCsvUtil {
                         name = name.substring(0, 1).toUpperCase() + name.substring(1);
                         Method m = product.getClass().getMethod("set"+name,String.class);
                         m.invoke(product,str);
-                        System.out.println(name+" : "+str);
+                        //System.out.println(name+" : "+str);
                         cells.add(str);
                         }
                         listFile.add(cells);

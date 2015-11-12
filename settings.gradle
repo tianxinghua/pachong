@@ -163,4 +163,6 @@ include 'railSoAtelier-stock'
 include 'amfeed'
 include 'amfeed-stock'
 include 'spinnaker-order'
+include 'havok'
+include 'havok-stock'
 
