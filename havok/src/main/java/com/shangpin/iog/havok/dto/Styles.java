@@ -5,14 +5,15 @@ package com.shangpin.iog.havok.dto;
  */
 public class Styles {
 
-    private Style[] spu;
-    public Style[] getSpu() {
-        return spu;
+
+    public Style[] getStyles() {
+        return styles;
     }
 
-    public void setSpu(Style[] spu) {
-        this.spu = spu;
+    public void setStyles(Style[] styles) {
+        this.styles = styles;
     }
 
+    private Style[] styles;
 
 }

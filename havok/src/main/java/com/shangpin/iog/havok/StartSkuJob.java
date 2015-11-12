@@ -23,11 +23,11 @@ public class StartSkuJob {
         loadSpringContext();
         log.info("----初始SPRING成功----");
         //拉取数据
-        log.info("----拉取articoli数据开始----");
+        log.info("----拉取havok数据开始----");
 
         FetchProduct fetchProduct = (FetchProduct) factory.getBean("havok");
         fetchProduct.fetchAndSave();
-        log.info("----拉取articoli数据完成----");
+        log.info("----拉取havok数据完成----");
         System.out.println("-------fetch end---------");
         System.exit(0);
     }
