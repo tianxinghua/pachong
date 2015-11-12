@@ -24,10 +24,11 @@ public interface ProductSearchService {
      * @param endDate   结束日期
      * @param pageIndex 开始页码
      * @param pageSize  每页显示行数
+     * @param flag same价格未变，diff价格变化
      * @return
      * @throws ServiceException 自定义异常
      */
-    public Page<ProductDTO> findProductPageBySupplierAndTime(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+    public Page<ProductDTO> findProductPageBySupplierAndTime(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
 
 
     /**
@@ -49,10 +50,11 @@ public interface ProductSearchService {
      * @param endDate   结束日期
      * @param pageIndex 开始页码
      * @param pageSize  每页显示行数
+     * @param flag same价格未变，diff价格变化
      * @return  StringBuffer
      * @throws ServiceException
      */
-    public StringBuffer exportProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+    public StringBuffer exportProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
     /**
      * 获取产品id
      * @param supplier  供货商
@@ -63,5 +65,6 @@ public interface ProductSearchService {
      */
     public String exportSkuId(String supplier,Date startDate,Date endDate) throws ServiceException;
     
+    public StringBuffer exportDiffProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
     
 }

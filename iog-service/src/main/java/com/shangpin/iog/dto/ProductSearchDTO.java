@@ -16,6 +16,7 @@ public class ProductSearchDTO {
     private String category;
     private String  supplier;
     private String  supplierName;
+    private String flag;
 
     public String getStartDate() {
         return startDate;

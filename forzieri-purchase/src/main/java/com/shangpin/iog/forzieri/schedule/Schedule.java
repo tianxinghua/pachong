@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.forzieri.order.OrderServiceImpl;
+import com.shangpin.iog.forzieri.order.ForzieriOrderServiceImpl;
 import com.shangpin.iog.service.OrderService;
 
 import org.slf4j.Logger;
@@ -26,13 +26,13 @@ public class Schedule {
     private static String supplierNo ;
     static {
         if(null==bdl)
-            bdl=ResourceBundle.getBundle("conf");
+            bdl=ResourceBundle.getBundle("param");
         supplierId = bdl.getString("supplierId");
         supplierNo = bdl.getString("supplierNo");
     }
 
     @Autowired
-    OrderServiceImpl orderService;
+    ForzieriOrderServiceImpl orderService;
 
     //下单 退单 异常
     @Scheduled(cron="0 0/10 * * * ? ")

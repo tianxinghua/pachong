@@ -39,6 +39,15 @@ public interface SkuRelationService {
     public SkuRelationDTO  getSkuRelationBySkuId(String skuId)  throws  ServiceException;
 
     /**
+     * 根据供货商门户ID和供货商SKUNO获取对照关系
+     * @param supplier
+     * @param supplierSkuNo
+     * @return
+     * @throws ServiceException
+     */
+    public SkuRelationDTO  getSkuRelationBySupplierIdAndSupplierSkuNo(String supplier,String supplierSkuNo)  throws  ServiceException;
+
+    /**
      * 保存SKU关系对照对象
      * @param skuRelationDTO
      * @throws ServiceException

@@ -91,6 +91,7 @@ public class FileDownloadController {
                          String queryJson) throws Exception {
         BufferedInputStream in = null;
         BufferedOutputStream out = null;
+        StringBuffer productBuffer =null;
         try {
 
 
@@ -108,8 +109,11 @@ public class FileDownloadController {
             if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
                 endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
             }
-
-            StringBuffer productBuffer =productService.exportProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize());
+            if (productSearchDTO.getFlag()=="same") {
+            	productBuffer =productService.exportProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
+			}else{
+				productBuffer =productService.exportDiffProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
+			}
 
             response.reset();
 

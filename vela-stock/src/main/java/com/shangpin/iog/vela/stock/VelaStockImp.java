@@ -160,7 +160,12 @@ public class VelaStockImp extends AbsUpdateProductStock {
         velaStockImp.setUseThread(true);velaStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("VELA更新数据库开始");
-        velaStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        try {
+            velaStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        } catch (Exception e) {
+            loggerError.error("vela 更新库存失败。"+e.getMessage());
+            e.printStackTrace();
+        }
         logger.info("VELA更新数据库结束");
         /*VelaStockImp velaStockImp = new VelaStockImp();
         Collection<String> sku = new HashSet<>();

@@ -33,7 +33,7 @@ public class ColtortiProductConvert {
 		dto.setProductCode(p.getProductCode());
 		dto.setColor(p.getColor());
 		dto.setCreateTime(new Date());
-		dto.setLastTime(p.getUpdatedAt());
+		dto.setLastTime(new Date());   //p.getUpdatedAt()
 		dto.setSkuId(p.getSkuId());
 		dto.setSupplierPrice(p.getPrice()==null?"0":""+p.getPrice());
 		dto.setSpuId(p.getProductId());
@@ -79,17 +79,21 @@ public class ColtortiProductConvert {
 	}
 	
 	public static Set<ProductPictureDTO> productPic(ColtortiProduct p){
-		List<List<String>> imgurls=p.getImages();
+//		List<List<String>> imgurls=p.getImages();
+		List<String> imgurls=p.getImages();
+		if(null==imgurls) return new HashSet<ProductPictureDTO>();
 		Set<ProductPictureDTO> ppc = new HashSet<>(imgurls.size());
-		for (List<String> list : imgurls) {
-			for (String string : list) {
-				ProductPictureDTO pc= new ProductPictureDTO();
-				pc.setId(UUIDGenerator.getUUID());
-				pc.setSkuId(p.getSkuId());pc.setSupplierId(ColtortiUtil.productSupplierId);
-				pc.setPicUrl(string);
-				ppc.add(pc);
-			}
+
+		for (String picUrl : imgurls) {
+			ProductPictureDTO pc= new ProductPictureDTO();
+			pc.setId(UUIDGenerator.getUUID());
+			pc.setSkuId(p.getSkuId());pc.setSupplierId(ColtortiUtil.productSupplierId);
+			pc.setPicUrl(picUrl);
+			ppc.add(pc);
 		}
+
 		return ppc;
+
+
 	}
 }

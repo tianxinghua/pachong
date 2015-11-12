@@ -25,7 +25,7 @@
 <script type="text/javascript">
 
 
-    function exportProduct() {
+    function exportProduct(str) {
 
 
         if(typeof($('#pageIndex').val()) != "undefined"&& $.trim($('#pageIndex').val()).length !=0){
@@ -65,13 +65,53 @@
             endDate:      $('#endDate').val(),
             pageIndex: $('#pageIndex').val(),
             pageSize:$('#pageSize').val(),
-            supplierName:$ ('#supplier').find("option:selected").text()
+            supplierName:$ ('#supplier').find("option:selected").text(),
+            flag:str
 
         };
         window.open('csv?queryJson='+$.toJSON(search), '','');
     }
 
+    function exportDiffProduct(str) {
 
+
+        if(typeof($('#pageIndex').val()) != "undefined"&& $.trim($('#pageIndex').val()).length !=0){
+            if(isNaN($('#pageIndex').val())){
+                alert("请输入数字");
+                $('#pageIndex').focus();
+                return ;
+            }
+
+            if(typeof($('#pageSize').val()) == "undefined"||$.trim($('#pageSize').val()).length ==0){
+                alert("页码有数值时，导出行数必须也要有数值");
+                return ;
+            }
+        }
+
+        if(typeof($('#pageSize').val()) != "undefined"&&$.trim($('#pageSize').val()).length !=0){
+            if(isNaN($('#pageSize').val())){
+                alert("请输入数字");
+                $('#pageSize').focus();
+                return ;
+            }
+            if(typeof($('#pageIndex').val()) == "undefined"||$.trim($('#pageIndex').val()).length ==0){
+                alert("导出行数有数值时，页码必须也要有数值");
+                return ;
+            }
+        }
+
+        var search = {
+            supplier:   $('#supplier').val(),
+            startDate:    $('#startDate').val(),
+            endDate:      $('#endDate').val(),
+            pageIndex: $('#pageIndex').val(),
+            pageSize:$('#pageSize').val(),
+            supplierName:$ ('#supplier').find("option:selected").text(),
+            flag:str
+
+        };
+        window.open('csv?queryJson='+$.toJSON(search), '','');
+    }
 
 
     function clearText(){
@@ -80,7 +120,6 @@
         $('#pageSize').val('');
         $('#startDate').val('');
         $('#endDate').val('');
-
 
 
     }
@@ -124,9 +163,14 @@
     </form>
 </div>
 <div style="text-align: left; padding: 0px 20px 20px 20px;"><a
-	href="javascript:void(0)" onclick="exportProduct()" id="btn-save"
-	icon="icon-search" class='easyui-linkbutton'>导出</a> <a href="javascript:void(0)"
-	onclick="clearText()" id="btn-cancel" icon="icon-cancel" class='easyui-linkbutton'>清空</a></div>
+	href="javascript:void(0)" onclick="exportProduct('same')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>导出</a> 
+	<a
+	href="javascript:void(0)" onclick="exportDiffProduct('diff')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>价格变化导出</a>
+	<a href="javascript:void(0)"
+	onclick="clearText()" id="btn-cancel" icon="icon-cancel" class='easyui-linkbutton'>清空</a>
+	
 </div>
 
 

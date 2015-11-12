@@ -333,22 +333,27 @@ public abstract class AbsUpdateProductStock {
 		//更新库存
 		int failCount=0;
 		Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
-		logger.warn("待更新的数据：--------"+toUpdateIce.size());
+		loggerInfo.info("待更新的数据总和：--------"+toUpdateIce.size());
+		logger.warn("待更新的数据总和：--------"+toUpdateIce.size());
 		while (iter.hasNext()) {
 			Entry<String, Integer> entry = iter.next();
 			Boolean result =true;
 			try{
 				logger.warn("待更新的数据：--------"+entry.getKey()+":"+entry.getValue());
 				result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());
+				loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+entry.getValue()+" ,"+ result);
 			}catch(Exception e){
 				result=false;
 				logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+				loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
 			}
 			if(!result){
 				failCount++;
 				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
 			}
 		}
+		loggerInfo.info("更新库存 失败的数量：" + failCount);
+		loggerError.error("更新库存 失败的数量：" + failCount);
 		return failCount;
 	}
 	/**
@@ -389,12 +394,15 @@ public abstract class AbsUpdateProductStock {
 
 		for(SopSkuInventoryIce skuIce:skuIceArray){
 	        if(iceStock.containsKey(skuIce.SkuNo)){
-				logger.warn("skuNo ：--------"+skuIce.SkuNo +"supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity );
-				System.out.println("skuNo ：--------"+skuIce.SkuNo +"supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity);
+				logger.warn("sop skuNo ：--------"+skuIce.SkuNo +" suppliersku: "+ skuIce.SupplierSkuNo +"  supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity );
+				loggerInfo.info("sop skuNo ：--------" + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
+				System.out.println("sop skuNo ：--------"+skuIce.SkuNo  +" suppliersku: "+ skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity);
 	             if( iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
 	                toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
 	            }
-	        }
+	        }else{
+				loggerError.error(" iceStock not contains  "+"sop skuNo ：--------"+skuIce.SkuNo +" suppliersku: "+ skuIce.SupplierSkuNo );
+			}
 		}
     }
 
@@ -420,7 +428,6 @@ public abstract class AbsUpdateProductStock {
 
 			String result = "",stockTemp="",priceResult="";
 			boolean sendMail=true;
-			logger.error("supplierSkuIdMain="+supplierSkuIdMain);
 			for (String skuNo : skuNos) {
 				stockTemp ="";
 				result =  supplierStock.get(skuNo);
@@ -462,8 +469,10 @@ public abstract class AbsUpdateProductStock {
 					if(sopPurchaseMap.containsKey(skuNo)){
 
 						logger.error("采购单supplierId："+skuNo +" ; 数量 : " + sopPurchaseMap.get(skuNo));
+						loggerInfo.info("采购单supplierId：" + skuNo + " ; 数量 : " + sopPurchaseMap.get(skuNo));
 						stockResult =  stockResult - sopPurchaseMap.get(skuNo);
 						logger.error("最终库存 ：" + stockResult);
+						loggerInfo.info("最终库存 ：" + stockResult);
 						if(stockResult<0) stockResult=0;
 
 					}
@@ -498,9 +507,13 @@ public abstract class AbsUpdateProductStock {
 		} catch (Exception e1) {
 			logger.error("抓取库存失败:", e1);
 		}
-		logger.error("iceStock size =" + iceStock.size());
+		loggerInfo.info("iceStock size =" + iceStock.size());
 		return iceStock;
 	}
+
+
+
+
 
 
 	/**

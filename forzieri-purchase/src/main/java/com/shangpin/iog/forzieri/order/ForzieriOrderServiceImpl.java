@@ -39,7 +39,7 @@ import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.TokenService;
 @Component
-public class OrderServiceImpl extends AbsOrderService{
+public class ForzieriOrderServiceImpl extends AbsOrderService{
 	@Autowired
 	SkuPriceService skuPriceService;
 	
