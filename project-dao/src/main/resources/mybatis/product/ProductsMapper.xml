@@ -192,11 +192,12 @@
           <if test="endDate!=null">
                 <![CDATA[ and sku.LAST_TIME <= #{endDate}    ]]>
           </if>
-        	  and 
-        	  (sku.NEW_MARKET_PRICE!="" or sku.NEW_SALE_PRICE !="" or sku.NEW_SUPPLIER_PRICE!="")
-<!--  			  and  -->
-<!--  			  (sku.NEW_MARKET_PRICE!=sku.MARKET_PRICE or sku.SALE_PRICE!=sku.NEW_SALE_PRICE or sku.SUPPLIER_PRICE!=sku.NEW_SUPPLIER_PRICE) -->
 
+				AND(
+				IF(NEW_MARKET_PRICE !="",IF(NEW_MARKET_PRICE != MARKET_PRICE,TRUE,FALSE),FALSE)
+				OR IF(NEW_SALE_PRICE != "",IF(NEW_SALE_PRICE != SALE_PRICE,TRUE,FALSE),FALSE)
+				OR IF(NEW_SUPPLIER_PRICE != "",IF(NEW_SUPPLIER_PRICE != SUPPLIER_PRICE,TRUE,FALSE),FALSE))
+		
         </where>
         order by brand_name, category_name
 

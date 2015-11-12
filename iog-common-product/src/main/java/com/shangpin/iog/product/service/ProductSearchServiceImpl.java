@@ -688,9 +688,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		String categoryName = "";
 		String supplierId = "";
 		for (ProductDTO dto : page.getItems()) {
-			if (!(dto.getNewSalePrice()==null?"-":dto.getNewSalePrice()).equals(dto.getSalePrice()==null?"-":dto.getSalePrice())
-					|| !(dto.getNewMarketPrice()==null?"-":dto.getNewMarketPrice()).equals(dto.getMarketPrice()==null?"-":dto.getMarketPrice())
-					|| !(dto.getNewSupplierPrice()==null?"-":dto.getNewSupplierPrice()).equals(dto.getSupplierPrice()==null?"-":dto.getSupplierPrice())) {
+//			if (!(dto.getNewSalePrice()==null?"-":dto.getNewSalePrice()).equals(dto.getSalePrice()==null?"-":dto.getSalePrice())
+//					|| !(dto.getNewMarketPrice()==null?"-":dto.getNewMarketPrice()).equals(dto.getMarketPrice()==null?"-":dto.getMarketPrice())
+//					|| !(dto.getNewSupplierPrice()==null?"-":dto.getNewSupplierPrice()).equals(dto.getSupplierPrice()==null?"-":dto.getSupplierPrice())) {
 				try {
 					// 供应商
 					supplierId = dto.getSupplierId();
@@ -766,7 +766,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
 					continue;
 				}
-			}
+//			}
 		}
 		return buffer;
 	}
