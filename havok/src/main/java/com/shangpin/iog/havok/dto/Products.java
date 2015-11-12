@@ -6,13 +6,15 @@ package com.shangpin.iog.havok.dto;
 
 public class Products {
 
-    private Product[] skus;
-    public Product[] getSkus() {
-        return skus;
+    public Product[] getProducts() {
+        return products;
     }
 
-    public void setSkus(Product[] skus) {
-        this.skus = skus;
+    public void setProducts(Product[] products) {
+        this.products = products;
     }
+
+    private Product[] products;
+
 
 }

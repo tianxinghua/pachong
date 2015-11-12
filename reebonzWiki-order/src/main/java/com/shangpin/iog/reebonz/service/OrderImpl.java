@@ -257,15 +257,27 @@ public class OrderImpl extends AbsOrderService {
 					RequestObject obj = new RequestObject();
 					obj.setSku(skuIDs[0]);
 					try {
-						if(purchasePrice!=null){
-							obj.setPayment_price(purchasePrice);
-//							SkuDTO sku = skuPriceService.findSupplierPrice(supplierId, skuNo);
-//							if(sku!=null){
-//								String supplierPrice = sku.getSupplierPrice();
-//								System.out.println("获取的进货价："+supplierPrice);
-//								
-//							}
-						}
+							String markPrice = null;
+							try {
+								Map tempmap = skuPriceService.getNewSkuPriceBySku(supplierId, skuNo);
+								Map map =(Map) tempmap.get(supplierId);
+								markPrice =(String) map.get(skuNo);
+						        if(!"-1".equals(markPrice)){
+						        	String price = markPrice.split("\\|")[1];
+						        	if(!"-1".equals(price)){
+						        		obj.setPayment_price(price);
+						        	}else{
+						        		obj.setPayment_price(purchasePrice);
+						        	}
+						        	
+						        }else{
+						        	obj.setPayment_price(purchasePrice);
+						        }
+							} catch (ServiceException e) {
+								obj.setPayment_price(purchasePrice);
+								System.out.println("sku"+skuNo+"没有供货价");
+					        	logger.info("异常错误："+e.getMessage());
+							}
 						String eventId = eventProductService.selectEventIdBySku(skuIDs[0], supplierId);
 						System.out.println("获取的活动Id："+eventId);
 						logger.info("eventId"+eventId);
@@ -310,10 +322,11 @@ public class OrderImpl extends AbsOrderService {
 					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
 				}else if("0".equals(result)){
 					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+				}else{
+					orderDTO.setStatus(OrderStatus.NOHANDLE);
 				}
 				//超过一天 不需要在做处理 订单状态改为其它状体
 				orderDTO.setExcState("0");
-				orderDTO.setStatus(OrderStatus.NOHANDLE);
 				Thread t = new Thread(	 new Runnable() {
 					@Override
 					public void run() {
