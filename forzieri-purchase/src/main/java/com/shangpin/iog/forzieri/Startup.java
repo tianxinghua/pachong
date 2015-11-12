@@ -28,5 +28,6 @@ public class Startup {
         //加载spring
         loadSpringContext();
         logger.info(" schedule start  ");
+        System.out.println("start");
     }
 }
