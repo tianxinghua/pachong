@@ -158,7 +158,51 @@
 
 	
 	
+	<select id="findDiffListBySupplierAndLastDate"  resultMap="ProductsResultMap">
+		select
+          sku.ID as id,
+          sku.SKU_ID as sku_id,
+          sku.SUPPLIER_ID  as supplier_id,
 
+          sku.PRODUCT_NAME as product_name,
+          sku.MARKET_PRICE  as market_price,
+          sku.SALE_PRICE  as  sale_price,
+          sku.SUPPLIER_PRICE as supplier_price,
+          sku.PRODUCT_CODE as product_code,
+          
+          sku.SALE_CURRENCY as sale_currency,
+          sku.STOCK as stock ,
+          
+          
+          sku.NEW_MARKET_PRICE as newMarketPrice,
+          sku.NEW_SALE_PRICE as newSalePrice,
+          sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
+          spu.BRAND_NAME as brand_name,
+          spu.CATEGORY_NAME as category_name,
+          spu.CATEGORY_GENDER as category_gender
+		
+		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+        <where>
+				(
+				IF(NEW_MARKET_PRICE !="",IF(NEW_MARKET_PRICE != MARKET_PRICE,TRUE,FALSE),FALSE)
+				OR IF(NEW_SALE_PRICE != "",IF(NEW_SALE_PRICE != SALE_PRICE,TRUE,FALSE),FALSE)
+				OR IF(NEW_SUPPLIER_PRICE != "",IF(NEW_SUPPLIER_PRICE != SUPPLIER_PRICE,TRUE,FALSE),FALSE))
+          <if test="'-1'!=supplier">
+            and   sku.SUPPLIER_ID = #{supplier}
+          </if>
+          <if test="null!=startDate">
+                and sku.LAST_TIME >= #{startDate}
+          </if>
+          <if test="endDate!=null">
+                <![CDATA[ and sku.LAST_TIME <= #{endDate}    ]]>
+          </if>
+
+		
+        </where>
+        order by supplier_id,brand_name, category_name
+
+
+	</select>
 	
 
 
