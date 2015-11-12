@@ -161,6 +161,7 @@
 	<select id="findDiffListBySupplierAndLastDate"  resultMap="ProductsResultMap">
 		select
           sku.ID as id,
+          sku.SKU_ID as sku_id,
           sku.SUPPLIER_ID  as supplier_id,
 
           sku.PRODUCT_NAME as product_name,
@@ -176,7 +177,7 @@
           sku.NEW_MARKET_PRICE as newMarketPrice,
           sku.NEW_SALE_PRICE as newSalePrice,
           sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
-          
+          spu.BRAND_NAME as brand_name,
           spu.CATEGORY_NAME as category_name,
           spu.CATEGORY_GENDER as category_gender
 		

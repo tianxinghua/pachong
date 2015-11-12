@@ -56,6 +56,7 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
             @Param("endDate") Date endDate);
     /**
      * 根据供货商id查询价格变化的产品列表
+     * 
      */
     List<ProductDTO> findDiffListBySupplierAndLastDate(@Param("supplier") String supplier,
     		@Param("startDate") Date startDate,
