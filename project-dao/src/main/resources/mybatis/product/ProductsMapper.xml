@@ -183,13 +183,8 @@
 		
 		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
         <where>
-			sku.NEW_MARKET_PRICE!=sku.MARKET_PRICE 
-			or sku.SALE_PRICE!=sku.NEW_SALE_PRICE 
-			or sku.SUPPLIER_PRICE!=sku.NEW_SUPPLIER_PRICE
-          <if test="null!=supplier">
-          	<if test="-1!=supplier">
-	            and   sku.SUPPLIER_ID = #{supplier}
-          	</if>
+          <if test="'-1'!=supplier">
+            and   sku.SUPPLIER_ID = #{supplier}
           </if>
           <if test="null!=startDate">
                 and sku.LAST_TIME >= #{startDate}
@@ -197,8 +192,10 @@
           <if test="endDate!=null">
                 <![CDATA[ and sku.LAST_TIME <= #{endDate}    ]]>
           </if>
-
-
+        	  and 
+        	  (sku.NEW_MARKET_PRICE!="" or sku.NEW_SALE_PRICE !="" or sku.NEW_SUPPLIER_PRICE!="")
+<!--  			  and  -->
+<!--  			  (sku.NEW_MARKET_PRICE!=sku.MARKET_PRICE or sku.SALE_PRICE!=sku.NEW_SALE_PRICE or sku.SUPPLIER_PRICE!=sku.NEW_SUPPLIER_PRICE) -->
 
         </where>
         order by brand_name, category_name

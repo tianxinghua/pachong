@@ -688,81 +688,85 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		String categoryName = "";
 		String supplierId = "";
 		for (ProductDTO dto : page.getItems()) {
+			if (!(dto.getNewSalePrice()==null?"-":dto.getNewSalePrice()).equals(dto.getSalePrice()==null?"-":dto.getSalePrice())
+					|| !(dto.getNewMarketPrice()==null?"-":dto.getNewMarketPrice()).equals(dto.getMarketPrice()==null?"-":dto.getMarketPrice())
+					|| !(dto.getNewSupplierPrice()==null?"-":dto.getNewSupplierPrice()).equals(dto.getSupplierPrice()==null?"-":dto.getSupplierPrice())) {
+				try {
+					// 供应商
+					supplierId = dto.getSupplierId();
+					if (null == supMap.get(supplierId)) {
+						buffer.append("	" + supplierId).append(splitSign);
+					} else {
+						buffer.append(supMap.get(supplierId)).append(splitSign);
+					}
+					// 品类名称
+					categoryName = dto.getSubCategoryName();
+					if (StringUtils.isBlank(categoryName)) {
+						categoryName = StringUtils.isBlank(dto
+								.getCategoryName()) ? "" : dto
+								.getCategoryName();
 
-			try {
-				// 供应商
-				supplierId = dto.getSupplierId();
-				if (null == supMap.get(supplierId)) {
-					buffer.append("	" + supplierId).append(splitSign);
-				} else {
-					buffer.append(supMap.get(supplierId)).append(splitSign);
+					}
+					categoryName.replaceAll(splitSign, " ");
+					buffer.append(categoryName).append(splitSign);
+					buffer.append(dto.getBrandName()).append(splitSign);
+
+					// 货号
+					buffer.append(
+							null == dto.getProductCode() ? "" : dto
+									.getProductCode().replaceAll(",", " "))
+							.append(splitSign);
+					// 供应商SKUID
+
+					buffer.append("\"\t" + dto.getSkuId() + "\"").append(
+							splitSign);
+
+					buffer.append(dto.getStock()).append(splitSign);
+					// 新的价格
+					buffer.append(
+							null == dto.getNewMarketPrice() ? " " : dto
+									.getNewMarketPrice()).append(splitSign);
+					buffer.append(
+							null == dto.getNewSalePrice() ? " " : dto
+									.getNewSalePrice()).append(splitSign);
+					buffer.append(
+							null == dto.getNewSupplierPrice() ? " " : dto
+									.getNewSupplierPrice()).append(splitSign);
+
+					String marketPrice = dto.getMarketPrice();
+					String salePrice = dto.getSalePrice();
+					String supplierPrice = dto.getSupplierPrice();
+					if (marketPrice != null) {
+						marketPrice = marketPrice.replace(",", ".");
+					} else {
+						marketPrice = "";
+					}
+					if (salePrice != null) {
+						salePrice = salePrice.replace(",", ".");
+					} else {
+						salePrice = "";
+					}
+					if (supplierPrice != null) {
+						supplierPrice = supplierPrice.replace(",", ".");
+					} else {
+						supplierPrice = "";
+					}
+					// 价格
+					buffer.append(
+							null == dto.getMarketPrice() ? " " : dto
+									.getMarketPrice())
+							.append(splitSign)
+							.append(null == dto.getSalePrice() ? " " : dto
+									.getSalePrice()).append(splitSign)
+							.append(dto.getSupplierPrice()).append(splitSign)
+							.append(dto.getSaleCurrency()).append(splitSign);
+
+					buffer.append("\r\n");
+				} catch (Exception e) {
+					logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
+					continue;
 				}
-				// 品类名称
-				categoryName = dto.getSubCategoryName();
-				if (StringUtils.isBlank(categoryName)) {
-					categoryName = StringUtils.isBlank(dto.getCategoryName()) ? ""
-							: dto.getCategoryName();
-
-				}
-				categoryName.replaceAll(splitSign, " ");
-				buffer.append(categoryName).append(splitSign);
-				buffer.append(dto.getBrandName()).append(splitSign);
-
-				// 货号
-				buffer.append(
-						null == dto.getProductCode() ? "" : dto
-								.getProductCode().replaceAll(",", " ")).append(
-						splitSign);
-				// 供应商SKUID
-
-				buffer.append("\"\t" + dto.getSkuId() + "\"").append(splitSign);
-
-				buffer.append(dto.getStock()).append(splitSign);
-				// 新的价格
-				buffer.append(
-						null == dto.getNewMarketPrice() ? " " : dto
-								.getNewMarketPrice()).append(splitSign);
-				buffer.append(
-						null == dto.getNewSalePrice() ? " " : dto
-								.getNewSalePrice()).append(splitSign);
-				buffer.append(
-						null == dto.getNewSupplierPrice() ? " " : dto
-								.getNewSupplierPrice()).append(splitSign);
-
-				String marketPrice = dto.getMarketPrice();
-				String salePrice = dto.getSalePrice();
-				String supplierPrice = dto.getSupplierPrice();
-				if (marketPrice != null) {
-					marketPrice = marketPrice.replace(",", ".");
-				} else {
-					marketPrice = "";
-				}
-				if (salePrice != null) {
-					salePrice = salePrice.replace(",", ".");
-				} else {
-					salePrice = "";
-				}
-				if (supplierPrice != null) {
-					supplierPrice = supplierPrice.replace(",", ".");
-				} else {
-					supplierPrice = "";
-				}
-				// 价格
-				buffer.append(
-						null == dto.getMarketPrice() ? " " : dto
-								.getMarketPrice())
-						.append(splitSign)
-						.append(null == dto.getSalePrice() ? " " : dto
-								.getSalePrice()).append(splitSign)
-						.append(dto.getSupplierPrice()).append(splitSign)
-						.append(dto.getSaleCurrency()).append(splitSign);
-
-				buffer.append("\r\n");
-			} catch (Exception e) {
-				logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
-				continue;
 			}
-
 		}
 		return buffer;
 	}
