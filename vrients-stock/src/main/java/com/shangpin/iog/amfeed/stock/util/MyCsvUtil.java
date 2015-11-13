@@ -43,6 +43,7 @@ public class MyCsvUtil {
         } catch (IOException ex) {
             flag = false;
             ex.printStackTrace();
+            return flag;
         } finally {
             try {
                 fwriter.flush();
@@ -50,6 +51,7 @@ public class MyCsvUtil {
             } catch (IOException ex) {
                 flag = false;
                 ex.printStackTrace();
+                return flag;
             }
         }
         return flag;
