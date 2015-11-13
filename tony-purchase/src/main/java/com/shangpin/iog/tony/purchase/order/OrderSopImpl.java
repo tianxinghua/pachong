@@ -1,30 +1,33 @@
 package com.shangpin.iog.tony.purchase.order;
 
-import com.google.gson.Gson;
-import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsOrderService;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.dto.*;
-import com.shangpin.iog.ice.dto.OrderStatus;
-import com.shangpin.iog.service.ReturnOrderService;
-import com.shangpin.iog.service.SkuPriceService;
-import com.shangpin.iog.tony.purchase.common.Constant;
-import com.shangpin.iog.tony.purchase.dto.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-/**
- * Created by wangyuzhi on 15/10/9.
- */
-
-public class OrderImpl extends AbsOrderService {
-
-    @Autowired
+import com.google.gson.Gson;
+import com.shangpin.framework.ServiceException;
+import com.shangpin.ice.ice.AbsOrderService;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.ReturnOrderDTO;
+import com.shangpin.iog.ice.dto.OrderStatus;
+import com.shangpin.iog.service.ReturnOrderService;
+import com.shangpin.iog.service.SkuPriceService;
+import com.shangpin.iog.tony.purchase.common.Constant;
+import com.shangpin.iog.tony.purchase.dto.AddressDTO;
+import com.shangpin.iog.tony.purchase.dto.BillingInfoDTO;
+import com.shangpin.iog.tony.purchase.dto.ItemDTO;
+import com.shangpin.iog.tony.purchase.dto.PushOrderDTO;
+import com.shangpin.iog.tony.purchase.dto.ReturnDataDTO;
+import com.shangpin.iog.tony.purchase.dto.ShippingInfoDTO;
+import com.shangpin.iog.tony.purchase.dto.UpdateOrderStatusDTO;
+@Component("tonyOrder")
+public class OrderSopImpl extends AbsOrderService{
+	@Autowired
     com.shangpin.iog.service.OrderService productOrderService;
     @Autowired
     SkuPriceService skuPriceService;
@@ -33,10 +36,9 @@ public class OrderImpl extends AbsOrderService {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
 
-    public void startWMS(){
-        //通过采购单处理下单 包括下单和退单
-        this.checkoutOrderFromWMS(Constant.SUPPLIER_NO, Constant.SUPPLIER_ID, true);
-    }
+	public void startSOP() {
+		 this.checkoutOrderFromSOP(Constant.SUPPLIER_ID,Constant.SUPPLIER_NO,true);
+	}
     
     public void confirmOrder(){
         //通过采购单处理下单 包括下单和退单
@@ -60,7 +62,6 @@ public class OrderImpl extends AbsOrderService {
     public void handleConfirmOrder(OrderDTO orderDTO) {
         //在线推送订单
     	orderDTO.setExcState("0");
-    	//createOrder(Constant.CONFIRMED,orderDTO);
         updateOrder(Constant.CONFIRMED,orderDTO);
         //设置异常信息
     }
@@ -114,9 +115,10 @@ public class OrderImpl extends AbsOrderService {
 		UpdateOrderStatusDTO updateOrder = new UpdateOrderStatusDTO();
         updateOrder.setMerchantId(Constant.MERCHANT_ID);
         updateOrder.setToken(Constant.TOKEN);
-        updateOrder.setShopOrderId(deleteOrder.getSpOrderId());
+//        updateOrder.setShopOrderId(deleteOrder.getSpOrderId());
+        updateOrder.setShopOrderId(deleteOrder.getSpPurchaseNo());
         updateOrder.setStatus(Constant.CANCELED);
-                updateOrder.setStatusDate(getUTCTime());
+        updateOrder.setStatusDate(getUTCTime());
         Gson gson = new Gson();
         String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);
         System.out.println("退款订单推送的 json数据： "+json);
@@ -163,7 +165,8 @@ public class OrderImpl extends AbsOrderService {
     	UpdateOrderStatusDTO updateOrder = new UpdateOrderStatusDTO();
         updateOrder.setMerchantId(Constant.MERCHANT_ID);
         updateOrder.setToken(Constant.TOKEN);
-        updateOrder.setShopOrderId(orderDTO.getSpOrderId());
+//        updateOrder.setShopOrderId(orderDTO.getSpOrderId());
+        updateOrder.setShopOrderId(orderDTO.getSpPurchaseNo());
         updateOrder.setStatus(status);
         updateOrder.setStatusDate(getUTCTime());
         Gson gson = new Gson();
@@ -226,7 +229,7 @@ public class OrderImpl extends AbsOrderService {
                 System.out.println("锁库存推送订单返回结果=="+rtnData);
                 if(HttpUtil45.errorResult.equals(rtnData)){
                 	orderDTO.setExcState("1");
-                    orderDTO.setExcDesc(rtnData);
+                    orderDTO.setExcDesc(rtnData); 
                 	return ;
                 }
                 logger.info("Response ：" + rtnData + ", shopOrderId:"+order.getShopOrderId());
@@ -236,7 +239,7 @@ public class OrderImpl extends AbsOrderService {
                     orderDTO.setExcState("1");
                     orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
                 } else if (Constant.PENDING.equals(status)){
-                    orderDTO.setStatus(OrderStatus.PLACED);
+                    orderDTO.setStatus(OrderStatus.PAYED);
                 } else if (Constant.CONFIRMED.equals(status)){
                     orderDTO.setStatus(OrderStatus.CONFIRMED);
                 }
@@ -318,7 +321,8 @@ public class OrderImpl extends AbsOrderService {
         PushOrderDTO order = new PushOrderDTO();
         order.setMerchantId(Constant.MERCHANT_ID); 
         order.setToken(Constant.TOKEN);
-        order.setShopOrderId(orderDTO.getSpOrderId());
+//        order.setShopOrderId(orderDTO.getSpOrderId());
+        order.setShopOrderId(orderDTO.getSpPurchaseNo());
         order.setOrderTotalPrice(totalPrice);
         order.setStatus(status);
     	order.setStatusDate(getUTCTime());

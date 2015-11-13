@@ -109,7 +109,7 @@ public class FileDownloadController {
             if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
                 endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
             }
-            if (productSearchDTO.getFlag()=="same") {
+            if (productSearchDTO.getFlag().equals("same")) {
             	productBuffer =productService.exportProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
 			}else{
 				productBuffer =productService.exportDiffProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());

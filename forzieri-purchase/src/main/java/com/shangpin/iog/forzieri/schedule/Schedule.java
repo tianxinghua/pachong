@@ -26,7 +26,7 @@ public class Schedule {
     private static String supplierNo ;
     static {
         if(null==bdl)
-            bdl=ResourceBundle.getBundle("conf");
+            bdl=ResourceBundle.getBundle("param");
         supplierId = bdl.getString("supplierId");
         supplierNo = bdl.getString("supplierNo");
     }
