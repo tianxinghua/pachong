@@ -80,6 +80,7 @@ public class FetchProduct {
 				SkuDTO sku = new SkuDTO();
 				sku.setId(UUIDGenerator.getUUID());
 				sku.setSkuId(skuEntry.getKey().replace("\"", ""));
+				sku.setBarcode(skuEntry.getValue().getART()+"<>"+skuEntry.getValue().getART_VAR()+"<>"+skuEntry.getValue().getART_COL()+"<>"+skuEntry.getValue().getTG());
 				sku.setSupplierId(supplierId);
 				sku.setSpuId(skuEntry.getValue().getART().replace("\"", ""));
 				sku.setColor(skuEntry.getValue().getCOL_DES().replace("\"", ""));

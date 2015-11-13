@@ -128,7 +128,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		try {
 			if (null != pageIndex && null != pageSize) {
 				page = new Page<>(pageIndex, pageSize);
-				if (flag == "same") {
+				if (flag .equals("same")) {
 					productList = productDAO.findListBySupplierAndLastDate(
 							supplier, startDate, endDate, new RowBounds(
 									pageIndex, pageSize));
@@ -139,7 +139,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				}
 
 			} else {
-				if (flag == "same") {
+				if (flag .equals("same")) {
 					productList = productDAO.findListBySupplierAndLastDate(
 							supplier, startDate, endDate);
 				} else {
@@ -248,7 +248,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				+ "Currency 币种" + splitSign + "上市季节" + splitSign + "活动开始时间"
 				+ splitSign + "活动结束时间").append("\r\n");
 		Page<ProductDTO> page = null;
-		if (flag == "same") {
+		if (flag.equals("same")) {
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,
 					endDate, pageIndex, pageSize, "same");
 
@@ -677,7 +677,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				+ splitSign + "sallPrice" + splitSign + "supplier Price 进货价"
 				+ splitSign + "Currency 币种").append("\r\n");
 		Page<ProductDTO> page = null;
-		if (flag == "same") {
+		if (flag.equals("same")) {
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,
 					endDate, pageIndex, pageSize, "same");
 
@@ -759,7 +759,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 							.append(null == dto.getSalePrice() ? " " : dto
 									.getSalePrice()).append(splitSign)
 							.append(dto.getSupplierPrice()).append(splitSign)
-							.append(dto.getSaleCurrency()).append(splitSign);
+							.append(dto.getSaleCurrency());
 
 					buffer.append("\r\n");
 				} catch (Exception e) {
