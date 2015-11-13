@@ -759,7 +759,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 							.append(null == dto.getSalePrice() ? " " : dto
 									.getSalePrice()).append(splitSign)
 							.append(dto.getSupplierPrice()).append(splitSign)
-							.append(dto.getSaleCurrency()).append(splitSign);
+							.append(dto.getSaleCurrency());
 
 					buffer.append("\r\n");
 				} catch (Exception e) {
