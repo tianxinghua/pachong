@@ -72,7 +72,7 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
      * test
      * */
     public static void main(String[] args) throws Exception {
-/*        String host = bundle.getString("HOST");
+        String host = bundle.getString("HOST");
         String app_key = bundle.getString("APP_KEY");
         String app_secret= bundle.getString("APP_SECRET");
         if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
@@ -84,9 +84,9 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
         logger.info("AMFEED更新数据库开始");
         impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
         logger.info("AMFEED更新数据库结束");
-        System.exit(0);*/
+        System.exit(0);
 
-        AbsUpdateProductStock impl = new AmfeedStockImp();
+/*        AbsUpdateProductStock impl = new AmfeedStockImp();
         List<String> skuNo = new ArrayList<>();
         skuNo.add("1054-S");
         skuNo.add("1032-S");
@@ -94,13 +94,13 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
         skuNo.add("1076-L");
         skuNo.add("1092-XS");
         skuNo.add("1150-8,5");
-/*        for (int i = 0;i<5000;i++){
+        for (int i = 0;i<5000;i++){
             skuNo.add(i+"1983933587_1985020936");
-        }*/
+        }
         Map returnMap = impl.grabStock(skuNo);
         System.out.println("test return size is "+returnMap.keySet().size());
         for(Object key: returnMap.keySet()){
            System.out.println("skuId is "+key+",stock is "+returnMap.get(key));;
-        }
+        }*/
     }
 }
