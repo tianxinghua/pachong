@@ -6,6 +6,7 @@ dependencies {
             "mysql:mysql-connector-java:5.1.21",
             "commons-dbcp:commons-dbcp:1.4",
             "commons-net:commons-net:3.3",
+            "net.sourceforge.javacsv:javacsv:2.0",
             project(':project-common'),
             project(':project-dao'),
             project(':iog-common-product')
