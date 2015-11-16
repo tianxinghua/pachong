@@ -90,6 +90,7 @@ include 'atelier-purchase'
 include 'prodottimonti'
 include 'prodottimonti-stock'
 include 'levelgroup'
+include 'levelgroup-purchase'
 include 'levelgroup-stock'
 
 
