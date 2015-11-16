@@ -82,7 +82,7 @@ public class MyCsvUtil {
         while(cr.readRecord()) {
             product = new SKUDto();
             rowString = cr.getRawRecord();
-            String[] from = rowString.split("|");
+            String[] from = rowString.split("\\|");
             //System.out.println(from.length + "--1--");
             Field[] to = product.getClass().getDeclaredFields();
             //System.out.println(to.length + "--2--");
