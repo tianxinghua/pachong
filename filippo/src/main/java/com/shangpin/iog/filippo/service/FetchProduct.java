@@ -142,7 +142,7 @@ public class FetchProduct {
 					spu.setSubCategoryName(spuEntry.getValue().getSUB_GRP_DES().replace("\"", ""));
 					spu.setCategoryGender(spuEntry.getValue().getSR_DES().replace("\"", ""));
 					spu.setMaterial(spuEntry.getValue().getCOMP().replace("\"", ""));
-					System.out.println(spuEntry.getValue().getCOMP().replace("\"", ""));
+					logger.info(spuEntry.getValue().getART().replace("\"", "")+spuEntry.getValue().getCOMP().replace("\"", ""));
 					spu.setProductOrigin(spuEntry.getValue().getMADEIN().replace("\"", ""));
 					productFetchService.saveSPU(spu);
 				} catch (ServiceException e) {
