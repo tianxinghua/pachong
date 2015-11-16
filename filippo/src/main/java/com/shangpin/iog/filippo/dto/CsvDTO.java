@@ -234,11 +234,11 @@ public class CsvDTO {
 	public void setIMG(String iMG) {
 		IMG = iMG;
 	}
-//	public String getVSO() {
-//		return VSO;
-//	}
-//	public void setVSO(String vSO) {
-//		VSO = vSO;
-//	}
+	public String getVSO() {
+		return VSO;
+	}
+	public void setVSO(String vSO) {
+		VSO = vSO;
+	}
 	
 }

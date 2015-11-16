@@ -29,11 +29,11 @@ public class StockClientImp extends AbsUpdateProductStock {
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger loggerError = Logger.getLogger("error");
 	
-//	 private static ApplicationContext factory;
-//    private static void loadSpringContext()
-//    {
-//        factory = new AnnotationConfigApplicationContext(AppContext.class);
-//    }
+	 private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
 
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
@@ -136,7 +136,10 @@ public class StockClientImp extends AbsUpdateProductStock {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		AbsUpdateProductStock stockImp = new StockClientImp();
+
+    	//加载spring
+        loadSpringContext();
+        StockClientImp stockImp =(StockClientImp)factory.getBean("forzieristock");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		logger.info("forzieri更新数据库开始");
 		try {

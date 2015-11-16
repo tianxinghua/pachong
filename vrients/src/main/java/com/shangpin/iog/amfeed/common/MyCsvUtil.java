@@ -44,7 +44,7 @@ public class MyCsvUtil {
         mongMap.put("supplierId", supplierId);
         mongMap.put("supplierName", "amfeed");
  		mongMap.put("result", csvFile);
-        logMongo.info(mongMap);
+        //logMongo.info(mongMap);
         //System.out.println(csvFile);
         FileWriter fwriter = null;
         try {
@@ -177,12 +177,12 @@ public class MyCsvUtil {
     public static void main(String[] args) {
         List<Product> list = null;
         try {
-            //MyCsvUtil.csvDownload();
-            list = MyCsvUtil.readCSVFile();
+            MyCsvUtil.csvDownload();
+            //list = MyCsvUtil.readCSVFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(list.size());
+/*        System.out.println(list.size());
         for (Product p:list){
             System.out.println(p.getImage1());
         }
@@ -194,7 +194,7 @@ public class MyCsvUtil {
         }
         for (Product p:list){
             System.out.println(p.getCategrory());
-        }
+        }*/
 
 /*        String json = HttpUtil45.get(httpurl, new OutTimeConfig(1000 * 60 * 10, 10 * 1000 * 60, 10 * 1000 * 60), null);
         System.out.println(json);*/

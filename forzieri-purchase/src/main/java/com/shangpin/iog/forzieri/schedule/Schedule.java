@@ -35,13 +35,13 @@ public class Schedule {
     ForzieriOrderServiceImpl orderService;
 
     //下单 退单 异常
-    @Scheduled(cron="0 0/10 * * * ? ")
+    @Scheduled(cron="0 0/5 * * * ? ")
     public void start(){
     	orderService.checkoutOrderFromWMS(supplierNo, supplierId, true);
     }
 
     //确认支付
-    @Scheduled(cron="0 0/5 * * * ? ")
+    @Scheduled(cron="0 0/3 * * * ? ")
     public  void confirmOrder(){
         try {
             orderService.confirmOrder(supplierId);;

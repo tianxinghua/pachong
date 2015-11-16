@@ -67,16 +67,17 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		PushOrderData pushOrderData = pushOrder(orderDTO);
-		if (pushOrderData.getStatusCode()=="401") {
+		System.out.println(pushOrderData.getStatusCode());
+		if (pushOrderData.getStatusCode().equals("401")) {
 			logger.info("accessToken过期");
 			getAccessToken(refreshToken);
 			handleSupplierOrder(orderDTO);
-		}else if(pushOrderData.getStatusCode()=="200"){
+		}else if(pushOrderData.getStatusCode().equals("200")){
 			//推送订单成功
 			 orderDTO.setExcState("0");
 			 orderDTO.setSupplierOrderNo(pushOrderData.getData().getOrder_id());
 			 orderDTO.setStatus(OrderStatus.PLACED);
-		}else if(pushOrderData.getStatusCode()=="400"){
+		}else if(pushOrderData.getStatusCode().equals("400")){
 			//推送订单失败
 			orderDTO.setExcDesc("订单失败，库存不足"+pushOrderData.getErrorCode());
 			handlePurchaseOrderExc(orderDTO);
@@ -87,11 +88,11 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		try {
 			PushOrderData pushOrderData = confirmOrCancelOrder(orderDTO.getSupplierOrderNo(), "approved");
-			if (pushOrderData.getStatusCode()=="401") {
+			if (pushOrderData.getStatusCode().equals("401")) {
 				logger.info("付款确认订单时accessToken过期");
 				getAccessToken(refreshToken);
 				handleConfirmOrder(orderDTO);
-			}else if(pushOrderData.getStatusCode()=="200"){
+			}else if(pushOrderData.getStatusCode().equals("200")){
 				//确认订单成功
 				 orderDTO.setExcState("0");
 				 orderDTO.setStatus(OrderStatus.CONFIRMED);
@@ -111,11 +112,11 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
 		try {
 			PushOrderData pushOrderData = confirmOrCancelOrder(deleteOrder.getSupplierOrderNo(), "cancelled");
-			if (pushOrderData.getStatusCode()=="401") {
+			if (pushOrderData.getStatusCode().equals("401")) {
 				logger.info("取消订单时accessToken过期");
 				getAccessToken(refreshToken);
 				handleCancelOrder(deleteOrder);
-			}else if(pushOrderData.getStatusCode()=="200"){
+			}else if(pushOrderData.getStatusCode().equals("200")){
 				//取消订单成功
 				deleteOrder.setExcState("0");
 				deleteOrder.setStatus(OrderStatus.CANCELLED);
@@ -214,8 +215,10 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
         httpPost.setEntity(entity);
 		try {
         	 response = httpClient.execute(httpPost);
-        	 pushOrderData = gson.fromJson(EntityUtils.toString(response.getEntity()), PushOrderData.class);
+        	 String str = EntityUtils.toString(response.getEntity());
+        	 pushOrderData = gson.fromJson(str, PushOrderData.class);
         	 pushOrderData.setStatusCode(String.valueOf(response.getStatusLine().getStatusCode()));
+        	 System.out.println(str);
         } catch (Exception e) {
 			e.printStackTrace();
 		}

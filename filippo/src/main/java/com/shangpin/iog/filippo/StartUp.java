@@ -7,7 +7,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.filippo.service.FetchProduct;
 
-
 public class StartUp {
 	 private static Logger log = Logger.getLogger("info");
 

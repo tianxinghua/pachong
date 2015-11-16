@@ -8,11 +8,11 @@ dependencies {
             "com.google.code.gson:gson:2.3.1",
     )
 }
+
 jar {
 
     dependsOn copyToLib , copyResources, copyResourcesToClasses
     exclude ("**/*.properties")
-
 
     def manifestCp = configurations.compile.files.collect  {
         File file = it
@@ -20,6 +20,7 @@ jar {
     }.join(' ')
 
     manifest {
-       attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+    	attributes 'Main-Class': 'com.shangpin.iog.amfeed.StartSkuJob'
+    	attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }

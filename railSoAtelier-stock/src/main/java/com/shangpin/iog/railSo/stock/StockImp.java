@@ -102,7 +102,7 @@ public class StockImp extends AbsUpdateProductStock {
 				String productId = stock.getProduct_id().trim();
 				List<Attribute> li = att.getAttributes();
 				for(Attribute a : li){
-					if("Unique".equals(a.getAttribute_name())){
+					if("Unique".equals(a.getAttribute_name())||"One size".equals(a.getAttribute_name())){
 						returnMap.put(productId+"|A", a.getQuantity());
 					}else{
 						returnMap.put(productId+"|"+a.getAttribute_name(), a.getQuantity());
