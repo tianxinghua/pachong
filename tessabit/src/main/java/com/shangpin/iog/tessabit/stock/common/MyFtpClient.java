@@ -43,8 +43,11 @@ public class MyFtpClient {
             ftp.setConnectMode(FTPConnectMode.PASV);
             //ASCII方式：传输xml文本文件
             ftp.setType(FTPTransferType.ASCII);
+
+            ftp.chdir(Constant.REMOTE_PATH);
             // 获取 XML文件到本地
-            ftp.get(new StringUtil().getLocalFileName(), Constant.SERVER_FILE);
+            System.out.println("file =" + Constant.REMOTE_PATH + "/"+ Constant.SERVER_FILE+"=");
+            ftp.get(new StringUtil().getLocalFileName(), Constant.REMOTE_PATH + "/"  +Constant.SERVER_FILE);
         } catch (IOException e) {
             System.out.println("IOException"+e.getMessage());
             e.printStackTrace();
