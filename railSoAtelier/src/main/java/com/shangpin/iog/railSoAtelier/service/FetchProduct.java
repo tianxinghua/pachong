@@ -13,6 +13,8 @@ import com.shangpin.iog.onsite.base.constance.Constant;
 import com.shangpin.iog.railSoAtelier.dto.Attribute;
 import com.shangpin.iog.railSoAtelier.dto.Attributes;
 import com.shangpin.iog.railSoAtelier.dto.Category;
+import com.shangpin.iog.railSoAtelier.dto.Description;
+import com.shangpin.iog.railSoAtelier.dto.Descriptions;
 import com.shangpin.iog.railSoAtelier.dto.Image;
 import com.shangpin.iog.railSoAtelier.dto.Product;
 import com.shangpin.iog.railSoAtelier.dto.Products;
@@ -119,7 +121,11 @@ public class FetchProduct {
     private void messMappingAndSave(Map<String,Attributes> returnMap,Products products) {
         List<Product> productList = products.getProducts();
         for (Product product : productList) {
-        	
+        	Descriptions desc = product.getDescriptions();
+        	Description des = null;
+        	if(desc!=null){
+        		des = desc.getDescriptions();
+        	}
             SpuDTO spu = new SpuDTO();
         	  try {
                   spu.setId(UUIDGenerator.getUUID());
@@ -130,7 +136,9 @@ public class FetchProduct {
                   if(c!=null){
                 	  spu.setCategoryName(c.getCategory_default_name());
                   }
-                  spu.setSpuName(product.getName());
+                  if(des!=null){
+                	  spu.setSpuName(des.getName());
+                  }
                   String tree = product.getProduct_category_tree();
                   String sex[] = tree.split(">");
                   spu.setCategoryGender(sex[0]);
@@ -151,11 +159,13 @@ public class FetchProduct {
                               sku.setId(UUIDGenerator.getUUID());
                               sku.setSupplierId(supplierId);
                               sku.setSpuId(product.getProduct_id());
-                              sku.setProductDescription(product.getDescription_short());
+                              if(des!=null){
+                            	  sku.setProductDescription(des.getDescription_short());
+                              }
                               sku.setMarketPrice(product.getPrice());
                               String itemSize = item.getAttribute_name().trim();
                               sku.setProductName(product.getName());
-                              if("Unique".equals(itemSize)){
+                              if("Unique".equals(itemSize)||"One size".equals(itemSize)){
                             	  itemSize="A"; 
                             	  skuId = product.getProduct_id()+"|"+itemSize;
                               }
