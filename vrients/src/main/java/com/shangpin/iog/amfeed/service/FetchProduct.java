@@ -48,11 +48,11 @@ public class FetchProduct {
      */
     public void fetchProductAndSave(){
         //download
-/*        try {
+        try {
             MyCsvUtil.csvDownload();
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        }*/
+        }
         //read .csv file
         List<Product> list = null;
         try {

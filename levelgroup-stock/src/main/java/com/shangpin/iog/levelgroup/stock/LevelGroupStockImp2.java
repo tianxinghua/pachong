@@ -1,20 +1,18 @@
-package com.shangpin.iog.amfeed.stock;
+package com.shangpin.iog.levelgroup.stock;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.amfeed.stock.dto.Product;
-import com.shangpin.iog.amfeed.stock.util.MyCsvUtil;
-import com.shangpin.sop.AbsUpdateProductStock;
-import org.apache.commons.lang.StringUtils;
+import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.levelgroup.dto.SKUDto;
+import com.shangpin.iog.levelgroup.util.MyCsvUtil;
 import org.apache.log4j.Logger;
 
 import java.net.MalformedURLException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
  * Created by wangyuzhi on 2015/11/11.
  */
-public class AmfeedStockImp extends AbsUpdateProductStock {
+public class LevelGroupStockImp2 extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
@@ -23,9 +21,9 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
     private String skuId = "";//单个skuId
 
     @Override
-    public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+    public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法开始！");
-        logger.info("AMFEED Sku 条数："+skuNo.size());
+        logger.info("LEVELGROUP Sku 条数："+skuNo.size());
         start = System.currentTimeMillis();
         boolean flag = true;
         try {
@@ -34,9 +32,9 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
             e.printStackTrace();
         }
         end = System.currentTimeMillis();
-        logger.info("下载AMFEED文件结果"+flag+"，耗时："+(end-start)/1000+"秒");
-        List<Product> list = null;
-        Map<String,Integer> map = new HashMap();
+        logger.info("下载LEVELGROUP文件结果"+flag+"，耗时："+(end-start)/1000+"秒");
+        List<SKUDto> list = null;
+        Map<String,String> map = new HashMap();
         if (flag){
             start = System.currentTimeMillis();
             try {
@@ -45,17 +43,17 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
                 e.printStackTrace();
             }
             for (int i = 1;i<list.size();i++){
-                map.put(list.get(i).getSku(),Integer.parseInt(list.get(i).getQty().trim()));
+                map.put(list.get(i).getSKU(),list.get(i).getSKU());//TODO
             }
             end = System.currentTimeMillis();
-            logger.info("解析AMFEED文件耗时："+(end-start)/1000+"秒");
+            logger.info("解析LEVELGROUP文件耗时："+(end-start)/1000+"秒");
         } else {
-            loggerError.error("下载AMFEED文件失败!");
+            loggerError.error("下载LEVELGROUP文件失败!");
         }
 
-        Map<String,Integer> returnMap = new HashMap();
+        Map<String,String> returnMap = new HashMap();
         Iterator<String> iterator=skuNo.iterator();
-        logger.info("为AMFEED供应商产品库存循环赋值");
+        logger.info("为LEVELGROUP供应商产品库存循环赋值");
         start = System.currentTimeMillis();
         while (iterator.hasNext()){
             skuId = iterator.next();
@@ -72,7 +70,7 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
      * test
      * */
     public static void main(String[] args) throws Exception {
-        String host = bundle.getString("HOST");
+/*        String host = bundle.getString("HOST");
         String app_key = bundle.getString("APP_KEY");
         String app_secret= bundle.getString("APP_SECRET");
         if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
@@ -84,9 +82,9 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
         logger.info("AMFEED更新数据库开始");
         impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
         logger.info("AMFEED更新数据库结束");
-        System.exit(0);
+        System.exit(0);*/
 
-/*        AbsUpdateProductStock impl = new AmfeedStockImp();
+        AbsUpdateProductStock impl = new LevelGroupStockImp2();
         List<String> skuNo = new ArrayList<>();
         skuNo.add("1054-S");
         skuNo.add("1032-S");
@@ -94,13 +92,13 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
         skuNo.add("1076-L");
         skuNo.add("1092-XS");
         skuNo.add("1150-8,5");
-        for (int i = 0;i<5000;i++){
+/*        for (int i = 0;i<5000;i++){
             skuNo.add(i+"1983933587_1985020936");
-        }
+        }*/
         Map returnMap = impl.grabStock(skuNo);
         System.out.println("test return size is "+returnMap.keySet().size());
         for(Object key: returnMap.keySet()){
            System.out.println("skuId is "+key+",stock is "+returnMap.get(key));;
-        }*/
+        }
     }
 }
