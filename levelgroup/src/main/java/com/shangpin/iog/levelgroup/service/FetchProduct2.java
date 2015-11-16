@@ -64,15 +64,15 @@ public class FetchProduct2 {
             try {
                 sku.setId(UUIDGenerator.getUUID());
                 sku.setSupplierId(supplierId);
-                sku.setSpuId(skuDto.getSKU());
+                sku.setSpuId(skuDto.getNAME());
                 sku.setSkuId(skuDto.getSKU());
-                sku.setProductSize(skuDto.getPRICE());
+                sku.setProductSize(skuDto.getFORMAT());
                 sku.setMarketPrice(skuDto.getPRICE());
                 sku.setSalePrice(skuDto.getSALEPRICE());
                 sku.setSupplierPrice(skuDto.getPRICE());
-                sku.setColor(skuDto.getSKU());
+                sku.setColor(skuDto.getLABEL());
                 sku.setProductDescription(skuDto.getDESCRIPTION());
-                sku.setStock("1");
+                sku.setStock("0");//TODO
                 sku.setProductCode(skuDto.getSKU());
                 sku.setSaleCurrency(skuDto.getCURRENCY());
                 sku.setBarcode(skuDto.getUPC());
@@ -112,11 +112,11 @@ public class FetchProduct2 {
             try {
                 spu.setId(UUIDGenerator.getUUID());
                 spu.setSupplierId(supplierId);
-                spu.setSpuId(skuDto.getSKU());
+                spu.setSpuId(skuDto.getNAME());
                 spu.setSpuName(skuDto.getNAME());
-                spu.setBrandName(skuDto.getSKU());
-                spu.setCategoryName(skuDto.getSKU());
-                spu.setSeasonId(skuDto.getSKU());
+                spu.setBrandName("Stuart Weitzman");
+                spu.setCategoryName("Shoes");
+                //spu.setSeasonId(skuDto.getSKU());
                 spu.setMaterial(skuDto.getMATERIAL());
                 spu.setCategoryGender(skuDto.getGENDER());
                 productFetchService.saveSPU(spu);

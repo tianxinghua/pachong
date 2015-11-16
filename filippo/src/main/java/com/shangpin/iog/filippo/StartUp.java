@@ -6,8 +6,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.filippo.service.FetchProduct;
-import com.sun.tracing.dtrace.Attributes;
-import com.sun.xml.internal.txw2.annotation.XmlElement;
 
 public class StartUp {
 	 private static Logger log = Logger.getLogger("info");

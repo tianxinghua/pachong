@@ -1,9 +1,12 @@
 package com.shangpin.iog.levelgroup.util;
 
 import com.csvreader.CsvReader;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.levelgroup.dto.SKUDto;
+import com.shangpin.iog.levelgroup.dto.Sku;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -60,6 +63,19 @@ public class MyCsvUtil {
     }
 
     /**
+     * http下载详情获取库存材质等信息
+     * @throws MalformedURLException
+     */
+    public static Sku getStockMess(String id) throws MalformedURLException {
+        String url = "http://www.ln-cc.com/dw/shop/v15_8/products/"+id+"/availability?inventory_ids=09&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+        String stockMess = HttpUtil45.get(url, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null);
+        Sku sku = new Gson().fromJson(stockMess, new TypeToken<Sku>() {}.getType());
+        System.out.println(sku.getC_material());
+        System.out.println(sku.getInventory().getStock_level());
+        return sku;
+    }
+
+    /**
      * http下载csv文件到本地路径
      * @throws MalformedURLException
      */
@@ -98,7 +114,14 @@ public class MyCsvUtil {
  * test
  * */
     public static void main(String[] args) {
-        List<SKUDto> list = null;
+        try {
+            MyCsvUtil.getStockMess("090000000011945");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+
+/*        List<SKUDto> list = null;
         try {
             //MyCsvUtil.csvDownload();
             list = MyCsvUtil.readCSVFile();
@@ -117,7 +140,7 @@ public class MyCsvUtil {
         }
         for (SKUDto p:list){
             System.out.println(p.getFORMAT());
-        }
+        }*/
 
 /*        String json = HttpUtil45.get(httpurl, new OutTimeConfig(1000 * 60 * 10, 10 * 1000 * 60, 10 * 1000 * 60), null);
         System.out.println(json);*/

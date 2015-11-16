@@ -22,11 +22,9 @@ public class Product {
     private String reference;
     private String manufacturer_id;
     private String product_id;
-    private String descriptions;
+    private Descriptions descriptions;
     private String name;
     private String link_rewrite;
-    private String description_short;
-    
     private String product_category_tree;
     private String price_shipping;
     private String price_sale;
