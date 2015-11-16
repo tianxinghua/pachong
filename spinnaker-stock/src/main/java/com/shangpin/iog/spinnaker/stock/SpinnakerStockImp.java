@@ -4,11 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.spinnaker.stock.dto.Quantity;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -16,13 +20,22 @@ import java.util.*;
 /**
  * Created by Administrator on 2015/7/8.
  */
+@Component("spinnaker")
 public class SpinnakerStockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
+    
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
 
     private static ResourceBundle bdl=null;
     private static String supplierId;
+    
 
     static {
         if(null==bdl)
@@ -84,11 +97,16 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args) throws Exception {
-        AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
-        grabStockImp.setUseThread(true);grabStockImp.setSkuCount4Thread(500);
+    	//加载spring
+        loadSpringContext();
+        //拉取数据
+        SpinnakerStockImp stockImp =(SpinnakerStockImp)factory.getBean("spinnaker");
+        
+//        AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
+        //grabStockImp.setUseThread(true);grabStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("SPINNAKER更新数据库开始");
-        grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
         logger.info("SPINNAKER更新数据库结束");
         System.exit(0);
 
