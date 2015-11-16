@@ -75,7 +75,25 @@ public class FetchProduct {
 					csvSpuMaps.put(csvDTO.getART(), csvDTO);
 				}
 			}
-			
+			for(Map.Entry<String, CsvDTO> spuEntry :csvSpuMaps.entrySet()){
+				SpuDTO spu = new SpuDTO();
+				try {
+					spu.setId(UUIDGenerator.getUUID());
+					spu.setSpuId(spuEntry.getValue().getART().replace("\"", ""));
+					spu.setSupplierId(supplierId);
+					spu.setBrandName(spuEntry.getValue().getBND_NAME().replace("\"", ""));
+					spu.setCategoryName(spuEntry.getValue().getGRP_DES().replace("\"", ""));
+					spu.setSubCategoryName(spuEntry.getValue().getSUB_GRP_DES().replace("\"", ""));
+					spu.setCategoryGender(spuEntry.getValue().getSR_DES().replace("\"", ""));
+					spu.setMaterial(spuEntry.getValue().getCOMP().replace("\"", ""));
+					logger.info(spuEntry.getValue().getART().replace("\"", "")+spuEntry.getValue().getCOMP().replace("\"", ""));
+					System.out.println(spuEntry.getValue().getART().replace("\"", "")+spuEntry.getValue().getCOMP().replace("\"", ""));
+					spu.setProductOrigin(spuEntry.getValue().getMADEIN().replace("\"", ""));
+					productFetchService.saveSPU(spu);
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
 			for(Map.Entry<String, CsvDTO> skuEntry :csvSkuMaps.entrySet()){
 				SkuDTO sku = new SkuDTO();
 				sku.setId(UUIDGenerator.getUUID());
@@ -107,9 +125,7 @@ public class FetchProduct {
 						if (e1.getMessage().equals("数据插入失败键重复")) {
 							// 更新价格和库存
 							productFetchService.updatePriceAndStock(sku);
-							e1.printStackTrace();
 						}
-
 					} catch (ServiceException e2) {
 						e2.printStackTrace();
 					}
@@ -131,24 +147,6 @@ public class FetchProduct {
 			//	}
 			}
 			
-			for(Map.Entry<String, CsvDTO> spuEntry :csvSpuMaps.entrySet()){
-				SpuDTO spu = new SpuDTO();
-				try {
-					spu.setId(UUIDGenerator.getUUID());
-					spu.setSpuId(spuEntry.getValue().getART().replace("\"", ""));
-					spu.setSupplierId(supplierId);
-					spu.setBrandName(spuEntry.getValue().getBND_NAME().replace("\"", ""));
-					spu.setCategoryName(spuEntry.getValue().getGRP_DES().replace("\"", ""));
-					spu.setSubCategoryName(spuEntry.getValue().getSUB_GRP_DES().replace("\"", ""));
-					spu.setCategoryGender(spuEntry.getValue().getSR_DES().replace("\"", ""));
-					spu.setMaterial(spuEntry.getValue().getCOMP().replace("\"", ""));
-					logger.info(spuEntry.getValue().getART().replace("\"", "")+spuEntry.getValue().getCOMP().replace("\"", ""));
-					spu.setProductOrigin(spuEntry.getValue().getMADEIN().replace("\"", ""));
-					productFetchService.saveSPU(spu);
-				} catch (ServiceException e) {
-					e.printStackTrace();
-				}
-			}
 			logger.info("抓取结束");
 		} catch (Exception e) {
 			e.printStackTrace();
