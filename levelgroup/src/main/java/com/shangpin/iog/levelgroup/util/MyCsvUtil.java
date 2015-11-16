@@ -66,13 +66,13 @@ public class MyCsvUtil {
      * http下载详情获取库存材质等信息
      * @throws MalformedURLException
      */
-    public static void getStockMess(String id) throws MalformedURLException {
+    public static Sku getStockMess(String id) throws MalformedURLException {
         String url = "http://www.ln-cc.com/dw/shop/v15_8/products/"+id+"/availability?inventory_ids=09&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
         String stockMess = HttpUtil45.get(url, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null);
         Sku sku = new Gson().fromJson(stockMess, new TypeToken<Sku>() {}.getType());
         System.out.println(sku.getC_material());
         System.out.println(sku.getInventory().getStock_level());
-
+        return sku;
     }
 
     /**
