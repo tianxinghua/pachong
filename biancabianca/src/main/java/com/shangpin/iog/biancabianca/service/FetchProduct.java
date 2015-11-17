@@ -39,12 +39,12 @@ public class FetchProduct {
      */
     public void fetchProductAndSave(){
         //download
-/*        try {
+        try {
             MyTxtUtil.txtDownload();
         } catch (MalformedURLException e) {
             loggerError.error("拉取数据失败！");
             e.printStackTrace();
-        }*/
+        }
         //read .csv file
         List<Product> list = null;
         try {
@@ -84,12 +84,15 @@ public class FetchProduct {
             } catch (ServiceException e) {
                 try {
                     if (e.getMessage().equals("数据插入失败键重复")) {
+                        System.out.println("saveSKU数据插入失败键重复");
                         //更新价格和库存
                         productFetchService.updatePriceAndStock(sku);
                     } else {
+                        System.out.println("saveSKU异常");
                         e.printStackTrace();
                     }
                 } catch (ServiceException e1) {
+                    System.out.println("updatePriceAndStock异常");
                     e1.printStackTrace();
                 }
             }
@@ -106,6 +109,7 @@ public class FetchProduct {
                 try {
                     productFetchService.savePictureForMongo(dto);
                 } catch (ServiceException e) {
+                    System.out.println("savePictureForMongo异常");
                     e.printStackTrace();
                 }
             }
@@ -125,6 +129,7 @@ public class FetchProduct {
                 spu.setProductOrigin("Spain");
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
+                System.out.println("saveSPU异常");
                 e.printStackTrace();
             }
         }
