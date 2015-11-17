@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.StockUpdateMapper">
+		
+	<resultMap id="suMap" type="iog_stockUpdate">
+        <result column="SUPPLIER_ID" property="supplierId" />
+        <result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+		
+    <update id="updateStockTime" parameterType="iog_stockUpdate" >
+          update UPDATE_STOCK
+          <set>
+              UPDATE_TIME = #{updateTime}
+          </set>
+          where  SUPPLIER_ID = #{supplierId}
+    </update>
+    
+    <select id="getAllData" resultMap="suMap">
+    	select SUPPLIER_ID,UPDATE_TIME 
+    	from UPDATE_STOCK
+    </select>
+</mapper>
