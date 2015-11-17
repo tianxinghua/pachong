@@ -77,7 +77,7 @@ public class FetchProduct {
                 sku.setProductDescription(product.getDESCRIPTION());
                 sku.setStock(product.getSTOCK_LEVEL());
                 sku.setProductCode("");
-                sku.setSaleCurrency("");
+                sku.setSaleCurrency("euro");
                 sku.setBarcode("");
                 productFetchService.saveSKU(sku);
 
@@ -122,7 +122,7 @@ public class FetchProduct {
                 //spu.setSeasonId(skuDto.getSKU());
                 spu.setMaterial(product.getMATERIAL());
                 spu.setCategoryGender(product.getGENDER());
-                spu.setProductOrigin("");//Italy
+                spu.setProductOrigin("Spain");
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
                 e.printStackTrace();
