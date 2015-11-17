@@ -101,26 +101,26 @@ public class MyTxtUtil {
  * */
     public static void main(String[] args) {
 
-/*        List<SKUDto> list = null;
+        List<Product> list = null;
         try {
-            //MyCsvUtil.csvDownload();
-            list = MyCsvUtil.readCSVFile();
+            MyTxtUtil.txtDownload();
+            list = MyTxtUtil.readTXTFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println(list.size());
-        for (SKUDto p:list){
-            System.out.println(p.getCURRENCY());
+        for (Product p:list){
+            System.out.println(p.getGENDER());
         }
-        for (SKUDto p:list){
+        for (Product p:list){
             System.out.println(p.getADVERTISERCATEGORY());
         }
-        for (SKUDto p:list){
+        for (Product p:list){
             System.out.println(p.getBUYURL());
         }
-        for (SKUDto p:list){
-            System.out.println(p.getFORMAT());
-        }*/
+        for (Product p:list){
+            System.out.println(p.getMASTER_SKU());
+        }
 
 /*        String json = HttpUtil45.get(httpurl, new OutTimeConfig(1000 * 60 * 10, 10 * 1000 * 60, 10 * 1000 * 60), null);
         System.out.println(json);*/
