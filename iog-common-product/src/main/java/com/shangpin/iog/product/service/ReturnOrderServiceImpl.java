@@ -34,6 +34,19 @@ public class ReturnOrderServiceImpl implements ReturnOrderService{
     }
 
     @Override
+    public boolean saveOrderWithResult(ReturnOrderDTO returnOrderDTO) throws ServiceException {
+        try{
+            returnOrderDao.save(returnOrderDTO);
+            return true;
+        }catch (Exception e){
+            logger.error("保存订单信息失败"+ e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    @Override
     public List<ReturnOrderDTO> getReturnOrderBySupplierIdAndOrderStatus(String supplierId, String status) throws ServiceException {
 
         return  returnOrderDao.findBySupplierIdAndStatus(supplierId,status);

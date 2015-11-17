@@ -44,7 +44,7 @@ public class MyFtpClient {
             //ASCII方式：传输xml文本文件
             ftp.setType(FTPTransferType.ASCII);
 
-            ftp.chdir(Constant.REMOTE_PATH);
+//            ftp.chdir(Constant.REMOTE_PATH);
             // 获取 XML文件到本地
             System.out.println("file =" + Constant.REMOTE_PATH + "/"+ Constant.SERVER_FILE+"=");
             ftp.get(new StringUtil().getLocalFileName(), Constant.REMOTE_PATH + "/"  +Constant.SERVER_FILE);

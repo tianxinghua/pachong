@@ -17,6 +17,14 @@ public interface ReturnOrderService {
      */
     public void saveOrder(ReturnOrderDTO returnOrderDTO ) throws ServiceException;
 
+
+    /**
+     * 保存退单信息
+     * @param returnOrderDTO 退单DTO
+     * @throws ServiceException
+     */
+    public boolean saveOrderWithResult(ReturnOrderDTO returnOrderDTO ) throws ServiceException;
+
     /**
      * 获取退单信息 根据供货商编号和状态
      * @param supplierId

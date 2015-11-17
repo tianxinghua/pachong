@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
  */
 public class StartJob {
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
     private static ResourceBundle bdl=null;
     private static String supplierId;
     static {
@@ -36,7 +37,12 @@ public class StartJob {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("VELA更新数据库开始");
-        grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        try {
+            grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            loggerError.error("更新失败");
+        }
         logger.info("VELA更新数据库结束");
 
 

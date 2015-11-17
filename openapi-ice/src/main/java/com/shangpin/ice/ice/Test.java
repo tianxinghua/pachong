@@ -27,22 +27,22 @@ import java.util.*;
  */
 public class Test {
     public static void main(String[] args){
-        OpenApiServantPrx servant = null;
-        try {
-            servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        List<Long> sopPurchaseOrderDetailNos =new ArrayList<>();
-        sopPurchaseOrderDetailNos.add(2015102600421L);
-        PurchaseOrderEx purchaseOrderEx = new PurchaseOrderEx(sopPurchaseOrderDetailNos,"ERROR! Data or Order Id or Order Site can't be empty!");
-        try {
-            System.out.print("　开始处理");
-            String  result = servant.PurchaseDetailEx(purchaseOrderEx,"2015101001584");
-            System.out.print("　返回信息" +result);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
+//        OpenApiServantPrx servant = null;
+//        try {
+//            servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        List<Long> sopPurchaseOrderDetailNos =new ArrayList<>();
+//        sopPurchaseOrderDetailNos.add(2015102600421L);
+//        PurchaseOrderEx purchaseOrderEx = new PurchaseOrderEx(sopPurchaseOrderDetailNos,"ERROR! Data or Order Id or Order Site can't be empty!");
+//        try {
+//            System.out.print("　开始处理");
+//            String  result = servant.PurchaseDetailEx(purchaseOrderEx,"2015101001584");
+//            System.out.print("　返回信息" +result);
+//        } catch (ApiException e) {
+//            e.printStackTrace();
+//        }
 
 //        List<Integer> status = new ArrayList<>();
 //        status.add(5);
@@ -185,6 +185,27 @@ public class Test {
 //        }else{
 //            System.out.println(" false  ");
 //        }
+
+        Gson gson = new Gson();
+        ICEWMSOrderRequestDTO  dto = new ICEWMSOrderRequestDTO();
+
+        dto.setBeginTime("2015-11-17 13:16:00");
+        dto.setEndTime("2015-11-17 13:16:20");
+        dto.setSupplierNo("S0000514");
+
+        String jsonParameter= "="+ gson.toJson(dto);
+        String result ="";
+
+
+        try {
+            result =  HttpUtil45.operateData("post","form","http://spwmsinventory.spidc1.com/Api/StockQuery/SupplierInventoryLogQuery",new OutTimeConfig(1000*5,1000*5,1000*5),null,
+                    jsonParameter,"","");
+            System.out.println("result = " + result);
+
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
