@@ -1,28 +1,26 @@
-package com.shangpin.iog.levelgroup.service;
+package com.shangpin.iog.biancabianca.service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.biancabianca.dto.Product;
+import com.shangpin.iog.biancabianca.util.MyTxtUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.levelgroup.dto.*;
-import com.shangpin.iog.levelgroup.util.MyCsvUtil;
 import com.shangpin.iog.service.ProductFetchService;
-import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by wangyuzhi on 2015/11/13.
  */
-@Component("levelgroup2")
-public class FetchProduct2 {
+@Component("biancabianca")
+public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static String supplierId;
@@ -40,15 +38,15 @@ public class FetchProduct2 {
      */
     public void fetchProductAndSave(){
         //download
-/*        try {
-            MyCsvUtil.csvDownload();
+        try {
+            MyTxtUtil.txtDownload();
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        }*/
+        }
         //read .csv file
-        List<SKUDto> list = null;
+        List<Product> list = null;
         try {
-            list = MyCsvUtil.readCSVFile();
+            list = MyTxtUtil.readTXTFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,36 +56,36 @@ public class FetchProduct2 {
     /**
      * 映射数据并保存
      */
-    private void messMappingAndSave(List<SKUDto> list) {
-        for(SKUDto skuDto:list) {
+    private void messMappingAndSave(List<Product> list) {
+        for(Product product:list) {
             SkuDTO sku = new SkuDTO();
-            String spuId = skuDto.getSKU().substring(0,10);
+            String spuId = product.getMASTER_SKU().substring(0, 10);
             try {
                 sku.setId(UUIDGenerator.getUUID());
                 sku.setSupplierId(supplierId);
                 sku.setSpuId(spuId);
-                sku.setSkuId(skuDto.getSKU());
-                sku.setProductSize(skuDto.getFORMAT());
-                sku.setMarketPrice(skuDto.getPRICE());
-                sku.setSalePrice(skuDto.getSALEPRICE());
-                sku.setSupplierPrice(skuDto.getPRICE());
-                sku.setColor(skuDto.getLABEL());
-                sku.setProductDescription(skuDto.getDESCRIPTION());
-                sku.setStock("0");//TODO
-                sku.setProductCode(skuDto.getSKU());
-                sku.setSaleCurrency(skuDto.getCURRENCY());
-                sku.setBarcode(skuDto.getUPC());
+                sku.setSkuId(product.getMASTER_SKU());
+                sku.setProductSize(product.getSIZE());
+                sku.setMarketPrice(product.getPRICE());
+                sku.setSalePrice(product.getSALEPRICE());
+                sku.setSupplierPrice(product.getPRICE());
+                sku.setColor(product.getCOLOR());
+                sku.setProductDescription(product.getDESCRIPTION());
+                sku.setStock(product.getSTOCK_LEVEL());
+                sku.setProductCode(product.getMASTER_SKU());
+                sku.setSaleCurrency(product.getMASTER_SKU());
+                sku.setBarcode(product.getMASTER_SKU());
                 productFetchService.saveSKU(sku);
 
                 /////////////////////////////////////////////////////
                 for(int i = 0;i<2;i++){
                     ProductPictureDTO dto  = new ProductPictureDTO();
-                    String picUrl = skuDto.getBUYURL();
-                    if (i == 1) picUrl = skuDto.getIMAGEURL();
+                    String picUrl = product.getBUYURL();
+                    if (i == 1) picUrl = product.getIMAGEURL();
                     dto.setPicUrl(picUrl);
                     dto.setSupplierId(supplierId);
                     dto.setId(UUIDGenerator.getUUID());
-                    dto.setSkuId(skuDto.getSKU());
+                    dto.setSkuId(product.getMASTER_SKU());
                     try {
                         productFetchService.savePictureForMongo(dto);
                     } catch (ServiceException e) {
@@ -113,12 +111,12 @@ public class FetchProduct2 {
                 spu.setId(UUIDGenerator.getUUID());
                 spu.setSupplierId(supplierId);
                 spu.setSpuId(spuId);
-                spu.setSpuName(skuDto.getNAME());
+                spu.setSpuName(product.getNAME());
                 spu.setBrandName("Stuart Weitzman");
                 spu.setCategoryName("Shoes");
                 //spu.setSeasonId(skuDto.getSKU());
-                spu.setMaterial(skuDto.getMATERIAL());
-                spu.setCategoryGender(skuDto.getGENDER());
+                spu.setMaterial(product.getMATERIAL());
+                spu.setCategoryGender(product.getGENDER());
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
                 e.printStackTrace();
