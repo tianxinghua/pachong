@@ -21,8 +21,9 @@ import java.util.ResourceBundle;
  */
 @Component("biancabianca")
 public class FetchProduct {
-    final Logger logger = Logger.getLogger(this.getClass());
     private static Logger logMongo = Logger.getLogger("mongodb");
+    private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
     private static String supplierId;
     @Autowired
     ProductFetchService productFetchService;
@@ -38,19 +39,21 @@ public class FetchProduct {
      */
     public void fetchProductAndSave(){
         //download
-        try {
+/*        try {
             MyTxtUtil.txtDownload();
         } catch (MalformedURLException e) {
+            loggerError.error("拉取数据失败！");
             e.printStackTrace();
-        }
+        }*/
         //read .csv file
         List<Product> list = null;
         try {
             list = MyTxtUtil.readTXTFile();
         } catch (Exception e) {
+            loggerError.error("解析文件失败！");
             e.printStackTrace();
         }
-        //mapping and save into db
+        logger.info("解析数据条数："+list.size());
         messMappingAndSave(list);
     }
     /**
@@ -58,13 +61,14 @@ public class FetchProduct {
      */
     private void messMappingAndSave(List<Product> list) {
         for(Product product:list) {
+            ///////////////////////////////保存SKU//////////////////////////////////
             SkuDTO sku = new SkuDTO();
-            String spuId = product.getMASTER_SKU().substring(0, 10);
+            String spuId = product.getVARIANT_SKU().substring(0, 10);
             try {
                 sku.setId(UUIDGenerator.getUUID());
                 sku.setSupplierId(supplierId);
                 sku.setSpuId(spuId);
-                sku.setSkuId(product.getMASTER_SKU());
+                sku.setSkuId(product.getVARIANT_SKU());
                 sku.setProductSize(product.getSIZE());
                 sku.setMarketPrice(product.getPRICE());
                 sku.setSalePrice(product.getSALEPRICE());
@@ -77,21 +81,6 @@ public class FetchProduct {
                 sku.setBarcode(product.getMASTER_SKU());
                 productFetchService.saveSKU(sku);
 
-                /////////////////////////////////////////////////////
-                for(int i = 0;i<2;i++){
-                    ProductPictureDTO dto  = new ProductPictureDTO();
-                    String picUrl = product.getBUYURL();
-                    if (i == 1) picUrl = product.getIMAGEURL();
-                    dto.setPicUrl(picUrl);
-                    dto.setSupplierId(supplierId);
-                    dto.setId(UUIDGenerator.getUUID());
-                    dto.setSkuId(product.getMASTER_SKU());
-                    try {
-                        productFetchService.savePictureForMongo(dto);
-                    } catch (ServiceException e) {
-                        e.printStackTrace();
-                    }
-                }
             } catch (ServiceException e) {
                 try {
                     if (e.getMessage().equals("数据插入失败键重复")) {
@@ -104,7 +93,23 @@ public class FetchProduct {
                     e1.printStackTrace();
                 }
             }
-            ////////////////////////////////////////////////////////////////////
+
+            ///////////////////////////////////保存图片///////////////////////////////////
+            for(int i = 0;i<2;i++){
+                ProductPictureDTO dto  = new ProductPictureDTO();
+                String picUrl = product.getBUYURL();
+                if (i == 1) picUrl = product.getIMAGEURL();
+                dto.setPicUrl(picUrl);
+                dto.setSupplierId(supplierId);
+                dto.setId(UUIDGenerator.getUUID());
+                dto.setSkuId(product.getVARIANT_SKU());
+                try {
+                    productFetchService.savePictureForMongo(dto);
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                }
+            }
+            ///////////////////////////////////保存SPU/////////////////////////////////
 
             SpuDTO spu = new SpuDTO();
             try {
