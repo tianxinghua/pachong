@@ -76,9 +76,9 @@ public class FetchProduct {
                 sku.setColor(product.getCOLOR());
                 sku.setProductDescription(product.getDESCRIPTION());
                 sku.setStock(product.getSTOCK_LEVEL());
-                sku.setProductCode(product.getMASTER_SKU());
-                sku.setSaleCurrency(product.getMASTER_SKU());
-                sku.setBarcode(product.getMASTER_SKU());
+                sku.setProductCode("");
+                sku.setSaleCurrency("");
+                sku.setBarcode("");
                 productFetchService.saveSKU(sku);
 
             } catch (ServiceException e) {
@@ -122,6 +122,7 @@ public class FetchProduct {
                 //spu.setSeasonId(skuDto.getSKU());
                 spu.setMaterial(product.getMATERIAL());
                 spu.setCategoryGender(product.getGENDER());
+                spu.setProductOrigin("");//Italy
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
                 e.printStackTrace();
