@@ -61,10 +61,11 @@ public class FetchProduct2 {
     private void messMappingAndSave(List<SKUDto> list) {
         for(SKUDto skuDto:list) {
             SkuDTO sku = new SkuDTO();
+            String spuId = skuDto.getSKU().substring(0,10);
             try {
                 sku.setId(UUIDGenerator.getUUID());
                 sku.setSupplierId(supplierId);
-                sku.setSpuId(skuDto.getNAME());
+                sku.setSpuId(spuId);
                 sku.setSkuId(skuDto.getSKU());
                 sku.setProductSize(skuDto.getFORMAT());
                 sku.setMarketPrice(skuDto.getPRICE());
@@ -101,7 +102,6 @@ public class FetchProduct2 {
                     } else {
                         e.printStackTrace();
                     }
-
                 } catch (ServiceException e1) {
                     e1.printStackTrace();
                 }
@@ -112,7 +112,7 @@ public class FetchProduct2 {
             try {
                 spu.setId(UUIDGenerator.getUUID());
                 spu.setSupplierId(supplierId);
-                spu.setSpuId(skuDto.getNAME());
+                spu.setSpuId(spuId);
                 spu.setSpuName(skuDto.getNAME());
                 spu.setBrandName("Stuart Weitzman");
                 spu.setCategoryName("Shoes");
