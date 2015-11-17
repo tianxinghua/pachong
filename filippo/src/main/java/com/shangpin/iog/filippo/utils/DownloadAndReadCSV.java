@@ -20,6 +20,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Created by monkey on 2015/10/20.
@@ -29,7 +30,7 @@ public class DownloadAndReadCSV {
     static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
     private static String path = bundle.getString("path");
     private static String httpurl = bundle.getString("url");
-
+    private static Logger logger = Logger.getLogger("info");
     /**
      * http下载csv文件到本地路径
      * @throws MalformedURLException
@@ -97,7 +98,7 @@ public class DownloadAndReadCSV {
     	for (String realPath : realPaths) {
     		//解析csv文件
     		cr = new CsvReader(new FileReader(realPath));
-    		//CsvReader cr = new CsvReader(new FileReader("F:/filippo.csv"));
+//    		CsvReader cr = new CsvReader(new FileReader("F:/filippo1.csv"));
     		System.out.println("创建cr对象成功");
     		//得到列名集合
     		cr.readRecord();
@@ -106,6 +107,8 @@ public class DownloadAndReadCSV {
     			split = rowString.split(sep);
     			colValueList = Arrays.asList(split);
     			T t = fillDTO(clazz.newInstance(),colValueList);
+    			System.out.println(((CsvDTO)t).getCOMP());
+    			logger.info(((CsvDTO)t).getCOMP());
     			//过滤重复的dto。。。sku,
     			//dtoSet.add(t);
     			dtoList.add(t);
