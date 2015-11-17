@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.*;
@@ -66,7 +67,7 @@ public class MyTxtUtil {
      * http下载txt文件到本地路径
      * @throws MalformedURLException
      */
-    public static List<Product> readTXTFile() throws Exception {
+    public static List<Product> readTXTFile() throws IOException {
         //解析txt文件
         CsvReader cr = new CsvReader(new FileReader(localPath));
         System.out.println("创建cr对象成功");
@@ -87,8 +88,19 @@ public class MyTxtUtil {
             for (int i = 0; i < to.length; i++){
                 String name = to[i].getName(); // 获取属性的名字
                 name = name.substring(0, 1).toUpperCase() + name.substring(1);
-                Method m = product.getClass().getMethod("set"+name,String.class);
-                m.invoke(product,from[i]);
+                Method m = null;
+                try {
+                    m = product.getClass().getMethod("set"+name,String.class);
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    m.invoke(product,from[i]);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
                 //System.out.println(name + " : " + from[i]);
             }
             dtoList.add(product);
@@ -104,7 +116,7 @@ public class MyTxtUtil {
 
         List<Product> list = null;
         try {
-            MyTxtUtil.txtDownload();
+            //MyTxtUtil.txtDownload();
             list = MyTxtUtil.readTXTFile();
         } catch (Exception e) {
             e.printStackTrace();

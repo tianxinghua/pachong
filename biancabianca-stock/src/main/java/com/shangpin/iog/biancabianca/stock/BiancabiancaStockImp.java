@@ -29,6 +29,7 @@ public class BiancabiancaStockImp extends AbsUpdateProductStock {
             flag = MyTxtUtil.txtDownload();
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            loggerError.error("下载BIANCABIANCA文件失败!"+e.getMessage());
         }
         end = System.currentTimeMillis();
         logger.info("下载BIANCABIANCA文件结果"+flag+"，耗时："+(end-start)/1000+"秒");
@@ -41,7 +42,7 @@ public class BiancabiancaStockImp extends AbsUpdateProductStock {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            for (int i = 1;i<list.size();i++){
+            for (int i = 0;i<list.size();i++){
                 map.put(list.get(i).getVARIANT_SKU(),list.get(i).getSTOCK_LEVEL());
             }
             end = System.currentTimeMillis();
