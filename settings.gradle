@@ -166,4 +166,5 @@ include 'vrients-stock'
 include 'spinnaker-order'
 include 'havok'
 include 'havok-stock'
+include 'biancabianca'
 
