@@ -53,6 +53,8 @@ public abstract class AbsOrderService {
 
 //    static String url="/purchase/createdeliveryorder";
     private static ResourceBundle bdl = null;
+    private static ResourceBundle bd = null;
+    private static String  startDateOfTemp=null,endDateOfTemp=null;
     private static  String url = null;
 
     public static boolean SENDMAIL = false;
@@ -60,10 +62,15 @@ public abstract class AbsOrderService {
 		 if(null==bdl){
 			 bdl=ResourceBundle.getBundle("openice");
 		 }
+		 if(null==bd){
+			 bd=ResourceBundle.getBundle("conf");
+		 }
 		 url = bdl.getString("wmsUrl");
         toEmail = bdl.getString("email");
         fromEmail = bdl.getString("fromEmail");
         emailPass = bdl.getString("emailPass");
+        startDateOfTemp=bd.getString("startDateOfTemp");
+        endDateOfTemp = bd.getString("endDateOfTemp");
 	}
 
     @Autowired
@@ -1274,9 +1281,17 @@ public abstract class AbsOrderService {
 
         Date tmpDate =  DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(startDateOfWMS,YYYY_MMDD_HH_WMS),-10,"S");
         startDateOfWMS = DateTimeUtil.convertFormat(tmpDate,YYYY_MMDD_HH_WMS) ;
-        writeGrapDate(endDateOfWMS, fileName);
-
-
+        
+        if(startDateOfTemp!=null&&!"".equals(startDateOfTemp)){
+        	startDateOfWMS = startDateOfTemp;
+        }
+        if(endDateOfTemp!=null&&!"".equals(endDateOfTemp)){
+        	endDateOfWMS = endDateOfTemp;
+        }else{
+        	writeGrapDate(endDateOfWMS, fileName);
+        }
+        System.out.println("startDateOfWMS："+startDateOfWMS + "，endDateOfWMS："+endDateOfWMS);
+        logger.info("startDateOfWMS："+startDateOfWMS + "，endDateOfWMS："+endDateOfWMS);
     }
 
     private static File getConfFile(String fileName) throws IOException {
