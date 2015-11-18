@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
     String bathPath = request.getContextPath();
 %>
@@ -169,13 +170,29 @@
 	href="javascript:void(0)" onclick="exportDiffProduct('diff')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>价格变化导出</a>
 	<a href="javascript:void(0)"
-	onclick="clearText()" id="btn-cancel" icon="icon-cancel" class='easyui-linkbutton'>清空</a>
+	onclick="clearText()" id="btn-cancel" icon="icon-cancel" class='easyui-linkbutton'>清空</a><br>
+	<br>
+	<a href="stockUpdateException" id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a>
 	
 </div>
-
-
-
-
+<div style="text-align: left; padding: 0px 20px 20px 20px;">
+	<table border="1" >
+  	<tr>
+  		<td>supplierId</td>
+  		<td>supplierName</td>
+  		<td>updateTime</td>
+  		<td>当前时间差</td>
+  	</tr>
+  	<c:forEach items="${allData}" var="data">
+	  	<tr>
+	  		<td>${data.supplierId}</td>
+	  		<td>${data.supplierName}</td>
+	  		<td><fmt:formatDate value="${data.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+	  		<td>${data.dif }</td>
+	  	</tr>
+  	</c:forEach>
+  </table>
+</div>
 
 </body>
 </html>
