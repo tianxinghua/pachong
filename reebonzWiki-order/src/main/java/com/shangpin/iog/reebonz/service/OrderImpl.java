@@ -256,7 +256,6 @@ public class OrderImpl extends AbsOrderService {
 
 					RequestObject obj = new RequestObject();
 					obj.setSku(skuIDs[0]);
-					obj.setPayment_price(purchasePrice);
 					try {
 //							String markPrice = null;
 //							try {
@@ -279,6 +278,9 @@ public class OrderImpl extends AbsOrderService {
 //								System.out.println("sku"+skuNo+"没有供货价");
 //					        	logger.info("异常错误："+e.getMessage());
 //							}
+						if(purchasePrice!=null){
+						    obj.setPayment_price(purchasePrice);
+						}
 						String eventId = eventProductService.selectEventIdBySku(skuIDs[0], supplierId);
 						System.out.println("获取的活动Id："+eventId);
 						logger.info("eventId"+eventId);
