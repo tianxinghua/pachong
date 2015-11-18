@@ -4,8 +4,6 @@
 package com.shangpin.iog.acanfora.stock;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
-
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.acanfora.stock.dto.Item;
 import com.shangpin.iog.acanfora.stock.dto.Items;
 import com.shangpin.iog.acanfora.stock.dto.Product;
@@ -14,12 +12,15 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.sop.AbsUpdateProductStock;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 
 import javax.xml.bind.JAXBException;
+
 import java.lang.String;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -31,15 +32,17 @@ public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
     private static String supplierId;
+    private static String grabStockUrl = "";
 
     static {
         if(null==bdl)
          bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        grabStockUrl = bdl.getString("grabStockUrl");
     }
 
-    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException {
-        Map<String, String> skustock = new HashMap<>(skuNo.size());
+    public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
+        Map<String, Integer> skustock = new HashMap<>();
         Map<String,String> stockMap = new HashMap<>();
 
 
@@ -53,7 +56,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
             timeConfig.confConnectOutTime(60*1000*5);
             timeConfig.confRequestOutTime(60*1000*5);
             timeConfig.confSocketOutTime(60*1000*5);
-            String result = HttpUtil45.get("http://www.acanfora.it/api_ecommerce_v2.aspx", timeConfig, null);
+            String result = HttpUtil45.get(grabStockUrl, timeConfig, null);
 
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","acanfora");
@@ -98,9 +101,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
         for (String skuno : skuNo) {
 
             if(stockMap.containsKey(skuno)){
-                skustock.put(skuno, stockMap.get(skuno));
+                skustock.put(skuno, Integer.parseInt(stockMap.get(skuno)));
             } else{
-                skustock.put(skuno, "0");
+                skustock.put(skuno, 0);
             }
         }
         logger.info("ACANFORA赋值库存数据成功");
@@ -109,12 +112,21 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
     public static void main(String[] args) throws Exception {
        
+    	String host = bdl.getString("HOST");
+        String app_key = bdl.getString("APP_KEY");
+        String app_secret= bdl.getString("APP_SECRET");
+        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
+            logger.error("参数错误，无法执行更新库存");
+        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");    	
         AbsUpdateProductStock grabStockImp = new GrabStockImp();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        
         logger.info("ACANFORA更新数据库开始");
-        grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        grabStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
         logger.info("ACANFORA更新数据库结束");
         System.exit(0);
+        
+        
 
     }
 
