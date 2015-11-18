@@ -17,8 +17,13 @@ public interface OrderService {
      * @throws ServiceException
      */
     public void saveOrder(OrderDTO orderDTO ) throws ServiceException;
-    
 
+    /**
+     * 保存订单信息
+     * @param orderDTO 订单DTO
+     * @throws ServiceException
+     */
+    public boolean saveOrderWithResult(OrderDTO orderDTO ) throws ServiceException;
     /**
      * 更新订单信息
      * @param orderDTO

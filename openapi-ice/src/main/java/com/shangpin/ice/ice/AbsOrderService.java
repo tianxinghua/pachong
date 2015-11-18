@@ -599,23 +599,28 @@ public abstract class AbsOrderService {
             try {
                 logger.info("采购单信息转化订单后信息："+spOrder.toString());
                 System.out.println("采购单信息转化订单后信息："+spOrder.toString());
-                productOrderService.saveOrder(spOrder);
-
-                try {
-                   //处理供货商订单
-                    handleSupplierOrder(spOrder);
-                    //更新海外购订单信息
-                    updateOrderMsg(spOrder);
 
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    loggerError.error("采购单 ："+ spOrder.getSpPurchaseNo() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
-                    Map<String,String> map = new HashMap<>();
-                    map.put("excDesc",e.getMessage());
-                    setErrorMsg(spOrder.getUuId(),map);
+                if(productOrderService.saveOrderWithResult(spOrder)){
+                    try {
+                        //处理供货商订单
+                        handleSupplierOrder(spOrder);
+                        //更新海外购订单信息
+                        updateOrderMsg(spOrder);
 
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        loggerError.error("采购单 ："+ spOrder.getSpPurchaseNo() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
+                        Map<String,String> map = new HashMap<>();
+                        map.put("excDesc",e.getMessage());
+                        setErrorMsg(spOrder.getUuId(),map);
+
+                    }
+                }else{
+                    loggerError.error("订单 ："+ spOrder.getSpOrderId() + "保存订单信息失败");
                 }
+
 
             } catch (ServiceException e) {
                 loggerError.error("采购单 ："+ spOrder.getSpPurchaseNo() + "失败,失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
@@ -661,23 +666,27 @@ public abstract class AbsOrderService {
             try {
                 logger.info("订单信息："+spOrder.toString());
                 System.out.println("订单信息："+spOrder.toString());
-                productOrderService.saveOrder(spOrder);
+                if(productOrderService.saveOrderWithResult(spOrder)){
+                    try {
+                        //处理供货商订单
+                        handleSupplierOrder(spOrder);
+                        //更新海外购订单信息
+                        updateOrderMsg(spOrder);
 
-                try {
-                    //处理供货商订单
-                    handleSupplierOrder(spOrder);
-                    //更新海外购订单信息
-                    updateOrderMsg(spOrder);
 
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        loggerError.error("订单 ："+ spOrder.getSpOrderId() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
+                        Map<String, String> map = new HashMap<>();
+                        map.put("excDesc", e.getMessage());
+                        setErrorMsg(spOrder.getUuId(), map);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    loggerError.error("订单 ："+ spOrder.getSpOrderId() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
-                    Map<String, String> map = new HashMap<>();
-                    map.put("excDesc", e.getMessage());
-                    setErrorMsg(spOrder.getUuId(), map);
-
+                    }
+                }else{
+                    loggerError.error("订单 ："+ spOrder.getSpOrderId() + "保存订单信息失败");
                 }
+
+
 
             } catch (Exception e){
                 loggerError.error("下单错误 " + e.getMessage());
@@ -1019,29 +1028,34 @@ public abstract class AbsOrderService {
                 try{
                     logger.info("采购单信息转化退单后信息："+deleteOrder.toString());
                     System.out.println("采购单信息转化退单后信息："+deleteOrder.toString());
-                    returnOrderService.saveOrder(deleteOrder);
-                    if(!handleCancel){
-                        //不处理退单
-                        continue;
+                    if(returnOrderService.saveOrderWithResult(deleteOrder)){
+                        if(!handleCancel){
+                            //不处理退单
+                            continue;
+                        }
+                        try {
+                            //处理取消订单
+                            handleCancelOrder(deleteOrder);
+                            //更改退单状态无论成功或失败 还需要更改订单状态
+
+                            updateRefundOrderMsg( deleteOrder);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+
+                            loggerError.error("订单 ："+ deleteOrder.getUuId() + "处理退单失败。 原因 ：" + e.getMessage() );
+
+                            Map<String,String> map = new HashMap<>();
+                            map.put("excDesc",e.getMessage());
+
+                            setErrorMsg(deleteOrder.getUuId(),map);
+
+                        }
+                    }else{
+                        loggerError.error("退单："+ deleteOrder.getSpOrderId() + "保存失败");
                     }
-                    try {
-                        //处理取消订单
-                        handleCancelOrder(deleteOrder);
-                        //更改退单状态无论成功或失败 还需要更改订单状态
 
-                        updateRefundOrderMsg( deleteOrder);
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-
-                        loggerError.error("订单 ："+ deleteOrder.getUuId() + "处理退单失败。 原因 ：" + e.getMessage() );
-
-                        Map<String,String> map = new HashMap<>();
-                        map.put("excDesc",e.getMessage());
-
-                        setErrorMsg(deleteOrder.getUuId(),map);
-
-                    }
 
                 } catch (ServiceException e) {
 
@@ -1241,7 +1255,8 @@ public abstract class AbsOrderService {
         String lastDate=getLastGrapDate(fileName);
         startDate= org.apache.commons.lang.StringUtils.isNotEmpty(lastDate) ? lastDate: com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(DateUtils.addDays(tempDate, -180), YYYY_MMDD_HH);
 
-
+        Date tmpDate =  DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(startDate,YYYY_MMDD_HH),-10,"S");
+        startDate = DateTimeUtil.convertFormat(tmpDate,YYYY_MMDD_HH) ;
 
         writeGrapDate(endDate,fileName);
 
@@ -1257,9 +1272,9 @@ public abstract class AbsOrderService {
         String lastDate=getLastGrapDate(fileName);
         startDateOfWMS= org.apache.commons.lang.StringUtils.isNotEmpty(lastDate) ? lastDate: com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(DateUtils.addDays(tempDate, -180), YYYY_MMDD_HH_WMS);
 
-
-
-        writeGrapDate(endDateOfWMS,fileName);
+        Date tmpDate =  DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(startDateOfWMS,YYYY_MMDD_HH_WMS),-10,"S");
+        startDateOfWMS = DateTimeUtil.convertFormat(tmpDate,YYYY_MMDD_HH_WMS) ;
+        writeGrapDate(endDateOfWMS, fileName);
 
 
     }

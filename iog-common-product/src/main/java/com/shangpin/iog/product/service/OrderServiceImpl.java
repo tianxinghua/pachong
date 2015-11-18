@@ -45,6 +45,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public boolean saveOrderWithResult(OrderDTO orderDTO) throws ServiceException {
+        try {
+            orderDAO.save(orderDTO);
+            return true;
+        } catch (Exception e) {
+            logger.error("订单保存失败："+ e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    @Override
     public void update(OrderDTO orderDTO) throws ServiceException {
         try {
             orderDAO.update(orderDTO);

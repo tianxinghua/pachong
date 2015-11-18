@@ -3,9 +3,7 @@ package com.shangpin.iog.facade.dubbo.service;
 import com.alibaba.dubbo.rpc.protocol.rest.support.ContentType;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -17,7 +15,11 @@ import javax.ws.rs.core.MediaType;
 @Service("orderOfSupplierFacadeServiceImpl")
 public class OrderOfSupplierServiceImpl implements OrderOfSupplierService{
     @Override
-    public String createOrder(String orderMessage) {
+
+    @GET
+    @Path("{supplierNo}")
+    public String createOrder(@PathParam("supplierNo") String supplierNo,String orderMessage) {
+
         return null;
     }
 }

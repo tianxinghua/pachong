@@ -168,4 +168,5 @@ include 'havok'
 include 'havok-stock'
 include 'biancabianca'
 include 'biancabianca-stock'
+include 'iog-order-dubbo'
 
