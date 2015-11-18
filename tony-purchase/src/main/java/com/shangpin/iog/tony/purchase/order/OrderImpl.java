@@ -21,7 +21,7 @@ import java.util.*;
 /**
  * Created by wangyuzhi on 15/10/9.
  */
-
+@Component("tonyOrder")
 public class OrderImpl extends AbsOrderService {
 
     @Autowired
