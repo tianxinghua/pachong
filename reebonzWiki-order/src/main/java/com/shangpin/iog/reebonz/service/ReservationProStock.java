@@ -281,6 +281,7 @@ public class ReservationProStock {
 				obj = requestSource(map);
 			}
 		} else {
+			oauth = authApi();
 			obj = new ResponseObject();
 			obj.setReturn_code("0");
 			obj.setError_msg(oauth.getError_msg());
