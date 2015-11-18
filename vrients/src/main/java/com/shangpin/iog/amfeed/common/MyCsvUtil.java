@@ -144,6 +144,7 @@ public class MyCsvUtil {
                         str = str.replaceAll("(?sm)(\"(\"))", "$2");
                         str = str.replaceAll("\"", "");
                         str = deleLastComma(str);
+                        str = str.replace("++++","");
                         //System.out.println(")(" + str + ")(");
                         String name = copyTo[i++].getName(); // 获取属性的名字
                         name = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -197,13 +198,13 @@ public class MyCsvUtil {
             System.out.println(p.getImage1());
         }
         for (Product p:list){
-            System.out.println(p.getSku());
+            System.out.println(p.getImage2());
         }
         for (Product p:list){
-            System.out.println(p.getPrice());
+            System.out.println(p.getImage3());
         }
         for (Product p:list){
-            System.out.println(p.getCategrory());
+            System.out.println(p.getImage4());
         }
 
 
