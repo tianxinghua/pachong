@@ -14,6 +14,7 @@ import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggerFactory;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBException;
+
 import java.util.*;
 
 /**
@@ -30,17 +32,28 @@ import java.util.*;
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
     private static Logger logMongo = Logger.getLogger("mongodb");
+    
+    private static ResourceBundle bdl=null;
+    private static String supplierId;
+    private static String grabStockUrl = "";
+
+    static {
+        if(null==bdl)
+         bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+        grabStockUrl = bdl.getString("grabStockUrl");
+    }
+    
     @Autowired
     ProductFetchService productFetchService;
 
-    public void fetchProductAndSave(String url){
+    public void fetchProductAndSave(){
 
-        String supplierId = "2015050800242";
         try {
             Map<String,String> mongMap = new HashMap<>();
 
             OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
-            String result = HttpUtil45.get(url, timeConfig, null);
+            String result = HttpUtil45.get(grabStockUrl, timeConfig, null);
             HttpUtil45.closePool();
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","acanfora");
