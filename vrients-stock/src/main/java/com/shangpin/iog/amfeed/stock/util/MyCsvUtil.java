@@ -113,6 +113,7 @@ public class MyCsvUtil {
             BufferedReader br = null;
 
             br = new BufferedReader(fr);
+            br.readLine();
             String rec = null;// 一行
             String str;// 一个单元格
             List<List<String>> listFile = new ArrayList<List<String>>();
@@ -133,6 +134,7 @@ public class MyCsvUtil {
                         str = mCells.group();
                         str = str.replaceAll("(?sm)\"?([^\"]*(\"{2})*[^\"]*)\"?.*,", "$1");
                         str = str.replaceAll("(?sm)(\"(\"))", "$2");
+                        str = deleLastComma(str);
                         //System.out.println(")(" + str + ")(");
                         String name = copyTo[i++].getName(); // 获取属性的名字
                         name = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -161,6 +163,13 @@ public class MyCsvUtil {
 
     private static String getLastValue(String[] strArr){
         return strArr[strArr.length-1].replace("\\r","");
+    }
+    private static String deleLastComma(String str){
+        int lenth = str.length();
+        if (",".equals(str.substring(lenth-1))){
+            return str.substring(0,lenth-1);
+        }
+        return  str;
     }
     /**
  * test
