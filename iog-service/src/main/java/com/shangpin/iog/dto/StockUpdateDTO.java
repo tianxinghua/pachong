@@ -8,7 +8,9 @@ public class StockUpdateDTO implements Serializable{
 	private static final long serialVersionUID = 4078982631318898469L;
 	
 	private String supplierId;
-	private Date updateTime = new Date();
+	private String supplierName;
+	private Date updateTime ;
+	private String dif;
 	public String getSupplierId() {
 		return supplierId;
 	}
@@ -20,6 +22,18 @@ public class StockUpdateDTO implements Serializable{
 	}
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+	public String getDif() {
+		return dif;
+	}
+	public void setDif(String dif) {
+		this.dif = dif;
+	}
+	public String getSupplierName() {
+		return supplierName;
+	}
+	public void setSupplierName(String supplierName) {
+		this.supplierName = supplierName;
 	}
 	
 }

@@ -3,8 +3,12 @@
  */
 package com.shangpin.iog.webcontainer.front.controller;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +28,7 @@ import com.shangpin.iog.service.UpdateStockService;
  * <br/>2015年9月23日
  */
 @Controller
-@RequestMapping
+@RequestMapping("/download")
 public class ExceptionShowController {
     
     @Autowired
@@ -53,8 +57,22 @@ public class ExceptionShowController {
     @RequestMapping(value = "/stockUpdateException")
     public String showStockUpdateException(Model model) throws Exception {
     	List<StockUpdateDTO> all = updateStockService.getAll();
+    	List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
+    	Map<String, String> nameMap = new HashMap<String, String>();
+    	for (SupplierDTO supplierDTO : supplierDTOList) {
+			nameMap.put(supplierDTO.getSupplierId(), supplierDTO.getSupplierName());
+		}
+    	for (StockUpdateDTO stockUpdateDTO : all) {
+    		long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+    		long days = diff / (1000 * 60 * 60 * 24);
+    		long hours = (diff-days*(1000 * 60 * 60 * 24))/(1000* 60 * 60);
+    		long minutes = (diff-days*(1000 * 60 * 60 * 24)-hours*(1000* 60 * 60))/(1000* 60);
+    		stockUpdateDTO.setDif(days+"天"+hours+"小时"+minutes+"分");
+    		stockUpdateDTO.setSupplierName(nameMap.get(stockUpdateDTO.getSupplierId()));
+    	}
     	model.addAttribute("allData", all);
-		return "showStockException";
+    	model.addAttribute("supplierDTOList", supplierDTOList);
+		return "iog";
     }
     
 }

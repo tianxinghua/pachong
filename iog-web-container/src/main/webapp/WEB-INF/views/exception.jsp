@@ -81,8 +81,6 @@
         $('#pageSize').val('');
         $('#startDate').val('');
         $('#endDate').val('');
-
-
     }
 
 
