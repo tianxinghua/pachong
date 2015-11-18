@@ -133,6 +133,7 @@ public class MyCsvUtil {
                     //Pattern pCells = Pattern.compile("(\"[^\"]*(\"{2})*[^\"]*\")*[^,]*,");
                     Pattern pCells = Pattern.compile("(\"[^\"]*+[^\"]*\")*[^,]*,");
                     rec = rec.replaceAll("\"\"", "");
+                    rec = rec.replaceAll("/+", "");
                     Matcher mCells = pCells.matcher(rec);
                     List<String> cells = new ArrayList<String>();// 每行记录一个list
                     int i = 0;
@@ -144,6 +145,7 @@ public class MyCsvUtil {
                         str = str.replaceAll("(?sm)(\"(\"))", "$2");
                         str = str.replaceAll("\"", "");
                         str = deleLastComma(str);
+                        str = str.replaceAll("\\+", "");
                         //System.out.println(")(" + str + ")(");
                         String name = copyTo[i++].getName(); // 获取属性的名字
                         name = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -184,7 +186,7 @@ public class MyCsvUtil {
  * test
  * */
     public static void main(String[] args) {
-       // System.out.println(MyCsvUtil.deleLastComma("0685,"));
+        System.out.println("123++++".replaceAll("\\+",""));
         List<Product> list = null;
         try {
             //MyCsvUtil.csvDownload();
@@ -197,13 +199,13 @@ public class MyCsvUtil {
             System.out.println(p.getImage1());
         }
         for (Product p:list){
-            System.out.println(p.getSku());
+            System.out.println(p.getImage2());
         }
         for (Product p:list){
-            System.out.println(p.getPrice());
+            System.out.println(p.getImage3());
         }
         for (Product p:list){
-            System.out.println(p.getCategrory());
+            System.out.println(p.getImage4());
         }
 
 

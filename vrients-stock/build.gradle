@@ -13,6 +13,7 @@ dependencies {
             "net.sourceforge.javacsv:javacsv:2.0",
             project(':project-common'),
             project(':iog-sop'),
+            project(':openapi-ice'),
             project(':iog-common-product')
     )
 

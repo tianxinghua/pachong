@@ -25,7 +25,7 @@ import com.shangpin.iog.tony.purchase.dto.PushOrderDTO;
 import com.shangpin.iog.tony.purchase.dto.ReturnDataDTO;
 import com.shangpin.iog.tony.purchase.dto.ShippingInfoDTO;
 import com.shangpin.iog.tony.purchase.dto.UpdateOrderStatusDTO;
-@Component("tonyOrder")
+
 public class OrderSopImpl extends AbsOrderService{
 	@Autowired
     com.shangpin.iog.service.OrderService productOrderService;
