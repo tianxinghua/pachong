@@ -1,6 +1,7 @@
 package com.shangpin.iog.product.service;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ public class UpdateStockServiceImpl implements UpdateStockService{
 	public void updateTime(String supplierId) throws SQLException {
 		StockUpdateDTO suDTO = new StockUpdateDTO();
 		suDTO.setSupplierId(supplierId);
+		suDTO.setUpdateTime(new Date());
 		updateStockDao.updateStockTime(suDTO);
 	}
 

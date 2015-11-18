@@ -418,43 +418,50 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 				buffer.append(dto.getStock()).append(splitSign);
 				// 新的价格
-				buffer.append(
-						null == dto.getNewMarketPrice() ? " " : dto
-								.getNewMarketPrice()).append(splitSign);
-				buffer.append(
-						null == dto.getNewSalePrice() ? " " : dto
-								.getNewSalePrice()).append(splitSign);
-				buffer.append(
-						null == dto.getNewSupplierPrice() ? " " : dto
-								.getNewSupplierPrice()).append(splitSign);
+				String newMarketPrice = dto.getNewMarketPrice();
+				String newSalePrice = dto.getNewSalePrice();
+				String newSupplierPrice = dto.getNewSupplierPrice();
+				if (StringUtils.isNotBlank(newMarketPrice)) {
+					newMarketPrice = newMarketPrice.replace(",", ".");
+				} else {
+					newMarketPrice = "";
+				}
+				if (StringUtils.isNotBlank(newSalePrice)) {
+					newSalePrice = newSalePrice.replace(",", ".");
+				} else {
+					newSalePrice = "";
+				}
+				if (StringUtils.isNotBlank(newSupplierPrice)) {
+					newSupplierPrice = newSupplierPrice.replace(",", ".");
+				} else {
+					newSupplierPrice = "";
+				}
+				buffer.append(newMarketPrice).append(splitSign);
+				buffer.append(newSalePrice).append(splitSign);
+				buffer.append(newSupplierPrice).append(splitSign);
 
+				// 价格
 				String marketPrice = dto.getMarketPrice();
 				String salePrice = dto.getSalePrice();
 				String supplierPrice = dto.getSupplierPrice();
-				if (marketPrice != null) {
+				if (StringUtils.isNotBlank( marketPrice)) {
 					marketPrice = marketPrice.replace(",", ".");
 				} else {
 					marketPrice = "";
 				}
-				if (salePrice != null) {
+				if (StringUtils.isNotBlank(salePrice )) {
 					salePrice = salePrice.replace(",", ".");
 				} else {
 					salePrice = "";
 				}
-				if (supplierPrice != null) {
+				if (StringUtils.isNotBlank(supplierPrice )) {
 					supplierPrice = supplierPrice.replace(",", ".");
 				} else {
 					supplierPrice = "";
 				}
-				// 价格
-				buffer.append(
-						null == dto.getMarketPrice() ? " " : dto
-								.getMarketPrice())
-						.append(splitSign)
-						.append(null == dto.getSalePrice() ? " " : dto
-								.getSalePrice()).append(splitSign)
-						.append(dto.getSupplierPrice()).append(splitSign)
-						.append(dto.getSaleCurrency()).append(splitSign);
+				buffer.append(marketPrice).append(splitSign);
+				buffer.append(salePrice).append(splitSign);
+				buffer.append(supplierPrice).append(splitSign);
 				// 季节
 
 				buffer.append(
@@ -723,43 +730,49 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 					buffer.append(dto.getStock()).append(splitSign);
 					// 新的价格
-					buffer.append(
-							null == dto.getNewMarketPrice() ? " " : dto
-									.getNewMarketPrice()).append(splitSign);
-					buffer.append(
-							null == dto.getNewSalePrice() ? " " : dto
-									.getNewSalePrice()).append(splitSign);
-					buffer.append(
-							null == dto.getNewSupplierPrice() ? " " : dto
-									.getNewSupplierPrice()).append(splitSign);
-
+					String newMarketPrice = dto.getNewMarketPrice();
+					String newSalePrice = dto.getNewSalePrice();
+					String newSupplierPrice = dto.getNewSupplierPrice();
+					if (StringUtils.isNotBlank(newMarketPrice)) {
+						newMarketPrice = newMarketPrice.replace(",", ".");
+					} else {
+						newMarketPrice = "";
+					}
+					if (StringUtils.isNotBlank(newSalePrice)) {
+						newSalePrice = newSalePrice.replace(",", ".");
+					} else {
+						newSalePrice = "";
+					}
+					if (StringUtils.isNotBlank(newSupplierPrice)) {
+						newSupplierPrice = newSupplierPrice.replace(",", ".");
+					} else {
+						newSupplierPrice = "";
+					}
+					buffer.append(newMarketPrice).append(splitSign);
+					buffer.append(newSalePrice).append(splitSign);
+					buffer.append(newSupplierPrice).append(splitSign);
+					// 价格
 					String marketPrice = dto.getMarketPrice();
 					String salePrice = dto.getSalePrice();
 					String supplierPrice = dto.getSupplierPrice();
-					if (marketPrice != null) {
+					if (StringUtils.isNotBlank( marketPrice)) {
 						marketPrice = marketPrice.replace(",", ".");
 					} else {
 						marketPrice = "";
 					}
-					if (salePrice != null) {
+					if (StringUtils.isNotBlank(salePrice )) {
 						salePrice = salePrice.replace(",", ".");
 					} else {
 						salePrice = "";
 					}
-					if (supplierPrice != null) {
+					if (StringUtils.isNotBlank(supplierPrice )) {
 						supplierPrice = supplierPrice.replace(",", ".");
 					} else {
 						supplierPrice = "";
 					}
-					// 价格
-					buffer.append(
-							null == dto.getMarketPrice() ? " " : dto
-									.getMarketPrice())
-							.append(splitSign)
-							.append(null == dto.getSalePrice() ? " " : dto
-									.getSalePrice()).append(splitSign)
-							.append(dto.getSupplierPrice()).append(splitSign)
-							.append(dto.getSaleCurrency());
+					buffer.append(marketPrice).append(splitSign);
+					buffer.append(salePrice).append(splitSign);
+					buffer.append(supplierPrice);
 
 					buffer.append("\r\n");
 				} catch (Exception e) {
