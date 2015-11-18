@@ -82,7 +82,13 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
 
       SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("AMFEED更新数据库开始");
-        impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
+        try{
+            impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
+        } catch (Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+
         logger.info("AMFEED更新数据库结束");
         System.exit(0);
 
