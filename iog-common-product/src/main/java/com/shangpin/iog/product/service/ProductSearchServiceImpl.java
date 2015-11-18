@@ -9,7 +9,6 @@ import com.shangpin.iog.mongodao.PictureDAO;
 import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.product.dao.*;
 import com.shangpin.iog.service.ProductSearchService;
-import com.sun.xml.internal.txw2.annotation.XmlElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.RowBounds;
