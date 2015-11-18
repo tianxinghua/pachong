@@ -49,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             orderDAO.save(orderDTO);
             return true;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             logger.error("订单保存失败："+ e.getMessage());
             e.printStackTrace();
         }
