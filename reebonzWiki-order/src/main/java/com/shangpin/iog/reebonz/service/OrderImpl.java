@@ -256,28 +256,29 @@ public class OrderImpl extends AbsOrderService {
 
 					RequestObject obj = new RequestObject();
 					obj.setSku(skuIDs[0]);
+					obj.setPayment_price(purchasePrice);
 					try {
-							String markPrice = null;
-							try {
-								Map tempmap = skuPriceService.getNewSkuPriceBySku(supplierId, skuNo);
-								Map map =(Map) tempmap.get(supplierId);
-								markPrice =(String) map.get(skuNo);
-						        if(!"-1".equals(markPrice)){
-						        	String price = markPrice.split("\\|")[1];
-						        	if(!"-1".equals(price)){
-						        		obj.setPayment_price(price);
-						        	}else{
-						        		obj.setPayment_price(purchasePrice);
-						        	}
-						        	
-						        }else{
-						        	obj.setPayment_price(purchasePrice);
-						        }
-							} catch (ServiceException e) {
-								obj.setPayment_price(purchasePrice);
-								System.out.println("sku"+skuNo+"没有供货价");
-					        	logger.info("异常错误："+e.getMessage());
-							}
+//							String markPrice = null;
+//							try {
+//								Map tempmap = skuPriceService.getNewSkuPriceBySku(supplierId, skuNo);
+//								Map map =(Map) tempmap.get(supplierId);
+//								markPrice =(String) map.get(skuNo);
+//						        if(!"-1".equals(markPrice)){
+//						        	String price = markPrice.split(  "\\|")[1];
+//						        	if(!"-1".equals(price)){
+//						        		obj.setPayment_price(price);
+//						        	}else{
+//						        		obj.setPayment_price(purchasePrice);
+//						        	}
+//						        	
+//						        }else{
+//						        	obj.setPayment_price(purchasePrice);
+//						        }
+//							} catch (ServiceException e) {
+//								obj.setPayment_price(purchasePrice);
+//								System.out.println("sku"+skuNo+"没有供货价");
+//					        	logger.info("异常错误："+e.getMessage());
+//							}
 						String eventId = eventProductService.selectEventIdBySku(skuIDs[0], supplierId);
 						System.out.println("获取的活动Id："+eventId);
 						logger.info("eventId"+eventId);
