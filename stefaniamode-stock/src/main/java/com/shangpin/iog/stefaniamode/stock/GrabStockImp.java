@@ -209,9 +209,14 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		AbsUpdateProductStock grabStockImp = new GrabStockImp();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		logger.info("stefaniamode更新数据库开始");
-		grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
-				format.format(new Date()));
-		logger.info("stefaniamode更新数据库结束");
+		try {
+			grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
+                    format.format(new Date()));
+			logger.info("stefaniamode更新数据库成功结束");
+		} catch (Exception e) {
+			loggerError.error("stefaniamode更新库存失败");
+		}
+
 		System.exit(0);
 
 	}

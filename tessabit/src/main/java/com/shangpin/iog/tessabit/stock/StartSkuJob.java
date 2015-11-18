@@ -12,6 +12,8 @@ public class StartSkuJob {
 
     private static Logger log = Logger.getLogger("info");
 
+    private static Logger loggerError = Logger.getLogger("info");
+
     private static ApplicationContext factory;
     private static void loadSpringContext() {
         factory = new AnnotationConfigApplicationContext(AppContext.class);
@@ -24,7 +26,11 @@ public class StartSkuJob {
         //拉取数据
         log.info("----拉取tessabit数据开始----");
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("tessabit");
-        fetchProduct.fetchProductAndSave();
+        try {
+            fetchProduct.fetchProductAndSave();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         log.info("----拉取tessabit数据完成----");
         System.out.println("-------fetch end---------");
         System.exit(0);
