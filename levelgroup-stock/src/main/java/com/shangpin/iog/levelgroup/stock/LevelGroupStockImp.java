@@ -4,10 +4,13 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.levelgroup.dto.Product;
+import com.shangpin.iog.levelgroup.util.MyTxtUtil;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -33,6 +36,7 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
         Map<String, String> skustock = new HashMap<>(skuNo.size());
 
         Map<String,String> mongMap = new HashMap<>();
+        Map<String,String> stockMap2 = getStockList();
 
         mongMap.put("supplierId",supplierId);
         mongMap.put("supplierName","levelgroup");
@@ -41,8 +45,11 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
 
         for (String skuno : skuNo) {
             String stock = getStock(skuno);
+            String stock2 = stockMap2.get(skuno);
             if (StringUtils.isNotEmpty(stock))
                 skustock.put(skuno, stock);
+            else if (StringUtils.isNotEmpty(stock2))
+                skustock.put(skuno, stock2);
             else
                 skustock.put(skuno, "0");
         }
@@ -50,6 +57,28 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
         return skustock;
     }
 
+    private static Map<String,String> getStockList(){
+        boolean flag = true;
+        try {
+            flag = MyTxtUtil.txtDownload();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            loggerError.error("下载LEVELGROUP文件失败!"+e.getMessage());
+        }
+        List<Product> list = null;
+        Map<String,String> map = new HashMap();
+        if (flag){
+            try {
+                list = MyTxtUtil.readTXTFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            for (int i = 0;i<list.size();i++){
+                map.put(list.get(i).getVARIANT_SKU(),list.get(i).getSTOCK_LEVEL());
+            }
+        }
+        return map;
+    }
 
     private static String getStock(String sku){
         String url = "http://www.ln-cc.com/dw/shop/v15_8/products/09"+sku+"/availability?inventory_ids=09&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
