@@ -27,12 +27,12 @@ public class FetchProduct {
 	private static Logger logError = Logger.getLogger("error");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = "";
-	private static String filePath = "E:\\lubaijiang\\DellaMartira.CSV";
+	private static String filePath = "";
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
-		//filePath = bdl.getString("filepath");
+		filePath = bdl.getString("filepath");
 	}
 
 	@Autowired
@@ -50,14 +50,19 @@ public class FetchProduct {
 				sku.setSupplierId(supplierId);
 				sku.setSkuId(item.getItem_code());
 				sku.setSpuId(item.getSupplier_item_code().replaceAll("\"", ""));
-				sku.setProductName("");//item.getBrand_name()+"品类"
+				sku.setProductName(item.getBrand_name().replaceAll("\"", ""));//item.getBrand_name()+"品类"
 				sku.setMarketPrice(item.getRetail_price().replaceAll(",", "."));
-				sku.setSalePrice(item.getYour_price().replaceAll(",", "."));
-				sku.setSupplierPrice(item.getSold_price().replaceAll(",", "."));
+				sku.setSupplierPrice(item.getYour_price().replaceAll(",", "."));
+				sku.setSalePrice(item.getSold_price().replaceAll(",", "."));
 				sku.setProductCode(item.getSupplier_item_code().replaceAll("\"", ""));
 				sku.setColor(item.getColor_description().replaceAll("\"", ""));
 				sku.setProductDescription(item.getItem_detailed_info().replaceAll(",", ".").replaceAll("\"", ""));
-				sku.setProductSize(item.getSize().replaceAll("\"", ""));
+				String size = item.getSize();
+				if(size.contains("1/2")){
+					size = size.replace("1/2", ".5");
+				}
+				size = size.replaceAll("\"", "").replaceAll(",", ".");
+				sku.setProductSize(size);
 				sku.setStock(item.getQuantity());
 				try {
 					productFetchService.saveSKU(sku);
@@ -75,7 +80,7 @@ public class FetchProduct {
 				
 				//保存图片
 				if(StringUtils.isNotBlank(item.getPhoto_links())){
-					String[] photos =  item.getPhoto_links().replaceAll("\"", "").split("|");
+					String[] photos =  item.getPhoto_links().replaceAll("\"", "").split("\\|");
 					for(String photo:photos){
 						ProductPictureDTO pictureDTO = new ProductPictureDTO();
 						pictureDTO.setId(UUIDGenerator.getUUID());
@@ -107,8 +112,8 @@ public class FetchProduct {
 	            spu.setSupplierId(supplierId);
 	            spu.setBrandName(item.getBrand_name().replaceAll("\"", ""));
 	            spu.setCategoryGender(item.getGender().replaceAll("\"", ""));
-	            spu.setCategoryName("");//品类
-	            spu.setMaterial("");//材质
+	            spu.setCategoryName(item.getBrand_name().replaceAll("\"", ""));//品类
+	            spu.setMaterial(item.getItem_detailed_info().replaceAll("\"", ""));//材质
 	            spu.setProductOrigin(item.getMade_in().replaceAll("\"", ""));
 	            spu.setSeasonId(item.getSeason().replaceAll("\"", ""));
 	            try {
