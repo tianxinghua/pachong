@@ -161,4 +161,5 @@ include 'forzieri-purchase'
 include 'tony-fetchstock'
 
 include 'Della'
+include 'Della-stock'
 
