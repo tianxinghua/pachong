@@ -15,17 +15,9 @@ import java.util.Date;
 /**
  * 订单状态
  *
- public static String PLACED="placed";
 
- public static String CONFIRMED="confirmed";
- public static String CANCELLED="cancelled";
- public static String PROCESSING="processing";
- public static String SHIPPED="shipped";
- public static String NOHANDLE="nohandle";
- public static String WAITCANCEL="waitcancel";
- public static String WAITPLACED="waitplaced";
 
- 状态请参考
+ 状态请参考  com.shangpin.iog.ice.dto.OrderStatus
  */
 public class OrderDTO {
     private BigInteger id;
@@ -46,6 +38,7 @@ public class OrderDTO {
     private String excDesc;  //错误描述
     private Date excTime;
     private String purchasePriceDetail; //采购价明细
+    private String consumerMsg;//购买人信息
 
 
     @Override
@@ -69,6 +62,7 @@ public class OrderDTO {
                 ", excDesc='" + excDesc + '\'' +
                 ", excTime=" + excTime +
                 ", purchasePriceDetail='" + purchasePriceDetail + '\'' +
+                ", consumerMsg='" + consumerMsg + '\'' +
                 '}';
     }
 }

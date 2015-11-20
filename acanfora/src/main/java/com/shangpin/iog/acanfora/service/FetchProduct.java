@@ -30,9 +30,9 @@ import java.util.*;
  */
 @Component("acanfora")
 public class FetchProduct {
-    final Logger logger = Logger.getLogger(this.getClass());
     private static Logger logMongo = Logger.getLogger("mongodb");
-    
+    private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static String grabStockUrl = "";
@@ -58,7 +58,8 @@ public class FetchProduct {
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","acanfora");
             mongMap.put("result",result) ;
-            logMongo.info(mongMap);
+            logger.info("result = " + result);
+//            logMongo.info(mongMap);
             Products products= ObjectXMLUtil.xml2Obj(Products.class, result);
             List<Product> productList = products.getProducts();
             for(Product product:productList){

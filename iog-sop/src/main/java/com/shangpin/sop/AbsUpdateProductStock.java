@@ -262,6 +262,7 @@ public abstract class AbsUpdateProductStock {
 			 String[] skuNoShangpinArray = new String[skuNoShangpinList.size()];
 			 result = SpClient.FindStock(host, app_key, app_secret, timestamp, (String[]) skuNoShangpinList.toArray(skuNoShangpinArray));
 			 if(null==result) return ;
+			 if(null==result.getResponse()) return ;
 			skuArray =(SopSkuInventory[]) result.getResponse().toArray(new SopSkuInventory[0]);
 
 		} catch (Exception e) {

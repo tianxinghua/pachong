@@ -31,6 +31,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
+    private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
     private static String supplierId;
     private static String grabStockUrl = "";
 
@@ -61,8 +62,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","acanfora");
             mongMap.put("result",result) ;
+            logger.info("result = " +result);
             try {
-                logMongo.info(mongMap);
+//                logMongo.info(mongMap);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -101,7 +103,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
         for (String skuno : skuNo) {
 
             if(stockMap.containsKey(skuno)){
-                skustock.put(skuno, Integer.parseInt(stockMap.get(skuno)));
+                try {
+                    skustock.put(skuno, Integer.parseInt(stockMap.get(skuno)));
+                } catch (NumberFormatException e) {
+                    skustock.put(skuno, 0);
+                }
             } else{
                 skustock.put(skuno, 0);
             }
@@ -112,9 +118,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
     public static void main(String[] args) throws Exception {
        
-    	String host = bdl.getString("HOST");
-        String app_key = bdl.getString("APP_KEY");
-        String app_secret= bdl.getString("APP_SECRET");
+    	String host = bundle.getString("HOST");
+        String app_key = bundle.getString("APP_KEY");
+        String app_secret= bundle.getString("APP_SECRET");
         if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
             logger.error("参数错误，无法执行更新库存");
         }
@@ -122,7 +128,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
         AbsUpdateProductStock grabStockImp = new GrabStockImp();
         
         logger.info("ACANFORA更新数据库开始");
-        grabStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+        try {
+            grabStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+        } catch (Exception e) {
+            loggerError.error("ACANFORA库存更新失败");
+        }
         logger.info("ACANFORA更新数据库结束");
         System.exit(0);
         

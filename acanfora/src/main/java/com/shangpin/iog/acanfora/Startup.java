@@ -17,7 +17,7 @@ import java.util.List;
 public class Startup
 {
     private static Logger log = Logger.getLogger("info");
-
+    private static Logger loggerError = Logger.getLogger("error");
     private static ApplicationContext factory;
 	private static void loadSpringContext()
 
@@ -35,14 +35,18 @@ public class Startup
         log.info("----初始SPRING成功----");
         //拉取数据
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("acanfora");
-        fetchProduct.fetchProductAndSave();
+        try {
+            fetchProduct.fetchProductAndSave();
+        } catch (Exception e) {
+           loggerError.error("拉取失败。" + e.getMessage());
+        }
 //        fetchProduct.fetchProductAndSave("http://127.0.0.1:8081/api_ecommerce_v2.xml");
 
         log.info("----拉取acanfora数据完成----");
 
 
 		System.out.println("-------fetch end---------");
-
+        System.exit(0);
 	}
 
 }
