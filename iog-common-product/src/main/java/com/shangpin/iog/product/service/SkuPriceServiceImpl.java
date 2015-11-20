@@ -124,18 +124,21 @@ public class SkuPriceServiceImpl implements SkuPriceService {
             logger.error("获取失败 "+e.getMessage());
 			e.printStackTrace();
 		}
-		if (null!=newPriceDTO.getNewMarketPrice()) {
-			sb.append(newPriceDTO.getNewMarketPrice()).append("|");
-		}else {
-			sb.append(newPriceDTO.getMarketPrice()==null?"-1":newPriceDTO.getMarketPrice()).append("|");
+		if(newPriceDTO!=null){
+			if (null!=newPriceDTO.getNewMarketPrice()) {
+				sb.append(newPriceDTO.getNewMarketPrice()).append("|");
+			}else {
+				sb.append(newPriceDTO.getMarketPrice()==null?"-1":newPriceDTO.getMarketPrice()).append("|");
+			}
+			if (null!=newPriceDTO.getNewSupplierPrice()) {
+				sb.append(newPriceDTO.getNewSupplierPrice());
+			}else {
+				sb.append(newPriceDTO.getSupplierPrice()==null?"-1":newPriceDTO.getSupplierPrice());
+			}
+			skuMap.put(newPriceDTO.getSkuId(), sb.toString());
+	    	supMap.put(supplierId, skuMap);
 		}
-		if (null!=newPriceDTO.getNewSupplierPrice()) {
-			sb.append(newPriceDTO.getNewSupplierPrice());
-		}else {
-			sb.append(newPriceDTO.getSupplierPrice()==null?"-1":newPriceDTO.getSupplierPrice());
-		}
-		skuMap.put(newPriceDTO.getSkuId(), sb.toString());
-    	supMap.put(supplierId, skuMap);
+	
     	return supMap;
     }
 
