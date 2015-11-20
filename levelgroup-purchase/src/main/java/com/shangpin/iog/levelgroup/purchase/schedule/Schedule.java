@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 public class Schedule {
 
 	@Autowired
-	com.shangpin.iog.levelgroup.purchase.service.OrderSreviceImpl orderService;
+	com.shangpin.iog.levelgroup.purchase.service.OrderServiceImpl orderService;
 	
 	
 	@Scheduled(cron="${jobsSchedule}")
 	public void start(){
-		orderService.start();
+		orderService.sendOrder();
 	}
 	
 }
