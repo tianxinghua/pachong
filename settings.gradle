@@ -168,8 +168,10 @@ include 'havok'
 include 'havok-stock'
 include 'biancabianca'
 include 'biancabianca-stock'
-include 'iog-order-dubbo'
+//include 'iog-order-dubbo'
 
 include 'Della'
 include 'Della-stock'
+include 'wokstore'
+include 'wokstore-stock'
 
