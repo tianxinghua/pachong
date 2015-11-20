@@ -166,6 +166,9 @@ public class OrderImpl extends AbsOrderService {
         updateOrder.setShopOrderId(orderDTO.getSpOrderId());
         updateOrder.setStatus(status);
         updateOrder.setStatusDate(getUTCTime());
+        AdditionalInfo additionalInfo = new AdditionalInfo();
+        additionalInfo.setPurchase_id(orderDTO.getSpPurchaseNo());
+        updateOrder.setAdditionalInfo(additionalInfo);
         Gson gson = new Gson();
         String json = gson.toJson(updateOrder,UpdateOrderStatusDTO.class);
         logger.info("支付订单推送的 json数据："+json);
@@ -267,6 +270,7 @@ public class OrderImpl extends AbsOrderService {
 			num = Integer.parseInt(details[i].split(":")[1]);
 			skuNo = details[i].split(":")[0];
 		}
+		
 		String markPrice = null;
 		try {
 			Map tempmap = skuPriceService.getNewSkuPriceBySku(Constant.SUPPLIER_ID, skuNo);

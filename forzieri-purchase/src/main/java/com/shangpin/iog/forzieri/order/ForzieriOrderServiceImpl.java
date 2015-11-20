@@ -56,7 +56,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 	private static String orderurl = null;
 	static {
 		if(null==bdl){
-			bdl=ResourceBundle.getBundle("param");
+			bdl=ResourceBundle.getBundle("conf");
 		}
 		supplierId = bdl.getString("supplierId");
 		clientId = bdl.getString("clientId");

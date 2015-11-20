@@ -9,8 +9,17 @@ public class UpdateOrderStatusDTO {
     private String shopOrderId;
     private String status;
     private String statusDate;
+    private AdditionalInfo additionalInfo;
+    
+    public AdditionalInfo getAdditionalInfo() {
+		return additionalInfo;
+	}
 
-    public String getMerchantId() {
+	public void setAdditionalInfo(AdditionalInfo additionalInfo) {
+		this.additionalInfo = additionalInfo;
+	}
+
+	public String getMerchantId() {
         return merchantId;
     }
 
