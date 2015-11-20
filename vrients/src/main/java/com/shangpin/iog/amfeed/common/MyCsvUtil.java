@@ -133,7 +133,7 @@ public class MyCsvUtil {
                     //Pattern pCells = Pattern.compile("(\"[^\"]*(\"{2})*[^\"]*\")*[^,]*,");
                     Pattern pCells = Pattern.compile("(\"[^\"]*+[^\"]*\")*[^,]*,");
                     rec = rec.replaceAll("\"\"", "");
-                    rec = rec.replaceAll("/+", "");
+                    //rec = rec.replaceAll("/+", "");
                     Matcher mCells = pCells.matcher(rec);
                     List<String> cells = new ArrayList<String>();// 每行记录一个list
                     int i = 0;

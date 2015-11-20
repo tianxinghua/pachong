@@ -135,6 +135,7 @@ public class MyCsvUtil {
                         str = str.replaceAll("(?sm)\"?([^\"]*(\"{2})*[^\"]*)\"?.*,", "$1");
                         str = str.replaceAll("(?sm)(\"(\"))", "$2");
                         str = deleLastComma(str);
+                        str = str.replaceAll("\\+", "");
                         //System.out.println(")(" + str + ")(");
                         String name = copyTo[i++].getName(); // 获取属性的名字
                         name = name.substring(0, 1).toUpperCase() + name.substring(1);
