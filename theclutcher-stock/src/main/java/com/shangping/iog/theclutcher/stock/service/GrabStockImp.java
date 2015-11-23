@@ -6,6 +6,7 @@ package com.shangping.iog.theclutcher.stock.service;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.theclutcher.Startup;
 import com.shangpin.iog.theclutcher.dao.Item;
 import com.shangpin.iog.theclutcher.dao.Rss;
@@ -16,6 +17,9 @@ import com.shangpin.sop.AbsUpdateProductStock;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -23,6 +27,7 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Component("theclutcherStock")
 public class GrabStockImp extends AbsUpdateProductStock {
 	
 	private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
@@ -132,7 +137,16 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		return skuStock;
 	}
 
+	private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
+	
 	public static void main(String[] args) throws Exception {
+		
+		loadSpringContext();
 		String host = bundle.getString("HOST");
         String app_key = bundle.getString("APP_KEY");
         String app_secret= bundle.getString("APP_SECRET");
@@ -140,10 +154,16 @@ public class GrabStockImp extends AbsUpdateProductStock {
             logger.error("参数错误，无法执行更新库存");
         }
 
-        AbsUpdateProductStock theclutcher = new GrabStockImp();
+        GrabStockImp theclutcher = (GrabStockImp)factory.getBean("theclutcherStock");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		logger.info("theclutcher-stock更新数据库开始");
-		theclutcher.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+		try{
+			theclutcher.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+		}catch(Exception ex){
+			loggerError.error(ex);
+			ex.printStackTrace();
+		}
+		
 		logger.info("theclutcher-stock更新数据库结束");
 		System.exit(0);
 //		GrabStockImp g = new GrabStockImp();
