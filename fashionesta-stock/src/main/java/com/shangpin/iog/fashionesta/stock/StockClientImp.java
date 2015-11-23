@@ -2,12 +2,16 @@ package com.shangpin.iog.fashionesta.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.fashionesta.stock.dto.Item;
 import com.shangpin.iog.fashionesta.stock.dto.Product;
 import com.shangpin.iog.fashionesta.stock.utils.DownloadAndReadCSV;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -15,11 +19,16 @@ import java.util.*;
 /**
  * Created by monkey on 2015/9/28.
  */
+@Component("fashionestastock")
 public class StockClientImp extends AbsUpdateProductStock {
 
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger loggerError = Logger.getLogger("error");
-
+	 private static ApplicationContext factory;
+	    private static void loadSpringContext()
+	    {
+	        factory = new AnnotationConfigApplicationContext(AppContext.class);
+	    }
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
 	private static String url;
@@ -71,7 +80,9 @@ public class StockClientImp extends AbsUpdateProductStock {
 	}
 
 	public static void main(String[] args) throws Exception {
-		AbsUpdateProductStock stockImp = new StockClientImp();
+	  	//加载spring
+        loadSpringContext();
+        StockClientImp stockImp =(StockClientImp)factory.getBean("forzieristock");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		logger.info("更新数据库开始");
 		try {
