@@ -6,6 +6,8 @@ public class Parameters {
 	private String order_no;
 	private String barcode;
 	private String ordQty;
+	private String key;
+	private String sellPrice;
 	
 	public String getDBContext() {
 		return DBContext;
@@ -37,5 +39,17 @@ public class Parameters {
 	public void setOrdQty(String ordQty) {
 		this.ordQty = ordQty;
 	}
-
+	public String getKey() {
+		return key;
+	}
+	public void setKey(String key) {
+		this.key = key;
+	}
+	public String getSellPrice() {
+		return sellPrice;
+	}
+	public void setSellPrice(String sellPrice) {
+		this.sellPrice = sellPrice;
+	}
+	
 }

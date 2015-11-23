@@ -5,6 +5,7 @@ package com.shangpin.iog.reebonz.service;
  */
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -264,7 +265,9 @@ public class FetchProduct {
 								double price = Double.parseDouble(item
 										.getFinal_selling_price())
 										* (1 - Double.parseDouble(discount));
-								sku.setSupplierPrice(String.valueOf(price));
+								BigDecimal   b   =   new   BigDecimal(price);  
+								double   f1   =   b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();  
+								sku.setSupplierPrice(String.valueOf(f1));
 							}
 
 							if (item.getColor() != null) {

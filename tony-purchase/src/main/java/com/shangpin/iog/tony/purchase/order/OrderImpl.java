@@ -3,6 +3,8 @@ package com.shangpin.iog.tony.purchase.order;
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
+import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.dto.*;
 import com.shangpin.iog.ice.dto.OrderStatus;
@@ -89,13 +91,17 @@ public class OrderImpl extends AbsOrderService {
             if(HttpUtil45.errorResult.equals(rtnData)){
             	return ;
             }
-            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
-            if ("ko".equals(returnDataDTO.getStatus())){
-                deleteOrder.setExcState("1");
-                deleteOrder.setExcDesc(returnDataDTO.getMessages().toString());
-            } else {
+            String returnStatus = getReturnOrder(deleteOrder.getSpOrderId());
+            if(Constant.CANCELED.equals(returnStatus)){
             	deleteOrder.setExcState("0");
-                deleteOrder.setStatus(OrderStatus.CANCELLED);
+            	deleteOrder.setStatus(OrderStatus.CANCELLED);
+            }else{
+            	 ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+                 if ("ko".equals(returnDataDTO.getStatus())){
+                     deleteOrder.setExcState("0");
+                     deleteOrder.setStatus(OrderStatus.CANCELLED);
+                     deleteOrder.setExcDesc(returnDataDTO.getMessages().toString());
+                 } 
             }
         } catch (ServiceException e) {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+updateOrder.getShopOrderId());
@@ -176,28 +182,33 @@ public class OrderImpl extends AbsOrderService {
         try {
             rtnData = HttpUtil45.operateData("post", "json", Constant.url+"updateOrderStatus", null, null, json, "", "");
             System.out.println("支付订单返回的结果："+rtnData);
+          
             logger.info("支付订单返回的结果："+rtnData);
             if(HttpUtil45.errorResult.equals(rtnData)){
             	orderDTO.setExcState("1");
             	orderDTO.setExcDesc(rtnData);
             	return ;
             }
-            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
-            if ("ko".equals(returnDataDTO.getStatus())){
-            	orderDTO.setExcState("0");
-            	orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
-            	String result = setPurchaseOrderExc(orderDTO);
-				if("-1".equals(result)){
-					orderDTO.setStatus(OrderStatus.NOHANDLE);
-				}else if("1".equals(result)){
-					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-				}else if("0".equals(result)){
-					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
-				}
-            } else {
+            String returnStatus = getReturnOrder(orderDTO.getSpOrderId());
+            if(Constant.CONFIRMED.equals(returnStatus)){
             	orderDTO.setExcState("0");
             	orderDTO.setStatus(OrderStatus.CONFIRMED);
+            }else{
+                ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+                if ("ko".equals(returnDataDTO.getStatus())){
+                	orderDTO.setExcState("0");
+                	orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
+                	String result = setPurchaseOrderExc(orderDTO);
+    				if("-1".equals(result)){
+    					orderDTO.setStatus(OrderStatus.NOHANDLE);
+    				}else if("1".equals(result)){
+    					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+    				}else if("0".equals(result)){
+    					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+    				}
+                }
             }
+        
         } catch (ServiceException e) {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+updateOrder.getShopOrderId());
             orderDTO.setExcState("1");
@@ -233,16 +244,18 @@ public class OrderImpl extends AbsOrderService {
                 	return ;
                 }
                 logger.info("Response ：" + rtnData + ", shopOrderId:"+order.getShopOrderId());
-
-                ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
-                if ("ko".equals(returnDataDTO.getStatus())){
-                    orderDTO.setExcState("1");
-                    orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
-                } else if (Constant.PENDING.equals(status)){
-                    orderDTO.setStatus(OrderStatus.PLACED);
-                } else if (Constant.CONFIRMED.equals(status)){
-                    orderDTO.setStatus(OrderStatus.CONFIRMED);
+                String returnStatus = getReturnOrder(orderDTO.getSpOrderId());
+                if(Constant.PENDING.equals(returnStatus)){
+                	orderDTO.setExcState("0");
+                	orderDTO.setStatus(OrderStatus.PLACED);
+                }else{
+                	 ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+                     if ("ko".equals(returnDataDTO.getStatus())){
+                    	 sendMail(orderDTO);
+                         orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
+                     } 
                 }
+               
         } catch (ServiceException e) {
             loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
             orderDTO.setExcState("1");
@@ -253,11 +266,32 @@ public class OrderImpl extends AbsOrderService {
             orderDTO.setExcDesc(e.getMessage());
         } 
     }
+    private void sendMail(OrderDTO orderDTO) {
+		
+			long tim = 60L;
+			//判断有异常的订单如果处理超过1小时，依然没有解决，则把状态置为不处理，并发邮件
+			if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim*1000*60)>0){ 
+				
+				String result = setPurchaseOrderExc(orderDTO);
+				if("-1".equals(result)){
+					orderDTO.setStatus(OrderStatus.NOHANDLE);
+				}else if("1".equals(result)){
+					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+				}else if("0".equals(result)){
+					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+				}else{
+					orderDTO.setStatus(OrderStatus.NOHANDLE);
+				}
+				//超过一天 不需要在做处理 订单状态改为其它状体
+				orderDTO.setExcState("0");
+			}else{
+				orderDTO.setExcState("1");
+			}
+	}
     /**
      * 获取订单信息
      */
     private PushOrderDTO getOrder(String status,OrderDTO orderDTO){
-        
     	
         String detail = orderDTO.getDetail();
         
@@ -350,5 +384,38 @@ public class OrderImpl extends AbsOrderService {
 	public void handleEmail(OrderDTO orderDTO) {
 		// TODO Auto-generated method stub
 		
+	}
+	private static String getReturnOrder(String orderId){
+		
+		String str = null;
+		ObjectOrder obj = new ObjectOrder();
+		obj.setMerchantId(Constant.MERCHANT_ID);
+		String [] arr = {orderId};
+		obj.setShopOrderIds(arr);
+		obj.setToken(Constant.TOKEN);
+		Gson gson = new Gson();
+		String json = gson.toJson(obj, ObjectOrder.class);
+		try {
+            String rtnData = HttpUtil45.operateData("post", "json", Constant.url +"getOrders", null, null, json, "", "");
+            System.out.println("rtnData=="+rtnData);
+            if(HttpUtil45.errorResult.equals(rtnData)){
+            	str = "no";
+            }else{
+            	ReturnObject returnObj =gson.fromJson(rtnData, ReturnObject.class);
+            	if("ok".equals(returnObj.getStatus())){
+            		List<Data> list = returnObj.getData();
+            		if(list!=null){
+            			if(list.size()>0){
+            				str = list.get(0).getOrder_status();
+            			}
+            		}
+            	}else{
+            		str = "none";
+            	}
+            }
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+		return str;
 	}
 }
