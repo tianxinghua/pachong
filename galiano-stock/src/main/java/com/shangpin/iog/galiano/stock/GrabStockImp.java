@@ -6,6 +6,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 
 
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.galiano.stock.dto.Item;
@@ -18,6 +19,8 @@ import com.shangpin.sop.AbsUpdateProductStock;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import javax.xml.bind.JAXBException;
 
@@ -115,6 +118,14 @@ public class GrabStockImp extends AbsUpdateProductStock {
         return skustock;
     }
 
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+
+    {
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
+
     public static void main(String[] args) throws Exception {
 //        AbsUpdateProductStock grabStockImp = new GrabStockImp();
 //        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -134,7 +145,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("galiano更新数据库开始");
-        grabStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+        try {
+            grabStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         logger.info("galiano更新数据库结束");
         System.exit(0);
 

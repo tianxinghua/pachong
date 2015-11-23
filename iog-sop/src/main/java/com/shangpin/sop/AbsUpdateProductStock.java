@@ -2,11 +2,14 @@ package com.shangpin.sop;
 
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.service.SkuRelationService;
+import com.shangpin.iog.service.UpdateStockService;
 import com.shangpin.openapi.api.sdk.client.SpClient;
 import com.shangpin.openapi.api.sdk.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -36,6 +39,13 @@ public abstract class AbsUpdateProductStock {
     public static boolean supplierSkuIdMain=false;
 
 	public  static boolean ORDER=false;
+
+
+	@Autowired
+	SkuRelationService skuRelationService;
+
+	@Autowired
+	UpdateStockService updateStockService;
 	
 	/**
 	 * 抓取供应商库存数据 
@@ -138,6 +148,7 @@ public abstract class AbsUpdateProductStock {
 			for(int k=0;k<totoalFailCnt.size();k++){
 				fct+=totoalFailCnt.get(k);
 			}
+			this.updateStockTime(app_key);
 			return fct;
 		}else{
 			return updateStock(host,app_key,app_secret, localAndIceSku, skuNoSet);
@@ -185,6 +196,7 @@ public abstract class AbsUpdateProductStock {
 			 {
 		Map<String, Integer> iceStock = grab4Icestock(host,app_key,app_secret,skuNoSet,localAndIceSkuId);
 		int failCount = updateIceStock(host,app_key,app_secret, iceStock);
+		this.updateStockTime(app_key);
 		return failCount;
 	}
 	/**
@@ -243,6 +255,22 @@ public abstract class AbsUpdateProductStock {
 			}				
 		}
 		return failCount;
+	}
+
+
+
+	/**
+	 * 更新库存时间
+	 * @param supplier
+	 */
+	private void updateStockTime(String supplier){
+		try {
+			if(null!=updateStockService){
+				updateStockService.updateTime(supplier);
+			}
+		} catch (Exception e) {
+			loggerError.error("更新库存更新时间业务失败");
+		}
 	}
 	/**
 	 * 移除库存没有变化的商品 不做更新
