@@ -21,13 +21,13 @@ public class StartUp {
 		{
 
 	        //加载spring
-	        log.info("----拉取menlooks数据开始----");
+	        log.info("----拉取menlook数据开始----");
 			loadSpringContext();
 	        log.info("----初始SPRING成功----");
 	        //拉取数据
 	        FetchProduct fetchProduct =(FetchProduct)factory.getBean("menlooks");
 	        fetchProduct.fetchProductAndSave();
-	        log.info("----拉取menlooks数据完成----");
+	        log.info("----拉取menlook数据完成----");
 
 
 			System.out.println("-------fetch end---------");
