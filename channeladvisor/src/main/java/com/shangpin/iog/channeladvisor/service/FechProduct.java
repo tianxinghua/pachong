@@ -66,7 +66,7 @@ public class FechProduct {
 					String marketPrice = obj.getString("BuyItNowPrice");
 					String stock = obj.getString("TotalAvailableQuantity");
 					//只有BuyItNowPrice不为空以及TotalAvailableQuantity不为空时才能入库
-					if(!marketPrice.equals("null") && StringUtils.isNotBlank(marketPrice)&& !stock.equals("null") && StringUtils.isNotBlank(stock)){
+					if(!marketPrice.equals("null") && StringUtils.isNotBlank(marketPrice)&& !stock.equals("null") && StringUtils.isNotBlank(stock) && !stock.equals("0")){
 						String categoryName = obj.getString("Classification");
 						String brandName = obj.getString("Brand");
 						String categoryGender = "";
@@ -76,7 +76,7 @@ public class FechProduct {
 						String skuId = obj.getString("Sku");
 						String color = "";
 						String productName = "";
-						String productCode = "";
+						String productCode = obj.getString("UPC");
 						String productSize = "";
 						
 						String id = obj.getString("ID");
@@ -112,7 +112,9 @@ public class FechProduct {
 								material = attr.getString("Value");
 								break;
 							case "UPC":
-								productCode = attr.getString("Value");
+								if(StringUtils.isBlank(productCode)){
+									productCode = attr.getString("Value");
+								}
 								break;
 							case "country of origin":
 								productOrigin = attr.getString("Value");

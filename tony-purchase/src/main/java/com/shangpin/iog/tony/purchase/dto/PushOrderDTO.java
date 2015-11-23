@@ -14,14 +14,22 @@ public class PushOrderDTO {
     private String statusDate;
     private String orderDate;
     private ItemDTO[] items;
-
+    private AdditionalInfo additionalInfo;
     
     private double orderTotalPrice;
     private ShippingInfoDTO shippingInfo;
     private BillingInfoDTO billingInfo;
 
     
-    public ItemDTO[] getItems() {
+    public AdditionalInfo getAdditionalInfo() {
+		return additionalInfo;
+	}
+
+	public void setAdditionalInfo(AdditionalInfo additionalInfo) {
+		this.additionalInfo = additionalInfo;
+	}
+
+	public ItemDTO[] getItems() {
         return items;
     }
 

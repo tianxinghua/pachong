@@ -1,6 +1,7 @@
 package com.shangpin.iog.marylou;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.onsite.base.common.HTTPClient;
@@ -11,6 +12,8 @@ import com.shangpin.sop.AbsUpdateProductStock;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -22,7 +25,12 @@ import java.util.regex.Pattern;
  */
 public class MarylouStockImpl  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
 
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
     private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
     @Override
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
@@ -38,8 +46,9 @@ public class MarylouStockImpl  extends AbsUpdateProductStock {
         return stockMap;
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args){
 //
+        loadSpringContext();
         String host = bundle.getString("HOST");
         String app_key = bundle.getString("APP_KEY");
         String app_secret= bundle.getString("APP_SECRET");
@@ -47,13 +56,16 @@ public class MarylouStockImpl  extends AbsUpdateProductStock {
             logger.error("参数错误，无法执行更新库存");
         }
 
-
-
         MarylouStockImpl impl = new MarylouStockImpl();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("更新数据库开始");
-        impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
-        logger.info("更新数据库结束");
+        try{
+        	 impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
+             logger.info("更新数据库结束");
+        }catch(Exception ex){
+        	ex.printStackTrace();
+        }
+       
         System.exit(0);
 //        List<String> skuNo = new ArrayList<>();
 //        skuNo.add("1986242872_10");

@@ -12,11 +12,17 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+
+@Component("summerStock")
 public class GrabStockImp extends AbsUpdateProductStock{
 
 	private static Logger logInfo  = Logger.getLogger("info");
@@ -95,9 +101,17 @@ public class GrabStockImp extends AbsUpdateProductStock{
         return JSONObject.fromObject(kk).getString("access_token");
 	}
 	
+	private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
+	
 	public static void main(String[] args) {
 
-		AbsUpdateProductStock grabStockImp = new GrabStockImp();
+		loadSpringContext();
+		GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("summerStock");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		logInfo.info("channeladvisor更新数据库开始");
 		System.out.println("channeladvisor更新数据库开始");
