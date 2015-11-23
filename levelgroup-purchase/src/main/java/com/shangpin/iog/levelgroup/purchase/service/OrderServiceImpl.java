@@ -2,6 +2,7 @@ package com.shangpin.iog.levelgroup.purchase.service;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.levelgroup.purchase.common.MyFtpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.FileWriter;
@@ -32,10 +33,18 @@ public class OrderServiceImpl {
     com.shangpin.iog.product.service.OrderServiceImpl orderService;
 
     /**
+     * 获取采购单信息到本地并上传采购单到服务器
+     * @throws ServiceException
+     */
+    public void saveAndUpLoadOrder(){
+        saveOrder();
+        new MyFtpUtil().upLoad();
+    }
+    /**
      * 组装并保存采购单信息到本地
      * @throws ServiceException
      */
-    public void saveOrder(){
+    private void saveOrder(){
         List<OrderDTO> list = null;
         try {
            list = orderService.getOrderBySupplierIdAndOrderStatus(supplierId,"confirmed");
@@ -76,6 +85,4 @@ public class OrderServiceImpl {
             }
         }
     }
-
-
 }
