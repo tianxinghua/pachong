@@ -1,6 +1,7 @@
 package com.shangpin.ice.ice;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -19,6 +20,7 @@ import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.SkuRelationService;
+import com.shangpin.iog.service.UpdateStockService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +90,9 @@ public abstract class AbsUpdateProductStock {
 
 	@Autowired
 	SkuRelationService skuRelationService;
+
+	@Autowired
+	UpdateStockService updateStockService;
 
 
 
@@ -245,12 +250,33 @@ public abstract class AbsUpdateProductStock {
 			for(int k=0;k<totoalFailCnt.size();k++){
 				fct+=totoalFailCnt.get(k);
 			}
+			this.updateStockTime(supplier);
 			return fct;
 		}else{
 			Map<String,String> sopPriceMap = new HashMap<>();
-			return updateStock(supplier, localAndIceSku, skuNoSet,sopPriceMap);
+			int i= updateStock(supplier, localAndIceSku, skuNoSet,sopPriceMap);
+
+			this.updateStockTime(supplier);
+			return i;
 		}
 	}
+
+	/**
+	 * 更新库存时间
+	 * @param supplier
+	 */
+	private void updateStockTime(String supplier){
+		try {
+			if(null!=updateStockService){
+				updateStockService.updateTime(supplier);
+			}
+		} catch (Exception e) {
+			loggerError.error("更新库存更新时间业务失败");
+		}
+	}
+
+
+
 	/**
 	 * @param skuNoSet
 	 * @return

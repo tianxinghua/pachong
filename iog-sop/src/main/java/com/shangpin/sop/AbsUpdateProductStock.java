@@ -234,10 +234,12 @@ public abstract class AbsUpdateProductStock {
 				 result = SpClient.UpdateStock(host, app_key, app_secret, new Date(), request_body);
 			}catch(Exception e){
 				logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+				loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+" " + e.getMessage());
 			}
-			if(!result.getResponse()){
+			if(null!=result&&!result.getResponse()){
 				failCount++;
 				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
+				loggerError.error(entry.getKey() + ":" + entry.getValue() +"更新库存失败");
 			}				
 		}
 		return failCount;
@@ -262,6 +264,7 @@ public abstract class AbsUpdateProductStock {
 			 String[] skuNoShangpinArray = new String[skuNoShangpinList.size()];
 			 result = SpClient.FindStock(host, app_key, app_secret, timestamp, (String[]) skuNoShangpinList.toArray(skuNoShangpinArray));
 			 if(null==result) return ;
+			 if(null==result.getResponse()) return ;
 			skuArray =(SopSkuInventory[]) result.getResponse().toArray(new SopSkuInventory[0]);
 
 		} catch (Exception e) {
