@@ -234,10 +234,12 @@ public abstract class AbsUpdateProductStock {
 				 result = SpClient.UpdateStock(host, app_key, app_secret, new Date(), request_body);
 			}catch(Exception e){
 				logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+				loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+" " + e.getMessage());
 			}
-			if(!result.getResponse()){
+			if(null!=result&&!result.getResponse()){
 				failCount++;
 				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
+				loggerError.error(entry.getKey() + ":" + entry.getValue() +"更新库存失败");
 			}				
 		}
 		return failCount;
