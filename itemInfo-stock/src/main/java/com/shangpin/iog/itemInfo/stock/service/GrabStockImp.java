@@ -17,13 +17,16 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.itemInfo.utils.SoapXmlUtil;
 
-@Component("alducaStock")
+@Component("grabStockImp")
 public class GrabStockImp extends AbsUpdateProductStock {
 
 	private static Logger logger = Logger.getLogger("info");
@@ -165,12 +168,28 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		}
 	}
 	
+	private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
+	
 	public static void main(String[] args) throws Exception{
 		
-		AbsUpdateProductStock grabStockImp = new GrabStockImp();
+		//加载spring
+        loadSpringContext();
+        //拉取数据
+        GrabStockImp stockImp =(GrabStockImp)factory.getBean("grabStockImp");
+//		AbsUpdateProductStock grabStockImp = new GrabStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("alduca daosta更新数据库开始");
-        grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        try{
+        	stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        }catch(Exception ex){
+        	loggerError.error(ex);
+        	ex.printStackTrace();
+        }
         logger.info("alduca daosta更新数据库结束");
         System.exit(0);
 		
