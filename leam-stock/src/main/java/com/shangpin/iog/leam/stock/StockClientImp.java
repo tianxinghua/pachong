@@ -4,13 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.dto.SkuDTO;
-import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.leam.dto.LeamDTO;
 import com.shangpin.iog.leam.dto.TokenDTO;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -18,9 +20,15 @@ import java.util.*;
 /**
  * Created by sunny on 2015/8/18.
  */
+@Component("leamStock")
 public class StockClientImp  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
 
     String user="shamping";
     String password="PA#=k2xU^ddUc6Jm";
@@ -137,23 +145,19 @@ public class StockClientImp  extends AbsUpdateProductStock {
         return obj;
     }
     public static void main(String[] args) throws Exception {
-        StockClientImp impl = new StockClientImp();
-//
+    	//加载spring
+        loadSpringContext();
+        StockClientImp stockImp = (StockClientImp)factory.getBean("leamStock");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("LEAM更新数据库开始");
-//        StockClientImp.supplierSkuIdMain=true;
+        logger.info("leam更新数据库开始");
         try {
-            impl.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+        	stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
         } catch (Exception e) {
-            loggerError.error("leam 更新库存失败."+e.getMessage());
+            loggerError.error("leam更新库存失败."+e.getMessage());
             e.printStackTrace();
         }
-//        impl.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
-        logger.info("LEAM更新数据库结束");
+        logger.info("leam更新数据库结束");
         System.exit(0);
-
-
-//        impl.getSkus("http://188.226.153.91/modules/api/v2/stock/");
 
     }
 }

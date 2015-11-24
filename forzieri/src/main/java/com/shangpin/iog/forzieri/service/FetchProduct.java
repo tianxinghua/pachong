@@ -118,7 +118,6 @@ public class FetchProduct {
 			}
 			//保存图片
 			ProductPictureDTO pictureDTO = new ProductPictureDTO();
-			pictureDTO.setId(UUIDGenerator.getUUID());
 			pictureDTO.setSupplierId(supplierId);
 			pictureDTO.setSkuId(csvDTO.getSku());
 			String[] picUrl = new String[]{csvDTO.getVistaImagel0(),csvDTO.getVistaImagel1()
@@ -129,6 +128,7 @@ public class FetchProduct {
 				//是
 				for (String string : picUrl) {
 					if (StringUtils.isNotBlank(string)) {
+						pictureDTO.setId(UUIDGenerator.getUUID());
 						pictureDTO.setPicUrl(string);
 						try {
 							productFetchService.savePictureForMongo(pictureDTO);
@@ -138,6 +138,7 @@ public class FetchProduct {
 					}
 				}
 			}else{
+				pictureDTO.setId(UUIDGenerator.getUUID());
 				pictureDTO.setPicUrl(picUrl[0]);
 				try {
 					productFetchService.savePictureForMongo(pictureDTO);

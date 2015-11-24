@@ -45,6 +45,11 @@ import org.springframework.stereotype.Component;
 public class GrabStockImp extends AbsUpdateProductStock {
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger loggerError = Logger.getLogger("error");
+	private static ApplicationContext factory;
+	private static void loadSpringContext()
+    {
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
 	public static String zipUrl;
@@ -204,9 +209,10 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
 	public static void main(String[] args) throws Exception {
 
-
-
-		AbsUpdateProductStock grabStockImp = new GrabStockImp();
+		//加载spring
+        loadSpringContext();
+        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("stefaniamodeStock");
+		//AbsUpdateProductStock grabStockImp = new GrabStockImp();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		logger.info("stefaniamode更新数据库开始");
 		try {
