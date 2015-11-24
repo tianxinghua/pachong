@@ -3,7 +3,7 @@ package com.shangpin.iog.levelgroup.util;
 import com.csvreader.CsvReader;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.levelgroup.dto.SKUDto;
+import com.shangpin.iog.levelgroup.dto.Product2;
 import org.apache.log4j.Logger;
 
 import java.io.FileReader;
@@ -17,7 +17,7 @@ import java.util.*;
 /**
  * Created by Administrator on 2015/11/13.
  */
-public class MyCsvUtil {
+public class MyTxtUtil {
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl = null;
     private static String httpurl;
@@ -31,58 +31,53 @@ public class MyCsvUtil {
             supplierId = bdl.getString("supplierId");
     }
     /**
-     * http下载csv文件到本地路径
+     * http下载txtcsv文件到本地路径
      * @throws MalformedURLException
      */
-    public static boolean csvDownload() throws MalformedURLException {
-        boolean flag = true;
+    public static void txtDownload() throws MalformedURLException {
         String csvFile = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null);
         //memo
         Map<String, String> mongMap = new HashMap<>();
         mongMap.put("supplierId", supplierId);
         mongMap.put("supplierName", "LevelGroup");
  		mongMap.put("result", csvFile);
-        logMongo.info(mongMap);
+        //logMongo.info(mongMap);
         //System.out.println(csvFile);
         FileWriter fwriter = null;
         try {
             fwriter = new FileWriter(localPath);
             fwriter.write(csvFile);
         } catch (IOException ex) {
-            flag = false;
             ex.printStackTrace();
-            return flag;
         } finally {
             try {
                 fwriter.flush();
                 fwriter.close();
             } catch (IOException ex) {
-                flag = false;
                 ex.printStackTrace();
-                return flag;
             }
         }
-        return flag;
     }
 
     /**
-     * http下载csv文件到本地路径
+     * http下载txt文件到本地路径
      * @throws MalformedURLException
      */
-    public static List<SKUDto> readCSVFile() throws Exception {
-        //解析csv文件
+    public static List<Product2> readTXTFile() throws Exception {
+        //解析txt文件
         CsvReader cr = new CsvReader(new FileReader(localPath));
         System.out.println("创建cr对象成功");
         //得到列名集合
         cr.readRecord();
         String rowString = cr.getRawRecord();
-        //System.out.println(rowString);
-        List<SKUDto> dtoList = new ArrayList<SKUDto>();
-        SKUDto product = null;
+        List<Product2> dtoList = new ArrayList<Product2>();
+        Product2 product = null;
         while(cr.readRecord()) {
-            product = new SKUDto();
+            product = new Product2();
             rowString = cr.getRawRecord();
-            String[] from = rowString.split("\\|");
+            //System.out.println("========================================");
+            //System.out.println(rowString+"========================================");
+            String[] from = rowString.split("[\t]");
             //System.out.println(from.length + "--1--");
             Field[] to = product.getClass().getDeclaredFields();
             //System.out.println(to.length + "--2--");
@@ -91,7 +86,7 @@ public class MyCsvUtil {
                 name = name.substring(0, 1).toUpperCase() + name.substring(1);
                 Method m = product.getClass().getMethod("set"+name,String.class);
                 m.invoke(product,from[i]);
-                //System.out.println(name + " : " + value);
+                //System.out.println(name + " : " + from[i]);
             }
             dtoList.add(product);
         }
@@ -99,29 +94,30 @@ public class MyCsvUtil {
     }
 
 
-      /**
+/**
  * test
  * */
     public static void main(String[] args) {
-        List<SKUDto> list = null;
+
+        List<Product2> list = null;
         try {
-            //MyCsvUtil.csvDownload();
-            list = MyCsvUtil.readCSVFile();
+            MyTxtUtil.txtDownload();
+            list = MyTxtUtil.readTXTFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println(list.size());
-        for (SKUDto p:list){
-            System.out.println(p.getCURRENCY());
+        for (Product2 p:list){
+            System.out.println(p.getGENDER());
         }
-        for (SKUDto p:list){
+        for (Product2 p:list){
             System.out.println(p.getADVERTISERCATEGORY());
         }
-        for (SKUDto p:list){
+        for (Product2 p:list){
             System.out.println(p.getBUYURL());
         }
-        for (SKUDto p:list){
-            System.out.println(p.getFORMAT());
+        for (Product2 p:list){
+            System.out.println(p.getMASTER_SKU());
         }
 
 /*        String json = HttpUtil45.get(httpurl, new OutTimeConfig(1000 * 60 * 10, 10 * 1000 * 60, 10 * 1000 * 60), null);
