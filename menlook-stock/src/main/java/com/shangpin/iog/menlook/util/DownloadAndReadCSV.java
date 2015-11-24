@@ -60,8 +60,8 @@ public class DownloadAndReadCSV {
     }
     public static List<Item> readLocalCSV() throws Exception {
         
-//    	String realPath=downloadNet();
-    	String realPath="F:/catalogueCompletLengow-menlook.csv";
+    	String realPath=downloadNet();
+//    	String realPath="F:/catalogueCompletLengow-menlook.csv";
         String rowString = null;
         List<Item> dtoList = new ArrayList<Item>();
     	String[] split = null;
