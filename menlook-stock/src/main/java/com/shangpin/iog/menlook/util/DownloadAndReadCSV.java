@@ -1,20 +1,23 @@
 package com.shangpin.iog.menlook.util;
 
-import com.csvreader.CsvReader;
-import com.shangpin.iog.menlook.dto.Item;
-
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.csvreader.CsvReader;
+import com.shangpin.iog.menlook.stock.dto.Item;
 
 /**
  * Created by monkey on 2015/11/23.

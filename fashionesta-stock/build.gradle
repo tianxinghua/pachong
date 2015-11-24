@@ -1,9 +1,5 @@
 
 
-
-
-def propertyPath =    "$buildDir/libs/conf"
-
 dependencies {
     compile(
             "org.mybatis:mybatis:3.2.2",
@@ -26,8 +22,8 @@ jar {
     dependsOn copyToLib , copyResources
     exclude ("**/*.properties")
 
-    def manifestCp = configurations.compile.files.collect  {
 
+    def manifestCp = configurations.compile.files.collect  {
         File file = it
         "lib/${file.name}"
     }.join(' ')

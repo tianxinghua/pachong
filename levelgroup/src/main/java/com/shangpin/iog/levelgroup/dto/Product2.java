@@ -1,9 +1,9 @@
 package com.shangpin.iog.levelgroup.dto;
 
 /**
- * Created by wangyuzhi on 2015/11/13.
+ * Created by wangyuzhi on 2015/11/17.
  */
-public class SKUDto {
+public class Product2 {
     private String NAME;
     private String KEYWORDS;
     private String DESCRIPTION;
