@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBException;
 
@@ -28,6 +29,7 @@ import java.lang.String;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Component("galianoStock")
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
@@ -134,6 +136,13 @@ public class GrabStockImp extends AbsUpdateProductStock {
 //        
 //        logger.info("galiano更新数据库结束");
 //        System.exit(0);
+
+
+        loadSpringContext();
+        logger.info("----初始SPRING成功----");
+        //拉取数据
+        GrabStockImp grabStockImp =(GrabStockImp)factory.getBean("galianoStock");
+
     	String host = bundle.getString("HOST");
         String app_key = bundle.getString("APP_KEY");
         String app_secret= bundle.getString("APP_SECRET");
@@ -141,13 +150,14 @@ public class GrabStockImp extends AbsUpdateProductStock {
             logger.error("参数错误，无法执行更新库存");
         }
         
-        AbsUpdateProductStock grabStockImp = new GrabStockImp();
+
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("galiano更新数据库开始");
         try {
             grabStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
         } catch (Exception e) {
+            loggerError.error("galiano更新库存失败:" + e.getMessage());
             e.printStackTrace();
         }
         logger.info("galiano更新数据库结束");
