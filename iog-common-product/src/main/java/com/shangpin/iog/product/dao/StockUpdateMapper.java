@@ -10,7 +10,10 @@ import com.shangpin.iog.dto.TokenDTO;
 @Mapper
 public interface StockUpdateMapper extends IBaseDao<TokenDTO> {
 	
-	public void updateStockTime(StockUpdateDTO stockUpdateDTO);
+	public void updateStockStatus(StockUpdateDTO stockUpdateDTO);
 	
 	public List<StockUpdateDTO> getAllData();
+	
+	public void saveStockUpdateDTO(StockUpdateDTO stockUpdateDTO);
+	
 }
