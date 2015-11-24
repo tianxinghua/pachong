@@ -50,7 +50,7 @@ public class FetchProduct {
 				sku.setSupplierId(supplierId);
 				sku.setSkuId(item.getItem_code());
 				sku.setSpuId(item.getSupplier_item_code().replaceAll("\"", ""));
-				sku.setProductName(item.getBrand_name().replaceAll("\"", ""));//item.getBrand_name()+"品类"
+				sku.setProductName((item.getBrand_name()+" "+item.getBrand_line()).replaceAll("\"", ""));//item.getBrand_name()+"品类"
 				sku.setMarketPrice(item.getRetail_price().replaceAll(",", "."));
 				sku.setSupplierPrice(item.getYour_price().replaceAll(",", "."));
 				sku.setSalePrice(item.getSold_price().replaceAll(",", "."));
@@ -112,7 +112,7 @@ public class FetchProduct {
 	            spu.setSupplierId(supplierId);
 	            spu.setBrandName(item.getBrand_name().replaceAll("\"", ""));
 	            spu.setCategoryGender(item.getGender().replaceAll("\"", ""));
-	            spu.setCategoryName(item.getBrand_name().replaceAll("\"", ""));//品类
+	            spu.setCategoryName(item.getBrand_line().replaceAll("\"", ""));//品类
 	            spu.setMaterial(item.getItem_detailed_info().replaceAll("\"", ""));//材质
 	            spu.setProductOrigin(item.getMade_in().replaceAll("\"", ""));
 	            spu.setSeasonId(item.getSeason().replaceAll("\"", ""));
