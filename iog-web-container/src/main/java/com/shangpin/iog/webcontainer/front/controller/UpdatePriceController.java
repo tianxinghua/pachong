@@ -9,10 +9,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,37 +57,42 @@ public class UpdatePriceController {
     public void showStockUpdateException(HttpServletRequest request,HttpServletResponse response){
     	String supplierId = request.getParameter("supplierId");
     	String skuIds = request.getParameter("skuIds");
-    	skuIds = skuIds.replace("，", ",");
-    	String[] skuArr = skuIds.split(",");
-    	int flag = 0;
-    	StringBuffer sb = new StringBuffer();
-    	try {
-			for (String skuId : skuArr) {
-				SkuDTO skuDTO = new SkuDTO();
-				skuDTO.setSupplierId(supplierId);
-				skuDTO.setSkuId(skuId);
-				NewPriceDTO newPriceDTO = skuPriceService.getNewPriceDTO(supplierId, skuId);
-				if (newPriceDTO!=null) {
-					skuDTO.setNewMarketPrice(newPriceDTO.getNewMarketPrice());
-					skuDTO.setNewSalePrice(newPriceDTO.getNewSalePrice());
-					skuDTO.setNewSupplierPrice(newPriceDTO.getNewSupplierPrice());
-					skuPriceService.synchPrice(skuDTO);
-				}else {
-					sb.append(skuId).append(",");
-				}
-			}
-		} catch (ServiceException e) {
-			flag = 1;
-		}
-    	try {
-	    	if (flag==1) {
-				response.getWriter().print("<script>alert('更新失败');</script>");
-			}
-	    	if (StringUtils.isNotBlank(sb.toString())) {
-	    		response.getWriter().print("<script>alert('"+sb.toString()+"sku未找到');</script>");
-			}
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    	}
+    	if (skuIds!=null) {
+	    	skuIds = skuIds.replace("，", ",");
+	    	int flag = 0;
+            Pattern p = Pattern.compile("\\s*|\t|\r|\n");
+            Matcher m = p.matcher(skuIds);
+            skuIds = m.replaceAll("");
+            String[] skuArr = skuIds.split(",");
+            StringBuffer sb = new StringBuffer();
+            try {
+            	for (String skuId : skuArr) {
+            		SkuDTO skuDTO = new SkuDTO();
+            		skuDTO.setSupplierId(supplierId);
+            		skuDTO.setSkuId(skuId);
+            		NewPriceDTO newPriceDTO = skuPriceService.getNewPriceDTO(supplierId, skuId);
+            		if (newPriceDTO!=null) {
+            			skuDTO.setNewMarketPrice(newPriceDTO.getNewMarketPrice());
+            			skuDTO.setNewSalePrice(newPriceDTO.getNewSalePrice());
+            			skuDTO.setNewSupplierPrice(newPriceDTO.getNewSupplierPrice());
+            			skuPriceService.synchPrice(skuDTO);
+            		}else {
+            			sb.append(skuId).append(",");
+            		}
+            	}
+            } catch (ServiceException e) {
+            	flag = 1;
+            }
+            try {
+            	if (flag==1) {
+            		response.getWriter().print("<script>alert('更新失败');</script>");
+            	}
+            	if (StringUtils.isNotBlank(sb.toString())) {
+            		response.getWriter().print(sb.toString()+"sku未找到");
+            	}
+            } catch (IOException e) {
+            	e.printStackTrace();
+            }
+         }
     }
 }
