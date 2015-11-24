@@ -12,7 +12,7 @@ public class StartSkuJob {
 
     private static Logger log = Logger.getLogger("info");
 
-    private static Logger loggerError = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
 
     private static ApplicationContext factory;
     private static void loadSpringContext() {

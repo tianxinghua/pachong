@@ -35,7 +35,7 @@ public class Schedule {
     ForzieriOrderServiceImpl orderService;
 
     //下单 退单 异常
-    @Scheduled(cron="0 0/5 * * * ? ")
+    @Scheduled(cron="0 0/2 * * * ? ")
     public void start(){
     	orderService.checkoutOrderFromWMS(supplierNo, supplierId, true);
     }
