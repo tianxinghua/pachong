@@ -40,11 +40,11 @@ public class FetchProduct2 {
      */
     public void fetchProductAndSave(){
         //download
-/*        try {
+        try {
             MyCsvUtil.csvDownload();
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        }*/
+        }
         //read .csv file
         List<SKUDto> list = null;
         try {
