@@ -156,4 +156,28 @@ public class SkuPriceServiceImpl implements SkuPriceService {
 		return sku;
 	}
 
+	@Override
+	public void synchPrice(SkuDTO skuDTO) throws ServiceException{
+        if(null==skuDTO.getUpdateTime()) skuDTO.setUpdateTime(new Date());
+        try {
+			skuDAO.updatePrice(skuDTO);
+		} catch (Exception e) {
+			logger.error("同步新旧价格失败 "+e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public NewPriceDTO getNewPriceDTO(String supplierId, String skuId)
+			throws ServiceException {
+		NewPriceDTO newPriceDTO = null;
+		try {
+			newPriceDTO = skuDAO.findNewPriceBySku(supplierId, skuId);
+		} catch (Exception e) {
+			logger.error("获取newpricedto失败 "+e.getMessage());
+			e.printStackTrace();
+		}
+		return newPriceDTO;
+	}
+
 }

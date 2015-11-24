@@ -174,4 +174,6 @@ include 'Della'
 include 'Della-stock'
 include 'wokstore'
 include 'wokstore-stock'
+include 'menlook'
+include 'menlook-stock'
 

@@ -28,6 +28,8 @@
         <result column="EXC_STATE" property="excState"  />
         <result column="EXC_DESC" property="excDesc"  />
         <result column="EXC_TIME" property="excTime" />
+
+        <result column="CONSUMER_MSG" property="consumerMsg" />
 	</resultMap>
 
 	<sql id="all_Order_column">
@@ -49,7 +51,8 @@
 		DETAIL,
 		MEMO,
 		STATUS,
-		CREATE_TIME
+		CREATE_TIME,
+        CONSUMER_MSG
     </sql>
     <select id="findBySupplierIdAndStatus"  resultMap="OrderResultMap">
         select
@@ -228,7 +231,7 @@
         #{supplierId},#{supplierNo}, #{uuId}, #{spOrderId},#{spPurchaseNo},#{spPurchaseDetailNo},
        	#{supplierOrderNo},
         #{detail},#{memo},#{status},
-        #{createTime}
+        #{createTime},#{consumerMsg}
         )
     </insert>
 

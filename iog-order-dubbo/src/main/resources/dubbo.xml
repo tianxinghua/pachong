@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <context:property-placeholder
+            location="classpath:dubbox.properties" ignore-unresolvable="true"/>
+
+    <dubbo:application name="iog-order-dubbo"  />
+
+    <dubbo:registry protocol="zookeeper" address="${zookeeper.address}" />
+
+    <dubbo:registry id="http" protocol="zookeeper" address="${zookeeper.address}" check="false" register="false"
+                    subscribe="false"/>
+
+    <dubbo:protocol name="dubbo" port="20880" threadpool="fixed" threads="200" dispatcher="message"  />
+
+    <!-- 监控中心通过注册中心获取 -->
+    <dubbo:monitor protocol="registry"/>
+
+
+    <!--
+    用rest协议在8080端口暴露服务；rest发布的：过滤器，拦截器，异常处理
+    contextpath="a"
+    详见：http://dangdangdotcom.github.io/dubbox/rest.html
+-->
+    <dubbo:protocol name="rest" port="${dubbo.rest.port}" server="tomcat"
+                    keepalive="false" threads="500" accepts="500"
+                    extension="com.shangpin.openapi.api.ApiRequestControlFilter,
+							   com.shangpin.openapi.api.ApiReaderInterceptor,
+							   com.shangpin.openapi.api.ApiExceptionMapper,
+							   com.shangpin.openapi.api.ApiResponseControlFilter,
+							   com.shangpin.openapi.api.ApiWriterInterceptor"/>
+
+</beans>

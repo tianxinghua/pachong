@@ -154,10 +154,22 @@ public class VelaStockImp extends AbsUpdateProductStock {
     }
 
 
+        private static ApplicationContext factory;
+    private static void loadSpringContext() {
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
+
+
     public static void main(String[] args) throws Exception {
-      
-        AbsUpdateProductStock velaStockImp = new VelaStockImp();
+
+        //加载spring
+        loadSpringContext();
+        logger.info("----初始SPRING成功----");
+
+        VelaStockImp velaStockImp =(VelaStockImp)factory.getBean("velaStock");
         velaStockImp.setUseThread(true);velaStockImp.setSkuCount4Thread(500);
+
+
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("VELA更新数据库开始");
         try {

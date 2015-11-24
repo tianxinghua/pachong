@@ -12,13 +12,21 @@ import com.shangpin.iog.dto.StockUpdateDTO;
  */
 public interface UpdateStockService {
 	/**
-	 * 更新updateStock的时间
+	 * 更新updateStock的状态
 	 */
-	public void updateTime(String supplierId) throws SQLException;
+	public void updateStatus(StockUpdateDTO stockUpdateDTO) throws SQLException;
 	
 	/**
 	 * 获取所有的库存更新状态
 	 */
 	public List<StockUpdateDTO> getAll() throws SQLException;
+	/**
+	 * 保存updateStock
+	 */
+	public void saveDTO(StockUpdateDTO stockUpdateDTO) throws SQLException;
+	/**
+	 * 保存或更新
+	 */
+	public void saveOrUpdateDTO(StockUpdateDTO stockUpdateDTO) throws SQLException;
 	
 }

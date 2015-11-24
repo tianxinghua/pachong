@@ -118,7 +118,6 @@ public class FetchProduct {
 			}
 			//保存图片
 			ProductPictureDTO pictureDTO = new ProductPictureDTO();
-			pictureDTO.setId(UUIDGenerator.getUUID());
 			pictureDTO.setSupplierId(supplierId);
 			pictureDTO.setSkuId(csvDTO.getSku());
 			String[] picUrl = new String[]{csvDTO.getVistaImagel0(),csvDTO.getVistaImagel1()
@@ -127,17 +126,27 @@ public class FetchProduct {
 			//判断是否是primary sku
 			if (csvDTO.getSku().split("-")[2].equals("00")) {
 				//是
-				String picstring = Arrays.toString(picUrl);
-				pictureDTO.setPicUrl(picstring.substring(1, picstring.length()-1));
+				for (String string : picUrl) {
+					if (StringUtils.isNotBlank(string)) {
+						pictureDTO.setId(UUIDGenerator.getUUID());
+						pictureDTO.setPicUrl(string);
+						try {
+							productFetchService.savePictureForMongo(pictureDTO);
+						} catch (ServiceException e) {
+							e.printStackTrace();
+						}
+					}
+				}
 			}else{
+				pictureDTO.setId(UUIDGenerator.getUUID());
 				pictureDTO.setPicUrl(picUrl[0]);
+				try {
+					productFetchService.savePictureForMongo(pictureDTO);
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
 			}
 			
-			try {
-				productFetchService.savePictureForMongo(pictureDTO);
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}
 		}
 		//保存spu
 		CsvDTO spuDTO = null;

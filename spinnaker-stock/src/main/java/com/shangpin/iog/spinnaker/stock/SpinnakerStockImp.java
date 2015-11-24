@@ -103,10 +103,15 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
         SpinnakerStockImp stockImp =(SpinnakerStockImp)factory.getBean("spinnaker");
         
 //        AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
-        //grabStockImp.setUseThread(true);grabStockImp.setSkuCount4Thread(500);
+        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("SPINNAKER更新数据库开始");
-        stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        try {
+            stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        } catch (Exception e) {
+            loggerError.error("spinnaker更新库存失败."+e.getMessage());
+            e.printStackTrace();
+        }
         logger.info("SPINNAKER更新数据库结束");
         System.exit(0);
 

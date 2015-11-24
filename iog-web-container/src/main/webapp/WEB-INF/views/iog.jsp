@@ -113,7 +113,26 @@
         };
         window.open('csv?queryJson='+$.toJSON(search), '','');
     }
-
+	
+//     function updatePrice(){
+// 		var supplierId = $('#supplier').val();
+// 		if("-1"== supplierId){
+// 	         alert("请选择供应商");
+// 	         return;
+// 	     }
+// 		var skuIds = prompt("请输入要更新的skuid用英文,隔开如:123,321,654");
+// 		if(skuIds!=null){
+// 			$.get("updatePrice", { "supplierId": supplierId, "skuIds": skuIds });
+// 		}
+// 	}
+    function updatePrice(){
+		var supplierId = $('#supplier').val();
+		if("-1"== supplierId){
+	         alert("请选择供应商");
+	         return;
+	     }
+		window.open('getSkuIds?supplierId='+supplierId, '','');
+	}
 
     function clearText(){
         $('#supplier').val('-1');
@@ -170,7 +189,8 @@
 	href="javascript:void(0)" onclick="exportDiffProduct('diff')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>价格变化导出</a>
 	<a href="javascript:void(0)"
-	onclick="clearText()" id="btn-cancel" icon="icon-cancel" class='easyui-linkbutton'>清空</a><br>
+	onclick="clearText()" id="btn-cancel" icon="icon-cancel" class='easyui-linkbutton'>清空</a>
+	<a href="javascript:void(0)" onclick="updatePrice()" class='easyui-linkbutton'>更新价格</a><br><br>
 	<br>
 	<a href="stockUpdateException" id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a>
 	
@@ -183,12 +203,20 @@
   		<td>updateTime</td>
   		<td>当前时间差</td>
   	</tr>
-  	<c:forEach items="${allData}" var="data">
-	  	<tr>
-	  		<td>${data.supplierId}</td>
-	  		<td>${data.supplierName}</td>
-	  		<td><fmt:formatDate value="${data.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-	  		<td>${data.dif }</td>
+	<c:forEach items="${redList}" var="reddata">
+	  	<tr bgcolor="Salmon">
+	  		<td>${reddata.supplierId}</td>
+	  		<td>${reddata.supplierName}</td>
+	  		<td><fmt:formatDate value="${reddata.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+	  		<td>${reddata.dif }</td>
+	  	</tr>
+  	</c:forEach>
+  	<c:forEach items="${greenList}" var="gredata">
+	  	<tr >
+	  		<td>${gredata.supplierId}</td>
+	  		<td>${gredata.supplierName}</td>
+	  		<td><fmt:formatDate value="${gredata.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+	  		<td>${gredata.dif }</td>
 	  	</tr>
   	</c:forEach>
   </table>

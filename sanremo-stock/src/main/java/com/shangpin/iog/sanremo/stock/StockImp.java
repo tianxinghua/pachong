@@ -4,10 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.sanremo.stock.dto.Quantity;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -15,6 +19,7 @@ import java.util.*;
 /**
  * Created by Administrator on 2015/7/8.
  */
+@Component("sanremoStock")
 public class StockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
@@ -31,6 +36,14 @@ public class StockImp extends AbsUpdateProductStock {
     }
 
     private Map<String,String> barcode_map = new HashMap<>();
+
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
+
 
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
@@ -102,11 +115,20 @@ public class StockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args) throws Exception {
-        AbsUpdateProductStock grabStockImp = new StockImp();
+        //加载spring
+        loadSpringContext();
+        //拉取数据
+        StockImp grabStockImp =(StockImp)factory.getBean("sanremoStock");
+//        AbsUpdateProductStock grabStockImp = new StockImp();
         grabStockImp.setUseThread(true);grabStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("sanremo更新数据库开始");
-        grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        try {
+            grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        } catch (Exception e) {
+            loggerError.error("sanremo库存更新失败");
+            e.printStackTrace();
+        }
         logger.info("sanremo更新数据库结束");
         System.exit(0);
 

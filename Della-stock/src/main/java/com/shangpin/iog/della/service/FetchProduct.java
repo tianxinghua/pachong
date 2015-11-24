@@ -13,10 +13,13 @@ import java.util.ResourceBundle;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.della.dto.Item;
 import com.shangpin.iog.della.utils.CSVUtil;
@@ -25,18 +28,19 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 
+@Component("dellaStock")
 public class FetchProduct extends AbsUpdateProductStock {
 	
 	private static Logger logError = Logger.getLogger("error");
 	private static Logger logInfo  = Logger.getLogger("info");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = "";
-	private static String filePath = "";
+	private static String remoteFileName = "";
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
-		filePath = bdl.getString("filepath");
+		remoteFileName = bdl.getString("remoteFileName");
 	}
 
 	@Override
@@ -46,10 +50,11 @@ public class FetchProduct extends AbsUpdateProductStock {
 		Map<String, String> skustock = new HashMap<>();
 		Map<String,String> stockMap = new HashMap<>();
 		
-		List<Item> items = CSVUtil.readLocalCSV(filePath, Item.class, ";");
+		List<Item> items = CSVUtil.readLocalCSV(remoteFileName,Item.class, ";");
 		for(Item item:items){
 			
 			stockMap.put(item.getItem_code(), item.getQuantity());
+//			System.out.println(stockMap.toString());
 		}
 		
 		for (String skuno : skuNo) {
@@ -63,9 +68,17 @@ public class FetchProduct extends AbsUpdateProductStock {
 		return skustock;
 	}
 	
+	private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
+	
 	public static void main(String[] args){
 		
-		AbsUpdateProductStock fetchProduct = new FetchProduct();
+		loadSpringContext();		
+		FetchProduct fetchProduct = (FetchProduct)factory.getBean("dellaStock");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		logInfo.info("della更新数据库开始");
 		System.out.println("della更新数据库开始");
@@ -80,6 +93,16 @@ public class FetchProduct extends AbsUpdateProductStock {
 		System.out.println("della更新数据库结束");
 		System.exit(0);
 		
+//		try {
+//			AbsUpdateProductStock fetchProduct = new FetchProduct();
+//			fetchProduct.grabStock(null);
+//		} catch (ServiceException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 }

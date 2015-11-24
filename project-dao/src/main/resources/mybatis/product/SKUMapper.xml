@@ -26,8 +26,10 @@
 		<result column="skuId" property="skuId"  />
 		<result column="supplierPrice" property="supplierPrice" />
 		<result column="marketPrice" property="marketPrice" />
+		<result column="salePrice" property="salePrice" />
 		<result column="newMarketPrice" property="newMarketPrice" />
 		<result column="newSupplierPrice" property="newSupplierPrice" />
+		<result column="newSalePrice" property="newSalePrice" />
 	</resultMap>
 
 	<sql id="all_sku_column">
@@ -143,6 +145,8 @@
 			select SKU_ID as skuId,
 				MARKET_PRICE as marketPrice,
 				SUPPLIER_PRICE as supplierPrice,
+				SALE_PRICE as salePrice,
+				NEW_SALE_PRICE as newSalePrice,
 			    NEW_MARKET_PRICE as newMarketPrice,
       	 	  	NEW_SUPPLIER_PRICE as newSupplierPrice
       	 	  	from SKU sku
@@ -155,5 +159,17 @@
             </if>
         </where>
 	</select>
+	
+	<update id="updatePrice" parameterType="iog_sku" >
+	    update SKU
+       <set>
+		 <if test="newMarketPrice != null"> MARKET_PRICE = #{newMarketPrice}, </if> 
+		 <if test="newSalePrice != null"> SALE_PRICE = #{newSalePrice}, </if> 
+		 <if test="newSupplierPrice != null"> SUPPLIER_PRICE = #{newSupplierPrice},</if>
+	     <if test="updateTime != null"> UPDATE_TIME = #{updateTime},</if>
+	   </set>
+	    where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
+
+    </update>
 	
 </mapper>

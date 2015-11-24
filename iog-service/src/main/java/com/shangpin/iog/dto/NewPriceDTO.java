@@ -8,8 +8,10 @@ public class NewPriceDTO implements Serializable{
     private String skuId;//必填
     private String marketPrice;//市场价  三个价格必须有一个 需要和BD沟通 那个价格是算尚品的供货价的价格
     private String supplierPrice;//供货商价格
+    private String salePrice;
     private String newMarketPrice;//市场价  三个价格必须有一个 需要和BD沟通 那个价格是算尚品的供货价的价格
     private String newSupplierPrice;//供货商价格
+    private String newSalePrice;
 	public String getSupplierId() {
 		return supplierId;
 	}
@@ -45,6 +47,18 @@ public class NewPriceDTO implements Serializable{
 	}
 	public void setNewSupplierPrice(String newSupplierPrice) {
 		this.newSupplierPrice = newSupplierPrice;
+	}
+	public String getSalePrice() {
+		return salePrice;
+	}
+	public void setSalePrice(String salePrice) {
+		this.salePrice = salePrice;
+	}
+	public String getNewSalePrice() {
+		return newSalePrice;
+	}
+	public void setNewSalePrice(String newSalePricel) {
+		this.newSalePrice = newSalePricel;
 	}
     
 }
