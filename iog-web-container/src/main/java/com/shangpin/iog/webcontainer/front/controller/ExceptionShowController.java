@@ -3,6 +3,7 @@
  */
 package com.shangpin.iog.webcontainer.front.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +58,8 @@ public class ExceptionShowController {
     @RequestMapping(value = "/stockUpdateException")
     public String showStockUpdateException(Model model) throws Exception {
     	List<StockUpdateDTO> all = updateStockService.getAll();
+    	List<StockUpdateDTO> redList = new ArrayList<StockUpdateDTO>();
+    	List<StockUpdateDTO> greenList = new ArrayList<StockUpdateDTO>();
     	List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
     	Map<String, String> nameMap = new HashMap<String, String>();
     	for (SupplierDTO supplierDTO : supplierDTOList) {
@@ -69,8 +72,14 @@ public class ExceptionShowController {
     		long minutes = (diff-days*(1000 * 60 * 60 * 24)-hours*(1000* 60 * 60))/(1000* 60);
     		stockUpdateDTO.setDif(days+"天"+hours+"小时"+minutes+"分");
     		stockUpdateDTO.setSupplierName(nameMap.get(stockUpdateDTO.getSupplierId()));
+    		if (hours<=2&&days<1) {
+    			redList.add(stockUpdateDTO);
+			}else {
+				greenList.add(stockUpdateDTO);
+			}
     	}
-    	model.addAttribute("allData", all);
+    	model.addAttribute("greenList", greenList);
+    	model.addAttribute("redList", redList);
     	model.addAttribute("supplierDTOList", supplierDTOList);
 		return "iog";
     }

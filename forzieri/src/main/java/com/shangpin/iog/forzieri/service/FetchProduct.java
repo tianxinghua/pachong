@@ -127,17 +127,25 @@ public class FetchProduct {
 			//判断是否是primary sku
 			if (csvDTO.getSku().split("-")[2].equals("00")) {
 				//是
-				String picstring = Arrays.toString(picUrl);
-				pictureDTO.setPicUrl(picstring.substring(1, picstring.length()-1));
+				for (String string : picUrl) {
+					if (StringUtils.isNotBlank(string)) {
+						pictureDTO.setPicUrl(string);
+						try {
+							productFetchService.savePictureForMongo(pictureDTO);
+						} catch (ServiceException e) {
+							e.printStackTrace();
+						}
+					}
+				}
 			}else{
 				pictureDTO.setPicUrl(picUrl[0]);
+				try {
+					productFetchService.savePictureForMongo(pictureDTO);
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
 			}
 			
-			try {
-				productFetchService.savePictureForMongo(pictureDTO);
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}
 		}
 		//保存spu
 		CsvDTO spuDTO = null;

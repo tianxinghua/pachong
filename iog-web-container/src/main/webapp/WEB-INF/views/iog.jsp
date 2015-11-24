@@ -183,12 +183,20 @@
   		<td>updateTime</td>
   		<td>当前时间差</td>
   	</tr>
-  	<c:forEach items="${allData}" var="data">
-	  	<tr>
-	  		<td>${data.supplierId}</td>
-	  		<td>${data.supplierName}</td>
-	  		<td><fmt:formatDate value="${data.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-	  		<td>${data.dif }</td>
+  	<c:forEach items="${redList}" var="reddata">
+	  	<tr bgcolor="Salmon">
+	  		<td>${reddata.supplierId}</td>
+	  		<td>${reddata.supplierName}</td>
+	  		<td><fmt:formatDate value="${reddata.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+	  		<td>${reddata.dif }</td>
+	  	</tr>
+  	</c:forEach>
+  	<c:forEach items="${greenList}" var="gredata">
+	  	<tr >
+	  		<td>${gredata.supplierId}</td>
+	  		<td>${gredata.supplierName}</td>
+	  		<td><fmt:formatDate value="${gredata.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+	  		<td>${gredata.dif }</td>
 	  	</tr>
   	</c:forEach>
   </table>

@@ -1279,7 +1279,7 @@ public abstract class AbsOrderService {
         String lastDate=getLastGrapDate(fileName);
         startDateOfWMS= org.apache.commons.lang.StringUtils.isNotEmpty(lastDate) ? lastDate: com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(DateUtils.addDays(tempDate, -180), YYYY_MMDD_HH_WMS);
 
-        Date tmpDate =  DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(startDateOfWMS,YYYY_MMDD_HH_WMS),-10,"S");
+        Date tmpDate =  DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(startDateOfWMS,YYYY_MMDD_HH_WMS),-1,"m");
         startDateOfWMS = DateTimeUtil.convertFormat(tmpDate,YYYY_MMDD_HH_WMS) ;
         
         if(startDateOfTemp!=null&&!"".equals(startDateOfTemp)){
