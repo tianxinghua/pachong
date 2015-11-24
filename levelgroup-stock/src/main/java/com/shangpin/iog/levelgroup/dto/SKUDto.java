@@ -7,22 +7,22 @@ public class SKUDto {
     private String NAME;
     private String KEYWORDS;
     private String DESCRIPTION;
-    private String SKU;
+    private String VARIANT_SKU;
+    private String MASTER_SKU;
     private String BUYURL;
     private String AVAILABLE;
     private String IMAGEURL;
     private String PRICE;
     private String SALEPRICE;
-    private String CURRENCY;
+    private String STOCK_LEVEL;
     private String UPC;
     private String ADVERTISERCATEGORY;
     private String GENDER;
-    private String CLOSURE;
     private String HEELS;
     private String MATERIAL;
     private String MANUFACTURER;
-    private String LABEL;
-    private String FORMAT;
+    private String COLOR;
+    private String SIZE;
     private String STANDARDSHIPPINCOST;
     private String CONDITION;
 
@@ -50,12 +50,20 @@ public class SKUDto {
         this.DESCRIPTION = DESCRIPTION;
     }
 
-    public String getSKU() {
-        return SKU;
+    public String getVARIANT_SKU() {
+        return VARIANT_SKU;
     }
 
-    public void setSKU(String SKU) {
-        this.SKU = SKU;
+    public void setVARIANT_SKU(String VARIANT_SKU) {
+        this.VARIANT_SKU = VARIANT_SKU;
+    }
+
+    public String getMASTER_SKU() {
+        return MASTER_SKU;
+    }
+
+    public void setMASTER_SKU(String MASTER_SKU) {
+        this.MASTER_SKU = MASTER_SKU;
     }
 
     public String getBUYURL() {
@@ -98,12 +106,12 @@ public class SKUDto {
         this.SALEPRICE = SALEPRICE;
     }
 
-    public String getCURRENCY() {
-        return CURRENCY;
+    public String getSTOCK_LEVEL() {
+        return STOCK_LEVEL;
     }
 
-    public void setCURRENCY(String CURRENCY) {
-        this.CURRENCY = CURRENCY;
+    public void setSTOCK_LEVEL(String STOCK_LEVEL) {
+        this.STOCK_LEVEL = STOCK_LEVEL;
     }
 
     public String getUPC() {
@@ -130,14 +138,6 @@ public class SKUDto {
         this.GENDER = GENDER;
     }
 
-    public String getCLOSURE() {
-        return CLOSURE;
-    }
-
-    public void setCLOSURE(String CLOSURE) {
-        this.CLOSURE = CLOSURE;
-    }
-
     public String getHEELS() {
         return HEELS;
     }
@@ -162,20 +162,20 @@ public class SKUDto {
         this.MANUFACTURER = MANUFACTURER;
     }
 
-    public String getLABEL() {
-        return LABEL;
+    public String getCOLOR() {
+        return COLOR;
     }
 
-    public void setLABEL(String LABEL) {
-        this.LABEL = LABEL;
+    public void setCOLOR(String COLOR) {
+        this.COLOR = COLOR;
     }
 
-    public String getFORMAT() {
-        return FORMAT;
+    public String getSIZE() {
+        return SIZE;
     }
 
-    public void setFORMAT(String FORMAT) {
-        this.FORMAT = FORMAT;
+    public void setSIZE(String SIZE) {
+        this.SIZE = SIZE;
     }
 
     public String getSTANDARDSHIPPINCOST() {
