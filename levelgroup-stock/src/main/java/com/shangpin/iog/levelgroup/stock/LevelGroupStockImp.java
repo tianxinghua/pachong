@@ -1,6 +1,7 @@
 package com.shangpin.iog.levelgroup.stock;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
@@ -9,6 +10,9 @@ import com.shangpin.iog.levelgroup.util.MyTxtUtil;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
@@ -17,11 +21,17 @@ import java.util.*;
 /**
  * Created by huxia on 2015/8/12.
  */
+@Component("levelgroup")
 public class LevelGroupStockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
     private static ResourceBundle bdl=null;
     private static String supplierId;
 
@@ -99,9 +109,11 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String args[]) throws Exception {
-
-        AbsUpdateProductStock levelGroupStockImp = new LevelGroupStockImp();
-
+        //加载spring
+        loadSpringContext();
+        //拉取数据
+        LevelGroupStockImp levelGroupStockImp =(LevelGroupStockImp)factory.getBean("levelgroup");
+        levelGroupStockImp.setUseThread(true);levelGroupStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("levelgroup更新数据库开始");
         //2015081401431

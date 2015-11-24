@@ -1,6 +1,7 @@
 package com.shangpin.iog.service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.dto.NewPriceDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SkuPriceDTO;
 
@@ -30,7 +31,7 @@ public interface SkuPriceService {
     public String getSkuPrice(String supplierId,String skuId) throws ServiceException;
 
     /**
-     * 更新价格
+     * 更新价格 (skuPrice库)
      * @param skuPriceDTO 对象
      * @throws ServiceException
      */
@@ -52,6 +53,17 @@ public interface SkuPriceService {
      *  通过sku，supplierid获取最新价格
      */
     public Map<String,Map<String,String>> getNewSkuPriceBySku(String supplierId,String skuId) throws ServiceException;
-    
+    /**
+     * 同步new和原价格(sku库)
+     * @param skuDTO 对象
+     * @throws ServiceException
+     */
+    public void synchPrice(SkuDTO skuDTO) throws ServiceException;
+    /**
+     * 得到NewPriceDTO对象
+     * @param supplierIdskuId
+     * @throws ServiceException
+     */
+    public NewPriceDTO getNewPriceDTO(String supplierId,String skuId) throws ServiceException;
     
 }

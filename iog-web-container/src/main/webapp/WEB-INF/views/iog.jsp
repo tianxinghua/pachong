@@ -113,7 +113,26 @@
         };
         window.open('csv?queryJson='+$.toJSON(search), '','');
     }
-
+	
+//     function updatePrice(){
+// 		var supplierId = $('#supplier').val();
+// 		if("-1"== supplierId){
+// 	         alert("请选择供应商");
+// 	         return;
+// 	     }
+// 		var skuIds = prompt("请输入要更新的skuid用英文,隔开如:123,321,654");
+// 		if(skuIds!=null){
+// 			$.get("updatePrice", { "supplierId": supplierId, "skuIds": skuIds });
+// 		}
+// 	}
+    function updatePrice(){
+		var supplierId = $('#supplier').val();
+		if("-1"== supplierId){
+	         alert("请选择供应商");
+	         return;
+	     }
+		window.open('getSkuIds?supplierId='+supplierId, '','');
+	}
 
     function clearText(){
         $('#supplier').val('-1');
@@ -170,7 +189,8 @@
 	href="javascript:void(0)" onclick="exportDiffProduct('diff')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>价格变化导出</a>
 	<a href="javascript:void(0)"
-	onclick="clearText()" id="btn-cancel" icon="icon-cancel" class='easyui-linkbutton'>清空</a><br>
+	onclick="clearText()" id="btn-cancel" icon="icon-cancel" class='easyui-linkbutton'>清空</a>
+	<a href="javascript:void(0)" onclick="updatePrice()" class='easyui-linkbutton'>更新价格</a><br><br>
 	<br>
 	<a href="stockUpdateException" id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a>
 	
@@ -183,7 +203,7 @@
   		<td>updateTime</td>
   		<td>当前时间差</td>
   	</tr>
-  	<c:forEach items="${redList}" var="reddata">
+	<c:forEach items="${redList}" var="reddata">
 	  	<tr bgcolor="Salmon">
 	  		<td>${reddata.supplierId}</td>
 	  		<td>${reddata.supplierName}</td>

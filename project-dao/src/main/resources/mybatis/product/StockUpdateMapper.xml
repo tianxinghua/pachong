@@ -5,18 +5,32 @@
 	<resultMap id="suMap" type="iog_stockUpdate">
         <result column="SUPPLIER_ID" property="supplierId" />
         <result column="UPDATE_TIME" property="updateTime" />
+        <result column="ERRORNUM" property="errorNum" />
+        <result column="RIGHTNUM" property="rightNum" />
 	</resultMap>
 		
-    <update id="updateStockTime" parameterType="iog_stockUpdate" >
+	<insert id="saveStockUpdateDTO" parameterType="iog_stockUpdate">
+		insert into UPDATE_STOCK (SUPPLIER_ID,UPDATE_TIME,ERRORNUM,RIGHTNUM)
+		values (#{supplierId},#{updateTime},#{errorNum},#{rightNum})
+	
+	</insert>
+
+    <update id="updateStockStatus" parameterType="iog_stockUpdate" >
           update UPDATE_STOCK
           <set>
               UPDATE_TIME = #{updateTime}
+              <if test="errorNum!=null">
+              	,ERRORNUM = #{errorNum},
+              </if>
+              <if test="rightNum!=null">
+              	RIGHTNUM = #{rightNum}
+              </if>
           </set>
           where  SUPPLIER_ID = #{supplierId}
     </update>
     
     <select id="getAllData" resultMap="suMap">
-    	select SUPPLIER_ID,UPDATE_TIME 
+    	select SUPPLIER_ID,UPDATE_TIME,ERRORNUM,RIGHTNUM
     	from UPDATE_STOCK
     </select>
 </mapper>
