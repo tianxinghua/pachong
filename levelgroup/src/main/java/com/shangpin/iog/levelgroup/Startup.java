@@ -32,7 +32,7 @@ public class Startup {
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("levelgroup");
         FetchProduct2 fetchProduct2 =(FetchProduct2)factory.getBean("levelgroup2");
 //        fetchProduct.fetchProductAndSave("http://www.thelevelgroup-ftp.com/uploads/TLG_GooglePLA_lncc_GB.txt");
-        fetchProduct.fetchProductAndSave("TLG_GooglePLA_lncc_IT.txt");
+        //fetchProduct.fetchProductAndSave("TLG_GooglePLA_lncc_IT.txt");
         fetchProduct2.fetchProductAndSave();
 //        fetchProduct.fetchProductAndSave("http://222.186.51.135:8080/trident/public/TLG_GooglePLA_lncc_GB.txt");
 
