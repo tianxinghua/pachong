@@ -8,8 +8,7 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.onsite.base.common.HTTPClient;
-import com.shangpin.iog.onsite.base.constance.Constant;
+
 import com.shangpin.iog.railSoAtelier.dto.Attribute;
 import com.shangpin.iog.railSoAtelier.dto.Attributes;
 import com.shangpin.iog.railSoAtelier.dto.Category;

@@ -9,7 +9,7 @@ dependencies {
             "org.jdom:jdom:2.0.2",
             "dom4j:dom4j:1.6.1",
             project(':project-common'),
-            project(':onsite'),
+//            project(':onsite'),
            
             project(':iog-common-product')
     )
