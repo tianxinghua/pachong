@@ -12,18 +12,26 @@ import com.shangpin.iog.tessabit.stock.common.MyFtpClient;
 import com.shangpin.iog.tessabit.stock.common.StringUtil;
 import com.shangpin.iog.tessabit.stock.dto.Item;
 import com.shangpin.iog.tessabit.stock.dto.Items;
+import com.shangpin.iog.tessabit.stock.dto.Picture;
 import com.shangpin.iog.tessabit.stock.dto.Product;
 import com.shangpin.iog.tessabit.stock.dto.Products;
+import com.shangpin.iog.tessabit.stock.dto.Riferimenti;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import sun.net.ftp.FtpClient;
 
 import javax.xml.bind.JAXBException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * Created by wangyuzhi on 2015/9/10.
@@ -42,14 +50,18 @@ public class FetchProduct {
     public void fetchProductAndSave() {
         //拉取FTP文件
         logger.info("downLoad ftpFile begin......");
-        new MyFtpClient().downLoad();
+        //
+        new MyFtpClient().downLoad(Constant.PICTURE_FILE);
+        new MyFtpClient().downLoad(Constant.SERVER_FILE);
         logger.info("downLoad ftpFile end......");
-
         //入库处理
         logger.info("save products into DB begin......");
         Products products = null;
+        Map<String,String> pictureMap = null;
         try {
-            // 将FTP拉取到的xml文件转换成模型数据
+        	//将FTP拉取到的图片xml文件转换成模型数据
+        	pictureMap = getPictureMap();
+            // 将FTP拉取到的数据xml文件转换成模型数据
             products = ObjectXMLUtil.xml2Obj(Products.class, new File(Constant.LOCAL_FILE));
             System.out.println(products.getProducts().size());
         } catch(  JAXBException e  )  {
@@ -58,15 +70,34 @@ public class FetchProduct {
             e.printStackTrace();
         }
         //映射数据并保存
-        messMappingAndSave(products);
+        messMappingAndSave(products,pictureMap);
         logger.info("save products into DB end......");
 
     }
-
+    private static Map<String,String> getPictureMap() {
+    	 Map<String,String> map = new HashMap<String,String>();
+			 try {
+				
+				 Picture p= ObjectXMLUtil.xml2Obj(Picture.class, Constant.LOCAL_PICTURE);
+				 List<Riferimenti> list = p.getList();
+				 for(Riferimenti r:list){
+					 if(map.containsKey(r.getRF_RECORD_ID())){
+						 map.put(r.getRF_RECORD_ID(),map.get(r.getRF_RECORD_ID())+","+r.getRIFERIMENTO());
+					 }else{
+						 map.put(r.getRF_RECORD_ID(), r.getRIFERIMENTO());
+					 }
+				 }
+				 System.out.println("s");
+			} catch (JAXBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			 return map;
+		}
     /**
      * 映射数据并保存
      */
-    private void messMappingAndSave(Products products) {
+    private void messMappingAndSave(Products products,Map<String,String> pictureMap) {
         List<Product> productList = products.getProducts();
         int i =0,j=0;
         for(Product product:productList){
@@ -104,29 +135,6 @@ public class FetchProduct {
                     sku.setBarcode(item.getBarcode());
                     sku.setProductCode(product.getProducer_id());
                     productFetchService.saveSKU(sku);
-
-                    if(StringUtils.isNotBlank(item.getPicture())){
-                        String[] picArray = item.getPicture().split("\\|");
-
-//                            List<String> picUrlList = Arrays.asList(picArray);
-                        for(String picUrl :picArray){
-                            ProductPictureDTO dto  = new ProductPictureDTO();
-                            dto.setPicUrl(picUrl);
-                            dto.setSupplierId(Constant.SUPPLIER_ID);
-                            dto.setId(UUIDGenerator.getUUID());
-                            dto.setSkuId(item.getItem_id());
-                            try {
-//                                    productFetchService.savePicture(dto);
-                                productFetchService.savePictureForMongo(dto);
-                            } catch (ServiceException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }else{
-                        i++;
-                        loggerError.error("无图片的sku=" +item.getItem_id());
-                    }
-
                 } catch (ServiceException e) {
                     try {
                         if(e.getMessage().equals("数据插入失败键重复")){
@@ -155,6 +163,25 @@ public class FetchProduct {
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
                 e.printStackTrace();
+            }
+            if(pictureMap!=null){
+                String proId = product.getProductId();
+                if(pictureMap.containsKey(proId)&&pictureMap.get(proId)!=null){
+                	String [] arr = pictureMap.get(proId).split(",");
+                	for(String picUrl :arr){
+                        ProductPictureDTO dto  = new ProductPictureDTO();
+                        dto.setPicUrl(picUrl);
+                        dto.setSupplierId(Constant.SUPPLIER_ID);
+                        dto.setId(UUIDGenerator.getUUID());
+                        dto.setSpuId(proId);
+                        try {
+                            productFetchService.savePictureForMongo(dto);
+                        } catch (ServiceException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }else{
             }
         }
         loggerError.error("库存为0的总数是=" + j+ "--");
