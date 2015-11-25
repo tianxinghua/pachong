@@ -190,7 +190,7 @@
 	icon="icon-search" class='easyui-linkbutton'>价格变化导出</a>
 	<a href="javascript:void(0)"
 	onclick="clearText()" id="btn-cancel" icon="icon-cancel" class='easyui-linkbutton'>清空</a>
-	<a href="javascript:void(0)" onclick="updatePrice()" class='easyui-linkbutton'>更新价格</a><br><br>
+	<a href="javascript:void(0)" onclick="updatePrice()" id="btn-edit" icon="icon-edit" class='easyui-linkbutton'>更新价格</a><br><br>
 	<br>
 	<a href="stockUpdateException" id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a>
 	

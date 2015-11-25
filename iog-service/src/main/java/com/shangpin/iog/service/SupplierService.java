@@ -11,7 +11,7 @@ import java.util.List;
 public interface SupplierService {
     /**
      * 根据供货商状态 获取供货商信息
-     * @param state 状态
+     * @param state 状态1可用，0不可用,null查询所有
      * @return  供货商列表
      * @throws ServiceException
      */
