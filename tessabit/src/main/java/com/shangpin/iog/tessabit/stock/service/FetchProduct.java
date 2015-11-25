@@ -51,8 +51,8 @@ public class FetchProduct {
         //拉取FTP文件
         logger.info("downLoad ftpFile begin......");
         //
-//        new MyFtpClient().downLoad("0",Constant.PICTURE_FILE);
-//        new MyFtpClient().downLoad("1",Constant.SERVER_FILE);
+        new MyFtpClient().downLoad("0",Constant.PICTURE_FILE);
+        new MyFtpClient().downLoad("1",Constant.SERVER_FILE);
         logger.info("downLoad ftpFile end......");
         //入库处理
         logger.info("save products into DB begin......");
