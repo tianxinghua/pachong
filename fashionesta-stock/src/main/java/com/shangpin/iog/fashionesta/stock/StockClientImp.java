@@ -39,8 +39,8 @@ public class StockClientImp extends AbsUpdateProductStock {
 		url = bdl.getString("url");
 	}
 
-	@Autowired
-	DownloadAndReadCSV csvUtil;
+
+
 
 	@Override
 	public Map<String, String> grabStock(Collection<String> skuNo)
@@ -48,7 +48,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 
 		Map<String, String> skustock = new HashMap<>(skuNo.size());
 		try {
-			List<Product> list = csvUtil.readLocalCSV();
+			List<Product> list = DownloadAndReadCSV.readLocalCSV();
 			Map<String,String> supplierStockMap = new HashMap<>();
 			for (Product product : list) {
                 List<Item> items = product.getItems();
@@ -82,7 +82,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 	public static void main(String[] args) throws Exception {
 	  	//加载spring
         loadSpringContext();
-        StockClientImp stockImp =(StockClientImp)factory.getBean("forzieristock");
+        StockClientImp stockImp =(StockClientImp)factory.getBean("fashionestastock");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		logger.info("更新数据库开始");
 		try {

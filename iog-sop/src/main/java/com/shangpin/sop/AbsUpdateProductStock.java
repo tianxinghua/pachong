@@ -319,18 +319,21 @@ public abstract class AbsUpdateProductStock {
         }
 
 		//排除无用的库存
-		for(SopSkuInventory skuIce:skuArray){
-	        if(iceStock.containsKey(skuIce.getSkuNo())){
-				logger.warn("skuNo ：--------"+skuIce.getSkuNo()+ " supplierIdsku :" + skuIce.getSupplierSkuNo()  +" supplier quantity =" + iceStock.get(skuIce.getSkuNo()) + " shangpin quantity = "+ skuIce.getInventoryQuantity() );
-						loggerInfo.info("skuNo ：--------" + skuIce.getSkuNo() + " supplierIdsku :" + skuIce.getSupplierSkuNo() + " supplier quantity =" + iceStock.get(skuIce.getSkuNo()) + " shangpin quantity = " + skuIce.getInventoryQuantity());
+		if(null!=skuArray){
+			for(SopSkuInventory skuIce:skuArray){
+				if(iceStock.containsKey(skuIce.getSkuNo())){
+					logger.warn("skuNo ：--------"+skuIce.getSkuNo()+ " supplierIdsku :" + skuIce.getSupplierSkuNo()  +" supplier quantity =" + iceStock.get(skuIce.getSkuNo()) + " shangpin quantity = "+ skuIce.getInventoryQuantity() );
+					loggerInfo.info("skuNo ：--------" + skuIce.getSkuNo() + " supplierIdsku :" + skuIce.getSupplierSkuNo() + " supplier quantity =" + iceStock.get(skuIce.getSkuNo()) + " shangpin quantity = " + skuIce.getInventoryQuantity());
 //				System.out.println("skuNo ：--------"+skuIce.SkuNo +"supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = "+ skuIce.InventoryQuantity);
-	            if(!iceStock.get(skuIce.getSkuNo()).toString().equals(skuIce.getInventoryQuantity())){
-	                toUpdateIce.put(skuIce.getSkuNo(), iceStock.get(skuIce.getSkuNo()));
+					if(!iceStock.get(skuIce.getSkuNo()).toString().equals(skuIce.getInventoryQuantity())){
+						toUpdateIce.put(skuIce.getSkuNo(), iceStock.get(skuIce.getSkuNo()));
+					}
+				} else {
+					loggerError.error("  skuNo ：--------" + skuIce.getSkuNo() + " supplierIdsku :" + skuIce.getSupplierSkuNo() + " supplier quantity =" + iceStock.get(skuIce.getSkuNo()) +" not handle " );
 				}
-			} else {
-				loggerError.error("  skuNo ：--------" + skuIce.getSkuNo() + " supplierIdsku :" + skuIce.getSupplierSkuNo() + " supplier quantity =" + iceStock.get(skuIce.getSkuNo()) +" not handle " );
 			}
 		}
+
     }
 	/**
 	 * 拉取供应商库存，并返回ice中对应的sku的库存

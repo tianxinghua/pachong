@@ -122,7 +122,11 @@ public class StockClientImp extends AbsUpdateProductStock {
         giltStockImp.setUseThread(true);giltStockImp.setSkuCount4Thread(100);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("gilt更新库存开始");
-        giltStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        try {
+            giltStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         logger.info("gilt更新库存结束");
 
         System.exit(0);

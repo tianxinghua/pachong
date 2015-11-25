@@ -40,8 +40,8 @@ public class StockClientImp extends AbsUpdateProductStock {
 		picurl = bdl.getString("picurl");
 	}
 
-	@Autowired
-	DownloadAndReadCSV csvUtil;
+
+
 
 	@Override
 	public Map<String, String> grabStock(Collection<String> skuNo)
@@ -50,7 +50,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 		Map<String,CsvDTO> csvSkuMaps = new HashMap<String,CsvDTO>();
 		CsvDTO dto = null;
 		Map<String, String> skustock = new HashMap<>(skuNo.size());
-		List<CsvDTO> list = csvUtil.readLocalCSV(CsvDTO.class, "\\|");
+		List<CsvDTO> list = DownloadAndReadCSV.readLocalCSV(CsvDTO.class, "\\|");
 		for (CsvDTO csvDTO : list) {
 			key = csvDTO.getVAR_ID()+"-"+csvDTO.getTG();
 			//添加pic
