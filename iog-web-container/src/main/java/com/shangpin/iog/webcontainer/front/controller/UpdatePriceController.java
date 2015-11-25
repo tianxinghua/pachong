@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.shangpin.iog.webcontainer.front.controller;
 
 import java.io.IOException;

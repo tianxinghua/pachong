@@ -60,7 +60,8 @@ public class ExceptionShowController {
     	List<StockUpdateDTO> all = updateStockService.getAll();
     	List<StockUpdateDTO> redList = new ArrayList<StockUpdateDTO>();
     	List<StockUpdateDTO> greenList = new ArrayList<StockUpdateDTO>();
-    	List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
+//    	List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
+    	List<SupplierDTO> supplierDTOList = supplierService.findByState(null);
     	Map<String, String> nameMap = new HashMap<String, String>();
     	for (SupplierDTO supplierDTO : supplierDTOList) {
 			nameMap.put(supplierDTO.getSupplierId(), supplierDTO.getSupplierName());
