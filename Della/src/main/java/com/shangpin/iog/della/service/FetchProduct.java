@@ -66,6 +66,25 @@ public class FetchProduct {
 				sku.setStock(item.getQuantity());
 				try {
 					productFetchService.saveSKU(sku);
+					
+					//保存图片
+					if(StringUtils.isNotBlank(item.getPhoto_links())){
+						String[] photos =  item.getPhoto_links().replaceAll("\"", "").split("\\|");
+						for(String photo:photos){
+							ProductPictureDTO pictureDTO = new ProductPictureDTO();
+							pictureDTO.setId(UUIDGenerator.getUUID());
+							pictureDTO.setSupplierId(supplierId);
+							pictureDTO.setSkuId(sku.getSkuId());
+							pictureDTO.setSpuId(sku.getSpuId());
+							pictureDTO.setPicUrl(photo);
+							try{
+								productFetchService.savePictureForMongo(pictureDTO);
+							}catch(Exception ex){
+								ex.printStackTrace();
+							}
+						}
+					}
+					
 				} catch (ServiceException e) {
 					if (e.getMessage().equals("数据插入失败键重复")) {
 						// 更新价格和库存
@@ -78,23 +97,6 @@ public class FetchProduct {
 					}
 				}
 				
-				//保存图片
-				if(StringUtils.isNotBlank(item.getPhoto_links())){
-					String[] photos =  item.getPhoto_links().replaceAll("\"", "").split("\\|");
-					for(String photo:photos){
-						ProductPictureDTO pictureDTO = new ProductPictureDTO();
-						pictureDTO.setId(UUIDGenerator.getUUID());
-						pictureDTO.setSupplierId(supplierId);
-						pictureDTO.setSkuId(sku.getSkuId());
-						pictureDTO.setSpuId(sku.getSpuId());
-						pictureDTO.setPicUrl(photo);
-						try{
-							productFetchService.savePictureForMongo(pictureDTO);
-						}catch(Exception ex){
-							ex.printStackTrace();
-						}
-					}
-				}
 				
 				if(!spuItems.containsKey(item.getSupplier_item_code())){
 					spuItems.put(item.getSupplier_item_code(),item);
