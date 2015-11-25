@@ -76,6 +76,18 @@ public class FetchProduct {
 				skuDTO.setSupplierPrice(item.getSupplierPrice().replace("^", ""));
 				try {
 					productFetchService.saveSKU(skuDTO);
+					//保存图片
+					ProductPictureDTO picture = new ProductPictureDTO();
+					picture.setSupplierId(supplierId);
+					picture.setId(UUIDGenerator.getUUID());
+					picture.setSkuId(item.getSkuId().replace("^", ""));
+					picture.setPicUrl(item.getImg().replace("^", ""));
+					try {
+						productFetchService.savePictureForMongo(picture);
+					} catch (ServiceException e) {
+						loggerError.info("图片存储失败");
+						e.printStackTrace();
+					}
 				} catch (ServiceException e) {
 					if (e.getMessage().equals("数据插入失败键重复")) {
 						try {
@@ -85,17 +97,6 @@ public class FetchProduct {
 							e1.printStackTrace();
 						}
 					}
-				}
-				ProductPictureDTO picture = new ProductPictureDTO();
-				picture.setSupplierId(supplierId);
-				picture.setId(UUIDGenerator.getUUID());
-				picture.setSkuId(item.getSkuId().replace("^", ""));
-				picture.setPicUrl(item.getImg().replace("^", ""));
-				try {
-					productFetchService.savePictureForMongo(picture);
-				} catch (ServiceException e) {
-					loggerError.info("图片存储失败");
-					e.printStackTrace();
 				}
 			}
 		}
