@@ -63,7 +63,8 @@ public class FetchProduct {
         for(Product product:list) {
             ///////////////////////////////保存SKU//////////////////////////////////
             SkuDTO sku = new SkuDTO();
-            String spuId = product.getVARIANT_SKU().substring(0, 10);
+//            String spuId = product.getVARIANT_SKU().substring(0, 10);
+            String spuId = product.getMASTER_SKU();
             try {
                 sku.setId(UUIDGenerator.getUUID());
                 sku.setSupplierId(supplierId);
@@ -81,6 +82,23 @@ public class FetchProduct {
                 sku.setBarcode("");
                 productFetchService.saveSKU(sku);
 
+                ///////////////////////////////////保存图片///////////////////////////////////
+//            for(int i = 0;i<2;i++){
+                ProductPictureDTO dto  = new ProductPictureDTO();
+                String picUrl = product.getIMAGEURL();
+                dto.setPicUrl(picUrl);
+                dto.setSupplierId(supplierId);
+                dto.setId(UUIDGenerator.getUUID());
+                dto.setSkuId(product.getVARIANT_SKU());
+                try {
+                    productFetchService.savePictureForMongo(dto);
+                } catch (ServiceException e) {
+                    System.out.println("savePictureForMongo异常");
+                    e.printStackTrace();
+                }
+//            }
+                ///////////////////////////////////保存SPU/////////////////////////////////
+
             } catch (ServiceException e) {
                 try {
                     if (e.getMessage().equals("数据插入失败键重复")) {
@@ -97,26 +115,11 @@ public class FetchProduct {
                 }
             }
 
-            ///////////////////////////////////保存图片///////////////////////////////////
-            for(int i = 0;i<2;i++){
-                ProductPictureDTO dto  = new ProductPictureDTO();
-                String picUrl = product.getBUYURL();
-                if (i == 1) picUrl = product.getIMAGEURL();
-                dto.setPicUrl(picUrl);
-                dto.setSupplierId(supplierId);
-                dto.setId(UUIDGenerator.getUUID());
-                dto.setSkuId(product.getVARIANT_SKU());
-                try {
-                    productFetchService.savePictureForMongo(dto);
-                } catch (ServiceException e) {
-                    System.out.println("savePictureForMongo异常");
-                    e.printStackTrace();
-                }
-            }
-            ///////////////////////////////////保存SPU/////////////////////////////////
+
 
             SpuDTO spu = new SpuDTO();
             try {
+
                 spu.setId(UUIDGenerator.getUUID());
                 spu.setSupplierId(supplierId);
                 spu.setSpuId(spuId);
