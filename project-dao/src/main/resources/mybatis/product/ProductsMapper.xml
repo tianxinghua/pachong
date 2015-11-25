@@ -204,6 +204,36 @@
 
 	</select>
 	
+	<select id="findProductOrderDTOList" parameterType="java.lang.String"  resultMap="ProductsResultMap">
+		select
+          sku.SKU_ID as sku_id,
+          sku.SPU_ID as spu_id;
+          sku.SUPPLIER_ID  as supplier_id,
+
+          sku.MARKET_PRICE  as market_price,
+          sku.SALE_PRICE  as  sale_price,
+          sku.SUPPLIER_PRICE as supplier_price,
+          
+          sku.STOCK as stock ,
+          sku.PRODUCT_SIZE as size,
+          
+          sku.NEW_MARKET_PRICE as newMarketPrice,
+          sku.NEW_SALE_PRICE as newSalePrice,
+          sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
+          spu.BRAND_NAME as brand_name,
+          spu.CATEGORY_NAME as category_name,
+		
+		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+        <where>
+          <if test="null!=supplierId">
+            and   sku.SUPPLIER_ID = #{supplierId}
+          </if>
+
+        </where>
+        order by supplier_id,brand_name, category_name
+
+
+	</select>
 
 
 	

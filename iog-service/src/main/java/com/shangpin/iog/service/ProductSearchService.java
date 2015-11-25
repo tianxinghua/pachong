@@ -67,4 +67,11 @@ public interface ProductSearchService {
     
     public StringBuffer exportDiffProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
     
+    /**
+     * 获取产品信息,for order
+     * @param supplier  供货商
+     * @return List<ProductDTO> (若为空，返回所有)
+     */
+    public List<ProductDTO> findProductForOrderList(String supplierId) throws ServiceException;
+    
 }
