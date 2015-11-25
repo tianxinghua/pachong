@@ -7,6 +7,7 @@
         <result column="UPDATE_TIME" property="updateTime" />
         <result column="ERRORNUM" property="errorNum" />
         <result column="RIGHTNUM" property="rightNum" />
+        <result column="TOTALNUM" property="totalNum" />
 	</resultMap>
 		
 	<insert id="saveStockUpdateDTO" parameterType="iog_stockUpdate">
@@ -23,14 +24,17 @@
               	,ERRORNUM = #{errorNum},
               </if>
               <if test="rightNum!=null">
-              	RIGHTNUM = #{rightNum}
+              	RIGHTNUM = #{rightNum},
+              </if>
+              <if test="totalNum!=null">
+              	TOTALNUM = #{totalNum}
               </if>
           </set>
           where  SUPPLIER_ID = #{supplierId}
     </update>
     
     <select id="getAllData" resultMap="suMap">
-    	select SUPPLIER_ID,UPDATE_TIME,ERRORNUM,RIGHTNUM
+    	select SUPPLIER_ID,UPDATE_TIME,ERRORNUM,RIGHTNUM,TOTALNUM
     	from UPDATE_STOCK
     </select>
     

@@ -13,6 +13,7 @@ public class StockUpdateDTO implements Serializable{
 	private String dif;
 	private String errorNum;
 	private String rightNum;
+	private String totalNum;
 	public String getSupplierId() {
 		return supplierId;
 	}
@@ -48,6 +49,12 @@ public class StockUpdateDTO implements Serializable{
 	}
 	public void setRightNum(String rightNum) {
 		this.rightNum = rightNum;
+	}
+	public String getTotalNum() {
+		return totalNum;
+	}
+	public void setTotalNum(String totalNum) {
+		this.totalNum = totalNum;
 	}
 	
 }

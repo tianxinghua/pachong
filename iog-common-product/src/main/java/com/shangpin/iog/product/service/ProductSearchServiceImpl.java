@@ -784,4 +784,11 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		return buffer;
 	}
 
+	@Override
+	public List<ProductDTO> findProductForOrderList(String supplierId)
+			throws ServiceException {
+		List<ProductDTO> productOrderDTOList = productDAO.findProductOrderDTOList(supplierId);
+		return productOrderDTOList;
+	}
+
 }
