@@ -33,7 +33,7 @@ public class MyTxtUtil {
             supplierId = bdl.getString("supplierId");
     }
     /**
-     * httpÏÂÔØtxtcsvÎÄ¼þµ½±¾µØÂ·¾¶
+     * httpï¿½ï¿½ï¿½ï¿½txtcsvï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½
      * @throws MalformedURLException
      */
     public static void txtDownload() throws MalformedURLException {
@@ -62,14 +62,14 @@ public class MyTxtUtil {
     }
 
     /**
-     * httpÏÂÔØtxtÎÄ¼þµ½±¾µØÂ·¾¶
+     * httpï¿½ï¿½ï¿½ï¿½txtï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½
      * @throws MalformedURLException
      */
     public static List<Product> readTXTFile() throws Exception {
-        //½âÎötxtÎÄ¼þ
+        //ï¿½ï¿½ï¿½ï¿½txtï¿½Ä¼ï¿½
         CsvReader cr = new CsvReader(new FileReader(localPath));
-        System.out.println("´´½¨cr¶ÔÏó³É¹¦");
-        //µÃµ½ÁÐÃû¼¯ºÏ
+        System.out.println("ï¿½ï¿½ï¿½ï¿½crï¿½ï¿½ï¿½ï¿½É¹ï¿½");
+        //ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         cr.readRecord();
         String rowString = cr.getRawRecord();
         List<Product> dtoList = new ArrayList<Product>();
@@ -84,7 +84,7 @@ public class MyTxtUtil {
             Field[] to = product.getClass().getDeclaredFields();
             //System.out.println(to.length + "--2--");
             for (int i = 0; i < to.length; i++){
-                String name = to[i].getName(); // »ñÈ¡ÊôÐÔµÄÃû×Ö
+                String name = to[i].getName(); // ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½ï¿½
                 name = name.substring(0, 1).toUpperCase() + name.substring(1);
                 Method m = product.getClass().getMethod("set"+name,String.class);
                 m.invoke(product,from[i]);
@@ -103,24 +103,23 @@ public class MyTxtUtil {
 
         List<Product> list = null;
         try {
-            MyTxtUtil.txtDownload();
+//            MyTxtUtil.txtDownload();
             list = MyTxtUtil.readTXTFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println(list.size());
         for (Product p:list){
-            System.out.println(p.getGENDER());
+            if("040827928307789".equals(p.getVARIANT_SKU())){
+                System.out.println("spu name = "+ p.getNAME());
+                System.out.println(p.getGENDER());
+                System.out.println(p.getADVERTISERCATEGORY());
+                System.out.println(p.getBUYURL());
+                System.out.println(p.getMASTER_SKU());
+            }
+
         }
-        for (Product p:list){
-            System.out.println(p.getADVERTISERCATEGORY());
-        }
-        for (Product p:list){
-            System.out.println(p.getBUYURL());
-        }
-        for (Product p:list){
-            System.out.println(p.getMASTER_SKU());
-        }
+
 
 /*        String json = HttpUtil45.get(httpurl, new OutTimeConfig(1000 * 60 * 10, 10 * 1000 * 60, 10 * 1000 * 60), null);
         System.out.println(json);*/
