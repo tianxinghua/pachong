@@ -84,7 +84,7 @@ public class StringUtil {
      *获取单品数量
      */
     public static Integer getStockById(String itemId,String file){
-        Integer qty = null;
+        Integer qty = 0;
         if (file.contains(itemId)){
             String itemStr = file.substring(file.indexOf(itemId),file.indexOf(itemId)+Constant.ITEM_LENTH);
             if(itemStr.contains("</stock>")){
@@ -92,7 +92,7 @@ public class StringUtil {
                     qty = Integer.parseInt(itemStr.substring(itemStr.indexOf("<stock>")+7,itemStr.indexOf("</stock>")));
                 }catch (NumberFormatException e){
                     loggerError.error("skuId: " + itemId + " 库存数量转化异常");
-                    return null;
+                    return 0;
                 }
             }
         }

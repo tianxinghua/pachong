@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 /**
  * Created by wangyuzhi on 2015/11/13.
  */
-@Component("biancabianca")
+@Component("levelgroup2")
 public class FetchProduct2 {
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static Logger logger = Logger.getLogger("info");

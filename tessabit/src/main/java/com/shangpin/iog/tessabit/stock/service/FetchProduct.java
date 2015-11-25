@@ -32,6 +32,8 @@ import java.util.List;
 public class FetchProduct {
 
     final Logger logger = Logger.getLogger("info");
+
+    private static Logger loggerError = Logger.getLogger("error");
     @Autowired
     ProductFetchService productFetchService;
     /**
@@ -66,6 +68,7 @@ public class FetchProduct {
      */
     private void messMappingAndSave(Products products) {
         List<Product> productList = products.getProducts();
+        int i =0,j=0;
         for(Product product:productList){
             SpuDTO spu = new SpuDTO();
 
@@ -77,6 +80,7 @@ public class FetchProduct {
             List<Item> itemList = items.getItems();
             if(null==itemList) continue;
             String skuId = "";
+
             for(Item item:itemList){
                 SkuDTO sku  = new SkuDTO();
                 try {
@@ -92,6 +96,10 @@ public class FetchProduct {
                     sku.setSupplierPrice(item.getSupply_price());
                     sku.setColor(item.getColor());
                     sku.setProductDescription(item.getDescription());
+                    if("0".equals(item.getStock())){
+                        j++;
+                        loggerError.error("库存为0的sku=" + skuId);
+                    }
                     sku.setStock(item.getStock());
                     sku.setBarcode(item.getBarcode());
                     sku.setProductCode(product.getProducer_id());
@@ -114,6 +122,9 @@ public class FetchProduct {
                                 e.printStackTrace();
                             }
                         }
+                    }else{
+                        i++;
+                        loggerError.error("无图片的sku=" +item.getItem_id());
                     }
 
                 } catch (ServiceException e) {
@@ -146,6 +157,8 @@ public class FetchProduct {
                 e.printStackTrace();
             }
         }
+        loggerError.error("库存为0的总数是=" + j+ "--");
+        loggerError.error("无图片的总数是---" +i + "----");
     }
 
     /**
