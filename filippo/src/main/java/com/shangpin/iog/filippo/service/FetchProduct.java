@@ -120,19 +120,8 @@ public class FetchProduct {
 				sku.setProductCode(skuEntry.getValue().getART().replace("\"", ""));
 				try {
 					productFetchService.saveSKU(sku);
-				} catch (ServiceException e1) {
-					try {
-						if (e1.getMessage().equals("数据插入失败键重复")) {
-							// 更新价格和库存
-							productFetchService.updatePriceAndStock(sku);
-						}
-					} catch (ServiceException e2) {
-						e2.printStackTrace();
-					}
-				}
-				//确定图片
-				//if (!picMaps.containsKey(skuEntry.getValue().getVAR_ID().replace("\"", ""))) {
-				//	picMaps.put(skuEntry.getValue().getVAR_ID().replace("\"", ""), "");
+					
+					//保存图片
 					ProductPictureDTO picture = new ProductPictureDTO();
 					picture.setSupplierId(supplierId);
 					picture.setId(UUIDGenerator.getUUID());
@@ -144,7 +133,18 @@ public class FetchProduct {
 					} catch (ServiceException e) {
 						e.printStackTrace();
 					}
-			//	}
+					
+					
+				} catch (ServiceException e1) {
+					try {
+						if (e1.getMessage().equals("数据插入失败键重复")) {
+							// 更新价格和库存
+							productFetchService.updatePriceAndStock(sku);
+						}
+					} catch (ServiceException e2) {
+						e2.printStackTrace();
+					}
+				}
 			}
 			
 			logger.info("抓取结束");
