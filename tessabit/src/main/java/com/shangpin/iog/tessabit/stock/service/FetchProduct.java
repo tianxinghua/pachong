@@ -173,7 +173,7 @@ public class FetchProduct {
                 	String [] arr = pictureMap.get(proId).split(",");
                 	for(String picUrl :arr){
                         ProductPictureDTO dto  = new ProductPictureDTO();
-                        dto.setPicUrl(picUrl);
+                        dto.setPicUrl("http://partners.tessabit.biz/partner/"+picUrl);
                         dto.setSupplierId(Constant.SUPPLIER_ID);
                         dto.setId(UUIDGenerator.getUUID());
                         dto.setSpuId(proId);
