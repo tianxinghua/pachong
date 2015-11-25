@@ -64,7 +64,7 @@ public class FetchProduct {
             // 将FTP拉取到的数据xml文件转换成模型数据--delete from SKU where SUPPLIER_ID = '2015091701503';
         	//--delete from SPU where SUPPLIER_ID = '2015091701503';
         	
-            products = ObjectXMLUtil.xml2Obj(Products.class, new File("D://tessabit.xml"));
+            products = ObjectXMLUtil.xml2Obj(Products.class, new File(Constant.LOCAL_FILE));
             System.out.println(products.getProducts().size());
         } catch(  JAXBException e  )  {
             e.printStackTrace();
@@ -80,7 +80,7 @@ public class FetchProduct {
     	 Map<String,String> map = new HashMap<String,String>();
 			 try {
 				
-				 Picture p= ObjectXMLUtil.xml2Obj(Picture.class,new File("D://Riferimenti.xml"));
+				 Picture p= ObjectXMLUtil.xml2Obj(Picture.class,new File(Constant.LOCAL_PICTURE));
 				 List<Riferimenti> list = p.getList();
 				 for(Riferimenti r:list){
 					 if(map.containsKey(r.getRF_RECORD_ID())){
