@@ -78,7 +78,7 @@ public class FetchProduct {
     	 Map<String,String> map = new HashMap<String,String>();
 			 try {
 				
-				 Picture p= ObjectXMLUtil.xml2Obj(Picture.class, Constant.LOCAL_PICTURE);
+				 Picture p= ObjectXMLUtil.xml2Obj(Picture.class,new File(Constant.LOCAL_PICTURE));
 				 List<Riferimenti> list = p.getList();
 				 for(Riferimenti r:list){
 					 if(map.containsKey(r.getRF_RECORD_ID())){
@@ -89,6 +89,9 @@ public class FetchProduct {
 				 }
 				 System.out.println("s");
 			} catch (JAXBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
