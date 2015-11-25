@@ -18,6 +18,7 @@ import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 
 import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.dto.SkuRelationDTO;
+import com.shangpin.iog.dto.StockUpdateDTO;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.SkuRelationService;
 import com.shangpin.iog.service.UpdateStockService;
@@ -268,7 +269,12 @@ public abstract class AbsUpdateProductStock {
 	private void updateStockTime(String supplier){
 		try {
 			if(null!=updateStockService){
-				updateStockService.updateTime(supplier);
+//				updateStockService.updateTime(supplier);
+				StockUpdateDTO stockUpdateDTO = new StockUpdateDTO();
+				stockUpdateDTO.setSupplierId(supplier);
+				stockUpdateDTO.setUpdateTime(new Date());
+
+				updateStockService.saveOrUpdateDTO(stockUpdateDTO);
 			}
 		} catch (Exception e) {
 			loggerError.error("更新库存更新时间业务失败");
