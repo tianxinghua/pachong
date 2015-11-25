@@ -21,7 +21,8 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public List<SupplierDTO> findByState(String state) throws ServiceException {
-        return null;
+    	List<SupplierDTO> supplierDTOList =  supplierDAO.findByState(state);
+        return supplierDTOList;
     }
 
     @Override

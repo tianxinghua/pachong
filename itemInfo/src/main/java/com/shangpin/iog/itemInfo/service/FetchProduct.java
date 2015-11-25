@@ -258,6 +258,24 @@ public class FetchProduct {
 					//保存sku
 					productFetchService.saveSKU(sku);
 					
+					try{
+						if(spuId.length()>0 && skuId.length()>0 && picList.size()>0){
+							for(String url :picList){
+								ProductPictureDTO dto  = new ProductPictureDTO();
+		                        dto.setId(UUIDGenerator.getUUID());
+		                        dto.setSkuId(skuId);
+		                        dto.setSpuId(spuId);
+		                        dto.setPicUrl(url);
+		                        dto.setSupplierId(supplierId);
+		                        productFetchService.savePictureForMongo(dto);
+							}
+						}
+						
+					}catch(Exception e){
+						e.printStackTrace();
+					}
+					
+					
 				}catch(Exception e){
 					try {
                         if(null != e.getMessage() && e.getMessage().equals("数据插入失败键重复")){
@@ -279,22 +297,6 @@ public class FetchProduct {
 					e.printStackTrace();
 				}
 				
-				try{
-					if(spuId.length()>0 && skuId.length()>0 && picList.size()>0){
-						for(String url :picList){
-							ProductPictureDTO dto  = new ProductPictureDTO();
-	                        dto.setId(UUIDGenerator.getUUID());
-	                        dto.setSkuId(skuId);
-	                        dto.setSpuId(spuId);
-	                        dto.setPicUrl(url);
-	                        dto.setSupplierId(supplierId);
-	                        productFetchService.savePictureForMongo(dto);
-						}
-					}
-					
-				}catch(Exception e){
-					e.printStackTrace();
-				}
 				
 			}else if(element.getChildElements().hasNext()){
 				saveSpuDTO(element.getChildElements());

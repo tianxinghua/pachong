@@ -22,12 +22,14 @@ public class WS_Sito_P15 {
     private static String itemsFile;
     private static String availabilityFile;
     private static String imageFile;
+    private static String address;
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
-        itemsFile = bdl.getString("items");
-        availabilityFile = bdl.getString("availability");
-        imageFile = bdl.getString("image");
+            itemsFile = bdl.getString("items");
+            availabilityFile = bdl.getString("availability");
+            imageFile = bdl.getString("image");
+            address = bdl.getString("address");
     }
     /**
      * fetch product from atelier to local
@@ -65,7 +67,7 @@ public class WS_Sito_P15 {
         System.out.println("getAllAvailabilityMarketplace---------------------------------");
         String items = "";
         try{
-            items = HttpUtil45.post("http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx/GetAllAvailabilityMarketplace",
+            items = HttpUtil45.post(address+"/GetAllAvailabilityMarketplace",
                     new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
             // System.out.println(items);
         }catch (Exception e){
@@ -101,7 +103,7 @@ public class WS_Sito_P15 {
                 "  </soap12:Body>\n" +
                 "</soap12:Envelope>";
         HttpClient httpClient = new HttpClient();
-        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=GetAllAvailabilityMarketplace";
+        String uri=address+"?op=GetAllAvailabilityMarketplace";
         PostMethod postMethod = new PostMethod(uri);
         postMethod.setRequestHeader("Content-Type", "application/soap+xml; charset=utf-8");
 
@@ -142,7 +144,7 @@ public class WS_Sito_P15 {
         System.out.println("getAllItemsMarketplace---------------------------------");
         String items = "";
         try{
-            items = HttpUtil45.post("http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx/GetAllItemsMarketplace",
+            items = HttpUtil45.post(address+"/GetAllItemsMarketplace",
                     new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
            // System.out.println(items);
         }catch (Exception e){
@@ -178,7 +180,7 @@ public class WS_Sito_P15 {
         System.out.println("getAllImageMarketplace---------------------------------------");
         String allImages = "";
         try{
-            allImages = HttpUtil45.post("http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx/GetAllImageMarketplace",
+            allImages = HttpUtil45.post(address+"/GetAllImageMarketplace",
                     new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10, 1000 * 60 * 10));
         }catch (Exception e){
             System.out.println("getAllImageMarketplace-failed--------------------------------------");
@@ -209,7 +211,7 @@ public class WS_Sito_P15 {
         System.out.println("GetUpdateItemsMarketplace---------------------------------------");
         String allImages = "";
         try{
-            allImages = HttpUtil45.post("http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx/GetUpdateItemsMarketplace",
+            allImages = HttpUtil45.post(address+"/GetUpdateItemsMarketplace",
                     new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10, 1000 * 60 * 10));
         }catch (Exception e){
             System.out.println("GetUpdateItemsMarketplace-failed--------------------------------------");
@@ -245,7 +247,7 @@ public class WS_Sito_P15 {
                 "  </soap12:Body>\n" +
                 "</soap12:Envelope>";
         HttpClient httpClient = new HttpClient();
-        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=GetAllImageMarketplace";
+        String uri=address+"?op=GetAllImageMarketplace";
         PostMethod postMethod = new PostMethod(uri);
         postMethod.setRequestHeader("Content-Type", "application/soap+xml; charset=utf-8");
 
@@ -299,7 +301,7 @@ public class WS_Sito_P15 {
         System.out.println("soapRequestData=="+soapRequestData);
         String file = "E:\\newOrder.xml";
         HttpClient httpClient = new HttpClient();
-        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=NewOrder";
+        String uri=address+"?op=NewOrder";
         PostMethod postMethod = new PostMethod(uri);
         postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/NewOrder");
         postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
@@ -351,7 +353,7 @@ public class WS_Sito_P15 {
         System.out.println("soapRequestData=="+soapRequestData);
         String file = "E:\\OrderAmendment.xml";
         HttpClient httpClient = new HttpClient();
-        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=OrderAmendment";
+        String uri=address+"?op=OrderAmendment";
         PostMethod postMethod = new PostMethod(uri);
         postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/OrderAmendment");
         postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
@@ -401,7 +403,7 @@ public class WS_Sito_P15 {
         System.out.println("soapRequestData=="+soapRequestData);
         String file = "E:\\GetStatusOrder.xml";
         HttpClient httpClient = new HttpClient();
-        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=GetStatusOrder";
+        String uri=address+"?op=GetStatusOrder";
         PostMethod postMethod = new PostMethod(uri);
         postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/GetStatusOrder");
         postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
@@ -449,7 +451,7 @@ public class WS_Sito_P15 {
         System.out.println("soapRequestData=="+soapRequestData);
         String file = "E:\\SetStatusOrder.xml";
         HttpClient httpClient = new HttpClient();
-        String uri="http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx?op=SetStatusOrder";
+        String uri=address+"?op=SetStatusOrder";
         PostMethod postMethod = new PostMethod(uri);
         postMethod.setRequestHeader("SOAPAction", "http://tempuri.org/SetStatusOrder");
         postMethod.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
