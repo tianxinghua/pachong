@@ -43,7 +43,7 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
         while (iterator.hasNext()){
             itemId = iterator.next();
             stock = StringUtil.getStockById(itemId,localFile);
-            //logger.info("SkuId is " +itemId + ",stock is " +stock);
+            logger.info("SkuId is " +itemId + ",stock is " +stock);
             returnMap.put(itemId, stock);
         }
         end = System.currentTimeMillis();
@@ -64,7 +64,12 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
 
       SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("TESSABIT更新数据库开始");
-        impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
+        try {
+            impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
+        } catch (Exception e) {
+            loggerError.error("更新库存失败");
+            e.printStackTrace();
+        }
         logger.info("TESSABIT更新数据库结束");
         System.exit(0);
 

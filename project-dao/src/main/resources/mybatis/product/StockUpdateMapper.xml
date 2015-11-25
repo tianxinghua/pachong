@@ -33,4 +33,12 @@
     	select SUPPLIER_ID,UPDATE_TIME,ERRORNUM,RIGHTNUM
     	from UPDATE_STOCK
     </select>
+    
+     <update id="updateStockTime" parameterType="iog_stockUpdate" >
+          update UPDATE_STOCK
+          <set>
+              UPDATE_TIME = #{updateTime}
+          </set>
+          where  SUPPLIER_ID = #{supplierId}
+    </update>
 </mapper>

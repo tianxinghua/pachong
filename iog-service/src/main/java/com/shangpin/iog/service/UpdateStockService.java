@@ -12,6 +12,10 @@ import com.shangpin.iog.dto.StockUpdateDTO;
  */
 public interface UpdateStockService {
 	/**
+	 * 更新updateStock的时间
+	 */
+	public void updateTime(String supplierId) throws SQLException;
+	/**
 	 * 更新updateStock的状态
 	 */
 	public void updateStatus(StockUpdateDTO stockUpdateDTO) throws SQLException;

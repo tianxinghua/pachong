@@ -17,6 +17,14 @@ public class UpdateStockServiceImpl implements UpdateStockService{
 	StockUpdateMapper updateStockDao;
 	
 	@Override
+	public void updateTime(String supplierId) throws SQLException {
+		StockUpdateDTO suDTO = new StockUpdateDTO();
+		suDTO.setSupplierId(supplierId);
+		suDTO.setUpdateTime(new Date());
+		updateStockDao.updateStockTime(suDTO);
+	}
+	
+	@Override
 	public void updateStatus(StockUpdateDTO stockUpdateDTO) throws SQLException {
 		updateStockDao.updateStockStatus(stockUpdateDTO);
 	}

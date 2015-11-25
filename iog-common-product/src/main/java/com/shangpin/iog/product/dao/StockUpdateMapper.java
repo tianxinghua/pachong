@@ -16,4 +16,6 @@ public interface StockUpdateMapper extends IBaseDao<TokenDTO> {
 	
 	public void saveStockUpdateDTO(StockUpdateDTO stockUpdateDTO);
 	
+	public void updateStockTime(StockUpdateDTO stockUpdateDTO);
+	
 }
