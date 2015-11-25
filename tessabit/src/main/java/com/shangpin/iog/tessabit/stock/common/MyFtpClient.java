@@ -28,7 +28,7 @@ public class MyFtpClient {
     /**
      * Description: 下载文件
      */
-    public  void downLoad(String fileName) {
+    public  void downLoad(String flag,String fileName) {
         //创建FTPClient
         FTPClient ftp = new com.enterprisedt.net.ftp.FTPClient();
         // 连接服务器
@@ -46,8 +46,14 @@ public class MyFtpClient {
 
 //            ftp.chdir(Constant.REMOTE_PATH);
             // 获取 XML文件到本地
-            System.out.println("file =" + Constant.REMOTE_PATH + "/"+ Constant.SERVER_FILE+"=");
-            ftp.get(new StringUtil().getLocalFileName(), Constant.REMOTE_PATH + "/"  +fileName);
+            if("0".equals(flag)){
+            	 System.out.println("file =" + Constant.REMOTE_PATH + "/"+ fileName+"=");
+                 ftp.get(new StringUtil().getLocalPictureFileName(), Constant.REMOTE_PATH + "/"  +fileName);
+            }else if("1".equals(flag)){
+            	 System.out.println("file =" + Constant.REMOTE_PATH + "/"+ fileName+"=");
+                 ftp.get(new StringUtil().getLocalFileName(), Constant.REMOTE_PATH + "/"  +fileName);
+            }
+         
         } catch (IOException e) {
             System.out.println("IOException"+e.getMessage());
             e.printStackTrace();
