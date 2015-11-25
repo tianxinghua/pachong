@@ -1,17 +1,23 @@
 package com.shangpin.iog.tessabit.stock;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.tessabit.stock.common.MyFtpClient;
 import com.shangpin.iog.tessabit.stock.common.StringUtil;
 import com.shangpin.sop.AbsUpdateProductStock;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
  * Created by wangyuzhi on 2015/9/14.
  */
+@Component("tessabitStock")
 public class TessabitStockImp  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
@@ -53,6 +59,14 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
         return returnMap;
     }
 
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+
+    {
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
+
     public static void main(String[] args) throws Exception {
         String host = bundle.getString("HOST");
         String app_key = bundle.getString("APP_KEY");
@@ -60,12 +74,17 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
         if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
             logger.error("参数错误，无法执行更新库存");
         }
-        AbsUpdateProductStock impl = new TessabitStockImp();
+
+
+        loadSpringContext();
+        logger.info("----初始SPRING成功----");
+        //拉取数据
+       TessabitStockImp tessabitStockImp =(TessabitStockImp)factory.getBean("tessabitStock");
 
       SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("TESSABIT更新数据库开始");
         try {
-            impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
+            tessabitStockImp.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
         } catch (Exception e) {
             loggerError.error("更新库存失败");
             e.printStackTrace();
