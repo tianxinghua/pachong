@@ -88,7 +88,7 @@ public class UpdatePriceController {
             		response.getWriter().print("<script>alert('更新失败');</script>");
             	}
             	if (StringUtils.isNotBlank(sb.toString())) {
-            		response.getWriter().print(sb.toString()+"sku未找到");
+            		response.getWriter().write("<html><h2>"+sb.toString()+"sku未找到"+"</h2></html>");
             	}
             } catch (IOException e) {
             	e.printStackTrace();

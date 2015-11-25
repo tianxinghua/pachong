@@ -202,6 +202,9 @@
   		<td>supplierName</td>
   		<td>updateTime</td>
   		<td>当前时间差</td>
+  		<td>更新错误数</td>
+  		<td>更新正确数</td>
+  		<td>更新总数</td>
   	</tr>
 	<c:forEach items="${redList}" var="reddata">
 	  	<tr bgcolor="Salmon">
@@ -209,6 +212,9 @@
 	  		<td>${reddata.supplierName}</td>
 	  		<td><fmt:formatDate value="${reddata.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 	  		<td>${reddata.dif }</td>
+	  		<td>${reddata.errorNum}</td>
+	  		<td>${reddata.rightNum}</td>
+	  		<td>${reddata.totalNum}</td>
 	  	</tr>
   	</c:forEach>
   	<c:forEach items="${greenList}" var="gredata">
@@ -217,6 +223,9 @@
 	  		<td>${gredata.supplierName}</td>
 	  		<td><fmt:formatDate value="${gredata.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 	  		<td>${gredata.dif }</td>
+	  		<td>${gredata.errorNum}</td>
+	  		<td>${gredata.rightNum}</td>
+	  		<td>${gredata.totalNum}</td>
 	  	</tr>
   	</c:forEach>
   </table>
