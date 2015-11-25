@@ -10,7 +10,7 @@ public class StockUpdateDTO implements Serializable{
 	private String supplierId;
 	private String supplierName;
 	private Date updateTime ;
-	private String dif;
+	private String dif;//显示时间用
 	private String errorNum;
 	private String rightNum;
 	private String totalNum;

@@ -84,6 +84,7 @@ public class UpdatePriceController {
             	flag = 1;
             }
             try {
+            	response.setContentType("text/html;charset=utf-8");
             	if (flag==1) {
             		response.getWriter().print("<script>alert('更新失败');</script>");
             	}
