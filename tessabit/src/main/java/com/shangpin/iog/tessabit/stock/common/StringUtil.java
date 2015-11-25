@@ -67,7 +67,17 @@ public class StringUtil {
         }
         return Constant.LOCAL_FILE;
     }
-
+    public String getLocalPictureFileName(){
+        File file = new File(Constant.LOCAL_PICTURE);
+        if (!file.exists()){
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return Constant.LOCAL_PICTURE;
+    }
     /**
      *获取单品数量和价格
      */
