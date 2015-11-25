@@ -23,7 +23,6 @@ import com.shangpin.iog.dto.EventProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.onsite.base.constance.Constant;
 import com.shangpin.iog.reebonz.dto.Item;
 import com.shangpin.iog.reebonz.dto.Items;
 import com.shangpin.iog.reebonz.dto.ResponseObject;
