@@ -70,8 +70,8 @@ public interface ProductSearchService {
     /**
      * 获取产品信息,for order
      * @param supplier  供货商
-     * @return List<ProductDTO> (若为空，返回所有)
+     * @return ProductDTO (若为空，返回所有)
      */
-    public List<ProductDTO> findProductForOrderList(String supplierId) throws ServiceException;
+    public ProductDTO findProductForOrderList(String supplierId,String skuId) throws ServiceException;
     
 }

@@ -204,7 +204,7 @@
 
 	</select>
 	
-	<select id="findProductOrderDTOList" parameterType="java.lang.String"  resultMap="ProductsResultMap">
+	<select id="findProductOrderDTOList" resultMap="ProductsResultMap">
 		select
           sku.SKU_ID as sku_id,
           sku.SPU_ID as spu_id;
@@ -228,10 +228,11 @@
           <if test="null!=supplierId">
             and   sku.SUPPLIER_ID = #{supplierId}
           </if>
+          <if test="null!=skuId">
+            and   sku.SKU_ID = #{skuId}
+          </if>
 
         </where>
-        order by supplier_id,brand_name, category_name
-
 
 	</select>
 
