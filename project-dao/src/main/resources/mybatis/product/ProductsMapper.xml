@@ -207,7 +207,7 @@
 	<select id="findProductOrderDTOList" resultMap="ProductsResultMap">
 		select
           sku.SKU_ID as sku_id,
-          sku.SPU_ID as spu_id;
+          sku.SPU_ID as spu_id,
           sku.SUPPLIER_ID  as supplier_id,
 
           sku.MARKET_PRICE  as market_price,
@@ -221,7 +221,7 @@
           sku.NEW_SALE_PRICE as newSalePrice,
           sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
           spu.BRAND_NAME as brand_name,
-          spu.CATEGORY_NAME as category_name,
+          spu.CATEGORY_NAME as category_name
 		
 		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
         <where>
