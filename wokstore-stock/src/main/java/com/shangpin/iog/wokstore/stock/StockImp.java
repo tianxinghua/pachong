@@ -4,11 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.wokstore.stock.dto.Quantity;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -16,11 +20,18 @@ import java.util.*;
 /**
  * Created by Administrator on 2015/7/8.
  */
+@Component("wokstore")
 public class StockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
 
     private static ResourceBundle bdl=null;
     private static String supplierId;
@@ -103,11 +114,19 @@ public class StockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args) throws Exception {
-        AbsUpdateProductStock grabStockImp = new StockImp();
-        grabStockImp.setUseThread(true);grabStockImp.setSkuCount4Thread(500);
+    	//加载spring
+        loadSpringContext();
+        StockImp stockImp = (StockImp)factory.getBean("wokstore");
+        //AbsUpdateProductStock grabStockImp = new StockImp();
+        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("wokstore更新数据库开始");
-        grabStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        try {
+        	stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+		} catch (Exception e) {
+			loggerError.error("wokstore更新数据库失败"+e.getMessage());
+			e.printStackTrace();
+		}
         logger.info("wokstore更新数据库结束");
         System.exit(0);
 
