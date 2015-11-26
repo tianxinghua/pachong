@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.SkuMapper">
+
+	<resultMap id="skuMap" type="iog_sku">
+		<id column="ID" property="id" />
+		<result column="SUPPLIER_ID" property="supplierId"  />
+		<result column="SPU_ID" property="spuId"  />
+		<result column="SKU_ID" property="skuId"  />
+		<result column="PRODUCT_NAME" property="productName"  />
+		<result column="SUPPLIER_PRICE" property="supplierPrice" />
+		<result column="BARCODE" property="barcode"  />
+		<result column="PRODUCT_CODE" property="productCode"  />
+		<result column="COLOR" property="color"  />
+        <result column="PRODUCT_DESCRIPTION" property="productDescription"/>
+        <result column="SALE_CURRENCY" property="saleCurrency"  />
+        <result column="MEMO" property="memo"  />
+
+        <result column="PRODUCT_SIZE" property="productSize" />
+        <result column="STOCK" property="stock" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="LAST_TIME" property="lastTime" />
+	</resultMap>
+	
+	<resultMap type="iog_newPrice" id="priceMap">
+		<result column="skuId" property="skuId"  />
+		<result column="supplierPrice" property="supplierPrice" />
+		<result column="marketPrice" property="marketPrice" />
+		<result column="salePrice" property="salePrice" />
+		<result column="newMarketPrice" property="newMarketPrice" />
+		<result column="newSupplierPrice" property="newSupplierPrice" />
+		<result column="newSalePrice" property="newSalePrice" />
+	</resultMap>
+
+	<sql id="all_sku_column">
+		ID ,
+		SUPPLIER_ID ,
+		SPU_ID,
+		SKU_ID,
+        PRODUCT_NAME,
+        MARKET_PRICE,
+        SALE_PRICE,
+        SUPPLIER_PRICE,
+        BARCODE,
+        PRODUCT_CODE,
+        COLOR,
+        PRODUCT_DESCRIPTION,SALE_CURRENCY,
+        PRODUCT_SIZE,STOCK,MEMO,CREATE_TIME,LAST_TIME,
+        NEW_MARKET_PRICE,
+        NEW_SALE_PRICE,
+        NEW_SUPPLIER_PRICE,UPDATE_TIME ,   EVENT_START_DATE,EVENT_END_DATE
+
+	</sql>
+
+	<select id="findSupplierPrice"  resultMap="skuMap" parameterType="java.lang.String">
+	        select
+	        SUPPLIER_PRICE
+	        from SKU
+	        <where>
+	            <if test="null!=supplierId">
+	                SUPPLIER_ID = #{supplierId}
+	            </if>
+	            <if test="null!=skuId">
+	                and SKU_ID = #{skuId}
+	            </if>
+	
+	
+	        </where>
+	
+	
+	
+	    </select>
+    <insert id="save"  parameterType="iog_sku" >
+
+
+
+        insert into SKU(
+
+        <include refid="all_sku_column"></include>
+        )
+        values(
+            #{id}, #{supplierId}, #{spuId}, #{skuId},
+            #{productName},#{marketPrice},#{salePrice}, #{supplierPrice}, #{barcode}, #{productCode},
+            #{color} , #{productDescription}, #{saleCurrency}, #{productSize}, #{stock},#{memo},
+            #{createTime}, #{lastTime}, #{newMarketPrice} , #{newSalePrice} , #{newSupplierPrice} ,
+        #{updateTime},#{eventStartDate},#{eventEndDate}
+
+        )
+
+
+    </insert>
+
+    <update id="updatePriceAndStock" parameterType="iog_sku" >
+          update SKU
+          <set>
+			 <if test="marketPrice != null"> NEW_MARKET_PRICE = #{marketPrice}, </if> 
+			 <if test="salePrice != null"> NEW_SALE_PRICE = #{salePrice}, </if> 
+			 <if test="supplierPrice != null"> NEW_SUPPLIER_PRICE = #{supplierPrice},</if>
+<!--               <if test="marketPrice != null"> MARKET_PRICE = #{marketPrice}, </if> -->
+<!--               <if test="salePrice != null"> SALE_PRICE = #{salePrice}, </if> -->
+<!--               <if test="supplierPrice != null"> SUPPLIER_PRICE = #{supplierPrice},</if> -->
+              <if test="stock != null"> STOCK = #{stock},</if>
+              <if test="updateTime != null"> UPDATE_TIME = #{updateTime},</if>
+              <if test="eventStartDate != null"> EVENT_START_DATE = #{eventStartDate},</if>
+              <if test="eventEndDate != null"> EVENT_END_DATE = #{eventEndDate}</if>
+          </set>
+
+
+          where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
+
+    </update>
+
+    <insert id="saveList"  parameterType="java.util.List" >
+
+
+
+        insert into SKU(
+
+        <include refid="all_sku_column"></include>
+        )
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.id}, #{item.supplierId}, #{item.spuId}, #{item.skuId},
+            #{item.productName},#{item.marketPrice},#{item.salePrice}, #{item.supplierPrice}, #{item.barcode}, #{item.productCode},
+            #{item.color} , #{item.productDescribe}, #{item.saleCurrency}, #{item.productSize}, #{item.stock},#{item.memo},
+            #{createTime}, #{lastTime}, #{newMarketPrice} , #{newSalePrice} , #{newSupplierPrice} ,
+            #{updateTime},#{eventStartDate},#{eventEndDate})
+        </foreach>
+
+    </insert>
+
+	<select id="findNewPrice" parameterType="java.lang.String" resultMap="priceMap">
+			select SKU_ID as skuId,
+				MARKET_PRICE as marketPrice,
+				SUPPLIER_PRICE as supplierPrice,
+			    NEW_MARKET_PRICE as newMarketPrice,
+      	 	  	NEW_SUPPLIER_PRICE as newSupplierPrice
+      	 	  	from SKU sku
+        <where>
+	           SUPPLIER_ID = #{supplierId}
+        </where>
+	</select>
+
+	<select id="findNewPriceBySku" resultMap="priceMap">
+			select SKU_ID as skuId,
+				MARKET_PRICE as marketPrice,
+				SUPPLIER_PRICE as supplierPrice,
+				SALE_PRICE as salePrice,
+				NEW_SALE_PRICE as newSalePrice,
+			    NEW_MARKET_PRICE as newMarketPrice,
+      	 	  	NEW_SUPPLIER_PRICE as newSupplierPrice
+      	 	  	from SKU sku
+        <where>
+             <if test="null!=supplierId">
+                SUPPLIER_ID = #{supplierId}
+            </if>
+            <if test="null!=skuId">
+                and SKU_ID = #{skuId}
+            </if>
+        </where>
+	</select>
+	
+	<update id="updatePrice" parameterType="iog_sku" >
+	    update SKU
+       <set>
+		 <if test="newMarketPrice != null"> MARKET_PRICE = #{newMarketPrice}, </if> 
+		 <if test="newSalePrice != null"> SALE_PRICE = #{newSalePrice}, </if> 
+		 <if test="newSupplierPrice != null"> SUPPLIER_PRICE = #{newSupplierPrice},</if>
+	     <if test="updateTime != null"> UPDATE_TIME = #{updateTime},</if>
+	   </set>
+	    where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
+
+    </update>
+	
+</mapper>

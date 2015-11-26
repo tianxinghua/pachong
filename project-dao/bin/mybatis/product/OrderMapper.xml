@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.OrderMapper">
+
+	<resultMap id="OrderResultMap" type="iog_order">
+
+        <id column="ID" property="id" />
+        <result column="SUPPLIER_ID" property="supplierId"  />
+        <result column="SUPPLIER_NO" property="supplierNo"  />
+        <result column="UUID" property="uuId"  />
+        <result column="SP_ORDER_ID" property="spOrderId"  />
+        <result column="SP_PURCHASE_NO" property="spPurchaseNo" />
+        <result column="SP_PURCHASE_DETAIL_NO" property="spPurchaseDetailNo" />
+
+        <result column="SUPPLIER_ORDER_NO" property="supplierOrderNo" />
+       
+        <result column="DETAIL" property="detail"  />
+        <result column="STATUS" property="status"/>
+
+        <result column="MEMO" property="memo"  />
+        <result column="DELIVERY_NO" property="deliveryNo"/>
+		
+        <result column="UPDATE_TIME" property="updateTime"/>
+        <result column="CREATE_TIME" property="createTime"  />
+        
+        <result column="PURCHASE_PRICE_DETAIL" property="purchasePriceDetail"  />
+
+        <result column="EXC_STATE" property="excState"  />
+        <result column="EXC_DESC" property="excDesc"  />
+        <result column="EXC_TIME" property="excTime" />
+
+        <result column="CONSUMER_MSG" property="consumerMsg" />
+	</resultMap>
+
+	<sql id="all_Order_column">
+		ID,
+		SUPPLIER_ID,
+		UUID,
+		SP_ORDER_ID,
+		DETAIL,
+		CREATE_TIME
+	</sql>
+    <sql id="save_column">
+        SUPPLIER_ID,
+        SUPPLIER_NO,
+		UUID,
+		SP_ORDER_ID,
+		SP_PURCHASE_NO,
+		SP_PURCHASE_DETAIL_NO,
+		SUPPLIER_ORDER_NO,
+		DETAIL,
+		MEMO,
+		STATUS,
+		CREATE_TIME,
+        CONSUMER_MSG
+    </sql>
+    <select id="findBySupplierIdAndStatus"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        SUPPLIER_ID as SUPPLIER_ID,
+        UUID as UUID,
+        SP_ORDER_ID as SP_ORDER_ID,
+        SP_PURCHASE_DETAIL_NO,
+        SUPPLIER_ORDER_NO as SUPPLIER_ORDER_NO,
+        STATUS as STATUS,
+        DETAIL as DETAIL,
+        SP_PURCHASE_NO as SP_PURCHASE_NO,
+        UPDATE_TIME as UPDATE_TIME,
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC,
+		PURCHASE_PRICE_DETAIL as PURCHASE_PRICE_DETAIL
+
+        from `ORDER`
+        <where>
+
+            <if test="null!=supplierId">
+                SUPPLIER_ID=#{supplierId}
+            </if>
+            <if test="null!=status">
+                and  STATUS = #{status}
+            </if>
+        </where>
+
+
+    </select>
+    <select id="findBySupplierIdAndStatusAndDate"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        SUPPLIER_ID as SUPPLIER_ID,
+        UUID as UUID,
+        SP_ORDER_ID as SP_ORDER_ID,
+        SP_PURCHASE_DETAIL_NO,
+        SUPPLIER_ORDER_NO as SUPPLIER_ORDER_NO,
+        STATUS as STATUS,
+        DETAIL as DETAIL,
+        SP_PURCHASE_NO as SP_PURCHASE_NO,
+        UPDATE_TIME as UPDATE_TIME,
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC,
+		PURCHASE_PRICE_DETAIL as PURCHASE_PRICE_DETAIL
+
+        from `ORDER`
+        <where>
+
+            <if test="null!=supplierId">
+                SUPPLIER_ID=#{supplierId}
+            </if>
+            <if test="null!=status">
+                and  STATUS = #{status}
+            </if>
+            <if test="null!=date">
+                and CREATE_TIME >=DATE_SUB(#{date},INTERVAL  12 HOUR)
+            </if>
+        </where>
+
+
+    </select>
+    
+    <select id="findBySpOrderId"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        SUPPLIER_ID ,
+        SUPPLIER_NO,
+        UUID as UUID,
+        SP_ORDER_ID ,
+        SP_PURCHASE_NO,
+        SP_PURCHASE_DETAIL_NO,
+        SUPPLIER_ORDER_NO as SUPPLIER_ORDER_NO,
+        STATUS as STATUS,
+        DETAIL as DETAIL,
+        MEMO,
+        UPDATE_TIME as UPDATE_TIME,
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC
+
+        from `ORDER`
+        <where>
+            SP_ORDER_ID=#{spOrderId}
+
+        </where>
+
+
+    </select>
+
+
+    <select id="findByUuId"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        SUPPLIER_ID ,
+        SUPPLIER_NO,
+        UUID,
+        SP_ORDER_ID ,
+        SP_PURCHASE_NO,
+        SP_PURCHASE_DETAIL_NO,
+        SUPPLIER_ORDER_NO as SUPPLIER_ORDER_NO,
+        STATUS ,
+        DETAIL,
+        MEMO,
+        UPDATE_TIME as UPDATE_TIME,
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC
+
+        from `ORDER`
+        <where>
+            UUID=#{uuId}
+
+        </where>
+
+
+    </select>
+
+
+    <select id="findByPurchaseNo"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        SUPPLIER_ID ,
+        SUPPLIER_NO,
+        UUID as UUID,
+        SP_ORDER_ID ,
+        SP_PURCHASE_NO,
+        SP_PURCHASE_DETAIL_NO,
+        SUPPLIER_ORDER_NO as SUPPLIER_ORDER_NO,
+        STATUS as STATUS,
+        DETAIL as DETAIL,
+        MEMO,
+        UPDATE_TIME as UPDATE_TIME,
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC
+
+        from `ORDER`
+        <where>
+            SP_PURCHASE_NO=#{purchaseNo}
+        </where>
+
+
+    </select>
+
+
+    <select id="findExceptionOrder"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        SUPPLIER_ID,
+        UUID ,
+        SP_ORDER_ID,
+        STATUS ,
+        DETAIL ,
+        CREATE_TIME ,
+        EXC_STATE ,
+        EXC_DESC ,EXC_TIME
+
+        from `ORDER`
+        WHERE EXC_STATE='1'
+
+
+    </select>
+
+
+
+
+
+    <insert id="save"  parameterType="iog_order" >
+        insert into `ORDER` (
+        <include refid="save_column"></include>
+        )
+        values(
+        #{supplierId},#{supplierNo}, #{uuId}, #{spOrderId},#{spPurchaseNo},#{spPurchaseDetailNo},
+       	#{supplierOrderNo},
+        #{detail},#{memo},#{status},
+        #{createTime},#{consumerMsg}
+        )
+    </insert>
+
+
+    <update id="update"  parameterType="iog_order" >
+        update `ORDER`
+        <set>
+            <if test="status != null"> STATUS = #{status}, </if>
+            <if test="memo != null"> MEMO = #{memo}, </if>
+            <if test="updateTime != null"> UPDATE_TIME = #{updateTime}, </if>
+            <if test="supplierOrderNo != null"> SUPPLIER_ORDER_NO = #{supplierOrderNo}, </if>
+                    <if test="spPurchaseDetailNo != null"> SP_PURCHASE_DETAIL_NO = #{spPurchaseDetailNo}, </if>
+         	<if test="spPurchaseNo != null"> SP_PURCHASE_NO = #{spPurchaseNo}, </if>    
+            <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo},</if>
+            <if test="excState != null"> EXC_STATE = #{excState}, </if>
+            <if test="excDesc != null"> EXC_DESC = #{excDesc}, </if>
+            
+              <if test="purchasePriceDetail != null"> PURCHASE_PRICE_DETAIL = #{purchasePriceDetail}, </if>
+            
+            <if test="excTime != null"> EXC_TIME = #{excTime}</if>
+
+		
+        </set>
+        where UUID = #{uuId}
+    </update>
+
+    <update id="updateOrderStatus" parameterType="Map" >
+        update `ORDER`
+
+
+        <set>
+            <if test="status != null"> STATUS = #{status}, </if>
+            <if test="updateTime != null"> UPDATE_TIME = #{updateTime} </if>
+
+
+
+        </set>
+        where UUID = #{uuId}
+        <!--<foreach collection="uuid" index="index" item="item" open="(" separator="," close=")">-->
+            <!--#{item}-->
+        <!--</foreach>-->
+
+    </update>
+
+
+    <update id="updateDeliveryNo" parameterType="Map" >
+        update `ORDER`
+
+
+        <set>
+            <if test="status != null"> STATUS = #{status}, </if>
+            <if test="updateTime != null"> UPDATE_TIME = #{updateTime}, </if>
+            <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo}</if>
+
+
+        </set>
+        where UUID = #{uuId}
+        <!--<foreach collection="uuid" index="index" item="item" open="(" separator="," close=")">-->
+        <!--#{item}-->
+        <!--</foreach>-->
+
+    </update>
+
+
+    <update id="updateOrderExceptionMsg" parameterType="Map" >
+        update `ORDER`
+        <set>
+            <if test="excState != null"> EXC_STATE = #{excState}, </if>
+            <if test="excDesc != null"> EXC_DESC = #{excDesc}, </if>
+            <if test="excTime != null"> EXC_TIME = #{excTime}</if>
+
+
+        </set>
+        where UUID = #{uuId}
+
+
+    </update>
+
+
+    <update id="updateOrderMsg" parameterType="Map" >
+        update `ORDER`
+        <set>
+            <if test="status != null"> STATUS = #{status}, </if>
+            <if test="memo != null"> MEMO = #{memo}, </if>
+            <if test="updateTime != null"> UPDATE_TIME = #{updateTime}, </if>
+            <if test="supplierOrderNo != null"> SUPPLIER_ORDER_NO = #{supplierOrderNo}, </if>
+            <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo},</if>
+            <if test="excState != null"> EXC_STATE = #{excState}, </if>
+            <if test="excDesc != null"> EXC_DESC = #{excDesc}, </if>
+            <if test="excTime != null"> EXC_TIME = #{excTime}</if>
+
+
+
+        </set>
+        where UUID = #{uuId}
+
+
+    </update>
+
+
+	
+</mapper>

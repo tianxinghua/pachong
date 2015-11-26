@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <context:property-placeholder
+            location="classpath:dubbox.properties" ignore-unresolvable="true"/>
+
+    <dubbo:application name="shangpin-iog-dubbo"  />
+
+    <dubbo:registry protocol="zookeeper" address="${zookeeper.address}" />
+
+    <dubbo:protocol name="dubbo" port="20880" threadpool="fixed" threads="200" dispatcher="message"  />
+
+    <dubbo:service interface="com.shangpin.iog.facade.dubbo.service.ProductionService" ref="productionFacadeServiceImpl" version="1.0.0" group="iog-facade" retries="1" cluster="failover"/>
+
+
+</beans>
