@@ -4,11 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.gilt.dto.GiltSkuDTO;
 import com.shangpin.iog.gilt.dto.InventoryDTO;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -16,10 +20,16 @@ import java.util.*;
 /**
  * Created by sunny on 2015/8/10.
  */
+@Component("giltStock")
 public class StockClientImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
 
     private static ResourceBundle bdl=null;
     private static String supplierId;
@@ -114,22 +124,23 @@ public class StockClientImp extends AbsUpdateProductStock {
         }
         return objs;
     }
+    
+    
     public static void main(String[] args) throws Exception {
-
-
-
-        AbsUpdateProductStock giltStockImp = new StockClientImp();
+    	//加载spring
+        loadSpringContext();
+        StockClientImp giltStockImp = (StockClientImp)factory.getBean("giltStock");
+        //AbsUpdateProductStock giltStockImp = new StockClientImp();
         giltStockImp.setUseThread(true);giltStockImp.setSkuCount4Thread(100);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("gilt更新库存开始");
         try {
             giltStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
         } catch (Exception e) {
+        	loggerError.equals("gilt更新库存失败"+e.getMessage());
             e.printStackTrace();
         }
         logger.info("gilt更新库存结束");
-
         System.exit(0);
-
     }
 }

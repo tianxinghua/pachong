@@ -34,7 +34,7 @@ public class MyCsvUtil {
      */
     public static boolean csvDownload() throws MalformedURLException {
         boolean flag = true;
-        String csvFile = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null);
+        String csvFile = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*30,1000*60*30), null);
         //System.out.println(csvFile);
         FileWriter fwriter = null;
         try {
