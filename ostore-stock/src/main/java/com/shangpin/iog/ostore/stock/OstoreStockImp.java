@@ -1,11 +1,15 @@
 package com.shangpin.iog.ostore.stock;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.sop.AbsUpdateProductStock;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -13,6 +17,7 @@ import java.util.*;
 /**
  * Created by huxia on 2015/8/12.
  */
+@Component("oStock")
 public class OstoreStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
@@ -27,13 +32,12 @@ public class OstoreStockImp extends AbsUpdateProductStock {
             Map<String,String> stock_map = new HashMap<>();
 
             String url = "http://b2b.officinastore.com/shangpin.asp?mode=stock_only";
-            String supplierId = "2015082701461";
             try{
                 Map<String,String> mongMap = new HashMap<>();
                 OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-                timeConfig.confRequestOutTime(360000);
-                timeConfig.confConnectOutTime(36000);
-                timeConfig.confSocketOutTime(360000);
+                timeConfig.confRequestOutTime(5*60*1000);
+                timeConfig.confConnectOutTime(1000*60*30);
+                timeConfig.confSocketOutTime(1000*60*30);
                 List<String> resultList = HttpUtil45.getContentListByInputSteam(url, timeConfig, null, null, null);
                 HttpUtil45.closePool();
 //            StringBuffer buffer =new StringBuffer();
@@ -99,6 +103,13 @@ public class OstoreStockImp extends AbsUpdateProductStock {
         return skuStock;
     }
 
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+
+    {
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
     public static void main(String args[]) throws Exception {
         String host = bundle.getString("HOST");
         String app_key = bundle.getString("APP_KEY");
@@ -107,20 +118,24 @@ public class OstoreStockImp extends AbsUpdateProductStock {
             logger.error("参数错误，无法执行更新库存");
         }
 
-        AbsUpdateProductStock ostoreStockImp = new OstoreStockImp();
+        loadSpringContext();
+        logger.info("----初始SPRING成功----");
+        //拉取数据
+        OstoreStockImp ostoreStockImp =(OstoreStockImp)factory.getBean("oStock");
+
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("OSTORE更新数据库开始");
         //2015081401431
-        ostoreStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+        try {
+            ostoreStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+        } catch (Exception e) {
+            loggerError.error("ostore更新库存失败");
+            e.printStackTrace();
+        }
         logger.info("OSTORE更新数据库结束");
         System.exit(0);
 
-        /*OstoreStockImp ostoreStockImp =new OstoreStockImp();
-        Collection<String> sku = new HashSet<>();
-        sku.add("0112-5523A1888-40");
-        Map<String,Integer> stock = new HashMap<>();
-        stock = ostoreStockImp.grabStock(sku);
-        System.out.println(stock.get("0112-5523A1888-40"));*/
+
     }
 }
