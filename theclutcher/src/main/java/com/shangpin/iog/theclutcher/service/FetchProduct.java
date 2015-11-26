@@ -135,6 +135,25 @@ public class FetchProduct {
 
 	                try {
 	                    productFetchService.saveSKU(sku);
+	                    
+	                  //保存图片
+		                if (item.getImage_links() != null) {
+		                    for (String  imageUrl: item.getImage_links().getLinks()) {
+		                        if (imageUrl != null ) {
+		                            ProductPictureDTO dto = new ProductPictureDTO();
+		                            dto.setPicUrl(imageUrl);
+		                            dto.setSupplierId(supplierId);
+		                            dto.setId(UUIDGenerator.getUUID());
+		                            dto.setSkuId(skuId);
+		                            try {
+		                                productFetchService.savePictureForMongo(dto);
+		                            } catch (ServiceException e) {
+		                                e.printStackTrace();
+		                            }
+		                        }
+		                    }
+		                }
+	                    
 	                } catch (ServiceException e) {
 	                    try {
 	                        if (e.getMessage().equals("数据插入失败键重复")) {
@@ -145,24 +164,6 @@ public class FetchProduct {
 	                        }
 	                    } catch (ServiceException e1) {
 	                        e1.printStackTrace();
-	                    }
-	                }
-
-	                //保存图片
-	                if (item.getImage_links() != null) {
-	                    for (String  imageUrl: item.getImage_links().getLinks()) {
-	                        if (imageUrl != null ) {
-	                            ProductPictureDTO dto = new ProductPictureDTO();
-	                            dto.setPicUrl(imageUrl);
-	                            dto.setSupplierId(supplierId);
-	                            dto.setId(UUIDGenerator.getUUID());
-	                            dto.setSkuId(skuId);
-	                            try {
-	                                productFetchService.savePictureForMongo(dto);
-	                            } catch (ServiceException e) {
-	                                e.printStackTrace();
-	                            }
-	                        }
 	                    }
 	                }
 

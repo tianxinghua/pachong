@@ -25,11 +25,11 @@ public class MyCsvUtil {
     static {
         if (bdl == null)
             bdl = ResourceBundle.getBundle("conf");
-            httpurl = bdl.getString("url");
-            localPath = bdl.getString("path");
+        httpurl = bdl.getString("url");
+        localPath = bdl.getString("path");
     }
     /**
-     * httpÏÂÔØcsvÎÄ¼şµ½±¾µØÂ·¾¶
+     * httpä¸‹è½½csvæ–‡ä»¶åˆ°æœ¬åœ°è·¯å¾„
      * @throws MalformedURLException
      */
     public static boolean csvDownload() throws MalformedURLException {
@@ -58,14 +58,14 @@ public class MyCsvUtil {
     }
 
     /**
-     * httpÏÂÔØcsvÎÄ¼şµ½±¾µØÂ·¾¶
+     * httpä¸‹è½½csvæ–‡ä»¶åˆ°æœ¬åœ°è·¯å¾„
      * @throws MalformedURLException
      */
     public static List<Product> readCSVFile2() throws Exception {
-        //½âÎöcsvÎÄ¼ş
+        //è§£æcsvæ–‡ä»¶
         CsvReader cr = new CsvReader(new FileReader(localPath));
-        System.out.println("´´½¨cr¶ÔÏó³É¹¦");
-        //µÃµ½ÁĞÃû¼¯ºÏ
+        System.out.println("åˆ›å»ºcrå¯¹è±¡æˆåŠŸ");
+        //å¾—åˆ°åˆ—åé›†åˆ
         cr.readRecord();
         String rowString = cr.getRawRecord();
         //System.out.println(rowString);
@@ -80,7 +80,7 @@ public class MyCsvUtil {
             Field[] to = product.getClass().getDeclaredFields();
             //System.out.println(to.length + "--2--");
             for (int i = 0; i < to.length; i++){
-                String name = to[i].getName(); // »ñÈ¡ÊôĞÔµÄÃû×Ö
+                String name = to[i].getName(); // è·å–å±æ€§çš„åå­—
                 name = name.substring(0, 1).toUpperCase() + name.substring(1);
                 Method m = product.getClass().getMethod("set"+name,String.class);
                 String value = "";
@@ -105,62 +105,62 @@ public class MyCsvUtil {
         return dtoList;
     }
 
-       /**
-          * ½âÎöcsvÎÄ¼ş µ½Ò»¸ölistÖĞ Ã¿¸öµ¥Ôª¸öÎªÒ»¸öStringÀàĞÍ¼ÇÂ¼£¬Ã¿Ò»ĞĞÎªÒ»¸öProduct¡£ ÔÙ½«ËùÓĞµÄĞĞ·Åµ½Ò»¸ö×ÜlistÖĞ
-          */
-        public static List<Product> readCSVFile() throws IOException {
-            InputStreamReader fr = new InputStreamReader(new FileInputStream(localPath));
-            BufferedReader br = null;
+    /**
+     * è§£æcsvæ–‡ä»¶ åˆ°ä¸€ä¸ªlistä¸­ æ¯ä¸ªå•å…ƒä¸ªä¸ºä¸€ä¸ªStringç±»å‹è®°å½•ï¼Œæ¯ä¸€è¡Œä¸ºä¸€ä¸ªProductã€‚ å†å°†æ‰€æœ‰çš„è¡Œæ”¾åˆ°ä¸€ä¸ªæ€»listä¸­
+     */
+    public static List<Product> readCSVFile() throws IOException {
+        InputStreamReader fr = new InputStreamReader(new FileInputStream(localPath));
+        BufferedReader br = null;
 
-            br = new BufferedReader(fr);
-            br.readLine();
-            String rec = null;// Ò»ĞĞ
-            String str;// Ò»¸öµ¥Ôª¸ñ
-            List<List<String>> listFile = new ArrayList<List<String>>();
+        br = new BufferedReader(fr);
+        br.readLine();
+        String rec = null;// ä¸€è¡Œ
+        String str;// ä¸€ä¸ªå•å…ƒæ ¼
+        List<List<String>> listFile = new ArrayList<List<String>>();
 
-            List<Product> dtoList = new ArrayList<Product>();
-            Product product = null;
-            try {
-                // ¶ÁÈ¡Ò»ĞĞ
-                while ((rec = br.readLine()) != null) {
-                    product = new Product();
-                    Field[] copyTo = product.getClass().getDeclaredFields();
-                    Pattern pCells = Pattern.compile("(\"[^\"]*(\"{2})*[^\"]*\")*[^,]*,");
-                    Matcher mCells = pCells.matcher(rec);
-                    List<String> cells = new ArrayList<String>();// Ã¿ĞĞ¼ÇÂ¼Ò»¸ölist
-                    int i = 0;
-                    // ¶ÁÈ¡Ã¿¸öµ¥Ôª¸ñ
-                    while (mCells.find()) {
-                        str = mCells.group();
-                        str = str.replaceAll("(?sm)\"?([^\"]*(\"{2})*[^\"]*)\"?.*,", "$1");
-                        str = str.replaceAll("(?sm)(\"(\"))", "$2");
-                        str = deleLastComma(str);
-                        str = str.replaceAll("\\+", "");
-                        //System.out.println(")(" + str + ")(");
-                        String name = copyTo[i++].getName(); // »ñÈ¡ÊôĞÔµÄÃû×Ö
-                        name = name.substring(0, 1).toUpperCase() + name.substring(1);
-                        Method m = product.getClass().getMethod("set"+name,String.class);
-                        m.invoke(product,str);
-                        //System.out.println(name+" : "+str);
-                        cells.add(str);
-                        }
-                        listFile.add(cells);
-                    //ÊÖ¶¯ÉèÖµ
-                    product.setCategrory(getLastValue(rec.split(",")));
-                    dtoList.add(product);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (fr != null) {
-                            fr.close();
-                        }
-                    if (br != null) {
-                            br.close();
-                        }
-                 }
-                return dtoList;
+        List<Product> dtoList = new ArrayList<Product>();
+        Product product = null;
+        try {
+            // è¯»å–ä¸€è¡Œ
+            while ((rec = br.readLine()) != null) {
+                product = new Product();
+                Field[] copyTo = product.getClass().getDeclaredFields();
+                Pattern pCells = Pattern.compile("(\"[^\"]*(\"{2})*[^\"]*\")*[^,]*,");
+                Matcher mCells = pCells.matcher(rec);
+                List<String> cells = new ArrayList<String>();// æ¯è¡Œè®°å½•ä¸€ä¸ªlist
+                int i = 0;
+                // è¯»å–æ¯ä¸ªå•å…ƒæ ¼
+                while (mCells.find()) {
+                    str = mCells.group();
+                    str = str.replaceAll("(?sm)\"?([^\"]*(\"{2})*[^\"]*)\"?.*,", "$1");
+                    str = str.replaceAll("(?sm)(\"(\"))", "$2");
+                    str = deleLastComma(str);
+                    str = str.replaceAll("\\+", "");
+                    //System.out.println(")(" + str + ")(");
+                    String name = copyTo[i++].getName(); // è·å–å±æ€§çš„åå­—
+                    name = name.substring(0, 1).toUpperCase() + name.substring(1);
+                    Method m = product.getClass().getMethod("set"+name,String.class);
+                    m.invoke(product,str);
+                    //System.out.println(name+" : "+str);
+                    cells.add(str);
+                }
+                listFile.add(cells);
+                //æ‰‹åŠ¨è®¾å€¼
+                product.setCategrory(getLastValue(rec.split(",")));
+                dtoList.add(product);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (fr != null) {
+                fr.close();
+            }
+            if (br != null) {
+                br.close();
+            }
+        }
+        return dtoList;
+    }
 
     private static String getLastValue(String[] strArr){
         return strArr[strArr.length-1].replace("\\r","");
@@ -173,8 +173,8 @@ public class MyCsvUtil {
         return  str;
     }
     /**
- * test
- * */
+     * test
+     * */
     public static void main(String[] args) {
         List<Product> list = null;
         try {

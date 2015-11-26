@@ -61,7 +61,9 @@ public class FetchProduct {
         try {
         	//将FTP拉取到的图片xml文件转换成模型数据
         	pictureMap = getPictureMap();
-            // 将FTP拉取到的数据xml文件转换成模型数据
+            // 将FTP拉取到的数据xml文件转换成模型数据--delete from SKU where SUPPLIER_ID = '2015091701503';
+        	//--delete from SPU where SUPPLIER_ID = '2015091701503';
+        	
             products = ObjectXMLUtil.xml2Obj(Products.class, new File(Constant.LOCAL_FILE));
             System.out.println(products.getProducts().size());
         } catch(  JAXBException e  )  {
@@ -164,28 +166,28 @@ public class FetchProduct {
                 spu.setMaterial(product.getProduct_material());
                 spu.setCategoryGender(product.getGender());
                 productFetchService.saveSPU(spu);
-            } catch (ServiceException e) {
-                e.printStackTrace();
-            }
-            if(pictureMap!=null){
-                String proId = product.getProductId();
-                if(pictureMap.containsKey(proId)&&pictureMap.get(proId)!=null){
-                	String [] arr = pictureMap.get(proId).split(",");
-                	for(String picUrl :arr){
-                        ProductPictureDTO dto  = new ProductPictureDTO();
-                        dto.setPicUrl("http://partners.tessabit.biz/partner/"+picUrl);
-                        dto.setSupplierId(Constant.SUPPLIER_ID);
-                        dto.setId(UUIDGenerator.getUUID());
-                        dto.setSpuId(proId);
-                        try {
-                            productFetchService.savePictureForMongo(dto);
-                        } catch (ServiceException e) {
-                            e.printStackTrace();
+                if(pictureMap!=null){
+                    String proId = product.getProductId();
+                    if(pictureMap.containsKey(proId)&&pictureMap.get(proId)!=null){
+                    	String [] arr = pictureMap.get(proId).split(",");
+                    	for(String picUrl :arr){
+                            ProductPictureDTO dto  = new ProductPictureDTO();
+                            dto.setPicUrl("http://partners.tessabit.biz/partner/"+picUrl);
+                            dto.setSupplierId(Constant.SUPPLIER_ID);
+                            dto.setId(UUIDGenerator.getUUID());
+                            dto.setSpuId(proId);
+                            try {
+                                productFetchService.savePictureForMongo(dto);
+                            } catch (ServiceException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
-            }else{
+            } catch (ServiceException e) {
+                e.printStackTrace();
             }
+            
         }
         loggerError.error("库存为0的总数是=" + j+ "--");
         loggerError.error("无图片的总数是---" +i + "----");
