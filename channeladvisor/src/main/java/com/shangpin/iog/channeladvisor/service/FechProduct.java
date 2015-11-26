@@ -65,21 +65,21 @@ public class FechProduct {
 					JSONObject obj = array.getJSONObject(i);
 					String marketPrice = obj.getString("BuyItNowPrice");
 					String stock = obj.getString("TotalAvailableQuantity");
+					String id = obj.getString("Sku");
 					//只有BuyItNowPrice不为空以及TotalAvailableQuantity不为空时才能入库
-					if(!marketPrice.equals("null") && StringUtils.isNotBlank(marketPrice)&& !stock.equals("null") && StringUtils.isNotBlank(stock) && !stock.equals("0")){
+					if(!marketPrice.equals("null") && StringUtils.isNotBlank(marketPrice)&& !stock.equals("null") && StringUtils.isNotBlank(stock) && !stock.equals("0") && (id.startsWith("NY") || id.startsWith("ny"))){
 						String categoryName = obj.getString("Classification");
 						String brandName = obj.getString("Brand");
 						String categoryGender = "";
 						String material = "";
 						String productOrigin = "";
 						
-						String skuId = obj.getString("Sku");
+						String skuId = obj.getString("ID");
 						String color = "";
 						String productName = "";
 						String productCode = obj.getString("UPC");
 						String productSize = "";
 						
-						String id = obj.getString("ID");
 						String attributeUrl = "https://api.channeladvisor.com/v1/Products("+id+")/Attributes?access_token="+access_token+"&";
 						String attributes = HttpUtil45.get(attributeUrl, timeConfig, null);
 						JSONObject attrObj = JSONObject.fromObject(attributes);
