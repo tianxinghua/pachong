@@ -785,7 +785,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	}
 
 	@Override
-	public ProductDTO findProductForOrderList(String supplierId,String skuId)
+	public ProductDTO findProductForOrder(String supplierId,String skuId)
 			throws ServiceException {
 		ProductDTO productOrderDTO = productDAO.findProductOrderDTOList(supplierId,skuId);
 		return productOrderDTO;

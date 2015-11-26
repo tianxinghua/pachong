@@ -72,6 +72,6 @@ public interface ProductSearchService {
      * @param supplier  供货商
      * @return ProductDTO (若为空，返回所有)
      */
-    public ProductDTO findProductForOrderList(String supplierId,String skuId) throws ServiceException;
+    public ProductDTO findProductForOrder(String supplierId,String skuId) throws ServiceException;
     
 }
