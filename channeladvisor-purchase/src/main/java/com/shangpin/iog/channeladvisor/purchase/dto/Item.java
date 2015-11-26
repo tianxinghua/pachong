@@ -10,8 +10,8 @@ import lombok.Setter;
 public class Item {
 
 	String sku;
-	String unitPrice;
-	String shippingPrice;
+	Double unitPrice;
+	//String shippingPrice;
 	Integer quantity;
-	List<Promotion> promotions;
+	//List<Promotion> promotions;
 }

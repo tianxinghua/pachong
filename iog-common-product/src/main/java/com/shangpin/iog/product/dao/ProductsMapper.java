@@ -65,10 +65,10 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     
     /**
      * 根据供货商id查询产品列表(supplierId，spuid,skuid,category,brand,size,color,price)
-     * @param supplierId
-     * @return 返回对应supplierId的产品，若为null返回所有
+     * @param supplierId skuid
+     * @return 返回对应supplierId,skuId的产品，
      */
-    List<ProductDTO> findProductOrderDTOList(@Param("supplierId") String supplierId);
+    ProductDTO findProductOrderDTOList(@Param("supplierId") String supplierId,@Param("skuId") String skuId);
 }
 
 
