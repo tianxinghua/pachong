@@ -31,11 +31,11 @@ public class MyTxtUtil {
             supplierId = bdl.getString("supplierId");
     }
     /**
-     * httpÏÂÔØtxtcsvÎÄ¼şµ½±¾µØÂ·¾¶
+     * httpä¸‹è½½txtcsvæ–‡ä»¶åˆ°æœ¬åœ°è·¯å¾„
      * @throws MalformedURLException
      */
     public static void txtDownload() throws MalformedURLException {
-        String csvFile = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null);
+        String csvFile = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*20,1000*60*20), null);
         //memo
         Map<String, String> mongMap = new HashMap<>();
         mongMap.put("supplierId", supplierId);
@@ -60,14 +60,14 @@ public class MyTxtUtil {
     }
 
     /**
-     * httpÏÂÔØtxtÎÄ¼şµ½±¾µØÂ·¾¶
+     * httpä¸‹è½½txtæ–‡ä»¶åˆ°æœ¬åœ°è·¯å¾„
      * @throws MalformedURLException
      */
     public static List<Product2> readTXTFile() throws Exception {
-        //½âÎötxtÎÄ¼ş
+        //è§£ætxtæ–‡ä»¶
         CsvReader cr = new CsvReader(new FileReader(localPath));
-        System.out.println("´´½¨cr¶ÔÏó³É¹¦");
-        //µÃµ½ÁĞÃû¼¯ºÏ
+        System.out.println("åˆ›å»ºcrå¯¹è±¡æˆåŠŸ");
+        //å¾—åˆ°åˆ—åé›†åˆ
         cr.readRecord();
         String rowString = cr.getRawRecord();
         List<Product2> dtoList = new ArrayList<Product2>();
@@ -82,7 +82,7 @@ public class MyTxtUtil {
             Field[] to = product.getClass().getDeclaredFields();
             //System.out.println(to.length + "--2--");
             for (int i = 0; i < to.length; i++){
-                String name = to[i].getName(); // »ñÈ¡ÊôĞÔµÄÃû×Ö
+                String name = to[i].getName(); // è·å–å±æ€§çš„åå­—
                 name = name.substring(0, 1).toUpperCase() + name.substring(1);
                 Method m = product.getClass().getMethod("set"+name,String.class);
                 m.invoke(product,from[i]);

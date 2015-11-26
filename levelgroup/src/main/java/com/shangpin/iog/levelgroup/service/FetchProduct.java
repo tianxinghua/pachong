@@ -38,11 +38,12 @@ public class FetchProduct {
         try {
 
             Map<String,String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig =new OutTimeConfig(1000*100*60,1000*100*60,1000*100*60);
+//            OutTimeConfig timeConfig =new OutTimeConfig(1000*100*60,1000*100*60,1000*100*60);
 
 //            List<String> list = HttpUtil45.getContentListByInputSteam(filepath,timeConfig,null,null,null);
+            //            HttpUtil45.closePool();
             List<String> list = LevlelgroupFtpUtil.readConfigFileForFTP(filepath);
-//            HttpUtil45.closePool();
+
             mongMap.put("supplierId",supplierId);
             mongMap.put("supplierName","levelgroup");
 
