@@ -65,16 +65,17 @@ public class FechProduct {
 					JSONObject obj = array.getJSONObject(i);
 					String marketPrice = obj.getString("BuyItNowPrice");
 					String stock = obj.getString("TotalAvailableQuantity");
-					String id = obj.getString("Sku");
+					String skuId = obj.getString("Sku");
+					
 					//只有BuyItNowPrice不为空以及TotalAvailableQuantity不为空时才能入库
-					if(!marketPrice.equals("null") && StringUtils.isNotBlank(marketPrice)&& !stock.equals("null") && StringUtils.isNotBlank(stock) && !stock.equals("0") && (id.startsWith("NY") || id.startsWith("ny"))){
+					if(!marketPrice.equals("null") && StringUtils.isNotBlank(marketPrice)&& !stock.equals("null") && StringUtils.isNotBlank(stock) && !stock.equals("0") && (skuId.startsWith("NY") || skuId.startsWith("ny"))){
 						String categoryName = obj.getString("Classification");
 						String brandName = obj.getString("Brand");
 						String categoryGender = "";
 						String material = "";
 						String productOrigin = "";
+						String id = obj.getString("ID");
 						
-						String skuId = obj.getString("ID");
 						String color = "";
 						String productName = "";
 						String productCode = obj.getString("UPC");
