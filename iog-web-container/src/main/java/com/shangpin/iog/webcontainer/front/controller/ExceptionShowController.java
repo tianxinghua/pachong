@@ -60,7 +60,7 @@ public class ExceptionShowController {
     	List<StockUpdateDTO> all = updateStockService.getAll();
     	List<StockUpdateDTO> redList = new ArrayList<StockUpdateDTO>();
     	List<StockUpdateDTO> greenList = new ArrayList<StockUpdateDTO>();
-//    	List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
+    	List<SupplierDTO> availableSupplierDTOList = supplierService.findAllWithAvailable();
     	List<SupplierDTO> supplierDTOList = supplierService.findByState(null);
     	Map<String, String> nameMap = new HashMap<String, String>();
     	for (SupplierDTO supplierDTO : supplierDTOList) {
@@ -81,7 +81,7 @@ public class ExceptionShowController {
     	}
     	model.addAttribute("greenList", greenList);
     	model.addAttribute("redList", redList);
-    	model.addAttribute("supplierDTOList", supplierDTOList);
+    	model.addAttribute("supplierDTOList", availableSupplierDTOList);
 		return "iog";
     }
     

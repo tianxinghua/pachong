@@ -10,6 +10,8 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.log4j.Logger;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -25,9 +27,6 @@ public class WS_Sito_P15 {
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
-        itemsFile = bdl.getString("items");
-        availabilityFile = bdl.getString("availability");
-        imageFile = bdl.getString("image");
     }
     /**
      * fetch product from atelier to local
@@ -142,7 +141,7 @@ public class WS_Sito_P15 {
         System.out.println("getAllItemsMarketplace---------------------------------");
         String items = "";
         try{
-            items = HttpUtil45.post("http://109.168.12.42/ws_sito_P15/ws_sito_p15.asmx/GetAllItemsMarketplace",
+            items = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/GetAllItemsMarketplace",
                     new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
            // System.out.println(items);
         }catch (Exception e){
@@ -513,19 +512,29 @@ public class WS_Sito_P15 {
      * test
      * */
     public static void main(String[] args) throws IOException {
-//        new WS_Sito_P15().fetchProduct();
-        //new WS_Sito_P15().setStatusOrder();
-       // new WS_Sito_P15().getStatusOrder();
-        //new WS_Sito_P15().newOrder();
-        //new WS_Sito_P15().orderAmendment();
-        //new WS_Sito_P15().getAllAvailabilityMarketplace();
-        //new WS_Sito_P15().getAllImageMarketplace();
-       //new WS_Sito_P15().getAllItemsMarketplace();
-        String str = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/GetAllItemsMarketplace",
-                new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10, 1000 * 60 * 10));
-        String[] split = str.split("\\n");
-        for (String string : split) {
-			System.out.println(string);
-		}
+    	Map<String, String> param = new HashMap<String,String>();
+    	param.put("BARCODE", "2115383168402");
+        String skuData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/GetItemStockBySize",
+				param,new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+        
+//        param.put("CODICE", "1066239979");
+//        param.put("ID_CLIENTE", "1066239979");
+//        param.put("ID_STATUS", "1");
+//		String post = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/SetStatusOrder", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+		System.out.println(skuData);
+        
+        
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
