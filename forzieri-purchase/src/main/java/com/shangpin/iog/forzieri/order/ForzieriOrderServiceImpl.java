@@ -80,7 +80,8 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 		}else if(pushOrderData.getStatusCode().equals("400")){
 			//推送订单失败
 			orderDTO.setExcDesc("订单失败，库存不足"+pushOrderData.getErrorCode());
-			handlePurchaseOrderExc(orderDTO);
+//			handlePurchaseOrderExc(orderDTO);
+			sendMail(orderDTO);
 		}
 	}
 
@@ -102,7 +103,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 				handlePurchaseOrderExc(orderDTO);
 			}
 		} catch (Exception e) {
-			orderDTO.setExcDesc(e.getMessage());
+			orderDTO.setExcDesc("网络原因付款失败"+e.getMessage());
 			orderDTO.setExcState("1");
 			e.printStackTrace();
 		}
@@ -124,7 +125,8 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 				//取消订单失败
 				logger.info("取消订单失败");
 				deleteOrder.setExcDesc("取消订单失败"+pushOrderData.getErrorCode());
-				deleteOrder.setExcState("1");
+				deleteOrder.setStatus(OrderStatus.CANCELLED);
+				deleteOrder.setExcState("0");
 			}
 		} catch (Exception e) {
 			logger.info("取消订单失败");
@@ -266,7 +268,35 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 		}else if("0".equals(result)){
 			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
 		}
-		orderDTO.setExcState("1");
+		orderDTO.setExcState("0");
+	}
+	
+	private void sendMail(OrderDTO orderDTO) {
+		
+		try{
+			long tim = 60l;
+			//判断有异常的订单如果处理超过两小时，依然没有解决，则把状态置为不处理，并发邮件
+			if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim*1000*60)>0){ 
+				
+				String result = setPurchaseOrderExc(orderDTO);
+				if("-1".equals(result)){
+					orderDTO.setStatus(OrderStatus.NOHANDLE);
+				}else if("1".equals(result)){
+					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+				}else if("0".equals(result)){
+					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+				}else{
+					orderDTO.setStatus(OrderStatus.NOHANDLE);
+				}
+				//超过一天 不需要在做处理 订单状态改为其它状体
+				orderDTO.setExcState("0");
+			}else{
+				orderDTO.setExcState("1");
+			}
+		}catch(Exception x){
+			logger.info("订单超时" + x.getMessage());
+		}
+		
 	}
 	public static void main(String[] args) {
 		//submit order
