@@ -87,6 +87,11 @@ subprojects {
     }
 
 
+    task dependsClassPath(){
+
+    }
+
+
     dependencies {
         compile(
                 "org.projectlombok:lombok:1.14.8",

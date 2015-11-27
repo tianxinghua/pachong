@@ -113,11 +113,16 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
         loadSpringContext();
         //拉取数据
         LevelGroupStockImp levelGroupStockImp =(LevelGroupStockImp)factory.getBean("levelgroup");
-        levelGroupStockImp.setUseThread(true);levelGroupStockImp.setSkuCount4Thread(500);
+//        levelGroupStockImp.setUseThread(true);levelGroupStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("levelgroup更新数据库开始");
         //2015081401431
-        levelGroupStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        try {
+            levelGroupStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        } catch (Exception e) {
+            loggerError.error("levelgroup库存更新失败");
+            e.printStackTrace();
+        }
         logger.info("levelgroup更新数据库结束");
         System.exit(0);
     }

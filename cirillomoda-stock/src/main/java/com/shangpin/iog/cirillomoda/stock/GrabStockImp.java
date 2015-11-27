@@ -51,7 +51,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
             logger.info("拉取cirillomoda数据开始");
 
 //            Map<String, String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*20, 1000*60*20,1000*60*20);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*20, 1000*60*40,1000*60*40);
 //            timeConfig.confRequestOutTime(600000);
 //            timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get("http://www.cirillomoda.com/maxpho/cirillo_maxpho.csv", timeConfig, null);

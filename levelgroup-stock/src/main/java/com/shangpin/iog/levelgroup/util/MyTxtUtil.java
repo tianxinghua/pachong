@@ -27,12 +27,12 @@ public class MyTxtUtil {
     static {
         if (bdl == null)
             bdl = ResourceBundle.getBundle("conf");
-            httpurl = bdl.getString("url");
-            localPath = bdl.getString("path");
-            supplierId = bdl.getString("supplierId");
+        httpurl = bdl.getString("url");
+        localPath = bdl.getString("path");
+        supplierId = bdl.getString("supplierId");
     }
     /**
-     * httpÏÂÔØtxtcsvÎÄ¼şµ½±¾µØÂ·¾¶
+     * httpä¸‹è½½txtcsvæ–‡ä»¶åˆ°æœ¬åœ°è·¯å¾„
      * @throws MalformedURLException
      */
     public static boolean txtDownload() throws MalformedURLException {
@@ -41,7 +41,7 @@ public class MyTxtUtil {
         Map<String, String> mongMap = new HashMap<>();
         mongMap.put("supplierId", supplierId);
         mongMap.put("supplierName", "LevelGroup");
- 		mongMap.put("result", csvFile);
+        mongMap.put("result", csvFile);
         //logMongo.info(mongMap);
         //System.out.println(csvFile);
         FileWriter fwriter = null;
@@ -64,14 +64,14 @@ public class MyTxtUtil {
     }
 
     /**
-     * httpÏÂÔØtxtÎÄ¼şµ½±¾µØÂ·¾¶
+     * httpä¸‹è½½txtæ–‡ä»¶åˆ°æœ¬åœ°è·¯å¾„
      * @throws MalformedURLException
      */
     public static List<Product> readTXTFile() throws IOException {
-        //½âÎötxtÎÄ¼ş
+        //è§£ætxtæ–‡ä»¶
         CsvReader cr = new CsvReader(new FileReader(localPath));
-        System.out.println("´´½¨cr¶ÔÏó³É¹¦");
-        //µÃµ½ÁĞÃû¼¯ºÏ
+        System.out.println("åˆ›å»ºcrå¯¹è±¡æˆåŠŸ");
+        //å¾—åˆ°åˆ—åé›†åˆ
         cr.readRecord();
         String rowString = cr.getRawRecord();
         List<Product> dtoList = new ArrayList<Product>();
@@ -86,7 +86,7 @@ public class MyTxtUtil {
             Field[] to = product.getClass().getDeclaredFields();
             //System.out.println(to.length + "--2--");
             for (int i = 0; i < to.length; i++){
-                String name = to[i].getName(); // »ñÈ¡ÊôĞÔµÄÃû×Ö
+                String name = to[i].getName(); // è·å–å±æ€§çš„åå­—
                 name = name.substring(0, 1).toUpperCase() + name.substring(1);
                 Method m = null;
                 try {
@@ -109,9 +109,9 @@ public class MyTxtUtil {
     }
 
 
-/**
- * test
- * */
+    /**
+     * test
+     * */
     public static void main(String[] args) {
 
         List<Product> list = null;
