@@ -126,7 +126,6 @@ public class OstoreStockImp extends AbsUpdateProductStock {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("OSTORE更新数据库开始");
-        //2015081401431
         try {
             ostoreStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
         } catch (Exception e) {
