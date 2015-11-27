@@ -24,8 +24,8 @@ public class FTPUtil {
         FTPClient ftpClient = new FTPClient();
         ftpClient.setControlEncoding("UTF-8");
         ftpClient.setDefaultTimeout(60*80 * 1000);
-        ftpClient.setConnectTimeout(0*80 * 1000);
-        ftpClient.setDataTimeout(0*80 * 1000);
+        ftpClient.setConnectTimeout(60*80 * 1000);
+        ftpClient.setDataTimeout(60*80 * 1000);
         ftpClient.connect(HOST, 21);
         ftpClient.login(USER, PASSWORD);
 
