@@ -66,6 +66,7 @@ public class DownloadAndReadExcel {
         * */
         try{
             fw=new FileInputStream(realPath);
+//            fw=new FileInputStream("F:\\BagheeraBoutiqueShangpin.xls");
             POIFSFileSystem fs=new POIFSFileSystem(fw);
             wb=new HSSFWorkbook(fs);
             fw.close();
@@ -86,7 +87,7 @@ public class DownloadAndReadExcel {
                 row=sheet.getRow(j);
                 BagheeraDTO bagheeraDTO=new BagheeraDTO();
                 Field[] beanFiled=bagheeraDTO.getClass().getDeclaredFields();
-                for(int z=0;z<21;z++){
+                for(int z=0;z<24;z++){
                     //循环每一行中的所有列,就是得到单元格中的数据
                     try {
                         //强制反射,让private 的属性也可以访问
@@ -140,7 +141,7 @@ public class DownloadAndReadExcel {
         realpath = realpath+".xls";
         return realpath;
     }
-    /*public static void main(String[] args) {
+  /*  public static void main(String[] args) {
         try {
             readLocalExcel();
         } catch (MalformedURLException e) {

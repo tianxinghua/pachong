@@ -11,6 +11,7 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,12 +52,13 @@ public class FetchProduct {
 		mongMap.put("supplierName", "bagheera");
 //		mongMap.put("result", result);
 		logMongo.info(mongMap);
+		StringBuffer sb = new StringBuffer();
         try {
             List<BagheeraDTO> list=DownloadAndReadExcel.readLocalExcel();
             for (BagheeraDTO dto:list){
                 SpuDTO spu = new SpuDTO();
                 SkuDTO sku = new SkuDTO();
-                ProductPictureDTO picture = new ProductPictureDTO();
+               
                 String size = dto.getSIZE();
                 if(size.indexOf("½")>0){
                     size=size.replace("½","+");
@@ -84,10 +86,21 @@ public class FetchProduct {
                 spu.setBrandName(dto.getITEM_GROUP());
                 spu.setSeasonName(dto.getCOLLECTION());
                 spu.setCategoryGender(dto.getDEPT().substring(0, dto.getDEPT().indexOf(" ")));
-                picture.setSupplierId(supplierId);
-                picture.setId(UUIDGenerator.getUUID());
-                picture.setSkuId(dto.getSUPPLIER_CODE()+"-"+dto.getSIZE());
-                picture.setPicUrl(dto.getIMAGE_URL());
+                
+                if (StringUtils.isNotBlank(dto.getIMAGE_URL1())) {
+                	sb.append(dto.getIMAGE_URL1());
+				}
+                if (StringUtils.isNotBlank(dto.getIMAGE_URL2())) {
+                	sb.append(",").append(dto.getIMAGE_URL2());
+                }
+                if (StringUtils.isNotBlank(dto.getIMAGE_URL3())) {
+                	sb.append(",").append(dto.getIMAGE_URL3());
+                }
+                if (StringUtils.isNotBlank(dto.getIMAGE_URL4())) {
+                	sb.append(",").append(dto.getIMAGE_URL4());
+                }
+                
+                
                 try {
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
@@ -95,7 +108,19 @@ public class FetchProduct {
                 }
                 try {
                     productFetchService.saveSKU(sku);
-                    productFetchService.savePictureForMongo(picture);
+                    
+                    String imgs = sb.toString();
+                    if (StringUtils.isNotBlank(imgs)) {
+						String[] split = imgs.split(",");
+						for (String img : split) {
+							 ProductPictureDTO picture = new ProductPictureDTO();
+							 picture.setSupplierId(supplierId);
+				             picture.setId(UUIDGenerator.getUUID());
+				             picture.setSkuId(dto.getSUPPLIER_CODE()+"-"+dto.getSIZE());
+				             picture.setPicUrl(img);
+				             productFetchService.savePictureForMongo(picture);
+						}
+					}
                 } catch (ServiceException e) {
                 	try {
 						if (e.getMessage().equals("数据插入失败键重复")) {
