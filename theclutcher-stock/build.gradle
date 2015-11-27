@@ -1,9 +1,9 @@
 
 dependencies {
     compile(
+    		"org.jdom:jdom:2.0.2",
             project(':project-common'),
-            project(':iog-sop'),
-            project(':theclutcher')
+            project(':iog-sop')
     )
     compile 'com.stanfy:gson-xml-java:0.1.+'
     compile 'com.google.code.gson:gson:2.3.1'
@@ -21,7 +21,7 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangping.iog.theclutcher.stock.service.GrabStockImp'
+        attributes 'Main-Class': 'com.shangpin.iog.theclutcher.Startup'
         attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }
