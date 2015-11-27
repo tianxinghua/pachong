@@ -46,12 +46,12 @@ public class FetchProduct {
 		//更改状态存储，不要忘了填币种
 		try {
 			Map<String, String> mongMap = new HashMap<>();
-			OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
+//			OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
 			//String result = HttpUtil45.get(url, timeConfig, null);
-			mongMap.put("supplierId", supplierId);
-			mongMap.put("supplierName", "filippo");
+//			mongMap.put("supplierId", supplierId);
+//			mongMap.put("supplierName", "filippo");
 			//mongMap.put("result", result);
-			logMongo.info(mongMap);
+//			logMongo.info(mongMap);
 			logger.info("开始抓取");
 			List<CsvDTO> csvLists = DownloadAndReadCSV.readLocalCSV(CsvDTO.class, "\\|");
 			Map<String,CsvDTO> csvSkuMaps = new HashMap<String,CsvDTO>();
@@ -79,7 +79,7 @@ public class FetchProduct {
 				SpuDTO spu = new SpuDTO();
 				try {
 					spu.setId(UUIDGenerator.getUUID());
-					spu.setSpuId(spuEntry.getValue().getART().replace("\"", ""));
+					spu.setSpuId(spuEntry.getValue().getVAR_ID().replace("\"", ""));
 					spu.setSupplierId(supplierId);
 					spu.setBrandName(spuEntry.getValue().getBND_NAME().replace("\"", ""));
 					spu.setCategoryName(spuEntry.getValue().getGRP_DES().replace("\"", ""));
