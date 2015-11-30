@@ -110,6 +110,7 @@ public class FetchProduct {
                     productFetchService.saveSKU(sku);
                     
                     String imgs = sb.toString();
+                    sb.setLength(0);
                     if (StringUtils.isNotBlank(imgs)) {
 						String[] split = imgs.split(",");
 						for (String img : split) {

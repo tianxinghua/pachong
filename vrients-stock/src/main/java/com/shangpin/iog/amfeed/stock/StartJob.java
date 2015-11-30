@@ -30,11 +30,11 @@ public class StartJob {
 
     public static void main(String[] args) throws Exception {
         //加载spring
-        loadSpringContext();
+//        loadSpringContext();
         logger.info("----初始SPRING成功----");
 
-        AmfeedStockImp amfeed =(AmfeedStockImp)factory.getBean("amfeed");
-
+//        AmfeedStockImp amfeed =(AmfeedStockImp)factory.getBean("amfeed");
+        AmfeedStockImp amfeed = new AmfeedStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("VRIENTS更新数据库开始");
         try {

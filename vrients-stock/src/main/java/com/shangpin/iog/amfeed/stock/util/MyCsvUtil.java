@@ -7,6 +7,7 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -108,7 +109,8 @@ public class MyCsvUtil {
     /**
      * 解析csv文件 到一个list中 每个单元个为一个String类型记录，每一行为一个Product。 再将所有的行放到一个总list中
      */
-    public static List<Product> readCSVFile() throws IOException {
+    public static List<Product>
+    readCSVFile() throws IOException {
         InputStreamReader fr = new InputStreamReader(new FileInputStream(localPath));
         BufferedReader br = null;
 
@@ -131,18 +133,24 @@ public class MyCsvUtil {
                 int i = 0;
                 // 读取每个单元格
                 while (mCells.find()) {
-                    str = mCells.group();
-                    str = str.replaceAll("(?sm)\"?([^\"]*(\"{2})*[^\"]*)\"?.*,", "$1");
-                    str = str.replaceAll("(?sm)(\"(\"))", "$2");
-                    str = deleLastComma(str);
-                    str = str.replaceAll("\\+", "");
-                    //System.out.println(")(" + str + ")(");
-                    String name = copyTo[i++].getName(); // 获取属性的名字
-                    name = name.substring(0, 1).toUpperCase() + name.substring(1);
-                    Method m = product.getClass().getMethod("set"+name,String.class);
-                    m.invoke(product,str);
-                    //System.out.println(name+" : "+str);
-                    cells.add(str);
+                    try {
+                        str = mCells.group();
+                        str = str.replaceAll("(?sm)\"?([^\"]*(\"{2})*[^\"]*)\"?.*,", "$1");
+                        str = str.replaceAll("(?sm)(\"(\"))", "$2");
+                        str = deleLastComma(str);
+                        str = str.replaceAll("\\+", "");
+                        //System.out.println(")(" + str + ")(");
+                        String name = copyTo[i++].getName(); // 获取属性的名字
+                        name = name.substring(0, 1).toUpperCase() + name.substring(1);
+                        Method m = product.getClass().getMethod("set"+name,String.class);
+                        m.invoke(product,str);
+                        //System.out.println(name+" : "+str);
+                        cells.add(str);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        continue;
+
+                    }
                 }
                 listFile.add(cells);
                 //手动设值
