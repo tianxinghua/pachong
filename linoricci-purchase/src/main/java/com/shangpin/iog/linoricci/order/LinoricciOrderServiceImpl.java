@@ -23,11 +23,13 @@ public class LinoricciOrderServiceImpl extends AbsOrderService{
 	private static Logger logger = Logger.getLogger("info");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
+	private static String url = null;
 	static {
 		if(null==bdl){
 			bdl=ResourceBundle.getBundle("conf");
 		}
 		supplierId = bdl.getString("supplierId");
+		url = bdl.getString("url");
 	}
 	@Autowired
 	ProductSearchService productSearchservice;
@@ -57,7 +59,7 @@ public class LinoricciOrderServiceImpl extends AbsOrderService{
 		}
 		String price = productForOrder.getSupplierPrice();
 		param.put("PRICE", price);
-		String returnData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/NewOrder", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+		String returnData = HttpUtil45.post(url+"NewOrder", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
 		
 		if (returnData.contains("OK")) {
 			 orderDTO.setExcState("0");
@@ -72,7 +74,22 @@ public class LinoricciOrderServiceImpl extends AbsOrderService{
 
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
-		
+		try {
+			String returnData = setStatusOrder(orderDTO, "1");
+			if (returnData.contains("OK")) {
+				orderDTO.setExcState("0");
+				orderDTO.setStatus(OrderStatus.CONFIRMED);
+			} else {
+				//确认订单失败
+				orderDTO.setExcDesc("确认订单失败");
+				//处理采购异常
+				handlePurchaseOrderExc(orderDTO);
+			}
+		} catch (Exception e) {
+			orderDTO.setExcDesc("网络原因付款失败"+e.getMessage());
+			orderDTO.setExcState("1");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -82,18 +99,8 @@ public class LinoricciOrderServiceImpl extends AbsOrderService{
 				deleteOrder.setExcState("0");
 				deleteOrder.setStatus(OrderStatus.CANCELLED);
 			}else{
-				Map<String, String> param = new HashMap<String, String>();
-				
-				param.put("ID_ORDER_WEB", deleteOrder.getSupplierOrderNo());
-				//TODO 参数设置？
-				param.put("ID_CLIENTE_WEB", "");
-				String skuId = deleteOrder.getDetail().split(",")[0].split(":")[0];
-				String barcode = skuId.split("-")[1];
-				param.put("BARCODE", barcode);
-				//TODO 取消订单设置成0
-				String qty = deleteOrder.getDetail().split(",")[0].split(":")[1];
-				param.put("QTY", qty);
-				String returnData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/OrderAmendment", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+				//TODO  暂时使用orderAmendment
+				String returnData = orderAmendment(deleteOrder);
 				if (returnData.contains("OK")) {
 					deleteOrder.setExcState("0");
 					deleteOrder.setStatus(OrderStatus.CANCELLED);
@@ -129,7 +136,18 @@ public class LinoricciOrderServiceImpl extends AbsOrderService{
 		// TODO Auto-generated method stub
 		
 	}
-	
+	//采购异常处理
+	private void handlePurchaseOrderExc(OrderDTO orderDTO) {
+		String result = setPurchaseOrderExc(orderDTO);
+		if("-1".equals(result)){
+			orderDTO.setStatus(OrderStatus.NOHANDLE);
+		}else if("1".equals(result)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+		}else if("0".equals(result)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+		}
+		orderDTO.setExcState("0");
+	}
 	private void sendMail(OrderDTO orderDTO) {
 		
 		try{
@@ -155,7 +173,31 @@ public class LinoricciOrderServiceImpl extends AbsOrderService{
 		}catch(Exception x){
 			logger.info("订单超时" + x.getMessage());
 		}
-		
 	}
-
+	//TODO 暂时当做付款确认，功能确定后修改
+	public String setStatusOrder(OrderDTO orderDTO,String status){
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("CODICE", orderDTO.getSupplierOrderNo());
+		param.put("ID_CLIENTE", "");
+		param.put("ID_STATUS", status);
+		String returnData = HttpUtil45.post(url+"OrderAmendment", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+		return returnData;
+	}
+	//TODO 暂时当取消订单使用，功能明确后修改
+	public String orderAmendment(ReturnOrderDTO deleteOrder){
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("ID_ORDER_WEB", deleteOrder.getSupplierOrderNo());
+		//TODO 参数设置？
+		param.put("ID_CLIENTE_WEB", "");
+		String skuId = deleteOrder.getDetail().split(",")[0].split(":")[0];
+		String barcode = skuId.split("-")[1];
+		param.put("BARCODE", barcode);
+		//TODO 取消订单设置成0
+		String qty = deleteOrder.getDetail().split(",")[0].split(":")[1];
+		param.put("QTY", qty);
+		String returnData = HttpUtil45.post(url+"OrderAmendment", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+		return returnData;
+	}
+	
+	
 }
