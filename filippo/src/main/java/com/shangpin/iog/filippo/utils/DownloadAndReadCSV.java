@@ -88,17 +88,17 @@ public class DownloadAndReadCSV {
      */
     public static <T> List<T> readLocalCSV(Class<T> clazz,String sep) throws Exception {
         
-    	List<String> realPaths=downloadNet();
+//    	List<String> realPaths=downloadNet();
         String rowString = null;
         List<T> dtoList = new ArrayList<T>();
         //Set<T> dtoSet = new HashSet<T>();
     	String[] split = null;
     	List<String> colValueList = null;
-    	CsvReader cr = null;
-    	for (String realPath : realPaths) {
+//    	CsvReader cr = null;
+//    	for (String realPath : realPaths) {
     		//解析csv文件
-    		cr = new CsvReader(new FileReader(realPath));
-//    		CsvReader cr = new CsvReader(new FileReader("F:/filippo1.csv"));
+//    		cr = new CsvReader(new FileReader(realPath));
+    		CsvReader cr = new CsvReader(new FileReader("F:/filippo1.csv"));
     		System.out.println("创建cr对象成功");
     		//得到列名集合
     		cr.readRecord();
@@ -113,7 +113,7 @@ public class DownloadAndReadCSV {
     			//dtoSet.add(t);
     			dtoList.add(t);
     		}
-		}
+//		}
         return dtoList;
     }
   
