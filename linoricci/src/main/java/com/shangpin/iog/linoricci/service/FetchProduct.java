@@ -85,9 +85,10 @@ public class FetchProduct {
 		               spu.setCategoryName(spuArr[8]);
 		               //spu.setSpuName(fields[0]);
 		               spu.setSeasonId(spuArr[6]);
-		               spu.setMaterial(spuArr[11]);
-		               if (StringUtils.isNotBlank(spuArr[42])&&StringUtils.isBlank(spuArr[11])) {
-		            	   spu.setMaterial(spuArr[42]);
+		               if (StringUtils.isNotBlank(spuArr[11])) {
+		            	   spu.setMaterial(spuArr[11]);
+		               }else {
+		            	   spu.setMaterial(spuArr[15]);
 		               }
 		               spu.setCategoryGender(spuArr[5]);
 		               spu.setProductOrigin(spuArr[40]);
