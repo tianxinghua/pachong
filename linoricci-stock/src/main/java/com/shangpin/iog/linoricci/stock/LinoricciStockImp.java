@@ -23,6 +23,7 @@ public class LinoricciStockImp  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static ResourceBundle bdl=null;
     private static String supplierId;
+    private static String url;
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -32,12 +33,13 @@ public class LinoricciStockImp  extends AbsUpdateProductStock {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        url = bdl.getString("url");
     }
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
     	Map<String,String> skuMap = new HashMap<String,String>();
     	String data = "";
-    	String skuData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/GetAllAvailabilityMarketplace",
+    	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
 				new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
 		String[] skuStrings = skuData.split("\\r\\n");
 		for (int i = 2; i < skuStrings.length; i++) {

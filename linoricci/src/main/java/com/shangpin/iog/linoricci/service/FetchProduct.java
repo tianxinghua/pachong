@@ -26,11 +26,13 @@ public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static String supplierId;
+    private static String url;
     private static ResourceBundle bdl=null;
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        url = bdl.getString("url");
     }
     @Autowired
     private ProductFetchService productFetchService;
@@ -43,11 +45,11 @@ public class FetchProduct {
     	Map<String,String> imgMap= new HashMap<String,String>();
         //获取产品信息
         logger.info("get product starting....");
-    	String spuData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/GetAllItemsMarketplace",
+    	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
     										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
-    	String skuData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/GetAllAvailabilityMarketplace",
+    	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
     										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
-    	String imageData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/GetAllImageMarketplace",
+    	String imageData = HttpUtil45.post(url+"GetAllImageMarketplace",
     										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
     	
     	

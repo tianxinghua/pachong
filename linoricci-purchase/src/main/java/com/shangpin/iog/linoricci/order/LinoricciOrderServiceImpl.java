@@ -38,7 +38,7 @@ public class LinoricciOrderServiceImpl extends AbsOrderService{
 		
 		Map<String, String> param = new HashMap<String, String>();
 		param.put("ID_ORDER_WEB", orderDTO.getSpOrderId());
-		//TODO
+		//TODO 参数设置？
 		param.put("ID_CLIENTE_WEB", "");
 		param.put("DESTINATIONROW1", "");
 		param.put("DESTINATIONROW2", "");
@@ -58,9 +58,8 @@ public class LinoricciOrderServiceImpl extends AbsOrderService{
 		String price = productForOrder.getSupplierPrice();
 		param.put("PRICE", price);
 		String returnData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/NewOrder", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
-		//TODO 后续处理
 		
-		if (returnData.equals("成功了")) {
+		if (returnData.contains("OK")) {
 			 orderDTO.setExcState("0");
 			 orderDTO.setSupplierOrderNo(orderDTO.getSpOrderId());//商品的订单Id
 			 orderDTO.setStatus(OrderStatus.PLACED);
@@ -69,7 +68,6 @@ public class LinoricciOrderServiceImpl extends AbsOrderService{
 			orderDTO.setExcDesc("订单失败，库存不足");
 			sendMail(orderDTO);
 		}
-		
 	}
 
 	@Override
@@ -79,7 +77,40 @@ public class LinoricciOrderServiceImpl extends AbsOrderService{
 
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
-		
+		try {
+			if(deleteOrder.getSupplierOrderNo()==null){ 
+				deleteOrder.setExcState("0");
+				deleteOrder.setStatus(OrderStatus.CANCELLED);
+			}else{
+				Map<String, String> param = new HashMap<String, String>();
+				
+				param.put("ID_ORDER_WEB", deleteOrder.getSupplierOrderNo());
+				//TODO 参数设置？
+				param.put("ID_CLIENTE_WEB", "");
+				String skuId = deleteOrder.getDetail().split(",")[0].split(":")[0];
+				String barcode = skuId.split("-")[1];
+				param.put("BARCODE", barcode);
+				//TODO 取消订单设置成0
+				String qty = deleteOrder.getDetail().split(",")[0].split(":")[1];
+				param.put("QTY", qty);
+				String returnData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/OrderAmendment", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+				if (returnData.contains("OK")) {
+					deleteOrder.setExcState("0");
+					deleteOrder.setStatus(OrderStatus.CANCELLED);
+				} else {
+					//取消订单失败
+					logger.info("取消订单失败");
+					deleteOrder.setExcDesc("取消订单失败");
+					deleteOrder.setStatus(OrderStatus.CANCELLED);
+					deleteOrder.setExcState("0");
+				}
+			}
+		} catch (Exception e) {
+			logger.info("取消订单失败");
+			deleteOrder.setExcDesc(e.getMessage());
+			deleteOrder.setExcState("1");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
