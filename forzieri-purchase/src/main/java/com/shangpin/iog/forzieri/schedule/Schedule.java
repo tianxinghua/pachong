@@ -44,7 +44,7 @@ public class Schedule {
     @Scheduled(cron="0 0/3 * * * ? ")
     public  void confirmOrder(){
         try {
-            orderService.confirmOrder(supplierId);;
+            orderService.confirmOrder(supplierId);
         } catch (Exception e) {
             e.printStackTrace();
         }

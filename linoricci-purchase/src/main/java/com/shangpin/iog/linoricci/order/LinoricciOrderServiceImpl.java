@@ -1,40 +1,94 @@
 package com.shangpin.iog.linoricci.order;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
+import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
+import com.shangpin.iog.ice.dto.OrderStatus;
+import com.shangpin.iog.service.ProductSearchService;
 
 public class LinoricciOrderServiceImpl extends AbsOrderService{
-
+	private static Logger logger = Logger.getLogger("info");
+	private static ResourceBundle bdl = null;
+	private static String supplierId = null;
+	static {
+		if(null==bdl){
+			bdl=ResourceBundle.getBundle("conf");
+		}
+		supplierId = bdl.getString("supplierId");
+	}
+	@Autowired
+	ProductSearchService productSearchservice;
+	
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
-		// TODO Auto-generated method stub
+		
+		
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("ID_ORDER_WEB", orderDTO.getSpOrderId());
+		//TODO
+		param.put("ID_CLIENTE_WEB", "");
+		param.put("DESTINATIONROW1", "");
+		param.put("DESTINATIONROW2", "");
+		param.put("DESTINATIONROW3", "");
+		String skuId = orderDTO.getDetail().split(",")[0].split(":")[0];
+		String barcode = skuId.split("-")[1];
+		param.put("BARCODE", barcode);
+		String qty = orderDTO.getDetail().split(",")[0].split(":")[1];
+		param.put("QTY", qty);
+		ProductDTO productForOrder = null;
+		try {
+		    productForOrder = productSearchservice.findProductForOrder(supplierId, skuId);
+		} catch (ServiceException e) {
+			logger.info("查找商品出错");
+			e.printStackTrace();
+		}
+		String price = productForOrder.getSupplierPrice();
+		param.put("PRICE", price);
+		String returnData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/NewOrder", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+		//TODO 后续处理
+		
+		if (returnData.equals("成功了")) {
+			 orderDTO.setExcState("0");
+			 orderDTO.setSupplierOrderNo(orderDTO.getSpOrderId());//商品的订单Id
+			 orderDTO.setStatus(OrderStatus.PLACED);
+		} else {
+			//推送订单失败
+			orderDTO.setExcDesc("订单失败，库存不足");
+			sendMail(orderDTO);
+		}
 		
 	}
 
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void handleEmail(OrderDTO orderDTO) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -42,6 +96,34 @@ public class LinoricciOrderServiceImpl extends AbsOrderService{
 	public void getSupplierSkuId(Map<String, String> skuMap)
 			throws ServiceException {
 		// TODO Auto-generated method stub
+		
+	}
+	
+	private void sendMail(OrderDTO orderDTO) {
+		
+		try{
+			long tim = 60l;
+			//判断有异常的订单如果处理超过两小时，依然没有解决，则把状态置为不处理，并发邮件
+			if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim*1000*60)>0){ 
+				
+				String result = setPurchaseOrderExc(orderDTO);
+				if("-1".equals(result)){
+					orderDTO.setStatus(OrderStatus.NOHANDLE);
+				}else if("1".equals(result)){
+					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+				}else if("0".equals(result)){
+					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+				}else{
+					orderDTO.setStatus(OrderStatus.NOHANDLE);
+				}
+				//超过一天 不需要在做处理 订单状态改为其它状体
+				orderDTO.setExcState("0");
+			}else{
+				orderDTO.setExcState("1");
+			}
+		}catch(Exception x){
+			logger.info("订单超时" + x.getMessage());
+		}
 		
 	}
 

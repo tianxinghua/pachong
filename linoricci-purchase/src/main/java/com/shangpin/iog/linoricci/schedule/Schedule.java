@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 /**
- * Created by sunny on 2015/9/16.
+ * Created by houkun on 2015/11/30.
  */
 @Component
 public class Schedule {
@@ -39,11 +39,9 @@ public class Schedule {
     @Scheduled(cron="0 0/3 * * * ? ")
     public  void confirmOrder(){
         try {
-            orderService.confirmOrder(supplierId);;
+            orderService.confirmOrder(supplierId);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-
 }
