@@ -8,6 +8,7 @@ import com.enterprisedt.net.ftp.FTPConnectMode;
 import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FTPTransferType;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.app.AppContext;
 //import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.sop.AbsUpdateProductStock;
 
@@ -15,16 +16,25 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.jdom2.input.SAXBuilder;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-
+@Component("brunarossoStock")
 public class StockClientImp extends AbsUpdateProductStock{
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
     public static final String PROPERTIES_FILE_NAME = "param";
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
     static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
     private  static  ResourceBundle sopBundle = ResourceBundle.getBundle("sop");
     private static String HOST="ftp.backend.brunarosso.com",PORT="21",USER="backend.brunarosso.com_shang",PASSWORD="1Lt53Vf6",FILE_PATH="/public/stockftp";
@@ -279,18 +289,26 @@ public class StockClientImp extends AbsUpdateProductStock{
     }
 
     public static void main(String[] args) throws Exception {
+    	//加载spring
+        loadSpringContext();
+        StockClientImp stockImp = (StockClientImp)factory.getBean("brunarossoStock");
     	String host = sopBundle.getString("HOST");
         String app_key = sopBundle.getString("APP_KEY");
         String app_secret= sopBundle.getString("APP_SECRET");
         if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
             logger.error("参数错误，无法执行更新库存");
         }
-        AbsUpdateProductStock impl = new StockClientImp();
+        //AbsUpdateProductStock impl = new StockClientImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("BRUNAROSSO更新数据库开始");
+        logger.info("BRUNAROSSO更新库存开始");
         downloadStock("","Disponibilita.xml",localFilePath,true);
-        impl.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
-        logger.info("BRUNAROSSO更新数据库结束");
+        try {
+        	stockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+		} catch (Exception e) {
+			loggerError.error("BRUNAROSSO更新库存失败");
+			e.printStackTrace();
+		}
+        logger.info("BRUNAROSSO更新库存结束");
         System.exit(0);
     }
 }

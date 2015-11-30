@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -23,12 +24,13 @@ import java.util.regex.Pattern;
 /**
  * Created by Administrator on 2015/9/18.
  */
+@Component("marylouStock")
 public class MarylouStockImpl  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
-
         factory = new AnnotationConfigApplicationContext(AppContext.class);
     }
     private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
@@ -47,31 +49,24 @@ public class MarylouStockImpl  extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args){
-//
+    	//加载spring
         loadSpringContext();
+        MarylouStockImpl marylouStockImpl = (MarylouStockImpl)factory.getBean("marylouStock");
         String host = bundle.getString("HOST");
         String app_key = bundle.getString("APP_KEY");
         String app_secret= bundle.getString("APP_SECRET");
         if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
             logger.error("参数错误，无法执行更新库存");
         }
-
-        MarylouStockImpl impl = new MarylouStockImpl();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("更新数据库开始");
+        logger.info("更新库存开始");
         try{
-        	 impl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
-             logger.info("更新数据库结束");
+        	marylouStockImpl.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
         }catch(Exception ex){
+        	loggerError.error("更新库存失败"+ex.getMessage());
         	ex.printStackTrace();
         }
-       
+        logger.info("更新库存结束");
         System.exit(0);
-//        List<String> skuNo = new ArrayList<>();
-//        skuNo.add("1986242872_10");
-//        Map returnMap = impl.grabStock(skuNo);
-//        System.out.println("test return size is "+returnMap.keySet().size());
-//        System.out.println("test return value is "+returnMap.get("1986242872_10"));
-
     }
 }
