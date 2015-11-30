@@ -1,11 +1,6 @@
-package com.shangpin.iog.forzieri.schedule;
+package com.shangpin.iog.linoricci.schedule;
 
-import com.google.gson.Gson;
-import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.forzieri.order.ForzieriOrderServiceImpl;
-import com.shangpin.iog.service.OrderService;
+import com.shangpin.iog.linoricci.order.LinoricciOrderServiceImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 /**
- * Created by sunny on 2015/9/16.
+ * Created by houkun on 2015/11/30.
  */
 @Component
 public class Schedule {
@@ -32,7 +27,7 @@ public class Schedule {
     }
 
     @Autowired
-    ForzieriOrderServiceImpl orderService;
+    LinoricciOrderServiceImpl orderService;
 
     //下单 退单 异常
     @Scheduled(cron="0 0/2 * * * ? ")
@@ -49,6 +44,4 @@ public class Schedule {
             e.printStackTrace();
         }
     }
-
-
 }

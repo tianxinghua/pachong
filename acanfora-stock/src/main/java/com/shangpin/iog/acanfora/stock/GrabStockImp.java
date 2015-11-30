@@ -8,6 +8,7 @@ import com.shangpin.iog.acanfora.stock.dto.Item;
 import com.shangpin.iog.acanfora.stock.dto.Items;
 import com.shangpin.iog.acanfora.stock.dto.Product;
 import com.shangpin.iog.acanfora.stock.dto.Products;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
@@ -18,6 +19,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBException;
 
@@ -25,11 +29,16 @@ import java.lang.String;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
+@Component("acanforaStock")
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
     private static ResourceBundle bdl=null;
     private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
     private static String supplierId;
@@ -117,7 +126,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args) throws Exception {
-       
+    	//加载spring
+        loadSpringContext();
+        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("acanforaStock");
     	String host = bundle.getString("HOST");
         String app_key = bundle.getString("APP_KEY");
         String app_secret= bundle.getString("APP_SECRET");
@@ -125,19 +136,15 @@ public class GrabStockImp extends AbsUpdateProductStock {
             logger.error("参数错误，无法执行更新库存");
         }
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");    	
-        AbsUpdateProductStock grabStockImp = new GrabStockImp();
-        
+        //AbsUpdateProductStock grabStockImp = new GrabStockImp();
         logger.info("ACANFORA更新数据库开始");
         try {
             grabStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
         } catch (Exception e) {
-            loggerError.error("ACANFORA库存更新失败");
+            loggerError.error("ACANFORA库存更新失败"+e.getMessage());
+            e.printStackTrace();
         }
         logger.info("ACANFORA更新数据库结束");
         System.exit(0);
-        
-        
-
     }
-
 }

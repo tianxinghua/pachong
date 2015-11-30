@@ -3,9 +3,6 @@ package com.shangpin.iog.linoricci.service;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +26,13 @@ public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static String supplierId;
+    private static String url;
     private static ResourceBundle bdl=null;
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        url = bdl.getString("url");
     }
     @Autowired
     private ProductFetchService productFetchService;
@@ -46,11 +45,11 @@ public class FetchProduct {
     	Map<String,String> imgMap= new HashMap<String,String>();
         //获取产品信息
         logger.info("get product starting....");
-    	String spuData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/GetAllItemsMarketplace",
+    	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
     										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
-    	String skuData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/GetAllAvailabilityMarketplace",
+    	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
     										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
-    	String imageData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/GetAllImageMarketplace",
+    	String imageData = HttpUtil45.post(url+"GetAllImageMarketplace",
     										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
     	
     	
@@ -86,9 +85,10 @@ public class FetchProduct {
 		               spu.setCategoryName(spuArr[8]);
 		               //spu.setSpuName(fields[0]);
 		               spu.setSeasonId(spuArr[6]);
-		               spu.setMaterial(spuArr[11]);
-		               if (StringUtils.isNotBlank(spuArr[42])&&StringUtils.isBlank(spuArr[11])) {
-		            	   spu.setMaterial(spuArr[42]);
+		               if (StringUtils.isNotBlank(spuArr[11])) {
+		            	   spu.setMaterial(spuArr[11]);
+		               }else {
+		            	   spu.setMaterial(spuArr[15]);
 		               }
 		               spu.setCategoryGender(spuArr[5]);
 		               spu.setProductOrigin(spuArr[40]);

@@ -50,8 +50,8 @@ public class FetchProduct {
 			//String result = HttpUtil45.get(url, timeConfig, null);
 			mongMap.put("supplierId", supplierId);
 			mongMap.put("supplierName", "filippo");
-			//mongMap.put("result", result);
-			logMongo.info(mongMap);
+//			mongMap.put("result", result);
+//			logMongo.info(mongMap);
 			logger.info("开始抓取");
 			List<CsvDTO> csvLists = DownloadAndReadCSV.readLocalCSV(CsvDTO.class, "\\|");
 			Map<String,CsvDTO> csvSkuMaps = new HashMap<String,CsvDTO>();
@@ -80,6 +80,7 @@ public class FetchProduct {
 				try {
 					spu.setId(UUIDGenerator.getUUID());
 					spu.setSpuId(spuEntry.getValue().getART().replace("\"", ""));
+//					spu.setSpuId(spuEntry.getValue().getVAR_ID().replace("\"", ""));
 					spu.setSupplierId(supplierId);
 					spu.setBrandName(spuEntry.getValue().getBND_NAME().replace("\"", ""));
 					spu.setCategoryName(spuEntry.getValue().getGRP_DES().replace("\"", ""));
