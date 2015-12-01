@@ -1,10 +1,10 @@
 package com.shangpin.iog.menlook;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.menlook.stock.dto.Item;
 import com.shangpin.iog.menlook.util.DownloadAndReadCSV;
+import com.shangpin.sop.AbsUpdateProductStock;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +30,15 @@ public class StockClientImp extends AbsUpdateProductStock {
 	    }
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
+	private static String host;
+	private static String app_key;
+	private static String app_secret;
 	static {
 		if (null == bdl)
-			bdl = ResourceBundle.getBundle("conf");
+			bdl = ResourceBundle.getBundle("sop");
+		host = bdl.getString("HOST");
+		app_key = bdl.getString("APP_KEY");
+		app_secret = bdl.getString("APP_SECRET");
 		supplierId = bdl.getString("supplierId");
 	}
 
@@ -40,11 +46,11 @@ public class StockClientImp extends AbsUpdateProductStock {
 	DownloadAndReadCSV csvUtil;
 
 	@Override
-	public Map<String, String> grabStock(Collection<String> skuNo)
+	public Map<String, Integer> grabStock(Collection<String> skuNo)
 			throws ServiceException, Exception {
 		 List<Item> list = csvUtil.readLocalCSV();
 		 Map<String,String> skuMap = new HashMap<String, String>();
-		 Map<String,String> reMap = new HashMap<String, String>();
+		 Map<String,Integer> reMap = new HashMap<String, Integer>();
 		 for (Item item : list) {
 			skuMap.put(item.getSkuId(), item.getStock());
 		}
@@ -52,9 +58,9 @@ public class StockClientImp extends AbsUpdateProductStock {
 		while (it.hasNext()) {
 			String skuId = it.next();
 			if (skuMap.containsKey(skuId)) {
-				reMap.put(skuId, skuMap.get(skuId));
+				reMap.put(skuId, Integer.valueOf(skuMap.get(skuId)));
 			}else {
-				reMap.put(skuId, "0");
+				reMap.put(skuId, 0);
 			}
 		}
 		return reMap; 
@@ -67,13 +73,12 @@ public class StockClientImp extends AbsUpdateProductStock {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		logger.info("更新数据库开始");
 		try {
-			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+			
+			stockImp.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
 		} catch (Exception e) {
 			logger.info("更新库存数据库出错"+e.toString());
 		}
 		logger.info("更新数据库结束");
 		System.exit(0);
 	}
-
-
 }
