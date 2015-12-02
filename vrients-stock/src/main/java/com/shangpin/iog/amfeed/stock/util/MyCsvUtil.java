@@ -175,9 +175,12 @@ public class MyCsvUtil {
     }
     private static String deleLastComma(String str){
         int lenth = str.length();
-        if (",".equals(str.substring(lenth-1))){
-            return str.substring(0,lenth-1);
+        if(lenth>0){
+            if (",".equals(str.substring(lenth-1))){
+                return str.substring(0,lenth-1);
+            }
         }
+
         return  str;
     }
     /**
@@ -188,6 +191,7 @@ public class MyCsvUtil {
         try {
             //MyCsvUtil.csvDownload();
             list = MyCsvUtil.readCSVFile();
+            System.out.println("asd");
         } catch (Exception e) {
             e.printStackTrace();
         }
