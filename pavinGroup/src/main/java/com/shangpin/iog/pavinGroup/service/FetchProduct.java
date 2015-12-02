@@ -89,7 +89,6 @@ public class FetchProduct {
 					.get(array[i],
 							new OutTimeConfig(1000 * 60*5, 1000 * 60*5, 1000 * 60*5),
 							null);
-			readLine(xml,i+"");
 			System.out.println(array[i]);
 			try {
 				ByteArrayInputStream is = new ByteArrayInputStream(
@@ -113,14 +112,12 @@ public class FetchProduct {
 				List<Item> array = channel.getListItem();
 				if(array!=null){
 					for (Item item : array) {
-						// 把新活动保存入库到EVENT_PRODUCT表中
 						SpuDTO spu = new SpuDTO();
 						try {
 							spu.setId(UUIDGenerator.getUUID());
 							spu.setSupplierId(supplierId);
 							spu.setSpuId(item.getSupplierSkuNo());
 							spu.setCategoryName(item.getGroup_description());
-							// spu.setSubCategoryName(item.getProduct_category_name());
 							spu.setBrandName(item.getBrand());
 							spu.setSpuName(item.getTitle());
 							spu.setMaterial(item.getMaterial());
@@ -182,45 +179,6 @@ public class FetchProduct {
 		}
 
 	}
-	private static String getJson(String fileName) {
-
-		String fullFileName = "D:/product.xml";
-
-		File file = new File(fullFileName);
-		Scanner scanner = null;
-		StringBuilder buffer = new StringBuilder();
-		try {
-			scanner = new Scanner(file, "utf-8");
-			while (scanner.hasNextLine()) {
-				buffer.append(scanner.nextLine());
-			}
-		} catch (Exception e) {
-
-		} finally {
-			if (scanner != null) {
-				scanner.close();
-			}
-		}
-		System.out.println(buffer.toString());
-		return buffer.toString();
-	}
-	  private static void readLine(String content,String name){
-	    	File file = new File("C://"+name+".json");
-	    	FileWriter fwriter = null;
-	    	   try {
-	    	    fwriter = new FileWriter(file);
-	    	    fwriter.write(content);
-	    	   } catch (Exception ex) {
-	    	    ex.printStackTrace();
-	    	   } finally {
-	    	    try {
-	    	     fwriter.flush();
-	    	     fwriter.close();
-	    	    } catch (Exception ex) {
-	    	     ex.printStackTrace();
-	    	    }
-	    	   }
-	    }
 }
 
 
