@@ -99,7 +99,10 @@ public class FileDownloadController {
 
             if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
 
-
+            String supplier = null;
+            if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
+            	supplier = productSearchDTO.getSupplier();
+            }
             Date startDate  =null;
             if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
                 startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
@@ -110,7 +113,7 @@ public class FileDownloadController {
                 endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
             }
             if (productSearchDTO.getFlag().equals("same")) {
-            	productBuffer =productService.exportProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
+            	productBuffer =productService.exportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
 			}else{
 				productBuffer =productService.exportDiffProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
 			}
