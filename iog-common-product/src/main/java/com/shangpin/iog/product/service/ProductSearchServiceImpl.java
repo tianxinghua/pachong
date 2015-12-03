@@ -129,9 +129,11 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			if (null != pageIndex && null != pageSize) {
 				page = new Page<>(pageIndex, pageSize);
 				if (flag .equals("same")) {
+					
 					productList = productDAO.findListBySupplierAndLastDate(
 							supplier, startDate, endDate, new RowBounds(
 									pageIndex, pageSize));
+					
 				} else {
 					productList = productDAO.findDiffListBySupplierAndLastDate(
 							supplier, startDate, endDate, new RowBounds(
@@ -141,7 +143,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			} else {
 				if (flag .equals("same")) {
 					productList = productDAO.findListBySupplierAndLastDate(
-							supplier, startDate, endDate);
+							supplier, startDate, endDate);					
+										
 				} else {
 					productList = productDAO.findDiffListBySupplierAndLastDate(
 							supplier, startDate, endDate);
@@ -229,7 +232,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			Date endDate, Integer pageIndex, Integer pageSize, String flag)
 			throws ServiceException {
 
-		StringBuffer buffer = new StringBuffer("CategoryName 品类名称" + splitSign
+		StringBuffer buffer = new StringBuffer("SupplierId 供货商编号" + splitSign
+				+ "CategoryName 品类名称" + splitSign
 				+ "Category_No 品类编号" + splitSign + "BrandNo 品牌编号" + splitSign
 				+ "BrandName 品牌" + splitSign + "ProductModel 货号" + splitSign
 				+ "SupplierSkuNo 供应商SkuNo" + splitSign + " 性别 " + splitSign
@@ -266,10 +270,13 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 		String productSize, season = "", productDetail = "", brandName = "", brandId = "", color = "", material = "", productOrigin = "";
 
-		String categoryId = "", categoryName = "", productName = "";
+		String supplierId="", categoryId = "", categoryName = "", productName = "";
 		for (ProductDTO dto : page.getItems()) {
-
+			
 			try {
+				//supplierId 供货商编号
+				supplierId = dto.getSupplierId();
+				buffer.append(supplierId).append(splitSign);
 				// 品类名称
 				categoryName = dto.getSubCategoryName();
 				if (StringUtils.isBlank(categoryName)) {
