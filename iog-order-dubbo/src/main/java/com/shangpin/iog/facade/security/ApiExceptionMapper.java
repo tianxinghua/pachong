@@ -1,8 +1,7 @@
 package com.shangpin.iog.facade.security;
 
 import com.alibaba.dubbo.rpc.protocol.rest.support.ContentType;
-import com.shangpin.openapi.api.contract.model.ApiException;
-import com.shangpin.openapi.api.contract.model.ExceptionResponse;
+
 import org.codehaus.jackson.map.JsonMappingException;
 
 import javax.ws.rs.NotAllowedException;
