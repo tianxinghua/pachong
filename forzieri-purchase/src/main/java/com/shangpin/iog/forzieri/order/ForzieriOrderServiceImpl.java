@@ -138,8 +138,29 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
-		// TODO Auto-generated method stub
-		
+		try {
+			PushOrderData pushOrderData = confirmOrCancelOrder(deleteOrder.getSupplierOrderNo(), "cancelled");
+			if (pushOrderData.getStatusCode().equals("401")) {
+				logger.info("取消订单时accessToken过期");
+				getAccessToken(refreshToken);
+				handleCancelOrder(deleteOrder);
+			}else if(pushOrderData.getStatusCode().equals("200")){
+				//退款取消订单成功
+				deleteOrder.setExcState("0");
+				deleteOrder.setStatus(OrderStatus.REFUNDED);
+			}else {
+				//退款取消订单失败
+				logger.info("退款取消订单失败");
+				deleteOrder.setExcDesc("退款取消订单失败"+pushOrderData.getErrorCode());
+				deleteOrder.setStatus(OrderStatus.REFUNDED);
+				deleteOrder.setExcState("0");
+			}
+		} catch (Exception e) {
+			logger.info("取消订单失败");
+			deleteOrder.setExcDesc(e.getMessage());
+			deleteOrder.setExcState("1");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
