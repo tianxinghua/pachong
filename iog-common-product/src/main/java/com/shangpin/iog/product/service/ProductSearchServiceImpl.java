@@ -129,10 +129,16 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			if (null != pageIndex && null != pageSize) {
 				page = new Page<>(pageIndex, pageSize);
 				if (flag .equals("same")) {
+					if(StringUtils.isNotBlank(supplier)){
+						productList = productDAO.findListBySupplierAndLastDate(
+								supplier, startDate, endDate, new RowBounds(
+										pageIndex, pageSize));
+					}else{
+						productList = productDAO.findListOfAllSupplier(startDate, endDate, new RowBounds(
+										pageIndex, pageSize));
+					}
 					
-					productList = productDAO.findListBySupplierAndLastDate(
-							supplier, startDate, endDate, new RowBounds(
-									pageIndex, pageSize));
+					
 					
 				} else {
 					productList = productDAO.findDiffListBySupplierAndLastDate(
@@ -274,9 +280,14 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		for (ProductDTO dto : page.getItems()) {
 			
 			try {
-				//supplierId 供货商编号
-				supplierId = dto.getSupplierId();
-				buffer.append(supplierId).append(splitSign);
+				//supplierId 供货商
+				supplierId = dto.getSupplierName();
+				if(StringUtils.isNotBlank(supplierId)){
+					buffer.append(supplierId).append(splitSign);
+				}else{
+					buffer.append(dto.getSupplierId()).append(splitSign);
+				}
+				
 				// 品类名称
 				categoryName = dto.getSubCategoryName();
 				if (StringUtils.isBlank(categoryName)) {
