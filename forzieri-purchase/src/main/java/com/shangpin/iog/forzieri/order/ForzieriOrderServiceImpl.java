@@ -156,7 +156,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 				deleteOrder.setExcState("0");
 			}
 		} catch (Exception e) {
-			logger.info("取消订单失败");
+			logger.info("网络异常取消订单失败");
 			deleteOrder.setExcDesc(e.getMessage());
 			deleteOrder.setExcState("1");
 			e.printStackTrace();
@@ -213,7 +213,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 		return pushOrderData;
 	}
 	//确认或取消订单
-	public PushOrderData confirmOrCancelOrder(String orderNo,String oper){
+	public PushOrderData confirmOrCancelOrder(String orderNo,String oper) throws ClientProtocolException{
 		TokenDTO tokenDTO = null;
 		HttpResponse response = null;
 		PushOrderData pushOrderData = null;
@@ -236,15 +236,15 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
         StringEntity entity = new StringEntity("{\"status\":\""+oper+"\"}","utf-8");
         entity.setContentType("application/json");
         httpPost.setEntity(entity);
-		try {
-        	 response = httpClient.execute(httpPost);
-        	 String str = EntityUtils.toString(response.getEntity());
-        	 pushOrderData = gson.fromJson(str, PushOrderData.class);
-        	 pushOrderData.setStatusCode(String.valueOf(response.getStatusLine().getStatusCode()));
-        	 System.out.println(str);
-        } catch (Exception e) {
-			e.printStackTrace();
-		}
+			 try {
+				response = httpClient.execute(httpPost);
+				String str = EntityUtils.toString(response.getEntity());
+				pushOrderData = gson.fromJson(str, PushOrderData.class);
+				pushOrderData.setStatusCode(String.valueOf(response.getStatusLine().getStatusCode()));
+				System.out.println(str);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		return pushOrderData;
 	}
 	// 刷新token
