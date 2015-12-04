@@ -60,6 +60,8 @@ public class StockClientImp extends AbsUpdateProductStock{
             skuId = it.next();
             if (skuData.containsKey(skuId)) {
             	skustock.put(skuId, skuData.get(skuId));
+			}else {
+				skustock.put(skuId, "0");
 			}
         }
         return skustock;
