@@ -105,11 +105,14 @@ public class FetchProduct {
 						sku.setStock(item.getStock());
 						sku.setProductCode(product.getProducer_id());
 						sku.setSaleCurrency("EUR");
-						productFetchService.saveSKU(sku);
 
 						if(skuDTOMap.containsKey(sku.getSkuId())){
 							skuDTOMap.remove(sku.getSkuId());
 						}
+
+						productFetchService.saveSKU(sku);
+
+
 
 						if (StringUtils.isNotBlank(item.getPicture())) {
 							String[] picArray = item.getPicture().split("\\|");
