@@ -234,6 +234,19 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	}
 
 	@Override
+	public Map<String, SkuDTO> findStockAndPriceOfSkuObjectMap(String supplier, Date startDate, Date endDate) throws ServiceException {
+		List<SkuDTO> skuList = skuDAO.findListBySupplierAndLastDate(supplier, startDate, endDate);
+		Map<String,SkuDTO> returnMap = new HashMap<>();
+		for (SkuDTO dto : skuList) {
+
+			  returnMap.put(dto.getSkuId(),dto);
+
+		}
+		return returnMap;
+	}
+
+
+	@Override
 	public StringBuffer exportProduct(String supplier, Date startDate,
 			Date endDate, Integer pageIndex, Integer pageSize, String flag)
 			throws ServiceException {
