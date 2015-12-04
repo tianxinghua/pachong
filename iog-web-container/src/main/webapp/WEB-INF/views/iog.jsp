@@ -54,11 +54,11 @@
             }
         }
 
-        if("-1"== $('#supplier').val()){
+        /* if("-1"== $('#supplier').val()){
             alert("请选择供应商");
 
             return;
-        }
+        } */
 
         var search = {
             supplier:   $('#supplier').val(),
@@ -143,6 +143,53 @@
 
 
     }
+    
+    function exportOrder(str){
+
+
+        if(typeof($('#pageIndex').val()) != "undefined"&& $.trim($('#pageIndex').val()).length !=0){
+            if(isNaN($('#pageIndex').val())){
+                alert("请输入数字");
+                $('#pageIndex').focus();
+                return ;
+            }
+
+            if(typeof($('#pageSize').val()) == "undefined"||$.trim($('#pageSize').val()).length ==0){
+                alert("页码有数值时，导出行数必须也要有数值");
+                return ;
+            }
+        }
+
+        if(typeof($('#pageSize').val()) != "undefined"&&$.trim($('#pageSize').val()).length !=0){
+            if(isNaN($('#pageSize').val())){
+                alert("请输入数字");
+                $('#pageSize').focus();
+                return ;
+            }
+            if(typeof($('#pageIndex').val()) == "undefined"||$.trim($('#pageIndex').val()).length ==0){
+                alert("导出行数有数值时，页码必须也要有数值");
+                return ;
+            }
+        }
+
+        /* if("-1"== $('#supplier').val()){
+            alert("请选择供应商");
+
+            return;
+        } */
+
+        var search = {
+            supplier:   $('#supplier').val(),
+            startDate:    $('#startDate').val(),
+            endDate:      $('#endDate').val(),
+            pageIndex: $('#pageIndex').val(),
+            pageSize:$('#pageSize').val(),
+            supplierName:$ ('#supplier').find("option:selected").text(),
+            flag:str
+
+        };
+        window.open('csv?queryJson='+$.toJSON(search), '','');
+    }
 
 
 </script>
@@ -190,7 +237,9 @@
 	icon="icon-search" class='easyui-linkbutton'>价格变化导出</a>
 	<a href="javascript:void(0)"
 	onclick="clearText()" id="btn-cancel" icon="icon-cancel" class='easyui-linkbutton'>清空</a>
-	<a href="javascript:void(0)" onclick="updatePrice()" id="btn-edit" icon="icon-edit" class='easyui-linkbutton'>更新价格</a><br><br>
+	<a href="javascript:void(0)" onclick="updatePrice()" id="btn-edit" icon="icon-edit" class='easyui-linkbutton'>更新价格</a>
+	<a href="javascript:void(0)" onclick="exportOrder('order')" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>导出订单</a>
+	<br><br>
 	<br>
 	<a href="stockUpdateException" id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a>
 	

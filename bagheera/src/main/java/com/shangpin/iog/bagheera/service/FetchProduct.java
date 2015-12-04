@@ -117,7 +117,7 @@ public class FetchProduct {
 							 ProductPictureDTO picture = new ProductPictureDTO();
 							 picture.setSupplierId(supplierId);
 				             picture.setId(UUIDGenerator.getUUID());
-				             picture.setSkuId(dto.getSUPPLIER_CODE()+"-"+dto.getSIZE());
+				             picture.setSkuId(sku.getSkuId());
 				             picture.setPicUrl(img);
 				             productFetchService.savePictureForMongo(picture);
 						}
