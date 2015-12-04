@@ -81,6 +81,8 @@ public class StockImp extends AbsUpdateProductStock {
     		for (String skuno : skuNo) {
     			if(map.containsKey(skuno)){
     				  stockMap.put(skuno,map.get(skuno));
+    			}else{
+    				stockMap.put(skuno,"0");
     			}
             }
     	}
