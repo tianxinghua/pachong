@@ -1,11 +1,12 @@
 package com.shangpin.iog.stefaniamode.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.bind.JAXBException;
 
+import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.service.ProductSearchService;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,17 +31,40 @@ import com.shangpin.iog.stefaniamode.dto.Products;
 public class FetchProduct {
 	final Logger logger = Logger.getLogger(this.getClass());
 	private static Logger infoLogger = Logger.getLogger("info");
+
+	private static ResourceBundle bdl = null;
+
+	public static String supplierId;
+
+	public static String zipUrl;
+
+	public static int day;
+
+	static {
+		if (null == bdl)
+			bdl = ResourceBundle.getBundle("conf");
+		supplierId = bdl.getString("supplierId");
+		day = Integer.valueOf(bdl.getString("day"));
+
+	}
+
 	@Autowired
 	ProductFetchService productFetchService;
-
+	@Autowired
+	ProductSearchService productSearchService;
 	public void fetchProductAndSave(String xmlContent, String supplierId) {
 
 		try {
-			Map<String, String> mongMap = new HashMap<>();
-			mongMap.put("supplierId", supplierId);
-			mongMap.put("supplierName", "stefaniamode");
-			mongMap.put("result", xmlContent);
-			infoLogger.info(mongMap);
+			Date startDate,endDate= new Date();
+			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+			//获取原有的SKU 紧紧包含价格和库存
+			Map<String,SkuDTO> skuDTOMap = new HashedMap();
+			try {
+				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+
 			Products products = ObjectXMLUtil.xml2Obj(Products.class,
 					xmlContent);
 			List<Product> productList = products.getProducts();
@@ -81,7 +105,14 @@ public class FetchProduct {
 						sku.setStock(item.getStock());
 						sku.setProductCode(product.getProducer_id());
 						sku.setSaleCurrency("EUR");
+
+						if(skuDTOMap.containsKey(sku.getSkuId())){
+							skuDTOMap.remove(sku.getSkuId());
+						}
+
 						productFetchService.saveSKU(sku);
+
+
 
 						if (StringUtils.isNotBlank(item.getPicture())) {
 							String[] picArray = item.getPicture().split("\\|");
@@ -130,6 +161,19 @@ public class FetchProduct {
 					productFetchService.saveSPU(spu);
 				} catch (ServiceException e) {
 					e.printStackTrace();
+				}
+			}
+
+			//更新网站不再给信息的老数据
+			for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+				 Map.Entry<String,SkuDTO> entry =  itor.next();
+				if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+					entry.getValue().setStock("0");
+					try {
+						productFetchService.updatePriceAndStock(entry.getValue());
+					} catch (ServiceException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		} catch (JAXBException e) {
