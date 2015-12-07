@@ -10,6 +10,7 @@
 
 <style type="text/css">
 	.table_border {
+	
 		border: solid 1px #B4B4B4;
 		border-collapse: collapse;
 		-
@@ -21,13 +22,14 @@
 		
 		padding-left: 4px;
 		height: 27px;
-		border: solid 1px #B4B4B4;
+		border: solid 1px #606060;
 	}
 	
 	.table_border tr td {
+	
 		height: 25px;
 		padding: 4px;
-		border: solid 1px #B4B4B4;
+		border: solid 1px #606060;
 	}
 </style>
 
@@ -35,7 +37,7 @@
 <body>
 订单列表：
 <table width="100%" width="100%" class="table_border" border="0" id="high_light" lang="tabRowData"  
-         cellpadding="0" cellspacing="0">
+         cellpadding="0" cellspacing="0" bgcolor="#C7EDCC" >
 <tr>
 	<td>序号</td>
 	<td>供货商名称</td>
