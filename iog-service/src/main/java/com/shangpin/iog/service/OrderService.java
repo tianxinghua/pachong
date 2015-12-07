@@ -68,6 +68,15 @@ public interface OrderService {
 			Date endDate,Integer pageIndex, Integer pageSize);
 
     /**
+     * 查询订单，不分页
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public List<OrderDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate, Date endDate);
+    
+    /**
      * 获取异常订单信息
      * @return
      * @throws ServiceException
