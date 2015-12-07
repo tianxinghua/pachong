@@ -133,7 +133,6 @@ public class FileDownloadController {
             }
             
             if (productSearchDTO.getFlag().equals("same")) {
-            	
             	productBuffer =productService.exportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
             	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 			}else if(productSearchDTO.getFlag().equals("order")){
