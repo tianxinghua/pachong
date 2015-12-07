@@ -1,59 +1,57 @@
 package com.shangpin.iog.channeladvisor.purchase.service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.time.OffsetDateTime;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.channeladvisor.purchase.dto.Item;
-import com.shangpin.iog.channeladvisor.purchase.dto.Order;
-import com.shangpin.iog.channeladvisor.purchase.dto.Promotion;
 import com.shangpin.iog.channeladvisor.purchase.utils.UtilOfChannel;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
+import com.shangpin.iog.service.ProductSearchService;
 
-@Configuration("order")
+@Component("channeladvisorOrder")
 public class OrderImpl extends AbsOrderService {
 
 	private static Logger logger = Logger.getLogger("error");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
 	private static String supplierNo = null;
-	private static String createOrderUrl = null;
-	private static String updateOrderUrl = null;
-	private static String access_token = "";
+	private static String createOrderUrl = "https://api.channeladvisor.com/v1/Orders";
 	private static OutTimeConfig timeConfig = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
+	private static String access_token = "";
 	static {
 		if (null == bdl) {
 			bdl = ResourceBundle.getBundle("conf");
 			supplierId = bdl.getString("supplierId");
 			supplierNo = bdl.getString("supplierNo");
-			createOrderUrl = bdl.getString("createOrderUrl");
-			updateOrderUrl = bdl.getString("updateOrderUrl");
+			access_token = UtilOfChannel.getNewToken(timeConfig);
 		}
-		access_token = UtilOfChannel.getNewToken(timeConfig);
+		
 	}
+	
+	@Autowired
+	ProductSearchService productSearchService;
 
 	/**
 	 * 下订单
@@ -77,57 +75,51 @@ public class OrderImpl extends AbsOrderService {
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 
 		try{
+			
 			String jsonValue = getRequestParam(orderDTO);//下订单所需要的参数
 			System.out.println("param==="+jsonValue);
-						
-			createOrderUrl = createOrderUrl+"?access_token="+access_token;
+			
 			String excDesc = "";
 			String result = "";
-			String sku_stock = "";
 			String id = "";
 			String stock = "";
 			try{
-				//判断库存
-				sku_stock = orderDTO.getDetail().split(",")[0];
-				id = sku_stock.split(":")[0];
-				stock = sku_stock.split(":")[1];
-				String content = HttpUtil45.get("https://api.channeladvisor.com/v1/Products("+id+")?access_token="+access_token, timeConfig, null);
-				String realStock = JSONObject.fromObject(content).getString("TotalAvailableQuantity");
-				if(Integer.parseInt(stock) <= Integer.parseInt(realStock)){
-					result = HttpUtil45.operateData("post", "json",createOrderUrl, timeConfig, null, jsonValue, "", "");
+				if(!access_token.equals(UtilOfChannel.ERROR)){
+					
+					createOrderUrl = createOrderUrl+"?access_token="+access_token;//access_token;
+					//判断库存
+					String sku_stock = orderDTO.getDetail().split(",")[0];
+					String sku = sku_stock.split(":")[0];
+					id = productSearchService.findProductForOrder(supplierId,sku).getSpuId();
+					stock = sku_stock.split(":")[1];
+					String content = HttpUtil45.operateData("get", "", "https://api.channeladvisor.com/v1/Products("+id+")?access_token="+access_token, timeConfig, null, "", "", "");
+					String realStock = JSONObject.fromObject(content).getString("TotalAvailableQuantity");
+					if(Integer.parseInt(stock) <= Integer.parseInt(realStock)){
+						result = HttpUtil45.operateData("post", "json",createOrderUrl, timeConfig, null, jsonValue, "", "");
+					}else{
+						result = HttpUtil45.errorResult;
+						excDesc = "库存不足：订单产品数量为"+stock+"实际库存为"+realStock;
+					}
+					
 				}else{
 					result = HttpUtil45.errorResult;
-					excDesc = "库存不足：订单产品数量为"+stock+"实际库存为"+realStock;
+					excDesc = "access_token 无效！！！";
 				}
 				
-			}catch(ServiceException ex){
-				logger.error(ex.getMessage());
 				
-				//access_token过期，刷新access_token
+			}catch(ServiceException ex){
+				//access_token过期
 				if(ex.getMessage().equals("状态码:401")){
-					access_token = UtilOfChannel.getNewToken(timeConfig);//获取新的访问令牌
-					createOrderUrl = createOrderUrl+"?access_token="+access_token;
-					try{
-						String content = HttpUtil45.get("https://api.channeladvisor.com/v1/Products("+id+")?access_token="+access_token, timeConfig, null);
-						String realStock = JSONObject.fromObject(content).getString("TotalAvailableQuantity");
-						if(Integer.parseInt(stock) <= Integer.parseInt(realStock)){
-							result = HttpUtil45.operateData("post", "json",createOrderUrl, timeConfig, null, jsonValue, "", "");
-						}else{
-							result = HttpUtil45.errorResult;
-							excDesc = "库存不足：订单产品数量为"+stock+"实际库存为"+realStock;
-						}
-					
-					}catch(ServiceException e){//下单失败，发生异常
-						logger.error("下单失败===="+e.getMessage());
-						result = HttpUtil45.errorResult;
-						excDesc = e.getMessage();
-					}
-				}else{//下单失败，发生异常
+					access_token = UtilOfChannel.getNewToken(timeConfig);
+					handleSupplierOrder(orderDTO);
+				}else{
+					logger.error("下单失败====" + ex.getMessage());
 					result = HttpUtil45.errorResult;
 					excDesc = ex.getMessage();
 				}
+				
 			}
-			
+			//根据返回信息设置订单状态
 			System.out.println("result==="+result);
 			if(StringUtils.isNotBlank(result) && !result.equals(HttpUtil45.errorResult)){
 				JSONObject json = JSONObject.fromObject(result);
@@ -168,16 +160,16 @@ public class OrderImpl extends AbsOrderService {
 			num = Integer.parseInt(details[i].split(":")[1]);
 			skuNo = details[i].split(":")[0];
 		}
-		String markPrice = "1";
-//		try {
-//			Map tempmap = skuPriceService
-//					.getNewSkuPriceBySku(supplierId, skuNo);
-//			Map map = (Map) tempmap.get(supplierId);
-//			markPrice = (String) map.get(skuNo);
-//		} catch (ServiceException e) {
-//			logger.error(e.getMessage());
-//			e.printStackTrace();
-//		}
+		String markPrice = "";
+		try {
+			Map tempmap = skuPriceService
+					.getNewSkuPriceBySku(supplierId, skuNo);
+			Map map = (Map) tempmap.get(supplierId);
+			markPrice = (String) map.get(skuNo);
+		} catch (ServiceException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
 		List<Map<String,Object>> items = new ArrayList<Map<String,Object>>();
 		Map<String,Object> itemMap = new HashMap<String,Object>();
 		itemMap.put("Sku",skuNo);
@@ -195,9 +187,11 @@ public class OrderImpl extends AbsOrderService {
 		param.put("SiteID", 587);
 		param.put("SiteName", "shangpin");
 		param.put("BuyerEmailAddress", "buyer@example.com");
-		param.put("CreatedDateUtc", "2015-11-24T14:33:00.1Z");//(new SimpleDateFormat("yyyy-MM-dd HH:mm")).format(new Date())
-		param.put("TotalPrice", totalPrice);//String.valueOf(totalPrice)
+		param.put("CreatedDateUtc", UtilOfChannel.getUTCTime());//
+		param.put("TotalPrice", totalPrice);//
 		param.put("Items", JSONArray.fromObject(items));
+		param.put("SellerOrderID", orderDTO.getSpOrderId());
+		param.put("CheckoutStatus", "Completed");
 
 		return JSONObject.fromObject(param).toString();
 	}
@@ -205,39 +199,64 @@ public class OrderImpl extends AbsOrderService {
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		//Retrieve details about a single order
-		//GET https://api.channeladvisor.com/v1/Orders(123456)
+		//POST https://api.channeladvisor.com/v1/Fulfillments
 		try{
 			
-			String newStoken = UtilOfChannel.getNewToken(timeConfig);//获取新的访问令牌
-			updateOrderUrl = updateOrderUrl+"("+orderDTO.getSupplierOrderNo()+")?access_token="+newStoken;
-			String result = HttpUtil45.get(updateOrderUrl, timeConfig, null);
-			System.out.println("result=="+result);
-			if(StringUtils.isNotBlank(result) && !result.equals(HttpUtil45.errorResult)){
-				JSONObject json = JSONObject.fromObject(result);
-				switch (json.getString("PaymentStatus")) {
-				case "NotYetSubmitted":
-					
-					break;
-				case "Cleared":
-					
-					break;
-				case "Submitted":
-					orderDTO.setStatus(OrderStatus.CONFIRMED);
-					break;
-				case "Failed":
-					
-					break;
-				case "Deposited":
-					orderDTO.setStatus(OrderStatus.WAITPLACED);
-					break;
-				}
-			}else{//异常
+			String result = "";
+			String excDesc = "";//异常信息
+			
+			if(!access_token.equals(UtilOfChannel.ERROR)){
 				
+				String url = "https://api.channeladvisor.com/v1/Orders("+orderDTO.getSupplierOrderNo()+")?access_token="+access_token;
+				Map<String,String> param = new HashMap<>();
+				param.put("CheckoutStatus", "Completed");
+				param.put("PaymentStatus", "Cleared");
+				param.put("CheckoutDateUtc", UtilOfChannel.getUTCTime());
+				param.put("PaymentDateUtc", UtilOfChannel.getUTCTime());
+				String jsonValue = JSONObject.fromObject(param).toString();
+				
+				try{
+					
+					result = HttpUtil45.operateData("put", "json", url, timeConfig, null, jsonValue, "", "");
+					
+				}catch(ServiceException e){
+					
+					if(e.getMessage().equals("状态码:401")){//access_token过期
+						access_token = UtilOfChannel.getNewToken(timeConfig);
+						handleConfirmOrder(orderDTO);
+					}else if(e.getMessage().equals("状态码:204")){//支付成功
+						
+						result = UtilOfChannel.SUCCESSFUL;
+						
+					}else{//其他情况支付失败
+						result = HttpUtil45.errorResult;
+						excDesc = e.getMessage();
+					}	
+					logger.error(e.getMessage());
+				}
+			}else{
+				result = HttpUtil45.errorResult;
+				excDesc = "access_token 无效！！！";
+			}
+			
+			//根据返回信息设置订单状态
+			System.out.println("result=="+result);
+			
+			if(result.equals(UtilOfChannel.SUCCESSFUL)){
+				
+				orderDTO.setStatus(OrderStatus.CONFIRMED);
+				
+			}else{
+				orderDTO.setExcDesc("支付失败=="+excDesc);
+				orderDTO.setExcState("1");
+				orderDTO.setExcTime(new Date());
 			}
 			
 		}catch(Exception ex){
+			logger.error(ex);
 			orderDTO.setExcDesc(ex.getMessage());
 			orderDTO.setExcState("1");
+			orderDTO.setExcTime(new Date());
 			ex.printStackTrace();
 		}
 		
@@ -247,28 +266,56 @@ public class OrderImpl extends AbsOrderService {
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
 		//Mark an order as not exported
 		//https://api.channeladvisor.com/v1/Orders(123456)/Adjust
-		try{
+		String rStr = "";
+		String excDesc = "";
+		try{	
 			
-			OutTimeConfig outTimeConf = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
-			String newStoken = UtilOfChannel.getNewToken(outTimeConf);//获取新的访问令牌
-			Map<String,String> param = new HashMap<String,String>();
-			param.put("Reason", "BuyerCancelled");
-			param.put("PreventSiteProcessing", "True");
-			param.put("SellerAdjustmentID", deleteOrder.getSpOrderId());
-			param.put("AdjustmentAmount", "0");
-			
-			System.out.println(JSONObject.fromObject(param));
-			
-			String url = "https://api.channeladvisor.com/v1/Orders("+deleteOrder.getSupplierOrderNo()+")/Adjust?access_token="+newStoken;
-			String rStr = HttpUtil45.post(url, param, outTimeConf);
-			System.out.println(rStr);
-			if( !rStr.equals(HttpUtil45.errorResult) && StringUtils.isNotBlank(rStr)){
+			if(!access_token.equals(UtilOfChannel.ERROR)){
+				Map<String,Object> param = new HashMap<String,Object>();
+				param.put("Reason", "BuyerCancelled");
+				param.put("PreventSiteProcessing", "True");
+//				param.put("SellerAdjustmentID", deleteOrder.getSpOrderId());
+				param.put("Type", "Cancellation");
+				String jsonValue = JSONObject.fromObject(param).toString();	
+				System.out.println("jsonValue==="+jsonValue);
+				String url = "https://api.channeladvisor.com/v1/Orders("+deleteOrder.getSupplierOrderNo()+")/Adjust?access_token="+access_token;
+				try{
+					
+					rStr = HttpUtil45.operateData("post", "json", url, timeConfig, null, jsonValue, "", "");
 				
+				}catch(ServiceException e){
+					if(e.getMessage().equals("状态码:401")){//access_token过期
+						access_token = UtilOfChannel.getNewToken(timeConfig);
+						handleCancelOrder(deleteOrder);
+					}else{
+						rStr = HttpUtil45.errorResult;
+						excDesc = e.getMessage();
+					}
+					
+					logger.error(e);
+				}
 			}else{
-				//发生异常
+				rStr = HttpUtil45.errorResult;
+				excDesc = "access_token 无效！！！";
+			}
+			
+			//根据返回结果设置退单的状态
+			System.out.println("result=="+rStr);			
+			if( !rStr.equals(HttpUtil45.errorResult) && StringUtils.isNotBlank(rStr)){
+				//取消成功
+				deleteOrder.setExcState("0");
+				deleteOrder.setStatus(OrderStatus.CANCELLED);				
+			}else{
+				//取消失败
+				deleteOrder.setExcDesc("订单已被供货商取消或者发生异常 "+excDesc);
+				deleteOrder.setExcState("1");
+				deleteOrder.setExcTime(new Date());
 			}
 			
 		}catch(Exception ex){
+			deleteOrder.setExcDesc(ex.getMessage());
+			deleteOrder.setExcState("1");
+			deleteOrder.setExcTime(new Date());
 			logger.error(ex);
 			ex.printStackTrace();
 		}
@@ -276,12 +323,72 @@ public class OrderImpl extends AbsOrderService {
 
 	}
 
+	@Override
+	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
+		
+		String result = "";
+		String excDesc = "";
+		
+		try{
+			
+			if(!access_token.equals(UtilOfChannel.ERROR)){
+				Map<String,Object> param = new HashMap<String,Object>();
+				param.put("PreventSiteProcessing", "True");
+				param.put("SellerAdjustmentID", deleteOrder.getSpOrderId());
+				param.put("AdjustmentAmount", getAdjustmentAmount(deleteOrder));
+				String jsonValue = JSONObject.fromObject(param).toString();	
+				System.out.println("jsonValue==="+jsonValue);
+				String url = "https://api.channeladvisor.com/v1/Orders("+deleteOrder.getSupplierOrderNo()+")/Adjust?access_token="+access_token;
+				try{
+					
+					result = HttpUtil45.operateData("post", "json", url, timeConfig, null, jsonValue, "", "");
+				
+				}catch(ServiceException e){
+					//access_token过期
+					if(e.getMessage().equals("状态码:401")){
+						access_token = UtilOfChannel.getNewToken(timeConfig);
+						handleRefundlOrder(deleteOrder);
+					}else{
+						result = HttpUtil45.errorResult;
+						excDesc = e.getMessage();
+					}
+					
+					logger.error(e);
+				}
+			}else{
+				result = HttpUtil45.errorResult;
+				excDesc = "access_token 无效！！！";
+			}
+			
+			//根据返回结果设置退单的状态
+			System.out.println("result=="+result);			
+			if( !result.equals(HttpUtil45.errorResult) && StringUtils.isNotBlank(result)){
+				//取消成功
+				deleteOrder.setExcState("0");
+				deleteOrder.setStatus(OrderStatus.CANCELLED);				
+			}else{
+				//取消失败
+				deleteOrder.setExcDesc("订单已被供货商取消或者发生异常 "+excDesc);
+				deleteOrder.setExcState("1");
+				deleteOrder.setExcTime(new Date());
+			}
+			
+		}catch(Exception ex){
+			deleteOrder.setExcDesc(ex.getMessage());
+			deleteOrder.setExcState("1");
+			deleteOrder.setExcTime(new Date());
+			logger.error(ex);
+			ex.printStackTrace();
+		}
+		
+	}
+	
 	/**
 	 * 计算取消订单的总金额
 	 * @param deleteOrder
 	 * @return
 	 */
-	public String getAdjustmentAmount(ReturnOrderDTO deleteOrder){
+	public Double getAdjustmentAmount(ReturnOrderDTO deleteOrder){
 		
 		String detail = deleteOrder.getDetail();
 		String[] details = detail.split(",");
@@ -309,13 +416,7 @@ public class OrderImpl extends AbsOrderService {
 			logger.info("产品sku= " + skuNo + " 没有市场价");
 		}
 		
-		return String.valueOf(totalPrice);
-	}
-	
-	@Override
-	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
-		// TODO Auto-generated method stub
-
+		return totalPrice;
 	}
 
 	@Override
@@ -331,21 +432,34 @@ public class OrderImpl extends AbsOrderService {
 
 	}
 	
+	private static ApplicationContext factory;
+	
+	private static void loadSpringContext()
+
+	{
+
+		factory = new AnnotationConfigApplicationContext(AppContext.class);
+	}
+	
 	public static void main(String[] args){
-		OrderImpl order = new OrderImpl();
+		loadSpringContext();
+		OrderImpl order = (OrderImpl)factory.getBean("channeladvisorOrder");
 		OrderDTO oo = new OrderDTO();
-		oo.setDetail("277562:5");
-		//String str = JSONObject.fromObject(order.getRequestParam(oo)).toString();
-		//System.out.println(str);
+		oo.setDetail("NY-15006:1");
+		//
+		oo.setSpOrderId("11111111111");		
+		
 		order.handleSupplierOrder(oo);
 		
+//		oo.setSupplierOrderNo("162765");
+//		order.handleConfirmOrder(oo);
+		
 //		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
-//		deleteOrder.setSpOrderId("123abc");
-//		deleteOrder.setSupplierOrderNo("123456");
+//		deleteOrder.setDetail("NY-15006:1");
+//		deleteOrder.setSpOrderId("2015120415006");
+//		deleteOrder.setSupplierOrderNo("162814");
 //		order.handleCancelOrder(deleteOrder);
-//		OrderDTO orderDTO = new OrderDTO();
-//		orderDTO.setSupplierOrderNo("159669");
-//		order.handleConfirmOrder(orderDTO);
+//		order.handleRefundlOrder(deleteOrder);
 		
 	}
 
