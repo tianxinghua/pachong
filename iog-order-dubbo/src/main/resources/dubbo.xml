@@ -33,9 +33,7 @@
                     extension="com.shangpin.openapi.api.ApiRequestControlFilter,
 							   com.shangpin.openapi.api.ApiReaderInterceptor,
 							   com.shangpin.openapi.api.ApiExceptionMapper,
-							   com.shangpin.openapi.api.ApiResponseControlFilter
-							   "/>
-
-
+							   com.shangpin.openapi.api.ApiResponseControlFilter,
+							   com.shangpin.openapi.api.ApiWriterInterceptor"/>
 
 </beans>

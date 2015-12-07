@@ -1,9 +1,6 @@
 package com.shangpin.iog.tony.stock;
 import com.shangpin.iog.app.AppContext;
 
-import com.shangpin.iog.dto.StockUpdateDTO;
-import com.shangpin.iog.product.service.UpdateStockServiceImpl;
-import com.shangpin.iog.service.UpdateStockService;
 import com.shangpin.iog.tony.stock.service.TonyStockImp;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -19,7 +16,6 @@ import java.util.ResourceBundle;
 public class StartSkuJob {
 
     private static Logger log = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
 
     private static ApplicationContext factory;
     private static void loadSpringContext() {
@@ -36,13 +32,7 @@ public class StartSkuJob {
         log.info("----拉取tony数据开始----");
         TonyStockImp tonyStockImp =(TonyStockImp)factory.getBean("tonyStock");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        try {
-            tonyStockImp.updateProductStock(SUPPLIER_ID, "2015-01-01 00:00", format.format(new Date()));
-
-        } catch (Exception e) {
-            loggerError.error("更新库存失败。"+ e.getMessage());
-            e.printStackTrace();
-        }
+        tonyStockImp.updateProductStock(SUPPLIER_ID, "2015-01-01 00:00", format.format(new Date()));
         log.info("----拉取tony数据完成----");
         System.out.println("-------fetch end---------");
         System.exit(0);

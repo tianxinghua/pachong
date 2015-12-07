@@ -31,7 +31,6 @@ import java.util.ResourceBundle;
 @Component("eleonorabonucci")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
-    private static Logger logInfo = Logger.getLogger("info");
     private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
@@ -61,7 +60,6 @@ public class FetchProduct {
 //            logMongo.info(mongMap);
 
             System.out.println("result : " + result);
-            logInfo.info("result="+ result);
 
             //Remove BOM from String
             if (result != null && !"".equals(result)) {
@@ -70,8 +68,6 @@ public class FetchProduct {
 
             Products products = ObjectXMLUtil.xml2Obj(Products.class, result);
             List<Product> productList = products.getProducts();
-            String skuId = "";
-            String size="";
             for (Product product : productList) {
                 SpuDTO spu = new SpuDTO();
 
@@ -85,7 +81,7 @@ public class FetchProduct {
 
                 List<Item> itemList = items.getItems();
                 if (null == itemList) continue;
-
+                String skuId = "";
                 for (Item item : itemList) {
 
                     //库存为0不进行入库
@@ -104,13 +100,7 @@ public class FetchProduct {
                             skuId = skuId.replace("½", "+");
                         }
                         sku.setSkuId(skuId);
-                        size = item.getItem_size();
-                        if(StringUtils.isNotBlank(size)){
-                            if (size.indexOf("½") > 0) {
-                                size = size.replace("½", ".5");
-                            }
-                        }
-                        sku.setProductSize(size);
+                        sku.setProductSize(item.getItem_size());
                         if(item.getMarket_price() != null) {
                             sku.setMarketPrice(item.getMarket_price().replaceAll(",", "."));
                         }
@@ -138,7 +128,7 @@ public class FetchProduct {
                                     dto.setPicUrl(picUrl);
                                     dto.setSupplierId(supplierId);
                                     dto.setId(UUIDGenerator.getUUID());
-                                    dto.setSkuId(sku.getSkuId());
+                                    dto.setSkuId(item.getItem_id());
                                     try {
                                         productFetchService.savePictureForMongo(dto);
                                     } catch (ServiceException e) {

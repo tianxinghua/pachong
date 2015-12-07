@@ -3,10 +3,8 @@ package com.shangpin.iog.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.OrderDTO;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * Created by loyalty on 15/9/11.
@@ -55,18 +53,6 @@ public interface OrderService {
      */
     public List<OrderDTO> getOrderBySupplierIdAndOrderStatus(String supplierId,String status) throws ServiceException;
 
-    /**
-     * 查询订单
-     * @param supplier
-     * @param startDate
-     * @param endDate
-     * @param pageIndex
-     * @param pageSize
-     * @return
-     */
-    public List<OrderDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate,
-			Date endDate,Integer pageIndex, Integer pageSize);
-    
     /**
      * 获取异常订单信息
      * @return
@@ -160,17 +146,5 @@ public interface OrderService {
      * @throws ServiceException
      */
     public OrderDTO getOrderByUuId(String uuid) throws ServiceException;
-    
-    /**
-     * 导出订单
-     * @param supplier 供货商编号
-     * @param startDate 开始时间
-     * @param endDate 结束时间
-     * @param pageIndex
-     * @param pageSize
-     * @param flag
-     * @return
-     */
-    public StringBuffer exportOrder(String supplier,Date startDate,Date endDate,int pageIndex,int pageSize,String flag);
 
 }

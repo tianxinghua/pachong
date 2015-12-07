@@ -37,32 +37,17 @@ public class StockClientImp extends AbsUpdateProductStock{
 
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-    	String skuId ="";
-    	String size = "";
-        Map<String, String> skustock = new HashMap<>();
-        Map<String, String> skuData = new HashMap<>();
-        
+        Map<String, String> skustock = new HashMap<>(skuNo.size());
         DownloadAndReadExcel excelHelper = new DownloadAndReadExcel();
         List<BagheeraDTO> list=excelHelper.readLocalExcel();
-        for (BagheeraDTO bagheeraDTO : list) {
-        	 size = bagheeraDTO.getSIZE();
-             if(size.indexOf("½")>0){
-                 size=size.replace("½","+");
-             }
-            skuId = bagheeraDTO.getSUPPLIER_CODE()+"-"+size;
-        	skuData.put(skuId, bagheeraDTO.getSTOCK());
-		}
-        
         Iterator<String> it = skuNo.iterator();
-        
-        
         while (it.hasNext()) {
-            skuId = it.next();
-            if (skuData.containsKey(skuId)) {
-            	skustock.put(skuId, skuData.get(skuId));
-			}else {
-				skustock.put(skuId, "0");
-			}
+            String skuId = it.next();
+            for(int i=0;i<list.size();i++){
+                if(skuId.equals(list.get(i).getSUPPLIER_CODE()+"-"+list.get(i).getSIZE())){
+                    skustock.put(skuId,list.get(i).getSTOCK()/*+"|"+list.get(i).getLIST_PRICE()*/);
+                }
+            }
         }
         return skustock;
     }

@@ -759,30 +759,26 @@ public abstract class AbsOrderService {
             deleteOrder.setCreateTime(new Date());
             try{
                 logger.info("退单信息："+deleteOrder.toString());
-                if(returnOrderService.saveOrderWithResult(deleteOrder)){
-                    if(!handleCancel){
-                        continue;
-                    }
-                    try {
-                        //处理退单
-                        handleCancelOrder(deleteOrder);
-                        //更改退单状态无论成功或失败
-                        updateCancelOrderMsg( deleteOrder);
+                returnOrderService.saveOrder(deleteOrder);
+                if(!handleCancel){
+                    continue;
+                }
+                try {
+                    //处理退单
+                    handleCancelOrder(deleteOrder);
+                    //更改退单状态无论成功或失败
+                    updateCancelOrderMsg( deleteOrder);
 
 
-                    } catch (Exception e) {
-                        //下单失败
-                        loggerError.error("取消订单："+deleteOrder.getSpOrderId()+" 处理失败");
-                        System.out.println("取消订单：" + deleteOrder.getSpOrderId() + " 处理失败");
-                        e.printStackTrace();
-                    }
-                }else{
-                    loggerError.error("取消订单："+ deleteOrder.getSpOrderId() + "保存失败");
+                } catch (Exception e) {
+                    //下单失败
+                    loggerError.error("退单："+deleteOrder.getSpOrderId()+" 处理失败");
+                    System.out.println("退单：" + deleteOrder.getSpOrderId() + " 处理失败");
+                    e.printStackTrace();
                 }
 
-
             }catch (Exception e){
-                loggerError.error("取消订单错误 " + e.getMessage());
+                loggerError.error("下单错误 " + e.getMessage());
                 e.printStackTrace();
             }
 
@@ -853,33 +849,28 @@ public abstract class AbsOrderService {
                 try {
                     logger.info("采购单信息转化退单后信息：" + deleteOrder.toString());
                     System.out.println("采购单信息转化退单后信息：" + deleteOrder.toString());
-                    if(returnOrderService.saveOrderWithResult(deleteOrder)){
-                        //处理退款
-                        handleRefundlOrder(deleteOrder);
-                        //更改退单状态无论成功或失败 还需要更改订单状态
-                        updateRefundOrderMsg(deleteOrder);
+                    returnOrderService.saveOrder(deleteOrder);
+                    //处理退款
+                    handleRefundlOrder(deleteOrder);
+                    //更改退单状态无论成功或失败 还需要更改订单状态
+                    updateRefundOrderMsg(deleteOrder);
 
 
-                        if(SENDMAIL){
-                            logger.info("send email ");
-                            handleEmail(orderDTO);
-                        }else{
-                            logger.info("not send email ");
-                        }
+                    if(SENDMAIL){
+                        logger.info("send email ");
+                        handleEmail(orderDTO);
                     }else{
-                        loggerError.error("退款："+ deleteOrder.getSpOrderId() + "保存失败");
+                        logger.info("not send email ");
                     }
 
-
                 } catch (ServiceException e) {
-                    loggerError.error("订单" + deleteOrder.getSpOrderId()  + "退款错误 " + e.getMessage());
+
                     e.printStackTrace();
                 }
 
             }
 
         } catch (Exception e) {
-            loggerError.error( "退款错误 " + e.getMessage());
             e.printStackTrace();
         }
 

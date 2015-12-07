@@ -62,12 +62,7 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
         while (iterator.hasNext()){
             skuId = iterator.next();
             logger.info("SkuId is " +skuId + ",stock is " +map.get(skuId));
-            if(map.containsKey(skuId)){
-                returnMap.put(skuId, map.get(skuId));
-            }else{
-                returnMap.put(skuId, "0");
-            }
-
+            returnMap.put(skuId, map.get(skuId));
         }
         end = System.currentTimeMillis();
         logger.info("为AMFEED产品库存赋值总共耗时："+(end-start)/1000+"秒");

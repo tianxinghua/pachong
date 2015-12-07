@@ -4,7 +4,10 @@
 package com.shangpin.iog.coltorti.dto;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import lombok.Getter;
@@ -92,20 +95,17 @@ public class ColtortiProduct implements Serializable{
 	 */
 	public String getColor(){
 		boolean got=false;
-
-		if(!got && variant!=null && variant.size()>0){
-			Set<Entry<String, String>> set = this.getVariant().entrySet();
-			return set.iterator().next().getValue();
-		}
-
-
 		if(attributes!=null && attributes.size()>0){
 			String v=getAttributeValues("000001");
 			if(v!=null)
 				return v;
 		}
 		
-
+		if(!got && variant!=null && variant.size()>0){
+				Set<Entry<String, String>> set = this.getVariant().entrySet();
+				return set.iterator().next().getValue();
+		}
+		
 		return "";
 	}
 	
@@ -116,13 +116,7 @@ public class ColtortiProduct implements Serializable{
 			@SuppressWarnings("unchecked")
 			Map<String,String> values=(Map<String, String>) attr.get("values");
 			if(values!=null ){
-//				return values.entrySet().iterator().next().getValue();
-				String restult ="";
-				for(Iterator<Entry<String,String>> itor = values.entrySet().iterator(); itor.hasNext(); ){
-					restult =restult + itor.next().getValue() + " " ;
-				}
-
-				return  restult.trim();
+				return values.entrySet().iterator().next().getValue();
 			}
 		}
 		return null;

@@ -2,13 +2,11 @@ package com.shangpin.iog.product.service;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
-import com.shangpin.framework.page.Page;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.product.dao.OrderMapper;
 import com.shangpin.iog.service.OrderService;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +29,6 @@ public class OrderServiceImpl implements OrderService {
     private  final  static String UPDATE_ERROR = "更新订单状态失败";
 
     private  final  static  String UPDATE_EXCEPTON_MSG_ERROR="更新订单异常信息时失败";
-    
-    private static String splitSign = ",";
 
     @Autowired
     OrderMapper orderDAO;
@@ -185,95 +181,6 @@ public class OrderServiceImpl implements OrderService {
         if(StringUtils.isBlank(uuid)) throw new ServiceMessageException("唯一编号参数为空");
         return orderDAO.findByUuId(uuid);
     }
-
-	@Override
-	public List<OrderDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate,
-			Date endDate,Integer pageIndex, Integer pageSize) {
-		
-		return orderDAO.getOrderBySupplierIdAndTime(supplier, startDate, endDate, new RowBounds(pageIndex,pageSize));
-	}
-	
-	public List<OrderDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate, Date endDate){
-		return orderDAO.getOrderBySupplierIdAndTime(supplier, startDate, endDate);
-	}
-	
-	public Page<OrderDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate,
-			Date endDate,Integer pageIndex, Integer pageSize,String flag) throws ServiceMessageException{
-		List<OrderDTO> orderList = new ArrayList<>();
-		Page<OrderDTO> page = null;
-		try{
-			if(pageIndex != null && pageSize != null && pageIndex != -1 && pageSize != -1){
-				
-				orderList = this.getOrderBySupplierIdAndTime(supplier, startDate, endDate, pageIndex, pageSize);
-				page = new Page<>(pageIndex, pageSize);
-				
-			}else{
-				
-				orderList = this.getOrderBySupplierIdAndTime(supplier, startDate, endDate);
-				page = new Page<>(1, orderList.size());
-				
-			}	
-			
-			page.setItems(orderList);
-			
-		}catch(Exception ex){
-			logger.error(ex.getMessage());
-			ex.printStackTrace();
-			throw new ServiceMessageException("数据导出失败");
-		}
-		
-		return page;
-	}
-
-	@Override
-	public StringBuffer exportOrder(String supplier, Date startDate,
-			Date endDate, int pageIndex, int pageSize, String flag) {		
-		
-		StringBuffer buffer = new StringBuffer("SupplierId 供货商" + splitSign
-				+ "SpOrderId 尚品订单编号" + splitSign
-				+ "SpPurchaseNo 采购单编号" + splitSign + "SpPurchaseDetailNo 采购单明细" + splitSign
-				+ "Detail 供货商skuId:数量" + splitSign + "Memo 尚品skuId:数量" + splitSign
-				+ "CreateTime" + splitSign + "UpdateTime" + splitSign
-				+ "UuId").append("\r\n");
-		Page<OrderDTO> page = null;
-		try{
-			
-			page = this.getOrderBySupplierIdAndTime(supplier, startDate, endDate, pageIndex, pageSize, flag);
-			String detail = "" ,memo = "",supplierName = "";
-			if(page.getItems().size()>0){
-				for(OrderDTO order :page.getItems()){
-					
-					if(StringUtils.isNotBlank(order.getSupplierName())){
-						supplierName = order.getSupplierName();
-					}else{
-						supplierName = order.getSupplierId();
-					}
-					buffer.append(supplierName).append(splitSign);
-					buffer.append(order.getSpOrderId()).append(splitSign);
-					buffer.append(order.getSpPurchaseNo()).append(splitSign);
-					buffer.append(order.getSpPurchaseDetailNo()).append(splitSign);
-					if(StringUtils.isNotBlank(order.getDetail())){
-						detail = order.getDetail().replaceAll(splitSign, "");
-					}
-					buffer.append(detail).append(splitSign);
-					if(StringUtils.isNotBlank(order.getMemo())){
-						memo = order.getMemo().replaceAll(splitSign, "");
-					}
-					buffer.append(memo).append(splitSign);
-					buffer.append(order.getCreateTime()).append(splitSign);
-					buffer.append(order.getUpdateTime()).append(splitSign);
-					buffer.append(order.getUuId());
-					buffer.append("\r\n");
-				}
-			}
-			
-		}catch(Exception ex){
-			logger.error(ex.getMessage());
-			ex.printStackTrace();
-		}
-		
-		return buffer;
-	}
 
 
 

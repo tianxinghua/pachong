@@ -4,7 +4,6 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.dto.SupplierStockDTO;
 import com.shangpin.iog.service.SupplierStockService;
-import com.shangpin.iog.service.UpdateStockService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,10 +28,6 @@ public class TonyStockImp extends AbsUpdateProductStock{
 
     @Autowired
     SupplierStockService supplierStockService;
-
-
-    @Autowired
-    UpdateStockService updateStockService;
 
     @Override
     public Map<String,String> grabStock(Collection<String> skuNos) throws ServiceException, Exception {

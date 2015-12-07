@@ -21,20 +21,6 @@
         <result column="CREATE_TIME" property="createTime" />
         <result column="LAST_TIME" property="lastTime" />
 	</resultMap>
-
-
-	<resultMap id="stockAndPriceMap" type="iog_sku">
-		<result column="SUPPLIER_ID" property="supplierId"  />
-		<result column="SKU_ID" property="skuId"  />
-		<result column="STOCK" property="stock" />
-		<result column="SUPPLIER_PRICE" property="supplierPrice" />
-		<result column="MARKET_PRICE" property="marketPrice" />
-		<result column="SALE_PRICE" property="salePrice" />
-		<result column="NEW_MARKET_PRICE" property="newMarketPrice" />
-		<result column="NEW_SUPPLIER_PRICE" property="newSupplierPrice" />
-		<result column="NEW_SALE_PRICE" property="newSalePrice" />
-
-	</resultMap>
 	
 	<resultMap type="iog_newPrice" id="priceMap">
 		<result column="skuId" property="skuId"  />
@@ -173,43 +159,6 @@
             </if>
         </where>
 	</select>
-
-
-	<select id="findListBySupplierAndLastDate"  resultMap="stockAndPriceMap">
-		select
-		SUPPLIER_ID as  supplierId,
-		SKU_ID as skuId,
-		STOCK as stock,
-		MARKET_PRICE as marketPrice,
-		SUPPLIER_PRICE as supplierPrice,
-		SALE_PRICE as salePrice,
-		NEW_SALE_PRICE as newSalePrice,
-		NEW_MARKET_PRICE as newMarketPrice,
-		NEW_SUPPLIER_PRICE as newSupplierPrice
-		from SKU sku
-		<where>
-
-
-			<if test="null!=supplier">
-				  sku.SUPPLIER_ID = #{supplier}
-			</if>
-			<if test="null!=startDate">
-				and sku.LAST_TIME >= #{startDate}
-			</if>
-			<if test="endDate!=null">
-
-				<![CDATA[ and sku.LAST_TIME <= #{endDate}    ]]>
-
-			</if>
-
-
-
-		</where>
-
-
-
-	</select>
-
 	
 	<update id="updatePrice" parameterType="iog_sku" >
 	    update SKU

@@ -1,5 +1,6 @@
 package com.shangpin.iog.facade.security;
 
+import com.shangpin.openapi.api.comm.ApiContext;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;

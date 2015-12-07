@@ -3,11 +3,8 @@ package com.shangpin.iog.product.dao;
 import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.dto.OrderDTO;
-
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -84,9 +81,4 @@ public interface OrderMapper extends IBaseDao<OrderDTO> {
      * @return
      */
     public List<OrderDTO> findExceptionOrder() ;
-    
-    public List<OrderDTO> getOrderBySupplierIdAndTime(@Param("supplierId")String supplier, @Param("startDate")Date startDate,
-    		@Param("endDate")Date endDate,RowBounds rowBounds);
-    
-    public List<OrderDTO> getOrderBySupplierIdAndTime(@Param("supplierId")String supplier, @Param("startDate")Date startDate, @Param("endDate")Date endDate);
 }

@@ -102,7 +102,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			 zipFile.delete();
+			// zipFile.delete();
 		}
 		InputStream inStream = null;
 		FileOutputStream fs = null;

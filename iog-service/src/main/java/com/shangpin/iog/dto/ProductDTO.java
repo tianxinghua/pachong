@@ -13,7 +13,6 @@ import java.util.Date;
 public class ProductDTO {
     private String id;
     private String supplierId;
-    private String supplierName;
     private String spuId;
 
     private String spuName;
@@ -99,15 +98,7 @@ public class ProductDTO {
 
 
 
-    public String getSupplierName() {
-		return supplierName;
-	}
-
-	public void setSupplierName(String supplierName) {
-		this.supplierName = supplierName;
-	}
-
-	public String getSpuId() {
+    public String getSpuId() {
         return spuId;
     }
 

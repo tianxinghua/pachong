@@ -4,11 +4,9 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.common.utils.excel.AccountsExcelTemplate;
 import com.shangpin.iog.dto.ProductDTO;
-import com.shangpin.iog.dto.SkuDTO;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by loyalty on 15/5/20.
@@ -43,15 +41,6 @@ public interface ProductSearchService {
      */
     public List<ProductDTO> findProductListBySupplierAndTime(String supplier,Date startDate,Date endDate) throws ServiceException;
 
-    /**
-     * 获取指定日期内的SKU 仅包含价格和库存
-     * @param supplier    供货商编号
-     * @param startDate   开始日期
-     * @param endDate     结束日期
-     * @return
-     * @throws ServiceException
-     */
-    public Map<String,SkuDTO> findStockAndPriceOfSkuObjectMap(String supplier,Date startDate,Date endDate)  throws ServiceException;
 
 
     /**
@@ -80,7 +69,7 @@ public interface ProductSearchService {
     
     /**
      * 获取产品信息,for order
-     * @param supplierId  供货商
+     * @param supplier  供货商
      * @return ProductDTO (若为空，返回所有)
      */
     public ProductDTO findProductForOrder(String supplierId,String skuId) throws ServiceException;

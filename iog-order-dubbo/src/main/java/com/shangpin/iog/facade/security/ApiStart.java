@@ -1,7 +1,7 @@
 package com.shangpin.iog.facade.security;
 
-
-
+import ShangPin.SOP.Servant.OpenApiServantPrx;
+import com.shangpin.openapi.api.comm.IcePrxHelper;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
@@ -35,7 +35,8 @@ public class ApiStart {
         public void run() {
             while (true) {
                 try {
-
+                    OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+                    servant.FindMoneyInfo();
                     Thread.sleep(50000);
                 } catch (Exception e) {
                 }
