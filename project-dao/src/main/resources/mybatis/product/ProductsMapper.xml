@@ -78,6 +78,7 @@
 	
 
 	<select id="findListBySupplierAndLastDate"  resultMap="ProductsResultMap">
+		
 		select
           sku.ID as id,
           sku.SUPPLIER_ID  as supplier_id,

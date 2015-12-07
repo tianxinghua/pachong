@@ -49,7 +49,7 @@ public class FileDownloadController {
     
     @Autowired
     SupplierService supplierService;
-
+    
     @Autowired
     OrderService orderService;
 
@@ -121,34 +121,33 @@ public class FileDownloadController {
             if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
                 endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
             }
-
+            
             Integer pageIndex = -1;
             if(null !=productSearchDTO.getPageIndex()){
             	pageIndex = productSearchDTO.getPageIndex();
             }
-
+            
             Integer pageSize = -1;
             if(null != productSearchDTO.getPageSize()){
             	pageSize = productSearchDTO.getPageSize();
             }
-
+            
             if (productSearchDTO.getFlag().equals("same")) {
-
             	productBuffer =productService.exportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
             	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 			}else if(productSearchDTO.getFlag().equals("order")){
-
+				
 				productBuffer =orderService.exportOrder(supplier,startDate,endDate,pageIndex,pageSize,productSearchDTO.getFlag());
 				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_order" + System.currentTimeMillis() + ".csv", "UTF-8"));
-
+				
 			}else{
 				productBuffer =productService.exportDiffProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
 				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 			}
 
+            
 
-
-
+            
 
 //            System.out.print("kk ----------------- " + productBuffer.toString());
             in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("gb2312")));

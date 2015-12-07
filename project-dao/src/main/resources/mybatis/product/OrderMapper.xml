@@ -4,6 +4,7 @@
 
 	<resultMap id="OrderResultMap" type="iog_order">
 
+
         <id column="ID" property="id" />
         <result column="SUPPLIER_ID" property="supplierId"  />
         <result column ="SUPPLIER_NAME" property = "supplierName"/>
