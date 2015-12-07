@@ -6,13 +6,16 @@ package com.shangpin.iog.webcontainer.front.controller;
 
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.page.Page;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.excel.AccountsExcelTemplate;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.json.JsonUtil;
+import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ProductSearchDTO;
 import com.shangpin.iog.dto.SupplierDTO;
+import com.shangpin.iog.service.OrderService;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SupplierService;
@@ -46,6 +49,9 @@ public class FileDownloadController {
     
     @Autowired
     SupplierService supplierService;
+    
+    @Autowired
+    OrderService orderService;
 
     @RequestMapping(value = "view")
     public ModelAndView viewPage() throws Exception {
@@ -94,12 +100,18 @@ public class FileDownloadController {
         StringBuffer productBuffer =null;
         try {
 
+        	response.reset();
+
+            response.setContentType("text/csv;charset=gb2312");
 
             ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
 
             if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
 
-
+            String supplier = null;
+            if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
+            	supplier = productSearchDTO.getSupplier();
+            }
             Date startDate  =null;
             if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
                 startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
@@ -109,17 +121,34 @@ public class FileDownloadController {
             if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
                 endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
             }
+            
+            Integer pageIndex = -1;
+            if(null !=productSearchDTO.getPageIndex()){
+            	pageIndex = productSearchDTO.getPageIndex();
+            }
+            
+            Integer pageSize = -1;
+            if(null != productSearchDTO.getPageSize()){
+            	pageSize = productSearchDTO.getPageSize();
+            }
+            
             if (productSearchDTO.getFlag().equals("same")) {
-            	productBuffer =productService.exportProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
+            	
+            	productBuffer =productService.exportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
+            	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+			}else if(productSearchDTO.getFlag().equals("order")){
+				
+				productBuffer =orderService.exportOrder(supplier,startDate,endDate,pageIndex,pageSize,productSearchDTO.getFlag());
+				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_order" + System.currentTimeMillis() + ".csv", "UTF-8"));
+				
 			}else{
 				productBuffer =productService.exportDiffProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
+				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 			}
 
-            response.reset();
+            
 
-            response.setContentType("text/csv;charset=gb2312");
-
-            response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+            
 
 //            System.out.print("kk ----------------- " + productBuffer.toString());
             in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("gb2312")));
@@ -149,6 +178,57 @@ public class FileDownloadController {
 
 
 
+    }
+    
+    
+    @RequestMapping(value = "orders")
+    public ModelAndView queryOrders(
+                         HttpServletResponse response,
+                         String queryJson){
+    	
+    	ModelAndView modelAndView = new ModelAndView();
+    	List<OrderDTO> orderList = null;
+    	try{
+    		
+    		ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
+            if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
+            String supplier = null;
+            if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
+            	supplier = productSearchDTO.getSupplier();
+            }
+            Date startDate  =null;
+            if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
+                startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
+            }
+            Date endDate = null;
+            if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
+                endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
+            }        
+            Integer pageIndex = -1;
+            if(null !=productSearchDTO.getPageIndex()){
+            	pageIndex = productSearchDTO.getPageIndex();
+            }        
+            Integer pageSize = -1;
+            if(null != productSearchDTO.getPageSize()){
+            	pageSize = productSearchDTO.getPageSize();
+            }
+            
+            
+            if(pageIndex != null && pageSize != null && pageIndex != -1 && pageSize != -1){			
+    			orderList = orderService.getOrderBySupplierIdAndTime(supplier, startDate, endDate, pageIndex, pageSize);
+    						
+    		}else{			
+    			orderList = orderService.getOrderBySupplierIdAndTime(supplier, startDate, endDate);
+    						
+    		}	        
+            modelAndView.addObject("orderList", orderList);
+    		modelAndView.setViewName("orders");
+    		
+    	}catch(Exception ex){
+    		log.error(ex.getMessage());
+    		ex.printStackTrace();
+    	}        
+		return modelAndView;
     }
 
 

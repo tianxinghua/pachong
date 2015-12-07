@@ -43,7 +43,7 @@ public class StockImp extends AbsUpdateProductStock {
 
     @Autowired
 	EventProductService eventProductService;
-    private static ResourceBundle bdl=null;
+    private static ResourceBundle bdl=null; 
     private static String supplierId;
     private static String stockUrl;
     static {
