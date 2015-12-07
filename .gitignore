@@ -2,7 +2,7 @@
 
 out/
 build/
-
+*/bin/*
 # .gitignore for maven 
 target/
 *.releaseBackup
