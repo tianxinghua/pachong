@@ -19,6 +19,8 @@ public class SpuItem {
     String spuId;
     @XmlElement(name = "producer_id")
     String productCode;
+    String retail_price;
+    String retail_price_tax;
     String price;
     String stock;
     @XmlElement(name = "product_detail")
@@ -137,6 +139,23 @@ public class SpuItem {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode;
+    }
+
+    public String getRetail_price() {
+        return retail_price;
+    }
+
+
+    public void setRetail_price(String retail_price) {
+        this.retail_price = retail_price;
+    }
+
+    public String getRetail_price_tax() {
+        return retail_price_tax;
+    }
+
+    public void setRetail_price_tax(String retail_price_tax) {
+        this.retail_price_tax = retail_price_tax;
     }
 
     @Override

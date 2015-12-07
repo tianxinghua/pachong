@@ -114,7 +114,9 @@ public class FetchProduct {
                     sku.setSupplierId(supplierId);
                     sku.setSkuId(skuId);
                     sku.setSpuId(spuId);
-                    sku.setMarketPrice(spuItem.getPrice());
+                    sku.setMarketPrice(spuItem.getRetail_price_tax());
+                    sku.setSalePrice(spuItem.getRetail_price());
+                    sku.setSupplierPrice(spuItem.getPrice());
                     sku.setColor(spuItem.getName());
                     sku.setProductSize(skuItem.getSize());
                     sku.setStock(skuItem.getStock());

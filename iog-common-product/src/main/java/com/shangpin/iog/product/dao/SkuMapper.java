@@ -45,4 +45,15 @@ public interface SkuMapper extends IBaseDao<SkuDTO> {
      * @throws ServiceException
      */
     public void updatePrice(SkuDTO skuDTO) throws ServiceException;
+
+    /**
+     * 根据供货商标识和最后修改时间获取产品列表
+     * @param supplier   供货商ID或NO 唯一标示
+     * @param startDate  开始时间
+     * @param endDate    结束时间
+     * @return
+     */
+    List<SkuDTO> findListBySupplierAndLastDate(@Param("supplier") String supplier,
+                                               @Param("startDate") Date startDate,
+                                               @Param("endDate") Date endDate);
 }

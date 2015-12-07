@@ -6,6 +6,7 @@
 		<id column="id" property="id" />
 
         <result column="supplier_id" property="supplierId"/>
+        <result column="supplier_name" property="supplierName"/>
 
         <result column="spu_name" property="spuName" />
         <result column="spu_id" property="spuId"/>
@@ -133,6 +134,62 @@
 
 	</select>
 	
+	<select id="findListOfAllSupplier"  resultMap="ProductsResultMap">
+		select
+          sku.ID as id,
+          sku.SUPPLIER_ID  as supplier_id,
+          su.SUPPLIER_NAME as supplier_name,
+          sku.SPU_ID  as spu_id,
+          sku.SKU_ID as sku_id,spu.SPU_NAME as spu_name,
+
+          sku.PRODUCT_NAME as product_name,
+          sku.MARKET_PRICE  as market_price,
+          sku.SALE_PRICE  as  sale_price,
+          sku.SUPPLIER_PRICE as supplier_price,sku.BARCODE as barcode,
+          sku.PRODUCT_CODE as product_code,sku.COLOR as color,
+          sku.PRODUCT_DESCRIPTION as product_description,
+          sku.SALE_CURRENCY as sale_currency,sku.PRODUCT_SIZE as product_size,
+          sku.STOCK as stock ,
+
+          sku.EVENT_START_DATE as eventStartTime,
+          sku.EVENT_END_DATE as eventEndTime,
+
+          sku.NEW_MARKET_PRICE as newMarketPrice,
+          sku.NEW_SALE_PRICE as newSalePrice,
+          sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
+
+          spu.CATEGORY_ID as category_id,
+          spu.CATEGORY_NAME as category_name,
+          spu.BRAND_ID as brand_id,spu.BRAND_NAME as brand_name,
+          spu.SEASON_ID as season_id,spu.SEASON_NAME as season_name,
+          spu.PIC_URL as pic_url,spu.MATERIAL as material,spu.PRODUCT_ORIGIN as product_origin ,
+          spu.CATEGORY_GENDER as category_gender,
+          spu.SUB_CATEGORY_ID  as  sub_category_id,
+          spu.SUB_CATEGORY_NAME  as  sub_category_name
+
+		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+			 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID
+        <where>
+
+            sku.STOCK >0
+
+            <if test="null!=startDate">
+                and sku.LAST_TIME >= #{startDate}
+            </if>
+           <if test="endDate!=null">
+
+                <![CDATA[ and sku.LAST_TIME <= #{endDate}    ]]>
+
+            </if>
+
+
+
+        </where>
+        order by supplier_id
+
+
+	</select>
+
 	<select id="findSkuIdbySupplier"  resultMap="ProductsResultMap">
 		select
            sku.SKU_ID as sku_id

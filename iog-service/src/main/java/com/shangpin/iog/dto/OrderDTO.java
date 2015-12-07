@@ -22,6 +22,7 @@ import java.util.Date;
 public class OrderDTO {
     private BigInteger id;
     private String supplierId; //供货商门户编号
+    private String supplierName;//供货商名称
     private String supplierNo;//供货商编号
     private String uuId;  //和供货商公用的订单唯一标识
     private String spOrderId;    //尚品订单编号
