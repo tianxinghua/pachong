@@ -673,28 +673,29 @@ public abstract class AbsOrderService {
             try {
                 logger.info("订单信息："+spOrder.toString());
                 System.out.println("订单信息："+spOrder.toString());
-                if(productOrderService.saveOrderWithResult(spOrder)){
-                    try {
-                        //处理供货商订单
-                        handleSupplierOrder(spOrder);
-                        //更新海外购订单信息
-                        updateOrderMsg(spOrder);
+                boolean flag = false;
+                flag = productOrderService.checkOrderByOrderIdSupplier(spOrder);
+                if(!flag){
+                	 if(productOrderService.saveOrderWithResult(spOrder)){
+                         try {
+                             //处理供货商订单
+                             handleSupplierOrder(spOrder);
+                             //更新海外购订单信息
+                             updateOrderMsg(spOrder);
 
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        loggerError.error("订单 ："+ spOrder.getSpOrderId() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
-                        Map<String, String> map = new HashMap<>();
-                        map.put("excDesc", e.getMessage());
-                        setErrorMsg(spOrder.getUuId(), map);
+                         } catch (Exception e) {
+                             e.printStackTrace();
+                             loggerError.error("订单 ："+ spOrder.getSpOrderId() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
+                             Map<String, String> map = new HashMap<>();
+                             map.put("excDesc", e.getMessage());
+                             setErrorMsg(spOrder.getUuId(), map);
 
-                    }
-                }else{
-                    loggerError.error("订单 ："+ spOrder.getSpOrderId() + "保存订单信息失败");
+                         }
+                     }else{
+                         loggerError.error("订单 ："+ spOrder.getSpOrderId() + "保存订单信息失败");
+                     }
                 }
-
-
-
             } catch (Exception e){
                 loggerError.error("下单错误 " + e.getMessage());
                 e.printStackTrace();

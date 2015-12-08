@@ -370,7 +370,18 @@
 
 
     </select>
-
-
+<select id="checkOrderByOrderIdSupplier"  resultMap="OrderResultMap">
+        select
+         <include refid="save_column"></include>
+        from `ORDER` ddd
+        <where>
+            <if test="null!=supplierId">
+                ddd.SUPPLIER_ID=#{supplierId}
+            </if>         
+            <if test="null!=orderId">
+                and ddd.SP_ORDER_ID=#{orderId}
+            </if>            
+        </where>
+    </select>
 	
 </mapper>
