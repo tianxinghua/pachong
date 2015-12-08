@@ -355,7 +355,7 @@
         from `ORDER` ddd
         	left join SUPPLIER su on ddd.SUPPLIER_ID = su.SUPPLIER_ID
         <where>
-
+			su.SUPPLIER_STATE = '1'
             <if test="null!=supplierId">
                 ddd.SUPPLIER_ID=#{supplierId}
             </if>         
