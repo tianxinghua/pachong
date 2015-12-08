@@ -182,4 +182,6 @@ public interface OrderService {
      */
     public StringBuffer exportOrder(String supplier,Date startDate,Date endDate,int pageIndex,int pageSize,String flag);
 
+	public boolean checkOrderByOrderIdSupplier(OrderDTO spOrder);
+
 }

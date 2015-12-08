@@ -4,6 +4,7 @@
 
 	<resultMap id="OrderResultMap" type="iog_order">
 
+
         <id column="ID" property="id" />
         <result column="SUPPLIER_ID" property="supplierId"  />
         <result column ="SUPPLIER_NAME" property = "supplierName"/>
@@ -354,7 +355,7 @@
         from `ORDER` ddd
         	left join SUPPLIER su on ddd.SUPPLIER_ID = su.SUPPLIER_ID
         <where>
-
+			su.SUPPLIER_STATE = '1'
             <if test="null!=supplierId">
                 ddd.SUPPLIER_ID=#{supplierId}
             </if>         
@@ -369,7 +370,19 @@
 
 
     </select>
-
-
+<select id="checkOrderByOrderIdSupplier"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        ddd.SUPPLIER_ID as SUPPLIER_ID
+        from `ORDER` ddd
+        <where>
+            <if test="null!=supplierId">
+                ddd.SUPPLIER_ID=#{supplierId}
+            </if>         
+            <if test="null!=orderId">
+                and ddd.SP_ORDER_ID=#{orderId}
+            </if>            
+        </where>
+    </select>
 	
 </mapper>
