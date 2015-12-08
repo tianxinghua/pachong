@@ -133,6 +133,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 
     }
 
+    
     @Override
     public void savePictureForMongo(ProductPictureDTO productPictureDTO) throws ServiceException {
         ProductPicture productPicture = new ProductPicture();

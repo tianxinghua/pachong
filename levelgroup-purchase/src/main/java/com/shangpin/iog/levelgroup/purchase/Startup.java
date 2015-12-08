@@ -19,6 +19,6 @@ public class Startup {
 
     public static void main(String[] args) throws  Exception{
     	loadSpringContext();
-         logger.info(" schedule start  ");
+        logger.info(" schedule start  ");
     }
 }
