@@ -372,8 +372,7 @@
     </select>
 <select id="checkOrderByOrderIdSupplier"  resultMap="OrderResultMap">
         select
-        ID as ID,
-        ddd.SUPPLIER_ID as SUPPLIER_ID
+         <include refid="save_column"></include>
         from `ORDER` ddd
         <where>
             <if test="null!=supplierId">
