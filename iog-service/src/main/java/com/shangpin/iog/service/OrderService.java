@@ -180,9 +180,8 @@ public interface OrderService {
      * @param flag
      * @return
      */
-    public StringBuffer exportOrder(String supplier,Date startDate,Date endDate,int pageIndex,int pageSize,String flag);
 
-	public boolean checkOrderByOrderIdSupplier(OrderDTO spOrder);
+
 
     /**
      * 导出订单
@@ -196,4 +195,10 @@ public interface OrderService {
      */
     public StringBuffer exportOrder(String supplier,Date startDate,Date endDate,int pageIndex,int pageSize,String flag);
 
+    /**
+     * 检查是否已存在订单
+     * @param spOrder
+     * @return
+     */
+    public boolean checkOrderByOrderIdSupplier(OrderDTO spOrder);
 }
