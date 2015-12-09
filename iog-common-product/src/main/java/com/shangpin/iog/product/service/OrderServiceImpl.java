@@ -54,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
             orderDAO.save(orderDTO);
             return true;
         } catch (Exception e) {
-            logger.error("订单保存失败："+ e.getMessage());
+            logger.error(orderDTO.getSpOrderId()+"订单保存失败："+ e.getMessage());
             e.printStackTrace();
         }
         return false;

@@ -105,7 +105,7 @@ public class FetchProduct {
 						sku.setStock(item.getStock());
 						sku.setProductCode(product.getProducer_id());
 						sku.setSaleCurrency("EUR");
-
+						//去掉已有的
 						if(skuDTOMap.containsKey(sku.getSkuId())){
 							skuDTOMap.remove(sku.getSkuId());
 						}
