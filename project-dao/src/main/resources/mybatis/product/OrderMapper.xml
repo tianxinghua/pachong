@@ -357,7 +357,7 @@
         <where>
 			su.SUPPLIER_STATE = '1'
             <if test="null!=supplierId">
-                ddd.SUPPLIER_ID=#{supplierId}
+                and ddd.SUPPLIER_ID=#{supplierId}
             </if>         
             <if test="null!=startDate">
                 and CREATE_TIME >=#{startDate}
