@@ -82,6 +82,7 @@
 		select
           sku.ID as id,
           sku.SUPPLIER_ID  as supplier_id,
+          su.SUPPLIER_NAME as supplier_name,
           sku.SPU_ID  as spu_id,
           sku.SKU_ID as sku_id,spu.SPU_NAME as spu_name,
 
@@ -111,6 +112,7 @@
           spu.SUB_CATEGORY_NAME  as  sub_category_name
 		
 		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+					 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID
         <where>
 
             sku.STOCK >0
@@ -172,7 +174,7 @@
 			 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID
         <where>
 
-            sku.STOCK >0
+            sku.STOCK >0 and su.SUPPLIER_STATE = '1'
 
             <if test="null!=startDate">
                 and sku.LAST_TIME >= #{startDate}
@@ -186,7 +188,7 @@
 
 
         </where>
-        order by supplier_id
+        order by supplier_name
 
 
 	</select>
