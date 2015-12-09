@@ -212,7 +212,9 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
         httpPost.setEntity(entity);
          try {
         	 response = httpClient.execute(httpPost);
-        	 pushOrderData = gson.fromJson(EntityUtils.toString(response.getEntity()), PushOrderData.class);
+        	 String str = EntityUtils.toString(response.getEntity());
+        	 logger.info("推送信息sku:"+sku+"qty:"+qty+"client_sku"+client_sku+"client_order_id"+client_order_id+"推送订单返回信息"+str);
+        	 pushOrderData = gson.fromJson(str, PushOrderData.class);
         	 pushOrderData.setStatusCode(String.valueOf(response.getStatusLine().getStatusCode()));
         } catch (Exception e) {
 			e.printStackTrace();
@@ -246,9 +248,9 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 		try {
         	 response = httpClient.execute(httpPost);
         	 String str = EntityUtils.toString(response.getEntity());
+        	 logger.info(oper+"订单推送信息orderNo:"+orderNo+",返回信息:"+str);
         	 pushOrderData = gson.fromJson(str, PushOrderData.class);
         	 pushOrderData.setStatusCode(String.valueOf(response.getStatusLine().getStatusCode()));
-        	 System.out.println(str);
         } catch (Exception e) {
 			e.printStackTrace();
 		}
