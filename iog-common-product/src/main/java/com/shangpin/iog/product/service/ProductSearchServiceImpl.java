@@ -251,7 +251,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			Date endDate, Integer pageIndex, Integer pageSize, String flag)
 			throws ServiceException {
 
-		StringBuffer buffer = new StringBuffer("SupplierId 供货商编号" + splitSign
+		StringBuffer buffer = new StringBuffer("SupplierId 供货商名称" + splitSign
 				+ "CategoryName 品类名称" + splitSign
 				+ "Category_No 品类编号" + splitSign + "BrandNo 品牌编号" + splitSign
 				+ "BrandName 品牌" + splitSign + "ProductModel 货号" + splitSign
@@ -308,7 +308,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 							: dto.getCategoryName();
 
 				}
-				categoryName.replaceAll(splitSign, " ");
+				categoryName = categoryName.replaceAll(splitSign, " ");
 				buffer.append(categoryName).append(splitSign);
 
 				buffer.append("尚品网品类编号").append(splitSign);
@@ -495,8 +495,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				buffer.append(supplierPrice).append(splitSign);
 
 				buffer.append(dto.getSaleCurrency()).append(splitSign);
-				
-				
+
+
 				// 季节
 
 				buffer.append(
