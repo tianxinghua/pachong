@@ -11,7 +11,7 @@ import com.shangpin.iog.dto.StockUpdateDTO;
 import com.shangpin.iog.product.dao.StockUpdateMapper;
 import com.shangpin.iog.service.UpdateStockService;
 
-@Service
+@Service("updateStockServiceImpl")
 public class UpdateStockServiceImpl implements UpdateStockService{
 	@Autowired
 	StockUpdateMapper updateStockDao;

@@ -115,12 +115,49 @@ public class ProductionServiceImpl implements  ProductionService {
         skuDTO.setSaleCurrency(productDTO.getSaleCurrency());
         try {
             productFetchService.saveSKU(skuDTO);
+            String imgUrl =productDTO.getSpuPicture();
+            String[] imageUrlArray = imgUrl.split("\\|\\|");
 
+            for(String  imageUrl:imageUrlArray){
+                ProductPictureDTO pictureDTO = new ProductPictureDTO();
+                pictureDTO.setSupplierId(productDTO.getSupplierId());
+                pictureDTO.setPicUrl(imageUrl);
+                pictureDTO.setSpuId(productDTO.getSpuId());
+                try {
+                    productFetchService.savePictureForMongo(pictureDTO);
+                } catch (Exception e) {
+                    loggerError.error("spu : " +  productDTO.getSpuId() + " 图片保存失败。失败原因: " + e.getMessage());
+                    e.printStackTrace();
+                    throw new ServiceMessageException("save spu(common) picture failed. please contact IT" );
+                }
+            }
+
+
+            String skuImgUrl =productDTO.getSkuPicture();
+            String[] skuImageUrlArray = skuImgUrl.split("\\|\\|");
+            for(String  imageUrl:skuImageUrlArray){
+                ProductPictureDTO pictureDTO = new ProductPictureDTO();
+                pictureDTO.setSupplierId(productDTO.getSupplierId());
+                pictureDTO.setPicUrl(imageUrl);
+                pictureDTO.setSkuId(productDTO.getSkuId());
+                try {
+                    productFetchService.savePictureForMongo(pictureDTO);
+                } catch (Exception e) {
+                    loggerError.error("sku :" + productDTO.getSkuId() + " 图片保存失败。失败原因: " + e.getMessage());
+                    e.printStackTrace();
+                    throw new ServiceMessageException("save sku  picture failed. please contact IT" );
+                }
+            }
 
         } catch (Exception e) {
             loggerError.error("sku:" + skuDTO.getSkuId() + " 保存失败。失败原因: " + e.getMessage());
             if(ProductFetchServiceImpl.REPEAT_MESSAGE.equals(e.getMessage())){
-                throw new ServiceMessageException("repeat save sku." );
+//                throw new ServiceMessageException("repeat save sku." );
+                try {
+                    productFetchService.updatePriceAndStock(skuDTO);
+                } catch (Exception e1) {
+                    throw new ServiceMessageException("repeat save sku." );
+                }
             }else{
                 e.printStackTrace();
                 throw new ServiceMessageException("save sku failed. please contact IT" );
@@ -129,39 +166,7 @@ public class ProductionServiceImpl implements  ProductionService {
 
         }
 
-        String imgUrl =productDTO.getSpuPicture();
-        String[] imageUrlArray = imgUrl.split("\\|\\|");
 
-        for(String  imageUrl:imageUrlArray){
-            ProductPictureDTO pictureDTO = new ProductPictureDTO();
-            pictureDTO.setSupplierId(productDTO.getSupplierId());
-            pictureDTO.setPicUrl(imageUrl);
-            pictureDTO.setSpuId(productDTO.getSpuId());
-            try {
-                productFetchService.savePictureForMongo(pictureDTO);
-            } catch (Exception e) {
-                loggerError.error("spu : " +  productDTO.getSpuId() + " 图片保存失败。失败原因: " + e.getMessage());
-                e.printStackTrace();
-                throw new ServiceMessageException("save spu(common) picture failed. please contact IT" );
-            }
-        }
-
-
-        String skuImgUrl =productDTO.getSkuPicture();
-        String[] skuImageUrlArray = skuImgUrl.split("\\|\\|");
-        for(String  imageUrl:skuImageUrlArray){
-            ProductPictureDTO pictureDTO = new ProductPictureDTO();
-            pictureDTO.setSupplierId(productDTO.getSupplierId());
-            pictureDTO.setPicUrl(imageUrl);
-            pictureDTO.setSkuId(productDTO.getSkuId());
-            try {
-                productFetchService.savePictureForMongo(pictureDTO);
-            } catch (Exception e) {
-                loggerError.error("sku :" + productDTO.getSkuId() + " 图片保存失败。失败原因: " + e.getMessage());
-                e.printStackTrace();
-                throw new ServiceMessageException("save sku  picture failed. please contact IT" );
-            }
-        }
 
 
         return true;

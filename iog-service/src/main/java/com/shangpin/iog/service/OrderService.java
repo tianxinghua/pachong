@@ -169,6 +169,20 @@ public interface OrderService {
      * @throws ServiceException
      */
     public OrderDTO getOrderByUuId(String uuid) throws ServiceException;
+    
+    /**
+     * 导出订单
+     * @param supplier 供货商编号
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @param pageIndex
+     * @param pageSize
+     * @param flag
+     * @return
+     */
+    public StringBuffer exportOrder(String supplier,Date startDate,Date endDate,int pageIndex,int pageSize,String flag);
+
+	public boolean checkOrderByOrderIdSupplier(OrderDTO spOrder);
 
     /**
      * 导出订单

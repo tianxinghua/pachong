@@ -1,6 +1,8 @@
 package com.shangpin.iog.stefaniamode.service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
@@ -50,8 +52,7 @@ public class FetchProduct {
 
 	@Autowired
 	ProductFetchService productFetchService;
-	@Autowired
-	ProductSearchService productSearchService;
+
 	public void fetchProductAndSave(String xmlContent, String supplierId) {
 
 		try {

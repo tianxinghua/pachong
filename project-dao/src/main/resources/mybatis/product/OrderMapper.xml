@@ -332,6 +332,41 @@
 
 
     </update>
+    
+    <select id="getOrderBySupplierIdAndTime"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        ddd.SUPPLIER_ID as SUPPLIER_ID,
+        su.SUPPLIER_NAME as SUPPLIER_NAME,
+        UUID as UUID,
+        SP_ORDER_ID as SP_ORDER_ID,
+        SP_PURCHASE_DETAIL_NO,
+        SUPPLIER_ORDER_NO as SUPPLIER_ORDER_NO,
+        STATUS as STATUS,
+        DETAIL as DETAIL,
+        MEMO as MEMO,
+        SP_PURCHASE_NO as SP_PURCHASE_NO,
+        UPDATE_TIME as UPDATE_TIME,
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC,
+		PURCHASE_PRICE_DETAIL as PURCHASE_PRICE_DETAIL
+
+        from `ORDER` ddd
+        	left join SUPPLIER su on ddd.SUPPLIER_ID = su.SUPPLIER_ID
+        <where>
+			su.SUPPLIER_STATE = '1'
+            <if test="null!=supplierId">
+                ddd.SUPPLIER_ID=#{supplierId}
+            </if>         
+            <if test="null!=startDate">
+                and CREATE_TIME >=#{startDate}
+            </if>            
+            <if test="null!=endDate">
+                <![CDATA[ and CREATE_TIME <=#{endDate}    ]]>
+            </if>
+        </where>
+        order by SUPPLIER_NAME
 
     <select id="getOrderBySupplierIdAndTime"  resultMap="OrderResultMap">
         select
@@ -372,5 +407,19 @@
     </select>
 
 
+    </select>
+<select id="checkOrderByOrderIdSupplier"  resultMap="OrderResultMap">
+        select
+         <include refid="save_column"></include>
+        from `ORDER` ddd
+        <where>
+            <if test="null!=supplierId">
+                ddd.SUPPLIER_ID=#{supplierId}
+            </if>         
+            <if test="null!=orderId">
+                and ddd.SP_ORDER_ID=#{orderId}
+            </if>            
+        </where>
+    </select>
 	
 </mapper>

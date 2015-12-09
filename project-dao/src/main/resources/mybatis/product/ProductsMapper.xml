@@ -136,7 +136,7 @@
 
 
 	</select>
-	
+
 	<select id="findListOfAllSupplier"  resultMap="ProductsResultMap">
 		select
           sku.ID as id,

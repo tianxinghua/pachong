@@ -493,6 +493,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				buffer.append(marketPrice).append(splitSign);
 				buffer.append(salePrice).append(splitSign);
 				buffer.append(supplierPrice).append(splitSign);
+
+				buffer.append(dto.getSaleCurrency()).append(splitSign);
+				
+				
 				// 季节
 
 				buffer.append(
@@ -803,7 +807,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					}
 					buffer.append(marketPrice).append(splitSign);
 					buffer.append(salePrice).append(splitSign);
-					buffer.append(supplierPrice);
+					buffer.append(supplierPrice).append(splitSign);
+					buffer.append(dto.getSaleCurrency());
 
 					buffer.append("\r\n");
 				} catch (Exception e) {

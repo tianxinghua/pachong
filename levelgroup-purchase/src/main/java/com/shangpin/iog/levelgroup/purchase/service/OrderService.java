@@ -1,9 +1,16 @@
 package com.shangpin.iog.levelgroup.purchase.service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.ReturnOrderDTO;
+import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.levelgroup.purchase.common.MyFtpUtil;
+import com.shangpin.iog.product.service.OrderServiceImpl;
+import com.shangpin.iog.service.ProductSearchService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,13 +19,15 @@ import java.util.*;
 /**
  * Created by Administrator on 2015/11/20.
  */
-public class OrderServiceImpl {
+@Component
+public class OrderService extends AbsOrderService {
 
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
     private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
 
     private static ResourceBundle bdl = null;
     private static  String supplierId = null;
+    private static String supplierNo = null;
     private static String localFile = null;
 
     static {
@@ -30,10 +39,23 @@ public class OrderServiceImpl {
     }
 
     @Autowired
-    com.shangpin.iog.product.service.OrderServiceImpl orderService;
+    OrderServiceImpl orderService;
+    
+    @Autowired
+    ProductSearchService productSearchService;
+    
+    // 涓嬪崟澶勭悊
+ 	public void startSOP() {
+ 		this.checkoutOrderFromSOP(supplierNo, supplierId, true);
+ 	}
+ 	
+ 	// 璁㈠崟纭澶勭悊
+ 	public void confirmOrder() {
+ 		this.confirmOrder(supplierId);
+ 	}
 
     /**
-     * 获取采购单信息到本地并上传采购单到服务器
+     * 鍒涘缓璁㈠崟淇℃伅骞朵笂浼犲埌ftp
      * @throws ServiceException
      */
     public void saveAndUpLoadOrder(){
@@ -41,7 +63,7 @@ public class OrderServiceImpl {
         new MyFtpUtil().upLoad();
     }
     /**
-     * 组装并保存采购单信息到本地
+     * 
      * @throws ServiceException
      */
     private void saveOrder(){
@@ -52,7 +74,6 @@ public class OrderServiceImpl {
             e.printStackTrace();
         }
         StringBuffer ftpFile = new StringBuffer();
-        //字段设值
         ftpFile.append("ORDER CODE;ITEM CODE;SIZE;SKU;ORDER;PRICE;BRAND");
         ftpFile.append("\\n\\t");
         for (OrderDTO orderDTO:list){
@@ -85,4 +106,36 @@ public class OrderServiceImpl {
             }
         }
     }
+	@Override
+	public void handleSupplierOrder(OrderDTO orderDTO) {
+		orderDTO.setStatus(OrderStatus.PLACED);
+		
+	}
+	@Override
+	public void handleConfirmOrder(OrderDTO orderDTO) {
+		orderDTO.setExcState("0");
+		//createOrder(OrderStatus.CONFIRMED, orderDTO);
+		orderDTO.setStatus(OrderStatus.CONFIRMED);
+		
+	}
+	@Override
+	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void handleEmail(OrderDTO orderDTO) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void getSupplierSkuId(Map<String, String> skuMap) throws ServiceException {
+		// TODO Auto-generated method stub
+		
+	}
 }

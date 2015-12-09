@@ -59,8 +59,21 @@ public class OrderServiceImpl implements OrderService {
         }
         return false;
     }
-
-
+    @Override
+    public boolean checkOrderByOrderIdSupplier(OrderDTO orderDTO){
+    	
+    	boolean flag = false;
+    	 try {
+    		 OrderDTO order = orderDAO.checkOrderByOrderIdSupplier(orderDTO.getSupplierId(),orderDTO.getSpOrderId());
+    		 if(order!=null){
+    			 flag = true;
+    		 }
+         } catch (Exception e) {
+             logger.error("订单保存失败："+ e.getMessage());
+             e.printStackTrace();
+         }
+         return flag;
+    }
     @Override
     public void update(OrderDTO orderDTO) throws ServiceException {
         try {
