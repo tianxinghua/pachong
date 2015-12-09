@@ -357,7 +357,7 @@
         <where>
 			su.SUPPLIER_STATE = '1'
             <if test="null!=supplierId">
-                ddd.SUPPLIER_ID=#{supplierId}
+                and ddd.SUPPLIER_ID=#{supplierId}
             </if>         
             <if test="null!=startDate">
                 and CREATE_TIME >=#{startDate}
@@ -372,8 +372,7 @@
     </select>
 <select id="checkOrderByOrderIdSupplier"  resultMap="OrderResultMap">
         select
-        ID as ID,
-        ddd.SUPPLIER_ID as SUPPLIER_ID
+         <include refid="save_column"></include>
         from `ORDER` ddd
         <where>
             <if test="null!=supplierId">
