@@ -118,7 +118,9 @@ public class TonyStockImp {
      * 更新库存数量
      */
     private void updateSOPInventory(){
+
         UpdateProductSock updateProductSock = new UpdateProductSock();
+
     }
 
     public static void main(String[] args) throws Exception {
