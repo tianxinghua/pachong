@@ -1,5 +1,9 @@
 package com.shangpin.iog.service;
 
+import com.shangpin.iog.dto.PictureDTO;
+
+import java.util.List;
+
 /**
  * Created by lizhongren on 2015/12/7.
  */
@@ -12,4 +16,6 @@ public interface PictureOfMongoService {
      * @return
      */
     public boolean isHavePic(String supplierId, String picUrl) ;
+
+
 }
