@@ -1272,7 +1272,7 @@ public abstract class AbsOrderService {
         String lastDate=getLastGrapDate(fileName);
         startDate= org.apache.commons.lang.StringUtils.isNotEmpty(lastDate) ? lastDate: com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(DateUtils.addDays(tempDate, -180), YYYY_MMDD_HH);
 
-        Date tmpDate =  DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(startDate,YYYY_MMDD_HH),-10,"S");
+        Date tmpDate =  DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(startDate,YYYY_MMDD_HH),-1,"m");
         startDate = DateTimeUtil.convertFormat(tmpDate,YYYY_MMDD_HH) ;
 
         writeGrapDate(endDate,fileName);
