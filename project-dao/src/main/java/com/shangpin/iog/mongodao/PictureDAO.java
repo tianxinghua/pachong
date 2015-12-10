@@ -23,6 +23,16 @@ public interface PictureDAO extends BaseMongodbDAO<ProductPicture,String> {
     public List<ProductPicture> findDistinctProductPictureBySupplierIdAndSkuId(String supplierId,String skuId) throws ServiceException;
 
     /**
+     * 根据供货商和地址获取图片对象
+     * @param supplierId
+     * @param picUrl
+     * @return
+     * @throws ServiceException
+     */
+    public  List<ProductPicture> findDistinctProductPictureBySupplierIdAndPicUrl(String supplierId,String picUrl) throws ServiceException;
+
+
+    /**
      * 根据供货商ID和SPUID获取图片
      * @param supplierId 供货商ID
      * @param spuId  spuId
