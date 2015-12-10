@@ -13,6 +13,7 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -66,23 +67,26 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 	}
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
-		PushOrderData pushOrderData = pushOrder(orderDTO);
-		System.out.println(pushOrderData.getStatusCode());
-		if (pushOrderData.getStatusCode().equals("401")) {
-			logger.info("accessToken过期");
-			getAccessToken(refreshToken);
-			handleSupplierOrder(orderDTO);
-		}else if(pushOrderData.getStatusCode().equals("200")){
-			//推送订单成功
-			 orderDTO.setExcState("0");
-			 orderDTO.setSupplierOrderNo(pushOrderData.getData().getOrder_id());
-			 orderDTO.setStatus(OrderStatus.PLACED);
-		}else if(pushOrderData.getStatusCode().equals("400")){
-			//推送订单失败
-			orderDTO.setExcDesc("订单失败，库存不足"+pushOrderData.getErrorCode());
-			orderDTO.setExcTime(new Date());
-//			handlePurchaseOrderExc(orderDTO);
-			sendMail(orderDTO);
+		try {
+			PushOrderData pushOrderData = pushOrder(orderDTO);
+			System.out.println(pushOrderData.getStatusCode());
+			if (pushOrderData.getStatusCode().equals("401")) {
+				logger.info("accessToken过期");
+				getAccessToken(refreshToken);
+				handleSupplierOrder(orderDTO);
+			}else if(pushOrderData.getStatusCode().equals("200")){
+				//推送订单成功
+				 orderDTO.setExcState("0");
+				 orderDTO.setSupplierOrderNo(pushOrderData.getData().getOrder_id());
+				 orderDTO.setStatus(OrderStatus.PLACED);
+			}else if(pushOrderData.getStatusCode().equals("400")){
+				//推送订单失败
+				orderDTO.setExcDesc("订单失败，库存不足"+pushOrderData.getErrorCode());
+				orderDTO.setExcTime(new Date());
+				sendMail(orderDTO);
+			}
+		} catch (Exception e) {
+			logger.info("post推送订单失败,orderNo:"+orderDTO.getSupplierOrderNo());
 		}
 	}
 
@@ -100,12 +104,13 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 				 orderDTO.setStatus(OrderStatus.CONFIRMED);
 			}else {
 				//确认订单失败
-				orderDTO.setExcDesc("确认订单失败"+pushOrderData.getErrorCode());
+				orderDTO.setExcDesc("返回状态码不为200确认订单失败"+pushOrderData.getErrorCode());
 				orderDTO.setExcTime(new Date());
 				handlePurchaseOrderExc(orderDTO);
 			}
 		} catch (Exception e) {
-			orderDTO.setExcDesc("网络原因付款失败"+e.getMessage());
+			logger.info("orderNo"+orderDTO.getSupplierOrderNo()+"网络原因付款失败"+e.getMessage());
+			orderDTO.setExcDesc("orderNo"+orderDTO.getSupplierOrderNo()+"网络原因付款失败"+e.getMessage());
 			orderDTO.setExcTime(new Date());
 			orderDTO.setExcState("1");
 			e.printStackTrace();
@@ -133,8 +138,8 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 				deleteOrder.setExcState("0");
 			}
 		} catch (Exception e) {
-			logger.info("取消订单失败");
-			deleteOrder.setExcDesc(e.getMessage());
+			logger.info("post请求取消订单失败,orderNo:"+deleteOrder.getSupplierOrderNo()+e.getMessage());
+			deleteOrder.setExcDesc("post请求取消订单失败,orderNo:"+deleteOrder.getSupplierOrderNo());
 			deleteOrder.setExcState("1");
 			deleteOrder.setExcTime(new Date());
 			e.printStackTrace();
@@ -155,15 +160,15 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 				deleteOrder.setStatus(OrderStatus.REFUNDED);
 			}else {
 				//退款取消订单失败
-				logger.info("取消订单失败");
+				logger.info("退款取消订单失败");
 				deleteOrder.setExcDesc("退款取消订单失败"+pushOrderData.getErrorCode());
 				deleteOrder.setStatus(OrderStatus.REFUNDED);
 				deleteOrder.setExcTime(new Date());
 				deleteOrder.setExcState("0");
 			}
 		} catch (Exception e) {
-			logger.info("取消订单失败");
-			deleteOrder.setExcDesc(e.getMessage());
+			logger.info("post退款订单失败orderNo:"+deleteOrder.getSupplierOrderNo()+e.getMessage());
+			deleteOrder.setExcDesc("post退款订单失败orderNo:"+deleteOrder.getSupplierOrderNo());
 			deleteOrder.setExcState("1");
 			deleteOrder.setExcTime(new Date());
 			e.printStackTrace();
@@ -184,7 +189,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 	}
 	
 	//推送订单，返回状态
-	public PushOrderData pushOrder(OrderDTO orderDTO){
+	public PushOrderData pushOrder(OrderDTO orderDTO) throws Exception{
 		TokenDTO tokenDTO = null;
 		HttpResponse response = null;
 		PushOrderData pushOrderData = null;
@@ -192,6 +197,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 		try {
 			tokenDTO = tokenService.findToken(supplierId);
 		} catch (SQLException e) {
+			logger.info("token未找到");
 			e.printStackTrace();
 		}
 		accessToken = tokenDTO.getAccessToken();
@@ -210,19 +216,16 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 		entity.setContentEncoding("UTF-8");    
         entity.setContentType("application/json");
         httpPost.setEntity(entity);
-         try {
-        	 response = httpClient.execute(httpPost);
-        	 String str = EntityUtils.toString(response.getEntity());
-        	 logger.info("推送信息sku:"+sku+"qty:"+qty+"client_sku"+client_sku+"client_order_id"+client_order_id+"推送订单返回信息"+str);
-        	 pushOrderData = gson.fromJson(str, PushOrderData.class);
-        	 pushOrderData.setStatusCode(String.valueOf(response.getStatusLine().getStatusCode()));
-        } catch (Exception e) {
-			e.printStackTrace();
-		}
+        logger.info("开始推送订单sku："+sku+",client_order_id"+client_order_id);
+        response = httpClient.execute(httpPost);
+        String str = EntityUtils.toString(response.getEntity());
+        logger.info("推送信息sku:"+sku+"qty:"+qty+"client_sku"+client_sku+"client_order_id"+client_order_id+"推送订单返回信息"+str);
+        pushOrderData = gson.fromJson(str, PushOrderData.class);
+        pushOrderData.setStatusCode(String.valueOf(response.getStatusLine().getStatusCode()));
 		return pushOrderData;
 	}
 	//确认或取消订单
-	public PushOrderData confirmOrCancelOrder(String orderNo,String oper){
+	public PushOrderData confirmOrCancelOrder(String orderNo,String oper) throws Exception{
 		TokenDTO tokenDTO = null;
 		HttpResponse response = null;
 		PushOrderData pushOrderData = null;
@@ -230,6 +233,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 		try {
 			tokenDTO = tokenService.findToken(supplierId);
 		} catch (SQLException e) {
+			logger.info("token未找到");
 			e.printStackTrace();
 		}
 		accessToken = tokenDTO.getAccessToken();
@@ -245,15 +249,12 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
         StringEntity entity = new StringEntity("{\"status\":\""+oper+"\"}","utf-8");
         entity.setContentType("application/json");
         httpPost.setEntity(entity);
-		try {
-        	 response = httpClient.execute(httpPost);
-        	 String str = EntityUtils.toString(response.getEntity());
-        	 logger.info(oper+"订单推送信息orderNo:"+orderNo+",返回信息:"+str);
-        	 pushOrderData = gson.fromJson(str, PushOrderData.class);
-        	 pushOrderData.setStatusCode(String.valueOf(response.getStatusLine().getStatusCode()));
-        } catch (Exception e) {
-			e.printStackTrace();
-		}
+		logger.info(oper+"订单开始，orderNo:"+orderNo);
+		response = httpClient.execute(httpPost);
+		String str = EntityUtils.toString(response.getEntity());
+		logger.info(oper+"订单推送信息orderNo:"+orderNo+",返回信息:"+str);
+		pushOrderData = gson.fromJson(str, PushOrderData.class);
+		pushOrderData.setStatusCode(String.valueOf(response.getStatusLine().getStatusCode()));
 		return pushOrderData;
 	}
 	// 刷新token
@@ -285,6 +286,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 				logger.info("刷新token失败");
 			}
 		} catch (Exception e) {
+			logger.info("获取token失败");
 			e.printStackTrace();
 		}
 	}
@@ -302,7 +304,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 	}
 	
 	private void sendMail(OrderDTO orderDTO) {
-		
+		logger.info("处理采购异常 orderNo:"+orderDTO.getSupplierOrderNo());
 		try{
 			long tim = 60l;
 			//判断有异常的订单如果处理超过两小时，依然没有解决，则把状态置为不处理，并发邮件
