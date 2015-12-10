@@ -126,6 +126,7 @@ public class OrderImpl extends AbsOrderService {
 				JSONObject json = JSONObject.fromObject(result);
 				orderDTO.setSupplierId(json.getString("ID"));
 				orderDTO.setStatus(OrderStatus.PLACED);
+				orderDTO.setExcState("0");
 			}else{
 				//发生异常
 				orderDTO.setExcDesc("下单失败==="+excDesc);
@@ -246,6 +247,7 @@ public class OrderImpl extends AbsOrderService {
 			if(result.equals(UtilOfChannel.SUCCESSFUL)){
 				
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
+				orderDTO.setExcState("0");
 				
 			}else{
 				orderDTO.setExcDesc("支付失败=="+excDesc);
@@ -368,7 +370,7 @@ public class OrderImpl extends AbsOrderService {
 			if( !result.equals(HttpUtil45.errorResult) && StringUtils.isNotBlank(result)){
 				//取消成功
 				deleteOrder.setExcState("0");
-				deleteOrder.setStatus(OrderStatus.CANCELLED);				
+				deleteOrder.setStatus(OrderStatus.REFUNDED);				
 			}else{
 				//取消失败
 				deleteOrder.setExcDesc("订单已被供货商取消或者发生异常 "+excDesc);

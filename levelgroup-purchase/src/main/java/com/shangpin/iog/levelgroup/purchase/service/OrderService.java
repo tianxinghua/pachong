@@ -35,6 +35,7 @@ public class OrderService extends AbsOrderService {
             bdl=ResourceBundle.getBundle("conf");
         }
         supplierId = bdl.getString("supplierId");
+        supplierNo = bdl.getString("supplierNo");
         localFile = bdl.getString("localFile");
     }
 
