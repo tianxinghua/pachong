@@ -42,6 +42,7 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 public class UtilOfChannel {
 
 	private static Logger logger = Logger.getLogger("error");
+	private static Logger info = Logger.getLogger("info");
 	public static String ERROR = "error";
 	public static String SUCCESSFUL = "successful";
 
@@ -68,6 +69,7 @@ public class UtilOfChannel {
 			
 			System.out.println("kk = " + kk);
 			result = JSONObject.fromObject(kk).getString("access_token");
+			info.info("access_token=="+result);
 			
 		}catch(Exception ex){
 			logger.error(ex);
