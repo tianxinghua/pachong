@@ -1,6 +1,8 @@
 package com.shangpin.iog.service;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.ProductPictureDTO;
@@ -12,6 +14,8 @@ import com.shangpin.iog.dto.SpuDTO;
  * 产品
  */
 public interface ProductFetchService {
+	 public Map<String,String> findPictureBySupplierIdAndSpuId(String supplierId, String spuId);
+	 public Map<String,String> findPictureBySupplierIdAndSkuId(String supplierId, String skuId);
     /**
      * 保存SPU列表
      * @param spuDTOList spu对象列表
@@ -72,6 +76,16 @@ public interface ProductFetchService {
      * @throws ServiceException
      */
     public void savePictureForMongo(ProductPictureDTO productPictureDTO) throws ServiceException;
+   
+    /**
+     * 
+     * @param supplierId
+     * @param spuId
+     * @param skuId
+     * @param picUrl集合
+     */
+	public void savePicture(String supplierId, String spuId, String skuId,
+			Collection<String> pic);
 
 
 
