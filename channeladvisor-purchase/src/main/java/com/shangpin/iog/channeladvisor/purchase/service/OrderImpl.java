@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.time.OffsetDateTime;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -34,6 +33,7 @@ import com.shangpin.iog.service.ProductSearchService;
 public class OrderImpl extends AbsOrderService {
 
 	private static Logger logger = Logger.getLogger("error");
+	private static Logger logInfo = Logger.getLogger("info");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
 	private static String supplierNo = null;
@@ -121,6 +121,7 @@ public class OrderImpl extends AbsOrderService {
 			}
 			//根据返回信息设置订单状态
 			System.out.println("result==="+result);
+			logInfo.info("result==="+result);
 			if(StringUtils.isNotBlank(result) && !result.equals(HttpUtil45.errorResult)){
 				JSONObject json = JSONObject.fromObject(result);
 				orderDTO.setSupplierId(json.getString("ID"));
@@ -217,7 +218,7 @@ public class OrderImpl extends AbsOrderService {
 				
 				try{
 					
-					result = HttpUtil45.operateData("put", "json", url, timeConfig, null, jsonValue, "", "");
+					HttpUtil45.operateData("put", "json", url, timeConfig, null, jsonValue, "", "");
 					
 				}catch(ServiceException e){
 					
@@ -241,7 +242,7 @@ public class OrderImpl extends AbsOrderService {
 			
 			//根据返回信息设置订单状态
 			System.out.println("result=="+result);
-			
+			logInfo.info("result==="+result);
 			if(result.equals(UtilOfChannel.SUCCESSFUL)){
 				
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
@@ -274,8 +275,8 @@ public class OrderImpl extends AbsOrderService {
 				Map<String,Object> param = new HashMap<String,Object>();
 				param.put("Reason", "BuyerCancelled");
 				param.put("PreventSiteProcessing", "True");
-//				param.put("SellerAdjustmentID", deleteOrder.getSpOrderId());
-				param.put("Type", "Cancellation");
+				param.put("SellerAdjustmentID", deleteOrder.getSpOrderId());
+				param.put("AdjustmentAmount", getAdjustmentAmount(deleteOrder));
 				String jsonValue = JSONObject.fromObject(param).toString();	
 				System.out.println("jsonValue==="+jsonValue);
 				String url = "https://api.channeladvisor.com/v1/Orders("+deleteOrder.getSupplierOrderNo()+")/Adjust?access_token="+access_token;
@@ -300,7 +301,8 @@ public class OrderImpl extends AbsOrderService {
 			}
 			
 			//根据返回结果设置退单的状态
-			System.out.println("result=="+rStr);			
+			System.out.println("result=="+rStr);
+			logInfo.info("result==="+rStr);
 			if( !rStr.equals(HttpUtil45.errorResult) && StringUtils.isNotBlank(rStr)){
 				//取消成功
 				deleteOrder.setExcState("0");
@@ -361,7 +363,8 @@ public class OrderImpl extends AbsOrderService {
 			}
 			
 			//根据返回结果设置退单的状态
-			System.out.println("result=="+result);			
+			System.out.println("result=="+result);
+			logInfo.info("result==="+result);
 			if( !result.equals(HttpUtil45.errorResult) && StringUtils.isNotBlank(result)){
 				//取消成功
 				deleteOrder.setExcState("0");
@@ -432,35 +435,35 @@ public class OrderImpl extends AbsOrderService {
 
 	}
 	
-	private static ApplicationContext factory;
-	
-	private static void loadSpringContext()
-
-	{
-
-		factory = new AnnotationConfigApplicationContext(AppContext.class);
-	}
-	
-	public static void main(String[] args){
-		loadSpringContext();
-		OrderImpl order = (OrderImpl)factory.getBean("channeladvisorOrder");
-		OrderDTO oo = new OrderDTO();
-		oo.setDetail("NY-15006:1");
-		//
-		oo.setSpOrderId("11111111111");		
-		
-		order.handleSupplierOrder(oo);
-		
-//		oo.setSupplierOrderNo("162765");
-//		order.handleConfirmOrder(oo);
-		
-//		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
-//		deleteOrder.setDetail("NY-15006:1");
-//		deleteOrder.setSpOrderId("2015120415006");
-//		deleteOrder.setSupplierOrderNo("162814");
-//		order.handleCancelOrder(deleteOrder);
-//		order.handleRefundlOrder(deleteOrder);
-		
-	}
+//	private static ApplicationContext factory;
+//	
+//	private static void loadSpringContext()
+//
+//	{
+//
+//		factory = new AnnotationConfigApplicationContext(AppContext.class);
+//	}
+//	
+//	public static void main(String[] args){
+//		loadSpringContext();
+//		OrderImpl order = (OrderImpl)factory.getBean("channeladvisorOrder");
+//		OrderDTO oo = new OrderDTO();
+//		oo.setDetail("NY-15006:1");
+//		//
+//		oo.setSpOrderId("11111111111");		
+//		
+//		order.handleSupplierOrder(oo);
+//		
+////		oo.setSupplierOrderNo("162765");
+////		order.handleConfirmOrder(oo);
+//		
+////		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
+////		deleteOrder.setDetail("NY-15006:1");
+////		deleteOrder.setSpOrderId("2015120415006");
+////		deleteOrder.setSupplierOrderNo("162814");
+////		order.handleCancelOrder(deleteOrder);
+////		order.handleRefundlOrder(deleteOrder);
+//		
+//	}
 
 }

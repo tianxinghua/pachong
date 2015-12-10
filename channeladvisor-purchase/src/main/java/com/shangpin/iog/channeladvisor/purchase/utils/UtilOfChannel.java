@@ -69,7 +69,7 @@ public class UtilOfChannel {
 			System.out.println("kk = " + kk);
 			result = JSONObject.fromObject(kk).getString("access_token");
 			
-		}catch(ServiceException ex){
+		}catch(Exception ex){
 			logger.error(ex);
 			ex.printStackTrace();
 			return UtilOfChannel.ERROR;
