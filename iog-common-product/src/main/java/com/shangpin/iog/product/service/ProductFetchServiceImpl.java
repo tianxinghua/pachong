@@ -3,6 +3,8 @@ package com.shangpin.iog.product.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.common.utils.InVoke;
+import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.dto.PictureDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -21,8 +23,12 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by loyalty on 15/6/4.
@@ -44,7 +50,27 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 
     @Autowired
     PictureDAO pictureDAO;
-
+    
+    @Override
+    public Map<String,String> findPictureBySupplierIdAndSpuId(String supplierId, String spuId){
+    	
+    	Map<String,String> map  =   null;
+    	List<ProductPicture> spuPictureList = null;
+    	try {
+    		spuPictureList = pictureDAO
+					.findDistinctProductPictureBySupplierIdAndSpuIdAndSkuIdNull(
+							supplierId, spuId);
+    		if(spuPictureList!=null){
+    			map = new HashMap<String,String>()	;
+    			for(ProductPicture p :spuPictureList){
+    				map.put(p.getPicUrl(),p.getSpuId());
+    			}
+    		}
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+    	return map;
+    }
 
     @Override
     public void saveSPU(List<SpuDTO> spuDTOList) throws ServiceException {
@@ -148,4 +174,53 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             }
         }
     }
+    public Map<String,String> findPictureBySupplierIdAndSkuId(String supplierId, String skuId){
+     	
+    	Map<String,String> map  =   null;
+    	List<ProductPicture> spuPictureList = null;
+    	try {
+    		spuPictureList = pictureDAO
+					.findDistinctProductPictureBySupplierIdAndSkuId(
+							supplierId, skuId);
+    		if(spuPictureList!=null){
+    			map = new HashMap<String,String>()	;
+    			for(ProductPicture p :spuPictureList){
+    				map.put(p.getPicUrl(),p.getSkuId());
+    			}
+    		}
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+    	return map;
+    }
+	@Override
+	public void savePicture(String supplierId, String spuId, String skuId,
+			Collection<String> picUrl) {
+		Map map = null;
+		ProductPictureDTO dto = null;
+		if(spuId!=null){
+			map = findPictureBySupplierIdAndSpuId(supplierId, spuId);
+		}else if(skuId!=null){
+			map = findPictureBySupplierIdAndSkuId(supplierId, skuId);
+		}
+		for(String pic:picUrl){
+			if(map==null||!map.containsKey(pic)){
+
+				dto = new ProductPictureDTO();
+				dto.setPicUrl(pic);
+				dto.setSupplierId(supplierId);
+				dto.setId(UUIDGenerator.getUUID());
+				if(spuId!=null){
+					dto.setSpuId(spuId);
+				}else{
+					dto.setSkuId(skuId);
+				}
+				try {
+					savePictureForMongo(dto);
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 }

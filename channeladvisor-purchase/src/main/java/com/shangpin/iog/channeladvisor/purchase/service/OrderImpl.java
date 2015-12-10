@@ -78,7 +78,7 @@ public class OrderImpl extends AbsOrderService {
 			
 			String jsonValue = getRequestParam(orderDTO);//下订单所需要的参数
 			System.out.println("param==="+jsonValue);
-			
+			logInfo.info("param==="+jsonValue);
 			String excDesc = "";
 			String result = "";
 			String id = "";
@@ -188,12 +188,12 @@ public class OrderImpl extends AbsOrderService {
 		param.put("ProfileID", 12018111);
 		param.put("SiteID", 587);
 		param.put("SiteName", "shangpin");
-		param.put("BuyerEmailAddress", "buyer@example.com");
+		param.put("BuyerEmailAddress", "buyer@shangpin.com");
 		param.put("CreatedDateUtc", UtilOfChannel.getUTCTime());//
 		param.put("TotalPrice", totalPrice);//
 		param.put("Items", JSONArray.fromObject(items));
 		param.put("SellerOrderID", orderDTO.getSpOrderId());
-		param.put("CheckoutStatus", "Completed");
+//		param.put("CheckoutStatus", "Completed");
 
 		return JSONObject.fromObject(param).toString();
 	}
@@ -216,7 +216,7 @@ public class OrderImpl extends AbsOrderService {
 				param.put("CheckoutDateUtc", UtilOfChannel.getUTCTime());
 				param.put("PaymentDateUtc", UtilOfChannel.getUTCTime());
 				String jsonValue = JSONObject.fromObject(param).toString();
-				
+				logInfo.info("param==="+jsonValue);
 				try{
 					
 					HttpUtil45.operateData("put", "json", url, timeConfig, null, jsonValue, "", "");
@@ -281,15 +281,21 @@ public class OrderImpl extends AbsOrderService {
 				param.put("AdjustmentAmount", getAdjustmentAmount(deleteOrder));
 				String jsonValue = JSONObject.fromObject(param).toString();	
 				System.out.println("jsonValue==="+jsonValue);
+				logInfo.info("param==="+jsonValue);
+				
 				String url = "https://api.channeladvisor.com/v1/Orders("+deleteOrder.getSupplierOrderNo()+")/Adjust?access_token="+access_token;
 				try{
 					
-					rStr = HttpUtil45.operateData("post", "json", url, timeConfig, null, jsonValue, "", "");
+					HttpUtil45.operateData("post", "json", url, timeConfig, null, jsonValue, "", "");
 				
 				}catch(ServiceException e){
 					if(e.getMessage().equals("状态码:401")){//access_token过期
 						access_token = UtilOfChannel.getNewToken(timeConfig);
 						handleCancelOrder(deleteOrder);
+					}else if(e.getMessage().equals("状态码:204")){//取消成功
+						
+						rStr = UtilOfChannel.SUCCESSFUL;
+						
 					}else{
 						rStr = HttpUtil45.errorResult;
 						excDesc = e.getMessage();
@@ -305,7 +311,7 @@ public class OrderImpl extends AbsOrderService {
 			//根据返回结果设置退单的状态
 			System.out.println("result=="+rStr);
 			logInfo.info("result==="+rStr);
-			if( !rStr.equals(HttpUtil45.errorResult) && StringUtils.isNotBlank(rStr)){
+			if( rStr.equals(UtilOfChannel.SUCCESSFUL)){
 				//取消成功
 				deleteOrder.setExcState("0");
 				deleteOrder.setStatus(OrderStatus.CANCELLED);				
@@ -342,16 +348,21 @@ public class OrderImpl extends AbsOrderService {
 				param.put("AdjustmentAmount", getAdjustmentAmount(deleteOrder));
 				String jsonValue = JSONObject.fromObject(param).toString();	
 				System.out.println("jsonValue==="+jsonValue);
+				logInfo.info("param==="+jsonValue);
 				String url = "https://api.channeladvisor.com/v1/Orders("+deleteOrder.getSupplierOrderNo()+")/Adjust?access_token="+access_token;
 				try{
 					
-					result = HttpUtil45.operateData("post", "json", url, timeConfig, null, jsonValue, "", "");
+					HttpUtil45.operateData("post", "json", url, timeConfig, null, jsonValue, "", "");
 				
 				}catch(ServiceException e){
 					//access_token过期
 					if(e.getMessage().equals("状态码:401")){
 						access_token = UtilOfChannel.getNewToken(timeConfig);
 						handleRefundlOrder(deleteOrder);
+					}else if(e.getMessage().equals("状态码:204")){
+						
+						result = UtilOfChannel.SUCCESSFUL;
+						
 					}else{
 						result = HttpUtil45.errorResult;
 						excDesc = e.getMessage();
@@ -367,7 +378,7 @@ public class OrderImpl extends AbsOrderService {
 			//根据返回结果设置退单的状态
 			System.out.println("result=="+result);
 			logInfo.info("result==="+result);
-			if( !result.equals(HttpUtil45.errorResult) && StringUtils.isNotBlank(result)){
+			if( result.equals(UtilOfChannel.SUCCESSFUL)){
 				//取消成功
 				deleteOrder.setExcState("0");
 				deleteOrder.setStatus(OrderStatus.REFUNDED);				
@@ -450,19 +461,19 @@ public class OrderImpl extends AbsOrderService {
 //		loadSpringContext();
 //		OrderImpl order = (OrderImpl)factory.getBean("channeladvisorOrder");
 //		OrderDTO oo = new OrderDTO();
-//		oo.setDetail("NY-15006:1");
+//		oo.setDetail("NY-15003:1");
 //		//
-//		oo.setSpOrderId("11111111111");		
+//		oo.setSpOrderId("201512101209");		
 //		
 //		order.handleSupplierOrder(oo);
 //		
-////		oo.setSupplierOrderNo("162765");
+////		oo.setSupplierOrderNo("165303");
 ////		order.handleConfirmOrder(oo);
 //		
 ////		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
-////		deleteOrder.setDetail("NY-15006:1");
-////		deleteOrder.setSpOrderId("2015120415006");
-////		deleteOrder.setSupplierOrderNo("162814");
+////		deleteOrder.setDetail("NY-15003:1");
+////		deleteOrder.setSpOrderId("201512101209");
+////		deleteOrder.setSupplierOrderNo("165303");
 ////		order.handleCancelOrder(deleteOrder);
 ////		order.handleRefundlOrder(deleteOrder);
 //		
