@@ -8,7 +8,9 @@ import com.shangpin.ice.ice.UpdateProductSock;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SupplierStockDTO;
+import com.shangpin.iog.service.SkuRelationService;
 import com.shangpin.iog.service.SupplierStockService;
 import com.shangpin.iog.tony.common.Constant;
 import com.shangpin.iog.tony.common.MyJsonClient;
@@ -31,8 +33,13 @@ public class TonyStockImp {
 
 
     OutTimeConfig outTimeConfig =     new OutTimeConfig(1000 * 60 , 1000 * 60 , 1000 * 60);
+
+    public static ResourceBundle bundle = ResourceBundle.getBundle("conf");
+    public static String SUPPLIER_ID = bundle.getString("supplierId");
     @Autowired
     SupplierStockService supplierStockService;
+    @Autowired
+    SkuRelationService skuRelationService;
     public void  fetchStock() {
 
         Gson gson = new Gson();
@@ -105,7 +112,7 @@ public class TonyStockImp {
                     }
 
                     //实时更新库存
-
+                    this.updateSOPInventory(stockMap);
 
                 }
 
@@ -117,10 +124,20 @@ public class TonyStockImp {
     /**
      * 更新库存数量
      */
-    private void updateSOPInventory(){
+    private void updateSOPInventory(Map<String,Integer> stockMap){
 
         UpdateProductSock updateProductSock = new UpdateProductSock();
+        Map<String,String> skuRelationMap = new HashMap<>();
+        for(Iterator<String> itor = skuRelationMap.keySet().iterator();itor.hasNext();){
+            try {
+                SkuRelationDTO skuRelationDTO =  skuRelationService.getSkuRelationBySupplierIdAndSupplierSkuNo(SUPPLIER_ID,itor.next());
+                skuRelationMap.put(skuRelationDTO.getSupplierSkuId(),skuRelationDTO.getSopSkuId());
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+        }
 
+        updateProductSock.updateStock(stockMap,skuRelationMap,SUPPLIER_ID);
     }
 
     public static void main(String[] args) throws Exception {

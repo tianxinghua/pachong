@@ -10,12 +10,14 @@ import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,21 +135,21 @@ public class FetchProduct {
 
                         //保存图片
                         String[] picArray = contentArray[12].split(",");
+                        List<String> picLit = Arrays.asList(picArray);
+                        productFetchService.savePicture(supplierId,null,skuId,picLit);
 
-
-                        for(String picUrl :picArray){
-                            ProductPictureDTO dto  = new ProductPictureDTO();
-                            dto.setPicUrl(picUrl);
-                            dto.setSupplierId(supplierId);
-                            dto.setId(UUIDGenerator.getUUID());
-                            dto.setSkuId(skuId);
-                            try {
-//                                    productFetchService.savePicture(dto);
-                                productFetchService.savePictureForMongo(dto);
-                            } catch (ServiceException e) {
-                                e.printStackTrace();
-                            }
-                        }
+//                        for(String picUrl :picArray){
+//                            ProductPictureDTO dto  = new ProductPictureDTO();
+//                            dto.setPicUrl(picUrl);
+//                            dto.setSupplierId(supplierId);
+//                            dto.setId(UUIDGenerator.getUUID());
+//                            dto.setSkuId(skuId);
+//                            try {
+//                                productFetchService.savePictureForMongo(dto);
+//                            } catch (ServiceException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
 
 
                     }
