@@ -90,8 +90,14 @@
 
     </insert>
 
-	
-
+	<update id="updateMaterial" parameterType="iog_spu" >
+          update SPU
+          <set>
+              <if test="material != null"> MATERIAL = #{material},</if>
+              <if test="lastTime != null"> LAST_TIME = #{lastTime}</if>
+          </set>
+          where  SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
+    </update>
 
 	
 </mapper>
