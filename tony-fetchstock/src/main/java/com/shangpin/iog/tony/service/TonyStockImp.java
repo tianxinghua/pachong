@@ -110,12 +110,9 @@ public class TonyStockImp {
                             e1.printStackTrace();
                         }
                     }
-
-                    //实时更新库存
-                    this.updateSOPInventory(stockMap);
-
                 }
-
+                //实时更新库存
+                this.updateSOPInventory(stockMap);
             }
 
         }
@@ -128,7 +125,7 @@ public class TonyStockImp {
 
         UpdateProductSock updateProductSock = new UpdateProductSock();
         Map<String,String> skuRelationMap = new HashMap<>();
-        for(Iterator<String> itor = skuRelationMap.keySet().iterator();itor.hasNext();){
+        for(Iterator<String> itor = stockMap.keySet().iterator();itor.hasNext();){
             try {
                 SkuRelationDTO skuRelationDTO =  skuRelationService.getSkuRelationBySupplierIdAndSupplierSkuNo(SUPPLIER_ID,itor.next());
                 skuRelationMap.put(skuRelationDTO.getSupplierSkuId(),skuRelationDTO.getSopSkuId());
