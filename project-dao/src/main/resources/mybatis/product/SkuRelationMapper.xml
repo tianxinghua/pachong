@@ -85,8 +85,8 @@
         CREATE_TIME
         from SKU_RELATION
         <where>
-            <if test="null!=supplier">
-                SUPPLIER_ID = #{supplier}
+            <if test="null!=supplierId">
+                SUPPLIER_ID = #{supplierId}
             </if>
             <if test="null!=skuNo">
               and    SUPPLIER_SKU_ID = #{skuNo}
