@@ -184,7 +184,18 @@ public class FileDownloadController {
     public ModelAndView queryOrders(
                          HttpServletResponse response,
                          String queryJson){
-    	
+    	Map<String, String> nameMap = new HashMap<String, String>();
+    	nameMap.put("placed", "下订单成功");
+    	nameMap.put("payed", "支付");
+    	nameMap.put("cancelled", "取消成功");
+    	nameMap.put("confirmed", "支付成功");
+    	nameMap.put("nohandle", "超时不处理");
+    	nameMap.put("waitplaced", "待下订单");
+    	nameMap.put("waitcancel", "待取消");
+    	nameMap.put("refunded", "退款成功");
+    	nameMap.put("waitrefund", "待退款");
+    	nameMap.put("purexpsuc", "采购异常Suc");
+    	nameMap.put("purexperr", "采购异常Err");
     	ModelAndView modelAndView = new ModelAndView();
     	List<OrderDTO> orderList = null;
     	try{
@@ -219,7 +230,10 @@ public class FileDownloadController {
     		}else{			
     			orderList = orderService.getOrderBySupplierIdAndTime(supplier, startDate, endDate);
     						
-    		}	        
+    		}	     
+            for (OrderDTO orderDTO : orderList) {
+				orderDTO.setStatus(nameMap.get(orderDTO.getStatus().toLowerCase()));
+			}
             modelAndView.addObject("orderList", orderList);
     		modelAndView.setViewName("orders");
     		
