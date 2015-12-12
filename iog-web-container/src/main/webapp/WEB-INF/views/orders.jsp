@@ -43,6 +43,7 @@
 	<td>供货商名称</td>
 	<td>尚品订单编号</td>
 	<td>采购单编号</td>
+	<td>订单状态</td>
 	<td>Detail</td>
 	<td>Memo</td>
 	<td>CreateTime</td>
@@ -55,10 +56,11 @@
 	<td>${order.supplierName }</td>
 	<td>${order.spOrderId }</td>
 	<td>${order.spPurchaseNo }</td>
+	<td>${order.status }</td>
 	<td>${order.detail }</td>
 	<td>${order.memo }</td>
-	<td>${order.createTime }</td>
-	<td>${order.updateTime }</td>
+	<td><fmt:formatDate value="${order.createTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+	<td><fmt:formatDate value="${order.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 	<td>${order.uuId }</td>
 </tr>
 </c:forEach>

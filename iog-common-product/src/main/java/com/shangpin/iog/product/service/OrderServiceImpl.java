@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -243,9 +244,21 @@ public class OrderServiceImpl implements OrderService {
 	public StringBuffer exportOrder(String supplier, Date startDate,
 			Date endDate, int pageIndex, int pageSize, String flag) {		
 		
+		Map<String, String> nameMap = new HashMap<String, String>();
+    	nameMap.put("placed", "下订单成功");
+    	nameMap.put("payed", "支付");
+    	nameMap.put("cancelled", "取消成功");
+    	nameMap.put("confirmed", "支付成功");
+    	nameMap.put("nohandle", "超时不处理");
+    	nameMap.put("waitplaced", "待下订单");
+    	nameMap.put("waitcancel", "待取消");
+    	nameMap.put("refunded", "退款成功");
+    	nameMap.put("waitrefund", "待退款");
+    	nameMap.put("purExpSuc", "采购异常Suc");
+    	nameMap.put("purExpErr", "采购异常Err");
 		StringBuffer buffer = new StringBuffer("SupplierId 供货商" + splitSign
 				+ "SpOrderId 尚品订单编号" + splitSign
-				+ "SpPurchaseNo 采购单编号" + splitSign + "SpPurchaseDetailNo 采购单明细" + splitSign
+				+ "SpPurchaseNo 采购单编号" + splitSign +"订单状态"+ splitSign+ "SpPurchaseDetailNo 采购单明细" + splitSign
 				+ "Detail 供货商skuId:数量" + splitSign + "Memo 尚品skuId:数量" + splitSign
 				+ "CreateTime" + splitSign + "UpdateTime" + splitSign
 				+ "UuId").append("\r\n");
@@ -265,6 +278,7 @@ public class OrderServiceImpl implements OrderService {
 					buffer.append(supplierName).append(splitSign);
 					buffer.append(order.getSpOrderId()).append(splitSign);
 					buffer.append(order.getSpPurchaseNo()).append(splitSign);
+					buffer.append(nameMap.get(order.getStatus().toLowerCase())).append(splitSign);
 					buffer.append(order.getSpPurchaseDetailNo()).append(splitSign);
 					if(StringUtils.isNotBlank(order.getDetail())){
 						detail = order.getDetail().replaceAll(splitSign, "");
