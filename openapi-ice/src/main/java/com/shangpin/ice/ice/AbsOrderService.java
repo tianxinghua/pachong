@@ -233,7 +233,10 @@ public abstract class AbsOrderService {
         handleOrderOfWMS(supplierNo, supplierId, skuMap, orderList);
 
         //查找漏单的信息（重新采购、财务补单）
-        handleOrderOfSOPForSpecial(supplierId,supplierNo,startDateOfWMS,endDateOfWMS);
+        String  startTime = "";
+        Date tmpDate =  DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(startDateOfWMS,YYYY_MMDD_HH_WMS),-20,"m");
+        startTime = DateTimeUtil.convertFormat(tmpDate,YYYY_MMDD_HH_WMS) ;
+        handleOrderOfSOPForSpecial(supplierId,supplierNo,startTime,endDateOfWMS);
 
         //处理退单
         handleCancelOfWMS(supplierNo, supplierId, skuMap, refundList,handleCancel);
@@ -354,6 +357,7 @@ public abstract class AbsOrderService {
             //获取已下单的订单信息
         	String nowDate = DateTimeUtil.getDateTime(); 
             orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
+            //判断12个小时还是未推送状态的 如果已经支付 就赋值成支付  待确认时 程序返回错误  使其赋值为采购异常
             List<OrderDTO>  waitList = productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
             orderDTOList.addAll(waitList);
             
@@ -421,7 +425,7 @@ public abstract class AbsOrderService {
             for(OrderDTO orderDTO:orderDTOList){
 
                 if(orderDTO.getSpOrderId().startsWith("C")){//采购单推送的
-                    orderDTO.setStatus(OrderStatus.PAYED);//如果退款了 也无所谓 临时保存为支付状态 后续有退款的处理
+                    orderDTO.setStatus(OrderStatus.PAYED);//如果退款了 无所谓 临时保存为支付状态 后续有退款的处理
                     productOrderService.update(orderDTO);
 
                 }else{//订单推送
@@ -447,6 +451,7 @@ public abstract class AbsOrderService {
                         for(Iterator<Map.Entry<String,List<PurchaseOrderDetailSpecial>>> itor = purchaseOrderMap.entrySet().iterator();itor.hasNext();) {
                             Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();
                             sopPurchaseOrderNo  = entry.getKey();
+
                             StringBuffer purchaseOrderDetailbuffer =new StringBuffer();
                             //获取同一产品的数量
                             for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){
@@ -461,6 +466,22 @@ public abstract class AbsOrderService {
                                 }
 
                             }
+                            //防止时间差 造成第一次查询时没有 ，补漏的订单重新推送 下次再此确认已支付推送 造成重复推送
+                            OrderDTO orderOfDB = null;
+                            try {
+                                orderOfDB = productOrderService.getOrderByPurchaseNo(sopPurchaseOrderNo);
+                            } catch (ServiceException e) {
+                                e.printStackTrace();
+                            }
+                            if(null!=orderOfDB){
+                                orderDTO.setStatus(OrderStatus.NOHANDLE);
+                                orderDTO.setUpdateTime(new Date());
+                                orderDTO.setExcTime(new Date());
+                                orderDTO.setExcDesc("发现重复推送，不再处理");
+
+                            }
+
+
                             orderDTO.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString().substring(0,purchaseOrderDetailbuffer.toString().length()-1));
                             productOrderService.update(orderDTO);
 
@@ -772,7 +793,7 @@ public abstract class AbsOrderService {
             }
 
 
-            logger.info("---- SOP订单操作完成----");
+            logger.info("---- SOP Special 订单操作完成----");
         }
     }
 
