@@ -97,7 +97,7 @@ public class ReservationProStock {
 		map.put("reservation_id", reservationId);
 		map.put("bags", data);
 		System.out.println("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:"+reservationId+",bags:"+data);
-		logger.info("推送订单的数据：[eps_order_id:"+map.get("eps_order_id")+",reservationId:"+reservationId+",bags:"+data);
+		logger.info("推送订单的数据：[orderId:"+map.get("eps_order_id")+",reservationId:"+reservationId+",data:"+data);
 		ResponseObject returnObj = requestSource(map);
 		Map<String, String> returnMap = null;
 		if (returnObj != null) {
@@ -115,6 +115,10 @@ public class ReservationProStock {
 					returnMap = new HashMap<String, String>();
 					returnMap.put("-1", returnObj.getError_msg());
 					logger.info("推送订单fail：" + returnObj.getError_msg());
+				}else if("INV_EPS_ORD_ID".equals(returnObj.getError_code())){
+					returnMap = new HashMap<String, String>();
+					returnMap.put("2", returnObj.getError_msg()); 
+					logger.info("推送订单success：" + returnObj.getOrder_id());
 				}else{
 					returnMap = new HashMap<String, String>();
 					returnMap.put("1", returnObj.getError_msg());
