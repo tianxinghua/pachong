@@ -254,8 +254,8 @@ public class OrderServiceImpl implements OrderService {
     	nameMap.put("waitcancel", "待取消");
     	nameMap.put("refunded", "退款成功");
     	nameMap.put("waitrefund", "待退款");
-    	nameMap.put("purExpSuc", "采购异常Suc");
-    	nameMap.put("purExpErr", "采购异常Err");
+    	nameMap.put("purexpsuc", "采购异常Suc");
+    	nameMap.put("purexperr", "采购异常Err");
 		StringBuffer buffer = new StringBuffer("SupplierId 供货商" + splitSign
 				+ "SpOrderId 尚品订单编号" + splitSign
 				+ "SpPurchaseNo 采购单编号" + splitSign +"订单状态"+ splitSign+ "SpPurchaseDetailNo 采购单明细" + splitSign

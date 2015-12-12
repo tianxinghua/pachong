@@ -194,8 +194,8 @@ public class FileDownloadController {
     	nameMap.put("waitcancel", "待取消");
     	nameMap.put("refunded", "退款成功");
     	nameMap.put("waitrefund", "待退款");
-    	nameMap.put("purExpSuc", "采购异常Suc");
-    	nameMap.put("purExpErr", "采购异常Err");
+    	nameMap.put("purexpsuc", "采购异常Suc");
+    	nameMap.put("purexperr", "采购异常Err");
     	ModelAndView modelAndView = new ModelAndView();
     	List<OrderDTO> orderList = null;
     	try{
