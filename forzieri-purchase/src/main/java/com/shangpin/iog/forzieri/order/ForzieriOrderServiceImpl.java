@@ -338,7 +338,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		CloseableHttpClient httpClient = httpClientBuilder.build();
 		HttpPost httpPost = new HttpPost("https://api.forzieri.com/test/orders");
-		httpPost.setHeader("Authorization", "Bearer ef197db73b29b7e9dde889dd7123b18451176fcc");
+		httpPost.setHeader("Authorization", "Bearer b5b455a0b249da5a2882bc3f27714ab34734ccca");
 		httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 		String sku = "fz181110-001-00";
 		String qty = "1";
@@ -371,6 +371,23 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
         	 System.out.println(EntityUtils.toString(response.getEntity()));
         	 System.out.println(String.valueOf(response.getStatusLine().getStatusCode()));
         } catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
+
+		HttpPost httpPost3 = new HttpPost("https://api.forzieri.com/test/orders/"+fromJson.getData().getOrder_id());
+		httpPost3.setHeader("Authorization", "Bearer ef197db73b29b7e9dde889dd7123b18451176fcc");
+		httpPost3.setHeader("X_HTTP_METHOD_OVERRIDE", "PUT");
+		httpPost3.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+		StringEntity entity2 = new StringEntity("{\"status\":\"cancelled\"}","utf-8");
+		entity.setContentType("application/json");
+		httpPost3.setEntity(entity2);
+		try {
+			response = httpClient.execute(httpPost3);
+			System.out.println(EntityUtils.toString(response.getEntity()));
+			System.out.println(String.valueOf(response.getStatusLine().getStatusCode()));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	

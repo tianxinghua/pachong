@@ -580,6 +580,7 @@ public abstract class AbsUpdateProductStock {
 		String startTime = format.format(getAppointDayFromSpecifiedDay(endDate, -2, "M"));
 		List<java.lang.Integer> statusList = new ArrayList<>();
 		statusList.add(1);
+		statusList.add(2);
 		while(hasNext){
 			List<PurchaseOrderDetail> orderDetails = null;
 			try {
