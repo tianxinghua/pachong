@@ -112,7 +112,10 @@ public class TonyStockImp {
                     }
                 }
                 //实时更新库存
-                this.updateSOPInventory(stockMap);
+                if(stockMap.size()>0){
+                    this.updateSOPInventory(stockMap);
+                }
+
             }
 
         }
@@ -123,18 +126,23 @@ public class TonyStockImp {
      */
     private void updateSOPInventory(Map<String,Integer> stockMap){
 
-        UpdateProductSock updateProductSock = new UpdateProductSock();
-        Map<String,String> skuRelationMap = new HashMap<>();
-        for(Iterator<String> itor = stockMap.keySet().iterator();itor.hasNext();){
-            try {
-                SkuRelationDTO skuRelationDTO =  skuRelationService.getSkuRelationBySupplierIdAndSupplierSkuNo(SUPPLIER_ID,itor.next());
-                skuRelationMap.put(skuRelationDTO.getSupplierSkuId(),skuRelationDTO.getSopSkuId());
-            } catch (ServiceException e) {
-                e.printStackTrace();
+        try {
+            UpdateProductSock updateProductSock = new UpdateProductSock();
+            Map<String,String> skuRelationMap = new HashMap<>();
+            for(Iterator<String> itor = stockMap.keySet().iterator();itor.hasNext();){
+                try {
+                    SkuRelationDTO skuRelationDTO =  skuRelationService.getSkuRelationBySupplierIdAndSupplierSkuNo(SUPPLIER_ID,itor.next());
+                    skuRelationMap.put(skuRelationDTO.getSupplierSkuId(),skuRelationDTO.getSopSkuId());
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        updateProductSock.updateStock(stockMap,skuRelationMap,SUPPLIER_ID);
+            updateProductSock.updateStock(stockMap,skuRelationMap,SUPPLIER_ID);
+        } catch (Exception e) {
+            loggerError.error("时时同步库存失败");
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) throws Exception {
