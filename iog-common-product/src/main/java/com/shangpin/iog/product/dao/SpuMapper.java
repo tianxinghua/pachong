@@ -8,4 +8,6 @@ import com.shangpin.iog.dto.SpuDTO;
 @Mapper
 public interface SpuMapper extends IBaseDao<SpuDTO> {
 
+	public void updateMaterial(SpuDTO spuDTO);
+
 }

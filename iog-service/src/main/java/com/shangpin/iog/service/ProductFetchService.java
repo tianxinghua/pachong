@@ -54,7 +54,13 @@ public interface ProductFetchService {
      * @throws ServiceException
      */
     public void updatePriceAndStock(SkuDTO skuDTO) throws ServiceException;
-
+    
+    /**
+     * 更新材质
+     * @param spuDTO
+     * @throws ServiceException
+     */
+    public void updateMaterial(SpuDTO spuDTO) throws ServiceException;
 
     /**
      * 保存照片

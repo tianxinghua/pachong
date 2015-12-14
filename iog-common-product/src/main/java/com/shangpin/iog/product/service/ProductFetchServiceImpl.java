@@ -134,7 +134,16 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             throw new ServiceMessageException("数据更新失败"+e.getMessage());
         }
     }
+    @Override
+    public void updateMaterial(SpuDTO spuDTO) throws ServiceException {
+        try {
+            if(null==spuDTO.getLastTime()) spuDTO.setLastTime(new Date());
+            spuDAO.updateMaterial(spuDTO);
+        } catch ( Exception e) {
 
+            throw new ServiceMessageException("数据更新失败"+e.getMessage());
+        }
+    }
     @Override
     public void savePicture(ProductPictureDTO pictureDTO) throws ServiceException {
         try {
