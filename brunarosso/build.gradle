@@ -12,13 +12,12 @@ dependencies {
             "com.thoughtworks.xstream:xstream:1.4.7",
             "commons-net:commons-net:1.4.1",
             "org.jdom:jdom:2.0.2",
-            project(':project-framework'),
+
             project(':project-common'),
             project(':iog-service'),
-            project(':project-dao'),
             project(':iog-common-product'),
-            project(':brunarosso-stock'),
-            /*project(':iog-web-container')*/
+//            project(':brunarosso-stock'),
+
     )
 
 
