@@ -122,7 +122,7 @@ public class FetchProduct {
                 sku.setProductDescription(item.getDescription());
                 sku.setProductCode(item.getMpn());
 
-                System.out.println("sku : " + sku);
+//                System.out.println("sku : " + sku);
 
                 try {
                     productFetchService.saveSKU(sku);
@@ -174,6 +174,16 @@ public class FetchProduct {
                 try {
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
+                    try {
+                        if (e.getMessage().equals("数据插入失败键重复")) {
+                            //更新价格和库存
+                            productFetchService.updateMaterial(spu);
+                        } else {
+                            e.printStackTrace();
+                        }
+                    } catch (ServiceException e1) {
+                        e1.printStackTrace();
+                    }
                     e.printStackTrace();
                 }
             }
