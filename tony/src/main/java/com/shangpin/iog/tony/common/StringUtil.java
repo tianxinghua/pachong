@@ -94,9 +94,9 @@ public class StringUtil {
      *get Product Size
      */
     public static String getProductCode(String skuId){
-        if (!skuId.contains("_") || !skuId.contains("-"))
-            return "";
-        return skuId.split("_")[1].split("-")[0];
+        if (!skuId.contains("-"))
+            return skuId;
+        return skuId.split("-")[0];
     }
     /**
      *get tony Category Name by id
