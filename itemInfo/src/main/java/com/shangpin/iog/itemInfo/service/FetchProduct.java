@@ -207,7 +207,11 @@ public class FetchProduct {
 					}
 					else if(nodeName.equals("size")){  //必填
 						if(elementSku.getValue() != null){
-							sku.setProductSize(elementSku.getValue());
+							String productSize = elementSku.getValue();							
+							if(productSize.contains("/2")){
+								productSize = productSize.replace("/2", ".5");
+							}
+							sku.setProductSize(productSize);
 						}else{
 							break;
 						}
