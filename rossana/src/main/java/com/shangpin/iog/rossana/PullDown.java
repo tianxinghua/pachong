@@ -81,16 +81,17 @@ public class PullDown {
 					break;
 				}
 				String salePrice = item.getPrice().replaceAll("\"", "");
-				String marketPrice = String.valueOf((Double.parseDouble(salePrice)*1.2));
+				String marketPrice = String.valueOf(new java.text.DecimalFormat("#.00").format(Double.parseDouble(salePrice)*1.2));
+				String skuId = item.getSku().replaceAll("\"", "");
 				SkuDTO sku = new SkuDTO();
 				sku.setId(UUIDGenerator.getUUID());
 				sku.setSupplierId(supplierId);
-				sku.setSkuId(item.getSku().replaceAll("\"", ""));
-				sku.setSpuId(item.getSku().replaceAll("\"", ""));
-				sku.setProductName(item.getSubcategory().replaceAll("\"", ""));
+				sku.setSkuId(skuId);
+				sku.setSpuId(skuId);
+				sku.setProductName(item.getProducer().replaceAll("\"", "")+" "+item.getSubcategory().replaceAll("\"", ""));
 				sku.setSalePrice(salePrice);
 				sku.setMarketPrice(marketPrice);
-				sku.setProductCode(item.getProducer().replaceAll("\"", ""));
+				sku.setProductCode(skuId);
 				sku.setColor(item.getColor().replaceAll("\"", ""));
 				sku.setProductDescription(item.getDescription().replaceAll("\"", ""));
 				sku.setProductSize(item.getSize_detail().replaceAll("\"", ""));
