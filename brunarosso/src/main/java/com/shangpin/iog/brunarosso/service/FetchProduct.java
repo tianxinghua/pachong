@@ -102,13 +102,14 @@ public class FetchProduct {
                             sku.setStock(stock);
                             sku.setSupplierId(supplierId);
                             try {
+                            	  if(spuMap.containsKey(key)){
+                                  	spuMap.put(key,spuMap.get(key)+","+ sku.getSkuId());
+                                  }else{
+                                  	spuMap.put(key,sku.getSkuId());
+                                  }
+                                  logger.info("key"+key);
                                 productFetchService.saveSKU(sku);
-                                if(spuMap.containsKey(key)){
-                                	spuMap.put(key,spuMap.get(key)+","+ sku.getSkuId());
-                                }else{
-                                	spuMap.put(key,sku.getSkuId());
-                                }
-                                logger.info("key"+key);
+                              
                             }catch (Exception e) {
                                 try {
                                     if(e.getMessage().equals("数据插入失败键重复")){
