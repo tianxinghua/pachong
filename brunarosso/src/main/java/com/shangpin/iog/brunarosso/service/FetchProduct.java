@@ -103,8 +103,11 @@ public class FetchProduct {
                             sku.setSupplierId(supplierId);
                             try {
                                 productFetchService.saveSKU(sku);
-                                spuMap.put(key,sku.getSkuId());
-                                
+                                if(spuMap.containsKey(key)){
+                                	spuMap.put(key,spuMap.get(key)+","+ sku.getSkuId());
+                                }else{
+                                	spuMap.put(key,sku.getSkuId());
+                                }
                                 logger.info("key"+key);
                             }catch (Exception e) {
                                 try {
@@ -155,8 +158,16 @@ public class FetchProduct {
         for (org.jdom2.Element element:picList){
         	System.out.println( " RF_RECORD_ID = " + element.getChildText("RF_RECORD_ID"));
             if(returnMap.containsKey(element.getChildText("RF_RECORD_ID"))){
-            	String[] picArray = {element.getChildText("RIFERIMENTO")};
-				productFetchService.savePicture(supplierId,null,element.getChildText("RF_RECORD_ID"),Arrays.asList(picArray));
+            	String skuId="";
+            	skuId = returnMap.get(element.getChildText("RF_RECORD_ID"));
+            	String[] skuArray = skuId.split(",");
+            	if(null!=skuArray){
+            		for(String sku :skuArray){
+            			String[] picArray = {element.getChildText("RIFERIMENTO")};
+        				productFetchService.savePicture(supplierId,null,sku,Arrays.asList(picArray));
+            		}
+            	}
+            	
             }
         }
     }
