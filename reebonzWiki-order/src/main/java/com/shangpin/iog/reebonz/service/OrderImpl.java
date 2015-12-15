@@ -134,12 +134,10 @@ public class OrderImpl extends AbsOrderService {
 		try{
 			String data = getJsonData(orderDTO.getDetail(),orderDTO.getPurchasePriceDetail());
 			Map<String, String> map = null;
-			logger.info("推送订单的数据：data："+data+",SupplierOrderNo:"+orderDTO.getSupplierOrderNo()+",OrderId:"+orderDTO.getSpOrderId()+",SpPurchaseNo:"+ orderDTO.getSpPurchaseNo());
 			map = stock.pushOrder(orderDTO.getSupplierOrderNo(),
 					orderDTO.getSpOrderId(), orderDTO.getSpPurchaseNo(), data);
 			// 1：代表发生了异常
 			if (map.get("1") != null) {
-				//超过一天 不需要在做处理 订单状态改为其它状体
 				orderDTO.setExcState("0");
 				orderDTO.setExcDesc(map.get("1"));
 				//-1:不做处理  1：成功  0：失败
@@ -166,7 +164,23 @@ public class OrderImpl extends AbsOrderService {
 			}else if(map.get("-1") != null){
 				sendMail(orderDTO);
 				orderDTO.setExcDesc(map.get("-1"));
-			} else {
+			}else if(map.get("2") != null){
+				orderDTO.setExcState("0");
+				orderDTO.setStatus(OrderStatus.CONFIRMED);
+				orderDTO.setExcDesc("由于网络等原因供应商未返回数据,二次推送，造成oderId重复推送"+map.get("2"));
+				Thread t = new Thread(	 new Runnable() {
+					@Override
+					public void run() {
+						try {
+							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"reebonz订单"+orderDTO.getSpOrderId()+":Duplicate EPS Order Id,由于网络等原因供应商未返回数据,二次推送，造成oderId重复推送,现已置为成功，请确认是否推送成功", messageType);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				t.start();
+				
+			}else {
 				orderDTO.setExcState("0");
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
 				orderDTO.setSupplierOrderNo(map.get("return_orderID"));

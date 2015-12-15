@@ -492,6 +492,7 @@ public abstract class AbsUpdateProductStock {
 				queryDto.setPageIndex(pageIndex);
 				queryDto.setPageSize(pageSize);
 				detailStatus.add(1);
+				detailStatus.add(2);
 				queryDto.setDetailStatus(detailStatus);
 
 

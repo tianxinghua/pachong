@@ -1,19 +1,20 @@
 package com.shangpin.iog.brunarosso.service;
 
 import com.shangpin.framework.ServiceException;
-
 import com.shangpin.iog.brunarosso.utils.XmlReader;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class FetchProduct {
                     try{
                         productFetchService.saveSPU(spu);
                     }catch (ServiceException e) {
-                        e.printStackTrace();
+                    	productFetchService.updateMaterial(spu);
                     }
                     if(map.containsKey(element.getChildText("ID_ARTICOLO"))){
                         //List<SkuDTO>skuDTOList=new ArrayList<>();
@@ -101,14 +102,14 @@ public class FetchProduct {
                             sku.setStock(stock);
                             sku.setSupplierId(supplierId);
                             try {
+                            	  if(spuMap.containsKey(key)){
+                                  	spuMap.put(key,spuMap.get(key)+","+ sku.getSkuId());
+                                  }else{
+                                  	spuMap.put(key,sku.getSkuId());
+                                  }
+                                  logger.info("key"+key);
                                 productFetchService.saveSKU(sku);
-                                if(spuMap.containsKey(key)){
-                                	spuMap.put(key,spuMap.get(key)+","+ sku.getSkuId());
-                                }else{
-                                	spuMap.put(key,sku.getSkuId());
-                                }
-                                
-                                logger.info("key"+key);
+                              
                             }catch (Exception e) {
                                 try {
                                     if(e.getMessage().equals("数据插入失败键重复")){
@@ -153,37 +154,26 @@ public class FetchProduct {
         }
        
     }
-    public void savePic(String url,Map<String,String>returnMap){
+    public  void savePic(String url,Map<String,String>returnMap){
         List<org.jdom2.Element>picList = XmlReader.getPictureElement(url);
-        String skuId="";
         for (org.jdom2.Element element:picList){
-        	
-        	logger.info( " RF_RECORD_ID = " + element.getChildText("RF_RECORD_ID"));
+        	System.out.println( " RF_RECORD_ID = " + element.getChildText("RF_RECORD_ID"));
             if(returnMap.containsKey(element.getChildText("RF_RECORD_ID"))){
-//            	logger.info( "contain key  RF_RECORD_ID = " + element.getChildText("RF_RECORD_ID"));
+            	String skuId="";
             	skuId = returnMap.get(element.getChildText("RF_RECORD_ID"));
             	String[] skuArray = skuId.split(",");
             	if(null!=skuArray){
             		for(String sku :skuArray){
-                		ProductPictureDTO dto  = new ProductPictureDTO();
-                        dto.setPicUrl(element.getChildText("RIFERIMENTO"));
-                        dto.setId(UUIDGenerator.getUUID());
-                        dto.setSupplierId(supplierId);
-                        dto.setSkuId(sku);
-                        //dto.setSpuId("");
-                        try {
-                            productFetchService.savePictureForMongo(dto);
-                        } catch (ServiceException e) {
-                            e.printStackTrace();
-                        }
-                	}
-                    
+            			String[] picArray = {element.getChildText("RIFERIMENTO")};
+        				productFetchService.savePicture(supplierId,null,sku,Arrays.asList(picArray));
+            		}
             	}
             	
             }
         }
     }
     public static void main(String args[]) {
+    	
         String url="http://85.159.181.250/ws_sito/ws_sito.asmx/DisponibilitaVarianteTaglia";
         Map<String,String> param = new HashMap<>();
         param.put("ID_ARTICOLO","6759079");

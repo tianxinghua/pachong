@@ -366,7 +366,7 @@
                 <![CDATA[ and CREATE_TIME <=#{endDate}    ]]>
             </if>
         </where>
-        order by SUPPLIER_NAME
+        order by SUPPLIER_NAME,CREATE_TIME DESC,STATUS
 
 
     </select>

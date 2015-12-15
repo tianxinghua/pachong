@@ -16,7 +16,9 @@ import com.shangpin.iog.tony.common.Constant;
 import com.shangpin.iog.tony.common.MyJsonClient;
 import com.shangpin.iog.tony.common.StringUtil;
 import com.shangpin.iog.tony.dto.Items;
+import org.apache.commons.collections.functors.ExceptionClosure;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,9 @@ import java.util.Map;
  */
 @Component("tony")
 public class FetchProduct {
+
+    private static Logger log = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
     @Autowired
     ProductFetchService productFetchService;
     private MyJsonClient jsonClient = new MyJsonClient();
@@ -86,7 +91,7 @@ public class FetchProduct {
                 sku.setSaleCurrency(item.getCur());
                 productFetchService.saveSKU(sku);
 
-                if(null!=item.getImages()&&StringUtils.isNotBlank(item.getImages()[0])){
+                if(null!=item.getImages()&& item.getImages().length>0&&StringUtils.isNotBlank(item.getImages()[0])){
                     String[] picArray = item.getImages();
                     for(String picUrl :picArray){
                         ProductPictureDTO dto  = new ProductPictureDTO();
@@ -114,6 +119,8 @@ public class FetchProduct {
                 } catch (ServiceException e1) {
                     e1.printStackTrace();
                 }
+            } catch(Exception e){
+                loggerError.error("tony 更新库存失败 " + e.getMessage());
             }
 /*            if (StringUtil.getMaterial(item.getDesc()) == null || "".equals(StringUtil.getMaterial(item.getDesc()))){
                 System.out.println(skuId+"======================================================");
