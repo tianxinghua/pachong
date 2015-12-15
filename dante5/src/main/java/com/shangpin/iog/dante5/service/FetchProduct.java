@@ -166,6 +166,7 @@ public class FetchProduct {
                 spu.setCategoryName(item.getProductType());
                 spu.setBrandName(item.getBrand());
                 spu.setMaterial(item.getComposition());
+                spu.setSeasonName(item.getCustomLabel0());
 
                 //SPU选填
                 spu.setCategoryGender(item.getGender());
