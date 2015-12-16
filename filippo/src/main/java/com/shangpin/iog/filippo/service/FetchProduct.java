@@ -1,5 +1,6 @@
 package com.shangpin.iog.filippo.service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,21 +122,6 @@ public class FetchProduct {
 				sku.setProductCode(skuEntry.getValue().getART().replace("\"", ""));
 				try {
 					productFetchService.saveSKU(sku);
-					
-					//保存图片
-					ProductPictureDTO picture = new ProductPictureDTO();
-					picture.setSupplierId(supplierId);
-					picture.setId(UUIDGenerator.getUUID());
-					picture.setSkuId(skuEntry.getKey().replace("\"", ""));
-					//picture.setSpuId(product.getProductCode());
-					picture.setPicUrl(skuEntry.getValue().getIMG().replace("\"", ""));
-					try {
-						productFetchService.savePictureForMongo(picture);
-					} catch (ServiceException e) {
-						e.printStackTrace();
-					}
-					
-					
 				} catch (ServiceException e1) {
 					try {
 						if (e1.getMessage().equals("数据插入失败键重复")) {
@@ -146,6 +132,9 @@ public class FetchProduct {
 						e2.printStackTrace();
 					}
 				}
+				
+				//保存图片
+				productFetchService.savePicture(supplierId, null, skuEntry.getKey().replace("\"", ""), Arrays.asList(skuEntry.getValue().getIMG().replace("\"", "")));
 			}
 			
 			logger.info("抓取结束");

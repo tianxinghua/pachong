@@ -1,5 +1,6 @@
 package com.shangpin.iog.fashionesta.service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,21 +88,6 @@ public class FetchProduct {
 						sku.setProductSize(size);
 						sku.setProductName(product.getProductName());
 						productFetchService.saveSKU(sku);
-						
-						String[] images = product.getImage_url();
-						for (String image : images) {
-							ProductPictureDTO picture = new ProductPictureDTO();
-							picture.setSupplierId(supplierId);
-							picture.setId(UUIDGenerator.getUUID());
-							//picture.setSkuId(item.getItemCode());
-							picture.setSpuId(product.getProductCode());
-							picture.setPicUrl(image);
-							try {
-								productFetchService.savePictureForMongo(picture);
-							} catch (ServiceException e) {
-								e.printStackTrace();
-							}
-						}
 
 					} catch (ServiceException e) {
 						try {
@@ -116,6 +102,9 @@ public class FetchProduct {
 							e1.printStackTrace();
 						}
 					}
+					
+					String[] images = product.getImage_url();
+					productFetchService.savePicture(supplierId, product.getProductCode(), null, Arrays.asList(images));
 
 				}
 
