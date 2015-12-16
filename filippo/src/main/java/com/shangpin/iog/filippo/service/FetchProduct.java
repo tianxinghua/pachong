@@ -94,6 +94,7 @@ public class FetchProduct {
 					productFetchService.saveSPU(spu);
 				} catch (ServiceException e) {
 					e.printStackTrace();
+					productFetchService.updateMaterial(spu);
 				}
 			}
 			for(Map.Entry<String, CsvDTO> skuEntry :csvSkuMaps.entrySet()){

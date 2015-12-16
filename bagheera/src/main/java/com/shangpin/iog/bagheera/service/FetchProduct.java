@@ -62,7 +62,6 @@ public class FetchProduct {
 		mongMap.put("supplierName", "bagheera");
 //		mongMap.put("result", result);
 		logMongo.info(mongMap);
-		StringBuffer sb = new StringBuffer();
         try {
         	Date startDate,endDate= new Date();
 			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
@@ -75,6 +74,7 @@ public class FetchProduct {
 			}
             List<BagheeraDTO> list=DownloadAndReadExcel.readLocalExcel();
             for (BagheeraDTO dto:list){
+            	StringBuffer sb = new StringBuffer();
                 SpuDTO spu = new SpuDTO();
                 SkuDTO sku = new SkuDTO();
                
@@ -123,7 +123,11 @@ public class FetchProduct {
                 try {
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
-                    e.printStackTrace();
+                	try {
+						productFetchService.updateMaterial(spu);
+					} catch (ServiceException e1) {
+						e1.printStackTrace();
+					}
                 }
                 try {
 
@@ -145,7 +149,6 @@ public class FetchProduct {
 					}
                 }
                 String imgs = sb.toString();
-                sb.setLength(0);
                 if (StringUtils.isNotBlank(imgs)) {
 					String[] split = imgs.split(",");
 					productFetchService.savePicture(supplierId, null, sku.getSkuId(), Arrays.asList(split));
