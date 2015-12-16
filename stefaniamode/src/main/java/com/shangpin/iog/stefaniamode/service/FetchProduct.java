@@ -55,6 +55,7 @@ public class FetchProduct {
 	public void fetchProductAndSave(String xmlContent, String supplierId) {
 
 		try {
+			String origin = "";
 			Date startDate,endDate= new Date();
 			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 			//获取原有的SKU 仅仅包含价格和库存
@@ -156,6 +157,10 @@ public class FetchProduct {
 					spu.setSpuName(product.getProduct_name());
 					spu.setSeasonId(product.getSeason_code());
 					spu.setMaterial(product.getProduct_material());
+					if (StringUtils.isNotBlank(product.getMade_in())) {
+						origin = product.getMade_in();
+					}
+					spu.setProductOrigin(origin);
 					// 商品所属性别字段；
 					spu.setCategoryGender(product.getMain_category());
 					productFetchService.saveSPU(spu);

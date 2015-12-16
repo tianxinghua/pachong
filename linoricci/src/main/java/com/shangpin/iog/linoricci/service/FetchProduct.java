@@ -43,6 +43,7 @@ public class FetchProduct {
     public void fetchProductAndSave(){
     	Map<String,Item> spuMap= new HashMap<String,Item>();
     	Map<String,String> imgMap= new HashMap<String,String>();
+    	Map<String,String> priceMap= new HashMap<String,String>();
         //获取产品信息
         logger.info("get product starting....");
     	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
@@ -51,28 +52,48 @@ public class FetchProduct {
     										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
     	String imageData = HttpUtil45.post(url+"GetAllImageMarketplace",
     										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
-    	
+    	String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
+    										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    		
     	
         logger.info("get product over");
         //映射数据并保存
         logger.info("save product into DB begin");
-        //得到所有的spu信息
         String data = "";
+        //价格信息
+        String[] priceStrings = priceData.split("\\r\\n");
+        String[] priceArr = null;
+        for (int i = 0; i < priceStrings.length; i++) {
+        	if (StringUtils.isNotBlank(priceStrings[i])) {
+				if (i==1) {
+				  data =  priceStrings[i].split("\\n")[1];
+				}else {
+				  data = priceStrings[i];
+				}
+        	}
+			priceArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+			priceMap.put(priceArr[0], priceArr[3]);
+			
+        }
+        
+        
+        
+        
+        //得到所有的spu信息
         String[] spuStrings = spuData.split("\\r\\n");
+        String[] spuArr = null;
 		for (int i = 1; i < spuStrings.length; i++) {
 			if (StringUtils.isNotBlank(spuStrings[i])) {
 				if (i==1) {
 				  data =  spuStrings[i].split("\\n")[1];
 				}else {
 				  data = spuStrings[i];
-				}
-				String[] spuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+			}
+				spuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
 				SpuDTO spu = new SpuDTO();
 				Item item = new Item();
 				  try {
 					   item.setColor(spuArr[10]);
-					   item.setMarketPrice(spuArr[16]);
-					   item.setSalePrice(spuArr[16]);
 					   item.setSupplierPrice(spuArr[16]);
 					   item.setDescription(spuArr[15]);
 					   item.setSpuId(spuArr[0]);
@@ -101,6 +122,7 @@ public class FetchProduct {
 		//处理sku信息
 		//处理图片信息
 		String[] imageStrings = imageData.split("\\r\\n");
+		String[] imageArr = null;
 		for (int j = 1; j < imageStrings.length; j++) {
 			if (StringUtils.isNotBlank(imageStrings[j])) {
 				if (j==1) {
@@ -109,7 +131,7 @@ public class FetchProduct {
 				  data = imageStrings[j];
 				}
 				
-				String[] imageArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+				imageArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
 				if (!imgMap.containsKey(imageArr[0])) {
 					imgMap.put(imageArr[0], imageArr[1]);
 				}else {
@@ -118,6 +140,7 @@ public class FetchProduct {
 			}
 		}
 		String[] skuStrings = skuData.split("\\r\\n");
+		String[] skuArr = null;
 		for (int i = 1; i < skuStrings.length; i++) {
 			if (StringUtils.isNotBlank(skuStrings[i])) {
 				if (i==1) {
@@ -125,7 +148,7 @@ public class FetchProduct {
 				}else {
 				  data = skuStrings[i];
 				}
-				String[] skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+				skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
 				if (spuMap.containsKey(skuArr[0])) {
 					Item item = spuMap.get(skuArr[0]);
 					SkuDTO sku = new SkuDTO();
@@ -134,9 +157,11 @@ public class FetchProduct {
         			sku.setSpuId(skuArr[0]);
         			//sku.setSkuId(skuId);
         			sku.setProductSize(skuArr[1]);
-        			sku.setMarketPrice(item.getMarketPrice());
-        			sku.setSalePrice(item.getSalePrice());
-        			sku.setSupplierPrice(item.getSupplierPrice());
+        			
+        			sku.setSalePrice(priceMap.get(item.getSpuId()));
+//        			sku.setMarketPrice(item.getMarketPrice());
+//        			sku.setSalePrice(item.getSalePrice());
+//        			sku.setSupplierPrice(item.getSupplierPrice());
         			sku.setColor(item.getColor());
         			sku.setProductDescription(item.getDescription());
         			sku.setSaleCurrency("EURO");

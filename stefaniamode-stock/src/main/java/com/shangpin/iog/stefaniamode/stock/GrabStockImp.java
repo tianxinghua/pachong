@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +25,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import javax.xml.bind.JAXBException;
+
 import com.shangpin.iog.app.AppContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -37,6 +41,7 @@ import com.shangpin.iog.stefaniamode.stock.dto.Item;
 import com.shangpin.iog.stefaniamode.stock.dto.Items;
 import com.shangpin.iog.stefaniamode.stock.dto.Product;
 import com.shangpin.iog.stefaniamode.stock.dto.Products;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -144,24 +149,41 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
 		return content;
 	}
-
+	public List<Product> getProductList(String[] urls) throws ServiceMessageException{
+		String xml = "";
+		Products products = null;
+		List<Product> productList = new ArrayList<Product>();
+		try {
+			for (String url : urls) {
+				xml = downLoadAndReadXml(url);
+				products = ObjectXMLUtil.xml2Obj(Products.class, xml);
+				productList.addAll(products.getProducts());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			loggerError.error("拉取stefaniamode数据失败---" + e.getMessage());
+			throw new ServiceMessageException("拉取stefaniamode数据失败");
+		}
+		return productList;
+	}
 	public Map<String, String> grabStock(Collection<String> skuNo)
 			throws ServiceException {
 		Map<String, String> skustock = new HashMap<>(skuNo.size());
 		Map<String, String> stockMap = new HashMap<>();
-
-		Products products = null;
+		String[] urls = zipUrl.split(",");
+		List<Product> productList = null;
+//		Products products = null;
 		try {
 			logger.info("拉取stefaniamode数据开始");
 
 			Map<String, String> mongMap = new HashMap<>();
-			String xmlContent = downLoadAndReadXml(zipUrl);
+//			String xmlContent = downLoadAndReadXml(zipUrl);
 
 			mongMap.put("supplierId", supplierId);
 			mongMap.put("supplierName", "stefaniamode");
-			mongMap.put("result", xmlContent);
 			logger.info(mongMap);
-			products = ObjectXMLUtil.xml2Obj(Products.class, xmlContent);
+			productList = getProductList(urls);
+//			products = ObjectXMLUtil.xml2Obj(Products.class, xmlContent);
 			logger.info("拉取stefaniamode数据成功");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -171,7 +193,6 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		} finally {
 			HttpUtil45.closePool();
 		}
-		List<Product> productList = products.getProducts();
 		String skuId = "";
 		for (Product product : productList) {
 
@@ -190,7 +211,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 					}
 					stockMap.put(skuId, item.getStock());
 				}
-			}
+			} 
 		}
 
 		for (String skuno : skuNo) {

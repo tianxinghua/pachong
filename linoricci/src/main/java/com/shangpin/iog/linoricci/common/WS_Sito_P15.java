@@ -514,22 +514,24 @@ public class WS_Sito_P15 {
     public static void main(String[] args) throws IOException {
     	Map<String, String> param = new HashMap<String,String>();
     	
-    	param.put("ID_ORDER_WEB", "201511301023");
-    	param.put("ID_CLIENTE_WEB", "1");
-    	param.put("DESTINATIONROW1", "");
-		param.put("DESTINATIONROW2", "");
-		param.put("DESTINATIONROW3", "");
-    	param.put("BARCODE", "2115383168402");
-    	param.put("QTY", "1");
-    	param.put("price", "1");
-        String skuData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/NewOrder",
-				param,new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+//    	param.put("ID_ORDER_WEB", "201511301023");
+//    	param.put("ID_CLIENTE_WEB", "1");
+//    	param.put("DESTINATIONROW1", "");
+//		param.put("DESTINATIONROW2", "");
+//		param.put("DESTINATIONROW3", "");
+//    	param.put("BARCODE", "2115383168402");
+//    	param.put("QTY", "1");
+//    	param.put("price", "1");
+//        String skuData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/NewOrder",
+//				param,new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+        String priceData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/GetAllPricelistMarketplace",
+        		param,new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
         
 //        param.put("CODICE", "1066239979");
 //        param.put("ID_CLIENTE", "1066239979");
 //        param.put("ID_STATUS", "1");
 //		String post = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/SetStatusOrder", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
-		System.out.println(skuData.contains("OK"));
+		System.out.println(priceData);
         
         
     }
