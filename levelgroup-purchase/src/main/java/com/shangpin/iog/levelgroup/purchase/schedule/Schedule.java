@@ -15,7 +15,7 @@ public class Schedule {
 	OrderService orderService;
 	
 	@Scheduled(cron="${jobsSchedule}")
-	public void startWMS() {
+	public void startSOP() {
 		try {
 			orderService.startSOP();
 		} catch (Exception e) {
@@ -35,7 +35,7 @@ public class Schedule {
 	}
 	
 	@Scheduled(cron="${jobsSchedule}")
-	public void start(){
+	public void saveAndUpLoadOrder(){
 		try {
 			orderService.saveAndUpLoadOrder();
 		}catch (Exception  e){

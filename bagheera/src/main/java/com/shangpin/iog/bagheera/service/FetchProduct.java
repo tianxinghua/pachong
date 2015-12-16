@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -131,20 +132,6 @@ public class FetchProduct {
 					}
 					
                 	productFetchService.saveSKU(sku);
-                    
-                    String imgs = sb.toString();
-                    sb.setLength(0);
-                    if (StringUtils.isNotBlank(imgs)) {
-						String[] split = imgs.split(",");
-						for (String img : split) {
-							 ProductPictureDTO picture = new ProductPictureDTO();
-							 picture.setSupplierId(supplierId);
-				             picture.setId(UUIDGenerator.getUUID());
-				             picture.setSkuId(sku.getSkuId());
-				             picture.setPicUrl(img);
-				             productFetchService.savePictureForMongo(picture);
-						}
-					}
                 } catch (ServiceException e) {
                 	try {
 						if (e.getMessage().equals("数据插入失败键重复")) {
@@ -157,6 +144,12 @@ public class FetchProduct {
 						e1.printStackTrace();
 					}
                 }
+                String imgs = sb.toString();
+                sb.setLength(0);
+                if (StringUtils.isNotBlank(imgs)) {
+					String[] split = imgs.split(",");
+					productFetchService.savePicture(supplierId, null, sku.getSkuId(), Arrays.asList(split));
+				}
 
             }
         	//更新网站不再给信息的老数据

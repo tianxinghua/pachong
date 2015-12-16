@@ -105,36 +105,6 @@ public class FetchProduct {
 			skuDTO.setProductDescription(csvDTO.getDescription());
 			try {
 					productFetchService.saveSKU(skuDTO);
-					//保存图片
-					ProductPictureDTO pictureDTO = new ProductPictureDTO();
-					pictureDTO.setSupplierId(supplierId);
-					pictureDTO.setSkuId(csvDTO.getSku());
-					String[] picUrl = new String[]{csvDTO.getVistaImagel0(),csvDTO.getVistaImagel1()
-												  ,csvDTO.getVistaImagel2(),csvDTO.getVistaImagel3()
-												  ,csvDTO.getVistaImagel4(),csvDTO.getVistaImagel5()};
-					//判断是否是primary sku
-					if (csvDTO.getSku().split("-")[2].equals("00")) {
-						//是
-						for (String string : picUrl) {
-							if (StringUtils.isNotBlank(string)) {
-								pictureDTO.setId(UUIDGenerator.getUUID());
-								pictureDTO.setPicUrl(string);
-								try {
-									productFetchService.savePictureForMongo(pictureDTO);
-								} catch (ServiceException e) {
-									e.printStackTrace();
-								}
-							}
-						}
-					}else{
-						pictureDTO.setId(UUIDGenerator.getUUID());
-						pictureDTO.setPicUrl(picUrl[0]);
-						try {
-							productFetchService.savePictureForMongo(pictureDTO);
-						} catch (ServiceException e) {
-							e.printStackTrace();
-						}
-					}
 					
 			} catch (ServiceException e) {
 				if (e.getMessage().equals("数据插入失败键重复")) {
@@ -146,6 +116,37 @@ public class FetchProduct {
 					}
 					e.printStackTrace();
 				}
+			}
+			
+			
+			//保存图片
+//			ProductPictureDTO pictureDTO = new ProductPictureDTO();
+//			pictureDTO.setSupplierId(supplierId);
+//			pictureDTO.setSkuId(csvDTO.getSku());
+			String[] picUrl = new String[]{csvDTO.getVistaImagel0(),csvDTO.getVistaImagel1()
+					,csvDTO.getVistaImagel2(),csvDTO.getVistaImagel3()
+					,csvDTO.getVistaImagel4(),csvDTO.getVistaImagel5()};
+			//判断是否是primary sku
+			if (csvDTO.getSku().split("-")[2].equals("00")) {
+				//是
+				productFetchService.savePicture(supplierId, null, csvDTO.getSku(), Arrays.asList(picUrl));
+//				for (String string : picUrl) {
+//					if (StringUtils.isNotBlank(string)) {
+//						pictureDTO.setId(UUIDGenerator.getUUID());
+//						pictureDTO.setPicUrl(string);
+//						try {
+//							productFetchService.savePictureForMongo(pictureDTO);
+//						} catch (ServiceException e) {
+//							e.printStackTrace();
+//						}
+//					}
+//				}
+			}else{
+//				pictureDTO.setId(UUIDGenerator.getUUID());
+//				pictureDTO.setPicUrl(picUrl[0]);
+					productFetchService.savePicture(supplierId, null, csvDTO.getSku(), Arrays.asList(picUrl[0]));
+//					productFetchService.savePictureForMongo(pictureDTO);
+				
 			}
 		}
 		//保存spu

@@ -6,6 +6,7 @@ import javax.xml.bind.JAXBException;
 
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.service.ProductSearchService;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -113,26 +114,6 @@ public class FetchProduct {
 
 						productFetchService.saveSKU(sku);
 
-
-
-						if (StringUtils.isNotBlank(item.getPicture())) {
-							String[] picArray = item.getPicture().split("\\|");
-
-							for (String picUrl : picArray) {
-								ProductPictureDTO dto = new ProductPictureDTO();
-								dto.setPicUrl(picUrl);
-								dto.setSupplierId(supplierId);
-								dto.setId(UUIDGenerator.getUUID());
-								dto.setSkuId(item.getItem_id());
-								try {
-									productFetchService
-											.savePictureForMongo(dto);
-								} catch (ServiceException e) {
-									e.printStackTrace();
-								}
-							}
-						}
-
 					} catch (ServiceException e) {
 						try {
 							if (e.getMessage().equals("数据插入失败键重复")) {
@@ -145,6 +126,11 @@ public class FetchProduct {
 						} catch (ServiceException e1) {
 							e1.printStackTrace();
 						}
+					}
+					
+					if (StringUtils.isNotBlank(item.getPicture())) {
+						String[] picArray = item.getPicture().split("\\|");
+						productFetchService.savePicture(supplierId, null, item.getItem_id(), Arrays.asList(picArray));
 					}
 				}
 
