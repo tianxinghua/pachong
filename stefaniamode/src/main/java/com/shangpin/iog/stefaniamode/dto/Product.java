@@ -19,7 +19,7 @@ public class Product {
     private String url;
     private String supply_price;
     private String producer_id;
-
+    private String made_in;
     private String main_category;
     private Items items;
 
@@ -127,10 +127,18 @@ public class Product {
 //    public void setItems(List<Item> items) {
 //        this.items = items;
 //    }
-
+    
     public Product(){
         super();
     }
+
+	public String getMade_in() {
+		return made_in;
+	}
+
+	public void setMade_in(String made_in) {
+		this.made_in = made_in;
+	}
 
 	public String getMain_category() {
 		return main_category;
