@@ -1,6 +1,7 @@
 package com.shangpin.iog.della.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -65,25 +66,7 @@ public class FetchProduct {
 				sku.setProductSize(size);
 				sku.setStock(item.getQuantity());
 				try {
-					productFetchService.saveSKU(sku);
-					
-					//保存图片
-					if(StringUtils.isNotBlank(item.getPhoto_links())){
-						String[] photos =  item.getPhoto_links().replaceAll("\"", "").split("\\|");
-						for(String photo:photos){
-							ProductPictureDTO pictureDTO = new ProductPictureDTO();
-							pictureDTO.setId(UUIDGenerator.getUUID());
-							pictureDTO.setSupplierId(supplierId);
-							pictureDTO.setSkuId(sku.getSkuId());
-							pictureDTO.setSpuId(sku.getSpuId());
-							pictureDTO.setPicUrl(photo);
-							try{
-								productFetchService.savePictureForMongo(pictureDTO);
-							}catch(Exception ex){
-								ex.printStackTrace();
-							}
-						}
-					}
+					productFetchService.saveSKU(sku);					
 					
 				} catch (ServiceException e) {
 					if (e.getMessage().equals("数据插入失败键重复")) {
@@ -95,6 +78,13 @@ public class FetchProduct {
 						}
 						e.printStackTrace();
 					}
+				}
+				
+				//保存图片
+				if(StringUtils.isNotBlank(item.getPhoto_links())){
+					String[] photos =  item.getPhoto_links().replaceAll("\"", "").split("\\|");
+					productFetchService.savePicture(supplierId, null, sku.getSkuId(), Arrays.asList(photos));
+					
 				}
 				
 				

@@ -1,5 +1,6 @@
 package com.shangpin.iog.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -72,24 +73,7 @@ public class PullSku {
     			                sku.setStock(item.getQty());
     			                try {
     			                    productFetchService.saveSKU(sku);    			                    
-    			                  //保存图片    				               
-    			                    String imags = item.getImages();
-    			                    if(StringUtils.isNotBlank(imags)){
-    			                    	for(String imag : imags.split(";")){
-    			                    		if(StringUtils.isNotBlank(imag)){
-    			                    			ProductPictureDTO dto = new ProductPictureDTO();
-    				                            dto.setPicUrl(imag);
-    				                            dto.setSupplierId(supplierId);
-    				                            dto.setId(UUIDGenerator.getUUID());
-    				                            dto.setSkuId(sku.getSkuId());
-    				                            try {
-    				                                productFetchService.savePictureForMongo(dto);
-    				                            } catch (ServiceException e) {
-    				                                e.printStackTrace();
-    				                            }
-    			                    		}
-    			                    	}
-    			                    }
+    			                  
     			                } catch (ServiceException e) {
     			                    try {
     			                        if (e.getMessage().equals("数据插入失败键重复")) {
@@ -103,6 +87,18 @@ public class PullSku {
     			                    }
     			                }
     			                
+    			              //保存图片    		
+    			                List<String> list = new ArrayList<String>();
+			                    String imags = item.getImages();
+			                    if(StringUtils.isNotBlank(imags)){
+			                    	for(String imag : imags.split(";")){
+			                    		if(StringUtils.isNotBlank(imag)){
+			                    			list.add(imag);			                    			
+			                    		}
+			                    	}
+			                    }
+			                    productFetchService.savePicture(supplierId, null, sku.getSkuId(), list);
+			                    
     			                //spu
     			                SpuDTO spu = new SpuDTO();
     			                spu.setId(UUIDGenerator.getUUID());

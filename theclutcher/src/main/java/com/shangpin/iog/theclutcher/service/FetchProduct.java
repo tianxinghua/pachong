@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.xml.bind.JAXBException;
 
 import com.shangpin.iog.theclutcher.dao.ImageLinks;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdom2.Element;
@@ -134,25 +136,7 @@ public class FetchProduct {
 	                System.out.println("sku : " + sku);
 
 	                try {
-	                    productFetchService.saveSKU(sku);
-	                    
-	                  //保存图片
-		                if (item.getImage_links() != null) {
-		                    for (String  imageUrl: item.getImage_links().getLinks()) {
-		                        if (imageUrl != null ) {
-		                            ProductPictureDTO dto = new ProductPictureDTO();
-		                            dto.setPicUrl(imageUrl);
-		                            dto.setSupplierId(supplierId);
-		                            dto.setId(UUIDGenerator.getUUID());
-		                            dto.setSkuId(skuId);
-		                            try {
-		                                productFetchService.savePictureForMongo(dto);
-		                            } catch (ServiceException e) {
-		                                e.printStackTrace();
-		                            }
-		                        }
-		                    }
-		                }
+	                    productFetchService.saveSKU(sku);	                  
 	                    
 	                } catch (ServiceException e) {
 	                    try {
@@ -165,6 +149,17 @@ public class FetchProduct {
 	                    } catch (ServiceException e1) {
 	                        e1.printStackTrace();
 	                    }
+	                }
+	                
+	              //保存图片
+	                List<String> list = new ArrayList<String>();
+	                if (item.getImage_links() != null) {
+	                    for (String  imageUrl: item.getImage_links().getLinks()) {
+	                        if (imageUrl != null ) {
+	                        	list.add(imageUrl);	                        	
+	                        }
+	                    }
+	                    productFetchService.savePicture(supplierId, null, skuId, list);
 	                }
 
 	                //保存SPU

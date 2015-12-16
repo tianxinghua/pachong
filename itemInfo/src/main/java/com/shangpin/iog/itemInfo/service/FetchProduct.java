@@ -260,25 +260,7 @@ public class FetchProduct {
 				}
 				try{
 					//保存sku
-					productFetchService.saveSKU(sku);
-					
-					try{
-						if(spuId.length()>0 && skuId.length()>0 && picList.size()>0){
-							for(String url :picList){
-								ProductPictureDTO dto  = new ProductPictureDTO();
-		                        dto.setId(UUIDGenerator.getUUID());
-		                        dto.setSkuId(skuId);
-		                        dto.setSpuId(spuId);
-		                        dto.setPicUrl(url);
-		                        dto.setSupplierId(supplierId);
-		                        productFetchService.savePictureForMongo(dto);
-							}
-						}
-						
-					}catch(Exception e){
-						e.printStackTrace();
-					}
-					
+					productFetchService.saveSKU(sku);					
 					
 				}catch(Exception e){
 					try {
@@ -293,6 +275,17 @@ public class FetchProduct {
                         e1.printStackTrace();
                     }
 				}
+				
+
+				try{
+					if(spuId.length()>0 && skuId.length()>0 && picList.size()>0){						
+						productFetchService.savePicture(supplierId, null, skuId, picList);
+					}
+					
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+				
 				try{
 					//保存spu
 					System.out.println(spu.getSpuId());

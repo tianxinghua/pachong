@@ -136,7 +136,8 @@ public class FechProduct {
 							picObj = JSONObject.fromObject(pics);
 						}
 						JSONArray picArr = picObj.getJSONArray("value");
-						
+						//保存图片
+						productFetchService.savePicture(supplierId, null, skuId, picArr);
 						
 						//入库sku
 						SkuDTO sku = new SkuDTO();
@@ -154,20 +155,7 @@ public class FechProduct {
 			            sku.setSaleCurrency("USD");
 			            try {
 			                productFetchService.saveSKU(sku);
-			                for(int k=0;k<picArr.size();k++){
-								ProductPictureDTO dto = new ProductPictureDTO();
-								dto.setId(UUIDGenerator.getUUID());
-								dto.setPicUrl(picArr.getJSONObject(k).getString("Url"));
-								dto.setSkuId(skuId);
-								dto.setSpuId(id);
-								dto.setSupplierId(supplierId);
-								try {
-				                    productFetchService.savePictureForMongo(dto);
-				                } catch (ServiceException e) {
-				                	logError.error(e.getMessage());
-				                    e.printStackTrace();
-				                }
-							}
+			                
 			            } catch (ServiceException e) {
 			                try {
 			                    if (e.getMessage().equals("数据插入失败键重复")) {

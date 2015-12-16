@@ -83,37 +83,7 @@ public class PullDown {
 				sku.setProductSize(item.getSize_detail().replaceAll("\"", ""));
 				sku.setStock(item.getQty_in_stock().replaceAll("\"", ""));
 				try {
-					productFetchService.saveSKU(sku);
-					
-					//保存图片
-					List<String> list = new ArrayList<String>();
-					if(StringUtils.isNotBlank(item.getBigimage0())){
-						list.add(item.getBigimage0());
-					}
-					if(StringUtils.isNotBlank(item.getBigimage1())){
-						list.add(item.getBigimage1());
-					}
-					if(StringUtils.isNotBlank(item.getBigimage2())){
-						list.add(item.getBigimage2());
-					}
-					if(StringUtils.isNotBlank(item.getBigimage3())){
-						list.add(item.getBigimage3());
-					}
-					
-					for (String photo : list) {
-						ProductPictureDTO pictureDTO = new ProductPictureDTO();
-						pictureDTO.setId(UUIDGenerator.getUUID());
-						pictureDTO.setSupplierId(supplierId);
-						pictureDTO.setSkuId(sku.getSkuId());
-						pictureDTO.setSpuId(sku.getSpuId());
-						pictureDTO.setPicUrl(photo);
-						try {
-							productFetchService.savePictureForMongo(pictureDTO);
-						} catch (Exception ex) {
-							ex.printStackTrace();
-						}
-					}
-					
+					productFetchService.saveSKU(sku);					
 					
 				} catch (ServiceException e) {
 					if (e.getMessage().equals("数据插入失败键重复")) {
@@ -126,6 +96,23 @@ public class PullDown {
 						e.printStackTrace();
 					}
 				}
+				
+				//保存图片
+				List<String> list = new ArrayList<String>();
+				if(StringUtils.isNotBlank(item.getBigimage0())){
+					list.add(item.getBigimage0());
+				}
+				if(StringUtils.isNotBlank(item.getBigimage1())){
+					list.add(item.getBigimage1());
+				}
+				if(StringUtils.isNotBlank(item.getBigimage2())){
+					list.add(item.getBigimage2());
+				}
+				if(StringUtils.isNotBlank(item.getBigimage3())){
+					list.add(item.getBigimage3());
+				}
+				
+				productFetchService.savePicture(supplierId, null, skuId, list);		
 			
 				SpuDTO spu = new SpuDTO();
 	            spu.setId(UUIDGenerator.getUUID());
