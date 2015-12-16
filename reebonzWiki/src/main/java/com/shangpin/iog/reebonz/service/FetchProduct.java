@@ -8,6 +8,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -209,28 +210,23 @@ public class FetchProduct {
 						}
 						spu.setCategoryGender(tempGender.toString());
 						productFetchService.saveSPU(spu);
-						if (StringUtils.isNotBlank(item.getImages()[0])) {
-							String[] picArray = item.getImages();
-							for (String picUrl : picArray) {
-								ProductPictureDTO dto = new ProductPictureDTO();
-								dto.setPicUrl(picUrl);
-								dto.setSupplierId(supplierId);
-								dto.setId(UUIDGenerator.getUUID());
-								dto.setSpuId(item.getSku());
-								try {
-									productFetchService.savePictureForMongo(dto);
-//									System.out.println("图片保存success");
-								} catch (ServiceException e) {
-									e.printStackTrace();
-								}
-							}
-						}
+						
 					} catch (Exception e) {
-						e.printStackTrace();
+						try {
+							productFetchService.updateMaterial(spu);
+						} catch (ServiceException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 
 				}
 				
+				
+				if (StringUtils.isNotBlank(item.getImages()[0])) {
+					String[] picArray = item.getImages();
+					productFetchService.savePicture(supplierId, item.getSku(), null, Arrays.asList(picArray));
+				}
 				//
 				// 第三步：根据skuId与eventId获取商品的库存跟尺码
 				

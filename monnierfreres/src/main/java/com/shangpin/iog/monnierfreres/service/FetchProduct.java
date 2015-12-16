@@ -1,5 +1,6 @@
 package com.shangpin.iog.monnierfreres.service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,20 +68,6 @@ public class FetchProduct {
                         sku.setProductDescription(product.getDescription());
                         productFetchService.saveSKU(sku);
 
-                        String[] images = product.getImage_url();
-                        for (String image : images) {
-                            ProductPictureDTO picture = new ProductPictureDTO();
-                            picture.setSupplierId(supplierId);
-                            picture.setId(UUIDGenerator.getUUID());
-                            picture.setSkuId(item.getItemCode());
-//							picture.setSpuId(product.getProductCode());
-                            picture.setPicUrl(image);
-                            try {
-                                productFetchService.savePictureForMongo(picture);
-                            } catch (ServiceException e) {
-                                e.printStackTrace();
-                            }
-                        }
 
                     } catch (ServiceException e) {
                         try {
@@ -95,7 +82,9 @@ public class FetchProduct {
                             e1.printStackTrace();
                         }
                     }
-
+                    String[] images = product.getImage_url();
+                    productFetchService.savePicture(supplierId, null, item.getItemCode(), Arrays.asList(images));
+              
                 }
 
                 try {
@@ -110,7 +99,12 @@ public class FetchProduct {
                     spu.setProductOrigin(product.getMade());
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
-                    e.printStackTrace();
+                	try {
+						productFetchService.updateMaterial(spu);
+					} catch (ServiceException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
                 }
 
             }
