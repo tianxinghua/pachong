@@ -84,7 +84,7 @@ public interface ProductFetchService {
     public void savePictureForMongo(ProductPictureDTO productPictureDTO) throws ServiceException;
    
     /**
-     * 
+     * 保存照片到mongodb中,如果以spu方式保存，则skuId设为null,反之，spuId为null,
      * @param supplierId
      * @param spuId
      * @param skuId

@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -143,7 +144,12 @@ public class FetchProduct {
                   spu.setCategoryGender(sex[0]);
                   productFetchService.saveSPU(spu);
               } catch (ServiceException e) {
-                  e.printStackTrace();
+            	  try {
+					productFetchService.updateMaterial(spu);
+				} catch (ServiceException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
               }
         
         	  if(returnMap.get(product.getProduct_id())!=null){
@@ -174,23 +180,7 @@ public class FetchProduct {
                               sku.setMarketPrice(product.getShangpin());
                               sku.setStock(item.getQuantity());
                               productFetchService.saveSKU(sku);
-                              Image image = product.getImages();
-                              String picture = null;
-                              if(image!=null){
-                            	  picture = image.getLarge_default();
-                            	  if (StringUtils.isNotBlank(image.getLarge_default())) {
-                                      ProductPictureDTO dto = new ProductPictureDTO();
-                                      dto.setPicUrl(picture);
-                                      dto.setSupplierId(supplierId);
-                                      dto.setId(UUIDGenerator.getUUID());
-                                      dto.setSpuId(product.getProduct_id());
-                                      try {
-                                          productFetchService.savePictureForMongo(dto);
-                                      } catch (ServiceException e) {
-                                          e.printStackTrace();
-                                      }
-                                  }
-                              }
+                            
                           } catch (ServiceException e) {
                               try {
                                   if (e.getMessage().equals("数据插入失败键重复")) {
@@ -201,6 +191,14 @@ public class FetchProduct {
                                   }
                               } catch (ServiceException e1) {
                                   e1.printStackTrace();
+                              }
+                          }
+                          Image image = product.getImages();
+                          String picture = null;
+                          if(image!=null){
+                        	  picture = image.getLarge_default();
+                        	  if (StringUtils.isNotBlank(image.getLarge_default())) {
+                                      productFetchService.savePicture(supplierId,null,product.getProduct_id(),Arrays.asList(picture));
                               }
                           }
                       }

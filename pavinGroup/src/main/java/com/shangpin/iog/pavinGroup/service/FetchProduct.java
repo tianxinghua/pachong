@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -124,7 +125,12 @@ public class FetchProduct {
 							spu.setCategoryGender(item.getGender());
 							productFetchService.saveSPU(spu);
 						} catch (Exception e) {
-							e.printStackTrace();
+							try {
+								productFetchService.updateMaterial(spu);
+							} catch (ServiceException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 						}
 
 						SkuDTO sku = new SkuDTO();
@@ -142,23 +148,6 @@ public class FetchProduct {
 							 sku.setSaleCurrency("EUR");
 							productFetchService.saveSKU(sku);
 							
-							if (StringUtils.isNotBlank(item.getImages())) {
-								String[] picArray = item.getImages().split("\\|");
-								for (String picUrl : picArray) {
-									ProductPictureDTO dto = new ProductPictureDTO();
-									dto.setPicUrl(picUrl);
-									dto.setSupplierId(supplierId);
-									dto.setId(UUIDGenerator.getUUID());
-									dto.setSkuId(item.getSupplierSkuNo());
-									try {
-										productFetchService
-												.savePictureForMongo(dto);
-										// System.out.println("图片保存success");
-									} catch (ServiceException e) {
-										e.printStackTrace();
-									}
-								}
-							}
 						} catch (ServiceException e) {
 							if (e.getMessage().equals("数据插入失败键重复")) {
 								try {
@@ -172,7 +161,11 @@ public class FetchProduct {
 							}
 
 						}
-
+						
+						if (StringUtils.isNotBlank(item.getImages())) {
+							String[] picArray = item.getImages().split("\\|");
+							productFetchService.savePicture(supplierId, null, item.getSupplierSkuNo(), Arrays.asList(picArray));
+						}
 					}
 				}
 			}
