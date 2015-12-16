@@ -1,8 +1,10 @@
 package com.shangpin.iog.linoricci.service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,24 +177,6 @@ public class FetchProduct {
         			// sku.setProductName(fields[14]);
         			try {
 						productFetchService.saveSKU(sku);
-						//处理图片
-						String imgUrls = imgMap.get(skuArr[0]);
-						if (StringUtils.isNotBlank(imgUrls)) {
-							String[] imgUrlArr = imgUrls.split(",");
-							for (String imgurl : imgUrlArr) {
-								ProductPictureDTO dto = new ProductPictureDTO();
-								dto.setPicUrl(imgurl);
-								dto.setSupplierId(supplierId);
-								dto.setId(UUIDGenerator.getUUID());
-								dto.setSkuId(skuArr[0]+"-"+barCode);
-								try {
-									productFetchService.savePictureForMongo(dto);
-								} catch (ServiceException e) {
-									e.printStackTrace();
-								}
-							}
-						}
-						
         			} catch (ServiceException e) {
 						try {
 	        				if (e.getMessage().equals("数据插入失败键重复")) {
@@ -204,6 +188,12 @@ public class FetchProduct {
 	        			} catch (ServiceException e1) {
 	        				e1.printStackTrace();
 	        			}
+					}
+        			//处理图片
+					String imgUrls = imgMap.get(skuArr[0]);
+					if (StringUtils.isNotBlank(imgUrls)) {
+						String[] imgUrlArr = imgUrls.split(",");
+						productFetchService.savePicture(supplierId, null, skuArr[0]+"-"+barCode, Arrays.asList(imgUrlArr));
 					}
 				}
 			}
