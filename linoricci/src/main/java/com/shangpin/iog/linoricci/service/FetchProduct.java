@@ -117,7 +117,11 @@ public class FetchProduct {
 		               spu.setProductOrigin(spuArr[40]);
 		               productFetchService.saveSPU(spu);
 		           } catch (ServiceException e) {
-		               e.printStackTrace();
+		        	   try {
+						productFetchService.updateMaterial(spu);
+					} catch (ServiceException e1) {
+						e1.printStackTrace();
+					}
 		           }
 			}
 		}
