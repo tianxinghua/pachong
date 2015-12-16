@@ -151,6 +151,11 @@ public class FetchProduct {
 					spu.setCategoryGender(product.getMain_category());
 					productFetchService.saveSPU(spu);
 				} catch (ServiceException e) {
+					try {
+						productFetchService.updateMaterial(spu);
+					} catch (ServiceException e1) {
+						e1.printStackTrace();
+					}
 					e.printStackTrace();
 				}
 			}
