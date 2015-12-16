@@ -42,44 +42,30 @@ public class PullDown {
 			String result = HttpUtil45.get(filePath, timeConfig, null);
 			List<Item> items = CsvUtil.readLocalCSV(result, Item.class, ";");
 			for(Item item:items){
-				String description = item.getDescription();
-				String[] des = description.split("<BR/>");
-				System.out.println("des.length "+des.length);
 				String material = "";
 				String productOrigin = "";
-				switch (des.length) {
-				case 1:
-					break;
-				case 2:
-					break;
-				case 3:
-					material = des[1];//材质
-					break;
-				case 4:
-					break;
-				case 5:
-					productOrigin = des[2];
-					material = des[3];
-					break;
-				case 6:
-					break;
-				case 7:
-					break;
-				case 8:
-					productOrigin = des[2];
-					material = des[4];
-					break;
-				case 9:
-					break;
-				case 10:
-					break;
-				case 11:
-					break;
-				case 12:
-					break;
-				default:
-					break;
+				String description = item.getDescription();
+				if(description.contains("%")){
+					material = description.substring(description.indexOf("%")-3).trim();
+					if(material.contains("<BR/>")){
+						material = material.substring(0, material.indexOf("<BR/>"));
+					}
+					material = material.replaceAll(">", "").replaceAll("\"", "");
 				}
+				if(description.contains("Made in")){
+					productOrigin = description.substring(description.indexOf("Made in"));
+					if(productOrigin.contains("<BR/>")){
+						productOrigin = productOrigin.substring(0, productOrigin.indexOf("<BR/>"));
+					}
+					productOrigin = productOrigin.replaceAll("\"", "");
+				}else if(description.contains("made in")){
+					productOrigin = description.substring(description.indexOf("made in"));
+					if(productOrigin.contains("<BR/>")){
+						productOrigin = productOrigin.substring(0, productOrigin.indexOf("<BR/>"));
+					}
+					productOrigin = productOrigin.replaceAll("\"", "");
+				}
+				
 				String salePrice = item.getPrice().replaceAll("\"", "");
 				String marketPrice = String.valueOf(new java.text.DecimalFormat("#.00").format(Double.parseDouble(salePrice)*1.2));
 				String skuId = item.getSku().replaceAll("\"", "");
