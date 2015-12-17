@@ -18,13 +18,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.coltorti.service.ColtortiTokenService;
 import com.shangpin.iog.coltorti.service.ColtortiUtil;
 import com.shangpin.iog.coltorti.service.InsertDataBaseService;
 import com.shangpin.iog.coltorti.service.UpdateStockService;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
 
 public class ColtortiStartup {
 	/**
@@ -43,14 +43,18 @@ public class ColtortiStartup {
 	static void grabProduct(){
 
 		Map<String,ProductFetchService> fetchsrvs=factory.getBeansOfType(ProductFetchService.class);
+		Map<String, ProductSearchService> fetch=factory.getBeansOfType(ProductSearchService.class);
 		ProductFetchService pfs=null;
+		ProductSearchService productSearchService = null;
 		if(fetchsrvs!=null && fetchsrvs.size()>0)
 			pfs=fetchsrvs.entrySet().iterator().next().getValue();
-		if(pfs==null) {
+		if(fetch!=null && fetch.size()>0)
+			productSearchService=fetch.entrySet().iterator().next().getValue();
+		if(productSearchService==null||pfs==null) {
 			logger.error("初始化Spring上下文错误!");
 			return ;			
 		}
-		InsertDataBaseService dataSrv= new InsertDataBaseService(pfs);
+		InsertDataBaseService dataSrv= new InsertDataBaseService(pfs, productSearchService);
 		String isoFmt="yyyy-MM-dd'T'HH:mm:ss'Z'";
 		String s=DateTimeUtil.convertFormat(startDate,isoFmt);
 		String e=DateTimeUtil.convertFormat(endDate,isoFmt);
