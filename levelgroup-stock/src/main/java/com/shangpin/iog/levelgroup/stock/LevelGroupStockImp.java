@@ -4,10 +4,12 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.levelgroup.dto.Product;
 import com.shangpin.iog.levelgroup.util.MyTxtUtil;
+import com.shangpin.sop.AbsUpdateProductStock;
+
 import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -34,16 +36,22 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
     }
     private static ResourceBundle bdl=null;
     private static String supplierId;
+	private static String host;
+	private static String app_key;
+	private static String app_secret;
 
     static {
         if(null==bdl)
-            bdl=ResourceBundle.getBundle("conf");
+            bdl=ResourceBundle.getBundle("sop");
         supplierId = bdl.getString("supplierId");
+        app_key = bdl.getString("APP_KEY");
+		app_secret = bdl.getString("APP_SECRET");
+		supplierId = bdl.getString("supplierId");
     }
 
 
-    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException {
-        Map<String, String> skustock = new HashMap<>(skuNo.size());
+    public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
+        Map<String, Integer> skustock = new HashMap<>(skuNo.size());
 
         Map<String,String> mongMap = new HashMap<>();
         Map<String,String> stockMap2 = getStockList();
@@ -57,11 +65,11 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
             String stock = getStock(skuno);
             String stock2 = stockMap2.get(skuno);
             if (StringUtils.isNotEmpty(stock))
-                skustock.put(skuno, stock);
+                skustock.put(skuno, Integer.valueOf(stock));
             else if (StringUtils.isNotEmpty(stock2))
-                skustock.put(skuno, stock2);
+                skustock.put(skuno, Integer.valueOf(stock2));
             else
-                skustock.put(skuno, "0");
+                skustock.put(skuno, 0);
         }
         logger.info("levelgroup赋值库存数据成功");
         return skustock;
@@ -118,7 +126,7 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
         logger.info("levelgroup更新数据库开始");
         //2015081401431
         try {
-            levelGroupStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+        	levelGroupStockImp.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
         } catch (Exception e) {
             loggerError.error("levelgroup库存更新失败");
             e.printStackTrace();
