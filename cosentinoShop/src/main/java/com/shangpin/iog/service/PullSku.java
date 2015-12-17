@@ -111,6 +111,11 @@ public class PullSku {
     			                try {
     			                    productFetchService.saveSPU(spu);
     			                } catch (ServiceException e) {
+    			                	try{
+    				            		productFetchService.updateMaterial(spu);
+    				            	}catch(ServiceException ex){
+    				            		ex.printStackTrace();
+    				            	}
     			                    e.printStackTrace();
     			                }
     			                

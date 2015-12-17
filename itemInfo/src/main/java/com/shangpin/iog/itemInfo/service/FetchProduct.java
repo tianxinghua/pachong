@@ -291,6 +291,12 @@ public class FetchProduct {
 					System.out.println(spu.getSpuId());
 					productFetchService.saveSPU(spu);
 				}catch(Exception e){
+					try{
+	            		productFetchService.updateMaterial(spu);
+	            	}catch(ServiceException ex){
+	            		logger.error(ex.getMessage());
+	            		ex.printStackTrace();
+	            	}
 					e.printStackTrace();
 				}
 				

@@ -128,6 +128,12 @@ public class PullDown {
 	                productFetchService.saveSPU(spu);
 	            } catch (ServiceException e) {
 	            	logError.error(e.getMessage());
+	            	try{
+	            		productFetchService.updateMaterial(spu);
+	            	}catch(ServiceException ex){
+	            		logError.error(ex.getMessage());
+	            		ex.printStackTrace();
+	            	}
 	                e.printStackTrace();
 	            }
 				
