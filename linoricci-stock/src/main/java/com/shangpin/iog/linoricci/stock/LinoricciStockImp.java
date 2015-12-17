@@ -42,7 +42,7 @@ public class LinoricciStockImp  extends AbsUpdateProductStock {
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
 				new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
 		String[] skuStrings = skuData.split("\\r\\n");
-		for (int i = 2; i < skuStrings.length; i++) {
+		for (int i = 1; i < skuStrings.length; i++) {
 			if (StringUtils.isNotBlank(skuStrings[i])) {
 			
 				if (i==1) {
@@ -68,6 +68,8 @@ public class LinoricciStockImp  extends AbsUpdateProductStock {
         		if (skuMap.containsKey(skuId)) {
         			stock = skuMap.get(skuId);
         			returnMap.put(skuId, stock);
+				}else{
+					returnMap.put(skuId, "0");
 				}
 			}
         }
