@@ -5,8 +5,10 @@ import java.io.ByteArrayInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.xml.soap.MessageFactory;
@@ -16,6 +18,7 @@ import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
@@ -24,11 +27,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
 
 @Component("itemInfo")
 public class FetchProduct {
@@ -43,14 +48,18 @@ public class FetchProduct {
 	private static Logger logMongo = Logger.getLogger("mongodb");
 	private static String supplierId = "";
 	private static ResourceBundle bdl=null;
+	private static int day;
 	
 	@Autowired
 	public ProductFetchService productFetchService;
+	@Autowired
+	ProductSearchService productSearchService;
 
 	static {
         if(null==bdl)
          bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        day = Integer.valueOf(bdl.getString("day"));
     }
 	
 	/**
@@ -112,6 +121,16 @@ public class FetchProduct {
 	 */
 	public void saveSpuDTO(Iterator<SOAPElement> iterator){
 
+		Date startDate,endDate= new Date();
+		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+		//获取原有的SKU 仅仅包含价格和库存
+		Map<String,SkuDTO> skuDTOMap = new HashedMap();
+		try {
+			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		
 		while(iterator.hasNext()){
 			SOAPElement element = iterator.next();
 			if(element.getNodeName().equals("SkuStok") && element.getChildElements().hasNext()){
@@ -260,6 +279,9 @@ public class FetchProduct {
 				}
 				try{
 					//保存sku
+					if(skuDTOMap.containsKey(sku.getSkuId())){
+						skuDTOMap.remove(sku.getSkuId());
+					}
 					productFetchService.saveSKU(sku);					
 					
 				}catch(Exception e){
@@ -305,6 +327,20 @@ public class FetchProduct {
 				saveSpuDTO(element.getChildElements());
 			}
 		}
+		
+		//更新网站不再给信息的老数据
+		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+			 Map.Entry<String,SkuDTO> entry =  itor.next();
+			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+				entry.getValue().setStock("0");
+				try {
+					productFetchService.updatePriceAndStock(entry.getValue());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
 	}
 
 

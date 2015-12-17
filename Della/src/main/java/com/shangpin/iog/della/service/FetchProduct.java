@@ -2,18 +2,21 @@ package com.shangpin.iog.della.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.della.dto.Item;
 import com.shangpin.iog.della.utils.CSVUtil;
@@ -21,6 +24,7 @@ import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
 
 @Component("della")
 public class FetchProduct {
@@ -29,18 +33,33 @@ public class FetchProduct {
 	private static ResourceBundle bdl = null;
 	private static String supplierId = "";
 	private static String filePath = "";
+	private static int day;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
 		filePath = bdl.getString("filepath");
+		day = Integer.valueOf(bdl.getString("day"));
 	}
 
 	@Autowired
 	public ProductFetchService productFetchService;
+	@Autowired
+	ProductSearchService productSearchService;
 	
 	public void fetchSave(){
 		try {
+			
+			Date startDate,endDate= new Date();
+			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+			//获取原有的SKU 仅仅包含价格和库存
+			Map<String,SkuDTO> skuDTOMap = new HashedMap();
+			try {
+				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+			
 			List<Item> items = CSVUtil.readLocalCSV(filePath, Item.class, ";");
 			Map<String,Item> spuItems = new HashMap<String,Item>();
 			for(Item item:items){
@@ -120,6 +139,19 @@ public class FetchProduct {
 	            	}
 	                e.printStackTrace();
 	            }
+			}
+			
+			//更新网站不再给信息的老数据
+			for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+				 Map.Entry<String,SkuDTO> entry =  itor.next();
+				if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+					entry.getValue().setStock("0");
+					try {
+						productFetchService.updatePriceAndStock(entry.getValue());
+					} catch (ServiceException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 			
 		} catch (Exception e) {
