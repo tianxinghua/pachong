@@ -6,7 +6,9 @@ dependencies {
             "commons-dbcp:commons-dbcp:1.4",
             "net.sourceforge.javacsv:javacsv:2.0",
             project(':project-common'),
-            project(':openapi-ice'),
+            project(':project-dao'),
+            project(':iog-common-product'),
+            project(':iog-sop'),
             "commons-net:commons-net:3.3"
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
