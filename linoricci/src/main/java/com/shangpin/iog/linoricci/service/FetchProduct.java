@@ -84,7 +84,7 @@ public class FetchProduct {
         //价格信息
         String[] priceStrings = priceData.split("\\r\\n");
         String[] priceArr = null;
-        for (int i = 0; i < priceStrings.length; i++) {
+        for (int i = 1; i < priceStrings.length; i++) {
         	if (StringUtils.isNotBlank(priceStrings[i])) {
 				if (i==1) {
 				  data =  priceStrings[i].split("\\n")[1];
