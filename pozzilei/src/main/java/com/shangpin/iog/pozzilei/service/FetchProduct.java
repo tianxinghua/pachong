@@ -97,8 +97,15 @@ public class FetchProduct {
                                 spudto.setSpuId(spu.getProduct_id());
                                 spudto.setId(UUIDGenerator.getUUID());
                                 spudto.setMaterial(spu.getProduct_detail());
+//                                if(spu.getProduct_detail().indexOf("made in")!=-1){
+//                                	String ProductOrigin = spu.getProduct_detail().substring(spu.getProduct_detail().indexOf("made in"), spu.getProduct_detail().length());
+//                                	spudto.setProductOrigin(ProductOrigin.substring(0,ProductOrigin.indexOf(" ")));
+//                                }else{
+                                	spudto.setProductOrigin("无");
+//                                }
                                 spudto.setPicUrl(spu.getUrl());
                                 spudto.setSpuName(spu.getDescription());
+                                spudto.setProductOrigin(spu.getProduct_origin());
                                 try {
                                     pfs.saveSPU(spudto);
                                 } catch (ServiceException e) {
@@ -123,6 +130,7 @@ public class FetchProduct {
                                     skudto.setProductCode(spu.getProduct_name());
                                     skudto.setProductDescription(spu.getProduct_detail());
                                     skudto.setProductName(spu.getDescription());
+                                    skudto.setSaleCurrency("EUR");
 
                                     if(sku.getItem_size().length()>4) {
                                         skudto.setProductSize(sku.getItem_size().substring(0,sku.getItem_size().length()-4));

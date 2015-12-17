@@ -95,6 +95,15 @@ public class Spu {
     private String product_detail;
     private String url;
     private String supply_price;
+    private String product_origin;
+    
+    public String getProduct_origin() {
+    	return product_origin;
+    }
+    
+    public void setProduct_origin(String product_origin) {
+    	this.product_origin =  product_origin;
+    }
 
     public Items getItems() {
         return items;
