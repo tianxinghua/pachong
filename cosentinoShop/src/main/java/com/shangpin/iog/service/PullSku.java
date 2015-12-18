@@ -131,6 +131,7 @@ public class PullSku {
     			                spu.setBrandName(item.getBrand());
     			                spu.setMaterial(item.getMaterial());
     			                spu.setCategoryGender("male");
+    			                spu.setProductOrigin(item.getOrigin());
     			                try {
     			                    productFetchService.saveSPU(spu);
     			                } catch (ServiceException e) {
