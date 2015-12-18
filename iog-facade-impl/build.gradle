@@ -1,6 +1,7 @@
 
 dependencies{
         compile(
+       			"com.google.code.gson:gson:2.2.2",
                 "com.alibaba:dubbo:2.8.4",
                 "org.springframework:spring-core:${springVersion}",
                 "org.springframework:spring-web:${springVersion}",
@@ -15,7 +16,8 @@ dependencies{
                 "org.apache.zookeeper:zookeeper:3.4.6",
                 "com.github.sgroschupf:zkclient:0.1",
                 project(':iog-facade'),
-                project(':iog-common-product')
+                project(':iog-common-product'),
+                project(':openapi-ice')
 
 
 
