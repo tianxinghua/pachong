@@ -1,8 +1,10 @@
 package com.shangpin.iog.channeladvisor.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -155,8 +157,12 @@ public class FechProduct {
 							picObj = JSONObject.fromObject(pics);
 						}
 						JSONArray picArr = picObj.getJSONArray("value");
+						List<String> list = new ArrayList<String>();
+						for(int k=0;k<picArr.size();k++){
+							list.add(picArr.getJSONObject(k).getString("Url"));
+						}
 						//保存图片
-						productFetchService.savePicture(supplierId, null, skuId, picArr);
+						productFetchService.savePicture(supplierId, null, skuId, list);
 						
 						//入库sku
 						SkuDTO sku = new SkuDTO();
