@@ -32,7 +32,7 @@ environments{
 
             Ice.Default.Locator='SPIceGrid/Locator:default -h 172.20.10.242 -p 12000:default -h 172.20.10.246 -p 12000'
 
-            MongoDB.hostname='172.20.30.215'
+            MongoDB.hostname='172.20.30.217'
             MongoDB.port='27017'
             SOP.HOST='http://open.shangpin.com:8080'
             zookeeper.address='172.20.10.51:2181,172.20.10.52:2181,172.20.10.54:2181,172.20.10.55:2181,172.20.10.56:2181'
@@ -51,7 +51,7 @@ environments{
 
             Ice.Default.Locator='SPIceGrid/Locator:default -h 172.20.10.242 -p 12000:default -h 172.20.10.246 -p 12000'
 
-            MongoDB.hostname='172.20.30.215'
+            MongoDB.hostname='172.20.30.217'
             MongoDB.port='27017'
             SOP.HOST='http://open.shangpin.com:8080'
             zookeeper.address='172.20.10.51:2181,172.20.10.52:2181,172.20.10.54:2181,172.20.10.55:2181,172.20.10.56:2181'
