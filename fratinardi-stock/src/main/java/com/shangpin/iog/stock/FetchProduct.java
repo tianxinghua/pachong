@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -42,12 +43,14 @@ public class FetchProduct extends AbsUpdateProductStock{
 		
 		OutTimeConfig timeConfig = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
 		String result = HttpUtil45.get(filePath, timeConfig, null);
-		List<Item> items = CsvUtil.readLocalCSV(result, Item.class, ",");
-		for(Item item:items){
-			stockMap.put(item.getSku_No().replaceAll("\"", ""), 
-							item.getQty().replaceAll("\"", ""));
-			System.out.println(stockMap.toString());
+		List<Item> items = CsvUtil.readLocalCSV(result, Item.class, "\",\"");
+		for(Item item:items){				
+			if(StringUtils.isNotBlank(item.getSku_No().replaceAll("\"", ""))){
+				stockMap.put(item.getSku_No().replaceAll("\"", ""), 
+						item.getQty().replaceAll("\"", ""));
+			}
 		}
+//		System.out.println(stockMap.toString());
 		for (String skuno : skuNo) {
             if(stockMap.containsKey(skuno)){
                 skustock.put(skuno, stockMap.get(skuno));
