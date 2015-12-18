@@ -70,6 +70,8 @@ public class ForzieriPushOrderServiceImpl{
 				orderDTO.setExcTime(new Date());
 			}
 		} catch (Exception e) {
+			orderDTO.setExcTime(new Date());
+			orderDTO.setExcDesc("网络异常推送失败orderNo:"+orderDTO.getSupplierOrderNo());
 			logger.info("post推送订单失败,orderNo:"+orderDTO.getSupplierOrderNo());
 		}
 	}
