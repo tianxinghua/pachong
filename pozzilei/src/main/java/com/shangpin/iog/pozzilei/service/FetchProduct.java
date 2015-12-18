@@ -97,15 +97,14 @@ public class FetchProduct {
                                 spudto.setSpuId(spu.getProduct_id());
                                 spudto.setId(UUIDGenerator.getUUID());
                                 spudto.setMaterial(spu.getProduct_detail());
-//                                if(spu.getProduct_detail().indexOf("made in")!=-1){
-//                                	String ProductOrigin = spu.getProduct_detail().substring(spu.getProduct_detail().indexOf("made in"), spu.getProduct_detail().length());
-//                                	spudto.setProductOrigin(ProductOrigin.substring(0,ProductOrigin.indexOf(" ")));
-//                                }else{
-                                	spudto.setProductOrigin("无");
-//                                }
+                                if(spu.getProduct_detail().indexOf("Made In")!=-1){
+                                	String ProductOrigin = spu.getProduct_detail().substring(spu.getProduct_detail().indexOf("Made In")+8, spu.getProduct_detail().length());
+                                	spudto.setProductOrigin(ProductOrigin.substring(0,ProductOrigin.indexOf(" ")));
+                                }else{
+                                	spudto.setProductOrigin(" ");
+                                }
                                 spudto.setPicUrl(spu.getUrl());
                                 spudto.setSpuName(spu.getDescription());
-                                spudto.setProductOrigin(spu.getProduct_origin());
                                 try {
                                     pfs.saveSPU(spudto);
                                 } catch (ServiceException e) {
@@ -203,15 +202,7 @@ public class FetchProduct {
         }
 
 
-
-
-
-
     }
-
-
-
-
 
 
 }
