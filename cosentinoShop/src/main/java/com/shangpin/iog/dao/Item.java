@@ -27,6 +27,7 @@ public class Item {
     String color;
     String item_group_id;
     String size;
+    String origin;
     
 //    String composition; //材质
 //    @SerializedName("g:id")
