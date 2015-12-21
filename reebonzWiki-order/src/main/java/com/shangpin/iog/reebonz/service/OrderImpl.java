@@ -106,7 +106,7 @@ public class OrderImpl extends AbsOrderService {
 		try{
 			String order_id = orderDTO.getSpOrderId();
 			String order_site = "shangpin";
-			String data = getJsonData(orderDTO.getDetail(),null);
+			String data = getJsonData(orderDTO.getDetail(),null,null);
 			logger.info("锁库存推送的数据：data："+data+",order_id:"+order_id);
 			Map<String, String> map = stock.lockStock(order_id, order_site, data);
 			if (map.get("1") != null) {
@@ -132,7 +132,7 @@ public class OrderImpl extends AbsOrderService {
 	public void handleConfirmOrder(final OrderDTO orderDTO) {
 
 		try{
-			String data = getJsonData(orderDTO.getDetail(),orderDTO.getPurchasePriceDetail());
+			String data = getJsonData(orderDTO.getDetail(),"ok",orderDTO.getPurchasePriceDetail());
 			Map<String, String> map = null;
 			map = stock.pushOrder(orderDTO.getSupplierOrderNo(),
 					orderDTO.getSpOrderId(), orderDTO.getSpPurchaseNo(), data);
@@ -251,7 +251,7 @@ public class OrderImpl extends AbsOrderService {
 	/*
 	 * detail数据格式： skuId:数量,skuId:数量
 	 */
-	private String getJsonData(String detail,String purchasePrice) {
+	private String getJsonData(String detail,String flag,String purchasePrice) {
 		
 		JSONArray array = null;
 		try{
@@ -275,7 +275,7 @@ public class OrderImpl extends AbsOrderService {
 //						if(purchasePrice!=null){
 //						    obj.setPayment_price(purchasePrice);
 //						}
-						if(purchasePrice!=null){
+						if("ok".equals(flag)){
 							String markPrice = null;
 							try {
 								Map tempmap = skuPriceService.getNewSkuPriceBySku(supplierId, skuNo);

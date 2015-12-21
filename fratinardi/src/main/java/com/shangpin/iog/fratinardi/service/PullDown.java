@@ -62,81 +62,85 @@ public class PullDown {
 			
 			OutTimeConfig timeConfig = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
 			String result = HttpUtil45.get(filePath, timeConfig, null);
-			List<Item> items = CsvUtil.readLocalCSV(result, Item.class, ",");
+			List<Item> items = CsvUtil.readLocalCSV(result, Item.class, "\",\"");
 			for(Item item:items){
 				
 				String skuId = item.getSku_No().replaceAll("\"", "");
-				SkuDTO sku = new SkuDTO();
-				sku.setId(UUIDGenerator.getUUID());
-				sku.setSupplierId(supplierId);
-				sku.setSkuId(skuId);
-				sku.setSpuId(skuId);
-				sku.setProductName(item.getName().replaceAll("\"", ""));
-				sku.setMarketPrice(item.getMarket_price().replaceAll("\"", ""));
-				sku.setProductCode(item.getProduct_No().replaceAll("\"", ""));
-				sku.setColor(item.getColor().replaceAll("\"", ""));
-				sku.setProductDescription(item.getDescription().replaceAll("\"", "").replaceAll("<br>", "").replaceAll("•", "").trim());
-				sku.setProductSize(item.getSize().replaceAll("\"", ""));
-				sku.setStock(item.getQty().replaceAll("\"", ""));
-				sku.setBarcode(item.getBarcode().replaceAll("\"", ""));
-				try {
+				if(StringUtils.isNotBlank(skuId)){
 					
-					if(skuDTOMap.containsKey(sku.getSkuId())){
-						skuDTOMap.remove(sku.getSkuId());
-					}
-					productFetchService.saveSKU(sku);					
-					
-				} catch (ServiceException e) {
-					if (e.getMessage().equals("数据插入失败键重复")) {
-						// 更新价格和库存
-						try {
-							productFetchService.updatePriceAndStock(sku);
-						} catch (ServiceException e1) {
-							e1.printStackTrace();
+					SkuDTO sku = new SkuDTO();
+					sku.setId(UUIDGenerator.getUUID());
+					sku.setSupplierId(supplierId);
+					sku.setSkuId(skuId);
+					sku.setSpuId(skuId);
+					sku.setProductName(item.getName().replaceAll("\"", "").replaceAll(",", " "));
+					sku.setMarketPrice(item.getMarket_price().replaceAll("\"", "").replaceAll(",", " "));
+					sku.setProductCode(item.getProduct_No().replaceAll("\"", "").replaceAll(",", " "));
+					sku.setColor(item.getColor().replaceAll("\"", "").replaceAll(",", " "));
+					sku.setProductDescription(item.getDescription().replaceAll("\"", "").replaceAll("<br>", "").replaceAll("•", "").replaceAll(",", " ").trim());
+					sku.setProductSize(item.getSize().replaceAll("\"", "").replaceAll(",", " "));
+					sku.setStock(item.getQty().replaceAll("\"", "").replaceAll(",", " "));
+					sku.setBarcode(item.getBarcode().replaceAll("\"", "").replaceAll(",", " "));
+					try {
+						
+						if(skuDTOMap.containsKey(sku.getSkuId())){
+							skuDTOMap.remove(sku.getSkuId());
 						}
-						e.printStackTrace();
+						productFetchService.saveSKU(sku);					
+						
+					} catch (ServiceException e) {
+						if (e.getMessage().equals("数据插入失败键重复")) {
+							// 更新价格和库存
+							try {
+								productFetchService.updatePriceAndStock(sku);
+							} catch (ServiceException e1) {
+								e1.printStackTrace();
+							}
+							e.printStackTrace();
+						}
 					}
-				}
+					
+					//保存图片
+					List<String> list = new ArrayList<String>();
+					if(StringUtils.isNotBlank(item.getImage1().replaceAll("\"", "").replaceAll(",", " "))){
+						list.add(item.getImage1().replaceAll("\"", "").replaceAll(",", " "));
+					}
+					if(StringUtils.isNotBlank(item.getImage2().replaceAll("\"", "").replaceAll(",", " "))){
+						list.add(item.getImage2().replaceAll("\"", "").replaceAll(",", " "));
+					}
+					if(StringUtils.isNotBlank(item.getImage3().replaceAll("\"", "").replaceAll(",", " "))){
+						list.add(item.getImage3().replaceAll("\"", "").replaceAll(",", " "));
+					}
+					if(StringUtils.isNotBlank(item.getImage4().replaceAll("\"", "").replaceAll(",", " "))){
+						list.add(item.getImage4().replaceAll("\"", "").replaceAll(",", " "));
+					}
+					
+					productFetchService.savePicture(supplierId, null, skuId, list);		
 				
-				//保存图片
-				List<String> list = new ArrayList<String>();
-				if(StringUtils.isNotBlank(item.getImage1())){
-					list.add(item.getImage1());
+					SpuDTO spu = new SpuDTO();
+		            spu.setId(UUIDGenerator.getUUID());
+		            spu.setSpuId(sku.getSpuId());
+		            spu.setSupplierId(supplierId);
+		            spu.setCategoryGender(item.getGender().replaceAll("\"", "").replaceAll(",", " "));
+		            spu.setCategoryName(item.getCategory().replaceAll("\"", "").replaceAll(",", " "));
+		            spu.setBrandName(item.getBrand().replaceAll("\"", "").replaceAll(",", " "));	            
+		            spu.setMaterial(item.getMaterials().replaceAll("\"", "").replaceAll(",", " "));
+//		            spu.setProductOrigin();
+		            try {
+		                productFetchService.saveSPU(spu);
+		            } catch (ServiceException e) {
+		            	logError.error(e.getMessage());
+		            	try{
+		            		productFetchService.updateMaterial(spu);
+		            	}catch(ServiceException ex){
+		            		logError.error(ex.getMessage());
+		            		ex.printStackTrace();
+		            	}
+		                e.printStackTrace();
+		            }
+					
 				}
-				if(StringUtils.isNotBlank(item.getImage2())){
-					list.add(item.getImage2());
-				}
-				if(StringUtils.isNotBlank(item.getImage3())){
-					list.add(item.getImage3());
-				}
-				if(StringUtils.isNotBlank(item.getImage4())){
-					list.add(item.getImage4());
-				}
-				
-				productFetchService.savePicture(supplierId, null, skuId, list);		
-			
-				SpuDTO spu = new SpuDTO();
-	            spu.setId(UUIDGenerator.getUUID());
-	            spu.setSpuId(sku.getSpuId());
-	            spu.setSupplierId(supplierId);
-	            spu.setCategoryGender(item.getGender().replaceAll("\"", ""));
-	            spu.setCategoryName(item.getCategory().replaceAll("\"", ""));
-	            spu.setBrandName(item.getBrand().replaceAll("\"", ""));	            
-	            spu.setMaterial(item.getMaterials().replaceAll("\"", ""));
-//	            spu.setProductOrigin();
-	            try {
-	                productFetchService.saveSPU(spu);
-	            } catch (ServiceException e) {
-	            	logError.error(e.getMessage());
-	            	try{
-	            		productFetchService.updateMaterial(spu);
-	            	}catch(ServiceException ex){
-	            		logError.error(ex.getMessage());
-	            		ex.printStackTrace();
-	            	}
-	                e.printStackTrace();
-	            }
-				
+								
 			}
 			
 			//更新网站不再给信息的老数据
