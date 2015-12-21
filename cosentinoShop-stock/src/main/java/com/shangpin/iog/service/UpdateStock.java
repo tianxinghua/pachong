@@ -110,7 +110,7 @@ public class UpdateStock extends AbsUpdateProductStock {
 			ex.printStackTrace();
 		}
 		logger.info("-------cosentinoShop更新库存完成-------------");
-		System.out.println("-------cosentinoShop更新库存完成-------------");
+		System.exit(0);
 	}
 
 }
