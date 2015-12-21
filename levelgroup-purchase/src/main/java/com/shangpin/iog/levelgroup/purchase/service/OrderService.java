@@ -47,7 +47,7 @@ public class OrderService extends AbsOrderService {
     
     // 下单处理
  	public void startSOP() {
- 		this.checkoutOrderFromSOP(supplierNo, supplierId, true);
+ 		this.checkoutOrderFromSOP(supplierId,supplierNo, true);
  	}
  	
  	// 订单确认处理
