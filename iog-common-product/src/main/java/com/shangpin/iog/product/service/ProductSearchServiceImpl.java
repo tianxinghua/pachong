@@ -358,8 +358,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 						splitSign);
 
 				// 获取颜色
-				color = dto.getColor();
-				buffer.append(null == color ? "" : color).append(splitSign);
+				color = dto.getColor()==null?"":dto.getColor().replace(",", " ");
+				buffer.append(null == color ? "" : color.replace(",", " ")).append(splitSign);
 				// 翻译中文
 				if (StringUtils.isNotBlank(color)) {
 					if (colorContrastMap.containsKey(color.toLowerCase())) {
