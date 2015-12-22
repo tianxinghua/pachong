@@ -29,7 +29,7 @@ import com.shangpin.iog.facade.dubbo.dto.PushOrderData;
 import com.shangpin.iog.service.TokenService;
 
 @Component
-public class ForzieriPushOrderServiceImpl{
+public class ForzieriPushOrderServiceImpl extends AbsOrderService{
 	@Autowired
 	TokenService tokenService;
 	private static Logger logger = Logger.getLogger("info");
@@ -43,7 +43,7 @@ public class ForzieriPushOrderServiceImpl{
 	private static String orderurl = null;
 	static {
 		if(null==bdl){
-			bdl=ResourceBundle.getBundle("conf");
+			bdl=ResourceBundle.getBundle("forzieri");
 		}
 		supplierId = bdl.getString("supplierId");
 		clientId = bdl.getString("clientId");
@@ -177,5 +177,31 @@ public class ForzieriPushOrderServiceImpl{
 				logger.info("获取token失败");
 				e.printStackTrace();
 			}
+		}
+
+		@Override
+		public void handleConfirmOrder(OrderDTO orderDTO) {
+			
+		}
+
+		@Override
+		public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
+			
+		}
+
+		@Override
+		public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
+			
+		}
+
+		@Override
+		public void handleEmail(OrderDTO orderDTO) {
+			
+		}
+
+		@Override
+		public void getSupplierSkuId(Map<String, String> skuMap)
+				throws ServiceException {
+			
 		}
 }
