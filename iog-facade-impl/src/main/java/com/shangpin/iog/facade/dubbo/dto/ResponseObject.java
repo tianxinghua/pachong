@@ -1,6 +1,6 @@
 package com.shangpin.iog.facade.dubbo.dto;
 
-	public class ResponseObject{
+public class ResponseObject{
 	private String return_code;
 	private String error_code;
 	private String error_msg;

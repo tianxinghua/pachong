@@ -1,7 +1,7 @@
 package com.shangpin.iog.facade.dubbo.dto;
 
 public class RequestObject {
-
+ 
 	private String event_id;
 	private String sku;
 	private String option_code;

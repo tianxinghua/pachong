@@ -14,7 +14,7 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 
 /**
- * Created by Administrator on 2015/9/21.
+ * Created by Administrator on 2015/12/21.
  */
 public class MyJsonUtil {
 	

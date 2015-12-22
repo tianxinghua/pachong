@@ -1,5 +1,5 @@
 package com.shangpin.iog.facade.dubbo.dto;
-
+ 
 public class OAuth {
 	
 	private String access_token;
