@@ -1,0 +1,131 @@
+package com.shangpin.iog.aspesi.util;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import com.csvreader.CsvReader;
+import com.shangpin.iog.aspesi.dto.TxtDTO;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+
+/**
+ * Created by Administrator on 2015/11/13.
+ */
+public class MyTxtUtil {
+    private static ResourceBundle bdl = null;
+    private static String httpurl;
+    private static String localPath;
+    private static String supplierId;
+    static {
+        if (bdl == null)
+            bdl = ResourceBundle.getBundle("conf");
+            httpurl = bdl.getString("url");
+            localPath = bdl.getString("path");
+            supplierId = bdl.getString("supplierId");
+    }
+    //http异常
+    private static String getHttpStr(){
+    	String str = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*20,1000*60*20), null);
+    	return str;
+    }
+    /**
+     * http下载txtcsv文件到本地路径
+     * @throws MalformedURLException
+     */
+    public static void txtDownload() throws MalformedURLException {
+        String csvFile =getHttpStr();
+        if (csvFile.contains("发生错误异常")) {
+        	try {
+				Thread.currentThread().sleep(5000l);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        	csvFile =getHttpStr();
+		}
+        FileWriter fwriter = null;
+        try {
+        	File file = new File(localPath);
+        	if (!file.exists()) {
+				file.mkdirs();
+			}
+            fwriter = new FileWriter(getPath());
+            fwriter.write(csvFile);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                fwriter.flush();
+                fwriter.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * http下载txt文件到本地路径
+     * @throws MalformedURLException
+     */
+    public static List<TxtDTO> readTXTFile() throws Exception {
+        //解析txt文件
+        CsvReader cr = new CsvReader(new FileReader(getPath()));
+        System.out.println("创建cr对象成功");
+        //得到列名集合
+        cr.readRecord();
+        String rowString = cr.getRawRecord();
+        List<TxtDTO> dtoList = new ArrayList<TxtDTO>();
+        TxtDTO product = null;
+        while(cr.readRecord()) {
+            product = new TxtDTO();
+            rowString = cr.getRawRecord();
+            String[] from = rowString.split("[\t]");
+            Field[] to = product.getClass().getDeclaredFields();
+            for (int i = 0; i < to.length; i++){
+                String name = to[i].getName(); // 获取属性的名字
+                name = name.substring(0, 1).toUpperCase() + name.substring(1);
+                Method m = product.getClass().getMethod("set"+name,String.class);
+                m.invoke(product,from[i]);
+            }
+            dtoList.add(product);
+        }
+        return dtoList;
+    }
+    private static String getPath(){
+    	return localPath+"/woolrich.txt";
+    }
+
+/**
+ * test
+ * */
+    public static void main(String[] args) {
+
+        List<TxtDTO> list = null;
+        try {
+            MyTxtUtil.txtDownload();
+            list = MyTxtUtil.readTXTFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(list.size());
+        for (TxtDTO p:list){
+            System.out.println(p.getGENDER());
+        }
+        for (TxtDTO p:list){
+            System.out.println(p.getADVERTISERCATEGORY());
+        }
+        for (TxtDTO p:list){
+            System.out.println(p.getBUYURL());
+        }
+        for (TxtDTO p:list){
+            System.out.println(p.getMASTER_SKU());
+        }
+    }
+}

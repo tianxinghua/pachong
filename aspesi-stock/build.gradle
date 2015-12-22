@@ -23,7 +23,7 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.woolrich.stock.WoolrichStockImp'
+        attributes 'Main-Class': 'com.shangpin.iog.aspesi.stock.AspesiStockImp'
         attributes 'Class-Path': '. ./conf/  ' + manifestCp
     }
 }

@@ -1,4 +1,4 @@
-package com.shangpin.iog.woolrich.stock;
+package com.shangpin.iog.aspesi.stock;
 
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
@@ -21,12 +21,10 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.woolrich.dto.Product;
-import com.shangpin.iog.woolrich.util.MyTxtUtil;
 import com.shangpin.sop.AbsUpdateProductStock;
 
-@Component("woolrichstock")
-public class WoolrichStockImp extends AbsUpdateProductStock {
+@Component("aspesistock")
+public class AspesiStockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
@@ -62,12 +60,11 @@ public class WoolrichStockImp extends AbsUpdateProductStock {
             	skustock.put(skuno, 0);
             }
         }
-        logger.info("woolrich赋值库存数据成功");
+        logger.info("aspesi赋值库存数据成功");
         return skustock;
     }
-
     private static String getStock(String sku){
-        String url = "http://www.woolrich.eu/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=07&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+        String url = "http://www.aspesi.com/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=02&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
         OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
         String jsonstr = HttpUtil45.get(url,timeConfig,null,null,null);
         if( jsonstr != null && jsonstr.length() >0){
@@ -87,18 +84,18 @@ public class WoolrichStockImp extends AbsUpdateProductStock {
         //加载spring
         loadSpringContext();
         //拉取数据
-        WoolrichStockImp woolrichStockImp =(WoolrichStockImp)factory.getBean("woolrichstock");
+        AspesiStockImp aspesiStockImp =(AspesiStockImp)factory.getBean("aspesistock");
 //        levelGroupStockImp.setUseThread(true);levelGroupStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("levelgroup更新数据库开始");
+        logger.info("aspesi更新数据库开始");
         //2015081401431
         try {
-        	woolrichStockImp.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
+        	aspesiStockImp.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
         } catch (Exception e) {
-            loggerError.error("woolrich库存更新失败");
+            loggerError.error("aspesi库存更新失败");
             e.printStackTrace();
         }
-        logger.info("woolrich更新数据库结束");
+        logger.info("aspesi更新数据库结束");
         System.exit(0);
     }
 }

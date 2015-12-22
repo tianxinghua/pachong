@@ -1,6 +1,5 @@
-package com.shangpin.iog.woolrich.service;
+package com.shangpin.iog.aspesi.service;
 
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,18 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.aspesi.dto.TxtDTO;
+import com.shangpin.iog.aspesi.util.MyTxtUtil;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
-import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SkuPriceService;
-import com.shangpin.iog.woolrich.dto.TxtDTO;
-import com.shangpin.iog.woolrich.util.MyTxtUtil;
 
-@Component("woolrich")
+@Component("aspesi")
 public class FetchProduct {
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger loggerError = Logger.getLogger("error");
@@ -65,7 +63,7 @@ public class FetchProduct {
 			List<TxtDTO> txtlist = getList();
 			
 		    for(TxtDTO product:txtlist) {
-		    	if (product.getMANUFACTURER().equalsIgnoreCase("WOOLRICH")) {
+		    	if (product.getMANUFACTURER().equalsIgnoreCase("Aspesi")) {
 					
 		    		if (!spuMap.containsKey(product.getMASTER_SKU())) {
 		    			spuMap.put(product.getMASTER_SKU(), product);
