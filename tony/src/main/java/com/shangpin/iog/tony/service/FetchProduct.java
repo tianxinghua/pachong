@@ -16,6 +16,7 @@ import com.shangpin.iog.tony.common.Constant;
 import com.shangpin.iog.tony.common.MyJsonClient;
 import com.shangpin.iog.tony.common.StringUtil;
 import com.shangpin.iog.tony.dto.Items;
+
 import org.apache.commons.collections.functors.ExceptionClosure;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -139,10 +140,21 @@ public class FetchProduct {
 
                 //spu.setSpuName(item.getTitle_en());
                 spu.setSeasonId(item.getSeason());
-                material = StringUtil.getMaterial(item.getDesc());
+                String desc = item.getDesc();
+                material = StringUtil.getMaterial(desc);
                 if ("".equals(material)){
                     material = StringUtil.getMaterial(item.getDesc_en());
                 }
+                
+                String productOrigin = null;
+            	int index = desc.lastIndexOf("Made in");
+            	if(index!=-1){
+            		desc = desc.substring(desc.lastIndexOf("Made in"));
+            		if(desc.indexOf("<br>")!=-1){
+            			productOrigin = desc.substring(0,desc.indexOf("<br>"));
+            		}
+            	}
+                spu.setProductOrigin(productOrigin);
                 spu.setMaterial(material);
                 spu.setCategoryGender(item.getSex());
                 //System.out.println(spuId+"======================================");
