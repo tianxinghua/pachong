@@ -61,7 +61,7 @@ public class PozzileiStockImp extends AbsUpdateProductStock {
 
              barcode = skuno.trim();
             //根据供应商skuno获取库存，并更新我方sop库存
-             url = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=Default&barcode=[[barcode]]&key=8IZk2x5tVN";
+             url = "http://net13serverpo.net/pozziapi/Myapi/Productslist/GetPriceBybarcode?DBContext=Default&barcode=[[barcode]]&key=5jq3vkBd7d";
             url = url.replaceAll("\\[\\[barcode\\]\\]", barcode);
              json = null;
             try {

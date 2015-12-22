@@ -148,14 +148,9 @@ public class FetchProduct {
 		//处理图片信息
 		String[] imageStrings = imageData.split("\\r\\n");
 		String[] imageArr = null;
-		for (int j = 1; j < imageStrings.length; j++) {
+		for (int j = 2; j < imageStrings.length; j++) {
 			if (StringUtils.isNotBlank(imageStrings[j])) {
-				if (j==1) {
-				  data =  imageStrings[j].split("\\n")[1];
-				}else {
-				  data = imageStrings[j];
-				}
-				
+				data = imageStrings[j];
 				imageArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
 				if (!imgMap.containsKey(imageArr[0])) {
 					imgMap.put(imageArr[0], imageArr[1]);
@@ -183,8 +178,8 @@ public class FetchProduct {
         			//sku.setSkuId(skuId);
         			sku.setProductSize(skuArr[1]);
         			
-        			sku.setSalePrice(priceMap.get(item.getSpuId()));
-//        			sku.setMarketPrice(item.getMarketPrice());
+//        			sku.setSalePrice(priceMap.get(item.getSpuId()));
+        			sku.setMarketPrice(priceMap.get(item.getSpuId()));
 //        			sku.setSalePrice(item.getSalePrice());
 //        			sku.setSupplierPrice(item.getSupplierPrice());
         			sku.setColor(item.getColor());
