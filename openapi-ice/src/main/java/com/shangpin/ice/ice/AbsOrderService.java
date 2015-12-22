@@ -714,9 +714,11 @@ public abstract class AbsOrderService {
             List<ICEOrderDetailDTO>list=new ArrayList<>();
             StringBuffer buffer = new StringBuffer();
             StringBuffer sopbuffer= new StringBuffer();
+            String purchsePrice = "";
             for(PurchaseOrderDetail purchaseOrderDetail:entry.getValue()){
                 //记录采购单明细信息 以便发货
                 purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
+                purchsePrice = purchaseOrderDetail.SkuPrice;
                 //计算同一采购单的相同产品的数量
                 if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
                     ICEOrderDetailDTO detailDTO = new ICEOrderDetailDTO();
@@ -756,6 +758,7 @@ public abstract class AbsOrderService {
             spOrder.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString());
             spOrder.setDetail(buffer.toString().substring(0,buffer.toString().length()-1));
             spOrder.setMemo(sopbuffer.toString().substring(0,sopbuffer.toString().length()-1));
+            spOrder.setPurchasePriceDetail(purchsePrice);
             spOrder.setCreateTime(new Date());
             try {
                 logger.info("采购单信息转化订单后信息："+spOrder.toString());

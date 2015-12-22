@@ -117,7 +117,41 @@
             </if>
         </where>
 
+    </select>
+    
+    <select id="findBySupplierIdAndStatusAndTime" resultMap="OrderResultMap">
+    	select
+        ID as ID,
+        SUPPLIER_ID as SUPPLIER_ID,
+        UUID as UUID,
+        SP_ORDER_ID as SP_ORDER_ID,
+        SP_PURCHASE_DETAIL_NO,
+        SUPPLIER_ORDER_NO as SUPPLIER_ORDER_NO,
+        STATUS as STATUS,
+        DETAIL as DETAIL,
+        SP_PURCHASE_NO as SP_PURCHASE_NO,
+        UPDATE_TIME as UPDATE_TIME,
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC,
+		PURCHASE_PRICE_DETAIL as PURCHASE_PRICE_DETAIL
 
+        from `ORDER`
+        <where>
+        	<if test="null!=supplierId">
+        		SUPPLIER_ID=#{supplierId}
+        	</if>
+        	<if test="null!=status">
+                and  STATUS = #{status}
+            </if>
+            <if test="null!=startTime">
+            	and CREATE_TIME >=DATE_SUB(#{null!=startTime}
+            </if>
+            <if test="null!=endTime">
+            	<![CDATA[ and CREATE_TIME <= #{endTime}    ]]>
+            	<!--  and CREATE_TIME >=DATE_SUB(#{null!=endTime}-->
+            </if>
+        </where>
     </select>
     
     <select id="findBySpOrderId"  resultMap="OrderResultMap">

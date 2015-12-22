@@ -46,6 +46,18 @@ public interface OrderService {
      * 判断时间是否超过一天
      * */
     public List<OrderDTO>  getOrderBySupplierIdAndOrderStatus(String supplierId,String status,String date) throws ServiceException;
+    
+    
+    /**
+     * 获取订单   根据订单ID,订单状态,开始时间,结束时间  
+     * @param supplierId
+     * @param status
+     * @param startTime
+     * @param endTime
+     * @return
+     * @throws ServiceException
+     */
+    public List<OrderDTO>  getOrderBySupplierIdAndOrderStatusAndTime(String supplierId,String status,String startTime,String endTime) throws ServiceException;
     /**
      * 获取订单 根据订单ID 和 订单状态
      * @param supplierId 供货商ID
