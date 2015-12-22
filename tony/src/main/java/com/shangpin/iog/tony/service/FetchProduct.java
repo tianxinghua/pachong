@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,21 +93,7 @@ public class FetchProduct {
                 sku.setSaleCurrency(item.getCur());
                 productFetchService.saveSKU(sku);
 
-                if(null!=item.getImages()&& item.getImages().length>0&&StringUtils.isNotBlank(item.getImages()[0])){
-                    String[] picArray = item.getImages();
-                    for(String picUrl :picArray){
-                        ProductPictureDTO dto  = new ProductPictureDTO();
-                        dto.setPicUrl(picUrl);
-                        dto.setSupplierId(Constant.SUPPLIER_ID);
-                        dto.setId(UUIDGenerator.getUUID());
-                        dto.setSkuId(item.getSku());
-                        try {
-                            productFetchService.savePictureForMongo(dto);
-                        } catch (ServiceException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
+            
 
             } catch (ServiceException e) {
                 try {
@@ -123,6 +110,14 @@ public class FetchProduct {
             } catch(Exception e){
                 loggerError.error("tony 更新库存失败 " + e.getMessage());
             }
+            
+            
+            if(null!=item.getImages()&& item.getImages().length>0&&StringUtils.isNotBlank(item.getImages()[0])){
+                String[] picArray = item.getImages();
+                productFetchService.savePicture(Constant.SUPPLIER_ID, null, skuId, Arrays.asList(picArray));
+            }
+            
+            
 /*            if (StringUtil.getMaterial(item.getDesc()) == null || "".equals(StringUtil.getMaterial(item.getDesc()))){
                 System.out.println(skuId+"======================================================");
                 continue;
@@ -161,8 +156,11 @@ public class FetchProduct {
                 productFetchService.saveSPU(spu);
 
             } catch (ServiceException e) {
-                System.out.println(spu.getSpuId());
-                //e.printStackTrace();
+            	try {
+					productFetchService.updateMaterial(spu);
+				} catch (ServiceException e1) {
+					e1.printStackTrace();
+				}
             }
         }
     }
