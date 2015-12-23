@@ -33,7 +33,7 @@ public interface OrderMapper extends IBaseDao<OrderDTO> {
      * @return
      */
     public List<OrderDTO> findBySupplierIdAndStatusAndTime(@Param("supplierId") String supplierId,
-            @Param("status") String status,@Param("startTime") String startTime,@Param("endTime") String endTime) ;
+            @Param("status") String status,@Param("startTime")String startTime,@Param("endTime")String endTime) ;
 
 
 

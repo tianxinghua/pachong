@@ -148,7 +148,7 @@
             	and CREATE_TIME >= #{startTime}
             </if>
             <if test="null!=endTime">
-            	<![CDATA[ and CREATE_TIME <= #{endTime}   ]]>
+            	<![CDATA[ and CREATE_TIME < #{endTime}   ]]>
             	<!-- and CREATE_TIME <= #{endTime} -->
             </if>
         </where>
