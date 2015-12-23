@@ -16,12 +16,14 @@ import com.shangpin.iog.tony.common.Constant;
 import com.shangpin.iog.tony.common.MyJsonClient;
 import com.shangpin.iog.tony.common.StringUtil;
 import com.shangpin.iog.tony.dto.Items;
+
 import org.apache.commons.collections.functors.ExceptionClosure;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -91,21 +93,7 @@ public class FetchProduct {
                 sku.setSaleCurrency(item.getCur());
                 productFetchService.saveSKU(sku);
 
-                if(null!=item.getImages()&& item.getImages().length>0&&StringUtils.isNotBlank(item.getImages()[0])){
-                    String[] picArray = item.getImages();
-                    for(String picUrl :picArray){
-                        ProductPictureDTO dto  = new ProductPictureDTO();
-                        dto.setPicUrl(picUrl);
-                        dto.setSupplierId(Constant.SUPPLIER_ID);
-                        dto.setId(UUIDGenerator.getUUID());
-                        dto.setSkuId(item.getSku());
-                        try {
-                            productFetchService.savePictureForMongo(dto);
-                        } catch (ServiceException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
+            
 
             } catch (ServiceException e) {
                 try {
@@ -122,6 +110,14 @@ public class FetchProduct {
             } catch(Exception e){
                 loggerError.error("tony 更新库存失败 " + e.getMessage());
             }
+            
+            
+            if(null!=item.getImages()&& item.getImages().length>0&&StringUtils.isNotBlank(item.getImages()[0])){
+                String[] picArray = item.getImages();
+                productFetchService.savePicture(Constant.SUPPLIER_ID, null, skuId, Arrays.asList(picArray));
+            }
+            
+            
 /*            if (StringUtil.getMaterial(item.getDesc()) == null || "".equals(StringUtil.getMaterial(item.getDesc()))){
                 System.out.println(skuId+"======================================================");
                 continue;
@@ -139,18 +135,32 @@ public class FetchProduct {
 
                 //spu.setSpuName(item.getTitle_en());
                 spu.setSeasonId(item.getSeason());
-                material = StringUtil.getMaterial(item.getDesc());
+                String desc = item.getDesc();
+                material = StringUtil.getMaterial(desc);
                 if ("".equals(material)){
                     material = StringUtil.getMaterial(item.getDesc_en());
                 }
+                
+                String productOrigin = null;
+            	int index = desc.lastIndexOf("Made in");
+            	if(index!=-1){
+            		desc = desc.substring(desc.lastIndexOf("Made in"));
+            		if(desc.indexOf("<br>")!=-1){
+            			productOrigin = desc.substring(0,desc.indexOf("<br>"));
+            		}
+            	}
+                spu.setProductOrigin(productOrigin);
                 spu.setMaterial(material);
                 spu.setCategoryGender(item.getSex());
                 //System.out.println(spuId+"======================================");
                 productFetchService.saveSPU(spu);
 
             } catch (ServiceException e) {
-                System.out.println(spu.getSpuId());
-                //e.printStackTrace();
+            	try {
+					productFetchService.updateMaterial(spu);
+				} catch (ServiceException e1) {
+					e1.printStackTrace();
+				}
             }
         }
     }

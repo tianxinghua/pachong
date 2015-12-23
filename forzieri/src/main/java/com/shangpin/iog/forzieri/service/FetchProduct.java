@@ -119,6 +119,7 @@ public class FetchProduct {
 			skuDTO.setProductSize(csvDTO.getSize());
 			skuDTO.setStock(csvDTO.getQuantity());
 			skuDTO.setProductDescription(csvDTO.getDescription());
+			skuDTO.setBarcode(csvDTO.getPreorder()+" | "+csvDTO.getShips_in_days());
 			try {
 				
 				if(skuDTOMap.containsKey(skuDTO.getSkuId())){
