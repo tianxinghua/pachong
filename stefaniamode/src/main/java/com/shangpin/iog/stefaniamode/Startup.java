@@ -140,10 +140,12 @@ public class Startup {
 		loadSpringContext();
 		log.info("----初始SPRING成功----");
 		// 拉取数据
-		String xmlContent = downLoadAndReadXml(zipUrl);
-		FetchProduct fetchProduct = (FetchProduct) factory
-				.getBean("stefaniamode");
-		fetchProduct.fetchProductAndSave(xmlContent, supplierId);
+		FetchProduct fetchProduct = (FetchProduct) factory.getBean("stefaniamode");
+		String[] split = zipUrl.split(",");
+		for (String url : split) {
+			String xmlContent = downLoadAndReadXml(url);
+			fetchProduct.fetchProductAndSave(xmlContent, supplierId);
+		}
 
 		log.info("----拉取stefaniamode数据完成----");
 
