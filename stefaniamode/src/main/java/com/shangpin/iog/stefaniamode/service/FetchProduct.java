@@ -60,7 +60,7 @@ public class FetchProduct {
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
 		day = Integer.valueOf(bdl.getString("day"));
-
+		zipUrl = bdl.getString("zipUrl");
 	}
 
 	@Autowired
