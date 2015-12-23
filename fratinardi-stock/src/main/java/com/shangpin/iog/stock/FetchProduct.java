@@ -41,20 +41,27 @@ public class FetchProduct extends AbsUpdateProductStock{
 		Map<String, String> skustock = new HashMap<>();
 		Map<String,String> stockMap = new HashMap<>();
 		
-		OutTimeConfig timeConfig = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
+		OutTimeConfig timeConfig = new OutTimeConfig(1000*5, 1000*60 * 40, 1000*60 * 40);
+		logInfo.info("开始下载文件");
 		String result = HttpUtil45.get(filePath, timeConfig, null);
+		logInfo.info("result = " + result);
 		List<Item> items = CsvUtil.readLocalCSV(result, Item.class, "\",\"");
-		for(Item item:items){				
-			if(StringUtils.isNotBlank(item.getSku_No().replaceAll("\"", ""))){
-				stockMap.put(item.getSku_No().replaceAll("\"", ""), 
-						item.getQty().replaceAll("\"", ""));
+		logInfo.info("items size =" + items.size());
+		for(Item item:items){
+			logInfo.info("sku  -"+item.getSku_No().replaceAll("\"", "")+"-- quantity =" + item.getQty().replaceAll("\"", "")+"--");
+
+			if(StringUtils.isNotBlank(item.getSku_No())&&StringUtils.isNotBlank(item.getQty())){
+
+				stockMap.put(item.getSku_No().replaceAll("\"", ""), item.getQty().replaceAll("\"", ""));
 			}
 		}
 //		System.out.println(stockMap.toString());
 		for (String skuno : skuNo) {
             if(stockMap.containsKey(skuno)){
+				logInfo.info("sku="+skuno+"---containskey");
                 skustock.put(skuno, stockMap.get(skuno));
             } else{
+				logInfo.info("sku="+skuno+"---not  containskey");
                 skustock.put(skuno, "0");
             }
         }
