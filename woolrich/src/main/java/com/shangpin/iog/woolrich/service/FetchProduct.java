@@ -55,7 +55,7 @@ public class FetchProduct {
 			Date startDate,endDate= new Date();
 			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 			//获取原有的SKU 仅仅包含价格和库存
-			Map<String,SkuDTO> skuDTOMap = new HashedMap();
+			Map<String,SkuDTO> skuDTOMap = new HashMap<String,SkuDTO>();
 			try {
 				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
 			} catch (ServiceException e) {
@@ -129,7 +129,7 @@ public class FetchProduct {
 	                spu.setCategoryName(category);
 	                spu.setMaterial(entry.getValue().getMATERIAL());
 	                spu.setCategoryGender(entry.getValue().getGENDER());
-	                spu.setProductOrigin("Spain");
+	                spu.setProductOrigin(MyTxtUtil.getOrigin(entry.getValue().getVARIANT_SKU()));
 	                productFetchService.saveSPU(spu);
 	            } catch (ServiceException e) {
 	            	productFetchService.updateMaterial(spu);
@@ -156,12 +156,12 @@ public class FetchProduct {
 	
 	private List<TxtDTO> getList(){
 		  //download
-       /* try {
+        try {
             MyTxtUtil.txtDownload();
         } catch (MalformedURLException e) {
             loggerError.error("拉取数据失败！");
             e.printStackTrace();
-        }*/
+        }
         //read .csv file
         List<TxtDTO> list = null;
         try {
