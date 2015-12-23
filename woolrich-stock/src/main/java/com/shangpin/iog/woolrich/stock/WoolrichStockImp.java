@@ -30,7 +30,6 @@ public class WoolrichStockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -88,16 +87,13 @@ public class WoolrichStockImp extends AbsUpdateProductStock {
     public static void main(String args[]) throws Exception {
         //加载spring 078055683960235
         loadSpringContext();
-        
-        WoolrichStockImp.getStock("078055683960235");
         //拉取数据
         WoolrichStockImp woolrichStockImp =(WoolrichStockImp)factory.getBean("woolrichstock");
-//        levelGroupStockImp.setUseThread(true);levelGroupStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("woolrich更新数据库开始");
         //2015081401431
         try {
-//        	woolrichStockImp.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
+        	woolrichStockImp.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
         } catch (Exception e) {
             loggerError.error("woolrich库存更新失败");
             e.printStackTrace();
