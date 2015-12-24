@@ -127,7 +127,7 @@ public class FetchProduct {
 	                spu.setCategoryName(category);
 	                spu.setMaterial(entry.getValue().getMATERIAL());
 	                spu.setCategoryGender(entry.getValue().getGENDER());
-	                spu.setProductOrigin("Spain");
+	                spu.setProductOrigin(MyTxtUtil.getOrigin(entry.getValue().getVARIANT_SKU()));
 	                productFetchService.saveSPU(spu);
 	            } catch (ServiceException e) {
 	            	productFetchService.updateMaterial(spu);

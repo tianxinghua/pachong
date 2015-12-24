@@ -11,14 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import net.sf.json.JSONObject;
+
 import com.csvreader.CsvReader;
 import com.shangpin.iog.aspesi.dto.TxtDTO;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 
-/**
- * Created by Administrator on 2015/11/13.
- */
 public class MyTxtUtil {
     private static ResourceBundle bdl = null;
     private static String httpurl;
@@ -99,8 +98,24 @@ public class MyTxtUtil {
         return dtoList;
     }
     private static String getPath(){
-    	return localPath+"/woolrich.txt";
+    	return localPath+"/aspesi.txt";
     }
+    
+    public static String getOrigin(String sku){
+        String url = "http://www.aspesi.com/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=02&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+        OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
+        String jsonstr = HttpUtil45.get(url,timeConfig,null,null,null);
+		if( jsonstr != null && jsonstr.length() >0){
+			if (!jsonstr.contains("error")) {
+				JSONObject json = JSONObject.fromObject(jsonstr);
+				if (!json.isNullObject() && !json.containsKey("fault")) {
+					return json.getString("c_madeIn");
+				}
+			}
+		}
+        return "";
+    }
+    
 
 /**
  * test
