@@ -1,5 +1,6 @@
 package com.shangpin.iog.aspesi.service;
 
+import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -154,12 +155,12 @@ public class FetchProduct {
 	
 	private List<TxtDTO> getList(){
 		  //download
-       /* try {
+        try {
             MyTxtUtil.txtDownload();
         } catch (MalformedURLException e) {
             loggerError.error("拉取数据失败！");
             e.printStackTrace();
-        }*/
+        }
         //read .csv file
         List<TxtDTO> list = null;
         try {
