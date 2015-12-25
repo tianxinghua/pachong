@@ -109,6 +109,8 @@ public class MyTxtUtil {
     		url = "http://www.woolrich.eu/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=07&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
 		}else if(brand.equalsIgnoreCase("aspesi")){
 			url = "http://www.aspesi.com/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=02&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+		}else if(brand.equalsIgnoreCase("casadei")){
+			url="http://www.casadei.com/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=05&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
 		}
         OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
         String jsonstr = HttpUtil45.get(url,timeConfig,null,null,null);

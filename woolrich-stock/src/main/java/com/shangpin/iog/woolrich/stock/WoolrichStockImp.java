@@ -1,11 +1,9 @@
 package com.shangpin.iog.woolrich.stock;
 
-import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -21,8 +19,6 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.woolrich.dto.Product;
-import com.shangpin.iog.woolrich.util.MyTxtUtil;
 import com.shangpin.sop.AbsUpdateProductStock;
 
 @Component("woolrichstock")
@@ -71,6 +67,8 @@ public class WoolrichStockImp extends AbsUpdateProductStock {
     		url = "http://www.woolrich.eu/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=07&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
 		}else if(sku.substring(0, 2).equals("02")){
 			url = "http://www.aspesi.com/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=02&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+		}else if(sku.substring(0, 2).equals("05")){
+			url="http://www.casadei.com/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=05&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
 		}
         OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
         String jsonstr = HttpUtil45.get(url,timeConfig,null,null,null);
