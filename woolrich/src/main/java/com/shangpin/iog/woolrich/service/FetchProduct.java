@@ -54,11 +54,9 @@ public class FetchProduct {
 	public void fetchProductAndSave() {
 		Map<String,TxtDTO> spuMap = new HashMap<String,TxtDTO>();
 		List<TxtDTO> dtoLists = new ArrayList<TxtDTO>();
-		//更改状态存储，不要忘了填币种
 		try {
 			Date startDate,endDate= new Date();
 			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
-			//获取原有的SKU 仅仅包含价格和库存
 			Map<String,SkuDTO> skuDTOMap = new HashMap<String,SkuDTO>();
 			try {
 				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
