@@ -10,6 +10,7 @@ import com.enterprisedt.net.ftp.FTPTransferType;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.app.AppContext;
 //import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.sop.AbsUpdateProductStock;
 
 import org.apache.commons.lang.StringUtils;
@@ -39,6 +40,7 @@ public class StockClientImp extends AbsUpdateProductStock{
     private  static  ResourceBundle sopBundle = ResourceBundle.getBundle("sop");
     private static String HOST="ftp.backend.brunarosso.com",PORT="21",USER="backend.brunarosso.com_shang",PASSWORD="1Lt53Vf6",FILE_PATH="/public/stockftp";
     static String localFilePath = bundle.getString("localFilePath");
+    static String email = bundle.getString("email");
     @Override
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //String url="E:\\brunarosso"+"Disponibilita.xml";
@@ -184,7 +186,7 @@ public class StockClientImp extends AbsUpdateProductStock{
             }
         }
     }
-    public static void downloadStock(String remoteFilePath,String remoteFileName,String localFilePath,Boolean isFile){
+    public static boolean downloadStock(String remoteFilePath,String remoteFileName,String localFilePath,Boolean isFile){
         /** 定义FTPClient便利 */
         FTPClient ftp = null;
         String subLocalfilePath = remoteFilePath;
@@ -275,6 +277,7 @@ public class StockClientImp extends AbsUpdateProductStock{
         } catch (Exception e)
         {
             logger.error("文件下载失败", e);
+            return false;
 
         }finally {
             /** 断开连接   */
@@ -283,6 +286,25 @@ public class StockClientImp extends AbsUpdateProductStock{
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (FTPException e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
+
+    //发邮件
+    class MailThread implements  Runnable{
+
+
+
+        @Override
+        public void run() {
+            try {
+                SendMail.sendGroupMail("smtp.shangpin.com", "chengxu@shangpin.com",
+                        "shangpin001", email, "brunarosso下载文件失败",
+                        "brunarosso下载文件5次后仍然失败，请检查网络",
+                        "text/html;charset=utf-8");
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -301,7 +323,24 @@ public class StockClientImp extends AbsUpdateProductStock{
         //AbsUpdateProductStock impl = new StockClientImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("BRUNAROSSO更新库存开始");
-        downloadStock("","Disponibilita.xml",localFilePath,true);
+        boolean bldown = false;
+        for(int i=0;i<6;i++){
+            if(downloadStock("","Disponibilita.xml",localFilePath,true)){
+                   i=5;
+                bldown = true;
+            }else {
+                  Thread.sleep(1000*60);
+            }
+        }
+        if(!bldown){//下载失败
+              //发邮件
+            loggerError.error("下载文件失败");
+            Thread t = new Thread(new StockClientImp().new MailThread());
+            t.start();
+
+            System.exit(0);
+        }
+
         try {
         	stockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
 		} catch (Exception e) {
