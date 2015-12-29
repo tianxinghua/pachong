@@ -104,7 +104,7 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
 			sku = "09"+sku;
 		}
     	
-        String url = "http://www.ln-cc.com/dw/shop/v15_8/products/09"+sku+"/availability?inventory_ids=09&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+        String url = "http://www.ln-cc.com/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=09&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
 
         OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
         String jsonstr = HttpUtil45.get(url,timeConfig,null,null,null);
