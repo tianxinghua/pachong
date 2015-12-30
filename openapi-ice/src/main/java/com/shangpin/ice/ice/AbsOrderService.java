@@ -719,6 +719,7 @@ public abstract class AbsOrderService {
                 //记录采购单明细信息 以便发货
                 purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
                 purchsePrice = purchaseOrderDetail.SkuPrice;
+                logger.info(entry.getValue()  + " 采购价 " + purchsePrice);
                 //计算同一采购单的相同产品的数量
                 if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
                     ICEOrderDetailDTO detailDTO = new ICEOrderDetailDTO();
