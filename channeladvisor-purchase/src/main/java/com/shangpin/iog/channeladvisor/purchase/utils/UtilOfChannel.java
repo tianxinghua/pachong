@@ -14,8 +14,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Map.Entry;
 
+import javax.mail.MessagingException;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -36,6 +40,7 @@ import org.apache.log4j.Logger;
 import net.sf.json.JSONObject;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 
@@ -45,6 +50,17 @@ public class UtilOfChannel {
 	private static Logger info = Logger.getLogger("info");
 	public static String ERROR = "error";
 	public static String SUCCESSFUL = "successful";
+	private static String fromEmail = "";
+	private static String emailPass = "";
+	private static ResourceBundle bdl = null;
+	static {
+		if (null == bdl) {
+			bdl = ResourceBundle.getBundle("conf");
+			fromEmail = bdl.getString("fromEmail");
+			emailPass = bdl.getString("emailPass");
+		}
+		
+	}
 
 	/**
 	 * 获取新的访问令牌
@@ -74,11 +90,37 @@ public class UtilOfChannel {
 		}catch(Exception ex){
 			logger.error(ex);
 			ex.printStackTrace();
-			return UtilOfChannel.ERROR;
+			int i = 0;
+			while(StringUtils.isBlank(result) && i<100){
+				try{
+					
+					String kk = HttpUtil45.operateData("post", "", "https://api.channeladvisor.com/oauth2/token", timeConfig, map, null, application_id, shared_secret);					
+					System.out.println("kk = " + kk);
+					result = JSONObject.fromObject(kk).getString("access_token");
+					info.info("access_token=="+result);
+					
+				}catch(Exception e){
+					logger.error(e);
+				}finally{
+					i++;
+				}				
+			}
+			if(StringUtils.isBlank(result)){
+				//发邮件
+				try {
+					SendMail.sendGroupMail("smtp.shangpin.com",fromEmail,"shangpin001",emailPass,"SummerGuru access_token获取失败","SummerGuru access_token获取失败,请查看日志","text/html;charset=utf-8");
+				} catch (MessagingException e) {
+					logger.error(e);
+					e.printStackTrace();
+				}
+				return UtilOfChannel.ERROR;
+			}
+			
 		}
 		
 		return result==null?UtilOfChannel.ERROR:result;
 	}
+	
 	
 	public static String getUTCTime(){
     	// 1、取得本地时间：  
