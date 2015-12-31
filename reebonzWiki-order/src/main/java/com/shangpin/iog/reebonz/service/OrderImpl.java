@@ -10,7 +10,6 @@ import java.util.ResourceBundle;
 import javax.mail.MessagingException;
 
 import com.google.gson.Gson;
-import com.shangpin.iog.onsite.base.utils.StringUtil;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
