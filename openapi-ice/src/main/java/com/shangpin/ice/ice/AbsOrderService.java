@@ -466,20 +466,20 @@ public abstract class AbsOrderService {
                                 }
 
                             }
-                            //防止时间差 造成第一次查询时没有 ，补漏的订单重新推送 下次再此确认已支付推送 造成重复推送
-                            OrderDTO orderOfDB = null;
-                            try {
-                                orderOfDB = productOrderService.getOrderByPurchaseNo(sopPurchaseOrderNo);
-                            } catch (ServiceException e) {
-                                e.printStackTrace();
-                            }
-                            if(null!=orderOfDB){
-                                orderDTO.setStatus(OrderStatus.NOHANDLE);
-                                orderDTO.setUpdateTime(new Date());
-                                orderDTO.setExcTime(new Date());
-                                orderDTO.setExcDesc("发现重复推送，不再处理");
-
-                            }
+//                            //防止时间差 造成第一次查询时没有 ，补漏的订单重新推送 下次再此确认已支付推送 造成重复推送
+//                            OrderDTO orderOfDB = null;
+//                            try {
+//                                orderOfDB = productOrderService.getOrderByPurchaseNo(sopPurchaseOrderNo);
+//                            } catch (ServiceException e) {
+//                                e.printStackTrace();
+//                            }
+//                            if(null!=orderOfDB){
+//                                orderDTO.setStatus(OrderStatus.NOHANDLE);
+//                                orderDTO.setUpdateTime(new Date());
+//                                orderDTO.setExcTime(new Date());
+//                                orderDTO.setExcDesc("发现重复推送，不再处理");
+//
+//                            }
 
 
                             orderDTO.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString().substring(0,purchaseOrderDetailbuffer.toString().length()-1));
@@ -688,20 +688,20 @@ public abstract class AbsOrderService {
         List<Integer> status = new ArrayList<>();
         status.add(1);
 
-        Map<String,List<PurchaseOrderDetail>> orderMap = null;
+        Map<String,List<PurchaseOrderDetailSpecial>> orderMap = null;
         try {
-            orderMap = this.getPurchaseOrder(supplierId, startDate, endDate, status);
+            orderMap = this.getPurchaseOrderSpecial(supplierId, startDate, endDate, status);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();){
-            Map.Entry<String, List<PurchaseOrderDetail>> entry = itor.next();
+        for(Iterator<Map.Entry<String,List<PurchaseOrderDetailSpecial>>> itor = orderMap.entrySet().iterator();itor.hasNext();){
+            Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();
             Map<String,Integer> stockMap = new HashMap<>();
             StringBuffer purchaseOrderDetailbuffer =new StringBuffer();
             //获取同一产品的数量
 
-            for(PurchaseOrderDetail purchaseOrderDetail:entry.getValue()){
+            for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){
 
                 if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
                     stockMap.put(purchaseOrderDetail.SupplierSkuNo, stockMap.get(purchaseOrderDetail.SupplierSkuNo)+1);
@@ -711,37 +711,40 @@ public abstract class AbsOrderService {
                 }
 
             }
-            List<ICEOrderDetailDTO>list=new ArrayList<>();
             StringBuffer buffer = new StringBuffer();
             StringBuffer sopbuffer= new StringBuffer();
-            String purchsePrice = "";
-            for(PurchaseOrderDetail purchaseOrderDetail:entry.getValue()){
+            String purchsePrice = "",spOrderNo="";
+            for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){
                 //记录采购单明细信息 以便发货
                 purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
                 purchsePrice = purchaseOrderDetail.SkuPrice;
+                logger.info(entry.getValue()  + " 采购价 " + purchsePrice);
                 //计算同一采购单的相同产品的数量
                 if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
-                    ICEOrderDetailDTO detailDTO = new ICEOrderDetailDTO();
-                    detailDTO.setSku_id(purchaseOrderDetail.SupplierSkuNo);
-                    detailDTO.setQuantity(stockMap.get(purchaseOrderDetail.SupplierSkuNo));
-                    buffer.append(detailDTO.getSku_id()).append(":").append(detailDTO.getQuantity()).append(",");
-                    sopbuffer.append(purchaseOrderDetail.SkuNo).append(":").append(detailDTO.getQuantity()).append(",");
-                    list.add(detailDTO);
+                    spOrderNo= purchaseOrderDetail.OrderNo;
+                    buffer.append(purchaseOrderDetail.SupplierSkuNo).append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
+                    sopbuffer.append(purchaseOrderDetail.SkuNo).append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
                     stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
                 }
 
             }
 
-
-
             OrderDTO orderOfDB = null;
             try {
-                 orderOfDB = productOrderService.getOrderByPurchaseNo(entry.getKey());
+                 orderOfDB = productOrderService.getOrderByOrderNo(spOrderNo);
             } catch (ServiceException e) {
                 e.printStackTrace();
             }
             if(null!=orderOfDB){
-                continue;
+                  if(null==orderOfDB.getSpPurchaseNo()||"".equals(orderOfDB.getSpPurchaseNo())){//新插入的记录， 由于时间差的原因尚未判断是否支付 待下次时间验证
+                      continue;//不做处理 待下次支付判断时 会做处理
+                  }else{
+                      if(entry.getKey().equals(orderOfDB.getSpPurchaseNo())){//原有数据不做处理
+                          continue;
+                      }else{//补单或重新采购的单子
+
+                      }
+                  }
 
             }
 
@@ -1304,6 +1307,77 @@ public abstract class AbsOrderService {
 //            gson.toJson(orderDetailList);
 //
 //        }
+        logger.warn("获取ice采购单 结束");
+
+        return purchaseOrderMap;
+
+    }
+
+
+    private Map<String,List<PurchaseOrderDetailSpecial>> getPurchaseOrderSpecial(String supplierId,String startTime ,String endTime,List<Integer> statusList) throws Exception{
+        int pageIndex=1,pageSize=20;
+        OpenApiServantPrx servant = null;
+        try {
+            servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        } catch (Exception e) {
+            loggerError.error("ICE  IcePrxHelper 初始化异常");
+            e.printStackTrace();
+        }
+        boolean hasNext=true;
+        logger.warn("获取ice采购单 开始");
+        Set<String> skuIds = new HashSet<String>();
+        Map<String,String>  purchaseTempMap = new HashMap<>();
+        Map<String,List<PurchaseOrderDetailSpecial>>  purchaseOrderMap=  new HashMap<>();
+        String sopPurchaseOrderNo = "";
+
+        while(hasNext){
+            List<PurchaseOrderDetail> orderDetails = null;
+            try {
+
+                PurchaseOrderQueryDto  orderQueryDto = new PurchaseOrderQueryDto(startTime,endTime,statusList
+                        ,pageIndex,pageSize);
+                PurchaseOrderDetailPage orderDetailPage=
+                        servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
+
+
+                orderDetails = orderDetailPage.PurchaseOrderDetails;
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            for (PurchaseOrderDetail orderDetail : orderDetails) {
+                sopPurchaseOrderNo  = orderDetail.SopPurchaseOrderNo;
+                if(purchaseTempMap.containsKey(sopPurchaseOrderNo)){
+                   continue;
+                }else{
+                    purchaseTempMap.put(sopPurchaseOrderNo,"");
+                    //转化为带订单号的采购单信息
+                    PurchaseOrderDetailSpecialPage  orderDetailSpecialPage = servant.FindPurchaseOrderDetailSpecial(supplierId,sopPurchaseOrderNo,"");
+
+                    if(null!=orderDetailSpecialPage&&null!=orderDetailSpecialPage.PurchaseOrderDetails&&orderDetailSpecialPage.PurchaseOrderDetails.size()>0) {  //存在采购单 就代表已支付
+
+                        for (PurchaseOrderDetailSpecial purchaseOrderDetailSpecial : orderDetailSpecialPage.PurchaseOrderDetails) {
+                            sopPurchaseOrderNo = purchaseOrderDetailSpecial.SopPurchaseOrderNo;
+                            if (purchaseOrderMap.containsKey(sopPurchaseOrderNo)) {
+                                purchaseOrderMap.get(sopPurchaseOrderNo).add(purchaseOrderDetailSpecial);
+                            } else {
+                                List<PurchaseOrderDetailSpecial> orderList = new ArrayList<>();
+                                orderList.add(purchaseOrderDetailSpecial);
+                                purchaseOrderMap.put(sopPurchaseOrderNo, orderList);
+
+                            }
+                        }
+                    }
+
+                }
+
+            }
+            pageIndex++;
+            hasNext=(pageSize==orderDetails.size());
+
+        }
+
         logger.warn("获取ice采购单 结束");
 
         return purchaseOrderMap;
