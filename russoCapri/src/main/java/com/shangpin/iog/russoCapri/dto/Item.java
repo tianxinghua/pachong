@@ -1,4 +1,4 @@
-package com.shangpin.iog.linoricci.dto;
+package com.shangpin.iog.russoCapri.dto;
 
 public class Item {
 	private String spuId;
@@ -8,8 +8,6 @@ public class Item {
 	private String color;
 	private String description;
 	private String productCode;
-	private String styleCode;
-	private String colorCode;
 	public String getSpuId() {
 		return spuId;
 	}
@@ -51,18 +49,6 @@ public class Item {
 	}
 	public void setProductCode(String productCode) {
 		this.productCode = productCode;
-	}
-	public String getStyleCode() {
-		return styleCode;
-	}
-	public void setStyleCode(String styleCode) {
-		this.styleCode = styleCode;
-	}
-	public String getColorCode() {
-		return colorCode;
-	}
-	public void setColorCode(String colorCode) {
-		this.colorCode = colorCode;
 	}
 	
 }
