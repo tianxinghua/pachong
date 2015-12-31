@@ -59,10 +59,11 @@ public class PozzileiStockImp extends AbsUpdateProductStock {
 //                barcode_map.put(skuno, null);
 //            }
 
-             barcode = skuno.trim();
+             //barcode = skuno.trim();
+             String itemId = skuno;
             //根据供应商skuno获取库存，并更新我方sop库存
-             url = "http://net13serverpo.net/pozziapi/Myapi/Productslist/GetPriceBybarcode?DBContext=Default&barcode=[[barcode]]&key=5jq3vkBd7d";
-            url = url.replaceAll("\\[\\[barcode\\]\\]", barcode);
+             url = "http://net13serverpo.net/pozziapi/Myapi/Productslist/GetQuantityByItemID?DBContext=Default&ItemID=[[itemId]]&key=5jq3vkBd7d";
+            url = url.replaceAll("\\[\\[itemId\\]\\]", itemId);
              json = null;
             try {
                 json = HttpUtil45.get(url, outTimeConfig, null);

@@ -1,11 +1,9 @@
 package com.shangpin.iog.woolrich.stock;
 
-import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -21,8 +19,6 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.woolrich.dto.Product;
-import com.shangpin.iog.woolrich.util.MyTxtUtil;
 import com.shangpin.sop.AbsUpdateProductStock;
 
 @Component("woolrichstock")
@@ -30,7 +26,6 @@ public class WoolrichStockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -67,12 +62,21 @@ public class WoolrichStockImp extends AbsUpdateProductStock {
     }
 
     private static String getStock(String sku){
-        String url = "http://www.woolrich.eu/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=07&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+    	String url = "";
+    	if (sku.substring(0, 2).equals("07")) {
+    		url = "http://www.woolrich.eu/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=07&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+		}else if(sku.substring(0, 2).equals("02")){
+			url = "http://www.aspesi.com/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=02&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+		}else if(sku.substring(0, 2).equals("05")){
+			url="http://www.casadei.com/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=05&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+		}
         OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
         String jsonstr = HttpUtil45.get(url,timeConfig,null,null,null);
         if( jsonstr != null && jsonstr.length() >0){
             JSONObject json = JSONObject.fromObject(jsonstr);
             if (!json.isNullObject() && !json.containsKey("fault")) {
+            	String string = json.getString("c_madeIn");
+            	System.out.println(string);
                 JSONObject inventObj = json.getJSONObject("inventory");
                 if (!inventObj.isNullObject() && !inventObj.isEmpty()){
                     int instock = inventObj.getInt("stock_level");
@@ -84,13 +88,12 @@ public class WoolrichStockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String args[]) throws Exception {
-        //加载spring
+        //加载spring 078055683960235
         loadSpringContext();
         //拉取数据
         WoolrichStockImp woolrichStockImp =(WoolrichStockImp)factory.getBean("woolrichstock");
-//        levelGroupStockImp.setUseThread(true);levelGroupStockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("levelgroup更新数据库开始");
+        logger.info("woolrich更新数据库开始");
         //2015081401431
         try {
         	woolrichStockImp.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));

@@ -2,6 +2,7 @@ package com.shangpin.iog.brunarosso.service;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.brunarosso.utils.XmlReader;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -10,15 +11,13 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 
+import com.shangpin.iog.service.ProductSearchService;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created by sunny on 2015/7/10.
@@ -30,12 +29,19 @@ public class FetchProduct {
 
     @Autowired
     ProductFetchService productFetchService;
+
+    @Autowired
+    ProductSearchService productSearchService;
+
     //String supplierId = "2015091801507";//2015071701342  new20150727
-    
+    private static int day;
     public static final String PROPERTIES_FILE_NAME = "param";
     static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
     
     static String supplierId = bundle.getString("supplierId");
+    static {
+        day = Integer.valueOf(bundle.getString("day"));
+    }
     /**
      *
      * @param map 尺寸集合,key是sku，value是尺寸list
@@ -46,6 +52,16 @@ public class FetchProduct {
         try {
             /*Products products = ObjectXMLUtil.xml2Obj(Products.class, result);
             List<Product> productList = products.getProducts();*/
+
+            Date startDate,endDate= new Date();
+            startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+            Map<String,SkuDTO> skuDTOMap = new HashedMap();
+            try {
+                skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+
             List<org.jdom2.Element>list  = XmlReader.getProductElement(url);
                 for (org.jdom2.Element element:list){
                     SpuDTO spu = new SpuDTO();
@@ -108,6 +124,10 @@ public class FetchProduct {
                                   	spuMap.put(key,sku.getSkuId());
                                   }
                                   logger.info("key"+key);
+
+                                if(skuDTOMap.containsKey(sku.getSkuId())){
+                                    skuDTOMap.remove(sku.getSkuId());
+                                }
                                 productFetchService.saveSKU(sku);
                               
                             }catch (Exception e) {
@@ -148,6 +168,18 @@ public class FetchProduct {
 //                        }
 //
 //                    }
+            }
+
+            for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+                Map.Entry<String,SkuDTO> entry =  itor.next();
+                if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+                    entry.getValue().setStock("0");
+                    try {
+                        productFetchService.updatePriceAndStock(entry.getValue());
+                    } catch (ServiceException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

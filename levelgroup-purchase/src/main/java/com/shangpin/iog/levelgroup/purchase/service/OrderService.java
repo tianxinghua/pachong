@@ -1,7 +1,21 @@
 package com.shangpin.iog.levelgroup.purchase.service;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
@@ -9,18 +23,13 @@ import com.shangpin.iog.levelgroup.purchase.common.MyFtpUtil;
 import com.shangpin.iog.product.service.OrderServiceImpl;
 import com.shangpin.iog.service.ProductSearchService;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
-
 /**
  * Created by Administrator on 2015/11/20.
  */
 @Component
 public class OrderService extends AbsOrderService {
+	
+	static Logger log = LoggerFactory.getLogger(OrderService.class);
 
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
     private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
@@ -29,6 +38,8 @@ public class OrderService extends AbsOrderService {
     private static  String supplierId = null;
     private static String supplierNo = null;
     private static String localFile = null;
+//    private static String startTime = null;
+//    private static String endTime = null;
 
     static {
         if(null==bdl){
@@ -69,23 +80,33 @@ public class OrderService extends AbsOrderService {
      */
     private void saveOrder(){
         List<OrderDTO> list = null;
+        Date startTime = new Date();
+        Date endTime = new Date();
+        startTime =DateTimeUtil.convertFormat(
+        		DateTimeUtil.shortFmt(DateTimeUtil.getAppointDayFromSpecifiedDay(startTime, -1, "D"))+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
+        endTime =DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(endTime)+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
         try {
-           list = orderService.getOrderBySupplierIdAndOrderStatus(supplierId,"confirmed");
+           list = orderService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId,"placed",DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
+        		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
         } catch (ServiceException e) {
             e.printStackTrace();
         }
+        
         StringBuffer ftpFile = new StringBuffer();
         ftpFile.append("ORDER CODE;ITEM CODE;SIZE;SKU;ORDER;PRICE;BRAND");
-        ftpFile.append("\\n\\t");
+        ftpFile.append("\n");
         for (OrderDTO orderDTO:list){
+        
             ftpFile.append(orderDTO.getSpPurchaseNo());
             ftpFile.append(";").append(orderDTO.getSpPurchaseDetailNo());
-            ftpFile.append(";").append("size");
+            ftpFile.append("size");
+            ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
             ftpFile.append(";").append(orderDTO.getMemo());
             ftpFile.append(";").append(orderDTO.getPurchasePriceDetail());
-            ftpFile.append("\\n\\t");
+            ftpFile.append("\n");
         }
-        //////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////
         Map<String, String> mongMap = new HashMap<>();
         mongMap.put("supplierId", supplierId);
         mongMap.put("supplierName", "LevelGroup");

@@ -46,7 +46,7 @@ public class FetchProduct extends AbsUpdateProductStock {
 
 	static {
 		if (null == bdl)
-			bdl = ResourceBundle.getBundle("conf");
+			bdl = ResourceBundle.getBundle("sop");
 		supplierId = bdl.getString("supplierId");
 		remoteFileName = bdl.getString("remoteFileName");
 		host = bdl.getString("HOST");

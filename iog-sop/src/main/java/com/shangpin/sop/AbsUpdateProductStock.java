@@ -94,6 +94,9 @@ public abstract class AbsUpdateProductStock {
 			for (SopProductSku sku : skus) {
 				List<SopSku> skuIces = sku.getSopSkuIces();
 				for (SopSku ice : skuIces) {
+					if(ice.getSkuNo().equals("30313199004")){
+						System.out.println("30313199004");
+					}
 					if(null!=ice.getSkuNo()&&!"".equals(ice.getSkuNo())&&null!=ice.getSupplierSkuNo()&&!"".equals(ice.getSupplierSkuNo())){
 						if(1!=ice.getIsDeleted()){
 							skuIds.add(ice.getSupplierSkuNo());

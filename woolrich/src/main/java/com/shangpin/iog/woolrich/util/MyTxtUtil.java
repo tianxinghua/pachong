@@ -8,47 +8,48 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+
+import net.sf.json.JSONObject;
 
 import com.csvreader.CsvReader;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.woolrich.dto.TxtDTO;
 
-/**
- * Created by Administrator on 2015/11/13.
- */
 public class MyTxtUtil {
     private static ResourceBundle bdl = null;
-    private static String httpurl;
     private static String localPath;
     private static String supplierId;
+    private static String detailurls;
     static {
         if (bdl == null)
             bdl = ResourceBundle.getBundle("conf");
-            httpurl = bdl.getString("url");
-            localPath = bdl.getString("path");
-            supplierId = bdl.getString("supplierId");
+        localPath = bdl.getString("path");
+        supplierId = bdl.getString("supplierId");
+        detailurls = bdl.getString("detailurls");
     }
     //http异常
-    private static String getHttpStr(){
-    	String str = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*20,1000*60*20), null);
+    private static String getHttpStr(String url){
+    	String str = HttpUtil45.get(url, new OutTimeConfig(1000*60*10,1000*60*20,1000*60*20), null);
     	return str;
     }
     /**
      * http下载txtcsv文件到本地路径
      * @throws MalformedURLException
      */
-    public static void txtDownload() throws MalformedURLException {
-        String csvFile =getHttpStr();
+    public static void txtDownload(String url) throws MalformedURLException {
+        String csvFile =getHttpStr(url);
         if (csvFile.contains("发生错误异常")) {
         	try {
 				Thread.currentThread().sleep(5000l);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-        	csvFile =getHttpStr();
+        	csvFile =getHttpStr(url);
 		}
         FileWriter fwriter = null;
         try {
@@ -101,6 +102,28 @@ public class MyTxtUtil {
     private static String getPath(){
     	return localPath+"/woolrich.txt";
     }
+    
+    public static String getOrigin(String sku,String brand){
+    	String url = "";
+    	if (brand.equalsIgnoreCase("woolrich")) {
+    		url = "http://www.woolrich.eu/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=07&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+		}else if(brand.equalsIgnoreCase("aspesi")){
+			url = "http://www.aspesi.com/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=02&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+		}else if(brand.equalsIgnoreCase("casadei")){
+			url="http://www.casadei.com/dw/shop/v15_8/products/"+sku+"/availability?inventory_ids=05&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
+		}
+        OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
+        String jsonstr = HttpUtil45.get(url,timeConfig,null,null,null);
+		if( jsonstr != null && jsonstr.length() >0){
+			if (!jsonstr.contains("error")) {
+				JSONObject json = JSONObject.fromObject(jsonstr);
+				if (!json.isNullObject() && !json.containsKey("fault")) {
+					return json.getString("c_madeIn");
+				}
+			}
+		}
+        return "";
+    }
 
 /**
  * test
@@ -109,7 +132,7 @@ public class MyTxtUtil {
 
         List<TxtDTO> list = null;
         try {
-            MyTxtUtil.txtDownload();
+            MyTxtUtil.txtDownload("");
             list = MyTxtUtil.readTXTFile();
         } catch (Exception e) {
             e.printStackTrace();

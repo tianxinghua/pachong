@@ -1,6 +1,7 @@
 package com.shangpin.iog.woolrich.service;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,13 +34,15 @@ public class FetchProduct {
 	private static Logger loggerError = Logger.getLogger("error");
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
-	private static String url;
+	private static String urls;
+	private static String brand;
 	public static int day;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
-		url = bdl.getString("url");
+		urls = bdl.getString("url");
+		brand = bdl.getString("brand");
 		day = Integer.valueOf(bdl.getString("day"));
 	}
 	@Autowired
@@ -50,23 +53,27 @@ public class FetchProduct {
 	private SkuPriceService skuPriceService;
 	public void fetchProductAndSave() {
 		Map<String,TxtDTO> spuMap = new HashMap<String,TxtDTO>();
-		//更改状态存储，不要忘了填币种
+		List<TxtDTO> dtoLists = new ArrayList<TxtDTO>();
 		try {
 			Date startDate,endDate= new Date();
 			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
-			//获取原有的SKU 仅仅包含价格和库存
-			Map<String,SkuDTO> skuDTOMap = new HashedMap();
+			Map<String,SkuDTO> skuDTOMap = new HashMap<String,SkuDTO>();
 			try {
 				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}
 			logger.info("开始抓取");
-			List<TxtDTO> txtlist = getList();
 			
-		    for(TxtDTO product:txtlist) {
-		    	if (product.getMANUFACTURER().equalsIgnoreCase("WOOLRICH")) {
-					
+			for(String url : urls.split(",")){
+				List<TxtDTO> txtlist = getList(url);
+				if (txtlist!=null&&txtlist.size()>0) {
+					dtoLists.addAll(txtlist);
+				}
+			}
+		    for(TxtDTO product:dtoLists) {
+		    	if (brand.contains(product.getMANUFACTURER().toLowerCase().trim())) {
+		    		
 		    		if (!spuMap.containsKey(product.getMASTER_SKU())) {
 		    			spuMap.put(product.getMASTER_SKU(), product);
 		    		}
@@ -107,7 +114,6 @@ public class FetchProduct {
 		    				e1.printStackTrace();
 		    			}
 		    		}
-		    		
 		    		///////////////////////////////////保存图片///////////////////////////////////
 		    		String picUrl = product.getIMAGEURL();
 		    		productFetchService.savePicture(supplierId, null, product.getVARIANT_SKU(), Arrays.asList(picUrl));
@@ -129,7 +135,8 @@ public class FetchProduct {
 	                spu.setCategoryName(category);
 	                spu.setMaterial(entry.getValue().getMATERIAL());
 	                spu.setCategoryGender(entry.getValue().getGENDER());
-	                spu.setProductOrigin("Spain");
+	                spu.setSeasonName(entry.getValue().getSEASON());
+	                spu.setProductOrigin(MyTxtUtil.getOrigin(entry.getValue().getVARIANT_SKU(),entry.getValue().getMANUFACTURER()));
 	                productFetchService.saveSPU(spu);
 	            } catch (ServiceException e) {
 	            	productFetchService.updateMaterial(spu);
@@ -154,14 +161,14 @@ public class FetchProduct {
 		}
 	}
 	
-	private List<TxtDTO> getList(){
+	private List<TxtDTO> getList(String url){
 		  //download
-       /* try {
-            MyTxtUtil.txtDownload();
+        try {
+            MyTxtUtil.txtDownload(url);
         } catch (MalformedURLException e) {
             loggerError.error("拉取数据失败！");
             e.printStackTrace();
-        }*/
+        }
         //read .csv file
         List<TxtDTO> list = null;
         try {
