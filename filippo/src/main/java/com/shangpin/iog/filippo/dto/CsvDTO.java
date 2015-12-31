@@ -18,12 +18,12 @@ public class CsvDTO {
 	private String SUB_GRP_ID;
 	private String SUB_GRP_DES;
 	private String ART_DES;
-	private String TG_ID;
 	private String COL_ID;
 	private String COL_DES;
 	private String REF;
 	private String VSO;
 	private String EUR;
+	private String TG_ID;
 	private String TG;
 	private String QTY;
 	private String MADEIN;
