@@ -374,7 +374,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				// 获取尺码
 				productSize = dto.getSize();
 				if (StringUtils.isNotBlank(productSize)) {
-
+					productSize=productSize.replace(",", ".");
 					if (productSize.indexOf("+") > 0) {
 						productSize = productSize.replace("+", ".5");
 					}
@@ -383,7 +383,6 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				} else {
 					productSize = "";
 				}
-
 				buffer.append(productSize).append(splitSign);
 
 				// 获取材质
