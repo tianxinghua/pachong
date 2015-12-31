@@ -137,6 +137,7 @@ public class FetchProduct {
 				if (size.substring(size.length()-1, size.length()).equals("-")) {
 					size = size.replace("-", ".5");
 				}
+				size = size.replace(",", ".");
 				sku.setProductSize(size);
 				sku.setProductCode(skuEntry.getValue().getART().replace("\"", ""));
 				try {
