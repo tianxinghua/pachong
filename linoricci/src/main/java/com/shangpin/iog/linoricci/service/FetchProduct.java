@@ -118,6 +118,8 @@ public class FetchProduct {
 					   item.setSupplierPrice(spuArr[16]);
 					   item.setDescription(spuArr[15]);
 					   item.setSpuId(spuArr[0]);
+					   item.setStyleCode(spuArr[3]);
+					   item.setColorCode(spuArr[4]);
 					   spuMap.put(spuArr[0], item);
 
 					   spu.setId(UUIDGenerator.getUUID());
@@ -190,7 +192,9 @@ public class FetchProduct {
         			sku.setStock(stock);
         			//skuid+barcode
         			sku.setSkuId(skuArr[0]+"-"+barCode);
-        			sku.setBarcode(barCode);
+        			
+        			sku.setBarcode(item.getStyleCode()+"|"+item.getColorCode());
+        			
         			sku.setProductCode(skuArr[0]);
         			// sku.setProductName(fields[14]);
         			try {
