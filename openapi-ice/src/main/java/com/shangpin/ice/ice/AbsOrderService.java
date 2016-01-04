@@ -742,7 +742,15 @@ public abstract class AbsOrderService {
                       if(entry.getKey().equals(orderOfDB.getSpPurchaseNo())){//原有数据不做处理
                           continue;
                       }else{//补单或重新采购的单子
-
+                    	  try {
+  							OrderDTO  orderOfDBForPurchase = productOrderService.getOrderByPurchaseNo(entry.getKey());
+  							if(null!=orderOfDBForPurchase){//采购单已插入 但订单不同以前的 现订单= 原订单+“-” + 两位随机数
+  								continue;
+  							}
+  						} catch (ServiceException e) {
+  							// TODO Auto-generated catch block
+  							e.printStackTrace();
+  						}
                       }
                   }
 
