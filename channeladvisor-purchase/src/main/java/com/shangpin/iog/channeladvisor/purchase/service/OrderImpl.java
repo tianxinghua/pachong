@@ -124,7 +124,7 @@ public class OrderImpl extends AbsOrderService {
 			logInfo.info("result==="+result);
 			if(StringUtils.isNotBlank(result) && !result.equals(HttpUtil45.errorResult)){
 				JSONObject json = JSONObject.fromObject(result);
-				orderDTO.setSupplierId(json.getString("ID"));
+				orderDTO.setSupplierOrderNo(json.getString("ID"));
 				orderDTO.setStatus(OrderStatus.PLACED);
 				orderDTO.setExcState("0");
 			}else{
