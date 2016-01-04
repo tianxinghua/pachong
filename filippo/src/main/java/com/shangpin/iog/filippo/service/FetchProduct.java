@@ -16,12 +16,10 @@ import org.springframework.stereotype.Component;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.filippo.stock.dto.CsvDTO;
+import com.shangpin.iog.filippo.dto.CsvDTO;
 import com.shangpin.iog.filippo.utils.DownloadAndReadCSV;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
@@ -119,7 +117,7 @@ public class FetchProduct {
 				SkuDTO sku = new SkuDTO();
 				sku.setId(UUIDGenerator.getUUID());
 				sku.setSkuId(skuEntry.getKey().replace("\"", ""));
-				sku.setBarcode(skuEntry.getValue().getART()+"<>"+skuEntry.getValue().getART_VAR()+"<>"+skuEntry.getValue().getART_COL()+"<>"+skuEntry.getValue().getTG());
+				sku.setBarcode(skuEntry.getValue().getART()+"<>"+skuEntry.getValue().getART_VAR()+"<>"+skuEntry.getValue().getART_COL()+"<>"+skuEntry.getValue().getTG().replace(",", "."));
 				sku.setSupplierId(supplierId);
 				sku.setSpuId(skuEntry.getValue().getART().replace("\"", ""));
 				sku.setColor(skuEntry.getValue().getCOL_DES().replace("\"", ""));
@@ -137,6 +135,7 @@ public class FetchProduct {
 				if (size.substring(size.length()-1, size.length()).equals("-")) {
 					size = size.replace("-", ".5");
 				}
+				size = size.replace(",", ".");
 				sku.setProductSize(size);
 				sku.setProductCode(skuEntry.getValue().getART().replace("\"", ""));
 				try {

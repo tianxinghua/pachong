@@ -45,8 +45,10 @@ public class StockClientImp extends AbsUpdateProductStock{
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //String url="E:\\brunarosso"+"Disponibilita.xml";
         Map<String,Integer>map=getSizeByPath("");
-        logger.info("供货商库存数量 =" + map.size());
         Map<String,Integer>returnMap=new HashMap<>();
+
+        logger.info("供货商库存数量 =" + map.size());
+
 //        Set<String>set=map.keySet();
 //        Iterator<String> iterator=set.iterator();
 //        while (iterator.hasNext()){
@@ -198,7 +200,7 @@ public class StockClientImp extends AbsUpdateProductStock{
             ftp.setRemoteHost(HOST);
 
             ftp.setRemotePort(Integer.parseInt(PORT));
-            ftp.setTimeout(3600000);
+            ftp.setTimeout(60*60*1000);
             ftp.connect();
 
             /** 登陆 */
