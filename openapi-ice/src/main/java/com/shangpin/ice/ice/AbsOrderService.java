@@ -757,7 +757,7 @@ public abstract class AbsOrderService {
             spOrder.setSupplierNo(supplierNo);
             spOrder.setStatus(OrderStatus.WAITPLACED);
             spOrder.setSpPurchaseNo(entry.getKey());
-            spOrder.setSpOrderId(entry.getKey());
+            spOrder.setSpOrderId(orderOfDB.getSpOrderId()+"-"+String.valueOf(Math.random()*10)+String.valueOf(Math.random()*10));
             spOrder.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString());
             spOrder.setDetail(buffer.toString().substring(0,buffer.toString().length()-1));
             spOrder.setMemo(sopbuffer.toString().substring(0,sopbuffer.toString().length()-1));
