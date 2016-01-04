@@ -746,6 +746,8 @@ public abstract class AbsOrderService {
                       }
                   }
 
+            }else{
+                continue;//一定会有的
             }
 
 
