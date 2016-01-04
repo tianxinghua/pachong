@@ -10,6 +10,7 @@ import com.shangpin.iog.levelgroup.purchase.service.OrderService;
 @Component
 @PropertySource("classpath:conf.properties")
 public class Schedule {
+	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
 
 	@Autowired
 	OrderService orderService;
@@ -27,6 +28,7 @@ public class Schedule {
 	@Scheduled(cron="${jobsSchedule}")
 	public void confirmOrder() {
 		try {
+			logger.info("订单确认开始");
 			orderService.confirmOrder();
 		} catch (Exception e) {
 			e.printStackTrace();
