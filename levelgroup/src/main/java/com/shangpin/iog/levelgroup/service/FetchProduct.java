@@ -6,13 +6,11 @@ import com.shangpin.iog.levelgroup.dto.Items;
 import com.shangpin.iog.levelgroup.dto.Product;
 import com.shangpin.iog.levelgroup.dto.Products;
 import com.shangpin.iog.common.utils.UUIDGenerator;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
-import org.apache.commons.httpclient.Header;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +23,7 @@ import java.util.*;
  */
 @Component("levelgroup")
 public class FetchProduct {
-    final Logger logger = Logger.getLogger(this.getClass());
+    private static Logger logger = Logger.getLogger("info");
     private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
@@ -33,7 +31,7 @@ public class FetchProduct {
     private static ResourceBundle bdl=ResourceBundle.getBundle("conf");;
 
     public void fetchProductAndSave(String filepath){
-
+    	String test = "097323332816235,097323332816242,097323332816259,097323332816266,097323332816273,097323332816280";
         String supplierId = bdl.getString("supplierId");
         try {
 
@@ -70,6 +68,11 @@ public class FetchProduct {
                 for(Item item:itemList){
                     SkuDTO sku  = new SkuDTO();
                     try {
+                    	
+                    	if (test.contains(product.getProductId())) {
+							logger.info("开始填充"+item.getItem_id()+"详细信息");
+						}
+                    	
                         sku.setId(UUIDGenerator.getUUID());
 
 
@@ -108,6 +111,11 @@ public class FetchProduct {
                     } catch (ServiceException e) {
                         try {
                             if(e.getMessage().equals("数据插入失败键重复")){
+                            	
+                            	if (test.contains(product.getProductId())) {
+        							logger.info(item.getItem_id()+"已经存在只更新库存价格");
+        						}
+                            	
                                 //更新价格和库存
                                 productFetchService.updatePriceAndStock(sku);
                             } else{
@@ -115,12 +123,18 @@ public class FetchProduct {
                             }
 
                         } catch (ServiceException e1) {
+                        	if (test.contains(product.getProductId())) {
+    							logger.info(e1.toString());
+    						}
                             e1.printStackTrace();
                         }
                     }
                 }
 
                 try {
+                	if (test.contains(product.getProductId())) {
+						logger.info(product.getProductId()+"开始保存spu");
+					}
                     spu.setId(UUIDGenerator.getUUID());
                     spu.setSupplierId(supplierId);
                     spu.setSpuId(product.getProductId());
@@ -132,6 +146,9 @@ public class FetchProduct {
                     spu.setCategoryGender(product.getCategoryGender());
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
+                	if (test.contains(product.getProductId())) {
+						logger.info(product.getProductId()+"保存spu失败"+e.toString());
+					}
                     e.printStackTrace();
                 }
 
@@ -156,6 +173,7 @@ public class FetchProduct {
 
 
     protected static List<Map<String,String>> getProductPartInfoList(List<String> rowlist){
+    	String test = "097323332816235,097323332816242,097323332816259,097323332816266,097323332816273,097323332816280";
         List<Map<String,String>> list = new ArrayList<>();
         for (String row : rowlist){
             String[] rows = row.split("[\n]");
@@ -173,6 +191,9 @@ public class FetchProduct {
                 }
                 if (p[0].length() != 3 && p.length > 11){
                     Map<String,String> map = new LinkedHashMap<>();
+                    if (test.contains(p[0])) {
+                    	logger.info("txt文件中读取到："+p[0]);
+                    }
                     map.put("id", p[0]);
                     map.put("price", p[11]);
                     map.put("saleprice", p[12]);
@@ -189,12 +210,16 @@ public class FetchProduct {
 
 
     private static Products completeProduct(List<Map<String,String>> list){
+    	String test = "097323332816235,097323332816242,097323332816259,097323332816266,097323332816273,097323332816280";
         if (list == null || list.size() == 0) return null;
         Products products = new Products();
         List<Product> plist = new ArrayList<Product>();
-
+        
         int i = 0;
         for (Map<String, String> map : list) {
+        	if (test.contains(map.get("id"))) {
+				logger.info("开始获取"+map.get("id")+"详细信息");
+			}
             String url = "http://www.ln-cc.com/dw/shop/v15_8/products/"+map.get("id")+"/availability?inventory_ids=09&client_id=8b29abea-8177-4fd9-ad79-2871a4b06658";
             OutTimeConfig timeConfig =new OutTimeConfig(1000*160,1000*160,1000*160);
             String jsonstr = HttpUtils.get(url,3);
@@ -212,6 +237,10 @@ public class FetchProduct {
                     }
 
                     if (instock > 0 && orderable) {
+                    	if (test.contains(map.get("id"))) {
+            				logger.info("保存"+map.get("id")+"详细信息到map");
+            			}
+                    	
                         Item item = new Item();
                         Product product = new Product();
                         List<Item> itemslist = new ArrayList<Item>();
