@@ -172,6 +172,7 @@ include 'iog-order-dubbo'
 
 include 'Della'
 include 'Della-stock'
+include 'Della-purchase'
 include 'wokstore'
 include 'wokstore-stock'
 include 'menlook'

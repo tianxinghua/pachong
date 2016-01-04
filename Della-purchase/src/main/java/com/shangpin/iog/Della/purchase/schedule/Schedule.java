@@ -1,16 +1,15 @@
-package com.shangpin.iog.levelgroup.purchase.schedule;
+package com.shangpin.iog.Della.purchase.schedule;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.iog.levelgroup.purchase.service.OrderService;
+import com.shangpin.iog.Della.purchase.service.OrderService;
 
 @Component
 @PropertySource("classpath:conf.properties")
 public class Schedule {
-	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
 
 	@Autowired
 	OrderService orderService;
@@ -28,7 +27,6 @@ public class Schedule {
 	@Scheduled(cron="${jobsSchedule}")
 	public void confirmOrder() {
 		try {
-			logger.info("订单确认开始");
 			orderService.confirmOrder();
 		} catch (Exception e) {
 			e.printStackTrace();

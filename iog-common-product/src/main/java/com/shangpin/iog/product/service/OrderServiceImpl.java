@@ -115,6 +115,12 @@ public class OrderServiceImpl implements OrderService {
 		 return  orderDAO.findBySupplierIdAndStatusAndTime(supplierId, status, startTime, endTime);
 	}
 	
+	@Override
+	public List<OrderDTO>  getOrderBySupplierIdAndOrderStatusAndUpdateTime(String supplierId,
+			String status, String startTime, String endTime) throws ServiceException {
+		 return  orderDAO.findBySupplierIdAndStatusAndUpdateTime(supplierId, status, startTime, endTime);
+	}
+	
     @Override
     public List<OrderDTO> getOrderBySupplierIdAndOrderStatus(String supplierId, String status) throws ServiceException {
         return  orderDAO.findBySupplierIdAndStatus(supplierId, status);

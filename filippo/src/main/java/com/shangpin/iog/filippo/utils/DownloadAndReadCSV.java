@@ -1,26 +1,25 @@
 package com.shangpin.iog.filippo.utils;
 
-import com.csvreader.CsvReader;
-import com.shangpin.iog.filippo.stock.dto.CsvDTO;
-
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
+import com.csvreader.CsvReader;
+import com.shangpin.iog.filippo.dto.CsvDTO;
 
 /**
  * Created by monkey on 2015/10/20.
@@ -68,9 +67,16 @@ public class DownloadAndReadCSV {
         return  returnList;
     }
     public static <T> T fillDTO(T t,List<String> data){
+    	CsvDTO product = new CsvDTO();
     	try {
 			Field[] fields = t.getClass().getDeclaredFields();
 			for (int i = 0; i < fields.length; i++) {
+				
+				  String name = fields[i].getName(); // 获取属性的名字
+	                name = name.substring(0, 1).toUpperCase() + name.substring(1);
+	                Method m = product.getClass().getMethod("set"+name,String.class);
+	                m.invoke(product,data.get(i));
+				
 				fields[i].setAccessible(true);
 				fields[i].set(t, data.get(i));
 			}
@@ -88,17 +94,17 @@ public class DownloadAndReadCSV {
      */
     public static <T> List<T> readLocalCSV(Class<T> clazz,String sep) throws Exception {
         
-//    	List<String> realPaths=downloadNet();
+    	List<String> realPaths=downloadNet();
         String rowString = null;
         List<T> dtoList = new ArrayList<T>();
         //Set<T> dtoSet = new HashSet<T>();
     	String[] split = null;
     	List<String> colValueList = null;
-//    	CsvReader cr = null;
-//    	for (String realPath : realPaths) {
+    	CsvReader cr = null;
+    	for (String realPath : realPaths) {
     		//解析csv文件
-//    		cr = new CsvReader(new FileReader(realPath));
-    		CsvReader cr = new CsvReader(new FileReader("F:/filippo1.csv"));
+    		cr = new CsvReader(new FileReader(realPath));
+//    		CsvReader cr = new CsvReader(new FileReader("F:/filippo1.csv"));
     		System.out.println("创建cr对象成功");
     		//得到列名集合
     		cr.readRecord();
@@ -113,7 +119,7 @@ public class DownloadAndReadCSV {
     			//dtoSet.add(t);
     			dtoList.add(t);
     		}
-//		}
+		}
         return dtoList;
     }
   
