@@ -424,7 +424,7 @@ public abstract class AbsOrderService {
 
             for(OrderDTO orderDTO:orderDTOList){
 
-                if(orderDTO.getSpOrderId().startsWith("C")){//采购单推送的
+                if(orderDTO.getSpOrderId().startsWith("C")||orderDTO.getSpOrderId().indexOf("-")>0){//采购单推送的
                     orderDTO.setStatus(OrderStatus.PAYED);//如果退款了 无所谓 临时保存为支付状态 后续有退款的处理
                     productOrderService.update(orderDTO);
 
@@ -757,7 +757,7 @@ public abstract class AbsOrderService {
             spOrder.setSupplierNo(supplierNo);
             spOrder.setStatus(OrderStatus.WAITPLACED);
             spOrder.setSpPurchaseNo(entry.getKey());
-            spOrder.setSpOrderId(orderOfDB.getSpOrderId()+"-"+String.valueOf(Math.random()*10)+String.valueOf(Math.random()*10));
+            spOrder.setSpOrderId(spOrderNo+"-"+String.valueOf((int)(Math.random() * 10))+String.valueOf((int)(Math.random() * 10)));
             spOrder.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString());
             spOrder.setDetail(buffer.toString().substring(0,buffer.toString().length()-1));
             spOrder.setMemo(sopbuffer.toString().substring(0,sopbuffer.toString().length()-1));
