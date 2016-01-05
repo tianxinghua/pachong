@@ -1,8 +1,8 @@
 package com.shangpin.iog.product.dao;
 
 
+import com.shangpin.iog.dao.base.HKIBaseDao;
 import com.shangpin.iog.dao.base.HKMapper;
-import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dto.ProductDTO;
 
 import org.apache.ibatis.annotations.Param;
@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @HKMapper
-public interface ProductsMapper extends IBaseDao<ProductDTO> {
+public interface ProductsMapper extends HKIBaseDao<ProductDTO> {
 
 
     /**

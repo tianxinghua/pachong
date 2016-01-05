@@ -52,10 +52,10 @@
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
     	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
         <property name="basePackage" value="com.shangpin.iog.*.dao"/>
+        <property name="annotationClass" value="com.shangpin.iog.dao.base.Mapper" />
     </bean>
     
      <!-- 自动扫描，多个包以 逗号分隔 -->
-    <context:component-scan base-package="com.shangpin.iog"/>
     <aop:aspectj-autoproxy/>
 	
 	<bean id="spinnakerTransactionManager"
