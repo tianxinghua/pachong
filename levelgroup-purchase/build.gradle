@@ -1,11 +1,15 @@
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
+	
+	compile(project(':openapi-ice')) {
+		exclude module: 'iog-common-product'
+	}
     compile(
             "com.google.code.gson:gson:2.2.2",
             project(':project-common'),
-            project(':openapi-ice'),
-            project(':iog-common-product')
+          
+            project(':iog-common-product2')
     )
 }
 
