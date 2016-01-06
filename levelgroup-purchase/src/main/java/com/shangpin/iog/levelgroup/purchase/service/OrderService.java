@@ -17,9 +17,11 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.levelgroup.purchase.common.MyFtpUtil;
+import com.shangpin.iog.levelgroup.purchase.common.OrderState;
 import com.shangpin.iog.product.service.OrderServiceImpl;
 import com.shangpin.iog.service.ProductSearchService;
 
@@ -63,6 +65,7 @@ public class OrderService extends AbsOrderService {
  	
  	// 订单确认处理
  	public void confirmOrder() {
+ 		logger.info("订单确认");
  		this.confirmOrder(supplierId);
  	}
 
@@ -71,6 +74,7 @@ public class OrderService extends AbsOrderService {
      * @throws ServiceException
      */
     public void saveAndUpLoadOrder(){
+    	logger.info("生成订单并上传");
         saveOrder();
         new MyFtpUtil().upLoad();
     }
@@ -86,25 +90,41 @@ public class OrderService extends AbsOrderService {
         		DateTimeUtil.shortFmt(DateTimeUtil.getAppointDayFromSpecifiedDay(startTime, -1, "D"))+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
         endTime =DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(endTime)+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
         try {
-           list = orderService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId,"placed",DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
+           list = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
         		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
         } catch (ServiceException e) {
             e.printStackTrace();
         }
         
         StringBuffer ftpFile = new StringBuffer();
-        ftpFile.append("ORDER CODE;ITEM CODE;SIZE;SKU;ORDER;PRICE;BRAND");
+        ftpFile.append("ORDER CODE;ITEM CODE;SIZE;SKU;ORDER;PRICE;BRAND;STATUS");
         ftpFile.append("\n");
         for (OrderDTO orderDTO:list){
+        	try {
+				ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getDetail().split(":")[0]);
+				ftpFile.append(orderDTO.getSpPurchaseNo());
+	            ftpFile.append(";").append(orderDTO.getSpPurchaseDetailNo());
+	            if(product!=null){
+	            	ftpFile.append(product.getSize());
+	            	ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
+		            ftpFile.append(";").append(product.getNewSupplierPrice());
+		            ftpFile.append(";").append(product.getBrandName());
+		            ftpFile.append(";").append(orderDTO.getStatus());
+	            }else{
+	            	ftpFile.append(" ");
+	            	ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
+		            ftpFile.append(";").append(0);
+		            ftpFile.append(";").append(" ");
+		            ftpFile.append(";").append(orderDTO.getStatus());
+	            }
+	            
+	            ftpFile.append("\n");
+        	} catch (ServiceException e) {
+				e.printStackTrace();
+			}
         
-            ftpFile.append(orderDTO.getSpPurchaseNo());
-            ftpFile.append(";").append(orderDTO.getSpPurchaseDetailNo());
-            ftpFile.append("size");
-            ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
-            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
-            ftpFile.append(";").append(orderDTO.getMemo());
-            ftpFile.append(";").append(orderDTO.getPurchasePriceDetail());
-            ftpFile.append("\n");
         }
         ///////////////////////////////////////////////////////////////////////////////////////
         Map<String, String> mongMap = new HashMap<>();
@@ -130,12 +150,14 @@ public class OrderService extends AbsOrderService {
     }
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
-		orderDTO.setStatus(OrderStatus.PLACED);
+		logger.info("下单成功!");
+		orderDTO.setStatus(OrderStatus.PAYED);
 		
 	}
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		orderDTO.setExcState("0");
+		logger.info("订单确认成功,订单状态为:"+orderDTO.getStatus());
 		//createOrder(OrderStatus.CONFIRMED, orderDTO);
 		orderDTO.setStatus(OrderStatus.CONFIRMED);
 		

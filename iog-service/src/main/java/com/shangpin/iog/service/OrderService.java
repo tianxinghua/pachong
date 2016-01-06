@@ -58,6 +58,8 @@ public interface OrderService {
      * @throws ServiceException
      */
     public List<OrderDTO>  getOrderBySupplierIdAndOrderStatusAndTime(String supplierId,String status,String startTime,String endTime) throws ServiceException;
+    
+    public List<OrderDTO>  getOrderBySupplierIdAndOrderStatusAndUpdateTime(String supplierId,String status,String startTime,String endTime) throws ServiceException;
     /**
      * 获取订单 根据订单ID 和 订单状态
      * @param supplierId 供货商ID
