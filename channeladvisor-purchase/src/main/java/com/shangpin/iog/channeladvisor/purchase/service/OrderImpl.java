@@ -91,9 +91,11 @@ public class OrderImpl extends AbsOrderService {
 					String sku_stock = orderDTO.getDetail().split(",")[0];
 					String sku = sku_stock.split(":")[0];
 					id = productSearchService.findProductForOrder(supplierId,sku).getSpuId();
+					logInfo.info("id======"+id);
 					stock = sku_stock.split(":")[1];
 					String content = HttpUtil45.operateData("get", "", "https://api.channeladvisor.com/v1/Products("+id+")?access_token="+access_token, timeConfig, null, "", "", "");
 					String realStock = JSONObject.fromObject(content).getString("TotalAvailableQuantity");
+					logInfo.info("realStock======"+realStock);
 					if(Integer.parseInt(stock) <= Integer.parseInt(realStock)){
 						result = HttpUtil45.operateData("post", "json",createOrderUrl, timeConfig, null, jsonValue, "", "");
 					}else{

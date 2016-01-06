@@ -113,7 +113,7 @@ public class UtilOfChannel {
 					logger.error(e);
 					e.printStackTrace();
 				}
-				return UtilOfChannel.ERROR;
+				
 			}
 			
 		}
