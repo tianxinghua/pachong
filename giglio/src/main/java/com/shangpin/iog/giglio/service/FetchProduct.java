@@ -145,6 +145,21 @@ public class FetchProduct {
                     //保存SKU
                     try {
                         productFetchService.saveSKU(sku);
+                        //保存SKU的图片
+                        if (picsList != null) {
+                            for (String pic : picsList) {
+                                ProductPictureDTO dto = new ProductPictureDTO();
+                                dto.setPicUrl(pic);
+                                dto.setSupplierId(supplierId);
+                                dto.setId(UUIDGenerator.getUUID());
+                                dto.setSkuId(skuId);
+                                try {
+                                    productFetchService.savePictureForMongo(dto);
+                                } catch (ServiceException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
                     } catch (ServiceException e) {
                         try {
                             if (e.getMessage().equals("数据插入失败键重复")) {
@@ -157,21 +172,7 @@ public class FetchProduct {
                         }
                     }
 
-                    //保存SKU的图片
-                    if (picsList != null) {
-                        for (String pic : picsList) {
-                            ProductPictureDTO dto = new ProductPictureDTO();
-                            dto.setPicUrl(pic);
-                            dto.setSupplierId(supplierId);
-                            dto.setId(UUIDGenerator.getUUID());
-                            dto.setSkuId(skuId);
-                            try {
-                                productFetchService.savePictureForMongo(dto);
-                            } catch (ServiceException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
+
 
                     //SPU
                     SpuDTO spu = new SpuDTO();

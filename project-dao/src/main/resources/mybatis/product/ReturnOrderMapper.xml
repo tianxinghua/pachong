@@ -61,7 +61,7 @@
         EXC_DESC  as EXC_DESC
 
 
-        from `ORDER`
+        from RETURN_ORDER
         <where>
 
             <if test="null!=supplierId">
@@ -77,7 +77,7 @@
 
 
 
-    <select id="findBySupplierIdAndOrderStatusAndExcStatus"  resultMap="OrderResultMap">
+    <select id="findBySupplierIdAndOrderStatusAndExcStatus"    resultMap="OrderResultMap">
         select
         ID as ID,
         SUPPLIER_ID as SUPPLIER_ID,
@@ -93,7 +93,7 @@
         EXC_DESC  as EXC_DESC
 
 
-        from `ORDER`
+        from RETURN_ORDER
         <where>
 
             <if test="null!=supplierId">

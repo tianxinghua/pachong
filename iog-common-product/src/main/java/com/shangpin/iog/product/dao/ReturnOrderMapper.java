@@ -36,10 +36,13 @@ public interface ReturnOrderMapper extends IBaseDao<ReturnOrderDTO> {
 
     /**
      * 获取退单信息
-     * @param supplierId
-     * @param status
+     * @param supplierId 供货商
+     * @param status    订单状态
+     * @param excState  异常状态
      * @return
      */
     public List<ReturnOrderDTO> findBySupplierIdAndOrderStatusAndExcStatus(@Param("supplierId") String supplierId,
                                                           @Param("status") String status,@Param("excState") String excState) ;
+
+
 }

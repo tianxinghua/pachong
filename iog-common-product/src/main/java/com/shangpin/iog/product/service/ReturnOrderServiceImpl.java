@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,8 +56,9 @@ public class ReturnOrderServiceImpl implements ReturnOrderService{
     }
 
     @Override
-    public List<ReturnOrderDTO> getReturnOrderBySupplierIdAndOrderStatusAndExcStatus(String supplierId, String status, String excStatus) throws ServiceException {
-        return returnOrderDao.findBySupplierIdAndOrderStatusAndExcStatus(supplierId,status,excStatus);
+    public List<ReturnOrderDTO> getReturnOrderBySupplierIdAndOrderStatusAndExcStatus(String supplierId, String status, String excState) throws ServiceException {
+
+         return returnOrderDao.findBySupplierIdAndOrderStatusAndExcStatus(supplierId,status,excState);
     }
 
 

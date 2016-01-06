@@ -546,6 +546,7 @@ public abstract class AbsOrderService {
         //拉取采购单存入本地库
         List<ReturnOrderDTO>  orderDTOList= null;
         try {
+//            orderDTOList  =returnOrderService.getReturnOrderBySupplierIdAndOrderStatus(supplierId,OrderStatus.WAITCANCEL);
             orderDTOList  =returnOrderService.getReturnOrderBySupplierIdAndOrderStatusAndExcStatus(supplierId, OrderStatus.WAITCANCEL,"1");
             if(null!=orderDTOList){
 
@@ -556,7 +557,7 @@ public abstract class AbsOrderService {
                         handleCancelOrder(deleteOrder);
                         //更改退单状态无论成功或失败 还需要更改订单状态
 
-                        updateRefundOrderMsg(deleteOrder);
+                        updateCancelOrderMsg(deleteOrder);
 
 
                     } catch (Exception e) {
