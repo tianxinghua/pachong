@@ -1,3 +1,228 @@
+
+include "project-common"
+
+rootProject.name = 'iog'
+
+include 'project-framework'
+
+include 'spinnaker'
+
+include 'iog-facade'
+
+include 'project-dao'
+
+include 'iog-service'
+
+include 'iog-web-container'
+
+include 'apennine'
+
+include 'iog-common-product'
+
+include 'acanfora'
+
+include 'coltorti'
+
+include 'acanfora-stock'
+
+include 'openapi-ice'
+
+include 'galiano'
+
+
+include 'ebay'
+
+include 'galiano-stock'
+include 'iog-facade-impl'
+
+include 'spinnaker-stock'
+include 'brunarosso'
+include 'vela'
+include 'vela-stock'
+include 'brunarosso-stock'
+include 'gilt'
+include 'lino'
+include 'lino-stock'
+include 'ostore'
+include 'channeladvisor'
+include 'channeladvisor-stock'
+include 'channeladvisor-purchase'
+include 'ostore-stock'
+include 'leam'
+include 'leam-stock'
+
+include 'sanremo'
+include 'sanremo-stock'
+include 'iog-web-tmp'
+include 'iog-sop'
+include 'iog-facade-dubbo'
+
+include 'bagheera'
+include 'bagheera-stock'
+include 'gilt-stock'
+include 'gilt-purchase'
+include 'tony'
+include 'tessabit'
+include 'tessabit-stock'
+include 'marylou'
+include 'marylou-stock'
+include 'onsite'
+include 'tony-stock'
+include 'tony-purchase'
+include 'atelier'
+include 'atelier-stock'
+include 'atelier-purchase'
+include 'linoricci'
+include 'linoricci-stock'
+
+//include 'alducadaosta'
+
+include 'bagheera-stock'
+
+include 'itemInfo'
+include 'atelier-stock'
+
+include 'giglio'
+
+include 'atelier-purchase'
+include 'atelier-stock'
+include 'atelier-purchase'
+
+include 'prodottimonti'
+include 'prodottimonti-stock'
+include 'levelgroup'
+include 'levelgroup-purchase'
+include 'levelgroup-stock'
+
+
+include 'bagheera-stock'
+
+include 'itemInfo'
+include 'itemInfo-stock'
+include 'itemInfo-purchase'
+
+
+include 'dante5'
+include 'dante5-stock'
+include 'giglio'
+include 'giglio-stock'
+include 'dellogliostore'
+include 'dellogliostore-stock'
+include 'eleonorabonucci'
+include 'eleonorabonucci-stock'
+include 'cirillomoda'
+include 'cirillomoda-stock'
+
+
+include 'prodottimonti'
+include 'prodottimonti-stock'
+include 'levelgroup'
+include 'levelgroup-stock'
+include 'reebonzWiki'
+include 'reebonzWiki-order'
+include 'reebonzWiki-stock'
+include 'linoricci'
+include 'linoricci-stock'
+include 'fashionesta'
+include 'fashionesta-stock'
+include 'itemInfo'
+include 'itemInfo-stock'
+
+include 'stefaniamode'
+include 'stefaniamode-stock'
+
+include 'dante5'
+include 'dante5-stock'
+
+
+include 'itemInfo'
+include 'itemInfo-stock'
+//include 'itemInfo-purchase'
+include 'monnierfreres'
+include 'monnierfreres-stock'
+
+include 'julian-fashion'
+include 'vinicco'
+include 'tizianafausti'
+include 'bernardellistores'
+include 'monnierfreres'
+include 'monnierfreres-stock'
+
+include 'iog-price'
+
+
+include 'theclutcher'
+include 'theclutcher-stock'
+include 'filippo'
+include 'filippo-stock'
+include 'forzieri'
+include 'forzieri-stock'
+include 'forzieri-purchase'
+//include 'hovok-stock'
+include 'tony-fetchstock'
+include 'railSoAtelier'
+include 'railSoAtelier-stock'
+include 'vrients'
+include 'vrients-stock'
+include 'spinnaker-order'
+include 'havok'
+include 'havok-stock'
+include 'biancabianca'
+include 'biancabianca-stock'
+include 'iog-order-dubbo'
+
+include 'Della'
+include 'Della-stock'
+include 'Della-purchase'
+include 'wokstore'
+include 'wokstore-stock'
+include 'menlook'
+include 'menlook-stock'
+include 'linoricci-purchase'
+//include 'anatwine'
+include 'pavinGroup'
+include 'efashion'
+include 'pavinGroup-stock'
+include 'efashion-stock'
+include 'gbEDS'
+//include 'nugnesEDS'
+include 'wiseEDS'
+//include 'rossanaNiccolai'
+//include 'efashion-order'
+include 'gbEDS-order'
+include 'gbEDS-stock'
+//include 'nugnes-order'
+include 'nugnes-stock'
+include 'rossanaNiccolai-order'
+include 'rossanaNiccolai-stock'
+include 'wise-order'
+include 'wise-stock'
+include 'stockMonitoring'
+include 'cosentinoShop'
+include 'cosentinoShop-stock'
+include 'rossana'
+include 'rossana-stock'
+include 'coltorti-purchase'
+include 'pozzilei'
+include 'pozzilei-stock'
+include 'fratinardi'
+include 'fratinardi-stock'
+include 'tony-day-stock'
+include 'woolrich'
+include 'woolrich-stock'
+include 'fratinardi'
+include 'fratinardi-stock'
+include 'aspesi-stock'
+include 'aspesi'
+include 'casadei-stock'
+include 'casadei'
+include 'Daniello'
+include 'atelier-ostore-stock'
+include 'atelier-ostore'
+include 'russoCapri'
+include 'russoCapri-stock'
+include 'project-muldatass-dao'
+include 'iog-common-product2'
 include "project-common"
 
 rootProject.name = 'iog'

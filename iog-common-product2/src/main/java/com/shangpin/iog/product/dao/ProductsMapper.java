@@ -1,18 +1,18 @@
 package com.shangpin.iog.product.dao;
 
 
-import com.shangpin.iog.dao.base.HKMapper;
-import com.shangpin.iog.dao.base.IBaseDao;
-import com.shangpin.iog.dto.ProductDTO;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
-import java.util.Date;
-import java.util.List;
+import com.shangpin.iog.dao.base.HKIBaseDao;
+import com.shangpin.iog.dao.base.Mapper;
+import com.shangpin.iog.dto.ProductDTO;
 
-@HKMapper
-public interface ProductsMapper extends IBaseDao<ProductDTO> {
+@Mapper
+public interface ProductsMapper extends HKIBaseDao<ProductDTO> {
 
 
     /**
