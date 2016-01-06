@@ -55,6 +55,13 @@ public class ReturnOrderServiceImpl implements ReturnOrderService{
     }
 
     @Override
+    public List<ReturnOrderDTO> getReturnOrderBySupplierIdAndOrderStatusAndExcStatus(String supplierId, String status, String excStatus) throws ServiceException {
+        return returnOrderDao.findBySupplierIdAndOrderStatusAndExcStatus(supplierId,status,excStatus);
+    }
+
+
+    @Override
+
     public void updateReturnOrderStatus(Map<String, String> statusMap) throws ServiceException {
         try {
             returnOrderDao.updateReturnOrderStatus(statusMap);

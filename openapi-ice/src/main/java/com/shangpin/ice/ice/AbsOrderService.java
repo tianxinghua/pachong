@@ -511,7 +511,8 @@ public abstract class AbsOrderService {
         List<OrderDTO>  orderDTOList= null;
         try {
         	String nowDate = DateTimeUtil.getDateTime(); 
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
+//            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
+            orderDTOList  = productOrderService.getOrderBySupplierIdAndOrderStatusAndExceptionStatus(supplierId,OrderStatus.WAITPLACED,"1",nowDate,2);
             if(null!=orderDTOList){
 
                 for(OrderDTO orderDTO:orderDTOList){
@@ -545,7 +546,7 @@ public abstract class AbsOrderService {
         //拉取采购单存入本地库
         List<ReturnOrderDTO>  orderDTOList= null;
         try {
-            orderDTOList  =returnOrderService.getReturnOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITCANCEL);
+            orderDTOList  =returnOrderService.getReturnOrderBySupplierIdAndOrderStatusAndExcStatus(supplierId, OrderStatus.WAITCANCEL,"1");
             if(null!=orderDTOList){
 
                 for(ReturnOrderDTO deleteOrder:orderDTOList){
@@ -748,8 +749,7 @@ public abstract class AbsOrderService {
   								continue;
   							}
   						} catch (ServiceException e) {
-  							// TODO Auto-generated catch block
-  							e.printStackTrace();
+  							continue;
   						}
                       }
                   }
@@ -1139,6 +1139,7 @@ public abstract class AbsOrderService {
         try {
             order = productOrderService.getOrderByUuId(uuId);
             order.setStatus(OrderStatus.CANCELLED);
+            order.setUpdateTime(new Date());
             productOrderService.update(order);
         } catch (ServiceException e) {
             e.printStackTrace();

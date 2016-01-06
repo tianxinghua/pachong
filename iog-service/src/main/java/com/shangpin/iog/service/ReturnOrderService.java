@@ -34,6 +34,17 @@ public interface ReturnOrderService {
      */
     public List<ReturnOrderDTO> getReturnOrderBySupplierIdAndOrderStatus(String supplierId,String status ) throws ServiceException;
 
+
+    /**
+     * 获取退单信息 根据供货商编号和状态
+     * @param supplierId  供货商Id
+     * @param status    订单状态
+     * @param excStatus 异常状态
+     * @return
+     * @throws ServiceException
+     */
+    public List<ReturnOrderDTO> getReturnOrderBySupplierIdAndOrderStatusAndExcStatus(String supplierId,String status,String excStatus ) throws ServiceException;
+
     /**
      * 修改退单状态
      * @param statusMap 状态信息  ORDERID(UUID),STATUS
