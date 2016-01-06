@@ -8,7 +8,6 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
      
-    <!-- DBCP方式配置数据源1Start -->
     <bean id="iogDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${db.driverClassName}"/>
         <property name="url" value="${db.url}"/>
@@ -28,8 +27,6 @@
         <property name="minEvictableIdleTimeMillis" value="10000"/>
     </bean>
 
-    <!-- DBCP方式配置数据源1End -->
-    <!-- DBCP方式配置数据源2Start -->
     <bean id="ioghkDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${hk.driverClassName}"/>
         <property name="url" value="${hk.url}"/>
@@ -49,5 +46,4 @@
         <property name="minEvictableIdleTimeMillis" value="10000"/>
     </bean>
 
-    <!-- DBCP方式配置数据源2End -->
 </beans>
