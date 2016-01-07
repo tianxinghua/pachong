@@ -4,6 +4,7 @@ import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
+
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -33,4 +34,15 @@ public interface ReturnOrderMapper extends IBaseDao<ReturnOrderDTO> {
      */
     public List<ReturnOrderDTO> findBySupplierIdAndStatus(@Param("supplierId") String supplierId,
                                                     @Param("status") String status) ;
+    
+    /**
+     * 获取退单信息
+     * @param supplierId
+     * @param status
+     * @return
+     */
+    public List<ReturnOrderDTO> findBySupplierIdAndOrderStatusAndExcStatus(@Param("supplierId") String supplierId,
+                                                          @Param("status") String status,@Param("excState") String excState) ;
+    
+    
 }
