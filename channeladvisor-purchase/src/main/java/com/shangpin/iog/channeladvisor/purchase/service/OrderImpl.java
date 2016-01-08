@@ -110,6 +110,7 @@ public class OrderImpl extends AbsOrderService {
 				
 				
 			}catch(ServiceException ex){
+				logger.error("ex=="+ex);
 				//access_token过期
 				if(ex.getMessage().equals("状态码:401")){
 					access_token = UtilOfChannel.getNewToken(timeConfig);
@@ -232,7 +233,7 @@ public class OrderImpl extends AbsOrderService {
 					HttpUtil45.operateData("put", "json", url, timeConfig, null, jsonValue, "", "");
 					
 				}catch(ServiceException e){
-					
+					logger.error("e=="+e.getMessage());
 					if(e.getMessage().equals("状态码:401")){//access_token过期
 						access_token = UtilOfChannel.getNewToken(timeConfig);
 						handleConfirmOrder(orderDTO);
@@ -244,7 +245,7 @@ public class OrderImpl extends AbsOrderService {
 						result = HttpUtil45.errorResult;
 						excDesc = e.getMessage();
 					}	
-					logger.error(e.getMessage());
+					
 				}
 			}else{
 				result = HttpUtil45.errorResult;
@@ -299,6 +300,7 @@ public class OrderImpl extends AbsOrderService {
 					HttpUtil45.operateData("post", "json", url, timeConfig, null, jsonValue, "", "");
 				
 				}catch(ServiceException e){
+					logger.error("e=="+e);
 					if(e.getMessage().equals("状态码:401")){//access_token过期
 						access_token = UtilOfChannel.getNewToken(timeConfig);
 						handleCancelOrder(deleteOrder);
@@ -309,9 +311,8 @@ public class OrderImpl extends AbsOrderService {
 					}else{
 						rStr = HttpUtil45.errorResult;
 						excDesc = e.getMessage();
-					}
+					}	
 					
-					logger.error(e);
 				}
 			}else{
 				rStr = HttpUtil45.errorResult;
@@ -365,6 +366,7 @@ public class OrderImpl extends AbsOrderService {
 					HttpUtil45.operateData("post", "json", url, timeConfig, null, jsonValue, "", "");
 				
 				}catch(ServiceException e){
+					logger.error("e=="+e);
 					//access_token过期
 					if(e.getMessage().equals("状态码:401")){
 						access_token = UtilOfChannel.getNewToken(timeConfig);
@@ -376,9 +378,8 @@ public class OrderImpl extends AbsOrderService {
 					}else{
 						result = HttpUtil45.errorResult;
 						excDesc = e.getMessage();
-					}
+					}				
 					
-					logger.error(e);
 				}
 			}else{
 				result = HttpUtil45.errorResult;
