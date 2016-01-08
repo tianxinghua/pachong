@@ -1,6 +1,7 @@
 package com.shangpin.iog.giglio.service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -8,6 +9,8 @@ import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -35,20 +38,35 @@ public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
 
+    @Autowired
+    ProductSearchService productSearchService;
+
     private static ResourceBundle bdl = null;
     private static String supplierId;
+    private static int day;
 
     static {
         if (bdl == null)
             bdl = ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        day = Integer.valueOf(bdl.getString("day"));
     }
 
 
     public void fetchProductAndSave(final String url) {
 
         try {
-            Map<String,String> mongMap = new HashMap<>();
+
+            Date startDate,endDate= new Date();
+            startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+            Map<String,SkuDTO> skuDTOMap = new HashedMap();
+            try {
+                skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+
+
             OutTimeConfig timeConfig =new OutTimeConfig(1000*60*60,1000*60*60,1000*60*60);
 
             String result = HttpUtil45.get(url, timeConfig, null);
@@ -144,7 +162,12 @@ public class FetchProduct {
 
                     //保存SKU
                     try {
+                        if(skuDTOMap.containsKey(sku.getSkuId())){
+                            skuDTOMap.remove(sku.getSkuId());
+                        }
+
                         productFetchService.saveSKU(sku);
+
                     } catch (ServiceException e) {
                         try {
                             if (e.getMessage().equals("数据插入失败键重复")) {
@@ -159,19 +182,9 @@ public class FetchProduct {
 
                     //保存SKU的图片
                     if (picsList != null) {
-                        for (String pic : picsList) {
-                            ProductPictureDTO dto = new ProductPictureDTO();
-                            dto.setPicUrl(pic);
-                            dto.setSupplierId(supplierId);
-                            dto.setId(UUIDGenerator.getUUID());
-                            dto.setSkuId(skuId);
-                            try {
-                                productFetchService.savePictureForMongo(dto);
-                            } catch (ServiceException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        productFetchService.savePicture(supplierId, null, skuId, picsList);
                     }
+
 
                     //SPU
                     SpuDTO spu = new SpuDTO();
@@ -187,9 +200,27 @@ public class FetchProduct {
                     try {
                         productFetchService.saveSPU(spu);
                     } catch (ServiceException e) {
-                        e.printStackTrace();
+                        try {
+                            productFetchService.updateMaterial(spu);
+                        } catch (ServiceException e1) {
+                            e1.printStackTrace();
+                        }
                     }
                 }
+
+                for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+                    Map.Entry<String,SkuDTO> entry =  itor.next();
+                    if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+                        entry.getValue().setStock("0");
+                        try {
+                            productFetchService.updatePriceAndStock(entry.getValue());
+                        } catch (ServiceException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {

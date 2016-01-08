@@ -5,6 +5,7 @@ import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.product.dao.ReturnOrderMapper;
 import com.shangpin.iog.service.ReturnOrderService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,4 +75,11 @@ public class ReturnOrderServiceImpl implements ReturnOrderService{
         }
 
     }
+
+	@Override
+	public List<ReturnOrderDTO> getReturnOrderBySupplierIdAndOrderStatusAndExcStatus(
+			String supplierId, String status, String excStatus)
+			throws ServiceException {
+		return returnOrderDao.findBySupplierIdAndOrderStatusAndExcStatus(supplierId,status,excStatus);
+	}
 }

@@ -24,6 +24,9 @@ public class Product {
     private String url;
     private String supply_price;
     private String producer_id;
+    private String made;//产地
+    private String gender; //性别
+
 
     private Items items;
 
@@ -122,6 +125,22 @@ public class Product {
 
     public void setItems(Items items) {
         this.items = items;
+    }
+
+    public String getMade() {
+        return made;
+    }
+
+    public void setMade(String made) {
+        this.made = made;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     //    public List<Item> getItems() {

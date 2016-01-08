@@ -108,8 +108,14 @@ public class OrderServiceImpl implements OrderService {
 		
 		 return  orderDAO.findBySupplierIdAndStatusAndDate(supplierId, status,date);
 	}
-	
-	@Override
+
+    @Override
+    public List<OrderDTO> getOrderBySupplierIdAndOrderStatusAndExceptionStatus(String supplierId, String status, String excState, String date ,int interval) throws ServiceException {
+        return orderDAO.findBySupplierIdAndOrderStatusAndDateAndExcSatus(supplierId,status,excState,date,interval);
+    }
+
+
+    @Override
 	public List<OrderDTO>  getOrderBySupplierIdAndOrderStatusAndTime(String supplierId,
 			String status, String startTime, String endTime) throws ServiceException {
 		 return  orderDAO.findBySupplierIdAndStatusAndTime(supplierId, status, startTime, endTime);
