@@ -189,12 +189,20 @@ public class OrderImpl extends AbsOrderService {
 		items.add(itemMap);
 		param.put("ProfileID", 12018111);
 		param.put("SiteID", 587);
-		param.put("SiteName", "shangpin");
-		param.put("BuyerEmailAddress", "buyer@shangpin.com");
+		param.put("SiteName", "Shangpin.com");
+		param.put("BuyerEmailAddress", "sunxiaowen@shangpin.com");
 		param.put("CreatedDateUtc", UtilOfChannel.getUTCTime());//
 		param.put("TotalPrice", totalPrice);//
 		param.put("Items", JSONArray.fromObject(items));
 		param.put("SellerOrderID", orderDTO.getSpOrderId());
+		param.put("ShippingFirstName", "TRANS WORLD");
+		param.put("ShippingLastName", "COURIER");
+		param.put("ShippingAddressLine1", "145-02,156th Street");
+		param.put("ShippingAddressLine2", "To: SARA SPW");
+		param.put("ShippingCity", "Jamaica");
+		param.put("ShippingPostalCode", "11434");
+		param.put("ShippingCity", "NY");
+		param.put("ShippingCountry", "US");
 //		param.put("CheckoutStatus", "Completed");
 
 		return JSONObject.fromObject(param).toString();
