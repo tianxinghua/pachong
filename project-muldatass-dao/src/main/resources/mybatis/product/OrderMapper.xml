@@ -119,6 +119,44 @@
 
     </select>
     
+    <select id="findBySupplierIdAndOrderStatusAndDateAndExcSatus"  resultMap="OrderResultMap">
+        select
+        ID as ID,
+        SUPPLIER_ID as SUPPLIER_ID,
+        UUID as UUID,
+        SP_ORDER_ID as SP_ORDER_ID,
+        SP_PURCHASE_DETAIL_NO,
+        SUPPLIER_ORDER_NO as SUPPLIER_ORDER_NO,
+        STATUS as STATUS,
+        DETAIL as DETAIL,
+        SP_PURCHASE_NO as SP_PURCHASE_NO,
+        UPDATE_TIME as UPDATE_TIME,
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC,
+        PURCHASE_PRICE_DETAIL as PURCHASE_PRICE_DETAIL
+
+        from `ORDER`
+        <where>
+
+            <if test="null!=supplierId">
+                SUPPLIER_ID=#{supplierId}
+            </if>
+            <if test="null!=status">
+                and  STATUS = #{status}
+            </if>
+
+            <if test="null!=excState">
+                and  EXC_STATE = #{excState}
+            </if>
+
+            <if test="null!=date">
+                and CREATE_TIME >=DATE_SUB(#{date},INTERVAL  #{interval} HOUR)
+            </if>
+        </where>
+
+    </select>
+    
     <select id="findBySupplierIdAndStatusAndTime" resultMap="OrderResultMap">
     	select
         ID as ID,

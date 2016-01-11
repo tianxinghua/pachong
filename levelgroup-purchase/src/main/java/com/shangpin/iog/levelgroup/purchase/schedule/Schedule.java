@@ -36,7 +36,7 @@ public class Schedule {
 		
 	}
 	
-	@Scheduled(cron="${jobsSchedule}")
+	@Scheduled(cron="${upLoadSchedule}")
 	public void saveAndUpLoadOrder(){
 		try {
 			orderService.saveAndUpLoadOrder();
