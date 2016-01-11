@@ -316,6 +316,13 @@ public class OrderServiceImpl implements OrderService {
 		return buffer;
 	}
 
+	@Override
+	public List<OrderDTO> getOrderBySupplierIdAndOrderStatusAndExceptionStatus(
+			String supplierId, String status, String excState, String date,
+			int interval) throws ServiceException {
+	     return orderDAO.findBySupplierIdAndOrderStatusAndDateAndExcSatus(supplierId,status,excState,date,interval);
+	}
+
 
 
 }

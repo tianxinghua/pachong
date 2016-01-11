@@ -1,13 +1,7 @@
 package com.shangpin.iog.levelgroup.purchase.common;
 
-public enum OrderState {
+public class OrderState {
 	
-    /** 支付成功 */
-	CONFIRMED 
-	{public String getName(){return "confirmed";}},
-    /** 退款成功 */
-	REFUNDED {public String getName(){return "refunded";}};
-    
-    public abstract String getName();
-
+	public static String CONFIRMED="confirmed,refunded";
+	
 }

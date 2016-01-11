@@ -16,7 +16,7 @@ public class Schedule {
 	@Autowired
 	OrderImpl orderService;
 	
-	@Scheduled(cron = "0/20 * * * * ? ")
+	@Scheduled(cron = "0 0/2 * * * ? ")
 	public void start() {
 		orderService.loopExecute();
 	}

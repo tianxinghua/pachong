@@ -13,11 +13,13 @@ import java.util.ResourceBundle;
  * Created by Administrator on 2015/10/2.
  */
 public class MyFtpUtil {
-    private static Logger loggerError = Logger.getLogger("error");
+    //private static Logger loggerError = Logger.getLogger("error");
+    private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
+    private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
     private static ResourceBundle bdl = null;
     private static String localFile = null,remoteFile;
     private static String supplierId = null;
-    private static String HOST,PORT,USER,PASSWORD;
+    private static String HOST,PORT,PATH,USER,PASSWORD;
 
     static {
         if (bdl == null)
@@ -27,6 +29,7 @@ public class MyFtpUtil {
             supplierId = bdl.getString("supplierId");
             HOST = bdl.getString("host");
             PORT = bdl.getString("port");
+            PATH = bdl.getString("path");
             USER = bdl.getString("user");
             PASSWORD = bdl.getString("password");
     }
@@ -56,12 +59,16 @@ public class MyFtpUtil {
             ftp.connect();
             //登陆
             ftp.login(USER, PASSWORD);
+            logger.info("ftp登录成功!!");
             //连接模式
             ftp.setConnectMode(FTPConnectMode.PASV);
+            //跳转到指定路径
+            ftp.chdir(PATH);
             //ASCII方式：传输xml文本文件
             ftp.setType(FTPTransferType.ASCII);
             // 获取 XML文件到本地
             ftp.put(localFile,remoteFile);
+            logger.info("上传成功!!");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (FTPException e) {
