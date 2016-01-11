@@ -110,6 +110,7 @@ public class OrderImpl extends AbsOrderService {
 				
 				
 			}catch(ServiceException ex){
+				logger.error("ex=="+ex);
 				//access_token过期
 				if(ex.getMessage().equals("状态码:401")){
 					access_token = UtilOfChannel.getNewToken(timeConfig);
@@ -189,12 +190,20 @@ public class OrderImpl extends AbsOrderService {
 		items.add(itemMap);
 		param.put("ProfileID", 12018111);
 		param.put("SiteID", 587);
-		param.put("SiteName", "shangpin");
-		param.put("BuyerEmailAddress", "buyer@shangpin.com");
+		param.put("SiteName", "Shangpin.com");
+		param.put("BuyerEmailAddress", "sunxiaowen@shangpin.com");
 		param.put("CreatedDateUtc", UtilOfChannel.getUTCTime());//
 		param.put("TotalPrice", totalPrice);//
 		param.put("Items", JSONArray.fromObject(items));
 		param.put("SellerOrderID", orderDTO.getSpOrderId());
+		param.put("ShippingFirstName", "TRANS WORLD");
+		param.put("ShippingLastName", "COURIER");
+		param.put("ShippingAddressLine1", "145-02,156th Street");
+		param.put("ShippingAddressLine2", "To: SARA SPW");
+		param.put("ShippingCity", "Jamaica");
+		param.put("ShippingPostalCode", "11434");
+		param.put("ShippingCity", "NY");
+		param.put("ShippingCountry", "US");
 //		param.put("CheckoutStatus", "Completed");
 
 		return JSONObject.fromObject(param).toString();
@@ -224,7 +233,7 @@ public class OrderImpl extends AbsOrderService {
 					HttpUtil45.operateData("put", "json", url, timeConfig, null, jsonValue, "", "");
 					
 				}catch(ServiceException e){
-					
+					logger.error("e=="+e.getMessage());
 					if(e.getMessage().equals("状态码:401")){//access_token过期
 						access_token = UtilOfChannel.getNewToken(timeConfig);
 						handleConfirmOrder(orderDTO);
@@ -236,7 +245,7 @@ public class OrderImpl extends AbsOrderService {
 						result = HttpUtil45.errorResult;
 						excDesc = e.getMessage();
 					}	
-					logger.error(e.getMessage());
+					
 				}
 			}else{
 				result = HttpUtil45.errorResult;
@@ -291,6 +300,7 @@ public class OrderImpl extends AbsOrderService {
 					HttpUtil45.operateData("post", "json", url, timeConfig, null, jsonValue, "", "");
 				
 				}catch(ServiceException e){
+					logger.error("e=="+e);
 					if(e.getMessage().equals("状态码:401")){//access_token过期
 						access_token = UtilOfChannel.getNewToken(timeConfig);
 						handleCancelOrder(deleteOrder);
@@ -301,9 +311,8 @@ public class OrderImpl extends AbsOrderService {
 					}else{
 						rStr = HttpUtil45.errorResult;
 						excDesc = e.getMessage();
-					}
+					}	
 					
-					logger.error(e);
 				}
 			}else{
 				rStr = HttpUtil45.errorResult;
@@ -357,6 +366,7 @@ public class OrderImpl extends AbsOrderService {
 					HttpUtil45.operateData("post", "json", url, timeConfig, null, jsonValue, "", "");
 				
 				}catch(ServiceException e){
+					logger.error("e=="+e);
 					//access_token过期
 					if(e.getMessage().equals("状态码:401")){
 						access_token = UtilOfChannel.getNewToken(timeConfig);
@@ -368,9 +378,8 @@ public class OrderImpl extends AbsOrderService {
 					}else{
 						result = HttpUtil45.errorResult;
 						excDesc = e.getMessage();
-					}
+					}				
 					
-					logger.error(e);
 				}
 			}else{
 				result = HttpUtil45.errorResult;
