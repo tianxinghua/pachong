@@ -73,6 +73,9 @@ public class StockClientImp extends AbsUpdateProductStock {
 					skustock.put(skuId, skuEntry.getValue().getQTY().replace("\"", ""));
 				}
 			}
+			if(!skustock.containsKey(skuId)){
+				skustock.put(skuId,"0");
+			}
 		}
 		return skustock;
 	}
