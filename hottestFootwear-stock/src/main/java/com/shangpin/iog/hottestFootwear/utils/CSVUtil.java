@@ -86,6 +86,7 @@ public class CSVUtil {
 			ftpClient.setControlEncoding("UTF-8");
 			ftpClient.enterLocalPassiveMode();
             in = ftpClient.retrieveFileStream("shangpin.csv");
+            ftpClient.quit();
         }catch(Exception ex){
         	log.error(ex);
         	ex.printStackTrace();
