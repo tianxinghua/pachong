@@ -27,7 +27,7 @@ import com.shangpin.iog.service.ProductSearchService;
 /**
  * Created by houkun on 2015/11/26.
  */
-@Component("linoricci")
+@Component("daniello")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
     private static Logger logMongo = Logger.getLogger("mongodb");
@@ -117,6 +117,10 @@ public class FetchProduct {
 					   item.setSupplierPrice(spuArr[16]);
 					   item.setDescription(spuArr[15]);
 					   item.setSpuId(spuArr[0]);
+					   
+					   item.setStyleCode(spuArr[3]);
+					   item.setColorCode(spuArr[4]);
+					   
 					   spuMap.put(spuArr[0], item);
 
 					   spu.setId(UUIDGenerator.getUUID());
@@ -126,11 +130,16 @@ public class FetchProduct {
 		               spu.setCategoryName(spuArr[8]);
 		               //spu.setSpuName(fields[0]);
 		               spu.setSeasonId(spuArr[6]);
+		               
+		               StringBuffer material = new StringBuffer() ;
 		               if (StringUtils.isNotBlank(spuArr[11])) {
-		            	   spu.setMaterial(spuArr[11]);
-		               }else {
-		            	   spu.setMaterial(spuArr[15]);
+		            	   material.append(spuArr[11]).append(";");
+		               }else if(StringUtils.isNotBlank(spuArr[15])){
+		            	   material.append(spuArr[15]).append(";");
+		               }else if (StringUtils.isNotBlank(spuArr[42])) {
+		            	   material.append(spuArr[42]);
 		               }
+		               spu.setMaterial(material.toString());
 		               spu.setCategoryGender(spuArr[5]);
 		               spu.setProductOrigin(spuArr[40]);
 		               productFetchService.saveSPU(spu);
@@ -158,6 +167,7 @@ public class FetchProduct {
 				}
 			}
 		}
+		String size="";
 		String[] skuStrings = skuData.split("\\r\\n");
 		String[] skuArr = null;
 		for (int i = 1; i < skuStrings.length; i++) {
@@ -175,7 +185,12 @@ public class FetchProduct {
         			sku.setSupplierId(supplierId);
         			sku.setSpuId(skuArr[0]);
         			//sku.setSkuId(skuId);
-        			sku.setProductSize(skuArr[1]);
+        			size = skuArr[1];
+        			if(size.indexOf("½")>0){
+        				size=size.replace("½","+");
+        			}
+        			
+        			sku.setProductSize(size);
         			
 //        			sku.setSalePrice(priceMap.get(item.getSpuId()));
         			sku.setMarketPrice(priceMap.get(item.getSpuId()));
@@ -190,7 +205,7 @@ public class FetchProduct {
         			//skuid+barcode
         			sku.setSkuId(skuArr[0]+"-"+barCode);
         			sku.setBarcode(barCode);
-        			sku.setProductCode(skuArr[0]);
+        			sku.setProductCode(item.getStyleCode()+"-"+item.getColorCode());
         			// sku.setProductName(fields[14]);
         			try {
         				

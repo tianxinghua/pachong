@@ -525,7 +525,7 @@ public class WS_Sito_P15 {
 //    	param.put("price", "125");
 //        String skuData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/NewOrder",
 //				param,new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
-        String priceData = HttpUtil45.post("http://79.62.242.6:8088/ws_sito/ws_sito_p15.asmx/GetAllAvailabilityMarketplace",
+        String priceData = HttpUtil45.post("http://79.62.242.6:8088/ws_sito_p15/ws_sito_p15.asmx/GetAllItemsMarketplace",
         		param,new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
 //        String data = "";
 //    	String[] imageStrings = priceData.split("\\r\\n");
