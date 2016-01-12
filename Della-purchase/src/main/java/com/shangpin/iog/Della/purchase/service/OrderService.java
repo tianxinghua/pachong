@@ -3,8 +3,10 @@ package com.shangpin.iog.Della.purchase.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.Della.purchase.common.MyFtpUtil;
+import com.shangpin.iog.Della.purchase.common.MyFtpUtil2;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.product.service.OrderServiceImpl;
@@ -64,7 +66,7 @@ public class OrderService extends AbsOrderService {
      */
     public void saveAndUpLoadOrder(){
         saveOrder();
-        new MyFtpUtil().upLoad();
+        new MyFtpUtil2().upLoad();
     }
     /**
      * 
@@ -86,19 +88,22 @@ public class OrderService extends AbsOrderService {
         }
         
         StringBuffer ftpFile = new StringBuffer();
-        ftpFile.append("SOP number;Purchasing number;Item code;Description;Item supplier code;Quantity");
-        ftpFile.append("\n\t");
+        ftpFile.append("Purchasing number;Item code;Size;Item supplier code;Quantity;Brand");
+        ftpFile.append("\n");
         for (OrderDTO orderDTO:list){
-        
-            ftpFile.append(orderDTO.getSpPurchaseNo());
-            ftpFile.append(";").append(orderDTO.getSpPurchaseDetailNo());
-            ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
-            ftpFile.append(";").append(" ");
-            ftpFile.append(";").append(" ");
-            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
-            ftpFile.append("\n\t");
+        	try {
+				ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getDetail().split(":")[0]);
+				ftpFile.append(orderDTO.getSpPurchaseNo());
+	            ftpFile.append(";").append(product.getProductCode());
+	            ftpFile.append(";").append(product.getSize());
+	            ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+	            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
+	            ftpFile.append(";").append(product.getBrandName());
+	            ftpFile.append("\n");
+        	} catch (ServiceException e) {
+				e.printStackTrace();
+			}
         }
-        //////////////////////////////////////////////////////////////////////////////////////////
         Map<String, String> mongMap = new HashMap<>();
         mongMap.put("supplierId", supplierId);
         mongMap.put("supplierName", "LevelGroup");

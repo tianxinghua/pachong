@@ -263,6 +263,201 @@ public class HttpUtil45 {
 		return getResultWithStatusCode(request, outTimeConf, null,localContext);
 
 	}
+	
+	/**
+	 * 操作数据
+	 * @param operatorType 操作类型  get put patch delete
+	 * @param transParaType 传递参数类型  json  无值 代表非JSON
+	 * @param url
+	 * @param outTimeConf
+	 * @param param     参数（非json类型时传入 ，json时 不做处理)
+	 * @param jsonValue   json类型时 需要传入的参数
+	 * @param headerMap 头信息
+	 * @param username  如果需要验证 需要填写 无值或为空 则认为不需要验证
+	 * @param password
+	 * @return
+	 */
+	public static  String operateData(String operatorType,String transParaType ,String url,OutTimeConfig outTimeConf,Map<String,String> param,String jsonValue ,Map<String,String> headerMap,String username,String password) throws ServiceException{
+		HttpClientContext localContext =null;
+		//验证
+		if(StringUtils.isNotBlank(username)){
+			localContext = getAuthContext(url, username, password);
+		}else{
+			localContext = getPlainContext(url);
+		}
+
+		HttpUriRequest request = null;
+		if("get".equals(operatorType.toLowerCase())){
+			String urlStr=paramGetUrl(url, param);
+			request  = new HttpGet(urlStr);
+		}else if("post".equals(operatorType.toLowerCase())){
+
+			HttpPost post=new HttpPost(url);
+			setTransParam(transParaType, param, jsonValue, post);
+
+			return getResultWithStatusCode(post, outTimeConf, headerMap, localContext);
+
+
+		}else if("put".equals(operatorType.toLowerCase())){
+
+			HttpPut putMothod = new HttpPut(url);
+			setTransParam(transParaType, param, jsonValue, putMothod);
+
+
+			return getResultWithStatusCode(putMothod, outTimeConf, headerMap, localContext);
+
+
+		}else if("patch".equals(operatorType.toLowerCase())){
+
+			HttpPatch patch  = new HttpPatch(url);
+
+			setTransParam(transParaType, param, jsonValue, patch);
+
+
+			return getResultWithStatusCode(patch, outTimeConf, headerMap,localContext);
+
+
+		}else if("delete".equals(operatorType.toLowerCase())){
+			String urlStr=paramGetUrl(url, param);
+            request = new HttpDelete(urlStr);
+		}else{
+		    throw new ServiceMessageException("无此操作方法");
+		}
+
+
+		return getResultWithStatusCode(request, outTimeConf, headerMap,localContext);
+
+	}
+	
+	/**
+	 * 操作数据
+	 * @param operatorType 操作类型  get put patch delete
+	 * @param transParaType 传递参数类型  json  无值 代表非JSON
+	 * @param url
+	 * @param outTimeConf
+	 * @param param     参数（非json类型时传入 ，json时 不做处理)
+	 * @param jsonValue   json类型时 需要传入的参数
+	 * @param headerMap 头信息
+	 * @param username  如果需要验证 需要填写 无值或为空 则认为不需要验证
+	 * @param password
+	 * @return
+	 */
+	public static  CloseableHttpResponse operateData2(String operatorType,String transParaType ,String url,OutTimeConfig outTimeConf,Map<String,String> param,String jsonValue ,Map<String,String> headerMap,String username,String password) throws ServiceException{
+		HttpClientContext localContext =null;
+		//验证
+		if(StringUtils.isNotBlank(username)){
+			localContext = getAuthContext(url, username, password);
+		}else{
+			localContext = getPlainContext(url);
+		}
+
+		HttpUriRequest request = null;
+		if("get".equals(operatorType.toLowerCase())){
+			String urlStr=paramGetUrl(url, param);
+			request  = new HttpGet(urlStr);
+		}else if("post".equals(operatorType.toLowerCase())){
+
+			HttpPost post=new HttpPost(url);
+			setTransParam(transParaType, param, jsonValue, post);
+
+			return getResponseWithStatusCode(post, outTimeConf, headerMap, localContext);
+
+
+		}else if("put".equals(operatorType.toLowerCase())){
+
+			HttpPut putMothod = new HttpPut(url);
+			setTransParam(transParaType, param, jsonValue, putMothod);
+
+
+			return getResponseWithStatusCode(putMothod, outTimeConf, headerMap, localContext);
+
+
+		}else if("patch".equals(operatorType.toLowerCase())){
+
+			HttpPatch patch  = new HttpPatch(url);
+
+			setTransParam(transParaType, param, jsonValue, patch);
+
+
+			return getResponseWithStatusCode(patch, outTimeConf, headerMap,localContext);
+
+
+		}else if("delete".equals(operatorType.toLowerCase())){
+			String urlStr=paramGetUrl(url, param);
+            request = new HttpDelete(urlStr);
+		}else{
+		    throw new ServiceMessageException("无此操作方法");
+		}
+
+
+		return getResponseWithStatusCode(request, outTimeConf, headerMap,localContext);
+
+	}
+	
+	/**
+	 * 获取返回的头信息
+	 * @param operatorType 操作类型  get put patch delete
+	 * @param transParaType 传递参数类型  json  无值 代表非JSON
+	 * @param url
+	 * @param outTimeConf
+	 * @param param     参数（非json类型时传入 ，json时 不做处理)
+	 * @param jsonValue   json类型时 需要传入的参数
+	 * @param name  请求想要得到的头信息的name
+	 * @param username  如果需要验证 需要填写 无值或为空 则认为不需要验证
+	 * @param password
+	 * @return
+	 */
+	public static  String getResponseHead(String operatorType,String transParaType ,String url,OutTimeConfig outTimeConf,Map<String,String> param,String jsonValue ,String name,String username,String password) throws ServiceException{
+		HttpClientContext localContext =null;
+		//验证
+		if(StringUtils.isNotBlank(username)){
+			localContext = getAuthContext(url, username, password);
+		}else{
+			localContext = getPlainContext(url);
+		}
+
+		HttpUriRequest request = null;
+		if("get".equals(operatorType.toLowerCase())){
+			String urlStr=paramGetUrl(url, param);
+			request  = new HttpGet(urlStr);
+		}else if("post".equals(operatorType.toLowerCase())){
+
+			HttpPost post=new HttpPost(url);
+			setTransParam(transParaType, param, jsonValue, post);
+
+			return getAuthorizationWithStatusCode(post, outTimeConf, null, localContext,name);
+
+
+		}else if("put".equals(operatorType.toLowerCase())){
+
+			HttpPut putMothod = new HttpPut(url);
+			setTransParam(transParaType, param, jsonValue, putMothod);
+
+
+			return getAuthorizationWithStatusCode(putMothod, outTimeConf, null, localContext,name);
+
+
+		}else if("patch".equals(operatorType.toLowerCase())){
+
+			HttpPatch patch  = new HttpPatch(url);
+
+			setTransParam(transParaType, param, jsonValue, patch);
+
+
+			return getAuthorizationWithStatusCode(patch, outTimeConf, null,localContext,name);
+
+
+		}else if("delete".equals(operatorType.toLowerCase())){
+			String urlStr=paramGetUrl(url, param);
+            request = new HttpDelete(urlStr);
+		}else{
+		    throw new ServiceMessageException("无此操作方法");
+		}
+
+
+		return getAuthorizationWithStatusCode(request, outTimeConf, null,localContext,name);
+
+	}
 
     //设置传递参数
 	private static void setTransParam(String transParaType, Map<String, String> param, String value, HttpEntityEnclosingRequestBase method) {
@@ -367,6 +562,63 @@ public class HttpUtil45 {
 			HttpEntity entity=resp.getEntity();
 			result= EntityUtils.toString(entity,"UTF-8");
 			EntityUtils.consume(entity);
+		}catch(ServiceException e){
+			logger.error("响应码非200,响应码为 : "+e.getMessage());
+			throw e;
+
+		}catch(Exception e){
+			logger.error("--------------httpError:"+e.getMessage());
+		}finally{
+			try {
+				if(resp!=null)
+					resp.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return result==null?errorResult:result;
+	}
+	
+	private static CloseableHttpResponse getResponseWithStatusCode(HttpUriRequest request, OutTimeConfig outTimeConf,Map<String,String> headMap, HttpClientContext localContext) throws ServiceException{
+
+		CloseableHttpResponse resp=null;
+		try {
+			setHeader(headMap,request);
+			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
+
+			resp=httpClient.execute(request,localContext);
+
+			getResponseStatus(resp);
+
+		}catch(ServiceException e){
+			logger.error("响应码非200,响应码为 : "+e.getMessage());
+			throw e;
+
+		}catch(Exception e){
+			logger.error("--------------httpError:"+e.getMessage());
+		}finally{
+			try {
+				if(resp!=null)
+					resp.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return resp;
+	}
+	
+	private static String getAuthorizationWithStatusCode(HttpUriRequest request, OutTimeConfig outTimeConf,Map<String,String> headMap, HttpClientContext localContext,String name) throws ServiceException{
+
+		String result=null;
+		CloseableHttpResponse resp=null;
+		try {
+			setHeader(headMap,request);
+			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
+
+			resp=httpClient.execute(request,localContext);
+
+			getResponseStatus(resp);
+			result = resp.getFirstHeader(name).getValue();
 		}catch(ServiceException e){
 			logger.error("响应码非200,响应码为 : "+e.getMessage());
 			throw e;

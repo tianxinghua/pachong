@@ -4,9 +4,13 @@ import com.enterprisedt.net.ftp.FTPClient;
 import com.enterprisedt.net.ftp.FTPConnectMode;
 import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FTPTransferType;
+import com.shangpin.iog.common.utils.DateTimeUtil;
+
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 /**
@@ -17,7 +21,7 @@ public class MyFtpUtil {
     private static ResourceBundle bdl = null;
     private static String localFile = null,remoteFile;
     private static String supplierId = null;
-    private static String HOST,PORT,USER,PASSWORD;
+    private static String HOST,PORT,PATH,USER,PASSWORD;
 
     static {
         if (bdl == null)
@@ -27,6 +31,7 @@ public class MyFtpUtil {
             supplierId = bdl.getString("supplierId");
             HOST = bdl.getString("host");
             PORT = bdl.getString("port");
+            PATH = bdl.getString("path");
             USER = bdl.getString("user");
             PASSWORD = bdl.getString("password");
     }
@@ -46,7 +51,12 @@ public class MyFtpUtil {
      * Description: 上传文件
      */
     public  void upLoad() {
-        //创建FTPClient
+    	String fileName = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String dateStr = format.format(new Date());
+		fileName = dateStr + ".txt";
+        
+		//创建FTPClient
         FTPClient ftp = new FTPClient();
         // 连接服务器
         try {
@@ -58,10 +68,11 @@ public class MyFtpUtil {
             ftp.login(USER, PASSWORD);
             //连接模式
             ftp.setConnectMode(FTPConnectMode.PASV);
+            ftp.chdir(PATH);
             //ASCII方式：传输xml文本文件
             ftp.setType(FTPTransferType.ASCII);
             // 获取 XML文件到本地
-            ftp.put(localFile,remoteFile);
+            ftp.put(localFile,fileName);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (FTPException e) {
