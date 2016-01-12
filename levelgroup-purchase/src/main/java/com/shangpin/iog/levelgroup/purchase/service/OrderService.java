@@ -105,10 +105,12 @@ public class OrderService extends AbsOrderService {
 				ftpFile.append(orderDTO.getSpPurchaseNo());
 	            ftpFile.append(";").append(orderDTO.getSpPurchaseDetailNo());
 	            if(product!=null){
+//	            	int priceInt = Integer.parseInt(product.getNewSalePrice());
+//					String price = String.valueOf(priceInt/1.05);
 	            	ftpFile.append(product.getSize());
 	            	ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
 		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
-		            ftpFile.append(";").append(product.getNewSupplierPrice());
+		            ftpFile.append(";").append(product.getNewSalePrice());
 		            ftpFile.append(";").append(product.getBrandName());
 		            ftpFile.append(";").append(orderDTO.getStatus());
 	            }else{

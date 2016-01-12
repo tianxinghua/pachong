@@ -61,7 +61,7 @@
         EXC_DESC  as EXC_DESC
 
 
-        from `ORDER`
+        from RETURN_ORDER
         <where>
 
             <if test="null!=supplierId">
@@ -109,4 +109,37 @@
 
 
     </update>
+    
+    <select id="findBySupplierIdAndOrderStatusAndExcStatus"    resultMap="OrderResultMap">
+        select
+        ID as ID,
+        SUPPLIER_ID as SUPPLIER_ID,
+        UUID as UUID,
+        SP_ORDER_ID ,
+        SP_PURCHASE_NO,
+        SUPPLIER_ORDER_NO as SUPPLIER_ORDER_NO,
+        STATUS as STATUS,
+        DETAIL as DETAIL,
+        UPDATE_TIME as UPDATE_TIME,
+        CREATE_TIME as CREATE_TIME,
+        EXC_STATE as EXC_STATE,
+        EXC_DESC  as EXC_DESC
+
+
+        from RETURN_ORDER
+        <where>
+
+            <if test="null!=supplierId">
+                SUPPLIER_ID=#{supplierId}
+            </if>
+            <if test="null!=status">
+                and  STATUS = #{status}
+            </if>
+            <if test="null!=excState">
+                and  EXC_STATE = #{excState}
+            </if>
+        </where>
+
+
+    </select>
 </mapper>

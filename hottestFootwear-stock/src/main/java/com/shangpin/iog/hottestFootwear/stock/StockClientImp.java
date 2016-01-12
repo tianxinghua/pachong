@@ -49,6 +49,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 		String skuId ="";
 		
 		Map<Integer, Integer> colNum = new HashMap<Integer, Integer>();
+		//参数附上对应的value
 		colNum.put(0, 0);colNum.put(1, 3);
 		List<CsvDTO> skuLists = CSVUtil.readLocalCSV(CsvDTO.class, ",", colNum);
 		Map<String,String> stockMap = new HashMap<String, String>();
