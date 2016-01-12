@@ -73,12 +73,26 @@ public class FetchProduct {
 					spu.setId(UUIDGenerator.getUUID());
 					spu.setSupplierId(supplierId);
 					spu.setSpuId(item.getSpuId());
+					spu.setSpuName(item.getProductName());
 					spu.setCategoryName(item.getCategoryName());
 					spu.setSubCategoryName(item.getSubCategoryName());
 					spu.setBrandName(item.getBrandName());
 					spu.setSpuName(item.getProductName());
-					if(!"NO DATA AVAILABLE".equals(item.getMaterial())){
-						spu.setMaterial(item.getMaterial());
+					if(item.getMaterial()!=null){
+						if(item.getMaterial().toLowerCase().indexOf("no data")==-1){
+							spu.setMaterial(item.getMaterial());
+						}
+					}
+					if(item.getSeasonName()!=null){
+						if(item.getSeasonName().toLowerCase().indexOf("no data")==-1){
+							spu.setMaterial(item.getSeasonName());
+						}
+					}
+					
+					if(item.getProductOrigin()!=null){
+						if(item.getProductOrigin().toLowerCase().indexOf("no data")==-1){
+							spu.setProductOrigin(item.getProductOrigin());
+						}
 					}
 					
 					spu.setCategoryGender(item.getCategoryGender());
@@ -106,7 +120,7 @@ public class FetchProduct {
 					sku.setSupplierId(supplierId);
 					sku.setSpuId(item.getSpuId());
 					String proSize = item.getSize();
-					if ("No".equals(proSize)) {
+					if ("no".equals(proSize.toLowerCase())) {
 						sku.setProductSize("A");
 					} else {
 						sku.setProductSize(proSize);
@@ -136,26 +150,5 @@ public class FetchProduct {
 				}
 			}
 		}
-	}
-
-	private static String getString(String ts) throws ParseException {
-		ts = ts.replace("Z", " UTC");
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-		Date dt = sdf.parse(ts);
-		TimeZone tz = sdf.getTimeZone();
-		Calendar c = sdf.getCalendar();
-		StringBuffer result = new StringBuffer();
-		result.append(c.get(Calendar.YEAR));
-		result.append("-");
-		result.append((c.get(Calendar.MONTH) + 1));
-		result.append("-");
-		result.append(c.get(Calendar.DAY_OF_MONTH));
-		result.append(" ");
-		result.append(c.get(Calendar.HOUR_OF_DAY));
-		result.append(":");
-		result.append(c.get(Calendar.MINUTE));
-		result.append(":");
-		result.append(c.get(Calendar.SECOND));
-		return result.toString();
 	}
 }
