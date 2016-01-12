@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.LogisticsMapper">
+
+	<resultMap id="logisticsResultMap" type="iog_logistics">
+        <id column="ID" property="id" />
+        <result column="SUPPLIER_ID" property="supplierId"  />
+        <result column="ORDER_NO" property="orderNo"  />
+        <result column="PURCHASE_NO" property="purchaseNo" />
+        <result column="PURCHASE_DETAIL_NO" property="purchaseDetailNo" />
+        <result column="LOGISTICS_COMPANY" property="logisticsCompany"/>
+        <result column="TRACK_NUMBER" property="trackNumber"/>
+        <result column="SHIPPED_DATE" property="shippedDate"/>
+        <result column="CREATE_TIME" property="createTime"  />
+        <result column="UPDATE_TIME" property="updateTime"/>
+        <result column="SP_INVOICE" property="spInvoice"  />
+        <result column="MEMO" property="memo" />
+ 	</resultMap>
+
+	<sql id="search_column">
+		ID,
+		SUPPLIER_ID,
+		UUID,
+		SP_ORDER_ID,
+		DETAIL,
+		CREATE_TIME
+	</sql>
+    <sql id="save_column">
+        SUPPLIER_ID,
+		ORDER_NO,
+		PURCHASE_NO,
+		PURCHASE_DETAIL_NO,
+		LOGISTICS_COMPANY,
+		TRACK_NUMBER,
+		SHIPPED_DATE,
+		CREATE_TIME,
+	     MEMO
+    </sql>
+
+
+    <insert id="save"  parameterType="iog_logistics" >
+        insert into LOGISTICS (
+        <include refid="save_column"></include>
+        )
+        values(
+        #{supplierId}, #{orderNo},#{purchaseNo},#{purchaseDetailNo},
+        #{logisticsCompany}, #{trackNumber},#{shippedDate},#{createTime},
+        #{memo}
+        )
+    </insert>
+
+
+    <update id="update"  parameterType="iog_logistics" >
+        update LOGISTICS
+        <set>
+            <if test="spInvoice != null"> SP_INVOICE = #{spInvoice}, </if>
+            <if test="memo != null"> MEMO = #{memo}, </if>
+            <if test="updateTime != null"> UPDATE_TIME = #{updateTime} </if>
+
+        </set>
+        where ID = #{id}
+    </update>
+    
+    <select id="findNotConfirmSupplierLogisticsNumber" resultType="String">
+    	select    TRACK_NUMBER
+        from  LOGISTICS
+        <where>
+
+            SP_INVOICE is null
+        	<if test="null!=supplierId">
+        		and SUPPLIER_ID=#{supplierId}
+        	</if>
+
+            <if test="null!=endTime">
+            	<![CDATA[ and CREATE_TIME < #{createTime}   ]]>
+
+            </if>
+        </where>
+        group by   TRACK_NUMBER
+    </select>
+    
+    
+    <select id="findPurchaseDetailNoByTrackNumber" resultMap="logisticsResultMap">
+    	select      <include refid="search_column"></include>
+
+
+        from LOGISTICS
+        <where>
+        	<if test="null!=trackNumber">
+                TRACK_NUMBER=#{trackNumber}
+        	</if>
+
+        </where>
+    </select>
+    
+
+</mapper>
