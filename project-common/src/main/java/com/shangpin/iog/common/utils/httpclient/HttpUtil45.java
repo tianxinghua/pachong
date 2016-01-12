@@ -673,7 +673,17 @@ public class HttpUtil45 {
 		 if(200==stateCode||201==stateCode||202==stateCode){
 
 		 }else{
+
+				 HttpEntity entity=resp.getEntity();
+				 try {
+					 logger.error("响应码" +stateCode +"　　返回信息内容:" + EntityUtils.toString(entity,"UTF-8"));
+				 }catch (Exception e) {
+
+					 e.printStackTrace();
+				 }
+
 			 throw new ServiceMessageException("状态码:"+stateCode);
+
 		 }
 		 return stateCode;
 	 }
