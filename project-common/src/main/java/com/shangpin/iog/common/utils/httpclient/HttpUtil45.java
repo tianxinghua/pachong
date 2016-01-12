@@ -683,7 +683,6 @@ public class HttpUtil45 {
 				 }
 
 			 throw new ServiceMessageException("状态码:"+stateCode);
-
 		 }
 		 return stateCode;
 	 }
