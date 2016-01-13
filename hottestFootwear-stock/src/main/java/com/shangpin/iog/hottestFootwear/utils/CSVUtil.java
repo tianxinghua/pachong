@@ -16,7 +16,7 @@ import com.csvreader.CsvReader;
 
 public class CSVUtil {
 	
-	private static Logger log = Logger.getLogger("error");
+	private static Logger log = Logger.getLogger("info");
 	/**
 	 * 解析csv文件，将其转换为对象
      * @param remoteFileName  远端文件名称 shangpin.csv
@@ -57,7 +57,7 @@ public class CSVUtil {
 			}
 			System.out.println(a);
 		}
-		
+		in.close();
 		return dtoList;
 	}
 	
@@ -81,12 +81,22 @@ public class CSVUtil {
         try {  
             ftpClient = new FTPClient();  
             ftpClient.setConnectTimeout(3600000);
+            System.out.println("开始连接");
+            log.info("开始连接");
             ftpClient.connect("ftp.adrive.com");// 连接FTP服务器  
-            ftpClient.login("shangpinftp123@gmail.com", "Shangpin-1234");
+            boolean login = ftpClient.login("shangpinftp123@gmail.com", "Shangpin-1234");
+            System.out.println("连接"+login);
+            log.info("连接"+login);
 			ftpClient.setControlEncoding("UTF-8");
 			ftpClient.enterLocalPassiveMode();
-            in = ftpClient.retrieveFileStream("shangpin.csv");
-            ftpClient.quit();
+            System.out.println("读取csv");
+            String[] listNames = ftpClient.listNames();
+            for (int i = 0; i < listNames.length; i++) {
+				System.out.println(listNames[i]);
+			}
+            ftpClient.setBufferSize(1024*1024);
+			in = ftpClient.retrieveFileStream("shangpin.csv");
+            ftpClient.disconnect();
         }catch(Exception ex){
         	log.error(ex);
         	ex.printStackTrace();
