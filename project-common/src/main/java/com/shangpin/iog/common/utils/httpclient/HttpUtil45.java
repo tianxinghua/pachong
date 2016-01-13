@@ -24,6 +24,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 
 import com.shangpin.framework.ServiceMessageException;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.*;
@@ -673,6 +674,15 @@ public class HttpUtil45 {
 		 if(200==stateCode||201==stateCode||202==stateCode){
 
 		 }else{
+			 if(401==stateCode){
+				 HttpEntity entity=resp.getEntity();
+			     try {
+			    	  logger.error(EntityUtils.toString(entity,"UTF-8"));
+				 }catch (Exception e) {
+					
+					e.printStackTrace();
+				 } 
+			 }
 			 throw new ServiceMessageException("状态码:"+stateCode);
 		 }
 		 return stateCode;
