@@ -1,6 +1,7 @@
 package com.shangpin.iog.product.service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.dto.LogisticsDTO;
 import com.shangpin.iog.dto.OrderDTO;
@@ -13,8 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by lizhongren on 2016/1/11.
@@ -48,12 +48,53 @@ public class LogisticsServiceImpl implements LogisticsService {
     }
 
     @Override
+    public List<String> findNotConfirmSupplierLogisticsNumber(String supplierId, Date searchDate) {
+        String dateTime = DateTimeUtil.convertFormat(searchDate,"yyyy-MM-dd HH:mm:ss");
+        return logisticsDAO.findNotConfirmSupplierLogisticsNumber(supplierId,dateTime) ;
+    }
+
+    @Override
+    public LogisticsDTO findPurchaseDetailNoByTrackNumber(String trackNmuber) {
+
+        List<LogisticsDTO> logisticsDTOList= logisticsDAO.findPurchaseDetailNoByTrackNumber(trackNmuber) ;
+        LogisticsDTO  returnDto = new LogisticsDTO();
+        returnDto.setTrackNumber(trackNmuber);
+        String purchaseDetailNo="";
+        List<String> purchaseDetailList = new ArrayList<>();
+        for(LogisticsDTO dto:logisticsDTOList){
+            returnDto.setLogisticsCompany(dto.getLogisticsCompany());
+
+            purchaseDetailNo=dto.getPurchaseDetailNo();
+            String[] purchaseDetailNoArray = purchaseDetailNo.split(";");
+            if(null!=purchaseDetailNoArray){
+                for(String purchaseDetailNum:purchaseDetailNoArray){
+                    purchaseDetailList.add(purchaseDetailNum);
+
+                }
+            }
+
+
+        }
+        returnDto.setPurchaseDetailList(purchaseDetailList);
+
+        return returnDto;
+    }
+
+
+    @Override
     @Transactional(rollbackFor = {ServiceException.class})
-    public void updateInvoice(String supplierId,Date  searchDate) throws ServiceException {
-        String dateTime = DateTimeUtil.convertFormat(searchDate,"yyyy-MM-hh HH:mm:ss");
-        List<String> trackNumberList = logisticsDAO.findNotConfirmSupplierLogisticsNumber(supplierId,dateTime) ;
-        for(String trackNmuber: trackNumberList){
-            List<LogisticsDTO> logisticsDTOList = logisticsDAO.findPurchaseDetailNoByTrackNumber(trackNmuber);
+    public void updateInvoice(String supplierId,String trackNum ,String spInvoice,Date updateTime) throws ServiceException {
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("supplierId",supplierId);
+        map.put("trackNumber",trackNum);
+        map.put("spInvoice",spInvoice);
+        map.put("updateTime",updateTime);
+        try {
+            logisticsDAO.updateMulti(map);
+        } catch (Exception e) {
+            logger.error("供货商:"+ supplierId + " 的物流单号:" + trackNum + " 更新尚品的物流单号:" + spInvoice + "失败" );
+            throw  new ServiceMessageException("更新物流信息失败");
         }
 
 

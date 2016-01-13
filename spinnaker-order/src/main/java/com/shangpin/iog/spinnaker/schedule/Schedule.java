@@ -1,5 +1,6 @@
 package com.shangpin.iog.spinnaker.schedule;
 
+import com.shangpin.iog.spinnaker.service.LogisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,9 @@ public class Schedule {
 	
 	@Autowired
 	OrderService orderService;
+
+	@Autowired
+	LogisticsService logisticsService;
 	
 	@Scheduled(cron = "0 0/2 * * * ? ")
 	public void start() {
@@ -36,6 +40,23 @@ public class Schedule {
 			e.printStackTrace();
 		}
 		
+	}
+
+	public void handleShippedOrder(){
+		try {
+			logisticsService.handleShippedOrder();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public void handleInvoice(){
+		try {
+			logisticsService.handleInvoice();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 //	@Scheduled(cron = "0 0/10 * * * ? ")

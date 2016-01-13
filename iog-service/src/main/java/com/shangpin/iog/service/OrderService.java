@@ -61,7 +61,7 @@ public interface OrderService {
     public List<OrderDTO>  getOrderBySupplierIdAndOrderStatusAndExceptionStatus(String supplierId,String status,String excState ,String date,int interval) throws ServiceException;
 
     /**
-     * 获取订单   根据订单ID,订单状态,开始时间,结束时间  
+     * 根据订单的创建时间获取订单   根据订单ID,订单状态,开始时间,结束时间
      * @param supplierId
      * @param status
      * @param startTime
@@ -70,7 +70,16 @@ public interface OrderService {
      * @throws ServiceException
      */
     public List<OrderDTO>  getOrderBySupplierIdAndOrderStatusAndTime(String supplierId,String status,String startTime,String endTime) throws ServiceException;
-    
+
+    /**
+     *  根据更新状态的时间 获取订单   根据订单ID,订单状态,开始时间,结束时间
+      * @param supplierId
+     * @param status
+     * @param startTime
+     * @param endTime
+     * @return
+     * @throws ServiceException
+     */
     public List<OrderDTO>  getOrderBySupplierIdAndOrderStatusAndUpdateTime(String supplierId,String status,String startTime,String endTime) throws ServiceException;
     /**
      * 获取订单 根据订单ID 和 订单状态

@@ -34,11 +34,17 @@ public interface LogisticsMapper extends IBaseDao<LogisticsDTO> {
     public List<LogisticsDTO>  findPurchaseDetailNoByTrackNumber(@Param("trackNumber") String trackNumber);
 
     /**
-     * 更新物流单号信息状态
+     * 更新尚品的发货单信息信息状态
      * @param logisticsDTO 更新信息对象
      * @return
      */
     public int updateLogisticsStatus(LogisticsDTO logisticsDTO);
+
+    /**
+     * 同时更新商品的发货单号信息及更新时间
+     * @param map   supplierId trackNumber spInvoice   updateTime
+     */
+    public void updateMulti(Map<String,Object> map);
 
 
 }

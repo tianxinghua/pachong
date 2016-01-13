@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by lizhongren on 2016/1/11.
@@ -26,6 +27,7 @@ public class LogisticsDTO {
     private Date updateDate;//更新时间
     private String spInvoice;//尚品的发货单号
     private String memo;//备注
+    private List<String> purchaseDetailList;//临时信息 与数据库无关
 
 
 }
