@@ -58,20 +58,27 @@ public class StockClientImp extends AbsUpdateProductStock {
 		//参数附上对应的value
 		colNum.put(0, 0);colNum.put(1, 3);
 		List<CsvDTO> skuLists = CSVUtil.readLocalCSV(CsvDTO.class, ",", colNum);
+		System.out.println("获取sku完毕");
+		logger.info("获取sku完毕");
 		Map<String,String> stockMap = new HashMap<String, String>();
 		Map<String,Integer> returnMap = new HashMap<String, Integer>();
 		for (CsvDTO csvDTO : skuLists) {
 			stockMap.put(csvDTO.getSku(), csvDTO.getQty());
 		}
 		Iterator<String> it = skuNo.iterator();
+		System.out.println("遍历填充"+skuNo.size());
+		int i =0;
 		while (it.hasNext()) {
+			i++;
 			skuId = it.next();
 			if (stockMap.containsKey(skuId)) {
 				returnMap.put(skuId, Integer.valueOf(stockMap.get(skuId)));
 			}else{
 				returnMap.put(skuId, 0);
 			}
+			System.out.println("填充"+i);
 		}
+		System.out.println("loop success");
 		return returnMap;
 	}
 
