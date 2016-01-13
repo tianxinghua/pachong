@@ -23,6 +23,7 @@ public class Channel {
 	private String pubDate;
 	private String docs;
 	private String generator;
+	private String nextPage;
 	@XmlElement(name="item")
 	private List<Item> listItem;
 

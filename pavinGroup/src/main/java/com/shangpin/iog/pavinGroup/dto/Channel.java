@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @XmlRootElement(name="channel")
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Channel {
 	
 	private String title;
@@ -23,6 +23,7 @@ public class Channel {
 	private String pubDate;
 	private String docs;
 	private String generator;
+	private String nextPage;
 	@XmlElement(name="item")
 	private List<Item> listItem;
 

@@ -7,9 +7,11 @@ package com.shangpin.iog.pavinGroup.service;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,6 +38,7 @@ import com.shangpin.iog.pavinGroup.dto.Item;
 import com.shangpin.iog.pavinGroup.dto.Rss;
 import com.shangpin.iog.service.EventProductService;
 import com.shangpin.iog.service.ProductFetchService;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,34 +86,59 @@ public class FetchProduct {
 	 * fetch product and save into db
 	 */
 	public void fetchProductAndSave() {
-
-		String xml = null;
-		for(int i=0;i<array.length;i++){
+		
+		List<Rss> list = null;
+		try {
+				for(int i=0;i<array.length;i++){
+					list = new ArrayList<Rss>();
+					System.out.println("-------------------------第"+(i+1)+"个开始--------------------------------");
+					fetchProduct(array[i]);
+					System.out.println("-------------------------第"+(i+1)+"个结束--------------------------------");
+				} 
+			}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	
+	}
+	private void fetchProduct(String url){
+		
+		try {
+			String xml = null;
+			
 			xml = HttpUtil45
-					.get(array[i],
+					.get(url,
 							new OutTimeConfig(1000 * 60*5, 1000 * 60*5, 1000 * 60*5),
 							null);
-			System.out.println(array[i]);
-			try {
-				ByteArrayInputStream is = new ByteArrayInputStream(
+			System.out.println(url);
+				ByteArrayInputStream is = null;
+				
+				is = new ByteArrayInputStream(
 						xml.getBytes("UTF-8"));
 				Rss rss = null;
 				rss = ObjectXMLUtil.xml2Obj(Rss.class, is);
-				messMappingAndSave(rss);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+				if(rss!=null){
+					Channel channel = rss.getChannel();
+					if(channel!=null){
+						List<Item> item = channel.getListItem();
+						messMappingAndSave(item);
+						if(channel.getNextPage()!=null){
+							fetchProduct(channel.getNextPage());
+						}
+					}
+				}
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
-
 	/**
 	 * message mapping and save into DB
 	 */
-	private void messMappingAndSave(Rss rss) {
-		if (rss != null) {
-			Channel channel = rss.getChannel();
-			if (channel != null) {
-				List<Item> array = channel.getListItem();
+	private void messMappingAndSave(List<Item> array) {
 				if(array!=null){
 					for (Item item : array) {
 						SpuDTO spu = new SpuDTO();
@@ -166,12 +194,11 @@ public class FetchProduct {
 							String[] picArray = item.getImages().split("\\|");
 							productFetchService.savePicture(supplierId, null, item.getSupplierSkuNo(), Arrays.asList(picArray));
 						}
+						
 					}
 				}
-			}
-		}
-
 	}
+
 }
 
 
