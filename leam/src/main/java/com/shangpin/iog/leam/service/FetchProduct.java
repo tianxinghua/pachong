@@ -3,6 +3,7 @@ package com.shangpin.iog.leam.service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -12,6 +13,9 @@ import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.leam.dto.LeamDTO;
 import com.shangpin.iog.leam.dto.TokenDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
+
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,13 +40,16 @@ public class FetchProduct {
     static String password="PA#=k2xU^ddUc6Jm";
     private static ResourceBundle bdl=null;
     private static String supplierId;
-
+	public static int day;
+    @Autowired
+	private ProductSearchService productSearchService;
     static {
         if(null==bdl)
             bdl= ResourceBundle.getBundle("conf");
             supplierId = bdl.getString("supplierId");
         tokenUrl = bdl.getString("token");
         skuUrl=bdl.getString("skuUrl");
+    	day = Integer.valueOf(bdl.getString("day"));
     }
     public void fetchProductAndSave(String url){
         List<LeamDTO> list=getSkus(skuUrl);
@@ -52,6 +59,19 @@ public class FetchProduct {
         int picNum =0;
 //        Map<String,String> skuMap = new HashMap<>();
         String size ="";
+        
+        
+      //获取原有的SKU 仅仅包含价格和库存
+        
+    	Date startDate,endDate= new Date();
+		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+  		Map<String,SkuDTO> skuDTOMap = new HashedMap();
+  		try {
+  			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+  		} catch (ServiceException e) {
+  			e.printStackTrace();
+  		}
+        
         for(int i =0;i<list.size();i++) {
 
             SkuDTO dto = new SkuDTO();
@@ -92,6 +112,11 @@ public class FetchProduct {
 //                        loggerError.error("sku :" + leamDTO.getStock_id() + ",尺码：" + leamDTO.getSize());
 //                        loggerError.error("sku :" + leamDTO.getStock_id() + ",原尺码：" +skuMap.get(leamDTO.getStock_id()));
 //                    }
+                	
+                	if(skuDTOMap.containsKey(dto.getSkuId())){
+    					skuDTOMap.remove(dto.getSkuId());
+    				}
+                	
                     productFetchService.saveSKU(dto);
 //                    skuMap.put(dto.getSkuId(),leamDTO.getSize());
                     for(String imgUrl:imageList){
@@ -134,11 +159,12 @@ public class FetchProduct {
                 try {
                     productFetchService.saveSPU(spuDTO);
                 } catch (Exception e) {
-                    if (e.getMessage().equals("数据插入失败键重复")) {
-                        loggerError.error(leamDTO.getSupplier_sku()+"保存错误.原因重复。");
-                    } else {
-                        loggerError.error(leamDTO.getSupplier_sku()+"保存错误.原因："+e.getMessage());
-                    }
+                	try {
+						productFetchService.updateMaterial(spuDTO);
+					} catch (ServiceException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 
                 }
 
@@ -146,6 +172,19 @@ public class FetchProduct {
                 picNum++;
             }
         }
+        
+        for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+			 Map.Entry<String,SkuDTO> entry =  itor.next();
+			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+				entry.getValue().setStock("0");
+				try {
+					productFetchService.updatePriceAndStock(entry.getValue());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+        
         logger.info("正确的库存数据 = " + rStock);
         logger.info("无库存数据 ="+ stockNum);
         logger.info("无图片数据 ="+ picNum);
