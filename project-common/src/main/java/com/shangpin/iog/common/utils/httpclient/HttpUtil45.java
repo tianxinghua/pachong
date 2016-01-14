@@ -597,13 +597,6 @@ public class HttpUtil45 {
 
 		}catch(Exception e){
 			logger.error("--------------httpError:"+e.getMessage());
-		}finally{
-			try {
-				if(resp!=null)
-					resp.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 		return resp;
 	}
