@@ -7,9 +7,11 @@ package com.shangpin.iog.pavinGroup.service;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,6 +38,7 @@ import com.shangpin.iog.pavinGroup.dto.Item;
 import com.shangpin.iog.pavinGroup.dto.Rss;
 import com.shangpin.iog.service.EventProductService;
 import com.shangpin.iog.service.ProductFetchService;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +66,8 @@ public class FetchProduct {
 	private static String SpecialPrice;
 	private static String Spring;
 	private static String Uomo ;
+	private static String new1 ;
+	private static String new2 ;
 	private static String [] array;
 	static {
 		if (null == bdl)
@@ -76,102 +81,136 @@ public class FetchProduct {
 		SpecialPrice = bdl.getString("SpecialPrice");
 		Spring = bdl.getString("Spring");
 		Uomo = bdl.getString("Uomo");
-		array = new String[]{Designers,Donna,FlashSale,Highlights,NuoviArrivi,SpecialPrice,Spring,Uomo};
+		new1 = bdl.getString("new1");
+		new2 = bdl.getString("new2");
+		array = new String[]{Designers,Donna,FlashSale,Highlights,NuoviArrivi,SpecialPrice,Spring,Uomo,new1,new2};
 	}
 
 	/**
 	 * fetch product and save into db
 	 */
 	public void fetchProductAndSave() {
-
-		String xml = null;
-		for(int i=0;i<array.length;i++){
+		
+		List<Rss> list = null;
+		try {
+				for(int i=0;i<array.length;i++){
+					list = new ArrayList<Rss>();
+					System.out.println("-------------------------第"+(i+1)+"个开始--------------------------------");
+					fetchProduct(array[i]);
+					System.out.println("-------------------------第"+(i+1)+"个结束--------------------------------");
+				} 
+			}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	
+	}
+	private void fetchProduct(String url){
+		
+		try {
+			String xml = null;
+			
 			xml = HttpUtil45
-					.get(array[i],
+					.get(url,
 							new OutTimeConfig(1000 * 60*5, 1000 * 60*5, 1000 * 60*5),
 							null);
-			System.out.println(array[i]);
-			try {
-				ByteArrayInputStream is = new ByteArrayInputStream(
+			System.out.println(url);
+				ByteArrayInputStream is = null;
+				
+				is = new ByteArrayInputStream(
 						xml.getBytes("UTF-8"));
 				Rss rss = null;
 				rss = ObjectXMLUtil.xml2Obj(Rss.class, is);
-				messMappingAndSave(rss);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+				if(rss!=null){
+					Channel channel = rss.getChannel();
+					if(channel!=null){
+						List<Item> item = channel.getListItem();
+						messMappingAndSave(item);
+						if(channel.getNextPage()!=null){
+							fetchProduct(channel.getNextPage());
+						}
+					}
+				}
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
-
 	/**
 	 * message mapping and save into DB
 	 */
-	private void messMappingAndSave(Rss rss) {
-		if (rss != null) {
-			Channel channel = rss.getChannel();
-			if (channel != null) {
-				List<Item> array = channel.getListItem();
-				if(array!=null){
-					for (Item item : array) {
-						SpuDTO spu = new SpuDTO();
+	private void messMappingAndSave(List<Item> array) {
+			if(array!=null){
+				for (Item item : array) {
+					SpuDTO spu = new SpuDTO();
+					try {
+						spu.setId(UUIDGenerator.getUUID());
+						spu.setSupplierId(supplierId);
+						spu.setSpuId(item.getSupplierSkuNo());
+						spu.setCategoryName(item.getGroup_description());
+						spu.setBrandName(item.getBrand());
+						spu.setSpuName(item.getTitle());
+						spu.setMaterial(item.getMaterial());
+						spu.setCategoryGender(item.getGender());
+						
+						String desc = item.getDescription();
+						int index = desc.indexOf("Made in");
+				    	if(index!=-1){
+				    		String s = desc.substring(index);	
+				    		String sss = s.substring(0,s.indexOf("<br>"));
+				    		spu.setProductOrigin(sss);
+				    	}
+						productFetchService.saveSPU(spu);
+					} catch (Exception e) {
 						try {
-							spu.setId(UUIDGenerator.getUUID());
-							spu.setSupplierId(supplierId);
-							spu.setSpuId(item.getSupplierSkuNo());
-							spu.setCategoryName(item.getGroup_description());
-							spu.setBrandName(item.getBrand());
-							spu.setSpuName(item.getTitle());
-							spu.setMaterial(item.getMaterial());
-							spu.setCategoryGender(item.getGender());
-							productFetchService.saveSPU(spu);
-						} catch (Exception e) {
+							productFetchService.updateMaterial(spu);
+						} catch (ServiceException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+
+					SkuDTO sku = new SkuDTO();
+					try {
+						sku.setId(UUIDGenerator.getUUID());
+						sku.setSupplierId(supplierId);
+						sku.setSpuId(item.getSupplierSkuNo());
+						sku.setSkuId(item.getSupplierSkuNo());
+						sku.setProductSize(item.getProductSize());
+						sku.setStock(item.getStock());
+						sku.setMarketPrice(item.getPrice());
+						sku.setColor(item.getProductColor());
+						sku.setProductName(item.getTitle());
+						sku.setProductDescription(item.getDescription());
+						 sku.setSaleCurrency("EUR");
+						productFetchService.saveSKU(sku);
+						
+					} catch (ServiceException e) {
+						if (e.getMessage().equals("数据插入失败键重复")) {
 							try {
-								productFetchService.updateMaterial(spu);
+								productFetchService.updatePriceAndStock(sku);
 							} catch (ServiceException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
+						} else {
+							e.printStackTrace();
 						}
 
-						SkuDTO sku = new SkuDTO();
-						try {
-							sku.setId(UUIDGenerator.getUUID());
-							sku.setSupplierId(supplierId);
-							sku.setSpuId(item.getSupplierSkuNo());
-							sku.setSkuId(item.getSupplierSkuNo());
-							sku.setProductSize(item.getProductSize());
-							sku.setStock(item.getStock());
-							sku.setMarketPrice(item.getPrice());
-							sku.setColor(item.getProductColor());
-							sku.setProductName(item.getTitle());
-							sku.setProductDescription(item.getDescription());
-							 sku.setSaleCurrency("EUR");
-							productFetchService.saveSKU(sku);
-							
-						} catch (ServiceException e) {
-							if (e.getMessage().equals("数据插入失败键重复")) {
-								try {
-									productFetchService.updatePriceAndStock(sku);
-								} catch (ServiceException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-							} else {
-								e.printStackTrace();
-							}
-
-						}
-						
-						if (StringUtils.isNotBlank(item.getImages())) {
-							String[] picArray = item.getImages().split("\\|");
-							productFetchService.savePicture(supplierId, null, item.getSupplierSkuNo(), Arrays.asList(picArray));
-						}
 					}
+					
+					if (StringUtils.isNotBlank(item.getImages())) {
+						String[] picArray = item.getImages().split("\\|");
+						productFetchService.savePicture(supplierId, null, item.getSupplierSkuNo(), Arrays.asList(picArray));
+					}
+					
 				}
 			}
-		}
-
 	}
+
 }
 
 

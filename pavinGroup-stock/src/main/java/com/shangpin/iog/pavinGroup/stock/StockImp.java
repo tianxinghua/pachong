@@ -56,6 +56,7 @@ public class StockImp extends AbsUpdateProductStock {
 	private static String Spring;
 	private static String Uomo ;
 	private static String [] array;
+	private static Map<String,String>	map = null;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -89,38 +90,54 @@ public class StockImp extends AbsUpdateProductStock {
         return stockMap;
     }
 	public static Map<String, String> fetchProductStcok() {
-
+		map = new HashMap<String,String>();
 		Map<String,String> map = null;
 		String xml = null;
 		for(int i=0;i<array.length;i++){
+			fetchProduct(array[i]);
+		}
+		return map;
+	}
+	
+	private static void fetchProduct(String url){
+		
+		try {
+			String xml = null;
 			xml = HttpUtil45
-					.get(array[i],
+					.get(url,
 							new OutTimeConfig(1000 * 60*5, 1000 * 60*5, 1000 * 60*5),
 							null);
-			System.out.println(array[i]);
-			try {
-				ByteArrayInputStream is = new ByteArrayInputStream(
+			System.out.println(url);
+				ByteArrayInputStream is = null;
+				
+				is = new ByteArrayInputStream(
 						xml.getBytes("UTF-8"));
 				Rss rss = null;
 				rss = ObjectXMLUtil.xml2Obj(Rss.class, is);
-				if (rss != null) {
+				if(rss!=null){
 					Channel channel = rss.getChannel();
-					if (channel != null) {
-						map = new HashMap<String,String>();
+					if(channel!=null){
+						
 						List<Item> array = channel.getListItem();
 						if(array!=null){
 							for (Item item : array) {
 								map.put(item.getSupplierSkuNo(),item.getStock());
 							}
 						}
+						if(channel.getNextPage()!=null){
+							fetchProduct(channel.getNextPage());
+						}
 					}
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return map;
 	}
+	
+	
     public static void main(String[] args) {
     
     	//加载spring

@@ -18,8 +18,8 @@ import java.util.*;
 /**
  * Created by houkun on 2015/9/14.
  */
-@Component("linoriccistock")
-public class LinoricciStockImp  extends AbsUpdateProductStock {
+@Component("atelierOstoreStock")
+public class OstoreStockImp  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static ResourceBundle bdl=null;
     private static String supplierId;
@@ -40,7 +40,7 @@ public class LinoricciStockImp  extends AbsUpdateProductStock {
     	Map<String,String> skuMap = new HashMap<String,String>();
     	String data = "";
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
-				new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+				new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
 		String[] skuStrings = skuData.split("\\r\\n");
 		for (int i = 1; i < skuStrings.length; i++) {
 			if (StringUtils.isNotBlank(skuStrings[i])) {
@@ -79,15 +79,15 @@ public class LinoricciStockImp  extends AbsUpdateProductStock {
     public static void main(String[] args) throws Exception {
     	//加载spring
         loadSpringContext();
-        LinoricciStockImp stockImp =(LinoricciStockImp)factory.getBean("linoriccistock");
+        OstoreStockImp stockImp =(OstoreStockImp)factory.getBean("atelierOstoreStock");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("linoricciATELIER更新数据库开始");
+        logger.info("ostoreATELIER更新数据库开始");
         try {
 			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
 		} catch (Exception e) {
-			logger.info("linoricciATELIER更新库存数据库出错"+e.toString());
+			logger.info("ostoreATELIER更新库存数据库出错"+e.toString());
 		}
-        logger.info("linoricciATELIER更新数据库结束");
+        logger.info("ostoreATELIER更新数据库结束");
         System.exit(0);
     }
 }

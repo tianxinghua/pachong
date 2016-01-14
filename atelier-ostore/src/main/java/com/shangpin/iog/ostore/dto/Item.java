@@ -13,4 +13,5 @@ public class Item {
 	private String color;
 	private String description;
 	private String productCode;
+	
 }
