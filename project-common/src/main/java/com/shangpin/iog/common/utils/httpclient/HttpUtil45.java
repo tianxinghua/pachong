@@ -667,7 +667,7 @@ public class HttpUtil45 {
 		 if(200==stateCode||201==stateCode||202==stateCode){
 
 		 }else{
-			 if(401==stateCode){
+			 if(401==stateCode || 404==stateCode){
 				 HttpEntity entity=resp.getEntity();
 			     try {
 			    	  logger.error(EntityUtils.toString(entity,"UTF-8"));
