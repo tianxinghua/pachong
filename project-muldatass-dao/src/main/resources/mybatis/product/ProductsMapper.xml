@@ -273,6 +273,7 @@
           sku.MARKET_PRICE  as market_price,
           sku.SALE_PRICE  as  sale_price,
           sku.SUPPLIER_PRICE as supplier_price,
+          sku.PRODUCT_CODE as product_code,
           
           sku.STOCK as stock ,
           sku.PRODUCT_SIZE as size,
