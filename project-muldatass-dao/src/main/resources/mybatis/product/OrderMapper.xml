@@ -54,6 +54,7 @@
 		MEMO,
 		STATUS,
 		CREATE_TIME,
+		PURCHASE_PRICE_DETAIL,
         CONSUMER_MSG
     </sql>
     <select id="findBySupplierIdAndStatus"  resultMap="OrderResultMap">
@@ -341,7 +342,7 @@
         #{supplierId},#{supplierNo}, #{uuId}, #{spOrderId},#{spPurchaseNo},#{spPurchaseDetailNo},
        	#{supplierOrderNo},
         #{detail},#{memo},#{status},
-        #{createTime},#{consumerMsg}
+        #{createTime},#{purchasePriceDetail},#{consumerMsg}
         )
     </insert>
 
