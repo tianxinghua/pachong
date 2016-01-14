@@ -55,13 +55,13 @@ public class FetchProduct {
         //获取产品信息
         logger.info("get product starting....");
     	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
-    										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    										new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
-    										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    										new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
     	String imageData = HttpUtil45.post(url+"GetAllImageMarketplace",
-    										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    										new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
     	String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
-    										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    										new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
     
     	System.out.println(priceData);
     	Date startDate,endDate= new Date();
