@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @XmlRootElement(name="channel")
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Channel {
 	
 	private String title;
