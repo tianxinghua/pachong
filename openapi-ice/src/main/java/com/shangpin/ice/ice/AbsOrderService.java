@@ -607,11 +607,13 @@ public abstract class AbsOrderService {
             List<ICEOrderDetailDTO>list=new ArrayList<>();
             StringBuffer buffer = new StringBuffer();
             StringBuffer sopbuffer= new StringBuffer();
+            String purchasePrice="";
             for(PurchaseOrderDetail purchaseOrderDetail:entry.getValue()){
                 //记录采购单明细信息 以便发货
                 purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
                 //计算同一采购单的相同产品的数量
                 if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
+                	purchasePrice = purchaseOrderDetail.SkuPrice;
                     ICEOrderDetailDTO detailDTO = new ICEOrderDetailDTO();
                     detailDTO.setSku_id(purchaseOrderDetail.SupplierSkuNo);
                     detailDTO.setQuantity(stockMap.get(purchaseOrderDetail.SupplierSkuNo));
@@ -633,6 +635,7 @@ public abstract class AbsOrderService {
             spOrder.setSpOrderId(entry.getKey());
             spOrder.setSpPurchaseNo(entry.getKey());
             spOrder.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString());
+            spOrder.setPurchasePriceDetail(purchasePrice);
             spOrder.setDetail(buffer.toString().substring(0,buffer.toString().length()-1));
             spOrder.setMemo(sopbuffer.toString().substring(0,sopbuffer.toString().length()-1));
             spOrder.setCreateTime(new Date());

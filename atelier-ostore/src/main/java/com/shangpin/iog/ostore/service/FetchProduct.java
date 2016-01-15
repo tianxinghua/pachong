@@ -55,15 +55,15 @@ public class FetchProduct {
         //获取产品信息
         logger.info("get product starting....");
     	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
-    										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    										new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
-    										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    										new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
     	String imageData = HttpUtil45.post(url+"GetAllImageMarketplace",
-    										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    										new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
     	String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
-    										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    										new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
     
-    	System.out.println(priceData);
+//    	System.out.println(priceData);
     	Date startDate,endDate= new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 		
@@ -101,6 +101,7 @@ public class FetchProduct {
         //得到所有的spu信息
         String[] spuStrings = spuData.split("\\r\\n");
         String[] spuArr = null;
+        int s=0;
 		for (int i = 1; i < spuStrings.length; i++) {
 			if (StringUtils.isNotBlank(spuStrings[i])) {
 				if (i==1) {
@@ -112,10 +113,14 @@ public class FetchProduct {
 				SpuDTO spu = new SpuDTO();
 				Item item = new Item();
 				  try {
-					   item.setColor(spuArr[10]);
+					   item.setColor(StringUtils.isBlank(spuArr[10])?spuArr[4]:spuArr[10]);
 					   item.setSupplierPrice(spuArr[16]);
 					   item.setDescription(spuArr[15]);
 					   item.setSpuId(spuArr[0]);
+					   
+					   item.setStyleCode(spuArr[3]);
+					   item.setColorCode(spuArr[4]);
+					   
 					   spuMap.put(spuArr[0], item);
 
 					   spu.setId(UUIDGenerator.getUUID());
@@ -123,12 +128,19 @@ public class FetchProduct {
 		               spu.setSpuId(spuArr[0]);
 		               spu.setBrandName(spuArr[2]);
 		               spu.setCategoryName(spuArr[8]);
-		               spu.setSeasonId(spuArr[6]);
+		               spu.setSeasonId(spuArr[1]);
+		               StringBuffer material = new StringBuffer() ;
 		               if (StringUtils.isNotBlank(spuArr[11])) {
-		            	   spu.setMaterial(spuArr[11]);
-		               }else {
-		            	   spu.setMaterial(spuArr[15]);
+		            	   s++;
+		            	   material.append(spuArr[11]).append(";");
+		               }else if(StringUtils.isNotBlank(spuArr[15])){
+		            	   s++;
+		            	   material.append(spuArr[15]).append(";");
+		               }else if (StringUtils.isNotBlank(spuArr[42])) {
+		            	   s++;
+		            	   material.append(spuArr[42]);
 		               }
+		               spu.setMaterial(material.toString());
 		               spu.setCategoryGender(spuArr[5]);
 		               spu.setProductOrigin(spuArr[40]);
 		               productFetchService.saveSPU(spu);
@@ -141,7 +153,7 @@ public class FetchProduct {
 		           }
 			}
 		}
-
+		System.out.println("++++++++++++++++++++++++"+s);
 		
 		//处理sku信息
 		//处理图片信息
@@ -181,7 +193,7 @@ public class FetchProduct {
 						size=size.replace("½", "+");
 					}
         			sku.setProductSize(size);
-        			sku.setMarketPrice(priceMap.get(item.getSpuId()));
+        			sku.setMarketPrice(priceMap.get(item.getSpuId()).replace(",", ""));
         			sku.setColor(item.getColor());
         			sku.setProductDescription(item.getDescription());
         			sku.setSaleCurrency("EURO");
@@ -191,7 +203,7 @@ public class FetchProduct {
         			//skuid+barcode
         			sku.setSkuId(skuArr[0]+"-"+barCode);
         			sku.setBarcode(barCode);
-        			sku.setProductCode(skuArr[0]);
+        			sku.setProductCode(item.getStyleCode()+"-"+item.getColorCode());
         			try {
         				
         				if(skuDTOMap.containsKey(sku.getSkuId())){
