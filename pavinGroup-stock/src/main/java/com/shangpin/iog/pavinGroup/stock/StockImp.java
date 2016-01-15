@@ -148,24 +148,6 @@ public class StockImp extends AbsUpdateProductStock {
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("pavinGroup");
-        try {
-			stockImp.grabStock(null);
-		} catch (ServiceException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-//        fetchProductStcok();
-//        List list = new ArrayList();
-//        list.add("NAM61310160_AXXS804L");
-//        try {
-//			stockImp.grabStock(list);
-//		} catch (Exception e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("pavinGroup更新库存开始");
         System.out.println("pavinGroup更新库存开始");
