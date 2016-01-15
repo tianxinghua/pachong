@@ -125,6 +125,8 @@ public class StockImp extends AbsUpdateProductStock {
 						List<Item> array = channel.getListItem();
 						if(array!=null){
 							for (Item item : array) {
+								logger.info(item.getSupplierSkuNo()+"="+item.getStock());
+								System.out.println(item.getSupplierSkuNo()+"="+item.getStock());
 								map.put(item.getSupplierSkuNo(),item.getStock());
 							}
 						}
@@ -143,12 +145,11 @@ public class StockImp extends AbsUpdateProductStock {
 	
 	
     public static void main(String[] args) {
-    
     	//加载spring
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("pavinGroup");
-        fetchProductStcok();
+//        fetchProductStcok();
 //        List list = new ArrayList();
 //        list.add("NAM61310160_AXXS804L");
 //        try {
