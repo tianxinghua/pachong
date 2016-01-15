@@ -28,14 +28,14 @@ public class LogisticsServiceImpl implements LogisticsService {
     LogisticsMapper logisticsDAO;
 
     @Override
-    public void save(OrderDTO orderDTO,String logisticsCompany,String trackNumber,String shipDate) throws ServiceException {
+    public void save(OrderDTO orderDTO,String logisticsCompany,String trackNumber,String shippedTime) throws ServiceException {
         try {
             LogisticsDTO logisticsDTO = new LogisticsDTO();
             logisticsDTO.setLogisticsCompany(logisticsCompany);
             logisticsDTO.setTrackNumber(trackNumber);
-            logisticsDTO.setShippedDate(shipDate);
-            logisticsDTO.setCreateDate(new Date());
-            logisticsDTO.setSupplierId(orderDTO.getSupplierNo());
+            logisticsDTO.setShippedTime(shippedTime);
+            logisticsDTO.setCreateTime(new Date());
+            logisticsDTO.setSupplierId(orderDTO.getSupplierId());
             logisticsDTO.setPurchaseNo(orderDTO.getSpPurchaseNo());
             logisticsDTO.setPurchaseDetailNo(orderDTO.getSpPurchaseDetailNo());
             logisticsDTO.setOrderNo(orderDTO.getSpOrderId());
@@ -54,16 +54,16 @@ public class LogisticsServiceImpl implements LogisticsService {
     }
 
     @Override
-    public LogisticsDTO findPurchaseDetailNoByTrackNumber(String trackNmuber) {
+    public LogisticsDTO findPurchaseDetailNoBySupplierIdAndTrackNumber(String supplierId,String trackNmuber) {
 
-        List<LogisticsDTO> logisticsDTOList= logisticsDAO.findPurchaseDetailNoByTrackNumber(trackNmuber) ;
+        List<LogisticsDTO> logisticsDTOList= logisticsDAO.findPurchaseDetailNoBySupplierAndTrackNumber(supplierId,trackNmuber) ;
         LogisticsDTO  returnDto = new LogisticsDTO();
         returnDto.setTrackNumber(trackNmuber);
         String purchaseDetailNo="";
         List<String> purchaseDetailList = new ArrayList<>();
         for(LogisticsDTO dto:logisticsDTOList){
             returnDto.setLogisticsCompany(dto.getLogisticsCompany());
-
+            returnDto.setPurchaseNo(dto.getPurchaseNo());
             purchaseDetailNo=dto.getPurchaseDetailNo();
             String[] purchaseDetailNoArray = purchaseDetailNo.split(";");
             if(null!=purchaseDetailNoArray){

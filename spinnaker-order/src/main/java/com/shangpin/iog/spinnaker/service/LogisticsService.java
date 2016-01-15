@@ -36,7 +36,7 @@ public class LogisticsService extends AbsDeliverService{
     @Override
     protected void handleConfirmShippedOrder(OrderDTO orderDTO) {
         orderDTO.setStatus(OrderStatus.SHIPPED);
-        String deliverNo =  "DHL" + "|" + "0123456789" + "2016-01-13 12:00:00";
+        String deliverNo =  "DHL" + ";" + "0123456789" + ";" + "2016-01-13 12:00:00";
         orderDTO.setDeliveryNo(deliverNo);
     }
 

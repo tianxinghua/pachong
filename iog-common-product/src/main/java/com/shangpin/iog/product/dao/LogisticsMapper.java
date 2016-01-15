@@ -31,7 +31,7 @@ public interface LogisticsMapper extends IBaseDao<LogisticsDTO> {
      * @param trackNumber
      * @return
      */
-    public List<LogisticsDTO>  findPurchaseDetailNoByTrackNumber(@Param("trackNumber") String trackNumber);
+    public List<LogisticsDTO>  findPurchaseDetailNoBySupplierAndTrackNumber(@Param("supplierId") String supplierId,@Param("trackNumber") String trackNumber);
 
     /**
      * 更新尚品的发货单信息信息状态

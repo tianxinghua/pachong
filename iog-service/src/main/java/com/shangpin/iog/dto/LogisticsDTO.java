@@ -22,9 +22,9 @@ public class LogisticsDTO {
     private String purchaseDetailNo;//采购单明细单号
     private String logisticsCompany;// 物流公司
     private String trackNumber;//物流单号
-    private String shippedDate;//发货时间
-    private Date createDate;//创建时间
-    private Date updateDate;//更新时间
+    private String shippedTime;//发货时间
+    private Date createTime;//创建时间
+    private Date updateTime;//更新时间
     private String spInvoice;//尚品的发货单号
     private String memo;//备注
     private List<String> purchaseDetailList;//临时信息 与数据库无关

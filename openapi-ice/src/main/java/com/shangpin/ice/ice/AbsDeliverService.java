@@ -1,5 +1,8 @@
 package com.shangpin.ice.ice;
 
+import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
+import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
+import ShangPin.SOP.Servant.OpenApiServantPrx;
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.*;
@@ -34,12 +37,14 @@ public abstract   class AbsDeliverService {
     private static ResourceBundle bdl = null;
     private static Integer Delay=20;
 
+
     static {
         if(null==bdl){
             bdl=ResourceBundle.getBundle("openice");
         }
 
         Delay=Integer.parseInt(bdl.getString("delay"));
+
     }
     /**
      * c
@@ -100,11 +105,25 @@ public abstract   class AbsDeliverService {
         List<String> trackNumList = logisticsService.findNotConfirmSupplierLogisticsNumber(supplierId,searchDate);
         for(String trackNum:trackNumList){
             Date date=new Date();
-            LogisticsDTO logisticsDTO =  logisticsService.findPurchaseDetailNoByTrackNumber(trackNum);
+            LogisticsDTO logisticsDTO =  logisticsService.findPurchaseDetailNoBySupplierIdAndTrackNumber(supplierId,trackNum);
             try {
+                //获取任意一个采购单的信息
+                OpenApiServantPrx servant = null;
+                try {
+                    servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                PurchaseOrderDetailPage page=servant.FindPurchaseOrderDetail(supplierId,logisticsDTO.getPurchaseNo());
+                List<PurchaseOrderDetail> purchaseOrderDetails=  page.PurchaseOrderDetails;
+                String warehouseCode="",warehouse="";
+                PurchaseOrderDetail purchaseOrderDetail = purchaseOrderDetails.get(0);
+                warehouseCode = purchaseOrderDetail.WarehouseNo;
+                warehouse = purchaseOrderDetail.WarehouseName;
+
                 String  deliverNo=  iceOrderService.getPurchaseDeliveryOrderNo(supplierId,
-                        logisticsDTO.getLogisticsCompany(),logisticsDTO.getTrackNumber(),logisticsDTO.getShippedDate(),4,
-                        supplierId,"联系方式无","发货地址无", "发货备注无","仓库编号无","仓库名称无",logisticsDTO.getPurchaseDetailList(),0);
+                        logisticsDTO.getLogisticsCompany(),logisticsDTO.getTrackNumber(),logisticsDTO.getShippedTime(),4,
+                        supplierId,"联系方式无","发货地址无", "发货备注无",warehouseCode,warehouse,logisticsDTO.getPurchaseDetailList(),0);
                 //更新状态
                 logisticsService.updateInvoice(supplierId,trackNum,deliverNo,date);
 
@@ -145,7 +164,7 @@ public abstract   class AbsDeliverService {
     }
 
     private void addLogisticsMsg(OrderDTO orderDTO){
-        String[] logsticsArray = orderDTO.getDeliveryNo().split("|");
+        String[] logsticsArray = orderDTO.getDeliveryNo().split(";",-1);
         if(null!=logsticsArray&&3==logsticsArray.length){
 
             try {

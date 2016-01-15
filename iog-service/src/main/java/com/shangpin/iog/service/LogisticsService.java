@@ -32,10 +32,11 @@ public interface LogisticsService {
 
     /**
      * 返回拼装的物流信息 包含 供货商使用的物流公司、物流单号和 尚品采购够单明细信息列表
+     * @param supplierId   供货商号
      * @param trackNmuber  供货商物流单号
      * @return
      */
-    public LogisticsDTO findPurchaseDetailNoByTrackNumber(String trackNmuber);
+    public LogisticsDTO findPurchaseDetailNoBySupplierIdAndTrackNumber(String supplierId,String trackNmuber);
 
     /**
      * 更新尚品发货单号

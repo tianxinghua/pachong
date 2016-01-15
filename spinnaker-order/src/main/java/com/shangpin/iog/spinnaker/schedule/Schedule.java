@@ -22,7 +22,7 @@ public class Schedule {
 	@Autowired
 	LogisticsService logisticsService;
 	
-	@Scheduled(cron = "0 0/2 * * * ? ")
+//	@Scheduled(cron = "0 0/2 * * * ? ")
 	public void start() {
 		try {
 			orderService.startWMS();
@@ -32,7 +32,7 @@ public class Schedule {
 		
 	}
 	
-	@Scheduled(cron = "0 0/2 * * * ? ")
+//	@Scheduled(cron = "0 0/2 * * * ? ")
 	public void confirmOrder() {
 		try {
 			orderService.confirmOrder();
@@ -42,6 +42,7 @@ public class Schedule {
 		
 	}
 
+	@Scheduled(cron = "0 0/3 * * * ? ")
 	public void handleShippedOrder(){
 		try {
 			logisticsService.handleShippedOrder();
@@ -50,7 +51,7 @@ public class Schedule {
 		}
 	}
 
-
+	@Scheduled(cron = "0 0/3 * * * ? ")
 	public void handleInvoice(){
 		try {
 			logisticsService.handleInvoice();
