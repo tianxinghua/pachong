@@ -56,6 +56,9 @@ public class StockImp extends AbsUpdateProductStock {
 	private static String Spring;
 	private static String Uomo ;
 	private static String [] array;
+	private static Map<String,String>	map = null;
+	private static String new1 ;
+	private static String new2 ;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -68,7 +71,9 @@ public class StockImp extends AbsUpdateProductStock {
 		SpecialPrice = bdl.getString("SpecialPrice");
 		Spring = bdl.getString("Spring");
 		Uomo = bdl.getString("Uomo");
-		array = new String[]{Designers,Donna,FlashSale,Highlights,NuoviArrivi,SpecialPrice,Spring,Uomo};
+		new1 = bdl.getString("new1");
+		new2 = bdl.getString("new2");
+		array = new String[]{Designers,Donna,FlashSale,Highlights,NuoviArrivi,SpecialPrice,Spring,Uomo,new1,new2};
 	}
    
     @Override
@@ -76,7 +81,7 @@ public class StockImp extends AbsUpdateProductStock {
         //get tony return date
         //定义三方
     	Map<String,String> stockMap = new HashMap<>();
-    	Map<String,String>  map = fetchProductStcok();
+    	fetchProductStcok();
     	if(map!=null){
     		for (String skuno : skuNo) {
     			if(map.containsKey(skuno)){
@@ -88,53 +93,61 @@ public class StockImp extends AbsUpdateProductStock {
     	}
         return stockMap;
     }
-	public static Map<String, String> fetchProductStcok() {
-
-		Map<String,String> map = null;
+	public static void fetchProductStcok() {
+		map = new HashMap<String,String>();
 		String xml = null;
 		for(int i=0;i<array.length;i++){
+			fetchProduct(array[i]);
+		}
+	}
+	
+	private static void fetchProduct(String url){
+		
+		try {
+			String xml = null;
 			xml = HttpUtil45
-					.get(array[i],
+					.get(url,
 							new OutTimeConfig(1000 * 60*5, 1000 * 60*5, 1000 * 60*5),
 							null);
-			System.out.println(array[i]);
-			try {
-				ByteArrayInputStream is = new ByteArrayInputStream(
+			System.out.println(url);
+				ByteArrayInputStream is = null;
+				
+				is = new ByteArrayInputStream(
 						xml.getBytes("UTF-8"));
 				Rss rss = null;
 				rss = ObjectXMLUtil.xml2Obj(Rss.class, is);
-				if (rss != null) {
+				if(rss!=null){
 					Channel channel = rss.getChannel();
-					if (channel != null) {
-						map = new HashMap<String,String>();
+					if(channel!=null){
+						
 						List<Item> array = channel.getListItem();
 						if(array!=null){
 							for (Item item : array) {
+								logger.info(item.getSupplierSkuNo()+"="+item.getStock());
+								System.out.println(item.getSupplierSkuNo()+"="+item.getStock());
 								map.put(item.getSupplierSkuNo(),item.getStock());
 							}
 						}
+						if(channel.getNextPage()!=null){
+							fetchProduct(channel.getNextPage());
+						}
 					}
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return map;
 	}
+	
+	
     public static void main(String[] args) {
-    
+    	
     	//加载spring
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("pavinGroup");
-//        List list = new ArrayList();
-//        list.add("NAM61310160_AXXS804L");
-//        try {
-//			stockImp.grabStock(list);
-//		} catch (Exception e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("pavinGroup更新库存开始");
         System.out.println("pavinGroup更新库存开始");

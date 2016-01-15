@@ -87,6 +87,7 @@ public class OrderImpl extends AbsOrderService {
 				if(!access_token.equals(UtilOfChannel.ERROR)){
 					
 					createOrderUrl = createOrderUrl+"?access_token="+access_token;//access_token;
+					logInfo.info("createOrderUrl===="+createOrderUrl);
 					//判断库存
 					String sku_stock = orderDTO.getDetail().split(",")[0];
 					String sku = sku_stock.split(":")[0];
@@ -94,6 +95,7 @@ public class OrderImpl extends AbsOrderService {
 					logInfo.info("id======"+id);
 					stock = sku_stock.split(":")[1];
 					String content = HttpUtil45.operateData("get", "", "https://api.channeladvisor.com/v1/Products("+id+")?access_token="+access_token, timeConfig, null, "", "", "");
+					logInfo.info("请求库存===="+content);
 					String realStock = JSONObject.fromObject(content).getString("TotalAvailableQuantity");
 					logInfo.info("realStock======"+realStock);
 					if(Integer.parseInt(stock) <= Integer.parseInt(realStock)){
@@ -220,7 +222,7 @@ public class OrderImpl extends AbsOrderService {
 			
 			if(!access_token.equals(UtilOfChannel.ERROR)){
 				String orderId = orderDTO.getSupplierOrderNo();
-				if(StringUtils.isNotBlank(orderId)){
+				if(StringUtils.isNotBlank(orderId) && !"null".equals(orderId)){
 					String url = "https://api.channeladvisor.com/v1/Orders("+orderId+")?access_token="+access_token;
 					Map<String,String> param = new HashMap<>();
 					param.put("CheckoutStatus", "Completed");
@@ -229,6 +231,7 @@ public class OrderImpl extends AbsOrderService {
 					param.put("PaymentDateUtc", UtilOfChannel.getUTCTime());
 					String jsonValue = JSONObject.fromObject(param).toString();
 					logInfo.info("param==="+jsonValue);
+					logInfo.info("url==="+url);
 					try{
 						
 						HttpUtil45.operateData("put", "json", url, timeConfig, null, jsonValue, "", "");

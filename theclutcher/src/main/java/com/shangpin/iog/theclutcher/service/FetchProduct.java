@@ -197,6 +197,7 @@ public class FetchProduct {
 	                spu.setMaterial(item.getMaterial());
 					spu.setSeasonName(item.getSeason());
 	                spu.setCategoryGender(item.getGender());
+	                spu.setProductOrigin(item.getMade());
 
 	                try {
 	                    productFetchService.saveSPU(spu);

@@ -24,6 +24,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 
 import com.shangpin.framework.ServiceMessageException;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.*;
@@ -596,13 +597,6 @@ public class HttpUtil45 {
 
 		}catch(Exception e){
 			logger.error("--------------httpError:"+e.getMessage());
-		}finally{
-			try {
-				if(resp!=null)
-					resp.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 		return resp;
 	}
