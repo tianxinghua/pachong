@@ -198,9 +198,10 @@ public class FetchProduct {
             Map<String, String> param = new HashMap<>();
             param.put("user",user);
             param.put("password",password);
-            OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*15,1000*60*15,1000*60*15);
+            OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*15,1000*60*60,1000*60*60);
             result= HttpUtil45.post(url+"?t="+token, param, outTimeConf);
             System.out.println(" result = "+ result);
+            logger.info(" result = "+ result);
             list = getObjectsByJsonString(result);
         }catch (Exception e){
             e.printStackTrace();
