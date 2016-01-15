@@ -81,7 +81,7 @@ public class StockImp extends AbsUpdateProductStock {
         //get tony return date
         //定义三方
     	Map<String,String> stockMap = new HashMap<>();
-    	Map<String,String>  map = fetchProductStcok();
+    	fetchProductStcok();
     	if(map!=null){
     		for (String skuno : skuNo) {
     			if(map.containsKey(skuno)){
@@ -93,14 +93,12 @@ public class StockImp extends AbsUpdateProductStock {
     	}
         return stockMap;
     }
-	public static Map<String, String> fetchProductStcok() {
+	public static void fetchProductStcok() {
 		map = new HashMap<String,String>();
-		Map<String,String> map = null;
 		String xml = null;
 		for(int i=0;i<array.length;i++){
 			fetchProduct(array[i]);
 		}
-		return map;
 	}
 	
 	private static void fetchProduct(String url){
@@ -145,10 +143,20 @@ public class StockImp extends AbsUpdateProductStock {
 	
 	
     public static void main(String[] args) {
+    	
     	//加载spring
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("pavinGroup");
+        try {
+			stockImp.grabStock(null);
+		} catch (ServiceException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 //        fetchProductStcok();
 //        List list = new ArrayList();
 //        list.add("NAM61310160_AXXS804L");
