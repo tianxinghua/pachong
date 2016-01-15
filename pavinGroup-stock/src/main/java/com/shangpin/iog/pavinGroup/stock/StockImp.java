@@ -57,6 +57,8 @@ public class StockImp extends AbsUpdateProductStock {
 	private static String Uomo ;
 	private static String [] array;
 	private static Map<String,String>	map = null;
+	private static String new1 ;
+	private static String new2 ;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -69,7 +71,9 @@ public class StockImp extends AbsUpdateProductStock {
 		SpecialPrice = bdl.getString("SpecialPrice");
 		Spring = bdl.getString("Spring");
 		Uomo = bdl.getString("Uomo");
-		array = new String[]{Designers,Donna,FlashSale,Highlights,NuoviArrivi,SpecialPrice,Spring,Uomo};
+		new1 = bdl.getString("new1");
+		new2 = bdl.getString("new2");
+		array = new String[]{Designers,Donna,FlashSale,Highlights,NuoviArrivi,SpecialPrice,Spring,Uomo,new1,new2};
 	}
    
     @Override
@@ -144,6 +148,7 @@ public class StockImp extends AbsUpdateProductStock {
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("pavinGroup");
+        fetchProductStcok();
 //        List list = new ArrayList();
 //        list.add("NAM61310160_AXXS804L");
 //        try {
