@@ -149,8 +149,8 @@ public class FetchProduct {
 	                sku.setStock(item.getAvailability());
 
 	                //SKU 选填
-	                sku.setProductName(item.getTitle());
-	                sku.setProductDescription(item.getDescription());
+	                sku.setProductName(item.getTitle().replaceAll("," , " "));
+	                sku.setProductDescription(item.getDescription().replaceAll("," , " "));
 	                sku.setProductCode(item.getMpn().replaceAll("," , "."));
 	                
 	                System.out.println("sku : " + sku);
@@ -192,12 +192,12 @@ public class FetchProduct {
 	                spu.setId(UUIDGenerator.getUUID());
 	                spu.setSpuId(spuId);
 	                spu.setSupplierId(supplierId);
-	                spu.setCategoryName(item.getProduct_type());
-	                spu.setBrandName(item.getBrand());
-	                spu.setMaterial(item.getMaterial());
-					spu.setSeasonName(item.getSeason());
-	                spu.setCategoryGender(item.getGender());
-	                spu.setProductOrigin(item.getMade());
+	                spu.setCategoryName(item.getProduct_type().replaceAll("," , " "));
+	                spu.setBrandName(item.getBrand().replaceAll("," , " "));
+	                spu.setMaterial(item.getMaterial().replaceAll("," , " "));
+					spu.setSeasonName(item.getSeason().replaceAll("," , " "));
+	                spu.setCategoryGender(item.getGender().replaceAll("," , " "));
+	                spu.setProductOrigin(item.getMade().replaceAll("," , " "));
 
 	                try {
 	                    productFetchService.saveSPU(spu);
