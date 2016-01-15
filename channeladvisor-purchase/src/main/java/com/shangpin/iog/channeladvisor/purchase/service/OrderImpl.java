@@ -87,6 +87,7 @@ public class OrderImpl extends AbsOrderService {
 				if(!access_token.equals(UtilOfChannel.ERROR)){
 					
 					createOrderUrl = createOrderUrl+"?access_token="+access_token;//access_token;
+					logInfo.info("createOrderUrl===="+createOrderUrl);
 					//判断库存
 					String sku_stock = orderDTO.getDetail().split(",")[0];
 					String sku = sku_stock.split(":")[0];
@@ -230,6 +231,7 @@ public class OrderImpl extends AbsOrderService {
 					param.put("PaymentDateUtc", UtilOfChannel.getUTCTime());
 					String jsonValue = JSONObject.fromObject(param).toString();
 					logInfo.info("param==="+jsonValue);
+					logInfo.info("url==="+url);
 					try{
 						
 						HttpUtil45.operateData("put", "json", url, timeConfig, null, jsonValue, "", "");
