@@ -304,6 +304,9 @@ public class FetchProduct {
                 spu.setBrandName(contentArray[1]);
                 spu.setCategoryName(contentArray[8]);
                 spu.setSpuName(contentArray[2]);
+                if (contentArray[9].equals("P16")) {
+					continue;
+				}
                 spu.setSeasonId(contentArray[9]);
                 spu.setMaterial(contentArray[6]);
                 spu.setCategoryGender(contentArray[7]);
