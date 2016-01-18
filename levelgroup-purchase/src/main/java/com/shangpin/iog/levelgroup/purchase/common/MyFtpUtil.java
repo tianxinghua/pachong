@@ -20,18 +20,21 @@ public class MyFtpUtil {
     private static Logger loggerError = Logger.getLogger("error");
     private static ResourceBundle bdl = null;
     private static String localFile = null,remoteFile;
+    private static String localFile2 = null;
     private static String supplierId = null;
-    private static String HOST,PORT,PATH,USER,PASSWORD;
+    private static String HOST,PORT,PATH,PATH2,USER,PASSWORD;
 
     static {
         if (bdl == null)
             bdl = ResourceBundle.getBundle("conf");
             localFile = bdl.getString("localFile");
+            localFile2 = bdl.getString("localFile2");
             remoteFile = bdl.getString("remoteFile");
             supplierId = bdl.getString("supplierId");
             HOST = bdl.getString("host");
             PORT = bdl.getString("port");
             PATH = bdl.getString("path");
+            PATH2 = bdl.getString("path2");
             USER = bdl.getString("user");
             PASSWORD = bdl.getString("password");
     }
@@ -54,7 +57,7 @@ public class MyFtpUtil {
     	String fileName = null;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String dateStr = format.format(new Date());
-		fileName = dateStr + ".txt";
+		fileName = dateStr + ".csv";
         
 		//创建FTPClient
         FTPClient ftp = new FTPClient();
@@ -80,6 +83,40 @@ public class MyFtpUtil {
         }  finally {
             close(ftp);
         }
+    }
+    
+    public void uploadCancel(){
+
+    	String fileName = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String dateStr = format.format(new Date());
+		fileName = dateStr + ".csv";
+        
+		//创建FTPClient
+        FTPClient ftp = new FTPClient();
+        // 连接服务器
+        try {
+            ftp.setRemoteHost(HOST);
+            ftp.setRemotePort(Integer.parseInt(PORT));
+            ftp.setTimeout(1000*60*30);
+            ftp.connect();
+            //登陆
+            ftp.login(USER, PASSWORD);
+            //连接模式
+            ftp.setConnectMode(FTPConnectMode.PASV);
+            ftp.chdir(PATH2);
+            //ASCII方式：传输xml文本文件
+            ftp.setType(FTPTransferType.ASCII);
+            // 获取 XML文件到本地
+            ftp.put(localFile2,fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (FTPException e) {
+            e.printStackTrace();
+        }  finally {
+            close(ftp);
+        }
+    
     }
 
     /**
