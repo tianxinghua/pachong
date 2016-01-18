@@ -275,6 +275,7 @@ public class FetchProduct {
         timeConfig.confConnectOutTime(10*60*1000);
         timeConfig.confSocketOutTime(10*60*1000);
         List<String> resultList = HttpUtil45.getContentListByInputSteam(oldurl, timeConfig, null, null, null);
+        //HttpUtil45.closePool();
     	return resultList;
     }
     public Map<String,Map> getDataMap(List<String> resultList){
