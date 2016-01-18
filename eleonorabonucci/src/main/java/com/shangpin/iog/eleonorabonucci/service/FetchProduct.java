@@ -2,6 +2,7 @@ package com.shangpin.iog.eleonorabonucci.service;
 
 import com.shangpin.framework.ServiceException;
 
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
@@ -14,16 +15,15 @@ import com.shangpin.iog.eleonorabonucci.dto.Items;
 import com.shangpin.iog.eleonorabonucci.dto.Product;
 import com.shangpin.iog.eleonorabonucci.dto.Products;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created by loyalty on 15/6/8.
@@ -36,13 +36,17 @@ public class FetchProduct {
     @Autowired
     ProductFetchService productFetchService;
 
+    @Autowired
+    ProductSearchService productSearchService;
+
     private static ResourceBundle bdl=null;
     private static String supplierId;
-
+    private static int day;
     static {
         if(null==bdl)
             bdl= ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        day = Integer.valueOf(bdl.getString("day"));
     }
 
     public void fetchProductAndSave(String url) {
@@ -60,13 +64,23 @@ public class FetchProduct {
 //            mongMap.put("result",result) ;
 //            logMongo.info(mongMap);
 
-            System.out.println("result : " + result);
+//            System.out.println("result : " + result);
             logInfo.info("result="+ result);
 
             //Remove BOM from String
             if (result != null && !"".equals(result)) {
                 result = result.replace("\uFEFF", "");
             }
+
+            Date startDate,endDate= new Date();
+            startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+            Map<String,SkuDTO> skuDTOMap = new HashedMap();
+            try {
+                skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+
 
             Products products = ObjectXMLUtil.xml2Obj(Products.class, result);
             List<Product> productList = products.getProducts();
@@ -129,25 +143,12 @@ public class FetchProduct {
                         sku.setProductCode(product.getProducer_id());
                         sku.setProductDescription(product.getDescription());
 
-                        if (item.getStock() != null && !"".equals(item.getStock()) && Integer.valueOf(item.getStock()) > 0) {
-                            productFetchService.saveSKU(sku);
-                            if (StringUtils.isNotBlank(item.getPicture())) {
-                                String[] picArray = item.getPicture().split("\\|");
-                                for (String picUrl : picArray) {
-                                    ProductPictureDTO dto = new ProductPictureDTO();
-                                    dto.setPicUrl(picUrl);
-                                    dto.setSupplierId(supplierId);
-                                    dto.setId(UUIDGenerator.getUUID());
-                                    dto.setSkuId(sku.getSkuId());
-                                    try {
-                                        productFetchService.savePictureForMongo(dto);
-                                    } catch (ServiceException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                }
-                            }
+                        if(skuDTOMap.containsKey(sku.getSkuId())){
+                            skuDTOMap.remove(sku.getSkuId());
                         }
+                        productFetchService.saveSKU(sku);
+
+
 
 
                     } catch (ServiceException e) {
@@ -162,6 +163,13 @@ public class FetchProduct {
                         } catch (ServiceException e1) {
                             e1.printStackTrace();
                         }
+                    }
+
+                    if(StringUtils.isNotBlank(item.getPicture())){
+                        String[] picArray = item.getPicture().split("\\|");
+
+                        List<String> picUrlList = Arrays.asList(picArray);
+                        productFetchService.savePicture(supplierId, null, skuId, picUrlList);
                     }
                 }
 
@@ -179,7 +187,23 @@ public class FetchProduct {
                     spu.setCategoryGender(product.getGender());
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
-                    e.printStackTrace();
+                    try {
+                        productFetchService.updateMaterial(spu);
+                    } catch (ServiceException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+
+            for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+                Map.Entry<String,SkuDTO> entry =  itor.next();
+                if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+                    entry.getValue().setStock("0");
+                    try {
+                        productFetchService.updatePriceAndStock(entry.getValue());
+                    } catch (ServiceException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         } catch (JAXBException e) {
