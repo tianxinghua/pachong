@@ -56,7 +56,7 @@ public class FetchProduct {
     public void fetchProductAndSave(final String url) {
 
         try {
-
+        	Map<String,String> mongMap = new HashMap<>();
             Date startDate,endDate= new Date();
             startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
             Map<String,SkuDTO> skuDTOMap = new HashedMap();
@@ -66,16 +66,14 @@ public class FetchProduct {
                 e.printStackTrace();
             }
 
-
             OutTimeConfig timeConfig =new OutTimeConfig(1000*60*60,1000*60*60,1000*60*60);
-
             String result = HttpUtil45.get(url, timeConfig, null);
             HttpUtil45.closePool();
 
-//            mongMap.put("supplierId", supplierId);
-//            mongMap.put("supplierName", "giglio");
-//            mongMap.put("result", "stream data.") ;
-//            logMongo.info(mongMap);
+            mongMap.put("supplierId", supplierId);
+            mongMap.put("supplierName", "giglio");
+            mongMap.put("result", result) ;
+            //logMongo.info(mongMap);
 
             CSVFormat csvFileFormat = CSVFormat.EXCEL.withHeader().withDelimiter(';');
             final Reader reader = new InputStreamReader(IOUtils.toInputStream(result, "UTF-8"), "UTF-8");

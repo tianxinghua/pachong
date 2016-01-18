@@ -3,6 +3,7 @@ package com.shangpin.iog.vela.service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
@@ -11,7 +12,10 @@ import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.vela.dto.*;
+
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,22 +23,57 @@ import org.springframework.stereotype.Component;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by loyalty on 15/6/8.
  */
 @Component("vela")
 public class FetchProduct {
-    final Logger logger = Logger.getLogger(this.getClass());
+    //final Logger logger = Logger.getLogger(this.getClass());
+    private static Logger logMongo = Logger.getLogger("mongodb");
+    private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
+    private static ResourceBundle bdl=null;
+    private static String supplierId;
+    private static String url = "";
+    private static int day;
+    static {
+        if(null==bdl)
+         bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+        url = bdl.getString("url");
+        day = Integer.valueOf(bdl.getString("day"));
+    }
 
-
-
+    @Autowired
+	ProductSearchService productSearchService;
     @Autowired
     private ProductFetchService pfs;
 
     public void fetchProductAndSave() {
 
-        String  supplierId = "NEW2015071701343";
+        //String  supplierId = "NEW2015071701343";
+    	try {
+    		Map<String, String> mongMap = new HashMap<>();
+			OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
+			mongMap.put("supplierId", supplierId);
+			mongMap.put("supplierName", "vela");
+//			mongMap.put("result", result);
+//			logMongo.info(mongMap);
+			Date startDate,endDate= new Date();
+			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+			//获取原有的SKU 仅仅包含价格和库存
+			Map<String,SkuDTO> skuDTOMap = new HashedMap();
+			try {
+				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+			
 
         //首先获取季节码
         String season_json = HttpUtil45.get("http://185.58.119.177/velashopapi/Myapi/Productslist/GetAllSeasonCode?DBContext=Default&key=MPm32XJp7M",new OutTimeConfig(),null);
@@ -124,6 +163,9 @@ public class FetchProduct {
                                 skudto.setStock(sku.getStock());
                                 skudto.setSupplierId(supplierId);
                                 try {
+                                	if(skuDTOMap.containsKey(skudto.getSkuId())){
+                						skuDTOMap.remove(skudto.getSkuId());
+                					}
                                     pfs.saveSKU(skudto);
                                     for(String image : sku.getPictures()){
                                         ProductPictureDTO pic = new ProductPictureDTO();
@@ -167,7 +209,23 @@ public class FetchProduct {
                 i += 100;
             }
         }
+        
+        for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+			 Map.Entry<String,SkuDTO> entry =  itor.next();
+			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+				entry.getValue().setStock("0");
+				try {
+					pfs.updatePriceAndStock(entry.getValue());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+        
+    } catch (Exception e) {
+		e.printStackTrace();
+	}
 
-        HttpUtil45.closePool();
+        //HttpUtil45.closePool();
     }
 }

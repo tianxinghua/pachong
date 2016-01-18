@@ -45,4 +45,13 @@ public class Schedule {
 		}
 	}
 	
+	@Scheduled(cron="${upLoadSchedule}")
+	public void saveAndUpLoadCancelOrder(){
+		try {
+			orderService.saveAndUpLoadCancelOrder();
+		}catch (Exception  e){
+			e.printStackTrace();
+		}
+	}
+	
 }
