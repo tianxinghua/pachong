@@ -1,11 +1,19 @@
 package com.shangpin.iog.spinnaker.service;
 
+import com.google.gson.Gson;
 import com.shangpin.ice.ice.AbsDeliverService;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
+import com.shangpin.iog.spinnaker.dto.Parameters2;
+import com.shangpin.iog.spinnaker.dto.ResponseObject;
+
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -15,6 +23,7 @@ import java.util.ResourceBundle;
 public class LogisticsService extends AbsDeliverService{
 
     private static Logger logger = Logger.getLogger("info");
+    private OutTimeConfig defaultConfig = new OutTimeConfig(1000 * 2, 1000 * 60, 1000 * 60);
 
     private static ResourceBundle bdl = null;
     private static String supplierId = null;
@@ -35,9 +44,29 @@ public class LogisticsService extends AbsDeliverService{
 
     @Override
     protected void handleConfirmShippedOrder(OrderDTO orderDTO) {
-        orderDTO.setStatus(OrderStatus.SHIPPED);
-        String deliverNo =  "DHL" + ";" + "0123456789" + ";" + "2016-01-13 12:00:00";
-        orderDTO.setDeliveryNo(deliverNo);
+    	String rtnData = null;
+    	Gson gson = new Gson();
+        
+        try {
+        	Map<String, String> map =new HashMap<String, String>();
+			 //String[] barcode = orderDTO.getDetail().split(":");
+			 map.put("DBContext", dBContext);
+			 map.put("purchase_no", orderDTO.getSpPurchaseNo());
+			 map.put("order_no", orderDTO.getSupplierOrderNo());
+			 map.put("key", key);
+			 //map.put("sellPrice", order.getSellPrice());
+			 rtnData = HttpUtil45.get(url, defaultConfig , map);
+        }catch (Exception e) {
+        	e.printStackTrace();
+        }
+        
+        ResponseObject responseObject = gson.fromJson(rtnData, ResponseObject.class);
+        if("SH".equals(responseObject.getStatus())){
+	        //String deliverNo =  "DHL" + ";" + "0123456789" + ";" + "2016-01-13 12:00:00";
+	        String deliverNo =  responseObject.getLogistics_company() +";"+ responseObject.getTrk_Number() +";"+ responseObject.getDate_Order();
+	        orderDTO.setStatus(OrderStatus.SHIPPED);
+	        orderDTO.setDeliveryNo(deliverNo);
+        }
     }
 
     /**
