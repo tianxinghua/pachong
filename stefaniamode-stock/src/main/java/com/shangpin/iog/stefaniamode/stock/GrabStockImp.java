@@ -181,7 +181,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
 			mongMap.put("supplierId", supplierId);
 			mongMap.put("supplierName", "stefaniamode");
-			logger.info(mongMap);
+//			logger.info(mongMap);
 			productList = getProductList(urls);
 //			products = ObjectXMLUtil.xml2Obj(Products.class, xmlContent);
 			logger.info("拉取stefaniamode数据成功");

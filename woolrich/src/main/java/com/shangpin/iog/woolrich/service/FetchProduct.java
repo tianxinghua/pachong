@@ -115,8 +115,13 @@ public class FetchProduct {
 		    			}
 		    		}
 		    		///////////////////////////////////保存图片///////////////////////////////////
-		    		String picUrl = product.getIMAGEURL();
-		    		productFetchService.savePicture(supplierId, null, product.getVARIANT_SKU(), Arrays.asList(picUrl));
+		    		List<String> picList = new ArrayList<String>();
+		    		picList.add(product.getIMAGEURL());
+		    		picList.add(product.getALT_IMAGEURL_1().equals("&sm=fit")?"":product.getALT_IMAGEURL_1());
+		    		picList.add(product.getALT_IMAGEURL_2().equals("&sm=fit")?"":product.getALT_IMAGEURL_2());
+		    		picList.add(product.getALT_IMAGEURL_3().equals("&sm=fit")?"":product.getALT_IMAGEURL_3());
+		    		picList.add(product.getALT_IMAGEURL_4().equals("&sm=fit")?"":product.getALT_IMAGEURL_4());
+		    		productFetchService.savePicture(supplierId, null, product.getVARIANT_SKU(),picList);
 				}
 	        }
 		    String category = "";

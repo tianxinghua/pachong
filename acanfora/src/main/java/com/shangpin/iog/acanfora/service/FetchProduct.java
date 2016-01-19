@@ -100,7 +100,13 @@ public class FetchProduct {
                             skuId = skuId.replace("½","+");
                         }
                         sku.setSkuId(skuId);
-                        sku.setProductSize(item.getItem_size());
+
+                        if(StringUtils.isNotBlank(item.getItem_size())){
+                            sku.setProductSize(item.getItem_size().replace("½",".5"));
+                        }else{
+                            sku.setProductSize("");
+                        }
+
                         sku.setMarketPrice(item.getMarket_price());
                         sku.setSalePrice(item.getSell_price());
                         sku.setSupplierPrice(item.getSupply_price());
