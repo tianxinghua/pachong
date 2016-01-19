@@ -28,6 +28,10 @@ public class TxtDTO {
     private String SIZE;
     private String STANDARDSHIPPINCOST;
     private String CONDITION;
+    private String ALT_IMAGEURL_1;
+    private String ALT_IMAGEURL_2;
+    private String ALT_IMAGEURL_3;
+    private String ALT_IMAGEURL_4;
 }
 					
 					  	

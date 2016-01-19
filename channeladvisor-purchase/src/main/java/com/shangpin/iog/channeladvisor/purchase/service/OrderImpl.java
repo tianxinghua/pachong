@@ -86,8 +86,8 @@ public class OrderImpl extends AbsOrderService {
 			try{
 				if(!access_token.equals(UtilOfChannel.ERROR)){
 					
-					createOrderUrl = createOrderUrl+"?access_token="+access_token;//access_token;
-					logInfo.info("createOrderUrl===="+createOrderUrl);
+					String orderUrl = createOrderUrl+"?access_token="+access_token;//access_token;
+					logInfo.info("createOrderUrl===="+orderUrl);
 					//判断库存
 					String sku_stock = orderDTO.getDetail().split(",")[0];
 					String sku = sku_stock.split(":")[0];
@@ -99,7 +99,7 @@ public class OrderImpl extends AbsOrderService {
 					String realStock = JSONObject.fromObject(content).getString("TotalAvailableQuantity");
 					logInfo.info("realStock======"+realStock);
 					if(Integer.parseInt(stock) <= Integer.parseInt(realStock)){
-						result = HttpUtil45.operateData("post", "json",createOrderUrl, timeConfig, null, jsonValue, "", "");
+						result = HttpUtil45.operateData("post", "json",orderUrl, timeConfig, null, jsonValue, "", "");
 					}else{
 						result = HttpUtil45.errorResult;
 						excDesc = "库存不足：订单产品数量为"+stock+"实际库存为"+realStock;
@@ -191,7 +191,7 @@ public class OrderImpl extends AbsOrderService {
 		}
 		items.add(itemMap);
 		param.put("ProfileID", 12018111);
-		param.put("SiteID", 587);
+//		param.put("SiteID", 587);
 		param.put("SiteName", "Shangpin.com");
 		param.put("BuyerEmailAddress", "sunxiaowen@shangpin.com");
 		param.put("CreatedDateUtc", UtilOfChannel.getUTCTime());//
@@ -200,9 +200,9 @@ public class OrderImpl extends AbsOrderService {
 		param.put("SellerOrderID", orderDTO.getSpOrderId());
 		param.put("ShippingFirstName", "TRANS WORLD");
 		param.put("ShippingLastName", "COURIER");
-		param.put("ShippingAddressLine1", "145-02,156th Street");
-		param.put("ShippingAddressLine2", "To: SARA SPW");
-		param.put("ShippingCity", "Jamaica");
+		param.put("ShippingAddressLine1", "145-02 156th Street");
+		param.put("ShippingAddressLine2", "SARA SPW");
+//		param.put("ShippingCity", "Jamaica");
 		param.put("ShippingPostalCode", "11434");
 		param.put("ShippingCity", "NY");
 		param.put("ShippingCountry", "US");

@@ -5,28 +5,28 @@ dependencies {
             "org.mybatis:mybatis-spring:1.2.0",
             "mysql:mysql-connector-java:5.1.21",
             "commons-dbcp:commons-dbcp:1.4",
+            "commons-net:commons-net:3.3",
+            "net.sourceforge.javacsv:javacsv:2.0",
+            "com.google.code.gson:gson:2.3.1",
             project(':project-common'),
             project(':project-dao'),
-            project(':onsite'),
-            project(':iog-common-product'),
-               project(':openapi-ice'),
-             "com.google.code.gson:gson:2.3.1",
+            project(':iog-common-product')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
-
-
 }
+
 jar {
-    dependsOn copyToLib, copyResources
+
+    dependsOn copyToLib,copyResources, copyResourcesToClasses
     exclude ("**/*.properties")
 
-    def manifestCp = configurations.compile.files.collect  {
+    def manifestCp = configurations.compile.files.collect {
         File file = it
         "lib/${file.name}"
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.spinnaker.Startup'
-        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+        attributes 'Main-Class': 'com.shangpin.iog.woolrich.Startup'
+        attributes 'Class-Path': '. ./conf/  ' + manifestCp
     }
 }
