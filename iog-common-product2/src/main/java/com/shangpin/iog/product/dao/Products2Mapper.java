@@ -1,6 +1,7 @@
 package com.shangpin.iog.product.dao;
 
 
+
 import java.util.Date;
 import java.util.List;
 
@@ -8,11 +9,12 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
 import com.shangpin.iog.dao.base.HKIBaseDao;
+import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.dto.ProductDTO;
 
 @Mapper
-public interface ProductsMapper extends HKIBaseDao<ProductDTO> {
+public interface Products2Mapper extends IBaseDao<ProductDTO> {
 
 
     /**
@@ -81,18 +83,6 @@ public interface ProductsMapper extends HKIBaseDao<ProductDTO> {
     List<ProductDTO> findListOfAllSupplier(@Param("startDate") Date startDate,
             @Param("endDate") Date endDate,
             RowBounds rowBounds);
-    
-    
-    List<ProductDTO> selectAllSku();
-    
-    
-    List<ProductDTO> selectAllSpu();
-    
-    List<ProductDTO> selectSkuByDay();
-    
-    
-    List<ProductDTO> selectSpuByDay();
-    
 }
 
 

@@ -41,6 +41,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 	@Autowired
 	ProductsMapper productDAO;
+	
+	@Autowired
+	Products2Mapper productDAO2;
 
 	@Autowired
 	BrandSpMapper brandSpDAO;
@@ -823,7 +826,12 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	public ProductDTO findProductForOrder(String supplierId,String skuId)
 			throws ServiceException {
 		ProductDTO productOrderDTO = productDAO.findProductOrderDTOList(supplierId,skuId);
-		return productOrderDTO;
+		if(productOrderDTO!=null){
+			 return productOrderDTO;
+		}else{
+			 productOrderDTO = productDAO2.findProductOrderDTOList(supplierId,skuId);
+			 return productOrderDTO;
+		}
 	}
 
 }

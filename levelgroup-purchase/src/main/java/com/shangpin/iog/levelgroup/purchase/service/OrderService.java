@@ -131,7 +131,11 @@ public class OrderService extends AbsOrderService {
 	            		ftpFile.append(";").append(price);
 	            	}
 		            ftpFile.append(";").append(product.getBrandName());
-		            ftpFile.append(";").append(orderDTO.getStatus());
+		            if(orderDTO.getDetail().split(":")[0]!=null){
+		            	ftpFile.append(";").append(orderDTO.getStatus());
+		            }else{
+		            	ftpFile.append(";").append("pre-sale");
+		            }
 	            }else{
 	            	ftpFile.append("");
 	            	if(orderDTO.getDetail().split(":")[0].length()<15){
@@ -214,7 +218,12 @@ public class OrderService extends AbsOrderService {
 	            		ftpFile.append(";").append(price);
 	            	}
 		            ftpFile.append(";").append(product.getBrandName());
-		            ftpFile.append(";").append(orderDTO.getStatus());
+		            if(orderDTO.getDetail().split(":")[0]!=null){
+		            	ftpFile.append(";").append(orderDTO.getStatus());
+		            }else{
+		            	ftpFile.append(";").append("pre-sale");
+		            }
+		            
 	            }else{
 	            	ftpFile.append(" ");
 	            	if(orderDTO.getDetail().split(":")[0].length()<15){

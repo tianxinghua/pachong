@@ -74,12 +74,12 @@ public class InsertDataBaseService {
 			Date startDate,endDate= new Date();
 			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 			//获取原有的SKU 仅仅包含价格和库存
-			Map<String,SkuDTO> skuDTOMap = new HashedMap();
-			try {    
-				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}
+//			Map<String,SkuDTO> skuDTOMap = new HashedMap();
+//			try {    
+//				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+//			} catch (ServiceException e) {
+//				e.printStackTrace();
+//			}
 			
 			logger.info("抓取数据开始，开始时间：{},结束时间:{}",dateStart,dateEnd);
 			System.out.println("抓取数据开始，开始时间：" + dateStart +" 结束时间:"+dateEnd);
@@ -100,9 +100,9 @@ public class InsertDataBaseService {
 			for (ColtortiProduct product : coltorProds) {
 				SkuDTO sk=ColtortiProductConvert.product2sku(product);
 				
-				if(skuDTOMap.containsKey(sk.getSkuId())){
-					skuDTOMap.remove(sk.getSkuId());
-				}
+//				if(skuDTOMap.containsKey(sk.getSkuId())){
+//					skuDTOMap.remove(sk.getSkuId());
+//				}
 				
 				skus.add(sk);
 				Set<ProductPictureDTO> ppcs=ColtortiProductConvert.productPic(product);
@@ -133,17 +133,17 @@ public class InsertDataBaseService {
 //			logger.info("-----SKUPIC保存结束，SKUPIC总数：{},成功数{}",total,total-failCnt);
 			
 	    	//更新网站不再给信息的老数据
-			for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
-				 Map.Entry<String,SkuDTO> entry =  itor.next();
-				if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
-					entry.getValue().setStock("0");
-					try {
-						pfs.updatePriceAndStock(entry.getValue());
-					} catch (ServiceException e) {
-						e.printStackTrace();
-					}
-				}
-			}
+//			for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+//				 Map.Entry<String,SkuDTO> entry =  itor.next();
+//				if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+//					entry.getValue().setStock("0");
+//					try {
+//						pfs.updatePriceAndStock(entry.getValue());
+//					} catch (ServiceException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//			}
 		} catch (ServiceException e) {
 			logger.error("抓取Coltorti数据失败。",e);
 		}

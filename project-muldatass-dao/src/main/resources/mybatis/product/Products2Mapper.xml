@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.shangpin.iog.product.dao.ProductsMapper">
+<mapper namespace="com.shangpin.iog.product.dao.Products2Mapper">
 
 	<resultMap id="ProductsResultMap" type="iog_product">
 		<id column="id" property="id" />
@@ -296,25 +296,7 @@
         </where>
 
 	</select>
-  <select id="selectAllSku" resultMap="ProductsResultMap">
 
-		select * from SKU LIMIT 1
 
-    </select>
-<select id="selectAllSpu" resultMap="ProductsResultMap">
-
-		select * from SPU LIMIT 1
-
-    </select>
-   <select id="selectSkuByDay" resultMap="ProductsResultMap">
-
-		select * from SKU where CREATE_TIME>=CURDATE()
-
-    </select>
-	<select id="selectSpuByDay" resultMap="ProductsResultMap">
-
-		select * from SPU where CREATE_TIME>=CURDATE()
-
-    </select>
-
+	
 </mapper>
