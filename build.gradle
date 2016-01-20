@@ -51,6 +51,7 @@ ext {
     slf4j_version='1.7.12'
     log4j_version='1.2.17'
     jedis_version='2.6.2'
+    resteasy_version='3.0.7.Final'
 }
 
 

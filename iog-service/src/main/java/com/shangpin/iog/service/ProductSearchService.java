@@ -84,5 +84,14 @@ public interface ProductSearchService {
      * @return ProductDTO (若为空，返回所有)
      */
     public ProductDTO findProductForOrder(String supplierId,String skuId) throws ServiceException;
+
+    /**
+     * 获取产品信息 基础信息
+     * @param supplierId   供货商
+     * @param skuId         供货商SKUID
+     * @return
+     * @throws ServiceException
+     */
+    public ProductDTO findProductBySupplierIdAndSkuId(String supplierId,String skuId) throws ServiceException;
     
 }
