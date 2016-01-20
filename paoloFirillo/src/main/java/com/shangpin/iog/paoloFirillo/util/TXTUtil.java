@@ -2,16 +2,13 @@ package com.shangpin.iog.paoloFirillo.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.log4j.Logger;
@@ -39,20 +36,20 @@ public class TXTUtil {
 			log.error("FTP下载失败！！！！！！！！！！");
 			System.exit(0);
 		}
-	 	File f = new File("D:/paolo.txt");
-    	if (!f.exists()) {
-			f.createNewFile();
-		}
-    	FileOutputStream fs = new FileOutputStream("D:/paolo.txt");
-    	byte[] buffer = new byte[1204];
-    	int length;
-        int bytesum = 0;
-        int byteread = 0;
-    	while ((byteread = in.read(buffer)) != -1) {
-    		bytesum += byteread;
-    		fs.write(buffer, 0, byteread);
-    	}
-		fs.close();
+//	 	File f = new File("D:/paolo.txt");
+//    	if (!f.exists()) {
+//			f.createNewFile();
+//		}
+//    	FileOutputStream fs = new FileOutputStream("D:/paolo.txt");
+//    	byte[] buffer = new byte[1204];
+//    	int length;
+//        int bytesum = 0;
+//        int byteread = 0;
+//    	while ((byteread = in.read(buffer)) != -1) {
+//    		bytesum += byteread;
+//    		fs.write(buffer, 0, byteread);
+//    	}
+//		fs.close();
 		String rowString = null;
 		List<T> dtoList = new ArrayList<T>();
 		String[] split = null;
@@ -99,7 +96,7 @@ public class TXTUtil {
 		InputStream in = null;
         try {  
             ftpClient = new FTPClient();  
-            ftpClient.setConnectTimeout(3600000);
+            ftpClient.setConnectTimeout(1000*60*10);
             System.out.println("开始连接");
             log.info("开始连接");
             ftpClient.connect("188.217.250.212",21);// 连接FTP服务器  
