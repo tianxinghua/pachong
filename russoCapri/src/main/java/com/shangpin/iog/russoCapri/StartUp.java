@@ -23,7 +23,9 @@ public class StartUp {
 
 	        //加载spring
 	        log.info("----拉取russoCapri数据开始----");
+	        System.out.println("拉取russoCapri数据开始");
 			loadSpringContext();
+			System.out.println("----初始SPRING成功----");
 	        log.info("----初始SPRING成功----");
 	        //拉取数据
 	        FetchProduct fetchProduct =(FetchProduct)factory.getBean("russoCapri");
