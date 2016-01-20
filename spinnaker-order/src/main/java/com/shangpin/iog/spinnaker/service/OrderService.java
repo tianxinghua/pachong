@@ -19,6 +19,7 @@ import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.spinnaker.dto.Parameters;
+import com.shangpin.iog.spinnaker.dto.Parameters2;
 import com.shangpin.iog.spinnaker.dto.ResponseObject;
 
 import net.sf.json.JSONArray;
@@ -30,7 +31,7 @@ public class OrderService extends AbsOrderService {
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
 	private static String supplierNo = null;
-	private static String url = null;
+	private static String url,cancelUrl = null;
 	private static String dBContext = null;
 	// private static String purchase_no = null;
 	// private static String order_no = null;
@@ -51,6 +52,7 @@ public class OrderService extends AbsOrderService {
 		supplierId = bdl.getString("supplierId");
 		supplierNo = bdl.getString("supplierNo");
 		url = bdl.getString("url");
+		cancelUrl = bdl.getString("cancelUrl");
 		dBContext = bdl.getString("dBContext");
 		key = bdl.getString("key");
 	}
@@ -71,14 +73,7 @@ public class OrderService extends AbsOrderService {
 	 */
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
-		// 先判断库存,库存不足时锁库存失败
-		// String stock = null;
-		// stock = HttpUtil45.get(url, null, param);
-
 		orderDTO.setStatus(OrderStatus.PLACED);
-
-		// orderDTO.setExcState("0");
-		// createOrder(OrderStatus.PLACED,orderDTO);
 
 	}
 
@@ -95,12 +90,16 @@ public class OrderService extends AbsOrderService {
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
-		// TODO Auto-generated method stub
+		deleteOrder.setExcDesc("0");
+		//deleteOrder.setStatus(OrderStatus.REFUNDED);
+//		if("HO".equals(deleteOrder.getStatus())){
+//			
+//		}
+		refundlOrder(OrderStatus.REFUNDED,deleteOrder);
 
 	}
 
@@ -119,10 +118,10 @@ public class OrderService extends AbsOrderService {
 	private void createOrder(String status, OrderDTO orderDTO) {
 
 		// 获取订单信息
-		Parameters order = getOrder(status, orderDTO);
+		Parameters2 order = getOrder(status, orderDTO);
 		Gson gson = new Gson();
 
-		String json = gson.toJson(order, Parameters.class);
+		String json = gson.toJson(order, Parameters2.class);
 		System.out.println("request json == " + json);
 		String rtnData = null;
 		logger.info("推送的数据：" + json);
@@ -148,7 +147,7 @@ public class OrderService extends AbsOrderService {
 				orderDTO.setExcDesc(rtnData);
 				return;
 			}
-			logger.info("Response ：" + rtnData + ", shopOrderId:" + order.getBarcode());
+			//logger.info("Response ：" + rtnData + ", shopOrderId:" + order.getBarcode());
 
 			ResponseObject responseObject = gson.fromJson(rtnData, ResponseObject.class);
 			if ("ko".equals(responseObject.getStatus())) {
@@ -165,19 +164,78 @@ public class OrderService extends AbsOrderService {
 			orderDTO.setExcDesc(e.getMessage());
 		}
 	}
+	
+	private void refundlOrder(String status, ReturnOrderDTO deleteOrder) {
+		//查询状态
+		String rtnData2 = null;
+		try{
+			Map<String, String> map =new HashMap<String, String>();
+			 String[] barcode = deleteOrder.getDetail().split(":");
+			 map.put("DBContext", dBContext);
+			 map.put("purchase_no", deleteOrder.getSpPurchaseNo());
+			 map.put("order_no", deleteOrder.getSupplierOrderNo());
+			 map.put("key", key);
+			 rtnData2 = HttpUtil45.get(url, defaultConfig , map);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		// 获取退单信息
+		Parameters2 order = getRefundlOrder(status, deleteOrder);
+		Gson gson = new Gson();
+		String json = gson.toJson(order, Parameters2.class);
+		//System.out.println("request json == " + json);
+		String rtnData = null;
+		logger.info("推送的数据：" + json);
+		//System.out.println("rtnData==" + json);
+		
+		ResponseObject response = gson.fromJson(rtnData2, ResponseObject.class);
+		if("HO".equals(response.getStatus())){
+			try {
+				 Map<String, String> map =new HashMap<String, String>();
+				 map.put("DBContext", dBContext);
+				 map.put("purchase_no", deleteOrder.getSpPurchaseNo());
+				 map.put("order_no", deleteOrder.getSupplierOrderNo());
+				 map.put("key", key);
+				 rtnData = HttpUtil45.get(cancelUrl, defaultConfig , map);
+				logger.info("推送" + status + "退单返回结果==+==" + rtnData);
+				System.out.println("推送退单返回结果==+==" + rtnData);
+				if (HttpUtil45.errorResult.equals(rtnData)) {
+					deleteOrder.setExcState("1");
+					deleteOrder.setExcDesc(rtnData);
+					return;
+				}
 
-	private Parameters getOrder(String status, OrderDTO orderDTO) {
+				ResponseObject responseObject = gson.fromJson(rtnData, ResponseObject.class);
+				if ("OK".equals(responseObject.getStatus())) {
+					deleteOrder.setExcState("0");
+					//deleteOrder.setExcDesc(responseObject.getMessage().toString());
+				} else {
+					deleteOrder.setStatus("1");
+					deleteOrder.setExcDesc(responseObject.getMessage().toString());
+					//deleteOrder.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
+				}
+			} catch (Exception e) {
+				deleteOrder.setExcState("1");
+				deleteOrder.setExcDesc(e.getMessage());
+			}
+		}
+		
+		
+	}
+
+	private Parameters2 getOrder(String status, OrderDTO orderDTO) {
 
 		String detail = orderDTO.getDetail();
 		String[] details = detail.split(":");
 		// logger.info("detail数据格式:"+detail);
 
-		Parameters order = new Parameters();
+		Parameters2 order = new Parameters2();
 		order.setDBContext(dBContext);
 		order.setPurchase_no(orderDTO.getSpPurchaseNo());
 		order.setOrder_no(orderDTO.getSpOrderId());
-		order.setBarcode(details[0]);
-		order.setOrdQty(ordQty);
+//		order.setBarcode(details[0]);
+//		order.setOrdQty(ordQty);
 		order.setKey(key);
 		String markPrice = null;
 		try {
@@ -201,6 +259,16 @@ public class OrderService extends AbsOrderService {
 			logger.info("异常错误：" + e.getMessage());
 		}
 		return order;
+	}
+	
+	private Parameters2 getRefundlOrder(String status, ReturnOrderDTO deleteOrder) {
+		Parameters2 refundlOrder = new Parameters2();
+		refundlOrder.setDBContext(dBContext);
+		refundlOrder.setPurchase_no(deleteOrder.getSpPurchaseNo());
+		refundlOrder.setOrder_no(deleteOrder.getSpOrderId());
+		refundlOrder.setKey(key);
+		
+		return refundlOrder;
 	}
 
 }
