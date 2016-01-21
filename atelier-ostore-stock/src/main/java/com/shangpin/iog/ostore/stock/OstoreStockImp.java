@@ -44,6 +44,7 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
     @Override
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
     	Map<String, String> skuMap = getOldData();
+    	int num = 0;
     	String data = "";
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
 				new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
@@ -60,8 +61,12 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
         			String stock = skuArr[2];
         			String barCode = skuArr[5];
         			skuMap.put(skuArr[0]+"-"+barCode, stock);
+        			if(!stock.equals("0")){
+        				num++;
+        			}
 			}
 		}
+		logger.info("新数据库存不为0的有：：："+num);
         Map<String,Integer> returnMap = new HashMap<String,Integer>();
         Iterator<String> iterator=skuNo.iterator();
         //为供应商循环赋值
@@ -83,7 +88,8 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
     }
     
     public Map<String,String> getOldData(){
-    	
+    	logger.info("=================获取老数据=================");
+    	int num = 0;
         Map<String,String> stock_map = new HashMap<>();
 
         String url = "http://b2b.officinastore.com/shangpin.asp?mode=stock_only";
@@ -120,9 +126,12 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
                     skuId = skuId.replace("½","+");
                 }
                 stock_map.put(skuId,stock);
+                if (!stock.equals("0")) {
+					num++;
+				}
             }
         }
-        
+        logger.info("老数据库存不为0的数据有：：："+num);
         return stock_map;
     }
 
