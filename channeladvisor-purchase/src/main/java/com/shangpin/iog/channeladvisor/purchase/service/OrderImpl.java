@@ -206,7 +206,6 @@ public class OrderImpl extends AbsOrderService {
 //		param.put("ShippingPostalCode", "11434");
 //		param.put("ShippingCity", "NY");
 //		param.put("ShippingCountry", "US");
-//		param.put("CheckoutStatus", "Completed");
 
 		return JSONObject.fromObject(param).toString();
 	}
@@ -229,6 +228,14 @@ public class OrderImpl extends AbsOrderService {
 					param.put("PaymentStatus", "Cleared");
 					param.put("CheckoutDateUtc", UtilOfChannel.getUTCTime());
 					param.put("PaymentDateUtc", UtilOfChannel.getUTCTime());
+					param.put("ShippingFirstName", "TRANS WORLD");
+					param.put("ShippingLastName", "COURIER");
+					param.put("ShippingAddressLine1", "145-02 156th Street");
+					param.put("ShippingAddressLine2", "SARA SPW");
+					param.put("ShippingCity", "Jamaica");
+					param.put("ShippingPostalCode", "11434");
+					param.put("ShippingCity", "NY");
+					param.put("ShippingCountry", "US");
 					String jsonValue = JSONObject.fromObject(param).toString();
 					logInfo.info("param==="+jsonValue);
 					logInfo.info("url==="+url);
