@@ -89,7 +89,7 @@ public class OrderService extends AbsOrderService {
 
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
-		// TODO Auto-generated method stub
+		deleteOrder.setStatus(OrderStatus.CANCELLED);
 	}
 
 	@Override

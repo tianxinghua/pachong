@@ -30,7 +30,11 @@ include 'iog-facade-impl'
 
 include 'iog-sop'
 
-include 'leam'
+include 'coltorti'
+
+include 'spinnaker-order'
+
+include 'Della'
 
 
 
