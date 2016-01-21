@@ -70,11 +70,11 @@ public class FetchProduct {
                 sku.setSupplierId(supplierId);
                 sku.setSpuId(spuId);
                 sku.setSkuId(product.getVARIANT_SKU());
-                sku.setProductSize(product.getSIZE());
+                sku.setProductSize(product.getSTANDARDSHIPPINCOST());
                 sku.setMarketPrice(product.getPRICE());
                 sku.setSalePrice(product.getSALEPRICE());
                 sku.setSupplierPrice(product.getPRICE());
-                sku.setColor(product.getCOLOR());
+                sku.setColor(product.getSIZE());
                 sku.setProductDescription(product.getDESCRIPTION());
                 sku.setStock(product.getSTOCK_LEVEL());
                 sku.setProductCode("");
