@@ -296,7 +296,25 @@
         </where>
 
 	</select>
+  <select id="selectAllSku" resultMap="ProductsResultMap">
 
+		select * from SKU LIMIT 1
 
-	
+    </select>
+<select id="selectAllSpu" resultMap="ProductsResultMap">
+
+		select * from SPU LIMIT 1
+
+    </select>
+   <select id="selectSkuByDay" resultMap="ProductsResultMap">
+
+		select * from SKU where CREATE_TIME>=CURDATE()
+
+    </select>
+	<select id="selectSpuByDay" resultMap="ProductsResultMap">
+
+		select * from SPU where CREATE_TIME>=CURDATE()
+
+    </select>
+
 </mapper>

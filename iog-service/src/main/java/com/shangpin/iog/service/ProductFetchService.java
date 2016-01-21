@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -93,6 +94,19 @@ public interface ProductFetchService {
 	public void savePicture(String supplierId, String spuId, String skuId,
 			Collection<String> pic);
 
+	
+	   /**
+     * 
+     * @param supplierId
+     * @param spuId
+     * @param skuId
+     * @param picUrl集合
+     */
+	public void saveAllSpuFromHK() throws ServiceException;
 
+	public void  saveAllSkuFromHK() throws ServiceException ;
+	public void saveSkuDayFromHK() throws ServiceException ;
+	public void saveSpuDayFromHK() throws ServiceException;
+	
 
 }

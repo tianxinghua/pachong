@@ -142,7 +142,9 @@ public abstract class AbsOrderService {
         //处理异常
         handlePurchaseOrderException(supplierId);
 
-        handleCancelPurchaseOrderException(supplierId);
+        handleCancelOrderException(supplierId);
+
+        handleRefundPurchaseOrderException(supplierId);
 
         //处理订单
         handleOrderOfSOP(supplierId, supplierNo);
@@ -227,7 +229,9 @@ public abstract class AbsOrderService {
         //处理异常
         handlePurchaseOrderException(supplierId);
 
-        handleCancelPurchaseOrderException(supplierId);
+        handleCancelOrderException(supplierId);
+
+        handleRefundPurchaseOrderException(supplierId);
 
         //处理订单
         handleOrderOfWMS(supplierNo, supplierId, skuMap, orderList);
@@ -539,10 +543,10 @@ public abstract class AbsOrderService {
     }
 
     /**
-     * 处理尚未有退单操作记录的异常
+     * 处理尚未有取消锁库存操作记录的异常
      * @param supplierId
      */
-    private void handleCancelPurchaseOrderException(String supplierId){
+    private void handleCancelOrderException(String supplierId){
         //拉取采购单存入本地库
         List<ReturnOrderDTO>  orderDTOList= null;
         try {
@@ -562,7 +566,7 @@ public abstract class AbsOrderService {
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        loggerError.error("退单处理失败。失败信息 " + deleteOrder.toString()+" 原因 ：" + e.getMessage() );
+                        loggerError.error("取消锁库存处理失败。失败信息 " + deleteOrder.toString()+" 原因 ：" + e.getMessage() );
 
                     }
                 }
@@ -573,7 +577,41 @@ public abstract class AbsOrderService {
         }
 
     }
+    /**
+     * 处理尚未有退单操作记录的异常
+     * @param supplierId
+     */
+    private void handleRefundPurchaseOrderException(String supplierId){
+        //拉取采购单存入本地库
+        List<ReturnOrderDTO>  orderDTOList= null;
+        try {
+//            orderDTOList  =returnOrderService.getReturnOrderBySupplierIdAndOrderStatus(supplierId,OrderStatus.WAITCANCEL);
+            orderDTOList  =returnOrderService.getReturnOrderBySupplierIdAndOrderStatusAndExcStatus(supplierId, OrderStatus.WAITREFUND,"1");
+            if(null!=orderDTOList){
 
+                for(ReturnOrderDTO deleteOrder:orderDTOList){
+
+                    try {
+                        //处理退款订单
+                        handleRefundlOrder(deleteOrder);
+                        //更改退单状态无论成功或失败 还需要更改订单状态
+
+                        updateRefundOrderMsg(deleteOrder);
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        loggerError.error("退款处理失败。失败信息 " + deleteOrder.toString()+" 原因 ：" + e.getMessage() );
+
+                    }
+                }
+            }
+
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
     private void handleOrderOfSOP(String supplierId, String supplierNo) {
@@ -1021,7 +1059,7 @@ public abstract class AbsOrderService {
                 deleteOrder.setSupplierId(supplierId);
                 deleteOrder.setSupplierNo(supplierNo);
                 deleteOrder.setSpPurchaseNo(orderDTO.getSpPurchaseNo());
-                deleteOrder.setStatus(OrderStatus.WAITCANCEL);
+                deleteOrder.setStatus(OrderStatus.WAITREFUND);
                 deleteOrder.setSpOrderId(orderDTO.getSpOrderId());
                 deleteOrder.setDetail(buffer.toString());
                 deleteOrder.setCreateTime(new Date());
@@ -1208,7 +1246,7 @@ public abstract class AbsOrderService {
                 deleteOrder.setSupplierId(supplierId);
                 deleteOrder.setSupplierNo(supplierNo);
                 if(handleCancel){
-                    deleteOrder.setStatus(OrderStatus.WAITCANCEL);
+                    deleteOrder.setStatus(OrderStatus.WAITREFUND);
                 }else{
                     deleteOrder.setStatus(OrderStatus.NOHANDLE);
                     deleteOrder.setMemo("退单不做处理只做记录");
@@ -1227,7 +1265,7 @@ public abstract class AbsOrderService {
                         }
                         try {
                             //处理取消订单
-                            handleCancelOrder(deleteOrder);
+                            handleRefundlOrder(deleteOrder);
                             //更改退单状态无论成功或失败 还需要更改订单状态
 
                             updateRefundOrderMsg( deleteOrder);

@@ -81,6 +81,18 @@ public interface ProductsMapper extends HKIBaseDao<ProductDTO> {
     List<ProductDTO> findListOfAllSupplier(@Param("startDate") Date startDate,
             @Param("endDate") Date endDate,
             RowBounds rowBounds);
+    
+    
+    List<ProductDTO> selectAllSku();
+    
+    
+    List<ProductDTO> selectAllSpu();
+    
+    List<ProductDTO> selectSkuByDay();
+    
+    
+    List<ProductDTO> selectSpuByDay();
+    
 }
 
 

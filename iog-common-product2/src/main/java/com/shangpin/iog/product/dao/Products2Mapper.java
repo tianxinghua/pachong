@@ -1,17 +1,20 @@
 package com.shangpin.iog.product.dao;
 
 
-import com.shangpin.iog.dao.base.IBaseDao;
-import com.shangpin.iog.dao.base.Mapper;
-import com.shangpin.iog.dto.ProductDTO;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 
 import java.util.Date;
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
+import com.shangpin.iog.dao.base.HKIBaseDao;
+import com.shangpin.iog.dao.base.IBaseDao;
+import com.shangpin.iog.dao.base.Mapper;
+import com.shangpin.iog.dto.ProductDTO;
+
 @Mapper
-public interface ProductsMapper extends IBaseDao<ProductDTO> {
+public interface Products2Mapper extends IBaseDao<ProductDTO> {
 
 
     /**
@@ -69,14 +72,6 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
      * @return 返回对应supplierId,skuId的产品，
      */
     ProductDTO findProductOrderDTOList(@Param("supplierId") String supplierId,@Param("skuId") String skuId);
-
-    /**
-     * 根据供货商id和skuId 查询产品全方位信息数据
-     * @param supplierId
-     * @param skuId
-     * @return 返回对应supplierId,skuId的产品，
-     */
-    ProductDTO findProductBySupplierIdAndSkuId(@Param("supplierId") String supplierId,@Param("skuId") String skuId);
     
     /**
      * 查询所有供货商的产品列表

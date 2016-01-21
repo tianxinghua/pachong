@@ -5,15 +5,18 @@ import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.common.utils.InVoke;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.PictureDTO;
+import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.mongodao.PictureDAO;
 import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.product.dao.ProductPictureMapper;
+import com.shangpin.iog.product.dao.ProductsMapper;
 import com.shangpin.iog.product.dao.SkuMapper;
 import com.shangpin.iog.product.dao.SpuMapper;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -41,7 +44,10 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 
     @Autowired
     SkuMapper skuDAO;
-
+    
+    @Autowired
+	ProductsMapper productDAO;
+    
     @Autowired
     SpuMapper spuDAO;
 
@@ -50,6 +56,10 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 
     @Autowired
     PictureDAO pictureDAO;
+    
+
+    @Autowired
+    ProductSearchService productSearchService;
     
     @Override
     public Map<String,String> findPictureBySupplierIdAndSpuId(String supplierId, String spuId){
@@ -227,6 +237,135 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 				try {
 					savePictureForMongo(dto);
 				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void saveAllSpuFromHK() throws ServiceException {
+		
+		List<ProductDTO>  list = productDAO.selectAllSpu();
+		if(list!=null){
+			for(ProductDTO pro:list){
+				SpuDTO spu = new SpuDTO();
+				spu.setBrandId(pro.getBrandId());
+				spu.setBrandName(pro.getBrandName());
+				spu.setCategoryGender(pro.getCategoryGender());
+				spu.setCategoryId(pro.getCategoryId());
+				spu.setCategoryName(pro.getCategoryName());
+				spu.setMaterial(pro.getMaterial());
+				spu.setProductOrigin(pro.getProductOrigin());
+				spu.setSeasonId(pro.getSeasonId());
+				spu.setSeasonName(pro.getSeasonName());
+				spu.setSpuId(pro.getSpuId());
+				spu.setSpuName(pro.getSpuName());
+				spu.setSubCategoryId(pro.getSubCategoryId());
+				spu.setSubCategoryName(pro.getSubCategoryName());
+				spu.setSupplierId(pro.getSupplierId());
+				try {
+					spuDAO.save(spu);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void  saveAllSkuFromHK() throws ServiceException {
+		
+		List<ProductDTO>  list = productDAO.selectAllSku();
+		if(list!=null){
+			for(ProductDTO pro:list){
+				SkuDTO sku = new SkuDTO();
+				sku.setBarcode(pro.getBarcode());
+				sku.setColor(pro.getColor());
+				sku.setMarketPrice(pro.getMarketPrice());
+				sku.setProductCode(pro.getProductCode());
+				sku.setProductDescription(pro.getProductDescription());
+				sku.setProductName(pro.getProductName());
+				sku.setProductSize(pro.getSize());
+				sku.setSaleCurrency(pro.getSaleCurrency());
+				sku.setSalePrice(pro.getSalePrice());
+				sku.setSkuId(pro.getSkuId());
+				sku.setSpuId(pro.getSpuId());
+				sku.setStock(pro.getStock());
+				sku.setStock(pro.getSupplierId());
+				sku.setSupplierPrice(pro.getSupplierPrice());
+				sku.setNewMarketPrice(pro.getNewMarketPrice());
+				sku.setNewSalePrice(pro.getNewSalePrice());
+				sku.setNewSupplierPrice(pro.getNewSupplierPrice());
+				try {
+					skuDAO.save(sku);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	}
+
+	@Override
+	public void saveSpuDayFromHK() throws ServiceException {
+		
+		List<ProductDTO>  list = productDAO.selectSpuByDay();
+		
+		if(list!=null){
+			for(ProductDTO pro:list){
+				SpuDTO spu = new SpuDTO();
+				spu.setBrandId(pro.getBrandId());
+				spu.setBrandName(pro.getBrandName());
+				spu.setCategoryGender(pro.getCategoryGender());
+				spu.setCategoryId(pro.getCategoryId());
+				spu.setCategoryName(pro.getCategoryName());
+				spu.setMaterial(pro.getMaterial());
+				spu.setProductOrigin(pro.getProductOrigin());
+				spu.setSeasonId(pro.getSeasonId());
+				spu.setSeasonName(pro.getSeasonName());
+				spu.setSpuId(pro.getSpuId());
+				spu.setSpuName(pro.getSpuName());
+				spu.setSubCategoryId(pro.getSubCategoryId());
+				spu.setSubCategoryName(pro.getSubCategoryName());
+				spu.setSupplierId(pro.getSupplierId());
+				try {
+					spuDAO.save(spu);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	}
+
+	@Override
+	public void saveSkuDayFromHK() throws ServiceException {
+		
+		List<ProductDTO>  list = productDAO.selectSkuByDay();
+		if(list!=null){
+			for(ProductDTO pro:list){
+				SkuDTO sku = new SkuDTO();
+				sku.setBarcode(pro.getBarcode());
+				sku.setColor(pro.getColor());
+				sku.setMarketPrice(pro.getMarketPrice());
+				sku.setProductCode(pro.getProductCode());
+				sku.setProductDescription(pro.getProductDescription());
+				sku.setProductName(pro.getProductName());
+				sku.setProductSize(pro.getSize());
+				sku.setSaleCurrency(pro.getSaleCurrency());
+				sku.setSalePrice(pro.getSalePrice());
+				sku.setSkuId(pro.getSkuId());
+				sku.setSpuId(pro.getSpuId());
+				sku.setStock(pro.getStock());
+				sku.setStock(pro.getSupplierId());
+				sku.setSupplierPrice(pro.getSupplierPrice());
+				sku.setNewMarketPrice(pro.getNewMarketPrice());
+				sku.setNewSalePrice(pro.getNewSalePrice());
+				sku.setNewSupplierPrice(pro.getNewSupplierPrice());
+				try {
+					skuDAO.save(sku);
+				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}

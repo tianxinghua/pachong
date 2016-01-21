@@ -232,4 +232,27 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 			}
 		}
 	}
+
+	@Override
+	public void saveAllSpuFromHK() throws ServiceException {
+		
+	}
+
+	@Override
+	public void saveAllSkuFromHK() throws ServiceException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void saveSkuDayFromHK() throws ServiceException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void saveSpuDayFromHK() throws ServiceException {
+		// TODO Auto-generated method stub
+		
+	}
 }

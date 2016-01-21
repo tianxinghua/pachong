@@ -30,7 +30,6 @@ import com.shangpin.iog.service.ProductSearchService;
 @Component("russoCapri")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
-    private static Logger logMongo = Logger.getLogger("mongodb");
     private static String supplierId;
     private static String url;
 	public static int day;
@@ -56,7 +55,8 @@ public class FetchProduct {
     	Map<String,String> priceMap= new HashMap<String,String>();
         //获取产品信息
         logger.info("get product starting....");
-    	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
+        System.out.println("开始获取产品信息");
+    	String spuData = HttpUtil45.post(url+"GetAllItems",
     										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
     										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
@@ -65,7 +65,7 @@ public class FetchProduct {
     	String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
     										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
     
-    	
+    	System.out.println("获取产品信息结束");
     	Date startDate,endDate= new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 		//获取原有的SKU 仅仅包含价格和库存
@@ -98,7 +98,7 @@ public class FetchProduct {
         
         
         
-        
+        System.out.println("保存spu");
         //得到所有的spu信息
         String[] spuStrings = spuData.split("\\r\\n");
         String[] spuArr = null;
@@ -117,6 +117,10 @@ public class FetchProduct {
 					   item.setSupplierPrice(spuArr[16]);
 					   item.setDescription(spuArr[15]);
 					   item.setSpuId(spuArr[0]);
+					   
+					   item.setStyleCode(spuArr[3]);
+					   item.setColorCode(spuArr[4]);
+					   
 					   spuMap.put(spuArr[0], item);
 
 					   spu.setId(UUIDGenerator.getUUID());
@@ -126,11 +130,17 @@ public class FetchProduct {
 		               spu.setCategoryName(spuArr[8]);
 		               //spu.setSpuName(fields[0]);
 		               spu.setSeasonId(spuArr[6]);
+		               
+		               StringBuffer material = new StringBuffer() ;
 		               if (StringUtils.isNotBlank(spuArr[11])) {
-		            	   spu.setMaterial(spuArr[11]);
-		               }else {
-		            	   spu.setMaterial(spuArr[15]);
+		            	   material.append(spuArr[11]).append(";");
+		               }else if(StringUtils.isNotBlank(spuArr[15])){
+		            	   material.append(spuArr[15]).append(";");
+		               }else if (StringUtils.isNotBlank(spuArr[42])) {
+		            	   material.append(spuArr[42]);
 		               }
+		               spu.setMaterial(material.toString());
+		               
 		               spu.setCategoryGender(spuArr[5]);
 		               spu.setProductOrigin(spuArr[40]);
 		               productFetchService.saveSPU(spu);
@@ -143,6 +153,7 @@ public class FetchProduct {
 		           }
 			}
 		}
+		System.out.println("save sku data");
 		//处理sku信息
 		//处理图片信息
 		String[] imageStrings = imageData.split("\\r\\n");
@@ -158,6 +169,7 @@ public class FetchProduct {
 				}
 			}
 		}
+		String size="";
 		String[] skuStrings = skuData.split("\\r\\n");
 		String[] skuArr = null;
 		for (int i = 1; i < skuStrings.length; i++) {
@@ -175,7 +187,11 @@ public class FetchProduct {
         			sku.setSupplierId(supplierId);
         			sku.setSpuId(skuArr[0]);
         			//sku.setSkuId(skuId);
-        			sku.setProductSize(skuArr[1]);
+        			size = skuArr[1];
+        			if(size.indexOf("½")>0){
+        				size=size.replace("½","+");
+        			}
+        			sku.setProductSize(size);
         			
 //        			sku.setSalePrice(priceMap.get(item.getSpuId()));
         			sku.setMarketPrice(priceMap.get(item.getSpuId()));
@@ -220,6 +236,7 @@ public class FetchProduct {
 				}
 			}
 		}
+		System.out.println("update old data");
 		//更新网站不再给信息的老数据
 		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
 			 Map.Entry<String,SkuDTO> entry =  itor.next();
