@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
@@ -19,6 +20,13 @@ import com.shangpin.iog.paoloFirillo.dto.TxtDTO;
 public class TXTUtil {
 	
 	private static Logger log = Logger.getLogger("info");
+	private static ResourceBundle bdl = null;
+	private static String name;
+	static {
+		if (null == bdl)
+			bdl = ResourceBundle.getBundle("conf");
+		name = bdl.getString("name");
+	}
 	/**
 	 * 解析csv文件，将其转换为对象
      * @param remoteFileName  远端文件名称 shangpin.csv
@@ -29,13 +37,15 @@ public class TXTUtil {
 	 */
 	public static <T> List<T> readLocalCSV(Class<T> clazz, String sep)
 			throws Exception {
-		
-		InputStream in = downloadFTP();
-		if(in == null){
-			System.out.println("FTP下载失败！！！！！！！！！！");
-			log.error("FTP下载失败！！！！！！！！！！");
-			System.exit(0);
-		}
+		List<T> dtoList = new ArrayList<T>();
+		String[] names = name.split(",");
+		for (String namestr : names) {
+			InputStream in = downloadFTP(namestr);
+			if(in == null){
+				System.out.println("FTP下载失败！！！！！！！！！！");
+				log.error("FTP下载失败！！！！！！！！！！");
+				System.exit(0);
+			}
 //	 	File f = new File("D:/paolo.txt");
 //    	if (!f.exists()) {
 //			f.createNewFile();
@@ -50,30 +60,30 @@ public class TXTUtil {
 //    		fs.write(buffer, 0, byteread);
 //    	}
 //		fs.close();
-		String rowString = null;
-		List<T> dtoList = new ArrayList<T>();
-		String[] split = null;
-		List<String> colValueList = null;
-		CsvReader cr = null;
-		// 解析csv文件
-		//cr = new CsvReader(result);
-		cr = new CsvReader(in,Charset.forName("UTF-8"));
-		System.out.println("创建cr对象成功");
-		// 得到列名集合
-		cr.readRecord();
-		int a = 0;
-		while (cr.readRecord()) {
-			a++;
-			rowString = cr.getRawRecord();
-			if (StringUtils.isNotBlank(rowString)) {
-				split = rowString.split(sep);
-				colValueList = Arrays.asList(split);
-				T t = fillDTO(clazz.newInstance(), colValueList);
-				dtoList.add(t);
+			String rowString = null;
+			String[] split = null;
+			List<String> colValueList = null;
+			CsvReader cr = null;
+			// 解析csv文件
+			//cr = new CsvReader(result);
+			cr = new CsvReader(in,Charset.forName("UTF-8"));
+			System.out.println("创建cr对象成功");
+			// 得到列名集合
+			cr.readRecord();
+			int a = 0;
+			while (cr.readRecord()) {
+				a++;
+				rowString = cr.getRawRecord();
+				if (StringUtils.isNotBlank(rowString)) {
+					split = rowString.split(sep);
+					colValueList = Arrays.asList(split);
+					T t = fillDTO(clazz.newInstance(), colValueList);
+					dtoList.add(t);
+				}
+				System.out.println(a);
 			}
-			System.out.println(a);
+			in.close();
 		}
-		in.close();
 		return dtoList;
 	}
 	
@@ -91,7 +101,7 @@ public class TXTUtil {
     }
 	
 	
-	public static InputStream downloadFTP(){
+	public static InputStream downloadFTP(String name){
 		FTPClient ftpClient = null;
 		InputStream in = null;
         try {  
@@ -105,10 +115,10 @@ public class TXTUtil {
             log.info("连接"+login);
 			ftpClient.setControlEncoding("UTF-8");
 			ftpClient.enterLocalPassiveMode();
-			ftpClient.changeWorkingDirectory("/PAFYO");
+			ftpClient.changeWorkingDirectory("/"+name);
             System.out.println("读取txt");
 //            ftpClient.setBufferSize(1024*1024);
-			in = ftpClient.retrieveFileStream("PAFYO.txt");
+			in = ftpClient.retrieveFileStream(name+".txt");
 //            ftpClient.logout();
         }catch(Exception ex){
         	log.error(ex);
