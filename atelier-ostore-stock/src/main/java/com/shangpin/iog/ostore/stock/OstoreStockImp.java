@@ -45,6 +45,8 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
     	Map<String, String> skuMap = getOldData();
     	int num = 0;
+    	int aaa = 0;
+    	int bbb = 0;
     	String data = "";
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
 				new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
@@ -66,7 +68,7 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
         			}
 			}
 		}
-		logger.info("新数据库存不为0的有：：："+num);
+		logger.info("新数据库存不为0的有：：："+num+"总条数"+skuStrings.length);
         Map<String,Integer> returnMap = new HashMap<String,Integer>();
         Iterator<String> iterator=skuNo.iterator();
         //为供应商循环赋值
@@ -79,11 +81,14 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
         		if (skuMap.containsKey(skuId)) {
         			stock = skuMap.get(skuId);
         			returnMap.put(skuId, Integer.valueOf(stock));
+        			aaa++;
 				}else{
 					returnMap.put(skuId, 0);
+					bbb++;
 				}
 			}
         }
+        logger.info("更新完毕================================不为0的有"+aaa+"为零的有"+bbb);
         return returnMap;
     }
     
@@ -131,7 +136,7 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
 				}
             }
         }
-        logger.info("老数据库存不为0的数据有：：："+num);
+        logger.info("老数据库存不为0的数据有：：："+num+"总条数"+resultList.size());
         return stock_map;
     }
 
