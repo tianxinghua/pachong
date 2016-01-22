@@ -86,7 +86,6 @@ public class FetchProduct {
 			skuDTO.setColor(TxtDTO.getColour_description());
 		
 			skuDTO.setProductCode(TxtDTO.getProduct_id());
-			
 			skuDTO.setSaleCurrency("EURO");
 			skuDTO.setProductSize(TxtDTO.getSize());
 			skuDTO.setStock(TxtDTO.getQuantity());
@@ -128,6 +127,7 @@ public class FetchProduct {
 				spu.setCategoryGender(spuDTO.getSex());
 				spu.setMaterial(spuDTO.getMaterial());
 				spu.setSeasonName(spuDTO.getSeason());
+				spu.setProductOrigin(spuDTO.getMade());
 				productFetchService.saveSPU(spu);
 			} catch (ServiceException e) {
 				try {
