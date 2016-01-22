@@ -44,13 +44,13 @@ public class MyJsonUtil {
 		Token accessToken = new Token("tcm525shdvbw0jg68ju87njxpmwot41v",
 				"hugcwsx5e8yrze1z7c11hgdaxe8aeits");
 		
-		getProductList(service,accessToken,0);
+		getProduct(service,accessToken,0);
 		System.out.println(list.size());
 		return list;
 	}
 	static int i = 1;
 	
-	public static void getProductList(OAuthService service,Token accessToken,int page){
+	public static void getProduct(OAuthService service,Token accessToken,int page){
 		
 		OAuthRequest request = new OAuthRequest(Verb.GET,
 				"http://glamorous-uat.phplab.co.uk/api/rest/shangpin/product?limit=100&page="+i,
@@ -62,13 +62,12 @@ public class MyJsonUtil {
 			List<Product> retList = new Gson().fromJson(json,  
 	                new TypeToken<List<Product>>() {  
 	                }.getType());  
-			System.out.println(json);
-			System.out.println(retList.size());
+			System.out.println("拉取的数量："+retList.size());
 			list.addAll(retList);
-			System.out.println("总的list数量："+list.size());
+			System.out.println("拉取的总数量："+list.size());
 			if(retList.size()==100){
 				i++;
-				getProductList(service,accessToken,i);
+				getProduct(service,accessToken,i);
 			}
 		}
 	}
