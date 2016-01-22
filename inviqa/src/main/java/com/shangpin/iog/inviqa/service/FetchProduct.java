@@ -22,6 +22,13 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Response;
+import com.github.scribejava.core.model.Token;
+import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.oauth.OAuthService;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.SkuDTO;
@@ -50,7 +57,8 @@ public class FetchProduct {
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
 	}
-
+	
+	
 	/**
 	 * fetch product and save into db
 	 */
@@ -59,6 +67,9 @@ public class FetchProduct {
 		List<Product> list = MyJsonUtil.getProductList();
 		messMappingAndSave(list);
 	}
+	
+	
+	
 	/**
 	 * message mapping and save into DB
 	 */
@@ -95,6 +106,7 @@ public class FetchProduct {
 						}
 					}
 					
+					
 					spu.setCategoryGender(item.getCategoryGender());
 					productFetchService.saveSPU(spu);
 
@@ -129,6 +141,17 @@ public class FetchProduct {
 					sku.setStock(item.getStock());
 					sku.setSalePrice(item.getSalePrice());
 					sku.setMarketPrice(item.getMarketPrice());
+					if(item.getSupplierPrice()!=null){
+						if(item.getSupplierPrice().toLowerCase().indexOf("no data")==-1){
+							sku.setSupplierPrice(item.getSupplierPrice());
+						}
+					}
+					
+					if(item.getBarcode()!=null){
+						if(item.getBarcode().toLowerCase().indexOf("no data")==-1){
+							sku.setBarcode(item.getBarcode());
+						}
+					}
 					sku.setSupplierPrice(item.getSupplierPrice());
 					sku.setColor(item.getColor());
 					sku.setProductName(item.getProductName());
