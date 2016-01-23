@@ -18,8 +18,8 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuthService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.shangpin.iog.inviqa.dto.API;
 import com.shangpin.iog.inviqa.dto.Product;
-import com.shangpin.iog.pavinGroup.util.TestAPI;
 
 /**
  * Created by Administrator on 2015/9/21.
@@ -36,21 +36,21 @@ public class MyJsonUtil {
     final static String MAGENTO_API_KEY = "anr63gksisphqnkcd671nh88egnfqtu3";
 	final static String MAGENTO_API_SECRET = "vhpk60p6srj4qtgbyq7wc3wxe7ybyzv4";
 	final String MAGENTO_REST_API_URL = "https://glamorous-uat.phplab.co.uk/api/rest";
-	static List<Product> list = new ArrayList<Product>();
+	static List<Product> list = null;
 	public static List<Product> getProductList() {
-			
-		OAuthService service = new ServiceBuilder().provider(TestAPI.class)
+		list = new ArrayList<Product>();
+		OAuthService service = new ServiceBuilder().provider(API.class)
 				.apiKey(MAGENTO_API_KEY).apiSecret(MAGENTO_API_SECRET).build();
 		Token accessToken = new Token("tcm525shdvbw0jg68ju87njxpmwot41v",
 				"hugcwsx5e8yrze1z7c11hgdaxe8aeits");
 		
-		getProductList(service,accessToken,0);
+		getProduct(service,accessToken,0);
 		System.out.println(list.size());
 		return list;
 	}
 	static int i = 1;
-	public static void getProductList(OAuthService service,Token accessToken,int page){
 	
+	public static void getProduct(OAuthService service,Token accessToken,int page){
 		
 		OAuthRequest request = new OAuthRequest(Verb.GET,
 				"http://glamorous-uat.phplab.co.uk/api/rest/shangpin/product?limit=100&page="+i,
@@ -62,14 +62,13 @@ public class MyJsonUtil {
 			List<Product> retList = new Gson().fromJson(json,  
 	                new TypeToken<List<Product>>() {  
 	                }.getType());  
-			System.out.println(json);
-			System.out.println(retList.size());
+			System.out.println("拉取的数量："+retList.size());
 			list.addAll(retList);
-//			if(retList.size()>=10){
+			System.out.println("拉取的总数量："+list.size());
+			if(retList.size()==100){
 				i++;
-				getProductList(service,accessToken,i);
-//			}
+				getProduct(service,accessToken,i);
+			}
 		}
-		
 	}
 }

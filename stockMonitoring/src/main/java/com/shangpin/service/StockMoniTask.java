@@ -60,7 +60,7 @@ public class StockMoniTask{
 		List<SupplierDTO> supplierLists = null;
 		Map<String,String> suppliernameMap = new HashMap<String,String>();
 		try {
-			supplierLists = supplierService.findAllWithAvailable();
+			supplierLists = supplierService.findByState(null);
 			lists = updateStockService.getAll();
 		} catch (Exception e) {
 			e.printStackTrace();
