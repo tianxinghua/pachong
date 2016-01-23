@@ -28,7 +28,7 @@ public class LogisticsService extends AbsDeliverService{
     private static ResourceBundle bdl = null;
     private static String supplierId = null;
     private static String supplierNo = null;
-    private static String url = null;
+    private static String queryOrderUrl = null;
     private static String dBContext = null;
     private static String key = null;
     static {
@@ -37,7 +37,7 @@ public class LogisticsService extends AbsDeliverService{
         }
         supplierId = bdl.getString("supplierId");
         supplierNo = bdl.getString("supplierNo");
-        url = bdl.getString("url");
+        queryOrderUrl = bdl.getString("queryOrderUrl");
         dBContext = bdl.getString("dBContext");
         key = bdl.getString("key");
     }
@@ -55,7 +55,7 @@ public class LogisticsService extends AbsDeliverService{
 			 map.put("order_no", orderDTO.getSupplierOrderNo());
 			 map.put("key", key);
 			 //map.put("sellPrice", order.getSellPrice());
-			 rtnData = HttpUtil45.get(url, defaultConfig , map);
+			 rtnData = HttpUtil45.get(queryOrderUrl, defaultConfig , map);
         }catch (Exception e) {
         	e.printStackTrace();
         }

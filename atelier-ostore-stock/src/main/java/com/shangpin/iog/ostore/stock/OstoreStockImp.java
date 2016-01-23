@@ -43,7 +43,7 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
     }
     @Override
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-    	Map<String, String> skuMap = getOldData();
+    	Map<String, String> skuMap = new HashMap<>();//getOldData();
     	int num = 0;
     	String data = "";
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
@@ -53,18 +53,21 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
 			if (StringUtils.isNotBlank(skuStrings[i])) {
 			
 				if (i==1) {
-					  data =  skuStrings[i].split("\\n")[1];
-					}else {
-					  data = skuStrings[i];
-					}
-					String[] skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
-        			String stock = skuArr[2];
-        			String barCode = skuArr[5];
-        			skuMap.put(skuArr[0]+"-"+barCode, stock);
-        			if(!stock.equals("0")){
-        				num++;
-        			}
-			}
+                  data =  skuStrings[i].split("\\n")[1];
+                }else {
+                  data = skuStrings[i];
+                }
+                String[] skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+                String stock = skuArr[2];
+                String barCode = skuArr[5];
+                skuMap.put(skuArr[0]+"-"+barCode, stock);
+               if(!stock.equals("0")){
+                  System.out.println("不为0的"+skuArr[0]+"-"+barCode+"数量===="+stock);
+                  logger.info("不为0的"+skuArr[0]+"-"+barCode+"数量===="+stock);
+                  num++;
+               }
+
+            }
 		}
 		logger.info("新数据库存不为0的有：：："+num);
         Map<String,Integer> returnMap = new HashMap<String,Integer>();
@@ -78,8 +81,12 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
         	if (StringUtils.isNotBlank(skuId)) {
         		if (skuMap.containsKey(skuId)) {
         			stock = skuMap.get(skuId);
-        			returnMap.put(skuId, Integer.valueOf(stock));
-				}else{
+                    try {
+                        returnMap.put(skuId, Integer.valueOf(stock));
+                    } catch (NumberFormatException e) {
+                        returnMap.put(skuId, 0);
+                    }
+                }else{
 					returnMap.put(skuId, 0);
 				}
 			}

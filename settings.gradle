@@ -36,6 +36,8 @@ include 'spinnaker-order'
 
 include 'Della'
 
+include 'atelier-ostore-stock'
+
 
 
 

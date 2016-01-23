@@ -3,19 +3,11 @@
  */
 package com.shangpin.iog.coltorti.service;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +34,6 @@ import com.shangpin.iog.service.ProductSearchService;
 public class InsertDataBaseService {
 	private static Logger logger = LoggerFactory.getLogger(InsertDataBaseService.class);
 	public static int day;
-	public static String supplierId;
 	private static ResourceBundle bdl = null;
 	private ProductFetchService pfs;
 	private ProductSearchService productSearchService;
@@ -50,7 +41,6 @@ public class InsertDataBaseService {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		day = Integer.valueOf(bdl.getString("day"));
-		supplierId = bdl.getString("supplierId");
 	}
 	/**O
 	 * 
@@ -152,18 +142,20 @@ public class InsertDataBaseService {
 	
 	private int insertSku(Collection<SkuDTO> skus,Map<String,Set<ProductPictureDTO>> picMap){
 		int failCnt=0;
+		logger.warn("sku 数量 ：" + skus.size());
+		int i =0,j=0;
 		for (SkuDTO sk : skus) {
 			
 			try{
 				sk.setMarketPrice(sk.getSupplierPrice());
 				pfs.saveSKU(sk);
-				if(null!=picMap){
-					logger.info("-----开始保存SKUPIC-----");
-					Set<ProductPictureDTO> pcs=picMap.get(sk.getSkuId());
-					if(CollectionUtils.isNotEmpty(pcs)){
-						insertSkuPic(pcs);
-					}
-				}
+//				if(null!=picMap){
+//					logger.info("-----开始保存SKUPIC-----");
+//					Set<ProductPictureDTO> pcs=picMap.get(sk.getSkuId());
+//					if(CollectionUtils.isNotEmpty(pcs)){
+//						insertSkuPic(pcs);
+//					}
+//				}
 
 
 //			logger.info("-----SKUPIC保存结束，SKUPIC总数：{},成功数{}",total,total-failCnt);
@@ -180,15 +172,36 @@ public class InsertDataBaseService {
 						logger.error("保存sku:{}失败,错误信息：{},",new Gson().toJson(sk),e.getMessage());
 					}
 				}
-				if(e.getClass().equals(DuplicateKeyException.class)){
-					continue;
-				}
+//				if(e.getClass().equals(DuplicateKeyException.class)){
+//					continue;
+//				}
 				if(failCnt==10){
 					e.printStackTrace();
 					logger.error("保存sku:{}失败,错误信息：{},",new Gson().toJson(sk),e.getMessage());
 				}
 			}
+
+			if(null!=picMap){
+                Set<ProductPictureDTO> pcs=picMap.get(sk.getSkuId());
+
+				if(null!=pcs&&pcs.size()>0){
+					i++;
+					logger.warn("sku = " + sk.getSkuId() + " 图片数量：" + pcs.size());
+					List<String> picUrlList = new ArrayList<>();
+					for(ProductPictureDTO productPictureDTO:pcs){
+						picUrlList.add(productPictureDTO.getPicUrl());
+					}
+					pfs.savePicture(ColtortiUtil.productSupplierId, null, sk.getSkuId(),picUrlList );
+				}else{
+					logger.warn("sku = " + sk.getSkuId() + " 无图片" );
+					j++;
+				}
+
+			}
+
 		}
+		logger.warn("有图片sku总数为:"+i);
+		logger.warn("无有图片sku总数为:"+j);
 		return failCnt;
 	}
 	private int insertSpu(Collection<SpuDTO> spus){
@@ -215,7 +228,7 @@ public class InsertDataBaseService {
 		int failCnt=0;
 		for (ProductPictureDTO pic : skuPics) {
 			try{
-				pfs.savePicture(supplierId, null, pic.getSkuId(), Arrays.asList(pic.getPicUrl()));
+				pfs.savePicture(ColtortiUtil.productSupplierId, null, pic.getSkuId(), Arrays.asList(pic.getPicUrl()));
 			}catch(Exception e){
 				failCnt++;
 				if(e.getClass().equals(DuplicateKeyException.class)){

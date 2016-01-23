@@ -94,9 +94,7 @@ public abstract class AbsUpdateProductStock {
 			for (SopProductSku sku : skus) {
 				List<SopSku> skuIces = sku.getSopSkuIces();
 				for (SopSku ice : skuIces) {
-					if(ice.getSkuNo().equals("30313199004")){
-						System.out.println("30313199004");
-					}
+
 					if(null!=ice.getSkuNo()&&!"".equals(ice.getSkuNo())&&null!=ice.getSupplierSkuNo()&&!"".equals(ice.getSupplierSkuNo())){
 						if(1!=ice.getIsDeleted()){
 							skuIds.add(ice.getSupplierSkuNo());
@@ -199,6 +197,7 @@ public abstract class AbsUpdateProductStock {
 			 {
 		Map<String, Integer> iceStock = grab4Icestock(host,app_key,app_secret,skuNoSet,localAndIceSkuId);
 		int failCount = updateIceStock(host,app_key,app_secret, iceStock);
+
 		this.updateStockTime(app_key);
 		return failCount;
 	}
@@ -238,7 +237,7 @@ public abstract class AbsUpdateProductStock {
 		loggerInfo.info("待更新的数据总和：--------"+toUpdateIce.size());
 		ApiResponse<Boolean>  result =null;
 		StockInfo request_body = null;
-		while (iter.hasNext()) {
+		while (null!=iter&&iter.hasNext()) {
 			Entry<String, Integer> entry = iter.next();
 
 			try{
@@ -257,6 +256,7 @@ public abstract class AbsUpdateProductStock {
 				loggerError.error(entry.getKey() + ":" + entry.getValue() +"更新库存失败");
 			}				
 		}
+		loggerInfo.info("更新库存结束");
 		return failCount;
 	}
 
@@ -269,6 +269,7 @@ public abstract class AbsUpdateProductStock {
 	private void updateStockTime(String supplier){
 		try {
 			if(null!=updateStockService){
+				loggerInfo.info("key="+supplier+"记录更新时间开始");
 				updateStockService.updateTime(supplier);
 			}
 		} catch (Exception e) {

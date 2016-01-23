@@ -210,8 +210,8 @@ public class ColtortiProductService{
 		return pros;
 	}
 	/**
-	 * @param entry
-	 * @param productId
+	 * @param recordId
+	 * @param p
 	 * @throws ServiceException
 	 */
 	private static void setStock(String recordId,ColtortiProduct p) {
@@ -286,7 +286,7 @@ System.out.println(productId+"存在,不存在的数:"+cnt);
 	 *  没有库存数据情况 默认为0
 	 * @param prd
 	 * @param scalarCode
-	 * @param stock
+	 * @param scalarCode
 	 * @return
 	 */
 	private static ColtortiProduct convertProduct(ColtortiProduct prd,String scalarCode) {
@@ -449,9 +449,9 @@ System.out.println(productId+"存在,不存在的数:"+cnt);
 	
 	public static void main(String[] args) throws ServiceException, Exception {
 		//requestAttribute(1, 100);
-		//findProduct(1,40,"152790AAV000001");
+//		findProduct(1,40,"152790AAV000001");
 		//getStock("152790AAV000001","152790AAV000001-PINxRU");//"152790FCR000005-SADMA"152450FPG000003-80723#1
-		List<ColtortiProduct> ps=divideSku4Size(findProductByProductId("152450FPG000003"));
+		List<ColtortiProduct> ps=divideSku4Size(findProductByProductId("161146DGB000007"));
 		logger.info("-----new products -----\r\n"+new Gson().toJson(ps));
 		List<SkuDTO> skus=new ArrayList<>(ps.size());
 		List<SpuDTO> spus=new ArrayList<>(ps.size());
