@@ -162,7 +162,8 @@ public class ColtortiProductService{
 		if(dateEnd!=null)param.put("until_updated_at", dateEnd);
 		if(recordId!=null)param.put("id", recordId);
 		String body=HttpUtil45.get(ColtortiUtil.paramGetUrl(ApiURL.PRODUCT,param),new OutTimeConfig(1000*10,1000*10,1000*10),null);
-		//logger.error(body);
+		System.out.println("body =" + body);
+		logger.error("body = "+ body);
 		ColtortiUtil.check(body);
 		JsonObject jo =new JsonParser().parse(body).getAsJsonObject();
 		Set<Entry<String,JsonElement>> ks=jo.entrySet();
@@ -451,7 +452,7 @@ System.out.println(productId+"存在,不存在的数:"+cnt);
 		//requestAttribute(1, 100);
 //		findProduct(1,40,"152790AAV000001");
 		//getStock("152790AAV000001","152790AAV000001-PINxRU");//"152790FCR000005-SADMA"152450FPG000003-80723#1
-		List<ColtortiProduct> ps=divideSku4Size(findProductByProductId("161146DGB000007"));
+		List<ColtortiProduct> ps=divideSku4Size(findProductByProductId("161416DFE000004"));
 		logger.info("-----new products -----\r\n"+new Gson().toJson(ps));
 		List<SkuDTO> skus=new ArrayList<>(ps.size());
 		List<SpuDTO> spus=new ArrayList<>(ps.size());

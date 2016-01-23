@@ -30,13 +30,15 @@ include 'iog-facade-impl'
 
 include 'iog-sop'
 
-include 'coltorti'
+
 
 include 'spinnaker-order'
 
-include 'Della'
+include 'giglio-stock'
 
-include 'atelier-ostore-stock'
+include 'monnierfreres-stock'
+
+
 
 
 

@@ -6,6 +6,7 @@ package com.shangpin.iog.giglio.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.sop.AbsUpdateProductStock;
@@ -16,6 +17,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -25,12 +29,19 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component("grabStockImp")
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
 
 
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
 
+    {
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
 
 
     private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
@@ -111,12 +122,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args) throws Exception {
-//        AbsUpdateProductStock grabStockImp = new GrabStockImp();
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//        logger.info("GIGLIO更新数据库开始");
-//        grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
-//        logger.info("GIGLIO更新数据库结束");
-//        System.exit(0);
+
 
 
 
@@ -127,7 +133,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
             logger.error("参数错误，无法执行更新库存");
         }
 
-        AbsUpdateProductStock giglioStockImp = new GrabStockImp();
+
+        loadSpringContext();
+        logger.info("----初始SPRING成功----");
+        //拉取数据
+        GrabStockImp giglioStockImp =(GrabStockImp)factory.getBean("grabStockImp");
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("giglio更新数据库开始");
