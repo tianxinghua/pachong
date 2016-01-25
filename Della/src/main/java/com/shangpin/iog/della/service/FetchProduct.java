@@ -85,6 +85,9 @@ public class FetchProduct {
 				sku.setProductSize(size);
 				sku.setStock(item.getQuantity());
 				try {
+					if(skuDTOMap.containsKey(sku.getSkuId())){
+						skuDTOMap.remove(sku.getSkuId());
+					}
 					productFetchService.saveSKU(sku);					
 					
 				} catch (ServiceException e) {

@@ -81,11 +81,13 @@ public abstract   class AbsDeliverService {
             e.printStackTrace();
         }
         if(null!=orderDTOList){
+            logger.info("已确认的订单数量是："+orderDTOList.size());
             for(OrderDTO orderDTO :orderDTOList){
                 //订单支付后查询是否发货
                 handleConfirmShippedOrder(orderDTO);
 
                 if(orderDTO.getStatus().equals(OrderStatus.SHIPPED)){
+                    logger.info("已发货的采购单："+orderDTO.getSpPurchaseNo());
                     updateOrderMsg(orderDTO);
                     addLogisticsMsg(orderDTO);
                 }
@@ -125,6 +127,7 @@ public abstract   class AbsDeliverService {
                         logisticsDTO.getLogisticsCompany(),logisticsDTO.getTrackNumber(),logisticsDTO.getShippedTime(),4,
                         supplierId,"联系方式无","发货地址无", "发货备注无",warehouseCode,warehouse,logisticsDTO.getPurchaseDetailList(),0);
                 //更新状态
+                logger.info( " 供货商：" + supplierId+ "　产生的发货单号是："+ deliverNo);
                 logisticsService.updateInvoice(supplierId,trackNum,deliverNo,date);
 
 
