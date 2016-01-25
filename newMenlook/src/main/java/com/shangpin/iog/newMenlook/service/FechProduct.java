@@ -121,10 +121,11 @@ public class FechProduct {
 			}
 			
 			//多线程插入
-			if(linkList.size()>0){
+			if(linkList.size()>0){				
 				int poolCnt = linkList.size()/thread;
 				ExecutorService exe=Executors.newFixedThreadPool(poolCnt/4+1);
 				final List<Collection<String>> links=subCollection(linkList);
+				logInfo.warn("线程池数："+(poolCnt/4+1)+",产品总数："+linkList.size()+",产品子集合数："+links.size());
 				for(int k=0;k<links.size();k++){
 					exe.execute(new FechThread(links.get(k),skuDTOMap));
 				}
@@ -233,100 +234,103 @@ public class FechProduct {
 					String result = HttpUtil45.get(link, outTimeConf, null);
 					JSONObject item = JSONObject.fromObject(result);
 					String itemId = item.getString("id");
-//					System.out.println(itemId);					
-					//库存
-					String stockurl = "https://staging.menlook.com/dw/shop/v15_4/products/"+itemId+"/availability?client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26&expand=images,prices,variations";
-					String stockRe = HttpUtil45.get(stockurl, outTimeConf, null);					
-					int stock = JSONObject.fromObject(stockRe).getJSONObject("inventory").getInt("stock_level");
-					if(stock>0){
-						//保存sku					
-						SkuDTO sku = new SkuDTO();
-						sku.setId(UUIDGenerator.getUUID());
-						sku.setSupplierId(supplierId);
-						sku.setSkuId(itemId);
-			            sku.setSpuId(itemId);
-			            sku.setColor(item.getString("c_octaveColor"));
-			            if(item.containsKey("c_octaveProductReference")){
-			            	sku.setProductCode(item.getString("c_octaveProductReference"));
-			            }else{
-			            	sku.setProductCode(itemId);
-			            }		            
-			            sku.setProductName(item.getString("name"));
-			            if(item.containsKey("c_octaveSize")){
-			            	sku.setProductSize(item.getString("c_octaveSize"));
-			            }else if(item.containsKey("c_octaveModelSize")){
-			            	sku.setProductSize(item.getString("c_octaveModelSize"));
-			            }		            
-			            sku.setStock(String.valueOf(stock));
-			            //价格
-			            String price = "http://staging.menlook.com/dw/shop/v15_9/products/"+sku.getSkuId()+"/prices?locale=fr&client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26";
-			            String pri = HttpUtil45.get(price, outTimeConf, null);
-			            String p = JSONObject.fromObject(pri).get("price").toString();
-			            sku.setMarketPrice(p);
-			            sku.setSaleCurrency("EUR");
-			            sku.setProductDescription(item.getString("long_description"));
-			            try {
-			            	if(skuDTOMap.containsKey(sku.getSkuId())){
-								skuDTOMap.remove(sku.getSkuId());
-							}
-			                productFetchService.saveSKU(sku);
-			                
-			            } catch (ServiceException e) {
-			                try {
-			                    if (e.getMessage().equals("数据插入失败键重复")) {
-			                        //更新价格和库存
-			                        productFetchService.updatePriceAndStock(sku);
-			                    } else {
-			                        e.printStackTrace();
-			                    }
-			                } catch (ServiceException e1) {
-			                	logError.error(e1.getMessage());
-			                    e1.printStackTrace();
-			                }
-			            }
-			            
-			            //入库spu
-			            SpuDTO spu = new SpuDTO();
-			            spu.setId(UUIDGenerator.getUUID());
-			            spu.setSpuId(item.getString("id"));
-			            spu.setSupplierId(supplierId);
-			            spu.setBrandName(item.getString("brand"));
-			            spu.setCategoryGender("male");
-			            spu.setCategoryName(item.getString("primary_category_id"));
-			            if(item.containsKey("c_octaveMaterial")){
-			            	spu.setMaterial(item.getString("c_octaveMaterial"));
-			            }	
-			            if(item.containsKey("c_merchantId")){
-			            	spu.setProductOrigin(item.getString("c_merchantId"));
-			            }			            
-			            try {
-			                productFetchService.saveSPU(spu);
-			            } catch (ServiceException e) {
-			            	logError.error(e.getMessage());
-			            	try{
-			            		productFetchService.updateMaterial(spu);
-			            	}catch(ServiceException ex){
-			            		logError.error(ex.getMessage());
-			            		ex.printStackTrace();
-			            	}
-			            	
-			                e.printStackTrace();
-			            }	            
-			            
-			            //图片
-			            List<String> list = new ArrayList<>();
-			            String pic_uri = "http://staging.menlook.com/dw/shop/v15_9/products/"+sku.getSkuId()+"/images?locale=fr&client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26";
-			            String pics = HttpUtil45.get(pic_uri, outTimeConf, null);
-		            	JSONArray picAr = JSONObject.fromObject(pics).getJSONArray("image_groups");
-			            for(int i=0;i<picAr.size();i++){
-			            	JSONArray aar = picAr.getJSONObject(i).getJSONArray("images");
-			            	for(int j=0;j<aar.size();j++){
-			            		list.add(aar.getJSONObject(j).getString("link"));
-			            	}
-			            }
-			            productFetchService.savePicture(supplierId, null, sku.getSkuId(), list);
-				            
-					}
+//					System.out.println(itemId);	
+					if(StringUtils.isNotBlank(itemId)){
+						//库存
+						String stockurl = "https://staging.menlook.com/dw/shop/v15_4/products/"+itemId+"/availability?client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26&expand=images,prices,variations";
+						String stockRe = HttpUtil45.get(stockurl, outTimeConf, null);					
+						int stock = JSONObject.fromObject(stockRe).getJSONObject("inventory").getInt("stock_level");
+						if(stock>0){
+							//sku					
+							SkuDTO sku = new SkuDTO();
+							sku.setId(UUIDGenerator.getUUID());
+							sku.setSupplierId(supplierId);
+							sku.setSkuId(itemId);
+				            sku.setSpuId(itemId);
+				            sku.setColor(item.getString("c_octaveColor"));
+				            if(item.containsKey("c_octaveProductReference")){
+				            	sku.setProductCode(item.getString("c_octaveProductReference"));
+				            }else{
+				            	sku.setProductCode(itemId);
+				            }		            
+				            sku.setProductName(item.getString("name"));
+				            if(item.containsKey("c_octaveSize")){
+				            	sku.setProductSize(item.getString("c_octaveSize"));
+				            }else if(item.containsKey("c_octaveModelSize")){
+				            	sku.setProductSize(item.getString("c_octaveModelSize"));
+				            }		            
+				            sku.setStock(String.valueOf(stock));
+				            //价格
+				            String price = "http://staging.menlook.com/dw/shop/v15_9/products/"+sku.getSkuId()+"/prices?locale=fr&client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26";
+				            String pri = HttpUtil45.get(price, outTimeConf, null);
+				            String p = JSONObject.fromObject(pri).get("price").toString();
+				            sku.setMarketPrice(p);
+				            sku.setSaleCurrency("EUR");
+				            sku.setProductDescription(item.getString("long_description"));				            
+				            //spu
+				            SpuDTO spu = new SpuDTO();
+				            spu.setId(UUIDGenerator.getUUID());
+				            spu.setSpuId(item.getString("id"));
+				            spu.setSupplierId(supplierId);
+				            spu.setBrandName(item.getString("brand"));
+				            spu.setCategoryGender("male");
+				            spu.setCategoryName(item.getString("primary_category_id"));
+				            if(item.containsKey("c_octaveMaterial")){
+				            	spu.setMaterial(item.getString("c_octaveMaterial"));
+				            }	
+				            if(item.containsKey("c_merchantId")){
+				            	spu.setProductOrigin(item.getString("c_merchantId"));
+				            }
+				            //图片
+				            List<String> list = new ArrayList<>();
+				            String pic_uri = "http://staging.menlook.com/dw/shop/v15_9/products/"+sku.getSkuId()+"/images?locale=fr&client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26";
+				            String pics = HttpUtil45.get(pic_uri, outTimeConf, null);
+			            	JSONArray picAr = JSONObject.fromObject(pics).getJSONArray("image_groups");
+				            for(int i=0;i<picAr.size();i++){
+				            	JSONArray aar = picAr.getJSONObject(i).getJSONArray("images");
+				            	for(int j=0;j<aar.size();j++){
+				            		list.add(aar.getJSONObject(j).getString("link"));
+				            	}
+				            }
+				            //sku入库
+				            try {
+				            	if(skuDTOMap.containsKey(sku.getSkuId())){
+									skuDTOMap.remove(sku.getSkuId());
+								}
+				                productFetchService.saveSKU(sku);
+				                
+				            } catch (ServiceException e) {
+				                try {
+				                    if (e.getMessage().equals("数据插入失败键重复")) {
+				                        //更新价格和库存
+				                        productFetchService.updatePriceAndStock(sku);
+				                    } else {
+				                        e.printStackTrace();
+				                    }
+				                } catch (ServiceException e1) {
+				                	logError.error(e1.getMessage());
+				                    e1.printStackTrace();
+				                }
+				            }
+				            //spu 入库
+				            try {
+				                productFetchService.saveSPU(spu);
+				            } catch (ServiceException e) {
+				            	logError.error(e.getMessage());
+				            	try{
+				            		productFetchService.updateMaterial(spu);
+				            	}catch(ServiceException ex){
+				            		logError.error(ex.getMessage());
+				            		ex.printStackTrace();
+				            	}
+				            	
+				                e.printStackTrace();
+				            }
+				            //保存图片
+				            productFetchService.savePicture(supplierId, null, sku.getSkuId(), list);
+					            
+						}
+					}					
 										
 				}catch(Exception ex){
 					logError.error(ex);
