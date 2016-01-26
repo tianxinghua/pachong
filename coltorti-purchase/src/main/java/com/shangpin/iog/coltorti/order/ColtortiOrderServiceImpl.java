@@ -61,10 +61,19 @@ public class ColtortiOrderServiceImpl extends AbsOrderService{
 			 orderDTO.setStatus(OrderStatus.CONFIRMED);
 		
 		} catch (ServiceException e) {
-			logger.info(e+operateData);
-			orderDTO.setExcDesc("订单失败重复订单号");
-			orderDTO.setExcTime(new Date());
-			handlePurchaseOrderExc(orderDTO);
+			String message = e.getMessage();
+			String statusCode = message.split(":")[1];
+			if (statusCode.equals("422")) {
+				logger.info(e+operateData+"订单号："+orderDTO.getSpOrderId());
+				orderDTO.setExcDesc("订单失败重复订单号");
+				orderDTO.setExcTime(new Date());
+				handlePurchaseOrderExc(orderDTO);
+			}else{
+				logger.info(e+operateData+"订单号："+orderDTO.getSpOrderId());
+				orderDTO.setExcDesc("网络异常，订单失败");
+				orderDTO.setExcTime(new Date());
+				handlePurchaseOrderExc(orderDTO);
+			}
 			if(e instanceof ServiceException){
 				if(ColtortiUtil.isTokenExpire((ServiceException) e)){
 					try {
