@@ -72,7 +72,7 @@ public class StockMoniTask{
 			Date time = stockUpdateDTO.getUpdateTime();
 			l = date.getTime()-time.getTime();
 			if (l/1000d/60d/60d-2.0>=0) {
-				sb.append(suppliernameMap.get(stockUpdateDTO.getSupplierId()))
+				sb.append("香港:::"+suppliernameMap.get(stockUpdateDTO.getSupplierId()))
 					.append("上次更新时间:").append(stockUpdateDTO.getUpdateTime().toLocaleString())
 					.append(",").append("\r\n");
 			}
