@@ -37,7 +37,7 @@ public class ColtortiOrderServiceImpl extends AbsOrderService{
 		try {
 			Gson gson = new Gson();
 			OrderJson oj = new OrderJson();
-			oj.setCustomer(new Customer("FilippoTroina", "", "VIAG.LEOPARDI 27，22075 LURATE CACCIVIO (COMO)", "22075", "CACCIVIO", "COMO", "Italy"));
+			oj.setCustomer(new Customer("FilippoTroina", "", "VIAG.LEOPARDI 27，22075 LURATE CACCIVIO (COMO)", "22075", "LURATE CACCIVIO", "COMO", "Italy"));
 			oj.setOrder_id(orderDTO.getSpOrderId());
 			List<Product> products = new ArrayList<Product>();
 			Map<String,String> param2=new HashMap<String, String>();
