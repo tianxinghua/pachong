@@ -16,9 +16,11 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.SpuDTO;
 
 public class Test {
 	
@@ -31,6 +33,7 @@ public class Test {
 	private static String product_lists_url = "";	
 	private static String login_url = "";
 	private static int day;
+	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
 
 //	public static void main(String[] args){
 //		OutTimeConfig outTimeConf = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
@@ -53,14 +56,14 @@ public class Test {
 //	}
 	
 	
-	static {
-		if (null == bdl)
-			bdl = ResourceBundle.getBundle("conf");
-		supplierId = bdl.getString("supplierId");
-		product_lists_url = bdl.getString("product_lists_url");
-		login_url = bdl.getString("login_url");
-		day = Integer.valueOf(bdl.getString("day"));
-	}
+//	static {
+//		if (null == bdl)
+//			bdl = ResourceBundle.getBundle("conf");
+//		supplierId = bdl.getString("supplierId");
+//		product_lists_url = bdl.getString("product_lists_url");
+//		login_url = bdl.getString("login_url");
+//		day = Integer.valueOf(bdl.getString("day"));
+//	}
 
 	public void fetchProductAndSave(){
 		OutTimeConfig outTimeConf = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
@@ -240,8 +243,20 @@ public class Test {
 	
 	
 	public static void main(String[] args){
-		Test t = new Test();
-		t.fetchProductAndSave();
+		try{
+			
+			String url = "http://staging.menlook.com/dw/shop/v15_9/products/M2045_1964_Beige?expand=availability,bundled_products,links,promotions,options,prices,variations,set_products&locale=fr&client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26";
+			String result = HttpUtil45.get(url, outTimeConf, null);
+			JSONObject spuObject = JSONObject.fromObject(result);
+			
+			//spu
+	        SpuDTO spu = new SpuDTO();
+	        spu.setBrandName(spuObject.getString("brand")); 
+			
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+		
 	}
 	
 }
