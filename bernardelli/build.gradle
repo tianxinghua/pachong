@@ -22,7 +22,7 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.bernardelli.StartUp'
+        attributes 'Main-Class': 'com.shangpin.iog.bernardelli.Startup'
         attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 

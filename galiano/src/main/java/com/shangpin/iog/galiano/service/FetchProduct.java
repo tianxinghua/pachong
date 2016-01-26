@@ -7,6 +7,7 @@ import com.shangpin.iog.galiano.dto.Item;
 import com.shangpin.iog.galiano.dto.Items;
 import com.shangpin.iog.galiano.dto.Product;
 import com.shangpin.iog.galiano.dto.Products;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
@@ -14,6 +15,9 @@ import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
+
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggerFactory;
@@ -30,6 +34,19 @@ import java.util.*;
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
     private static Logger logMongo = Logger.getLogger("mongodb");
+    private static String supplierId;
+    private static String url;
+	public static int day;
+    private static ResourceBundle bdl=null;
+    static {
+        if(null==bdl)
+            bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+        url = bdl.getString("url");
+        day = Integer.valueOf(bdl.getString("day"));
+    }
+    @Autowired
+	ProductSearchService productSearchService;
     @Autowired
     ProductFetchService productFetchService;
 
@@ -47,6 +64,16 @@ public class FetchProduct {
             logMongo.info(mongMap);
             Products products= ObjectXMLUtil.xml2Obj(Products.class, result);
             List<Product> productList = products.getProducts();
+            
+            Date startDate,endDate= new Date();
+			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+            Map<String,SkuDTO> skuDTOMap = new HashedMap();
+			try {
+				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+			
             for(Product product:productList){
                 SpuDTO spu = new SpuDTO();
 
@@ -83,27 +110,31 @@ public class FetchProduct {
                         sku.setProductDescription(item.getDescription());
                         sku.setStock(item.getStock());
                         sku.setProductCode(product.getProducer_id());
+                        
+                        if(skuDTOMap.containsKey(sku.getSkuId())){
+    						skuDTOMap.remove(sku.getSkuId());
+    					}
                         productFetchService.saveSKU(sku);
 
-                        if(StringUtils.isNotBlank(item.getPicture())){
-                            String[] picArray = item.getPicture().split("\\|");
-
-//                            List<String> picUrlList = Arrays.asList(picArray);
-                            for(String picUrl :picArray){
-                                ProductPictureDTO dto  = new ProductPictureDTO();
-                                dto.setPicUrl(picUrl);
-                                dto.setSupplierId(supplierId);
-                                dto.setId(UUIDGenerator.getUUID());
-                                dto.setSkuId(item.getItem_id());
-                                try {
-                                    productFetchService.savePictureForMongo(dto);
-                                } catch (ServiceException e) {
-                                    e.printStackTrace();
-                                }
-
-                            }
-
-                        }
+//                        if(StringUtils.isNotBlank(item.getPicture())){
+//                            String[] picArray = item.getPicture().split("\\|");
+//
+////                            List<String> picUrlList = Arrays.asList(picArray);
+//                            for(String picUrl :picArray){
+//                                ProductPictureDTO dto  = new ProductPictureDTO();
+//                                dto.setPicUrl(picUrl);
+//                                dto.setSupplierId(supplierId);
+//                                dto.setId(UUIDGenerator.getUUID());
+//                                dto.setSkuId(item.getItem_id());
+//                                try {
+//                                    productFetchService.savePictureForMongo(dto);
+//                                } catch (ServiceException e) {
+//                                    e.printStackTrace();
+//                                }
+//
+//                            }
+//
+//                        }
 
                     } catch (ServiceException e) {
                         try {
@@ -117,6 +148,13 @@ public class FetchProduct {
                         } catch (ServiceException e1) {
                             e1.printStackTrace();
                         }
+                    }
+                    
+                    if(StringUtils.isNotBlank(item.getPicture())){
+                        String[] picArray = item.getPicture().split("\\|");
+
+                        List<String> picUrlList = Arrays.asList(picArray);
+                        productFetchService.savePicture(supplierId, null, skuId, picUrlList);
                     }
                 }
 
@@ -132,11 +170,28 @@ public class FetchProduct {
                     spu.setCategoryGender(product.getGender());
                     productFetchService.saveSPU(spu);
                 } catch (ServiceException e) {
+                	try {
+						productFetchService.updateMaterial(spu);
+					} catch (ServiceException e1) {
+						e1.printStackTrace();
+					}
                     e.printStackTrace();
                 }
 
 
             }
+          //更新网站不再给信息的老数据
+    		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+    			 Map.Entry<String,SkuDTO> entry =  itor.next();
+    			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+    				entry.getValue().setStock("0");
+    				try {
+    					productFetchService.updatePriceAndStock(entry.getValue());
+    				} catch (ServiceException e) {
+    					e.printStackTrace();
+    				}
+    			}
+    		}
 
 
         } catch (JAXBException e) {
