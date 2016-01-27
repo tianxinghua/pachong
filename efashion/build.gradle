@@ -15,6 +15,7 @@ dependencies {
             project(':project-common'),
             project(':iog-service'),
             project(':project-dao'),
+            "org.jsoup:jsoup:1.6.3",
             project(':iog-common-product'),
             project(':openapi-ice')
     )
