@@ -834,10 +834,4 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		}
 	}
 
-	@Override
-	public ProductDTO findProductBySupplierIdAndSkuId(String supplierId,
-			String skuId) throws ServiceException {
-		return  productDAO.findProductBySupplierIdAndSkuId(supplierId,skuId);
-	}
-
 }
