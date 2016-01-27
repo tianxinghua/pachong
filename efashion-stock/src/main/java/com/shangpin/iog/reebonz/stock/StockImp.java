@@ -45,74 +45,68 @@ public class StockImp extends AbsUpdateProductStock {
 	EventProductService eventProductService;
     private static ResourceBundle bdl=null;
     private static String supplierId;
-    private static String stockUrl;
+	private static String url;
+	public static int day;
+	public static int max;
     static {
         if(null==bdl)
          bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
-        stockUrl = bdl.getString("stockUrl");
+		max = Integer.valueOf(bdl.getString("max"));
+		url = bdl.getString("url");
     }
-   
+    static Map<String,String> map = new HashMap<String,String>();
+    static int i=0;
+    public static void getProductList(int index){
+    	String json = HttpUtil45
+				.get(url+"&limit="+max+"&offset="+index,
+						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
+						null);
+		ReturnObject obj = new Gson().fromJson(json, ReturnObject.class);
+		// 第一步：获取活动信息
+		if(obj!=null){
+			Result result = obj.getResults();
+			List<Item> item = result.getItems();
+			if(!item.isEmpty()){
+				for(Item ite:item){
+					map.put(ite.getSku_id(), ite.getQuantity());
+				}
+				i++;
+				System.out.println("---------第"+i+"页-------------");
+				System.out.println("商品数量："+item.size());
+				getProductList(max*i+1);
+			}
+		}
+	}
+    
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
     	
-    	String json = HttpUtil45
-				.get(stockUrl,
-						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
-						null);
-		
-		ReturnObject obj = new Gson().fromJson(json, ReturnObject.class);
-		Map<String,String> map = new HashMap<String,String>();
-		if(obj!=null){
-			Result result = obj.getResults();
-			if(result!=null){
-				List<Item> list = result.getItems();
-				if(list!=null){
-					for(Item item : list){
-						map.put(item.getProduct_id()+"|"+item.getSize(),item.getQuantity());
-					}
-				}
-			}
-		}
-    	
-        //get tony return date
+    	getProductList(1);
+    	System.out.println("总的商品数量："+map.size());
+    	logger.info("总的商品数量："+map.size());
+    	System.out.println("拉取完成");
         //定义三方
     	Map<String,String> stockMap = new HashMap<String,String>();
         for (String skuno : skuNo) {
         	//skuno格式：skuId|proCode|colorCode|size
         	String tempSku = null;
         	String [] skuArray = skuno.split("\\|");
-        	if("A".equals(skuArray[3])){
-        		tempSku = skuArray[0]+"|";
-        	}else{
-        		tempSku = skuArray[0]+"|"+skuArray[3];
-        	}
+        	tempSku = skuArray[0];
             if(map.containsKey(tempSku)){
             	stockMap.put(skuno,map.get(tempSku));
+            }else{
+            	stockMap.put(skuno,"0");
             }
         }
         return stockMap;
     }
     
     public static void main(String[] args) {
-    	
     	//加载spring
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("efashion");
-        /*
-            List li = new ArrayList();
-	        li.add("563cdefe9b30aec2d862b7fc|3945869|3017T|TU");
-	        try {
-				stockImp.grabStock(li);
-			} catch (ServiceException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-         * */
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("efashiom更新库存开始");
         System.out.println("efashiom更新库存开始");
