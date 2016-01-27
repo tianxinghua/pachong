@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
@@ -21,7 +22,7 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
-
+@Component
 public class ColtortiOrderServiceImpl extends AbsOrderService{
 	private static Logger logger = Logger.getLogger("info");
 	@Override
