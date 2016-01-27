@@ -1,5 +1,6 @@
 package com.shangpin.iog.spinnaker.service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +33,7 @@ public class OrderService extends AbsOrderService {
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
 	private static String supplierNo = null;
-	private static String url,cancelUrl = null;
+	private static String setOrderUrl,queryOrderUrl,cancelUrl;
 	private static String dBContext = null;
 	// private static String purchase_no = null;
 	// private static String order_no = null;
@@ -43,7 +45,7 @@ public class OrderService extends AbsOrderService {
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger loggerError = Logger.getLogger("error");
 
-	private OutTimeConfig defaultConfig = new OutTimeConfig(1000 * 2, 1000 * 60, 1000 * 60);
+	private OutTimeConfig defaultConfig = new OutTimeConfig(1000 * 2, 1000 * 60*5, 1000 * 60*5);
 
 	static {
 		if (null == bdl) {
@@ -51,7 +53,8 @@ public class OrderService extends AbsOrderService {
 		}
 		supplierId = bdl.getString("supplierId");
 		supplierNo = bdl.getString("supplierNo");
-		url = bdl.getString("url");
+		setOrderUrl = bdl.getString("setOrderUrl");
+		queryOrderUrl = bdl.getString("queryOrderUrl");
 		cancelUrl = bdl.getString("cancelUrl");
 		dBContext = bdl.getString("dBContext");
 		key = bdl.getString("key");
@@ -89,7 +92,7 @@ public class OrderService extends AbsOrderService {
 
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
-		// TODO Auto-generated method stub
+		deleteOrder.setStatus(OrderStatus.CANCELLED);
 	}
 
 	@Override
@@ -137,7 +140,7 @@ public class OrderService extends AbsOrderService {
 			 map.put("ordQty", barcode[1]);
 			 map.put("key", key);
 			 map.put("sellPrice", order.getSellPrice());
-			 rtnData = HttpUtil45.get(url, defaultConfig , map);
+			 rtnData = HttpUtil45.get(setOrderUrl, defaultConfig , map);
 			//rtnData = HttpUtil45.operateData("get", "json", url, null, null, json, "", "");
 			// {"error":"发生异常错误"}
 			logger.info("推送" + status + "订单返回结果==+==" + rtnData);
@@ -170,25 +173,19 @@ public class OrderService extends AbsOrderService {
 		String rtnData2 = null;
 		try{
 			Map<String, String> map =new HashMap<String, String>();
-			 String[] barcode = deleteOrder.getDetail().split(":");
 			 map.put("DBContext", dBContext);
 			 map.put("purchase_no", deleteOrder.getSpPurchaseNo());
 			 map.put("order_no", deleteOrder.getSupplierOrderNo());
 			 map.put("key", key);
-			 rtnData2 = HttpUtil45.get(url, defaultConfig , map);
+			 rtnData2 = HttpUtil45.get(queryOrderUrl, defaultConfig , map);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		// 获取退单信息
-		Parameters2 order = getRefundlOrder(status, deleteOrder);
 		Gson gson = new Gson();
-		String json = gson.toJson(order, Parameters2.class);
-		//System.out.println("request json == " + json);
 		String rtnData = null;
-		logger.info("推送的数据：" + json);
-		//System.out.println("rtnData==" + json);
-		
+
 		ResponseObject response = gson.fromJson(rtnData2, ResponseObject.class);
 		if("HO".equals(response.getStatus())){
 			try {
@@ -237,27 +234,34 @@ public class OrderService extends AbsOrderService {
 //		order.setBarcode(details[0]);
 //		order.setOrdQty(ordQty);
 		order.setKey(key);
-		String markPrice = null;
-		try {
-			Map tempmap = skuPriceService.getNewSkuPriceBySku(supplierId, details[0]);
-			Map map = (Map) tempmap.get(supplierId);
-			markPrice = (String) map.get(details[0]);
-			if (!"-1".equals(markPrice)) {
-				String price = markPrice.split("\\|")[1];
-				if (!"-1".equals(price)) {
-					order.setSellPrice(price);
-				} else {
-					order.setSellPrice(orderDTO.getPurchasePriceDetail());
-				}
+//		String sPurchasePrice = StringUtils.isBlank(orderDTO.getPurchasePriceDetail())?"0":orderDTO.getPurchasePriceDetail();
+//     	BigDecimal purchasePrice = new BigDecimal(sPurchasePrice).divide(new BigDecimal(1.05),2,BigDecimal.ROUND_HALF_UP);
+//		order.setSellPrice(purchasePrice.toString());
+		order.setSellPrice("0");
 
-			} else {
-				order.setSellPrice(orderDTO.getPurchasePriceDetail());
-			}
-		} catch (ServiceException e) {
-			order.setSellPrice(orderDTO.getPurchasePriceDetail());
-			System.out.println("sku" + details[0] + "没有供货价");
-			logger.info("异常错误：" + e.getMessage());
-		}
+
+
+
+//		try {
+//			Map tempmap = skuPriceService.getNewSkuPriceBySku(supplierId, details[0]);
+//			Map map = (Map) tempmap.get(supplierId);
+//			markPrice = (String) map.get(details[0]);
+//			if (!"-1".equals(markPrice)) {
+//				String price = markPrice.split("\\|")[1];
+//				if (!"-1".equals(price)) {
+//					order.setSellPrice(price);
+//				} else {
+//					order.setSellPrice(orderDTO.getPurchasePriceDetail());
+//				}
+//
+//			} else {
+//				order.setSellPrice(orderDTO.getPurchasePriceDetail());
+//			}
+//		} catch (ServiceException e) {
+//			order.setSellPrice(orderDTO.getPurchasePriceDetail());
+//			System.out.println("sku" + details[0] + "没有供货价");
+//			logger.info("异常错误：" + e.getMessage());
+//		}
 		return order;
 	}
 	

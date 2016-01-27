@@ -39,16 +39,17 @@
 <table width="100%" width="100%" class="table_border" border="0" id="high_light" lang="tabRowData"  
          cellpadding="0" cellspacing="0" bgcolor="#C7EDCC" >
 <tr>
-	<td>序号</td>
-	<td>供货商名称</td>
-	<td>尚品订单编号</td>
-	<td>采购单编号</td>
-	<td>订单状态</td>
-	<td>Detail</td>
-	<td>Memo</td>
-	<td>CreateTime</td>
-	<td>UpdateTime</td>
-	<td>UuId</td>
+	<td width="50">序号</td>
+	<td width="50">供货商名称</td>
+	<td width="50">尚品订单编号</td>
+	<td width="50">采购单编号</td>
+	<td width="80">订单状态</td>
+	<td width="50">Detail</td>
+	<td width="50">Memo</td>
+	<td width="50">CreateTime</td>
+	<td width="50">UpdateTime</td>
+	<td width="100">异常原因</td>
+	<td width="50">UuId</td>
 </tr>
 <c:forEach items="${orderList }" var="order" varStatus="status">
 <tr>
@@ -61,6 +62,7 @@
 	<td>${order.memo }</td>
 	<td><fmt:formatDate value="${order.createTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 	<td><fmt:formatDate value="${order.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+	<td>${order.excDesc }</td>
 	<td>${order.uuId }</td>
 </tr>
 </c:forEach>

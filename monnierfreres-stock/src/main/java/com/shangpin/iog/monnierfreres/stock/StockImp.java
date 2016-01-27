@@ -2,6 +2,7 @@ package com.shangpin.iog.monnierfreres.stock;
 
 import com.shangpin.framework.ServiceException;
 
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.monnierfreres.utils.DownloadAndReadCSV;
 
 
@@ -34,12 +35,7 @@ public class StockImp extends AbsUpdateProductStock {
         supplierId = bdl.getString("supplierId");
         url = bdl.getString("url");
     }
-//    private static ApplicationContext factory;
-//    private static void loadSpringContext()
-//    {
-//
-//        factory = new AnnotationConfigApplicationContext(AppContext.class);
-//    }
+
     @Override
     public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //定义三方
@@ -70,12 +66,24 @@ public class StockImp extends AbsUpdateProductStock {
      realpath = realpath+"_"+date+".csv";
      return realpath;
  }
+
+
+    private static ApplicationContext factory;
+    private static void loadSpringContext()
+
+    {
+
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
+
+
+
     public static void main(String[] args) {
         
     	//加载spring
-//        loadSpringContext();
-        //拉取数据
-//        StockImp stockImp =(StockImp)factory.getBean("monnierfreres");
+        loadSpringContext();
+
+
 
         String host = bundle.getString("HOST");
         String app_key = bundle.getString("APP_KEY");
@@ -84,7 +92,8 @@ public class StockImp extends AbsUpdateProductStock {
             logger.error("参数错误，无法执行更新库存");
         }
 
-        StockImp stockImp = new StockImp();
+        StockImp stockImp =(StockImp)factory.getBean("monnierfreres");
+
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("monnierfreres更新库存开始");
         try {

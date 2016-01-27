@@ -1,17 +1,21 @@
 package com.shangpin.iog.menlook.sevice;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.ProductPictureDTO;
@@ -20,6 +24,7 @@ import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.menlook.dto.Item;
 import com.shangpin.iog.menlook.util.DownloadAndReadCSV;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SkuPriceService;
 
 @Component("menlooks")
@@ -31,17 +36,30 @@ public class FetchProduct {
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
 	private static String url;
+	private static int day;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
 		url = bdl.getString("url");
+		day = Integer.valueOf(bdl.getString("day"));
 	}
 	@Autowired
 	private ProductFetchService productFetchService;
 	@Autowired
+	ProductSearchService productSearchService;
+	@Autowired
 	private SkuPriceService skuPriceService;
 	public void fetchProductAndSave() {
+		Date startDate,endDate= new Date();
+		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+		//获取原有的SKU 仅仅包含价格和库存
+		Map<String,SkuDTO> skuDTOMap = new HashedMap();
+		try {
+			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 //		Map<String, String> mongMap = new HashMap<>();
 //		OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
 //		mongMap.put("supplierId", supplierId);
@@ -75,6 +93,9 @@ public class FetchProduct {
 				skuDTO.setMarketPrice(item.getMarketPrice().replace("^", ""));
 				skuDTO.setSupplierPrice(item.getSupplierPrice().replace("^", ""));
 				try {
+					if(skuDTOMap.containsKey(skuDTO.getSkuId())){
+						skuDTOMap.remove(skuDTO.getSkuId());
+					}
 					productFetchService.saveSKU(skuDTO);
 					//保存图片
 					ProductPictureDTO picture = new ProductPictureDTO();
@@ -118,8 +139,27 @@ public class FetchProduct {
 				productFetchService.saveSPU(spuDTO);
 			} catch (ServiceException e) {
 				loggerError.info(entry.getKey()+"spu保存失败");
-				e.printStackTrace();
+				try {
+					productFetchService.updateMaterial(spuDTO);
+				} catch (ServiceException e1) {
+					e1.printStackTrace();
+				}
+                e.printStackTrace();
+			}
+		}
+		
+		//更新网站不再给信息的老数据
+		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+			 Map.Entry<String,SkuDTO> entry =  itor.next();
+			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+				entry.getValue().setStock("0");
+				try {
+					productFetchService.updatePriceAndStock(entry.getValue());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
+	
 }

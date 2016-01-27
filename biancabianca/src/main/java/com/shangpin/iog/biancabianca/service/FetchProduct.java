@@ -3,17 +3,25 @@ package com.shangpin.iog.biancabianca.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.biancabianca.dto.Product;
 import com.shangpin.iog.biancabianca.util.MyTxtUtil;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
+
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -25,14 +33,18 @@ public class FetchProduct {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static String supplierId;
+    private static int day;
     @Autowired
     ProductFetchService productFetchService;
+    @Autowired
+	ProductSearchService productSearchService;
 
     private static ResourceBundle bdl=null;
     static {
         if(null==bdl)
             bdl= ResourceBundle.getBundle("conf");
             supplierId = bdl.getString("supplierId");
+            day = Integer.valueOf(bdl.getString("day"));
     }
     /**
      * 主处理
@@ -60,6 +72,15 @@ public class FetchProduct {
      * 映射数据并保存
      */
     private void messMappingAndSave(List<Product> list) {
+    	Date startDate,endDate= new Date();
+		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+		//获取原有的SKU 仅仅包含价格和库存
+		Map<String,SkuDTO> skuDTOMap = new HashedMap();
+		try {
+			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
         for(Product product:list) {
             ///////////////////////////////保存SKU//////////////////////////////////
             SkuDTO sku = new SkuDTO();
@@ -70,31 +91,39 @@ public class FetchProduct {
                 sku.setSupplierId(supplierId);
                 sku.setSpuId(spuId);
                 sku.setSkuId(product.getVARIANT_SKU());
-                sku.setProductSize(product.getSTANDARDSHIPPINCOST());
+                sku.setProductSize(product.getSIZE());
                 sku.setMarketPrice(product.getPRICE());
                 sku.setSalePrice(product.getSALEPRICE());
                 sku.setSupplierPrice(product.getPRICE());
-                sku.setColor(product.getSIZE());
+                sku.setColor(product.getCOLOR());
                 sku.setProductDescription(product.getDESCRIPTION());
                 sku.setStock(product.getSTOCK_LEVEL());
-                sku.setProductCode("");
+                sku.setProductCode(spuId);
                 sku.setSaleCurrency("euro");
                 sku.setBarcode("");
+                
+                if(skuDTOMap.containsKey(sku.getSkuId())){
+    				skuDTOMap.remove(sku.getSkuId());
+    			}
                 productFetchService.saveSKU(sku);
 
                 ///////////////////////////////////保存图片///////////////////////////////////
 //            for(int i = 0;i<2;i++){
-                ProductPictureDTO dto  = new ProductPictureDTO();
-                String picUrl = product.getIMAGEURL();
-                dto.setPicUrl(picUrl);
-                dto.setSupplierId(supplierId);
-                dto.setId(UUIDGenerator.getUUID());
-                dto.setSkuId(product.getVARIANT_SKU());
-                try {
-                    productFetchService.savePictureForMongo(dto);
-                } catch (ServiceException e) {
-                    System.out.println("savePictureForMongo异常");
-                    e.printStackTrace();
+//                ProductPictureDTO dto  = new ProductPictureDTO();
+//                String picUrl = product.getIMAGEURL();
+//                dto.setPicUrl(picUrl);
+//                dto.setSupplierId(supplierId);
+//                dto.setId(UUIDGenerator.getUUID());
+//                dto.setSkuId(product.getVARIANT_SKU());
+//                try {
+//                    productFetchService.savePictureForMongo(dto);
+//                } catch (ServiceException e) {
+//                    System.out.println("savePictureForMongo异常");
+//                    e.printStackTrace();
+//                }
+                if(StringUtils.isNotBlank(product.getIMAGEURL())){
+                    String[] picArray = product.getIMAGEURL().split("\\|");
+                    productFetchService.savePicture(supplierId, null, product.getVARIANT_SKU(), Arrays.asList(picArray));
                 }
 //            }
                 ///////////////////////////////////保存SPU/////////////////////////////////
@@ -127,6 +156,7 @@ public class FetchProduct {
                 spu.setBrandName("Stuart Weitzman");
                 spu.setCategoryName("Shoes");
                 //spu.setSeasonId(skuDto.getSKU());
+                spu.setSeasonName(product.getSEASON());
                 spu.setMaterial(product.getMATERIAL());
                 spu.setCategoryGender(product.getGENDER());
                 spu.setProductOrigin("Spain");

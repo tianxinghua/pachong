@@ -7,6 +7,8 @@ import com.enterprisedt.net.ftp.FTPTransferType;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 /**
@@ -49,25 +51,31 @@ public class MyFtpUtil {
      * Description: 上传文件
      */
     public  void upLoad() {
+    	String fileName = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String dateStr = format.format(new Date());
+		fileName = dateStr + ".csv";
+    	
         //创建FTPClient
         FTPClient ftp = new FTPClient();
         // 连接服务器
         try {
-            ftp.setRemoteHost(HOST);
-            ftp.setRemotePort(Integer.parseInt(PORT));
+        	ftp.setRemoteHost("49.213.13.167");
+            ftp.setRemotePort(60021);
             ftp.setTimeout(1000*60*30);
             ftp.connect();
             //登陆
-            ftp.login(USER, PASSWORD);
-            logger.info("ftp登录成功!!");
+            ftp.login("apiftp", "api@888");
+            //logger.info("ftp登录成功!!");
+            System.out.println("ftp登录成功!!");
             //连接模式
             ftp.setConnectMode(FTPConnectMode.PASV);
             //跳转到指定路径
-            ftp.chdir(PATH);
+            //ftp.chdir("/home/apiftp");
             //ASCII方式：传输xml文本文件
-            ftp.setType(FTPTransferType.ASCII);
+            ftp.setType(FTPTransferType.BINARY);
             // 获取 XML文件到本地
-            ftp.put(localFile,remoteFile);
+            ftp.put(localFile,"a.csv");
             logger.info("上传成功!!");
         } catch (IOException e) {
             e.printStackTrace();
