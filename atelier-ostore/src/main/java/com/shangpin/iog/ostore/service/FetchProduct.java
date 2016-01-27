@@ -201,6 +201,12 @@ public class FetchProduct {
 						size=size.replace("½", "+");
 					}
         			sku.setProductSize(size);
+        			
+        			if (StringUtils.isBlank(priceMap.get(item.getSpuId()))) {
+        				logger.info(item.getSpuId()+"++++++++++++++++++++++++++++++++++"+"没有价格");
+						System.err.println(item.getSpuId()+"++++++++++++++++++++++++++++++++++"+"没有价格");
+						continue;
+					}
         			sku.setMarketPrice(priceMap.get(item.getSpuId()).replace(",", ""));
         			sku.setColor(item.getColor());
         			sku.setProductDescription(item.getDescription());
