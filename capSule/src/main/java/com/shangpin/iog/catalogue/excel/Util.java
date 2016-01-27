@@ -1,10 +1,5 @@
 package com.shangpin.iog.catalogue.excel;
 
-
-/**
- * @author Hongten
- * @created 2014-5-21
- */
 public class Util {
 
     /**
