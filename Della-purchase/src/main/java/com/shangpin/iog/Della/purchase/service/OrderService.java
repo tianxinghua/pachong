@@ -66,7 +66,7 @@ public class OrderService extends AbsOrderService {
      */
     public void saveAndUpLoadOrder(){
         saveOrder();
-        new MyFtpUtil2().upLoad();
+        new MyFtpUtil().upLoad();
     }
     /**
      * 
@@ -88,17 +88,19 @@ public class OrderService extends AbsOrderService {
         }
         
         StringBuffer ftpFile = new StringBuffer();
-        ftpFile.append("Purchasing number;Item code;Size;Item supplier code;Quantity;Brand");
+        ftpFile.append("Purchasing number;PO Line;Item code;Description;Item supplier code;Price;Quantity;Size");
         ftpFile.append("\n");
         for (OrderDTO orderDTO:list){
         	try {
 				ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getDetail().split(":")[0]);
 				ftpFile.append(orderDTO.getSpPurchaseNo());
+				ftpFile.append(";").append("");
 	            ftpFile.append(";").append(product.getProductCode());
-	            ftpFile.append(";").append(product.getSize());
+	            ftpFile.append(";").append("");
 	            ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+	            ftpFile.append(";").append("");
 	            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
-	            ftpFile.append(";").append(product.getBrandName());
+	            ftpFile.append(";").append(product.getSize());
 	            ftpFile.append("\n");
         	} catch (ServiceException e) {
 				e.printStackTrace();

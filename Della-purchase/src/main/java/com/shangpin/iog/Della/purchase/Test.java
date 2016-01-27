@@ -31,21 +31,21 @@ public class Test {
    		 
    		 ftp.setFileType(FTPClient.BINARY_FILE_TYPE); 	
    		 
-   		 File srcFile = new File("/usr/local/apporder/Della/a.csv"); ///usr/local/apporder/Della/a.csv
+   		 File srcFile = new File("E:/aaa.txt"); ///usr/local/apporder/Della/a.csv
    		 fis = new FileInputStream(srcFile);
    		 logger.info("ftp连接成功");
    		 System.out.println("ftp连接成功");
    		 
-   		byte[] b = new byte[1024]; //所有内容读到此数组中
-
-   	    int len = fis.read(b);
-   	     System.out.println("读取到的字符串为："+new String(b,0,len));
-   		 ftp.changeWorkingDirectory("/MOSU/Orders/Save"); 
+//   		byte[] b = new byte[1024]; //所有内容读到此数组中
+//
+//   	    int len = fis.read(b);
+//   	     System.out.println("读取到的字符串为："+new String(b,0,len));
+   		 ftp.changeWorkingDirectory("/MOSU/Orders"); 
    		 //ftp.setBufferSize(1024); 
    		
    		logger.info("开始上传");
   		 System.out.println("开始上传");
-   		 ftp.storeFile("TestOrder.csv" , fis); 
+   		 ftp.storeFile("2016-01-13(2).csv" , fis); 
    		 logger.info("上传成功");
    		 System.out.println("上传成功");
 			

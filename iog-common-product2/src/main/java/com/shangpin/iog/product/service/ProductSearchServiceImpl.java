@@ -834,4 +834,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		}
 	}
 
+	@Override
+	public ProductDTO findProductBySupplierIdAndSkuId(String supplierId, String skuId) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 /**
@@ -52,8 +54,14 @@ public class MyFtpUtil2 {
      * Description: 上传文件
      */
     public static void upLoad() {
-    	 FTPClient ftp = new FTPClient(); 
-    	 FileInputStream fis = null ; 
+    	
+    	String fileName = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String dateStr = format.format(new Date());
+		fileName = dateStr + ".csv";
+		
+    	FTPClient ftp = new FTPClient(); 
+    	FileInputStream fis = null ; 
     	 
     	 try {
     		 ftp.setConnectTimeout(1000*60*60);
@@ -71,7 +79,7 @@ public class MyFtpUtil2 {
     		 ftp.setControlEncoding("UTF-8" ); 
     		 
     		 ftp.setFileType(FTPClient.BINARY_FILE_TYPE); 
-    		 ftp.storeFile("JanOrder.csv" , fis); 
+    		 ftp.storeFile(fileName , fis); 
     		 logger.info("上传成功");
 			
 		} catch (Exception e) {

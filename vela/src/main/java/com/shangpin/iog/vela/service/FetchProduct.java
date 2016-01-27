@@ -22,9 +22,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -125,6 +127,11 @@ public class FetchProduct {
                             try {
                                 pfs.saveSPU(spudto);
                             } catch (ServiceException e) {
+                            	try{
+                            		pfs.updateMaterial(spudto);
+        		            	}catch(ServiceException ex){
+        		            		ex.printStackTrace();
+        		            	}
                                 e.printStackTrace();
                             }
 
@@ -167,18 +174,29 @@ public class FetchProduct {
                 						skuDTOMap.remove(skudto.getSkuId());
                 					}
                                     pfs.saveSKU(skudto);
-                                    for(String image : sku.getPictures()){
-                                        ProductPictureDTO pic = new ProductPictureDTO();
-                                        pic.setPicUrl(image);
-                                        pic.setId(UUIDGenerator.getUUID());
-                                        pic.setSkuId(sku.getItem_id());
-                                        pic.setSupplierId(supplierId);
-                                        try {
-                                            pfs.savePictureForMongo(pic);
-                                        } catch (ServiceException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
+                                    
+                                  //保存图片
+                	                List<String> imgList = new ArrayList<String>();
+                	                if (sku.getPictures() != null) {
+                	                    for (String  imageUrl: sku.getPictures()) {
+                	                        if (imageUrl != null ) {
+                	                        	imgList.add(imageUrl);	                        	
+                	                        }
+                	                    }
+                	                    pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);
+                	                }
+//                                    for(String image : sku.getPictures()){
+//                                        ProductPictureDTO pic = new ProductPictureDTO();
+//                                        pic.setPicUrl(image);
+//                                        pic.setId(UUIDGenerator.getUUID());
+//                                        pic.setSkuId(sku.getItem_id());
+//                                        pic.setSupplierId(supplierId);
+//                                        try {
+//                                            pfs.savePictureForMongo(pic);
+//                                        } catch (ServiceException e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                    }
                                 } catch (ServiceException e) {
                                     try {
                                         if(e.getMessage().equals("数据插入失败键重复")){

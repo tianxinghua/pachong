@@ -131,11 +131,9 @@ public class OrderService extends AbsOrderService {
 	            		ftpFile.append(";").append(price);
 	            	}
 		            ftpFile.append(";").append(product.getBrandName());
-		            if(orderDTO.getDetail().split(":")[0]!=null){
-		            	ftpFile.append(";").append(orderDTO.getStatus());
-		            }else{
-		            	ftpFile.append(";").append("pre-sale");
-		            }
+		            ftpFile.append(";").append(orderDTO.getStatus());
+		            
+		            logger.info("SkuID="+orderDTO.getDetail().split(":")[0]+"采购单号:"+orderDTO.getSpPurchaseNo());
 	            }else{
 	            	ftpFile.append("");
 	            	if(orderDTO.getDetail().split(":")[0].length()<15){
@@ -146,7 +144,7 @@ public class OrderService extends AbsOrderService {
 		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
 		            ftpFile.append(";").append(0);
 		            ftpFile.append(";").append("");
-		            ftpFile.append(";").append(orderDTO.getStatus());
+		            ftpFile.append(";").append("pre-sale");
 	            }
 	            
 	            ftpFile.append("\n");
@@ -218,11 +216,7 @@ public class OrderService extends AbsOrderService {
 	            		ftpFile.append(";").append(price);
 	            	}
 		            ftpFile.append(";").append(product.getBrandName());
-		            if(orderDTO.getDetail().split(":")[0]!=null){
-		            	ftpFile.append(";").append(orderDTO.getStatus());
-		            }else{
-		            	ftpFile.append(";").append("pre-sale");
-		            }
+		            ftpFile.append(";").append(orderDTO.getStatus());
 		            
 	            }else{
 	            	ftpFile.append(" ");
@@ -234,7 +228,7 @@ public class OrderService extends AbsOrderService {
 		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
 		            ftpFile.append(";").append(0);
 		            ftpFile.append(";").append(" ");
-		            ftpFile.append(";").append(orderDTO.getStatus());
+		            ftpFile.append(";").append("pre-sale");
 	            }
 	            
 	            ftpFile.append("\n");
