@@ -61,7 +61,7 @@ public class ColtortiOrderServiceImpl extends AbsOrderService{
 			String jsonValue = json;
 			 operateData = HttpUtil45.operateData("post", "json", "https://api.orderlink.it/v1/orders",new OutTimeConfig(10000,10000,10000), null, jsonValue,param1,"SHANGPIN", "12345678");
 			 orderDTO.setExcState("0");
-			 orderDTO.setSupplierOrderNo(orderDTO.getSpOrderId());
+			 orderDTO.setSupplierOrderNo(orderDTO.getSpPurchaseNo());
 			 orderDTO.setStatus(OrderStatus.CONFIRMED);
 			 logger.info("推送成功："+json);
 		
