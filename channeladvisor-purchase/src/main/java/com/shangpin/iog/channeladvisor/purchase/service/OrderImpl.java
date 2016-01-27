@@ -198,14 +198,14 @@ public class OrderImpl extends AbsOrderService {
 		param.put("TotalPrice", totalPrice);//
 		param.put("Items", JSONArray.fromObject(items));
 		param.put("SellerOrderID", orderDTO.getSpOrderId());
-//		param.put("ShippingFirstName", "TRANS WORLD");
-//		param.put("ShippingLastName", "COURIER");
-//		param.put("ShippingAddressLine1", "145-02 156th Street");
-//		param.put("ShippingAddressLine2", "SARA SPW");
-//		param.put("ShippingCity", "Jamaica");
-//		param.put("ShippingPostalCode", "11434");
-//		param.put("ShippingCity", "NY");
-//		param.put("ShippingCountry", "US");
+		param.put("ShippingFirstName", "TRANS_WORLD");
+		param.put("ShippingLastName", "COURIER");
+		param.put("ShippingAddressLine1", "145-02_156th_Street");
+		param.put("ShippingAddressLine2", "SARA_SPW");
+		param.put("ShippingCity", "Jamaica");
+		param.put("ShippingPostalCode", "11434");
+		param.put("ShippingCity", "NY");
+		param.put("ShippingCountry", "US");
 
 		return JSONObject.fromObject(param).toString();
 	}
@@ -228,14 +228,14 @@ public class OrderImpl extends AbsOrderService {
 					param.put("PaymentStatus", "Cleared");
 					param.put("CheckoutDateUtc", UtilOfChannel.getUTCTime());
 					param.put("PaymentDateUtc", UtilOfChannel.getUTCTime());
-					param.put("ShippingFirstName", "TRANS WORLD");
-					param.put("ShippingLastName", "COURIER");
-					param.put("ShippingAddressLine1", "145-02 156th Street");
-					param.put("ShippingAddressLine2", "SARA SPW");
-					param.put("ShippingCity", "Jamaica");
-					param.put("ShippingPostalCode", "11434");
-					param.put("ShippingCity", "NY");
-					param.put("ShippingCountry", "US");
+//					param.put("ShippingFirstName", "TRANS WORLD");
+//					param.put("ShippingLastName", "COURIER");
+//					param.put("ShippingAddressLine1", "145-02 156th Street");
+//					param.put("ShippingAddressLine2", "SARA SPW");
+//					param.put("ShippingCity", "Jamaica");
+//					param.put("ShippingPostalCode", "11434");
+//					param.put("ShippingCity", "NY");
+//					param.put("ShippingCountry", "US");
 					String jsonValue = JSONObject.fromObject(param).toString();
 					logInfo.info("param==="+jsonValue);
 					logInfo.info("url==="+url);
@@ -490,7 +490,7 @@ public class OrderImpl extends AbsOrderService {
 //		loadSpringContext();
 //		OrderImpl order = (OrderImpl)factory.getBean("channeladvisorOrder");
 //		OrderDTO oo = new OrderDTO();
-//		oo.setDetail("NY-15003:1");
+//		oo.setDetail("NY-15051:1");
 //		//
 //		oo.setSpOrderId("201512101209");		
 //		
@@ -500,10 +500,11 @@ public class OrderImpl extends AbsOrderService {
 ////		order.handleConfirmOrder(oo);
 //		
 ////		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
-////		deleteOrder.setDetail("NY-15003:1");
+////		deleteOrder.setDetail("NY-25957:1");
 ////		deleteOrder.setSpOrderId("201512101209");
-////		deleteOrder.setSupplierOrderNo("165303");
+////		deleteOrder.setSupplierOrderNo("178470");
 ////		order.handleCancelOrder(deleteOrder);
+//		
 ////		order.handleRefundlOrder(deleteOrder);
 //		
 //	}
