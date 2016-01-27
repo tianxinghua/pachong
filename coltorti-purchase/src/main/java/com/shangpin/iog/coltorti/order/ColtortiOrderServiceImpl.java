@@ -52,6 +52,7 @@ public class ColtortiOrderServiceImpl extends AbsOrderService{
 			products.add(new Product(skuId,"",param2));
 			oj.setProducts(products );
 			String json = gson.toJson(oj);
+			logger.info("推送订单数据为："+json);
 			System.out.println(json);
 			Map<String,String> param=ColtortiUtil.getCommonParam(0,0);
 			Map<String,String> param1=new HashMap<String, String>();
@@ -60,23 +61,28 @@ public class ColtortiOrderServiceImpl extends AbsOrderService{
 			String jsonValue = json;
 			 operateData = HttpUtil45.operateData("post", "json", "https://api.orderlink.it/v1/orders",new OutTimeConfig(10000,10000,10000), null, jsonValue,param1,"SHANGPIN", "12345678");
 			 orderDTO.setExcState("0");
-			 orderDTO.setSupplierOrderNo(orderDTO.getSpOrderId());
+			 orderDTO.setSupplierOrderNo(orderDTO.getSpPurchaseNo());
 			 orderDTO.setStatus(OrderStatus.CONFIRMED);
+			 logger.info("推送成功："+json);
 		
 		} catch (ServiceException e) {
 			String message = e.getMessage();
-			String statusCode = message.split(":")[1];
-			if (statusCode.equals("422")) {
-				logger.info(e+operateData+"订单号："+orderDTO.getSpOrderId());
-				orderDTO.setExcDesc("订单失败重复订单号");
-				orderDTO.setExcTime(new Date());
-				handlePurchaseOrderExc(orderDTO);
-			}else{
-				logger.info(e+operateData+"订单号："+orderDTO.getSpOrderId());
-				orderDTO.setExcDesc("网络异常，订单失败");
-				orderDTO.setExcTime(new Date());
-				handlePurchaseOrderExc(orderDTO);
+			logger.info(e.getMessage());
+			if (message.contains("状态码")) {
+				String statusCode = message.split(":")[1];
+				if (statusCode.equals("422")) {
+					logger.info(e+operateData+"订单号："+orderDTO.getSpOrderId());
+					orderDTO.setExcDesc("订单失败重复订单号");
+					orderDTO.setExcTime(new Date());
+					handlePurchaseOrderExc(orderDTO);
+				}else{
+					logger.info(e+operateData+"订单号："+orderDTO.getSpOrderId());
+					orderDTO.setExcDesc("网络异常，订单失败");
+					orderDTO.setExcTime(new Date());
+					handlePurchaseOrderExc(orderDTO);
+				}
 			}
+			
 			if(e instanceof ServiceException){
 				if(ColtortiUtil.isTokenExpire((ServiceException) e)){
 					try {
