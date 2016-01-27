@@ -1,6 +1,7 @@
 package com.shangpin.iog.cirillomoda.service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -8,6 +9,9 @@ import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
+
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -34,15 +38,19 @@ public class FetchProduct {
 //    private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
+    @Autowired
+	ProductSearchService productSearchService;
 
     private static ResourceBundle bdl=null;
     private static String supplierId; //测试
+    private static int day;
 //    private static String supplierId = ""; //正式
 
     static {
         if(null==bdl)
             bdl= ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        day = Integer.valueOf(bdl.getString("day"));
     }
 
     public void fetchProductAndSave(final String url) {
@@ -61,6 +69,15 @@ public class FetchProduct {
 //            logMongo.info(mongMap);
 
             System.out.println(result);
+            
+            Date startDate,endDate= new Date();
+			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+            Map<String,SkuDTO> skuDTOMap = new HashedMap();
+			try {
+				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
 
             CSVFormat csvFileFormat = CSVFormat.EXCEL.withHeader().withDelimiter(';');
             final Reader reader = new InputStreamReader(IOUtils.toInputStream(result, "UTF-8"), "UTF-8");
@@ -109,6 +126,11 @@ public class FetchProduct {
                         try {
                             productFetchService.saveSPU(spu);
                         } catch (ServiceException e) {
+                        	try {
+        						productFetchService.updateMaterial(spu);
+        					} catch (ServiceException e1) {
+        						e1.printStackTrace();
+        					}
                             e.printStackTrace();
                         }
 
@@ -185,6 +207,9 @@ public class FetchProduct {
                         sku.setProductDescription(description);
 
                         try {
+                        	if(skuDTOMap.containsKey(sku.getSkuId())){
+        						skuDTOMap.remove(sku.getSkuId());
+        					}
                             productFetchService.saveSKU(sku);
                         } catch (ServiceException e) {
                             try {
@@ -218,6 +243,19 @@ public class FetchProduct {
             } finally {
                 reader.close();
             }
+            
+          //更新网站不再给信息的老数据
+    		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+    			 Map.Entry<String,SkuDTO> entry =  itor.next();
+    			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+    				entry.getValue().setStock("0");
+    				try {
+    					productFetchService.updatePriceAndStock(entry.getValue());
+    				} catch (ServiceException e) {
+    					e.printStackTrace();
+    				}
+    			}
+    		}
         } catch (Exception e) {
             e.printStackTrace();
         }

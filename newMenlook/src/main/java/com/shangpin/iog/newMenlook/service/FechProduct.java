@@ -167,7 +167,7 @@ public class FechProduct {
 	public void getSkuLink(String category_id,int start,List<String> linkList){
 		
 		String url = "https://staging.menlook.com/dw/shop/v15_4/product_search?client_id=e8c869c5-cf72-4192-9ec6-0fc72383e1f2&locale=fr&refine_1=cgid="+category_id+"&count=200&sort=default&start="+start;
-		logInfo.info("url======"+url);
+//		logInfo.info("url======"+url);
 		try{
 			
 			String products = HttpUtil45.get(url, outTimeConf, null);
@@ -236,16 +236,18 @@ public class FechProduct {
 		public void run() {
 			
 			for(String product_id:product_ids){				
+				String link = "";
+				String result = ""; 
 				try{
-					String link = "http://staging.menlook.com/dw/shop/v15_9/products/"+product_id+"?expand=availability,bundled_products,links,promotions,options,prices,variations,set_products&locale=fr&client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26";
-					logInfo.info("开始拉取====="+link);
-					String result = HttpUtil45.get(link, outTimeConf, null);
+					link = "http://staging.menlook.com/dw/shop/v15_9/products/"+product_id+"?expand=availability,bundled_products,links,promotions,options,prices,variations,set_products&locale=fr&client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26";
+//					logInfo.info("开始拉取====="+link);
+					result = HttpUtil45.get(link, outTimeConf, null);
 					JSONObject spuObject = JSONObject.fromObject(result);
 					
 					//spu
 		            SpuDTO spu = new SpuDTO();
 		            spu.setId(UUIDGenerator.getUUID());
-		            spu.setSpuId(spuObject.getString("id"));
+		            spu.setSpuId(product_id);
 		            spu.setSupplierId(supplierId);
 		            spu.setBrandName(spuObject.getString("brand"));
 		            spu.setCategoryGender("male");
@@ -271,43 +273,86 @@ public class FechProduct {
 		            	
 		                e.printStackTrace();
 		            }
-					
-					JSONArray skus = spuObject.getJSONArray("variants");
-					for(int i=0;i<skus.size();i++){
-						JSONObject skuO = skus.getJSONObject(i);
-						//库存
-						String itemId = skuO.getString("product_id");
-						String stockurl = "https://staging.menlook.com/dw/shop/v15_4/products/"+itemId+"/availability?client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26&expand=images,prices,variations";
+					if(spuObject.containsKey("variants")){
+						//一个spu对应多个sku
+						JSONArray skus = spuObject.getJSONArray("variants");
+						for(int i=0;i<skus.size();i++){
+							JSONObject skuO = skus.getJSONObject(i);
+							//库存
+							String itemId = skuO.getString("product_id");
+							String stockurl = "https://staging.menlook.com/dw/shop/v15_4/products/"+itemId+"/availability?client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26&expand=images,prices,variations";
+							String stockRe = HttpUtil45.get(stockurl, outTimeConf, null);					
+							int stock = JSONObject.fromObject(stockRe).getJSONObject("inventory").getInt("stock_level");
+							if(stock>0){
+								SkuDTO sku = new SkuDTO();
+								sku.setId(UUIDGenerator.getUUID());
+								sku.setSupplierId(supplierId);
+								sku.setSkuId(itemId);
+								sku.setSpuId(spu.getSpuId()); 
+								sku.setProductSize(skuO.getJSONObject("variation_values").getString("size"));
+								sku.setMarketPrice(skuO.getString("price"));
+					            sku.setSaleCurrency("EUR");	
+								String detail = HttpUtil45.get(skuO.getString("link"), outTimeConf, null);
+								JSONObject detailO = JSONObject.fromObject(detail);
+					            sku.setProductDescription(detailO.getString("long_description"));
+					            sku.setColor(detailO.getString("c_octaveColor"));	
+					            if(detailO.containsKey("c_octaveBarcode")){
+					            	sku.setProductCode(detailO.getString("c_octaveBarcode"));
+					            }else if(detailO.containsKey("ean")){
+					            	sku.setProductCode(detailO.getString("ean"));
+					            }					                  
+					            sku.setProductName(detailO.getString("name"));			            	            
+					            sku.setStock(String.valueOf(stock));        
+					            			            
+					            //sku入库
+					            try {
+					            	if(skuDTOMap.containsKey(sku.getSkuId())){
+										skuDTOMap.remove(sku.getSkuId());
+									}
+					                productFetchService.saveSKU(sku);
+					                
+					            } catch (ServiceException e) {
+					                try {
+					                    if (e.getMessage().equals("数据插入失败键重复")) {
+					                        //更新价格和库存
+					                        productFetchService.updatePriceAndStock(sku);
+					                    } else {
+					                        e.printStackTrace();
+					                    }
+					                } catch (ServiceException e1) {
+					                	logError.error(e1.getMessage());
+					                    e1.printStackTrace();
+					                }
+					            }
+					            //保存图片
+					            savePic(sku.getSkuId());
+					            				            
+							}
+						}
+					}else{
+						//spu也就是sku
+						String stockurl = "https://staging.menlook.com/dw/shop/v15_4/products/"+product_id+"/availability?client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26&expand=images,prices,variations";
 						String stockRe = HttpUtil45.get(stockurl, outTimeConf, null);					
 						int stock = JSONObject.fromObject(stockRe).getJSONObject("inventory").getInt("stock_level");
 						if(stock>0){
 							SkuDTO sku = new SkuDTO();
 							sku.setId(UUIDGenerator.getUUID());
 							sku.setSupplierId(supplierId);
-							sku.setSkuId(itemId);
-							sku.setSpuId(spu.getSpuId()); 
-							sku.setProductSize(skuO.getJSONObject("variation_values").getString("size"));
-							sku.setMarketPrice(skuO.getString("price"));
-				            sku.setSaleCurrency("EUR");	
-							String detail = HttpUtil45.get(skuO.getString("link"), outTimeConf, null);
-							JSONObject detailO = JSONObject.fromObject(detail);
-				            sku.setProductDescription(detailO.getString("long_description"));
-				            sku.setColor(detailO.getString("c_octaveColor"));			            
-				            sku.setProductCode(detailO.getString("c_octaveBarcode"));      
-				            sku.setProductName(detailO.getString("name"));			            	            
-				            sku.setStock(String.valueOf(stock));
-				            
-				            //图片
-				            List<String> list = new ArrayList<>();
-				            String pic_uri = "http://staging.menlook.com/dw/shop/v15_9/products/"+sku.getSkuId()+"/images?locale=fr&client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26";
-				            String pics = HttpUtil45.get(pic_uri, outTimeConf, null);
-			            	JSONArray picAr = JSONObject.fromObject(pics).getJSONArray("image_groups");
-				            for(int ii=0;ii<picAr.size();ii++){
-				            	JSONArray aar = picAr.getJSONObject(ii).getJSONArray("images");
-				            	for(int j=0;j<aar.size();j++){
-				            		list.add(aar.getJSONObject(j).getString("link"));
-				            	}
-				            }				            
+							sku.setSkuId(product_id);
+							sku.setSpuId(product_id); 
+							sku.setProductSize(spuObject.getString("c_octaveSize"));
+							sku.setMarketPrice(spuObject.getString("price"));
+				            sku.setSaleCurrency("EUR");								
+				            sku.setProductDescription(spuObject.getString("long_description"));
+				            sku.setColor(spuObject.getString("c_octaveColor"));	
+				            if(spuObject.containsKey("c_octaveBarcode")){
+				            	sku.setProductCode(spuObject.getString("c_octaveBarcode"));
+				            }else if(spuObject.containsKey("ean")){
+				            	sku.setProductCode(spuObject.getString("ean"));
+				            }
+				            sku.setProductName(spuObject.getString("name"));			            	            
+				            sku.setStock(String.valueOf(stock));        
+				            			            
 				            //sku入库
 				            try {
 				            	if(skuDTOMap.containsKey(sku.getSkuId())){
@@ -329,13 +374,17 @@ public class FechProduct {
 				                }
 				            }
 				            //保存图片
-				            productFetchService.savePicture(supplierId, null, sku.getSkuId(), list);
-				            
+				            savePic(sku.getSkuId());
+				            				            
 						}
 					}
 					
+					
 									
 				}catch(Exception ex){
+					logInfo.info("开始拉取====="+link);
+					logInfo.info(ex);
+					logInfo.info("result===="+result);
 					logError.error(ex);
 					ex.printStackTrace(); 					
 				} 
@@ -343,6 +392,24 @@ public class FechProduct {
 			}			
 			
 		}
+		
+		public void savePic(String skuId) throws Exception{
+			//图片
+            List<String> list = new ArrayList<>();
+            String pic_uri = "http://staging.menlook.com/dw/shop/v15_9/products/"+skuId+"/images?locale=fr&client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26";
+            String pics = HttpUtil45.get(pic_uri, outTimeConf, null);
+        	JSONArray picAr = JSONObject.fromObject(pics).getJSONArray("image_groups");
+            for(int ii=0;ii<picAr.size();ii++){
+            	JSONArray aar = picAr.getJSONObject(ii).getJSONArray("images");
+            	for(int j=0;j<aar.size();j++){
+            		list.add(aar.getJSONObject(j).getString("link"));
+            	}
+            }
+          //保存图片
+           productFetchService.savePicture(supplierId, null, skuId, list);
+		}
+		
+		
 	}
 	
 }
