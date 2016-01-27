@@ -1,4 +1,4 @@
-package com.shangpin.iog.reebonz.stock;
+package com.shangpin.iog.efashion.stock;
 
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
@@ -7,10 +7,10 @@ import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.EventProductDTO;
+import com.shangpin.iog.efashion.dto.Item;
+import com.shangpin.iog.efashion.dto.Result;
+import com.shangpin.iog.efashion.dto.ReturnObject;
 import com.shangpin.iog.product.service.EventProductServiceImpl;
-import com.shangpin.iog.reebonz.dto.Item;
-import com.shangpin.iog.reebonz.dto.Result;
-import com.shangpin.iog.reebonz.dto.ReturnObject;
 import com.shangpin.iog.service.EventProductService;
 
 import net.sf.json.JSONObject;
