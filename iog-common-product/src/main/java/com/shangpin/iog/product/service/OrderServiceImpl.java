@@ -279,7 +279,7 @@ public class OrderServiceImpl implements OrderService {
 				+ "SpOrderId 尚品订单编号" + splitSign
 				+ "SpPurchaseNo 采购单编号" + splitSign +"订单状态"+ splitSign+ "SpPurchaseDetailNo 采购单明细" + splitSign
 				+ "Detail 供货商skuId:数量" + splitSign + "Memo 尚品skuId:数量" + splitSign
-				+ "CreateTime" + splitSign + "UpdateTime" + splitSign
+				+ "CreateTime" + splitSign + "UpdateTime" + splitSign+ "异常原因" + splitSign
 				+ "UuId").append("\r\n");
 		Page<OrderDTO> page = null;
 		try{
@@ -309,6 +309,7 @@ public class OrderServiceImpl implements OrderService {
 					buffer.append(memo).append(splitSign);
 					buffer.append(order.getCreateTime()).append(splitSign);
 					buffer.append(order.getUpdateTime()).append(splitSign);
+					buffer.append(order.getExcDesc()).append(splitSign);
 					buffer.append(order.getUuId());
 					buffer.append("\r\n");
 				}
