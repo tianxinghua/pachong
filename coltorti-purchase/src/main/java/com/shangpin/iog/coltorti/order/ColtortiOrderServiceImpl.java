@@ -52,6 +52,7 @@ public class ColtortiOrderServiceImpl extends AbsOrderService{
 			products.add(new Product(skuId,"",param2));
 			oj.setProducts(products );
 			String json = gson.toJson(oj);
+			logger.info("推送订单数据为："+json);
 			System.out.println(json);
 			Map<String,String> param=ColtortiUtil.getCommonParam(0,0);
 			Map<String,String> param1=new HashMap<String, String>();
@@ -62,6 +63,7 @@ public class ColtortiOrderServiceImpl extends AbsOrderService{
 			 orderDTO.setExcState("0");
 			 orderDTO.setSupplierOrderNo(orderDTO.getSpOrderId());
 			 orderDTO.setStatus(OrderStatus.CONFIRMED);
+			 logger.info("推送成功："+json);
 		
 		} catch (ServiceException e) {
 			String message = e.getMessage();
