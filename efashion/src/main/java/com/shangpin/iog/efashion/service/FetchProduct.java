@@ -74,9 +74,9 @@ public class FetchProduct {
 		max = Integer.valueOf(bdl.getString("max"));
 		url = bdl.getString("url");
 	}
-	static List<Item> retList = new ArrayList<Item>();
+	static int sum =0;
 	static int i=0;
-	public static void getProductList(int index){
+	public  void getProductList(int index){
 		String json = HttpUtil45
 				.get(url+"&limit="+max+"&offset="+index,
 						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
@@ -87,11 +87,11 @@ public class FetchProduct {
 			Result result = obj.getResults();
 			List<Item> item = result.getItems();
 			if(!item.isEmpty()){
-				retList.addAll(item);
 				i++;
 				System.out.println("------------------------第"+i+"页---------------------------");
 				System.out.println("商品数量："+item.size());
-				System.out.println("总的商品数量："+retList.size());
+				sum+=item.size();
+				messMappingAndSave(item);
 				getProductList(max*i+1);
 			}
 		}
@@ -102,16 +102,16 @@ public class FetchProduct {
 	public void fetchProductAndSave() {
 		// 第一步：获取活动信息
 		getProductList(1);
-		System.out.println("总的商品数量："+retList.size());
-		logger.info("总的商品数量："+retList.size());
+		System.out.println("总的商品数量："+sum);
+		logger.info("总的商品数量："+sum);
 		System.out.println("--拉取数据end--");
 		logger.info("--拉取数据end--");
-		messMappingAndSave();
+//		messMappingAndSave();
 	}
 	/**
 	 * message mapping and save into DB
 	 */
-	private void messMappingAndSave() {
+	private void messMappingAndSave(List<Item> retList) {
 		if(retList!=null){
 			
 			Date startDate,endDate= new Date();
