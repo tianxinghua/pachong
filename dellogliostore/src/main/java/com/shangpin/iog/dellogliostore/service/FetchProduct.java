@@ -100,7 +100,18 @@ public class FetchProduct {
                 spu.setCategoryName(spuItem.getCategory());
                 spu.setBrandName(spuItem.getBrand());
                 spu.setMaterial(spuItem.getMaterial());
-
+                
+                String str =spuItem.getDescription(); 
+                int beginIndex=str.indexOf("Made");
+                if(beginIndex!=-1){
+                	str=str.substring(beginIndex);
+                	str=str.replace(" ", ",");
+                	String array []=str.split(",");
+                    spu.setProductOrigin(array[0]+" "+array[1]+" "+array[2]);
+                }else{
+                	spu.setProductOrigin("");
+                }
+                
                 //SPU 选填
                 spu.setSpuName(spuItem.getName());
                 spu.setCategoryGender(spuItem.getSex());
