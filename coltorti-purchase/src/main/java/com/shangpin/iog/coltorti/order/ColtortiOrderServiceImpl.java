@@ -36,9 +36,10 @@ public class ColtortiOrderServiceImpl extends AbsOrderService{
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		String operateData ="";
 		try {
+			Map<String,String> param=ColtortiUtil.getCommonParam(0,0);
 			Gson gson = new Gson();
 			OrderJson oj = new OrderJson();
-			oj.setCustomer(new Customer("FilippoTroina", "", "VIAG.LEOPARDI 27，22075 LURATE CACCIVIO (COMO)", "22075", "LURATE CACCIVIO", "COMO", "Italy"));
+			oj.setCustomer(new Customer("FilippoTroina", "FilippoTroina", "VIAG.LEOPARDI 27，22075 LURATE CACCIVIO (COMO)", "22075", "LURATE CACCIVIO", "COMO", "Italy"));
 			
 			oj.setOrder_id(orderDTO.getSpPurchaseNo());
 			
@@ -53,33 +54,33 @@ public class ColtortiOrderServiceImpl extends AbsOrderService{
 			oj.setProducts(products );
 			String json = gson.toJson(oj);
 			logger.info("推送订单数据为："+json);
-			System.out.println(json);
-			Map<String,String> param=ColtortiUtil.getCommonParam(0,0);
+			logger.info("初始化token");
 			Map<String,String> param1=new HashMap<String, String>();
+			logger.info("token="+param.get("access_token"));
 			param1.put("Authorization", "Bearer "+param.get("access_token"));
-			
 			String jsonValue = json;
-			 operateData = HttpUtil45.operateData("post", "json", "https://api.orderlink.it/v1/orders",new OutTimeConfig(10000,10000,10000), null, jsonValue,param1,"SHANGPIN", "12345678");
+			logger.info("开始推送订单");
+			 operateData = HttpUtil45.operateData("post", "json", "https://api.orderlink.it/v1/orders",new OutTimeConfig(1000*60*3,1000*60*3,1000*60*3), null, jsonValue,param1,"SHANGPIN", "12345678");
+			 logger.info("推送成功："+json);
 			 orderDTO.setExcState("0");
 			 orderDTO.setSupplierOrderNo(orderDTO.getSpPurchaseNo());
 			 orderDTO.setStatus(OrderStatus.CONFIRMED);
-			 logger.info("推送成功："+json);
 		
 		} catch (ServiceException e) {
 			String message = e.getMessage();
-			logger.info(e.getMessage());
+			logger.info("订单失败"+e.getMessage());
 			if (message.contains("状态码")) {
 				String statusCode = message.split(":")[1];
 				if (statusCode.equals("422")) {
 					logger.info(e+operateData+"订单号："+orderDTO.getSpOrderId());
 					orderDTO.setExcDesc("订单失败重复订单号");
 					orderDTO.setExcTime(new Date());
-					handlePurchaseOrderExc(orderDTO);
+					orderDTO.setExcState("1");
 				}else{
 					logger.info(e+operateData+"订单号："+orderDTO.getSpOrderId());
 					orderDTO.setExcDesc("网络异常，订单失败");
 					orderDTO.setExcTime(new Date());
-					handlePurchaseOrderExc(orderDTO);
+					orderDTO.setExcState("1");
 				}
 			}
 			
@@ -97,14 +98,14 @@ public class ColtortiOrderServiceImpl extends AbsOrderService{
 
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
-		// TODO Auto-generated method stub
-		
+		deleteOrder.setExcState("0");
+		deleteOrder.setStatus(OrderStatus.CANCELLED);
 	}
 
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
-		// TODO Auto-generated method stub
-		
+		deleteOrder.setExcState("0");
+		deleteOrder.setStatus(OrderStatus.REFUNDED);
 	}
 
 	@Override
@@ -135,12 +136,12 @@ public class ColtortiOrderServiceImpl extends AbsOrderService{
 		try {
 			Gson gson = new Gson();
 			OrderJson oj = new OrderJson();
-			oj.setCustomer(new Customer("aaa", "bbb", "ccc", "ddd", "eee", "fff", "ggg"));
-			oj.setOrder_id("102112210393611");
+			oj.setCustomer(new Customer("FilippoTroina", "test", "VIAG.LEOPARDI 27，22075 LURATE CACCIVIO (COMO)", "22075", "LURATE CACCIVIO", "COMO", "Italy"));
+			oj.setOrder_id("CGD2016012700569");
 			List<Product> products = new ArrayList<Product>();
 			Map<String,String> param2=new HashMap<String, String>();
 			param2.put("8", "1");
-			products.add(new Product("152565LCX000007-WHT","",param2));
+			products.add(new Product("152328NCX000011-F0002","",param2));
 			oj.setProducts(products );
 			String json = gson.toJson(oj);
 			System.out.println(json);
