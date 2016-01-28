@@ -39,7 +39,14 @@ public class SkuDTO implements Serializable {
     private Date updateTime;
     private String eventStartDate;
     private String eventEndDate;
+    private String measurement;
 
+	public String getMeasurement() {
+		return measurement;
+	}
+	public void setMeasurement(String measurement) {
+		this.measurement = measurement;
+	}
 	public String getEventStartDate() {
 		return eventStartDate;
 	}
