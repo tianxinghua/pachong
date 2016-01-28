@@ -74,9 +74,9 @@ public class FetchProduct {
 		max = Integer.valueOf(bdl.getString("max"));
 		url = bdl.getString("url");
 	}
-	static int sum =0;
+	static List<Item> retList = new ArrayList<Item>();
 	static int i=0;
-	public  void getProductList(int index){
+	public static void getProductList(int index){
 		String json = HttpUtil45
 				.get(url+"&limit="+max+"&offset="+index,
 						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
@@ -87,11 +87,11 @@ public class FetchProduct {
 			Result result = obj.getResults();
 			List<Item> item = result.getItems();
 			if(!item.isEmpty()){
+				retList.addAll(item);
 				i++;
 				System.out.println("------------------------第"+i+"页---------------------------");
 				System.out.println("商品数量："+item.size());
-				sum+=item.size();
-				messMappingAndSave(item);
+				System.out.println("总的商品数量："+retList.size());
 				getProductList(max*i+1);
 			}
 		}
@@ -102,18 +102,19 @@ public class FetchProduct {
 	public void fetchProductAndSave() {
 		// 第一步：获取活动信息
 		getProductList(1);
-		System.out.println("总的商品数量："+sum);
-		logger.info("总的商品数量："+sum);
+		System.out.println("总的商品数量："+retList.size());
+		logger.info("总的商品数量："+retList.size());
 		System.out.println("--拉取数据end--");
 		logger.info("--拉取数据end--");
-//		messMappingAndSave();
+		messMappingAndSave();
+		System.out.println("--正在保存中.....--");
+		logger.info("--正在保存中.....--");
 	}
 	/**
 	 * message mapping and save into DB
 	 */
-	private void messMappingAndSave(List<Item> retList) {
+	private void messMappingAndSave() {
 		if(retList!=null){
-			
 			Date startDate,endDate= new Date();
 			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 			//获取原有的SKU 仅仅包含价格和库存
@@ -146,9 +147,7 @@ public class FetchProduct {
 					}
 				}
 				
-				String [] picArray = item.getItem_images();
-				productFetchService.savePicture(supplierId, null, item.getSku_id(),Arrays.asList(picArray));
-				
+				String skuId = null;
 				SkuDTO sku = new SkuDTO();
 				try {
 					sku.setId(UUIDGenerator.getUUID());
@@ -159,7 +158,8 @@ public class FetchProduct {
 					if(size==null){
 						size = "A";
 					}
-					sku.setSkuId(item.getSku_id()+"|"+item.getProduct_reference()+"|"+item.getColor_reference()+"|"+size);
+					skuId = item.getSku_id()+"|"+item.getProduct_reference()+"|"+item.getColor_reference()+"|"+size;
+					sku.setSkuId(skuId);
 					sku.setProductSize(size);
 					sku.setStock(item.getQuantity());
 					sku.setMarketPrice(item.getPrice_IT());
@@ -186,6 +186,10 @@ public class FetchProduct {
 					}
 
 				}
+				
+				String [] picArray = item.getItem_images();
+				productFetchService.savePicture(supplierId, null, skuId,Arrays.asList(picArray));
+			
 
 			}
 
@@ -202,5 +206,7 @@ public class FetchProduct {
 				}
 			}
 		}
+		System.out.println("--保存end.....--");
+		logger.info("--保存end.....--");
 	}
 }
