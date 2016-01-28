@@ -181,6 +181,10 @@ public class FetchProduct {
 		String[] skuStrings = skuData.split("\\r\\n");
 		String[] skuArr = null;
 		String size = "";
+		int qqq=0;
+		int has=0;
+		int hasnot=0;
+		int stockis0=0;
 		for (int i = 1; i < skuStrings.length; i++) {
 			if (StringUtils.isNotBlank(skuStrings[i])) {
 				if (i==1) {
@@ -220,9 +224,24 @@ public class FetchProduct {
         			sku.setProductCode(item.getStyleCode()+"-"+item.getColorCode());
         			//====================================================================================
         			skuMap.put(sku.getSkuId(), sku);
+        			has++;
+        			logger.info("sku找到对应的spu,itemId="+skuArr[0]+"尺寸："+skuArr[1]+"barcode="+barCode+"库存为："+stock);
+        			if (stock.equals("0")) {
+        				stockis0++;
+					}
+				}else{
+					qqq++;
+					if (skuArr[2].equals("0")) {
+						hasnot++;
+					}
+					logger.info("此sku找不到对应的spu,itemId="+skuArr[0]+"尺寸："+skuArr[1]+"库存为"+skuArr[2]+" barcode="+skuArr[5]);
 				}
 			}
 		}
+		logger.info("找不到对应关系总数为："+qqq);
+		logger.info("找不到对应关系数据中库存为0的有："+hasnot);
+		logger.info("有对应sku，spu的数据的总数为："+has);
+		logger.info("有对应sku，spu的数据中库存为0的总数为："+stockis0);
 		
 		//============================保存sku和图片==================================
 		for (Entry<String, SkuDTO> entry : skuMap.entrySet()) {
