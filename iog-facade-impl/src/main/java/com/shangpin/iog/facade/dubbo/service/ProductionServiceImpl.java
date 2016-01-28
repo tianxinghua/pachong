@@ -19,10 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by loyalty on 15/9/16.
@@ -87,6 +84,11 @@ public class ProductionServiceImpl implements  ProductionService {
 
             if(ProductFetchServiceImpl.REPEAT_MESSAGE.equals(e.getMessage())){
               //重复插入不做处理
+                try {
+                    productFetchService.updateMaterial(spuDTO);
+                } catch (com.shangpin.framework.ServiceException e1) {
+                    e1.printStackTrace();
+                }
                 loggerError.error("spu :" + spuDTO.getSpuId() + " 重复保存" );
             }else{
                 loggerError.error("spu :" + spuDTO.getSpuId() + " 保存失败。失败原因：" + e.getMessage() );
@@ -115,39 +117,7 @@ public class ProductionServiceImpl implements  ProductionService {
         skuDTO.setSaleCurrency(productDTO.getSaleCurrency());
         try {
             productFetchService.saveSKU(skuDTO);
-            String imgUrl =productDTO.getSpuPicture();
-            String[] imageUrlArray = imgUrl.split("\\|\\|");
 
-            for(String  imageUrl:imageUrlArray){
-                ProductPictureDTO pictureDTO = new ProductPictureDTO();
-                pictureDTO.setSupplierId(productDTO.getSupplierId());
-                pictureDTO.setPicUrl(imageUrl);
-                pictureDTO.setSpuId(productDTO.getSpuId());
-                try {
-                    productFetchService.savePictureForMongo(pictureDTO);
-                } catch (Exception e) {
-                    loggerError.error("spu : " +  productDTO.getSpuId() + " 图片保存失败。失败原因: " + e.getMessage());
-                    e.printStackTrace();
-                    throw new ServiceMessageException("save spu(common) picture failed. please contact IT" );
-                }
-            }
-
-
-            String skuImgUrl =productDTO.getSkuPicture();
-            String[] skuImageUrlArray = skuImgUrl.split("\\|\\|");
-            for(String  imageUrl:skuImageUrlArray){
-                ProductPictureDTO pictureDTO = new ProductPictureDTO();
-                pictureDTO.setSupplierId(productDTO.getSupplierId());
-                pictureDTO.setPicUrl(imageUrl);
-                pictureDTO.setSkuId(productDTO.getSkuId());
-                try {
-                    productFetchService.savePictureForMongo(pictureDTO);
-                } catch (Exception e) {
-                    loggerError.error("sku :" + productDTO.getSkuId() + " 图片保存失败。失败原因: " + e.getMessage());
-                    e.printStackTrace();
-                    throw new ServiceMessageException("save sku  picture failed. please contact IT" );
-                }
-            }
 
         } catch (Exception e) {
             loggerError.error("sku:" + skuDTO.getSkuId() + " 保存失败。失败原因: " + e.getMessage());
@@ -165,8 +135,43 @@ public class ProductionServiceImpl implements  ProductionService {
 
 
         }
+        try {
+            String imgUrl =productDTO.getSpuPicture();
+            String[] imageUrlArray = imgUrl.split("\\|\\|");
+            if(null!=imageUrlArray&&imageUrlArray.length>0){
+                List<String> picUrlList = Arrays.asList(imageUrlArray);
+                productFetchService.savePicture(productDTO.getSupplierId(), productDTO.getSpuId(), null, picUrlList);
+            }
+        } catch (Exception e) {
+            loggerError.error("spu : " +  productDTO.getSpuId() + " 图片保存失败。失败原因: " + e.getMessage());
+            throw new ServiceMessageException("save spu(common) picture failed. please contact IT" );
+        }
+//        for(String  imageUrl:imageUrlArray){
+//            ProductPictureDTO pictureDTO = new ProductPictureDTO();
+//            pictureDTO.setSupplierId(productDTO.getSupplierId());
+//            pictureDTO.setPicUrl(imageUrl);
+//            pictureDTO.setSpuId(productDTO.getSpuId());
+//            try {
+//                productFetchService.savePictureForMongo(pictureDTO);
+//            } catch (Exception e) {
+//                loggerError.error("spu : " +  productDTO.getSpuId() + " 图片保存失败。失败原因: " + e.getMessage());
+//                e.printStackTrace();
+//                throw new ServiceMessageException("save spu(common) picture failed. please contact IT" );
+//            }
+//        }
 
 
+        try {
+            String skuImgUrl =productDTO.getSkuPicture();
+            String[] skuImageUrlArray = skuImgUrl.split("\\|\\|");
+            if(null!=skuImageUrlArray&&skuImageUrlArray.length>0){
+                List<String> picUrlList = Arrays.asList(skuImageUrlArray);
+                productFetchService.savePicture(productDTO.getSupplierId(), null, productDTO.getSkuId(), picUrlList);
+            }
+        } catch (Exception e) {
+            loggerError.error("sku : " +  productDTO.getSkuId() + " 图片保存失败。失败原因: " + e.getMessage());
+            throw new ServiceMessageException("save spu(common) picture failed. please contact IT" );
+        }
 
 
         return true;

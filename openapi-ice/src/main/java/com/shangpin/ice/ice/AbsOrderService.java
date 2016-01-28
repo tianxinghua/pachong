@@ -59,19 +59,23 @@ public abstract class AbsOrderService {
 
     public static boolean SENDMAIL = false;
 	static {
-		 if(null==bdl){
-			 bdl=ResourceBundle.getBundle("openice");
-		 }
-		 if(null==bd){
-			 bd=ResourceBundle.getBundle("conf");
-		 }
-		 url = bdl.getString("wmsUrl");
-        toEmail = bdl.getString("email");
-        fromEmail = bdl.getString("fromEmail");
-        emailPass = bdl.getString("emailPass");
-        startDateOfTemp=bd.getString("startDateOfTemp");
-        endDateOfTemp = bd.getString("endDateOfTemp");
-	}
+        try {
+            if(null==bdl){
+                bdl=ResourceBundle.getBundle("openice");
+            }
+            if(null==bd){
+                bd=ResourceBundle.getBundle("conf");
+            }
+            url = bdl.getString("wmsUrl");
+            toEmail = bdl.getString("email");
+            fromEmail = bdl.getString("fromEmail");
+            emailPass = bdl.getString("emailPass");
+            startDateOfTemp=bd.getString("startDateOfTemp");
+            endDateOfTemp = bd.getString("endDateOfTemp");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Autowired
 	public SkuPriceService skuPriceService;
