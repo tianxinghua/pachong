@@ -91,6 +91,7 @@ public class FetchProduct {
 				i++;
 				System.out.println("------------------------第"+i+"页---------------------------");
 				System.out.println("商品数量："+item.size());
+				System.out.println("总的商品数量："+retList.size());
 				getProductList(max*i+1);
 			}
 		}
@@ -154,8 +155,12 @@ public class FetchProduct {
 					sku.setSupplierId(supplierId);
 					sku.setSpuId(item.getProduct_id());
 					String size = null;
+					size = item.getSize();
+					if(size==null){
+						size = "A";
+					}
 					sku.setSkuId(item.getSku_id()+"|"+item.getProduct_reference()+"|"+item.getColor_reference()+"|"+size);
-					sku.setProductSize(item.getSize());
+					sku.setProductSize(size);
 					sku.setStock(item.getQuantity());
 					sku.setMarketPrice(item.getPrice());
 					sku.setColor(item.getColor());
