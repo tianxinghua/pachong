@@ -35,10 +35,9 @@ include 'iog-sop'
 
 include 'spinnaker-order'
 
-include 'giglio-stock'
 
-include 'monnierfreres-stock'
 
+include 'dellogliostore'
 
 
 
