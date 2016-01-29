@@ -38,7 +38,6 @@ public class OrderService extends AbsOrderService {
 	// private static String purchase_no = null;
 	// private static String order_no = null;
 	// private static String barcode = null;
-	private static String ordQty = null;
 	private static String key = null;
 	private static Map<String, String> param = null;
 
@@ -233,7 +232,7 @@ public class OrderService extends AbsOrderService {
 		order.setPurchase_no(orderDTO.getSpPurchaseNo());
 		order.setOrder_no(orderDTO.getSpOrderId());
 		order.setBarcode(details[0]);
-		order.setOrdQty(ordQty);
+		order.setOrdQty(details[1]);
 		order.setKey(key);
 //		String sPurchasePrice = StringUtils.isBlank(orderDTO.getPurchasePriceDetail())?"0":orderDTO.getPurchasePriceDetail();
 //     	BigDecimal purchasePrice = new BigDecimal(sPurchasePrice).divide(new BigDecimal(1.05),2,BigDecimal.ROUND_HALF_UP);
