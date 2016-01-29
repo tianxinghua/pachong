@@ -67,47 +67,47 @@ public class LoggerUtil {
 
 	public void trace(Object message) {
 		if (logger.isTraceEnabled()) {
-			forcedLog(logger, Level.TRACE, message);
+			forcedLog(logger, Level.TRACE, this.getLoggerMessage("TRACE",message));
 		}
 	}
 
 	public void trace(Object message, Throwable t) {
 		if (logger.isTraceEnabled()) {
-			forcedLog(logger, Level.TRACE, message, t);
+			forcedLog(logger, Level.TRACE, this.getLoggerMessage("TRACE",message), t);
 		}
 	}
 
 	public void trace(String pattern, Object... arguments) {
 		if (logger.isTraceEnabled()) {
-			forcedLog(logger, Level.TRACE, format(pattern, arguments));
+			forcedLog(logger, Level.TRACE, this.getLoggerMessage("TRACE",format(pattern, arguments)));
 		}
 	}
 	public void trace(String pattern, Throwable t, Object... arguments) {
 		if (logger.isTraceEnabled()) {
-			forcedLog(logger, Level.TRACE, format(pattern, arguments), t);
+			forcedLog(logger, Level.TRACE, this.getLoggerMessage("TRACE",format(pattern, arguments)), t);
 		}
 	}
 
 	public void debug(Object message) {
 		if (logger.isDebugEnabled()) {
-			forcedLog(logger, Level.DEBUG, message);
+			forcedLog(logger, Level.DEBUG, this.getLoggerMessage("DEBUG",message));
 		}
 	}
 
 	public void debug(Object message, Throwable t) {
 		if (logger.isDebugEnabled()) {
-			forcedLog(logger, Level.DEBUG, message, t);
+			forcedLog(logger, Level.DEBUG, this.getLoggerMessage("DEBUG",message), t);
 		}
 	}
 
 	public void debug(String pattern, Object... arguments) {
 		if (logger.isDebugEnabled()) {
-			forcedLog(logger, Level.DEBUG, format(pattern, arguments));
+			forcedLog(logger, Level.DEBUG, this.getLoggerMessage("DEBUG",format(pattern, arguments)));
 		}
 	}
 	public void debug(String pattern, Throwable t, Object... arguments) {
 		if (logger.isDebugEnabled()) {
-			forcedLog(logger, Level.DEBUG, format(pattern, arguments), t);
+			forcedLog(logger, Level.DEBUG, this.getLoggerMessage("DEBUG",format(pattern, arguments)), t);
 		}
 	}
 
@@ -120,86 +120,86 @@ public class LoggerUtil {
 
 	public void info(Object message, Throwable t) {
 		if (logger.isInfoEnabled()) {
-			forcedLog(logger, Level.INFO, message, t);
+			forcedLog(logger, Level.INFO, this.getLoggerMessage("INFO",message), t);
 		}
 	}
 
 	public void info(String pattern, Object... arguments) {
 		if (logger.isInfoEnabled()) {
-			forcedLog(logger, Level.INFO, format(pattern, arguments));
+			forcedLog(logger, Level.INFO, this.getLoggerMessage("INFO",format(pattern, arguments)));
 		}
 	}
 	public void info(String pattern, Throwable t, Object... arguments) {
 		if (logger.isInfoEnabled()) {
-			forcedLog(logger, Level.INFO, format(pattern, arguments), t);
+			forcedLog(logger, Level.INFO, this.getLoggerMessage("INFO",format(pattern, arguments)), t);
 		}
 	}
 	public void warn(Object message) {
 		if (logger.isEnabledFor(Level.WARN)) {
-			forcedLog(logger, Level.WARN, message);
+			forcedLog(logger, Level.WARN, this.getLoggerMessage("WARN",message));
 		}
 	}
 
 	public void warn(Object message, Throwable t) {
 		if (logger.isEnabledFor(Level.WARN)) {
-			forcedLog(logger, Level.WARN, message, t);
+			forcedLog(logger, Level.WARN, this.getLoggerMessage("WARN",message), t);
 		}
 	}
 
 	public void warn(String pattern, Object... arguments) {
 		if (logger.isEnabledFor(Level.WARN)) {
-			forcedLog(logger, Level.WARN, format(pattern, arguments));
+			forcedLog(logger, Level.WARN, this.getLoggerMessage("WARN",format(pattern, arguments)));
 		}
 	}
 	public void warn(String pattern, Throwable t, Object... arguments) {
 		if (logger.isEnabledFor(Level.WARN)) {
-			forcedLog(logger, Level.WARN, format(pattern, arguments), t);
+			forcedLog(logger, Level.WARN, this.getLoggerMessage("WARN",format(pattern, arguments)), t);
 		}
 	}
 
 	public void error(Object message) {
 		if (logger.isEnabledFor(Level.ERROR)) {
-			forcedLog(logger, Level.ERROR, message);
+			forcedLog(logger, Level.ERROR, this.getLoggerMessage("ERROR",message));
 		}
 	}
 
 	public void error(Object message, Throwable t) {
 		if (logger.isEnabledFor(Level.ERROR)) {
-			forcedLog(logger, Level.ERROR, message, t);
+			forcedLog(logger, Level.ERROR, this.getLoggerMessage("ERROR",message), t);
 		}
 	}
 
 	public void error(String pattern, Object... arguments) {
 		if (logger.isEnabledFor(Level.ERROR)) {
-			forcedLog(logger, Level.ERROR, format(pattern, arguments));
+			forcedLog(logger, Level.ERROR, this.getLoggerMessage("ERROR",format(pattern, arguments)));
 		}
 	}
 	public void error(String pattern, Throwable t, Object... arguments) {
 		if (logger.isEnabledFor(Level.ERROR)) {
-			forcedLog(logger, Level.ERROR, format(pattern, arguments), t);
+			forcedLog(logger, Level.ERROR, this.getLoggerMessage("ERROR",format(pattern, arguments)), t);
 		}
 	}
 
 	public void fatal(Object message) {
 		if (logger.isEnabledFor(Level.FATAL)) {
-			forcedLog(logger, Level.FATAL, message);
+			forcedLog(logger, Level.FATAL, this.getLoggerMessage("FATAL",message));
 		}
 	}
 
 	public void fatal(Object message, Throwable t) {
 		if (logger.isEnabledFor(Level.FATAL)) {
-			forcedLog(logger, Level.FATAL, message, t);
+			forcedLog(logger, Level.FATAL, this.getLoggerMessage("FATAL",message), t);
 		}
 	}
 
 	public void fatal(String pattern, Object... arguments) {
 		if (logger.isEnabledFor(Level.FATAL)) {
-			forcedLog(logger, Level.FATAL, format(pattern, arguments));
+			forcedLog(logger, Level.FATAL, this.getLoggerMessage("FATAL",format(pattern, arguments)));
 		}
 	}
 	public void fatal(String pattern, Throwable t, Object... arguments) {
 		if (logger.isEnabledFor(Level.FATAL)) {
-			forcedLog(logger, Level.FATAL, format(pattern, arguments), t);
+			forcedLog(logger, Level.FATAL, this.getLoggerMessage("FATAL",format(pattern, arguments)), t);
 		}
 	}
 
@@ -247,9 +247,9 @@ public class LoggerUtil {
 		location = "类名："+stacks[4].getClassName() + "\n函数名：" + stacks[4].getMethodName()
 				+ "\n文件名：" + stacks[4].getFileName() + "\n行号："
 				+ stacks[4].getLineNumber() + "";
-		 System.out.println("location = " + location);
+//		 System.out.println("location = " + location);
 
-		loggerMessage.setFunction(stacks[4].getClassName()+"."+ stacks[4].getMethodName());
+		loggerMessage.setFunction(stacks[4].getClassName()+"."+ stacks[4].getMethodName()+"--"+stacks[4].getLineNumber()+"行");
 	}
 
     //获取本地ip

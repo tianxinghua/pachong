@@ -71,77 +71,7 @@ public class OrderImpl extends AbsOrderService {
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 
-		CloseableHttpResponse resp = null;
-		CloseableHttpResponse resp2 = null;
-		try {
-
-			//认证
-			String jsonValue = "{\"type\":\"guest\"}";
-			String auth = HttpUtil45.getResponseHead("post", "json", "https://staging.menlook.com/dw/shop/v15_9/customers/auth?client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26", outTimeConf, null, jsonValue,"Authorization", "", "");
-			System.out.println("auth==="+auth);
-			logInfo.info("auth==="+auth);
-			if(StringUtils.isNotBlank(auth)){
-				//创建购物车
-				String basket_url = "https://staging.menlook.com/dw/shop/v15_9/baskets?client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26";
-				Map<String,String> headerMap = new HashMap<String,String>();
-				headerMap.put("Authorization", auth);
-				headerMap.put("Content-Type", "application/json");
-				//下单参数
-				String basket_JValue = getBasketJsonParam(orderDTO);
-				logInfo.info("basket_JValue==="+basket_JValue);
-				resp = HttpUtil45.operateData2("post", "json", basket_url, outTimeConf, null, basket_JValue, headerMap, "", "");
-				HttpEntity entity=resp.getEntity();
-				String basket = EntityUtils.toString(entity,"UTF-8");
-				EntityUtils.consume(entity);
-				System.out.println("basket==="+basket);
-				logInfo.info("basket==="+basket);
-				String basketETag = resp.getFirstHeader("ETag").getValue();
-				System.out.println("basketETag==="+basketETag);
-				logInfo.info("basketETag==="+basketETag);				
-				if(StringUtils.isNotBlank(basket) && JSONObject.fromObject(basket).containsKey("basket_id") && StringUtils.isNotBlank("basketETag")){
-										
-					String basket_id = JSONObject.fromObject(basket).getString("basket_id");
-					Map<String,String> headerMapSM = new HashMap<String,String>();
-					headerMapSM.put("Authorization", auth);
-					headerMapSM.put("If-Match", basketETag);
-					headerMapSM.put("Content-Type", "application/json");
-					
-					String basket_submit = "https://staging.menlook.com/dw/shop/v15_9/baskets/"+basket_id+"/submit?client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26";
-					logInfo.info("提交购物车URL==="+basket_submit); 										
-					resp2 = HttpUtil45.operateData2("post", "", basket_submit, outTimeConf, null, "", headerMapSM, "", "");
-					String gouwucheSubmit = EntityUtils.toString(resp2.getEntity(),"UTF-8");
-					String gouwucheSubmitETag = resp2.getFirstHeader("ETag").getValue();
-					logInfo.info("gouwucheSubmitETag==="+gouwucheSubmitETag);
-					logInfo.info("gouwucheSubmit==="+gouwucheSubmit);
-					//保存CustomerJWT、ETag和order_no 
-					orderDTO.setSupplierOrderNo(JSONObject.fromObject(gouwucheSubmitETag).getString("order_no"));
-					orderDTO.setStatus(OrderStatus.PLACED);
-					orderDTO.setConsumerMsg(auth+"|"+gouwucheSubmitETag);
-					orderDTO.setExcState("0");
-				}
-			}
-			
-		} catch (Exception e) {
-			logger.error("e========"+e);
-			logInfo.info("e========"+e);
-			orderDTO.setExcDesc(e.getMessage());
-			orderDTO.setExcState("1");
-			orderDTO.setExcTime(new Date());
-			e.printStackTrace();
-		}finally{
-			try {
-				if(resp!=null)
-					resp.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				if(resp2!=null)
-					resp2.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		orderDTO.setStatus(OrderStatus.PLACED);
 	}
 	
 	/**
@@ -253,17 +183,88 @@ public class OrderImpl extends AbsOrderService {
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		
-		
+		CloseableHttpResponse resp = null;
+		CloseableHttpResponse resp2 = null;
+		try {
+
+			//认证
+			String jsonValue = "{\"type\":\"guest\"}";
+			String auth = HttpUtil45.getResponseHead("post", "json", "https://staging.menlook.com/dw/shop/v15_9/customers/auth?client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26", outTimeConf, null, jsonValue,"Authorization", "", "");
+			System.out.println("auth==="+auth);
+			logInfo.info("auth==="+auth);
+			if(StringUtils.isNotBlank(auth)){
+				//创建购物车
+				String basket_url = "https://staging.menlook.com/dw/shop/v15_9/baskets?client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26";
+				Map<String,String> headerMap = new HashMap<String,String>();
+				headerMap.put("Authorization", auth);
+				headerMap.put("Content-Type", "application/json");
+				//下单参数
+				String basket_JValue = getBasketJsonParam(orderDTO);
+				logInfo.info("basket_JValue==="+basket_JValue);
+				resp = HttpUtil45.operateData2("post", "json", basket_url, outTimeConf, null, basket_JValue, headerMap, "", "");
+				HttpEntity entity=resp.getEntity();
+				String basket = EntityUtils.toString(entity,"UTF-8");
+				EntityUtils.consume(entity);
+				System.out.println("basket==="+basket);
+				logInfo.info("basket==="+basket);
+				String basketETag = resp.getFirstHeader("ETag").getValue();
+				System.out.println("basketETag==="+basketETag);
+				logInfo.info("basketETag==="+basketETag);				
+				if(StringUtils.isNotBlank(basket) && JSONObject.fromObject(basket).containsKey("basket_id") && StringUtils.isNotBlank("basketETag")){
+										
+					String basket_id = JSONObject.fromObject(basket).getString("basket_id");
+					Map<String,String> headerMapSM = new HashMap<String,String>();
+					headerMapSM.put("Authorization", auth);
+					headerMapSM.put("If-Match", basketETag);
+					headerMapSM.put("Content-Type", "application/json");
+					
+					String basket_submit = "https://staging.menlook.com/dw/shop/v15_9/baskets/"+basket_id+"/submit?client_id=c8f0a7ef-dee7-4b94-8e5c-4ee108e61e26";
+					logInfo.info("提交购物车URL==="+basket_submit); 										
+					resp2 = HttpUtil45.operateData2("post", "", basket_submit, outTimeConf, null, "", headerMapSM, "", "");
+					String gouwucheSubmit = EntityUtils.toString(resp2.getEntity(),"UTF-8");
+					String gouwucheSubmitETag = resp2.getFirstHeader("ETag").getValue();
+					logInfo.info("gouwucheSubmitETag==="+gouwucheSubmitETag);
+					logInfo.info("gouwucheSubmit==="+gouwucheSubmit);
+					//保存CustomerJWT、ETag和order_no 
+					orderDTO.setSupplierOrderNo(JSONObject.fromObject(gouwucheSubmit).getString("order_no"));
+					orderDTO.setStatus(OrderStatus.PAYED);
+					orderDTO.setConsumerMsg(auth+"|"+gouwucheSubmitETag);
+					orderDTO.setExcState("0");
+				}
+			}
+			
+		} catch (Exception e) {
+			logger.error("e========"+e);
+			logInfo.info("e========"+e);
+			orderDTO.setExcDesc(e.getMessage());
+			orderDTO.setExcState("1");
+			orderDTO.setExcTime(new Date());
+			e.printStackTrace();
+		}finally{
+			try {
+				if(resp!=null)
+					resp.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				if(resp2!=null)
+					resp2.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
 		
+		deleteOrder.setStatus(OrderStatus.CANCELLED);
 	}
 
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
-		
+		deleteOrder.setStatus(OrderStatus.REFUNDED);
 	}
 	
 	/**
@@ -324,13 +325,13 @@ public class OrderImpl extends AbsOrderService {
 //		factory = new AnnotationConfigApplicationContext(AppContext.class);
 //	}
 //	
-	public static void main(String[] args){
-		//loadSpringContext();
-		//OrderImpl order = (OrderImpl)factory.getBean("channeladvisorOrder");
-		OrderImpl order = new OrderImpl();
-		order.handleSupplierOrder(null);
-		
-		
-	}
+//	public static void main(String[] args){
+//		//loadSpringContext();
+//		//OrderImpl order = (OrderImpl)factory.getBean("channeladvisorOrder");
+//		OrderImpl order = new OrderImpl();
+//		order.handleSupplierOrder(null);
+//		
+//		
+//	}
 
 }
