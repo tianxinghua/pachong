@@ -47,14 +47,20 @@ public class StockClientImp extends AbsUpdateProductStock {
 	public Map<String, String> grabStock(Collection<String> skuNo)
 			throws ServiceException, Exception {
 		String skuId ="";
+		int stock = 0;
 		System.out.println("开始获取sku");
-		List<TxtDTO> skuLists = TXTUtil.readLocalCSV(TxtDTO.class, ";");
+		List<TxtDTO> skuLists = TXTUtil.downloadFTP(TxtDTO.class, ";");
 		System.out.println("获取sku完毕");
 		logger.info("获取sku完毕");
 		Map<String,String> stockMap = new HashMap<String, String>();
 		Map<String,String> returnMap = new HashMap<String, String>();
 		for (TxtDTO TxtDTO : skuLists) {
-			stockMap.put(TxtDTO.getSkuId(), TxtDTO.getStock());
+			if (stockMap.containsKey(TxtDTO.getSkuId())) {
+				stock = Integer.valueOf(stockMap.get(TxtDTO.getSkuId()))+Integer.valueOf(TxtDTO.getStock());
+				stockMap.put(TxtDTO.getSkuId(), String.valueOf(stock));
+			}else{
+				stockMap.put(TxtDTO.getSkuId(), TxtDTO.getStock());
+			}
 		}
 		Iterator<String> it = skuNo.iterator();
 		System.out.println("遍历填充"+skuNo.size());
