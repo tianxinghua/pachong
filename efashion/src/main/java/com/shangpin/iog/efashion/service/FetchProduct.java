@@ -81,6 +81,7 @@ public class FetchProduct {
 				.get(url+"&limit="+max+"&offset="+index,
 						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
 						null);
+		System.out.println(json);
 		ReturnObject obj = new Gson().fromJson(json, ReturnObject.class);
 		// 第一步：获取活动信息
 		if(obj!=null){
@@ -162,6 +163,7 @@ public class FetchProduct {
 					sku.setSkuId(skuId);
 					sku.setProductSize(size);
 					sku.setStock(item.getQuantity());
+					sku.setProductCode(item.getProduct_reference());
 					sku.setMarketPrice(item.getPrice_IT());
 					sku.setColor(item.getColor());
 					sku.setProductName(item.getItem_intro());
