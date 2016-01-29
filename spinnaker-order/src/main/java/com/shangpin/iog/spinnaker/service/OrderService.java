@@ -121,23 +121,22 @@ public class OrderService extends AbsOrderService {
 	private void createOrder(String status, OrderDTO orderDTO) {
 
 		// 获取订单信息
-		Parameters2 order = getOrder(status, orderDTO);
+		Parameters order = getOrder(status, orderDTO);
 		Gson gson = new Gson();
 
-		String json = gson.toJson(order, Parameters2.class);
+		String json = gson.toJson(order, Parameters.class);
 		System.out.println("request json == " + json);
 		String rtnData = null;
 		logger.info("推送的数据：" + json);
 		System.out.println("rtnData==" + json);
 		try {
 			 Map<String, String> map =new HashMap<String, String>();
-			 String[] barcode = orderDTO.getDetail().split(":");
 			 map.put("DBContext", dBContext);
 			 map.put("purchase_no", orderDTO.getSpPurchaseNo());
 			 map.put("order_no", orderDTO.getSupplierOrderNo());
-			 map.put("barcode", barcode[0]);
+			 map.put("barcode", order.getBarcode());
 			 //map.put("barcode", "2004238900028");
-			 map.put("ordQty", barcode[1]);
+			 map.put("ordQty", order.getOrdQty());
 			 map.put("key", key);
 			 map.put("sellPrice", order.getSellPrice());
 			 rtnData = HttpUtil45.get(setOrderUrl, defaultConfig , map);
@@ -156,7 +155,7 @@ public class OrderService extends AbsOrderService {
 			if ("ko".equals(responseObject.getStatus())) {
 				orderDTO.setExcState("1");
 				orderDTO.setExcDesc(responseObject.getMessage().toString());
-			} else if (OrderStatus.PLACED.equals(status)) {
+			} else {
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
 				orderDTO.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
 			}
@@ -178,6 +177,8 @@ public class OrderService extends AbsOrderService {
 			 map.put("order_no", deleteOrder.getSupplierOrderNo());
 			 map.put("key", key);
 			 rtnData2 = HttpUtil45.get(queryOrderUrl, defaultConfig , map);
+			logger.info("查询订单状态返回值:" + rtnData2);
+			System.out.println("查询订单状态返回值:" + rtnData2);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -195,8 +196,8 @@ public class OrderService extends AbsOrderService {
 				 map.put("order_no", deleteOrder.getSupplierOrderNo());
 				 map.put("key", key);
 				 rtnData = HttpUtil45.get(cancelUrl, defaultConfig , map);
-				logger.info("推送" + status + "退单返回结果==+==" + rtnData);
-				System.out.println("推送退单返回结果==+==" + rtnData);
+				logger.info("推送采购单：" + deleteOrder.getSpPurchaseNo() + "退单返回结果==" + rtnData);
+				System.out.println("推送采购单："+ deleteOrder.getSpPurchaseNo() +"退单返回结果==" + rtnData);
 				if (HttpUtil45.errorResult.equals(rtnData)) {
 					deleteOrder.setExcState("1");
 					deleteOrder.setExcDesc(rtnData);
@@ -221,18 +222,18 @@ public class OrderService extends AbsOrderService {
 		
 	}
 
-	private Parameters2 getOrder(String status, OrderDTO orderDTO) {
+	private Parameters getOrder(String status, OrderDTO orderDTO) {
 
 		String detail = orderDTO.getDetail();
 		String[] details = detail.split(":");
 		// logger.info("detail数据格式:"+detail);
 
-		Parameters2 order = new Parameters2();
+		Parameters order = new Parameters();
 		order.setDBContext(dBContext);
 		order.setPurchase_no(orderDTO.getSpPurchaseNo());
 		order.setOrder_no(orderDTO.getSpOrderId());
-//		order.setBarcode(details[0]);
-//		order.setOrdQty(ordQty);
+		order.setBarcode(details[0]);
+		order.setOrdQty(ordQty);
 		order.setKey(key);
 //		String sPurchasePrice = StringUtils.isBlank(orderDTO.getPurchasePriceDetail())?"0":orderDTO.getPurchasePriceDetail();
 //     	BigDecimal purchasePrice = new BigDecimal(sPurchasePrice).divide(new BigDecimal(1.05),2,BigDecimal.ROUND_HALF_UP);

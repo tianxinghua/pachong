@@ -19,6 +19,7 @@ include 'iog-web-container'
 
 
 include 'iog-common-product'
+include 'atelier-ostore'
 
 
 
