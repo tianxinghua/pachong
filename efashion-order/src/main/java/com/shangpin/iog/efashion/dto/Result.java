@@ -1,4 +1,4 @@
-package com.shangpin.iog.reebonz.dto;
+package com.shangpin.iog.efashion.dto;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import lombok.Setter;
 public class Result {
 	
 	private String reqCode;
-	private String count;
-	private List<Item> items;
+	private String description;
+	private String result;
 	
 }

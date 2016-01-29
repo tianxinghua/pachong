@@ -22,7 +22,6 @@ import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.levelgroup.purchase.common.MyFtpUtil;
-import com.shangpin.iog.levelgroup.purchase.common.OrderState;
 import com.shangpin.iog.product.service.OrderServiceImpl;
 import com.shangpin.iog.service.ProductSearchService;
 

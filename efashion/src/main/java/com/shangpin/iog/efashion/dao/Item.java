@@ -10,24 +10,29 @@ import lombok.Setter;
 public class Item {
 
 	private String product_id;
+	private String sku_id;
+	private String brand;
 	private String product_reference;
 	private String color_reference;
-	private String first_category;
-	private String second_category;
-	private String gender;
-	private String brand;
-	private String item_name;
+	private String made_in;
 	private String item_intro;
 	private String item_description;
-	private String color;
-	private String size;
+	private String technical_info;
+	private String suitable;
+
 	private String quantity;
 	private String season_year;
 	private String season_reference;
-//	private String suitable;
-	private Material [] technical_info;
+
+
+	private String [] item_images;
+	private String color;
+	private String size;
+	private String gender;
+	private String category;
 	private String price;
 	private String price_IT;
 	private String currency;
-	private Image item_images;
+	private String details_link;
+
 }
