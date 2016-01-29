@@ -151,7 +151,10 @@ public class OrderService extends AbsOrderService {
 			//logger.info("Response ：" + rtnData + ", shopOrderId:" + order.getBarcode());
 
 			ResponseObject responseObject = gson.fromJson(rtnData, ResponseObject.class);
-			if ("ko".equals(responseObject.getStatus())) {
+			if(null==responseObject.getStatus()){
+				orderDTO.setExcState("1");
+				orderDTO.setExcDesc(responseObject.getMessage());
+			}else if ("ko".equals(responseObject.getStatus().toLowerCase())) {
 				orderDTO.setExcState("1");
 				orderDTO.setExcDesc(responseObject.getMessage().toString());
 			} else {

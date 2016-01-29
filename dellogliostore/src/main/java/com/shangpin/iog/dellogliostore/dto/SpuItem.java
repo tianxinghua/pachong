@@ -165,15 +165,17 @@ public class SpuItem {
                 "name='" + name + '\'' +
                 ", spuId='" + spuId + '\'' +
                 ", productCode='" + productCode + '\'' +
+                ", marketPrice='" + marketPrice + '\'' +
+                ", sellPrice='" + sellPrice + '\'' +
                 ", price='" + price + '\'' +
                 ", stock='" + stock + '\'' +
                 ", description='" + description + '\'' +
                 ", photos=" + photos +
                 ", sex='" + sex + '\'' +
-                ", discount='" + discount + '\'' +
                 ", category='" + category + '\'' +
                 ", brand='" + brand + '\'' +
                 ", material='" + material + '\'' +
+                ", discount='" + discount + '\'' +
                 ", skuItems=" + skuItems +
                 '}';
     }
