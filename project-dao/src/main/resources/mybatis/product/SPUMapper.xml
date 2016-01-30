@@ -97,6 +97,7 @@
               <if test="lastTime != null"> LAST_TIME = #{lastTime},</if>
               <if test="productOrigin != null"> PRODUCT_ORIGIN = #{productOrigin},</if>
               <if test="categoryGender != null"> CATEGORY_GENDER = #{categoryGender},</if>
+              <if test="seasonId != null"> SEASON_ID = #{seasonId},</if>
               <if test="seasonName != null"> SEASON_NAME = #{seasonName}</if>
               
           </set>

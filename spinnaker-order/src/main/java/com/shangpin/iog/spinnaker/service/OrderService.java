@@ -85,7 +85,7 @@ public class OrderService extends AbsOrderService {
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		orderDTO.setExcState("0");
-		createOrder(OrderStatus.CONFIRMED, orderDTO);
+		createOrder(orderDTO);
 
 	}
 
@@ -117,10 +117,10 @@ public class OrderService extends AbsOrderService {
 
 	}
 
-	private void createOrder(String status, OrderDTO orderDTO) {
+	private void createOrder( OrderDTO orderDTO) {
 
 		// 获取订单信息
-		Parameters order = getOrder(status, orderDTO);
+		Parameters order = getOrder( orderDTO);
 		Gson gson = new Gson();
 
 		String json = gson.toJson(order, Parameters.class);
@@ -141,7 +141,7 @@ public class OrderService extends AbsOrderService {
 			 rtnData = HttpUtil45.get(setOrderUrl, defaultConfig , map);
 			//rtnData = HttpUtil45.operateData("get", "json", url, null, null, json, "", "");
 			// {"error":"发生异常错误"}
-			logger.info("推送" + status + "订单返回结果==+==" + rtnData);
+			logger.info("推送订单返回结果==+==" + rtnData);
 			System.out.println("推送订单返回结果==+==" + rtnData);
 			if (HttpUtil45.errorResult.equals(rtnData)) {
 				orderDTO.setExcState("1");
@@ -155,8 +155,14 @@ public class OrderService extends AbsOrderService {
 				orderDTO.setExcState("1");
 				orderDTO.setExcDesc(responseObject.getMessage());
 			}else if ("ko".equals(responseObject.getStatus().toLowerCase())) {
-				orderDTO.setExcState("1");
-				orderDTO.setExcDesc(responseObject.getMessage().toString());
+				if(0==responseObject.getId_b2b_order()){   //无库存
+
+
+				}else{
+					orderDTO.setExcState("1");
+					orderDTO.setExcDesc(responseObject.getMessage().toString());
+				}
+
 			} else {
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
 				orderDTO.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
@@ -224,7 +230,7 @@ public class OrderService extends AbsOrderService {
 		
 	}
 
-	private Parameters getOrder(String status, OrderDTO orderDTO) {
+	private Parameters getOrder( OrderDTO orderDTO) {
 
 		String detail = orderDTO.getDetail();
 		String[] details = detail.split(":");
