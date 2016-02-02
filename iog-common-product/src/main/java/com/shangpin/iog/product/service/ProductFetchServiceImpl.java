@@ -5,6 +5,7 @@ import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.common.utils.InVoke;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.PictureDTO;
+import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -233,26 +234,28 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		}
 	}
 
+
 	@Override
-	public void saveAllSpuFromHK() throws ServiceException {
-		
+	public List<ProductDTO> selectSkuByDay() throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public void saveAllSkuFromHK() throws ServiceException {
+	public List<ProductDTO> selectSpuByDay() throws ServiceException {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void saveSkuDayFromHK() throws ServiceException {
+	public List<ProductDTO> selectAllSku() throws ServiceException {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void saveSpuDayFromHK() throws ServiceException {
+	public List<ProductDTO> selectAllSpu() throws ServiceException {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 }
