@@ -133,9 +133,10 @@ public class FetchProduct {
 	                                spudto.setSupplierId(supplierId);
 	                                spudto.setSpuId(spu.getProduct_id());
 	                                spudto.setId(UUIDGenerator.getUUID());
-	                                spudto.setMaterial(spu.getProduct_detail());
+	                                spudto.setMaterial(spu.getProduct_Material());
 	                                spudto.setPicUrl(spu.getUrl());
 	                                spudto.setSpuName(spu.getDescription());
+	                                spudto.setProductOrigin(spu.getProduct_MadeIn());
 	                                try {
 	                                    pfs.saveSPU(spudto);
 	                                } catch (ServiceException e) {
