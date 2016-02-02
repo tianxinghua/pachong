@@ -298,12 +298,12 @@
 	</select>
   <select id="selectAllSku" resultMap="ProductsResultMap">
 
-		select * from SKU LIMIT 1
+		select * from SKU 
 
     </select>
 <select id="selectAllSpu" resultMap="ProductsResultMap">
 
-		select * from SPU LIMIT 1
+		select * from SPU 
 
     </select>
    <select id="selectSkuByDay" resultMap="ProductsResultMap">
