@@ -35,7 +35,7 @@ public class DataTransUtil {
 		password = bdl.getString("password");
 	}
 
-	public static Map<String,String> getGoodsDetailList(){
+	public static Map<String,String> getGoodsStockList(){
 		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10);
 		Map<String,String> returnMap = new HashMap<String, String>();
 		logger.info("获取所有库存");
@@ -64,6 +64,6 @@ public class DataTransUtil {
 	
 	
 	public static void main(String[] args) {
-		DataTransUtil.getGoodsDetailList();
+		DataTransUtil.getGoodsStockList();
 	}
 }
