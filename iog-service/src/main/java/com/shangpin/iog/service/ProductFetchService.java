@@ -102,11 +102,11 @@ public interface ProductFetchService {
      * @param skuId
      * @param picUrl集合
      */
-	public void saveAllSpuFromHK() throws ServiceException;
-
-	public void  saveAllSkuFromHK() throws ServiceException ;
-	public void saveSkuDayFromHK() throws ServiceException ;
-	public void saveSpuDayFromHK() throws ServiceException;
+	
+	public List<ProductDTO> selectSkuByDay() throws ServiceException;
+	public List<ProductDTO> selectSpuByDay() throws ServiceException;
+	public List<ProductDTO> selectAllSku() throws ServiceException;
+	public List<ProductDTO> selectAllSpu() throws ServiceException;
 	
 
 }
