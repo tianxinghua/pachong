@@ -7,6 +7,15 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Scanner;
 import java.util.logging.Logger;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
+
+import com.shangpin.ice.ice.AbsOrderService;
+import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.service.ProductFetchService;
 @Component("fetchProductFromHK")
 public class FetchProductFromHK {
   private static Logger logger = Logger.getLogger("info");
@@ -35,20 +44,23 @@ public class FetchProductFromHK {
 		
 //		productFetchService.saveAllSkuFromHK();
 		String falg = readFile();
-		if("true".equals(falg)){
-			productFetchService.saveAllSkuFromHK();
-			productFetchService.saveAllSpuFromHK();
-			writeGrapDate("false","date.ini");
-		}else{
+		if("false".equals(falg)){
+			System.out.println("false");
 			productFetchService.saveSkuDayFromHK();
 			productFetchService.saveSpuDayFromHK();
+		}else{
+			System.out.println("true");
+			productFetchService.saveAllSkuFromHK();
+			productFetchService.saveAllSpuFromHK();
+			writeGrapDate("false","init.ini");
+
 		}
 		
    }
 
 	 private String readFile() throws IOException {
 
-			File file = getConfFile("date.ini");
+		 File file = getConfFile("init.ini");
 		 Scanner scanner = null;
 			StringBuilder buffer = new StringBuilder();
 			try {
@@ -63,7 +75,6 @@ public class FetchProductFromHK {
 					scanner.close();
 				}
 			}
-			System.out.println(buffer.toString());
 		return buffer.toString();
 	}
 
@@ -80,7 +91,7 @@ public class FetchProductFromHK {
 	        }
 	    }
 	 private static File getConfFile(String fileName) throws IOException {
-	        String realPath = AbsOrderService.class.getClassLoader().getResource("").getFile();
+	        String realPath = FetchProductFromHK.class.getClassLoader().getResource("").getFile();
 	        realPath= URLDecoder.decode(realPath, "utf-8");
 	        File df = new File(realPath+fileName);//"date.ini"
 	        if(!df.exists()){

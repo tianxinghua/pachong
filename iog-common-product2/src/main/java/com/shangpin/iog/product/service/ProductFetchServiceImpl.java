@@ -251,6 +251,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 			for(ProductDTO pro:list){
 				SpuDTO spu = new SpuDTO();
 				spu.setBrandId(pro.getBrandId());
+				spu.setId(UUIDGenerator.getUUID());
 				spu.setBrandName(pro.getBrandName());
 				spu.setCategoryGender(pro.getCategoryGender());
 				spu.setCategoryId(pro.getCategoryId());
@@ -282,6 +283,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 				SkuDTO sku = new SkuDTO();
 				sku.setBarcode(pro.getBarcode());
 				sku.setColor(pro.getColor());
+				sku.setId(UUIDGenerator.getUUID());
 				sku.setMarketPrice(pro.getMarketPrice());
 				sku.setProductCode(pro.getProductCode());
 				sku.setProductDescription(pro.getProductDescription());
@@ -292,7 +294,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 				sku.setSkuId(pro.getSkuId());
 				sku.setSpuId(pro.getSpuId());
 				sku.setStock(pro.getStock());
-				sku.setStock(pro.getSupplierId());
+				sku.setSupplierId(pro.getSupplierId());
 				sku.setSupplierPrice(pro.getSupplierPrice());
 				sku.setNewMarketPrice(pro.getNewMarketPrice());
 				sku.setNewSalePrice(pro.getNewSalePrice());
@@ -312,10 +314,11 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		
 		List<ProductDTO>  list = productDAO.selectSpuByDay();
 		
-		if(list!=null){
+		if(list!=null){   
 			for(ProductDTO pro:list){
 				SpuDTO spu = new SpuDTO();
 				spu.setBrandId(pro.getBrandId());
+				spu.setId(UUIDGenerator.getUUID());
 				spu.setBrandName(pro.getBrandName());
 				spu.setCategoryGender(pro.getCategoryGender());
 				spu.setCategoryId(pro.getCategoryId());
@@ -346,6 +349,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		if(list!=null){
 			for(ProductDTO pro:list){
 				SkuDTO sku = new SkuDTO();
+				sku.setId(UUIDGenerator.getUUID());
 				sku.setBarcode(pro.getBarcode());
 				sku.setColor(pro.getColor());
 				sku.setMarketPrice(pro.getMarketPrice());
@@ -358,7 +362,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 				sku.setSkuId(pro.getSkuId());
 				sku.setSpuId(pro.getSpuId());
 				sku.setStock(pro.getStock());
-				sku.setStock(pro.getSupplierId());
+				sku.setSupplierId(pro.getSupplierId());
 				sku.setSupplierPrice(pro.getSupplierPrice());
 				sku.setNewMarketPrice(pro.getNewMarketPrice());
 				sku.setNewSalePrice(pro.getNewSalePrice());
