@@ -85,7 +85,44 @@ public class Spu {
         this.supply_price = supply_price;
     }
 
-    private String product_id;
+    
+    public String getProduct_MadeIn() {
+		return product_MadeIn;
+	}
+
+	public void setProduct_MadeIn(String product_MadeIn) {
+		this.product_MadeIn = product_MadeIn;
+	}
+
+	public String getProduct_Material() {
+		return product_Material;
+	}
+
+	public void setProduct_Material(String product_Material) {
+		this.product_Material = product_Material;
+	}
+
+	
+
+	public String getProduct_Measure() {
+		return product_Measure;
+	}
+
+	public void setProduct_Measure(String product_Measure) {
+		this.product_Measure = product_Measure;
+	}
+
+	public String getCarryOver() {
+		return CarryOver;
+	}
+
+	public void setCarryOver(String carryOver) {
+		CarryOver = carryOver;
+	}
+
+
+
+	private String product_id;
     private String producer_id;
     private String type;
     private String season;
@@ -93,8 +130,13 @@ public class Spu {
     private String description;
     private String category;
     private String product_detail;
+    private String product_MadeIn;
+    private String product_Material;
+    private String product_Measure;
     private String url;
     private String supply_price;
+    private String CarryOver;
+   
 
     public Items getItems() {
         return items;
