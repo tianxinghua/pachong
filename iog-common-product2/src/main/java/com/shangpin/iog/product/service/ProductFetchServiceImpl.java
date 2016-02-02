@@ -294,7 +294,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 				sku.setSkuId(pro.getSkuId());
 				sku.setSpuId(pro.getSpuId());
 				sku.setStock(pro.getStock());
-				sku.setStock(pro.getSupplierId());
+				sku.setSupplierId(pro.getSupplierId());
 				sku.setSupplierPrice(pro.getSupplierPrice());
 				sku.setNewMarketPrice(pro.getNewMarketPrice());
 				sku.setNewSalePrice(pro.getNewSalePrice());
@@ -362,7 +362,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 				sku.setSkuId(pro.getSkuId());
 				sku.setSpuId(pro.getSpuId());
 				sku.setStock(pro.getStock());
-				sku.setStock(pro.getSupplierId());
+				sku.setSupplierId(pro.getSupplierId());
 				sku.setSupplierPrice(pro.getSupplierPrice());
 				sku.setNewMarketPrice(pro.getNewMarketPrice());
 				sku.setNewSalePrice(pro.getNewSalePrice());
