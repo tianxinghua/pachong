@@ -54,7 +54,8 @@ public class FetchProduct {
 
 
     public void fetchProductAndSave(String url){
-
+    	int aaa = 0;
+    	int bbb = 0;
         //String supplierId = "2015081401431";
         Date startDate,endDate= new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
@@ -103,7 +104,6 @@ public class FetchProduct {
                     spu.setSeasonId(contentArray[9]);
                     spu.setMaterial(contentArray[6]);
                     spu.setCategoryGender(contentArray[7]);
-                    
                     try {
 						madeIn = contentArray[15];
 					} catch (Exception e) {
@@ -127,9 +127,15 @@ public class FetchProduct {
 
                     for(String sizeAndStock:sizeArray){
                         if(sizeAndStock.contains("(")&&sizeAndStock.length()>1) {
+                        	aaa++;
                             size = sizeAndStock.substring(0, sizeAndStock.indexOf("("));
                             stock = sizeAndStock.substring(sizeAndStock.indexOf("(")+1, sizeAndStock.length() - 1);
                             //System.out.println("库存"+stock);
+                            
+                            if (!stock.equals("0")) {
+								bbb++;
+							}
+                            
                         }
                         SkuDTO sku  = new SkuDTO();
                         try {
@@ -147,7 +153,7 @@ public class FetchProduct {
                             sku.setColor(contentArray[3]);
                             sku.setProductDescription(contentArray[5]);
                             sku.setStock(stock);
-
+                            sku.setProductCode(contentArray[0]);
 //                            sku.setProductCode(product.getProducer_id());
                             
                             if(skuDTOMap.containsKey(sku.getSkuId())){
@@ -192,7 +198,8 @@ public class FetchProduct {
                     e.printStackTrace();
                 }
             }
-            
+            System.out.println(aaa+"==========================================");
+            System.out.println(bbb+"==========================================");
           //更新网站不再给信息的老数据
 			for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
 				 Map.Entry<String,SkuDTO> entry =  itor.next();
