@@ -100,16 +100,19 @@ public class InsertDataBaseService {
 			}
 			logger.warn("抓取到sku:\r\n"+new Gson().toJson(skus));
 			//开始保存
-			if(CollectionUtils.isNotEmpty(skus)) {
-				logger.info("-----开始保存SKU-----总数：{}",skus.size());
-				int failCnt=insertSku(skus,productPics);
-				logger.info("-----SKU保存结束，sku总数：{},成功数{}",skus.size(),skus.size()-failCnt);
-			}
 			if(CollectionUtils.isNotEmpty(spus)){
 				logger.info("-----开始保存SPU-----总数：{}",spus.size());
 				int failCnt = insertSpu(spus);
 				logger.info("-----SPU保存结束，spu总数：{},成功数{}",spus.size(),spus.size()-failCnt);
 			}
+
+
+			if(CollectionUtils.isNotEmpty(skus)) {
+				logger.info("-----开始保存SKU-----总数：{}",skus.size());
+				int failCnt=insertSku(skus,productPics);
+				logger.info("-----SKU保存结束，sku总数：{},成功数{}",skus.size(),skus.size()-failCnt);
+			}
+
 //			logger.info("-----开始保存SKUPIC-----");
 //			Set<String> picSku=productPics.keySet();
 //			int failCnt=0;int total=0;

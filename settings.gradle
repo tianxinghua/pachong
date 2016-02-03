@@ -19,7 +19,7 @@ include 'iog-web-container'
 
 
 include 'iog-common-product'
-include 'atelier-ostore'
+
 
 
 
@@ -35,9 +35,9 @@ include 'iog-sop'
 
 include 'spinnaker-order'
 
-include 'giglio-stock'
 
-include 'monnierfreres-stock'
+include 'ostore'
+include 'coltorti'
 
 
 
