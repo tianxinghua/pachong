@@ -34,18 +34,15 @@ import java.util.ResourceBundle;
 @Component("ostore")
 public class FetchProduct {
     //final Logger logger = Logger.getLogger(this.getClass());
-    private static Logger logMongo = Logger.getLogger("mongodb");
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static ResourceBundle bdl=null;
     private static String supplierId;
-    private static String grabStockUrl = "";
     private static int day;
     static {
         if(null==bdl)
          bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
-        grabStockUrl = bdl.getString("grabStockUrl");
         day = Integer.valueOf(bdl.getString("day"));
     }
     
@@ -70,7 +67,6 @@ public class FetchProduct {
 		}
         
         try {
-            Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
             timeConfig.confRequestOutTime(10*60*1000);
             timeConfig.confConnectOutTime(10*60*1000);
@@ -81,17 +77,11 @@ public class FetchProduct {
             for(String content:resultList){
                 buffer.append(content).append("|||");
             }
-            mongMap.put("supplierId",supplierId);
-            mongMap.put("supplierName","acanfora");
-            mongMap.put("result", buffer.toString()) ;
-            try {
-                logMongo.info(mongMap);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            
             int i=0;
             String stock="",size ="";
             String skuId = "";
+            String madeIn = "";
             for(String content:resultList){
                 if(i==0){
                     i++;
@@ -113,6 +103,14 @@ public class FetchProduct {
                     spu.setSeasonId(contentArray[9]);
                     spu.setMaterial(contentArray[6]);
                     spu.setCategoryGender(contentArray[7]);
+                    
+                    try {
+						madeIn = contentArray[15];
+					} catch (Exception e) {
+						madeIn = "";
+					}
+                    
+                    spu.setProductOrigin(madeIn);
                     System.out.println(spu.getCategoryGender());
                     try{
                         productFetchService.saveSPU(spu);
