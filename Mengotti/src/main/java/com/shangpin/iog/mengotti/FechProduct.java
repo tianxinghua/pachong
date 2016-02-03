@@ -79,10 +79,16 @@ public class FechProduct {
 			if (items.size() > 0) {
 				for (Item item : items) {
 					try{
-						
+						String sku_id = item.getSupplierSkuNo();
+						String spu_id = "";
 						SkuDTO sku = new SkuDTO();
-						sku.setSkuId(item.getSupplierSkuNo());
-						sku.setSpuId(item.getSopProductName());
+						sku.setSkuId(sku_id);
+						if(sku_id.endsWith("+")){
+							spu_id = sku_id.substring(0, sku_id.length()-2);
+						}else{
+							spu_id = sku_id.substring(0, sku_id.length()-1);
+						}
+						sku.setSpuId(spu_id);
 						sku.setId(UUIDGenerator.getUUID());
 						sku.setSupplierId(supplierId);
 						sku.setNewMarketPrice(item.getNewMarkerPrice());
@@ -91,7 +97,7 @@ public class FechProduct {
 						sku.setMarketPrice(item.getMarkerPrice());
 						sku.setSalePrice(item.getSallPrice());
 						sku.setSupplierPrice(item.getSupplierPrice());
-						sku.setProductCode(item.getBarCode());
+						sku.setProductCode(spu_id);
 						sku.setColor(item.getProductColor());
 						sku.setProductDescription(item.getPcDesc());
 						sku.setProductSize(item.getProductSize());
@@ -132,7 +138,7 @@ public class FechProduct {
 
 						SpuDTO spu = new SpuDTO();
 						spu.setId(UUIDGenerator.getUUID());
-						spu.setSpuId(item.getSopProductName());
+						spu.setSpuId(spu_id);
 						spu.setSupplierId(supplierId);
 						spu.setCategoryGender(item.getXingbie());
 						spu.setCategoryName(item.getCategoryName());
