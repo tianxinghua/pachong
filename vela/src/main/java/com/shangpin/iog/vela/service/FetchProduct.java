@@ -174,13 +174,13 @@ public class FetchProduct {
                 						skuDTOMap.remove(skudto.getSkuId());
                 					}
                                     pfs.saveSKU(skudto);
-                                    
+
                                   //保存图片
                 	                List<String> imgList = new ArrayList<String>();
                 	                if (sku.getPictures() != null) {
                 	                    for (String  imageUrl: sku.getPictures()) {
                 	                        if (imageUrl != null ) {
-                	                        	imgList.add(imageUrl);	                        	
+                	                        	imgList.add(imageUrl);
                 	                        }
                 	                    }
                 	                    pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);

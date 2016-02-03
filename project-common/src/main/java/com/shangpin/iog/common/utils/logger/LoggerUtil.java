@@ -264,7 +264,7 @@ public class LoggerUtil {
 					InetAddress inetAddress = (InetAddress) enumIpAddr.nextElement();
 					if (!inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()
 							&& inetAddress.isSiteLocalAddress()) {
-						sb.append(inetAddress.getHostAddress().toString()+"\n");
+						sb.append(inetAddress.getHostAddress().toString()+"-");
 					}
 				}
 			}
