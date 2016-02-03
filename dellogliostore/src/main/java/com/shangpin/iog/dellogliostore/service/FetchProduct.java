@@ -100,7 +100,7 @@ public class FetchProduct {
                 spu.setCategoryName(spuItem.getCategory());
                 spu.setBrandName(spuItem.getBrand());
                 spu.setMaterial(spuItem.getMaterial());
-                
+                spu.setSeasonName(spuItem.getSeasonCode());
                 String str =spuItem.getDescription(); 
                 int beginIndex=str.indexOf("Made");
                 if(beginIndex!=-1){
