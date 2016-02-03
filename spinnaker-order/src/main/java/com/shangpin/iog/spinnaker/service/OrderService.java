@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import com.shangpin.iog.common.utils.SendMail;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -45,7 +46,13 @@ public class OrderService extends AbsOrderService {
 	private static Logger loggerError = Logger.getLogger("error");
 
 	private OutTimeConfig defaultConfig = new OutTimeConfig(1000 * 2, 1000 * 60*5, 1000 * 60*5);
-
+	private static String smtpHost = null;
+	private static String from = null;
+	private static String fromUserPassword = null;
+	private static String to = null;
+	private static String subject = null;
+	private static String messageText = null;
+	private static String messageType = null;
 	static {
 		if (null == bdl) {
 			bdl = ResourceBundle.getBundle("param");
@@ -57,6 +64,16 @@ public class OrderService extends AbsOrderService {
 		cancelUrl = bdl.getString("cancelUrl");
 		dBContext = bdl.getString("dBContext");
 		key = bdl.getString("key");
+
+
+
+		smtpHost  = bdl.getString("smtpHost");
+		from = bdl.getString("from");
+		fromUserPassword = bdl.getString("fromUserPassword");
+		to = bdl.getString("to");
+		subject = bdl.getString("subject");
+		messageText = bdl.getString("messageText");
+		messageType = bdl.getString("messageType");
 	}
 
 	// 下单处理
@@ -155,8 +172,8 @@ public class OrderService extends AbsOrderService {
 				orderDTO.setExcState("1");
 				orderDTO.setExcDesc(responseObject.getMessage());
 			}else if ("ko".equals(responseObject.getStatus().toLowerCase())) {
-				if(0==responseObject.getId_b2b_order()){   //无库存
-
+				if("Error ! Quantity Not Availble".equals(responseObject.getMessage())){   //无库存
+					this.setPurchaseExc(orderDTO);
 
 				}else{
 					orderDTO.setExcState("1");
@@ -282,6 +299,31 @@ public class OrderService extends AbsOrderService {
 		refundlOrder.setKey(key);
 		
 		return refundlOrder;
+	}
+
+
+	private void setPurchaseExc(final OrderDTO orderDTO){
+		String result = setPurchaseOrderExc(orderDTO);
+		if("-1".equals(result)){
+			orderDTO.setStatus(OrderStatus.NOHANDLE);
+		}else if("1".equals(result)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+		}else if("0".equals(result)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+		}
+
+		Thread t = new Thread(	 new Runnable() {
+			@Override
+			public void run() {
+				try {
+					SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"spinnaker 采购单"+orderDTO.getSpPurchaseNo()+"已弃单.状态是:"+orderDTO.getStatus(), messageType);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		t.start();
+
 	}
 
 }

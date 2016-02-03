@@ -1,5 +1,8 @@
 package com.shangpin.iog.dellogliostore.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -10,6 +13,8 @@ import java.util.List;
  * SpuItem
  * Created by kelseo on 15/9/25.
  */
+@Getter
+@Setter
 @XmlRootElement(name = "item")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SpuItem {
@@ -24,6 +29,8 @@ public class SpuItem {
     @XmlElement(name="retail_price")
     String sellPrice;
     String price;
+    @XmlElement(name="season_code")
+    String seasonCode;
     String stock;
     @XmlElement(name = "product_detail")
     String description;
@@ -39,126 +46,6 @@ public class SpuItem {
     @XmlElement(name = "items")
     SkuItems skuItems;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSpuId() {
-        return spuId;
-    }
-
-    public void setSpuId(String spuId) {
-        this.spuId = spuId;
-    }
-
-    public String getPrice() {
-        return price;
-    }
-
-    public void setPrice(String price) {
-        this.price = price;
-    }
-
-    public String getStock() {
-        return stock;
-    }
-
-    public void setStock(String stock) {
-        this.stock = stock;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<Photo> getPhotos() {
-        return photos;
-    }
-
-    public void setPhotos(List<Photo> photos) {
-        this.photos = photos;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
-    public String getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(String discount) {
-        this.discount = discount;
-    }
-
-    public SkuItems getSkuItems() {
-        return skuItems;
-    }
-
-    public void setSkuItems(SkuItems skuItems) {
-        this.skuItems = skuItems;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public String getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(String material) {
-        this.material = material;
-    }
-
-    public String getProductCode() {
-        return productCode;
-    }
-
-    public void setProductCode(String productCode) {
-        this.productCode = productCode;
-    }
-
-    public String getMarketPrice() {
-        return marketPrice;
-    }
-
-    public void setMarketPrice(String marketPrice) {
-        this.marketPrice = marketPrice;
-    }
-
-    public String getSellPrice() {
-        return sellPrice;
-    }
-
-    public void setSellPrice(String sellPrice) {
-        this.sellPrice = sellPrice;
-    }
-
     @Override
     public String toString() {
         return "SpuItem{" +
@@ -168,6 +55,7 @@ public class SpuItem {
                 ", marketPrice='" + marketPrice + '\'' +
                 ", sellPrice='" + sellPrice + '\'' +
                 ", price='" + price + '\'' +
+                ", seasonCode='" + seasonCode + '\'' +
                 ", stock='" + stock + '\'' +
                 ", description='" + description + '\'' +
                 ", photos=" + photos +
