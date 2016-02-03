@@ -109,7 +109,7 @@ public class FetchProduct {
 			}
 			
 			//保存图片
-			productFetchService.savePicture(supplierId, TxtDTO.getProduct_id(), null, Arrays.asList(TxtDTO.getPhoto_links()));
+			productFetchService.savePicture(supplierId, TxtDTO.getProduct_id(), null, Arrays.asList(TxtDTO.getPhoto_links().split("\\|")));
 		}
 		//保存spu
 		System.out.println("开始保存spu");

@@ -20,6 +20,8 @@
         <result column="STOCK" property="stock" />
         <result column="CREATE_TIME" property="createTime" />
         <result column="LAST_TIME" property="lastTime" />
+        <result column="MEASUREMENT" property="measurement" />
+        
 	</resultMap>
 
 
@@ -62,7 +64,7 @@
         PRODUCT_SIZE,STOCK,MEMO,CREATE_TIME,LAST_TIME,
         NEW_MARKET_PRICE,
         NEW_SALE_PRICE,
-        NEW_SUPPLIER_PRICE,UPDATE_TIME ,   EVENT_START_DATE,EVENT_END_DATE
+        NEW_SUPPLIER_PRICE,UPDATE_TIME ,   EVENT_START_DATE,EVENT_END_DATE,MEASUREMENT
 
 	</sql>
 
@@ -97,7 +99,7 @@
             #{productName},#{marketPrice},#{salePrice}, #{supplierPrice}, #{barcode}, #{productCode},
             #{color} , #{productDescription}, #{saleCurrency}, #{productSize}, #{stock},#{memo},
             #{createTime}, #{lastTime}, #{newMarketPrice} , #{newSalePrice} , #{newSupplierPrice} ,
-        #{updateTime},#{eventStartDate},#{eventEndDate}
+        #{updateTime},#{eventStartDate},#{eventEndDate},#{measurement}
 
         )
 
@@ -139,7 +141,7 @@
             #{item.productName},#{item.marketPrice},#{item.salePrice}, #{item.supplierPrice}, #{item.barcode}, #{item.productCode},
             #{item.color} , #{item.productDescribe}, #{item.saleCurrency}, #{item.productSize}, #{item.stock},#{item.memo},
             #{createTime}, #{lastTime}, #{newMarketPrice} , #{newSalePrice} , #{newSupplierPrice} ,
-            #{updateTime},#{eventStartDate},#{eventEndDate})
+            #{updateTime},#{eventStartDate},#{eventEndDate},#{measurement})
         </foreach>
 
     </insert>
