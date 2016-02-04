@@ -1,14 +1,17 @@
 package com.shangpin.iog.newMenlook_stock;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -45,11 +48,17 @@ public class GrabStock extends AbsUpdateProductStock{
 			try{
 				
 				String result = HttpUtil45.get(url, outTimeConf, null);
-				skustock.put(id,String.valueOf(JSONObject.fromObject(result).getJSONObject("inventory").getInt("stock_level")));
+				String stock =""; 
+				stock = String.valueOf(JSONObject.fromObject(result).getJSONObject("inventory").getInt("stock_level"));
+				if(StringUtils.isNotBlank(stock)){
+					skustock.put(id,stock);
+				}else{
+					skustock.put(id,"0");
+				}				
 								
 			}catch(Exception ex){
+				skustock.put(id,"0");
 				logError.error(ex);
-				ex.printStackTrace();
 			}				
 			
 		}
@@ -66,7 +75,8 @@ public class GrabStock extends AbsUpdateProductStock{
 	public static void main(String[] args) {
 
 		loadSpringContext();
-		GrabStock grabStockImp = (GrabStock)factory.getBean("menlook");
+		GrabStock grabStockImp = (GrabStock)factory.getBean("menlook");		
+		
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		logInfo.info("menlook更新数据库开始");
 		System.out.println("menlook更新数据库开始");
