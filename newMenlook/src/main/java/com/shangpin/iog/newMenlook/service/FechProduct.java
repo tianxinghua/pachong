@@ -42,7 +42,7 @@ public class FechProduct {
 	private static Logger logInfo  = Logger.getLogger("info");
 	private static Logger logError = Logger.getLogger("error");
 	private static Logger logMongoDB = Logger.getLogger("MongoDB");
-	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
+	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000*5*60, 1000*60 * 5, 1000*60 * 5);
 	
 	private static ResourceBundle bdl = null;
 	private static String supplierId = "";

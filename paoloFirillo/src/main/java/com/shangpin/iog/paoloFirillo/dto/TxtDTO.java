@@ -6,23 +6,24 @@ import lombok.Setter;
 @Setter
 @Getter
 public class TxtDTO {
-	private String product_id;
-	private String design_code;
-	private String item_detailed_info;
-	private String item_id;
-	private String category;
-	private String season;
-	private String brand_name;
-	private String supplier_item_code;
-	private String colour_description;
-	private String colour_code;
-	private String size;
-	private String retail_price;
-	private String sold_price;
-	private String quantity;
-	private String size_family;
-	private String photo_links;
-	private String sex;
-	private String material;
-	private String made;
+	String product_id;
+	String design_code;
+	String tem_detailed_info;
+	String item_id;
+	String category;
+	String season;
+	String brand_name;
+	String supplier_item_code;
+	String colour_description;
+	String colour_code;
+	String size;
+	String retail_price;
+	String sold_price;
+	String quantity;
+	String size_family;
+	String photo_links;
+	String sex;
+	String material;
+	String made;
+
 }

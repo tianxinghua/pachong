@@ -80,7 +80,7 @@ public class FetchProduct {
 			skuDTO.setSkuId(TxtDTO.getItem_id());
 			skuDTO.setSpuId(TxtDTO.getProduct_id());
 			skuDTO.setSupplierId(supplierId);
-			skuDTO.setProductName(TxtDTO.getItem_detailed_info());
+			skuDTO.setProductName(TxtDTO.getTem_detailed_info());
 			skuDTO.setMarketPrice(TxtDTO.getRetail_price());
 			skuDTO.setSupplierPrice(TxtDTO.getSold_price());
 			skuDTO.setColor(TxtDTO.getColour_description());
