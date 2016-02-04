@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 public class TxtDTO {
 	private String product_id;
+	private String design_code;
 	private String item_detailed_info;
 	private String item_id;
 	private String category;
