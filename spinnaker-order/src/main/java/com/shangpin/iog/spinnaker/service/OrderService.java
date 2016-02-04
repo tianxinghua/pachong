@@ -172,8 +172,18 @@ public class OrderService extends AbsOrderService {
 				orderDTO.setExcState("1");
 				orderDTO.setExcDesc(responseObject.getMessage());
 			}else if ("ko".equals(responseObject.getStatus().toLowerCase())) {
-				if("Error ! Quantity Not Availble".equals(responseObject.getMessage())){   //无库存
-					this.setPurchaseExc(orderDTO);
+//				if("Error ! Quantity Not Availble".equals(responseObject.getMessage())){   //无库存
+//					this.setPurchaseExc(orderDTO);
+//
+//				}else{
+//					orderDTO.setExcState("1");
+//					orderDTO.setExcDesc(responseObject.getMessage().toString());
+//				}
+
+				if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
+//					this.setPurchaseExc(orderDTO);
+					orderDTO.setStatus(OrderStatus.NOHANDLE);
+					orderDTO.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
 
 				}else{
 					orderDTO.setExcState("1");

@@ -2,9 +2,9 @@ environments{
 	development{
         db {
             driverClassName = 'com.mysql.jdbc.Driver'
-            url ='jdbc:mysql://192.168.20.82:3306/iog-test?useUnicode=true&amp;characterEncoding=utf-8'
-            username = 'root'
-            password = '123456'
+            url ='jdbc:mysql://192.168.9.135:3306/iog-test?useUnicode=true&amp;characterEncoding=utf-8'
+            username = 'writer'
+            password = 'wt@sp520'
 
 
             Ice.Default.Locator='SPIceGrid/Locator:default -h 192.168.20.204 -p 12000:default -h 192.168.20.205 -p 12000'
