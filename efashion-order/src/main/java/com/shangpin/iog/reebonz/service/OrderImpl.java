@@ -154,7 +154,7 @@ public class OrderImpl  extends AbsOrderService{
 		HttpResponse response = null;
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		CloseableHttpClient httpClient = httpClientBuilder.build();
-		HttpPost httpPost = new HttpPost("http://api.test.gebnegozi.com/api/v2/place/order.json?storeCode=DW3LT");
+		HttpPost httpPost = new HttpPost(url);
 		StringEntity entity = new StringEntity(json,"utf-8");
 		entity.setContentEncoding("UTF-8");    
         entity.setContentType("application/json");
