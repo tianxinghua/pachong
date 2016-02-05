@@ -102,6 +102,7 @@ public class OrderImpl  extends AbsOrderService{
 	public void handleConfirmOrder(final OrderDTO orderDTO) {
 		
 		String rtnData = pushOrder(orderDTO);
+		logger.info("rtnData===="+rtnData);
 		String [] data = rtnData.split("\\|");
 		String code = data[0];
 		String res = data[1];
@@ -150,6 +151,7 @@ public class OrderImpl  extends AbsOrderService{
 	private String pushOrder(OrderDTO orderDTO){
 		
 		String json = getJsonData(orderDTO);
+		logger.info("推送的url："+url);
 		logger.info("推送的数据："+json);
 		HttpResponse response = null;
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
