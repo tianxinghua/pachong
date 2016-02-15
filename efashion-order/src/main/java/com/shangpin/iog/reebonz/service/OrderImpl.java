@@ -2,6 +2,7 @@ package com.shangpin.iog.reebonz.service;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -245,7 +246,8 @@ public class OrderImpl  extends AbsOrderService{
 			RequestObject obj = new RequestObject();
 			obj.setOrder_number(orderDTO.getSpOrderId());                                                                     
 			obj.setItems_count("1");
-			obj.setDate(orderDTO.getCreateTime()+"");
+			SimpleDateFormat time=new SimpleDateFormat("yyyy-MM-dd"); 
+			obj.setDate(time.format(orderDTO.getCreateTime()));
 			Item item = new Item();
 		    
 			String detail = orderDTO.getDetail();
