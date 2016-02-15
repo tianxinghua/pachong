@@ -151,7 +151,7 @@ public class OrderService extends AbsOrderService {
 			//logger.info("Response ：" + rtnData + ", shopOrderId:" + order.getBarcode());
 
 			ResponseObject responseObject = gson.fromJson(rtnData, ResponseObject.class);
-			if ("ko".equals(responseObject.getStatus())) {
+			if ("ko".equals(responseObject.getStatus().toLowerCase())) {
 				orderDTO.setExcState("1");
 				orderDTO.setExcDesc(responseObject.getMessage().toString());
 			} else if (OrderStatus.PLACED.equals(status)) {
@@ -185,7 +185,7 @@ public class OrderService extends AbsOrderService {
 		String rtnData = null;
 
 		ResponseObject response = gson.fromJson(rtnData2, ResponseObject.class);
-		if("HO".equals(response.getStatus())){
+		if("HO".equals(response.getStatus().toUpperCase())){
 			try {
 				 Map<String, String> map =new HashMap<String, String>();
 				 map.put("DBContext", dBContext);
@@ -202,7 +202,7 @@ public class OrderService extends AbsOrderService {
 				}
 
 				ResponseObject responseObject = gson.fromJson(rtnData, ResponseObject.class);
-				if ("OK".equals(responseObject.getStatus())) {
+				if ("OK".equals(responseObject.getStatus().toUpperCase())) {
 					deleteOrder.setExcState("0");
 					//deleteOrder.setExcDesc(responseObject.getMessage().toString());
 				} else {
