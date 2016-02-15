@@ -102,17 +102,60 @@ public class OrderImpl  extends AbsOrderService{
 	@Override
 	public void handleConfirmOrder(final OrderDTO orderDTO) {
 		
-		String rtnData = pushOrder(orderDTO);
-		logger.info("rtnData===="+rtnData);
-		String [] data = rtnData.split("\\|");
-		String code = data[0];
-		String res = data[1];
-		System.out.println(res);
-		logger.info(res);
-		if("400".equals(code)){
-			Result result = new Gson().fromJson(res, Result.class);
-			if("400".equals(result.getReqCode())){
-				orderDTO.setExcDesc(result.getResult());
+		String orderId = orderDTO.getSpOrderId();
+		
+		
+		if(orderId.startsWith("20160206")||orderId.startsWith("20160207")||orderId.startsWith("20160208")||orderId.startsWith("20160209")){
+			orderDTO.setStatus(OrderStatus.CONFIRMED);
+		}else{
+			String rtnData = pushOrder(orderDTO);
+			logger.info("rtnData===="+rtnData);
+			String [] data = rtnData.split("\\|");
+			String code = data[0];
+			String res = data[1];
+			System.out.println(res);
+			logger.info(res);
+			if("400".equals(code)){
+				Result result = new Gson().fromJson(res, Result.class);
+				if("400".equals(result.getReqCode())){
+					orderDTO.setExcDesc(result.getResult());
+					orderDTO.setExcState("1");
+					String reResult = setPurchaseOrderExc(orderDTO);
+					if("-1".equals(reResult)){
+						orderDTO.setStatus(OrderStatus.NOHANDLE);
+					}else if("1".equals(reResult)){
+						orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+					}else if("0".equals(reResult)){
+						orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+					}
+				}
+			}else if("200".equals(code)){
+				ReturnObject obj = new Gson().fromJson(res, ReturnObject.class);
+				if(obj!=null){
+					Result r = obj.getResults();
+					if(r!=null){
+						if("200".equals(r.getReqCode())){
+							orderDTO.setExcState("0");
+							orderDTO.setSupplierOrderNo(r.getDescription());
+							orderDTO.setStatus(OrderStatus.CONFIRMED);
+						}else if("400".equals(r.getReqCode())){
+							
+							orderDTO.setExcState("0");
+							orderDTO.setExcDesc(r.getDescription());
+							String reResult = setPurchaseOrderExc(orderDTO);
+							if("-1".equals(reResult)){
+								orderDTO.setStatus(OrderStatus.NOHANDLE);
+							}else if("1".equals(reResult)){
+								orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+							}else if("0".equals(reResult)){
+								orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+							}
+							
+						}
+					}
+				}
+			}else{
+				orderDTO.setExcDesc(res);
 				orderDTO.setExcState("1");
 				String reResult = setPurchaseOrderExc(orderDTO);
 				if("-1".equals(reResult)){
@@ -122,29 +165,6 @@ public class OrderImpl  extends AbsOrderService{
 				}else if("0".equals(reResult)){
 					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
 				}
-			}
-		}else if("200".equals(code)){
-			ReturnObject obj = new Gson().fromJson(res, ReturnObject.class);
-			if(obj!=null){
-				Result r = obj.getResults();
-				if(r!=null){
-					if("200".equals(r.getReqCode())){
-						orderDTO.setExcState("0");
-						orderDTO.setSupplierOrderNo(r.getDescription());
-						orderDTO.setStatus(OrderStatus.CONFIRMED);
-					}
-				}
-			}
-		}else{
-			orderDTO.setExcDesc(res);
-			orderDTO.setExcState("1");
-			String reResult = setPurchaseOrderExc(orderDTO);
-			if("-1".equals(reResult)){
-				orderDTO.setStatus(OrderStatus.NOHANDLE);
-			}else if("1".equals(reResult)){
-				orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-			}else if("0".equals(reResult)){
-				orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
 			}
 		}
 	}
@@ -300,13 +320,13 @@ public class OrderImpl  extends AbsOrderService{
 		}
 		
 	}
-//	public static void main(String[] args) {
-//		OrderImpl ompl = new OrderImpl();
-//		OrderDTO orderDTO = new OrderDTO();
-//		String d= "1201|09029100|1555|40:1";
-//		orderDTO.setDetail(d);
-//		orderDTO.setSpOrderId("123456789");
-//		orderDTO.setSpPurchaseDetailNo("123");
-//		ompl.handleConfirmOrder(orderDTO);
-//	}
+	public static void main(String[] args) {
+		OrderImpl ompl = new OrderImpl();
+		OrderDTO orderDTO = new OrderDTO();
+		String d= "1201|09029100|1555|40:1";
+		orderDTO.setDetail(d);
+		orderDTO.setSpOrderId("2016021012");
+		orderDTO.setSpPurchaseDetailNo("123");
+		ompl.handleConfirmOrder(orderDTO);
+	}
 }
