@@ -154,6 +154,9 @@ public class OrderService extends AbsOrderService {
 			if ("ko".equals(responseObject.getStatus().toLowerCase())) {
 				orderDTO.setExcState("1");
 				orderDTO.setExcDesc(responseObject.getMessage().toString());
+				//采购异常处理
+				doOrderExc(orderDTO);
+				
 			} else if (OrderStatus.PLACED.equals(status)) {
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
 				orderDTO.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
@@ -163,7 +166,25 @@ public class OrderService extends AbsOrderService {
 			// shopOrderId:"+order.getBarcode());
 			orderDTO.setExcState("1");
 			orderDTO.setExcDesc(e.getMessage());
+			//采购异常处理
+			doOrderExc(orderDTO);
 		}
+	}
+	
+	/**
+	 * 采购异常处理
+	 * @param orderDTO
+	 */
+	public void doOrderExc(OrderDTO orderDTO){
+		String reResult = setPurchaseOrderExc(orderDTO);
+		if("-1".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.NOHANDLE);
+		}else if("1".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+		}else if("0".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+		}
+		orderDTO.setExcState("0");
 	}
 	
 	private void refundlOrder(String status, ReturnOrderDTO deleteOrder) {
