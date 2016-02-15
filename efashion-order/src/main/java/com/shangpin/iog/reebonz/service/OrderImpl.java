@@ -1,6 +1,7 @@
 package com.shangpin.iog.reebonz.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -110,16 +111,15 @@ public class OrderImpl  extends AbsOrderService{
 		}else{
 			String rtnData = pushOrder(orderDTO);
 			logger.info("rtnData===="+rtnData);
+			System.out.println("rtnData===="+rtnData);
 			String [] data = rtnData.split("\\|");
 			String code = data[0];
 			String res = data[1];
-			System.out.println(res);
-			logger.info(res);
 			if("400".equals(code)){
 				Result result = new Gson().fromJson(res, Result.class);
 				if("400".equals(result.getReqCode())){
 					orderDTO.setExcDesc(result.getResult());
-					orderDTO.setExcState("1");
+					orderDTO.setExcState("0");
 					String reResult = setPurchaseOrderExc(orderDTO);
 					if("-1".equals(reResult)){
 						orderDTO.setStatus(OrderStatus.NOHANDLE);
@@ -150,13 +150,12 @@ public class OrderImpl  extends AbsOrderService{
 							}else if("0".equals(reResult)){
 								orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
 							}
-							
 						}
 					}
 				}
 			}else{
 				orderDTO.setExcDesc(res);
-				orderDTO.setExcState("1");
+				orderDTO.setExcState("0");
 				String reResult = setPurchaseOrderExc(orderDTO);
 				if("-1".equals(reResult)){
 					orderDTO.setStatus(OrderStatus.NOHANDLE);
@@ -172,7 +171,6 @@ public class OrderImpl  extends AbsOrderService{
 	private String pushOrder(OrderDTO orderDTO){
 		
 		String json = getJsonData(orderDTO);
-		logger.info("推送的url："+url);
 		logger.info("推送的数据："+json);
 		HttpResponse response = null;
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
@@ -251,7 +249,7 @@ public class OrderImpl  extends AbsOrderService{
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
 		// TODO Auto-generated method stub
-		
+		deleteOrder.setStatus(OrderStatus.REFUNDED);
 	}
 
 	@Override
@@ -288,24 +286,11 @@ public class OrderImpl  extends AbsOrderService{
 			}
 			item.setSize(size);
 			
-			String markPrice = null;
-			try {
-				Map tempmap = skuPriceService.getNewSkuPriceBySku(supplierId, skuNo);
-				Map map =(Map) tempmap.get(supplierId);
-				markPrice =(String) map.get(skuNo);
-		        if(!"-1".equals(markPrice)){
-		        	String price = markPrice.split("\\|")[1];
-		        	if(!"-1".equals(price)){
-		        		item.setPurchase_price(price);
-		        	}else{
-		        		item.setPurchase_price(orderDTO.getPurchasePriceDetail());
-		        	}
-		        	
-		        }else{
-		        	item.setPurchase_price(orderDTO.getPurchasePriceDetail());
-		        }
-			} catch (ServiceException e) {
-			}
+	    	
+	    	BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
+			String price = priceInt.divide(new BigDecimal(1.05),2).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
+			
+			item.setPurchase_price(price);
 			
 			Item [] i = {item};
 			obj.setItems(i);
@@ -320,13 +305,13 @@ public class OrderImpl  extends AbsOrderService{
 		}
 		
 	}
-	public static void main(String[] args) {
-		OrderImpl ompl = new OrderImpl();
-		OrderDTO orderDTO = new OrderDTO();
-		String d= "1201|09029100|1555|40:1";
-		orderDTO.setDetail(d);
-		orderDTO.setSpOrderId("2016021012");
-		orderDTO.setSpPurchaseDetailNo("123");
-		ompl.handleConfirmOrder(orderDTO);
-	}
+//	public static void main(String[] args) {
+//		OrderImpl ompl = new OrderImpl();
+//		OrderDTO orderDTO = new OrderDTO();
+//		String d= "1201|09029100|1555|40:1";
+//		orderDTO.setDetail(d);
+//		orderDTO.setSpOrderId("2016021012");
+//		orderDTO.setSpPurchaseDetailNo("123");
+//		ompl.handleConfirmOrder(orderDTO);
+//	}
 }
