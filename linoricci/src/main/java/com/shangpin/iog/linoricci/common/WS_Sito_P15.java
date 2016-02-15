@@ -10,6 +10,7 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.log4j.Logger;
 
 import java.io.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -525,14 +526,45 @@ public class WS_Sito_P15 {
 //        String skuData = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/NewOrder",
 //				param,new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
     	//http://2.118.242.149/ws_sito/ws_sito_p15.asmx/  http://185.5.180.90/ws_sito/ws_sito_p15.asmx
-        String priceData = HttpUtil45.post("http://185.5.180.90/ws_sito/ws_sito_p15.asmx/GetAllPricelistMarketplace",
-        		param,new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    	
+//    	
+//        String priceData = HttpUtil45.post("http://2.118.242.149/ws_sito/ws_sito_p15.asmx/GetAllAvailabilityMarketplace",
+//        		param,new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
+        logger.info("开始获取数据"+new Date().getTime());
         
-//        param.put("CODICE", "1066239979");
+        System.out.println("开始获取数据");
+        String post = HttpUtil45.post("http://185.5.180.90/ws_sito/ws_sito_p15.asmx/GetAllItemsMarketplace", new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
+        logger.info("获取结束"+new Date().getTime());
+        //        param.put("CODICE", "1066239979");
 //        param.put("ID_CLIENTE", "1066239979");
 //        param.put("ID_STATUS", "1");
 //		String post = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/SetStatusOrder", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
-		System.out.println(priceData);
+//		System.out.println(priceData);
+		System.out.println("开始保存数据");
+		File file = new File("/usr/local/app/DIVOSPU.txt");
+		if (!file.exists()) {
+			try {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		FileWriter fwriter = null;
+		try {
+			fwriter = new FileWriter("/usr/local/app/DIVOSPU.txt");
+			fwriter.write(post);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				fwriter.flush();
+				fwriter.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
         
         
     }
