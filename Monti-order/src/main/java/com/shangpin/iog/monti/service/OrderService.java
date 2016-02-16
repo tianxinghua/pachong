@@ -151,9 +151,12 @@ public class OrderService extends AbsOrderService {
 			//logger.info("Response ：" + rtnData + ", shopOrderId:" + order.getBarcode());
 
 			ResponseObject responseObject = gson.fromJson(rtnData, ResponseObject.class);
-			if ("ko".equals(responseObject.getStatus())) {
+			if ("ko".equals(responseObject.getStatus().toLowerCase())) {
 				orderDTO.setExcState("1");
 				orderDTO.setExcDesc(responseObject.getMessage().toString());
+				//采购异常处理
+				doOrderExc(orderDTO);
+				
 			} else if (OrderStatus.PLACED.equals(status)) {
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
 				orderDTO.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
@@ -163,7 +166,25 @@ public class OrderService extends AbsOrderService {
 			// shopOrderId:"+order.getBarcode());
 			orderDTO.setExcState("1");
 			orderDTO.setExcDesc(e.getMessage());
+			//采购异常处理
+			doOrderExc(orderDTO);
 		}
+	}
+	
+	/**
+	 * 采购异常处理
+	 * @param orderDTO
+	 */
+	public void doOrderExc(OrderDTO orderDTO){
+		String reResult = setPurchaseOrderExc(orderDTO);
+		if("-1".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.NOHANDLE);
+		}else if("1".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+		}else if("0".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+		}
+		orderDTO.setExcState("0");
 	}
 	
 	private void refundlOrder(String status, ReturnOrderDTO deleteOrder) {
@@ -185,7 +206,7 @@ public class OrderService extends AbsOrderService {
 		String rtnData = null;
 
 		ResponseObject response = gson.fromJson(rtnData2, ResponseObject.class);
-		if("HO".equals(response.getStatus())){
+		if("HO".equals(response.getStatus().toUpperCase())){
 			try {
 				 Map<String, String> map =new HashMap<String, String>();
 				 map.put("DBContext", dBContext);
@@ -202,7 +223,7 @@ public class OrderService extends AbsOrderService {
 				}
 
 				ResponseObject responseObject = gson.fromJson(rtnData, ResponseObject.class);
-				if ("OK".equals(responseObject.getStatus())) {
+				if ("OK".equals(responseObject.getStatus().toUpperCase())) {
 					deleteOrder.setExcState("0");
 					//deleteOrder.setExcDesc(responseObject.getMessage().toString());
 				} else {

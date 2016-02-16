@@ -137,6 +137,8 @@ public class OrderImpl extends AbsOrderService {
 				orderDTO.setExcDesc("下单失败==="+excDesc);
 				orderDTO.setExcState("1");
 				orderDTO.setExcTime(new Date());
+				//采购异常处理
+				doOrderExc(orderDTO);
 			}
 			
 			
@@ -146,8 +148,26 @@ public class OrderImpl extends AbsOrderService {
 			orderDTO.setExcTime(new Date());
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
+			//采购异常处理
+			doOrderExc(orderDTO);
 		}
 		
+	}
+	
+	/**
+	 * 采购异常处理
+	 * @param orderDTO
+	 */
+	public void doOrderExc(OrderDTO orderDTO){
+		String reResult = setPurchaseOrderExc(orderDTO);
+		if("-1".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.NOHANDLE);
+		}else if("1".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+		}else if("0".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+		}
+		orderDTO.setExcState("0");
 	}
 
 	/**
@@ -282,6 +302,8 @@ public class OrderImpl extends AbsOrderService {
 				orderDTO.setExcDesc("支付失败=="+excDesc);
 				orderDTO.setExcState("1");
 				orderDTO.setExcTime(new Date());
+				//采购异常处理
+				doOrderExc(orderDTO);
 			}
 			
 		}catch(Exception ex){
@@ -290,6 +312,8 @@ public class OrderImpl extends AbsOrderService {
 			orderDTO.setExcState("1");
 			orderDTO.setExcTime(new Date());
 			ex.printStackTrace();
+			//采购异常处理
+			doOrderExc(orderDTO);
 		}
 		
 	}
