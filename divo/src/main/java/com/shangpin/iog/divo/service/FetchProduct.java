@@ -61,6 +61,7 @@ public class FetchProduct {
     	Map<String,String> priceMap= new HashMap<String,String>();
         //获取产品信息
         logger.info("get product starting....");
+        System.out.println("get product starting....");
     	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
     										new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
@@ -69,6 +70,7 @@ public class FetchProduct {
     										new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
     	String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
     										new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
+    	System.out.println("save file");
     	
     	save("divoSPU.txt",spuData);
     	save("divoSKU.txt",skuData);
@@ -89,6 +91,7 @@ public class FetchProduct {
         logger.info("get product over");
         //映射数据并保存
         logger.info("save product into DB begin");
+        System.out.println("save product into DB begin");
         String data = "";
         
         //价格信息
