@@ -1,5 +1,8 @@
 package com.shangpin.iog.divo.service;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -66,7 +69,11 @@ public class FetchProduct {
     										new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
     	String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
     										new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
-
+    	
+    	save("divoSPU.txt",spuData);
+    	save("divoSKU.txt",skuData);
+    	
+    	
     	Date startDate,endDate= new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 		
@@ -290,4 +297,32 @@ public class FetchProduct {
 		}
         logger.info("save product into DB success");
     }  
+    
+    public void save(String name,String data){
+    	
+    	File file = new File("/usr/local/app/"+name);
+		if (!file.exists()) {
+			try {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		FileWriter fwriter = null;
+		try {
+			fwriter = new FileWriter("/usr/local/app/"+name);
+			fwriter.write(data);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				fwriter.flush();
+				fwriter.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+    }
 }
