@@ -75,7 +75,7 @@ public class FechProduct {
 			}
 
 			List<Item> items = readLocalCSV(Item.class, ';');
-			List<String> pics = new ArrayList<String>();
+			
 			if (items.size() > 0) {
 				for (Item item : items) {
 					try{
@@ -124,7 +124,7 @@ public class FechProduct {
 								e1.printStackTrace();
 							}
 						}
-
+						List<String> pics = new ArrayList<String>();
 						pics.add(item.getProductUrl1());
 						pics.add(item.getProductUrl2());
 						pics.add(item.getProductUrl3());
