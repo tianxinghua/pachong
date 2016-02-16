@@ -53,11 +53,19 @@ public class FetchProduct {
      * 得到产品信息并储存
      */
     public void fetchProductAndSave(){
-    	List<String> dataList = getDataList();
+    	
+    	//全部改用atelier
+/*    	List<String> dataList = getDataList();
     	Map<String, Map> dataMap = getDataMap(dataList);
     	Map<String,SkuDTO> skuMap = dataMap.get("sku");
     	Map<String,SpuDTO> spuMap = dataMap.get("spu");
-    	Map<String,String> imgMap = dataMap.get("img");
+    	Map<String,String> imgMap = dataMap.get("img");*/
+    	
+    	
+    	Map<String,SkuDTO> skuMap= new HashMap<String,SkuDTO>();
+      	Map<String,SpuDTO> spuMap= new HashMap<String,SpuDTO>();
+    	Map<String,String> imgMap= new HashMap<String,String>();
+    	
     	Map<String,Item> itemMap= new HashMap<String,Item>();
     	Map<String,String> priceMap= new HashMap<String,String>();
         //获取产品信息
