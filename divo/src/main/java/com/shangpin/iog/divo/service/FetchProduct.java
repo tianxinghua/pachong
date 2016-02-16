@@ -304,6 +304,7 @@ public class FetchProduct {
     public void save(String name,String data){
     	
     	File file = new File("/usr/local/app/"+name);
+//    	File file = new File("E://"+name);
 		if (!file.exists()) {
 			try {
 				file.getParentFile().mkdirs();
