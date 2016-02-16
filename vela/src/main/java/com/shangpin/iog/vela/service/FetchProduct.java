@@ -175,16 +175,7 @@ public class FetchProduct {
                 					}
                                     pfs.saveSKU(skudto);
 
-                                  //保存图片
-                	                List<String> imgList = new ArrayList<String>();
-                	                if (sku.getPictures() != null) {
-                	                    for (String  imageUrl: sku.getPictures()) {
-                	                        if (imageUrl != null ) {
-                	                        	imgList.add(imageUrl);
-                	                        }
-                	                    }
-                	                    pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);
-                	                }
+
 //                                    for(String image : sku.getPictures()){
 //                                        ProductPictureDTO pic = new ProductPictureDTO();
 //                                        pic.setPicUrl(image);
@@ -212,6 +203,18 @@ public class FetchProduct {
 
 
                                 }
+
+                                //保存图片
+                                List<String> imgList = new ArrayList<String>();
+                                if (sku.getPictures() != null) {
+                                    for (String  imageUrl: sku.getPictures()) {
+                                        if (imageUrl != null ) {
+                                            imgList.add(imageUrl);
+                                        }
+                                    }
+                                    pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);
+                                }
+
 
 
                             }

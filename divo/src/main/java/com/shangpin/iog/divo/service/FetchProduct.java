@@ -1,10 +1,12 @@
-package com.shangpin.iog.ostore.service;
+package com.shangpin.iog.divo.service;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
@@ -19,21 +21,20 @@ import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.divo.dto.Item;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.ostore.dto.Item;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 
 /**
  * Created by monkey on 2015/12/25.
  */
-@Component("atelierostore")
+@Component("atelierdivo")
 public class FetchProduct {
-    final Logger logger = Logger.getLogger(this.getClass());
+	private static Logger logger = Logger.getLogger("info");
     private static String supplierId;
     private static String url;
-    private static String oldurl;
 	public static int day;
     private static ResourceBundle bdl=null;
     static {
@@ -41,7 +42,6 @@ public class FetchProduct {
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         url = bdl.getString("url");
-        oldurl = bdl.getString("oldurl");
         day = Integer.valueOf(bdl.getString("day"));
     }
     @Autowired
@@ -53,15 +53,6 @@ public class FetchProduct {
      * 得到产品信息并储存
      */
     public void fetchProductAndSave(){
-    	
-    	//全部改用atelier
-/*    	List<String> dataList = getDataList();
-    	Map<String, Map> dataMap = getDataMap(dataList);
-    	Map<String,SkuDTO> skuMap = dataMap.get("sku");
-    	Map<String,SpuDTO> spuMap = dataMap.get("spu");
-    	Map<String,String> imgMap = dataMap.get("img");*/
-    	
-    	
     	Map<String,SkuDTO> skuMap= new HashMap<String,SkuDTO>();
       	Map<String,SpuDTO> spuMap= new HashMap<String,SpuDTO>();
     	Map<String,String> imgMap= new HashMap<String,String>();
@@ -70,6 +61,7 @@ public class FetchProduct {
     	Map<String,String> priceMap= new HashMap<String,String>();
         //获取产品信息
         logger.info("get product starting....");
+        System.out.println("get product starting....");
     	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
     										new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
@@ -78,7 +70,12 @@ public class FetchProduct {
     										new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
     	String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
     										new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
-
+    	System.out.println("save file");
+    	
+    	save("divoSPU.txt",spuData);
+    	save("divoSKU.txt",skuData);
+    	
+    	
     	Date startDate,endDate= new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 		
@@ -94,6 +91,7 @@ public class FetchProduct {
         logger.info("get product over");
         //映射数据并保存
         logger.info("save product into DB begin");
+        System.out.println("save product into DB begin");
         String data = "";
         
         //价格信息
@@ -301,88 +299,33 @@ public class FetchProduct {
 			}
 		}
         logger.info("save product into DB success");
-    }
-    public List<String> getDataList(){
-        OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-        timeConfig.confRequestOutTime(10*60*1000);
-        timeConfig.confConnectOutTime(10*60*1000);
-        timeConfig.confSocketOutTime(10*60*1000);
-        List<String> resultList = HttpUtil45.getContentListByInputSteam(oldurl, timeConfig, null, null, null);
-        //HttpUtil45.closePool();
-    	return resultList;
-    }
-    public Map<String,Map> getDataMap(List<String> resultList){
+    }  
+    
+    public void save(String name,String data){
     	
-    	Map<String,Map> returnMap= new HashMap<String,Map>();
-      	Map<String,SkuDTO> skuMap= new HashMap<String,SkuDTO>();
-      	Map<String,SpuDTO> spuMap= new HashMap<String,SpuDTO>();
-    	Map<String,String> imgMap= new HashMap<String,String>();
-        int i=0;
-        String stock="",size ="";
-        String skuId = "";
-        for(String content:resultList){
-            if(i==0){
-                i++;
-                continue;
-            }
-            i++;
-            //SKU;Brand;ModelName;Color;ColorFilter;Description;Materials;Sex;Category;Season;Price;Discount;Images;SizesFormat;Sizes
-            // 0 ;  1   ;  2      ;3    ;   4       ;    5      ;6        ;7  ;  8     ;  9   ;10   ; 11     ;  12  ;  13       ; 14
-            String[] contentArray = content.split(";");
-            if(null==contentArray||contentArray.length<15) continue;
-                SpuDTO spu = new SpuDTO();
-                spu.setId(UUIDGenerator.getUUID());
-                spu.setSupplierId(supplierId);
-                spu.setSpuId(contentArray[0]);
-                spu.setBrandName(contentArray[1]);
-                spu.setCategoryName(contentArray[8]);
-                spu.setSpuName(contentArray[2]);
-                if (contentArray[9].equals("P16")) {
-					continue;
-				}
-                spu.setSeasonId(contentArray[9]);
-                spu.setMaterial(contentArray[6]);
-                spu.setCategoryGender(contentArray[7]);
-                System.out.println(spu.getCategoryGender());
-                spuMap.put(spu.getSpuId(), spu);
-
-                String[] sizeArray = contentArray[14].split(",");
-
-                for(String sizeAndStock:sizeArray){
-                    if(sizeAndStock.contains("(")&&sizeAndStock.length()>1) {
-                        size = sizeAndStock.substring(0, sizeAndStock.indexOf("("));
-                        stock = sizeAndStock.substring(sizeAndStock.indexOf("(")+1, sizeAndStock.length() - 1);
-                        //System.out.println("库存"+stock);
-                    }
-                    SkuDTO sku  = new SkuDTO();
-                        sku.setId(UUIDGenerator.getUUID());
-                        sku.setSupplierId(supplierId);
-
-                        sku.setSpuId(contentArray[0]);
-                        skuId = contentArray[0] + "-"+size;
-                        if(skuId.indexOf("½")>0){
-                            skuId = skuId.replace("½","+");
-                        }
-                        sku.setSkuId(skuId);
-                        sku.setProductSize(size.replace("½","+"));
-                        sku.setMarketPrice(contentArray[10]);
-                        sku.setColor(contentArray[3]);
-                        sku.setProductDescription(contentArray[5]);
-                        sku.setStock(stock);
-                        skuMap.put(sku.getSkuId(), sku);
-                    imgMap.put(sku.getSkuId()+"|"+"dota1", contentArray[12]);
-                }
-        }
-        returnMap.put("sku", skuMap);
-        returnMap.put("spu", spuMap);
-        returnMap.put("img", imgMap);
-    	return returnMap;
-    }
-   
-    
-    
-    
-    public static void main(String[] args){
-        new FetchProduct().fetchProductAndSave();
+    	File file = new File("/usr/local/app/"+name);
+		if (!file.exists()) {
+			try {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		FileWriter fwriter = null;
+		try {
+			fwriter = new FileWriter("/usr/local/app/"+name);
+			fwriter.write(data);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				fwriter.flush();
+				fwriter.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
     }
 }
