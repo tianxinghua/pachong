@@ -146,6 +146,8 @@ public class OrderService extends AbsOrderService {
 			if (HttpUtil45.errorResult.equals(rtnData)) {
 				orderDTO.setExcState("1");
 				orderDTO.setExcDesc(rtnData);
+				//采购异常处理
+				doOrderExc(orderDTO);
 				return;
 			}
 			//logger.info("Response ：" + rtnData + ", shopOrderId:" + order.getBarcode());
