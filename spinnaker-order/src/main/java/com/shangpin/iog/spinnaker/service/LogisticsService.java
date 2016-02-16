@@ -54,11 +54,11 @@ public class LogisticsService extends AbsDeliverService{
 			 //String[] barcode = orderDTO.getDetail().split(":");
 			 map.put("DBContext", dBContext);
 			 map.put("purchase_no", orderDTO.getSpPurchaseNo());
-			 map.put("order_no", orderDTO.getSupplierOrderNo());
+			 map.put("order_no", orderDTO.getSpOrderId());
 			 map.put("key", key);
 			 //map.put("sellPrice", order.getSellPrice());
 			 rtnData = HttpUtil45.get(queryOrderUrl, defaultConfig , map);
-            logger.info("查询订单状态返回信息："+rtnData);
+            logger.info("purchase_no=" + orderDTO.getSpPurchaseNo()+";order_no="+ orderDTO.getSpOrderId() + " 查询订单状态返回信息："+rtnData);
         }catch (Exception e) {
         	e.printStackTrace();
         }
