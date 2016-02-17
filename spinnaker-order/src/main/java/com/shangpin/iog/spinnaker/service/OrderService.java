@@ -149,7 +149,7 @@ public class OrderService extends AbsOrderService {
 			 Map<String, String> map =new HashMap<String, String>();
 			 map.put("DBContext", dBContext);
 			 map.put("purchase_no", orderDTO.getSpPurchaseNo());
-			 map.put("order_no", orderDTO.getSupplierOrderNo());
+			 map.put("order_no", orderDTO.getSpOrderId());
 			 map.put("barcode", order.getBarcode());
 			 //map.put("barcode", "2004238900028");
 			 map.put("ordQty", order.getOrdQty());
@@ -172,23 +172,26 @@ public class OrderService extends AbsOrderService {
 				orderDTO.setExcState("1");
 				orderDTO.setExcDesc(responseObject.getMessage());
 			}else if ("ko".equals(responseObject.getStatus().toLowerCase())) {
-//				if("Error ! Quantity Not Availble".equals(responseObject.getMessage())){   //无库存
+            	orderDTO.setExcDesc(responseObject.getMessage());
+				if("Error !! Quantity Not Available.".equals(responseObject.getMessage())){   //无库存
+					orderDTO.setExcState("0");
+                 	this.setPurchaseExc(orderDTO);
+
+				}else if("Error !! Barcode Not Exist.".equals(responseObject.getMessage())){
+					orderDTO.setExcState("0");
+					this.setPurchaseExc(orderDTO);
+				}else{
+					orderDTO.setExcState("1");
+					orderDTO.setExcDesc(responseObject.getMessage().toString());
+				}
+//				if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
+//				    orderDTO.setExcState("0");
 //					this.setPurchaseExc(orderDTO);
 //
 //				}else{
 //					orderDTO.setExcState("1");
 //					orderDTO.setExcDesc(responseObject.getMessage().toString());
 //				}
-
-				if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
-//					this.setPurchaseExc(orderDTO);
-					orderDTO.setStatus(OrderStatus.NOHANDLE);
-					orderDTO.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
-
-				}else{
-					orderDTO.setExcState("1");
-					orderDTO.setExcDesc(responseObject.getMessage().toString());
-				}
 
 			} else {
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
@@ -209,7 +212,7 @@ public class OrderService extends AbsOrderService {
 			Map<String, String> map =new HashMap<String, String>();
 			 map.put("DBContext", dBContext);
 			 map.put("purchase_no", deleteOrder.getSpPurchaseNo());
-			 map.put("order_no", deleteOrder.getSupplierOrderNo());
+			 map.put("order_no", deleteOrder.getSpOrderId());
 			 map.put("key", key);
 			 rtnData2 = HttpUtil45.get(queryOrderUrl, defaultConfig , map);
 			logger.info("查询订单状态返回值:" + rtnData2);
@@ -228,7 +231,7 @@ public class OrderService extends AbsOrderService {
 				 Map<String, String> map =new HashMap<String, String>();
 				 map.put("DBContext", dBContext);
 				 map.put("purchase_no", deleteOrder.getSpPurchaseNo());
-				 map.put("order_no", deleteOrder.getSupplierOrderNo());
+				 map.put("order_no", deleteOrder.getSpOrderId());
 				 map.put("key", key);
 				 rtnData = HttpUtil45.get(cancelUrl, defaultConfig , map);
 				logger.info("推送采购单：" + deleteOrder.getSpPurchaseNo() + "退单返回结果==" + rtnData);

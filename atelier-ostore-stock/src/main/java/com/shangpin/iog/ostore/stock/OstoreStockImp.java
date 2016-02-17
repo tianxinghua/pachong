@@ -43,11 +43,15 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
     }
     @Override
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-    	Map<String, String> skuMap = getOldData();
+    	
+    	//不再使用老数据
+//    	Map<String, String> skuMap = getOldData();
+    	
+    	Map<String,String> skuMap = new HashMap<>();
     	int num = 0;
     	String data = "";
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
-				new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
+				new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
 		String[] skuStrings = skuData.split("\\r\\n");
 		for (int i = 1; i < skuStrings.length; i++) {
 			if (StringUtils.isNotBlank(skuStrings[i])) {
@@ -99,9 +103,9 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
         String url = "http://b2b.officinastore.com/shangpin.asp?mode=stock_only";
         
         OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-        timeConfig.confRequestOutTime(5*60*1000);
-        timeConfig.confConnectOutTime(1000*60*30);
-        timeConfig.confSocketOutTime(1000*60*30);
+        timeConfig.confRequestOutTime(120*60*1000);
+        timeConfig.confConnectOutTime(1000*60*120);
+        timeConfig.confSocketOutTime(1000*60*120);
         List<String> resultList = HttpUtil45.getContentListByInputSteam(url, timeConfig, null, null, null);
 
         int i=0;
