@@ -2,12 +2,14 @@ package com.shangpin.iog.stefaniamode.service;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
@@ -29,7 +31,9 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -51,8 +55,8 @@ public class FetchProduct {
 
 	public static String supplierId;
 
-	public static String zipUrl;
-
+//	public static String zipUrl;
+	public static String url;
 	public static int day;
 
 	static {
@@ -60,7 +64,8 @@ public class FetchProduct {
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
 		day = Integer.valueOf(bdl.getString("day"));
-		zipUrl = bdl.getString("zipUrl");
+//		zipUrl = bdl.getString("zipUrl");
+		url = bdl.getString("url");
 	}
 
 	@Autowired
@@ -84,14 +89,27 @@ public class FetchProduct {
 				e.printStackTrace();
 			}
 			
-			String[] urls = zipUrl.split(",");
-			for (String url : urls) {
-				xmlContent = FetchProduct.downLoadAndReadXml(url);
-				products = ObjectXMLUtil.xml2Obj(Products.class,xmlContent);
-				if (products.getProducts()!=null&&products.getProducts().size()>0) {
-					productList.addAll(products.getProducts());
+			String xml = null;
+			xml = HttpUtil45
+					.get(url,
+							new OutTimeConfig(1000 * 60*5, 1000 * 60*5, 1000 * 60*5),
+							null);
+			System.out.println(url);
+				ByteArrayInputStream is = null;
+				
+				try {
+					is = new ByteArrayInputStream(
+							xml.getBytes("UTF-8"));
+				} catch (UnsupportedEncodingException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
 				}
+			
+			products = ObjectXMLUtil.xml2Obj(Products.class,is);
+			if (products.getProducts()!=null&&products.getProducts().size()>0) {
+				productList.addAll(products.getProducts());
 			}
+			
 			for (Product product : productList) {
 				SpuDTO spu = new SpuDTO();
 
@@ -133,7 +151,6 @@ public class FetchProduct {
 						if(skuDTOMap.containsKey(sku.getSkuId())){
 							skuDTOMap.remove(sku.getSkuId());
 						}
-
 						productFetchService.saveSKU(sku);
 
 					} catch (ServiceException e) {
@@ -178,7 +195,6 @@ public class FetchProduct {
 					} catch (ServiceException e1) {
 						e1.printStackTrace();
 					}
-					e.printStackTrace();
 				}
 			}
 
