@@ -195,7 +195,6 @@ public class FetchProduct {
 					} catch (ServiceException e1) {
 						e1.printStackTrace();
 					}
-					e.printStackTrace();
 				}
 			}
 
