@@ -41,6 +41,8 @@ include 'atelier-ostore'
 
 include 'coltorti'
 
+include 'levelgroup-stock'
+
 
 
 
