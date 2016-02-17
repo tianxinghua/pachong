@@ -147,7 +147,7 @@ public class FetchProduct {
 						sku.setStock(item.getStock());
 						sku.setProductCode(product.getProducer_id());
 						sku.setSaleCurrency("EUR");
-
+						sku.setBarcode(item.getBarcode());
 						if(skuDTOMap.containsKey(sku.getSkuId())){
 							skuDTOMap.remove(sku.getSkuId());
 						}
