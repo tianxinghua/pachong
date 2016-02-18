@@ -68,6 +68,8 @@ public class FetchProduct {
 	private static String Uomo ;
 	private static String new1 ;
 	private static String new2 ;
+	private static String new3 ;
+	private static String new4 ;
 	private static String [] array;
 	static {
 		if (null == bdl)
@@ -83,7 +85,9 @@ public class FetchProduct {
 		Uomo = bdl.getString("Uomo");
 		new1 = bdl.getString("new1");
 		new2 = bdl.getString("new2");
-		array = new String[]{Designers,Donna,FlashSale,Highlights,NuoviArrivi,SpecialPrice,Spring,Uomo,new1,new2};
+		new3 = bdl.getString("new3");
+		new4 = bdl.getString("new4");
+		array = new String[]{Designers,Donna,FlashSale,Highlights,NuoviArrivi,SpecialPrice,Spring,Uomo,new1,new2,new3,new4};
 	}
 
 	/**
