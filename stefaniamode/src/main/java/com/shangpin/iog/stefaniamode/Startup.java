@@ -34,13 +34,6 @@ public class Startup {
 	public static String supplierId;
 
 	public static String zipUrl;
-	
-	static {
-		if (null == bdl)
-			bdl = ResourceBundle.getBundle("conf");
-		supplierId = bdl.getString("supplierId");
-		zipUrl = bdl.getString("zipUrl");
-	}
 
 	private static void loadSpringContext() {
 		factory = new AnnotationConfigApplicationContext(AppContext.class);

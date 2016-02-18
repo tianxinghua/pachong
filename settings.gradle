@@ -35,8 +35,8 @@ include 'iog-sop'
 
 include 'spinnaker-order'
 
-include 'efashion-order'
-include 'ostore'
+include 'atelier-ostore'
+
 include 'coltorti'
 
 
