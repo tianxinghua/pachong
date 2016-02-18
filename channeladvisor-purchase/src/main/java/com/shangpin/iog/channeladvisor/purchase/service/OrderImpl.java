@@ -38,7 +38,7 @@ public class OrderImpl extends AbsOrderService {
 	private static String supplierId = null;
 	private static String supplierNo = null;
 	private static String createOrderUrl = "https://api.channeladvisor.com/v1/Orders";
-	private static OutTimeConfig timeConfig = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
+	private static OutTimeConfig timeConfig = new OutTimeConfig(1000*5*60, 1000*60 * 5, 1000*60 * 5);
 	private static String access_token = "";
 	static {
 		if (null == bdl) {
@@ -118,6 +118,7 @@ public class OrderImpl extends AbsOrderService {
 				if(ex.getMessage().equals("状态码:401")){
 					access_token = UtilOfChannel.getNewToken(timeConfig);
 					handleSupplierOrder(orderDTO);
+					return;
 				}else{
 					result = HttpUtil45.errorResult;
 					excDesc = ex.getMessage();
@@ -270,6 +271,7 @@ public class OrderImpl extends AbsOrderService {
 						if(e.getMessage().equals("状态码:401")){//access_token过期
 							access_token = UtilOfChannel.getNewToken(timeConfig);
 							handleConfirmOrder(orderDTO);
+							return;
 						}else if(e.getMessage().equals("状态码:204")){//支付成功
 							
 							result = UtilOfChannel.SUCCESSFUL;
@@ -346,6 +348,7 @@ public class OrderImpl extends AbsOrderService {
 					if(e.getMessage().equals("状态码:401")){//access_token过期
 						access_token = UtilOfChannel.getNewToken(timeConfig);
 						handleCancelOrder(deleteOrder);
+						return;
 					}else if(e.getMessage().equals("状态码:204")){//取消成功
 						
 						rStr = UtilOfChannel.SUCCESSFUL;
@@ -413,6 +416,7 @@ public class OrderImpl extends AbsOrderService {
 					if(e.getMessage().equals("状态码:401")){
 						access_token = UtilOfChannel.getNewToken(timeConfig);
 						handleRefundlOrder(deleteOrder);
+						return;
 					}else if(e.getMessage().equals("状态码:204")){
 						
 						result = UtilOfChannel.SUCCESSFUL;
