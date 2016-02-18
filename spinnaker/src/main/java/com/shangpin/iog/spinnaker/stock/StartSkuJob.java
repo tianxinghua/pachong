@@ -40,7 +40,11 @@ public class StartSkuJob {
         log.info("----初始SPRING成功----");
         //拉取数据
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("spinnaker");
-        fetchProduct.fetchProductAndSave();
+        try {
+            fetchProduct.fetchProductAndSave();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         log.info("----拉取spinnaker数据完成----");
         System.out.println("-------fetch end---------");
         System.exit(0);

@@ -44,6 +44,8 @@ include 'coltorti'
 include 'levelgroup-stock'
 
 include 'stefaniamode'
+include 'stefaniamode-stock'
+include 'reebonzWiki'
 
 
 

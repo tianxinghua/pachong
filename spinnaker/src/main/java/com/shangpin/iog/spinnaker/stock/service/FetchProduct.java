@@ -97,6 +97,7 @@ public class FetchProduct {
 	                    try {
 	
 	                        json = HttpUtil45.get(url,outTimeConfig,null);
+							logger.info("json=" + json);
 	                    }catch (Exception e){
 	                        e.printStackTrace();
 	                    }
@@ -140,10 +141,10 @@ public class FetchProduct {
 	                                    //sku入库操作
 	                                    stock = sku.getStock();
 	                                    if(StringUtils.isBlank(stock)){
-	                                        continue;
+											stock="0";
 	                                    }else{
 	                                        if(Integer.valueOf(stock)<=0){
-	                                            continue;
+												stock="0";
 	                                        }
 	                                    }
 	                                    SkuDTO skudto = new SkuDTO();
