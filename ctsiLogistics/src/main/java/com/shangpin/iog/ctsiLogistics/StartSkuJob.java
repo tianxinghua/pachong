@@ -1,13 +1,8 @@
-package com.shangpin.iog.pavinGroup;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-
+package com.shangpin.iog.ctsiLogistics;
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.pavinGroup.service.FetchProduct;
+
+
+import com.shangpin.iog.ctsiLogistics.service.FetchProduct;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -25,14 +20,15 @@ public class StartSkuJob {
         factory = new AnnotationConfigApplicationContext(AppContext.class);
     }
     public static void main(String[] args){
+        //鍔犺浇spring
         loadSpringContext();
-          log.info("----初始SPRING成功----");
+        log.info("--------spring初始化成功------");
         //鎷夊彇鏁版嵁
-        log.info("----拉取数据开始----");   
+        log.info("----拉取数据开始----");              
         System.out.println("-------fetch start---------");
-        FetchProduct fetchProduct =(FetchProduct)factory.getBean("pavinGroup");
+        FetchProduct fetchProduct =(FetchProduct)factory.getBean("ctsilog");
         fetchProduct.fetchProductAndSave();
-        log.info("----拉取数据接受----");   
+        log.info("----拉取数据结束----");
         System.out.println("-------fetch end---------");
         System.exit(0);
     }

@@ -36,11 +36,17 @@ import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.pavinGroup.dto.Channel;
 import com.shangpin.iog.pavinGroup.dto.Item;
 import com.shangpin.iog.pavinGroup.dto.Rss;
+import com.shangpin.iog.pavinGroup.util.HttpResponse;
+import com.shangpin.iog.pavinGroup.util.HttpUtils;
 import com.shangpin.iog.service.EventProductService;
 import com.shangpin.iog.service.ProductFetchService;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,45 +64,44 @@ public class FetchProduct {
 	private static Logger logger = Logger.getLogger("info");
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
-	private static String Designers;
-	private static String Donna;
-	private static String FlashSale;
-	private static String Highlights ;
-	private static String NuoviArrivi	;
-	private static String SpecialPrice;
-	private static String Spring;
-	private static String Uomo ;
-	private static String new1 ;
-	private static String new2 ;
-	private static String [] array;
+	private static String uri;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
-		Designers = bdl.getString("Designers");
-		Donna = bdl.getString("Donna");
-		FlashSale = bdl.getString("FlashSale");
-		Highlights = bdl.getString("Highlights");
-		NuoviArrivi = bdl.getString("NuoviArrivi");
-		SpecialPrice = bdl.getString("SpecialPrice");
-		Spring = bdl.getString("Spring");
-		Uomo = bdl.getString("Uomo");
-		new1 = bdl.getString("new1");
-		new2 = bdl.getString("new2");
-		array = new String[]{Designers,Donna,FlashSale,Highlights,NuoviArrivi,SpecialPrice,Spring,Uomo,new1,new2};
+		uri = bdl.getString("uri");
 	}
-
+	private List<String> getCategoryUrl() {
+		List<String> list = new ArrayList<String>();
+		try {
+			HttpResponse response = HttpUtils.get(uri);
+			if (response.getStatus()==200) {
+				String htmlContent = response.getResponse();
+				Document doc = Jsoup.parse(htmlContent);
+				Elements ele1 = doc.select("#rss-table-category");
+				Elements categorys = ele1.select("a[href]");
+				for (Element category : categorys) {
+					String url = category.attr("href");
+					System.out.println(url);
+					list.add(url);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 	/**
 	 * fetch product and save into db
 	 */
 	public void fetchProductAndSave() {
-		
+		List<String> array = getCategoryUrl();
 		List<Rss> list = null;
 		try {
-				for(int i=0;i<array.length;i++){
+				for(int i=0;i<array.size();i++){
 					list = new ArrayList<Rss>();
 					System.out.println("-------------------------第"+(i+1)+"个开始--------------------------------");
-					fetchProduct(array[i]);
+					fetchProduct(array.get(i));
 					System.out.println("-------------------------第"+(i+1)+"个结束--------------------------------");
 				} 
 			}
