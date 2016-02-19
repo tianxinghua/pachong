@@ -173,25 +173,25 @@ public class OrderService extends AbsOrderService {
 				orderDTO.setExcDesc(responseObject.getMessage());
 			}else if ("ko".equals(responseObject.getStatus().toLowerCase())) {
             	orderDTO.setExcDesc(responseObject.getMessage());
-				if("Error !! Quantity Not Available.".equals(responseObject.getMessage())){   //无库存
-					orderDTO.setExcState("0");
-                 	this.setPurchaseExc(orderDTO);
-
-				}else if("Error !! Barcode Not Exist.".equals(responseObject.getMessage())){
-					orderDTO.setExcState("0");
-					this.setPurchaseExc(orderDTO);
-				}else{
-					orderDTO.setExcState("1");
-					orderDTO.setExcDesc(responseObject.getMessage().toString());
-				}
-//				if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
-//				    orderDTO.setExcState("0");
-//					this.setPurchaseExc(orderDTO);
+//				if("Error !! Quantity Not Available.".equals(responseObject.getMessage())){   //无库存
+//					orderDTO.setExcState("0");
+//                 	this.setPurchaseExc(orderDTO);
 //
+//				}else if("Error !! Barcode Not Exist.".equals(responseObject.getMessage())){
+//					orderDTO.setExcState("0");
+//					this.setPurchaseExc(orderDTO);
 //				}else{
 //					orderDTO.setExcState("1");
 //					orderDTO.setExcDesc(responseObject.getMessage().toString());
 //				}
+				if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
+				    orderDTO.setExcState("0");
+					this.setPurchaseExc(orderDTO);
+
+				}else{
+					orderDTO.setExcState("1");
+					orderDTO.setExcDesc(responseObject.getMessage().toString());
+				}
 
 			} else {
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
