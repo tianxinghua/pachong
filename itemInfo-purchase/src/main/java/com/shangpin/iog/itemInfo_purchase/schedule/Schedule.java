@@ -17,7 +17,12 @@ public class Schedule {
 	
 	@Scheduled(cron="${jobsSchedule}")
 	public void start(){
-		orderService.start();
+		orderService.loopExecute();
+	}
+	
+	@Scheduled(cron = "0 0/2  * * * ? ")
+	public void confirmOrder() {
+		orderService.confirmOrder();
 	}
 	
 }

@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
+import javax.mail.MessagingException;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPMessage;
 
@@ -23,6 +24,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.ice.ice.OrderService;
 import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
@@ -39,89 +41,55 @@ public class OrderSreviceImpl extends AbsOrderService {
 	@Autowired
     com.shangpin.iog.service.OrderService productOrderService;
 	
-	private static String serviceUrl = "http://service.alducadaosta.com/EcSrv/Services.asmx?op=InsertOrder";
-	private static String sopAction = "http://service.alducadaosta.com/EcSrv/InsertOrder";
-	private static String contentType = "text/xml; charset=utf-8"; //或者    application/soap+xml; charset=utf-8
-	private static String soapRequestData = "";
+	private static String serviceUrl = "";
+	private static String sopAction = "";
+	private static String contentType = ""; //或者    application/soap+xml; charset=utf-8
+	private static String identifier = "";
+	
+	private static String fromEmail = "";
+	private static String toEmail = "";
+	private static String emailPass = "";
 	
 	private static ResourceBundle bdl=null;
-    private static String supplierId;
-    private static String key ;
+    private static String supplierId = "";
+    private static String supplierNo = "";
+   
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
-        key = bdl.getString("key");
+        supplierNo = bdl.getString("supplierNo");
+        serviceUrl = bdl.getString("serviceUrl");
+        sopAction = bdl.getString("sopAction");
+        contentType = bdl.getString("contentType");
+        identifier = bdl.getString("identifier");
+        fromEmail = bdl.getString("fromEmail");
+        toEmail = bdl.getString("toEmail");
+        emailPass = bdl.getString("emailPass");
+        
     }
     
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
 	
-    public void start(){
-    	this.checkoutOrderFromSOP(supplierId, "", false);
-    }
+    /**
+	 * 下订单
+	 */
+	public void loopExecute() {
+		this.checkoutOrderFromWMS(supplierNo, supplierId, true);
+	}
+
+	/**
+	 * 确认支付
+	 */
+	public void confirmOrder() {
+		this.confirmOrder(supplierId);
+	}
 	
 	@Override
 	public void handleSupplierOrder(OrderDTO spOrder) {
-		String order = spOrder.getSpOrderId();
-		try{
-			
-			String[] sku_stocks = spOrder.getDetail().split(",");
-			for(String sku_stock : sku_stocks){
-				String[] tem = sku_stock.split(":");
-				soapRequestData =  "<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
-									"<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">"+
-									"  <soap12:Body>"+
-									"    <InsertOrder xmlns=\"http://service.alducadaosta.com/EcSrv\">"+
-									"      <Identifier>Mosu</Identifier>"+
-									"      <Order>"+order+"</Order>"+     //"+order+"
-									"      <SkuID>"+tem[0].trim()+"</SkuID>"+
-									"      <Quantity>"+tem[1].trim()+"</Quantity>"+  //
-									"    </InsertOrder>"+
-									"  </soap12:Body>"+
-									"</soap12:Envelope>";
-				System.out.println(soapRequestData);
-				try{
-					
-					String str = SoapXmlUtil.getSoapXml(serviceUrl, sopAction, contentType, soapRequestData);
-					System.out.println("str=====" +str);
-					if(str != null){
-						String startStr = "<InsertOrderResult>";
-						String endStr = "</InsertOrderResult>";
-						String retMessage = str.substring(str.indexOf(startStr)+startStr.length(), str.indexOf(endStr));
-						if(retMessage.equals("OK")){//下单成功
-							spOrder.setStatus(OrderStatus.PAYED);
-							System.out.println("下单成功*********");
-						}else if(retMessage.equals("Fail, No Stock!")){//下单失败，无库存
-							logger.info("下单失败：该商品没有库存("+retMessage+") ");
-						}else if(retMessage.equals("OK, but only: 1")){//下单失败，库存不够
-							logger.info("下单失败：库存只有 1 件("+retMessage+") ");
-						}else{
-							logger.info("下单失败："+retMessage);
-						}
-					}else{
-						spOrder.setExcState("1");
-						spOrder.setExcDesc("采购单："+order+" 在请求验证时发生错误，未返回响应信息");
-						loggerError.error("采购单："+order+" 在请求验证时发生错误，未返回响应信息");
-					}
-					
-				}catch(Exception e){
-					//下单失败
-					spOrder.setExcState("1");
-					spOrder.setExcDesc("未知错误...\n"+e.getMessage());
-		            loggerError.error("采购单："+order+" 下单返回转化失败");
-		            e.printStackTrace();
-				}
-			}
-			
-		}catch(Exception ex){
-			//下单失败
-			spOrder.setExcState("1");
-			spOrder.setExcDesc("未知错误...\n"+ex.getMessage());
-            loggerError.error("采购单："+order+" 下单返回转化失败");
-            ex.printStackTrace();
-		}
+		spOrder.setStatus(OrderStatus.PLACED);
 	}
 	
 
@@ -130,13 +98,87 @@ public class OrderSreviceImpl extends AbsOrderService {
 	 */
 	@Override
 	public void handleConfirmOrder(OrderDTO spOrder) {
+		String order = spOrder.getSpPurchaseNo();
+		try{
+			
+			String[] sku_stocks = spOrder.getDetail().split(",");
+			for(String sku_stock : sku_stocks){
+				String[] tem = sku_stock.split(":");
+				String soapRequestData =  "<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
+									"<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">"+
+									"  <soap12:Body>"+
+									"    <InsertOrder xmlns=\"http://service.alducadaosta.com/EcSrv\">"+
+									"      <Identifier>"+identifier+"</Identifier>"+
+									"      <Order>"+order+"</Order>"+     //"+order+"
+									"      <SkuID>"+tem[0].trim()+"</SkuID>"+
+									"      <Quantity>"+tem[1].trim()+"</Quantity>"+  //
+									"    </InsertOrder>"+
+									"  </soap12:Body>"+
+									"</soap12:Envelope>";
+				logger.info("推送的订单=========="+soapRequestData);
+				try{
+					
+					String str = SoapXmlUtil.getSoapXml(serviceUrl, sopAction, contentType, soapRequestData);
+					logger.info("返回的结果========" +str);
+					if(StringUtils.isNotBlank(str)){ 
+						String startStr = "<InsertOrderResult>";
+						String endStr = "</InsertOrderResult>";
+						String retMessage = str.substring(str.indexOf(startStr)+startStr.length(), str.indexOf(endStr));
+						logger.info("retMessage===="+retMessage);						
+						if(retMessage.toUpperCase().equals("OK")){//下单成功
+							spOrder.setStatus(OrderStatus.CONFIRMED);
+						}else{//下单失败，无库存
+							spOrder.setExcState("0");
+							spOrder.setExcDesc("下单失败："+retMessage);
+							doOrderExc(spOrder);
+						}
+					}else{
+						spOrder.setExcState("0");
+						spOrder.setExcDesc("采购单："+order+" 在请求验证时发生错误，未返回响应信息");
+						loggerError.error("采购单："+order+" 在请求验证时发生错误，未返回响应信息");
+						doOrderExc(spOrder);
+					}
+					
+				}catch(Exception e){
+					//下单失败
+					spOrder.setExcState("0");
+					spOrder.setExcDesc("发生异常:"+e.getMessage());
+		            loggerError.error("发生异常:"+e.getMessage());
+		            e.printStackTrace();
+		            doOrderExc(spOrder);
+				}
+			}
+			
+		}catch(Exception ex){
+			//下单失败
+			spOrder.setExcState("0");
+			spOrder.setExcDesc(ex.getMessage());
+            loggerError.error(ex);
+            ex.printStackTrace();
+            doOrderExc(spOrder);
+		}
 		
-		
+	}
+	
+	/**
+	 * 采购异常处理
+	 * @param orderDTO
+	 */
+	public void doOrderExc(OrderDTO orderDTO){
+		String reResult = setPurchaseOrderExc(orderDTO);
+		if("-1".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.NOHANDLE);
+		}else if("1".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+		}else if("0".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+		}
+		orderDTO.setExcState("0");
 	}
 
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
-		// TODO Auto-generated method stub
+		deleteOrder.setStatus(OrderStatus.CANCELLED);
 		
 	}
 
@@ -149,8 +191,21 @@ public class OrderSreviceImpl extends AbsOrderService {
 
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
-		// TODO Auto-generated method stub
+		deleteOrder.setStatus(OrderStatus.REFUNDED);
 		
+		//发邮件
+		try {
+			String content = "退款订单编号："+deleteOrder.getSpOrderId()+"\n"
+							+"采购单号："+deleteOrder.getSpPurchaseNo()+"\n"
+							+"时间："+deleteOrder.getCreateTime()+"\n"
+							+"供货商的订单编号："+deleteOrder.getSupplierOrderNo();
+			SendMail.sendGroupMail("smtp.shangpin.com",fromEmail,emailPass,toEmail,
+					"alducadaosta退款订单",
+					content,"text/html;charset=utf-8");
+		} catch (MessagingException e) {
+			loggerError.error(e);
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -162,9 +217,9 @@ public class OrderSreviceImpl extends AbsOrderService {
 //	public static void main(String[] args){
 //		OrderSreviceImpl o = new OrderSreviceImpl();
 //		OrderDTO spOrder = new OrderDTO();
-//		spOrder.setSpOrderId("Mosu Test");
-//		spOrder.setDetail("910042603901:1");
-//		o.handleSupplierOrder(spOrder);
-//		o.start();
+//		spOrder.setSpPurchaseNo("CGD2016021300");
+//		spOrder.setDetail("203275406502:1");
+//		o.handleConfirmOrder(spOrder);
+//		
 //	}
 }
