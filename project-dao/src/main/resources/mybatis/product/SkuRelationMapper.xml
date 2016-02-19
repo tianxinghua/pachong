@@ -76,6 +76,23 @@
 
     </select>
 
+
+
+    <select id="getSkuRelationBySupplierIdAndSkuId"  resultMap="skuMap">
+        select
+        SUPPLIER_ID ,
+        SOP_NO,
+        SOP_SKU_ID,
+        SUPPLIER_SKU_ID,
+        CREATE_TIME
+        from SKU_RELATION
+
+        where   SUPPLIER_ID = #{supplierId} and  SOP_SKU_ID=#{sopSkuId}
+
+    </select>
+
+
+
     <select id="getSkuRelationBySupplierSkuId"  resultMap="skuMap">
         select
         SUPPLIER_ID ,

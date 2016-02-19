@@ -38,6 +38,13 @@ public interface SkuRelationMapper extends IBaseDao<SkuRelationDTO> {
     public SkuRelationDTO getSkuRelationBySopSkuId(@Param("sopSkuId") String sopSkuId);
 
     /**
+     * 根据门户号和尚品的SKUID获取对照关系
+     * @param sopSkuId
+     * @return
+     */
+    public SkuRelationDTO   getSkuRelationBySupplierIdAndSkuId(@Param("supplierId") String supplierId,@Param("sopSkuId") String sopSkuId);
+
+    /**
      * 获取对照关系
      * @param supplierId   供货商门户编号
      * @param supplierSkuNo 供货商SKU编号
