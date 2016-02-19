@@ -38,6 +38,17 @@ public interface SkuRelationService {
      */
     public SkuRelationDTO  getSkuRelationBySkuId(String skuId)  throws  ServiceException;
 
+
+
+    /**
+     * 根据门户编号 和 尚品SKUID 获取对照关系
+     * @param supplier :门户编号
+     * @param skuId ：尚品SKUID
+     * @return
+     * @throws ServiceException
+     */
+    public SkuRelationDTO  getSkuRelationBySupplierIdAndSkuId(String supplier,String skuId)  throws  ServiceException;
+
     /**
      * 根据供货商门户ID和供货商SKUNO获取对照关系
      * @param supplier
