@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -125,7 +126,11 @@ public class FechProduct {
 	                spu.setCategoryGender(item.getGender());
 	                spu.setCategoryName(item.getCategory_name());
 	                spu.setBrandName(item.getBrand_name());
-	                spu.setMaterial(item.getComposition());
+	                String material = item.getComposition();
+	                if(StringUtils.isBlank(material)){
+	                	material = item.getMaterial();
+	                }
+	                spu.setMaterial(material);
 	                //spu.setProductOrigin(item.get);
 	                try {
 	                    productFetchService.saveSPU(spu);
