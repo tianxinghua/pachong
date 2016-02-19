@@ -233,20 +233,25 @@ public abstract class AbsUpdateProductStock {
 		
 		int failCount=0;
 		Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
+
 		logger.warn("待更新的数据总和：--------"+toUpdateIce.size());
 		loggerInfo.info("待更新的数据总和：--------"+toUpdateIce.size());
 		ApiResponse<Boolean>  result =null;
 		StockInfo request_body = null;
+
 		while (null!=iter&&iter.hasNext()) {
+
 			Entry<String, Integer> entry = iter.next();
+
 
 			try{
 				logger.warn("待更新的数据：--------"+entry.getKey()+":"+entry.getValue());
 				request_body = new StockInfo();
 				request_body.setSkuNo(entry.getKey());
-				request_body.setInventoryQuantity(entry.getValue());
+				request_body.setInventoryQuantity(entry.getValue()<0?0:entry.getValue());
 				 result = SpClient.UpdateStock(host, app_key, app_secret, new Date(), request_body);
 			}catch(Exception e){
+				loggerInfo.info("更新sku错误： " +e.getMessage());
 				logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
 				loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+" " + e.getMessage());
 			}

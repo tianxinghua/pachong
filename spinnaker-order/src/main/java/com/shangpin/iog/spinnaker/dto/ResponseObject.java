@@ -9,7 +9,7 @@ public class ResponseObject {
 	private String Message;
 	
 	private String Date_Order;
-	private String Logistics_company;
+	private String logistics_company;
 	private String Trk_Number;
 	
 	public Integer getId_b2b_order() {
@@ -49,12 +49,15 @@ public class ResponseObject {
 	public void setDate_Order(String date_Order) {
 		Date_Order = date_Order;
 	}
+
 	public String getLogistics_company() {
-		return Logistics_company;
+		return logistics_company;
 	}
+
 	public void setLogistics_company(String logistics_company) {
-		Logistics_company = logistics_company;
+		this.logistics_company = logistics_company;
 	}
+
 	public String getTrk_Number() {
 		return Trk_Number;
 	}

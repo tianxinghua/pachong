@@ -11,12 +11,18 @@ import com.shangpin.iog.dto.EventProductDTO;
 import com.shangpin.iog.pavinGroup.dto.Channel;
 import com.shangpin.iog.pavinGroup.dto.Item;
 import com.shangpin.iog.pavinGroup.dto.Rss;
+import com.shangpin.iog.pavinGroup.util.HttpResponse;
+import com.shangpin.iog.pavinGroup.util.HttpUtils;
 import com.shangpin.iog.product.service.EventProductServiceImpl;
 import com.shangpin.iog.service.EventProductService;
 
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -47,35 +53,15 @@ public class StockImp extends AbsUpdateProductStock {
 	EventProductService eventProductService;
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
-	private static String Designers;
-	private static String Donna;
-	private static String FlashSale;
-	private static String Highlights ;
-	private static String NuoviArrivi	;
-	private static String SpecialPrice;
-	private static String Spring;
-	private static String Uomo ;
-	private static String [] array;
-	private static Map<String,String>	map = null;
-	private static String new1 ;
-	private static String new2 ;
+	private static String uri;
+	private static Map<String,String>  map = null;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
-		Designers = bdl.getString("Designers");
-		Donna = bdl.getString("Donna");
-		FlashSale = bdl.getString("FlashSale");
-		Highlights = bdl.getString("Highlights");
-		NuoviArrivi = bdl.getString("NuoviArrivi");
-		SpecialPrice = bdl.getString("SpecialPrice");
-		Spring = bdl.getString("Spring");
-		Uomo = bdl.getString("Uomo");
-		new1 = bdl.getString("new1");
-		new2 = bdl.getString("new2");
-		array = new String[]{Designers,Donna,FlashSale,Highlights,NuoviArrivi,SpecialPrice,Spring,Uomo,new1,new2};
+		uri = bdl.getString("uri");
 	}
-   
+	
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //get tony return date
@@ -94,13 +80,33 @@ public class StockImp extends AbsUpdateProductStock {
         return stockMap;
     }
 	public static void fetchProductStcok() {
+		List<String> array = getCategoryUrl();
 		map = new HashMap<String,String>();
 		String xml = null;
-		for(int i=0;i<array.length;i++){
-			fetchProduct(array[i]);
+		for(int i=0;i<array.size();i++){
+			fetchProduct(array.get(i));
 		}
 	}
-	
+	private static List<String> getCategoryUrl() {
+		List<String> list = new ArrayList<String>();
+		try {
+			HttpResponse response = HttpUtils.get(uri);
+			if (response.getStatus()==200) {
+				String htmlContent = response.getResponse();
+				Document doc = Jsoup.parse(htmlContent);
+				Elements ele1 = doc.select("#rss-table-category");
+				Elements categorys = ele1.select("a[href]");
+				for (Element category : categorys) {
+					String url = category.attr("href");
+					System.out.println(url);
+					list.add(url);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 	private static void fetchProduct(String url){
 		
 		try {

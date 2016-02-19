@@ -97,6 +97,7 @@ public class FetchProduct {
 	                    try {
 	
 	                        json = HttpUtil45.get(url,outTimeConfig,null);
+							logger.info("json=" + json);
 	                    }catch (Exception e){
 	                        e.printStackTrace();
 	                    }
@@ -140,10 +141,10 @@ public class FetchProduct {
 	                                    //sku入库操作
 	                                    stock = sku.getStock();
 	                                    if(StringUtils.isBlank(stock)){
-	                                        continue;
+											stock="0";
 	                                    }else{
 	                                        if(Integer.valueOf(stock)<=0){
-	                                            continue;
+												stock="0";
 	                                        }
 	                                    }
 	                                    SkuDTO skudto = new SkuDTO();
@@ -160,7 +161,7 @@ public class FetchProduct {
 	                                    }else{
 	                                        skudto.setProductSize(sku.getItem_size());
 	                                    }
-	                                    skudto.setSkuId(sku.getItem_id());
+	                                    skudto.setSkuId(sku.getBarcode());  //sku.getItem_id()
 	                                    itemID = sku.getItem_id();
 	                                    priceUrl = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetPriceByItemID?DBContext="+database+"&ItemID="+itemID+"&key=8IZk2x5tVN";
 	                                    try {
@@ -187,16 +188,7 @@ public class FetchProduct {
 	                						}
 	                                        pfs.saveSKU(skudto);
 	                                        
-	                                      //保存图片
-	                    	                List<String> imgList = new ArrayList<String>();
-	                    	                if (sku.getPictures() != null) {
-	                    	                    for (String  imageUrl: sku.getPictures()) {
-	                    	                        if (imageUrl != null ) {
-	                    	                        	imgList.add(imageUrl);	                        	
-	                    	                        }
-	                    	                    }
-	                    	                    pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);
-	                    	                }
+
 	//                                        for(String image : sku.getPictures()){
 	//                                            ProductPictureDTO pic = new ProductPictureDTO();
 	//                                            pic.setPicUrl(image);
@@ -222,7 +214,16 @@ public class FetchProduct {
 	                                        }
 	
 	                                    }
-	
+										//保存图片
+										List<String> imgList = new ArrayList<String>();
+										if (sku.getPictures() != null) {
+											for (String  imageUrl: sku.getPictures()) {
+												if (imageUrl != null ) {
+													imgList.add(imageUrl);
+												}
+											}
+											pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);
+										}
 	
 	                                }
 	                            }

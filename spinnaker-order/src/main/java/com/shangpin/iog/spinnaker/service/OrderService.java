@@ -255,6 +255,9 @@ public class OrderService extends AbsOrderService {
 				deleteOrder.setExcState("1");
 				deleteOrder.setExcDesc(e.getMessage());
 			}
+		}else{
+			loggerError.error("采购单"+deleteOrder.getSpPurchaseNo()+"用户退款,供货商状态已变，无法通知。");
+			deleteOrder.setExcDesc("采购单"+deleteOrder.getSpPurchaseNo()+"用户退款,供货商状态已变，无法通知。");
 		}
 		
 		
