@@ -1,8 +1,11 @@
 package com.shangpin.iog.divo.service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,6 +63,8 @@ public class FetchProduct {
     	Map<String,Item> itemMap= new HashMap<String,Item>();
     	Map<String,String> priceMap= new HashMap<String,String>();
         //获取产品信息
+    	
+    	
         logger.info("get product starting....");
         System.out.println("get product starting....");
     	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
@@ -70,11 +75,6 @@ public class FetchProduct {
     										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
     	String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
     										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
-    	System.out.println("save file");
-    	
-    	save("divoSPU.txt",spuData);
-    	save("divoSKU.txt",skuData);
-    	
     	
     	Date startDate,endDate= new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
@@ -124,7 +124,12 @@ public class FetchProduct {
 				spuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
 				SpuDTO spu = new SpuDTO();
 				Item item = new Item();
-			   item.setColor(StringUtils.isBlank(spuArr[10])?spuArr[4]:spuArr[10]);
+//			   item.setColor(StringUtils.isBlank(spuArr[10])?spuArr[4]:spuArr[10]);
+			   //设置成颜色码
+			   String color = spuArr[4].split(" ")[1];
+			   color = StringUtils.isBlank(color)?"":color;
+			   
+			   item.setColor(color);
 			   item.setSupplierPrice(spuArr[16]);
 			   item.setDescription(spuArr[15]);
 			   item.setSpuId(spuArr[0]);
@@ -137,6 +142,7 @@ public class FetchProduct {
 			   spu.setId(UUIDGenerator.getUUID());
                spu.setSupplierId(supplierId);
                spu.setSpuId(spuArr[0]);
+               //TODO  品牌名更改
                spu.setBrandName(spuArr[2]);
                spu.setCategoryName(spuArr[8]);
                spu.setSeasonId(spuArr[1]);
@@ -271,18 +277,10 @@ public class FetchProduct {
 		}
 		//=======================处理图片==========================
 		for (Entry<String, String> entry : imgMap.entrySet()) {
-			if (entry.getKey().contains("dota1")) {
-				String imgUrls = entry.getValue();
-				if (StringUtils.isNotBlank(imgUrls)) {
-					String[] imgUrlArr = imgUrls.split(",");
-					productFetchService.savePicture(supplierId, null, entry.getKey().split("|")[0], Arrays.asList(imgUrlArr));
-				}
-			}else{
-				String imgUrls = entry.getValue();
-				if (StringUtils.isNotBlank(imgUrls)) {
-					String[] imgUrlArr = imgUrls.split(",");
-					productFetchService.savePicture(supplierId, entry.getKey(), null, Arrays.asList(imgUrlArr));
-				}
+			String imgUrls = entry.getValue();
+			if (StringUtils.isNotBlank(imgUrls)) {
+				String[] imgUrlArr = imgUrls.split(",");
+				productFetchService.savePicture(supplierId, entry.getKey(), null, Arrays.asList(imgUrlArr));
 			}
 		}
 		
@@ -329,4 +327,5 @@ public class FetchProduct {
 			}
 		}
     }
+    
 }
