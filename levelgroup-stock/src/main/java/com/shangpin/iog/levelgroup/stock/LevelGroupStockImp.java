@@ -59,7 +59,7 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
         mongMap.put("supplierId",supplierId);
         mongMap.put("supplierName","levelgroup");
 
-        logMongo.info(mongMap);
+//        logMongo.info(mongMap);
 
         for (String skuno : skuNo) {
             String stock = getStock(skuno);

@@ -6,6 +6,7 @@
 	<typeAliases>
 		<!-- promotion database -->
 		<typeAlias alias="iog_product" type="com.shangpin.iog.dto.ProductDTO" />
+		<typeAlias alias="iog_spec_product" type="com.shangpin.iog.dto.ProductOfSpecDTO" />
         <typeAlias alias="iog_spu" type="com.shangpin.iog.dto.SpuDTO" />
         <typeAlias alias="iog_sku" type="com.shangpin.iog.dto.SkuDTO" />
 		<typeAlias alias="iog_sku_relation" type="com.shangpin.iog.dto.SkuRelationDTO" />

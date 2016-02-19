@@ -1,6 +1,7 @@
 
 dependencies {
     compile(
+          "org.jsoup:jsoup:1.8.3",
             "org.mybatis:mybatis:3.2.2",
             "org.mybatis:mybatis-spring:1.2.0",
             "mysql:mysql-connector-java:5.1.21",

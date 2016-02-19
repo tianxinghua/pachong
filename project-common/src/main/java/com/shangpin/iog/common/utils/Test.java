@@ -11,15 +11,15 @@ public class Test {
     private static LoggerUtil logger = LoggerUtil.getLogger("info");
     public static void main(String[] args) throws Exception{
 
-        int i = 10/2;
-        logger.info("i="+i);
-
-        try {
-            int j=2/0;
-        } catch (Exception e) {
-            logger.info("exception ="+e.getMessage());
-        }
-
+//        int i = 10/2;
+//        logger.info("i="+i);
+//
+//        try {
+//            int j=2/0;
+//        } catch (Exception e) {
+//            logger.info("exception ="+e.getMessage());
+//        }
+           System.out.println( "201602161167427".compareTo("201602161167427"));
 
     }
 }
