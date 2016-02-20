@@ -35,17 +35,20 @@ include 'iog-sop'
 
 include 'spinnaker-order'
 
-include 'spinnaker'
 
-include 'atelier-ostore'
 
 include 'coltorti'
 
 include 'levelgroup-stock'
 
-include 'stefaniamode'
-include 'stefaniamode-stock'
+
 include 'reebonzWiki'
+
+include 'iog-common-product2'
+
+include 'project-muldatass-dao'
+
+include 'levelgroup-purchase'
 
 
 
