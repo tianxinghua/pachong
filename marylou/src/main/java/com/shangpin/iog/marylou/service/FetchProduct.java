@@ -1,6 +1,7 @@
 package com.shangpin.iog.marylou.service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
@@ -15,13 +16,22 @@ import com.shangpin.iog.marylou.dto.Products;
 import com.shangpin.iog.onsite.base.common.HTTPClient;
 import com.shangpin.iog.onsite.base.constance.Constant;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
+
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.AsyncListenableTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBException;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2015/9/17.
@@ -32,7 +42,8 @@ public class FetchProduct {
     private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     private ProductFetchService productFetchService;
-
+	@Autowired
+	private ProductSearchService productSearchService;
     /**
      * 得到产品信息并储存
      */
@@ -55,12 +66,23 @@ public class FetchProduct {
         messMappingAndSave(products);
         logMongo.info("save product into DB success");
  
-        //System.out.println(json);
     }
     /**
      * 映射数据并保存
      */
     private void messMappingAndSave(Products products) {
+    	
+    	int day = 90;
+		Date startDate,endDate= new Date();
+		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+		//获取原有的SKU 仅仅包含价格和库存
+		Map<String,SkuDTO> skuDTOMap = new HashedMap();
+		try {
+			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(Constant.SUPP_ID_MARYLOU,startDate,endDate);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+    	
         List<Product> productList = products.getProducts();
         for (Product product : productList) {
             SpuDTO spu = new SpuDTO();
@@ -98,27 +120,12 @@ public class FetchProduct {
                     sku.setColor(product.getColor());
                     sku.setProductDescription(product.getDescription());
                     sku.setStock(item.getStock());
+                    
+                    if(skuDTOMap.containsKey(sku.getSkuId())){
+						skuDTOMap.remove(sku.getSkuId());
+					}
+                    
                     productFetchService.saveSKU(sku);
-
-                    if (StringUtils.isNotBlank(item.getPicture())) {
-                        String[] picArray = item.getPicture().split("\\|");
-
-//                            List<String> picUrlList = Arrays.asList(picArray);
-                        for (String picUrl : picArray) {
-                            ProductPictureDTO dto = new ProductPictureDTO();
-                            dto.setPicUrl(picUrl);
-                            dto.setSupplierId(Constant.SUPP_ID_MARYLOU);
-                            dto.setId(UUIDGenerator.getUUID());
-                            dto.setSkuId(item.getItemId());
-                            try {
-//                                    productFetchService.savePicture(dto);
-                                productFetchService.savePictureForMongo(dto);
-                            } catch (ServiceException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
                 } catch (ServiceException e) {
                     try {
                         if (e.getMessage().equals("数据插入失败键重复")) {
@@ -132,6 +139,10 @@ public class FetchProduct {
                         e1.printStackTrace();
                     }
                 }
+                
+                String[] picArray = item.getPicture().split("\\|");
+                productFetchService.savePicture(Constant.SUPP_ID_MARYLOU, null, item.getItemId(), Arrays.asList(picArray));
+                
             }
 
             try {
@@ -146,9 +157,28 @@ public class FetchProduct {
                 spu.setMaterial(product.getMaterial());
                 productFetchService.saveSPU(spu);
             } catch (ServiceException e) {
-                e.printStackTrace();
+            	try {
+					productFetchService.updateMaterial(spu);
+				} catch (ServiceException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
             }
         }
+        
+      //更新网站不再给信息的老数据
+		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+			 Map.Entry<String,SkuDTO> entry =  itor.next();
+			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+				entry.getValue().setStock("0");
+				try {
+					productFetchService.updatePriceAndStock(entry.getValue());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+        
     }
 
     public static void main(String[] args){
