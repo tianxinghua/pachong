@@ -208,7 +208,8 @@ public abstract class AbsOrderService {
                     refundList.add(icewmsOrderDTO);
                 }
                 try {
-                    skuRelationDTO=  skuRelationService.getSkuRelationBySkuId(icewmsOrderDTO.getSkuNo());
+//                    skuRelationDTO=  skuRelationService.getSkuRelationBySkuId(icewmsOrderDTO.getSkuNo());
+                      skuRelationDTO = skuRelationService.getSkuRelationBySupplierIdAndSkuId(supplierId,icewmsOrderDTO.getSkuNo());
                     if(null!=skuRelationDTO){
                         skuMap.put(skuRelationDTO.getSopSkuId(), skuRelationDTO.getSupplierSkuId());
                     }else{   //获取供货商的SKU编号
