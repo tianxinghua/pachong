@@ -282,7 +282,7 @@ public class OrderService extends AbsOrderService {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		order.setBarcode(pro.getBarCode());
+		order.setBarcode(pro.getBarcode());
 		order.setOrdQty(details[1]);
 		order.setKey(key);
 //		String sPurchasePrice = StringUtils.isBlank(orderDTO.getPurchasePriceDetail())?"0":orderDTO.getPurchasePriceDetail();
