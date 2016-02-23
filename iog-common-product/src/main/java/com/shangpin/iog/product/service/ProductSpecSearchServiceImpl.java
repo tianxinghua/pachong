@@ -24,7 +24,7 @@ public class ProductSpecSearchServiceImpl implements ProductSpecSearchService{
               productOfSpecDTO = new ProductOfSpecDTO();
             productOfSpecDTO.setSupplierId(supplierId);
             productOfSpecDTO.setSkuId(skuId);
-            productOfSpecDTO.setBarCode("");
+            productOfSpecDTO.setBarcode("");
         }
         return productOfSpecDTO;
     }
