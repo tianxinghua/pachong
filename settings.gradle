@@ -47,8 +47,17 @@ include 'stefaniamode'
 include 'stefaniamode-stock'
 include 'reebonzWiki'
 
+include 'meifeng'
+include 'meifeng-stock'
 
 
+include 'KIX'
+include 'divo-stock'
+include 'divo'
+include 'Daniello'
+include 'Daniello-stock'
+include 'atelier-ostore-stock'
+include 'Della'
 
 
 
