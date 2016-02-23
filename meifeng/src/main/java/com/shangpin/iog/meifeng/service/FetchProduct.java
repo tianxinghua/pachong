@@ -60,7 +60,7 @@ public class FetchProduct {
 			System.out.println("请求数据");
 			logger.info("请求数据");
 			Excel2DTO excel2dto = new Excel2DTO();
-			Short[] needColsNo = new Short[]{1,2,3,4,5,6,7,23,24,26,28,31,32,33,34};
+			Short[] needColsNo = new Short[]{1,2,3,4,5,6,7,24,25,27,29,32,33,34,35};
 			List<MeiFengSPU> spuList = excel2dto.toDTO(filepath, 0, needColsNo, MeiFengSPU.class);
 			
 			Map<String,MeiFengSPU> spuMap = new HashMap<String, MeiFengSPU>();
