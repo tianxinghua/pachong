@@ -168,6 +168,15 @@ public class FechProduct {
 						spu.setSeasonId(product.getSeason());
 						spu.setBrandName(product.getBrand());
 						spu.setMaterial(product.getMaterial()); 
+						String desc = product.getDescription();
+						String[] des = desc.split("<br />");
+						String origin = "";
+						for(int j=0;j<des.length;j++){
+							if(des[j].contains("Made in") || des[j].contains("made in")){
+								origin = des[j];
+							}
+						}
+						spu.setProductOrigin(origin); 
 						try {
 							productFetchService.saveSPU(spu);
 						} catch (ServiceException e) {
