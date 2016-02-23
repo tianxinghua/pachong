@@ -85,6 +85,7 @@ public class FechProduct {
 			result = result.replaceAll("<Season>", "<season>").replaceAll("</Season>", "</season>");
 			result = result.replaceAll("<Color>", "<color>").replaceAll("</Color>", "</color>");
 			result = result.replaceAll("<Material>", "<material>").replaceAll("</Material>", "</material>");
+			result = result.replaceAll(",", "");
 //			Products products = XMLUtil.gsonXml2Obj(Products.class, result);
 //			String result = UnicodeReader.file2Striing(new File("E:\\lubaijiang\\B.xml"));
 //			result = result.replaceAll("<other_images/>", "<other_images><image1></image1><image2></image2></other_images>");
@@ -174,6 +175,8 @@ public class FechProduct {
 						for(int j=0;j<des.length;j++){
 							if(des[j].contains("Made in") || des[j].contains("made in")){
 								origin = des[j];
+								origin = origin.replaceAll("-", "").replaceAll("\r", "").replaceAll("\n", "");
+								break;
 							}
 						}
 						spu.setProductOrigin(origin); 
