@@ -20,7 +20,7 @@ dependencies {
 
 jar {
 
-    dependsOn copyToLib , copyResources
+    dependsOn copyToLib , copyResources ,dependsClassPath
     exclude ("**/*.properties")
 
 

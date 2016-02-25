@@ -82,6 +82,7 @@ public class FetchProduct {
 				sku.setMeasurement(array[0].trim());
 				sku.setProductName(item.getItemName());
 				sku.setColor(array[1].trim());
+				sku.setSaleCurrency("USD");
 				if (skuDTOMap.containsKey(sku.getSkuId())) {
 					skuDTOMap.remove(sku.getSkuId());
 				}
