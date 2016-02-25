@@ -152,7 +152,7 @@ public class OrderService extends AbsOrderService {
 			 String[] barcode = orderDTO.getDetail().split(":");
 			 map.put("DBContext", dBContext);
 			 map.put("purchase_no", orderDTO.getSpPurchaseNo());
-			 map.put("order_no", orderDTO.getSupplierOrderNo());
+			 map.put("order_no", orderDTO.getSpOrderId());
 			 map.put("barcode", barcode[0]);
 			 map.put("ordQty", barcode[1]);
 			 map.put("key", key);
@@ -213,7 +213,7 @@ public class OrderService extends AbsOrderService {
 			@Override
 			public void run() {
 				try {
-					SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"monti 采购单"+orderDTO.getSpPurchaseNo()+"已弃单.状态是:"+orderDTO.getStatus(), messageType);
+					SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject,"monti 采购单"+orderDTO.getSpPurchaseNo()+"已弃单.状态是:"+orderDTO.getStatus(), messageType);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
