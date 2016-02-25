@@ -118,18 +118,20 @@ public class DownloadAndReadCSV {
 				}
     			System.out.println(a);
     		}
+    		
+    		cr.close();
+        	File flie = new File(path+realPath);
+    		boolean falg = flie.delete();
+    		if(falg){
+    			System.out.println("文件删除success");
+    		}else{
+    			System.out.println("文件删除fail");
+    		}
 		}
+    	
         return dtoList;
     }
   
-    public static String getPath(String realpath){
-        //Date dt=new Date();
-        SimpleDateFormat matter1=new SimpleDateFormat("yyyy-MM-ddHH");
-        //String date=matter1.format(dt).replaceAll("-","").trim();
-        //realpath = realpath+"_"+date+".csv";
-        realpath = realpath+".txt";
-        return realpath;
-    }
   public static void main(String[] args) {
         try {
         	System.out.println("下载中");
