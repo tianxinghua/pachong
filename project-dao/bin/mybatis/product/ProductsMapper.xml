@@ -57,8 +57,18 @@
 
 
 	</resultMap>
-	
 
+    <resultMap id="barcodeResultMap" type="iog_spec_product">
+
+
+        <result column="supplier_id" property="supplierId"/>
+
+        <result column="sku_id" property="skuId"  />
+
+        <result column="barcode" property="barcode" />
+
+
+    </resultMap>
 
 	
 	
@@ -289,6 +299,18 @@
 
         where  sku.SUPPLIER_ID = #{supplierId}   and   sku.SKU_ID = #{skuId}
      </select>
+
+    <select id="findProductOfSpecBySupplierIdAndSkuId" resultMap="barcodeResultMap">
+        select
+        SUPPLIER_ID as  supplier_id,
+        SKU_ID as sku_id,
+        BARCODE as barcode
+
+        from SKU
+
+        where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
+    </select>
+
 
 
 	<select id="findProductOrderDTOList" resultMap="ProductsResultMap">
