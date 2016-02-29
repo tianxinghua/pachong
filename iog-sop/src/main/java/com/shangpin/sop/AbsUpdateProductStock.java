@@ -2,6 +2,7 @@ package com.shangpin.sop;
 
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.service.SkuRelationService;
 import com.shangpin.iog.service.UpdateStockService;
 import com.shangpin.openapi.api.sdk.client.SpClient;
@@ -75,6 +76,18 @@ public abstract class AbsUpdateProductStock {
 		boolean hasNext=true;
 		logger.warn("获取sku 开始");
 		Set<String> skuIds = new HashSet<String>();
+
+		//获取已有的SPSKUID
+//		Map<String,String> map = new HashMap<>();
+//		if(null!=skuRelationService){
+//			List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
+//
+//			for(SkuRelationDTO skuRelationDTO:skuRelationDTOList){
+//				map.put(skuRelationDTO.getSopSkuId(),null);
+//			}
+//		}
+
+		Date date  = new Date();
 		while(hasNext){
 
 			List<SopProductSku> skus = null;
@@ -94,6 +107,20 @@ public abstract class AbsUpdateProductStock {
 			for (SopProductSku sku : skus) {
 				List<SopSku> skuIces = sku.getSopSkuIces();
 				for (SopSku ice : skuIces) {
+
+//					if (null!=skuRelationService&&!map.containsKey(ice.getSkuNo())){ //海外库保留尚品SKU和供货商SKU对照关系
+//						SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
+//						skuRelationDTO.setSupplierId(supplier);
+//						skuRelationDTO.setSupplierSkuId(ice.getSupplierSkuNo());
+//						skuRelationDTO.setSopSkuId(ice.getSkuNo());
+//						skuRelationDTO.setCreateTime(date);
+//						try {
+//							skuRelationService.saveSkuRelateion(skuRelationDTO);
+//						} catch (ServiceException e) {
+//							logger.error(skuRelationDTO.toString() + "保存失败");
+//						}
+//					}
+
 
 					if(null!=ice.getSkuNo()&&!"".equals(ice.getSkuNo())&&null!=ice.getSupplierSkuNo()&&!"".equals(ice.getSupplierSkuNo())){
 						if(1!=ice.getIsDeleted()){

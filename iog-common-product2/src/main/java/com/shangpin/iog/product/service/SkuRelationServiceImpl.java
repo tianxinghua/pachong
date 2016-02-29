@@ -59,6 +59,11 @@ public class SkuRelationServiceImpl implements SkuRelationService {
     }
 
     @Override
+    public SkuRelationDTO getSkuRelationBySupplierIdAndSkuId(String supplier, String skuId) throws ServiceException {
+        return skuRelationDAO.getSkuRelationBySupplierIdAndSkuId(supplier,skuId);
+    }
+
+    @Override
     public SkuRelationDTO getSkuRelationBySupplierIdAndSupplierSkuNo(String supplier, String supplierSkuNo) throws ServiceException {
         return skuRelationDAO.getSkuRelationBySupplierSkuId(supplier,supplierSkuNo);
     }

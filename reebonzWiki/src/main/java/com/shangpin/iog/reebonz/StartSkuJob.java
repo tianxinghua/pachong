@@ -27,13 +27,12 @@ public class StartSkuJob {
     public static void main(String[] args){
         //鍔犺浇spring
         loadSpringContext();
-        log.info("----鍒濆SPRING鎴愬姛--1--");
         //鎷夊彇鏁版嵁
-        log.info("----鎷夊彇鏁版嵁寮�濮�----");              
+        log.info("----开始拉取数据----");              
         System.out.println("-------fetch start---------");
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("reebonzWiki");
         fetchProduct.fetchProductAndSave();
-        log.info("----鎷夊彇鏁版嵁瀹屾垚----");
+        log.info("----拉取数据结束----");
         System.out.println("-------fetch end---------");
         System.exit(0);
     }

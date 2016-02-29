@@ -1,3 +1,4 @@
+
 package com.shangpin.iog.kix.dto;
 
 import lombok.Getter;

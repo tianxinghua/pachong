@@ -1,3 +1,4 @@
+
 package com.shangpin.iog.kix.util;
 
 import java.util.ArrayList;
@@ -52,3 +53,4 @@ public class KIXUtil {
 		return returnMap;
 	}
 }
+
