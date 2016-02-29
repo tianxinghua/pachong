@@ -40,7 +40,7 @@ public class LinoricciStockImp  extends AbsUpdateProductStock {
     	Map<String,String> skuMap = new HashMap<String,String>();
     	String data = "";
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
-				new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+				new OutTimeConfig(1000*60*30,1000*60*120,1000*60*120));
 		String[] skuStrings = skuData.split("\\r\\n");
 		for (int i = 1; i < skuStrings.length; i++) {
 			if (StringUtils.isNotBlank(skuStrings[i])) {

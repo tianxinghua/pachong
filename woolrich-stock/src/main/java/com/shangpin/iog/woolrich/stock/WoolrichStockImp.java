@@ -75,8 +75,8 @@ public class WoolrichStockImp extends AbsUpdateProductStock {
         if( jsonstr != null && jsonstr.length() >0){
             JSONObject json = JSONObject.fromObject(jsonstr);
             if (!json.isNullObject() && !json.containsKey("fault")) {
-            	String string = json.getString("c_madeIn");
-            	System.out.println(string);
+//            	String string = json.getString("c_madeIn");
+//            	System.out.println(string);
                 JSONObject inventObj = json.getJSONObject("inventory");
                 if (!inventObj.isNullObject() && !inventObj.isEmpty()){
                     int instock = inventObj.getInt("stock_level");
