@@ -16,7 +16,7 @@ public class ProductOfSpecDTO {
     private String supplierId;
 
     private String skuId;
-    private String barCode;
+    private String barcode;
 
 
 

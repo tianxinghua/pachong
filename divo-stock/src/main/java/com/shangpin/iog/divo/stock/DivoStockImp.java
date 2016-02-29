@@ -24,9 +24,9 @@ public class DivoStockImp  extends AbsUpdateProductStock {
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static String url;
-	private static String host;
-	private static String app_key;
-	private static String app_secret;
+   	private static String host;
+   	private static String app_key;
+   	private static String app_secret;
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {

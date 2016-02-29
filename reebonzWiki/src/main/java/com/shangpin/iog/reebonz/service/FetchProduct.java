@@ -11,7 +11,9 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.TimeZone;
@@ -19,6 +21,7 @@ import java.util.TimeZone;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.EventProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
@@ -30,9 +33,11 @@ import com.shangpin.iog.reebonz.dto.ResponseObject;
 import com.shangpin.iog.reebonz.util.MyJsonUtil;
 import com.shangpin.iog.service.EventProductService;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,19 +66,34 @@ public class FetchProduct {
 	private static int updateTotal =0;
 	private static int skuPassTotal =0;
 	private static int allEventPassSkuTotal =0;
-	
+    @Autowired
+   	ProductSearchService productSearchService;
+	private static int day;
+    
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
 		rows = Integer.parseInt(bdl.getString("rows"));
+		day = Integer.valueOf(bdl.getString("day"));
 	}
-
+	private Map<String,SkuDTO> skuDTOMap = new HashedMap();
 	/**
 	 * fetch product and save into db
 	 */
 	public void fetchProductAndSave() {
 
+		Date startDate,endDate= new Date();
+		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+		//获取原有的SKU 仅仅包含价格和库存
+		
+		try {
+			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		
+		
 		// 第一步：获取活动信息
 		List<Item> eventList = MyJsonUtil.getReebonzEventJson();
 		int i=0;
@@ -113,6 +133,20 @@ public class FetchProduct {
 			logger.info("reebonz总共更新和保存的sku总数："+skuSaveAndUpdateTotal);
 			logger.info("reebonz总共去重过滤掉总数："+allEventPassSkuTotal);
 		}
+		
+		  //更新网站不再给信息的老数据
+		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+			 Map.Entry<String,SkuDTO> entry =  itor.next();
+			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+				entry.getValue().setStock("0");
+				try {
+					productFetchService.updatePriceAndStock(entry.getValue());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
 	}
 
 	/**
@@ -276,6 +310,9 @@ public class FetchProduct {
 							sku.setSaleCurrency(item.getCurrency());
 							sku.setEventStartDate(item.getEvent_start_date());
 							sku.setEventEndDate(item.getEvent_end_date());
+							if(skuDTOMap.containsKey(sku.getSkuId())){
+								skuDTOMap.remove(sku.getSkuId());
+    						}
 							//新产品入库，旧产品只更新价格库存
 							if(flag){
 								skuSaveTotal+=1;

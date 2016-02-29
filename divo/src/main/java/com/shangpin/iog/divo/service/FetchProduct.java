@@ -126,7 +126,11 @@ public class FetchProduct {
 				Item item = new Item();
 //			   item.setColor(StringUtils.isBlank(spuArr[10])?spuArr[4]:spuArr[10]);
 			   //设置成颜色码
-			   String color = spuArr[4].split(" ")[1];
+				String color = "";
+				String[] split = spuArr[4].split(" ");
+		    	for (int j = 1; j < split.length; j++) {
+					color+=split[j]+" ";
+				}
 			   color = StringUtils.isBlank(color)?"":color;
 			   
 			   item.setColor(color);
@@ -327,5 +331,13 @@ public class FetchProduct {
 			}
 		}
     }
-    
+    public static void main(String[] args) {
+    	String aaa= "00200 BIANCO OTTICO";
+    	String[] split = aaa.split(" ");
+    	String color = "";
+    	for (int i = 1; i < split.length; i++) {
+			color+=split[i]+" ";
+		}
+    	System.out.println(color);
+    }
 }

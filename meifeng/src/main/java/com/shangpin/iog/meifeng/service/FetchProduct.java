@@ -58,8 +58,9 @@ public class FetchProduct {
 				e.printStackTrace();
 			}
 			System.out.println("请求数据");
+			logger.info("请求数据");
 			Excel2DTO excel2dto = new Excel2DTO();
-			Short[] needColsNo = new Short[]{1,2,3,4,5,6,7,23,24,26,28,31,32,33,34};
+			Short[] needColsNo = new Short[]{1,2,3,4,5,6,7,24,25,27,29,32,33,34,35};
 			List<MeiFengSPU> spuList = excel2dto.toDTO(filepath, 0, needColsNo, MeiFengSPU.class);
 			
 			Map<String,MeiFengSPU> spuMap = new HashMap<String, MeiFengSPU>();
@@ -67,6 +68,7 @@ public class FetchProduct {
 			Short[] stockneedColsNo = new Short[]{0,1,4,5};
 			List<MeiFengSku> skuList = excel2dto.toDTO(filepath, 1, stockneedColsNo , MeiFengSku.class);
 			
+			logger.info("开始保存spu");
 			System.out.println("开始保存spu");
 			
 			for (MeiFengSPU product : spuList) {
@@ -78,7 +80,7 @@ public class FetchProduct {
 				spu.setBrandName(product.getBrandName());
 				spu.setCategoryName(product.getCategory());
 				spu.setCategoryGender(product.getGender().contains("男")?"男":"女");
-				spu.setSeasonName(product.getYear()+product.getSeason());
+				spu.setSeasonName(product.getYear()+""+product.getSeason());
 				spu.setMaterial(product.getMaterial());
 				spu.setProductOrigin(product.getMadeIn());
 				spu.setSpuName(product.getSpuName());
