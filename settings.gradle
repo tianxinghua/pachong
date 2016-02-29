@@ -50,15 +50,10 @@ include 'project-muldatass-dao'
 
 include 'levelgroup-purchase'
 
+include 'woolrich-stock'
 
+include 'linoricci-stock'
 
-
-
-
-
-
-
-
-
+include 'log-template'
 
 
