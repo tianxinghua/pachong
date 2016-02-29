@@ -198,11 +198,14 @@ public class Items {
         this.images = images;
     }
 
-    public Object getCat_id() {
-        return cat_id;
-    }
+	public Object getCat_id() {
+		return cat_id;
+	}
 
-    public void setCat_id(Object cat_id) {
-        this.cat_id = cat_id;
-    }
+	public void setCat_id(Object cat_id) {
+		this.cat_id = cat_id;
+	}
+
+	
+
 }
