@@ -56,7 +56,7 @@ public class FetchProduct {
         //获取产品信息
         logger.info("get product starting....");
         System.out.println("开始获取产品信息");
-    	String spuData = HttpUtil45.post(url+"GetAllItems",
+    	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
     										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
     										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
