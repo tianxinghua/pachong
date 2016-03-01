@@ -146,21 +146,21 @@ public abstract   class AbsDeliverService {
         //更新订单状态
         Map<String,String> map = new HashMap<>();
 
-        map.put("uuId", spOrder.getUuId());
-        map.put("supplierOrderNo",spOrder.getSupplierOrderNo());
-        map.put("excState",spOrder.getExcState());
-        map.put("excDesc",spOrder.getExcDesc());
-        if(null!=spOrder.getExcState()&&"1".equals(spOrder.getExcState())){
-            map.put("excTime", com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
-        }else{
-            map.put("status",spOrder.getStatus());
-            map.put("updateTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
-        }
-        try {
 
+        try {
+            map.put("uuId", spOrder.getUuId());
+            map.put("supplierOrderNo",spOrder.getSupplierOrderNo());
+            map.put("excState",spOrder.getExcState());
+            map.put("excDesc",spOrder.getExcDesc());
+            if(null!=spOrder.getExcState()&&"1".equals(spOrder.getExcState())){
+                map.put("excTime", com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
+            }else{
+                map.put("status",spOrder.getStatus());
+                map.put("updateTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
+            }
             productOrderService.updateOrderMsg(map);
-        } catch (ServiceException e) {
-            loggerError.error("订单："+spOrder.getSpOrderId()+" 更新订单状态失败");
+        } catch (Exception e) {
+            loggerError.error("订单："+spOrder.getSpOrderId()+" 更新订单状态失败。"+e.getMessage());
             System.out.println("订单：" + spOrder.getSpOrderId() + " 更新订单状态失败");
             e.printStackTrace();
         }
@@ -172,8 +172,8 @@ public abstract   class AbsDeliverService {
 
             try {
                 logisticsService.save(orderDTO,logsticsArray[0],logsticsArray[1],logsticsArray[2]);
-            } catch (ServiceException e) {
-                loggerError.error("采购单:"+ orderDTO.getSpPurchaseNo() + "保存物流信息失败。" );
+            } catch (Exception e) {
+                loggerError.error("采购单:"+ orderDTO.getSpPurchaseNo() + "保存物流信息失败。" + e.getMessage() );
             }
         }else{
             loggerError.error("采购单:"+ orderDTO.getSpPurchaseNo() + "传入发货单信息不正确:" + orderDTO.getDeliveryNo() );

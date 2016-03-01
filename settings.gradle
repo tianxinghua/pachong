@@ -35,17 +35,11 @@ include 'iog-sop'
 
 include 'spinnaker-order'
 
-include 'spinnaker'
 
-include 'atelier-ostore'
+include 'tony'
+include 'log-template'
 
-include 'coltorti'
-
-include 'levelgroup-stock'
-
-include 'stefaniamode'
-include 'stefaniamode-stock'
-include 'reebonzWiki'
+include 'channeladvisor'
 
 
 
