@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Created by monkey on 2015/9/28.
@@ -25,20 +26,23 @@ public class DownloadAndReadCSV {
     static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
     private static String path = bundle.getString("path");
     private static String httpurl = bundle.getString("url");
+    private static Logger logger = Logger.getLogger("info");
 
     /**
      * http下载csv文件到本地路径
      * @throws MalformedURLException
      */
-    public static String downloadNet() throws MalformedURLException {
+    public static String downloadNet() {
         int bytesum = 0;
         int byteread = 0;
 
-        URL url = new URL(httpurl);
         String realPath="";
         try {
+        	URL url = new URL(httpurl);
             URLConnection conn = url.openConnection();
             InputStream inStream = conn.getInputStream();
+            conn.setConnectTimeout(1000*60*30);
+            conn.setReadTimeout(1000*60*120);
             realPath = getPath(path);
             FileOutputStream fs = new FileOutputStream(realPath);
 
@@ -49,10 +53,9 @@ public class DownloadAndReadCSV {
                 System.out.println(bytesum);
                 fs.write(buffer, 0, byteread);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+        	logger.info("下载失败");
+        	throw new RuntimeException(e);
         }
         return  realPath;
     }
