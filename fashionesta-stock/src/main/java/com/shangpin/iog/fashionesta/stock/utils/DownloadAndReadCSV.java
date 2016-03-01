@@ -31,13 +31,13 @@ public class DownloadAndReadCSV {
      * http下载csv文件到本地路径
      * @throws MalformedURLException
      */
-    public static String downloadNet() throws MalformedURLException {
+    public static String downloadNet(){
         int bytesum = 0;
         int byteread = 0;
 
-        URL url = new URL(httpurl);
         String realPath="";
         try {
+        	URL url = new URL(httpurl);
             URLConnection conn = url.openConnection();
             conn.setConnectTimeout(1000*60*30);
             conn.setReadTimeout(1000*60*60);
@@ -51,12 +51,9 @@ public class DownloadAndReadCSV {
                 System.out.println(bytesum);
                 fs.write(buffer, 0, byteread);
             }
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
         	logger.info("下载失败");
-            e.printStackTrace();
-        } catch (IOException e) {
-        	logger.info("下载失败");
-            e.printStackTrace();
+        	throw new RuntimeException(e);
         }
         return  realPath;
     }
