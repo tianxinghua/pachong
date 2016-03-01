@@ -50,6 +50,10 @@ public class StockClientImp extends AbsUpdateProductStock {
 		try {
 			logger.info("下载元数据，解析csv");
 			List<Product> list = DownloadAndReadCSV.readLocalCSV();
+			logger.info("解析完毕，productnum="+list.size());
+			if (list.size()==0) {
+				logger.info("数量为零");
+			}
 			Map<String,String> supplierStockMap = new HashMap<>();
 			for (Product product : list) {
                 List<Item> items = product.getItems();
