@@ -98,7 +98,8 @@
               <if test="productOrigin != null"> PRODUCT_ORIGIN = #{productOrigin},</if>
               <if test="categoryGender != null"> CATEGORY_GENDER = #{categoryGender},</if>
               <if test="seasonId != null"> SEASON_ID = #{seasonId},</if>
-              <if test="seasonName != null"> SEASON_NAME = #{seasonName}</if>
+              <if test="seasonName != null"> SEASON_NAME = #{seasonName},</if>
+              <if test="categoryName != null"> CATEGORY_NAME = #{categoryName}</if>
               
           </set>
           where  SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
