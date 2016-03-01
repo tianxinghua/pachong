@@ -57,13 +57,13 @@ public class FetchProduct {
         logger.info("get product starting....");
         System.out.println("开始获取产品信息");
     	String spuData = HttpUtil45.post(url+"GetAllItems",
-    										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
-    										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
     	String imageData = HttpUtil45.post(url+"GetAllImageMarketplace",
-    										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
     	String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
-    										new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+    										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
     
     	System.out.println("获取产品信息结束");
     	Date startDate,endDate= new Date();
@@ -113,7 +113,8 @@ public class FetchProduct {
 				SpuDTO spu = new SpuDTO();
 				Item item = new Item();
 				  try {
-					   item.setColor(spuArr[10]);
+					   item.setColor(StringUtils.isBlank(spuArr[10])?spuArr[4]:spuArr[10]);
+//					   item.setColor(spuArr[10]);
 					   item.setSupplierPrice(spuArr[16]);
 					   item.setDescription(spuArr[15]);
 					   item.setSpuId(spuArr[0]);
@@ -129,7 +130,7 @@ public class FetchProduct {
 		               spu.setBrandName(spuArr[2]);
 		               spu.setCategoryName(spuArr[8]);
 		               //spu.setSpuName(fields[0]);
-		               spu.setSeasonId(spuArr[6]);
+		               spu.setSeasonId(spuArr[1]);
 		               
 		               StringBuffer material = new StringBuffer() ;
 		               if (StringUtils.isNotBlank(spuArr[11])) {
@@ -192,11 +193,12 @@ public class FetchProduct {
         				size=size.replace("½","+");
         			}
         			sku.setProductSize(size);
-        			
-//        			sku.setSalePrice(priceMap.get(item.getSpuId()));
-        			sku.setMarketPrice(priceMap.get(item.getSpuId()));
-//        			sku.setSalePrice(item.getSalePrice());
-//        			sku.setSupplierPrice(item.getSupplierPrice());
+        			if (StringUtils.isBlank(priceMap.get(item.getSpuId()))) {
+        				logger.info(item.getSpuId()+"++++++++++++++++++++++++++++++++++"+"没有价格");
+						System.err.println(item.getSpuId()+"++++++++++++++++++++++++++++++++++"+"没有价格");
+						continue;
+					}
+        			sku.setMarketPrice(priceMap.get(item.getSpuId()).replace(",", ""));
         			sku.setColor(item.getColor());
         			sku.setProductDescription(item.getDescription());
         			sku.setSaleCurrency("EURO");
@@ -206,8 +208,7 @@ public class FetchProduct {
         			//skuid+barcode
         			sku.setSkuId(skuArr[0]+"-"+barCode);
         			sku.setBarcode(barCode);
-        			sku.setProductCode(skuArr[0]);
-        			// sku.setProductName(fields[14]);
+        			sku.setProductCode(item.getStyleCode()+"-"+item.getColorCode());
         			try {
         				
         				if(skuDTOMap.containsKey(sku.getSkuId())){
@@ -231,7 +232,7 @@ public class FetchProduct {
 					String imgUrls = imgMap.get(skuArr[0]);
 					if (StringUtils.isNotBlank(imgUrls)) {
 						String[] imgUrlArr = imgUrls.split(",");
-						productFetchService.savePicture(supplierId, null, skuArr[0]+"-"+barCode, Arrays.asList(imgUrlArr));
+						productFetchService.savePicture(supplierId, null, sku.getSkuId(), Arrays.asList(imgUrlArr));
 					}
 				}
 			}
