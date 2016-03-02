@@ -41,7 +41,7 @@ public class LogisticsServiceImpl implements LogisticsService {
             logisticsDTO.setOrderNo(orderDTO.getSpOrderId());
 
             logisticsDAO.save(logisticsDTO);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             logger.error("采购单："+ orderDTO.getSpPurchaseNo()+"，保存失败："+ e.getMessage());
             e.printStackTrace();
         }

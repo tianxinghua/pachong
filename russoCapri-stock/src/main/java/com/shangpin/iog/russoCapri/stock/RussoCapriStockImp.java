@@ -40,8 +40,9 @@ public class RussoCapriStockImp  extends AbsUpdateProductStock {
     	Map<String,String> skuMap = new HashMap<String,String>();
     	String data = "";
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
-				new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
+				new OutTimeConfig(1000*60*60,1000*60*300,1000*60*300));
 		String[] skuStrings = skuData.split("\\r\\n");
+		logger.info("待更新库存+++"+skuNo.size()+"读取库存+++"+skuStrings.length);
 		for (int i = 1; i < skuStrings.length; i++) {
 			if (StringUtils.isNotBlank(skuStrings[i])) {
 			
@@ -62,17 +63,20 @@ public class RussoCapriStockImp  extends AbsUpdateProductStock {
         logger.info("循环赋值");
         String skuId = "";
         String stock = "0";
+        int num = 0;
         while (iterator.hasNext()){
         	skuId = iterator.next();
         	if (StringUtils.isNotBlank(skuId)) {
         		if (skuMap.containsKey(skuId)) {
         			stock = skuMap.get(skuId);
         			returnMap.put(skuId, stock);
+        			num++;
 				}else{
 					returnMap.put(skuId, "0");
 				}
 			}
         }
+        logger.info("元数据包含的有"+num);
         return returnMap;
     }
 

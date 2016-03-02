@@ -32,8 +32,6 @@ import com.shangpin.iog.service.SkuPriceService;
 public class FetchProduct {
 
 	private static Logger logger = Logger.getLogger("info");
-	private static Logger loggerError = Logger.getLogger("error");
-	private static Logger logMongo = Logger.getLogger("mongodb");
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
 	private static String url;
@@ -54,13 +52,6 @@ public class FetchProduct {
 	public void fetchProductAndSave() {
 		//更改状态存储，不要忘了填币种
 		try {
-			Map<String, String> mongMap = new HashMap<>();
-			OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-			timeConfig.confRequestOutTime(360000);
-			timeConfig.confSocketOutTime(360000);
-			mongMap.put("supplierId", supplierId);
-			mongMap.put("supplierName", "fashionesta");
-			logMongo.info(mongMap);
 			
 			Date startDate,endDate= new Date();
 			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
@@ -71,7 +62,7 @@ public class FetchProduct {
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}
-			
+			logger.info("下载元数据，解析csv");
 			List<Product> list = DownloadAndReadCSV.readLocalCSV();
 			for (Product product : list) {
 				SpuDTO spu = new SpuDTO();

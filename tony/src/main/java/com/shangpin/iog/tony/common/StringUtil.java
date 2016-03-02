@@ -1,5 +1,8 @@
 package com.shangpin.iog.tony.common;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 /**
  * Created by wangyuzhi on 2015/9/10.
  */
@@ -102,13 +105,29 @@ public class StringUtil {
      *get tony Category Name by id
      */
     public static String getCategoryNameByID(String categoryId,String categoryJson){
-            if (!categoryJson.contains(categoryId)){
-                return "";
-            }
-        String str = categoryJson.substring(categoryJson.indexOf(categoryId),categoryJson.indexOf(categoryId)+50);
-/*        System.out.println("==========str==========");
-        System.out.println(str);*/
-        return  str .split(",")[1].replaceAll("\"","").replaceAll("name:","");
+//            if (!categoryJson.contains(categoryId)){
+//                return "";
+//            }
+//        String str = categoryJson.substring(categoryJson.indexOf(categoryId),categoryJson.indexOf(categoryId)+50);
+///*        System.out.println("==========str==========");
+//        System.out.println(str);*/
+//        return  str .split(",")[1].replaceAll("\"","").replaceAll("name:","");
+    	try{
+    		
+    		JSONObject jsonObj = JSONObject.fromObject(categoryJson);
+        	JSONArray arr = jsonObj.getJSONObject("data").getJSONArray("categories");
+        	for(int i=0;i<arr.size();i++){
+        		JSONObject object = arr.getJSONObject(i);
+        		if(categoryId.equals(object.getJSONObject("_id").getString("$id"))){
+        			return  object.getString("name");    			
+        		}
+        	}
+    		
+    	}catch(Exception ec){
+    		ec.printStackTrace();
+    	}
+    	
+    	return "";
     }
 
     /**
