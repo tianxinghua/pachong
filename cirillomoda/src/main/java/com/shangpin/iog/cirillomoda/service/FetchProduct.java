@@ -17,10 +17,17 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.SocketException;
@@ -44,6 +51,7 @@ public class FetchProduct {
     private static ResourceBundle bdl=null;
     private static String supplierId; //测试
     private static int day;
+    private static String path = null;
 //    private static String supplierId = ""; //正式
 
     static {
@@ -51,6 +59,7 @@ public class FetchProduct {
             bdl= ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         day = Integer.valueOf(bdl.getString("day"));
+        path = bdl.getString("path");
     }
 
     public void fetchProductAndSave(final String url) {
@@ -60,7 +69,34 @@ public class FetchProduct {
             OutTimeConfig timeConfig = new OutTimeConfig(1000*60*20, 1000*60*20,1000*60*20);
 //            timeConfig.confRequestOutTime(600000);
 //            timeConfig.confSocketOutTime(600000);
-            String result = HttpUtil45.get(url, timeConfig, null);
+            String result = "";
+            if(StringUtils.isNotBlank(path)){
+				File file = new File(path);
+				BufferedReader reader = null;
+				try {
+					
+					reader = new BufferedReader(new FileReader(file));
+					String tempString = null;					
+					// 一次读入一行，直到读入null为文件结束
+					while ((tempString = reader.readLine()) != null) {
+						 result += tempString;
+					}
+					result = result.replaceAll("<br />\n", "").replaceAll("<br />\r", ""); 
+					System.out.println(result);
+					reader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					if (reader != null) {
+						try {
+							reader.close();
+						} catch (IOException e1) {
+						}
+					}
+				}
+            }else{
+            	result = HttpUtil45.get(url, timeConfig, null);
+            }
             HttpUtil45.closePool();
 
 //            mongMap.put("supplierId", supplierId);
@@ -68,7 +104,6 @@ public class FetchProduct {
 //            mongMap.put("result", "stream data.") ;
 //            logMongo.info(mongMap);
 
-            System.out.println(result);
             
             Date startDate,endDate= new Date();
 			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
@@ -90,6 +125,8 @@ public class FetchProduct {
             String category = "";
             String description = "";
             String status = "";
+            String origin = "";
+            String season = "";
             try (CSVParser parser = new CSVParser(reader, csvFileFormat)) {
                 for (final CSVRecord record : parser) {
                     if (record.size() <= 1) {
@@ -106,7 +143,12 @@ public class FetchProduct {
                         category = record.get("Categoria");
                         description = record.get("description_it_it");
                         status = record.get("Stato");
-
+                        try{
+                        	origin = record.get("ORIGIN");
+                            season = record.get("SEASON");
+                        }catch(Exception e){
+                        	
+                        } 
                         //保存SPU
                         SpuDTO spu = new SpuDTO();
                         //SPU 必填
@@ -117,6 +159,8 @@ public class FetchProduct {
                         spu.setBrandName(brand);
                         spu.setMaterial(description);
 //                        spu.setProductOrigin(description);
+                        spu.setProductOrigin(origin);
+                        spu.setSeasonId(season); 
 
                         spu.setCategoryGender(category);
 
