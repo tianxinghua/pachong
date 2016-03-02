@@ -41,8 +41,8 @@ public class DownloadAndReadCSV {
         	URL url = new URL(httpurl);
             URLConnection conn = url.openConnection();
             InputStream inStream = conn.getInputStream();
-            conn.setConnectTimeout(1000*60*30);
-            conn.setReadTimeout(1000*60*120);
+            conn.setConnectTimeout(1);//1000*60*30
+            conn.setReadTimeout(1);//1000*60*120
             realPath = getPath(path);
             FileOutputStream fs = new FileOutputStream(realPath);
 
@@ -55,7 +55,7 @@ public class DownloadAndReadCSV {
             }
         } catch (Exception e) {
         	logger.info("下载失败");
-        	throw new RuntimeException(e);
+        	System.exit(0);
         }
         return  realPath;
     }
