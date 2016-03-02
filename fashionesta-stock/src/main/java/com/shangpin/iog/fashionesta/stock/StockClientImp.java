@@ -48,7 +48,12 @@ public class StockClientImp extends AbsUpdateProductStock {
 
 		Map<String, String> skustock = new HashMap<>(skuNo.size());
 		try {
+			logger.info("下载元数据，解析csv");
 			List<Product> list = DownloadAndReadCSV.readLocalCSV();
+			logger.info("解析完毕，productnum="+list.size());
+			if (list.size()==0) {
+				logger.info("数量为零");
+			}
 			Map<String,String> supplierStockMap = new HashMap<>();
 			for (Product product : list) {
                 List<Item> items = product.getItems();
@@ -74,7 +79,7 @@ public class StockClientImp extends AbsUpdateProductStock {
             }
 		} catch (Exception e) {
 			loggerError.error("获取库存失败。"+e.getMessage());
-			throw e;
+			logger.info("获取库存失败。"+e.getMessage());
 		}
 		return skustock;
 	}
