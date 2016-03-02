@@ -21,7 +21,7 @@ dependencies {
 
 jar {
 
-    dependsOn copyToLib
+    dependsOn copyToLib, copyResources
 //    , copyResources
 //    exclude ("**/*.properties")
 //    from {
