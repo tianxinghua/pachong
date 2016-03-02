@@ -1,24 +1,31 @@
 
-
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
+    /*compile project(':project-framework')
+    compile project(':project-common')
+    compile project(':iog-service')
+    compile project(':project-dao')*/
     compile(
-
+            "commons-httpclient:commons-httpclient:3.1",
+            "org.apache.httpcomponents:httpclient:4.1.1",
             "net.sf.json-lib:json-lib:2.2:jdk15",
-            "org.apache.poi:poi:3.0.1-FINAL",
-            "com.thoughtworks.xstream:xstream:1.4.7",
-            "commons-net:commons-net:1.4.1",
-            "org.jdom:jdom:2.0.2",
-            "dom4j:dom4j:1.6.1",
+            "com.google.code.gson:gson:2.2.2",
+            "org.projectlombok:lombok:1.14.8",
+            project(':project-framework'),
             project(':project-common'),
+            project(':iog-service'),
+            project(':project-dao'),
             project(':iog-common-product'),
-
+            project(':openapi-ice')
     )
+
+
+
 }
 
 jar {
 
-    dependsOn copyToLib , copyResources
+    dependsOn copyToLib , copyResources,dependsClassPath
     exclude ("**/*.properties")
 
 
@@ -28,7 +35,8 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.linoricci.StartUp'
+        attributes 'Main-Class': 'com.shangpin.iog.biondini.StartSkuJob'
         attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
+
 }
