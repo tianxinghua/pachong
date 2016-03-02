@@ -58,7 +58,6 @@ public abstract class AbsUpdateProductStock {
 	public abstract Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception;
 	/**
 	 * 抓取主站商品SKU信息，等待更新库存<br/>
-	 * @see #updateProduct(String, Map) 更新库存
 	 * @param host 服务地址
 	 * @param app_key 分配给供应商的KEY
 	 * @param app_secret 分配给供应商的SECRET
@@ -77,15 +76,76 @@ public abstract class AbsUpdateProductStock {
 		logger.warn("获取sku 开始");
 		Set<String> skuIds = new HashSet<String>();
 
+		while(hasNext){
+
+			List<SopProductSku> skus = null;
+			try {
+				request  = new SopProductSkuPageQuery();
+				request.setPageIndex(pageIndex);
+				request.setPageSize(pageSize);
+				request.setStartTime(start);
+				request.setEndTime(end);
+				Date timestamp = new Date();  //
+				result =SpClient.FindCommodityByPage( host,  app_key,  app_secret,  timestamp,  request);
+				SopProductSkuPage products = result.getResponse();
+				skus = products.getSopProductSkuIces();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			for (SopProductSku sku : skus) {
+				List<SopSku> skuIces = sku.getSopSkuIces();
+				for (SopSku ice : skuIces) {
+
+					if(null!=ice.getSkuNo()&&!"".equals(ice.getSkuNo())&&null!=ice.getSupplierSkuNo()&&!"".equals(ice.getSupplierSkuNo())){
+						if(1!=ice.getIsDeleted()){
+							skuIds.add(ice.getSupplierSkuNo());
+							stocks.put(ice.getSupplierSkuNo(),ice.getSkuNo());
+						}
+					}
+
+				}
+			}
+			pageIndex++;
+			hasNext=(pageSize==skus.size());
+
+		}
+		logger.warn("获取sku 结束");
+	    loggerInfo.info("获取SKU数量为："+skuIds.size());
+		return skuIds;
+	}
+
+
+	/**
+	 * 抓取主站商品SKU信息，等待更新库存<br/>
+
+	 * @param host 服务地址
+	 * @param app_key 分配给供应商的KEY
+	 * @param app_secret 分配给供应商的SECRET
+	 * @param supplierId 供货商ID
+	 * @param start 主站数据开始时间
+	 * @param end 主站数据结束时间
+	 * @param stocks 本地sku编号与ice的sku键值对
+	 * @return 供应商skuNo
+	 * @throws Exception
+	 */
+	private Collection<String> grabProduct(String host,String app_key,String app_secret,String supplierId,String start,String end,Map<String,String> stocks) throws Exception{
+		int pageIndex=1,pageSize=100;
+		ApiResponse<SopProductSkuPage>  result =   null;
+		SopProductSkuPageQuery   request = null;
+
+		boolean hasNext=true;
+		logger.warn("获取sku 开始");
+		Set<String> skuIds = new HashSet<String>();
+
 		//获取已有的SPSKUID
-//		Map<String,String> map = new HashMap<>();
-//		if(null!=skuRelationService){
-//			List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
-//
-//			for(SkuRelationDTO skuRelationDTO:skuRelationDTOList){
-//				map.put(skuRelationDTO.getSopSkuId(),null);
-//			}
-//		}
+		Map<String,String> map = new HashMap<>();
+		if(null!=skuRelationService){
+			List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplierId);
+
+			for(SkuRelationDTO skuRelationDTO:skuRelationDTOList){
+				map.put(skuRelationDTO.getSopSkuId(),null);
+			}
+		}
 
 		Date date  = new Date();
 		while(hasNext){
@@ -108,18 +168,18 @@ public abstract class AbsUpdateProductStock {
 				List<SopSku> skuIces = sku.getSopSkuIces();
 				for (SopSku ice : skuIces) {
 
-//					if (null!=skuRelationService&&!map.containsKey(ice.getSkuNo())){ //海外库保留尚品SKU和供货商SKU对照关系
-//						SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
-//						skuRelationDTO.setSupplierId(supplier);
-//						skuRelationDTO.setSupplierSkuId(ice.getSupplierSkuNo());
-//						skuRelationDTO.setSopSkuId(ice.getSkuNo());
-//						skuRelationDTO.setCreateTime(date);
-//						try {
-//							skuRelationService.saveSkuRelateion(skuRelationDTO);
-//						} catch (ServiceException e) {
-//							logger.error(skuRelationDTO.toString() + "保存失败");
-//						}
-//					}
+					if (null!=skuRelationService&&!map.containsKey(ice.getSkuNo())){ //海外库保留尚品SKU和供货商SKU对照关系
+						SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
+						skuRelationDTO.setSupplierId(supplierId);
+						skuRelationDTO.setSupplierSkuId(ice.getSupplierSkuNo());
+						skuRelationDTO.setSopSkuId(ice.getSkuNo());
+						skuRelationDTO.setCreateTime(date);
+						try {
+							skuRelationService.saveSkuRelateion(skuRelationDTO);
+						} catch (ServiceException e) {
+							logger.error(skuRelationDTO.toString() + "保存失败");
+						}
+					}
 
 
 					if(null!=ice.getSkuNo()&&!"".equals(ice.getSkuNo())&&null!=ice.getSupplierSkuNo()&&!"".equals(ice.getSupplierSkuNo())){
@@ -136,7 +196,7 @@ public abstract class AbsUpdateProductStock {
 
 		}
 		logger.warn("获取sku 结束");
-	    loggerInfo.info("获取SKU数量为："+skuIds.size());
+		loggerInfo.info("获取SKU数量为："+skuIds.size());
 		return skuIds;
 	}
 	
@@ -149,7 +209,7 @@ public abstract class AbsUpdateProductStock {
 	 * @param start 主站产品数据时间开始 yyyy-MM-dd HH:mm
 	 * @param end 主站产品数据时间结束 yyyy
 	 *            +   -MM-dd HH:mm
-	 * @see {@link #grabStock(List) 抓取库存 }
+
 	 * @return 更新失败数
 	 * @throws Exception 
 	 */
@@ -182,6 +242,53 @@ public abstract class AbsUpdateProductStock {
 			return updateStock(host,app_key,app_secret, localAndIceSku, skuNoSet);
 		}
 	}
+
+
+
+	/**
+	 * 更新主站库存
+	 * 客户端调用的接口
+	 * @param host     服务地址
+	 * @param app_key 提供给供应商的KEY
+	 * @param app_secret 提供给供应商的SECRET
+	 * @param supplierId  供货商ID 主要是为了存储SKUID对应关系中的供货商ID
+	 * @param start 主站产品数据时间开始 yyyy-MM-dd HH:mm
+	 * @param end 主站产品数据时间结束 yyyy
+	 *            +   -MM-dd HH:mm
+	 *
+	 * @return 更新失败数
+	 * @throws Exception
+	 */
+	public int updateProductStock(final  String host,final String app_key, final String app_secret,final String supplierId,final String start,final String end) throws Exception{
+		//ice的skuid与本地库拉到的skuId的关系，value是ice中skuId,key是本地中的skuId
+		final Map<String,String> localAndIceSku=new HashMap<String, String>();
+		final Collection<String> skuNoSet=grabProduct(host,app_key,app_secret,supplierId, start, end,localAndIceSku);
+		logger.warn("待更新库存数据总数："+skuNoSet.size());
+		//logger.warn("需要更新ice,supplier sku关系是："+JSON.serialize(localAndIceSku));
+		final List<Integer> totoalFailCnt=Collections.synchronizedList(new ArrayList<Integer>());
+		if(useThread){
+			int poolCnt=skuNoSet.size()/getSkuCount4Thread();
+			ExecutorService exe=Executors.newFixedThreadPool(poolCnt/4+1);//相当于跑4遍
+			final List<Collection<String>> subSkuNos=subCollection(skuNoSet);
+			logger.warn("线程池数："+(poolCnt/4+1)+",sku子集合数："+subSkuNos.size());
+			for(int i = 0 ; i <subSkuNos.size();i++){
+				exe.execute(new UpdateThread(subSkuNos.get(i),host,app_key,app_secret,localAndIceSku,totoalFailCnt));
+			}
+			exe.shutdown();
+			while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
+
+			}
+			int fct=0;
+			for(int k=0;k<totoalFailCnt.size();k++){
+				fct+=totoalFailCnt.get(k);
+			}
+			this.updateStockTime(app_key);
+			return fct;
+		}else{
+			return updateStock(host,app_key,app_secret, localAndIceSku, skuNoSet);
+		}
+	}
+
 	/**
 	 * @param skuNoSet
 	 * @return
@@ -438,6 +545,7 @@ public abstract class AbsUpdateProductStock {
 	class UpdateThread extends Thread{
 		final Logger logger = LoggerFactory.getLogger(UpdateThread.class);
 		private Collection<String> skuNos;
+		private String supplierId;//
 		private String host;//服务地址
 		private String app_key;//
 		private String app_secret;//
