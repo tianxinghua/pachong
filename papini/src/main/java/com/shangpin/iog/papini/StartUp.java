@@ -4,8 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import sun.awt.AppContext;
-
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.papini.service.FetchProduct;
 
 public class StartUp {
