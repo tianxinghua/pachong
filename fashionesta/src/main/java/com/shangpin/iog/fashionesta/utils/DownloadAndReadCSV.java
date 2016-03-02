@@ -55,7 +55,7 @@ public class DownloadAndReadCSV {
             }
         } catch (Exception e) {
         	logger.info("下载失败");
-        	throw new RuntimeException(e);
+        	System.exit(0);
         }
         return  realPath;
     }
