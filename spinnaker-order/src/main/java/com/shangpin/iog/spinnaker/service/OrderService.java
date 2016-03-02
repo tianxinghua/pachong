@@ -3,11 +3,15 @@ package com.shangpin.iog.spinnaker.service;
 
 import java.util.HashMap;
 
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.shangpin.iog.common.utils.SendMail;
 
+import com.shangpin.iog.spinnaker.dto.OrderInfoDTO;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -110,7 +114,7 @@ public class OrderService extends AbsOrderService {
 
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
-		deleteOrder.setExcDesc("0");
+		deleteOrder.setExcState("0");
 		//deleteOrder.setStatus(OrderStatus.REFUNDED);
 //		if("HO".equals(deleteOrder.getStatus())){
 //			
@@ -215,47 +219,66 @@ public class OrderService extends AbsOrderService {
 			logger.info("查询订单状态返回值:" + rtnData2);
 			System.out.println("查询订单状态返回值:" + rtnData2);
 		}catch(Exception e){
-			e.printStackTrace();
+
 		}
 		
 		// 获取退单信息
 		Gson gson = new Gson();
 		String rtnData = null;
 
-		ResponseObject response = gson.fromJson(rtnData2, ResponseObject.class);
-		if("HO".equals(response.getStatus())){
-			try {
-				 Map<String, String> map =new HashMap<String, String>();
-				 map.put("DBContext", dBContext);
-				 map.put("purchase_no", deleteOrder.getSpPurchaseNo());
-				 map.put("order_no", deleteOrder.getSpOrderId());
-				 map.put("key", key);
-				 rtnData = HttpUtil45.get(cancelUrl, defaultConfig , map);
-				logger.info("推送采购单：" + deleteOrder.getSpPurchaseNo() + "退单返回结果==" + rtnData);
-				System.out.println("推送采购单："+ deleteOrder.getSpPurchaseNo() +"退单返回结果==" + rtnData);
-				if (HttpUtil45.errorResult.equals(rtnData)) {
-					deleteOrder.setExcState("1");
-					deleteOrder.setExcDesc(rtnData);
-					return;
-				}
 
-				ResponseObject responseObject = gson.fromJson(rtnData, ResponseObject.class);
-				if ("OK".equals(responseObject.getStatus())) {
-					deleteOrder.setExcState("0");
-					//deleteOrder.setExcDesc(responseObject.getMessage().toString());
-				} else {
-					deleteOrder.setStatus("1");
-					deleteOrder.setExcDesc(responseObject.getMessage().toString());
-					//deleteOrder.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
+
+		try {
+			List<OrderInfoDTO> responseObjectList = gson.fromJson(rtnData2, new TypeToken<List<OrderInfoDTO>>() {}.getType());
+			if(responseObjectList.size()>0){
+				OrderInfoDTO orderInfo = responseObjectList.get(0);
+				if("HO".equals(orderInfo.getStatus())) {
+					try {
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("DBContext", dBContext);
+						map.put("purchase_no", deleteOrder.getSpPurchaseNo());
+						map.put("order_no", deleteOrder.getSpOrderId());
+						map.put("key", key);
+						rtnData = HttpUtil45.get(cancelUrl, defaultConfig, map);
+						logger.info("推送采购单：" + deleteOrder.getSpPurchaseNo() + "退单返回结果==" + rtnData);
+						System.out.println("推送采购单：" + deleteOrder.getSpPurchaseNo() + "退单返回结果==" + rtnData);
+						if (HttpUtil45.errorResult.equals(rtnData)) {
+							deleteOrder.setExcState("1");
+							deleteOrder.setExcDesc(rtnData);
+							return;
+						}
+
+						ResponseObject responseObject = gson.fromJson(rtnData, ResponseObject.class);
+						if ("OK".equals(responseObject.getStatus())) {
+							deleteOrder.setExcState("0");
+							//deleteOrder.setExcDesc(responseObject.getMessage().toString());
+						} else {
+							deleteOrder.setStatus("1");
+							deleteOrder.setExcDesc(responseObject.getMessage().toString());
+							//deleteOrder.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
+						}
+					} catch (Exception e) {
+						deleteOrder.setExcState("1");
+						deleteOrder.setExcDesc(e.getMessage());
+					}
+
+				}else{
+					loggerError.error("采购单"+deleteOrder.getSpPurchaseNo()+"用户退款,供货商状态已变，无法通知。");
+					deleteOrder.setExcDesc("采购单"+deleteOrder.getSpPurchaseNo()+"用户退款,供货商状态已变，无法通知。");
 				}
-			} catch (Exception e) {
+			}else{
 				deleteOrder.setExcState("1");
-				deleteOrder.setExcDesc(e.getMessage());
+				deleteOrder.setExcDesc("未获取到供货商的订单状态");
 			}
-		}else{
-			loggerError.error("采购单"+deleteOrder.getSpPurchaseNo()+"用户退款,供货商状态已变，无法通知。");
-			deleteOrder.setExcDesc("采购单"+deleteOrder.getSpPurchaseNo()+"用户退款,供货商状态已变，无法通知。");
+
+
+
+		} catch (JsonSyntaxException e) {
+			loggerError.error("采购单："+ deleteOrder.getSpPurchaseNo()+ "查询订单状态，转化错误."+e.getMessage());
+			e.printStackTrace();
 		}
+
+
 		
 		
 	}

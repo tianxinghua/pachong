@@ -474,7 +474,6 @@ public class HttpUtil45 {
                     e.printStackTrace();
                 }
             }
-
         }else if("form".equals(transParaType.toLowerCase())){
 			if(StringUtils.isNotBlank(value)){
 				StringEntity s = null;
@@ -482,6 +481,19 @@ public class HttpUtil45 {
 					s = new StringEntity(value);
 					s.setContentEncoding("UTF-8");
 					s.setContentType("application/x-www-form-urlencoded");//发送json数据需要设置contentType
+					method.setEntity(s);
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}else if("soap".equals(transParaType.toLowerCase())){
+			if(StringUtils.isNotBlank(value)){
+				StringEntity s = null;
+				try {
+					s = new StringEntity(value);
+					s.setContentEncoding("UTF-8");
+					s.setContentType("application/soap+xml");//发送json数据需要设置contentType
 					method.setEntity(s);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();

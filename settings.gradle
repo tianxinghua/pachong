@@ -1,6 +1,4 @@
 
-
-
 rootProject.name = 'iog'
 
 include 'project-framework'
@@ -73,5 +71,4 @@ include 'forzieri'
 include 'tessabit'
 include 'creative99'
 include 'creative99-stock'
-
 
