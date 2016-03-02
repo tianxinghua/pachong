@@ -1,0 +1,28 @@
+
+
+dependencies {
+    compile(
+		"org.freemarker:freemarker:2.3.16",
+    )
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+
+}
+
+jar {
+
+    dependsOn copyToLib , copyResources
+    exclude ("**/*.properties")
+
+
+    def manifestCp = configurations.compile.files.collect  {
+        File file = it
+        "lib/${file.name}"
+    }.join(' ')
+
+    manifest {
+        attributes 'Main-Class': 'machine.Test'
+        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+    }
+
+}
