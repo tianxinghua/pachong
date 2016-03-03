@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.ice.ice.AbsDeliverService;
+import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.OrderDTO;
@@ -13,6 +14,7 @@ import com.shangpin.iog.spinnaker.dto.Parameters2;
 import com.shangpin.iog.spinnaker.dto.ResponseObject;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -47,6 +49,8 @@ public class LogisticsService extends AbsDeliverService{
         key = bdl.getString("key");
     }
 
+    @Autowired
+    OrderService orderService;
     @Override
     protected void handleConfirmShippedOrder(OrderDTO orderDTO) {
     	String rtnData = null;
@@ -78,7 +82,24 @@ public class LogisticsService extends AbsDeliverService{
                     String deliverNo =  responseObject.getLogistics_company() +";"+ responseObject.getTrk_Number() +";"+ responseObject.getDate_Shipped();
                     orderDTO.setStatus(OrderStatus.SHIPPED);
                     orderDTO.setDeliveryNo(deliverNo);
+                }else if("CL".equals(responseObject.getStatus())){ //无货，需要设置采购异常
+                    try {
+                        String result = orderService.setPurchaseOrderExc(orderDTO);
+                        if("-1".equals(result)){
+                            orderDTO.setStatus(OrderStatus.NOHANDLE);
+                        }else if("1".equals(result)){
+                            orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+                        }else if("0".equals(result)){
+                            orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+                        }
+                    } catch (Exception e) {
+                        loggerError.error("供货商无货，设置采购单"+ orderDTO.getSpPurchaseNo()+"失败。"+e.getMessage());
+                    }
+
+
                 }
+
+
             }
 
 

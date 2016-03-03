@@ -7,6 +7,7 @@ import com.shangpin.iog.dto.LogisticsDTO;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.product.dao.LogisticsMapper;
 import com.shangpin.iog.service.LogisticsService;
+import com.shangpin.iog.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,10 @@ public class LogisticsServiceImpl implements LogisticsService {
 
     @Autowired
     LogisticsMapper logisticsDAO;
+
+
+    @Autowired
+    OrderService orderService;
 
     @Override
     public void save(OrderDTO orderDTO,String logisticsCompany,String trackNumber,String shippedTime) throws ServiceException {
@@ -64,6 +69,15 @@ public class LogisticsServiceImpl implements LogisticsService {
         for(LogisticsDTO dto:logisticsDTOList){
             returnDto.setLogisticsCompany(dto.getLogisticsCompany());
             returnDto.setPurchaseNo(dto.getPurchaseNo());
+            OrderDTO orderDTO =null;
+            try {
+                 orderDTO = orderService.getOrderByPurchaseNo(dto.getPurchaseNo());
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+            if(orderDTO.getStatus().equals("refunded")){  //判断用户是否取消订单 ，取消的不推送
+                continue;
+            }
             purchaseDetailNo=dto.getPurchaseDetailNo();
             String[] purchaseDetailNoArray = purchaseDetailNo.split(";");
             if(null!=purchaseDetailNoArray){

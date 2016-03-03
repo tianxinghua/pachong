@@ -262,7 +262,8 @@ public class OrderService extends AbsOrderService {
 						deleteOrder.setExcDesc(e.getMessage());
 					}
 
-				}else{
+				}else{ //供货商已发货 不允许退，但库的状态需要改变
+					deleteOrder.setExcState("0");
 					loggerError.error("采购单"+deleteOrder.getSpPurchaseNo()+"用户退款,供货商状态已变，无法通知。");
 					deleteOrder.setExcDesc("采购单"+deleteOrder.getSpPurchaseNo()+"用户退款,供货商状态已变，无法通知。");
 				}
@@ -338,7 +339,7 @@ public class OrderService extends AbsOrderService {
 	}
 
 
-	private void setPurchaseExc(final OrderDTO orderDTO){
+	public void setPurchaseExc(final OrderDTO orderDTO){
 		String result = setPurchaseOrderExc(orderDTO);
 		if("-1".equals(result)){
 			orderDTO.setStatus(OrderStatus.NOHANDLE);
