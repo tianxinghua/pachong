@@ -17,7 +17,10 @@ import com.shangpin.iog.kix.dto.Product;
 public class KIXUtil {
 	
 	public List<Product> getAllProducts(){
-//		/fields
+//		/fields   admin/products.json?collection_id=841564295
+//		/admin/products/count.json?collection_id=841564295
+//		https://c1e1d0fa10d3f3dc9ec8390e1aaeb007:0fc94701904077a2fb8eca2da6800522@kix-files.myshopify.com/admin/products.json?collection_id=213136323
+//		https://c1e1d0fa10d3f3dc9ec8390e1aaeb007:0fc94701904077a2fb8eca2da6800522@kix-files.myshopify.com/admin/count.json?collection_id=213136323
 		Gson gson = new Gson();
 		String url = "https://c1e1d0fa10d3f3dc9ec8390e1aaeb007:0fc94701904077a2fb8eca2da6800522@kix-files.myshopify.com/admin/products.json?limit=250&page=";
 		String string = null;
@@ -36,12 +39,12 @@ public class KIXUtil {
 		return productList; 
 	}
 	private int getPageNum(){
-		String url = "https://c1e1d0fa10d3f3dc9ec8390e1aaeb007:0fc94701904077a2fb8eca2da6800522@kix-files.myshopify.com/admin/count.json";
+		String url = "https://c1e1d0fa10d3f3dc9ec8390e1aaeb007:0fc94701904077a2fb8eca2da6800522@kix-files.myshopify.com/admin/products/count.json";
 		String count = HttpUtil45.get(url, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10), null);
 		return Integer.valueOf(count)%250==0?Integer.valueOf(count)/250:Integer.valueOf(count)/250+1;
 	}
 	public Map<String,String> getMetaField(String productId){
-	
+//	https://c1e1d0fa10d3f3dc9ec8390e1aaeb007:0fc94701904077a2fb8eca2da6800522@kix-files.myshopify.com/admin/products/5170501571/metafields.json
 		String url = "https://kix-files.myshopify.com/admin/products/"+productId+"/metafields.json";
 		String string = HttpUtil45.get(url, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10), null);
 		Gson gson = new Gson();

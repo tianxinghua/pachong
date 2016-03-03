@@ -1,5 +1,7 @@
 package com.shangpin.iog.common.utils;
 
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import org.apache.log4j.Logger;
 
@@ -19,7 +21,8 @@ public class Test {
 //        } catch (Exception e) {
 //            logger.info("exception ="+e.getMessage());
 //        }
-           System.out.println( "201602161167427".compareTo("201602161167427"));
-
+//           System.out.println( "201602161167427".compareTo("201602161167427"));
+        HttpUtil45.get("http://www.pos123.us/api/v2/products/.json?limit=50&page=2",new OutTimeConfig(),
+                null,"RIX5NkHDIM25yUFZmDlVSdWEE7V3aSYv","");
     }
 }

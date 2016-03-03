@@ -165,7 +165,26 @@ public class FetchProduct {
                     spu.setBrandName(product.getProduct_brand());
                     spu.setCategoryName(product.getCategory());
                     spu.setSpuName(product.getProduct_name());
-                    spu.setSeasonId(product.getSeason_name());
+                    String seasonId = product.getSeason_name();
+                    String season = "";
+                    if(seasonId.equals("161")){
+                    	season = "161 Primave estate 2016";
+                    }else if (seasonId.equals("51")){
+                    	season = "51 Autunno inverno 2015";
+                    }else if (seasonId.equals("141")){
+                    	season = "141 Primavera estate 2014";
+                    }else if (seasonId.equals("151")){
+                    	season = "151 Primavera estate 2015";
+                    }else if(seasonId.equals("41")){
+                    	season = "41 Autunno inverrno 2014";
+                    }else if(seasonId.equals("31")){
+                    	season = "31 Autunno inverrno 2013";
+                    }else if(seasonId.equals("21")){
+                    	season = "21 Autunno inverrno 2012";
+                    }else if(seasonId.equals("131")){
+                    	season = "131 Primavera estate 2013";
+                    }
+                    spu.setSeasonId(season);
                     spu.setMaterial(StringUtils.isBlank(product.getProduct_material())?product.getDescription():product.getProduct_material());
                     spu.setCategoryGender(product.getGender());
                     productFetchService.saveSPU(spu);
