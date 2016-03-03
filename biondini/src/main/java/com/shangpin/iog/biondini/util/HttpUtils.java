@@ -28,7 +28,7 @@ public class HttpUtils {
 		map.put("SOAPAction", "urn:LcvMagWS/LectureDesTables");
 		map.put("Content-Type", "text/xml; charset=UTF-8");
 		map.put("Content-Type", "application/soap+xml; charset=utf-8");
-
+		System.out.println("=================tables fetch begin====================================");
 		try {
 			json = HttpUtil45
 					.operateData(
@@ -37,7 +37,7 @@ public class HttpUtils {
 							"http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDesTables",
 							new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10,
 									1000 * 60 * 10), map, xx, null, null);
-
+			System.out.println("=================tables fetch end====================================");
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -59,12 +59,12 @@ public class HttpUtils {
 				+ "<sUser xsd:type=\"xsd:string\">BION456</sUser>"
 				+ "<sMdp xsd:type=\"xsd:string\">INI123</sMdp>"
 				+ "</LectureDuStock>" + "</soap:Body>" + "</soap:Envelope>";
-
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("SOAPAction", "urn:LcvMagWS/LectureDuStock");
 		map.put("Content-Type", "text/xml; charset=UTF-8");
 		map.put("Content-Type", "application/soap+xml; charset=utf-8");
 		String json = null;
+		System.out.println("=================Stock fetch begin====================================");
 		try {
 			json = HttpUtil45
 					.operateData(
@@ -73,6 +73,7 @@ public class HttpUtils {
 							"http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDuStock",
 							new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10,
 									1000 * 60 * 10), map, xx, null, null);
+			System.out.println("=================Stock fetch end====================================");
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -96,20 +97,21 @@ public class HttpUtils {
 				+ "</LectureDesModelesAvecPrix>"
 				+ "</soap:Body>"
 				+ "</soap:Envelope>";
-
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("SOAPAction", "urn:LcvMagWS/LectureDesModelesAvecPrix");
 		map.put("Content-Type", "text/xml; charset=UTF-8");
 		map.put("Content-Type", "application/soap+xml; charset=utf-8");
 		String json = null;
+		System.out.println("=================product fetch begin====================================");
 		try {
 			json = HttpUtil45
 					.operateData(
 							"post",
 							"soap",
 							"http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDesModelesAvecPrix",
-							new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10,
-									1000 * 60 * 10), map, xx, null, null);
+							new OutTimeConfig(1000 * 60 * 20, 1000 * 60 * 20,
+									1000 * 60 * 20), map, xx, null, null);
+			System.out.println("=================product fetch end====================================");
 			// readLine(json,productPath);
 		} catch (ServiceException e) {
 			e.printStackTrace();

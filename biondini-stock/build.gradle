@@ -5,7 +5,10 @@ dependencies {
             project(':project-common'),
             project(':iog-service'),
             project(':project-dao'),
+               project(':openapi-ice'),
             project(':iog-common-product')
+            
+           
     )
 }
 
@@ -20,7 +23,7 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.biondini.StartSkuJob'
+        attributes 'Main-Class': 'com.shangpin.iog.biondini.stock.StockImp'
         attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 

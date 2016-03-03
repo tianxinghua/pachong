@@ -45,87 +45,93 @@ public class FetchProduct {
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
 	}
-	
+
 	/**
 	 * message mapping and save into DB
 	 */
 	public void messMappingAndSave() {
-		
-		//Mode下的属性代码表
+		SoapUtil.getTableModeleAndArticle();
+		// Mode下的属性代码表
 		List<IdTable> listIdTable = SoapUtil.getTableModele();
-		//
+		//获取artcile下的代码表
 		List<IdTable> listTableArtcile = SoapUtil.getTableArtcile();
-		
-		Map map = SoapUtil.getProductStockList(null);
-		
-		//获取商品list
+		//获取商品库存
+		Map<String,String> map = SoapUtil.getProductStockList();
+		// 获取商品list
 		List<Modele> array = SoapUtil.getProductList();
-		
+
 		if (array != null) {
 			for (Modele item : array) {
-				
-				String numMdle,numArti,spuId = null;
+
+				String numMdle = null;
 				numMdle = item.getNumMdle();
 				List<Article> artList = item.getArticleList();
-				
-				for(Article art :artList){
+
+				for (Article art : artList) {
 					
+					String prductName = null , numArti = null, spuId= null;
 					numArti = art.getNumArti();
-					spuId= numMdle + numArti;
+					spuId = numMdle + numArti;
 					SpuDTO spu = new SpuDTO();
 					try {
 						spu.setId(UUIDGenerator.getUUID());
 						spu.setSupplierId(supplierId);
 						spu.setSpuId(spuId);
 						spu.setBrandName(item.getNomFour());
-						
-						for(IdTable id :listIdTable){
+						if(item.getNomFour()!=null){
+							prductName = item.getNomFour();	
+						}
+						for (IdTable id : listIdTable) {
 							boolean flag = false;
-							if("Rayon".equals(id.getNomTable())){
-								List<TableMdle> tbList = id.getDescription().getTableMdle();
-								for(TableMdle tb : tbList){
-									if(item.getRayon().equals(tb.getCode())){
+							if ("Rayon".equals(id.getNomTable())) {
+								List<TableMdle> tbList = id.getDescription()
+										.getTableMdle();
+								for (TableMdle tb : tbList) {
+									if (item.getRayon().equals(tb.getCode())) {
 										spu.setCategoryGender(tb.getLibelle());
-										flag=true;
+										flag = true;
 										break;
 									}
 								}
 							}
-							if(flag){
-								break;	
+							if (flag) {
+								break;
 							}
 						}
-						for(IdTable id :listIdTable){
+						for (IdTable id : listIdTable) {
 							boolean flag1 = false;
-							if("Famille".equals(id.getNomTable())){
-								List<TableMdle> tbList = id.getDescription().getTableMdle();
-								for(TableMdle tb : tbList){
-									if(item.getFamille().equals(tb.getCode())){
+							if ("Famille".equals(id.getNomTable())) {
+								List<TableMdle> tbList = id.getDescription()
+										.getTableMdle();
+								for (TableMdle tb : tbList) {
+									if (item.getFamille().equals(tb.getCode())) {
 										spu.setCategoryName(tb.getLibelle());
-										flag1=true;
+										prductName += tb.getLibelle();
+										flag1 = true;
 										break;
 									}
 								}
 							}
-							if(flag1){
-								break;	
+							if (flag1) {
+								break;
 							}
 						}
-//						listIdTable.get(0);
-//						spu.setSpuName(item.getProductName());
-						for(IdTable id :listTableArtcile){
+						// listIdTable.get(0);
+						// spu.setSpuName(item.getProductName());
+						for (IdTable id : listTableArtcile) {
 							boolean fl = false;
-							if("Matière".equals(id.getNomTable())){
-								List<TableArti> tbList = id.getDescription().getTableArti();
-								for(TableArti tb : tbList){
-									if(art.getMatière().equals(tb.getCode())){
+							if ("Matière".equals(id.getNomTable())) {
+								List<TableArti> tbList = id.getDescription()
+										.getTableArti();
+								for (TableArti tb : tbList) {
+									if (art.getMatière().equals(tb.getCode())) {
 										spu.setMaterial(tb.getLibelle());
 										fl = true;
 										break;
 									}
 								}
 							}
-							if(fl){
+							if (fl) {
 								break;
 							}
 						}
@@ -140,62 +146,59 @@ public class FetchProduct {
 						}
 					}
 					List<QtTaille> ta = art.getTarifMagInternet().getList();
-					for(QtTaille qt : ta){
+					for (QtTaille qt : ta) {
 						SkuDTO sku = new SkuDTO();
 						try {
-							
 
-							
-							
 							sku.setId(UUIDGenerator.getUUID());
 							sku.setSupplierId(supplierId);
 							sku.setSpuId(spuId);
 							String size = qt.getTaille();
-							if(size!=null){
-								if(size.indexOf("½")>0){
-									size = size.replace("½","+");	
+							if (size != null) {
+								if (size.indexOf("½") > 0) {
+									size = size.replace("½", "+");
 								}
-							}else{
+							} else {
 								size = "A";
 							}
 							String color = art.getCouleurPrincipale();
-							for(IdTable id :listTableArtcile){
+							for (IdTable id : listTableArtcile) {
 								boolean fla = false;
-								if("Couleur-Principale".equals(id.getNomTable())){
-									List<TableArti> tbArtList = id.getDescription().getTableArti();
-									for(TableArti tb : tbArtList){
-										if(color.equals(tb.getCode())){
+								if ("Couleur-Principale".equals(id
+										.getNomTable())) {
+									List<TableArti> tbArtList = id
+											.getDescription().getTableArti();
+									for (TableArti tb : tbArtList) {
+										if (color.equals(tb.getCode())) {
 											sku.setColor(tb.getLibelle());
 											fla = true;
 											break;
 										}
 									}
 								}
-								if(fla){
+								if (fla) {
 									break;
 								}
 							}
-							sku.setSkuId(spuId+"|"+size);
+							sku.setSkuId(spuId + "|" + size);
 							sku.setBarcode(item.getCodMdle());
 							sku.setProductSize(size);
-							if(map.get(sku.getSkuId())==null){
+							if (map.get(sku.getSkuId()) == null) {
 								sku.setStock("0");
-							}else{
+							} else {
 								sku.setStock(sku.getSkuId());
 							}
 							sku.setProductCode(spuId);
-//							sku.setSalePrice(item.getSalePrice());
-							sku.setMarketPrice(qt.getPrixVente());
-//							sku.setSupplierPrice(item.getSupplierPrice());
-//							sku.setProductName(item.getProductName());
-//							sku.setProductDescription(item.getProductDescription());
-//							sku.setSaleCurrency(item.getSaleCurrency());
+							sku.setSalePrice(qt.getPrixVente());
+							sku.setProductName(prductName);
+							// sku.setSaleCurrency(item.getSaleCurrency());
 							sku.setBarcode(art.getCodArti());
 							productFetchService.saveSKU(sku);
 						} catch (ServiceException e) {
 							if (e.getMessage().equals("数据插入失败键重复")) {
 								try {
-									productFetchService.updatePriceAndStock(sku);
+									productFetchService
+											.updatePriceAndStock(sku);
 								} catch (ServiceException e1) {
 									e1.printStackTrace();
 								}
@@ -205,10 +208,10 @@ public class FetchProduct {
 
 						}
 					}
-					
+
 				}
-					
-				}
+
 			}
 		}
 	}
+}
