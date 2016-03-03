@@ -1,23 +1,25 @@
 package com.shangpin.iog.bagheera.stock.utils;
 
-import com.shangpin.iog.bagheera.stock.dto.BagheeraDTO;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
-import java.io.*;
-import java.lang.reflect.Field;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import com.shangpin.iog.bagheera.stock.dto.BagheeraDTO;
 
 /**
  * Created by sunny on 2015/9/8.
@@ -26,20 +28,23 @@ public class DownloadAndReadExcel {
     public static final String PROPERTIES_FILE_NAME = "param";
     static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
     private static String path = bundle.getString("path");
+    private static Logger logger = Logger.getLogger("info");    
     private static String httpurl = bundle.getString("url");
 
     /**
      * http下载excel文件到本地路径
      * @throws MalformedURLException
      */
-    public static String downloadNet() throws MalformedURLException {
+    public static String downloadNet() {
         int bytesum = 0;
         int byteread = 0;
 
-        URL url = new URL(httpurl);
         String realPath="";
         try {
+        	URL url = new URL(httpurl);
             URLConnection conn = url.openConnection();
+            conn.setConnectTimeout(1000*60*30);
+            conn.setConnectTimeout(1000*60*60);
             InputStream inStream = conn.getInputStream();
             realPath = getPath(path);
             FileOutputStream fs = new FileOutputStream(realPath);
@@ -51,10 +56,9 @@ public class DownloadAndReadExcel {
                 System.out.println(bytesum);
                 fs.write(buffer, 0, byteread);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+        	logger.info("下载失败");
+        	throw new RuntimeException(e);
         }
         return  realPath;
     }
