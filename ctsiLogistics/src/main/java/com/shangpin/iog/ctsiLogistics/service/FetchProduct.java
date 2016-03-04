@@ -5,7 +5,7 @@ import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.ctsiLogistics.dao.Item;
-import com.shangpin.iog.ctsiLogistics.util.DownloadAndReadCSV;
+import com.shangpin.iog.ctsiLogistics.util.ReconciliationFtpUtil;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -46,7 +46,7 @@ public class FetchProduct {
 		String supplierId = bdl.getString("supplierId");
 		List<Item> list = null;
 		try {
-			list = DownloadAndReadCSV.readLocalCSV(Item.class);
+			list = ReconciliationFtpUtil.readLocalCSV(Item.class);;
 		} catch (Exception e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -101,7 +101,7 @@ public class FetchProduct {
 			}
 
 			if (StringUtils.isNotBlank(item.getPhoto())) {
-				String [] picArray = item.getPhoto().split("//|");
+				String [] picArray = item.getPhoto().split("\\|");
 				productFetchService.savePicture(supplierId, null,
 						item.getSku(), Arrays.asList(picArray));
 			}
