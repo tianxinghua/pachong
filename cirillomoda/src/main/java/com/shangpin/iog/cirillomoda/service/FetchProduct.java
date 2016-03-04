@@ -80,6 +80,7 @@ public class FetchProduct {
 					// 一次读入一行，直到读入null为文件结束
 					while ((tempString = reader.readLine()) != null) {
 						 result += tempString;
+						 result += "\n";
 					}
 					result = result.replaceAll("<br />\n", "").replaceAll("<br />\r", ""); 
 					System.out.println(result);
@@ -96,8 +97,8 @@ public class FetchProduct {
 				}
             }else{
             	result = HttpUtil45.get(url, timeConfig, null);
-            }
-            HttpUtil45.closePool();
+            	HttpUtil45.closePool();
+            }        
 
 //            mongMap.put("supplierId", supplierId);
 //            mongMap.put("supplierName", "giglio");
