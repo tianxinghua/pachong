@@ -51,7 +51,6 @@ public abstract class AbsUpdateProductStock {
 	/**
 	 * 抓取供应商库存数据 
 	 * @param skuNo 供应商的每个产品的唯一编号：sku
-	 * @see #grabProduct(String, String, String) 抓取主站SKU
 	 * @return 每个sku对应的库存数
 	 * @throws ServiceException 
 	 */
@@ -489,50 +488,65 @@ public abstract class AbsUpdateProductStock {
 		Map<String, Integer> iceStock=new HashMap<>();
 
 		Map<String,Integer>  sopPurchaseMap = new HashMap<>();
-		try {
-			if(!ORDER)	sopPurchaseMap = this.getPurchaseOrder(host,app_key,app_secret);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
 
 		try {
-			Map<String, Integer> supplierStock=grabStock(skuNos);
 
 
-                for (String skuNo : skuNos) {
-                    Integer stock=supplierStock.get(skuNo);
+			Map<String, Integer> supplierStock= null;  //
+			try {
+				supplierStock = grabStock(skuNos);
+				if(supplierStock.size()==0){
+					loggerError.error("获取库存信息是发生异常，程序退出");
+					System.exit(0);
+				}
+			} catch (Exception e) {    //获取库存信息时失败 直接退出
+				loggerError.error("获取库存信息是发生异常，程序退出");
+				System.exit(0);
+			}
 
-					if(!ORDER){
-						if(sopPurchaseMap.containsKey(skuNo)){
-							if(stock==null)
-								stock=0;
-							logger.error("供货商库存：" + stock + "采购单："+skuNo +" ; 数量 : " + sopPurchaseMap.get(skuNo));
-							loggerInfo.info("供货商库存：" + stock +"采购单：" + skuNo + " ; 数量 : " + sopPurchaseMap.get(skuNo));
-							stock =  stock - sopPurchaseMap.get(skuNo);
-							logger.error("最终库存 ：" + stock);
-							loggerInfo.info("最终库存 ：" + stock);
-							if(stock<0) stock=0;
 
+		   //获取采购单信息
+			try {
+				if(!ORDER)	sopPurchaseMap = this.getPurchaseOrder(host,app_key,app_secret);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			for (String skuNo : skuNos) {
+				Integer stock=supplierStock.get(skuNo);
+
+				if(!ORDER){
+					if(sopPurchaseMap.containsKey(skuNo)){
+						if(stock==null)
+							stock=0;
+						logger.error("供货商库存：" + stock + "采购单："+skuNo +" ; 数量 : " + sopPurchaseMap.get(skuNo));
+						loggerInfo.info("供货商库存：" + stock +"采购单：" + skuNo + " ; 数量 : " + sopPurchaseMap.get(skuNo));
+						stock =  stock - sopPurchaseMap.get(skuNo);
+						logger.error("最终库存 ：" + stock);
+						loggerInfo.info("最终库存 ：" + stock);
+						if(stock<0) stock=0;
+
+					}
+				}
+
+				String iceSku=localAndIceSkuId.get(skuNo);
+				if(this.supplierSkuIdMain){  // 已供应商提供的SKU为主 不更新未提供的库存
+					if(supplierStock.containsKey(skuNo)){
+						if(null!=stock){
+							iceStock.put(iceSku, stock);
 						}
 					}
 
-                    String iceSku=localAndIceSkuId.get(skuNo);
-                    if(this.supplierSkuIdMain){  // 已供应商提供的SKU为主 不更新未提供的库存
-						if(supplierStock.containsKey(skuNo)){
-							if(null!=stock){
-								iceStock.put(iceSku, stock);
-							}
-						}
 
+				}else{
+					if(stock==null)
+						stock=0;
+					if(!StringUtils.isEmpty(iceSku))
+						iceStock.put(iceSku, stock);
+				}
 
-                    }else{
-                        if(stock==null)
-                            stock=0;
-                        if(!StringUtils.isEmpty(iceSku))
-                            iceStock.put(iceSku, stock);
-                    }
-
-                }
+			}
 
 
         } catch (Exception e1) {
