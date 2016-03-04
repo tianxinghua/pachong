@@ -49,26 +49,9 @@ public class MyFtpClient {
             ftp.chdir(Constant.REMOTE_PATH);
             // 获取 XML文件到本地
             ftp.get(new StringUtil().getLocalFileName(),Constant.REMOTE_PATH + "/"+ Constant.SERVER_FILE);
-        } catch (IOException e) {
-            System.out.println("IOException:"+e.getMessage());
-            loggerError.error("IOException:"+e.getMessage());
-            if (i++<5){
-                downLoad();
-            }
-            return false;
-        } catch (FTPException e) {
-            System.out.println("FTPException:"+e.getMessage());
-            loggerError.error("FTPException:"+e.getMessage());
-            if (i++<5){
-                downLoad();
-            }
-            return false;
         } catch (Exception e){
             loggerError.error("Exception:"+e.getMessage());
-            if (i++<5){
-                downLoad();
-            }
-            return false;
+            System.exit(0);
         } finally {
             close(ftp);
         }

@@ -11,6 +11,7 @@ import com.shangpin.iog.biondini.dao.IdTable;
 import com.shangpin.iog.biondini.dao.Modele;
 import com.shangpin.iog.biondini.dao.Qty;
 import com.shangpin.iog.biondini.dao.SOAP;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 
 
@@ -26,8 +27,10 @@ public class SoapUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
-		listTabModeIdTable = ps.getBody().getReturns().getResult().getTableModele().getIdTable();
-		listTabArtIdTable  =  ps.getBody().getReturns().getResult().getTable_Article().getIdTable();
+		if(ps!=null){
+			listTabModeIdTable = ps.getBody().getReturns().getResult().getTableModele().getIdTable();
+			listTabArtIdTable  =  ps.getBody().getReturns().getResult().getTable_Article().getIdTable();
+		}
 	}
 	
 	public static List<IdTable> getTableModele() {
@@ -42,17 +45,21 @@ public class SoapUtil {
 	public static List<Modele> getProductList(){
 		
 		String xml = HttpUtils.getProductsBySoap();
-		SOAP ps = null;
-		try {
-			ps = ObjectXMLUtil.xml2Obj(SOAP.class, xml);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-		List<Modele> array = ps.getBody().getReturns().getResult().getModele();
-		return array;
+		if("{\"error\":\"发生异常错误\"}".equals(HttpUtil45.errorResult)){
+			return null;
+		}else{
+			SOAP ps = null;
+			try {
+				ps = ObjectXMLUtil.xml2Obj(SOAP.class, xml);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} 
+			List<Modele> array = ps.getBody().getReturns().getResult().getModele();
+			return array;
+		}
 	}
 	
-	public static Map<String,String> getProductStockList(String q){
+	public static Map<String,String> getProductStockList(){
 		
 		String xml = HttpUtils.getProductStocksBySoap();
 		Map<String,String> map = new HashMap<String,String>();
