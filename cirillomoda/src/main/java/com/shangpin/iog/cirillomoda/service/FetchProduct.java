@@ -82,9 +82,9 @@ public class FetchProduct {
 						 result += tempString;
 						 result += "\n";
 					}
-					result = result.replaceAll("<br />\n", "").replaceAll("<br />\r", ""); 
-					System.out.println(result);
-					reader.close();
+//					result = result.replaceAll("<br />\n", "").replaceAll("<br />\r", ""); 
+//					System.out.println(result);
+//					reader.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				} finally {
