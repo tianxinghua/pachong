@@ -36,7 +36,7 @@ public class MyFtpClient {
         try {
             ftp.setRemoteHost(Constant.URL);
             ftp.setRemotePort(Integer.parseInt(Constant.PORT));
-            ftp.setTimeout(1000*60*30);
+            ftp.setTimeout(1000*60*60);
             ftp.connect();
             //登陆
             ftp.login(Constant.USER, Constant.PASSWORD);
