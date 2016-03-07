@@ -115,7 +115,7 @@ public class FetchProduct {
 				
 				sku.setMarketPrice(item.getMarket_price());
 				sku.setSalePrice(item.getSell_price());
-				
+				sku.setSupplierPrice(item.getSupply_price());
 				size = item.getItem_size();
 				if (size.indexOf("½") > 0) {
 					size = size.replace("½", "+");
