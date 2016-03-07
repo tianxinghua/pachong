@@ -26,7 +26,7 @@ public class KIXUtil {
 		List<Product> productList = new ArrayList<Product>();
 		int pageNum = getPageNum();
 		for (int i = 1; i <=pageNum; i++) {
-			string = HttpUtil45.get(url, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10), null);
+			string = HttpUtil45.get(url, new OutTimeConfig(1000*60*30, 1000*60*60, 1000*60*60), null);
 			data = gson.fromJson(string, Data.class);
 			for (Product product : data.getProducts()) {
 				productList.add(product);
@@ -36,14 +36,14 @@ public class KIXUtil {
 	}
 	private int getPageNum(){
 		String url = "https://c1e1d0fa10d3f3dc9ec8390e1aaeb007:0fc94701904077a2fb8eca2da6800522@kix-files.myshopify.com/admin/products/count.json?collection_id=213136323";
-		String str = HttpUtil45.get(url, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10), null);
+		String str = HttpUtil45.get(url, new OutTimeConfig(1000*60*30, 1000*60*60, 1000*60*60), null);
 		Gson gson = new Gson();
 		Count count = gson.fromJson(str, Count.class);
 		return Integer.valueOf(count.getCount())%250==0?Integer.valueOf(count.getCount())/250:Integer.valueOf(count.getCount())/250+1;
 	}
 	public Map<String,String> getMetaField(String productId){
 		String url = "https://kix-files.myshopify.com/admin/products/"+productId+"/metafields.json";
-		String string = HttpUtil45.get(url, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10), null);
+		String string = HttpUtil45.get(url, new OutTimeConfig(1000*60*30, 1000*60*60, 1000*60*60), null);
 		Gson gson = new Gson();
 		MetaFields metaFields = gson.fromJson(string, MetaFields.class);
 		Map<String,String> returnMap = new HashMap<String, String>();
@@ -62,7 +62,7 @@ public class KIXUtil {
 		Data data = null;
 		int pageNum = getPageNum();
 		for (int i = 1; i <=pageNum; i++) {
-			string = HttpUtil45.get(url, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10), null);
+			string = HttpUtil45.get(url, new OutTimeConfig(1000*60*30, 1000*60*60, 1000*60*60), null);
 			data = gson.fromJson(string, Data.class);
 			for (Product product : data.getProducts()) {
 				for (Variant variant : product.getVariants()) {

@@ -61,13 +61,16 @@ public class FetchProduct {
 			SpuDTO spu = new SpuDTO();
 			spu.setId(UUIDGenerator.getUUID());
 			spu.setSupplierId(supplierId);
-			spu.setSpuId(metaField.get("item_number"));
+//			spu.setSpuId(metaField.get("item_number"));
+			spu.setSpuId(product.getId());
 			spu.setBrandName(product.getVendor());
-			spu.setCategoryGender("");
+			
+			spu.setCategoryGender(metaField.get("sex"));
+			
 			spu.setCategoryName(product.getProduct_type());
-			spu.setMaterial("");
-			spu.setSeasonName("");
-			spu.setProductOrigin("");
+			spu.setMaterial(metaField.get("material"));
+			spu.setSeasonName(metaField.get("sex"));
+			spu.setProductOrigin(metaField.get("made_in"));
 			
 			//============================保存spu===================================
 			 try {
@@ -86,14 +89,14 @@ public class FetchProduct {
 				sku.setId(UUIDGenerator.getUUID());
 				sku.setSupplierId(supplierId);
 				sku.setSpuId(spu.getSpuId());
-				sku.setSkuId(variant.getSku());
+				sku.setSkuId(variant.getId());
 				sku.setProductCode(variant.getSku());
 				sku.setColor(metaField.get("color_desc"));
 				sku.setSalePrice(variant.getPrice());
 				sku.setProductName(product.getTitle());
 				sku.setProductSize(variant.getTitle());
 				sku.setStock(variant.getInventory_quantity());
-				sku.setSaleCurrency("");
+				sku.setSaleCurrency("HDK");
 				
 				if(skuDTOMap.containsKey(sku.getSkuId())){
 					skuDTOMap.remove(sku.getSkuId());
