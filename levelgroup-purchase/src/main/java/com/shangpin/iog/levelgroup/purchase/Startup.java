@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
- * Created by Administrator on 2015/9/28.
+ * Created by 董晶辉
  */
 public class Startup {
 	   private static   Logger logger = LoggerFactory.getLogger(Startup.class);
