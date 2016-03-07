@@ -1,0 +1,29 @@
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+	
+	compile(project(':openapi-ice')) {
+		exclude module: 'iog-common-product'
+	}
+    compile(
+            "com.google.code.gson:gson:2.2.2",
+            project(':project-common'),
+          
+            project(':iog-common-product2')
+    )
+}
+
+jar {
+    dependsOn copyToLib, copyResources
+    exclude ("**/*.properties")
+
+    def manifestCp = configurations.compile.files.collect  {
+        File file = it
+        "lib/${file.name}"
+    }.join(' ')
+
+    manifest {
+        attributes 'Main-Class': 'com.shangpin.iog.levelgroup.monobrand.purchase.Startup'
+        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+    }
+}
