@@ -11,12 +11,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -990,7 +986,7 @@ public class HttpUtil45 {
 		HttpHost target = url2Host(url);
 		CredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(
-				new AuthScope(target.getHostName(), target.getPort()),
+				new AuthScope(target.getHostName(), target.getPort(), AuthScope.ANY_REALM),
 				new UsernamePasswordCredentials(userName, password));
 		AuthCache authCache = new BasicAuthCache();
 		BasicScheme basicAuth = new BasicScheme();
@@ -1087,7 +1083,15 @@ public class HttpUtil45 {
 	private static String getHost(String url) {
 		int s = url.indexOf("://");
 		int e = url.indexOf("/", s + 3);
-		String host = e > 0 ? url.substring(s + 3, e) : url.substring(s + 3);
+		String host="";
+		if(e>0){
+			host = url.substring(s + 3, e);
+			//排除端口
+			host=host.indexOf(":")>0?host.substring(0,host.indexOf(":")):host;
+		}else{
+			host= url.substring(s + 3);
+		}
+//		String host = e > 0 ? url.substring(s + 3, e) : url.substring(s + 3);
 		return host;
 	}
 	/**
@@ -1216,23 +1220,14 @@ public class HttpUtil45 {
 
 	public  static void main(String[] args){
 
-		HttpGet request = new HttpGet("https://api.channeladvisor.com/oauth2/token?client_id=qwmmx12wu7ug39a97uter3dz29jbij3j&" +
-				"grant_type=soap&scope=inventory&developer_key=537c99a8-e3d6-4788-9296-029420540832&password=ChannelAdvisor15&account_id=12018111");
-		String auth = "qwmmx12wu7ug39a97uter3dz29jbij3j" + ":" + "TqMSdN6-LkCFA0n7g7DWuQ";
-		byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("US-ASCII")));
-		String authHeader = "Basic " + new String(encodedAuth);
-		request.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
-
-		HttpClient client = HttpClientBuilder.create().build();
-		HttpResponse response = null;
-		try {
-			response = client.execute(request);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		int statusCode = response.getStatusLine().getStatusCode();
-		System.out.println("status = " + statusCode);
-
+//		String user="shangpin",password="Daniello0203";
+//		Map<String,String> map = new HashMap<>();
+//		String imageData = HttpUtil45.postAuth("http://79.62.242.6:8088/ws_sito/ws_sito_p15.asmx/GetAllImageMarketplace",
+//				map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),"shangpin","Daniello0203");
+//	    System.out.println("img =" + imageData);
+//
+//		String spuData = HttpUtil45.postAuth("http://79.60.136.177/ws_sito/ws_sito_p15.asmx/GetAllItemsMarketplace",
+//				null, new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600), "shangpin", "creative99");
+//		System.out.println("img =" + spuData);
 	}
 }
