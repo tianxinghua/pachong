@@ -40,7 +40,29 @@ public class StockImp  extends AbsUpdateProductStock {
     	
     	//获取库存元数据
     	Map<String,String> skuMap = new HashMap<String,String>();
-
+    	int num = 0;
+    	String data = "";
+    	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
+				new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
+    	String[] skuStrings = skuData.split("\\r\\n");
+		for (int i = 1; i < skuStrings.length; i++) {
+			if (StringUtils.isNotBlank(skuStrings[i])) {
+			
+				if (i==1) {
+					  data =  skuStrings[i].split("\\n")[1];
+					}else {
+					  data = skuStrings[i];
+					}
+					String[] skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+        			String stock = skuArr[2];
+        			String barCode = skuArr[5];
+        			skuMap.put(skuArr[0]+"-"+barCode, stock);
+        			if(!stock.equals("0")){
+        				num++;
+        			}
+			}
+		}
+		logger.info("新数据库存不为0的有：：："+num);
         Map<String,String> returnMap = new HashMap<String,String>();
         Iterator<String> iterator=skuNo.iterator();
         //为供应商循环赋值

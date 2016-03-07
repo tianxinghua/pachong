@@ -530,18 +530,17 @@ public class WS_Sito_P15 {
 //    	
 //        String priceData = HttpUtil45.post("http://2.118.242.149/ws_sito/ws_sito_p15.asmx/GetAllAvailabilityMarketplace",
 //        		param,new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30));
-        logger.info("开始获取数据"+new Date().getTime());
         
         System.out.println("开始获取数据");
-        String post = HttpUtil45.post("http://185.5.180.90/ws_sito/ws_sito_p15.asmx/GetAllItemsMarketplace", new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
-        logger.info("获取结束"+new Date().getTime());
+//        String post = HttpUtil45.post("http://79.62.242.6:8088/ws_sito/ws_sito_p15.asmx/GetAllItemsMarketplace", new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
+        String post = HttpUtil45.postAuth("http://79.62.242.6:8088/ws_sito/ws_sito_p15.asmx/GetAllItemsMarketplace", null, new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120), "shangpin", "Daniello0203");
         //        param.put("CODICE", "1066239979");
 //        param.put("ID_CLIENTE", "1066239979");
 //        param.put("ID_STATUS", "1");
 //		String post = HttpUtil45.post("http://79.61.138.184/ws_sito/ws_sito_p15.asmx/SetStatusOrder", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10));
 //		System.out.println(priceData);
 		System.out.println("开始保存数据");
-		File file = new File("/usr/local/app/DIVOSPU.txt");
+		File file = new File("E://anielloSPU.txt");
 		if (!file.exists()) {
 			try {
 				file.getParentFile().mkdirs();
@@ -553,7 +552,7 @@ public class WS_Sito_P15 {
 		}
 		FileWriter fwriter = null;
 		try {
-			fwriter = new FileWriter("/usr/local/app/DIVOSPU.txt");
+			fwriter = new FileWriter("E://anielloSPU.txt");
 			fwriter.write(post);
 		} catch (IOException ex) {
 			ex.printStackTrace();

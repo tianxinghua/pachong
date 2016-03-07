@@ -18,24 +18,9 @@ include 'iog-web-container'
 
 include 'iog-common-product'
 
-
-
-
-
 include 'openapi-ice'
 
 
 include 'iog-facade-impl'
 
 include 'iog-sop'
-
-
-
-include 'spinnaker-order'
-
-include  'tessabit-stock'
-include  'tessabit'
-include  'Daniello'
-include 'Daniello-stock'
-
-
