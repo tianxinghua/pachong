@@ -33,9 +33,11 @@ include 'iog-sop'
 
 include 'spinnaker-order'
 
-include  'tessabit-stock'
-include  'tessabit'
-include  'Daniello'
-include 'Daniello-stock'
+
+
+include 'tony-day-stock'
+include 'tony'
+include 'tony-purchase'
+include 'log-template'
 
 

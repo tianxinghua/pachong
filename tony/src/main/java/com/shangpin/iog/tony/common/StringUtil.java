@@ -105,13 +105,7 @@ public class StringUtil {
      *get tony Category Name by id
      */
     public static String getCategoryNameByID(String categoryId,String categoryJson){
-//            if (!categoryJson.contains(categoryId)){
-//                return "";
-//            }
-//        String str = categoryJson.substring(categoryJson.indexOf(categoryId),categoryJson.indexOf(categoryId)+50);
-///*        System.out.println("==========str==========");
-//        System.out.println(str);*/
-//        return  str .split(",")[1].replaceAll("\"","").replaceAll("name:","");
+
     	try{
     		
     		JSONObject jsonObj = JSONObject.fromObject(categoryJson);
@@ -128,6 +122,23 @@ public class StringUtil {
     	}
     	
     	return "";
+    }
+
+
+    public static String getCategory(JSONArray arr){
+
+        try{
+            if(null!=arr&&arr.size()>0){
+                JSONObject object = arr.getJSONObject(0);
+                return object.getJSONObject("_id").getString("$id");
+
+            }
+
+        }catch(Exception ec){
+            ec.printStackTrace();
+        }
+
+        return "";
     }
 
     /**
