@@ -17,8 +17,10 @@ import com.shangpin.iog.biondini.dao.Article;
 import com.shangpin.iog.biondini.dao.IdTable;
 import com.shangpin.iog.biondini.dao.Modele;
 import com.shangpin.iog.biondini.dao.QtTaille;
+import com.shangpin.iog.biondini.dao.SOAP;
 import com.shangpin.iog.biondini.dao.TableArti;
 import com.shangpin.iog.biondini.dao.TableMdle;
+import com.shangpin.iog.biondini.util.HttpUtils;
 import com.shangpin.iog.biondini.util.SoapUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.SkuDTO;
@@ -50,6 +52,10 @@ public class FetchProduct {
 	 * message mapping and save into DB
 	 */
 	public void messMappingAndSave() {
+		
+		// 获取商品list
+		List<Modele> array = SoapUtil.getProductList();
+		
 		SoapUtil.getTableModeleAndArticle();
 		// Mode下的属性代码表
 		List<IdTable> listIdTable = SoapUtil.getTableModele();
@@ -57,9 +63,7 @@ public class FetchProduct {
 		List<IdTable> listTableArtcile = SoapUtil.getTableArtcile();
 		//获取商品库存
 		Map<String,String> map = SoapUtil.getProductStockList();
-		// 获取商品list
-		List<Modele> array = SoapUtil.getProductList();
-
+		
 		if (array != null) {
 			for (Modele item : array) {
 
@@ -106,7 +110,7 @@ public class FetchProduct {
 								for (TableMdle tb : tbList) {
 									if (item.getFamille().equals(tb.getCode())) {
 										spu.setCategoryName(tb.getLibelle());
-										prductName += tb.getLibelle();
+										prductName += ","+tb.getLibelle();
 										flag1 = true;
 										break;
 									}
@@ -145,11 +149,12 @@ public class FetchProduct {
 							e1.printStackTrace();
 						}
 					}
-					List<QtTaille> ta = art.getTarifMagInternet().getList();
+					
+					List<QtTaille> ta = SoapUtil.getProductSizeAndPriceBySoap(spuId);
+
 					for (QtTaille qt : ta) {
 						SkuDTO sku = new SkuDTO();
 						try {
-
 							sku.setId(UUIDGenerator.getUUID());
 							sku.setSupplierId(supplierId);
 							sku.setSpuId(spuId);
@@ -183,16 +188,18 @@ public class FetchProduct {
 							sku.setSkuId(spuId + "|" + size);
 							sku.setBarcode(item.getCodMdle());
 							sku.setProductSize(size);
+							
 							if (map.get(sku.getSkuId()) == null) {
 								sku.setStock("0");
 							} else {
-								sku.setStock(sku.getSkuId());
+								sku.setStock(map.get(sku.getSkuId()));
 							}
 							sku.setProductCode(spuId);
 							sku.setSalePrice(qt.getPrixVente());
 							sku.setProductName(prductName);
 							// sku.setSaleCurrency(item.getSaleCurrency());
 							sku.setBarcode(art.getCodArti());
+							System.out.println("===保存"+sku.getSkuId()+",库存为："+sku.getStock()+"==");
 							productFetchService.saveSKU(sku);
 						} catch (ServiceException e) {
 							if (e.getMessage().equals("数据插入失败键重复")) {

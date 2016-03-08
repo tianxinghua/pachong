@@ -22,4 +22,8 @@ public class ArticleQty {
 	@XmlElement(name="QtTaille")
 	private List<Qty> listQtTaille;
 	
+	private String CodeArticle;
+	@XmlElement(name="TarifMagInternet")
+	private TarifMagInternet tarifMagInternet;
+	
 }

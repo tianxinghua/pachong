@@ -1,7 +1,6 @@
 package com.shangpin.iog.biondini;
 import com.shangpin.iog.app.AppContext;
 
-
 import com.shangpin.iog.biondini.service.FetchProduct;
 
 import org.apache.log4j.Logger;
