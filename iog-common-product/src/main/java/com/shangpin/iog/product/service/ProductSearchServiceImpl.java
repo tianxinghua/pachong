@@ -818,6 +818,107 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		}
 		return buffer;
 	}
+	
+	public StringBuffer getDiffProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException{
+		Map<String, String> supMap = new HashMap<String, String>();
+		List<SupplierDTO> supplierList = supplierDAO.findByState("1");
+		for (SupplierDTO supplierDTO : supplierList) {
+			supMap.put(supplierDTO.getSupplierId(),
+					supplierDTO.getSupplierName());
+		}
+		StringBuffer buffer = new StringBuffer("供应商" + splitSign				
+				+ "ProductModel 货号" + splitSign + "新市场价" + splitSign
+				+ "新销售价" + splitSign + "新进货价" + splitSign + "市场价"
+				+ splitSign + "销售价" + splitSign + "进货价").append("\r\n");
+		Page<ProductDTO> page = null;
+		if (flag.equals("same")) {
+			page = this.findProductPageBySupplierAndTime(supplier, startDate,
+					endDate, pageIndex, pageSize, "same");
+
+		} else {
+			page = this.findProductPageBySupplierAndTime(supplier, startDate,
+					endDate, pageIndex, pageSize, "diff");
+		}
+		
+		if(null==page || null== page.getItems()){
+			return null;
+		}
+		
+		String categoryName = "";
+		String supplierId = "";
+		for (ProductDTO dto : page.getItems()) {
+//			if (!(dto.getNewSalePrice()==null?"-":dto.getNewSalePrice()).equals(dto.getSalePrice()==null?"-":dto.getSalePrice())
+//					|| !(dto.getNewMarketPrice()==null?"-":dto.getNewMarketPrice()).equals(dto.getMarketPrice()==null?"-":dto.getMarketPrice())
+//					|| !(dto.getNewSupplierPrice()==null?"-":dto.getNewSupplierPrice()).equals(dto.getSupplierPrice()==null?"-":dto.getSupplierPrice())) {
+				try {
+					// 供应商
+					supplierId = dto.getSupplierId();
+					if (null == supMap.get(supplierId)) {
+						buffer.append("	" + supplierId).append(splitSign);
+					} else {
+						buffer.append(supMap.get(supplierId)).append(splitSign);
+					}
+					
+					// 货号
+					buffer.append(
+							null == dto.getProductCode() ? "" : dto
+									.getProductCode().replaceAll(",", " "))
+							.append(splitSign);
+					
+					// 新的价格
+					String newMarketPrice = dto.getNewMarketPrice();
+					String newSalePrice = dto.getNewSalePrice();
+					String newSupplierPrice = dto.getNewSupplierPrice();
+					if (StringUtils.isNotBlank(newMarketPrice)) {
+						newMarketPrice = newMarketPrice.replace(",", ".");
+					} else {
+						newMarketPrice = "";
+					}
+					if (StringUtils.isNotBlank(newSalePrice)) {
+						newSalePrice = newSalePrice.replace(",", ".");
+					} else {
+						newSalePrice = "";
+					}
+					if (StringUtils.isNotBlank(newSupplierPrice)) {
+						newSupplierPrice = newSupplierPrice.replace(",", ".");
+					} else {
+						newSupplierPrice = "";
+					}
+					buffer.append(newMarketPrice).append(splitSign);
+					buffer.append(newSalePrice).append(splitSign);
+					buffer.append(newSupplierPrice).append(splitSign);
+					// 价格
+					String marketPrice = dto.getMarketPrice();
+					String salePrice = dto.getSalePrice();
+					String supplierPrice = dto.getSupplierPrice();
+					if (StringUtils.isNotBlank( marketPrice)) {
+						marketPrice = marketPrice.replace(",", ".");
+					} else {
+						marketPrice = "";
+					}
+					if (StringUtils.isNotBlank(salePrice )) {
+						salePrice = salePrice.replace(",", ".");
+					} else {
+						salePrice = "";
+					}
+					if (StringUtils.isNotBlank(supplierPrice )) {
+						supplierPrice = supplierPrice.replace(",", ".");
+					} else {
+						supplierPrice = "";
+					}
+					buffer.append(marketPrice).append(splitSign);
+					buffer.append(salePrice).append(splitSign);
+					buffer.append(supplierPrice);
+
+					buffer.append("\r\n");
+				} catch (Exception e) {
+					logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
+					continue;
+				}
+//			}
+		}
+		return buffer;
+	}
 
 	@Override
 	public ProductDTO findProductForOrder(String supplierId,String skuId)

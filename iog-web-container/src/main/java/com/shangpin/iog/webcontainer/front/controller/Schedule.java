@@ -1,12 +1,18 @@
 package com.shangpin.iog.webcontainer.front.controller;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -14,6 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.service.ProductSearchService;
 
 @Component
@@ -21,11 +28,30 @@ import com.shangpin.iog.service.ProductSearchService;
 public class Schedule {	
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
+	private static Logger log = LoggerFactory.getLogger(Schedule.class);
+	private static String filepath = null;
+	
+	private static String smtpHost = null;
+	private static String from = null;
+	private static String fromUserPassword = null;
+	private static String to = null;
+	private static String subject = null;
+	private static String messageType = null;
+	
 	static {
 		if (null == bdl) {
 			bdl = ResourceBundle.getBundle("conf");
 		}
 		supplierId = bdl.getString("supplierId");
+		
+		smtpHost  = bdl.getString("smtpHost");
+		from = bdl.getString("from");
+		fromUserPassword = bdl.getString("fromUserPassword");
+		to = bdl.getString("to");
+		subject = bdl.getString("subject");
+		messageType = bdl.getString("messageType");
+		
+		filepath = bdl.getString("filepath");
 	}
 
 	@Autowired
@@ -37,19 +63,61 @@ public class Schedule {
 			supplierId = "-1";
 		}
 		Date endDate = new Date();
-		Calendar calendar = Calendar.getInstance();		
-		calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - 1);
-		Date startDate = calendar.getTime();
+//		Calendar calendar = Calendar.getInstance();		
+//		calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - Integer.parseInt(hour_of_day)); 
+//		Date startDate = calendar.getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");   
+		Date startDate = null;
+		try {
+			startDate = sdf.parse("2015-01-01 00:00:00");
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+			log.error(e1.getMessage()); 
+		}
 		
 		try {
-			StringBuffer buffer = productService.exportDiffProduct(supplierId,startDate,endDate,null,null,"diff");
-			if(buffer != null){
-				System.out.println(buffer.toString());
+			if(StringUtils.isNotBlank(to)){
+				
+				StringBuffer buffer = productService.getDiffProduct(supplierId,startDate,endDate,null,null,"diff");
+				String messageText  = buffer.toString();
+				if(StringUtils.isNotBlank(messageText)){ 
+					try {
+						BufferedInputStream in = null;
+						File file = null;
+						FileOutputStream out = null;
+						try{
+							in = new BufferedInputStream(new ByteArrayInputStream(messageText.getBytes("gb2312")));
+							file = new File(filepath);
+							out = new FileOutputStream(file);
+							byte[] data = new byte[1024];
+				            int len = 0;
+				            while (-1 != (len=in.read(data, 0, data.length))) {
+				                out.write(data, 0, len);
+				            }
+						}catch(Exception e){
+							e.printStackTrace();
+						}finally {
+				            if (in != null) {
+				                in.close();
+				            }
+				            if (out != null) {
+				                out.close();
+				            }
+				        }
+						if(null != file){
+							SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword, to, subject,"请查看附件", messageType,file);
+						}
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+						log.error(e.getMessage());
+					}
+				}
+				
 			}
-			System.out.println(startDate+"---------------"+endDate);
 			
 		} catch (Exception e) {
-			
+			log.error(e.getMessage()); 
 			e.printStackTrace();
 		}
 	}

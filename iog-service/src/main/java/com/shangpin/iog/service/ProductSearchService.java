@@ -77,6 +77,18 @@ public interface ProductSearchService {
     public String exportSkuId(String supplier,Date startDate,Date endDate) throws ServiceException;
     
     public StringBuffer exportDiffProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
+    /**
+     * 获取价格变化了的产品   用于发邮件
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @param pageIndex
+     * @param pageSize
+     * @param flag
+     * @return
+     * @throws ServiceException
+     */
+    public StringBuffer getDiffProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
     
     /**
      * 获取产品信息,for order

@@ -76,7 +76,16 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			}
 					
 			// 解压
-			File xmlFile = UNZIPFile.unZipFile(zipFile, localPath);
+			File xmlFile = null;
+			try{
+				
+				UNZIPFile.unZipFile(zipFile, localPath);
+			}catch(Exception e){
+				loggerError.error(e);
+				e.printStackTrace();
+				return skuStock;
+			}
+					
 			// 读取文件
 			String result = DownloadFileFromNet.file2Striing(xmlFile);
 			rss= XMLUtil.gsonXml2Obj(Rss.class, result);

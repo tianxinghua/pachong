@@ -78,7 +78,7 @@ public class FetchProduct {
 					if(products.containsKey(String.valueOf(k))){
 						JSONObject product = products.getJSONObject(String.valueOf(k));//spu
 						//保存spu
-						String spuId = "";
+						String spuId = ""; 
 						JSONArray items = product.getJSONArray("variations");
 						for(int i=0;i<items.size();i++){
 							try{
@@ -91,7 +91,7 @@ public class FetchProduct {
 								sku.setSupplierId(supplierId);
 								sku.setSpuId(spuId);
 								sku.setSkuId(item.getString("upc"));
-								sku.setProductCode(spuId);
+								sku.setProductCode(product.getString("style"));
 								sku.setColor(product.getString("color"));
 								sku.setSalePrice(product.getString("price"));
 								sku.setProductName(item.getString("name"));
