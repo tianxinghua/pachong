@@ -3,6 +3,7 @@ package com.shangpin.iog.levelgroup.purchase.service;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +35,10 @@ public class OrderService extends AbsOrderService {
 	static Logger log = LoggerFactory.getLogger(OrderService.class);
 
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
-    private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
 
     private static ResourceBundle bdl = null;
     private static  String supplierId = null;
+    private static  String supplierId2 = null;
     private static String supplierNo = null;
     private static String localFile = null;
     private static String localFile2 = null;
@@ -49,6 +50,7 @@ public class OrderService extends AbsOrderService {
             bdl=ResourceBundle.getBundle("conf");
         }
         supplierId = bdl.getString("supplierId");
+        supplierId2 = bdl.getString("supplierId2");
         supplierNo = bdl.getString("supplierNo");
         localFile = bdl.getString("localFile");
         localFile2 = bdl.getString("localFile2");
@@ -71,10 +73,7 @@ public class OrderService extends AbsOrderService {
  		this.confirmOrder(supplierId);
  	}
 
-    /**
-     * 创建订单信息并上传到ftp
-     * @throws ServiceException
-     */
+     // 创建订单信息并上传到ftp
     public void saveAndUpLoadOrder(){
     	logger.info("生成订单并上传");
         saveOrder();
@@ -91,17 +90,28 @@ public class OrderService extends AbsOrderService {
      * @throws ServiceException
      */
     private void saveOrder(){
-        List<OrderDTO> list = null;
+        List<OrderDTO> list = new ArrayList<>();
+        List<OrderDTO> list1 = null;
+        List<OrderDTO> list2 = null;
         Date startTime = new Date();
         Date endTime = new Date();
         startTime =DateTimeUtil.convertFormat(
         		DateTimeUtil.shortFmt(DateTimeUtil.getAppointDayFromSpecifiedDay(startTime, -1, "D"))+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
         endTime =DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(endTime)+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
         try {
-           list = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
+           list1 = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
         		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+           list2 = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId2,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
+         		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+           
         } catch (ServiceException e) {
             e.printStackTrace();
+        }
+        if(list2!=null && !list2.isEmpty()){
+        	list.addAll(list1);
+            list.addAll(list2);
+        }else{
+            list.addAll(list1);
         }
         
         StringBuffer ftpFile = new StringBuffer();

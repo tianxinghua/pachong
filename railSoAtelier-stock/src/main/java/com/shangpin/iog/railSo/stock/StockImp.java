@@ -76,42 +76,46 @@ public class StockImp extends AbsUpdateProductStock {
 
     	
     private static Map<String,String> getStockMap() {
-   		 
-   		Map<String,String> map = new HashMap<String,String>();
-    	map.put("id","4");
-    	map.put("password","JwqDZDF-5jk%YRH=");
-    	map.put("affiliate","shangpin");
-    	String json = HttpUtil45.post("http://www.railso.com/xml_feeds.php", map,new OutTimeConfig(1000*60*10,10*1000*60,10*1000*60));// new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
-    	System.out.println("库存"+json);
-    	logger.info(json);
-    	Pattern patt =Pattern.compile("</attributes-\\d*>");
-		Pattern patt1 =Pattern.compile("<attributes-\\d*>");
-		Stocks stocks = null;
-		try {
-			String replaceAll = patt.matcher(json).replaceAll("</item>");
-			String replaceAll1 = patt1.matcher(replaceAll).replaceAll("<item>");
-			stocks = ObjectXMLUtil.xml2Obj(Stocks.class, replaceAll1.toString());
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		List<Stock> list = stocks.getStocks();
-	    Map<String,String> returnMap = new HashMap<String,String>();
-		for(Stock stock:list){
-			Attributes att = stock.getAttributes();
-			if(att!=null){
-				String productId = stock.getProduct_id().trim();
-				List<Attribute> li = att.getAttributes();
-				for(Attribute a : li){
-					if("Unique".equals(a.getAttribute_name())||"One size".equals(a.getAttribute_name())){
-						returnMap.put(productId+"|A", a.getQuantity());
-					}else{
-						returnMap.put(productId+"|"+a.getAttribute_name(), a.getQuantity());
-					}
-				}
-			}
-		
-		}
-		return returnMap;
+    	 Map<String,String> returnMap = new HashMap<String,String>();
+   		try{
+   			Map<String,String> map = new HashMap<String,String>();
+   	    	map.put("id","4");
+   	    	map.put("password","JwqDZDF-5jk%YRH=");
+   	    	map.put("affiliate","shangpin");
+   	    	String json = HttpUtil45.post("http://www.railso.com/xml_feeds.php", map,new OutTimeConfig(1000*60*10,10*1000*60,10*1000*60));// new HTTPClient(Constant.URL_MARYLOU).fetchProductJson();
+   	    	System.out.println("库存"+json);
+   	    	logger.info(json);
+   	    	Pattern patt =Pattern.compile("</attributes-\\d*>");
+   			Pattern patt1 =Pattern.compile("<attributes-\\d*>");
+   			Stocks stocks = null;
+   			try {
+   				String replaceAll = patt.matcher(json).replaceAll("</item>");
+   				String replaceAll1 = patt1.matcher(replaceAll).replaceAll("<item>");
+   				stocks = ObjectXMLUtil.xml2Obj(Stocks.class, replaceAll1.toString());
+   			} catch (JAXBException e) {
+   				e.printStackTrace();
+   			}
+   			List<Stock> list = stocks.getStocks();
+   		    
+   			for(Stock stock:list){
+   				Attributes att = stock.getAttributes();
+   				if(att!=null){
+   					String productId = stock.getProduct_id().trim();
+   					List<Attribute> li = att.getAttributes();
+   					for(Attribute a : li){
+   						if("Unique".equals(a.getAttribute_name())||"One size".equals(a.getAttribute_name())){
+   							returnMap.put(productId+"|A", a.getQuantity());
+   						}else{
+   							returnMap.put(productId+"|"+a.getAttribute_name(), a.getQuantity());
+   						}
+   					}
+   				}
+   			}
+   		}catch(Exception ex){
+   			
+   		} 
+   		
+   		return returnMap;
    	}
     public static void main(String[] args) {
     

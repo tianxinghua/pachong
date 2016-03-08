@@ -28,7 +28,5 @@ public class Article {
 	private String access       ;
 	@XmlElement(name="Matière-secondaire")
 	private String matièreSecondaire    ;
-	@XmlElement(name="TarifMagInternet")
-	private TarifMagInternet tarifMagInternet;
 	
 }

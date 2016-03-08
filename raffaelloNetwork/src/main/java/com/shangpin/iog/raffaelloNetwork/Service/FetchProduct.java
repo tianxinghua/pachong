@@ -120,10 +120,24 @@ public class FetchProduct {
 								
 								//图片
 								List<String> pics = new ArrayList<String>();
-								pics.add(item.getImage_link());
-								pics.add(item.getAdditional_image_link());
-								//pics.add(item.getImage_URL_2());
-								//pics.add(item.getImage_URL_3());
+								int pic1Index=item.getImage_link().indexOf(",");
+								int pic2Index=item.getAdditional_image_link().indexOf(",");
+								if(pic1Index!=-1){
+									String img1 [] = item.getImage_link().split(",");
+									for (int j = 0; j < img1.length; j++) {
+										pics.add(img1 [j]);
+									}
+								}else{
+									pics.add(item.getImage_link());
+								}
+								if(pic2Index!=-1){
+									String img2 [] = item.getAdditional_image_link().split(",");
+									for (int j = 0; j < img2.length; j++) {
+										pics.add(img2[j]);
+									}
+								}else{
+									pics.add(item.getAdditional_image_link());
+								}
 								productFetchService.savePicture(supplierId, null, sku.getSkuId(), pics);
 							}
 						}else{
@@ -173,10 +187,24 @@ public class FetchProduct {
 						
 						//图片
 						List<String> pics = new ArrayList<String>();
-						pics.add(item.getImage_link());
-						pics.add(item.getAdditional_image_link());
-						//pics.add(item.getImage_URL_2());
-						//pics.add(item.getImage_URL_3());
+						int pic1Index=item.getImage_link().indexOf(",");
+						int pic2Index=item.getAdditional_image_link().indexOf(",");
+						if(pic1Index!=-1){
+							String img1 [] = item.getImage_link().split(",");
+							for (int i = 0; i < img1.length; i++) {
+								pics.add(img1 [i]);
+							}
+						}else{
+							pics.add(item.getImage_link());
+						}
+						if(pic2Index!=-1){
+							String img2 [] = item.getAdditional_image_link().split(",");
+							for (int i = 0; i < img2.length; i++) {
+								pics.add(img2[i]);
+							}
+						}else{
+							pics.add(item.getAdditional_image_link());
+						}
 						productFetchService.savePicture(supplierId, null, sku.getSkuId(), pics);
 						
 					}
