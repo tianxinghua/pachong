@@ -1,3 +1,4 @@
+
 package com.shangpin.iog.biondini.dao;
 
 import java.util.List;
@@ -21,5 +22,9 @@ public class ArticleQty {
 	private String Grille;
 	@XmlElement(name="QtTaille")
 	private List<Qty> listQtTaille;
+	
+	private String CodeArticle;
+	@XmlElement(name="TarifMagInternet")
+	private TarifMagInternet tarifMagInternet;
 	
 }

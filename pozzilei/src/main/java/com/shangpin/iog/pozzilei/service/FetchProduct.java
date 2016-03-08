@@ -73,9 +73,10 @@ public class FetchProduct {
     	
         Gson gson = new Gson();
         
-        String[]  databaseArray = new String[] {"Default"}; //
+        String[]  databaseArray = new String[] {"forte","default","arte"}; //
         OutTimeConfig outTimeConfig  = new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2);
         for(String database:databaseArray){
+        	System.out.println(database);
             String season_json = HttpUtil45.get("http://net13serverpo.net/pozziapi/Myapi/Productslist/GetAllSeasonCode?DBContext="+database+"&key=5jq3vkBd7d",outTimeConfig,null);
 
             SeasoncodeList season_list = gson.fromJson(season_json, new TypeToken<SeasoncodeList>() {
@@ -161,7 +162,7 @@ public class FetchProduct {
                                     }
                                     SkuDTO skudto = new SkuDTO();
                                     skudto.setCreateTime(new Date());
-                                    skudto.setBarcode(sku.getBarcode());
+                                    skudto.setBarcode(sku.getBarcode()+"|"+database);
                                     skudto.setColor(sku.getColor());
                                     skudto.setId(UUIDGenerator.getUUID());
                                     skudto.setProductCode(spu.getProduct_name());
@@ -174,7 +175,7 @@ public class FetchProduct {
                                     }else{
                                         skudto.setProductSize(sku.getItem_size());
                                     }
-                                    skudto.setSkuId(sku.getItem_id());
+                                    skudto.setSkuId(sku.getBarcode());
                                     itemID = sku.getItem_id();
                                     barcode = sku.getBarcode();
                                     priceUrl = "http://net13serverpo.net/pozziapi/Myapi/Productslist/GetPriceBybarcode?DBContext="+database+"&barcode="+barcode+"&key=5jq3vkBd7d";
