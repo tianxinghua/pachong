@@ -449,10 +449,20 @@ public abstract class AbsUpdateProductStock {
 											  Map<String,String> sopPriceMap, final String supplierId) {
 		Map<String, Integer> iceStock=new HashMap<>();
 		try {
-			Map<String, String> supplierStock=grabStock(skuNos);  //
+			Map<String, String> supplierStock= null;  //
+			try {
+				supplierStock = grabStock(skuNos);
+				if(supplierStock.size()==0){
+					loggerError.error("获取库存信息是发生异常，程序退出");
+					System.exit(0);
+				}
+			} catch (Exception e) {    //获取库存信息时失败 直接退出
+				loggerError.error("获取库存信息是发生异常，程序退出");
+				System.exit(0);
+			}
 
 			int stockResult=0;
-
+			//获取采购单信息
 			Map<String,Integer> sopPurchaseMap = new HashMap<>();
 			if(!ORDER){
                  sopPurchaseMap = this.getSopPuchase(supplierId);

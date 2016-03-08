@@ -82,22 +82,23 @@ public class LogisticsService extends AbsDeliverService{
                     String deliverNo =  responseObject.getLogistics_company() +";"+ responseObject.getTrk_Number() +";"+ responseObject.getDate_Shipped();
                     orderDTO.setStatus(OrderStatus.SHIPPED);
                     orderDTO.setDeliveryNo(deliverNo);
-                }else if("CL".equals(responseObject.getStatus())){ //无货，需要设置采购异常
-                    try {
-                        String result = orderService.setPurchaseOrderExc(orderDTO);
-                        if("-1".equals(result)){
-                            orderDTO.setStatus(OrderStatus.NOHANDLE);
-                        }else if("1".equals(result)){
-                            orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-                        }else if("0".equals(result)){
-                            orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
-                        }
-                    } catch (Exception e) {
-                        loggerError.error("供货商无货，设置采购单"+ orderDTO.getSpPurchaseNo()+"失败。"+e.getMessage());
-                    }
-
-
                 }
+//                else if("CL".equals(responseObject.getStatus())){ //无货，需要设置采购异常  （暂时屏蔽 因为对方的数据需要修改 但看状况没有修改 ）
+//                    try {
+//                        String result = orderService.setPurchaseOrderExc(orderDTO);
+//                        if("-1".equals(result)){
+//                            orderDTO.setStatus(OrderStatus.NOHANDLE);
+//                        }else if("1".equals(result)){
+//                            orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+//                        }else if("0".equals(result)){
+//                            orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+//                        }
+//                    } catch (Exception e) {
+//                        loggerError.error("供货商无货，设置采购单"+ orderDTO.getSpPurchaseNo()+"失败。"+e.getMessage());
+//                    }
+//
+//
+//                }
 
 
             }

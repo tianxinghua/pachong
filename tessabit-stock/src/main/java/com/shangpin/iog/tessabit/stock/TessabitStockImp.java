@@ -36,13 +36,20 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
         boolean flg = new MyFtpClient().downLoad();
         end = System.currentTimeMillis();
         logger.info("下载TESSABIT文件结果"+flg+"，耗时："+(end-start)/1000+"秒");
+        Map<String,Integer> returnMap = new HashMap();
         if (flg){
             start = System.currentTimeMillis();
             localFile = new StringUtil().parseXml2Str();
+            if(localFile.indexOf("</products>")<0){ //文件未完全下载
+                return returnMap;
+            }
             end = System.currentTimeMillis();
             logger.info("解析TESSABIT文件耗时："+(end-start)/1000+"秒");
+        }else{
+            //下载文件失败 直接返回
+            return returnMap;
         }
-        Map<String,Integer> returnMap = new HashMap();
+
         Iterator<String> iterator=skuNo.iterator();
         logger.info("为TESSABIT供应商产品库存循环赋值");
         start = System.currentTimeMillis();

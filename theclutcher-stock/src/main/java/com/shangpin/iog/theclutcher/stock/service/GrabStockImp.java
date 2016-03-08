@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.*;
@@ -64,8 +65,16 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			Rss rss = null;
 
 			// 下载
-			File zipFile = DownloadFileFromNet.downLoad(urlStr, fileName,
-					localPath);
+			File zipFile = null;
+			try{
+				zipFile = DownloadFileFromNet.downLoad(urlStr, fileName,
+						localPath);
+			}catch(IOException e){
+				loggerError.error(e);
+				e.printStackTrace();
+				return skuStock;
+			}
+					
 			// 解压
 			File xmlFile = UNZIPFile.unZipFile(zipFile, localPath);
 			// 读取文件

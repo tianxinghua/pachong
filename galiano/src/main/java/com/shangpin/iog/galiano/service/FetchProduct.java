@@ -165,7 +165,7 @@ public class FetchProduct {
                     spu.setBrandName(product.getProduct_brand());
                     spu.setCategoryName(product.getCategory());
                     spu.setSpuName(product.getProduct_name());
-                    String seasonId = product.getSeason_name();
+                    String seasonId = product.getSeason_name().trim();
                     String season = "";
                     if(seasonId.equals("161")){
                     	season = "161 Primave estate 2016";

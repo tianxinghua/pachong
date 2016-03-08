@@ -41,7 +41,8 @@ import java.util.regex.Pattern;
  */
 @Component("cirillomoda")
 public class FetchProduct {
-//    final Logger logger = Logger.getLogger(this.getClass());
+      private static Logger logger = Logger.getLogger("info");
+      private static Logger error = Logger.getLogger("error");
 //    private static Logger logMongo = Logger.getLogger("mongodb");
     @Autowired
     ProductFetchService productFetchService;
@@ -80,10 +81,12 @@ public class FetchProduct {
 					// 一次读入一行，直到读入null为文件结束
 					while ((tempString = reader.readLine()) != null) {
 						 result += tempString;
+						 result += "\n";
 					}
-					result = result.replaceAll("<br />\n", "").replaceAll("<br />\r", ""); 
-					System.out.println(result);
-					reader.close();
+//					result = result.replaceAll("<br />\n", "").replaceAll("<br />\r", ""); 
+//					System.out.println(result);
+//					reader.close();
+					logger.info(result); 
 				} catch (IOException e) {
 					e.printStackTrace();
 				} finally {
@@ -96,8 +99,8 @@ public class FetchProduct {
 				}
             }else{
             	result = HttpUtil45.get(url, timeConfig, null);
-            }
-            HttpUtil45.closePool();
+            	HttpUtil45.closePool();
+            }        
 
 //            mongMap.put("supplierId", supplierId);
 //            mongMap.put("supplierName", "giglio");
@@ -145,7 +148,7 @@ public class FetchProduct {
                         status = record.get("Stato");
                         try{
                         	origin = record.get("ORIGIN");
-                            season = record.get("SEASON");
+                            season = record.get("SEASON");                            
                         }catch(Exception e){
                         	
                         } 
@@ -171,9 +174,11 @@ public class FetchProduct {
                             productFetchService.saveSPU(spu);
                         } catch (ServiceException e) {
                         	try {
+                        		logger.info(spu.getSpuId() +"  "+spu.getSeasonId()+"  "+spu.getSeasonName()+"  "+spu.getProductOrigin());
         						productFetchService.updateMaterial(spu);
         					} catch (ServiceException e1) {
         						e1.printStackTrace();
+        						error.error(e1); 
         					}
                             e.printStackTrace();
                         }

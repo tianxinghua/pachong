@@ -131,7 +131,7 @@ public class FetchProduct {
 					Channel channel = rss.getChannel();
 					if(channel!=null){
 						List<Item> item = channel.getListItem();
-						messMappingAndSave(item);
+						messMappingAndSave(item,channel.getTitle());
 						if(channel.getNextPage()!=null){
 							fetchProduct(channel.getNextPage());
 						}
@@ -147,7 +147,7 @@ public class FetchProduct {
 	/**
 	 * message mapping and save into DB
 	 */
-	private void messMappingAndSave(List<Item> array) {
+	private void messMappingAndSave(List<Item> array,String tile) {
 			if(array!=null){
 				for (Item item : array) {
 					SpuDTO spu = new SpuDTO();
@@ -191,6 +191,7 @@ public class FetchProduct {
 						sku.setProductName(item.getTitle());
 						sku.setProductDescription(item.getDescription());
 						 sku.setSaleCurrency("EUR");
+						 sku.setBarcode(tile);
 						productFetchService.saveSKU(sku);
 						
 					} catch (ServiceException e) {

@@ -106,7 +106,7 @@ public class FetchProduct {
 							sku.setSupplierId(supplierId);
 							sku.setSpuId(spu.getSpuId());
 							sku.setSkuId(spu.getSpuId()+"-"+productSize);
-							sku.setProductCode(spu.getSpuId());
+							sku.setProductCode(item.getProductNo());
 							sku.setColor(item.getColor().replaceAll("\r", "").replaceAll("\n", ""));
 							sku.setSalePrice(item.getSaleprice());
 							sku.setProductName(item.getProductName());
@@ -119,14 +119,16 @@ public class FetchProduct {
 							}
 							try {
 								productFetchService.saveSKU(sku);
-							} catch (ServiceException e) {
+							} catch (Exception e) {
 								try {
-									if (e.getMessage().equals("数据插入失败键重复")) {
+//									if (e.getMessage().equals("数据插入失败键重复")) {
 										// 更新价格和库存
 										productFetchService.updatePriceAndStock(sku);
-									} else {
+//									} else {
+//										e.printStackTrace();
+//									}
 										e.printStackTrace();
-									}
+										
 								} catch (ServiceException e1) {
 									e1.printStackTrace();
 								}

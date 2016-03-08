@@ -1,5 +1,8 @@
 package com.shangpin.iog.daniello.service;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,10 +32,10 @@ import com.shangpin.iog.service.ProductSearchService;
  */
 @Component("daniello")
 public class FetchProduct {
-    final Logger logger = Logger.getLogger(this.getClass());
-    private static Logger logMongo = Logger.getLogger("mongodb");
+    final Logger logger = Logger.getLogger("info");
     private static String supplierId;
     private static String url;
+	private static String user,password;
 	public static int day;
     private static ResourceBundle bdl=null;
     static {
@@ -41,6 +44,8 @@ public class FetchProduct {
         supplierId = bdl.getString("supplierId");
         url = bdl.getString("url");
         day = Integer.valueOf(bdl.getString("day"));
+		user = bdl.getString("user");
+		password = bdl.getString("password");
     }
     @Autowired
     private ProductFetchService productFetchService;
@@ -56,16 +61,20 @@ public class FetchProduct {
     	Map<String,String> priceMap= new HashMap<String,String>();
         //获取产品信息
         logger.info("get product starting....");
-    	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
-    										new OutTimeConfig(1000*60*30,1000*60*300,1000*60*300));
-    	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
-    										new OutTimeConfig(1000*60*30,1000*60*300,1000*60*300));
-    	String imageData = HttpUtil45.post(url+"GetAllImageMarketplace",
-    										new OutTimeConfig(1000*60*30,1000*60*300,1000*60*300));
-    	String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
-    										new OutTimeConfig(1000*60*30,1000*60*300,1000*60*300));
+        System.out.println("获取数据");
+		OutTimeConfig outTimeConfig =   new OutTimeConfig(1000*60*300,1000*60*900,1000*60*900);
+		Map<String,String> map = new HashMap<>();
+		user="shangpin";
+		password="Daniello0203";
+    	String skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace", map,outTimeConfig,user,password	);
+    	save("anielloSKU.txt", skuData);
+    	String imageData = HttpUtil45.postAuth(url+"GetAllImageMarketplace",map,outTimeConfig,user,password);
+    	save("anielloImage.txt", imageData);
+    	String priceData = HttpUtil45.postAuth(url+"GetAllPricelistMarketplace", map,outTimeConfig,user,password);
+    	save("anielloPrice.txt", priceData);
+    	String spuData = HttpUtil45.postAuth(url+"GetAllItemsMarketplace",map,outTimeConfig,user,password);
+    	save("anielloSPU.txt", spuData);
     
-    	
     	Date startDate,endDate= new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 		//获取原有的SKU 仅仅包含价格和库存
@@ -249,7 +258,34 @@ public class FetchProduct {
 		}
         logger.info("save product into DB success");
     }
-
+    public void save(String name,String data){
+    	
+    	File file = new File("/usr/local/app/"+name);
+//    	File file = new File("E://"+name);
+		if (!file.exists()) {
+			try {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		FileWriter fwriter = null;
+		try {
+			fwriter = new FileWriter("/usr/local/app/"+name);
+			fwriter.write(data);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				fwriter.flush();
+				fwriter.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+    }
     public static void main(String[] args){
         new FetchProduct().fetchProductAndSave();
     }

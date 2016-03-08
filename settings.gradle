@@ -18,57 +18,9 @@ include 'iog-web-container'
 
 include 'iog-common-product'
 
-
-
-
-
 include 'openapi-ice'
 
 
 include 'iog-facade-impl'
 
 include 'iog-sop'
-
-
-
-include 'spinnaker-order'
-
-include 'spinnaker'
-
-include 'atelier-ostore'
-include 'atelier-ostore-stock'
-
-include 'coltorti'
-include 'Daniello'
-include 'Daniello-stock'
-include 'deliberti-stock'
-include 'deliberti'
-
-include 'levelgroup-stock'
-
-include 'stefaniamode'
-include 'stefaniamode-stock'
-include 'reebonzWiki'
-include 'meifeng'
-include 'meifeng-stock'
-include 'biondini'
-include 'papini'
-include 'papini-stock'
-include 'Della'
-include 'divo'
-include 'divo-stock'
-include 'KIX-stock'
-include 'KIX'
-
-include 'linoricci'
-include 'fashionesta'
-include 'fashionesta-stock'
-include 'russoCapri-stock'
-include 'russoCapri'
-include 'bagheera'
-include 'bagheera-stock'
-include 'forzieri'
-include 'tessabit'
-include 'creative99'
-include 'creative99-stock'
-
