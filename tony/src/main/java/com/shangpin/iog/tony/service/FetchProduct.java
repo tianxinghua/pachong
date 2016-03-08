@@ -23,9 +23,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by wangyuzhi on 2015/9/10.
@@ -69,7 +67,7 @@ public class FetchProduct {
             map.put(StringUtil.getSkuID(skuId),"");
         }*/
         System.out.println(map.size());
-
+        String categoryId ="";
         for(Items item:array){
             skuId = item.getSku();
             spuId = StringUtil.getSpuId(skuId);
@@ -129,8 +127,17 @@ public class FetchProduct {
                 spu.setSupplierId(Constant.SUPPLIER_ID);
                 spu.setSpuId(spuId);
                 spu.setBrandName(item.getBrand());
-                String categoryId = StringUtil.getCategoryID(item.getCat_id().toString());
+//                String categoryId = StringUtil.getCategoryID(item.getCat_id().toString());
+
+                List<Map<String,String>> catList = (ArrayList)item.getCat_ids();
+                if(null!=catList&&catList.size()>0){
+                    categoryId =catList.get(0).get("$id");
+                }else{
+                    continue;
+                }
+
                 spu.setCategoryId(categoryId);
+
                 spu.setCategoryName(StringUtil.getCategoryNameByID(categoryId, categoriesJson));
 
                 //spu.setSpuName(item.getTitle_en());

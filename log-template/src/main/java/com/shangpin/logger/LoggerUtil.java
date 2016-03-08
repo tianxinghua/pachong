@@ -245,9 +245,13 @@ public class LoggerUtil  {
 	private void getClassMsg(LoggerMessage loggerMessage){
 		String location="";
 		StackTraceElement[] stacks = Thread.currentThread().getStackTrace();
-		location = "类名："+stacks[4].getClassName() + "\n函数名：" + stacks[4].getMethodName()
-				+ "\n文件名：" + stacks[4].getFileName() + "\n行号："
-				+ stacks[4].getLineNumber() + "";
+		if(stacks.length>=6){
+//			location = "类名："+stacks[5].getClassName() + "\n函数名：" + stacks[5].getMethodName()
+//					+ "\n文件名：" + stacks[5].getFileName() + "\n行号："
+//					+ stacks[5].getLineNumber() + "";
+
+		}
+
 //		 System.out.println("location = " + location);
 
 		loggerMessage.setFunction(stacks[4].getClassName()+"."+ stacks[4].getMethodName()+"--"+stacks[4].getLineNumber()+"行");

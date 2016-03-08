@@ -18,9 +18,26 @@ include 'iog-web-container'
 
 include 'iog-common-product'
 
+
+
+
+
 include 'openapi-ice'
 
 
 include 'iog-facade-impl'
 
 include 'iog-sop'
+
+
+
+include 'spinnaker-order'
+
+
+
+include 'tony-day-stock'
+include 'tony'
+include 'tony-purchase'
+include 'log-template'
+
+

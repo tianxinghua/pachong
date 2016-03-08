@@ -13,6 +13,7 @@ import com.shangpin.iog.common.utils.*;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.dto.SkuRelationDTO;
@@ -49,7 +50,7 @@ public abstract class AbsOrderService {
     private static String emailPass;
 
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
-    private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
+    private static LoggerUtil loggerError = LoggerUtil.getLogger("error");
 
 //    static String url="/purchase/createdeliveryorder";
     private static ResourceBundle bdl = null;
@@ -191,7 +192,7 @@ public abstract class AbsOrderService {
         try {
             orderDTOList = gson.fromJson(result,new TypeToken<List<ICEWMSOrderDTO>>(){}.getType());
         } catch (JsonSyntaxException e) {
-            loggerError.error("订单转化异常,退出");
+            loggerError.error("获取"+supplierNo +"供货商，wms订单转化异常,退出");
             return;
         }
         String uuid="",skuNo="";
@@ -345,7 +346,7 @@ public abstract class AbsOrderService {
             }
 
         } catch (Exception e) {
-            loggerError.error(orderDTO.getSpPurchaseNo()+"推送取消采购单失败.原因："+e.getMessage());
+            loggerError.error("供货商门户："+orderDTO.getSupplierId() + " 采购单： " +orderDTO.getSpPurchaseNo()+"推送取消采购单失败.原因："+e.getMessage());
             return "0";
         }
         return "1";
@@ -534,8 +535,7 @@ public abstract class AbsOrderService {
 
 
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        loggerError.error("订单处理失败。失败信息 " + orderDTO.toString()+" 原因 ：" + e.getMessage() );
+                        logger.error("订单处理失败。失败信息 " + orderDTO.toString()+" 原因 ：" + e.getMessage() );
 
                     }
                 }
@@ -571,7 +571,7 @@ public abstract class AbsOrderService {
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        loggerError.error("取消锁库存处理失败。失败信息 " + deleteOrder.toString()+" 原因 ：" + e.getMessage() );
+                        logger.error("取消锁库存处理失败。失败信息 " + deleteOrder.toString()+" 原因 ：" + e.getMessage() );
 
                     }
                 }
@@ -606,7 +606,7 @@ public abstract class AbsOrderService {
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        loggerError.error("退款处理失败。失败信息 " + deleteOrder.toString()+" 原因 ：" + e.getMessage() );
+                        logger.error("退款处理失败。失败信息 " + deleteOrder.toString()+" 原因 ：" + e.getMessage() );
 
                     }
                 }
@@ -698,23 +698,21 @@ public abstract class AbsOrderService {
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        loggerError.error("采购单 ："+ spOrder.getSpPurchaseNo() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
+                        loggerError.error("供货商:"+spOrder.getSupplierId()+" 采购单 ："+ spOrder.getSpPurchaseNo() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
                         Map<String,String> map = new HashMap<>();
                         map.put("excDesc",e.getMessage());
                         setErrorMsg(spOrder.getUuId(),map);
 
                     }
                 }else{
-                    loggerError.error("订单 ："+ spOrder.getSpOrderId() + "保存订单信息失败");
+                    loggerError.error("供货商:"+spOrder.getSupplierId()+ "订单 ："+ spOrder.getSpOrderId() + "保存订单信息失败");
                 }
 
 
             } catch (ServiceException e) {
-                loggerError.error("采购单 ："+ spOrder.getSpPurchaseNo() + "失败,失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
-                System.out.println("采购单 ："+ spOrder.getSpPurchaseNo() + "失败,失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage());
-                e.printStackTrace();
+                logger.error("采购单 ："+ spOrder.getSpPurchaseNo() + "失败,失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
             } catch (Exception e){
-                loggerError.error("下单错误 " + e.getMessage());
+                logger.error("下单错误 " + e.getMessage());
                 e.printStackTrace();
             }
 
@@ -836,23 +834,23 @@ public abstract class AbsOrderService {
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        loggerError.error("采购单 ："+ spOrder.getSpPurchaseNo() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
+                        loggerError.error("供货商：" + spOrder.getSupplierId()+" 采购单 ："+ spOrder.getSpPurchaseNo() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
                         Map<String,String> map = new HashMap<>();
                         map.put("excDesc",e.getMessage());
                         setErrorMsg(spOrder.getUuId(),map);
 
                     }
                 }else{
-                    loggerError.error("订单 ："+ spOrder.getSpOrderId() + "保存订单信息失败");
+                    loggerError.error("供货商：" + spOrder.getSupplierId()+ " 订单 ："+ spOrder.getSpOrderId() + "保存订单信息失败");
                 }
 
 
             } catch (ServiceException e) {
-                loggerError.error("采购单 ："+ spOrder.getSpPurchaseNo() + "失败,失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
+                logger.error("采购单 ："+ spOrder.getSpPurchaseNo() + "失败,失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
                 System.out.println("采购单 ："+ spOrder.getSpPurchaseNo() + "失败,失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage());
                 e.printStackTrace();
             } catch (Exception e){
-                loggerError.error("下单错误 " + e.getMessage());
+                logger.error("下单错误 " + e.getMessage());
                 e.printStackTrace();
             }
 
@@ -903,18 +901,18 @@ public abstract class AbsOrderService {
 
                          } catch (Exception e) {
                              e.printStackTrace();
-                             loggerError.error("订单 ："+ spOrder.getSpOrderId() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
+                             loggerError.error("供货商：" + spOrder.getSupplierId()+ "订单 ："+ spOrder.getSpOrderId() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
                              Map<String, String> map = new HashMap<>();
                              map.put("excDesc", e.getMessage());
                              setErrorMsg(spOrder.getUuId(), map);
 
                          }
                      }else{
-                         loggerError.error("订单 ："+ spOrder.getSpOrderId() + "保存订单信息失败");
+                         loggerError.error("供货商：" + spOrder.getSupplierId()+ "订单 ："+ spOrder.getSpOrderId() + "保存订单信息失败");
                      }
                 }
             } catch (Exception e){
-                loggerError.error("下单错误 " + e.getMessage());
+                logger.error("下单错误 " + e.getMessage());
                 e.printStackTrace();
             }
             logger.info("----订单处理完成----");
@@ -939,9 +937,8 @@ public abstract class AbsOrderService {
 
             productOrderService.updateOrderMsg(map);
         } catch (ServiceException e) {
-            loggerError.error("订单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");
+            logger.error("订单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");
             System.out.println("订单：" + spOrder.getSpOrderId() + " 下单成功。但更新订单状态失败");
-            e.printStackTrace();
         }
     }
 
@@ -990,17 +987,16 @@ public abstract class AbsOrderService {
 
                     } catch (Exception e) {
                         //下单失败
-                        loggerError.error("取消订单："+deleteOrder.getSpOrderId()+" 处理失败");
-                        System.out.println("取消订单：" + deleteOrder.getSpOrderId() + " 处理失败");
+                        loggerError.error("供货商：" + deleteOrder.getSupplierId()+" 取消订单："+deleteOrder.getSpOrderId()+" 处理失败");
                         e.printStackTrace();
                     }
                 }else{
-                    loggerError.error("取消订单："+ deleteOrder.getSpOrderId() + "保存失败");
+                    loggerError.error("供货商：" + deleteOrder.getSupplierId() +" 取消订单："+ deleteOrder.getSpOrderId() + "保存失败");
                 }
 
 
             }catch (Exception e){
-                loggerError.error("取消订单错误 " + e.getMessage());
+                logger.error("取消订单错误 " + e.getMessage());
                 e.printStackTrace();
             }
 
@@ -1024,7 +1020,6 @@ public abstract class AbsOrderService {
             }else {
                 logger.info("获取退款数量：无 " );
             }
-            logger.info("sendmail = " + SENDMAIL );
             for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();) {
                 Map.Entry<String, List<PurchaseOrderDetail>> entry = itor.next();
                 Map<String, Integer> stockMap = new HashMap<>();
@@ -1048,14 +1043,15 @@ public abstract class AbsOrderService {
                  */
                 OrderDTO orderDTO = null;
                 try {
-                    logger.info("purchaseno =" + entry.getKey()+"---");
+                    logger.info("退款操作 purchaseno =" + entry.getKey()+"---");
                     orderDTO = productOrderService.getOrderByPurchaseNo(entry.getKey());
                 } catch (ServiceException e) {
                     e.printStackTrace();
                 }
 
                 if (null==orderDTO) {//采购单已到退款状态  未有已支付状态 为下单 不做存储
-                    logger.info("uuid = " + entry.getKey()+"未找到订单信息");
+                    logger.info("退款操作 purchaseno  = " + entry.getKey()+"未找到订单信息");
+                    loggerError.error("退款操作 purchaseno  = " + entry.getKey()+"未找到订单信息");
                     continue;
                 }
 
@@ -1069,8 +1065,8 @@ public abstract class AbsOrderService {
                 deleteOrder.setDetail(buffer.toString());
                 deleteOrder.setCreateTime(new Date());
                 try {
-                    logger.info("采购单信息转化退单后信息：" + deleteOrder.toString());
-                    System.out.println("采购单信息转化退单后信息：" + deleteOrder.toString());
+                    logger.info("采购单转化退单后信息：" + deleteOrder.toString());
+                    System.out.println("采购单转化退单后信息：" + deleteOrder.toString());
                     if(returnOrderService.saveOrderWithResult(deleteOrder)){
                         //处理退款
                         handleRefundlOrder(deleteOrder);
@@ -1079,17 +1075,14 @@ public abstract class AbsOrderService {
 
 
                         if(SENDMAIL){
-                            logger.info("send email ");
                             handleEmail(orderDTO);
-                        }else{
-                            logger.info("not send email ");
                         }
                     }else{
                         loggerError.error("退款："+ deleteOrder.getSpOrderId() + "保存失败");
                     }
 
 
-                } catch (ServiceException e) {
+                } catch (Exception e) {
                     loggerError.error("订单" + deleteOrder.getSpOrderId()  + "退款错误 " + e.getMessage());
                     e.printStackTrace();
                 }
@@ -1097,7 +1090,7 @@ public abstract class AbsOrderService {
             }
 
         } catch (Exception e) {
-            loggerError.error( "退款错误 " + e.getMessage());
+            logger.error( "退款错误 " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -1124,8 +1117,7 @@ public abstract class AbsOrderService {
             }
             returnOrderService.updateReturnOrderMsg(map);
         } catch (ServiceException e) {
-            loggerError.error("取消订单："+deleteOrder.getUuId()+" 操作成功。但更新退单状态失败 原因:" +e.getMessage());
-            System.out.println("取消订单：" + deleteOrder.getUuId() + " 操作成功。但更新退单状态失败  原因:" +e.getMessage());
+            loggerError.error("供货商"+ deleteOrder.getSupplierId()+" 取消订单："+deleteOrder.getSpPurchaseNo()+" 操作成功。但更新退单状态失败 原因:" +e.getMessage());
             e.printStackTrace();
 
         }
@@ -1162,8 +1154,7 @@ public abstract class AbsOrderService {
             }
             returnOrderService.updateReturnOrderMsg(map);
         } catch (ServiceException e) {
-            loggerError.error("退单："+deleteOrder.getUuId()+" 操作成功。但更新订单状态失败 原因:" +e.getMessage());
-            System.out.println("退单：" + deleteOrder.getUuId() + " 操作成功。但更新订单状态失败  原因:" +e.getMessage());
+            loggerError.error("供货商"+ deleteOrder.getSupplierId()+" 取消订单："+deleteOrder.getSpPurchaseNo()+" 操作成功。但更新订单状态失败 原因:" +e.getMessage());
             e.printStackTrace();
 
         }
@@ -1278,7 +1269,7 @@ public abstract class AbsOrderService {
                         } catch (Exception e) {
                             e.printStackTrace();
 
-                            loggerError.error("订单 ："+ deleteOrder.getUuId() + "处理退单失败。 原因 ：" + e.getMessage() );
+                            loggerError.error("供货商:"+deleteOrder.getSupplierId()+"订单 ："+ deleteOrder.getSpOrderId() + "处理退单失败。 原因 ：" + e.getMessage() );
 
                             Map<String,String> map = new HashMap<>();
                             map.put("excDesc",e.getMessage());
@@ -1287,7 +1278,7 @@ public abstract class AbsOrderService {
 
                         }
                     }else{
-                        loggerError.error("退单："+ deleteOrder.getSpOrderId() + "保存失败");
+                        loggerError.error("供货商:"+deleteOrder.getSupplierId()+"退单："+ deleteOrder.getSpOrderId() + "保存失败");
                     }
 
 
@@ -1319,7 +1310,7 @@ public abstract class AbsOrderService {
         try {
             servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
         } catch (Exception e) {
-            loggerError.error("ICE  IcePrxHelper 初始化异常");
+            loggerError.error("供货商:" + supplierId+ " ICE  IcePrxHelper 初始化异常");
             e.printStackTrace();
         }
         boolean hasNext=true;
@@ -1379,7 +1370,7 @@ public abstract class AbsOrderService {
         try {
             servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
         } catch (Exception e) {
-            loggerError.error("ICE  IcePrxHelper 初始化异常");
+            loggerError.error("供货商:" + supplierId+" ICE  IcePrxHelper 初始化异常");
             e.printStackTrace();
         }
         boolean hasNext=true;
@@ -1517,7 +1508,7 @@ public abstract class AbsOrderService {
         try {
             productOrderService.updateExceptionMsg(map);
         } catch (ServiceException e) {
-            loggerError.error("保存订单号：" + uuid + "，错误信息时失败");
+            logger.error("保存订单号：" + uuid + "，错误信息时失败");
             e.printStackTrace();
         }
     }
