@@ -49,25 +49,31 @@ public class MyJsonUtil {
 	
 	public static String getProductStock(OAuthService service,Token accessToken,String sku){
 		
-		OAuthRequest request = new OAuthRequest(Verb.GET,
-				"http://glamorous-uat.phplab.co.uk/api/rest/shangpin/stock/"+URLEncoder.encode(sku),
-				service);
-		service.signRequest(accessToken, request);
-		Response response = request.send();
-		String json = response.getBody();
-		if(!json.isEmpty()){
-			Stock stock = new Gson().fromJson(json,  
-					Stock.class);
-			if(stock!=null){
-				return stock.getStock();
+		String qty = null;
+		try{
+			OAuthRequest request = new OAuthRequest(Verb.GET,
+					"http://glamorous-uat.phplab.co.uk/api/rest/shangpin/stock/"+sku,
+					service);
+			service.signRequest(accessToken, request);
+			Response response = request.send();
+			String json = response.getBody();
+			if(!json.isEmpty()){
+				Stock stock = new Gson().fromJson(json,  
+						Stock.class);
+				if(stock!=null){
+					qty = stock.getStock();
+				}else{
+					qty = "0";
+				}
+				
 			}else{
-				return "0";
+				qty = "0";
 			}
-			
-		}else{
-			return "0";
+		}catch(Exception ex){
+			System.out.println("======="+sku+"异常错误:"+ex.getMessage()+"=========");
+			qty = "0";
 		}
-		
+		return qty;
 	}
 	
 	

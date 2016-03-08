@@ -1,17 +1,27 @@
 package com.shangpin.iog.common.utils;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
+import javax.mail.BodyPart;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 
 
 
@@ -113,6 +123,66 @@ public class SendMail {
         transport.connect(from, fromUserPassword);
         transport.send(message, message.getRecipients(RecipientType.TO));  
         System.out.println("message yes");
+	}
+	
+	public static void sendGroupMailWithFile(String smtpHost, String from,  
+            String fromUserPassword, String to, String subject,  
+            String messageText, String messageType,File attachment) throws MessagingException, UnsupportedEncodingException{
+		
+		// 第一步：配置javax.mail.Session对象  
+        System.out.println("为" + smtpHost + "配置mail session对象");  
+          
+          
+        Properties props = new Properties();  
+        props.put("mail.smtp.host", smtpHost);  
+        props.put("mail.smtp.starttls.enable","true");//使用 STARTTLS安全连接  
+        //props.put("mail.smtp.port", "25");             //google使用465或587端口  
+        props.put("mail.smtp.auth", "true");        // 使用验证  
+        //props.put("mail.debug", "true");  
+        Session mailSession = Session.getInstance(props,new MyAuthenticator(from,fromUserPassword));  
+ 
+        //第二步：编写消息 
+        MimeMessage message = new MimeMessage(mailSession);  
+        InternetAddress fromAddress = new InternetAddress(from);
+        message.setFrom(fromAddress); 
+        //创建收件人列表
+        String[] arr = to.split(",");
+        InternetAddress[] address = new InternetAddress[arr.length];  
+        for (int i = 0; i < arr.length; i++) {  
+            address[i] = new InternetAddress(arr[i]);  
+        }  
+        message.addRecipients(RecipientType.TO, address);
+        message.setSentDate(Calendar.getInstance().getTime());  
+        message.setSubject(subject);  
+     // 向multipart对象中添加邮件的各个部分内容，包括文本内容和附件
+        Multipart multipart = new MimeMultipart();
+     // 添加邮件正文
+        BodyPart contentPart = new MimeBodyPart();
+        contentPart.setContent(messageText, messageType);
+        multipart.addBodyPart(contentPart);
+        
+        if (attachment != null) {
+            BodyPart attachmentBodyPart = new MimeBodyPart();
+            DataSource source = new FileDataSource(attachment);
+            attachmentBodyPart.setDataHandler(new DataHandler(source));            
+            // 网上流传的解决文件名乱码的方法，其实用MimeUtility.encodeWord就可以很方便的搞定
+            // 这里很重要，通过下面的Base64编码的转换可以保证你的中文附件标题名在发送时不会变成乱码
+            //sun.misc.BASE64Encoder enc = new sun.misc.BASE64Encoder();
+            //messageBodyPart.setFileName("=?GBK?B?" + enc.encode(attachment.getName().getBytes()) + "?=");            
+            //MimeUtility.encodeWord可以避免文件名乱码
+            attachmentBodyPart.setFileName(MimeUtility.encodeWord(attachment.getName()));
+            multipart.addBodyPart(attachmentBodyPart);
+        }        
+        // 将multipart对象放到message中
+        message.setContent(multipart);
+        // 保存邮件
+        message.saveChanges();
+        
+        Transport transport = mailSession.getTransport("smtp"); 
+        transport.connect(from, fromUserPassword);
+        transport.sendMessage(message, message.getAllRecipients());
+        System.out.println("message yes");
+		
 	}
   
 

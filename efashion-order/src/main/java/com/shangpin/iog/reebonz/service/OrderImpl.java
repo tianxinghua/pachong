@@ -290,8 +290,7 @@ public class OrderImpl  extends AbsOrderService{
 	    	BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
 			String price = priceInt.divide(new BigDecimal(1.05),2).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
 			
-			item.setPurchase_price(price);
-			
+			item.setPurchase_price((Double.parseDouble(price)-3)+"");
 			Item [] i = {item};
 			obj.setItems(i);
 			array = JSONObject.fromObject(obj);	

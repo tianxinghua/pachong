@@ -1,10 +1,10 @@
 package com.shangpin.iog.Creative99.stock;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.sop.AbsUpdateProductStock;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -24,6 +24,9 @@ public class StockImp  extends AbsUpdateProductStock {
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static String url;
+	private static String host;
+   	private static String app_key;
+   	private static String app_secret;
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -31,17 +34,41 @@ public class StockImp  extends AbsUpdateProductStock {
     }
     static {
         if(null==bdl)
-            bdl=ResourceBundle.getBundle("conf");
+            bdl=ResourceBundle.getBundle("sop");
         supplierId = bdl.getString("supplierId");
         url = bdl.getString("url");
+        host = bdl.getString("HOST");
+		app_key = bdl.getString("APP_KEY");
+		app_secret = bdl.getString("APP_SECRET");
     }
     @Override
-    public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+    public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
     	
     	//获取库存元数据
     	Map<String,String> skuMap = new HashMap<String,String>();
-
-        Map<String,String> returnMap = new HashMap<String,String>();
+    	int num = 0;
+    	String data = "";
+    	String skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace",null,new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120),"shangpin", "creative99");
+    	String[] skuStrings = skuData.split("\\r\\n");
+		for (int i = 1; i < skuStrings.length; i++) {
+			if (StringUtils.isNotBlank(skuStrings[i])) {
+			
+				if (i==1) {
+					  data =  skuStrings[i].split("\\n")[1];
+					}else {
+					  data = skuStrings[i];
+					}
+					String[] skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+        			String stock = skuArr[2];
+        			String barCode = skuArr[5];
+        			skuMap.put(skuArr[0]+"-"+barCode, stock);
+        			if(!stock.equals("0")){
+        				num++;
+        			}
+			}
+		}
+		logger.info("新数据库存不为0的有：：："+num);
+        Map<String,Integer> returnMap = new HashMap<String,Integer>();
         Iterator<String> iterator=skuNo.iterator();
         //为供应商循环赋值
         logger.info("循环赋值");
@@ -52,9 +79,9 @@ public class StockImp  extends AbsUpdateProductStock {
         	if (StringUtils.isNotBlank(skuId)) {
         		if (skuMap.containsKey(skuId)) {
         			stock = skuMap.get(skuId);
-        			returnMap.put(skuId, stock);
+        			returnMap.put(skuId, Integer.valueOf(stock));
 				}else{
-					returnMap.put(skuId, "0");
+					returnMap.put(skuId, 0);
 				}
 			}
         }
@@ -68,8 +95,9 @@ public class StockImp  extends AbsUpdateProductStock {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("Creative99更新数据库开始");
         try {
-			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
-		} catch (Exception e) {
+//			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+        	stockImp.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
+        } catch (Exception e) {
 			logger.info("Creative99更新库存数据库出错"+e.toString());
 		}
         logger.info("Creative99更新数据库结束");
