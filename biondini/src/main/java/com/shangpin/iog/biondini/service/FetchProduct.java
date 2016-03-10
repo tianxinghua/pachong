@@ -17,10 +17,8 @@ import com.shangpin.iog.biondini.dao.Article;
 import com.shangpin.iog.biondini.dao.IdTable;
 import com.shangpin.iog.biondini.dao.Modele;
 import com.shangpin.iog.biondini.dao.QtTaille;
-import com.shangpin.iog.biondini.dao.SOAP;
 import com.shangpin.iog.biondini.dao.TableArti;
 import com.shangpin.iog.biondini.dao.TableMdle;
-import com.shangpin.iog.biondini.util.HttpUtils;
 import com.shangpin.iog.biondini.util.SoapUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.SkuDTO;
@@ -65,6 +63,7 @@ public class FetchProduct {
 		Map<String,String> map = SoapUtil.getProductStockList();
 		
 		if (array != null) {
+			logger.info("save start.......");
 			for (Modele item : array) {
 
 				String numMdle = null;
@@ -149,12 +148,11 @@ public class FetchProduct {
 							e1.printStackTrace();
 						}
 					}
-					
-					List<QtTaille> ta = SoapUtil.getProductSizeAndPriceBySoap(spuId);
-
+					List<QtTaille> ta = art.getTarifMagInternet().getList();
 					for (QtTaille qt : ta) {
 						SkuDTO sku = new SkuDTO();
 						try {
+
 							sku.setId(UUIDGenerator.getUUID());
 							sku.setSupplierId(supplierId);
 							sku.setSpuId(spuId);
@@ -188,7 +186,6 @@ public class FetchProduct {
 							sku.setSkuId(spuId + "|" + size);
 							sku.setBarcode(item.getCodMdle());
 							sku.setProductSize(size);
-							
 							if (map.get(sku.getSkuId()) == null) {
 								sku.setStock("0");
 							} else {
@@ -199,7 +196,6 @@ public class FetchProduct {
 							sku.setProductName(prductName);
 							// sku.setSaleCurrency(item.getSaleCurrency());
 							sku.setBarcode(art.getCodArti());
-							System.out.println("===保存"+sku.getSkuId()+",库存为："+sku.getStock()+"==");
 							productFetchService.saveSKU(sku);
 						} catch (ServiceException e) {
 							if (e.getMessage().equals("数据插入失败键重复")) {
@@ -220,5 +216,6 @@ public class FetchProduct {
 
 			}
 		}
+		logger.info("save end.......");
 	}
 }

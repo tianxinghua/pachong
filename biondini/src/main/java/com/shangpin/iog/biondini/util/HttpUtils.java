@@ -17,6 +17,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.log4j.Logger;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.biondini.dao.SOAP;
@@ -25,7 +26,7 @@ import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 
 public class HttpUtils {
-
+	private static Logger logger = Logger.getLogger("info");
 	/*
 	 * 拉取代码表
 	 * */
@@ -56,6 +57,8 @@ public class HttpUtils {
 									1000 * 60 * 10), map, xx, null, null);
 			System.out.println("tables ："+json.length());
 			System.out.println("=================tables fetch end====================================");
+			logger.info("tables ："+json.length());
+			logger.info("=================tables fetch end====================================");
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -93,6 +96,8 @@ public class HttpUtils {
 									1000 * 60 * 10), map, xx, null, null);
 			System.out.println("Stock ："+json.length());
 			System.out.println("=================Stock fetch end====================================");
+			logger.info("Stock ："+json.length());
+			logger.info("=================Stock fetch end====================================");
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -108,17 +113,17 @@ public class HttpUtils {
 				+ "xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\""
 				+ "xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">"
 				+ "<soap:Body>"
-				+ "<LectureDesModeles xmlns=\"urn:LcvMagWS\">"
+				+ "<LectureDesModelesAvecPrix xmlns=\"urn:LcvMagWS\">"
 				+ "<bCData xsd:type=\"xsd:string\">"
 				+ "</bCData>"
 				+ "<sUser xsd:type=\"xsd:string\">BION456</sUser>"
 				+ "<sMdp xsd:type=\"xsd:string\">INI123</sMdp>"
-				+ "</LectureDesModeles>"
+				+ "</LectureDesModelesAvecPrix>"
 				+ "</soap:Body>"
 				+ "</soap:Envelope>";
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("SOAPAction", "urn:LcvMagWS/LectureDesModeles");
-//		map.put("Content-Type", "text/xml; charset=UTF-8");
+		map.put("SOAPAction", "urn:LcvMagWS/LectureDesModelesAvecPrix");
+		map.put("Content-Type", "text/xml; charset=UTF-8");
 		map.put("Content-Type", "application/soap+xml; charset=utf-8");
 		String json = null;
 		System.out.println("=================product fetch begin====================================");
@@ -127,51 +132,14 @@ public class HttpUtils {
 					.operateData(
 							"post",
 							"soap",
-							"http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDesModeles",
-							new OutTimeConfig(1000 * 60 * 30, 1000 * 60 * 30,
-									1000 * 60 * 30), map, xx, null, null);
-			System.out.println("==over===");
-			System.out.println("=================product fetch end====================================");
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-		return json;
-	}
-	
-	/*
-	 * 拉取商品list 
-	 * */
-	public static String getProductSizeAndPriceBySoap(String sArticle) {
-
-		String xx = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
-				+ "xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\""
-				+ "xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">"
-				+ "<soap:Body>"
-				+ "<LectureTarifWeb xmlns=\"urn:LcvMagWS\">"
-				+ "<bCData xsd:type=\"xsd:string\">"
-				+ "</bCData>"
-				+ "<sUser xsd:type=\"xsd:string\">BION456</sUser>"
-				+ "<sMdp xsd:type=\"xsd:string\">INI123</sMdp>"
-				+ "<sArticle xsd:type=\"xsd:string\">"+sArticle+"</sArticle>"
-				+ "</LectureTarifWeb>"
-				+ "</soap:Body>"
-				+ "</soap:Envelope>";
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("SOAPAction", "urn:LcvMagWS/LectureTarifWeb");
-		map.put("Content-Type", "text/xml; charset=UTF-8");
-		map.put("Content-Type", "application/soap+xml; charset=utf-8");
-		String json = null;
-		System.out.println("=================product: "+ sArticle +" size fetch begin====================================");
-		try {
-			json = HttpUtil45
-					.operateData(
-							"post",
-							"soap",
-							"http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureTarifWeb",
+							"http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDesModelesAvecPrix",
 							new OutTimeConfig(1000 * 60 * 60, 1000 * 60 * 60,
 									1000 * 60 * 60), map, xx, null, null);
+			System.out.println("product length:"+json.length());
 			System.out.println("==over===");
-			System.out.println("=================product "+ sArticle +" size fetch end====================================");
+			System.out.println("=================product fetch end====================================");
+			logger.info("product length:"+json.length());
+			logger.info("=================product fetch end====================================");
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
