@@ -18,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Created by loyalty on 15/5/20.
@@ -930,6 +932,81 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	@Override
 	public ProductDTO findProductBySupplierIdAndSkuId(String supplierId, String skuId) throws ServiceException {
 		return  productDAO.findProductBySupplierIdAndSkuId(supplierId,skuId);
+	}
+
+	@Override
+	public StringBuffer dailyUpdatedProduct(String supplier, int day,
+			Date now, Integer pageIndex, Integer pageSize, String flag)
+			throws ServiceException {
+		
+		StringBuffer buffer = new StringBuffer("SupplierId 供货商名称" + splitSign
+				+ "开始日期" + splitSign
+				+ "结束日期" + splitSign 
+				+ "good sku数量" + splitSign
+				+ "bad sku数量").append("\r\n");
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");		
+		List<SupplierDTO> supplierList = supplierDAO.findByState("1");
+		for(SupplierDTO supplierDTO:supplierList){
+			System.out.println("======================="+supplierDTO.getSupplierId()+"=============================");
+			for(int i=0;i<day;i++){
+				Calendar calendar = Calendar.getInstance();	
+				calendar.setTime(now);
+			    calendar.set(Calendar.HOUR_OF_DAY, 0);
+			    calendar.set(Calendar.MINUTE, 0);
+			    calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) - i); 
+				Date startDate = calendar.getTime();
+				
+				Calendar calendar1 = Calendar.getInstance();	
+				calendar1.setTime(startDate);
+				calendar1.set(Calendar.DATE, calendar1.get(Calendar.DATE) +1); 
+				Date endDate = calendar1.getTime();
+				System.out.println(startDate+"----------------------"+endDate);
+				Page<ProductDTO> page = null;
+				if (flag.equals("same")) {
+					page = this.findProductPageBySupplierAndTime(supplierDTO.getSupplierId(), startDate,
+							endDate, pageIndex, pageSize, "same");				
+					if(null != page && null !=page.getItems() && page.getItems().size()>0){
+						String supplierId="";
+						int goodSkuNo = 0;
+						int badSkuNo = 0;
+						for (ProductDTO dto : page.getItems()) {
+							if(StringUtils.isNotBlank(dto.getSupplierName())){
+								supplierId = dto.getSupplierName();
+							}else{
+								supplierId = dto.getSupplierId();
+							}
+							if(StringUtils.isNotBlank(dto.getCategoryName())&&StringUtils.isNotBlank(dto.getBrandName())
+									&&StringUtils.isNotBlank(dto.getProductCode())&&StringUtils.isNotBlank(dto.getCategoryGender())
+									&&StringUtils.isNotBlank(dto.getColor())&&StringUtils.isNotBlank(dto.getSize())
+									&&StringUtils.isNotBlank(dto.getMaterial())
+									&&StringUtils.isNotBlank(dto.getProductOrigin())
+									&&(
+									StringUtils.isNotBlank(dto.getPicUrl())||StringUtils.isNotBlank(dto.getItemPictureUrl1())||StringUtils.isNotBlank(dto.getItemPictureUrl2())||StringUtils.isNotBlank(dto.getItemPictureUrl3())||StringUtils.isNotBlank(dto.getItemPictureUrl4())||StringUtils.isNotBlank(dto.getItemPictureUrl5())||StringUtils.isNotBlank(dto.getItemPictureUrl6())
+									||StringUtils.isNotBlank(dto.getItemPictureUrl7())||StringUtils.isNotBlank(dto.getItemPictureUrl8())
+									)
+									&&(StringUtils.isNotBlank(dto.getMarketPrice())||StringUtils.isNotBlank(dto.getSalePrice())||StringUtils.isNotBlank(dto.getSupplierPrice()))){
+								goodSkuNo ++;
+							}else{
+								badSkuNo++;
+							}
+							
+						}
+						if(StringUtils.isNotBlank(supplierId)){
+							buffer.append(supplierId).append(splitSign);
+							buffer.append(sdf.format(startDate)).append(splitSign);
+							buffer.append(sdf.format(endDate)).append(splitSign); 
+							buffer.append(goodSkuNo).append(splitSign);
+							buffer.append(badSkuNo);
+							buffer.append("\r\n");
+						}						
+					}
+				}
+			}
+		}	
+		
+		return buffer;
 	}
 
 

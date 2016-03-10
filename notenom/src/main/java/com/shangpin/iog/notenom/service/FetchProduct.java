@@ -91,7 +91,7 @@ public class FetchProduct {
 						e1.printStackTrace();
 					}
 				} 
-				String size = item.getSize().trim().replaceAll(",", ".").replaceAll("\\s+", " ").replaceAll("\r", "").replaceAll("\n", "");
+				String size = item.getSize().trim().replaceAll(",", ".").replaceAll("\t", " ").replaceAll("\\s+", " ").replaceAll("\r", "").replaceAll("\n", "");
 				String[] sizes = size.split(" ");
 				if(sizes.length>0){
 					for (int i = 0; i < sizes.length; i++) {

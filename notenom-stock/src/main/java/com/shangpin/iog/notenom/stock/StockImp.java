@@ -51,14 +51,20 @@ public class StockImp  extends AbsUpdateProductStock {
         ReadExcel.downLoadFile(url, path);
 		List<Item> allProducts = ReadExcel.readExcel(Item.class,path);		
 		for (Item item : allProducts) {
-			String size = item.getSize().trim().replaceAll(",", ".").replaceAll("\\s+", " ").replaceAll("\r", "").replaceAll("\n", "");
+			String size = item.getSize().trim().replaceAll(",", ".").replaceAll("\t", " ").replaceAll("\\s+", " ").replaceAll("\r", "").replaceAll("\n", "");
 			String[] sizes = size.split(" ");
 			if(sizes.length>0){
 				for (int i = 0; i < sizes.length; i++) {
-					String[] stockSize = sizes[i].split("/");
-					String stock = stockSize[0];
-					String productSize = stockSize[1];
-					skuMap.put(item.getSkuNo()+"-"+productSize, Integer.valueOf(stock)); 
+					try{
+						String[] stockSize = sizes[i].split("/");
+						String stock = stockSize[0];
+						String productSize = stockSize[1];
+						skuMap.put(item.getSkuNo()+"-"+productSize, Integer.valueOf(stock)); 
+					}catch(Exception ex){
+						ex.printStackTrace();
+						error.error(ex); 
+						error.error("stockSize==="+sizes[i]); 
+					}					
 				}
 			}
 		}

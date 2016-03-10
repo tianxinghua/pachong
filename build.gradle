@@ -1,10 +1,12 @@
+import java.rmi.server.Operation;
+
+import com.sun.tracing.dtrace.DependencyClass;
+
 apply plugin: 'java'
 
 sourceCompatibility = 1.7
 version = '1.0'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
-
 
 
 allprojects {
@@ -51,7 +53,7 @@ ext {
     slf4j_version='1.7.12'
     log4j_version='1.2.17'
     jedis_version='2.6.2'
-    resteasy_version='3.0.7.Final'
+	resteasy_version='3.0.7.Final'
 }
 
 
@@ -64,20 +66,17 @@ def loadGroovy(){
 
 
 
-
-
-
 subprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
     [compileJava, compileTestJava, compileGroovy, compileTestGroovy]*.options*.encoding = 'UTF-8'
-
-    task copyToLib( type: Copy ) {
+	
+    task copyToLib( type: Copy) {
         into "$buildDir/libs/lib"
         from configurations.compile
     }
 
-    task copyResources( type: Copy ) {
+    task copyResources( type: Copy) {
         into "$buildDir/libs/conf"
         from "$buildDir/resources/main"
     }
@@ -86,12 +85,44 @@ subprojects {
         into "$buildDir/classes/main"
         from "$buildDir/resources/main"
     }
+	
 
-
-    task dependsClassPath(){
-
+    task dependsClassPath(dependsOn:copyResources)<<{
+		
+		jar{
+			def publicJar=['activation-1.1.jar','aopalliance-1.0.jar','commons-beanutils-1.7.0.jar'
+				,'commons-codec-1.9.jar','commons-collections-3.2.jar','commons-dbcp-1.4.jar'
+				,'commons-httpclient-3.1.jar','commons-lang-2.3.jar','commons-logging-1.2.jar','commons-net-3.3.jar'
+				,'commons-pool-1.5.4.jar','commons-pool2-2.0.jar','edtFTPj-1.5.3.jar'
+				,'ezmorph-1.0.4.jar','fastjson-1.1.39.jar','groovy-all-2.3.10.jar','gson-2.2.2.jar'
+				,'httpclient-4.5.jar','httpcore-4.4.1.jar','Ice-3.5.1.jar'
+				,'iog-common-product.jar','iog-service.jar','iog-sop.jar','jackson-annotations-2.4.4.jar'
+				,'jackson-core-2.4.4.jar','jackson-core-asl-1.9.13.jar','jackson-databind-2.4.4.jar'
+				,'jackson-mapper-asl-1.9.13.jar','jcl-over-slf4j-1.7.10.jar','jedis-2.6.2.jar'
+				,'json-lib-2.2-jdk15.jar','jsqlparser-0.9.1.jar','log4j-1.2.17.jar'
+				,'log4mongo-java-0.7.4.jar','lombok-1.14.8.jar','mail-1.4.4.jar'
+				,'mongo-java-driver-3.0.2.jar','mybatis-3.2.2.jar','mybatis-spring-1.2.0.jar'
+				,'mysql-connector-java-5.1.21.jar','openapi-ice.jar','pagehelper-3.7.3.jar'
+				,'poi-3.0.1-FINAL.jar','project-common.jar','project-dao.jar'
+				,'project-framework.jar','slf4j-api-1.7.12.jar','slf4j-log4j12-1.7.12.jar'
+				,'spring-aop-4.1.4.RELEASE.jar','spring-beans-4.1.4.RELEASE.jar','spring-context-4.1.4.RELEASE.jar'
+				,'spring-core-4.1.4.RELEASE.jar','spring-data-commons-1.10.0.RELEASE.jar','spring-data-mongodb-1.7.0.RELEASE.jar','spring-expression-4.1.4.RELEASE.jar'
+				,'spring-jdbc-4.1.4.RELEASE.jar','spring-tx-4.1.4.RELEASE.jar','xmlbeans-2.6.0.jar','stax-api-1.0.1.jar'
+				,'commons-collections-3.2.1.jar','openapi-api-sdk-3.0.jar']
+			def manifestCp = configurations.compile.files.collect  {
+				File file = it
+				if (publicJar.contains(file.name)) {
+					"/usr/local/appPubJar/${file.name}"
+				}else{
+					"lib/${file.name}"
+				}
+			}.join(' ')
+			manifest {
+				 attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+			}
+		}
     }
-
+	
 
     dependencies {
         compile(
@@ -124,9 +155,6 @@ subprojects {
         }
     }
 
-
-
-
 }
 
 
@@ -138,3 +166,4 @@ task wrapper(type: Wrapper) {
 //    archiveBase = 'PROJECT'
 //    archivePath = 'gradle/dists'
 }
+

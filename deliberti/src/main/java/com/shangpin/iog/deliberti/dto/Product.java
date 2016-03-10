@@ -3,9 +3,9 @@ package com.shangpin.iog.deliberti.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
-public class CsvDTO {
+@Setter
+public class Product {
 	private String spuId;
 	private String brandCode;
 	private String brandDesc;
@@ -52,8 +52,9 @@ public class CsvDTO {
 	private String size49x;
 	private String image;
 	private String groupId;
-	private String articleCode;
-	private String onlineStatus;
-	private String materialDesc;
+	private String articleCode;//货号
+	private String material;//材质
+	private String color;//颜色
 	private String colorDesc;
+	private String description;//描述
 }
