@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.crypto.CipherInputStream;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
@@ -20,7 +19,6 @@ import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.deliberti.dto.Product;
-import com.shangpin.iog.deliberti.util.CsvUtil;
 import com.shangpin.iog.deliberti.util.MyUtil;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
