@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.annotation.Schedules;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
@@ -38,6 +39,11 @@ public class Schedule {
 	private static String subject = null;
 	private static String messageType = null;
 	
+	private static String dailyUpdateProductFilePath=null;
+	private static String dailyUpdateProductTo=null;
+	private static String dailyUpdateProductSubject=null;
+	private static String day_of_month = null;
+	
 	static {
 		if (null == bdl) {
 			bdl = ResourceBundle.getBundle("conf");
@@ -52,6 +58,11 @@ public class Schedule {
 		messageType = bdl.getString("messageType");
 		
 		filepath = bdl.getString("filepath");
+		
+		dailyUpdateProductFilePath=bdl.getString("dailyUpdateProductFilePath");
+		dailyUpdateProductTo = bdl.getString("dailyUpdateProductTo");
+		dailyUpdateProductSubject = bdl.getString("dailyUpdateProductSubject");
+		day_of_month = bdl.getString("day_of_month");
 	}
 
 	@Autowired
@@ -121,4 +132,54 @@ public class Schedule {
 			e.printStackTrace();
 		}
 	}
+	
+	@Scheduled(cron="${dailyUpdateProductSchedule}")
+	public void sendMailDailyUpdateProducts(){
+		Date endDate = new Date();		
+		try{
+			if(StringUtils.isNotBlank(dailyUpdateProductTo)){
+				StringBuffer buffer = productService.dailyUpdatedProduct("", Integer.parseInt(day_of_month), endDate, null, null, "same");
+				String messageText  = buffer.toString();
+				if(StringUtils.isNotBlank(messageText)){ 
+					try {
+						BufferedInputStream in = null;
+						File file = null;
+						FileOutputStream out = null;
+						try{
+							in = new BufferedInputStream(new ByteArrayInputStream(messageText.getBytes("gb2312")));
+							file = new File(dailyUpdateProductFilePath);
+							out = new FileOutputStream(file);
+							byte[] data = new byte[1024];
+				            int len = 0;
+				            while (-1 != (len=in.read(data, 0, data.length))) {
+				                out.write(data, 0, len);
+				            }
+						}catch(Exception e){
+							e.printStackTrace();
+						}finally {
+				            if (in != null) {
+				                in.close();
+				            }
+				            if (out != null) {
+				                out.close();
+				            }
+				        }
+						if(null != file){
+							SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword, dailyUpdateProductTo, dailyUpdateProductSubject,"上新产品统计信息请查看附件", messageType,file);
+						}
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+						log.error(e.getMessage());
+					}
+				}
+				
+			}			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			log.error(e.getMessage());
+		}
+	}
+	
 }

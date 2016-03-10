@@ -79,7 +79,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			File xmlFile = null;
 			try{
 				
-				UNZIPFile.unZipFile(zipFile, localPath);
+				xmlFile = UNZIPFile.unZipFile(zipFile, localPath);
 			}catch(Exception e){
 				loggerError.error(e);
 				e.printStackTrace();

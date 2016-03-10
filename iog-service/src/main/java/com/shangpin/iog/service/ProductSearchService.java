@@ -66,6 +66,9 @@ public interface ProductSearchService {
      * @throws ServiceException
      */
     public StringBuffer exportProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
+    
+    public StringBuffer dailyUpdatedProduct(String supplier,int day,Date now,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
+    
     /**
      * 获取产品id
      * @param supplier  供货商
