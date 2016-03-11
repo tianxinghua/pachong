@@ -7,6 +7,7 @@ package com.shangpin.iog.theclutcher.stock.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.sop.AbsUpdateProductStock;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.theclutcher.stock.dto.Item;
 import com.shangpin.iog.theclutcher.stock.dto.Rss;
 import com.shangpin.iog.theclutcher.utils.DownloadFileFromNet;
@@ -28,7 +29,8 @@ import java.util.*;
 public class GrabStockImp extends AbsUpdateProductStock {
 	
 	private static Logger logger = Logger.getLogger("info");
-	private static Logger loggerError = Logger.getLogger("error");
+//	private static Logger loggerError = Logger.getLogger("error");
+	private static LoggerUtil error = LoggerUtil.getLogger("error");
 	private static Logger logMongo = Logger.getLogger("mongodb");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = "";
@@ -54,7 +56,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 					.getResource("").getFile()), "utf-8");
 		} catch (UnsupportedEncodingException e) {
 			localPath = localPathDefault;
-			loggerError.info(e.getMessage());
+			error.error(e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -70,7 +72,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 				zipFile = DownloadFileFromNet.downLoad(urlStr, fileName,
 						localPath);
 			}catch(IOException e){
-				loggerError.error(e);
+				error.error(e);
 				e.printStackTrace();
 				return skuStock;
 			}
@@ -81,7 +83,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 				
 				xmlFile = UNZIPFile.unZipFile(zipFile, localPath);
 			}catch(Exception e){
-				loggerError.error(e);
+				error.error(e);
 				e.printStackTrace();
 				return skuStock;
 			}
@@ -136,13 +138,13 @@ public class GrabStockImp extends AbsUpdateProductStock {
 				logger.info("拉取theclutcher-stock数据成功");
 			} catch (Exception e) {
 				e.printStackTrace();
-				loggerError
+				logger
 						.error("拉取theclutcher-stock数据失败---" + e.getMessage());
 				throw new ServiceMessageException("拉取theclutcher-stock数据失败");
 			}
 
 		} catch (Exception e) {
-			loggerError.error(e.getMessage());
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 

@@ -40,6 +40,7 @@ public class OrderImpl extends AbsOrderService {
 	private static String createOrderUrl = "https://api.channeladvisor.com/v1/Orders";
 	private static OutTimeConfig timeConfig = new OutTimeConfig(1000*5*60, 1000*60 * 5, 1000*60 * 5);
 	private static String access_token = "";
+	private static String nostock = "nostock";
 	static {
 		if (null == bdl) {
 			bdl = ResourceBundle.getBundle("conf");
@@ -101,7 +102,7 @@ public class OrderImpl extends AbsOrderService {
 					if(Integer.parseInt(stock) <= Integer.parseInt(realStock)){
 						result = HttpUtil45.operateData("post", "json",orderUrl, timeConfig, null, jsonValue, "", "");
 					}else{
-						result = HttpUtil45.errorResult;
+						result = nostock;
 						excDesc = "库存不足：订单产品数量为"+stock+"实际库存为"+realStock;
 					}
 					
@@ -128,18 +129,24 @@ public class OrderImpl extends AbsOrderService {
 			//根据返回信息设置订单状态
 //			System.out.println("result==="+result);
 			logInfo.info("result==="+result);
-			if(StringUtils.isNotBlank(result) && !result.equals(HttpUtil45.errorResult)){
+			if(StringUtils.isNotBlank(result) && !result.equals(HttpUtil45.errorResult) && !result.equals(nostock)){
 				JSONObject json = JSONObject.fromObject(result);
 				orderDTO.setSupplierOrderNo(json.getString("ID"));
 				orderDTO.setStatus(OrderStatus.PLACED);
 				orderDTO.setExcState("0");
-			}else{
+			}else if(result.equals(nostock)){
 				//发生异常
 				orderDTO.setExcDesc("下单失败==="+excDesc);
 				orderDTO.setExcState("1");
 				orderDTO.setExcTime(new Date());
 				//采购异常处理
 				doOrderExc(orderDTO);
+			}else{
+				//发生异常
+				orderDTO.setExcDesc("下单失败==="+excDesc);
+				orderDTO.setExcState("1");
+				orderDTO.setExcTime(new Date());
+				
 			}
 			
 			
@@ -148,9 +155,7 @@ public class OrderImpl extends AbsOrderService {
 			orderDTO.setExcState("1");
 			orderDTO.setExcTime(new Date());
 			logger.error(ex.getMessage());
-			ex.printStackTrace();
-			//采购异常处理
-			doOrderExc(orderDTO);
+			ex.printStackTrace();			
 		}
 		
 	}
@@ -305,7 +310,7 @@ public class OrderImpl extends AbsOrderService {
 				orderDTO.setExcState("1");
 				orderDTO.setExcTime(new Date());
 				//采购异常处理
-				doOrderExc(orderDTO);
+//				doOrderExc(orderDTO);
 			}
 			
 		}catch(Exception ex){
@@ -315,7 +320,7 @@ public class OrderImpl extends AbsOrderService {
 			orderDTO.setExcTime(new Date());
 			ex.printStackTrace();
 			//采购异常处理
-			doOrderExc(orderDTO);
+//			doOrderExc(orderDTO);
 		}
 		
 	}

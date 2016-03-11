@@ -143,7 +143,7 @@ public class OrderSreviceImpl extends AbsOrderService {
 						spOrder.setExcState("0");
 						spOrder.setExcDesc("采购单："+order+" 在请求验证时发生错误，未返回响应信息");
 						loggerError.error("采购单："+order+" 在请求验证时发生错误，未返回响应信息");
-						doOrderExc(spOrder);
+//						doOrderExc(spOrder);
 					}
 					
 				}catch(Exception e){
@@ -152,7 +152,7 @@ public class OrderSreviceImpl extends AbsOrderService {
 					spOrder.setExcDesc("发生异常:"+e.getMessage());
 		            loggerError.error("发生异常:"+e.getMessage());
 		            e.printStackTrace();
-		            doOrderExc(spOrder);
+//		            doOrderExc(spOrder);
 				}
 			}
 			
@@ -162,7 +162,7 @@ public class OrderSreviceImpl extends AbsOrderService {
 			spOrder.setExcDesc(ex.getMessage());
             loggerError.error(ex);
             ex.printStackTrace();
-            doOrderExc(spOrder);
+//            doOrderExc(spOrder);
 		}
 		
 	}

@@ -182,4 +182,8 @@ public class Schedule {
 		}
 	}
 	
+	public void sendDailyGoodProducts(){
+		
+	}
+	
 }

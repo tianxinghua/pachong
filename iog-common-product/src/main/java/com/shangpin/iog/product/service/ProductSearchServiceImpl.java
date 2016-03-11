@@ -940,12 +940,11 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			throws ServiceException {
 		
 		StringBuffer buffer = new StringBuffer("SupplierId 供货商名称" + splitSign
-				+ "开始日期" + splitSign
-				+ "结束日期" + splitSign 
-				+ "good sku数量" + splitSign
-				+ "bad sku数量").append("\r\n");
+				+ "日期" + splitSign				
+				+ "sku数量" + splitSign
+				+ "缺少信息的sku数量").append("\r\n");
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");		
 		List<SupplierDTO> supplierList = supplierDAO.findByState("1");
 		for(SupplierDTO supplierDTO:supplierList){
 			System.out.println("======================="+supplierDTO.getSupplierId()+"=============================");
@@ -968,7 +967,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					page = this.findProductPageBySupplierAndTime(supplierDTO.getSupplierId(), startDate,
 							endDate, pageIndex, pageSize, "same");				
 					if(null != page && null !=page.getItems() && page.getItems().size()>0){
-						String supplierId="";
+						String supplierId="";						
 						int goodSkuNo = 0;
 						int badSkuNo = 0;
 						for (ProductDTO dto : page.getItems()) {
@@ -996,8 +995,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 						if(StringUtils.isNotBlank(supplierId)){
 							buffer.append(supplierId).append(splitSign);
 							buffer.append(sdf.format(startDate)).append(splitSign);
-							buffer.append(sdf.format(endDate)).append(splitSign); 
-							buffer.append(goodSkuNo).append(splitSign);
+//							buffer.append(sdf.format(endDate)).append(splitSign); 
+							buffer.append(goodSkuNo+badSkuNo).append(splitSign);
 							buffer.append(badSkuNo);
 							buffer.append("\r\n");
 						}						
