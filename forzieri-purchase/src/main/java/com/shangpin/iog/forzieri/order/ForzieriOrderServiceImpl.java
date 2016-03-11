@@ -104,7 +104,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 				 orderDTO.setStatus(OrderStatus.CONFIRMED);
 			}else {
 				//确认订单失败
-				orderDTO.setExcDesc("返回状态码不为200确认订单失败"+pushOrderData.getErrorCode());
+				orderDTO.setExcDesc("返回状态码不为200确认订单失败"+pushOrderData.getStatusCode());
 				orderDTO.setExcTime(new Date());
 				handlePurchaseOrderExc(orderDTO);
 			}

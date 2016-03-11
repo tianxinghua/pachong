@@ -367,7 +367,7 @@ public abstract class AbsOrderService {
             //获取已下单的订单信息
         	String nowDate = DateTimeUtil.getDateTime(); 
             orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
-            //判断12个小时还是未推送状态的 如果已经支付 就赋值成支付  待确认时 程序返回错误  使其赋值为采购异常
+            //判断12个小时还是未推送状态的 如果已经支付 就赋值成支付  待确认支付推送时 继承者handlerConfirm返回错误  使其赋值为采购异常
             List<OrderDTO>  waitList = productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
             orderDTOList.addAll(waitList);
             
@@ -442,6 +442,7 @@ public abstract class AbsOrderService {
                     Map<String,List<PurchaseOrderDetailSpecial>>  purchaseOrderMap = new HashMap<>();
 
                     PurchaseOrderDetailSpecialPage  orderDetailSpecialPage = servant.FindPurchaseOrderDetailSpecial(supplierId,"",orderDTO.getSpOrderId());
+                    logger.info("查询是否支付，订单号:"+orderDTO.getSpOrderId());
                     if(null!=orderDetailSpecialPage&&null!=orderDetailSpecialPage.PurchaseOrderDetails&&orderDetailSpecialPage.PurchaseOrderDetails.size()>0){  //存在采购单 就代表已支付
 
                         for (PurchaseOrderDetailSpecial orderDetail : orderDetailSpecialPage.PurchaseOrderDetails) {
@@ -668,7 +669,7 @@ public abstract class AbsOrderService {
                 }
 
             }
-
+            logger.info("商品采购价："+purchasePrice);
 
             //存储
             OrderDTO spOrder =new OrderDTO();
