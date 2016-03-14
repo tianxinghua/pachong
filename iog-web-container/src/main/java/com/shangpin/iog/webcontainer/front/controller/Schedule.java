@@ -1,9 +1,14 @@
 package com.shangpin.iog.webcontainer.front.controller;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -44,6 +49,13 @@ public class Schedule {
 	private static String dailyUpdateProductSubject=null;
 	private static String day_of_month = null;
 	
+	private static String supplierfilePath = null;
+	private static String splitSign=null;
+	private static String goodproduct_Schedule = null;
+	private static String goodproduct_FilePath = null;
+	private static String goodproduct_To = null;
+	private static String goodproduct_Subject = null;
+	
 	static {
 		if (null == bdl) {
 			bdl = ResourceBundle.getBundle("conf");
@@ -63,6 +75,14 @@ public class Schedule {
 		dailyUpdateProductTo = bdl.getString("dailyUpdateProductTo");
 		dailyUpdateProductSubject = bdl.getString("dailyUpdateProductSubject");
 		day_of_month = bdl.getString("day_of_month");
+		
+		supplierfilePath = bdl.getString("supplierfilePath");
+		splitSign = bdl.getString("splitSign");
+		goodproduct_Schedule = bdl.getString("goodproduct_Schedule");
+		goodproduct_FilePath = bdl.getString("goodproduct_FilePath");
+		goodproduct_To = bdl.getString("goodproduct_To");
+		goodproduct_Subject = bdl.getString("goodproduct_Subject");
+		
 	}
 
 	@Autowired
@@ -182,8 +202,80 @@ public class Schedule {
 		}
 	}
 	
+	@Scheduled(cron="${goodproduct_Schedule}")
 	public void sendDailyGoodProducts(){
 		
+		if(StringUtils.isNotBlank(goodproduct_To)){
+		
+			Date now = new Date();
+			Calendar calendar = Calendar.getInstance();	
+			calendar.setTime(now);
+		    calendar.set(Calendar.HOUR_OF_DAY, 0);
+		    calendar.set(Calendar.MINUTE, 0);
+		    calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.DATE, calendar.get(Calendar.DATE)); 
+			Date startDate = calendar.getTime();
+			
+			BufferedReader reader = null;
+			try{
+				String suppliers = "";
+				File supplierFile = new File(supplierfilePath);
+				reader = new BufferedReader(new FileReader(supplierFile));
+				String temp = null;
+				while(null != (temp = reader.readLine())){
+					suppliers += temp;
+				}
+				if(StringUtils.isNotBlank(suppliers)){
+					String[] sus = suppliers.split(splitSign);
+					if(sus.length>0){
+						StringBuffer buffer = productService.dailyGoodProducts(sus, startDate, now, null, null);
+						String messageText  = buffer.toString();
+						if(StringUtils.isNotBlank(messageText)){ 
+							try {
+								BufferedInputStream in = null;
+								File file = null;
+								FileOutputStream out = null;
+								try{
+									in = new BufferedInputStream(new ByteArrayInputStream(messageText.getBytes("gb2312")));
+									file = new File(goodproduct_FilePath);
+									out = new FileOutputStream(file);
+									byte[] data = new byte[1024];
+						            int len = 0;
+						            while (-1 != (len=in.read(data, 0, data.length))) {
+						                out.write(data, 0, len);
+						            }
+								}catch(Exception e){
+									e.printStackTrace();
+								}finally {
+						            if (in != null) {
+						                in.close();
+						            }
+						            if (out != null) {
+						                out.close();
+						            }
+						        }
+								if(null != file){
+									SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword, goodproduct_To, goodproduct_Subject,"今日拉取的新品请查看附件", messageType,file);
+								}
+								
+							} catch (Exception e) {
+								e.printStackTrace();
+								log.error(e.getMessage());
+							}
+						}
+					}
+				}			
+				
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}finally{
+				try{
+					reader.close();
+				}catch(Exception e){
+					e.printStackTrace();
+				}			
+			}
+		}	
 	}
 	
 }

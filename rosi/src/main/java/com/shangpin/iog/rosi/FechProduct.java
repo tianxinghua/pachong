@@ -83,7 +83,7 @@ public class FechProduct {
 	                sku.setSpuId(item.getSupplier_SKU());
 	                sku.setProductName(item.getSubtitle());
 	                sku.setMarketPrice(item.getPrice().replaceAll("EUR", "").replaceAll(",", ""));  
-	                sku.setProductCode(item.getSupplier_SKU());
+	                sku.setProductCode(item.getSupplier_SKU().replaceAll(item.getBrand_name().toUpperCase(), ""));
 	                sku.setColor(item.getColor());
 	                sku.setProductDescription(item.getDescription().replaceAll(",", " "));
 	                sku.setSaleCurrency("EUR");

@@ -69,6 +69,8 @@ public interface ProductSearchService {
     
     public StringBuffer dailyUpdatedProduct(String supplier,int day,Date now,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
     
+    public StringBuffer dailyGoodProducts(String[] suppliers,Date startime,Date endtime,Integer pageIndex,Integer pageSize) throws ServiceException;
+    
     /**
      * 获取产品id
      * @param supplier  供货商

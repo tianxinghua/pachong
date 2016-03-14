@@ -59,7 +59,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			error.error(e.getMessage());
 			e.printStackTrace();
 		}
-		
+		logger.info("zip存放地址+"+localPath); 
 		Map<String, Integer> skuStock = new HashMap<>();
 		Map<String, Integer> stockMap = new HashMap<>();
 		try {
@@ -69,8 +69,10 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			// 下载
 			File zipFile = null;
 			try{
+				logger.info("====================开始下载zip文件=================");
 				zipFile = DownloadFileFromNet.downLoad(urlStr, fileName,
 						localPath);
+				logger.info("====================下载zip文件结束=================");
 			}catch(IOException e){
 				error.error(e);
 				e.printStackTrace();
@@ -80,8 +82,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			// 解压
 			File xmlFile = null;
 			try{
-				
+				logger.info("====================解压文件开始=================");
 				xmlFile = UNZIPFile.unZipFile(zipFile, localPath);
+				logger.info("====================解压文件结束=================");
 			}catch(Exception e){
 				error.error(e);
 				e.printStackTrace();
