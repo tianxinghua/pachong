@@ -22,6 +22,7 @@ import com.shangpin.framework.ServiceException;
 
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.della.dto.Item;
 import com.shangpin.iog.della.utils.CSVUtil;
 import com.shangpin.iog.dto.ProductPictureDTO;
@@ -34,8 +35,9 @@ import com.shangpin.sop.AbsUpdateProductStock;
 @Component("dellaStock")
 public class FetchProduct extends AbsUpdateProductStock {
 	
-	private static Logger logError = Logger.getLogger("error");
+//	private static Logger logError = Logger.getLogger("error");
 	private static Logger logInfo  = Logger.getLogger("info");
+	private static LoggerUtil error = LoggerUtil.getLogger("error");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = "";
 	private static String remoteFileName = "";
@@ -62,7 +64,14 @@ public class FetchProduct extends AbsUpdateProductStock {
 		Map<String,Integer> stockMap = new HashMap<>();
 
 		
-		List<Item> items = CSVUtil.readLocalCSV(remoteFileName,Item.class, ";");
+		List<Item> items =null; 
+		try{
+			
+			items = CSVUtil.readLocalCSV(remoteFileName,Item.class, ";");
+		}catch(Exception ex){
+			error.error(ex); 
+		}
+		
 		for(Item item:items){
 			
 
@@ -104,7 +113,7 @@ public class FetchProduct extends AbsUpdateProductStock {
 			fetchProduct.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
 
 		} catch (Exception e) {
-			logError.error(e.getMessage());
+			logInfo.error(e.getMessage());
 			e.printStackTrace();
 		}
 		logInfo.info("della更新数据库结束");

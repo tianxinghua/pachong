@@ -7,6 +7,7 @@ package com.shangpin.iog.theclutcher.stock.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.sop.AbsUpdateProductStock;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.theclutcher.stock.dto.Item;
 import com.shangpin.iog.theclutcher.stock.dto.Rss;
 import com.shangpin.iog.theclutcher.utils.DownloadFileFromNet;
@@ -28,7 +29,8 @@ import java.util.*;
 public class GrabStockImp extends AbsUpdateProductStock {
 	
 	private static Logger logger = Logger.getLogger("info");
-	private static Logger loggerError = Logger.getLogger("error");
+//	private static Logger loggerError = Logger.getLogger("error");
+	private static LoggerUtil error = LoggerUtil.getLogger("error");
 	private static Logger logMongo = Logger.getLogger("mongodb");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = "";
@@ -54,10 +56,10 @@ public class GrabStockImp extends AbsUpdateProductStock {
 					.getResource("").getFile()), "utf-8");
 		} catch (UnsupportedEncodingException e) {
 			localPath = localPathDefault;
-			loggerError.info(e.getMessage());
+			error.error(e.getMessage());
 			e.printStackTrace();
 		}
-		
+		logger.info("zip存放地址+"+localPath); 
 		Map<String, Integer> skuStock = new HashMap<>();
 		Map<String, Integer> stockMap = new HashMap<>();
 		try {
@@ -67,10 +69,12 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			// 下载
 			File zipFile = null;
 			try{
+				logger.info("====================开始下载zip文件=================");
 				zipFile = DownloadFileFromNet.downLoad(urlStr, fileName,
 						localPath);
+				logger.info("====================下载zip文件结束=================");
 			}catch(IOException e){
-				loggerError.error(e);
+				error.error(e);
 				e.printStackTrace();
 				return skuStock;
 			}
@@ -78,10 +82,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			// 解压
 			File xmlFile = null;
 			try{
-				
+				logger.info("====================解压文件开始=================");
 				xmlFile = UNZIPFile.unZipFile(zipFile, localPath);
+				logger.info("====================解压文件结束=================");
 			}catch(Exception e){
-				loggerError.error(e);
+				error.error(e);
 				e.printStackTrace();
 				return skuStock;
 			}
@@ -136,13 +141,13 @@ public class GrabStockImp extends AbsUpdateProductStock {
 				logger.info("拉取theclutcher-stock数据成功");
 			} catch (Exception e) {
 				e.printStackTrace();
-				loggerError
+				logger
 						.error("拉取theclutcher-stock数据失败---" + e.getMessage());
 				throw new ServiceMessageException("拉取theclutcher-stock数据失败");
 			}
 
 		} catch (Exception e) {
-			loggerError.error(e.getMessage());
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 

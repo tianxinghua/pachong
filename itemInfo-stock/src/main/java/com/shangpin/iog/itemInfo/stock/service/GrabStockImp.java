@@ -23,14 +23,16 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import com.shangpin.iog.itemInfo.stock.schedule.AppContext;
 import com.shangpin.iog.itemInfo.utils.SoapXmlUtil;
 
 @Component("grabStockImp")
 public class GrabStockImp extends AbsUpdateProductStock {
 
 	private static Logger logger = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
+//    private static Logger loggerError = Logger.getLogger("error");
+	private static LoggerUtil logError = LoggerUtil.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
     private static String supplierId = "";
@@ -92,7 +94,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
 			}catch(Exception e){
 				e.printStackTrace();
-				loggerError.error("拉取alduca daosta数据失败---" + e.getMessage());
+				logError.error("拉取alduca daosta数据失败---" + e.getMessage());
 			}
 		}
 //		String filePath = "d:/soapml.xml";
@@ -179,29 +181,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		
 		//加载spring
         loadSpringContext();
-        //拉取数据
-        GrabStockImp stockImp =(GrabStockImp)factory.getBean("grabStockImp");
-//		AbsUpdateProductStock grabStockImp = new GrabStockImp();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("alduca daosta更新数据库开始");
-        try{
-        	stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
-        }catch(Exception ex){
-        	loggerError.error(ex);
-        	ex.printStackTrace();
-        }
-        logger.info("alduca daosta更新数据库结束");
-        System.exit(0);
-		
-//		String ss = URLDecoder.decode((GrabStockImp.class.getClassLoader().getResource("").getFile()), "utf-8")+"soap.xml";
-//		File ff = new File(ss);
-//		if(!ff.exists()){
-//			ff.createNewFile();
-//		}
-//		System.out.println(ss);
-//		GrabStockImp g = new GrabStockImp();
-//		g.grabStock(null);
-		
+        
 	} 
 
 }

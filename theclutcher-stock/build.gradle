@@ -12,17 +12,17 @@ dependencies {
 }
 
 jar {
-    dependsOn copyToLib , copyResources    , copyResourcesToClasses
+    dependsOn copyToLib , copyResources ,dependsClassPath
     exclude ("**/*.properties")
 
-    def manifestCp = configurations.compile.files.collect  {
-        File file = it
-        "lib/${file.name}"
-    }.join(' ')
+    //def manifestCp = configurations.compile.files.collect  {
+    //    File file = it
+    //    "lib/${file.name}"
+    //}.join(' ')
 
     manifest {
         attributes 'Main-Class': 'com.shangpin.iog.theclutcher.Startup'
-        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+      //  attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }
 
