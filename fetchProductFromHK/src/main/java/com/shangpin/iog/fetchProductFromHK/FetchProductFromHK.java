@@ -22,6 +22,7 @@ import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 
@@ -44,15 +45,78 @@ public class FetchProductFromHK {
 		FetchProductFromHK o = (FetchProductFromHK) factory
 				.getBean("fetchProductFromHK");
 		try {
+			o.fetchRelationFromHK();
 			o.fetchProductFromHK();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	private void fetchRelationFromHK() {
+		String falg = readFile("initRelation.ini");
+		//false 表示按每天拉取
+		if ("false".equals(falg)) {
+			System.out.println("false");
+			saveRelationDayFromHK();
+		} else {
+			//true 表示拉取所有的
+			System.out.println("true");
+			fetchAndsaveAllRelationFromHK();
+			writeGrapDate("false", "initRelation.ini");
+
+		}
+	}
+
+	private void fetchAndsaveAllRelationFromHK() {
+		List<SkuRelationDTO> list = null;
+		try {
+			list = productFetchService.selectAllRelation();
+			logger.info("拉取所有的relation总数："+list.size());
+			System.out.println("拉取所有的relation总数："+list.size());
+			saveAllRelation(list);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void saveRelationDayFromHK() {
+		List<SkuRelationDTO> list = null;
+		try {
+			list = productFetchService.selectRelationDayFromHK();
+			logger.info("今日拉取的relation总数："+list.size());
+			System.out.println("今日拉取的relation总数："+list.size());
+			saveAllRelation(list);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+	private void saveAllRelation(List<SkuRelationDTO> list) {
+		if (list != null) {
+			for (SkuRelationDTO pro : list) {
+				SkuRelationDTO sku = new SkuRelationDTO();
+				sku.setSupplierId(pro.getSupplierId());
+				sku.setSopNo(pro.getSopNo());
+				sku.setSopSkuId(pro.getSopSkuId());
+				sku.setSupplierSkuId(pro.getSupplierSkuId());
+				try {
+					productFetchService.saveSkuRelation(sku);
+					i++;
+				} catch (ServiceException e) {
+					j++;
+				}
+			}
+			logger.info("save success数量："+i);
+			System.out.println("save success数量："+i);
+			logger.info("重复的数量："+j);
+			System.out.println("重复的数量："+j);
+			i=0;
+			j=0;
+		}
+	}
+
 	public void fetchProductFromHK() {
 
-		String falg = readFile();
+		String falg = readFile("initSkuSpu.ini");
 		//false 表示按每天拉取
 		if ("false".equals(falg)) {
 			System.out.println("false");
@@ -63,7 +127,7 @@ public class FetchProductFromHK {
 			System.out.println("true");
 			saveAllSkuFromHK();
 			saveAllSpuFromHK();
-			writeGrapDate("false", "init.ini");
+			writeGrapDate("false", "initSkuSpu.ini");
 
 		}
 	}
@@ -193,12 +257,12 @@ public class FetchProductFromHK {
 			n=0;
 		}
 	}
-	private String readFile() {
+	private String readFile(String fileName) {
 
 		Scanner scanner = null;
 		StringBuilder buffer = new StringBuilder();
 		try {
-			File file = getConfFile("init.ini");
+			File file = getConfFile(fileName);
 			scanner = new Scanner(file, "utf-8");
 			while (scanner.hasNextLine()) {
 				buffer.append(scanner.nextLine());
@@ -208,13 +272,13 @@ public class FetchProductFromHK {
 		} finally {
 			if (scanner != null) {
 				scanner.close();
-			}
+			}	
 		}
 		return buffer.toString();
 	}
 
 	private static void writeGrapDate(String date, String fileName) {
-		File df;
+		File df = null;
 		try {
 			df = getConfFile(fileName);
 

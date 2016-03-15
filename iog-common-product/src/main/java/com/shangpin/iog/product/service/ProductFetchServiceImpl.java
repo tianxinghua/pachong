@@ -8,11 +8,13 @@ import com.shangpin.iog.dto.PictureDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.mongodao.PictureDAO;
 import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.product.dao.ProductPictureMapper;
 import com.shangpin.iog.product.dao.SkuMapper;
+import com.shangpin.iog.product.dao.SkuRelationMapper;
 import com.shangpin.iog.product.dao.SpuMapper;
 import com.shangpin.iog.service.ProductFetchService;
 
@@ -43,6 +45,9 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     @Autowired
     SkuMapper skuDAO;
 
+
+    @Autowired
+    SkuRelationMapper skuRelationDAO;
     @Autowired
     SpuMapper spuDAO;
 
@@ -234,7 +239,45 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		}
 	}
 
+	@Override
+	public SkuDTO findSupplierPrice(String supplierId, String skuId)
+			throws ServiceException {
+		
+		SkuDTO sku = null;
+		try {
+			sku = skuDAO.findSupplierPrice(supplierId, skuId);
+		} catch (Exception e) {
+            logger.error("获取失败 "+e.getMessage());
+			e.printStackTrace();
+		}
+		return sku;
+	}
+	
 
+	@Override
+	public SkuDTO findSKUBySupplierIdAndSkuId(String supplierId, String skuId) {
+		SkuDTO sku = null;
+		try {
+			sku = skuDAO.findSKUBySupplierAndSkuId(supplierId, skuId);
+		} catch (Exception e) {
+            logger.error("获取失败 "+e.getMessage());
+			e.printStackTrace();
+		}
+		return sku;
+	}
+	
+	@Override
+	public SpuDTO findSPUBySupplierIdAndSpuId(String supplierId, String spuId) {
+		SpuDTO spu = null;
+		try {
+			spu = spuDAO.findSPUBySupplierAndSpuId(supplierId, spuId);
+		} catch (Exception e) {
+            logger.error("获取失败 "+e.getMessage());
+			e.printStackTrace();
+		}
+		return spu;
+	}
+	
 	@Override
 	public List<ProductDTO> selectSkuByDay() throws ServiceException {
 		// TODO Auto-generated method stub
@@ -255,6 +298,30 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 
 	@Override
 	public List<ProductDTO> selectAllSpu() throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List selectAllRelation() throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void saveSkuRelation(SkuRelationDTO sku) throws ServiceException {
+		try {
+			skuRelationDAO.save(sku);
+		} catch ( Exception e) {
+        	if(e instanceof DuplicateKeyException)
+        	throw new ServiceMessageException(REPEAT_MESSAGE);
+            throw new ServiceMessageException("数据插入失败"+e.getMessage());
+        }
+	}
+
+	@Override
+	public List<SkuRelationDTO> selectRelationDayFromHK()
+			throws ServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}

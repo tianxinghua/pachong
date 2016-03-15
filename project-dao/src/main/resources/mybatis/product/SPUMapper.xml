@@ -104,6 +104,17 @@
           </set>
           where  SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
     </update>
-
-	
+    <select id="findSPUBySupplierAndSpuId"  resultMap="spuMap" parameterType="java.lang.String">
+	        select
+	          <include refid="all_spu_column"></include>
+	        from SPU
+	        <where>
+	            <if test="null!=supplierId">
+	                SUPPLIER_ID = #{supplierId}
+	            </if>
+	            <if test="null!=spuId">
+	                and SPU_ID = #{spuId}
+	            </if>
+	        </where>
+	    </select>
 </mapper>

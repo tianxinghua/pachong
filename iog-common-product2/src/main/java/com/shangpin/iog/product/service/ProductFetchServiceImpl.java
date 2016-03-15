@@ -8,12 +8,15 @@ import com.shangpin.iog.dto.PictureDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.mongodao.PictureDAO;
 import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.product.dao.ProductPictureMapper;
 import com.shangpin.iog.product.dao.ProductsMapper;
 import com.shangpin.iog.product.dao.SkuMapper;
+import com.shangpin.iog.product.dao.SkuRelationHKMapper;
+import com.shangpin.iog.product.dao.SkuRelationMapper;
 import com.shangpin.iog.product.dao.SpuMapper;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
@@ -44,7 +47,11 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 
     @Autowired
     SkuMapper skuDAO;
+    @Autowired
+    SkuRelationHKMapper skuRelationHKDAO;
     
+    @Autowired
+    SkuRelationMapper skuRelationDAO;
     @Autowired
 	ProductsMapper productDAO;
     
@@ -272,5 +279,43 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		List<ProductDTO>  list = productDAO.selectSkuByDay();
 		return list;
 	}
+	@Override
+	public List<SkuRelationDTO> selectAllRelation()  throws ServiceException{
+		return skuRelationHKDAO.selectAllRelation();
+	}
+	@Override
+	public SkuDTO findSKUBySupplierIdAndSkuId(String supplierId, String spuId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SkuDTO findSupplierPrice(String supplierId, String skuId)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SpuDTO findSPUBySupplierIdAndSpuId(String supplierId, String spuId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
+	@Override
+	public void saveSkuRelation(SkuRelationDTO sku) throws ServiceException {
+		try {
+			skuRelationDAO.save(sku);
+		} catch ( Exception e) {
+        	if(e instanceof DuplicateKeyException)
+        	throw new ServiceMessageException(REPEAT_MESSAGE);
+            throw new ServiceMessageException("数据插入失败"+e.getMessage());
+        }
+	}
+
+	@Override
+	public List<SkuRelationDTO> selectRelationDayFromHK()
+			throws ServiceException {
+		return skuRelationHKDAO.selectRalationDayFromHK();
+	}
 }

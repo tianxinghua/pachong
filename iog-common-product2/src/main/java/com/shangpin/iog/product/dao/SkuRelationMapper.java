@@ -2,10 +2,12 @@ package com.shangpin.iog.product.dao;
 
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.dao.base.HKIBaseDao;
 import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SkuRelationDTO;
+
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
@@ -52,5 +54,7 @@ public interface SkuRelationMapper extends IBaseDao<SkuRelationDTO> {
      * @return  对照关系对象
      */
     public SkuRelationDTO getSkuRelationBySupplierSkuId(@Param("supplierId") String supplierId,@Param("skuNo") String supplierSkuNo);
+    
+    public List<SkuRelationDTO> selectAllRelation()  throws ServiceException;
 
 }

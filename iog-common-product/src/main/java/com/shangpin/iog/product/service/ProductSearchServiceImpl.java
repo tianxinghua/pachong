@@ -271,7 +271,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				+ splitSign + "新进货价" + splitSign + "markerPrice" + splitSign
 				+ "sallPrice" + splitSign + "supplier Price 进货价" + splitSign
 				+ "Currency 币种" + splitSign + "上市季节" + splitSign + "活动开始时间"
-				+ splitSign + "活动结束时间").append("\r\n");
+				+ splitSign + "活动结束时间"+ splitSign + "备注").append("\r\n");
 		Page<ProductDTO> page = null;
 		if (flag.equals("same")) {
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,

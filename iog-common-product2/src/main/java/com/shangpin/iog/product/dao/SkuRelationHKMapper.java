@@ -1,11 +1,8 @@
 package com.shangpin.iog.product.dao;
 
 
-import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dao.base.HKIBaseDao;
-import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
-import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SkuRelationDTO;
 
 import org.apache.ibatis.annotations.Param;
@@ -56,5 +53,8 @@ public interface SkuRelationHKMapper extends HKIBaseDao<SkuRelationDTO> {
     public SkuRelationDTO getSkuRelationBySupplierSkuId(@Param("supplierId") String supplierId,@Param("skuNo") String supplierSkuNo);
     
     public List<SkuRelationDTO> selectAllRelation();
+
+
+	public List<SkuRelationDTO> selectRalationDayFromHK();
 
 }

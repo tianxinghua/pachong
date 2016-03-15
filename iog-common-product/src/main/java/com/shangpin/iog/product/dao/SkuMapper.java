@@ -6,6 +6,7 @@ import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.dto.NewPriceDTO;
 import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.dto.SpuDTO;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -34,6 +35,7 @@ public interface SkuMapper extends IBaseDao<SkuDTO> {
      */
     public SkuDTO findSupplierPrice(@Param("supplierId") String supplierId,@Param("skuId") String skuId) throws ServiceException;
     
+    
     /**
      * 通过supplierid和skuid查询最新价格
      */
@@ -57,4 +59,15 @@ public interface SkuMapper extends IBaseDao<SkuDTO> {
     List<SkuDTO> findListBySupplierAndLastDate(@Param("supplier") String supplier,
                                                    @Param("startDate") Date startDate,
                                                    @Param("endDate") Date endDate);
+    
+    public SkuDTO findSKUBySupplierAndSkuId(@Param("supplierId") String supplierId,@Param("skuId") String skuId) throws ServiceException; 
+
+
+	/**
+	 * 
+	 * @param supplierId
+	 * @param skuId
+	 * @return
+	 */
+	
 }
