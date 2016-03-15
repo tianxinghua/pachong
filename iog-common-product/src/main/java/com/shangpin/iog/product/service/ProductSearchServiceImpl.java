@@ -9,6 +9,7 @@ import com.shangpin.iog.mongodao.PictureDAO;
 import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.product.dao.*;
 import com.shangpin.iog.service.ProductSearchService;
+import com.shangpin.iog.service.SkuPriceService;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.RowBounds;
@@ -55,7 +56,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 	@Autowired
 	SupplierMapper supplierDAO;
-
+	
 	private static Map<String, String> spBrandMap = new HashMap<>();
 	private static Map<String, String> colorContrastMap = new HashMap<>();
 
@@ -832,15 +833,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				+ "ProductModel 货号" + splitSign + "新市场价" + splitSign
 				+ "新销售价" + splitSign + "新进货价" + splitSign + "市场价"
 				+ splitSign + "销售价" + splitSign + "进货价").append("\r\n");
-		Page<ProductDTO> page = null;
-		if (flag.equals("same")) {
-			page = this.findProductPageBySupplierAndTime(supplier, startDate,
-					endDate, pageIndex, pageSize, "same");
-
-		} else {
-			page = this.findProductPageBySupplierAndTime(supplier, startDate,
-					endDate, pageIndex, pageSize, "diff");
-		}
+		
+		final Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate,
+				endDate, pageIndex, pageSize, "diff");
 		
 		if(null==page || null== page.getItems()){
 			return null;
@@ -919,6 +914,41 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				}
 //			}
 		}
+		
+		//更新价格
+		Thread t = new Thread(	 new Runnable() {
+			@Override
+			public void run() {
+				try {
+					
+					for (ProductDTO dto : page.getItems()) {
+						try{
+							
+							SkuDTO skuDTO = new SkuDTO();
+							skuDTO.setUpdateTime(new Date());
+							if(!dto.getMarketPrice().equals(dto.getNewMarketPrice())){
+								skuDTO.setNewMarketPrice(dto.getNewMarketPrice());
+							}
+							if(!dto.getSalePrice().equals(dto.getNewSalePrice())){
+								skuDTO.setNewSalePrice(dto.getNewSalePrice());
+							}
+							if(!dto.getSupplierPrice().equals(dto.getNewSupplierPrice())){
+								skuDTO.setNewSupplierPrice(dto.getNewSupplierPrice());
+							}
+							skuDAO.updatePrice(skuDTO); 
+							
+						}catch(Exception ex){
+							ex.printStackTrace();
+						}						
+					}
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		t.start();
+		
 		return buffer;
 	}
 
