@@ -1,6 +1,7 @@
 package com.shangpin.iog.luisaworld.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.SocketException;
@@ -85,6 +86,37 @@ public class FTPUtils {
 		} 
 		
 	}
+	
+	
+	/**  
+     * 上传文件或文件夹  
+     * @param file 上传的文件或文件夹  
+     * @throws Exception  
+     */    
+    private void upload(File file) throws Exception{      
+        if(file.isDirectory()){           
+        	ftpClient.makeDirectory(file.getName());                
+        	ftpClient.changeWorkingDirectory(file.getName());      
+            String[] files = file.list();             
+            for (int i = 0; i < files.length; i++) {      
+                File file1 = new File(file.getPath()+File.separator+files[i] );      
+                if(file1.isDirectory()){      
+                    upload(file1);      
+                    ftpClient.changeToParentDirectory();      
+                }else{                    
+                    File file2 = new File(file.getPath()+File.separator+files[i]);      
+                    FileInputStream input = new FileInputStream(file2);      
+                    ftpClient.storeFile(file2.getName(), input);      
+                    input.close();                            
+                }                 
+            }      
+        }else{      
+            File file2 = new File(file.getPath());      
+            FileInputStream input = new FileInputStream(file2);      
+            ftpClient.storeFile(file2.getName(), input);      
+            input.close();        
+        }      
+    }    
 
 	
 }

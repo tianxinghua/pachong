@@ -1,6 +1,9 @@
 package com.shangpin.iog.luisaworld.util;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -12,6 +15,47 @@ import com.csvreader.CsvReader;
 
 public class CVSUtil {
 
+	/**
+	 * 生成csv文件
+	 * @param buffer 
+	 * @param filePath 要写入的文件  xxx.csv
+	 */
+	public static void writeCSV(StringBuffer buffer,String filePath){
+		
+		String messageText  = buffer.toString();
+		if(StringUtils.isNotBlank(messageText)){
+			BufferedInputStream in = null;
+			File file = null;
+			FileOutputStream out = null;
+			try{
+				in = new BufferedInputStream(new ByteArrayInputStream(messageText.getBytes("gb2312")));
+				file = new File(filePath);
+				out = new FileOutputStream(file);
+				byte[] data = new byte[1024];
+	            int len = 0;
+	            while (-1 != (len=in.read(data, 0, data.length))) {
+	                out.write(data, 0, len);
+	            }
+			}catch(Exception e){
+				e.printStackTrace();
+			}finally {
+				try{
+					if (in != null) {
+		                in.close();
+		            }
+		            if (out != null) { 
+		                out.close();
+		            }
+				}catch(Exception ex){
+					ex.printStackTrace(); 
+				}
+	            
+	        }
+			
+		}
+	
+	}
+	
 	/**
 	 * 
 	 * @param file csv文件

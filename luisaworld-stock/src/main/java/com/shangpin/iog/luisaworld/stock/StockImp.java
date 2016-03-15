@@ -78,7 +78,7 @@ public class StockImp  extends AbsUpdateProductStock {
         		File file = new File(localPath+File.separator+remoteFileName);
         		List<Item> list = CVSUtil.readCSV(file, Item.class, ',');
         		for(Item item:list){
-        			stockMap.put(item.getSku_no(), item.getQty());
+        			stockMap.put(item.getBarcode(), item.getQty());
         		}
         	}else{
         		//log
