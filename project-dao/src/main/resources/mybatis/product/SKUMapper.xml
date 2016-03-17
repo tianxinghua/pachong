@@ -238,4 +238,14 @@
 	            </if>
 	        </where>
 	    </select>
+	    
+	<update id="updateSkuMemo" parameterType="iog_sku" >
+	    update SKU
+       <set>
+		  MEMO = CONCAT(MEMO,"  ",#{memo}), 
+	      LAST_TIME = #{lastTime},
+	   </set>
+	    where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
+    </update>
+	    
 </mapper>

@@ -124,5 +124,6 @@ public interface ProductFetchService {
 	public void saveSkuRelation(SkuRelationDTO sku) throws ServiceException;
 	public List<SkuRelationDTO> selectRelationDayFromHK() throws ServiceException;
 
+	public void updateSkuMemoAndTime(SkuDTO skuDTO);
 
 }
