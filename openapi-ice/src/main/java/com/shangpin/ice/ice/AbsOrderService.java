@@ -156,11 +156,22 @@ public abstract class AbsOrderService {
         //处理退款
         refundOrderFromSOP(supplierNo, supplierId, handleCancel);
 
+        //时刻更新时间，以便监测程序是否运行
+        updateOrderTime(supplierId);
 
     }
 
+    private void updateOrderTime(String supplierId) {
+		//先判断是否supplier已存在
+    	boolean flag = productOrderService.selectOrderUpdateBySupplier(supplierId);
+    	if(flag){
+    		productOrderService.updateSupplierOrderTime(supplierId);
+    	}else{
+    		productOrderService.saveSupplierOrderTime(supplierId);
+    	}
+	}
 
-    /**
+	/**
      * 通过WMS下单 包换退单的处理
      * @param supplierNo 供货商编号    S******
      * @param supplierId 供货商门户编号 2015****

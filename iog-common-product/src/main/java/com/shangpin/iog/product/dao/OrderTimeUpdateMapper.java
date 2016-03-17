@@ -2,6 +2,8 @@ package com.shangpin.iog.product.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.dto.OrderTimeUpdateDTO;
@@ -17,6 +19,6 @@ public interface OrderTimeUpdateMapper extends IBaseDao<OrderTimeUpdateDTO> {
 	public void savesupplierOrderTime(OrderTimeUpdateDTO stockUpdateDTO);
 	
 
-	public OrderTimeUpdateDTO findSupplierOrderById(String supplierId);
+	public OrderTimeUpdateDTO findSupplierOrderById(@Param("supplierId") String supplierId);
 	
 }

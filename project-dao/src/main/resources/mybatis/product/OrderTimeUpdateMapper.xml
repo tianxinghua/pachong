@@ -7,11 +7,11 @@
         <result column="UPDATE_TIME" property="updateTime" />
 	</resultMap>
 		
-	<insert id="savesupplierOrderTime" parameterType="iog_supplierOrderMap">
+	<insert id="savesupplierOrderTime" parameterType="iog_supplierOrderUpdate">
 		insert into SUPPLIER_ORDER (SUPPLIER_ID,UPDATE_TIME)
 		values (#{supplierId},#{updateTime})
 	</insert>
-    <update id="updateSupplierOrderTime" parameterType="iog_supplierOrderMap" >
+    <update id="updateSupplierOrderTime" parameterType="iog_supplierOrderUpdate" >
           update SUPPLIER_ORDER
           <set>
               UPDATE_TIME = #{updateTime}
