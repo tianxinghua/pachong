@@ -341,7 +341,7 @@ public class OrderService extends AbsOrderService{
 			headerMap.put("Authorization", Authorization);
 			String result = HttpUtil45.post(url_token, param, headerMap, outTimeConf);
 			logger.info("Token===="+result);
-			System.out.println(result);
+//			System.out.println(result);
 			Gson gson = new Gson();
 			token = gson.fromJson(result, Token.class);
 			
