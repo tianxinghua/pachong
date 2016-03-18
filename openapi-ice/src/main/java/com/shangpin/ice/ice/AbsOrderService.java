@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import redis.clients.jedis.Jedis;
+
 import java.io.*;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
@@ -57,7 +59,7 @@ public abstract class AbsOrderService {
     private static ResourceBundle bd = null;
     private static String  startDateOfTemp=null,endDateOfTemp=null;
     private static  String url = null;
-
+    private static  String redisUrl = null;  
     public static boolean SENDMAIL = false;
 	static {
         try {
@@ -68,11 +70,13 @@ public abstract class AbsOrderService {
                 bd=ResourceBundle.getBundle("conf");
             }
             url = bdl.getString("wmsUrl");
+            redisUrl = bdl.getString("redisUrl"); 
             toEmail = bdl.getString("email");
             fromEmail = bdl.getString("fromEmail");
             emailPass = bdl.getString("emailPass");
             startDateOfTemp=bd.getString("startDateOfTemp");
             endDateOfTemp = bd.getString("endDateOfTemp");
+           
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -143,7 +147,12 @@ public abstract class AbsOrderService {
 
         //初始化时间
         initDate("date.ini");
-
+        
+        SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MMDD_HH);
+        String date = sdf.format(new Date());
+        Jedis j = new Jedis(redisUrl);
+        j.set("iog_"+supplierId,date);
+        
         //处理异常
         handlePurchaseOrderException(supplierId);
 
@@ -157,7 +166,7 @@ public abstract class AbsOrderService {
         refundOrderFromSOP(supplierNo, supplierId, handleCancel);
 
         //时刻更新时间，以便监测程序是否运行
-        updateOrderTime(supplierId);
+//        updateOrderTime(supplierId);
 
     }
 
