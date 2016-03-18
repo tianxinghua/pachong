@@ -61,7 +61,10 @@ public interface SkuMapper extends IBaseDao<SkuDTO> {
                                                    @Param("endDate") Date endDate);
     
     public SkuDTO findSKUBySupplierAndSkuId(@Param("supplierId") String supplierId,@Param("skuId") String skuId) throws ServiceException; 
-
+    /**
+     * 更新备注，last_time
+     */
+    public void updateSkuMemo(SkuDTO skuDTO);
 
 	/**
 	 * 
@@ -69,5 +72,6 @@ public interface SkuMapper extends IBaseDao<SkuDTO> {
 	 * @param skuId
 	 * @return
 	 */
+    
 	
 }

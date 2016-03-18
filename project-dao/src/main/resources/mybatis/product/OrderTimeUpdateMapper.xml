@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.OrderTimeUpdateMapper">
+		
+	<resultMap id="iog_supplierOrderMap" type="iog_supplierOrderUpdate">
+        <result column="SUPPLIER_ID" property="supplierId" />
+        <result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+		
+	<insert id="savesupplierOrderTime" parameterType="iog_supplierOrderUpdate">
+		insert into SUPPLIER_ORDER (SUPPLIER_ID,UPDATE_TIME)
+		values (#{supplierId},#{updateTime})
+	</insert>
+    <update id="updateSupplierOrderTime" parameterType="iog_supplierOrderUpdate" >
+          update SUPPLIER_ORDER
+          <set>
+              UPDATE_TIME = #{updateTime}
+          </set>
+          where  SUPPLIER_ID = #{supplierId}
+    </update>
+    
+     	<select id="findSupplierOrderById" resultMap="iog_supplierOrderMap" parameterType="java.lang.String">
+  			select
+    			SUPPLIER_Id,UPDATE_TIME
+      		 from SUPPLIER_ORDER 
+  			 <where>
+	    		<if test="null!=supplierId">
+	     		SUPPLIER_ID = #{supplierId}
+	   			</if>
+			 </where> 
+ 		</select>
+    
+</mapper>

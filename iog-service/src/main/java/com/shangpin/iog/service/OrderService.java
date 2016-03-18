@@ -219,4 +219,10 @@ public interface OrderService {
 
 	public boolean checkOrderByOrderIdSupplier(OrderDTO spOrder);
 
+	public boolean selectOrderUpdateBySupplier(String supplierId);
+
+	public void updateSupplierOrderTime(String supplierId);
+
+	public void saveSupplierOrderTime(String supplierId);
+
 }

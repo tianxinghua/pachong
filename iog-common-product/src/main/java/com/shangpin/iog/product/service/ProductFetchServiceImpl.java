@@ -325,4 +325,8 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public void updateSkuMemoAndTime(SkuDTO skuDTO) {
+		skuDAO.updateSkuMemo(skuDTO);
+	}
 }
