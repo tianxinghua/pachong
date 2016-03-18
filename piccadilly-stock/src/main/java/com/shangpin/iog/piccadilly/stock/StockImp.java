@@ -31,7 +31,7 @@ public class StockImp  extends AbsUpdateProductStock {
     }
     static {
         if(null==bdl)
-            bdl=ResourceBundle.getBundle("sop");
+            bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         url = bdl.getString("url");
     }
