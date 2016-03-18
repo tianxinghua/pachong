@@ -15,10 +15,19 @@ import java.awt.image.ColorConvertOp;
 import java.awt.image.CropImageFilter;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 /**
  * 图片处理工具类：<br>
@@ -47,8 +56,79 @@ public class ImageUtils {
 //        ImageUtils.scale("E:\\处理好的图片\\2015-12-09\\", "E:\\TTTTT\\", 2, false);//测试OK
         // 方法二：按高度和宽度缩放
 //        ImageUtils.scale2("E:\\处理好的图片\\2015-12-09\\", "E:\\TTTTT\\", 500, 300, false);//测试OK
+    	
+    	ImageUtils.checkImageSize("E:\\abc.jpg");
     }
-    
+    /**
+     * 下载图片
+     * @param url
+     * @param filepath  /usr/local/app/supplierName/picture/
+     * @param filename
+     * @return 成功返回图片绝对路径,失败返回""
+     */
+    public static String downImage(String url,String filepath,String filename){
+    	HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+		CloseableHttpClient httpClient = httpClientBuilder.build();
+		HttpGet get = new HttpGet(url);
+		try {
+			CloseableHttpResponse response = httpClient.execute(get);
+			if (response.getStatusLine().getStatusCode() == 200) {  
+                byte[] result = EntityUtils.toByteArray(response.getEntity());  
+                BufferedOutputStream bw = null;  
+                try {  
+					// 创建文件对象  
+                    File f = new File(filepath+filename);  
+                    // 创建文件路径  
+                    if (!f.getParentFile().exists())  
+                        f.getParentFile().mkdirs();  
+                    // 写入文件  
+                    bw = new BufferedOutputStream(new FileOutputStream(filepath+filename));  
+                    bw.write(result);  
+                } catch (Exception e) {  
+                	System.out.println("保存图片出错");
+                	return "";
+                } finally {  
+                    try {  
+                        if (bw != null)  
+                            bw.close();  
+                    } catch (Exception e) {  
+                    	System.out.println("关闭出错");
+                    }  
+                }  
+            }  
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+    	return filepath+filename;
+    }
+    /**
+     * 检查图片尺寸和大小。
+     * @return "",图片>1M,图片尺寸>800
+     */
+    public static String checkImageSize(String filePath){
+    	FileInputStream fis = null;
+    	String memo = "";
+    	try {
+    		File file = new File(filePath);
+            fis = new FileInputStream(file);
+            int available = fis.available();
+            fis.close();
+            if (available>1048576) {
+				memo = "图片>1M";
+			}
+    		BufferedImage src = ImageIO.read(file);
+    		int width = src.getWidth(); // 得到源图宽
+            int height = src.getHeight(); // 得到源图长
+            
+            if (width>800||height>800) {
+            	memo = memo + "图片尺寸>800";
+            }
+    	} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	return memo;
+    }
     /**
      * 缩放图像（按比例缩放）
      * @param srcImageFile 存放源图像文件的文件夹 如 E:\\image\\

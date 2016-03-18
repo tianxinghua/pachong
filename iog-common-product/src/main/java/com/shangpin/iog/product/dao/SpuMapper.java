@@ -1,6 +1,8 @@
 package com.shangpin.iog.product.dao;
 
 
+import java.util.Date;
+
 import org.apache.ibatis.annotations.Param;
 
 import com.shangpin.framework.ServiceException;
@@ -14,5 +16,9 @@ public interface SpuMapper extends IBaseDao<SpuDTO> {
 	public void updateMaterial(SpuDTO spuDTO);
 
 	public SpuDTO findSPUBySupplierAndSpuId(@Param("supplierId") String supplierId,@Param("spuId") String spuId) throws ServiceException;
+	
+	public SpuDTO findPartBySupAndSpuId(@Param("supplierId") String supplierId,@Param("spuId") String spuId);
+	
+	public void updateSpuMemo(@Param("supplierId") String supplierId,@Param("spuId") String spuId,@Param("memo") String memo,@Param("lastTime") Date date);
 
 }

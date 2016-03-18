@@ -326,7 +326,47 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		return null;
 	}
 	@Override
-	public void updateSkuMemoAndTime(SkuDTO skuDTO) {
-		skuDAO.updateSkuMemo(skuDTO);
+	public void updateSkuMemoAndTime(String supplierId,String spuId,String memo) {
+		skuDAO.updateSkuMemo(supplierId, spuId, memo, new Date());
 	}
+
+	@Override
+	public void updateSpuMemoAndTime(String supplierId,String spuId,String memo) {
+		spuDAO.updateSpuMemo(supplierId, spuId, memo, new Date());
+	}
+	
+	@Override
+	public List<String> saveAndCheckPicture(String supplierId, String spuId, String skuId,
+			Collection<String> picUrl) {
+		List<String> imageList = new ArrayList<String>();
+		Map map = null;
+		ProductPictureDTO dto = null;
+		if(spuId!=null){
+			map = findPictureBySupplierIdAndSpuId(supplierId, spuId);
+		}else if(skuId!=null){
+			map = findPictureBySupplierIdAndSkuId(supplierId, skuId);
+		}
+		for(String pic:picUrl){
+			if(map==null||!map.containsKey(pic)){
+				imageList.add(pic);
+				dto = new ProductPictureDTO();
+				dto.setPicUrl(pic);
+				dto.setSupplierId(supplierId);
+				dto.setId(UUIDGenerator.getUUID());
+				if(spuId!=null){
+					dto.setSpuId(spuId);
+				}else{
+					dto.setSkuId(skuId);
+				}
+				try {
+					savePictureForMongo(dto);
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return imageList;
+	}
+	
+	
 }
