@@ -41,7 +41,7 @@ public abstract class AbsSaveProduct {
 	 * @param picpath 如果为"",表示不下载图片
 	 */
 	@SuppressWarnings("unchecked")
-	public void handleData(String flag,String supplierId,int day,String picpath) {
+	public void handleData(final String flag,final String supplierId,final int day,final String picpath) {
 //		SpuDTO spuDTO = new SpuDTO();
 //		spuDTO.setSupplierId("2015101501608");
 //		spuDTO.setSpuId("00101007622");
@@ -62,15 +62,29 @@ public abstract class AbsSaveProduct {
 			return;
 		}
 
-		List<SkuDTO> skuList = (List<SkuDTO>)totalMap.get("sku");
-		saveSKU(skuList,supplierId,day);
+		final List<SkuDTO> skuList = (List<SkuDTO>)totalMap.get("sku");
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				saveSKU(skuList,supplierId,day);
+			}
+		});
+		t.start();
+		final List<SpuDTO> spuList =(List<SpuDTO>)totalMap.get("spu");
+		Thread t1 = new Thread(new Runnable() {
+			public void run() {
+				saveSPU(spuList);
+			}
+		});
+		t1.start();
 
-		List<SpuDTO> spuList =(List<SpuDTO>)totalMap.get("spu");
-		saveSPU(spuList);
-
-		Map<String,List<String>> imageMap = (Map<String,List<String>>)totalMap.get("image");
-		saveImage(imageMap,flag,supplierId,picpath);
-
+		final Map<String,List<String>> imageMap = (Map<String,List<String>>)totalMap.get("image");
+		Thread t2 = new Thread(new Runnable() {
+			public void run() {
+				saveImage(imageMap,flag,supplierId,picpath);
+			}
+		});
+		t2.start();
+		
 	}
 	//检查price是否改变
 	private void isSkuChanged(SkuDTO skuDTO){
@@ -168,6 +182,7 @@ public abstract class AbsSaveProduct {
 				}
 			}
 		}
+		System.out.println("=================保存sku结束=================");
 	}
 	/**
 	 * 保存spu
@@ -186,6 +201,7 @@ public abstract class AbsSaveProduct {
 				}
 			}
 		}
+		System.out.println("+++++++++++++保存spu结束+++++++++++++");
 	}
 	/**
 	 * 保存图片,检查并处理图片变化
@@ -203,6 +219,8 @@ public abstract class AbsSaveProduct {
 				list = productFetchService.saveAndCheckPicture(supplierId, null, entry.getKey().split(";")[0], entry.getValue());
 				if (list.size()>0) {
 					productFetchService.updateSkuMemoAndTime(supplierId, entry.getKey().split(";")[0], new Date().toLocaleString()+"图片变化");
+				}else{
+					System.out.println("===============图片存在未改变=============");
 				}
 			}else {
 				list =productFetchService.saveAndCheckPicture(supplierId, entry.getKey().split(";")[0], null, entry.getValue());
@@ -211,8 +229,12 @@ public abstract class AbsSaveProduct {
 				}
 			}
 			if (!picpath.equals("")&&list.size()>0) {
+				int num = 1;
 				for (String url : list) {
-					imagePath = ImageUtils.downImage(url, picpath, entry.getKey().split(";")[1]);
+					if (StringUtils.isEmpty(url)) {
+						continue;
+					}
+					imagePath = ImageUtils.downImage(url, picpath, entry.getKey().split(";")[1]+"_"+num+++".jpg");
 					memo = ImageUtils.checkImageSize(imagePath);
 					if (!memo.equals("")) {
 						if (flag.equals("sku")) {
@@ -230,7 +252,7 @@ public abstract class AbsSaveProduct {
 	/**
 	 * 子类处理原始数据
 	 * @param flag=0 表示图片使用skuid保存 ，
-	 * @return sku:List<SkuDTO> spu:List<SpuDTO> image:Map<id;picName,List<picUrl>
+	 * @return sku:List(skuDTO) spu:List(spuDTO) image: Map(id;picName,List<picUrl>) 
 	 */
 	public abstract Map<String, Object> fetchProductAndSave();
 	
