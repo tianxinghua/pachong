@@ -5,6 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +28,7 @@ import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SkuPriceService;
 
 public abstract class AbsSaveProduct {
+	private static ExecutorService executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
 	
 	private static org.apache.log4j.Logger loggerInfo = org.apache.log4j.Logger.getLogger("info");
 	private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
@@ -102,7 +107,7 @@ public abstract class AbsSaveProduct {
 			}
 			if (change) {
 				//更新数据库
-				productFetchService.updateSkuMemoAndTime(skuDTO.getSupplierId(),skuDTO.getSkuId(), new Date().toLocaleString()+"价格发生变化");
+				productFetchService.updateSpuOrSkuMemoAndTime(skuDTO.getSupplierId(),skuDTO.getSkuId(), new Date().toLocaleString()+"价格发生变化","sku");
 			}
 		} catch (ServiceException e) {
 			loggerError.error("查询价格出错"+e.toString());
@@ -130,7 +135,7 @@ public abstract class AbsSaveProduct {
 			}
 		}
 		if (memo.length()>0) {
-			productFetchService.updateSpuMemoAndTime(spuDTO.getSupplierId(),spuDTO.getSpuId(),memo.toString());
+			productFetchService.updateSpuOrSkuMemoAndTime(spuDTO.getSupplierId(), spuDTO.getSpuId(),memo.toString(), "spu");
 		}
 	}
 	/**
@@ -214,39 +219,49 @@ public abstract class AbsSaveProduct {
 		List<String> list = null;
 		String imagePath = "";
 		String memo = "";
+		String id = "";
+		String imgname = "";
+		String result = "";
 		for (Entry<String, List<String>> entry : imageMap.entrySet()) {
-			if (flag.equals("sku")) {
-				list = productFetchService.saveAndCheckPicture(supplierId, null, entry.getKey().split(";")[0], entry.getValue());
-				if (list.size()>0) {
-					productFetchService.updateSkuMemoAndTime(supplierId, entry.getKey().split(";")[0], new Date().toLocaleString()+"图片变化");
+			id = entry.getKey().split(";")[0];
+			
+			if (!picpath.equals("")) {
+				if (flag.equals("spu")) {
+					Map<String, String> imgMap = productFetchService.findPictureBySupplierIdAndSpuId(supplierId, id);
+					ImageUtils.downImage(url, picpath,imgname);
 				}else{
-					System.out.println("===============图片存在未改变=============");
-				}
-			}else {
-				list =productFetchService.saveAndCheckPicture(supplierId, entry.getKey().split(";")[0], null, entry.getValue());
-				if (list.size()>0) {
-					productFetchService.updateSpuMemoAndTime(supplierId, entry.getKey().split(";")[0], new Date().toLocaleString()+"图片变化");
+					Map<String, String> imgMap = productFetchService.findPictureBySupplierIdAndSkuId(supplierId, id);
 				}
 			}
-			if (!picpath.equals("")&&list.size()>0) {
+			
+			list = productFetchService.saveAndCheckPicture(supplierId,id, entry.getValue(), flag);
+			if (list.size()>0) {
+				productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+"图片变化", flag);
+			}
+			if (list.size()>0) {
 				int num = 1;
 				for (String url : list) {
 					if (StringUtils.isEmpty(url)) {
 						continue;
 					}
-					imagePath = ImageUtils.downImage(url, picpath, entry.getKey().split(";")[1]+"_"+num+++".jpg");
-					memo = ImageUtils.checkImageSize(imagePath);
-					if (!memo.equals("")) {
-						if (flag.equals("sku")) {
-							productFetchService.updateSkuMemoAndTime(supplierId, entry.getKey().split(";")[0], new Date().toLocaleString()+memo);
+					imgname = entry.getKey().split(";")[1]+"_"+num+++".jpg";
+					imagePath = picpath+imgname;
+//					imagePath = ImageUtils.downImage(url, picpath,imgname);
+					result = ImageUtils.checkImageSize(imagePath);
+					if (!result.equals("")) {
+						if (memo.contains(result)) {
+							memo = memo.replace(result, result+"1");
 						}else{
-							productFetchService.updateSpuMemoAndTime(supplierId, entry.getKey().split(";")[0], new Date().toLocaleString()+memo);
-						}
+							memo +=" "+result;
+ 						}
 					}
 				}
+				if (StringUtils.isNotBlank(memo)) {
+					productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+memo, flag);
+				}
+				memo = "";
 			}
 		}
-		
 	}
 
 	/**

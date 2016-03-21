@@ -123,10 +123,16 @@ public interface ProductFetchService {
 	public List<ProductDTO> selectAllSpu() throws ServiceException;
 	public void saveSkuRelation(SkuRelationDTO sku) throws ServiceException;
 	public List<SkuRelationDTO> selectRelationDayFromHK() throws ServiceException;
-
-	public List<String> saveAndCheckPicture(String supplierId, String spuId, String skuId,
-			Collection<String> picUrl);
-	public void updateSpuMemoAndTime(String supplierId, String spuId, String memo);
-	public void updateSkuMemoAndTime(String supplierId, String skuId, String memo);
+	/**
+	 * @param supplierId
+	 * @param id 对应的skuid or spuid
+	 * @param picUrl
+	 * @param flag sku表示用skuid保存 spu表示用spuid保存
+	 * @return
+	 */
+	public List<String> saveAndCheckPicture(String supplierId, String id,Collection<String> picUrl,String flag);
+//	public void updateSpuMemoAndTime(String supplierId, String spuId, String memo);
+//	public void updateSkuMemoAndTime(String supplierId, String skuId, String memo);
+	void updateSpuOrSkuMemoAndTime(String supplierId, String id, String memo,String flag);
 
 }
