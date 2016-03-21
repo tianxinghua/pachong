@@ -15,7 +15,7 @@ public class Constant {
     public static String TEXT_JSON = "text/json";
     public static String APPLICATION_JSON = "application/json";
     public static String ITEMS_INPUT = "{\"merchantId\":\""+ merchantId +"\",\"token\":\""+token+"\"}";
-    public static String ITEMS_URL = "http://www.cs4b.eu/ws/getItemsList";
+    public static String ITEMS_URL = "http://www.cs4b.eu/ws/getInventory";// http://www.cs4b.eu/ws/getItemsList
     public static String CATEGORIES_INPUT = "{\"merchantId\":\""+ merchantId +"\",\"token\":\""+token+"\"}";
     public static String CATEGORIES_URL = "http://www.cs4b.eu/ws/getCategories";
     public static String EVENTS_INPUT ="{\"merchantId\":\""+ merchantId +"\",\"token\":\""+token+"\"}";

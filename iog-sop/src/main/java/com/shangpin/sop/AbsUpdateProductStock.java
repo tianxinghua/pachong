@@ -497,11 +497,11 @@ public abstract class AbsUpdateProductStock {
 			try {
 				supplierStock = grabStock(skuNos);
 				if(supplierStock.size()==0){
-					loggerError.error("获取库存信息是发生异常，程序退出");
+					loggerError.error("获取库存信息时发生异常，程序退出");
 					System.exit(0);
 				}
 			} catch (Exception e) {    //获取库存信息时失败 直接退出
-				loggerError.error("获取库存信息是发生异常，程序退出");
+				loggerError.error("获取库存信息时发生异常，程序退出");
 				System.exit(0);
 			}
 

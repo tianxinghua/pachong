@@ -15,8 +15,10 @@ import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.tony.common.Constant;
 import com.shangpin.iog.tony.common.MyJsonClient;
 import com.shangpin.iog.tony.common.StringUtil;
+import com.shangpin.iog.tony.dto.Data;
 import com.shangpin.iog.tony.dto.Items;
 
+import com.shangpin.iog.tony.dto.ReturnObject;
 import org.apache.commons.collections.functors.ExceptionClosure;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -38,6 +40,7 @@ public class FetchProduct {
     private MyJsonClient jsonClient = new MyJsonClient();
     private String itemsJson;
     private String categoriesJson;
+    private List<Items> itemsList= new ArrayList();
     /**
      * fetch product and save into db
      */
@@ -46,16 +49,38 @@ public class FetchProduct {
         itemsJson =       jsonClient.httpPostOfJson(Constant.ITEMS_INPUT, Constant.ITEMS_URL);
         categoriesJson = jsonClient.httpPostOfJson(Constant.CATEGORIES_INPUT, Constant.CATEGORIES_URL);
         //解析数据
-        Items[] array = new Gson().fromJson(new StringUtil().getItemsArray(itemsJson),
-                new TypeToken<Items[]>() {}.getType());
-        System.out.println("tony qty is ---------"+array.length);
+//        Items[] array = new Gson().fromJson(new StringUtil().getItemsArray(itemsJson),
+//                new TypeToken<Items[]>() {}.getType());
+        this.getStock(itemsJson);
         //保存数据
-        messMappingAndSave(array);
+        messMappingAndSave();
     }
+
+    private  void getStock(String itemsJson){
+
+        ReturnObject obj = new Gson().fromJson(itemsJson, ReturnObject.class);
+        if(obj!=null){
+            String next = obj.getNext_step();
+            Data data = obj.getData();
+            if(data!=null){
+                Items[] array = data.getInventory();
+                if(array!=null){
+                    for(Items item:array){
+                        itemsList.add(item);
+                    }
+                }
+                if(next!=null){
+                    getStock(jsonClient.httpPostOfJson("{\"merchantId\":\"55f707f6b49dbbe14ec6354d\",\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\",\"step\":\""+next+"\"}", Constant.ITEMS_URL));
+                }
+            }
+        }
+    }
+
+
     /**
      * message mapping and save into DB
      */
-    private void messMappingAndSave(Items[] array) {
+    private void messMappingAndSave() {
         //get tony Category data
         String skuId = "";
         String spuId = "";
@@ -68,7 +93,7 @@ public class FetchProduct {
         }*/
         System.out.println(map.size());
         String categoryId ="";
-        for(Items item:array){
+        for(Items item:itemsList){
             skuId = item.getSku();
             spuId = StringUtil.getSpuId(skuId);
 

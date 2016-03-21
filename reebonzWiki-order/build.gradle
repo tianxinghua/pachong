@@ -7,7 +7,7 @@ dependencies {
             "commons-dbcp:commons-dbcp:1.4",
             project(':project-common'),
             project(':project-dao'),
-            project(':onsite'),
+
             project(':iog-common-product'),
                project(':openapi-ice'),
              "com.google.code.gson:gson:2.3.1",
