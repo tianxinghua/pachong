@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import redis.clients.jedis.Jedis;
+
 import java.io.*;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
@@ -57,7 +59,7 @@ public abstract class AbsOrderService {
     private static ResourceBundle bd = null;
     private static String  startDateOfTemp=null,endDateOfTemp=null;
     private static  String url = null;
-
+    private static  String redisUrl = null;  
     public static boolean SENDMAIL = false;
 	static {
         try {
@@ -68,11 +70,13 @@ public abstract class AbsOrderService {
                 bd=ResourceBundle.getBundle("conf");
             }
             url = bdl.getString("wmsUrl");
+            redisUrl = bdl.getString("redisUrl"); 
             toEmail = bdl.getString("email");
             fromEmail = bdl.getString("fromEmail");
             emailPass = bdl.getString("emailPass");
             startDateOfTemp=bd.getString("startDateOfTemp");
             endDateOfTemp = bd.getString("endDateOfTemp");
+           
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -143,7 +147,12 @@ public abstract class AbsOrderService {
 
         //初始化时间
         initDate("date.ini");
-
+        
+        SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MMDD_HH);
+        String date = sdf.format(new Date());
+        Jedis j = new Jedis(redisUrl);
+        j.set("iog_"+supplierId,date);
+        
         //处理异常
         handlePurchaseOrderException(supplierId);
 
@@ -156,11 +165,22 @@ public abstract class AbsOrderService {
         //处理退款
         refundOrderFromSOP(supplierNo, supplierId, handleCancel);
 
+        //时刻更新时间，以便监测程序是否运行
+//        updateOrderTime(supplierId);
 
     }
 
+    private void updateOrderTime(String supplierId) {
+		//先判断是否supplier已存在
+    	boolean flag = productOrderService.selectOrderUpdateBySupplier(supplierId);
+    	if(flag){
+    		productOrderService.updateSupplierOrderTime(supplierId);
+    	}else{
+    		productOrderService.saveSupplierOrderTime(supplierId);
+    	}
+	}
 
-    /**
+	/**
      * 通过WMS下单 包换退单的处理
      * @param supplierNo 供货商编号    S******
      * @param supplierId 供货商门户编号 2015****
@@ -367,7 +387,7 @@ public abstract class AbsOrderService {
             //获取已下单的订单信息
         	String nowDate = DateTimeUtil.getDateTime(); 
             orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
-            //判断12个小时还是未推送状态的 如果已经支付 就赋值成支付  待确认时 程序返回错误  使其赋值为采购异常
+            //判断12个小时还是未推送状态的 如果已经支付 就赋值成支付  待确认支付推送时 继承者handlerConfirm返回错误  使其赋值为采购异常
             List<OrderDTO>  waitList = productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
             orderDTOList.addAll(waitList);
             
@@ -442,6 +462,7 @@ public abstract class AbsOrderService {
                     Map<String,List<PurchaseOrderDetailSpecial>>  purchaseOrderMap = new HashMap<>();
 
                     PurchaseOrderDetailSpecialPage  orderDetailSpecialPage = servant.FindPurchaseOrderDetailSpecial(supplierId,"",orderDTO.getSpOrderId());
+                    logger.info("查询是否支付，订单号:"+orderDTO.getSpOrderId());
                     if(null!=orderDetailSpecialPage&&null!=orderDetailSpecialPage.PurchaseOrderDetails&&orderDetailSpecialPage.PurchaseOrderDetails.size()>0){  //存在采购单 就代表已支付
 
                         for (PurchaseOrderDetailSpecial orderDetail : orderDetailSpecialPage.PurchaseOrderDetails) {
@@ -668,7 +689,7 @@ public abstract class AbsOrderService {
                 }
 
             }
-
+            logger.info("商品采购价："+purchasePrice);
 
             //存储
             OrderDTO spOrder =new OrderDTO();

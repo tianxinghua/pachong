@@ -4,7 +4,9 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.OrderTimeUpdateDTO;
 import com.shangpin.iog.product.dao.OrderMapper;
+import com.shangpin.iog.product.dao.OrderTimeUpdateMapper;
 import com.shangpin.iog.service.OrderService;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,7 +39,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     OrderMapper orderDAO;
-
+    
+    @Autowired
+    OrderTimeUpdateMapper orderUpdateDAO;
     @Override
     public void saveOrder(OrderDTO orderDTO) throws ServiceException {
         try {
@@ -323,6 +327,31 @@ public class OrderServiceImpl implements OrderService {
 		return buffer;
 	}
 
+	public boolean selectOrderUpdateBySupplier(String supplierId){
+		
+		boolean flag = false;
+		OrderTimeUpdateDTO dto = orderUpdateDAO.findSupplierOrderById(supplierId);
+		if(dto!=null){
+			flag = true;
+		}
+		return flag;
+	}
 
+	@Override
+	public void updateSupplierOrderTime(String supplierId) {
+		OrderTimeUpdateDTO dto = new OrderTimeUpdateDTO();
+		dto.setSupplierId(supplierId);
+		dto.setUpdateTime(new Date());
+		orderUpdateDAO.updateSupplierOrderTime(dto);
+		
+	}
+
+	@Override
+	public void saveSupplierOrderTime(String supplierId) {
+		OrderTimeUpdateDTO dto = new OrderTimeUpdateDTO();
+		dto.setSupplierId(supplierId);
+		dto.setUpdateTime(new Date());
+		orderUpdateDAO.savesupplierOrderTime(dto);
+	}
 
 }

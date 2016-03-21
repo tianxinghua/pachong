@@ -295,10 +295,15 @@
 	<a href="javascript:void(0)" onclick="queryOrder()" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>查看订单</a>
 	<br><br>
 	<br>
-	<a href="stockUpdateException" id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a>
+	<a href="stockUpdateException" onclick="stock()" id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a> 
+	<a href="orderUpdateException" onclick="order()" id="btn-save" icon="icon-search" class='easyui-linkbutton'>订单更新异常查看</a>
+	
 	
 </div>
-<div style="text-align: left; padding: 0px 20px 20px 20px;">
+<script>
+
+</script>
+<div id="stock" style="text-align: left; padding: 0px 20px 20px 20px;">
 	<table border="1" >
   	<tr>
   		<td>supplierId</td>
@@ -333,6 +338,32 @@
   	</c:forEach>
   </table>
 </div>
-
+<div id="order" style="text-align: left; padding: 0px 20px 20px 20px;">
+	<table border="1" >
+  	<tr>
+  		<td>supplierId</td>
+  		<td>supplierName</td>
+  		<td>updateTime</td>
+  		<td>当前时间差</td>
+  	
+  	</tr>
+	<c:forEach items="${redOrderList}" var="reddata">
+	  	<tr bgcolor="Salmon">
+	  		<td>${reddata.supplierId}</td>
+	  		<td>${reddata.supplierName}</td>
+	  		<td><fmt:formatDate value="${reddata.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+	  		<td>${reddata.dif }</td>
+	  	</tr>
+  	</c:forEach>
+  	<c:forEach items="${greenOrderList}" var="gredata">
+	  	<tr >
+	  		<td>${gredata.supplierId}</td>
+	  		<td>${gredata.supplierName}</td>
+	  		<td><fmt:formatDate value="${gredata.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+	  		<td>${gredata.dif }</td>
+	  	</tr>
+  	</c:forEach>
+  </table>
+</div>
 </body>
 </html>

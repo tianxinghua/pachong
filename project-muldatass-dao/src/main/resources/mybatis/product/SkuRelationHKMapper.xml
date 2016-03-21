@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.SkuRelationHKMapper">
+
+	<resultMap id="skuMap" type="iog_sku_relation">
+
+		<result column="SUPPLIER_ID" property="supplierId"  />
+        <result column="SOP_NO" property="sopNo"  />
+
+		<result column="SOP_SKU_ID" property="sopSkuId"  />
+		<result column="SUPPLIER_SKU_ID" property="supplierSkuId" />
+
+        <result column="CREATE_TIME" property="createTime" />
+
+
+
+	</resultMap>
+	
+
+
+	
+	
+	<sql id="all_sku_column">
+
+		SUPPLIER_ID ,
+		SOP_NO,
+		SOP_SKU_ID,
+		SUPPLIER_SKU_ID,
+        CREATE_TIME
+	</sql>
+
+
+    <insert id="save"  parameterType="iog_sku_relation" >
+
+
+
+        insert into SKU_RELATION(
+
+        <include refid="all_sku_column"></include>
+        )
+        values(
+           #{supplierId}, #{sopNo}, #{sopSkuId},
+            #{supplierSkuId},#{createTime}
+        )
+
+
+    </insert>
+
+    <select id="getSkuRelationListBySupplierId"  resultMap="skuMap">
+        select
+        <include refid="all_sku_column"></include>
+        from SKU_RELATION
+        <where>
+            <if test="null!=supplier">
+                SUPPLIER_ID = #{supplier}
+            </if>
+
+        </where>
+
+
+
+    </select>
+
+
+    <select id="getSkuRelationBySopSkuId"  resultMap="skuMap">
+        select
+        SUPPLIER_ID ,
+		SOP_NO,
+		SOP_SKU_ID,
+		SUPPLIER_SKU_ID,
+        CREATE_TIME
+        from SKU_RELATION
+
+        where  SOP_SKU_ID=#{sopSkuId}
+
+
+    </select>
+
+    <select id="getSkuRelationBySupplierIdAndSkuId"  resultMap="skuMap">
+        select
+        SUPPLIER_ID ,
+        SOP_NO,
+        SOP_SKU_ID,
+        SUPPLIER_SKU_ID,
+        CREATE_TIME
+        from SKU_RELATION
+
+        where   SUPPLIER_ID = #{supplierId} and  SOP_SKU_ID=#{sopSkuId}
+
+    </select>
+
+    <select id="getSkuRelationBySupplierSkuId"  resultMap="skuMap">
+        select
+        SUPPLIER_ID ,
+        SOP_NO,
+        SOP_SKU_ID,
+        SUPPLIER_SKU_ID,
+        CREATE_TIME
+        from SKU_RELATION
+        <where>
+            <if test="null!=supplierId">
+                SUPPLIER_ID = #{supplierId}
+            </if>
+            <if test="null!=skuNo">
+              and    SUPPLIER_SKU_ID = #{skuNo}
+            </if>
+
+        </where>
+
+
+
+    </select>
+	
+    <select id="selectAllRelation"  resultMap="skuMap">
+        select
+        SUPPLIER_ID ,
+        SOP_NO,
+        SOP_SKU_ID,
+        SUPPLIER_SKU_ID,
+        CREATE_TIME
+        from SKU_RELATION
+    </select>
+	
+	<select id="selectRalationDayFromHK"  resultMap="skuMap">
+        select
+        SUPPLIER_ID ,
+        SOP_NO,
+        SOP_SKU_ID,
+        SUPPLIER_SKU_ID,
+        CREATE_TIME
+        from SKU_RELATION
+        where CREATE_TIME>=CURDATE()
+    </select>
+	
+</mapper>

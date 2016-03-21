@@ -35,6 +35,7 @@ public class SpuDTO implements Serializable {
     private String productOrigin;//产地
     private Date createTime= new Date();
     private Date lastTime= new Date();//修改时间
+    private String memo;
 
     public String getId() {
         return id;

@@ -16,7 +16,7 @@ public class Schedule {
 	@Autowired
 	LoggerServiceImpl loggerService;
 	
-	@Scheduled(cron="0/20 * * * * ?")
+	@Scheduled(cron="0/1 * * * * ?")
 	public void start() {
 		try {
 			loggerService.printLog();

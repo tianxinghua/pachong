@@ -33,7 +33,7 @@ public class FetchProduct {
 	public static int day;
 	static {
 		if (null == bdl)
-			bdl = ResourceBundle.getBundle("param");
+			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
 		day = Integer.valueOf(bdl.getString("day"));
 	}
@@ -69,7 +69,7 @@ public class FetchProduct {
 			
 			spu.setCategoryName(product.getProduct_type());
 			spu.setMaterial(metaField.get("material"));
-			spu.setSeasonName(metaField.get("sex"));
+//			spu.setSeasonName(metaField.get("sex"));
 			spu.setProductOrigin(metaField.get("made_in"));
 			
 			//============================保存spu===================================
@@ -92,11 +92,12 @@ public class FetchProduct {
 				sku.setSkuId(variant.getId());
 				sku.setProductCode(variant.getSku());
 				sku.setColor(metaField.get("color_desc"));
-				sku.setSalePrice(variant.getPrice());
+//				sku.setSalePrice(variant.getPrice());
+				sku.setMarketPrice(variant.getPrice());
 				sku.setProductName(product.getTitle());
 				sku.setProductSize(variant.getTitle());
 				sku.setStock(variant.getInventory_quantity());
-				sku.setSaleCurrency("HDK");
+				sku.setSaleCurrency("Dollor");
 				
 				if(skuDTOMap.containsKey(sku.getSkuId())){
 					skuDTOMap.remove(sku.getSkuId());

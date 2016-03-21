@@ -840,4 +840,20 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		return null;
 	}
 
+	@Override
+	public StringBuffer dailyUpdatedProduct(String supplier, int day, Date now,
+			Integer pageIndex, Integer pageSize, String flag)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StringBuffer getDiffProduct(String supplier, Date startDate,
+			Date endDate, Integer pageIndex, Integer pageSize, String flag)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -15,7 +15,7 @@ import com.shangpin.iog.theclutcher.stock.service.GrabStockImp;
 public class Startup {
 
 	private static Logger logger = Logger.getLogger("info");
-	private static Logger loggerError = Logger.getLogger("error");
+//	private static Logger loggerError = Logger.getLogger("error");
 	private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
 	
 	private static ApplicationContext factory;
@@ -44,7 +44,7 @@ public class Startup {
 			theclutcher.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
 			
 		}catch(Exception ex){
-			loggerError.error(ex);
+			logger.error(ex);
 			ex.printStackTrace();
 		}
 		

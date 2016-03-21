@@ -9,6 +9,7 @@ import com.shangpin.iog.mongodao.PictureDAO;
 import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.product.dao.*;
 import com.shangpin.iog.service.ProductSearchService;
+import com.shangpin.iog.service.SkuPriceService;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.RowBounds;
@@ -18,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Created by loyalty on 15/5/20.
@@ -53,7 +56,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 	@Autowired
 	SupplierMapper supplierDAO;
-
+	
 	private static Map<String, String> spBrandMap = new HashMap<>();
 	private static Map<String, String> colorContrastMap = new HashMap<>();
 
@@ -269,7 +272,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				+ splitSign + "新进货价" + splitSign + "markerPrice" + splitSign
 				+ "sallPrice" + splitSign + "supplier Price 进货价" + splitSign
 				+ "Currency 币种" + splitSign + "上市季节" + splitSign + "活动开始时间"
-				+ splitSign + "活动结束时间").append("\r\n");
+				+ splitSign + "活动结束时间"+ splitSign + "备注").append("\r\n");
 		Page<ProductDTO> page = null;
 		if (flag.equals("same")) {
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,
@@ -830,15 +833,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				+ "ProductModel 货号" + splitSign + "新市场价" + splitSign
 				+ "新销售价" + splitSign + "新进货价" + splitSign + "市场价"
 				+ splitSign + "销售价" + splitSign + "进货价").append("\r\n");
-		Page<ProductDTO> page = null;
-		if (flag.equals("same")) {
-			page = this.findProductPageBySupplierAndTime(supplier, startDate,
-					endDate, pageIndex, pageSize, "same");
-
-		} else {
-			page = this.findProductPageBySupplierAndTime(supplier, startDate,
-					endDate, pageIndex, pageSize, "diff");
-		}
+		
+		final Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate,
+				endDate, pageIndex, pageSize, "diff");
 		
 		if(null==page || null== page.getItems()){
 			return null;
@@ -917,6 +914,41 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				}
 //			}
 		}
+		
+		//更新价格
+		Thread t = new Thread(	 new Runnable() {
+			@Override
+			public void run() {
+				try {
+					
+					for (ProductDTO dto : page.getItems()) {
+						try{
+							
+							SkuDTO skuDTO = new SkuDTO();
+							skuDTO.setUpdateTime(new Date());
+							if(!dto.getMarketPrice().equals(dto.getNewMarketPrice())){
+								skuDTO.setNewMarketPrice(dto.getNewMarketPrice());
+							}
+							if(!dto.getSalePrice().equals(dto.getNewSalePrice())){
+								skuDTO.setNewSalePrice(dto.getNewSalePrice());
+							}
+							if(!dto.getSupplierPrice().equals(dto.getNewSupplierPrice())){
+								skuDTO.setNewSupplierPrice(dto.getNewSupplierPrice());
+							}
+							skuDAO.updatePrice(skuDTO); 
+							
+						}catch(Exception ex){
+							ex.printStackTrace();
+						}						
+					}
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		t.start();
+		
 		return buffer;
 	}
 
@@ -932,5 +964,417 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		return  productDAO.findProductBySupplierIdAndSkuId(supplierId,skuId);
 	}
 
+	@Override
+	public StringBuffer dailyUpdatedProduct(String supplier, int day,
+			Date now, Integer pageIndex, Integer pageSize, String flag)
+			throws ServiceException {
+		
+		StringBuffer buffer = new StringBuffer("SupplierId 供货商名称" + splitSign
+				+ "日期" + splitSign				
+				+ "sku数量" + splitSign
+				+ "缺少信息的sku数量").append("\r\n");
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");		
+		List<SupplierDTO> supplierList = supplierDAO.findByState("1");
+		for(SupplierDTO supplierDTO:supplierList){
+			System.out.println("======================="+supplierDTO.getSupplierId()+"=============================");
+			for(int i=0;i<day;i++){
+				Calendar calendar = Calendar.getInstance();	
+				calendar.setTime(now);
+			    calendar.set(Calendar.HOUR_OF_DAY, 0);
+			    calendar.set(Calendar.MINUTE, 0);
+			    calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) - i); 
+				Date startDate = calendar.getTime();
+				
+				Calendar calendar1 = Calendar.getInstance();	
+				calendar1.setTime(startDate);
+				calendar1.set(Calendar.DATE, calendar1.get(Calendar.DATE) +1); 
+				Date endDate = calendar1.getTime();
+				System.out.println(startDate+"----------------------"+endDate);
+				Page<ProductDTO> page = null;
+				if (flag.equals("same")) {
+					page = this.findProductPageBySupplierAndTime(supplierDTO.getSupplierId(), startDate,
+							endDate, pageIndex, pageSize, "same");				
+					if(null != page && null !=page.getItems() && page.getItems().size()>0){
+						String supplierId="";						
+						int goodSkuNo = 0;
+						int badSkuNo = 0;
+						for (ProductDTO dto : page.getItems()) {
+							if(StringUtils.isNotBlank(dto.getSupplierName())){
+								supplierId = dto.getSupplierName();
+							}else{
+								supplierId = dto.getSupplierId();
+							}
+							if(StringUtils.isNotBlank(dto.getCategoryName())&&StringUtils.isNotBlank(dto.getBrandName())
+									&&StringUtils.isNotBlank(dto.getProductCode())&&StringUtils.isNotBlank(dto.getCategoryGender())
+									&&StringUtils.isNotBlank(dto.getColor())&&StringUtils.isNotBlank(dto.getSize())
+									&&StringUtils.isNotBlank(dto.getMaterial())
+									&&StringUtils.isNotBlank(dto.getProductOrigin())
+									&&(
+									StringUtils.isNotBlank(dto.getPicUrl())||StringUtils.isNotBlank(dto.getItemPictureUrl1())||StringUtils.isNotBlank(dto.getItemPictureUrl2())||StringUtils.isNotBlank(dto.getItemPictureUrl3())||StringUtils.isNotBlank(dto.getItemPictureUrl4())||StringUtils.isNotBlank(dto.getItemPictureUrl5())||StringUtils.isNotBlank(dto.getItemPictureUrl6())
+									||StringUtils.isNotBlank(dto.getItemPictureUrl7())||StringUtils.isNotBlank(dto.getItemPictureUrl8())
+									)
+									&&(StringUtils.isNotBlank(dto.getMarketPrice())||StringUtils.isNotBlank(dto.getSalePrice())||StringUtils.isNotBlank(dto.getSupplierPrice()))){
+								goodSkuNo ++;
+							}else{
+								badSkuNo++;
+							}
+							
+						}
+						if(StringUtils.isNotBlank(supplierId)){
+							buffer.append(supplierId).append(splitSign);
+							buffer.append(sdf.format(startDate)).append(splitSign);
+//							buffer.append(sdf.format(endDate)).append(splitSign); 
+							buffer.append(goodSkuNo+badSkuNo).append(splitSign);
+							buffer.append(badSkuNo);
+							buffer.append("\r\n");
+						}						
+					}
+				}
+			}
+		}	
+		
+		return buffer;
+	}
 
+	@Override
+	public StringBuffer dailyGoodProducts(String[] suppliers, Date startDate,
+			Date endDate, Integer pageIndex, Integer pageSize)
+			throws ServiceException {
+		StringBuffer buffer = new StringBuffer("SupplierId 供货商名称" + splitSign
+				+ "CategoryName 品类名称" + splitSign
+				+ "Category_No 品类编号" + splitSign + "BrandNo 品牌编号" + splitSign
+				+ "BrandName 品牌" + splitSign + "ProductModel 货号" + splitSign
+				+ "SupplierSkuNo 供应商SkuNo" + splitSign + " 性别 " + splitSign
+				+ "SopProductName 商品名称" + splitSign + "BarCode 条形码" + splitSign
+				+ "ProductColor 颜色" + splitSign + "color 中文" + splitSign
+				+ "ProductSize 尺码" + splitSign + "material 材质" + splitSign
+				+ "material 中文材质" + splitSign + "ProductOrigin 产地" + splitSign
+				+ "productUrl1" + splitSign + "productUrl2" + splitSign
+				+ "productUrl3" + splitSign + "productUrl4" + splitSign
+				+ "productUrl5" + splitSign + "productUrl6" + splitSign
+				+ "productUrl7" + splitSign + "productUrl8" + splitSign
+				+ "productUrl9" + splitSign + "PcDesc 描述" + splitSign
+				+ "Stock 库存" + splitSign + "新市场价" + splitSign + "新销售价"
+				+ splitSign + "新进货价" + splitSign + "markerPrice" + splitSign
+				+ "sallPrice" + splitSign + "supplier Price 进货价" + splitSign
+				+ "Currency 币种" + splitSign + "上市季节" + splitSign + "开始时间"
+				+ splitSign + "结束时间").append("\r\n");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");	
+		
+		for (int i = 0; i < suppliers.length; i++) {
+
+			try {
+
+				String supplier = suppliers[i];
+				Page<ProductDTO> page = null;
+				page = this.findProductPageBySupplierAndTime(supplier,
+						startDate, endDate, pageIndex, pageSize, "same");
+
+				// 设置尚品网品牌
+				this.setBrandMap();
+				// 颜色Map赋值
+				this.setColorContrastMap();
+				// 材质Map 赋值
+				this.setMaterialContrastMap();
+
+				String productSize, season = "", productDetail = "", brandName = "", brandId = "", color = "", material = "", productOrigin = "";
+
+				String supplierId = "", categoryId = "", categoryName = "", productName = "";
+				for (ProductDTO dto : page.getItems()) {
+
+					try {
+
+						if (StringUtils.isNotBlank(dto.getCategoryName())
+								&& StringUtils.isNotBlank(dto.getBrandName())
+								&& StringUtils.isNotBlank(dto.getProductCode())
+								&& StringUtils.isNotBlank(dto
+										.getCategoryGender())
+								&& StringUtils.isNotBlank(dto.getColor())
+								&& StringUtils.isNotBlank(dto.getSize())
+								&& StringUtils.isNotBlank(dto.getMaterial())
+								&& StringUtils.isNotBlank(dto
+										.getProductOrigin())
+								&& (StringUtils.isNotBlank(dto.getPicUrl())
+										|| StringUtils.isNotBlank(dto
+												.getItemPictureUrl1())
+									)
+								&& (StringUtils
+										.isNotBlank(dto.getMarketPrice())
+										|| StringUtils.isNotBlank(dto
+												.getSalePrice()) || StringUtils
+											.isNotBlank(dto.getSupplierPrice()))) {
+
+							// supplierId 供货商
+							supplierId = dto.getSupplierName();
+							if (StringUtils.isNotBlank(supplierId)) {
+								buffer.append(supplierId).append(splitSign);
+							} else {
+								buffer.append(dto.getSupplierId()).append(
+										splitSign);
+							}
+
+							// 品类名称
+							categoryName = dto.getSubCategoryName();
+							if (StringUtils.isBlank(categoryName)) {
+								categoryName = StringUtils.isBlank(dto
+										.getCategoryName()) ? "" : dto
+										.getCategoryName();
+
+							}
+							categoryName = categoryName.replaceAll(splitSign,
+									" ");
+							buffer.append(categoryName).append(splitSign);
+
+							buffer.append("尚品网品类编号").append(splitSign);
+
+							brandName = dto.getBrandName();
+							if (StringUtils.isNotBlank(brandName)) {
+								if (spBrandMap.containsKey(brandName
+										.toLowerCase())) {
+									brandId = spBrandMap.get(brandName
+											.toLowerCase());
+								} else {
+									brandId = "";
+								}
+							} else {
+								brandId = "";
+							}
+
+							buffer.append(
+									!"".equals(brandId) ? brandId : "尚品网品牌编号")
+									.append(splitSign);
+							buffer.append(brandName).append(splitSign);
+							// 货号
+							buffer.append(
+									null == dto.getProductCode() ? "" : dto
+											.getProductCode().replaceAll(",",
+													" ")).append(splitSign);
+							// 供应商SKUID
+
+							buffer.append("\"\t" + dto.getSkuId() + "\"")
+									.append(splitSign);
+							// 欧洲习惯 第一个先看 男女
+							buffer.append(
+									null == dto.getCategoryGender() ? "" : dto
+											.getCategoryGender().replaceAll(
+													splitSign, " ")).append(
+									splitSign);
+							// 产品名称
+							productName = dto.getProductName();
+							if (StringUtils.isBlank(productName)) {
+								productName = dto.getSpuName();
+							}
+
+							if (StringUtils.isNotBlank(productName)) {
+
+								productName = productName
+										.replaceAll(splitSign, " ")
+										.replaceAll("\\r", "")
+										.replaceAll("\\n", "");
+							}
+
+							buffer.append(productName).append(splitSign);
+
+							buffer.append("\"\t" + dto.getBarcode() + "\"")
+									.append(splitSign);
+
+							// 获取颜色
+							color = dto.getColor() == null ? "" : dto
+									.getColor().replace(",", " ");
+							buffer.append(
+									null == color ? "" : color
+											.replace(",", " ")).append(
+									splitSign);
+							// 翻译中文
+							if (StringUtils.isNotBlank(color)) {
+								if (colorContrastMap.containsKey(color
+										.toLowerCase())) {
+									color = colorContrastMap.get(color
+											.toLowerCase());
+								}
+							} else {
+								color = "";
+							}
+
+							buffer.append(color).append(splitSign);
+
+							// 获取尺码
+							productSize = dto.getSize();
+							if (StringUtils.isNotBlank(productSize)) {
+								productSize = productSize.replace(",", ".");
+								if (productSize.indexOf("+") > 0) {
+									productSize = productSize
+											.replace("+", ".5");
+								}
+								productSize = productSize.replaceAll(splitSign,
+										" ");
+
+							} else {
+								productSize = "";
+							}
+							buffer.append(productSize).append(splitSign);
+
+							// 获取材质
+							material = dto.getMaterial();
+							if (StringUtils.isBlank(material)) {
+								material = "";
+							} else {
+
+								material = material.replaceAll(splitSign, " ")
+										.replaceAll("\\r", "")
+										.replaceAll("\\n", "");
+							}
+
+							buffer.append(material).append(splitSign);
+							// 材质 中文
+							if (!"".equals(material)) {
+
+								Set<Map.Entry<String, String>> materialSet = materialContrastMap
+										.entrySet();
+								for (Map.Entry<String, String> entry : materialSet) {
+
+									material = material.toLowerCase()
+											.replaceAll(entry.getKey(),
+													entry.getValue());
+								}
+							}
+
+							buffer.append(material).append(splitSign);
+
+							// 获取产地
+							productOrigin = dto.getProductOrigin();
+							if (StringUtils.isNotBlank(productOrigin)) {
+								if (cityMap.containsKey(productOrigin
+										.toLowerCase())) {
+									productOrigin = cityMap.get(productOrigin
+											.toLowerCase());
+								}
+							} else {
+								productOrigin = "";
+							}
+
+							buffer.append(productOrigin).append(splitSign);
+
+							// 图片
+							buffer.append(dto.getPicUrl()).append(splitSign);
+							buffer.append(dto.getItemPictureUrl1())
+									.append(splitSign)
+									.append(dto.getItemPictureUrl2())
+									.append(splitSign)
+									.append(dto.getItemPictureUrl3())
+									.append(splitSign)
+									.append(dto.getItemPictureUrl4())
+									.append(splitSign)
+									.append(dto.getItemPictureUrl5())
+									.append(splitSign)
+									.append(dto.getItemPictureUrl6())
+									.append(splitSign)
+									.append(dto.getItemPictureUrl7())
+									.append(splitSign)
+									.append(dto.getItemPictureUrl8())
+									.append(splitSign);
+							// 明细描述
+							productDetail = dto.getProductDescription();
+							if (StringUtils.isNotBlank(productDetail)) {
+								if (productDetail.indexOf(splitSign) > 0) {
+									productDetail = productDetail.replace(
+											splitSign, "  ");
+								}
+
+								productDetail = productDetail.replaceAll("\\r",
+										"").replaceAll("\\n", "");
+							}
+
+							buffer.append(productDetail).append(splitSign);
+
+							buffer.append(dto.getStock()).append(splitSign);
+							// 新的价格
+							String newMarketPrice = dto.getNewMarketPrice();
+							String newSalePrice = dto.getNewSalePrice();
+							String newSupplierPrice = dto.getNewSupplierPrice();
+							if (StringUtils.isNotBlank(newMarketPrice)) {
+								newMarketPrice = newMarketPrice.replace(",",
+										".");
+							} else {
+								newMarketPrice = "";
+							}
+							if (StringUtils.isNotBlank(newSalePrice)) {
+								newSalePrice = newSalePrice.replace(",", ".");
+							} else {
+								newSalePrice = "";
+							}
+							if (StringUtils.isNotBlank(newSupplierPrice)) {
+								newSupplierPrice = newSupplierPrice.replace(
+										",", ".");
+							} else {
+								newSupplierPrice = "";
+							}
+							buffer.append(newMarketPrice).append(splitSign);
+							buffer.append(newSalePrice).append(splitSign);
+							buffer.append(newSupplierPrice).append(splitSign);
+
+							// 价格
+							String marketPrice = dto.getMarketPrice();
+							String salePrice = dto.getSalePrice();
+							String supplierPrice = dto.getSupplierPrice();
+							if (StringUtils.isNotBlank(marketPrice)) {
+								marketPrice = marketPrice.replace(",", ".");
+							} else {
+								marketPrice = "";
+							}
+							if (StringUtils.isNotBlank(salePrice)) {
+								salePrice = salePrice.replace(",", ".");
+							} else {
+								salePrice = "";
+							}
+							if (StringUtils.isNotBlank(supplierPrice)) {
+								supplierPrice = supplierPrice.replace(",", ".");
+							} else {
+								supplierPrice = "";
+							}
+							buffer.append(marketPrice).append(splitSign);
+							buffer.append(salePrice).append(splitSign);
+							buffer.append(supplierPrice).append(splitSign);
+
+							buffer.append(dto.getSaleCurrency()).append(
+									splitSign);
+
+							// 季节
+
+							buffer.append(
+									null == dto.getSeasonName() ? dto
+											.getSeasonId() : dto
+											.getSeasonName()).append(splitSign);
+							// 活动开始时间
+							buffer.append(sdf.format(startDate)).append(
+									splitSign);
+							// 活动结束时间
+							buffer.append(sdf.format(endDate));
+
+							buffer.append("\r\n");
+
+						}
+
+					} catch (Exception e) {
+						logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
+						continue;
+					}
+
+				}
+
+			} catch (Exception ex) {
+				logger.debug(ex.getMessage());
+				ex.printStackTrace();
+			}
+		}
+		
+		return buffer;
+	}
+
+	@Override
+	public SpuDTO findPartSpuData(String supplierId, String spuId) {
+		return spuDAO.findPartBySupAndSpuId(supplierId, spuId);
+	}
 }

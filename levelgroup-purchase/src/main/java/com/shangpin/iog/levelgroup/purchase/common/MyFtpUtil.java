@@ -5,6 +5,7 @@ import com.enterprisedt.net.ftp.FTPConnectMode;
 import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FTPTransferType;
 import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.common.utils.SendMail;
 
 import org.apache.log4j.Logger;
 
@@ -18,11 +19,19 @@ import java.util.ResourceBundle;
  */
 public class MyFtpUtil {
     private static Logger loggerError = Logger.getLogger("error");
+    private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
     private static ResourceBundle bdl = null;
     private static String localFile = null,remoteFile;
     private static String localFile2 = null;
     private static String supplierId = null;
     private static String HOST,PORT,PATH,PATH2,USER,PASSWORD;
+    
+    private static String smtpHost = null;
+	private static String from = null;
+	private static String fromUserPassword = null;
+	private static String to = null;
+	private static String subject = null;
+	private static String messageType = null;
 
     static {
         if (bdl == null)
@@ -37,6 +46,13 @@ public class MyFtpUtil {
             PATH2 = bdl.getString("path2");
             USER = bdl.getString("user");
             PASSWORD = bdl.getString("password");
+            
+            smtpHost  = bdl.getString("smtpHost");
+    		from = bdl.getString("from");
+    		fromUserPassword = bdl.getString("fromUserPassword");
+    		to = bdl.getString("to");
+    		subject = bdl.getString("subject");
+    		messageType = bdl.getString("messageType");
     }
     /**
      * test
@@ -76,9 +92,13 @@ public class MyFtpUtil {
             ftp.setType(FTPTransferType.ASCII);
             // 获取 XML文件到本地
             ftp.put(localFile,fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (FTPException e) {
+            logger.info("文件"+fileName+"上传成功!");
+        } catch (Exception e) {
+            try {
+				SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject, "levelgroup订单上传失败", messageType);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
             e.printStackTrace();
         }  finally {
             close(ftp);

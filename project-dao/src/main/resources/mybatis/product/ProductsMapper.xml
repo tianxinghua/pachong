@@ -28,12 +28,13 @@
         <result column="brand_id" property="brandId"  />
         <result column="brand_name" property="brandName"  />
 
-
+		<result column="memo" property="memo"  />
 
 		<result column="pic_url" property="picUrl"  />
         <result column="material" property="material"/>
         <result column="product_origin" property="productOrigin"/>
 
+		<result column="product_origin" property="productOrigin"/>
 
 
         <result column="sku_id" property="skuId"  />
@@ -119,7 +120,9 @@
           spu.PIC_URL as pic_url,spu.MATERIAL as material,spu.PRODUCT_ORIGIN as product_origin ,
           spu.CATEGORY_GENDER as category_gender,
           spu.SUB_CATEGORY_ID  as  sub_category_id,
-          spu.SUB_CATEGORY_NAME  as  sub_category_name
+          spu.SUB_CATEGORY_NAME  as  sub_category_name,
+<!--           sku.MEMO  as  memo -->
+          CONCAT(sku.MEMO,spu.MEMO) as memo
 		
 		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
 					 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID
@@ -131,11 +134,11 @@
             and   sku.SUPPLIER_ID = #{supplier}
           </if>
             <if test="null!=startDate">
-                and sku.LAST_TIME >= #{startDate}
+                and (sku.LAST_TIME >= #{startDate} or spu.LAST_TIME >=#{startDate})
             </if>
            <if test="endDate!=null">
 
-                <![CDATA[ and sku.LAST_TIME <= #{endDate}    ]]>
+                <![CDATA[ and (sku.LAST_TIME <= #{endDate} or spu.LAST_TIME<= #{endDate})    ]]>
 
             </if>
 
@@ -178,8 +181,8 @@
           spu.PIC_URL as pic_url,spu.MATERIAL as material,spu.PRODUCT_ORIGIN as product_origin ,
           spu.CATEGORY_GENDER as category_gender,
           spu.SUB_CATEGORY_ID  as  sub_category_id,
-          spu.SUB_CATEGORY_NAME  as  sub_category_name
-		
+          spu.SUB_CATEGORY_NAME  as  sub_category_name,
+		  sku.MEMO  as  memo
 		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
 			 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID
         <where>
@@ -249,8 +252,8 @@
           sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
           spu.BRAND_NAME as brand_name,
           spu.CATEGORY_NAME as category_name,
-          spu.CATEGORY_GENDER as category_gender
-		
+          spu.CATEGORY_GENDER as category_gender,
+		  sku.MEMO  as  memo
 		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
         <where>
 				(
@@ -331,7 +334,6 @@
           sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
           spu.BRAND_NAME as brand_name,
           spu.CATEGORY_NAME as category_name
-		
 		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
         <where>
           <if test="null!=supplierId">

@@ -3,11 +3,15 @@
  */
 package com.shangpin.iog.webcontainer.front.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +20,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import redis.clients.jedis.Jedis;
+
+import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.OrderTimeUpdateDTO;
 import com.shangpin.iog.dto.StockUpdateDTO;
 import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.service.OrderService;
@@ -39,6 +47,14 @@ public class ExceptionShowController {
 	@Autowired
 	UpdateStockService updateStockService;
 	
+	private static ResourceBundle bdl = null;
+	private static String host;
+	static {
+		if (null == bdl)
+			bdl = ResourceBundle.getBundle("conf");
+		host = bdl.getString("host");
+	}
+	
 	@RequestMapping(value="/showException")
 	public String showException(Model model,String supplierId) throws Exception{
 	
@@ -54,9 +70,67 @@ public class ExceptionShowController {
         mv.addObject("supplierDTOList",supplierDTOList);
         return mv;
     }
-
-    @RequestMapping(value = "/stockUpdateException")
+////
+    @RequestMapping(value = "/orderUpdateException")
     public String showStockUpdateException(Model model) throws Exception {
+    	
+    	 Jedis j = new Jedis(host);
+     	 System.out.println("Connection to server sucessfully");
+   		 Set<String> set = j.keys("iog_*");
+    	
+//    	List<OrderTimeUpdateDTO> all =	productOrderService.selectAllSupplierOrder();
+    	List<OrderTimeUpdateDTO> redList = new ArrayList<OrderTimeUpdateDTO>();
+    	List<OrderTimeUpdateDTO> greenList = new ArrayList<OrderTimeUpdateDTO>();
+    	List<SupplierDTO> supplierDTOList = supplierService.findByState(null);
+    	Map<String, String> nameMap = new HashMap<String, String>();
+    	for (SupplierDTO supplierDTO : supplierDTOList) {
+			nameMap.put(supplierDTO.getSupplierId(), supplierDTO.getSupplierName());
+		}
+    	/*
+    	 * 数据库方式
+    	for (OrderTimeUpdateDTO stockUpdateDTO : all) {
+    		long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+    		long days = diff / (1000 * 60 * 60 * 24);
+    		long hours = (diff-days*(1000 * 60 * 60 * 24))/(1000* 60 * 60);
+    		long minutes = (diff-days*(1000 * 60 * 60 * 24)-hours*(1000* 60 * 60))/(1000* 60);
+    		stockUpdateDTO.setDif(days+"天"+hours+"小时"+minutes+"分");
+    		stockUpdateDTO.setSupplierName(nameMap.get(stockUpdateDTO.getSupplierId()));
+    		if (minutes>30) {
+    			redList.add(stockUpdateDTO);
+			}else {
+				greenList.add(stockUpdateDTO);
+			}
+    	}
+    	*/
+    	Iterator<String> it=set.iterator();
+	       while(it.hasNext())
+	       {
+	    	   OrderTimeUpdateDTO stockUpdateDTO = new OrderTimeUpdateDTO();
+	           String o=(String)it.next();
+	           System.out.println(o);
+	           System.out.println(j.get(o));
+	           SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	           Date date=sdf.parse(j.get(o));
+	           long diff = new Date().getTime()-date.getTime();
+	    		long days = diff / (1000 * 60 * 60 * 24);
+	    		long hours = (diff-days*(1000 * 60 * 60 * 24))/(1000* 60 * 60);
+	    		long minutes = (diff-days*(1000 * 60 * 60 * 24)-hours*(1000* 60 * 60))/(1000* 60);
+	    		stockUpdateDTO.setDif(days+"天"+hours+"小时"+minutes+"分");
+	    		stockUpdateDTO.setSupplierName(nameMap.get(o.split("_")[1]));
+	    		stockUpdateDTO.setSupplierId(o.split("_")[1]);
+	    		stockUpdateDTO.setUpdateTime(date);
+	    		if (minutes>30) {
+	    			redList.add(stockUpdateDTO);
+				}else {
+					greenList.add(stockUpdateDTO);
+				}
+	       }
+    	model.addAttribute("greenOrderList", greenList);
+    	model.addAttribute("redOrderList", redList);
+		return "iog";
+    }
+    @RequestMapping(value = "/stockUpdateException")
+    public String showOrderUpdateException(Model model) throws Exception {
     	List<StockUpdateDTO> all = updateStockService.getAll();
     	List<StockUpdateDTO> redList = new ArrayList<StockUpdateDTO>();
     	List<StockUpdateDTO> greenList = new ArrayList<StockUpdateDTO>();
@@ -84,5 +158,5 @@ public class ExceptionShowController {
     	model.addAttribute("supplierDTOList", availableSupplierDTOList);
 		return "iog";
     }
-    
+
 }

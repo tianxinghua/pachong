@@ -8,6 +8,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SpuDTO;
 
 /**
@@ -17,6 +18,7 @@ import com.shangpin.iog.dto.SpuDTO;
 public interface ProductFetchService {
 	 public Map<String,String> findPictureBySupplierIdAndSpuId(String supplierId, String spuId);
 	 public Map<String,String> findPictureBySupplierIdAndSkuId(String supplierId, String skuId);
+	 public SkuDTO findSKUBySupplierIdAndSkuId(String supplierId, String spuId);
     /**
      * 保存SPU列表
      * @param spuDTOList spu对象列表
@@ -103,10 +105,34 @@ public interface ProductFetchService {
      * @param picUrl集合
      */
 	
+	/**
+	 * 
+	 * @param supplierId
+	 * @param skuId
+	 * @return
+	 * @throws ServiceException
+	 */
+	public SkuDTO findSupplierPrice(String supplierId, String skuId)
+			throws ServiceException ;
+	public SpuDTO findSPUBySupplierIdAndSpuId(String supplierId, String spuId);
+	public List<SkuRelationDTO> selectAllRelation()  throws ServiceException;
+	
 	public List<ProductDTO> selectSkuByDay() throws ServiceException;
 	public List<ProductDTO> selectSpuByDay() throws ServiceException;
 	public List<ProductDTO> selectAllSku() throws ServiceException;
 	public List<ProductDTO> selectAllSpu() throws ServiceException;
-	
+	public void saveSkuRelation(SkuRelationDTO sku) throws ServiceException;
+	public List<SkuRelationDTO> selectRelationDayFromHK() throws ServiceException;
+	/**
+	 * @param supplierId
+	 * @param id 对应的skuid or spuid
+	 * @param picUrl
+	 * @param flag sku表示用skuid保存 spu表示用spuid保存
+	 * @return
+	 */
+	public List<String> saveAndCheckPicture(String supplierId, String id,Collection<String> picUrl,String flag);
+//	public void updateSpuMemoAndTime(String supplierId, String spuId, String memo);
+//	public void updateSkuMemoAndTime(String supplierId, String skuId, String memo);
+	void updateSpuOrSkuMemoAndTime(String supplierId, String id, String memo,String flag);
 
 }

@@ -31,9 +31,17 @@ public class ProductDTO {
     private String subCategoryId;
     private String subCategoryName;
 
+    private String memo;
 
+    public String getMemo() {
+		return memo;
+	}
 
-    private String brandId;
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
+
+	private String brandId;
     private String seasonId;//上市季节ID
     private String brandName;
     private String seasonName;

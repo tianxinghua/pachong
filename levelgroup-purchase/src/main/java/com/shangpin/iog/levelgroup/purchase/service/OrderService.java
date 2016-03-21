@@ -90,7 +90,7 @@ public class OrderService extends AbsOrderService {
      * @throws ServiceException
      */
     private void saveOrder(){
-        List<OrderDTO> list = new ArrayList<>();
+        //List<OrderDTO> list = new ArrayList<>();
         List<OrderDTO> list1 = null;
         List<OrderDTO> list2 = null;
         Date startTime = new Date();
@@ -103,21 +103,14 @@ public class OrderService extends AbsOrderService {
         		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
            list2 = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId2,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
          		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
-           
         } catch (ServiceException e) {
             e.printStackTrace();
-        }
-        if(list2!=null && !list2.isEmpty()){
-        	list.addAll(list1);
-            list.addAll(list2);
-        }else{
-            list.addAll(list1);
         }
         
         StringBuffer ftpFile = new StringBuffer();
         ftpFile.append("ORDER CODE;ITEM CODE;SIZE;SKU;ORDER;PRICE;BRAND;STATUS");
         ftpFile.append("\n");
-        for (OrderDTO orderDTO:list){
+        for (OrderDTO orderDTO:list1){
         	try {
 				ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getDetail().split(":")[0]);
 				ftpFile.append(orderDTO.getSpPurchaseNo());
@@ -144,7 +137,8 @@ public class OrderService extends AbsOrderService {
 		            
 		            logger.info("SkuID="+orderDTO.getDetail().split(":")[0]+"采购单号:"+orderDTO.getSpPurchaseNo());
 	            }else{
-	            	ftpFile.append("");
+	            	ftpFile.append(";").append("");
+	            	ftpFile.append(";").append("");
 	            	if(orderDTO.getDetail().split(":")[0].length()<15){
 	            		ftpFile.append(";").append("09").append(orderDTO.getDetail().split(":")[0]);
 	            	}else{
@@ -160,14 +154,60 @@ public class OrderService extends AbsOrderService {
         	} catch (ServiceException e) {
 				e.printStackTrace();
 			}
-        
         }
+        
+        for (OrderDTO orderDTO:list2){
+        	try {
+				ProductDTO product2 = productSearchService.findProductForOrder(supplierId2,orderDTO.getDetail().split(":")[0]);
+				ftpFile.append(orderDTO.getSpPurchaseNo());
+	            if(product2!=null){
+	            	ftpFile.append(";").append(product2.getProductCode());
+	            	ftpFile.append(";").append(product2.getSize());
+	            	if(orderDTO.getDetail().split(":")[0].length()<15){
+	            		ftpFile.append(";").append("09").append(orderDTO.getDetail().split(":")[0]);
+	            	}else{
+	            		ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+	            	}
+		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
+		            
+		            if(orderDTO.getPurchasePriceDetail()!=null){
+//		            	System.out.println("数据2="+orderDTO.getPurchasePriceDetail());
+//		            	System.out.println("skuId="+orderDTO.getDetail().split(":")[0]);
+//	            		BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
+//						String price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
+//						ftpFile.append(";").append(price.trim());
+						ftpFile.append(";").append(orderDTO.getPurchasePriceDetail());
+		            }else{
+	            		String price = "";
+	            		ftpFile.append(";").append(price);
+	            	}
+		            ftpFile.append(";").append(product2.getBrandName());
+		            ftpFile.append(";").append(orderDTO.getStatus());
+		            logger.info("SkuID="+orderDTO.getDetail().split(":")[0]+"采购单号:"+orderDTO.getSpPurchaseNo());
+	            }else{
+	            	ftpFile.append(";").append("");
+	            	ftpFile.append(";").append("");
+	            	if(orderDTO.getDetail().split(":")[0].length()<15){
+	            		ftpFile.append(";").append("09").append(orderDTO.getDetail().split(":")[0]);
+	            	}else{
+	            		ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+	            	}
+		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
+		            ftpFile.append(";").append(0);
+		            ftpFile.append(";").append("");
+		            ftpFile.append(";").append("pre-sale");
+	            }
+	            
+	            ftpFile.append("\n");
+        	} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+        }
+        
         Map<String, String> mongMap = new HashMap<>();
         mongMap.put("supplierId", supplierId);
         mongMap.put("supplierName", "LevelGroup");
         mongMap.put("result", ftpFile.toString());
-        //logMongo.info(mongMap);
-        //System.out.println(csvFile);
         FileWriter fwriter = null;
         try {
             fwriter = new FileWriter(localFile);
@@ -228,7 +268,8 @@ public class OrderService extends AbsOrderService {
 		            ftpFile.append(";").append(orderDTO.getStatus());
 		            
 	            }else{
-	            	ftpFile.append(" ");
+	            	ftpFile.append(";").append("");
+	            	ftpFile.append(";").append("");
 	            	if(orderDTO.getDetail().split(":")[0].length()<15){
 	            		ftpFile.append(";").append("09").append(orderDTO.getDetail().split(":")[0]);
 	            	}else{
@@ -236,7 +277,7 @@ public class OrderService extends AbsOrderService {
 	            	}
 		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
 		            ftpFile.append(";").append(0);
-		            ftpFile.append(";").append(" ");
+		            ftpFile.append(";").append("");
 		            ftpFile.append(";").append("pre-sale");
 	            }
 	            

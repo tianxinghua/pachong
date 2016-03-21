@@ -27,6 +27,7 @@ import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 
@@ -34,7 +35,8 @@ import com.shangpin.iog.dto.SpuDTO;
 public class GrapStock extends AbsUpdateProductStock{
 
 	private static Logger logInfo  = Logger.getLogger("info");
-	private static Logger logError = Logger.getLogger("error");
+//	private static Logger logError = Logger.getLogger("error");
+	private static LoggerUtil logError = LoggerUtil.getLogger("error");
 	private static Logger logMongoDB = Logger.getLogger("MongoDB");
 	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
 	

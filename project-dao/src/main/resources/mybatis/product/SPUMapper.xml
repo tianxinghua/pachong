@@ -27,7 +27,7 @@
 	</resultMap>
 	
 
-
+ 
 	
 	
 	<sql id="all_spu_column">
@@ -104,6 +104,38 @@
           </set>
           where  SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
     </update>
-
-	
+    <select id="findSPUBySupplierAndSpuId"  resultMap="spuMap" parameterType="java.lang.String">
+	        select
+	          <include refid="all_spu_column"></include>
+	        from SPU
+	        <where>
+	            <if test="null!=supplierId">
+	                SUPPLIER_ID = #{supplierId}
+	            </if>
+	            <if test="null!=spuId">
+	                and SPU_ID = #{spuId}
+	            </if>
+	        </where>
+	    </select>
+	<select id="findPartBySupAndSpuId" resultMap="spuMap" parameterType="java.lang.String">
+	   select
+       		SEASON_NAME,MATERIAL,PRODUCT_ORIGIN
+       from SPU
+        <where>
+            <if test="null!=supplierId">
+                SUPPLIER_ID = #{supplierId}
+            </if>
+            <if test="null!=spuId">
+                and SPU_ID = #{spuId}
+            </if>
+        </where>
+	</select>	    
+		<update id="updateSpuMemo">
+	    update SPU
+       <set>
+		  MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",#{memo}), 
+	      LAST_TIME = #{lastTime},
+	   </set>
+	    where  SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
+    </update>
 </mapper>

@@ -1,14 +1,14 @@
 package com.shangpin.iog.service;
 
-import com.shangpin.framework.ServiceException;
-import com.shangpin.framework.page.Page;
-import com.shangpin.iog.common.utils.excel.AccountsExcelTemplate;
-import com.shangpin.iog.dto.ProductDTO;
-import com.shangpin.iog.dto.SkuDTO;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.page.Page;
+import com.shangpin.iog.dto.ProductDTO;
+import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.dto.SpuDTO;
 
 /**
  * Created by loyalty on 15/5/20.
@@ -66,6 +66,11 @@ public interface ProductSearchService {
      * @throws ServiceException
      */
     public StringBuffer exportProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
+    
+    public StringBuffer dailyUpdatedProduct(String supplier,int day,Date now,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
+    
+    public StringBuffer dailyGoodProducts(String[] suppliers,Date startime,Date endtime,Integer pageIndex,Integer pageSize) throws ServiceException;
+    
     /**
      * 获取产品id
      * @param supplier  供货商
@@ -105,5 +110,8 @@ public interface ProductSearchService {
      * @throws ServiceException
      */
     public ProductDTO findProductBySupplierIdAndSkuId(String supplierId,String skuId) throws ServiceException;
+    
+    public SpuDTO findPartSpuData(String supplierId,String spuId);
+    
     
 }

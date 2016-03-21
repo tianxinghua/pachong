@@ -8,11 +8,13 @@ import com.shangpin.iog.dto.PictureDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.mongodao.PictureDAO;
 import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.product.dao.ProductPictureMapper;
 import com.shangpin.iog.product.dao.SkuMapper;
+import com.shangpin.iog.product.dao.SkuRelationMapper;
 import com.shangpin.iog.product.dao.SpuMapper;
 import com.shangpin.iog.service.ProductFetchService;
 
@@ -43,6 +45,9 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     @Autowired
     SkuMapper skuDAO;
 
+
+    @Autowired
+    SkuRelationMapper skuRelationDAO;
     @Autowired
     SpuMapper spuDAO;
 
@@ -234,7 +239,45 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		}
 	}
 
+	@Override
+	public SkuDTO findSupplierPrice(String supplierId, String skuId)
+			throws ServiceException {
+		
+		SkuDTO sku = null;
+		try {
+			sku = skuDAO.findSupplierPrice(supplierId, skuId);
+		} catch (Exception e) {
+            logger.error("获取失败 "+e.getMessage());
+			e.printStackTrace();
+		}
+		return sku;
+	}
+	
 
+	@Override
+	public SkuDTO findSKUBySupplierIdAndSkuId(String supplierId, String skuId) {
+		SkuDTO sku = null;
+		try {
+			sku = skuDAO.findSKUBySupplierAndSkuId(supplierId, skuId);
+		} catch (Exception e) {
+            logger.error("获取失败 "+e.getMessage());
+			e.printStackTrace();
+		}
+		return sku;
+	}
+	
+	@Override
+	public SpuDTO findSPUBySupplierIdAndSpuId(String supplierId, String spuId) {
+		SpuDTO spu = null;
+		try {
+			spu = spuDAO.findSPUBySupplierAndSpuId(supplierId, spuId);
+		} catch (Exception e) {
+            logger.error("获取失败 "+e.getMessage());
+			e.printStackTrace();
+		}
+		return spu;
+	}
+	
 	@Override
 	public List<ProductDTO> selectSkuByDay() throws ServiceException {
 		// TODO Auto-generated method stub
@@ -258,4 +301,90 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List selectAllRelation() throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void saveSkuRelation(SkuRelationDTO sku) throws ServiceException {
+		try {
+			skuRelationDAO.save(sku);
+		} catch ( Exception e) {
+        	if(e instanceof DuplicateKeyException)
+        	throw new ServiceMessageException(REPEAT_MESSAGE);
+            throw new ServiceMessageException("数据插入失败"+e.getMessage());
+        }
+	}
+
+	@Override
+	public List<SkuRelationDTO> selectRelationDayFromHK()
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+//	@Override
+//	public void updateSkuMemoAndTime(String supplierId,String spuId,String memo) {
+//		skuDAO.updateSkuMemo(supplierId, spuId, memo, new Date());
+//	}
+//
+//	@Override
+//	public void updateSpuMemoAndTime(String supplierId,String spuId,String memo) {
+//		spuDAO.updateSpuMemo(supplierId, spuId, memo, new Date());
+//	}
+	@Override
+	public void updateSpuOrSkuMemoAndTime(String supplierId,String id,String memo,String flag) {
+		if (flag.equals("spu")) {
+			spuDAO.updateSpuMemo(supplierId, id, memo, new Date());
+		}else{
+			skuDAO.updateSkuMemo(supplierId, id, memo, new Date());
+		}
+	}
+	
+	@Override
+	public List<String> saveAndCheckPicture(String supplierId, String id,
+			Collection<String> picUrl,String flag) {
+		List<String> imageList = new ArrayList<String>();
+		Map map = null;
+		ProductPictureDTO dto = null;
+		if (flag.equals("spu")) {
+			map = findPictureBySupplierIdAndSpuId(supplierId, id);
+		}else if(flag.equals("sku")){
+			map = findPictureBySupplierIdAndSkuId(supplierId, id);
+		}
+//		if(spuId!=null){
+//			map = findPictureBySupplierIdAndSpuId(supplierId, spuId);
+//		}else if(skuId!=null){
+//			map = findPictureBySupplierIdAndSkuId(supplierId, skuId);
+//		}
+		for(String pic:picUrl){
+			if(map==null||!map.containsKey(pic)){
+				imageList.add(pic);
+				dto = new ProductPictureDTO();
+				dto.setPicUrl(pic);
+				dto.setSupplierId(supplierId);
+				dto.setId(UUIDGenerator.getUUID());
+				if (flag.equals("spu")){
+					dto.setSpuId(id);
+				}else{
+					dto.setSkuId(id);
+				}
+//				if(spuId!=null){
+//					dto.setSpuId(spuId);
+//				}else{
+//					dto.setSkuId(skuId);
+//				}
+				try {
+					savePictureForMongo(dto);
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return imageList;
+	}
+	
+	
 }

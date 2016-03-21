@@ -21,6 +21,7 @@ import com.shangpin.iog.service.ProductFetchService;
 @Component("mycrawler")
 public class MyCrawler {
 	private static Logger log = Logger.getLogger("info");
+	private static String supplierId = "201603181323";
 	// feed
 	//  www.farfetch.com/cn/shopping/women/smets/items.aspx?q=smets
 	//	www.farfetch.com/cn/shopping/men/smets/items.aspx?q=smets
@@ -136,10 +137,10 @@ public class MyCrawler {
 												spu.setCategoryGender(gender);
 												spu.setCategoryName(category);
 												spu.setMaterial(matrial);
-												spu.setSupplierId("201601291741");
+												spu.setSupplierId(supplierId);
 												
 												
-												sku.setSupplierId("201601291741");
+												sku.setSupplierId(supplierId);
 												sku.setSpuId(skuId);
 												sku.setSkuId(skuId);
 												sku.setSaleCurrency("www.farfetch.com"+a.attr("href"));
@@ -152,7 +153,7 @@ public class MyCrawler {
 												System.out.println("save spu");
 												productFetchService.saveSPU(spu);
 												System.out.println("save spic");
-												productFetchService.savePicture("201601281522", null, skuId, Arrays.asList(img.split(";")));
+												productFetchService.savePicture(supplierId, null, skuId, Arrays.asList(img.split(";")));
 												//
 												img = "";
 //											 size = "";

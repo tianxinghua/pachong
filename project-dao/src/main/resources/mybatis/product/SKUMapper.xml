@@ -225,5 +225,27 @@
 	    where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
 
     </update>
-	
+	<select id="findSKUBySupplierAndSkuId"  resultMap="skuMap" parameterType="java.lang.String">
+	        select
+	           <include refid="all_sku_column"></include>
+	        from SKU
+	        <where>
+	            <if test="null!=supplierId">
+	                SUPPLIER_ID = #{supplierId}
+	            </if>
+	            <if test="null!=skuId">
+	                and SKU_ID = #{skuId}
+	            </if>
+	        </where>
+	    </select>
+	    
+	<update id="updateSkuMemo">
+	    update SKU
+       <set>
+		  MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",#{memo}), 
+	      LAST_TIME = #{lastTime},
+	   </set>
+	    where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
+    </update>
+	    
 </mapper>

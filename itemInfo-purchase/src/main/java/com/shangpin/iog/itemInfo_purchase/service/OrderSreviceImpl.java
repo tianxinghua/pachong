@@ -1,5 +1,6 @@
 package com.shangpin.iog.itemInfo_purchase.service;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,9 @@ public class OrderSreviceImpl extends AbsOrderService {
 	private static ResourceBundle bdl=null;
     private static String supplierId = "";
     private static String supplierNo = "";
+    
+    private static String deleteOrderUrl = "";
+    private static String deleteOrderSop = "";
    
     static {
         if(null==bdl)
@@ -66,6 +70,9 @@ public class OrderSreviceImpl extends AbsOrderService {
         fromEmail = bdl.getString("fromEmail");
         toEmail = bdl.getString("toEmail");
         emailPass = bdl.getString("emailPass");
+        
+        deleteOrderUrl = bdl.getString("deleteOrderUrl");
+        deleteOrderSop = bdl.getString("deleteOrderSop");
         
     }
     
@@ -136,7 +143,7 @@ public class OrderSreviceImpl extends AbsOrderService {
 						spOrder.setExcState("0");
 						spOrder.setExcDesc("采购单："+order+" 在请求验证时发生错误，未返回响应信息");
 						loggerError.error("采购单："+order+" 在请求验证时发生错误，未返回响应信息");
-						doOrderExc(spOrder);
+//						doOrderExc(spOrder);
 					}
 					
 				}catch(Exception e){
@@ -145,7 +152,7 @@ public class OrderSreviceImpl extends AbsOrderService {
 					spOrder.setExcDesc("发生异常:"+e.getMessage());
 		            loggerError.error("发生异常:"+e.getMessage());
 		            e.printStackTrace();
-		            doOrderExc(spOrder);
+//		            doOrderExc(spOrder);
 				}
 			}
 			
@@ -155,7 +162,7 @@ public class OrderSreviceImpl extends AbsOrderService {
 			spOrder.setExcDesc(ex.getMessage());
             loggerError.error(ex);
             ex.printStackTrace();
-            doOrderExc(spOrder);
+//            doOrderExc(spOrder);
 		}
 		
 	}
@@ -190,22 +197,59 @@ public class OrderSreviceImpl extends AbsOrderService {
 	}
 
 	@Override
-	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
-		deleteOrder.setStatus(OrderStatus.REFUNDED);
+	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {		
 		
 		//发邮件
-		try {
-			String content = "退款订单编号："+deleteOrder.getSpOrderId()+"\n"
-							+"采购单号："+deleteOrder.getSpPurchaseNo()+"\n"
-							+"时间："+deleteOrder.getCreateTime()+"\n"
-							+"供货商的订单编号："+deleteOrder.getSupplierOrderNo();
-			SendMail.sendGroupMail("smtp.shangpin.com",fromEmail,emailPass,toEmail,
-					"alducadaosta退款订单",
-					content,"text/html;charset=utf-8");
-		} catch (MessagingException e) {
-			loggerError.error(e);
-			e.printStackTrace();
+//		try {
+//			String content = "退款订单编号："+deleteOrder.getSpOrderId()+"\n"
+//							+"采购单号："+deleteOrder.getSpPurchaseNo()+"\n"
+//							+"时间："+deleteOrder.getCreateTime()+"\n"
+//							+"供货商的订单编号："+deleteOrder.getSupplierOrderNo();
+//			SendMail.sendGroupMail("smtp.shangpin.com",fromEmail,emailPass,toEmail,
+//					"alducadaosta退款订单",
+//					content,"text/html;charset=utf-8");
+//		} catch (MessagingException e) {
+//			loggerError.error(e);
+//			e.printStackTrace();
+//		}
+		
+		String order = deleteOrder.getSpPurchaseNo();		
+		
+		try{
+			String skuId = deleteOrder.getDetail().split(",")[0].split(":")[0];
+			String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
+					"<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"+
+					"<soap:Body>"+
+					"<DeleteOrder xmlns=\"http://service.alducadaosta.com/EcSrv\">"+
+					"<Identifier>"+identifier+"</Identifier>"+
+					"<Order>"+order+"</Order>"+
+					"<SkuID>"+skuId+"</SkuID>"+
+					"</DeleteOrder>"+
+					"</soap:Body>"+
+					"</soap:Envelope>";
+			logger.info("退款订单=========="+soapRequestData);
+			String str = SoapXmlUtil.getSoapXml(deleteOrderUrl, deleteOrderSop, contentType, soapRequestData);
+			logger.info("退单返回信息===="+str);
+			String startStr = "<DeleteOrderResult>";
+			String endStr = "</DeleteOrderResult>";
+			String retMessage = str.substring(str.indexOf(startStr)+startStr.length(), str.indexOf(endStr));
+			logger.info("截取的信息===="+retMessage);						
+			if(retMessage.toUpperCase().equals("OK")){//退款成功
+				deleteOrder.setExcState("0");
+				deleteOrder.setStatus(OrderStatus.REFUNDED);
+			}else{//退款失败
+				deleteOrder.setExcDesc(retMessage);
+				deleteOrder.setExcState("1");
+				deleteOrder.setExcTime(new Date());
+			}
+			
+		}catch(Exception ex){ 
+			deleteOrder.setExcDesc(ex.getMessage());
+			deleteOrder.setExcState("1");
+			deleteOrder.setExcTime(new Date());
+			loggerError.error(ex);
 		}
+		
 	}
 
 	@Override
@@ -216,10 +260,10 @@ public class OrderSreviceImpl extends AbsOrderService {
 	
 //	public static void main(String[] args){
 //		OrderSreviceImpl o = new OrderSreviceImpl();
-//		OrderDTO spOrder = new OrderDTO();
+//		ReturnOrderDTO spOrder = new ReturnOrderDTO();
 //		spOrder.setSpPurchaseNo("CGD2016021300");
 //		spOrder.setDetail("203275406502:1");
-//		o.handleConfirmOrder(spOrder);
+//		o.handleRefundlOrder(spOrder);
 //		
 //	}
 }

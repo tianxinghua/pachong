@@ -5,6 +5,7 @@ import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.dto.SkuDTO;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -16,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created by houkun on 2015/9/14.
+ * Created by dongjinghui
  */
 @Component("delibertistock")
 public class StockImp  extends AbsUpdateProductStock {
@@ -39,26 +40,51 @@ public class StockImp  extends AbsUpdateProductStock {
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
     	
     	//获取库存元数据
-    	Map<String,String> skuMap = new HashMap<String,String>();
-
-        Map<String,String> returnMap = new HashMap<String,String>();
-        Iterator<String> iterator=skuNo.iterator();
-        //为供应商循环赋值
-        logger.info("循环赋值");
-        String skuId = "";
-        String stock = "0";
-        while (iterator.hasNext()){
-        	skuId = iterator.next();
-        	if (StringUtils.isNotBlank(skuId)) {
-        		if (skuMap.containsKey(skuId)) {
-        			stock = skuMap.get(skuId);
-        			returnMap.put(skuId, stock);
-				}else{
-					returnMap.put(skuId, "0");
-				}
+    	Map<String,String> skustock = new HashMap<String,String>();
+        Map<String,String> stockMap = new HashMap<String,String>();
+        
+        List<Product> products = MyUtil.readLocalCSV(url, Product.class);
+        if(products.size()>0){
+        	logger.info("------------------一共有"+products.size()+"条数据----------------");
+        	for(Product pro :products){
+        		String size [] = {pro.getSize35(),pro.getSize35x(),pro.getSize36(),pro.getSize36x(),pro.getSize37(),pro.getSize37x(),
+						pro.getSize38(),pro.getSize38x(),pro.getSize39(),pro.getSize39x(),pro.getSize40(),pro.getSize40x(),
+						pro.getSize41(),pro.getSize41x(),pro.getSize42(),pro.getSize42x(),pro.getSize43(),pro.getSize43x(),
+						pro.getSize44(),pro.getSize44x(),pro.getSize45(),pro.getSize45x(),pro.getSize46(),pro.getSize46x(),
+						pro.getSize47(),pro.getSize47x(),pro.getSize48(),pro.getSize48x(),pro.getSize49(),pro.getSize49x()};
+        		for (int i = 0; i < size.length; i++) {
+        			SkuDTO sku = new SkuDTO();
+        			if(size[i]!=null){
+        				String si[] = size[i].split("~");
+        				if(si[0].equals("")){
+    						continue;
+            			}else{
+            				sku.setProductSize(si[0]);
+            			}
+            			if(si[1].equals("0")){
+    						continue;
+            			}else{
+            				sku.setStock(si[1]);
+            			}
+        			}else{
+        				continue;
+        			}
+        			
+        			
+        			stockMap.put(pro.getSpuId()+"-"+sku.getProductSize(),sku.getStock());
+        		}
 			}
         }
-        return returnMap;
+        
+        for (String skuno : skuNo) {
+            if(stockMap.containsKey(skuno)){
+                skustock.put(skuno, stockMap.get(skuno));
+            } else{
+                skustock.put(skuno, "0");
+            }
+        }
+
+        return skustock;
     }
 
     public static void main(String[] args) throws Exception {
@@ -67,12 +93,14 @@ public class StockImp  extends AbsUpdateProductStock {
         StockImp stockImp =(StockImp)factory.getBean("delibertistock");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("deliberti更新数据库开始");
+        System.out.println("deliberti更新数据库开始");
         try {
 			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
 		} catch (Exception e) {
 			logger.info("deliberti更新库存数据库出错"+e.toString());
 		}
         logger.info("deliberti更新数据库结束");
+        System.out.println("deliberti更新数据库结束");
         System.exit(0);
     }
 }
