@@ -221,7 +221,7 @@ public abstract class AbsSaveProduct {
 				productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+"图片变化", flag);
 				//存新增的的图片到map
 				imgname = entry.getKey().split(";")[1];
-				downMap.put(imgname, list);
+				downMap.put(id+";"+imgname, list);
 			}
 		}
 		if (StringUtils.isNotBlank(picpath)) {
@@ -232,7 +232,8 @@ public abstract class AbsSaveProduct {
 						if (StringUtils.isEmpty(url)) {
 							continue;
 						}
-						imgname = e.getKey()+"_"+n+++".jpg";
+						id = e.getKey().split(";")[0];
+						imgname = e.getKey().split(";")[1]+"_"+n+++".jpg";
 						imagePath = picpath+imgname;
 						imagePath = ImageUtils.downImage(url, picpath,imgname);
 						result = ImageUtils.checkImageSize(imagePath);
