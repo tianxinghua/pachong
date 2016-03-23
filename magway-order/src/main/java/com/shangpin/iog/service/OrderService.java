@@ -89,7 +89,7 @@ public class OrderService extends AbsOrderService{
 			CreateOrder createOrder = new CreateOrder();
 			createOrder.setGoods(goodslist);
 			createOrder.setName("FilippoTroina");
-			createOrder.setMobile("15101515432");
+			createOrder.setMobile("00393454377342");
 			createOrder.setAddress("VIAG.LEOPARDI 27，22075 LURATE CACCIVIO (COMO)");
 			createOrder.setIDCardNumber("641233187008230523");
 			createOrder.setIDCardPathOne("ShangPin.com");
