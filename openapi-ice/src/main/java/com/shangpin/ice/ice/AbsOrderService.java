@@ -61,6 +61,7 @@ public abstract class AbsOrderService {
     private static  String url = null;
     private static  String redisUrl = null;  
     public static boolean SENDMAIL = false;
+    private static Jedis j = null;
 	static {
         try {
             if(null==bdl){
@@ -76,7 +77,7 @@ public abstract class AbsOrderService {
             emailPass = bdl.getString("emailPass");
             startDateOfTemp=bd.getString("startDateOfTemp");
             endDateOfTemp = bd.getString("endDateOfTemp");
-           
+            j = new Jedis(redisUrl);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -150,9 +151,9 @@ public abstract class AbsOrderService {
         
         SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MMDD_HH);
         String date = sdf.format(new Date());
-        Jedis j = new Jedis(redisUrl);
+//        Jedis j = new Jedis(redisUrl);
         j.set("iog_"+supplierId,date);
-        
+//        
         //处理异常
         handlePurchaseOrderException(supplierId);
 
@@ -166,18 +167,18 @@ public abstract class AbsOrderService {
         refundOrderFromSOP(supplierNo, supplierId, handleCancel);
 
         //时刻更新时间，以便监测程序是否运行
-//        updateOrderTime(supplierId);
+        updateOrderTime(supplierId);
 
     }
 
     private void updateOrderTime(String supplierId) {
 		//先判断是否supplier已存在
-    	boolean flag = productOrderService.selectOrderUpdateBySupplier(supplierId);
-    	if(flag){
-    		productOrderService.updateSupplierOrderTime(supplierId);
-    	}else{
-    		productOrderService.saveSupplierOrderTime(supplierId);
-    	}
+//    	boolean flag = productOrderService.selectOrderUpdateBySupplier(supplierId);
+//    	if(flag){
+//    		productOrderService.updateSupplierOrderTime(supplierId);
+//    	}else{
+//    		productOrderService.saveSupplierOrderTime(supplierId);
+//    	}
 	}
 
 	/**
@@ -188,7 +189,20 @@ public abstract class AbsOrderService {
     public  void  checkoutOrderFromWMS(String supplierNo,String supplierId,boolean handleCancel){
         //初始化时间
         initWMSDate("dateWMS.ini");
+        
+        SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MMDD_HH);
+        String date = sdf.format(new Date());
+//        Jedis j = new Jedis(redisUrl);
+        j.set("iog_"+supplierId,date);
         //获取订单数组
+        Set<String> set = j.keys("iog_*");
+		 Iterator it=set.iterator();
+	       while(it.hasNext())
+	       {
+	           String o=(String)it.next();
+	           System.out.println(o);
+	           System.out.println(j.get(o));
+	       }
         Gson gson = new Gson();
         ICEWMSOrderRequestDTO  dto = new ICEWMSOrderRequestDTO();
         logger.info("startDateOfWMS ="+startDateOfWMS);
