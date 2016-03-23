@@ -1,5 +1,6 @@
 package com.shangpin.iog.della.service;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.della.dto.Item;
 import com.shangpin.iog.della.utils.CSVUtil;
+import com.shangpin.iog.della.utils.FTPUtils;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -41,6 +43,7 @@ public class FetchProduct extends AbsUpdateProductStock {
 	private static ResourceBundle bdl = null;
 	private static String supplierId = "";
 	private static String remoteFileName = "";
+	private static String local = "";
 
 	private static String host;
 	private static String app_key;
@@ -54,6 +57,7 @@ public class FetchProduct extends AbsUpdateProductStock {
 		host = bdl.getString("HOST");
 	    app_key = bdl.getString("APP_KEY");
 	    app_secret = bdl.getString("APP_SECRET");
+	    local = bdl.getString("local");
 
 	}
 	
@@ -66,10 +70,24 @@ public class FetchProduct extends AbsUpdateProductStock {
 		
 		List<Item> items =null; 
 		try{
-			
-			items = CSVUtil.readLocalCSV(remoteFileName,Item.class, ";");
+			FTPUtils ftp =new FTPUtils("mosuftp", "inter2015£", "92.223.134.2", 21);
+			ftp.downFile("MOSU", remoteFileName, local);
+			File file = new File(local+File.separator+remoteFileName);
+			items = CSVUtil.readCSV(file, Item.class, ';');
+			ftp.logout();
 		}catch(Exception ex){
-			error.error(ex); 
+			error.error("first======"+ex); 
+			try{
+				System.out.println("============第一次失败，再试一次=============");
+				FTPUtils ftp =new FTPUtils("mosuftp", "inter2015£", "92.223.134.2", 21);
+				ftp.downFile("MOSU", remoteFileName, local);
+				File file = new File(local+File.separator+remoteFileName);
+				items = CSVUtil.readCSV(file, Item.class, ';');
+				ftp.logout();
+			}catch(Exception e){
+				error.error("second======"+e); 
+				return skustock;
+			}			
 		}
 		
 		for(Item item:items){
@@ -77,9 +95,9 @@ public class FetchProduct extends AbsUpdateProductStock {
 
 			stockMap.put(item.getItem_code(), Integer.parseInt(item.getQuantity()));
 
-			stockMap.put(item.getItem_code(), Integer.parseInt(item.getQuantity()));
+//			stockMap.put(item.getItem_code(), Integer.parseInt(item.getQuantity()));
 
-//			System.out.println(stockMap.toString());
+			System.out.println(stockMap.toString());
 		}
 		
 		for (String skuno : skuNo) {

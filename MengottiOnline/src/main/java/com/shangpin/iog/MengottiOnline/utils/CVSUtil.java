@@ -1,4 +1,4 @@
-package com.shangpin.iog.della.utils;
+package com.shangpin.iog.MengottiOnline.utils;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.csvreader.CsvReader;
 
-public class CSVUtil {
+public class CVSUtil {
 
 	/**
 	 * 生成csv文件
@@ -172,5 +172,7 @@ public class CSVUtil {
 		}
 		return t;
 	}
+	
+	
 
 }
