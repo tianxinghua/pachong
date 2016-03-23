@@ -60,28 +60,27 @@ public class FetchProduct {
 		
 			for (Product pro : allProducts) {
 				//保存spu
-				String size [] = {pro.getSize35(),pro.getSize35x(),pro.getSize36(),pro.getSize36x(),pro.getSize37(),pro.getSize37x(),
+				String sizes [] = {pro.getSize35(),pro.getSize35x(),pro.getSize36(),pro.getSize36x(),pro.getSize37(),pro.getSize37x(),
 						pro.getSize38(),pro.getSize38x(),pro.getSize39(),pro.getSize39x(),pro.getSize40(),pro.getSize40x(),
 						pro.getSize41(),pro.getSize41x(),pro.getSize42(),pro.getSize42x(),pro.getSize43(),pro.getSize43x(),
 						pro.getSize44(),pro.getSize44x(),pro.getSize45(),pro.getSize45x(),pro.getSize46(),pro.getSize46x(),
 						pro.getSize47(),pro.getSize47x(),pro.getSize48(),pro.getSize48x(),pro.getSize49(),pro.getSize49x()};
-				//System.out.println("数组长度="+size.length);
-				for (int i = 0; i < size.length; i++) {
+
+				for (int i = 0; i < sizes.length; i++) {
 					//保存sku
 					SkuDTO sku = new SkuDTO();
 					
-					if(size[i]!=null){
-						String si[] = size[i].split("~");
+					if(sizes[i]!=null){
+						String si[] = sizes[i].split("~");
 						if(si[0].equals("")){
 							continue;
 						}else{
 							if(si[0].indexOf("x")!=-1){
-								si[0].replace("x", ".5");
-								sku.setProductSize(si[0]);
+								String size = si[0].replace("x", ".5");
+								sku.setProductSize(size);
 							}else{
 								sku.setProductSize(si[0]);
 							}
-							
 						}
 						if(si[1].equals("0")){
 							continue;

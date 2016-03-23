@@ -56,23 +56,7 @@ public class FetchProduct {
 	private SkuPriceService skuPriceService;
 	@Autowired
 	private ProductSearchService productSearchService;
-/*	@Autowired
-	private TokenService tokenService;
-	
-	public void testDAO(){
-		TokenDTO findToken = new TokenDTO();
-		findToken.setSupplierId(supplierId);
-		try {
-			tokenService.refreshToken(findToken);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}*/
 	public void fetchProductAndSave() {
-		Map<String, String> mongMap = new HashMap<>();
-		mongMap.put("supplierId", supplierId);
-		mongMap.put("supplierName", "forzieri");
-		logMongo.info(mongMap);
 		logger.info("开始抓取");
 		Map<String,CsvDTO> csvSpuMaps = new HashMap<String,CsvDTO>();
 		List<String> skuIdList = new ArrayList<String>();
@@ -121,7 +105,7 @@ public class FetchProduct {
 			skuDTO.setProductDescription(csvDTO.getDescription());
 			skuDTO.setBarcode(csvDTO.getPreorder()+" | "+csvDTO.getShips_in_days());
 			try {
-				
+
 				if(skuDTOMap.containsKey(skuDTO.getSkuId())){
 					skuDTOMap.remove(skuDTO.getSkuId());
 				}
@@ -150,22 +134,8 @@ public class FetchProduct {
 			if (csvDTO.getSku().split("-")[2].equals("00")) {
 				//是
 				productFetchService.savePicture(supplierId, null, csvDTO.getSku(), Arrays.asList(picUrl));
-//				for (String string : picUrl) {
-//					if (StringUtils.isNotBlank(string)) {
-//						pictureDTO.setId(UUIDGenerator.getUUID());
-//						pictureDTO.setPicUrl(string);
-//						try {
-//							productFetchService.savePictureForMongo(pictureDTO);
-//						} catch (ServiceException e) {
-//							e.printStackTrace();
-//						}
-//					}
-//				}
 			}else{
-//				pictureDTO.setId(UUIDGenerator.getUUID());
-//				pictureDTO.setPicUrl(picUrl[0]);
-					productFetchService.savePicture(supplierId, null, csvDTO.getSku(), Arrays.asList(picUrl[0]));
-//					productFetchService.savePictureForMongo(pictureDTO);
+				productFetchService.savePicture(supplierId, null, csvDTO.getSku(), Arrays.asList(picUrl[0]));
 				
 			}
 		}

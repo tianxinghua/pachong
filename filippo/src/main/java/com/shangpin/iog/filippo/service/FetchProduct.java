@@ -53,13 +53,6 @@ public class FetchProduct {
 	public void fetchProductAndSave() {
 		//更改状态存储，不要忘了填币种
 		try {
-			Map<String, String> mongMap = new HashMap<>();
-			OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
-			//String result = HttpUtil45.get(url, timeConfig, null);
-			mongMap.put("supplierId", supplierId);
-			mongMap.put("supplierName", "filippo");
-//			mongMap.put("result", result);
-//			logMongo.info(mongMap);
 			Date startDate,endDate= new Date();
 			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 			//获取原有的SKU 仅仅包含价格和库存
@@ -159,7 +152,7 @@ public class FetchProduct {
 				}
 				
 				//保存图片
-				productFetchService.savePicture(supplierId, null, skuEntry.getKey().replace("\"", ""), Arrays.asList(skuEntry.getValue().getIMG().replace("\"", "")));
+				productFetchService.savePicture(supplierId, null, skuEntry.getKey().replace("\"", ""), Arrays.asList(skuEntry.getValue().getIMG().replace("\"", "").split(";")));
 			}
 			
 			logger.info("抓取结束");

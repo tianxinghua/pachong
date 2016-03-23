@@ -2,8 +2,8 @@ package com.shangpin.iog.bagheera.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.bagheera.stock.dto.BagheeraDTO;
+import com.shangpin.iog.bagheera.stock.schedule.AppContext;
 import com.shangpin.iog.bagheera.stock.utils.DownloadAndReadExcel;
 
 import org.apache.log4j.Logger;
@@ -70,16 +70,16 @@ public class StockClientImp extends AbsUpdateProductStock{
     public static void main(String[] args) throws Exception {
     	//加载spring
         loadSpringContext();
-        StockClientImp stockImp = (StockClientImp)factory.getBean("bagheeraStock");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("bagheera更新数据库开始");
-        try {
-        	stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
-		} catch (Exception e) {
-			logger.info("bagheera更新数据库出错"+e.toString());
-		}
-        logger.info("bagheera更新数据库结束");
-        System.exit(0);
+//        StockClientImp stockImp = (StockClientImp)factory.getBean("bagheeraStock");
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("bagheera更新数据库开始");
+//        try {
+//        	stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+//		} catch (Exception e) {
+//			logger.info("bagheera更新数据库出错"+e.toString());
+//		}
+//        logger.info("bagheera更新数据库结束");
+//        System.exit(0);
 
     }
 

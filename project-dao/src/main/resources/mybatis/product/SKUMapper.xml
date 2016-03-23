@@ -239,10 +239,10 @@
 	        </where>
 	    </select>
 	    
-	<update id="updateSkuMemo" parameterType="iog_sku" >
+	<update id="updateSkuMemo">
 	    update SKU
        <set>
-		  MEMO = CONCAT(MEMO,"  ",#{memo}), 
+		  MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",#{memo}), 
 	      LAST_TIME = #{lastTime},
 	   </set>
 	    where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}

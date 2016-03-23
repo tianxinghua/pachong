@@ -103,17 +103,9 @@ public class OrderService extends AbsOrderService {
         		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
            list2 = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId2,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
          		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
-           
         } catch (ServiceException e) {
             e.printStackTrace();
         }
-        
-//        if(list2!=null && !list2.isEmpty()){
-//        	list.addAll(list1);
-//            list.addAll(list2);
-//        }else{
-//            list.addAll(list1);
-//        }
         
         StringBuffer ftpFile = new StringBuffer();
         ftpFile.append("ORDER CODE;ITEM CODE;SIZE;SKU;ORDER;PRICE;BRAND;STATUS");
@@ -145,7 +137,6 @@ public class OrderService extends AbsOrderService {
 		            
 		            logger.info("SkuID="+orderDTO.getDetail().split(":")[0]+"采购单号:"+orderDTO.getSpPurchaseNo());
 	            }else{
-	            	//System.out.println("skuId="+orderDTO.getDetail().split(":")[0]);
 	            	ftpFile.append(";").append("");
 	            	ftpFile.append(";").append("");
 	            	if(orderDTO.getDetail().split(":")[0].length()<15){
@@ -180,16 +171,18 @@ public class OrderService extends AbsOrderService {
 		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
 		            
 		            if(orderDTO.getPurchasePriceDetail()!=null){
-	            		BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
-						String price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
-						ftpFile.append(";").append(price.trim());
+//		            	System.out.println("数据2="+orderDTO.getPurchasePriceDetail());
+//		            	System.out.println("skuId="+orderDTO.getDetail().split(":")[0]);
+//	            		BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
+//						String price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
+//						ftpFile.append(";").append(price.trim());
+						ftpFile.append(";").append(orderDTO.getPurchasePriceDetail());
 		            }else{
 	            		String price = "";
 	            		ftpFile.append(";").append(price);
 	            	}
 		            ftpFile.append(";").append(product2.getBrandName());
 		            ftpFile.append(";").append(orderDTO.getStatus());
-		            
 		            logger.info("SkuID="+orderDTO.getDetail().split(":")[0]+"采购单号:"+orderDTO.getSpPurchaseNo());
 	            }else{
 	            	ftpFile.append(";").append("");
@@ -215,8 +208,6 @@ public class OrderService extends AbsOrderService {
         mongMap.put("supplierId", supplierId);
         mongMap.put("supplierName", "LevelGroup");
         mongMap.put("result", ftpFile.toString());
-        //logMongo.info(mongMap);
-        //System.out.println(csvFile);
         FileWriter fwriter = null;
         try {
             fwriter = new FileWriter(localFile);

@@ -15,10 +15,28 @@ import java.awt.image.ColorConvertOp;
 import java.awt.image.CropImageFilter;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 
 import javax.imageio.ImageIO;
+
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 
 /**
  * 图片处理工具类：<br>
@@ -47,8 +65,98 @@ public class ImageUtils {
 //        ImageUtils.scale("E:\\处理好的图片\\2015-12-09\\", "E:\\TTTTT\\", 2, false);//测试OK
         // 方法二：按高度和宽度缩放
 //        ImageUtils.scale2("E:\\处理好的图片\\2015-12-09\\", "E:\\TTTTT\\", 500, 300, false);//测试OK
+    	
+//    	ImageUtils.checkImageSize("E:\\abc.jpg");
+    	String replaceSpecialChar = ImageUtils.replaceSpecialChar("http://dynamic.forzieri.com/is/image/Forzieri/confezione+manieri?scl=1");
+    	System.out.println(replaceSpecialChar);
+    	ImageUtils.downImage("http://dynamic.forzieri.com/is/image/Forzieri/confezione+manieri?scl=1", "E://aaa//", "test.jpg");
     }
-    
+    /**
+     * 下载图片
+     * @param url
+     * @param filepath  /usr/local/app/supplierName/picture/
+     * @param filename
+     * @return 成功返回图片绝对路径,失败返回""
+     */
+    public static String downImage(String url,String filepath,String filename){
+    	System.out.println(url);
+    	System.out.println("下载"+filepath+filename);
+    	// 创建文件对象  
+        File f = new File(filepath+filename);  
+        if (f.exists()) {
+        	System.out.println("image has been download");
+			return "";
+		}
+    	HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+		CloseableHttpClient httpClient = httpClientBuilder.build();
+		HttpClientContext context = HttpClientContext.create();
+		context.setRequestConfig(RequestConfig.custom()
+				.setConnectionRequestTimeout(1000*60*10)
+				.setConnectTimeout(1000*60*10)
+				.setSocketTimeout(1000*60*10)
+				.build());
+		String string = replaceSpecialChar(url);
+		System.out.println(string);
+		HttpGet get = new HttpGet(string);
+		try {
+			CloseableHttpResponse response = httpClient.execute(get,context);
+			if (response.getStatusLine().getStatusCode() == 200) {  
+                byte[] result = EntityUtils.toByteArray(response.getEntity());  
+                BufferedOutputStream bw = null;  
+                try {  
+					
+                    // 创建文件路径  
+                    if (!f.getParentFile().exists())  
+                        f.getParentFile().mkdirs();  
+                    // 写入文件  
+                    bw = new BufferedOutputStream(new FileOutputStream(filepath+filename));  
+                    bw.write(result);  
+                } catch (Exception e) {  
+                	System.out.println("保存图片出错");
+                	return "";
+                } finally {  
+                    try {  
+                        if (bw != null)  
+                            bw.close();  
+                    } catch (Exception e) {  
+                    	System.out.println("关闭出错");
+                    }  
+                }  
+            }  
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+    	return filepath+filename;
+    }
+    /**
+     * 检查图片尺寸和大小。
+     * @return "",图片>1M,图片尺寸>800
+     */
+    public static String checkImageSize(String filePath){
+    	System.out.println("检查图片"+filePath);
+    	FileInputStream fis = null;
+    	String memo = "";
+    	try {
+    		File file = new File(filePath);
+            fis = new FileInputStream(file);
+            int available = fis.available();
+            fis.close();
+            if (available>1048576) {
+				memo = "图片>1M ";
+			}
+    		BufferedImage src = ImageIO.read(file);
+    		int width = src.getWidth(); // 得到源图宽
+            int height = src.getHeight(); // 得到源图长
+            
+            if (width>800||height>800) {
+            	memo = memo + "图片尺寸>800 ";
+            }
+    	} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	return memo;
+    }
     /**
      * 缩放图像（按比例缩放）
      * @param srcImageFile 存放源图像文件的文件夹 如 E:\\image\\
@@ -472,6 +580,13 @@ public class ImageUtils {
         }
         return length / 2;
     }
-
-    
+    /**
+     * 替换url中的特殊字符  空格
+     */
+    private static String replaceSpecialChar(String url){
+    	return url.replace(" ", "%20");
+//    	http://188.217.192.104/foto/P16/M%20MISSONI/KD0KM02Z2300NO_7_P.JPG
+//    	http://188.217.192.104/foto/P16/COACH%20NEW%20YORK/36600DK()FOG.JPG
+//    	http://188.217.192.104/foto/P16/COACH%20NEW%20YORK/36600DK()FOG_3_D.JPG
+    }
 }

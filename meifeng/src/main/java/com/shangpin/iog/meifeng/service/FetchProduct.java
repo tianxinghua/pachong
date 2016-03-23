@@ -114,6 +114,7 @@ public class FetchProduct {
 				sku.setMarketPrice(detail.getMarketPrice());
 				sku.setSupplierPrice(detail.getSupplierPrice());
 				sku.setSaleCurrency("HDK");
+				sku.setBarcode(item.getSpuId());
 				try {
 					
 					if(skuDTOMap.containsKey(sku.getSkuId())){

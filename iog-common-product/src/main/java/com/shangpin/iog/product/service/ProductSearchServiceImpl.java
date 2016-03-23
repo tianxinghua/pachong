@@ -1373,5 +1373,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		return buffer;
 	}
 
-
+	@Override
+	public SpuDTO findPartSpuData(String supplierId, String spuId) {
+		return spuDAO.findPartBySupAndSpuId(supplierId, spuId);
+	}
 }

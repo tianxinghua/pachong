@@ -15,7 +15,7 @@ import freemarker.template.TemplateException;
 
 public class Test {
 	public static void main(String[] args) {
-		String supplierName = "jianzhuangdexiaohuozi";
+		String supplierName = "frametest";
 		Test test = new Test();
 		test.generateService(supplierName);
 		test.genFile(supplierName);
