@@ -30,8 +30,8 @@ public class Murder extends TimerTask{
 	@Override
 	public void run() {
 		System.out.println(Thread.currentThread().getName()+"执行murder");
-//		Thread t = new Thread(new Worker(stockImp));
-		Thread t = new Thread(new Worker());
+		Thread t = new Thread(new Worker(stockImp));
+//		Thread t = new Thread(new Worker());
 		Future<?> future = executor.submit(t);
 		try {
 			future.get(1000*60*90, TimeUnit.MILLISECONDS);

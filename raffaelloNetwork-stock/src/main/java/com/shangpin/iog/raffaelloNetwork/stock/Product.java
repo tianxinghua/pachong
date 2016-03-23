@@ -1,4 +1,4 @@
-package com.shangpin.iog.raffaelloNetwork.dto;
+package com.shangpin.iog.raffaelloNetwork.stock;
 
 import lombok.Getter;
 import lombok.Setter;
