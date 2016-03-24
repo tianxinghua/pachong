@@ -34,7 +34,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 	private static String url;
 	static {
 		if (null == bdl)
-			bdl = ResourceBundle.getBundle("param");
+			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
 		url = bdl.getString("url");
 	}
@@ -87,6 +87,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 	public static void main(String[] args) throws Exception {
 	  	//加载spring
         loadSpringContext();
+        System.out.println("asdasdasdasd");
         StockClientImp stockImp =(StockClientImp)factory.getBean("fashionestastock");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		logger.info("更新数据库开始");
