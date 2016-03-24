@@ -13,25 +13,19 @@ import com.shangpin.iog.bagheera.stock.StockClientImp;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 
 @Component
-@PropertySource("classpath:param.properties")
+@PropertySource("classpath:conf.properties")
 public class Schedule {
 
 	private static Logger logger = Logger.getLogger("info");
-	private static ResourceBundle bdl=null;
-    private static String supplierId = "";
-    static {
-        if(null==bdl)
-         bdl=ResourceBundle.getBundle("param");
-        supplierId = bdl.getString("supplierId");
-    }
+
 	@Autowired
 	StockClientImp stockImp;
 	
 	
 	@SuppressWarnings("deprecation")
 	@Scheduled(cron="${jobsSchedule}")
-//	@Scheduled(cron="0 * 0/1 * * ? ")
 	public void start(){
+		logger.info(new Date().toLocaleString()+"开始更新");
 		System.out.println(new Date().toLocaleString()+"开始更新");
     	Murder mur = Murder.getMur();
     	mur.setStockImp(stockImp);
