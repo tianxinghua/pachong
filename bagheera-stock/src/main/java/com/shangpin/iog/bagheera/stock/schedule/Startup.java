@@ -23,7 +23,6 @@ public class Startup {
         //加载spring
     	System.out.println("start");
         loadSpringContext();
-//		new AnnotationConfigApplicationContext(AppContext.class);
         logger.info(" schedule start  ");
     }
 }
