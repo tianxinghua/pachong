@@ -510,8 +510,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 								.getEventStartTime()).append(splitSign);
 				// 活动结束时间
 				buffer.append(null == dto.getEventEndTime() ? " " : dto
-						.getEventEndTime());
-
+						.getEventEndTime()).append(splitSign);;
+buffer.append(dto.getMemo());
 				buffer.append("\r\n");
 			} catch (Exception e) {
 				logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
