@@ -12,6 +12,25 @@ public class OrderTimeUpdateDTO implements Serializable{
 	
 	private String supplierId;
 	private Date updateTime ;
+	private String dif;
+	private String supplierName;
+	
+	
+	public String getSupplierName() {
+		return supplierName;
+	}
+	public void setSupplierName(String supplierName) {
+		this.supplierName = supplierName;
+	}
+	public String getDif() {
+		return dif;
+	}
+	public void setDif(String dif) {
+		this.dif = dif;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 	public String getSupplierId() {
 		return supplierId;
 	}
