@@ -35,14 +35,12 @@ include 'spinnaker-order'
 
 
 
-include 'tony-day-stock'
+
 include 'tony'
-include 'tony-purchase'
+
 include 'log-template'
 include 'theclutcher-stock'
 include 'reebonzWiki-order'
 
-
-include 'raffaelloNetwork'
-include 'raffaello-stock'
+include 'deliberti-purchase'
 

@@ -22,6 +22,7 @@ public class Test {
 		
 		try {
 			rtnData = HttpUtil45.operateData("post", "json", url, defaultConfig, null, jsonValue, "", "");
+
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
