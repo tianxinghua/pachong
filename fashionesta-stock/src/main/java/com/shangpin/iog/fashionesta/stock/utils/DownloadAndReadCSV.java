@@ -22,8 +22,7 @@ import org.apache.log4j.Logger;
  * Created by monkey on 2015/9/28.
  */
 public class DownloadAndReadCSV {
-    public static final String PROPERTIES_FILE_NAME = "param";
-    static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
+    static ResourceBundle bundle = ResourceBundle.getBundle("conf") ;
     private static String path = bundle.getString("path");
     private static String httpurl = bundle.getString("url");
     private static Logger logger = Logger.getLogger("info");

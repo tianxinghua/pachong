@@ -201,9 +201,9 @@ public class FetchProduct {
 								sku.setSkuId(data.getID()+"-"+stock.getSize()); 
 								sku.setSpuId(data.getID());
 								sku.setProductName(data.getName());
-								sku.setMarketPrice(data.getPriceCN());
-								sku.setSalePrice(data.getYourPriceCN());
-								sku.setSaleCurrency("China"); 
+								sku.setMarketPrice(data.getPriceEuro());
+								sku.setSalePrice(data.getYourPriceEuro());
+								sku.setSaleCurrency("Euro"); 
 								sku.setProductCode(data.getCode());
 								String color = "";
 								for(com.shangpin.iog.magway.dto.DataC dataC:colorList.getData()){

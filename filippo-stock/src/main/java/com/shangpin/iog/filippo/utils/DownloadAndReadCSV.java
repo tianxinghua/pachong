@@ -25,8 +25,7 @@ import org.apache.commons.lang.StringUtils;
  * Created by monkey on 2015/10/20.
  */
 public class DownloadAndReadCSV {
-    public static final String PROPERTIES_FILE_NAME = "param";
-    static ResourceBundle bundle = ResourceBundle.getBundle(PROPERTIES_FILE_NAME) ;
+    static ResourceBundle bundle = ResourceBundle.getBundle("conf") ;
     private static String path = bundle.getString("path");
     private static String httpurl = bundle.getString("url");
 

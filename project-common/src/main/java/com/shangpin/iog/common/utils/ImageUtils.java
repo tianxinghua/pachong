@@ -81,6 +81,12 @@ public class ImageUtils {
     public static String downImage(String url,String filepath,String filename){
     	System.out.println(url);
     	System.out.println("下载"+filepath+filename);
+    	// 创建文件对象  
+        File f = new File(filepath+filename);  
+        if (f.exists()) {
+        	System.out.println("image has been download");
+			return "";
+		}
     	HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		CloseableHttpClient httpClient = httpClientBuilder.build();
 		HttpClientContext context = HttpClientContext.create();
@@ -98,12 +104,7 @@ public class ImageUtils {
                 byte[] result = EntityUtils.toByteArray(response.getEntity());  
                 BufferedOutputStream bw = null;  
                 try {  
-					// 创建文件对象  
-                    File f = new File(filepath+filename);  
-                    if (f.exists()) {
-                    	System.out.println("image has been download");
-						return "";
-					}
+					
                     // 创建文件路径  
                     if (!f.getParentFile().exists())  
                         f.getParentFile().mkdirs();  

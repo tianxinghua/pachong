@@ -1,6 +1,7 @@
 package com.shangpin.product;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -47,16 +48,6 @@ public abstract class AbsSaveProduct {
 	 */
 	@SuppressWarnings("unchecked")
 	public void handleData(final String flag,final String supplierId,final int day,final String picpath) {
-//		SpuDTO spuDTO = new SpuDTO();
-//		spuDTO.setSupplierId("2015101501608");
-//		spuDTO.setSpuId("00101007622");
-//		spuDTO.setSeasonName("春天");
-//		isSpuChanged(spuDTO );
-//		SkuDTO skuDTO = new SkuDTO();
-//		skuDTO.setSupplierId("2015101501608");
-//		skuDTO.setSkuId("00101007622_456-TU");
-//		skuDTO.setMarketPrice("250");
-//		isSkuChanged(skuDTO );
 		
 		Map<String, Object> totalMap = null;
 
@@ -222,47 +213,48 @@ public abstract class AbsSaveProduct {
 		String id = "";
 		String imgname = "";
 		String result = "";
+		Map<String, List<String>> downMap = new HashMap<String, List<String>>();
 		for (Entry<String, List<String>> entry : imageMap.entrySet()) {
 			id = entry.getKey().split(";")[0];
-			
-			if (!picpath.equals("")) {
-				if (flag.equals("spu")) {
-					Map<String, String> imgMap = productFetchService.findPictureBySupplierIdAndSpuId(supplierId, id);
-					ImageUtils.downImage(url, picpath,imgname);
-				}else{
-					Map<String, String> imgMap = productFetchService.findPictureBySupplierIdAndSkuId(supplierId, id);
-				}
-			}
-			
 			list = productFetchService.saveAndCheckPicture(supplierId,id, entry.getValue(), flag);
 			if (list.size()>0) {
 				productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+"图片变化", flag);
+				//存新增的的图片到map
+				imgname = entry.getKey().split(";")[1];
+				downMap.put(id+";"+imgname, list);
 			}
-			if (list.size()>0) {
-				int num = 1;
-				for (String url : list) {
-					if (StringUtils.isEmpty(url)) {
-						continue;
+		}
+		if (StringUtils.isNotBlank(picpath)) {
+			if (downMap.size()>0) {
+				for (Entry<String, List<String>> e : downMap.entrySet()) {
+					int n = 1;
+					for (String url : e.getValue()) {
+						if (StringUtils.isEmpty(url)) {
+							continue;
+						}
+						id = e.getKey().split(";")[0];
+						imgname = e.getKey().split(";")[1]+"_"+n+++".jpg";
+						imagePath = picpath+imgname;
+						imagePath = ImageUtils.downImage(url, picpath,imgname);
+						result = ImageUtils.checkImageSize(imagePath);
+						if (!result.equals("")) {
+							if (memo.contains(result)) {
+								memo = memo.replace(result, result+"1");
+							}else{
+								memo +=" "+result;
+							}
+						}
 					}
-					imgname = entry.getKey().split(";")[1]+"_"+num+++".jpg";
-					imagePath = picpath+imgname;
-//					imagePath = ImageUtils.downImage(url, picpath,imgname);
-					result = ImageUtils.checkImageSize(imagePath);
-					if (!result.equals("")) {
-						if (memo.contains(result)) {
-							memo = memo.replace(result, result+"1");
-						}else{
-							memo +=" "+result;
- 						}
+					if (StringUtils.isNotBlank(memo)) {
+						productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+memo, flag);
 					}
+					memo = "";
 				}
-				if (StringUtils.isNotBlank(memo)) {
-					productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+memo, flag);
-				}
-				memo = "";
 			}
 		}
 	}
+	
+	
 
 	/**
 	 * 子类处理原始数据

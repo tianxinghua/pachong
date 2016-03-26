@@ -145,7 +145,7 @@ public class FetchProduct {
 						sku.setColor(item.getColor());
 						sku.setProductDescription(item.getDescription());
 						sku.setStock(item.getStock());
-						sku.setProductCode(product.getProducer_id());
+						sku.setProductCode(product.getProductId());
 						sku.setSaleCurrency("EUR");
 						sku.setBarcode(item.getBarcode());
 						if(skuDTOMap.containsKey(sku.getSkuId())){

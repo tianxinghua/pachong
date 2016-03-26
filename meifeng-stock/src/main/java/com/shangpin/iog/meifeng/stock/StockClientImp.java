@@ -49,14 +49,10 @@ public class StockClientImp extends AbsUpdateProductStock {
 		Map<String,String> returnMap = new HashMap<String, String>();
 		Iterator<String> it = skuNo.iterator();
 		System.out.println("遍历填充"+skuNo.size());
-		int i =0;
 		while (it.hasNext()) {
-			i++;
 			skuId = it.next();
-			System.out.println("========="+skuId);
 			String stock = EfastUtil.getTotalStock(skuId);
 			returnMap.put(skuId, stock);
-			System.out.println("填充"+i);
 		}
 		System.out.println("loop successfully");
 		return returnMap;

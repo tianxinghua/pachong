@@ -25,6 +25,9 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.iog.hottest.dto.BaseProductLookup;
+import com.shangpin.iog.hottest.dto.Item;
+import com.shangpin.iog.hottest.dto.Products;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 
@@ -77,22 +80,39 @@ public class FetchProduct {
 				for(int k=0;k<100;k++){
 					if(products.containsKey(String.valueOf(k))){
 						JSONObject product = products.getJSONObject(String.valueOf(k));//spu
+						String style = product.getString("style");
+						String color = product.getString("color");
+						String colorDes = "";
+						try{
+//							String colorUri = "http://www.pos123.us/api/products/"+style+"/.json";
+//							String colorRes = HttpUtil45.get(colorUri, outTimeConf, null, headMap, "", "");
+//							Item item = new Gson().fromJson(colorRes, Item.class);
+//							for(BaseProductLookup base:item.getProducts().getBaseProductLookup()){
+//								if(base.getKey().equals("color_description")){
+//									colorDes = base.getValue();
+//									break;
+//								}
+//							}	
+							colorDes = product.getString("color_description");
+							
+						}catch(Exception e){
+							e.printStackTrace();
+						}
 						//保存spu
-						String spuId = ""; 
+						String spuId = style+color; 
 						JSONArray items = product.getJSONArray("variations");
 						for(int i=0;i<items.size();i++){
 							try{
 								
-								JSONObject item = items.getJSONObject(i);//sku
-								spuId = item.getString("sku");
+								JSONObject item = items.getJSONObject(i);//sku								
 								//保存sku
 								SkuDTO sku = new SkuDTO();
 								sku.setId(UUIDGenerator.getUUID());
 								sku.setSupplierId(supplierId);
 								sku.setSpuId(spuId);
 								sku.setSkuId(item.getString("upc"));
-								sku.setProductCode(product.getString("style"));
-								sku.setColor(product.getString("color"));
+								sku.setProductCode(spuId);								
+								sku.setColor(colorDes);
 								sku.setSalePrice(product.getString("price"));
 								sku.setProductName(item.getString("name"));
 								sku.setProductSize(item.getString("size"));

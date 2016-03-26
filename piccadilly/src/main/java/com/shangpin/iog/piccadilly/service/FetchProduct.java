@@ -64,16 +64,15 @@ public class FetchProduct {
     	
         logger.info("get product starting....");
         System.out.println("get product starting....");
-        System.out.println("get product starting....");
         OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600);
         String skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace", null, outTimeConfig, "shangpin", "piccadilly");
         save("sku.txt",skuData);
         String imageData = HttpUtil45.postAuth(url+"GetAllImageMarketplace", null, outTimeConfig, "shangpin", "piccadilly");
-        save("imageData.txt",skuData);
+        save("imageData.txt",imageData);
         String priceData = HttpUtil45.postAuth(url+"GetAllPricelistMarketplace", null, outTimeConfig, "shangpin", "piccadilly");
-        save("priceData.txt",skuData);
+        save("priceData.txt",priceData);
         String spuData = HttpUtil45.postAuth(url+"GetAllItemsMarketplace", null, outTimeConfig, "shangpin", "piccadilly");
-        save("spu.txt",skuData);
+        save("spu.txt",spuData);
     	
     	
     	Date startDate,endDate= new Date();
@@ -124,16 +123,8 @@ public class FetchProduct {
 				spuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
 				SpuDTO spu = new SpuDTO();
 				Item item = new Item();
-//			   item.setColor(StringUtils.isBlank(spuArr[10])?spuArr[4]:spuArr[10]);
-			   //设置成颜色码
-				String color = "";
-				String[] split = spuArr[4].split(" ");
-		    	for (int j = 1; j < split.length; j++) {
-					color+=split[j]+" ";
-				}
-			   color = StringUtils.isBlank(color)?"":color;
+			   item.setColor(StringUtils.isBlank(spuArr[10])?spuArr[4]:spuArr[10]);
 			   
-			   item.setColor(color);
 			   item.setSupplierPrice(spuArr[16]);
 			   item.setDescription(spuArr[15]);
 			   item.setSpuId(spuArr[0]);
@@ -142,7 +133,7 @@ public class FetchProduct {
 			   item.setColorCode(spuArr[4]);
 			   
 			   itemMap.put(spuArr[0], item);
-
+			   
 			   spu.setId(UUIDGenerator.getUUID());
                spu.setSupplierId(supplierId);
                spu.setSpuId(spuArr[0]);
@@ -151,13 +142,9 @@ public class FetchProduct {
                spu.setCategoryName(spuArr[8]);
                spu.setSeasonId(spuArr[1]);
                StringBuffer material = new StringBuffer() ;
-               if (StringUtils.isNotBlank(spuArr[11])) {
-            	   material.append(spuArr[11]).append(";");
-               }else if(StringUtils.isNotBlank(spuArr[15])){
-            	   material.append(spuArr[15]).append(";");
-               }else if (StringUtils.isNotBlank(spuArr[42])) {
-            	   material.append(spuArr[42]);
-               }
+        	   material.append(spuArr[11]).append(";");
+        	   material.append(spuArr[39]).append(";");
+        	   material.append(spuArr[42]);
                spu.setMaterial(material.toString());
                spu.setCategoryGender(spuArr[5]);
                spu.setProductOrigin(spuArr[40]);
@@ -215,7 +202,7 @@ public class FetchProduct {
 					sku.setId(UUIDGenerator.getUUID());
         			sku.setSupplierId(supplierId);
         			sku.setSpuId(skuArr[0]);
-        			
+        			sku.setProductName(item.getDescription());
         			size = skuArr[1];
         			if (size.indexOf("½")>0) {
 						size=size.replace("½", "+");

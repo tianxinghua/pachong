@@ -1,5 +1,6 @@
 package com.shangpin.iog.della.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -20,6 +21,7 @@ import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.della.dto.Item;
 import com.shangpin.iog.della.utils.CSVUtil;
+import com.shangpin.iog.della.utils.FTPUtils;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -34,12 +36,16 @@ public class FetchProduct {
 	private static String supplierId = "";
 	private static String filePath = "";
 	private static int day;
+	private static String remoteFileName = null;
+	private static String local = null;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
 		filePath = bdl.getString("filepath");
 		day = Integer.valueOf(bdl.getString("day"));
+		remoteFileName = bdl.getString("remoteFileName");
+		local = bdl.getString("local");
 	}
 
 	@Autowired
@@ -60,7 +66,32 @@ public class FetchProduct {
 				e.printStackTrace();
 			}
 			
-			List<Item> items = CSVUtil.readLocalCSV(filePath, Item.class, ";");
+			List<Item> items = null;
+			
+			try{
+				
+				FTPUtils ftp =new FTPUtils("mosuftp", "inter2015£", "92.223.134.2", 21);
+				ftp.downFile("MOSU", remoteFileName, local);
+				File file = new File(local+File.separator+remoteFileName);
+				items = CSVUtil.readCSV(file, Item.class, ';');
+				ftp.logout();
+			}catch(Exception ex){
+				logError.error("第一次下载==="+ex.getMessage());
+				try{
+					System.out.println("========第一次下载失败，再试一次==========="); 
+					FTPUtils ftp =new FTPUtils("mosuftp", "inter2015£", "92.223.134.2", 21);
+					ftp.downFile("MOSU", remoteFileName, local);
+					File file = new File(local+File.separator+remoteFileName);
+					items = CSVUtil.readCSV(file, Item.class, ';');
+					ftp.logout();
+				}catch(Exception e){
+					logError.error("第2次下载==="+e.getMessage());
+					
+				}
+			}
+				
+			
+			
 			Map<String,Item> spuItems = new HashMap<String,Item>();
 			for(Item item:items){
 				
@@ -156,6 +187,7 @@ public class FetchProduct {
 					}
 				}
 			}
+			
 			
 		} catch (Exception e) {
 			logError.error(e.getMessage());
