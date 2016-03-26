@@ -87,6 +87,8 @@ public class FetchProduct {
         String material = "";
         Map<String,String> map = new HashMap<>();
 
+        Map<String,String> categoryMap = StringUtil.getCategoryMap(categoriesJson);
+
 /*        for(Items item:array){
             skuId = item.get_id();
             map.put(StringUtil.getSkuID(skuId),"");
@@ -155,15 +157,19 @@ public class FetchProduct {
 //                String categoryId = StringUtil.getCategoryID(item.getCat_id().toString());
 
                 List<Map<String,String>> catList = (ArrayList)item.getCat_ids();
+                List<String> categoryIdList = new ArrayList<>();
                 if(null!=catList&&catList.size()>0){
-                    categoryId =catList.get(0).get("$id");
+//                    categoryId =catList.get(0).get("$id");
+                    for(Map<String,String> tempCategoryMap:catList){
+                        categoryIdList.add(tempCategoryMap.get("$id"));
+                    }
                 }else{
                     continue;
                 }
 
-                spu.setCategoryId(categoryId);
+                spu.setCategoryId(categoryIdList.get(0));
 
-                spu.setCategoryName(StringUtil.getCategoryNameByID(categoryId, categoriesJson));
+                spu.setCategoryName(StringUtil.getCategoryNameByID(categoryIdList, categoryMap));
 
                 //spu.setSpuName(item.getTitle_en());
                 spu.setSeasonId(item.getSeason());
