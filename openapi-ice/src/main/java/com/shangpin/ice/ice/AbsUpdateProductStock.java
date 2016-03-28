@@ -164,10 +164,16 @@ public abstract class AbsUpdateProductStock {
 
 		Date date  = new Date();
 		while(hasNext){
+			long startDate = System.currentTimeMillis();
+
 			List<SopProductSkuIce> skus = null;
 			try {
+
 				SopProductSkuPageQuery query = new SopProductSkuPageQuery(start,end,pageIndex,pageSize);
 				SopProductSkuPage products = servant.FindCommodityInfoPage(supplier, query);
+				logger.warn("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
+				loggerInfo.info("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
+
 				skus = products.SopProductSkuIces;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -184,7 +190,10 @@ public abstract class AbsUpdateProductStock {
 						skuRelationDTO.setSopSkuId(ice.SkuNo);
 						skuRelationDTO.setCreateTime(date);
 						try {
-							skuRelationService.saveSkuRelateion(skuRelationDTO);
+							long startDateSave = System.currentTimeMillis();
+                            skuRelationService.saveSkuRelateion(skuRelationDTO);
+							logger.warn("保存SKU对应关系耗时 " + (System.currentTimeMillis() - startDate));
+							loggerInfo.info("保存SKU对应关系耗时 " + (System.currentTimeMillis() - startDate));
 						} catch (ServiceException e) {
 						    logger.error(skuRelationDTO.toString() + "保存失败");
 						}
@@ -228,6 +237,9 @@ public abstract class AbsUpdateProductStock {
 		final Map<String,String> localAndIceSku=new HashMap<String, String>();
 		final Map<String,String> sopSkuAndSupplierSku =new HashMap<>();
 		final Collection<String> skuNoSet=grabProduct(supplier, start, end,localAndIceSku);
+		if(skuNoSet.size()==0){
+
+		}
 		loggerInfo.info("sku总数："+skuNoSet.size());
 		//logger.warn("需要更新ice,supplier sku关系是："+JSON.serialize(localAndIceSku));
 		final List<Integer> totoalFailCnt=Collections.synchronizedList(new ArrayList<Integer>());
