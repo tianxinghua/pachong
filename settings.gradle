@@ -35,9 +35,12 @@ include 'spinnaker-order'
 
 
 
-include 'tony-day-stock'
-include 'tony'
-include 'tony-purchase'
-include 'log-template'
 
+include 'tony'
+
+include 'log-template'
+include 'theclutcher-stock'
+include 'reebonzWiki-order'
+
+include 'deliberti-purchase'
 

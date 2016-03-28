@@ -3,6 +3,10 @@ package com.shangpin.iog.tony.common;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by wangyuzhi on 2015/9/10.
  */
@@ -14,10 +18,7 @@ public class StringUtil {
      */
     public static void main(String[] args) {
 
-        String id = "\"561ddae32ec771f6c9f23bf6\"}";
-        //System.out.println(localFile);
-        System.out.println("00000000000000000000000000000");
-        System.out.println(StringUtil.getSkuID(id));
+
     }
 
 
@@ -104,24 +105,36 @@ public class StringUtil {
     /**
      *get tony Category Name by id
      */
-    public static String getCategoryNameByID(String categoryId,String categoryJson){
-
+    public static String getCategoryNameByID(List<String> categoryIdList, Map<String,String> categoryMap){
     	try{
-    		
-    		JSONObject jsonObj = JSONObject.fromObject(categoryJson);
-        	JSONArray arr = jsonObj.getJSONObject("data").getJSONArray("categories");
-        	for(int i=0;i<arr.size();i++){
-        		JSONObject object = arr.getJSONObject(i);
-        		if(categoryId.equals(object.getJSONObject("_id").getString("$id"))){
-        			return  object.getString("name");    			
-        		}
-        	}
-    		
+            String categoryName ="";
+            for(String categoryId:categoryIdList){
+                categoryName = categoryName+ categoryMap.get(categoryId)+"-";
+            }
+            return categoryName.substring(0,categoryName.length()-1);
     	}catch(Exception ec){
     		ec.printStackTrace();
     	}
     	
     	return "";
+    }
+
+    public static Map<String,String> getCategoryMap(String categoryJson){
+        Map<String,String> categoryMap  = new HashMap<String,String>();
+        try{
+
+            JSONObject jsonObj = JSONObject.fromObject(categoryJson);
+            JSONArray arr = jsonObj.getJSONObject("data").getJSONArray("categories");
+            for(int i=0;i<arr.size();i++){
+                JSONObject object = arr.getJSONObject(i);
+                categoryMap.put(object.getJSONObject("_id").getString("$id"),object.getString("name"));
+            }
+
+        }catch(Exception ec){
+            ec.printStackTrace();
+        }
+
+        return categoryMap;
     }
 
 
