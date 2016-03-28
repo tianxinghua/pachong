@@ -16,19 +16,20 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.biffi.dto.Detail;
 import com.shangpin.iog.biffi.dto.Item;
 import com.shangpin.iog.biffi.dto.Items;
+import com.shangpin.iog.biffi.schedule.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 
 @Component("biffi")
 public class UpdateStock extends AbsUpdateProductStock{
 
 	private static Logger logInfo = Logger.getLogger("info");
-	private static Logger logError = Logger.getLogger("error");
+	private static LoggerUtil logError = LoggerUtil.getLogger("error");
 	private static Logger logMongoDB = Logger.getLogger("MongoDB");
 	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000 * 60,
 			1000 * 60 * 5, 1000 * 60 * 5);
@@ -65,8 +66,7 @@ public class UpdateStock extends AbsUpdateProductStock{
 						for(Detail de :dets){
 							try{								
 								stockMap.put(de.getBarcode(), de.getQty());
-							}catch(Exception e){
-								logError.error(e);
+							}catch(Exception e){								
 								e.printStackTrace();
 							}						
 						}
@@ -107,20 +107,7 @@ public class UpdateStock extends AbsUpdateProductStock{
 	public static void main(String[] args) {
 
 		loadSpringContext();
-		UpdateStock grabStockImp = (UpdateStock)factory.getBean("biffi");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		logInfo.info("biffi更新数据库开始 start");
-		System.out.println("biffi更新数据库开始");
-		try {
-			grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
-					format.format(new Date()));
-		} catch (Exception e) {
-			logError.error(e.getMessage());
-			e.printStackTrace();
-		}
-		logInfo.info("biffi更新数据库结束");
-		System.out.println("biffi更新数据库结束 over");
-		System.exit(0);
+		
 		
 	}
 

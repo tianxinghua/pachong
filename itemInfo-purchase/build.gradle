@@ -5,7 +5,7 @@ dependencies {
             project(':project-common'),
             project(':openapi-ice'),
             project(':iog-common-product'),
-            project(':itemInfo')
+            project(':project-dao')            
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }

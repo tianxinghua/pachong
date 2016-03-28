@@ -1,5 +1,6 @@
 package com.shangpin.iog.MengottiOnline.schedule;
 
+import java.util.ResourceBundle;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutionException;
@@ -17,6 +18,14 @@ import com.shangpin.iog.common.utils.logger.LoggerUtil;
 @Component
 public class Murder extends TimerTask{
 	private static LoggerUtil logError = LoggerUtil.getLogger("error");
+	private static ResourceBundle bdl=null;
+	private static int time;
+	static {
+        if(null==bdl)
+         bdl=ResourceBundle.getBundle("conf");
+        time = Integer.valueOf(bdl.getString("time"));
+    }
+	
 	private StockImp stockImp;
 	public void setStockImp(StockImp stockImp) {
 		this.stockImp = stockImp;
@@ -34,7 +43,7 @@ public class Murder extends TimerTask{
 //		Thread t = new Thread(new Worker());
 		Future<?> future = executor.submit(t);
 		try {
-			future.get(1000*60*90, TimeUnit.MILLISECONDS);
+			future.get(time, TimeUnit.MILLISECONDS);
 		} catch (Exception e) {
 			future.cancel(true);
 			logError.error(Thread.currentThread().getName()+"超时销毁");

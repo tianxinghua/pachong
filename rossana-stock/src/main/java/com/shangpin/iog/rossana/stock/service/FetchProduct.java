@@ -15,16 +15,17 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.rossana.stock.dto.Item;
+import com.shangpin.iog.rossana.stock.schedule.AppContext;
 import com.shangpin.iog.rossana.stock.utils.CsvUtil;
 
 @Component("rossanaStock")
 public class FetchProduct extends AbsUpdateProductStock{
 
-	private static Logger logError = Logger.getLogger("error");
+	private static LoggerUtil logError = LoggerUtil.getLogger("error");
 	private static Logger logInfo  = Logger.getLogger("info");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = "";
@@ -43,8 +44,15 @@ public class FetchProduct extends AbsUpdateProductStock{
 		Map<String,String> stockMap = new HashMap<>();
 		
 		OutTimeConfig timeConfig = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
-		String result = HttpUtil45.get(filePath, timeConfig, null);
-		List<Item> items = CsvUtil.readLocalCSV(result, Item.class, ";");
+		String result = "";
+		List<Item> items = null;
+		try{
+			result = HttpUtil45.get(filePath, timeConfig, null);
+			items = CsvUtil.readLocalCSV(result, Item.class, ";");
+		}catch(Exception e){
+			logError.error(e);
+			return skustock;
+		}		
 		for(Item item:items){
 			stockMap.put(item.getSku().replaceAll("\"", ""), 
 							item.getQty_in_stock().replaceAll("\"", ""));
@@ -70,21 +78,21 @@ public class FetchProduct extends AbsUpdateProductStock{
 	public static void main(String[] args) {
 
 		loadSpringContext();
-		FetchProduct fetchProduct = (FetchProduct) factory
-				.getBean("rossanaStock");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		logInfo.info("更新数据库开始");
-		System.out.println("===========更新数据库开始============");
-		try {
-			fetchProduct.updateProductStock(supplierId, "2015-01-01 00:00",
-					format.format(new Date()));
-		} catch (Exception e) {
-			logError.error(e.getMessage());
-			e.printStackTrace();
-		}
-		logInfo.info("更新数据库结束");
-		System.out.println("==========更新数据库结束==========");
-		System.exit(0);
+//		FetchProduct fetchProduct = (FetchProduct) factory
+//				.getBean("rossanaStock");
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//		logInfo.info("更新数据库开始");
+//		System.out.println("===========更新数据库开始============");
+//		try {
+//			fetchProduct.updateProductStock(supplierId, "2015-01-01 00:00",
+//					format.format(new Date()));
+//		} catch (Exception e) {
+//			logError.error(e.getMessage());
+//			e.printStackTrace();
+//		}
+//		logInfo.info("更新数据库结束");
+//		System.out.println("==========更新数据库结束==========");
+//		System.exit(0);
 
 	}
 	

@@ -1,35 +1,20 @@
 package com.shangpin.iog.itemInfo_purchase.service;
 
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.Map.Entry;
+
 import java.util.ResourceBundle;
 
-import javax.mail.MessagingException;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
-import com.shangpin.ice.ice.OrderService;
-import com.shangpin.iog.common.utils.DateTimeUtil;
-import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
-import com.shangpin.iog.itemInfo.utils.SoapXmlUtil;
 
 /**
  * 下订单类，并且完成在线验证

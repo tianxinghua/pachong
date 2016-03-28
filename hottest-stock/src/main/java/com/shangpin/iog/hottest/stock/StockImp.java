@@ -2,9 +2,10 @@ package com.shangpin.iog.hottest.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import com.shangpin.iog.hottest.stock.schedule.AppContext;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -24,7 +25,7 @@ import java.util.*;
 @Component("hotteststock")
 public class StockImp  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
-    private static Logger error = Logger.getLogger("error");
+    private static LoggerUtil error = LoggerUtil.getLogger("error");
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static String url;
@@ -79,7 +80,7 @@ public class StockImp  extends AbsUpdateProductStock {
 			logger.info("maxPage====="+maxPage);
 			page = page+1;
 		}
-		System.out.println(skuMap.toString()); 
+//		System.out.println(skuMap.toString()); 
 		for (String skuno : skuNo) {
             if(skuMap.containsKey(skuno)){
             	returnMap.put(skuno, skuMap.get(skuno));
@@ -94,16 +95,16 @@ public class StockImp  extends AbsUpdateProductStock {
     public static void main(String[] args){
     	//加载spring
         loadSpringContext();
-        StockImp stockImp =(StockImp)factory.getBean("hotteststock");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("hottest更新数据库开始");
-        try {
-			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
-		} catch (Exception e) {
-			logger.info("hottest更新库存数据库出错"+e.toString());
-		}
-        logger.info("hottest更新数据库结束");
-        System.exit(0);
+//        StockImp stockImp =(StockImp)factory.getBean("hotteststock");
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("hottest更新数据库开始");
+//        try {
+//			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+//		} catch (Exception e) {
+//			logger.info("hottest更新库存数据库出错"+e.toString());
+//		}
+//        logger.info("hottest更新数据库结束");
+//        System.exit(0);
     	
 //    	StockImp stock = new StockImp();
 //    	try {

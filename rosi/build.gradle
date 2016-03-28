@@ -7,7 +7,7 @@ dependencies {
 			//"xpp3:xpp3_min:1.1.4c",			
 			"org.jdom:jdom:2.0.2",
             "commons-dbcp:commons-dbcp:1.4",
-            //"net.sourceforge.javacsv:javacsv:2.0",
+            "net.sourceforge.javacsv:javacsv:2.0",
             project(':project-common'),
             project(':iog-common-product'),
     )

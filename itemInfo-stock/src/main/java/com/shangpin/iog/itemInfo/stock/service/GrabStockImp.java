@@ -95,6 +95,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			}catch(Exception e){
 				e.printStackTrace();
 				logError.error("拉取alduca daosta数据失败---" + e.getMessage());
+				return skustock;
 			}
 		}
 //		String filePath = "d:/soapml.xml";

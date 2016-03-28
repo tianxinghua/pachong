@@ -14,17 +14,18 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.rosi.dto.Channel;
 import com.shangpin.iog.rosi.dto.Item;
+import com.shangpin.iog.rosi.schedule.AppContext;
 
 @Component("rosiStock")
 public class GrapStock extends AbsUpdateProductStock {
 
 	private static Logger logger = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
+	private static LoggerUtil logError = LoggerUtil.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
     private static String supplierId = "";
@@ -47,10 +48,17 @@ public class GrapStock extends AbsUpdateProductStock {
 		Map<String, String> skustock = new HashMap<String, String>();
 		Map<String,String> stockMap = new HashMap<String, String>();
 		
-		String result = HttpUtil45.get(uri, outTimeConf, null);
-		result = result.replaceAll("Discounted-price", "Discounted_price");
-		result = result.replaceAll("product-code", "product_code");		
-		Channel channel = XMLUtil.gsonXml2Obj(Channel.class, result);
+		String result  = "";
+		Channel channel = null;
+		try{
+			result = HttpUtil45.get(uri, outTimeConf, null);
+			result = result.replaceAll("Discounted-price", "Discounted_price");
+			result = result.replaceAll("product-code", "product_code");		
+			channel = XMLUtil.gsonXml2Obj(Channel.class, result);
+		}catch(Exception e){
+			logError.error(e);
+			return skustock;
+		}		
 		if(channel != null && channel.getItem().size()>0){
 			System.out.println("------------一共"+channel.getItem().size()+"条数据---------------"); 
 			logger.info("------------一共"+channel.getItem().size()+"条数据---------------"); 
@@ -81,20 +89,20 @@ public class GrapStock extends AbsUpdateProductStock {
 	public static void main(String[] args) {
 
 		loadSpringContext();
-		GrapStock grabStockImp = (GrapStock)factory.getBean("rosiStock");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		logger.info("-----rosiStock update stock start-------");
-		System.out.println("-----rosiStock update stock start-------");
-		try {
-			grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
-					format.format(new Date()));
-		} catch (Exception e) {
-			loggerError.error(e.getMessage());
-			e.printStackTrace();
-		}
-		logger.info("-----rosiStock update stock end-------");
-		System.out.println("-----rosiStock update stock end-------");
-		System.exit(0);
+//		GrapStock grabStockImp = (GrapStock)factory.getBean("rosiStock");
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//		logger.info("-----rosiStock update stock start-------");
+//		System.out.println("-----rosiStock update stock start-------");
+//		try {
+//			grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
+//					format.format(new Date()));
+//		} catch (Exception e) {
+//			logError.error(e.getMessage());
+//			e.printStackTrace();
+//		}
+//		logger.info("-----rosiStock update stock end-------");
+//		System.out.println("-----rosiStock update stock end-------");
+//		System.exit(0);
 //		try{
 //			GrapStock grabStockImp = new GrapStock();
 //			grabStockImp.grabStock(null);

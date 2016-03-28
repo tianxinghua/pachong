@@ -3,12 +3,12 @@ package com.shangpin.iog.magway.stock;
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.magway.dto.GoodsStock;
 import com.shangpin.iog.magway.dto.Token;
+import com.shangpin.iog.magway.schedule.AppContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -123,16 +123,16 @@ public class StockImp  extends AbsUpdateProductStock {
     public static void main(String[] args) throws Exception {
     	//加载spring
         loadSpringContext();
-        StockImp stockImp =(StockImp)factory.getBean("magwaystock");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("magway更新数据库开始");
-        try {
-			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
-		} catch (Exception e) {
-			logger.info("magway更新库存数据库出错"+e.toString());
-		}
-        logger.info("magway更新数据库结束");
-        System.exit(0);
+//        StockImp stockImp =(StockImp)factory.getBean("magwaystock");
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("magway更新数据库开始");
+//        try {
+//			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+//		} catch (Exception e) {
+//			logger.info("magway更新库存数据库出错"+e.toString());
+//		}
+//        logger.info("magway更新数据库结束");
+//        System.exit(0);
     	
     }
 }

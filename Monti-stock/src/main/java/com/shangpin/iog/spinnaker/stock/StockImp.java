@@ -4,17 +4,16 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.spinnaker.stock.dto.Quantity;
+import com.shangpin.iog.spinnaker.stock.schedule.AppContext;
+
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
-
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -24,7 +23,7 @@ import java.util.*;
 public class StockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
+    private static LoggerUtil logError = LoggerUtil.getLogger("error");
     
     private static ApplicationContext factory;
     private static void loadSpringContext()
@@ -67,7 +66,7 @@ public class StockImp extends AbsUpdateProductStock {
                 json = HttpUtil45.get(url, outTimeConfig, null);
             } catch (Exception e) {
                 stock_map.put(skuno, "0");  //读取失败的时候赋值为0
-                loggerError.error("拉取失败 "+e.getMessage());
+                logError.error("拉取失败 "+e.getMessage());
                 e.printStackTrace();
                 continue;
             }
@@ -101,20 +100,20 @@ public class StockImp extends AbsUpdateProductStock {
     	//加载spring
         loadSpringContext();
         //拉取数据
-        StockImp stockImp =(StockImp)factory.getBean("monti");
-        
-//        AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
-        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("monti更新数据库开始");
-        try {
-            stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
-        } catch (Exception e) {
-            loggerError.error("monti更新库存失败."+e.getMessage());
-            e.printStackTrace();
-        }
-        logger.info("monti更新数据库结束");
-        System.exit(0);
+//        StockImp stockImp =(StockImp)factory.getBean("monti");
+//        
+////        AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
+//        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("monti更新数据库开始");
+//        try {
+//            stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+//        } catch (Exception e) {
+//        	logError.error("monti更新库存失败."+e.getMessage());
+//            e.printStackTrace();
+//        }
+//        logger.info("monti更新数据库结束");
+//        System.exit(0);
     	
 //    	try{
 //    		List<String> skuNo = new ArrayList<String>();

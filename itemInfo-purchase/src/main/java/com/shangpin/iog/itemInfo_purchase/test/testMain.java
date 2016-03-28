@@ -1,6 +1,7 @@
 package com.shangpin.iog.itemInfo_purchase.test;
 
-import com.shangpin.iog.itemInfo.utils.SoapXmlUtil;
+import com.shangpin.iog.itemInfo_purchase.service.SoapXmlUtil;
+
 
 public class testMain {
 

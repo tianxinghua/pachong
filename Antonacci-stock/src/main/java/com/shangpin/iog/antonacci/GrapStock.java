@@ -17,7 +17,7 @@ import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.antonacci.dto.Product;
 import com.shangpin.iog.antonacci.dto.Products;
 import com.shangpin.iog.antonacci.dto.Size;
-import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.antonacci.schedule.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -93,20 +93,20 @@ public class GrapStock extends AbsUpdateProductStock{
 	public static void main(String[] args) {
 
 		loadSpringContext();
-		GrapStock grabStockImp = (GrapStock)factory.getBean("antonacci");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		logInfo.info("antonacci更新数据库开始 start");
-		System.out.println("antonacci更新数据库开始");
-		try {
-			grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
-					format.format(new Date()));
-		} catch (Exception e) {
-			logError.error(e.getMessage());
-			e.printStackTrace();
-		}
-		logInfo.info("antonacci更新数据库结束");
-		System.out.println("antonacci更新数据库结束 over");
-		System.exit(0);
+//		GrapStock grabStockImp = (GrapStock)factory.getBean("antonacci");
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//		logInfo.info("antonacci更新数据库开始 start");
+//		System.out.println("antonacci更新数据库开始");
+//		try {
+//			grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
+//					format.format(new Date()));
+//		} catch (Exception e) {
+//			logError.error(e.getMessage());
+//			e.printStackTrace();
+//		}
+//		logInfo.info("antonacci更新数据库结束");
+//		System.out.println("antonacci更新数据库结束 over");
+//		System.exit(0);
 		
 	}
 

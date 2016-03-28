@@ -1,9 +1,6 @@
 dependencies {
     compile(
-            "org.mybatis:mybatis:3.2.2",
-            "org.mybatis:mybatis-spring:1.2.0",
-            "mysql:mysql-connector-java:5.1.21",
-            "commons-dbcp:commons-dbcp:1.4",
+            
             "net.sourceforge.javacsv:javacsv:2.0",
             project(':iog-common-product'),
             project(':openapi-ice'),
@@ -15,20 +12,20 @@ dependencies {
 
 jar {
 
-    dependsOn copyToLib , copyResources
+    dependsOn copyToLib , copyResources,dependsClassPath
     exclude ("**/*.properties")
 
-    def manifestCp = configurations.compile.files.collect  {
-
-        File file = it
-        "lib/${file.name}"
-    }.join(' ')
+//    def manifestCp = configurations.compile.files.collect  {
+//
+  //      File file = it
+    //    "lib/${file.name}"
+//    }.join(' ')
 
 
 
     manifest {
         attributes 'Main-Class': 'com.shangpin.iog.mengotti.GrapStock'
 
-        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+  //      attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }
