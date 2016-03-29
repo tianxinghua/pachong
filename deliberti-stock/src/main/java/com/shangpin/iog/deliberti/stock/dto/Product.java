@@ -1,4 +1,4 @@
-package com.shangpin.iog.deliberti.stock;
+package com.shangpin.iog.deliberti.stock.dto;
 
 import lombok.Getter;
 import lombok.Setter;
