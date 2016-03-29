@@ -81,16 +81,17 @@ public class StefanFrameFetchProduct extends AbsSaveProduct{
 		String xml = null;
 		xml = HttpUtil45.get(url,new OutTimeConfig(1000 * 60*60, 1000 * 60*60, 1000 * 60*60),null);
 		ByteArrayInputStream is = null;
+		System.out.println(url);
 		try {
 			is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
 			products = ObjectXMLUtil.xml2Obj(Products.class,is);
+//			products = ObjectXMLUtil.xml2Obj(Products.class, new File("F://StefaniaMode.xml"));
 			if (products.getProducts()!=null&&products.getProducts().size()>0) {
 				productList.addAll(products.getProducts());
 			}
 		} catch (Exception e2) {
 			e2.printStackTrace();
 		}
-		
 		for (Product product : productList) {
 			SpuDTO spu = new SpuDTO();
 

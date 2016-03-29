@@ -1,4 +1,5 @@
-package com.shangpin.iog.filippo.stock.schedule;
+
+package com.shangpin.iog.russoCapri.stock.schedule;
 
 import java.util.ResourceBundle;
 import java.util.TimerTask;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
+
 @Component
 public class Murder extends TimerTask{
 	private static ResourceBundle bdl=null;
@@ -49,3 +51,4 @@ public class Murder extends TimerTask{
 		}
 	}
 }
+

@@ -1,4 +1,5 @@
-package com.shangpin.iog.bagheera.stock.schedule;
+
+package com.shangpin.iog.tiziana.stock.schedule;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,8 +8,8 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.bagheera.stock.StockClientImp;
 
 @Component
 public class Worker implements Runnable{
