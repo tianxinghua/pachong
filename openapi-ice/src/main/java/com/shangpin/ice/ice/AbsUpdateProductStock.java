@@ -457,11 +457,24 @@ public abstract class AbsUpdateProductStock {
 				supplierStock = grabStock(skuNos);
 				if(supplierStock.size()==0){
 					loggerError.error("获取库存信息是发生异常，程序退出");
-					System.exit(0);
+					return iceStock;
+				}else{//判断supplierStock的值是否全为0
+					boolean isNUll = true;
+					for (Map.Entry<String, String> entry : supplierStock
+							.entrySet()) {
+						if(org.apache.commons.lang.StringUtils.isNotBlank(entry.getValue())){
+							isNUll = false;
+							break;
+						}
+					}
+					
+					if(isNUll){
+						return iceStock;
+					}
 				}
 			} catch (Exception e) {    //获取库存信息时失败 直接退出
 				loggerError.error("获取库存信息是发生异常，程序退出");
-				System.exit(0);
+				return iceStock;
 			}
 
 			int stockResult=0;
