@@ -39,7 +39,7 @@ public class StockImp extends AbsUpdateProductStock {
 	EventProductService eventProductService;
     private static ResourceBundle bdl=null;
     private static String supplierId;
-    private static Map<String,String> qtyMap = null;
+  
     static {
         if(null==bdl)
          bdl=ResourceBundle.getBundle("conf");
@@ -49,15 +49,19 @@ public class StockImp extends AbsUpdateProductStock {
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //get tony return date
-    	
+        Map<String,String> qtyMap = null;
+    	qtyMap = SoapUtil.getProductStockList();
     	Map<String,String> stockMap = new HashMap<String,String>();
-        for (String skuno : skuNo) {
-        	if(qtyMap.containsKey(skuno)){
-        		stockMap.put(skuno,qtyMap.get(skuno));
-        	}else{
-        		stockMap.put(skuno,"0");
-        	}
-        }
+    	if(!qtyMap.isEmpty()){
+            for (String skuno : skuNo) {
+            	if(qtyMap.containsKey(skuno)){
+            		stockMap.put(skuno,qtyMap.get(skuno));
+            	}else{
+            		stockMap.put(skuno,"0");
+            	}
+            }
+    	}
+    	
         return stockMap;
     }
 
@@ -70,7 +74,6 @@ public class StockImp extends AbsUpdateProductStock {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("biondini更新库存开始");
         System.out.println("biondini更新库存开始");
-        qtyMap = SoapUtil.getProductStockList();
         try {
 			stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
 		} catch (Exception e) {
