@@ -133,13 +133,18 @@ public class PullSku {
     			                spu.setCategoryGender("male");
     			                spu.setProductOrigin(item.getOrigin());
     			                String description = item.getDescription();
-    			                String temp = "This is a";
-    			                int aaa = "Spring/Summer 2016 ".length();    			                
-    			                description = description.substring(description.indexOf(temp)+temp.length()).trim();
-    			                if(description.length()>aaa){
-    			                	description = description.substring(0, aaa);
+    			                try{
+    			                	String temp = "Spring/Summer 2016";   
+        			                description = description.substring(description.indexOf(temp),description.indexOf(temp)+temp.length()).trim();
+        			                spu.setSeasonName(description);
+    			                }catch(Exception e){
+    			                	e.printStackTrace();
     			                }
-    			                spu.setSeasonName(description);
+    			                
+//    			                if(description.length()>aaa){
+//    			                	description = description.substring(0, aaa);
+//    			                }
+    			                
     			                try {
     			                    productFetchService.saveSPU(spu);
     			                } catch (ServiceException e) {

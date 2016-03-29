@@ -8,7 +8,7 @@ dependencies {
 			"org.jdom:jdom:2.0.2",
             "commons-dbcp:commons-dbcp:1.4",
             //"net.sourceforge.javacsv:javacsv:2.0",
-            project(':project-common'),
+            project(':iog-common-product'),
             project(':openapi-ice')
     )
     compile 'com.stanfy:gson-xml-java:0.1.+'

@@ -6,7 +6,7 @@
 dependencies {
     compile(
             "com.google.code.gson:gson:2.3.1",
-            project(':project-common'),
+            project(':iog-common-product'),
             project(':openapi-ice')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'

@@ -260,13 +260,17 @@ public abstract class AbsUpdateProductStock {
 			for(int k=0;k<totoalFailCnt.size();k++){
 				fct+=totoalFailCnt.get(k);
 			}
-			this.updateStockTime(supplier);
+			if(fct>0){//待更新的库存不为0，则更新时间
+				this.updateStockTime(supplier);
+			}			
 			return fct;
 		}else{
 			Map<String,String> sopPriceMap = new HashMap<>();
 			int i= updateStock(supplier, localAndIceSku, skuNoSet,sopPriceMap);
-
-			this.updateStockTime(supplier);
+			if(i>0){//待更新的库存不为0，则更新时间
+				this.updateStockTime(supplier);
+			}
+			
 			return i;
 		}
 	}
@@ -341,6 +345,11 @@ public abstract class AbsUpdateProductStock {
 	 */
 	private int updateIceStock(String supplier, Map<String, Integer> iceStock,Map<String,String> sopPriceMap)
 			throws Exception {
+		
+		if(iceStock.size() ==0){//待更新的库存为0，直接返回-1
+			return -1;
+		}
+		
 		OpenApiServantPrx servant = null;
 		try {
 			servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
@@ -462,13 +471,13 @@ public abstract class AbsUpdateProductStock {
 					boolean isNUll = true;
 					for (Map.Entry<String, String> entry : supplierStock
 							.entrySet()) {
-						if(org.apache.commons.lang.StringUtils.isNotBlank(entry.getValue())){
+						if(org.apache.commons.lang.StringUtils.isNotBlank(entry.getValue()) && !"0".equals(entry.getValue())){
 							isNUll = false;
 							break;
 						}
 					}
 					
-					if(isNUll){
+					if(isNUll){//supplierStock的值全为0,则返回空的map
 						return iceStock;
 					}
 				}
