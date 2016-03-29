@@ -4,6 +4,7 @@ import java.util.ResourceBundle;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -28,16 +29,18 @@ public class Murder extends TimerTask{
 		this.stockImp = stockImp;
 	}
 	
-	private static Murder murder = new Murder();
+	private static Murder murder = new Murder(); 
 	private Murder(){};
 	public static Murder getMur(){
 		return murder;
 	}
 	
-	private static ExecutorService executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
+//	private static ExecutorService executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
+	private static ExecutorService executor =Executors.newCachedThreadPool(); 
 	@Override
 	public void run() {
 		System.out.println(Thread.currentThread().getName()+"执行murder");
+		System.out.println(executor.toString());
 		Thread t = new Thread(new Worker(stockImp));
 		Future<?> future = executor.submit(t);
 		try {

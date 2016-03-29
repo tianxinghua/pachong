@@ -1,4 +1,4 @@
-package com.shangpin.iog.atelier-paolo.stock;
+package com.shangpin.iog.paolo.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * Created by houkun on 2015/9/14.
  */
-@Component("atelier-paolostock")
+@Component("atelierpaolo")
 public class StockImp  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static ResourceBundle bdl=null;
@@ -37,42 +37,61 @@ public class StockImp  extends AbsUpdateProductStock {
     }
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-    	
-    	//获取库存元数据
     	Map<String,String> skuMap = new HashMap<String,String>();
-
+    	String data = "";
+    	OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600);
+    	String skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace", null, outTimeConfig, "shangpin", "fiorillo1003");
+		String[] skuStrings = skuData.split("\\r\\n");
+		logger.info("待更新库存+++"+skuNo.size()+"读取库存+++"+skuStrings.length);
+		for (int i = 1; i < skuStrings.length; i++) {
+			if (StringUtils.isNotBlank(skuStrings[i])) {
+			
+				if (i==1) {
+				  data =  skuStrings[i].split("\\n")[1];
+				}else {
+				  data = skuStrings[i];
+				}
+				String[] skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+    			String stock = skuArr[2];
+    			String barCode = skuArr[5];
+    			skuMap.put(skuArr[0]+"-"+barCode, stock);
+			}
+		}
         Map<String,String> returnMap = new HashMap<String,String>();
         Iterator<String> iterator=skuNo.iterator();
         //为供应商循环赋值
         logger.info("循环赋值");
         String skuId = "";
         String stock = "0";
+        int num = 0;
         while (iterator.hasNext()){
         	skuId = iterator.next();
         	if (StringUtils.isNotBlank(skuId)) {
         		if (skuMap.containsKey(skuId)) {
         			stock = skuMap.get(skuId);
         			returnMap.put(skuId, stock);
+        			num++;
 				}else{
 					returnMap.put(skuId, "0");
 				}
 			}
         }
+        logger.info("元数据包含的有"+num);
         return returnMap;
     }
 
     public static void main(String[] args) throws Exception {
     	//加载spring
         loadSpringContext();
-        StockImp stockImp =(StockImp)factory.getBean("atelier-paolostock");
+        StockImp stockImp =(StockImp)factory.getBean("atelierpaolo");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("atelier-paolo更新数据库开始");
+        logger.info("russoCapri ATELIER更新数据库开始");
         try {
 			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
 		} catch (Exception e) {
-			logger.info("atelier-paolo更新库存数据库出错"+e.toString());
+			logger.info("russoCapri ATELIER更新库存数据库出错"+e.toString());
 		}
-        logger.info("atelier-paolo更新数据库结束");
+        logger.info("russoCapri ATELIER更新数据库结束");
         System.exit(0);
     }
 }

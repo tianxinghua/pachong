@@ -533,7 +533,7 @@ public class WS_Sito_P15 {
         
         System.out.println("开始获取数据");
 //        String post = HttpUtil45.post("http://79.62.242.6:8088/ws_sito/ws_sito_p15.asmx/GetAllItemsMarketplace", new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
-        String post = HttpUtil45.postAuth("http://79.62.242.6:8088/ws_sito/ws_sito_p15.asmx/GetAllItemsMarketplace", null, new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120), "shangpin", "Daniello0203");
+        String post = HttpUtil45.postAuth("http://95.227.147.192/WS_SITO/WS_SITO_P15.ASMX/GetAllAvailabilityMarketplace", null, new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120), "shangpin", "Daniello0203");
         //        param.put("CODICE", "1066239979");
 //        param.put("ID_CLIENTE", "1066239979");
 //        param.put("ID_STATUS", "1");

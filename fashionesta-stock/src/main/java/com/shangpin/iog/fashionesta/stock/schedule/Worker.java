@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.iog.fashionesta.stock.StockClientImp;
+import com.shangpin.ice.ice.AbsUpdateProductStock;
 
 
 @Component
@@ -20,9 +20,9 @@ public class Worker implements Runnable{
          bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
     }
-	private StockClientImp stockImp;
+	private AbsUpdateProductStock stockImp;
 	public Worker(){};
-	public Worker(StockClientImp stockImp) {
+	public Worker(AbsUpdateProductStock stockImp) {
 		this.stockImp = stockImp;
 	}
 	@Override
