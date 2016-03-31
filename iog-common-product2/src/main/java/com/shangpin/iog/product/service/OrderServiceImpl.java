@@ -323,6 +323,24 @@ public class OrderServiceImpl implements OrderService {
 	     return orderDAO.findBySupplierIdAndOrderStatusAndDateAndExcSatus(supplierId,status,excState,date,interval);
 	}
 
+	@Override
+	public boolean selectOrderUpdateBySupplier(String supplierId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void updateSupplierOrderTime(String supplierId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void saveSupplierOrderTime(String supplierId) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 
 }

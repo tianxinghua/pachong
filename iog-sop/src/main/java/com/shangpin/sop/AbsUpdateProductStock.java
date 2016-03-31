@@ -236,7 +236,7 @@ public abstract class AbsUpdateProductStock {
 			for(int k=0;k<totoalFailCnt.size();k++){
 				fct+=totoalFailCnt.get(k);
 			}
-			if(fct>0){//如果待更新的数据不为0，则更新时间
+			if(fct>=0){//如果待更新的数据不为0，则更新时间
 				this.updateStockTime(app_key);
 			}			
 			
@@ -334,8 +334,9 @@ public abstract class AbsUpdateProductStock {
 			 {
 		Map<String, Integer> iceStock = grab4Icestock(host,app_key,app_secret,skuNoSet,localAndIceSkuId);
 		int failCount = updateIceStock(host,app_key,app_secret, iceStock);
-
-		this.updateStockTime(app_key);
+		if(failCount>=0){//更新库存失败数大于等于0时，更新时间
+			this.updateStockTime(app_key);
+		}		
 		return failCount;
 	}
 	/**

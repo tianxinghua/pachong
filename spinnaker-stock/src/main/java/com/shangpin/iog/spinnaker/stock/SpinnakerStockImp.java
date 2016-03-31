@@ -4,11 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.spinnaker.stock.dto.Quantity;
+import com.shangpin.iog.spinnaker.stock.schedule.AppContext;
+
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -67,7 +68,7 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
                 json = HttpUtil45.get(url, outTimeConfig, null);
             } catch (Exception e) {
                 stock_map.put(skuno, "0");  //读取失败的时候赋值为0
-                loggerError.error("拉取失败 "+e.getMessage());
+//                loggerError.error("拉取失败 "+e.getMessage());
                 e.printStackTrace();
                 continue;
             }
@@ -100,20 +101,20 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
     	//加载spring
         loadSpringContext();
         //拉取数据
-        SpinnakerStockImp stockImp =(SpinnakerStockImp)factory.getBean("spinnaker");
-        
-//        AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
-        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("SPINNAKER更新数据库开始");
-        try {
-            stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
-        } catch (Exception e) {
-            loggerError.error("spinnaker更新库存失败."+e.getMessage());
-            e.printStackTrace();
-        }
-        logger.info("SPINNAKER更新数据库结束");
-        System.exit(0);
+//        SpinnakerStockImp stockImp =(SpinnakerStockImp)factory.getBean("spinnaker");
+//        
+////        AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
+//        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("SPINNAKER更新数据库开始");
+//        try {
+//            stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+//        } catch (Exception e) {
+//            loggerError.error("spinnaker更新库存失败."+e.getMessage());
+//            e.printStackTrace();
+//        }
+//        logger.info("SPINNAKER更新数据库结束");
+//        System.exit(0);
 
     }
 
