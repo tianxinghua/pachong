@@ -134,8 +134,9 @@ public class PullSku {
     			                spu.setProductOrigin(item.getOrigin());
     			                String description = item.getDescription();
     			                try{
+    			                	String str = "This is a ";
     			                	String temp = "Spring/Summer 2016";   
-        			                description = description.substring(description.indexOf(temp),description.indexOf(temp)+temp.length()).trim();
+        			                description = description.substring(description.indexOf(str)+str.length(),description.indexOf(str)+str.length()+temp.length()).trim();
         			                spu.setSeasonName(description);
     			                }catch(Exception e){
     			                	e.printStackTrace();
