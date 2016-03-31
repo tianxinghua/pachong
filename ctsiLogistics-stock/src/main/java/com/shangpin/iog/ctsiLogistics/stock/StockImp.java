@@ -25,7 +25,7 @@ import com.shangpin.iog.service.EventProductService;
 /**
  * Created by Administrator on 2015/7/8.
  */
-@Component("inviqa")
+@Component("ctsiLogistics")
 public class StockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
@@ -71,18 +71,18 @@ public class StockImp extends AbsUpdateProductStock {
     	//加载spring
         loadSpringContext();
         //拉取数据
-        StockImp stockImp =(StockImp)factory.getBean("inviqa");
+        StockImp stockImp =(StockImp)factory.getBean("ctsiLogistics");
         stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("inviqa更新库存开始");
-        System.out.println("inviqa更新库存开始");
+        logger.info("ctsiLogistics更新库存开始");
+        System.out.println("ctsiLogistics更新库存开始");
         try {
 			stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        logger.info("inviqa更新库存结束");
-        System.out.println("inviqa更新库存结束");
+        logger.info("ctsiLogistics更新库存结束");
+        System.out.println("ctsiLogistics更新库存结束");
         System.exit(0);
     }
 }

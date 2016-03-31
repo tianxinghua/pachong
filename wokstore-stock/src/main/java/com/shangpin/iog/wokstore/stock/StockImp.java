@@ -8,7 +8,6 @@ import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.wokstore.stock.dto.Quantity;
-
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -116,20 +115,20 @@ public class StockImp extends AbsUpdateProductStock {
     public static void main(String[] args) throws Exception {
     	//加载spring
         loadSpringContext();
-        StockImp stockImp = (StockImp)factory.getBean("wokstore");
-        //AbsUpdateProductStock grabStockImp = new StockImp();
-        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("wokstore更新数据库开始");
-        try {
-        	stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
-		} catch (Exception e) {
-			loggerError.error("wokstore更新数据库失败"+e.getMessage());
-			e.printStackTrace();
-		}
-        logger.info("wokstore更新数据库结束");
-        System.exit(0);
-
+//        StockImp stockImp = (StockImp)factory.getBean("wokstore");
+//        //AbsUpdateProductStock grabStockImp = new StockImp();
+//        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("wokstore更新数据库开始");
+//        try {
+//        	stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+//		} catch (Exception e) {
+//			loggerError.error("wokstore更新数据库失败"+e.getMessage());
+//			e.printStackTrace();
+//		}
+//        logger.info("wokstore更新数据库结束");
+//        System.exit(0);
+//
     }
 
 }

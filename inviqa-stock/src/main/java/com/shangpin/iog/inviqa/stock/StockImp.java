@@ -15,11 +15,20 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Response;
+import com.github.scribejava.core.model.Token;
+import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.oauth.OAuthService;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import com.shangpin.iog.inviqa.dto.API;
 import com.shangpin.iog.inviqa.dto.Stock;
-import com.shangpin.iog.inviqa.util.MyJsonUtil;
 import com.shangpin.iog.service.EventProductService;
 
 /**
@@ -27,11 +36,16 @@ import com.shangpin.iog.service.EventProductService;
  */
 @Component("inviqa")
 public class StockImp extends AbsUpdateProductStock {
-
-    private static Logger logger = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
     
+    final static String MAGENTO_API_KEY = "4myf74kunqjzxilv5rcp4a10mt80jza9";
+	final static String MAGENTO_API_SECRET = "39c7316hejadp5p7zkc4lku1dw8231g3";
+    private static Logger logger = Logger.getLogger("info");
     private static ApplicationContext factory;
+    private static String token = null;
+    private static String secret = null;
+	private int sum = 0;
+	private int excSum = 0;
+	private int j = 0,tempPage=0;
     private static void loadSpringContext()
     {
 
@@ -45,19 +59,90 @@ public class StockImp extends AbsUpdateProductStock {
     static {
         if(null==bdl)
          bdl=ResourceBundle.getBundle("conf");
+        
         supplierId = bdl.getString("supplierId");
+        
+        token = bdl.getString("token");
+		secret = bdl.getString("secret");
     }
-   
+    private int i = 1;
+    private Map<String,String> map = new HashMap<String,String>();
+    public  void getStockMap(List<Stock> allStockList) {
+    	
+    	for(Stock stock : allStockList){
+    		map.put(stock.getSkuId(),stock.getStock());
+    	}
+	}
+    public  void getStockList() {
+		String stock = null;
+		try{
+			OAuthService service = new ServiceBuilder().provider(API.class)
+					.apiKey(MAGENTO_API_KEY).apiSecret(MAGENTO_API_SECRET).build();
+			Token accessToken = new Token(token,secret);
+			getProductStock(service,accessToken,1);
+		}catch(Exception e){
+			stock="0";
+		}
+	}
+    public   void getProductStock(OAuthService service,Token accessToken,int page){
+		//https://glamorous-uat.phplab.co.uk/api/rest
+		try{
+			OAuthRequest request = new OAuthRequest(Verb.GET,
+					"http://glamorous-staging.space48.com/api/rest/shangpin/stock?limit=100&page="+page,
+					service);
+			service.signRequest(accessToken, request);
+			Response response = request.send();
+			String json = response.getBody();
+			if(!json.isEmpty()){
+				List<Stock> retList = new Gson().fromJson(json,  
+		                new TypeToken<List<Stock>>() {  
+		                }.getType());  
+				logger.info("拉取的数量："+retList.size());
+				System.out.println("拉取的数量："+retList.size());
+				j=0;
+				if(retList.size()==100){
+					getStockMap(retList);
+					page++;
+					sum += 100;
+					System.out.println("已拉取的数量："+sum);
+					logger.info("已拉取的数量："+sum);
+					getProductStock(service,accessToken,page);
+				}else{
+					getStockMap(retList);
+				}
+			}
+		}catch(Exception ex){
+			excSum+=1;
+			tempPage = page;
+			if(tempPage==page){
+				j++;
+			}
+			logger.info("第"+excSum+"次发生异常,异常原因："+ex.getMessage());
+			System.out.println("第"+excSum+"次发生异常,异常原因："+ex.getMessage());
+			getProductStock(service,accessToken,page);
+			if(j==3){
+				ex.printStackTrace();
+			}
+		}
+		
+	}
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //get tony return date
         //定义三方
-//    	List<Stock> list = MyJsonUtil.getStockList();
     	Map<String,String> stockMap = new HashMap<>();
+    	getStockList();
+    	System.out.println("11=========================");
+    	System.out.println(map.size());
         for (String skuno : skuNo) {
-        	String stock = MyJsonUtil.getStockList(skuno);
-        	if(stock!=null){
-        		stockMap.put(skuno,stock);
+        	
+        	if(map.get(skuno)!=null){
+        		String value = map.get(skuno);
+        		int stock = Integer.parseInt(value);
+        		if(stock<0){
+        			stock=0;
+        		}
+        		stockMap.put(skuno,String.valueOf(stock));
         	}else{
         		stockMap.put(skuno,"0");
         	}
@@ -71,7 +156,8 @@ public class StockImp extends AbsUpdateProductStock {
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("inviqa");
-        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
+//        stockImp.getStockList();
+//        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("inviqa更新库存开始");
         System.out.println("inviqa更新库存开始");

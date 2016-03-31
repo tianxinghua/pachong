@@ -1,4 +1,4 @@
-package com.shangpin.iog.deliberti.stock;
+package com.shangpin.iog.deliberti.stock.utils;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
