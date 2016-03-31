@@ -131,9 +131,18 @@ public class StockImp extends AbsUpdateProductStock {
         //get tony return date
         //定义三方
     	Map<String,String> stockMap = new HashMap<>();
+    	getStockList();
+    	System.out.println("11=========================");
+    	System.out.println(map.size());
         for (String skuno : skuNo) {
+        	
         	if(map.get(skuno)!=null){
-        		stockMap.put(skuno,map.get(skuno));
+        		String value = map.get(skuno);
+        		int stock = Integer.parseInt(value);
+        		if(stock<0){
+        			stock=0;
+        		}
+        		stockMap.put(skuno,String.valueOf(stock));
         	}else{
         		stockMap.put(skuno,"0");
         	}
