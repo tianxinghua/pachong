@@ -67,13 +67,13 @@ public class FetchProduct {
 			if(null != items && items.size()>0){
 				for(Item item:items){
 					try{
-						String spu_id = "";
+						String spu_id = item.getProductModel();
 						String sku_id = item.getSupplierSkuNo();
-						if(sku_id.endsWith("+")){
-							spu_id = sku_id.substring(0, sku_id.length()-2);
-						}else{
-							spu_id = sku_id.substring(0, sku_id.length()-1);
-						}
+//						if(sku_id.endsWith("+")){
+//							spu_id = sku_id.substring(0, sku_id.length()-2);
+//						}else{
+//							spu_id = sku_id.substring(0, sku_id.length()-1);
+//						}
 						SkuDTO sku = new SkuDTO();
 						sku.setId(UUIDGenerator.getUUID());
 						sku.setSupplierId(supplierId);

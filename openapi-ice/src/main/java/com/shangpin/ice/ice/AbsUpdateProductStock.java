@@ -260,14 +260,14 @@ public abstract class AbsUpdateProductStock {
 			for(int k=0;k<totoalFailCnt.size();k++){
 				fct+=totoalFailCnt.get(k);
 			}
-			if(fct>0){//待更新的库存不为0，则更新时间
+			if(fct>=0){//待更新的库存失败数小于0时，不更新
 				this.updateStockTime(supplier);
 			}			
 			return fct;
 		}else{
 			Map<String,String> sopPriceMap = new HashMap<>();
 			int i= updateStock(supplier, localAndIceSku, skuNoSet,sopPriceMap);
-			if(i>0){//待更新的库存不为0，则更新时间
+			if(i>=0){//待更新的库存失败数小于0时，不更新
 				this.updateStockTime(supplier);
 			}
 			
