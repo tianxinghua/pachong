@@ -332,4 +332,23 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void updateSkuListMemo(String supplierId, List<String> idList) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateSpuListMemo(List<SpuDTO> spuList) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<String> saveAndCheckPictureForSteFaniamode(String supplierId,
+			String id, Collection<String> picUrl, String flag) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
