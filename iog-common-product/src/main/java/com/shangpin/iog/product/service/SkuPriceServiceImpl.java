@@ -180,4 +180,15 @@ public class SkuPriceServiceImpl implements SkuPriceService {
 		return newPriceDTO;
 	}
 
+	@Override
+    public List<NewPriceDTO> getNewSkuPriceList(String supplierId){
+      List<NewPriceDTO> skuList = null;
+      try{
+        skuList = skuDAO.findNewPrice(supplierId);
+      }
+      catch (ServiceException e){
+        e.printStackTrace();
+      }
+      return skuList;
+    }
 }

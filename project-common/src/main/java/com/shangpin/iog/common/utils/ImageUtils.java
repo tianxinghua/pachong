@@ -27,6 +27,7 @@ import java.net.URLEncoder;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -34,6 +35,7 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -44,7 +46,7 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
  * @author Administrator
  */
 public class ImageUtils {
-
+	private static Logger loggerInfo = Logger.getLogger("info");
 	/**
      * 几种常见的图片格式
      */
@@ -91,12 +93,11 @@ public class ImageUtils {
 		CloseableHttpClient httpClient = httpClientBuilder.build();
 		HttpClientContext context = HttpClientContext.create();
 		context.setRequestConfig(RequestConfig.custom()
-				.setConnectionRequestTimeout(1000*60*10)
-				.setConnectTimeout(1000*60*10)
-				.setSocketTimeout(1000*60*10)
+				.setConnectionRequestTimeout(1000*60*5)
+				.setConnectTimeout(1000*60*5)
+				.setSocketTimeout(1000*60*5)
 				.build());
 		String string = replaceSpecialChar(url);
-		System.out.println(string);
 		HttpGet get = new HttpGet(string);
 		try {
 			CloseableHttpResponse response = httpClient.execute(get,context);
@@ -124,7 +125,7 @@ public class ImageUtils {
                 }  
             }  
 		} catch (Exception e) {
-			e.printStackTrace();
+			loggerInfo.info("图片未知错误"+e.getMessage());
 			return "";
 		}
     	return filepath+filename;
@@ -134,26 +135,28 @@ public class ImageUtils {
      * @return "",图片>1M,图片尺寸>800
      */
     public static String checkImageSize(String filePath){
-    	System.out.println("检查图片"+filePath);
-    	FileInputStream fis = null;
     	String memo = "";
-    	try {
-    		File file = new File(filePath);
-            fis = new FileInputStream(file);
-            int available = fis.available();
-            fis.close();
-            if (available>1048576) {
-				memo = "图片>1M ";
-			}
-    		BufferedImage src = ImageIO.read(file);
-    		int width = src.getWidth(); // 得到源图宽
-            int height = src.getHeight(); // 得到源图长
-            
-            if (width>800||height>800) {
-            	memo = memo + "图片尺寸>800 ";
-            }
-    	} catch (IOException e) {
-			e.printStackTrace();
+    	if (StringUtils.isNotEmpty(filePath)) {
+    		FileInputStream fis = null;
+    		
+    		try {
+    			File file = new File(filePath);
+    			fis = new FileInputStream(file);
+    			int available = fis.available();
+    			fis.close();
+    			if (available>1048576) {
+    				memo = "图片>1M ";
+    			}
+    			BufferedImage src = ImageIO.read(file);
+    			int width = src.getWidth(); // 得到源图宽
+    			int height = src.getHeight(); // 得到源图长
+    			
+    			if (width>800||height>800) {
+    				memo = memo + "图片尺寸>800 ";
+    			}
+    		} catch (Exception e) {
+    			loggerInfo.info("检查图片出错"+filePath);
+    		}
 		}
     	return memo;
     }
