@@ -1377,4 +1377,14 @@ buffer.append(dto.getMemo());
 	public SpuDTO findPartSpuData(String supplierId, String spuId) {
 		return spuDAO.findPartBySupAndSpuId(supplierId, spuId);
 	}
+	public List<SpuDTO> findpartSpuListBySupplier(String supplierId){
+	    return spuDAO.findPartSPUListBySupplierId(supplierId);
+	}
+
+	@Override
+	public List<SpuDTO> findPartBySupAndSpuId(String supplierId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

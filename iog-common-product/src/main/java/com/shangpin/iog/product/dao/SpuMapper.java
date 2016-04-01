@@ -2,6 +2,7 @@ package com.shangpin.iog.product.dao;
 
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -20,5 +21,9 @@ public interface SpuMapper extends IBaseDao<SpuDTO> {
 	public SpuDTO findPartBySupAndSpuId(@Param("supplierId") String supplierId,@Param("spuId") String spuId);
 	
 	public void updateSpuMemo(@Param("supplierId") String supplierId,@Param("spuId") String spuId,@Param("memo") String memo,@Param("lastTime") Date date);
+
+	public void updateSpuMemoList(@Param("list") List<SpuDTO> spuList);
+
+	public List<SpuDTO> findPartSPUListBySupplierId(@Param("supplierId") String supplierId);
 
 }

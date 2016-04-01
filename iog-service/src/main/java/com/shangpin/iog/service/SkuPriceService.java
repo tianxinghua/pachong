@@ -5,6 +5,7 @@ import com.shangpin.iog.dto.NewPriceDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SkuPriceDTO;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -65,5 +66,7 @@ public interface SkuPriceService {
      * @throws ServiceException
      */
     public NewPriceDTO getNewPriceDTO(String supplierId,String skuId) throws ServiceException;
+    //得到sku价格集合
+    public abstract List<NewPriceDTO> getNewSkuPriceList(String supplierId);
     
 }
