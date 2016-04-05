@@ -1,4 +1,4 @@
-package com.shangpin.iog.ostore.stock.schedule;
+package com.shangpin.iog.bernardelli.stock.schedule;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class Startup {
 
-    private static   Logger logger = LoggerFactory.getLogger("info");
+    private static   Logger logger = LoggerFactory.getLogger(Startup.class);
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {

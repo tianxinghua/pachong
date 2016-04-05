@@ -1,4 +1,4 @@
-package com.shangpin.iog.ostore.stock.schedule;
+package com.shangpin.iog.daniello.stock.schedule;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,7 +14,6 @@ public class Worker implements Runnable{
 	private static Logger logger = Logger.getLogger("info");
 	private static ResourceBundle bdl=null;
     private static String supplierId;
-    private static String url ;
     private static String host;
     private static String app_key;
     private static String app_secret;
@@ -25,7 +24,6 @@ public class Worker implements Runnable{
         host = bdl.getString("HOST");
         app_key = bdl.getString("APP_KEY");
         app_secret = bdl.getString("APP_SECRET");
-        url = bdl.getString("url");
     }
 	private AbsUpdateProductStock stockImp;
 	public Worker(){};

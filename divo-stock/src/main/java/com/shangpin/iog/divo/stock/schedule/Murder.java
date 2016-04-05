@@ -17,7 +17,7 @@ public class Murder extends TimerTask{
 	private static int time;
     static {
         if(null==bdl)
-         bdl=ResourceBundle.getBundle("conf");
+         bdl=ResourceBundle.getBundle("sop");
         time = Integer.valueOf(bdl.getString("time"));
     }
     

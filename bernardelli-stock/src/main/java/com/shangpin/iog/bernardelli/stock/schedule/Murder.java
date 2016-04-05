@@ -1,4 +1,4 @@
-package com.shangpin.iog.woolrich.stock.schedule;
+package com.shangpin.iog.bernardelli.stock.schedule;
 
 import java.util.ResourceBundle;
 import java.util.TimerTask;
@@ -9,15 +9,15 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Component;
 
+import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.sop.AbsUpdateProductStock;
 @Component
 public class Murder extends TimerTask{
 	private static ResourceBundle bdl=null;
 	private static int time;
     static {
         if(null==bdl)
-         bdl=ResourceBundle.getBundle("sop");
+         bdl=ResourceBundle.getBundle("conf");
         time = Integer.valueOf(bdl.getString("time"));
     }
     

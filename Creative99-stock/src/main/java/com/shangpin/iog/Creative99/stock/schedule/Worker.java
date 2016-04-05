@@ -14,7 +14,6 @@ public class Worker implements Runnable{
 	private static Logger logger = Logger.getLogger("info");
 	private static ResourceBundle bdl=null;
     private static String supplierId;
-    private static String url = bdl.getString("url");
     private static String host;
     private static String app_key;
     private static String app_secret;

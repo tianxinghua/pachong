@@ -2,7 +2,6 @@ dependencies {
     compile(
 
             "net.sourceforge.javacsv:javacsv:2.0",
-            project(':project-common'),
             project(':iog-common-product'),
             project(':iog-sop')
     )
@@ -11,15 +10,16 @@ dependencies {
 
 jar {
 
-    dependsOn copyToLib,copyResources, copyResourcesToClasses
+    dependsOn copyToLib,copyResources, dependsClassPath
     exclude ("**/*.properties")
-    def manifestCp = configurations.compile.files.collect {
-        File file = it
-        "lib/${file.name}"
-    }.join(' ')
+//    def manifestCp = configurations.compile.files.collect {
+//        File file = it
+//        "lib/${file.name}"
+//    }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.woolrich.stock.WoolrichStockImp'
-        attributes 'Class-Path': '. ./conf/  ' + manifestCp
+		attributes 'Main-Class': 'com.shangpin.iog.woolrich.stock.schedule.Startup'
+//        attributes 'Main-Class': 'com.shangpin.iog.woolrich.stock.WoolrichStockImp'
+//        attributes 'Class-Path': '. ./conf/  ' + manifestCp
     }
 }

@@ -1,4 +1,4 @@
-package com.shangpin.iog.woolrich.stock.schedule;
+package com.shangpin.iog.daniello.stock.schedule;
 
 import java.util.ResourceBundle;
 import java.util.TimerTask;
