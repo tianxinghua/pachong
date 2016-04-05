@@ -131,8 +131,12 @@ public interface ProductFetchService {
 	 * @return
 	 */
 	public List<String> saveAndCheckPicture(String supplierId, String id,Collection<String> picUrl,String flag);
-//	public void updateSpuMemoAndTime(String supplierId, String spuId, String memo);
-//	public void updateSkuMemoAndTime(String supplierId, String skuId, String memo);
-	void updateSpuOrSkuMemoAndTime(String supplierId, String id, String memo,String flag);
-
+	//更新spu或sku
+	public void updateSpuOrSkuMemoAndTime(String supplierId, String id, String memo,String flag);
+	//更新skuList的memo
+	public void updateSkuListMemo(String supplierId, List<String> idList);
+	//更新spuList的memo
+	public void updateSpuListMemo(List<SpuDTO> spuList);
+	//检查更新stefaniamode的图片
+	public abstract List<String> saveAndCheckPictureForSteFaniamode(String supplierId, String id, Collection<String> picUrl, String flag);
 }

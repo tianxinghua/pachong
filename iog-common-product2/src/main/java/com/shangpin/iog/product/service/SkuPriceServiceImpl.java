@@ -180,4 +180,10 @@ public class SkuPriceServiceImpl implements SkuPriceService {
 		return newPriceDTO;
 	}
 
+	@Override
+	public List<NewPriceDTO> getNewSkuPriceList(String supplierId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

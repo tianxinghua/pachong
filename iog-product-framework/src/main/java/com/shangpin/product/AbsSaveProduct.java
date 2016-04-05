@@ -1,5 +1,6 @@
 package com.shangpin.product;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,7 +30,6 @@ import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SkuPriceService;
 
 public abstract class AbsSaveProduct {
-	private static ExecutorService executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
 	
 	private static org.apache.log4j.Logger loggerInfo = org.apache.log4j.Logger.getLogger("info");
 	private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger.getLogger("error");
@@ -68,7 +68,7 @@ public abstract class AbsSaveProduct {
 		final List<SpuDTO> spuList =(List<SpuDTO>)totalMap.get("spu");
 		Thread t1 = new Thread(new Runnable() {
 			public void run() {
-				saveSPU(spuList);
+				saveSPU(spuList,supplierId);
 			}
 		});
 		t1.start();
@@ -82,7 +82,7 @@ public abstract class AbsSaveProduct {
 		t2.start();
 		
 	}
-	//检查price是否改变
+	@Deprecated
 	private void isSkuChanged(SkuDTO skuDTO){
 		NewPriceDTO newPriceDTO = null;
 		boolean change = false;
@@ -105,7 +105,30 @@ public abstract class AbsSaveProduct {
 			e.printStackTrace();
 		}
 	}
-	//检查spu的   made_in ,material ,season 是否变化
+	//检查price是否改变
+	private void updateSkuChange(String supplierId,List<SkuDTO> skuList){
+		//isSkuChanged 查询库中所有的sku价格，对比skuList，如果未变化从查询出的集合中删除，如果有变化添加备注到这个sku，最后保存结果集
+		List<NewPriceDTO> newSkuPriceList = skuPriceService.getNewSkuPriceList(supplierId);
+		Map<String,NewPriceDTO> priceMap = new HashMap<String,NewPriceDTO>();
+		for (NewPriceDTO newPriceDTO : newSkuPriceList) {
+			priceMap.put(newPriceDTO.getSkuId(), newPriceDTO);
+		}
+		NewPriceDTO n = null;
+		List<String> idList = new ArrayList<String>();
+		for (SkuDTO sku : skuList) {
+			if (priceMap.containsKey(sku.getSkuId())) {
+				n = priceMap.get(sku.getSkuId());
+				if (!(sku.getSupplierPrice().equals(n.getNewSupplierPrice())&&sku.getSalePrice().equals(n.getNewSalePrice())&&sku.getMarketPrice().equals(n.getNewMarketPrice()))) {
+					idList.add(sku.getSkuId());
+				}
+			}
+		}
+		//更新list memo
+		if (idList.size()>0&&idList!=null) {
+			productFetchService.updateSkuListMemo(supplierId, idList);
+		}
+	}
+	@Deprecated
 	private void isSpuChanged(SpuDTO spuDTO){
 		StringBuffer memo = new StringBuffer();
 		String localeString = new Date().toLocaleString();
@@ -129,6 +152,52 @@ public abstract class AbsSaveProduct {
 			productFetchService.updateSpuOrSkuMemoAndTime(spuDTO.getSupplierId(), spuDTO.getSpuId(),memo.toString(), "spu");
 		}
 	}
+	
+	//检查spu的   made_in ,material ,season 是否变化
+	private String conpareSpu(SpuDTO spuDTO,SpuDTO nespuDTO){
+		StringBuffer memo = new StringBuffer();
+		String localeString = new Date().toLocaleString();
+		if (StringUtils.isNotBlank(spuDTO.getSeasonName())) {
+			if (!spuDTO.getSeasonName().equals(nespuDTO.getSeasonName())) {
+				memo.append(localeString+"季节改变").append(";");
+			}
+		}
+		if (StringUtils.isNotBlank(spuDTO.getMaterial())) {
+			if (!spuDTO.getMaterial().equals(nespuDTO.getMaterial())) {
+				memo.append(localeString+"材质改变").append(";");
+			}
+		}
+		if (StringUtils.isNotBlank(spuDTO.getProductOrigin())) {
+			if (!spuDTO.getProductOrigin().equals(nespuDTO.getProductOrigin())) {
+				memo.append(localeString+"产地改变").append(";");
+			}
+		}
+		return memo.toString();
+	}
+	
+	private void updateSPUMemo(String supplierId,List<SpuDTO> spuList){
+		List<SpuDTO> updateSpu = productSearchService.findpartSpuListBySupplier(supplierId);
+		loggerInfo.info("获取到更新spu数"+updateSpu.size());
+		Map<String,SpuDTO> spuMap = new HashMap<String,SpuDTO>();
+		
+		List<SpuDTO> reSpuList = new ArrayList<SpuDTO>();
+		for (SpuDTO spu : updateSpu) {
+			spuMap.put(spu.getSpuId(), spu);
+		}
+		String memo = "";
+		for (SpuDTO spuDTO : spuList) {
+			if (spuMap.containsKey(spuDTO.getSpuId())) {
+				memo = conpareSpu(spuDTO, spuMap.get(spuDTO.getSpuId()));
+				if (StringUtils.isNotEmpty(memo)) {
+					spuDTO.setMemo(memo);
+					reSpuList.add(spuDTO);
+				}
+			}
+		}
+		if (reSpuList.size()>0&&reSpuList!=null) {
+			productFetchService.updateSpuListMemo(reSpuList);
+		}
+	}
 	/**
 	 * 保存sku
 	 * @param skuList
@@ -136,6 +205,7 @@ public abstract class AbsSaveProduct {
 	 * @param day
 	 */
 	private void saveSKU(List<SkuDTO> skuList,String supplierId,int day) {
+		loggerInfo.info("开始保存sku");
 		Date startDate, endDate = new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate, day* -1, "D");
 		// 获取原有的SKU 仅仅包含价格和库存
@@ -146,6 +216,9 @@ public abstract class AbsSaveProduct {
 			loggerError.error("获取原有sku失败" + e.getMessage());
 			e.printStackTrace();
 		}
+		
+		updateSkuChange(supplierId, skuList);
+		
 		for (SkuDTO skuDTO : skuList) {
 			if (skuDTOMap.containsKey(skuDTO.getSkuId())) {
 				skuDTOMap.remove(skuDTO.getSkuId());
@@ -156,7 +229,7 @@ public abstract class AbsSaveProduct {
 				if (e.getMessage().equals("数据插入失败键重复")) {
 					// 更新价格和库存
 					try {
-						isSkuChanged(skuDTO);
+//						isSkuChanged(skuDTO);//取消单个查询对比
 						productFetchService.updatePriceAndStock(skuDTO);
 					} catch (ServiceException e1) {
 						loggerError.error("更新价格库存失败");
@@ -179,18 +252,22 @@ public abstract class AbsSaveProduct {
 			}
 		}
 		System.out.println("=================保存sku结束=================");
+		loggerInfo.info("=================保存sku结束=================");
+
 	}
 	/**
 	 * 保存spu
 	 * @param spuList
 	 */
-	private void saveSPU(List<SpuDTO> spuList) {
+	private void saveSPU(List<SpuDTO> spuList,String supplierId) {
+		loggerInfo.info("开始保存spu");
+		updateSPUMemo(supplierId, spuList);
 		for (SpuDTO spuDTO : spuList) {
 			try {
 				productFetchService.saveSPU(spuDTO);
 			} catch (ServiceException e) {
 				try {
-					isSpuChanged(spuDTO);
+//					isSpuChanged(spuDTO);//取消单个查询
 					productFetchService.updateMaterial(spuDTO);
 				} catch (ServiceException e1) {
 					loggerError.info("spu更新材质信息失败");
@@ -198,6 +275,7 @@ public abstract class AbsSaveProduct {
 			}
 		}
 		System.out.println("+++++++++++++保存spu结束+++++++++++++");
+		loggerInfo.info("保存spu结束");
 	}
 	/**
 	 * 保存图片,检查并处理图片变化
@@ -207,6 +285,7 @@ public abstract class AbsSaveProduct {
 	 * @param picpath 如果为空就不下载图片
 	 */
 	private void saveImage(Map<String,List<String>> imageMap,String flag,String supplierId, String picpath) {
+		loggerInfo.info("开始处理图片");
 		List<String> list = null;
 		String imagePath = "";
 		String memo = "";
@@ -216,7 +295,11 @@ public abstract class AbsSaveProduct {
 		Map<String, List<String>> downMap = new HashMap<String, List<String>>();
 		for (Entry<String, List<String>> entry : imageMap.entrySet()) {
 			id = entry.getKey().split(";")[0];
-			list = productFetchService.saveAndCheckPicture(supplierId,id, entry.getValue(), flag);
+			//正常使用
+//			list = productFetchService.saveAndCheckPicture(supplierId,id, entry.getValue(), flag);
+			// 仅仅stefaniamode采取
+			list = productFetchService.saveAndCheckPictureForSteFaniamode(supplierId,id, entry.getValue(), flag);
+			loggerInfo.info("id"+id+"新增图片数"+list.size());
 			if (list.size()>0) {
 				productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+"图片变化", flag);
 				//存新增的的图片到map
@@ -224,14 +307,13 @@ public abstract class AbsSaveProduct {
 				downMap.put(id+";"+imgname, list);
 			}
 		}
-		if (StringUtils.isNotBlank(picpath)) {
-			if (downMap.size()>0) {
-				for (Entry<String, List<String>> e : downMap.entrySet()) {
-					int n = 1;
-					for (String url : e.getValue()) {
-						if (StringUtils.isEmpty(url)) {
-							continue;
-						}
+		
+		if (StringUtils.isNotBlank(picpath)&&downMap.size()>0) {
+			loggerInfo.info("开始保存图片"+downMap.size());
+			for (Entry<String, List<String>> e : downMap.entrySet()) {
+				int n = 1;
+				for (String url : e.getValue()) {
+					if (StringUtils.isNotEmpty(url)) {
 						id = e.getKey().split(";")[0];
 						imgname = e.getKey().split(";")[1]+"_"+n+++".jpg";
 						imagePath = picpath+imgname;
@@ -245,13 +327,15 @@ public abstract class AbsSaveProduct {
 							}
 						}
 					}
-					if (StringUtils.isNotBlank(memo)) {
-						productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+memo, flag);
-					}
-					memo = "";
 				}
+				if (StringUtils.isNotBlank(memo)) {
+					productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+memo, flag);
+				}
+				memo = "";
 			}
 		}
+		System.out.println("保存图片结束");
+		loggerInfo.info("保存图片结束");
 	}
 	
 	

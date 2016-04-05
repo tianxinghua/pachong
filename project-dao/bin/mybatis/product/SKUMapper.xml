@@ -247,5 +247,17 @@
 	   </set>
 	    where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
     </update>
-	    
+	<update id="updateSkuMemoList">
+       update SKU
+       <set>
+       		MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",CONCAT(NOW(),"价格变化")),
+       		LAST_TIME = NOW(),
+       </set>
+       <where>
+           SUPPLIER_ID = #{supplierId} 
+     	  <foreach collection="list" item="id" open="AND SKU_ID IN (" close=")" separator=",">
+			#{id}       
+     	  </foreach>
+       </where>
+    </update>
 </mapper>

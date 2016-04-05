@@ -856,4 +856,30 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		return null;
 	}
 
+	@Override
+	public StringBuffer dailyGoodProducts(String[] suppliers, Date startime,
+			Date endtime, Integer pageIndex, Integer pageSize)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SpuDTO findPartSpuData(String supplierId, String spuId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SpuDTO> findPartBySupAndSpuId(String supplierId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SpuDTO> findpartSpuListBySupplier(String supplierId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

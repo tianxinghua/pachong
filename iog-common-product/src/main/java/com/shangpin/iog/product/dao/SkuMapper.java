@@ -66,13 +66,7 @@ public interface SkuMapper extends IBaseDao<SkuDTO> {
      */
     public void updateSkuMemo(@Param("supplierId") String supplierId,@Param("skuId") String skuId,@Param("memo") String memo,@Param("lastTime") Date date);
 
+	public void updateSkuMemoList(@Param("list") List<String> idList, @Param("supplierId")String supplierId);
 
-	/**
-	 * 
-	 * @param supplierId
-	 * @param skuId
-	 * @return
-	 */
-    
 	
 }

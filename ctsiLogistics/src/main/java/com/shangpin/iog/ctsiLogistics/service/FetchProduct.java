@@ -66,7 +66,7 @@ public class FetchProduct {
 		for (Item item : list) {
 
 			String[] array = item.getDescription().split("\\|");
-			if(array.length!=3){
+			if(array.length==1){
 				array = item.getDescription().split("-");
 			}
 			SkuDTO sku = new SkuDTO();

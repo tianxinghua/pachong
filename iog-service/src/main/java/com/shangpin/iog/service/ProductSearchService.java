@@ -112,6 +112,8 @@ public interface ProductSearchService {
     public ProductDTO findProductBySupplierIdAndSkuId(String supplierId,String skuId) throws ServiceException;
     
     public SpuDTO findPartSpuData(String supplierId,String spuId);
+
+	public List<SpuDTO> findPartBySupAndSpuId(String supplierId);
     
-    
+	public abstract List<SpuDTO> findpartSpuListBySupplier(String supplierId);
 }
