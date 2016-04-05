@@ -7,7 +7,7 @@ dependencies {
 
             project(':openapi-ice'),
             
-            project(':itemInfo')
+            //project(':itemInfo')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 

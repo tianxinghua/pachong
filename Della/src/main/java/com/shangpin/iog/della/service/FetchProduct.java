@@ -134,11 +134,44 @@ public class FetchProduct {
 				}
 				
 				//保存图片
-				if(StringUtils.isNotBlank(item.getPhoto_links())){
-					String[] photos =  item.getPhoto_links().replaceAll("\"", "").split("\\|");
-					productFetchService.savePicture(supplierId, null, sku.getSkuId(), Arrays.asList(photos));
-					
+//				if(StringUtils.isNotBlank(item.getPhoto_links())){
+//					String[] photos =  item.getPhoto_links().replaceAll("\"", "").split("\\|");
+//					productFetchService.savePicture(supplierId, null, sku.getSkuId(), Arrays.asList(photos));
+//					
+//				}
+				List<String> listPics = new ArrayList<String>();				
+				if(StringUtils.isNotBlank(item.getLINK_PHOTO_1())){
+					listPics.add(item.getLINK_PHOTO_1());
 				}
+				if(StringUtils.isNotBlank(item.getLINK_PHOTO_2())){
+					listPics.add(item.getLINK_PHOTO_2());
+				}
+				if(StringUtils.isNotBlank(item.getLINK_PHOTO_3())){
+					listPics.add(item.getLINK_PHOTO_3());
+				}
+				if(StringUtils.isNotBlank(item.getLINK_PHOTO_4())){
+					listPics.add(item.getLINK_PHOTO_4());
+				}
+				if(StringUtils.isNotBlank(item.getLINK_PHOTO_5())){
+					listPics.add(item.getLINK_PHOTO_5());
+				}
+				if(StringUtils.isNotBlank(item.getLINK_PHOTO_6())){
+					listPics.add(item.getLINK_PHOTO_6());
+				}
+				if(StringUtils.isNotBlank(item.getLINK_PHOTO_7())){
+					listPics.add(item.getLINK_PHOTO_7());
+				}
+				if(StringUtils.isNotBlank(item.getLINK_PHOTO_8())){
+					listPics.add(item.getLINK_PHOTO_8());
+				}
+				if(StringUtils.isNotBlank(item.getLINK_PHOTO_9())){
+					listPics.add(item.getLINK_PHOTO_9());
+				}
+				if(StringUtils.isNotBlank(item.getLINK_PHOTO_10())){
+					listPics.add(item.getLINK_PHOTO_10());
+				}
+				
+				productFetchService.savePicture(supplierId, null, sku.getSkuId(), listPics);
 				
 				
 				if(!spuItems.containsKey(item.getSupplier_item_code())){

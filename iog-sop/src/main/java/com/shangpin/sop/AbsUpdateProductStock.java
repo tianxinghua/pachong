@@ -525,7 +525,8 @@ public abstract class AbsUpdateProductStock {
 				}
 			} catch (Exception e) {    //获取库存信息时失败 直接退出
 				loggerError.error("获取库存信息时发生异常，程序退出");
-				System.exit(0);
+//				System.exit(0);
+				return iceStock;
 			}
 
 
@@ -533,7 +534,8 @@ public abstract class AbsUpdateProductStock {
 			try {
 				if(!ORDER)	sopPurchaseMap = this.getPurchaseOrder(host,app_key,app_secret);
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
+				loggerError.error(e);
 			}
 
 			for (String skuNo : skuNos) {

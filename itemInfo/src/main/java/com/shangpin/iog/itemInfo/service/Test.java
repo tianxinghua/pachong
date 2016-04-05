@@ -20,12 +20,29 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 
 public class Test {
 	
-	public static String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-            "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
-            "  <soap12:Body>\n" +
-            "    <GetAllItems xmlns=\"http://tempuri.org/\" />\n" +
-            "  </soap12:Body>\n" +
-            "</soap12:Envelope>";
+//	public static String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+//            "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
+//            "  <soap12:Body>\n" +
+//            "    <GetAllItems xmlns=\"http://tempuri.org/\" />\n" +
+//            "  </soap12:Body>\n" +
+//            "</soap12:Envelope>";
+	
+//	public static String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
+//											"<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"+
+//											  "<soap:Body>"+
+//											    "<GetSku4Platform xmlns=\"http://service.alducadaosta.com/EcSrv\">"+
+//											      "<Customer>shangpin</Customer>"+
+//											    "</GetSku4Platform>"+
+//											"  </soap:Body>"+
+//											"</soap:Envelope>";
+	public static String soapRequestData ="<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
+											"<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">"+
+											  "<soap12:Body>"+
+											    "<GetSku4Platform xmlns=\"http://service.alducadaosta.com/EcSrv\">"+
+											      "<Customer>shangpin</Customer>"+
+											    "</GetSku4Platform>"+
+											  "</soap12:Body>"+
+											"</soap12:Envelope>";
 	public static void main(String[] arg){
 //		Test t= new Test();
 //		t.getResAsStream(
@@ -47,16 +64,16 @@ public class Test {
 		System.out.println(rtStr);*/
 //		String ss  = "<DocumentElement xmlns=\"\"><SkuStok diffgr:id=\"SkuStok1\" msdata:rowOrder=\"0\"><sku_id>202885102407</sku_id><product_id>2028851024</product_id>";
 //		System.out.println(ss.replace("diffgr:id=\"(.*)\"", ""));
-		String teStr = "pic1:https://alducadaostastorage.blob.core.windows.net/product/16902/original/1b043f87-4d35-4b44-aac1-6609241038b7.jpg,pic2:https://alducadaostastorage.blob.core.windows.net/product/16902/original/e6910034-7fd0-48b7-92d3-85bf2ae2e56e.jpg,pic3:https://alducadaostastorage.blob.core.windows.net/product/16902/original/d4e49736-e4a0-4c22-a036-a71349e24876.jpg";
-		String param[] = teStr.split(",");
-		List<String> list = new ArrayList();
-		for(String str : param){
-			String ss = str.replace(str.substring(0, str.indexOf(":")+1), "");
-			list.add(ss);
-		}
-		for(String str : list){
-			System.out.println(str);
-		}
+//		String teStr = "pic1:https://alducadaostastorage.blob.core.windows.net/product/16902/original/1b043f87-4d35-4b44-aac1-6609241038b7.jpg,pic2:https://alducadaostastorage.blob.core.windows.net/product/16902/original/e6910034-7fd0-48b7-92d3-85bf2ae2e56e.jpg,pic3:https://alducadaostastorage.blob.core.windows.net/product/16902/original/d4e49736-e4a0-4c22-a036-a71349e24876.jpg";
+//		String param[] = teStr.split(",");
+//		List<String> list = new ArrayList();
+//		for(String str : param){
+//			String ss = str.replace(str.substring(0, str.indexOf(":")+1), "");
+//			list.add(ss);
+//		}
+//		for(String str : list){
+//			System.out.println(str);
+//		}
 		
 	}
 	

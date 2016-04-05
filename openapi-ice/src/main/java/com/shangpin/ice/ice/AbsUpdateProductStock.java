@@ -146,7 +146,7 @@ public abstract class AbsUpdateProductStock {
 			servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		} catch (Exception e) {
 			loggerError.error("ICE 代理失败");
-			e.printStackTrace();
+//			e.printStackTrace();
 			throw e;
 		}
 		boolean hasNext=true;
@@ -355,7 +355,7 @@ public abstract class AbsUpdateProductStock {
 			servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		} catch (Exception e) {
 			loggerError.error("Ice 代理失败");
-			e.printStackTrace();
+//			e.printStackTrace();
 			throw e;
 		}
 		//logger.warn("{}---更新ice--,数量：{}",Thread.currentThread().getName(),iceStock.size());
@@ -595,7 +595,7 @@ public abstract class AbsUpdateProductStock {
 			servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		} catch (Exception e) {
 			loggerError.error("Ice 代理失败");
-			e.printStackTrace();
+//			e.printStackTrace();
 			throw e;
 
 		}
@@ -625,7 +625,7 @@ public abstract class AbsUpdateProductStock {
 
 				orderDetails = orderDetailPage.PurchaseOrderDetails;
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 			for (PurchaseOrderDetail orderDetail : orderDetails) {
 				supplierSkuNo  = orderDetail.SupplierSkuNo;
