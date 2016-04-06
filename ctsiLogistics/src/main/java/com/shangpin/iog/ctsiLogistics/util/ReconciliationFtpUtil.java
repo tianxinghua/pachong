@@ -176,8 +176,9 @@ public class ReconciliationFtpUtil {
 
                 try {
                     files = ftp.dir(remoteFilePath);
-                    list.add(files[0]);
-                    ftp.get(path+files[0],files[0]);
+                    System.out.println(files[files.length-1]);
+                    list.add(files[files.length-1]);
+                    ftp.get(path+files[files.length-1],files[files.length-1]);
                     
                 }catch (Exception e){
                     e.printStackTrace();

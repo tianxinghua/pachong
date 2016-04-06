@@ -1,4 +1,4 @@
-package com.shangpin.iog.ctsiLogistics.util;
+package com.shangpin.iog.fusco.util;
 
 import com.csvreader.CsvReader;
 import com.enterprisedt.net.ftp.FTPClient;
