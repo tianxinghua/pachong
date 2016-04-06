@@ -205,7 +205,7 @@ public abstract class AbsOrderService {
         String jsonParameter= "="+ gson.toJson(dto);
         String result ="";
         try {
-            result =  HttpUtil45.operateData("post","form",url+"/Api/StockQuery/SupplierInventoryLogQuery",new OutTimeConfig(1000*5,1000*5,1000*5),null,
+            result =  HttpUtil45.operateData("post","form",url+"/Api/StockQuery/SupplierInventoryLogQuery",new OutTimeConfig(1000*5,1000*30,1000*30),null,
                     jsonParameter,"","");
             logger.info("获取的订单信息为:" + result);
             System.out.println("kk = " + result);
@@ -218,6 +218,8 @@ public abstract class AbsOrderService {
             orderDTOList = gson.fromJson(result,new TypeToken<List<ICEWMSOrderDTO>>(){}.getType());
         } catch (JsonSyntaxException e) {
             loggerError.error("获取"+supplierNo +"供货商，wms订单转化异常,退出");
+            Thread t = new Thread(new MailThread(supplierId,supplierId+" 线上订单发生错误","获取订单信息失败，无信息返回。"));
+            t.start();
             return;
         }
         String uuid="",skuNo="";
