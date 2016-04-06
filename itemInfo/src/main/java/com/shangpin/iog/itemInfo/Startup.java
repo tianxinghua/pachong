@@ -48,8 +48,8 @@ public class Startup {
 		//从网站拉取数据，保存到文件
 		Test t= new Test();
 		t.getResAsStream(
-				"http://service.alducadaosta.com/EcSrv/Services.asmx?op=GetItem4Platform",
-				"http://service.alducadaosta.com/EcSrv/GetItem4Platform",
+				"http://service.alducadaosta.com/EcSrv/Services.asmx?op=GetSku4Platform",
+				"http://service.alducadaosta.com/EcSrv/GetSku4Platform",
 				"text/xml; charset=UTF-8",
 				localPath);
 		//获取文件内容，解析xml，并且将信息保存入库
