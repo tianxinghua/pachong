@@ -5,9 +5,9 @@ import com.github.scribejava.core.model.Token;
 
 public class API extends DefaultApi10a {
 
-    private static final String AUTHORIZE_URL = "https://glamorous-uat.phplab.co.uk/gladmin/oauth_authorize?oauth_token=%s";
-    private static final String REQUEST_TOKEN_ENDPOINT = "https://glamorous-uat.phplab.co.uk/oauth/initiate";
-    private static final String ACCESS_TOKEN_ENDPOINT = "https://glamorous-uat.phplab.co.uk/oauth/token";
+    private static final String AUTHORIZE_URL = "http://www.glamorous.com/gladmin9pUTvoBLqx7b0zhT/oauth_authorize?oauth_token=%s";
+    private static final String REQUEST_TOKEN_ENDPOINT = "http://www.glamorous.com/oauth/initiate";
+    private static final String ACCESS_TOKEN_ENDPOINT = "http://www.glamorous.com/oauth/token";
 
     @Override
     public String getAccessTokenEndpoint() {

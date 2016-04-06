@@ -37,8 +37,9 @@ import com.shangpin.iog.service.EventProductService;
 @Component("inviqa")
 public class StockImp extends AbsUpdateProductStock {
     
-    final static String MAGENTO_API_KEY = "4myf74kunqjzxilv5rcp4a10mt80jza9";
-	final static String MAGENTO_API_SECRET = "39c7316hejadp5p7zkc4lku1dw8231g3";
+	private static String MAGENTO_API_KEY = null;
+    private static String MAGENTO_API_SECRET = null;
+    private static String MAGENTO_REST_API_URL = null;
     private static Logger logger = Logger.getLogger("info");
     private static ApplicationContext factory;
     private static String token = null;
@@ -61,7 +62,9 @@ public class StockImp extends AbsUpdateProductStock {
          bdl=ResourceBundle.getBundle("conf");
         
         supplierId = bdl.getString("supplierId");
-        
+        MAGENTO_API_KEY = bdl.getString("MAGENTO_API_KEY");
+		MAGENTO_API_SECRET = bdl.getString("MAGENTO_API_SECRET");
+		MAGENTO_REST_API_URL = bdl.getString("MAGENTO_REST_API_URL");
         token = bdl.getString("token");
 		secret = bdl.getString("secret");
     }
@@ -88,7 +91,7 @@ public class StockImp extends AbsUpdateProductStock {
 		//https://glamorous-uat.phplab.co.uk/api/rest
 		try{
 			OAuthRequest request = new OAuthRequest(Verb.GET,
-					"http://glamorous-staging.space48.com/api/rest/shangpin/stock?limit=100&page="+page,
+					MAGENTO_REST_API_URL+ "stock?limit=100&page="+page,
 					service);
 			service.signRequest(accessToken, request);
 			Response response = request.send();
@@ -156,8 +159,7 @@ public class StockImp extends AbsUpdateProductStock {
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("inviqa");
-//        stockImp.getStockList();
-//        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
+        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("inviqa更新库存开始");
         System.out.println("inviqa更新库存开始");

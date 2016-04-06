@@ -1,4 +1,4 @@
-package com.shangpin.iog.ctsiLogistics.util;
+package com.shangpin.iog.fusco.util;
 
 import com.csvreader.CsvReader;
 import com.enterprisedt.net.ftp.FTPClient;
@@ -6,13 +6,12 @@ import com.enterprisedt.net.ftp.FTPConnectMode;
 import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FTPTransferType;
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.ctsiLogistics.dao.Item;
-import com.shangpin.iog.ctsiLogistics.service.FetchProduct;
+import com.shangpin.iog.fusco.dao.Item;
+import com.shangpin.iog.fusco.service.FetchProduct;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -40,7 +39,7 @@ public class FtpUtil {
 	// Locale.ENGLISH) ;
 	private static String HOST = "ftp.teknosis-quick.it", PORT = "21",
 			USER = "fusco@teknosis-quick.it", PASSWORD = "Fusco00440044",
-			FILE_PATH = "/csv";
+			FILE_PATH = "/immagini";
 	public static final String PROPERTIES_FILE_NAME = "conf";
 	static ResourceBundle bundle = ResourceBundle.getBundle("conf");
 	private static String path = bundle.getString("localPath");

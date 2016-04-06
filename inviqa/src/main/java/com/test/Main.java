@@ -63,7 +63,7 @@ public class Main {
 		
 	}
     public static final class MagentoThreeLeggedOAuth extends DefaultApi10a {
-		private static final String BASE = "http://admin.glamorous.com/gladmin/";
+		private static final String BASE = "http://www.glamorous.com/";
 		
 		
 		@Override
@@ -78,7 +78,7 @@ public class Main {
 //http://admin.glamorous.com/gladmin9pUTvoBLqx7b0zhT/oauth_authorize?oauth_token=49w83p33u97yi3x18csvrul43ipwjor8
 		@Override
 		public String getAuthorizationUrl(Token requestToken) {
-			return BASE+"/oauth_authorize?oauth_token="
+			return "http://www.glamorous.com/gladmin9pUTvoBLqx7b0zhT/oauth_authorize?oauth_token="
 					+ requestToken.getToken(); 
 		}
 

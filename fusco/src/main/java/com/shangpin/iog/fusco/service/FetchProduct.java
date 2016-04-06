@@ -1,15 +1,15 @@
-package com.shangpin.iog.ctsiLogistics.service;
+package com.shangpin.iog.fusco.service;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.ctsiLogistics.dao.Item;
-import com.shangpin.iog.ctsiLogistics.util.FtpUtil;
-import com.shangpin.iog.ctsiLogistics.util.ReconciliationFtpUtil;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.iog.fusco.dao.Item;
+import com.shangpin.iog.fusco.util.FtpUtil;
+import com.shangpin.iog.fusco.util.ReconciliationFtpUtil;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 

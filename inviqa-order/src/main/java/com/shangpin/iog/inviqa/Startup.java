@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.inviqa.schedule.AppContext;
+
 
 /**
  * Created by zhaogenchun on 2015/8/5.

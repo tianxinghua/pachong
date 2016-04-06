@@ -2,7 +2,7 @@ package com.shangpin.iog.ctsiLogistics;
 import com.shangpin.iog.app.AppContext;
 
 
-import com.shangpin.iog.ctsiLogistics.service.FetchProduct;
+import com.shangpin.iog.fusco.service.FetchProduct;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
