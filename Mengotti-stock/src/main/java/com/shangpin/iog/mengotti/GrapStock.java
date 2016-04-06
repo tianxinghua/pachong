@@ -63,7 +63,7 @@ public class GrapStock extends AbsUpdateProductStock{
 		}
 		for (Item item : items) {
 			stockMap.put(item.getSupplierSkuNo(), item.getStock());
-			System.out.println(stockMap.toString());
+//			System.out.println(stockMap.toString());
 		}		
 		for (String skuno : skuNo) {
             if(stockMap.containsKey(skuno)){

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -77,7 +78,11 @@ public class OrderService extends AbsOrderService {
 						orderDTO.setExcDesc("产品信息不正确");
 						orderDTO.setExcTime(new Date());
 					}else{
-						sb.append("1;13618;13618;shangpin;shangpin;wangsaying@shangpin.com;S;;0;123123;VIA CUPA;NAPOLI;80131;NA;3348053248;Italy;IT;2;10/02/2015|");
+
+
+						String date = DateTimeUtil.convertFormat(new Date(),"dd/MM/yyyy");
+						sb.append("1;13618;13618;shangpin;shangpin;wangsaying@shangpin.com;S;;0;123123;VIA CUPA;NAPOLI;80131;NA;3348053248;Italy;IT;2;")
+								.append(date).append("|");
 						sb.append("2;Via Leopardi 27, 22075 Lurate Caccivio (CO)|");
 						sb.append("3;").append(detail[1]).append(";").append(skuDetail[0]).append(";");
 						sb.append(skuDetail[1]).append(";").append(price).append("|");
@@ -95,6 +100,8 @@ public class OrderService extends AbsOrderService {
 							if("ok".equals(rtnData)){
 								orderDTO.setExcState("0");
 								orderDTO.setStatus(OrderStatus.CONFIRMED);
+							}else if("not ok".equals(rtnData)){//sell out
+
 							}else{
 								orderDTO.setExcState("1");
 								orderDTO.setExcDesc(rtnData);
