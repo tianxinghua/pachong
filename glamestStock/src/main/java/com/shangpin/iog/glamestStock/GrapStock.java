@@ -24,12 +24,12 @@ import org.springframework.stereotype.Component;
 import com.csvreader.CsvReader;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.iog.glamestStock.schedule.AppContext;
 
 @Component("glamestStock")
 public class GrapStock extends AbsUpdateProductStock{
@@ -58,7 +58,16 @@ public class GrapStock extends AbsUpdateProductStock{
 		Map<String, String> skustock = new HashMap<String, String>();
 		Map<String,String> stockMap = new HashMap<String, String>();
 		
-		List<Item> items= readLocalCSV(Item.class,",");
+		List<Item> items = null;
+		try{
+			
+			items= readLocalCSV(Item.class,",");
+			
+		}catch(Exception e){
+			logError.error(e);
+			return skustock;
+		}
+		
 		if(items.size()>0){
 			for(Item item: items){
 				String sizes = item.getSizes();
@@ -224,20 +233,20 @@ public class GrapStock extends AbsUpdateProductStock{
 	public static void main(String[] args) {
 
 		loadSpringContext();
-		GrapStock grabStockImp = (GrapStock)factory.getBean("glamestStock");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		logInfo.info("glamestStock更新数据库开始");
-		System.out.println("glamestStock更新数据库开始");
-		try {
-			grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
-					format.format(new Date()));
-		} catch (Exception e) {
-			logError.error(e.getMessage());
-			e.printStackTrace();
-		}
-		logInfo.info("glamestStock更新数据库结束");
-		System.out.println("glamestStock更新数据库结束");
-		System.exit(0);
+//		GrapStock grabStockImp = (GrapStock)factory.getBean("glamestStock");
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//		logInfo.info("glamestStock更新数据库开始");
+//		System.out.println("glamestStock更新数据库开始");
+//		try {
+//			grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
+//					format.format(new Date()));
+//		} catch (Exception e) {
+//			logError.error(e.getMessage());
+//			e.printStackTrace();
+//		}
+//		logInfo.info("glamestStock更新数据库结束");
+//		System.out.println("glamestStock更新数据库结束");
+//		System.exit(0);
 //		try{
 //			GrapStock grabStockImp = new GrapStock();
 //			grabStockImp.grabStock(null);

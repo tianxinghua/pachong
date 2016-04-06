@@ -130,7 +130,18 @@
             </if>
         </where>
 	</select>	    
-		<update id="updateSpuMemo">
+	<select id="findPartSPUListBySupplierId" resultMap="spuMap" parameterType="java.lang.String">
+	   select
+       		SEASON_NAME,MATERIAL,PRODUCT_ORIGIN
+       from SPU
+        <where>
+            <if test="null!=supplierId">
+                SUPPLIER_ID = #{supplierId}
+            </if>
+        </where>
+	</select>	
+	
+	<update id="updateSpuMemo">
 	    update SPU
        <set>
 		  MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",#{memo}), 
@@ -138,4 +149,17 @@
 	   </set>
 	    where  SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
     </update>
+    
+    <update id="updateSpuMemoList">
+		<foreach collection="list" item="spu" separator=";" open="" close="">
+		    update SPU
+		    <set>
+				  MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",#{spu.memo}), 
+			      LAST_TIME = NOW(),
+			 </set>
+		    where  SUPPLIER_ID = #{spu.supplierId}  and  SPU_ID = #{spu.spuId}
+	    </foreach>
+    </update>
+    
+    
 </mapper>

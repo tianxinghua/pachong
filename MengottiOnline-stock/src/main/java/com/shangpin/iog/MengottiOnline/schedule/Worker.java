@@ -27,7 +27,7 @@ public class Worker implements Runnable{
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			logger.info("更新数据库开始");
 			try {
-				stockImp.updateProductStock("2015100701573", "2015-01-01 00:00", format.format(new Date()));
+				stockImp.updateProductStock("2016032401820", "2015-01-01 00:00", format.format(new Date()));
 			} catch (Exception e) {
 				logger.info("更新库存数据库出错"+e.toString());
 			}

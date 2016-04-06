@@ -47,7 +47,7 @@ environments{
 
         db {
             driverClassName = 'com.mysql.jdbc.Driver'
-            url ='jdbc:mysql://iogdb.shangpin.com:3306/iog?useUnicode=true&amp;characterEncoding=utf-8'
+            url ='jdbc:mysql://iogdb.shangpin.com:3306/iog?useUnicode=true&amp;characterEncoding=utf-8&allowMultiQueries=true'
             username = 'writer'
             password = 'wt@sp520'
 

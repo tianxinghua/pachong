@@ -146,7 +146,7 @@ public abstract class AbsUpdateProductStock {
 			servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		} catch (Exception e) {
 			loggerError.error("ICE 代理失败");
-			e.printStackTrace();
+//			e.printStackTrace();
 			throw e;
 		}
 		boolean hasNext=true;
@@ -260,13 +260,17 @@ public abstract class AbsUpdateProductStock {
 			for(int k=0;k<totoalFailCnt.size();k++){
 				fct+=totoalFailCnt.get(k);
 			}
-			this.updateStockTime(supplier);
+			if(fct>=0){//待更新的库存失败数小于0时，不更新
+				this.updateStockTime(supplier);
+			}			
 			return fct;
 		}else{
 			Map<String,String> sopPriceMap = new HashMap<>();
 			int i= updateStock(supplier, localAndIceSku, skuNoSet,sopPriceMap);
-
-			this.updateStockTime(supplier);
+			if(i>=0){//待更新的库存失败数小于0时，不更新
+				this.updateStockTime(supplier);
+			}
+			
 			return i;
 		}
 	}
@@ -341,12 +345,17 @@ public abstract class AbsUpdateProductStock {
 	 */
 	private int updateIceStock(String supplier, Map<String, Integer> iceStock,Map<String,String> sopPriceMap)
 			throws Exception {
+		
+		if(iceStock.size() ==0){//待更新的库存为0，直接返回-1
+			return -1;
+		}
+		
 		OpenApiServantPrx servant = null;
 		try {
 			servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		} catch (Exception e) {
 			loggerError.error("Ice 代理失败");
-			e.printStackTrace();
+//			e.printStackTrace();
 			throw e;
 		}
 		//logger.warn("{}---更新ice--,数量：{}",Thread.currentThread().getName(),iceStock.size());
@@ -457,11 +466,24 @@ public abstract class AbsUpdateProductStock {
 				supplierStock = grabStock(skuNos);
 				if(supplierStock.size()==0){
 					loggerError.error("获取库存信息是发生异常，程序退出");
-					System.exit(0);
+					return iceStock;
+				}else{//判断supplierStock的值是否全为0
+					boolean isNUll = true;
+					for (Map.Entry<String, String> entry : supplierStock
+							.entrySet()) {
+						if(org.apache.commons.lang.StringUtils.isNotBlank(entry.getValue()) && !"0".equals(entry.getValue())){
+							isNUll = false;
+							break;
+						}
+					}
+					
+					if(isNUll){//supplierStock的值全为0,则返回空的map
+						return iceStock;
+					}
 				}
 			} catch (Exception e) {    //获取库存信息时失败 直接退出
 				loggerError.error("获取库存信息是发生异常，程序退出");
-				System.exit(0);
+				return iceStock;
 			}
 
 			int stockResult=0;
@@ -573,7 +595,7 @@ public abstract class AbsUpdateProductStock {
 			servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		} catch (Exception e) {
 			loggerError.error("Ice 代理失败");
-			e.printStackTrace();
+//			e.printStackTrace();
 			throw e;
 
 		}
@@ -603,7 +625,7 @@ public abstract class AbsUpdateProductStock {
 
 				orderDetails = orderDetailPage.PurchaseOrderDetails;
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 			for (PurchaseOrderDetail orderDetail : orderDetails) {
 				supplierSkuNo  = orderDetail.SupplierSkuNo;

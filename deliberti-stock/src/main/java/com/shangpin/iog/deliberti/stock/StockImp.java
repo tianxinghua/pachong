@@ -5,6 +5,8 @@ import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.deliberti.stock.dto.Product;
+import com.shangpin.iog.deliberti.stock.utils.MyUtil;
 import com.shangpin.iog.dto.SkuDTO;
 
 import org.apache.commons.lang.StringUtils;
@@ -90,17 +92,17 @@ public class StockImp  extends AbsUpdateProductStock {
     public static void main(String[] args) throws Exception {
     	//加载spring
         loadSpringContext();
-        StockImp stockImp =(StockImp)factory.getBean("delibertistock");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("deliberti更新数据库开始");
-        System.out.println("deliberti更新数据库开始");
-        try {
-			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
-		} catch (Exception e) {
-			logger.info("deliberti更新库存数据库出错"+e.toString());
-		}
-        logger.info("deliberti更新数据库结束");
-        System.out.println("deliberti更新数据库结束");
-        System.exit(0);
+//        StockImp stockImp =(StockImp)factory.getBean("delibertistock");
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("deliberti更新数据库开始");
+//        System.out.println("deliberti更新数据库开始");
+//        try {
+//			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+//		} catch (Exception e) {
+//			logger.info("deliberti更新库存数据库出错"+e.toString());
+//		}
+//        logger.info("deliberti更新数据库结束");
+//        System.out.println("deliberti更新数据库结束");
+//        System.exit(0);
     }
 }

@@ -7,6 +7,7 @@ import com.shangpin.iog.service.SkuRelationService;
 import com.shangpin.iog.service.UpdateStockService;
 import com.shangpin.openapi.api.sdk.client.SpClient;
 import com.shangpin.openapi.api.sdk.model.*;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -235,7 +236,10 @@ public abstract class AbsUpdateProductStock {
 			for(int k=0;k<totoalFailCnt.size();k++){
 				fct+=totoalFailCnt.get(k);
 			}
-			this.updateStockTime(app_key);
+			if(fct>=0){//如果待更新的数据不为0，则更新时间
+				this.updateStockTime(app_key);
+			}			
+			
 			return fct;
 		}else{
 			return updateStock(host,app_key,app_secret, localAndIceSku, skuNoSet);
@@ -330,8 +334,9 @@ public abstract class AbsUpdateProductStock {
 			 {
 		Map<String, Integer> iceStock = grab4Icestock(host,app_key,app_secret,skuNoSet,localAndIceSkuId);
 		int failCount = updateIceStock(host,app_key,app_secret, iceStock);
-
-		this.updateStockTime(app_key);
+		if(failCount>=0){//更新库存失败数大于等于0时，更新时间
+			this.updateStockTime(app_key);
+		}		
 		return failCount;
 	}
 	/**
@@ -345,6 +350,11 @@ public abstract class AbsUpdateProductStock {
 	 */
 	private int updateIceStock(String host,String app_key,String app_secret, Map<String, Integer> iceStock)
 			throws Exception {
+		
+		if(iceStock.size() ==0){
+			return -1;
+		}
+		
 		//logger.warn("{}---更新ice--,数量：{}",Thread.currentThread().getName(),iceStock.size());
 		//获取尚品库存
 		Set<String> skuNoShangpinSet = iceStock.keySet();
@@ -498,11 +508,25 @@ public abstract class AbsUpdateProductStock {
 				supplierStock = grabStock(skuNos);
 				if(supplierStock.size()==0){
 					loggerError.error("获取库存信息时发生异常，程序退出");
-					System.exit(0);
+					return iceStock;
+				}else{
+					boolean isNUll = true;
+					for (Map.Entry<String, Integer> entry : supplierStock
+							.entrySet()) {
+						if(null !=entry.getValue() && 0 != entry.getValue()){
+							isNUll = false;
+							break;
+						}
+					}
+					
+					if(isNUll){//supplierStock的值全为0,则返回空的map
+						return iceStock;
+					}
 				}
 			} catch (Exception e) {    //获取库存信息时失败 直接退出
 				loggerError.error("获取库存信息时发生异常，程序退出");
-				System.exit(0);
+//				System.exit(0);
+				return iceStock;
 			}
 
 
@@ -510,7 +534,8 @@ public abstract class AbsUpdateProductStock {
 			try {
 				if(!ORDER)	sopPurchaseMap = this.getPurchaseOrder(host,app_key,app_secret);
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
+				loggerError.error(e);
 			}
 
 			for (String skuNo : skuNos) {

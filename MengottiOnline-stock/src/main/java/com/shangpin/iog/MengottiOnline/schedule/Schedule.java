@@ -13,7 +13,7 @@ import com.shangpin.iog.MengottiOnline.stock.StockImp;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 
 @Component
-@PropertySource("classpath:param.properties")
+@PropertySource("classpath:conf.properties")
 public class Schedule {
 
 	private static Logger logger = Logger.getLogger("info");
@@ -21,7 +21,7 @@ public class Schedule {
     private static String supplierId = "";
     static {
         if(null==bdl)
-         bdl=ResourceBundle.getBundle("param");
+         bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
     }
 	@Autowired

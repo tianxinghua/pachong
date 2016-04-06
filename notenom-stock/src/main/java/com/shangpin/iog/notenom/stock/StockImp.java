@@ -1,8 +1,8 @@
 package com.shangpin.iog.notenom.stock;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.notenom.dto.Item;
+import com.shangpin.iog.notenom.schedule.AppContext;
 import com.shangpin.iog.notenom.util.ReadExcel;
 import com.shangpin.sop.AbsUpdateProductStock;
 
@@ -91,21 +91,21 @@ public class StockImp  extends AbsUpdateProductStock {
 	public static void main(String[] args){
 		
 		loadSpringContext();		
-		StockImp fetchProduct = (StockImp)factory.getBean("notenomstock");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		logger.info("notenomstock更新数据库开始");
-		System.out.println("notenomstock更新数据库开始");
-		try {
-			
-			fetchProduct.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
-
-		} catch (Exception e) {
-			error.error(e.getMessage());
-			e.printStackTrace();
-		}
-		logger.info("notenomstock更新数据库结束");
-		System.out.println("notenomstock更新数据库结束");
-		System.exit(0);
+//		StockImp fetchProduct = (StockImp)factory.getBean("notenomstock");
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//		logger.info("notenomstock更新数据库开始");
+//		System.out.println("notenomstock更新数据库开始");
+//		try {
+//			
+//			fetchProduct.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
+//
+//		} catch (Exception e) {
+//			error.error(e.getMessage());
+//			e.printStackTrace();
+//		}
+//		logger.info("notenomstock更新数据库结束");
+//		System.out.println("notenomstock更新数据库结束");
+//		System.exit(0);
 		
 	}
 }

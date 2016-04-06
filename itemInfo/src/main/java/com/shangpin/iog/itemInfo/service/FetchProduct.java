@@ -44,8 +44,10 @@ public class FetchProduct {
 			+ "    <GetAllItems xmlns=\"http://tempuri.org/\" />\n"
 			+ "  </soap12:Body>\n" + "</soap12:Envelope>";
 	public static String errRet = "error";
-	final Logger logger = Logger.getLogger(this.getClass());
-	private static Logger logMongo = Logger.getLogger("mongodb");
+//	final Logger logger = Logger.getLogger(this.getClass());
+//	private static Logger logMongo = Logger.getLogger("mongodb");
+	private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
 	private static String supplierId = "";
 	private static ResourceBundle bdl=null;
 	private static int day;
@@ -87,10 +89,12 @@ public class FetchProduct {
 				SOAPBody body = msg.getSOAPBody();
 				Iterator<SOAPElement> iterator = body.getChildElements();
 				saveSpuDTO(iterator);
+				logger.info("==============================saveSpuDTO  over============================");
 			}
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			loggerError.error(ex); 
 		}
 	}
 
@@ -110,6 +114,7 @@ public class FetchProduct {
 			return reqMsg;
 		} catch (Exception e) {
 			e.printStackTrace();
+			loggerError.error(e); 
 			return null;
 		}
 	}
@@ -316,7 +321,7 @@ public class FetchProduct {
 					try{
 	            		productFetchService.updateMaterial(spu);
 	            	}catch(ServiceException ex){
-	            		logger.error(ex.getMessage());
+//	            		logger.error(ex.getMessage());
 	            		ex.printStackTrace();
 	            	}
 					e.printStackTrace();

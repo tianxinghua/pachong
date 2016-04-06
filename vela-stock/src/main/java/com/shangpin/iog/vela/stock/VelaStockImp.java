@@ -4,13 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.vela.stock.dto.Price;
 import com.shangpin.iog.vela.stock.dto.Quantity;
+import com.shangpin.iog.vela.stock.schedule.AppContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @Component("velaStock")
 public class VelaStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
+    private static LoggerUtil logError = LoggerUtil.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
     private static String supplierId;
@@ -83,7 +85,7 @@ public class VelaStockImp extends AbsUpdateProductStock {
 
             } catch (Exception e) {
                 //如果 httpUtil45 发生错误 返回  {"error":"发生异常错误"}
-                loggerError.error("拉取数据失败---" + e.getMessage());
+            	logError.error("拉取数据失败---" + e.getMessage());
                 e.printStackTrace();
             }
             if (json != null && !json.isEmpty()) {
@@ -164,28 +166,28 @@ public class VelaStockImp extends AbsUpdateProductStock {
 
         //加载spring
         loadSpringContext();
-        logger.info("----初始SPRING成功----");
-
-        VelaStockImp velaStockImp =(VelaStockImp)factory.getBean("velaStock");
-        velaStockImp.setUseThread(true);velaStockImp.setSkuCount4Thread(500);
-
-
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("VELA更新数据库开始");
-        try {
-            velaStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
-        } catch (Exception e) {
-            loggerError.error("vela 更新库存失败。"+e.getMessage());
-            e.printStackTrace();
-        }
-        logger.info("VELA更新数据库结束");
-        /*VelaStockImp velaStockImp = new VelaStockImp();
-        Collection<String> sku = new HashSet<>();
-        sku.add("75901");
-        Map<String,Integer> stock = new HashMap<>();
-        stock = velaStockImp.grabStock(sku);
-        System.out.println(stock.get("75901"));*/
-        System.exit(0);
+//        logger.info("----初始SPRING成功----");
+//
+//        VelaStockImp velaStockImp =(VelaStockImp)factory.getBean("velaStock");
+//        velaStockImp.setUseThread(true);velaStockImp.setSkuCount4Thread(500);
+//
+//
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("VELA更新数据库开始");
+//        try {
+//            velaStockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+//        } catch (Exception e) {
+//            loggerError.error("vela 更新库存失败。"+e.getMessage());
+//            e.printStackTrace();
+//        }
+//        logger.info("VELA更新数据库结束");
+//        /*VelaStockImp velaStockImp = new VelaStockImp();
+//        Collection<String> sku = new HashSet<>();
+//        sku.add("75901");
+//        Map<String,Integer> stock = new HashMap<>();
+//        stock = velaStockImp.grabStock(sku);
+//        System.out.println(stock.get("75901"));*/
+//        System.exit(0);
     }
 
 

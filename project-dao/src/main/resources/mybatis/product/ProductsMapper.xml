@@ -122,7 +122,7 @@
           spu.SUB_CATEGORY_ID  as  sub_category_id,
           spu.SUB_CATEGORY_NAME  as  sub_category_name,
 <!--           sku.MEMO  as  memo -->
-          CONCAT(sku.MEMO,spu.MEMO) as memo
+          CONCAT(sku.MEMO) as memo
 		
 		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
 					 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID

@@ -25,5 +25,16 @@ public class Item {
 	String item_detailed_info;
 	String gender; //性别
 	String made_in;
+	String LINK_PHOTO_1;
+	String LINK_PHOTO_2;
+	String LINK_PHOTO_3;
+	String LINK_PHOTO_4;
+	String LINK_PHOTO_5;
+	String LINK_PHOTO_6;
+	String LINK_PHOTO_7;
+	String LINK_PHOTO_8;
+	String LINK_PHOTO_9;
+	String LINK_PHOTO_10;
+
 	
 }

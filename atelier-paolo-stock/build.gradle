@@ -21,10 +21,7 @@ jar {
 
     manifest {
 	
-   		 attributes 'Main-Class': 'com.shangpin.iog.atelier-paolo.stock.StockImp'
-    
-   
-   
+   		 attributes 'Main-Class': 'com.shangpin.iog.paolo.stock.schedule.Startup'
    //     attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }

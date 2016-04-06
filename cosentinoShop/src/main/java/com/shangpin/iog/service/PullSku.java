@@ -83,7 +83,7 @@ public class PullSku {
     			                sku.setSkuId(item.getSku());
     			                sku.setSpuId(item.getItem_group_id());
     			                sku.setProductName(item.getTitle());
-    			                sku.setSupplierPrice(item.getPrice().replace("EUR", ""));
+    			                sku.setMarketPrice(item.getPrice().replace("EUR", ""));
     			                sku.setProductCode(item.getItem_group_id());
     			                sku.setColor(item.getColor());
     			                sku.setProductDescription(item.getDescription());
@@ -132,6 +132,20 @@ public class PullSku {
     			                spu.setMaterial(item.getMaterial());
     			                spu.setCategoryGender("male");
     			                spu.setProductOrigin(item.getOrigin());
+    			                String description = item.getDescription();
+    			                try{
+    			                	String str = "This is a ";
+    			                	String temp = "Spring/Summer 2016";   
+        			                description = description.substring(description.indexOf(str)+str.length(),description.indexOf(str)+str.length()+temp.length()).trim();
+        			                spu.setSeasonName(description);
+    			                }catch(Exception e){
+    			                	e.printStackTrace();
+    			                }
+    			                
+//    			                if(description.length()>aaa){
+//    			                	description = description.substring(0, aaa);
+//    			                }
+    			                
     			                try {
     			                    productFetchService.saveSPU(spu);
     			                } catch (ServiceException e) {

@@ -15,9 +15,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.stock.schedule.AppContext;
 import com.shangpin.sop.AbsUpdateProductStock;
 
 @Component("fratinardiStock")
@@ -90,20 +90,20 @@ public class FetchProduct extends AbsUpdateProductStock{
 	public static void main(String[] args) {
 
 		loadSpringContext();
-		FetchProduct fetchProduct = (FetchProduct) factory.getBean("fratinardiStock");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		logInfo.info("更新数据库开始");
-		System.out.println("===========更新数据库开始============");
-		try {
-			fetchProduct.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00",
-					format.format(new Date()));
-		} catch (Exception e) {
-			logError.error(e.getMessage());
-			e.printStackTrace();
-		}
-		logInfo.info("更新数据库结束");
-		System.out.println("==========更新数据库结束==========");
-		System.exit(0);
+//		FetchProduct fetchProduct = (FetchProduct) factory.getBean("fratinardiStock");
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//		logInfo.info("更新数据库开始");
+//		System.out.println("===========更新数据库开始============");
+//		try {
+//			fetchProduct.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00",
+//					format.format(new Date()));
+//		} catch (Exception e) {
+//			logError.error(e.getMessage());
+//			e.printStackTrace();
+//		}
+//		logInfo.info("更新数据库结束");
+//		System.out.println("==========更新数据库结束==========");
+//		System.exit(0);
 
 	}
 	

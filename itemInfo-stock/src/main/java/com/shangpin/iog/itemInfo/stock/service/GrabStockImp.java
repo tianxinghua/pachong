@@ -25,7 +25,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.itemInfo.stock.schedule.AppContext;
-import com.shangpin.iog.itemInfo.utils.SoapXmlUtil;
+import com.shangpin.iog.itemInfo.stock.utils.SoapXmlUtil;
 
 @Component("grabStockImp")
 public class GrabStockImp extends AbsUpdateProductStock {
@@ -36,14 +36,24 @@ public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
     private static String supplierId = "";
-    private static String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-								            "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
-								            "  <soap12:Body>\n" +
-								            "    <GetAllItems xmlns=\"http://tempuri.org/\" />\n" +
-								            "  </soap12:Body>\n" +
-								            "</soap12:Envelope>";
-    private static String serviceUrl = "http://service.alducadaosta.com/EcSrv/Services.asmx?op=GetItem4Platform";
-    private static String soapAction = "http://service.alducadaosta.com/EcSrv/GetItem4Platform";
+//    private static String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+//								            "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
+//								            "  <soap12:Body>\n" +
+//								            "    <GetAllItems xmlns=\"http://tempuri.org/\" />\n" +
+//								            "  </soap12:Body>\n" +
+//								            "</soap12:Envelope>";
+//    private static String serviceUrl = "http://service.alducadaosta.com/EcSrv/Services.asmx?op=GetItem4Platform";
+//    private static String soapAction = "http://service.alducadaosta.com/EcSrv/GetItem4Platform";
+    private static String soapRequestData ="<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
+											"<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">"+
+											  "<soap12:Body>"+
+											    "<GetSku4Platform xmlns=\"http://service.alducadaosta.com/EcSrv\">"+
+											      "<Customer>shangpin</Customer>"+
+											    "</GetSku4Platform>"+
+											  "</soap12:Body>"+
+											"</soap12:Envelope>";
+    private static String serviceUrl ="http://service.alducadaosta.com/EcSrv/Services.asmx?op=GetSku4Platform";
+    private static String soapAction ="http://service.alducadaosta.com/EcSrv/GetSku4Platform";
     private static String contentType = "text/xml; charset=utf-8";
     private static String localPath = "";
     private static String localPathDefault = "";
@@ -95,6 +105,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			}catch(Exception e){
 				e.printStackTrace();
 				logError.error("拉取alduca daosta数据失败---" + e.getMessage());
+				return skustock;
 			}
 		}
 //		String filePath = "d:/soapml.xml";

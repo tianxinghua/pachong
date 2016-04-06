@@ -20,17 +20,11 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 
-
-import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.della.dto.Item;
+import com.shangpin.iog.della.schedule.AppContext;
 import com.shangpin.iog.della.utils.CSVUtil;
 import com.shangpin.iog.della.utils.FTPUtils;
-import com.shangpin.iog.dto.ProductPictureDTO;
-import com.shangpin.iog.dto.SkuDTO;
-import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.sop.AbsUpdateProductStock;
 
 
@@ -74,7 +68,7 @@ public class FetchProduct extends AbsUpdateProductStock {
 			ftp.downFile("MOSU", remoteFileName, local);
 			File file = new File(local+File.separator+remoteFileName);
 			items = CSVUtil.readCSV(file, Item.class, ';');
-			ftp.logout();
+//			ftp.logout();
 		}catch(Exception ex){
 			error.error("first======"+ex); 
 			try{
@@ -83,7 +77,7 @@ public class FetchProduct extends AbsUpdateProductStock {
 				ftp.downFile("MOSU", remoteFileName, local);
 				File file = new File(local+File.separator+remoteFileName);
 				items = CSVUtil.readCSV(file, Item.class, ';');
-				ftp.logout();
+//				ftp.logout();
 			}catch(Exception e){
 				error.error("second======"+e); 
 				return skustock;
@@ -97,7 +91,7 @@ public class FetchProduct extends AbsUpdateProductStock {
 
 //			stockMap.put(item.getItem_code(), Integer.parseInt(item.getQuantity()));
 
-			System.out.println(stockMap.toString());
+//			System.out.println(stockMap.toString());
 		}
 		
 		for (String skuno : skuNo) {
@@ -122,21 +116,21 @@ public class FetchProduct extends AbsUpdateProductStock {
 	public static void main(String[] args){
 		
 		loadSpringContext();		
-		FetchProduct fetchProduct = (FetchProduct)factory.getBean("dellaStock");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		logInfo.info("della更新数据库开始");
-		System.out.println("della更新数据库开始");
-		try {
-			
-			fetchProduct.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
-
-		} catch (Exception e) {
-			logInfo.error(e.getMessage());
-			e.printStackTrace();
-		}
-		logInfo.info("della更新数据库结束");
-		System.out.println("della更新数据库结束");
-		System.exit(0);
+//		FetchProduct fetchProduct = (FetchProduct)factory.getBean("dellaStock");
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//		logInfo.info("della更新数据库开始");
+//		System.out.println("della更新数据库开始");
+//		try {
+//			
+//			fetchProduct.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
+//
+//		} catch (Exception e) {
+//			logInfo.error(e.getMessage());
+//			e.printStackTrace();
+//		}
+//		logInfo.info("della更新数据库结束");
+//		System.out.println("della更新数据库结束");
+//		System.exit(0);
 		
 //		try {
 //			AbsUpdateProductStock fetchProduct = new FetchProduct();

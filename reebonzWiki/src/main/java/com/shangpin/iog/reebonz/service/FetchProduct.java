@@ -29,6 +29,7 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.reebonz.dto.Item;
 import com.shangpin.iog.reebonz.dto.Items;
+import com.shangpin.iog.reebonz.dto.ProductOrigin;
 import com.shangpin.iog.reebonz.dto.ResponseObject;
 import com.shangpin.iog.reebonz.util.MyJsonUtil;
 import com.shangpin.iog.service.EventProductService;
@@ -58,18 +59,18 @@ public class FetchProduct {
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
 	private static int rows;
-	//以下参数做统计用，无实际意义
-	private static int skuTotal=0;
-	private static int skuSaveAndUpdateTotal=0;
-	private static int sku=0;
-	private static int skuSaveTotal=0 ;
-	private static int updateTotal =0;
-	private static int skuPassTotal =0;
-	private static int allEventPassSkuTotal =0;
-    @Autowired
-   	ProductSearchService productSearchService;
+	// 以下参数做统计用，无实际意义
+	private static int skuTotal = 0;
+	private static int skuSaveAndUpdateTotal = 0;
+	private static int sku = 0;
+	private static int skuSaveTotal = 0;
+	private static int updateTotal = 0;
+	private static int skuPassTotal = 0;
+	private static int allEventPassSkuTotal = 0;
+	@Autowired
+	ProductSearchService productSearchService;
 	private static int day;
-    
+
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -77,67 +78,72 @@ public class FetchProduct {
 		rows = Integer.parseInt(bdl.getString("rows"));
 		day = Integer.valueOf(bdl.getString("day"));
 	}
-	private Map<String,SkuDTO> skuDTOMap = new HashedMap();
+	private Map<String, SkuDTO> skuDTOMap = new HashedMap();
+
 	/**
 	 * fetch product and save into db
 	 */
 	public void fetchProductAndSave() {
 
-		Date startDate,endDate= new Date();
-		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
-		//获取原有的SKU 仅仅包含价格和库存
-		
+		Date startDate, endDate = new Date();
+		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate, day
+				* -1, "D");
+		// 获取原有的SKU 仅仅包含价格和库存
+
 		try {
-			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(
+					supplierId, startDate, endDate);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		// 第一步：获取活动信息
 		List<Item> eventList = MyJsonUtil.getReebonzEventJson();
-		int i=0;
-		if(eventList!=null){
+		int i = 0;
+		if (eventList != null) {
 			for (Item item : eventList) {
-				logger.info("--------------活动"+(++i)+"---------------------");
+				logger.info("--------------活动" + (++i)
+						+ "---------------------");
 				// 第二步：根据活动获取商品信息
 				// 获取商品总数量
 				String productNum = getProductNum(item.getEvent_id());
 				// rows代表每次请求的数据行数，默认10
-				if(productNum!=null){
+				if (productNum != null) {
 					for (int start = 0; start < Integer.parseInt(productNum); start += rows) {
 						List<Item> eventSpuList = MyJsonUtil
-								.getReebonzSpuJsonByEventId(item.getEvent_id(), start,
-										rows);
+								.getReebonzSpuJsonByEventId(item.getEvent_id(),
+										start, rows);
 						// 保存入库
 						messMappingAndSave(eventSpuList);
 					}
 				}
 				logger.info("---拉取活动" + item.getEvent_id() + "下的sku总数为：" + sku);
-//				System.out.println("---拉取活动" + item.getEvent_id() + "下的sku总数为：" + sku);
-				skuTotal +=sku;
-				sku=0;
-				logger.info("-----sku保存总数："+skuSaveTotal);
-				logger.info("-----sku更新总数："+updateTotal);
-				logger.info("-----sku去重总数："+skuPassTotal);
-				skuSaveAndUpdateTotal+=skuSaveTotal+=updateTotal;
-				allEventPassSkuTotal+=skuPassTotal;
-				skuSaveTotal =0;
-				updateTotal =0;
-				skuPassTotal =0;
+				// System.out.println("---拉取活动" + item.getEvent_id() +
+				// "下的sku总数为：" + sku);
+				skuTotal += sku;
+				sku = 0;
+				logger.info("-----sku保存总数：" + skuSaveTotal);
+				logger.info("-----sku更新总数：" + updateTotal);
+				logger.info("-----sku去重总数：" + skuPassTotal);
+				skuSaveAndUpdateTotal += skuSaveTotal += updateTotal;
+				allEventPassSkuTotal += skuPassTotal;
+				skuSaveTotal = 0;
+				updateTotal = 0;
+				skuPassTotal = 0;
 			}
-			skuSaveTotal =0;
-			updateTotal =0;
-			logger.info("reebonz供应商拉取的所有活动总数："+i);
-			logger.info("reebonz供应商拉取所有活动下的商品总数："+skuTotal);
-			logger.info("reebonz总共更新和保存的sku总数："+skuSaveAndUpdateTotal);
-			logger.info("reebonz总共去重过滤掉总数："+allEventPassSkuTotal);
+			skuSaveTotal = 0;
+			updateTotal = 0;
+			logger.info("reebonz供应商拉取的所有活动总数：" + i);
+			logger.info("reebonz供应商拉取所有活动下的商品总数：" + skuTotal);
+			logger.info("reebonz总共更新和保存的sku总数：" + skuSaveAndUpdateTotal);
+			logger.info("reebonz总共去重过滤掉总数：" + allEventPassSkuTotal);
 		}
-		
-		  //更新网站不再给信息的老数据
-		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
-			 Map.Entry<String,SkuDTO> entry =  itor.next();
-			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+
+		// 更新网站不再给信息的老数据
+		for (Iterator<Map.Entry<String, SkuDTO>> itor = skuDTOMap.entrySet()
+				.iterator(); itor.hasNext();) {
+			Map.Entry<String, SkuDTO> entry = itor.next();
+			if (!"0".equals(entry.getValue().getStock())) {// 更新不为0的数据 使其库存为0
 				entry.getValue().setStock("0");
 				try {
 					productFetchService.updatePriceAndStock(entry.getValue());
@@ -146,17 +152,14 @@ public class FetchProduct {
 				}
 			}
 		}
-		
+
 	}
 
 	/**
 	 * message mapping and save into DB
 	 */
 	private void messMappingAndSave(List<Item> array) {
-		
-	
-
-		if(array!=null){
+		if (array != null) {
 			for (Item item : array) {
 				boolean flag = false;
 				boolean f = false;
@@ -166,26 +169,27 @@ public class FetchProduct {
 					eventDTO = eventProductService.checkEventSku(supplierId,
 							item.getSku());
 					if (eventDTO != null) {
-	 					if (!item.getEvent_id().equals(eventDTO.getEventId())) {
+						if (!item.getEvent_id().equals(eventDTO.getEventId())) {
 							// 新的活动,判断是否旧活动已到期
 							SimpleDateFormat sf = new SimpleDateFormat(
 									"yyyy-MM-dd HH:mm:ss");
-							Date endDate = sf.parse(getString(eventDTO.getEndDate()));
+							Date endDate = sf.parse(getString(eventDTO
+									.getEndDate()));
 							boolean before = endDate.before(new Date());
 							if (before) {
 								// 旧活动已结束
 								flag = true;
-							}else{
+							} else {
 								// 旧活动未结束
-								f=true;
+								f = true;
 							}
 						} else {
 							// 已存在的活动更新产品
 							flag = false;
 						}
-					}else{
-						//新产品，且未参加过任何活动
-						flag=true;
+					} else {
+						// 新产品，且未参加过任何活动
+						flag = true;
 					}
 				} catch (ServiceException e2) {
 					e2.printStackTrace();
@@ -211,63 +215,74 @@ public class FetchProduct {
 						}
 					}
 				}
-				if(flag){
-					SpuDTO spu = new SpuDTO();
-					try {
-						spu.setId(UUIDGenerator.getUUID());
-						spu.setSupplierId(supplierId);
-						spu.setSpuId(item.getSku());
-						spu.setCategoryName(item.getProduct_category_name());
-						spu.setSubCategoryName(item.getProduct_category_name());
-						spu.setBrandName(item.getBrand_name());
-						spu.setSpuName(item.getTitle());
-						StringBuffer materialTemp = new StringBuffer();
-						if (item.getMaterial() != null) {
-							for (int i = 0; i < item.getMaterial().length; i++) {
-								if (i == 0) {
-									materialTemp.append(item.getMaterial()[i]);
-								} else {
-									materialTemp.append("," + item.getMaterial()[i]);
-								}
+				SpuDTO spu = new SpuDTO();
+				try {
+					spu.setId(UUIDGenerator.getUUID());
+					spu.setSupplierId(supplierId);
+					spu.setSpuId(item.getSku());
+					spu.setCategoryName(item.getProduct_category_name());
+					spu.setSubCategoryName(item.getProduct_category_name());
+					spu.setBrandName(item.getBrand_name());
+					spu.setSpuName(item.getTitle());
+					StringBuffer materialTemp = new StringBuffer();
+					if (item.getMaterial() != null) {
+						for (int i = 0; i < item.getMaterial().length; i++) {
+							if (i == 0) {
+								materialTemp.append(item.getMaterial()[i]);
+							} else {
+								materialTemp
+										.append("," + item.getMaterial()[i]);
 							}
 						}
-						spu.setMaterial(materialTemp.toString());
-						StringBuffer tempGender = new StringBuffer();
-						if (item.getGender() != null) {
-							for (int i = 0; i < item.getGender().length; i++) {
-								if (i == 0) {
-									tempGender.append(item.getGender()[i]);
-								} else {
-									tempGender.append("," + item.getGender()[i]);
-								}
+					}
+					spu.setMaterial(materialTemp.toString());
+					StringBuffer tempGender = new StringBuffer();
+					if (item.getGender() != null) {
+						for (int i = 0; i < item.getGender().length; i++) {
+							if (i == 0) {
+								tempGender.append(item.getGender()[i]);
+							} else {
+								tempGender.append("," + item.getGender()[i]);
 							}
 						}
-						spu.setCategoryGender(tempGender.toString());
-						productFetchService.saveSPU(spu);
-						
-					} catch (Exception e) {
+					}
+					spu.setCategoryGender(tempGender.toString());
+
+					Map map = ProductOrigin.getMap();
+					if (map.containsKey(item.getBrand_name())) {
+						spu.setProductOrigin(map.get(item.getBrand_name())
+								.toString());
+					}
+					if (flag) {
+						this.productFetchService.saveSPU(spu);
+					} else {
 						try {
-							productFetchService.updateMaterial(spu);
+							this.productFetchService.updateMaterial(spu);
 						} catch (ServiceException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 					}
+				} catch (Exception e) {
+					try {
+						this.productFetchService.updateMaterial(spu);
+					} catch (ServiceException e1) {
+						e1.printStackTrace();
+					}
 
 				}
-				
-				
+
 				if (StringUtils.isNotBlank(item.getImages()[0])) {
 					String[] picArray = item.getImages();
-					productFetchService.savePicture(supplierId, item.getSku(), null, Arrays.asList(picArray));
+					productFetchService.savePicture(supplierId, item.getSku(),
+							null, Arrays.asList(picArray));
 				}
 				//
 				// 第三步：根据skuId与eventId获取商品的库存跟尺码
-				
+
 				List<Item> skuScokeList = MyJsonUtil.getSkuScokeJson(
 						item.getEvent_id(), item.getSku());
 				if (skuScokeList != null) {
-					sku +=skuScokeList.size();
+					sku += skuScokeList.size();
 					for (Item stock : skuScokeList) {
 						SkuDTO sku = new SkuDTO();
 						try {
@@ -289,13 +304,15 @@ public class FetchProduct {
 							sku.setMarketPrice(item.getRetail_price());
 							String discount = item.getPartner_discount();
 							if (Double.parseDouble(discount) == 1) {
-								sku.setSupplierPrice(item.getFinal_selling_price());
+								sku.setSupplierPrice(item
+										.getFinal_selling_price());
 							} else {
 								double price = Double.parseDouble(item
 										.getFinal_selling_price())
 										* (1 - Double.parseDouble(discount));
-								BigDecimal   b   =   new   BigDecimal(price);  
-								double   f1   =   b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();  
+								BigDecimal b = new BigDecimal(price);
+								double f1 = b.setScale(2,
+										BigDecimal.ROUND_HALF_UP).doubleValue();
 								sku.setSupplierPrice(String.valueOf(f1));
 							}
 
@@ -305,68 +322,69 @@ public class FetchProduct {
 								}
 							}
 							sku.setProductName(item.getTitle());
-							sku.setProductDescription(item.getDescription()+","+item.getMeasurement());
+							sku.setProductDescription(item.getDescription()
+									+ "," + item.getMeasurement());
 							sku.setProductCode(item.getSku());
 							sku.setSaleCurrency(item.getCurrency());
 							sku.setEventStartDate(item.getEvent_start_date());
 							sku.setEventEndDate(item.getEvent_end_date());
-							if(skuDTOMap.containsKey(sku.getSkuId())){
+							if (skuDTOMap.containsKey(sku.getSkuId())) {
 								skuDTOMap.remove(sku.getSkuId());
-    						}
-							//新产品入库，旧产品只更新价格库存
-							if(flag){
-								skuSaveTotal+=1;
+							}
+							// 新产品入库，旧产品只更新价格库存
+							if (flag) {
+								skuSaveTotal += 1;
 								productFetchService.saveSKU(sku);
-								
-							}else{
-								if(!f){
-									productFetchService.updatePriceAndStock(sku);
-									updateTotal+=1;
-								}else{
-									skuPassTotal +=1;
+
+							} else {
+								if (!f) {
+									productFetchService
+											.updatePriceAndStock(sku);
+									updateTotal += 1;
+								} else {
+									skuPassTotal += 1;
 								}
-							
-//								System.out.println("------更新库存以及价格success："+stock.getTotal_stock_qty()+":"+item.getFinal_selling_price());
-								
 							}
 						} catch (ServiceException e) {
 							if (e.getMessage().equals("数据插入失败键重复")) {
 								try {
-									productFetchService.updatePriceAndStock(sku);
+									productFetchService
+											.updatePriceAndStock(sku);
 								} catch (ServiceException e1) {
 									e1.printStackTrace();
 								}
 							} else {
 								e.printStackTrace();
 							}
-							
+
 						}
 					}
 				}
+
 			}
 		}
 	}
 
 	private String getProductNum(String eventId) {
 		String spuJson = MyJsonUtil.getProductNum(eventId);
-		if("{\"error\":\"发生异常错误\"}".equals(spuJson)){
-			logger.info("网络连接："+spuJson);
+		if ("{\"error\":\"发生异常错误\"}".equals(spuJson)) {
+			logger.info("网络连接：" + spuJson);
 			return null;
-		}else{
+		} else {
 			ResponseObject obj = new Gson().fromJson(spuJson,
 					ResponseObject.class);
-			if(obj!=null){
+			if (obj != null) {
 				Object o = obj.getResponse();
 				JSONObject jsonObject = JSONObject.fromObject(o);
 				Items eventSpuList = new Gson().fromJson(jsonObject.toString(),
 						Items.class);
-				if(eventSpuList!=null){
+				if (eventSpuList != null) {
 					return eventSpuList.getNumFound();
-				}else{
+				} else {
 					return null;
 				}
-				
-			}else{
+
+			} else {
 				return null;
 			}
 		}

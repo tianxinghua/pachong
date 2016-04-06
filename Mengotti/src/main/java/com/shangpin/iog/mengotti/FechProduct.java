@@ -80,14 +80,14 @@ public class FechProduct {
 				for (Item item : items) {
 					try{
 						String sku_id = item.getSupplierSkuNo();
-						String spu_id = "";
+						String spu_id = item.getProductModel();
 						SkuDTO sku = new SkuDTO();
 						sku.setSkuId(sku_id);
-						if(sku_id.endsWith("+")){
-							spu_id = sku_id.substring(0, sku_id.length()-2);
-						}else{
-							spu_id = sku_id.substring(0, sku_id.length()-1);
-						}
+//						if(sku_id.endsWith("+")){
+//							spu_id = sku_id.substring(0, sku_id.length()-2);
+//						}else{
+//							spu_id = sku_id.substring(0, sku_id.length()-1);
+//						}
 						sku.setSpuId(spu_id);
 						sku.setId(UUIDGenerator.getUUID());
 						sku.setSupplierId(supplierId);

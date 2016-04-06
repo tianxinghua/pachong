@@ -24,14 +24,15 @@ import org.springframework.stereotype.Component;
 import com.csvreader.CsvReader;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import com.shangpin.iog.mengotti.schedule.AppContext;
 
 @Component("mengottiStock")
 public class GrapStock extends AbsUpdateProductStock{
 
 	private static Logger logInfo  = Logger.getLogger("info");
-	private static Logger logError = Logger.getLogger("error");
+	private static LoggerUtil logError = LoggerUtil.getLogger("error");
 	private static Logger logMongoDB = Logger.getLogger("MongoDB");
 	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
 	
@@ -52,10 +53,17 @@ public class GrapStock extends AbsUpdateProductStock{
 		
 		Map<String, String> skustock = new HashMap<String, String>();
 		Map<String,String> stockMap = new HashMap<String, String>();
-		List<Item> items = readLocalCSV(Item.class, ';');
+		List<Item> items = null;
+		try{
+			items = readLocalCSV(Item.class, ';');
+		}catch(Exception e){
+			e.printStackTrace();
+			logError.error(e);
+			return skustock;
+		}
 		for (Item item : items) {
 			stockMap.put(item.getSupplierSkuNo(), item.getStock());
-			System.out.println(stockMap.toString());
+//			System.out.println(stockMap.toString());
 		}		
 		for (String skuno : skuNo) {
             if(stockMap.containsKey(skuno)){
@@ -224,20 +232,20 @@ public class GrapStock extends AbsUpdateProductStock{
 	public static void main(String[] args) {
 
 		loadSpringContext();
-		GrapStock grabStockImp = (GrapStock)factory.getBean("mengottiStock");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		logInfo.info("glamestStock更新数据库开始");
-		System.out.println("glamestStock更新数据库开始");
-		try {
-			grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
-					format.format(new Date()));
-		} catch (Exception e) {
-			logError.error(e.getMessage());
-			e.printStackTrace();
-		}
-		logInfo.info("glamestStock更新数据库结束");
-		System.out.println("glamestStock更新数据库结束");
-		System.exit(0);
+//		GrapStock grabStockImp = (GrapStock)factory.getBean("mengottiStock");
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//		logInfo.info("glamestStock更新数据库开始");
+//		System.out.println("glamestStock更新数据库开始");
+//		try {
+//			grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
+//					format.format(new Date()));
+//		} catch (Exception e) {
+//			logError.error(e.getMessage());
+//			e.printStackTrace();
+//		}
+//		logInfo.info("glamestStock更新数据库结束");
+//		System.out.println("glamestStock更新数据库结束");
+//		System.exit(0);
 //		try{
 //			GrapStock grabStockImp = new GrapStock();
 //			grabStockImp.grabStock(null);

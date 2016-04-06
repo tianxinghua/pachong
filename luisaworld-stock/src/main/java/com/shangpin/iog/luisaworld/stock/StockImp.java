@@ -1,11 +1,11 @@
 package com.shangpin.iog.luisaworld.stock;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.luisaworld.dto.Item;
+import com.shangpin.iog.luisaworld.schedule.AppContext;
 import com.shangpin.iog.luisaworld.util.CVSUtil;
 import com.shangpin.iog.luisaworld.util.FTPUtils;
 import com.shangpin.sop.AbsUpdateProductStock;
@@ -106,24 +106,24 @@ public class StockImp  extends AbsUpdateProductStock {
     	//加载spring
     	loadSpringContext();
 		
-        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
-            logger.error("参数错误，无法执行更新库存");
-        }
-
-        StockImp luisaworld = (StockImp)factory.getBean("luisaworldstock");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		logger.info("luisaworldstock-stock更新数据库开始");
-		try{
-			
-			luisaworld.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
-			
-		}catch(Exception ex){
-			logger.error(ex);
-			ex.printStackTrace();
-		}
-		
-		logger.info("luisaworldstock更新数据库结束");
-		System.exit(0);
+//        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
+//            logger.error("参数错误，无法执行更新库存");
+//        }
+//
+//        StockImp luisaworld = (StockImp)factory.getBean("luisaworldstock");
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//		logger.info("luisaworldstock-stock更新数据库开始");
+//		try{
+//			
+//			luisaworld.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+//			
+//		}catch(Exception ex){
+//			logger.error(ex);
+//			ex.printStackTrace();
+//		}
+//		
+//		logger.info("luisaworldstock更新数据库结束");
+//		System.exit(0);
 //    	StockImp s = new StockImp();
 //    	s.grabStock(null);
     }

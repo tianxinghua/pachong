@@ -192,17 +192,8 @@ public abstract class AbsOrderService {
         
         SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MMDD_HH);
         String date = sdf.format(new Date());
-//        Jedis j = new Jedis(redisUrl);
         j.set("iog_"+supplierId,date);
         //获取订单数组
-        Set<String> set = j.keys("iog_*");
-		 Iterator it=set.iterator();
-	       while(it.hasNext())
-	       {
-	           String o=(String)it.next();
-	           System.out.println(o);
-	           System.out.println(j.get(o));
-	       }
         Gson gson = new Gson();
         ICEWMSOrderRequestDTO  dto = new ICEWMSOrderRequestDTO();
         logger.info("startDateOfWMS ="+startDateOfWMS);
