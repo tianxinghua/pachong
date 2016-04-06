@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import com.shangpin.iog.common.utils.DateTimeUtil;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -78,40 +79,96 @@ public class OrderService extends AbsOrderService {
 						orderDTO.setExcDesc("产品信息不正确");
 						orderDTO.setExcTime(new Date());
 					}else{
-
-
-						String date = DateTimeUtil.convertFormat(new Date(),"dd/MM/yyyy");
-						sb.append("1;13618;13618;shangpin;shangpin;wangsaying@shangpin.com;S;;0;123123;VIA CUPA;NAPOLI;80131;NA;3348053248;Italy;IT;2;")
-								.append(date).append("|");
-						sb.append("2;Via Leopardi 27, 22075 Lurate Caccivio (CO)|");
-						sb.append("3;").append(detail[1]).append(";").append(skuDetail[0]).append(";");
-						sb.append(skuDetail[1]).append(";").append(price).append("|");
-						//sb.append("3;1;235850;38;79|");
-						sb.append("4;Totale Prodotti (iva inclusa):;").append(price).append("|");
-						sb.append("4;Corriere Espresso SDA/DHL:;0|4;Contributo per contrassegno:;0|4;Totale Ordine (iva inclusa):;0|");
-						sb.append("9;").append(orderDTO.getSpOrderId()).append("|");
-						//sb.append("9;3400988|");
-						String rtnData = null;
-						String jsonValue = sb.toString();
-						logger.info("推送参数 ：" + jsonValue);
-						try {
-							rtnData = HttpUtil45.operateData("post", "json", url, defaultConfig, null, jsonValue, "", "");
-							logger.info("返回结果 ：" + rtnData);
-							if("ok".equals(rtnData)){
+						
+						String json = HttpUtil45.get("http://gicos.it/outsrc.php?do=products&cart="+skuDetail[0], new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2),null);
+						logger.info(skuDetail[0]+"的库存查询结果:"+json);
+						System.out.println((skuDetail[0]+"的库存查询结果:"+json));
+						boolean flag = true;
+						if(!json.equals(HttpUtil45.errorResult)){
+							Map map = new HashMap();
+							String array [] = json.split("\\|");
+							for(int i=14;i<44;i++){
+								if(array[i]!=null){
+									String stock = null;
+									String size = null;
+									String si[] = array[i].split("~");
+									if(si[0].equals("")){
+										continue;
+									}else{
+										if(si[0].indexOf("x")!=-1){
+											 size = si[0].replace("x", ".5");
+										}else{
+											size = si[0];
+										}
+									}
+									stock = si[1];
+									map.put(size, stock);
+								}
+							}
+							logger.info("尺码"+skuDetail[1]+"的库存为:"+map.get(skuDetail[1]));
+							System.out.println("尺码"+skuDetail[1]+"的库存为:"+map.get(skuDetail[1]));
+							if(map.get(skuDetail[1])!=null&&Integer.parseInt(map.get(skuDetail[1]).toString())<=0){
+								flag = false;
+							}
+							
+						}
+						if(flag){
+							String date = DateTimeUtil.convertFormat(new Date(),"dd/MM/yyyy");
+							sb.append("1;13618;13618;shangpin;shangpin;wangsaying@shangpin.com;S;;0;123123;VIA CUPA;NAPOLI;80131;NA;3348053248;Italy;IT;2;")
+									.append(date).append("|");
+							sb.append("2;Via Leopardi 27, 22075 Lurate Caccivio (CO)|");
+							sb.append("3;").append(detail[1]).append(";").append(skuDetail[0]).append(";");
+							sb.append(skuDetail[1]).append(";").append(price).append("|");
+							//sb.append("3;1;235850;38;79|");
+							sb.append("4;Totale Prodotti (iva inclusa):;").append(price).append("|");
+							sb.append("4;Corriere Espresso SDA/DHL:;0|4;Contributo per contrassegno:;0|4;Totale Ordine (iva inclusa):;0|");
+							sb.append("9;").append(orderDTO.getSpOrderId()).append("|");
+							//sb.append("9;3400988|");
+							String rtnData = null;
+							String jsonValue = sb.toString();
+							logger.info("推送参数 ：" + jsonValue);
+							try {
+								rtnData = HttpUtil45.operateData("post", "json", url, defaultConfig, null, jsonValue, "", "");
+								logger.info("返回结果 ：" + rtnData);
+								if("ok".equals(rtnData)){
+									orderDTO.setExcState("0");
+									orderDTO.setStatus(OrderStatus.CONFIRMED);
+								}else if("not ok".equals(rtnData)){//sell out
+									orderDTO.setExcDesc(rtnData);
+									orderDTO.setExcState("0");
+									String reResult = setPurchaseOrderExc(orderDTO);
+									if("-1".equals(reResult)){
+										orderDTO.setStatus(OrderStatus.NOHANDLE);
+									}else if("1".equals(reResult)){
+										orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+									}else if("0".equals(reResult)){
+										orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+									}
+								}else{
+									orderDTO.setStatus(OrderStatus.NOHANDLE);
+									orderDTO.setExcState("0");
+									orderDTO.setExcDesc(rtnData);
+									orderDTO.setExcTime(new Date());;
+								}
+							} catch (ServiceException e1) {
+								orderDTO.setStatus(OrderStatus.NOHANDLE);
 								orderDTO.setExcState("0");
-								orderDTO.setStatus(OrderStatus.CONFIRMED);
-							}else if("not ok".equals(rtnData)){//sell out
-
-							}else{
-								orderDTO.setExcState("1");
-								orderDTO.setExcDesc(rtnData);
+								orderDTO.setExcDesc(e1.getMessage());
 								orderDTO.setExcTime(new Date());;
 							}
-						} catch (ServiceException e1) {
-							orderDTO.setExcState("1");
-							orderDTO.setExcDesc(e1.getMessage());
-							orderDTO.setExcTime(new Date());;
+						}else{
+							orderDTO.setExcDesc("stock不足");
+							orderDTO.setExcState("0");
+							String reResult = setPurchaseOrderExc(orderDTO);
+							if("-1".equals(reResult)){
+								orderDTO.setStatus(OrderStatus.NOHANDLE);
+							}else if("1".equals(reResult)){
+								orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+							}else if("0".equals(reResult)){
+								orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+							}
 						}
+						
 					}
 
 
