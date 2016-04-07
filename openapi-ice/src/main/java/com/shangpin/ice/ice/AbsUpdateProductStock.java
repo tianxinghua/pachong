@@ -177,6 +177,7 @@ public abstract class AbsUpdateProductStock {
 				skus = products.SopProductSkuIces;
 			} catch (Exception e) {
 //				e.printStackTrace();
+				loggerError.error("openAPI获取信息超时"+e.getMessage());
 			}
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
