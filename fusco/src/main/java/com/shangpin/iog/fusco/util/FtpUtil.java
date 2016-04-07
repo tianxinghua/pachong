@@ -39,7 +39,7 @@ public class FtpUtil {
 	// Locale.ENGLISH) ;
 	private static String HOST = "ftp.teknosis-quick.it", PORT = "21",
 			USER = "fusco@teknosis-quick.it", PASSWORD = "Fusco00440044",
-			FILE_PATH = "/immagini";
+			FILE_PATH = "/csv";
 	public static final String PROPERTIES_FILE_NAME = "conf";
 	static ResourceBundle bundle = ResourceBundle.getBundle("conf");
 	private static String path = bundle.getString("localPath");
@@ -152,7 +152,6 @@ public class FtpUtil {
 			// ftp.setType(FTPTransferType.ASCII);
 			ftp.setType(FTPTransferType.BINARY);
 			remoteFilePath = FILE_PATH + "/";
-
 			String[] files = null;
 			ftp.chdir(remoteFilePath);
 
@@ -167,6 +166,7 @@ public class FtpUtil {
 				files = ftp.dir(remoteFilePath);
 				for (String fileName : files) {
 					if (fileName.indexOf("csv") > 0) {
+						System.out.println(fileName);
 						list.add(fileName);
 						ftp.get(path + fileName, fileName);
 					}
