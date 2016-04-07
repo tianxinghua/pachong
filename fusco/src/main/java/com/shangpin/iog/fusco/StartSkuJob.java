@@ -1,8 +1,8 @@
-package com.shangpin.iog.ctsiLogistics;
+package com.shangpin.iog.fusco;
 import com.shangpin.iog.app.AppContext;
 
 
-import com.shangpin.iog.ctsiLogistics.service.FetchProduct;
+import com.shangpin.iog.fusco.service.FetchProduct;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -20,9 +20,6 @@ public class StartSkuJob {
         factory = new AnnotationConfigApplicationContext(AppContext.class);
     }
     public static void main(String[] args){
-    	String ss = "\"ss1\"";
-    	System.out.println(ss.substring(1, ss.length()-1));
-    	
     	
         //鍔犺浇spring
         loadSpringContext();

@@ -5,25 +5,15 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 
-import javax.mail.MessagingException;
-
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
@@ -37,30 +27,19 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
-import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.ice.ice.AbsOrderService;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.SendMail;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.dto.EventProductDTO;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
-import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.efashion.dto.Item;
 import com.shangpin.iog.efashion.dto.RequestObject;
 import com.shangpin.iog.efashion.dto.Result;
 import com.shangpin.iog.efashion.dto.ReturnObject;
 import com.shangpin.iog.ice.dto.OrderStatus;
-import com.shangpin.iog.product.service.SkuPriceServiceImpl;
-import com.shangpin.iog.service.EventProductService;
-import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.SkuPriceService;
 @Component
 public class OrderImpl  extends AbsOrderService{
@@ -70,6 +49,14 @@ public class OrderImpl  extends AbsOrderService{
 	private static String supplierId = null;
 	private static String supplierNo = null;
 	private static String url = null;
+	
+	private static String smtpHost = null;
+	private static String from = null;
+	private static String fromUserPassword = null;
+	private static String to = null;
+	private static String subject = null;
+	private static String messageText = null;
+	private static String messageType = null;
 	@Autowired
 	SkuPriceService skuPriceService;
 	static {
@@ -79,6 +66,14 @@ public class OrderImpl  extends AbsOrderService{
 		supplierId = bdl.getString("supplierId");
 		supplierNo = bdl.getString("supplierNo");
 		url = bdl.getString("url");
+		
+		smtpHost = bdl.getString("smtpHost");
+		from = bdl.getString("from");
+		fromUserPassword = bdl.getString("fromUserPassword");
+		to = bdl.getString("to");
+		subject = bdl.getString("subject");
+		messageText = bdl.getString("messageText");
+		messageType = bdl.getString("messageType");
 	}
 
 	public void loopExecute() {
@@ -118,16 +113,51 @@ public class OrderImpl  extends AbsOrderService{
 			if("400".equals(code)){
 				Result result = new Gson().fromJson(res, Result.class);
 				if("400".equals(result.getReqCode())){
-					orderDTO.setExcDesc(result.getResult());
-					orderDTO.setExcState("0");
-					String reResult = setPurchaseOrderExc(orderDTO);
-					if("-1".equals(reResult)){
+					if("StoreCode not valid".equals(result.getResult())){
+						orderDTO.setExcDesc(res);
+						orderDTO.setExcState("0");
 						orderDTO.setStatus(OrderStatus.NOHANDLE);
-					}else if("1".equals(reResult)){
-						orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-					}else if("0".equals(reResult)){
-						orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+						
+						Thread t = new Thread(new Runnable() {
+							@Override
+							public void run() {
+								try {
+									SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"推送efashion订单"+orderDTO.getSpOrderId()+"出现错误,已置为不做处理，原因："+orderDTO.getExcDesc(), messageType);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
+						t.start();
+					} else if ("Order number just placed".equals(result.getResult())) {
+			            orderDTO.setExcDesc(res);
+			            orderDTO.setExcState("0");
+			            orderDTO.setStatus(OrderStatus.NOHANDLE);
+			            Thread t = new Thread(new Runnable() {
+							@Override
+							public void run() {
+								try {
+									SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"推送efashion订单"+orderDTO.getSpOrderId()+"出现错误,已置为不做处理，原因："+orderDTO.getExcDesc(), messageType);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
+						t.start();
+			          } else{
+						res = res.substring(0,200);
+						orderDTO.setExcDesc(res);
+						orderDTO.setExcState("0");
+						String reResult = setPurchaseOrderExc(orderDTO);
+						if("-1".equals(reResult)){
+							orderDTO.setStatus(OrderStatus.NOHANDLE);
+						}else if("1".equals(reResult)){
+							orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+						}else if("0".equals(reResult)){
+							orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+						}
 					}
+					
 				}
 			}else if("200".equals(code)){
 				ReturnObject obj = new Gson().fromJson(res, ReturnObject.class);
@@ -154,16 +184,33 @@ public class OrderImpl  extends AbsOrderService{
 					}
 				}
 			}else{
+				if(res.length()>200){
+					res = res.substring(0,200);
+				}
 				orderDTO.setExcDesc(res);
 				orderDTO.setExcState("0");
-				String reResult = setPurchaseOrderExc(orderDTO);
-				if("-1".equals(reResult)){
-					orderDTO.setStatus(OrderStatus.NOHANDLE);
-				}else if("1".equals(reResult)){
-					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-				}else if("0".equals(reResult)){
-					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
-				}
+				orderDTO.setStatus(OrderStatus.NOHANDLE);
+//				String reResult = setPurchaseOrderExc(orderDTO);
+//				if("-1".equals(reResult)){
+//					orderDTO.setStatus(OrderStatus.NOHANDLE);
+//				}else if("1".equals(reResult)){
+//					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+//				}else if("0".equals(reResult)){
+//					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+//				}
+				
+				Thread t = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject,"推送efashion订单"+orderDTO.getSpOrderId()+"出现错误,已置为不做处理，原因："+orderDTO.getExcDesc(), messageType);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				t.start();
+				
 			}
 		}
 	}

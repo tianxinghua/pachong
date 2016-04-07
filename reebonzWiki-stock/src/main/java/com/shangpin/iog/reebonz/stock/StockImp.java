@@ -105,7 +105,7 @@ public class StockImp extends AbsUpdateProductStock {
         				.get(stockUrl,
         						new OutTimeConfig(1000 * 60*2, 1000 * 60*2, 1000 * 60*2),
         						map);
-                logger.info("get skuId :"+skuNo +" 库存返回值为："+jsonStr );
+                System.out.println("get skuId :"+skuNo +" 库存返回值为："+jsonStr );
                
         	}
         	 if(HttpUtil45.errorResult.equals(jsonStr)){    //链接异常

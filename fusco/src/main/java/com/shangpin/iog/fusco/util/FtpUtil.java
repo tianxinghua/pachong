@@ -1,4 +1,4 @@
-package com.shangpin.iog.ctsiLogistics.util;
+package com.shangpin.iog.fusco.util;
 
 import com.csvreader.CsvReader;
 import com.enterprisedt.net.ftp.FTPClient;
@@ -6,13 +6,12 @@ import com.enterprisedt.net.ftp.FTPConnectMode;
 import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FTPTransferType;
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.ctsiLogistics.dao.Item;
-import com.shangpin.iog.ctsiLogistics.service.FetchProduct;
+import com.shangpin.iog.fusco.dao.Item;
+import com.shangpin.iog.fusco.service.FetchProduct;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -153,7 +152,6 @@ public class FtpUtil {
 			// ftp.setType(FTPTransferType.ASCII);
 			ftp.setType(FTPTransferType.BINARY);
 			remoteFilePath = FILE_PATH + "/";
-
 			String[] files = null;
 			ftp.chdir(remoteFilePath);
 
@@ -168,6 +166,7 @@ public class FtpUtil {
 				files = ftp.dir(remoteFilePath);
 				for (String fileName : files) {
 					if (fileName.indexOf("csv") > 0) {
+						System.out.println(fileName);
 						list.add(fileName);
 						ftp.get(path + fileName, fileName);
 					}

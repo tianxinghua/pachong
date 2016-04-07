@@ -24,31 +24,31 @@ public class Startup {
 	private static ResourceBundle bdl=null;
 	private static String biaoshi = "0";
 
-    private static ApplicationContext factory;
-    
-    private static String localPath = "";
-    
-    static {
-        if(null==bdl)
-         bdl=ResourceBundle.getBundle("conf");
-        biaoshi = bdl.getString("biaoshi");
-    }
-    
+	private static ApplicationContext factory;
+
+	private static String localPath = "";
+
+	static {
+		if(null==bdl)
+			bdl=ResourceBundle.getBundle("conf");
+		biaoshi = bdl.getString("biaoshi");
+	}
+
 	private static void loadSpringContext()
 
 	{
 
-        factory = new AnnotationConfigApplicationContext(AppContext.class);
+		factory = new AnnotationConfigApplicationContext(AppContext.class);
 	}
-	
+
 	public static void main(String[] args)
 	{
 
-        //加载spring
+		//加载spring
 		loadSpringContext();
 		System.out.println("初始化Spring成功");
 		logger.info("============初始化Spring成功===============");
-		
+
 		try {
 			localPath = URLDecoder.decode((Startup.class.getClassLoader().getResource("").getFile()), "utf-8");
 			localPath = localPath+"testBuffer.xml";
@@ -57,7 +57,7 @@ public class Startup {
 		}
 		logger.info("localPath============"+localPath);
 		logger.info("biaoshi==============="+biaoshi);
-        //拉取数据
+		//拉取数据
 		//从网站拉取数据，保存到文件
 		if("0".equals(biaoshi)){
 			Test t= new Test();
@@ -66,7 +66,7 @@ public class Startup {
 					"http://service.alducadaosta.com/EcSrv/GetSku4Platform",
 					"text/xml; charset=UTF-8",
 					localPath);
-		}		
+		}
 //		t.getResAsStream(
 //				"http://service.alducadaosta.com/EcSrv/Services.asmx?op=GetItem4Platform",
 //				"http://service.alducadaosta.com/EcSrv/GetItem4Platform",
@@ -74,10 +74,10 @@ public class Startup {
 //				localPath);
 		//获取文件内容，解析xml，并且将信息保存入库
 		System.out.println(localPath);
-        FetchProduct fetchProduct =(FetchProduct)factory.getBean("itemInfo");
-        fetchProduct.fetchProductAndSave(localPath);
+		FetchProduct fetchProduct =(FetchProduct)factory.getBean("itemInfo");
+		fetchProduct.fetchProductAndSave(localPath);
 
-        logger.info("-------fetch end---------");
+		logger.info("-------fetch end---------");
 		System.out.println("-------fetch end---------");
 
 	}

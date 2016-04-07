@@ -1,28 +1,14 @@
 package com.shangpin.iog.inviqa.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sf.json.JSONArray;
-
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsOrderService;
-import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.common.utils.DateTimeUtil;
-import com.shangpin.iog.common.utils.SendMail;
-import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
@@ -30,6 +16,12 @@ import com.github.scribejava.core.model.Token;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuthService;
 import com.google.gson.Gson;
+import com.shangpin.framework.ServiceException;
+import com.shangpin.ice.ice.AbsOrderService;
+import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.common.utils.SendMail;
+import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
@@ -58,6 +50,8 @@ public class OrderImpl extends AbsOrderService {
 	private static String MAGENTO_API_KEY = null;
     private static String MAGENTO_API_SECRET = null;
     private static String MAGENTO_REST_API_URL = null;
+    private static String token = null;
+    private static String secret = null;
 	static {
 		if(null==bdl){
 			bdl=ResourceBundle.getBundle("conf");
@@ -67,6 +61,8 @@ public class OrderImpl extends AbsOrderService {
 		MAGENTO_API_KEY = bdl.getString("MAGENTO_API_KEY");
 		MAGENTO_API_SECRET = bdl.getString("MAGENTO_API_SECRET");
 		MAGENTO_REST_API_URL = bdl.getString("MAGENTO_REST_API_URL");
+		token = bdl.getString("token");
+		secret = bdl.getString("secret");
 		
 		supplierId = bdl.getString("supplierId");
 		supplierNo = bdl.getString("supplierNo");
@@ -98,14 +94,6 @@ public class OrderImpl extends AbsOrderService {
 	        factory = new AnnotationConfigApplicationContext(AppContext.class);
 	    }
 
-	    public static void main(String[] args)
-	    {
-	        //加载spring
-	        loadSpringContext();
-	        logger.info(" schedule start  ");
-	        OrderImpl o = new OrderImpl();
-			o.handleRefundlOrder(null);
-	    }
 	/**
 	 * 锁库存
 	 */
@@ -113,24 +101,19 @@ public class OrderImpl extends AbsOrderService {
 	public void handleSupplierOrder(final OrderDTO orderDTO) {
 		String skuId =  null;
 		int qty = 0;
-//		String detail = orderDTO.getDetail();
-//		skuId = detail.split(":")[0];
-//		qty = Integer.parseInt(detail.split(":")[1]);
+		String detail = orderDTO.getDetail();
+		skuId = detail.split(":")[0];
+		qty = Integer.parseInt(detail.split(":")[1]);
 		
-		 OrderDTO orderDTO1 = new OrderDTO();
-		skuId = "JW0010-LIGHT-GOLD-One Size";
-		qty = 1;
-		orderDTO1.setSpOrderId("9999999");
-		
-		String json = "{\"order_no\":\""+orderDTO1.getSpOrderId()+"\",\"order_items\":[{\"sku_id\":\""+skuId+"\",\"quantity\":"+qty+"}]}";
+		String json = "{\"order_no\":\""+orderDTO.getSpOrderId()+"\",\"order_items\":[{\"sku_id\":\""+skuId+"\",\"quantity\":"+qty+"}]}";
 		System.out.println("推送的数据:"+json);
 		logger.info("推送的数据:"+json);
 		OAuthService service = new ServiceBuilder().provider(API.class)
 				.apiKey(MAGENTO_API_KEY).apiSecret(MAGENTO_API_SECRET).build();
-		Token accessToken = new Token("q5gj1n97vkjwspptteb5nonjidte2j7c",
-				"virjysp6wpnwqgio1k2ohbsvds09ti2o");
+		Token accessToken = new Token(token,
+				secret);
 		OAuthRequest request = new OAuthRequest(Verb.PUT,
-				"http://glamorous-staging.space48.com/api/rest/shangpin/holdorders/"+ UUIDGenerator.getUUID(),
+				MAGENTO_REST_API_URL+"holdorders/"+ UUIDGenerator.getUUID(),
 				service);
 		
 		request.addHeader("Content-type","application/json");
@@ -214,26 +197,26 @@ public class OrderImpl extends AbsOrderService {
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		String skuId =  null;
 		int qty = 0;
-//		String detail = orderDTO.getDetail();
-//		skuId = detail.split(":")[0];
-//		qty = Integer.parseInt(detail.split(":")[1]);9df6a7e632dd483c87b72b7b0cb128e3
+		String detail = orderDTO.getDetail();
+		skuId = detail.split(":")[0];
+		qty = Integer.parseInt(detail.split(":")[1]);
 		
-		skuId = "JW0010-LIGHT-GOLD-One Size";
-		qty = 1;
-		orderDTO = new OrderDTO();
-		orderDTO.setSpOrderId("9999999");
-		orderDTO.setSpPurchaseNo("CGD1234567");
-		orderDTO.setSupplierOrderNo("1");
+//		skuId = "JW0010-LIGHT-GOLD-One Size";
+//		qty = 1;
+//		orderDTO = new OrderDTO();
+//		orderDTO.setSpOrderId("9999999");
+//		orderDTO.setSpPurchaseNo("CGD1234567");
+//		orderDTO.setSupplierOrderNo("1");
 		
 		String json = "{\"purchase_no\":\""+orderDTO.getSpPurchaseNo()+"\",\"order_no\":\""+orderDTO.getSpOrderId()+"\",\"order_items\":[{\"sku_id\":\""+skuId+"\",\"quantity\":"+qty+"}]}";
 		System.out.println("推送的数据:"+json);
 		logger.info("推送的数据:"+json);
 		OAuthService service = new ServiceBuilder().provider(API.class)
 				.apiKey(MAGENTO_API_KEY).apiSecret(MAGENTO_API_SECRET).build();
-		Token accessToken = new Token("q5gj1n97vkjwspptteb5nonjidte2j7c",
-				"virjysp6wpnwqgio1k2ohbsvds09ti2o");
+		Token accessToken = new Token(token,
+				secret);
 		OAuthRequest request = new OAuthRequest(Verb.PUT,
-				"http://glamorous-staging.space48.com/api/rest/shangpin/orders/"+orderDTO.getSupplierOrderNo(),
+				MAGENTO_REST_API_URL+"orders/"+orderDTO.getSupplierOrderNo(),
 				service);
 		
 		request.addHeader("Content-type","application/json");
@@ -272,11 +255,14 @@ public class OrderImpl extends AbsOrderService {
 			}
 			orderDTO.setExcState("0");
 		}else if(code==500){
-			orderDTO.setExcState("1");
+			FailResult fail = new Gson().fromJson(message, FailResult.class);
+			Errors error = fail.getMessages().getError().get(0);
+			orderDTO.setExcDesc(error.getMessage());
+			orderDTO.setExcState("0");
 			orderDTO.setStatus(OrderStatus.NOHANDLE);
 		}else{
 			orderDTO.setExcDesc("");
-			orderDTO.setExcState("1");
+			orderDTO.setExcState("0");
 		}
 	}
 
@@ -298,24 +284,16 @@ public class OrderImpl extends AbsOrderService {
 		String detail = deleteOrder.getDetail();
 		skuId = detail.split(":")[0];
 		qty = Integer.parseInt(detail.split(":")[1]);
-		
-//		skuId = "JW0010-LIGHT-GOLD-One Size";
-//		qty = 1;
-//		deleteOrder = new ReturnOrderDTO();
-//		deleteOrder.setSpOrderId("9999999");
-//		deleteOrder.setSpPurchaseNo("CGD1234567");
-//		deleteOrder.setSupplierOrderNo("1");
 //		
 		String json = "{\"purchase_no\":\""+deleteOrder.getSpPurchaseNo()+"\",\"order_no\":\""+deleteOrder.getSpOrderId()+"\",\"order_items\":[{\"sku_id\":\""+skuId+"\",\"quantity\":"+qty+"}]}";
 		System.out.println("推送的数据:"+json);
 		logger.info("推送的数据:"+json);
 		OAuthService service = new ServiceBuilder().provider(API.class)
 				.apiKey(MAGENTO_API_KEY).apiSecret(MAGENTO_API_SECRET).build();
-		Token accessToken = new Token("q5gj1n97vkjwspptteb5nonjidte2j7c",
-				"virjysp6wpnwqgio1k2ohbsvds09ti2o");
-						
+		Token accessToken = new Token(token,
+				secret);		
 		OAuthRequest request = new OAuthRequest(Verb.DELETE,
-				"http://glamorous-staging.space48.com/api/rest/shangpin/orders/"+deleteOrder.getSupplierOrderNo(),
+				MAGENTO_REST_API_URL+"orders/"+deleteOrder.getSupplierOrderNo(),
 				service);
 		
 		request.addHeader("Content-type","application/json");

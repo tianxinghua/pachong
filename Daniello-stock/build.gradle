@@ -1,38 +1,27 @@
-
-
-
-
-def propertyPath =    "$buildDir/libs/conf"
-
 dependencies {
     compile(
-
-            project(':project-common'),
-
             project(':iog-common-product'),
             project(':iog-sop'),
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
-
-
 }
 
 jar {
 
-    dependsOn copyToLib , copyResources
+    dependsOn copyToLib , copyResources,dependsClassPath
     exclude ("**/*.properties")
 
-    def manifestCp = configurations.compile.files.collect  {
-
-        File file = it
-        "lib/${file.name}"
-    }.join(' ')
+//    def manifestCp = configurations.compile.files.collect  {
+//
+//        File file = it
+//        "lib/${file.name}"
+//    }.join(' ')
 
 
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.daniello.stock.DanielloStockImp'
-
-        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+//        attributes 'Main-Class': 'com.shangpin.iog.daniello.stock.DanielloStockImp'
+		attributes 'Main-Class': 'com.shangpin.iog.daniello.stock.schedule.Startup'
+//        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }

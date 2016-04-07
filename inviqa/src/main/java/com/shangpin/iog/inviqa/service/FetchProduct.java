@@ -12,12 +12,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 import net.sf.json.JSONArray;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,7 @@ import com.github.scribejava.core.oauth.OAuthService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
@@ -39,6 +43,7 @@ import com.shangpin.iog.inviqa.dto.API;
 import com.shangpin.iog.inviqa.dto.Product;
 import com.shangpin.iog.service.EventProductService;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
 
 /**
  * Created by 赵根春 on 2015/12/25.
@@ -48,7 +53,8 @@ public class FetchProduct {
 
 	@Autowired
 	ProductFetchService productFetchService;
-
+	@Autowired
+	ProductSearchService productSearchService;
 	@Autowired
 	EventProductService eventProductService;
 	private static Logger logger = Logger.getLogger("info");
@@ -56,7 +62,10 @@ public class FetchProduct {
 	private static String MAGENTO_API_KEY = null;
     private static String MAGENTO_API_SECRET = null;
     private static String MAGENTO_REST_API_URL = null;
+    private static String token = null;
+    private static String secret = null;
 	private static String supplierId;
+	private Map<String,SkuDTO> skuDTOMap = new HashedMap();
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -65,47 +74,101 @@ public class FetchProduct {
 		MAGENTO_API_KEY = bdl.getString("MAGENTO_API_KEY");
 		MAGENTO_API_SECRET = bdl.getString("MAGENTO_API_SECRET");
 		MAGENTO_REST_API_URL = bdl.getString("MAGENTO_REST_API_URL");
+		token = bdl.getString("token");
+		secret = bdl.getString("secret");
 	}
     
     
-	private int i = 1;
-	
+	private int sum = 0;
+	private int update = 0;
+	private int save = 0;
+	private int excSum = 0;
+	private int j = 0,tempPage=0;
 	public  void getProduct(OAuthService service,Token accessToken,int page){
-		//https://glamorous-uat.phplab.co.uk/api/rest
-		OAuthRequest request = new OAuthRequest(Verb.GET,
-				"http://glamorous-uat.phplab.co.uk/api/rest/shangpin/product?limit=100&page="+i,
-				service);
-		service.signRequest(accessToken, request);
-		Response response = request.send();
-		String json = response.getBody();
-//		System.out.println(json);
-		if(!json.isEmpty()){
-			List<Product> retList = new Gson().fromJson(json,  
-	                new TypeToken<List<Product>>() {  
-	                }.getType());  
-			System.out.println("拉取的数量："+retList.size());
-			if(retList.size()==100){
-				i++;
-				messMappingAndSave(retList);
-				System.out.println("save success");
-				getProduct(service,accessToken,i);
-			}else{
-				messMappingAndSave(retList);
+		try{
+			OAuthRequest request = new OAuthRequest(Verb.GET,
+					MAGENTO_REST_API_URL+"product?limit=100&page="+page,
+					service);
+			service.signRequest(accessToken, request);
+			Response response = request.send();
+			String json = response.getBody();
+			System.out.println(json);
+			if(!json.isEmpty()){
+				List<Product> retList = new Gson().fromJson(json,  
+		                new TypeToken<List<Product>>() {  
+		                }.getType());  
+				logger.info("拉取的数量："+retList.size());
+				System.out.println("拉取的数量："+retList.size());
+				j=0;
+				if(retList.size()==100){
+					page++;
+					sum += 100;
+					System.out.println("已拉取的数量："+sum);
+					logger.info("已拉取的数量："+sum);
+					messMappingAndSave(retList);
+					System.out.println("save success");
+					getProduct(service,accessToken,page);
+				}else{
+					messMappingAndSave(retList);
+				}
+			}
+		}catch(Exception ex){
+			excSum+=1;
+			tempPage = page;
+			if(tempPage==page){
+				j++;
+			}
+			logger.info("第"+excSum+"次发生异常,异常原因："+ex.getMessage());
+			System.out.println("第"+excSum+"次发生异常,异常原因："+ex.getMessage());
+			getProduct(service,accessToken,page);
+			if(j==4){
+				System.out.println("第四次发生异常"+ex.getMessage());
+				ex.printStackTrace();
 			}
 		}
+		
 	}
 	/**
 	 * fetch product and save into db
 	 */
 	public void fetchProductAndSave() {
+		int day = 90;
+		Date startDate,endDate= new Date();
+		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+		//获取原有的SKU 仅仅包含价格和库存
 		
+		try {
+			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 		OAuthService service = new ServiceBuilder().provider(API.class)
 				.apiKey(MAGENTO_API_KEY).apiSecret(MAGENTO_API_SECRET).build();
-		Token accessToken = new Token("tcm525shdvbw0jg68ju87njxpmwot41v",
-				"hugcwsx5e8yrze1z7c11hgdaxe8aeits");
-		getProduct(service,accessToken,0);
+		Token accessToken = new Token(token,
+				secret);
+		getProduct(service,accessToken,1);
+		logger.info("总共拉取总数："+sum);
+		logger.info("总共save总数："+save);
+		logger.info("总共update总数："+update);
+		logger.info("总共发生异常次数："+excSum);
+		System.out.println("总共拉取总数："+sum);
+		System.out.println("总共save总数："+save);
+		System.out.println("总共update总数："+update);
+		System.out.println("总共发生异常次数："+excSum);
+		//更新网站不再给信息的老数据
+		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+			 Map.Entry<String,SkuDTO> entry =  itor.next();
+			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+				entry.getValue().setStock("0");
+				try {
+					productFetchService.updatePriceAndStock(entry.getValue());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
-	
+	//  , ]
 	
 	
 	/**
@@ -133,7 +196,8 @@ public class FetchProduct {
 						}
 						if(item.getSeasonName()!=null){
 							if(item.getSeasonName().toLowerCase().indexOf("no data")==-1){
-								spu.setMaterial(item.getSeasonName());
+								spu.setSeasonId(item.getSeasonName());
+								spu.setSeasonName(item.getSeasonName());
 							}
 						}
 						
@@ -190,11 +254,17 @@ public class FetchProduct {
 						sku.setProductDescription(item.getProductDescription());
 						sku.setProductCode(item.getProductCode());
 						sku.setSaleCurrency(item.getSaleCurrency());
+						if(skuDTOMap.containsKey(sku.getSkuId())){
+							skuDTOMap.remove(sku.getSkuId());
+						}
+						
 						productFetchService.saveSKU(sku);
+						save++;
 					} catch (ServiceException e) {
 						if (e.getMessage().equals("数据插入失败键重复")) {
 							try {
 								productFetchService.updatePriceAndStock(sku);
+								update++;		
 							} catch (ServiceException e1) {
 								e1.printStackTrace();
 							}

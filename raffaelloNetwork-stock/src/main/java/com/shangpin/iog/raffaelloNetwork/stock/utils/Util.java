@@ -1,4 +1,4 @@
-package com.shangpin.iog.raffaelloNetwork.stock;
+package com.shangpin.iog.raffaelloNetwork.stock.utils;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;

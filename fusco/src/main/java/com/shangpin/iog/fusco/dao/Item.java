@@ -1,4 +1,4 @@
-package com.shangpin.iog.ctsiLogistics.dao;
+package com.shangpin.iog.fusco.dao;
 
 import lombok.Getter;
 import lombok.Setter;

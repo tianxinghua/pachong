@@ -72,6 +72,15 @@ public class StockImp extends AbsUpdateProductStock {
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("ctsiLogistics");
+        try {
+			stockImp.grabStock(null);
+		} catch (ServiceException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("ctsiLogistics更新库存开始");

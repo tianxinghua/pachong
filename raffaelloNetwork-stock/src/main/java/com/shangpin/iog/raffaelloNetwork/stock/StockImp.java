@@ -6,6 +6,9 @@ import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.raffaelloNetwork.stock.dto.Product;
+import com.shangpin.iog.raffaelloNetwork.stock.utils.Util;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -66,8 +69,6 @@ public class StockImp  extends AbsUpdateProductStock {
         			logger.info("SkuId="+pro.getMpn()+"_"+pro.getSize()+"------stock="+pro.getQuantity());
         			
         		}
-        		
-        		
         	}
         } 
         
@@ -86,17 +87,17 @@ public class StockImp  extends AbsUpdateProductStock {
     public static void main(String[] args) throws Exception {
     	//加载spring
         loadSpringContext();
-        StockImp stockImp =(StockImp)factory.getBean("raffaelloNetworkStock");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("raffaelloNetwork更新数据库开始");
-        System.out.println("raffaelloNetwork更新数据库开始");
-        try {
-			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
-		} catch (Exception e) {
-			logger.info("raffaelloNetwork更新库存数据库出错"+e.toString());
-		}
-        logger.info("raffaelloNetwork更新数据库结束");
-        System.out.println("raffaelloNetwork更新数据库结束");
-        System.exit(0);
+//        StockImp stockImp =(StockImp)factory.getBean("raffaelloNetworkStock");
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("raffaelloNetwork更新数据库开始");
+//        System.out.println("raffaelloNetwork更新数据库开始");
+//        try {
+//			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+//		} catch (Exception e) {
+//			logger.info("raffaelloNetwork更新库存数据库出错"+e.toString());
+//		}
+//        logger.info("raffaelloNetwork更新数据库结束");
+//        System.out.println("raffaelloNetwork更新数据库结束");
+//        System.exit(0);
     }
 }

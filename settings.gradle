@@ -43,4 +43,4 @@ include 'theclutcher-stock'
 include 'reebonzWiki-order'
 
 include 'deliberti-purchase'
-
+include 'itemInfo'
