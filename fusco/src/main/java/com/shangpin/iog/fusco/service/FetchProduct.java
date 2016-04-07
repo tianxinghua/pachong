@@ -48,27 +48,21 @@ public class FetchProduct {
 		String supplierId = bdl.getString("supplierId");
 		
 		List<String> realPaths=FtpUtil.download();
-//		for (String realPath : realPaths) {
-			List<Item> list = FtpUtil.readLocalCSV(Item.class,realPaths.get(0));
-//			System.out.println(list.size());
-//		}
+		System.out.println(realPaths.size());
+		List<Item> list = FtpUtil.readLocalCSV(Item.class,realPaths.get(0));
 		
 
 		Date startDate, endDate = new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate, day
 				* -1, "D");
 		Map<String, SkuDTO> skuDTOMap = new HashMap<String, SkuDTO>();
-//		try {
-//			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(
-//					supplierId, startDate, endDate);
-//		} catch (ServiceException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(
+					supplierId, startDate, endDate);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 		for (Item item : list) {
-//			String[] array = item.getDescription().split("\\|");
-//			if(array.length==1){
-//				array = item.getDescription().split("-");
-//			}
 			SkuDTO sku = new SkuDTO();
 			try {
 				
@@ -76,10 +70,9 @@ public class FetchProduct {
 				sku.setSupplierId(supplierId);
 				sku.setSpuId(item.getCODICE().substring(1, item.getCODICE().length()-1));
 				
-//				if(array.length>=3){
-				if(item.getTAGLIA().substring(1, item.getTAGLIA().length()-1).indexOf("�")>0){
-					sku.setProductSize(item.getTAGLIA().substring(1, item.getTAGLIA().length()-1).replace("�", "+"));
-					sku.setSkuId(item.getCODICE().substring(1, item.getCODICE().length()-1)+"|"+item.getTAGLIA().substring(1, item.getTAGLIA().length()-1).replace("?", "+"));
+				if(item.getTAGLIA().substring(1, item.getTAGLIA().length()-1).endsWith("�")){
+					sku.setProductSize(item.getTAGLIA().substring(1, item.getTAGLIA().length()-1).replace("�", ".5"));
+					sku.setSkuId(item.getCODICE().substring(1, item.getCODICE().length()-1)+"|"+item.getTAGLIA().substring(1, item.getTAGLIA().length()-1).replace("�", ".5"));
 				}else{
 					sku.setSkuId(item.getCODICE().substring(1, item.getCODICE().length()-1)+"|"+item.getTAGLIA().substring(1, item.getTAGLIA().length()-1));
 					sku.setProductSize(item.getTAGLIA().substring(1, item.getTAGLIA().length()-1));
@@ -111,11 +104,6 @@ public class FetchProduct {
 				}
 			}
 
-//			if (StringUtils.isNotBlank(item.getPhoto())) {
-//				String [] picArray = item.getPhoto().split("\\|");
-//				productFetchService.savePicture(supplierId, null,
-//						item.getSku(), Arrays.asList(picArray));
-//			}
 
 			SpuDTO spu = new SpuDTO();
 			try {
