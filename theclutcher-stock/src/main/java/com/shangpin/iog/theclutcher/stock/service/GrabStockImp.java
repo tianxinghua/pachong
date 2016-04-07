@@ -92,12 +92,20 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			}
 					
 			// 读取文件
-			String result = DownloadFileFromNet.file2Striing(xmlFile);
-			rss= XMLUtil.gsonXml2Obj(Rss.class, result);
+			try{
+				String result = DownloadFileFromNet.file2Striing(xmlFile);
+				rss= XMLUtil.gsonXml2Obj(Rss.class, result);
+				logger.info("====================转化对象成功=================");
+			}catch(Exception e){
+				error.error(e);
+				return skuStock;
+			}
+			
 				
 
 			
 			if (rss == null || rss.getChannel() == null) {
+				logger.info("====================rss为空=================");
 				return  skuStock;
 			}
 
@@ -141,8 +149,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 				logger.info("拉取theclutcher-stock数据成功");
 			} catch (Exception e) {
 				e.printStackTrace();
-				logger
-						.error("拉取theclutcher-stock数据失败---" + e.getMessage());
+				logger.error("拉取theclutcher-stock数据失败---" + e.getMessage());
 				throw new ServiceMessageException("拉取theclutcher-stock数据失败");
 			}
 

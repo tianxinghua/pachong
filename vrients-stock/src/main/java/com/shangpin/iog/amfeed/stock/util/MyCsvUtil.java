@@ -4,6 +4,7 @@ import com.csvreader.CsvReader;
 import com.shangpin.iog.amfeed.stock.dto.Product;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -23,6 +24,7 @@ public class MyCsvUtil {
     private static ResourceBundle bdl = null;
     private static String httpurl;
     private static String localPath;
+    private static LoggerUtil error = LoggerUtil.getLogger("error");
     static {
         if (bdl == null)
             bdl = ResourceBundle.getBundle("conf");
@@ -44,6 +46,7 @@ public class MyCsvUtil {
         } catch (IOException ex) {
             flag = false;
             ex.printStackTrace();
+            error.equals(ex);
             return flag;
         } finally {
             try {
@@ -52,6 +55,7 @@ public class MyCsvUtil {
             } catch (IOException ex) {
                 flag = false;
                 ex.printStackTrace();
+                error.equals(ex);
                 return flag;
             }
         }
