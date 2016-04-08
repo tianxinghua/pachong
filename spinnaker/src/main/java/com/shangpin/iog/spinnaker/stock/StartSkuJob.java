@@ -11,6 +11,8 @@ import com.shangpin.iog.product.service.ProductFetchServiceImpl;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.spinnaker.stock.dto.*;
 import com.shangpin.iog.spinnaker.stock.service.FetchProduct;
+import com.shangpin.iog.spinnaker.stock.service.FrameFetchProduct;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -38,8 +40,10 @@ public class StartSkuJob {
         log.info("----拉取spinnaker数据开始----");
         loadSpringContext();
         log.info("----初始SPRING成功----");
+        System.out.println("开始拉取:");
         //拉取数据
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("spinnaker");
+        //FrameFetchProduct fetchProduct =(FrameFetchProduct)factory.getBean("frameSpinnaker");
         try {
             fetchProduct.fetchProductAndSave();
         } catch (Exception e) {
