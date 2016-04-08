@@ -1,26 +1,25 @@
 package com.shangpin.ice.ice;
 
-import ShangPin.SOP.Entity.Api.Purchase.*;
-import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
-import ShangPin.SOP.Servant.OpenApiServantPrx;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-import com.shangpin.framework.ServiceException;
-import com.shangpin.framework.ServiceMessageException;
-import com.shangpin.iog.common.utils.*;
-import com.shangpin.iog.common.utils.DateTimeUtil;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.dto.OrderDTO;
-import com.shangpin.iog.dto.ReturnOrderDTO;
-import com.shangpin.iog.dto.SkuRelationDTO;
-import com.shangpin.iog.ice.dto.*;
-import com.shangpin.iog.service.ReturnOrderService;
-import com.shangpin.iog.service.SkuPriceService;
-import com.shangpin.iog.service.SkuRelationService;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -28,12 +27,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import redis.clients.jedis.Jedis;
+import ShangPin.SOP.Entity.Api.Purchase.DeliveryOrderAdd;
+import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
+import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
+import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailSpecial;
+import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailSpecialPage;
+import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx;
+import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
+import ShangPin.SOP.Servant.OpenApiServantPrx;
 
-import java.io.*;
-import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.common.utils.SendMail;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import com.shangpin.iog.common.utils.redis.JedisClient;
+import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.ReturnOrderDTO;
+import com.shangpin.iog.dto.SkuRelationDTO;
+import com.shangpin.iog.ice.dto.ICEOrderDetailDTO;
+import com.shangpin.iog.ice.dto.ICEWMSOrderDTO;
+import com.shangpin.iog.ice.dto.ICEWMSOrderRequestDTO;
+import com.shangpin.iog.ice.dto.OrderStatus;
+import com.shangpin.iog.ice.dto.ResMessage;
+import com.shangpin.iog.service.ReturnOrderService;
+import com.shangpin.iog.service.SkuPriceService;
+import com.shangpin.iog.service.SkuRelationService;
 
 /**
  * Created by loyalty on 15/9/9.
@@ -61,7 +84,7 @@ public abstract class AbsOrderService {
     private static  String url = null;
     private static  String redisUrl = null;  
     public static boolean SENDMAIL = false;
-    private static Jedis j = null;
+    private static JedisClient j = null;
 	static {
         try {
             if(null==bdl){
@@ -77,7 +100,7 @@ public abstract class AbsOrderService {
             emailPass = bdl.getString("emailPass");
             startDateOfTemp=bd.getString("startDateOfTemp");
             endDateOfTemp = bd.getString("endDateOfTemp");
-            j = new Jedis(redisUrl);
+            j = JedisClient.getInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -151,9 +174,7 @@ public abstract class AbsOrderService {
         
         SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MMDD_HH);
         String date = sdf.format(new Date());
-//        Jedis j = new Jedis(redisUrl);
-        j.set("iog_"+supplierId,date);
-//        
+        j.setValueOnAsync("iog_"+supplierId,date);
         //处理异常
         handlePurchaseOrderException(supplierId);
 
@@ -192,7 +213,8 @@ public abstract class AbsOrderService {
         
         SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MMDD_HH);
         String date = sdf.format(new Date());
-        j.set("iog_"+supplierId,date);
+        j.setValueOnAsync("iog_"+supplierId,date);
+    
         //获取订单数组
         Gson gson = new Gson();
         ICEWMSOrderRequestDTO  dto = new ICEWMSOrderRequestDTO();

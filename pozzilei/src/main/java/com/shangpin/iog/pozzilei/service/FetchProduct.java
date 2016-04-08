@@ -135,7 +135,7 @@ public class FetchProduct {
                                 }else{
                                 	spudto.setProductOrigin(" ");
                                 }
-                                spudto.setPicUrl(spu.getUrl());
+                                //spudto.setPicUrl(spu.getUrl());
                                 spudto.setSpuName(spu.getDescription());
                                 try {
                                     pfs.saveSPU(spudto);
@@ -202,28 +202,8 @@ public class FetchProduct {
                     					}
                                         pfs.saveSKU(skudto);
                                         
-                                      //保存图片
-                    	                List<String> imgList = new ArrayList<String>();
-                    	                if (sku.getPictures() != null) {
-                    	                    for (String  imageUrl: sku.getPictures()) {
-                    	                        if (imageUrl != null ) {
-                    	                        	imgList.add(imageUrl);	                        	
-                    	                        }
-                    	                    }
-                    	                    pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);
-                    	                }
-//                                        for(String image : sku.getPictures()){
-//                                            ProductPictureDTO pic = new ProductPictureDTO();
-//                                            pic.setPicUrl(image);
-//                                            pic.setId(UUIDGenerator.getUUID());
-//                                            pic.setSkuId(sku.getItem_id());
-//                                            pic.setSupplierId(supplierId);
-//                                            try {
-//                                                pfs.savePictureForMongo(pic);
-//                                            } catch (ServiceException e) {
-//                                                e.printStackTrace();
-//                                            }
-//                                        }
+                                      
+
                                     } catch (ServiceException e) {
                                         try {
                                             if(e.getMessage().equals("数据插入失败键重复")){
@@ -237,7 +217,16 @@ public class FetchProduct {
                                         }
 
                                     }
-
+                                  //保存图片
+                	                List<String> imgList = new ArrayList<String>();
+                	                if (sku.getPictures() != null) {
+                	                    for (String  imageUrl: sku.getPictures()) {
+                	                        if (imageUrl != null ) {
+                	                        	imgList.add(imageUrl);	                        	
+                	                        }
+                	                    }
+                	                    pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);
+                	                }
 
                                 }
                             }
