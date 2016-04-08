@@ -95,6 +95,7 @@ public class MyFtpUtil {
             logger.info("文件"+fileName+"上传成功!");
         } catch (Exception e) {
             try {
+            	this.upLoad();
 				SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject, "levelgroup订单上传失败", messageType);
 			} catch (Exception e1) {
 				e1.printStackTrace();
