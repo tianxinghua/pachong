@@ -422,7 +422,7 @@ public abstract class AbsUpdateProductStock {
 			skuIceArray =servant.FindStockInfo(supplier, skuNoShangpinList);
 			
 		}catch(Exception e){
-			loggerError.error(e);
+			loggerError.error("removeNoChangeStockRecord查询库存出错======="+e);
 		}
         //查找未维护库存的SKU
         if(null!=skuIceArray&&skuIceArray.length!=skuNoShangpinList.size()){
@@ -474,7 +474,7 @@ public abstract class AbsUpdateProductStock {
 			try {
 				supplierStock = grabStock(skuNos);
 				if(supplierStock.size()==0){
-					loggerError.error("获取库存信息为空");
+					loggerError.error("抓取供货商信息返回的supplierStock.size为0");
 					return iceStock;
 				}else{//判断supplierStock的值是否全为0
 					boolean isNUll = true;
