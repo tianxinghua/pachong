@@ -83,7 +83,7 @@ public class StockImp extends AbsUpdateProductStock {
                         Quantity result = gson.fromJson(json, new TypeToken<Quantity>() {
                         }.getType());
                         stock_map.put(skuno, result.getResult());
-                        System.out.println(stock_map.toString());
+//                        System.out.println(stock_map.toString());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

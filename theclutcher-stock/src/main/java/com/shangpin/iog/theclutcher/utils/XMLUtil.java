@@ -9,11 +9,14 @@ import org.jdom2.input.SAXBuilder;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import com.google.gson.JsonSyntaxException;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.stanfy.gsonxml.GsonXml;
 import com.stanfy.gsonxml.GsonXmlBuilder;
 import com.stanfy.gsonxml.XmlParserCreator;
 
 public class XMLUtil {
+	private static LoggerUtil error = LoggerUtil.getLogger("error");
 	
 	/**
 	 * 
@@ -41,24 +44,29 @@ public class XMLUtil {
 	        return retList;
 	    }
 	 
-	 public static <T> T gsonXml2Obj(Class<T> clazz, String xml){
-		 XmlParserCreator parserCreator = new XmlParserCreator() {
+	 public static <T> T gsonXml2Obj(Class<T> clazz, String xml) throws JsonSyntaxException{
+		 XmlParserCreator parserCreator = new XmlParserCreator(){
              @Override
              public XmlPullParser createParser() {
                  try {
                      return XmlPullParserFactory.newInstance().newPullParser();
                  } catch (Exception e) {
-                     throw new RuntimeException(e);
+                	 error.error(e);
+                	 return null;
                  }
              }
          };
 
-         GsonXml gsonXml = new GsonXmlBuilder()
-                 .setSameNameLists(true)
-                 .setXmlParserCreator(parserCreator)
-                 .create();
+         if(null != parserCreator){
+        	 GsonXml gsonXml = new GsonXmlBuilder()
+             .setSameNameLists(true)
+             .setXmlParserCreator(parserCreator)
+             .create();
 
-         return gsonXml.fromXml(xml, clazz); 
+        	 return gsonXml.fromXml(xml, clazz); 
+         }else{
+        	 return null;
+         }         
 	 }
 
 

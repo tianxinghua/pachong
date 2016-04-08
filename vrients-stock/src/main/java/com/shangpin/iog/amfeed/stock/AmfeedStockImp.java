@@ -3,7 +3,9 @@ package com.shangpin.iog.amfeed.stock;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.amfeed.stock.dto.Product;
 import com.shangpin.iog.amfeed.stock.util.MyCsvUtil;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -18,7 +20,8 @@ import java.util.*;
 @Component("amfeed")
 public class AmfeedStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
+//    private static Logger loggerError = Logger.getLogger("error");
+    private static LoggerUtil error = LoggerUtil.getLogger("error");
 
     private long start = 0;//计时开始时间
     private long end = 0;//计时结束时间
@@ -26,7 +29,10 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
 
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法开始！");
+       
+    	Map<String,String> returnMap = new HashMap();
+    	
+    	logger.info(this.getClass()+" 调用grabStock(Collection<String> skuNo)方法开始！");
         logger.info("AMFEED Sku 条数："+skuNo.size());
         start = System.currentTimeMillis();
         boolean flag = true;
@@ -34,6 +40,8 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
             flag = MyCsvUtil.csvDownload();
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            error.equals(e);
+            return returnMap;
         }
         end = System.currentTimeMillis();
         logger.info("下载AMFEED文件结果"+flag+"，耗时："+(end-start)/1000+"秒");
@@ -45,6 +53,8 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
                 list = MyCsvUtil.readCSVFile();
             } catch (Exception e) {
                 e.printStackTrace();
+                error.equals(e);
+                return returnMap;
             }
             for (int i = 1;i<list.size();i++){
                 map.put(list.get(i).getSku(),list.get(i).getQty().trim());
@@ -52,10 +62,9 @@ public class AmfeedStockImp extends AbsUpdateProductStock {
             end = System.currentTimeMillis();
             logger.info("解析AMFEED文件耗时："+(end-start)/1000+"秒");
         } else {
-            loggerError.error("下载AMFEED文件失败!");
+            error.error("下载AMFEED文件失败!");
         }
-
-        Map<String,String> returnMap = new HashMap();
+        
         Iterator<String> iterator=skuNo.iterator();
         logger.info("为AMFEED供应商产品库存循环赋值");
         start = System.currentTimeMillis();

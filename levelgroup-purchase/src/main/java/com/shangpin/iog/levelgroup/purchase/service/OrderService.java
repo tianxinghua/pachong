@@ -110,6 +110,9 @@ public class OrderService extends AbsOrderService {
         StringBuffer ftpFile = new StringBuffer();
         ftpFile.append("ORDER CODE;ITEM CODE;SIZE;SKU;ORDER;PRICE;BRAND;STATUS");
         ftpFile.append("\n");
+//        System.out.println("list1长度为:"+list1.size());
+//        System.out.println("list2长度为:"+list2.size());
+        
         for (OrderDTO orderDTO:list1){
         	try {
 				ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getDetail().split(":")[0]);
@@ -136,6 +139,7 @@ public class OrderService extends AbsOrderService {
 		            ftpFile.append(";").append(orderDTO.getStatus());
 		            
 		            logger.info("SkuID="+orderDTO.getDetail().split(":")[0]+"采购单号:"+orderDTO.getSpPurchaseNo());
+		           // System.out.println("订单1采购单号="+orderDTO.getSpPurchaseNo());
 	            }else{
 	            	ftpFile.append(";").append("");
 	            	ftpFile.append(";").append("");
@@ -156,43 +160,44 @@ public class OrderService extends AbsOrderService {
 			}
         }
         
-        for (OrderDTO orderDTO:list2){
+        for (OrderDTO orderDTO2:list2){
         	try {
-				ProductDTO product2 = productSearchService.findProductForOrder(supplierId2,orderDTO.getDetail().split(":")[0]);
-				ftpFile.append(orderDTO.getSpPurchaseNo());
+				ProductDTO product2 = productSearchService.findProductForOrder(supplierId2,orderDTO2.getDetail().split(":")[0]);
+				ftpFile.append(orderDTO2.getSpPurchaseNo());
 	            if(product2!=null){
 	            	ftpFile.append(";").append(product2.getProductCode());
 	            	ftpFile.append(";").append(product2.getSize());
-	            	if(orderDTO.getDetail().split(":")[0].length()<15){
-	            		ftpFile.append(";").append("09").append(orderDTO.getDetail().split(":")[0]);
+	            	if(orderDTO2.getDetail().split(":")[0].length()<15){
+	            		ftpFile.append(";").append("09").append(orderDTO2.getDetail().split(":")[0]);
 	            	}else{
-	            		ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+	            		ftpFile.append(";").append(orderDTO2.getDetail().split(":")[0]);
 	            	}
-		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
+		            ftpFile.append(";").append(orderDTO2.getDetail().split(":")[1]);
 		            
-		            if(orderDTO.getPurchasePriceDetail()!=null){
+		            if(orderDTO2.getPurchasePriceDetail()!=null){
 //		            	System.out.println("数据2="+orderDTO.getPurchasePriceDetail());
 //		            	System.out.println("skuId="+orderDTO.getDetail().split(":")[0]);
 //	            		BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
 //						String price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
 //						ftpFile.append(";").append(price.trim());
-						ftpFile.append(";").append(orderDTO.getPurchasePriceDetail());
+						ftpFile.append(";").append(orderDTO2.getPurchasePriceDetail());
 		            }else{
 	            		String price = "";
 	            		ftpFile.append(";").append(price);
 	            	}
 		            ftpFile.append(";").append(product2.getBrandName());
-		            ftpFile.append(";").append(orderDTO.getStatus());
-		            logger.info("SkuID="+orderDTO.getDetail().split(":")[0]+"采购单号:"+orderDTO.getSpPurchaseNo());
+		            ftpFile.append(";").append(orderDTO2.getStatus());
+		            logger.info("SkuID="+orderDTO2.getDetail().split(":")[0]+"采购单号:"+orderDTO2.getSpPurchaseNo());
+		            //System.out.println("订单2采购单号="+orderDTO2.getSpPurchaseNo());
 	            }else{
 	            	ftpFile.append(";").append("");
 	            	ftpFile.append(";").append("");
-	            	if(orderDTO.getDetail().split(":")[0].length()<15){
-	            		ftpFile.append(";").append("09").append(orderDTO.getDetail().split(":")[0]);
+	            	if(orderDTO2.getDetail().split(":")[0].length()<15){
+	            		ftpFile.append(";").append("09").append(orderDTO2.getDetail().split(":")[0]);
 	            	}else{
-	            		ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+	            		ftpFile.append(";").append(orderDTO2.getDetail().split(":")[0]);
 	            	}
-		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
+		            ftpFile.append(";").append(orderDTO2.getDetail().split(":")[1]);
 		            ftpFile.append(";").append(0);
 		            ftpFile.append(";").append("");
 		            ftpFile.append(";").append("pre-sale");

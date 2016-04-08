@@ -176,7 +176,8 @@ public abstract class AbsUpdateProductStock {
 
 				skus = products.SopProductSkuIces;
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
+				loggerError.error("openAPI获取信息超时"+e.getMessage());
 			}
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
@@ -688,7 +689,7 @@ public abstract class AbsUpdateProductStock {
 						"门户编号：" + supplier + "，链接异常。请手工拉取库存",
 						"text/html;charset=utf-8");
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 		}
 	}

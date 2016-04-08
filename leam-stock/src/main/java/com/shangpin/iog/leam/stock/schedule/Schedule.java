@@ -1,4 +1,4 @@
-package com.shangpin.iog.spinnaker.stock.schedule;
+package com.shangpin.iog.leam.stock.schedule;
 
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.spinnaker.stock.SpinnakerStockImp;
+import com.shangpin.iog.leam.stock.StockClientImp;
 
 @Component
 @PropertySource("classpath:conf.properties")
@@ -19,7 +19,7 @@ public class Schedule {
 	private static Logger logger = Logger.getLogger("info");
 
 	@Autowired
-	SpinnakerStockImp stockImp;
+	StockClientImp stockImp;
 	
 	
 	@SuppressWarnings("deprecation")

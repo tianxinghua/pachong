@@ -191,7 +191,13 @@ public class FetchProduct {
 	            spu.setBrandName(item.getBrand_name().replaceAll("\"", ""));
 	            spu.setCategoryGender(item.getGender().replaceAll("\"", ""));
 	            spu.setCategoryName(item.getBrand_line().replaceAll("\"", ""));//品类
-	            spu.setMaterial(item.getItem_detailed_info().replaceAll("\"", ""));//材质
+	            String material = item.getItem_detailed_info();
+	            try{
+	            	material = material.substring(material.lastIndexOf(":")+1);
+	            }catch(Exception e){
+	            	e.printStackTrace();
+	            }
+	            spu.setMaterial(material);//材质
 	            spu.setProductOrigin(item.getMade_in().replaceAll("\"", ""));
 	            spu.setSeasonId(item.getSeason().replaceAll("\"", ""));
 	            try {
