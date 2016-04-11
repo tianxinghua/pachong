@@ -446,17 +446,27 @@ public abstract class AbsUpdateProductStock {
         }
 
 		//排除无用的库存
-
-		for(SopSkuInventoryIce skuIce:skuIceArray){
-	        if(iceStock.containsKey(skuIce.SkuNo)){
-				loggerInfo.info("sop skuNo ：--------" + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
-	             if( iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
-	                toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
-	            }
-	        }else{
-				logger.error(" iceStock not contains  "+"sop skuNo ：--------"+skuIce.SkuNo +" suppliersku: "+ skuIce.SupplierSkuNo );
-			}
-		}
+        if(null!=skuIceArray){
+        	for(SopSkuInventoryIce skuIce:skuIceArray){
+    	        if(iceStock.containsKey(skuIce.SkuNo)){
+    				loggerInfo.info("sop skuNo ：--------" + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
+    	             if( iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
+    	                toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
+    	            }
+    	        }else{
+    				logger.error(" iceStock not contains  "+"sop skuNo ：--------"+skuIce.SkuNo +" suppliersku: "+ skuIce.SupplierSkuNo );
+    			}
+    		}
+        }else{//查询现有库存失败 更新查找到的库存
+        	for(String spSku:skuNoShangpinList){
+        		 if(iceStock.containsKey(spSku)){
+        			 loggerError.error("ICE服务查询库存失败的记录 skuNO="+spSku );
+     	            toUpdateIce.put(spSku, iceStock.get(spSku));
+     	            
+     	        }
+        	}
+        }
+		
     }
 
 

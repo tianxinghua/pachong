@@ -62,6 +62,7 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
             	try{
             		
             		stockMap = getStock(skuno);
+            		logger.info("抓取的供货商stockMap==="+stockMap.toString());
                     if (stockMap.size() > 0)
                         skustock.put(skuno, stockMap.get(skuno));
                     else
@@ -78,7 +79,7 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
         } finally {
             HttpUtil45.closePool();
         }
-        logger.info("erminiomonti赋值库存数据成功");
+        logger.info("erminiomonti赋值库存数据成功"+skustock.toString());
         return skustock;
     }
 

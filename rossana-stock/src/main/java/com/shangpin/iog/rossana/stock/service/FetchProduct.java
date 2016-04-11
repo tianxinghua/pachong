@@ -43,12 +43,14 @@ public class FetchProduct extends AbsUpdateProductStock{
 		Map<String, String> skustock = new HashMap<>();
 		Map<String,String> stockMap = new HashMap<>();
 		
-		OutTimeConfig timeConfig = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
+		OutTimeConfig timeConfig = new OutTimeConfig(1000*5, 1000*60 * 60, 1000*60 * 60);
 		String result = "";
 		List<Item> items = null;
 		try{
+			logInfo.info("===========获取供货商库存开始=================");
 			result = HttpUtil45.get(filePath, timeConfig, null);
 			items = CsvUtil.readLocalCSV(result, Item.class, ";");
+			logInfo.info("===========下载转化成功=================");
 		}catch(Exception e){
 			logError.error(e);
 			return skustock;
@@ -57,6 +59,8 @@ public class FetchProduct extends AbsUpdateProductStock{
 			stockMap.put(item.getSku().replaceAll("\"", ""), 
 							item.getQty_in_stock().replaceAll("\"", ""));
 		}
+		logInfo.info("获取供货商库存stockMap==="+stockMap.toString());
+		logInfo.info("skuNo======="+skuNo.toString()); 
 		for (String skuno : skuNo) {
             if(stockMap.containsKey(skuno)){
                 skustock.put(skuno, stockMap.get(skuno));
@@ -64,7 +68,7 @@ public class FetchProduct extends AbsUpdateProductStock{
                 skustock.put(skuno, "0");
             }
         }
-		
+		logInfo.info("返回的skustock.size======="+skustock.size()); 
 		return skustock;
 	}
 	
@@ -93,6 +97,16 @@ public class FetchProduct extends AbsUpdateProductStock{
 //		logInfo.info("更新数据库结束");
 //		System.out.println("==========更新数据库结束==========");
 //		System.exit(0);
+//		OutTimeConfig timeConfig = new OutTimeConfig(1000*5, 1000*60 * 6, 1000*60 * 5);
+//		String result = HttpUtil45.get(filePath, timeConfig, null);
+//		System.out.println(result); 
+//		try {
+//			List<Item> items = CsvUtil.readLocalCSV(result, Item.class, ";");
+//			
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 	}
 	
