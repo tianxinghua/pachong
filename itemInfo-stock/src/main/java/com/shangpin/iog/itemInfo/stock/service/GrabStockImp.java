@@ -71,15 +71,15 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		
 		Map<String, String> skustock = new HashMap<>();
 		Map<String,String> stockMap = new HashMap<>();
-//		Map<String,String> mongMap = new HashMap<>();
-//		mongMap.put("supplierId",supplierId);
-//        mongMap.put("supplierName","alduca daosta");
-//        mongMap.put("result","") ;
-//        try {
-//            logMongo.info(mongMap);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+		Map<String,String> mongMap = new HashMap<>();
+		mongMap.put("supplierId",supplierId);
+        mongMap.put("supplierName","alduca daosta");
+        mongMap.put("result","") ;
+        try {
+            logMongo.info(mongMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //获取本类class文件所在目录，作为localPath的值
         try{
 
@@ -191,9 +191,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 	public static void main(String[] args) throws Exception{
 		
 		//加载spring
-//        loadSpringContext();
-		GrabStockImp g = new GrabStockImp();
-		g.grabStock(null);
+        loadSpringContext();
         
 	} 
 

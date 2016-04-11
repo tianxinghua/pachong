@@ -177,6 +177,7 @@ public abstract class AbsUpdateProductStock {
 				skus = products.SopProductSkuIces;
 			} catch (Exception e) {
 //				e.printStackTrace();
+				loggerError.error("openAPI获取信息超时"+e.getMessage());
 			}
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
@@ -260,6 +261,7 @@ public abstract class AbsUpdateProductStock {
 			for(int k=0;k<totoalFailCnt.size();k++){
 				fct+=totoalFailCnt.get(k);
 			}
+			loggerInfo.info("更新库存失败的数量==========="+fct);
 			if(fct>=0){//待更新的库存失败数小于0时，不更新
 				this.updateStockTime(supplier);
 			}			
@@ -267,6 +269,7 @@ public abstract class AbsUpdateProductStock {
 		}else{
 			Map<String,String> sopPriceMap = new HashMap<>();
 			int i= updateStock(supplier, localAndIceSku, skuNoSet,sopPriceMap);
+			loggerInfo.info("更新库存失败的数量==========="+i);
 			if(i>=0){//待更新的库存失败数小于0时，不更新
 				this.updateStockTime(supplier);
 			}
@@ -413,8 +416,14 @@ public abstract class AbsUpdateProductStock {
 	 */
 	private void removeNoChangeStockRecord(String supplier, Map<String, Integer> iceStock, OpenApiServantPrx servant, List<String> skuNoShangpinList, Map<String, Integer> toUpdateIce) throws ApiException {
 		if(CollectionUtils.isEmpty(skuNoShangpinList)) return ;
-		SopSkuInventoryIce[] skuIceArray =servant.FindStockInfo(supplier, skuNoShangpinList);
-
+		SopSkuInventoryIce[] skuIceArray = null;
+		try{
+			
+			skuIceArray =servant.FindStockInfo(supplier, skuNoShangpinList);
+			
+		}catch(Exception e){
+			loggerError.error("removeNoChangeStockRecord查询库存出错======="+e);
+		}
         //查找未维护库存的SKU
         if(null!=skuIceArray&&skuIceArray.length!=skuNoShangpinList.size()){
             Map<String,String> sopSkuMap = new HashMap();
@@ -437,17 +446,27 @@ public abstract class AbsUpdateProductStock {
         }
 
 		//排除无用的库存
-
-		for(SopSkuInventoryIce skuIce:skuIceArray){
-	        if(iceStock.containsKey(skuIce.SkuNo)){
-				loggerInfo.info("sop skuNo ：--------" + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
-	             if( iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
-	                toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
-	            }
-	        }else{
-				logger.error(" iceStock not contains  "+"sop skuNo ：--------"+skuIce.SkuNo +" suppliersku: "+ skuIce.SupplierSkuNo );
-			}
-		}
+        if(null!=skuIceArray){
+        	for(SopSkuInventoryIce skuIce:skuIceArray){
+    	        if(iceStock.containsKey(skuIce.SkuNo)){
+    				loggerInfo.info("sop skuNo ：--------" + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
+    	             if( iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
+    	                toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
+    	            }
+    	        }else{
+    				logger.error(" iceStock not contains  "+"sop skuNo ：--------"+skuIce.SkuNo +" suppliersku: "+ skuIce.SupplierSkuNo );
+    			}
+    		}
+        }else{//查询现有库存失败 更新查找到的库存
+        	for(String spSku:skuNoShangpinList){
+        		 if(iceStock.containsKey(spSku)){
+        			 loggerError.error("ICE服务查询库存失败的记录 skuNO="+spSku );
+     	            toUpdateIce.put(spSku, iceStock.get(spSku));
+     	            
+     	        }
+        	}
+        }
+		
     }
 
 
@@ -465,7 +484,7 @@ public abstract class AbsUpdateProductStock {
 			try {
 				supplierStock = grabStock(skuNos);
 				if(supplierStock.size()==0){
-					loggerError.error("获取库存信息是发生异常，程序退出");
+					loggerError.error("抓取供货商信息返回的supplierStock.size为0");
 					return iceStock;
 				}else{//判断supplierStock的值是否全为0
 					boolean isNUll = true;
@@ -481,8 +500,8 @@ public abstract class AbsUpdateProductStock {
 						return iceStock;
 					}
 				}
-			} catch (Exception e) {    //获取库存信息时失败 直接退出
-				loggerError.error("获取库存信息是发生异常，程序退出");
+			} catch (Exception e) {    //获取库存信息时失败 
+				loggerError.error("获取库存信息时发生异常"+e.getMessage());
 				return iceStock;
 			}
 

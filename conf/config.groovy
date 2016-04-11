@@ -18,6 +18,11 @@ environments{
 
             wmsUrl='http://wmsinventory.liantiao.com'
 			redisUrl='192.168.20.241'
+			
+			
+			redis.url='192.168.20.241'
+            redis.port='6379'
+            redis.password=''
         }
     }
 
@@ -40,6 +45,10 @@ environments{
             wmsUrl='http://spwmsinventory.spidc1.com'
             
             redisUrl='172.20.10.127'
+            
+            redis.url='172.20.10.127'
+            redis.port='6379'
+            redis.password=''
         }
     }
 
@@ -60,6 +69,10 @@ environments{
 
             wmsUrl='http://spwmsinventory.spidc1.com'
             redisUrl='172.20.10.127'
+            
+            redis.url='172.20.10.127'
+            redis.port='6379'
+            redis.password=''
         }
     }
 
@@ -76,7 +89,7 @@ environments{
 
             Ice.Default.Locator='SPIceGrid/Locator:default -h 172.20.10.242 -p 12000:default -h 172.20.10.246 -p 12000'
 
-            MongoDB.hostname='49.213.13.167'      d
+            MongoDB.hostname='49.213.13.167'      
             MongoDB.port='27017'
             SOP.HOST='http://open.shangpin.com:8080'
 
@@ -84,6 +97,11 @@ environments{
 
             wmsUrl='http://spwmsinventory.spidc1.com'
 			redisUrl='10.11.20.140'
+			
+			
+            redis.url='10.11.20.140'
+            redis.port='6379'
+            redis.password=''
         }
     }
 

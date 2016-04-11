@@ -1,8 +1,3 @@
-
-
-
-
-
 dependencies {
     compile(
             "com.google.code.gson:gson:2.3.1",
@@ -10,25 +5,21 @@ dependencies {
             project(':openapi-ice')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
-
-
 }
 
 jar {
 
-    dependsOn copyToLib , copyResources
+    dependsOn copyToLib , copyResources,dependsClassPath
     exclude ("**/*.properties")
 
-
-    def manifestCp = configurations.compile.files.collect  {
-        File file = it
-        "lib/${file.name}"
-    }.join(' ')
+    //def manifestCp = configurations.compile.files.collect  {
+    //    File file = it
+    //    "lib/${file.name}"
+    //}.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.spinnaker.stock.SpinnakerStockImp'
-//        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
-        attributes 'Class-Path': '. ./conf/ ' +  manifestCp
+        attributes 'Main-Class': 'com.shangpin.iog.spinnaker.stock.schedule.Startup'
+//        attributes 'Class-Path': '. ./conf/ ' +  manifestCp
     }
 }
 

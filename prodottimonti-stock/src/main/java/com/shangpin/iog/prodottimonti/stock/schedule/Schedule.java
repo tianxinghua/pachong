@@ -1,4 +1,4 @@
-package com.shangpin.iog.hottest.stock.schedule;
+package com.shangpin.iog.prodottimonti.stock.schedule;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.hottest.stock.StockImp;
+import com.shangpin.iog.prodottimonti.stock.ProdottimontiStockImp;
 
 @Component
 @PropertySource("classpath:conf.properties")
@@ -33,7 +33,7 @@ public class Schedule {
     private String time;
 
 	@Autowired	
-	StockImp stockImp;
+	ProdottimontiStockImp stockImp;
 	
 	
 	@SuppressWarnings("deprecation")
@@ -97,7 +97,7 @@ public class Schedule {
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				logger.info("更新数据库开始");
 				try {
-					stockImp.supplierSkuIdMain=true;
+					
 					stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
 				} catch (Exception e) {
 					e.printStackTrace();

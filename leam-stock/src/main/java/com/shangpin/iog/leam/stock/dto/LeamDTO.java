@@ -1,4 +1,4 @@
-package com.shangpin.iog.leam.dto;
+package com.shangpin.iog.leam.stock.dto;
 
 import java.util.List;
 
