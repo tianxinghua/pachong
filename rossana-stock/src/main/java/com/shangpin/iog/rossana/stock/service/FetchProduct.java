@@ -1,5 +1,7 @@
 package com.shangpin.iog.rossana.stock.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -20,7 +22,9 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.rossana.stock.dto.Item;
 import com.shangpin.iog.rossana.stock.schedule.AppContext;
+import com.shangpin.iog.rossana.stock.utils.CVSUtil;
 import com.shangpin.iog.rossana.stock.utils.CsvUtil;
+import com.shangpin.iog.rossana.stock.utils.DownLoad;
 
 @Component("rossanaStock")
 public class FetchProduct extends AbsUpdateProductStock{
@@ -30,11 +34,13 @@ public class FetchProduct extends AbsUpdateProductStock{
 	private static ResourceBundle bdl = null;
 	private static String supplierId = "";
 	private static String filePath = "";
+	private static String local = null;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
 		filePath = bdl.getString("filepath");
+		local = bdl.getString("local");
 	}
 	@Override
 	public Map<String, String> grabStock(Collection<String> skuNo)
@@ -50,6 +56,9 @@ public class FetchProduct extends AbsUpdateProductStock{
 			logInfo.info("===========获取供货商库存开始=================");
 			result = HttpUtil45.get(filePath, timeConfig, null);
 			items = CsvUtil.readLocalCSV(result, Item.class, ";");
+//			DownLoad.downFromNet(filePath, local);
+//			File file = new File(local);
+//			items = CVSUtil.readCSV(file, Item.class, ';');
 			logInfo.info("===========下载转化成功=================");
 		}catch(Exception e){
 			logError.error(e);
@@ -107,6 +116,20 @@ public class FetchProduct extends AbsUpdateProductStock{
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+//		try {
+//			OutTimeConfig timeConfig = new OutTimeConfig(1000*5, 1000*60 * 60, 1000*60 * 60);
+//			String result = HttpUtil45.get(filePath, timeConfig, null);
+//			System.out.println(result); 
+//			List<Item> items = CsvUtil.readLocalCSV(result, Item.class, ";");
+//			DownLoad.downFromNet(filePath, local);
+//			File file = new File(local);
+////			List<Item> items = CVSUtil.readCSV(file, Item.class, ';');
+//			System.out.println(items.size()); 
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
 
 	}
 	

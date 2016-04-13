@@ -40,6 +40,29 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
                                                             @Param("endDate") Date endDate);
     
     /**
+     * 根据ep规则查找商品 分页
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @param rowBounds
+     * @return
+     */
+    List<ProductDTO> findListByEPRegularAndLastDate(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            RowBounds rowBounds);
+    /**
+     * 根据ep规则查找商品  不分页
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    List<ProductDTO> findListByEPRegularAndLastDate(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate);
+    
+    /**
      * 根据供货商标识和修改时间获取所有产品的ID
      * @param supplier   供货商ID或NO 唯一标示
      * @param startDate  开始时间

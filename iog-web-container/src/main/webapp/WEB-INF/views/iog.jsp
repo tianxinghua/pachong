@@ -243,6 +243,15 @@
         };
         window.open('orders?queryJson='+$.toJSON(search), '','');
     }
+    
+	/* function exportProductByCond(){
+		var iWidth=600; //弹出窗口的宽度;
+		var iHeight=400; //弹出窗口的高度;
+		var iTop = (window.screen.height-30-iHeight)/2; //获得窗口的垂直位置;
+		var iLeft = (window.screen.width-10-iWidth)/2; //获得窗口的水平位置;
+		window.open("exportByConditions", "按条件导出", "height="+iHeight+", width="+iWidth+", toolbar =no, menubar=no,top="+iTop+",left="+iLeft+"");
+	
+	}   */ 
 
 
 </script>
@@ -285,6 +294,9 @@
 <div style="text-align: left; padding: 0px 20px 20px 20px;"><a
 	href="javascript:void(0)" onclick="exportProduct('same')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>导出</a> 
+	<a
+	href="javascript:void(0)" onclick="exportProduct('ep_regular')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>按条件导出</a> 
 	<a
 	href="javascript:void(0)" onclick="exportDiffProduct('diff')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>价格变化导出</a>
