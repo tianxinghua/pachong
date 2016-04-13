@@ -59,11 +59,11 @@ public class PozzileiStockImp extends AbsUpdateProductStock {
 //                barcode_map.put(skuno, null);
 //            }
 
-             //barcode = skuno.trim();
-             String itemId = skuno;
+             barcode = skuno.trim();
+             //String itemId = skuno;
             //根据供应商skuno获取库存，并更新我方sop库存
-             url = "http://net13serverpo.net/pozziapi/Myapi/Productslist/GetQuantityByItemID?DBContext=Default&ItemID=[[itemId]]&key=5jq3vkBd7d";
-            url = url.replaceAll("\\[\\[itemId\\]\\]", itemId);
+             url = "http://net13serverpo.net/pozziapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=Default&barcode=[[barcode]]&key=5jq3vkBd7d";
+            url = url.replaceAll("\\[\\[barcode\\]\\]", barcode);
              json = null;
             try {
                 json = HttpUtil45.get(url, outTimeConfig, null);
@@ -101,21 +101,21 @@ public class PozzileiStockImp extends AbsUpdateProductStock {
     public static void main(String[] args) throws Exception {
     	//加载spring
         loadSpringContext();
-        //拉取数据
-        PozzileiStockImp stockImp =(PozzileiStockImp)factory.getBean("pozzilei");
-        
-//        AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
-        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("pozzilei更新数据库开始");
-        try {
-            stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
-        } catch (Exception e) {
-            loggerError.error("pozzilei更新库存失败."+e.getMessage());
-            e.printStackTrace();
-        }
-        logger.info("pozzilei更新数据库结束");
-        System.exit(0);
+//        //拉取数据
+//        PozzileiStockImp stockImp =(PozzileiStockImp)factory.getBean("pozzilei");
+//        
+////        AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
+//        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("pozzilei更新数据库开始");
+//        try {
+//            stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+//        } catch (Exception e) {
+//            loggerError.error("pozzilei更新库存失败."+e.getMessage());
+//            e.printStackTrace();
+//        }
+//        logger.info("pozzilei更新数据库结束");
+//        System.exit(0);
 
     }
 

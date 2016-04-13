@@ -60,8 +60,9 @@ public class GrapStock extends AbsUpdateProductStock{
 		
 		List<Item> items = null;
 		try{
-			
+			logInfo.info("===========开始下载文件=================");
 			items= readLocalCSV(Item.class,",");
+			logInfo.info("items.size============"+items.size());
 			
 		}catch(Exception e){
 			logError.error(e);
@@ -75,7 +76,7 @@ public class GrapStock extends AbsUpdateProductStock{
 				for(int i=0;i<s.length;i++){
 					String[] shu = s[i].split(",");
 					stockMap.put(item.getProduct_id()+"-"+s[i], String.valueOf(shu.length));
-		            System.out.println(stockMap.toString());
+//		            System.out.println(stockMap.toString());
 				}
 			}
 		}

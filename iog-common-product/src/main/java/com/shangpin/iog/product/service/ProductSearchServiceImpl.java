@@ -830,7 +830,7 @@ buffer.append(dto.getMemo());
 					supplierDTO.getSupplierName());
 		}
 		StringBuffer buffer = new StringBuffer("供应商" + splitSign				
-				+ "ProductModel 货号" + splitSign + "新市场价" + splitSign
+				+ "ProductModel 货号" + splitSign + "供货商skuid" + splitSign+ "新市场价" + splitSign
 				+ "新销售价" + splitSign + "新进货价" + splitSign + "市场价"
 				+ splitSign + "销售价" + splitSign + "进货价").append("\r\n");
 		
@@ -860,6 +860,10 @@ buffer.append(dto.getMemo());
 					buffer.append(
 							null == dto.getProductCode() ? "" : dto
 									.getProductCode().replaceAll(",", " "))
+							.append(splitSign);
+					//supplier skuid
+					buffer.append(
+							null == dto.getSkuId() ? "" : dto.getSkuId())
 							.append(splitSign);
 					
 					// 新的价格

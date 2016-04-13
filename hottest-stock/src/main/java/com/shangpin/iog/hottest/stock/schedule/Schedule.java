@@ -97,7 +97,7 @@ public class Schedule {
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				logger.info("更新数据库开始");
 				try {
-					
+					stockImp.supplierSkuIdMain=true;
 					stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
 				} catch (Exception e) {
 					e.printStackTrace();

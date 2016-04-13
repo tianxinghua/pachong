@@ -89,7 +89,7 @@ environments{
 
             Ice.Default.Locator='SPIceGrid/Locator:default -h 172.20.10.242 -p 12000:default -h 172.20.10.246 -p 12000'
 
-            MongoDB.hostname='49.213.13.167'      d
+            MongoDB.hostname='49.213.13.167'      
             MongoDB.port='27017'
             SOP.HOST='http://open.shangpin.com:8080'
 

@@ -90,7 +90,7 @@ public abstract class AbsUpdateProductStock {
 				SopProductSkuPage products = result.getResponse();
 				skus = products.getSopProductSkuIces();
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 			for (SopProductSku sku : skus) {
 				List<SopSku> skuIces = sku.getSopSkuIces();
@@ -162,7 +162,7 @@ public abstract class AbsUpdateProductStock {
 				SopProductSkuPage products = result.getResponse();
 				skus = products.getSopProductSkuIces();
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 			for (SopProductSku sku : skus) {
 				List<SopSku> skuIces = sku.getSopSkuIces();
@@ -285,7 +285,9 @@ public abstract class AbsUpdateProductStock {
 			for(int k=0;k<totoalFailCnt.size();k++){
 				fct+=totoalFailCnt.get(k);
 			}
-			this.updateStockTime(app_key);
+			if(fct>=0){//更新失败数小于0时说明更新失败
+				this.updateStockTime(app_key);
+			}			
 			return fct;
 		}else{
 			return updateStock(host,app_key,app_secret, localAndIceSku, skuNoSet);
@@ -448,7 +450,8 @@ public abstract class AbsUpdateProductStock {
 			skuArray =(SopSkuInventory[]) result.getResponse().toArray(new SopSkuInventory[0]);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+			loggerError.error("removeNoChangeStockRecord出错==="+e);
 		}
 		//查找未维护库存的SKU
         if(null!=skuArray&&skuArray.length!=skuNoShangpinList.size()){
@@ -507,7 +510,7 @@ public abstract class AbsUpdateProductStock {
 			try {
 				supplierStock = grabStock(skuNos);
 				if(supplierStock.size()==0){
-					loggerError.error("获取库存信息时发生异常");
+					loggerError.error("抓取供货商信息返回的supplierStock.size为0");
 					return iceStock;
 				}else{
 					boolean isNUll = true;
@@ -524,7 +527,7 @@ public abstract class AbsUpdateProductStock {
 					}
 				}
 			} catch (Exception e) {    //获取库存信息时失败 直接退出
-				loggerError.error("获取库存信息时发生异常");
+				loggerError.error("获取库存信息时发生异常 "+e);
 //				System.exit(0);
 				return iceStock;
 			}
@@ -700,7 +703,7 @@ public abstract class AbsUpdateProductStock {
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 
 			pageIndex++;
