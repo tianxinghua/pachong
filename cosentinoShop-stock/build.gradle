@@ -12,17 +12,12 @@ dependencies {
 }
 
 jar {
-    dependsOn copyToLib , copyResources    , copyResourcesToClasses
+    dependsOn copyToLib , copyResources    , dependsClassPath
     exclude ("**/*.properties")
 
-    def manifestCp = configurations.compile.files.collect  {
-        File file = it
-        "lib/${file.name}"
-    }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.service.UpdateStock'
-        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+        attributes 'Main-Class': 'com.shangpin.iog.stock.schedule.Startup'
     }
 }
 
