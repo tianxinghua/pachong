@@ -49,10 +49,12 @@ public class ExceptionShowController {
 	
 	private static ResourceBundle bdl = null;
 	private static String host;
+	private static String deleteSupplier;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		host = bdl.getString("host");
+		deleteSupplier = bdl.getString("deleteSupplier");
 	}
 	
 	@RequestMapping(value="/showException")
@@ -74,14 +76,23 @@ public class ExceptionShowController {
     @RequestMapping(value = "/orderUpdateException")
     public String showStockUpdateException(Model model) throws Exception {
     	
-    	 Jedis j = new Jedis(host);
-     	 System.out.println("Connection to server sucessfully");
+    	Jedis j = new Jedis(host);
+    	
+    	String [] delSuppArray = null;
+    	if(! deleteSupplier.isEmpty()){
+    		delSuppArray = deleteSupplier.split(",");
+    		for(String delSupp : delSuppArray){
+    			j.del(delSupp);
+    		}
+    	}
+    	 
    		 Set<String> set = j.keys("iog_*");
     	
 //    	List<OrderTimeUpdateDTO> all =	productOrderService.selectAllSupplierOrder();
     	List<OrderTimeUpdateDTO> redList = new ArrayList<OrderTimeUpdateDTO>();
     	List<OrderTimeUpdateDTO> greenList = new ArrayList<OrderTimeUpdateDTO>();
     	List<SupplierDTO> supplierDTOList = supplierService.findByState(null);
+    	List<SupplierDTO> availableSupplierDTOList = supplierService.findAllWithAvailable();
     	Map<String, String> nameMap = new HashMap<String, String>();
     	for (SupplierDTO supplierDTO : supplierDTOList) {
 			nameMap.put(supplierDTO.getSupplierId(), supplierDTO.getSupplierName());
@@ -102,31 +113,37 @@ public class ExceptionShowController {
 			}
     	}
     	*/
-    	Iterator<String> it=set.iterator();
-	       while(it.hasNext())
-	       {
-	    	   OrderTimeUpdateDTO stockUpdateDTO = new OrderTimeUpdateDTO();
-	           String o=(String)it.next();
-	           System.out.println(o);
-	           System.out.println(j.get(o));
-	           SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	           Date date=sdf.parse(j.get(o));
-	           long diff = new Date().getTime()-date.getTime();
-	    		long days = diff / (1000 * 60 * 60 * 24);
-	    		long hours = (diff-days*(1000 * 60 * 60 * 24))/(1000* 60 * 60);
-	    		long minutes = (diff-days*(1000 * 60 * 60 * 24)-hours*(1000* 60 * 60))/(1000* 60);
-	    		stockUpdateDTO.setDif(days+"天"+hours+"小时"+minutes+"分");
-	    		stockUpdateDTO.setSupplierName(nameMap.get(o.split("_")[1]));
-	    		stockUpdateDTO.setSupplierId(o.split("_")[1]);
-	    		stockUpdateDTO.setUpdateTime(date);
-	    		if (minutes>30) {
-	    			redList.add(stockUpdateDTO);
-				}else {
-					greenList.add(stockUpdateDTO);
-				}
-	       }
+    	try{
+    		Iterator<String> it=set.iterator();
+ 	       while(it.hasNext())
+ 	       {
+ 	    	   OrderTimeUpdateDTO stockUpdateDTO = new OrderTimeUpdateDTO();
+ 	           String o=(String)it.next();
+ 	           System.out.println(o);
+ 	           System.out.println(j.get(o));
+ 	           SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+ 	           Date date=sdf.parse(j.get(o));
+ 	           long diff = new Date().getTime()-date.getTime();
+ 	    		long days = diff / (1000 * 60 * 60 * 24);
+ 	    		long hours = (diff-days*(1000 * 60 * 60 * 24))/(1000* 60 * 60);
+ 	    		long minutes = (diff-days*(1000 * 60 * 60 * 24)-hours*(1000* 60 * 60))/(1000* 60);
+ 	    		stockUpdateDTO.setDif(days+"天"+hours+"小时"+minutes+"分");
+ 	    		stockUpdateDTO.setSupplierName(nameMap.get(o.split("_")[1]));
+ 	    		stockUpdateDTO.setSupplierId(o.split("_")[1]);
+ 	    		stockUpdateDTO.setUpdateTime(date);
+ 	    		if (minutes>30||days>1||hours>1) {
+ 	    			redList.add(stockUpdateDTO);
+ 				}else {
+ 					greenList.add(stockUpdateDTO);
+ 				}
+ 	       }
+    	}catch(Exception e){
+    		
+    	}
+    	
     	model.addAttribute("greenOrderList", greenList);
     	model.addAttribute("redOrderList", redList);
+    	model.addAttribute("supplierDTOList", availableSupplierDTOList);
 		return "iog";
     }
     @RequestMapping(value = "/stockUpdateException")
