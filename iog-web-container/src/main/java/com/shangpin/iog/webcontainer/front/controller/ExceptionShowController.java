@@ -131,7 +131,7 @@ public class ExceptionShowController {
  	    		stockUpdateDTO.setSupplierName(nameMap.get(o.split("_")[1]));
  	    		stockUpdateDTO.setSupplierId(o.split("_")[1]);
  	    		stockUpdateDTO.setUpdateTime(date);
- 	    		if (minutes>30||days>1||hours>1) {
+ 	    		if (minutes>30||days>=1||hours>=1) {
  	    			redList.add(stockUpdateDTO);
  				}else {
  					greenList.add(stockUpdateDTO);
