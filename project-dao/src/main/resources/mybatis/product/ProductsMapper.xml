@@ -391,7 +391,7 @@
             sku.STOCK >0 
             and spu.BRAND_NAME in (select BRAND_NAME from EP_REGULAR)
             and spu.CATEGORY_NAME not in (select CATEGORY_NAME from EP_REGULAR)
-            and sku.PRODUCT_SIZE not in (select PRODUCT_SIZE from EP_REGULAR)
+            <!-- and sku.PRODUCT_SIZE not in (select PRODUCT_SIZE from EP_REGULAR) -->
             and spu.SEASON_NAME not in (select SEASON_NAME from EP_REGULAR)
             and spu.CATEGORY_GENDER not in (select GENDER from EP_REGULAR)
 
