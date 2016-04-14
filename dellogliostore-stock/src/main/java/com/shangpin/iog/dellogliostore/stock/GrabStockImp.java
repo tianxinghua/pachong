@@ -7,8 +7,6 @@ package com.shangpin.iog.dellogliostore.stock;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -16,14 +14,13 @@ import com.shangpin.iog.dellogliostore.dto.Feed;
 import com.shangpin.iog.dellogliostore.dto.SkuItem;
 import com.shangpin.iog.dellogliostore.dto.SkuItems;
 import com.shangpin.iog.dellogliostore.dto.SpuItem;
-import com.shangpin.iog.dto.SkuDTO;
-import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.iog.dellogliostore.stock.schedule.AppContext;
+
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 @Component("delloglioStore")
 public class GrabStockImp extends AbsUpdateProductStock {
@@ -115,18 +112,18 @@ public class GrabStockImp extends AbsUpdateProductStock {
     public static void main(String[] args) throws Exception {
     	//加载spring
         loadSpringContext();
-        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("delloglioStore");
-        //AbsUpdateProductStock grabStockImp = new GrabStockImp();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("dellogliostore更新数据库开始");
-        try {
-        	grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
-		} catch (Exception e) {
-			loggerError.error("dellogliostore更新库存失败");
-			e.printStackTrace();
-		}
-        logger.info("dellogliostore更新数据库结束");
-        System.exit(0);
+//        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("delloglioStore");
+//        //AbsUpdateProductStock grabStockImp = new GrabStockImp();
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("dellogliostore更新数据库开始");
+//        try {
+//        	grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+//		} catch (Exception e) {
+//			loggerError.error("dellogliostore更新库存失败");
+//			e.printStackTrace();
+//		}
+//        logger.info("dellogliostore更新数据库结束");
+//        System.exit(0);
     }
 
 }

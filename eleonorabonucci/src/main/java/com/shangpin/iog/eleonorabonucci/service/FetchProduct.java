@@ -141,7 +141,7 @@ public class FetchProduct {
                         sku.setProductDescription(item.getDescription());
                         sku.setStock(item.getStock());
                         sku.setProductCode(product.getProducer_id());
-                        sku.setProductDescription(product.getDescription());
+                        sku.setProductDescription(product.getDescription().replaceAll(",", " ").replaceAll("\\r", "").replaceAll("\\n", "").trim());
 
                         if(skuDTOMap.containsKey(sku.getSkuId())){
                             skuDTOMap.remove(sku.getSkuId());
@@ -182,7 +182,14 @@ public class FetchProduct {
                     spu.setSpuName(product.getProduct_name());
                     spu.setSeasonId(product.getSeason_code());
                     spu.setMaterial(product.getProduct_material());
-
+                    String origin = "";
+                    try {
+                    	String des = product.getDescription();
+                    	origin = des.substring(des.indexOf("made in")+7).replaceAll(",", "").replaceAll("\\r", "").replaceAll("\\n", "").trim(); 
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+                    spu.setProductOrigin(origin);
 
                     spu.setCategoryGender(product.getGender());
                     productFetchService.saveSPU(spu);

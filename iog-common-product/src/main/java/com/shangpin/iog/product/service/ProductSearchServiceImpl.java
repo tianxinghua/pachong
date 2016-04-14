@@ -143,7 +143,12 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					
 					
 					
-				} else {
+				}else if(flag.equals("ep_regular")){//根据ep规则查找product
+					productList = productDAO.findListByEPRegularAndLastDate(
+							supplier, startDate, endDate, new RowBounds(
+							pageIndex, pageSize));
+				}				
+				else {
 					productList = productDAO.findDiffListBySupplierAndLastDate(
 							supplier, startDate, endDate, new RowBounds(
 									pageIndex, pageSize));
@@ -154,7 +159,13 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					productList = productDAO.findListBySupplierAndLastDate(
 							supplier, startDate, endDate);					
 										
-				} else {
+				}else if(flag.equals("ep_regular")){//根据ep规则查找product		
+					
+					productList = productDAO.findListByEPRegularAndLastDate(
+							supplier, startDate, endDate);
+					
+				}
+				else {
 					productList = productDAO.findDiffListBySupplierAndLastDate(
 							supplier, startDate, endDate);
 				}
@@ -278,7 +289,11 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,
 					endDate, pageIndex, pageSize, "same");
 
-		} else {
+		}else if(flag.equals("ep_regular")){
+			page = this.findProductPageBySupplierAndTime(supplier, startDate,
+					endDate, pageIndex, pageSize, "ep_regular");
+		}		
+		else {
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,
 					endDate, pageIndex, pageSize, "diff");
 		}
@@ -438,11 +453,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 						.append(dto.getItemPictureUrl8()).append(splitSign);
 				// 明细描述
 				productDetail = dto.getProductDescription();
-				if (StringUtils.isNotBlank(productDetail)) {
-					if (productDetail.indexOf(splitSign) > 0) {
-						productDetail = productDetail.replace(splitSign, "  ");
-					}
-
+				if (StringUtils.isNotBlank(productDetail)) {					
+					productDetail = productDetail.replaceAll(splitSign, "  ");
 					productDetail = productDetail.replaceAll("\\r", "")
 							.replaceAll("\\n", "");
 				}
