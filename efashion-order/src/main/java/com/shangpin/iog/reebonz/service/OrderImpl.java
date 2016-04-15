@@ -145,7 +145,9 @@ public class OrderImpl  extends AbsOrderService{
 						});
 						t.start();
 			          } else{
-						res = res.substring(0,200);
+		        		if(res.length()>200){
+							res = res.substring(0,200);
+						}
 						orderDTO.setExcDesc(res);
 						orderDTO.setExcState("0");
 						String reResult = setPurchaseOrderExc(orderDTO);
