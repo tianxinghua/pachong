@@ -40,7 +40,6 @@ import com.shangpin.iog.service.ProductFetchService;
  */
 @Component("opticalscribe")
 public class FetchProduct {
-
 	@Autowired
 	ProductFetchService productFetchService;
 
@@ -50,16 +49,16 @@ public class FetchProduct {
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
 	private static String uri;
-//	static {
-//		if (null == bdl)
-//			bdl = ResourceBundle.getBundle("conf");
-//		supplierId = bdl.getString("supplierId");
-//		uri = bdl.getString("uri");
-//	}
+	static {
+		if (null == bdl)
+			bdl = ResourceBundle.getBundle("conf");
+		supplierId = bdl.getString("supplierId");
+		uri = bdl.getString("uri");
+	}
 	private static List getUrlList() {
 		List<String> list = new ArrayList();
 			try {
-				HttpResponse response = HttpUtils.get("http://www.opticalscribe.com/");
+				HttpResponse response = HttpUtils.get(uri);
 				if (response.getStatus()==200) {
 					String htmlContent = response.getResponse();
 					Document doc = Jsoup.parse(htmlContent);
@@ -198,27 +197,16 @@ private static List getProductList() {
 			SpuDTO spu = new SpuDTO();
 			try {
 				spu.setId(UUIDGenerator.getUUID());
-				spu.setSupplierId("201604051925");
+				spu.setSupplierId(supplierId);
 				spu.setSpuId(item.getSpuId());
 				spu.setCategoryName(item.getDesc());
 				spu.setBrandName(item.getBrand());
-//				spu.setSpuName(item.getTitle());
 				spu.setMaterial(item.getFrame());
-//				spu.setCategoryGender(item.getGender());
-				
-//				String desc = item.getDescription();
-//				int index = desc.indexOf("Made in");
-//		    	if(index!=-1){
-//		    		String s = desc.substring(index);	
-//		    		String sss = s.substring(0,s.indexOf("<br>"));
-//		    		spu.setProductOrigin(sss);
-//		    	}
 				productFetchService.saveSPU(spu);
 			} catch (Exception e) {
 				try {
 					productFetchService.updateMaterial(spu);
 				} catch (ServiceException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
@@ -226,15 +214,15 @@ private static List getProductList() {
 			SkuDTO sku = new SkuDTO();
 			try {
 				sku.setId(UUIDGenerator.getUUID());
-				sku.setSupplierId("201604051925");
+				sku.setSupplierId(supplierId);
 				sku.setSpuId(item.getSpuId());
 				sku.setSkuId(item.getSkuId());
 				sku.setProductSize(item.getSize());
 				sku.setMarketPrice(item.getPrice());
 				sku.setColor(item.getColor());
 				sku.setProductDescription(item.getDesc());
-				 sku.setSaleCurrency(item.getPriceCurry());
-				 sku.setMarketPrice(item.getPrice());
+				sku.setSaleCurrency(item.getPriceCurry());
+				sku.setMarketPrice(item.getPrice());
 				productFetchService.saveSKU(sku);
 				
 			} catch (ServiceException e) {
@@ -242,7 +230,6 @@ private static List getProductList() {
 					try {
 						productFetchService.updatePriceAndStock(sku);
 					} catch (ServiceException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				} else {
@@ -251,7 +238,7 @@ private static List getProductList() {
 			}
 			if (StringUtils.isNotBlank(item.getUrl())) {
 				String[] picArray = {item.getUrl()};
-				productFetchService.savePicture("201604051925", null, item.getSkuId(), Arrays.asList(picArray));
+				productFetchService.savePicture(supplierId, null, item.getSkuId(), Arrays.asList(picArray));
 			}
 		}
 	}
