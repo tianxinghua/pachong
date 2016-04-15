@@ -116,4 +116,15 @@ public interface ProductSearchService {
 	public List<SpuDTO> findPartBySupAndSpuId(String supplierId);
     
 	public abstract List<SpuDTO> findpartSpuListBySupplier(String supplierId);
+	
+	/**
+	 * 查询符合ep规则的所有图片名
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 */
+	List<String> findPicName(String supplier, Date startDate, Date endDate,Integer pageIndex, Integer pageSize);
 }

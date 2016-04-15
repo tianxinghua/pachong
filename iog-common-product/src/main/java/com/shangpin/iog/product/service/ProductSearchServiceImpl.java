@@ -1402,5 +1402,14 @@ buffer.append(dto.getMemo());
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Override
+	public List<String> findPicName(String supplier,Date startDate, Date endDate, Integer pageIndex, Integer pageSize){
+		List<String> nameList = null;
+		if (null != pageIndex && null != pageSize) {
+			nameList = productDAO.findPicNameListByEPRegularAndLastDate(supplier, startDate, endDate, new RowBounds(pageIndex, pageSize));
+		}else{
+			nameList = productDAO.findPicNameListByEPRegularAndLastDate(supplier, startDate, endDate);
+		}
+		return nameList;
+	}
 }
