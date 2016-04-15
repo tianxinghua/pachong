@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +21,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import redis.clients.jedis.Jedis;
 
-import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.OrderTimeUpdateDTO;
 import com.shangpin.iog.dto.StockUpdateDTO;
