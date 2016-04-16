@@ -415,16 +415,29 @@
 
 	</select>
 	
-	<select id="findPicNameListByEPRegularAndLastDate" resultType="java.lang.String">
-		SELECT DISTINCT CONCAT(PRODUCT_CODE," ",COLOR) 
+	<select id="findPicNameListByEPRegularAndLastDate" resultMap="ProductsResultMap">
+	   select
+          sku.ID as id,
+          sku.SUPPLIER_ID  as supplier_id,
+          su.SUPPLIER_NAME as supplier_name,
+          sku.SPU_ID  as spu_id,
+          sku.SKU_ID as sku_id,
+          spu.SPU_NAME as spu_name,
+
+          sku.PRODUCT_NAME as product_name,
+          sku.BARCODE as barcode,
+          sku.PRODUCT_CODE as product_code,sku.COLOR as color,
+          sku.PRODUCT_SIZE as product_size
+		
 		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
 					 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID
-		  <where>
+        <where>
             sku.STOCK >0 
             and spu.BRAND_NAME in (select BRAND_NAME from EP_REGULAR)
-            and spu.CATEGORY_NAME not in (select CATEGORY_NAME from EP_REGULAR)
-            and spu.SEASON_NAME not in (select SEASON_NAME from EP_REGULAR)
-            and spu.CATEGORY_GENDER not in (select GENDER from EP_REGULAR)
+            and IF(spu.CATEGORY_NAME is null,true,spu.CATEGORY_NAME not in (select CATEGORY_NAME from EP_REGULAR))
+            and IF(spu.SEASON_NAME is null,true,spu.SEASON_NAME not in (select SEASON_NAME from EP_REGULAR))
+            and IF(spu.CATEGORY_GENDER is null,true,spu.CATEGORY_GENDER not in (select GENDER from EP_REGULAR))
+
           <if test="null!=supplier">
             and   sku.SUPPLIER_ID = #{supplier}
           </if>

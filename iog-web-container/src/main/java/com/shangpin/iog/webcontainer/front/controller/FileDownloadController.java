@@ -15,16 +15,17 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
 
@@ -50,6 +51,7 @@ import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.service.OrderService;
 import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SupplierService;
+import com.shangpin.iog.webcontainer.front.util.SavePic;
 
 
 /**
@@ -358,40 +360,85 @@ public class FileDownloadController {
             while (-1 != (len=in.read(data, 0, data.length))) {
                 out.write(data, 0, len);
             }
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
 			try {
-				zipfile.getFile().delete();
 				in.close();
 				out.close();
+				zipfile.getFile().delete();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
     }
     @RequestMapping("uploadFileAndDown")
-    public void uploadFileAndDown(@RequestParam(value = "uploadFile", required = false) MultipartFile file, HttpServletRequest request){
-//    	uploadFile
-    	System.out.println("开始");  
-        String path = request.getSession().getServletContext().getRealPath("uploadFileAndDown");  
+    public void uploadFileAndDown(@RequestParam(value = "uploadFile", required = false) MultipartFile file, HttpServletRequest request,HttpServletResponse response){
+    	BufferedInputStream in = null;
+    	BufferedOutputStream out = null;
+    	String path = request.getSession().getServletContext().getRealPath("");  
         String fileName = file.getOriginalFilename();  
-//        String fileName = new Date().getTime()+".jpg";  
-        System.out.println(path);  
         File targetFile = new File(path, fileName);  
-        if(!targetFile.exists()){  
-            targetFile.mkdirs();  
-        }  
-  
         //保存  
         try {  
+        	if (!targetFile.exists()) {
+        		targetFile.mkdirs(); 
+        		targetFile.createNewFile();
+			}
             file.transferTo(targetFile);  
         } catch (Exception e) {  
             e.printStackTrace();  
         }  
-    	
-    	
+        SavePic savePic = new SavePic();
+        String filePath = savePic.saveImg(targetFile);
+        ThreadPoolExecutor executor = savePic.getExecutor();
+        while(true){
+        	if(executor.getActiveCount()==0){
+        		break;
+        	}
+        	try {
+				Thread.sleep(1000*60*2);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
+        ZipFile zipfile = null;
+        
+        try {
+			zipfile = new ZipFile(new File(new Date().getTime()+""));
+
+			ZipParameters parameters = new ZipParameters();  
+		    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+		    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
+			zipfile.addFolder(filePath, parameters);
+			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+new Date().getTime()+".zip", "UTF-8"));
+
+			in = new BufferedInputStream(new FileInputStream(zipfile.getFile()));
+
+            out = new BufferedOutputStream(response.getOutputStream());
+            byte[] data = new byte[1048576];
+            int len = 0;
+            while (-1 != (len=in.read(data, 0, data.length))) {
+                out.write(data, 0, len);
+            }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				in.close();
+				out.close();
+				zipfile.getFile().delete();
+			    File delfiledir = new File(filePath);
+	            for (File b : delfiledir.listFiles()) {
+					b.delete();
+				}
+	            delfiledir.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+        
+        
     }
     //文件下载 主要方法
     private  void download(HttpServletRequest request,

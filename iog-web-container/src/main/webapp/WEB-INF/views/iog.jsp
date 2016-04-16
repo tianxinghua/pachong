@@ -21,7 +21,17 @@
     <script type="text/javascript" src="<%=bathPath%>/js/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="<%=bathPath%>/js/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="<%=bathPath%>/js/jquery-easyui-1.3.3/jquery.json-2.4.js"></script>
-
+<style type="text/css"> 
+	#showExcel { 
+				
+				position:absolute;
+				padding:0px 20px 20px 20px;
+				top:280px;           
+				left:350px;         
+				width:600px; 
+				height:200px;
+				background:LightSkyBlue;}  
+</style>
 
 <script type="text/javascript">
 	function filter(str){
@@ -289,9 +299,11 @@
 	
 	}   */ 
 	function show(){
-		alert(123123);
+		$("#showExcel").removeAttr("hidden");
 	}
-
+	function unshow(){
+		$("#showExcel").attr("hidden",'hidden');
+	}
 </script>
 <script type="text/javascript"	src="<%=bathPath%>/js/DatePicker/config.js"></script>
 <script type="text/javascript"	src="<%=bathPath%>/js/DatePicker/WdatePicker.js"></script>
@@ -357,9 +369,9 @@
 	
 </div>
 
-<div id="showExcel" style="text-align: left; padding: 0px 20px 20px 20px;" hidden="hidden">
+<div id="showExcel" hidden="hidden">
 	<h5>传入excel表格格式</h5>
-	<h5>第二列必须有,但可以为空</h5>
+	<h5>第二列必须有,但可以为空。第一行列名，从第二行开始下载</h5>
 	<form action="">
 	<table border="1">
 		<tr>
@@ -370,7 +382,7 @@
 			<td>......</td>
 		</tr>
 		<tr>
-			<td>picture</td>
+			<td>code</td>
 			<td>blue</td>
 			<td>http://1.1.1.1/adeg.jpg</td>
 			<td>http://1.1.1.1/lkjh.jpg</td>
@@ -378,7 +390,7 @@
 		</tr>
 	</table>
 	</form>
-	<h5>下载结果为picture blue_1.jpg,picture blue_2.jpg</h5>
+	<h5>下载结果为  code blue_1.jpg， code blue_2.jpg</h5>
 </div>
 <script>
 
