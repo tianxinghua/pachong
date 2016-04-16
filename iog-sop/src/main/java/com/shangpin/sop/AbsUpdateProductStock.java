@@ -487,6 +487,14 @@ public abstract class AbsUpdateProductStock {
 					loggerError.error("  skuNo ：--------" + skuIce.getSkuNo() + " supplierIdsku :" + skuIce.getSupplierSkuNo() + " supplier quantity =" + iceStock.get(skuIce.getSkuNo()) +" not handle " );
 				}
 			}
+		}else{//查询现有库存失败 更新查找到的库存
+			for(String spSku:skuNoShangpinList){
+				if(iceStock.containsKey(spSku)){
+					loggerError.error("ICE服务查询库存失败的记录 skuNO="+spSku );
+					toUpdateIce.put(spSku, iceStock.get(spSku));
+
+				}
+			}
 		}
 
     }
