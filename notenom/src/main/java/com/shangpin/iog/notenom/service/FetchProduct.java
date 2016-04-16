@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -96,43 +97,46 @@ public class FetchProduct {
 				if(sizes.length>0){
 					for (int i = 0; i < sizes.length; i++) {
 						try{
-							
-							String[] stockSize = sizes[i].split("/");
-							String stock = stockSize[0];
-							String productSize = stockSize[1];
-							//============================保存sku===================================
-							SkuDTO sku = new SkuDTO();
-							sku.setId(UUIDGenerator.getUUID());
-							sku.setSupplierId(supplierId);
-							sku.setSpuId(spu.getSpuId());
-							sku.setSkuId(spu.getSpuId()+"-"+productSize);
-							sku.setProductCode(item.getProductNo());
-							sku.setColor(item.getColor().replaceAll("\r", "").replaceAll("\n", ""));
-							sku.setSalePrice(item.getSaleprice());
-							sku.setProductName(item.getProductName());
-							sku.setProductSize(productSize);
-							sku.setStock(stock);
-							sku.setSaleCurrency("Euro");
+							if(StringUtils.isNotBlank(sizes[i])){
+								String[] stockSize = sizes[i].split("/");
+								logger.info(spu.getSpuId()+"=========stockSize========"+stockSize.toString());
+								String stock = stockSize[0];
+								String productSize = stockSize[1];
+								//============================保存sku===================================
+								SkuDTO sku = new SkuDTO();
+								sku.setId(UUIDGenerator.getUUID());
+								sku.setSupplierId(supplierId);
+								sku.setSpuId(spu.getSpuId());
+								sku.setSkuId(spu.getSpuId()+"-"+productSize);
+								sku.setProductCode(item.getProductNo());
+								sku.setColor(item.getColor().replaceAll("\r", "").replaceAll("\n", ""));
+								sku.setSalePrice(item.getSaleprice());
+								sku.setProductName(item.getProductName());
+								sku.setProductSize(productSize);
+								sku.setStock(stock);
+								sku.setSaleCurrency("Euro");
 
-							if (skuDTOMap.containsKey(sku.getSkuId())) {
-								skuDTOMap.remove(sku.getSkuId());
-							}
-							try {
-								productFetchService.saveSKU(sku);
-							} catch (Exception e) {
+								if (skuDTOMap.containsKey(sku.getSkuId())) {
+									skuDTOMap.remove(sku.getSkuId());
+								}
 								try {
-//									if (e.getMessage().equals("数据插入失败键重复")) {
-										// 更新价格和库存
-										productFetchService.updatePriceAndStock(sku);
-//									} else {
-//										e.printStackTrace();
-//									}
-										e.printStackTrace();
-										
-								} catch (ServiceException e1) {
-									e1.printStackTrace();
+									productFetchService.saveSKU(sku);
+								} catch (Exception e) {
+									try {
+//										if (e.getMessage().equals("数据插入失败键重复")) {
+											// 更新价格和库存
+											productFetchService.updatePriceAndStock(sku);
+//										} else {
+//											e.printStackTrace();
+//										}
+											e.printStackTrace();
+											
+									} catch (ServiceException e1) {
+										e1.printStackTrace();
+									}
 								}
 							}
+							
 							
 						}catch(Exception ex){
 							ex.printStackTrace();

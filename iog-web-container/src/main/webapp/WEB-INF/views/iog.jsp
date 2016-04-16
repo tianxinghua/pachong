@@ -59,6 +59,16 @@
 
             return;
         } */
+        if(str == 'ep_rule'){
+        	if("-1"== $('#supplier').val()){
+        		alert("请选择KA或重点供应商");
+            	return;
+        	}else{
+        		
+        	
+        	}
+        
+        }
 
         var search = {
             supplier:   $('#supplier').val(),
@@ -295,7 +305,7 @@
 	href="javascript:void(0)" onclick="exportProduct('same')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>导出</a> 
 	<a
-	href="javascript:void(0)" onclick="exportProduct('ep_regular')" id="btn-save"
+	href="javascript:void(0)" onclick="exportProduct('ep_rule')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>按条件导出</a> 
 	<a
 	href="javascript:void(0)" onclick="exportDiffProduct('diff')" id="btn-save"
