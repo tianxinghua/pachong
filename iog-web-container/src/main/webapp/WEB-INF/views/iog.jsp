@@ -288,7 +288,9 @@
 		window.open("exportByConditions", "按条件导出", "height="+iHeight+", width="+iWidth+", toolbar =no, menubar=no,top="+iTop+",left="+iLeft+"");
 	
 	}   */ 
-
+	function show(){
+		alert(123123);
+	}
 
 </script>
 <script type="text/javascript"	src="<%=bathPath%>/js/DatePicker/config.js"></script>
@@ -343,11 +345,40 @@
 	<a href="javascript:void(0)" onclick="queryOrder()" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>查看订单</a>
 	<br><br><br>
 	<a href="javascript:void(0)" onclick="downloadpicture()" id="dowm" icon="icon-search" class='easyui-linkbutton'>下载图片</a>
+		<br><br><br>
+	<form action="uploadFileAndDown" method="post" enctype="multipart/form-data">
+		<input type="file" name="uploadFile">
+		<input type="submit" value ="开始上传" onmouseenter="show()" onmouseleave="unshow()">
+	</form>
 	<br><br><br>
 	<a href="stockUpdateException" onclick="stock()" id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a> 
 	<a href="orderUpdateException" onclick="order()" id="btn-save" icon="icon-search" class='easyui-linkbutton'>订单更新异常查看</a>
 	
 	
+</div>
+
+<div id="showExcel" style="text-align: left; padding: 0px 20px 20px 20px;" hidden="hidden">
+	<h5>传入excel表格格式</h5>
+	<h5>第二列必须有,但可以为空</h5>
+	<form action="">
+	<table border="1">
+		<tr>
+			<td>名称1</td>
+			<td>名称2</td>
+			<td>url1</td>
+			<td>url2</td>
+			<td>......</td>
+		</tr>
+		<tr>
+			<td>picture</td>
+			<td>blue</td>
+			<td>http://1.1.1.1/adeg.jpg</td>
+			<td>http://1.1.1.1/lkjh.jpg</td>
+			<td>......jpg</td>
+		</tr>
+	</table>
+	</form>
+	<h5>下载结果为picture blue_1.jpg,picture blue_2.jpg</h5>
 </div>
 <script>
 

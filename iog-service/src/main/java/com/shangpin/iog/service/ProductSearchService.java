@@ -126,5 +126,5 @@ public interface ProductSearchService {
 	 * @param pageSize
 	 * @return
 	 */
-	List<String> findPicName(String supplier, Date startDate, Date endDate,Integer pageIndex, Integer pageSize);
+	List<ProductDTO> findPicName(String supplier, Date startDate, Date endDate,Integer pageIndex, Integer pageSize);
 }
