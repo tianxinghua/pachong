@@ -5,10 +5,39 @@ package com.shangpin.iog.webcontainer.front.controller;
 
 
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.util.Zip4jConstants;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
 import com.shangpin.framework.ServiceException;
-import com.shangpin.framework.page.Page;
 import com.shangpin.iog.common.utils.DateTimeUtil;
-import com.shangpin.iog.common.utils.excel.AccountsExcelTemplate;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.json.JsonUtil;
@@ -16,25 +45,8 @@ import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ProductSearchDTO;
 import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.service.OrderService;
-import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SupplierService;
-
-import net.sf.json.JSONObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.*;
-import java.util.*;
 
 
 /**
@@ -140,7 +152,11 @@ public class FileDownloadController {
 				productBuffer =orderService.exportOrder(supplier,startDate,endDate,pageIndex,pageSize,productSearchDTO.getFlag());
 				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_order" + System.currentTimeMillis() + ".csv", "UTF-8"));
 				
-			}else{
+			}else if(productSearchDTO.getFlag().equals("ep_regular")){//按条件导出
+				productBuffer =productService.exportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
+            	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+			}			
+			else{
 				productBuffer =productService.exportDiffProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
 				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 			}
@@ -243,8 +259,94 @@ public class FileDownloadController {
     	}        
 		return modelAndView;
     }
+    @RequestMapping(value = "downLoadPicture")
+    public void dowmLoadPic(HttpServletResponse response, String queryJson){
+    	ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
+    	BufferedInputStream in = null;
+    	BufferedOutputStream out = null;
+    	if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
 
+        String supplier = null;
+        if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
+        	supplier = productSearchDTO.getSupplier();
+        }
+        Date startDate  =null;
+        if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
+            startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
+        }
 
+        Date endDate = null;
+        if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
+            endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
+        }
+        
+        Integer pageIndex = productSearchDTO.getPageIndex();
+        
+        Integer pageSize = productSearchDTO.getPageSize();
+        Map<String,List<File>> nameMap = new HashMap<String,List<File>>();
+        
+        try {
+        	//要下载的文件名列表
+        	List<String> picNameList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
+        	
+        	ZipFile zipfile = new ZipFile( new File(new Date().getTime()+""));
+        	ArrayList<File> filesToAdd = new ArrayList<File>();
+    		for (String string : picNameList) {
+				nameMap.put(string, new ArrayList<File>());
+			}
+    		//供应商pic的文件夹
+    		//TODO 具体位置待定
+    		File dir = new File("E://"+productSearchDTO.getSupplierName());
+    		String key = "";
+    		if (dir.isDirectory()) {
+    			File[] files = dir.listFiles();
+    			for (File file : files) {
+    				if (nameMap.containsKey(file.getName().split("_")[0])) {
+    					key = file.getName().split("_")[0];
+    					nameMap.get(key).add(file);
+					}
+    			}
+			}
+    		//添加map中要下载的文件
+    		for (Entry<String, List<File>> entry : nameMap.entrySet()) {
+    			if (entry.getValue().size()>0) {
+
+    				for (File file : entry.getValue()) {
+    					filesToAdd.add(file);
+					}
+    				
+				}
+    		}
+    		
+			ZipParameters parameters = new ZipParameters();  
+		    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+		    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
+			zipfile.addFiles(filesToAdd, parameters);
+			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+new Date().getTime()+".zip", "UTF-8"));
+
+			in = new BufferedInputStream(new FileInputStream(zipfile.getFile()));
+
+            out = new BufferedOutputStream(response.getOutputStream());
+            byte[] data = new byte[1048576];
+            int len = 0;
+            while (-1 != (len=in.read(data, 0, data.length))) {
+                out.write(data, 0, len);
+                
+            }
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				in.close();
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+    	
+    }
     //文件下载 主要方法
     private  void download(HttpServletRequest request,
                                 HttpServletResponse response, String storeName, String contentType

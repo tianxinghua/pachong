@@ -24,10 +24,46 @@
 
 
 <script type="text/javascript">
-
-
+	function filter(str){
+		  if(typeof($('#pageIndex').val()) != "undefined"&& $.trim($('#pageIndex').val()).length !=0){
+	            if(isNaN($('#pageIndex').val())){
+	                alert("请输入数字");
+	                $('#pageIndex').focus();
+	                return ;
+	            }
+	            if(typeof($('#pageSize').val()) == "undefined"||$.trim($('#pageSize').val()).length ==0){
+	                alert("页码有数值时，导出行数必须也要有数值");
+	                return ;
+	            }
+	        }
+	        if(typeof($('#pageSize').val()) != "undefined"&&$.trim($('#pageSize').val()).length !=0){
+	            if(isNaN($('#pageSize').val())){
+	                alert("请输入数字");
+	                $('#pageSize').focus();
+	                return ;
+	            }
+	            if(typeof($('#pageIndex').val()) == "undefined"||$.trim($('#pageIndex').val()).length ==0){
+	                alert("导出行数有数值时，页码必须也要有数值");
+	                return ;
+	            }
+	        }
+	        var search = {
+	            supplier:   $('#supplier').val(),
+	            startDate:    $('#startDate').val(),
+	            endDate:      $('#endDate').val(),
+	            pageIndex: $('#pageIndex').val(),
+	            pageSize:$('#pageSize').val(),
+	            supplierName:$ ('#supplier').find("option:selected").text(),
+	            flag:str
+	        };
+	        return search;
+	}
+	function downloadpicture(){
+		var search = filter("");
+	    alert($.toJSON(search));
+	    window.open('downLoadPicture?queryJson='+$.toJSON(search), '','');
+	}
     function exportProduct(str) {
-
 
         if(typeof($('#pageIndex').val()) != "undefined"&& $.trim($('#pageIndex').val()).length !=0){
             if(isNaN($('#pageIndex').val())){
@@ -243,6 +279,15 @@
         };
         window.open('orders?queryJson='+$.toJSON(search), '','');
     }
+    
+	/* function exportProductByCond(){
+		var iWidth=600; //弹出窗口的宽度;
+		var iHeight=400; //弹出窗口的高度;
+		var iTop = (window.screen.height-30-iHeight)/2; //获得窗口的垂直位置;
+		var iLeft = (window.screen.width-10-iWidth)/2; //获得窗口的水平位置;
+		window.open("exportByConditions", "按条件导出", "height="+iHeight+", width="+iWidth+", toolbar =no, menubar=no,top="+iTop+",left="+iLeft+"");
+	
+	}   */ 
 
 
 </script>
@@ -286,6 +331,9 @@
 	href="javascript:void(0)" onclick="exportProduct('same')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>导出</a> 
 	<a
+	href="javascript:void(0)" onclick="exportProduct('ep_regular')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>按条件导出</a> 
+	<a
 	href="javascript:void(0)" onclick="exportDiffProduct('diff')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>价格变化导出</a>
 	<a href="javascript:void(0)"
@@ -293,8 +341,9 @@
 	<a href="javascript:void(0)" onclick="updatePrice()" id="btn-edit" icon="icon-edit" class='easyui-linkbutton'>更新价格</a>
 	<a href="javascript:void(0)" onclick="exportOrder('order')" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>导出订单</a>
 	<a href="javascript:void(0)" onclick="queryOrder()" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>查看订单</a>
-	<br><br>
-	<br>
+	<br><br><br>
+	<a href="javascript:void(0)" onclick="downloadpicture()" id="dowm" icon="icon-search" class='easyui-linkbutton'>下载图片</a>
+	<br><br><br>
 	<a href="stockUpdateException" onclick="stock()" id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a> 
 	<a href="orderUpdateException" onclick="order()" id="btn-save" icon="icon-search" class='easyui-linkbutton'>订单更新异常查看</a>
 	

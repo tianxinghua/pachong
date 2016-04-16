@@ -5,7 +5,10 @@ import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductOfSpecDTO;
+
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.ResultType;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.Date;
@@ -38,6 +41,29 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     List<ProductDTO> findListBySupplierAndLastDate(@Param("supplier") String supplier,
                                                             @Param("startDate") Date startDate,
                                                             @Param("endDate") Date endDate);
+    
+    /**
+     * 根据ep规则查找商品 分页
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @param rowBounds
+     * @return
+     */
+    List<ProductDTO> findListByEPRegularAndLastDate(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            RowBounds rowBounds);
+    /**
+     * 根据ep规则查找商品  不分页
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    List<ProductDTO> findListByEPRegularAndLastDate(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate);
     
     /**
      * 根据供货商标识和修改时间获取所有产品的ID
@@ -99,6 +125,15 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     List<ProductDTO> findListOfAllSupplier(@Param("startDate") Date startDate,
             @Param("endDate") Date endDate,
             RowBounds rowBounds);
+    /**
+     * 按照ep规则查询所有图片名
+     */
+    List<String> findPicNameListByEPRegularAndLastDate(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate);
+    List<String> findPicNameListByEPRegularAndLastDate(@Param("supplier") String supplier,
+    		@Param("startDate") Date startDate,
+    		@Param("endDate") Date endDate, RowBounds rowBounds);
 }
 
 

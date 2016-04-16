@@ -63,9 +63,11 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
             //根据供应商skuno获取库存，并更新我方sop库存
              url = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=Default&barcode=[[barcode]]&key=8IZk2x5tVN";
             url = url.replaceAll("\\[\\[barcode\\]\\]", barcode);
+            logger.info("url===="+url); 
              json = null;
             try {
                 json = HttpUtil45.get(url, outTimeConfig, null);
+                logger.info("json====="+json); 
             } catch (Exception e) {
                 stock_map.put(skuno, "0");  //读取失败的时候赋值为0
 //                loggerError.error("拉取失败 "+e.getMessage());
@@ -94,6 +96,7 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
             }
         }
 
+        logger.info("返回的map大小  stock_map.size======"+stock_map.size()); 
         return stock_map;
     }
 

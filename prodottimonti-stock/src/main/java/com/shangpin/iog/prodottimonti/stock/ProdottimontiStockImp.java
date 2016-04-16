@@ -62,7 +62,7 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
             	try{
             		
             		stockMap = getStock(skuno);
-            		logger.info("抓取的供货商stockMap==="+stockMap.toString());
+//            		logger.info("抓取的供货商stockMap==="+stockMap.toString());
                     if (stockMap.size() > 0)
                         skustock.put(skuno, stockMap.get(skuno));
                     else
@@ -87,9 +87,11 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
     private static Map<String,String> getStock(String sku){
         String url = "http://www.3forb.it/webserver/prodotto/?pid="+sku;
 
+        logger.info("url====="+url); 
         OutTimeConfig timeConfig =new OutTimeConfig(1000*60,1000*60,1000*60);
         Map<String,String> map = new HashMap<>();
         String jsonstr = HttpUtil45.get(url,timeConfig,null,null,null);
+        logger.info("jsonstr===="+jsonstr); 
         if( jsonstr != null){
             JSONObject obj = JSONObject.fromObject(jsonstr);
 //            System.out.println("stock="+obj.has("stock"));
@@ -97,6 +99,7 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
                 map.put(obj.getString("sku"), obj.getString("stock"));
             }
         }
+        logger.info("map====="+map); 
         return map;
     }
 

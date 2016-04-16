@@ -145,7 +145,9 @@ public class OrderImpl  extends AbsOrderService{
 						});
 						t.start();
 			          } else{
-						res = res.substring(0,200);
+		        		if(res.length()>200){
+							res = res.substring(0,200);
+						}
 						orderDTO.setExcDesc(res);
 						orderDTO.setExcState("0");
 						String reResult = setPurchaseOrderExc(orderDTO);
@@ -335,7 +337,7 @@ public class OrderImpl  extends AbsOrderService{
 			
 	    	
 	    	BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
-			String price = priceInt.divide(new BigDecimal(1.05),2).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
+			String price = priceInt.divide(new BigDecimal(1.05),2).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 			
 			item.setPurchase_price((Double.parseDouble(price)-3)+"");
 			Item [] i = {item};

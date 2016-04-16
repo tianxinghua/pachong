@@ -272,7 +272,7 @@ public class OrderService extends AbsOrderService {
 		// logger.info("detail数据格式:"+detail);
 
 		Parameters order = new Parameters();
-		order.setDBContext(dBContext);
+		
 		order.setPurchase_no(orderDTO.getSpPurchaseNo());
 		order.setOrder_no(orderDTO.getSpOrderId());
 		
@@ -283,37 +283,16 @@ public class OrderService extends AbsOrderService {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		order.setBarcode(pro.getBarcode());
+		String barCode = pro.getBarcode();
+		if(barCode.split("\\|").length>0){
+			order.setBarcode(barCode.split("\\|")[0]);
+		}else{
+			order.setBarcode(barCode);
+		}
+		
 		order.setOrdQty(details[1]);
 		order.setKey(key);
-//		String sPurchasePrice = StringUtils.isBlank(orderDTO.getPurchasePriceDetail())?"0":orderDTO.getPurchasePriceDetail();
-//     	BigDecimal purchasePrice = new BigDecimal(sPurchasePrice).divide(new BigDecimal(1.05),2,BigDecimal.ROUND_HALF_UP);
-//		order.setSellPrice(purchasePrice.toString());
 		order.setSellPrice("0");
-
-
-
-
-//		try {
-//			Map tempmap = skuPriceService.getNewSkuPriceBySku(supplierId, details[0]);
-//			Map map = (Map) tempmap.get(supplierId);
-//			markPrice = (String) map.get(details[0]);
-//			if (!"-1".equals(markPrice)) {
-//				String price = markPrice.split("\\|")[1];
-//				if (!"-1".equals(price)) {
-//					order.setSellPrice(price);
-//				} else {
-//					order.setSellPrice(orderDTO.getPurchasePriceDetail());
-//				}
-//
-//			} else {
-//				order.setSellPrice(orderDTO.getPurchasePriceDetail());
-//			}
-//		} catch (ServiceException e) {
-//			order.setSellPrice(orderDTO.getPurchasePriceDetail());
-//			System.out.println("sku" + details[0] + "没有供货价");
-//			logger.info("异常错误：" + e.getMessage());
-//		}
 		return order;
 	}
 	
