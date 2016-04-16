@@ -5,36 +5,53 @@ package com.shangpin.iog.webcontainer.front.controller;
 
 
 
-import com.shangpin.framework.ServiceException;
-import com.shangpin.framework.page.Page;
-import com.shangpin.iog.common.utils.DateTimeUtil;
-import com.shangpin.iog.common.utils.excel.AccountsExcelTemplate;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.common.utils.json.JsonUtil;
-import com.shangpin.iog.dto.OrderDTO;
-import com.shangpin.iog.dto.ProductSearchDTO;
-import com.shangpin.iog.dto.SupplierDTO;
-import com.shangpin.iog.service.OrderService;
-import com.shangpin.iog.service.ProductFetchService;
-import com.shangpin.iog.service.ProductSearchService;
-import com.shangpin.iog.service.SupplierService;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.ResourceBundle;
+import java.util.concurrent.ThreadPoolExecutor;
 
-import net.sf.json.JSONObject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.util.Zip4jConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.*;
-import java.util.*;
+import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.json.JsonUtil;
+import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.ProductDTO;
+import com.shangpin.iog.dto.ProductSearchDTO;
+import com.shangpin.iog.dto.SupplierDTO;
+import com.shangpin.iog.service.OrderService;
+import com.shangpin.iog.service.ProductSearchService;
+import com.shangpin.iog.service.SupplierService;
+import com.shangpin.iog.webcontainer.front.util.SavePic;
 
 
 /**
@@ -42,6 +59,21 @@ import java.util.*;
 @Controller
 @RequestMapping("/download")
 public class FileDownloadController {
+	private static ResourceBundle bdl = null;
+	private static String pcode = null;
+	private static String pcodecolor = null;
+	private static String skuwithoutsize = null;
+	private static String efashion = null;
+	private static String pavin = null;
+	static {
+		if (null == bdl)
+			bdl = ResourceBundle.getBundle("conf");
+		pcode = bdl.getString("pcode");
+		pcodecolor = bdl.getString("pcodecolor");
+		skuwithoutsize = bdl.getString("skuwithoutsize");
+		efashion = bdl.getString("efashion");
+		pavin = bdl.getString("pavin");
+	}
 	private Logger log = LoggerFactory.getLogger(FileDownloadController.class) ;
 	
     @Autowired
@@ -143,13 +175,13 @@ public class FileDownloadController {
 			}else if(productSearchDTO.getFlag().equals("ep_regular")){//按条件导出
 				productBuffer =productService.exportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
             	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+
 			
 			}else if(productSearchDTO.getFlag().equals("ep_rule")){
 				productBuffer =productService.exportProductByEpRule(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize());
             	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 			
-			}	
-            
+			}			
 			else{
 				productBuffer =productService.exportDiffProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
 				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
@@ -253,7 +285,168 @@ public class FileDownloadController {
     	}        
 		return modelAndView;
     }
-    
+    @RequestMapping(value = "downLoadPicture")
+    public void dowmLoadPic(HttpServletResponse response, String queryJson){
+    	ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
+    	BufferedInputStream in = null;
+    	BufferedOutputStream out = null;
+    	if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
+
+        String supplier = null;
+        if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
+        	supplier = productSearchDTO.getSupplier();
+        }
+        Date startDate  =null;
+        if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
+            startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
+        }
+
+        Date endDate = null;
+        if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
+            endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
+        }
+        
+        Integer pageIndex = productSearchDTO.getPageIndex();
+        
+        Integer pageSize = productSearchDTO.getPageSize();
+        Map<String,List<File>> nameMap = null;
+        ZipFile zipfile = null;
+        try {
+        	//要下载的文件列表
+        	List<ProductDTO> pList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
+        	//TODO 获取dto按条件拼接图片名称
+        	if (pcode.contains(supplier)) {
+        		nameMap = pcodeasname(pList);
+        	}else if(pcodecolor.contains(supplier)){
+        		nameMap = pcodeColorAsname(pList);
+        	}else if(skuwithoutsize.contains(supplier)){
+        		nameMap = skuIdNSizeAsName(pList);
+        	}else if(efashion.contains(supplier)){
+        		nameMap = efashion(pList);
+        	}else if(pavin.contains(supplier)){
+        		nameMap = pavin(pList);
+        	}
+        	
+        	zipfile = new ZipFile(new File(new Date().getTime()+""));
+        	ArrayList<File> filesToAdd = new ArrayList<File>();
+    		//供应商pic的文件夹
+    		//TODO 具体位置待定
+    		File dir = new File("E://"+productSearchDTO.getSupplierName());
+    		String key = "";
+    		if (dir.isDirectory()) {
+    			File[] files = dir.listFiles();
+    			for (File file : files) {
+    				if (nameMap.containsKey(file.getName().split("_")[0])) {
+    					key = file.getName().split("_")[0];
+    					if(null==nameMap.get(key)){
+    						nameMap.put(key, new ArrayList<File>());
+    					}
+    					nameMap.get(key).add(file);
+					}
+    			}
+			}
+    		//添加map中要下载的文件
+    		for (Entry<String, List<File>> entry : nameMap.entrySet()) {
+    			if (entry.getValue()!=null&&entry.getValue().size()>0) {
+    				filesToAdd.addAll(entry.getValue());
+				}
+    		}
+    		
+			ZipParameters parameters = new ZipParameters();  
+		    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+		    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
+			zipfile.addFiles(filesToAdd, parameters);
+			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+new Date().getTime()+".zip", "UTF-8"));
+
+			in = new BufferedInputStream(new FileInputStream(zipfile.getFile()));
+
+            out = new BufferedOutputStream(response.getOutputStream());
+            byte[] data = new byte[1048576];
+            int len = 0;
+            while (-1 != (len=in.read(data, 0, data.length))) {
+                out.write(data, 0, len);
+            }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				in.close();
+				out.close();
+				zipfile.getFile().delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+    }
+    @RequestMapping("uploadFileAndDown")
+    public void uploadFileAndDown(@RequestParam(value = "uploadFile", required = false) MultipartFile file, HttpServletRequest request,HttpServletResponse response){
+    	BufferedInputStream in = null;
+    	BufferedOutputStream out = null;
+    	String path = request.getSession().getServletContext().getRealPath("");  
+        String fileName = file.getOriginalFilename();  
+        File targetFile = new File(path, fileName);  
+        //保存  
+        try {  
+        	if (!targetFile.exists()) {
+        		targetFile.mkdirs(); 
+        		targetFile.createNewFile();
+			}
+            file.transferTo(targetFile);  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+        SavePic savePic = new SavePic();
+        String filePath = savePic.saveImg(targetFile);
+        ThreadPoolExecutor executor = savePic.getExecutor();
+        while(true){
+        	if(executor.getActiveCount()==0){
+        		break;
+        	}
+        	try {
+				Thread.sleep(1000*60*2);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
+        ZipFile zipfile = null;
+        
+        try {
+			zipfile = new ZipFile(new File(new Date().getTime()+""));
+
+			ZipParameters parameters = new ZipParameters();  
+		    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+		    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
+			zipfile.addFolder(filePath, parameters);
+			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+new Date().getTime()+".zip", "UTF-8"));
+
+			in = new BufferedInputStream(new FileInputStream(zipfile.getFile()));
+
+            out = new BufferedOutputStream(response.getOutputStream());
+            byte[] data = new byte[1048576];
+            int len = 0;
+            while (-1 != (len=in.read(data, 0, data.length))) {
+                out.write(data, 0, len);
+            }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				in.close();
+				out.close();
+				zipfile.getFile().delete();
+				targetFile.delete();
+			    File delfiledir = new File(filePath);
+	            for (File b : delfiledir.listFiles()) {
+					b.delete();
+				}
+	            delfiledir.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+        
+        
+    }
     //文件下载 主要方法
     private  void download(HttpServletRequest request,
                                 HttpServletResponse response, String storeName, String contentType
@@ -261,6 +454,41 @@ public class FileDownloadController {
 
 
     }
-
+    private Map<String,List<File>> pcodeasname(List<ProductDTO> pList){
+    	Map<String,List<File>> nameMap = new HashMap<String,List<File>>();
+    	for (ProductDTO p : pList) {
+    		nameMap.put(p.getProductCode(), null);
+		}
+    	return nameMap;
+    }
+    private  Map<String,List<File>> pcodeColorAsname(List<ProductDTO> pList){
+    	Map<String,List<File>> nameMap = new HashMap<String,List<File>>();
+    	for (ProductDTO p : pList) {
+    		nameMap.put(p.getProductCode()+" "+p.getColor(), null);
+    	}
+    	return nameMap;
+    }
+    private  Map<String,List<File>> skuIdNSizeAsName(List<ProductDTO> pList){
+    	Map<String,List<File>> nameMap = new HashMap<String,List<File>>();
+    	for (ProductDTO p : pList) {
+    		//TODO
+    	
+    	}
+    	return nameMap;
+    }
+    private  Map<String,List<File>> efashion(List<ProductDTO> pList){
+    	Map<String,List<File>> nameMap = new HashMap<String,List<File>>();
+    	for (ProductDTO p : pList) {
+    		//TODO 
+    	}
+    	return nameMap;
+    }
+    private  Map<String,List<File>> pavin(List<ProductDTO> pList){
+    	Map<String,List<File>> nameMap = new HashMap<String,List<File>>();
+    	for (ProductDTO p : pList) {
+    		//TODO 
+    	}
+    	return nameMap;
+    }
 
 }

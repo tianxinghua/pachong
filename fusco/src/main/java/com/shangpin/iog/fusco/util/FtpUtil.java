@@ -37,8 +37,8 @@ public class FtpUtil {
 	private static Log log = LogFactory.getLog(FtpUtil.class);
 	// private static ResourceBundle bundle =ResourceBundle.getBundle("param",
 	// Locale.ENGLISH) ;
-	private static String HOST = "ftp.teknosis-quick.it", PORT = "21",
-			USER = "fusco@teknosis-quick.it", PASSWORD = "Fusco00440044",
+	private static String HOST = "51.254.35.80", PORT = "21",
+			USER = "fusco", PASSWORD = "004400",
 			FILE_PATH = "/csv";
 	public static final String PROPERTIES_FILE_NAME = "conf";
 	static ResourceBundle bundle = ResourceBundle.getBundle("conf");

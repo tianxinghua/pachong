@@ -1,15 +1,15 @@
 package com.shangpin.iog.product.service;
 
-import com.shangpin.framework.ServiceException;
-import com.shangpin.framework.ServiceMessageException;
-import com.shangpin.framework.page.Page;
-import com.shangpin.iog.common.utils.InVoke;
-import com.shangpin.iog.dto.*;
-import com.shangpin.iog.mongodao.PictureDAO;
-import com.shangpin.iog.mongodomain.ProductPicture;
-import com.shangpin.iog.product.dao.*;
-import com.shangpin.iog.service.ProductSearchService;
-import com.shangpin.iog.service.SkuPriceService;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.RowBounds;
@@ -18,10 +18,30 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Map.Entry;
+import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
+import com.shangpin.framework.page.Page;
+import com.shangpin.iog.common.utils.InVoke;
+import com.shangpin.iog.dto.BrandSpDTO;
+import com.shangpin.iog.dto.ColorContrastDTO;
+import com.shangpin.iog.dto.MaterialContrastDTO;
+import com.shangpin.iog.dto.ProductDTO;
+import com.shangpin.iog.dto.ProductPictureDTO;
+import com.shangpin.iog.dto.SkuDTO;
+import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.iog.dto.SupplierDTO;
+import com.shangpin.iog.mongodao.PictureDAO;
+import com.shangpin.iog.mongodomain.ProductPicture;
+import com.shangpin.iog.product.dao.BrandSpMapper;
+import com.shangpin.iog.product.dao.ColorContrastMapper;
+import com.shangpin.iog.product.dao.EPRuleMapper;
+import com.shangpin.iog.product.dao.MaterialContrastMapper;
+import com.shangpin.iog.product.dao.ProductPictureMapper;
+import com.shangpin.iog.product.dao.ProductsMapper;
+import com.shangpin.iog.product.dao.SkuMapper;
+import com.shangpin.iog.product.dao.SpuMapper;
+import com.shangpin.iog.product.dao.SupplierMapper;
+import com.shangpin.iog.service.ProductSearchService;
 
 /**
  * Created by loyalty on 15/5/20.
@@ -1405,7 +1425,6 @@ buffer.append(dto.getMemo());
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
 	public StringBuffer exportProductByEpRule(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException{
 		
 		StringBuffer buffer = new StringBuffer("SupplierId 供货商名称" + splitSign
@@ -1689,5 +1708,14 @@ buffer.append(dto.getMemo());
 		return buffer;
 				
 	}
-
+	@Override
+	public List<ProductDTO> findPicName(String supplier,Date startDate, Date endDate, Integer pageIndex, Integer pageSize){
+		List<ProductDTO> pList = null;
+		if (null != pageIndex && null != pageSize) {
+			pList = productDAO.findPicNameListByEPRegularAndLastDate(supplier, startDate, endDate, new RowBounds(pageIndex, pageSize));
+		}else{
+			pList = productDAO.findPicNameListByEPRegularAndLastDate(supplier, startDate, endDate);
+		}
+		return pList;
+	}
 }

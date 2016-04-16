@@ -5,7 +5,10 @@ import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductOfSpecDTO;
+
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.ResultType;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.Date;
@@ -122,6 +125,15 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     List<ProductDTO> findListOfAllSupplier(@Param("startDate") Date startDate,
             @Param("endDate") Date endDate,
             RowBounds rowBounds);
+    /**
+     * 按照ep规则查询所有图片名
+     */
+    List<ProductDTO> findPicNameListByEPRegularAndLastDate(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate);
+    List<ProductDTO> findPicNameListByEPRegularAndLastDate(@Param("supplier") String supplier,
+    		@Param("startDate") Date startDate,
+    		@Param("endDate") Date endDate, RowBounds rowBounds);
 }
 
 

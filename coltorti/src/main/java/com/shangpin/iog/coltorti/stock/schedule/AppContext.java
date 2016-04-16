@@ -1,4 +1,4 @@
-package com.shangpin.iog.Creative99.stock.schedule;
+package com.shangpin.iog.coltorti.stock.schedule;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

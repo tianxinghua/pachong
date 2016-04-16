@@ -118,6 +118,17 @@ public interface ProductSearchService {
 	public abstract List<SpuDTO> findpartSpuListBySupplier(String supplierId);
 	
 	/**
+	 * 查询符合ep规则的所有图片名
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 */
+	List<ProductDTO> findPicName(String supplier, Date startDate, Date endDate,Integer pageIndex, Integer pageSize);
+	
+	/**
 	 * 根据ep规则导出重点供货商或者KA的产品
 	 * @param supplier
 	 * @param startDate
@@ -129,3 +140,4 @@ public interface ProductSearchService {
 	 */
 	public StringBuffer exportProductByEpRule(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
 }
+
