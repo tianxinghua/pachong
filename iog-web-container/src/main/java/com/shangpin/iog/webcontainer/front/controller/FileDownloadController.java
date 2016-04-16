@@ -428,6 +428,7 @@ public class FileDownloadController {
 				in.close();
 				out.close();
 				zipfile.getFile().delete();
+				targetFile.delete();
 			    File delfiledir = new File(filePath);
 	            for (File b : delfiledir.listFiles()) {
 					b.delete();
