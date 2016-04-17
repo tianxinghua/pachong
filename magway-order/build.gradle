@@ -22,7 +22,7 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.Startup'
+        attributes 'Main-Class': 'com.shangpin.iog.magway.Startup'
         attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }

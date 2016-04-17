@@ -1,4 +1,4 @@
-package com.shangpin.iog.service;
+package com.shangpin.iog.magway.service;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,23 +9,25 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.dto.CancelOrder;
-import com.shangpin.iog.dto.CancelResult;
-import com.shangpin.iog.dto.ConfirmResult;
-import com.shangpin.iog.dto.CreateOrder;
-import com.shangpin.iog.dto.Goods;
 import com.shangpin.iog.dto.OrderDTO;
-import com.shangpin.iog.dto.OrderResult;
 import com.shangpin.iog.dto.ReturnOrderDTO;
-import com.shangpin.iog.dto.Token;
 import com.shangpin.iog.ice.dto.OrderStatus;
+import com.shangpin.iog.magway.dto.CancelOrder;
+import com.shangpin.iog.magway.dto.CancelResult;
+import com.shangpin.iog.magway.dto.ConfirmResult;
+import com.shangpin.iog.magway.dto.CreateOrder;
+import com.shangpin.iog.magway.dto.Goods;
+import com.shangpin.iog.magway.dto.OrderResult;
+import com.shangpin.iog.magway.dto.Token;
 
+@Component
 public class OrderService extends AbsOrderService{
 
 	private static Logger logger = Logger.getLogger("info");

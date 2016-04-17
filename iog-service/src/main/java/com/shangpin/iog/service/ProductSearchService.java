@@ -126,5 +126,18 @@ public interface ProductSearchService {
 	 * @param pageSize
 	 * @return
 	 */
-	List<String> findPicName(String supplier, Date startDate, Date endDate,Integer pageIndex, Integer pageSize);
+	List<ProductDTO> findPicName(String supplier, Date startDate, Date endDate,Integer pageIndex, Integer pageSize);
+	
+	/**
+	 * 根据ep规则导出重点供货商或者KA的产品
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 * @throws ServiceException
+	 */
+	public StringBuffer exportProductByEpRule(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
 }
+

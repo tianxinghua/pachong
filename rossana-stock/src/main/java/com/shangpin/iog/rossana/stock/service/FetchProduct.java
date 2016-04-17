@@ -55,7 +55,9 @@ public class FetchProduct extends AbsUpdateProductStock{
 		try{
 			logInfo.info("===========获取供货商库存开始=================");
 			result = HttpUtil45.get(filePath, timeConfig, null);
+			logInfo.info("result========"+result); 
 			items = CsvUtil.readLocalCSV(result, Item.class, ";");
+			logInfo.info("items.size======="+items.size()); 
 //			DownLoad.downFromNet(filePath, local);
 //			File file = new File(local);
 //			items = CVSUtil.readCSV(file, Item.class, ';');
@@ -63,11 +65,21 @@ public class FetchProduct extends AbsUpdateProductStock{
 		}catch(Exception e){
 			logError.error(e);
 			return skustock;
-		}		
-		for(Item item:items){
-			stockMap.put(item.getSku().replaceAll("\"", ""), 
-							item.getQty_in_stock().replaceAll("\"", ""));
 		}
+		try {
+			for(Item item:items){
+				try {
+					stockMap.put(item.getSku().replaceAll("\"", ""), 
+							item.getQty_in_stock().replaceAll("\"", ""));
+				} catch (Exception e) {
+					logError.error(e);
+				}
+				
+			}
+		} catch (Exception e) {
+			logError.error(e);
+		}
+		
 		logInfo.info("获取供货商库存stockMap==="+stockMap.toString());
 		logInfo.info("skuNo======="+skuNo.toString()); 
 		for (String skuno : skuNo) {

@@ -128,10 +128,10 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     /**
      * 按照ep规则查询所有图片名
      */
-    List<String> findPicNameListByEPRegularAndLastDate(@Param("supplier") String supplier,
+    List<ProductDTO> findPicNameListByEPRegularAndLastDate(@Param("supplier") String supplier,
             @Param("startDate") Date startDate,
             @Param("endDate") Date endDate);
-    List<String> findPicNameListByEPRegularAndLastDate(@Param("supplier") String supplier,
+    List<ProductDTO> findPicNameListByEPRegularAndLastDate(@Param("supplier") String supplier,
     		@Param("startDate") Date startDate,
     		@Param("endDate") Date endDate, RowBounds rowBounds);
 }

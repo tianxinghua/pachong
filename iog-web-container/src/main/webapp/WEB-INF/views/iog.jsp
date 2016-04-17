@@ -21,7 +21,17 @@
     <script type="text/javascript" src="<%=bathPath%>/js/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="<%=bathPath%>/js/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="<%=bathPath%>/js/jquery-easyui-1.3.3/jquery.json-2.4.js"></script>
-
+<style type="text/css"> 
+	#showExcel { 
+				
+				position:absolute;
+				padding:0px 20px 20px 20px;
+				top:280px;           
+				left:350px;         
+				width:600px; 
+				height:200px;
+				background:LightSkyBlue;}  
+</style>
 
 <script type="text/javascript">
 	function filter(str){
@@ -95,6 +105,16 @@
 
             return;
         } */
+        if(str == 'ep_rule'){
+        	if("-1"== $('#supplier').val()){
+        		alert("请选择KA或重点供应商");
+            	return;
+        	}else{
+        		
+        	
+        	}
+        
+        }
 
         var search = {
             supplier:   $('#supplier').val(),
@@ -288,8 +308,12 @@
 		window.open("exportByConditions", "按条件导出", "height="+iHeight+", width="+iWidth+", toolbar =no, menubar=no,top="+iTop+",left="+iLeft+"");
 	
 	}   */ 
-
-
+	function show(){
+		$("#showExcel").removeAttr("hidden");
+	}
+	function unshow(){
+		$("#showExcel").attr("hidden",'hidden');
+	}
 </script>
 <script type="text/javascript"	src="<%=bathPath%>/js/DatePicker/config.js"></script>
 <script type="text/javascript"	src="<%=bathPath%>/js/DatePicker/WdatePicker.js"></script>
@@ -331,7 +355,7 @@
 	href="javascript:void(0)" onclick="exportProduct('same')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>导出</a> 
 	<a
-	href="javascript:void(0)" onclick="exportProduct('ep_regular')" id="btn-save"
+	href="javascript:void(0)" onclick="exportProduct('ep_rule')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>按条件导出</a> 
 	<a
 	href="javascript:void(0)" onclick="exportDiffProduct('diff')" id="btn-save"
@@ -343,11 +367,40 @@
 	<a href="javascript:void(0)" onclick="queryOrder()" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>查看订单</a>
 	<br><br><br>
 	<a href="javascript:void(0)" onclick="downloadpicture()" id="dowm" icon="icon-search" class='easyui-linkbutton'>下载图片</a>
+		<br><br><br>
+	<form action="uploadFileAndDown" method="post" enctype="multipart/form-data">
+		<input type="file" name="uploadFile">
+		<input type="submit" value ="开始上传" onmouseenter="show()" onmouseleave="unshow()">
+	</form>
 	<br><br><br>
 	<a href="stockUpdateException" onclick="stock()" id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a> 
 	<a href="orderUpdateException" onclick="order()" id="btn-save" icon="icon-search" class='easyui-linkbutton'>订单更新异常查看</a>
 	
 	
+</div>
+
+<div id="showExcel" hidden="hidden">
+	<h5>传入excel表格格式</h5>
+	<h5>第二列必须有,但可以为空。第一行列名，从第二行开始下载</h5>
+	<form action="">
+	<table border="1">
+		<tr>
+			<td>名称1</td>
+			<td>名称2</td>
+			<td>url1</td>
+			<td>url2</td>
+			<td>......</td>
+		</tr>
+		<tr>
+			<td>code</td>
+			<td>blue</td>
+			<td>http://1.1.1.1/adeg.jpg</td>
+			<td>http://1.1.1.1/lkjh.jpg</td>
+			<td>......jpg</td>
+		</tr>
+	</table>
+	</form>
+	<h5>下载结果为  code blue_1.jpg， code blue_2.jpg</h5>
 </div>
 <script>
 

@@ -6,6 +6,7 @@ import com.shangpin.iog.notenom.schedule.AppContext;
 import com.shangpin.iog.notenom.util.ReadExcel;
 import com.shangpin.sop.AbsUpdateProductStock;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -56,10 +57,12 @@ public class StockImp  extends AbsUpdateProductStock {
 			if(sizes.length>0){
 				for (int i = 0; i < sizes.length; i++) {
 					try{
-						String[] stockSize = sizes[i].split("/");
-						String stock = stockSize[0];
-						String productSize = stockSize[1];
-						skuMap.put(item.getSkuNo()+"-"+productSize, Integer.valueOf(stock)); 
+						if(StringUtils.isNotBlank(sizes[i])){
+							String[] stockSize = sizes[i].split("/");
+							String stock = stockSize[0];
+							String productSize = stockSize[1];
+							skuMap.put(item.getSkuNo()+"-"+productSize, Integer.valueOf(stock)); 
+						}						
 					}catch(Exception ex){
 						ex.printStackTrace();
 						error.error(ex); 
