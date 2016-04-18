@@ -44,7 +44,7 @@ public class XMLUtil {
 	        return retList;
 	    }
 	 
-	 public static <T> T gsonXml2Obj(Class<T> clazz, String xml) throws JsonSyntaxException{
+	 public static <T> T gsonXml2Obj(Class<T> clazz, String xml){
 		 XmlParserCreator parserCreator = new XmlParserCreator(){
              @Override
              public XmlPullParser createParser() {
@@ -58,15 +58,21 @@ public class XMLUtil {
          };
 
          if(null != parserCreator){
-        	 GsonXml gsonXml = new GsonXmlBuilder()
-             .setSameNameLists(true)
-             .setXmlParserCreator(parserCreator)
-             .create();
+        	 try {
+				
+        		 GsonXml gsonXml = new GsonXmlBuilder()
+                 .setSameNameLists(true)
+                 .setXmlParserCreator(parserCreator)
+                 .create();
 
-        	 return gsonXml.fromXml(xml, clazz); 
-         }else{
-        	 return null;
-         }         
+            	 return gsonXml.fromXml(xml, clazz); 
+        		 
+			} catch (Exception e) {
+				error.error("解析xml出错======="+e.getMessage()); 
+			}
+        	 
+         }
+         return null;
 	 }
 
 

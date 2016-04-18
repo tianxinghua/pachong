@@ -484,7 +484,7 @@ public abstract class AbsUpdateProductStock {
 			try {
 				supplierStock = grabStock(skuNos);
 				if(supplierStock.size()==0){
-					loggerError.error("抓取供货商信息返回的supplierStock.size为0");
+					loggerError.error("=======抓取供货商信息返回的supplierStock.size为0=========");
 					return iceStock;
 				}else{//判断supplierStock的值是否全为0
 					boolean isNUll = true;
@@ -497,6 +497,7 @@ public abstract class AbsUpdateProductStock {
 					}
 					
 					if(isNUll){//supplierStock的值全为0,则返回空的map
+						loggerError.error("========抓取供货商那边返回的map里的所有的value都是0========");
 						return iceStock;
 					}
 				}
@@ -514,6 +515,7 @@ public abstract class AbsUpdateProductStock {
 
 			String result = "",stockTemp="",priceResult="";
 			boolean sendMail=true;
+			loggerInfo.info("供货商skuid和sop skuid关系map==========="+localAndIceSkuId.toString());
 			for (String skuNo : skuNos) {
 				stockTemp ="";
 				result =  supplierStock.get(skuNo);
@@ -560,8 +562,8 @@ public abstract class AbsUpdateProductStock {
 
 					}
 				}
-
-				String iceSku=localAndIceSkuId.get(skuNo);
+				
+				String iceSku=localAndIceSkuId.get(skuNo);				
 				if(this.supplierSkuIdMain){  // 已供应商提供的SKU为主 不更新未提供的库存
 
 					if(supplierStock.containsKey(skuNo)){

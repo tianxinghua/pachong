@@ -55,7 +55,7 @@ public class FetchProduct extends AbsUpdateProductStock{
 		try{
 			logInfo.info("===========获取供货商库存开始=================");
 			result = HttpUtil45.get(filePath, timeConfig, null);
-			logInfo.info("result========"+result); 
+//			logInfo.info("result========"+result); 
 			items = CsvUtil.readLocalCSV(result, Item.class, ";");
 			logInfo.info("items.size======="+items.size()); 
 //			DownLoad.downFromNet(filePath, local);
@@ -80,8 +80,8 @@ public class FetchProduct extends AbsUpdateProductStock{
 			logError.error(e);
 		}
 		
-		logInfo.info("获取供货商库存stockMap==="+stockMap.toString());
-		logInfo.info("skuNo======="+skuNo.toString()); 
+//		logInfo.info("获取供货商库存stockMap==="+stockMap.toString());
+//		logInfo.info("skuNo======="+skuNo.toString()); 
 		for (String skuno : skuNo) {
             if(stockMap.containsKey(skuno)){
                 skustock.put(skuno, stockMap.get(skuno));
@@ -89,7 +89,7 @@ public class FetchProduct extends AbsUpdateProductStock{
                 skustock.put(skuno, "0");
             }
         }
-		logInfo.info("返回的skustock.size======="+skustock.size()); 
+		logInfo.info("返回的skustock.size======="+skustock.toString()); 
 		return skustock;
 	}
 	

@@ -94,6 +94,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			// 读取文件
 			try{
 				String result = DownloadFileFromNet.file2Striing(xmlFile);
+				logger.info("================读取成功=======================");
 				rss= XMLUtil.gsonXml2Obj(Rss.class, result);
 				logger.info("====================转化对象成功=================");
 			}catch(Exception e){

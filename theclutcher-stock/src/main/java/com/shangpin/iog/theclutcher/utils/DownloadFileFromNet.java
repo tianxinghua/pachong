@@ -93,7 +93,7 @@ public class DownloadFileFromNet {
 		StringBuilder stringBuilder = new StringBuilder();
 		String content = "";
 		while ((content = bufferedReader.readLine()) != null) {
-			stringBuilder.append(content);
+			stringBuilder.append(content).append("\r\n"); 
 		}
 		String result = stringBuilder.toString();
 		
