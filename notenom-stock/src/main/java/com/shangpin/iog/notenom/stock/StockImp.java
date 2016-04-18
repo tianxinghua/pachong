@@ -48,9 +48,11 @@ public class StockImp  extends AbsUpdateProductStock {
     	//获取库存元数据
     	Map<String,Integer> skuMap = new HashMap<String,Integer>();
         Map<String,Integer> returnMap = new HashMap<String,Integer>();
-        
+        logger.info("=================下载文件开始================="); 
         ReadExcel.downLoadFile(url, path);
-		List<Item> allProducts = ReadExcel.readExcel(Item.class,path);		
+        logger.info("=================转化对象开始================="); 
+		List<Item> allProducts = ReadExcel.readExcel(Item.class,path);	
+		logger.info("转化对象数组的大小是========"+allProducts.size()); 
 		for (Item item : allProducts) {
 			String size = item.getSize().trim().replaceAll(",", ".").replaceAll("\t", " ").replaceAll("\\s+", " ").replaceAll("\r", "").replaceAll("\n", "");
 			String[] sizes = size.split(" ");
@@ -80,7 +82,7 @@ public class StockImp  extends AbsUpdateProductStock {
 
             }
         }
-        
+        logger.info("返回的map大小====="+returnMap.size());
         return returnMap;
     }
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 import org.xmlpull.v1.XmlPullParser;
@@ -17,6 +18,7 @@ import com.stanfy.gsonxml.XmlParserCreator;
 
 public class XMLUtil {
 	private static LoggerUtil error = LoggerUtil.getLogger("error");
+	private static Logger logger = Logger.getLogger("info");
 	
 	/**
 	 * 
@@ -56,23 +58,23 @@ public class XMLUtil {
                  }
              }
          };
-
-         if(null != parserCreator){
-        	 try {
-				
-        		 GsonXml gsonXml = new GsonXmlBuilder()
-                 .setSameNameLists(true)
-                 .setXmlParserCreator(parserCreator)
-                 .create();
-
-            	 return gsonXml.fromXml(xml, clazz); 
-        		 
-			} catch (Exception e) {
-				error.error("解析xml出错======="+e.getMessage()); 
-			}
-        	 
-         }
-         return null;
+         
+         logger.info("创建parserCreator成功===="+parserCreator); 
+    	 try {
+			
+    		 GsonXml gsonXml = new GsonXmlBuilder()
+             .setSameNameLists(true)
+             .setXmlParserCreator(parserCreator)
+             .create();
+    		 logger.info("创建gsonXml成功===="+gsonXml); 
+        	 return gsonXml.fromXml(xml, clazz); 
+    		 
+		} catch (Exception e) {
+			error.error("解析xml出错======="+e.getMessage()); 
+		}
+    	 
+    	return null;
+        
 	 }
 
 
