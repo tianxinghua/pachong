@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
 
@@ -51,6 +50,8 @@ import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.service.OrderService;
 import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SupplierService;
+import com.shangpin.iog.webcontainer.front.strategy.NameGenContext;
+import com.shangpin.iog.webcontainer.front.strategy.PcodeAsName;
 import com.shangpin.iog.webcontainer.front.util.SavePic;
 
 
@@ -309,17 +310,10 @@ public class FileDownloadController {
         	//要下载的文件列表
         	List<ProductDTO> pList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
         	//TODO 获取dto按条件拼接图片名称
-        	if (pcode.contains(supplier)) {
-        		nameMap = pcodeasname(pList);
-        	}else if(pcodecolor.contains(supplier)){
-        		nameMap = pcodeColorAsname(pList);
-        	}else if(skuwithoutsize.contains(supplier)){
-        		nameMap = skuIdNSizeAsName(pList);
-        	}else if(efashion.contains(supplier)){
-        		nameMap = efashion(pList);
-        	}else if(pavin.contains(supplier)){
-        		nameMap = pavin(pList);
-        	}
+        	
+        	
+        	NameGenContext context = new NameGenContext(supplier);
+        	nameMap = context.operate(pList);
         	
         	zipfile = new ZipFile(new File(new Date().getTime()+""));
         	ArrayList<File> filesToAdd = new ArrayList<File>();
@@ -397,7 +391,7 @@ public class FileDownloadController {
         		break;
         	}
         	try {
-				Thread.sleep(1000*60*2);
+				Thread.sleep(1000*30);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -413,7 +407,7 @@ public class FileDownloadController {
 			zipfile.addFolder(filePath, parameters);
 			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+new Date().getTime()+".zip", "UTF-8"));
 
-			in = new BufferedInputStream(new FileInputStream(zipfile.getFile()));
+			in = new BufferedInputStream(new FileInputStream (zipfile.getFile()));
 
             out = new BufferedOutputStream(response.getOutputStream());
             byte[] data = new byte[1048576];
@@ -438,51 +432,8 @@ public class FileDownloadController {
 				e.printStackTrace();
 			}
 		}
-        
-        
     }
-    //文件下载 主要方法
-    private  void download(HttpServletRequest request,
-                                HttpServletResponse response, String storeName, String contentType
-    ) throws Exception {
-
-
-    }
-    private Map<String,List<File>> pcodeasname(List<ProductDTO> pList){
-    	Map<String,List<File>> nameMap = new HashMap<String,List<File>>();
-    	for (ProductDTO p : pList) {
-    		nameMap.put(p.getProductCode(), null);
-		}
-    	return nameMap;
-    }
-    private  Map<String,List<File>> pcodeColorAsname(List<ProductDTO> pList){
-    	Map<String,List<File>> nameMap = new HashMap<String,List<File>>();
-    	for (ProductDTO p : pList) {
-    		nameMap.put(p.getProductCode()+" "+p.getColor(), null);
-    	}
-    	return nameMap;
-    }
-    private  Map<String,List<File>> skuIdNSizeAsName(List<ProductDTO> pList){
-    	Map<String,List<File>> nameMap = new HashMap<String,List<File>>();
-    	for (ProductDTO p : pList) {
-    		//TODO
-    	
-    	}
-    	return nameMap;
-    }
-    private  Map<String,List<File>> efashion(List<ProductDTO> pList){
-    	Map<String,List<File>> nameMap = new HashMap<String,List<File>>();
-    	for (ProductDTO p : pList) {
-    		//TODO 
-    	}
-    	return nameMap;
-    }
-    private  Map<String,List<File>> pavin(List<ProductDTO> pList){
-    	Map<String,List<File>> nameMap = new HashMap<String,List<File>>();
-    	for (ProductDTO p : pList) {
-    		//TODO 
-    	}
-    	return nameMap;
-    }
-
+ 
+    
+    
 }
