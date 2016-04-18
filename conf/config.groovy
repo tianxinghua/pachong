@@ -60,7 +60,7 @@ environments{
             username = 'writer'
             password = 'wt@sp520'
 
-            Ice.Default.Locator='SPIceGrid/Locator:default -h 172.20.10.186 -p 12000:default -h 172.20.10.187 -p 12000'
+            Ice.Default.Locator='SPIceGrid/Locator:default -h 172.20.11.141 -p 12000:default -h 172.20.11.140 -p 12000'
 
             MongoDB.hostname='iogmongodb.shangpin.com'
             MongoDB.port='27017'

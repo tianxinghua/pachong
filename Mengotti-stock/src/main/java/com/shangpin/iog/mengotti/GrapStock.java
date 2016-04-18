@@ -56,15 +56,23 @@ public class GrapStock extends AbsUpdateProductStock{
 		List<Item> items = null;
 		try{
 			items = readLocalCSV(Item.class, ';');
+			logInfo.info("items.size========="+items.size()); 
 		}catch(Exception e){
 			e.printStackTrace();
 			logError.error(e);
 			return skustock;
 		}
 		for (Item item : items) {
-			stockMap.put(item.getSupplierSkuNo(), item.getStock());
+			try {
+				stockMap.put(item.getSupplierSkuNo(), item.getStock());
+			} catch (Exception e) {
+				logError.error(e);
+			}
+			
 //			System.out.println(stockMap.toString());
-		}		
+		}
+		
+		logInfo.info("供货商的map.size====="+stockMap.size()); 
 		for (String skuno : skuNo) {
             if(stockMap.containsKey(skuno)){
                 skustock.put(skuno, stockMap.get(skuno));
@@ -72,7 +80,7 @@ public class GrapStock extends AbsUpdateProductStock{
                 skustock.put(skuno, "0");
             }
         }
-		
+		logInfo.info("返回的map.size======="+skustock.size());
 		return skustock;
 	}
 	

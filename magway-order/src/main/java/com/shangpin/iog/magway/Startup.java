@@ -1,10 +1,10 @@
-package com.shangpin.iog;
+package com.shangpin.iog.magway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.shangpin.iog.schedule.AppContext;
+import com.shangpin.iog.magway.schedule.AppContext;
 
 
 

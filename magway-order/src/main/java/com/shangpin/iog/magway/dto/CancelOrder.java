@@ -1,4 +1,4 @@
-package com.shangpin.iog.dto;
+package com.shangpin.iog.magway.dto;
 
 import lombok.Getter;
 
