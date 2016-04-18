@@ -90,20 +90,26 @@ public abstract class AbsUpdateProductStock {
 				SopProductSkuPage products = result.getResponse();
 				skus = products.getSopProductSkuIces();
 			} catch (Exception e) {
+				loggerError.error("获取SKU时失败:"+e.getMessage());
 //				e.printStackTrace();
 			}
-			for (SopProductSku sku : skus) {
-				List<SopSku> skuIces = sku.getSopSkuIces();
-				for (SopSku ice : skuIces) {
+			if(null!=skus) {
+				for (SopProductSku sku : skus) {
+					List<SopSku> skuIces = sku.getSopSkuIces();
+					loggerInfo.info("获取到的sku数量为:"+skuIces.size());
+					for (SopSku ice : skuIces) {
 
-					if(null!=ice.getSkuNo()&&!"".equals(ice.getSkuNo())&&null!=ice.getSupplierSkuNo()&&!"".equals(ice.getSupplierSkuNo())){
-						if(1!=ice.getIsDeleted()){
-							skuIds.add(ice.getSupplierSkuNo());
-							stocks.put(ice.getSupplierSkuNo(),ice.getSkuNo());
+						if (null != ice.getSkuNo() && !"".equals(ice.getSkuNo()) && null != ice.getSupplierSkuNo() && !"".equals(ice.getSupplierSkuNo())) {
+							if (1 != ice.getIsDeleted()) {
+								skuIds.add(ice.getSupplierSkuNo());
+								stocks.put(ice.getSupplierSkuNo(), ice.getSkuNo());
+							}
 						}
-					}
 
+					}
 				}
+			}else{
+				skus = new ArrayList<>();
 			}
 			pageIndex++;
 			hasNext=(pageSize==skus.size());
@@ -217,7 +223,13 @@ public abstract class AbsUpdateProductStock {
 		//ice的skuid与本地库拉到的skuId的关系，value是ice中skuId,key是本地中的skuId
 		final Map<String,String> localAndIceSku=new HashMap<String, String>();
 		final Collection<String> skuNoSet=grabProduct(host,app_key,app_secret, start, end,localAndIceSku);
-		logger.warn("待更新库存数据总数："+skuNoSet.size());
+		if(null==skuNoSet){
+			loggerError.equals("获取SKU失败");
+
+		}else{
+			logger.warn("库存总数："+skuNoSet.size());
+		}
+
 		//logger.warn("需要更新ice,supplier sku关系是："+JSON.serialize(localAndIceSku));
 		final List<Integer> totoalFailCnt=Collections.synchronizedList(new ArrayList<Integer>());
 		if(useThread){
@@ -485,6 +497,14 @@ public abstract class AbsUpdateProductStock {
 					}
 				} else {
 					loggerError.error("  skuNo ：--------" + skuIce.getSkuNo() + " supplierIdsku :" + skuIce.getSupplierSkuNo() + " supplier quantity =" + iceStock.get(skuIce.getSkuNo()) +" not handle " );
+				}
+			}
+		}else{//查询现有库存失败 更新查找到的库存
+			for(String spSku:skuNoShangpinList){
+				if(iceStock.containsKey(spSku)){
+					loggerError.error("ICE服务查询库存失败的记录 skuNO="+spSku );
+					toUpdateIce.put(spSku, iceStock.get(spSku));
+
 				}
 			}
 		}

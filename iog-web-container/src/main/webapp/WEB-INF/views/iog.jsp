@@ -68,119 +68,22 @@
 	        };
 	        return search;
 	}
+	//下载图片
 	function downloadpicture(){
 		var search = filter("");
-	    alert($.toJSON(search));
 	    window.open('downLoadPicture?queryJson='+$.toJSON(search), '','');
 	}
+	//导出商品
     function exportProduct(str) {
-
-        if(typeof($('#pageIndex').val()) != "undefined"&& $.trim($('#pageIndex').val()).length !=0){
-            if(isNaN($('#pageIndex').val())){
-                alert("请输入数字");
-                $('#pageIndex').focus();
-                return ;
-            }
-
-            if(typeof($('#pageSize').val()) == "undefined"||$.trim($('#pageSize').val()).length ==0){
-                alert("页码有数值时，导出行数必须也要有数值");
-                return ;
-            }
-        }
-
-        if(typeof($('#pageSize').val()) != "undefined"&&$.trim($('#pageSize').val()).length !=0){
-            if(isNaN($('#pageSize').val())){
-                alert("请输入数字");
-                $('#pageSize').focus();
-                return ;
-            }
-            if(typeof($('#pageIndex').val()) == "undefined"||$.trim($('#pageIndex').val()).length ==0){
-                alert("导出行数有数值时，页码必须也要有数值");
-                return ;
-            }
-        }
-
-        /* if("-1"== $('#supplier').val()){
-            alert("请选择供应商");
-
-            return;
-        } */
-        if(str == 'ep_rule'){
-        	if("-1"== $('#supplier').val()){
-        		alert("请选择KA或重点供应商");
-            	return;
-        	}else{
-        		
-        	
-        	}
-        
-        }
-
-        var search = {
-            supplier:   $('#supplier').val(),
-            startDate:    $('#startDate').val(),
-            endDate:      $('#endDate').val(),
-            pageIndex: $('#pageIndex').val(),
-            pageSize:$('#pageSize').val(),
-            supplierName:$ ('#supplier').find("option:selected").text(),
-            flag:str
-
-        };
+    	var search = filter(str);
         window.open('csv?queryJson='+$.toJSON(search), '','');
     }
-
+	//导出价格不同商品
     function exportDiffProduct(str) {
-
-
-        if(typeof($('#pageIndex').val()) != "undefined"&& $.trim($('#pageIndex').val()).length !=0){
-            if(isNaN($('#pageIndex').val())){
-                alert("请输入数字");
-                $('#pageIndex').focus();
-                return ;
-            }
-
-            if(typeof($('#pageSize').val()) == "undefined"||$.trim($('#pageSize').val()).length ==0){
-                alert("页码有数值时，导出行数必须也要有数值");
-                return ;
-            }
-        }
-
-        if(typeof($('#pageSize').val()) != "undefined"&&$.trim($('#pageSize').val()).length !=0){
-            if(isNaN($('#pageSize').val())){
-                alert("请输入数字");
-                $('#pageSize').focus();
-                return ;
-            }
-            if(typeof($('#pageIndex').val()) == "undefined"||$.trim($('#pageIndex').val()).length ==0){
-                alert("导出行数有数值时，页码必须也要有数值");
-                return ;
-            }
-        }
-
-        var search = {
-            supplier:   $('#supplier').val(),
-            startDate:    $('#startDate').val(),
-            endDate:      $('#endDate').val(),
-            pageIndex: $('#pageIndex').val(),
-            pageSize:$('#pageSize').val(),
-            supplierName:$ ('#supplier').find("option:selected").text(),
-            flag:str
-
-        };
+    	var search = filter(str);
         window.open('csv?queryJson='+$.toJSON(search), '','');
     }
-	
-//     function updatePrice(){
-// 		var supplierId = $('#supplier').val();
-// 		if("-1"== supplierId){
-// 	         alert("请选择供应商");
-// 	         return;
-// 	     }
-// 		var skuIds = prompt("请输入要更新的skuid用英文,隔开如:123,321,654");
-// 		if(skuIds!=null){
-// 			$.get("updatePrice", { "supplierId": supplierId, "skuIds": skuIds });
-// 		}
-// 	}
+	//更新价格
     function updatePrice(){
 		var supplierId = $('#supplier').val();
 		if("-1"== supplierId){
@@ -199,115 +102,17 @@
 
 
     }
-    /**
-    *	导出订单
-    *
-    */
+//     导出订单
     function exportOrder(str){
-
-
-        if(typeof($('#pageIndex').val()) != "undefined"&& $.trim($('#pageIndex').val()).length !=0){
-            if(isNaN($('#pageIndex').val())){
-                alert("请输入数字");
-                $('#pageIndex').focus();
-                return ;
-            }
-
-            if(typeof($('#pageSize').val()) == "undefined"||$.trim($('#pageSize').val()).length ==0){
-                alert("页码有数值时，导出行数必须也要有数值");
-                return ;
-            }
-        }
-
-        if(typeof($('#pageSize').val()) != "undefined"&&$.trim($('#pageSize').val()).length !=0){
-            if(isNaN($('#pageSize').val())){
-                alert("请输入数字");
-                $('#pageSize').focus();
-                return ;
-            }
-            if(typeof($('#pageIndex').val()) == "undefined"||$.trim($('#pageIndex').val()).length ==0){
-                alert("导出行数有数值时，页码必须也要有数值");
-                return ;
-            }
-        }
-
-        /* if("-1"== $('#supplier').val()){
-            alert("请选择供应商");
-
-            return;
-        } */
-
-        var search = {
-            supplier:   $('#supplier').val(),
-            startDate:    $('#startDate').val(),
-            endDate:      $('#endDate').val(),
-            pageIndex: $('#pageIndex').val(),
-            pageSize:$('#pageSize').val(),
-            supplierName:$ ('#supplier').find("option:selected").text(),
-            flag:str
-
-        };
+    	var search = filter(str);
         window.open('csv?queryJson='+$.toJSON(search), '','');
     }
     
-    /**
-    *	查看订单
-    *
-    */
+//    查看订单
     function queryOrder(){
-
-
-        if(typeof($('#pageIndex').val()) != "undefined"&& $.trim($('#pageIndex').val()).length !=0){
-            if(isNaN($('#pageIndex').val())){
-                alert("请输入数字");
-                $('#pageIndex').focus();
-                return ;
-            }
-
-            if(typeof($('#pageSize').val()) == "undefined"||$.trim($('#pageSize').val()).length ==0){
-                alert("页码有数值时，导出行数必须也要有数值");
-                return ;
-            }
-        }
-
-        if(typeof($('#pageSize').val()) != "undefined"&&$.trim($('#pageSize').val()).length !=0){
-            if(isNaN($('#pageSize').val())){
-                alert("请输入数字");
-                $('#pageSize').focus();
-                return ;
-            }
-            if(typeof($('#pageIndex').val()) == "undefined"||$.trim($('#pageIndex').val()).length ==0){
-                alert("导出行数有数值时，页码必须也要有数值");
-                return ;
-            }
-        }
-
-        /* if("-1"== $('#supplier').val()){
-            alert("请选择供应商");
-
-            return;
-        } */
-
-        var search = {
-            supplier:   $('#supplier').val(),
-            startDate:    $('#startDate').val(),
-            endDate:      $('#endDate').val(),
-            pageIndex: $('#pageIndex').val(),
-            pageSize:$('#pageSize').val(),
-            supplierName:$ ('#supplier').find("option:selected").text(),            
-
-        };
+    	var search = filter("");
         window.open('orders?queryJson='+$.toJSON(search), '','');
     }
-    
-	/* function exportProductByCond(){
-		var iWidth=600; //弹出窗口的宽度;
-		var iHeight=400; //弹出窗口的高度;
-		var iTop = (window.screen.height-30-iHeight)/2; //获得窗口的垂直位置;
-		var iLeft = (window.screen.width-10-iWidth)/2; //获得窗口的水平位置;
-		window.open("exportByConditions", "按条件导出", "height="+iHeight+", width="+iWidth+", toolbar =no, menubar=no,top="+iTop+",left="+iLeft+"");
-	
-	}   */ 
 	function show(){
 		$("#showExcel").removeAttr("hidden");
 	}
