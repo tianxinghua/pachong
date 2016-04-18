@@ -3,14 +3,16 @@
 <mapper namespace="com.shangpin.iog.product.dao.EPRuleMapper">
 
     <select id="findAll" resultType="java.lang.String">
-        SELECT `VALUE` from EP_RULE ep
+        SELECT `VALUE` 
+        from EP_RULE ep        
+        <where>
+			<if test="null!=flag">
+	          and  ep.FLAG = #{flag}
+	        </if>
+	        <if test="null!=flag">
+	          and  ep.YN = #{yn}
+	        </if>
+		</where>
     </select> 
-	<where>
-		<if test="null!=flag">
-          and  ep.FLAG = #{flag}
-        </if>
-        <if test="null!=flag">
-          and  ep.YN = #{yn}
-        </if>
-	</where>
+	
 </mapper>
