@@ -109,7 +109,7 @@ public class FetchProduct {
 					skuId = skuId.replace("½", "+");
 				}
 				sku.setSkuId(skuId);
-				sku.setProductCode(product.getProductId());
+				sku.setProductCode(product.getProducer_id()+"-"+item.getColor());
 				sku.setColor(item.getColor());
 				sku.setProductDescription(item.getDescription());
 				

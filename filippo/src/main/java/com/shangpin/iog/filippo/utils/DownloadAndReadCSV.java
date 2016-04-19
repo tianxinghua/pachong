@@ -1,8 +1,10 @@
 package com.shangpin.iog.filippo.utils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -19,6 +21,8 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 
 import com.csvreader.CsvReader;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.filippo.dto.CsvDTO;
 
 /**
@@ -34,36 +38,45 @@ public class DownloadAndReadCSV {
      * http下载csv文件到本地路径
      * @throws MalformedURLException
      */
-    public static List<String> downloadNet() throws MalformedURLException {
-        int bytesum = 0;
-        int byteread = 0;
+    public static List<String> downloadNet() {
         int num = 0;
         List<String> returnList = new ArrayList<String>();
         String[] urls = httpurl.split(",");
-        try {
-	        for (String hurl : urls) {
-	        	num++;
-	        	URL url = new URL(hurl);
-	        	String realPath="";
-	        	URLConnection conn = url.openConnection();
-	        	InputStream inStream = conn.getInputStream();
-	        	realPath = getPath(path+num);
-	        	FileOutputStream fs = new FileOutputStream(realPath);
-	        	
-	        	byte[] buffer = new byte[1204];
-	        	int length;
-	        	while ((byteread = inStream.read(buffer)) != -1) {
-	        		bytesum += byteread;
-	        		System.out.println(bytesum);
-	        		fs.write(buffer, 0, byteread);
-	        	}
-	        	returnList.add(realPath);
+        OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*120, 1000*60*120);
+		for (String hurl : urls) {
+			num++;
+			System.out.println("开始下载数据"+hurl);
+			String string = HttpUtil45.get(hurl, outTimeConf , null);
+			String realPath="";
+			realPath = getPath(path+num);
+			logger.info("开始保存数据");
+			System.out.println("开始保存数据");
+			File file = new File(realPath);
+			if (!file.exists()) {
+				try {
+					file.getParentFile().mkdirs();
+					file.createNewFile();
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+			FileWriter fwriter = null;
+			try {
+				fwriter = new FileWriter(realPath);
+				fwriter.write(string);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			} finally {
+				try {
+					fwriter.flush();
+					fwriter.close();
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}
+			returnList.add(realPath);
+		}
         return  returnList;
     }
     public static <T> T fillDTO(T t,List<String> data){
@@ -92,7 +105,7 @@ public class DownloadAndReadCSV {
      * @return 填充好的集合
      * @throws Exception
      */
-    public static <T> List<T> readLocalCSV(Class<T> clazz,String sep) throws Exception {
+    public static <T> List<T> readLocalCSV(Class<T> clazz,String sep) {
         
     	List<String> realPaths=downloadNet();
         String rowString = null;
@@ -103,22 +116,31 @@ public class DownloadAndReadCSV {
     	CsvReader cr = null;
     	for (String realPath : realPaths) {
     		//解析csv文件
-    		cr = new CsvReader(new FileReader(realPath));
+    		try {
+				cr = new CsvReader(new FileReader(realPath));
 //    		CsvReader cr = new CsvReader(new FileReader("F:/filippo1.csv"));
-    		System.out.println("创建cr对象成功");
-    		//得到列名集合
-    		cr.readRecord();
-    		while(cr.readRecord()){
-    			rowString = cr.getRawRecord();
-    			split = rowString.split(sep);
-    			colValueList = Arrays.asList(split);
-    			T t = fillDTO(clazz.newInstance(),colValueList);
-    			System.out.println(((CsvDTO)t).getCOMP());
-    			logger.info(((CsvDTO)t).getCOMP());
-    			//过滤重复的dto。。。sku,
-    			//dtoSet.add(t);
-    			dtoList.add(t);
-    		}
+				System.out.println("创建cr对象成功");
+				cr.readRecord();
+				while(cr.readRecord()){
+					rowString = cr.getRawRecord();
+					split = rowString.split(sep);
+					colValueList = Arrays.asList(split);
+					T t = fillDTO(clazz.newInstance(),colValueList);
+					System.out.println(((CsvDTO)t).getCOMP());
+					logger.info(((CsvDTO)t).getCOMP());
+					//过滤重复的dto。。。sku,
+					//dtoSet.add(t);
+					dtoList.add(t);
+				}
+			} catch (FileNotFoundException e) {
+				continue;
+			} catch (IOException e) {
+				continue;
+			} catch (InstantiationException e) {
+				logger.error("类型转化异常");
+			} catch (IllegalAccessException e) {
+				logger.error("类型转化异常");
+			}
 		}
         return dtoList;
     }
@@ -131,13 +153,6 @@ public class DownloadAndReadCSV {
         realpath = realpath+".csv";
         return realpath;
     }
-  /* public static void main(String[] args) {
-        try {
-        	System.out.println("下载中");
-			List<CsvDTO> lists = readLocalCSV(CsvDTO.class,"\\|");
-            System.out.println("====");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
+  public static void main(String[] args) {
+  }
 }
