@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,15 +38,17 @@ import com.shangpin.iog.theclutcher.dao.Rss;
 import com.shangpin.iog.theclutcher.utils.DownloadFileFromNet;
 import com.shangpin.iog.theclutcher.utils.UNZIPFile;
 import com.shangpin.iog.theclutcher.utils.XMLUtil;
+import com.shangpin.product.AbsSaveProduct;
 
 @Component("theclutcher")
-public class FetchProduct {
+public class FetchProduct extends AbsSaveProduct{
 
 	private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
     private static String supplierId = "";
+    private static String uri = "";
     
     private static String localPathDefault = ""; //
     private static int day;
@@ -56,6 +59,8 @@ public class FetchProduct {
         supplierId = bdl.getString("supplierId");
         localPathDefault = bdl.getString("local.filePath");
         day = Integer.valueOf(bdl.getString("day"));
+        uri = bdl.getString("uri");
+        
     }
     
     @Autowired
@@ -63,17 +68,26 @@ public class FetchProduct {
     @Autowired
 	ProductSearchService productSearchService;
     
-	public void fetchProductAndSave(String urlStr,String fileName){
+	public Map<String, Object> fetchProductAndSave(){
 		
-		Date startDate,endDate= new Date();
-		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
-		//获取原有的SKU 仅仅包含价格和库存
-		Map<String,SkuDTO> skuDTOMap = new HashedMap();
-		try {
-			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		List<SkuDTO> skuList = new ArrayList<SkuDTO>();
+		List<SpuDTO> spuList = new ArrayList<SpuDTO>();
+		Map<String,List<String>> imageMap = new HashMap<String, List<String>>();		
+		
+//		String uri = "https://www.theclutcher.com/en-US/home/feedShangpin";
+		String fileName = "feedShangpin.zip";
+		
+		
+//		Date startDate,endDate= new Date();
+//		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+//		//获取原有的SKU 仅仅包含价格和库存
+//		Map<String,SkuDTO> skuDTOMap = new HashedMap();
+//		try {
+//			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+//		} catch (ServiceException e) {
+//			e.printStackTrace();
+//		}
 		
 		String localPath = "";//存放下载的zip文件的本地目录
 		try {
@@ -85,7 +99,7 @@ public class FetchProduct {
 		}
 		try {
 			//下载
-			File zipFile = DownloadFileFromNet.downLoad(urlStr, fileName, localPath);
+			File zipFile = DownloadFileFromNet.downLoad(uri, fileName, localPath);
 //			//解压
 			File xmlFile = UNZIPFile.unZipFile(zipFile,localPath);//(new File("C:\\Users\\suny\\git\\iog\\theclutcher\\bin\\feedShangping.zip"), localPath);
 //			//读取文件
@@ -97,7 +111,7 @@ public class FetchProduct {
 				Rss rss = XMLUtil.gsonXml2Obj(Rss.class, result);
 				
 				if (rss == null || rss.getChannel() == null) {
-	                return;
+	                return null;
 	            }
 	            int count = 0;
 				String markerPrice ="",supplier_price ="";
@@ -153,27 +167,28 @@ public class FetchProduct {
 	                sku.setProductDescription(item.getDescription().replaceAll("," , " "));
 	                sku.setProductCode(item.getMpn().replaceAll("," , "."));
 	                
-	                System.out.println("sku : " + sku);
+//	                System.out.println("sku : " + sku);
+	                skuList.add(sku);
 
-	                try {
-	                	
-	                	if(skuDTOMap.containsKey(sku.getSkuId())){
-							skuDTOMap.remove(sku.getSkuId());
-						}
-	                    productFetchService.saveSKU(sku);	                  
-	                    
-	                } catch (ServiceException e) {
-	                    try {
-	                        if (e.getMessage().equals("数据插入失败键重复")) {
-	                            //更新价格和库存
-	                            productFetchService.updatePriceAndStock(sku);
-	                        } else {
-	                            e.printStackTrace();
-	                        }
-	                    } catch (ServiceException e1) {
-	                        e1.printStackTrace();
-	                    }
-	                }
+//	                try {
+//	                	
+//	                	if(skuDTOMap.containsKey(sku.getSkuId())){
+//							skuDTOMap.remove(sku.getSkuId());
+//						}
+//	                    productFetchService.saveSKU(sku);	                  
+//	                    
+//	                } catch (ServiceException e) {
+//	                    try {
+//	                        if (e.getMessage().equals("数据插入失败键重复")) {
+//	                            //更新价格和库存
+//	                            productFetchService.updatePriceAndStock(sku);
+//	                        } else {
+//	                            e.printStackTrace();
+//	                        }
+//	                    } catch (ServiceException e1) {
+//	                        e1.printStackTrace();
+//	                    }
+//	                }
 	                
 	              //保存图片
 	                List<String> list = new ArrayList<String>();
@@ -183,7 +198,8 @@ public class FetchProduct {
 	                        	list.add(imageUrl);	                        	
 	                        }
 	                    }
-	                    productFetchService.savePicture(supplierId, null, skuId, list);
+	                    imageMap.put(skuId+";"+sku.getProductCode()+" "+sku.getColor(), list);
+//	                    productFetchService.savePicture(supplierId, null, skuId, list);
 	                }
 
 	                //保存SPU
@@ -198,17 +214,19 @@ public class FetchProduct {
 					spu.setSeasonName(item.getSeason().replaceAll("," , " "));
 	                spu.setCategoryGender(item.getGender().replaceAll("," , " "));
 	                spu.setProductOrigin(item.getMade().replaceAll("," , " "));
+	                
+	                spuList.add(spu);
 
-	                try {
-	                    productFetchService.saveSPU(spu);
-	                } catch (ServiceException e) {
-	                	try{
-		            		productFetchService.updateMaterial(spu);
-		            	}catch(ServiceException ex){
-		            		ex.printStackTrace();
-		            	}
-	                    e.printStackTrace();
-	                }
+//	                try {
+//	                    productFetchService.saveSPU(spu);
+//	                } catch (ServiceException e) {
+//	                	try{
+//		            		productFetchService.updateMaterial(spu);
+//		            	}catch(ServiceException ex){
+//		            		ex.printStackTrace();
+//		            	}
+//	                    e.printStackTrace();
+//	                }
 	            }
 				
 			} catch (Exception e) {
@@ -217,22 +235,27 @@ public class FetchProduct {
 			}
 			
 			//更新网站不再给信息的老数据
-			for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
-				 Map.Entry<String,SkuDTO> entry =  itor.next();
-				if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
-					entry.getValue().setStock("0");
-					try {
-						productFetchService.updatePriceAndStock(entry.getValue());
-					} catch (ServiceException e) {
-						e.printStackTrace();
-					}
-				}
-			}
+//			for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+//				 Map.Entry<String,SkuDTO> entry =  itor.next();
+//				if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+//					entry.getValue().setStock("0");
+//					try {
+//						productFetchService.updatePriceAndStock(entry.getValue());
+//					} catch (ServiceException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//			}
 		
 		} catch (Exception e) {
 			loggerError.info(e.getMessage());
 			e.printStackTrace();
 		}
+		
+		returnMap.put("sku", skuList);
+		returnMap.put("spu", spuList);
+		returnMap.put("image", imageMap);
+		return returnMap;
 	}
 
 	public static void main(String[] args){
@@ -292,6 +315,7 @@ public class FetchProduct {
 
 
 	}
+
     
 	
 }
