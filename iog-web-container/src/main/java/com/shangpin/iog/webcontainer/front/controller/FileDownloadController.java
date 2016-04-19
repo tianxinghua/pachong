@@ -316,24 +316,25 @@ public class FileDownloadController {
         	//要下载的文件列表
         	List<ProductDTO> pList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
         	//TODO 获取dto按条件拼接图片名称
-        	System.out.println("下载文件列表长度"+pList.size());
+        	log.error("下载文件列表长度"+pList.size());
         	
         	NameGenContext context = new NameGenContext(supplier);
         	nameMap = context.operate(pList);
         	for (Entry<String, List<File>> productDTO : nameMap.entrySet()) {
-				System.out.println(productDTO.getKey());
+        		log.error(productDTO.getKey());
 			}
         	zipfile = new ZipFile(new File(new Date().getTime()+""));
         	ArrayList<File> filesToAdd = new ArrayList<File>();
     		//供应商pic的文件夹
     		//TODO 具体位置待定
+        	log.error("/mnt/nfs/"+productSearchDTO.getSupplierName()+"/");
     		File dir = new File("/mnt/nfs/"+productSearchDTO.getSupplierName()+"/");
 //    		File dir = new File("E://"+productSearchDTO.getSupplierName()+"/");
     		String key = "";
     		if (dir.isDirectory()) {
     			File[] files = dir.listFiles();
     			for (File file : files) {
-    				System.out.println(file.getName());
+    				log.error(file.getName());
     				if (nameMap.containsKey(file.getName().split("_")[0])) {
     					key = file.getName().split("_")[0];
     					if(null==nameMap.get(key)){
