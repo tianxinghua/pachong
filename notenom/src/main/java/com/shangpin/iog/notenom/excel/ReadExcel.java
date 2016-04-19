@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -31,6 +32,8 @@ import com.shangpin.iog.notenom.dto.Item;
 
 public class ReadExcel {
     
+	private static Logger error = Logger.getLogger("error");
+	
 	/**
 	 * 
 	 * @param uri 文件网址
@@ -106,6 +109,66 @@ public class ReadExcel {
      * @return
      * @throws IOException
      */
+//    public static <T> List<T> readXlsx(Class<T> clazz,String path) throws Exception {
+//        System.out.println(Common.PROCESSING + path);
+//        InputStream is = new FileInputStream(path);
+//        XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
+//        List<T> list = new ArrayList<T>();
+//        // Read the Sheet
+//        for (int numSheet = 0; numSheet < xssfWorkbook.getNumberOfSheets(); numSheet++) {
+//            XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(numSheet);
+//            if (xssfSheet == null) {
+//                continue;
+//            }
+//            // Read the Row
+//            for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
+//                XSSFRow xssfRow = xssfSheet.getRow(rowNum);
+//                if (xssfRow != null) {
+//	                List<String> colValueList = new ArrayList<String>();
+//	                for(int cellNo=0;cellNo<xssfRow.getLastCellNum();cellNo++){
+//	                	colValueList.add(getValue(xssfRow.getCell(cellNo)));
+//	                }
+//	                T t = clazz.newInstance();
+//	                Field[] fields = t.getClass().getDeclaredFields();
+//	                for(int i=0;i<fields.length;i++){
+//	                	fields[i].setAccessible(true);
+//	                	fields[i].set(t, colValueList.get(i));
+//	                }
+//	                list.add(t);
+//                }
+////                if (xssfRow != null) {
+////                    Item item = new Item();
+////                    item.setCategories(getValue(xssfRow.getCell(0)));
+////                    item.setBrandName(getValue(xssfRow.getCell(1)));
+////                    item.setProductName(getValue(xssfRow.getCell(2)));
+////                    item.setProductNo(getValue(xssfRow.getCell(3)));
+////                    item.setBlank(getValue(xssfRow.getCell(4)));
+////                    item.setColor(getValue(xssfRow.getCell(5)));
+////                    item.setSize(getValue(xssfRow.getCell(6)));
+////                    item.setDanwei(getValue(xssfRow.getCell(7)));
+////                    item.setSaleprice(getValue(xssfRow.getCell(8)));
+////                    item.setSkuNo(getValue(xssfRow.getCell(9)));
+////                    item.setBarcode(getValue(xssfRow.getCell(10)));
+////                    item.setStock(getValue(xssfRow.getCell(11)));
+////                    item.setMaterial(getValue(xssfRow.getCell(12)));   
+////                    item.setSeason(getValue(xssfRow.getCell(13)));
+////                    item.setMadein(getValue(xssfRow.getCell(14)));
+////                    item.setGender(getValue(xssfRow.getCell(15)));
+////                    item.setLength(getValue(xssfRow.getCell(16)));
+////                    item.setWidth(getValue(xssfRow.getCell(17)));
+////                    item.setHeight(getValue(xssfRow.getCell(18)));
+////                    list.add(item);
+////                }
+//            }
+//        }
+//        return list;
+//    }
+    /**
+     * Read the Excel 2010
+     * @param path the path of the excel file
+     * @return
+     * @throws IOException
+     */
     public static <T> List<T> readXlsx(Class<T> clazz,String path) throws Exception {
         System.out.println(Common.PROCESSING + path);
         InputStream is = new FileInputStream(path);
@@ -113,53 +176,45 @@ public class ReadExcel {
         List<T> list = new ArrayList<T>();
         // Read the Sheet
         for (int numSheet = 0; numSheet < xssfWorkbook.getNumberOfSheets(); numSheet++) {
-            XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(numSheet);
-            if (xssfSheet == null) {
-                continue;
-            }
-            // Read the Row
-            for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
-                XSSFRow xssfRow = xssfSheet.getRow(rowNum);
-                if (xssfRow != null) {
-	                List<String> colValueList = new ArrayList<String>();
-	                for(int cellNo=0;cellNo<xssfRow.getLastCellNum();cellNo++){
-	                	colValueList.add(getValue(xssfRow.getCell(cellNo)));
-	                }
-	                T t = clazz.newInstance();
-	                Field[] fields = t.getClass().getDeclaredFields();
-	                for(int i=0;i<fields.length;i++){
-	                	fields[i].setAccessible(true);
-	                	fields[i].set(t, colValueList.get(i));
-	                }
-	                list.add(t);
+        	try {
+        		XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(numSheet);
+                if (xssfSheet == null) {
+                    continue;
                 }
-//                if (xssfRow != null) {
-//                    Item item = new Item();
-//                    item.setCategories(getValue(xssfRow.getCell(0)));
-//                    item.setBrandName(getValue(xssfRow.getCell(1)));
-//                    item.setProductName(getValue(xssfRow.getCell(2)));
-//                    item.setProductNo(getValue(xssfRow.getCell(3)));
-//                    item.setBlank(getValue(xssfRow.getCell(4)));
-//                    item.setColor(getValue(xssfRow.getCell(5)));
-//                    item.setSize(getValue(xssfRow.getCell(6)));
-//                    item.setDanwei(getValue(xssfRow.getCell(7)));
-//                    item.setSaleprice(getValue(xssfRow.getCell(8)));
-//                    item.setSkuNo(getValue(xssfRow.getCell(9)));
-//                    item.setBarcode(getValue(xssfRow.getCell(10)));
-//                    item.setStock(getValue(xssfRow.getCell(11)));
-//                    item.setMaterial(getValue(xssfRow.getCell(12)));   
-//                    item.setSeason(getValue(xssfRow.getCell(13)));
-//                    item.setMadein(getValue(xssfRow.getCell(14)));
-//                    item.setGender(getValue(xssfRow.getCell(15)));
-//                    item.setLength(getValue(xssfRow.getCell(16)));
-//                    item.setWidth(getValue(xssfRow.getCell(17)));
-//                    item.setHeight(getValue(xssfRow.getCell(18)));
-//                    list.add(item);
-//                }
-            }
+                // Read the Row
+                for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
+                	try {
+                		XSSFRow xssfRow = xssfSheet.getRow(rowNum);
+                        if (xssfRow != null) {
+        	                List<String> colValueList = new ArrayList<String>();
+        	                for(int cellNo=0;cellNo<xssfRow.getLastCellNum();cellNo++){
+        	                	colValueList.add(getValue(xssfRow.getCell(cellNo)));
+        	                }
+        	                T t = clazz.newInstance();
+        	                Field[] fields = t.getClass().getDeclaredFields();
+        	                for(int i=0;i<fields.length;i++){
+        	                	try {
+        	                		fields[i].setAccessible(true);
+        		                	fields[i].set(t, colValueList.get(i));
+        						} catch (Exception e) {
+        							error.error(e); 
+        						}
+        	                	
+        	                }
+        	                list.add(t);
+                        }
+    				} catch (Exception e) {
+    					error.error(e); 
+    				}                
+                }
+			} catch (Exception e) {
+				error.error(e); 
+			}
+            
         }
         return list;
     }
+
 
     /**
      * Read the Excel 2003-2007

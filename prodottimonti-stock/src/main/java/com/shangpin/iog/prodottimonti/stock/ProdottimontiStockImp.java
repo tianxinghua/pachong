@@ -88,7 +88,7 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
         String url = "http://www.3forb.it/webserver/prodotto/?pid="+sku;
 
         logger.info("url====="+url); 
-        OutTimeConfig timeConfig =new OutTimeConfig(1000*60*5,1000*60*5,1000*60*5);
+        OutTimeConfig timeConfig =new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10);
         Map<String,String> map = new HashMap<>();
         String jsonstr = HttpUtil45.get(url,timeConfig,null,"","");
         logger.info("jsonstr===="+jsonstr); 
