@@ -167,29 +167,23 @@ public abstract class AbsUpdateProductStock {
 			long startDate = System.currentTimeMillis();
 			SopProductSkuPageQuery query = new SopProductSkuPageQuery(start,end,pageIndex,pageSize);
 			List<SopProductSkuIce> skus = null;
-			try {
-				SopProductSkuPage products = servant.FindCommodityInfoPage(supplier, query);
-				logger.warn("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
-				loggerInfo.info("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
 
-				skus = products.SopProductSkuIces;
-			}catch (ApiException e){
-
-				loggerError.error("openAPI获取信息出粗"+e.Message);
-				//处理：通过openAPI 获取产品信息超时异常，如果异常次数超过5次就跳出
-				for(int i=0;i<5;i++){
+			//如果异常次数超过5次就跳出
+			for(int i=0;i<5;i++){
+				startDate = System.currentTimeMillis();
+				try {
 					SopProductSkuPage products = servant.FindCommodityInfoPage(supplier, query);
 					logger.warn("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
 					loggerInfo.info("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
-
-					skus = products.SopProductSkuIces;
-					loggerInfo.info("异常次数："+(i+1)+"通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
+                  	skus = products.SopProductSkuIces;
 					if(skus!=null){
-
-						i=5;
+                 		i=5;
 					}
+				} catch (ApiException e1) {
+					loggerError.error("openAPI 获取产品信息出错"+e1.Message);
 				}
 			}
+
 
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
@@ -402,13 +396,19 @@ public abstract class AbsUpdateProductStock {
 		while (iter.hasNext()) {
 			Entry<String, Integer> entry = iter.next();
 			Boolean result =true;
-			try{
-				result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());
-				loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+entry.getValue()+" ,"+ result);
-			}catch(Exception e){
-				result=false;
-				logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+			for(int i=0;i<2;i++){  //发生错误 允许再执行一次
+				try{
+                   	result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());
+					loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+entry.getValue()+" ,"+ result);
+				}catch(Exception e){
+					result=false;
+					logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+				}
+				if(result){
+					i=2;
+				}
 			}
+
 			if(!result){
 				failCount++;
 				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
@@ -648,18 +648,28 @@ public abstract class AbsUpdateProductStock {
 		statusList.add(2);
 		while(hasNext){
 			List<PurchaseOrderDetail> orderDetails = null;
-			try {
+			boolean fetchSuccess=true;
+			for(int i=0;i<2;i++){  //允许调用失败后，再次调用一次
+				try {
 
-				PurchaseOrderQueryDto orderQueryDto = new PurchaseOrderQueryDto(startTime,endTime,statusList
-						,pageIndex,pageSize);
-				PurchaseOrderDetailPage orderDetailPage=
-						servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
-
-
-				orderDetails = orderDetailPage.PurchaseOrderDetails;
-			} catch (Exception e) {
-//				e.printStackTrace();
+					PurchaseOrderQueryDto orderQueryDto = new PurchaseOrderQueryDto(startTime,endTime,statusList
+							,pageIndex,pageSize);
+					PurchaseOrderDetailPage orderDetailPage=
+							servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
+					orderDetails = orderDetailPage.PurchaseOrderDetails;
+					if(null==orderDetails){
+						fetchSuccess=false;
+					}
+				} catch (Exception e) {
+					fetchSuccess=false;
+				}
+				if(fetchSuccess){
+					i=2;
+				}else{
+					loggerError.error("获取采购单失败");
+				}
 			}
+
 			for (PurchaseOrderDetail orderDetail : orderDetails) {
 				supplierSkuNo  = orderDetail.SupplierSkuNo;
 				if(sopPurchaseMap.containsKey(supplierSkuNo)){

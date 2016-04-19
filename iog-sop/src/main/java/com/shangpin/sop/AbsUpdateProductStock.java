@@ -77,26 +77,37 @@ public abstract class AbsUpdateProductStock {
 		Set<String> skuIds = new HashSet<String>();
 
 		while(hasNext){
-
+			long startDate = System.currentTimeMillis();
 			List<SopProductSku> skus = null;
-			try {
-				request  = new SopProductSkuPageQuery();
-				request.setPageIndex(pageIndex);
-				request.setPageSize(pageSize);
-				request.setStartTime(start);
-				request.setEndTime(end);
+			request  = new SopProductSkuPageQuery();
+			request.setPageIndex(pageIndex);
+			request.setPageSize(pageSize);
+			request.setStartTime(start);
+			request.setEndTime(end);
+
+			//处理：通过openAPI 获取产品信息超时异常，如果异常次数超过5次就跳出
+			for(int i=0;i<5;i++){
+				startDate = System.currentTimeMillis();
 				Date timestamp = new Date();  //
-				result =SpClient.FindCommodityByPage( host,  app_key,  app_secret,  timestamp,  request);
-				SopProductSkuPage products = result.getResponse();
-				skus = products.getSopProductSkuIces();
-			} catch (Exception e) {
-				loggerError.error("获取SKU时失败:"+e.getMessage());
-//				e.printStackTrace();
+				try {
+					result =SpClient.FindCommodityByPage( host,  app_key,  app_secret,  timestamp,  request);
+					SopProductSkuPage products = result.getResponse();
+					skus = products.getSopProductSkuIces();
+					loggerInfo.info("第"+(i+1)+"次通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
+					if(skus!=null){
+						i=5;
+					}
+				} catch (Exception e1) {
+					loggerError.error("openAPI在异常中获取信息出错"+e1.getMessage());
+				}
+
 			}
+
+			//五次循环后 还有错误 不在处理 抛出异常
 			if(null!=skus) {
 				for (SopProductSku sku : skus) {
 					List<SopSku> skuIces = sku.getSopSkuIces();
-					loggerInfo.info("获取到的sku数量为:"+skuIces.size());
+//					loggerInfo.info("获取到的sku数量为:"+skuIces.size());
 					for (SopSku ice : skuIces) {
 
 						if (null != ice.getSkuNo() && !"".equals(ice.getSkuNo()) && null != ice.getSupplierSkuNo() && !"".equals(ice.getSupplierSkuNo())) {
@@ -109,7 +120,7 @@ public abstract class AbsUpdateProductStock {
 					}
 				}
 			}else{
-				skus = new ArrayList<>();
+				throw new Exception("无法获取到产品信息");
 			}
 			pageIndex++;
 			hasNext=(pageSize==skus.size());
@@ -155,21 +166,31 @@ public abstract class AbsUpdateProductStock {
 
 		Date date  = new Date();
 		while(hasNext){
-
+			long startDate = System.currentTimeMillis();
 			List<SopProductSku> skus = null;
-			try {
-				request  = new SopProductSkuPageQuery();
-				request.setPageIndex(pageIndex);
-				request.setPageSize(pageSize);
-				request.setStartTime(start);
-				request.setEndTime(end);
+			request  = new SopProductSkuPageQuery();
+			request.setPageIndex(pageIndex);
+			request.setPageSize(pageSize);
+			request.setStartTime(start);
+			request.setEndTime(end);
+			//处理：通过openAPI 获取产品信息超时异常，如果异常次数超过5次就跳出
+			for(int i=0;i<5;i++){
+				startDate = System.currentTimeMillis();
 				Date timestamp = new Date();  //
-				result =SpClient.FindCommodityByPage( host,  app_key,  app_secret,  timestamp,  request);
-				SopProductSkuPage products = result.getResponse();
-				skus = products.getSopProductSkuIces();
-			} catch (Exception e) {
-//				e.printStackTrace();
+				try {
+					result =SpClient.FindCommodityByPage( host,  app_key,  app_secret,  timestamp,  request);
+					SopProductSkuPage products = result.getResponse();
+					skus = products.getSopProductSkuIces();
+					loggerInfo.info("第"+(i+1)+"次通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
+					if(skus!=null){
+						i=5;
+					}
+				} catch (Exception e1) {
+					loggerError.error("openAPI在异常中获取信息出错"+e1.getMessage());
+				}
+
 			}
+			//五次循环后 还有错误 不在处理 抛出异常
 			for (SopProductSku sku : skus) {
 				List<SopSku> skuIces = sku.getSopSkuIces();
 				for (SopSku ice : skuIces) {
@@ -399,24 +420,33 @@ public abstract class AbsUpdateProductStock {
 		while (null!=iter&&iter.hasNext()) {
 
 			Entry<String, Integer> entry = iter.next();
+			request_body = new StockInfo();
+			request_body.setSkuNo(entry.getKey());
+			request_body.setInventoryQuantity(entry.getValue()<0?0:entry.getValue());
+			boolean success=true;
+			for(int i=0;i<2;i++){//发生错误 允许再执行一次
+				try{
+					loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+entry.getValue());
 
-
-			try{
-				logger.warn("待更新的数据：--------"+entry.getKey()+":"+entry.getValue());
-				request_body = new StockInfo();
-				request_body.setSkuNo(entry.getKey());
-				request_body.setInventoryQuantity(entry.getValue()<0?0:entry.getValue());
-				 result = SpClient.UpdateStock(host, app_key, app_secret, new Date(), request_body);
-			}catch(Exception e){
-				loggerInfo.info("更新sku错误： " +e.getMessage());
-				logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
-				loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+" " + e.getMessage());
+					result = SpClient.UpdateStock(host, app_key, app_secret, new Date(), request_body);
+					if(null!=result&&!result.getResponse()){
+						failCount++;
+						success=false;
+						logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
+						loggerError.error(entry.getKey() + ":" + entry.getValue() +"更新库存失败");
+					}
+				}catch(Exception e){
+					loggerInfo.info("更新sku错误： " +e.getMessage());
+					logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+					loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+" " + e.getMessage());
+				}
+				if(success){ //成功直接跳出
+					i=2;
+				}
 			}
-			if(null!=result&&!result.getResponse()){
-				failCount++;
-				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
-				loggerError.error(entry.getKey() + ":" + entry.getValue() +"更新库存失败");
-			}				
+
+
+
 		}
 		loggerInfo.info("更新库存结束");
 		return failCount;
@@ -675,7 +705,6 @@ public abstract class AbsUpdateProductStock {
 		int pageIndex=1,pageSize=20;
 		boolean hasNext=true;
 		logger.warn("获取SOP采购单 开始");
-		Set<String> skuIds = new HashSet<String>();
 		Map<String,Integer>  purchaseOrderMap = new HashMap<>();
 		String supplierSkuNo = "";
 		String startTime="" , endTime="";
@@ -690,41 +719,53 @@ public abstract class AbsUpdateProductStock {
 		ApiResponse<PurchaseOrderDetailPage> response = null;
 		while(hasNext){
 			List<PurchaseOrderDetail> orderDetails = null;
-			try {
-				PurchaseOrderQueryDto queryDto = new PurchaseOrderQueryDto();
+			PurchaseOrderQueryDto queryDto = new PurchaseOrderQueryDto();
 
-				queryDto.setUpdateTimeBegin(startTime);
-				queryDto.setUpdateTimeEnd(endTime);
-				queryDto.setPageIndex(pageIndex);
-				queryDto.setPageSize(pageSize);
-				detailStatus.add(1);
-				detailStatus.add(2);
-				queryDto.setDetailStatus(detailStatus);
+			queryDto.setUpdateTimeBegin(startTime);
+			queryDto.setUpdateTimeEnd(endTime);
+			queryDto.setPageIndex(pageIndex);
+			queryDto.setPageSize(pageSize);
+			detailStatus.add(1);
+			detailStatus.add(2);
+			queryDto.setDetailStatus(detailStatus);
 
 
-				response =  SpClient.FindPOrderByPage(host, app_key, app_secret, new Date(), queryDto);
+			boolean fetchSuccess=true;
+			for(int i=0;i<2;i++){   //允许调用失败后，再次调用一次
+				try {
 
-				PurchaseOrderDetailPage orderDetailPage = response.getResponse();
+					response =  SpClient.FindPOrderByPage(host, app_key, app_secret, new Date(), queryDto);
 
-				orderDetails=orderDetailPage.getPurchaseOrderDetails();
+					PurchaseOrderDetailPage orderDetailPage = response.getResponse();
 
-				for (PurchaseOrderDetail orderDetail : orderDetails) {
-					supplierSkuNo  = orderDetail.getSupplierSkuNo();
-					if(purchaseOrderMap.containsKey(supplierSkuNo)){
-
-						purchaseOrderMap.put(supplierSkuNo, purchaseOrderMap.get(supplierSkuNo)+ 1);
-						;
-					}else{
-
-						purchaseOrderMap.put(supplierSkuNo,1);
+					orderDetails=orderDetailPage.getPurchaseOrderDetails();
+					if(null==orderDetails){
+						fetchSuccess=false;
 					}
+				} catch (Exception e) {
+					fetchSuccess=false;
+				}
+				if(fetchSuccess){
+					i=2;
+				}else{
+					loggerError.error("获取采购单失败");
+				}
+			}
 
 
+
+			for (PurchaseOrderDetail orderDetail : orderDetails) {
+				supplierSkuNo  = orderDetail.getSupplierSkuNo();
+				if(purchaseOrderMap.containsKey(supplierSkuNo)){
+				   purchaseOrderMap.put(supplierSkuNo, purchaseOrderMap.get(supplierSkuNo)+ 1);
+
+				}else{
+					purchaseOrderMap.put(supplierSkuNo,1);
 				}
 
-			} catch (Exception e) {
-//				e.printStackTrace();
+
 			}
+
 
 			pageIndex++;
 			hasNext=(pageSize==orderDetails.size());
