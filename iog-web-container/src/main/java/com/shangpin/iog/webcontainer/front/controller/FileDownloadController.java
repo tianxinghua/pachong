@@ -325,7 +325,7 @@ public class FileDownloadController {
         	ArrayList<File> filesToAdd = new ArrayList<File>();
     		//供应商pic的文件夹
     		//TODO 具体位置待定
-    		File dir = new File("E://"+productSearchDTO.getSupplierName());
+    		File dir = new File("/mnt/nfs/"+productSearchDTO.getSupplierName()+"/");
     		String key = "";
     		if (dir.isDirectory()) {
     			File[] files = dir.listFiles();
