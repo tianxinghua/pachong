@@ -173,24 +173,24 @@ public abstract class AbsUpdateProductStock {
 				loggerInfo.info("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
 
 				skus = products.SopProductSkuIces;
-			} catch (Exception e) {
-//				e.printStackTrace();
-				loggerError.error("openAPI获取信息超时"+e.getMessage());
+			}catch (ApiException e){
+
+				loggerError.error("openAPI获取信息出粗"+e.Message);
 				//处理：通过openAPI 获取产品信息超时异常，如果异常次数超过5次就跳出
 				for(int i=0;i<5;i++){
 					SopProductSkuPage products = servant.FindCommodityInfoPage(supplier, query);
 					logger.warn("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
 					loggerInfo.info("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
-					
+
 					skus = products.SopProductSkuIces;
 					loggerInfo.info("异常次数："+(i+1)+"通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
 					if(skus!=null){
-						
+
 						i=5;
 					}
 				}
-				
 			}
+
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
 				for (SopSkuIce ice : skuIces) {
