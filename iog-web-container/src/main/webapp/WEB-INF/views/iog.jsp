@@ -57,6 +57,14 @@
 	                return ;
 	            }
 	        }
+	        if(str == 'ep_regular'){
+	        	if("-1"== $('#supplier').val()){
+	        		alert("请选择KA或重点供应商");
+	            	return;
+	        	}else{
+	        		
+	        	}
+	        }
 	        var search = {
 	            supplier:   $('#supplier').val(),
 	            startDate:    $('#startDate').val(),
@@ -76,7 +84,10 @@
 	//导出商品
     function exportProduct(str) {
     	var search = filter(str);
-        window.open('csv?queryJson='+$.toJSON(search), '','');
+    	if(null != search){
+    		window.open('csv?queryJson='+$.toJSON(search), '','');
+    	}
+        
     }
 	//导出价格不同商品
     function exportDiffProduct(str) {
@@ -160,7 +171,7 @@
 	href="javascript:void(0)" onclick="exportProduct('same')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>导出</a> 
 	<a
-	href="javascript:void(0)" onclick="exportProduct('ep_rule')" id="btn-save"
+	href="javascript:void(0)" onclick="exportProduct('ep_regular')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>按条件导出</a> 
 	<a
 	href="javascript:void(0)" onclick="exportDiffProduct('diff')" id="btn-save"
@@ -179,13 +190,13 @@
 	</form>
 	<br><br><br>
 	<a href="stockUpdateException" onclick="stock()" id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a> 
-	<a href="orderUpdateException" onclick="order()" id="btn-save" icon="icon-search" class='easyui-linkbutton'>订单更新异常查看</a>
+	<a href="orderUpdateException" id="btn-save" icon="icon-search" class='easyui-linkbutton'>订单更新异常查看</a>
 	
 	
 </div>
 
 <div id="showExcel" hidden="hidden">
-	<h5>传入excel表格格式</h5>
+	<h5>传入excel(07/2010版)表格格式</h5>
 	<h5>第二列必须有,但可以为空。第一行列名，从第二行开始下载</h5>
 	<form action="">
 	<table border="1">
