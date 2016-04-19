@@ -47,12 +47,20 @@ public class StockImp  extends AbsUpdateProductStock {
     	
     	//获取库存元数据
     	Map<String,Integer> skuMap = new HashMap<String,Integer>();
-        Map<String,Integer> returnMap = new HashMap<String,Integer>();
-        logger.info("=================下载文件开始================="); 
-        ReadExcel.downLoadFile(url, path);
-        logger.info("=================转化对象开始================="); 
-		List<Item> allProducts = ReadExcel.readExcel(Item.class,path);	
-		logger.info("转化对象数组的大小是========"+allProducts.size()); 
+        Map<String,Integer> returnMap = new HashMap<String,Integer>();        
+		List<Item> allProducts = null;
+		try {
+			logger.info("=================下载文件开始================="); 
+	        ReadExcel.downLoadFile(url, path);
+	        logger.info("=================转化对象开始================="); 
+			allProducts = ReadExcel.readExcel(Item.class,path);
+			logger.info("转化对象数组的大小是========"+allProducts.size()); 
+		} catch (Exception e) {
+			error.error(e);
+			return returnMap;
+		}
+					
+		
 		for (Item item : allProducts) {
 			String size = item.getSize().trim().replaceAll(",", ".").replaceAll("\t", " ").replaceAll("\\s+", " ").replaceAll("\r", "").replaceAll("\n", "");
 			String[] sizes = size.split(" ");
@@ -63,7 +71,7 @@ public class StockImp  extends AbsUpdateProductStock {
 							String[] stockSize = sizes[i].split("/");
 							String stock = stockSize[0];
 							String productSize = stockSize[1];
-							skuMap.put(item.getSkuNo()+"-"+productSize, Integer.valueOf(stock)); 
+							skuMap.put(item.getSupplierSku()+"-"+productSize, Integer.valueOf(stock)); 
 						}						
 					}catch(Exception ex){
 						ex.printStackTrace();
@@ -111,6 +119,35 @@ public class StockImp  extends AbsUpdateProductStock {
 //		logger.info("notenomstock更新数据库结束");
 //		System.out.println("notenomstock更新数据库结束");
 //		System.exit(0);
+//		try {
+//			logger.info("=================下载文件开始================="); 
+//	        ReadExcel.downLoadFile(url, path);
+//	        logger.info("=================转化对象开始================="); 
+//	        List<Item>  allProducts = ReadExcel.readExcel(Item.class,path);
+//			logger.info("转化对象数组的大小是========"+allProducts.size()); 
+//			for (Item item : allProducts) {
+//				String size = item.getSize().trim().replaceAll(",", ".").replaceAll("\t", " ").replaceAll("\\s+", " ").replaceAll("\r", "").replaceAll("\n", "");
+//				String[] sizes = size.split(" ");
+//				if(sizes.length>0){
+//					for (int i = 0; i < sizes.length; i++) {
+//						try{
+//							if(StringUtils.isNotBlank(sizes[i])){
+//								String[] stockSize = sizes[i].split("/");
+//								String stock = stockSize[0];
+//								String productSize = stockSize[1];
+//								System.out.println((item.getSupplierSku()+"-"+productSize+"========"+Integer.valueOf(stock))); 
+//							}						
+//						}catch(Exception ex){
+//							ex.printStackTrace();
+//							error.error(ex); 
+//							error.error("stockSize==="+sizes[i]); 
+//						}					
+//					}
+//				}
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		
 	}
 }

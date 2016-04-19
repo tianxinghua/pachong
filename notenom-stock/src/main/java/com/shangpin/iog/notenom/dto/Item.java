@@ -10,25 +10,23 @@ public class Item {
 	String blank;
 	String color;
 	String size;
-	String danwei;
 	String saleprice;
-	String supplierName;
-	String ghsbm;//供应商编码*
-	String sssh;//所属商户	
-	String skuNo;
-	String ghsspbm;//供应商商品编码
-	String barcode;
-	String sxmc;//#属性名称
-	String mbid;//模板ID
-	String ggnr;//规格内容(模板值ID)	
+	String supplierSku;
 	String stock;
 	String material;
 	String season;
 	String madein;
+	String hkys;
+	String ysp;
+	String vmsp;
+	String gender;
+	String barcode;
+	String sxmc;//#属性名称
+	String mbid;//模板ID
+	String ggnr;//规格内容(模板值ID)	
 	String aa;
 	String bb;
 	String cc;
-	String gender;
 	String dd;
 	String ee;
 	String ff;
@@ -47,6 +45,12 @@ public class Item {
 	public void setBrandName(String brandName) {
 		this.brandName = brandName;
 	}
+	public String getBrandCode() {
+		return brandCode;
+	}
+	public void setBrandCode(String brandCode) {
+		this.brandCode = brandCode;
+	}
 	public String getProductName() {
 		return productName;
 	}
@@ -58,6 +62,12 @@ public class Item {
 	}
 	public void setProductNo(String productNo) {
 		this.productNo = productNo;
+	}
+	public String getBlank() {
+		return blank;
+	}
+	public void setBlank(String blank) {
+		this.blank = blank;
 	}
 	public String getColor() {
 		return color;
@@ -71,29 +81,17 @@ public class Item {
 	public void setSize(String size) {
 		this.size = size;
 	}
-	public String getDanwei() {
-		return danwei;
-	}
-	public void setDanwei(String danwei) {
-		this.danwei = danwei;
-	}
 	public String getSaleprice() {
 		return saleprice;
 	}
 	public void setSaleprice(String saleprice) {
 		this.saleprice = saleprice;
 	}
-	public String getSkuNo() {
-		return skuNo;
+	public String getSupplierSku() {
+		return supplierSku;
 	}
-	public void setSkuNo(String skuNo) {
-		this.skuNo = skuNo;
-	}
-	public String getBarcode() {
-		return barcode;
-	}
-	public void setBarcode(String barcode) {
-		this.barcode = barcode;
+	public void setSupplierSku(String supplierSku) {
+		this.supplierSku = supplierSku;
 	}
 	public String getStock() {
 		return stock;
@@ -119,59 +117,35 @@ public class Item {
 	public void setMadein(String madein) {
 		this.madein = madein;
 	}
+	public String getHkys() {
+		return hkys;
+	}
+	public void setHkys(String hkys) {
+		this.hkys = hkys;
+	}
+	public String getYsp() {
+		return ysp;
+	}
+	public void setYsp(String ysp) {
+		this.ysp = ysp;
+	}
+	public String getVmsp() {
+		return vmsp;
+	}
+	public void setVmsp(String vmsp) {
+		this.vmsp = vmsp;
+	}
 	public String getGender() {
 		return gender;
 	}
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
-	public String getLength() {
-		return length;
+	public String getBarcode() {
+		return barcode;
 	}
-	public void setLength(String length) {
-		this.length = length;
-	}
-	public String getWidth() {
-		return width;
-	}
-	public void setWidth(String width) {
-		this.width = width;
-	}
-	public String getHeight() {
-		return height;
-	}
-	public void setHeight(String height) {
-		this.height = height;
-	}
-	public String getBlank() {
-		return blank;
-	}
-	public void setBlank(String blank) {
-		this.blank = blank;
-	}
-	public String getBrandCode() {
-		return brandCode;
-	}
-	public void setBrandCode(String brandCode) {
-		this.brandCode = brandCode;
-	}
-	public String getSupplierName() {
-		return supplierName;
-	}
-	public void setSupplierName(String supplierName) {
-		this.supplierName = supplierName;
-	}
-	public String getSssh() {
-		return sssh;
-	}
-	public void setSssh(String sssh) {
-		this.sssh = sssh;
-	}
-	public String getGhsspbm() {
-		return ghsspbm;
-	}
-	public void setGhsspbm(String ghsspbm) {
-		this.ghsspbm = ghsspbm;
+	public void setBarcode(String barcode) {
+		this.barcode = barcode;
 	}
 	public String getSxmc() {
 		return sxmc;
@@ -227,12 +201,23 @@ public class Item {
 	public void setFf(String ff) {
 		this.ff = ff;
 	}
-	public String getGhsbm() {
-		return ghsbm;
+	public String getLength() {
+		return length;
 	}
-	public void setGhsbm(String ghsbm) {
-		this.ghsbm = ghsbm;
+	public void setLength(String length) {
+		this.length = length;
+	}
+	public String getWidth() {
+		return width;
+	}
+	public void setWidth(String width) {
+		this.width = width;
+	}
+	public String getHeight() {
+		return height;
+	}
+	public void setHeight(String height) {
+		this.height = height;
 	}
 	
-
 }

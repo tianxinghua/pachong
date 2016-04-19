@@ -49,7 +49,7 @@ public class FetchProduct extends AbsUpdateProductStock{
 		Map<String, String> skustock = new HashMap<>();
 		Map<String,String> stockMap = new HashMap<>();
 		
-		OutTimeConfig timeConfig = new OutTimeConfig(1000*5, 1000*60 * 60, 1000*60 * 60);
+		OutTimeConfig timeConfig = new OutTimeConfig(1000*60*10, 1000*60 * 60, 1000*60 * 60);
 		String result = "";
 		List<Item> items = null;
 		try{
