@@ -295,10 +295,10 @@ public abstract class AbsSaveProduct {
 		Map<String, List<String>> downMap = new HashMap<String, List<String>>();
 		for (Entry<String, List<String>> entry : imageMap.entrySet()) {
 			id = entry.getKey().split(";")[0];
-			//正常使用
-//			list = productFetchService.saveAndCheckPicture(supplierId,id, entry.getValue(), flag);
+//			正常使用
+			list = productFetchService.saveAndCheckPicture(supplierId,id, entry.getValue(), flag);
 			// 仅仅stefaniamode采取
-			list = productFetchService.saveAndCheckPictureForSteFaniamode(supplierId,id, entry.getValue(), flag);
+//			list = productFetchService.saveAndCheckPictureForSteFaniamode(supplierId,id, entry.getValue(), flag);
 			loggerInfo.info("id"+id+"新增图片数"+list.size());
 			if (list.size()>0) {
 				productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+"图片变化", flag);
