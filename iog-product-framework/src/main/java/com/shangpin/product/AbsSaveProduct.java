@@ -295,7 +295,7 @@ public abstract class AbsSaveProduct {
 		Map<String, List<String>> downMap = new HashMap<String, List<String>>();
 		for (Entry<String, List<String>> entry : imageMap.entrySet()) {
 			id = entry.getKey().split(";")[0];
-//			正常使用
+			//正常使用
 			list = productFetchService.saveAndCheckPicture(supplierId,id, entry.getValue(), flag);
 			// 仅仅stefaniamode采取
 //			list = productFetchService.saveAndCheckPictureForSteFaniamode(supplierId,id, entry.getValue(), flag);

@@ -94,6 +94,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		if (products.getProducts() != null && products.getProducts().size() > 0) {
 			productList.addAll(products.getProducts());
 		}
+		try {
+			is.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return productList;
 	}
 
@@ -107,13 +112,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			logger.info("拉取stefaniamode数据开始");
 
 			Map<String, String> mongMap = new HashMap<>();
-			// String xmlContent = downLoadAndReadXml(zipUrl);
-
-			mongMap.put("supplierId", supplierId);
-			mongMap.put("supplierName", "stefaniamode");
-			// logger.info(mongMap);
 			productList = getProductList(url);
-			// products = ObjectXMLUtil.xml2Obj(Products.class, xmlContent);
 			logger.info("拉取stefaniamode数据成功");
 		} catch (Exception e) {
 			e.printStackTrace();

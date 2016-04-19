@@ -46,3 +46,5 @@ include 'deliberti-purchase'
 include 'itemInfo'
 
 include 'coltorti'
+include 'papini'
+include 'stefaniamode-stock'

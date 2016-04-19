@@ -161,6 +161,7 @@ public class FetchProduct extends AbsSaveProduct{
 	                sku.setColor(item.getColor());
 	                sku.setProductSize(size);
 	                sku.setStock(item.getAvailability());
+	                sku.setSalePrice(""); 
 
 	                //SKU 选填
 	                sku.setProductName(item.getTitle().replaceAll("," , " "));

@@ -1,6 +1,7 @@
 package com.shangpin.sop;
 
 
+
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.service.SkuRelationService;
@@ -92,6 +93,17 @@ public abstract class AbsUpdateProductStock {
 			} catch (Exception e) {
 				loggerError.error("获取SKU时失败:"+e.getMessage());
 //				e.printStackTrace();
+				for(int i=0;i<5;i++){
+					Date timestamp = new Date(); 
+					result =SpClient.FindCommodityByPage( host,  app_key,  app_secret,  timestamp,  request);
+					SopProductSkuPage products = result.getResponse();
+					skus = products.getSopProductSkuIces();
+					loggerInfo.info("异常次数："+(i+1));
+					if(skus!=null){
+						i=5;
+					}
+				}
+				
 			}
 			if(null!=skus) {
 				for (SopProductSku sku : skus) {
