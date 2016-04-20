@@ -29,8 +29,8 @@ public class GrapStock extends AbsUpdateProductStock {
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
     private static String supplierId = "";
-	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000 * 5*60,
-			1000 * 60 * 5, 1000 * 60 * 5);
+	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*60,
+			1000 * 60 * 60, 1000 * 60 * 60);
 	
 	private static String uri = "";
 	
@@ -74,7 +74,7 @@ public class GrapStock extends AbsUpdateProductStock {
                 skustock.put(skuno, "0");
             }
         }
-		
+		logger.info("供货商返回的map的大小是======="+skustock.size()+"=======");
 		return skustock;
 	}
 

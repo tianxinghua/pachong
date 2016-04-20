@@ -18,7 +18,7 @@ include 'iog-web-container'
 
 include 'iog-common-product'
 
-
+include 'iog-product-framework'
 
 
 
@@ -46,5 +46,3 @@ include 'deliberti-purchase'
 include 'itemInfo'
 
 include 'coltorti'
-include 'papini'
-include 'stefaniamode-stock'
