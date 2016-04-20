@@ -400,9 +400,9 @@ public abstract class AbsUpdateProductStock {
 				try{
 					result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());
 					loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+entry.getValue()+" ,"+ result);
-				}catch(Exception e){
+				}catch(ApiException e){
 					result=false;
-					logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+					logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+"---"+e.Message);
 				}
 				if(result){
 					i=2;
@@ -433,8 +433,8 @@ public abstract class AbsUpdateProductStock {
 
 			skuIceArray =servant.FindStockInfo(supplier, skuNoShangpinList);
 
-		}catch(Exception e){
-			loggerError.error("removeNoChangeStockRecord查询库存出错======="+e);
+		}catch(ApiException e){
+			loggerError.error("removeNoChangeStockRecord查询库存出错======="+e.Message);
 		}
 		//查找未维护库存的SKU
 		if(null!=skuIceArray&&skuIceArray.length!=skuNoShangpinList.size()){
@@ -660,8 +660,9 @@ public abstract class AbsUpdateProductStock {
 					if(null==orderDetails){
 						fetchSuccess=false;
 					}
-				} catch (Exception e) {
+				} catch (ApiException e) {
 					fetchSuccess=false;
+					loggerError.error("获取采购单失败"+e.Message);
 				}
 				if(fetchSuccess){
 					i=2;
