@@ -1,7 +1,6 @@
 package com.shangpin.sop;
 
 
-
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.service.SkuRelationService;
@@ -25,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 更新主站库存的抽象类<br/>
  * 各供应商模块，只要实现{@link #grabStock(Collection) "根据sku拿库存"}就行
- * @description 
+ * @description
  * @author 陈小峰
  * <br/>2015年6月10日
  */
@@ -37,9 +36,9 @@ public abstract class AbsUpdateProductStock {
 	private boolean useThread=false;
 	private int skuCount4Thread=100;
 
-    //  true :已供应商提供的SKU为主 不更新未提供的库存
-    //  false:已尚品的SKU为主 未查到的一律赋值为0
-    public static boolean supplierSkuIdMain=false;
+	//  true :已供应商提供的SKU为主 不更新未提供的库存
+	//  false:已尚品的SKU为主 未查到的一律赋值为0
+	public static boolean supplierSkuIdMain=false;
 
 	public  static boolean ORDER=false;
 
@@ -49,12 +48,12 @@ public abstract class AbsUpdateProductStock {
 
 	@Autowired
 	UpdateStockService updateStockService;
-	
+
 	/**
-	 * 抓取供应商库存数据 
+	 * 抓取供应商库存数据
 	 * @param skuNo 供应商的每个产品的唯一编号：sku
 	 * @return 每个sku对应的库存数
-	 * @throws ServiceException 
+	 * @throws ServiceException
 	 */
 	public abstract Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception;
 	/**
@@ -78,37 +77,37 @@ public abstract class AbsUpdateProductStock {
 		Set<String> skuIds = new HashSet<String>();
 
 		while(hasNext){
-
+			long startDate = System.currentTimeMillis();
 			List<SopProductSku> skus = null;
-			try {
-				request  = new SopProductSkuPageQuery();
-				request.setPageIndex(pageIndex);
-				request.setPageSize(pageSize);
-				request.setStartTime(start);
-				request.setEndTime(end);
+			request  = new SopProductSkuPageQuery();
+			request.setPageIndex(pageIndex);
+			request.setPageSize(pageSize);
+			request.setStartTime(start);
+			request.setEndTime(end);
+
+			//处理：通过openAPI 获取产品信息超时异常，如果异常次数超过5次就跳出
+			for(int i=0;i<5;i++){
+				startDate = System.currentTimeMillis();
 				Date timestamp = new Date();  //
-				result =SpClient.FindCommodityByPage( host,  app_key,  app_secret,  timestamp,  request);
-				SopProductSkuPage products = result.getResponse();
-				skus = products.getSopProductSkuIces();
-			} catch (Exception e) {
-				loggerError.error("获取SKU时失败:"+e.getMessage());
-//				e.printStackTrace();
-				for(int i=0;i<5;i++){
-					Date timestamp = new Date(); 
+				try {
 					result =SpClient.FindCommodityByPage( host,  app_key,  app_secret,  timestamp,  request);
 					SopProductSkuPage products = result.getResponse();
 					skus = products.getSopProductSkuIces();
-					loggerInfo.info("异常次数："+(i+1));
+					loggerInfo.info("第"+(i+1)+"次通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
 					if(skus!=null){
 						i=5;
 					}
+				} catch (Exception e1) {
+					loggerError.error("openAPI在异常中获取信息出错"+e1.getMessage());
 				}
-				
+
 			}
+
+			//五次循环后 还有错误 不在处理 抛出异常
 			if(null!=skus) {
 				for (SopProductSku sku : skus) {
 					List<SopSku> skuIces = sku.getSopSkuIces();
-					loggerInfo.info("获取到的sku数量为:"+skuIces.size());
+//					loggerInfo.info("获取到的sku数量为:"+skuIces.size());
 					for (SopSku ice : skuIces) {
 
 						if (null != ice.getSkuNo() && !"".equals(ice.getSkuNo()) && null != ice.getSupplierSkuNo() && !"".equals(ice.getSupplierSkuNo())) {
@@ -121,14 +120,14 @@ public abstract class AbsUpdateProductStock {
 					}
 				}
 			}else{
-				skus = new ArrayList<>();
+				throw new Exception("无法获取到产品信息");
 			}
 			pageIndex++;
 			hasNext=(pageSize==skus.size());
 
 		}
 		logger.warn("获取sku 结束");
-	    loggerInfo.info("获取SKU数量为："+skuIds.size());
+		loggerInfo.info("获取SKU数量为："+skuIds.size());
 		return skuIds;
 	}
 
@@ -167,21 +166,31 @@ public abstract class AbsUpdateProductStock {
 
 		Date date  = new Date();
 		while(hasNext){
-
+			long startDate = System.currentTimeMillis();
 			List<SopProductSku> skus = null;
-			try {
-				request  = new SopProductSkuPageQuery();
-				request.setPageIndex(pageIndex);
-				request.setPageSize(pageSize);
-				request.setStartTime(start);
-				request.setEndTime(end);
+			request  = new SopProductSkuPageQuery();
+			request.setPageIndex(pageIndex);
+			request.setPageSize(pageSize);
+			request.setStartTime(start);
+			request.setEndTime(end);
+			//处理：通过openAPI 获取产品信息超时异常，如果异常次数超过5次就跳出
+			for(int i=0;i<5;i++){
+				startDate = System.currentTimeMillis();
 				Date timestamp = new Date();  //
-				result =SpClient.FindCommodityByPage( host,  app_key,  app_secret,  timestamp,  request);
-				SopProductSkuPage products = result.getResponse();
-				skus = products.getSopProductSkuIces();
-			} catch (Exception e) {
-//				e.printStackTrace();
+				try {
+					result =SpClient.FindCommodityByPage( host,  app_key,  app_secret,  timestamp,  request);
+					SopProductSkuPage products = result.getResponse();
+					skus = products.getSopProductSkuIces();
+					loggerInfo.info("第"+(i+1)+"次通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
+					if(skus!=null){
+						i=5;
+					}
+				} catch (Exception e1) {
+					loggerError.error("openAPI在异常中获取信息出错"+e1.getMessage());
+				}
+
 			}
+			//五次循环后 还有错误 不在处理 抛出异常
 			for (SopProductSku sku : skus) {
 				List<SopSku> skuIces = sku.getSopSkuIces();
 				for (SopSku ice : skuIces) {
@@ -217,7 +226,7 @@ public abstract class AbsUpdateProductStock {
 		loggerInfo.info("获取SKU数量为："+skuIds.size());
 		return skuIds;
 	}
-	
+
 	/**
 	 * 更新主站库存
 	 * 客户端调用的接口
@@ -229,7 +238,7 @@ public abstract class AbsUpdateProductStock {
 	 *            +   -MM-dd HH:mm
 
 	 * @return 更新失败数
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public int updateProductStock(final  String host,final String app_key, final String app_secret,final String start,final String end) throws Exception{
 		//ice的skuid与本地库拉到的skuId的关系，value是ice中skuId,key是本地中的skuId
@@ -254,7 +263,7 @@ public abstract class AbsUpdateProductStock {
 			}
 			exe.shutdown();
 			while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
-				
+
 			}
 			int fct=0;
 			for(int k=0;k<totoalFailCnt.size();k++){
@@ -262,8 +271,8 @@ public abstract class AbsUpdateProductStock {
 			}
 			if(fct>=0){//如果待更新的数据不为0，则更新时间
 				this.updateStockTime(app_key);
-			}			
-			
+			}
+
 			return fct;
 		}else{
 			return updateStock(host,app_key,app_secret, localAndIceSku, skuNoSet);
@@ -311,7 +320,7 @@ public abstract class AbsUpdateProductStock {
 			}
 			if(fct>=0){//更新失败数小于0时说明更新失败
 				this.updateStockTime(app_key);
-			}			
+			}
 			return fct;
 		}else{
 			return updateStock(host,app_key,app_secret, localAndIceSku, skuNoSet);
@@ -333,7 +342,7 @@ public abstract class AbsUpdateProductStock {
 				count=0;
 			if(count==0){
 				Collection<String> e = new ArrayList<>();
-				list.add(e);				
+				list.add(e);
 				currentSet++;
 			}
 			list.get(currentSet-1).add(skuNo);
@@ -355,14 +364,14 @@ public abstract class AbsUpdateProductStock {
 
 	 */
 	private int updateStock(String host,String app_key,String app_secret,
-			Map<String, String> localAndIceSkuId,
-			Collection<String> skuNoSet) throws ServiceException, Exception
-			 {
+							Map<String, String> localAndIceSkuId,
+							Collection<String> skuNoSet) throws ServiceException, Exception
+	{
 		Map<String, Integer> iceStock = grab4Icestock(host,app_key,app_secret,skuNoSet,localAndIceSkuId);
 		int failCount = updateIceStock(host,app_key,app_secret, iceStock);
 		if(failCount>=0){//更新库存失败数大于等于0时，更新时间
 			this.updateStockTime(app_key);
-		}		
+		}
 		return failCount;
 	}
 	/**
@@ -376,11 +385,11 @@ public abstract class AbsUpdateProductStock {
 	 */
 	private int updateIceStock(String host,String app_key,String app_secret, Map<String, Integer> iceStock)
 			throws Exception {
-		
+
 		if(iceStock.size() ==0){
 			return -1;
 		}
-		
+
 		//logger.warn("{}---更新ice--,数量：{}",Thread.currentThread().getName(),iceStock.size());
 		//获取尚品库存
 		Set<String> skuNoShangpinSet = iceStock.keySet();
@@ -398,8 +407,8 @@ public abstract class AbsUpdateProductStock {
 		}
 		//排除最后一次
 		removeNoChangeStockRecord(host,app_key,app_secret, iceStock, skuNoShangpinList,toUpdateIce);
-		
-		
+
+
 		int failCount=0;
 		Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
 
@@ -411,24 +420,33 @@ public abstract class AbsUpdateProductStock {
 		while (null!=iter&&iter.hasNext()) {
 
 			Entry<String, Integer> entry = iter.next();
+			request_body = new StockInfo();
+			request_body.setSkuNo(entry.getKey());
+			request_body.setInventoryQuantity(entry.getValue()<0?0:entry.getValue());
+			boolean success=true;
+			for(int i=0;i<2;i++){//发生错误 允许再执行一次
+				try{
+					loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+entry.getValue());
 
-
-			try{
-				logger.warn("待更新的数据：--------"+entry.getKey()+":"+entry.getValue());
-				request_body = new StockInfo();
-				request_body.setSkuNo(entry.getKey());
-				request_body.setInventoryQuantity(entry.getValue()<0?0:entry.getValue());
-				 result = SpClient.UpdateStock(host, app_key, app_secret, new Date(), request_body);
-			}catch(Exception e){
-				loggerInfo.info("更新sku错误： " +e.getMessage());
-				logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
-				loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+" " + e.getMessage());
+					result = SpClient.UpdateStock(host, app_key, app_secret, new Date(), request_body);
+					if(null!=result&&!result.getResponse()){
+						failCount++;
+						success=false;
+						logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
+						loggerError.error(entry.getKey() + ":" + entry.getValue() +"更新库存失败");
+					}
+				}catch(Exception e){
+					loggerInfo.info("更新sku错误： " +e.getMessage());
+					logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+					loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+" " + e.getMessage());
+				}
+				if(success){ //成功直接跳出
+					i=2;
+				}
 			}
-			if(null!=result&&!result.getResponse()){
-				failCount++;
-				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
-				loggerError.error(entry.getKey() + ":" + entry.getValue() +"更新库存失败");
-			}				
+
+
+
 		}
 		loggerInfo.info("更新库存结束");
 		return failCount;
@@ -458,7 +476,7 @@ public abstract class AbsUpdateProductStock {
 	 * @param app_secret 提供给供应商的SECRET
 	 * @param iceStock
 	 * @param skuNoShangpinList
-	 * @param toUpdateIce 
+	 * @param toUpdateIce
 	 * @throws ServiceException
 	 */
 	private void removeNoChangeStockRecord(String host,String app_key,String app_secret, Map<String, Integer> iceStock,  List<String> skuNoShangpinList, Map<String, Integer> toUpdateIce) throws ServiceException {
@@ -467,10 +485,10 @@ public abstract class AbsUpdateProductStock {
 		ApiResponse<List<SopSkuInventory>> result = null;
 		Date timestamp = new Date();//时间戳
 		try {
-			 String[] skuNoShangpinArray = new String[skuNoShangpinList.size()];
-			 result = SpClient.FindStock(host, app_key, app_secret, timestamp, (String[]) skuNoShangpinList.toArray(skuNoShangpinArray));
-			 if(null==result) return ;
-			 if(null==result.getResponse()) return ;
+			String[] skuNoShangpinArray = new String[skuNoShangpinList.size()];
+			result = SpClient.FindStock(host, app_key, app_secret, timestamp, (String[]) skuNoShangpinList.toArray(skuNoShangpinArray));
+			if(null==result) return ;
+			if(null==result.getResponse()) return ;
 			skuArray =(SopSkuInventory[]) result.getResponse().toArray(new SopSkuInventory[0]);
 
 		} catch (Exception e) {
@@ -478,24 +496,24 @@ public abstract class AbsUpdateProductStock {
 			loggerError.error("removeNoChangeStockRecord出错==="+e);
 		}
 		//查找未维护库存的SKU
-        if(null!=skuArray&&skuArray.length!=skuNoShangpinList.size()){
-            Map<String,String> sopSkuMap = new HashMap();
-            for(SopSkuInventory skuIce:skuArray){
-                sopSkuMap.put(skuIce.getSkuNo(),"");
-            }
-            String sopSku="";
-           for(Iterator<String> itor =  skuNoShangpinList.iterator();itor.hasNext();){
-               sopSku = itor.next();
+		if(null!=skuArray&&skuArray.length!=skuNoShangpinList.size()){
+			Map<String,String> sopSkuMap = new HashMap();
+			for(SopSkuInventory skuIce:skuArray){
+				sopSkuMap.put(skuIce.getSkuNo(),"");
+			}
+			String sopSku="";
+			for(Iterator<String> itor =  skuNoShangpinList.iterator();itor.hasNext();){
+				sopSku = itor.next();
 
-                  if(!sopSkuMap.containsKey(sopSku)){
-                      if(iceStock.containsKey(sopSku)){
+				if(!sopSkuMap.containsKey(sopSku)){
+					if(iceStock.containsKey(sopSku)){
 //						  logger.warn("skuNo ：--------"+sopSku +"supplier quantity =" + iceStock.get(sopSku) + " shangpin quantity = null" );
 //						  System.out.println("skuNo ：--------"+sopSku +"supplier quantity =" + iceStock.get(sopSku) + " shangpin quantity = null");
-								  toUpdateIce.put(sopSku, iceStock.get(sopSku));
-                      }
-                  }
-           }
-        }
+						toUpdateIce.put(sopSku, iceStock.get(sopSku));
+					}
+				}
+			}
+		}
 
 		//排除无用的库存
 		if(null!=skuArray){
@@ -521,7 +539,7 @@ public abstract class AbsUpdateProductStock {
 			}
 		}
 
-    }
+	}
 	/**
 	 * 拉取供应商库存，并返回ice中对应的sku的库存
 	 * @param skuNos 供应商sku编号，从ice中获取到的
@@ -553,7 +571,7 @@ public abstract class AbsUpdateProductStock {
 							break;
 						}
 					}
-					
+
 					if(isNUll){//supplierStock的值全为0,则返回空的map
 						return iceStock;
 					}
@@ -565,7 +583,7 @@ public abstract class AbsUpdateProductStock {
 			}
 
 
-		   //获取采购单信息
+			//获取采购单信息
 			try {
 				if(!ORDER)	sopPurchaseMap = this.getPurchaseOrder(host,app_key,app_secret);
 			} catch (Exception e) {
@@ -609,7 +627,7 @@ public abstract class AbsUpdateProductStock {
 			}
 
 
-        } catch (Exception e1) {
+		} catch (Exception e1) {
 			logger.error("抓取库存失败:", e1);
 		}
 
@@ -627,7 +645,7 @@ public abstract class AbsUpdateProductStock {
 		private List<Integer> totoalFailCnt;
 		/**
 		 * @param localAndIceSku 所有主站skuId,供应商skuNo关系,key：供应商skuId,value:ice的skuNo
-		 * @param totoalFailCnt 
+		 * @param totoalFailCnt
 		 * @param skuNos 供应商skuNo集合
 		 */
 		public UpdateThread(Collection<String> skuNos,String host,String app_key,String app_secret, Map<String, String> localAndIceSku, List<Integer> totoalFailCnt ) {
@@ -650,7 +668,7 @@ public abstract class AbsUpdateProductStock {
 				logger.warn(Thread.currentThread().getName() + "处理出错", e);
 			}
 		}
-		
+
 	}
 
 
@@ -687,7 +705,6 @@ public abstract class AbsUpdateProductStock {
 		int pageIndex=1,pageSize=20;
 		boolean hasNext=true;
 		logger.warn("获取SOP采购单 开始");
-		Set<String> skuIds = new HashSet<String>();
 		Map<String,Integer>  purchaseOrderMap = new HashMap<>();
 		String supplierSkuNo = "";
 		String startTime="" , endTime="";
@@ -702,41 +719,53 @@ public abstract class AbsUpdateProductStock {
 		ApiResponse<PurchaseOrderDetailPage> response = null;
 		while(hasNext){
 			List<PurchaseOrderDetail> orderDetails = null;
-			try {
-				PurchaseOrderQueryDto queryDto = new PurchaseOrderQueryDto();
+			PurchaseOrderQueryDto queryDto = new PurchaseOrderQueryDto();
 
-				queryDto.setUpdateTimeBegin(startTime);
-				queryDto.setUpdateTimeEnd(endTime);
-				queryDto.setPageIndex(pageIndex);
-				queryDto.setPageSize(pageSize);
-				detailStatus.add(1);
-				detailStatus.add(2);
-				queryDto.setDetailStatus(detailStatus);
+			queryDto.setUpdateTimeBegin(startTime);
+			queryDto.setUpdateTimeEnd(endTime);
+			queryDto.setPageIndex(pageIndex);
+			queryDto.setPageSize(pageSize);
+			detailStatus.add(1);
+			detailStatus.add(2);
+			queryDto.setDetailStatus(detailStatus);
 
 
-				response =  SpClient.FindPOrderByPage(host, app_key, app_secret, new Date(), queryDto);
+			boolean fetchSuccess=true;
+			for(int i=0;i<2;i++){   //允许调用失败后，再次调用一次
+				try {
 
-				PurchaseOrderDetailPage orderDetailPage = response.getResponse();
+					response =  SpClient.FindPOrderByPage(host, app_key, app_secret, new Date(), queryDto);
 
-				orderDetails=orderDetailPage.getPurchaseOrderDetails();
+					PurchaseOrderDetailPage orderDetailPage = response.getResponse();
 
-				for (PurchaseOrderDetail orderDetail : orderDetails) {
-					supplierSkuNo  = orderDetail.getSupplierSkuNo();
-					if(purchaseOrderMap.containsKey(supplierSkuNo)){
-
-						purchaseOrderMap.put(supplierSkuNo, purchaseOrderMap.get(supplierSkuNo)+ 1);
-						;
-					}else{
-
-						purchaseOrderMap.put(supplierSkuNo,1);
+					orderDetails=orderDetailPage.getPurchaseOrderDetails();
+					if(null==orderDetails){
+						fetchSuccess=false;
 					}
+				} catch (Exception e) {
+					fetchSuccess=false;
+				}
+				if(fetchSuccess){
+					i=2;
+				}else{
+					loggerError.error("获取采购单失败");
+				}
+			}
 
 
+
+			for (PurchaseOrderDetail orderDetail : orderDetails) {
+				supplierSkuNo  = orderDetail.getSupplierSkuNo();
+				if(purchaseOrderMap.containsKey(supplierSkuNo)){
+					purchaseOrderMap.put(supplierSkuNo, purchaseOrderMap.get(supplierSkuNo)+ 1);
+
+				}else{
+					purchaseOrderMap.put(supplierSkuNo,1);
 				}
 
-			} catch (Exception e) {
-//				e.printStackTrace();
+
 			}
+
 
 			pageIndex++;
 			hasNext=(pageSize==orderDetails.size());
@@ -749,8 +778,8 @@ public abstract class AbsUpdateProductStock {
 
 	}
 
-	
-	
+
+
 	/**
 	 * 多少个sku启动一个线程,默认100
 	 * @return
