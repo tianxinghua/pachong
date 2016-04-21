@@ -145,4 +145,64 @@ public interface _OpenApiServantDel extends Ice._ObjectDel
     ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailSpecialPage FindPurchaseOrderDetailSpecial(String supplierId, String purchaseOrderNo, String orderNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Purchase.DirectoryPurchaseOrderDetailPage FindDirectoryPurchaseOrderDetailPaged(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto queryDto, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Purchase.DirectPurchaseOrder FindDirectoryPurchaseOrderDetail(String supplierId, String purchaseOrderNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    String SendDirectoryDeliveryOrder(String supplierId, ShangPin.SOP.Entity.Api.Purchase.SendDeliveryOrder sendDeliveryOrder, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    String SendDirectoryDeliveryOrderError(String supplierId, ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx deliveryOrderEx, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    String SendArrivalAbnormalProcess(String supplierId, ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderAbnormal purchaseOrderAbnormal, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SopProductPricePage FindProductPrice(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Product.ProductPriceQueryDto queryDto, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    boolean UpdateProductPrice(String supplierId, ShangPin.SOP.Entity.Api.Product.SopProductPriceEditIce productPrice, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Purchase.SopSecondReturnOrderPage FindSecondReturnOrderList(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Purchase.SecondReturnOrderQueryDto queryDto, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Purchase.SopSecondReturnOrder FindSecondReturnOrderByReturnNo(String supplierId, String returnOrderNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    boolean ReceiveSecondReturnOrder(String supplierId, String returnOrderNo, String returnOrderDetailId, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    boolean SubmitSecondReturnOrderAbnormal(String supplierId, ShangPin.SOP.Entity.Api.Purchase.SopSecondReturnOrderSupply secondReturnOrderDetail, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SopSkuPriceApplyPage FindSupplyInfoPage(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Product.ProductPriceQueryDto supply, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SopSupplierProductInventoryPage FindSopProductInventoryList(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Product.SopSkuInventoryQueryDto queryDto, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    boolean ModifySkuInventoryQuantity(String supplierId, ShangPin.SOP.Entity.Api.Product.SopSupplierProductInventoryEditIce productInventory, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    boolean AddSecondReturnOrderAbnormalPic(String supplierId, int detailId, byte[] sbnormalpic, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
 }

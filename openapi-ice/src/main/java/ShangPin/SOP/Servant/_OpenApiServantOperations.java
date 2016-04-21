@@ -114,4 +114,49 @@ public interface _OpenApiServantOperations
 
     ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailSpecialPage FindPurchaseOrderDetailSpecial(String supplierId, String purchaseOrderNo, String orderNo, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Purchase.DirectoryPurchaseOrderDetailPage FindDirectoryPurchaseOrderDetailPaged(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto queryDto, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Purchase.DirectPurchaseOrder FindDirectoryPurchaseOrderDetail(String supplierId, String purchaseOrderNo, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    String SendDirectoryDeliveryOrder(String supplierId, ShangPin.SOP.Entity.Api.Purchase.SendDeliveryOrder sendDeliveryOrder, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    String SendDirectoryDeliveryOrderError(String supplierId, ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx deliveryOrderEx, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    String SendArrivalAbnormalProcess(String supplierId, ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderAbnormal purchaseOrderAbnormal, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SopProductPricePage FindProductPrice(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Product.ProductPriceQueryDto queryDto, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    boolean UpdateProductPrice(String supplierId, ShangPin.SOP.Entity.Api.Product.SopProductPriceEditIce productPrice, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Purchase.SopSecondReturnOrderPage FindSecondReturnOrderList(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Purchase.SecondReturnOrderQueryDto queryDto, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Purchase.SopSecondReturnOrder FindSecondReturnOrderByReturnNo(String supplierId, String returnOrderNo, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    boolean ReceiveSecondReturnOrder(String supplierId, String returnOrderNo, String returnOrderDetailId, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    boolean SubmitSecondReturnOrderAbnormal(String supplierId, ShangPin.SOP.Entity.Api.Purchase.SopSecondReturnOrderSupply secondReturnOrderDetail, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SopSkuPriceApplyPage FindSupplyInfoPage(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Product.ProductPriceQueryDto supply, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SopSupplierProductInventoryPage FindSopProductInventoryList(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Product.SopSkuInventoryQueryDto queryDto, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    boolean ModifySkuInventoryQuantity(String supplierId, ShangPin.SOP.Entity.Api.Product.SopSupplierProductInventoryEditIce productInventory, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    boolean AddSecondReturnOrderAbnormalPic(String supplierId, int detailId, byte[] sbnormalpic, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
 }

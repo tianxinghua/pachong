@@ -88,6 +88,12 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         return AddPurchaseDetailToDeliveryOrder(supplierId, deliveryOrderNo, purchaseOrderDetailNos, null);
     }
 
+    public final boolean AddSecondReturnOrderAbnormalPic(String supplierId, int detailId, byte[] sbnormalpic)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return AddSecondReturnOrderAbnormalPic(supplierId, detailId, sbnormalpic, null);
+    }
+
     public final String CreateDeliveryOrder(String supplierId, ShangPin.SOP.Entity.Api.Purchase.DeliveryOrderAdd deliverOrder)
         throws ShangPin.SOP.Api.ApiException
     {
@@ -136,10 +142,28 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         return FindDeliveryOrderSend(supplierId, deliveryOrderSend, null);
     }
 
+    public final ShangPin.SOP.Entity.Api.Purchase.DirectPurchaseOrder FindDirectoryPurchaseOrderDetail(String supplierId, String purchaseOrderNo)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindDirectoryPurchaseOrderDetail(supplierId, purchaseOrderNo, null);
+    }
+
+    public final ShangPin.SOP.Entity.Api.Purchase.DirectoryPurchaseOrderDetailPage FindDirectoryPurchaseOrderDetailPaged(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto queryDto)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindDirectoryPurchaseOrderDetailPaged(supplierId, queryDto, null);
+    }
+
     public final ShangPin.SOP.Entity.Api.BaseDatas.SopCurrencyIce[] FindMoneyInfo()
         throws ShangPin.SOP.Api.ApiException
     {
         return FindMoneyInfo(null);
+    }
+
+    public final ShangPin.SOP.Entity.Api.Product.SopProductPricePage FindProductPrice(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Product.ProductPriceQueryDto queryDto)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindProductPrice(supplierId, queryDto, null);
     }
 
     public final ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage FindPurchaseOrderDetail(String supplierId, String purchaseOrderNo)
@@ -170,6 +194,24 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         throws ShangPin.SOP.Api.ApiException
     {
         return FindReturnOrderPaged(supplierId, queryDto, null);
+    }
+
+    public final ShangPin.SOP.Entity.Api.Purchase.SopSecondReturnOrder FindSecondReturnOrderByReturnNo(String supplierId, String returnOrderNo)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSecondReturnOrderByReturnNo(supplierId, returnOrderNo, null);
+    }
+
+    public final ShangPin.SOP.Entity.Api.Purchase.SopSecondReturnOrderPage FindSecondReturnOrderList(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Purchase.SecondReturnOrderQueryDto queryDto)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSecondReturnOrderList(supplierId, queryDto, null);
+    }
+
+    public final ShangPin.SOP.Entity.Api.Product.SopSupplierProductInventoryPage FindSopProductInventoryList(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Product.SopSkuInventoryQueryDto queryDto)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSopProductInventoryList(supplierId, queryDto, null);
     }
 
     public final ShangPin.SOP.Entity.Api.Product.SpBrandPage FindSpBrandPage(String supplierId, int pageIndex, int pageSize)
@@ -232,10 +274,58 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         return FindSupplyInfo(supplierId, supply, null);
     }
 
+    public final ShangPin.SOP.Entity.Api.Product.SopSkuPriceApplyPage FindSupplyInfoPage(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Product.ProductPriceQueryDto supply)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindSupplyInfoPage(supplierId, supply, null);
+    }
+
+    public final boolean ModifySkuInventoryQuantity(String supplierId, ShangPin.SOP.Entity.Api.Product.SopSupplierProductInventoryEditIce productInventory)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return ModifySkuInventoryQuantity(supplierId, productInventory, null);
+    }
+
     public final String PurchaseDetailEx(ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx purchaseOrderEx, String supplierId)
         throws ShangPin.SOP.Api.ApiException
     {
         return PurchaseDetailEx(purchaseOrderEx, supplierId, null);
+    }
+
+    public final boolean ReceiveSecondReturnOrder(String supplierId, String returnOrderNo, String returnOrderDetailId)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return ReceiveSecondReturnOrder(supplierId, returnOrderNo, returnOrderDetailId, null);
+    }
+
+    public final String SendArrivalAbnormalProcess(String supplierId, ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderAbnormal purchaseOrderAbnormal)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return SendArrivalAbnormalProcess(supplierId, purchaseOrderAbnormal, null);
+    }
+
+    public final String SendDirectoryDeliveryOrder(String supplierId, ShangPin.SOP.Entity.Api.Purchase.SendDeliveryOrder sendDeliveryOrder)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return SendDirectoryDeliveryOrder(supplierId, sendDeliveryOrder, null);
+    }
+
+    public final String SendDirectoryDeliveryOrderError(String supplierId, ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx deliveryOrderEx)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return SendDirectoryDeliveryOrderError(supplierId, deliveryOrderEx, null);
+    }
+
+    public final boolean SubmitSecondReturnOrderAbnormal(String supplierId, ShangPin.SOP.Entity.Api.Purchase.SopSecondReturnOrderSupply secondReturnOrderDetail)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return SubmitSecondReturnOrderAbnormal(supplierId, secondReturnOrderDetail, null);
+    }
+
+    public final boolean UpdateProductPrice(String supplierId, ShangPin.SOP.Entity.Api.Product.SopProductPriceEditIce productPrice)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return UpdateProductPrice(supplierId, productPrice, null);
     }
 
     public final boolean UpdateStock(String supplierId, String SkuNo, int InventoryQuantity)
@@ -1040,11 +1130,394 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         }
     }
 
+    public static Ice.DispatchStatus ___FindDirectoryPurchaseOrderDetailPaged(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDtoHolder queryDto = new ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDtoHolder();
+        supplierId = __is.readString();
+        __is.readObject(queryDto);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Purchase.DirectoryPurchaseOrderDetailPage __ret = __obj.FindDirectoryPurchaseOrderDetailPaged(supplierId, queryDto.value, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeObject(__ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___FindDirectoryPurchaseOrderDetail(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        String purchaseOrderNo;
+        supplierId = __is.readString();
+        purchaseOrderNo = __is.readString();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Purchase.DirectPurchaseOrder __ret = __obj.FindDirectoryPurchaseOrderDetail(supplierId, purchaseOrderNo, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeObject(__ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___SendDirectoryDeliveryOrder(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Api.Purchase.SendDeliveryOrderHolder sendDeliveryOrder = new ShangPin.SOP.Entity.Api.Purchase.SendDeliveryOrderHolder();
+        supplierId = __is.readString();
+        __is.readObject(sendDeliveryOrder);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            String __ret = __obj.SendDirectoryDeliveryOrder(supplierId, sendDeliveryOrder.value, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(__ret);
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___SendDirectoryDeliveryOrderError(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderExHolder deliveryOrderEx = new ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderExHolder();
+        supplierId = __is.readString();
+        __is.readObject(deliveryOrderEx);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            String __ret = __obj.SendDirectoryDeliveryOrderError(supplierId, deliveryOrderEx.value, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(__ret);
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___SendArrivalAbnormalProcess(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderAbnormalHolder purchaseOrderAbnormal = new ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderAbnormalHolder();
+        supplierId = __is.readString();
+        __is.readObject(purchaseOrderAbnormal);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            String __ret = __obj.SendArrivalAbnormalProcess(supplierId, purchaseOrderAbnormal.value, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(__ret);
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___FindProductPrice(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Where.OpenApi.Product.ProductPriceQueryDtoHolder queryDto = new ShangPin.SOP.Entity.Where.OpenApi.Product.ProductPriceQueryDtoHolder();
+        supplierId = __is.readString();
+        __is.readObject(queryDto);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Product.SopProductPricePage __ret = __obj.FindProductPrice(supplierId, queryDto.value, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeObject(__ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___UpdateProductPrice(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Api.Product.SopProductPriceEditIceHolder productPrice = new ShangPin.SOP.Entity.Api.Product.SopProductPriceEditIceHolder();
+        supplierId = __is.readString();
+        __is.readObject(productPrice);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            boolean __ret = __obj.UpdateProductPrice(supplierId, productPrice.value, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeBool(__ret);
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___FindSecondReturnOrderList(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Where.OpenApi.Purchase.SecondReturnOrderQueryDtoHolder queryDto = new ShangPin.SOP.Entity.Where.OpenApi.Purchase.SecondReturnOrderQueryDtoHolder();
+        supplierId = __is.readString();
+        __is.readObject(queryDto);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Purchase.SopSecondReturnOrderPage __ret = __obj.FindSecondReturnOrderList(supplierId, queryDto.value, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeObject(__ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___FindSecondReturnOrderByReturnNo(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        String returnOrderNo;
+        supplierId = __is.readString();
+        returnOrderNo = __is.readString();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Purchase.SopSecondReturnOrder __ret = __obj.FindSecondReturnOrderByReturnNo(supplierId, returnOrderNo, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeObject(__ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___ReceiveSecondReturnOrder(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        String returnOrderNo;
+        String returnOrderDetailId;
+        supplierId = __is.readString();
+        returnOrderNo = __is.readString();
+        returnOrderDetailId = __is.readString();
+        __inS.endReadParams();
+        try
+        {
+            boolean __ret = __obj.ReceiveSecondReturnOrder(supplierId, returnOrderNo, returnOrderDetailId, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeBool(__ret);
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___SubmitSecondReturnOrderAbnormal(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Api.Purchase.SopSecondReturnOrderSupplyHolder secondReturnOrderDetail = new ShangPin.SOP.Entity.Api.Purchase.SopSecondReturnOrderSupplyHolder();
+        supplierId = __is.readString();
+        __is.readObject(secondReturnOrderDetail);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            boolean __ret = __obj.SubmitSecondReturnOrderAbnormal(supplierId, secondReturnOrderDetail.value, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeBool(__ret);
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___FindSupplyInfoPage(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Where.OpenApi.Product.ProductPriceQueryDtoHolder supply = new ShangPin.SOP.Entity.Where.OpenApi.Product.ProductPriceQueryDtoHolder();
+        supplierId = __is.readString();
+        __is.readObject(supply);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Product.SopSkuPriceApplyPage __ret = __obj.FindSupplyInfoPage(supplierId, supply.value, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeObject(__ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___FindSopProductInventoryList(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Where.OpenApi.Product.SopSkuInventoryQueryDtoHolder queryDto = new ShangPin.SOP.Entity.Where.OpenApi.Product.SopSkuInventoryQueryDtoHolder();
+        supplierId = __is.readString();
+        __is.readObject(queryDto);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Product.SopSupplierProductInventoryPage __ret = __obj.FindSopProductInventoryList(supplierId, queryDto.value, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeObject(__ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___ModifySkuInventoryQuantity(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Api.Product.SopSupplierProductInventoryEditIceHolder productInventory = new ShangPin.SOP.Entity.Api.Product.SopSupplierProductInventoryEditIceHolder();
+        supplierId = __is.readString();
+        __is.readObject(productInventory);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            boolean __ret = __obj.ModifySkuInventoryQuantity(supplierId, productInventory.value, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeBool(__ret);
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___AddSecondReturnOrderAbnormalPic(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        int detailId;
+        byte[] sbnormalpic;
+        supplierId = __is.readString();
+        detailId = __is.readInt();
+        sbnormalpic = ImageByteArrayHelper.read(__is);
+        __inS.endReadParams();
+        try
+        {
+            boolean __ret = __obj.AddSecondReturnOrderAbnormalPic(supplierId, detailId, sbnormalpic, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeBool(__ret);
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
     private final static String[] __all =
     {
         "AddCommodity",
         "AddCommodityPic",
         "AddPurchaseDetailToDeliveryOrder",
+        "AddSecondReturnOrderAbnormalPic",
         "CreateDeliveryOrder",
         "FindAreaPage",
         "FindCategoryBrandAgreement",
@@ -1053,12 +1526,18 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         "FindDeliveryOrder",
         "FindDeliveryOrderPaged",
         "FindDeliveryOrderSend",
+        "FindDirectoryPurchaseOrderDetail",
+        "FindDirectoryPurchaseOrderDetailPaged",
         "FindMoneyInfo",
+        "FindProductPrice",
         "FindPurchaseOrderDetail",
         "FindPurchaseOrderDetailPaged",
         "FindPurchaseOrderDetailSpecial",
         "FindReturnOrder",
         "FindReturnOrderPaged",
+        "FindSecondReturnOrderByReturnNo",
+        "FindSecondReturnOrderList",
+        "FindSopProductInventoryList",
         "FindSpBrandPage",
         "FindSpCategoryPage",
         "FindSpCategorySizeStandard",
@@ -1069,7 +1548,15 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         "FindSuppliersById",
         "FindSuppliersByName",
         "FindSupplyInfo",
+        "FindSupplyInfoPage",
+        "ModifySkuInventoryQuantity",
         "PurchaseDetailEx",
+        "ReceiveSecondReturnOrder",
+        "SendArrivalAbnormalProcess",
+        "SendDirectoryDeliveryOrder",
+        "SendDirectoryDeliveryOrderError",
+        "SubmitSecondReturnOrderAbnormal",
+        "UpdateProductPrice",
         "UpdateStock",
         "UpdateSupplyPrice",
         "UpdateSupplyPriceSpecial",
@@ -1103,129 +1590,189 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
             }
             case 3:
             {
-                return ___CreateDeliveryOrder(this, in, __current);
+                return ___AddSecondReturnOrderAbnormalPic(this, in, __current);
             }
             case 4:
             {
-                return ___FindAreaPage(this, in, __current);
+                return ___CreateDeliveryOrder(this, in, __current);
             }
             case 5:
             {
-                return ___FindCategoryBrandAgreement(this, in, __current);
+                return ___FindAreaPage(this, in, __current);
             }
             case 6:
             {
-                return ___FindCommodityInfo(this, in, __current);
+                return ___FindCategoryBrandAgreement(this, in, __current);
             }
             case 7:
             {
-                return ___FindCommodityInfoPage(this, in, __current);
+                return ___FindCommodityInfo(this, in, __current);
             }
             case 8:
             {
-                return ___FindDeliveryOrder(this, in, __current);
+                return ___FindCommodityInfoPage(this, in, __current);
             }
             case 9:
             {
-                return ___FindDeliveryOrderPaged(this, in, __current);
+                return ___FindDeliveryOrder(this, in, __current);
             }
             case 10:
             {
-                return ___FindDeliveryOrderSend(this, in, __current);
+                return ___FindDeliveryOrderPaged(this, in, __current);
             }
             case 11:
             {
-                return ___FindMoneyInfo(this, in, __current);
+                return ___FindDeliveryOrderSend(this, in, __current);
             }
             case 12:
             {
-                return ___FindPurchaseOrderDetail(this, in, __current);
+                return ___FindDirectoryPurchaseOrderDetail(this, in, __current);
             }
             case 13:
             {
-                return ___FindPurchaseOrderDetailPaged(this, in, __current);
+                return ___FindDirectoryPurchaseOrderDetailPaged(this, in, __current);
             }
             case 14:
             {
-                return ___FindPurchaseOrderDetailSpecial(this, in, __current);
+                return ___FindMoneyInfo(this, in, __current);
             }
             case 15:
             {
-                return ___FindReturnOrder(this, in, __current);
+                return ___FindProductPrice(this, in, __current);
             }
             case 16:
             {
-                return ___FindReturnOrderPaged(this, in, __current);
+                return ___FindPurchaseOrderDetail(this, in, __current);
             }
             case 17:
             {
-                return ___FindSpBrandPage(this, in, __current);
+                return ___FindPurchaseOrderDetailPaged(this, in, __current);
             }
             case 18:
             {
-                return ___FindSpCategoryPage(this, in, __current);
+                return ___FindPurchaseOrderDetailSpecial(this, in, __current);
             }
             case 19:
             {
-                return ___FindSpCategorySizeStandard(this, in, __current);
+                return ___FindReturnOrder(this, in, __current);
             }
             case 20:
             {
-                return ___FindSpSizeTmp(this, in, __current);
+                return ___FindReturnOrderPaged(this, in, __current);
             }
             case 21:
             {
-                return ___FindSpSpfProductAttributeInfo(this, in, __current);
+                return ___FindSecondReturnOrderByReturnNo(this, in, __current);
             }
             case 22:
             {
-                return ___FindSpfProductMainColor(this, in, __current);
+                return ___FindSecondReturnOrderList(this, in, __current);
             }
             case 23:
             {
-                return ___FindStockInfo(this, in, __current);
+                return ___FindSopProductInventoryList(this, in, __current);
             }
             case 24:
             {
-                return ___FindSuppliersById(this, in, __current);
+                return ___FindSpBrandPage(this, in, __current);
             }
             case 25:
             {
-                return ___FindSuppliersByName(this, in, __current);
+                return ___FindSpCategoryPage(this, in, __current);
             }
             case 26:
             {
-                return ___FindSupplyInfo(this, in, __current);
+                return ___FindSpCategorySizeStandard(this, in, __current);
             }
             case 27:
             {
-                return ___PurchaseDetailEx(this, in, __current);
+                return ___FindSpSizeTmp(this, in, __current);
             }
             case 28:
             {
-                return ___UpdateStock(this, in, __current);
+                return ___FindSpSpfProductAttributeInfo(this, in, __current);
             }
             case 29:
             {
-                return ___UpdateSupplyPrice(this, in, __current);
+                return ___FindSpfProductMainColor(this, in, __current);
             }
             case 30:
             {
-                return ___UpdateSupplyPriceSpecial(this, in, __current);
+                return ___FindStockInfo(this, in, __current);
             }
             case 31:
             {
-                return ___ice_id(this, in, __current);
+                return ___FindSuppliersById(this, in, __current);
             }
             case 32:
             {
-                return ___ice_ids(this, in, __current);
+                return ___FindSuppliersByName(this, in, __current);
             }
             case 33:
             {
-                return ___ice_isA(this, in, __current);
+                return ___FindSupplyInfo(this, in, __current);
             }
             case 34:
+            {
+                return ___FindSupplyInfoPage(this, in, __current);
+            }
+            case 35:
+            {
+                return ___ModifySkuInventoryQuantity(this, in, __current);
+            }
+            case 36:
+            {
+                return ___PurchaseDetailEx(this, in, __current);
+            }
+            case 37:
+            {
+                return ___ReceiveSecondReturnOrder(this, in, __current);
+            }
+            case 38:
+            {
+                return ___SendArrivalAbnormalProcess(this, in, __current);
+            }
+            case 39:
+            {
+                return ___SendDirectoryDeliveryOrder(this, in, __current);
+            }
+            case 40:
+            {
+                return ___SendDirectoryDeliveryOrderError(this, in, __current);
+            }
+            case 41:
+            {
+                return ___SubmitSecondReturnOrderAbnormal(this, in, __current);
+            }
+            case 42:
+            {
+                return ___UpdateProductPrice(this, in, __current);
+            }
+            case 43:
+            {
+                return ___UpdateStock(this, in, __current);
+            }
+            case 44:
+            {
+                return ___UpdateSupplyPrice(this, in, __current);
+            }
+            case 45:
+            {
+                return ___UpdateSupplyPriceSpecial(this, in, __current);
+            }
+            case 46:
+            {
+                return ___ice_id(this, in, __current);
+            }
+            case 47:
+            {
+                return ___ice_ids(this, in, __current);
+            }
+            case 48:
+            {
+                return ___ice_isA(this, in, __current);
+            }
+            case 49:
             {
                 return ___ice_ping(this, in, __current);
             }
