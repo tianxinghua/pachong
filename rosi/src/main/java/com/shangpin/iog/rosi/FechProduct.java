@@ -158,7 +158,7 @@ public class FechProduct {
 					SkuDTO sku = new SkuDTO();
 					sku.setId(UUIDGenerator.getUUID());
 	                sku.setSupplierId(supplierId);
-	                sku.setSkuId(item.getSKUAndSize());
+	                sku.setSkuId(item.getSku());
 	                sku.setSpuId(item.getSupplier_SKU());
 	                sku.setProductName(item.getSubtitle());
 	                sku.setMarketPrice(item.getPrice().replaceAll("EUR", "").replaceAll(",", ""));  
@@ -190,11 +190,22 @@ public class FechProduct {
 	                
 	              //保存图片
 	                List<String> list = new ArrayList<String>();
-	                if (item.getImage_link() != null) {	  
-	                	String[] imags = item.getImage_link().split(",");
-	                    list = Arrays.asList(imags);
-	                    productFetchService.savePicture(supplierId, null, sku.getSkuId(), list);
-	                }	                
+	                if (item.getImage_link_1() != null) {	  
+	                	list.add(item.getImage_link_1());	                    
+	                }
+	                if(StringUtils.isNotBlank(item.getImage_link_2())){
+	                	list.add(item.getImage_link_2());
+	                }
+	                if(StringUtils.isNotBlank(item.getImage_link_3())){
+	                	list.add(item.getImage_link_3());
+	                }
+	                if(StringUtils.isNotBlank(item.getImage_link_4())){
+	                	list.add(item.getImage_link_4());
+	                }
+	                if(StringUtils.isNotBlank(item.getImage_link_5())){
+	                	list.add(item.getImage_link_5());
+	                }
+	                productFetchService.savePicture(supplierId, null, sku.getSkuId(), list);
 	               //
 	              //保存SPU
 	                SpuDTO spu = new SpuDTO();

@@ -63,9 +63,11 @@ public class GrapStock extends AbsUpdateProductStock {
 			System.out.println("------------一共"+channel.getItem().size()+"条数据---------------"); 
 			logger.info("------------一共"+channel.getItem().size()+"条数据---------------"); 
 			for(Item item : channel.getItem()){
-				stockMap.put(item.getSKUAndSize(), item.getStock());
+				stockMap.put(item.getSku(), item.getStock());
 			}
 		}
+		logger.info("供货商这边的map大小是======="+stockMap.size());
+//		logger.info("sop这边的skuid是========"+skuNo.toString()); 
 		
 		for (String skuno : skuNo) {
             if(stockMap.containsKey(skuno)){
