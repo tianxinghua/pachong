@@ -451,6 +451,7 @@
                 <![CDATA[ and (sku.LAST_TIME <= #{endDate} or spu.LAST_TIME<= #{endDate})    ]]>
             </if>
         </where>
+        order by brand_name, category_name
 	</select>
 	
 </mapper>
