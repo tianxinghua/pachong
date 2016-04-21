@@ -18,8 +18,12 @@ public class Item {
 	String material;
 	String subtitle;
 	String description;
-	String image_link;
-	String SKUAndSize;
+	String image_link_1;
+	String image_link_2;
+	String image_link_3;
+	String image_link_4;
+	String image_link_5;
+	String sku;
 	String Stock;
 	String size;
 	String price;

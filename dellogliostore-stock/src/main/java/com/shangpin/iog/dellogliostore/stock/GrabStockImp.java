@@ -49,7 +49,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
             logger.info("拉取dellogliostore数据开始");
 
 //            Map<String, String> mongMap = new HashMap<>();
-            OutTimeConfig timeConfig = new OutTimeConfig(1000*60, 1000*60*20,1000*60*20);
+            OutTimeConfig timeConfig = new OutTimeConfig(1000*60*10, 1000*60*60,1000*60*60);
             String result = HttpUtil45.get("http://www.dellogliostore.com/admin/temp/xi125.xml", timeConfig, null);
             HttpUtil45.closePool();
 
@@ -68,6 +68,8 @@ public class GrabStockImp extends AbsUpdateProductStock {
             }
 
             Feed feed = ObjectXMLUtil.xml2Obj(Feed.class, result);
+            
+            logger.info("从供货商拉取的信息feed大小==========="+feed.getSpuItems().getItems().size()); 
 
             if (feed == null || feed.getSpuItems() == null) {
                 return stockMap;
@@ -106,6 +108,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
             loggerError.error("拉取dellogliostore数据失败---" + e.getMessage());
             throw new ServiceMessageException("拉取dellogliostore数据失败");
         }
+        logger.info("返回的map的大小是======="+skuStock.size());
         return skuStock;
     }
 

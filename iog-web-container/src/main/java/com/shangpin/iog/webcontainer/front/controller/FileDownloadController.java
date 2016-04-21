@@ -1,4 +1,3 @@
-
 package com.shangpin.iog.webcontainer.front.controller;
 
 
@@ -64,6 +63,7 @@ public class FileDownloadController {
 	private static String skuwithoutsize = null;
 	private static String efashion = null;
 	private static String pavin = null;
+	private static String downloadpath = null;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -72,6 +72,7 @@ public class FileDownloadController {
 		skuwithoutsize = bdl.getString("skuwithoutsize");
 		efashion = bdl.getString("efashion");
 		pavin = bdl.getString("pavin");
+		downloadpath = bdl.getString("downloadpath");
 	}
 	private Logger log = LoggerFactory.getLogger(FileDownloadController.class) ;
 	
@@ -314,7 +315,7 @@ public class FileDownloadController {
         	//要下载的文件列表
         	List<ProductDTO> pList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
         	//TODO 获取dto按条件拼接图片名称
-        	log.error("下载文件列表长度"+pList.size());
+        	log.error(productSearchDTO.getSupplierName()+"下载文件列表长度"+pList.size());
         	
         	NameGenContext context = new NameGenContext(supplier);
         	nameMap = context.operate(pList);
@@ -325,9 +326,8 @@ public class FileDownloadController {
         	ArrayList<File> filesToAdd = new ArrayList<File>();
     		//供应商pic的文件夹
     		//TODO 具体位置待定
-        	log.error("/mnt/nfs/"+productSearchDTO.getSupplierName()+"/");
-    		File dir = new File("/mnt/nfs/"+productSearchDTO.getSupplierName()+"/");
-//    		File dir = new File("E://"+productSearchDTO.getSupplierName()+"/");
+        	log.error(downloadpath+productSearchDTO.getSupplierName()+"/");
+    		File dir = new File(downloadpath+productSearchDTO.getSupplierName()+"/");
     		String key = "";
     		if (dir.isDirectory()) {
     			File[] files = dir.listFiles();
@@ -394,9 +394,11 @@ public class FileDownloadController {
         }  
         SavePic savePic = new SavePic();
         String filePath = savePic.saveImg(targetFile);
+        log.error(targetFile.getName()+"下载路径为+++++++++++++++++++++++++++++++++"+filePath);
         ThreadPoolExecutor executor = savePic.getExecutor();
         while(true){
         	if(executor.getActiveCount()==0){
+        		log.error("线程活动数为0");
         		break;
         	}
         	try {
@@ -408,6 +410,7 @@ public class FileDownloadController {
         ZipFile zipfile = null;
         
         try {
+        	log.error("下载路径为+++++++++++++++++++++++++++++++++"+filePath);
 			zipfile = new ZipFile(new File(new Date().getTime()+""));
 
 			ZipParameters parameters = new ZipParameters();  

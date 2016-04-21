@@ -15,12 +15,16 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.shangpin.iog.webcontainer.front.controller.FileDownloadController;
 
 public class DowmImage extends Thread{
 	private String urlString;
 	private String filename;
 	private String savePath;
-	
+	private Logger log = LoggerFactory.getLogger(FileDownloadController.class) ;
 	@Override
 	public void run() {
 		try {
@@ -30,12 +34,11 @@ public class DowmImage extends Thread{
 		}
 	}
 	  public void downImage(String url,String filepath,String filename){
-	    	System.out.println(url);
-	    	System.out.println("下载"+filepath+"//"+filename);
+	    	log.info("下载"+filepath+"/"+filename);
 	    	// 创建文件对象  
-	        File f = new File(filepath+"//"+filename);  
+	        File f = new File(filepath+"/"+filename);  
 	        if (f.exists()) {
-	        	System.out.println("image has been download");
+	        	log.error("image has been download");
 			}
 	    	HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 			CloseableHttpClient httpClient = httpClientBuilder.build();
@@ -56,16 +59,16 @@ public class DowmImage extends Thread{
 	                    if (!f.getParentFile().exists())  
 	                        f.getParentFile().mkdirs();  
 	                    // 写入文件  
-	                    bw = new BufferedOutputStream(new FileOutputStream(filepath+"//"+filename));  
+	                    bw = new BufferedOutputStream(new FileOutputStream(filepath+"/"+filename));  
 	                    bw.write(result);  
 	                } catch (Exception e) {  
-	                	System.out.println("保存图片出错");
+	                	log.error("保存图片出错");
 	                } finally {  
 	                    try {  
 	                        if (bw != null)  
 	                            bw.close();  
 	                    } catch (Exception e) {  
-	                    	System.out.println("关闭出错");
+	                    	log.error("关闭出错");
 	                    }  
 	                }  
 	            }  

@@ -707,6 +707,7 @@ public abstract class AbsOrderService {
                 //计算同一采购单的相同产品的数量
                 if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
 
+                	logger.info("SopPurchaseOrderNo:"+purchaseOrderDetail.SopPurchaseOrderNo+"====="+"SopPurchaseOrderDetailNo:"+purchaseOrderDetail.SopPurchaseOrderDetailNo+"==="+"supplierId:"+supplierId);
                     purchasePrice =purchaseOrderDetail.SkuPrice;
                     ICEOrderDetailDTO detailDTO = new ICEOrderDetailDTO();
                     detailDTO.setSku_id(purchaseOrderDetail.SupplierSkuNo);

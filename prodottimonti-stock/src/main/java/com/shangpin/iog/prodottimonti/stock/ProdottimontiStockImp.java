@@ -3,13 +3,13 @@ package com.shangpin.iog.prodottimonti.stock;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 
 
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.prodottimonti.stock.schedule.AppContext;
+import com.shangpin.sop.AbsUpdateProductStock;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -31,7 +31,7 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static LoggerUtil logError = LoggerUtil.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
+//    private static Logger logMongo = Logger.getLogger("mongodb");
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -47,16 +47,16 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
     }
 
 
-    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException {
-        Map<String, String> skustock = new HashMap<>(skuNo.size());
-        Map<String,String> stockMap = new HashMap<>();
+    public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException {
+        Map<String, Integer> skustock = new HashMap<>(skuNo.size());
+        Map<String,Integer> stockMap = new HashMap<>();
 
         Map<String,String> mongMap = new HashMap<>();
         try{
 
-            mongMap.put("supplierId",supplierId);
-            mongMap.put("supplierName","erminiomonti");
-            logMongo.info("获取供应商商品列表失败");
+//            mongMap.put("supplierId",supplierId);
+//            mongMap.put("supplierName","erminiomonti");
+//            logMongo.info("获取供应商商品列表失败");
 
             for (String skuno : skuNo) {
             	try{
@@ -66,7 +66,7 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
                     if (stockMap.size() > 0)
                         skustock.put(skuno, stockMap.get(skuno));
                     else
-                        skustock.put(skuno, "0");
+                        skustock.put(skuno, 0);
             		
             	}catch(Exception e){
             		logError.equals(e);
@@ -84,19 +84,19 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
     }
 
 
-    private static Map<String,String> getStock(String sku){
+    private static Map<String,Integer> getStock(String sku){
         String url = "http://www.3forb.it/webserver/prodotto/?pid="+sku;
 
         logger.info("url====="+url); 
         OutTimeConfig timeConfig =new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10);
-        Map<String,String> map = new HashMap<>();
+        Map<String,Integer> map = new HashMap<>();
         String jsonstr = HttpUtil45.get(url,timeConfig,null,"","");
         logger.info("jsonstr===="+jsonstr); 
         if( jsonstr != null){
             JSONObject obj = JSONObject.fromObject(jsonstr);
 //            System.out.println("stock="+obj.has("stock"));
             if (!obj.isNullObject() && obj.has("stock")){
-                map.put(obj.getString("sku"), obj.getString("stock"));
+                map.put(obj.getString("sku"), Integer.parseInt(obj.getString("stock")));
             }
         }
         logger.info("map====="+map); 
