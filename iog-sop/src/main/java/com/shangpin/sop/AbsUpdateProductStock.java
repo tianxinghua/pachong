@@ -98,7 +98,7 @@ public abstract class AbsUpdateProductStock {
 						i=5;
 					}
 				} catch (Exception e1) {
-					loggerError.error("openAPI在异常中获取信息出错"+e1.getMessage());
+					loggerError.error("openAPI在异常中获取信息出错"+e1.getMessage(),e1);
 				}
 
 			}
@@ -186,7 +186,7 @@ public abstract class AbsUpdateProductStock {
 						i=5;
 					}
 				} catch (Exception e1) {
-					loggerError.error("openAPI在异常中获取信息出错"+e1.getMessage());
+					loggerError.error("openAPI在异常中获取信息出错"+e1.getMessage(),e1);
 				}
 
 			}
@@ -436,9 +436,9 @@ public abstract class AbsUpdateProductStock {
 						loggerError.error(entry.getKey() + ":" + entry.getValue() +"更新库存失败");
 					}
 				}catch(Exception e){
-					loggerInfo.info("更新sku错误： " +e.getMessage());
+
 					logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
-					loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+" " + e.getMessage());
+					loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+" " + e.getMessage(),e);
 				}
 				if(success){ //成功直接跳出
 					i=2;
@@ -484,17 +484,23 @@ public abstract class AbsUpdateProductStock {
 		SopSkuInventory[] skuArray = null;
 		ApiResponse<List<SopSkuInventory>> result = null;
 		Date timestamp = new Date();//时间戳
-		try {
-			String[] skuNoShangpinArray = new String[skuNoShangpinList.size()];
-			result = SpClient.FindStock(host, app_key, app_secret, timestamp, (String[]) skuNoShangpinList.toArray(skuNoShangpinArray));
-			if(null==result) return ;
-			if(null==result.getResponse()) return ;
-			skuArray =(SopSkuInventory[]) result.getResponse().toArray(new SopSkuInventory[0]);
+		for(int i=0;i<2;i++){
+			try {
+				String[] skuNoShangpinArray = new String[skuNoShangpinList.size()];
+				result = SpClient.FindStock(host, app_key, app_secret, timestamp, (String[]) skuNoShangpinList.toArray(skuNoShangpinArray));
+				if(null==result) return ;
+				if(null==result.getResponse()) return ;
+				skuArray =(SopSkuInventory[]) result.getResponse().toArray(new SopSkuInventory[0]);
 
-		} catch (Exception e) {
+			} catch (Exception e) {
 //			e.printStackTrace();
-			loggerError.error("removeNoChangeStockRecord出错==="+e);
+				loggerError.error("removeNoChangeStockRecord出错==="+e,e);
+			}
+			if(null!=skuArray){
+				i=2;
+			}
 		}
+
 		//查找未维护库存的SKU
 		if(null!=skuArray&&skuArray.length!=skuNoShangpinList.size()){
 			Map<String,String> sopSkuMap = new HashMap();
@@ -744,6 +750,7 @@ public abstract class AbsUpdateProductStock {
 					}
 				} catch (Exception e) {
 					fetchSuccess=false;
+					loggerError.error("获取采购单失败",e);
 				}
 				if(fetchSuccess){
 					i=2;

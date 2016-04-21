@@ -180,7 +180,10 @@ public abstract class AbsUpdateProductStock {
 						i=5;
 					}
 				} catch (ApiException e1) {
-					loggerError.error("openAPI 获取产品信息出错"+e1.Message);
+					loggerError.error("openAPI 获取产品信息出错 -ApiException -  "+e1.Message);
+				}  catch (Exception e1) {
+					logger.error("openAPI 获取产品信息出错",e1);
+					loggerError.error("openAPI 获取产品信息出错"+e1.getMessage());
 				}
 			}
 
@@ -400,10 +403,14 @@ public abstract class AbsUpdateProductStock {
 				try{
 					result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());
 					loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+entry.getValue()+" ,"+ result);
-				}catch(Exception e){
+				}catch(ApiException e){
 					result=false;
+					loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+"---"+e.Message);
+				} catch(Exception e){
 					logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+					loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
 				}
+
 				if(result){
 					i=2;
 				}
@@ -429,13 +436,20 @@ public abstract class AbsUpdateProductStock {
 	private void removeNoChangeStockRecord(String supplier, Map<String, Integer> iceStock, OpenApiServantPrx servant, List<String> skuNoShangpinList, Map<String, Integer> toUpdateIce) throws ApiException {
 		if(CollectionUtils.isEmpty(skuNoShangpinList)) return ;
 		SopSkuInventoryIce[] skuIceArray = null;
-		try{
 
-			skuIceArray =servant.FindStockInfo(supplier, skuNoShangpinList);
-
-		}catch(Exception e){
-			loggerError.error("removeNoChangeStockRecord查询库存出错======="+e);
+		for(int i=0;i<2;i++){
+			try{
+				skuIceArray =servant.FindStockInfo(supplier, skuNoShangpinList);
+			}catch(ApiException e){
+				loggerError.error("removeNoChangeStockRecord查询库存出错=======",e);
+			}catch(Exception e){
+				loggerError.error("removeNoChangeStockRecord查询库存出错=======",e);
+			}
+			if(null!=skuIceArray){
+				i=2;
+			}
 		}
+
 		//查找未维护库存的SKU
 		if(null!=skuIceArray&&skuIceArray.length!=skuNoShangpinList.size()){
 			Map<String,String> sopSkuMap = new HashMap();
@@ -660,8 +674,12 @@ public abstract class AbsUpdateProductStock {
 					if(null==orderDetails){
 						fetchSuccess=false;
 					}
-				} catch (Exception e) {
+				} catch (ApiException e) {
 					fetchSuccess=false;
+					loggerError.error("获取采购单失败"+e.Message);
+				}  catch (Exception e) {
+					fetchSuccess=false;
+					loggerError.error("获取采购单失败",e);
 				}
 				if(fetchSuccess){
 					i=2;
