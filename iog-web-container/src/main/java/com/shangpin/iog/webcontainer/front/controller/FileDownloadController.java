@@ -192,7 +192,7 @@ public class FileDownloadController {
             
 
 //            System.out.print("kk ----------------- " + productBuffer.toString());
-            in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("gb2312")));
+            in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("utf-8")));
 
             out = new BufferedOutputStream(response.getOutputStream());
             byte[] data = new byte[1024];

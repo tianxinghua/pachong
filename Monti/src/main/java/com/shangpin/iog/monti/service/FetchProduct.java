@@ -25,16 +25,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import com.shangpin.product.AbsSaveProduct;
 
 /**
  * Created by lubaijiang
  */
 @Component("monti")
-public class FetchProduct {
+public class FetchProduct extends AbsSaveProduct{
     final Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     
@@ -59,17 +61,24 @@ public class FetchProduct {
     @Autowired
 	ProductSearchService productSearchService;
 
-    public void fetchProductAndSave() {
-	    try{
-	    	Date startDate,endDate= new Date();
-			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
-			//获取原有的SKU 仅仅包含价格和库存
-			Map<String,SkuDTO> skuDTOMap = new HashedMap();
-			try {
-				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}
+    public Map<String, Object> fetchProductAndSave() {
+	    
+    	Map<String, Object> returnMap = new HashMap<String, Object>();
+		List<SkuDTO> skuList = new ArrayList<SkuDTO>();
+		List<SpuDTO> spuList = new ArrayList<SpuDTO>();
+		Map<String,List<String>> imageMap = new HashMap<String, List<String>>();
+    	
+    	try{
+	    	
+//	    	Date startDate,endDate= new Date();
+//			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+//			//获取原有的SKU 仅仅包含价格和库存
+//			Map<String,SkuDTO> skuDTOMap = new HashedMap();
+//			try {
+//				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+//			} catch (ServiceException e) {
+//				e.printStackTrace();
+//			}
 	
 	        //首先获取季节码  http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetAllSeasonCode?DBContext=Default&key=8IZk2x5tVN
 	
@@ -137,16 +146,19 @@ public class FetchProduct {
 	                                spudto.setPicUrl(spu.getUrl());
 	                                spudto.setSpuName(spu.getDescription());
 	                                spudto.setProductOrigin(spu.getProduct_MadeIn());
-	                                try {
-	                                    pfs.saveSPU(spudto);
-	                                } catch (ServiceException e) {
-	                                	try{
-	                                		pfs.updateMaterial(spudto);
-	            		            	}catch(ServiceException ex){
-	            		            		ex.printStackTrace();
-	            		            	}
-	                                    e.printStackTrace();
-	                                }
+	                                
+	                                spuList.add(spudto);
+	                                
+//	                                try {
+//	                                    pfs.saveSPU(spudto);
+//	                                } catch (ServiceException e) {
+//	                                	try{
+//	                                		pfs.updateMaterial(spudto);
+//	            		            	}catch(ServiceException ex){
+//	            		            		ex.printStackTrace();
+//	            		            	}
+//	                                    e.printStackTrace();
+//	                                }
 	
 	                                for (Sku sku : spu.getItems().getItem()) {
 	                                    //sku入库操作
@@ -192,12 +204,15 @@ public class FetchProduct {
 	                                    skudto.setSpuId(spu.getProduct_id());
 	                                    skudto.setStock(sku.getStock());
 	                                    skudto.setSupplierId(supplierId);
+	                                    
+	                                    skuList.add(skudto);
+	                                    
 	                                    try {
 	                                    	
-	                                    	if(skuDTOMap.containsKey(skudto.getSkuId())){
-	                							skuDTOMap.remove(skudto.getSkuId());
-	                						}
-	                                        pfs.saveSKU(skudto);
+//	                                    	if(skuDTOMap.containsKey(skudto.getSkuId())){
+//	                							skuDTOMap.remove(skudto.getSkuId());
+//	                						}
+//	                                        pfs.saveSKU(skudto);
 	                                        
 	                                      //保存图片
 	                    	                List<String> imgList = new ArrayList<String>();
@@ -207,7 +222,8 @@ public class FetchProduct {
 	                    	                        	imgList.add(imageUrl);	                        	
 	                    	                        }
 	                    	                    }
-	                    	                    pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);
+	                    	                    imageMap.put(skudto.getSkuId()+";"+skudto.getProductCode()+" "+skudto.getColor(), imgList);
+//	                    	                    pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);
 	                    	                }
 	//                                        for(String image : sku.getPictures()){
 	//                                            ProductPictureDTO pic = new ProductPictureDTO();
@@ -221,17 +237,17 @@ public class FetchProduct {
 	//                                                e.printStackTrace();
 	//                                            }
 	//                                        }
-	                                    } catch (ServiceException e) {
-	                                        try {
-	                                            if(e.getMessage().equals("数据插入失败键重复")){
-	                                                pfs.updatePriceAndStock(skudto);
-	                                            } else{
-	                                                e.printStackTrace();
-	                                            }
-	
-	                                        } catch (ServiceException e1) {
-	                                            e1.printStackTrace();
-	                                        }
+	                                    } catch (Exception e) {
+//	                                        try {
+//	                                            if(e.getMessage().equals("数据插入失败键重复")){
+//	                                                pfs.updatePriceAndStock(skudto);
+//	                                            } else{
+//	                                                e.printStackTrace();
+//	                                            }
+//	
+//	                                        } catch (ServiceException e1) {
+//	                                            e1.printStackTrace();
+//	                                        }
 	
 	                                    }
 	
@@ -251,22 +267,28 @@ public class FetchProduct {
 	            }
 	        }
 	        
-	      //更新网站不再给信息的老数据
-			for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
-				 Map.Entry<String,SkuDTO> entry =  itor.next();
-				if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
-					entry.getValue().setStock("0");
-					try {
-						pfs.updatePriceAndStock(entry.getValue());
-					} catch (ServiceException e) {
-						e.printStackTrace();
-					}
-				}
-			}
+//	      //更新网站不再给信息的老数据
+//			for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+//				 Map.Entry<String,SkuDTO> entry =  itor.next();
+//				if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+//					entry.getValue().setStock("0");
+//					try {
+//						pfs.updatePriceAndStock(entry.getValue());
+//					} catch (ServiceException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+	        
 	    } catch (Exception e) {
 			loggerError.info(e.getMessage());
 			e.printStackTrace();
-	}
+	    }
+	    returnMap.put("sku", skuList);
+		returnMap.put("spu", spuList);
+		returnMap.put("image", imageMap);
+		return returnMap;
+	    
 
   }
 

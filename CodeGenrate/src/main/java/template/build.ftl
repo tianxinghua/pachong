@@ -4,13 +4,17 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile(
     <#if stock=='stock'>
-		project(':iog-common-product'),
-        project(':openapi-ice'),
-        
-       <#else>
-       		"com.google.code.gson:gson:2.3.1",
+    	<#if isHK=='1'>
+    	project(':project-common'),
+        project(':iog-sop')
+	    	<#else>
+		    	project(':iog-common-product'),
+		        project(':openapi-ice'),
+    	</#if>
+		
+       <#else>       		
             project(':iog-common-product'),
-        
+        	project(':iog-product-framework')
     </#if>
  
     )
@@ -20,10 +24,6 @@ jar {
 
     dependsOn copyToLib , copyResources ,dependsClassPath
     exclude ("**/*.properties")
-   // def manifestCp = configurations.compile.files.collect  {
-   //    File file = it
-   //    <#noparse> "lib/${file.name}"</#noparse> 
-   // }.join(' ')
 
     manifest {
      <#if "stock"==stock>
@@ -34,7 +34,5 @@ jar {
    		 attributes 'Main-Class': 'com.shangpin.iog.${supplierName}.StartUp'
    </#if>
    
-   
-   //     attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }

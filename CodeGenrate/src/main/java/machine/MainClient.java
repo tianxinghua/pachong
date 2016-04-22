@@ -8,24 +8,47 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-public class Test {
-	public static void main(String[] args) {
-		String supplierName = "frametest";
-		Test test = new Test();
-		test.generateService(supplierName);
+public class MainClient {
+	
+	private static ResourceBundle bdl=null;
+	private static String supplierId = null;
+	private static String supplierName = null;
+	private static String isHK = null;
+	private static String createdby = null;
+	private static String profileName = null;
+	
+	static {
+        if(null==bdl)
+         bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+        supplierName = bdl.getString("supplierName");
+        isHK = bdl.getString("isHK");
+        createdby = bdl.getString("createdby");
+        profileName = bdl.getString("profileName");
+        
+	}
+	
+	public static void main(String[] args) {		
+		MainClient test = new MainClient();
+		//拉取产品
+		test.generateService(createdby,profileName,supplierName);
 		test.genFile(supplierName);
-		test.genGradle(supplierName);
+		//gradle
+		test.genGradle(isHK,supplierName);
+		//resoueces
 		test.genResources(supplierName);
 		test.genStart(supplierName);
 		test.genStock(supplierName);
+		test.genSchedule();
 	}
 	//生成service
-	public void generateService(String supplierName){
+	public void generateService(String createdby,String profileName,String supplierName){
 		Configuration sfg = new Configuration();
 		try {
 			sfg.setDirectoryForTemplateLoading(new File("src/main/java/template"));
@@ -39,13 +62,15 @@ public class Test {
 			Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f)));
 			Map<String,String> rootMap = new HashMap<String, String>();
 			rootMap.put("supplierName", supplierName);
+			rootMap.put("profileName",profileName);
+			rootMap.put("createdby", createdby);
 			template.process(rootMap, out);
 		} catch (IOException | TemplateException e) {
 			e.printStackTrace();
 		}
 	}
 	//生成gradle
-	public void genGradle(String supplierName){
+	public void genGradle(String isHK,String supplierName){
 		String[] ddd = new String[]{"","stock"};
 		Configuration sfg = new Configuration();
 		Map<String,String> rootMap = new HashMap<String, String>();
@@ -55,6 +80,7 @@ public class Test {
 			for (String string : ddd) {
 				if (string.equals("stock")) {
 					rootMap.put("stock", "stock");
+					rootMap.put("isHK", isHK);
 					f = new File("E://"+supplierName+"-stock"+"//build.gradle");
 				}else{
 					rootMap.put("stock", "");
@@ -94,6 +120,7 @@ public class Test {
 			Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f)));
 			Map<String,String> rootMap = new HashMap<String, String>();
 			rootMap.put("supplierName", supplierName);
+			rootMap.put("createdby", createdby);
 			template.process(rootMap, out);
 		} catch (IOException | TemplateException e) {
 			e.printStackTrace();
@@ -104,10 +131,11 @@ public class Test {
 		Configuration sfg = new Configuration();
 		Template template = null;
 		File f = null;
-		String[] fileName = new String[]{"log4j","conf"};
+		String[] fileName = new String[]{"log4j",profileName};
 		String[] stock = new String[]{"","stock"};
 		Map<String,String> rootMap = new HashMap<String, String>();
-		
+		rootMap.put("supplierId", supplierId);
+		rootMap.put("isHK", isHK);
 		try {
 			for (String sss : stock) {
 				for (String name : fileName) {
@@ -183,10 +211,18 @@ public class Test {
 		}
 		Map<String,String> rootMap = new HashMap<String, String>();
 		rootMap.put("supplierName", supplierName);
+		rootMap.put("createdby", createdby);
+		rootMap.put("profileName", profileName);
+		
 		Configuration sfg = new Configuration();
 		try {
 			sfg.setDirectoryForTemplateLoading(new File("src/main/java/template"));
-			Template template = sfg.getTemplate("StockImp.ftl");
+			Template template = null;
+			if(isHK.equals("1")){ 
+				template = sfg.getTemplate("StockImpHK.ftl");
+			}else{
+				template = sfg.getTemplate("StockImp.ftl");
+			}			
 			template.setEncoding("UTF-8");
 			File f = new File("E://"+supplierName+"-stock"+"//src//main//java/com/shangpin/iog/"+supplierName+"//stock//StockImp.java");
 			if (!f.exists()) {
@@ -195,6 +231,57 @@ public class Test {
 			} 
 			Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f)));
 			template.process(rootMap, out);
+		} catch (IOException | TemplateException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void genSchedule(){
+		String dir = "schedule";
+		File f = new File("E://"+supplierName+"-stock"+"//src//main//java/com/shangpin/iog/"+supplierName+"//"+dir);
+		if (!f.exists()) {
+			f.mkdirs();
+		}
+		
+		Map<String,String> rootMap = new HashMap<String, String>();
+		rootMap.put("supplierName", supplierName);
+		rootMap.put("profileName", profileName);
+		rootMap.put("supplierId", "${supplierId}");
+		rootMap.put("time", "${time}");
+		rootMap.put("jobsSchedule", "${jobsSchedule}");
+		rootMap.put("HOST", "${HOST}");
+		rootMap.put("APP_KEY", "${APP_KEY}");
+		rootMap.put("APP_SECRET", "${APP_SECRET}");
+		
+		Configuration sfg = new Configuration();
+		try {
+			sfg.setDirectoryForTemplateLoading(new File("src/main/java/template"));
+			Template template = null;
+			if(isHK.equals("1")){
+				template = sfg.getTemplate("ScheduleHK.ftl");
+			}else{
+				template = sfg.getTemplate("Schedule.ftl");
+			}			
+			template.setEncoding("UTF-8");
+			File fSch = new File(f.getPath()+File.separator+"Schedule.java");
+			if (!fSch.exists()) {
+//				fSch.getParentFile().mkdirs();
+				fSch.createNewFile();
+			} 
+			Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fSch)));
+			template.process(rootMap, out);
+			
+			Template template2 = null;			
+			template2 = sfg.getTemplate("AppContext.ftl");					
+			template2.setEncoding("UTF-8");
+			File fApp = new File(f.getPath()+File.separator+"AppContext.java");
+			if (!fApp.exists()) {
+//				fSch.getParentFile().mkdirs();
+				fApp.createNewFile();
+			} 
+			Writer out1 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fApp)));
+			template2.process(rootMap, out1);
+			
 		} catch (IOException | TemplateException e) {
 			e.printStackTrace();
 		}

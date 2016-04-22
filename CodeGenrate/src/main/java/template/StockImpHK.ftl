@@ -1,12 +1,10 @@
 package com.shangpin.iog.${supplierName}.stock;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.sop.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.${supplierName}.schedule.AppContext;
-import com.shangpin.iog.common.utils.logger.LoggerUtil;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -38,11 +36,11 @@ public class StockImp  extends AbsUpdateProductStock {
         supplierId = bdl.getString("supplierId");
     }
     @Override
-    public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+    public Map<String, Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
     	
     	//获取库存元数据
-    	Map<String, String> skustock = new HashMap<String, String>();
-		Map<String,String> stockMap = new HashMap<String, String>();
+    	Map<String, Integer> skustock = new HashMap<String, Integer>();
+		Map<String,Integer> stockMap = new HashMap<String, Integer>();
         
         try{
         	//业务实现
@@ -57,7 +55,7 @@ public class StockImp  extends AbsUpdateProductStock {
             if(stockMap.containsKey(skuno)){
                 skustock.put(skuno, stockMap.get(skuno));
             } else{
-                skustock.put(skuno, "0");
+                skustock.put(skuno, 0);
             }
         }
         return skustock;

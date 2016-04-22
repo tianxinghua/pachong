@@ -108,7 +108,7 @@ subprojects {
 				,'spring-aop-4.1.4.RELEASE.jar','spring-beans-4.1.4.RELEASE.jar','spring-context-4.1.4.RELEASE.jar'
 				,'spring-core-4.1.4.RELEASE.jar','spring-data-commons-1.10.0.RELEASE.jar','spring-data-mongodb-1.7.0.RELEASE.jar','spring-expression-4.1.4.RELEASE.jar'
 				,'spring-jdbc-4.1.4.RELEASE.jar','spring-tx-4.1.4.RELEASE.jar','xmlbeans-2.6.0.jar','stax-api-1.0.1.jar'
-				,'commons-collections-3.2.1.jar','openapi-api-sdk-3.0.jar']
+				,'commons-collections-3.2.1.jar','openapi-api-sdk-3.0.jar','iog-product-framework.jar','gson-2.3.1.jar']
 			def manifestCp = configurations.compile.files.collect  {
 				File file = it
 				if (publicJar.contains(file.name)) {

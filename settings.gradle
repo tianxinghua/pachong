@@ -19,7 +19,9 @@ include 'iog-web-container'
 include 'iog-common-product'
 
 include 'iog-product-framework'
-
+include 'CodeGenrate'
+include 'iog-common-product2'
+include 'project-muldatass-dao'
 
 
 include 'openapi-ice'
