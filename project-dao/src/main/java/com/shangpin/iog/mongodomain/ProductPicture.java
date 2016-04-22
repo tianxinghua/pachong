@@ -21,6 +21,7 @@ public class ProductPicture implements Serializable{
 	private String spuId;
     private String skuId;
     private String picUrl;
+    private String status;
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -117,4 +118,12 @@ public class ProductPicture implements Serializable{
 	public void setSpuId(String spuId) {
 		this.spuId = spuId;
 	}
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }
