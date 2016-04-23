@@ -39,6 +39,7 @@ include 'spinnaker-order'
 
 
 include 'tony'
+include 'efashion'
 
 include 'log-template'
 include 'theclutcher-stock'
