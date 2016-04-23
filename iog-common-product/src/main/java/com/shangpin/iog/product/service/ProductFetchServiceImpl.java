@@ -408,5 +408,15 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 	    }
 	    return imageList;
 	  }
+
+	@Override
+	public void updateMongoTest(String id) {
+		try {
+			pictureDAO.removePicture(id);
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 }
