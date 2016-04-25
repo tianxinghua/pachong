@@ -3,6 +3,7 @@ dependencies {
     compile(
             project(':project-common'),
             project(':openapi-ice')
+            //project(':iog-sop'),
     )
     //compile project(':dellogliostore')
     testCompile group: 'junit', name: 'junit', version: '4.11'

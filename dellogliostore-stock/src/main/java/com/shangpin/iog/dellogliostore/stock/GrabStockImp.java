@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 @Component("delloglioStore")
 public class GrabStockImp extends AbsUpdateProductStock {
-    private static Logger logger = Logger.getLogger("info");
+    private static java.util.logging.Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ApplicationContext factory;
@@ -51,6 +51,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 //            Map<String, String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = new OutTimeConfig(1000*60*10, 1000*60*60,1000*60*60);
             String result = HttpUtil45.get("http://www.dellogliostore.com/admin/temp/xi125.xml", timeConfig, null);
+            logger.info("result==="+result);
             HttpUtil45.closePool();
 
 //            mongMap.put("supplierId", supplierId);
@@ -105,7 +106,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
             logger.info("拉取dellogliostore数据成功");
         } catch (Exception e) {
             e.printStackTrace();
-            loggerError.error("拉取dellogliostore数据失败---" + e.getMessage());
+            loggerError.error("拉取dellogliostore数据失败---" + e.getMessage(),e);
             throw new ServiceMessageException("拉取dellogliostore数据失败");
         }
         logger.info("返回的map的大小是======="+skuStock.size());
