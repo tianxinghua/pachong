@@ -11,6 +11,9 @@ import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.smets.queue.PicQueue;
+import com.shangpin.iog.smets.queue.SkuQueue;
+import com.shangpin.iog.smets.queue.SpuQueue;
 
 public class SaveTo extends Thread{
 	private String visitUrl1;
@@ -41,7 +44,6 @@ public class SaveTo extends Thread{
 		try {
 			response1 = HttpUtils.get("www.farfetch.com"+visitUrl1+"?page="+i);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println("www.farfetch.com"+visitUrl1+"?page="+i);
@@ -68,9 +70,6 @@ public class SaveTo extends Thread{
 							for(Element ele:docdet.select("a[class=relative js-video-thumb]")){
 								img += ele.select("img").attr("src")+";";
 							}
-//						for(Element ele:doc.select("#detailSizeDropdown").select("#SizesInformation_SizeDesc")){
-//							size += ele.attr("data-sizeid")+";";
-//						}
 							brandName = docdet.select("a[data-tstid=Label_ItemBrand]").get(0).ownText();
 							for(Element ele:docdet.select("div[data-tstid=Content_Composition&Care]").select("dd")){
 								if (ele.ownText().contains(">")) {
@@ -98,19 +97,19 @@ public class SaveTo extends Thread{
 							sku.setSpuId(skuId);
 							sku.setSkuId(skuId);
 							sku.setSaleCurrency("www.farfetch.com"+a.attr("href"));
-//						sku.setProductSize(size);
 							sku.setProductName(skuName);
 							sku.setProductDescription(description);
 							sku.setStock("1");
-							System.out.println("save sku");
-							productFetchService.saveSKU(sku);
-							System.out.println("save spu");
-							productFetchService.saveSPU(spu);
-							System.out.println("save spic");
-							productFetchService.savePicture(supplierId, null, skuId, Arrays.asList(img.split(";")));
-							//
+							//sku 入队
+							System.out.println("sku入队~~~~~~~~~~~~~~~~");
+							SkuQueue.addUnvisitedSku(sku);
+							//spu 入队
+							System.out.println("spu入队~~~~~~~~~~~~~~~~~");
+							SpuQueue.addUnvisitedSpu(spu);
+							//pic 入队
+							System.out.println("pic入队~~~~~~~~~~~~~~~~~~~");
+							PicQueue.addUnvisitedUrl(skuId+"^"+img);
 							img = "";
-//						 size = "";
 							skuId = "";
 							brandName = "";
 							description = "";
@@ -129,5 +128,8 @@ public class SaveTo extends Thread{
 		}
 	
 	}
-	
+	public static void main(String[] args) {
+		String a = "asdasd^ssss";
+		System.out.println(a.split("\\^")[0]);
+	}
 }

@@ -27,10 +27,10 @@ public class LinkQueue {
 	}
 	//未访问过的出队列
 	public static String unVisitEdUrlDeQueue(){
-		return unVisitedUrl.deQueue();
+		return (String) unVisitedUrl.deQueue();
 	}
 	public static String allSkuUrlDeQueue(){
-		return allSkuUrl.deQueue();
+		return (String) allSkuUrl.deQueue();
 	}
 	//未访问入队
 	public static void addUnvisitedUrl(String url){

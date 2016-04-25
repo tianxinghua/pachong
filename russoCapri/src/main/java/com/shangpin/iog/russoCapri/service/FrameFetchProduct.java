@@ -1,16 +1,20 @@
 package com.shangpin.iog.russoCapri.service;
 	
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
-import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -18,11 +22,12 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.russoCapri.dto.Item;
 import com.shangpin.product.AbsSaveProduct;
-
+@Component("russocapriframe")
 public class FrameFetchProduct extends AbsSaveProduct{
 	  final Logger logger = Logger.getLogger(this.getClass());
 	    private static String supplierId;
 	    private static String url;
+	    private static String picpath;
 		public static int day;
 	    private static ResourceBundle bdl=null;
 	    static {
@@ -30,7 +35,13 @@ public class FrameFetchProduct extends AbsSaveProduct{
 	            bdl=ResourceBundle.getBundle("conf");
 	        supplierId = bdl.getString("supplierId");
 	        url = bdl.getString("url");
+	        picpath = bdl.getString("picpath");
 	        day = Integer.valueOf(bdl.getString("day"));
+	    }
+	    private static ApplicationContext factory;
+	    private static void loadSpringContext()
+	    {
+	        factory = new AnnotationConfigApplicationContext(AppContext.class);
 	    }
 	@Override
 //	sku:List(skuDTO) spu:List(spuDTO) image: Map(id;picName,List) 
@@ -75,7 +86,7 @@ public class FrameFetchProduct extends AbsSaveProduct{
       //得到所有的spu信息
         String[] spuStrings = spuData.split("\\r\\n");
         String[] spuArr = null;
-        List<SpuDTO> spuList = new LinkedList<SpuDTO>();
+        List<SpuDTO> spuList = new ArrayList<SpuDTO>();
 		for (int i = 1; i < spuStrings.length; i++) {
 			if (StringUtils.isNotBlank(spuStrings[i])) {
 				if (i==1) {
@@ -111,7 +122,7 @@ public class FrameFetchProduct extends AbsSaveProduct{
 		}
 		//处理sku信息
 		//处理图片信息
-		List<SkuDTO> skuList = new LinkedList<SkuDTO>();
+		List<SkuDTO> skuList = new ArrayList<SkuDTO>();
 		String[] imageStrings = imageData.split("\\r\\n");
 		String[] imageArr = null;
 		for (int j = 2; j < imageStrings.length; j++) {
@@ -153,6 +164,8 @@ public class FrameFetchProduct extends AbsSaveProduct{
 						continue;
 					}
         			sku.setMarketPrice(priceMap.get(item.getSpuId()).replace(",", ""));
+        			sku.setSalePrice("");
+        			sku.setSupplierPrice("");
         			sku.setColor(item.getColor());
         			sku.setProductDescription(item.getDescription());
         			sku.setSaleCurrency("EURO");
@@ -181,4 +194,13 @@ public class FrameFetchProduct extends AbsSaveProduct{
 		
 		return returnMap;
 	}
+	
+	public static void main(String[] args) {
+	  	//加载spring
+        loadSpringContext();
+        FrameFetchProduct stockImp =(FrameFetchProduct)factory.getBean("russocapriframe");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		stockImp.handleData("sku", supplierId, day, picpath);
+	}
+	
 }
