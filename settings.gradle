@@ -20,32 +20,9 @@ include 'iog-common-product'
 
 include 'iog-product-framework'
 include 'CodeGenrate'
+include 'CodeGenrate-CSV'
 include 'iog-common-product2'
 include 'project-muldatass-dao'
-
-
 include 'openapi-ice'
-
-
 include 'iog-facade-impl'
-
 include 'iog-sop'
-
-
-
-include 'spinnaker-order'
-
-
-
-
-include 'tony'
-include 'efashion'
-
-include 'log-template'
-include 'theclutcher-stock'
-include 'reebonzWiki-order'
-
-include 'deliberti-purchase'
-include 'itemInfo'
-
-include 'coltorti'
