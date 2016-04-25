@@ -2,11 +2,13 @@ package com.shangpin.iog.smets.util;
 
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,7 +23,8 @@ import com.shangpin.iog.service.ProductFetchService;
 @Component("mycrawler")
 public class MyCrawler {
 	private static Logger log = Logger.getLogger("info");
-	private static String supplierId = "201603181323";
+	private static String supplierId = "201604221726";
+	private static ExecutorService executor = new ThreadPoolExecutor(2, 10, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(10),new ThreadPoolExecutor.CallerRunsPolicy());
 	// feed
 	//  www.farfetch.com/cn/shopping/women/smets/items.aspx?q=smets
 	//	www.farfetch.com/cn/shopping/men/smets/items.aspx?q=smets
@@ -72,20 +75,22 @@ public class MyCrawler {
 					if (response.getStatus()==200) {
 						String htmlContentPage = response.getResponse();
 						Document docpage = Jsoup.parse(htmlContentPage);
+						
+						Elements pages = docpage.select("span[data-tstid=paginationTotal]");
+						Integer maxPage = Integer.valueOf(pages.get(0).ownText());
 						//获取页码
-						Elements pages = docpage.select("li[class=pagination-item float-left]");
-						Integer maxPage = 1;
-						for(int i = pages.size()-1;i>=1;i--){
-							Element page = pages.get(i);
-							if (page.select("a").size()!=0) {
-								if (StringUtils.isNotBlank(page.select("a").get(0).ownText())) {
-									maxPage = Integer.valueOf(page.select("a").get(0).ownText());
-									break;
-								}
-							}
-						}
+//						Elements pages = docpage.select("li[class=pagination-item float-left]");
+//						for(int i = pages.size()-1;i>=1;i--){
+//							Element page = pages.get(i);
+//							if (page.select("a").size()!=0) {
+//								if (StringUtils.isNotBlank(page.select("a").get(0).ownText())) {
+//									maxPage = Integer.valueOf(page.select("a").get(0).ownText());
+//									break;
+//								}
+//							}
+//						}
 						for (int i = 1; i <=maxPage; i++) {
-							
+//							executor.execute(new SaveTo(visitUrl1, i, num, category, supplierId, productFetchService));
 							//具体页码
 							HttpResponse response1 = HttpUtils.get("www.farfetch.com"+visitUrl1+"?page="+i);
 							System.out.println("www.farfetch.com"+visitUrl1+"?page="+i);
@@ -98,79 +103,66 @@ public class MyCrawler {
 									System.out.println(num+"*"+a.attr("href"));
 									log.info(num+"*"+a.attr("href"));
 					
-										try {
-											response1 = HttpUtils.get("www.farfetch.com"+a.attr("href"));
-											if(response1.getStatus()==200){
-												String img = "";
-												String matrial = "";
-												String brandName = "";
-												String description = "";
-												String skuName = "";
-												String gender = "";
-												String skuId = "";
-												
-												String htmlContentdet = response1.getResponse();
-												Document docdet = Jsoup.parse(htmlContentdet);
-												for(Element ele:docdet.select("a[class=relative js-video-thumb]")){
-													img += ele.select("img").attr("src")+";";
-												}
-//											for(Element ele:doc.select("#detailSizeDropdown").select("#SizesInformation_SizeDesc")){
-//												size += ele.attr("data-sizeid")+";";
-//											}
-												brandName = docdet.select("a[data-tstid=Label_ItemBrand]").get(0).ownText();
-												for(Element ele:docdet.select("div[data-tstid=Content_Composition&Care]").select("dd")){
-													if (ele.ownText().contains(">")) {
-														matrial +=ele.ownText().split(">")[1]+";";
-													}
-												}
-												skuName = docdet.select("h1[class=detail-brand detail-name]").get(0).select("span").get(0).ownText();
-												description = docdet.select("p[itemprop=description]").get(0).ownText();
-												skuId = docdet.select("span[itemprop=sku]").get(0).ownText();
-												gender = docdet.select("#divBreadCrumbInformation").select("a").get(1).ownText();
-												//保存到数据库
-												SkuDTO sku = new SkuDTO();
-												SpuDTO spu = new SpuDTO();
-												spu.setId(UUIDGenerator.getUUID());
-												sku.setId(UUIDGenerator.getUUID());
-												spu.setBrandName(brandName);
-												spu.setSpuId(skuId);
-												spu.setCategoryGender(gender);
-												spu.setCategoryName(category);
-												spu.setMaterial(matrial);
-												spu.setSupplierId(supplierId);
-												
-												
-												sku.setSupplierId(supplierId);
-												sku.setSpuId(skuId);
-												sku.setSkuId(skuId);
-												sku.setSaleCurrency("www.farfetch.com"+a.attr("href"));
-//											sku.setProductSize(size);
-												sku.setProductName(skuName);
-												sku.setProductDescription(description);
-												sku.setStock("1");
-												System.out.println("save sku");
-												productFetchService.saveSKU(sku);
-												System.out.println("save spu");
-												productFetchService.saveSPU(spu);
-												System.out.println("save spic");
-												productFetchService.savePicture(supplierId, null, skuId, Arrays.asList(img.split(";")));
-												//
-												img = "";
-//											 size = "";
-												skuId = "";
-												brandName = "";
-												description = "";
-												matrial = "";
-												skuName = "";
+									try {
+										response1 = HttpUtils.get("www.farfetch.com"+a.attr("href"));
+										if(response1.getStatus()==200){
+											String img = "";
+											String matrial = "";
+											String brandName = "";
+											String description = "";
+											String skuName = "";
+											String gender = "";
+											String skuId = "";
+											
+											String htmlContentdet = response1.getResponse();
+											Document docdet = Jsoup.parse(htmlContentdet);
+											for(Element ele:docdet.select("a[class=relative js-video-thumb]")){
+												img += ele.select("img").attr("src")+";";
 											}
-										} catch (Exception e) {
-											e.printStackTrace();
+											brandName = docdet.select("a[data-tstid=Label_ItemBrand]").get(0).ownText();
+											for(Element ele:docdet.select("div[data-tstid=Content_Composition&Care]").select("dd")){
+												if (ele.ownText().contains(">")) {
+													matrial +=ele.ownText().split(">")[1]+";";
+												}
+											}
+											skuName = docdet.select("h1[class=detail-brand detail-name]").get(0).select("span").get(0).ownText();
+											description = docdet.select("p[itemprop=description]").get(0).ownText();
+											skuId = docdet.select("span[itemprop=sku]").get(0).ownText();
+											gender = docdet.select("#divBreadCrumbInformation").select("a").get(1).ownText();
+											//保存到数据库
+											SkuDTO sku = new SkuDTO();
+											SpuDTO spu = new SpuDTO();
+											spu.setId(UUIDGenerator.getUUID());
+											sku.setId(UUIDGenerator.getUUID());
+											spu.setBrandName(brandName);
+											spu.setSpuId(skuId);
+											spu.setCategoryGender(gender);
+											spu.setCategoryName(category);
+											spu.setMaterial(matrial);
+											spu.setSupplierId(supplierId);
+											sku.setSupplierId(supplierId);
+											sku.setSpuId(skuId);
+											sku.setSkuId(skuId);
+											sku.setSaleCurrency("www.farfetch.com"+a.attr("href"));
+											sku.setProductName(skuName);
+											sku.setProductDescription(description);
+											sku.setStock("1");
+											System.out.println("save sku");
+											productFetchService.saveSKU(sku);
+											System.out.println("save spu");
+											productFetchService.saveSPU(spu);
+											System.out.println("save spic");
+											productFetchService.savePicture(supplierId, null, skuId, Arrays.asList(img.split(";")));
+											img = "";
+											skuId = "";
+											brandName = "";
+											description = "";
+											matrial = "";
+											skuName = "";
 										}
-										
-//									}
-									
-									
-									
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
 								}
 							}
 						}
@@ -324,28 +316,29 @@ public class MyCrawler {
 	public static void main(String[] args) {
 		
 		
-//		HttpResponse response = null;
-//		try {
-//			response = HttpUtils.get("http://www.farfetch.com/cn/shopping/men/smets/items.aspx?q=%2520smets&category=135976");
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		if (response.getStatus()==200) {
-//			String htmlContent = response.getResponse();
-//			Document doc = Jsoup.parse(htmlContent);
-//			Elements pages = doc.select("li[class=pagination-item float-left]");
-//			Integer maxPage = 1;
-//			for(int i = pages.size()-1;i>=1;i--){
-//				Element page = pages.get(i);
-//				if (page.select("a").size()!=0) {
-//					if (StringUtils.isNotBlank(page.select("a").get(0).ownText())) {
-//						maxPage = Integer.valueOf(page.select("a").get(0).ownText());
-//						break;
-//					}
-//				}
-//			}
-//			System.out.println(maxPage);
-//		}
+		HttpResponse response = null;
+		try {
+			response = HttpUtils.get("http://www.farfetch.com/cn/shopping/women/smets/items.aspx?q=%20smets");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (response.getStatus()==200) {
+			String htmlContent = response.getResponse();
+			Document doc = Jsoup.parse(htmlContent);
+			Elements pages = doc.select("span[data-tstid=paginationTotal]");
+			System.out.println(pages.get(0).ownText());
+			Integer maxPage = 1;
+			for(int i = pages.size()-1;i>=1;i--){
+				Element page = pages.get(i);
+				if (page.select("a").size()!=0) {
+					if (StringUtils.isNotBlank(page.select("a").get(0).ownText())) {
+						maxPage = Integer.valueOf(page.select("a").get(0).ownText());
+						break;
+					}
+				}
+			}
+			System.out.println(maxPage);
+		}
 		String[] feeds = new String[]{"www.farfetch.com/cn/shopping/women/smets/items.aspx?q=smets","http://www.farfetch.com/cn/shopping/men/smets/items.aspx?q=smets"};
 		new MyCrawler().crawling(feeds);
 		
