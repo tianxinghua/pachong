@@ -6,7 +6,6 @@ package com.shangpin.iog.dellogliostore.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -15,6 +14,7 @@ import com.shangpin.iog.dellogliostore.dto.SkuItem;
 import com.shangpin.iog.dellogliostore.dto.SkuItems;
 import com.shangpin.iog.dellogliostore.dto.SpuItem;
 import com.shangpin.iog.dellogliostore.stock.schedule.AppContext;
+import com.shangpin.sop.AbsUpdateProductStock;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 @Component("delloglioStore")
 public class GrabStockImp extends AbsUpdateProductStock {
-    private static java.util.logging.Logger logger = Logger.getLogger("info");
+    private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ApplicationContext factory;
@@ -41,9 +41,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
         supplierId = bdl.getString("supplierId");
     }
 
-    public Map<String, String> grabStock(Collection<String> skuNos) throws ServiceException {
-        Map<String, String> skuStock = new HashMap<>(skuNos.size());
-        Map<String, String> stockMap = new HashMap<>();
+    public Map<String, Integer> grabStock(Collection<String> skuNos) throws ServiceException {
+        Map<String, Integer> skuStock = new HashMap<>(skuNos.size());
+        Map<String, Integer> stockMap = new HashMap<>();
 
         try {
             logger.info("拉取dellogliostore数据开始");
@@ -90,14 +90,14 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
                 for (SkuItem skuItem : skuItems.getSkuItems()) {
                     String skuId = spuId + skuItem.getSize();
-                    stockMap.put(skuId, skuItem.getStock());
+                    stockMap.put(skuId, Integer.parseInt(skuItem.getStock()));
                 }
 
                 for (String skuNo : skuNos) {
                     if (stockMap.containsKey(skuNo)) {
                         skuStock.put(skuNo, stockMap.get(skuNo));
                     } else {
-                        skuStock.put(skuNo, "0");
+                        skuStock.put(skuNo, 0);
                     }
                 }
             }
