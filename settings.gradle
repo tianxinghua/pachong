@@ -1,28 +1,46 @@
-
 rootProject.name = 'iog'
-
 include 'project-framework'
-
 include "project-common"
-
 include 'iog-facade'
 include 'iog-facade-dubbo'
 include 'iog-order-dubbo'
-
 include 'project-dao'
-
 include 'iog-service'
-
 include 'iog-web-container'
-
-
 include 'iog-common-product'
-
 include 'iog-product-framework'
-include 'CodeGenrate'
-include 'CodeGenrate-CSV'
-include 'iog-common-product2'
-include 'project-muldatass-dao'
 include 'openapi-ice'
 include 'iog-facade-impl'
 include 'iog-sop'
+include 'tony'
+include 'log-template'
+include 'theclutcher-stock'
+include 'reebonzWiki-order'
+include 'deliberti-purchase'
+include 'itemInfo'
+include 'filippo'
+include 'filippo-stock'
+include 'atelier-ostore'
+include 'atelier-ostore-stock'
+include 'stefaniamode'
+include 'stefaniamode-stock'
+include 'Daniello'
+include 'Daniello-stock'
+include 'bagheera'
+include 'bagheera-stock'
+include 'deliberti'
+include 'deliberti-stock'
+include 'russoCapri'
+include 'smets'
+include 'coltorti-purchase'
+include 'coltorti'
+include 'fashionesta'
+include 'CodeGenrate'
+include 'iog-common-product2'
+include 'project-muldatass-dao'
+include 'efashion'
+include 'reebonzWiki-order'
+include 'smets-stock'
+include 'KIX'
+include 'KIX-order'
+include 'KIX-stock'
