@@ -42,5 +42,5 @@ public interface PictureDAO extends BaseMongodbDAO<ProductPicture,String> {
     public List<ProductPicture> findDistinctProductPictureBySupplierIdAndSpuIdAndSkuIdNull(String supplierId,String spuId) throws ServiceException;
 
 
-    public void updatePicStatus(String _id)throws ServiceException;
+    public void removePicture(String _id)throws ServiceException;
 }
