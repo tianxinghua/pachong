@@ -23,7 +23,7 @@ import com.shangpin.iog.service.ProductFetchService;
 @Component("mycrawler")
 public class MyCrawler {
 	private static Logger log = Logger.getLogger("info");
-	private static String supplierId = "201604221726";
+	private static String supplierId = "201604251004";
 	private static ExecutorService executor = new ThreadPoolExecutor(2, 10, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(10),new ThreadPoolExecutor.CallerRunsPolicy());
 	// feed
 	//  www.farfetch.com/cn/shopping/women/smets/items.aspx?q=smets
@@ -90,7 +90,7 @@ public class MyCrawler {
 //							}
 //						}
 						for (int i = 1; i <=maxPage; i++) {
-//							executor.execute(new SaveTo(visitUrl1, i, num, category, supplierId, productFetchService));
+//							executor.execute(new SaveTo(visitUrl1, i, ++num, category, supplierId, productFetchService));
 							//具体页码
 							HttpResponse response1 = HttpUtils.get("www.farfetch.com"+visitUrl1+"?page="+i);
 							System.out.println("www.farfetch.com"+visitUrl1+"?page="+i);

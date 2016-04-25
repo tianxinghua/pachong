@@ -15,6 +15,7 @@ import com.shangpin.iog.dante5.dto.Rss;
 import com.stanfy.gsonxml.GsonXml;
 import com.stanfy.gsonxml.GsonXmlBuilder;
 import com.stanfy.gsonxml.XmlParserCreator;
+
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -30,10 +31,10 @@ public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ApplicationContext factory;
-    private static void loadSpringContext()
-    {
-        factory = new AnnotationConfigApplicationContext(AppContext.class);
-    }
+//    private static void loadSpringContext()
+//    {
+//        factory = new AnnotationConfigApplicationContext(AppContext.class);
+//    }
     private static ResourceBundle bdl = null;
     private static String supplierId;
 
@@ -122,20 +123,20 @@ public class GrabStockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args) throws Exception {
-    	//加载spring
-        loadSpringContext();
-        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("dante5Stock");
-        //AbsUpdateProductStock grabStockImp = new GrabStockImp();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("dante5更新数据库开始");
-        try {
-            grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
-        } catch (Exception e) {
-            loggerError.error("dante5 更新库存失败。");
-            e.printStackTrace();
-        }
-        logger.info("dante5更新数据库结束");
-        System.exit(0);
+//    	//加载spring
+//        loadSpringContext();
+//        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("dante5Stock");
+//        //AbsUpdateProductStock grabStockImp = new GrabStockImp();
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("dante5更新数据库开始");
+//        try {
+//            grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+//        } catch (Exception e) {
+//            loggerError.error("dante5 更新库存失败。");
+//            e.printStackTrace();
+//        }
+//        logger.info("dante5更新数据库结束");
+//        System.exit(0);
     }
 
 }
