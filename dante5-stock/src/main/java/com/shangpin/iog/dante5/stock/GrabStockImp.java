@@ -4,6 +4,20 @@
  */
 package com.shangpin.iog.dante5.stock;
 
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
@@ -15,26 +29,16 @@ import com.shangpin.iog.dante5.dto.Rss;
 import com.stanfy.gsonxml.GsonXml;
 import com.stanfy.gsonxml.GsonXmlBuilder;
 import com.stanfy.gsonxml.XmlParserCreator;
-
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.stereotype.Component;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
 @Component("dante5Stock")
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
     private static ApplicationContext factory;
-//    private static void loadSpringContext()
-//    {
-//        factory = new AnnotationConfigApplicationContext(AppContext.class);
-//    }
+    private static void loadSpringContext()
+    {
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
     private static ResourceBundle bdl = null;
     private static String supplierId;
 
@@ -43,7 +47,6 @@ public class GrabStockImp extends AbsUpdateProductStock {
             bdl = ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
     }
-
     public Map<String, String> grabStock(Collection<String> skuNos) throws ServiceException {
         Map<String, String> skuStock = new HashMap<>(skuNos.size());
         Map<String, String> stockMap = new HashMap<>();
@@ -53,6 +56,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
         timeConfig.confSocketOutTime(600000);*/
         String url = "https://www.dante5.com/en-US/home/feedShangpin";
         String result = HttpUtil45.get(url, timeConfig, null);
+        System.out.println("success");
         HttpUtil45.closePool();
 
         if (result == null || "".equals(result)) {
@@ -123,20 +127,28 @@ public class GrabStockImp extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args) throws Exception {
-//    	//加载spring
-//        loadSpringContext();
-//        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("dante5Stock");
-//        //AbsUpdateProductStock grabStockImp = new GrabStockImp();
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//        logger.info("dante5更新数据库开始");
-//        try {
-//            grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
-//        } catch (Exception e) {
-//            loggerError.error("dante5 更新库存失败。");
-//            e.printStackTrace();
-//        }
-//        logger.info("dante5更新数据库结束");
-//        System.exit(0);
+
+    	
+    	 OutTimeConfig timeConfig = new OutTimeConfig(1000*60, 1000*60*20,1000*60*20);
+    	 /*        timeConfig.confRequestOutTime(600000);
+    	         timeConfig.confSocketOutTime(600000);*/
+//    	         String url = "http://www.dante5.com/en-US/home/feedShangpin";
+//    	         String result = HttpUtil45.get(url, timeConfig, null);
+//    	         HttpUtil45.closePool();
+    	//    	//加载spring
+        loadSpringContext();
+        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("dante5Stock");
+        //AbsUpdateProductStock grabStockImp = new GrabStockImp();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        logger.info("dante5更新数据库开始");
+        try {
+            grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+        } catch (Exception e) {
+            loggerError.error("dante5 更新库存失败。");
+            e.printStackTrace();
+        }
+        logger.info("dante5更新数据库结束");
+        System.exit(0);
     }
 
 }
