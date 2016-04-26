@@ -1,11 +1,5 @@
 #root
-log4j.rootLogger=WARN, spring
-log4j.appender.spring=org.apache.log4j.ConsoleAppender
-log4j.appender.spring.layout=org.apache.log4j.PatternLayout
-log4j.appender.spring.layout.ConversionPattern=%d %p [%c] - %m%n
-
-#global
-log4j.rootCategory=ERROR, file
+log4j.rootLogger=WARN, file
 log4j.appender.file=org.apache.log4j.RollingFileAppender
 log4j.appender.file.Encoding=UTF-8
 log4j.appender.file.File=log/${supplierName}${stock}-logs.log
@@ -44,7 +38,12 @@ log4j.appender.error.DatePattern=_yyyy-MM-dd'.log'
 #log4j.appender.error.MaxFileSize=1MB
 #log4j.appender.error.MaxBackupIndex=2
 log4j.appender.error.layout=org.apache.log4j.PatternLayout
+<#if stock=='-stock'>
+log4j.appender.error.layout.ConversionPattern=%m%n
+<#else>
 log4j.appender.error.layout.ConversionPattern=\r\n--------Start----------\r\n[%-5p] %d{yyyy-MM-dd HH\:mm\:ss,SSS} method\:%l%n%m%n\r\n----------End---------\r\n
+</#if>
+
 #not out to log4j.rootLogger
 log4j.additivity.error=false
 

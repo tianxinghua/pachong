@@ -192,7 +192,7 @@ public class FileDownloadController {
             
 
 //            System.out.print("kk ----------------- " + productBuffer.toString());
-            in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("gb2312")));
+            in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("utf-8")));
 
             out = new BufferedOutputStream(response.getOutputStream());
             byte[] data = new byte[1024];
@@ -411,13 +411,14 @@ public class FileDownloadController {
         
         try {
         	log.error("下载路径为+++++++++++++++++++++++++++++++++"+filePath);
-			zipfile = new ZipFile(new File(new Date().getTime()+""));
+        	long time = new Date().getTime();
+			zipfile = new ZipFile(time+"");
 
 			ZipParameters parameters = new ZipParameters();  
 		    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
 		    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
 			zipfile.addFolder(filePath, parameters);
-			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+new Date().getTime()+".zip", "UTF-8"));
+			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+time+".zip", "UTF-8"));
 
 			in = new BufferedInputStream(new FileInputStream (zipfile.getFile()));
 

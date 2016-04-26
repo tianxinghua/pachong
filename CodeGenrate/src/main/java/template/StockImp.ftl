@@ -2,9 +2,11 @@ package com.shangpin.iog.${supplierName}.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import com.shangpin.iog.${supplierName}.schedule.AppContext;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -16,14 +18,15 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created by houkun on 2015/9/14.
+ * Created by ${createdby} on 2015/9/14.
  */
 @Component("${supplierName}stock")
 public class StockImp  extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
+    private static LoggerUtil logError = LoggerUtil.getLogger("error");
+    
     private static ResourceBundle bdl=null;
     private static String supplierId;
-    private static String url;
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -31,48 +34,37 @@ public class StockImp  extends AbsUpdateProductStock {
     }
     static {
         if(null==bdl)
-            bdl=ResourceBundle.getBundle("conf");
+            bdl=ResourceBundle.getBundle("${profileName}");
         supplierId = bdl.getString("supplierId");
-        url = bdl.getString("url");
     }
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
     	
     	//获取库存元数据
-    	Map<String,String> skuMap = new HashMap<String,String>();
-
-        Map<String,String> returnMap = new HashMap<String,String>();
-        Iterator<String> iterator=skuNo.iterator();
-        //为供应商循环赋值
-        logger.info("循环赋值");
-        String skuId = "";
-        String stock = "0";
-        while (iterator.hasNext()){
-        	skuId = iterator.next();
-        	if (StringUtils.isNotBlank(skuId)) {
-        		if (skuMap.containsKey(skuId)) {
-        			stock = skuMap.get(skuId);
-        			returnMap.put(skuId, stock);
-				}else{
-					returnMap.put(skuId, "0");
-				}
-			}
+    	Map<String, String> skustock = new HashMap<String, String>();
+		Map<String,String> stockMap = new HashMap<String, String>();
+        
+        try{
+        	//业务实现
+        
+        
+        
+        }catch(Exception ex){
+        	logError.error(ex);
         }
-        return returnMap;
+        
+        for (String skuno : skuNo) {
+            if(stockMap.containsKey(skuno)){
+                skustock.put(skuno, stockMap.get(skuno));
+            } else{
+                skustock.put(skuno, "0");
+            }
+        }
+        return skustock;
     }
 
     public static void main(String[] args) throws Exception {
     	//加载spring
-        loadSpringContext();
-        StockImp stockImp =(StockImp)factory.getBean("${supplierName}stock");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("${supplierName}更新数据库开始");
-        try {
-			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
-		} catch (Exception e) {
-			logger.info("${supplierName}更新库存数据库出错"+e.toString());
-		}
-        logger.info("${supplierName}更新数据库结束");
-        System.exit(0);
+        loadSpringContext();       
     }
 }

@@ -1,27 +1,27 @@
 package com.shangpin.iog.smets.util;
 
 import java.util.LinkedList;
+
 /**
  * 保存要访问的url
+ * @param <T>
  */
-public class Queue {
+public class Queue<T> {
 	//链表队列
-	private LinkedList<String> queue = new LinkedList<String>();
+	private LinkedList<T> queue = new LinkedList<T>();
 	//入队
-	public void enQueue(String url){
+	public void enQueue(T url){
 		queue.add(url);
 	}
 	//出队
-	public String deQueue(){
+	public T deQueue(){
 		return queue.removeFirst();
 	}
 	//判断队列是否为空
 	public boolean isQueueEmpty(){
 		return queue.isEmpty();
 	}
-	//判断是否包含url
-	public boolean contians(String url){
-		return queue.contains(url);
+	public int size() {
+		return queue.size();
 	}
-	
 }

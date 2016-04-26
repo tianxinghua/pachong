@@ -23,7 +23,6 @@ allprojects {
 		natures 'org.springsource.ide.eclipse.gradle.core.nature'
 	}
     repositories {
-
         mavenLocal()
 //        maven {
 //            url "http://192.168.1.110:8888/nexus/content/groups/public/"
@@ -58,6 +57,7 @@ ext {
     log4j_version='1.2.17'
     jedis_version='2.6.2'
 	resteasy_version='3.0.7.Final'
+	spring_data_mongo='1.9.1.RELEASE'
 }
 
 
@@ -102,17 +102,17 @@ subprojects {
 				,'httpclient-4.5.jar','httpcore-4.4.1.jar','Ice-3.5.1.jar'
 				,'iog-common-product.jar','iog-service.jar','iog-sop.jar','jackson-annotations-2.4.4.jar'
 				,'jackson-core-2.4.4.jar','jackson-core-asl-1.9.13.jar','jackson-databind-2.4.4.jar'
-				,'jackson-mapper-asl-1.9.13.jar','jcl-over-slf4j-1.7.10.jar','jedis-2.6.2.jar'
+				,'jackson-mapper-asl-1.9.13.jar','jcl-over-slf4j-1.7.19.jar','jedis-2.6.2.jar'
 				,'json-lib-2.2-jdk15.jar','jsqlparser-0.9.1.jar','log4j-1.2.17.jar'
 				,'log4mongo-java-0.7.4.jar','lombok-1.14.8.jar','mail-1.4.4.jar'
 				,'mongo-java-driver-3.0.2.jar','mybatis-3.2.2.jar','mybatis-spring-1.2.0.jar'
 				,'mysql-connector-java-5.1.21.jar','openapi-ice.jar','pagehelper-3.7.3.jar'
 				,'poi-3.0.1-FINAL.jar','project-common.jar','project-dao.jar'
-				,'project-framework.jar','slf4j-api-1.7.12.jar','slf4j-log4j12-1.7.12.jar'
-				,'spring-aop-4.1.4.RELEASE.jar','spring-beans-4.1.4.RELEASE.jar','spring-context-4.1.4.RELEASE.jar'
-				,'spring-core-4.1.4.RELEASE.jar','spring-data-commons-1.10.0.RELEASE.jar','spring-data-mongodb-1.7.0.RELEASE.jar','spring-expression-4.1.4.RELEASE.jar'
-				,'spring-jdbc-4.1.4.RELEASE.jar','spring-tx-4.1.4.RELEASE.jar','xmlbeans-2.6.0.jar','stax-api-1.0.1.jar'
-				,'commons-collections-3.2.1.jar','openapi-api-sdk-3.0.jar']
+				,'project-framework.jar','slf4j-api-1.7.19.jar','slf4j-log4j12-1.7.12.jar'
+				,'spring-aop-4.2.5.RELEASE.jar','spring-beans-4.2.5.RELEASE.jar','spring-context-4.2.5.RELEASE.jar'
+				,'spring-core-4.2.5.RELEASE.jar','spring-data-commons-1.12.1.RELEASE.jar','spring-data-mongodb-1.9.1.RELEASE.jar','spring-expression-4.2.5.RELEASE.jar'
+				,'spring-jdbc-4.2.5.RELEASE.jar','spring-tx-4.2.5.RELEASE.jar','xmlbeans-2.6.0.jar','stax-api-1.0.1.jar'
+				,'commons-collections-3.2.1.jar','openapi-api-sdk-3.0.jar','iog-product-framework.jar','gson-2.3.1.jar']
 			def manifestCp = configurations.compile.files.collect  {
 				File file = it
 				if (publicJar.contains(file.name)) {

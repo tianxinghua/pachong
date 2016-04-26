@@ -38,11 +38,11 @@ public class SavePic {
 				if (StringUtils.isNotBlank(img)) {
 					try {
 						i++;
-						File f = new File(dirPath+"/"+steImg.getProductModel().replace("/", " ")+" "+steImg.getColor()+"_"+i+".jpg");
+						File f = new File(dirPath+"/"+steImg.getProductModel().replace("/", " ")+" "+steImg.getColor()+" ("+i+").jpg");
 						if (f.exists()) {
 							continue;
 						}
-						executor.execute(new DowmImage(img.trim(),steImg.getProductModel().replace("/", " ")+" "+steImg.getColor()+"_"+i+".jpg",dirPath));
+						executor.execute(new DowmImage(img.trim(),steImg.getProductModel().replace("/", " ")+" "+steImg.getColor()+" ("+i+").jpg",dirPath));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

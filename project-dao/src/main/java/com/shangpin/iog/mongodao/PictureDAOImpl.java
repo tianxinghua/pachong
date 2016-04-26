@@ -1,14 +1,14 @@
 package com.shangpin.iog.mongodao;
 
-import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.mongodomain.ProductPicture;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
-import static org.springframework.data.mongodb.core.query.Query.query;
-import static org.springframework.data.mongodb.core.query.Update.update;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
+import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.mongodomain.ProductPicture;
 
 /**
  * Created by lizhongren on 2016/4/21.
@@ -19,7 +19,8 @@ public class PictureDAOImpl {
     MongoTemplate mongoTemplate;
 
 
-    public void updatePicStatus(String _id) throws ServiceException {
-        mongoTemplate.updateFirst(query(where("id").is(_id)), update("status", "0"),ProductPicture.class) ;
+    public void removePicture(String _id) throws ServiceException {
+    	mongoTemplate.remove(query(where("id").is( _id )),ProductPicture.class);
+//        mongoTemplate.updateFirst(query(where("name").is( _id )), update("age", 66),Test.class) ;
     };
 }
