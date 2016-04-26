@@ -42,7 +42,5 @@ include 'log-template'
 include 'theclutcher-stock'
 include 'reebonzWiki-order'
 
-include 'deliberti-purchase'
-include 'itemInfo'
 
-include 'coltorti'
+include 'levelgroup-stock'

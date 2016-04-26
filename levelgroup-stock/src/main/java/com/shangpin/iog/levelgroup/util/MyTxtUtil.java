@@ -69,7 +69,7 @@ public class MyTxtUtil {
      */
     public static List<Product> readTXTFile() throws IOException {
         //解析txt文件
-        CsvReader cr = new CsvReader(new FileReader(localPath));
+        CsvReader cr = new CsvReader(new FileReader("e;/tmp/testtttttt.txt")); //localPath
         System.out.println("创建cr对象成功");
         //得到列名集合
         cr.readRecord();

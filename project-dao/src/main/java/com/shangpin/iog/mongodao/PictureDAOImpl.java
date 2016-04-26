@@ -20,6 +20,6 @@ public class PictureDAOImpl {
 
 
     public void updatePicStatus(String _id) throws ServiceException {
-        mongoTemplate.updateFirst(query(where("name").is("Joe")), update("age", 35),ProductPicture.class) ;
+        mongoTemplate.updateFirst(query(where("id").is(_id)), update("status", "0"),ProductPicture.class) ;
     };
 }

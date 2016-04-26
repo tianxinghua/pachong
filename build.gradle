@@ -23,13 +23,17 @@ allprojects {
 		natures 'org.springsource.ide.eclipse.gradle.core.nature'
 	}
     repositories {
+
         mavenLocal()
-        maven {
-            url "http://192.168.1.110:8888/nexus/content/groups/public/"
-        }
+//        maven {
+//            url "http://192.168.1.110:8888/nexus/content/groups/public/"
+//        }
         maven {
         	url "http://192.168.1.212:8081/nexus/content/groups/public/"
         }
+//        maven {
+//            url 'https://repo.spring.io/libs-milestone'
+//        }
         mavenCentral()
     }
 
@@ -46,7 +50,7 @@ ext {
     } else {
         profile = "development"
     }
-    springVersion='4.1.4.RELEASE'
+    springVersion='4.2.5.RELEASE'
     slf4jversion='1.7.12'
     codehaus_jackson_version='1.9.13'
     fasterxml_jackson_version='2.4.4'
@@ -142,7 +146,7 @@ subprojects {
     repositories {
         mavenLocal()
         maven {
-            url "http://192.168.1.110:8888/nexus/content/groups/public/"
+            url "http://192.168.1.212:8081/nexus/content/groups/public/"
         }
         mavenCentral()
     }
