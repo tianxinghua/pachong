@@ -1,20 +1,24 @@
-package com.shangpin.iog.smets.util;
+package com.shangpin.iog.smets.queue;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-public class LinkQueue {
+import com.shangpin.iog.smets.util.Queue;
+
+public class PicQueue {
 	//已访问的url
 	private static Set<String> visitedUrl = new HashSet<String>();
 	//等待访问的url
-	private static Queue unVisitedUrl = new Queue();
+	private static Queue<String> unVisitedUrl = new Queue<String>();
 	//所有产品队列
-	private static Queue allSkuUrl = new Queue();
+	private static Queue<String> allSkuUrl = new Queue<String>();
 	//获得url队列
-	public static Queue getUnVisitedUrl(){
+	public static Queue<String> getUnVisitedUrl(){
 		return unVisitedUrl;
 	}
-	public static Queue getAllSkuUrl(){
+	public static Queue<String> getAllSkuUrl(){
 		return allSkuUrl;
 	}
 	//添加到访问过的url
@@ -27,10 +31,10 @@ public class LinkQueue {
 	}
 	//未访问过的出队列
 	public static String unVisitEdUrlDeQueue(){
-		return (String) unVisitedUrl.deQueue();
+		return unVisitedUrl.deQueue();
 	}
 	public static String allSkuUrlDeQueue(){
-		return (String) allSkuUrl.deQueue();
+		return  allSkuUrl.deQueue();
 	}
 	//未访问入队
 	public static void addUnvisitedUrl(String url){
@@ -42,6 +46,9 @@ public class LinkQueue {
 	//获得已访问的url数目
 	public static int getVisitedUrlNum(){
 		return visitedUrl.size();
+	}
+	public static int getunVisitedUrlNum(){
+		return unVisitedUrl.size();
 	}
 	//判断未访问url是否为空
 	public static boolean unVisitedUrlsEmpty(){

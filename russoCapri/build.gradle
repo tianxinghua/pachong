@@ -4,6 +4,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile(
             project(':iog-common-product'),
+            project(':iog-product-framework'),
     )
 }
 
@@ -19,7 +20,7 @@ jar {
   //  }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.russoCapri.StartUp'
+        attributes 'Main-Class': 'com.shangpin.iog.russoCapri.service.FrameFetchProduct'
    //     attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }

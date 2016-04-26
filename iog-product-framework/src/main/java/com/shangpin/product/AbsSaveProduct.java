@@ -315,7 +315,7 @@ public abstract class AbsSaveProduct {
 				for (String url : e.getValue()) {
 					if (StringUtils.isNotEmpty(url)) {
 						id = e.getKey().split(";")[0];
-						imgname = e.getKey().split(";")[1]+"_"+n+++".jpg";
+						imgname = e.getKey().split(";")[1]+" ("+n+++").jpg";
 						imagePath = picpath+imgname;
 						imagePath = ImageUtils.downImage(url, picpath,imgname);
 						result = ImageUtils.checkImageSize(imagePath);

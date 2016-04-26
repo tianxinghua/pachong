@@ -75,35 +75,49 @@ public class MyFtpUtil {
 		String dateStr = format.format(new Date());
 		fileName = dateStr + ".csv";
         
-		//创建FTPClient
-        FTPClient ftp = new FTPClient();
-        // 连接服务器
-        try {
-            ftp.setRemoteHost(HOST);
-            ftp.setRemotePort(Integer.parseInt(PORT));
-            ftp.setTimeout(1000*60*30);
-            ftp.connect();
-            //登陆
-            ftp.login(USER, PASSWORD);
-            //连接模式
-            ftp.setConnectMode(FTPConnectMode.PASV);
-            ftp.chdir(PATH);
-            //ASCII方式：传输xml文本文件
-            ftp.setType(FTPTransferType.ASCII);
-            // 获取 XML文件到本地
-            ftp.put(localFile,fileName);
-            logger.info("文件"+fileName+"上传成功!");
-        } catch (Exception e) {
-            try {
-            	this.upLoad();
-				SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject, "levelgroup订单上传失败", messageType);
-			} catch (Exception e1) {
-				e1.printStackTrace();
+		int i = 0;
+		while(i<10){
+			//创建FTPClient
+	        FTPClient ftp = new FTPClient();
+	        // 连接服务器
+	        try {
+	            ftp.setRemoteHost(HOST);
+	            ftp.setRemotePort(Integer.parseInt(PORT));
+	            ftp.setTimeout(1000*60*30);
+	            ftp.connect();
+	            //登陆
+	            ftp.login(USER, PASSWORD);
+	            //连接模式
+	            ftp.setConnectMode(FTPConnectMode.PASV);
+	            ftp.chdir(PATH);
+	            //ASCII方式：传输xml文本文件
+	            ftp.setType(FTPTransferType.ASCII);
+	            // 获取 XML文件到本地
+	            ftp.put(localFile,fileName);
+	            logger.info("文件"+fileName+"上传成功!");
+	            break;
+	        } catch (Exception e) {
+//	            try {
+//	            	this.upLoad();
+//					SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject, "levelgroup订单上传失败", messageType);
+//				} catch (Exception e1) {
+//					e1.printStackTrace();
+//				} 
+	        	loggerError.error(e);	            
+	        }  finally {
+	        	i++;
+	            close(ftp);
+	        }
+		}
+		
+		if(i == 10){
+			try {
+				SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject, "levelgroup订单上传ftp("+HOST+") 10遍都没有成功。。。。。请查找原因。", messageType);
+			} catch (Exception e) {
+				loggerError.error(e);
 			}
-            e.printStackTrace();
-        }  finally {
-            close(ftp);
-        }
+		}
+		
     }
     
     public void uploadCancel(){
@@ -113,30 +127,36 @@ public class MyFtpUtil {
 		String dateStr = format.format(new Date());
 		fileName = dateStr + ".csv";
         
-		//创建FTPClient
-        FTPClient ftp = new FTPClient();
-        // 连接服务器
-        try {
-            ftp.setRemoteHost(HOST);
-            ftp.setRemotePort(Integer.parseInt(PORT));
-            ftp.setTimeout(1000*60*30);
-            ftp.connect();
-            //登陆
-            ftp.login(USER, PASSWORD);
-            //连接模式
-            ftp.setConnectMode(FTPConnectMode.PASV);
-            ftp.chdir(PATH2);
-            //ASCII方式：传输xml文本文件
-            ftp.setType(FTPTransferType.ASCII);
-            // 获取 XML文件到本地
-            ftp.put(localFile2,fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (FTPException e) {
-            e.printStackTrace();
-        }  finally {
-            close(ftp);
-        }
+		int i=0;
+		while(i<10){
+			//创建FTPClient
+	        FTPClient ftp = new FTPClient();
+	        // 连接服务器
+	        try {
+	            ftp.setRemoteHost(HOST);
+	            ftp.setRemotePort(Integer.parseInt(PORT));
+	            ftp.setTimeout(1000*60*30);
+	            ftp.connect();
+	            //登陆
+	            ftp.login(USER, PASSWORD);
+	            //连接模式
+	            ftp.setConnectMode(FTPConnectMode.PASV);
+	            ftp.chdir(PATH2);
+	            //ASCII方式：传输xml文本文件
+	            ftp.setType(FTPTransferType.ASCII);
+	            // 获取 XML文件到本地
+	            ftp.put(localFile2,fileName);
+	            break;
+	        } catch (IOException e) {
+	        	loggerError.error(e);
+	        } catch (FTPException e) {
+	        	loggerError.error(e);
+	        }  finally {
+	        	i++;
+	            close(ftp);
+	        }
+		}
+		
     
     }
 

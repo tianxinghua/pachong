@@ -1,20 +1,22 @@
-package com.shangpin.iog.smets.util;
+package com.shangpin.iog.smets.queue;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import com.shangpin.iog.smets.util.Queue;
 
 public class LinkQueue {
 	//已访问的url
 	private static Set<String> visitedUrl = new HashSet<String>();
 	//等待访问的url
-	private static Queue unVisitedUrl = new Queue();
+	private static Queue<String> unVisitedUrl = new Queue<String>();
 	//所有产品队列
-	private static Queue allSkuUrl = new Queue();
+	private static Queue<String> allSkuUrl = new Queue<String>();
 	//获得url队列
-	public static Queue getUnVisitedUrl(){
+	public static Queue<String> getUnVisitedUrl(){
 		return unVisitedUrl;
 	}
-	public static Queue getAllSkuUrl(){
+	public static Queue<String> getAllSkuUrl(){
 		return allSkuUrl;
 	}
 	//添加到访问过的url
