@@ -192,7 +192,7 @@ public class FileDownloadController {
             
 
 //            System.out.print("kk ----------------- " + productBuffer.toString());
-            in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("utf-8")));
+            in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("gb2312")));
 
             out = new BufferedOutputStream(response.getOutputStream());
             byte[] data = new byte[1024];
@@ -314,8 +314,6 @@ public class FileDownloadController {
         try {
         	//要下载的文件列表
         	List<ProductDTO> pList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
-        	//TODO 获取dto按条件拼接图片名称
-        	log.error(productSearchDTO.getSupplierName()+"下载文件列表长度"+pList.size());
         	
         	NameGenContext context = new NameGenContext(supplier);
         	nameMap = context.operate(pList);
@@ -325,14 +323,12 @@ public class FileDownloadController {
         	zipfile = new ZipFile(new File(new Date().getTime()+""));
         	ArrayList<File> filesToAdd = new ArrayList<File>();
     		//供应商pic的文件夹
-    		//TODO 具体位置待定
-        	log.error(downloadpath+productSearchDTO.getSupplierName()+"/");
     		File dir = new File(downloadpath+productSearchDTO.getSupplierName()+"/");
     		String key = "";
     		if (dir.isDirectory()) {
     			File[] files = dir.listFiles();
     			for (File file : files) {
-    				log.error(file.getName());
+    				//TODO  替换filename中的转义字符
     				if (nameMap.containsKey(file.getName().split("_")[0])) {
     					key = file.getName().split("_")[0];
     					if(null==nameMap.get(key)){
