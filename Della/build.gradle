@@ -3,11 +3,12 @@
 dependencies {
     compile(
 
-            "commons-dbcp:commons-dbcp:1.4",
+            //"commons-dbcp:commons-dbcp:1.4",
             "net.sourceforge.javacsv:javacsv:2.0",
             project(':project-common'),
             project(':iog-common-product'),
-            "commons-net:commons-net:3.3"
+            "commons-net:commons-net:3.3",
+            project(':iog-product-framework')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 

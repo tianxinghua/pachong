@@ -66,8 +66,10 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
             String stock2 = stockMap2.get(skuno);
             if (StringUtils.isNotEmpty(stock))
                 skustock.put(skuno, Integer.valueOf(stock));
-            else if (StringUtils.isNotEmpty(stock2))
+            else if (StringUtils.isNotEmpty(stock2)){
+            	logger.info(skuno+"===通过文件获取库存====");
                 skustock.put(skuno, Integer.valueOf(stock2));
+            }            	
             else
                 skustock.put(skuno, 0);
         }
@@ -76,10 +78,16 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
     }
 
     private static Map<String,String> getStockList(){
-        boolean flag = true;
+        boolean flag = false;
+        int j=0;
         try {
-            flag = MyTxtUtil.txtDownload();
-        } catch (MalformedURLException e) {
+        	while(!flag && j<10){
+        		logger.info("=================第"+j+"次开始下载文件=================="); 
+        		flag = MyTxtUtil.txtDownload();
+        		j++;
+        	}
+            
+        } catch (Exception e) {
             e.printStackTrace();
             loggerError.error("下载LEVELGROUP文件失败!"+e.getMessage());
         }
@@ -89,7 +97,7 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
             try {
                 list = MyTxtUtil.readTXTFile();
             } catch (Exception e) {
-                e.printStackTrace();
+            	loggerError.error("读取txt文件时出错====="+e); 
             }
             for (int i = 0;i<list.size();i++){
                 map.put(list.get(i).getVARIANT_SKU(),list.get(i).getSTOCK_LEVEL());

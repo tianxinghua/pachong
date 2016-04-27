@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +35,10 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
+import com.shangpin.product.AbsSaveProduct;
 
 @Component("itemInfo")
-public class FetchProduct {
+public class FetchProduct extends AbsSaveProduct{
 
 	public static String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 			+ "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n"
@@ -50,18 +52,24 @@ public class FetchProduct {
     private static Logger loggerError = Logger.getLogger("error");
 	private static String supplierId = "";
 	private static ResourceBundle bdl=null;
-	private static int day;
+//	private static int day;
 	
 	@Autowired
 	public ProductFetchService productFetchService;
 	@Autowired
 	ProductSearchService productSearchService;
+	
+	private static String biaoshi = "0";
+	private static String localPath = "";
+	
 
 	static {
         if(null==bdl)
          bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
-        day = Integer.valueOf(bdl.getString("day"));
+//        day = Integer.valueOf(bdl.getString("day"));
+        biaoshi = bdl.getString("biaoshi");
+        localPath = bdl.getString("localPath");
     }
 	
 	/**
@@ -71,12 +79,30 @@ public class FetchProduct {
 	 * @param sopAction
 	 *            sopAction的地址
 	 */
-	public void fetchProductAndSave(String url) {
+	public Map<String, Object> fetchProductAndSave() {
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		List<SkuDTO> skuList = new ArrayList<SkuDTO>();
+		List<SpuDTO> spuList = new ArrayList<SpuDTO>();
+		Map<String,List<String>> imageMap = new HashMap<String, List<String>>();
 		
 		try {
+			
+			logger.info("localPath============"+localPath);
+			logger.info("biaoshi==============="+biaoshi);
+			//拉取数据
+			//从网站拉取数据，保存到文件
+			if("0".equals(biaoshi)){
+				Test t= new Test();
+				t.getResAsStream(
+						"http://service.alducadaosta.com/EcSrv/Services.asmx?op=GetSku4Platform",
+						"http://service.alducadaosta.com/EcSrv/GetSku4Platform",
+						"text/xml; charset=UTF-8",
+						localPath);
+			}
 
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(
-					url));
+					localPath));
 			StringBuilder stringBuilder = new StringBuilder();
 			String content = "";
 			while ((content = bufferedReader.readLine()) != null) {
@@ -88,7 +114,7 @@ public class FetchProduct {
 			if(msg != null){
 				SOAPBody body = msg.getSOAPBody();
 				Iterator<SOAPElement> iterator = body.getChildElements();
-				saveSpuDTO(iterator);
+				saveSpuDTO(iterator,skuList,spuList,imageMap);
 				logger.info("==============================saveSpuDTO  over============================");
 			}
 			
@@ -96,6 +122,12 @@ public class FetchProduct {
 			ex.printStackTrace();
 			loggerError.error(ex); 
 		}
+		
+		returnMap.put("sku", skuList);
+		returnMap.put("spu", spuList);
+		returnMap.put("image", imageMap);
+		return returnMap;
+		
 	}
 
 	
@@ -124,17 +156,17 @@ public class FetchProduct {
 	 * @param iterator
 	 * @throws Exception 
 	 */
-	public void saveSpuDTO(Iterator<SOAPElement> iterator){
+	public void saveSpuDTO(Iterator<SOAPElement> iterator,List<SkuDTO> skuList,List<SpuDTO> spuList,Map<String,List<String>> imageMap){
 
-		Date startDate,endDate= new Date();
-		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
-		//获取原有的SKU 仅仅包含价格和库存
-		Map<String,SkuDTO> skuDTOMap = new HashedMap();
-		try {
-			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
+//		Date startDate,endDate= new Date();
+//		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+//		//获取原有的SKU 仅仅包含价格和库存
+//		Map<String,SkuDTO> skuDTOMap = new HashedMap();
+//		try {
+//			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+//		} catch (ServiceException e) {
+//			e.printStackTrace();
+//		}
 		
 		while(iterator.hasNext()){
 			SOAPElement element = iterator.next();
@@ -215,11 +247,15 @@ public class FetchProduct {
 					else if(nodeName.equals("market_price")){  //必填
 						if(elementSku.getValue() != null){
 							sku.setMarketPrice(elementSku.getValue());
+						}else{
+							sku.setMarketPrice("");
 						}
 					}
 					else if(nodeName.equals("supply_price")){  //必填
 						if(elementSku.getValue() != null){
 							sku.setSupplierPrice(elementSku.getValue());
+						}else{
+							sku.setSupplierPrice("");
 						}
 					}
 					else if(nodeName.equals("color")){  //必填
@@ -282,69 +318,74 @@ public class FetchProduct {
 					}
 					
 				}
-				try{
-					//保存sku
-					if(skuDTOMap.containsKey(sku.getSkuId())){
-						skuDTOMap.remove(sku.getSkuId());
-					}
-					productFetchService.saveSKU(sku);					
-					
-				}catch(Exception e){
-					try {
-                        if(null != e.getMessage() && e.getMessage().equals("数据插入失败键重复")){
-                            //更新价格和库存
-                            productFetchService.updatePriceAndStock(sku);
-                        } else{
-                            e.printStackTrace();
-                        }
-
-                    } catch (ServiceException e1) {
-                        e1.printStackTrace();
-                    }
-				}
+				sku.setSalePrice(""); 
+				skuList.add(sku);
+//				try{
+//					//保存sku
+//					if(skuDTOMap.containsKey(sku.getSkuId())){
+//						skuDTOMap.remove(sku.getSkuId());
+//					}
+//					productFetchService.saveSKU(sku);					
+//					
+//				}catch(Exception e){
+//					try {
+//                        if(null != e.getMessage() && e.getMessage().equals("数据插入失败键重复")){
+//                            //更新价格和库存
+//                            productFetchService.updatePriceAndStock(sku);
+//                        } else{
+//                            e.printStackTrace();
+//                        }
+//
+//                    } catch (ServiceException e1) {
+//                        e1.printStackTrace();
+//                    }
+//				}
 				
+				imageMap.put(sku.getSkuId()+";"+sku.getProductCode()+" "+sku.getColor(), picList);
 
-				try{
-					if(spuId.length()>0 && skuId.length()>0 && picList.size()>0){						
-						productFetchService.savePicture(supplierId, null, skuId, picList);
-					}
-					
-				}catch(Exception e){
-					e.printStackTrace();
-				}
+//				try{
+//					if(spuId.length()>0 && skuId.length()>0 && picList.size()>0){						
+//						productFetchService.savePicture(supplierId, null, skuId, picList);
+//					}
+//					
+//				}catch(Exception e){
+//					e.printStackTrace();
+//				}
 				
-				try{
-					//保存spu
-					System.out.println(spu.getSpuId());
-					productFetchService.saveSPU(spu);
-				}catch(Exception e){
-					try{
-	            		productFetchService.updateMaterial(spu);
-	            	}catch(ServiceException ex){
-//	            		logger.error(ex.getMessage());
-	            		ex.printStackTrace();
-	            	}
-					e.printStackTrace();
-				}
+				spuList.add(spu);
+				
+//				try{
+//					//保存spu
+//					System.out.println(spu.getSpuId());
+//					productFetchService.saveSPU(spu);
+//				}catch(Exception e){
+//					try{
+//	            		productFetchService.updateMaterial(spu);
+//	            	}catch(ServiceException ex){
+////	            		logger.error(ex.getMessage());
+//	            		ex.printStackTrace();
+//	            	}
+//					e.printStackTrace();
+//				}
 				
 				
 			}else if(element.getChildElements().hasNext()){
-				saveSpuDTO(element.getChildElements());
+				saveSpuDTO(element.getChildElements(),skuList,spuList,imageMap);
 			}
 		}
 		
-		//更新网站不再给信息的老数据
-		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
-			 Map.Entry<String,SkuDTO> entry =  itor.next();
-			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
-				entry.getValue().setStock("0");
-				try {
-					productFetchService.updatePriceAndStock(entry.getValue());
-				} catch (ServiceException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+//		//更新网站不再给信息的老数据
+//		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+//			 Map.Entry<String,SkuDTO> entry =  itor.next();
+//			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+//				entry.getValue().setStock("0");
+//				try {
+//					productFetchService.updatePriceAndStock(entry.getValue());
+//				} catch (ServiceException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
 		
 	}
 

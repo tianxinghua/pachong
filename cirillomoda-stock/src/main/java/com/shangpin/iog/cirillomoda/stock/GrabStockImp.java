@@ -101,9 +101,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
                 } else {
                     skuStock.put(skuNo, "0");
                 }
-            }
-
-            logger.info("cirillomoda赋值库存数据成功");
+            }            
             logger.info("拉取cirillomoda数据成功");
         } catch (Exception e) {
             e.printStackTrace();

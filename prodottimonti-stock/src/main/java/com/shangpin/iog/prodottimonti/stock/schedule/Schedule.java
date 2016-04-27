@@ -41,7 +41,7 @@ public class Schedule {
 	
 	
 	@SuppressWarnings("deprecation")
-	@Scheduled(cron="${jobsSchedule}")
+	//@Scheduled(cron="${jobsSchedule}")
 	public void start(){
 		System.out.println(new Date().toLocaleString()+"开始更新");
     	Murder mur = Murder.getMur();
