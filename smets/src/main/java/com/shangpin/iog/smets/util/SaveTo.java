@@ -70,16 +70,19 @@ public class SaveTo extends Thread{
 							for(Element ele:docdet.select("a[class=relative js-video-thumb]")){
 								img += ele.select("img").attr("src")+";";
 							}
-							brandName = docdet.select("a[data-tstid=Label_ItemBrand]").get(0).ownText();
-							for(Element ele:docdet.select("div[data-tstid=Content_Composition&Care]").select("dd")){
-								if (ele.ownText().contains(">")) {
-									matrial +=ele.ownText().split(">")[1]+";";
-								}
-							}
-							skuName = docdet.select("h1[class=detail-brand detail-name]").get(0).select("span").get(0).ownText();
-							description = docdet.select("p[itemprop=description]").get(0).ownText();
+//							brandName = docdet.select("a[data-tstid=Label_ItemBrand]").get(0).ownText();
+//							Elements select = docdet.select("div[data-tstid=Content_Composition&Care]").select("dd");
+//							for(Element ele:select){
+//								if (ele.ownText().contains(">")) {
+//									matrial +=ele.ownText().split(">")[1]+";";
+//								}
+//							}
+//							String barcode = select.last().ownText();
+
+//							skuName = docdet.select("h1[class=detail-brand detail-name]").get(0).select("span").get(0).ownText();
+//							description = docdet.select("p[itemprop=description]").get(0).ownText();
 							skuId = docdet.select("span[itemprop=sku]").get(0).ownText();
-							gender = docdet.select("#divBreadCrumbInformation").select("a").get(1).ownText();
+//							gender = docdet.select("#divBreadCrumbInformation").select("a").get(1).ownText();
 							//保存到数据库
 							SkuDTO sku = new SkuDTO();
 							SpuDTO spu = new SpuDTO();
@@ -91,7 +94,7 @@ public class SaveTo extends Thread{
 							spu.setCategoryName(category);
 							spu.setMaterial(matrial);
 							spu.setSupplierId(supplierId);
-							
+//							sku.setBarcode(barcode);
 							
 							sku.setSupplierId(supplierId);
 							sku.setSpuId(skuId);
@@ -100,13 +103,13 @@ public class SaveTo extends Thread{
 							sku.setProductName(skuName);
 							sku.setProductDescription(description);
 							sku.setStock("1");
-							//sku 入队
-							System.out.println("sku入队~~~~~~~~~~~~~~~~");
-							SkuQueue.addUnvisitedSku(sku);
-							//spu 入队
-							System.out.println("spu入队~~~~~~~~~~~~~~~~~");
-							SpuQueue.addUnvisitedSpu(spu);
-							//pic 入队
+//							//sku 入队
+//							System.out.println("sku入队~~~~~~~~~~~~~~~~");
+//							SkuQueue.addUnvisitedSku(sku);
+//							//spu 入队
+//							System.out.println("spu入队~~~~~~~~~~~~~~~~~");
+//							SpuQueue.addUnvisitedSpu(spu);
+//							//pic 入队
 							System.out.println("pic入队~~~~~~~~~~~~~~~~~~~");
 							PicQueue.addUnvisitedUrl(skuId+"^"+img);
 							img = "";

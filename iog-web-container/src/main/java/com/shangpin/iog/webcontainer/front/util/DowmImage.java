@@ -39,6 +39,7 @@ public class DowmImage extends Thread{
 	        File f = new File(filepath+"/"+filename);  
 	        if (f.exists()) {
 	        	log.error("image has been download");
+	        	return;
 			}
 	    	HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 			CloseableHttpClient httpClient = httpClientBuilder.build();
