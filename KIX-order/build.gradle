@@ -21,7 +21,7 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.forzieri.Startup'
+        attributes 'Main-Class': 'com.shangpin.iog.kix.Startup'
         attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }

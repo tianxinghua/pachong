@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Created by houkun on 2015/9/14.
@@ -41,6 +42,10 @@ public class StockImp  extends AbsUpdateProductStock {
     	
     	//获取库存元数据
     	Map<String, String> skuMap = new KIXUtil().getStockMap();
+    	System.out.println(skuMap.size());
+    	for (Entry<String, String> string : skuMap.entrySet()) {
+			System.out.println(string.getKey()+"::::"+string.getValue()+";");
+		}
         Map<String,String> returnMap = new HashMap<String,String>();
         Iterator<String> iterator=skuNo.iterator();
         //为供应商循环赋值
