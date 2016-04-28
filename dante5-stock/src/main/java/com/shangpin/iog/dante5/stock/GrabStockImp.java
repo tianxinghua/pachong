@@ -29,12 +29,6 @@ import java.util.*;
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
-    private static ApplicationContext factory;
-//    private static void loadSpringContext()
-//    {
-//        factory = new AnnotationConfigApplicationContext(AppContext.class);
-//    }
     private static ResourceBundle bdl = null;
     private static String supplierId;
 
@@ -48,13 +42,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
         Map<String, String> skuStock = new HashMap<>(skuNos.size());
         Map<String, String> stockMap = new HashMap<>();
 
-        OutTimeConfig timeConfig = new OutTimeConfig(1000*60, 1000*60*20,1000*60*20);
-/*        timeConfig.confRequestOutTime(600000);
-        timeConfig.confSocketOutTime(600000);*/
+        OutTimeConfig timeConfig = new OutTimeConfig(1000*60*10, 1000*60*20,1000*60*20);
         String url = "https://www.dante5.com/en-US/home/feedShangpin";
+        System.out.println(url);
         String result = HttpUtil45.get(url, timeConfig, null);
-        HttpUtil45.closePool();
-
+        System.out.println(result.length()+"success");
         if (result == null || "".equals(result)) {
             logger.error("从接口未取到数据. url : " + url);
             throw new ServiceException();
@@ -66,6 +58,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
                 try {
                     return XmlPullParserFactory.newInstance().newPullParser();
                 } catch (Exception e) {
+                	e.printStackTrace();
                     throw new RuntimeException(e);
                 }
             }
@@ -81,7 +74,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
         if (rss == null || rss.getChannel() == null) {
             return skuStock;
         }
-
+        System.out.println("拉取dante5数据开始");
         try {
             logger.info("拉取dante5数据开始");
 
