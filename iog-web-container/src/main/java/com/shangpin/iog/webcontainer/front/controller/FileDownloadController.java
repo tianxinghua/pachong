@@ -14,7 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +51,7 @@ import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SupplierService;
 import com.shangpin.iog.webcontainer.front.strategy.NameGenContext;
 import com.shangpin.iog.webcontainer.front.strategy.PcodeAsName;
+import com.shangpin.iog.webcontainer.front.util.NewSavePic;
 import com.shangpin.iog.webcontainer.front.util.SavePic;
 
 
@@ -374,7 +379,17 @@ public class FileDownloadController {
     	BufferedInputStream in = null;
     	BufferedOutputStream out = null;
     	String path = request.getSession().getServletContext().getRealPath("");  
-        String fileName = file.getOriginalFilename();  
+    	
+    	String parameter = request.getParameter("threadnum");
+    	ThreadPoolExecutor executor = null;
+    	if (parameter.equals("")||parameter.contains("-")) {
+    		executor = new ThreadPoolExecutor(3, 30, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
+		}else{
+			executor = new ThreadPoolExecutor(Integer.valueOf(parameter), Integer.valueOf(parameter),0L, TimeUnit.MILLISECONDS,new LinkedBlockingQueue<Runnable>());
+		}
+        NewSavePic newSavePic = new NewSavePic(executor);
+        
+    	String fileName = file.getOriginalFilename();  
         File targetFile = new File(path, fileName);  
         //保存  
         try {  
@@ -387,9 +402,10 @@ public class FileDownloadController {
             e.printStackTrace();  
         }  
         SavePic savePic = new SavePic();
-        String filePath = savePic.saveImg(targetFile);
+//        String filePath = savePic.saveImg(targetFile);
+        String filePath = newSavePic.saveImg(targetFile);
         log.error(targetFile.getName()+"下载路径为+++++++++++++++++++++++++++++++++"+filePath);
-        ThreadPoolExecutor executor = savePic.getExecutor();
+//        ThreadPoolExecutor executor = savePic.getExecutor();
         while(true){
         	if(executor.getActiveCount()==0){
         		log.error("线程活动数为0");
