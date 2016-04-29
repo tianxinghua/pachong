@@ -29,8 +29,6 @@ import com.shangpin.iog.service.SkuPriceService;
 public class FetchProduct {
 
 	private static Logger logger = Logger.getLogger("info");
-	//private static Logger loggerError = Logger.getLogger("error");
-	private static Logger logMongo = Logger.getLogger("mongodb");
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
 	private static String url;
@@ -50,6 +48,10 @@ public class FetchProduct {
 	ProductSearchService productSearchService;
 	@Autowired
 	private SkuPriceService skuPriceService;
+	
+	public void test(String id){
+		productFetchService.updateMongoTest(id);
+	}
 	public void fetchProductAndSave() {
 		//更改状态存储，不要忘了填币种
 		try {
@@ -100,6 +102,7 @@ public class FetchProduct {
 					logger.info(spuEntry.getValue().getART().replace("\"", "")+spuEntry.getValue().getCOMP().replace("\"", ""));
 					System.out.println(spuEntry.getValue().getART().replace("\"", "")+spuEntry.getValue().getCOMP().replace("\"", ""));
 					spu.setProductOrigin(spuEntry.getValue().getMADEIN().replace("\"", ""));
+					spu.setSeasonName(spuEntry.getValue().getSTG().replace("\"", ""));
 					productFetchService.saveSPU(spu);
 				} catch (ServiceException e) {
 					e.printStackTrace();
