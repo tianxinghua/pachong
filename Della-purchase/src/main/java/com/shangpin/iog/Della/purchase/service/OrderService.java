@@ -73,18 +73,20 @@ public class OrderService extends AbsOrderService {
      * @throws ServiceException
      */
     private void saveOrder(){
+    	
         List<OrderDTO> list = null;
         Date startTime = new Date();
         Date endTime = new Date();
         startTime =DateTimeUtil.convertFormat(
         		DateTimeUtil.shortFmt(DateTimeUtil.getAppointDayFromSpecifiedDay(startTime, -1, "D"))+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
         endTime =DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(endTime)+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
+        logger.info("========="+startTime+"到"+endTime+"的订单开始保存本地========="); 
         try {
            list = orderService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
         		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
            //list = orderService.getOrderBySupplierIdAndOrderStatus(supplierId,"confirmed");
         } catch (ServiceException e) {
-            e.printStackTrace();
+        	loggerError.error(e); 
         }
         
         StringBuffer ftpFile = new StringBuffer();
@@ -103,13 +105,14 @@ public class OrderService extends AbsOrderService {
 	            ftpFile.append(";").append(product.getSize());
 	            ftpFile.append("\n");
         	} catch (ServiceException e) {
-				e.printStackTrace();
+        		loggerError.error(e); 
 			}
         }
-        Map<String, String> mongMap = new HashMap<>();
-        mongMap.put("supplierId", supplierId);
-        mongMap.put("supplierName", "LevelGroup");
-        mongMap.put("result", ftpFile.toString());
+        logger.info(startTime+"的订单========\n"+ftpFile.toString());
+//        Map<String, String> mongMap = new HashMap<>();
+//        mongMap.put("supplierId", supplierId);
+//        mongMap.put("supplierName", "LevelGroup");
+//        mongMap.put("result", ftpFile.toString());
         //logMongo.info(mongMap);
         //System.out.println(csvFile);
         FileWriter fwriter = null;
@@ -117,15 +120,16 @@ public class OrderService extends AbsOrderService {
             fwriter = new FileWriter(localFile);
             fwriter.write(ftpFile.toString());
         } catch (IOException ex) {
-            ex.printStackTrace();
+        	loggerError.error(ex); 
         } finally {
             try {
                 fwriter.flush();
                 fwriter.close();
             } catch (IOException ex) {
-                ex.printStackTrace();
+            	loggerError.error(ex); 
             }
         }
+        logger.info("========="+startTime+"到"+endTime+"的订单保存本地完毕 "+localFile);
     }
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {

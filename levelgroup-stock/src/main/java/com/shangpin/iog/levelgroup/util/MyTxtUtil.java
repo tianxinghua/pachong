@@ -20,23 +20,12 @@ import java.util.*;
  */
 public class MyTxtUtil {
     private static Logger logMongo = Logger.getLogger("mongodb");
-    private static Logger loggerError = Logger.getLogger("error");
-    private static ResourceBundle bdl = null;
-    private static String httpurl;
-    private static String localPath;
-    private static String supplierId;
-    static {
-        if (bdl == null)
-            bdl = ResourceBundle.getBundle("conf");
-        httpurl = bdl.getString("url");
-        localPath = bdl.getString("path");
-        supplierId = bdl.getString("supplierId");
-    }
+    private static Logger loggerError = Logger.getLogger("error");    
     /**
      * http下载txtcsv文件到本地路径
      * @throws MalformedURLException
      */
-    public static boolean txtDownload(){
+    public static boolean txtDownload(String url,String path){
         
         //memo
 //        Map<String, String> mongMap = new HashMap<>();
@@ -47,8 +36,8 @@ public class MyTxtUtil {
         //System.out.println(csvFile);
         FileWriter fwriter = null;
         try {
-        	String csvFile = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*60,1000*60*60), null);
-            fwriter = new FileWriter(localPath);
+        	String csvFile = HttpUtil45.get(url, new OutTimeConfig(1000*60*10,1000*60*60,1000*60*60), null);
+            fwriter = new FileWriter(path);
             fwriter.write(csvFile);
         } catch (IOException ex) {
         	loggerError.error("下载LEVELGROUP文件失败!"+ex);
@@ -69,9 +58,9 @@ public class MyTxtUtil {
      * http下载txt文件到本地路径
      * @throws MalformedURLException
      */
-    public static List<Product> readTXTFile() throws IOException {
+    public static List<Product> readTXTFile(String path) throws IOException {
         //解析txt文件
-        CsvReader cr = new CsvReader(new FileReader(localPath)); //localPath
+        CsvReader cr = new CsvReader(new FileReader(path)); //localPath
         System.out.println("创建cr对象成功");
         //得到列名集合
         cr.readRecord();
@@ -119,7 +108,7 @@ public class MyTxtUtil {
         List<Product> list = null;
         try {
             //MyTxtUtil.txtDownload();
-            list = MyTxtUtil.readTXTFile();
+            list = MyTxtUtil.readTXTFile("");
         } catch (Exception e) {
             e.printStackTrace();
         }

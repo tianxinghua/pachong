@@ -41,7 +41,7 @@ public class Test {
    		
    		logger.info("开始上传");
   		 System.out.println("开始上传");
-   		 ftp.storeFile("2016-03-21.csv" , fis); 
+   		 ftp.storeFile("2016-04-21.csv" , fis); 
    		 logger.info("上传成功");
    		 System.out.println("上传成功");
 			
