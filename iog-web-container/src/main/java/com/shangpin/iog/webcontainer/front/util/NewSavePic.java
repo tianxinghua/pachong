@@ -13,15 +13,16 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 
 import com.shangpin.iog.webcontainer.front.dto.Img;
-public class SavePic {
-//	ThreadPoolExecutor executor =new ThreadPoolExecutor(10, 100,60L, TimeUnit.SECONDS,new SynchronousQueue<Runnable>());
-	private static ThreadPoolExecutor executor = new ThreadPoolExecutor(
-									2, 30, 300, TimeUnit.MILLISECONDS,
-									new ArrayBlockingQueue<Runnable>(3),
-									new ThreadPoolExecutor.CallerRunsPolicy());
+public class NewSavePic {
+	private ThreadPoolExecutor executor; 
+	public NewSavePic(ThreadPoolExecutor executor) {
+		super();
+		this.executor = executor;
+	}
 	public String saveImg(File file){
 		Short[] needColsNo = new Short[]{0,1,2,3,4,5,6,7,8,9};
 		//TODO 暂时保存  /usr/local/picturetem
+//		String dirPath = "F://picturetem/"+new Date().getTime();
 		String dirPath = "/usr/local/picturetem/"+new Date().getTime();
 		File f1 = new File(dirPath);
 		if (!f1.exists()) {

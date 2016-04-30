@@ -295,6 +295,7 @@ public abstract class AbsUpdateProductStock {
 		try {
 			if(null!=updateStockService){
 //				updateStockService.updateTime(supplier);
+				loggerInfo.info("=========="+supplier+"开始更新库存时间========"); 
 				StockUpdateDTO stockUpdateDTO = new StockUpdateDTO();
 				stockUpdateDTO.setSupplierId(supplier);
 				stockUpdateDTO.setUpdateTime(new Date());
@@ -302,7 +303,7 @@ public abstract class AbsUpdateProductStock {
 				updateStockService.saveOrUpdateDTO(stockUpdateDTO);
 			}
 		} catch (Exception e) {
-			logger.error("更新库存更新时间业务失败");
+			loggerError.error("更新库存更新时间业务失败======"+e);
 		}
 	}
 

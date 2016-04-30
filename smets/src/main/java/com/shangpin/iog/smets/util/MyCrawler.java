@@ -23,7 +23,7 @@ import com.shangpin.iog.service.ProductFetchService;
 @Component("mycrawler")
 public class MyCrawler {
 	private static Logger log = Logger.getLogger("info");
-	private static String supplierId = "201604251004";
+	private static String supplierId = "201604271112";
 	private static ExecutorService executor = new ThreadPoolExecutor(2, 10, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(10),new ThreadPoolExecutor.CallerRunsPolicy());
 	// feed
 	//  www.farfetch.com/cn/shopping/women/smets/items.aspx?q=smets
@@ -119,38 +119,38 @@ public class MyCrawler {
 											for(Element ele:docdet.select("a[class=relative js-video-thumb]")){
 												img += ele.select("img").attr("src")+";";
 											}
-											brandName = docdet.select("a[data-tstid=Label_ItemBrand]").get(0).ownText();
-											for(Element ele:docdet.select("div[data-tstid=Content_Composition&Care]").select("dd")){
-												if (ele.ownText().contains(">")) {
-													matrial +=ele.ownText().split(">")[1]+";";
-												}
-											}
-											skuName = docdet.select("h1[class=detail-brand detail-name]").get(0).select("span").get(0).ownText();
-											description = docdet.select("p[itemprop=description]").get(0).ownText();
+//											brandName = docdet.select("a[data-tstid=Label_ItemBrand]").get(0).ownText();
+//											for(Element ele:docdet.select("div[data-tstid=Content_Composition&Care]").select("dd")){
+//												if (ele.ownText().contains(">")) {
+//													matrial +=ele.ownText().split(">")[1]+";";
+//												}
+//											}
+//											skuName = docdet.select("h1[class=detail-brand detail-name]").get(0).select("span").get(0).ownText();
+//											description = docdet.select("p[itemprop=description]").get(0).ownText();
 											skuId = docdet.select("span[itemprop=sku]").get(0).ownText();
-											gender = docdet.select("#divBreadCrumbInformation").select("a").get(1).ownText();
+//											gender = docdet.select("#divBreadCrumbInformation").select("a").get(1).ownText();
 											//保存到数据库
-											SkuDTO sku = new SkuDTO();
-											SpuDTO spu = new SpuDTO();
-											spu.setId(UUIDGenerator.getUUID());
-											sku.setId(UUIDGenerator.getUUID());
-											spu.setBrandName(brandName);
-											spu.setSpuId(skuId);
-											spu.setCategoryGender(gender);
-											spu.setCategoryName(category);
-											spu.setMaterial(matrial);
-											spu.setSupplierId(supplierId);
-											sku.setSupplierId(supplierId);
-											sku.setSpuId(skuId);
-											sku.setSkuId(skuId);
-											sku.setSaleCurrency("www.farfetch.com"+a.attr("href"));
-											sku.setProductName(skuName);
-											sku.setProductDescription(description);
-											sku.setStock("1");
-											System.out.println("save sku");
-											productFetchService.saveSKU(sku);
-											System.out.println("save spu");
-											productFetchService.saveSPU(spu);
+//											SkuDTO sku = new SkuDTO();
+//											SpuDTO spu = new SpuDTO();
+//											spu.setId(UUIDGenerator.getUUID());
+//											sku.setId(UUIDGenerator.getUUID());
+//											spu.setBrandName(brandName);
+//											spu.setSpuId(skuId);
+//											spu.setCategoryGender(gender);
+//											spu.setCategoryName(category);
+//											spu.setMaterial(matrial);
+//											spu.setSupplierId(supplierId);
+//											sku.setSupplierId(supplierId);
+//											sku.setSpuId(skuId);
+//											sku.setSkuId(skuId);
+//											sku.setSaleCurrency("www.farfetch.com"+a.attr("href"));
+//											sku.setProductName(skuName);
+//											sku.setProductDescription(description);
+//											sku.setStock("1");
+//											System.out.println("save sku");
+//											productFetchService.saveSKU(sku);
+//											System.out.println("save spu");
+//											productFetchService.saveSPU(spu);
 											System.out.println("save spic");
 											productFetchService.savePicture(supplierId, null, skuId, Arrays.asList(img.split(";")));
 											img = "";
@@ -251,11 +251,13 @@ public class MyCrawler {
 //										size += ele.attr("data-sizeid")+";";
 //									}
 										brandName = doc.select("a[data-tstid=Label_ItemBrand]").get(0).ownText();
-										for(Element ele:doc.select("div[data-tstid=Content_Composition&Care]").select("dd")){
+										Elements select = doc.select("div[data-tstid=Content_Composition&Care]").select("dd");
+										for(Element ele:select){
 											if (ele.ownText().contains(">")) {
 												matrial +=ele.ownText().split(">")[1]+";";
 											}
 										}
+										String barcode = select.last().ownText();
 										skuName = doc.select("h1[class=detail-brand detail-name]").get(0).select("span").get(0).ownText();
 										description = doc.select("p[itemprop=description]").get(0).ownText();
 										skuId = doc.select("span[itemprop=sku]").get(0).ownText();
@@ -271,7 +273,7 @@ public class MyCrawler {
 										spu.setCategoryName(category);
 										spu.setMaterial(matrial);
 										spu.setSupplierId("201601281522");
-										
+										sku.setBarcode(barcode);
 										
 										sku.setSupplierId("201601281522");
 										sku.setSpuId(skuId);

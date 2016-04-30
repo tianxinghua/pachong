@@ -26,14 +26,13 @@ public class PicCustomer  extends Thread{
 			}else{
 				System.out.println("消费图片+++++++++++++++++++++++");
 				String string = PicQueue.unVisitEdUrlDeQueue();
-				productFetchService.savePicture("201604231848", null, string.split("\\^")[0], Arrays.asList(string.split("\\^")[1].split(";")));
+				try {
+					productFetchService.savePicture("201604271112", null, string.split("\\^")[0], Arrays.asList(string.split("\\^")[1].split(";")));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-			
 		}
-	
 	}
-	
-	
-	
 	
 }

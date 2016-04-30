@@ -67,7 +67,7 @@ public class MyTxtUtil {
      */
     public static List<Product> readTXTFile() throws Exception {
         //����txt�ļ�
-        CsvReader cr = new CsvReader(new FileReader(localPath));
+        CsvReader cr = new CsvReader(new FileReader("E:\\testsssss.txt"));//localPath
         System.out.println("����cr����ɹ�");
         //�õ���������
         cr.readRecord();

@@ -1,3 +1,4 @@
+
 package com.shangpin.iog.smets.crawer;
 
 import java.util.LinkedList;
@@ -25,8 +26,8 @@ import com.shangpin.iog.smets.util.SaveTo;
 @Component("queueCraw")
 public class QueueCraw {
 	private static Logger log = Logger.getLogger("info");
-	private static String supplierId = "201604231848";
-	private static ExecutorService executor = new ThreadPoolExecutor(4, 14, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(14),new ThreadPoolExecutor.CallerRunsPolicy());
+	private static String supplierId = "201604271112";
+	private static ExecutorService executor = new ThreadPoolExecutor(4, 60, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(60),new ThreadPoolExecutor.CallerRunsPolicy());
 	@Autowired
 	ProductFetchService productFetchService;
 	
@@ -61,8 +62,8 @@ public class QueueCraw {
 	
 	public void crawling(String[] feeds){
 		//消费线程
-		executor.execute(new SkuCustomer(productFetchService));
-		executor.execute(new SpuCustomer(productFetchService));
+//		executor.execute(new SkuCustomer(productFetchService));
+//		executor.execute(new SpuCustomer(productFetchService));
 		executor.execute(new PicCustomer(productFetchService));
 		
 		

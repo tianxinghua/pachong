@@ -76,7 +76,7 @@ public class Excel2DTO {
 			strCell = xssfCell.toString();
 			break;
 		case XSSFCell.CELL_TYPE_NUMERIC:
-			strCell = String.valueOf((int)xssfCell.getNumericCellValue());
+			strCell = String.valueOf((long)xssfCell.getNumericCellValue());
 			break;
 		case XSSFCell.CELL_TYPE_BOOLEAN:
 			strCell = String.valueOf(xssfCell.getStringCellValue());

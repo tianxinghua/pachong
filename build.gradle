@@ -24,6 +24,7 @@ allprojects {
 	}
     repositories {
         mavenLocal()
+        mavenCentral()
 //        maven {
 //            url "http://192.168.1.110:8888/nexus/content/groups/public/"
 //        }
@@ -33,7 +34,7 @@ allprojects {
 //        maven {
 //            url 'https://repo.spring.io/libs-milestone'
 //        }
-        mavenCentral()
+        
     }
 
 

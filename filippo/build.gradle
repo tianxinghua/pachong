@@ -2,7 +2,7 @@
 
 dependencies {
     compile(
-
+//			"org.springframework:spring-test:4.1.4.RELEASE",
             "net.sourceforge.javacsv:javacsv:2.0",
             project(':iog-common-product'),
     )

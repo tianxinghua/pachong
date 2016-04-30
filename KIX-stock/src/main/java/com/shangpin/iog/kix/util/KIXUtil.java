@@ -62,7 +62,7 @@ public class KIXUtil {
 		Data data = null;
 		int pageNum = getPageNum();
 		for (int i = 1; i <=pageNum; i++) {
-			string = HttpUtil45.get(url, new OutTimeConfig(1000*60*30, 1000*60*60, 1000*60*60), null);
+			string = HttpUtil45.get(url+i, new OutTimeConfig(1000*60*30, 1000*60*60, 1000*60*60), null);
 			data = gson.fromJson(string, Data.class);
 			for (Product product : data.getProducts()) {
 				for (Variant variant : product.getVariants()) {

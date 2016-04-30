@@ -51,8 +51,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
 //            Map<String, String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = new OutTimeConfig(1000*60*10, 1000*60*60,1000*60*60);
             String result = HttpUtil45.get("http://www.dellogliostore.com/admin/temp/xi125.xml", timeConfig, null);
+            
             logger.info("result==="+result);
-            HttpUtil45.closePool();
+//            HttpUtil45.closePool();
 
 //            mongMap.put("supplierId", supplierId);
 //            mongMap.put("supplierName", "giglio");

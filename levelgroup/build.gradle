@@ -1,37 +1,38 @@
 
 dependencies {
     compile(
-            "org.mybatis:mybatis:3.2.2",
-            "org.mybatis:mybatis-spring:1.2.0",
-            "mysql:mysql-connector-java:5.1.21",
-            "commons-dbcp:commons-dbcp:1.4",
+            //"org.mybatis:mybatis:3.2.2",
+            //"org.mybatis:mybatis-spring:1.2.0",
+            //"mysql:mysql-connector-java:5.1.21",
+            //"commons-dbcp:commons-dbcp:1.4",
             "commons-net:commons-net:3.3",
             "net.sourceforge.javacsv:javacsv:2.0",
             "com.google.code.gson:gson:2.3.1",
             project(':project-common'),
-            project(':project-dao'),
-            project(':iog-common-product')
+           // project(':project-dao'),
+            project(':iog-common-product'),
+            project(':iog-product-framework')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
 jar {
 
-    dependsOn copyToLib,copyResources, copyResourcesToClasses
+    dependsOn copyToLib, copyResources ,dependsClassPath
     exclude ("**/*.properties")
 //    from {
 //        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 
 //    }
 
-    def manifestCp = configurations.compile.files.collect {
-        File file = it
-        "lib/${file.name}"
-    }.join(' ')
+   // def manifestCp = configurations.compile.files.collect {
+      //  File file = it
+        //"lib/${file.name}"
+    //}.join(' ')
 
     manifest {
         attributes 'Main-Class': 'com.shangpin.iog.levelgroup.Startup'
 //        attributes 'Class-Path': new File(libPath).list().findAll { it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
-        attributes 'Class-Path': '. ./conf/  ' + manifestCp
+        //attributes 'Class-Path': '. ./conf/  ' + manifestCp
     }
 }

@@ -27,7 +27,7 @@
 				position:absolute;
 				padding:0px 20px 20px 20px;
 				top:280px;           
-				left:350px;         
+				left:550px;         
 				width:600px; 
 				height:200px;
 				background:LightSkyBlue;}  
@@ -186,6 +186,7 @@
 		<br><br><br>
 	<form action="uploadFileAndDown" method="post" enctype="multipart/form-data">
 		<input type="file" name="uploadFile">
+		下载数:<input type="number" name="threadnum">
 		<input type="submit" value ="开始上传" onmouseenter="show()" onmouseleave="unshow()">
 	</form>
 	<br><br><br>
@@ -196,7 +197,8 @@
 </div>
 
 <div id="showExcel" hidden="hidden">
-	<h5>传入excel(07/2010版)表格格式</h5>
+	<h5>若下载受限请限制下载数,默认30</h5>
+	<h5>传入excel(07/2010版)表格格式,表名不能为中文</h5>
 	<h5>第二列必须有,但可以为空。第一行列名，从第二行开始下载</h5>
 	<form action="">
 	<table border="1">
