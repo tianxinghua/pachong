@@ -5,9 +5,6 @@ include 'project-framework'
 
 include "project-common"
 
-include 'iog-facade'
-include 'iog-facade-dubbo'
-include 'iog-order-dubbo'
 
 include 'project-dao'
 
@@ -21,28 +18,21 @@ include 'iog-common-product'
 include 'iog-product-framework'
 
 
-
 include 'openapi-ice'
 
 
-include 'iog-facade-impl'
 
 include 'iog-sop'
 
 
 
-include 'spinnaker-order'
 
 
 
 
+
+
+
+include 'inviqa'
 include 'tony'
-
-include 'log-template'
-include 'theclutcher-stock'
-include 'reebonzWiki-order'
-
-include 'deliberti-purchase'
-include 'itemInfo'
-
-include 'coltorti'
+include 'pozzilei'

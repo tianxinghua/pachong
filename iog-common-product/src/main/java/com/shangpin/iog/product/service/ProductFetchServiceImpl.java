@@ -417,5 +417,11 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 			e.printStackTrace();
 		}
 	}
+	@Override
+	public String findBarCodeBySupplierIdAndSkuId(String supplierId,
+			String skuno){
+		
+		return skuDAO.findBarCodeBySkuId(supplierId,skuno);
+	}
 	
 }

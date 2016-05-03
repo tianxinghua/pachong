@@ -5,32 +5,30 @@ package com.shangpin.iog.pavinGroup.service;
  */
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Scanner;
-import java.util.TimeZone;
 
-import javax.xml.bind.JAXBException;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.dto.EventProductDTO;
-import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.pavinGroup.dto.Channel;
@@ -40,21 +38,13 @@ import com.shangpin.iog.pavinGroup.util.HttpResponse;
 import com.shangpin.iog.pavinGroup.util.HttpUtils;
 import com.shangpin.iog.service.EventProductService;
 import com.shangpin.iog.service.ProductFetchService;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.shangpin.product.AbsSaveProduct;
 
 /**
  * Created by 赵根春 on 2015/9/25.
  */
-//@Component("pavinGroup")
-public class FetchProduct {
+@Component("pavignFrameFetchProduct")
+public class PavignFrameFetchProduct extends AbsSaveProduct{
 
 	@Autowired
 	ProductFetchService productFetchService;
@@ -94,7 +84,7 @@ public class FetchProduct {
 	/**
 	 * fetch product and save into db
 	 */
-	public void fetchProductAndSave() {
+	public void fetchProductAndSave11() {
 		List<String> array = getCategoryUrl();
 		List<Rss> list = null;
 		try {
@@ -111,6 +101,7 @@ public class FetchProduct {
 		
 	
 	}
+	private List<Item> allItem = new ArrayList<Item>();
 	private void fetchProduct(String url){
 		
 		try {
@@ -131,7 +122,10 @@ public class FetchProduct {
 					Channel channel = rss.getChannel();
 					if(channel!=null){
 						List<Item> item = channel.getListItem();
-						messMappingAndSave(item,channel.getTitle());
+						if(item!=null){
+							allItem.addAll(item);
+						}
+						
 						if(channel.getNextPage()!=null){
 							fetchProduct(channel.getNextPage());
 						}
@@ -147,11 +141,19 @@ public class FetchProduct {
 	/**
 	 * message mapping and save into DB
 	 */
-	private void messMappingAndSave(List<Item> array,String tile) {
-			if(array!=null){
-				for (Item item : array) {
+	@Override
+	public Map<String, Object> fetchProductAndSave() {
+		fetchProductAndSave11();
+//	private Map<String, Object> fetchProductAndSave(List<Item> array,String tile) {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		List<SkuDTO> skuList = new ArrayList<SkuDTO>();
+		List<SpuDTO> spuList = new ArrayList<SpuDTO>();
+		Map<String,List<String>> imageMap = new HashMap<String, List<String>>();
+		
+		
+			if(allItem!=null){
+				for (Item item : allItem) {
 					SpuDTO spu = new SpuDTO();
-					try {
 						spu.setId(UUIDGenerator.getUUID());
 						spu.setSupplierId(supplierId);
 						spu.setSpuId(item.getSupplierSkuNo());
@@ -160,26 +162,25 @@ public class FetchProduct {
 						spu.setSpuName(item.getTitle());
 						spu.setMaterial(item.getMaterial());
 						spu.setCategoryGender(item.getGender());
-						
 						String desc = item.getDescription();
 						int index = desc.indexOf("Made in");
+						String sss = null;
 				    	if(index!=-1){
 				    		String s = desc.substring(index);	
-				    		String sss = s.substring(0,s.indexOf("<br>"));
-				    		spu.setProductOrigin(sss);
+				    		int i = s.indexOf("<br>");
+				    		if(i!=-1){
+				    			sss = s.substring(0,s.indexOf("<br>"));
+				    			System.out.println(sss);
+				    		}else{
+				    			sss = s.substring(0);
+				    			System.out.println(sss);
+				    		}
+				    		
 				    	}
-						productFetchService.saveSPU(spu);
-					} catch (Exception e) {
-						try {
-							productFetchService.updateMaterial(spu);
-						} catch (ServiceException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-
+				    	spu.setProductOrigin(sss);
+				    	spuList.add(spu);
+				
 					SkuDTO sku = new SkuDTO();
-					try {
 						sku.setId(UUIDGenerator.getUUID());
 						sku.setSupplierId(supplierId);
 						sku.setSpuId(item.getSupplierSkuNo());
@@ -187,36 +188,44 @@ public class FetchProduct {
 						sku.setProductSize(item.getProductSize());
 						sku.setStock(item.getStock());
 						sku.setMarketPrice(item.getPrice());
+						sku.setSalePrice("");
+						sku.setSupplierPrice("");
 						sku.setColor(item.getProductColor());
 						sku.setProductName(item.getTitle());
 						sku.setProductDescription(item.getDescription());
 						 sku.setSaleCurrency("EUR");
-						 sku.setBarcode(tile);
-						productFetchService.saveSKU(sku);
-						
-					} catch (ServiceException e) {
-						if (e.getMessage().equals("数据插入失败键重复")) {
-							try {
-								productFetchService.updatePriceAndStock(sku);
-							} catch (ServiceException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-						} else {
-							e.printStackTrace();
-						}
-
-					}
-					
+						skuList.add(sku);						
 					if (StringUtils.isNotBlank(item.getImages())) {
 						String[] picArray = item.getImages().split("\\|");
-						productFetchService.savePicture(supplierId, null, item.getSupplierSkuNo(), Arrays.asList(picArray));
+						imageMap.put(sku.getSkuId()+";"+sku.getSkuId().split("_")[0]+" "+sku.getColor(), Arrays.asList(picArray));
 					}
-					
 				}
 			}
+			returnMap.put("sku", skuList);
+			returnMap.put("spu", spuList);
+			returnMap.put("image", imageMap);
+			return returnMap;
 	}
+	public static String picpath;
+	public static int day;
 
+	static {
+		if (null == bdl)
+		day = Integer.valueOf(bdl.getString("day"));
+		picpath = bdl.getString("picpath");
+	}
+	private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
+	public static void main(String[] args) throws Exception {
+	  	//加载spring
+        loadSpringContext();
+        PavignFrameFetchProduct stockImp =(PavignFrameFetchProduct)factory.getBean("pavignFrameFetchProduct");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		stockImp.handleData("sku", supplierId, day, picpath);
+	}
 }
 
 

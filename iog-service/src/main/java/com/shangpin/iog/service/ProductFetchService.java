@@ -139,4 +139,6 @@ public interface ProductFetchService {
 	public void updateSpuListMemo(List<SpuDTO> spuList);
 	//检查更新stefaniamode的图片
 	public abstract List<String> saveAndCheckPictureForSteFaniamode(String supplierId, String id, Collection<String> picUrl, String flag);
+	public String findBarCodeBySupplierIdAndSkuId(String supplierId,
+			String skuId);
 }
