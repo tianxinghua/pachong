@@ -54,7 +54,6 @@ public class FetchProduct {
 		KIXUtil kixUtil = new KIXUtil();
 		List<Product> allProducts = kixUtil.getAllProducts();
 		Map<String, String> metaField = null;
-		
 		for (Product product : allProducts) {
 			//sava spu 
 			metaField = kixUtil.getMetaField(product.getId());
@@ -90,7 +89,8 @@ public class FetchProduct {
 				sku.setSupplierId(supplierId);
 				sku.setSpuId(spu.getSpuId());
 				sku.setSkuId(variant.getId());
-				sku.setProductCode(variant.getSku());
+				sku.setProductCode(metaField.get("item_number"));
+				
 				sku.setColor(metaField.get("color_desc"));
 				if (product.getTags().contains("Sale")) {
 					sku.setSupplierPrice(Double.valueOf(variant.getPrice())*7.5+"");
@@ -98,6 +98,8 @@ public class FetchProduct {
 				}else{
 					sku.setSupplierPrice(Double.valueOf(variant.getPrice())*6.9+"");
 				}
+				sku.setMarketPrice(Double.valueOf(variant.getPrice())*10+"");
+				sku.setSalePrice("");
 				sku.setProductName(product.getTitle());
 				sku.setProductSize(variant.getTitle());
 				sku.setStock(variant.getInventory_quantity());

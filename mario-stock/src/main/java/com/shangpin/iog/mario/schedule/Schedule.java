@@ -67,7 +67,7 @@ public class Schedule {
 		public void run() {
 			System.out.println("supplierId==="+supplierId);
 			System.out.println("time=="+time); 			
-			System.out.println(Thread.currentThread().getName()+"执行murder");
+			logError.error(Thread.currentThread().getName()+"执行murder");
 			Thread t = new Thread(new Worker(supplierId,stockImp));
 			Future<?> future = executor.submit(t);
 			try {
