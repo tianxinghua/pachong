@@ -25,6 +25,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
@@ -97,6 +98,26 @@ public class HttpUtil45 {
 			e.printStackTrace();
 		}finally{
 
+		}
+		return result;
+	}
+	/**
+	 * 请求需要NTLM认证的url
+	 * @param url url
+	 * @param param 请求参数 nullable
+	 * @param outTimeConf 超时时间设置，nullable
+	 * @param userName 认证用户名
+	 * @param password 认证密码
+	 * @return 请求结果的字符串
+	 * @see OutTimeConfig 超时设置
+	 */
+	public static String postNTAuth(String url,Map<String,String> param,OutTimeConfig outTimeConf,String userName,String password){
+		String result=null;
+		try {
+			HttpClientContext localContext = getNTAuthContext(url,userName,password);
+			result=post(url,param,outTimeConf,localContext);
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		return result;
 	}
@@ -997,6 +1018,27 @@ public class HttpUtil45 {
 		return localContext;
 	}
 	/**
+	 * 请求url需要NT认证的上下文
+	 * @param url
+	 * @param userName
+	 * @param password
+	 * @return
+	 */
+	private static HttpClientContext getNTAuthContext(String url,String userName,String password){
+		HttpHost target = url2Host(url);
+		CredentialsProvider credsProvider = new BasicCredentialsProvider();
+		credsProvider.setCredentials(
+				new AuthScope(target.getHostName(), target.getPort(), AuthScope.ANY_REALM),
+				new NTCredentials(userName, password, null, getHost(url)));
+		AuthCache authCache = new BasicAuthCache();
+		BasicScheme basicAuth = new BasicScheme();
+		authCache.put(target, basicAuth);
+		HttpClientContext localContext = HttpClientContext.create();
+		localContext.setAuthCache(authCache);
+		localContext.setCredentialsProvider(credsProvider);
+		return localContext;
+	}
+	/**
 	 * 普通的无需认证的请求上下文
 	 * @param url 请求url nullable
 	 * @return
@@ -1219,7 +1261,7 @@ public class HttpUtil45 {
 
 
 	public  static void main(String[] args){
-
+		
 //		String user="shangpin",password="Daniello0203";
 //		Map<String,String> map = new HashMap<>();
 //		String imageData = HttpUtil45.postAuth("http://79.62.242.6:8088/ws_sito/ws_sito_p15.asmx/GetAllImageMarketplace",
