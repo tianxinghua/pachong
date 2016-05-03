@@ -882,4 +882,19 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		return null;
 	}
 
+	@Override
+	public List<ProductDTO> findPicName(String supplier, Date startDate,
+			Date endDate, Integer pageIndex, Integer pageSize) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StringBuffer exportProductByEpRule(String supplier, Date startDate,
+			Date endDate, Integer pageIndex, Integer pageSize)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

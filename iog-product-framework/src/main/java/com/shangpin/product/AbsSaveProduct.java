@@ -111,17 +111,26 @@ public abstract class AbsSaveProduct {
 		List<NewPriceDTO> newSkuPriceList = skuPriceService.getNewSkuPriceList(supplierId);
 		Map<String,NewPriceDTO> priceMap = new HashMap<String,NewPriceDTO>();
 		for (NewPriceDTO newPriceDTO : newSkuPriceList) {
-			priceMap.put(newPriceDTO.getSkuId(), newPriceDTO);
+			try {
+				priceMap.put(newPriceDTO.getSkuId(), newPriceDTO);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
 		}
 		NewPriceDTO n = null;
 		List<String> idList = new ArrayList<String>();
 		for (SkuDTO sku : skuList) {
-			if (priceMap.containsKey(sku.getSkuId())) {
-				n = priceMap.get(sku.getSkuId());
-				if (!(sku.getSupplierPrice().equals(n.getNewSupplierPrice())&&sku.getSalePrice().equals(n.getNewSalePrice())&&sku.getMarketPrice().equals(n.getNewMarketPrice()))) {
-					idList.add(sku.getSkuId());
+			try {
+				if (priceMap.containsKey(sku.getSkuId())) {
+					n = priceMap.get(sku.getSkuId());
+					if (!(sku.getSupplierPrice().equals(n.getNewSupplierPrice())&&sku.getSalePrice().equals(n.getNewSalePrice())&&sku.getMarketPrice().equals(n.getNewMarketPrice()))) {
+						idList.add(sku.getSkuId());
+					}
 				}
+			} catch (Exception e) {
+				loggerError.error(e); 
 			}
+			
 		}
 		//更新list memo
 		if (idList.size()>0&&idList!=null) {
@@ -182,17 +191,26 @@ public abstract class AbsSaveProduct {
 		
 		List<SpuDTO> reSpuList = new ArrayList<SpuDTO>();
 		for (SpuDTO spu : updateSpu) {
-			spuMap.put(spu.getSpuId(), spu);
+			try {
+				spuMap.put(spu.getSpuId(), spu);
+			} catch (Exception e) {
+				loggerError.error(e); 
+			}			
 		}
 		String memo = "";
 		for (SpuDTO spuDTO : spuList) {
-			if (spuMap.containsKey(spuDTO.getSpuId())) {
-				memo = conpareSpu(spuDTO, spuMap.get(spuDTO.getSpuId()));
-				if (StringUtils.isNotEmpty(memo)) {
-					spuDTO.setMemo(memo);
-					reSpuList.add(spuDTO);
+			try {
+				if (spuMap.containsKey(spuDTO.getSpuId())) {
+					memo = conpareSpu(spuDTO, spuMap.get(spuDTO.getSpuId()));
+					if (StringUtils.isNotEmpty(memo)) {
+						spuDTO.setMemo(memo);
+						reSpuList.add(spuDTO);
+					}
 				}
+			} catch (Exception e) {
+				loggerError.error(e); 
 			}
+			
 		}
 		if (reSpuList.size()>0&&reSpuList!=null) {
 			productFetchService.updateSpuListMemo(reSpuList);
@@ -294,44 +312,59 @@ public abstract class AbsSaveProduct {
 		String result = "";
 		Map<String, List<String>> downMap = new HashMap<String, List<String>>();
 		for (Entry<String, List<String>> entry : imageMap.entrySet()) {
-			id = entry.getKey().split(";")[0];
-			//正常使用
-			list = productFetchService.saveAndCheckPicture(supplierId,id, entry.getValue(), flag);
-			// 仅仅stefaniamode采取
-//			list = productFetchService.saveAndCheckPictureForSteFaniamode(supplierId,id, entry.getValue(), flag);
-			loggerInfo.info("id"+id+"新增图片数"+list.size());
-			if (list.size()>0) {
-				productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+"图片变化", flag);
-				//存新增的的图片到map
-				imgname = entry.getKey().split(";")[1];
-				downMap.put(id+";"+imgname, list);
+			try {
+				id = entry.getKey().split(";")[0];
+				//正常使用
+				list = productFetchService.saveAndCheckPicture(supplierId,id, entry.getValue(), flag);
+				// 仅仅stefaniamode采取
+//				list = productFetchService.saveAndCheckPictureForSteFaniamode(supplierId,id, entry.getValue(), flag);
+				loggerInfo.info("id"+id+"新增图片数"+list.size());
+				if (list.size()>0) {
+					productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+"图片变化", flag);
+					//存新增的的图片到map
+					imgname = entry.getKey().split(";")[1];
+					downMap.put(id+";"+imgname, list);
+				}
+			} catch (Exception e) {
+				loggerError.error(e); 
 			}
+			
 		}
 		
 		if (StringUtils.isNotBlank(picpath)&&downMap.size()>0) {
 			loggerInfo.info("开始保存图片"+downMap.size());
 			for (Entry<String, List<String>> e : downMap.entrySet()) {
-				int n = 1;
-				for (String url : e.getValue()) {
-					if (StringUtils.isNotEmpty(url)) {
-						id = e.getKey().split(";")[0];
-						imgname = e.getKey().split(";")[1]+"_"+n+++".jpg";
-						imagePath = picpath+imgname;
-						imagePath = ImageUtils.downImage(url, picpath,imgname);
-						result = ImageUtils.checkImageSize(imagePath);
-						if (!result.equals("")) {
-							if (memo.contains(result)) {
-								memo = memo.replace(result, result+"1");
-							}else{
-								memo +=" "+result;
+				try {
+					int n = 1;
+					for (String url : e.getValue()) {
+						try {
+							if (StringUtils.isNotEmpty(url)) {
+								id = e.getKey().split(";")[0];
+								imgname = e.getKey().split(";")[1]+" ("+n+++").jpg";
+								imagePath = picpath+imgname;
+								imagePath = ImageUtils.downImage(url, picpath,imgname);
+								result = ImageUtils.checkImageSize(imagePath);
+								if (!result.equals("")) {
+									if (memo.contains(result)) {
+										memo = memo.replace(result, result+"1");
+									}else{
+										memo +=" "+result;
+									}
+								}
 							}
+						} catch (Exception e2) {
+							loggerError.error(e2); 
 						}
+						
 					}
+					if (StringUtils.isNotBlank(memo)) {
+						productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+memo, flag);
+					}
+					memo = "";
+				} catch (Exception e2) {
+					loggerError.error(e2); 
 				}
-				if (StringUtils.isNotBlank(memo)) {
-					productFetchService.updateSpuOrSkuMemoAndTime(supplierId, id,  new Date().toLocaleString()+memo, flag);
-				}
-				memo = "";
+				
 			}
 		}
 		System.out.println("保存图片结束");

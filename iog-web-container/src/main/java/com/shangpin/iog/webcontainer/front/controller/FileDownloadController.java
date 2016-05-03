@@ -1,7 +1,5 @@
 package com.shangpin.iog.webcontainer.front.controller;
 
-
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -16,7 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,6 +51,7 @@ import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SupplierService;
 import com.shangpin.iog.webcontainer.front.strategy.NameGenContext;
 import com.shangpin.iog.webcontainer.front.strategy.PcodeAsName;
+import com.shangpin.iog.webcontainer.front.util.NewSavePic;
 import com.shangpin.iog.webcontainer.front.util.SavePic;
 
 
@@ -314,8 +317,6 @@ public class FileDownloadController {
         try {
         	//要下载的文件列表
         	List<ProductDTO> pList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
-        	//TODO 获取dto按条件拼接图片名称
-        	log.error(productSearchDTO.getSupplierName()+"下载文件列表长度"+pList.size());
         	
         	NameGenContext context = new NameGenContext(supplier);
         	nameMap = context.operate(pList);
@@ -325,14 +326,12 @@ public class FileDownloadController {
         	zipfile = new ZipFile(new File(new Date().getTime()+""));
         	ArrayList<File> filesToAdd = new ArrayList<File>();
     		//供应商pic的文件夹
-    		//TODO 具体位置待定
-        	log.error(downloadpath+productSearchDTO.getSupplierName()+"/");
     		File dir = new File(downloadpath+productSearchDTO.getSupplierName()+"/");
     		String key = "";
     		if (dir.isDirectory()) {
     			File[] files = dir.listFiles();
     			for (File file : files) {
-    				log.error(file.getName());
+    				//TODO  替换filename中的转义字符
     				if (nameMap.containsKey(file.getName().split("_")[0])) {
     					key = file.getName().split("_")[0];
     					if(null==nameMap.get(key)){
@@ -380,7 +379,17 @@ public class FileDownloadController {
     	BufferedInputStream in = null;
     	BufferedOutputStream out = null;
     	String path = request.getSession().getServletContext().getRealPath("");  
-        String fileName = file.getOriginalFilename();  
+    	
+    	String parameter = request.getParameter("threadnum");
+    	ThreadPoolExecutor executor = null;
+    	if (parameter.equals("")||parameter.contains("-")) {
+    		executor = new ThreadPoolExecutor(3, 30, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
+		}else{
+			executor = new ThreadPoolExecutor(Integer.valueOf(parameter), Integer.valueOf(parameter),0L, TimeUnit.MILLISECONDS,new LinkedBlockingQueue<Runnable>());
+		}
+        NewSavePic newSavePic = new NewSavePic(executor);
+        
+    	String fileName = file.getOriginalFilename();  
         File targetFile = new File(path, fileName);  
         //保存  
         try {  
@@ -393,9 +402,10 @@ public class FileDownloadController {
             e.printStackTrace();  
         }  
         SavePic savePic = new SavePic();
-        String filePath = savePic.saveImg(targetFile);
+//        String filePath = savePic.saveImg(targetFile);
+        String filePath = newSavePic.saveImg(targetFile);
         log.error(targetFile.getName()+"下载路径为+++++++++++++++++++++++++++++++++"+filePath);
-        ThreadPoolExecutor executor = savePic.getExecutor();
+//        ThreadPoolExecutor executor = savePic.getExecutor();
         while(true){
         	if(executor.getActiveCount()==0){
         		log.error("线程活动数为0");
@@ -411,13 +421,14 @@ public class FileDownloadController {
         
         try {
         	log.error("下载路径为+++++++++++++++++++++++++++++++++"+filePath);
-			zipfile = new ZipFile(new File(new Date().getTime()+""));
+        	long time = new Date().getTime();
+			zipfile = new ZipFile(time+"");
 
 			ZipParameters parameters = new ZipParameters();  
 		    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
 		    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
 			zipfile.addFolder(filePath, parameters);
-			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+new Date().getTime()+".zip", "UTF-8"));
+			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+time+".zip", "UTF-8"));
 
 			in = new BufferedInputStream(new FileInputStream (zipfile.getFile()));
 

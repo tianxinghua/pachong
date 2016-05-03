@@ -465,7 +465,7 @@ public abstract class AbsUpdateProductStock {
 				updateStockService.updateTime(supplier);
 			}
 		} catch (Exception e) {
-			loggerError.error("更新库存更新时间业务失败");
+			loggerError.error("更新库存更新时间业务失败==="+e);
 		}
 	}
 	/**

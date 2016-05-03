@@ -16,6 +16,7 @@ public class Product {
     private String product_brand;
     private String product_detail;
     private String product_material;
+    private String product_MADEin;
     private String url;
     private String supply_price;
     private String producer_id;
@@ -127,6 +128,8 @@ public class Product {
     public void setGender(String gender) {
         this.gender = gender;
     }
+    
+    
 
 
 //    public List<Item> getItems() {
@@ -137,7 +140,15 @@ public class Product {
 //        this.items = items;
 //    }
 
-    public Product(){
+    public String getProduct_MADEin() {
+		return product_MADEin;
+	}
+
+	public void setProduct_MADEin(String product_MADEin) {
+		this.product_MADEin = product_MADEin;
+	}
+
+	public Product(){
         super();
     }
 

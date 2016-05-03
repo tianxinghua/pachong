@@ -42,14 +42,16 @@ public class FetchProduct {
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static int day;
+    private static String url =  null;
     static {
         if(null==bdl)
             bdl= ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         day = Integer.valueOf(bdl.getString("day"));
+        url = bdl.getString("url");
     }
 
-    public void fetchProductAndSave(String url) {
+    public void fetchProductAndSave() {
 
         try {
             Map<String, String> mongMap = new HashMap<>();
@@ -182,14 +184,14 @@ public class FetchProduct {
                     spu.setSpuName(product.getProduct_name());
                     spu.setSeasonId(product.getSeason_code());
                     spu.setMaterial(product.getProduct_material());
-                    String origin = "";
-                    try {
-                    	String des = product.getDescription();
-                    	origin = des.substring(des.indexOf("made in")+7).replaceAll(",", "").replaceAll("\\r", "").replaceAll("\\n", "").trim(); 
-					} catch (Exception e) {
-						// TODO: handle exception
-					}
-                    spu.setProductOrigin(origin);
+//                    String origin = "";
+//                    try {
+//                    	String des = product.getDescription();
+//                    	origin = des.substring(des.indexOf("made in")+7).replaceAll(",", "").replaceAll("\\r", "").replaceAll("\\n", "").trim(); 
+//					} catch (Exception e) {
+//						// TODO: handle exception
+//					}
+                    spu.setProductOrigin(product.getProduct_MADEin());
 
                     spu.setCategoryGender(product.getGender());
                     productFetchService.saveSPU(spu);

@@ -3,7 +3,7 @@ dependencies {
     compile(
            
             "org.jdom:jdom:2.0.2",
-            project(':project-common'),
+            //project(':project-common'),
          
             project(':iog-common-product'),
             project(':iog-product-framework')

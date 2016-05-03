@@ -367,6 +367,11 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 				buffer.append(!"".equals(brandId) ? brandId : "尚品网品牌编号")
 						.append(splitSign);
+				
+				if(supplier== "2015081701437"){
+					brandName = brandName.replaceAll("C?LINE", "CÈLINE");
+				}
+				
 				buffer.append(brandName).append(splitSign);
 				// 货号
 				buffer.append(
@@ -465,15 +470,28 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				buffer.append(productOrigin).append(splitSign);
 
 				// 图片
-				buffer.append(dto.getPicUrl()).append(splitSign);
-				buffer.append(dto.getItemPictureUrl1()).append(splitSign)
-						.append(dto.getItemPictureUrl2()).append(splitSign)
-						.append(dto.getItemPictureUrl3()).append(splitSign)
-						.append(dto.getItemPictureUrl4()).append(splitSign)
-						.append(dto.getItemPictureUrl5()).append(splitSign)
-						.append(dto.getItemPictureUrl6()).append(splitSign)
-						.append(dto.getItemPictureUrl7()).append(splitSign)
-						.append(dto.getItemPictureUrl8()).append(splitSign);
+				if(supplier== "2015081701437"){//处理特殊供货商的特殊字符
+					buffer.append(dto.getPicUrl().replaceAll("C?LINE", "CÈLINE")).append(splitSign);
+					buffer.append(dto.getItemPictureUrl1().replaceAll("C?LINE", "CÈLINE")).append(splitSign)
+							.append(dto.getItemPictureUrl2().replaceAll("C?LINE", "CÈLINE")).append(splitSign)
+							.append(dto.getItemPictureUrl3().replaceAll("C?LINE", "CÈLINE")).append(splitSign)
+							.append(dto.getItemPictureUrl4().replaceAll("C?LINE", "CÈLINE")).append(splitSign)
+							.append(dto.getItemPictureUrl5().replaceAll("C?LINE", "CÈLINE")).append(splitSign)
+							.append(dto.getItemPictureUrl6().replaceAll("C?LINE", "CÈLINE")).append(splitSign)
+							.append(dto.getItemPictureUrl7().replaceAll("C?LINE", "CÈLINE")).append(splitSign)
+							.append(dto.getItemPictureUrl8().replaceAll("C?LINE", "CÈLINE")).append(splitSign);
+				}else{
+					buffer.append(dto.getPicUrl()).append(splitSign);
+					buffer.append(dto.getItemPictureUrl1()).append(splitSign)
+							.append(dto.getItemPictureUrl2()).append(splitSign)
+							.append(dto.getItemPictureUrl3()).append(splitSign)
+							.append(dto.getItemPictureUrl4()).append(splitSign)
+							.append(dto.getItemPictureUrl5()).append(splitSign)
+							.append(dto.getItemPictureUrl6()).append(splitSign)
+							.append(dto.getItemPictureUrl7()).append(splitSign)
+							.append(dto.getItemPictureUrl8()).append(splitSign);
+				}
+				
 				// 明细描述
 				productDetail = dto.getProductDescription();
 				if (StringUtils.isNotBlank(productDetail)) {					

@@ -13,4 +13,5 @@ public class Product {
 	private String product_type;//categoryName
 	private Variant[] variants;//sku 
 	private Image[] images;
+	private String tags;
 }

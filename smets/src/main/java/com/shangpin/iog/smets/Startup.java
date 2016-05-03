@@ -4,8 +4,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.smets.util.MyCrawler;
-import com.shangpin.iog.smets.util.Test;
+import com.shangpin.iog.smets.crawer.QueueCraw;
 
 /**
  * Created by houkun on 2016.01.25.
@@ -24,11 +23,11 @@ public class Startup {
 
         loadSpringContext();
         //拉取数据
-        MyCrawler fetchService = (MyCrawler) factory.getBean("mycrawler");
+        QueueCraw fetchService = (QueueCraw) factory.getBean("queueCraw");
 //        Test fetchService = (Test)factory.getBean("qwerty");
         System.out.println("-------bernardelli start---------");
         try {
-        	String[] feeds = new String[]{"http://www.farfetch.com/cn/shopping/women/daniello/items.aspx?q=aniello","http://www.farfetch.com/cn/shopping/men/daniello/items.aspx?q=aniello"};
+        	String[] feeds = new String[]{"http://www.farfetch.com/cn/shopping/women/smets/items.aspx?q=smets","http://www.farfetch.com/cn/shopping/men/smets/items.aspx?q=smets"};
             fetchService.crawling(feeds);
 //        	fetchService.test("/cn/shopping/women/smets/bags-purses-1/items.aspx|包袋");
 //        	fetchService.test();

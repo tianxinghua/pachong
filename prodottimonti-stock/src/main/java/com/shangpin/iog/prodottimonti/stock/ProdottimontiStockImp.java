@@ -3,12 +3,12 @@ package com.shangpin.iog.prodottimonti.stock;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 
 
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.prodottimonti.stock.schedule.AppContext;
 import com.shangpin.sop.AbsUpdateProductStock;
 
 import net.sf.json.JSONArray;
@@ -32,6 +32,8 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static LoggerUtil logError = LoggerUtil.getLogger("error");
 //    private static Logger logMongo = Logger.getLogger("mongodb");
+    private static String host, app_key, app_secret;
+    
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -44,6 +46,9 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
+        host = bdl.getString("HOST");
+        app_key = bdl.getString("APP_KEY");
+        app_secret = bdl.getString("APP_SECRET");
     }
 
 
@@ -106,19 +111,20 @@ public class ProdottimontiStockImp extends AbsUpdateProductStock {
     public static void main(String args[]) throws Exception {
     	//加载spring
         loadSpringContext();
-//        ProdottimontiStockImp stockImp = (ProdottimontiStockImp)factory.getBean("prodottimontiStock");
-//
-//        //AbsUpdateProductStock prodottimontiStockImp = new ProdottimontiStockImp();
-//
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//        logger.info("prodottimonti更新库存开始");
-//        try {
-//        	stockImp.updateProductStock(supplierId,"2015-10-01 00:00",format.format(new Date()));
-//		} catch (Exception e) {
-//			loggerError.error("prodottimonti更新库存失败"+e.getMessage());
-//			e.printStackTrace();
-//		}
-//        logger.info("prodottimonti更新库存结束");
-//        System.exit(0);
+        ProdottimontiStockImp stockImp = (ProdottimontiStockImp)factory.getBean("prodottimontiStock");
+
+        //AbsUpdateProductStock prodottimontiStockImp = new ProdottimontiStockImp();
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        logger.info("prodottimonti更新库存开始");
+        try {
+        	//stockImp.updateProductStock(supplierId,"2015-10-01 00:00",format.format(new Date()));
+        	stockImp.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
+		} catch (Exception e) {
+			logError.error("prodottimonti更新库存失败"+e.getMessage());
+			e.printStackTrace();
+		}
+        logger.info("prodottimonti更新库存结束");
+        System.exit(0);
     }
 }

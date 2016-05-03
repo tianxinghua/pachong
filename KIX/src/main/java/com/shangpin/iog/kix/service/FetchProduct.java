@@ -92,12 +92,16 @@ public class FetchProduct {
 				sku.setSkuId(variant.getId());
 				sku.setProductCode(variant.getSku());
 				sku.setColor(metaField.get("color_desc"));
-//				sku.setSalePrice(variant.getPrice());
-				sku.setMarketPrice(variant.getPrice());
+				if (product.getTags().contains("Sale")) {
+					sku.setSupplierPrice(Double.valueOf(variant.getPrice())*7.5+"");
+					sku.setProductDescription("sale");
+				}else{
+					sku.setSupplierPrice(Double.valueOf(variant.getPrice())*6.9+"");
+				}
 				sku.setProductName(product.getTitle());
 				sku.setProductSize(variant.getTitle());
 				sku.setStock(variant.getInventory_quantity());
-				sku.setSaleCurrency("Dollor");
+				sku.setSaleCurrency("HDK");
 				
 				if(skuDTOMap.containsKey(sku.getSkuId())){
 					skuDTOMap.remove(sku.getSkuId());
