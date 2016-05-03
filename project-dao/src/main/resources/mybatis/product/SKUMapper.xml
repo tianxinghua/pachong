@@ -86,6 +86,21 @@
 	
 	
 	    </select>
+	<select id="findBarCodeBySkuId"  resultType = "String" parameterType="java.lang.String">
+	        select
+	        BARCODE
+	        from SKU
+	        <where>
+	            <if test="null!=supplierId">
+	                SUPPLIER_ID = #{supplierId}
+	            </if>
+	            <if test="null!=skuId">
+	                and SKU_ID = #{skuId}
+	            </if>
+				limit 1	
+	        </where>
+	
+	    </select>
     <insert id="save"  parameterType="iog_sku" >
 
 
