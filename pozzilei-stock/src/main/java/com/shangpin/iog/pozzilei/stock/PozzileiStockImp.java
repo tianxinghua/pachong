@@ -61,13 +61,13 @@ public class PozzileiStockImp extends AbsUpdateProductStock {
 		OutTimeConfig outTimeConfig = new OutTimeConfig(1000 * 60, 1000 * 60,
 				1000 * 60);
 		for (String skuno : skuNo) {
-			String barCode = pfs.findBarCodeBySupplierIdAndSkuId(supplierId,
+			String barCodeArray = pfs.findBarCodeBySupplierIdAndSkuId(supplierId,
 					skuno);
+			String barCode = null;
 			String database = null;
-			System.out.println(skuno+"==="+barCode);
-			if (barCode != null && barCode.split("\\|").length > 1) {
-				barCode = barCode.split("\\|")[0];
-				database = barCode.split("\\|")[1];
+			if (barCodeArray != null && barCodeArray.split("\\|").length > 1) {
+				barCode = barCodeArray.split("\\|")[0];
+				database = barCodeArray.split("\\|")[1];
 			} else {
 				stock_map.put(skuno, "0");
 				continue;
@@ -79,7 +79,6 @@ public class PozzileiStockImp extends AbsUpdateProductStock {
 			json = null;
 			try {
 				json = HttpUtil45.get(url, outTimeConfig, null);
-				System.out.println(json);
 			} catch (Exception e) {
 				stock_map.put(skuno, "0"); // 读取失败的时候赋值为0
 				loggerError.error("拉取失败 " + e.getMessage());
@@ -112,17 +111,7 @@ public class PozzileiStockImp extends AbsUpdateProductStock {
 		// //拉取数据
 		 PozzileiStockImp stockImp
 		 =(PozzileiStockImp)factory.getBean("pozzilei");
-		// //
-		//
-		// List list = new ArrayList();
-		// list.add("3000022300014");
-		// list.add("1000079800012");
-		// list.add("2000042300016");
-		// stockImp.grabStock(list);
-		//
-
 		// AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
-		 stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
 		 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		 logger.info("pozzilei更新数据库开始");
 		 try {
