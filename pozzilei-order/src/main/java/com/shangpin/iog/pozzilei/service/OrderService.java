@@ -64,7 +64,7 @@ public class OrderService extends AbsOrderService {
 		setOrderUrl = bdl.getString("setOrderUrl");
 		queryOrderUrl = bdl.getString("queryOrderUrl");
 		cancelUrl = bdl.getString("cancelUrl");
-		dBContext = bdl.getString("dBContext");
+//		dBContext = bdl.getString("dBContext");
 		key = bdl.getString("key");
 
 
@@ -149,7 +149,7 @@ public class OrderService extends AbsOrderService {
 		System.out.println("rtnData==" + json);
 		try {
 			 Map<String, String> map =new HashMap<String, String>();
-			 map.put("DBContext", dBContext);
+			 map.put("DBContext", order.getDBContext());
 			 map.put("purchase_no", orderDTO.getSpPurchaseNo());
 			 map.put("order_no", orderDTO.getSpOrderId());
 			 map.put("barcode", order.getBarcode());
@@ -284,12 +284,13 @@ public class OrderService extends AbsOrderService {
 			e.printStackTrace();
 		}
 		String barCode = pro.getBarcode();
-		if(barCode.split("\\|").length>0){
+		if(barCode.split("\\|").length>1){
 			order.setBarcode(barCode.split("\\|")[0]);
+			order.setDBContext(barCode.split("\\|")[1]);
 		}else{
 			order.setBarcode(barCode);
+			order.setDBContext("Default");
 		}
-		
 		order.setOrdQty(details[1]);
 		order.setKey(key);
 		order.setSellPrice("0");
