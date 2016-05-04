@@ -78,9 +78,9 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
             
             if (StringUtils.isNotEmpty(stock2)){//先在文件里查找             	
                 skustock.put(skuno, Integer.valueOf(stock2));
-            }else if (StringUtils.isNotEmpty(stock = getStock(skuno))){//查找不到再去接口
-            	logger.info(skuno+"===通过接口获取库存===="+stock);
-            	skustock.put(skuno, Integer.valueOf(stock));
+//            }else if (StringUtils.isNotEmpty(stock = getStock(skuno))){//查找不到再去接口
+//            	logger.info(skuno+"===通过接口获取库存===="+stock);
+//            	skustock.put(skuno, Integer.valueOf(stock));
             }else{
             	skustock.put(skuno, 0);
             }

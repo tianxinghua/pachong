@@ -128,13 +128,19 @@ public abstract class AbsSaveProduct {
 					}
 				}
 			} catch (Exception e) {
-				loggerError.error(e); 
+				
 			}
 			
 		}
 		//更新list memo
 		if (idList.size()>0&&idList!=null) {
-			productFetchService.updateSkuListMemo(supplierId, idList);
+			try {
+				productFetchService.updateSkuListMemo(supplierId, idList);
+			} catch (Exception e) {
+				loggerError.error(e); 
+				e.printStackTrace();
+			}
+			
 		}
 	}
 	@Deprecated

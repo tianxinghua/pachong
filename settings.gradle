@@ -2,37 +2,14 @@
 rootProject.name = 'iog'
 
 include 'project-framework'
-
 include "project-common"
-
-
 include 'project-dao'
-
 include 'iog-service'
-
 include 'iog-web-container'
-
-
 include 'iog-common-product'
-
 include 'iog-product-framework'
-
-
 include 'openapi-ice'
-
-
-
 include 'iog-sop'
-
-
-
-
-
-
-
-
-
-
-include 'inviqa'
-include 'tony'
-include 'pozzilei'
+include 'iog-common-product2'
+include 'log-template'
+include 'project-muldatass-dao'
