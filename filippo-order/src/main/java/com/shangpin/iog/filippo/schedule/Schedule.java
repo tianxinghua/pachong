@@ -1,17 +1,11 @@
 package com.shangpin.iog.filippo.schedule;
-
-import com.google.gson.Gson;
-import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.forzieri.order.ForzieriOrderServiceImpl;
-import com.shangpin.iog.service.OrderService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.shangpin.iog.filippo.order.FilippoOrderServiceImpl;
 
 import java.util.*;
 
