@@ -423,5 +423,36 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		
 		return skuDAO.findBarCodeBySkuId(supplierId,skuno);
 	}
+	@Override
+    public Map<String,String> findPictureBySupplierIdAndSkuIdOrSpuId(String supplierId, String skuId,String spuId){
+     	
+    	Map<String,String> map  =   null;
+    	List<ProductPicture> pictureList = null;
+    	try {
+    		if (skuId!=null) {
+    			pictureList = pictureDAO.findDistinctProductPictureBySupplierIdAndSkuId(supplierId, skuId);
+			}else{
+				pictureList = pictureDAO.findDistinctProductPictureBySupplierIdAndSkuId(supplierId, spuId);
+				
+			}
+    		if(pictureList!=null){
+    			String key = "";
+    			map = new HashMap<String,String>()	;
+    			for(ProductPicture p :pictureList){
+    				key = p.getSkuId()==null?p.getSpuId():p.getSkuId();
+    				
+    				if (map.containsKey(key)) {
+    					map.put(key, map.get(key)+","+p.getPicUrl());
+					}else{
+						map.put(key, p.getPicUrl());
+					}
+    			}
+    		}
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+    	return map;
+    }
+	
 	
 }

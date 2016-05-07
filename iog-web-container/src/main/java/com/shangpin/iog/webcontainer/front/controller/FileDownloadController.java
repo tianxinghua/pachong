@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -47,12 +46,14 @@ import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductSearchDTO;
 import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.service.OrderService;
+import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SupplierService;
 import com.shangpin.iog.webcontainer.front.strategy.NameGenContext;
-import com.shangpin.iog.webcontainer.front.strategy.PcodeAsName;
+import com.shangpin.iog.webcontainer.front.util.DowmImage;
 import com.shangpin.iog.webcontainer.front.util.NewSavePic;
 import com.shangpin.iog.webcontainer.front.util.SavePic;
+import com.shangpin.iog.webcontainer.front.util.queue.PicQueue;
 
 
 /**
@@ -78,7 +79,8 @@ public class FileDownloadController {
 		downloadpath = bdl.getString("downloadpath");
 	}
 	private Logger log = LoggerFactory.getLogger(FileDownloadController.class) ;
-	
+	@Autowired
+	ProductFetchService pfs;
     @Autowired
     ProductSearchService productService;
     
@@ -456,8 +458,171 @@ public class FileDownloadController {
 			}
 		}
     }
- 
-    
-    
+    @RequestMapping(value = "OnlineDownLoad")
+    public void dowmLoadPicOnline(HttpServletResponse response,HttpServletRequest request, String queryJson){
+    	//获取要下载的产品
+    	List<ProductDTO> productList = getDownProductList(queryJson);
+    	if (null==productList||productList.size()<1) {
+			return;
+		}
+    	//遍历 获取要下载的图片 map<spskuid,url1,url2>
+    	Map<String,String> imgMap = getMongoPic(productList);
+    	
+    	//下载保存图片
+    	BufferedInputStream in = null;
+    	BufferedOutputStream out = null;
+    	String path = request.getSession().getServletContext().getRealPath("");  
+    	ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 30, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
+    	String dirPath = "/usr/local/picturetem/"+new Date().getTime();
+		File f1 = new File(dirPath);
+		if (!f1.exists()) {
+			f1.mkdirs();
+		}
+		int a = 0;
+		PicQueue picQueue = new PicQueue();
+		for (Entry<String, String> entry : imgMap.entrySet()) {
+			System.out.println("++++"+a+"++++++");
+			a++;
+			String[] ingArr = entry.getValue().split(",");
+			int i = 0;
+			for (String img : ingArr) {
+				if (org.apache.commons.lang.StringUtils.isNotBlank(img)) {
+					try {
+						i++;
+						File f = new File(dirPath+"/"+entry.getKey()+" ("+i+").jpg");
+						if (f.exists()) {
+							continue;
+						}
+						executor.execute(new DowmImage(img.trim(),entry.getKey()+" ("+i+").jpg",dirPath,picQueue));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		delay(executor);
+		//重新下载失败的
+		 String failUrl = "";
+		 String[] split = null;
+		 Map<String,Integer> recordMap = new HashMap<String, Integer>();
+		 while(!picQueue.unVisitedUrlsEmpty()){
+			 failUrl = picQueue.unVisitEdUrlDeQueue();
+			 if (recordMap.containsKey(failUrl)) {
+				 if (recordMap.get(failUrl)>10) {
+					continue;
+				 }
+				 recordMap.put(failUrl, recordMap.get(failUrl)+1);
+			 }else{
+				 recordMap.put(failUrl, 1);
+			 }
+			 split = failUrl.split(";");
+			 executor.execute(new DowmImage(split[0],split[2],split[1],picQueue));
+		 }
+		 delay(executor);
+		
+	       ZipFile zipfile = null;
+	        
+	        try {
+	        	log.error("下载路径为+++++++++++++++++++++++++++++++++"+dirPath);
+	        	long time = new Date().getTime();
+				zipfile = new ZipFile(time+"");
+
+				ZipParameters parameters = new ZipParameters();  
+			    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+			    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
+				zipfile.addFolder(dirPath, parameters);
+				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+time+".zip", "UTF-8"));
+
+				in = new BufferedInputStream(new FileInputStream (zipfile.getFile()));
+
+	            out = new BufferedOutputStream(response.getOutputStream());
+	            byte[] data = new byte[1048576];
+	            int len = 0;
+	            while (-1 != (len=in.read(data, 0, data.length))) {
+	                out.write(data, 0, len);
+	            }
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				try {
+					in.close();
+					out.close();
+					zipfile.getFile().delete();
+				    File delfiledir = new File(dirPath);
+		            for (File b : delfiledir.listFiles()) {
+						b.delete();
+					}
+		            delfiledir.delete();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		 
+		 
+		
+		
+    }
+    private void delay(ThreadPoolExecutor executor){
+    	 while(true){
+         	if(executor.getActiveCount()==0){
+         		log.error("线程活动数为0");
+         		break;
+         	}
+         	try {
+ 				Thread.sleep(1000*30);
+ 			} catch (InterruptedException e) {
+ 				e.printStackTrace();
+ 			}
+         }
+    }
+    private Map<String,String> getMongoPic(List<ProductDTO> productList){
+    	Map<String,String> imgMap = new HashMap<String,String>();
+    	Map<String,String> idMap = new HashMap<String,String>();
+    	
+    	
+    	Map<String, String> findMap = null;
+    	for (ProductDTO productDTO : productList) {
+    		
+    		//TODO 如果spskuid为空跳过
+    		idMap.put(productDTO.getSpuId(), "尚品skuId");
+    		idMap.put(productDTO.getSkuId(), "尚品skuId");
+    		findMap = pfs.findPictureBySupplierIdAndSkuIdOrSpuId(productDTO.getSupplierId(), productDTO.getSkuId(),null);
+			if (null==findMap||findMap.size()<1) {
+				findMap =pfs.findPictureBySupplierIdAndSkuIdOrSpuId(productDTO.getSupplierId(), null,productDTO.getSpuId());
+			}
+			if (null!=findMap&&findMap.size()>0) {
+				for (Entry<String, String> m : findMap.entrySet()) {
+					imgMap.put(idMap.get(m.getKey()), m.getValue());
+				}
+			}
+		}
+    	return imgMap;
+    	
+    }
+    private List<ProductDTO> getDownProductList(String queryJson){
+
+    	ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
+    	if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
+
+        String supplier = null;
+        if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
+        	supplier = productSearchDTO.getSupplier();
+        }
+        Date startDate  =null;
+        if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
+            startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
+        }
+
+        Date endDate = null;
+        if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
+            endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
+        }
+        
+        Integer pageIndex = productSearchDTO.getPageIndex();
+        
+        Integer pageSize = productSearchDTO.getPageSize();
+        List<ProductDTO> pList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
+        return pList;
+    }
 }
 
