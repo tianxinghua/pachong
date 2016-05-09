@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -27,6 +28,7 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.efashion.dao.Item;
+import com.shangpin.iog.efashion.dao.Item_images;
 import com.shangpin.iog.efashion.dao.Result;
 import com.shangpin.iog.efashion.dao.ReturnObject;
 import com.shangpin.iog.service.EventProductService;
@@ -83,7 +85,7 @@ public class efashionFrameFetchProduct extends AbsSaveProduct {
 						+ "页---------------------------");
 				System.out.println("商品数量：" + item.size());
 				System.out.println("总的商品数量：" + retList.size());
-//				getProductList(max * i + 1);
+				getProductList(max * i + 1);
 			}
 		}
 	}
@@ -146,8 +148,21 @@ public class efashionFrameFetchProduct extends AbsSaveProduct {
 			sku.setSupplierPrice("");
 			skuList.add(sku);
 
-			String[] picArray = item.getItem_images();
-			imageMap.put(sku.getSkuId() + ";" + sku.getSkuId().split("\\|")[1]+URLEncoder.encode("|")+sku.getSkuId().split("\\|")[2], Arrays.asList(picArray));
+			Item_images images = item.getItem_images();
+			List<String> picArray = new ArrayList<String>();
+			if(StringUtils.isNotBlank(images.getUrl1())){
+				picArray.add(images.getUrl1());
+			}
+			if(StringUtils.isNotBlank(images.getUrl2())){
+				picArray.add(images.getUrl2());
+			}
+			if(StringUtils.isNotBlank(images.getUrl3())){
+				picArray.add(images.getUrl3());
+			}
+			if(StringUtils.isNotBlank(images.getUrl4())){
+				picArray.add(images.getUrl4());
+			}
+			imageMap.put(sku.getSkuId() + ";" + sku.getSkuId().split("\\|")[1]+URLEncoder.encode("|")+sku.getSkuId().split("\\|")[2], picArray);
 		}
 		returnMap.put("sku", skuList);
 		returnMap.put("spu", spuList);

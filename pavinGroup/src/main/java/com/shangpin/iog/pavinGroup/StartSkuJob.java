@@ -8,6 +8,7 @@ import java.util.TimeZone;
 
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.pavinGroup.service.FetchProduct;
+import com.shangpin.iog.pavinGroup.service.PavignFrameFetchProduct;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -30,8 +31,9 @@ public class StartSkuJob {
         //鎷夊彇鏁版嵁
         log.info("----拉取数据开始----");   
         System.out.println("-------fetch start---------");
-        FetchProduct fetchProduct =(FetchProduct)factory.getBean("pavinGroup");
-        fetchProduct.fetchProductAndSave();
+        PavignFrameFetchProduct fetchProduct =(PavignFrameFetchProduct)factory.getBean("pavignFrameFetchProduct");
+//        fetchProduct.handleData(flag, supplierId, day, picpath);
+//        fetchProduct.fetchProductAndSave();
         log.info("----拉取数据接受----");   
         System.out.println("-------fetch end---------");
         System.exit(0);

@@ -86,6 +86,7 @@ public class PavignFrameFetchProduct extends AbsSaveProduct{
 	 */
 	public void fetchProductAndSave11() {
 		List<String> array = getCategoryUrl();
+		array.add("http://www.pavingroup.com/it/rss/catalog/category/cid/156/store_id/1/");
 		List<Rss> list = null;
 		try {
 				for(int i=0;i<array.size();i++){
@@ -98,8 +99,6 @@ public class PavignFrameFetchProduct extends AbsSaveProduct{
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-	
 	}
 	private List<Item> allItem = new ArrayList<Item>();
 	private void fetchProduct(String url){

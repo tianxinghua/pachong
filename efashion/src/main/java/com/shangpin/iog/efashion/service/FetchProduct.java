@@ -189,9 +189,9 @@ public class FetchProduct {
 
 				}
 				
-				String [] picArray = item.getItem_images();
-				productFetchService.savePicture(supplierId, null, skuId,Arrays.asList(picArray));
-			
+//				String [] picArray = item.getItem_images();
+//				productFetchService.savePicture(supplierId, null, skuId,Arrays.asList(picArray));
+//			
 
 			}
 

@@ -88,8 +88,9 @@ public class FetchProduct {
 	public  void getProduct(OAuthService service,Token accessToken,int page){
 		try{
 			OAuthRequest request = new OAuthRequest(Verb.GET,
-//					MAGENTO_REST_API_URL+"product?limit=100&page="+page,
-					MAGENTO_REST_API_URL+"product/"+URLEncoder.encode("CK2676-BLACK-M (UK12)"),
+					MAGENTO_REST_API_URL+"product?limit=100&page="+page,
+//					MAGENTO_REST_API_URL+"orders/fe7d791ced254a0697c36a055a94d609",
+//					MAGENTO_REST_API_URL+"logistics/200044098",
 					service);
 			service.signRequest(accessToken, request);
 			Response response = request.send();
@@ -142,11 +143,11 @@ public class FetchProduct {
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 		//获取原有的SKU 仅仅包含价格和库存
 		
-//		try {
-//			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
-//		} catch (ServiceException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 		OAuthService service = new ServiceBuilder().provider(API.class)
 				.apiKey(MAGENTO_API_KEY).apiSecret(MAGENTO_API_SECRET).build();
 		Token accessToken = new Token(token,
@@ -173,8 +174,6 @@ public class FetchProduct {
 			}
 		}
 	}
-	//  , ]
-	
 	
 	/**
 	 * message mapping and save into DB
