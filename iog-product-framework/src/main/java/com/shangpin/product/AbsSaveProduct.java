@@ -117,24 +117,49 @@ public abstract class AbsSaveProduct {
 				e.printStackTrace();
 			}			
 		}
+		boolean change = false;
 		NewPriceDTO n = null;
 		List<String> idList = new ArrayList<String>();
 		for (SkuDTO sku : skuList) {
 			try {
 				if (priceMap.containsKey(sku.getSkuId())) {
+					
+					change = false;
 					n = priceMap.get(sku.getSkuId());
-					if (!(sku.getSupplierPrice().equals(n.getNewSupplierPrice())&&sku.getSalePrice().equals(n.getNewSalePrice())&&sku.getMarketPrice().equals(n.getNewMarketPrice()))) {
+					if (!sku.getMarketPrice().equals(n.getNewMarketPrice()==null?"":n.getNewMarketPrice())) {
+						change = true;
+					}else if(!sku.getSupplierPrice().equals(n.getNewSupplierPrice()==null?"":n.getNewSupplierPrice())){
+						change = true;
+					}else if(!sku.getSalePrice().equals(n.getNewSalePrice()==null?"":n.getNewSalePrice())){
+						change = true;
+					}
+					
+					if (change) {
+						//更新数据库
 						idList.add(sku.getSkuId());
 					}
+					
+//					
+//					if (!(sku.getSupplierPrice().equals(n.getNewSupplierPrice())&&sku.getSalePrice().equals(n.getNewSalePrice())&&sku.getMarketPrice().equals(n.getNewMarketPrice()))) {
+//						idList.add(sku.getSkuId());
+//					}
+//				
+				
 				}
 			} catch (Exception e) {
-				loggerError.error(e); 
+				
 			}
 			
 		}
 		//更新list memo
 		if (idList.size()>0&&idList!=null) {
-			productFetchService.updateSkuListMemo(supplierId, idList);
+			try {
+				productFetchService.updateSkuListMemo(supplierId, idList);
+			} catch (Exception e) {
+				loggerError.error(e); 
+				e.printStackTrace();
+			}
+			
 		}
 	}
 	@Deprecated
