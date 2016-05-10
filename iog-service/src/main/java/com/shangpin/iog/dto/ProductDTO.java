@@ -32,7 +32,7 @@ public class ProductDTO {
     private String subCategoryName;
 
     private String memo;
-
+    private String spSkuId;
     public String getMemo() {
 		return memo;
 	}
@@ -488,6 +488,14 @@ public class ProductDTO {
 
 	public void setNewSupplierPrice(String newSupplierPrice) {
 		this.newSupplierPrice = newSupplierPrice;
+	}
+
+	public String getSpSkuId() {
+		return spSkuId;
+	}
+
+	public void setSpSkuId(String spSkuId) {
+		this.spSkuId = spSkuId;
 	}
     
 }

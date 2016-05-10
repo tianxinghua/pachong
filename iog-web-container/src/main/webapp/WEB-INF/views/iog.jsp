@@ -79,6 +79,11 @@
 		var search = filter("");
 	    window.open('downLoadPicture?queryJson='+$.toJSON(search), '','');
 	}
+	//下载图片
+	function OnlineDownLoad(){
+		var search = filter("");
+	    window.open('OnlineDownLoad?queryJson='+$.toJSON(search), '','');
+	}
 	//导出商品
     function exportProduct(str) {
     	var search = filter(str);
@@ -182,7 +187,9 @@
 	<a href="javascript:void(0)" onclick="exportOrder('order')" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>导出订单</a>
 	<a href="javascript:void(0)" onclick="queryOrder()" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>查看订单</a>
 	<br><br><br>
-	<a href="javascript:void(0)" onclick="downloadpicture()" id="dowm" icon="icon-search" class='easyui-linkbutton'>下载图片</a>
+	<a href="javascript:void(0)" onclick="downloadpicture()" icon="icon-search" class='easyui-linkbutton'>下载图片</a>
+		<br><br><br>
+	<a href="javascript:void(0)" onclick="OnlineDownLoad()" icon="icon-search" class='easyui-linkbutton'>下载图片online</a>
 		<br><br><br>
 	<form action="uploadFileAndDown" method="post" enctype="multipart/form-data">
 		<input type="file" name="uploadFile">

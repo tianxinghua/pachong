@@ -64,7 +64,7 @@
         PRODUCT_SIZE,STOCK,MEMO,CREATE_TIME,LAST_TIME,
         NEW_MARKET_PRICE,
         NEW_SALE_PRICE,
-        NEW_SUPPLIER_PRICE,UPDATE_TIME ,   EVENT_START_DATE,EVENT_END_DATE,MEASUREMENT
+        NEW_SUPPLIER_PRICE,UPDATE_TIME ,   EVENT_START_DATE,EVENT_END_DATE,MEASUREMENT,SP_SKU_ID
 
 	</sql>
 
@@ -114,7 +114,7 @@
             #{productName},#{marketPrice},#{salePrice}, #{supplierPrice}, #{barcode}, #{productCode},
             #{color} , #{productDescription}, #{saleCurrency}, #{productSize}, #{stock},#{memo},
             #{createTime}, #{lastTime}, #{newMarketPrice} , #{newSalePrice} , #{newSupplierPrice} ,
-        #{updateTime},#{eventStartDate},#{eventEndDate},#{measurement}
+        #{updateTime},#{eventStartDate},#{eventEndDate},#{measurement},#{spSkuId}
 
         )
 
