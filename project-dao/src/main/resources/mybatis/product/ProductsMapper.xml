@@ -55,6 +55,7 @@
         <result column="newMarketPrice" property="newMarketPrice" />
         <result column="newSalePrice" property="newSalePrice" />
         <result column="newSupplierPrice" property="newSupplierPrice" />
+        <result column="spSkuId" property="spSkuId" />
 
 
 	</resultMap>
@@ -430,8 +431,9 @@
           sku.PRODUCT_NAME as product_name,
           sku.BARCODE as barcode,
           sku.PRODUCT_CODE as product_code,sku.COLOR as color,
-          sku.PRODUCT_SIZE as product_size
+          sku.PRODUCT_SIZE as product_size,
 		
+		  sku.SP_SKU_ID as spSkuId		
 		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
 					 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID
         <where>
