@@ -30,8 +30,8 @@ import java.util.ResourceBundle;
  */
 public class FtpUtil {
 	private static Log log = LogFactory.getLog(FtpUtil.class);
-	private static String HOST = "89.225.249.252", PORT = "2121",
-			USER = "ftp_Shangpin", PASSWORD = "Z3!C8=mp", FILE_PATH = "/csv";
+	private static String HOST = "89.185.38.144", PORT = "21",
+			USER = "ftp_shangpin", PASSWORD = "Z3!C8=mp", FILE_PATH = "/csv";
 	public static final String PROPERTIES_FILE_NAME = "conf";
 	public static  String path = null;
 	static ResourceBundle bundle = ResourceBundle.getBundle("conf");
@@ -63,8 +63,8 @@ public class FtpUtil {
 	}
 
 	public static <T> List<T> readLocalCSV(Class<T> clazz) throws Exception {
-//		String realPath = download();
-		String realPath = "C://test//ftp_Shangpin//Catalog//output_06052016.csv";
+		String realPath = download();
+//		String realPath = "C://test//ftp_Shangpin//Catalog//output_06052016.csv";
 		String rowString = null;
 		List<T> dtoList = new ArrayList<T>();
 		// Set<T> dtoSet = new HashSet<T>();

@@ -11,6 +11,7 @@ dependencies {
             "com.google.code.gson:gson:2.3.1",
             project(':project-common'),
             project(':iog-common-product'),
+                    project(':iog-product-framework'),
             project(':project-dao')
     )
 
@@ -29,7 +30,7 @@ jar {
     //}.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.pozzilei.StartSkuJob'
+        attributes 'Main-Class': 'com.shangpin.iog.pozzilei.service.PozzileiFrameFetchProduct'
     //    attributes 'Class-Path': '. ./conf/  ' + manifestCp
     }
 }
