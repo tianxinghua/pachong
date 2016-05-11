@@ -386,7 +386,7 @@ public class FileDownloadController {
     	String parameter = request.getParameter("threadnum");
     	ThreadPoolExecutor executor = null;
     	if (parameter.equals("")||parameter.contains("-")) {
-    		executor = new ThreadPoolExecutor(3, 30, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
+    		executor = new ThreadPoolExecutor(3, 15, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(6),new ThreadPoolExecutor.CallerRunsPolicy());
 		}else{
 			executor = new ThreadPoolExecutor(Integer.valueOf(parameter), Integer.valueOf(parameter),0L, TimeUnit.MILLISECONDS,new LinkedBlockingQueue<Runnable>());
 		}

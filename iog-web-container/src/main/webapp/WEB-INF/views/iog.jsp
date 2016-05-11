@@ -189,11 +189,11 @@
 	<br><br><br>
 	<a href="javascript:void(0)" onclick="downloadpicture()" icon="icon-search" class='easyui-linkbutton'>下载图片</a>
 		<br><br><br>
-	<a href="javascript:void(0)" onclick="OnlineDownLoad()" icon="icon-search" class='easyui-linkbutton'>下载图片online</a>
+	<a href="javascript:void(0)" onclick="OnlineDownLoad()" icon="icon-search" class='easyui-linkbutton' title="按条件导出产品的下载图片,命名为spskuid,失败重试10次">下载图片online</a>
 		<br><br><br>
 	<form action="uploadFileAndDown" method="post" enctype="multipart/form-data">
 		<input type="file" name="uploadFile">
-		下载数:<input type="number" name="threadnum">
+		同时下载图片数:<input type="number" name="threadnum">
 		<input type="submit" value ="开始上传" onmouseenter="show()" onmouseleave="unshow()">
 	</form>
 	<br><br><br>
