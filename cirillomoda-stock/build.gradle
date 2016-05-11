@@ -1,7 +1,8 @@
 dependencies {
     compile(
             project(':project-common'),
-            project(':openapi-ice')
+            project(':openapi-ice'),
+            "net.sourceforge.javacsv:javacsv:2.0",
     )
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
     compile 'org.apache.commons:commons-csv:1.2'

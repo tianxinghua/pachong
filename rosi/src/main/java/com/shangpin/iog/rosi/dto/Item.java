@@ -16,6 +16,8 @@ public class Item {
 	String color;
 	String composition;//材质
 	String material;
+	String origin;
+	String season;
 	String subtitle;
 	String description;
 	String image_link_1;
@@ -23,9 +25,9 @@ public class Item {
 	String image_link_3;
 	String image_link_4;
 	String image_link_5;
-	String sku;
 	String Stock;
 	String size;
 	String price;
+	String sku;
 	
 }

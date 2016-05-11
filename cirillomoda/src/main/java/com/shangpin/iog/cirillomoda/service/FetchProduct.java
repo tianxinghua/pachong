@@ -143,8 +143,14 @@ public class FetchProduct {
                         title = record.get("Titolo");
                         brand = record.get("Marca");
                         price = record.get("Prezzo");
+                        
+//                        String Prezzo_scontato = record.get("Prezzo scontato");
+                        
                         category = record.get("Categoria");
                         description = record.get("description_it_it");
+//                        String description_en_gb = record.get("description_en_gb");
+//                        String description_en_us = record.get("description_en_us");
+//                        String description_de_de = record.get("description_de_de");
                         status = record.get("Stato");
                         try{
                         	origin = record.get("ORIGIN");
@@ -160,7 +166,16 @@ public class FetchProduct {
                         spu.setSupplierId(supplierId);
                         spu.setCategoryName(category);
                         spu.setBrandName(brand);
-                        spu.setMaterial(description);
+                        String material = "";
+                        description = description.replaceAll("\n", "").replaceAll("\r", "");
+                        String[] des = description.split("<br />");                        
+                        for(String str:des){
+                        	if(StringUtils.isNotBlank(str) && str.contains("%")){
+                        		material = str;
+                        		break;
+                        	}
+                        }
+                        spu.setMaterial(material);
 //                        spu.setProductOrigin(description);
                         spu.setProductOrigin(origin);
                         spu.setSeasonId(season); 

@@ -15,9 +15,14 @@ public class Product {
 	String Colore ;//颜色
 	String Taglia ;//尺寸
 	String Materiale ;//材料
-	String HttpFoto ;//照片链接
+	String HttpFoto1 ;//照片链接
+	String HttpFoto2 ;
+	String HttpFoto3 ;
+	String HttpFoto4 ;
+	String HttpFoto5 ;
 	String Giacenza ;//库存
 	String Prezzoven ;//价格
 	String Stagione ;//季节
+	String ProductOrigin ;
 
 }
