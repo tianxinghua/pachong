@@ -21,14 +21,10 @@
         <result column="PRODUCT_ORIGIN" property="productOrigin" />
         <result column="CREATE_TIME" property="createTime" />
         <result column="LAST_TIME" property="lastTime" />
-
-
+ 		<result column="STATUS" property="status" />
+ 		<result column="MEMO" property="memo" />
 
 	</resultMap>
-	
-
- 
-	
 	
 	<sql id="all_spu_column">
 		ID ,
@@ -38,12 +34,26 @@
         CATEGORY_ID,CATEGORY_NAME,SUB_CATEGORY_ID,SUB_CATEGORY_NAME,
         BRAND_ID,BRAND_NAME,
         SEASON_ID,SEASON_NAME,
-        PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME
+        PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME,STATUS
 	</sql>
 
+	<select id="findSpuBySupplierIdAndSpuId"  resultMap="spuMap" parameterType="java.lang.String">
+	        select
+	        *
+	        from SPU
+	        <where>
+	            <if test="null!=supplierId">
+	                SUPPLIER_ID = #{supplierId}
+	            </if>
+	            <if test="null!=spuId">
+	                and SPU_ID = #{spuId}
+	            </if>
+	
+	
+	        </where>
+	
+	    </select>
     <insert id="save"  parameterType="iog_spu" >
-
-
 
         insert into SPU(ID ,
         SUPPLIER_ID ,
@@ -52,18 +62,37 @@
         CATEGORY_ID,CATEGORY_NAME,SUB_CATEGORY_ID,SUB_CATEGORY_NAME,
         BRAND_ID,BRAND_NAME,
         SEASON_ID,SEASON_NAME,
-        PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME)
+        PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME,STATUS)
         values(
             #{id}, #{supplierId}, #{spuId}, #{spuName},#{categoryGender},
             #{categoryId}, #{categoryName},#{subCategoryId}, #{subCategoryName}, #{brandId}, #{brandName},
             #{seasonId} , #{seasonName}, #{picUrl}, #{material}, #{productOrigin},
-            #{createTime}, #{lastTime}
+            #{createTime}, #{lastTime},#{status}
         )
-
 
     </insert>
 
-
+	<update id="update" parameterType="iog_spu" >
+          update SPU
+          <set>
+	          <if test="categoryGender != null"> CATEGORY_GENDER = #{categoryGender},</if>
+<!-- 	          <if test="categoryName != null"> CATEGORY_NAME = #{categoryName},</if> -->
+<!-- 	          <if test="subCategoryName != null"> SUB_CATEGORY_NAME = #{subCategoryName},</if> -->
+	          <if test="categoryId != null"> CATEGORY_ID = #{categoryId},</if>
+<!-- 	          <if test="brandName != null"> BRAND_NAME = #{brandName},</if> -->
+	          <if test="seasonName != null"> SEASON_ID = #{seasonName},</if>
+	          <if test="status != null"> STATUS = #{status},</if>
+          	  <if test="picUrl != null"> PIC_URL = #{picUrl},</if>
+              <if test="material != null"> MATERIAL = #{material},</if>
+              <if test="lastTime != null"> LAST_TIME = #{lastTime},</if>
+              <if test="memo != null"> MEMO = #{memo},</if>
+              <if test="productOrigin != null"> PRODUCT_ORIGIN = #{productOrigin},</if>
+              <if test="categoryGender != null"> CATEGORY_GENDER = #{categoryGender},</if>
+              <if test="seasonName != null"> SEASON_NAME = #{seasonName}</if>
+              
+          </set>
+          where  SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
+    </update>
 
 
     <!-- batch save spu  -->
@@ -78,13 +107,13 @@
         CATEGORY_ID,CATEGORY_NAME,SUB_CATEGORY_ID,SUB_CATEGORY_NAME,
         BRAND_ID,BRAND_NAME,
         SEASON_ID,SEASON_NAME,
-        PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME)
+        PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME,STATUS)
         values
         <foreach collection="list" index="index" item="item" separator=",">
             (#{item.id}, #{item.supplierId}, #{item.spuId}, #{item.spuName},#{item.categoryGender},
             #{item.categoryId}, #{item.categoryName},#{item.subCategoryId}, #{item.subCategoryName},
             #{item.brandId}, #{item.brandName},#{item.seasonId} , #{item.seasonName}, 
-            #{item.picUrl}, #{item.material}, #{item.productOrigin},
+            #{item.picUrl}, #{item.material}, #{item.productOrigin},#{item.status},
             #{item.createTime}, #{item.lastTime})
         </foreach>
 
@@ -97,69 +126,11 @@
               <if test="lastTime != null"> LAST_TIME = #{lastTime},</if>
               <if test="productOrigin != null"> PRODUCT_ORIGIN = #{productOrigin},</if>
               <if test="categoryGender != null"> CATEGORY_GENDER = #{categoryGender},</if>
-              <if test="seasonId != null"> SEASON_ID = #{seasonId},</if>
-              <if test="seasonName != null"> SEASON_NAME = #{seasonName},</if>
-              <if test="categoryName != null"> CATEGORY_NAME = #{categoryName}</if>
+              <if test="seasonName != null"> SEASON_NAME = #{seasonName}</if>
               
           </set>
           where  SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
     </update>
-    <select id="findSPUBySupplierAndSpuId"  resultMap="spuMap" parameterType="java.lang.String">
-	        select
-	          <include refid="all_spu_column"></include>
-	        from SPU
-	        <where>
-	            <if test="null!=supplierId">
-	                SUPPLIER_ID = #{supplierId}
-	            </if>
-	            <if test="null!=spuId">
-	                and SPU_ID = #{spuId}
-	            </if>
-	        </where>
-	    </select>
-	<select id="findPartBySupAndSpuId" resultMap="spuMap" parameterType="java.lang.String">
-	   select
-       		SEASON_NAME,MATERIAL,PRODUCT_ORIGIN
-       from SPU
-        <where>
-            <if test="null!=supplierId">
-                SUPPLIER_ID = #{supplierId}
-            </if>
-            <if test="null!=spuId">
-                and SPU_ID = #{spuId}
-            </if>
-        </where>
-	</select>	    
-	<select id="findPartSPUListBySupplierId" resultMap="spuMap" parameterType="java.lang.String">
-	   select
-       		SEASON_NAME,MATERIAL,PRODUCT_ORIGIN
-       from SPU
-        <where>
-            <if test="null!=supplierId">
-                SUPPLIER_ID = #{supplierId}
-            </if>
-        </where>
-	</select>	
+
 	
-	<update id="updateSpuMemo">
-	    update SPU
-       <set>
-		  MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",#{memo}), 
-	      LAST_TIME = #{lastTime},
-	   </set>
-	    where  SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
-    </update>
-    
-    <update id="updateSpuMemoList">
-		<foreach collection="list" item="spu" separator=";" open="" close="">
-		    update SPU
-		    <set>
-				  MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",#{spu.memo}), 
-			      LAST_TIME = NOW(),
-			 </set>
-		    where  SUPPLIER_ID = #{spu.supplierId}  and  SPU_ID = #{spu.spuId}
-	    </foreach>
-    </update>
-    
-    
 </mapper>

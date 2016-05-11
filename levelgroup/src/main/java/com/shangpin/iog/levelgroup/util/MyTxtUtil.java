@@ -1,9 +1,12 @@
 package com.shangpin.iog.levelgroup.util;
 
 import com.csvreader.CsvReader;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.levelgroup.dto.Product2;
+import com.shangpin.iog.levelgroup.dto.Product;
+
 import org.apache.log4j.Logger;
 
 import java.io.FileReader;
@@ -31,11 +34,11 @@ public class MyTxtUtil {
             supplierId = bdl.getString("supplierId");
     }
     /**
-     * http下载txtcsv文件到本地路径
+     * http����txtcsv�ļ�������·��
      * @throws MalformedURLException
      */
     public static void txtDownload() throws MalformedURLException {
-        String csvFile = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*20,1000*60*20), null);
+        String csvFile = HttpUtil45.get(httpurl, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null);
         //memo
         Map<String, String> mongMap = new HashMap<>();
         mongMap.put("supplierId", supplierId);
@@ -60,20 +63,20 @@ public class MyTxtUtil {
     }
 
     /**
-     * http下载txt文件到本地路径
+     * http����txt�ļ�������·��
      * @throws MalformedURLException
      */
-    public static List<Product2> readTXTFile() throws Exception {
-        //解析txt文件
-        CsvReader cr = new CsvReader(new FileReader(localPath));
-        System.out.println("创建cr对象成功");
-        //得到列名集合
+    public static List<Product> readTXTFile() throws Exception {
+        //
+        CsvReader cr = new CsvReader(new FileReader(localPath));//localPath//"E:\\testsssss.txt"
+        System.out.println("创建cr成功");
+        //
         cr.readRecord();
         String rowString = cr.getRawRecord();
-        List<Product2> dtoList = new ArrayList<Product2>();
-        Product2 product = null;
+        List<Product> dtoList = new ArrayList<Product>();
+        Product product = null;
         while(cr.readRecord()) {
-            product = new Product2();
+            product = new Product();
             rowString = cr.getRawRecord();
             //System.out.println("========================================");
             //System.out.println(rowString+"========================================");
@@ -82,7 +85,7 @@ public class MyTxtUtil {
             Field[] to = product.getClass().getDeclaredFields();
             //System.out.println(to.length + "--2--");
             for (int i = 0; i < to.length; i++){
-                String name = to[i].getName(); // 获取属性的名字
+                String name = to[i].getName(); // ��ȡ���Ե�����
                 name = name.substring(0, 1).toUpperCase() + name.substring(1);
                 Method m = product.getClass().getMethod("set"+name,String.class);
                 m.invoke(product,from[i]);
@@ -99,26 +102,25 @@ public class MyTxtUtil {
  * */
     public static void main(String[] args) {
 
-        List<Product2> list = null;
+        List<Product> list = null;
         try {
-            MyTxtUtil.txtDownload();
+//            MyTxtUtil.txtDownload();
             list = MyTxtUtil.readTXTFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println(list.size());
-        for (Product2 p:list){
-            System.out.println(p.getGENDER());
+        for (Product p:list){
+            if("040827928307789".equals(p.getVARIANT_SKU())){
+                System.out.println("spu name = "+ p.getNAME());
+                System.out.println(p.getGENDER());
+                System.out.println(p.getADVERTISERCATEGORY());
+                System.out.println(p.getBUYURL());
+                System.out.println(p.getMASTER_SKU());
+            }
+
         }
-        for (Product2 p:list){
-            System.out.println(p.getADVERTISERCATEGORY());
-        }
-        for (Product2 p:list){
-            System.out.println(p.getBUYURL());
-        }
-        for (Product2 p:list){
-            System.out.println(p.getMASTER_SKU());
-        }
+
 
 /*        String json = HttpUtil45.get(httpurl, new OutTimeConfig(1000 * 60 * 10, 10 * 1000 * 60, 10 * 1000 * 60), null);
         System.out.println(json);*/

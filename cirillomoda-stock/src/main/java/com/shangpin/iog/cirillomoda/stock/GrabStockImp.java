@@ -8,8 +8,11 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.cirillomoda.stock.dto.Item;
+import com.shangpin.iog.cirillomoda.stock.util.CVSUtil;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -23,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 @Component("cirillomodaStock")
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
@@ -44,7 +48,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
     }
 
     public Map<String, String> grabStock(Collection<String> skuNos) throws ServiceException {
-        Map<String, String> skuStock = new HashMap<>(skuNos.size());
+        Map<String, String> skuStock = new HashMap<>();
         Map<String, String> stockMap = new HashMap<>();
 
         try {
@@ -55,7 +59,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 //            timeConfig.confRequestOutTime(600000);
 //            timeConfig.confSocketOutTime(600000);
             String result = HttpUtil45.get("http://www.cirillomoda.com/maxpho/cirillo_maxpho.csv", timeConfig, null);
-            HttpUtil45.closePool();
+//            HttpUtil45.closePool();
 
 //            mongMap.put("supplierId", supplierId);
 //            mongMap.put("supplierName", "cirillomoda");
@@ -94,6 +98,26 @@ public class GrabStockImp extends AbsUpdateProductStock {
             } finally {
                 reader.close();
             }
+            
+//            List<Item> items = CVSUtil.readCSV(result, Item.class, ';');
+//            for(Item item :items){
+//            	try {
+//					String spuId = "";
+//            		String type = item.getParentChild();           		
+//                    if ("parent".equals(type)) { //SPU
+//                        spuId = item.getSKU();
+//                    } else if ("child".equals(type)) { //SKU                       
+//                        String size = item.getAttribute_size();
+//                        String stock = item.getAttribute_size_quantity();
+//                        String skuId =  spuId + "-" + size;
+//                        stockMap.put(skuId, stock);
+//                    }
+//            		
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					
+//				}
+//            }
 
             for (String skuNo : skuNos) {
                 if (stockMap.containsKey(skuNo)) {
@@ -106,20 +130,21 @@ public class GrabStockImp extends AbsUpdateProductStock {
         } catch (Exception e) {
             e.printStackTrace();
             loggerError.error("拉取cirillomoda数据失败---" + e.getMessage());
-            throw new ServiceMessageException("拉取cirillomoda数据失败");
+            return skuStock;            
         }
         return skuStock;
     }
 
     public static void main(String[] args) throws Exception {
-    	//加载spring
-        loadSpringContext();
-        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("cirillomodaStock");
+    	
+        GrabStockImp grabStockImp = new GrabStockImp();
         //AbsUpdateProductStock grabStockImp = new GrabStockImp();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("cirillomoda更新数据库开始");
         try {
-        	grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+//        	grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+        	
+        	grabStockImp.grabStock(null);
 		} catch (Exception e) {
 			logger.info("cirillomoda更新数据库出错"+e.toString());
 			e.printStackTrace();

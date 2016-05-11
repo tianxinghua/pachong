@@ -69,14 +69,23 @@ public class OrderSreviceImpl extends AbsOrderService {
 	 * 下订单
 	 */
 	public void loopExecute() {
-		this.checkoutOrderFromWMS(supplierNo, supplierId, true);
+		try {
+			this.checkoutOrderFromWMS(supplierNo, supplierId, true);
+		} catch (Exception e) {
+			loggerError.error(e); 
+		}		
 	}
 
 	/**
 	 * 确认支付
 	 */
 	public void confirmOrder() {
-		this.confirmOrder(supplierId);
+		try {
+			this.confirmOrder(supplierId);
+		} catch (Exception e) {
+			loggerError.error(e); 
+		}
+		
 	}
 	
 	@Override

@@ -80,7 +80,7 @@ public class FetchProduct {
 				spu.setMaterial(item.getMateriale());
 				spu.setSeasonName(item.getStagione());
 				spu.setSeasonName(item.getStagione()); 
-				//spu.setProductOrigin(item.getMadein());
+				spu.setProductOrigin(item.getProductOrigin());
 				
 				//============================保存spu===================================
 				 try {
@@ -125,7 +125,21 @@ public class FetchProduct {
 				}
 				
 				List<String> listPics = new ArrayList<String>();
-				listPics.add(item.getHttpFoto());				
+				if(StringUtils.isNotBlank(item.getHttpFoto1())){
+					listPics.add(item.getHttpFoto1());	
+				}
+				if(StringUtils.isNotBlank(item.getHttpFoto2())){
+					listPics.add(item.getHttpFoto2());	
+				}
+				if(StringUtils.isNotBlank(item.getHttpFoto3())){
+					listPics.add(item.getHttpFoto3());	
+				}
+				if(StringUtils.isNotBlank(item.getHttpFoto4())){
+					listPics.add(item.getHttpFoto4());	
+				}
+				if(StringUtils.isNotBlank(item.getHttpFoto5())){
+					listPics.add(item.getHttpFoto5());	
+				}							
 				try {
 					productFetchService.savePicture(supplierId, null, sku.getSkuId(), listPics);
 				} catch (Exception e) {
