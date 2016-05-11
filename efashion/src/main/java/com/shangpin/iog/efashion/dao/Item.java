@@ -25,7 +25,7 @@ public class Item {
 	private String season_reference;
 
 
-	private String [] item_images;
+	private Item_images item_images;
 	private String color;
 	private String size;
 	private String gender;

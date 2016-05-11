@@ -33,6 +33,7 @@ public class FetchProduct {
     private static ResourceBundle bdl = null;
     private static String supplierId;
     private static String url;
+    private static String picpath;
     private static int day;
     static {
         if (null == bdl)
@@ -40,6 +41,7 @@ public class FetchProduct {
         supplierId = bdl.getString("supplierId");
         url = bdl.getString("url");
         day = Integer.valueOf(bdl.getString("day"));
+        picpath = bdl.getString("picpath");
     }
     @Autowired
     private ProductFetchService productFetchService;

@@ -5,8 +5,8 @@ dependencies {
             project(':project-common'),
             project(':iog-service'),
             project(':project-dao'),
-            project(':iog-common-product'),
-              project(':log-template')
+            project(':iog-product-framework'),
+            project(':iog-common-product')
     )
 }
 
@@ -15,14 +15,8 @@ jar {
       dependsOn copyToLib, copyResources ,dependsClassPath
     exclude ("**/*.properties")
 
-    def manifestCp = configurations.compile.files.collect  {
-        File file = it
-        "lib/${file.name}"
-    }.join(' ')
-
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.biondini.StartSkuJob'
-        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+        attributes 'Main-Class': 'com.shangpin.iog.biondini.service.biondiniFetchProduct'
     }
 
 }
