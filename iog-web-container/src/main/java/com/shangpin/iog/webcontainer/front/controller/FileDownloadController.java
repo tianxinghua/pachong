@@ -390,7 +390,8 @@ public class FileDownloadController {
 		}else{
 			executor = new ThreadPoolExecutor(Integer.valueOf(parameter), Integer.valueOf(parameter),0L, TimeUnit.MILLISECONDS,new LinkedBlockingQueue<Runnable>());
 		}
-        NewSavePic newSavePic = new NewSavePic(executor);
+    	PicQueue picQueue = new PicQueue();
+        NewSavePic newSavePic = new NewSavePic(picQueue,executor);
         
     	String fileName = file.getOriginalFilename();  
         File targetFile = new File(path, fileName);  
@@ -404,22 +405,40 @@ public class FileDownloadController {
         } catch (Exception e) {  
             e.printStackTrace();  
         }  
-        SavePic savePic = new SavePic();
-//        String filePath = savePic.saveImg(targetFile);
-        String filePath = newSavePic.saveImg(targetFile);
+        
+        
+        String filePath = newSavePic.saveImg(targetFile,picQueue);
         log.error(targetFile.getName()+"下载路径为+++++++++++++++++++++++++++++++++"+filePath);
-//        ThreadPoolExecutor executor = savePic.getExecutor();
-        while(true){
-        	if(executor.getActiveCount()==0){
-        		log.error("线程活动数为0");
-        		break;
-        	}
-        	try {
-				Thread.sleep(1000*30);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-        }
+    	delay(executor);
+    	
+    	//重新下载失败的
+		 String failUrl = "";
+		 String[] split = null;
+		 Map<String,Integer> recordMap = new HashMap<String, Integer>();
+		 while(executor.getActiveCount()>0||!picQueue.unVisitedUrlsEmpty()){
+			 if (picQueue.unVisitedUrlsEmpty()&&executor.getActiveCount()>=0) {
+				 log.error("============================================都为空=======================================================");
+				try {
+	 				Thread.sleep(1000*15);
+	 			} catch (InterruptedException e) {
+	 				e.printStackTrace();
+	 			}
+				continue;
+			 }
+			 failUrl = picQueue.unVisitEdUrlDeQueue();
+			 if (recordMap.containsKey(failUrl)) {
+				 if (recordMap.get(failUrl)>10) {
+					continue;
+				 }
+				 recordMap.put(failUrl, recordMap.get(failUrl)+1);
+			 }else{
+				 recordMap.put(failUrl, 1);
+			 }
+			 split = failUrl.split(";");
+			 executor.execute(new DowmImage(split[0],split[2],split[1],picQueue));
+		 }
+		 delay(executor);
+    	
         ZipFile zipfile = null;
         
         try {
@@ -436,7 +455,7 @@ public class FileDownloadController {
 			in = new BufferedInputStream(new FileInputStream (zipfile.getFile()));
 
             out = new BufferedOutputStream(response.getOutputStream());
-            byte[] data = new byte[1048576];
+            byte[] data = new byte[2048];
             int len = 0;
             while (-1 != (len=in.read(data, 0, data.length))) {
                 out.write(data, 0, len);
@@ -474,8 +493,8 @@ public class FileDownloadController {
     	BufferedOutputStream out = null;
     	String path = request.getSession().getServletContext().getRealPath("");  
     	ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 15, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(6),new ThreadPoolExecutor.CallerRunsPolicy());
-    	String dirPath = "F:/usr/local/picturetem/"+new Date().getTime();
-//    	String dirPath = "/usr/local/picturetem/"+new Date().getTime();
+//    	String dirPath = "F:/usr/local/picturetem/"+new Date().getTime();
+    	String dirPath = "/usr/local/picturetem/"+new Date().getTime();
 		File f1 = new File(dirPath);
 		if (!f1.exists()) {
 			f1.mkdirs();
