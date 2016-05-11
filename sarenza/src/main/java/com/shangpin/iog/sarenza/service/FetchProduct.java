@@ -131,7 +131,6 @@ public class FetchProduct {
 						logError.error(ex.getMessage());
 						ex.printStackTrace();
 					}
-					e.printStackTrace();
 				}
 				SkuDTO skudto = new SkuDTO();
 				skudto.setCreateTime(new Date());

@@ -162,7 +162,7 @@ public class FechProduct {
 	                sku.setSpuId(item.getSupplier_SKU());
 	                sku.setProductName(item.getSubtitle());
 	                sku.setMarketPrice(item.getPrice().replaceAll("EUR", "").replaceAll(",", ""));  
-	                sku.setProductCode(item.getSupplier_SKU().replaceAll(item.getBrand_name().toUpperCase(), ""));
+	                sku.setProductCode(item.getProduct_code());
 	                sku.setColor(item.getColor());
 	                sku.setProductDescription(item.getDescription().replaceAll(",", " "));
 	                sku.setSaleCurrency("EUR");
@@ -221,7 +221,8 @@ public class FechProduct {
 	                	material = item.getMaterial();
 	                }
 	                spu.setMaterial(material);
-	                //spu.setProductOrigin(item.get);
+	                spu.setProductOrigin(item.getOrigin());
+	                spu.setSeasonName(item.getSeason()); 
 	                try {
 	                    productFetchService.saveSPU(spu);
 	                } catch (ServiceException e) {

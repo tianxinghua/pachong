@@ -1,7 +1,6 @@
 package com.shangpin.iog.monnierfreres.utils;
 
 import com.csvreader.CsvReader;
-import com.google.gson.Gson;
 import com.shangpin.iog.monnierfreres.dto.Item;
 import com.shangpin.iog.monnierfreres.dto.Product;
 

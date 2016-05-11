@@ -30,8 +30,8 @@ import java.util.ResourceBundle;
  */
 public class FtpUtil {
 	private static Log log = LogFactory.getLog(FtpUtil.class);
-	private static String HOST = "89.225.249.252", PORT = "2121",
-			USER = "ftp_Shangpin", PASSWORD = "Z3!C8=mp", FILE_PATH = "/csv";
+	private static String HOST = "89.185.38.144", PORT = "21",
+			USER = "ftp_shangpin", PASSWORD = "Z3!C8=mp";
 	public static final String PROPERTIES_FILE_NAME = "conf";
 	public static  String path = null;
 	static ResourceBundle bundle = ResourceBundle.getBundle("conf");
@@ -64,7 +64,8 @@ public class FtpUtil {
 
 	public static <T> List<T> readLocalCSV(Class<T> clazz) throws Exception {
 //		String realPath = download();
-		String realPath = "C://test//ftp_Shangpin//Catalog//output_06052016.csv";
+//		String realPath = "C://AMD//output_11052016.csv";
+		String realPath = "/usr/local/applications/appfetch/sarenza/output_11052016.csv";
 		String rowString = null;
 		List<T> dtoList = new ArrayList<T>();
 		// Set<T> dtoSet = new HashSet<T>();
@@ -72,34 +73,37 @@ public class FtpUtil {
 		List<String> colValueList = null;
 		CsvReader cr = null;
 		// 解析csv文件
-		cr = new CsvReader(new FileReader( realPath));
-		System.out.println("创建cr对象成功");
-		// 得到列名集合
-		cr.readRecord();
-		int a = 0;
-		while (cr.readRecord()) {
-			a++;
-			rowString = cr.getRawRecord();
-			if (StringUtils.isNotBlank(rowString)) {
-				split = rowString.split("\\|");
-				colValueList = Arrays.asList(split);
-				T t = fillDTO(clazz.newInstance(), colValueList);
-				// 过滤重复的dto。。。sku,
-				// dtoSet.add(t);
-				dtoList.add(t);
+		if(realPath!=null){
+			cr = new CsvReader(new FileReader( realPath));
+			System.out.println("创建cr对象成功");
+			// 得到列名集合
+			cr.readRecord();
+			int a = 0;
+			while (cr.readRecord()) {
+				a++;
+				rowString = cr.getRawRecord();
+				if (StringUtils.isNotBlank(rowString)) {
+					split = rowString.split("\\|");
+					colValueList = Arrays.asList(split);
+					T t = fillDTO(clazz.newInstance(), colValueList);
+					// 过滤重复的dto。。。sku,
+					// dtoSet.add(t);
+					dtoList.add(t);
+				}
+				System.out.println(a);
 			}
-			System.out.println(a);
+
+			cr.close();
+//			File flie = new File(realPath);
+//			boolean falg = flie.delete();
+//			 if(falg){
+//			 System.out.println("文件删除success");
+//			 }else{
+//			 System.out.println("文件删除fail");
+//			 }
+
 		}
-
-		cr.close();
-		File flie = new File(realPath);
-//		boolean falg = flie.delete();
-		// if(falg){
-		// System.out.println("文件删除success");
-		// }else{
-		// System.out.println("文件删除fail");
-		// }
-
+		
 		return dtoList;
 	}
 
@@ -129,7 +133,7 @@ public class FtpUtil {
 		String filePath = null;
 		/** 定义FTPClient便利 */
 		FTPClient ftp = null;
-		String remoteFilePath = "/ftp_Shangpin/Catalog";
+		String remoteFilePath = "/";
 		try {
 			/** 创建FTPClient */
 			ftp = new FTPClient();
@@ -164,12 +168,14 @@ public class FtpUtil {
 
 			try {
 				files = ftp.dir(remoteFilePath);
-				
-				for (String fileName : files) {
-					if (fileName.indexOf("csv") > 0) {
-						filePath = fileName;
-						ftp.get(path+fileName, fileName);
-					}
+				if(files!=null&&files.length>=1){
+//					for (String fileName : files) {
+						if (files[files.length-1].indexOf("csv") > 0) {
+							filePath = files[files.length-1];
+							System.out.println(filePath);
+							ftp.get(path+filePath, filePath);
+						}
+//					}
 				}
 
 			} catch (Exception e) {

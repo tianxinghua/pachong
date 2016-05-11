@@ -19,8 +19,12 @@ import javax.xml.soap.SOAPMessage;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.log4j.Logger;
 
 public class SoapXmlUtil {
+	
+	private static Logger loggerError = Logger.getLogger("error");
+	private static Logger logger = Logger.getLogger("info");
 	
 	
 	/**
@@ -41,21 +45,30 @@ public class SoapXmlUtil {
         postMethod.setRequestEntity(requestEntity);
         
         int returnCode=0;
+        InputStream in = null;
         try {
 
             returnCode = httpClient.executeMethod(postMethod);
-            System.out.println("returnCode=="+returnCode);
+            logger.info("getSoapXml.returnCode=="+returnCode);
             
             if(returnCode == 200){
-            	InputStream in = postMethod.getResponseBodyAsStream();
-            	System.out.println(postMethod.getResponseContentLength());
+            	in = postMethod.getResponseBodyAsStream();
+            	logger.info("postMethod.getResponseContentLength()=========="+postMethod.getResponseContentLength());
                 byte[] ims=new byte[(int)postMethod.getResponseContentLength()];
                 in.read(ims);
                 return new String(ims);
             }
             
         } catch (Exception e) {
-        	e.printStackTrace();
+        	loggerError.error(e); 
+        }finally{
+        	try {
+        		if(in != null){
+        			in.close(); 
+        		}
+			} catch (Exception e2) {
+				loggerError.error(e2); 
+			}
         }
 		
 		return null;

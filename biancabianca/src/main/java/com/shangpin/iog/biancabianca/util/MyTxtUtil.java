@@ -66,10 +66,10 @@ public class MyTxtUtil {
      * @throws MalformedURLException
      */
     public static List<Product> readTXTFile() throws Exception {
-        //����txt�ļ�
-        CsvReader cr = new CsvReader(new FileReader("E:\\testsssss.txt"));//localPath
-        System.out.println("����cr����ɹ�");
-        //�õ���������
+        //
+        CsvReader cr = new CsvReader(new FileReader(localPath));//localPath
+        System.out.println("创建cr成功");
+        //
         cr.readRecord();
         String rowString = cr.getRawRecord();
         List<Product> dtoList = new ArrayList<Product>();

@@ -1,9 +1,6 @@
 package com.shangpin.iog.smets.util;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
@@ -11,7 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
@@ -37,7 +36,6 @@ public class TXTUtil {
 		if(in == null){
 			System.out.println("FTP下载失败！！！！！！！！！！");
 			log.error("FTP下载失败！！！！！！！！！！");
-			System.exit(0);
 		}
 		String rowString = null;
 		String[] split = null;
@@ -126,17 +124,26 @@ public class TXTUtil {
 	}
 	public static void main(String[] args) {
 		
-		String aaa= "3000003587604,3000003587611,3000003587628,3000003587635,3000003587642,3000003587659,3000003587666";
-		try {
-			List<TxtDTO> list = TXTUtil.downloadFTP(TxtDTO.class, ";");
-			System.out.println(list.size());
-			for (TxtDTO txtDTO : list) {
-				if (aaa.contains(txtDTO.getSkuId())) {
-					System.out.println(txtDTO.getSkuId()+"====="+txtDTO.getStock());
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+////		String aaa= "3000003587604,3000003587611,3000003587628,3000003587635,3000003587642,3000003587659,3000003587666";
+//		try {
+//			List<TxtDTO> list = TXTUtil.downloadFTP(TxtDTO.class, ";");
+//			Short[] needColsNo = new Short[]{0};
+//			File file = new File("F://smets.xlsx");
+//			List<TxtDTO> dto = new Excel2DTO().toDTO(file, 0, needColsNo, TxtDTO.class);
+//			Map<String,String> mmm = new HashMap<String, String>();
+//			System.out.println("判断");
+//			for (TxtDTO txtDTO : dto) {
+//				mmm.put(txtDTO.getId(), "");
+//			}
+//			
+//			for (TxtDTO txtDTO : list) {
+//				if (mmm.containsKey(txtDTO.getId())) {
+//					System.out.println(txtDTO.getId());
+//				}
+//			}
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 }

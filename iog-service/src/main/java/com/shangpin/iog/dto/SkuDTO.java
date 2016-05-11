@@ -40,7 +40,8 @@ public class SkuDTO implements Serializable {
     private String eventStartDate;
     private String eventEndDate;
     private String measurement;
-
+    private String spSkuId;
+    
 	public String getMeasurement() {
 		return measurement;
 	}
@@ -278,6 +279,12 @@ public class SkuDTO implements Serializable {
 				+ productDescription + ", saleCurrency=" + saleCurrency
 				+ ", productSize=" + productSize + ", stock=" + stock
 				+ ", createTime=" + createTime + ", lastTime=" + lastTime + "]";
+	}
+	public String getSpSkuId() {
+		return spSkuId;
+	}
+	public void setSpSkuId(String spSkuId) {
+		this.spSkuId = spSkuId;
 	}
     
 }

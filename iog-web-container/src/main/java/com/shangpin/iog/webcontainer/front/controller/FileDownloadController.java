@@ -243,6 +243,7 @@ public class FileDownloadController {
     	nameMap.put("waitrefund", "待退款");
     	nameMap.put("purexpsuc", "采购异常Suc");
     	nameMap.put("purexperr", "采购异常Err");
+    	nameMap.put("shipped", "shipped");
     	ModelAndView modelAndView = new ModelAndView();
     	List<OrderDTO> orderList = null;
     	try{
@@ -472,8 +473,9 @@ public class FileDownloadController {
     	BufferedInputStream in = null;
     	BufferedOutputStream out = null;
     	String path = request.getSession().getServletContext().getRealPath("");  
-    	ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 30, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
-    	String dirPath = "/usr/local/picturetem/"+new Date().getTime();
+    	ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 15, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(6),new ThreadPoolExecutor.CallerRunsPolicy());
+    	String dirPath = "F:/usr/local/picturetem/"+new Date().getTime();
+//    	String dirPath = "/usr/local/picturetem/"+new Date().getTime();
 		File f1 = new File(dirPath);
 		if (!f1.exists()) {
 			f1.mkdirs();
@@ -505,7 +507,16 @@ public class FileDownloadController {
 		 String failUrl = "";
 		 String[] split = null;
 		 Map<String,Integer> recordMap = new HashMap<String, Integer>();
-		 while(!picQueue.unVisitedUrlsEmpty()){
+		 while(executor.getActiveCount()>0||!picQueue.unVisitedUrlsEmpty()){
+			 if (picQueue.unVisitedUrlsEmpty()&&executor.getActiveCount()>=0) {
+				 System.out.println("============================================都为空=======================================================");
+				try {
+	 				Thread.sleep(1000*15);
+	 			} catch (InterruptedException e) {
+	 				e.printStackTrace();
+	 			}
+				continue;
+			 }
 			 failUrl = picQueue.unVisitEdUrlDeQueue();
 			 if (recordMap.containsKey(failUrl)) {
 				 if (recordMap.get(failUrl)>10) {
@@ -517,6 +528,11 @@ public class FileDownloadController {
 			 }
 			 split = failUrl.split(";");
 			 executor.execute(new DowmImage(split[0],split[2],split[1],picQueue));
+//			try {
+// 				Thread.sleep(500);
+// 			} catch (InterruptedException e) {
+// 				e.printStackTrace();
+// 			}
 		 }
 		 delay(executor);
 		
@@ -536,7 +552,7 @@ public class FileDownloadController {
 				in = new BufferedInputStream(new FileInputStream (zipfile.getFile()));
 
 	            out = new BufferedOutputStream(response.getOutputStream());
-	            byte[] data = new byte[1048576];
+	            byte[] data = new byte[2048];
 	            int len = 0;
 	            while (-1 != (len=in.read(data, 0, data.length))) {
 	                out.write(data, 0, len);
@@ -584,8 +600,8 @@ public class FileDownloadController {
     	for (ProductDTO productDTO : productList) {
     		
     		//TODO 如果spskuid为空跳过
-    		idMap.put(productDTO.getSpuId(), "尚品skuId");
-    		idMap.put(productDTO.getSkuId(), "尚品skuId");
+    		idMap.put(productDTO.getSpuId(), productDTO.getSpSkuId());
+    		idMap.put(productDTO.getSkuId(), productDTO.getSpSkuId());
     		findMap = pfs.findPictureBySupplierIdAndSkuIdOrSpuId(productDTO.getSupplierId(), productDTO.getSkuId(),null);
 			if (null==findMap||findMap.size()<1) {
 				findMap =pfs.findPictureBySupplierIdAndSkuIdOrSpuId(productDTO.getSupplierId(), null,productDTO.getSpuId());
@@ -625,4 +641,3 @@ public class FileDownloadController {
         return pList;
     }
 }
-

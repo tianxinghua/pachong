@@ -188,7 +188,8 @@ public class OrderService extends AbsOrderService {
 //				}
 				if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
 				    orderDTO.setExcState("0");
-					this.setPurchaseExc(orderDTO);
+					orderDTO.setStatus(OrderStatus.NOHANDLE);
+//					this.setPurchaseExc(orderDTO);
 
 				}else{
 					orderDTO.setExcState("1");
