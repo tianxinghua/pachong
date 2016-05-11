@@ -1,9 +1,8 @@
-package com.shangpin.iog.revolve.util;
+package com.shangpin.iog.revolve.stock.util;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +21,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 import com.csvreader.CsvReader;
-import com.shangpin.iog.revolve.sepStrategy.ISepStrategy;
+import com.shangpin.iog.revolve.stock.sepStrategy.ISepStrategy;
 
 public class Csv2DTO {
 	/**
