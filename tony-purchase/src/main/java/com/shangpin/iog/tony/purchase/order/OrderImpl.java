@@ -199,14 +199,15 @@ public class OrderImpl extends AbsOrderService {
                 if ("ko".equals(returnDataDTO.getStatus())){
                 	orderDTO.setExcState("0");
                 	orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
-                	String result = setPurchaseOrderExc(orderDTO);
-    				if("-1".equals(result)){
-    					orderDTO.setStatus(OrderStatus.NOHANDLE);
-    				}else if("1".equals(result)){
-    					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-    				}else if("0".equals(result)){
-    					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
-    				}
+                	orderDTO.setStatus(OrderStatus.NOHANDLE);
+//                	String result = setPurchaseOrderExc(orderDTO);
+//    				if("-1".equals(result)){
+//    					orderDTO.setStatus(OrderStatus.NOHANDLE);
+//    				}else if("1".equals(result)){
+//    					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+//    				}else if("0".equals(result)){
+//    					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+//    				}
                 }
             }
         
