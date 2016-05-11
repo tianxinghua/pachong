@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.filippo.dto.CsvDTO;
@@ -49,9 +48,6 @@ public class FetchProduct {
 	@Autowired
 	private SkuPriceService skuPriceService;
 	
-	public void test(String id){
-		productFetchService.updateMongoTest(id);
-	}
 	public void fetchProductAndSave() {
 		//更改状态存储，不要忘了填币种
 		try {
@@ -121,6 +117,9 @@ public class FetchProduct {
 				sku.setMarketPrice(skuEntry.getValue().getREF().replace("\"", ""));
 				sku.setSupplierPrice(skuEntry.getValue().getEUR().replace("\"", ""));
 				sku.setStock(skuEntry.getValue().getQTY().replace("\"", ""));
+				
+				sku.setProductDescription(skuEntry.getValue().getTG_ID());
+				
 				String size = skuEntry.getValue().getTG().replace("\"", "");
 				if(size.indexOf("1/2")>0){
 					size=size.replace("-1/2","+");

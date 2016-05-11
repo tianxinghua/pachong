@@ -99,16 +99,21 @@ public class FetchProduct extends AbsSaveProduct{
 		}
 		try {
 			//下载
+			logger.info("=========开始下载zip==========");
 			File zipFile = DownloadFileFromNet.downLoad(uri, fileName, localPath);
 //			//解压
+			logger.info("=========开始解压==========");
 			File xmlFile = UNZIPFile.unZipFile(zipFile,localPath);//(new File("C:\\Users\\suny\\git\\iog\\theclutcher\\bin\\feedShangping.zip"), localPath);
 //			//读取文件
+			logger.info("=========读取xml文件==========");
 			String result = DownloadFileFromNet.file2Striing(xmlFile);//(new File("C:\\Users\\suny\\git\\iog\\theclutcher\\bin\\feedShangping.xml"));//+"</item></channel></rss>";
 
 			//字符串转对象
 			try {
 				
 				Rss rss = XMLUtil.gsonXml2Obj(Rss.class, result);
+				
+				logger.info("=========转化对象成功======"+rss.getChannel().getItem().size()); 
 				
 				if (rss == null || rss.getChannel() == null) {
 	                return null;
@@ -231,7 +236,7 @@ public class FetchProduct extends AbsSaveProduct{
 	            }
 				
 			} catch (Exception e) {
-				loggerError.info(e.getMessage());
+				loggerError.info(e);
 				e.printStackTrace();
 			}
 			
@@ -249,7 +254,7 @@ public class FetchProduct extends AbsSaveProduct{
 //			}
 		
 		} catch (Exception e) {
-			loggerError.info(e.getMessage());
+			loggerError.info(e);
 			e.printStackTrace();
 		}
 		

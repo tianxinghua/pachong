@@ -51,7 +51,7 @@ import org.springframework.stereotype.Component;
 /**
  * Created by 赵根春 on 2015/9/25.
  */
-@Component("efashion")
+//@Component("efashion")
 public class FetchProduct {
 
 	@Autowired
@@ -189,9 +189,9 @@ public class FetchProduct {
 
 				}
 				
-				String [] picArray = item.getItem_images();
-				productFetchService.savePicture(supplierId, null, skuId,Arrays.asList(picArray));
-			
+//				String [] picArray = item.getItem_images();
+//				productFetchService.savePicture(supplierId, null, skuId,Arrays.asList(picArray));
+//			
 
 			}
 

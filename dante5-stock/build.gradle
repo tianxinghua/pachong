@@ -1,4 +1,3 @@
-
 dependencies {
     compile(
             project(':openapi-ice'),
@@ -23,5 +22,4 @@ jar {
         	        attributes 'Class-Path': '. ./conf/ ' +  manifestCp
     }
 }
-
 

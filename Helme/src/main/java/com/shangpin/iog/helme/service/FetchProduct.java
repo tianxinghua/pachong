@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,9 +16,13 @@ import org.springframework.stereotype.Component;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.helme.dto.Item;
+import com.shangpin.iog.helme.dto.Product;
+import com.shangpin.iog.helme.excel.CVSUtil;
 import com.shangpin.iog.helme.excel.ReadExcel;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
@@ -58,28 +63,24 @@ public class FetchProduct {
 		try{
 			
 			//ReadExcel.downLoadFile(url, path);
-			List<Item> allProducts = ReadExcel.readExcel(Item.class,path);
+//			List<Item> allProducts = ReadExcel.readExcel(Item.class,path);
+			logger.info("=========开始下载内容========"); 
+			OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10,1000*60*60,1000*60*60);
+			String result = HttpUtil45.get(url, outTimeConf, null);
+			List<Product> products = CVSUtil.readCSV(result, Product.class, ';');
 			
-			for (Item item : allProducts) {
+			for (Product item : products) {
 				SpuDTO spu = new SpuDTO();
 				spu.setId(UUIDGenerator.getUUID());
 				spu.setSupplierId(supplierId);
-				spu.setSpuId(item.getGruppo_Marchio());
-				spu.setBrandName(item.getGruppo_Marchio());	
-				String cat = item.getGruppo_Marchio();
-				String gender = "";
-				if(cat.startsWith("WOMEN")){
-					gender = "WOMEN";
-				}else if(cat.startsWith("MEN")){
-					gender = "MEN";
-				}else{
-					gender = cat;
-				}
-				spu.setCategoryGender(gender);
-				spu.setCategoryName(cat);
+				spu.setSpuId(item.getModello());
+				spu.setBrandName(item.getGruppoMarchio());					
+				spu.setCategoryGender(item.getGenere());
+				spu.setCategoryName(item.getTipologia());
 				spu.setMaterial(item.getMateriale());
 				spu.setSeasonName(item.getStagione());
-				spu.setProductOrigin("");
+				spu.setSeasonName(item.getStagione()); 
+				//spu.setProductOrigin(item.getMadein());
 				
 				//============================保存spu===================================
 				 try {
@@ -91,59 +92,46 @@ public class FetchProduct {
 						e1.printStackTrace();
 					}
 				} 
-				String size = item.getTaglia();
-				String[] sizes = size.split(" ");
-				if(sizes.length>0){
-//					for (int i = 0; i < sizes.length; i++) {
-						try{
 							
-//							String[] stockSize = sizes[i].split("/");
-//							String stock = stockSize[0];
-//							String productSize = stockSize[1];
-							//============================保存sku===================================
-							SkuDTO sku = new SkuDTO();
-							sku.setId(UUIDGenerator.getUUID());
-							sku.setSupplierId(supplierId);
-							sku.setSpuId(spu.getSpuId());
-							sku.setSkuId(item.getModello());
-							sku.setProductCode(item.getModello());
-							sku.setBarcode(item.getBarcode());
-							sku.setColor(item.getColore());
-							sku.setSalePrice(item.getPrezzo_ven());
-							sku.setProductName(item.getGenere());
-							sku.setProductSize(item.getTaglia());
-							sku.setStock(item.getGiacenza());
-							sku.setSaleCurrency("Euro");
+				//============================保存sku===================================
+				String skuId = item.getBarcode().replaceAll("[*]", "").trim();
+				SkuDTO sku = new SkuDTO();
+				sku.setId(UUIDGenerator.getUUID());
+				sku.setSupplierId(supplierId);
+				sku.setSpuId(spu.getSpuId());
+				sku.setSkuId(skuId);
+				sku.setProductCode(item.getModello());
+				sku.setBarcode(skuId); 
+				sku.setColor(item.getColore());
+				sku.setSalePrice(item.getPrezzoven());
+				sku.setProductName(item.getTipologia()+" "+item.getGruppoMarchio());
+				sku.setProductSize(item.getTaglia());
+				sku.setStock(item.getGiacenza());
+//				sku.setSaleCurrency("Euro");
 
-							if (skuDTOMap.containsKey(sku.getSkuId())) {
-								skuDTOMap.remove(sku.getSkuId());
-							}
-							try {
-								productFetchService.saveSKU(sku);
-							} catch (Exception e) {
-								try {
-//									if (e.getMessage().equals("数据插入失败键重复")) {
-										// 更新价格和库存
-										productFetchService.updatePriceAndStock(sku);
-//									} else {
-//										e.printStackTrace();
-//									}
-										e.printStackTrace();
-										
-								} catch (ServiceException e1) {
-									e1.printStackTrace();
-								}
-							}
-							
-						}catch(Exception ex){
-							ex.printStackTrace();
-							error.error(ex);
-							error.error(spu.getSpuId()); 
-						}					
-//					}
+				if (skuDTOMap.containsKey(sku.getSkuId())) {
+					skuDTOMap.remove(sku.getSkuId());
 				}
-						
-				//productFetchService.savePicture(supplierId, spu.getSpuId(), null, imageList);
+				try {
+					productFetchService.saveSKU(sku);
+				} catch (Exception e) {
+					try { 
+						// 更新价格和库存
+						productFetchService.updatePriceAndStock(sku);
+						e.printStackTrace();
+					} catch (ServiceException e1) {
+						e1.printStackTrace();
+					}
+				}
+				
+				List<String> listPics = new ArrayList<String>();
+				listPics.add(item.getHttpFoto());				
+				try {
+					productFetchService.savePicture(supplierId, null, sku.getSkuId(), listPics);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}				
+								
 			}
 
 		}catch(Exception ex){

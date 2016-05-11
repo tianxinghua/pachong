@@ -137,7 +137,8 @@ public class OrderImpl extends AbsOrderService {
             }
             ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
             if ("ko".equals(returnDataDTO.getStatus())){
-                deleteOrder.setExcState("1");
+            	deleteOrder.setStatus(OrderStatus.NOHANDLE);
+            	deleteOrder.setExcState("0");
                 deleteOrder.setExcDesc(returnDataDTO.getMessages().toString());
             } else {
             	deleteOrder.setExcState("0");

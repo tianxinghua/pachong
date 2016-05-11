@@ -9,8 +9,11 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.pozzilei.stock.dto.Quantity;
+import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -24,99 +27,103 @@ import java.util.*;
 @Component("pozzilei")
 public class PozzileiStockImp extends AbsUpdateProductStock {
 
-    private static Logger logger = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
-    
-    private static ApplicationContext factory;
-    private static void loadSpringContext()
-    {
+	private static Logger logger = Logger.getLogger("info");
+	private static Logger loggerError = Logger.getLogger("error");
 
-        factory = new AnnotationConfigApplicationContext(AppContext.class);
-    }
+	@Autowired
+	private ProductFetchService pfs;
 
-    private static ResourceBundle bdl=null;
-    private static String supplierId;
-    
+	@Autowired
+	ProductSearchService productSearchService;
+	private static ApplicationContext factory;
 
-    static {
-        if(null==bdl)
-            bdl=ResourceBundle.getBundle("conf");
-        supplierId = bdl.getString("supplierId");
-    }
+	private static void loadSpringContext() {
 
-    private Map<String,String> barcode_map = new HashMap<>();
+		factory = new AnnotationConfigApplicationContext(AppContext.class);
+	}
 
-    @Override
-    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        Map<String, String> stock_map = new HashMap<String, String>();
-        Gson gson = new Gson();
-        String barcode="" ,url="",json="";
-        OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60,1000*60,1000*60);
-        for (String skuno : skuNo) {
-//            if (barcode_map.containsKey(skuno)) {
-//                continue;
-//            } else {
-//                barcode_map.put(skuno, null);
-//            }
+	private static ResourceBundle bdl = null;
+	private static String supplierId;
 
-             barcode = skuno.trim();
-             //String itemId = skuno;
-            //根据供应商skuno获取库存，并更新我方sop库存
-             url = "http://net13serverpo.net/pozziapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=Default&barcode=[[barcode]]&key=5jq3vkBd7d";
-            url = url.replaceAll("\\[\\[barcode\\]\\]", barcode);
-             json = null;
-            try {
-                json = HttpUtil45.get(url, outTimeConfig, null);
-            } catch (Exception e) {
-                stock_map.put(skuno, "0");  //读取失败的时候赋值为0
-                loggerError.error("拉取失败 "+e.getMessage());
-                e.printStackTrace();
-                continue;
-            }
-            if (json != null && !json.isEmpty()) {
+	static {
+		if (null == bdl)
+			bdl = ResourceBundle.getBundle("conf");
+		supplierId = bdl.getString("supplierId");
+	}
 
-                if(json.equals("{\"Result\":\"No Record Found\"}")) {    //未找到
+	@Override
+	public Map<String, String> grabStock(Collection<String> skuNo)
+			throws ServiceException, Exception {
+		System.out.println(skuNo.size());
+		Map<String, String> stock_map = new HashMap<String, String>();
+		Gson gson = new Gson();
+		String url = "", json = "";
+		OutTimeConfig outTimeConfig = new OutTimeConfig(1000 * 60, 1000 * 60,
+				1000 * 60);
+		for (String skuno : skuNo) {
+			String barCodeArray = pfs.findBarCodeBySupplierIdAndSkuId(supplierId,
+					skuno);
+			String barCode = null;
+			String database = null;
+			if (barCodeArray != null && barCodeArray.split("\\|").length > 1) {
+				barCode = barCodeArray.split("\\|")[0];
+				database = barCodeArray.split("\\|")[1];
+			} else {
+				stock_map.put(skuno, "0");
+				continue;
+			}
+			// String itemId = skuno;
+			// 根据供应商skuno获取库存，并更新我方sop库存
+			url = "http://net13serverpo.net/pozziapi/Myapi/Productslist/GetQuantityByBarcode?DBContext="+database+"&barcode=[[barcode]]&key=5jq3vkBd7d";
+			url = url.replaceAll("\\[\\[barcode\\]\\]", barCode);
+			json = null;
+			try {
+				json = HttpUtil45.get(url, outTimeConfig, null);
+			} catch (Exception e) {
+				stock_map.put(skuno, "0"); // 读取失败的时候赋值为0
+				loggerError.error("拉取失败 " + e.getMessage());
+				e.printStackTrace();
+				continue;
+			}
+			if (json != null && !json.isEmpty()) {
+				if (json.equals("{\"Result\":\"No Record Found\"}")) { // 未找到
+					stock_map.put(skuno, "0");
+				} else {// 找到赋值
 
-                            stock_map.put(skuno, "0");
+					try {
+						Quantity result = gson.fromJson(json,
+								new TypeToken<Quantity>() {
+								}.getType());
+						stock_map.put(skuno, result.getResult());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 
+		return stock_map;
+	}
 
-                }else{//找到赋值
+	public static void main(String[] args) throws Exception {
+		// 加载spring
+		loadSpringContext();
+		// //拉取数据
+		 PozzileiStockImp stockImp
+		 =(PozzileiStockImp)factory.getBean("pozzilei");
+		// AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
+		 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		 logger.info("pozzilei更新数据库开始");
+		 try {
+		 stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new
+		 Date()));
+		 } catch (Exception e) {
+		 loggerError.error("pozzilei更新库存失败."+e.getMessage());
+		 e.printStackTrace();
+		 }
+		 logger.info("pozzilei更新数据库结束");
+		 System.exit(0);
 
-                    try {
-                        Quantity result = gson.fromJson(json, new TypeToken<Quantity>() {
-                        }.getType());
-                        stock_map.put(skuno, result.getResult());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-
-            }
-        }
-
-        return stock_map;
-    }
-
-    public static void main(String[] args) throws Exception {
-    	//加载spring
-        loadSpringContext();
-//        //拉取数据
-//        PozzileiStockImp stockImp =(PozzileiStockImp)factory.getBean("pozzilei");
-//        
-////        AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
-//        stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//        logger.info("pozzilei更新数据库开始");
-//        try {
-//            stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
-//        } catch (Exception e) {
-//            loggerError.error("pozzilei更新库存失败."+e.getMessage());
-//            e.printStackTrace();
-//        }
-//        logger.info("pozzilei更新数据库结束");
-//        System.exit(0);
-
-    }
+	}
 
 }

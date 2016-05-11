@@ -7,18 +7,24 @@ import lombok.Setter;
 @Setter
 public class Item {
 
-	String Tipologia;
-	String Gruppo_Marchio;
-	String Modello;
-	String Genere;
-	String Barcode;
-	String Colore;
-	String Taglia;
-	String Materiale;
-	String Http_Foto;
-	String Giacenza;
-	String Prezzo_ven;
-	String Stagione;
+	String categories;
+	String brandName;
+	String brandNo;
+	String productName;
+	String productNo;
+	String blank1;
+	String color;
+	String size;
+	String marketPrice;
+	String suppliersku;
+	String stock;
+	String material;
+	String season;
+	String madein;
+	String hkys;
+	String ysp;
+	String vmsp;
+	String gender;
 	
 
 }

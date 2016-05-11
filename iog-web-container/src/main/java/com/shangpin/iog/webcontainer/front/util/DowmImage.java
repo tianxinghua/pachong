@@ -3,10 +3,7 @@ package com.shangpin.iog.webcontainer.front.util;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
+import java.util.Map;
 
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -19,19 +16,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.shangpin.iog.webcontainer.front.controller.FileDownloadController;
+import com.shangpin.iog.webcontainer.front.util.queue.PicQueue;
 
 public class DowmImage extends Thread{
 	private String urlString;
 	private String filename;
 	private String savePath;
+	private PicQueue picQueue;
 	private Logger log = LoggerFactory.getLogger(FileDownloadController.class) ;
 	@Override
 	public void run() {
-		try {
-			downImage(urlString, savePath, filename);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		downImage(urlString, savePath, filename);
 	}
 	  public void downImage(String url,String filepath,String filename){
 	    	log.info("下载"+filepath+"/"+filename);
@@ -74,9 +69,11 @@ public class DowmImage extends Thread{
 	                }  
 	            }  
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("下载图片出错保存重新下载"+e.getMessage());
+				String key = url+";"+filepath+";"+filename;
+				picQueue.addUnvisitedUrl(key);
 			}
-	    }
+	    } 
 	 private String replaceSpecialChar(String url){
     	return url.replace(" ", "%20");
     }
@@ -86,4 +83,14 @@ public class DowmImage extends Thread{
 		this.filename = filename;
 		this.savePath = savePath;
 	}
+	public DowmImage(String urlString, String filename, String savePath,
+			PicQueue picQueue) {
+		super();
+		this.urlString = urlString;
+		this.filename = filename;
+		this.savePath = savePath;
+		this.picQueue = picQueue;
+	}
+	
+	
 }

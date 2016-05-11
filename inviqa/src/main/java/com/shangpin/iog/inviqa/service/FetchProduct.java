@@ -6,6 +6,7 @@ package com.shangpin.iog.inviqa.service;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -88,6 +89,8 @@ public class FetchProduct {
 		try{
 			OAuthRequest request = new OAuthRequest(Verb.GET,
 					MAGENTO_REST_API_URL+"product?limit=100&page="+page,
+//					MAGENTO_REST_API_URL+"orders/fe7d791ced254a0697c36a055a94d609",
+//					MAGENTO_REST_API_URL+"logistics/200044098",
 					service);
 			service.signRequest(accessToken, request);
 			Response response = request.send();
@@ -131,6 +134,9 @@ public class FetchProduct {
 	/**
 	 * fetch product and save into db
 	 */
+	public static void main(String[] args) {
+		new FetchProduct().fetchProductAndSave();
+	}
 	public void fetchProductAndSave() {
 		int day = 90;
 		Date startDate,endDate= new Date();
@@ -168,8 +174,6 @@ public class FetchProduct {
 			}
 		}
 	}
-	//  , ]
-	
 	
 	/**
 	 * message mapping and save into DB

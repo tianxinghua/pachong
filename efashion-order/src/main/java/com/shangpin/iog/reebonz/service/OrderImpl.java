@@ -150,14 +150,16 @@ public class OrderImpl  extends AbsOrderService{
 						}
 						orderDTO.setExcDesc(res);
 						orderDTO.setExcState("0");
-						String reResult = setPurchaseOrderExc(orderDTO);
-						if("-1".equals(reResult)){
-							orderDTO.setStatus(OrderStatus.NOHANDLE);
-						}else if("1".equals(reResult)){
-							orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-						}else if("0".equals(reResult)){
-							orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
-						}
+						//供应商返回信息有误，暂时设置成不处理
+						orderDTO.setStatus(OrderStatus.NOHANDLE);
+//						String reResult = setPurchaseOrderExc(orderDTO);
+//						if("-1".equals(reResult)){
+//							orderDTO.setStatus(OrderStatus.NOHANDLE);
+//						}else if("1".equals(reResult)){
+//							orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+//						}else if("0".equals(reResult)){
+//							orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+//						}
 					}
 					
 				}
@@ -174,14 +176,16 @@ public class OrderImpl  extends AbsOrderService{
 							
 							orderDTO.setExcState("0");
 							orderDTO.setExcDesc(r.getDescription());
-							String reResult = setPurchaseOrderExc(orderDTO);
-							if("-1".equals(reResult)){
-								orderDTO.setStatus(OrderStatus.NOHANDLE);
-							}else if("1".equals(reResult)){
-								orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-							}else if("0".equals(reResult)){
-								orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
-							}
+							//供应商返回信息有误，暂时设置成不处理
+							orderDTO.setStatus(OrderStatus.NOHANDLE);
+//							String reResult = setPurchaseOrderExc(orderDTO);
+//							if("-1".equals(reResult)){
+//								orderDTO.setStatus(OrderStatus.NOHANDLE);
+//							}else if("1".equals(reResult)){
+//								orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+//							}else if("0".equals(reResult)){
+//								orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+//							}
 						}
 					}
 				}

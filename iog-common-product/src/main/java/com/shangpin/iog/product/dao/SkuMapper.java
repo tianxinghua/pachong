@@ -68,5 +68,7 @@ public interface SkuMapper extends IBaseDao<SkuDTO> {
 
 	public void updateSkuMemoList(@Param("list") List<String> idList, @Param("supplierId")String supplierId);
 
+	public String findBarCodeBySkuId(@Param("supplierId")String supplierId, @Param("skuId") String skuId);
+
 	
 }

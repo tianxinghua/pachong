@@ -53,7 +53,7 @@ import org.springframework.stereotype.Component;
 /**
  * Created by 赵根春 on 2015/9/25.
  */
-@Component("pavinGroup")
+//@Component("pavinGroup")
 public class FetchProduct {
 
 	@Autowired

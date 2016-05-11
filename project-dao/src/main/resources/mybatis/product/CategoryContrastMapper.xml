@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.CategoryContrastMapper">
+
+	<resultMap id="CategoryContrastResultMap" type="iog_category_contrast">
+
+        <result column="CATEGORY_NAME" property="categoryName"  />
+        <result column="CATEGORY_CH" property="categoryCH"  />
+        <result column="CATEGORY_ORDER" property="categoryOrder"  />
+
+	</resultMap>
+
+	
+	<sql id="all_CategoryContrast_column">
+		CATEGORY_NAME,
+		CATEGORY_CH,
+		CATEGORY_ORDER
+	</sql>
+
+    <select id="findCount" resultType="java.lang.Integer">
+        SELECT  COUNT(CATEGORY_NAME) from CATEGORY_CONTRAST
+    </select>
+
+
+    <select id="findAll" resultMap="CategoryContrastResultMap">
+        select
+        <include refid="all_CategoryContrast_column"></include>
+
+        from CATEGORY_CONTRAST
+    </select>
+	
+</mapper>

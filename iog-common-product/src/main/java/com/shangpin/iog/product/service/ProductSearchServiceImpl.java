@@ -23,6 +23,7 @@ import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.common.utils.InVoke;
 import com.shangpin.iog.dto.BrandSpDTO;
+import com.shangpin.iog.dto.CategoryContrastDTO;
 import com.shangpin.iog.dto.ColorContrastDTO;
 import com.shangpin.iog.dto.MaterialContrastDTO;
 import com.shangpin.iog.dto.ProductDTO;
@@ -33,6 +34,7 @@ import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.mongodao.PictureDAO;
 import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.product.dao.BrandSpMapper;
+import com.shangpin.iog.product.dao.CategoryContrastMapper;
 import com.shangpin.iog.product.dao.ColorContrastMapper;
 import com.shangpin.iog.product.dao.EPRuleMapper;
 import com.shangpin.iog.product.dao.MaterialContrastMapper;
@@ -80,10 +82,15 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	@Autowired
 	EPRuleMapper ePRuleDAO;
 	
+	@Autowired
+	CategoryContrastMapper categoryDAO;
+	
 	private static Map<String, String> spBrandMap = new HashMap<>();
 	private static Map<String, String> colorContrastMap = new HashMap<>();
-
 	private static Map<String, String> materialContrastMap = new HashMap<>();
+	private static Map<String, String> smallMaterialContrastMap= new HashMap<>();
+	private static Map<String, String> categoryContrastMap = new HashMap<>();
+	
 
 	String splitSign = ",";
 
@@ -290,6 +297,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 		StringBuffer buffer = new StringBuffer("SupplierId 供货商名称" + splitSign
 				+ "CategoryName 品类名称" + splitSign
+				+ "Category 品类翻译" + splitSign
 				+ "Category_No 品类编号" + splitSign + "BrandNo 品牌编号" + splitSign
 				+ "BrandName 品牌" + splitSign + "ProductModel 货号" + splitSign
 				+ "SupplierSkuNo 供应商SkuNo" + splitSign + " 性别 " + splitSign
@@ -321,6 +329,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					endDate, pageIndex, pageSize, "diff");
 		}
 
+		//品类map赋值
+		this.setCategoryMap();
 		// 设置尚品网品牌
 		this.setBrandMap();
 		// 颜色Map赋值
@@ -349,8 +359,20 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 							: dto.getCategoryName();
 
 				}
+				
+				//翻译
+				String categoryCH = "";
+				if(StringUtils.isNotBlank(categoryName)){
+					if(categoryContrastMap.containsKey(categoryName.toLowerCase())){
+						categoryCH = categoryContrastMap.get(categoryName.toLowerCase());
+					}
+				}
+				
 				categoryName = categoryName.replaceAll(splitSign, " ");
 				buffer.append(categoryName).append(splitSign);
+				
+				//品类翻译
+				buffer.append(categoryCH).append(splitSign);
 
 				buffer.append("尚品网品类编号").append(splitSign);
 
@@ -373,6 +395,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				}
 				
 				buffer.append(brandName).append(splitSign);
+				
+				//品牌翻译
+				
+				
 				// 货号
 				buffer.append(
 						null == dto.getProductCode() ? "" : dto
@@ -443,14 +469,25 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 				buffer.append(material).append(splitSign);
 				// 材质 中文
-				if (!"".equals(material)) {
-
+				if (StringUtils.isNotBlank(material)) {
+					
+					//先遍历带有空格的材质
 					Set<Map.Entry<String, String>> materialSet = materialContrastMap
 							.entrySet();
 					for (Map.Entry<String, String> entry : materialSet) {
 
 						material = material.toLowerCase().replaceAll(
 								entry.getKey(), entry.getValue());
+					}
+					
+					//再遍历单个材质
+					Set<Map.Entry<String, String>> smallMaterialSet = smallMaterialContrastMap
+							.entrySet();
+					for (Map.Entry<String, String> entry : smallMaterialSet) {
+
+						material = material.toLowerCase()
+								.replaceAll(entry.getKey(),
+										entry.getValue());
 					}
 				}
 
@@ -574,6 +611,28 @@ buffer.append(dto.getMemo());
 		}
 		return buffer;
 	}
+	
+	/**
+	 * 
+	 */
+	private void setCategoryMap(){
+		
+		int num = categoryDAO.findCount();
+		if (categoryContrastMap.size() < num) {
+			List<CategoryContrastDTO> cateList = null;
+			try {
+				cateList = categoryDAO.findAll();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return;
+			}
+			for (CategoryContrastDTO dto : cateList) {
+				categoryContrastMap.put(dto.getCategoryName().toLowerCase(),
+						dto.getCategoryCH());
+			}
+		}
+		
+	}
 
 	/**
 	 * 设置map
@@ -622,8 +681,9 @@ buffer.append(dto.getMemo());
 	 * 设置materialContrastMap
 	 */
 	private void setMaterialContrastMap() {
+		Map<String, String> material = new HashMap<>(); 
 		int num = materialContrastDAO.findCount();
-		if (materialContrastMap.size() < num) {
+		if (material.size() < num) {
 			List<MaterialContrastDTO> materialContrastDTOList = null;
 
 			try {
@@ -634,8 +694,14 @@ buffer.append(dto.getMemo());
 			}
 
 			for (MaterialContrastDTO dto : materialContrastDTOList) {
-				materialContrastMap.put(dto.getMaterial().toLowerCase(),
-						dto.getMaterialCh());
+				if(dto.getMaterial().contains("\\s+")){
+					materialContrastMap.put(dto.getMaterial().toLowerCase(),
+							dto.getMaterialCh());
+				}else{
+					smallMaterialContrastMap.put(dto.getMaterial().toLowerCase(),
+							dto.getMaterialCh());
+				}
+				
 			}
 		}
 	}
@@ -1288,6 +1354,7 @@ buffer.append(dto.getMemo());
 							// 材质 中文
 							if (!"".equals(material)) {
 
+								//先遍历带有空格的材质
 								Set<Map.Entry<String, String>> materialSet = materialContrastMap
 										.entrySet();
 								for (Map.Entry<String, String> entry : materialSet) {
@@ -1296,6 +1363,16 @@ buffer.append(dto.getMemo());
 											.replaceAll(entry.getKey(),
 													entry.getValue());
 								}
+								//再遍历单个材质
+								Set<Map.Entry<String, String>> smallMaterialSet = smallMaterialContrastMap
+										.entrySet();
+								for (Map.Entry<String, String> entry : smallMaterialSet) {
+
+									material = material.toLowerCase()
+											.replaceAll(entry.getKey(),
+													entry.getValue());
+								}
+								
 							}
 
 							buffer.append(material).append(splitSign);
@@ -1447,6 +1524,7 @@ buffer.append(dto.getMemo());
 		
 		StringBuffer buffer = new StringBuffer("SupplierId 供货商名称" + splitSign
 				+ "CategoryName 品类名称" + splitSign
+				+ "Category 品类翻译" + splitSign
 				+ "Category_No 品类编号" + splitSign + "BrandNo 品牌编号" + splitSign
 				+ "BrandName 品牌" + splitSign + "ProductModel 货号" + splitSign
 				+ "SupplierSkuNo 供应商SkuNo" + splitSign + " 性别 " + splitSign
@@ -1492,6 +1570,8 @@ buffer.append(dto.getMemo());
 //		System.out.println("seasonList.size===================="+seasonList.size());
 //		System.out.println("genderList.size======================"+genderList.size()); 
 		
+		//品类map赋值
+		this.setCategoryMap();
 		// 设置尚品网品牌
 		this.setBrandMap();
 		// 颜色Map赋值
@@ -1525,9 +1605,21 @@ buffer.append(dto.getMemo());
 												: dto.getCategoryName();
 	
 									}
+									
+									//翻译
+									String categoryCH = "";
+									if(StringUtils.isNotBlank(categoryName)){
+										if(categoryContrastMap.containsKey(categoryName.toLowerCase())){
+											categoryCH = categoryContrastMap.get(categoryName.toLowerCase());
+										}
+									}
+									
 									categoryName = categoryName.replaceAll(splitSign, " ");
 									buffer.append(categoryName).append(splitSign);
-	
+									
+									//品类翻译
+									buffer.append(categoryCH).append(splitSign);
+									
 									buffer.append("尚品网品类编号").append(splitSign);
 	
 									brandName = dto.getBrandName();
@@ -1607,26 +1699,36 @@ buffer.append(dto.getMemo());
 									if (StringUtils.isBlank(material)) {
 										material = "";
 									} else {
-	
+
 										material = material.replaceAll(splitSign, " ")
 												.replaceAll("\\r", "").replaceAll("\\n", "");
 									}
-	
+
 									buffer.append(material).append(splitSign);
 									// 材质 中文
-									if (!"".equals(material)) {
-	
+									if (StringUtils.isNotBlank(material)) {
+										
+										//先遍历带有空格的材质
 										Set<Map.Entry<String, String>> materialSet = materialContrastMap
 												.entrySet();
 										for (Map.Entry<String, String> entry : materialSet) {
-	
+
 											material = material.toLowerCase().replaceAll(
 													entry.getKey(), entry.getValue());
 										}
+										
+										//再遍历单个材质
+										Set<Map.Entry<String, String>> smallMaterialSet = smallMaterialContrastMap
+												.entrySet();
+										for (Map.Entry<String, String> entry : smallMaterialSet) {
+
+											material = material.toLowerCase()
+													.replaceAll(entry.getKey(),
+															entry.getValue());
+										}
 									}
-	
+
 									buffer.append(material).append(splitSign);
-	
 									// 获取产地
 									productOrigin = dto.getProductOrigin();
 									if (StringUtils.isNotBlank(productOrigin)) {
