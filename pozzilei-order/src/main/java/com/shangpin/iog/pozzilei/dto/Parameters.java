@@ -9,6 +9,13 @@ public class Parameters {
 	private String key;
 	private String sellPrice;
 	
+	@Override
+	public String toString() {
+		return "Parameters [DBContext=" + DBContext + ", purchase_no="
+				+ purchase_no + ", order_no=" + order_no + ", barcode="
+				+ barcode + ", ordQty=" + ordQty + ", key=" + key
+				+ ", sellPrice=" + sellPrice + "]";
+	}
 	public String getDBContext() {
 		return DBContext;
 	}

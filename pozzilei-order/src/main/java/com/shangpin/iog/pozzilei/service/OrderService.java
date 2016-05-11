@@ -143,7 +143,7 @@ public class OrderService extends AbsOrderService {
 		Gson gson = new Gson();
 
 		String json = gson.toJson(order, Parameters.class);
-		System.out.println("request json == " + json);
+		System.out.println("request json == "+order.toString());
 		String rtnData = null;
 		logger.info("推送的数据：" + json);
 		System.out.println("rtnData==" + json);
@@ -188,7 +188,8 @@ public class OrderService extends AbsOrderService {
 //				}
 				if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
 				    orderDTO.setExcState("0");
-					this.setPurchaseExc(orderDTO);
+				    orderDTO.setStatus(OrderStatus.NOHANDLE);
+//					this.setPurchaseExc(orderDTO);
 
 				}else{
 					orderDTO.setExcState("1");
@@ -284,6 +285,8 @@ public class OrderService extends AbsOrderService {
 			e.printStackTrace();
 		}
 		String barCode = pro.getBarcode();
+		System.out.println("根据sku"+skuId+"查询的barCode"+barCode);
+		logger.info("根据sku"+skuId+"查询的barCode"+barCode);
 		if(barCode.split("\\|").length>1){
 			order.setBarcode(barCode.split("\\|")[0]);
 			order.setDBContext(barCode.split("\\|")[1]);
