@@ -69,6 +69,9 @@ public class StockImp  extends AbsUpdateProductStock {
         	if (StringUtils.isNotBlank(skuId)) {
         		if (skuMap.containsKey(skuId)) {
         			stock = skuMap.get(skuId);
+        			if (stock.contains("-")) {
+        				stock="0";
+					}
         			returnMap.put(skuId, stock);
         			num++;
 				}else{

@@ -38,7 +38,7 @@ public class Csv2DTO {
 	 */
 	@SuppressWarnings("resource")
 	public  <T> List<T> toDTO(String url,String filePath, String sep,String[] needColsNo,ISepStrategy[] iSepStrategies, Class<T> clazz) {
-//		txtDownload(url,filePath);
+		txtDownload(url,filePath);
 		List<T> dtoList = new ArrayList<T>();
 		CsvReader cr = null;
 		String[] split = null;

@@ -204,37 +204,32 @@
 		</form>
 	</div>
 	<div style="text-align: left; padding: 0px 20px 20px 20px;">
-		<a href="javascript:void(0)" onclick="exportProduct('same')"
-			id="btn-save" icon="icon-search" class='easyui-linkbutton'>导出</a> <a
-			href="javascript:void(0)" onclick="exportProduct('ep_rule')"
-			id="btn-save" icon="icon-search" class='easyui-linkbutton'>按条件导出</a>
-		<a href="javascript:void(0)" onclick="exportDiffProduct('diff')"
-			id="btn-save" icon="icon-search" class='easyui-linkbutton'>价格变化导出</a>
-		<a href="javascript:void(0)" onclick="clearText()" id="btn-cancel"
-			icon="icon-cancel" class='easyui-linkbutton'>清空</a> <a
-			href="javascript:void(0)" onclick="updatePrice()" id="btn-edit"
-			icon="icon-edit" class='easyui-linkbutton'>更新价格</a> <a
-			href="javascript:void(0)" onclick="exportOrder('order')"
-			id="btn-edit" icon="icon-search" class='easyui-linkbutton'>导出订单</a> <a
-			href="javascript:void(0)" onclick="queryOrder()" id="btn-edit"
-			icon="icon-search" class='easyui-linkbutton'>查看订单</a> <br>
-		<br>
-		<br> <a href="javascript:void(0)" onclick="downloadpicture()"
-			icon="icon-search" class='easyui-linkbutton'>下载图片</a> 
-	 <a href="javascript:void(0)" onclick="OnlineDownLoad()"
-			icon="icon-search" class='easyui-linkbutton'>下载图片online</a> <br>
-		<br>
-		<br>
-		<form action="uploadFileAndDown" method="post"
-			enctype="multipart/form-data">
-			<input type="file" name="uploadFile"> 下载数:<input
-				type="number" name="threadnum"> <input type="submit"
-				value="开始上传" onmouseenter="show()" onmouseleave="unshow()">
-		</form>
-
-		<br>
-
-
+		<a
+	href="javascript:void(0)" onclick="exportProduct('same')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>导出</a> 
+	<a
+	href="javascript:void(0)" onclick="exportProduct('ep_rule')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>按条件导出</a> 
+	<a
+	href="javascript:void(0)" onclick="exportDiffProduct('diff')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>价格变化导出</a>
+	<a href="javascript:void(0)"
+	onclick="clearText()" id="btn-cancel" icon="icon-cancel" class='easyui-linkbutton'>清空</a>
+	<a href="javascript:void(0)" onclick="updatePrice()" id="btn-edit" icon="icon-edit" class='easyui-linkbutton'>更新价格</a>
+	<a href="javascript:void(0)" onclick="exportOrder('order')" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>导出订单</a>
+	<a href="javascript:void(0)" onclick="queryOrder()" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>查看订单</a>
+	<br><br><br>
+	<a href="javascript:void(0)" onclick="downloadpicture()" icon="icon-search" class='easyui-linkbutton'>下载图片</a>
+		<br><br><br>
+	<a href="javascript:void(0)" onclick="OnlineDownLoad()" icon="icon-search" class='easyui-linkbutton' title="按条件导出产品的下载图片,命名为spskuid,失败重试10次">下载图片online</a>
+		<br><br><br>
+	<form action="uploadFileAndDown" method="post" enctype="multipart/form-data">
+		<input type="file" name="uploadFile">
+		同时下载图片数:<input type="number" name="threadnum">
+		<input type="submit" value ="开始上传" onmouseenter="show()" onmouseleave="unshow()">
+	</form>
+	
+			<br>
 		<div>
 		
 			<div
@@ -261,20 +256,13 @@
 				</form>
 			</div>
 		</div>
-
-
-		<br>
-		<br>
-		<br> <a href="stockUpdateException" onclick="stock()"
-			id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a>
-		<a href="orderUpdateException" id="btn-save" icon="icon-search"
-			class='easyui-linkbutton'>订单更新异常查看</a>
-
+	<br><br><br>
+	<a href="stockUpdateException" onclick="stock()" id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a> 
+	<a href="orderUpdateException" id="btn-save" icon="icon-search" class='easyui-linkbutton'>订单更新异常查看</a>
 
 	</div>
 	<script>
 $(function(){
-	
 	if("${resultMessage}"!=""){
 		var result = "${resultMessage}";
 		$.messager.show({
@@ -285,7 +273,6 @@ $(function(){
 
 		});
 	}
-	
 	
     $('#submitSku').bind('click', function(){    
     	if($("#uploadPreSaleFile").val()==""||typeof($('#uploadPreSaleFile').val()) == "undefined"){

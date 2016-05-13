@@ -3,12 +3,8 @@ dependencies {
 
             "com.google.code.gson:gson:2.2.2",
             "net.sourceforge.jexcelapi:jxl:2.6.12",
-            "javax.servlet:servlet-api:2.5",
-            "org.springframework:spring-web:4.1.6.RELEASE",
-            project(':project-common'),
             project(':openapi-ice'),
             project(':iog-common-product'),
-            project(':bagheera-stock')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
