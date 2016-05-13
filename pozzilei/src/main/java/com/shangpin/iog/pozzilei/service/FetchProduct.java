@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class FetchProduct {
     
     @Autowired
 	ProductSearchService productSearchService;
-
+Map map = new HashMap();
     public void fetchProductAndSave() {
 
         //首先获取季节码  http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetAllSeasonCode?DBContext=Default&key=8IZk2x5tVN
@@ -73,7 +74,7 @@ public class FetchProduct {
     	
         Gson gson = new Gson();
         
-        String[]  databaseArray = new String[] {"default","forte","arte"}; //"default",,"arte"
+        String[]  databaseArray = new String[] {"arte","forte","default"}; //"default","forte",
         OutTimeConfig outTimeConfig  = new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2);
         for(String database:databaseArray){
         	int m=0;
@@ -127,6 +128,16 @@ public class FetchProduct {
                                 spudto.setCreateTime(new Date());
                                 spudto.setSeasonId(obj.getSeasonCode());
                                 spudto.setSupplierId(supplierId);
+                                if(spu.getProduct_id().equals("513")){
+                                	System.out.println("");
+                                }
+                                if(map.containsKey(spu.getProduct_id())){
+                                	System.out.println("当前值："+spu.getProduct_id()+"==当前database:"+database+"=="+spu.getProducer_id());
+                                	System.out.println("已存在的database:"+map.get(spu.getProduct_id()));
+                                }else{
+                                	map.put(spu.getProduct_id(), database+"=="+spu.getProducer_id());
+                                }
+                                
                                 spudto.setSpuId(spu.getProduct_id());
                                 spudto.setId(UUIDGenerator.getUUID());
                                 spudto.setMaterial(spu.getProduct_detail());
@@ -138,18 +149,18 @@ public class FetchProduct {
                                 }
                                 //spudto.setPicUrl(spu.getUrl());
                                 spudto.setSpuName(spu.getDescription());
-                                try {
-                                    pfs.saveSPU(spudto);
-                                } catch (ServiceException e) {
-                                	logError.error(e.getMessage());
-                	            	try{
-                	            		pfs.updateMaterial(spudto);
-                	            	}catch(ServiceException ex){
-                	            		logError.error(ex.getMessage());
-                	            		ex.printStackTrace();
-                	            	}
-                                    e.printStackTrace();
-                                }
+//                                try {
+//                                    pfs.saveSPU(spudto);
+//                                } catch (ServiceException e) {
+//                                	logError.error(e.getMessage());
+//                	            	try{
+//                	            		pfs.updateMaterial(spudto);
+//                	            	}catch(ServiceException ex){
+//                	            		logError.error(ex.getMessage());
+//                	            		ex.printStackTrace();
+//                	            	}
+//                                    e.printStackTrace();
+//                                }
 
                                 for (Sku sku : spu.getItems().getItem()) {
                                     //sku入库操作
@@ -176,6 +187,9 @@ public class FetchProduct {
                                     }else{
                                         skudto.setProductSize(sku.getItem_size());
                                     }
+                                    if(sku.getBarcode().equals("3000051300015")){
+                                    	System.out.println("");
+                                    }
                                     skudto.setSkuId(sku.getBarcode());
                                     itemID = sku.getItem_id();
                                     barcode = sku.getBarcode();
@@ -197,38 +211,38 @@ public class FetchProduct {
                                     skudto.setSpuId(spu.getProduct_id());
                                     skudto.setStock(sku.getStock());
                                     skudto.setSupplierId(supplierId);
-                                    try {
-                                    	if(skuDTOMap.containsKey(skudto.getSkuId())){
-                    						skuDTOMap.remove(skudto.getSkuId());
-                    					}
-                                    	m++;
-                                        pfs.saveSKU(skudto);
-                                        
-                                      
-
-                                    } catch (ServiceException e) {
-                                        try {
-                                            if(e.getMessage().equals("数据插入失败键重复")){
-                                                pfs.updatePriceAndStock(skudto);
-                                            } else{
-                                                e.printStackTrace();
-                                            }
-
-                                        } catch (ServiceException e1) {
-                                            e1.printStackTrace();
-                                        }
-
-                                    }
+//                                    try {
+//                                    	if(skuDTOMap.containsKey(skudto.getSkuId())){
+//                    						skuDTOMap.remove(skudto.getSkuId());
+//                    					}
+//                                    	m++;
+//                                        pfs.saveSKU(skudto);
+//                                        
+//                                      
+//
+//                                    } catch (ServiceException e) {
+//                                        try {
+//                                            if(e.getMessage().equals("数据插入失败键重复")){
+//                                                pfs.updatePriceAndStock(skudto);
+//                                            } else{
+//                                                e.printStackTrace();
+//                                            }
+//
+//                                        } catch (ServiceException e1) {
+//                                            e1.printStackTrace();
+//                                        }
+//
+//                                    }
                                   //保存图片
-                	                List<String> imgList = new ArrayList<String>();
-                	                if (sku.getPictures() != null) {
-                	                    for (String  imageUrl: sku.getPictures()) {
-                	                        if (imageUrl != null ) {
-                	                        	imgList.add(imageUrl);	                        	
-                	                        }
-                	                    }
-                	                    pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);
-                	                }
+//                	                List<String> imgList = new ArrayList<String>();
+//                	                if (sku.getPictures() != null) {
+//                	                    for (String  imageUrl: sku.getPictures()) {
+//                	                        if (imageUrl != null ) {
+//                	                        	imgList.add(imageUrl);	                        	
+//                	                        }
+//                	                    }
+//                	                    pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);
+//                	                }
 
                                 }
                             }

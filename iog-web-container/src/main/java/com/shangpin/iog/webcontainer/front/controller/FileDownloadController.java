@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -44,14 +46,17 @@ import com.shangpin.iog.common.utils.json.JsonUtil;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductSearchDTO;
+import com.shangpin.iog.dto.SpecialSkuDTO;
 import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.service.OrderService;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
+import com.shangpin.iog.service.SpecialSkuService;
 import com.shangpin.iog.service.SupplierService;
 import com.shangpin.iog.webcontainer.front.strategy.NameGenContext;
 import com.shangpin.iog.webcontainer.front.util.DowmImage;
 import com.shangpin.iog.webcontainer.front.util.NewSavePic;
+import com.shangpin.iog.webcontainer.front.util.ReadExcel;
 import com.shangpin.iog.webcontainer.front.util.SavePic;
 import com.shangpin.iog.webcontainer.front.util.queue.PicQueue;
 
@@ -83,6 +88,9 @@ public class FileDownloadController {
 	ProductFetchService pfs;
     @Autowired
     ProductSearchService productService;
+
+    @Autowired
+    SpecialSkuService specialSkuService;
     
     @Autowired
     SupplierService supplierService;
@@ -459,6 +467,90 @@ public class FileDownloadController {
 			}
 		}
     }
+    
+    
+    @RequestMapping("uploadPreSaleFileAndDown")
+    public String uploadPreSaleFileAndDown(@RequestParam(value = "uploadPreSaleFile", required = false) MultipartFile file, HttpServletRequest request,HttpServletResponse response,Model model){
+    	BufferedInputStream in = null;
+    	BufferedOutputStream out = null;
+    	String path = request.getSession().getServletContext().getRealPath("");  
+    	
+    	String fileName = file.getOriginalFilename();  
+        File targetFile = new File(path, fileName);  
+        //保存  
+        try {  
+        	if (!targetFile.exists()) {
+        		targetFile.mkdirs(); 
+        		targetFile.createNewFile();
+			}
+            file.transferTo(targetFile);  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+        List<SpecialSkuDTO> list = null;
+        try {
+        	list = ReadExcel.readXlsx(path+"/"+fileName);
+        	System.out.println(list.size());
+        	targetFile.delete();
+		} catch (Exception e) {
+			e.printStackTrace(); 
+		}
+        try {
+			specialSkuService.saveDTO(list);
+		} catch (ServiceMessageException e) {
+			e.printStackTrace(); 
+		}
+        List<SupplierDTO> availableSupplierDTOList = null ;
+		try {
+			availableSupplierDTOList = supplierService.findAllWithAvailable();
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        model.addAttribute("supplierDTOList", availableSupplierDTOList);
+        model.addAttribute("resultMessage", "save success");
+        return "iog";
+    }
+    
+    @RequestMapping("deletePreSaleFile")
+    public String deletePreSaleFile(@RequestParam(value = "deletePreSaleFile", required = false) MultipartFile file, HttpServletRequest request,HttpServletResponse response,Model model){
+    	BufferedInputStream in = null;
+    	BufferedOutputStream out = null;
+    	String path = request.getSession().getServletContext().getRealPath("");  
+    	
+    	String fileName = file.getOriginalFilename();  
+        File targetFile = new File(path, fileName);  
+        //保存  
+        try {  
+        	if (!targetFile.exists()) {
+        		targetFile.mkdirs(); 
+        		targetFile.createNewFile();
+			}
+            file.transferTo(targetFile);  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+        List<SpecialSkuDTO> list = null;
+        try {
+        	list = ReadExcel.readXlsx(path+"/"+fileName);
+        	System.out.println(list.size());
+        	targetFile.delete();
+		} catch (Exception e) {
+			e.printStackTrace(); 
+		}
+			specialSkuService.deleteSkuBySupplierId(list);
+        List<SupplierDTO> availableSupplierDTOList = null ;
+		try {
+			availableSupplierDTOList = supplierService.findAllWithAvailable();
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        model.addAttribute("supplierDTOList", availableSupplierDTOList);
+        model.addAttribute("resultMessage", "save success");
+        return "iog";
+    }
+    
     @RequestMapping(value = "OnlineDownLoad")
     public void dowmLoadPicOnline(HttpServletResponse response,HttpServletRequest request, String queryJson){
     	//获取要下载的产品

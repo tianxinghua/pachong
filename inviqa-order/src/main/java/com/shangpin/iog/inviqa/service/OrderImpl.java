@@ -142,16 +142,17 @@ public class OrderImpl extends AbsOrderService {
 			FailResult fail = new Gson().fromJson(message, FailResult.class);
 			Errors error = fail.getMessages().getError().get(0);
 			orderDTO.setExcDesc(error.getMessage());
-			String result = setPurchaseOrderExc(orderDTO);
-			if("-1".equals(result)){
-				orderDTO.setStatus(OrderStatus.NOHANDLE);
-			}else if("1".equals(result)){
-				orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-			}else if("0".equals(result)){
-				orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
-			}else{
-				orderDTO.setStatus(OrderStatus.NOHANDLE);
-			}
+//			String result = setPurchaseOrderExc(orderDTO);
+//			if("-1".equals(result)){
+//				orderDTO.setStatus(OrderStatus.NOHANDLE);
+//			}else if("1".equals(result)){
+//				orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+//			}else if("0".equals(result)){
+//				orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+//			}else{
+//				orderDTO.setStatus(OrderStatus.NOHANDLE);
+//			}
+			orderDTO.setStatus(OrderStatus.NOHANDLE);
 			//超过一天 不需要在做处理 订单状态改为其它状体
 			orderDTO.setExcState("0");
 			Thread t = new Thread(	 new Runnable() {
