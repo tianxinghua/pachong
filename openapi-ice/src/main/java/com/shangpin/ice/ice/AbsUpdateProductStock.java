@@ -516,6 +516,7 @@ public abstract class AbsUpdateProductStock {
 			try {
 				supplierStock = grabStock(skuNos);
 				
+				//根据supplierId获取预售的sku集合
 				map = specialSkuService.findListSkuBySupplierId(supplierId);
 				
 				if(supplierStock.size()==0){
@@ -552,9 +553,10 @@ public abstract class AbsUpdateProductStock {
 			boolean sendMail=true;
 			loggerInfo.info("供货商skuid和sop skuid关系map==========="+localAndIceSkuId.toString());
 			for (String skuNo : skuNos) {
-				
-				if(map.containsKey(skuNo)){
-					continue;
+				if(map.size()>0){
+					if(map.containsKey(skuNo)){
+						continue;
+					}
 				}
 				stockTemp ="";
 				result =  supplierStock.get(skuNo);
