@@ -72,9 +72,14 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
 
 //        logMongo.info(mongMap);
 
-        for (String skuno : skuNo) { 
-        	String stock = "";
-            String stock2 = stockMap2.get(skuno); 
+        for (String skuno : skuNo) {         	
+            String stock2 = "";
+            
+            if(skuno.length()<15){
+            	stock2 = stockMap2.get("09"+skuno); 
+            }else{
+            	stock2 = stockMap2.get(skuno); 
+            }         
             
             if (StringUtils.isNotEmpty(stock2)){//先在文件里查找             	
                 skustock.put(skuno, Integer.valueOf(stock2));

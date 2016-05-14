@@ -101,10 +101,14 @@ public class FetchProduct extends AbsSaveProduct{
 //            String spuId = product.getVARIANT_SKU().substring(0, 10);
             String spuId = product.getMASTER_SKU();
             try {
+            	String skuid = product.getVARIANT_SKU();
+            	if(skuid.length() >= 15){
+            		skuid = skuid.substring(2);
+            	}
                 sku.setId(UUIDGenerator.getUUID());
                 sku.setSupplierId(supplierId);
                 sku.setSpuId(spuId);
-                sku.setSkuId(product.getVARIANT_SKU());
+                sku.setSkuId(skuid); 
                 sku.setProductSize(product.getSIZE());
                 sku.setMarketPrice(product.getPRICE());
                 sku.setSalePrice(product.getSALEPRICE());

@@ -21,6 +21,8 @@
         <result column="PRODUCT_ORIGIN" property="productOrigin" />
         <result column="CREATE_TIME" property="createTime" />
         <result column="LAST_TIME" property="lastTime" />
+        <result column="NEWSEASON_ID" property="newseasonId" />
+        <result column="NEWSEASON_NAME" property="newseasonName" />
 
 
 
@@ -97,8 +99,10 @@
               <if test="lastTime != null"> LAST_TIME = #{lastTime},</if>
               <if test="productOrigin != null"> PRODUCT_ORIGIN = #{productOrigin},</if>
               <if test="categoryGender != null"> CATEGORY_GENDER = #{categoryGender},</if>
-              <if test="seasonId != null"> SEASON_ID = #{seasonId},</if>
-              <if test="seasonName != null"> SEASON_NAME = #{seasonName},</if>
+              <!-- <if test="seasonId != null"> SEASON_ID = #{seasonId},</if>
+              <if test="seasonName != null"> SEASON_NAME = #{seasonName},</if> -->
+              <if test="seasonId != null"> NEWSEASON_ID = #{seasonId},</if>
+              <if test="seasonName != null"> NEWSEASON_NAME = #{seasonName},</if>
               <if test="categoryName != null"> CATEGORY_NAME = #{categoryName}</if>
               
           </set>
