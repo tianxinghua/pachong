@@ -86,7 +86,7 @@ public class FetchProduct {
 						sku.setMarketPrice(item.getPrice());
 						sku.setSupplierPrice(item.getSpecial_price());
 						sku.setStock(item.getStock());
-						
+						sku.setSpSkuId(item.getItemCode());
 						String size = item.getSize();
 						if(size.indexOf("1/2")>0){
 		                    size=size.replace("-1/2","+");

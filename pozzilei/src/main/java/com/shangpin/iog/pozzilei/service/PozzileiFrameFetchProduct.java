@@ -125,7 +125,7 @@ public class PozzileiFrameFetchProduct extends AbsSaveProduct {
                                 spudto.setCreateTime(new Date());
                                 spudto.setSeasonId(obj.getSeasonCode());
                                 spudto.setSupplierId(supplierId);
-                                spudto.setSpuId(spu.getProduct_id());
+                                spudto.setSpuId(spu.getProduct_id()+"|"+database);
                                 spudto.setId(UUIDGenerator.getUUID());
                                 spudto.setMaterial(spu.getProduct_detail());
                                 if(spu.getProduct_detail().indexOf("Made In")!=-1){
@@ -180,8 +180,8 @@ public class PozzileiFrameFetchProduct extends AbsSaveProduct {
                                             skudto.setSupplierPrice(price.getSuply_price().replace(",","."));
                                         }
                                     }
-
-                                    skudto.setSpuId(spu.getProduct_id());
+                                    spudto.setSpuId(spu.getProduct_id()+"|"+database);
+//                                    skudto.setSpuId(spu.getProduct_id());
                                     skudto.setStock(sku.getStock());
                                     skudto.setSupplierId(supplierId);
                                     skuList.add(skudto);

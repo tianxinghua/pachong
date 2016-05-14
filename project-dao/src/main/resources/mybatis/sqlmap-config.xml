@@ -29,6 +29,7 @@
 		<typeAlias alias="iog_stockUpdate" type="com.shangpin.iog.dto.StockUpdateDTO"/>
 		<typeAlias alias="iog_supplierOrderUpdate" type="com.shangpin.iog.dto.OrderTimeUpdateDTO"/>
 		<typeAlias alias="iog_category_contrast" type="com.shangpin.iog.dto.CategoryContrastDTO"/>
+		<typeAlias alias="iog_specialSku" type="com.shangpin.iog.dto.SpecialSkuDTO"/>
 		
 	</typeAliases>
 </configuration>

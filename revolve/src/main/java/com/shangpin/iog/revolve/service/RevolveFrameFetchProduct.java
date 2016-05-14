@@ -41,6 +41,7 @@ public class RevolveFrameFetchProduct extends AbsSaveProduct{
 	public static String url;
 	public static String picpath;
 	public static int day;
+	public static String filepath;
 
 	static {
 		if (null == bdl)
@@ -49,6 +50,7 @@ public class RevolveFrameFetchProduct extends AbsSaveProduct{
 		day = Integer.valueOf(bdl.getString("day"));
 		url = bdl.getString("url");
 		picpath = bdl.getString("picpath");
+		filepath = bdl.getString("filepath");
 	}
 	//sku:List(skuDTO) spu:List(spuDTO) image: Map(id;picName,List) 
 	@Override
@@ -65,7 +67,7 @@ public class RevolveFrameFetchProduct extends AbsSaveProduct{
 		//策略组
 		String[] strategys = new String[]{"","","","","","","","more% %0%;","","","","","sin% %0%\"\"","","","","sin% %1%\"\"","","","",""};
 		ISepStrategy[] iSepStrategies = new SepStrategyContext().operate(strategys);
-		List<ProductDTO> dto = csv2.toDTO(url, "F:\\head-revolveChinaMarketplace.txt", sep, needColsNo, iSepStrategies, ProductDTO.class);
+		List<ProductDTO> dto = csv2.toDTO(url, filepath, sep, needColsNo, iSepStrategies, ProductDTO.class);
 		
 		for (ProductDTO productDTO : dto) {
 			if (!spuMap.containsKey(productDTO.getSpuId())) {
