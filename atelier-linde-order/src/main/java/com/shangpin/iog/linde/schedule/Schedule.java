@@ -24,9 +24,13 @@ public class Schedule {
 		orderService.confirmOrder();
 	}
 
-	@Scheduled(cron = "0 0 0/12 * * ? ")
-//	@Scheduled(cron = "0 0/2  * * * ? ")
-	public void sendEmailToSupplier() {
-		orderService.sendEmailToSupplier();
+	@Scheduled(cron = "0 0 9 ? * MON-FRI")
+	public void sendEmailToSupplier1() {
+		orderService.sendEmailToSupplier1();
+	}
+	
+	@Scheduled(cron = "0 0 14 ? * MON-FRI")
+	public void sendEmailToSupplier2() {
+		orderService.sendEmailToSupplier2();
 	}
 }

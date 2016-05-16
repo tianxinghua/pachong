@@ -186,8 +186,7 @@ public class OrderImpl extends AbsOrderService {
 		cr.close();
 		return dtoList;
 	}
-
-	public void sendEmailToSupplier() {
+	public void sendEmailToSupplier1() {
 
 		SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date beginDate = new Date();
@@ -195,9 +194,33 @@ public class OrderImpl extends AbsOrderService {
 		String endTime = dft.format(beginDate);
 		Calendar date = Calendar.getInstance();
 		date.setTime(beginDate);
-		date.set(Calendar.HOUR, date.get(Calendar.HOUR) - 12);
+		
+		int week = date.get(Calendar.DAY_OF_WEEK);
+		//如果为2，则为星期一，订单要查询从周五下午14::00到周一9:00的订单
+		if(week==2){
+			date.set(Calendar.HOUR, date.get(Calendar.HOUR) - 67);
+		}else{
+			date.set(Calendar.HOUR, date.get(Calendar.HOUR) - 19);
+		}
+		
 		System.out.println(dft.format(date.getTime()));
 		String startTime = dft.format(date.getTime());
+		getOrderList(startTime,endTime);
+	}
+	public void sendEmailToSupplier2() {
+
+		SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date beginDate = new Date();
+		System.out.println(dft.format(beginDate));
+		String endTime = dft.format(beginDate);
+		Calendar date = Calendar.getInstance();
+		date.setTime(beginDate);
+		date.set(Calendar.HOUR, date.get(Calendar.HOUR) - 5);
+		System.out.println(dft.format(date.getTime()));
+		String startTime = dft.format(date.getTime());
+		getOrderList(startTime,endTime);
+	}
+	public void getOrderList(String startTime,String endTime){
 		List<OrderDTO> listOrder = null;
 		try {
 			listOrder = productOrderService
@@ -207,42 +230,44 @@ public class OrderImpl extends AbsOrderService {
 			e.printStackTrace();
 		}
 		StringBuffer str = new StringBuffer();
-		for (OrderDTO dto : listOrder) {
-			// skuId:qty
-			String detail = dto.getDetail();
-			// 2220080-2014876494045
-			String skuId = detail.split(":", -1)[0];
-			String barCode = skuId.split("-")[1];
-			if (barCode.startsWith("20")) {
-				barCode = barCode.replaceFirst("20", "00").substring(0,
-						barCode.length() - 1);
-			}
-			if (barCode.startsWith("21")) {
-				barCode = barCode.replaceFirst("21", "90").substring(0,
-						barCode.length() - 1);
-			}
-			String qty = "00001";
-			String vid = skuId.split("-")[0];
-			String id = map.get(barCode);
-			str.append(barCode).append(" ").append(qty).append(" ").append(vid)
-					.append(" ").append(id).append("\r\n");
-		}
-		final String path = readLine(str.toString());
-		
-		Thread t = new Thread(	 new Runnable() {
-			@Override
-			public void run() {
-				try {
-					System.out.println("email");
-					SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword,to,subject,messageText,messageType, new File(path));
-				} catch (Exception e) {
-					e.printStackTrace();
+		if(listOrder!=null&&!listOrder.isEmpty()){
+			for (OrderDTO dto : listOrder) {
+				// skuId:qty
+				String detail = dto.getDetail();
+				// 2220080-2014876494045
+				String skuId = detail.split(":", -1)[0];
+				String barCode = skuId.split("-")[1];
+				if (barCode.startsWith("20")) {
+					barCode = barCode.replaceFirst("20", "00").substring(0,
+							barCode.length() - 1);
 				}
+				if (barCode.startsWith("21")) {
+					barCode = barCode.replaceFirst("21", "90").substring(0,
+							barCode.length() - 1);
+				}
+				String qty = "00001";
+				String vid = skuId.split("-")[0];
+				String id = map.get(barCode);
+				str.append(barCode).append(" ").append(qty).append(" ").append(vid)
+						.append(" ").append(id).append("\r\n");
 			}
-		});
-		t.start();
+			messageText= "orders in the attachment";
+			final String path = readLine(str.toString());
+			
+			Thread t = new Thread(	 new Runnable() {
+				@Override
+				public void run() {
+					try {
+						System.out.println("email");
+						SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword,to,subject,messageText,messageType, new File(path));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			t.start();
+		}
 	}
-
 	private static String readLine(String content) {
 
 		SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH");
