@@ -89,6 +89,24 @@ public class ProductDTO {
     private String newMarketPrice;
     private String newSalePrice;
     private String newSupplierPrice;
+    private String newseasonId;
+    public String getNewseasonId() {
+		return newseasonId;
+	}
+
+	public void setNewseasonId(String newseasonId) {
+		this.newseasonId = newseasonId;
+	}
+
+	public String getNewseasonName() {
+		return newseasonName;
+	}
+
+	public void setNewseasonName(String newseasonName) {
+		this.newseasonName = newseasonName;
+	}
+
+	private String newseasonName;
     public String getId() {
         return id;
     }

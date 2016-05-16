@@ -134,6 +134,7 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     List<ProductDTO> findPicNameListByEPRegularAndLastDate(@Param("supplier") String supplier,
     		@Param("startDate") Date startDate,
     		@Param("endDate") Date endDate, RowBounds rowBounds);
+    List<ProductDTO> findDiffSeasonProducts(@Param("supplier") String supplier,@Param("startDate") Date startDate,@Param("endDate") Date endDate);
 }
 
 

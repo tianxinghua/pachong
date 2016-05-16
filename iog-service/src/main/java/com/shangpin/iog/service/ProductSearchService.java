@@ -96,6 +96,17 @@ public interface ProductSearchService {
     public StringBuffer getDiffProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
     
     /**
+     * 获取季节发生变化的产品
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     * @throws ServiceException
+     */
+    public StringBuffer getDiffSeasonProducts(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+    /**
      * 获取产品信息,for order
      * @param supplierId  供货商
      * @return ProductDTO (若为空，返回所有)
