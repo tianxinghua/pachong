@@ -313,8 +313,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				+ "Stock 库存" + splitSign + "新市场价" + splitSign + "新销售价"
 				+ splitSign + "新进货价" + splitSign + "markerPrice" + splitSign
 				+ "sallPrice" + splitSign + "supplier Price 进货价" + splitSign
-				+ "Currency 币种" + splitSign + "上市季节" + splitSign + "活动开始时间"
-				+ splitSign + "活动结束时间"+ splitSign + "备注").append("\r\n");
+				+ "Currency 币种" + splitSign + "新上市季节" + splitSign + "上市季节" + splitSign 
+				+ "活动开始时间"+ splitSign + "活动结束时间"+ splitSign + "备注").append("\r\n");
 		Page<ProductDTO> page = null;
 		if (flag.equals("same")) {
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,
@@ -588,6 +588,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 				buffer.append(dto.getSaleCurrency()).append(splitSign);
 				
+				//新季节
+				buffer.append(
+						null == dto.getNewseasonName() ? dto.getNewseasonId() : dto
+								.getNewseasonName()).append(splitSign);
 				
 				// 季节
 
@@ -937,6 +941,56 @@ buffer.append(dto.getMemo());
 					continue;
 				}
 //			}
+		}
+		return buffer;
+	}
+	
+	public StringBuffer getDiffSeasonProducts(String suppliers,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException{
+		
+		Map<String, String> supMap = new HashMap<String, String>();
+		List<SupplierDTO> supplierList = supplierDAO.findByState("1");
+		for (SupplierDTO supplierDTO : supplierList) {
+			supMap.put(supplierDTO.getSupplierId(),
+					supplierDTO.getSupplierName());
+		}
+		StringBuffer buffer = new StringBuffer("供应商" + splitSign				
+				+ "ProductModel 货号" + splitSign + "供货商skuid" + splitSign+ "新上市季节" + splitSign+ "上市季节").append("\r\n");
+		for(String supplier : suppliers.split(",")){
+			if(StringUtils.isNotBlank(supplier)){
+				final List<ProductDTO> products = productDAO.findDiffSeasonProducts(supplier,startDate,endDate);
+				if(null == products || products.size()==0){
+					return null;
+				}else{
+					for(ProductDTO dto : products){
+						// 供应商
+						String supplierId = dto.getSupplierId();
+						if (null == supMap.get(supplierId)) {
+							buffer.append("	" + supplierId).append(splitSign);
+						} else {
+							buffer.append(supMap.get(supplierId)).append(splitSign);
+						}
+						buffer.append(
+								null == dto.getProductCode() ? "" : dto
+										.getProductCode().replaceAll(",", " "))
+								.append(splitSign);
+						//supplier skuid
+						buffer.append(
+								null == dto.getSkuId() ? "" : dto.getSkuId())
+								.append(splitSign);
+						//新季节
+						buffer.append(
+								null == dto.getNewseasonName() ? dto.getNewseasonId() : dto
+										.getNewseasonName()).append(splitSign);
+						
+						// 季节
+
+						buffer.append(
+								null == dto.getSeasonName() ? dto.getSeasonId() : dto
+										.getSeasonName());
+						buffer.append("\r\n");
+					}
+				}
+			}
 		}
 		return buffer;
 	}
@@ -1540,7 +1594,7 @@ buffer.append(dto.getMemo());
 				+ "Stock 库存" + splitSign + "新市场价" + splitSign + "新销售价"
 				+ splitSign + "新进货价" + splitSign + "markerPrice" + splitSign
 				+ "sallPrice" + splitSign + "supplier Price 进货价" + splitSign
-				+ "Currency 币种" + splitSign + "上市季节" + splitSign + "活动开始时间"
+				+ "Currency 币种" + splitSign + "新上市季节" + splitSign+ "上市季节" + splitSign + "活动开始时间"
 				+ splitSign + "活动结束时间"+ splitSign + "备注").append("\r\n");
 		Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate,
 				endDate, pageIndex, pageSize, "same");
@@ -1808,6 +1862,10 @@ buffer.append(dto.getMemo());
 									buffer.append(salePrice).append(splitSign);
 									buffer.append(supplierPrice).append(splitSign);
 									buffer.append(dto.getSaleCurrency()).append(splitSign);								
+									//新季节
+									buffer.append(
+											null == dto.getNewseasonName() ? dto.getNewseasonId() : dto
+													.getNewseasonName()).append(splitSign);
 									// 季节
 									buffer.append(
 											null == dto.getSeasonName() ? dto.getSeasonId() : dto
@@ -1849,4 +1907,7 @@ buffer.append(dto.getMemo());
 		}
 		return pList;
 	}
+	
+	
+	
 }

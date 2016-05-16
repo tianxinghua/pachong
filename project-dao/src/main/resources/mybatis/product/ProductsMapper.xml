@@ -13,6 +13,9 @@
 
 		<result column="product_code" property="productCode"  />
 
+		<result column="newseason_id" property="newseasonId"  />
+        <result column="newseason_name" property="newseasonName"  />
+		
 		<result column="season_id" property="seasonId"  />
         <result column="season_name" property="seasonName"  />
 
@@ -122,6 +125,8 @@
           spu.CATEGORY_GENDER as category_gender,
           spu.SUB_CATEGORY_ID  as  sub_category_id,
           spu.SUB_CATEGORY_NAME  as  sub_category_name,
+          spu.NEWSEASON_ID as newseasonId,
+          spu.NEWSEASON_NAME as newseasonName,
 <!--           sku.MEMO  as  memo -->
           CONCAT(sku.MEMO) as memo
 		
@@ -183,7 +188,9 @@
           spu.CATEGORY_GENDER as category_gender,
           spu.SUB_CATEGORY_ID  as  sub_category_id,
           spu.SUB_CATEGORY_NAME  as  sub_category_name,
-		  sku.MEMO  as  memo
+		  sku.MEMO  as  memo,
+		  spu.NEWSEASON_ID as newseasonId,
+          spu.NEWSEASON_NAME as newseasonName
 		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
 			 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID
         <where>
@@ -254,6 +261,8 @@
           spu.BRAND_NAME as brand_name,
           spu.CATEGORY_NAME as category_name,
           spu.CATEGORY_GENDER as category_gender,
+          spu.NEWSEASON_ID as newseasonId,
+          spu.NEWSEASON_NAME as newseasonName,
 		  sku.MEMO  as  memo
 		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
         <where>
@@ -280,6 +289,54 @@
 
 
 
+	<select id="findDiffSeasonProducts"  resultMap="ProductsResultMap">
+		select
+          sku.ID as id,
+          sku.SKU_ID as sku_id,
+          sku.SUPPLIER_ID  as supplier_id,
+
+          sku.PRODUCT_NAME as product_name,
+          sku.MARKET_PRICE  as market_price,
+          sku.SALE_PRICE  as  sale_price,
+          sku.SUPPLIER_PRICE as supplier_price,
+          sku.PRODUCT_CODE as product_code,
+          
+          sku.SALE_CURRENCY as sale_currency,
+          sku.STOCK as stock ,
+          
+          
+          sku.NEW_MARKET_PRICE as newMarketPrice,
+          sku.NEW_SALE_PRICE as newSalePrice,
+          sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
+          spu.BRAND_NAME as brand_name,
+          spu.CATEGORY_NAME as category_name,
+          spu.CATEGORY_GENDER as category_gender,
+          spu.SEASON_ID as season_id,spu.SEASON_NAME as season_name,
+          spu.NEWSEASON_ID as newseasonId,
+          spu.NEWSEASON_NAME as newseasonName,
+		  sku.MEMO  as  memo
+		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+        <where>
+				(
+				IF(spu.NEWSEASON_NAME !="",IF(spu.SEASON_NAME != spu.NEWSEASON_NAME,TRUE,FALSE),FALSE)
+				OR IF(spu.NEWSEASON_ID != "",IF(spu.SEASON_ID != spu.NEWSEASON_ID,TRUE,FALSE),FALSE)
+				)
+          <if test="'-1'!=supplier">
+            and   sku.SUPPLIER_ID = #{supplier}
+          </if>
+          <if test="null!=startDate">
+                and sku.LAST_TIME >= #{startDate}
+          </if>
+          <if test="endDate!=null">
+                <![CDATA[ and sku.LAST_TIME <= #{endDate}    ]]>
+          </if>
+
+		
+        </where>
+        order by supplier_id,brand_name, category_name
+
+
+	</select>
 
 
     <select id="findProductBySupplierIdAndSkuId" resultMap="ProductsResultMap">

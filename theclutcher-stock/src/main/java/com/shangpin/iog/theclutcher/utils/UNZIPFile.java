@@ -9,7 +9,11 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.log4j.Logger;
+
 public class UNZIPFile {
+	
+	private static Logger logger = Logger.getLogger("info");
 
 	/**
 	 * 解压zip文件
@@ -19,7 +23,7 @@ public class UNZIPFile {
 	 */
 	public static File unZipFile(File zipFile, String descDir)
 			throws IOException {
-		
+//		logger.info("====================解压文件开始=================");
 		File retFile = null;
 		File pathFile = new File(descDir);
 		if (!pathFile.exists()) {
@@ -54,6 +58,7 @@ public class UNZIPFile {
 			out.close();
 		}
 		System.out.println("******************解压完毕********************");
+//		logger.info("====================解压文件结束=================");
 		return retFile;
 	}
 }

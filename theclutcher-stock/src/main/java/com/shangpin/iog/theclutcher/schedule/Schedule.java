@@ -81,6 +81,7 @@ public class Schedule {
 			} catch (Exception e) {
 				future.cancel(true);
 				e.printStackTrace();
+				logError.error(e); 
 				logError.error(Thread.currentThread().getName()+"超时销毁");
 				System.out.println(Thread.currentThread().getName()+"超时销毁");
 			}

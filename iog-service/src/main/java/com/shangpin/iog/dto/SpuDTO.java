@@ -36,6 +36,8 @@ public class SpuDTO implements Serializable {
     private Date createTime= new Date();
     private Date lastTime= new Date();//修改时间
     private String memo;
+    private String newseasonId;
+    private String newseasonName;
 
     public String getId() {
         return id;

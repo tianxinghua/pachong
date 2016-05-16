@@ -31,9 +31,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
 	private static Logger logger = Logger.getLogger("info");
 //	private static Logger loggerError = Logger.getLogger("error");
 	private static LoggerUtil error = LoggerUtil.getLogger("error");
-	private static Logger logMongo = Logger.getLogger("mongodb");
+//	private static Logger logMongo = Logger.getLogger("mongodb");
 	private static ResourceBundle bdl = null;
-	private static String supplierId = "";
+//	private static String supplierId = "";
 	private static String fileName = "feedShangpin.zip";
 	private static String urlStr ;
 
@@ -42,7 +42,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("sop");
-		supplierId = bdl.getString("supplierId");
+//		supplierId = bdl.getString("supplierId");
 		localPathDefault = bdl.getString("local.filePath");
 		urlStr = bdl.getString("url");
 	}
@@ -162,6 +162,15 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
 		return skuStock;
 	}
+//	public static void main(String[] args) {
+//		GrabStockImp g = new GrabStockImp();
+//		try {
+//			g.grabStock(null);
+//		} catch (ServiceException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 
 	
 }
