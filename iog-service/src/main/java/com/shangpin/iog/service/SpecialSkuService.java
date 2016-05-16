@@ -19,4 +19,12 @@ public interface SpecialSkuService {
 	public Map<String, String> findListSkuBySupplierId(String supplierId);
 
 	public void deleteSkuBySupplierId(List<SpecialSkuDTO> list);
+
+	/**
+	 * 
+	 * @param supplierId 供应商Id
+	 * @param skuId 供应商skuId
+	 * @return true 是预售商品 ， false 不是预售商品
+	 */
+	boolean checkBySupplierIdAndSkuId(String supplierId, String skuId);
 }

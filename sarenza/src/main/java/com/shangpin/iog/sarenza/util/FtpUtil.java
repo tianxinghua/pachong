@@ -63,9 +63,9 @@ public class FtpUtil {
 	}
 
 	public static <T> List<T> readLocalCSV(Class<T> clazz) throws Exception {
-		String realPath = download();
+//		String realPath = download();
 //		String realPath = "C://AMD//output_11052016.csv";
-//		String realPath = "/usr/local/applications/appfetch/sarenza/output_11052016.csv";
+		String realPath = "/usr/local/applications/appfetch/sarenza/output_13052016.csv";
 		String rowString = null;
 		List<T> dtoList = new ArrayList<T>();
 		// Set<T> dtoSet = new HashSet<T>();
@@ -94,13 +94,13 @@ public class FtpUtil {
 			}
 
 			cr.close();
-			File flie = new File(path+realPath);
-			boolean falg = flie.delete();
-			 if(falg){
-			 System.out.println("文件删除success");
-			 }else{
-			 System.out.println("文件删除fail");
-			 }
+//			File flie = new File(path+realPath);
+//			boolean falg = flie.delete();
+//			 if(falg){
+//			 System.out.println("文件删除success");
+//			 }else{
+//			 System.out.println("文件删除fail");
+//			 }
 
 		}
 		

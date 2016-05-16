@@ -230,6 +230,8 @@
 	</form>
 	
 			<br>
+
+
 		<div>
 		
 			<div
@@ -273,6 +275,7 @@ $(function(){
 
 		});
 	}
+	
 	
     $('#submitSku').bind('click', function(){    
     	if($("#uploadPreSaleFile").val()==""||typeof($('#uploadPreSaleFile').val()) == "undefined"){
@@ -319,16 +322,24 @@ $(function(){
 
 	<div id="showSkuExcel" hidden="hidden">
 		<h5>excel格式</h5>
-		<h5>传入excel(07/2010版)表格格式,表名不能为中文</h5>
+		<h5>传入excel(07/2010版)表格格式</h5>
 		<form action="">
 			<table border="1">
 				<tr>
 					<td>supplierId</td>
-					<td>skuId</td>
+					<td>supplierSkuId</td>
 				</tr>
 				<tr>
 					<td>2016******</td>
 					<td>*****</td>
+				</tr>
+				<tr>
+					<td>2016******</td>
+					<td>*****</td>
+				</tr>
+				<tr>
+					<td>.......</td>
+					<td>.......</td>
 				</tr>
 			</table>
 		</form>

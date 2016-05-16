@@ -30,6 +30,7 @@ public class SpecialSkuServiceImpl implements SpecialSkuService{
 		
 		
 	}
+	@Override
 	public Map<String, String> findListSkuBySupplierId(String supplierId){
 		
 		List<SpecialSkuDTO> list = specialSkuMapper.findListSkuBySupplierId(supplierId);
@@ -42,7 +43,7 @@ public class SpecialSkuServiceImpl implements SpecialSkuService{
 		 return map;
 		
 	}
-	
+	@Override
 	public void deleteSkuBySupplierId(List<SpecialSkuDTO> list){
 		
 		if(list!=null){
@@ -50,7 +51,17 @@ public class SpecialSkuServiceImpl implements SpecialSkuService{
 				specialSkuMapper.delete(dto);
 			}
 		}
-		 
-		
 	}
+	
+	@Override
+	public boolean checkBySupplierIdAndSkuId(String supplierId,String skuId){
+		
+		SpecialSkuDTO dto = specialSkuMapper.checkBySupplierIdAndSkuId(supplierId,skuId);
+		if(dto!=null){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 }

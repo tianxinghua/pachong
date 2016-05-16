@@ -53,10 +53,8 @@ public class FetchProduct {
 
     @Autowired
     private ProductFetchService pfs;
-    
     @Autowired
 	ProductSearchService productSearchService;
-Map map = new HashMap();
     public void fetchProductAndSave() {
 
         //首先获取季节码  http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetAllSeasonCode?DBContext=Default&key=8IZk2x5tVN
@@ -128,17 +126,7 @@ Map map = new HashMap();
                                 spudto.setCreateTime(new Date());
                                 spudto.setSeasonId(obj.getSeasonCode());
                                 spudto.setSupplierId(supplierId);
-                                if(spu.getProduct_id().equals("513")){
-                                	System.out.println("");
-                                }
-                                if(map.containsKey(spu.getProduct_id())){
-                                	System.out.println("当前值："+spu.getProduct_id()+"==当前database:"+database+"=="+spu.getProducer_id());
-                                	System.out.println("已存在的database:"+map.get(spu.getProduct_id()));
-                                }else{
-                                	map.put(spu.getProduct_id(), database+"=="+spu.getProducer_id());
-                                }
-                                
-                                spudto.setSpuId(spu.getProduct_id());
+                                spudto.setSpuId(spu.getProduct_id()+"|"+database);
                                 spudto.setId(UUIDGenerator.getUUID());
                                 spudto.setMaterial(spu.getProduct_detail());
                                 if(spu.getProduct_detail().indexOf("Made In")!=-1){
@@ -149,18 +137,18 @@ Map map = new HashMap();
                                 }
                                 //spudto.setPicUrl(spu.getUrl());
                                 spudto.setSpuName(spu.getDescription());
-//                                try {
-//                                    pfs.saveSPU(spudto);
-//                                } catch (ServiceException e) {
-//                                	logError.error(e.getMessage());
-//                	            	try{
-//                	            		pfs.updateMaterial(spudto);
-//                	            	}catch(ServiceException ex){
-//                	            		logError.error(ex.getMessage());
-//                	            		ex.printStackTrace();
-//                	            	}
-//                                    e.printStackTrace();
-//                                }
+                                try {
+                                    pfs.saveSPU(spudto);
+                                } catch (ServiceException e) {
+                                	logError.error(e.getMessage());
+                	            	try{
+                	            		pfs.updateMaterial(spudto);
+                	            	}catch(ServiceException ex){
+                	            		logError.error(ex.getMessage());
+                	            		ex.printStackTrace();
+                	            	}
+                                    e.printStackTrace();
+                                }
 
                                 for (Sku sku : spu.getItems().getItem()) {
                                     //sku入库操作
@@ -208,41 +196,41 @@ Map map = new HashMap();
                                         }
                                     }
 
-                                    skudto.setSpuId(spu.getProduct_id());
+                                    skudto.setSpuId(spu.getProduct_id()+"|"+database);
                                     skudto.setStock(sku.getStock());
                                     skudto.setSupplierId(supplierId);
-//                                    try {
-//                                    	if(skuDTOMap.containsKey(skudto.getSkuId())){
-//                    						skuDTOMap.remove(skudto.getSkuId());
-//                    					}
-//                                    	m++;
-//                                        pfs.saveSKU(skudto);
-//                                        
-//                                      
-//
-//                                    } catch (ServiceException e) {
-//                                        try {
-//                                            if(e.getMessage().equals("数据插入失败键重复")){
-//                                                pfs.updatePriceAndStock(skudto);
-//                                            } else{
-//                                                e.printStackTrace();
-//                                            }
-//
-//                                        } catch (ServiceException e1) {
-//                                            e1.printStackTrace();
-//                                        }
-//
-//                                    }
+                                    try {
+                                    	if(skuDTOMap.containsKey(skudto.getSkuId())){
+                    						skuDTOMap.remove(skudto.getSkuId());
+                    					}
+                                    	m++;
+                                        pfs.saveSKU(skudto);
+                                        
+                                      
+
+                                    } catch (ServiceException e) {
+                                        try {
+                                            if(e.getMessage().equals("数据插入失败键重复")){
+                                                pfs.updatePriceAndStock(skudto);
+                                            } else{
+                                                e.printStackTrace();
+                                            }
+
+                                        } catch (ServiceException e1) {
+                                            e1.printStackTrace();
+                                        }
+
+                                    }
                                   //保存图片
-//                	                List<String> imgList = new ArrayList<String>();
-//                	                if (sku.getPictures() != null) {
-//                	                    for (String  imageUrl: sku.getPictures()) {
-//                	                        if (imageUrl != null ) {
-//                	                        	imgList.add(imageUrl);	                        	
-//                	                        }
-//                	                    }
-//                	                    pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);
-//                	                }
+                	                List<String> imgList = new ArrayList<String>();
+                	                if (sku.getPictures() != null) {
+                	                    for (String  imageUrl: sku.getPictures()) {
+                	                        if (imageUrl != null ) {
+                	                        	imgList.add(imageUrl);	                        	
+                	                        }
+                	                    }
+                	                    pfs.savePicture(supplierId, null, skudto.getSkuId(), imgList);
+                	                }
 
                                 }
                             }

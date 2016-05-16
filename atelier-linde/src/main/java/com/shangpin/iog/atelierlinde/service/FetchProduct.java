@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -65,8 +66,6 @@ public class FetchProduct {
     	Map<String,Item> itemMap= new HashMap<String,Item>();
     	Map<String,String> priceMap= new HashMap<String,String>();
         //获取产品信息
-    	
-    	
         logger.info("get product starting....");
         System.out.println("get product starting....");
         OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600);

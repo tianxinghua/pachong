@@ -17,5 +17,8 @@ public interface SpecialSkuMapper  {
 
 	public void delete(SpecialSkuDTO dto);
 
+	public SpecialSkuDTO checkBySupplierIdAndSkuId(@Param("supplierId") String supplierId,
+			@Param("skuId") String skuId);
+
 
 }

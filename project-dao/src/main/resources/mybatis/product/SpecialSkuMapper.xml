@@ -30,6 +30,19 @@
 	            </if>
 	        </where>
 	    </select>
+    <select id="checkBySupplierIdAndSkuId"  resultMap="skuMap" parameterType="java.lang.String">
+	        select
+	        SUPPLIER_SKU_ID
+	        from SPECIAL_SKU
+	        <where>
+	            <if test="null!=supplierId">
+	                SUPPLIER_ID = #{supplierId}
+	            </if>
+	             <if test="null!=skuId">
+	               and SUPPLIER_SKU_ID = #{skuId}
+	            </if>
+	        </where>
+	    </select>
     <delete id="delete">
     
     	 DELETE  from SPECIAL_SKU 
