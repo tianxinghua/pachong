@@ -106,7 +106,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 				//确认订单失败
 				orderDTO.setExcDesc("返回状态码不为200确认订单失败"+pushOrderData.getStatusCode());
 				orderDTO.setExcTime(new Date());
-				handlePurchaseOrderExc(orderDTO);
+				orderDTO.setExcState("1");
 			}
 		} catch (Exception e) {
 			logger.info("orderNo"+orderDTO.getSupplierOrderNo()+"网络原因付款失败"+e.getMessage());
