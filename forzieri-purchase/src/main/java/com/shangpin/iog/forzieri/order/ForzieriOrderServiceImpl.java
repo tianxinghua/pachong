@@ -55,6 +55,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 	private static String clientsecret = null;
 	private static String tokenurl = null;
 	private static String orderurl = null;
+	private static String flag = null;
 	static {
 		if(null==bdl){
 			bdl=ResourceBundle.getBundle("conf");
@@ -64,6 +65,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 		clientsecret = bdl.getString("clientsecret");
 		tokenurl = bdl.getString("tokenurl");
 		orderurl = bdl.getString("orderurl");
+		flag = bdl.getString("flag");
 	}
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
@@ -177,14 +179,12 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 
 	@Override
 	public void handleEmail(OrderDTO orderDTO) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void getSupplierSkuId(Map<String, String> skuMap)
 			throws ServiceException {
-		// TODO Auto-generated method stub
 		
 	}
 	
@@ -309,16 +309,19 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 			long tim = 60l;
 			//判断有异常的订单如果处理超过两小时，依然没有解决，则把状态置为不处理，并发邮件
 			if(DateTimeUtil.getTimeDifference(orderDTO.getCreateTime(),new Date())/(tim*1000*60)>0){ 
-				
-				String result = setPurchaseOrderExc(orderDTO);
-				if("-1".equals(result)){
-					orderDTO.setStatus(OrderStatus.NOHANDLE);
-				}else if("1".equals(result)){
-					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-				}else if("0".equals(result)){
-					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+				if (flag.equals("520")) {
+					orderDTO.setExcDesc("520采购异常暂时设置");
 				}else{
-					orderDTO.setStatus(OrderStatus.NOHANDLE);
+					String result = setPurchaseOrderExc(orderDTO);
+					if("-1".equals(result)){
+						orderDTO.setStatus(OrderStatus.NOHANDLE);
+					}else if("1".equals(result)){
+						orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+					}else if("0".equals(result)){
+						orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+					}else{
+						orderDTO.setStatus(OrderStatus.NOHANDLE);
+					}
 				}
 				//超过一天 不需要在做处理 订单状态改为其它状体
 				orderDTO.setExcState("0");
