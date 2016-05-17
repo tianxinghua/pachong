@@ -65,8 +65,7 @@ public class KixOrderServiceImpl extends AbsOrderService{
 				System.out.println("库存不足，创建订单失败。订单信息："+jsonValue);
 				orderDTO.setExcDesc("订单失败，库存不足"+e.getMessage());
 				orderDTO.setExcTime(new Date());
-				handlePurchaseOrderExc(orderDTO);
-//				orderDTO.setExcState("1");
+				orderDTO.setExcState("1");
 			}else{
 				logger.info("网络原因，创建订单失败。订单信息："+jsonValue);
 				System.out.println("网络原因，创建订单失败。订单信息："+jsonValue);
