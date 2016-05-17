@@ -201,10 +201,10 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 		param.put("op", "o");param.put("qty", qty);
 		param.put("o", "shangG");param.put("p", "aW5102cn6");
 		param.put("w", "ha");param.put("q", "ordreq");
-		param.put("v", skuid.split("-")[0]);param.put("tg", skuDTO.getProductDescription());
+		param.put("v", skuid.split("-")[0]);param.put("tg", skuDTO.getProductName());
 		param.put("cf", orderDTO.getSpOrderId());
 
-		logger.info("op=o请求参数为v="+skuid.split("-")[0]+"tg="+skuDTO.getProductDescription());
+		logger.info("op=o请求参数为v="+skuid.split("-")[0]+"tg="+skuDTO.getProductName());
 		
 		String result = HttpUtil45.get(orderurl, outTimeConf, param);
 		return result;

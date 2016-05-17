@@ -72,6 +72,7 @@ public class Csv2DTO {
 	}
 
 	private <T> T fillDTO(T t,String[] needColsNo,ISepStrategy[] iSepStrategies,List<String> data) {
+		System.out.println("转化文件");
 		try {
 			Field[] fields = t.getClass().getDeclaredFields();
 			String[] split = null;
@@ -104,7 +105,7 @@ public class Csv2DTO {
 
 	// http异常
 	private String getHttpStr(String url) {
-		
+		System.out.println("下载文件");
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		CloseableHttpClient httpClient = httpClientBuilder.build();
 //		HttpPost httpPost = new HttpPost("https://api.forzieri.com/test/orders");
@@ -121,7 +122,7 @@ public class Csv2DTO {
 			e.printStackTrace();
 		}
 		
-		
+		System.out.println(str.length());
 //		String str = HttpUtil45.get(url, new OutTimeConfig(1000 * 60 * 10,1000 * 60 * 20, 1000 * 60 * 20), null);
 		return str;
 	}
@@ -132,6 +133,7 @@ public class Csv2DTO {
 	 * @throws MalformedURLException
 	 */
 	private void txtDownload(String url,String filepath){
+		System.out.println("下载文件");
 		String csvFile = getHttpStr(url);
 		if (csvFile.contains("发生错误异常")) {
 			try {
