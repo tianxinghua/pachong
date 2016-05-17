@@ -41,8 +41,8 @@ public class StockClientImp extends AbsUpdateProductStock{
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
-        supplierId = bdl.getString("url");
-        supplierId = bdl.getString("filepath");
+        url = bdl.getString("url");
+        filepath = bdl.getString("filepath");
     }
     
 
@@ -81,6 +81,8 @@ public class StockClientImp extends AbsUpdateProductStock{
     }
 
     public static void main(String[] args) throws Exception {
+    	Collection<String> skuNo = null;
+		new StockClientImp().grabStock(skuNo );
     	//加载spring
 //        loadSpringContext();
 //        StockClientImp stockImp = (StockClientImp)factory.getBean("bagheeraStock");
