@@ -115,7 +115,7 @@ public class FetchProduct {
 				spudto.setSeasonId(spu.getSeasonLabel());
 				spudto.setSeasonName(spu.getSeasonLabel());
 				spudto.setSupplierId(supplierId);
-				spudto.setSpuId(spu.getProductId());
+				spudto.setSpuId(spu.getProductId()+"-"+spu.getPCID());
 				spudto.setId(UUIDGenerator.getUUID());
 				spudto.setMaterial(spu.getMaterialLabel());
 				spudto.setProductOrigin(spu.getMadeIn());
@@ -142,10 +142,10 @@ public class FetchProduct {
 				skudto.setProductName(spu.getTitle());
 				// skudto.setSaleCurrency("EUR");
 				skudto.setProductSize(spu.getSupplierSize());
-				skudto.setSkuId(spu.getProductId() + "|"
+				skudto.setSkuId(spu.getProductId()+"-"+spu.getPCID()+ "-"
 						+ spu.getSupplierSize());
 				skudto.setMarketPrice(spu.getPrice());
-				skudto.setSpuId(spu.getProductId());
+				skudto.setSpuId(spu.getProductId()+"-"+spu.getPCID());
 				skudto.setStock(spu.getStock());
 				skudto.setSupplierId(supplierId);
 				try {
