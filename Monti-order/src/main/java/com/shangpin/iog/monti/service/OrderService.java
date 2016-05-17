@@ -20,6 +20,7 @@ import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
@@ -46,7 +47,8 @@ public class OrderService extends AbsOrderService {
 	private static Map<String, String> param = null;
 
 	private static Logger logger = Logger.getLogger("info");
-	private static Logger loggerError = Logger.getLogger("error");
+//	private static Logger loggerError = Logger.getLogger("error");
+	private static LoggerUtil loggerError = LoggerUtil.getLogger("error");
 
 	private OutTimeConfig defaultConfig = new OutTimeConfig(1000 * 2, 1000 * 60*5, 1000 * 60*5);
 	
@@ -57,6 +59,8 @@ public class OrderService extends AbsOrderService {
 	private static String subject = null;
 	private static String messageText = null;
 	private static String messageType = null;
+	
+	private static String is520 = null;
 
 	static {
 		if (null == bdl) {
@@ -77,6 +81,8 @@ public class OrderService extends AbsOrderService {
 		subject = bdl.getString("subject");
 		messageText = bdl.getString("messageText");
 		messageType = bdl.getString("messageType");
+		
+		is520 = bdl.getString("is520");
 	}
 
 	// 下单处理
@@ -188,8 +194,13 @@ public class OrderService extends AbsOrderService {
 //						orderDTO.setExcDesc(responseObject.getMessage().toString());
 //					}
 					if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
-					    orderDTO.setExcState("0");
-						this.setPurchaseExc(orderDTO);
+					    if("y".equals(is520)){
+					    	orderDTO.setExcState("0");
+					    	orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+					    }else{
+					    	orderDTO.setExcState("0");
+							this.setPurchaseExc(orderDTO);
+					    }						
 
 					}else{
 						orderDTO.setExcState("1");

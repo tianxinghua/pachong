@@ -2,16 +2,19 @@ package com.shangpin.iog.itemInfo_purchase.service;
 
 import java.util.Date;
 import java.util.Map;
-
 import java.util.ResourceBundle;
+
+
 
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
@@ -42,6 +45,8 @@ public class OrderSreviceImpl extends AbsOrderService {
     
     private static String deleteOrderUrl = "";
     private static String deleteOrderSop = "";
+    
+    private static String if520 = "";
    
     static {
         if(null==bdl)
@@ -59,10 +64,13 @@ public class OrderSreviceImpl extends AbsOrderService {
         deleteOrderUrl = bdl.getString("deleteOrderUrl");
         deleteOrderSop = bdl.getString("deleteOrderSop");
         
+        if520 = bdl.getString("if520");
+        
     }
     
     private static Logger logger = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
+//    private static Logger loggerError = Logger.getLogger("error");
+    private static LoggerUtil loggerError = LoggerUtil.getLogger("error");
     private static Logger logMongo = Logger.getLogger("mongodb");
 	
     /**
@@ -131,7 +139,9 @@ public class OrderSreviceImpl extends AbsOrderService {
 						}else{//下单失败，无库存
 							spOrder.setExcState("0");
 							spOrder.setExcDesc("下单失败："+retMessage);
-							doOrderExc(spOrder);
+							if(!if520.equals("y")){
+								doOrderExc(spOrder);
+							}
 						}
 					}else{
 						spOrder.setExcState("0");
