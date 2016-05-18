@@ -671,7 +671,7 @@ public abstract class AbsUpdateProductStock {
 		Date endDate = new Date();
 		String endTime = format.format(endDate);
 
-		String startTime = format.format(getAppointDayFromSpecifiedDay(endDate, -2, "M"));
+		String startTime = format.format(getAppointDayFromSpecifiedDay(endDate, -10, "D"));
 		List<java.lang.Integer> statusList = new ArrayList<>();
 		statusList.add(1);
 		statusList.add(2);
