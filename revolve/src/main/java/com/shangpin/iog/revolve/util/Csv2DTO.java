@@ -38,15 +38,15 @@ public class Csv2DTO {
 	 */
 	@SuppressWarnings("resource")
 	public  <T> List<T> toDTO(String url,String filePath, String sep,String[] needColsNo,ISepStrategy[] iSepStrategies, Class<T> clazz) {
-//		txtDownload(url,filePath);
+		txtDownload(url,filePath);
 		List<T> dtoList = new ArrayList<T>();
 		CsvReader cr = null;
 		String[] split = null;
 		List<String> colValueList = null;
 		String rowString = "";
 		try {
-			InputStream in = new FileInputStream("E:\\products.txt");
-//			InputStream in = new FileInputStream(filePath);
+//			InputStream in = new FileInputStream("E:\\products.txt");
+			InputStream in = new FileInputStream(filePath);
 			cr = new CsvReader(in, Charset.forName("utf-8"));
 			cr.readRecord();
 			while(cr.readRecord()){
