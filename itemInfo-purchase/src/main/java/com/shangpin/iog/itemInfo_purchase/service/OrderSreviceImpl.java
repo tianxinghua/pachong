@@ -137,11 +137,15 @@ public class OrderSreviceImpl extends AbsOrderService {
 						if(retMessage.toUpperCase().equals("OK")){//下单成功
 							spOrder.setStatus(OrderStatus.CONFIRMED);
 						}else{//下单失败，无库存
-							spOrder.setExcState("0");
-							spOrder.setExcDesc("下单失败："+retMessage);
-							if(!if520.equals("y")){
+							if("y".equals(if520)){
+								spOrder.setExcState("0");
+								spOrder.setExcDesc("下单失败："+retMessage);
+								spOrder.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+							}else{
+								spOrder.setExcState("0");
+								spOrder.setExcDesc("下单失败："+retMessage);							
 								doOrderExc(spOrder);
-							}
+							}						
 						}
 					}else{
 						spOrder.setExcState("0");

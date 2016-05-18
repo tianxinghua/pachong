@@ -7,6 +7,7 @@ import com.shangpin.ice.ice.AbsDeliverService;
 import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.spinnaker.dto.OrderInfoDTO;
@@ -29,7 +30,8 @@ import java.util.ResourceBundle;
 public class LogisticsService extends AbsDeliverService{
 
     private static Logger logger = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
+//    private static Logger loggerError = Logger.getLogger("error");
+    private static LoggerUtil loggerError = LoggerUtil.getLogger("error");
     private OutTimeConfig defaultConfig = new OutTimeConfig(1000 * 2, 1000 * 60, 1000 * 60);
 
     private static ResourceBundle bdl = null;
