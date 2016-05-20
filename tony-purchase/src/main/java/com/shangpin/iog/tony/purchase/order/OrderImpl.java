@@ -199,15 +199,19 @@ public class OrderImpl extends AbsOrderService {
                 if ("ko".equals(returnDataDTO.getStatus())){
                 	orderDTO.setExcState("0");
                 	orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
-                	orderDTO.setStatus(OrderStatus.NOHANDLE);
-//                	String result = setPurchaseOrderExc(orderDTO);
-//    				if("-1".equals(result)){
-//    					orderDTO.setStatus(OrderStatus.NOHANDLE);
-//    				}else if("1".equals(result)){
-//    					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-//    				}else if("0".equals(result)){
-//    					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
-//    				}
+                	if("yes".equals(Constant.isPurchaseExp)){
+                     	String result = setPurchaseOrderExc(orderDTO);
+        				if("-1".equals(result)){
+        					orderDTO.setStatus(OrderStatus.NOHANDLE);
+        				}else if("1".equals(result)){
+        					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+        				}else if("0".equals(result)){
+        					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+        				}
+                	}else{
+                		orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+                	}
+//       
                 }
             }
         
@@ -295,77 +299,79 @@ public class OrderImpl extends AbsOrderService {
      */
     private PushOrderDTO getOrder(String status,OrderDTO orderDTO){
     	
-        String detail = orderDTO.getDetail();
-        
-        String[] details = detail.split(",");
-		logger.info("detail数据格式:"+detail);
-		int num = 0;
-		String skuNo = null;
-		for (int i = 0; i < details.length; i++) {
-			// detail[i]数据格式==>skuId:数量
-			num = Integer.parseInt(details[i].split(":")[1]);
-			skuNo = details[i].split(":")[0];
-		}
-		
+    	PushOrderDTO order = null;
 		String markPrice = null;
 		try {
+		     String detail = orderDTO.getDetail();
+		        
+		        String[] details = detail.split(",");
+				logger.info("detail数据格式:"+detail);
+				int num = 0;
+				String skuNo = null;
+				for (int i = 0; i < details.length; i++) {
+					// detail[i]数据格式==>skuId:数量
+					num = Integer.parseInt(details[i].split(":")[1]);
+					skuNo = details[i].split(":")[0];
+				}
+				
+			
 			Map tempmap = skuPriceService.getNewSkuPriceBySku(Constant.SUPPLIER_ID, skuNo);
 			Map map =(Map) tempmap.get(Constant.SUPPLIER_ID);
 			markPrice =(String) map.get(skuNo);
+			ItemDTO[] itemsArr = new ItemDTO[1];
+	        ItemDTO item = new ItemDTO();
+	        item.setQty(num);
+	        item.setSku(skuNo);
+	        double totalPrice = 0;
+	        if(!"-1".equals(markPrice)){
+	        	String price = markPrice.split("\\|")[0];
+	        	item.setPrice(price);	
+	        	totalPrice = (Double.parseDouble(price))*num;
+	        }else{
+	        	logger.info("没有市场价");
+	        }
+	        item.setCur(1);
+	        itemsArr[0] = item;
+	        
+	        ShippingInfoDTO shippingInfo = new ShippingInfoDTO();
+	        //运费需要得到
+	        double fees = 0;
+	        shippingInfo.setFees(String.valueOf(fees));
+	        //地址写死就行
+	        AddressDTO address = new AddressDTO();
+	        address.setFirstname("Filippo ");
+	        address.setLastname("Troina");
+	        address.setCompanyname("Genertec Italia S.r.l.");
+	        address.setStreet("VIA G.LEOPARDI 27");	
+	        address.setHn("22075 ");
+	        address.setZip("22075");
+	        address.setCity("LURATE CACCIVIO ");
+	        address.setProvince("como");
+	        address.setState("Italy");
+	        shippingInfo.setAddress(address);
+	        
+	        BillingInfoDTO billingInfo = new BillingInfoDTO();
+	        //fees and the orderTotalPrice
+	        billingInfo.setTotal(totalPrice+fees);
+	        //1:PayPal,2:postal order,3:bank check,4:Visa / Mastercard credit card,5:American Express credit card,6:cash on delivery,7:bank transfer
+	        billingInfo.setPaymentMethod(7);
+	        billingInfo.setAddress(address);
+	        
+	        order = new PushOrderDTO();
+	        order.setMerchantId(Constant.MERCHANT_ID); 
+	        order.setToken(Constant.TOKEN);
+	        order.setShopOrderId(orderDTO.getSpOrderId());
+	        order.setOrderTotalPrice(totalPrice);
+	        order.setStatus(status);
+	    	order.setStatusDate(getUTCTime());
+	        order.setOrderDate(getUTCTime());
+	        order.setItems(itemsArr);
+	        order.setShippingInfo(shippingInfo);
+	        order.setBillingInfo(billingInfo);
 		} catch (ServiceException e) {
+			loggerError.info(e);
 			e.printStackTrace();
 		}
-		
-        ItemDTO[] itemsArr = new ItemDTO[1];
-        ItemDTO item = new ItemDTO();
-        item.setQty(num);
-        item.setSku(skuNo);
-        double totalPrice = 0;
-        if(!"-1".equals(markPrice)){
-        	String price = markPrice.split("\\|")[0];
-        	item.setPrice(price);	
-        	totalPrice = (Double.parseDouble(price))*num;
-        }else{
-        	logger.info("没有市场价");
-        }
-        item.setCur(1);
-        itemsArr[0] = item;
-        
-        ShippingInfoDTO shippingInfo = new ShippingInfoDTO();
-        //运费需要得到
-        double fees = 0;
-        shippingInfo.setFees(String.valueOf(fees));
-        //地址写死就行
-        AddressDTO address = new AddressDTO();
-        address.setFirstname("Filippo ");
-        address.setLastname("Troina");
-        address.setCompanyname("Genertec Italia S.r.l.");
-        address.setStreet("VIA G.LEOPARDI 27");	
-        address.setHn("22075 ");
-        address.setZip("22075");
-        address.setCity("LURATE CACCIVIO ");
-        address.setProvince("como");
-        address.setState("Italy");
-        shippingInfo.setAddress(address);
-        
-        BillingInfoDTO billingInfo = new BillingInfoDTO();
-        //fees and the orderTotalPrice
-        billingInfo.setTotal(totalPrice+fees);
-        //1:PayPal,2:postal order,3:bank check,4:Visa / Mastercard credit card,5:American Express credit card,6:cash on delivery,7:bank transfer
-        billingInfo.setPaymentMethod(7);
-        billingInfo.setAddress(address);
-        
-        PushOrderDTO order = new PushOrderDTO();
-        order.setMerchantId(Constant.MERCHANT_ID); 
-        order.setToken(Constant.TOKEN);
-        order.setShopOrderId(orderDTO.getSpOrderId());
-        order.setOrderTotalPrice(totalPrice);
-        order.setStatus(status);
-    	order.setStatusDate(getUTCTime());
-        order.setOrderDate(getUTCTime());
-        order.setItems(itemsArr);
-        order.setShippingInfo(shippingInfo);
-        order.setBillingInfo(billingInfo);
         return  order;
     }
 

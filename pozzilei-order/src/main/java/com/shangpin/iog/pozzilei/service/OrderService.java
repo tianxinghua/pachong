@@ -55,6 +55,7 @@ public class OrderService extends AbsOrderService {
 	private static String subject = null;
 	private static String messageText = null;
 	private static String messageType = null;
+	private static String isPurchaseExp = null;
 	static {
 		if (null == bdl) {
 			bdl = ResourceBundle.getBundle("param");
@@ -76,6 +77,7 @@ public class OrderService extends AbsOrderService {
 		subject = bdl.getString("subject");
 		messageText = bdl.getString("messageText");
 		messageType = bdl.getString("messageType");
+		isPurchaseExp = bdl.getString("isPurchaseExp");
 	}
 
 	// 下单处理
@@ -97,7 +99,6 @@ public class OrderService extends AbsOrderService {
 		orderDTO.setStatus(OrderStatus.PLACED);
 
 	}
-
 	/**
 	 * 推送订单
 	 */
@@ -107,33 +108,23 @@ public class OrderService extends AbsOrderService {
 		createOrder(orderDTO);
 
 	}
-
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
 		deleteOrder.setStatus(OrderStatus.CANCELLED);
 	}
-
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
 		deleteOrder.setExcDesc("0");
-		//deleteOrder.setStatus(OrderStatus.REFUNDED);
-//		if("HO".equals(deleteOrder.getStatus())){
-//			
-//		}
 		refundlOrder(OrderStatus.REFUNDED,deleteOrder);
-
 	}
 
 	@Override
 	public void handleEmail(OrderDTO orderDTO) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void getSupplierSkuId(Map<String, String> skuMap) throws ServiceException {
-		// TODO Auto-generated method stub
-
 	}
 
 	private void createOrder( OrderDTO orderDTO) {
@@ -153,13 +144,10 @@ public class OrderService extends AbsOrderService {
 			 map.put("purchase_no", orderDTO.getSpPurchaseNo());
 			 map.put("order_no", orderDTO.getSpOrderId());
 			 map.put("barcode", order.getBarcode());
-			 //map.put("barcode", "2004238900028");
 			 map.put("ordQty", order.getOrdQty());
 			 map.put("key", key);
 			 map.put("sellPrice", order.getSellPrice());
 			 rtnData = HttpUtil45.get(setOrderUrl, defaultConfig , map);
-			//rtnData = HttpUtil45.operateData("get", "json", url, null, null, json, "", "");
-			// {"error":"发生异常错误"}
 			logger.info("推送订单返回结果==+==" + rtnData);
 			System.out.println("推送订单返回结果==+==" + rtnData);
 			if (HttpUtil45.errorResult.equals(rtnData)) {
@@ -187,10 +175,18 @@ public class OrderService extends AbsOrderService {
 //					orderDTO.setExcDesc(responseObject.getMessage().toString());
 //				}
 				if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
-				    orderDTO.setExcState("0");
-				    orderDTO.setStatus(OrderStatus.NOHANDLE);
-//					this.setPurchaseExc(orderDTO);
-
+					if("Error !! Barcode Not Exist.".equals(responseObject.getMessage())){
+						orderDTO.setExcState("0");
+						 orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+						 loggerError.error("推送订单"+orderDTO.getSpOrderId()+"Error !! Barcode Not Exist.");
+					}
+					
+					if("yes".equals(isPurchaseExp)){
+						this.setPurchaseExc(orderDTO);
+					}else{
+					    orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+					}
+					orderDTO.setExcState("0");
 				}else{
 					orderDTO.setExcState("1");
 					orderDTO.setExcDesc(responseObject.getMessage().toString());
@@ -205,6 +201,7 @@ public class OrderService extends AbsOrderService {
 			// shopOrderId:"+order.getBarcode());
 			orderDTO.setExcState("1");
 			orderDTO.setExcDesc(e.getMessage());
+			 loggerError.error(e);
 		}
 	}
 	
@@ -281,22 +278,24 @@ public class OrderService extends AbsOrderService {
 		ProductOfSpecDTO pro = null;
 		try {
 			pro = productSpecSearchService.findProductBySupplierIdAndSkuId(supplierId, skuId);
+			String barCode = pro.getBarcode();
+			System.out.println("根据sku"+skuId+"查询的barCode"+barCode);
+			logger.info("根据sku"+skuId+"查询的barCode"+barCode);
+			if(barCode.split("\\|").length>1){
+				order.setBarcode(barCode.split("\\|")[0]);
+				order.setDBContext(barCode.split("\\|")[1]);
+			}else{
+				order.setBarcode(barCode);
+				order.setDBContext("Default");
+			}
+			order.setOrdQty(details[1]);
+			order.setKey(key);
+			order.setSellPrice("0");
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			loggerError.error("根据skuId获取barcode："+pro.toString());
+			loggerError.error("异常信息："+e.getMessage());
 		}
-		String barCode = pro.getBarcode();
-		System.out.println("根据sku"+skuId+"查询的barCode"+barCode);
-		logger.info("根据sku"+skuId+"查询的barCode"+barCode);
-		if(barCode.split("\\|").length>1){
-			order.setBarcode(barCode.split("\\|")[0]);
-			order.setDBContext(barCode.split("\\|")[1]);
-		}else{
-			order.setBarcode(barCode);
-			order.setDBContext("Default");
-		}
-		order.setOrdQty(details[1]);
-		order.setKey(key);
-		order.setSellPrice("0");
+		
 		return order;
 	}
 	
