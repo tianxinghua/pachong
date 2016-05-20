@@ -158,7 +158,8 @@
 		<foreach collection="list" item="spu" separator=";" open="" close="">
 		    update SPU
 		    <set>
-				  MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",#{spu.memo}), 
+				  <!--MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",#{spu.memo}), -->
+				  MEMO = #{spu.memo}, 
 			      LAST_TIME = NOW(),
 			 </set>
 		    where  SUPPLIER_ID = #{spu.supplierId}  and  SPU_ID = #{spu.spuId}

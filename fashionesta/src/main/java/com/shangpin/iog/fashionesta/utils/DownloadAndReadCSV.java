@@ -121,7 +121,7 @@ public class DownloadAndReadCSV {
 				dtoList.add(product);
 				sb.setLength(0);
 			}else {
-				if (!colValueList.get(colNameList.indexOf("qty")).equals("0")) {
+//				if (!colValueList.get(colNameList.indexOf("qty")).equals("0")) {
 					Item item = new Item();
 					item.setItemCode(colValueList.get(colNameList.indexOf("\"sku")).replace("\"", ""));
 					item.setPrice(colValueList.get(colNameList.indexOf("price")));
@@ -129,7 +129,7 @@ public class DownloadAndReadCSV {
 					item.setSize(colValueList.get(colNameList.indexOf("size")));
 					item.setStock(colValueList.get(colNameList.indexOf("qty")));
 					product.getItems().add(item);
-				}
+//				}
 				
 			}
 		}

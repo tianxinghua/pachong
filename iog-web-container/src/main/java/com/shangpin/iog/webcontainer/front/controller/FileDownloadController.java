@@ -252,6 +252,7 @@ public class FileDownloadController {
     	nameMap.put("purexpsuc", "采购异常Suc");
     	nameMap.put("purexperr", "采购异常Err");
     	nameMap.put("shipped", "shipped");
+    	nameMap.put("should purExp", "应该采购异常");
     	ModelAndView modelAndView = new ModelAndView();
     	List<OrderDTO> orderList = null;
     	try{
@@ -288,7 +289,9 @@ public class FileDownloadController {
     						
     		}	     
             for (OrderDTO orderDTO : orderList) {
-				orderDTO.setStatus(nameMap.get(orderDTO.getStatus().toLowerCase()));
+            	if(nameMap.containsKey(orderDTO.getStatus().toLowerCase())){
+            		orderDTO.setStatus(nameMap.get(orderDTO.getStatus().toLowerCase()));
+            	}				
 			}
             modelAndView.addObject("orderList", orderList);
     		modelAndView.setViewName("orders");

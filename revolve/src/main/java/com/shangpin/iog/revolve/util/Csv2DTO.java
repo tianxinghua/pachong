@@ -45,6 +45,7 @@ public class Csv2DTO {
 		List<String> colValueList = null;
 		String rowString = "";
 		try {
+//			InputStream in = new FileInputStream("E:\\products.txt");
 			InputStream in = new FileInputStream(filePath);
 			cr = new CsvReader(in, Charset.forName("utf-8"));
 			cr.readRecord();
@@ -78,7 +79,6 @@ public class Csv2DTO {
 			String[] split = null;
 			String str = "";
 			for (int i = 0; i < needColsNo.length; i++) {
-				System.out.println("i="+i);
 				fields[i].setAccessible(true);
 				if (needColsNo[i].equals("")) {
 					fields[i].set(t,"");
@@ -89,7 +89,6 @@ public class Csv2DTO {
 				List<String> dataList = new ArrayList<String>();
 				
 				for (int j = 0; j < split.length; j++) {
-					System.out.println("j="+j);
 					dataList.add(data.get(Integer.valueOf(split[j])));
 //					str+=data.get(Integer.valueOf(split[j]))+colsSep[i];
 				}

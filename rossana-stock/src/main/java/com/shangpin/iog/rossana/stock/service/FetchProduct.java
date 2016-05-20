@@ -89,7 +89,7 @@ public class FetchProduct extends AbsUpdateProductStock{
                 skustock.put(skuno, "0");
             }
         }
-		logInfo.info("返回的skustock.size======="+skustock.toString()); 
+		logInfo.info("返回的skustock.size======="+skustock.size()); 
 		return skustock;
 	}
 	

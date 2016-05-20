@@ -49,9 +49,9 @@ public class UpdateStock extends AbsUpdateProductStock {
 		Map<String,String> stockMap = new HashMap<>();
 		
 		if(StringUtils.isNotBlank(url)){
-    		url = url + XMLUtil.random();
-    		System.out.println("url=="+url);
-			String result = HttpUtil45.get(url, outTimeConf,null);
+    		String urlw = url + XMLUtil.random();
+    		System.out.println("url=="+urlw);
+			String result = HttpUtil45.get(urlw, outTimeConf,null);
 			if(!result.equals(HttpUtil45.errorResult)){
 				Rss rss = XMLUtil.gsonXml2Obj(Rss.class, result);
 				if(null != rss && null != rss.getChannel()){					
@@ -96,14 +96,14 @@ public class UpdateStock extends AbsUpdateProductStock {
 	}
 	public static void main(String[] args){
 		
-		loadSpringContext();
-		System.out.println("初始化Spring成功");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		UpdateStock up = (UpdateStock)factory.getBean("UpdateStock");
+//		loadSpringContext();
+//		System.out.println("初始化Spring成功");
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		UpdateStock up = new UpdateStock();
 		try{
-			
-			up.updateProductStock(supplierId, "2015-01-01 00:00",
-					format.format(new Date()));
+			up.grabStock(null);
+//			up.updateProductStock(supplierId, "2015-01-01 00:00",
+//					format.format(new Date()));
 			
 		}catch(Exception ex){
 			loggerError.error(ex);
