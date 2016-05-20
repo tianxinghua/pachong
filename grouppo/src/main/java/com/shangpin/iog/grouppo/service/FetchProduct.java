@@ -79,7 +79,7 @@ public class FetchProduct extends AbsSaveProduct{
 	                sku.setProductName(item.getCategoryName()+" "+item.getBrandName());
 	                sku.setMarketPrice(item.getMarketPrice());
 	                sku.setSalePrice("");
-	                sku.setSupplierPrice("");
+	                sku.setSupplierPrice(item.getSupplierPrice());
 	                sku.setBarcode(item.getSkuId());
 	                sku.setProductCode(item.getProductCode());
 	                sku.setColor(item.getColor());
