@@ -18,6 +18,7 @@ public class Constant {
     public static String TOKEN = bundle.getString("token");
     //请求地址
     public static String url = bundle.getString("url");
+    public static String isPurchaseExp = bundle.getString("isPurchaseExp");
     //订单状态
     public static String CANCELED = "CANCELED";
     public static String PENDING = "PENDING";

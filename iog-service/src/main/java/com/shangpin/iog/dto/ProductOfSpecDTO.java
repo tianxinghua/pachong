@@ -17,11 +17,9 @@ public class ProductOfSpecDTO {
 
     private String skuId;
     private String barcode;
-
-
-
-
-
-
-
+	@Override
+	public String toString() {
+		return "ProductOfSpecDTO [supplierId=" + supplierId + ", skuId="
+				+ skuId + ", barcode=" + barcode + "]";
+	}
 }

@@ -52,7 +52,7 @@ public class OrderService extends AbsOrderService {
 	private static String fromUserPassword = null;
 	private static String to = null;
 	private static String subject = null;
-	private static String messageText = null;
+	private static String isPurchaseExp = null;
 	private static String messageType = null;
 	static {
 		if (null == bdl) {
@@ -73,7 +73,7 @@ public class OrderService extends AbsOrderService {
 		fromUserPassword = bdl.getString("fromUserPassword");
 		to = bdl.getString("to");
 		subject = bdl.getString("subject");
-		messageText = bdl.getString("messageText");
+		isPurchaseExp = bdl.getString("isPurchaseExp");
 		messageType = bdl.getString("messageType");
 	}
 
@@ -174,20 +174,15 @@ public class OrderService extends AbsOrderService {
 				orderDTO.setExcDesc(responseObject.getMessage());
 			}else if ("ko".equals(responseObject.getStatus().toLowerCase())) {
             	orderDTO.setExcDesc(responseObject.getMessage());
-//				if("Error !! Quantity Not Available.".equals(responseObject.getMessage())){   //无库存
-//					orderDTO.setExcState("0");
-//                 	this.setPurchaseExc(orderDTO);
-//
-//				}else if("Error !! Barcode Not Exist.".equals(responseObject.getMessage())){
-//					orderDTO.setExcState("0");
-//					this.setPurchaseExc(orderDTO);
-//				}else{
-//					orderDTO.setExcState("1");
-//					orderDTO.setExcDesc(responseObject.getMessage().toString());
-//				}
+            	orderDTO.setExcState("0");
 				if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
 				    orderDTO.setExcState("0");
-					this.setPurchaseExc(orderDTO);
+				    if("yes".equals(isPurchaseExp)){
+				    	this.setPurchaseExc(orderDTO);
+				    }else{
+				    	orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+				    }
+					
 
 				}else{
 					orderDTO.setExcState("1");
@@ -199,7 +194,7 @@ public class OrderService extends AbsOrderService {
 				orderDTO.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
 			}
 		} catch (Exception e) {
-			// loggerError.error("Failed Response ：" + e.getMessage() + ",
+			 loggerError.error(e);
 			// shopOrderId:"+order.getBarcode());
 			orderDTO.setExcState("1");
 			orderDTO.setExcDesc(e.getMessage());
@@ -219,6 +214,7 @@ public class OrderService extends AbsOrderService {
 			logger.info("查询订单状态返回值:" + rtnData2);
 			System.out.println("查询订单状态返回值:" + rtnData2);
 		}catch(Exception e){
+			loggerError.error(e);
 			e.printStackTrace();
 		}
 		
@@ -279,17 +275,19 @@ public class OrderService extends AbsOrderService {
 		ProductOfSpecDTO pro = null;
 		try {
 			pro = productSpecSearchService.findProductBySupplierIdAndSkuId(supplierId, skuId);
+			order.setBarcode(pro.getBarcode());
+			order.setOrdQty(details[1]);
+			order.setKey(key);
+//			String sPurchasePrice = StringUtils.isBlank(orderDTO.getPurchasePriceDetail())?"0":orderDTO.getPurchasePriceDetail();
+//	     	BigDecimal purchasePrice = new BigDecimal(sPurchasePrice).divide(new BigDecimal(1.05),2,BigDecimal.ROUND_HALF_UP);
+//			order.setSellPrice(purchasePrice.toString());
+			order.setSellPrice("0");
+
 		} catch (ServiceException e) {
+			 loggerError.error(e);
 			e.printStackTrace();
 		}
-		order.setBarcode(pro.getBarcode());
-		order.setOrdQty(details[1]);
-		order.setKey(key);
-//		String sPurchasePrice = StringUtils.isBlank(orderDTO.getPurchasePriceDetail())?"0":orderDTO.getPurchasePriceDetail();
-//     	BigDecimal purchasePrice = new BigDecimal(sPurchasePrice).divide(new BigDecimal(1.05),2,BigDecimal.ROUND_HALF_UP);
-//		order.setSellPrice(purchasePrice.toString());
-		order.setSellPrice("0");
-
+		
 
 
 
