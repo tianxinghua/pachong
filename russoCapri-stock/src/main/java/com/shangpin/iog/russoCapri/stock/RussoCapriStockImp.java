@@ -24,6 +24,7 @@ public class RussoCapriStockImp  extends AbsUpdateProductStock {
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static String url;
+    private static String username,password;
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -34,13 +35,16 @@ public class RussoCapriStockImp  extends AbsUpdateProductStock {
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         url = bdl.getString("url");
+        username = bdl.getString("username");
+    	password = bdl.getString("password");
     }
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
     	Map<String,String> skuMap = new HashMap<String,String>();
     	String data = "";
-    	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
-				new OutTimeConfig(1000*60*60,1000*60*300,1000*60*300));
+    	  Map<String,String> map = new HashMap<>();
+    	String skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+    	
 		String[] skuStrings = skuData.split("\\r\\n");
 		logger.info("待更新库存+++"+skuNo.size()+"读取库存+++"+skuStrings.length);
 		for (int i = 1; i < skuStrings.length; i++) {
