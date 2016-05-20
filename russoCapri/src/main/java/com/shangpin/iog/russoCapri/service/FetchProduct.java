@@ -60,10 +60,10 @@ public class FetchProduct {
         logger.info("get product starting....");
         System.out.println("开始获取产品信息");
         Map<String,String> map = new HashMap<>();
-    	String spuData = HttpUtil45.postAuth(url+"GetAllItemsMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
-    	String skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
-    	String imageData = HttpUtil45.postAuth(url+"GetAllImageMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
-    	String priceData = HttpUtil45.postAuth(url+"GetAllPricelistMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+    	String spuData = HttpUtil45.postNTAuth(url+"GetAllItemsMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+    	String skuData = HttpUtil45.postNTAuth(url+"GetAllAvailabilityMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+    	String imageData = HttpUtil45.postNTAuth(url+"GetAllImageMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+    	String priceData = HttpUtil45.postNTAuth(url+"GetAllPricelistMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
     
     	System.out.println("获取产品信息结束");
     	Date startDate,endDate= new Date();

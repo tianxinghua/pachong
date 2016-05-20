@@ -43,7 +43,7 @@ public class RussoCapriStockImp  extends AbsUpdateProductStock {
     	Map<String,String> skuMap = new HashMap<String,String>();
     	String data = "";
     	  Map<String,String> map = new HashMap<>();
-    	String skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+    	String skuData = HttpUtil45.postNTAuth(url+"GetAllAvailabilityMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
     	
 		String[] skuStrings = skuData.split("\\r\\n");
 		logger.info("待更新库存+++"+skuNo.size()+"读取库存+++"+skuStrings.length);
