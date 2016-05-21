@@ -24,7 +24,7 @@ import java.util.*;
  * Created by loyalty on 15/5/20.
  */
 @Service
-public class ProductSearchServiceImpl implements ProductSearchService {
+public abstract class ProductSearchServiceImpl implements ProductSearchService {
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired

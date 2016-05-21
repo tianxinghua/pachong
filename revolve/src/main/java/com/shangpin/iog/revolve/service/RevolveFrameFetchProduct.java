@@ -110,7 +110,11 @@ public class RevolveFrameFetchProduct extends AbsSaveProduct{
 			
 			if (StringUtils.isNotBlank(productDTO.getPicurl())) {
 				picArray = productDTO.getPicurl().split(";");
-				imageMap.put(productDTO.getSpuId()+";"+productDTO.getSpuId()+" "+productDTO.getColor(), Arrays.asList(picArray));
+				ArrayList<String> arrayList = new ArrayList<String>();
+				for (String string : picArray) {
+					arrayList.add(string.replace("/c", "/z").replace("/d", "/z"));
+				}
+				imageMap.put(productDTO.getSpuId()+";"+productDTO.getSpuId()+" "+productDTO.getColor(), arrayList);
 			}
 			
 		}

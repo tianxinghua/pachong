@@ -10,9 +10,11 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import org.apache.commons.net.ftp.FTPClient;
+import org.springframework.stereotype.Component;
 
 import com.shangpin.iog.common.utils.SendMail;
 
+@Component
 public class Upload {
 	
 	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
@@ -37,14 +39,14 @@ public class Upload {
 		messageType = bdl.getString("messageType");
 	}
 	
-	public static void main(String[] args) {
-		 testUpload(); 
-		
-	}
+//	public static void main(String[] args) {
+//		 testUpload(); 
+//		
+//	}
 	
-	public static void testUpload() { 
+	public void testUpload() { 
 		String fileName = null;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH");
 		String dateStr = format.format(new Date());
 		fileName = dateStr + ".csv";
 		
@@ -67,7 +69,7 @@ public class Upload {
 				fis = new FileInputStream(srcFile);
 				logger.info("ftp连接成功");
 				ftp.storeFile(fileName, fis);
-				logger.info("上传92.223.134.2成功");
+				logger.info(fileName+"上传92.223.134.2成功!!!!!!!!!!!!!!!!!");
 				break;
 	   		
 			} catch (Exception e) {				
@@ -83,7 +85,7 @@ public class Upload {
 		}
 		if(i==10){
 			try {
-				SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, "della订单上传92.223.134.2ftp失败", "della订单上传92.223.134.2ftp失败", messageType);
+				SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, fileName+"della订单上传92.223.134.2ftp失败", fileName+"della订单上传92.223.134.2ftp失败", messageType);
 			} catch (Exception e) {
 				loggerError.error(e);
 			}

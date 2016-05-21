@@ -4,6 +4,7 @@ package com.shangpin.sop;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.service.SkuRelationService;
+import com.shangpin.iog.service.SpecialSkuService;
 import com.shangpin.iog.service.UpdateStockService;
 import com.shangpin.openapi.api.sdk.client.SpClient;
 import com.shangpin.openapi.api.sdk.model.*;
@@ -48,6 +49,9 @@ public abstract class AbsUpdateProductStock {
 
 	@Autowired
 	UpdateStockService updateStockService;
+	
+	@Autowired
+	SpecialSkuService specialSkuService;
 
 	/**
 	 * 抓取供应商库存数据
@@ -557,14 +561,20 @@ public abstract class AbsUpdateProductStock {
 		Map<String, Integer> iceStock=new HashMap<>();
 
 		Map<String,Integer>  sopPurchaseMap = new HashMap<>();
-
+		Map<String,String> map = null;
 
 		try {
 
+			
 
 			Map<String, Integer> supplierStock= null;  //
 			try {
 				supplierStock = grabStock(skuNos);
+				
+				//根据supplierId获取预售的sku集合
+				map = specialSkuService.findListSkuBySupplierId(app_key);
+				
+				
 				if(supplierStock.size()==0){
 					loggerError.error("抓取供货商信息返回的supplierStock.size为0");
 					return iceStock;
@@ -760,6 +770,9 @@ public abstract class AbsUpdateProductStock {
 			}
 
 
+			if(!fetchSuccess){
+				return purchaseOrderMap;
+			}
 
 			for (PurchaseOrderDetail orderDetail : orderDetails) {
 				supplierSkuNo  = orderDetail.getSupplierSkuNo();
