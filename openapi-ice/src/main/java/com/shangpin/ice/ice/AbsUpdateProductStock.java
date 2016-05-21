@@ -702,7 +702,10 @@ public abstract class AbsUpdateProductStock {
 					loggerError.error("获取采购单失败");
 				}
 			}
-
+			if (!fetchSuccess) {
+				loggerError.error("两次获取采购单均失败");
+				return sopPurchaseMap;
+			}
 			for (PurchaseOrderDetail orderDetail : orderDetails) {
 				supplierSkuNo  = orderDetail.SupplierSkuNo;
 				if(sopPurchaseMap.containsKey(supplierSkuNo)){
