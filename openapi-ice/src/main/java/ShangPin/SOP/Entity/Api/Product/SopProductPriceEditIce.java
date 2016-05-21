@@ -26,11 +26,11 @@ public class SopProductPriceEditIce extends Ice.ObjectImpl
     {
     }
 
-    public SopProductPriceEditIce(String SopSkuPriceApplyId, int SopSkuPriceApplyNo, int SopSkuNo, String MarketCurrency, String MarketPrice, String SupplyCurrency, String SupplyPrice, String StagePrice, String StagePriceEffectDate, String StagePriceFailureDate, String TraiffPrice)
+    public SopProductPriceEditIce(String SopSkuPriceApplyId, int SopSkuPriceApplyNo, String SkuNo, String MarketCurrency, String MarketPrice, String SupplyCurrency, String SupplyPrice, String StagePrice, String StagePriceEffectDate, String StagePriceFailureDate, String TraiffPrice)
     {
         this.SopSkuPriceApplyId = SopSkuPriceApplyId;
         this.SopSkuPriceApplyNo = SopSkuPriceApplyNo;
-        this.SopSkuNo = SopSkuNo;
+        this.SkuNo = SkuNo;
         this.MarketCurrency = MarketCurrency;
         this.MarketPrice = MarketPrice;
         this.SupplyCurrency = SupplyCurrency;
@@ -107,7 +107,7 @@ public class SopProductPriceEditIce extends Ice.ObjectImpl
         __os.startWriteSlice(ice_staticId(), -1, true);
         __os.writeString(SopSkuPriceApplyId);
         __os.writeInt(SopSkuPriceApplyNo);
-        __os.writeInt(SopSkuNo);
+        __os.writeString(SkuNo);
         __os.writeString(MarketCurrency);
         __os.writeString(MarketPrice);
         __os.writeString(SupplyCurrency);
@@ -124,7 +124,7 @@ public class SopProductPriceEditIce extends Ice.ObjectImpl
         __is.startReadSlice();
         SopSkuPriceApplyId = __is.readString();
         SopSkuPriceApplyNo = __is.readInt();
-        SopSkuNo = __is.readInt();
+        SkuNo = __is.readString();
         MarketCurrency = __is.readString();
         MarketPrice = __is.readString();
         SupplyCurrency = __is.readString();
@@ -140,7 +140,7 @@ public class SopProductPriceEditIce extends Ice.ObjectImpl
 
     public int SopSkuPriceApplyNo;
 
-    public int SopSkuNo;
+    public String SkuNo;
 
     public String MarketCurrency;
 
@@ -158,5 +158,5 @@ public class SopProductPriceEditIce extends Ice.ObjectImpl
 
     public String TraiffPrice;
 
-    public static final long serialVersionUID = 712316478L;
+    public static final long serialVersionUID = 1519192754L;
 }

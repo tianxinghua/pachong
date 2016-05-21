@@ -26,7 +26,7 @@ public class DirectPurchaseOrderDetail extends Ice.ObjectImpl
     {
     }
 
-    public DirectPurchaseOrderDetail(String SopPurchaseOrderDetailNo, String SopPurchaseOrderNo, String SupplierSkuNo, int DetailStatus, String ProductModel, String SopProductName, String BarCode, String SkuName, int SopProductNo, int PurchaseType, String WarehouseNo, String Material, String PlaceOriginText, String ProductColor, String ProductSizeValue, String DateStart, String DateEnd, int IsReSend, String SkuPrice, String SkuPriceCurrency, String ConsigneeName, String TariffPrice, String TariffPriceCurrencyName, String Freight, String FreightCurrencyName, String DeliveryBefore, String SkuNo)
+    public DirectPurchaseOrderDetail(String SopPurchaseOrderDetailNo, String SopPurchaseOrderNo, String SupplierSkuNo, int DetailStatus, String ProductModel, String SopProductName, String BarCode, String SkuName, int SopProductNo, int PurchaseType, String WarehouseNo, String Material, String PlaceOriginText, String ProductColor, String ProductSizeValue, String DateStart, String DateEnd, int IsReSend, String SkuPrice, String SkuPriceCurrency, String ConsigneeName, String ConsigneeAddress, String ConsigneeMobile, String TariffPrice, String TariffPriceCurrencyName, String Freight, String FreightCurrencyName, String DeliveryBefore, String SkuNo)
     {
         this.SopPurchaseOrderDetailNo = SopPurchaseOrderDetailNo;
         this.SopPurchaseOrderNo = SopPurchaseOrderNo;
@@ -49,6 +49,8 @@ public class DirectPurchaseOrderDetail extends Ice.ObjectImpl
         this.SkuPrice = SkuPrice;
         this.SkuPriceCurrency = SkuPriceCurrency;
         this.ConsigneeName = ConsigneeName;
+        this.ConsigneeAddress = ConsigneeAddress;
+        this.ConsigneeMobile = ConsigneeMobile;
         this.TariffPrice = TariffPrice;
         this.TariffPriceCurrencyName = TariffPriceCurrencyName;
         this.Freight = Freight;
@@ -142,6 +144,8 @@ public class DirectPurchaseOrderDetail extends Ice.ObjectImpl
         __os.writeString(SkuPrice);
         __os.writeString(SkuPriceCurrency);
         __os.writeString(ConsigneeName);
+        __os.writeString(ConsigneeAddress);
+        __os.writeString(ConsigneeMobile);
         __os.writeString(TariffPrice);
         __os.writeString(TariffPriceCurrencyName);
         __os.writeString(Freight);
@@ -175,6 +179,8 @@ public class DirectPurchaseOrderDetail extends Ice.ObjectImpl
         SkuPrice = __is.readString();
         SkuPriceCurrency = __is.readString();
         ConsigneeName = __is.readString();
+        ConsigneeAddress = __is.readString();
+        ConsigneeMobile = __is.readString();
         TariffPrice = __is.readString();
         TariffPriceCurrencyName = __is.readString();
         Freight = __is.readString();
@@ -226,6 +232,10 @@ public class DirectPurchaseOrderDetail extends Ice.ObjectImpl
 
     public String ConsigneeName;
 
+    public String ConsigneeAddress;
+
+    public String ConsigneeMobile;
+
     public String TariffPrice;
 
     public String TariffPriceCurrencyName;
@@ -238,5 +248,5 @@ public class DirectPurchaseOrderDetail extends Ice.ObjectImpl
 
     public String SkuNo;
 
-    public static final long serialVersionUID = -162119316L;
+    public static final long serialVersionUID = -2116684358L;
 }

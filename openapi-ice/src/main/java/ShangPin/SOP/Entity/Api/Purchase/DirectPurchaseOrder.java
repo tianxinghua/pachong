@@ -26,7 +26,7 @@ public class DirectPurchaseOrder extends Ice.ObjectImpl
     {
     }
 
-    public DirectPurchaseOrder(String SopPurchaseOrderNo, String SupplierNo, String DateStart, String DateEnd, String PurchaseContacts, String PurchaseContactsPhone, int DataSource, String Memo, java.util.List<DirectPurchaseOrderDetail> DirectPurchaseOrderDetailList, String ConsigneeName, String ConsigneeMobile, String ConsigneeAddress, String ConsigneeProvinceName, String ConsigneeCityName, String ConsigneeAreaName, String ConsigneeTownName, String DeliveryBefore, int IsOutside, String LogisticsName, String LogisticsOrderNo, String DateDeliver, String EstimateArrivedTime, String DeliveryAddress, String DeliveryContacts, String DeliveryMemo, String DeliveryContactsPhone)
+    public DirectPurchaseOrder(String SopPurchaseOrderNo, String SupplierNo, String DateStart, String DateEnd, String PurchaseContacts, String PurchaseContactsPhone, int DataSource, String Memo, java.util.List<DirectPurchaseOrderDetail> DirectPurchaseOrderDetailList, String ConsigneeName, String ConsigneeMobile, String ConsigneeAddress, String ConsigneeProvinceName, String ConsigneeCityName, String ConsigneeAreaName, String ConsigneeTownName, String DeliveryBefore, int IsOutside, String LogisticsName, String LogisticsOrderNo, String DateDeliver, String EstimateArrivedTime, String DeliveryAddress, String DeliveryContacts, String DeliveryMemo, String DeliveryContactsPhone, String TotalAmount, int TotalQuantity, String Freight, String FreightCurrency)
     {
         this.SopPurchaseOrderNo = SopPurchaseOrderNo;
         this.SupplierNo = SupplierNo;
@@ -54,6 +54,10 @@ public class DirectPurchaseOrder extends Ice.ObjectImpl
         this.DeliveryContacts = DeliveryContacts;
         this.DeliveryMemo = DeliveryMemo;
         this.DeliveryContactsPhone = DeliveryContactsPhone;
+        this.TotalAmount = TotalAmount;
+        this.TotalQuantity = TotalQuantity;
+        this.Freight = Freight;
+        this.FreightCurrency = FreightCurrency;
     }
 
     private static class __F implements Ice.ObjectFactory
@@ -146,6 +150,10 @@ public class DirectPurchaseOrder extends Ice.ObjectImpl
         __os.writeString(DeliveryContacts);
         __os.writeString(DeliveryMemo);
         __os.writeString(DeliveryContactsPhone);
+        __os.writeString(TotalAmount);
+        __os.writeInt(TotalQuantity);
+        __os.writeString(Freight);
+        __os.writeString(FreightCurrency);
         __os.endWriteSlice();
     }
 
@@ -178,6 +186,10 @@ public class DirectPurchaseOrder extends Ice.ObjectImpl
         DeliveryContacts = __is.readString();
         DeliveryMemo = __is.readString();
         DeliveryContactsPhone = __is.readString();
+        TotalAmount = __is.readString();
+        TotalQuantity = __is.readInt();
+        Freight = __is.readString();
+        FreightCurrency = __is.readString();
         __is.endReadSlice();
     }
 
@@ -233,5 +245,13 @@ public class DirectPurchaseOrder extends Ice.ObjectImpl
 
     public String DeliveryContactsPhone;
 
-    public static final long serialVersionUID = -431949844L;
+    public String TotalAmount;
+
+    public int TotalQuantity;
+
+    public String Freight;
+
+    public String FreightCurrency;
+
+    public static final long serialVersionUID = 832513820L;
 }
