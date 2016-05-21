@@ -40,7 +40,7 @@ import java.util.Map;
  * Created by loyalty on 15/6/4.
  */
 @Service
-public class ProductFetchServiceImpl implements ProductFetchService {
+public abstract class ProductFetchServiceImpl implements ProductFetchService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public static String  REPEAT_MESSAGE="数据插入失败键重复";

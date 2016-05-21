@@ -13,8 +13,7 @@ import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
-import com.shangpin.iog.product.service.OrderServiceImpl;
-import com.shangpin.iog.service.ProductSearchService;
+import com.shangpin.iog.service.SpecialSkuService;
 
 /**
  * Created by Administrator on 2015/11/20.
@@ -37,12 +36,9 @@ public class OrderService extends AbsOrderService {
         supplierId = bdl.getString("supplierId");
         supplierNo = bdl.getString("supplierNo");
     }
-
-    @Autowired
-    OrderServiceImpl orderService;
     
     @Autowired
-    ProductSearchService productSearchService;
+    SpecialSkuService specialSkuService;
     
     // 下单处理
  	public void startSOP() {
@@ -64,8 +60,13 @@ public class OrderService extends AbsOrderService {
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		orderDTO.setExcState("0");
-		logger.info("订单确认成功,订单状态为:"+orderDTO.getStatus());
-		orderDTO.setStatus(OrderStatus.CONFIRMED);
+		logger.info("订单确认成功,订单状态为:"+orderDTO.getStatus()+" skuId="+orderDTO.getDetail().split(",")[0].split(":")[0]);
+		if(specialSkuService.checkBySupplierIdAndSkuId(supplierId, orderDTO.getDetail().split(",")[0].split(":")[0])){
+			logger.info(orderDTO.getSpPurchaseNo()+" 是预售订单."); 
+			orderDTO.setStatus(OrderStatus.YUSHOUCONFIRM);
+		}else{
+			orderDTO.setStatus(OrderStatus.CONFIRMED);
+		}		
 		
 	}
 	@Override

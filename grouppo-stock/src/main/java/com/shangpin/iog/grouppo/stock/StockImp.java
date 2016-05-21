@@ -61,17 +61,37 @@ public class StockImp  extends AbsUpdateProductStock {
         	stock_TabularQuery2.setM_Company("PRITE");
         	stock_TabularQuery2.setSkuId(""); 
         	logger.info("=============开始获取response=============="); 
-        	Stock_TabularQueryResponse response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);
-        	Stock_TabularQueryResponseStructure[] items = response.getRecords().getItem();
-        	logger.info("===========抓取的items.length========="+items.length); 
-        	for(Stock_TabularQueryResponseStructure item : items){
-        		try {
-        			stockMap.put(item.getSkuId(),""+item.getStock());
-				} catch (Exception e) {
-					e.printStackTrace();
+        	Stock_TabularQueryResponse response = null;
+        	try {
+        		response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);
+			} catch (Exception e) {
+				logError.error("第1次异常===="+e);
+				response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);
+				try {
+					response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);
+				} catch (Exception e2) {
+					logError.error("第2次异常===="+e2);
+					try {
+						response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);
+					} catch (Exception e3) {
+						logError.error("第3次异常===="+e3);
+					}
 				}
-        		
-        	}
+			}
+        	if(null != response){
+        		Stock_TabularQueryResponseStructure[] items = response.getRecords().getItem();
+            	logger.info("===========抓取的items.length========="+items.length); 
+            	for(Stock_TabularQueryResponseStructure item : items){
+            		try {
+            			stockMap.put(item.getSkuId(),""+item.getStock());
+    				} catch (Exception e) {
+    					e.printStackTrace();
+    				}
+            		
+            	}
+        	}else{
+        		logger.info("===========抓取的response为null========="); 
+        	}        	
         
         }catch(Exception ex){
         	logError.error(ex);
