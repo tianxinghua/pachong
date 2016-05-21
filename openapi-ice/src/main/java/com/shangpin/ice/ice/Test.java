@@ -20,6 +20,7 @@ import com.shangpin.iog.ice.dto.ICEWMSOrderDTO;
 import com.shangpin.iog.ice.dto.ICEWMSOrderRequestDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -45,7 +46,8 @@ public class Test {
 //        }
 
 //        List<Integer> status = new ArrayList<>();
-//        status.add(5);
+//        status.add(1);
+//        status.add(2);
 //
 //
 //
@@ -186,27 +188,124 @@ public class Test {
 //            System.out.println(" false  ");
 //        }
 
-        Gson gson = new Gson();
-        ICEWMSOrderRequestDTO  dto = new ICEWMSOrderRequestDTO();
-
-        dto.setBeginTime("2015-11-17 13:16:00");
-        dto.setEndTime("2015-11-17 13:16:20");
-        dto.setSupplierNo("S0000514");
-
-        String jsonParameter= "="+ gson.toJson(dto);
-        String result ="";
-
-
+//        Gson gson = new Gson();
+//        ICEWMSOrderRequestDTO  dto = new ICEWMSOrderRequestDTO();
+//
+//        dto.setBeginTime("2015-11-17 13:16:00");
+//        dto.setEndTime("2015-11-17 13:16:20");
+//        dto.setSupplierNo("S0000514");
+//
+//        String jsonParameter= "="+ gson.toJson(dto);
+//        String result ="";
+//
+//
+//        try {
+//            result =  HttpUtil45.operateData("post","form","http://spwmsinventory.spidc1.com/Api/StockQuery/SupplierInventoryLogQuery",new OutTimeConfig(1000*5,1000*5,1000*5),null,
+//                    jsonParameter,"","");
+//            System.out.println("result = " + result);
+//
+//        } catch (ServiceException e) {
+//            e.printStackTrace();
+//        }
+        Test tesst = new Test();
         try {
-            result =  HttpUtil45.operateData("post","form","http://spwmsinventory.spidc1.com/Api/StockQuery/SupplierInventoryLogQuery",new OutTimeConfig(1000*5,1000*5,1000*5),null,
-                    jsonParameter,"","");
-            System.out.println("result = " + result);
-
-        } catch (ServiceException e) {
+            tesst.getSopPuchase("2015081701440");//2015081701443       2015081701440    2015111601665
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-
     }
 
+
+    public  Map<String,Integer> getSopPuchase(String supplierId) throws  Exception {
+
+
+        int pageIndex = 1, pageSize = 20;
+        OpenApiServantPrx servant = null;
+        try {
+            servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        } catch (Exception e) {
+//			e.printStackTrace();
+            throw e;
+
+        }
+        boolean hasNext = true;
+        Set<String> skuIds = new HashSet<String>();
+        Map<String, Integer> sopPurchaseMap = new HashMap<>();
+        String supplierSkuNo = "";
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date endDate = new Date();
+        String endTime = format.format(endDate);
+
+        String startTime = format.format(getAppointDayFromSpecifiedDay(endDate, -10, "D"));
+        List<java.lang.Integer> statusList = new ArrayList<>();
+        statusList.add(1);
+        statusList.add(2);
+        while (hasNext) {
+            List<PurchaseOrderDetail> orderDetails = null;
+            boolean fetchSuccess = true;
+            for (int i = 0; i < 2; i++) {  //允许调用失败后，再次调用一次
+                try {
+
+                    PurchaseOrderQueryDto orderQueryDto = new PurchaseOrderQueryDto(startTime, endTime, statusList
+                            , pageIndex, pageSize);
+                    PurchaseOrderDetailPage orderDetailPage =
+                            servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
+                    orderDetails = orderDetailPage.PurchaseOrderDetails;
+                    if (null == orderDetails) {
+                        fetchSuccess = false;
+                    }
+                } catch (ApiException e) {
+                    e.printStackTrace();
+                    fetchSuccess = false;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    fetchSuccess = false;
+                }
+                if (fetchSuccess) {
+                    i = 2;
+                } else {
+                }
+            }
+
+            for (PurchaseOrderDetail orderDetail : orderDetails) {
+                supplierSkuNo = orderDetail.SupplierSkuNo;
+                if (sopPurchaseMap.containsKey(supplierSkuNo)) {
+                    //
+
+                    sopPurchaseMap.put(supplierSkuNo, sopPurchaseMap.get(supplierSkuNo) + 1);
+                } else {
+
+                    sopPurchaseMap.put(supplierSkuNo, 1);
+                }
+
+
+            }
+            pageIndex++;
+            hasNext = (pageSize == orderDetails.size());
+
+        }
+        return   sopPurchaseMap;
+    }
+
+        //时间处理
+        private  Date getAppointDayFromSpecifiedDay(Date today,int num,String type){
+            Calendar c   =   Calendar.getInstance();
+            c.setTime(today);
+
+            if("Y".equals(type)){
+                c.add(Calendar.YEAR, num);
+            }else if("M".equals(type)){
+                c.add(Calendar.MONTH, num);
+            }else if(null==type||"".equals(type)||"D".equals(type))
+                c.add(Calendar.DAY_OF_YEAR, num);
+            else if("H".equals(type))
+                c.add(Calendar.HOUR_OF_DAY,num);
+            else if("m".equals(type))
+                c.add(Calendar.MINUTE,num);
+            else if("S".equals(type))
+                c.add(Calendar.SECOND,num);
+            return c.getTime();
+        }
 }
