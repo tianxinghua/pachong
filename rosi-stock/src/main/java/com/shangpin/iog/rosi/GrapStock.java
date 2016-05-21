@@ -77,6 +77,7 @@ public class GrapStock extends AbsUpdateProductStock {
             }
         }
 		logger.info("供货商返回的map的大小是======="+skustock.size()+"=======");
+		logger.info(skustock);
 		return skustock;
 	}
 

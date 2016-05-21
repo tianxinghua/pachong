@@ -20,6 +20,10 @@ public class OrderStatus {
 
     public static String PURCHASE_EXP_SUCCESS="purExpSuc";//采购单异常成功
     public static String PURCHASE_EXP_ERROR="purExpErr";
+    
+    public static String SHOULD_PURCHASE_EXP = "should purExp";
+    
+    public static String YUSHOUCONFIRM = "yushouConfirm";
 
 
 }

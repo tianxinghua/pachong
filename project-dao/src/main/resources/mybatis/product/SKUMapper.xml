@@ -265,7 +265,8 @@
 	<update id="updateSkuMemoList">
        update SKU
        <set>
-       		MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",CONCAT(NOW(),"价格变化")),
+       		<!--MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",CONCAT(NOW(),"价格变化")),-->
+       		MEMO = CONCAT(NOW(),"价格变化"),
        		LAST_TIME = NOW(),
        </set>
        <where>

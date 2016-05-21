@@ -41,6 +41,7 @@ public class RevolveFrameFetchProduct extends AbsSaveProduct{
 	public static String url;
 	public static String picpath;
 	public static int day;
+	public static String filepath;
 
 	static {
 		if (null == bdl)
@@ -49,6 +50,7 @@ public class RevolveFrameFetchProduct extends AbsSaveProduct{
 		day = Integer.valueOf(bdl.getString("day"));
 		url = bdl.getString("url");
 		picpath = bdl.getString("picpath");
+		filepath = bdl.getString("filepath");
 	}
 	//sku:List(skuDTO) spu:List(spuDTO) image: Map(id;picName,List) 
 	@Override
@@ -61,11 +63,11 @@ public class RevolveFrameFetchProduct extends AbsSaveProduct{
 		String sep = "\t";
 		Csv2DTO csv2 = new Csv2DTO();
 		//第一个为size and stock
-		String[] needColsNo = new String[]{"","0","2","14","22","3","","9,10,11,12,8","","16","4","","23","","","27","23","19","20","","5"};
+		String[] needColsNo = new String[]{"","0","2","14","22","3","","9,10,11,12,8","","16","4","","23","","","15","23","19","20","1","5"};
 		//策略组
-		String[] strategys = new String[]{"","","","","","","","more% %0%;","","","","","sin% %0%\"\"","","","","sin% %1%\"\"","","","",""};
+		String[] strategys = new String[]{"","","","","","","","more% %0%;","","","","","sin% %0%\"\"","","","","sin% %0%\"\"","","","",""};
 		ISepStrategy[] iSepStrategies = new SepStrategyContext().operate(strategys);
-		List<ProductDTO> dto = csv2.toDTO(url, "F:\\head-revolveChinaMarketplace.txt", sep, needColsNo, iSepStrategies, ProductDTO.class);
+		List<ProductDTO> dto = csv2.toDTO(url, filepath, sep, needColsNo, iSepStrategies, ProductDTO.class);
 		
 		for (ProductDTO productDTO : dto) {
 			if (!spuMap.containsKey(productDTO.getSpuId())) {
@@ -79,13 +81,13 @@ public class RevolveFrameFetchProduct extends AbsSaveProduct{
 			sku.setSkuId(productDTO.getSkuId());
 			sku.setProductSize(productDTO.getSize());
 			sku.setMarketPrice(productDTO.getMarketPrice());
-			sku.setSalePrice(productDTO.getSalePrice());
+			sku.setSalePrice(productDTO.getSalePrice().substring(3));
 			sku.setSupplierPrice(productDTO.getSupplierPrice());
 			sku.setColor(productDTO.getColor());
 			sku.setProductDescription(productDTO.getDescription());
 			sku.setStock(productDTO.getStock());
 			sku.setProductCode(productDTO.getProductCode());
-			sku.setSaleCurrency(productDTO.getCurrency());
+			sku.setSaleCurrency(productDTO.getSalePrice().substring(0,3));
 			sku.setBarcode(productDTO.getBarcode());
 			skuList.add(sku);
 		}

@@ -11,8 +11,10 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.csvreader.CsvReader;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 
 public class CVSUtil {
+	private static LoggerUtil logError = LoggerUtil.getLogger("error");
 
 	/**
 	 * 解析csv文件，将其转换为对象
@@ -27,6 +29,7 @@ public class CVSUtil {
 	public static <T> List<T> readCSV(String uri,Class<T> clazz, char sep)
 			throws Exception {
 		String result = null;
+		InputStream in = null;
 		URL url = new URL(uri);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		// 设置超时间为5分钟
@@ -35,10 +38,11 @@ public class CVSUtil {
 		conn.setRequestProperty("User-Agent",
 				"Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
 		// 得到输入流
-		InputStream in = conn.getInputStream();
+		in = conn.getInputStream();
 		if (in == null) {
 			System.out.println("下载失败！！！！！！！！！！");
-			System.exit(0);
+			logError.error("下载失败！！！！！！！！！！"); 
+//			System.exit(0);
 		}
 //		BufferedReader reader = new BufferedReader(new InputStreamReader(in, "utf-8"));  
 //        StringBuffer sb = new StringBuffer();  
@@ -73,6 +77,9 @@ public class CVSUtil {
 				dtoList.add(t);
 			}
 
+		}
+		if(null != in){
+			in.close(); 
 		}
 
 		return dtoList;

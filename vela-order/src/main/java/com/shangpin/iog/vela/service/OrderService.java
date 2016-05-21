@@ -53,7 +53,7 @@ public class OrderService extends AbsOrderService {
 	private static String fromUserPassword = null;
 	private static String to = null;
 	private static String subject = null;
-	private static String messageText = null;
+	private static String isPurchaseExp = null;
 	private static String messageType = null;
 	static {
 		if (null == bdl) {
@@ -74,7 +74,7 @@ public class OrderService extends AbsOrderService {
 		fromUserPassword = bdl.getString("fromUserPassword");
 		to = bdl.getString("to");
 		subject = bdl.getString("subject");
-		messageText = bdl.getString("messageText");
+		isPurchaseExp = bdl.getString("isPurchaseExp");
 		messageType = bdl.getString("messageType");
 	}
 
@@ -187,8 +187,13 @@ public class OrderService extends AbsOrderService {
 //					orderDTO.setExcDesc(responseObject.getMessage().toString());
 //				}
 				if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
-				    orderDTO.setExcState("0");
-					orderDTO.setStatus(OrderStatus.NOHANDLE);
+					if("yes".equals(isPurchaseExp)){
+						this.setPurchaseExc(orderDTO);
+					}else{
+						orderDTO.setExcState("0");
+						orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+					}
+				
 //					this.setPurchaseExc(orderDTO);
 
 				}else{
@@ -203,6 +208,7 @@ public class OrderService extends AbsOrderService {
 		} catch (Exception e) {
 			// loggerError.error("Failed Response ：" + e.getMessage() + ",
 			// shopOrderId:"+order.getBarcode());
+			loggerError.info(e);
 			orderDTO.setExcState("1");
 			orderDTO.setExcDesc(e.getMessage());
 		}
@@ -257,6 +263,7 @@ public class OrderService extends AbsOrderService {
 			} catch (Exception e) {
 				deleteOrder.setExcState("1");
 				deleteOrder.setExcDesc(e.getMessage());
+				loggerError.info(e);
 			}
 		}else{
 			loggerError.error("采购单"+deleteOrder.getSpPurchaseNo()+"用户退款,供货商状态已变，无法通知。");
@@ -282,6 +289,7 @@ public class OrderService extends AbsOrderService {
 		try {
 			pro = productSpecSearchService.findProductBySupplierIdAndSkuId(supplierId, skuId);
 		} catch (ServiceException e) {
+			loggerError.info(e);
 			e.printStackTrace();
 		}
 		order.setBarcode(pro.getBarcode());

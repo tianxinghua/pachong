@@ -49,6 +49,7 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
 	private static String orderurl = null;
+	private static String flag = null;
 	private static OutTimeConfig outTimeConf = null;
 	static {
 		if(null==bdl){
@@ -56,6 +57,7 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 		}
 		supplierId = bdl.getString("supplierId");
 		orderurl = bdl.getString("orderurl");
+		flag = bdl.getString("flag");
 		outTimeConf = new OutTimeConfig(1000*60*2, 1000*60*2, 1000*60*2);
 	}
 	@Autowired
@@ -88,7 +90,13 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 				//确认订单失败
 				orderDTO.setExcDesc("支付订单失败"+operationS);
 				orderDTO.setExcTime(new Date());
-				handlePurchaseOrderExc(orderDTO);
+				if (flag.equals("520")) {
+					orderDTO.setExcState(OrderStatus.SHOULD_PURCHASE_EXP);
+					orderDTO.setExcState("1");
+					orderDTO.setExcDesc("520采购异常");
+				}else{
+					handlePurchaseOrderExc(orderDTO);
+				}
 			}else{
 				//支付成功
 				 orderDTO.setExcState("0");
@@ -201,10 +209,10 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 		param.put("op", "o");param.put("qty", qty);
 		param.put("o", "shangG");param.put("p", "aW5102cn6");
 		param.put("w", "ha");param.put("q", "ordreq");
-		param.put("v", skuid.split("-")[0]);param.put("tg", skuDTO.getProductDescription());
+		param.put("v", skuid.split("-")[0]);param.put("tg", skuDTO.getProductName());
 		param.put("cf", orderDTO.getSpOrderId());
 
-		logger.info("op=o请求参数为v="+skuid.split("-")[0]+"tg="+skuDTO.getProductDescription());
+		logger.info("op=o请求参数为v="+skuid.split("-")[0]+"tg="+skuDTO.getProductName());
 		
 		String result = HttpUtil45.get(orderurl, outTimeConf, param);
 		return result;

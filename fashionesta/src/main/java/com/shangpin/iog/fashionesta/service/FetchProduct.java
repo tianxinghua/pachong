@@ -1,5 +1,6 @@
 package com.shangpin.iog.fashionesta.service;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.fashionesta.dto.Item;
 import com.shangpin.iog.fashionesta.dto.Product;
+import com.shangpin.iog.fashionesta.utils.CVSUtil;
 import com.shangpin.iog.fashionesta.utils.DownloadAndReadCSV;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
@@ -63,7 +65,9 @@ public class FetchProduct {
 				e.printStackTrace();
 			}
 			logger.info("下载元数据，解析csv");
+//			String realPath=DownloadAndReadCSV.downloadNet();
 			List<Product> list = DownloadAndReadCSV.readLocalCSV();
+//			List<Product> list = CVSUtil.readCSV(new File("F:\\fashionesta.csv"), Product.class, ';');
 			for (Product product : list) {
 				SpuDTO spu = new SpuDTO();
 
@@ -86,7 +90,7 @@ public class FetchProduct {
 						sku.setMarketPrice(item.getPrice());
 						sku.setSupplierPrice(item.getSpecial_price());
 						sku.setStock(item.getStock());
-						
+						sku.setSpSkuId(item.getItemCode());
 						String size = item.getSize();
 						if(size.indexOf("1/2")>0){
 		                    size=size.replace("-1/2","+");

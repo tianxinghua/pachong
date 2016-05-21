@@ -43,7 +43,7 @@ import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.service.SkuPriceService;
 @Component
 public class OrderImpl  extends AbsOrderService{
-
+	private static Logger loggerError = Logger.getLogger("error");
 	private static Logger logger = Logger.getLogger("info");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
@@ -57,6 +57,8 @@ public class OrderImpl  extends AbsOrderService{
 	private static String subject = null;
 	private static String messageText = null;
 	private static String messageType = null;
+	private static String isPurchaseExp = null;
+	
 	@Autowired
 	SkuPriceService skuPriceService;
 	static {
@@ -74,6 +76,7 @@ public class OrderImpl  extends AbsOrderService{
 		subject = bdl.getString("subject");
 		messageText = bdl.getString("messageText");
 		messageType = bdl.getString("messageType");
+		isPurchaseExp = bdl.getString("isPurchaseExp");
 	}
 
 	public void loopExecute() {
@@ -117,7 +120,7 @@ public class OrderImpl  extends AbsOrderService{
 						orderDTO.setExcDesc(res);
 						orderDTO.setExcState("0");
 						orderDTO.setStatus(OrderStatus.NOHANDLE);
-						
+						loggerError.info(result.getResult());
 						Thread t = new Thread(new Runnable() {
 							@Override
 							public void run() {
@@ -145,6 +148,7 @@ public class OrderImpl  extends AbsOrderService{
 						});
 						t.start();
 			          } else{
+			        	  loggerError.info(res);
 		        		if(res.length()>200){
 							res = res.substring(0,200);
 						}
@@ -152,14 +156,6 @@ public class OrderImpl  extends AbsOrderService{
 						orderDTO.setExcState("0");
 						//供应商返回信息有误，暂时设置成不处理
 						orderDTO.setStatus(OrderStatus.NOHANDLE);
-//						String reResult = setPurchaseOrderExc(orderDTO);
-//						if("-1".equals(reResult)){
-//							orderDTO.setStatus(OrderStatus.NOHANDLE);
-//						}else if("1".equals(reResult)){
-//							orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-//						}else if("0".equals(reResult)){
-//							orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
-//						}
 					}
 					
 				}
@@ -177,34 +173,33 @@ public class OrderImpl  extends AbsOrderService{
 							orderDTO.setExcState("0");
 							orderDTO.setExcDesc(r.getDescription());
 							//供应商返回信息有误，暂时设置成不处理
-							orderDTO.setStatus(OrderStatus.NOHANDLE);
-//							String reResult = setPurchaseOrderExc(orderDTO);
-//							if("-1".equals(reResult)){
-//								orderDTO.setStatus(OrderStatus.NOHANDLE);
-//							}else if("1".equals(reResult)){
-//								orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-//							}else if("0".equals(reResult)){
-//								orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
-//							}
+							if(r.getDescription().indexOf("Quantity")>0){
+								if("yes".equals(isPurchaseExp)){
+									String reResult = setPurchaseOrderExc(orderDTO);
+									if("-1".equals(reResult)){
+										orderDTO.setStatus(OrderStatus.NOHANDLE);
+									}else if("1".equals(reResult)){
+										orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+									}else if("0".equals(reResult)){
+										orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+									}
+								}else{
+									orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+								}
+							}else{
+								orderDTO.setStatus(OrderStatus.NOHANDLE);
+							}
 						}
 					}
 				}
 			}else{
+				 loggerError.info(res);
 				if(res.length()>200){
 					res = res.substring(0,200);
 				}
 				orderDTO.setExcDesc(res);
 				orderDTO.setExcState("0");
 				orderDTO.setStatus(OrderStatus.NOHANDLE);
-//				String reResult = setPurchaseOrderExc(orderDTO);
-//				if("-1".equals(reResult)){
-//					orderDTO.setStatus(OrderStatus.NOHANDLE);
-//				}else if("1".equals(reResult)){
-//					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-//				}else if("0".equals(reResult)){
-//					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
-//				}
-				
 				Thread t = new Thread(new Runnable() {
 					@Override
 					public void run() {
@@ -238,25 +233,17 @@ public class OrderImpl  extends AbsOrderService{
         Iterable<? extends NameValuePair> nvs = map2NameValuePair(map);
         httpPost.setEntity(new UrlEncodedFormEntity(nvs, Charset
 				.forName("UTF-8")));
-        try {
-			response = httpClient.execute(httpPost);
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
         String str = null;
         try {
+			response = httpClient.execute(httpPost);
 			str = EntityUtils.toString(response.getEntity());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
+			
+			loggerError.info("推送订单返回的响应response:"+response+str);
+			 loggerError.info(e.getMessage());
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
+       
         return response.getStatusLine().getStatusCode()+"|"+str;
 	}
 	

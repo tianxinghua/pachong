@@ -38,13 +38,14 @@ public class Csv2DTO {
 	 */
 	@SuppressWarnings("resource")
 	public  <T> List<T> toDTO(String url,String filePath, String sep,String[] needColsNo,ISepStrategy[] iSepStrategies, Class<T> clazz) {
-//		txtDownload(url,filePath);
+		txtDownload(url,filePath);
 		List<T> dtoList = new ArrayList<T>();
 		CsvReader cr = null;
 		String[] split = null;
 		List<String> colValueList = null;
 		String rowString = "";
 		try {
+//			InputStream in = new FileInputStream("E:\\products.txt");
 			InputStream in = new FileInputStream(filePath);
 			cr = new CsvReader(in, Charset.forName("utf-8"));
 			cr.readRecord();
@@ -78,7 +79,6 @@ public class Csv2DTO {
 			String[] split = null;
 			String str = "";
 			for (int i = 0; i < needColsNo.length; i++) {
-				System.out.println("i="+i);
 				fields[i].setAccessible(true);
 				if (needColsNo[i].equals("")) {
 					fields[i].set(t,"");
@@ -89,7 +89,6 @@ public class Csv2DTO {
 				List<String> dataList = new ArrayList<String>();
 				
 				for (int j = 0; j < split.length; j++) {
-					System.out.println("j="+j);
 					dataList.add(data.get(Integer.valueOf(split[j])));
 //					str+=data.get(Integer.valueOf(split[j]))+colsSep[i];
 				}

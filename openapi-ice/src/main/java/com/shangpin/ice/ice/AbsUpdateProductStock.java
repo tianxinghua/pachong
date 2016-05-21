@@ -23,7 +23,9 @@ import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.StockUpdateDTO;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.SkuRelationService;
+import com.shangpin.iog.service.SpecialSkuService;
 import com.shangpin.iog.service.UpdateStockService;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +98,8 @@ public abstract class AbsUpdateProductStock {
 	@Autowired
 	UpdateStockService updateStockService;
 
+	@Autowired
+	SpecialSkuService specialSkuService;
 
 
 	/**
@@ -506,10 +510,15 @@ public abstract class AbsUpdateProductStock {
 	private Map<String, Integer> grab4Icestock(Collection<String> skuNos,Map<String, String> localAndIceSkuId,
 											   Map<String,String> sopPriceMap, final String supplierId) {
 		Map<String, Integer> iceStock=new HashMap<>();
+		Map<String,String> map = null;
 		try {
 			Map<String, String> supplierStock= null;  //
 			try {
 				supplierStock = grabStock(skuNos);
+				
+				//根据supplierId获取预售的sku集合
+				map = specialSkuService.findListSkuBySupplierId(supplierId);
+				
 				if(supplierStock.size()==0){
 					loggerError.error("=======抓取供货商信息返回的supplierStock.size为0=========");
 					return iceStock;
@@ -544,6 +553,11 @@ public abstract class AbsUpdateProductStock {
 			boolean sendMail=true;
 			loggerInfo.info("供货商skuid和sop skuid关系map==========="+localAndIceSkuId.toString());
 			for (String skuNo : skuNos) {
+				if(map.size()>0){
+					if(map.containsKey(skuNo)){
+						continue;
+					}
+				}
 				stockTemp ="";
 				result =  supplierStock.get(skuNo);
 				if(!StringUtils.isEmpty(result)){
@@ -657,7 +671,7 @@ public abstract class AbsUpdateProductStock {
 		Date endDate = new Date();
 		String endTime = format.format(endDate);
 
-		String startTime = format.format(getAppointDayFromSpecifiedDay(endDate, -2, "M"));
+		String startTime = format.format(getAppointDayFromSpecifiedDay(endDate, -10, "D"));
 		List<java.lang.Integer> statusList = new ArrayList<>();
 		statusList.add(1);
 		statusList.add(2);
@@ -688,7 +702,10 @@ public abstract class AbsUpdateProductStock {
 					loggerError.error("获取采购单失败");
 				}
 			}
-
+			if (!fetchSuccess) {
+				loggerError.error("两次获取采购单均失败");
+				return sopPurchaseMap;
+			}
 			for (PurchaseOrderDetail orderDetail : orderDetails) {
 				supplierSkuNo  = orderDetail.SupplierSkuNo;
 				if(sopPurchaseMap.containsKey(supplierSkuNo)){

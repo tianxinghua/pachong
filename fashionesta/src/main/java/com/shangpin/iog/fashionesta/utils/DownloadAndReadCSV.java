@@ -44,7 +44,11 @@ public class DownloadAndReadCSV {
             conn.setConnectTimeout(1000*60*30);
             conn.setReadTimeout(1000*60*120);
             realPath = getPath(path);
-            FileOutputStream fs = new FileOutputStream(realPath);
+            File f = new File(realPath);
+            if (!f.exists()) {
+				f.createNewFile();
+			}
+            FileOutputStream fs = new FileOutputStream(f);
 
             byte[] buffer = new byte[1204];
             int length;
@@ -54,6 +58,7 @@ public class DownloadAndReadCSV {
                 fs.write(buffer, 0, byteread);
             }
         } catch (Exception e) {
+        	e.printStackTrace();
         	logger.info("下载失败");
         	System.exit(0);
         }
@@ -116,7 +121,7 @@ public class DownloadAndReadCSV {
 				dtoList.add(product);
 				sb.setLength(0);
 			}else {
-				if (!colValueList.get(colNameList.indexOf("qty")).equals("0")) {
+//				if (!colValueList.get(colNameList.indexOf("qty")).equals("0")) {
 					Item item = new Item();
 					item.setItemCode(colValueList.get(colNameList.indexOf("\"sku")).replace("\"", ""));
 					item.setPrice(colValueList.get(colNameList.indexOf("price")));
@@ -124,7 +129,7 @@ public class DownloadAndReadCSV {
 					item.setSize(colValueList.get(colNameList.indexOf("size")));
 					item.setStock(colValueList.get(colNameList.indexOf("qty")));
 					product.getItems().add(item);
-				}
+//				}
 				
 			}
 		}

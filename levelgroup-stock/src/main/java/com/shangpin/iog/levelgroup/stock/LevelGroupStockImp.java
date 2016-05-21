@@ -66,6 +66,7 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
         Map<String,String> mongMap = new HashMap<>();
         //从文件里获取
         Map<String,String> stockMap2 = getStockList();
+        Map<String,String> lnccStockMap = getLnccStock();
 
         mongMap.put("supplierId",supplierId);
         mongMap.put("supplierName","levelgroup");
@@ -73,16 +74,21 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
 //        logMongo.info(mongMap);
 
         for (String skuno : skuNo) { 
-        	String stock = "";
-            String stock2 = stockMap2.get(skuno); 
-            
-            if (StringUtils.isNotEmpty(stock2)){//先在文件里查找             	
-                skustock.put(skuno, Integer.valueOf(stock2));
-//            }else if (StringUtils.isNotEmpty(stock = getStock(skuno))){//查找不到再去接口
-//            	logger.info(skuno+"===通过接口获取库存===="+stock);
-//            	skustock.put(skuno, Integer.valueOf(stock));
-            }else{
-            	skustock.put(skuno, 0);
+        	
+            if (StringUtils.isNotEmpty(stockMap2.get(skuno))){//先在weitzman里查找             	
+                skustock.put(skuno, Integer.valueOf(stockMap2.get(skuno)));
+            }else{//然后在lncc里找
+            	String stock2 = "";                
+                if(skuno.length()<15){
+                	stock2 = lnccStockMap.get("09"+skuno); 
+                }else{
+                	stock2 = lnccStockMap.get(skuno); 
+                }
+                if(StringUtils.isNotBlank(stock2)){
+                	skustock.put(skuno,Integer.valueOf(stock2));
+                }else{
+                	skustock.put(skuno, 0);
+                }            	
             }
                 
         }
@@ -114,9 +120,14 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
         } catch (Exception e) {
             e.printStackTrace();
             loggerError.error("下载"+path+"文件失败!"+e.getMessage());
-        }
+        }       
         
-        boolean flag2 = false;
+        return map;
+    }
+    
+    public static Map<String,String> getLnccStock(){
+    	Map<String,String> map = new HashMap();
+    	boolean flag2 = false;
         int k=0;
         try {
         	while(!flag2 && k<10){//如果下载失败，尝试10遍！！！！
@@ -138,10 +149,9 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
             e.printStackTrace();
             loggerError.error("下载"+pathincc+"文件失败!"+e.getMessage());
         }
-        
         return map;
     }
-
+ 
     private static String getStock(String sku){
     	
     	try {

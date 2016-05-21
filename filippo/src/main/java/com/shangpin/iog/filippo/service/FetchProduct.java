@@ -119,6 +119,7 @@ public class FetchProduct {
 				sku.setStock(skuEntry.getValue().getQTY().replace("\"", ""));
 				
 				sku.setProductDescription(skuEntry.getValue().getTG_ID());
+				sku.setProductName(skuEntry.getValue().getTG_ID());
 				
 				String size = skuEntry.getValue().getTG().replace("\"", "");
 				if(size.indexOf("1/2")>0){

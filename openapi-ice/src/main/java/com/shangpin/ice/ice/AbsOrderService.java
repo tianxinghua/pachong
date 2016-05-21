@@ -226,15 +226,7 @@ public abstract class AbsOrderService {
 
         String jsonParameter= "="+ gson.toJson(dto);
         String result ="";
-        try {
-            result =  HttpUtil45.operateData("post","form",url+"/Api/StockQuery/SupplierInventoryLogQuery",new OutTimeConfig(1000*5,1000*30,1000*30),null,
-                    jsonParameter,"","");
-            logger.info("获取的订单信息为:" + result);
-            System.out.println("kk = " + result);
-            result =  result.substring(1,result.length()-1).replace("\\","");
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
+        result = getOrderInfoFromWMS(jsonParameter, result);
         List<ICEWMSOrderDTO> orderDTOList  = null;
         try {
             orderDTOList = gson.fromJson(result,new TypeToken<List<ICEWMSOrderDTO>>(){}.getType());
@@ -242,7 +234,16 @@ public abstract class AbsOrderService {
             loggerError.error("获取"+supplierNo +"供货商，wms订单转化异常,退出");
             Thread t = new Thread(new MailThread(supplierId,supplierId+" 线上订单发生错误","获取订单信息失败，无信息返回。"));
             t.start();
-            return;
+            try {
+            	result = getOrderInfoFromWMS(jsonParameter, result);
+            	orderDTOList = gson.fromJson(result,new TypeToken<List<ICEWMSOrderDTO>>(){}.getType());
+			} catch (Exception e2) {
+				loggerError.error("第二次获取"+supplierNo +"供货商，wms订单转化异常,退出");
+	            Thread t1 = new Thread(new MailThread(supplierId,supplierId+" 线上订单发生错误","获取订单信息失败，无信息返回。"));
+	            t1.start();
+	            return;
+			}           
+            
         }
         String uuid="",skuNo="";
         //由于拉取时可能更改供货商的SKU的编号需要 继承者确认
@@ -303,6 +304,20 @@ public abstract class AbsOrderService {
         //处理退款
         handleRefundOrderAndEmailOfWMS(supplierNo, supplierId);
     }
+
+	private String getOrderInfoFromWMS(String jsonParameter, String result) {
+		try {
+        	
+            result =  HttpUtil45.operateData("post","form",url+"/Api/StockQuery/SupplierInventoryLogQuery",new OutTimeConfig(1000*5,1000*30,1000*30),null,
+                    jsonParameter,"","");
+            logger.info("获取的订单信息为:" + result);
+            System.out.println("kk = " + result);
+            result =  result.substring(1,result.length()-1).replace("\\","");
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+		return result;
+	}
 
 
 

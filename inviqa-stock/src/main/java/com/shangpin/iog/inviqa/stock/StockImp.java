@@ -41,6 +41,7 @@ public class StockImp extends AbsUpdateProductStock {
     private static String MAGENTO_API_SECRET = null;
     private static String MAGENTO_REST_API_URL = null;
     private static Logger logger = Logger.getLogger("info");
+    private static Logger loggerError = Logger.getLogger("error");
     private static ApplicationContext factory;
     private static String token = null;
     private static String secret = null;
@@ -84,6 +85,7 @@ public class StockImp extends AbsUpdateProductStock {
 			Token accessToken = new Token(token,secret);
 			getProductStock(service,accessToken,1);
 		}catch(Exception e){
+			loggerError.info(e);
 			stock="0";
 		}
 	}
@@ -124,6 +126,7 @@ public class StockImp extends AbsUpdateProductStock {
 			System.out.println("第"+excSum+"次发生异常,异常原因："+ex.getMessage());
 			getProductStock(service,accessToken,page);
 			if(j==3){
+				loggerError.info(ex);
 				ex.printStackTrace();
 			}
 		}
@@ -131,25 +134,28 @@ public class StockImp extends AbsUpdateProductStock {
 	}
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-        //get tony return date
         //定义三方
     	Map<String,String> stockMap = new HashMap<>();
-    	getStockList();
-    	System.out.println("11=========================");
-    	System.out.println(map.size());
-        for (String skuno : skuNo) {
-        	
-        	if(map.get(skuno)!=null){
-        		String value = map.get(skuno);
-        		int stock = Integer.parseInt(value);
-        		if(stock<0){
-        			stock=0;
-        		}
-        		stockMap.put(skuno,String.valueOf(stock));
-        	}else{
-        		stockMap.put(skuno,"0");
-        	}
-        }
+    	try{
+    		getStockList();
+        	System.out.println("11=========================");
+        	System.out.println(map.size());
+            for (String skuno : skuNo) {
+            	
+            	if(map.get(skuno)!=null){
+            		String value = map.get(skuno);
+            		int stock = Integer.parseInt(value);
+            		if(stock<0){
+            			stock=0;
+            		}
+            		stockMap.put(skuno,String.valueOf(stock));
+            	}else{
+            		stockMap.put(skuno,"0");
+            	}
+            }
+    	}catch(Exception ex){
+    		loggerError.info(ex);
+    	}
         return stockMap;
     }
 
