@@ -550,7 +550,7 @@ public abstract class AbsUpdateProductStock {
 			}
 
 			int stockResult=0;
-			//获取采购单信息
+			//获取采购单信息   key为尚品的SKU
 			Map<String,Integer> sopPurchaseMap = new HashMap<>();
 			if(!ORDER){
 				sopPurchaseMap = this.getSopPuchase(supplierId);
@@ -559,6 +559,7 @@ public abstract class AbsUpdateProductStock {
 			String result = "",stockTemp="",priceResult="";
 			boolean sendMail=true;
 			loggerInfo.info("供货商skuid和sop skuid关系map==========="+localAndIceSkuId.toString());
+			String iceSku="";
 			for (String skuNo : skuNos) {
 				if(map.size()>0){
 					if(map.containsKey(skuNo)){
@@ -600,18 +601,20 @@ public abstract class AbsUpdateProductStock {
 					sendMail = false;
 				}
 
+				iceSku=localAndIceSkuId.get(skuNo);//根据供货商的sku 获取尚品的SKU
+
 				if(!ORDER){
 
-					if(sopPurchaseMap.containsKey(skuNo)){
+					if(sopPurchaseMap.containsKey(iceSku)){
 
-						stockResult =  stockResult - sopPurchaseMap.get(skuNo);
+						stockResult =  stockResult - sopPurchaseMap.get(iceSku);
 						loggerInfo.info("sku ：" + skuNo +"库存："+stockResult  + " ; 采购单含有数量 : " + sopPurchaseMap.get(skuNo)+" 最终库存 ：" + stockResult);
 						if(stockResult<0) stockResult=0;
 
 					}
 				}
 
-				String iceSku=localAndIceSkuId.get(skuNo);
+
 				if(this.supplierSkuIdMain){  // 已供应商提供的SKU为主 不更新未提供的库存
 
 					if(supplierStock.containsKey(skuNo)){
@@ -715,7 +718,7 @@ public abstract class AbsUpdateProductStock {
 			if(null!=purchaseOrderInfoApiDto){
 				detilApiDtos =  purchaseOrderInfoApiDto.PurchaseOrderDetailList;
 				for (PurchaseOrderDetilApiDto orderDetail : detilApiDtos) {
-					sopPurchaseMap.put(orderDetail.SupplierSkuNo,orderDetail.Count);
+					sopPurchaseMap.put(orderDetail.SkuNo,orderDetail.Count);
 				}
 			}else{
 				loggerError.error("两次获取采购单均失败");
