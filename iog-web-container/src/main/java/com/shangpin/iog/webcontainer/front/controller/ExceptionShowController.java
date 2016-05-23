@@ -3,6 +3,8 @@
  */
 package com.shangpin.iog.webcontainer.front.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +15,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,7 +48,6 @@ public class ExceptionShowController {
 	OrderService orderService;
 	@Autowired
 	UpdateStockService updateStockService;
-	
 	private static ResourceBundle bdl = null;
 	private static String host;
 	private static String deleteSupplier;
@@ -172,6 +175,29 @@ public class ExceptionShowController {
     	model.addAttribute("redList", redList);
     	model.addAttribute("supplierDTOList", availableSupplierDTOList);
 		return "iog";
+    }
+    @RequestMapping(value="/changeErrReason")
+    public void changeErrReason(String supplierId,String reason,String opeation){
+    	StockUpdateDTO sdto = new StockUpdateDTO();
+    	String s = "";
+    	try {
+			s = new String(reason.getBytes("ISO8859-1"),"utf-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+    	sdto.setSupplierId(supplierId);
+    	if (opeation.equals("errorNum")) {
+			sdto.setErrorNum(s);
+		}else if(opeation.equals("rightNum")){
+			sdto.setRightNum(s);
+		}else{
+			sdto.setTotalNum(s);
+		}
+    	try {
+			updateStockService.updateStatus(sdto);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     }
 
 }

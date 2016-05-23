@@ -1,4 +1,4 @@
-package com.shangpin.iog.vela.stock.schedule;
+package com.shangpin.iog.EMonti.schedule;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.vela.stock.VelaStockImp;
+import com.shangpin.iog.EMonti.stock.StockImp;
 
 @Component
 @PropertySource("classpath:conf.properties")
@@ -34,7 +33,7 @@ public class Schedule {
     private String time;
 
 	@Autowired	
-	VelaStockImp stockImp;
+	StockImp stockImp;
 	
 	
 	@SuppressWarnings("deprecation")
@@ -63,7 +62,7 @@ public class Schedule {
 			return murder;
 		}
 		
-		private static ExecutorService executor = Executors.newCachedThreadPool();//new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
+		private static ExecutorService executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
 		@Override
 		public void run() {
 			System.out.println("supplierId==="+supplierId);
@@ -77,7 +76,6 @@ public class Schedule {
 				future.cancel(true);
 				e.printStackTrace();
 				logError.error(Thread.currentThread().getName()+"超时销毁");
-				logError.error(e);
 				System.out.println(Thread.currentThread().getName()+"超时销毁");
 			}
 		}
@@ -99,7 +97,7 @@ public class Schedule {
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				logger.info("更新数据库开始");
 				try {
-					stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
+					
 					stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
 				} catch (Exception e) {
 					e.printStackTrace();
