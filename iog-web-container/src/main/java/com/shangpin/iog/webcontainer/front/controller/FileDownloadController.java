@@ -57,7 +57,6 @@ import com.shangpin.iog.webcontainer.front.strategy.NameGenContext;
 import com.shangpin.iog.webcontainer.front.util.DowmImage;
 import com.shangpin.iog.webcontainer.front.util.NewSavePic;
 import com.shangpin.iog.webcontainer.front.util.ReadExcel;
-import com.shangpin.iog.webcontainer.front.util.SavePic;
 import com.shangpin.iog.webcontainer.front.util.queue.PicQueue;
 
 
@@ -754,4 +753,5 @@ public class FileDownloadController {
         List<ProductDTO> pList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
         return pList;
     }
+
 }

@@ -3,6 +3,7 @@
  */
 package com.shangpin.iog.webcontainer.front.controller;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -172,6 +173,23 @@ public class ExceptionShowController {
     	model.addAttribute("redList", redList);
     	model.addAttribute("supplierDTOList", availableSupplierDTOList);
 		return "iog";
+    }
+    @RequestMapping(value="/changeErrReason")
+    public void changeErrReason(String supplierId,String reason,String opeation){
+    	StockUpdateDTO sdto = new StockUpdateDTO();
+    	sdto.setSupplierId(supplierId);
+    	if (opeation.equals("errorNum")) {
+			sdto.setErrorNum(reason);
+		}else if(opeation.equals("rightNum")){
+			sdto.setRightNum(reason);
+		}else{
+			sdto.setTotalNum(reason);
+		}
+    	try {
+			updateStockService.updateStatus(sdto);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     }
 
 }
