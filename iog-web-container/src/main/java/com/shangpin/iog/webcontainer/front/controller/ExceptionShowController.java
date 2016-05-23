@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,7 +48,6 @@ public class ExceptionShowController {
 	OrderService orderService;
 	@Autowired
 	UpdateStockService updateStockService;
-	
 	private static ResourceBundle bdl = null;
 	private static String host;
 	private static String deleteSupplier;
@@ -180,7 +181,7 @@ public class ExceptionShowController {
     	StockUpdateDTO sdto = new StockUpdateDTO();
     	String s = "";
     	try {
-			s = new String(reason.getBytes("iso-8859-1"),"utf-8");
+			s = new String(reason.getBytes("ISO8859-1"),"utf-8");
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
