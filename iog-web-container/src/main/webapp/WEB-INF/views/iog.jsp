@@ -363,12 +363,13 @@ $(function(){
 				<tr bgcolor="Salmon">
 					<td>${reddata.supplierId}</td>
 					<td>${reddata.supplierName}</td>
-					<td><fmt:formatDate value="${reddata.updateTime }"
-							pattern="yyyy-MM-dd HH:mm:ss" /></td>
+					<td><fmt:formatDate value="${reddata.updateTime }" pattern="yyyy-MM-dd HH:mm:ss" /></td>
 					<td>${reddata.dif }</td>
-					<td>${reddata.errorNum}</td> 
- 		        	<td>${reddata.rightNum}</td>
- 					<td>${reddata.totalNum}</td>
+					<form id="${gredata.supplierId}">
+						<td><input type="text" name="errorNum" value="${reddata.errorNum}" onchange="changeReason(${reddata.supplierId},this.value,'errorNum')"/></td>
+						<td><input type="text" name="rightNum" value="${reddata.rightNum}" onchange="changeReason(${reddata.supplierId},this.value,'rightNum')"/></td>
+						<td><input type="text" name="totalNum" value="${reddata.totalNum}" onchange="changeReason(${reddata.supplierId},this.value,'totalNum')"/></td>
+					</form>
 				</tr>
 			</c:forEach>
 			<c:forEach items="${greenList}" var="gredata">
