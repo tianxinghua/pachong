@@ -404,16 +404,20 @@ public abstract class AbsUpdateProductStock {
 		while (iter.hasNext()) {
 			Entry<String, Integer> entry = iter.next();
 			Boolean result =true;
+			int stock = 0;
 			for(int i=0;i<2;i++){  //发生错误 允许再执行一次
 				try{
-					result = servant.UpdateStock(supplier, entry.getKey(), entry.getValue());
-					loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+entry.getValue()+" ,"+ result);
+					if(entry.getValue()>=0){
+						stock = entry.getValue();
+					}
+					result = servant.UpdateStock(supplier, entry.getKey(), stock);
+					loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+stock+" ,"+ result);
 				}catch(ApiException e){
 					result=false;
-					loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+"---"+e.Message);
+					loggerError.error("更新sku错误："+entry.getKey()+":"+stock+"---"+e.Message);
 				} catch(Exception e){
-					logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
-					loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+					logger.error("更新sku错误："+entry.getKey()+":"+stock,e);
+					loggerError.error("更新sku错误："+entry.getKey()+":"+stock,e);
 				}
 
 				if(result){
@@ -423,7 +427,7 @@ public abstract class AbsUpdateProductStock {
 
 			if(!result){
 				failCount++;
-				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
+				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),stock);
 			}
 		}
 		loggerInfo.info("更新库存 失败的数量：" + failCount);
