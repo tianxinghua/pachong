@@ -3,6 +3,7 @@
  */
 package com.shangpin.iog.webcontainer.front.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -177,13 +178,19 @@ public class ExceptionShowController {
     @RequestMapping(value="/changeErrReason")
     public void changeErrReason(String supplierId,String reason,String opeation){
     	StockUpdateDTO sdto = new StockUpdateDTO();
+    	String s = "";
+    	try {
+			s = new String(reason.getBytes("iso-8859-1"),"utf-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
     	sdto.setSupplierId(supplierId);
     	if (opeation.equals("errorNum")) {
-			sdto.setErrorNum(reason);
+			sdto.setErrorNum(s);
 		}else if(opeation.equals("rightNum")){
-			sdto.setRightNum(reason);
+			sdto.setRightNum(s);
 		}else{
-			sdto.setTotalNum(reason);
+			sdto.setTotalNum(s);
 		}
     	try {
 			updateStockService.updateStatus(sdto);
