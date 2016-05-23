@@ -24,11 +24,10 @@ public class Schedule {
 		orderService.confirmOrder();
 	}
 
-	@Scheduled(cron = "0 0 9 ? * MON-FRI")
+	@Scheduled(cron = "0 0 11 ? * MON-FRI")
 	public void sendEmailToSupplier1() {
 		orderService.sendEmailToSupplier1();
 	}
-	
 	@Scheduled(cron = "0 0 14 ? * MON-FRI")
 	public void sendEmailToSupplier2() {
 		orderService.sendEmailToSupplier2();

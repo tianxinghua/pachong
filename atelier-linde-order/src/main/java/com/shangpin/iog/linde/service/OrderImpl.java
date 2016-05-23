@@ -198,7 +198,7 @@ public class OrderImpl extends AbsOrderService {
 		int week = date.get(Calendar.DAY_OF_WEEK);
 		//如果为2，则为星期一，订单要查询从周五下午14::00到周一9:00的订单
 		if(week==2){
-			date.set(Calendar.HOUR, date.get(Calendar.HOUR) - 67);
+			date.set(Calendar.HOUR, date.get(Calendar.HOUR) - 69);
 		}else{
 			date.set(Calendar.HOUR, date.get(Calendar.HOUR) - 19);
 		}
@@ -224,7 +224,7 @@ public class OrderImpl extends AbsOrderService {
 		List<OrderDTO> listOrder = null;
 		try {
 			listOrder = productOrderService
-					.getOrderBySupplierIdAndOrderStatusAndTime(supplierId,
+					.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId,
 							"confirmed", startTime, endTime);
 		} catch (ServiceException e) {
 			e.printStackTrace();
@@ -233,6 +233,7 @@ public class OrderImpl extends AbsOrderService {
 		if(listOrder!=null&&!listOrder.isEmpty()){
 			for (OrderDTO dto : listOrder) {
 				// skuId:qty
+				final String orderId = dto.getSpOrderId();
 				String detail = dto.getDetail();
 				// 2220080-2014876494045
 				String skuId = detail.split(":", -1)[0];
@@ -247,9 +248,24 @@ public class OrderImpl extends AbsOrderService {
 				}
 				String qty = "00001";
 				String vid = skuId.split("-")[0];
-				String id = map.get(barCode);
-				str.append(barCode).append(" ").append(qty).append(" ").append(vid)
-						.append(" ").append(id).append("\r\n");
+				final String id = map.get(barCode);
+				if(id==null){
+					Thread t = new Thread(	 new Runnable() {
+						@Override
+						public void run() {
+							try {
+								System.out.println("email");
+								SendMail.sendMessage(smtpHost, from, fromUserPassword,"zhaogenchun@shangpin.com",subject,"订单号："+orderId+"未推送，参数id值为"+id,messageType);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
+					t.start();
+				}else{
+					str.append(barCode).append(" ").append(qty).append(" ").append(vid)
+					.append(" ").append(id).append("\r\n");	
+				}
 			}
 			messageText= "orders in the attachment";
 			final String path = readLine(str.toString());

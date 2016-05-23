@@ -175,11 +175,17 @@ public class OrderService extends AbsOrderService {
 				orderDTO.setExcDesc(responseObject.getMessage());
 			}else if ("ko".equals(responseObject.getStatus().toLowerCase())) {
             	orderDTO.setExcDesc(responseObject.getMessage());
-//				if("Error !! Quantity Not Available.".equals(responseObject.getMessage())){   //无库存
-//					orderDTO.setExcState("0");
-//                 	this.setPurchaseExc(orderDTO);
-//
-//				}else if("Error !! Barcode Not Exist.".equals(responseObject.getMessage())){
+				if("Error !! Quantity Not Available.".equals(responseObject.getMessage())){   //无库存
+					orderDTO.setExcState("0");
+//					if("yes".equals(isPurchaseExp)){
+//						this.setPurchaseExc(orderDTO);
+//					}else{
+//						orderDTO.setExcState("0");
+						orderDTO.setStatus(OrderStatus.NOHANDLE);
+//					}
+
+				}
+//				else if("Error !! Barcode Not Exist.".equals(responseObject.getMessage())){
 //					orderDTO.setExcState("0");
 //					this.setPurchaseExc(orderDTO);
 //				}else{
@@ -191,7 +197,7 @@ public class OrderService extends AbsOrderService {
 						this.setPurchaseExc(orderDTO);
 					}else{
 						orderDTO.setExcState("0");
-						orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+						orderDTO.setStatus(OrderStatus.NOHANDLE);
 					}
 				
 //					this.setPurchaseExc(orderDTO);
@@ -210,6 +216,7 @@ public class OrderService extends AbsOrderService {
 			// shopOrderId:"+order.getBarcode());
 			loggerError.info(e);
 			orderDTO.setExcState("1");
+			orderDTO.setStatus(OrderStatus.NOHANDLE);
 			orderDTO.setExcDesc(e.getMessage());
 		}
 	}
