@@ -19,9 +19,11 @@
     <update id="updateStockStatus" parameterType="iog_stockUpdate" >
           update UPDATE_STOCK
           <set>
-              UPDATE_TIME = #{updateTime}
+ 				<if test="updateTime!=null">
+              UPDATE_TIME = #{updateTime},
+              </if>              
               <if test="errorNum!=null">
-              	,ERRORNUM = #{errorNum},
+              	ERRORNUM = #{errorNum},
               </if>
               <if test="rightNum!=null">
               	RIGHTNUM = #{rightNum},
