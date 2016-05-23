@@ -159,4 +159,34 @@ public interface _OpenApiServantOperations
 
     boolean AddSecondReturnOrderAbnormalPic(String supplierId, int detailId, byte[] sbnormalpic, Ice.Current __current)
         throws ShangPin.SOP.Api.ApiException;
+
+    String PurchaseDetailError(ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx purchaseOrderEx, String supplierId, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.BaseDatas.SopCategoryBrandAgreementPage FindCategoryBrandAgreementPage(String supplierId, ShangPin.SOP.Entity.Api.BaseDatas.SopCategoryBrandAgreementQuery query, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Purchase.DirectoryPurchaseOrderPage FindDirectoryPurchaseOrderPage(String supplierId, ShangPin.SOP.Entity.Api.Purchase.DirectoryPurchaseOrderQueryDto queryDto, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    java.util.List<java.lang.String> GetLogisticsCompany(String supplierId, String logisticsName, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    boolean DirectUpdateStock(String supplierId, String SkuNo, String SupplierSkuNo, int InventoryQuantity, String PrewarningQuantity, String Freight, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Purchase.DirectPurchaseOrderApi FindDirectoryPurchaseOrder(String supplierId, String purchaseOrderNo, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    boolean UpdateStockNew(String supplierId, String SkuNo, String SupplierSkuNo, int InventoryQuantity, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindDirectStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos, java.util.List<java.lang.String> SupplierSkuNos, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    String DeleteProduct(String supplierId, String SkuNo, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.DTO.PurchaseOrderInfoApiDto FindPurchaseOrderDetailCountPaged(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto queryDto, Ice.Current __current)
+        throws ShangPin.SOP.Api.ApiException;
 }

@@ -161,6 +161,9 @@
 	function unshowSkuExcel(){
 		$("#showSkuExcel").attr("hidden",'hidden');
 	}
+	function changeReason(id,reason,opeation){
+		$.get("changeErrReason",{"supplierId":id,"reason":reason,"opeation":opeation})
+	}
 	
 </script>
 <script type="text/javascript"
@@ -225,7 +228,7 @@
 		<br><br><br>
 	<form action="uploadFileAndDown" method="post" enctype="multipart/form-data">
 		<input type="file" name="uploadFile">
-		同时下载图片数:<input type="number" name="threadnum">
+		下载数:<input type="number" name="threadnum">
 		<input type="submit" value ="开始上传" onmouseenter="show()" onmouseleave="unshow()">
 	</form>
 	
@@ -352,9 +355,9 @@ $(function(){
 				<td>supplierName</td>
 				<td>updateTime</td>
 				<td>当前时间差</td>
-				<td>更新错误数</td>
-				<td>更新正确数</td>
-				<td>更新总数</td>
+				<td>错误原因</td>
+				<td>端口</td> 
+				<td>其他</td> 
 			</tr>
 			<c:forEach items="${redList}" var="reddata">
 				<tr bgcolor="Salmon">
@@ -363,9 +366,9 @@ $(function(){
 					<td><fmt:formatDate value="${reddata.updateTime }"
 							pattern="yyyy-MM-dd HH:mm:ss" /></td>
 					<td>${reddata.dif }</td>
-					<td>${reddata.errorNum}</td>
-					<td>${reddata.rightNum}</td>
-					<td>${reddata.totalNum}</td>
+					<td>${reddata.errorNum}</td> 
+ 		        	<td>${reddata.rightNum}</td>
+ 					<td>${reddata.totalNum}</td>
 				</tr>
 			</c:forEach>
 			<c:forEach items="${greenList}" var="gredata">
@@ -375,9 +378,11 @@ $(function(){
 					<td><fmt:formatDate value="${gredata.updateTime }"
 							pattern="yyyy-MM-dd HH:mm:ss" /></td>
 					<td>${gredata.dif }</td>
-					<td>${gredata.errorNum}</td>
-					<td>${gredata.rightNum}</td>
-					<td>${gredata.totalNum}</td>
+					<form id="${gredata.supplierId}">
+						<td><input type="text" name="errorNum" value="${gredata.errorNum}" onchange="changeReason(${gredata.supplierId},this.value,'errorNum')"/></td>
+						<td><input type="text" name="rightNum" value="${gredata.rightNum}" onchange="changeReason(${gredata.supplierId},this.value,'rightNum')"/></td>
+						<td><input type="text" name="totalNum" value="${gredata.totalNum}" onchange="changeReason(${gredata.supplierId},this.value,'totalNum')"/></td>
+					</form>
 				</tr>
 			</c:forEach>
 		</table>

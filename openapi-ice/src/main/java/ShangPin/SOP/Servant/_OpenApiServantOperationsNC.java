@@ -159,4 +159,34 @@ public interface _OpenApiServantOperationsNC
 
     boolean AddSecondReturnOrderAbnormalPic(String supplierId, int detailId, byte[] sbnormalpic)
         throws ShangPin.SOP.Api.ApiException;
+
+    String PurchaseDetailError(ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx purchaseOrderEx, String supplierId)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.BaseDatas.SopCategoryBrandAgreementPage FindCategoryBrandAgreementPage(String supplierId, ShangPin.SOP.Entity.Api.BaseDatas.SopCategoryBrandAgreementQuery query)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Purchase.DirectoryPurchaseOrderPage FindDirectoryPurchaseOrderPage(String supplierId, ShangPin.SOP.Entity.Api.Purchase.DirectoryPurchaseOrderQueryDto queryDto)
+        throws ShangPin.SOP.Api.ApiException;
+
+    java.util.List<java.lang.String> GetLogisticsCompany(String supplierId, String logisticsName)
+        throws ShangPin.SOP.Api.ApiException;
+
+    boolean DirectUpdateStock(String supplierId, String SkuNo, String SupplierSkuNo, int InventoryQuantity, String PrewarningQuantity, String Freight)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Purchase.DirectPurchaseOrderApi FindDirectoryPurchaseOrder(String supplierId, String purchaseOrderNo)
+        throws ShangPin.SOP.Api.ApiException;
+
+    boolean UpdateStockNew(String supplierId, String SkuNo, String SupplierSkuNo, int InventoryQuantity)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindDirectStockInfo(String supplierId, java.util.List<java.lang.String> SkuNos, java.util.List<java.lang.String> SupplierSkuNos)
+        throws ShangPin.SOP.Api.ApiException;
+
+    String DeleteProduct(String supplierId, String SkuNo)
+        throws ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.DTO.PurchaseOrderInfoApiDto FindPurchaseOrderDetailCountPaged(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto queryDto)
+        throws ShangPin.SOP.Api.ApiException;
 }
