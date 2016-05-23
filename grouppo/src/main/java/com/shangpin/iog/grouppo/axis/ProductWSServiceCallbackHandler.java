@@ -1,12 +1,10 @@
-package com.shangpin.iog.grouppo.axis;
-
 /**
  * ProductWSServiceCallbackHandler.java
  *
  * This file was auto-generated from WSDL
  * by the Apache Axis2 version: 1.6.3  Built on : Jun 27, 2015 (11:17:49 BST)
  */
-
+package com.shangpin.iog.grouppo.axis;
 
 
 /**
@@ -45,7 +43,7 @@ public abstract class ProductWSServiceCallbackHandler {
      * override this method for handling normal response from product_Query operation
      */
     public void receiveResultproduct_Query(
-        ProductWSServiceStub.Product_QueryResponse result) {
+        com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_QueryResponse result) {
     }
 
     /**
@@ -60,7 +58,7 @@ public abstract class ProductWSServiceCallbackHandler {
      * override this method for handling normal response from product_TabularQuery operation
      */
     public void receiveResultproduct_TabularQuery(
-        ProductWSServiceStub.Product_TabularQueryResponse result) {
+        com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQueryResponse result) {
     }
 
     /**

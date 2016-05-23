@@ -64,23 +64,23 @@ public class OrderService extends AbsOrderService {
      * 创建订单信息并上传到ftp
      * @throws ServiceException
      */
-    public void saveAndUpLoadOrder(){
-        saveOrder();
+    public void saveAndUpLoadOrder(Date startTime,Date endTime){
+        saveOrder(startTime,endTime);
         new MyFtpUtil().upLoad();
     }
     /**
      * 
      * @throws ServiceException
      */
-    private void saveOrder(){
+    private void saveOrder(Date startTime,Date endTime){
     	
         List<OrderDTO> list = null;
-        Date startTime = new Date();
-        Date endTime = new Date();
-        startTime =DateTimeUtil.convertFormat(
-        		DateTimeUtil.shortFmt(DateTimeUtil.getAppointDayFromSpecifiedDay(startTime, -1, "D"))+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
-        endTime =DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(endTime)+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
-        logger.info("========="+startTime+"到"+endTime+"的订单开始保存本地========="); 
+//        Date startTime = new Date();
+//        Date endTime = new Date();
+//        startTime =DateTimeUtil.convertFormat(
+//        		DateTimeUtil.shortFmt(DateTimeUtil.getAppointDayFromSpecifiedDay(startTime, -1, "D"))+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
+//        endTime =DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(endTime)+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
+        logger.info("=========开始时间"+DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss")+"到结束时间"+DateTimeUtil.convertFormat(endTime, "yyyy-MM-dd HH:mm:ss")+"的订单开始保存本地========="); 
         try {
            list = orderService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
         		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
@@ -94,6 +94,7 @@ public class OrderService extends AbsOrderService {
         ftpFile.append("\n");
         for (OrderDTO orderDTO:list){
         	try {
+        		
 				ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getDetail().split(":")[0]);
 				ftpFile.append(orderDTO.getSpPurchaseNo());
 				ftpFile.append(";").append("");
@@ -108,7 +109,7 @@ public class OrderService extends AbsOrderService {
         		loggerError.error(e); 
 			}
         }
-        logger.info(startTime+"的订单========\n"+ftpFile.toString());
+        logger.info("=========开始时间"+DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss")+"的订单========\n"+ftpFile.toString());
 //        Map<String, String> mongMap = new HashMap<>();
 //        mongMap.put("supplierId", supplierId);
 //        mongMap.put("supplierName", "LevelGroup");

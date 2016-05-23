@@ -347,6 +347,136 @@ public final class _OpenApiServantDelD extends Ice._ObjectDelD implements _OpenA
         return __result.value;
     }
 
+    public String DeleteProduct(final String supplierId, final String SkuNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        final Ice.Current __current = new Ice.Current();
+        __initCurrent(__current, "DeleteProduct", Ice.OperationMode.Idempotent, __ctx);
+        final Ice.StringHolder __result = new Ice.StringHolder();
+        IceInternal.Direct __direct = null;
+        try
+        {
+            __direct = new IceInternal.Direct(__current)
+            {
+                public Ice.DispatchStatus run(Ice.Object __obj)
+                {
+                    OpenApiServant __servant = null;
+                    if(__obj == null || __obj instanceof OpenApiServant)
+                    {
+                        __servant = (OpenApiServant)__obj;
+                    }
+                    else
+                    {
+                        throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
+                    }
+                    try
+                    {
+                        __result.value = __servant.DeleteProduct(supplierId, SkuNo, __current);
+                        return Ice.DispatchStatus.DispatchOK;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        setUserException(__ex);
+                        return Ice.DispatchStatus.DispatchUserException;
+                    }
+                }
+            };
+            try
+            {
+                Ice.DispatchStatus __status = __direct.getServant().__collocDispatch(__direct);
+                if(__status == Ice.DispatchStatus.DispatchUserException)
+                {
+                    __direct.throwUserException();
+                }
+                assert __status == Ice.DispatchStatus.DispatchOK;
+                return __result.value;
+            }
+            finally
+            {
+                __direct.destroy();
+            }
+        }
+        catch(ShangPin.SOP.Api.ApiException __ex)
+        {
+            throw __ex;
+        }
+        catch(Ice.SystemException __ex)
+        {
+            throw __ex;
+        }
+        catch(java.lang.Throwable __ex)
+        {
+            IceInternal.LocalExceptionWrapper.throwWrapper(__ex);
+        }
+        return __result.value;
+    }
+
+    public boolean DirectUpdateStock(final String supplierId, final String SkuNo, final String SupplierSkuNo, final int InventoryQuantity, final String PrewarningQuantity, final String Freight, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        final Ice.Current __current = new Ice.Current();
+        __initCurrent(__current, "DirectUpdateStock", Ice.OperationMode.Idempotent, __ctx);
+        final Ice.BooleanHolder __result = new Ice.BooleanHolder();
+        IceInternal.Direct __direct = null;
+        try
+        {
+            __direct = new IceInternal.Direct(__current)
+            {
+                public Ice.DispatchStatus run(Ice.Object __obj)
+                {
+                    OpenApiServant __servant = null;
+                    if(__obj == null || __obj instanceof OpenApiServant)
+                    {
+                        __servant = (OpenApiServant)__obj;
+                    }
+                    else
+                    {
+                        throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
+                    }
+                    try
+                    {
+                        __result.value = __servant.DirectUpdateStock(supplierId, SkuNo, SupplierSkuNo, InventoryQuantity, PrewarningQuantity, Freight, __current);
+                        return Ice.DispatchStatus.DispatchOK;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        setUserException(__ex);
+                        return Ice.DispatchStatus.DispatchUserException;
+                    }
+                }
+            };
+            try
+            {
+                Ice.DispatchStatus __status = __direct.getServant().__collocDispatch(__direct);
+                if(__status == Ice.DispatchStatus.DispatchUserException)
+                {
+                    __direct.throwUserException();
+                }
+                assert __status == Ice.DispatchStatus.DispatchOK;
+                return __result.value;
+            }
+            finally
+            {
+                __direct.destroy();
+            }
+        }
+        catch(ShangPin.SOP.Api.ApiException __ex)
+        {
+            throw __ex;
+        }
+        catch(Ice.SystemException __ex)
+        {
+            throw __ex;
+        }
+        catch(java.lang.Throwable __ex)
+        {
+            IceInternal.LocalExceptionWrapper.throwWrapper(__ex);
+        }
+        return __result.value;
+    }
+
     public ShangPin.SOP.Entity.Api.Product.SopAreaPage FindAreaPage(final String supplierId, final int pageIndex, final int pageSize, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException
@@ -438,6 +568,71 @@ public final class _OpenApiServantDelD extends Ice._ObjectDelD implements _OpenA
                     try
                     {
                         __result.value = __servant.FindCategoryBrandAgreement(supplierId, categoryNo, brandNo, __current);
+                        return Ice.DispatchStatus.DispatchOK;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        setUserException(__ex);
+                        return Ice.DispatchStatus.DispatchUserException;
+                    }
+                }
+            };
+            try
+            {
+                Ice.DispatchStatus __status = __direct.getServant().__collocDispatch(__direct);
+                if(__status == Ice.DispatchStatus.DispatchUserException)
+                {
+                    __direct.throwUserException();
+                }
+                assert __status == Ice.DispatchStatus.DispatchOK;
+                return __result.value;
+            }
+            finally
+            {
+                __direct.destroy();
+            }
+        }
+        catch(ShangPin.SOP.Api.ApiException __ex)
+        {
+            throw __ex;
+        }
+        catch(Ice.SystemException __ex)
+        {
+            throw __ex;
+        }
+        catch(java.lang.Throwable __ex)
+        {
+            IceInternal.LocalExceptionWrapper.throwWrapper(__ex);
+        }
+        return __result.value;
+    }
+
+    public ShangPin.SOP.Entity.Api.BaseDatas.SopCategoryBrandAgreementPage FindCategoryBrandAgreementPage(final String supplierId, final ShangPin.SOP.Entity.Api.BaseDatas.SopCategoryBrandAgreementQuery query, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        final Ice.Current __current = new Ice.Current();
+        __initCurrent(__current, "FindCategoryBrandAgreementPage", Ice.OperationMode.Idempotent, __ctx);
+        final ShangPin.SOP.Entity.Api.BaseDatas.SopCategoryBrandAgreementPageHolder __result = new ShangPin.SOP.Entity.Api.BaseDatas.SopCategoryBrandAgreementPageHolder();
+        IceInternal.Direct __direct = null;
+        try
+        {
+            __direct = new IceInternal.Direct(__current)
+            {
+                public Ice.DispatchStatus run(Ice.Object __obj)
+                {
+                    OpenApiServant __servant = null;
+                    if(__obj == null || __obj instanceof OpenApiServant)
+                    {
+                        __servant = (OpenApiServant)__obj;
+                    }
+                    else
+                    {
+                        throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
+                    }
+                    try
+                    {
+                        __result.value = __servant.FindCategoryBrandAgreementPage(supplierId, query, __current);
                         return Ice.DispatchStatus.DispatchOK;
                     }
                     catch(Ice.UserException __ex)
@@ -802,6 +997,136 @@ public final class _OpenApiServantDelD extends Ice._ObjectDelD implements _OpenA
         return __result.value;
     }
 
+    public ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce[] FindDirectStockInfo(final String supplierId, final java.util.List<java.lang.String> SkuNos, final java.util.List<java.lang.String> SupplierSkuNos, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        final Ice.Current __current = new Ice.Current();
+        __initCurrent(__current, "FindDirectStockInfo", Ice.OperationMode.Idempotent, __ctx);
+        final SopSkuInventoryIceListHolder __result = new SopSkuInventoryIceListHolder();
+        IceInternal.Direct __direct = null;
+        try
+        {
+            __direct = new IceInternal.Direct(__current)
+            {
+                public Ice.DispatchStatus run(Ice.Object __obj)
+                {
+                    OpenApiServant __servant = null;
+                    if(__obj == null || __obj instanceof OpenApiServant)
+                    {
+                        __servant = (OpenApiServant)__obj;
+                    }
+                    else
+                    {
+                        throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
+                    }
+                    try
+                    {
+                        __result.value = __servant.FindDirectStockInfo(supplierId, SkuNos, SupplierSkuNos, __current);
+                        return Ice.DispatchStatus.DispatchOK;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        setUserException(__ex);
+                        return Ice.DispatchStatus.DispatchUserException;
+                    }
+                }
+            };
+            try
+            {
+                Ice.DispatchStatus __status = __direct.getServant().__collocDispatch(__direct);
+                if(__status == Ice.DispatchStatus.DispatchUserException)
+                {
+                    __direct.throwUserException();
+                }
+                assert __status == Ice.DispatchStatus.DispatchOK;
+                return __result.value;
+            }
+            finally
+            {
+                __direct.destroy();
+            }
+        }
+        catch(ShangPin.SOP.Api.ApiException __ex)
+        {
+            throw __ex;
+        }
+        catch(Ice.SystemException __ex)
+        {
+            throw __ex;
+        }
+        catch(java.lang.Throwable __ex)
+        {
+            IceInternal.LocalExceptionWrapper.throwWrapper(__ex);
+        }
+        return __result.value;
+    }
+
+    public ShangPin.SOP.Entity.Api.Purchase.DirectPurchaseOrderApi FindDirectoryPurchaseOrder(final String supplierId, final String purchaseOrderNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        final Ice.Current __current = new Ice.Current();
+        __initCurrent(__current, "FindDirectoryPurchaseOrder", Ice.OperationMode.Idempotent, __ctx);
+        final ShangPin.SOP.Entity.Api.Purchase.DirectPurchaseOrderApiHolder __result = new ShangPin.SOP.Entity.Api.Purchase.DirectPurchaseOrderApiHolder();
+        IceInternal.Direct __direct = null;
+        try
+        {
+            __direct = new IceInternal.Direct(__current)
+            {
+                public Ice.DispatchStatus run(Ice.Object __obj)
+                {
+                    OpenApiServant __servant = null;
+                    if(__obj == null || __obj instanceof OpenApiServant)
+                    {
+                        __servant = (OpenApiServant)__obj;
+                    }
+                    else
+                    {
+                        throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
+                    }
+                    try
+                    {
+                        __result.value = __servant.FindDirectoryPurchaseOrder(supplierId, purchaseOrderNo, __current);
+                        return Ice.DispatchStatus.DispatchOK;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        setUserException(__ex);
+                        return Ice.DispatchStatus.DispatchUserException;
+                    }
+                }
+            };
+            try
+            {
+                Ice.DispatchStatus __status = __direct.getServant().__collocDispatch(__direct);
+                if(__status == Ice.DispatchStatus.DispatchUserException)
+                {
+                    __direct.throwUserException();
+                }
+                assert __status == Ice.DispatchStatus.DispatchOK;
+                return __result.value;
+            }
+            finally
+            {
+                __direct.destroy();
+            }
+        }
+        catch(ShangPin.SOP.Api.ApiException __ex)
+        {
+            throw __ex;
+        }
+        catch(Ice.SystemException __ex)
+        {
+            throw __ex;
+        }
+        catch(java.lang.Throwable __ex)
+        {
+            IceInternal.LocalExceptionWrapper.throwWrapper(__ex);
+        }
+        return __result.value;
+    }
+
     public ShangPin.SOP.Entity.Api.Purchase.DirectPurchaseOrder FindDirectoryPurchaseOrderDetail(final String supplierId, final String purchaseOrderNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException
@@ -893,6 +1218,71 @@ public final class _OpenApiServantDelD extends Ice._ObjectDelD implements _OpenA
                     try
                     {
                         __result.value = __servant.FindDirectoryPurchaseOrderDetailPaged(supplierId, queryDto, __current);
+                        return Ice.DispatchStatus.DispatchOK;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        setUserException(__ex);
+                        return Ice.DispatchStatus.DispatchUserException;
+                    }
+                }
+            };
+            try
+            {
+                Ice.DispatchStatus __status = __direct.getServant().__collocDispatch(__direct);
+                if(__status == Ice.DispatchStatus.DispatchUserException)
+                {
+                    __direct.throwUserException();
+                }
+                assert __status == Ice.DispatchStatus.DispatchOK;
+                return __result.value;
+            }
+            finally
+            {
+                __direct.destroy();
+            }
+        }
+        catch(ShangPin.SOP.Api.ApiException __ex)
+        {
+            throw __ex;
+        }
+        catch(Ice.SystemException __ex)
+        {
+            throw __ex;
+        }
+        catch(java.lang.Throwable __ex)
+        {
+            IceInternal.LocalExceptionWrapper.throwWrapper(__ex);
+        }
+        return __result.value;
+    }
+
+    public ShangPin.SOP.Entity.Api.Purchase.DirectoryPurchaseOrderPage FindDirectoryPurchaseOrderPage(final String supplierId, final ShangPin.SOP.Entity.Api.Purchase.DirectoryPurchaseOrderQueryDto queryDto, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        final Ice.Current __current = new Ice.Current();
+        __initCurrent(__current, "FindDirectoryPurchaseOrderPage", Ice.OperationMode.Idempotent, __ctx);
+        final ShangPin.SOP.Entity.Api.Purchase.DirectoryPurchaseOrderPageHolder __result = new ShangPin.SOP.Entity.Api.Purchase.DirectoryPurchaseOrderPageHolder();
+        IceInternal.Direct __direct = null;
+        try
+        {
+            __direct = new IceInternal.Direct(__current)
+            {
+                public Ice.DispatchStatus run(Ice.Object __obj)
+                {
+                    OpenApiServant __servant = null;
+                    if(__obj == null || __obj instanceof OpenApiServant)
+                    {
+                        __servant = (OpenApiServant)__obj;
+                    }
+                    else
+                    {
+                        throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
+                    }
+                    try
+                    {
+                        __result.value = __servant.FindDirectoryPurchaseOrderPage(supplierId, queryDto, __current);
                         return Ice.DispatchStatus.DispatchOK;
                     }
                     catch(Ice.UserException __ex)
@@ -1088,6 +1478,71 @@ public final class _OpenApiServantDelD extends Ice._ObjectDelD implements _OpenA
                     try
                     {
                         __result.value = __servant.FindPurchaseOrderDetail(supplierId, purchaseOrderNo, __current);
+                        return Ice.DispatchStatus.DispatchOK;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        setUserException(__ex);
+                        return Ice.DispatchStatus.DispatchUserException;
+                    }
+                }
+            };
+            try
+            {
+                Ice.DispatchStatus __status = __direct.getServant().__collocDispatch(__direct);
+                if(__status == Ice.DispatchStatus.DispatchUserException)
+                {
+                    __direct.throwUserException();
+                }
+                assert __status == Ice.DispatchStatus.DispatchOK;
+                return __result.value;
+            }
+            finally
+            {
+                __direct.destroy();
+            }
+        }
+        catch(ShangPin.SOP.Api.ApiException __ex)
+        {
+            throw __ex;
+        }
+        catch(Ice.SystemException __ex)
+        {
+            throw __ex;
+        }
+        catch(java.lang.Throwable __ex)
+        {
+            IceInternal.LocalExceptionWrapper.throwWrapper(__ex);
+        }
+        return __result.value;
+    }
+
+    public ShangPin.SOP.Entity.DTO.PurchaseOrderInfoApiDto FindPurchaseOrderDetailCountPaged(final String supplierId, final ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto queryDto, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        final Ice.Current __current = new Ice.Current();
+        __initCurrent(__current, "FindPurchaseOrderDetailCountPaged", Ice.OperationMode.Idempotent, __ctx);
+        final ShangPin.SOP.Entity.DTO.PurchaseOrderInfoApiDtoHolder __result = new ShangPin.SOP.Entity.DTO.PurchaseOrderInfoApiDtoHolder();
+        IceInternal.Direct __direct = null;
+        try
+        {
+            __direct = new IceInternal.Direct(__current)
+            {
+                public Ice.DispatchStatus run(Ice.Object __obj)
+                {
+                    OpenApiServant __servant = null;
+                    if(__obj == null || __obj instanceof OpenApiServant)
+                    {
+                        __servant = (OpenApiServant)__obj;
+                    }
+                    else
+                    {
+                        throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
+                    }
+                    try
+                    {
+                        __result.value = __servant.FindPurchaseOrderDetailCountPaged(supplierId, queryDto, __current);
                         return Ice.DispatchStatus.DispatchOK;
                     }
                     catch(Ice.UserException __ex)
@@ -2297,6 +2752,71 @@ public final class _OpenApiServantDelD extends Ice._ObjectDelD implements _OpenA
         return __result.value;
     }
 
+    public java.util.List<java.lang.String> GetLogisticsCompany(final String supplierId, final String logisticsName, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        final Ice.Current __current = new Ice.Current();
+        __initCurrent(__current, "GetLogisticsCompany", Ice.OperationMode.Idempotent, __ctx);
+        final StringListHolder __result = new StringListHolder();
+        IceInternal.Direct __direct = null;
+        try
+        {
+            __direct = new IceInternal.Direct(__current)
+            {
+                public Ice.DispatchStatus run(Ice.Object __obj)
+                {
+                    OpenApiServant __servant = null;
+                    if(__obj == null || __obj instanceof OpenApiServant)
+                    {
+                        __servant = (OpenApiServant)__obj;
+                    }
+                    else
+                    {
+                        throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
+                    }
+                    try
+                    {
+                        __result.value = __servant.GetLogisticsCompany(supplierId, logisticsName, __current);
+                        return Ice.DispatchStatus.DispatchOK;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        setUserException(__ex);
+                        return Ice.DispatchStatus.DispatchUserException;
+                    }
+                }
+            };
+            try
+            {
+                Ice.DispatchStatus __status = __direct.getServant().__collocDispatch(__direct);
+                if(__status == Ice.DispatchStatus.DispatchUserException)
+                {
+                    __direct.throwUserException();
+                }
+                assert __status == Ice.DispatchStatus.DispatchOK;
+                return __result.value;
+            }
+            finally
+            {
+                __direct.destroy();
+            }
+        }
+        catch(ShangPin.SOP.Api.ApiException __ex)
+        {
+            throw __ex;
+        }
+        catch(Ice.SystemException __ex)
+        {
+            throw __ex;
+        }
+        catch(java.lang.Throwable __ex)
+        {
+            IceInternal.LocalExceptionWrapper.throwWrapper(__ex);
+        }
+        return __result.value;
+    }
+
     public boolean ModifySkuInventoryQuantity(final String supplierId, final ShangPin.SOP.Entity.Api.Product.SopSupplierProductInventoryEditIce productInventory, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException
@@ -2323,6 +2843,71 @@ public final class _OpenApiServantDelD extends Ice._ObjectDelD implements _OpenA
                     try
                     {
                         __result.value = __servant.ModifySkuInventoryQuantity(supplierId, productInventory, __current);
+                        return Ice.DispatchStatus.DispatchOK;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        setUserException(__ex);
+                        return Ice.DispatchStatus.DispatchUserException;
+                    }
+                }
+            };
+            try
+            {
+                Ice.DispatchStatus __status = __direct.getServant().__collocDispatch(__direct);
+                if(__status == Ice.DispatchStatus.DispatchUserException)
+                {
+                    __direct.throwUserException();
+                }
+                assert __status == Ice.DispatchStatus.DispatchOK;
+                return __result.value;
+            }
+            finally
+            {
+                __direct.destroy();
+            }
+        }
+        catch(ShangPin.SOP.Api.ApiException __ex)
+        {
+            throw __ex;
+        }
+        catch(Ice.SystemException __ex)
+        {
+            throw __ex;
+        }
+        catch(java.lang.Throwable __ex)
+        {
+            IceInternal.LocalExceptionWrapper.throwWrapper(__ex);
+        }
+        return __result.value;
+    }
+
+    public String PurchaseDetailError(final ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderEx purchaseOrderEx, final String supplierId, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        final Ice.Current __current = new Ice.Current();
+        __initCurrent(__current, "PurchaseDetailError", Ice.OperationMode.Idempotent, __ctx);
+        final Ice.StringHolder __result = new Ice.StringHolder();
+        IceInternal.Direct __direct = null;
+        try
+        {
+            __direct = new IceInternal.Direct(__current)
+            {
+                public Ice.DispatchStatus run(Ice.Object __obj)
+                {
+                    OpenApiServant __servant = null;
+                    if(__obj == null || __obj instanceof OpenApiServant)
+                    {
+                        __servant = (OpenApiServant)__obj;
+                    }
+                    else
+                    {
+                        throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
+                    }
+                    try
+                    {
+                        __result.value = __servant.PurchaseDetailError(purchaseOrderEx, supplierId, __current);
                         return Ice.DispatchStatus.DispatchOK;
                     }
                     catch(Ice.UserException __ex)
@@ -2843,6 +3428,71 @@ public final class _OpenApiServantDelD extends Ice._ObjectDelD implements _OpenA
                     try
                     {
                         __result.value = __servant.UpdateStock(supplierId, SkuNo, InventoryQuantity, __current);
+                        return Ice.DispatchStatus.DispatchOK;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        setUserException(__ex);
+                        return Ice.DispatchStatus.DispatchUserException;
+                    }
+                }
+            };
+            try
+            {
+                Ice.DispatchStatus __status = __direct.getServant().__collocDispatch(__direct);
+                if(__status == Ice.DispatchStatus.DispatchUserException)
+                {
+                    __direct.throwUserException();
+                }
+                assert __status == Ice.DispatchStatus.DispatchOK;
+                return __result.value;
+            }
+            finally
+            {
+                __direct.destroy();
+            }
+        }
+        catch(ShangPin.SOP.Api.ApiException __ex)
+        {
+            throw __ex;
+        }
+        catch(Ice.SystemException __ex)
+        {
+            throw __ex;
+        }
+        catch(java.lang.Throwable __ex)
+        {
+            IceInternal.LocalExceptionWrapper.throwWrapper(__ex);
+        }
+        return __result.value;
+    }
+
+    public boolean UpdateStockNew(final String supplierId, final String SkuNo, final String SupplierSkuNo, final int InventoryQuantity, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        final Ice.Current __current = new Ice.Current();
+        __initCurrent(__current, "UpdateStockNew", Ice.OperationMode.Idempotent, __ctx);
+        final Ice.BooleanHolder __result = new Ice.BooleanHolder();
+        IceInternal.Direct __direct = null;
+        try
+        {
+            __direct = new IceInternal.Direct(__current)
+            {
+                public Ice.DispatchStatus run(Ice.Object __obj)
+                {
+                    OpenApiServant __servant = null;
+                    if(__obj == null || __obj instanceof OpenApiServant)
+                    {
+                        __servant = (OpenApiServant)__obj;
+                    }
+                    else
+                    {
+                        throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
+                    }
+                    try
+                    {
+                        __result.value = __servant.UpdateStockNew(supplierId, SkuNo, SupplierSkuNo, InventoryQuantity, __current);
                         return Ice.DispatchStatus.DispatchOK;
                     }
                     catch(Ice.UserException __ex)

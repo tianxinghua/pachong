@@ -66,50 +66,67 @@ public class FetchProduct extends AbsSaveProduct{
 			product_TabularQuery2.setM_Password("getDataWs16");
 			product_TabularQuery2.setM_Company("PRITE");
 			product_TabularQuery2.setSkuId(""); 
-			Product_TabularQueryResponse response = productWSServiceStub.product_TabularQuery(product_TabularQuery2);
-			Product_TabularQueryResponseStructure[] localItems = response.getRecords().getItem();
-			System.out.println(localItems.length); 
-			for(Product_TabularQueryResponseStructure item : localItems){
+			Product_TabularQueryResponse response = null;
+			try {
+				response = productWSServiceStub.product_TabularQuery(product_TabularQuery2);
+			} catch (Exception e) {
+				loggerError.error("第1次异常==="+e);
 				try {
-					SkuDTO sku = new SkuDTO();
-					sku.setId(UUIDGenerator.getUUID());
-	                sku.setSupplierId(supplierId);
-	                sku.setSkuId(item.getSkuId());
-	                sku.setSpuId(item.getProductCode());
-	                sku.setProductName(item.getCategoryName()+" "+item.getBrandName());
-	                sku.setMarketPrice(item.getMarketPrice());
-	                sku.setSalePrice("");
-	                sku.setSupplierPrice("");
-	                sku.setBarcode(item.getSkuId());
-	                sku.setProductCode(item.getProductCode());
-	                sku.setColor(item.getColor());
-	                sku.setSaleCurrency(item.getSaleCurrency());
-	                sku.setProductSize(item.getSize());
-	                sku.setStock(""+item.getStock());
-	                skuList.add(sku);	                
-	                try {
-	                	imageMap.put(sku.getSkuId()+";"+sku.getProductCode()+" "+sku.getColor(), Arrays.asList(item.getImages().split("\\|\\|")));
+					response = productWSServiceStub.product_TabularQuery(product_TabularQuery2);
+				} catch (Exception e2) {
+					loggerError.error("第2次异常==="+e2);
+					try {
+						response = productWSServiceStub.product_TabularQuery(product_TabularQuery2);
+					} catch (Exception e3) {
+						loggerError.error("第3次异常==="+e3);
+					}
+				}
+			}			
+			if(null != response){
+				Product_TabularQueryResponseStructure[] localItems = response.getRecords().getItem();
+				System.out.println(localItems.length); 
+				for(Product_TabularQueryResponseStructure item : localItems){
+					try {
+						SkuDTO sku = new SkuDTO();
+						sku.setId(UUIDGenerator.getUUID());
+		                sku.setSupplierId(supplierId);
+		                sku.setSkuId(item.getSkuId());
+		                sku.setSpuId(item.getProductCode());
+		                sku.setProductName(item.getCategoryName()+" "+item.getBrandName());
+		                sku.setMarketPrice(item.getMarketPrice());
+		                sku.setSalePrice("");
+		                sku.setSupplierPrice(item.getSupplierPrice());
+		                sku.setBarcode(item.getSkuId());
+		                sku.setProductCode(item.getProductCode());
+		                sku.setColor(item.getColor());
+		                sku.setSaleCurrency(item.getSaleCurrency());
+		                sku.setProductSize(item.getSize());
+		                sku.setStock(""+item.getStock());
+		                skuList.add(sku);	                
+		                try {
+		                	imageMap.put(sku.getSkuId()+";"+sku.getProductCode()+" "+sku.getColor(), Arrays.asList(item.getImages().split("\\|\\|")));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}               
+		                
+		                SpuDTO spu = new SpuDTO();
+		                spu.setId(UUIDGenerator.getUUID());
+		                spu.setSupplierId(supplierId);
+		                spu.setSpuId(sku.getSpuId());
+		                spu.setCategoryGender(item.getCategoryGender());
+		                spu.setCategoryName(item.getCategoryName());
+		                spu.setBrandName(item.getBrandName());
+		                spu.setSeasonName(item.getSeasonName());
+		                spu.setMaterial(item.getMaterial());
+		                spu.setProductOrigin(item.getProductOrigin());
+		                spuList.add(spu);
+		                
 					} catch (Exception e) {
 						e.printStackTrace();
-					}               
+					}		
 	                
-	                SpuDTO spu = new SpuDTO();
-	                spu.setId(UUIDGenerator.getUUID());
-	                spu.setSupplierId(supplierId);
-	                spu.setSpuId(sku.getSpuId());
-	                spu.setCategoryGender(item.getCategoryGender());
-	                spu.setCategoryName(item.getCategoryName());
-	                spu.setBrandName(item.getBrandName());
-	                spu.setSeasonName(item.getSeasonName());
-	                spu.setMaterial(item.getMaterial());
-	                spu.setProductOrigin(item.getProductOrigin());
-	                spuList.add(spu);
-	                
-				} catch (Exception e) {
-					e.printStackTrace();
-				}		
-                
-			}
+				}
+			}			
 			System.out.println("======orver========="); 
 			
 		}catch(Exception ex){

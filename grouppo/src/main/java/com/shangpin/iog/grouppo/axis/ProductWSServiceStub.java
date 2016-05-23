@@ -1,12 +1,10 @@
-package com.shangpin.iog.grouppo.axis;
-
 /**
  * ProductWSServiceStub.java
  *
  * This file was auto-generated from WSDL
  * by the Apache Axis2 version: 1.6.3  Built on : Jun 27, 2015 (11:17:49 BST)
  */
-
+package com.shangpin.iog.grouppo.axis;
 
 
 /*
@@ -124,11 +122,11 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
     /**
      * Auto generated method signature
      *
-     * @see ProductWSService#product_Query
+     * @see com.shangpin.iog.grouppo.axis.ProductWSService#product_Query
      * @param product_Query0
      */
-    public ProductWSServiceStub.Product_QueryResponse product_Query(
-        ProductWSServiceStub.Product_Query product_Query0)
+    public com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_QueryResponse product_Query(
+        com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_Query product_Query0)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -173,10 +171,10 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
 
             java.lang.Object object = fromOM(_returnEnv.getBody()
                                                        .getFirstElement(),
-                    ProductWSServiceStub.Product_QueryResponse.class,
+                    com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_QueryResponse.class,
                     getEnvelopeNamespaces(_returnEnv));
 
-            return (ProductWSServiceStub.Product_QueryResponse) object;
+            return (com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_QueryResponse) object;
         } catch (org.apache.axis2.AxisFault f) {
             org.apache.axiom.om.OMElement faultElt = f.getDetail();
 
@@ -239,12 +237,12 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
     /**
      * Auto generated method signature for Asynchronous Invocations
      *
-     * @see ProductWSService#startproduct_Query
+     * @see com.shangpin.iog.grouppo.axis.ProductWSService#startproduct_Query
      * @param product_Query0
      */
     public void startproduct_Query(
-        ProductWSServiceStub.Product_Query product_Query0,
-        final ProductWSServiceCallbackHandler callback)
+        com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_Query product_Query0,
+        final com.shangpin.iog.grouppo.axis.ProductWSServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[0].getName());
         _operationClient.getOptions()
@@ -285,9 +283,9 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
 
                         java.lang.Object object = fromOM(resultEnv.getBody()
                                                                   .getFirstElement(),
-                                ProductWSServiceStub.Product_QueryResponse.class,
+                                com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_QueryResponse.class,
                                 getEnvelopeNamespaces(resultEnv));
-                        callback.receiveResultproduct_Query((ProductWSServiceStub.Product_QueryResponse) object);
+                        callback.receiveResultproduct_Query((com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_QueryResponse) object);
                     } catch (org.apache.axis2.AxisFault e) {
                         callback.receiveErrorproduct_Query(e);
                     }
@@ -389,11 +387,11 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
     /**
      * Auto generated method signature
      *
-     * @see ProductWSService#product_TabularQuery
+     * @see com.shangpin.iog.grouppo.axis.ProductWSService#product_TabularQuery
      * @param product_TabularQuery2
      */
-    public ProductWSServiceStub.Product_TabularQueryResponse product_TabularQuery(
-        ProductWSServiceStub.Product_TabularQuery product_TabularQuery2)
+    public com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQueryResponse product_TabularQuery(
+        com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQuery product_TabularQuery2)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -439,10 +437,10 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
 
             java.lang.Object object = fromOM(_returnEnv.getBody()
                                                        .getFirstElement(),
-                    ProductWSServiceStub.Product_TabularQueryResponse.class,
+                    com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQueryResponse.class,
                     getEnvelopeNamespaces(_returnEnv));
 
-            return (ProductWSServiceStub.Product_TabularQueryResponse) object;
+            return (com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQueryResponse) object;
         } catch (org.apache.axis2.AxisFault f) {
             org.apache.axiom.om.OMElement faultElt = f.getDetail();
 
@@ -505,12 +503,12 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
     /**
      * Auto generated method signature for Asynchronous Invocations
      *
-     * @see ProductWSService#startproduct_TabularQuery
+     * @see com.shangpin.iog.grouppo.axis.ProductWSService#startproduct_TabularQuery
      * @param product_TabularQuery2
      */
     public void startproduct_TabularQuery(
-        ProductWSServiceStub.Product_TabularQuery product_TabularQuery2,
-        final ProductWSServiceCallbackHandler callback)
+        com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQuery product_TabularQuery2,
+        final com.shangpin.iog.grouppo.axis.ProductWSServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[1].getName());
         _operationClient.getOptions()
@@ -551,9 +549,9 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
 
                         java.lang.Object object = fromOM(resultEnv.getBody()
                                                                   .getFirstElement(),
-                                ProductWSServiceStub.Product_TabularQueryResponse.class,
+                                com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQueryResponse.class,
                                 getEnvelopeNamespaces(resultEnv));
-                        callback.receiveResultproduct_TabularQuery((ProductWSServiceStub.Product_TabularQueryResponse) object);
+                        callback.receiveResultproduct_TabularQuery((com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQueryResponse) object);
                     } catch (org.apache.axis2.AxisFault e) {
                         callback.receiveErrorproduct_TabularQuery(e);
                     }
@@ -684,10 +682,10 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
     }
 
     private org.apache.axiom.om.OMElement toOM(
-        ProductWSServiceStub.Product_Query param,
+        com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_Query param,
         boolean optimizeContent) throws org.apache.axis2.AxisFault {
         try {
-            return param.getOMElement(ProductWSServiceStub.Product_Query.MY_QNAME,
+            return param.getOMElement(com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_Query.MY_QNAME,
                 org.apache.axiom.om.OMAbstractFactory.getOMFactory());
         } catch (org.apache.axis2.databinding.ADBException e) {
             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -695,10 +693,10 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
     }
 
     private org.apache.axiom.om.OMElement toOM(
-        ProductWSServiceStub.Product_QueryResponse param,
+        com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_QueryResponse param,
         boolean optimizeContent) throws org.apache.axis2.AxisFault {
         try {
-            return param.getOMElement(ProductWSServiceStub.Product_QueryResponse.MY_QNAME,
+            return param.getOMElement(com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_QueryResponse.MY_QNAME,
                 org.apache.axiom.om.OMAbstractFactory.getOMFactory());
         } catch (org.apache.axis2.databinding.ADBException e) {
             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -706,10 +704,10 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
     }
 
     private org.apache.axiom.om.OMElement toOM(
-        ProductWSServiceStub.Product_TabularQuery param,
+        com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQuery param,
         boolean optimizeContent) throws org.apache.axis2.AxisFault {
         try {
-            return param.getOMElement(ProductWSServiceStub.Product_TabularQuery.MY_QNAME,
+            return param.getOMElement(com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQuery.MY_QNAME,
                 org.apache.axiom.om.OMAbstractFactory.getOMFactory());
         } catch (org.apache.axis2.databinding.ADBException e) {
             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -717,10 +715,10 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
     }
 
     private org.apache.axiom.om.OMElement toOM(
-        ProductWSServiceStub.Product_TabularQueryResponse param,
+        com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQueryResponse param,
         boolean optimizeContent) throws org.apache.axis2.AxisFault {
         try {
-            return param.getOMElement(ProductWSServiceStub.Product_TabularQueryResponse.MY_QNAME,
+            return param.getOMElement(com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQueryResponse.MY_QNAME,
                 org.apache.axiom.om.OMAbstractFactory.getOMFactory());
         } catch (org.apache.axis2.databinding.ADBException e) {
             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -729,14 +727,14 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
 
     private org.apache.axiom.soap.SOAPEnvelope toEnvelope(
         org.apache.axiom.soap.SOAPFactory factory,
-        ProductWSServiceStub.Product_Query param,
+        com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_Query param,
         boolean optimizeContent, javax.xml.namespace.QName methodQName)
         throws org.apache.axis2.AxisFault {
         try {
             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
             emptyEnvelope.getBody()
                          .addChild(param.getOMElement(
-                    ProductWSServiceStub.Product_Query.MY_QNAME,
+                    com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_Query.MY_QNAME,
                     factory));
 
             return emptyEnvelope;
@@ -748,14 +746,14 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
     /* methods to provide back word compatibility */
     private org.apache.axiom.soap.SOAPEnvelope toEnvelope(
         org.apache.axiom.soap.SOAPFactory factory,
-        ProductWSServiceStub.Product_TabularQuery param,
+        com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQuery param,
         boolean optimizeContent, javax.xml.namespace.QName methodQName)
         throws org.apache.axis2.AxisFault {
         try {
             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
             emptyEnvelope.getBody()
                          .addChild(param.getOMElement(
-                    ProductWSServiceStub.Product_TabularQuery.MY_QNAME,
+                    com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQuery.MY_QNAME,
                     factory));
 
             return emptyEnvelope;
@@ -778,24 +776,24 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
         java.lang.Class type, java.util.Map extraNamespaces)
         throws org.apache.axis2.AxisFault {
         try {
-            if (ProductWSServiceStub.Product_Query.class.equals(
+            if (com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_Query.class.equals(
                         type)) {
-                return ProductWSServiceStub.Product_Query.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                return com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_Query.Factory.parse(param.getXMLStreamReaderWithoutCaching());
             }
 
-            if (ProductWSServiceStub.Product_QueryResponse.class.equals(
+            if (com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_QueryResponse.class.equals(
                         type)) {
-                return ProductWSServiceStub.Product_QueryResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                return com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_QueryResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
             }
 
-            if (ProductWSServiceStub.Product_TabularQuery.class.equals(
+            if (com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQuery.class.equals(
                         type)) {
-                return ProductWSServiceStub.Product_TabularQuery.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                return com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQuery.Factory.parse(param.getXMLStreamReaderWithoutCaching());
             }
 
-            if (ProductWSServiceStub.Product_TabularQueryResponse.class.equals(
+            if (com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQueryResponse.class.equals(
                         type)) {
-                return ProductWSServiceStub.Product_TabularQueryResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                return com.shangpin.iog.grouppo.axis.ProductWSServiceStub.Product_TabularQueryResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
             }
         } catch (java.lang.Exception e) {
             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -3581,6 +3579,17 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
         protected boolean localMarketPriceTracker = false;
 
         /**
+         * field for SupplierPrice
+         */
+        protected java.lang.String localSupplierPrice;
+
+        /*  This tracker boolean wil be used to detect whether the user called the set method
+         *   for this attribute. It will be used to determine whether to include this field
+         *   in the serialized XML
+         */
+        protected boolean localSupplierPriceTracker = false;
+
+        /**
          * field for Stock
          */
         protected double localStock;
@@ -3820,6 +3829,28 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
             localMarketPriceTracker = param != null;
 
             this.localMarketPrice = param;
+        }
+
+        public boolean isSupplierPriceSpecified() {
+            return localSupplierPriceTracker;
+        }
+
+        /**
+         * Auto generated getter method
+         * @return java.lang.String
+         */
+        public java.lang.String getSupplierPrice() {
+            return localSupplierPrice;
+        }
+
+        /**
+         * Auto generated setter method
+         * @param param SupplierPrice
+         */
+        public void setSupplierPrice(java.lang.String param) {
+            localSupplierPriceTracker = param != null;
+
+            this.localSupplierPrice = param;
         }
 
         public boolean isStockSpecified() {
@@ -4122,6 +4153,21 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
                         "marketPrice cannot be null!!");
                 } else {
                     xmlWriter.writeCharacters(localMarketPrice);
+                }
+
+                xmlWriter.writeEndElement();
+            }
+
+            if (localSupplierPriceTracker) {
+                namespace = "http://product.ws.localhost/";
+                writeStartElement(null, namespace, "supplierPrice", xmlWriter);
+
+                if (localSupplierPrice == null) {
+                    // write the nil attribute
+                    throw new org.apache.axis2.databinding.ADBException(
+                        "supplierPrice cannot be null!!");
+                } else {
+                    xmlWriter.writeCharacters(localSupplierPrice);
                 }
 
                 xmlWriter.writeEndElement();
@@ -4535,6 +4581,19 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
                 }
             }
 
+            if (localSupplierPriceTracker) {
+                elementList.add(new javax.xml.namespace.QName(
+                        "http://product.ws.localhost/", "supplierPrice"));
+
+                if (localSupplierPrice != null) {
+                    elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
+                            localSupplierPrice));
+                } else {
+                    throw new org.apache.axis2.databinding.ADBException(
+                        "supplierPrice cannot be null!!");
+                }
+            }
+
             if (localStockTracker) {
                 elementList.add(new javax.xml.namespace.QName(
                         "http://product.ws.localhost/", "stock"));
@@ -4889,6 +4948,34 @@ public class ProductWSServiceStub extends org.apache.axis2.client.Stub {
                         java.lang.String content = reader.getElementText();
 
                         object.setMarketPrice(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
+                                content));
+
+                        reader.next();
+                    } // End of if for expected property start element
+
+                    else {
+                    }
+
+                    while (!reader.isStartElement() && !reader.isEndElement())
+                        reader.next();
+
+                    if (reader.isStartElement() &&
+                            new javax.xml.namespace.QName(
+                                "http://product.ws.localhost/", "supplierPrice").equals(
+                                reader.getName())) {
+                        nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                                "nil");
+
+                        if ("true".equals(nillableValue) ||
+                                "1".equals(nillableValue)) {
+                            throw new org.apache.axis2.databinding.ADBException(
+                                "The element: " + "supplierPrice" +
+                                "  cannot be null");
+                        }
+
+                        java.lang.String content = reader.getElementText();
+
+                        object.setSupplierPrice(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                                 content));
 
                         reader.next();

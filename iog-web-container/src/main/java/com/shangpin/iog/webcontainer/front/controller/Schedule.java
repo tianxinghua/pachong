@@ -303,45 +303,46 @@ public class Schedule {
 			if(StringUtils.isNotBlank(to)){
 				
 				StringBuffer buffer = productService.getDiffSeasonProducts(supplierId_diffSeason,startDate,endDate,null,null);
-				String messageText  = buffer.toString();
-				if(StringUtils.isNotBlank(messageText)){ 
-					try {
-						BufferedInputStream in = null;
-						File file = null;
-						FileOutputStream out = null;
-						try{
-							in = new BufferedInputStream(new ByteArrayInputStream(messageText.getBytes("gb2312")));
-							file = new File(diffSeasonFilepath);
-							out = new FileOutputStream(file);
-							byte[] data = new byte[1024];
-				            int len = 0;
-				            while (-1 != (len=in.read(data, 0, data.length))) {
-				                out.write(data, 0, len);
-				            }
-						}catch(Exception e){
+				if(null != buffer){
+					String messageText  = buffer.toString();
+					if(StringUtils.isNotBlank(messageText)){ 
+						try {
+							BufferedInputStream in = null;
+							File file = null;
+							FileOutputStream out = null;
+							try{
+								in = new BufferedInputStream(new ByteArrayInputStream(messageText.getBytes("gb2312")));
+								file = new File(diffSeasonFilepath);
+								out = new FileOutputStream(file);
+								byte[] data = new byte[1024];
+					            int len = 0;
+					            while (-1 != (len=in.read(data, 0, data.length))) {
+					                out.write(data, 0, len);
+					            }
+							}catch(Exception e){
+								e.printStackTrace();
+							}finally {
+					            if (in != null) {
+					                in.close();
+					            }
+					            if (out != null) {
+					                out.close();
+					            }
+					        }
+							if(null != file){
+								SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword, to, "以下产品季节发生了变化，请查看","以下产品季节发生了变化,请查看附件", messageType,file);
+							}
+							
+						} catch (Exception e) {
 							e.printStackTrace();
-						}finally {
-				            if (in != null) {
-				                in.close();
-				            }
-				            if (out != null) {
-				                out.close();
-				            }
-				        }
-						if(null != file){
-							SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword, "lubaijiang@shangpin.com", "以下产品季节发生了变化，请查看","以下产品季节发生了变化,请查看附件", messageType,file);
+							log.error(e.getMessage());
 						}
-						
-					} catch (Exception e) {
-						e.printStackTrace();
-						log.error(e.getMessage());
 					}
-				}
-				
+				}			
 			}
 			
 		} catch (Exception e) {
-			log.error(e.getMessage()); 
+			log.error(""+e); 
 			e.printStackTrace();
 		}
 	}

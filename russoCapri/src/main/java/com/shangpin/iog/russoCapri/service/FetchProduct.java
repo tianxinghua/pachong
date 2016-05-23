@@ -33,6 +33,7 @@ public class FetchProduct {
     private static String supplierId;
     private static String url;
 	public static int day;
+	private static String username,password;
     private static ResourceBundle bdl=null;
     static {
         if(null==bdl)
@@ -40,6 +41,8 @@ public class FetchProduct {
         supplierId = bdl.getString("supplierId");
         url = bdl.getString("url");
         day = Integer.valueOf(bdl.getString("day"));
+        username = bdl.getString("username");
+		password = bdl.getString("password");
     }
     @Autowired
     private ProductFetchService productFetchService;
@@ -56,14 +59,11 @@ public class FetchProduct {
         //获取产品信息
         logger.info("get product starting....");
         System.out.println("开始获取产品信息");
-    	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
-    										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
-    	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
-    										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
-    	String imageData = HttpUtil45.post(url+"GetAllImageMarketplace",
-    										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
-    	String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
-    										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
+        Map<String,String> map = new HashMap<>();
+    	String spuData = HttpUtil45.postNTAuth(url+"GetAllItemsMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+    	String skuData = HttpUtil45.postNTAuth(url+"GetAllAvailabilityMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+    	String imageData = HttpUtil45.postNTAuth(url+"GetAllImageMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+    	String priceData = HttpUtil45.postNTAuth(url+"GetAllPricelistMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
     
     	System.out.println("获取产品信息结束");
     	Date startDate,endDate= new Date();
