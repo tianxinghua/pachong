@@ -614,10 +614,8 @@ public abstract class AbsUpdateProductStock {
 					if(sopPurchaseMap.containsKey(skuNo)){
 						if(stock==null)
 							stock=0;
-						logger.error( skuNo + "供货商库存：" + stock + " "+ "采购单数量 : " + sopPurchaseMap.get(skuNo));
 						loggerInfo.info(skuNo + "供货商库存：" + stock +" 采购单数量 : " + sopPurchaseMap.get(skuNo));
 						stock =  stock - sopPurchaseMap.get(skuNo);
-						logger.error("最终库存 ：" + stock);
 						loggerInfo.info("最终库存 ：" + stock);
 						if(stock<0) stock=0;
 
@@ -730,6 +728,7 @@ public abstract class AbsUpdateProductStock {
 		endTime = format.format(endDate);
 
 		startTime = format.format(this.getAppointDayFromSpecifiedDay(endDate,-2,"M"));
+
 
 		List<Integer> detailStatus = new ArrayList<>();
 		ApiResponse<PurchaseOrderDetailPage> response = null;

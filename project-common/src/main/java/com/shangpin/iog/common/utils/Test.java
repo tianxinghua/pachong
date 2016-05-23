@@ -22,9 +22,13 @@ public class Test {
 //            logger.info("exception ="+e.getMessage());
 //        }
 //           System.out.println( "201602161167427".compareTo("201602161167427"));
-        HttpUtil45.get("http://www.pos123.us/api/v2/products/.json?limit=50&page=2",new OutTimeConfig(),
-                null,"RIX5NkHDIM25yUFZmDlVSdWEE7V3aSYv","");
+//        HttpUtil45.get("http://www.pos123.us/api/v2/products/.json?limit=50&page=2",new OutTimeConfig(),
+//                null,"RIX5NkHDIM25yUFZmDlVSdWEE7V3aSYv","");
 
+
+        String skuData = HttpUtil45.postAuth("http://79.62.242.6:8088/ws_sito/ws_sito_p15.asmx/GetAllAvailabilityMarketplace", null,
+                new OutTimeConfig(1000*60*10,1000*60*60,1000*60*60),"shangpin","Daniello0203");
+        System.out.println("skuData　＝"+ skuData);
 
     }
 }

@@ -14,9 +14,12 @@ import IceUtilInternal.StringUtil;
 import ShangPin.SOP.Entity.Api.Product.*;
 import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
 import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
+import ShangPin.SOP.Entity.DTO.PurchaseOrderDetilApiDto;
+import ShangPin.SOP.Entity.DTO.PurchaseOrderInfoApiDto;
 import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 
 import com.mysql.jdbc.log.LogUtils;
+import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.dto.SkuRelationDTO;
@@ -676,17 +679,19 @@ public abstract class AbsUpdateProductStock {
 		statusList.add(1);
 		statusList.add(2);
 		while(hasNext){
-			List<PurchaseOrderDetail> orderDetails = null;
+//			List<PurchaseOrderDetail> orderDetails = null;
 			boolean fetchSuccess=true;
+			PurchaseOrderInfoApiDto purchaseOrderInfoApiDto = null;
 			for(int i=0;i<2;i++){  //允许调用失败后，再次调用一次
 				try {
 
 					PurchaseOrderQueryDto orderQueryDto = new PurchaseOrderQueryDto(startTime,endTime,statusList
 							,pageIndex,pageSize);
-					PurchaseOrderDetailPage orderDetailPage=
-							servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
-					orderDetails = orderDetailPage.PurchaseOrderDetails;
-					if(null==orderDetails){
+//					PurchaseOrderDetailPage orderDetailPage=
+//							servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
+//					orderDetails = orderDetailPage.PurchaseOrderDetails;
+					purchaseOrderInfoApiDto = servant.FindPurchaseOrderDetailCountPaged(supplierId, orderQueryDto);
+					if(null==purchaseOrderInfoApiDto){
 						fetchSuccess=false;
 					}
 				} catch (ApiException e) {
@@ -702,25 +707,37 @@ public abstract class AbsUpdateProductStock {
 					loggerError.error("获取采购单失败");
 				}
 			}
-			if (!fetchSuccess) {
-				loggerError.error("两次获取采购单均失败");
-				return sopPurchaseMap;
-			}
-			for (PurchaseOrderDetail orderDetail : orderDetails) {
-				supplierSkuNo  = orderDetail.SupplierSkuNo;
-				if(sopPurchaseMap.containsKey(supplierSkuNo)){
-					//
-
-					sopPurchaseMap.put(supplierSkuNo,sopPurchaseMap.get(supplierSkuNo)+1);
-				}else{
-
-					sopPurchaseMap.put(supplierSkuNo,1);
+			List<PurchaseOrderDetilApiDto>  detilApiDtos = null;
+			if(null!=purchaseOrderInfoApiDto){
+				detilApiDtos =  purchaseOrderInfoApiDto.PurchaseOrderDetailList;
+				for (PurchaseOrderDetilApiDto orderDetail : detilApiDtos) {
+					sopPurchaseMap.put(orderDetail.SupplierSkuNo,orderDetail.Count);
 				}
-
-
+			}else{
+				loggerError.error("两次获取采购单均失败");
+				throw new ServiceMessageException("获取采购单信息失败");
+//				return sopPurchaseMap;
 			}
+
+//			if (!fetchSuccess) {
+//				loggerError.error("两次获取采购单均失败");
+//				return sopPurchaseMap;
+//			}
+//			for (PurchaseOrderDetail orderDetail : orderDetails) {
+//				supplierSkuNo  = orderDetail.SupplierSkuNo;
+//				if(sopPurchaseMap.containsKey(supplierSkuNo)){
+//					//
+//
+//					sopPurchaseMap.put(supplierSkuNo,sopPurchaseMap.get(supplierSkuNo)+1);
+//				}else{
+//
+//					sopPurchaseMap.put(supplierSkuNo,1);
+//				}
+//
+//
+//			}
 			pageIndex++;
-			hasNext=(pageSize==orderDetails.size());
+			hasNext=(pageSize==detilApiDtos.size());
 
 		}
 

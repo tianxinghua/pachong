@@ -6,6 +6,8 @@ import ShangPin.SOP.Entity.Api.Product.SopProductSkuPage;
 import ShangPin.SOP.Entity.Api.Product.SopProductSkuPageQuery;
 import ShangPin.SOP.Entity.Api.Product.SopSkuIce;
 import ShangPin.SOP.Entity.Api.Purchase.*;
+import ShangPin.SOP.Entity.DTO.PurchaseOrderDetilApiDto;
+import ShangPin.SOP.Entity.DTO.PurchaseOrderInfoApiDto;
 import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
 import com.google.gson.Gson;
@@ -209,7 +211,7 @@ public class Test {
 //        }
         Test tesst = new Test();
         try {
-            tesst.getSopPuchase("2015081701440");//2015081701443       2015081701440    2015111601665
+            tesst.getSopPuchase("2016040100264");//2015081701443       2015081701440    2015111601665
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -243,16 +245,16 @@ public class Test {
         statusList.add(1);
         statusList.add(2);
         while (hasNext) {
-            List<PurchaseOrderDetail> orderDetails = null;
+            List<PurchaseOrderDetilApiDto> orderDetails = null;
             boolean fetchSuccess = true;
             for (int i = 0; i < 2; i++) {  //允许调用失败后，再次调用一次
                 try {
 
                     PurchaseOrderQueryDto orderQueryDto = new PurchaseOrderQueryDto(startTime, endTime, statusList
                             , pageIndex, pageSize);
-                    PurchaseOrderDetailPage orderDetailPage =
-                            servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
-                    orderDetails = orderDetailPage.PurchaseOrderDetails;
+                    PurchaseOrderInfoApiDto orderDetailPage =
+                            servant.FindPurchaseOrderDetailCountPaged(supplierId, orderQueryDto);
+                    orderDetails = orderDetailPage.PurchaseOrderDetailList;
                     if (null == orderDetails) {
                         fetchSuccess = false;
                     }
@@ -269,16 +271,11 @@ public class Test {
                 }
             }
 
-            for (PurchaseOrderDetail orderDetail : orderDetails) {
+            for (PurchaseOrderDetilApiDto orderDetail : orderDetails) {
                 supplierSkuNo = orderDetail.SupplierSkuNo;
-                if (sopPurchaseMap.containsKey(supplierSkuNo)) {
-                    //
 
-                    sopPurchaseMap.put(supplierSkuNo, sopPurchaseMap.get(supplierSkuNo) + 1);
-                } else {
+                sopPurchaseMap.put(supplierSkuNo, orderDetail.Count);
 
-                    sopPurchaseMap.put(supplierSkuNo, 1);
-                }
 
 
             }
