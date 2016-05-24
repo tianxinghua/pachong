@@ -26,6 +26,7 @@ public class OrderDTO {
     private String supplierNo;//供货商编号
     private String uuId;  //和供货商公用的订单唯一标识
     private String spOrderId;    //尚品订单编号
+    private String spOrderDetailNo;//尚品订单明细编号
     private String supplierOrderNo;//供货商的订单编号
     private String spPurchaseNo; //采购单编号
     private String spPurchaseDetailNo;  //采购单明细
@@ -49,6 +50,7 @@ public class OrderDTO {
                 ", supplierId='" + supplierId + '\'' +
                 ", supplierNo='" + supplierNo + '\'' +
                 ", uuId='" + uuId + '\'' +
+                ", spOrderId='" + spOrderId + '\'' +
                 ", spOrderId='" + spOrderId + '\'' +
                 ", supplierOrderNo='" + supplierOrderNo + '\'' +
                 ", spPurchaseNo='" + spPurchaseNo + '\'' +
