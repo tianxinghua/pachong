@@ -50,36 +50,51 @@ public class StockImp  extends AbsUpdateProductStock {
         if(items.size()>0){
         	logger.info("------------------一共有"+items.size()+"条数据----------------");
         	for(Product pro :items){
+        		try {
+        			int beginIndex=pro.getSize().indexOf(",");
+            		if(beginIndex!=-1){
+    					String size[] = pro.getSize().split(",");
+    					String stock[] = pro.getQuantity().split(",");
+    						if(size.length==stock.length){
+    							for (int i = 0; i < size.length; i++) {
+    								try {
+    									stockMap.put(pro.getMpn()+"_"+size[i], stock[i].trim());
+        								logger.info("SkuId="+pro.getMpn()+"_"+size[i]+"------stock="+stock[i]);
+									} catch (Exception e) {
+										// TODO: handle exception
+									}
+    								
+    								//System.out.println("SkuId="+pro.getMpn()+"_"+size[i]+"------stock="+stock[i]);
+    							}
+    						}else{	
+    							continue;
+    						}
+            		}else{
+            			stockMap.put(pro.getMpn()+"_"+pro.getSize(),pro.getQuantity());
+            			logger.info("SkuId="+pro.getMpn()+"_"+pro.getSize()+"------stock="+pro.getQuantity());
+            			
+            		}
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
         		//SkuDTO sku = new SkuDTO();
-        		int beginIndex=pro.getSize().indexOf(",");
-        		if(beginIndex!=-1){
-					String size[] = pro.getSize().split(",");
-					String stock[] = pro.getQuantity().split(",");
-						if(size.length==stock.length){
-							for (int i = 0; i < size.length; i++) {
-								stockMap.put(pro.getMpn()+"_"+size[i], stock[i].trim());
-								logger.info("SkuId="+pro.getMpn()+"_"+size[i]+"------stock="+stock[i]);
-								//System.out.println("SkuId="+pro.getMpn()+"_"+size[i]+"------stock="+stock[i]);
-							}
-						}else{	
-							continue;
-						}
-        		}else{
-        			stockMap.put(pro.getMpn()+"_"+pro.getSize(),pro.getQuantity());
-        			logger.info("SkuId="+pro.getMpn()+"_"+pro.getSize()+"------stock="+pro.getQuantity());
-        			
-        		}
+        		
         	}
         } 
         
         for (String skuno : skuNo) {
-            if(stockMap.containsKey(skuno)){
-            	logger.info("skuNo1="+skuno + " stock="+ stockMap.get(skuno));
-                skustock.put(skuno, stockMap.get(skuno));
-            } else{
-            	logger.info("skuNo2="+skuno);
-                skustock.put(skuno, "0");
-            }
+        	try {
+        		if(stockMap.containsKey(skuno)){
+                	logger.info("skuNo1="+skuno + " stock="+ stockMap.get(skuno));
+                    skustock.put(skuno, stockMap.get(skuno));
+                } else{
+                	logger.info("skuNo2="+skuno);
+                    skustock.put(skuno, "0");
+                }
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+            
         }
         return skustock;
     }
