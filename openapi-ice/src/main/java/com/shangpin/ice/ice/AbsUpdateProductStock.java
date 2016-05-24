@@ -606,7 +606,8 @@ public abstract class AbsUpdateProductStock {
 				if(!ORDER){
 
 					if(sopPurchaseMap.containsKey(iceSku)){
-
+						
+						loggerInfo.info("sku ：" + skuNo +"原库存："+stockResult);
 						stockResult =  stockResult - sopPurchaseMap.get(iceSku);
 						loggerInfo.info("sku ：" + skuNo +"库存："+stockResult  + " ; 采购单含有数量 : " + sopPurchaseMap.get(skuNo)+" 最终库存 ：" + stockResult);
 						if(stockResult<0) stockResult=0;
@@ -749,7 +750,7 @@ public abstract class AbsUpdateProductStock {
 		}
 
 		logger.warn("获取ice采购单 结束");
-
+		loggerInfo.info("获取采购单数量："+sopPurchaseMap.size());
 		return sopPurchaseMap;
 
 
