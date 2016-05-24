@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
     			 flag = true;
     		 }
          } catch (Exception e) {
-             logger.error("订单保存失败："+ e.getMessage());
+             logger.error("订单查询失败："+ e.getMessage());
              e.printStackTrace();
          }
          return flag;
