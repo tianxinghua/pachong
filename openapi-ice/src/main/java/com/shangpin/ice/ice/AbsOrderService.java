@@ -296,7 +296,7 @@ public abstract class AbsOrderService {
         String  startTime = "";
         Date tmpDate =  DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(startDateOfWMS,YYYY_MMDD_HH_WMS),-20,"m");
         startTime = DateTimeUtil.convertFormat(tmpDate,YYYY_MMDD_HH_WMS) ;
-//        handleOrderOfSOPForSpecial(supplierId,supplierNo,startTime,endDateOfWMS);
+        handleOrderOfSOPForSpecial(supplierId,supplierNo,startTime,endDateOfWMS);
 
         //处理退单
         handleCancelOfWMS(supplierNo, supplierId, skuMap, refundList,handleCancel);
@@ -862,7 +862,7 @@ public abstract class AbsOrderService {
             }
             StringBuffer buffer = new StringBuffer();
             StringBuffer sopbuffer= new StringBuffer();
-            String purchsePrice = "",spOrderNo="";
+            String purchsePrice = "",spOrderNo="",spSku="";
             for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){
                 //记录采购单明细信息 以便发货
                 purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
@@ -871,6 +871,7 @@ public abstract class AbsOrderService {
                 //计算同一采购单的相同产品的数量
                 if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
                     spOrderNo= purchaseOrderDetail.OrderNo;
+                    spSku =   purchaseOrderDetail.SkuNo;
                     buffer.append(purchaseOrderDetail.SupplierSkuNo).append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
                     sopbuffer.append(purchaseOrderDetail.SkuNo).append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
                     stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
@@ -880,7 +881,11 @@ public abstract class AbsOrderService {
 
             OrderDTO orderOfDB = null;
             try {
-                 orderOfDB = productOrderService.getOrderByOrderNo(spOrderNo);
+                orderOfDB = productOrderService.getOrderByOrderNo(spOrderNo+"|"+spSku);
+                if(null==orderOfDB){
+                    orderOfDB = productOrderService.getOrderByOrderNo(spOrderNo);
+                }
+
             } catch (ServiceException e) {
                 e.printStackTrace();
             }
@@ -915,7 +920,7 @@ public abstract class AbsOrderService {
             spOrder.setSupplierNo(supplierNo);
             spOrder.setStatus(OrderStatus.WAITPLACED);
             spOrder.setSpPurchaseNo(entry.getKey());
-            spOrder.setSpOrderId(spOrderNo+"-"+String.valueOf((int)(Math.random() * 10))+String.valueOf((int)(Math.random() * 10)));
+            spOrder.setSpOrderId(spOrderNo+"|"+spSku+"-"+String.valueOf((int)(Math.random() * 10))+String.valueOf((int)(Math.random() * 10)));
             spOrder.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString());
             spOrder.setDetail(buffer.toString().substring(0,buffer.toString().length()-1));
             spOrder.setMemo(sopbuffer.toString().substring(0,sopbuffer.toString().length()-1));
