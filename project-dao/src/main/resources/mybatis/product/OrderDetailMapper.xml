@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.shangpin.iog.product.dao.OrderMapper">
+<mapper namespace="com.shangpin.iog.product.dao.OrderDetailMapper">
 
-	<resultMap id="OrderResultMap" type="iog_order">
+	<resultMap id="OrderResultMap" type="iog_orderDetail">
 
 
         <id column="ID" property="id" />
@@ -23,7 +23,7 @@
         
         <result column="STATUS" property="status"/>
 
-        <result column="DELIVERY_NO" property="deliverNo"/>
+        <result column="DELIVERY_NO" property="deliveryNo"/>
         <result column="CREATE_TIME" property="createTime"  />
         <result column="UPDATE_TIME" property="updateTime"/>
         <result column="EXC_STATE" property="excState"  />
@@ -74,7 +74,7 @@
 		values(#{id},#{supplierId},#{supplierNo},#{spOrderNo},
 			#{spOrderDetailNo},#{spPurchaseNo},#{spPurchaseDetailNo},
 			#{spSku},#{supplierSku},#{quantity},#{purchasePriceDetail},
-			#{status},#{deliverNo},#{createTime})				
+			#{status},#{deliveryNo},#{createTime})				
 	</insert>   
    	 <update id="update"  parameterType="iog_orderDetail" >
         update ORDER_DETAIL
@@ -95,9 +95,9 @@
         </set>
         where ID = #{id}
     </update>
-	<select id ="findSubOrderListByMOrderNo" parameterType="java.lang.String">
+	<select id ="findSubOrderListByMOrderNo" resultMap="OrderResultMap">
 		select <include refid="all_Order_column"/>
 			from ORDER_DETAIL 
-		    where SP_ORDER_NO like '#{spMorderNo}%'
+		    where SP_ORDER_NO like '${spMorderNo}%'
 	</select>
 </mapper>

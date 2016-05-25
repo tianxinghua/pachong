@@ -26,7 +26,7 @@ public class OrderDetailDTO {
 	    private String quantity;
 	    private String purchasePriceDetail;
 	    private String status;
-	    private String deliverNo;
+	    private String deliveryNo;
 	    private Date createTime;
 	    private Date updateTime;
 	    private String excState;  //异常标记 发生错误 赋值为 1
