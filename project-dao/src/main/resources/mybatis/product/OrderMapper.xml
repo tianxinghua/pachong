@@ -344,7 +344,7 @@
         <include refid="save_column"></include>
         )
         values(
-        #{supplierId},#{supplierNo}, #{uuId}, #{spOrderId},#{spPurchaseNo},#{spPurchaseDetailNo},
+        #{supplierId},#{supplierNo}, #{uuId}, #{spOrderId},#{spMasterOrderNo},#{spPurchaseNo},#{spPurchaseDetailNo},
        	#{supplierOrderNo},
         #{detail},#{memo},#{status},
         #{createTime},#{purchasePriceDetail},#{consumerMsg}

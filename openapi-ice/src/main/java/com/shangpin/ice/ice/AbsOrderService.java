@@ -989,6 +989,7 @@ public abstract class AbsOrderService {
             spOrder.setSupplierNo(supplierNo);
             spOrder.setStatus(OrderStatus.WAITPLACED);
             spOrder.setSpOrderId(icewmsOrderDTO.getFormNo()+"|"+icewmsOrderDTO.getSkuNo());
+            spOrder.setSpMasterOrderNo(icewmsOrderDTO.getFormNo());
             spOrder.setDetail(skuMap.get(icewmsOrderDTO.getSkuNo())+":"+Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
             spOrder.setMemo(icewmsOrderDTO.getSkuNo()+":"+icewmsOrderDTO.getChangeForOrderQuantity());
             spOrder.setCreateTime(new Date());
