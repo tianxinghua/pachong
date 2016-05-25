@@ -58,7 +58,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
             OutTimeConfig timeConfig =new OutTimeConfig(1000*60*60,1000*60*60,1000*60*60);
             String result = HttpUtil45.get("http://www.giglio.com/feeds/shangpin.csv", timeConfig, null);
-            HttpUtil45.closePool();
+//            HttpUtil45.closePool();
 
 //            mongMap.put("supplierId", supplierId);
 //            mongMap.put("supplierName", "giglio");
