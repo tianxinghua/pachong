@@ -137,7 +137,24 @@ public class JedisClient {
 
     }
 
+    public  long getIncValue(String key){
+        writeErrorForInit();
+        Jedis jedis = null;
+        try {
+            jedis = pool.getResource();
+            if(null!=PASSWORD&&!"".equals(PASSWORD))   jedis.auth(PASSWORD) ;
+            return jedis.incr(key);
 
+        } catch (Exception e) {
+            logger.info("redis获取数据失败", e.getCause());
+            return 0;
+        }finally {
+            // 释放对象池
+            if(null != jedis) pool.returnResource(jedis);
+        }
+
+
+    }
 
 
 

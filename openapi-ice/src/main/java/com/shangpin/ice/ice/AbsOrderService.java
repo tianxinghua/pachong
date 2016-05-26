@@ -214,7 +214,7 @@ public abstract class AbsOrderService {
         SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MMDD_HH);
         String date = sdf.format(new Date());
         j.setValueOnAsync("iog_"+supplierId,date);
-    
+
         //获取订单数组
         Gson gson = new Gson();
         ICEWMSOrderRequestDTO  dto = new ICEWMSOrderRequestDTO();
