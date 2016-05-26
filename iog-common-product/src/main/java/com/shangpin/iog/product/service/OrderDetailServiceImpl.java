@@ -22,7 +22,7 @@ public class OrderDetailServiceImpl implements OrderDetailService{
 	@Override
 	public void updateOrderDetail(OrderDetailDTO orderDetailDTO)
 			throws ServiceException {
-		orderDetailDao.update(orderDetailDTO);
+		orderDetailDao.updateByOrderNo(orderDetailDTO);
 	}
 
 	@Override

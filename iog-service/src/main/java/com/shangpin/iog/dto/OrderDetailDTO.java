@@ -6,10 +6,11 @@ import java.util.Date;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
-
+@ToString
 /**
  * 子订单
  */
@@ -18,8 +19,9 @@ public class OrderDetailDTO {
 	private String uuid;
     private String supplierId; //供货商门户编号
     private String supplierNo;//供货商编号
-    private String spOrderNo;
+    private String spMasterOrderNo;
     private String spOrderDetailNo;
+    private String orderNo;
     private String spPurchaseNo;
     private String spPurchaseDetailNo;
     private String spSku;
