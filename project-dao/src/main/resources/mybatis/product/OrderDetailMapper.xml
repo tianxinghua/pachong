@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.OrderDetailMapper">
+	<resultMap id="OrderResultMap" type="iog_orderDetail">
+		<id column="ID" property="id" />
+		<result column="UUID" property="uuid"  />
+		<result column="SUPPLIER_ID" property="supplierId"  />
+		<result column="SUPPLIER_NO" property="supplierNo"  />
+		<result column="SP_MASTER_ORDER_NO" property="spMasterOrderNo"  />
+		<result column="SP_ORDER_DETAIL_NO" property="spOrderDetailNo" />
+		<result column="SP_PURCHASE_NO" property="spPurchaseNo" />
+		<result column="SP_PURCHASE_DETAIL_NO" property="spPurchaseDetailNo" />
+		<result column="SP_SKU" property="spSku" />
+		<result column="SUPPLIER_SKU" property="supplierSku" />
+		<result column="QUANTITY" property="quantity" />
+		<result column="PURCHASE_PRICE_DETAIL" property="purchasePriceDetail"  />
+		<result column="STATUS" property="status"/>
+		<result column="DELIVERY_NO" property="deliveryNo"/>
+		<result column="CREATE_TIME" property="createTime"  />
+		<result column="UPDATE_TIME" property="updateTime"/>
+		<result column="EXC_STATE" property="excState"  />
+		<result column="EXC_DESC" property="excDesc"  />
+		<result column="EXC_TIME" property="excTime" />
+		<result column="ORDER_NO" property="orderNo" />
+	</resultMap>
+	<sql id="all_Order_column">
+		ID, UUID,ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO,
+		SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU, SUPPLIER_SKU, QUANTITY, PURCHASE_PRICE_DETAIL,
+		STATUS, DELIVERY_NO, CREATE_TIME, UPDATE_TIME, EXC_STATE, EXC_DESC, EXC_TIME
+	</sql>
+	<sql id="save_column">
+		ID,UUID,ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO,
+		SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU, SUPPLIER_SKU, QUANTITY, PURCHASE_PRICE_DETAIL,
+		STATUS, DELIVERY_NO, CREATE_TIME
+	</sql>
+	<insert id="saveOrderDetailDTO" parameterType="iog_orderDetail">
+		insert into 
+			ORDER_DETAIL (
+		<include refid="save_column"/>
+		) values(#{id},#{uuid},#{orderNo},#{supplierId},#{supplierNo},#{spMasterOrderNo},
+		#{spOrderDetailNo},#{spPurchaseNo},#{spPurchaseDetailNo}, #{spSku},#{supplierSku},#{quantity},#{purchasePriceDetail},
+		#{status},#{deliveryNo},#{createTime})
+	</insert>
+	<update id="updateByOrderNo"  parameterType="iog_orderDetail" >
+		update ORDER_DETAIL
+		<set>
+			<if test="status != null">STATUS = #{status},</if>
+			<if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
+			<if test="spPurchaseDetailNo != null">SP_PURCHASE_DETAIL_NO = #{spPurchaseDetailNo},</if>
+			<if test="spPurchaseNo != null">SP_PURCHASE_NO = #{spPurchaseNo},</if>
+			<if test="deliveryNo != null">DELIVERY_NO = #{deliveryNo},</if>
+			<if test="excState != null">EXC_STATE = #{excState},</if>
+			<if test="excDesc != null">EXC_DESC = #{excDesc},</if>
+			<if test="purchasePriceDetail != null">PURCHASE_PRICE_DETAIL = #{purchasePriceDetail},</if>
+			<if test="excTime != null">EXC_TIME = #{excTime}</if>
+		</set>
+		where ORDER_NO = #{orderNo}
+	</update>
+	<select id ="findSubOrderListByMOrderNo" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL 
+		    where SP_MASTER_ORDER_NO like '${spMorderNo}%'
+	</select>
+	<select id="findSubOrderByPurchaseNo" parameterType="java.lang.String" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		where SP_PURCHASE_NO=#{purchaseNo}
+	</select>
+	<select id="findSubOrderByOrderNo" parameterType="java.lang.String" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		where ORDER_NO=#{orderNo}
+	</select>
+	<select id="findByUuId" parameterType="java.lang.String" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		where UUID=#{uuid}
+	</select>
+	<select id="findBySIDAndSNOAndStatus" parameterType="java.lang.String" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId} and</if>
+			<if test="null!=supplierNo">SUPPLIER_NO=#{supplierNo} and</if>
+			<if test="null!=status">STATUS=#{status}</if>
+		</where>
+	</select>
+	<select id="findBySupplierIdAndOrderStatusAndDateAndExcSatus" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=supplierNo">and SUPPLIER_NO=#{supplierNo}</if>
+			<if test="null!=status">and  STATUS = #{status}</if>
+			<if test="null!=excState">and  EXC_STATE = #{excState}</if>
+			<if test="null!=date">and CREATE_TIME >=DATE_SUB(#{date},INTERVAL  #{interval} HOUR)</if>
+		</where>
+	</select>	
+	
+</mapper>
