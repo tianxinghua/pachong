@@ -100,4 +100,16 @@
 			from ORDER_DETAIL 
 		    where SP_ORDER_NO like '${spMorderNo}%'
 	</select>
-</mapper>
+	
+	<select id="findSubOrderByPurchaseNo" parameterType="java.lang.String" resultMap="OrderResultMap">
+		select ID as id,SUPPLIER_ID as supplierId,SUPPLIER_NO as supplierNo,SP_ORDER_NO as spOrderNo,
+				SP_ORDER_DETAIL_NO,SP_PURCHASE_NO,
+				SP_PURCHASE_DETAIL_NO,SP_SKU,
+				SUPPLIER_SKU,QUANTITY,
+				PURCHASE_PRICE_DETAIL,STATUS,DELIVERY_NO
+		from ORDER_DETAIL
+		where SP_PURCHASE_NO=#{purchaseNo}			
+	</select>
+
+		
+	</mapper>

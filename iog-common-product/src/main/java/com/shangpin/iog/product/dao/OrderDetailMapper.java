@@ -18,4 +18,6 @@ public interface OrderDetailMapper extends IBaseDao<OrderDTO>{
 	
 	public List<OrderDetailDTO> findSubOrderListByMOrderNo(@Param("spMorderNo") String masterOrderNo);
 	
+	public OrderDetailDTO findSubOrderByPurchaseNo(@Param("purchaseNo") String spPurchaseNo);
+	
 }
