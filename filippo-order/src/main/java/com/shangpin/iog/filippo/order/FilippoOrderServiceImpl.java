@@ -67,9 +67,11 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 		String operationO = operationO(orderDTO);
 		if (operationO.contains("#a")) {
 			//数据推送成功，filippo系统返回信息
+			logger.info("下订单"+orderDTO.getSpOrderId()+"返回数据为"+operationO);
 			String[] split = operationO.split("\\|");
 			if (split[1].equals("ACK")) {
 				orderDTO.setExcState("0");
+				logger.info(orderDTO.getSpOrderId()+"设置供应商订单号为"+split[3]);
 				orderDTO.setSupplierOrderNo(split[3]);
 				orderDTO.setStatus(OrderStatus.PLACED);
 			}else{
@@ -240,7 +242,7 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 		param.put("w", "ha");param.put("q", "ordreq");
 		param.put("poc", deleteOrder.getSupplierOrderNo());
 		
-		logger.info("op=s请求参数为poc="+deleteOrder.getSupplierOrderNo());
+		logger.info("op=c请求参数为poc="+deleteOrder.getSupplierOrderNo());
 		String result = HttpUtil45.get(orderurl, outTimeConf, param);
 		return result;
 	}
