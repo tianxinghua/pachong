@@ -96,11 +96,100 @@
 		from ORDER_DETAIL
 		<where>
 			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
-			<if test="null!=supplierNo">and SUPPLIER_NO=#{supplierNo}</if>
 			<if test="null!=status">and  STATUS = #{status}</if>
 			<if test="null!=excState">and  EXC_STATE = #{excState}</if>
 			<if test="null!=date">and CREATE_TIME >=DATE_SUB(#{date},INTERVAL  #{interval} HOUR)</if>
 		</where>
-	</select>	
-	
+	</select>
+	<select id="findBySupplierIdAndStatus"  resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=status">and  STATUS = #{status}</if>
+		</where>
+	</select>
+	<select id="findBySupplierIdAndStatusAndDate"  resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=status">and  STATUS = #{status}</if>
+			<if test="null!=date">and CREATE_TIME >=DATE_SUB(#{date},INTERVAL  12 HOUR)</if>
+		</where>
+	</select>
+	<select id="findBySupplierIdAndStatusAndTime" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=status">and  STATUS = #{status}</if>
+			<if test="null!=startTime">and CREATE_TIME >= #{startTime}</if>
+			<if test="null!=endTime">
+				<![CDATA[ and CREATE_TIME < #{endTime}   ]]>
+				<!-- and CREATE_TIME <= #{endTime} -->
+			</if>
+		</where>
+	</select>
+	<select id="findBySupplierIdAndStatusAndUpdateTime" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=status">and  STATUS = #{status}</if>
+			<if test="null!=startTime">and UPDATE_TIME >= #{startTime}</if>
+			<if test="null!=endTime">
+				<![CDATA[ and UPDATE_TIME < #{endTime}   ]]>
+				<!-- and CREATE_TIME <= #{endTime} -->
+			</if>
+		</where>
+	</select>
+	<select id="getOrderBySupplierIdAndTime"  resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL ddd left join SUPPLIER su on ddd.SUPPLIER_ID = su.SUPPLIER_ID
+		<where>
+			su.SUPPLIER_STATE = '1'
+			<if test="null!=supplierId">and ddd.SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=startDate">and CREATE_TIME >=#{startDate}</if>
+			<if test="null!=endDate">
+				<![CDATA[ and CREATE_TIME <=#{endDate}    ]]>
+			</if>
+		</where>
+		order by SUPPLIER_NAME,CREATE_TIME ,STATUS
+	</select>
+	<select id="findExceptionOrder"  resultMap="OrderResultMap">
+		select ID as ID, SUPPLIER_ID, UUID , ORDER_NO, STATUS , CREATE_TIME , EXC_STATE ,
+		EXC_DESC ,EXC_TIME from ORDER_DETAIL WHERE EXC_STATE='1'
+	</select>
+	<update id="updateOrderStatus" parameterType="Map" >
+		update ORDER_DETAIL
+		<set>
+			<if test="status != null">STATUS = #{status},</if>
+			<if test="updateTime != null">UPDATE_TIME = #{updateTime}</if>
+		</set>
+		where UUID = #{uuid}
+	</update>
+	<update id="updateOrderExceptionMsg" parameterType="Map" >
+		update ORDER_DETAIL
+		<set>
+			<if test="excState != null">EXC_STATE = #{excState},</if>
+			<if test="excDesc != null">EXC_DESC = #{excDesc},</if>
+			<if test="excTime != null">EXC_TIME = #{excTime}</if>
+		</set>
+		where UUID = #{uuid}
+	</update>
+	<update id="updateDeliveryNo" parameterType="Map" >
+		update ORDER_DETAIL
+		<set>
+			<if test="status != null">STATUS = #{status},</if>
+			<if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
+			<if test="deliveryNo != null">DELIVERY_NO = #{deliveryNo}</if>
+		</set>
+		where UUID = #{uuid}
+	</update>
 </mapper>
