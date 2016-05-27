@@ -432,14 +432,25 @@ public abstract class AbsOrderService {
 
 
         List<OrderDTO>  orderDTOList= new ArrayList<>();
-
+        List<OrderDetailDTO> orderDetailDTOList = null;
         try {
             //获取已下单的订单信息
         	String nowDate = DateTimeUtil.getDateTime(); 
             orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
+            if(null!=orderDetailDTOList){
+                for(OrderDetailDTO detailDTO:orderDetailDTOList){
+                    orderDTOList.add(this.transOrderDatailToOrder(detailDTO));
+                }
+            }
+
             //判断12个小时还是未推送状态的 如果已经支付 就赋值成支付  待确认支付推送时 继承者handlerConfirm返回错误  使其赋值为采购异常
-            List<OrderDTO>  waitList = productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
-            orderDTOList.addAll(waitList);
+            List<OrderDetailDTO>  waitList = orderDetailService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
+            if(null!=waitList){
+                for(OrderDetailDTO detailDTO:orderDetailDTOList){
+                    orderDTOList.add(this.transOrderDatailToOrder(detailDTO));
+                }
+            }
+//            orderDTOList.addAll(waitList);
             
         } catch (ServiceException e) {
             e.printStackTrace();
