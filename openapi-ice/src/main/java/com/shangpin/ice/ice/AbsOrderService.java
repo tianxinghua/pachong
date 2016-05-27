@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
 
+import com.shangpin.iog.dto.OrderDetailDTO;
 import com.shangpin.iog.service.OrderDetailService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -58,6 +59,7 @@ import com.shangpin.iog.ice.dto.ResMessage;
 import com.shangpin.iog.service.ReturnOrderService;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.SkuRelationService;
+import org.springframework.core.annotation.Order;
 
 /**
  * Created by loyalty on 15/9/9.
@@ -566,13 +568,11 @@ public abstract class AbsOrderService {
                                         purchaseNobuffer.append(purchaseOrderDetail.SopPurchaseOrderNo).append(";");
                                         //赋值状态 海外商品每个采购单 只有一种商品
                                         orderDTO.setPurchasePriceDetail(purchaseOrderDetail.SkuPrice);
-                                        //TODO 如果一个退了 一个正常  无法区分
                                         if(5!=purchaseOrderDetail.DetailStatus){ //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
                                             orderDTO.setStatus(OrderStatus.PAYED);
+                                        }else{
+                                            orderDTO.setStatus(OrderStatus.REFUNDED);
                                         }
-//                                        else{
-//                                            orderDTO.setStatus(OrderStatus.REFUNDED);
-//                                        }
                                     }
 
 
@@ -580,20 +580,7 @@ public abstract class AbsOrderService {
 
                             }
 
-//                            //防止时间差 造成第一次查询时没有 ，补漏的订单重新推送 下次再此确认已支付推送 造成重复推送
-//                            OrderDTO orderOfDB = null;
-//                            try {
-//                                orderOfDB = productOrderService.getOrderByPurchaseNo(sopPurchaseOrderNo);
-//                            } catch (ServiceException e) {
-//                                e.printStackTrace();
-//                            }
-//                            if(null!=orderOfDB){
-//                                orderDTO.setStatus(OrderStatus.NOHANDLE);
-//                                orderDTO.setUpdateTime(new Date());
-//                                orderDTO.setExcTime(new Date());
-//                                orderDTO.setExcDesc("发现重复推送，不再处理");
-//
-//                            }
+
 
                         }
                         if(isNew) {//新系统
@@ -617,6 +604,28 @@ public abstract class AbsOrderService {
 
     }
 
+    /**
+     * 保留以前的逻辑 转化对象
+     * @param detailDTO
+     * @return
+     */
+    private OrderDTO transOrderDatailToOrder(OrderDetailDTO detailDTO){
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setSpOrderId(detailDTO.getOrderNo());//使用自定义的NO
+        orderDTO.setDetail(detailDTO.getSupplierSku()+":"+detailDTO.getQuantity());
+        orderDTO.setSpMasterOrderNo(detailDTO.getSpMasterOrderNo());
+        orderDTO.setUuId(detailDTO.getUuid());
+        orderDTO.setExcState(detailDTO.getExcState());
+        orderDTO.setPurchasePriceDetail(detailDTO.getPurchasePriceDetail());
+        orderDTO.setExcDesc(detailDTO.getExcDesc());
+        orderDTO.setMemo(detailDTO.getSpSku()+":"+ detailDTO.getQuantity());
+        orderDTO.setSpPurchaseNo(detailDTO.getSpPurchaseNo());
+        orderDTO.setSpPurchaseDetailNo(detailDTO.getSpPurchaseDetailNo());
+
+
+        return orderDTO;
+
+    }
 
     /*
     处理发生错误的订单
@@ -1061,8 +1070,8 @@ public abstract class AbsOrderService {
         }
         try {
             //TODO 替换为明细表
-            productOrderService.updateOrderMsg(map);
-
+//            productOrderService.updateOrderMsg(map);
+            orderDetailService.updateDetailMsg(map);
         } catch (ServiceException e) {
             logger.error("订单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");
             System.out.println("订单：" + spOrder.getSpOrderId() + " 下单成功。但更新订单状态失败");
@@ -1636,7 +1645,8 @@ public abstract class AbsOrderService {
 
         map.put("excTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
         try {
-            productOrderService.updateExceptionMsg(map);
+//            productOrderService.updateExceptionMsg(map);
+            orderDetailService.updateDetailMsg(map);
         } catch (ServiceException e) {
             logger.error("保存订单号：" + uuid + "，错误信息时失败");
             e.printStackTrace();
