@@ -212,7 +212,7 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 		param.put("o", "shangG");param.put("p", "aW5102cn6");
 		param.put("w", "ha");param.put("q", "ordreq");
 		param.put("v", skuid.split("-")[0]);param.put("tg", skuDTO.getProductName());
-		param.put("cf", orderDTO.getSpOrderId());
+		param.put("cf", orderDTO.getSpOrderId().replace("|", "_"));
 
 		logger.info("op=o请求参数为v="+skuid.split("-")[0]+"tg="+skuDTO.getProductName());
 		
@@ -249,6 +249,9 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 	
 	
 	public static void main(String[] args) {
+		
+		String s = "a|s";
+		System.out.println(s.replace("|", "_"));
 //		OrderDTO orderDTO = new OrderDTO();
 //		orderDTO.setDetail("2161905-4148973:1,");
 //		Map<String, String> param = new HashMap<String, String>();
