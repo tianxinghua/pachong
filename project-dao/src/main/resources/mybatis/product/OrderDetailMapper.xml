@@ -6,6 +6,7 @@
 		<result column="UUID" property="uuid"  />
 		<result column="SUPPLIER_ID" property="supplierId"  />
 		<result column="SUPPLIER_NO" property="supplierNo"  />
+		<result column="SUPPLIER_ORDER_NO" property="supplierOrderNo"  />
 		<result column="SP_MASTER_ORDER_NO" property="spMasterOrderNo"  />
 		<result column="SP_ORDER_DETAIL_NO" property="spOrderDetailNo" />
 		<result column="SP_PURCHASE_NO" property="spPurchaseNo" />
@@ -24,12 +25,12 @@
 		<result column="ORDER_NO" property="orderNo" />
 	</resultMap>
 	<sql id="all_Order_column">
-		ID, UUID,ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO,
+		ID, UUID,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO,
 		SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU, SUPPLIER_SKU, QUANTITY, PURCHASE_PRICE_DETAIL,
 		STATUS, DELIVERY_NO, CREATE_TIME, UPDATE_TIME, EXC_STATE, EXC_DESC, EXC_TIME
 	</sql>
 	<sql id="save_column">
-		ID,UUID,ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO,
+		ID,UUID,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO,
 		SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU, SUPPLIER_SKU, QUANTITY, PURCHASE_PRICE_DETAIL,
 		STATUS, DELIVERY_NO, CREATE_TIME
 	</sql>
@@ -37,7 +38,7 @@
 		insert into 
 			ORDER_DETAIL (
 		<include refid="save_column"/>
-		) values(#{id},#{uuid},#{orderNo},#{supplierId},#{supplierNo},#{spMasterOrderNo},
+		) values(#{id},#{uuid},#{orderNo},#{supplierOrderNo},#{supplierId},#{supplierNo},#{spMasterOrderNo},
 		#{spOrderDetailNo},#{spPurchaseNo},#{spPurchaseDetailNo}, #{spSku},#{supplierSku},#{quantity},#{purchasePriceDetail},
 		#{status},#{deliveryNo},#{createTime})
 	</insert>
@@ -53,6 +54,7 @@
 			<if test="excDesc != null">EXC_DESC = #{excDesc},</if>
 			<if test="purchasePriceDetail != null">PURCHASE_PRICE_DETAIL = #{purchasePriceDetail},</if>
 			<if test="excTime != null">EXC_TIME = #{excTime}</if>
+			<if test="supplierOrderNo != null">SUPPLIER_ORDER_NO = #{supplierOrderNo}</if>
 		</set>
 		where ORDER_NO = #{orderNo}
 	</update>
@@ -163,7 +165,7 @@
 		order by SUPPLIER_NAME,CREATE_TIME ,STATUS
 	</select>
 	<select id="findExceptionOrder"  resultMap="OrderResultMap">
-		select ID as ID, SUPPLIER_ID, UUID , ORDER_NO, STATUS , CREATE_TIME , EXC_STATE ,
+		select ID , SUPPLIER_ID, UUID , ORDER_NO, STATUS , CREATE_TIME , EXC_STATE ,
 		EXC_DESC ,EXC_TIME from ORDER_DETAIL WHERE EXC_STATE='1'
 	</select>
 	<update id="updateOrderStatus" parameterType="Map" >

@@ -51,21 +51,10 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 	}
 
 	@Override
-	public List<String> getOrderIdBySupplierIdAndOrderStatus(String supplierId,
+	public List<OrderDetailDTO> getOrderIdBySupplierIdAndOrderStatus(String supplierId,
 			String status) throws ServiceException {
-		List<String> uuIdList = new ArrayList<>();
-		try {
-			List<OrderDetailDTO> orderDTOList = orderDetailDao
-					.findBySupplierIdAndStatus(supplierId, status);
-			for (OrderDetailDTO dto : orderDTOList) {
-				uuIdList.add(dto.getUuid());
-			}
-		} catch (Exception e) {
-			logger.error("查询订单失败：供货商：" + supplierId + " 订单状态：" + status + " | "
-					+ e.getMessage());
-			e.printStackTrace();
-		}
-		return uuIdList;
+	
+		return orderDetailDao.findBySupplierIdAndStatus(supplierId, status);
 	}
 
 	@Override
