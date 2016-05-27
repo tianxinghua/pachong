@@ -10,7 +10,7 @@ import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.OrderDetailDTO;
 
 @Mapper
-public interface OrderDetailMapper extends IBaseDao<OrderDTO>{
+public interface OrderDetailMapper extends IBaseDao<OrderDetailDTO>{
 	
 	public void saveOrderDetailDTO(OrderDetailDTO orderDetailDTO);
 
