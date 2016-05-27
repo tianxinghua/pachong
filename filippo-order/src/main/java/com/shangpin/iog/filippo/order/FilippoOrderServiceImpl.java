@@ -1,47 +1,24 @@
 package com.shangpin.iog.filippo.order;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.security.auth.callback.ConfirmationCallback;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.common.utils.DateTimeUtil;
-import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.dto.SkuDTO;
-import com.shangpin.iog.dto.TokenDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.service.ProductFetchService;
-import com.shangpin.iog.service.SkuPriceService;
-import com.shangpin.iog.service.TokenService;
 @Component
 public class FilippoOrderServiceImpl extends AbsOrderService{
 	
@@ -65,13 +42,12 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		String operationO = operationO(orderDTO);
+		logger.info(orderDTO.getSpOrderId()+"推送订单返回数据op=o:"+operationO);
 		if (operationO.contains("#a")) {
 			//数据推送成功，filippo系统返回信息
-			logger.info("下订单"+orderDTO.getSpOrderId()+"返回数据为"+operationO);
 			String[] split = operationO.split("\\|");
 			if (split[1].equals("ACK")) {
 				orderDTO.setExcState("0");
-				logger.info(orderDTO.getSpOrderId()+"设置供应商订单号为"+split[3]);
 				orderDTO.setSupplierOrderNo(split[3]);
 				orderDTO.setStatus(OrderStatus.PLACED);
 			}else{
@@ -87,6 +63,7 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		String operationS = operationS(orderDTO);
+		logger.info(orderDTO.getSpOrderId()+"确认订单返回数据op=s:"+operationS);
 		if (operationS.contains("#a")) {
 			if (operationS.contains("NACK")) {
 				//确认订单失败
@@ -117,6 +94,7 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
 		String operationC = operationC(deleteOrder);
+		logger.info(deleteOrder.getSpOrderId()+"取消订单返回数据op=c:"+operationC);
 		if (operationC.contains("#a")) {
 			if (operationC.contains("NACK")) {
 				//取消订单失败
@@ -212,7 +190,7 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 		param.put("o", "shangG");param.put("p", "aW5102cn6");
 		param.put("w", "ha");param.put("q", "ordreq");
 		param.put("v", skuid.split("-")[0]);param.put("tg", skuDTO.getProductName());
-		param.put("cf", orderDTO.getSpOrderId().replace("|", "_"));
+		param.put("cf", orderDTO.getSpOrderId());
 
 		logger.info("op=o请求参数为v="+skuid.split("-")[0]+"tg="+skuDTO.getProductName());
 		
@@ -242,16 +220,13 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 		param.put("w", "ha");param.put("q", "ordreq");
 		param.put("poc", deleteOrder.getSupplierOrderNo());
 		
-		logger.info("op=c请求参数为poc="+deleteOrder.getSupplierOrderNo());
+		logger.info("op=s请求参数为poc="+deleteOrder.getSupplierOrderNo());
 		String result = HttpUtil45.get(orderurl, outTimeConf, param);
 		return result;
 	}
 	
 	
 	public static void main(String[] args) {
-		
-		String s = "a|s";
-		System.out.println(s.replace("|", "_"));
 //		OrderDTO orderDTO = new OrderDTO();
 //		orderDTO.setDetail("2161905-4148973:1,");
 //		Map<String, String> param = new HashMap<String, String>();
