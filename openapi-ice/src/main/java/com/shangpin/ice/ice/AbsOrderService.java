@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
 
+import com.shangpin.iog.service.OrderDetailService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -111,6 +112,9 @@ public abstract class AbsOrderService {
 
     @Autowired
     com.shangpin.iog.service.OrderService productOrderService;
+
+    @Autowired
+    OrderDetailService orderDetailService;
 
     @Autowired
     ReturnOrderService returnOrderService;
@@ -1045,7 +1049,7 @@ public abstract class AbsOrderService {
         //更新订单状态
         Map<String,String> map = new HashMap<>();
 
-        map.put("uuId", spOrder.getUuId());
+        map.put("uuid", spOrder.getUuId());
         map.put("supplierOrderNo",spOrder.getSupplierOrderNo());
         map.put("excState",spOrder.getExcState());
         map.put("excDesc",spOrder.getExcDesc());
@@ -1058,6 +1062,7 @@ public abstract class AbsOrderService {
         try {
             //TODO 替换为明细表
             productOrderService.updateOrderMsg(map);
+
         } catch (ServiceException e) {
             logger.error("订单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");
             System.out.println("订单：" + spOrder.getSpOrderId() + " 下单成功。但更新订单状态失败");
