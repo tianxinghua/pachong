@@ -3,8 +3,12 @@ package com.shangpin.iog.product.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.framework.page.Page;
+import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.common.utils.redis.JedisClient;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.OrderDetailDTO;
 import com.shangpin.iog.dto.OrderTimeUpdateDTO;
+import com.shangpin.iog.product.dao.OrderDetailMapper;
 import com.shangpin.iog.product.dao.OrderMapper;
 import com.shangpin.iog.product.dao.OrderTimeUpdateMapper;
 import com.shangpin.iog.service.OrderService;
@@ -13,15 +17,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by loyalty on 15/9/11.
@@ -37,8 +39,15 @@ public class OrderServiceImpl implements OrderService {
     
     private static String splitSign = ",";
 
+    private static JedisClient redisClient  = JedisClient.getInstance();
+
+    private static String  ORDER_KEY ="EP_ORDER_NO_KEY";
+
     @Autowired
     OrderMapper orderDAO;
+
+    @Autowired
+    OrderDetailMapper orderDetailDAO;
     
     @Autowired
     OrderTimeUpdateMapper orderUpdateDAO;
@@ -54,6 +63,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+
     public boolean saveOrderWithResult(OrderDTO orderDTO) throws ServiceException {
         try {
             orderDAO.save(orderDTO);
@@ -64,6 +74,67 @@ public class OrderServiceImpl implements OrderService {
         }
         return false;
     }
+
+    @Override
+    @Transactional(rollbackFor = {ServiceException.class})
+    public List<OrderDTO> saveOrderDetail(OrderDTO orderDTO) throws ServiceException {
+        List<OrderDTO> detailDTOList = new ArrayList<>();
+        try {
+            orderDAO.save(orderDTO);
+            String orderDetail = orderDTO.getDetail();
+            String memo= orderDTO.getMemo();
+            String supplierSku="",sQuantity="",spSku="";
+
+            int quantiy = 0;
+            //获取供货商的SKU 和 购买数量
+            if(null!=orderDetail&&orderDetail.indexOf(",")>0){
+                orderDetail= orderDetail.substring(0,orderDetail.indexOf(","));
+            }
+            if(null!=orderDetail){
+                supplierSku = orderDetail.substring(0,orderDetail.indexOf(":"));
+                sQuantity= orderDetail.substring(orderDetail.indexOf(":")+1,orderDetail.length());
+            }
+            if(StringUtils.isNotBlank(memo)){
+                spSku = memo.substring(0,memo.indexOf(":"));
+            }
+
+            try {
+                quantiy = new Integer(sQuantity);
+                Date date = new Date();
+                String seq="";
+                for(int i=0;i<quantiy;i++){          //拆单
+                    OrderDTO temp = new OrderDTO();//发送给供货商商的信息
+                    BeanUtils.copyProperties(orderDTO,temp);
+                    OrderDetailDTO detailDTO = new OrderDetailDTO();
+                    detailDTO.setSupplierId(orderDTO.getSupplierId());
+                    detailDTO.setSupplierNo(orderDTO.getSupplierNo());
+                    detailDTO.setCreateTime(new Date());
+                    detailDTO.setUuid(UUID.randomUUID().toString());
+                    detailDTO.setSpMasterOrderNo(orderDTO.getSpMasterOrderNo());
+                    seq =   "0000000"+ redisClient.getIncValue("ORDER_KEY");
+                    detailDTO.setOrderNo(DateTimeUtil.strForDate(date)+seq.substring(seq.length()-7,seq.length()));
+                    temp.setSpOrderId(detailDTO.getOrderNo());//修改订单编号
+                    temp.setDetail(supplierSku+":1");
+                    detailDTO.setQuantity("1");
+                    detailDTO.setSupplierSku(supplierSku);
+                    detailDTO.setSpSku(spSku);
+                    detailDTO.setStatus(orderDTO.getStatus());
+                    orderDetailDAO.saveOrderDetailDTO(detailDTO);
+                    detailDTOList.add(temp);
+                }
+            } catch (NumberFormatException e) {
+                throw new ServiceMessageException("无数量");
+            }
+
+        } catch (Exception e) {
+            logger.error("订单保存失败："+ e.getMessage(),e);
+
+            throw new ServiceMessageException(e.getMessage());
+        }
+        return  detailDTOList;
+    }
+
+
     @Override
     public boolean checkOrderByOrderIdSupplier(OrderDTO orderDTO){
     	

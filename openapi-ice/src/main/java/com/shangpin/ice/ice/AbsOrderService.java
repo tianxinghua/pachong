@@ -999,31 +999,44 @@ public abstract class AbsOrderService {
                 boolean flag = false;
                 flag = productOrderService.checkOrderByOrderIdSupplier(spOrder);
                 if(!flag){ //查询订单是否存在 发生
-                	 if(productOrderService.saveOrderWithResult(spOrder)){
-                         try {
-                             //处理供货商订单
-                             handleSupplierOrder(spOrder);
-                             //更新海外购订单信息
-                             updateOrderMsg(spOrder);
+                    List<OrderDTO>  orderDTOs = null;
+
+                    try {
+                        orderDTOs= productOrderService.saveOrderDetail(spOrder);
+                        if(null!=orderDTOs) {
+                            for (OrderDTO orderDTO : orderDTOs) {
+                                try {
+                                    //处理供货商订单
+                                    handleSupplierOrder(orderDTO);
+                                    //更新海外购订单信息
+                                    updateOrderMsg(orderDTO);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    loggerError.error("供货商：" + spOrder.getSupplierId()+ "订单 ："+ spOrder.getSpOrderId() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
+                                    Map<String, String> map = new HashMap<>();
+                                    map.put("excDesc", e.getMessage());
+                                    setErrorMsg(spOrder.getUuId(), map);
+                                }
+                            }
+                            logger.info("----订单处理完成----");
+                        }else{
+                            loggerError.error("下单错误 无订单产生");
+
+                        }
 
 
-                         } catch (Exception e) {
-                             e.printStackTrace();
-                             loggerError.error("供货商：" + spOrder.getSupplierId()+ "订单 ："+ spOrder.getSpOrderId() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
-                             Map<String, String> map = new HashMap<>();
-                             map.put("excDesc", e.getMessage());
-                             setErrorMsg(spOrder.getUuId(), map);
+                    } catch (Exception e) {
+                        loggerError.error("下单错误 " + e.getMessage());
+                        e.printStackTrace();
 
-                         }
-                     }else{
-                         loggerError.error("供货商：" + spOrder.getSupplierId()+ "订单 ："+ spOrder.getSpOrderId() + "保存订单信息失败");
-                     }
+                    }
+
                 }
             } catch (Exception e){
-                logger.error("下单错误 " + e.getMessage());
+                loggerError.error("下单错误 " + e.getMessage());
                 e.printStackTrace();
             }
-            logger.info("----订单处理完成----");
+
         }
     }
 
@@ -1042,7 +1055,7 @@ public abstract class AbsOrderService {
             map.put("updateTime",DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
         }
         try {
-
+            //TODO 替换为明细表
             productOrderService.updateOrderMsg(map);
         } catch (ServiceException e) {
             logger.error("订单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");

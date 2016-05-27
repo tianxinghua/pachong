@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import redis.clients.jedis.*;
 
 import java.util.List;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 /**
@@ -146,8 +147,9 @@ public class JedisClient {
             return jedis.incr(key);
 
         } catch (Exception e) {
-            logger.info("redis获取数据失败", e.getCause());
-            return 0;
+            logger.error("redis获取数据失败", e.getCause());
+            Random ra =new Random();
+            return ra.nextInt(1000000);
         }finally {
             // 释放对象池
             if(null != jedis) pool.returnResource(jedis);
@@ -160,7 +162,7 @@ public class JedisClient {
 
     private void writeErrorForInit(){
         if(null==pool) {
-            logger.info("redis初始化失败");
+            logger.error("redis初始化失败");
             return;
         }
     }
