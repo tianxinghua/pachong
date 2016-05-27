@@ -17,6 +17,7 @@ import lombok.ToString;
 public class OrderDetailDTO {
 	private BigInteger id;
 	private String uuid;
+	private String supplierOrderNo;//供应商订单标号
     private String supplierId; //供货商门户编号
     private String supplierNo;//供货商编号
     private String spMasterOrderNo;
