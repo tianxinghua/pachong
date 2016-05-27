@@ -43,7 +43,7 @@ public interface OrderDetailService {
      * @return
      * @throws ServiceException
      */
-    public List<String> getOrderIdBySupplierIdAndOrderStatus(String supplierId,String status) throws ServiceException;
+    public List<OrderDetailDTO> getOrderIdBySupplierIdAndOrderStatus(String supplierId,String status) throws ServiceException;
     
     /**
      * 判断时间是否超过一天
