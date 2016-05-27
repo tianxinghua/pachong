@@ -151,4 +151,12 @@ public interface OrderDetailMapper extends IBaseDao<OrderDetailDTO> {
      * @return
      */
     public int updateOrderExceptionMsg(Map<String,String> paraMap);
+
+    /**
+     * 更新订单发货单信息
+     * map 包含
+     * @param paraMap
+     * @return
+     */
+    public int updateDeliveryNo(Map<String,String> paraMap);
 }

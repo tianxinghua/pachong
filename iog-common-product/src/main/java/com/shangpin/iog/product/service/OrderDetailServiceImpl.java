@@ -152,4 +152,18 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void updateDeliveryNo(Map<String, String> exceptionMap)
+			throws ServiceException {
+		judgeMapParam(exceptionMap);
+
+		try {
+			orderDetailDao.updateDeliveryNo(exceptionMap);
+		} catch (Exception e) {
+			logger.error(exceptionMap.get("uuid") + "更改发货单失败");
+			e.printStackTrace();
+		}
+	}
+
 }

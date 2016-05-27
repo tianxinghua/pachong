@@ -127,5 +127,20 @@ public interface OrderDetailService {
      * @throws ServiceException
      */
     public void  updateExceptionMsg(Map<String,String> exceptionMap) throws ServiceException;
+    /**
+     * 增加发货单
+     *
+     *  <set>
+     <if test="status != null"> STATUS = #{status}, </if>
+     <if test="updateTime != null"> UPDATE_TIME = #{updateTime}, </if>
+     <if test="deliveryNo != null"> DELIVERY_NO = #{deliveryNo}</if>
+
+
+     </set>
+     where UUID = #{uuid}
+     * @param exceptionMap
+     * @throws ServiceException
+     */
+    public void updateDeliveryNo(Map<String,String> exceptionMap) throws ServiceException;
 
 }
