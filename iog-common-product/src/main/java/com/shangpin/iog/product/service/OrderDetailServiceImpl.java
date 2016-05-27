@@ -51,7 +51,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 	}
 
 	@Override
-	public List<OrderDetailDTO> getOrderIdBySupplierIdAndOrderStatus(String supplierId,
+	public List<OrderDetailDTO> getOrderDetailBySupplierIdAndOrderStatus(String supplierId,
 			String status) throws ServiceException {
 	
 		return orderDetailDao.findBySupplierIdAndStatus(supplierId, status);
