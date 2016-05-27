@@ -166,4 +166,11 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 		}
 	}
 
+	@Override
+	public void updateDetailMsg(Map<String, String> detailMap)
+			throws ServiceException {
+		judgeMapParam(detailMap);
+		orderDetailDao.updateAllByMap(detailMap);
+	}
+
 }
