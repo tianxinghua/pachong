@@ -142,5 +142,12 @@ public interface OrderDetailService {
      * @throws ServiceException
      */
     public void updateDeliveryNo(Map<String,String> exceptionMap) throws ServiceException;
+    /**
+     * 通过uuid更新详细订单信息
+     * map 包含status  orderNo updateTime spPurchaseDetailNo spPurchaseNo deliveryNo excState excDesc purchasePriceDetail excTime
+     * @param paraMap
+     * @return
+     */
+    public void updateDetailMsg(Map<String,String> detailMap) throws ServiceException;
 
 }
