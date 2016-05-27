@@ -383,11 +383,46 @@ public abstract class AbsUpdateProductStock {
 		Set<String> skuNoShangpinSet = iceStock.keySet();
 		int skuNum = 1;
 		List<String> skuNoShangpinList = new ArrayList<>();
-		Map<String,Integer> toUpdateIce=new HashMap<>();
+
+		//更新库存
+		int failCount=0;
 		for(Iterator<String> itor =skuNoShangpinSet.iterator();itor.hasNext();){
 			if(skuNum%100==0){
 				//调用接口 查找库存
+				Map<String,Integer> toUpdateIce=new HashMap<>();
 				removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList,toUpdateIce);
+
+				Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
+				loggerInfo.info("待更新的数据总和：--------"+toUpdateIce.size());
+				while (iter.hasNext()) {
+					Entry<String, Integer> entry = iter.next();
+					Boolean result =true;
+					int stock = 0;
+					for(int i=0;i<2;i++){  //发生错误 允许再执行一次
+						try{
+							if(entry.getValue()>=0){
+								stock = entry.getValue();
+							}
+							result = servant.UpdateStock(supplier, entry.getKey(), stock);
+							loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+stock+" ,"+ result);
+						}catch(ApiException e){
+							result=false;
+							loggerError.error("更新sku错误："+entry.getKey()+":"+stock+"---"+e.Message);
+						} catch(Exception e){
+							logger.error("更新sku错误："+entry.getKey()+":"+stock,e);
+							loggerError.error("更新sku错误："+entry.getKey()+":"+stock,e);
+						}
+
+						if(result){
+							i=2;
+						}
+					}
+
+					if(!result){
+						failCount++;
+						logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),stock);
+					}
+				}
 
 				skuNoShangpinList = new ArrayList<>();
 			}
@@ -395,13 +430,9 @@ public abstract class AbsUpdateProductStock {
 			skuNum++;
 		}
 		//排除最后一次
+		Map<String,Integer> toUpdateIce=new HashMap<>();
 		removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList,toUpdateIce);
 
-
-
-
-		//更新库存
-		int failCount=0;
 		Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
 		loggerInfo.info("待更新的数据总和：--------"+toUpdateIce.size());
 		while (iter.hasNext()) {
