@@ -130,7 +130,77 @@ public class OrderServiceImpl implements OrderService {
                     orderDetailDAO.saveOrderDetailDTO(detailDTO);
                     detailDTOList.add(temp);
                 }
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
+                logger.error("订单保存失败："+ e.getMessage(),e);
+                throw new ServiceMessageException("无数量");
+            }
+
+        } catch (Exception e) {
+            logger.error("订单保存失败："+ e.getMessage(),e);
+
+            throw new ServiceMessageException(e.getMessage());
+        }
+        return  detailDTOList;
+    }
+
+    @Override
+    public List<OrderDTO> saveOrderDetail(OrderDTO orderDTO, Map<String, Integer> orderNoQuantityMap,int count) throws ServiceException {
+        List<OrderDTO> detailDTOList = new ArrayList<>();
+        try {
+            orderDAO.save(orderDTO);
+            String orderDetail = orderDTO.getDetail();
+            String memo= orderDTO.getMemo();
+            String supplierSku="",sQuantity="",spSku="";
+
+            int quantiy = 0;
+            //获取供货商的SKU 和 购买数量
+            if(null!=orderDetail&&orderDetail.indexOf(",")>0){
+                orderDetail= orderDetail.substring(0,orderDetail.indexOf(","));
+            }
+            if(null!=orderDetail){
+                supplierSku = orderDetail.substring(0,orderDetail.indexOf(":"));
+                sQuantity= orderDetail.substring(orderDetail.indexOf(":")+1,orderDetail.length());
+            }
+            if(StringUtils.isNotBlank(memo)){
+                spSku = memo.substring(0,memo.indexOf(":"));
+            }
+
+            try {
+                quantiy = new Integer(sQuantity);
+
+                Date date = new Date();
+                String seq="";
+                for(int i=0;i<quantiy;i++){          //拆单
+                    OrderDTO temp = new OrderDTO();//发送给供货商商的信息
+                    BeanUtils.copyProperties(orderDTO,temp);
+                    OrderDetailDTO detailDTO = new OrderDetailDTO();
+                    detailDTO.setSupplierId(orderDTO.getSupplierId());
+                    detailDTO.setSupplierNo(orderDTO.getSupplierNo());
+                    detailDTO.setCreateTime(new Date());
+                    detailDTO.setUuid(UUID.randomUUID().toString());
+                    detailDTO.setSpMasterOrderNo(orderDTO.getSpMasterOrderNo());
+                    detailDTO.setEpMasterOrderNo(orderDTO.getSpOrderId());//主订单号+“|”+尚品的SKU
+//                    seq =   "0000000"+ redisClient.getIncValue("ORDER_KEY");
+//                    detailDTO.setOrderNo(DateTimeUtil.strForDate(date)+seq.substring(seq.length()-7,seq.length()));
+                    if(count==1){
+                        detailDTO.setOrderNo(orderDTO.getSpMasterOrderNo());
+                    }else{
+                        detailDTO.setOrderNo(orderDTO.getSpMasterOrderNo()+orderNoQuantityMap.get(orderDTO.getSpMasterOrderNo()));
+                    }
+
+
+                    temp.setSpOrderId(detailDTO.getOrderNo());//修改订单编号
+                    temp.setDetail(supplierSku+":1");
+                    detailDTO.setQuantity("1");
+                    detailDTO.setSupplierSku(supplierSku);
+                    detailDTO.setSpSku(spSku);
+                    detailDTO.setStatus(orderDTO.getStatus());
+                    orderDetailDAO.saveOrderDetailDTO(detailDTO);
+                    orderNoQuantityMap.put(orderDTO.getSpMasterOrderNo(),orderNoQuantityMap.get(orderDTO.getSpMasterOrderNo())-1);
+                    detailDTOList.add(temp);
+                }
+            } catch (Exception e) {
+                logger.error("订单保存失败："+ e.getMessage(),e);
                 throw new ServiceMessageException("无数量");
             }
 

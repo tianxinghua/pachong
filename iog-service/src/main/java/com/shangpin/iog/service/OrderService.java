@@ -37,6 +37,16 @@ public interface OrderService {
 
 
     /**
+     * 保存订单信息
+     * @param orderDTO 订单DTO
+     * @param orderNoQuantityMap 本供应商主订单编号对应的购买数量
+     * @param count  供货商本订单对应的总的销售数量
+     * @throws ServiceException
+     */
+    public List<OrderDTO> saveOrderDetail(OrderDTO orderDTO,Map<String,Integer> orderNoQuantityMap,int count) throws ServiceException;
+
+
+    /**
      * 更新订单信息
      * @param orderDTO
      * @throws ServiceException
