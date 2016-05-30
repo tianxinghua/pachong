@@ -1035,12 +1035,15 @@ public abstract class AbsOrderService {
         String uuid;
         Map<String,Integer> orderNoQuantityMap = new HashMap<>();
 
+        Map<String,Integer> orderNoQuantityOriginMap = new HashMap<>();
+
         for(ICEWMSOrderDTO icewmsOrderDTO:orderLit){
             if(orderNoQuantityMap.containsKey(icewmsOrderDTO.getFormNo())){
                 orderNoQuantityMap.put(icewmsOrderDTO.getFormNo(),orderNoQuantityMap.get(icewmsOrderDTO.getFormNo())+Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
-
+                orderNoQuantityOriginMap.put(icewmsOrderDTO.getFormNo(),orderNoQuantityOriginMap.get(icewmsOrderDTO.getFormNo())+Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
             } else{
                 orderNoQuantityMap.put(icewmsOrderDTO.getFormNo(),Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
+                orderNoQuantityOriginMap.put(icewmsOrderDTO.getFormNo(),Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
             }
         }
 
@@ -1070,7 +1073,7 @@ public abstract class AbsOrderService {
                     List<OrderDTO>  orderDTOs = null;
 
                     try {
-                        orderDTOs= productOrderService.saveOrderDetail(spOrder,orderNoQuantityMap,orderNoQuantityMap.get(spOrder.getSpMasterOrderNo()));
+                        orderDTOs= productOrderService.saveOrderDetail(spOrder,orderNoQuantityMap,orderNoQuantityOriginMap.get(spOrder.getSpMasterOrderNo()));
                         if(null!=orderDTOs) {
                             for (OrderDTO orderDTO : orderDTOs) {
                                 try {
@@ -1132,19 +1135,41 @@ public abstract class AbsOrderService {
         }
     }
 
-    private void handleCancelOfWMS(String supplierNo,String supplierId,Map<String,String> skuMap,List<ICEWMSOrderDTO>  refundList,boolean handleCancel) {
+    private void handleCancelOfWMS(String supplierNo,String supplierId,Map<String,String> skuMap,List<ICEWMSOrderDTO>  cancelList,boolean handleCancel) {
         String spOrderNo;
-        for(ICEWMSOrderDTO refundOrder:refundList) {
+
+        Map<String,Integer> orderNoQuantityMap = new HashMap<>();
+        Map<String,Integer> orderNoQuantityOriginMap = new HashMap<>();
+        for(ICEWMSOrderDTO icewmsOrderDTO:cancelList){
+            if(orderNoQuantityMap.containsKey(icewmsOrderDTO.getFormNo())){
+                orderNoQuantityMap.put(icewmsOrderDTO.getFormNo(),orderNoQuantityMap.get(icewmsOrderDTO.getFormNo())+Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
+                orderNoQuantityOriginMap.put(icewmsOrderDTO.getFormNo(),orderNoQuantityOriginMap.get(icewmsOrderDTO.getFormNo())+Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
+
+            } else{
+                orderNoQuantityMap.put(icewmsOrderDTO.getFormNo(),Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
+                orderNoQuantityOriginMap.put(icewmsOrderDTO.getFormNo(),Math.abs(icewmsOrderDTO.getChangeForOrderQuantity()));
+            }
+        }
+
+
+        for(ICEWMSOrderDTO refundOrder:cancelList) {
 
             int quantity = Math.abs(refundOrder.getChangeForOrderQuantity());
 
 
             for(int i=0;i<quantity;i++){ //拆分子单到 退单表
-                if(1==quantity){
-                    spOrderNo = refundOrder.getFormNo();
+//                if(1==quantity){
+//                    spOrderNo = refundOrder.getFormNo();
+//                }else{
+//                    spOrderNo = refundOrder.getFormNo()+i;
+//                }
+                if(1==orderNoQuantityOriginMap.get(refundOrder.getFormNo())){
+                    spOrderNo=refundOrder.getFormNo();
                 }else{
-                    spOrderNo = refundOrder.getFormNo()+i;
+                    spOrderNo = refundOrder.getFormNo()+  orderNoQuantityMap.get(refundOrder.getFormNo());
+                    orderNoQuantityMap.put(refundOrder.getFormNo(),orderNoQuantityMap.get(refundOrder.getFormNo())-1);
                 }
+
                 String uuid = null;
                 OrderDetailDTO detailDTO = null;
                 try {
