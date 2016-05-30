@@ -45,16 +45,22 @@ public interface OrderDetailMapper extends IBaseDao<OrderDetailDTO> {
 	/**
 	 * 通过自定义号查询子订单
 	 * 
-	 * @param String
-	 *            orderNo
+	 * @param   orderNo
 	 * @return 子订单 OrderDetailDTO
 	 */
 	public OrderDetailDTO findSubOrderByOrderNo(@Param("orderNo") String orderNo);
 
 	/**
+	 * 根据订单的子订单号查找子订单
+	 * @param orderDetailNo
+	 * @return
+     */
+	public List<OrderDetailDTO> findOrderDetailByOrderDetailNo(@Param("orderDetailNo") String orderDetailNo);
+
+	/**
 	 * 根据订单唯一编号获取信息
 	 * 
-	 * @param uuId
+	 * @param uuid
 	 * 
 	 * @return OrderDetailDTO
 	 */
@@ -77,7 +83,7 @@ public interface OrderDetailMapper extends IBaseDao<OrderDetailDTO> {
 	 * 查询供货商异常的待处理订单
 	 * 
 	 * @param supplierId
-	 * @param supplierNo
+
 	 * @param status
 	 * @param excState
 	 * @param date

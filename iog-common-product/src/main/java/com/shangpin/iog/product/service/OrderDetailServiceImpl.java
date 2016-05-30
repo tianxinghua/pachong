@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,18 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 	}
 
 	@Override
+	public boolean saveOrderDetailWithResult(OrderDetailDTO orderDetailDTO) throws ServiceException {
+		try {
+			orderDetailDao.saveOrderDetailDTO(orderDetailDTO);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+
+	@Override
 	public void updateOrderDetail(OrderDetailDTO orderDetailDTO)
 			throws ServiceException {
 		orderDetailDao.updateByOrderNo(orderDetailDTO);
@@ -49,6 +62,26 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 	public void update(OrderDetailDTO orderDetailDTO) throws ServiceException {
 		orderDetailDao.updateByOrderNo(orderDetailDTO);
 	}
+
+	@Override
+	public OrderDetailDTO getOrderDetailByOrderNo(String orderNo) throws ServiceException {
+		if(StringUtils.isBlank(orderNo)) throw new ServiceMessageException("订单编号参数为空");
+		return orderDetailDao.findSubOrderByOrderNo(orderNo);
+	}
+
+	@Override
+	public List<OrderDetailDTO> getOrderDetailBySpOrderDetailNo(String orderDetailNo) throws ServiceException {
+		if(StringUtils.isBlank(orderDetailNo)) throw new ServiceMessageException("订单子编号参数为空");
+		return orderDetailDao.findOrderDetailByOrderDetailNo(orderDetailNo);
+	}
+
+
+	@Override
+	public OrderDetailDTO getOrderByPurchaseNo(String purchaseNo) throws ServiceException {
+		if(StringUtils.isBlank(purchaseNo)) throw new ServiceMessageException("采购单参数为空");
+		return orderDetailDao.findSubOrderByPurchaseNo(purchaseNo);
+	}
+
 
 	@Override
 	public List<OrderDetailDTO> getOrderDetailBySupplierIdAndOrderStatus(String supplierId,

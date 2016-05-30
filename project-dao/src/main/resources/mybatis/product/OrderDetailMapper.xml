@@ -6,6 +6,8 @@
 		<result column="UUID" property="uuid"  />
 		<result column="SUPPLIER_ID" property="supplierId"  />
 		<result column="SUPPLIER_NO" property="supplierNo"  />
+		<result column="EP_MASTER_ORDER_NO" property="epMasterOrderNo" />
+		<result column="ORDER_NO" property="orderNo" />
 		<result column="SUPPLIER_ORDER_NO" property="supplierOrderNo"  />
 		<result column="SP_MASTER_ORDER_NO" property="spMasterOrderNo"  />
 		<result column="SP_ORDER_DETAIL_NO" property="spOrderDetailNo" />
@@ -22,15 +24,15 @@
 		<result column="EXC_STATE" property="excState"  />
 		<result column="EXC_DESC" property="excDesc"  />
 		<result column="EXC_TIME" property="excTime" />
-		<result column="ORDER_NO" property="orderNo" />
+
 	</resultMap>
 	<sql id="all_Order_column">
-		ID, UUID,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO,
+		ID, UUID,EP_MASTER_ORDER_NO,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO,
 		SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU, SUPPLIER_SKU, QUANTITY, PURCHASE_PRICE_DETAIL,
 		STATUS, DELIVERY_NO, CREATE_TIME, UPDATE_TIME, EXC_STATE, EXC_DESC, EXC_TIME
 	</sql>
 	<sql id="save_column">
-		ID,UUID,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO,
+		UUID,EP_MASTER_ORDER_NO,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO,
 		SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU, SUPPLIER_SKU, QUANTITY, PURCHASE_PRICE_DETAIL,
 		STATUS, DELIVERY_NO, CREATE_TIME
 	</sql>
@@ -38,7 +40,7 @@
 		insert into 
 			ORDER_DETAIL (
 		<include refid="save_column"/>
-		) values(#{id},#{uuid},#{orderNo},#{supplierOrderNo},#{supplierId},#{supplierNo},#{spMasterOrderNo},
+		) values(#{uuid},#{epMasterOrderNo},#{orderNo},#{supplierOrderNo},#{supplierId},#{supplierNo},#{spMasterOrderNo},
 		#{spOrderDetailNo},#{spPurchaseNo},#{spPurchaseDetailNo}, #{spSku},#{supplierSku},#{quantity},#{purchasePriceDetail},
 		#{status},#{deliveryNo},#{createTime})
 	</insert>
@@ -76,6 +78,15 @@
 		from ORDER_DETAIL
 		where ORDER_NO=#{orderNo}
 	</select>
+
+	<select id="findOrderDetailByOrderDetailNo" parameterType="java.lang.String" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		where SP_ORDER_DETAIL_NO=#{orderDetailNo}
+	</select>
+
+
 	<select id="findByUuId" parameterType="java.lang.String" resultMap="OrderResultMap">
 		select
 		<include refid="all_Order_column"/>

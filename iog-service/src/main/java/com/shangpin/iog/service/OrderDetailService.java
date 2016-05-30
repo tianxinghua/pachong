@@ -15,6 +15,12 @@ public interface OrderDetailService {
 	 * @throws ServiceException
 	 */
 	public void saveOrderDetail(OrderDetailDTO orderDetailDTO)throws ServiceException;
+
+
+    public boolean  saveOrderDetailWithResult(OrderDetailDTO orderDetailDTO)throws ServiceException;
+
+
+
 	/**
 	 * 更新子订单信息
 	 * @param orderDetailDTO
@@ -31,10 +37,36 @@ public interface OrderDetailService {
 	
 	   /**
      * 更新订单信息
-     * @param orderDTO
+     * @param orderDetailDTO
      * @throws ServiceException
      */
     public void update(OrderDetailDTO orderDetailDTO) throws ServiceException;
+
+
+    /**
+     * 根据订单号获取订单明细
+     * @param orderNo  ：EP的订单号
+     * @return
+     * @throws ServiceException
+     */
+    public OrderDetailDTO getOrderDetailByOrderNo(String orderNo) throws ServiceException;
+
+    /**
+     * 根据尚品的子订单号获取订单明细
+     * @param orderDetailNo
+     * @return
+     * @throws ServiceException
+     */
+    public List<OrderDetailDTO> getOrderDetailBySpOrderDetailNo(String orderDetailNo)  throws ServiceException;
+
+
+    /**
+     * 根据采购单获取订单信息
+     * @param purchaseNo ：采购单编号
+     * @return
+     * @throws ServiceException
+     */
+    public OrderDetailDTO getOrderByPurchaseNo(String purchaseNo) throws ServiceException;
     	
     /**
      * 获取订单状态 根据供货商ID 和 订单状态

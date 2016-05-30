@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
 
+import ShangPin.SOP.Api.ApiException;
 import com.shangpin.iog.dto.OrderDetailDTO;
 import com.shangpin.iog.service.OrderDetailService;
 import org.apache.commons.lang.StringUtils;
@@ -288,11 +289,11 @@ public abstract class AbsOrderService {
         // 检查订单是否已经被支付  若支付修改其状态
         checkPayed(supplierId);
 
-        //处理异常
+        //处理推送异常
         handlePurchaseOrderException(supplierId);
-
+        //处理取消异常
         handleCancelOrderException(supplierId);
-
+       //处理退款异常
         handleRefundPurchaseOrderException(supplierId);
 
         //处理订单
@@ -435,22 +436,29 @@ public abstract class AbsOrderService {
         List<OrderDetailDTO> orderDetailDTOList = null;
         try {
             //获取已下单的订单信息
-        	String nowDate = DateTimeUtil.getDateTime(); 
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
-            if(null!=orderDetailDTOList){
-                for(OrderDetailDTO detailDTO:orderDetailDTOList){
-                    orderDTOList.add(this.transOrderDatailToOrder(detailDTO));
-                }
-            }
+        	String nowDate = DateTimeUtil.getDateTime();
+
+            orderDetailDTOList = orderDetailService.getOrderDetailBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
+
+//            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
+
+//            if(null!=orderDetailDTOList){
+//                for(OrderDetailDTO detailDTO:orderDetailDTOList){
+//                    orderDTOList.add(this.transOrderDatailToOrder(detailDTO));
+//                }
+//            }
 
             //判断12个小时还是未推送状态的 如果已经支付 就赋值成支付  待确认支付推送时 继承者handlerConfirm返回错误  使其赋值为采购异常
             List<OrderDetailDTO>  waitList = orderDetailService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
-            if(null!=waitList){
-                for(OrderDetailDTO detailDTO:orderDetailDTOList){
-                    orderDTOList.add(this.transOrderDatailToOrder(detailDTO));
-                }
+//            if(null!=waitList){
+//                for(OrderDetailDTO detailDTO:orderDetailDTOList){
+//                    orderDTOList.add(this.transOrderDatailToOrder(detailDTO));
+//                }
+//            }
+            if(null==orderDetailDTOList){
+                orderDetailDTOList = new ArrayList<>();
             }
-//            orderDTOList.addAll(waitList);
+            orderDetailDTOList.addAll(waitList);
             
         } catch (ServiceException e) {
             e.printStackTrace();
@@ -514,101 +522,103 @@ public abstract class AbsOrderService {
 
             String spOrderNo="",spSku="";
             boolean isNew = true;
-            for(OrderDTO orderDTO:orderDTOList){
 
-                if(orderDTO.getSpOrderId().startsWith("C")||orderDTO.getSpOrderId().indexOf("-")>0){//采购单推送的
-                    orderDTO.setStatus(OrderStatus.PAYED);//如果退款了 无所谓 临时保存为支付状态 后续有退款的处理
-                    productOrderService.update(orderDTO);
+            Map<String,String>  spMasterOrderNoMap = new HashMap<>();
 
-                }else{//订单推送
-                    Map<String,List<PurchaseOrderDetailSpecial>>  purchaseOrderMap = new HashMap<>();
+            Map<String,List<PurchaseOrderDetailSpecial>>  purchaseOrderMap = new HashMap<>();
+
+            for(OrderDetailDTO detailDTO:orderDetailDTOList) {
+
+                if ( detailDTO.getEpMasterOrderNo().indexOf("-") > 0) {//重新采购 或者 财务确认重新生成的采购单
+                    detailDTO.setStatus(OrderStatus.PAYED);//如果退款了 无所谓 临时保存为支付状态 后续有退款的处理
+                    try {
+                        orderDetailService.update(detailDTO);
+                    } catch (ServiceException e1) {
+                        loggerError.error("重新采购的采购单更新状态时失败  ");
+                        e1.printStackTrace();
+                    }
+
+                } else {//订单推送
+
                     //获取真正的主订单号
-                    spOrderNo =orderDTO.getSpOrderId();
-                    if(spOrderNo.indexOf("|")>0){
-                        spOrderNo = spOrderNo.substring(0,spOrderNo.indexOf("|"));
-                        spSku=orderDTO.getSpOrderId().substring(orderDTO.getSpOrderId().indexOf("|")+1,orderDTO.getSpOrderId().length());
-                        isNew = true;
-                    }else{
-                        spOrderNo = orderDTO.getSpOrderId();
-                        isNew = false;
+                    spOrderNo = detailDTO.getSpMasterOrderNo();
+//                    if(spOrderNo.indexOf("|")>0){
+//                        spOrderNo = spOrderNo.substring(0,spOrderNo.indexOf("|"));
+//                        spSku=orderDTO.getSpOrderId().substring(orderDTO.getSpOrderId().indexOf("|")+1,orderDTO.getSpOrderId().length());
+//                        isNew = true;
+//                    }else{
+//                        spOrderNo = orderDTO.getSpOrderId();
+//                        isNew = false;
+//                    }
+                    if (!spMasterOrderNoMap.containsKey(spOrderNo)) {
+                        PurchaseOrderDetailSpecialPage orderDetailSpecialPage = null;
+                        try {
+                            orderDetailSpecialPage = servant.FindPurchaseOrderDetailSpecial(supplierId, "", spOrderNo);
+                        } catch (ApiException e1) {
+                            e1.printStackTrace();
+                        }
+                        logger.info("查询是否支付，订单号:" + spOrderNo);
+                        if (null != orderDetailSpecialPage && null != orderDetailSpecialPage.PurchaseOrderDetails && orderDetailSpecialPage.PurchaseOrderDetails.size() > 0) {  //存在采购单 就代表已支付
+
+                            for (PurchaseOrderDetailSpecial orderDetail : orderDetailSpecialPage.PurchaseOrderDetails) {
+                                sopPurchaseOrderNo = orderDetail.SopPurchaseOrderNo;
+                                if (purchaseOrderMap.containsKey(sopPurchaseOrderNo)) {
+                                    purchaseOrderMap.get(sopPurchaseOrderNo).add(orderDetail);
+                                } else {
+                                    List<PurchaseOrderDetailSpecial> orderList = new ArrayList<>();
+                                    orderList.add(orderDetail);
+                                    purchaseOrderMap.put(sopPurchaseOrderNo, orderList);
+                                }
+                            }
+                        }
                     }
 
-                    PurchaseOrderDetailSpecialPage  orderDetailSpecialPage = servant.FindPurchaseOrderDetailSpecial(supplierId,"",spOrderNo);
-                    logger.info("查询是否支付，订单号:"+spOrderNo);
-                    if(null!=orderDetailSpecialPage&&null!=orderDetailSpecialPage.PurchaseOrderDetails&&orderDetailSpecialPage.PurchaseOrderDetails.size()>0){  //存在采购单 就代表已支付
-
-                        for (PurchaseOrderDetailSpecial orderDetail : orderDetailSpecialPage.PurchaseOrderDetails) {
-                            sopPurchaseOrderNo  = orderDetail.SopPurchaseOrderNo;
-                            if(purchaseOrderMap.containsKey(sopPurchaseOrderNo)){
-                                purchaseOrderMap.get(sopPurchaseOrderNo).add(orderDetail);
-                            }else{
-                                List<PurchaseOrderDetailSpecial> orderList = new ArrayList<>();
-                                orderList.add(orderDetail);
-                                purchaseOrderMap.put(sopPurchaseOrderNo,orderList);
-
-                            }
-
-
-                        }
-                        StringBuffer purchaseOrderDetailbuffer =new StringBuffer();
-                        StringBuffer purchaseNobuffer= new  StringBuffer();
-                        for(Iterator<Map.Entry<String,List<PurchaseOrderDetailSpecial>>> itor = purchaseOrderMap.entrySet().iterator();itor.hasNext();) {
-                            Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();
-                            sopPurchaseOrderNo  = entry.getKey();
-
-
-                            //获取同一产品的数量
-                            if(!isNew){//老系统
-                                for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){
-
-                                    purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
-                                    //赋值状态 海外商品每个采购单 只有一种商品
-                                    orderDTO.setSpPurchaseNo(sopPurchaseOrderNo);
-                                    orderDTO.setPurchasePriceDetail(purchaseOrderDetail.SkuPrice);
-                                    if(5!=purchaseOrderDetail.DetailStatus){ //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
-                                        orderDTO.setStatus(OrderStatus.PAYED);
-                                    }else{
-                                        orderDTO.setStatus(OrderStatus.REFUNDED);
-                                    }
-
+                    StringBuffer purchaseOrderDetailbuffer = new StringBuffer();
+                    StringBuffer purchaseNobuffer = new StringBuffer();
+                    for (Iterator<Map.Entry<String, List<PurchaseOrderDetailSpecial>>> itor = purchaseOrderMap.entrySet().iterator(); itor.hasNext(); ) {
+                        Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();
+                        sopPurchaseOrderNo = entry.getKey();
+                        List<PurchaseOrderDetailSpecial> purchaseOrderDetailSpecialList =  entry.getValue();
+                        for (int i=0;i<purchaseOrderDetailSpecialList.size();i++) {
+                            PurchaseOrderDetailSpecial purchaseOrderDetail = purchaseOrderDetailSpecialList.get(i);
+                            if (detailDTO.getSpSku().equals(purchaseOrderDetail.SkuNo)) { //与ORDER 同一个商品
+                                purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
+                                purchaseNobuffer.append(purchaseOrderDetail.SopPurchaseOrderNo).append(";");
+                                //赋值状态 海外商品每个采购单 只有一种商品
+                                detailDTO.setPurchasePriceDetail(purchaseOrderDetail.SkuPrice);
+                                detailDTO.setSpOrderDetailNo(purchaseOrderDetail.OrderDetailNo);
+                                detailDTO.setSpPurchaseNo(sopPurchaseOrderNo);
+                                detailDTO.setSpPurchaseDetailNo(purchaseOrderDetail.SopPurchaseOrderDetailNo);
+                                if (5 != purchaseOrderDetail.DetailStatus) { //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
+                                    detailDTO.setStatus(OrderStatus.PAYED);
+                                } else {
+                                    detailDTO.setStatus(OrderStatus.REFUNDED);
                                 }
-                            }else{//新系统
-                                for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){
-                                    if(spSku.equals(purchaseOrderDetail.SkuNo)){ //与ORDER 同一个商品
-                                        purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
-                                        purchaseNobuffer.append(purchaseOrderDetail.SopPurchaseOrderNo).append(";");
-                                        //赋值状态 海外商品每个采购单 只有一种商品
-                                        orderDTO.setPurchasePriceDetail(purchaseOrderDetail.SkuPrice);
-                                        if(5!=purchaseOrderDetail.DetailStatus){ //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
-                                            orderDTO.setStatus(OrderStatus.PAYED);
-                                        }else{
-                                            orderDTO.setStatus(OrderStatus.REFUNDED);
-                                        }
-                                    }
-
-
-                                }
-
+                                purchaseOrderDetailSpecialList.remove(i);
+                                i--;
                             }
-
-
-
                         }
-                        if(isNew) {//新系统
-                            orderDTO.setSpPurchaseNo(purchaseNobuffer.toString().substring(0,purchaseNobuffer.toString().length()-1));
-                        }
-
-                        orderDTO.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString().substring(0,purchaseOrderDetailbuffer.toString().length()-1));
-                        productOrderService.update(orderDTO);
-
-
                     }
+//                    if (isNew) {//新系统
+//                        orderDTO.setSpPurchaseNo(purchaseNobuffer.toString().substring(0, purchaseNobuffer.toString().length() - 1));
+//                    }
+//
+//                    orderDTO.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString().substring(0, purchaseOrderDetailbuffer.toString().length() - 1));
+//                    productOrderService.update(orderDTO);
+                    try {
+                        orderDetailService.update(detailDTO);
+                    } catch (ServiceException e1) {
+                        e1.printStackTrace();
+                    }
+
+
                 }
 
 
-
-
             }
+
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -643,15 +653,19 @@ public abstract class AbsOrderService {
      */
     private void handlePurchaseOrderException(String supplierId){
         //拉取采购单存入本地库
-        List<OrderDTO>  orderDTOList= null;
+//        List<OrderDTO>  orderDTOList= null;
+        List<OrderDetailDTO> detailDTOList =null;
         try {
         	String nowDate = DateTimeUtil.getDateTime(); 
-//            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId, OrderStatus.WAITPLACED,nowDate);
-            orderDTOList  = productOrderService.getOrderBySupplierIdAndOrderStatusAndExceptionStatus(supplierId,OrderStatus.WAITPLACED,"1",nowDate,2);
-            if(null!=orderDTOList){
+//            orderDTOList  = productOrderService.getOrderBySupplierIdAndOrderStatusAndExceptionStatus(supplierId,OrderStatus.WAITPLACED,"1",nowDate,2);
+            detailDTOList = orderDetailService.getOrderBySupplierIdAndOrderStatusAndExceptionStatus(supplierId,OrderStatus.WAITPLACED,"1",nowDate,2);
 
-                for(OrderDTO orderDTO:orderDTOList){
 
+            if(null!=detailDTOList){
+
+                for(OrderDetailDTO detailDTO:detailDTOList){
+                    //兼容以前的程序
+                    OrderDTO orderDTO = this.transOrderDatailToOrder(detailDTO);
                     try {
                         //处理供货商订单
                         handleSupplierOrder(orderDTO);
@@ -685,7 +699,7 @@ public abstract class AbsOrderService {
             if(null!=orderDTOList){
 
                 for(ReturnOrderDTO deleteOrder:orderDTOList){
-
+                    //获取子订单
                     try {
                         //处理取消订单
                         handleCancelOrder(deleteOrder);
@@ -870,94 +884,82 @@ public abstract class AbsOrderService {
 
         for(Iterator<Map.Entry<String,List<PurchaseOrderDetailSpecial>>> itor = orderMap.entrySet().iterator();itor.hasNext();){
             Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();
-            Map<String,Integer> stockMap = new HashMap<>();
             StringBuffer purchaseOrderDetailbuffer =new StringBuffer();
-            //获取同一产品的数量
 
-            for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){
-
-                if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
-                    stockMap.put(purchaseOrderDetail.SupplierSkuNo, stockMap.get(purchaseOrderDetail.SupplierSkuNo)+1);
-                }else{
-                    stockMap.put(purchaseOrderDetail.SupplierSkuNo, 1);
-
-                }
-
-            }
             StringBuffer buffer = new StringBuffer();
             StringBuffer sopbuffer= new StringBuffer();
-            String purchsePrice = "",spOrderNo="",spSku="";
-            for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){
+            String purchsePrice = "",spMasterOrderNo="",spSku="",supplierSku="",spOrderDetailNo="";
+            String purchaseNo,purchaseDetailNo="";
+            purchaseNo = entry.getKey();
+            for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){  //每个采购单只有一个
                 //记录采购单明细信息 以便发货
                 purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
                 purchsePrice = purchaseOrderDetail.SkuPrice;
                 logger.info(entry.getValue()  + " 采购价 " + purchsePrice);
-                //计算同一采购单的相同产品的数量
-                if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
-                    spOrderNo= purchaseOrderDetail.OrderNo;
-                    spSku =   purchaseOrderDetail.SkuNo;
-                    buffer.append(purchaseOrderDetail.SupplierSkuNo).append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
-                    sopbuffer.append(purchaseOrderDetail.SkuNo).append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
-                    stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
-                }
 
+                spMasterOrderNo= purchaseOrderDetail.OrderNo;
+                spSku =   purchaseOrderDetail.SkuNo;
+                buffer.append(purchaseOrderDetail.SupplierSkuNo).append(":1");
+                sopbuffer.append(purchaseOrderDetail.SkuNo).append(":1");
+                spOrderDetailNo = purchaseOrderDetail.OrderDetailNo;
+                purchaseDetailNo = purchaseOrderDetail.SopPurchaseOrderDetailNo;
+                supplierSku = purchaseOrderDetail.SupplierSkuNo;
             }
 
-            OrderDTO orderOfDB = null;
-            try {
-                orderOfDB = productOrderService.getOrderByOrderNo(spOrderNo+"|"+spSku);
-                if(null==orderOfDB){
-                    orderOfDB = productOrderService.getOrderByOrderNo(spOrderNo);
-                }
 
+            List<OrderDetailDTO> detailDTOList =null;
+            try {
+                 //根据订单子编号查找EP库中的采购单
+                detailDTOList = orderDetailService.getOrderDetailBySpOrderDetailNo(spOrderDetailNo);
             } catch (ServiceException e) {
                 e.printStackTrace();
             }
-            if(null!=orderOfDB){
-                  if(null==orderOfDB.getSpPurchaseNo()||"".equals(orderOfDB.getSpPurchaseNo())){//新插入的记录， 由于时间差的原因尚未判断是否支付 待下次时间验证
-                      continue;//不做处理 待下次支付判断时 会做处理
-                  }else{
-                      if(entry.getKey().equals(orderOfDB.getSpPurchaseNo())){//原有数据不做处理
+            if(null!=detailDTOList&&detailDTOList.size()>0){
+                  for(OrderDetailDTO detailDTO:detailDTOList){
+                      if(entry.getKey().equals(detailDTO.getSpPurchaseNo())){//原有数据不做处理
                           continue;
-                      }else{//补单或重新采购的单子
-                    	  try {
-  							OrderDTO  orderOfDBForPurchase = productOrderService.getOrderByPurchaseNo(entry.getKey());
-  							if(null!=orderOfDBForPurchase){//采购单已插入 但订单不同以前的 现订单= 原订单+“-” + 两位随机数
-  								continue;
-  							}
-  						} catch (ServiceException e) {
-  							continue;
-  						}
                       }
                   }
 
-            }else{
-                continue;//一定会有的
+            }else{//新插入的记录， 由于时间差的原因尚未判断是否支付 待下次时间验证
+               continue;
             }
 
-
-
             //存储
-            OrderDTO spOrder =new OrderDTO();
-            spOrder.setUuId(UUID.randomUUID().toString());
-            spOrder.setSupplierId(supplierId);
-            spOrder.setSupplierNo(supplierNo);
-            spOrder.setStatus(OrderStatus.WAITPLACED);
-            spOrder.setSpPurchaseNo(entry.getKey());
-            spOrder.setSpOrderId(spOrderNo+"|"+spSku+"-"+String.valueOf((int)(Math.random() * 10))+String.valueOf((int)(Math.random() * 10)));
-            spOrder.setSpMasterOrderNo(spOrderNo);
-            spOrder.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString());
-            spOrder.setDetail(buffer.toString().substring(0,buffer.toString().length()-1));
-            spOrder.setMemo(sopbuffer.toString().substring(0,sopbuffer.toString().length()-1));
-            spOrder.setPurchasePriceDetail(purchsePrice);
-            spOrder.setCreateTime(new Date());
+//            OrderDTO spOrder =new OrderDTO();
+//            spOrder.setUuId(UUID.randomUUID().toString());
+//            spOrder.setSupplierId(supplierId);
+//            spOrder.setSupplierNo(supplierNo);
+//            spOrder.setStatus(OrderStatus.WAITPLACED);
+//            spOrder.setSpPurchaseNo(entry.getKey());
+//            spOrder.setSpOrderId(spOrderNo+"|"+spSku+"-"+String.valueOf((int)(Math.random() * 10))+String.valueOf((int)(Math.random() * 10)));
+//            spOrder.setSpMasterOrderNo(spOrderNo);
+//            spOrder.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString());
+//            spOrder.setDetail(buffer.toString().substring(0,buffer.toString().length()-1));
+//            spOrder.setMemo(sopbuffer.toString().substring(0,sopbuffer.toString().length()-1));
+//            spOrder.setPurchasePriceDetail(purchsePrice);
+//            spOrder.setCreateTime(new Date());
+            OrderDetailDTO detailDTO = new OrderDetailDTO();
+            detailDTO.setUuid(UUID.randomUUID().toString());
+            detailDTO.setSupplierId(supplierId);
+            detailDTO.setSupplierNo(supplierNo);
+            detailDTO.setStatus(OrderStatus.WAITPLACED);
+            detailDTO.setOrderNo(spMasterOrderNo+"-"+String.valueOf((int)(Math.random() * 10))+String.valueOf((int)(Math.random() * 10)));
+            detailDTO.setSpPurchaseNo(purchaseNo);
+            detailDTO.setSpPurchaseDetailNo(purchaseDetailNo);
+            detailDTO.setSpMasterOrderNo(spMasterOrderNo);
+            detailDTO.setEpMasterOrderNo(spMasterOrderNo+"|"+spSku);
+            detailDTO.setSpOrderDetailNo(spOrderDetailNo);
+            detailDTO.setSupplierSku(supplierSku);
+            detailDTO.setPurchasePriceDetail(purchsePrice);
+            detailDTO.setCreateTime(new Date());
             try {
-                logger.info("采购单信息转化订单后信息："+spOrder.toString());
-                System.out.println("采购单信息转化订单后信息："+spOrder.toString());
+                logger.info("采购单信息转化订单后信息："+detailDTO.toString());
+                System.out.println("采购单信息转化订单后信息："+detailDTO.toString());
 
-
-                if(productOrderService.saveOrderWithResult(spOrder)){
+                if(orderDetailService.saveOrderDetailWithResult(detailDTO)){
                     try {
+                        OrderDTO spOrder = this.transOrderDatailToOrder(detailDTO);
                         //处理供货商订单
                         handleSupplierOrder(spOrder);
                         //更新海外购订单信息
@@ -966,23 +968,23 @@ public abstract class AbsOrderService {
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        loggerError.error("供货商：" + spOrder.getSupplierId()+" 采购单 ："+ spOrder.getSpPurchaseNo() + "处理失败。失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
+                        loggerError.error("供货商：" + detailDTO.getSupplierId()+" 采购单 ："+ detailDTO.getSpPurchaseNo() + "处理失败。失败信息 " + detailDTO.toString()+" 原因 ：" + e.getMessage() );
                         Map<String,String> map = new HashMap<>();
                         map.put("excDesc",e.getMessage());
-                        setErrorMsg(spOrder.getUuId(),map);
+                        setErrorMsg(detailDTO.getUuid(),map);
 
                     }
                 }else{
-                    loggerError.error("供货商：" + spOrder.getSupplierId()+ " 订单 ："+ spOrder.getSpOrderId() + "保存订单信息失败");
+                    loggerError.error("供货商：" + detailDTO.getSupplierId()+ " 订单 ："+ detailDTO.getEpMasterOrderNo() + "保存订单信息失败");
                 }
 
 
             } catch (ServiceException e) {
-                logger.error("采购单 ："+ spOrder.getSpPurchaseNo() + "失败,失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage() );
-                System.out.println("采购单 ："+ spOrder.getSpPurchaseNo() + "失败,失败信息 " + spOrder.toString()+" 原因 ：" + e.getMessage());
+                loggerError.error("采购单 ："+ detailDTO.getSpPurchaseNo() + "失败,失败信息 " + detailDTO.toString()+" 原因 ：" + e.getMessage() );
+                System.out.println("采购单 ："+ detailDTO.getSpPurchaseNo() + "失败,失败信息 " + detailDTO.toString()+" 原因 ：" + e.getMessage());
                 e.printStackTrace();
             } catch (Exception e){
-                logger.error("下单错误 " + e.getMessage());
+                loggerError.error("下单错误 " + e.getMessage());
                 e.printStackTrace();
             }
 
@@ -1090,66 +1092,75 @@ public abstract class AbsOrderService {
     }
 
     private void handleCancelOfWMS(String supplierNo,String supplierId,Map<String,String> skuMap,List<ICEWMSOrderDTO>  refundList,boolean handleCancel) {
+        String spOrderNo;
         for(ICEWMSOrderDTO refundOrder:refundList) {
 
-            String uuid = null;
-            OrderDTO order = null;
-            try {
-                order = productOrderService.getOrderByOrderNo(refundOrder.getFormNo()+"|"+refundOrder.getSkuNo());
-                if(null==order){
-                    order = productOrderService.getOrderByOrderNo(refundOrder.getFormNo());
-                }
-            } catch (ServiceException e) {
-                e.printStackTrace();
-            }
-            //存储
-            if(null==order){//采购单已到退款状态  未有已支付状态
-                loggerError.error("退单信息：" + refundOrder.toString() + "  未发现订单，异常不做处理。");
-                continue;
-            }
-
-            ReturnOrderDTO deleteOrder =new ReturnOrderDTO();
-            deleteOrder.setUuId(order.getUuId());
-            deleteOrder.setSupplierId(supplierId);
-            deleteOrder.setSupplierNo(supplierNo);
-            deleteOrder.setSupplierOrderNo(order.getSupplierOrderNo());
-            if(handleCancel) {
-                deleteOrder.setStatus(OrderStatus.WAITCANCEL);
-            }else{
-                deleteOrder.setStatus(OrderStatus.NOHANDLE);
-            }
-            deleteOrder.setSpOrderId(refundOrder.getFormNo()+"|"+refundOrder.getSkuNo());
-            deleteOrder.setDetail(skuMap.get(refundOrder.getSkuNo())+":"+refundOrder.getChangeForOrderQuantity());
-            deleteOrder.setMemo(refundOrder.getSkuNo()+":"+refundOrder.getChangeForOrderQuantity());
-            deleteOrder.setCreateTime(new Date());
-            try{
-                logger.info("退单信息："+deleteOrder.toString());
-                if(returnOrderService.saveOrderWithResult(deleteOrder)){
-                    if(!handleCancel){
-                        continue;
-                    }
-                    try {
-                        //处理退单
-                        handleCancelOrder(deleteOrder);
-                        //更改退单状态无论成功或失败
-                        updateCancelOrderMsg( deleteOrder);
+            int quantity = Math.abs(refundOrder.getChangeForOrderQuantity());
 
 
-                    } catch (Exception e) {
-                        //下单失败
-                        loggerError.error("供货商：" + deleteOrder.getSupplierId()+" 取消订单："+deleteOrder.getSpOrderId()+" 处理失败");
-                        e.printStackTrace();
-                    }
+            for(int i=0;i<quantity;i++){ //拆分子单到 退单表
+                if(1==quantity){
+                    spOrderNo = refundOrder.getFormNo();
                 }else{
-                    loggerError.error("供货商：" + deleteOrder.getSupplierId() +" 取消订单："+ deleteOrder.getSpOrderId() + "保存失败");
+                    spOrderNo = refundOrder.getFormNo()+i;
+                }
+                String uuid = null;
+                OrderDetailDTO detailDTO = null;
+                try {
+                    detailDTO = orderDetailService.getOrderDetailByOrderNo(spOrderNo);
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                }
+
+                if(null==detailDTO){//采购单已到退款状态  未有已支付状态
+                    loggerError.error("退单信息：" + refundOrder.toString() + "  未发现订单，异常不做处理。");
+                    continue;
+                }
+                ReturnOrderDTO deleteOrder =new ReturnOrderDTO();
+                deleteOrder.setUuId(detailDTO.getUuid());
+                deleteOrder.setSupplierId(supplierId);
+                deleteOrder.setSupplierNo(supplierNo);
+                deleteOrder.setSupplierOrderNo(detailDTO.getSupplierOrderNo());
+                if(handleCancel) {
+                    deleteOrder.setStatus(OrderStatus.WAITCANCEL);
+                }else{
+                    deleteOrder.setStatus(OrderStatus.NOHANDLE);
+                }
+                deleteOrder.setSpOrderId(detailDTO.getOrderNo());
+                deleteOrder.setDetail(skuMap.get(refundOrder.getSkuNo())+":1");
+                deleteOrder.setMemo(refundOrder.getSkuNo()+":1");
+                deleteOrder.setCreateTime(new Date());
+                try{
+                    logger.info("退单信息："+deleteOrder.toString());
+                    if(returnOrderService.saveOrderWithResult(deleteOrder)){
+                        if(!handleCancel){
+                            continue;
+                        }
+                        try {
+                            //处理退单
+                            handleCancelOrder(deleteOrder);
+                            //更改退单状态无论成功或失败
+                            updateCancelOrderMsg( deleteOrder);
+
+
+                        } catch (Exception e) {
+                            //下单失败
+                            loggerError.error("供货商：" + deleteOrder.getSupplierId()+" 取消订单："+deleteOrder.getSpOrderId()+" 处理失败");
+                            e.printStackTrace();
+                        }
+                    }else{
+                        loggerError.error("供货商：" + deleteOrder.getSupplierId() +" 取消订单："+ deleteOrder.getSpOrderId() + "保存失败");
+                    }
+
+
+                }catch (Exception e){
+                    logger.error("取消订单错误 " + e.getMessage());
+                    e.printStackTrace();
                 }
 
 
-            }catch (Exception e){
-                logger.error("取消订单错误 " + e.getMessage());
-                e.printStackTrace();
-            }
 
+            }
 
         }
     }
@@ -1191,27 +1202,27 @@ public abstract class AbsOrderService {
                 /**
                  * 根据sp_order_id查询UUID
                  */
-                OrderDTO orderDTO = null;
+                OrderDetailDTO detailDTO = null;
                 try {
                     logger.info("退款操作 purchaseno =" + entry.getKey()+"---");
-                    orderDTO = productOrderService.getOrderByPurchaseNo(entry.getKey());
+                    detailDTO= orderDetailService.getOrderByPurchaseNo(entry.getKey());
                 } catch (ServiceException e) {
                     e.printStackTrace();
                 }
 
-                if (null==orderDTO) {//采购单已到退款状态  未有已支付状态 为下单 不做存储
+                if (null==detailDTO) {//采购单已到退款状态  未有已支付状态 为下单 不做存储
                     logger.info("退款操作 purchaseno  = " + entry.getKey()+"未找到订单信息");
                     loggerError.error("退款操作 purchaseno  = " + entry.getKey()+"未找到订单信息");
                     continue;
                 }
 
                 ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
-                deleteOrder.setUuId(orderDTO.getUuId());
+                deleteOrder.setUuId(detailDTO.getUuid());
                 deleteOrder.setSupplierId(supplierId);
                 deleteOrder.setSupplierNo(supplierNo);
-                deleteOrder.setSpPurchaseNo(orderDTO.getSpPurchaseNo());
+                deleteOrder.setSpPurchaseNo(detailDTO.getSpPurchaseNo());
                 deleteOrder.setStatus(OrderStatus.WAITREFUND);
-                deleteOrder.setSpOrderId(orderDTO.getSpOrderId());
+                deleteOrder.setSpOrderId(detailDTO.getOrderNo());
                 deleteOrder.setDetail(buffer.toString());
                 deleteOrder.setCreateTime(new Date());
                 try {
@@ -1225,6 +1236,7 @@ public abstract class AbsOrderService {
 
 
                         if(SENDMAIL){
+                            OrderDTO orderDTO = this.transOrderDatailToOrder(detailDTO);
                             handleEmail(orderDTO);
                         }
                     }else{
@@ -1324,12 +1336,19 @@ public abstract class AbsOrderService {
      * @param uuId 订单编号
      */
     private void updateOrderMsgOnCancelOrder(String uuId){
-        OrderDTO order = null;
+//        OrderDTO order = null;
+
         try {
-            order = productOrderService.getOrderByUuId(uuId);
-            order.setStatus(OrderStatus.CANCELLED);
-            order.setUpdateTime(new Date());
-            productOrderService.update(order);
+//            order = productOrderService.getOrderByUuId(uuId);
+//            order.setStatus(OrderStatus.CANCELLED);
+//
+//            order.setUpdateTime(new Date());
+//            productOrderService.update(order);
+            Map<String,String> map = new HashMap<>();
+            map.put("uuid",uuId);
+            map.put("status",OrderStatus.CANCELLED);
+            map.put("updateTime",DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
+            orderDetailService.updateDetailMsg(map);
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -1341,11 +1360,16 @@ public abstract class AbsOrderService {
      * @param uuId 订单编号
      */
     private void updateOrderMsgOnRefundOrder(String uuId){
-        OrderDTO order = null;
+//        OrderDTO order = null;
         try {
-            order = productOrderService.getOrderByUuId(uuId);
-            order.setStatus(OrderStatus.REFUNDED);
-            productOrderService.update(order);
+//            order = productOrderService.getOrderByUuId(uuId);
+//            order.setStatus(OrderStatus.REFUNDED);
+//            productOrderService.update(order);
+            Map<String,String> map = new HashMap<>();
+            map.put("uuid",uuId);
+            map.put("status",OrderStatus.REFUNDED);
+            map.put("updateTime",DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
+            orderDetailService.updateDetailMsg(map);
         } catch (ServiceException e) {
             e.printStackTrace();
         }

@@ -111,8 +111,16 @@ public class OrderServiceImpl implements OrderService {
                     detailDTO.setCreateTime(new Date());
                     detailDTO.setUuid(UUID.randomUUID().toString());
                     detailDTO.setSpMasterOrderNo(orderDTO.getSpMasterOrderNo());
-                    seq =   "0000000"+ redisClient.getIncValue("ORDER_KEY");
-                    detailDTO.setOrderNo(DateTimeUtil.strForDate(date)+seq.substring(seq.length()-7,seq.length()));
+                    detailDTO.setEpMasterOrderNo(orderDTO.getSpOrderId());//主订单号+“|”+尚品的SKU
+//                    seq =   "0000000"+ redisClient.getIncValue("ORDER_KEY");
+//                    detailDTO.setOrderNo(DateTimeUtil.strForDate(date)+seq.substring(seq.length()-7,seq.length()));
+                    if(quantiy==1){
+                        detailDTO.setOrderNo(orderDTO.getSpMasterOrderNo());
+                    }else{
+                        detailDTO.setOrderNo(orderDTO.getSpMasterOrderNo()+i);
+                    }
+
+
                     temp.setSpOrderId(detailDTO.getOrderNo());//修改订单编号
                     temp.setDetail(supplierSku+":1");
                     detailDTO.setQuantity("1");

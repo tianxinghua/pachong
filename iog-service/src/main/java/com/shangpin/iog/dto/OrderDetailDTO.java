@@ -20,9 +20,10 @@ public class OrderDetailDTO {
 	private String supplierOrderNo;//供应商订单标号
     private String supplierId; //供货商门户编号
     private String supplierNo;//供货商编号
-    private String spMasterOrderNo;
-    private String spOrderDetailNo;
-    private String orderNo;
+    private String spMasterOrderNo;     //尚品主订单号
+    private String epMasterOrderNo;    //ep主订单号
+    private String spOrderDetailNo;    //尚品拆单后子订单号
+    private String orderNo;    //EP订单号(EP拆单后的订单号）
     private String spPurchaseNo;
     private String spPurchaseDetailNo;
     private String spSku;
