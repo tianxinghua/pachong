@@ -7,7 +7,8 @@ import lombok.Setter;
 @Setter
 public class Item {
 
-	String Gender;//性别
+//	String Gender;//性别
+	String url_imag;
 	String Categoria;//品类
 	String Marca ; //品牌
 	String Codice_Originale_Prodotto;//货号

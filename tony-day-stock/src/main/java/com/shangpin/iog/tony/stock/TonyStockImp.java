@@ -7,12 +7,14 @@ import com.shangpin.ice.ice.AbsUpdateProductStock;
 
 
 import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.tony.common.*;
 import com.shangpin.iog.tony.dto.Data;
 import com.shangpin.iog.tony.dto.Items;
 import com.shangpin.iog.tony.dto.ReturnObject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -31,6 +33,25 @@ public class TonyStockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
+    
+    private static ResourceBundle bdl = null;
+    private static String smtpHost = null;
+	private static String from = null;
+	private static String fromUserPassword = null;
+	private static String to = null;
+//	private static String subject = null;
+	private static String messageType = null;
+	static {
+        if (bdl == null)
+            bdl = ResourceBundle.getBundle("conf");            
+            smtpHost  = bdl.getString("smtpHost");
+    		from = bdl.getString("from");
+    		fromUserPassword = bdl.getString("fromUserPassword");
+    		to = bdl.getString("to");
+//    		subject = bdl.getString("subject");
+    		messageType = bdl.getString("messageType");
+    }
+    
     @Autowired
     ProductFetchService productFetchService;
     private static MyJsonClient jsonClient = new MyJsonClient();
@@ -42,12 +63,12 @@ public class TonyStockImp extends AbsUpdateProductStock {
     }
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+    	Map<String,String> stockmap = new HashMap<String,String>();
     	map = new HashMap<String,String>();
         itemsJson =  jsonClient.httpPostOfJson(Constant.ITEMS_INPUT, Constant.ITEMS_URL);
         //解析数据
         getStock(itemsJson);
-        //保存数据
-        Map<String,String> stockmap = new HashMap<String,String>();
+        //保存数据        
         for(String sku:skuNo){
         	if(map.containsKey(sku)){
         		stockmap.put(sku, map.get(sku));
@@ -75,7 +96,22 @@ public class TonyStockImp extends AbsUpdateProductStock {
                 if(next!=null){
               	  getStock(jsonClient.httpPostOfJson("{\"merchantId\":\"55f707f6b49dbbe14ec6354d\",\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\",\"step\":\""+next+"\"}", Constant.ITEMS_URL));
                 }
-    		}
+    		}    		
+    		
+    	}else{
+    		logger.info("更新次数已经超过对方规定，退出！！！"); 
+    		Thread t = new Thread(new Runnable() {				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {    			
+						SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, "tony-day-stock库存更新次数已经超过对方规定", "tony-day-stock库存更新次数已经超过对方规定，程序退出！！！", messageType);
+					} catch (Exception e) {
+						loggerError.error(e);
+					}
+				}
+			});
+    		System.exit(0);
     	}
     }
     public static void main(String[] args) throws Exception {
