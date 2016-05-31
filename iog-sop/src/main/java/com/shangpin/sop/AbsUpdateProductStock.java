@@ -399,21 +399,61 @@ public abstract class AbsUpdateProductStock {
 		Set<String> skuNoShangpinSet = iceStock.keySet();
 		int skuNum = 1;
 		List<String> skuNoShangpinList = new ArrayList<>();
-		Map<String,Integer> toUpdateIce=new HashMap<>();
+		int failCount=0;
 		for(Iterator<String> itor =skuNoShangpinSet.iterator();itor.hasNext();){
 			if(skuNum%100==0){
 				//调用接口 查找库存
+				Map<String,Integer> toUpdateIce=new HashMap<>();
 				removeNoChangeStockRecord(host,app_key,app_secret, iceStock, skuNoShangpinList,toUpdateIce);
+				Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
+
+				logger.warn("待更新的数据总和：--------"+toUpdateIce.size());
+				loggerInfo.info("待更新的数据总和：--------"+toUpdateIce.size());
+				ApiResponse<Boolean>  result =null;
+				StockInfo request_body = null;
+
+				while (null!=iter&&iter.hasNext()) {
+
+					Entry<String, Integer> entry = iter.next();
+					request_body = new StockInfo();
+					request_body.setSkuNo(entry.getKey());
+					request_body.setInventoryQuantity(entry.getValue()<0?0:entry.getValue());
+					boolean success=true;
+					for(int i=0;i<2;i++){//发生错误 允许再执行一次
+						try{
+							loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+entry.getValue());
+
+							result = SpClient.UpdateStock(host, app_key, app_secret, new Date(), request_body);
+							if(null!=result&&!result.getResponse()){
+								failCount++;
+								success=false;
+								logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
+								loggerError.error(entry.getKey() + ":" + entry.getValue() +"更新库存失败");
+							}
+						}catch(Exception e){
+
+							logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+							loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+" " + e.getMessage(),e);
+						}
+						if(success){ //成功直接跳出
+							i=2;
+						}
+					}
+
+
+
+				}
 				skuNoShangpinList = new ArrayList<>();
 			}
 			skuNoShangpinList.add(itor.next());
 			skuNum++;
 		}
+		Map<String,Integer> toUpdateIce=new HashMap<>();
 		//排除最后一次
 		removeNoChangeStockRecord(host,app_key,app_secret, iceStock, skuNoShangpinList,toUpdateIce);
 
 
-		int failCount=0;
+
 		Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
 
 		logger.warn("待更新的数据总和：--------"+toUpdateIce.size());
