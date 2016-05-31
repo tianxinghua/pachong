@@ -8,7 +8,16 @@
 	</resultMap>
 
 
-    <insert id="saveList"  parameterType="java.util.List" >
+    <insert id="saveList"  parameterType="iog_specialSku" >
+
+        insert into SPECIAL_SKU(
+		SUPPLIER_ID,SUPPLIER_SKU_ID,CREATE_TIME
+        )
+        values
+            (#{supplierId}, #{supplierSkuId}, #{createTime})
+
+    </insert>
+       <insert id="save"  parameterType="java.util.List" >
 
         insert into SPECIAL_SKU(
 		SUPPLIER_ID,SUPPLIER_SKU_ID,CREATE_TIME

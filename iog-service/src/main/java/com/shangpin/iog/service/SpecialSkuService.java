@@ -14,7 +14,7 @@ import com.shangpin.iog.dto.StockUpdateDTO;
  *
  */
 public interface SpecialSkuService {
-	public void saveDTO(List<SpecialSkuDTO> stockUpdateDTO) throws ServiceMessageException;
+	public void saveDTO(SpecialSkuDTO stockUpdateDTO) throws ServiceMessageException;
 
 	public Map<String, String> findListSkuBySupplierId(String supplierId);
 

@@ -18,10 +18,10 @@ public class SpecialSkuServiceImpl implements SpecialSkuService{
 	 com.shangpin.iog.product.dao.SpecialSkuMapper specialSkuMapper;
 	 public static String  REPEAT_MESSAGE="数据插入失败键重复";
 	@Override
-	public void saveDTO(List<SpecialSkuDTO> stockUpdateDTO) throws ServiceMessageException{
+	public void saveDTO(SpecialSkuDTO stockUpdateDTO) throws ServiceMessageException{
 		
 		 try {
-			 specialSkuMapper.saveList(stockUpdateDTO);
+			 specialSkuMapper.save(stockUpdateDTO);
 	        } catch (Exception e) {
 	        	if(e instanceof DuplicateKeyException)
 	        		throw new ServiceMessageException(REPEAT_MESSAGE);
