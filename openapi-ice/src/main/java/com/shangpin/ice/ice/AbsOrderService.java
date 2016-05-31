@@ -333,15 +333,16 @@ public abstract class AbsOrderService {
      * @param supplierId
      */
     public void confirmOrder(String supplierId){
-
-        List<com.shangpin.iog.dto.OrderDTO>  orderDTOList= null;
+ 
+        List<OrderDetailDTO> detailDTOList = null;
         try {
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatus(supplierId,OrderStatus.PAYED);
+        	detailDTOList  =orderDetailService.getOrderDetailBySupplierIdAndOrderStatus(supplierId,OrderStatus.PAYED);
         } catch (ServiceException e) {
             e.printStackTrace();
         }
-        if(null!=orderDTOList){
-            for(OrderDTO orderDTO :orderDTOList){
+        if(null!=detailDTOList){
+            for(OrderDetailDTO detailDTO :detailDTOList){
+            	com.shangpin.iog.dto.OrderDTO orderDTO = this.transOrderDatailToOrder(detailDTO);
                 //订单支付后的处理
                 handleConfirmOrder(orderDTO);
                 updateOrderMsg(orderDTO);
@@ -527,6 +528,7 @@ public abstract class AbsOrderService {
 
             Map<String,List<PurchaseOrderDetailSpecial>>  purchaseOrderMap = new HashMap<>();
 
+            start:
             for(OrderDetailDTO detailDTO:orderDetailDTOList) {
 
                 if ( detailDTO.getEpMasterOrderNo().indexOf("-") > 0) {//重新采购 或者 财务确认重新生成的采购单
@@ -559,7 +561,7 @@ public abstract class AbsOrderService {
                         }
                         logger.info("查询是否支付，订单号:" + spOrderNo);
                         if (null != orderDetailSpecialPage && null != orderDetailSpecialPage.PurchaseOrderDetails && orderDetailSpecialPage.PurchaseOrderDetails.size() > 0) {  //存在采购单 就代表已支付
-
+                        	spMasterOrderNoMap.put(spOrderNo, "");
                             for (PurchaseOrderDetailSpecial orderDetail : orderDetailSpecialPage.PurchaseOrderDetails) {
                                 sopPurchaseOrderNo = orderDetail.SopPurchaseOrderNo;
                                 if (purchaseOrderMap.containsKey(sopPurchaseOrderNo)) {
@@ -594,8 +596,16 @@ public abstract class AbsOrderService {
                                 } else {
                                     detailDTO.setStatus(OrderStatus.REFUNDED);
                                 }
-                                purchaseOrderDetailSpecialList.remove(i);
-                                i--;
+//                                purchaseOrderDetailSpecialList.remove(i);
+//                                i--;
+                                purchaseOrderMap.remove(sopPurchaseOrderNo);
+                                try {
+                                    orderDetailService.update(detailDTO);
+                                    continue start;
+                                } catch (ServiceException e1) {
+                                    e1.printStackTrace();
+                                }
+
                             }
                         }
                     }
@@ -605,12 +615,7 @@ public abstract class AbsOrderService {
 //
 //                    orderDTO.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString().substring(0, purchaseOrderDetailbuffer.toString().length() - 1));
 //                    productOrderService.update(orderDTO);
-                    try {
-                        orderDetailService.update(detailDTO);
-                    } catch (ServiceException e1) {
-                        e1.printStackTrace();
-                    }
-
+                    
 
                 }
 
