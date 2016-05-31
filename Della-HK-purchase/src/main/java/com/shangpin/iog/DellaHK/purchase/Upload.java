@@ -83,12 +83,22 @@ public class Upload {
 				}
 			}
 		}
+		logger.info("i========="+i);
+		
 		if(i==10){
-			try {
-				SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, fileName+"della订单上传92.223.134.2ftp失败", fileName+"della订单上传92.223.134.2ftp失败", messageType);
-			} catch (Exception e) {
-				loggerError.error(e);
-			}
+			loggerError.error("上传失败的fileName================="+fileName); 
+			Thread t = new Thread(new Runnable() {				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, "della订单上传92.223.134.2ftp失败", "della订单上传92.223.134.2ftp失败", messageType);
+					} catch (Exception e) {
+						loggerError.error(e);
+					}
+				}
+			});
+			
 		}
         
 

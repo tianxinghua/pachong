@@ -102,13 +102,20 @@ public class MyFtpUtil {
                 close(ftp);
             }
     	}
-    	
+    	logger.info("i======"+i);
     	if(i == 10){
-    		try {
-				SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, "della订单上传香港ftp失败", "della订单上传香港ftp失败", messageType);
-			} catch (Exception e) {
-				loggerError.error(e);
-			}
+    		Thread t = new Thread(new Runnable() {				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {    			
+						SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, "della订单上传香港ftp失败", "della订单上传香港ftp失败", messageType);
+					} catch (Exception e) {
+						loggerError.error(e);
+					}
+				}
+			});
+    		
     	}
         
     }
@@ -122,9 +129,9 @@ public class MyFtpUtil {
             if (null != ftp)
                 ftp.quit();
         } catch (IOException e) {
-            e.printStackTrace();
+        	loggerError.error(e);        
         } catch (FTPException e) {
-            e.printStackTrace();
+        	loggerError.error(e);        
         }
     }
 

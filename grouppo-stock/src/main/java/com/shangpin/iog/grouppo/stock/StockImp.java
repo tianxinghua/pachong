@@ -66,7 +66,6 @@ public class StockImp  extends AbsUpdateProductStock {
         		response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);
 			} catch (Exception e) {
 				logError.error("第1次异常===="+e);
-				response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);
 				try {
 					response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);
 				} catch (Exception e2) {
