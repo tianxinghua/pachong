@@ -24,17 +24,18 @@
 		<result column="EXC_STATE" property="excState"  />
 		<result column="EXC_DESC" property="excDesc"  />
 		<result column="EXC_TIME" property="excTime" />
-
+		
 	</resultMap>
 	<sql id="all_Order_column">
-		ID, UUID,EP_MASTER_ORDER_NO,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO,
-		SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU, SUPPLIER_SKU, QUANTITY, PURCHASE_PRICE_DETAIL,
-		STATUS, DELIVERY_NO, CREATE_TIME, UPDATE_TIME, EXC_STATE, EXC_DESC, EXC_TIME
+		ID, UUID,EP_MASTER_ORDER_NO,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_ID, SUPPLIER_NO,
+		SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO, SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU,
+		SUPPLIER_SKU, QUANTITY, PURCHASE_PRICE_DETAIL, STATUS, DELIVERY_NO, CREATE_TIME,
+		UPDATE_TIME, EXC_STATE, EXC_DESC, EXC_TIME
 	</sql>
 	<sql id="save_column">
-		UUID,EP_MASTER_ORDER_NO,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO,
-		SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU, SUPPLIER_SKU, QUANTITY, PURCHASE_PRICE_DETAIL,
-		STATUS, DELIVERY_NO, CREATE_TIME
+		UUID,EP_MASTER_ORDER_NO,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO,
+		SP_ORDER_DETAIL_NO, SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU, SUPPLIER_SKU,
+		QUANTITY, PURCHASE_PRICE_DETAIL, STATUS, DELIVERY_NO, CREATE_TIME
 	</sql>
 	<insert id="saveOrderDetailDTO" parameterType="iog_orderDetail">
 		insert into 
@@ -79,15 +80,15 @@
 		from ORDER_DETAIL
 		where ORDER_NO=#{orderNo}
 	</select>
-
+	
 	<select id="findOrderDetailByOrderDetailNo" parameterType="java.lang.String" resultMap="OrderResultMap">
 		select
 		<include refid="all_Order_column"/>
 		from ORDER_DETAIL
 		where SP_ORDER_DETAIL_NO=#{orderDetailNo}
 	</select>
-
-
+	
+	
 	<select id="findByUuId" parameterType="java.lang.String" resultMap="OrderResultMap">
 		select
 		<include refid="all_Order_column"/>
@@ -177,8 +178,8 @@
 		order by SUPPLIER_NAME,CREATE_TIME ,STATUS
 	</select>
 	<select id="findExceptionOrder"  resultMap="OrderResultMap">
-		select ID , SUPPLIER_ID, UUID , ORDER_NO, STATUS , CREATE_TIME , EXC_STATE ,
-		EXC_DESC ,EXC_TIME from ORDER_DETAIL WHERE EXC_STATE='1'
+		select ID , SUPPLIER_ID, UUID , ORDER_NO, STATUS , CREATE_TIME , EXC_STATE , EXC_DESC
+		,EXC_TIME from ORDER_DETAIL WHERE EXC_STATE='1'
 	</select>
 	<update id="updateOrderStatus" parameterType="Map" >
 		update ORDER_DETAIL
@@ -222,4 +223,12 @@
 		</set>
 		where UUID = #{uuid}
 	</update>
+	<select id="getDetailDTOByEpMasterOrderNo"  resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=epMasterOrderNo">EP_MASTER_ORDER_NO=#{epMasterOrderNo}</if>
+		</where>
+	</select>
 </mapper>

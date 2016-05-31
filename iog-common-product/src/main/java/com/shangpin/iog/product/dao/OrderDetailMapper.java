@@ -172,4 +172,10 @@ public interface OrderDetailMapper extends IBaseDao<OrderDetailDTO> {
      * @return
      */
     public int updateAllByMap(Map<String,String> paraMap);
+    /**
+     * 通过epMasterOrderNo查询
+     * @param epMasterOrderNo
+     * @return
+     */
+    public List<OrderDetailDTO> getDetailDTOByEpMasterOrderNo(@Param("epMasterOrderNo") String epMasterOrderNo);
 }

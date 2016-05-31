@@ -195,4 +195,10 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 		orderDetailDao.updateAllByMap(detailMap);
 	}
 
+	@Override
+	public List<OrderDetailDTO> getDetailDTOByEpMasterOrderNo(
+			String epMasterOrderNo) throws ServiceException {
+		return orderDetailDao.getDetailDTOByEpMasterOrderNo(epMasterOrderNo);
+	}
+
 }

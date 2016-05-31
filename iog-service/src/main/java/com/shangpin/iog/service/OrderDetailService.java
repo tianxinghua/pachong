@@ -181,5 +181,12 @@ public interface OrderDetailService {
      * @return
      */
     public void updateDetailMsg(Map<String,String> detailMap) throws ServiceException;
+    /**
+     * 通过epMasterOrderNo查询
+     * @param epMasterOrderNo
+     * @return List<OrderDetailDTO>
+     * @throws ServiceException
+     */
+    public List<OrderDetailDTO> getDetailDTOByEpMasterOrderNo(String epMasterOrderNo) throws ServiceException;
 
 }

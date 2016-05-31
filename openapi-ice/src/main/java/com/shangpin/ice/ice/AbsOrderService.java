@@ -916,7 +916,7 @@ public abstract class AbsOrderService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        start:
         for(Iterator<Map.Entry<String,List<PurchaseOrderDetailSpecial>>> itor = orderMap.entrySet().iterator();itor.hasNext();){
             Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();
             StringBuffer purchaseOrderDetailbuffer =new StringBuffer();
@@ -945,20 +945,34 @@ public abstract class AbsOrderService {
             List<OrderDetailDTO> detailDTOList =null;
             try {
                  //根据订单子编号查找EP库中的采购单
-                detailDTOList = orderDetailService.getOrderDetailBySpOrderDetailNo(spOrderDetailNo);
+            	detailDTOList = orderDetailService.getDetailDTOByEpMasterOrderNo(spMasterOrderNo+"|"+spSku);
+//                detailDTOList = orderDetailService.getOrderDetailBySpOrderDetailNo(spOrderDetailNo);
             } catch (ServiceException e) {
                 e.printStackTrace();
             }
+            
+            
             if(null!=detailDTOList&&detailDTOList.size()>0){
-                  for(OrderDetailDTO detailDTO:detailDTOList){
-                      if(entry.getKey().equals(detailDTO.getSpPurchaseNo())){//原有数据不做处理
-                          continue;
-                      }
-                  }
-
-            }else{//新插入的记录， 由于时间差的原因尚未判断是否支付 待下次时间验证
-               continue;
+            	boolean f = true;
+            	//原有数据 如果有采购单号且一致 为原有数据
+            	for (OrderDetailDTO orderDetailDTO : detailDTOList) {
+            		//是否是新的
+            		if (!StringUtils.isEmpty(orderDetailDTO.getSpPurchaseNo())) {
+						f = false;
+					}
+				}
+            	if (f) {
+            		continue start;
+				}else{
+					for (OrderDetailDTO orderDetailDTO : detailDTOList) {
+						//原有数据不做处理
+						 if(orderDetailDTO.getSpPurchaseNo().equals(purchaseNo)){
+	                          continue start;
+	                      }
+					}
+				}
             }
+
 
             //存储
 //            OrderDTO spOrder =new OrderDTO();
