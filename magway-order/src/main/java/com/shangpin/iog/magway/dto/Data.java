@@ -10,6 +10,7 @@ import lombok.Getter;
 public class Data {
 
 	String OrderCode;
+	String DealerCode;
 	String TotalPriceCN;
 	String TotalPriceEuro;
 	List<OrderGoods> OrderGoods; 

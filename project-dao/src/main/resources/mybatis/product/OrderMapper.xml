@@ -481,6 +481,7 @@
             </if>
         </where>
         order by SUPPLIER_NAME,CREATE_TIME DESC,STATUS
+        limit #{page},#{pageSize}
 
 
     </select>
@@ -495,6 +496,25 @@
             <if test="null!=orderId">
                 and ddd.SP_ORDER_ID=#{orderId}
             </if>            
+        </where>
+    </select>
+    
+     <select id="getOrderTotalBySupplierIdAndTime"  resultType="int">
+        select
+        count(*)
+        from `ORDER` ddd
+        	left join SUPPLIER su on ddd.SUPPLIER_ID = su.SUPPLIER_ID
+        <where>
+			su.SUPPLIER_STATE = '1'
+            <if test="null!=supplierId">
+                and ddd.SUPPLIER_ID=#{supplierId}
+            </if>         
+            <if test="null!=startDate">
+                and CREATE_TIME >=#{startDate}
+            </if>            
+            <if test="null!=endDate">
+                <![CDATA[ and CREATE_TIME <=#{endDate}    ]]>
+            </if>
         </where>
     </select>
 	

@@ -225,10 +225,10 @@ public abstract class AbsOrderService {
         dto.setSupplierNo(supplierNo);
 
         String jsonParameter= "="+ gson.toJson(dto);
-        String result ="";
-        result = getOrderInfoFromWMS(jsonParameter, result);
+        String result ="";        
         List<ICEWMSOrderDTO> orderDTOList  = null;
         try {
+        	result = getOrderInfoFromWMS(jsonParameter, result);
             orderDTOList = gson.fromJson(result,new TypeToken<List<ICEWMSOrderDTO>>(){}.getType());
         } catch (JsonSyntaxException e) {
             loggerError.error("获取"+supplierNo +"供货商，wms订单转化异常,退出");

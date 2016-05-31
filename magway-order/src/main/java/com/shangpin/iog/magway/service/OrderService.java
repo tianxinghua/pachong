@@ -94,8 +94,8 @@ public class OrderService extends AbsOrderService{
 			createOrder.setMobile("00393454377342");
 			createOrder.setAddress("VIAG.LEOPARDI 27，22075 LURATE CACCIVIO (COMO)");
 			createOrder.setIDCardNumber("641233187008230523");
-			createOrder.setIDCardPathOne("ShangPin.com");
-			createOrder.setIDCardPathTwo("Shangpin.com"); 
+			createOrder.setIDCardPathOne("SHANGPIN.COM");
+			createOrder.setIDCardPathTwo("SHANGPIN.COM"); 
 			String createOrderStr = new Gson().toJson(createOrder);
 			logger.info("createOrderStr======"+createOrderStr);
 			

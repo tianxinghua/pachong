@@ -227,7 +227,7 @@ public class OrderServiceImpl implements OrderService {
 	public List<OrderDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate,
 			Date endDate,Integer pageIndex, Integer pageSize) {
 		
-		return orderDAO.getOrderBySupplierIdAndTime(supplier, startDate, endDate, new RowBounds(pageIndex,pageSize));
+		return orderDAO.getOrderBySupplierIdAndTime(supplier, startDate, endDate,pageIndex, pageSize);
 	}
 	
 	public List<OrderDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate, Date endDate){
@@ -354,4 +354,12 @@ public class OrderServiceImpl implements OrderService {
 		orderUpdateDAO.savesupplierOrderTime(dto);
 	}
 
+	@Override
+	public int getOrderTotalBySupplierIdAndTime(String supplier, String startDate,
+			String endDate) {
+		int total = orderDAO.getOrderTotalBySupplierIdAndTime(supplier, null, null);
+		return total;
+	}
+
+	
 }

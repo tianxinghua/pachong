@@ -31,7 +31,7 @@ public class Test {
    		 
    		 ftp.setFileType(FTPClient.BINARY_FILE_TYPE); 	
    		 
-   		 File srcFile = new File("E:/a.txt"); ///usr/local/apporder/Della/a.csv
+   		 File srcFile = new File("F:/della_0527.csv"); ///usr/local/apporder/Della/a.csv
    		 fis = new FileInputStream(srcFile);
    		 logger.info("ftp连接成功");
    		 System.out.println("ftp连接成功");
@@ -41,7 +41,7 @@ public class Test {
    		
    		logger.info("开始上传");
   		 System.out.println("开始上传");
-   		 ftp.storeFile("2016-04-21.csv" , fis); 
+   		 ftp.storeFile("2016-05-27-11.csv" , fis); 
    		 logger.info("上传成功");
    		 System.out.println("上传成功");
 			

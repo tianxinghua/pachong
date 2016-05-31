@@ -23,6 +23,7 @@ import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.dto.SkuRelationDTO;
+import com.shangpin.iog.dto.SpecialSkuDTO;
 import com.shangpin.iog.dto.StockUpdateDTO;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.SkuRelationService;
@@ -640,7 +641,7 @@ public abstract class AbsUpdateProductStock {
 						
 						loggerInfo.info("sku ：" + skuNo +"原库存："+stockResult);
 						stockResult =  stockResult - sopPurchaseMap.get(iceSku);
-						loggerInfo.info("sku ：" + skuNo +"库存："+stockResult  + " ; 采购单含有数量 : " + sopPurchaseMap.get(skuNo)+" 最终库存 ：" + stockResult);
+						loggerInfo.info("sku ：" + skuNo +"库存："+stockResult  + " ; 采购单含有数量 : " + sopPurchaseMap.get(iceSku)+" 最终库存 ：" + stockResult);
 						if(stockResult<0) stockResult=0;
 
 					}
@@ -779,13 +780,52 @@ public abstract class AbsUpdateProductStock {
 			hasNext=(pageSize==detilApiDtos.size());
 
 		}
-
+		setStockNotUpdateBySop(supplierId,servant);
 		logger.warn("获取ice采购单 结束");
 		loggerInfo.info("获取采购单数量："+sopPurchaseMap.size());
 		return sopPurchaseMap;
 
 
 	}
+	
+	private void setStockNotUpdateBySop(String supplierId,OpenApiServantPrx servant){
+		
+		List<PurchaseOrderDetail> orderDetails = null;
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		Date endDate = new Date();
+		String endTime = format.format(endDate);
+		String startTime = format.format(getAppointDayFromSpecifiedDay(endDate, -1, "D"));
+		
+		List<java.lang.Integer> statusList = new ArrayList<>();
+		statusList.add(7);
+		
+		int pageIndex=1,pageSize=20;
+		PurchaseOrderQueryDto orderQueryDto = new PurchaseOrderQueryDto(startTime,endTime,statusList
+				,pageIndex,pageSize);
+		PurchaseOrderDetailPage orderDetailPage;
+		try {
+			orderDetailPage = servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
+			orderDetails = orderDetailPage.PurchaseOrderDetails;
+			
+			for (PurchaseOrderDetail orderDetail : orderDetails) {
+				
+				SpecialSkuDTO spec = new SpecialSkuDTO();
+				String supplierSkuNo  = orderDetail.SupplierSkuNo;
+				spec.setSupplierId(supplierId);
+				spec.setSupplierSkuId(supplierSkuNo);
+				try {
+					System.out.println(spec.toString());
+					specialSkuService.saveDTO(spec);
+				} catch (ServiceMessageException e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	//时间处理
 	private  Date getAppointDayFromSpecifiedDay(Date today,int num,String type){
 		Calendar c   =   Calendar.getInstance();
