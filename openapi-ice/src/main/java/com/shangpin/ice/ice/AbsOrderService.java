@@ -763,20 +763,20 @@ public abstract class AbsOrderService {
         List<Integer> status = new ArrayList<>();
         status.add(1);
 
-        Map<String,List<PurchaseOrderDetailSpecial>> orderMap = null;
+        Map<String,List<PurchaseOrderDetail>> orderMap = null;
         try {
-            orderMap = this.getPurchaseOrderSpecial(supplierId, startDate, endDate, status);
+            orderMap = this.getPurchaseOrder(supplierId, startDate, endDate, status);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        for(Iterator<Map.Entry<String,List<PurchaseOrderDetailSpecial>>> itor = orderMap.entrySet().iterator();itor.hasNext();){
-            Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();
+        for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();){
+            Map.Entry<String, List<PurchaseOrderDetail>> entry = itor.next();
             Map<String,Integer> stockMap = new HashMap<>();
             StringBuffer purchaseOrderDetailbuffer =new StringBuffer();
             //获取同一产品的数量
 
-            for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){
+            for(PurchaseOrderDetail purchaseOrderDetail:entry.getValue()){
 
                 if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
                     stockMap.put(purchaseOrderDetail.SupplierSkuNo, stockMap.get(purchaseOrderDetail.SupplierSkuNo)+1);
@@ -790,7 +790,7 @@ public abstract class AbsOrderService {
             StringBuffer buffer = new StringBuffer();
             StringBuffer sopbuffer= new StringBuffer();
             String purchasePrice="";
-            for(PurchaseOrderDetailSpecial purchaseOrderDetail:entry.getValue()){
+            for(PurchaseOrderDetail purchaseOrderDetail:entry.getValue()){
                 //记录采购单明细信息 以便发货
                 purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
                 //计算同一采购单的相同产品的数量
@@ -1448,12 +1448,12 @@ public abstract class AbsOrderService {
             //获取订单数组
             List<Integer> status = new ArrayList<>();
             status.add(5);
-            Map<String,List<PurchaseOrderDetailSpecial>> orderMap =  this.getPurchaseOrderSpecial(supplierId, startDate, endDate, status);
+            Map<String,List<PurchaseOrderDetail>> orderMap =  this.getPurchaseOrder(supplierId, startDate, endDate, status);
 
-            for(Iterator<Map.Entry<String,List<PurchaseOrderDetailSpecial>>> itor = orderMap.entrySet().iterator();itor.hasNext();) {
-                Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();
+            for(Iterator<Map.Entry<String,List<PurchaseOrderDetail>>> itor = orderMap.entrySet().iterator();itor.hasNext();) {
+                Map.Entry<String, List<PurchaseOrderDetail>> entry = itor.next();
                 Map<String, Integer> stockMap = new HashMap<>();
-                for (PurchaseOrderDetailSpecial purchaseOrderDetail : entry.getValue()) {
+                for (PurchaseOrderDetail purchaseOrderDetail : entry.getValue()) {
                     if (stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)) {
                         stockMap.put(purchaseOrderDetail.SupplierSkuNo, stockMap.get(purchaseOrderDetail.SupplierSkuNo) + 1);
                     } else {
@@ -1462,7 +1462,7 @@ public abstract class AbsOrderService {
                 }
                 List<ICEOrderDetailDTO> list = new ArrayList<>();
                 StringBuffer buffer = new StringBuffer();
-                for (PurchaseOrderDetailSpecial purchaseOrderDetail : entry.getValue()) {
+                for (PurchaseOrderDetail purchaseOrderDetail : entry.getValue()) {
                     if (stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)) {
                         buffer.append(purchaseOrderDetail.SupplierSkuNo).append(":").append(stockMap.get(purchaseOrderDetail.SupplierSkuNo)).append(",");
                         stockMap.remove(purchaseOrderDetail.SupplierSkuNo);
