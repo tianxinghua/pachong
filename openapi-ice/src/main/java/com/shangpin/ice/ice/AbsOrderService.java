@@ -584,14 +584,24 @@ public abstract class AbsOrderService {
                         for (int i=0;i<purchaseOrderDetailSpecialList.size();i++) {
                             PurchaseOrderDetailSpecial purchaseOrderDetail = purchaseOrderDetailSpecialList.get(i);
                             if (detailDTO.getSpSku().equals(purchaseOrderDetail.SkuNo)) { //与ORDER 同一个商品
-                                purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
-                                purchaseNobuffer.append(purchaseOrderDetail.SopPurchaseOrderNo).append(";");
-                                //赋值状态 海外商品每个采购单 只有一种商品
-                                detailDTO.setPurchasePriceDetail(purchaseOrderDetail.SkuPrice);
-                                detailDTO.setSpOrderDetailNo(purchaseOrderDetail.OrderDetailNo);
-                                detailDTO.setSpPurchaseNo(sopPurchaseOrderNo);
-                                detailDTO.setSpPurchaseDetailNo(purchaseOrderDetail.SopPurchaseOrderDetailNo);
-                                if (5 != purchaseOrderDetail.DetailStatus) { //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
+                            	
+                            	//两种情况：1 新插入的,spPurchaseNo 为空 2 重新采购的 有值
+                            	
+                            	if (StringUtils.isEmpty(detailDTO.getSpPurchaseNo())) {
+                            	     purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
+                                     purchaseNobuffer.append(purchaseOrderDetail.SopPurchaseOrderNo).append(";");
+                                     //赋值状态 海外商品每个采购单 只有一种商品
+                                     detailDTO.setPurchasePriceDetail(purchaseOrderDetail.SkuPrice);
+                                     detailDTO.setSpOrderDetailNo(purchaseOrderDetail.OrderDetailNo);
+                                     detailDTO.setSpPurchaseNo(sopPurchaseOrderNo);
+                                     detailDTO.setSpPurchaseDetailNo(purchaseOrderDetail.SopPurchaseOrderDetailNo);
+								}else{
+									if (!detailDTO.getSpPurchaseNo().equals(sopPurchaseOrderNo)) {
+										continue;
+									}
+								}
+ 
+                            	if (5 != purchaseOrderDetail.DetailStatus) { //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
                                     detailDTO.setStatus(OrderStatus.PAYED);
                                 } else {
                                     detailDTO.setStatus(OrderStatus.REFUNDED);
@@ -998,9 +1008,11 @@ public abstract class AbsOrderService {
             detailDTO.setSpPurchaseDetailNo(purchaseDetailNo);
             detailDTO.setSpMasterOrderNo(spMasterOrderNo);
             detailDTO.setEpMasterOrderNo(spMasterOrderNo+"|"+spSku);
+            detailDTO.setSpSku(spSku);
             detailDTO.setSpOrderDetailNo(spOrderDetailNo);
             detailDTO.setSupplierSku(supplierSku);
             detailDTO.setPurchasePriceDetail(purchsePrice);
+            detailDTO.setQuantity("1");
             detailDTO.setCreateTime(new Date());
             try {
                 logger.info("采购单信息转化订单后信息："+detailDTO.toString());
