@@ -791,7 +791,7 @@ public abstract class AbsUpdateProductStock {
 	private void setStockNotUpdateBySop(String supplierId,OpenApiServantPrx servant){
 		
 		List<PurchaseOrderDetail> orderDetails = null;
-		
+		boolean hasNext=true;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		Date endDate = new Date();
 		String endTime = format.format(endDate);
@@ -799,31 +799,36 @@ public abstract class AbsUpdateProductStock {
 		
 		List<java.lang.Integer> statusList = new ArrayList<>();
 		statusList.add(7);
-		
 		int pageIndex=1,pageSize=20;
-		PurchaseOrderQueryDto orderQueryDto = new PurchaseOrderQueryDto(startTime,endTime,statusList
-				,pageIndex,pageSize);
-		PurchaseOrderDetailPage orderDetailPage;
-		try {
-			orderDetailPage = servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
-			orderDetails = orderDetailPage.PurchaseOrderDetails;
-			
-			for (PurchaseOrderDetail orderDetail : orderDetails) {
+		
+		while(hasNext){
+			PurchaseOrderQueryDto orderQueryDto = new PurchaseOrderQueryDto(startTime,endTime,statusList
+					,pageIndex,pageSize);
+			PurchaseOrderDetailPage orderDetailPage;
+			try {
+				orderDetailPage = servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
+				orderDetails = orderDetailPage.PurchaseOrderDetails;
 				
-				SpecialSkuDTO spec = new SpecialSkuDTO();
-				String supplierSkuNo  = orderDetail.SupplierSkuNo;
-				spec.setSupplierId(supplierId);
-				spec.setSupplierSkuId(supplierSkuNo);
-				try {
-					System.out.println(spec.toString());
-					specialSkuService.saveDTO(spec);
-				} catch (ServiceMessageException e) {
-					e.printStackTrace();
+				for (PurchaseOrderDetail orderDetail : orderDetails) {
+					
+					SpecialSkuDTO spec = new SpecialSkuDTO();
+					String supplierSkuNo  = orderDetail.SupplierSkuNo;
+					spec.setSupplierId(supplierId);
+					spec.setSupplierSkuId(supplierSkuNo);
+					try {
+						System.out.println(spec.toString());
+						specialSkuService.saveDTO(spec);
+					} catch (ServiceMessageException e) {
+						e.printStackTrace();
+					}
 				}
+			} catch (ApiException e) {
+				e.printStackTrace();
 			}
-		} catch (ApiException e) {
-			e.printStackTrace();
+			pageIndex++;
+			hasNext=(pageSize==orderDetails.size());
 		}
+		
 	}
 	
 	//时间处理
