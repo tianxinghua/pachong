@@ -430,18 +430,21 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 						splitSign);
 
 				// 获取颜色
-				color = dto.getColor()==null?"":dto.getColor().replace(",", " ");
+				color = dto.getColor()==null?"":dto.getColor().replace(",", " ").replaceAll("/", " ").replaceAll("\\", " "); 
 				buffer.append(null == color ? "" : color.replace(",", " ")).append(splitSign);
 				// 翻译中文
+				String colorCh = "";
 				if (StringUtils.isNotBlank(color)) {
-					if (colorContrastMap.containsKey(color.toLowerCase())) {
-						color = colorContrastMap.get(color.toLowerCase());
+					for(String co :color.split("\\s+")){
+						if (colorContrastMap.containsKey(co.toLowerCase())) {
+							colorCh += colorContrastMap.get(co.toLowerCase());
+						}else{
+							colorCh += co;
+						}
 					}
-				} else {
-					color = "";
+					
 				}
-
-				buffer.append(color).append(splitSign);
+				buffer.append(colorCh).append(splitSign);
 
 				// 获取尺码
 				productSize = dto.getSize();
@@ -1721,18 +1724,21 @@ buffer.append(dto.getMemo());
 											splitSign);
 	
 									// 获取颜色
-									color = dto.getColor()==null?"":dto.getColor().replace(",", " ");
+									color = dto.getColor()==null?"":dto.getColor().replace(",", " ").replaceAll("/", " ").replaceAll("\\", " "); 
 									buffer.append(null == color ? "" : color.replace(",", " ")).append(splitSign);
 									// 翻译中文
+									String colorCh = "";
 									if (StringUtils.isNotBlank(color)) {
-										if (colorContrastMap.containsKey(color.toLowerCase())) {
-											color = colorContrastMap.get(color.toLowerCase());
+										for(String co :color.split("\\s+")){
+											if (colorContrastMap.containsKey(co.toLowerCase())) {
+												colorCh += colorContrastMap.get(co.toLowerCase());
+											}else{
+												colorCh += co;
+											}
 										}
-									} else {
-										color = "";
+										
 									}
-	
-									buffer.append(color).append(splitSign);
+									buffer.append(colorCh).append(splitSign);
 	
 									// 获取尺码
 									productSize = dto.getSize();
