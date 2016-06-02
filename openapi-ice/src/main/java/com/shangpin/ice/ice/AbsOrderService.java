@@ -838,6 +838,7 @@ public abstract class AbsOrderService {
             spOrder.setMemo(sopbuffer.toString().substring(0,sopbuffer.toString().length()-1));
             spOrder.setPurchasePriceDetail(purchasePrice);
             spOrder.setCreateTime(new Date());
+            spOrder.setSpMasterOrderNo(entry.getKey());
             try {
                 logger.info("采购单信息转化订单后信息："+spOrder.toString());
                 System.out.println("采购单信息转化订单后信息："+spOrder.toString());
