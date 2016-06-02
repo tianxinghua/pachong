@@ -119,10 +119,16 @@ public class OrderServiceImpl implements OrderService {
                     }else{
                         detailDTO.setOrderNo(orderDTO.getSpMasterOrderNo()+i);
                     }
-
+                    
+                    if(orderDTO.getSpMasterOrderNo().startsWith("CGD")){//通过 SOP获取的 需要增加主的采购单号
+                    	
+                    	detailDTO.setSpPurchaseNo(orderDTO.getSpMasterOrderNo());
+                    	
+                    }
 
                     temp.setSpOrderId(detailDTO.getOrderNo());//修改订单编号
                     temp.setDetail(supplierSku+":1");
+                    temp.setUuId(detailDTO.getUuid());
                     detailDTO.setQuantity("1");
                     detailDTO.setSupplierSku(supplierSku);
                     detailDTO.setSpSku(spSku);
@@ -191,6 +197,7 @@ public class OrderServiceImpl implements OrderService {
 
                     temp.setSpOrderId(detailDTO.getOrderNo());//修改订单编号
                     temp.setDetail(supplierSku+":1");
+                    temp.setUuId(detailDTO.getUuid());
                     detailDTO.setQuantity("1");
                     detailDTO.setSupplierSku(supplierSku);
                     detailDTO.setSpSku(spSku);
