@@ -40,7 +40,7 @@ public class FetchProduct {
     private MyJsonClient jsonClient = new MyJsonClient();
     private String itemsJson;
     private String categoriesJson;
-    private List<Items> itemsList= new ArrayList();
+    private List<Items> itemsList= new ArrayList<Items>();
     /**
      * fetch product and save into db
      */

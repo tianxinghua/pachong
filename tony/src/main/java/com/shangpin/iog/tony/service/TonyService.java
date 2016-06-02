@@ -30,7 +30,7 @@ public class TonyService {
     public void getCategories(){
         String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\",\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"}";
         try {
-            String rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/getCategories", null, null, json, "", "");
+            String rtnData = HttpUtil45.operateData("post", "json", "http://www.cloudstore.srl/ws/getCategories", null, null, json, "", "");
             System.out.println("rtnData=="+rtnData);
         } catch (ServiceException e) {
             e.printStackTrace();
@@ -40,7 +40,7 @@ public class TonyService {
     public void getEvents(){
         String json = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\",\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"}";
         try {
-            String rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/getEvents", null, null, json, "", "");
+            String rtnData = HttpUtil45.operateData("post", "json", "http://www.cloudstore.srl/ws/getEvents", null, null, json, "", "");
             System.out.println("rtnData=="+rtnData);
         } catch (ServiceException e) {
             e.printStackTrace();
@@ -49,7 +49,7 @@ public class TonyService {
     public void getItem(){
         String json = "{\"sku\":\"geColor\",\"merchantId\":\"55f707f6b49dbbe14ec6354d\",\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"}";
         try {
-            String rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/getItem", null, null, json, "", "");
+            String rtnData = HttpUtil45.operateData("post", "json", "http://www.cloudstore.srl/ws/getItem", null, null, json, "", "");
             System.out.println("rtnData=="+rtnData);
         } catch (ServiceException e) {
             e.printStackTrace();
@@ -75,7 +75,7 @@ public class TonyService {
                 "\"province\":\"2\" ,\"state\":\"2\" }}}";
         System.out.println("request json == "+json);
         try {
-            String rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/createOrder", null, null, json, "", "");
+            String rtnData = HttpUtil45.operateData("post", "json", "http://www.cloudstore.srl/ws/createOrder", null, null, json, "", "");
             System.out.println("rtnData=="+rtnData);
         } catch (ServiceException e) {
             e.printStackTrace();
@@ -89,7 +89,7 @@ public class TonyService {
                 "\"statusDate\":\"2015/01/31 09:01:00\"}";
         System.out.println("request json == "+json);
         try {
-            String rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/updateOrderStatus", null, null, json, "", "");
+            String rtnData = HttpUtil45.operateData("post", "json", "http://www.cloudstore.srl/ws/updateOrderStatus", null, null, json, "", "");
             System.out.println("rtnData=="+rtnData);
         } catch (ServiceException e) {
             e.printStackTrace();

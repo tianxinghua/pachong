@@ -11,64 +11,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>查询订单列表</title>
-<link rel="stylesheet"
-	href="<%=bathPath%>/js/jquery-easyui-1.3.3/themes/icon.css"
-	type="text/css" media="screen" />
-<link rel="stylesheet"
-	href="<%=bathPath%>/js/jquery-easyui-1.3.3/themes/default/easyui.css"
-	type="text/css" />
-<link rel="stylesheet"
-	href="<%=bathPath%>/js/jquery-easyui-1.3.3/themes/main.css"
-	type="text/css" />
-<script type="text/javascript"
-	src="<%=bathPath%>/js/jquery-easyui-1.3.3/jquery-1.8.3.min.js"></script>
-<script type="text/javascript"
-	src="<%=bathPath%>/js/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
-<script type="text/javascript"
-	src="<%=bathPath%>/js/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
-<!-- <script type="text/javascript" -->
-<%-- 	src="<%=bathPath%>/js/jquery-easyui-1.3.3/jquery.json-2.4.js"></script> --%>
-
-
-</head>
-<body class="easyui-layout" data-options="fit:true" onload="test();">  
-    <div data-options="region:'center'"  style="height:100px" style="background:#eee;">
-    <table id="dg"></table>  
-
-<!-- <table width="100%" width="100%" class="table_border" border="0" id="high_light" lang="tabRowData"   -->
-<!--          cellpadding="0" cellspacing="0" bgcolor="#C7EDCC" > -->
-<!-- <tr> -->
-<!-- 	<td width="50">序号</td> -->
-<!-- 	<td width="50">供货商名称</td> -->
-<!-- 	<td width="50">尚品订单编号</td> -->
-<!-- 	<td width="50">采购单编号</td> -->
-<!-- 	<td width="80">订单状态</td> -->
-<!-- 	<td width="50">Detail</td> -->
-<!-- 	<td width="50">Memo</td> -->
-<!-- 	<td width="50">CreateTime</td> -->
-<!-- 	<td width="50">UpdateTime</td> -->
-<!-- 	<td width="100">异常原因</td> -->
-<!-- 	<td width="50">UuId</td> -->
-<!-- </tr> -->
-<%-- <c:forEach items="${orderList }" var="order" varStatus="status"> --%>
-<!-- <tr> -->
-	
-<%-- 	<td>${status.index + 1}</td> --%>
-<%-- 	<td>${order.supplierName }</td> --%>
-<%-- 	<td>${order.spOrderId }</td> --%>
-<%-- 	<td>${order.spPurchaseNo }</td> --%>
-<%-- 	<td>${order.status }</td> --%>
-<%-- 	<td>${order.detail }</td> --%>
-<%-- 	<td>${order.memo }</td> --%>
-<%-- 	<td><fmt:formatDate value="${order.createTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td> --%>
-<%-- 	<td><fmt:formatDate value="${order.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td> --%>
-<%-- 	<td>${order.excDesc }</td> --%>
-<%-- 	<td>${order.uuId }</td> --%>
-<%-- 	<td><input type="hidden" id="${order.supplierId }"></td> --%>
-<!-- </tr> -->
-<%-- </c:forEach> --%>
-
-<!-- </table> -->
+	<link rel="stylesheet" type="text/css" href="<%=bathPath%>/js/jquery-easyui-1.4/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="<%=bathPath%>/js/jquery-easyui-1.4/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="<%=bathPath%>/js/jquery-easyui-1.4/demo.css">
+	<script type="text/javascript" src="<%=bathPath%>/js/jquery-easyui-1.4/jquery.min.js"></script>
+	<script type="text/javascript" src="<%=bathPath%>/js/jquery-easyui-1.4/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="<%=bathPath%>/js/jquery-easyui-1.4/jquery.easyui.min.js"></script>
 <script>
 function test(){
 	$.ajax({
@@ -94,6 +42,36 @@ function test(){
         }
     });
 }
+
+	function getDate(date){
+// 		var date = ; //获取一个时间对象  注意：如果是uinx时间戳记得乘于1000。比如php函数time()获得的时间戳就要乘于1000
+// 		console.info(date);
+		var year = date.getFullYear();  // 获取完整的年份(4位,1970)
+		var Month = date.getMonth()+1;  // 获取月份(0-11,0代表1月,用的时候记得加上1)
+		if(Month<10){
+			Month = "0"+Month;
+		}
+		var Date = date.getDate();  // 获取日(1-31)
+		if(Date<10){
+			Date = "0"+Date;
+		}
+		var Hours = date.getHours();  // 获取小时数(0-23)
+		if(Hours<10){
+			Hours = "0"+Hours;
+		}
+		var Minutes = date.getMinutes();  // 获取分钟数(0-59)
+		if(Minutes<10){
+			Minutes = "0" + Minutes;
+		}
+		var Seconds = date.getSeconds(); 
+		if(Seconds<10){
+			Seconds = "0" + Seconds;
+		}
+		var dateTime = year+"-"+Month+"-"+Date+" "+Hours+":"+Minutes+":"+Seconds;
+// 		console.info(dateTime);
+		return dateTime;
+	}
+
 $(function(){
 	 
 	$('#dg').datagrid({    
@@ -106,17 +84,68 @@ $(function(){
         rownumbers:true,
 		pagination:true,
 		pageSize:100,  nowrap:false,
+    	rowStyler: function(index,row,index){
+    		return 'font-size:505px';
+    		}	,
 	    columns:[[    
-	        {field:'supplierName',title:'供货商名称',width:'100'},    
-	        {field:'spOrderId',title:'尚品订单编号',width:'150'},
-	        {field:'spPurchaseDetailNo',title:'采购单编号',width:'150'}, 
-	        {field:'status',title:'订单状态',width:'100'}, 
-	        {field:'detail',title:'Detail',width:'250'}, 
-	        {field:'memo',title:'Memo',width:'150'}, 
-	        {field:'createTime',title:'CreateTime',width:'100'}, 
-	        {field:'updateTime',title:'UpdateTime',width:'100'}, 
-	        {field:'excDesc',title:'异常原因',width:'450'}, 
-	        {field:'uuId',title:'UuId',width:'200'}
+	        {field:'supplierName',title:'供货商名称',width:'100',
+	        	styler: function(index,row,index){
+	        		return 'font-size:15px';
+	        		}	
+	        
+	        },    
+	        {field:'spOrderId',title:'尚品订单编号',width:'250',
+	        	styler: function(index,row,index){
+	        		return 'font-size:15px';
+	        		}	},
+	        {field:'spPurchaseNo',title:'采购单编号',width:'150',
+	    	        	styler: function(index,row,index){
+	    	        		return 'font-size:15px';
+	    	        		}	}, 
+	        {field:'status',title:'订单状态',width:'100',
+	    	    	        	styler: function(index,row,index){
+	    	    	        		return 'font-size:15px';
+	    	    	        		}	,
+	        	styler: function(value,row,index){
+					if (row.status==="采购异常Suc"||row.status==="采购异常Err"){
+						return 'color:red;';
+					} 
+				}
+}, 
+	        {field:'detail',title:'Detail',width:'250',
+	styler: function(index,row,index){
+		return 'font-size:15px';
+		}	}, 
+	        {field:'memo',title:'Memo',width:'150',
+        	styler: function(index,row,index){
+        		return 'font-size:15px';
+        		}	}, 
+	        {field:'createTime',title:'CreateTime',width:'150',
+    	        	styler: function(index,row,index){
+    	        		return 'font-size:15px';
+    	        		}	
+	        	,formatter: function (value, row, index) {
+		        	var time = getDate(new Date(row.createTime.time));
+	                 return time;                                 
+	            }
+			}, 
+	        {field:'updateTime',title:'UpdateTime',width:'150',
+	        	styler: function(index,row,index){
+	        		return 'font-size:15px';
+	        		}	
+				,formatter: function (value, row, index) {
+		        	var time = getDate(new Date(row.createTime.time));
+	                 return time;                                 
+	            }
+			}, 
+	        {field:'excDesc',title:'异常原因',width:'300',
+	        	styler: function(index,row,index){
+	        		return 'font-size:15px';
+	        		}	}, 
+	        {field:'uuId',title:'UuId',width:'250',
+	    	        	styler: function(index,row,index){
+	    	        		return 'font-size:15px';
+	    	        		}	}
 	    ]]    
 	}); 
 	
@@ -139,6 +168,7 @@ $(function(){
 //         afterPageText: '页    共 {pages} 页',  
 //         displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录'  
 //     });  
+
 });
 function find(pageNumber, pageSize)
 {
@@ -228,6 +258,10 @@ function pageData(list,total){
 // 	}
 
 </script>
+</head>
+<body class="easyui-layout" onload="test();">  
+    <div data-options="region:'center'">
+		<table id="dg"></table>
     </div>   
 </body>
 </html>

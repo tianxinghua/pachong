@@ -1,8 +1,18 @@
 package com.shangpin.iog.tony.service;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
-
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.ice.ice.UpdateProductSock;
 import com.shangpin.iog.common.utils.UUIDGenerator;
@@ -13,15 +23,8 @@ import com.shangpin.iog.dto.SupplierStockDTO;
 import com.shangpin.iog.service.SkuRelationService;
 import com.shangpin.iog.service.SupplierStockService;
 import com.shangpin.iog.tony.common.Constant;
-import com.shangpin.iog.tony.common.MyJsonClient;
-
 import com.shangpin.iog.tony.dto.EventDTO;
 import com.shangpin.iog.tony.dto.ReturnDTO;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 /**
  * Created by wangyuzhi on 2015/9/14.
