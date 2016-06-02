@@ -1503,12 +1503,28 @@ public abstract class AbsOrderService {
                 /**
                  * 根据sp_order_id查询UUID
                  */
-                String uuid = productOrderService.getUuIdBySpOrderId(entry.getKey());
+                
+                
+                
+                
+                String uuid = "" ;//productOrderService.getUuIdBySpOrderId(entry.getKey());
+                
+                OrderDetailDTO detailDTO = null;
+                try {
+                    logger.info("退款操作 purchaseno =" + entry.getKey()+"---");
+                    detailDTO= orderDetailService.getOrderByPurchaseNo(entry.getKey());
+                    if(null!=detailDTO)  uuid = detailDTO.getUuid();
+                } catch (Exception e) {
+                	
+                    e.printStackTrace();
+                    loggerError.error("采购单：" +entry.getKey()  +  " 未找到订单明细 ,EP无法退款");
+                }
+                
 
                 if(org.apache.commons.lang.StringUtils.isBlank(uuid)){//采购单已到退款状态  未有已支付状态 为下单 不做存储
                     continue;
                 }
-
+                
                 ReturnOrderDTO deleteOrder =new ReturnOrderDTO();
                 deleteOrder.setUuId(uuid);
                 deleteOrder.setSupplierId(supplierId);
@@ -1541,7 +1557,7 @@ public abstract class AbsOrderService {
                         } catch (Exception e) {
                             e.printStackTrace();
 
-                            loggerError.error("供货商:"+deleteOrder.getSupplierId()+"订单 ："+ deleteOrder.getSpOrderId() + "处理退单失败。 原因 ：" + e.getMessage() );
+                            loggerError.error("供货商:"+deleteOrder.getSupplierId()+"订单 ："+ deleteOrder.getSpOrderId() + "处理退单失败。 原因 ：" + e.getMessage(),e );
 
                             Map<String,String> map = new HashMap<>();
                             map.put("excDesc",e.getMessage());
