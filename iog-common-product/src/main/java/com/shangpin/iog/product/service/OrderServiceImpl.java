@@ -150,6 +150,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(rollbackFor = {ServiceException.class})
     public List<OrderDTO> saveOrderDetail(OrderDTO orderDTO, Map<String, Integer> orderNoQuantityMap,int count) throws ServiceException {
         List<OrderDTO> detailDTOList = new ArrayList<>();
         try {
