@@ -660,6 +660,7 @@ public abstract class AbsOrderService {
         orderDTO.setSupplierOrderNo(detailDTO.getSupplierOrderNo());
         orderDTO.setCreateTime(detailDTO.getCreateTime());
         orderDTO.setStatus(detailDTO.getStatus());
+        orderDTO.setSupplierId(detailDTO.getSupplierId());
         return orderDTO;
 
     }
