@@ -657,7 +657,7 @@ public abstract class AbsOrderService {
         orderDTO.setMemo(detailDTO.getSpSku()+":"+ detailDTO.getQuantity());
         orderDTO.setSpPurchaseNo(detailDTO.getSpPurchaseNo());
         orderDTO.setSpPurchaseDetailNo(detailDTO.getSpPurchaseDetailNo());
-
+        orderDTO.setSupplierOrderNo(detailDTO.getSupplierOrderNo());
 
         return orderDTO;
 
