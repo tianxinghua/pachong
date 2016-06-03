@@ -6,10 +6,12 @@ import com.shangpin.iog.Della.purchase.common.MyFtpUtil;
 import com.shangpin.iog.Della.purchase.common.MyFtpUtil2;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.OrderDetailDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.product.service.OrderServiceImpl;
+import com.shangpin.iog.service.OrderDetailService;
 import com.shangpin.iog.service.ProductSearchService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,9 @@ public class OrderService extends AbsOrderService {
     @Autowired
     ProductSearchService productSearchService;
     
+    @Autowired
+    OrderDetailService orderDetailService;
+    
     // 下单处理
  	public void startSOP() {
  		this.checkoutOrderFromSOP(supplierId,supplierNo, true);
@@ -74,7 +79,8 @@ public class OrderService extends AbsOrderService {
      */
     private void saveOrder(Date startTime,Date endTime){
     	
-        List<OrderDTO> list = null;
+    	List<OrderDetailDTO> orderDetails = null;
+//        List<OrderDTO> list = null;
 //        Date startTime = new Date();
 //        Date endTime = new Date();
 //        startTime =DateTimeUtil.convertFormat(
@@ -82,9 +88,12 @@ public class OrderService extends AbsOrderService {
 //        endTime =DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(endTime)+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
         logger.info("=========开始时间"+DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss")+"到结束时间"+DateTimeUtil.convertFormat(endTime, "yyyy-MM-dd HH:mm:ss")+"的订单开始保存本地========="); 
         try {
-           list = orderService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
-        		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+//           list = orderService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
+//        		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
            //list = orderService.getOrderBySupplierIdAndOrderStatus(supplierId,"confirmed");
+        	
+        	orderDetails = orderDetailService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId, OrderStatus.CONFIRMED, DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"), DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+        	
         } catch (ServiceException e) {
         	loggerError.error(e); 
         }
@@ -92,17 +101,17 @@ public class OrderService extends AbsOrderService {
         StringBuffer ftpFile = new StringBuffer();
         ftpFile.append("Purchasing number;PO Line;Item code;Description;Item supplier code;Price;Quantity;Size");
         ftpFile.append("\n");
-        for (OrderDTO orderDTO:list){
+        for (OrderDetailDTO orderDTO:orderDetails){
         	try {
         		
-				ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getDetail().split(":")[0]);
+				ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getSupplierSku());
 				ftpFile.append(orderDTO.getSpPurchaseNo());
 				ftpFile.append(";").append("");
 	            ftpFile.append(";").append(product.getProductCode());
 	            ftpFile.append(";").append("");
-	            ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+	            ftpFile.append(";").append(orderDTO.getSupplierSku());
 	            ftpFile.append(";").append("");
-	            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
+	            ftpFile.append(";").append(orderDTO.getQuantity());
 	            ftpFile.append(";").append(product.getSize());
 	            ftpFile.append("\n");
         	} catch (ServiceException e) {
