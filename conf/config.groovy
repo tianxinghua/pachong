@@ -16,7 +16,8 @@ environments{
 
             zookeeper.address='192.168.20.40:2181,192.168.20.41:2181,192.168.20.42:2181'
 
-            wmsUrl='http://wmsinventory.liantiao.com'
+//            wmsUrl='http://wmsinventory.liantiao.com'
+            wmsUrl='qa.wmsinventory.shangpin.com'
 			redisUrl='192.168.20.241'
 			
 			
