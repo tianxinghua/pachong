@@ -2,7 +2,9 @@ package com.shangpin.sop;
 
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.dto.SkuRelationDTO;
+import com.shangpin.iog.dto.SpecialSkuDTO;
 import com.shangpin.iog.service.SkuRelationService;
 import com.shangpin.iog.service.SpecialSkuService;
 import com.shangpin.iog.service.UpdateStockService;
@@ -399,21 +401,61 @@ public abstract class AbsUpdateProductStock {
 		Set<String> skuNoShangpinSet = iceStock.keySet();
 		int skuNum = 1;
 		List<String> skuNoShangpinList = new ArrayList<>();
-		Map<String,Integer> toUpdateIce=new HashMap<>();
+		int failCount=0;
 		for(Iterator<String> itor =skuNoShangpinSet.iterator();itor.hasNext();){
 			if(skuNum%100==0){
 				//调用接口 查找库存
+				Map<String,Integer> toUpdateIce=new HashMap<>();
 				removeNoChangeStockRecord(host,app_key,app_secret, iceStock, skuNoShangpinList,toUpdateIce);
+				Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
+
+				logger.warn("待更新的数据总和：--------"+toUpdateIce.size());
+				loggerInfo.info("待更新的数据总和：--------"+toUpdateIce.size());
+				ApiResponse<Boolean>  result =null;
+				StockInfo request_body = null;
+
+				while (null!=iter&&iter.hasNext()) {
+
+					Entry<String, Integer> entry = iter.next();
+					request_body = new StockInfo();
+					request_body.setSkuNo(entry.getKey());
+					request_body.setInventoryQuantity(entry.getValue()<0?0:entry.getValue());
+					boolean success=true;
+					for(int i=0;i<2;i++){//发生错误 允许再执行一次
+						try{
+							loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+entry.getValue());
+
+							result = SpClient.UpdateStock(host, app_key, app_secret, new Date(), request_body);
+							if(null!=result&&!result.getResponse()){
+								failCount++;
+								success=false;
+								logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),entry.getValue());
+								loggerError.error(entry.getKey() + ":" + entry.getValue() +"更新库存失败");
+							}
+						}catch(Exception e){
+
+							logger.error("更新sku错误："+entry.getKey()+":"+entry.getValue(),e);
+							loggerError.error("更新sku错误："+entry.getKey()+":"+entry.getValue()+" " + e.getMessage(),e);
+						}
+						if(success){ //成功直接跳出
+							i=2;
+						}
+					}
+
+
+
+				}
 				skuNoShangpinList = new ArrayList<>();
 			}
 			skuNoShangpinList.add(itor.next());
 			skuNum++;
 		}
+		Map<String,Integer> toUpdateIce=new HashMap<>();
 		//排除最后一次
 		removeNoChangeStockRecord(host,app_key,app_secret, iceStock, skuNoShangpinList,toUpdateIce);
 
 
-		int failCount=0;
+
 		Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
 
 		logger.warn("待更新的数据总和：--------"+toUpdateIce.size());
@@ -607,22 +649,30 @@ public abstract class AbsUpdateProductStock {
 				loggerError.error(e);
 			}
 
+			String iceSku="";
 			for (String skuNo : skuNos) {
+				if(map.size()>0){
+					if(map.containsKey(skuNo)){
+						continue;
+					}
+				}
+				
 				Integer stock=supplierStock.get(skuNo);
+				iceSku=localAndIceSkuId.get(skuNo);
 
 				if(!ORDER){
-					if(sopPurchaseMap.containsKey(skuNo)){
+					if(sopPurchaseMap.containsKey(iceSku)){
 						if(stock==null)
 							stock=0;
-						loggerInfo.info(skuNo + "供货商库存：" + stock +" 采购单数量 : " + sopPurchaseMap.get(skuNo));
-						stock =  stock - sopPurchaseMap.get(skuNo);
+						loggerInfo.info(skuNo + "供货商库存：" + stock +" 采购单数量 : " + sopPurchaseMap.get(iceSku));
+						stock =  stock - sopPurchaseMap.get(iceSku);
 						loggerInfo.info("最终库存 ：" + stock);
 						if(stock<0) stock=0;
 
 					}
 				}
 
-				String iceSku=localAndIceSkuId.get(skuNo);
+
 				if(this.supplierSkuIdMain){  // 已供应商提供的SKU为主 不更新未提供的库存
 					if(supplierStock.containsKey(skuNo)){
 						if(null!=stock){
@@ -714,6 +764,97 @@ public abstract class AbsUpdateProductStock {
 	 * @return
 	 * @throws Exception
 	 */
+//	public Map<String,Integer> getPurchaseOrder(String host,String app_key,
+//												String app_secret) throws Exception{
+//		int pageIndex=1,pageSize=20;
+//		boolean hasNext=true;
+//		logger.warn("获取SOP采购单 开始");
+//		Map<String,Integer>  purchaseOrderMap = new HashMap<>();
+//		String supplierSkuNo = "";
+//		String startTime="" , endTime="";
+//
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//		Date endDate = new Date();
+//		endTime = format.format(endDate);
+//
+//		startTime = format.format(this.getAppointDayFromSpecifiedDay(endDate,-2,"M"));
+//
+//
+//		List<Integer> detailStatus = new ArrayList<>();
+//		ApiResponse<PurchaseOrderDetailPage> response = null;
+//		while(hasNext){
+//			List<PurchaseOrderDetail> orderDetails = null;
+//			PurchaseOrderQueryDto queryDto = new PurchaseOrderQueryDto();
+//
+//			queryDto.setUpdateTimeBegin(startTime);
+//			queryDto.setUpdateTimeEnd(endTime);
+//			queryDto.setPageIndex(pageIndex);
+//			queryDto.setPageSize(pageSize);
+//			detailStatus.add(1);
+//			detailStatus.add(2);
+//			queryDto.setDetailStatus(detailStatus);
+//
+//
+//			boolean fetchSuccess=true;
+//			for(int i=0;i<2;i++){   //允许调用失败后，再次调用一次
+//				try {
+//
+//					response =  SpClient.FindPOrderByPage(host, app_key, app_secret, new Date(), queryDto);
+//
+//					PurchaseOrderDetailPage orderDetailPage = response.getResponse();
+//
+//					orderDetails=orderDetailPage.getPurchaseOrderDetails();
+//					if(null==orderDetails){
+//						fetchSuccess=false;
+//					}
+//				} catch (Exception e) {
+//					fetchSuccess=false;
+//					loggerError.error("获取采购单失败",e);
+//				}
+//				if(fetchSuccess){
+//					i=2;
+//				}else{
+//					loggerError.error("获取采购单失败");
+//				}
+//			}
+//
+//
+//			if(!fetchSuccess){
+//				return purchaseOrderMap;
+//			}
+//
+//			for (PurchaseOrderDetail orderDetail : orderDetails) {
+//				supplierSkuNo  = orderDetail.getSupplierSkuNo();
+//				if(purchaseOrderMap.containsKey(supplierSkuNo)){
+//					purchaseOrderMap.put(supplierSkuNo, purchaseOrderMap.get(supplierSkuNo)+ 1);
+//
+//				}else{
+//					purchaseOrderMap.put(supplierSkuNo,1);
+//				}
+//
+//
+//			}
+//
+//
+//			pageIndex++;
+//			hasNext=(pageSize==orderDetails.size());
+//
+//		}
+//
+//		logger.warn("获取SOP采购单 结束");
+//
+//		return purchaseOrderMap;
+//
+//	}
+
+	/**
+	 * 获取采购单
+	 * @param host
+	 * @param app_key
+	 * @param app_secret
+	 * @return
+	 * @throws Exception
+	 */
 	public Map<String,Integer> getPurchaseOrder(String host,String app_key,
 												String app_secret) throws Exception{
 		int pageIndex=1,pageSize=20;
@@ -727,14 +868,15 @@ public abstract class AbsUpdateProductStock {
 		Date endDate = new Date();
 		endTime = format.format(endDate);
 
-		startTime = format.format(this.getAppointDayFromSpecifiedDay(endDate,-2,"M"));
+		startTime = format.format(this.getAppointDayFromSpecifiedDay(endDate,-10,"D"));
 
 
 		List<Integer> detailStatus = new ArrayList<>();
-		ApiResponse<PurchaseOrderDetailPage> response = null;
+		ApiResponse<PurchaseOrderInfoApiDto> response = null;
 		while(hasNext){
-			List<PurchaseOrderDetail> orderDetails = null;
+			PurchaseOrderInfoApiDto  purchaseOrderInfoApiDto=null;
 			PurchaseOrderQueryDto queryDto = new PurchaseOrderQueryDto();
+
 
 			queryDto.setUpdateTimeBegin(startTime);
 			queryDto.setUpdateTimeEnd(endTime);
@@ -749,12 +891,12 @@ public abstract class AbsUpdateProductStock {
 			for(int i=0;i<2;i++){   //允许调用失败后，再次调用一次
 				try {
 
-					response =  SpClient.FindPOrderByPage(host, app_key, app_secret, new Date(), queryDto);
+					response =  SpClient.FindPurchaseProductCountByPage(host, app_key, app_secret, new Date(), queryDto);
 
-					PurchaseOrderDetailPage orderDetailPage = response.getResponse();
+					purchaseOrderInfoApiDto = response.getResponse();
 
-					orderDetails=orderDetailPage.getPurchaseOrderDetails();
-					if(null==orderDetails){
+
+					if(null==purchaseOrderInfoApiDto){
 						fetchSuccess=false;
 					}
 				} catch (Exception e) {
@@ -773,32 +915,86 @@ public abstract class AbsUpdateProductStock {
 				return purchaseOrderMap;
 			}
 
-			for (PurchaseOrderDetail orderDetail : orderDetails) {
-				supplierSkuNo  = orderDetail.getSupplierSkuNo();
-				if(purchaseOrderMap.containsKey(supplierSkuNo)){
-					purchaseOrderMap.put(supplierSkuNo, purchaseOrderMap.get(supplierSkuNo)+ 1);
-
-				}else{
-					purchaseOrderMap.put(supplierSkuNo,1);
+			List<PurchaseOrderDetilApiDto>  detilApiDtos = null;
+			if(null!=purchaseOrderInfoApiDto){
+				detilApiDtos =  purchaseOrderInfoApiDto.getPurchaseOrderDetailList();
+				for (PurchaseOrderDetilApiDto orderDetail : detilApiDtos) {
+					purchaseOrderMap.put(orderDetail.getSkuNo(),orderDetail.getCount());
 				}
-
-
+			}else{
+				loggerError.error("两次获取采购单均失败");
 			}
 
-
 			pageIndex++;
-			hasNext=(pageSize==orderDetails.size());
+			hasNext=(pageSize==detilApiDtos.size());
 
 		}
 
 		logger.warn("获取SOP采购单 结束");
-
+		setStockNotUpdateBySop(host, app_key, app_secret);
 		return purchaseOrderMap;
 
 	}
+private void setStockNotUpdateBySop(String host,String app_key,String app_secret){
+	int pageIndex=1,pageSize=20;
+	boolean hasNext=true;
+	logger.warn("获取SOP采购单 开始");
+	Map<String,Integer>  purchaseOrderMap = new HashMap<>();
+	String supplierSkuNo = "";
+	String startTime="" , endTime="";
 
+	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	Date endDate = new Date();
+	endTime = format.format(endDate);
 
+	startTime = format.format(this.getAppointDayFromSpecifiedDay(endDate,-1,"D"));
 
+	List<Integer> detailStatus = new ArrayList<>();
+	ApiResponse<PurchaseOrderInfoApiDto> response = null;
+	while(hasNext){
+		PurchaseOrderInfoApiDto  purchaseOrderInfoApiDto=null;
+		PurchaseOrderQueryDto queryDto = new PurchaseOrderQueryDto();
+
+		queryDto.setUpdateTimeBegin(startTime);
+		queryDto.setUpdateTimeEnd(endTime);
+		queryDto.setPageIndex(pageIndex);
+		queryDto.setPageSize(pageSize);
+		detailStatus.add(7);
+		queryDto.setDetailStatus(detailStatus);
+
+		boolean fetchSuccess=true;
+		for(int i=0;i<2;i++){   //允许调用失败后，再次调用一次
+			try {
+				response =  SpClient.FindPurchaseProductCountByPage(host, app_key, app_secret, new Date(), queryDto);
+				purchaseOrderInfoApiDto = response.getResponse();
+				if(null==purchaseOrderInfoApiDto){
+					fetchSuccess=false;
+				}
+			} catch (Exception e) {
+				fetchSuccess=false;
+				loggerError.error("获取采购单失败",e);
+			}
+			if(fetchSuccess){
+				i=2;
+			}else{
+				loggerError.error("获取采购单失败");
+			}
+		}
+
+		List<PurchaseOrderDetilApiDto>  detilApiDtos = null;
+		if(null!=purchaseOrderInfoApiDto){
+			detilApiDtos =  purchaseOrderInfoApiDto.getPurchaseOrderDetailList();
+			for (PurchaseOrderDetilApiDto orderDetail : detilApiDtos) {
+				purchaseOrderMap.put(orderDetail.getSkuNo(),orderDetail.getCount());
+			}
+		}else{
+			loggerError.error("两次获取采购单均失败");
+		}
+
+		pageIndex++;
+		hasNext=(pageSize==detilApiDtos.size());
+		}
+	}
 	/**
 	 * 多少个sku启动一个线程,默认100
 	 * @return

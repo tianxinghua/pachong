@@ -20,5 +20,7 @@ public interface SpecialSkuMapper  {
 	public SpecialSkuDTO checkBySupplierIdAndSkuId(@Param("supplierId") String supplierId,
 			@Param("skuId") String skuId);
 
+	public void save(SpecialSkuDTO stockUpdateDTO);
+
 
 }

@@ -3,7 +3,6 @@ dependencies {
 
             "com.google.code.gson:gson:2.2.2",
             project(':project-common'),
-            project(':tony'),
             project(':openapi-ice'),
             project(':iog-common-product')
     )
@@ -13,16 +12,11 @@ dependencies {
 
 jar {
 
-    dependsOn copyToLib , copyResources
+    dependsOn copyToLib , copyResources,dependsClassPath
     exclude ("**/*.properties")
 
-    def manifestCp = configurations.compile.files.collect  {
-        File file = it
-        "lib/${file.name}"
-    }.join(' ')
 
     manifest {
         attributes 'Main-Class': 'com.shangpin.iog.tony.Startup'
-        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }

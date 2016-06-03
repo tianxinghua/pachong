@@ -25,7 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
+import net.sf.json.JSONObject;
 
+import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -235,9 +238,88 @@ public class FileDownloadController {
     
     
     @RequestMapping(value = "orders")
-    public ModelAndView queryOrders(
+    @ResponseBody
+    public ModelAndView queryOrders(HttpServletRequest request,
                          HttpServletResponse response,
                          String queryJson){
+    	ModelAndView modelAndView = new ModelAndView();
+//    	Map<String, String> nameMap = new HashMap<String, String>();
+//    	nameMap.put("placed", "下订单成功");
+//    	nameMap.put("payed", "支付");
+//    	nameMap.put("cancelled", "取消成功");
+//    	nameMap.put("confirmed", "支付成功");
+//    	nameMap.put("nohandle", "超时不处理");
+//    	nameMap.put("waitplaced", "待下订单");
+//    	nameMap.put("waitcancel", "待取消");
+//    	nameMap.put("refunded", "退款成功");
+//    	nameMap.put("waitrefund", "待退款");
+//    	nameMap.put("purexpsuc", "采购异常Suc");
+//    	nameMap.put("purexperr", "采购异常Err");
+//    	nameMap.put("shipped", "shipped");
+//    	nameMap.put("should purExp", "应该采购异常");
+//    	
+//    	List<OrderDTO> orderList = null;
+//    	try{
+//    		String page = request.getParameter("page");
+//    		String rows = request.getParameter("rows");
+//    		System.out.println(page+rows);
+//    		ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
+//            if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
+//            String supplier = null;
+//            if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
+//            	supplier = productSearchDTO.getSupplier();
+//            }
+//            Date startDate  =null;
+//            if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
+//                startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
+//            }
+//            Date endDate = null;
+//            if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
+//                endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
+//            }        
+//            Integer pageIndex = -1;
+//            if(null !=productSearchDTO.getPageIndex()){
+//            	pageIndex = productSearchDTO.getPageIndex();
+//            }        
+//            Integer pageSize = -1;
+//            if(null != productSearchDTO.getPageSize()){
+//            	pageSize = productSearchDTO.getPageSize();
+//            }
+//            
+//            
+//            if(pageIndex != null && pageSize != null && pageIndex != -1 && pageSize != -1){			
+//    			orderList = orderService.getOrderBySupplierIdAndTime(supplier, startDate, endDate, pageIndex, pageSize);
+//    						
+//    		}else{			
+//    			orderList = orderService.getOrderBySupplierIdAndTime(supplier, startDate, endDate,1,100);
+//    						
+//    		}	     
+//            for (OrderDTO orderDTO : orderList) {
+//            	if(nameMap.containsKey(orderDTO.getStatus().toLowerCase())){
+//            		orderDTO.setStatus(nameMap.get(orderDTO.getStatus().toLowerCase()));
+//            	}				
+//			}
+    	
+            modelAndView.addObject("supplierId", request.getParameter("supplierId"));
+    		modelAndView.setViewName("orders");
+//    		
+//    	}catch(Exception ex){
+//    		log.error(ex.getMessage());
+//    		ex.printStackTrace();
+//    	}        
+//    	
+    	modelAndView.setViewName("orders");
+		return modelAndView;
+    }
+    
+    
+    
+    
+    @RequestMapping(value = "orderPage")
+    @ResponseBody
+    public String queryOrdersPage(HttpServletRequest request,
+                         HttpServletResponse response){
+    	
     	Map<String, String> nameMap = new HashMap<String, String>();
     	nameMap.put("placed", "下订单成功");
     	nameMap.put("payed", "支付");
@@ -255,38 +337,47 @@ public class FileDownloadController {
     	ModelAndView modelAndView = new ModelAndView();
     	List<OrderDTO> orderList = null;
     	try{
-    		
-    		ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
-            if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
-            String supplier = null;
-            if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
-            	supplier = productSearchDTO.getSupplier();
-            }
-            Date startDate  =null;
-            if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
-                startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
-            }
-            Date endDate = null;
-            if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
-                endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
-            }        
-            Integer pageIndex = -1;
-            if(null !=productSearchDTO.getPageIndex()){
-            	pageIndex = productSearchDTO.getPageIndex();
-            }        
-            Integer pageSize = -1;
-            if(null != productSearchDTO.getPageSize()){
-            	pageSize = productSearchDTO.getPageSize();
-            }
+    		String page = request.getParameter("page");
+    		String rows = request.getParameter("rows");
+    		String supplier = request.getParameter("supplierId");
+    		System.out.println(page+rows);
+//    		ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString("", ProductSearchDTO.class);
+//            if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
+////            String supplier = null;
+//            if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
+//            	supplier = productSearchDTO.getSupplier();
+//            }
+//            Date startDate  =null;
+//            if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
+//                startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
+//            }
+//            Date endDate = null;
+//            if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
+//                endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
+//            }        
+//            Integer pageIndex = -1;
+//            if(null !=productSearchDTO.getPageIndex()){
+//            	pageIndex = productSearchDTO.getPageIndex();
+//            }        
+//            Integer pageSize = -1;
+//            if(null != productSearchDTO.getPageSize()){
+//            	pageSize = productSearchDTO.getPageSize();
+//            }
+//            
+            int pageIndex1 = Integer.parseInt(page);
+    		int pageSize1 = Integer.parseInt(rows);
+//    		
+    			
+//            if(pageIndex != null && pageSize != null && pageIndex != -1 && pageSize != -1){		
+//    		
+//            	orderList = orderService.getOrderBySupplierIdAndTime(supplier, null, null, (pageIndex1-1)*pageSize1+1,pageSize1 );	
+//    		}else{			
+//    			orderList = orderService.getOrderBySupplierIdAndTime(supplier, null, null, (pageIndex1-1)*pageSize1+1,pageSize1 );	
+//    						
+//    		}	     
+            orderList = orderService.getOrderBySupplierIdAndTime(supplier, null, null, (pageIndex1-1)*pageSize1,pageSize1 );	
+            int total = orderService.getOrderTotalBySupplierIdAndTime(supplier, null, null);
             
-            
-            if(pageIndex != null && pageSize != null && pageIndex != -1 && pageSize != -1){			
-    			orderList = orderService.getOrderBySupplierIdAndTime(supplier, startDate, endDate, pageIndex, pageSize);
-    						
-    		}else{			
-    			orderList = orderService.getOrderBySupplierIdAndTime(supplier, startDate, endDate);
-    						
-    		}	     
             for (OrderDTO orderDTO : orderList) {
             	if(nameMap.containsKey(orderDTO.getStatus().toLowerCase())){
             		orderDTO.setStatus(nameMap.get(orderDTO.getStatus().toLowerCase()));
@@ -294,13 +385,19 @@ public class FileDownloadController {
 			}
             modelAndView.addObject("orderList", orderList);
     		modelAndView.setViewName("orders");
-    		
+    		 JSONObject result = new JSONObject();  
+    	      result.put("rows", orderList);  
+             result.put("total",total);
+             return result.toString();//这个就是你在ajax成功的时候返回的数据，我在那边进行了一个对象封装
     	}catch(Exception ex){
     		log.error(ex.getMessage());
     		ex.printStackTrace();
     	}        
-		return modelAndView;
+    	return null;
     }
+    
+    
+    
     @RequestMapping(value = "downLoadPicture")
     public void dowmLoadPic(HttpServletResponse response, String queryJson){
     	ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
@@ -517,7 +614,10 @@ public class FileDownloadController {
 			e.printStackTrace(); 
 		}
         try {
-			specialSkuService.saveDTO(list);
+        	for(SpecialSkuDTO spec:list){
+        		specialSkuService.saveDTO(spec);
+        	}
+			
 		} catch (ServiceMessageException e) {
 			e.printStackTrace(); 
 		}

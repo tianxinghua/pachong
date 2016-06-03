@@ -81,15 +81,15 @@ public abstract class AbsOrderService {
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("info");
     private static LoggerUtil loggerError = LoggerUtil.getLogger("error");
 
-//    static String url="/purchase/createdeliveryorder";
+    //    static String url="/purchase/createdeliveryorder";
     private static ResourceBundle bdl = null;
     private static ResourceBundle bd = null;
     private static String  startDateOfTemp=null,endDateOfTemp=null;
     private static  String url = null;
-    private static  String redisUrl = null;  
+    private static  String redisUrl = null;
     public static boolean SENDMAIL = false;
     private static JedisClient j = null;
-	static {
+    static {
         try {
             if(null==bdl){
                 bdl=ResourceBundle.getBundle("openice");
@@ -98,7 +98,7 @@ public abstract class AbsOrderService {
                 bd=ResourceBundle.getBundle("conf");
             }
             url = bdl.getString("wmsUrl");
-            redisUrl = bdl.getString("redisUrl"); 
+            redisUrl = bdl.getString("redisUrl");
             toEmail = bdl.getString("email");
             fromEmail = bdl.getString("fromEmail");
             emailPass = bdl.getString("emailPass");
@@ -111,7 +111,7 @@ public abstract class AbsOrderService {
     }
 
     @Autowired
-	public SkuPriceService skuPriceService;
+    public SkuPriceService skuPriceService;
 
     @Autowired
     com.shangpin.iog.service.OrderService productOrderService;
@@ -178,7 +178,7 @@ public abstract class AbsOrderService {
 
         //初始化时间
         initDate("date.ini");
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MMDD_HH);
         String date = sdf.format(new Date());
         j.setValueOnAsync("iog_"+supplierId,date);
@@ -200,16 +200,16 @@ public abstract class AbsOrderService {
     }
 
     private void updateOrderTime(String supplierId) {
-		//先判断是否supplier已存在
+        //先判断是否supplier已存在
 //    	boolean flag = productOrderService.selectOrderUpdateBySupplier(supplierId);
 //    	if(flag){
 //    		productOrderService.updateSupplierOrderTime(supplierId);
 //    	}else{
 //    		productOrderService.saveSupplierOrderTime(supplierId);
 //    	}
-	}
+    }
 
-	/**
+    /**
      * 通过WMS下单 包换退单的处理
      * @param supplierNo 供货商编号    S******
      * @param supplierId 供货商门户编号 2015****
@@ -217,7 +217,7 @@ public abstract class AbsOrderService {
     public  void  checkoutOrderFromWMS(String supplierNo,String supplierId,boolean handleCancel){
         //初始化时间
         initWMSDate("dateWMS.ini");
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MMDD_HH);
         String date = sdf.format(new Date());
         j.setValueOnAsync("iog_"+supplierId,date);
@@ -242,15 +242,15 @@ public abstract class AbsOrderService {
             Thread t = new Thread(new MailThread(supplierId,supplierId+" 线上订单发生错误","获取订单信息失败，无信息返回。"));
             t.start();
             try {
-            	result = getOrderInfoFromWMS(jsonParameter, result);
-            	orderDTOList = gson.fromJson(result,new TypeToken<List<ICEWMSOrderDTO>>(){}.getType());
-			} catch (Exception e2) {
-				loggerError.error("第二次获取"+supplierNo +"供货商，wms订单转化异常,退出");
-	            Thread t1 = new Thread(new MailThread(supplierId,supplierId+" 线上订单发生错误","获取订单信息失败，无信息返回。"));
-	            t1.start();
-	            return;
-			}           
-            
+                result = getOrderInfoFromWMS(jsonParameter, result);
+                orderDTOList = gson.fromJson(result,new TypeToken<List<ICEWMSOrderDTO>>(){}.getType());
+            } catch (Exception e2) {
+                loggerError.error("第二次获取"+supplierNo +"供货商，wms订单转化异常,退出");
+                Thread t1 = new Thread(new MailThread(supplierId,supplierId+" 线上订单发生错误","获取订单信息失败，无信息返回。"));
+                t1.start();
+                return;
+            }
+
         }
         String uuid="",skuNo="";
         //由于拉取时可能更改供货商的SKU的编号需要 继承者确认
@@ -267,7 +267,7 @@ public abstract class AbsOrderService {
                 }
                 try {
 //                    skuRelationDTO=  skuRelationService.getSkuRelationBySkuId(icewmsOrderDTO.getSkuNo());
-                      skuRelationDTO = skuRelationService.getSkuRelationBySupplierIdAndSkuId(supplierId,icewmsOrderDTO.getSkuNo());
+                    skuRelationDTO = skuRelationService.getSkuRelationBySupplierIdAndSkuId(supplierId,icewmsOrderDTO.getSkuNo());
                     if(null!=skuRelationDTO){
                         skuMap.put(skuRelationDTO.getSopSkuId(), skuRelationDTO.getSupplierSkuId());
                     }else{   //获取供货商的SKU编号
@@ -293,7 +293,7 @@ public abstract class AbsOrderService {
         handlePurchaseOrderException(supplierId);
         //处理取消异常
         handleCancelOrderException(supplierId);
-       //处理退款异常
+        //处理退款异常
         handleRefundPurchaseOrderException(supplierId);
 
         //处理订单
@@ -312,9 +312,9 @@ public abstract class AbsOrderService {
         handleRefundOrderAndEmailOfWMS(supplierNo, supplierId);
     }
 
-	private String getOrderInfoFromWMS(String jsonParameter, String result) {
-		try {
-        	
+    private String getOrderInfoFromWMS(String jsonParameter, String result) {
+        try {
+
             result =  HttpUtil45.operateData("post","form",url+"/Api/StockQuery/SupplierInventoryLogQuery",new OutTimeConfig(1000*5,1000*30,1000*30),null,
                     jsonParameter,"","");
             logger.info("获取的订单信息为:" + result);
@@ -323,8 +323,8 @@ public abstract class AbsOrderService {
         } catch (ServiceException e) {
             e.printStackTrace();
         }
-		return result;
-	}
+        return result;
+    }
 
 
 
@@ -333,16 +333,16 @@ public abstract class AbsOrderService {
      * @param supplierId
      */
     public void confirmOrder(String supplierId){
- 
+
         List<OrderDetailDTO> detailDTOList = null;
         try {
-        	detailDTOList  =orderDetailService.getOrderDetailBySupplierIdAndOrderStatus(supplierId,OrderStatus.PAYED);
+            detailDTOList  =orderDetailService.getOrderDetailBySupplierIdAndOrderStatus(supplierId,OrderStatus.PAYED);
         } catch (ServiceException e) {
             e.printStackTrace();
         }
         if(null!=detailDTOList){
             for(OrderDetailDTO detailDTO :detailDTOList){
-            	com.shangpin.iog.dto.OrderDTO orderDTO = this.transOrderDatailToOrder(detailDTO);
+                com.shangpin.iog.dto.OrderDTO orderDTO = this.transOrderDatailToOrder(detailDTO);
                 //订单支付后的处理
                 handleConfirmOrder(orderDTO);
                 updateOrderMsg(orderDTO);
@@ -393,9 +393,9 @@ public abstract class AbsOrderService {
                 }
                 String excDesc = orderDTO.getExcDesc();
                 if(excDesc!=null){
-                	if(excDesc.length()>100){
-                		excDesc = excDesc.substring(0,100);
-                	}
+                    if(excDesc.length()>100){
+                        excDesc = excDesc.substring(0,100);
+                    }
                 }
                 logger.info("推送取消采购单发生的参数：sopPurchaseOrderDetailNos："+sopPurchaseOrderDetailNos+"excDesc:"+orderDTO.getExcDesc());
                 PurchaseOrderEx purchaseOrderEx = new PurchaseOrderEx(sopPurchaseOrderDetailNos,sopPurchaseOrderDetailNos+":"+excDesc);
@@ -437,7 +437,7 @@ public abstract class AbsOrderService {
         List<OrderDetailDTO> orderDetailDTOList = null;
         try {
             //获取已下单的订单信息
-        	String nowDate = DateTimeUtil.getDateTime();
+            String nowDate = DateTimeUtil.getDateTime();
 
             orderDetailDTOList = orderDetailService.getOrderDetailBySupplierIdAndOrderStatus(supplierId, OrderStatus.PLACED);
 
@@ -460,7 +460,7 @@ public abstract class AbsOrderService {
                 orderDetailDTOList = new ArrayList<>();
             }
             orderDetailDTOList.addAll(waitList);
-            
+
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -561,7 +561,7 @@ public abstract class AbsOrderService {
                         }
                         logger.info("查询是否支付，订单号:" + spOrderNo);
                         if (null != orderDetailSpecialPage && null != orderDetailSpecialPage.PurchaseOrderDetails && orderDetailSpecialPage.PurchaseOrderDetails.size() > 0) {  //存在采购单 就代表已支付
-                        	spMasterOrderNoMap.put(spOrderNo, "");
+                            spMasterOrderNoMap.put(spOrderNo, "");
                             for (PurchaseOrderDetailSpecial orderDetail : orderDetailSpecialPage.PurchaseOrderDetails) {
                                 sopPurchaseOrderNo = orderDetail.SopPurchaseOrderNo;
                                 if (purchaseOrderMap.containsKey(sopPurchaseOrderNo)) {
@@ -584,24 +584,24 @@ public abstract class AbsOrderService {
                         for (int i=0;i<purchaseOrderDetailSpecialList.size();i++) {
                             PurchaseOrderDetailSpecial purchaseOrderDetail = purchaseOrderDetailSpecialList.get(i);
                             if (detailDTO.getSpSku().equals(purchaseOrderDetail.SkuNo)) { //与ORDER 同一个商品
-                            	
-                            	//两种情况：1 新插入的,spPurchaseNo 为空 2 重新采购的 有值
-                            	
-                            	if (StringUtils.isEmpty(detailDTO.getSpPurchaseNo())) {
-                            	     purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
-                                     purchaseNobuffer.append(purchaseOrderDetail.SopPurchaseOrderNo).append(";");
-                                     //赋值状态 海外商品每个采购单 只有一种商品
-                                     detailDTO.setPurchasePriceDetail(purchaseOrderDetail.SkuPrice);
-                                     detailDTO.setSpOrderDetailNo(purchaseOrderDetail.OrderDetailNo);
-                                     detailDTO.setSpPurchaseNo(sopPurchaseOrderNo);
-                                     detailDTO.setSpPurchaseDetailNo(purchaseOrderDetail.SopPurchaseOrderDetailNo);
-								}else{
-									if (!detailDTO.getSpPurchaseNo().equals(sopPurchaseOrderNo)) {
-										continue;
-									}
-								}
- 
-                            	if (5 != purchaseOrderDetail.DetailStatus) { //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
+
+                                //两种情况：1 新插入的,spPurchaseNo 为空 2 重新采购的 有值
+
+                                if (StringUtils.isEmpty(detailDTO.getSpPurchaseNo())) {
+                                    purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
+                                    purchaseNobuffer.append(purchaseOrderDetail.SopPurchaseOrderNo).append(";");
+                                    //赋值状态 海外商品每个采购单 只有一种商品
+                                    detailDTO.setPurchasePriceDetail(purchaseOrderDetail.SkuPrice);
+                                    detailDTO.setSpOrderDetailNo(purchaseOrderDetail.OrderDetailNo);
+                                    detailDTO.setSpPurchaseNo(sopPurchaseOrderNo);
+                                    detailDTO.setSpPurchaseDetailNo(purchaseOrderDetail.SopPurchaseOrderDetailNo);
+                                }else{
+                                    if (!detailDTO.getSpPurchaseNo().equals(sopPurchaseOrderNo)) {
+                                        continue;
+                                    }
+                                }
+
+                                if (5 != purchaseOrderDetail.DetailStatus) { //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
                                     detailDTO.setStatus(OrderStatus.PAYED);
                                 } else {
                                     detailDTO.setStatus(OrderStatus.REFUNDED);
@@ -625,7 +625,7 @@ public abstract class AbsOrderService {
 //
 //                    orderDTO.setSpPurchaseDetailNo(purchaseOrderDetailbuffer.toString().substring(0, purchaseOrderDetailbuffer.toString().length() - 1));
 //                    productOrderService.update(orderDTO);
-                    
+
 
                 }
 
@@ -671,7 +671,7 @@ public abstract class AbsOrderService {
 //        List<OrderDTO>  orderDTOList= null;
         List<OrderDetailDTO> detailDTOList =null;
         try {
-        	String nowDate = DateTimeUtil.getDateTime(); 
+            String nowDate = DateTimeUtil.getDateTime();
 //            orderDTOList  = productOrderService.getOrderBySupplierIdAndOrderStatusAndExceptionStatus(supplierId,OrderStatus.WAITPLACED,"1",nowDate,2);
             detailDTOList = orderDetailService.getOrderBySupplierIdAndOrderStatusAndExceptionStatus(supplierId,OrderStatus.WAITPLACED,"1",nowDate,2);
 
@@ -811,7 +811,7 @@ public abstract class AbsOrderService {
                 //计算同一采购单的相同产品的数量
                 if(stockMap.containsKey(purchaseOrderDetail.SupplierSkuNo)){
 
-                	logger.info("SopPurchaseOrderNo:"+purchaseOrderDetail.SopPurchaseOrderNo+"====="+"SopPurchaseOrderDetailNo:"+purchaseOrderDetail.SopPurchaseOrderDetailNo+"==="+"supplierId:"+supplierId);
+                    logger.info("SopPurchaseOrderNo:"+purchaseOrderDetail.SopPurchaseOrderNo+"====="+"SopPurchaseOrderDetailNo:"+purchaseOrderDetail.SopPurchaseOrderDetailNo+"==="+"supplierId:"+supplierId);
                     purchasePrice =purchaseOrderDetail.SkuPrice;
                     ICEOrderDetailDTO detailDTO = new ICEOrderDetailDTO();
                     detailDTO.setSku_id(purchaseOrderDetail.SupplierSkuNo);
@@ -897,7 +897,7 @@ public abstract class AbsOrderService {
 //                }
 
 
-           } catch (Exception e){
+            } catch (Exception e){
                 logger.error("下单错误 " + e.getMessage());
                 e.printStackTrace();
             }
@@ -955,33 +955,33 @@ public abstract class AbsOrderService {
 
             List<OrderDetailDTO> detailDTOList =null;
             try {
-                 //根据订单子编号查找EP库中的采购单
-            	detailDTOList = orderDetailService.getDetailDTOByEpMasterOrderNo(spMasterOrderNo+"|"+spSku);
+                //根据订单子编号查找EP库中的采购单
+                detailDTOList = orderDetailService.getDetailDTOByEpMasterOrderNo(spMasterOrderNo+"|"+spSku);
 //                detailDTOList = orderDetailService.getOrderDetailBySpOrderDetailNo(spOrderDetailNo);
             } catch (ServiceException e) {
                 e.printStackTrace();
             }
-            
-            
+
+
             if(null!=detailDTOList&&detailDTOList.size()>0){
-            	boolean f = true;
-            	//原有数据 如果有采购单号且一致 为原有数据
-            	for (OrderDetailDTO orderDetailDTO : detailDTOList) {
-            		//是否是新的
-            		if (!StringUtils.isEmpty(orderDetailDTO.getSpPurchaseNo())) {
-						f = false;
-					}
-				}
-            	if (f) {
-            		continue start;
-				}else{
-					for (OrderDetailDTO orderDetailDTO : detailDTOList) {
-						//原有数据不做处理
-						 if(orderDetailDTO.getSpPurchaseNo().equals(purchaseNo)){
-	                          continue start;
-	                      }
-					}
-				}
+                boolean f = true;
+                //原有数据 如果有采购单号且一致 为原有数据
+                for (OrderDetailDTO orderDetailDTO : detailDTOList) {
+                    //是否是新的
+                    if (!StringUtils.isEmpty(orderDetailDTO.getSpPurchaseNo())) {
+                        f = false;
+                    }
+                }
+                if (f) {
+                    continue start;
+                }else{
+                    for (OrderDetailDTO orderDetailDTO : detailDTOList) {
+                        //原有数据不做处理
+                        if(orderDetailDTO.getSpPurchaseNo().equals(purchaseNo)){
+                            continue start;
+                        }
+                    }
+                }
             }
 
 
@@ -1503,28 +1503,28 @@ public abstract class AbsOrderService {
                 /**
                  * 根据sp_order_id查询UUID
                  */
-                
-                
-                
-                
+
+
+
+
                 String uuid = "" ;//productOrderService.getUuIdBySpOrderId(entry.getKey());
-                
+
                 OrderDetailDTO detailDTO = null;
                 try {
                     logger.info("退款操作 purchaseno =" + entry.getKey()+"---");
                     detailDTO= orderDetailService.getOrderByPurchaseNo(entry.getKey());
                     if(null!=detailDTO)  uuid = detailDTO.getUuid();
                 } catch (Exception e) {
-                	
+
                     e.printStackTrace();
                     loggerError.error("采购单：" +entry.getKey()  +  " 未找到订单明细 ,EP无法退款");
                 }
-                
+
 
                 if(org.apache.commons.lang.StringUtils.isBlank(uuid)){//采购单已到退款状态  未有已支付状态 为下单 不做存储
                     continue;
                 }
-                
+
                 ReturnOrderDTO deleteOrder =new ReturnOrderDTO();
                 deleteOrder.setUuId(uuid);
                 deleteOrder.setSupplierId(supplierId);
@@ -1573,7 +1573,7 @@ public abstract class AbsOrderService {
 
                 } catch (ServiceException e) {
 
-                        e.printStackTrace();
+                    e.printStackTrace();
                 }
 
             }
@@ -1614,7 +1614,7 @@ public abstract class AbsOrderService {
                 PurchaseOrderQueryDto  orderQueryDto = new PurchaseOrderQueryDto(startTime,endTime,statusList
                         ,pageIndex,pageSize);
                 PurchaseOrderDetailPage orderDetailPage=
-                servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
+                        servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
 
 
                 orderDetails = orderDetailPage.PurchaseOrderDetails;
@@ -1687,7 +1687,7 @@ public abstract class AbsOrderService {
             for (PurchaseOrderDetail orderDetail : orderDetails) {
                 sopPurchaseOrderNo  = orderDetail.SopPurchaseOrderNo;
                 if(purchaseTempMap.containsKey(sopPurchaseOrderNo)){
-                   continue;
+                    continue;
                 }else{
                     purchaseTempMap.put(sopPurchaseOrderNo,"");
                     //转化为带订单号的采购单信息
@@ -1757,10 +1757,10 @@ public abstract class AbsOrderService {
      * @throws Exception
      */
     public  String getPurchaseDeliveryOrderNo(String supplierId,String logisticsName, String logisticsOrderNo,
-                                                    String dateDeliver, int estimateArrivedTime, String deliveryContacts,
-                                                    String deliveryContactsPhone, String deliveryAddress,
-                                                    String deliveryMemo, String warehouseNo, String warehouseName,
-                                                    List<String> sopPurchaseOrderDetailNo, int printStatus) throws Exception{
+                                              String dateDeliver, int estimateArrivedTime, String deliveryContacts,
+                                              String deliveryContactsPhone, String deliveryAddress,
+                                              String deliveryMemo, String warehouseNo, String warehouseName,
+                                              List<String> sopPurchaseOrderDetailNo, int printStatus) throws Exception{
         OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
         if(StringUtils.isEmpty(logisticsName)) logisticsName = "顺丰";
         if(StringUtils.isEmpty(logisticsOrderNo)) logisticsOrderNo = getRandomNum();
@@ -1778,7 +1778,7 @@ public abstract class AbsOrderService {
 
         DeliveryOrderAdd deliveryOrderAdd= new DeliveryOrderAdd(logisticsName,logisticsOrderNo,dateDeliver,
                 estimateArrivedTime,deliveryContacts
-        ,deliveryContactsPhone,deliveryAddress,deliveryMemo,warehouseNo
+                ,deliveryContactsPhone,deliveryAddress,deliveryMemo,warehouseNo
                 ,warehouseName, sopPurchaseOrderDetailNo,printStatus);
         String sopLogisticsOrderNo= servant.CreateDeliveryOrder(supplierId, deliveryOrderAdd);
         return sopLogisticsOrderNo;
@@ -1860,14 +1860,14 @@ public abstract class AbsOrderService {
 
         Date tmpDate =  DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(startDateOfWMS,YYYY_MMDD_HH_WMS),-1,"m");
         startDateOfWMS = DateTimeUtil.convertFormat(tmpDate,YYYY_MMDD_HH_WMS) ;
-        
+
         if(startDateOfTemp!=null&&!"".equals(startDateOfTemp)){
-        	startDateOfWMS = startDateOfTemp;
+            startDateOfWMS = startDateOfTemp;
         }
         if(endDateOfTemp!=null&&!"".equals(endDateOfTemp)){
-        	endDateOfWMS = endDateOfTemp;
+            endDateOfWMS = endDateOfTemp;
         }else{
-        	writeGrapDate(endDateOfWMS, fileName);
+            writeGrapDate(endDateOfWMS, fileName);
         }
         System.out.println("startDateOfWMS："+startDateOfWMS + "，endDateOfWMS："+endDateOfWMS);
         logger.info("startDateOfWMS："+startDateOfWMS + "，endDateOfWMS："+endDateOfWMS);

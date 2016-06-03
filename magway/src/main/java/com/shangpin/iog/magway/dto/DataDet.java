@@ -12,7 +12,9 @@ public class DataDet {
 
 	String ID;
 	String Color;
+	String Fabric;
 	String Composition;
+	String SizeAndFit;
 	String MadeIn;
 	List<Stocks> Stocks;
 	List<Pictures> Pictures;

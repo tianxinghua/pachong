@@ -23,6 +23,7 @@ import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.dto.SkuRelationDTO;
+import com.shangpin.iog.dto.SpecialSkuDTO;
 import com.shangpin.iog.dto.StockUpdateDTO;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.SkuRelationService;
@@ -383,6 +384,7 @@ public abstract class AbsUpdateProductStock {
 		Set<String> skuNoShangpinSet = iceStock.keySet();
 		int skuNum = 1;
 		List<String> skuNoShangpinList = new ArrayList<>();
+
 		//更新库存
 		int failCount=0;
 		for(Iterator<String> itor =skuNoShangpinSet.iterator();itor.hasNext();){
@@ -390,7 +392,6 @@ public abstract class AbsUpdateProductStock {
 				//调用接口 查找库存
 				Map<String,Integer> toUpdateIce=new HashMap<>();
 				removeNoChangeStockRecord(supplier, iceStock, servant, skuNoShangpinList,toUpdateIce);
-
 
 				Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
 				loggerInfo.info("待更新的数据总和：--------"+toUpdateIce.size());
@@ -423,7 +424,6 @@ public abstract class AbsUpdateProductStock {
 						logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),stock);
 					}
 				}
-
 
 				skuNoShangpinList = new ArrayList<>();
 			}
@@ -465,11 +465,6 @@ public abstract class AbsUpdateProductStock {
 				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),stock);
 			}
 		}
-
-
-
-
-
 		loggerInfo.info("更新库存 失败的数量：" + failCount);
 		return failCount;
 	}
@@ -646,7 +641,7 @@ public abstract class AbsUpdateProductStock {
 						
 						loggerInfo.info("sku ：" + skuNo +"原库存："+stockResult);
 						stockResult =  stockResult - sopPurchaseMap.get(iceSku);
-						loggerInfo.info("sku ：" + skuNo +"库存："+stockResult  + " ; 采购单含有数量 : " + sopPurchaseMap.get(skuNo)+" 最终库存 ：" + stockResult);
+						loggerInfo.info("sku ：" + skuNo +"库存："+stockResult  + " ; 采购单含有数量 : " + sopPurchaseMap.get(iceSku)+" 最终库存 ：" + stockResult);
 						if(stockResult<0) stockResult=0;
 
 					}
@@ -792,6 +787,50 @@ public abstract class AbsUpdateProductStock {
 
 
 	}
+
+	private void setStockNotUpdateBySop(String supplierId,OpenApiServantPrx servant){
+
+		List<PurchaseOrderDetail> orderDetails = null;
+		boolean hasNext=true;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		Date endDate = new Date();
+		String endTime = format.format(endDate);
+		String startTime = format.format(getAppointDayFromSpecifiedDay(endDate, -1, "D"));
+
+		List<java.lang.Integer> statusList = new ArrayList<>();
+		statusList.add(7);
+		int pageIndex=1,pageSize=20;
+
+		while(hasNext){
+			PurchaseOrderQueryDto orderQueryDto = new PurchaseOrderQueryDto(startTime,endTime,statusList
+					,pageIndex,pageSize);
+			PurchaseOrderDetailPage orderDetailPage;
+			try {
+				orderDetailPage = servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
+				orderDetails = orderDetailPage.PurchaseOrderDetails;
+
+				for (PurchaseOrderDetail orderDetail : orderDetails) {
+
+					SpecialSkuDTO spec = new SpecialSkuDTO();
+					String supplierSkuNo  = orderDetail.SupplierSkuNo;
+					spec.setSupplierId(supplierId);
+					spec.setSupplierSkuId(supplierSkuNo);
+					try {
+						System.out.println(spec.toString());
+						specialSkuService.saveDTO(spec);
+					} catch (ServiceMessageException e) {
+						e.printStackTrace();
+					}
+				}
+			} catch (ApiException e) {
+				e.printStackTrace();
+			}
+			pageIndex++;
+			hasNext=(pageSize==orderDetails.size());
+		}
+
+	}
+
 	//时间处理
 	private  Date getAppointDayFromSpecifiedDay(Date today,int num,String type){
 		Calendar c   =   Calendar.getInstance();

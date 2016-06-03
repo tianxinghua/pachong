@@ -8,15 +8,13 @@
 	</resultMap>
 
 
-    <insert id="saveList"  parameterType="java.util.List" >
+    <insert id="save"  parameterType="iog_specialSku" >
 
         insert into SPECIAL_SKU(
 		SUPPLIER_ID,SUPPLIER_SKU_ID,CREATE_TIME
         )
         values
-        <foreach collection="list" index="index" item="item" separator=",">
-            (#{item.supplierId}, #{item.supplierSkuId}, #{item.createTime})
-        </foreach>
+            (#{supplierId}, #{supplierSkuId}, #{createTime})
 
     </insert>
     

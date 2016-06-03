@@ -36,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private  final  static String UPDATE_ERROR = "更新订单状态失败";
 
     private  final  static  String UPDATE_EXCEPTON_MSG_ERROR="更新订单异常信息时失败";
-    
+
     private static String splitSign = ",";
 
     private static JedisClient redisClient  = JedisClient.getInstance();
@@ -48,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     OrderDetailMapper orderDetailDAO;
-    
+
     @Autowired
     OrderTimeUpdateMapper orderUpdateDAO;
     @Override
@@ -119,11 +119,11 @@ public class OrderServiceImpl implements OrderService {
                     }else{
                         detailDTO.setOrderNo(orderDTO.getSpMasterOrderNo()+i);
                     }
-                    
+
                     if(orderDTO.getSpMasterOrderNo().startsWith("CGD")){//通过 SOP获取的 需要增加主的采购单号
-                    	
-                    	detailDTO.setSpPurchaseNo(orderDTO.getSpMasterOrderNo());
-                    	
+
+                        detailDTO.setSpPurchaseNo(orderDTO.getSpMasterOrderNo());
+
                     }
 
                     temp.setSpOrderId(detailDTO.getOrderNo());//修改订单编号
@@ -223,18 +223,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean checkOrderByOrderIdSupplier(OrderDTO orderDTO){
-    	
-    	boolean flag = false;
-    	 try {
-    		 OrderDTO order = orderDAO.checkOrderByOrderIdSupplier(orderDTO.getSupplierId(),orderDTO.getSpOrderId());
-    		 if(order!=null){
-    			 flag = true;
-    		 }
-         } catch (Exception e) {
-             logger.error("订单查询失败："+ e.getMessage());
-             e.printStackTrace();
-         }
-         return flag;
+
+        boolean flag = false;
+        try {
+            OrderDTO order = orderDAO.checkOrderByOrderIdSupplier(orderDTO.getSupplierId(),orderDTO.getSpOrderId());
+            if(order!=null){
+                flag = true;
+            }
+        } catch (Exception e) {
+            logger.error("订单查询失败："+ e.getMessage());
+            e.printStackTrace();
+        }
+        return flag;
     }
     @Override
     public void update(OrderDTO orderDTO) throws ServiceException {
@@ -263,12 +263,12 @@ public class OrderServiceImpl implements OrderService {
         return uuIdList;
     }
 
-	@Override
-	public List<OrderDTO>  getOrderBySupplierIdAndOrderStatus(String supplierId,
-			String status, String date) throws ServiceException {
-		
-		 return  orderDAO.findBySupplierIdAndStatusAndDate(supplierId, status,date);
-	}
+    @Override
+    public List<OrderDTO>  getOrderBySupplierIdAndOrderStatus(String supplierId,
+                                                              String status, String date) throws ServiceException {
+
+        return  orderDAO.findBySupplierIdAndStatusAndDate(supplierId, status,date);
+    }
 
     @Override
     public List<OrderDTO> getOrderBySupplierIdAndOrderStatusAndExceptionStatus(String supplierId, String status, String excState, String date ,int interval) throws ServiceException {
@@ -277,17 +277,17 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-	public List<OrderDTO>  getOrderBySupplierIdAndOrderStatusAndTime(String supplierId,
-			String status, String startTime, String endTime) throws ServiceException {
-		 return  orderDAO.findBySupplierIdAndStatusAndTime(supplierId, status, startTime, endTime);
-	}
-	
-	@Override
-	public List<OrderDTO>  getOrderBySupplierIdAndOrderStatusAndUpdateTime(String supplierId,
-			String status, String startTime, String endTime) throws ServiceException {
-		 return  orderDAO.findBySupplierIdAndStatusAndUpdateTime(supplierId, status, startTime, endTime);
-	}
-	
+    public List<OrderDTO>  getOrderBySupplierIdAndOrderStatusAndTime(String supplierId,
+                                                                     String status, String startTime, String endTime) throws ServiceException {
+        return  orderDAO.findBySupplierIdAndStatusAndTime(supplierId, status, startTime, endTime);
+    }
+
+    @Override
+    public List<OrderDTO>  getOrderBySupplierIdAndOrderStatusAndUpdateTime(String supplierId,
+                                                                           String status, String startTime, String endTime) throws ServiceException {
+        return  orderDAO.findBySupplierIdAndStatusAndUpdateTime(supplierId, status, startTime, endTime);
+    }
+
     @Override
     public List<OrderDTO> getOrderBySupplierIdAndOrderStatus(String supplierId, String status) throws ServiceException {
         return  orderDAO.findBySupplierIdAndStatus(supplierId, status);
@@ -295,7 +295,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDTO> getExceptionOrder() throws ServiceException {
-    	return orderDAO.findExceptionOrder();
+        return orderDAO.findExceptionOrder();
     }
 
     @Override
@@ -380,135 +380,135 @@ public class OrderServiceImpl implements OrderService {
         return orderDAO.findByUuId(uuid);
     }
 
-	@Override
-	public List<OrderDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate,
-			Date endDate,Integer pageIndex, Integer pageSize) {
-		
-		return orderDAO.getOrderBySupplierIdAndTime(supplier, startDate, endDate, new RowBounds(pageIndex,pageSize));
-	}
-	
-	public List<OrderDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate, Date endDate){
-		return orderDAO.getOrderBySupplierIdAndTime(supplier, startDate, endDate);
-	}
-	
-	public Page<OrderDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate,
-			Date endDate,Integer pageIndex, Integer pageSize,String flag) throws ServiceMessageException{
-		List<OrderDTO> orderList = new ArrayList<>();
-		Page<OrderDTO> page = null;
-		try{
-			if(pageIndex != null && pageSize != null && pageIndex != -1 && pageSize != -1){
-				
-				orderList = this.getOrderBySupplierIdAndTime(supplier, startDate, endDate, pageIndex, pageSize);
-				page = new Page<>(pageIndex, pageSize);
-				
-			}else{
-				
-				orderList = this.getOrderBySupplierIdAndTime(supplier, startDate, endDate);
-				page = new Page<>(1, orderList.size());
-				
-			}	
-			
-			page.setItems(orderList);
-			
-		}catch(Exception ex){
-			logger.error(ex.getMessage());
-			ex.printStackTrace();
-			throw new ServiceMessageException("数据导出失败");
-		}
-		
-		return page;
-	}
+    @Override
+    public List<OrderDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate,
+                                                      Date endDate,Integer pageIndex, Integer pageSize) {
 
-	
-	@Override
-	public StringBuffer exportOrder(String supplier, Date startDate,
-			Date endDate, int pageIndex, int pageSize, String flag) {		
-		
-		Map<String, String> nameMap = new HashMap<String, String>();
-    	nameMap.put("placed", "下订单成功");
-    	nameMap.put("payed", "支付");
-    	nameMap.put("cancelled", "取消成功");
-    	nameMap.put("confirmed", "支付成功");
-    	nameMap.put("nohandle", "超时不处理");
-    	nameMap.put("waitplaced", "待下订单");
-    	nameMap.put("waitcancel", "待取消");
-    	nameMap.put("refunded", "退款成功");
-    	nameMap.put("waitrefund", "待退款");
-    	nameMap.put("purexpsuc", "采购异常Suc");
-    	nameMap.put("purexperr", "采购异常Err");
-		StringBuffer buffer = new StringBuffer("SupplierId 供货商" + splitSign
-				+ "SpOrderId 尚品订单编号" + splitSign
-				+ "SpPurchaseNo 采购单编号" + splitSign +"订单状态"+ splitSign+ "SpPurchaseDetailNo 采购单明细" + splitSign
-				+ "Detail 供货商skuId:数量" + splitSign + "Memo 尚品skuId:数量" + splitSign
-				+ "CreateTime" + splitSign + "UpdateTime" + splitSign+ "异常原因" + splitSign
-				+ "UuId").append("\r\n");
-		Page<OrderDTO> page = null;
-		try{
-			
-			page = this.getOrderBySupplierIdAndTime(supplier, startDate, endDate, pageIndex, pageSize, flag);
-			String detail = "" ,memo = "",supplierName = "";
-			if(page.getItems().size()>0){
-				for(OrderDTO order :page.getItems()){
-					
-					if(StringUtils.isNotBlank(order.getSupplierName())){
-						supplierName = order.getSupplierName();
-					}else{
-						supplierName = order.getSupplierId();
-					}
-					buffer.append(supplierName).append(splitSign);
-					buffer.append(order.getSpOrderId()).append(splitSign);
-					buffer.append(order.getSpPurchaseNo()).append(splitSign);
-					buffer.append(nameMap.get(order.getStatus().toLowerCase())).append(splitSign);
-					buffer.append(order.getSpPurchaseDetailNo()).append(splitSign);
-					if(StringUtils.isNotBlank(order.getDetail())){
-						detail = order.getDetail().replaceAll(splitSign, "");
-					}
-					buffer.append(detail).append(splitSign);
-					if(StringUtils.isNotBlank(order.getMemo())){
-						memo = order.getMemo().replaceAll(splitSign, "");
-					}
-					buffer.append(memo).append(splitSign);
-					buffer.append(order.getCreateTime()).append(splitSign);
-					buffer.append(order.getUpdateTime()).append(splitSign);
-					buffer.append(order.getExcDesc()).append(splitSign);
-					buffer.append(order.getUuId());
-					buffer.append("\r\n");
-				}
-			}
-			
-		}catch(Exception ex){
-			logger.error(ex.getMessage());
-			ex.printStackTrace();
-		}
-		
-		return buffer;
-	}
+        return orderDAO.getOrderBySupplierIdAndTime(supplier, startDate, endDate, new RowBounds(pageIndex,pageSize));
+    }
 
-	public boolean selectOrderUpdateBySupplier(String supplierId){
-		
-		boolean flag = false;
-		OrderTimeUpdateDTO dto = orderUpdateDAO.findSupplierOrderById(supplierId);
-		if(dto!=null){
-			flag = true;
-		}
-		return flag;
-	}
+    public List<OrderDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate, Date endDate){
+        return orderDAO.getOrderBySupplierIdAndTime(supplier, startDate, endDate);
+    }
 
-	@Override
-	public void updateSupplierOrderTime(String supplierId) {
-		OrderTimeUpdateDTO dto = new OrderTimeUpdateDTO();
-		dto.setSupplierId(supplierId);
-		dto.setUpdateTime(new Date());
-		orderUpdateDAO.updateSupplierOrderTime(dto);
-		
-	}
+    public Page<OrderDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate,
+                                                      Date endDate,Integer pageIndex, Integer pageSize,String flag) throws ServiceMessageException{
+        List<OrderDTO> orderList = new ArrayList<>();
+        Page<OrderDTO> page = null;
+        try{
+            if(pageIndex != null && pageSize != null && pageIndex != -1 && pageSize != -1){
 
-	@Override
-	public void saveSupplierOrderTime(String supplierId) {
-		OrderTimeUpdateDTO dto = new OrderTimeUpdateDTO();
-		dto.setSupplierId(supplierId);
-		dto.setUpdateTime(new Date());
-		orderUpdateDAO.savesupplierOrderTime(dto);
-	}
+                orderList = this.getOrderBySupplierIdAndTime(supplier, startDate, endDate, pageIndex, pageSize);
+                page = new Page<>(pageIndex, pageSize);
+
+            }else{
+
+                orderList = this.getOrderBySupplierIdAndTime(supplier, startDate, endDate);
+                page = new Page<>(1, orderList.size());
+
+            }
+
+            page.setItems(orderList);
+
+        }catch(Exception ex){
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
+            throw new ServiceMessageException("数据导出失败");
+        }
+
+        return page;
+    }
+
+
+    @Override
+    public StringBuffer exportOrder(String supplier, Date startDate,
+                                    Date endDate, int pageIndex, int pageSize, String flag) {
+
+        Map<String, String> nameMap = new HashMap<String, String>();
+        nameMap.put("placed", "下订单成功");
+        nameMap.put("payed", "支付");
+        nameMap.put("cancelled", "取消成功");
+        nameMap.put("confirmed", "支付成功");
+        nameMap.put("nohandle", "超时不处理");
+        nameMap.put("waitplaced", "待下订单");
+        nameMap.put("waitcancel", "待取消");
+        nameMap.put("refunded", "退款成功");
+        nameMap.put("waitrefund", "待退款");
+        nameMap.put("purexpsuc", "采购异常Suc");
+        nameMap.put("purexperr", "采购异常Err");
+        StringBuffer buffer = new StringBuffer("SupplierId 供货商" + splitSign
+                + "SpOrderId 尚品订单编号" + splitSign
+                + "SpPurchaseNo 采购单编号" + splitSign +"订单状态"+ splitSign+ "SpPurchaseDetailNo 采购单明细" + splitSign
+                + "Detail 供货商skuId:数量" + splitSign + "Memo 尚品skuId:数量" + splitSign
+                + "CreateTime" + splitSign + "UpdateTime" + splitSign+ "异常原因" + splitSign
+                + "UuId").append("\r\n");
+        Page<OrderDTO> page = null;
+        try{
+
+            page = this.getOrderBySupplierIdAndTime(supplier, startDate, endDate, pageIndex, pageSize, flag);
+            String detail = "" ,memo = "",supplierName = "";
+            if(page.getItems().size()>0){
+                for(OrderDTO order :page.getItems()){
+
+                    if(StringUtils.isNotBlank(order.getSupplierName())){
+                        supplierName = order.getSupplierName();
+                    }else{
+                        supplierName = order.getSupplierId();
+                    }
+                    buffer.append(supplierName).append(splitSign);
+                    buffer.append(order.getSpOrderId()).append(splitSign);
+                    buffer.append(order.getSpPurchaseNo()).append(splitSign);
+                    buffer.append(nameMap.get(order.getStatus().toLowerCase())).append(splitSign);
+                    buffer.append(order.getSpPurchaseDetailNo()).append(splitSign);
+                    if(StringUtils.isNotBlank(order.getDetail())){
+                        detail = order.getDetail().replaceAll(splitSign, "");
+                    }
+                    buffer.append(detail).append(splitSign);
+                    if(StringUtils.isNotBlank(order.getMemo())){
+                        memo = order.getMemo().replaceAll(splitSign, "");
+                    }
+                    buffer.append(memo).append(splitSign);
+                    buffer.append(order.getCreateTime()).append(splitSign);
+                    buffer.append(order.getUpdateTime()).append(splitSign);
+                    buffer.append(order.getExcDesc()).append(splitSign);
+                    buffer.append(order.getUuId());
+                    buffer.append("\r\n");
+                }
+            }
+
+        }catch(Exception ex){
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
+        }
+
+        return buffer;
+    }
+
+    public boolean selectOrderUpdateBySupplier(String supplierId){
+
+        boolean flag = false;
+        OrderTimeUpdateDTO dto = orderUpdateDAO.findSupplierOrderById(supplierId);
+        if(dto!=null){
+            flag = true;
+        }
+        return flag;
+    }
+
+    @Override
+    public void updateSupplierOrderTime(String supplierId) {
+        OrderTimeUpdateDTO dto = new OrderTimeUpdateDTO();
+        dto.setSupplierId(supplierId);
+        dto.setUpdateTime(new Date());
+        orderUpdateDAO.updateSupplierOrderTime(dto);
+
+    }
+
+    @Override
+    public void saveSupplierOrderTime(String supplierId) {
+        OrderTimeUpdateDTO dto = new OrderTimeUpdateDTO();
+        dto.setSupplierId(supplierId);
+        dto.setUpdateTime(new Date());
+        orderUpdateDAO.savesupplierOrderTime(dto);
+    }
 
 }

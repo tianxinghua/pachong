@@ -147,7 +147,7 @@
 //    查看订单
     function queryOrder(){
     	var search = filter("");
-        window.open('orders?queryJson='+$.toJSON(search), '','');
+        window.open('orders?supplierId='+$('#supplier').val(), '','');
     }
 	function show(){
 		$("#showExcel").removeAttr("hidden");

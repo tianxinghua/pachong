@@ -10,6 +10,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.magway.service.FetchProduct;
+import com.shangpin.iog.magway.service.FetchProduct2;
 
 public class StartUp {
 	 private static Logger log = Logger.getLogger("info");
@@ -30,7 +31,7 @@ public class StartUp {
 			loadSpringContext();
 	        log.info("----初始SPRING成功----");
 	        //拉取数据
-	        FetchProduct fetchProduct =(FetchProduct)factory.getBean("magway");
+	        FetchProduct2 fetchProduct =(FetchProduct2)factory.getBean("magway2");
 	        fetchProduct.fetchProductAndSave();
 
 	        log.info("----拉取magway数据完成----");
