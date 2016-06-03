@@ -47,10 +47,12 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.json.JsonUtil;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.OrderDetailDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductSearchDTO;
 import com.shangpin.iog.dto.SpecialSkuDTO;
 import com.shangpin.iog.dto.SupplierDTO;
+import com.shangpin.iog.service.OrderDetailService;
 import com.shangpin.iog.service.OrderService;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
@@ -99,7 +101,10 @@ public class FileDownloadController {
     
     @Autowired
     OrderService orderService;
-
+    
+    @Autowired
+    OrderDetailService orderDetailService;
+    
     @RequestMapping(value = "view")
     public ModelAndView viewPage() throws Exception {
         ModelAndView mv = new ModelAndView("iog");
@@ -335,50 +340,19 @@ public class FileDownloadController {
     	nameMap.put("shipped", "shipped");
     	nameMap.put("should purExp", "应该采购异常");
     	ModelAndView modelAndView = new ModelAndView();
-    	List<OrderDTO> orderList = null;
+    
     	try{
     		String page = request.getParameter("page");
     		String rows = request.getParameter("rows");
     		String supplier = request.getParameter("supplierId");
     		System.out.println(page+rows);
-//    		ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString("", ProductSearchDTO.class);
-//            if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
-////            String supplier = null;
-//            if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
-//            	supplier = productSearchDTO.getSupplier();
-//            }
-//            Date startDate  =null;
-//            if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
-//                startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
-//            }
-//            Date endDate = null;
-//            if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
-//                endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
-//            }        
-//            Integer pageIndex = -1;
-//            if(null !=productSearchDTO.getPageIndex()){
-//            	pageIndex = productSearchDTO.getPageIndex();
-//            }        
-//            Integer pageSize = -1;
-//            if(null != productSearchDTO.getPageSize()){
-//            	pageSize = productSearchDTO.getPageSize();
-//            }
-//            
             int pageIndex1 = Integer.parseInt(page);
     		int pageSize1 = Integer.parseInt(rows);
-//    		
-    			
-//            if(pageIndex != null && pageSize != null && pageIndex != -1 && pageSize != -1){		
-//    		
-//            	orderList = orderService.getOrderBySupplierIdAndTime(supplier, null, null, (pageIndex1-1)*pageSize1+1,pageSize1 );	
-//    		}else{			
-//    			orderList = orderService.getOrderBySupplierIdAndTime(supplier, null, null, (pageIndex1-1)*pageSize1+1,pageSize1 );	
-//    						
-//    		}	     
-            orderList = orderService.getOrderBySupplierIdAndTime(supplier, null, null, (pageIndex1-1)*pageSize1,pageSize1 );	
-            int total = orderService.getOrderTotalBySupplierIdAndTime(supplier, null, null);
+    		List<OrderDetailDTO> orderList = null;
+            orderList = orderDetailService.getOrderBySupplierIdAndTime(supplier, null, null, (pageIndex1-1)*pageSize1,pageSize1 );	
+            int total = orderDetailService.getOrderTotalBySupplierIdAndTime(supplier, null, null);
             
-            for (OrderDTO orderDTO : orderList) {
+            for (OrderDetailDTO orderDTO : orderList) {
             	if(nameMap.containsKey(orderDTO.getStatus().toLowerCase())){
             		orderDTO.setStatus(nameMap.get(orderDTO.getStatus().toLowerCase()));
             	}				

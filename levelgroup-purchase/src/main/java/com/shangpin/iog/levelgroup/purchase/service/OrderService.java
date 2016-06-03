@@ -19,11 +19,13 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.OrderDetailDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.levelgroup.purchase.common.MyFtpUtil;
 import com.shangpin.iog.product.service.OrderServiceImpl;
+import com.shangpin.iog.service.OrderDetailService;
 import com.shangpin.iog.service.ProductSearchService;
 
 /**
@@ -62,6 +64,9 @@ public class OrderService extends AbsOrderService {
     @Autowired
     ProductSearchService productSearchService;
     
+    @Autowired
+    OrderDetailService orderDetailService;
+    
     // 下单处理
  	public void startSOP() {
  		this.checkoutOrderFromSOP(supplierId,supplierNo, true);
@@ -91,18 +96,20 @@ public class OrderService extends AbsOrderService {
      */
     private void saveOrder(){
         //List<OrderDTO> list = new ArrayList<>();
-        List<OrderDTO> list1 = null;
-        List<OrderDTO> list2 = null;
+        List<OrderDetailDTO> list1 = null;
+        List<OrderDetailDTO> list2 = null;
         Date startTime = new Date();
         Date endTime = new Date();
         startTime =DateTimeUtil.convertFormat(
         		DateTimeUtil.shortFmt(DateTimeUtil.getAppointDayFromSpecifiedDay(startTime, -1, "D"))+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
         endTime =DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(endTime)+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
         try {
-           list1 = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
-        		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
-           list2 = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId2,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
-         		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+//           list1 = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
+//        		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+//           list2 = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId2,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
+//         		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+        	list1 = orderDetailService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId, OrderStatus.CONFIRMED, DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"), DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+        	list2 = orderDetailService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId2, OrderStatus.CONFIRMED, DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"), DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -113,19 +120,19 @@ public class OrderService extends AbsOrderService {
 //        System.out.println("list1长度为:"+list1.size());
 //        System.out.println("list2长度为:"+list2.size());
         
-        for (OrderDTO orderDTO:list1){
+        for (OrderDetailDTO orderDTO:list1){
         	try {
-				ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getDetail().split(":")[0]);
+				ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getSupplierSku());
 				ftpFile.append(orderDTO.getSpPurchaseNo());
 	            if(product!=null){
 	            	ftpFile.append(";").append(product.getProductCode());
 	            	ftpFile.append(";").append(product.getSize());
-	            	if(orderDTO.getDetail().split(":")[0].length()<15){
-	            		ftpFile.append(";").append("09").append(orderDTO.getDetail().split(":")[0]);
+	            	if(orderDTO.getSupplierSku().length()<15){
+	            		ftpFile.append(";").append("09").append(orderDTO.getSupplierSku());
 	            	}else{
-	            		ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+	            		ftpFile.append(";").append(orderDTO.getSupplierSku());
 	            	}
-		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
+		            ftpFile.append(";").append(orderDTO.getQuantity());
 		            
 		            if(orderDTO.getPurchasePriceDetail()!=null){
 	            		BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
@@ -138,17 +145,17 @@ public class OrderService extends AbsOrderService {
 		            ftpFile.append(";").append(product.getBrandName());
 		            ftpFile.append(";").append(orderDTO.getStatus());
 		            
-		            logger.info("SkuID="+orderDTO.getDetail().split(":")[0]+"采购单号:"+orderDTO.getSpPurchaseNo());
+		            logger.info("SkuID="+orderDTO.getSupplierSku()+"采购单号:"+orderDTO.getSpPurchaseNo());
 		           // System.out.println("订单1采购单号="+orderDTO.getSpPurchaseNo());
 	            }else{
 	            	ftpFile.append(";").append("");
 	            	ftpFile.append(";").append("");
-	            	if(orderDTO.getDetail().split(":")[0].length()<15){
-	            		ftpFile.append(";").append("09").append(orderDTO.getDetail().split(":")[0]);
+	            	if(orderDTO.getSupplierSku().length()<15){
+	            		ftpFile.append(";").append("09").append(orderDTO.getSupplierSku());
 	            	}else{
-	            		ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+	            		ftpFile.append(";").append(orderDTO.getSupplierSku());
 	            	}
-		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
+		            ftpFile.append(";").append(orderDTO.getQuantity());
 		            ftpFile.append(";").append(0);
 		            ftpFile.append(";").append("");
 		            ftpFile.append(";").append("pre-sale");
@@ -160,19 +167,19 @@ public class OrderService extends AbsOrderService {
 			}
         }
         
-        for (OrderDTO orderDTO2:list2){
+        for (OrderDetailDTO orderDTO2:list2){
         	try {
-				ProductDTO product2 = productSearchService.findProductForOrder(supplierId2,orderDTO2.getDetail().split(":")[0]);
+				ProductDTO product2 = productSearchService.findProductForOrder(supplierId2,orderDTO2.getSupplierSku());
 				ftpFile.append(orderDTO2.getSpPurchaseNo());
 	            if(product2!=null){
 	            	ftpFile.append(";").append(product2.getProductCode());
 	            	ftpFile.append(";").append(product2.getSize());
-	            	if(orderDTO2.getDetail().split(":")[0].length()<15){
-	            		ftpFile.append(";").append("09").append(orderDTO2.getDetail().split(":")[0]);
+	            	if(orderDTO2.getSupplierSku().length()<15){
+	            		ftpFile.append(";").append("09").append(orderDTO2.getSupplierSku());
 	            	}else{
-	            		ftpFile.append(";").append(orderDTO2.getDetail().split(":")[0]);
+	            		ftpFile.append(";").append(orderDTO2.getSupplierSku());
 	            	}
-		            ftpFile.append(";").append(orderDTO2.getDetail().split(":")[1]);
+		            ftpFile.append(";").append(orderDTO2.getQuantity());
 		            
 		            if(orderDTO2.getPurchasePriceDetail()!=null){
 //		            	System.out.println("数据2="+orderDTO.getPurchasePriceDetail());
@@ -187,17 +194,17 @@ public class OrderService extends AbsOrderService {
 	            	}
 		            ftpFile.append(";").append(product2.getBrandName());
 		            ftpFile.append(";").append(orderDTO2.getStatus());
-		            logger.info("SkuID="+orderDTO2.getDetail().split(":")[0]+"采购单号:"+orderDTO2.getSpPurchaseNo());
+		            logger.info("SkuID="+orderDTO2.getSupplierSku()+"采购单号:"+orderDTO2.getSpPurchaseNo());
 		            //System.out.println("订单2采购单号="+orderDTO2.getSpPurchaseNo());
 	            }else{
 	            	ftpFile.append(";").append("");
 	            	ftpFile.append(";").append("");
-	            	if(orderDTO2.getDetail().split(":")[0].length()<15){
-	            		ftpFile.append(";").append("09").append(orderDTO2.getDetail().split(":")[0]);
+	            	if(orderDTO2.getSupplierSku().length()<15){
+	            		ftpFile.append(";").append("09").append(orderDTO2.getSupplierSku());
 	            	}else{
-	            		ftpFile.append(";").append(orderDTO2.getDetail().split(":")[0]);
+	            		ftpFile.append(";").append(orderDTO2.getSupplierSku());
 	            	}
-		            ftpFile.append(";").append(orderDTO2.getDetail().split(":")[1]);
+		            ftpFile.append(";").append(orderDTO2.getQuantity());
 		            ftpFile.append(";").append(0);
 		            ftpFile.append(";").append("");
 		            ftpFile.append(";").append("pre-sale");
@@ -231,15 +238,16 @@ public class OrderService extends AbsOrderService {
     
     
     private void saveCancelOrder(){
-        List<OrderDTO> list = null;
+        List<OrderDetailDTO> list = null;
         Date startTime = new Date();
         Date endTime = new Date();
         startTime =DateTimeUtil.convertFormat(
         		DateTimeUtil.shortFmt(DateTimeUtil.getAppointDayFromSpecifiedDay(startTime, -1, "D"))+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
         endTime =DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(endTime)+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
         try {
-           list = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId,OrderStatus.REFUNDED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
-        		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+//           list = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId,OrderStatus.REFUNDED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
+//        		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+        	list = orderDetailService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId, OrderStatus.REFUNDED, DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"), DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -247,19 +255,19 @@ public class OrderService extends AbsOrderService {
         StringBuffer ftpFile = new StringBuffer();
         ftpFile.append("ORDER CODE;ITEM CODE;SIZE;SKU;ORDER;PRICE;BRAND;STATUS");
         ftpFile.append("\n");
-        for (OrderDTO orderDTO:list){
+        for (OrderDetailDTO orderDTO:list){
         	try {
-				ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getDetail().split(":")[0]);
+				ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getSupplierSku());
 				ftpFile.append(orderDTO.getSpPurchaseNo());
 	            if(product!=null){
 	            	ftpFile.append(";").append(product.getProductCode());
 	            	ftpFile.append(";").append(product.getSize());
-	            	if(orderDTO.getDetail().split(":")[0].length()<15){
-	            		ftpFile.append(";").append("09").append(orderDTO.getDetail().split(":")[0]);
+	            	if(orderDTO.getSupplierSku().length()<15){
+	            		ftpFile.append(";").append("09").append(orderDTO.getSupplierSku());
 	            	}else{
-	            		ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+	            		ftpFile.append(";").append(orderDTO.getSupplierSku());
 	            	}
-		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
+		            ftpFile.append(";").append(orderDTO.getQuantity());
 		            
 		            if(orderDTO.getPurchasePriceDetail()!=null){
 	            		BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
@@ -275,12 +283,12 @@ public class OrderService extends AbsOrderService {
 	            }else{
 	            	ftpFile.append(";").append("");
 	            	ftpFile.append(";").append("");
-	            	if(orderDTO.getDetail().split(":")[0].length()<15){
-	            		ftpFile.append(";").append("09").append(orderDTO.getDetail().split(":")[0]);
+	            	if(orderDTO.getSupplierSku().length()<15){
+	            		ftpFile.append(";").append("09").append(orderDTO.getSupplierSku());
 	            	}else{
-	            		ftpFile.append(";").append(orderDTO.getDetail().split(":")[0]);
+	            		ftpFile.append(";").append(orderDTO.getSupplierSku());
 	            	}
-		            ftpFile.append(";").append(orderDTO.getDetail().split(":")[1]);
+		            ftpFile.append(";").append(orderDTO.getQuantity());
 		            ftpFile.append(";").append(0);
 		            ftpFile.append(";").append("");
 		            ftpFile.append(";").append("pre-sale");

@@ -120,7 +120,7 @@ public interface OrderMapper extends IBaseDao<OrderDTO> {
     public List<OrderDTO> findExceptionOrder() ;
     
     public List<OrderDTO> getOrderBySupplierIdAndTime(@Param("supplierId")String supplier, @Param("startDate")Date startDate,
-    		@Param("endDate")Date endDate,@Param("page") int pageIndex,@Param("pageSize") int pageSize);
+    		@Param("endDate")Date endDate,RowBounds rowBounds);
     
     
     public List<OrderDTO> getOrderBySupplierIdAndTime(@Param("supplierId")String supplier, @Param("startDate")Date startDate, @Param("endDate")Date endDate);

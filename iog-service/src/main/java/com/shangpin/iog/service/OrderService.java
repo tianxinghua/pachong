@@ -245,7 +245,5 @@ public interface OrderService {
 
 	public void saveSupplierOrderTime(String supplierId);
 
-	public int getOrderTotalBySupplierIdAndTime(String supplier, String object,
-			String object2);
 
 }

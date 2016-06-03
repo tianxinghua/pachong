@@ -658,7 +658,9 @@ public abstract class AbsOrderService {
         orderDTO.setSpPurchaseNo(detailDTO.getSpPurchaseNo());
         orderDTO.setSpPurchaseDetailNo(detailDTO.getSpPurchaseDetailNo());
         orderDTO.setSupplierOrderNo(detailDTO.getSupplierOrderNo());
-
+        orderDTO.setCreateTime(detailDTO.getCreateTime());
+        orderDTO.setStatus(detailDTO.getStatus());
+        orderDTO.setSupplierId(detailDTO.getSupplierId());
         return orderDTO;
 
     }

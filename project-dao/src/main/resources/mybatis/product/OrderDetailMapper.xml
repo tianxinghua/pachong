@@ -24,6 +24,7 @@
 		<result column="EXC_STATE" property="excState"  />
 		<result column="EXC_DESC" property="excDesc"  />
 		<result column="EXC_TIME" property="excTime" />
+		<result column="SUPPLIER_NAME" property="supplierName" />
 		
 	</resultMap>
 	<sql id="all_Order_column">
@@ -165,7 +166,10 @@
 	</select>
 	<select id="getOrderBySupplierIdAndTime"  resultMap="OrderResultMap">
 		select
-		<include refid="all_Order_column"/>
+		ID, UUID,EP_MASTER_ORDER_NO,ORDER_NO,SUPPLIER_ORDER_NO, su.SUPPLIER_ID, SUPPLIER_NO,
+		SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO, SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU,
+		SUPPLIER_SKU, QUANTITY, PURCHASE_PRICE_DETAIL, STATUS, DELIVERY_NO, CREATE_TIME,
+		UPDATE_TIME, EXC_STATE, EXC_DESC, EXC_TIME,su.SUPPLIER_NAME
 		from ORDER_DETAIL ddd left join SUPPLIER su on ddd.SUPPLIER_ID = su.SUPPLIER_ID
 		<where>
 			su.SUPPLIER_STATE = '1'
@@ -175,7 +179,7 @@
 				<![CDATA[ and CREATE_TIME <=#{endDate}    ]]>
 			</if>
 		</where>
-		order by SUPPLIER_NAME,CREATE_TIME ,STATUS
+		order by CREATE_TIME desc
 	</select>
 	<select id="findExceptionOrder"  resultMap="OrderResultMap">
 		select ID , SUPPLIER_ID, UUID , ORDER_NO, STATUS , CREATE_TIME , EXC_STATE , EXC_DESC
@@ -231,4 +235,16 @@
 			<if test="null!=epMasterOrderNo">EP_MASTER_ORDER_NO=#{epMasterOrderNo}</if>
 		</where>
 	</select>
+	
+	<select id="getOrderTotalBySupplierIdAndTime"  resultType="int">
+        select
+        count(*)
+        from ORDER_DETAIL ddd
+        <where>
+            <if test="null!=supplierId">
+                ddd.SUPPLIER_ID=#{supplierId}
+            </if>         
+        </where>
+    </select>
+	
 </mapper>

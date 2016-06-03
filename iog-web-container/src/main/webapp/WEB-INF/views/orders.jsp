@@ -85,7 +85,7 @@ $(function(){
 		pagination:true,
 		pageSize:100,  nowrap:false,
     	rowStyler: function(index,row,index){
-    		return 'font-size:505px';
+    		return 'background-color:#C7EDCC;';
     		}	,
 	    columns:[[    
 	        {field:'supplierName',title:'供货商名称',width:'100',
@@ -94,10 +94,14 @@ $(function(){
 	        		}	
 	        
 	        },    
-	        {field:'spOrderId',title:'尚品订单编号',width:'250',
+	        {field:'epMasterOrderNo',title:'主订单号',width:'200',
 	        	styler: function(index,row,index){
 	        		return 'font-size:15px';
 	        		}	},
+      		  {field:'orderNo',title:'子订单号',width:'150',
+  	        	styler: function(index,row,index){
+  	        		return 'font-size:15px';
+  	        		}	},
 	        {field:'spPurchaseNo',title:'采购单编号',width:'150',
 	    	        	styler: function(index,row,index){
 	    	        		return 'font-size:15px';
@@ -112,11 +116,11 @@ $(function(){
 					} 
 				}
 }, 
-	        {field:'detail',title:'Detail',width:'250',
+	        {field:'spSku',title:'spSkuId',width:'150',
 	styler: function(index,row,index){
 		return 'font-size:15px';
 		}	}, 
-	        {field:'memo',title:'Memo',width:'150',
+	        {field:'supplierSku',title:'supplierSkuId',width:'150',
         	styler: function(index,row,index){
         		return 'font-size:15px';
         		}	}, 
@@ -142,7 +146,7 @@ $(function(){
 	        	styler: function(index,row,index){
 	        		return 'font-size:15px';
 	        		}	}, 
-	        {field:'uuId',title:'UuId',width:'250',
+	        {field:'uuid',title:'UuId',width:'250',
 	    	        	styler: function(index,row,index){
 	    	        		return 'font-size:15px';
 	    	        		}	}
@@ -186,7 +190,7 @@ function find(pageNumber, pageSize)
             success : function(data) {
                 $("#dg").datagrid('loadData',pageData(data.rows,data.total));//这里的pageData是我自己创建的一个对象，用来封装获取的总条数，和数据，data.rows是我在控制器里面添加的一个map集合的键的名称
                 var total =data.total;
-                console.info(total);
+                console.info(data);
                 $("#dg").datagrid('getPager').pagination({total : total});//重置
                 $("#dg").datagrid("loaded"); //移除屏蔽
             },
