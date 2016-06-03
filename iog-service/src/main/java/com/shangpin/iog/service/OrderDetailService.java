@@ -189,4 +189,8 @@ public interface OrderDetailService {
      */
     public List<OrderDetailDTO> getDetailDTOByEpMasterOrderNo(String epMasterOrderNo) throws ServiceException;
 
+
+	public int getOrderTotalBySupplierIdAndTime(String supplier, String object,
+			String object2);
+
 }

@@ -200,5 +200,10 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 			String epMasterOrderNo) throws ServiceException {
 		return orderDetailDao.getDetailDTOByEpMasterOrderNo(epMasterOrderNo);
 	}
-
+	
+	@Override
+	public int getOrderTotalBySupplierIdAndTime(String supplier, String object,
+			String object2){
+		return orderDetailDao.getOrderTotalBySupplierIdAndTime(supplier);
+	}
 }

@@ -178,4 +178,6 @@ public interface OrderDetailMapper extends IBaseDao<OrderDetailDTO> {
      * @return
      */
     public List<OrderDetailDTO> getDetailDTOByEpMasterOrderNo(@Param("epMasterOrderNo") String epMasterOrderNo);
+
+	public int getOrderTotalBySupplierIdAndTime(@Param("supplierId") String supplier);
 }

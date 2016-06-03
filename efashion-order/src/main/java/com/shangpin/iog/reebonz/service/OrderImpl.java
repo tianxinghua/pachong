@@ -272,6 +272,7 @@ public class OrderImpl extends AbsOrderService {
 
 	private String pushOrder(OrderDTO orderDTO) {
 
+		System.out.println("order info:"+orderDTO.toString());
 		String json = getJsonData(orderDTO);
 		logger.info("推送的数据：" + json);
 		HttpResponse response = null;
