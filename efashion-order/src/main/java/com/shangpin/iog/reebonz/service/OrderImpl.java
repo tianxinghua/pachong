@@ -177,6 +177,7 @@ public class OrderImpl extends AbsOrderService {
 					} else if (result.getResult().startsWith("Quantity")) {
 						System.out.println("isPurchaseExp"+isPurchaseExp);
 						if ("yes".equals(isPurchaseExp)) {
+							orderDTO.setExcDesc(result.getResult());
 							String reResult = setPurchaseOrderExc(orderDTO);
 							System.out.println(reResult);
 							if ("-1".equals(reResult)) {
