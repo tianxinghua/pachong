@@ -25,7 +25,7 @@ import com.shangpin.sop.AbsUpdateProductStock;
 /**
  * Created by Administrator on 2015/7/8.
  */
-@Component("SarenzaStock")
+@Component("sarenzaStockImp")
 public class SarenzaStockImp extends AbsUpdateProductStock {
 
 	private static Logger logger = Logger.getLogger("info");
@@ -59,19 +59,22 @@ public class SarenzaStockImp extends AbsUpdateProductStock {
 		Map<String, String> stock = new HashMap<String, String>();
 		List<Product> list = null;
 		try {
+			logger.info("get supplier file start");
 			list = FtpUtil.readLocalCSV(Product.class);
-
+			logger.info("get supplier file end ");
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		if (list != null) {
+			logger.info("list size " + list.size());
 			for (com.shangpin.iog.sarenza.stock.dto.Product spu : list) {
 				stock.put(spu.getVariantId(), spu.getStock());
 			}
 		}
 		
-		System.out.println(stock.size());
+//		System.out.println(stock.size());
+		logger.info("stock map =" + stock.toString() );
 		for (String skuno : skuNo) {
 			if(stock.containsKey(skuno)){
 				int stocktem = Integer.parseInt(stock.get(skuno));

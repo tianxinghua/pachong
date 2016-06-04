@@ -4,10 +4,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -104,11 +103,11 @@ public class FtpUtil {
 	/**
 	 * 下载文件 请注意未使用连接池 另外文件类型已知 要么文件夹要么文件 所以不做复杂判断
 	 * 
-	 * @param remoteFilePath
+	 *  remoteFilePath
 	 *            远端文件路径
-	 * @param remoteFileName
+	 *  remoteFileName
 	 *            远端文件名称
-	 * @param localFilePath
+	 *  localFilePath
 	 *            本地文件存放路径
 	 */
 	public static void main(String[] args) {
@@ -163,12 +162,41 @@ public class FtpUtil {
 			try {
 				files = ftp.dir(remoteFilePath);
 				if(files!=null&&files.length>=1){
-//					for (String fileName : files) {
-						if (files[files.length-1].indexOf("csv") > 0) {
-							filePath = files[files.length-1];
-							System.out.println(filePath);
-							ftp.get(path+filePath, filePath);
+					SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+					Date date = null;
+					Date maxDate = null;
+					String tmp="";
+					for (String fileName : files) {
+						if (fileName.indexOf("csv") > 0) {
+							tmp = fileName.substring(7,15);
+							try {
+								date = sdf.parse(tmp);
+								if(null==maxDate){
+									maxDate = date;
+									filePath = fileName;
+								}else{
+									if(date.getTime()-maxDate.getTime()>0){
+										filePath = fileName;
+									}
+								}
+								ftp.get(path+filePath, filePath);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								log.error("获取文件失败");
+							}
+
+
 						}
+
+					}
+
+
+//					for (String fileName : files) {
+//						if (files[files.length-1].indexOf("csv") > 0) {
+//							filePath = files[files.length-1];
+//							System.out.println(filePath);
+//							ftp.get(path+filePath, filePath);
+//						}
 //					}
 				}
 

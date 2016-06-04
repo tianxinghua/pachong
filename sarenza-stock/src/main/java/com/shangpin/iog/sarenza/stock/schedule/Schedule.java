@@ -4,11 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.TimerTask;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +33,7 @@ public class Schedule {
     private String time;
 
 	@Autowired	
-	SarenzaStockImp stockImp;
+	SarenzaStockImp sarenzaStockImp;
 	
 	
 	@SuppressWarnings("deprecation")
@@ -45,7 +41,7 @@ public class Schedule {
 	public void start(){
 		System.out.println(new Date().toLocaleString()+"开始更新");
     	Murder mur = Murder.getMur();
-    	mur.setStockImp(host,app_key,app_secret,time,stockImp); 
+    	mur.setStockImp(host,app_key,app_secret,time,sarenzaStockImp);
     	Thread t = new Thread(mur);
     	t.start();
 	}
@@ -70,7 +66,8 @@ public class Schedule {
 			return murder;
 		}
 		
-		private static ExecutorService executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
+//		private static ExecutorService executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
+		private static ExecutorService executor = Executors.newCachedThreadPool();
 		@Override
 		public void run() {				
 			System.out.println(Thread.currentThread().getName()+"执行murder");
@@ -110,8 +107,9 @@ public class Schedule {
 					
 					stockImp.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
 				} catch (Exception e) {
+
+					logError.error("更新失败  :"+e.getMessage(),e);
 					e.printStackTrace();
-					logger.info("更新库存数据库出错"+e.toString());
 				}
 				logger.info("更新数据库结束");
 				System.out.println("结束");
