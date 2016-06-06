@@ -8,20 +8,20 @@ dependencies {
 
 jar {
 
-    dependsOn copyToLib , copyResources,dependsClassPath
+    dependsOn copyToLib , copyResources
     exclude ("**/*.properties")
+//	,dependsClassPath
+    def manifestCp = configurations.compile.files.collect  {
 
-//    def manifestCp = configurations.compile.files.collect  {
-//
-//        File file = it
-//        "lib/${file.name}"
-//    }.join(' ')
+        File file = it
+        "lib/${file.name}"
+    }.join(' ')
 
 
 
     manifest {
-//        attributes 'Main-Class': 'com.shangpin.iog.daniello.stock.DanielloStockImp'
-		attributes 'Main-Class': 'com.shangpin.iog.daniello.stock.schedule.Startup'
-//        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+        attributes 'Main-Class': 'com.shangpin.iog.daniello.stock.DanielloStockImp'
+//		attributes 'Main-Class': 'com.shangpin.iog.daniello.stock.schedule.Startup'
+        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }

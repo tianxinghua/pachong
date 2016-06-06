@@ -189,6 +189,7 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 		param.put("op", "o");param.put("qty", qty);
 		param.put("o", "shangG");param.put("p", "aW5102cn6");
 		param.put("w", "ha");param.put("q", "ordreq");
+		param.put("nohtml","csv");
 		param.put("v", skuid.split("-")[0]);param.put("tg", skuDTO.getProductName());
 		param.put("cf", orderDTO.getSpOrderId());
 
