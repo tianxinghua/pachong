@@ -69,15 +69,23 @@ public class SarenzaStockImp extends AbsUpdateProductStock {
 		if (list != null) {
 			logger.info("list size " + list.size());
 			for (com.shangpin.iog.sarenza.stock.dto.Product spu : list) {
-				stock.put(spu.getVariantId(), spu.getStock());
+//				stock.put(spu.getVariantId(), spu.getStock());
+				stock.put(spu.getProductId()+"-"+spu.getPCID()+ "-"
+						+ spu.getSupplierSize(),spu.getStock() );
 			}
+
 		}
 		
 //		System.out.println(stock.size());
-		logger.info("stock map =" + stock.toString() );
+		int stocktem=0;
 		for (String skuno : skuNo) {
 			if(stock.containsKey(skuno)){
-				int stocktem = Integer.parseInt(stock.get(skuno));
+				stocktem = 0;
+				try {
+					stocktem = Integer.parseInt(stock.get(skuno).trim());
+				} catch (NumberFormatException e) {
+					loggerError.error(skuno +" 获取库存失败");
+				}
 				if(stocktem<0){
 					stocktem = 0;
 				}
@@ -87,6 +95,8 @@ public class SarenzaStockImp extends AbsUpdateProductStock {
 			}
 						
 		}
+		logger.info("stock_map size =" + stock_map.size() );
+		logger.info("stock_map map =" + stock_map.toString() );
 		return stock_map;
 	}
 

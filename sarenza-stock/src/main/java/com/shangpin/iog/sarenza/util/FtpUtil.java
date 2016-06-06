@@ -162,13 +162,15 @@ public class FtpUtil {
 			try {
 				files = ftp.dir(remoteFilePath);
 				if(files!=null&&files.length>=1){
+					log.warn("files.length="+files.length);
 					SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 					Date date = null;
 					Date maxDate = null;
 					String tmp="";
 					for (String fileName : files) {
+						log.warn("file name ="+fileName);
 						if (fileName.indexOf("csv") > 0) {
-							tmp = fileName.substring(7,15);
+							tmp = fileName.substring(8,16);
 							try {
 								date = sdf.parse(tmp);
 								if(null==maxDate){
@@ -179,7 +181,7 @@ public class FtpUtil {
 										filePath = fileName;
 									}
 								}
-								ftp.get(path+filePath, filePath);
+
 							} catch (ParseException e) {
 								// TODO Auto-generated catch block
 								log.error("获取文件失败");
@@ -189,8 +191,8 @@ public class FtpUtil {
 						}
 
 					}
-
-
+				    log.warn("new file="+filePath);
+					ftp.get(path+filePath, filePath);
 //					for (String fileName : files) {
 //						if (files[files.length-1].indexOf("csv") > 0) {
 //							filePath = files[files.length-1];

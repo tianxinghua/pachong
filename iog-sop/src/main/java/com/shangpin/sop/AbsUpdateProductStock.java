@@ -395,7 +395,7 @@ public abstract class AbsUpdateProductStock {
 			throws Exception {
 
 		if(iceStock.size() ==0){
-			logger.info("查询供货商的库存为全部为0");
+			loggerError.error("查询供货商的库存为全部为0");
 			return -1;
 		}
 
@@ -617,8 +617,10 @@ public abstract class AbsUpdateProductStock {
 				supplierStock = grabStock(skuNos);
 				
 				//根据supplierId获取预售的sku集合
-				map = specialSkuService.findListSkuBySupplierId(app_key);
-				
+				loggerInfo.info("获取预售的sku集合开始");
+				if(null!=specialSkuService)		map = specialSkuService.findListSkuBySupplierId(app_key);
+				loggerInfo.info("获取预售的sku集合结束");
+
 				
 				if(supplierStock.size()==0){
 					loggerError.error("抓取供货商信息返回的supplierStock.size为0");
@@ -634,6 +636,7 @@ public abstract class AbsUpdateProductStock {
 					}
 
 					if(isNUll){//supplierStock的值全为0,则返回空的map
+						loggerInfo.info("获取到的商品库存均为0");
 						return iceStock;
 					}
 				}
@@ -650,7 +653,7 @@ public abstract class AbsUpdateProductStock {
 				if(!ORDER)	sopPurchaseMap = this.getPurchaseOrder(host,app_key,app_secret);
 			} catch (Exception e) {
 //				e.printStackTrace();
-				loggerError.error(e);
+				loggerError.error("获取采购单失败"+e.getMessage(),e);
 			}
 
 			String iceSku="";
@@ -696,7 +699,7 @@ public abstract class AbsUpdateProductStock {
 
 
 		} catch (Exception e1) {
-			loggerError.error("抓取库存失败:", e1);
+			loggerError.error("抓取库存失败:"+e1.getMessage(), e1);
 		}
 
 		return iceStock;
