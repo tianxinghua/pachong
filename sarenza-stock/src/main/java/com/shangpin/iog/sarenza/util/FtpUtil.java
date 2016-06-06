@@ -1,28 +1,23 @@
 package com.shangpin.iog.sarenza.util;
 
-import com.csvreader.CsvReader;
-import com.enterprisedt.net.ftp.FTPClient;
-import com.enterprisedt.net.ftp.FTPConnectMode;
-import com.enterprisedt.net.ftp.FTPException;
-import com.enterprisedt.net.ftp.FTPTransferType;
-import com.shangpin.iog.sarenza.dto.Product;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import com.csvreader.CsvReader;
+import com.enterprisedt.net.ftp.FTPClient;
+import com.enterprisedt.net.ftp.FTPConnectMode;
+import com.enterprisedt.net.ftp.FTPException;
+import com.enterprisedt.net.ftp.FTPTransferType;
+import com.shangpin.iog.sarenza.stock.dto.Product;
 
 /**
  *
@@ -34,12 +29,10 @@ public class FtpUtil {
 			USER = "ftp_shangpin", PASSWORD = "Z3!C8=mp";
 	public static final String PROPERTIES_FILE_NAME = "conf";
 	public static  String path = null;
-	public static  String file = null;
 	static ResourceBundle bundle = ResourceBundle.getBundle("conf");
 
 	static{
 		path = bundle.getString("path");
-		file = bundle.getString("file");
 	}
 	public static boolean isDirExist(String dirname, String[] files) {
 		for (int i = 0; i < files.length; i++) {
@@ -65,68 +58,56 @@ public class FtpUtil {
 	}
 
 	public static <T> List<T> readLocalCSV(Class<T> clazz) throws Exception {
-		List<String> realPaths = null;
-		if(StringUtils.isNotBlank(file)){
-			realPaths = new ArrayList();
-			String ss[] = file.split(",",-1);
-			for(String s:ss){
-				realPaths.add(s);
+		String realPath = download();
+//		String realPath = "C://AMD//output_11052016.csv";
+		String rowString = null;
+		List<T> dtoList = new ArrayList<T>();
+		String[] split = null;
+		List<String> colValueList = null;
+		CsvReader cr = null;
+		// 解析csv文件
+		if(realPath!=null){
+			cr = new CsvReader(new FileReader(path+ realPath));
+			System.out.println("创建cr对象成功");
+			// 得到列名集合
+			cr.readRecord();
+			int a = 0;
+			while (cr.readRecord()) {
+				a++;
+				rowString = cr.getRawRecord();
+				if (StringUtils.isNotBlank(rowString)) {
+					split = rowString.split("\\|");
+					colValueList = Arrays.asList(split);
+					T t = fillDTO(clazz.newInstance(), colValueList);
+					// 过滤重复的dto。。。sku,
+					// dtoSet.add(t);
+					dtoList.add(t);
+				}
+				System.out.println(a);
 			}
-			
-		}else{
-			realPaths = download();
+
+			cr.close();
+			File flie = new File(path+realPath);
+			boolean falg = flie.delete();
+			 if(falg){
+			 System.out.println("文件删除success");
+			 }else{
+			 System.out.println("文件删除fail");
+			 }
+
 		}
 		
-		List<T> AlldtoList = new ArrayList<T>();
-//		String realPath = "C://AMD//output_11052016.csv";
-		for(String realPath : realPaths){
-			String rowString = null;
-			List<T> dtoList = new ArrayList<T>();
-			String[] split = null;
-			List<String> colValueList = null;
-			CsvReader cr = null;
-			// 解析csv文件
-			if(realPath!=null){
-				cr = new CsvReader(new FileReader(path+ realPath));
-				System.out.println("创建cr对象成功");
-				// 得到列名集合
-				cr.readRecord();
-				int a = 0;
-				while (cr.readRecord()) {
-					a++;
-					rowString = cr.getRawRecord();
-					if (StringUtils.isNotBlank(rowString)) {
-						split = rowString.split("\\|");
-						colValueList = Arrays.asList(split);
-						T t = fillDTO(clazz.newInstance(), colValueList);
-						// 过滤重复的dto。。。sku,
-						// dtoSet.add(t);
-						dtoList.add(t);
-					}
-					System.out.println(a);
-				}
-				AlldtoList.addAll(dtoList);
-				cr.close();
-//				File flie = new File(path+realPath);
-//				boolean falg = flie.delete();
-//				 if(falg){
-//				 System.out.println("文件删除success");
-//				 }else{
-//				 System.out.println("文件删除fail");
-//				 }
-			}
-		}
-		return AlldtoList;
+		return dtoList;
 	}
 
 	/**
 	 * 下载文件 请注意未使用连接池 另外文件类型已知 要么文件夹要么文件 所以不做复杂判断
 	 * 
-	 * @param remoteFilePath
+	 *  remoteFilePath
 	 *            远端文件路径
-	 * @param remoteFileName
+	 *  remoteFileName
 	 *            远端文件名称
-	 * @param localFilePath
+	 *  localFilePath
 	 *            本地文件存放路径
 	 */
 	public static void main(String[] args) {
@@ -141,8 +122,8 @@ public class FtpUtil {
 		
 	}
 
-	public static List<String> download() {
-		List<String> filePath = new ArrayList<String>();
+	public static String download() {
+		String filePath = null;
 		/** 定义FTPClient便利 */
 		FTPClient ftp = null;
 		String remoteFilePath = "/";
@@ -181,17 +162,44 @@ public class FtpUtil {
 			try {
 				files = ftp.dir(remoteFilePath);
 				if(files!=null&&files.length>=1){
-					String d=new SimpleDateFormat("ddMMyyyy").format(new Date());
+					log.warn("files.length="+files.length);
+					SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+					Date date = null;
+					Date maxDate = null;
+					String tmp="";
 					for (String fileName : files) {
-						String ff = "/output_"+d+".csv";
-						
-						System.out.println(ff+"=="+fileName);
-						if(ff.equals(fileName)){
-							filePath.add(fileName);
-							System.out.println(files[files.length-1]);
-							ftp.get(path+files[files.length-1], files[files.length-1]);
+						log.warn("file name ="+fileName);
+						if (fileName.indexOf("csv") > 0) {
+							tmp = fileName.substring(8,16);
+							try {
+								date = sdf.parse(tmp);
+								if(null==maxDate){
+									maxDate = date;
+									filePath = fileName;
+								}else{
+									if(date.getTime()-maxDate.getTime()>0){
+										filePath = fileName;
+									}
+								}
+
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								log.error("获取文件失败");
+							}
+
+
 						}
+
 					}
+				    log.warn("new file="+filePath);
+					ftp.get(path+filePath, filePath);
+//					for (String fileName : files) {
+//						if (files[files.length-1].indexOf("csv") > 0) {
+//							filePath = files[files.length-1];
+//							System.out.println(filePath);
+//							ftp.get(path+filePath, filePath);
+//						}
+//					}
 				}
 
 			} catch (Exception e) {

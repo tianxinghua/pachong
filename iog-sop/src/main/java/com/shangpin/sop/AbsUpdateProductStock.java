@@ -104,6 +104,7 @@ public abstract class AbsUpdateProductStock {
 						i=5;
 					}
 				} catch (Exception e1) {
+					e1.printStackTrace();
 					loggerError.error("openAPI在异常中获取信息出错"+e1.getMessage(),e1);
 				}
 
@@ -126,6 +127,7 @@ public abstract class AbsUpdateProductStock {
 					}
 				}
 			}else{
+				loggerError.error("无法获取到产品信息");
 				throw new Exception("无法获取到产品信息");
 			}
 			pageIndex++;
@@ -393,6 +395,7 @@ public abstract class AbsUpdateProductStock {
 			throws Exception {
 
 		if(iceStock.size() ==0){
+			loggerError.error("查询供货商的库存为全部为0");
 			return -1;
 		}
 
@@ -614,8 +617,10 @@ public abstract class AbsUpdateProductStock {
 				supplierStock = grabStock(skuNos);
 				
 				//根据supplierId获取预售的sku集合
-				map = specialSkuService.findListSkuBySupplierId(app_key);
-				
+				loggerInfo.info("获取预售的sku集合开始");
+				if(null!=specialSkuService)		map = specialSkuService.findListSkuBySupplierId(app_key);
+				loggerInfo.info("获取预售的sku集合结束");
+
 				
 				if(supplierStock.size()==0){
 					loggerError.error("抓取供货商信息返回的supplierStock.size为0");
@@ -631,11 +636,12 @@ public abstract class AbsUpdateProductStock {
 					}
 
 					if(isNUll){//supplierStock的值全为0,则返回空的map
+						loggerInfo.info("获取到的商品库存均为0");
 						return iceStock;
 					}
 				}
 			} catch (Exception e) {    //获取库存信息时失败 直接退出
-				loggerError.error("获取库存信息时发生异常 "+e);
+				loggerError.error("获取库存信息时发生异常 "+e.getMessage(),e);
 //				System.exit(0);
 				return iceStock;
 			}
@@ -643,10 +649,11 @@ public abstract class AbsUpdateProductStock {
 
 			//获取采购单信息
 			try {
+				loggerInfo.info("获取采购单开始");
 				if(!ORDER)	sopPurchaseMap = this.getPurchaseOrder(host,app_key,app_secret);
 			} catch (Exception e) {
 //				e.printStackTrace();
-				loggerError.error(e);
+				loggerError.error("获取采购单失败"+e.getMessage(),e);
 			}
 
 			String iceSku="";
@@ -692,7 +699,7 @@ public abstract class AbsUpdateProductStock {
 
 
 		} catch (Exception e1) {
-			logger.error("抓取库存失败:", e1);
+			loggerError.error("抓取库存失败:"+e1.getMessage(), e1);
 		}
 
 		return iceStock;

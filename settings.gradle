@@ -31,18 +31,13 @@ include 'iog-sop'
 
 
 
-include 'spinnaker-order'
+include 'vela-order'
+
+include 'sanremo-order'
+
+include 'sarenza-stock'
 
 
 
 
-include 'tony'
 
-include 'log-template'
-include 'theclutcher-stock'
-include 'reebonzWiki-order'
-
-include 'deliberti-purchase'
-include 'itemInfo'
-
-include 'Helme'
