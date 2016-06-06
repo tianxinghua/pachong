@@ -8,4 +8,9 @@ public class Data {
 	public void setOrder_id(String order_id) {
 		this.order_id = order_id;
 	}
+	@Override
+	public String toString() {
+		return "Data [order_id=" + order_id + "]";
+	}
+	
 }
