@@ -71,7 +71,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		try {
 			PushOrderData pushOrderData = pushOrder(orderDTO);
-			System.out.println(pushOrderData.getStatusCode());
+			logger.info("推送订单转化对象为:"+pushOrderData.toString());
 			if (pushOrderData.getStatusCode().equals("401")) {
 				logger.info("accessToken过期");
 				getAccessToken(refreshToken);
@@ -96,6 +96,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		try {
 			PushOrderData pushOrderData = confirmOrCancelOrder(orderDTO.getSupplierOrderNo(), "approved");
+			logger.info("确认订单转化对象为:"+pushOrderData.toString());
 			if (pushOrderData.getStatusCode().equals("401")) {
 				logger.info("付款确认订单时accessToken过期");
 				getAccessToken(refreshToken);
@@ -123,6 +124,7 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
 		try {
 			PushOrderData pushOrderData = confirmOrCancelOrder(deleteOrder.getSupplierOrderNo(), "cancelled");
+			logger.info("取消订单转化对象为:"+pushOrderData.toString());
 			if (pushOrderData.getStatusCode().equals("401")) {
 				logger.info("取消订单时accessToken过期");
 				getAccessToken(refreshToken);
@@ -334,8 +336,15 @@ public class ForzieriOrderServiceImpl extends AbsOrderService{
 		
 	}
 	public static void main(String[] args) {
-		//submit order
+		
 		Gson gson = new Gson();
+		String a = "{\"status\":\"success\",\"data\":{\"order_id\":\"8806786\"}}";
+		PushOrderData pushOrderData = gson.fromJson(a, PushOrderData.class);		
+		System.out.println(pushOrderData.toString());
+		System.out.println(pushOrderData.getData().getOrder_id());
+		
+		
+		//submit order
 		HttpResponse response = null;
 		PushOrderData fromJson = null;
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();

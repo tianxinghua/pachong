@@ -36,5 +36,11 @@ public class PushOrderData {
 	public void setStatusCode(String statusCode) {
 		this.statusCode = statusCode;
 	}
+	@Override
+	public String toString() {
+		return "PushOrderData [status=" + status + ", statusCode=" + statusCode
+				+ ", error=" + error + ", errorCode=" + errorCode + ", data="
+				+ data + "]";
+	}
 	
 }
