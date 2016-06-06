@@ -21,11 +21,13 @@ import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.magway.dto.CancelOrder;
 import com.shangpin.iog.magway.dto.CancelResult;
+import com.shangpin.iog.magway.dto.CancelTradeDTO;
 import com.shangpin.iog.magway.dto.ConfirmResult;
 import com.shangpin.iog.magway.dto.CreateOrder;
 import com.shangpin.iog.magway.dto.Goods;
 import com.shangpin.iog.magway.dto.OrderResult;
 import com.shangpin.iog.magway.dto.Token;
+import com.shangpin.iog.magway.dto.TradeDetailResponseDTO;
 
 @Component
 public class OrderService extends AbsOrderService{
@@ -41,10 +43,13 @@ public class OrderService extends AbsOrderService{
     
     private static String url_token = null;
     private static String url_createOrder = null;
-    private static String url_getOrderConfirmState = null;
-    private static String url_cancelOrders = null;
+//    private static String url_getOrderConfirmState = null;
+//    private static String url_cancelOrders = null;
     private static String Authorization = null;
 	private static String grant_type = null;
+	
+	private static String url_getTradeDetail = null;
+	private static String url_cancelTrade = null;
     
     static {
         if(null==bdl)
@@ -53,10 +58,13 @@ public class OrderService extends AbsOrderService{
         supplierNo = bdl.getString("supplierNo");
         url_token = bdl.getString("url_token");
         url_createOrder = bdl.getString("url_createOrder");
-        url_getOrderConfirmState = bdl.getString("url_getOrderConfirmState");
-        url_cancelOrders = bdl.getString("url_cancelOrders");
+//        url_getOrderConfirmState = bdl.getString("url_getOrderConfirmState");
+//        url_cancelOrders = bdl.getString("url_cancelOrders");
         Authorization = bdl.getString("Authorization");
 		grant_type = bdl.getString("grant_type");
+		
+		url_getTradeDetail = bdl.getString("url_getTradeDetail");
+		url_cancelTrade = bdl.getString("url_cancelTrade");
         
         token = getToken();
     }
@@ -90,6 +98,7 @@ public class OrderService extends AbsOrderService{
 			goodslist.add(goods);
 			CreateOrder createOrder = new CreateOrder();
 			createOrder.setGoods(goodslist);
+			createOrder.setDealerCode(orderDTO.getSpPurchaseNo()); 
 			createOrder.setName("FilippoTroina");
 			createOrder.setMobile("00393454377342");
 			createOrder.setAddress("VIAG.LEOPARDI 27，22075 LURATE CACCIVIO (COMO)");
@@ -162,7 +171,7 @@ public class OrderService extends AbsOrderService{
 			//采购异常处理
 			doOrderExc(orderDTO);
 		}else if(status.equals("1")){//下单成功
-			orderDTO.setSupplierOrderNo(orderResult.getData().getOrderCode());
+			orderDTO.setSupplierOrderNo(orderResult.getData().getTradeCode());
 			orderDTO.setStatus(OrderStatus.PLACED);
 			orderDTO.setExcState("0");
 		}else{//其他都失败
@@ -208,6 +217,7 @@ public class OrderService extends AbsOrderService{
 						orderDTO.setExcTime(new Date());
 					}				
 				}else{
+					ex.printStackTrace();
 					error.error(ex);
 					orderDTO.setExcDesc(ex.getMessage());
 					orderDTO.setExcState("1");
@@ -224,31 +234,36 @@ public class OrderService extends AbsOrderService{
 	}
 	
 	public void confirmOrder(OrderDTO orderDTO,Map<String,String> headMap) throws Exception{
-		String uri = url_getOrderConfirmState+orderDTO.getSupplierOrderNo();
+		String uri = url_getTradeDetail+orderDTO.getSupplierOrderNo();
 		logger.info("confirm uri====="+uri);
 		String confirmResult = HttpUtil45.get(uri, outTimeConf, null, headMap, "", "");
 		logger.info("confirm result====="+confirmResult);
-		ConfirmResult confirm = new Gson().fromJson(confirmResult, ConfirmResult.class);
-		String confirmStr = confirm.getData().getConfirmedType();
-		if(StringUtils.isBlank(confirmStr) || confirmStr.equals("待确认")){//可以认为待确认
-			
-		}else if(confirmStr.equals("已部分确认")){
-			orderDTO.setExcDesc(confirmStr);
-			orderDTO.setExcState("1");
-			orderDTO.setExcTime(new Date());
-			//采购异常
-			doOrderExc(orderDTO);
-			
-		}else if(confirmStr.equals("已全部确认")){
+		TradeDetailResponseDTO confirm = new Gson().fromJson(confirmResult, TradeDetailResponseDTO.class);
+		Integer confirmStr = confirm.getData().getTradeStatus();
+		System.out.println(confirmStr); 
+		logger.info("交易单状态:"+confirmStr);
+		if(confirmStr ==9005 ){//可以认为待确认
+			logger.info("交易单状态:处理中");
+		}else if(confirmStr == 9006){			
+			logger.info("交易单状态:已发货");
 			orderDTO.setStatus(OrderStatus.CONFIRMED);
 			orderDTO.setExcState("0");
 			
-		}else if(confirmStr.equals("已被取消")){
-			orderDTO.setExcDesc(confirmStr);
+		}else if(confirmStr == 9007){
+			logger.info("交易单状态:已完成");
+			orderDTO.setStatus(OrderStatus.CONFIRMED);
+			orderDTO.setExcState("0");
+			
+		}else if(confirmStr == 9098){
+			orderDTO.setExcDesc("已关闭");
 			orderDTO.setExcState("1");
 			orderDTO.setExcTime(new Date());
-			//采购异常
-			doOrderExc(orderDTO);
+			
+		}else if(confirmStr ==9099){
+			orderDTO.setExcDesc("已取消");
+			orderDTO.setExcState("1");
+			orderDTO.setExcTime(new Date());
+			
 		}
 		
 		
@@ -260,12 +275,12 @@ public class OrderService extends AbsOrderService{
 			token = getToken();
 			Map<String,String> headMap = new HashMap<String,String>();
 			headMap.put("Authorization", token.getToken_type()+" "+token.getAccess_token());
-			CancelOrder cancelOrder = new CancelOrder();
-			cancelOrder.setOrderCode(deleteOrder.getSupplierOrderNo());
+			CancelTradeDTO cancelOrder = new CancelTradeDTO();
+			cancelOrder.setTradeCode(deleteOrder.getSupplierOrderNo());
 			cancelOrder.setReason("no reason");
 			String canStr = new Gson().toJson(cancelOrder);
 			logger.info("取消订单的参数====="+canStr);
-			String result = HttpUtil45.operateData("post", "json", url_cancelOrders, outTimeConf, null, canStr, headMap, "", "");
+			String result = HttpUtil45.operateData("post", "json", url_cancelTrade, outTimeConf, null, canStr, headMap, "", "");
 			logger.info("取消订单返回结果====="+result);
 			System.out.println(result); 
 			CancelResult cancelResult = new Gson().fromJson(result, CancelResult.class);
@@ -293,12 +308,12 @@ public class OrderService extends AbsOrderService{
 			token = getToken();
 			Map<String,String> headMap = new HashMap<String,String>();
 			headMap.put("Authorization", token.getToken_type()+" "+token.getAccess_token());
-			CancelOrder cancelOrder = new CancelOrder();
-			cancelOrder.setOrderCode(deleteOrder.getSupplierOrderNo());
+			CancelTradeDTO cancelOrder = new CancelTradeDTO();
+			cancelOrder.setTradeCode(deleteOrder.getSupplierOrderNo());
 			cancelOrder.setReason("no reason");
 			String canStr = new Gson().toJson(cancelOrder);
 			logger.info("取消订单的参数====="+canStr);
-			String result = HttpUtil45.operateData("post", "json", url_cancelOrders, outTimeConf, null, canStr, headMap, "", "");
+			String result = HttpUtil45.operateData("post", "json", url_cancelTrade, outTimeConf, null, canStr, headMap, "", "");
 			logger.info("取消订单返回结果====="+result);
 			System.out.println(result); 
 			CancelResult cancelResult = new Gson().fromJson(result, CancelResult.class);
@@ -354,18 +369,28 @@ public class OrderService extends AbsOrderService{
 		
 	}
 	
-//	public static void main(String[] args){
+	public static void main(String[] args){
+//		OrderService order = new OrderService();
+//		
 //		OrderDTO orderDTO = new OrderDTO();
-//		orderDTO.setDetail("12367-UNI:1,");
-//		orderDTO.setSupplierOrderNo("1603000267"); 
+//		orderDTO.setDetail("12385-52:1,");		
 //		
 //		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
-//		deleteOrder.setSupplierOrderNo("1603000267");
-//		
-//		OrderService order = new OrderService();
-////		order.handleSupplierOrder(orderDTO); 
-//		order.handleConfirmOrder(orderDTO); 
-////		order.handleCancelOrder(deleteOrder); 
-//	}
+//		deleteOrder.setSupplierOrderNo("1606000011");		
+		
+//		orderDTO.setSpPurchaseNo("CGD2016052601093"); 
+//		order.handleSupplierOrder(orderDTO); 
+		
+//		orderDTO.setSupplierOrderNo("1606000011");
+//		order.handleConfirmOrder(orderDTO); 	
+		
+//		order.handleCancelOrder(deleteOrder);
+//		order.handleRefundlOrder(deleteOrder); 
+		
+//		Map<String,String> headerMap = new HashMap<String,String>();
+//		headerMap.put("Authorization", token.getToken_type()+" "+token.getAccess_token());
+//		String result = HttpUtil45.get("http://open.1magway.com/test/Order/GetStatusList", outTimeConf, null, headerMap, "", "");
+//		System.out.println(result); 
+	}
 
 }

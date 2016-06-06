@@ -9,9 +9,9 @@ import lombok.Getter;
 @Setter
 public class Data {
 
-	String OrderCode;
+	String TradeCode;
 	String DealerCode;
-	String TotalPriceCN;
-	String TotalPriceEuro;
-	List<OrderGoods> OrderGoods; 
+	String TotalMoneyCN;
+	String TotalMoneyEuro;
+	List<OrderItems> OrderItems; 
 }

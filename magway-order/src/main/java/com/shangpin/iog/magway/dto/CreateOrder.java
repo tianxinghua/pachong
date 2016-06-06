@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 public class CreateOrder {
 
+	String DealerCode;
 	String Name;
 	String Mobile;
 	String Address;
