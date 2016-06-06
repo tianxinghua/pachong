@@ -69,9 +69,9 @@ public class SarenzaStockImp extends AbsUpdateProductStock {
 		if (list != null) {
 			logger.info("list size " + list.size());
 			for (com.shangpin.iog.sarenza.stock.dto.Product spu : list) {
-//				stock.put(spu.getVariantId(), spu.getStock());
-				stock.put(spu.getProductId()+"-"+spu.getPCID()+ "-"
-						+ spu.getSupplierSize(),spu.getStock() );
+				stock.put(spu.getVariantId(), spu.getStock());
+//				stock.put(spu.getProductId()+"-"+spu.getPCID()+ "-"
+//						+ spu.getSupplierSize(),spu.getStock() );
 			}
 
 		}
