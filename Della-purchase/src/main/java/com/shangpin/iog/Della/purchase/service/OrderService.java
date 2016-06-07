@@ -10,7 +10,6 @@ import com.shangpin.iog.dto.OrderDetailDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
-import com.shangpin.iog.product.service.OrderServiceImpl;
 import com.shangpin.iog.service.OrderDetailService;
 import com.shangpin.iog.service.ProductSearchService;
 
@@ -45,9 +44,6 @@ public class OrderService extends AbsOrderService {
         supplierNo = bdl.getString("supplierNo");
         localFile = bdl.getString("localFile");
     }
-
-    @Autowired
-    OrderServiceImpl orderService;
     
     @Autowired
     ProductSearchService productSearchService;
@@ -92,7 +88,7 @@ public class OrderService extends AbsOrderService {
 //        		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
            //list = orderService.getOrderBySupplierIdAndOrderStatus(supplierId,"confirmed");
         	
-        	orderDetails = orderDetailService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId, OrderStatus.CONFIRMED, DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"), DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+        	orderDetails = orderDetailService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId, OrderStatus.CONFIRMED, DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"), DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
         	
         } catch (ServiceException e) {
         	loggerError.error(e); 
