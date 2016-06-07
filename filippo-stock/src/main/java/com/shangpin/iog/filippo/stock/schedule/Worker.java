@@ -13,24 +13,20 @@ import com.shangpin.sop.AbsUpdateProductStock;
 public class Worker implements Runnable {
 	private static Logger logger = Logger.getLogger("info");
 	private static ResourceBundle bdl = null;
-	private static String url = bdl.getString("url");
 	private static String host;
 	private static String app_key;
 	private static String app_secret;
-	private static String supplierId = "";
 	static {
 		if (null == bdl) {
 			bdl = ResourceBundle.getBundle("sop");
 		}
-		supplierId = bdl.getString("supplierId");
 		host = bdl.getString("HOST");
 		app_key = bdl.getString("APP_KEY");
 		app_secret = bdl.getString("APP_SECRET");
 	}
 	private AbsUpdateProductStock stockImp;
 
-	public Worker() {
-	};
+	public Worker() {};
 
 	public Worker(AbsUpdateProductStock stockImp) {
 		this.stockImp = stockImp;
