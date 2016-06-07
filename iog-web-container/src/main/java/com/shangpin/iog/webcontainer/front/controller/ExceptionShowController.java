@@ -190,6 +190,10 @@ public class ExceptionShowController {
 			sdto.setErrorNum(s);
 		}else if(opeation.equals("rightNum")){
 			sdto.setRightNum(s);
+		}else if(opeation.equals("email")){
+			sdto.setEmail(s);
+		}else if(opeation.equals("status")){
+			sdto.setStatus(s);
 		}else{
 			sdto.setTotalNum(s);
 		}
