@@ -31,6 +31,9 @@
 	src="<%=bathPath%>/js/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript"
 	src="<%=bathPath%>/js/jquery-easyui-1.3.3/jquery.json-2.4.js"></script>
+	
+
+	
 <style type="text/css">
 #showExcel {
 	position: absolute;
@@ -358,6 +361,8 @@ $(function(){
 				<td>错误原因</td>
 				<td>端口</td> 
 				<td>其他</td> 
+				<td>邮箱</td> 
+				<td>启用</td> 
 			</tr>
 			<c:forEach items="${redList}" var="reddata">
 				<tr bgcolor="Salmon">
@@ -370,6 +375,15 @@ $(function(){
 						<td><input type="text" name="rightNum" value="${reddata.rightNum}" onchange="changeReason(${reddata.supplierId},this.value,'rightNum')"/></td>
 						<td><input type="text" name="totalNum" value="${reddata.totalNum}" onchange="changeReason(${reddata.supplierId},this.value,'totalNum')"/></td>
 					</form>
+					<td ><input type="text" name="email" style="width:420px;" value="${reddata.email }"  onchange="changeReason(${reddata.supplierId},this.value,'email')"/></td>
+					<c:choose>
+						<c:when test="${reddata.status == 1}">
+						<td><input type=checkbox checked value="0"  onchange="changeReason(${reddata.supplierId},this.value,'status')"></td>
+						</c:when>
+						<c:otherwise>
+						<td><input type=checkbox  value="1" onchange="changeReason(${reddata.supplierId},this.value,'status')"></td>
+						</c:otherwise>
+					</c:choose>
 				</tr>
 			</c:forEach>
 			<c:forEach items="${greenList}" var="gredata">
@@ -384,6 +398,17 @@ $(function(){
 						<td><input type="text" name="rightNum" value="${gredata.rightNum}" onchange="changeReason(${gredata.supplierId},this.value,'rightNum')"/></td>
 						<td><input type="text" name="totalNum" value="${gredata.totalNum}" onchange="changeReason(${gredata.supplierId},this.value,'totalNum')"/></td>
 					</form>
+					
+					<td ><input type="text" name="email" style="width:420px;" value="${gredata.email }"  onchange="changeReason(${gredata.supplierId},this.value,'email')"/></td>
+					<c:choose>
+						<c:when test="${gredata.status == 1}">
+						<td><input type=checkbox checked value="0"  onchange="changeReason(${gredata.supplierId},this.value,'status')"></td>
+						</c:when>
+						<c:otherwise>
+						<td><input type=checkbox  value="1" onchange="changeReason(${gredata.supplierId},this.value,'status')"></td>
+						</c:otherwise>
+					</c:choose>
+						
 				</tr>
 			</c:forEach>
 		</table>

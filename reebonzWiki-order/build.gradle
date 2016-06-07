@@ -17,9 +17,17 @@ dependencies {
 
 }
 jar {
-    dependsOn copyToLib, copyResources,dependsClassPath
+    dependsOn copyToLib, copyResources,copyResourcesToClasses
     exclude ("**/*.properties")
+    
+        def manifestCp = configurations.compile.files.collect  {
+        File file = it
+        "lib/${file.name}"
+    }.join(' ')
+    
+    
     manifest {
         attributes 'Main-Class': 'com.shangpin.iog.reebonz.Startup'
+          attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }
