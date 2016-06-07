@@ -1,10 +1,10 @@
 package com.shangpin.iog.filippo.stock;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.filippo.stock.dto.CsvDTO;
 import com.shangpin.iog.filippo.utils.DownloadAndReadCSV;
+import com.shangpin.sop.AbsUpdateProductStock;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 	private static String picurl;
 	static {
 		if (null == bdl)
-			bdl = ResourceBundle.getBundle("param");
+			bdl = ResourceBundle.getBundle("sop");
 		supplierId = bdl.getString("supplierId");
 		url = bdl.getString("url");
 		picurl = bdl.getString("picurl");
@@ -44,12 +44,12 @@ public class StockClientImp extends AbsUpdateProductStock {
 
 
 	@Override
-	public Map<String, String> grabStock(Collection<String> skuNo)
+	public Map<String, Integer> grabStock(Collection<String> skuNo)
 			throws ServiceException, Exception {
 		String key = "";
 		Map<String,CsvDTO> csvSkuMaps = new HashMap<String,CsvDTO>();
 		CsvDTO dto = null;
-		Map<String, String> skustock = new HashMap<>(skuNo.size());
+		Map<String, Integer> skustock = new HashMap<>(skuNo.size());
 		List<CsvDTO> list = DownloadAndReadCSV.readLocalCSV(CsvDTO.class, "\\|");
 		for (CsvDTO csvDTO : list) {
 			key = csvDTO.getVAR_ID()+"-"+csvDTO.getTG();
@@ -70,11 +70,11 @@ public class StockClientImp extends AbsUpdateProductStock {
 			for(Map.Entry<String, CsvDTO> skuEntry :csvSkuMaps.entrySet()){
 				key = skuEntry.getValue().getVAR_ID()+"-"+skuEntry.getValue().getTG();
 				if (skuId.equals(key.replace("\"", ""))) {
-					skustock.put(skuId, skuEntry.getValue().getQTY().replace("\"", ""));
+					skustock.put(skuId, Integer.valueOf(skuEntry.getValue().getQTY().replace("\"", "")));
 				}
 			}
 			if(!skustock.containsKey(skuId)){
-				skustock.put(skuId,"0");
+				skustock.put(skuId,0);
 			}
 		}
 		return skustock;
@@ -82,17 +82,17 @@ public class StockClientImp extends AbsUpdateProductStock {
 
 	public static void main(String[] args) throws Exception {
 		//加载spring
-        loadSpringContext();
-        StockClientImp stockImp =(StockClientImp)factory.getBean("filippostock");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		logger.info("更新数据库开始");
-		try {
-			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
-		} catch (Exception e) {
-			logger.info("更新库存数据库出错"+e.toString());
-		}
-		logger.info("更新数据库结束");
-		System.exit(0);
+//        loadSpringContext();
+//        StockClientImp stockImp =(StockClientImp)factory.getBean("filippostock");
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//		logger.info("更新数据库开始");
+//		try {
+//			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+//		} catch (Exception e) {
+//			logger.info("更新库存数据库出错"+e.toString());
+//		}
+//		logger.info("更新数据库结束");
+//		System.exit(0);
 	}
 
 

@@ -2,7 +2,7 @@ dependencies {
     compile(
             "net.sourceforge.javacsv:javacsv:2.0",
             project(':iog-common-product'),
-            project(':openapi-ice')
+            project(':iog-sop')
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 
