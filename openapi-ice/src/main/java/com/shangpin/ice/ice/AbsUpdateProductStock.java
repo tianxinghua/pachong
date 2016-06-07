@@ -152,6 +152,9 @@ public abstract class AbsUpdateProductStock {
 		OpenApiServantPrx servant = null;
 		try {
 			servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+			
+			setStockNotUpdateBySop(supplier,servant);
+			
 		} catch (Exception e) {
 			loggerError.error("ICE 代理失败");
 //			e.printStackTrace();
@@ -780,7 +783,6 @@ public abstract class AbsUpdateProductStock {
 			hasNext=(pageSize==detilApiDtos.size());
 
 		}
-
 		logger.warn("获取ice采购单 结束");
 		loggerInfo.info("获取采购单数量："+sopPurchaseMap.size());
 		return sopPurchaseMap;
@@ -804,11 +806,10 @@ public abstract class AbsUpdateProductStock {
 		while(hasNext){
 			PurchaseOrderQueryDto orderQueryDto = new PurchaseOrderQueryDto(startTime,endTime,statusList
 					,pageIndex,pageSize);
-			PurchaseOrderDetailPage orderDetailPage;
 			try {
-				orderDetailPage = servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
+				PurchaseOrderDetailPage orderDetailPage=
+						servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
 				orderDetails = orderDetailPage.PurchaseOrderDetails;
-
 				for (PurchaseOrderDetail orderDetail : orderDetails) {
 
 					SpecialSkuDTO spec = new SpecialSkuDTO();
@@ -816,13 +817,16 @@ public abstract class AbsUpdateProductStock {
 					spec.setSupplierId(supplierId);
 					spec.setSupplierSkuId(supplierSkuNo);
 					try {
-						System.out.println(spec.toString());
+						logger.info("采购异常的信息："+spec.toString());
 						specialSkuService.saveDTO(spec);
 					} catch (ServiceMessageException e) {
 						e.printStackTrace();
 					}
 				}
-			} catch (ApiException e) {
+			} catch (Exception e) {
+				if(orderDetails==null){
+					orderDetails = new ArrayList<PurchaseOrderDetail>();
+				}
 				e.printStackTrace();
 			}
 			pageIndex++;
