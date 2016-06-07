@@ -238,6 +238,7 @@ public class FetchProduct {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			error.error(e.getMessage());
 		}
 		
 		

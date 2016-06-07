@@ -24,7 +24,6 @@ import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.levelgroup.purchase.common.MyFtpUtil;
-import com.shangpin.iog.product.service.OrderServiceImpl;
 import com.shangpin.iog.service.OrderDetailService;
 import com.shangpin.iog.service.ProductSearchService;
 
@@ -58,9 +57,6 @@ public class OrderService extends AbsOrderService {
         localFile2 = bdl.getString("localFile2");
     }
 
-    @Autowired
-    OrderServiceImpl orderService;
-    
     @Autowired
     ProductSearchService productSearchService;
     
@@ -108,8 +104,8 @@ public class OrderService extends AbsOrderService {
 //        		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
 //           list2 = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId2,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
 //         		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
-        	list1 = orderDetailService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId, OrderStatus.CONFIRMED, DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"), DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
-        	list2 = orderDetailService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId2, OrderStatus.CONFIRMED, DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"), DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+        	list1 = orderDetailService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId, OrderStatus.CONFIRMED, DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"), DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+        	list2 = orderDetailService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId2, OrderStatus.CONFIRMED, DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"), DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -247,7 +243,7 @@ public class OrderService extends AbsOrderService {
         try {
 //           list = orderService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId,OrderStatus.REFUNDED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
 //        		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
-        	list = orderDetailService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId, OrderStatus.REFUNDED, DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"), DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
+        	list = orderDetailService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId, OrderStatus.REFUNDED, DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"), DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
         } catch (ServiceException e) {
             e.printStackTrace();
         }

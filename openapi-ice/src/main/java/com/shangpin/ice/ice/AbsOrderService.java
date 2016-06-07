@@ -22,8 +22,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import ShangPin.SOP.Api.ApiException;
+
 import com.shangpin.iog.dto.OrderDetailDTO;
 import com.shangpin.iog.service.OrderDetailService;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -60,6 +62,7 @@ import com.shangpin.iog.ice.dto.ResMessage;
 import com.shangpin.iog.service.ReturnOrderService;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.SkuRelationService;
+
 import org.springframework.core.annotation.Order;
 
 /**
@@ -1899,16 +1902,29 @@ public abstract class AbsOrderService {
     }
 
     private static void writeGrapDate(String date,String fileName){
-        File df;
-        try {
-            df = getConfFile(fileName);
-
-            try(BufferedWriter bw = new BufferedWriter(new FileWriter(df))){
-                bw.write(date);
+    	int i=0;
+    	boolean boo = true;
+    	while(boo && i<100){
+    		File df;
+            try {
+                df = getConfFile(fileName);
+                try(BufferedWriter bw = new BufferedWriter(new FileWriter(df))){
+                    bw.write(date);
+                }
+                boo = false;
+            } catch (IOException e) {
+                logger.error("写入日期配置文件错误 "+i); 
+                boo = true;
+                try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+            }finally{
+            	i++;
             }
-        } catch (IOException e) {
-            logger.error("写入日期配置文件错误");
-        }
+    	}
+        
     }
 
 

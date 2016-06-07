@@ -9,7 +9,7 @@ dependencies {
             "com.google.code.gson:gson:2.2.2",
             project(':project-common'),
           
-            project(':iog-common-product2')
+            project(':iog-common-product')
     )
 }
 
