@@ -69,12 +69,16 @@ public class FetchProduct {
         System.out.println("get product starting....");
     	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
     										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
+    	save("divoSPU.txt", spuData);
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
     										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
+    	save("divoSKU.txt", skuData);
     	String imageData = HttpUtil45.post(url+"GetAllImageMarketplace",
     										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
+    	save("divoImage.txt", imageData);
     	String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
     										new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600));
+    	save("divoPrice.txt", priceData);
     	
     	Date startDate,endDate= new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
