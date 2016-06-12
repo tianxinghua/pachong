@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.deliberti.stock.StockImp;
+import com.shangpin.iog.deliberti.stock.PHPStockImp;
 @Component
 public class Murder extends TimerTask{
 	private static ResourceBundle bdl=null;
@@ -23,8 +23,8 @@ public class Murder extends TimerTask{
     }
     
 	private static LoggerUtil logError = LoggerUtil.getLogger("error");
-	private StockImp stockImp;
-	public void setStockImp(StockImp stockImp) {
+	private PHPStockImp stockImp;
+	public void setStockImp(PHPStockImp stockImp) {
 		this.stockImp = stockImp;
 	}
 	
