@@ -100,7 +100,7 @@ public class FetchProduct {
 					sku.setColor(color);
 					sku.setProductDescription(des); 
 					sku.setSaleCurrency(item.getValuta());
-					sku.setProductSize(item.getNumero());
+					sku.setProductSize(item.getSize_Tipe()+" "+item.getSize());
 					sku.setStock(item.getStock());
 					// sku入库
 					try {

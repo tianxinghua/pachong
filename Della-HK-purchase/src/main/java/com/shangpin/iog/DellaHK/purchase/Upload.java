@@ -1,7 +1,11 @@
 package com.shangpin.iog.DellaHK.purchase;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +32,7 @@ public class Upload {
 	private static String to = null;
 	private static String subject = null;
 	private static String messageType = null;
+	private static String saveLocal = null;
 	
 	static{
 		if (bdl == null)
@@ -37,6 +43,7 @@ public class Upload {
 		to = bdl.getString("to");
 		subject = bdl.getString("subject");
 		messageType = bdl.getString("messageType");
+		saveLocal = bdl.getString("saveLocal");
 	}
 	
 //	public static void main(String[] args) {
@@ -70,6 +77,34 @@ public class Upload {
 				logger.info("ftp连接成功");
 				ftp.storeFile(fileName, fis);
 				logger.info(fileName+"上传92.223.134.2成功!!!!!!!!!!!!!!!!!");
+				
+				//保存到本地
+				BufferedWriter out = null;
+				BufferedReader in = null;
+				try {
+					out =new BufferedWriter(new FileWriter(saveLocal+File.separator+fileName));
+					in =new BufferedReader(new FileReader(srcFile));
+					String temp = "";
+					while(StringUtils.isNotBlank(temp=in.readLine())){
+						out.append(temp).append("\n"); 
+					}
+					out.flush();
+					logger.info(fileName+"保存本地成功!!!!!!!!!!!!!!!!!");
+				} catch (Exception e) {
+					loggerError.error(e);
+					loggerError.error(fileName+"保存到本地失败"); 
+				}finally{
+					try {
+						if(null != out){
+							out.close();
+						}
+						if(null != in){
+							in.close();
+						}
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+				}
 				break;
 	   		
 			} catch (Exception e) {				

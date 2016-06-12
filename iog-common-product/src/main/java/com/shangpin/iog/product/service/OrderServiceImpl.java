@@ -133,6 +133,7 @@ public class OrderServiceImpl implements OrderService {
                     detailDTO.setSupplierSku(supplierSku);
                     detailDTO.setSpSku(spSku);
                     detailDTO.setStatus(orderDTO.getStatus());
+                    detailDTO.setPurchasePriceDetail(orderDTO.getPurchasePriceDetail());
                     orderDetailDAO.saveOrderDetailDTO(detailDTO);
                     detailDTOList.add(temp);
                 }
@@ -510,4 +511,5 @@ public class OrderServiceImpl implements OrderService {
         dto.setUpdateTime(new Date());
         orderUpdateDAO.savesupplierOrderTime(dto);
     }
+
 }

@@ -36,6 +36,13 @@ include 'vela-order'
 include 'sanremo-order'
 
 include 'sarenza-stock'
+include 'reebonzWiki-order'
+include 'atelier-linde-order'
+include 'Creative99-stock'
+include 'inviqa-stock'
+include 'tony-subFellas'
+include 'giglio-stock'
+include 'sarenza'
 
 
 

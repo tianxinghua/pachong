@@ -48,7 +48,7 @@ public class OrderService extends AbsOrderService{
     private static String Authorization = null;
 	private static String grant_type = null;
 	
-	private static String url_getTradeDetail = null;
+//	private static String url_getTradeDetail = null;
 	private static String url_cancelTrade = null;
     
     static {
@@ -63,7 +63,7 @@ public class OrderService extends AbsOrderService{
         Authorization = bdl.getString("Authorization");
 		grant_type = bdl.getString("grant_type");
 		
-		url_getTradeDetail = bdl.getString("url_getTradeDetail");
+//		url_getTradeDetail = bdl.getString("url_getTradeDetail");
 		url_cancelTrade = bdl.getString("url_cancelTrade");
         
         token = getToken();
@@ -85,6 +85,89 @@ public class OrderService extends AbsOrderService{
 	
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
+		
+		orderDTO.setStatus(OrderStatus.PLACED);
+	}
+	
+	/**
+	 * 创建订单
+	 * @param orderDTO
+	 * @param createOrderStr 下订单所需参数json格式
+	 * @param headMap
+	 */
+	public void createOrder(OrderDTO orderDTO,String createOrderStr,Map<String,String> headMap) throws ServiceException{
+		
+		String result = HttpUtil45.operateData("post", "json", url_createOrder, outTimeConf, null, createOrderStr, headMap, "", "");
+		logger.info("创建订单result====="+result);
+		OrderResult orderResult = new Gson().fromJson(result, OrderResult.class);
+		String status = orderResult.getStatus();
+		if(status.equals("0")){//库存不足
+			orderDTO.setExcDesc(orderResult.getMessage());
+			orderDTO.setExcState("1");
+			orderDTO.setExcTime(new Date());
+			//采购异常处理
+			doOrderExc(orderDTO);
+		}else if(status.equals("1")){//下单成功
+			orderDTO.setSupplierOrderNo(orderResult.getData().getTradeCode());
+			orderDTO.setStatus(OrderStatus.CONFIRMED);
+			orderDTO.setExcState("0");
+		}else{//其他都失败
+			orderDTO.setExcDesc(orderResult.getMessage());
+			orderDTO.setExcState("1");
+			orderDTO.setExcTime(new Date());
+		}
+	}
+	
+	/**
+	 * 采购异常处理
+	 * @param orderDTO
+	 */
+	public void doOrderExc(OrderDTO orderDTO){
+		String reResult = setPurchaseOrderExc(orderDTO);
+		if("-1".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.NOHANDLE);
+		}else if("1".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+		}else if("0".equals(reResult)){
+			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+		}
+		orderDTO.setExcState("0");
+	}
+
+	@Override
+	public void handleConfirmOrder(OrderDTO orderDTO) {
+//		try{
+//			Map<String,String> headMap = new HashMap<String,String>();
+//			headMap.put("Authorization", token.getToken_type()+" "+token.getAccess_token());		
+//			try{
+//				confirmOrder(orderDTO,headMap);
+//			}catch(Exception ex){
+//				if(ex.getMessage().equals("状态码:401")){
+//					token = getToken();
+//					headMap.put("Authorization", token.getToken_type()+" "+token.getAccess_token());
+//					try{
+//						confirmOrder(orderDTO,headMap);
+//					}catch(Exception e){
+//						error.error(e);
+//						orderDTO.setExcDesc(e.getMessage());
+//						orderDTO.setExcState("1");
+//						orderDTO.setExcTime(new Date());
+//					}				
+//				}else{
+//					ex.printStackTrace();
+//					error.error(ex);
+//					orderDTO.setExcDesc(ex.getMessage());
+//					orderDTO.setExcState("1");
+//					orderDTO.setExcTime(new Date());
+//				}
+//			}
+//		}catch(Exception ex){
+//			error.error(ex);
+//			orderDTO.setExcDesc(ex.getMessage());
+//			orderDTO.setExcState("1");
+//			orderDTO.setExcTime(new Date());
+//		}
+		
 		try{
 			//参数
 			String sku_stock = orderDTO.getDetail().split(",")[0];
@@ -149,149 +232,70 @@ public class OrderService extends AbsOrderService{
 			orderDTO.setExcState("1");
 			orderDTO.setExcTime(new Date());
 		}
-		
-	}
-	
-	/**
-	 * 创建订单
-	 * @param orderDTO
-	 * @param createOrderStr 下订单所需参数json格式
-	 * @param headMap
-	 */
-	public void createOrder(OrderDTO orderDTO,String createOrderStr,Map<String,String> headMap) throws ServiceException{
-		
-		String result = HttpUtil45.operateData("post", "json", url_createOrder, outTimeConf, null, createOrderStr, headMap, "", "");
-		logger.info("创建订单result====="+result);
-		OrderResult orderResult = new Gson().fromJson(result, OrderResult.class);
-		String status = orderResult.getStatus();
-		if(status.equals("0")){//库存不足
-			orderDTO.setExcDesc(orderResult.getMessage());
-			orderDTO.setExcState("1");
-			orderDTO.setExcTime(new Date());
-			//采购异常处理
-			doOrderExc(orderDTO);
-		}else if(status.equals("1")){//下单成功
-			orderDTO.setSupplierOrderNo(orderResult.getData().getTradeCode());
-			orderDTO.setStatus(OrderStatus.PLACED);
-			orderDTO.setExcState("0");
-		}else{//其他都失败
-			orderDTO.setExcDesc(orderResult.getMessage());
-			orderDTO.setExcState("1");
-			orderDTO.setExcTime(new Date());
-		}
-	}
-	
-	/**
-	 * 采购异常处理
-	 * @param orderDTO
-	 */
-	public void doOrderExc(OrderDTO orderDTO){
-		String reResult = setPurchaseOrderExc(orderDTO);
-		if("-1".equals(reResult)){
-			orderDTO.setStatus(OrderStatus.NOHANDLE);
-		}else if("1".equals(reResult)){
-			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-		}else if("0".equals(reResult)){
-			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
-		}
-		orderDTO.setExcState("0");
-	}
-
-	@Override
-	public void handleConfirmOrder(OrderDTO orderDTO) {
-		try{
-			Map<String,String> headMap = new HashMap<String,String>();
-			headMap.put("Authorization", token.getToken_type()+" "+token.getAccess_token());		
-			try{
-				confirmOrder(orderDTO,headMap);
-			}catch(Exception ex){
-				if(ex.getMessage().equals("状态码:401")){
-					token = getToken();
-					headMap.put("Authorization", token.getToken_type()+" "+token.getAccess_token());
-					try{
-						confirmOrder(orderDTO,headMap);
-					}catch(Exception e){
-						error.error(e);
-						orderDTO.setExcDesc(e.getMessage());
-						orderDTO.setExcState("1");
-						orderDTO.setExcTime(new Date());
-					}				
-				}else{
-					ex.printStackTrace();
-					error.error(ex);
-					orderDTO.setExcDesc(ex.getMessage());
-					orderDTO.setExcState("1");
-					orderDTO.setExcTime(new Date());
-				}
-			}
-		}catch(Exception ex){
-			error.error(ex);
-			orderDTO.setExcDesc(ex.getMessage());
-			orderDTO.setExcState("1");
-			orderDTO.setExcTime(new Date());
-		}
 				
 	}
 	
-	public void confirmOrder(OrderDTO orderDTO,Map<String,String> headMap) throws Exception{
-		String uri = url_getTradeDetail+orderDTO.getSupplierOrderNo();
-		logger.info("confirm uri====="+uri);
-		String confirmResult = HttpUtil45.get(uri, outTimeConf, null, headMap, "", "");
-		logger.info("confirm result====="+confirmResult);
-		TradeDetailResponseDTO confirm = new Gson().fromJson(confirmResult, TradeDetailResponseDTO.class);
-		Integer confirmStr = confirm.getData().getTradeStatus();
-		System.out.println(confirmStr); 
-		logger.info("交易单状态:"+confirmStr);
-		if(confirmStr ==9005 ){//可以认为待确认
-			logger.info("交易单状态:处理中");
-		}else if(confirmStr == 9006){			
-			logger.info("交易单状态:已发货");
-			orderDTO.setStatus(OrderStatus.CONFIRMED);
-			orderDTO.setExcState("0");
-			
-		}else if(confirmStr == 9007){
-			logger.info("交易单状态:已完成");
-			orderDTO.setStatus(OrderStatus.CONFIRMED);
-			orderDTO.setExcState("0");
-			
-		}else if(confirmStr == 9098){
-			orderDTO.setExcDesc("已关闭");
-			orderDTO.setExcState("1");
-			orderDTO.setExcTime(new Date());
-			
-		}else if(confirmStr ==9099){
-			orderDTO.setExcDesc("已取消");
-			orderDTO.setExcState("1");
-			orderDTO.setExcTime(new Date());
-			
-		}
-		
-		
-	}
+//	public void confirmOrder(OrderDTO orderDTO,Map<String,String> headMap) throws Exception{
+//		String uri = url_getTradeDetail+orderDTO.getSupplierOrderNo();
+//		logger.info("confirm uri====="+uri);
+//		String confirmResult = HttpUtil45.get(uri, outTimeConf, null, headMap, "", "");
+//		logger.info("confirm result====="+confirmResult);
+//		TradeDetailResponseDTO confirm = new Gson().fromJson(confirmResult, TradeDetailResponseDTO.class);
+//		Integer confirmStr = confirm.getData().getTradeStatus();
+//		System.out.println(confirmStr); 
+//		logger.info("交易单状态:"+confirmStr);
+//		if(confirmStr ==9005 ){//可以认为待确认
+//			logger.info("交易单状态:处理中");
+//		}else if(confirmStr == 9006){			
+//			logger.info("交易单状态:已发货");
+//			orderDTO.setStatus(OrderStatus.CONFIRMED);
+//			orderDTO.setExcState("0");
+//			
+//		}else if(confirmStr == 9007){
+//			logger.info("交易单状态:已完成");
+//			orderDTO.setStatus(OrderStatus.CONFIRMED);
+//			orderDTO.setExcState("0");
+//			
+//		}else if(confirmStr == 9098){
+//			orderDTO.setExcDesc("已关闭");
+//			orderDTO.setExcState("1");
+//			orderDTO.setExcTime(new Date());
+//			
+//		}else if(confirmStr ==9099){
+//			orderDTO.setExcDesc("已取消");
+//			orderDTO.setExcState("1");
+//			orderDTO.setExcTime(new Date());
+//			
+//		}
+//		
+//		
+//	}
 
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
 		try{
-			token = getToken();
-			Map<String,String> headMap = new HashMap<String,String>();
-			headMap.put("Authorization", token.getToken_type()+" "+token.getAccess_token());
-			CancelTradeDTO cancelOrder = new CancelTradeDTO();
-			cancelOrder.setTradeCode(deleteOrder.getSupplierOrderNo());
-			cancelOrder.setReason("no reason");
-			String canStr = new Gson().toJson(cancelOrder);
-			logger.info("取消订单的参数====="+canStr);
-			String result = HttpUtil45.operateData("post", "json", url_cancelTrade, outTimeConf, null, canStr, headMap, "", "");
-			logger.info("取消订单返回结果====="+result);
-			System.out.println(result); 
-			CancelResult cancelResult = new Gson().fromJson(result, CancelResult.class);
-			if(cancelResult.getStatus().equals("1")){
-				deleteOrder.setExcState("0");
-				deleteOrder.setStatus(OrderStatus.CANCELLED);
-			}else{
-				deleteOrder.setExcDesc(cancelResult.getMessage());
-				deleteOrder.setExcState("1");
-				deleteOrder.setExcTime(new Date());
-			}
+			if(StringUtils.isNotBlank(deleteOrder.getSupplierOrderNo())){
+				token = getToken();
+				Map<String,String> headMap = new HashMap<String,String>();
+				headMap.put("Authorization", token.getToken_type()+" "+token.getAccess_token());
+				CancelTradeDTO cancelOrder = new CancelTradeDTO();
+				cancelOrder.setTradeCode(deleteOrder.getSupplierOrderNo());
+				cancelOrder.setReason("no reason");
+				String canStr = new Gson().toJson(cancelOrder);
+				logger.info("取消订单的参数====="+canStr);
+				String result = HttpUtil45.operateData("post", "json", url_cancelTrade, outTimeConf, null, canStr, headMap, "", "");
+				logger.info("取消订单返回结果====="+result);
+				System.out.println(result); 
+				CancelResult cancelResult = new Gson().fromJson(result, CancelResult.class);
+				if(cancelResult.getStatus().equals("1")){
+					deleteOrder.setExcState("0");
+					deleteOrder.setStatus(OrderStatus.CANCELLED);
+				}else{
+					deleteOrder.setExcDesc(cancelResult.getMessage());
+					deleteOrder.setExcState("1");
+					deleteOrder.setExcTime(new Date());
+				}
+			}			
 			
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -305,25 +309,27 @@ public class OrderService extends AbsOrderService{
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
 		try{
-			token = getToken();
-			Map<String,String> headMap = new HashMap<String,String>();
-			headMap.put("Authorization", token.getToken_type()+" "+token.getAccess_token());
-			CancelTradeDTO cancelOrder = new CancelTradeDTO();
-			cancelOrder.setTradeCode(deleteOrder.getSupplierOrderNo());
-			cancelOrder.setReason("no reason");
-			String canStr = new Gson().toJson(cancelOrder);
-			logger.info("取消订单的参数====="+canStr);
-			String result = HttpUtil45.operateData("post", "json", url_cancelTrade, outTimeConf, null, canStr, headMap, "", "");
-			logger.info("取消订单返回结果====="+result);
-			System.out.println(result); 
-			CancelResult cancelResult = new Gson().fromJson(result, CancelResult.class);
-			if(cancelResult.getStatus().equals("1")){
-				deleteOrder.setExcState("0");
-				deleteOrder.setStatus(OrderStatus.CANCELLED);
-			}else{
-				deleteOrder.setExcDesc(cancelResult.getMessage());
-				deleteOrder.setExcState("1");
-				deleteOrder.setExcTime(new Date());
+			if(StringUtils.isNotBlank(deleteOrder.getSupplierOrderNo())){
+				token = getToken();
+				Map<String,String> headMap = new HashMap<String,String>();
+				headMap.put("Authorization", token.getToken_type()+" "+token.getAccess_token());
+				CancelTradeDTO cancelOrder = new CancelTradeDTO();
+				cancelOrder.setTradeCode(deleteOrder.getSupplierOrderNo());
+				cancelOrder.setReason("no reason");
+				String canStr = new Gson().toJson(cancelOrder);
+				logger.info("取消订单的参数====="+canStr);
+				String result = HttpUtil45.operateData("post", "json", url_cancelTrade, outTimeConf, null, canStr, headMap, "", "");
+				logger.info("取消订单返回结果====="+result);
+				System.out.println(result); 
+				CancelResult cancelResult = new Gson().fromJson(result, CancelResult.class);
+				if(cancelResult.getStatus().equals("1")){
+					deleteOrder.setExcState("0");
+					deleteOrder.setStatus(OrderStatus.CANCELLED);
+				}else{
+					deleteOrder.setExcDesc(cancelResult.getMessage());
+					deleteOrder.setExcState("1");
+					deleteOrder.setExcTime(new Date());
+				}				
 			}
 			
 		}catch(Exception ex){
