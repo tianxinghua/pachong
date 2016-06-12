@@ -60,21 +60,25 @@ public class FetchProduct {
         logger.info("get product starting....");
         System.out.println("开始获取产品信息");
         Map<String,String> map = new HashMap<>();
-    	String spuData = HttpUtil45.postNTAuth(url+"GetAllItemsMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
-    	String skuData = HttpUtil45.postNTAuth(url+"GetAllAvailabilityMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
-    	String imageData = HttpUtil45.postNTAuth(url+"GetAllImageMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
-    	String priceData = HttpUtil45.postNTAuth(url+"GetAllPricelistMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+//    	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+        
+    	String skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+    	
+    	String imageData = HttpUtil45.postAuth(url+"GetAllImageMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+    	
+    	String priceData = HttpUtil45.postAuth(url+"GetAllPricelistMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
     
+    	String spuData = HttpUtil45.postAuth(url+"GetAllItemsMarketplace", map, new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600), username, password);
     	System.out.println("获取产品信息结束");
     	Date startDate,endDate= new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 		//获取原有的SKU 仅仅包含价格和库存
-		Map<String,SkuDTO> skuDTOMap = new HashedMap();
-		try {
-			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
+//		Map<String,SkuDTO> skuDTOMap = new HashedMap();
+//		try {
+//			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+//		} catch (ServiceException e) {
+//			e.printStackTrace();
+//		}
     	
         logger.info("get product over");
         //映射数据并保存
@@ -211,9 +215,9 @@ public class FetchProduct {
         			sku.setProductCode(item.getStyleCode()+"-"+item.getColorCode());
         			try {
         				
-        				if(skuDTOMap.containsKey(sku.getSkuId())){
-    						skuDTOMap.remove(sku.getSkuId());
-    					}
+//        				if(skuDTOMap.containsKey(sku.getSkuId())){
+//    						skuDTOMap.remove(sku.getSkuId());
+//    					}
         				
 						productFetchService.saveSKU(sku);
         			} catch (ServiceException e) {
@@ -239,17 +243,17 @@ public class FetchProduct {
 		}
 		System.out.println("update old data");
 		//更新网站不再给信息的老数据
-		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
-			 Map.Entry<String,SkuDTO> entry =  itor.next();
-			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
-				entry.getValue().setStock("0");
-				try {
-					productFetchService.updatePriceAndStock(entry.getValue());
-				} catch (ServiceException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+//		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+//			 Map.Entry<String,SkuDTO> entry =  itor.next();
+//			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+//				entry.getValue().setStock("0");
+//				try {
+//					productFetchService.updatePriceAndStock(entry.getValue());
+//				} catch (ServiceException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
         logger.info("save product into DB success");
     }
 

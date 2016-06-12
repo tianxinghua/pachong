@@ -60,12 +60,12 @@ public class FetchProduct {
 				* -1, "D");
 		// 获取原有的SKU 仅仅包含价格和库存
 		Map<String, SkuDTO> skuDTOMap = new HashedMap();
-//		try {
-//			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(
-//					supplierId, startDate, endDate);
-//		} catch (ServiceException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(
+					supplierId, startDate, endDate);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 		List<Product> list = null;
 		try {
 			list = FtpUtil.readLocalCSV(Product.class);
@@ -142,8 +142,7 @@ public class FetchProduct {
 				skudto.setProductName(spu.getTitle());
 				// skudto.setSaleCurrency("EUR");
 				skudto.setProductSize(spu.getSupplierSize());
-				skudto.setSkuId(spu.getProductId()+"-"+spu.getPCID()+ "-"
-						+ spu.getSupplierSize());
+				skudto.setSkuId(spu.getVariantId());
 				skudto.setMarketPrice(spu.getPrice());
 				skudto.setSpuId(spu.getProductId()+"-"+spu.getPCID());
 				skudto.setStock(spu.getStock());
