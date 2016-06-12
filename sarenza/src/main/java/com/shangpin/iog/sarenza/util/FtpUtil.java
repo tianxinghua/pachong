@@ -107,13 +107,13 @@ public class FtpUtil {
 				}
 				AlldtoList.addAll(dtoList);
 				cr.close();
-//				File flie = new File(path+realPath);
-//				boolean falg = flie.delete();
-//				 if(falg){
-//				 System.out.println("文件删除success");
-//				 }else{
-//				 System.out.println("文件删除fail");
-//				 }
+				File flie = new File(path+realPath);
+				boolean falg = flie.delete();
+				 if(falg){
+				 System.out.println("文件删除success");
+				 }else{
+				 System.out.println("文件删除fail");
+				 }
 			}
 		}
 		return AlldtoList;
@@ -188,8 +188,8 @@ public class FtpUtil {
 						System.out.println(ff+"=="+fileName);
 						if(ff.equals(fileName)){
 							filePath.add(fileName);
-							System.out.println(files[files.length-1]);
-							ftp.get(path+files[files.length-1], files[files.length-1]);
+							System.out.println(fileName);
+							ftp.get(path+fileName, fileName);
 						}
 					}
 				}

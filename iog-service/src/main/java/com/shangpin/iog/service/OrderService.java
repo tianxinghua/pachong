@@ -245,5 +245,4 @@ public interface OrderService {
 
 	public void saveSupplierOrderTime(String supplierId);
 
-
 }

@@ -371,17 +371,17 @@ $(function(){
 					<td><fmt:formatDate value="${reddata.updateTime }" pattern="yyyy-MM-dd HH:mm:ss" /></td>
 					<td>${reddata.dif }</td>
 					<form id="${gredata.supplierId}">
-						<td><input type="text" name="errorNum" value="${reddata.errorNum}" onchange="changeReason(${reddata.supplierId},this.value,'errorNum')"/></td>
-						<td><input type="text" name="rightNum" value="${reddata.rightNum}" onchange="changeReason(${reddata.supplierId},this.value,'rightNum')"/></td>
-						<td><input type="text" name="totalNum" value="${reddata.totalNum}" onchange="changeReason(${reddata.supplierId},this.value,'totalNum')"/></td>
+						<td><input type="text" name="errorNum" value="${reddata.errorNum}" onchange="changeReason('${reddata.supplierId}',this.value,'errorNum')"/></td>
+						<td><input type="text" name="rightNum" value="${reddata.rightNum}" onchange="changeReason('${reddata.supplierId}',this.value,'rightNum')"/></td>
+						<td><input type="text" name="totalNum" value="${reddata.totalNum}" onchange="changeReason('${reddata.supplierId}',this.value,'totalNum')"/></td>
 					</form>
-					<td ><input type="text" name="email" style="width:420px;" value="${reddata.email }"  onchange="changeReason(${reddata.supplierId},this.value,'email')"/></td>
+					<td ><input type="text" name="email" style="width:420px;" value="${reddata.email }"  onchange="changeReason('${reddata.supplierId}',this.value,'email')"/></td>
 					<c:choose>
 						<c:when test="${reddata.status == 1}">
-						<td><input type=checkbox checked value="0"  onchange="changeReason(${reddata.supplierId},this.value,'status')"></td>
+						<td><input type=checkbox checked value="0"  onchange="changeReason('${reddata.supplierId}',this.value,'status')"></td>
 						</c:when>
 						<c:otherwise>
-						<td><input type=checkbox  value="1" onchange="changeReason(${reddata.supplierId},this.value,'status')"></td>
+						<td><input type=checkbox  value="1" onchange="changeReason('${reddata.supplierId}',this.value,'status')"></td>
 						</c:otherwise>
 					</c:choose>
 				</tr>
@@ -394,18 +394,18 @@ $(function(){
 							pattern="yyyy-MM-dd HH:mm:ss" /></td>
 					<td>${gredata.dif }</td>
 					<form id="${gredata.supplierId}">
-						<td><input type="text" name="errorNum" value="${gredata.errorNum}" onchange="changeReason(${gredata.supplierId},this.value,'errorNum')"/></td>
-						<td><input type="text" name="rightNum" value="${gredata.rightNum}" onchange="changeReason(${gredata.supplierId},this.value,'rightNum')"/></td>
-						<td><input type="text" name="totalNum" value="${gredata.totalNum}" onchange="changeReason(${gredata.supplierId},this.value,'totalNum')"/></td>
+						<td><input type="text" name="errorNum" value="${gredata.errorNum}" onchange="changeReason('${gredata.supplierId}',this.value,'errorNum')"/></td>
+						<td><input type="text" name="rightNum" value="${gredata.rightNum}" onchange="changeReason('${gredata.supplierId}',this.value,'rightNum')"/></td>
+						<td><input type="text" name="totalNum" value="${gredata.totalNum}" onchange="changeReason('${gredata.supplierId}',this.value,'totalNum')"/></td>
 					</form>
 					
-					<td ><input type="text" name="email" style="width:420px;" value="${gredata.email }"  onchange="changeReason(${gredata.supplierId},this.value,'email')"/></td>
+					<td ><input type="text" name="email" style="width:420px;" value="${gredata.email }"  onchange="changeReason('${gredata.supplierId}',this.value,'email')"/></td>
 					<c:choose>
 						<c:when test="${gredata.status == 1}">
-						<td><input type=checkbox checked value="0"  onchange="changeReason(${gredata.supplierId},this.value,'status')"></td>
+						<td><input type=checkbox checked value="0"  onchange="changeReason('${gredata.supplierId}',this.value,'status')"></td>
 						</c:when>
 						<c:otherwise>
-						<td><input type=checkbox  value="1" onchange="changeReason(${gredata.supplierId},this.value,'status')"></td>
+						<td><input type=checkbox  value="1" onchange="changeReason('${gredata.supplierId}',this.value,'status')"></td>
 						</c:otherwise>
 					</c:choose>
 						

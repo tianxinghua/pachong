@@ -20,5 +20,6 @@ public interface OrderTimeUpdateMapper extends IBaseDao<OrderTimeUpdateDTO> {
 	
 
 	public OrderTimeUpdateDTO findSupplierOrderById(@Param("supplierId") String supplierId);
+
 	
 }

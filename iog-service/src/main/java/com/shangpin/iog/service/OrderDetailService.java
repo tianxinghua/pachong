@@ -193,4 +193,8 @@ public interface OrderDetailService {
 	public int getOrderTotalBySupplierIdAndTime(String supplier, String object,
 			String object2);
 
+
+	public int getOrderTotalBySpPurchaseNo(String supplierId, String startTime,
+			String endTime);
+
 }

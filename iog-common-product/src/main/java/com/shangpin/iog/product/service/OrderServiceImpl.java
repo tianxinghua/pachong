@@ -510,5 +510,4 @@ public class OrderServiceImpl implements OrderService {
         dto.setUpdateTime(new Date());
         orderUpdateDAO.savesupplierOrderTime(dto);
     }
-
 }

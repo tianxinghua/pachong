@@ -150,6 +150,26 @@
 			</if>
 		</where>
 	</select>
+	
+	
+	
+		<select id="getOrderTotalBySpPurchaseNo" resultType="int">
+		select
+			count(*)
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=startTime">and CREATE_TIME >= #{startTime}</if>
+			<if test="null!=endTime">
+				<![CDATA[ and UPDATE_TIME < #{endTime}   ]]>
+				<!-- and CREATE_TIME <= #{endTime} -->
+			</if>
+			and SP_PURCHASE_NO is not null
+		</where>
+	</select>
+	
+	
+	
 	<select id="findBySupplierIdAndStatusAndUpdateTime" resultMap="OrderResultMap">
 		select
 		<include refid="all_Order_column"/>

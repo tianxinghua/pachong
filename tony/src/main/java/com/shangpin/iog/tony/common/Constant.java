@@ -12,6 +12,7 @@ public class Constant {
     public static String merchantId =   bundle.getString("merchantId");
     public static String token =   bundle.getString("token");
     public static String baseUrl =   bundle.getString("baseUrl");
+    public static int day =   Integer.parseInt(bundle.getString("day"));
     //public static String SUPPLIER_ID = "2015101501608";
     public static String TEXT_JSON = "text/json";
     public static String APPLICATION_JSON = "application/json";

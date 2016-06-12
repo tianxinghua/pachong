@@ -7,19 +7,22 @@ package com.shangpin.iog.tony.service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.tony.common.Constant;
 import com.shangpin.iog.tony.common.MyJsonClient;
 import com.shangpin.iog.tony.common.StringUtil;
 import com.shangpin.iog.tony.dto.Data;
 import com.shangpin.iog.tony.dto.Items;
-
 import com.shangpin.iog.tony.dto.ReturnObject;
+
 import org.apache.commons.collections.functors.ExceptionClosure;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +40,8 @@ public class FetchProduct {
     private static Logger loggerError = Logger.getLogger("error");
     @Autowired
     ProductFetchService productFetchService;
+	@Autowired
+	ProductSearchService productSearchService;
     private MyJsonClient jsonClient = new MyJsonClient();
     private String itemsJson;
     private String categoriesJson;
@@ -81,6 +86,19 @@ public class FetchProduct {
      * message mapping and save into DB
      */
     private void messMappingAndSave() {
+    	
+    	Date startDate, endDate = new Date();
+		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate, Constant.day
+				* -1, "D");
+		// 获取原有的SKU 仅仅包含价格和库存
+		Map<String, SkuDTO> skuDTOMap = new HashedMap();
+		try {
+			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(
+					Constant.SUPPLIER_ID, startDate, endDate);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+    	
         //get tony Category data
         String skuId = "";
         String spuId = "";
@@ -116,9 +134,10 @@ public class FetchProduct {
                 sku.setBarcode(item.getBarcode());
                 sku.setProductCode(StringUtil.getProductCode(skuId));
                 sku.setSaleCurrency(item.getCur());
+                if(skuDTOMap.containsKey(sku.getSkuId())){
+                	skuDTOMap.remove(sku.getSkuId());
+                }
                 productFetchService.saveSKU(sku);
-
-            
 
             } catch (ServiceException e) {
                 try {
@@ -201,6 +220,20 @@ public class FetchProduct {
 				}
             }
         }
+        
+     // 更新网站不再给信息的老数据
+     		for (Iterator<Map.Entry<String, SkuDTO>> itor = skuDTOMap.entrySet()
+     				.iterator(); itor.hasNext();) {
+     			Map.Entry<String, SkuDTO> entry = itor.next();
+     			if (!"0".equals(entry.getValue().getStock())) {// 更新不为0的数据 使其库存为0
+     				entry.getValue().setStock("0");
+     				try {
+     					productFetchService.updatePriceAndStock(entry.getValue());
+     				} catch (ServiceException e) {
+     					e.printStackTrace();
+     				}
+     			}
+     		}
     }
 
 }
