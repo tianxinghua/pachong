@@ -14,38 +14,43 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class Worker implements Runnable {
-	private Map<String, Future> recordMap;
-	private ExecutorService threadPool;
+public class Worker extends Thread {
 	private String supplierId;
+	private String cronExpression;
+	private String url;
+	private String filePath;
+	private String[] needColsNo;
+	private String[] sepStrategys;
+	private String sep;
+	private String condition;
+	private String flag;
+	private int day;
+	private String picpath;
 	private String status;
 
 	@Override
 	public void run() {
-
-		final Task task1 = new Task();
+//		recordMap.put(supplierId, Thread.currentThread());
+		final Task task = new Task();
 		// 执行
-		task1.setHanderExpression("testTask");
-		task1.setCronExpression("0/5 * * * * ?");
-		Trigger trigger = task1.getTrigger();
+		task.setHanderExpression("testTask");
+//		task.setCronExpression("0/5 * * * * ?");
+		task.setCronExpression(cronExpression);
+		Trigger trigger = task.getTrigger();
 		ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-		scheduler.setThreadNamePrefix("SpringCronJob");
+		scheduler.setThreadNamePrefix("productCron");
 		scheduler.setPoolSize(2);
 		scheduler.initialize();
 		scheduler.schedule(new Runnable() {
 			public void run() {
 				try {
-					System.out.println("tttttttttttttttttttt1");
+					new AbsSaveProductImpl().handleData(flag, supplierId, day, picpath, condition, url, filePath, sep, needColsNo, sepStrategys);
 				} catch (Exception e) {
-
 					e.printStackTrace();
 				}
 			}
 		}, trigger);
 	}
 	
-	public static void main(String[] args) {
-		new Worker().run();
-	}
 	
 }

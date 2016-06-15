@@ -32,12 +32,10 @@ public class Csv2DTO {
 	 *            要转换成的dto
 	 * @return List<DTO>
 	 */
-	@SuppressWarnings("resource")
 	public <T> List<T> toDTO(String url,String filePath, String sep,String[] needColsNo,ISepStrategy[] iSepStrategies, Class<T> clazz) {
 		txtDownload(url,filePath);
 		List<T> dtoList = new ArrayList<T>();
 		CsvReader cr = null;
-		String[] split = null;
 		List<String> colValueList = null;
 		String rowString = "";
 		try {
@@ -47,8 +45,6 @@ public class Csv2DTO {
 				rowString = cr.getRawRecord();
 				if (StringUtils.isNotBlank(rowString)) {
 					colValueList = fromCSVLinetoArray(rowString,sep.charAt(0));
-//					split = rowString.split(sep);
-//					colValueList = Arrays.asList(split);
 					T t = fillDTO(clazz.newInstance(),needColsNo,iSepStrategies, colValueList);
 					dtoList.add(t);
 				}
@@ -84,10 +80,7 @@ public class Csv2DTO {
 				
 				for (int j = 0; j < split.length; j++) {
 					dataList.add(data.get(Integer.valueOf(split[j])));
-//					str+=data.get(Integer.valueOf(split[j]))+colsSep[i];
 				}
-				
-//				str+=data.get(Integer.valueOf(split[split.length-1]));
 				fields[i].set(t,iSepStrategies[i].merge(dataList));
 			}
 		} catch (Exception e) {
@@ -96,12 +89,10 @@ public class Csv2DTO {
 		return t;
 	}
 
-	// http异常
 	private String getHttpStr(String url) {
 		
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		CloseableHttpClient httpClient = httpClientBuilder.build();
-//		HttpPost httpPost = new HttpPost("https://api.forzieri.com/test/orders");
 		HttpGet httpPost = new HttpGet(url);
 		httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
         CloseableHttpResponse response = null;
@@ -114,9 +105,6 @@ public class Csv2DTO {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
-//		String str = HttpUtil45.get(url, new OutTimeConfig(1000 * 60 * 10,1000 * 60 * 20, 1000 * 60 * 20), null);
 		return str;
 	}
 
@@ -159,7 +147,7 @@ public class Csv2DTO {
 	/**
 	 * 把CSV文件的一行转换成字符串数组。不指定数组长度。
 	 */
-	public ArrayList<String> fromCSVLinetoArray(String source,char sep) {
+	private ArrayList<String> fromCSVLinetoArray(String source,char sep) {
 		if (source == null || source.length() == 0) {
 			return new ArrayList<String>();
 		}

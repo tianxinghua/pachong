@@ -16,13 +16,12 @@ public class TaskObserver implements Observer {
 		monitor.addObserver(this);
 	}
 
-	// TODO 根据改变的supplier状态,修改执行
 	@Override
 	public void update(Observable monitor, Object changedMap) {
 
 		HashMap<String, String> changeMap = (HashMap<String, String>) changedMap;
 		
-		taskController.resetTast(changeMap);
+		taskController.resetTask(changeMap);
 		
 	}
 }

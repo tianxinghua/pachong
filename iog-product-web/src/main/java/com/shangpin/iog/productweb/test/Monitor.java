@@ -26,10 +26,6 @@ public class Monitor extends Observable{
 	
 	
 	public void checkChange(MonitorMessage newMonitorMessage){
-		//赋值第一次记录
-		if (this.oldMonitorMessage==null) {
-			this.oldMonitorMessage = newMonitorMessage;
-		}
 		
 		Map<String, String> changedMap = isChanged(newMonitorMessage);
 		this.oldMonitorMessage = newMonitorMessage;
@@ -45,6 +41,9 @@ public class Monitor extends Observable{
 	
 	// 判断新旧信息是否一致
 	private Map<String, String> isChanged(MonitorMessage newMonitorMessage){
+		if (oldMonitorMessage.getSupplierIdAndStatus()==null) {
+			oldMonitorMessage.setSupplierIdAndStatus(new HashMap<String, String>());
+		}
 		Map<String, String> changedMap = new HashMap<String, String>();
 		
 		for (Entry<String, String> entry : newMonitorMessage.getSupplierIdAndStatus().entrySet()) {
