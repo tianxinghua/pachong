@@ -1,4 +1,4 @@
-package com.shangpin.iog.productweb.test;
+package com.shangpin.iog.productmanager;
 
 import java.util.ArrayList;
 import java.util.Date;

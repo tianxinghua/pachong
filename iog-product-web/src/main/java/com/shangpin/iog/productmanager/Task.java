@@ -8,12 +8,15 @@ import java.util.Date;
 
 
 
+
 import lombok.Getter;
 import lombok.Setter;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.support.CronTrigger;
+
+import com.shangpin.iog.productweb.schedule.TaskHanderService;
 @Setter
 @Getter
 public class Task {
@@ -33,5 +36,23 @@ public class Task {
 	 */
 	public Trigger getTrigger(){
 		return new CronTrigger(getCronExpression());
+	}
+	
+	/**
+	 * 获取任务执行者对象
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public TaskHanderService getHander(ApplicationContext context){
+		
+		Object hander = context.getBean(getHanderExpression());
+		
+		
+		if(!TaskHanderService.class.isAssignableFrom(hander.getClass())){
+			throw new RuntimeException(getHanderExpression()+"must implements com.guahaoe.system.service.CronHander interface!");
+		}
+		
+		return (TaskHanderService)hander;
 	}
 }

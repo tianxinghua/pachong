@@ -1,14 +1,17 @@
-package com.shangpin.iog.productweb.test;
+package com.shangpin.iog.productmanager;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Observable;
+
+import org.springframework.stereotype.Component;
 /**
  * 监控数据库变化,通知观察者
  * @author Administrator
  *
  */
+@Component
 public class Monitor extends Observable{
 	
 	private Monitor(){};
@@ -19,13 +22,14 @@ public class Monitor extends Observable{
 		}
 		return monitor;
 	}
-	private MonitorMessage oldMonitorMessage = new MonitorMessage();
-	public MonitorMessage getMonitorMessage(){
-		return oldMonitorMessage;
-	}
+//	private MonitorMessage oldMonitorMessage = new MonitorMessage();
+//	public MonitorMessage getMonitorMessage(){
+//		return oldMonitorMessage;
+//	}
+	private Map<String,String> oldMonitorMessage;
 	
-	
-	public void checkChange(MonitorMessage newMonitorMessage){
+//	public void checkChange(MonitorMessage newMonitorMessage){
+	public void checkChange(Map<String,String> newMonitorMessage){
 		
 		Map<String, String> changedMap = isChanged(newMonitorMessage);
 		this.oldMonitorMessage = newMonitorMessage;
@@ -41,15 +45,16 @@ public class Monitor extends Observable{
 	
 	
 	// 判断新旧信息是否一致
-	private Map<String, String> isChanged(MonitorMessage newMonitorMessage){
-		if (null==oldMonitorMessage.getSupplierIdAndStatus()) {
-			oldMonitorMessage.setSupplierIdAndStatus(new HashMap<String, String>());
+	private Map<String, String> isChanged(Map<String,String> newMonitorMessage){
+		
+		if (null==oldMonitorMessage) {
+			oldMonitorMessage = new HashMap<String, String>();
 		}
 		Map<String, String> changedMap = new HashMap<String, String>();
 		
-		for (Entry<String, String> entry : newMonitorMessage.getSupplierIdAndStatus().entrySet()) {
-			if (oldMonitorMessage.getSupplierIdAndStatus().containsKey(entry.getKey())) {
-				if (!oldMonitorMessage.getSupplierIdAndStatus().get(entry.getKey()).equals(entry.getValue())) {
+		for (Entry<String, String> entry : newMonitorMessage.entrySet()) {
+			if (oldMonitorMessage.containsKey(entry.getKey())) {
+				if (!oldMonitorMessage.get(entry.getKey()).equals(entry.getValue())) {
 					changedMap.put(entry.getKey(), entry.getValue());
 				}
 			}else{
@@ -59,5 +64,7 @@ public class Monitor extends Observable{
 		
 		return changedMap;
 	}
+	
+	
 	
 }
