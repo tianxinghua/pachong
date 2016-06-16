@@ -1210,7 +1210,7 @@ public abstract class AbsOrderService {
                 String uuid = null;
                 OrderDetailDTO detailDTO = null;
                 try {
-                    detailDTO = orderDetailService.getOrderDetailByOrderNo(spOrderNo);
+                    detailDTO = orderDetailService.getOrderDetailByOrderNoAndSupplierId(spOrderNo,supplierId);
                 } catch (ServiceException e) {
                     e.printStackTrace();
                 }

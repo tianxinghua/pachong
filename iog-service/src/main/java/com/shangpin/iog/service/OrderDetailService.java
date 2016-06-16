@@ -49,7 +49,7 @@ public interface OrderDetailService {
      * @return
      * @throws ServiceException
      */
-    public OrderDetailDTO getOrderDetailByOrderNo(String orderNo) throws ServiceException;
+    public OrderDetailDTO getOrderDetailByOrderNoAndSupplierId(String orderNo,String supplierId) throws ServiceException;
 
     /**
      * 根据尚品的子订单号获取订单明细

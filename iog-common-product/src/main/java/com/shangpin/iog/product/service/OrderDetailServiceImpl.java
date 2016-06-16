@@ -65,9 +65,9 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 	}
 
 	@Override
-	public OrderDetailDTO getOrderDetailByOrderNo(String orderNo) throws ServiceException {
+	public OrderDetailDTO getOrderDetailByOrderNoAndSupplierId(String orderNo,String supplierId) throws ServiceException {
 		if(StringUtils.isBlank(orderNo)) throw new ServiceMessageException("订单编号参数为空");
-		return orderDetailDao.findSubOrderByOrderNo(orderNo);
+		return orderDetailDao.findSubOrderByOrderNoAndSupplierId(orderNo,supplierId);
 	}
 
 	@Override

@@ -61,7 +61,7 @@
 			<if test="excTime != null">EXC_TIME = #{excTime}</if>
 			<if test="supplierOrderNo != null">SUPPLIER_ORDER_NO = #{supplierOrderNo}</if>
 		</set>
-		where ORDER_NO = #{orderNo}
+		where ORDER_NO = #{orderNo} and SUPPLIER_ID=#{supplierId}
 	</update>
 	<select id ="findSubOrderListByMOrderNo" resultMap="OrderResultMap">
 		select
@@ -79,7 +79,7 @@
 		select
 		<include refid="all_Order_column"/>
 		from ORDER_DETAIL
-		where ORDER_NO=#{orderNo}
+		where ORDER_NO=#{orderNo} and SUPPLIER_ID = #{supplierId}
 	</select>
 	
 	<select id="findOrderDetailByOrderDetailNo" parameterType="java.lang.String" resultMap="OrderResultMap">
