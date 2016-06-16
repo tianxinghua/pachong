@@ -157,6 +157,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             orderDAO.save(orderDTO);
             String orderDetail = orderDTO.getDetail();
+            System.out.println("orderDetail :"+orderDetail);
             String memo= orderDTO.getMemo();
             String supplierSku="",sQuantity="",spSku="";
 

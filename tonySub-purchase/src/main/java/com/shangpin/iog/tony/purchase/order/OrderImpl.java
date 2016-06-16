@@ -196,9 +196,9 @@ public class OrderImpl extends AbsOrderService {
             	orderDTO.setStatus(OrderStatus.CONFIRMED);
             }else{
                 ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+                orderDTO.setExcState("0");
+            	orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
                 if ("ko".equals(returnDataDTO.getStatus())){
-                	orderDTO.setExcState("0");
-                	orderDTO.setExcDesc(returnDataDTO.getMessages().toString());
                 	orderDTO.setStatus(OrderStatus.NOHANDLE);
 //                	String result = setPurchaseOrderExc(orderDTO);
 //    				if("-1".equals(result)){
@@ -208,6 +208,8 @@ public class OrderImpl extends AbsOrderService {
 //    				}else if("0".equals(result)){
 //    					orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
 //    				}
+                }else{
+                	orderDTO.setStatus(OrderStatus.NOHANDLE);
                 }
             }
         
@@ -301,17 +303,23 @@ public class OrderImpl extends AbsOrderService {
 		logger.info("detail数据格式:"+detail);
 		int num = 0;
 		String skuNo = null;
-		for (int i = 0; i < details.length; i++) {
-			// detail[i]数据格式==>skuId:数量
-			num = Integer.parseInt(details[i].split(":")[1]);
-			skuNo = details[i].split(":")[0];
-		}
+//		if(details.length==2){
+			for (int i = 0; i < details.length; i++) {
+				// detail[i]数据格式==>skuId:数量
+				num = Integer.parseInt(details[i].split(":")[1]);
+				skuNo = details[i].split(":")[0];
+			}
+//		}
 		
 		String markPrice = null;
 		try {
 			Map tempmap = skuPriceService.getNewSkuPriceBySku(Constant.SUPPLIER_ID, skuNo);
+			
+			
 			Map map =(Map) tempmap.get(Constant.SUPPLIER_ID);
-			markPrice =(String) map.get(skuNo);
+			if(map!=null){
+				markPrice =(String) map.get(skuNo);
+			}
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -321,7 +329,8 @@ public class OrderImpl extends AbsOrderService {
         item.setQty(num);
         item.setSku(skuNo);
         double totalPrice = 0;
-        if(!"-1".equals(markPrice)){
+        System.out.println("markPrice"+markPrice);
+        if(markPrice!=null&&!"-1".equals(markPrice)){
         	String price = markPrice.split("\\|")[0];
         	item.setPrice(price);	
         	totalPrice = (Double.parseDouble(price))*num;

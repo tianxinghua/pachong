@@ -119,6 +119,7 @@ public class SkuPriceServiceImpl implements SkuPriceService {
     	Map<String,String> skuMap = new HashMap<String, String>();
     	NewPriceDTO newPriceDTO = null;
 		try {
+			System.out.println("supplierId:"+supplierId + ",skuId:"+skuId);
 			newPriceDTO = skuDAO.findNewPriceBySku(supplierId, skuId);
 		} catch (Exception e) {
             logger.error("获取失败 "+e.getMessage());
@@ -135,6 +136,7 @@ public class SkuPriceServiceImpl implements SkuPriceService {
 			}else {
 				sb.append(newPriceDTO.getSupplierPrice()==null?"-1":newPriceDTO.getSupplierPrice());
 			}
+			System.out.println("sb"+sb.toString());
 			skuMap.put(newPriceDTO.getSkuId(), sb.toString());
 	    	supMap.put(supplierId, skuMap);
 		}
