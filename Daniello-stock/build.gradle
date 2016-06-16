@@ -20,8 +20,8 @@ jar {
 
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.daniello.stock.DanielloStockImp'
-//		attributes 'Main-Class': 'com.shangpin.iog.daniello.stock.schedule.Startup'
+//        attributes 'Main-Class': 'com.shangpin.iog.daniello.stock.DanielloStockImp'
+		attributes 'Main-Class': 'com.shangpin.iog.daniello.stock.schedule.Startup'
         attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }

@@ -42,7 +42,11 @@ include 'Creative99-stock'
 include 'inviqa-stock'
 include 'tony-subFellas'
 include 'giglio-stock'
-include 'sarenza'
+include 'tonySub-purchase'
+include 'reebonzWiki-stock'
+include 'fetchProductFromHK'
+include 'iog-common-product2'
+include 'project-muldatass-dao'
 
 
 

@@ -96,7 +96,7 @@ public class FetchProduct {
 						sku.setProductCode(pro.getArticleCode());
 						sku.setColor(pro.getColor());
 						sku.setSalePrice(pro.getCurrentPrice());
-						sku.setProductName(pro.getGenderDesc());
+						sku.setProductName(pro.getSubCategoryDesc());
 						sku.setSaleCurrency("Euro");
 						sku.setProductDescription(pro.getDescription());
 						

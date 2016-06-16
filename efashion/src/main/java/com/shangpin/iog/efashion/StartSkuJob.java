@@ -26,20 +26,6 @@ public class StartSkuJob {
     }
     public static void main(String[] args){
     	
-    	TempObj oo = new TempObj();
-    	List list = new ArrayList();
-    	Pararm p = new Pararm();
-    	p.setMes("30004162002");
-    	list.add(p);
-    	oo.setList(list);
-    	
-    	
-    	for(Pararm pp : oo.getList()){
-    		String json = HttpUtil45.get("http://192.168.1.105:8082/ListingCatalog/getPicListBySkuNoList?skuNoList="+pp.getMes(),new OutTimeConfig(), null);
-        	PictureObj obj = new Gson().fromJson(json, PictureObj.class);
-        	pp.setPic(obj.getContent().getList().get(0).getPicUrl());
-    	}
-    	
         //鍔犺浇spring
         loadSpringContext();
         log.info("--------spring初始化成功------");
