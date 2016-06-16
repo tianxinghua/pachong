@@ -126,7 +126,7 @@ public interface ProductSearchService {
 
 	public List<SpuDTO> findPartBySupAndSpuId(String supplierId);
     
-	public abstract List<SpuDTO> findpartSpuListBySupplier(String supplierId);
+//	public abstract List<SpuDTO> findpartSpuListBySupplier(String supplierId);
 	
 	/**
 	 * 查询符合ep规则的所有图片名

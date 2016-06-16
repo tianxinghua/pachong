@@ -7,9 +7,8 @@ import lombok.Setter;
 @Getter
 public class Item {
 	
-	private String sku_id;
-	private String product_reference;
-	private String color_reference;
+	private String product;
+//	private String color_reference;
 	private String quantity;
 	private String size;
 	private String purchase_price;

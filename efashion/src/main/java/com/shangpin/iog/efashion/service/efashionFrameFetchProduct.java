@@ -29,6 +29,7 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.efashion.dao.Item;
 import com.shangpin.iog.efashion.dao.Item_images;
+import com.shangpin.iog.efashion.dao.Material;
 import com.shangpin.iog.efashion.dao.Result;
 import com.shangpin.iog.efashion.dao.ReturnObject;
 import com.shangpin.iog.service.EventProductService;
@@ -113,12 +114,19 @@ public class efashionFrameFetchProduct extends AbsSaveProduct {
 			spu.setId(UUIDGenerator.getUUID());
 			spu.setSupplierId(supplierId);
 			spu.setSpuId(item.getProduct_id());
-			spu.setCategoryName(item.getCategory());
 			spu.setBrandName(item.getBrand());
 			spu.setSpuName(item.getItem_intro());
-			spu.setMaterial(item.getTechnical_info());
-			spu.setProductOrigin(item.getMade_in());
-			spu.setSeasonName(item.getSeason_year());
+			spu.setCategoryName(item.getFirst_category());
+			List<Material> list = item.getTechnical_info();
+			if(list!=null&&!list.isEmpty()){
+				StringBuffer str = new StringBuffer();
+				for(Material m:list){
+					str.append(",").append(m.getPercentage()).append(m.getName());
+				}
+				spu.setMaterial(str.substring(1));
+			}
+//			spu.setProductOrigin(item.getMade_in());
+			spu.setSeasonName(item.getSeason_year()+item.getSeason_reference());
 			spu.setCategoryGender(item.getGender());
 			spuList.add(spu);
 
@@ -132,7 +140,7 @@ public class efashionFrameFetchProduct extends AbsSaveProduct {
 			if (size == null) {
 				size = "A";
 			}
-			skuId = item.getSku_id() + "|" + item.getProduct_reference() + "|"
+			skuId = item.getProduct_reference() + "|"
 					+ item.getColor_reference() + "|" + size;
 			sku.setSkuId(skuId);
 			sku.setProductSize(size);
@@ -141,28 +149,14 @@ public class efashionFrameFetchProduct extends AbsSaveProduct {
 			sku.setMarketPrice(item.getPrice_IT());
 			sku.setColor(item.getColor());
 			sku.setProductName(item.getItem_intro());
-			sku.setProductDescription(item.getItem_description() + ","
-					+ item.getSuitable());
+			sku.setProductDescription(item.getItem_description());
 			sku.setSaleCurrency(item.getCurrency());
 			sku.setSalePrice("");
 			sku.setSupplierPrice("");
 			skuList.add(sku);
 
-			Item_images images = item.getItem_images();
-			List<String> picArray = new ArrayList<String>();
-			if(StringUtils.isNotBlank(images.getUrl1())){
-				picArray.add(images.getUrl1());
-			}
-			if(StringUtils.isNotBlank(images.getUrl2())){
-				picArray.add(images.getUrl2());
-			}
-			if(StringUtils.isNotBlank(images.getUrl3())){
-				picArray.add(images.getUrl3());
-			}
-			if(StringUtils.isNotBlank(images.getUrl4())){
-				picArray.add(images.getUrl4());
-			}
-			imageMap.put(sku.getSkuId() + ";" + sku.getSkuId().split("\\|")[1]+URLEncoder.encode("|")+sku.getSkuId().split("\\|")[2], picArray);
+			String [] images = item.getItem_images().getFull();
+			imageMap.put(sku.getSkuId() + ";" + item.getProduct_reference()+URLEncoder.encode("|")+item.getColor_reference(), Arrays.asList(images));
 		}
 		returnMap.put("sku", skuList);
 		returnMap.put("spu", spuList);
@@ -179,6 +173,6 @@ public class efashionFrameFetchProduct extends AbsSaveProduct {
         loadSpringContext();
         efashionFrameFetchProduct stockImp =(efashionFrameFetchProduct)factory.getBean("efashion");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		stockImp.handleData("sku", supplierId, day, picpath);
+		stockImp.handleData("spu", supplierId, day, picpath);
 	}
 }

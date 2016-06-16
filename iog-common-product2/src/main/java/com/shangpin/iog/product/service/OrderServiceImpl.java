@@ -341,6 +341,21 @@ public class OrderServiceImpl implements OrderService {
 		
 	}
 
+	@Override
+	public List<OrderDTO> saveOrderDetail(OrderDTO orderDTO)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<OrderDTO> saveOrderDetail(OrderDTO orderDTO,
+			Map<String, Integer> orderNoQuantityMap, int count)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 
 }

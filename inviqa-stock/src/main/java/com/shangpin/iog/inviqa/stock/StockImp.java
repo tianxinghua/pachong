@@ -45,8 +45,6 @@ public class StockImp extends AbsUpdateProductStock {
     private static ApplicationContext factory;
     private static String token = null;
     private static String secret = null;
-	private int sum = 0;
-	private int excSum = 0;
 	private int j = 0,tempPage=0;
     private static void loadSpringContext()
     {
@@ -70,14 +68,27 @@ public class StockImp extends AbsUpdateProductStock {
 		secret = bdl.getString("secret");
     }
     private int i = 1;
-    private Map<String,String> map = new HashMap<String,String>();
+    private Map<String,String> map = null;
     public  void getStockMap(List<Stock> allStockList) {
     	
     	for(Stock stock : allStockList){
     		map.put(stock.getSkuId(),stock.getStock());
     	}
 	}
+    private int sum = 0;
+  	private int excSum = 0;
     public  void getStockList() {
+    	if(map!=null){
+    		logger.info("map数量："+map.size());
+    	}else{
+    		logger.info("map数量：0");
+    	}
+    	map = new HashMap<String,String>();
+    	logger.info("map数量："+map.size());
+    	sum = 0;
+    	excSum = 0;
+    	j = 0;
+    	tempPage=0;
 		String stock = null;
 		try{
 			OAuthService service = new ServiceBuilder().provider(API.class)
@@ -89,6 +100,7 @@ public class StockImp extends AbsUpdateProductStock {
 			stock="0";
 		}
 	}
+  
     public   void getProductStock(OAuthService service,Token accessToken,int page){
 		//https://glamorous-uat.phplab.co.uk/api/rest
 		try{

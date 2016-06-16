@@ -24,7 +24,7 @@ import java.util.*;
  * Created by loyalty on 15/5/20.
  */
 @Service
-public abstract class ProductSearchServiceImpl implements ProductSearchService {
+public  class ProductSearchServiceImpl implements ProductSearchService {
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
@@ -876,11 +876,6 @@ public abstract class ProductSearchServiceImpl implements ProductSearchService {
 		return null;
 	}
 
-	@Override
-	public List<SpuDTO> findpartSpuListBySupplier(String supplierId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public List<ProductDTO> findPicName(String supplier, Date startDate,
@@ -891,6 +886,14 @@ public abstract class ProductSearchServiceImpl implements ProductSearchService {
 
 	@Override
 	public StringBuffer exportProductByEpRule(String supplier, Date startDate,
+			Date endDate, Integer pageIndex, Integer pageSize)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StringBuffer getDiffSeasonProducts(String supplier, Date startDate,
 			Date endDate, Integer pageIndex, Integer pageSize)
 			throws ServiceException {
 		// TODO Auto-generated method stub

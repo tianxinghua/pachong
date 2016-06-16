@@ -143,4 +143,6 @@ public interface ProductFetchService {
 			String skuId);
 	//获取mongo
 	Map<String, String> findPictureBySupplierIdAndSkuIdOrSpuId(String supplierId, String skuId, String spuId);
+	public List<ProductDTO> findSkuBySupplierId(String supplier);
+	public List<ProductDTO> findProductByDate(String startDate, String endDate);
 }
