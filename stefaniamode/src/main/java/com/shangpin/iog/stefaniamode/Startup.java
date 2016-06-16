@@ -23,6 +23,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.stefaniamode.service.FetchProduct;
+import com.shangpin.iog.stefaniamode.service.StefanFrameFetchProduct;
 
 public class Startup {
 	private static Logger log = Logger.getLogger("info");
@@ -46,7 +47,7 @@ public class Startup {
 		loadSpringContext();
 		log.info("----初始SPRING成功----");
 		// 拉取数据
-		FetchProduct fetchProduct = (FetchProduct) factory.getBean("stefaniamode");
+		StefanFrameFetchProduct fetchProduct = (StefanFrameFetchProduct) factory.getBean("framestefaniamode");
 		fetchProduct.fetchProductAndSave();
 
 		log.info("----拉取stefaniamode数据完成----");
