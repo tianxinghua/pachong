@@ -22,14 +22,14 @@ public class Task {
 	
 	private String queryKeyAndValue;//查询条件
 	
-	private TaskState        state=TaskState.INIT;//任务状态
+	private TaskState state=TaskState.INIT;//任务状态
 	
-	private Date        createTime=new Date();//任务创建时间
+	private Date createTime=new Date();//任务创建时间
 	
 	private String handerExpression;//任务处理者表达式
-	private String   cronExpression;//Cron表达式
+	private String cronExpression;//Cron表达式
 	
-	private String           remark;//简要说明
+	private String remark;//简要说明
 	
 	
 	

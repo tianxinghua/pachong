@@ -18,8 +18,8 @@ public class TaskObserver implements Observer {
 
 	@Override
 	public void update(Observable monitor, Object changedMap) {
-
 		HashMap<String, String> changeMap = (HashMap<String, String>) changedMap;
+		System.out.println("++++发生变化+++++"+changeMap.toString());
 		
 		taskController.resetTask(changeMap);
 		

@@ -19,7 +19,7 @@ public class Monitor extends Observable{
 		}
 		return monitor;
 	}
-	private MonitorMessage oldMonitorMessage;
+	private MonitorMessage oldMonitorMessage = new MonitorMessage();
 	public MonitorMessage getMonitorMessage(){
 		return oldMonitorMessage;
 	}
@@ -31,6 +31,7 @@ public class Monitor extends Observable{
 		this.oldMonitorMessage = newMonitorMessage;
 
 		if (changedMap.size()>0) {//发生变化,通知观察者
+			System.out.println("发生变化");
 			this.setChanged();
 			this.notifyObservers(changedMap);
 		}
@@ -41,7 +42,7 @@ public class Monitor extends Observable{
 	
 	// 判断新旧信息是否一致
 	private Map<String, String> isChanged(MonitorMessage newMonitorMessage){
-		if (oldMonitorMessage.getSupplierIdAndStatus()==null) {
+		if (null==oldMonitorMessage.getSupplierIdAndStatus()) {
 			oldMonitorMessage.setSupplierIdAndStatus(new HashMap<String, String>());
 		}
 		Map<String, String> changedMap = new HashMap<String, String>();

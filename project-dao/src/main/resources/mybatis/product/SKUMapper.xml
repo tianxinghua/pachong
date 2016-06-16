@@ -166,8 +166,10 @@
 			select SKU_ID as skuId,
 				MARKET_PRICE as marketPrice,
 				SUPPLIER_PRICE as supplierPrice,
+				SALE_PRICE as salePrice,
 			    NEW_MARKET_PRICE as newMarketPrice,
-      	 	  	NEW_SUPPLIER_PRICE as newSupplierPrice
+      	 	  	NEW_SUPPLIER_PRICE as newSupplierPrice,
+				NEW_SALE_PRICE as newSalePrice
       	 	  	from SKU sku
         <where>
 	           SUPPLIER_ID = #{supplierId}
