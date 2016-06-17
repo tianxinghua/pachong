@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.CsvAttributeInfoMapper">
+
+	<resultMap id="csvAttributeResultMap" type="iog_csvAttribute">
+		<result column="ID" property="id"  />
+        <result column="SUPPLIERID" property="supplierId"  />
+        <result column="ATTRINAME" property="attriName"  />
+        <result column="ATTRIVALUE" property="attriValue"  />
+        <result column="ATTRIRULE" property="attriRule"  />
+
+	</resultMap>
+
+	
+	<sql id="all_csvAttribute_column">
+		ID,
+		SUPPLIERID,
+		ATTRINAME,
+		ATTRIVALUE,
+		ATTRIRULE
+	</sql>
+	
+	<insert id="save" parameterType="iog_csvAttribute">
+		insert into CSV_ATTRIBUTE_INFO(
+			ID,
+			SUPPLIERID,
+			ATTRINAME,
+			ATTRIVALUE,
+			ATTRIRULE
+		)values(
+			#{id},
+			#{supplierId},
+			#{attriName},
+			#{attriValue},
+			#{attriRule}		
+		)
+		
+	</insert>
+	
+	<update id="update" parameterType="iog_csvAttribute">
+		update CSV_ATTRIBUTE_INFO 
+		<set>
+			 <if test="attriName != null"> ATTRINAME = #{attriName}, </if> 
+			 <if test="attriValue != null"> ATTRIVALUE = #{attriValue}, </if> 
+			 <if test="attriRule != null"> ATTRIRULE = #{attriRule}, </if> 
+		</set>
+		where ID = #{id}
+	</update>
+
+   
+    <select id="findCsvAttributeBySupplierId" resultMap="csvAttributeResultMap">
+        select
+        <include refid="all_csvAttribute_column"></include>
+
+        from CSV_ATTRIBUTE_INFO
+        <where>
+       		<if test="null!=supplierId">
+                SUPPLIERID=#{supplierId}
+            </if>
+        </where>
+    </select>
+    
+    <delete id="delete">
+    	delete from CSV_ATTRIBUTE_INFO where ID = #{id}
+    </delete>
+	
+</mapper>

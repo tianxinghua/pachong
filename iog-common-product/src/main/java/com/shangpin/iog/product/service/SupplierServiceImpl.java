@@ -4,6 +4,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.product.dao.SupplierMapper;
 import com.shangpin.iog.service.SupplierService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,4 +31,11 @@ public class SupplierServiceImpl implements SupplierService {
         List<SupplierDTO> supplierDTOList =  supplierDAO.findByState("1");
         return supplierDTOList;
     }
+
+	@Override
+	public SupplierDTO findBysupplierId(String supplierId)
+			throws ServiceException {
+		SupplierDTO supplierDTO = supplierDAO.findBysupplierId(supplierId);
+		return supplierDTO;
+	}
 }

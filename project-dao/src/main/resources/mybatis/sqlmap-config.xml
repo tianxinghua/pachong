@@ -31,6 +31,8 @@
 		<typeAlias alias="iog_category_contrast" type="com.shangpin.iog.dto.CategoryContrastDTO"/>
 		<typeAlias alias="iog_specialSku" type="com.shangpin.iog.dto.SpecialSkuDTO"/>
 		<typeAlias alias="iog_orderDetail" type="com.shangpin.iog.dto.OrderDetailDTO"/>
+		<typeAlias alias="iog_csvSupplier" type="com.shangpin.iog.dto.CsvSupplierInfoDTO"/>
+		<typeAlias alias="iog_csvAttribute" type="com.shangpin.iog.dto.CsvAttributeInfoDTO"/>
 		
 	</typeAliases>
 </configuration>

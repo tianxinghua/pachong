@@ -70,7 +70,17 @@
 
 
 
+<select id="findBysupplierId" resultMap="resultMap">
+  select
+  <include refid="all_column"></include>
 
+  from SUPPLIER
+     <where>
+     <if test="null!=supplierId">
+         SUPPLIER_ID = #{supplierId}
+     </if>
+     </where>
+ </select>
 
 
 

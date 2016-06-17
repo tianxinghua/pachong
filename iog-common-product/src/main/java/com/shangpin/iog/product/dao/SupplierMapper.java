@@ -1,10 +1,12 @@
 package com.shangpin.iog.product.dao;
 
 
+import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SupplierDTO;
+
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -20,5 +22,12 @@ public interface SupplierMapper extends IBaseDao<SupplierDTO> {
 
     List<SupplierDTO> findByState(@Param("state") String state );
 
+    /**
+     * 根据supplierId获取实体
+     * @param supplierId
+     * @return
+     * @throws ServiceException
+     */
+    public SupplierDTO findBysupplierId(@Param("supplierId") String supplierId);
 
 }
