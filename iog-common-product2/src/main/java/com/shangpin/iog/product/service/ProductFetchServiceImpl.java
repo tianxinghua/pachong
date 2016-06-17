@@ -1,10 +1,22 @@
 package com.shangpin.iog.product.service;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.common.utils.InVoke;
 import com.shangpin.iog.common.utils.UUIDGenerator;
-import com.shangpin.iog.dto.PictureDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
@@ -21,26 +33,11 @@ import com.shangpin.iog.product.dao.SpuMapper;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Created by loyalty on 15/6/4.
  */
 @Service
-public abstract class ProductFetchServiceImpl implements ProductFetchService {
+public  class ProductFetchServiceImpl implements ProductFetchService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public static String  REPEAT_MESSAGE="数据插入失败键重复";
@@ -63,6 +60,9 @@ public abstract class ProductFetchServiceImpl implements ProductFetchService {
 
     @Autowired
     PictureDAO pictureDAO;
+    
+    @Autowired
+    ProductsMapper productsMapper;
     
 
     @Autowired
@@ -345,9 +345,30 @@ public abstract class ProductFetchServiceImpl implements ProductFetchService {
 		
 	}
 
-	@Override
 	public List<String> saveAndCheckPictureForSteFaniamode(String supplierId,
 			String id, Collection<String> picUrl, String flag) {
+		return null;
+	}
+	@Override
+	public List<ProductDTO> findSkuBySupplierId(String supplier){
+		return productsMapper.findProductBySupplierId(supplier);
+	}	
+	
+	@Override
+	public List<ProductDTO> findProductByDate(String startDate, String endDate){
+		return productsMapper.findProductByDate(startDate,endDate);
+	}
+
+	@Override
+	public String findBarCodeBySupplierIdAndSkuId(String supplierId,
+			String skuId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, String> findPictureBySupplierIdAndSkuIdOrSpuId(
+			String supplierId, String skuId, String spuId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

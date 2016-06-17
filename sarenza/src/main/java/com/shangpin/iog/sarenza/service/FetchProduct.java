@@ -137,7 +137,7 @@ public class FetchProduct {
 				// skudto.setBarcode(sku.getBarcode()+"|"+database);
 				skudto.setColor(spu.getSupplierColorLabel());
 				skudto.setId(UUIDGenerator.getUUID());
-				skudto.setProductCode(spu.getProductCode());
+				skudto.setProductCode(spu.getProductId()+"-"+spu.getPCID());
 				skudto.setProductDescription(spu.getDescription());
 				skudto.setProductName(spu.getTitle());
 				// skudto.setSaleCurrency("EUR");

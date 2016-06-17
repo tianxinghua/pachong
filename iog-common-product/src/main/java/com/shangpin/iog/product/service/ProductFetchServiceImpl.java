@@ -13,6 +13,7 @@ import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.mongodao.PictureDAO;
 import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.product.dao.ProductPictureMapper;
+import com.shangpin.iog.product.dao.ProductsMapper;
 import com.shangpin.iog.product.dao.SkuMapper;
 import com.shangpin.iog.product.dao.SkuRelationMapper;
 import com.shangpin.iog.product.dao.SpuMapper;
@@ -56,6 +57,8 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 
     @Autowired
     PictureDAO pictureDAO;
+    @Autowired
+    ProductsMapper productsMapper;
     
     @Override
     public Map<String,String> findPictureBySupplierIdAndSpuId(String supplierId, String spuId){
@@ -453,6 +456,18 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		}
     	return map;
     }
+
+	@Override
+	public List<ProductDTO> findSkuBySupplierId(String supplier) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ProductDTO> findProductByDate(String startDate, String endDate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
-	
+
 }

@@ -129,10 +129,10 @@ public class StefanFrameFetchProduct extends AbsSaveProduct{
 				sku.setSaleCurrency("EUR");
 				sku.setBarcode(item.getBarcode());
 				skuList.add(sku);
-				if (StringUtils.isNotBlank(item.getPicture())) {
-					String[] picArray = item.getPicture().split("\\|");
-					imageMap.put(sku.getSkuId()+";"+sku.getProductCode()+" "+sku.getColor(), Arrays.asList(picArray));
-				}
+//				if (StringUtils.isNotBlank(item.getPicture())) {
+//					String[] picArray = item.getPicture().split("\\|");
+//					imageMap.put(sku.getSkuId()+";"+sku.getProductCode()+" "+sku.getColor(), Arrays.asList(picArray));
+//				}
 			}
 			spu.setId(UUIDGenerator.getUUID());
 			spu.setSupplierId(supplierId);

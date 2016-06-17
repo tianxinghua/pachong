@@ -23,37 +23,6 @@ import java.net.URLEncoder;
  * Created by Administrator on 2015/9/21.
  */
 public class MyJsonClient {
-    /**
-     * get tony data
-     * */
-    public String getTonyJson(){
-        String input = "{\"merchantId\":\"56e95bb7f868647d13873d98\",\"token\":\"ec1ebaa88fbcb0e5fa02ad42bdcc5be4\"}";
-        String json = null;
-        try {
-            json = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/getItemsList", new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null, input, "", "");
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        } finally {
-            HttpUtil45.closePool();
-        }
-
-        try {
-            File newTextFile = new File("E:/tonyITEMS.xml");
-            if (!newTextFile.exists())
-                newTextFile.createNewFile();
-            FileWriter fw;
-            fw = new FileWriter(newTextFile);
-            fw.write(json);
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(json);
-        return  json.substring(json.indexOf("["), json.length() - 2).replaceAll("\\$", "");
-    }
-
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * 通过JSON方式发送HTTP请求
@@ -131,55 +100,5 @@ public class MyJsonClient {
             }
         }
         return sb.toString();
-    }
-
-    /**
-     * get tony data
-     * */
-    public String getTonyCategoriesJson(){
-        String input = "{\"merchantId\":\"56e95bb7f868647d13873d98\",\"token\":\"ec1ebaa88fbcb0e5fa02ad42bdcc5be4\"}";
-        String json = null;
-        try {
-            json = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/getCategories",  new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null, input, "", "");
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        } finally {
-            HttpUtil45.closePool();
-        }
-        System.out.println(json);
-        return json;
-    }
-    /**
-     *get stock by getEvents
-     * */
-    public String getEvents(){
-        String json = "{\"merchantId\":\"56e95bb7f868647d13873d98\",\"token\":\"ec1ebaa88fbcb0e5fa02ad42bdcc5be4\"}";
-        try {
-            String rtnData = HttpUtil45.operateData("post", "json", "http://www.cs4b.eu/ws/getEvents",  new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null, json, "", "");
-            System.out.println("rtnData=="+rtnData);
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        } finally {
-            HttpUtil45.closePool();
-        }
-        return json;
-    }
-    /**
-     *test
-     * */
-    public static void main(String[] args){
-/*        String input = "{\"merchantId\":\"55f707f6b49dbbe14ec6354d\",\"token\":\"d355cd8701b2ebc54d6c8811e03a3229\"}";
-        String url = "http://www.cs4b.eu/ws/getCategories";*/
-/*            new MyJsonClient().getJsonByHttp();
-            new MyJsonClient().getJsonByHttpCategories();*/
-/*        String s1 = new MyJsonClient().httpPostOfJson(Constant.ITEMS_INPUT, Constant.ITEMS_URL);
-        String s2 = new MyJsonClient().httpPostOfJson(Constant.CATEGORIES_INPUT, Constant.CATEGORIES_URL);
-        System.out.println(s1);
-        System.out.println("===================================");
-        System.out.println(s2);*/
-
-        new MyJsonClient().getEvents();
-        //new MyJsonClient().getTonyJson();
-        //MyJsonClient.getTonyCategoriesJson();
     }
 }

@@ -46,6 +46,18 @@ public class EventProductDTO {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
+	@Override
+	public String toString() {
+		return "EventProductDTO [eventId=" + eventId + ", skuId=" + skuId
+				+ ", supplierId=" + supplierId + ", endDate=" + endDate
+				+ ", startDate=" + startDate + ", createTime=" + createTime
+				+ ", getEventId()=" + getEventId() + ", getSkuId()="
+				+ getSkuId() + ", getSupplierId()=" + getSupplierId()
+				+ ", getEndDate()=" + getEndDate() + ", getStartDate()="
+				+ getStartDate() + ", getCreateTime()=" + getCreateTime()
+				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
+				+ ", toString()=" + super.toString() + "]";
+	}
 
 	
 }

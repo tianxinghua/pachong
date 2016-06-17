@@ -136,13 +136,9 @@ public class FetchProduct {
                spu.setCategoryName(spuArr[8]);
                spu.setSeasonId(spuArr[1]);
                StringBuffer material = new StringBuffer() ;
-               if (StringUtils.isNotBlank(spuArr[11])) {
             	   material.append(spuArr[11]).append(";");
-               }else if(StringUtils.isNotBlank(spuArr[15])){
             	   material.append(spuArr[15]).append(";");
-               }else if (StringUtils.isNotBlank(spuArr[42])) {
             	   material.append(spuArr[42]);
-               }
                spu.setMaterial(material.toString());
                spu.setCategoryGender(spuArr[5]);
                spu.setProductOrigin(spuArr[40]);
