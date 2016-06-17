@@ -23,8 +23,6 @@ public class Task {
 	
 	private String supplierId; //主键
 	
-	private TaskState state=TaskState.INIT;//任务状态
-	
 	private Date createTime=new Date();//任务创建时间
 	
 	private String handerExpression;//任务处理者表达式

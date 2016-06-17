@@ -3,6 +3,7 @@ package com.shangpin.iog.productmanager;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
@@ -14,59 +15,45 @@ import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
+import com.shangpin.iog.dto.CsvAttributeInfoDTO;
+import com.shangpin.iog.dto.CsvSupplierInfoDTO;
+import com.shangpin.iog.generater.strategy.sepStrategy.ISepStrategy;
+import com.shangpin.iog.generater.strategy.sepStrategy.SepStrategyContext;
+import com.shangpin.iog.service.CsvSupplierService;
 import com.shangpin.iog.service.SupplierService;
 
 
-@Component
+@Component("taskController")
 public class TaskController {
 	
 	
-	private static TaskController taskController  = new TaskController();
-	private TaskController(){};
-	public static TaskController getTaskController(){
-		return taskController;
-	}
+//	private static TaskController taskController  = new TaskController();
+//	private TaskController(){};
+//	public static TaskController getTaskController(){
+//		return taskController;
+//	}
 	
 	private  Map<String,ScheduledFuture> recordMap = new HashMap<String, ScheduledFuture>();
 	@Autowired
-	SupplierService supplierService;
+	CsvSupplierService csvSupplierService;
 	
 	
 	
-	public void resetTask(Map<String, String> changedMap){
+	public void resetTask(Map<String, CsvSupplierInfoDTO> changedMap){
 		System.out.println(recordMap.toString());
 		System.out.println("================================");
-		for (Entry<String, String> entry : changedMap.entrySet()) {
+		for (Entry<String, CsvSupplierInfoDTO> entry : changedMap.entrySet()) {
 			// 判断状态,如果停止 关闭相应线程
 			if (recordMap.containsKey(entry.getKey())) {
-				
-				if (entry.getValue().contains("stop")) {
+				if (entry.getValue().getState().equals(TaskState.STOP)) {
 					System.out.println("停止++++++++++++++++");
-					
 					recordMap.get(entry.getKey()).cancel(true);
-					
 					recordMap.remove(entry.getKey());
-					
-				}else if(entry.getValue().contains("restart")){
-					recordMap.get(entry.getKey()).cancel(true);
-//					Worker worker = getWorker(entry.getKey());
-//					threadPool.execute(worker);
-					//TODO  查询任务
-					Task task = new Task();
-					task.setSupplierId(entry.getKey());
-					excuteTask(task);
 				}
-				
 			}else{
-				if (entry.getValue().contains("start")) {
-//					Worker worker = getWorker(entry.getKey());
-//					threadPool.execute(worker);
-					
-					//TODO  查询任务
-					Task task = new Task();
-					task.setSupplierId(entry.getKey());
-					task.setCronExpression(entry.getValue().split(",")[1]);
-					excuteTask(task);
+				if (entry.getValue().getState().equals(TaskState.START)) {
+					System.out.println("开始++++++++++++++++");
+					excuteTask(entry.getValue());
 				}
 				
 			}
@@ -80,26 +67,31 @@ public class TaskController {
 //		return worker;
 //	}
 	
-	private void excuteTask(final Task task){
-		task.setHanderExpression("testTask");
-		task.setCronExpression(task.getCronExpression());
-//		task.setCronExpression(cronExpression);
+	private void excuteTask(final CsvSupplierInfoDTO csvSupplier){
+		
+		final Task task = new Task();
+		task.setCronExpression(csvSupplier.getCrontime());
 		Trigger trigger = task.getTrigger();
 		ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-		scheduler.setThreadNamePrefix("productCron");
 		scheduler.setPoolSize(2);
 		scheduler.initialize();
+		System.out.println(csvSupplier.getSupplierId() +"开始运行"+new Date().toLocaleString());
 		ScheduledFuture<?> future = scheduler.schedule(new Runnable() {
 			public void run() {
 				try {
-					System.out.println(task.getSupplierId() +"运行中"+new Date().toLocaleString());
-//					new AbsSaveProductImpl().handleData(flag, supplierId, day, picpath, condition, url, filePath, sep, needColsNo, sepStrategys);
+					System.out.println(csvSupplier.getSupplierId() +"运行中"+new Date().toLocaleString());
+					String[] needColsNo = new String[]{"","0","2","14","22","3","","9,10,11,12,8","","16","4","","23","","","15","23","19","20","1","5"};
+					//策略组
+					String[] strategys = new String[]{"","","","","","","","more% %0%;","","","","","sin% %0%\"\"","","","","sin% %0%\"\"","","","",""};
+					
+					AbsSaveProductImpl abs = (AbsSaveProductImpl)StartUp.getApplicationContext().getBean("abssaveproduct");
+					abs.handleData("sku", csvSupplier.getSupplierId(), 90, "", "", csvSupplier.getFetchUrl(), "F://products.txt", "\t", needColsNo, strategys);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}, trigger);
-		recordMap.put(task.getSupplierId(), future);
+		recordMap.put(csvSupplier.getSupplierId(), future);
 	}
 }
 

@@ -47,8 +47,6 @@ public class Csv2DTO {
 				rowString = cr.getRawRecord();
 				if (StringUtils.isNotBlank(rowString)) {
 					colValueList = fromCSVLinetoArray(rowString,sep.charAt(0));
-//					split = rowString.split(sep);
-//					colValueList = Arrays.asList(split);
 					T t = fillDTO(clazz.newInstance(),needColsNo,iSepStrategies, colValueList);
 					dtoList.add(t);
 				}

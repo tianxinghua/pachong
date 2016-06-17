@@ -19,10 +19,12 @@ import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
+import com.shangpin.iog.dto.CsvSupplierInfoDTO;
 import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.productweb.schedule.TaskHanderService;
 import com.shangpin.iog.productweb.schedule.service.impl.StartTaskServiceImpl;
 import com.shangpin.iog.productweb.tool.Threads;
+import com.shangpin.iog.service.CsvSupplierService;
 import com.shangpin.iog.service.SupplierService;
 
 @Component("startTask")
@@ -51,6 +53,10 @@ public class StartTask {
 	}
 	@Autowired
 	SupplierService supplierService;
+	
+	@Autowired
+	CsvSupplierService csvSupplierService;
+	
 	public void startTask() {
 		//TODO 获取信息
 		List<Task> tasks = new ArrayList<Task>();
@@ -69,83 +75,27 @@ public class StartTask {
 					Monitor monitor = Monitor.getMonitor();
 					TaskObserver taskObserver = TaskObserver.getTaskObserver();
 					taskObserver.setMonitor(monitor);
-					taskObserver.setTaskController(TaskController.getTaskController());
+					
+					TaskController taskController = (TaskController)StartUp.getApplicationContext().getBean("taskController");
+					
+//					taskObserver.setTaskController(TaskController.getTaskController());
+					taskObserver.setTaskController(taskController);
 					monitor.addObserver(taskObserver);
 					//TODO 获取信息
-					Map<String, String> newMonitorMessage = new HashMap<String, String>();
-					List<SupplierDTO> list = supplierService.findAllWithAvailable();
-					System.out.println("获取到"+list.size());
-					for (SupplierDTO supplierDTO : list) {
-						newMonitorMessage.put(supplierDTO.getSupplierId(), supplierDTO.getSupplierName());
+					Map<String, CsvSupplierInfoDTO> newMonitorMessage = new HashMap<String, CsvSupplierInfoDTO>();
+//					List<SupplierDTO> list = supplierService.findAllWithAvailable();
+					List<CsvSupplierInfoDTO> csvSuppliers = csvSupplierService.findAllCsvSuppliers();
+					
+					System.out.println("获取到"+csvSuppliers.size());
+					
+					for (CsvSupplierInfoDTO CsvSupplierInfoDTO : csvSuppliers) {
+						newMonitorMessage.put(CsvSupplierInfoDTO.getSupplierId(), CsvSupplierInfoDTO);
 					}
-					
-					
 					monitor.checkChange(newMonitorMessage );
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}, trigger);
-		System.out.println("asdasd");
 	}
-
-	
-	private void excuteTask(Task task){
-		try{
-//			final TaskHanderService hander = task.getHander(context);
-			Trigger         trigger = task.getTrigger();
-			ScheduledFuture  future =  scheduler.schedule(new Runnable() {
-				public void run() {
-					try {
-						Monitor monitor = Monitor.getMonitor();
-//						TaskObserver taskObserver = new TaskObserver(monitor, TaskController.getTaskController());
-						//TODO 获取信息
-						Map<String, String> newMonitorMessage = new HashMap<String, String>();
-						
-						List<SupplierDTO> list = supplierService.findAllWithAvailable();
-						for (SupplierDTO supplierDTO : list) {
-							newMonitorMessage.put(supplierDTO.getSupplierId(), supplierDTO.getSupplierName());
-						}
-						
-						
-						monitor.checkChange(newMonitorMessage );
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}, trigger);
-			//TODO 更新数据
-		}catch (Exception e) {
-			
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

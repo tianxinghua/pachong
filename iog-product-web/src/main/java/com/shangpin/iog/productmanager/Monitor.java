@@ -6,12 +6,13 @@ import java.util.Map.Entry;
 import java.util.Observable;
 
 import org.springframework.stereotype.Component;
+
+import com.shangpin.iog.dto.CsvSupplierInfoDTO;
 /**
  * 监控数据库变化,通知观察者
  * @author Administrator
  *
  */
-@Component
 public class Monitor extends Observable{
 	
 	private Monitor(){};
@@ -22,16 +23,11 @@ public class Monitor extends Observable{
 		}
 		return monitor;
 	}
-//	private MonitorMessage oldMonitorMessage = new MonitorMessage();
-//	public MonitorMessage getMonitorMessage(){
-//		return oldMonitorMessage;
-//	}
-	private Map<String,String> oldMonitorMessage;
+	private Map<String,CsvSupplierInfoDTO> oldMonitorMessage;
 	
-//	public void checkChange(MonitorMessage newMonitorMessage){
-	public void checkChange(Map<String,String> newMonitorMessage){
+	public void checkChange(Map<String,CsvSupplierInfoDTO> newMonitorMessage){
 		
-		Map<String, String> changedMap = isChanged(newMonitorMessage);
+		Map<String, CsvSupplierInfoDTO> changedMap = isChanged(newMonitorMessage);
 		this.oldMonitorMessage = newMonitorMessage;
 
 		if (changedMap.size()>0) {//发生变化,通知观察者
@@ -45,16 +41,16 @@ public class Monitor extends Observable{
 	
 	
 	// 判断新旧信息是否一致
-	private Map<String, String> isChanged(Map<String,String> newMonitorMessage){
+	private Map<String, CsvSupplierInfoDTO> isChanged(Map<String,CsvSupplierInfoDTO> newMonitorMessage){
 		
 		if (null==oldMonitorMessage) {
-			oldMonitorMessage = new HashMap<String, String>();
+			oldMonitorMessage = new HashMap<String, CsvSupplierInfoDTO>();
 		}
-		Map<String, String> changedMap = new HashMap<String, String>();
+		Map<String, CsvSupplierInfoDTO> changedMap = new HashMap<String, CsvSupplierInfoDTO>();
 		
-		for (Entry<String, String> entry : newMonitorMessage.entrySet()) {
+		for (Entry<String, CsvSupplierInfoDTO> entry : newMonitorMessage.entrySet()) {
 			if (oldMonitorMessage.containsKey(entry.getKey())) {
-				if (!oldMonitorMessage.get(entry.getKey()).equals(entry.getValue())) {
+				if (!oldMonitorMessage.get(entry.getKey()).getState().equals(entry.getValue().getState())) {
 					changedMap.put(entry.getKey(), entry.getValue());
 				}
 			}else{
