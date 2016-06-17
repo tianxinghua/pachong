@@ -2,51 +2,22 @@
 rootProject.name = 'iog'
 
 include 'project-framework'
-
 include "project-common"
-
 include 'iog-facade'
 include 'iog-facade-dubbo'
 include 'iog-order-dubbo'
-
 include 'project-dao'
-
 include 'iog-service'
-
 include 'iog-web-container'
-
-
 include 'iog-common-product'
-
 include 'iog-product-framework'
-
-
-
 include 'openapi-ice'
-
-
 include 'iog-facade-impl'
-
 include 'iog-sop'
+include 'iog-generater-util'
+include 'iog-web-apiHandler'
 
 
-
-include 'vela-order'
-
-include 'sanremo-order'
-
-include 'sarenza-stock'
-include 'reebonzWiki-order'
-include 'atelier-linde-order'
-include 'Creative99-stock'
-include 'inviqa-stock'
-include 'tony-subFellas'
-include 'giglio-stock'
-include 'tonySub-purchase'
-include 'reebonzWiki-stock'
-include 'fetchProductFromHK'
-include 'iog-common-product2'
-include 'project-muldatass-dao'
 
 
 
