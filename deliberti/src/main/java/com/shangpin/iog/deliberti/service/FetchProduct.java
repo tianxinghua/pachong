@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 
+
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,9 @@ public class FetchProduct {
 					
 					if(sizes[i]!=null){
 						String si[] = sizes[i].split("~");
+						if (si.length<1) {
+							continue;
+						}
 						if(si[0].equals("")){
 							continue;
 						}else{
@@ -82,11 +86,16 @@ public class FetchProduct {
 								sku.setProductSize(si[0]);
 							}
 						}
-						if(si[1].equals("0")){
+						try {
+							if(si[1].equals("0")){
+								continue;
+							}else{
+								System.out.println("库存="+si[1]);
+								sku.setStock(si[1]);
+							}
+						} catch (Exception e2) {
+							e2.printStackTrace();
 							continue;
-						}else{
-							System.out.println("库存="+si[1]);
-							sku.setStock(si[1]);
 						}
 						sku.setId(UUIDGenerator.getUUID());
 						sku.setSupplierId(supplierId);
