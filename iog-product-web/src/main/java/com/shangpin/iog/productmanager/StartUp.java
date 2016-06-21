@@ -15,7 +15,9 @@ public class StartUp {
        {
            factory = new AnnotationConfigApplicationContext(AppContext.class);
        }
-
+       public static ApplicationContext getApplicationContext(){
+    	   return factory;
+       }
     public static void main(String[] args) throws  Exception{
     	loadSpringContext();
         logger.info(" schedule start  ");
@@ -23,4 +25,4 @@ public class StartUp {
         startTask.startTask();
         Thread.currentThread().join();
     }
-}
+} 

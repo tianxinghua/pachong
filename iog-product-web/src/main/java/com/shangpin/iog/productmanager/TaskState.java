@@ -7,10 +7,8 @@ package com.shangpin.iog.productmanager;
  * 3、异常
  */
 public enum TaskState {
-	INIT(0),
-	LOCK(1),
-	COMPLETE(2),
-	EXCEPTION(3);
+	STOP(0),
+	START(1);
 	private Integer value;
 
 	public Integer getValue() {

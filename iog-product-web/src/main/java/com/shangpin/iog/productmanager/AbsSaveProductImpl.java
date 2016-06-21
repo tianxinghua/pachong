@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.app.AppContext;
@@ -33,7 +34,7 @@ import com.shangpin.iog.generater.util.DataListToMap;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SkuPriceService;
-
+@Component("abssaveproduct")
 public class AbsSaveProductImpl {
 
 	private static org.apache.log4j.Logger loggerInfo = org.apache.log4j.Logger
@@ -61,7 +62,7 @@ public class AbsSaveProductImpl {
 	public void handleData(final String flag, final String supplierId,
 			final int day, final String picpath, String condition, String url,
 			String filePath, String sep, String[] needColsNo,String[] sepStrategys) {
-
+		System.out.println("处理数据");
 		Map<String, Object> totalMap = null;
 
 		try {
@@ -137,14 +138,6 @@ public class AbsSaveProductImpl {
 						// 更新数据库
 						idList.add(sku.getSkuId());
 					}
-
-					//
-					// if
-					// (!(sku.getSupplierPrice().equals(n.getNewSupplierPrice())&&sku.getSalePrice().equals(n.getNewSalePrice())&&sku.getMarketPrice().equals(n.getNewMarketPrice())))
-					// {
-					// idList.add(sku.getSkuId());
-					// }
-					//
 
 				}
 			} catch (Exception e) {
