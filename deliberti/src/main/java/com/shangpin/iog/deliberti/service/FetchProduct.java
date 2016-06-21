@@ -60,6 +60,7 @@ public class FetchProduct {
 			List<Product> allProducts = MyUtil.readLocalCSV(url,Product.class);
 		
 			for (Product pro : allProducts) {
+				System.out.println(pro.getSpuId());
 				//保存spu
 				String sizes [] = {pro.getSize35(),pro.getSize35x(),pro.getSize36(),pro.getSize36x(),pro.getSize37(),pro.getSize37x(),
 						pro.getSize38(),pro.getSize38x(),pro.getSize39(),pro.getSize39x(),pro.getSize40(),pro.getSize40x(),
@@ -90,7 +91,6 @@ public class FetchProduct {
 							if(si[1].equals("0")){
 								continue;
 							}else{
-								System.out.println("库存="+si[1]);
 								sku.setStock(si[1]);
 							}
 						} catch (Exception e2) {
@@ -104,6 +104,7 @@ public class FetchProduct {
 						sku.setBarcode(pro.getBrandCode());
 						sku.setProductCode(pro.getArticleCode());
 						sku.setColor(pro.getColor());
+						sku.setMarketPrice(pro.getRetailPrice());
 						sku.setSalePrice(pro.getCurrentPrice());
 						sku.setProductName(pro.getSubCategoryDesc());
 						sku.setSaleCurrency("Euro");
