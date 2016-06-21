@@ -8,6 +8,7 @@
         <result column="ATTRINAME" property="attriName"  />
         <result column="ATTRIVALUE" property="attriValue"  />
         <result column="ATTRIRULE" property="attriRule"  />
+        <result column="BIAOSHI" property="biaoshi"/> 
 
 	</resultMap>
 
@@ -17,7 +18,8 @@
 		SUPPLIERID,
 		ATTRINAME,
 		ATTRIVALUE,
-		ATTRIRULE
+		ATTRIRULE,
+		BIAOSHI
 	</sql>
 	
 	<insert id="save" parameterType="iog_csvAttribute">
@@ -26,13 +28,15 @@
 			SUPPLIERID,
 			ATTRINAME,
 			ATTRIVALUE,
-			ATTRIRULE
+			ATTRIRULE,
+			BIAOSHI
 		)values(
 			#{id},
 			#{supplierId},
 			#{attriName},
 			#{attriValue},
-			#{attriRule}		
+			#{attriRule},
+			#{biaoshi}		
 		)
 		
 	</insert>
@@ -43,6 +47,7 @@
 			 <if test="attriName != null"> ATTRINAME = #{attriName}, </if> 
 			 <if test="attriValue != null"> ATTRIVALUE = #{attriValue}, </if> 
 			 <if test="attriRule != null"> ATTRIRULE = #{attriRule}, </if> 
+			 <if test="biaoshi != null"> BIAOSHI = #{biaoshi}, </if> 
 		</set>
 		where ID = #{id}
 	</update>

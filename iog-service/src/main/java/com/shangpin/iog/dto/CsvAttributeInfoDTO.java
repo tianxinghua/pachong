@@ -12,4 +12,5 @@ public class CsvAttributeInfoDTO {
 	private String attriName;
 	private String attriValue;
 	private String attriRule;
+	private String biaoshi;
 }

@@ -12,4 +12,7 @@ public class CsvSupplierInfoDTO {
 	private String crontime;
 	private String fetchUrl;
 	private String state;//started,waitStart
+	private String classPath;
+	private String dataType;
+	private String filePath;
 }
