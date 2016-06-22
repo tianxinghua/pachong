@@ -1,4 +1,4 @@
-package com.shangpin.iog.productmanager;
+package com.shangpin.iog.productmanager.task;
 
 import java.util.Date;
 

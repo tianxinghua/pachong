@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.productmanager.task.StartTask;
 import com.shangpin.iog.productweb.Startup;
 
 public class StartUp {
