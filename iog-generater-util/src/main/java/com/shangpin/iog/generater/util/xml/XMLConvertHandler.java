@@ -1,4 +1,4 @@
-package com.shangpin.iog.productmanager.xml;
+package com.shangpin.iog.generater.util.xml;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
