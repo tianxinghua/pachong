@@ -75,7 +75,7 @@
 		from ORDER_DETAIL
 		where SP_PURCHASE_NO=#{purchaseNo}
 	</select>
-	<select id="findSubOrderByOrderNo" parameterType="java.lang.String" resultMap="OrderResultMap">
+	<select id="findSubOrderByOrderNoAndSupplierId" parameterType="java.lang.String" resultMap="OrderResultMap">
 		select
 		<include refid="all_Order_column"/>
 		from ORDER_DETAIL
