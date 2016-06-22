@@ -2,10 +2,17 @@
 dependencies {
     compile(
 		    "net.sourceforge.javacsv:javacsv:2.0",
+		    "com.google.code.gson:gson:2.7",
+		    "com.fasterxml.jackson.core:jackson-core:2.7.5",
+		    "net.sf.json-lib:json-lib:2.4",
+		    "com.io7m.xom:xom:1.2.10",
+			"org.apache.poi:poi:3.13",
+			"org.apache.poi:poi-ooxml:3.13",
             project(':project-common'),
             project(':iog-service'),
             project(':project-dao')
-
+			
+			
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
