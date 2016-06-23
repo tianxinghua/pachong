@@ -95,6 +95,7 @@ public class MyFtpUtil {
 	            // 获取 XML文件到本地
 	            ftp.put(localFile,fileName);
 	            logger.info("文件"+fileName+"上传成功!");
+	            
 	            break;
 	        } catch (Exception e) {
 //	            try {
