@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * 分割合并策略接口
- * @author Administrator
+  * @author Administrator
  *
  */
 public abstract class ISepStrategy {
@@ -16,7 +16,7 @@ public abstract class ISepStrategy {
 	}
 
 	/**
-	 * 
+	 * 两个值的分隔合并  front%;%0%- 如 值a;b 值c 处理后 为a-c  
 	 * @param strategy  默认策略不处理   ""        前%sep%分割后第几个%合并sep	  f%;%0%-     后%sep%分割后第几个%合并sep   b%-%1%-    单%sep%分割后第几个%合并sep s%-%1%""
 	 * @param dataList
 	 * @return

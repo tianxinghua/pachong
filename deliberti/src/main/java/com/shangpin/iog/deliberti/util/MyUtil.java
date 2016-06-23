@@ -59,6 +59,8 @@ public class MyUtil {
 			a++;
 			System.out.println("a="+a);
 			rowString = cr.getRawRecord();
+			rowString = rowString.replace("<br>", "");
+			System.out.println(rowString);
 			if (StringUtils.isNotBlank(rowString)) {
 				split = rowString.split("[|]");
 				colValueList = Arrays.asList(split);

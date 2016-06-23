@@ -1,4 +1,4 @@
-package com.shangpin.iog.productmanager;
+package com.shangpin.iog.productmanager.task;
 /**
  * 任务状态枚举类.
  * 0、未执行
