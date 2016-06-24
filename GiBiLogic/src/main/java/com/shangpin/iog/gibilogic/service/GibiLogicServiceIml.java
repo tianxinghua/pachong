@@ -75,10 +75,6 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 		
 		for (Entry<String, Product> entry : productMap.entrySet()) {
 			Product p = entry.getValue();
-
-			if (p.getSkuId().equals("SEB0004NE")) {
-				System.out.println("SEB0004NE");
-			}
 			
 			SkuDTO sku = new SkuDTO();
 			SpuDTO spu = new SpuDTO();
@@ -96,7 +92,7 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 			sku.setProductSize(p.getSize());
 			sku.setProductName(p.getProduct_name());
 			sku.setProductDescription(p.getProduct_desc());
-
+			sku.setProductCode(p.getSkuId());
 			skuList.add(sku);
 			
 			spu.setId(UUIDGenerator.getUUID());
@@ -128,7 +124,7 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 		HashMap<String, Product> jsonMap = new HashMap<String, Product>();
 		Map<String,Product> json = null;
 		while(true){
-			System.out.println("页码"+pageNum);
+			System.out.println("pageNum=="+pageNum);
 			productJson = HttpUtil45.get("http://shop.areadocks.it/en/api/product?pagesize=100&page="+pageNum++, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10),null);
 			json = gson.fromJson(productJson, new TypeToken<Map<String, Product>>(){}.getType());
 			if (json.size()==0) {
@@ -165,7 +161,6 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 				break;
 			}
 			for (Category category : categorys) {
-				System.out.println(category.getCategoryId()+"=="+category.getCategoryName());
 				categoryMap.put(category.getCategoryId(), category.getCategoryName());
 			}
 		}
