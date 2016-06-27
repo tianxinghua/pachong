@@ -790,6 +790,11 @@ public abstract class AbsUpdateProductStock {
 
 	}
 
+	/**
+	 * 获取采购异常的商品  存入不再更新库存的记录表中
+	 * @param supplierId
+	 * @param servant
+     */
 	private void setStockNotUpdateBySop(String supplierId,OpenApiServantPrx servant){
 
 		List<PurchaseOrderDetail> orderDetails = null;
