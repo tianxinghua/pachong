@@ -53,8 +53,6 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 		excelPath = bdl.getString("excelPath");
 	}
 	public static void main(String[] args){
-//		new RevolveFrameFetchProduct().fetchProductAndSave();
-//	  	加载spring
         loadSpringContext();
         GibiLogicServiceIml stockImp =(GibiLogicServiceIml)factory.getBean("gibilogicService");
 		stockImp.handleData("sku", supplierId, day, picpath);
@@ -77,6 +75,7 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 		
 		for (Entry<String, Product> entry : productMap.entrySet()) {
 			Product p = entry.getValue();
+			
 			SkuDTO sku = new SkuDTO();
 			SpuDTO spu = new SpuDTO();
 			
@@ -93,7 +92,7 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 			sku.setProductSize(p.getSize());
 			sku.setProductName(p.getProduct_name());
 			sku.setProductDescription(p.getProduct_desc());
-
+			sku.setProductCode(p.getSkuId());
 			skuList.add(sku);
 			
 			spu.setId(UUIDGenerator.getUUID());
@@ -125,7 +124,7 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 		HashMap<String, Product> jsonMap = new HashMap<String, Product>();
 		Map<String,Product> json = null;
 		while(true){
-			System.out.println("页码"+pageNum);
+			System.out.println("pageNum=="+pageNum);
 			productJson = HttpUtil45.get("http://shop.areadocks.it/en/api/product?pagesize=100&page="+pageNum++, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10),null);
 			json = gson.fromJson(productJson, new TypeToken<Map<String, Product>>(){}.getType());
 			if (json.size()==0) {
@@ -174,8 +173,8 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 		StringBuffer sb = new StringBuffer();
 		
 		for (int i = 0; i < catIds.length; i++) {
-			if (StringUtils.isNotBlank(categoryMap.get(catIds[i]))) {
-				sb.append(categoryMap.get(catIds[i])).append(",");
+			if (StringUtils.isNotBlank(categoryMap.get(catIds[i].trim()))) {
+				sb.append(categoryMap.get(catIds[i].trim())).append("|");
 			}
 		}
 		return sb.toString();
