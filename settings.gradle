@@ -31,11 +31,9 @@ include 'iog-sop'
 
 
 
-include 'vela-order'
+include 'filippo-order'
 
-include 'sanremo-order'
 
-include 'sarenza-stock'
 
 
 
