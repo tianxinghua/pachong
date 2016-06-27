@@ -25,4 +25,11 @@ public interface CsvSupplierInfoMapper extends IBaseDao<CsvSupplierInfoDTO>{
 	 */
 	public void deleteBySupplierId(@Param("supplierId") String supplierId) throws ServiceException;
 	
+	/**
+	 * 根据状态查询数据库
+	 * @return
+	 * @throws ServiceException
+	 */
+	public List<CsvSupplierInfoDTO> findCsvSuppliersByState(@Param("state") String state) throws ServiceException;
+	
 }

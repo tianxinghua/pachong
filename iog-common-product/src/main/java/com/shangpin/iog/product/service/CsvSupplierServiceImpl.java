@@ -37,6 +37,11 @@ public class CsvSupplierServiceImpl implements CsvSupplierService {
 	public List<CsvSupplierInfoDTO> findAllCsvSuppliers() throws ServiceException{
 		return csvSupplierInfoDao.findAllCsvSuppliers();
 	}
+	
+	@Override
+	public List<CsvSupplierInfoDTO> findCsvSuppliersByState(String state) throws ServiceException{
+		return csvSupplierInfoDao.findCsvSuppliersByState(state);
+	}
 
 	@Override
 	public List<CsvAttributeInfoDTO> findCsvAttributeBySupplierId(

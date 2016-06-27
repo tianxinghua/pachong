@@ -370,8 +370,17 @@ public abstract class AbsUpdateProductStock {
 	private int updateIceStock(String supplier, Map<String, Integer> iceStock,Map<String,String> sopPriceMap)
 			throws Exception {
 
-		if(iceStock.size() ==0){//待更新的库存为0，直接返回-1
-			return -1;
+		//待更新的库存为0时查询超时时间，如果超时时间大于某一个特定值，则继续往下执行，避免超卖
+		if(iceStock.size() ==0){
+			
+			StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(supplier);
+			if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
+				long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+	    		long hours = diff / (1000 * 60 * 60);
+	    		if(hours < 5){
+	    			return -1;
+	    		}
+			}
 		}
 
 		OpenApiServantPrx servant = null;

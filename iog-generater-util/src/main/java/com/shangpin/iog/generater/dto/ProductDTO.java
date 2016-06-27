@@ -11,14 +11,13 @@ import lombok.ToString;
 public class ProductDTO {
 	//size and stock 
 	private String sizeandstock;
-
 	private String spuId;
 	private String skuId;
 	private String gender;
 	private String category;
 	private String brand;
 	private String season;
-	private String picurl;
+	private String picurl;   //1,2,3,4,5   more%1%2%;
 	private String origin;
 	private String material;
 	private String productName;

@@ -10,8 +10,14 @@
         <result column="FETCHURL" property="fetchUrl"  />
         <result column="STATE" property="state"  />
         <result column="CLASSPATH" property="classPath"  />
-        <result column="DATAPATH" property="dataType"  />
-        <result column="FILEPATH" property="filePath"  />
+        <result column="DATATYPE" property="dataType"  />
+        <result column="FILEPATH" property="filePath"  />        
+        <result column="TOMAPCONDITION" property="toMapCondition"  />
+        <result column="SEP" property="sep"  />
+        <result column="XMLSKUTAG" property="xmlSkuTag"  />
+        <result column="XMLSPUTAG" property="xmlSpuTag"  />
+        <result column="PICFLAG" property="picFlag"  />
+        <result column="PICPATH" property="picPath"  />
 
 	</resultMap>
 
@@ -23,8 +29,14 @@
 		FETCHURL,
 		STATE,
 		CLASSPATH,
-		DATAPATH,
-		FILEPATH
+		DATATYPE,
+		FILEPATH,
+		TOMAPCONDITION,
+		SEP,
+		XMLSKUTAG,
+		XMLSPUTAG,
+		PICFLAG,
+		PICPATH
 	</sql>
 	
 	<insert id="save" parameterType="iog_csvSupplier">
@@ -35,8 +47,14 @@
 			FETCHURL,
 			STATE,
 			CLASSPATH,
-			DATAPATH,
-			FILEPATH
+			DATATYPE,
+			FILEPATH,
+			TOMAPCONDITION,
+			SEP,
+			XMLSKUTAG,
+			XMLSPUTAG,
+			PICFLAG,
+			PICPATH
 		)values(
 			#{supplierId},
 			#{supplierNo},
@@ -45,7 +63,13 @@
 			#{state},
 			#{classPath},
 			#{dataType},
-			#{filePath}	
+			#{filePath},
+			#{toMapCondition},	
+			#{sep},
+			#{xmlSkuTag},
+			#{xmlSpuTag},
+			#{picFlag},
+			#{picPath}
 		)
 		
 	</insert>
@@ -59,6 +83,16 @@
         
     </select>
     
+    <select id="findCsvSuppliersByState" resultMap="csvSupplierResultMap">
+    	select
+        <include refid="all_csvSupplier_column"></include>
+
+        from CSV_SUPPLIER_INFO
+        <where>
+        	<if test="state != null">STATE = #{state},</if>
+        </where>
+    </select>
+    
     <update id="update" parameterType="iog_csvSupplier">
     	update CSV_SUPPLIER_INFO
     	<set>
@@ -66,8 +100,14 @@
     		FETCHURL = #{fetchUrl},
     		STATE = #{state},
     		CLASSPATH = #{classPath},
-			DATAPATH = #{dataType},
-			FILEPATH = #{filePath}
+			DATATYPE = #{dataType},
+			FILEPATH = #{filePath},
+			TOMAPCONDITION = #{toMapCondition},
+			SEP = #{sep},
+			XMLSKUTAG = #{xmlSkuTag},
+			XMLSPUTAG = #{xmlSpuTag},
+			PICFLAG = #{picFlag},
+			PICPATH = #{picPath}
     	</set>
     	where SUPPLIERID = #{supplierId}
     </update>

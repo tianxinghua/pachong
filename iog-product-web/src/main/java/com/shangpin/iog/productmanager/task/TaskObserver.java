@@ -37,7 +37,7 @@ public class TaskObserver implements Observer {
 		HashMap<String, CsvSupplierInfoDTO> changeMap = (HashMap<String, CsvSupplierInfoDTO>) changedMap;
 		System.out.println("++++发生变化+++++"+changeMap.toString());
 		
-		taskController.resetTask(changeMap);
+//		taskController.resetTask(changeMap);
 		
 	}
 

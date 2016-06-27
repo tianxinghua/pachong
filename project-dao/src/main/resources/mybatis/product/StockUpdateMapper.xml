@@ -55,4 +55,13 @@
           </set>
           where  SUPPLIER_ID = #{supplierId}
     </update>
+    
+    <select id="findStockUpdateBySUpplierId" resultMap="suMap">
+    	select SUPPLIER_ID,UPDATE_TIME,ERRORNUM,RIGHTNUM,TOTALNUM,EMAIL,STATUS
+    	from UPDATE_STOCK
+    	<where>
+    		SUPPLIER_ID = #{supplierId}
+    	</where>
+    </select>
+    
 </mapper>

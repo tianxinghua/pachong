@@ -60,17 +60,15 @@ public class AbsSaveProductImpl {
 	 *            如果为"",表示不下载图片
 	 */
 	public void handleData(final String flag, final String supplierId,
-			final int day, final String picpath, String condition, String url,
-			String filePath, String sep, String[] needColsNo,String[] sepStrategys) {
-		System.out.println("处理数据");
-		Map<String, Object> totalMap = null;
-
-		try {
-			totalMap = fetchProductAndSave(supplierId,condition,url,filePath,sep,needColsNo,sepStrategys);
-		} catch (Exception e) {
-			loggerError.error("处理原始数据出错" + e.getMessage());
-			return;
-		}
+			final int day, final String picpath, final Map<String, Object> totalMap) throws Exception {
+		System.out.println("保存数据");		
+//		try {
+//			totalMap = fetchProductAndSave(supplierId,condition,url,filePath,sep,needColsNo,sepStrategys);
+//			
+//		} catch (Exception e) {
+//			loggerError.error("处理原始数据出错" + e.getMessage());
+//			return false;
+//		}
 
 		final List<SkuDTO> skuList = (List<SkuDTO>) totalMap.get("sku");
 		Thread t = new Thread(new Runnable() {
@@ -399,6 +397,8 @@ public class AbsSaveProductImpl {
 	private Map<String, Object> fetchProductAndSave(String supplierId,
 			String condition, String url, String filePath, String sep,
 			String[] needColsNo, String[] sepStrategys) {
+		//不同格式
+		//csv
 		ISepStrategy[] iSepStrategies = new SepStrategyContext()
 				.operate(sepStrategys);
 
@@ -408,6 +408,8 @@ public class AbsSaveProductImpl {
 		Map<String, Object> map = DataListToMap.toMap(condition, productList,
 				supplierId, sepStrategys);
 
+		//xml
+		//json
 		return map;
 	}
 

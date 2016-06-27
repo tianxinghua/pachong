@@ -132,16 +132,25 @@
 		<div>Click the buttons on datagrid toolbar to do crud actions.</div>
 	</div>
 	
-	<table id="dg" title="" class="easyui-datagrid" style="width:auto;height:auto"
+	<table id="dg" title="" class="easyui-datagrid" 
 			url="CsvSuppliers"
 			toolbar="#toolbar" pagination="true"
 			rownumbers="true" fitColumns="true" singleSelect="true">
 		<thead>
 			<tr>
-				<th field="supplierId" width="50">supplierId</th>
+				<th field="supplierId" width="80">supplierId</th>
 				<th field="supplierNo" width="50">supplierNo</th>
-				<th field="crontime" width="50">cron time</th>
-				<th field="fetchUrl" width="50">fetchUrl</th>
+				<th field="crontime" width="80">cron time</th>
+				<th field="fetchUrl" width="200">fetchUrl</th>
+				<th field="classPath" width="100">classPath</th>
+				<th field="dataType" width="50">dataType</th>
+				<th field="filePath" width="100">filePath</th>
+				<th field="toMapCondition" width="50">策略</th>
+				<th field="sep" width="50">分隔符</th>
+				<th field="xmlSkuTag" width="50">xmlSkuTag</th>
+				<th field="xmlSpuTag" width="50">xmlSpuTag</th>
+				<th field="picFlag" width="50">picFlag</th>
+				<th field="picPath" width="100">picPath</th>
 				<th field="state" width="50">status</th>
 				<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>  
 				<!-- <th data-options="field:'status',width:50,align:'center',editor:{type:'checkbox',options:{on:'P',off:''}}">status</th> -->
@@ -154,30 +163,67 @@
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="removeUser()">删除</a>
 	</div>
 	
-	<div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+	<div id="dlg" class="easyui-dialog" style="width:500px;height:630px;padding:5px 30px"
 			closed="true" buttons="#dlg-buttons">
 		<div class="ftitle">c-s-v</div>
 		<form id="fm" method="post" novalidate>
 			<div class="fitem">
 				<label>supplierId:</label>
-				<input id="supplierId" name="supplierId" class="easyui-validatebox" required="true">
+				<input style="width:250px;height:20px" id="supplierId" name="supplierId" class="easyui-validatebox" required="true">
 			</div>
 			<div class="fitem">
 				<label>supplierNo:</label>
-				<input id="supplierNo" name="supplierNo" class="easyui-validatebox" required="true">
+				<input style="width:250px;height:20px" id="supplierNo" name="supplierNo" class="easyui-validatebox" required="true">
 			</div>
 			<div class="fitem">
 				<label>cron time:</label>
-				<input id="crontime" name="crontime" class="easyui-validatebox" >
+				<input style="width:250px;height:20px" id="crontime" name="crontime" class="easyui-validatebox" >
 			</div>
 			<div class="fitem">
 				<label>fetchUrl:</label>
-				<input id="fetchUrl" name="fetchUrl" class="easyui-validatebox">
+				<input style="width:250px;height:20px" id="fetchUrl" name="fetchUrl" class="easyui-validatebox">
 			</div>
 			<div class="fitem">
 				<label>status:</label>
-				<input id="status" name="status" class="easyui-validatebox" > 
+				<input style="width:250px;height:20px" id="status" name="status" class="easyui-validatebox" > 
 			</div>
+			<div class="fitem">
+				<label>classPath:</label>
+				<input style="width:250px;height:20px" id="classPath" name="classPath" class="easyui-validatebox" > 
+			</div>
+			<div class="fitem">
+				<label>dataType:</label>
+				<input style="width:250px;height:20px" id="dataType" name="dataType" class="easyui-validatebox" > 
+			</div>
+			<div class="fitem">
+				<label>filePath:</label>
+				<input style="width:250px;height:20px" id="filePath" name="filePath" class="easyui-validatebox" > 
+			</div>
+			<div class="fitem">
+				<label>策略:</label>
+				<input style="width:250px;height:20px" id="toMapCondition" name="toMapCondition" class="easyui-validatebox" > 
+			</div>
+			<div class="fitem">
+				<label>分隔符:</label>
+				<input style="width:250px;height:20px" id="sep" name="sep" class="easyui-validatebox" > 
+			</div>
+			<div class="fitem">
+				<label>xmlSkuTag:</label>
+				<input style="width:250px;height:20px" id="xmlSkuTag" name="xmlSkuTag" class="easyui-validatebox" > 
+			</div>
+			<div class="fitem">
+				<label>xmlSpuTag:</label>
+				<input style="width:250px;height:20px" id="xmlSpuTag" name="xmlSpuTag" class="easyui-validatebox" > 
+			</div>
+			<div class="fitem">
+				<label>picFlag:</label>
+				<input style="width:250px;height:20px" id="picFlag" name="picFlag" class="easyui-validatebox" > 
+			</div>
+			<div class="fitem">
+				<label>picPath:</label>
+				<input style="width:250px;height:20px" id="picPath" name="picPath" class="easyui-validatebox" > 
+			</div>
+			
 		</form>
 	</div>
 	<div id="dlg-buttons">

@@ -7,6 +7,8 @@ public class ToMapStrategyContext {
 			return new DefaultImp();
 		}else if(condition.contains("sas")){
 			return new SasImp();
+		}else if(condition.contains("spuWithSku")){
+			return new SpuWithSkuImp();
 		}else{
 			return new DefaultImp();
 		}

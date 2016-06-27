@@ -25,13 +25,13 @@ public class Xml2DTO {
 	 * @param tagNameMap 标签与productDTO字段对照   如 标签名skucode,skucode=skuId
 	 * @return
 	 */
-	public static List<ProductDTO> toDTO(File xmlFile,String skuStartTag,String spuStartTag,Map<String,String> tagNameMap){
+	public static List<ProductDTO> toDTO(String xmlFile,String skuStartTag,String spuStartTag,Map<String,String> tagNameMap){
 		List<ProductDTO> spuList = null;
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
 			XMLConvertHandler handler = new XMLConvertHandler(spuStartTag,skuStartTag, tagNameMap);
-			saxParser.parse(xmlFile, handler);
+			saxParser.parse(new File(xmlFile), handler);
 			spuList = handler.getSpuList();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();

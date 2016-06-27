@@ -33,6 +33,13 @@ public interface CsvSupplierService {
 	public List<CsvSupplierInfoDTO> findAllCsvSuppliers() throws ServiceException;
 	
 	/**
+	 * 根据状态查询数据库
+	 * @return
+	 * @throws ServiceException
+	 */
+	public List<CsvSupplierInfoDTO> findCsvSuppliersByState(String state) throws ServiceException;
+	
+	/**
 	 * 根据supplierId查找该供货商所有属性值以及规则
 	 * @param supplierId
 	 * @return
