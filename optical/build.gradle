@@ -1,0 +1,23 @@
+
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile(
+                project(':iog-common-product'),
+        	project(':iog-product-framework'),
+        	'org.apache.poi:poi:3.13',
+      		'org.apache.poi:poi-excelant:3.13',
+ 
+    )
+}
+
+jar {
+
+    dependsOn copyToLib , copyResources ,dependsClassPath
+    exclude ("**/*.properties")
+
+    manifest {
+   		 attributes 'Main-Class': 'com.shangpin.iog.optical.StartUp'
+   
+    }
+}
