@@ -89,7 +89,7 @@
 
         from CSV_SUPPLIER_INFO
         <where>
-        	<if test="state != null">STATE = #{state},</if>
+        	<if test="state != null">STATE = #{state}</if>
         </where>
     </select>
     

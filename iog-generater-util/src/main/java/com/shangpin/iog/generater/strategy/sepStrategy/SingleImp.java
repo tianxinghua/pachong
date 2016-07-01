@@ -8,6 +8,10 @@ public class SingleImp extends ISepStrategy{
 		super(strategy);
 	}
 
+	/**
+	 * 拆分某一个字段，比如字段a值是XXL|3
+	 * 现在要从a中摘出尺码的部分，则策略是：sin%|%0 
+	 */
 	@Override
 	public String merge(List<String> dataList) {
 		String[] split = strategy.split("%");

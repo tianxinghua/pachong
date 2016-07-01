@@ -76,7 +76,16 @@ public class CsvController {
 				csvSupplierInfoDTO.setSupplierNo(usr.getSupplierNo());
 				csvSupplierInfoDTO.setCrontime(usr.getCrontime());
 				csvSupplierInfoDTO.setFetchUrl(usr.getFetchUrl());
-				csvSupplierInfoDTO.setState(StringUtils.isBlank(usr.getStatus())? "0":usr.getStatus()); 
+				csvSupplierInfoDTO.setState(StringUtils.isBlank(usr.getState())? "3":usr.getState()); 		
+				csvSupplierInfoDTO.setClassPath(usr.getClassPath());
+				csvSupplierInfoDTO.setFilePath(usr.getFilePath());
+				csvSupplierInfoDTO.setDataType(usr.getDataType());
+				csvSupplierInfoDTO.setToMapCondition(usr.getToMapCondition());
+				csvSupplierInfoDTO.setSep(usr.getSep());
+				csvSupplierInfoDTO.setXmlSkuTag(usr.getXmlSkuTag());
+				csvSupplierInfoDTO.setXmlSpuTag(usr.getXmlSpuTag());
+				csvSupplierInfoDTO.setPicFlag(usr.getPicFlag());
+				csvSupplierInfoDTO.setPicPath(usr.getPicPath()); 
 				Class<ProductDTO> clazz = ProductDTO.class;
 				for(Field field :clazz.getDeclaredFields()){
 					CsvAttributeInfoDTO csvAttributeInfoDTO = new CsvAttributeInfoDTO();
@@ -117,7 +126,16 @@ public class CsvController {
 				csvSupplierInfoDTO.setSupplierNo(usr.getSupplierNo());
 				csvSupplierInfoDTO.setCrontime(usr.getCrontime());
 				csvSupplierInfoDTO.setFetchUrl(usr.getFetchUrl());
-				csvSupplierInfoDTO.setState(StringUtils.isBlank(usr.getStatus())? "0":usr.getStatus()); 				
+				csvSupplierInfoDTO.setState(StringUtils.isBlank(usr.getState())? "3":usr.getState()); 		
+				csvSupplierInfoDTO.setClassPath(usr.getClassPath());
+				csvSupplierInfoDTO.setFilePath(usr.getFilePath());
+				csvSupplierInfoDTO.setDataType(usr.getDataType());
+				csvSupplierInfoDTO.setToMapCondition(usr.getToMapCondition());
+				csvSupplierInfoDTO.setSep(usr.getSep());
+				csvSupplierInfoDTO.setXmlSkuTag(usr.getXmlSkuTag());
+				csvSupplierInfoDTO.setXmlSpuTag(usr.getXmlSpuTag());
+				csvSupplierInfoDTO.setPicFlag(usr.getPicFlag());
+				csvSupplierInfoDTO.setPicPath(usr.getPicPath()); 
 				csvSupplierService.updateCsvSupplierInfo(csvSupplierInfoDTO);
 				
 				response.setCharacterEncoding("utf-8");

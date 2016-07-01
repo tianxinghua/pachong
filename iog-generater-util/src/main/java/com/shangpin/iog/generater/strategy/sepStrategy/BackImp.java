@@ -8,6 +8,10 @@ public class BackImp extends ISepStrategy{
 		super(strategy);
 	}
 
+	/**
+	 * 处理2个字段，适用于处理后一个字段，比如字段1值是a，字段2值是b-c，现在要得到a_c，则策略是：
+	 * back%-%1%_
+	 */
 	@Override
 	public String merge(List<String> dataList) {
 		String[] split = strategy.split("%");

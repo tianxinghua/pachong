@@ -11,6 +11,7 @@ import java.util.concurrent.ScheduledFuture;
 
 import lombok.Delegate;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -132,6 +133,10 @@ public class TaskController {
 	
 	private void excuteTask(final CsvSupplierInfoDTO csvSupplier){
 		
+		if(StringUtils.isBlank(csvSupplier.getCrontime())){
+			System.out.println("任务的定时时间为空，创建任务失败。。。");
+			return;
+		}
 		
 		final Task task = new Task();
 		task.setCronExpression(csvSupplier.getCrontime());
@@ -154,13 +159,13 @@ public class TaskController {
 						for(CsvAttributeInfoDTO attribute : attributes){
 							java.lang.reflect.Field field = attriValueClzz.getClass().getDeclaredField(attribute.getAttriName());
 							field.setAccessible(true);
-							field.set(attriValueClzz, attribute.getAttriValue()== null? "":attribute.getAttriValue());
+							field.set(attriValueClzz, attribute.getAttriValue());
 						}
 						ProductDTO attriRuleClzz = new ProductDTO();
 						for(CsvAttributeInfoDTO attribute : attributes){
 							java.lang.reflect.Field field = attriValueClzz.getClass().getDeclaredField(attribute.getAttriName());
 							field.setAccessible(true);
-							field.set(attriRuleClzz, attribute.getAttriRule()== null? "":attribute.getAttriRule());
+							field.set(attriRuleClzz, attribute.getAttriRule());
 						}
 						
 						String[] needColsNo = new String[]{attriValueClzz.getSizeandstock(),attriValueClzz.getSpuId(),
@@ -200,6 +205,7 @@ public class TaskController {
 					}
 					
 					if(null != map && map.size()>0){
+						System.out.println("====================开始保存信息======================");
 						AbsSaveProductImpl abs = (AbsSaveProductImpl)StartUp.getApplicationContext().getBean("abssaveproduct");	
 						abs.handleData(csvSupplier.getPicFlag(), csvSupplier.getSupplierId(), 90, csvSupplier.getPicPath(),map);
 						//将执行成功的供货商状态置成2

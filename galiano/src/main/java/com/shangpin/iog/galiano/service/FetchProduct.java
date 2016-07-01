@@ -184,7 +184,7 @@ public class FetchProduct {
                     }else if(seasonId.equals("131")){
                     	season = "131 Primavera estate 2013";
                     }
-                    spu.setSeasonId(season);
+                    spu.setSeasonId(StringUtils.isNotBlank(season)? season:seasonId);
                     spu.setMaterial(StringUtils.isBlank(product.getProduct_material())?product.getDescription():product.getProduct_material());
                     spu.setCategoryGender(product.getGender());
                     productFetchService.saveSPU(spu);

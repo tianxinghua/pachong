@@ -61,7 +61,7 @@ public class AbsSaveProductImpl {
 	 */
 	public void handleData(final String flag, final String supplierId,
 			final int day, final String picpath, final Map<String, Object> totalMap) throws Exception {
-		System.out.println("保存数据");		
+		System.out.println(supplierId+"保存数据");		
 //		try {
 //			totalMap = fetchProductAndSave(supplierId,condition,url,filePath,sep,needColsNo,sepStrategys);
 //			

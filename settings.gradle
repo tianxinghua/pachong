@@ -19,7 +19,25 @@ include 'iog-web-apiHandler'
 include 'iog-product-web'
 
 
-
-
-
+include 'optical'
+include 'theclutcher-stock'
+include 'brunarosso-order'
+include 'rossana'
+include 'magway-order'
+include 'grouppo'
+include 'levelgroup'
+include 'ostore'
+include 'Daniello-stock'
+include 'Daniello'
+include 'lungolivigno'
+include 'lungolivigno-order'
+include 'lungolivigno-stock'
+include 'galiano'
+include 'levelgroup-stock'
+include 'coltorti'
+include 'hottest'
+include 'giglio'
+include 'divo'
+include 'atelier-ostore'
+include 'stefaniamode-stock'
 

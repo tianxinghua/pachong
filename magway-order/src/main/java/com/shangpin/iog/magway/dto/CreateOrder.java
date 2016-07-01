@@ -20,5 +20,6 @@ public class CreateOrder {
 	String IDCardPathOne;
 	String IDCardPathTwo;
 	List<Goods> Goods;
+	String Notes;
 	
 }
