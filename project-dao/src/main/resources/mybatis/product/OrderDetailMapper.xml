@@ -61,7 +61,7 @@
 			<if test="excTime != null">EXC_TIME = #{excTime}</if>
 			<if test="supplierOrderNo != null">SUPPLIER_ORDER_NO = #{supplierOrderNo}</if>
 		</set>
-		where ORDER_NO = #{orderNo}
+		where ORDER_NO = #{orderNo} and SUPPLIER_ID=#{supplierId}
 	</update>
 	<select id ="findSubOrderListByMOrderNo" resultMap="OrderResultMap">
 		select
@@ -75,11 +75,11 @@
 		from ORDER_DETAIL
 		where SP_PURCHASE_NO=#{purchaseNo}
 	</select>
-	<select id="findSubOrderByOrderNo" parameterType="java.lang.String" resultMap="OrderResultMap">
+	<select id="findSubOrderByOrderNoAndSupplierId" parameterType="java.lang.String" resultMap="OrderResultMap">
 		select
 		<include refid="all_Order_column"/>
 		from ORDER_DETAIL
-		where ORDER_NO=#{orderNo}
+		where ORDER_NO=#{orderNo} and SUPPLIER_ID = #{supplierId}
 	</select>
 	
 	<select id="findOrderDetailByOrderDetailNo" parameterType="java.lang.String" resultMap="OrderResultMap">
@@ -150,6 +150,26 @@
 			</if>
 		</where>
 	</select>
+	
+	
+	
+		<select id="getOrderTotalBySpPurchaseNo" resultType="int">
+		select
+			count(*)
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=startTime">and CREATE_TIME >= #{startTime}</if>
+			<if test="null!=endTime">
+				<![CDATA[ and UPDATE_TIME < #{endTime}   ]]>
+				<!-- and CREATE_TIME <= #{endTime} -->
+			</if>
+			and SP_PURCHASE_NO is not null
+		</where>
+	</select>
+	
+	
+	
 	<select id="findBySupplierIdAndStatusAndUpdateTime" resultMap="OrderResultMap">
 		select
 		<include refid="all_Order_column"/>

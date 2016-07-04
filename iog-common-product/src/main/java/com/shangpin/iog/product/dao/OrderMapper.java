@@ -129,4 +129,7 @@ public interface OrderMapper extends IBaseDao<OrderDTO> {
 
 	public int getOrderTotalBySupplierIdAndTime(@Param("supplierId") String supplier,
 			 @Param("startDate")Date startDate, @Param("endDate")Date endDate);
+
+	public int getOrderTotalBySpPurchaseNo(@Param("supplierId") String supplier,
+			 @Param("startDate")Date startDate, @Param("endDate")Date endDate);
 }

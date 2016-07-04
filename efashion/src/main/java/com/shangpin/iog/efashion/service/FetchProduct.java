@@ -132,12 +132,12 @@ public class FetchProduct {
 					spu.setId(UUIDGenerator.getUUID());
 					spu.setSupplierId(supplierId);
 					spu.setSpuId(item.getProduct_id());
-					spu.setCategoryName(item.getCategory());
+					spu.setCategoryName(item.getFirst_category());
 					spu.setBrandName(item.getBrand());
 					spu.setSpuName(item.getItem_intro());
-					spu.setMaterial(item.getTechnical_info());
-					spu.setProductOrigin(item.getMade_in());
-					spu.setSeasonName(item.getSeason_year());
+//					spu.setMaterial(item.getTechnical_info());
+//					spu.setProductOrigin(item.getMade_in());
+					spu.setSeasonName(item.getSeason_year()+item.getSeason_reference());
 					spu.setCategoryGender(item.getGender());
 					productFetchService.saveSPU(spu);
 				} catch (Exception e) {
@@ -159,7 +159,7 @@ public class FetchProduct {
 					if(size==null){
 						size = "A";
 					}
-					skuId = item.getSku_id()+"|"+item.getProduct_reference()+"|"+item.getColor_reference()+"|"+size;
+					skuId = item.getProduct_reference()+"|"+item.getColor_reference()+"|"+size;
 					sku.setSkuId(skuId);
 					sku.setProductSize(size);
 					sku.setStock(item.getQuantity());
@@ -167,7 +167,7 @@ public class FetchProduct {
 					sku.setMarketPrice(item.getPrice_IT());
 					sku.setColor(item.getColor());
 					sku.setProductName(item.getItem_intro());
-					sku.setProductDescription(item.getItem_description()+","+item.getSuitable());
+					sku.setProductDescription(item.getItem_description());
 					sku.setSaleCurrency(item.getCurrency());
 					
 					if(skuDTOMap.containsKey(sku.getSkuId())){
@@ -189,8 +189,8 @@ public class FetchProduct {
 
 				}
 				
-//				String [] picArray = item.getItem_images();
-//				productFetchService.savePicture(supplierId, null, skuId,Arrays.asList(picArray));
+				String [] picArray = item.getItem_images().getFull();
+				productFetchService.savePicture(supplierId, item.getProduct_id(), null,Arrays.asList(picArray));
 //			
 
 			}

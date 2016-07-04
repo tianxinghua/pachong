@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -374,11 +375,11 @@ public class OrderImpl extends AbsOrderService {
 				num = detail.split(":")[1];
 			}
 			// item.getSku_id()+"|"+item.getProduct_reference()+"|"+item.getColor_reference()+"|"+size
-			item.setSku_id(skuNo.split("\\|")[0]);
-			item.setColor_reference(skuNo.split("\\|")[2]);
-			item.setProduct_reference(skuNo.split("\\|")[1]);
+//			item.setSku_id(skuNo.split("\\|")[0]);
+//			item.setColor_reference(skuNo.split("\\|")[2]);
+			item.setProduct(skuNo.split("\\|")[0]);
 			item.setQuantity(num);
-			String size = skuNo.split("\\|")[3];
+			String size = skuNo.split("\\|")[2];
 			if ("A".equals(size)) {
 				size = null;
 			}
@@ -407,9 +408,12 @@ public class OrderImpl extends AbsOrderService {
 	public static void main(String[] args) {
 		OrderImpl ompl = new OrderImpl();
 		OrderDTO orderDTO = new OrderDTO();
-		String d = "1201|09029100|1555|40:1";
+		String d = "5731bc812b33300afbc3ba22|469|36:1";
 		orderDTO.setDetail(d);
 		orderDTO.setSpOrderId("2016021012");
+		orderDTO.setCreateTime(new Date());
+		orderDTO.setPurchasePriceDetail("1.11");
+		
 		orderDTO.setSpPurchaseDetailNo("CGD2016052000392");
 		ompl.handleConfirmOrder(orderDTO);
 	}

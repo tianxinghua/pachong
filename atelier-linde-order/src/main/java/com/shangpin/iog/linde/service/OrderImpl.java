@@ -24,6 +24,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.OrderDetailDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.linde.dto.Item;
@@ -50,7 +51,7 @@ public class OrderImpl extends AbsOrderService {
 	SkuPriceService skuPriceService;
 
 	@Autowired
-	com.shangpin.iog.service.OrderService productOrderService;
+	com.shangpin.iog.service.OrderDetailService productOrderService;
 
 	private static Map<String, String> map = new HashMap<String, String>();
 	static {
@@ -221,7 +222,7 @@ public class OrderImpl extends AbsOrderService {
 		getOrderList(startTime,endTime);
 	}
 	public void getOrderList(String startTime,String endTime){
-		List<OrderDTO> listOrder = null;
+		List<OrderDetailDTO> listOrder = null;
 		try {
 			listOrder = productOrderService
 					.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId,
@@ -231,12 +232,11 @@ public class OrderImpl extends AbsOrderService {
 		}
 		StringBuffer str = new StringBuffer();
 		if(listOrder!=null&&!listOrder.isEmpty()){
-			for (OrderDTO dto : listOrder) {
+			for (OrderDetailDTO dto : listOrder) {
 				// skuId:qty
-				final String orderId = dto.getSpOrderId();
-				String detail = dto.getDetail();
+				final String orderId = dto.getOrderNo();
 				// 2220080-2014876494045
-				String skuId = detail.split(":", -1)[0];
+				String skuId = dto.getSupplierSku();
 				String barCode = skuId.split("-")[1];
 				if (barCode.startsWith("20")) {
 					barCode = barCode.replaceFirst("20", "00").substring(0,

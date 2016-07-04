@@ -48,7 +48,7 @@ public interface OrderDetailMapper extends IBaseDao<OrderDetailDTO> {
 	 * @param   orderNo
 	 * @return 子订单 OrderDetailDTO
 	 */
-	public OrderDetailDTO findSubOrderByOrderNo(@Param("orderNo") String orderNo);
+	public OrderDetailDTO findSubOrderByOrderNoAndSupplierId(@Param("orderNo") String orderNo,@Param("supplierId") String supplierId);
 
 	/**
 	 * 根据订单的子订单号查找子订单
@@ -180,4 +180,7 @@ public interface OrderDetailMapper extends IBaseDao<OrderDetailDTO> {
     public List<OrderDetailDTO> getDetailDTOByEpMasterOrderNo(@Param("epMasterOrderNo") String epMasterOrderNo);
 
 	public int getOrderTotalBySupplierIdAndTime(@Param("supplierId") String supplier);
+
+	public int getOrderTotalBySpPurchaseNo(@Param("supplierId") String supplierId,
+            @Param("startTime")String startTime,@Param("endTime")String endTime);
 }

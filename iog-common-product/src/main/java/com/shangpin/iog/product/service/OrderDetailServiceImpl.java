@@ -28,6 +28,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 	@Autowired
 	OrderDetailMapper orderDetailDao;
 
+	
 	@Override
 	public void saveOrderDetail(OrderDetailDTO orderDetailDTO)
 			throws ServiceException {
@@ -64,9 +65,9 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 	}
 
 	@Override
-	public OrderDetailDTO getOrderDetailByOrderNo(String orderNo) throws ServiceException {
+	public OrderDetailDTO getOrderDetailByOrderNoAndSupplierId(String orderNo,String supplierId) throws ServiceException {
 		if(StringUtils.isBlank(orderNo)) throw new ServiceMessageException("订单编号参数为空");
-		return orderDetailDao.findSubOrderByOrderNo(orderNo);
+		return orderDetailDao.findSubOrderByOrderNoAndSupplierId(orderNo,supplierId);
 	}
 
 	@Override
@@ -114,7 +115,13 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 		return orderDetailDao.findBySupplierIdAndStatusAndTime(supplierId,
 				status, startTime, endTime);
 	}
-
+	
+    @Override
+	public int getOrderTotalBySpPurchaseNo(String supplierId,
+			String startTime, String endTime){
+    	return orderDetailDao.getOrderTotalBySpPurchaseNo(supplierId,startTime,endTime);
+    }
+	
 	@Override
 	public List<OrderDetailDTO> getOrderBySupplierIdAndOrderStatusAndUpdateTime(
 			String supplierId, String status, String startTime, String endTime)

@@ -23,4 +23,12 @@ public interface SupplierService {
      * @throws ServiceException
      */
     public List<SupplierDTO> findAllWithAvailable() throws ServiceException;
+    
+    /**
+     * 根据supplierId获取实体
+     * @param supplierId
+     * @return
+     * @throws ServiceException
+     */
+    public SupplierDTO findBysupplierId(String supplierId) throws ServiceException;
 }

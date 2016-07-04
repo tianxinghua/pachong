@@ -1,7 +1,9 @@
 package com.shangpin.iog.smets.util;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -22,11 +24,21 @@ public class Test {
 	ProductFetchService productFetchService;
 //	11282197
 	public void test() {
+		Map<String,String> savedMap = new HashMap<String, String>();
 		String url = "";
-		List<ExcelDTO> dtoLists = new Excel2DTO().toDTO("F:\\has_id.xlsx", 0, new Short[]{0,1}, ExcelDTO.class);
+		String farfetchid = "";
+		List<ExcelDTO> dtoLists = new Excel2DTO().toDTO("F:\\luisasku.xlsx", 0, new Short[]{0}, ExcelDTO.class);
+		int count = 1;
 		for (ExcelDTO excelDTO : dtoLists) {
-			url = "http://www.farfetch.com/cn/shopping/"+excelDTO.getGender()+"/item-"+excelDTO.getId()+".aspx?q="+excelDTO.getId();
+			System.out.println(count++);
+			farfetchid=excelDTO.getId().trim();
+			if (savedMap.containsKey(farfetchid)) {
+				continue;
+			}
+			savedMap.put(farfetchid, "");
+			url = "http://www.farfetch.com/cn/shopping/item-"+excelDTO.getId().trim()+".aspx?q="+excelDTO.getId().trim();
 //			url = http://www.farfetch.com/cn/shopping/men/item-11282197.aspx?q=11282197;
+//			http://www.farfetch.com/cn/shopping/item-11252645.aspx?q=11252645
 			System.out.println(url);
 			save(url);
 		}
@@ -75,10 +87,10 @@ public class Test {
 				spu.setCategoryGender(gender);
 				spu.setCategoryName(category);
 				spu.setMaterial(matrial);
-				spu.setSupplierId("201603111152");
+				spu.setSupplierId("201606151019");
 				
 //				201601291741   
-				sku.setSupplierId("201603111152");
+				sku.setSupplierId("201606151019");
 				sku.setSpuId(skuId);
 				sku.setSkuId(skuId);
 				sku.setSaleCurrency(url);
@@ -90,7 +102,7 @@ public class Test {
 				System.out.println("save spu");
 				productFetchService.saveSPU(spu);
 				System.out.println("save spic");
-				productFetchService.savePicture("201603111152", null, skuId, Arrays.asList(img.split(";")));
+				productFetchService.savePicture("201606151019", null, skuId, Arrays.asList(img.split(";")));
 				//
 				img = "";
 				skuId = "";

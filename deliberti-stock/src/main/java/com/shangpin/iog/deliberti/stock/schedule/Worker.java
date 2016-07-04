@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.iog.deliberti.stock.StockImp;
+import com.shangpin.iog.deliberti.stock.PHPStockImp;
 
 
 @Component
@@ -20,9 +20,9 @@ public class Worker implements Runnable{
          bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
     }
-	private StockImp stockImp;
+	private PHPStockImp stockImp;
 	public Worker(){};
-	public Worker(StockImp stockImp) {
+	public Worker(PHPStockImp stockImp) {
 		this.stockImp = stockImp;
 	}
 	@Override

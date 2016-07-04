@@ -7,19 +7,22 @@ package com.shangpin.iog.tony.service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.tony.common.Constant;
 import com.shangpin.iog.tony.common.MyJsonClient;
 import com.shangpin.iog.tony.common.StringUtil;
 import com.shangpin.iog.tony.dto.Data;
 import com.shangpin.iog.tony.dto.Items;
-
 import com.shangpin.iog.tony.dto.ReturnObject;
+
 import org.apache.commons.collections.functors.ExceptionClosure;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +43,8 @@ public class FetchProduct {
     private MyJsonClient jsonClient = new MyJsonClient();
     private String itemsJson;
     private String categoriesJson;
+	@Autowired
+	ProductSearchService productSearchService;
     private List<Items> itemsList= new ArrayList();
     /**
      * fetch product and save into db
@@ -81,6 +86,19 @@ public class FetchProduct {
      * message mapping and save into DB
      */
     private void messMappingAndSave() {
+    	
+    	Date startDate, endDate = new Date();
+		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate, Constant.day
+				* -1, "D");
+		// 获取原有的SKU 仅仅包含价格和库存
+		Map<String, SkuDTO> skuDTOMap = new HashedMap();
+		try {
+			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(
+					Constant.SUPPLIER_ID, startDate, endDate);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+    	
         //get tony Category data
         String skuId = "";
         String spuId = "";
@@ -98,7 +116,9 @@ public class FetchProduct {
         for(Items item:itemsList){
             skuId = item.getSku();
             spuId = StringUtil.getSpuId(skuId);
-
+            if("522359926251_730-XXL".equals(skuId)){
+            	System.out.println("");
+            }
             //
             SkuDTO sku  = new SkuDTO();
             try {

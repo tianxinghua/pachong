@@ -62,8 +62,8 @@ public class QueueCraw {
 	
 	public void crawling(String[] feeds){
 		//消费线程
-//		executor.execute(new SkuCustomer(productFetchService));
-//		executor.execute(new SpuCustomer(productFetchService));
+		executor.execute(new SkuCustomer(productFetchService));
+		executor.execute(new SpuCustomer(productFetchService));
 		executor.execute(new PicCustomer(productFetchService));
 		
 		

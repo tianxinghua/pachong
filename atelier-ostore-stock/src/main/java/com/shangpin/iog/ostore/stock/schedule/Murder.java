@@ -43,6 +43,7 @@ public class Murder extends TimerTask{
 		try {
 			future.get(time, TimeUnit.MILLISECONDS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			future.cancel(true);
 			logError.error(Thread.currentThread().getName()+"超时销毁");
 			System.out.println(Thread.currentThread().getName()+"超时销毁");

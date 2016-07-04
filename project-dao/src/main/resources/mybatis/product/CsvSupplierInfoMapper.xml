@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.CsvSupplierInfoMapper">
+
+	<resultMap id="csvSupplierResultMap" type="iog_csvSupplier">
+
+        <result column="SUPPLIERID" property="supplierId"  />
+        <result column="SUPPLIERNO" property="supplierNo"  />
+        <result column="CRONTIME" property="crontime"  />
+        <result column="FETCHURL" property="fetchUrl"  />
+        <result column="STATE" property="state"  />
+        <result column="CLASSPATH" property="classPath"  />
+        <result column="DATAPATH" property="dataType"  />
+        <result column="FILEPATH" property="filePath"  />
+
+	</resultMap>
+
+	
+	<sql id="all_csvSupplier_column">
+		SUPPLIERID,
+		SUPPLIERNO,
+		CRONTIME,
+		FETCHURL,
+		STATE,
+		CLASSPATH,
+		DATAPATH,
+		FILEPATH
+	</sql>
+	
+	<insert id="save" parameterType="iog_csvSupplier">
+		insert into CSV_SUPPLIER_INFO(
+			SUPPLIERID,
+			SUPPLIERNO,
+			CRONTIME,
+			FETCHURL,
+			STATE,
+			CLASSPATH,
+			DATAPATH,
+			FILEPATH
+		)values(
+			#{supplierId},
+			#{supplierNo},
+			#{crontime},
+			#{fetchUrl},
+			#{state},
+			#{classPath},
+			#{dataType},
+			#{filePath}	
+		)
+		
+	</insert>
+
+   
+    <select id="findAllCsvSuppliers" resultMap="csvSupplierResultMap">
+        select
+        <include refid="all_csvSupplier_column"></include>
+
+        from CSV_SUPPLIER_INFO
+        
+    </select>
+    
+    <update id="update" parameterType="iog_csvSupplier">
+    	update CSV_SUPPLIER_INFO
+    	<set>
+    		CRONTIME = #{crontime},
+    		FETCHURL = #{fetchUrl},
+    		STATE = #{state},
+    		CLASSPATH = #{classPath},
+			DATAPATH = #{dataType},
+			FILEPATH = #{filePath}
+    	</set>
+    	where SUPPLIERID = #{supplierId}
+    </update>
+    
+    <delete id="deleteBySupplierId">
+    	delete from CSV_SUPPLIER_INFO where SUPPLIERID = #{supplierId}
+    </delete>
+	
+</mapper>

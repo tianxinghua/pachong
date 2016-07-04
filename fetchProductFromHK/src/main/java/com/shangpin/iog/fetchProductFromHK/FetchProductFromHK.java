@@ -6,18 +6,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.List;
-import java.util.Scanner;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.framework.ServiceMessageException;
-import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductDTO;
@@ -30,6 +28,24 @@ import com.shangpin.iog.service.ProductFetchService;
 public class FetchProductFromHK {
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger loggerError = Logger.getLogger("error");
+	
+	private static ResourceBundle bdl = null;
+	private static String supplierId;
+	private static String relationFlag;
+	public static String productFlag;
+	public static String endDate;
+	public static String startDate;
+	static {
+		if (null == bdl)
+			bdl = ResourceBundle.getBundle("conf");
+		supplierId = bdl.getString("supplierId");
+		relationFlag = bdl.getString("relationFlag");
+		productFlag = bdl.getString("productFlag");
+		startDate = bdl.getString("startDate");
+		endDate = bdl.getString("endDate");
+	}
+	
+	
 	@Autowired
 	private ProductFetchService productFetchService;
 	private static ApplicationContext factory;
@@ -53,16 +69,15 @@ public class FetchProductFromHK {
 	}
 
 	private void fetchRelationFromHK() {
-		String falg = readFile("initRelation.ini");
 		//false 表示按每天拉取
-		if ("false".equals(falg)) {
+		if ("false".equals(relationFlag)) {
 			System.out.println("false");
 			saveRelationDayFromHK();
 		} else {
 			//true 表示拉取所有的
 			System.out.println("true");
 			fetchAndsaveAllRelationFromHK();
-			writeGrapDate("false", "initRelation.ini");
+//			writeGrapDate("false", "initRelation.ini");
 
 		}
 	}
@@ -116,21 +131,60 @@ public class FetchProductFromHK {
 
 	public void fetchProductFromHK() {
 
-		String falg = readFile("initSkuSpu.ini");
-		//false 表示按每天拉取
-		if ("false".equals(falg)) {
-			System.out.println("false");
+		//按供应商拉取数据
+		if(StringUtils.isNotBlank(supplierId)){
+			String [] arraySupplierId = supplierId.split(",",-1);
+			for(String supplier:arraySupplierId){
+				saveProductFromHKBySupplierId(supplier);
+			}
+			
+		}else if(StringUtils.isNotBlank(startDate)){
+			saveProductFromHKByDate();
+		}else{
 			saveSkuDayFromHK();
 			saveSpuDayFromHK();
-		} else {
-			//true 表示拉取所有的
-			System.out.println("true");
-			saveAllSkuFromHK();
-			saveAllSpuFromHK();
-			writeGrapDate("false", "initSkuSpu.ini");
-
+		}
+		//false 表示按每天拉取
+//		if ("false".equals(supplierId)) {
+//			System.out.println("false");
+//			saveSkuDayFromHK();
+//			saveSpuDayFromHK();
+//		} else {
+//			//true 表示拉取所有的
+//			System.out.println("true");
+//			saveAllSkuFromHK();
+//			saveAllSpuFromHK();
+//			writeGrapDate("false", "initSkuSpu.ini");
+//
+//		}
+	}
+	private void saveProductFromHKByDate() {
+		List<ProductDTO> list = null;
+		try {
+			list = productFetchService.findProductByDate(startDate,endDate);
+			logger.info("拉取的供应商数据总数："+list.size());
+			System.out.println("今日拉取的供应商数据总数："+list.size());
+			saveSku(list);
+			saveSpu(list);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
+
+	private void saveProductFromHKBySupplierId(String supplier) {
+		List<ProductDTO> list = null;
+		try {
+			list = productFetchService.findSkuBySupplierId(supplier);
+			logger.info("拉取的供应商:"+supplier+"数据总数："+list.size());
+			System.out.println("今日拉取的SKU总数："+list.size());
+			saveSku(list);
+			saveSpu(list);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 	private void saveSkuDayFromHK() {
 
 		List<ProductDTO> list = null;
@@ -257,25 +311,25 @@ public class FetchProductFromHK {
 			n=0;
 		}
 	}
-	private String readFile(String fileName) {
-
-		Scanner scanner = null;
-		StringBuilder buffer = new StringBuilder();
-		try {
-			File file = getConfFile(fileName);
-			scanner = new Scanner(file, "utf-8");
-			while (scanner.hasNextLine()) {
-				buffer.append(scanner.nextLine());
-			}
-		} catch (Exception e) {
-
-		} finally {
-			if (scanner != null) {
-				scanner.close();
-			}	
-		}
-		return buffer.toString();
-	}
+//	private String readFile(String fileName) {
+//
+//		Scanner scanner = null;
+//		StringBuilder buffer = new StringBuilder();
+//		try {
+//			File file = getConfFile(fileName);
+//			scanner = new Scanner(file, "utf-8");
+//			while (scanner.hasNextLine()) {
+//				buffer.append(scanner.nextLine());
+//			}
+//		} catch (Exception e) {
+//
+//		} finally {
+//			if (scanner != null) {
+//				scanner.close();
+//			}	
+//		}
+//		return buffer.toString();
+//	}
 
 	private static void writeGrapDate(String date, String fileName) {
 		File df = null;
