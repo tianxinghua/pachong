@@ -32,8 +32,10 @@ include 'iog-generater-util'
 include 'iog-web-apiHandler'
 
 
-
+include 'iog-product-web'
 include 'filippo-order'
+include 'bagheera-stock'
+include 'coltorti'
 
 
 

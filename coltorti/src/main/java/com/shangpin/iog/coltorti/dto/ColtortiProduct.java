@@ -34,6 +34,7 @@ public class ColtortiProduct implements Serializable{
 	String name;//名字
 	String description;//描述
 	Float price;//价格
+    Integer discountRate;//折扣
 	String[] alternativeIds;
 	Map<String,String> scalars; //
 	Map<String,String> brand;

@@ -644,7 +644,7 @@ public abstract class AbsUpdateProductStock {
 						
 						loggerInfo.info("sku ：" + skuNo +"原库存："+stockResult);
 						stockResult =  stockResult - sopPurchaseMap.get(iceSku);
-						loggerInfo.info("sku ：" + skuNo +"库存："+stockResult  + " ; 采购单含有数量 : " + sopPurchaseMap.get(iceSku)+" 最终库存 ：" + stockResult);
+						loggerInfo.info("sku ：" + skuNo +" 采购单含有数量 : " + sopPurchaseMap.get(iceSku)+" 最终库存 ：" + stockResult);
 						if(stockResult<0) stockResult=0;
 
 					}

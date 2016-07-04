@@ -154,7 +154,7 @@ public class ColtortiProductService{
 	public static List<ColtortiProduct> findProduct(int page,int size,String dateStart,
 			String dateEnd,String productId,String recordId) throws ServiceException{
 		Map<String,String> param=ColtortiUtil.getCommonParam(page,size);
-		param.put("fields", "id,name,product_id,variant,description,price,scalars,"
+		param.put("fields", "id,name,product_id,variant,description,price,discount_rate,scalars,"
 				+ "ms5_group,ms5_subgroup,ms5_category,brand,season,images,alternative_ids,"
 				+ "macro_category,group,family,line,subgroup,category,attributes,updated_at");
 		if(productId!=null) param.put("product_id", productId);
@@ -187,7 +187,7 @@ public class ColtortiProductService{
 
 	public static List<ColtortiProduct> findSingleProduct(String productId,String recordId) throws ServiceException{
 		Map<String,String> param=ColtortiUtil.getCommonParam(-1,-1);
-		param.put("fields", "id,name,product_id,price");
+		param.put("fields", "id,name,product_id,price,discount_rate");
 		if(productId!=null) param.put("product_id", productId);
 		if(recordId!=null)param.put("id", recordId);
 		String body=HttpUtil45.get(ColtortiUtil.paramGetUrl(ApiURL.PRODUCT,param),new OutTimeConfig(1000*10,1000*10,1000*10),null);
@@ -452,8 +452,12 @@ System.out.println(productId+"存在,不存在的数:"+cnt);
 		//requestAttribute(1, 100);
 //		findProduct(1,40,"152790AAV000001");
 		//getStock("152790AAV000001","152790AAV000001-PINxRU");//"152790FCR000005-SADMA"152450FPG000003-80723#1
-		List<ColtortiProduct> ps=divideSku4Size(findProductByProductId("161146UGB000007"));
+
+		//  152197NCX000004-F0308#7，161197LCX000001-F0002#9，152510APG000003-2006#1，152001LCX000019-S40#11
+
+		List<ColtortiProduct> ps=divideSku4Size(findProductByProductId("152510APG000003"));
 		logger.info("-----new products -----\r\n"+new Gson().toJson(ps));
+		System.out.println("-----new products -----\r\n"+new Gson().toJson(ps));
 		List<SkuDTO> skus=new ArrayList<>(ps.size());
 		List<SpuDTO> spus=new ArrayList<>(ps.size());
 		Map<String,Set<ProductPictureDTO>> mpccs=new HashMap<String, Set<ProductPictureDTO>>();

@@ -3,6 +3,7 @@
  */
 package com.shangpin.iog.coltorti.convert;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -35,7 +36,14 @@ public class ColtortiProductConvert {
 		dto.setCreateTime(new Date());
 		dto.setLastTime(new Date());   //p.getUpdatedAt()
 		dto.setSkuId(p.getSkuId());
-		dto.setSupplierPrice(p.getPrice()==null?"0":""+p.getPrice());
+//		dto.setSupplierPrice(p.getPrice()==null?"0":""+p.getPrice());
+		dto.setMarketPrice(p.getPrice()==null?"0":""+p.getPrice());
+		if(null!=p.getDiscountRate()&&0!=p.getDiscountRate()){
+			dto.setSupplierPrice(new BigDecimal(dto.getMarketPrice()).multiply(new BigDecimal(100-p.getDiscountRate()))
+					.divide(new BigDecimal(122),5).setScale(0,BigDecimal.ROUND_HALF_UP).toString());
+		}else{
+			dto.setSupplierPrice("0");
+		}
 		dto.setSpuId(p.getProductId());
 		dto.setSaleCurrency("EUR");
 		dto.setProductDescription(p.getDescription());

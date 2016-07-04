@@ -39,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
 
     private static String splitSign = ",";
 
-    private static JedisClient redisClient  = JedisClient.getInstance();
+//    private static JedisClient redisClient  = JedisClient.getInstance();
 
     private static String  ORDER_KEY ="EP_ORDER_NO_KEY";
 
