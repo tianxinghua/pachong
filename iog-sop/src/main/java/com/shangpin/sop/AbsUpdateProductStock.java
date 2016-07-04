@@ -468,14 +468,15 @@ public abstract class AbsUpdateProductStock {
 		//待更新的库存为0时查询超时时间，如果超时时间大于某一个特定值，则继续往下执行，避免超卖
 		if (iceStock.size() == 0) {
 			loggerError.error("查询供货商的库存为全部为0");
-			StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(app_key);
-			if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
-				long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
-	    		long hours = diff / (1000 * 60 * 60);
-	    		if(hours < 5){
-	    			return -1;
-	    		}
-			}
+//			StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(app_key);
+//			if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
+//				long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+//	    		long hours = diff / (1000 * 60 * 60);
+//	    		if(hours < 5){
+//	    			return -1;
+//	    		}
+//			}
+			return -1;
 		}
 
 		// logger.warn("{}---更新ice--,数量：{}",Thread.currentThread().getName(),iceStock.size());
@@ -758,7 +759,18 @@ public abstract class AbsUpdateProductStock {
 
 				if (supplierStock.size() == 0) {
 					loggerError.error("抓取供货商信息返回的supplierStock.size为0");
-					return iceStock;
+					StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(app_key);
+					if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
+						long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+			    		long hours = diff / (1000 * 60 * 60);
+			    		//待更新的库存为0时查询超时时间，如果超时时间大于某一个特定值，则继续往下执行，避免超卖
+			    		if(hours < 5){
+			    			return iceStock;
+			    		}else{
+			    			loggerError.error("该供货商出错已经超过"+hours+"小时，所有库存将会被置为0，避免超卖");
+			    		}
+					}
+					
 				} else {
 					boolean isNUll = true;
 					for (Map.Entry<String, Integer> entry : supplierStock
@@ -771,7 +783,17 @@ public abstract class AbsUpdateProductStock {
 
 					if (isNUll) {// supplierStock的值全为0,则返回空的map
 						loggerInfo.info("获取到的商品库存均为0");
-						return iceStock;
+						StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(app_key);
+						if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
+							long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+				    		long hours = diff / (1000 * 60 * 60);
+				    		//待更新的库存为0时查询超时时间，如果超时时间大于某一个特定值，则继续往下执行，避免超卖
+				    		if(hours < 5){
+				    			return iceStock;
+				    		}else{
+				    			loggerError.error("该供货商出错已经超过"+hours+"小时，所有库存将会被置为0，避免超卖");
+				    		}
+						}
 					}
 				}
 			} catch (Exception e) { // 获取库存信息时失败 直接退出

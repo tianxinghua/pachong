@@ -33,7 +33,7 @@ public class FechProduct {
 
 	private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
+//    private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
     private static String supplierId = "";
     private static int day;
@@ -41,7 +41,7 @@ public class FechProduct {
 			1000 * 60 * 5, 1000 * 60 * 5);
 	
 	private static String uri = "";
-	private static String path = "";
+//	private static String path = "";
 	
 	static {
         if(null==bdl)
@@ -49,7 +49,7 @@ public class FechProduct {
         supplierId = bdl.getString("supplierId");
         uri = bdl.getString("uri");
         day = Integer.valueOf(bdl.getString("day"));
-        path = bdl.getString("path");
+//        path = bdl.getString("path");
     }
 	
 	@Autowired
@@ -69,87 +69,87 @@ public class FechProduct {
 			e.printStackTrace();
 		}
 		
-		try{
-			
-			if(StringUtils.isNotBlank(path)){
-				File file = new File(path);
-				List<CSVTemp> list = CVSUtil.readCSV(file, CSVTemp.class, ',');
-				for(CSVTemp temp:list){
-					try{
-						
-						SkuDTO sku = new SkuDTO();
-						sku.setId(UUIDGenerator.getUUID());
-		                sku.setSupplierId(supplierId);
-		                sku.setSkuId(temp.getSupplierSkuNo());
-		                sku.setSpuId(temp.getProductModel());
-		                sku.setProductName(temp.getSopProductName());
-		                sku.setMarketPrice(temp.getMarkerPrice());  
-		                sku.setProductCode(temp.getProductModel());
-		                sku.setColor(temp.getProductColor());
-		                sku.setProductDescription(temp.getPcDesc());
-		                sku.setSaleCurrency("EUR");
-		                sku.setProductSize(temp.getProductSize());
-		                sku.setStock(temp.getStock());
-		                try {
-		                	
-		                	if(skuDTOMap.containsKey(sku.getSkuId())){
-								skuDTOMap.remove(sku.getSkuId());
-							}
-		                    productFetchService.saveSKU(sku);	                  
-		                    
-		                } catch (ServiceException e) {
-		                    try {
-		                        if (e.getMessage().equals("数据插入失败键重复")) {
-		                            //更新价格和库存
-		                            productFetchService.updatePriceAndStock(sku);
-		                        } else {
-		                            e.printStackTrace();
-		                        }
-		                    } catch (ServiceException e1) {
-		                        e1.printStackTrace();
-		                    }
-		                }
-		                
-		              //保存SPU
-		                SpuDTO spu = new SpuDTO();
-		                //SPU 必填
-		                spu.setId(UUIDGenerator.getUUID());
-		                spu.setSpuId(temp.getProductModel());
-		                spu.setSupplierId(supplierId);
-		                spu.setCategoryGender(temp.getGender());
-		                spu.setCategoryName(temp.getCategoryName());
-		                spu.setBrandName(temp.getBrandName());		                
-		                spu.setMaterial(temp.getMaterial());
-		                //spu.setProductOrigin(item.get);
-		                try {
-		                    productFetchService.saveSPU(spu);
-		                } catch (ServiceException e) {
-		                	try{
-			            		productFetchService.updateMaterial(spu);
-			            	}catch(ServiceException ex){
-			            		ex.printStackTrace();
-			            	}
-		                    e.printStackTrace();
-		                }
-						
-					}catch(Exception e){
-						e.printStackTrace();
-					}
-				}
-				
-				return;
-			}	
-			
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}
+//		try{
+//			
+//			if(StringUtils.isNotBlank(path)){
+//				File file = new File(path);
+//				List<CSVTemp> list = CVSUtil.readCSV(file, CSVTemp.class, ',');
+//				for(CSVTemp temp:list){
+//					try{
+//						
+//						SkuDTO sku = new SkuDTO();
+//						sku.setId(UUIDGenerator.getUUID());
+//		                sku.setSupplierId(supplierId);
+//		                sku.setSkuId(temp.getSupplierSkuNo());
+//		                sku.setSpuId(temp.getProductModel());
+//		                sku.setProductName(temp.getSopProductName());
+//		                sku.setMarketPrice(temp.getMarkerPrice());  
+//		                sku.setProductCode(temp.getProductModel());
+//		                sku.setColor(temp.getProductColor());
+//		                sku.setProductDescription(temp.getPcDesc());
+//		                sku.setSaleCurrency("EUR");
+//		                sku.setProductSize(temp.getProductSize());
+//		                sku.setStock(temp.getStock());
+//		                try {
+//		                	
+//		                	if(skuDTOMap.containsKey(sku.getSkuId())){
+//								skuDTOMap.remove(sku.getSkuId());
+//							}
+//		                    productFetchService.saveSKU(sku);	                  
+//		                    
+//		                } catch (ServiceException e) {
+//		                    try {
+//		                        if (e.getMessage().equals("数据插入失败键重复")) {
+//		                            //更新价格和库存
+//		                            productFetchService.updatePriceAndStock(sku);
+//		                        } else {
+//		                            e.printStackTrace();
+//		                        }
+//		                    } catch (ServiceException e1) {
+//		                        e1.printStackTrace();
+//		                    }
+//		                }
+//		                
+//		              //保存SPU
+//		                SpuDTO spu = new SpuDTO();
+//		                //SPU 必填
+//		                spu.setId(UUIDGenerator.getUUID());
+//		                spu.setSpuId(temp.getProductModel());
+//		                spu.setSupplierId(supplierId);
+//		                spu.setCategoryGender(temp.getGender());
+//		                spu.setCategoryName(temp.getCategoryName());
+//		                spu.setBrandName(temp.getBrandName());		                
+//		                spu.setMaterial(temp.getMaterial());
+//		                //spu.setProductOrigin(item.get);
+//		                try {
+//		                    productFetchService.saveSPU(spu);
+//		                } catch (ServiceException e) {
+//		                	try{
+//			            		productFetchService.updateMaterial(spu);
+//			            	}catch(ServiceException ex){
+//			            		ex.printStackTrace();
+//			            	}
+//		                    e.printStackTrace();
+//		                }
+//						
+//					}catch(Exception e){
+//						e.printStackTrace();
+//					}
+//				}
+//				
+//				return;
+//			}	
+//			
+//		}catch(Exception ex){
+//			ex.printStackTrace();
+//		}
 		
 		try{
 			
 			String result = HttpUtil45.get(uri, outTimeConf, null);
 			result = result.replaceAll("Discounted-price", "Discounted_price");
 			result = result.replaceAll("product-code", "product_code");
-			logger.info(result); 
+//			logger.info(result); 
 			Channel channel = XMLUtil.gsonXml2Obj(Channel.class, result);
 			if(channel != null && channel.getItem().size()>0){
 				System.out.println("------------一共"+channel.getItem().size()+"条数据---------------"); 

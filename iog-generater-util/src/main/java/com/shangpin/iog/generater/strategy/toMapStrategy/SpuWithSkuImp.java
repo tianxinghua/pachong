@@ -10,6 +10,12 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.generater.dto.ProductDTO;
 
+/**
+ * 处理特殊的xml的类
+ * 该类适用于一个spu下边包含多个sku，即ProductDTO类的productList不为空
+ * @author sunny
+ *
+ */
 public class SpuWithSkuImp implements TransStrategy{
 
 	@Override

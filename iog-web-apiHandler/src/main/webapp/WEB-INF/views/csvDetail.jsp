@@ -57,7 +57,7 @@
 					<th field="supplierId" hidden="true"></th> 
 					<th field="supplierName" width="150" >供货商名称</th>
 					<th field="attriName" width="150" editor="{type:'validatebox',options:{required:true}}">属性名称</th>
-					<th field="attriValue" width="150" editor="{type:'validatebox'}">属性对应列号</th>
+					<th field="attriValue" width="150" editor="{type:'validatebox'}">属性对应列名/号</th>
 					<th field="attriRule" width="150" editor="{type:'validatebox'}">拆分规则</th>
 				</tr>
 			</thead>

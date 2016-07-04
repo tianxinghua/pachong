@@ -40,6 +40,7 @@ public class DefaultImp implements TransStrategy{
 
 				sku.setSpuId(productDTO.getSpuId());
 				sku.setSkuId(productDTO.getSkuId());
+				sku.setProductName(productDTO.getProductName()); 
 				sku.setProductSize(productDTO.getSize());
 				sku.setMarketPrice(productDTO.getMarketPrice());
 				sku.setSalePrice(productDTO.getSalePrice());

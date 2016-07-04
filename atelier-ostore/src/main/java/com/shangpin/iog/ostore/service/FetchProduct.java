@@ -1,5 +1,8 @@
 package com.shangpin.iog.ostore.service;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +40,7 @@ public class FetchProduct {
     private static String oldurl;
 	public static int day;
     private static ResourceBundle bdl=null;
+    private static String savePath = null;
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
@@ -44,6 +48,7 @@ public class FetchProduct {
         url = bdl.getString("url");
         oldurl = bdl.getString("oldurl");
         day = Integer.valueOf(bdl.getString("day"));
+        savePath = bdl.getString("savePath");
     }
     @Autowired
     private ProductFetchService productFetchService;
@@ -73,13 +78,21 @@ public class FetchProduct {
         logger.info("get product starting....");
     	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
     										new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
+    	save("spuData.txt",spuData);
+    	
     	String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
     										new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
+    	save("skuData.txt",skuData);
+    	
     	String imageData = HttpUtil45.post(url+"GetAllImageMarketplace",
     										new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
+    	save("imageData.txt",imageData);
+    	
     	String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
     										new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
 
+    	save("priceData.txt",priceData);
+    	
     	Date startDate,endDate= new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 		
@@ -125,6 +138,7 @@ public class FetchProduct {
         //得到所有的spu信息
         String[] spuStrings = spuData.split("\\r\\n");
         String[] spuArr = null;
+        logger.info("spu的总数是======="+spuStrings.length); 
 		for (int i = 1; i < spuStrings.length; i++) {
 			try {				
 			
@@ -170,19 +184,24 @@ public class FetchProduct {
 				
 			} catch (Exception e) {
 				e.printStackTrace();
-				errorLogger.error(e);
+				errorLogger.error(spuStrings[i]); 
+				errorLogger.error(i+" "+e);
 			}
 		}
 		
 		//============================保存spu===================================
+		logger.info("开始保存spu，spuMap的大小是============"+spuMap.size()); 
 		for (Entry<String, SpuDTO> entry: spuMap.entrySet()) {
 			 try {
 				productFetchService.saveSPU(entry.getValue());
+				logger.info(entry.getKey()+"已保存");				
 			} catch (ServiceException e) {
 			   try {
 					productFetchService.updateMaterial(entry.getValue());
+					logger.info(entry.getKey()+"已存在");
 				} catch (ServiceException e1) {
 					e1.printStackTrace();
+					errorLogger.error(entry.getKey()+"+++++++++++++"+e);
 				}
 			}
 		}
@@ -215,6 +234,7 @@ public class FetchProduct {
 		int has=0;
 		int hasnot=0;
 		int stockis0=0;
+		logger.info("sku的总数有============"+skuStrings.length);
 		for (int i = 1; i < skuStrings.length; i++) {
 			
 			try {				
@@ -273,7 +293,8 @@ public class FetchProduct {
 			
 			} catch (Exception e) {
 				e.printStackTrace();
-				errorLogger.error(e);
+				errorLogger.error(skuStrings[i]); 
+				errorLogger.error(i+" "+e);
 			}
 		}
 		logger.info("找不到对应关系总数为："+qqq);
@@ -282,6 +303,7 @@ public class FetchProduct {
 		logger.info("有对应sku，spu的数据中库存为0的总数为："+stockis0);
 		
 		//============================保存sku和图片==================================
+		logger.info("开始保存sku，skuMap的大小是============"+skuMap.size()); 
 		for (Entry<String, SkuDTO> entry : skuMap.entrySet()) {
 			if(skuDTOMap.containsKey(entry.getValue().getSkuId())){
 				skuDTOMap.remove(entry.getValue().getSkuId());
@@ -295,9 +317,11 @@ public class FetchProduct {
     					productFetchService.updatePriceAndStock(entry.getValue());
     				} else {
     					e.printStackTrace();
+    					errorLogger.error(entry.getKey()+" "+e); 
     				}
     			} catch (ServiceException e1) {
     				e1.printStackTrace();
+    				errorLogger.error(entry.getKey()+" "+e1);
     			}
 			}
 		}
@@ -415,7 +439,39 @@ public class FetchProduct {
     	return returnMap;
     }
    
-    
+    public void save(String name,String data){
+    	try {
+    		File file = new File(savePath+File.separator+name);
+//        	File file = new File("E://"+name);
+    		if (!file.exists()) {
+    			try {
+    				file.getParentFile().mkdirs();
+    				file.createNewFile();
+    				
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
+    		FileWriter fwriter = null;
+    		try {
+    			fwriter = new FileWriter(savePath+File.separator+name);
+    			fwriter.write(data);
+    		} catch (IOException ex) {
+    			ex.printStackTrace();
+    		} finally {
+    			try {
+    				fwriter.flush();
+    				fwriter.close();
+    			} catch (IOException ex) {
+    				ex.printStackTrace();
+    			}
+    		}
+		} catch (Exception e) {
+			e.printStackTrace();
+			errorLogger.error(e);
+		}
+    	
+    }
     
     
     public static void main(String[] args){
