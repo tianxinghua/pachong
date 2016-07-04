@@ -34,7 +34,9 @@ public class Csv2DTO {
 	 */
 	@SuppressWarnings("resource")
 	public <T> List<T> toDTO(String url,String filePath, String sep,String[] needColsNo,ISepStrategy[] iSepStrategies, Class<T> clazz) {
-		txtDownload(url,filePath);
+		if(StringUtils.isNotBlank(url) && StringUtils.isNotBlank(filePath)){
+			txtDownload(url,filePath);
+		}		
 		List<T> dtoList = new ArrayList<T>();
 		CsvReader cr = null;
 		String[] split = null;
@@ -42,25 +44,23 @@ public class Csv2DTO {
 		String rowString = "";
 		try {
 			cr = new CsvReader(filePath);
-			cr.readRecord();
 			while(cr.readRecord()){
-				rowString = cr.getRawRecord();
-				if (StringUtils.isNotBlank(rowString)) {
-					colValueList = fromCSVLinetoArray(rowString,sep.charAt(0));
-					T t = fillDTO(clazz.newInstance(),needColsNo,iSepStrategies, colValueList);
-					dtoList.add(t);
-				}
+				try {
+					rowString = cr.getRawRecord();
+					if (StringUtils.isNotBlank(rowString)) {
+						colValueList = fromCSVLinetoArray(rowString,sep.charAt(0));
+						T t = fillDTO(clazz.newInstance(),needColsNo,iSepStrategies, colValueList);
+						dtoList.add(t);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}				
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}catch (IOException e) {
 			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		
+		}		
 		
 		return dtoList;
 	}
@@ -72,14 +72,14 @@ public class Csv2DTO {
 			String str = "";
 			for (int i = 0; i < needColsNo.length; i++) {
 				fields[i].setAccessible(true);
-				if (needColsNo[i].equals("")) {
-					fields[i].set(t,"");
+				if (StringUtils.isBlank(needColsNo[i])) {
+					fields[i].set(t,null);
 					continue;
 				}
 				str = "";
 				split = needColsNo[i].split(",");
 				List<String> dataList = new ArrayList<String>();
-				
+//				System.out.println(data.toString()); 
 				for (int j = 0; j < split.length; j++) {
 					dataList.add(data.get(Integer.valueOf(split[j])));
 //					str+=data.get(Integer.valueOf(split[j]))+colsSep[i];

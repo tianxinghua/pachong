@@ -7,9 +7,18 @@ import lombok.Setter;
 @Setter
 public class Usr {
 
-	String supplierId;
-	String supplierNo;
-	String crontime;
-	String fetchUrl;
-	String status;
+	private String supplierId;
+	private String supplierNo;
+	private String crontime;
+	private String fetchUrl;
+	private String state;//
+	private String classPath;
+	private String dataType;
+	private String filePath;
+	private String toMapCondition;
+	private String sep;
+	private String xmlSkuTag;
+	private String xmlSpuTag;
+	private String picFlag;//SKU or SPU
+	private String picPath;
 }

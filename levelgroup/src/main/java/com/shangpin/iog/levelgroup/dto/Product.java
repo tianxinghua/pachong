@@ -17,7 +17,7 @@ public class Product {
     private String BUYURL;
     private String AVAILABLE;
     private String IMAGEURL;
-    private String PRICE;
+//    private String PRICE;
     private String SALEPRICE;
     private String STOCK_LEVEL;
     private String UPC;

@@ -55,4 +55,10 @@ public class UpdateStockServiceImpl implements UpdateStockService{
 			updateStockDao.saveStockUpdateDTO(stockUpdateDTO);
 		}
 	}
+
+	@Override
+	public StockUpdateDTO findStockUpdateBySUpplierId(String supplierId)
+			throws SQLException {
+		return updateStockDao.findStockUpdateBySUpplierId(supplierId);
+	}
 }

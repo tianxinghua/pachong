@@ -188,6 +188,7 @@ public class OrderService extends AbsOrderService{
 			createOrder.setIDCardNumber("641233187008230523");
 			createOrder.setIDCardPathOne("SHANGPIN.COM");
 			createOrder.setIDCardPathTwo("SHANGPIN.COM"); 
+			createOrder.setNotes(orderDTO.getSpPurchaseNo()); 
 			String createOrderStr = new Gson().toJson(createOrder);
 			logger.info("createOrderStr======"+createOrderStr);
 			

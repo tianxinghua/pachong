@@ -20,6 +20,7 @@ public class Item {
 	String size;
 	String qty;
 	String market_price;
+	String sale_price;
 	String image1;
 	String image2;
 	String image3;

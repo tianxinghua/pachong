@@ -30,7 +30,8 @@ import com.shangpin.iog.service.ProductSearchService;
  */
 @Component("atelierostore")
 public class FetchProduct {
-    final Logger logger = Logger.getLogger(this.getClass());
+    final Logger logger = Logger.getLogger("info");
+    private static Logger errorLogger = Logger.getLogger("error");
     private static String supplierId;
     private static String url;
     private static String oldurl;
@@ -100,16 +101,24 @@ public class FetchProduct {
         String[] priceStrings = priceData.split("\\r\\n");
         String[] priceArr = null;
         for (int i = 1; i < priceStrings.length; i++) {
-        	if (StringUtils.isNotBlank(priceStrings[i])) {
-				if (i==1) {
-				  data =  priceStrings[i].split("\\n")[1];
-				}else {
-				  data = priceStrings[i];
-				}
-        	}
-			priceArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
-			priceMap.put(priceArr[0], priceArr[3]);
-			
+        	try {
+				
+        		if (StringUtils.isNotBlank(priceStrings[i])) {
+    				if (i==1) {
+    				  data =  priceStrings[i].split("\\n")[1];
+    				}else {
+    				  data = priceStrings[i];
+    				}
+            	}
+    			priceArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+    			priceMap.put(priceArr[0], priceArr[3]);
+    			
+        		
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorLogger.error(e);
+			}
+        	
         }
         
         
@@ -117,44 +126,51 @@ public class FetchProduct {
         String[] spuStrings = spuData.split("\\r\\n");
         String[] spuArr = null;
 		for (int i = 1; i < spuStrings.length; i++) {
-			if (StringUtils.isNotBlank(spuStrings[i])) {
-				if (i==1) {
-				  data =  spuStrings[i].split("\\n")[1];
-				}else {
-				  data = spuStrings[i];
-			}
-				spuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
-				SpuDTO spu = new SpuDTO();
-				Item item = new Item();
-			   item.setColor(StringUtils.isBlank(spuArr[10])?spuArr[4]:spuArr[10]);
-			   item.setSupplierPrice(spuArr[16]);
-			   item.setDescription(spuArr[15]);
-			   item.setSpuId(spuArr[0]);
-			   
-			   item.setStyleCode(spuArr[3]);
-			   item.setColorCode(spuArr[4]);
-			   
-			   itemMap.put(spuArr[0], item);
-
-			   spu.setId(UUIDGenerator.getUUID());
-               spu.setSupplierId(supplierId);
-               spu.setSpuId(spuArr[0]);
-               spu.setBrandName(spuArr[2]);
-               spu.setCategoryName(spuArr[8]);
-               spu.setSeasonId(spuArr[1]);
-               StringBuffer material = new StringBuffer() ;
-               if (StringUtils.isNotBlank(spuArr[11])) {
-            	   material.append(spuArr[11]).append(";");
-               }else if(StringUtils.isNotBlank(spuArr[15])){
-            	   material.append(spuArr[15]).append(";");
-               }else if (StringUtils.isNotBlank(spuArr[42])) {
-            	   material.append(spuArr[42]);
-               }
-               spu.setMaterial(material.toString());
-               spu.setCategoryGender(spuArr[5]);
-               spu.setProductOrigin(spuArr[40]);
-               //=====================================================================================
-               spuMap.put(spu.getSpuId(), spu);
+			try {				
+			
+				if (StringUtils.isNotBlank(spuStrings[i])) {
+					if (i==1) {
+					  data =  spuStrings[i].split("\\n")[1];
+					}else {
+					  data = spuStrings[i];
+				}
+					spuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+					SpuDTO spu = new SpuDTO();
+					Item item = new Item();
+				   item.setColor(StringUtils.isBlank(spuArr[10])?spuArr[4]:spuArr[10]);
+				   item.setSupplierPrice(spuArr[16]);
+				   item.setDescription(spuArr[15]);
+				   item.setSpuId(spuArr[0]);
+				   
+				   item.setStyleCode(spuArr[3]);
+				   item.setColorCode(spuArr[4]);
+				   
+				   itemMap.put(spuArr[0], item);
+	
+				   spu.setId(UUIDGenerator.getUUID());
+	               spu.setSupplierId(supplierId);
+	               spu.setSpuId(spuArr[0]);
+	               spu.setBrandName(spuArr[2]);
+	               spu.setCategoryName(spuArr[8]);
+	               spu.setSeasonId(spuArr[1]);
+	               StringBuffer material = new StringBuffer() ;
+	               if (StringUtils.isNotBlank(spuArr[11])) {
+	            	   material.append(spuArr[11]).append(";");
+	               }else if(StringUtils.isNotBlank(spuArr[15])){
+	            	   material.append(spuArr[15]).append(";");
+	               }else if (StringUtils.isNotBlank(spuArr[42])) {
+	            	   material.append(spuArr[42]);
+	               }
+	               spu.setMaterial(material.toString());
+	               spu.setCategoryGender(spuArr[5]);
+	               spu.setProductOrigin(spuArr[40]);
+	               //=====================================================================================
+	               spuMap.put(spu.getSpuId(), spu);
+				}				
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorLogger.error(e);
 			}
 		}
 		
@@ -176,15 +192,21 @@ public class FetchProduct {
 		String[] imageStrings = imageData.split("\\r\\n");
 		String[] imageArr = null;
 		for (int j = 2; j < imageStrings.length; j++) {
-			if (StringUtils.isNotBlank(imageStrings[j])) {
-				data = imageStrings[j];
-				imageArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
-				if (!imgMap.containsKey(imageArr[0])) {
-					imgMap.put(imageArr[0], imageArr[1]);
-				}else {
-					imgMap.put(imageArr[0],imgMap.get(imageArr[0])+","+imageArr[1]);
+			try {
+				if (StringUtils.isNotBlank(imageStrings[j])) {
+					data = imageStrings[j];
+					imageArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+					if (!imgMap.containsKey(imageArr[0])) {
+						imgMap.put(imageArr[0], imageArr[1]);
+					}else {
+						imgMap.put(imageArr[0],imgMap.get(imageArr[0])+","+imageArr[1]);
+					}
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorLogger.error(e);
 			}
+			
 		}
 		String[] skuStrings = skuData.split("\\r\\n");
 		String[] skuArr = null;
@@ -194,56 +216,64 @@ public class FetchProduct {
 		int hasnot=0;
 		int stockis0=0;
 		for (int i = 1; i < skuStrings.length; i++) {
-			if (StringUtils.isNotBlank(skuStrings[i])) {
-				if (i==1) {
-				  data =  skuStrings[i].split("\\n")[1];
-				}else {
-				  data = skuStrings[i];
+			
+			try {				
+			
+				if (StringUtils.isNotBlank(skuStrings[i])) {
+					if (i==1) {
+					  data =  skuStrings[i].split("\\n")[1];
+					}else {
+					  data = skuStrings[i];
+					}
+					skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+					if (itemMap.containsKey(skuArr[0])) {
+						Item item = itemMap.get(skuArr[0]);
+						SkuDTO sku = new SkuDTO();
+						sku.setId(UUIDGenerator.getUUID());
+	        			sku.setSupplierId(supplierId);
+	        			sku.setSpuId(skuArr[0]);
+	        			
+	        			size = skuArr[1];
+	        			if (size.indexOf("½")>0) {
+							size=size.replace("½", "+");
+						}
+	        			sku.setProductSize(size);
+	        			
+	        			if (StringUtils.isBlank(priceMap.get(item.getSpuId()))) {
+	        				logger.info(item.getSpuId()+"++++++++++++++++++++++++++++++++++"+"没有价格");
+							System.err.println(item.getSpuId()+"++++++++++++++++++++++++++++++++++"+"没有价格");
+							continue;
+						}
+	        			sku.setMarketPrice(priceMap.get(item.getSpuId()).replace(",", ""));
+	        			sku.setColor(item.getColor());
+	        			sku.setProductDescription(item.getDescription());
+	        			sku.setSaleCurrency("EURO");
+	        			String stock = skuArr[2];
+	        			String barCode = skuArr[5];
+	        			sku.setStock(stock);
+	        			//skuid+barcode
+	        			sku.setSkuId(skuArr[0]+"-"+barCode);
+	        			sku.setBarcode(barCode);
+	        			sku.setProductCode(item.getStyleCode()+"-"+item.getColorCode());
+	        			//====================================================================================
+	        			skuMap.put(sku.getSkuId(), sku);
+	        			has++;
+	        			logger.info("sku找到对应的spu,itemId="+skuArr[0]+"尺寸："+skuArr[1]+"barcode="+barCode+"库存为："+stock);
+	        			if (stock.equals("0")) {
+	        				stockis0++;
+						}
+					}else{
+						qqq++;
+						if (skuArr[2].equals("0")) {
+							hasnot++;
+						}
+						logger.info("此sku找不到对应的spu,itemId="+skuArr[0]+"尺寸："+skuArr[1]+"库存为"+skuArr[2]+" barcode="+skuArr[5]);
+					}
 				}
-				skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
-				if (itemMap.containsKey(skuArr[0])) {
-					Item item = itemMap.get(skuArr[0]);
-					SkuDTO sku = new SkuDTO();
-					sku.setId(UUIDGenerator.getUUID());
-        			sku.setSupplierId(supplierId);
-        			sku.setSpuId(skuArr[0]);
-        			
-        			size = skuArr[1];
-        			if (size.indexOf("½")>0) {
-						size=size.replace("½", "+");
-					}
-        			sku.setProductSize(size);
-        			
-        			if (StringUtils.isBlank(priceMap.get(item.getSpuId()))) {
-        				logger.info(item.getSpuId()+"++++++++++++++++++++++++++++++++++"+"没有价格");
-						System.err.println(item.getSpuId()+"++++++++++++++++++++++++++++++++++"+"没有价格");
-						continue;
-					}
-        			sku.setMarketPrice(priceMap.get(item.getSpuId()).replace(",", ""));
-        			sku.setColor(item.getColor());
-        			sku.setProductDescription(item.getDescription());
-        			sku.setSaleCurrency("EURO");
-        			String stock = skuArr[2];
-        			String barCode = skuArr[5];
-        			sku.setStock(stock);
-        			//skuid+barcode
-        			sku.setSkuId(skuArr[0]+"-"+barCode);
-        			sku.setBarcode(barCode);
-        			sku.setProductCode(item.getStyleCode()+"-"+item.getColorCode());
-        			//====================================================================================
-        			skuMap.put(sku.getSkuId(), sku);
-        			has++;
-        			logger.info("sku找到对应的spu,itemId="+skuArr[0]+"尺寸："+skuArr[1]+"barcode="+barCode+"库存为："+stock);
-        			if (stock.equals("0")) {
-        				stockis0++;
-					}
-				}else{
-					qqq++;
-					if (skuArr[2].equals("0")) {
-						hasnot++;
-					}
-					logger.info("此sku找不到对应的spu,itemId="+skuArr[0]+"尺寸："+skuArr[1]+"库存为"+skuArr[2]+" barcode="+skuArr[5]);
-				}
+			
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorLogger.error(e);
 			}
 		}
 		logger.info("找不到对应关系总数为："+qqq);
@@ -273,19 +303,25 @@ public class FetchProduct {
 		}
 		//=======================处理图片==========================
 		for (Entry<String, String> entry : imgMap.entrySet()) {
-			if (entry.getKey().contains("dota1")) {
-				String imgUrls = entry.getValue();
-				if (StringUtils.isNotBlank(imgUrls)) {
-					String[] imgUrlArr = imgUrls.split(",");
-					productFetchService.savePicture(supplierId, null, entry.getKey().split("|")[0], Arrays.asList(imgUrlArr));
+			try {
+				if (entry.getKey().contains("dota1")) {
+					String imgUrls = entry.getValue();
+					if (StringUtils.isNotBlank(imgUrls)) {
+						String[] imgUrlArr = imgUrls.split(",");
+						productFetchService.savePicture(supplierId, null, entry.getKey().split("|")[0], Arrays.asList(imgUrlArr));
+					}
+				}else{
+					String imgUrls = entry.getValue();
+					if (StringUtils.isNotBlank(imgUrls)) {
+						String[] imgUrlArr = imgUrls.split(",");
+						productFetchService.savePicture(supplierId, entry.getKey(), null, Arrays.asList(imgUrlArr));
+					}
 				}
-			}else{
-				String imgUrls = entry.getValue();
-				if (StringUtils.isNotBlank(imgUrls)) {
-					String[] imgUrlArr = imgUrls.split(",");
-					productFetchService.savePicture(supplierId, entry.getKey(), null, Arrays.asList(imgUrlArr));
-				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorLogger.error(e);
 			}
+			
 		}
 		
 		//更新网站不再给信息的老数据

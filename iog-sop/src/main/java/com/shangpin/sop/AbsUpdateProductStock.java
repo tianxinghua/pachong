@@ -4,6 +4,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SpecialSkuDTO;
+import com.shangpin.iog.dto.StockUpdateDTO;
 import com.shangpin.iog.service.SkuRelationService;
 import com.shangpin.iog.service.SpecialSkuService;
 import com.shangpin.iog.service.UpdateStockService;
@@ -463,10 +464,18 @@ public abstract class AbsUpdateProductStock {
 	 */
 	private int updateIceStock(String host, String app_key, String app_secret,
 			Map<String, Integer> iceStock) throws Exception {
-
+		
+		//待更新的库存为0时查询超时时间，如果超时时间大于某一个特定值，则继续往下执行，避免超卖
 		if (iceStock.size() == 0) {
 			loggerError.error("查询供货商的库存为全部为0");
-			return -1;
+			StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(app_key);
+			if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
+				long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+	    		long hours = diff / (1000 * 60 * 60);
+	    		if(hours < 5){
+	    			return -1;
+	    		}
+			}
 		}
 
 		// logger.warn("{}---更新ice--,数量：{}",Thread.currentThread().getName(),iceStock.size());

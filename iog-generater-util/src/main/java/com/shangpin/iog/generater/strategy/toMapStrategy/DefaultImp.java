@@ -29,48 +29,62 @@ public class DefaultImp implements TransStrategy{
 		Map<String,ProductDTO> spuMap = new HashMap<String, ProductDTO>();
 		
 		for (ProductDTO productDTO : productList) {
-			if (!spuMap.containsKey(productDTO.getSpuId())) {
-				spuMap.put(productDTO.getSpuId(), productDTO);
-			}
-			SkuDTO sku = new SkuDTO();
-			sku.setId(UUIDGenerator.getUUID());
-			sku.setSupplierId(supplierId);
+			try {
+				
+				if (!spuMap.containsKey(productDTO.getSpuId())) {
+					spuMap.put(productDTO.getSpuId(), productDTO);
+				}
+				SkuDTO sku = new SkuDTO();
+				sku.setId(UUIDGenerator.getUUID());
+				sku.setSupplierId(supplierId);
 
-			sku.setSpuId(productDTO.getSpuId());
-			sku.setSkuId(productDTO.getSkuId());
-			sku.setProductSize(productDTO.getSize());
-			sku.setMarketPrice(productDTO.getMarketPrice());
-			sku.setSalePrice(productDTO.getSalePrice().substring(3));
-			sku.setSupplierPrice(productDTO.getSupplierPrice());
-			sku.setColor(productDTO.getColor());
-			sku.setProductDescription(productDTO.getDescription());
-			sku.setStock(productDTO.getStock());
-			sku.setProductCode(productDTO.getProductCode());
-			sku.setSaleCurrency(productDTO.getSalePrice().substring(0,3));
-			sku.setBarcode(productDTO.getBarcode());
-			skuList.add(sku);
+				sku.setSpuId(productDTO.getSpuId());
+				sku.setSkuId(productDTO.getSkuId());
+				sku.setProductSize(productDTO.getSize());
+				sku.setMarketPrice(productDTO.getMarketPrice());
+				sku.setSalePrice(productDTO.getSalePrice());
+				sku.setSupplierPrice(productDTO.getSupplierPrice());
+				sku.setColor(productDTO.getColor());
+				sku.setProductDescription(productDTO.getDescription());
+				sku.setStock(productDTO.getStock());
+				sku.setProductCode(productDTO.getProductCode());
+				sku.setSaleCurrency(productDTO.getCurrency());
+				sku.setBarcode(productDTO.getBarcode());
+				skuList.add(sku);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 		}
 		ProductDTO productDTO = null;
 		String[] picArray = null;
 		for (Entry<String, ProductDTO> en : spuMap.entrySet()) {
-			productDTO = en.getValue();
-			SpuDTO spu = new SpuDTO();
-			spu.setId(UUIDGenerator.getUUID());
-			spu.setSupplierId(supplierId);
-			spu.setSpuId(productDTO.getSpuId());
-			spu.setBrandName(productDTO.getBrand());
-			spu.setCategoryName(productDTO.getCategory());
-			spu.setMaterial(productDTO.getMaterial());
-			spu.setSeasonName(productDTO.getSeason());
-			spu.setProductOrigin(productDTO.getOrigin());
-			// 商品所属性别字段；
-			spu.setCategoryGender(productDTO.getGender());
-			spuList.add(spu);
-			
-			if (StringUtils.isNotBlank(productDTO.getPicurl())) {
-				picArray = productDTO.getPicurl().split(";");
-				imageMap.put(productDTO.getSpuId()+";"+productDTO.getSpuId()+" "+productDTO.getColor(), Arrays.asList(picArray));
+			try {
+				
+				productDTO = en.getValue();
+				SpuDTO spu = new SpuDTO();
+				spu.setId(UUIDGenerator.getUUID());
+				spu.setSupplierId(supplierId);
+				spu.setSpuId(productDTO.getSpuId());
+				spu.setBrandName(productDTO.getBrand());
+				spu.setCategoryName(productDTO.getCategory());
+				spu.setMaterial(productDTO.getMaterial());
+				spu.setSeasonName(productDTO.getSeason());
+				spu.setProductOrigin(productDTO.getOrigin());
+				// 商品所属性别字段；
+				spu.setCategoryGender(productDTO.getGender());
+				spuList.add(spu);
+				
+				if (StringUtils.isNotBlank(productDTO.getPicurl())) {
+					picArray = productDTO.getPicurl().split(";");
+					imageMap.put(productDTO.getSpuId()+";"+productDTO.getSpuId()+" "+productDTO.getColor(), Arrays.asList(picArray));
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+			
 		}
 		returnMap.put("sku", skuList);
 		returnMap.put("spu", spuList);

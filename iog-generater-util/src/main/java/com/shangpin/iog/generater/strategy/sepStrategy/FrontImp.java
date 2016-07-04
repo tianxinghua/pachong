@@ -8,6 +8,10 @@ public class FrontImp extends ISepStrategy{
 		super(strategy);
 	}
 
+	/**
+	 * 处理2个字段，适用于要处理前一个字段，比如字段1值是a|b,字段2值是c，现在要得到a-c则策略是：
+	 * front%|%0%-
+	 */
 	@Override
 	public String merge(List<String> dataList) {
 		String[] split = strategy.split("%");

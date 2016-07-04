@@ -56,42 +56,30 @@ public class StartTask {
 	CsvSupplierService csvSupplierService;
 	
 	public void startTask() {
-		//TODO 获取信息
-		List<Task> tasks = new ArrayList<Task>();
-		
 		
 		//TODO 获取总体执行时间
 		Task totalTask = new Task();
 		totalTask.setCronExpression("0/10 * * * * ?");
+		Trigger trigger = totalTask.getTrigger();
 		
-//		excuteTask(totalTask);
-//		final TaskHanderService hander = totalTask.getHander(context);
-		Trigger         trigger = totalTask.getTrigger();
 		ScheduledFuture  future =  scheduler.schedule(new Runnable() {
 			public void run() {
 				try {
-					Monitor monitor = Monitor.getMonitor();
-					TaskObserver taskObserver = TaskObserver.getTaskObserver();
-					taskObserver.setMonitor(monitor);
-					
 					TaskController taskController = (TaskController)StartUp.getApplicationContext().getBean("taskController");
+					//0=stop待关闭 , 1=start待启动 , 2=run正在运行 , 3=stopped已关闭
+					// 必须先检查状态为2的进行判断，如果状态为2的并没有运行，则置状态为3
+					List<CsvSupplierInfoDTO> suppliers_2 = csvSupplierService.findCsvSuppliersByState("2");
+					taskController.checkTask(suppliers_2); 
+					// 状态0 执行关闭任务 关闭后修改状态为3 				
+					List<CsvSupplierInfoDTO> suppliers_0 = csvSupplierService.findCsvSuppliersByState("0");
+					taskController.stopTask(suppliers_0); 
+					// 状态1 执行启动 启动后修改数据库状态为2
+					List<CsvSupplierInfoDTO> suppliers_1 = csvSupplierService.findCsvSuppliersByState("1");
+					taskController.startTask(suppliers_1);
 					
-//					taskObserver.setTaskController(TaskController.getTaskController());
-					taskObserver.setTaskController(taskController);
-					monitor.addObserver(taskObserver);
-					//TODO 获取信息
-					Map<String, CsvSupplierInfoDTO> newMonitorMessage = new HashMap<String, CsvSupplierInfoDTO>();
-//					List<SupplierDTO> list = supplierService.findAllWithAvailable();
-					List<CsvSupplierInfoDTO> csvSuppliers = csvSupplierService.findAllCsvSuppliers();
-					
-					System.out.println("获取到"+csvSuppliers.size());
-					
-					for (CsvSupplierInfoDTO CsvSupplierInfoDTO : csvSuppliers) {
-						newMonitorMessage.put(CsvSupplierInfoDTO.getSupplierId(), CsvSupplierInfoDTO);
-					}
-					monitor.checkChange(newMonitorMessage );
 				} catch (Exception e) {
 					e.printStackTrace();
+					logger.error(e); 
 				}
 			}
 		}, trigger);

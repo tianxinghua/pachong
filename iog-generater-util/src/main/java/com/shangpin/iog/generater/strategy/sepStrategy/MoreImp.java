@@ -8,6 +8,9 @@ public class MoreImp extends ISepStrategy{
 		super(strategy);
 	}
 
+	/**
+	 * more% %0%;
+	 */
 	@Override
 	public String merge(List<String> dataList) {
 		String[] split = strategy.split("%");

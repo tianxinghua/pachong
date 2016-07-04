@@ -81,6 +81,7 @@ public class PullDown {
 					sku.setProductSize(item.getSize().replaceAll("\"", "").replaceAll(",", " "));
 					sku.setStock(item.getQty().replaceAll("\"", "").replaceAll(",", " "));
 					sku.setBarcode(item.getBarcode().replaceAll("\"", "").replaceAll(",", " "));
+					sku.setSalePrice(item.getSale_price().replaceAll("\"", "").replaceAll(",", " ")); 
 					try {
 						
 						if(skuDTOMap.containsKey(sku.getSkuId())){

@@ -33,4 +33,12 @@ public interface UpdateStockService {
 	 */
 	public void saveOrUpdateDTO(StockUpdateDTO stockUpdateDTO) throws SQLException;
 	
+	/**
+	 * 根据supplierId查询表
+	 * @param supplierId
+	 * @return
+	 * @throws SQLException
+	 */
+	public StockUpdateDTO findStockUpdateBySUpplierId(String supplierId) throws SQLException;
+	
 }
