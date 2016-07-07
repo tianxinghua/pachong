@@ -54,6 +54,7 @@ public class UNZIPFile {
 			while ((len = in.read(buf1)) > 0) {
 				out.write(buf1, 0, len);
 			}
+			out.flush();
 			in.close();
 			out.close();
 		}

@@ -262,7 +262,8 @@ public class FetchProduct {
 	        			if (StringUtils.isBlank(priceMap.get(item.getSpuId()))) {
 	        				logger.info(item.getSpuId()+"++++++++++++++++++++++++++++++++++"+"没有价格");
 							System.err.println(item.getSpuId()+"++++++++++++++++++++++++++++++++++"+"没有价格");
-							continue;
+//							continue;
+							priceMap.put(item.getSpuId(), "0");
 						}
 	        			sku.setMarketPrice(priceMap.get(item.getSpuId()).replace(",", ""));
 	        			sku.setColor(item.getColor());

@@ -121,6 +121,10 @@ public class FetchProduct2 {
 				DateSupplier dateSupplier1 = new DateSupplier();
 				dateSupplier1.setID("38");
 				dateSupplier1.setName("ACANFORA S.R.L.");
+				DateSupplier dateSupplier2 = new DateSupplier();
+				dateSupplier2.setID("13");
+				dateSupplier2.setName("GAUDENZISRL"); 
+				supplierL.add(dateSupplier2);
 				supplierL.add(dateSupplier1);
 				supplierL.add(dateSupplier0);
 				supplierList.setData(supplierL); 

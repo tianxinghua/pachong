@@ -71,11 +71,15 @@ public abstract class AbsUpdateProductStock {
 
 	private static ResourceBundle bdl = null;
 	private static  String email = null;
+	private static String expStartTime = null;
+	private static String expEndTime = null;
 	static {
 		if(null==bdl){
 			bdl=ResourceBundle.getBundle("openice");
 		}
 		email = bdl.getString("email");
+		expStartTime = bdl.getString("expStartTime");
+		expEndTime = bdl.getString("expEndTime");
 	}
 
 
@@ -824,11 +828,18 @@ public abstract class AbsUpdateProductStock {
 
 		List<PurchaseOrderDetail> orderDetails = null;
 		boolean hasNext=true;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		Date endDate = new Date();
-		String endTime = format.format(endDate);
-		String startTime = format.format(getAppointDayFromSpecifiedDay(endDate, -1, "D"));
-
+		String endTime = "";
+		String startTime = "";
+		if(org.apache.commons.lang.StringUtils.isNotBlank(expStartTime) && org.apache.commons.lang.StringUtils.isNotBlank(expEndTime)){
+			startTime = expStartTime;
+			endTime = expEndTime;
+		}else{
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			Date endDate = new Date();
+			endTime = format.format(endDate);
+			startTime = format.format(getAppointDayFromSpecifiedDay(endDate, -1, "D"));
+		}
+		
 		List<java.lang.Integer> statusList = new ArrayList<>();
 		statusList.add(7);
 		int pageIndex=1,pageSize=20;

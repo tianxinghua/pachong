@@ -1,5 +1,6 @@
 package com.shangpin.iog.brunarosso.order.service;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -55,10 +56,10 @@ public class OrderSreviceImpl extends AbsOrderService{
 	}
 	
 	@Override
-	public void handleSupplierOrder(OrderDTO orderDTO) {
+	public void handleSupplierOrder(OrderDTO orderDTO) {		
 		
-		logger.info("下单成功!");
 		orderDTO.setStatus(OrderStatus.PAYED);
+		logger.info("下单成功!");
 	}
 
 	@Override
@@ -69,29 +70,43 @@ public class OrderSreviceImpl extends AbsOrderService{
 			OrdineConfermato ordineConfermato = new OrdineConfermato();
 			String[] skuId_qty = orderDTO.getDetail().split(",")[0].split(":"); 
 			String[] spuId_size = skuId_qty[0].split("-");
-			ordineConfermato.setID_ARTICOLO(Long.parseLong(spuId_size[0]));
-			ordineConfermato.setTAGLIA(spuId_size[1]);
-			ordineConfermato.setQTA(Long.parseLong(skuId_qty[1]));
+			ordineConfermato.setID_ARTICOLO(Long.parseLong(spuId_size[0]));//spuId
+			ordineConfermato.setTAGLIA(spuId_size[1]);//尺码
+			ordineConfermato.setQTA(Long.parseLong(skuId_qty[1]));//数量
+			logger.info("下单参数========spuId="+ordineConfermato.getID_ARTICOLO()+",尺码="+ordineConfermato.getTAGLIA()+",数量="+ordineConfermato.getQTA());
 			OrdineConfermatoResponse response = wS_SitoStub.ordineConfermato(ordineConfermato);
 			String result = response.getOrdineConfermatoResult();
-			System.out.println(result); 
+			logger.info("返回的结果======"+result);
+			System.out.println(result); 			
+			if(result.startsWith("OK")){
+				orderDTO.setStatus(OrderStatus.CONFIRMED);
+				orderDTO.setExcState("0");
+			}else{
+				orderDTO.setExcState("1");
+				orderDTO.setExcDesc(result);
+				orderDTO.setExcTime(new Date());
+			}
 			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			loggerError.error(e); 
+			orderDTO.setExcState("1");
+			orderDTO.setExcDesc(e.getMessage());
+			orderDTO.setExcTime(new Date());
 		}
 	}
 
 	@Override
 	public void handleCancelOrder(ReturnOrderDTO deleteOrder) {
 		// TODO Auto-generated method stub
-		
+		deleteOrder.setStatus(OrderStatus.CANCELLED); 
 	}
 
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
 		// TODO Auto-generated method stub
-		
+		deleteOrder.setStatus(OrderStatus.REFUNDED); 
 	}
 
 	@Override
@@ -110,7 +125,7 @@ public class OrderSreviceImpl extends AbsOrderService{
 	public static void main(String[] args) {
 		OrderSreviceImpl order = new OrderSreviceImpl();
 		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setDetail("3131784-39:1,");
+		orderDTO.setDetail("8713299-39:1,");
 		order.handleConfirmOrder(orderDTO); 
 		
 	}
