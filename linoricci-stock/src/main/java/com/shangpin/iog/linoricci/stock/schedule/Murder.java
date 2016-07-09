@@ -1,5 +1,5 @@
 
-package com.shangpin.iog.linoricci.stock.schedule;
+package com.shangpin.iog.ostore.stock.schedule;
 
 import java.util.ResourceBundle;
 import java.util.TimerTask;

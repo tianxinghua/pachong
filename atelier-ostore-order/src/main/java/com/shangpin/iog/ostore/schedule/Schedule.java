@@ -1,6 +1,6 @@
 package com.shangpin.iog.ostore.schedule;
 
-import com.shangpin.iog.ostore.order.LinoricciOrderServiceImpl;
+import com.shangpin.iog.ostore.order.OrderServiceImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class Schedule {
     }
 
     @Autowired
-    LinoricciOrderServiceImpl orderService;
+    OrderServiceImpl orderService;
 
     //下单 退单 异常
     @Scheduled(cron="0 0/2 * * * ? ")

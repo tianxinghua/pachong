@@ -38,11 +38,12 @@ public class ColtortiProductConvert {
 		dto.setSkuId(p.getSkuId());
 //		dto.setSupplierPrice(p.getPrice()==null?"0":""+p.getPrice());
 		dto.setMarketPrice(p.getPrice()==null?"0":""+p.getPrice());
-		if(null!=p.getDiscountRate()&&0!=p.getDiscountRate()){
+		if(null!=p.getDiscountRate()){
 			dto.setSupplierPrice(new BigDecimal(dto.getMarketPrice()).multiply(new BigDecimal(100-p.getDiscountRate()))
 					.divide(new BigDecimal(122),5).setScale(0,BigDecimal.ROUND_HALF_UP).toString());
-		}else{
-			dto.setSupplierPrice("0");
+		}else {
+			dto.setSupplierPrice(new BigDecimal(dto.getMarketPrice()).multiply(new BigDecimal(100))
+					.divide(new BigDecimal(122),5).setScale(0,BigDecimal.ROUND_HALF_UP).toString());
 		}
 		dto.setSpuId(p.getProductId());
 		dto.setSaleCurrency("EUR");

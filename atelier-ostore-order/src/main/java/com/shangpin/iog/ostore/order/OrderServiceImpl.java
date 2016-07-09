@@ -19,7 +19,7 @@ import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.service.ProductSearchService;
 
-public class LinoricciOrderServiceImpl extends AbsOrderService{
+public class OrderServiceImpl extends AbsOrderService{
 	private static Logger logger = Logger.getLogger("info");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
@@ -83,7 +83,7 @@ public class LinoricciOrderServiceImpl extends AbsOrderService{
 				//确认订单失败
 				orderDTO.setExcDesc("确认订单失败");
 				//处理采购异常
-				handlePurchaseOrderExc(orderDTO);
+//				handlePurchaseOrderExc(orderDTO);
 			}
 		} catch (Exception e) {
 			orderDTO.setExcDesc("网络原因付款失败"+e.getMessage());

@@ -22,10 +22,5 @@ include 'iog-product-web'
 include 'filippo-order'
 include 'bagheera-stock'
 include 'coltorti'
-
-
-
-
-
-
+include 'atelier-ostore-order'
 

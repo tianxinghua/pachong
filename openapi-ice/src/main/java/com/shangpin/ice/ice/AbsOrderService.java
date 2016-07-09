@@ -200,6 +200,8 @@ public abstract class AbsOrderService {
         //时刻更新时间，以便监测程序是否运行
         updateOrderTime(supplierId);
 
+        writeGrapDate(endDate,"date.ini");
+
     }
 
     private void updateOrderTime(String supplierId) {
@@ -255,6 +257,9 @@ public abstract class AbsOrderService {
             }
 
         }
+
+
+
         String uuid="",skuNo="";
         //由于拉取时可能更改供货商的SKU的编号需要 继承者确认
         Map<String,String> skuMap = new HashMap<>();
@@ -313,6 +318,10 @@ public abstract class AbsOrderService {
 
         //处理退款
         handleRefundOrderAndEmailOfWMS(supplierNo, supplierId);
+
+
+        //更新拉取成功后的拉取时间
+        writeGrapDate(endDateOfWMS, "dateWMS.ini");
     }
 
     private String getOrderInfoFromWMS(String jsonParameter, String result) {
@@ -559,8 +568,8 @@ public abstract class AbsOrderService {
                         PurchaseOrderDetailSpecialPage orderDetailSpecialPage = null;
                         try {
                             orderDetailSpecialPage = servant.FindPurchaseOrderDetailSpecial(supplierId, "", spOrderNo);
-                        } catch (ApiException e1) {
-                            e1.printStackTrace();
+                        } catch (Exception e1) {
+                            loggerError.error("查询订单 " + spOrderNo  +" 采购单信息失败." +e1.getMessage(),e1);
                         }
                         logger.info("查询是否支付，订单号:" + spOrderNo);
                         if (null != orderDetailSpecialPage && null != orderDetailSpecialPage.PurchaseOrderDetails && orderDetailSpecialPage.PurchaseOrderDetails.size() > 0) {  //存在采购单 就代表已支付
@@ -584,43 +593,47 @@ public abstract class AbsOrderService {
                         Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();
                         sopPurchaseOrderNo = entry.getKey();
                         List<PurchaseOrderDetailSpecial> purchaseOrderDetailSpecialList =  entry.getValue();
-                        for (int i=0;i<purchaseOrderDetailSpecialList.size();i++) {
-                            PurchaseOrderDetailSpecial purchaseOrderDetail = purchaseOrderDetailSpecialList.get(i);
-                            if (detailDTO.getSpSku().equals(purchaseOrderDetail.SkuNo)) { //与ORDER 同一个商品
+                        if(null!=purchaseOrderDetailSpecialList) {
+                            for (int i=0;i<purchaseOrderDetailSpecialList.size();i++) {
+                                PurchaseOrderDetailSpecial purchaseOrderDetail = purchaseOrderDetailSpecialList.get(i);
+                                if (detailDTO.getSpSku().equals(purchaseOrderDetail.SkuNo)) { //与ORDER 同一个商品
 
-                                //两种情况：1 新插入的,spPurchaseNo 为空 2 重新采购的 有值
+                                    //两种情况：1 新插入的,spPurchaseNo 为空 2 重新采购的 有值
 
-                                if (StringUtils.isEmpty(detailDTO.getSpPurchaseNo())) {
-                                    purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
-                                    purchaseNobuffer.append(purchaseOrderDetail.SopPurchaseOrderNo).append(";");
-                                    //赋值状态 海外商品每个采购单 只有一种商品
-                                    detailDTO.setPurchasePriceDetail(purchaseOrderDetail.SkuPrice);
-                                    detailDTO.setSpOrderDetailNo(purchaseOrderDetail.OrderDetailNo);
-                                    detailDTO.setSpPurchaseNo(sopPurchaseOrderNo);
-                                    detailDTO.setSpPurchaseDetailNo(purchaseOrderDetail.SopPurchaseOrderDetailNo);
-                                }else{
-                                    if (!detailDTO.getSpPurchaseNo().equals(sopPurchaseOrderNo)) {
-                                        continue;
+                                    if (StringUtils.isEmpty(detailDTO.getSpPurchaseNo())) {
+                                        purchaseOrderDetailbuffer.append(purchaseOrderDetail.SopPurchaseOrderDetailNo).append(";");
+                                        purchaseNobuffer.append(purchaseOrderDetail.SopPurchaseOrderNo).append(";");
+                                        //赋值状态 海外商品每个采购单 只有一种商品
+                                        detailDTO.setPurchasePriceDetail(purchaseOrderDetail.SkuPrice);
+                                        detailDTO.setSpOrderDetailNo(purchaseOrderDetail.OrderDetailNo);
+                                        detailDTO.setSpPurchaseNo(sopPurchaseOrderNo);
+                                        detailDTO.setSpPurchaseDetailNo(purchaseOrderDetail.SopPurchaseOrderDetailNo);
+                                    }else{
+                                        if (!detailDTO.getSpPurchaseNo().equals(sopPurchaseOrderNo)) {
+                                            continue;
+                                        }
                                     }
-                                }
 
-                                if (5 != purchaseOrderDetail.DetailStatus) { //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
-                                    detailDTO.setStatus(OrderStatus.PAYED);
-                                } else {
-                                    detailDTO.setStatus(OrderStatus.REFUNDED);
-                                }
+                                    if (5 != purchaseOrderDetail.DetailStatus) { //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
+                                        detailDTO.setStatus(OrderStatus.PAYED);
+                                    } else {
+                                        detailDTO.setStatus(OrderStatus.REFUNDED);
+                                    }
 //                                purchaseOrderDetailSpecialList.remove(i);
 //                                i--;
-                                purchaseOrderMap.remove(sopPurchaseOrderNo);
-                                try {
-                                    orderDetailService.update(detailDTO);
-                                    continue start;
-                                } catch (ServiceException e1) {
-                                    e1.printStackTrace();
-                                }
+                                    purchaseOrderMap.remove(sopPurchaseOrderNo);
+                                    try {
+                                        orderDetailService.update(detailDTO);
+                                        continue start;
+                                    } catch (Exception e1) {
+                                        loggerError.error("更新订单状态失败："+e1.getMessage(),e1);
 
+                                    }
+
+                                }
                             }
                         }
+
                     }
 //                    if (isNew) {//新系统
 //                        orderDTO.setSpPurchaseNo(purchaseNobuffer.toString().substring(0, purchaseNobuffer.toString().length() - 1));
@@ -1849,7 +1862,7 @@ public abstract class AbsOrderService {
         Date tmpDate =  DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(startDate,YYYY_MMDD_HH),-10,"S");
         startDate = DateTimeUtil.convertFormat(tmpDate,YYYY_MMDD_HH) ;
 
-        writeGrapDate(endDate,fileName);
+//        writeGrapDate(endDate,fileName);
 
 
     }
@@ -1872,7 +1885,7 @@ public abstract class AbsOrderService {
         if(endDateOfTemp!=null&&!"".equals(endDateOfTemp)){
             endDateOfWMS = endDateOfTemp;
         }else{
-            writeGrapDate(endDateOfWMS, fileName);
+//            writeGrapDate(endDateOfWMS, fileName);
         }
         System.out.println("startDateOfWMS："+startDateOfWMS + "，endDateOfWMS："+endDateOfWMS);
         logger.info("startDateOfWMS："+startDateOfWMS + "，endDateOfWMS："+endDateOfWMS);

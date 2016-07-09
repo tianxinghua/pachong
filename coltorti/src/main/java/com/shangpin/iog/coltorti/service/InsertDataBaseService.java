@@ -150,7 +150,7 @@ public class InsertDataBaseService {
 		for (SkuDTO sk : skus) {
 			
 			try{
-				sk.setMarketPrice(sk.getSupplierPrice());
+//				sk.setMarketPrice(sk.getSupplierPrice());
 				pfs.saveSKU(sk);
 //				if(null!=picMap){
 //					logger.info("-----开始保存SKUPIC-----");

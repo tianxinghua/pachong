@@ -1,4 +1,4 @@
-package com.shangpin.iog.linoricci.stock;
+package com.shangpin.iog.ostore.stock;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
