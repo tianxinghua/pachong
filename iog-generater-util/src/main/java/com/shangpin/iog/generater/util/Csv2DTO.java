@@ -44,6 +44,7 @@ public class Csv2DTO {
 		String rowString = "";
 		try {
 			cr = new CsvReader(filePath);
+			cr.readRecord();
 			while(cr.readRecord()){
 				try {
 					rowString = cr.getRawRecord();

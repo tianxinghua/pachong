@@ -1,15 +1,25 @@
 package com.shangpin.iog.rosi.dto;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@XmlRootElement(name="item")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Item {
 
+	@javax.xml.bind.annotation.XmlElement(name="no-name")
+	String no_name;
+	@javax.xml.bind.annotation.XmlElement(name="Discounted-price")
 	String Discounted_price;
 	String category_name;
 	String brand_name;
+	@javax.xml.bind.annotation.XmlElement(name="product-code")
 	String product_code;
 	String supplier_SKU;
 	String gender;
@@ -25,6 +35,7 @@ public class Item {
 	String image_link_3;
 	String image_link_4;
 	String image_link_5;
+	String stock_sku;
 	String Stock;
 	String size;
 	String price;

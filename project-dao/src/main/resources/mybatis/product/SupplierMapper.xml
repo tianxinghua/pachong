@@ -83,7 +83,13 @@
  </select>
 
 
+<select id="findAll" resultMap="resultMap">
 
+	select
+  <include refid="all_column"></include>
+
+  from SUPPLIER
+</select>
 
 
 </mapper>

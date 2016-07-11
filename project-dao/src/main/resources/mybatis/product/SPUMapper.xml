@@ -108,6 +108,16 @@
           </set>
           where  SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
     </update>
+    
+    <update id="updateSeason" parameterType="iog_spu">
+    	update SPU
+    	<set>           
+              <if test="seasonId != null"> SEASON_ID = #{seasonId},</if>
+              <if test="seasonName != null"> SEASON_NAME = #{seasonName}</if>              
+          </set>
+          where  SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
+    </update>
+    
     <select id="findSPUBySupplierAndSpuId"  resultMap="spuMap" parameterType="java.lang.String">
 	        select
 	          <include refid="all_spu_column"></include>

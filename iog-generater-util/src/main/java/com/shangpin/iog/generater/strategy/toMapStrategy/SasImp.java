@@ -13,6 +13,12 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.generater.dto.ProductDTO;
 
+/**
+ * 处理特殊csv的类
+ * 该类适用于sizeandstock，即尺码和库存在一列
+ * @author sunny
+ *
+ */
 public class SasImp implements TransStrategy{
 
 	public Map<String, Object> toMap(List<ProductDTO> productList,String supplierId, String[] strategys) {

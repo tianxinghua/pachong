@@ -71,11 +71,15 @@ public abstract class AbsUpdateProductStock {
 
 	private static ResourceBundle bdl = null;
 	private static  String email = null;
+	private static String expStartTime = null;
+	private static String expEndTime = null;
 	static {
 		if(null==bdl){
 			bdl=ResourceBundle.getBundle("openice");
 		}
 		email = bdl.getString("email");
+		expStartTime = bdl.getString("expStartTime");
+		expEndTime = bdl.getString("expEndTime");
 	}
 
 
@@ -370,17 +374,18 @@ public abstract class AbsUpdateProductStock {
 	private int updateIceStock(String supplier, Map<String, Integer> iceStock,Map<String,String> sopPriceMap)
 			throws Exception {
 
-		//待更新的库存为0时查询超时时间，如果超时时间大于某一个特定值，则继续往下执行，避免超卖
+		//拉取的供货商的库存集合为空时，不往下执行
 		if(iceStock.size() ==0){
 			
-			StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(supplier);
-			if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
-				long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
-	    		long hours = diff / (1000 * 60 * 60);
-	    		if(hours < 5){
-	    			return -1;
-	    		}
-			}
+			return -1;
+//			StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(supplier);
+//			if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
+//				long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+//	    		long hours = diff / (1000 * 60 * 60);
+//	    		if(hours < 5){
+//	    			return -1;
+//	    		}
+//			}
 		}
 
 		OpenApiServantPrx servant = null;
@@ -572,7 +577,17 @@ public abstract class AbsUpdateProductStock {
 				
 				if(supplierStock.size()==0){
 					loggerError.error("=======抓取供货商信息返回的supplierStock.size为0=========");
-					return iceStock;
+					StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(supplierId);
+					if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
+						long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+			    		long hours = diff / (1000 * 60 * 60);
+			    		//待更新的库存为0时查询超时时间，如果超时时间大于某一个特定值，则继续往下执行，避免超卖
+			    		if(hours < 5){
+			    			return iceStock;
+			    		}else{
+			    			loggerError.error("该供货商出错已经超过"+hours+"小时，所有库存将会被置为0，避免超卖");
+			    		}
+					}					
 				}else{//判断supplierStock的值是否全为0
 					boolean isNUll = true;
 					for (Map.Entry<String, String> entry : supplierStock
@@ -585,7 +600,17 @@ public abstract class AbsUpdateProductStock {
 
 					if(isNUll){//supplierStock的值全为0,则返回空的map
 						loggerError.error("========抓取供货商那边返回的map里的所有的value都是0========");
-						return iceStock;
+						StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(supplierId);
+						if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
+							long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+				    		long hours = diff / (1000 * 60 * 60);
+				    		//待更新的库存为0时查询超时时间，如果超时时间大于某一个特定值，则继续往下执行，避免超卖
+				    		if(hours < 5){
+				    			return iceStock;
+				    		}else{
+				    			loggerError.error("该供货商出错已经超过"+hours+"小时，所有库存将会被置为0，避免超卖");
+				    		}
+						}	
 					}
 				}
 			} catch (Exception e) {    //获取库存信息时失败
@@ -808,11 +833,18 @@ public abstract class AbsUpdateProductStock {
 
 		List<PurchaseOrderDetail> orderDetails = null;
 		boolean hasNext=true;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		Date endDate = new Date();
-		String endTime = format.format(endDate);
-		String startTime = format.format(getAppointDayFromSpecifiedDay(endDate, -1, "D"));
-
+		String endTime = "";
+		String startTime = "";
+		if(org.apache.commons.lang.StringUtils.isNotBlank(expStartTime) && org.apache.commons.lang.StringUtils.isNotBlank(expEndTime)){
+			startTime = expStartTime;
+			endTime = expEndTime;
+		}else{
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			Date endDate = new Date();
+			endTime = format.format(endDate);
+			startTime = format.format(getAppointDayFromSpecifiedDay(endDate, -1, "D"));
+		}
+		
 		List<java.lang.Integer> statusList = new ArrayList<>();
 		statusList.add(7);
 		int pageIndex=1,pageSize=20;

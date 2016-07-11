@@ -194,11 +194,28 @@ public class TaskController {
 												
 					}else if("xml".equals(csvSupplier.getDataType())){
 						//TODO 
-//						Map<String,String> tagNameMap = new HashMap<String,String>();
-//						for(CsvAttributeInfoDTO attribute : attributes){
-//							tagNameMap.put(attribute.getAttriValue(), attribute.getAttriName());
-//						}
-//						List<ProductDTO> productList = Xml2DTO.toDTO(csvSupplier.getFilePath(), csvSupplier.getXmlSkuTag(), csvSupplier.getXmlSpuTag(), tagNameMap);
+						Map<String,String> tagNameMap = new HashMap<String,String>();
+						Map<String,String> tempMap = new HashMap<String,String>();
+						for(CsvAttributeInfoDTO attribute : attributes){
+							tempMap.put(attribute.getAttriName(),attribute.getAttriValue());
+							if(StringUtils.isNotBlank(attribute.getAttriValue())){
+								tagNameMap.put(attribute.getAttriValue(),attribute.getAttriName());
+							}							
+						}
+						//多个属性用同一个标签
+						Map<String,List<String>> theSame = new HashMap<String,List<String>>(); 
+						for(Entry<String, String> entry :tempMap.entrySet()){
+							List<String> sameValList = new ArrayList<String>();
+							for(Entry<String, String> entry1 :tempMap.entrySet()){
+								if(StringUtils.isNotBlank(entry.getValue()) && StringUtils.isNotBlank(entry1.getValue()) && entry.getValue().equals(entry1.getValue())){
+									sameValList.add(entry1.getKey());									
+								}
+							}
+							theSame.put(entry.getKey(), sameValList);
+						}
+						
+						List<ProductDTO> productList = Xml2DTO.toDTO(csvSupplier.getFetchUrl(),csvSupplier.getFilePath(), csvSupplier.getXmlSkuTag(), csvSupplier.getXmlSpuTag(), tagNameMap,theSame);
+						map = DataListToMap.toMap(csvSupplier.getToMapCondition(), productList,csvSupplier.getSupplierId(), null);	
 						
 					}else if("json".equals(csvSupplier.getDataType())){
 						//TODO 

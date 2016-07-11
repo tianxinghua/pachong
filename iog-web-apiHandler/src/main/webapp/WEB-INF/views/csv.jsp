@@ -120,7 +120,7 @@
 		}
 		
 		function formatOper(val,row,index){ 
-    		return '<a href="javascript:void(0)" onclick="editAttibute('+index+')">编辑属性</a>';  
+    		return '<a href="javascript:void(0)" onclick="editAttibute('+index+')">更多属性</a>';  
 		} 
 		
 		function editAttibute(index){

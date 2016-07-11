@@ -101,6 +101,7 @@ public class FetchProduct {
         
         //价格信息
         String[] priceStrings = priceData.split("\\r\\n");
+        logger.info("priceStrings的大小为======"+priceStrings.length); 
         String[] priceArr = null;
         for (int i = 1; i < priceStrings.length; i++) {
         	try {
@@ -124,6 +125,7 @@ public class FetchProduct {
         
         //得到所有的spu信息
         String[] spuStrings = spuData.split("\\r\\n");
+        logger.info("spu的总数有==============="+spuStrings.length);
         String[] spuArr = null;
 		for (int i = 1; i < spuStrings.length; i++) {
 			
@@ -181,20 +183,26 @@ public class FetchProduct {
 			
 			} catch (Exception e) {
 				e.printStackTrace();
+				errorLogger.error(spuStrings[i]); 
 				errorLogger.error(e);
 			}
 		}
 		
 		//============================保存spu===================================
+		logger.info("开始保存spu，spuMap的大小是============"+spuMap.size()); 
 		for (Entry<String, SpuDTO> entry: spuMap.entrySet()) {
 			 try {
 				productFetchService.saveSPU(entry.getValue());
+				logger.info(entry.getKey()+"已保存");
 			} catch (ServiceException e) {
+				System.out.println(entry.getKey()+e.getMessage()); 
 			   try {
 					productFetchService.updateMaterial(entry.getValue());
+					logger.info(entry.getKey()+"已存在");
 				} catch (ServiceException e1) {
 					e1.printStackTrace();
-				}
+					errorLogger.error(entry.getKey()+"+++++++++++++"+e);
+				}			   
 			}
 		}
 		
@@ -226,6 +234,7 @@ public class FetchProduct {
 		int has=0;
 		int hasnot=0;
 		int stockis0=0;
+		logger.info("sku的总数有============"+skuStrings.length);
 		for (int i = 1; i < skuStrings.length; i++) {
 			
 			try {
@@ -253,7 +262,8 @@ public class FetchProduct {
 	        			if (StringUtils.isBlank(priceMap.get(item.getSpuId()))) {
 	        				logger.info(item.getSpuId()+"++++++++++++++++++++++++++++++++++"+"没有价格");
 							System.err.println(item.getSpuId()+"++++++++++++++++++++++++++++++++++"+"没有价格");
-							continue;
+//							continue;
+							priceMap.put(item.getSpuId(), "0");
 						}
 	        			sku.setMarketPrice(priceMap.get(item.getSpuId()).replace(",", ""));
 	        			sku.setColor(item.getColor());

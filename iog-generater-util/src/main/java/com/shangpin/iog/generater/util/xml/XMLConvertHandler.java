@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -20,13 +21,16 @@ public class XMLConvertHandler extends DefaultHandler {
 	private String spuStartElementTag;
 	private String skuStartElementTag;
 	private Map<String, String> tagNameMap;
+	private Map<String,List<String>> theSame;
 
 	public XMLConvertHandler(String spuStartElementTag,
-			String skuStartElementTag, Map<String, String> tagNameMap) {
+			String skuStartElementTag, Map<String, String> tagNameMap,
+			Map<String,List<String>> theSame) {
 		super();
 		this.spuStartElementTag = spuStartElementTag;
 		this.skuStartElementTag = skuStartElementTag;
 		this.tagNameMap = tagNameMap;
+		this.theSame = theSame;
 	}
 	
 	public List<ProductDTO> getSpuList() {
@@ -40,11 +44,11 @@ public class XMLConvertHandler extends DefaultHandler {
 			throws SAXException {
 		String data = new String(ch, start, length);
 		if (sku !=null && preTag!=null) {
-			setDTOValue(data, preTag, sku);
+			setDTOValue(data, preTag, sku,theSame);
 			return;
 		}
 		if (spu != null && preTag!=null) {
-			setDTOValue(data, preTag, spu);
+			setDTOValue(data, preTag, spu,theSame);
 		}
 
 	}
@@ -85,11 +89,20 @@ public class XMLConvertHandler extends DefaultHandler {
 	}
 	
 	//赋值productDTO
-	private void setDTOValue(String data, String preTag, ProductDTO productDTO){
+	private void setDTOValue(String data, String preTag, ProductDTO productDTO,Map<String,List<String>> theSame){
 		try {
-			Field field = productDTO.getClass().getDeclaredField(preTag);
-			field.setAccessible(true);
-			field.set(productDTO, data);
+//			Field field = productDTO.getClass().getDeclaredField(preTag);
+//			field.setAccessible(true);
+//			field.set(productDTO, data);
+			for(Entry<String,List<String>> entry :theSame.entrySet()){
+				if(preTag.equals(entry.getKey())){
+					for(String name : entry.getValue()){
+						Field fieldSame = productDTO.getClass().getDeclaredField(name);
+						fieldSame.setAccessible(true);
+						fieldSame.set(productDTO, data);
+					}
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

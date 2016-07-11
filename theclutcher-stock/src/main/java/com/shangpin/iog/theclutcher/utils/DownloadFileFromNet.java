@@ -52,7 +52,8 @@ public class DownloadFileFromNet {
 		File file = new File(saveDir + File.separator + fileName);
 		FileOutputStream fos = new FileOutputStream(file);
 		fos.write(getData);
-		if (fos != null) {
+		fos.flush(); 
+		if (fos != null) { 
 			fos.close();
 		}
 		if (inputStream != null) {

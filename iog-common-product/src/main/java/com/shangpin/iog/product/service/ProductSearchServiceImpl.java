@@ -952,29 +952,31 @@ buffer.append(dto.getMemo());
 	}
 	
 	public StringBuffer getDiffSeasonProducts(String suppliers,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException{
-		
-		Map<String, String> supMap = new HashMap<String, String>();
+		List<ProductDTO> toupdateProducts = new ArrayList<ProductDTO>();
+//		Map<String, String> supMap = new HashMap<String, String>();
 		List<SupplierDTO> supplierList = supplierDAO.findByState("1");
-		for (SupplierDTO supplierDTO : supplierList) {
-			supMap.put(supplierDTO.getSupplierId(),
-					supplierDTO.getSupplierName());
-		}
+//		for (SupplierDTO supplierDTO : supplierList) {
+//			supMap.put(supplierDTO.getSupplierId(),
+//					supplierDTO.getSupplierName());
+//		}
 		StringBuffer buffer = new StringBuffer("供应商" + splitSign				
 				+ "ProductModel 货号" + splitSign + "供货商skuid" + splitSign+ "新上市季节" + splitSign+ "上市季节").append("\r\n");
-		for(String supplier : suppliers.split(",")){
-			if(StringUtils.isNotBlank(supplier)){
-				final List<ProductDTO> products = productDAO.findDiffSeasonProducts(supplier,startDate,endDate);
+		for(SupplierDTO supplier : supplierList){
+			if(StringUtils.isNotBlank(supplier.getSupplierId())){
+				final List<ProductDTO> products = productDAO.findDiffSeasonProducts(supplier.getSupplierId(),startDate,endDate);
 				if(null == products || products.size()==0){
 					return null;
 				}else{
 					for(ProductDTO dto : products){
+						toupdateProducts.add(dto);
 						// 供应商
-						String supplierId = dto.getSupplierId();
-						if (null == supMap.get(supplierId)) {
-							buffer.append("	" + supplierId).append(splitSign);
-						} else {
-							buffer.append(supMap.get(supplierId)).append(splitSign);
-						}
+//						String supplierId = dto.getSupplierId();
+//						if (null == supMap.get(supplierId)) {
+//							buffer.append("	" + supplierId).append(splitSign);
+//						} else {
+//							buffer.append(supMap.get(supplierId)).append(splitSign);
+//						}
+						buffer.append(StringUtils.isNotBlank(supplier.getSupplierName())? supplier.getSupplierName():supplier.getSupplierId()).append(splitSign);
 						buffer.append(
 								null == dto.getProductCode() ? "" : dto
 										.getProductCode().replaceAll(",", " "))
@@ -998,16 +1000,42 @@ buffer.append(dto.getMemo());
 				}
 			}
 		}
+		
+		if(toupdateProducts.size()> 0){
+			try {
+				
+				for(ProductDTO dto :toupdateProducts){
+					try {
+						SpuDTO spu = new SpuDTO();
+						spu.setSupplierId(dto.getSupplierId());
+						spu.setSpuId(dto.getSpuId());
+						spu.setSeasonName(dto.getNewseasonName());
+						spu.setSeasonId(dto.getNewseasonId());
+						spuDAO.updateSeason(spu);						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		return buffer;
 	}
 	
 	public StringBuffer getDiffProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException{
 		Map<String, String> supMap = new HashMap<String, String>();
-		List<SupplierDTO> supplierList = supplierDAO.findByState("1");
-		for (SupplierDTO supplierDTO : supplierList) {
-			supMap.put(supplierDTO.getSupplierId(),
-					supplierDTO.getSupplierName());
-		}
+		try {
+			List<SupplierDTO> supplierList = supplierDAO.findAll();
+			for (SupplierDTO supplierDTO : supplierList) {
+				supMap.put(supplierDTO.getSupplierId(),
+						supplierDTO.getSupplierName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
 		StringBuffer buffer = new StringBuffer("供应商" + splitSign				
 				+ "ProductModel 货号" + splitSign + "供货商skuid" + splitSign+ "新市场价" + splitSign
 				+ "新销售价" + splitSign + "新进货价" + splitSign + "市场价"
@@ -1109,14 +1137,16 @@ buffer.append(dto.getMemo());
 							
 							SkuDTO skuDTO = new SkuDTO();
 							skuDTO.setUpdateTime(new Date());
+							skuDTO.setSupplierId(dto.getSupplierId());
+							skuDTO.setSkuId(dto.getSkuId()); 
 							if(!dto.getMarketPrice().equals(dto.getNewMarketPrice())){
-								skuDTO.setNewMarketPrice(dto.getNewMarketPrice());
+								skuDTO.setMarketPrice(dto.getNewMarketPrice());
 							}
 							if(!dto.getSalePrice().equals(dto.getNewSalePrice())){
-								skuDTO.setNewSalePrice(dto.getNewSalePrice());
+								skuDTO.setSalePrice(dto.getNewSalePrice());
 							}
 							if(!dto.getSupplierPrice().equals(dto.getNewSupplierPrice())){
-								skuDTO.setNewSupplierPrice(dto.getNewSupplierPrice());
+								skuDTO.setSupplierPrice(dto.getNewSupplierPrice());
 							}
 							skuDAO.updatePrice(skuDTO); 
 							
