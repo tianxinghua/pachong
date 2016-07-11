@@ -11,8 +11,10 @@ import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.LogisticsDTO;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.OrderDetailDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.service.LogisticsService;
+import com.shangpin.iog.service.OrderDetailService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +57,7 @@ public abstract   class AbsDeliverService {
 
 
     @Autowired
-    com.shangpin.iog.service.OrderService productOrderService;
+    OrderDetailService orderDetailService;
 
     @Autowired
     LogisticsService logisticsService;
@@ -70,19 +72,21 @@ public abstract   class AbsDeliverService {
      */
     public void confirmShippedOrder(String supplierId){
 
-        List<com.shangpin.iog.dto.OrderDTO>  orderDTOList= null;
+        List<OrderDetailDTO> orderDetailDTOs = null;
         Date date = new Date();
         String startDate="",endDate="";
         endDate = DateTimeUtil.convertFormat(date,YYYY_MMDD_HH) ;
         startDate = DateTimeUtil.convertFormat(DateTimeUtil.getAppointDayFromSpecifiedDay(date,-Delay,"D"),YYYY_MMDD_HH);
         try {
-            orderDTOList  =productOrderService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId,OrderStatus.CONFIRMED,startDate,endDate);
+            orderDetailDTOs  =orderDetailService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId,OrderStatus.CONFIRMED,startDate,endDate);
         } catch (ServiceException e) {
             e.printStackTrace();
         }
-        if(null!=orderDTOList){
-            logger.info("已确认的订单数量是："+orderDTOList.size());
-            for(OrderDTO orderDTO :orderDTOList){
+        if(null!=orderDetailDTOs){
+            logger.info("已确认的订单数量是："+orderDetailDTOs.size());
+            for(OrderDetailDTO orderDetailDTO :orderDetailDTOs){
+                OrderDTO orderDTO = this.transDTO(orderDetailDTO);
+
                 //订单支付后查询是否发货
                 handleConfirmShippedOrder(orderDTO);
 
@@ -158,7 +162,7 @@ public abstract   class AbsDeliverService {
                 map.put("status",spOrder.getStatus());
                 map.put("updateTime", DateTimeUtil.convertFormat(new Date(), YYYY_MMDD_HH));
             }
-            productOrderService.updateOrderMsg(map);
+            orderDetailService.updateDetailMsg(map);
         } catch (Exception e) {
             loggerError.error("订单："+spOrder.getSpOrderId()+" 更新订单状态失败。"+e.getMessage());
             System.out.println("订单：" + spOrder.getSpOrderId() + " 更新订单状态失败");
@@ -180,5 +184,27 @@ public abstract   class AbsDeliverService {
         }
 
 
+    }
+
+    private OrderDTO transDTO(OrderDetailDTO orderDetailDTO){
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setSupplierId(orderDetailDTO.getSupplierId());
+        orderDTO.setSupplierNo(orderDetailDTO.getSupplierNo());
+        orderDTO.setSpOrderId(orderDetailDTO.getOrderNo());
+        orderDTO.setSpPurchaseNo(orderDetailDTO.getSpPurchaseNo());
+        orderDTO.setStatus(orderDetailDTO.getStatus());
+        orderDTO.setDeliveryNo(orderDetailDTO.getDeliveryNo());
+        orderDTO.setUuId(orderDetailDTO.getUuid());
+        orderDTO.setSupplierOrderNo(orderDetailDTO.getSupplierOrderNo());
+        orderDTO.setCreateTime(orderDetailDTO.getCreateTime());
+        orderDTO.setExcDesc(orderDetailDTO.getExcDesc());
+        orderDTO.setExcState(orderDetailDTO.getExcState());
+        orderDTO.setExcTime(orderDetailDTO.getExcTime());
+        orderDTO.setPurchasePriceDetail(orderDetailDTO.getPurchasePriceDetail());
+        orderDTO.setUpdateTime(orderDetailDTO.getUpdateTime());
+        orderDTO.setDetail(orderDetailDTO.getSupplierSku()+":1");
+        orderDTO.setMemo(orderDetailDTO.getSpSku()+":-1");
+
+        return orderDTO;
     }
 }
