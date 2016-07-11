@@ -1,4 +1,4 @@
-package com.shangpin.iog.linoricci.order;
+package com.shangpin.iog.ostore.order;
 
 import java.util.Date;
 import java.util.HashMap;

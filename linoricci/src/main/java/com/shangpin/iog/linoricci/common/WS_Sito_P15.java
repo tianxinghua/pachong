@@ -1,4 +1,4 @@
-package com.shangpin.iog.linoricci.common;
+package com.shangpin.iog.ostore.common;
 
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;

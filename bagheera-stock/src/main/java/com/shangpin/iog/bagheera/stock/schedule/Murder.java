@@ -44,6 +44,7 @@ public class Murder extends TimerTask{
 		System.out.println(Thread.currentThread().getName()+"执行murder");
 		System.out.println(executor.toString());
 		Thread t = new Thread(new Worker(stockImp));
+
 		Future<?> future = executor.submit(t);
 		try {
 			future.get(time, TimeUnit.MILLISECONDS);

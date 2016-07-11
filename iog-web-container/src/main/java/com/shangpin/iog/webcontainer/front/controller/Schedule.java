@@ -286,9 +286,9 @@ public class Schedule {
 	//季节码发生变化发送邮件
 	@Scheduled(cron="${sendMaildiffSeason_Schedule}")
 	public void sendMaildiffSeason(){
-		if(StringUtils.isBlank(supplierId_diffSeason)){
-			return;
-		}
+//		if(StringUtils.isBlank(supplierId_diffSeason)){
+//			return;
+//		}
 		Date endDate = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");   
 		Date startDate = null;
@@ -302,7 +302,7 @@ public class Schedule {
 		try {
 			if(StringUtils.isNotBlank(to)){
 				
-				StringBuffer buffer = productService.getDiffSeasonProducts(supplierId_diffSeason,startDate,endDate,null,null);
+				StringBuffer buffer = productService.getDiffSeasonProducts(null,startDate,endDate,null,null);
 				if(null != buffer){
 					String messageText  = buffer.toString();
 					if(StringUtils.isNotBlank(messageText)){ 

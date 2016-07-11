@@ -1,6 +1,6 @@
-package com.shangpin.iog.linoricci.schedule;
+package com.shangpin.iog.ostore.schedule;
 
-import com.shangpin.iog.linoricci.order.LinoricciOrderServiceImpl;
+import com.shangpin.iog.ostore.order.LinoricciOrderServiceImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

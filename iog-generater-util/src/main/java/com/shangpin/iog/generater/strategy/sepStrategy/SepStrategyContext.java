@@ -2,6 +2,8 @@ package com.shangpin.iog.generater.strategy.sepStrategy;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 public class SepStrategyContext {
 	//具体操作
 	public ISepStrategy[] operate(String[] strategy){
@@ -13,7 +15,7 @@ public class SepStrategyContext {
 	}
 	//选择
 	private ISepStrategy checkCondition(String condition){
-		if (condition.equals("")) {
+		if (StringUtils.isBlank(condition)) {
 			return new DefaultImp(condition);
 		}else if(condition.contains("front")){
 			return new FrontImp(condition);

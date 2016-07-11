@@ -11,6 +11,7 @@ import java.util.concurrent.ScheduledFuture;
 
 import lombok.Delegate;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -132,6 +133,10 @@ public class TaskController {
 	
 	private void excuteTask(final CsvSupplierInfoDTO csvSupplier){
 		
+		if(StringUtils.isBlank(csvSupplier.getCrontime())){
+			System.out.println("任务的定时时间为空，创建任务失败。。。");
+			return;
+		}
 		
 		final Task task = new Task();
 		task.setCronExpression(csvSupplier.getCrontime());
@@ -154,13 +159,13 @@ public class TaskController {
 						for(CsvAttributeInfoDTO attribute : attributes){
 							java.lang.reflect.Field field = attriValueClzz.getClass().getDeclaredField(attribute.getAttriName());
 							field.setAccessible(true);
-							field.set(attriValueClzz, attribute.getAttriValue()== null? "":attribute.getAttriValue());
+							field.set(attriValueClzz, attribute.getAttriValue());
 						}
 						ProductDTO attriRuleClzz = new ProductDTO();
 						for(CsvAttributeInfoDTO attribute : attributes){
 							java.lang.reflect.Field field = attriValueClzz.getClass().getDeclaredField(attribute.getAttriName());
 							field.setAccessible(true);
-							field.set(attriRuleClzz, attribute.getAttriRule()== null? "":attribute.getAttriRule());
+							field.set(attriRuleClzz, attribute.getAttriRule());
 						}
 						
 						String[] needColsNo = new String[]{attriValueClzz.getSizeandstock(),attriValueClzz.getSpuId(),
@@ -189,17 +194,35 @@ public class TaskController {
 												
 					}else if("xml".equals(csvSupplier.getDataType())){
 						//TODO 
-//						Map<String,String> tagNameMap = new HashMap<String,String>();
-//						for(CsvAttributeInfoDTO attribute : attributes){
-//							tagNameMap.put(attribute.getAttriValue(), attribute.getAttriName());
-//						}
-//						List<ProductDTO> productList = Xml2DTO.toDTO(csvSupplier.getFilePath(), csvSupplier.getXmlSkuTag(), csvSupplier.getXmlSpuTag(), tagNameMap);
+						Map<String,String> tagNameMap = new HashMap<String,String>();
+						Map<String,String> tempMap = new HashMap<String,String>();
+						for(CsvAttributeInfoDTO attribute : attributes){
+							tempMap.put(attribute.getAttriName(),attribute.getAttriValue());
+							if(StringUtils.isNotBlank(attribute.getAttriValue())){
+								tagNameMap.put(attribute.getAttriValue(),attribute.getAttriName());
+							}							
+						}
+						//多个属性用同一个标签
+						Map<String,List<String>> theSame = new HashMap<String,List<String>>(); 
+						for(Entry<String, String> entry :tempMap.entrySet()){
+							List<String> sameValList = new ArrayList<String>();
+							for(Entry<String, String> entry1 :tempMap.entrySet()){
+								if(StringUtils.isNotBlank(entry.getValue()) && StringUtils.isNotBlank(entry1.getValue()) && entry.getValue().equals(entry1.getValue())){
+									sameValList.add(entry1.getKey());									
+								}
+							}
+							theSame.put(entry.getKey(), sameValList);
+						}
+						
+						List<ProductDTO> productList = Xml2DTO.toDTO(csvSupplier.getFetchUrl(),csvSupplier.getFilePath(), csvSupplier.getXmlSkuTag(), csvSupplier.getXmlSpuTag(), tagNameMap,theSame);
+						map = DataListToMap.toMap(csvSupplier.getToMapCondition(), productList,csvSupplier.getSupplierId(), null);	
 						
 					}else if("json".equals(csvSupplier.getDataType())){
 						//TODO 
 					}
 					
 					if(null != map && map.size()>0){
+						System.out.println("====================开始保存信息======================");
 						AbsSaveProductImpl abs = (AbsSaveProductImpl)StartUp.getApplicationContext().getBean("abssaveproduct");	
 						abs.handleData(csvSupplier.getPicFlag(), csvSupplier.getSupplierId(), 90, csvSupplier.getPicPath(),map);
 						//将执行成功的供货商状态置成2

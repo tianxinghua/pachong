@@ -75,21 +75,29 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
 
         for (String skuno : skuNo) { 
         	
-            if (StringUtils.isNotEmpty(stockMap2.get(skuno))){//先在weitzman里查找             	
-                skustock.put(skuno, Integer.valueOf(stockMap2.get(skuno)));
-            }else{//然后在lncc里找
-            	String stock2 = "";                
-                if(skuno.length()<15){
-                	stock2 = lnccStockMap.get("09"+skuno); 
-                }else{
-                	stock2 = lnccStockMap.get(skuno); 
+        	try {
+				
+        		if (StringUtils.isNotEmpty(stockMap2.get(skuno))){//先在weitzman里查找             	
+                    skustock.put(skuno, Integer.valueOf(stockMap2.get(skuno)));
+                }else{//然后在lncc里找
+                	String stock2 = "";                
+                    if(skuno.length()<15){
+                    	stock2 = lnccStockMap.get("09"+skuno); 
+                    }else{
+                    	stock2 = lnccStockMap.get(skuno); 
+                    }
+                    if(StringUtils.isNotBlank(stock2)){
+                    	skustock.put(skuno,Integer.valueOf(stock2));
+                    }else{
+                    	skustock.put(skuno, 0);
+                    }            	
                 }
-                if(StringUtils.isNotBlank(stock2)){
-                	skustock.put(skuno,Integer.valueOf(stock2));
-                }else{
-                	skustock.put(skuno, 0);
-                }            	
-            }
+        		
+			} catch (Exception e) {
+				e.printStackTrace();
+				loggerError.error(e); 
+			}
+            
                 
         }
         logger.info("levelgroup赋值库存数据成功");

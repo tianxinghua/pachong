@@ -63,7 +63,17 @@
 			usr.supplierNo=$('#supplierNo').val();
 			usr.crontime=$('#crontime').val();
 			usr.fetchUrl=$('#fetchUrl').val();
-			usr.status=$('#status').val();
+			usr.state=$('#state').val();
+			usr.classPath = $('#classPath').val();
+			usr.state=$('#state').val();
+			usr.dataType=$('#dataType').val();
+			usr.filePath=$('#filePath').val();
+			usr.toMapCondition=$('#toMapCondition').val();
+			usr.xmlSkuTag=$('#xmlSkuTag').val();
+			usr.sep=$('#sep').val();
+			usr.xmlSpuTag=$('#xmlSpuTag').val();
+			usr.picFlag=$('#picFlag').val();
+			usr.picPath=$('#picPath').val();			
 			var jsonDate = $.toJSON(usr);		
 			$('#fm').form('submit',{
 				url: url,
@@ -110,7 +120,7 @@
 		}
 		
 		function formatOper(val,row,index){ 
-    		return '<a href="javascript:void(0)" onclick="editAttibute('+index+')">编辑属性</a>';  
+    		return '<a href="javascript:void(0)" onclick="editAttibute('+index+')">更多属性</a>';  
 		} 
 		
 		function editAttibute(index){
@@ -185,7 +195,7 @@
 			</div>
 			<div class="fitem">
 				<label>status:</label>
-				<input style="width:250px;height:20px" id="status" name="status" class="easyui-validatebox" > 
+				<input style="width:250px;height:20px" id="state" name="state" class="easyui-validatebox" > 
 			</div>
 			<div class="fitem">
 				<label>classPath:</label>

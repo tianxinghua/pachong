@@ -102,6 +102,7 @@ public class FetchProduct {
                     final String cate = record.get("Categoria"); // 类目
                     final String season = record.get("Collezione / Anno"); //上市季节
                     final String localPrice = record.get("Prezzo Et (€)"); // 当地价格(欧元)
+                    final String salePrice = record.get("Prezzo Imp (€)");
                     final String supplierPrice = record.get("Price to WS (€)"); // 供应商价格
                     final String sizeStr = record.get("Taglie"); // 尺码(库存)
                     final String picsStr = record.get("Foto"); // 图片
@@ -150,6 +151,7 @@ public class FetchProduct {
                     sku.setSkuId(skuId);
                     sku.setProductSize(size);
                     sku.setMarketPrice(localPrice);
+                    sku.setSalePrice(salePrice); 
                     sku.setSupplierPrice(supplierPrice);
                     sku.setProductCode(productCode);
                     sku.setColor(color);

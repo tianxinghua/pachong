@@ -110,9 +110,10 @@ public class FetchProduct extends AbsSaveProduct{
                 sku.setSpuId(spuId);
                 sku.setSkuId(skuid); 
                 sku.setProductSize(product.getSIZE());
-                sku.setMarketPrice(product.getPRICE());
+//                sku.setMarketPrice(product.getPRICE());
+                sku.setMarketPrice("");
                 sku.setSalePrice(product.getSALEPRICE());
-//                sku.setSupplierPrice(product.getPRICE());
+                sku.setSupplierPrice("");
                 sku.setColor(product.getCOLOR());
                 sku.setProductDescription(product.getDESCRIPTION());
                 sku.setStock(product.getSTOCK_LEVEL());

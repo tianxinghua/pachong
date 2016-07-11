@@ -12,7 +12,7 @@ public class Product {
     private String BUYURL;
     private String AVAILABLE;
     private String IMAGEURL;
-    private String PRICE;
+//    private String PRICE;
     private String SALEPRICE;
     private String STOCK_LEVEL;
     private String UPC;
@@ -88,14 +88,6 @@ public class Product {
 
     public void setIMAGEURL(String IMAGEURL) {
         this.IMAGEURL = IMAGEURL;
-    }
-
-    public String getPRICE() {
-        return PRICE;
-    }
-
-    public void setPRICE(String PRICE) {
-        this.PRICE = PRICE;
     }
 
     public String getSALEPRICE() {

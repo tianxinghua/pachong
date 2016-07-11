@@ -1,5 +1,5 @@
 
-package com.shangpin.iog.linoricci.stock.schedule;
+package com.shangpin.iog.ostore.stock.schedule;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

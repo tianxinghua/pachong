@@ -1,4 +1,4 @@
-package com.shangpin.iog.linoricci.stock.schedule;
+package com.shangpin.iog.ostore.stock.schedule;
 
 import java.util.Date;
 
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.iog.linoricci.stock.LinoricciStockImp;
+import com.shangpin.iog.ostore.stock.LinoricciStockImp;
 
 @Component
 @PropertySource("classpath:conf.properties")
