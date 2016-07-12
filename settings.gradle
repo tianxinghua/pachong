@@ -16,6 +16,8 @@ include 'iog-facade-impl'
 include 'iog-sop'
 include 'iog-generater-util'
 include 'iog-web-apiHandler'
+include 'filippo-order'
+include 'spinnaker-order'
 
 
 include 'iog-product-web'

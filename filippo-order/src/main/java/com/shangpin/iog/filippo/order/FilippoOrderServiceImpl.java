@@ -220,7 +220,7 @@ public class FilippoOrderServiceImpl extends AbsOrderService{
 		param.put("w", "ha");param.put("q", "ordreq");
 		param.put("poc", deleteOrder.getSupplierOrderNo());
 		
-		logger.info("op=s请求参数为poc="+deleteOrder.getSupplierOrderNo());
+		logger.info("op=c请求参数为poc="+deleteOrder.getSupplierOrderNo());
 		String result = HttpUtil45.get(orderurl, outTimeConf, param);
 		return result;
 	}
