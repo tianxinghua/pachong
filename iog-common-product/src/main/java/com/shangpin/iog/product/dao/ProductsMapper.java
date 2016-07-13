@@ -135,6 +135,15 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     		@Param("startDate") Date startDate,
     		@Param("endDate") Date endDate, RowBounds rowBounds);
     List<ProductDTO> findDiffSeasonProducts(@Param("supplier") String supplier,@Param("startDate") Date startDate,@Param("endDate") Date endDate);
+    
+    /**
+     * 根据供货商id查询价格不同的商品
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    List<ProductDTO> findDiffPriceProducts(@Param("supplier") String supplier,@Param("startDate") Date startDate,@Param("endDate") Date endDate);
 }
 
 

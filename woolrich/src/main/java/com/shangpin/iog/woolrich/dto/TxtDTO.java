@@ -14,7 +14,7 @@ public class TxtDTO {
     private String BUYURL;
     private String AVAILABLE;
     private String IMAGEURL;
-    private String PRICE;
+//    private String PRICE;
     private String SALEPRICE;
     private String STOCK_LEVEL;
     private String UPC;
@@ -28,6 +28,7 @@ public class TxtDTO {
     private String SIZE;
     private String STANDARDSHIPPINCOST;
     private String CONDITION;
+    private String MADEIN;
     private String ALT_IMAGEURL_1;
     private String ALT_IMAGEURL_2;
     private String ALT_IMAGEURL_3;

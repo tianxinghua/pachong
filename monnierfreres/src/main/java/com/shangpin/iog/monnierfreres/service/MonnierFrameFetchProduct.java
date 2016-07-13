@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -29,7 +28,6 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.monnierfreres.dto.Item;
 import com.shangpin.iog.monnierfreres.dto.Product;
-import com.shangpin.iog.monnierfreres.utils.CVSUtil;
 import com.shangpin.iog.monnierfreres.utils.DownloadAndReadCSV;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
@@ -63,67 +61,50 @@ public class MonnierFrameFetchProduct extends AbsSaveProduct {
 		List<SpuDTO> spuList = new ArrayList<SpuDTO>();
 		Map<String, List<String>> imageMap = new HashMap<String, List<String>>();
 
+		List<Product> list = null;
 		try {
-			OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*5,1000*60*60,1000*60*60);
-			String data = HttpUtil45.get(url, outTimeConf, null, "mnfrootadmin", "LfHaP2016!");
-//			System.out.println(data); 
-			List<Item> items = CVSUtil.readCSV(data, Item.class, '|');
-			
-			for (Item item : items) {
-				try {
-					SkuDTO sku = new SkuDTO();
-					sku.setId(UUIDGenerator.getUUID());
-					sku.setSkuId(item.getSku());
-					sku.setSupplierId(supplierId);
-					sku.setSpuId(item.getProduct_id());
-					sku.setProductCode(item.getProduct_id());
-					sku.setColor(item.getColor());
-//					sku.setSaleCurrency();
-					sku.setMarketPrice(item.getPrice());
-					sku.setStock(item.getQty());
-//					sku.setBarcode(item.getBarCode());
-					sku.setProductSize(item.getSize());
-					sku.setProductName(item.getCategory_breadcrumb()+" "+item.getBrand());
-					sku.setProductDescription(item.getDescription());
-					skuList.add(sku);
-
-					List<String> images = new ArrayList<String>();
-					if(StringUtils.isNotBlank(item.getImage_url_1())){
-						images.add(item.getImage_url_1());
-					}
-					if(StringUtils.isNotBlank(item.getImage_url_2())){
-						images.add(item.getImage_url_2());
-					}
-					if(StringUtils.isNotBlank(item.getImage_url_3())){
-						images.add(item.getImage_url_3());
-					}
-					if(StringUtils.isNotBlank(item.getImage_url_4())){
-						images.add(item.getImage_url_4());
-					}
-					if(StringUtils.isNotBlank(item.getImage_url_5())){
-						images.add(item.getImage_url_5());
-					}				
-					imageMap.put(sku.getSkuId() + ";" + sku.getProductCode(), images);
-					
-					SpuDTO spu = new SpuDTO(); 
-					spu.setId(UUIDGenerator.getUUID());
-					spu.setSpuId(sku.getSpuId());
-					spu.setSupplierId(supplierId);
-					spu.setBrandName(item.getBrand());
-					spu.setCategoryName(item.getCategory_breadcrumb());
-//					spu.setSubCategoryName(product.getSubCategory());
-					spu.setCategoryGender("female");
-					spu.setMaterial(item.getMaterial()+" "+item.getCharacteristics1()+";"+item.getCharacteristics2()+";"+item.getCharacteristics3()+";"+item.getCharacteristics4());
-//					spu.setProductOrigin(item.get);
-					spuList.add(spu);
-				} catch (Exception e) {
-					e.printStackTrace(); 
-				}
-				
-			}	
+			list = DownloadAndReadCSV.readLocalCSV();
 		} catch (Exception e) {
-			e.printStackTrace(); 
-		}			
+			e.printStackTrace();
+		}
+		for (Product product : list) {
+			SpuDTO spu = new SpuDTO();
+			List<Item> items = product.getItems();
+			if (items.size() == 0) {
+				continue;
+			}
+			for (Item item : items) {
+				SkuDTO sku = new SkuDTO();
+				sku.setId(UUIDGenerator.getUUID());
+				sku.setSkuId(item.getItemCode());
+				sku.setSupplierId(supplierId);
+				sku.setSpuId(product.getProductCode());
+				sku.setProductCode(product.getProductCode());
+				sku.setColor(product.getColor());
+				sku.setSaleCurrency("USD");
+				sku.setMarketPrice(item.getPrice());
+				sku.setStock(item.getStock());
+				sku.setBarcode(item.getBarCode());
+				sku.setProductSize(item.getSize());
+				sku.setProductName(product.getProductName());
+				sku.setProductDescription(product.getDescription());
+				skuList.add(sku);
+
+				String[] images = product.getImage_url();
+				imageMap.put(sku.getSkuId() + ";" + sku.getProductCode(), Arrays.asList(images));
+				 
+				spu.setId(UUIDGenerator.getUUID());
+				spu.setSpuId(product.getProductCode());
+				spu.setSupplierId(supplierId);
+				spu.setBrandName(product.getBrand());
+				spu.setCategoryName(product.getCategory());
+				spu.setSubCategoryName(product.getSubCategory());
+				spu.setCategoryGender("female");
+				spu.setMaterial(product.getMaterial());
+				spu.setProductOrigin(product.getMade());
+				spuList.add(spu);
+			}
+		}
 		returnMap.put("sku", skuList);
 		returnMap.put("spu", spuList);
 		returnMap.put("image", imageMap);
@@ -138,13 +119,11 @@ public class MonnierFrameFetchProduct extends AbsSaveProduct {
 
 	public static void main(String[] args) throws Exception {
 		// 加载spring
-//		loadSpringContext();
-//		MonnierFrameFetchProduct stockImp = (MonnierFrameFetchProduct) factory
-//				.getBean("monnierFrameFetchProduct");
-//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//		stockImp.handleData("sku", supplierId, day, picpath);
-		MonnierFrameFetchProduct stockImp = new MonnierFrameFetchProduct();
-		stockImp.fetchProductAndSave();
+		loadSpringContext();
+		MonnierFrameFetchProduct stockImp = (MonnierFrameFetchProduct) factory
+				.getBean("monnierFrameFetchProduct");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		stockImp.handleData("sku", supplierId, day, picpath);
 	}
 
 }

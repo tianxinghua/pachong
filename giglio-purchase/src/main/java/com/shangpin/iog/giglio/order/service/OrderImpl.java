@@ -12,14 +12,17 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.dto.OrderDTO;
+import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
+import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SkuPriceService;
 
 @Component
 public class OrderImpl extends AbsOrderService {
 
 	private static Logger logger = Logger.getLogger("info");
+	private static Logger errorLogs = Logger.getLogger("error");
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
 	private static String supplierNo = null;
@@ -28,10 +31,13 @@ public class OrderImpl extends AbsOrderService {
 	private static String from = null;
 	private static String fromUserPassword = null;
 	private static String to = null;
-	private static String subject = null;
+//	private static String subject = null;
 	private static String messageType = null;
 	@Autowired
 	SkuPriceService skuPriceService;
+	
+	@Autowired
+    ProductSearchService productSearchService;
 
 	@Autowired
 	com.shangpin.iog.service.OrderService productOrderService;
@@ -46,7 +52,7 @@ public class OrderImpl extends AbsOrderService {
 		fromUserPassword = bdl.getString("fromUserPassword");
 		from = bdl.getString("from");
 		to = bdl.getString("to");
-		subject = bdl.getString("subject");
+//		subject = bdl.getString("subject");
 		messageType = bdl.getString("messageType");
 		smtpHost = bdl.getString("smtpHost");
 	}
@@ -87,6 +93,7 @@ public class OrderImpl extends AbsOrderService {
 		deleteOrder.setExcState("0");
 		// 超过一天 不需要在做处理 订单状态改为其它状体
 		deleteOrder.setStatus(OrderStatus.CANCELLED);
+//		sendMailOfReturnedOrder(deleteOrder);
 	}
 
 	/**
@@ -112,27 +119,74 @@ public class OrderImpl extends AbsOrderService {
 		// TODO Auto-generated method stub
 		deleteOrder.setExcState("0");
 		deleteOrder.setStatus(OrderStatus.REFUNDED);
+		sendMailOfReturnedOrder(deleteOrder);
 	}
 
 	@Override
 	public void handleEmail(OrderDTO orderDTO) {
 	}
 	
+	/**
+	 * 推送订单
+	 * @param orderDTO
+	 */
 	private void sendMail(OrderDTO orderDTO){
 		
 		try {
+			logger.info("开始推送的订单==="+orderDTO.getSpPurchaseNo()); 
 			String detail = orderDTO.getDetail();
-			String string = detail.split(",")[0];
-			String messageText = string.split(":")[0]+" "+string.split(":")[1]+" "+orderDTO.getSpPurchaseNo();
-			SendMail.sendMessage(smtpHost, from, fromUserPassword, to, subject, messageText , messageType);
+			String string = detail.split(",")[0];			
+			String skuId = string.split(":")[0];
+			ProductDTO product = productSearchService.findProductForOrder(supplierId,skuId);
+			String subject = "order-shangpin";
+			//采购单号 尺码  skuId 货号  barcode 数量    
+			String messageText =orderDTO.getSpPurchaseNo()+
+								";"+product.getSize()+
+								";"+skuId+
+								";"+(null != product.getProductCode()? product.getProductCode():"")+
+								";"+(null != product.getBarcode()? product.getBarcode():"")+
+								";"+string.split(":")[1];
+			SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject, messageText , messageType);
+			logger.info("=============订单推送成功===========");
 		} catch (Exception e) {
 			e.printStackTrace();
+			errorLogs.error(e);
+			errorLogs.error("推送失败的订单======="+orderDTO.getSpPurchaseNo()); 
+		}
+	}
+	
+	/**
+	 * 推动退单
+	 * @param orderDTO
+	 */
+	private void sendMailOfReturnedOrder(ReturnOrderDTO deleteOrder){
+		
+		try {
+			logger.info("开始推送退单++++"+deleteOrder.getSpPurchaseNo()); 
+			String detail = deleteOrder.getDetail();
+			String string = detail.split(",")[0];			
+			String skuId = string.split(":")[0];
+			ProductDTO product = productSearchService.findProductForOrder(supplierId,skuId);
+			String subject = "cancelled order-shangpin";
+			//采购单号 尺码  skuId 货号  barcode 数量    
+			String messageText =deleteOrder.getSpPurchaseNo()+
+								";"+product.getSize()+
+								";"+skuId+
+								";"+(null != product.getProductCode()? product.getProductCode():"")+
+								";"+(null != product.getBarcode()? product.getBarcode(): "")+
+								";"+string.split(":")[1];
+			SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject, messageText , messageType);
+			logger.info("+++++++++++退单推送成功+++++++++++++"); 
+		} catch (Exception e) {
+			e.printStackTrace();
+			errorLogs.error(e);
+			errorLogs.error("推送失败的退单+++++++++"+deleteOrder.getSpPurchaseNo()); 
 		}
 	}
 	public static void main(String[] args) {
 		OrderDTO orderDTO = new OrderDTO();
 		orderDTO.setDetail("asdf:1,");
-		orderDTO.setSpPurchaseNo("12312313");
+		orderDTO.setSpPurchaseNo("CGD201607120001");
 		new OrderImpl().handleConfirmOrder(orderDTO );
 	}
 }
