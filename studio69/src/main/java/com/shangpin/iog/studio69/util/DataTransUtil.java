@@ -1,5 +1,8 @@
 package com.shangpin.iog.studio69.util;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +31,7 @@ public class DataTransUtil {
 	private static String url;
 	private static String username;
 	private static String password;
+	private static String savePath = null;
 
 	static {
 		if (null == bdl)
@@ -36,6 +40,7 @@ public class DataTransUtil {
 		url = bdl.getString("url");
 		username = bdl.getString("username");
 		password = bdl.getString("password");
+		savePath = bdl.getString("savePath");
 	}
 	public static Map<String,Category> getGoodsCategory(){
 		//处理------------------------------
@@ -43,6 +48,7 @@ public class DataTransUtil {
 		logger.info("获取所有品类");
 		Map<String,Category> returnMap = new HashMap<String, Category>();
 		String goodsCategorys = HttpUtil45.postAuth(url+"GetGoodsCatg", null, outTimeConf, username, password);
+		save("GetGoodsCatg.txt",goodsCategorys);
 		GoodsCategory goodsCategory = null;
 		try {
 			goodsCategory = ObjectXMLUtil.xml2Obj(GoodsCategory.class, goodsCategorys);
@@ -62,6 +68,9 @@ public class DataTransUtil {
 		logger.info("获取所有品类");
 		Map<String,String> returnMap = new HashMap<String, String>();
 		String data = HttpUtil45.postAuth(url+"DictBrand", null, outTimeConf, username, password);
+		
+		save("DictBrand.txt",data);
+		
 		BrandList brandlist = null;
 		try {
 			brandlist = ObjectXMLUtil.xml2Obj(BrandList.class, data);
@@ -79,6 +88,9 @@ public class DataTransUtil {
 		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10);
 		logger.info("获取所有spu");
 		String data = HttpUtil45.postAuth(url+"GetGoodsList", null, outTimeConf, username, password);
+		
+		save("GetGoodsList.txt",data);
+		
 		Goods goods = null;
 		try {
 			goods = ObjectXMLUtil.xml2Obj(Goods.class, data);
@@ -94,6 +106,9 @@ public class DataTransUtil {
 		Map<String,GoodDetail> returnMap = new HashMap<String, GoodDetail>();
 		logger.info("获取所有spu");
 		String data = HttpUtil45.postAuth(url+"GetGoodsDetailList", null, outTimeConf, username, password);
+		
+		save("GetGoodsDetailList.txt",data);
+		
 		GoodsDetail goodsDetail = null;
 		try {
 			goodsDetail = ObjectXMLUtil.xml2Obj(GoodsDetail.class, data);
@@ -107,4 +122,38 @@ public class DataTransUtil {
 		}
 		return returnMap;
 	}
+	
+	public static void save(String name,String data){
+    	try {
+    		File file = new File(savePath+File.separator+name);
+//        	File file = new File("E://"+name);
+    		if (!file.exists()) {
+    			try {
+    				file.getParentFile().mkdirs();
+    				file.createNewFile();
+    				
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
+    		FileWriter fwriter = null;
+    		try {
+    			fwriter = new FileWriter(savePath+File.separator+name);
+    			fwriter.write(data);
+    		} catch (IOException ex) {
+    			ex.printStackTrace();
+    		} finally {
+    			try {
+    				fwriter.flush();
+    				fwriter.close();
+    			} catch (IOException ex) {
+    				ex.printStackTrace();
+    			}
+    		}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+		}
+    	
+    }
 }

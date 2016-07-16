@@ -56,15 +56,18 @@ public class StockImp  extends AbsUpdateProductStock {
         	//业务实现
         	ReadExcel.downLoadFile(url, filepath);
 			List<Item> items = ReadExcel.readExcel(Item.class, filepath);
+			logger.info("items.size===================="+items.size());
 			for(Item item : items){
 				try {
-					
-					stockMap.put(item.getSkuNo()+"-"+item.getProductSize(), item.getStock());
+					logger.info(item.getSkuNo()+"----------"+item.getStock()); 
+					stockMap.put(item.getSkuNo(), item.getStock());
 					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}        
+			} 
+			
+			logger.info("供货商的stockMap.size============="+stockMap.size()); 
         
         }catch(Exception ex){
         	ex.printStackTrace();
@@ -73,12 +76,14 @@ public class StockImp  extends AbsUpdateProductStock {
         }
         
         for (String skuno : skuNo) {
+        	logger.info(skuno+"++++++++++++++++++++");
             if(stockMap.containsKey(skuno)){
                 skustock.put(skuno, stockMap.get(skuno));
             } else{
                 skustock.put(skuno, "0");
             }
         }
+        logger.info("返回的map大小==============="+skustock.size()); 
         return skustock;
     }
 

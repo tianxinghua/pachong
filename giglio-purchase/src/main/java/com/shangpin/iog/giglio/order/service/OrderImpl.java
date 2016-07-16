@@ -1,5 +1,6 @@
 package com.shangpin.iog.giglio.order.service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -80,9 +81,21 @@ public class OrderImpl extends AbsOrderService {
 	 */
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
-		orderDTO.setExcState("0");
-		orderDTO.setStatus(OrderStatus.CONFIRMED);
-		sendMail(orderDTO);
+		try {	
+			logger.info("开始推送的订单==="+orderDTO.getSpPurchaseNo());
+			sendMail(orderDTO);
+			orderDTO.setExcState("0");	
+			orderDTO.setStatus(OrderStatus.CONFIRMED);
+			logger.info("=============订单推送成功===========");
+		} catch (Exception e) {
+			e.printStackTrace();
+			errorLogs.error(e);
+			orderDTO.setExcState("1");
+			orderDTO.setExcDesc(e.getMessage());
+			orderDTO.setExcTime(new Date()); 
+			errorLogs.error("推送失败的订单======="+orderDTO.getSpPurchaseNo()); 
+		}
+		
 	}
 
 	/**
@@ -116,10 +129,22 @@ public class OrderImpl extends AbsOrderService {
 
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
-		// TODO Auto-generated method stub
-		deleteOrder.setExcState("0");
-		deleteOrder.setStatus(OrderStatus.REFUNDED);
-		sendMailOfReturnedOrder(deleteOrder);
+		// TODO Auto-generated method stub		
+		try {
+			
+			logger.info("开始推送退单++++"+deleteOrder.getSpPurchaseNo()); 
+			sendMailOfReturnedOrder(deleteOrder);
+			deleteOrder.setExcState("0");
+			deleteOrder.setStatus(OrderStatus.REFUNDED);
+			logger.info("+++++++++++退单推送成功+++++++++++++"); 
+		} catch (Exception e) {
+			e.printStackTrace();
+			deleteOrder.setExcState("1");
+			deleteOrder.setExcDesc(e.getMessage());
+			deleteOrder.setExcTime(new Date()); 
+			errorLogs.error(e);
+			errorLogs.error("推送失败的退单+++++++++"+deleteOrder.getSpPurchaseNo()); 
+		}
 	}
 
 	@Override
@@ -130,58 +155,44 @@ public class OrderImpl extends AbsOrderService {
 	 * 推送订单
 	 * @param orderDTO
 	 */
-	private void sendMail(OrderDTO orderDTO){
+	private void sendMail(OrderDTO orderDTO) throws Exception{
 		
-		try {
-			logger.info("开始推送的订单==="+orderDTO.getSpPurchaseNo()); 
-			String detail = orderDTO.getDetail();
-			String string = detail.split(",")[0];			
-			String skuId = string.split(":")[0];
-			ProductDTO product = productSearchService.findProductForOrder(supplierId,skuId);
-			String subject = "order-shangpin";
-			//采购单号 尺码  skuId 货号  barcode 数量    
-			String messageText =orderDTO.getSpPurchaseNo()+
-								";"+product.getSize()+
-								";"+skuId+
-								";"+(null != product.getProductCode()? product.getProductCode():"")+
-								";"+(null != product.getBarcode()? product.getBarcode():"")+
-								";"+string.split(":")[1];
-			SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject, messageText , messageType);
-			logger.info("=============订单推送成功===========");
-		} catch (Exception e) {
-			e.printStackTrace();
-			errorLogs.error(e);
-			errorLogs.error("推送失败的订单======="+orderDTO.getSpPurchaseNo()); 
-		}
+		String detail = orderDTO.getDetail();
+		String string = detail.split(",")[0];			
+		String skuId = string.split(":")[0];
+		ProductDTO product = productSearchService.findProductForOrder(supplierId,skuId);
+		String subject = "order-shangpin";
+		//采购单号 尺码  skuId 货号  barcode 数量    
+		String messageText =orderDTO.getSpPurchaseNo()+
+							";"+product.getSize()+
+							";"+skuId+
+							";"+(null != product.getProductCode()? product.getProductCode():"")+
+							";"+(null != product.getBarcode()? product.getBarcode():"")+
+							";"+string.split(":")[1];
+		SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject, messageText , messageType);
+			
 	}
 	
 	/**
 	 * 推动退单
 	 * @param orderDTO
 	 */
-	private void sendMailOfReturnedOrder(ReturnOrderDTO deleteOrder){
+	private void sendMailOfReturnedOrder(ReturnOrderDTO deleteOrder) throws Exception{
 		
-		try {
-			logger.info("开始推送退单++++"+deleteOrder.getSpPurchaseNo()); 
-			String detail = deleteOrder.getDetail();
-			String string = detail.split(",")[0];			
-			String skuId = string.split(":")[0];
-			ProductDTO product = productSearchService.findProductForOrder(supplierId,skuId);
-			String subject = "cancelled order-shangpin";
-			//采购单号 尺码  skuId 货号  barcode 数量    
-			String messageText =deleteOrder.getSpPurchaseNo()+
-								";"+product.getSize()+
-								";"+skuId+
-								";"+(null != product.getProductCode()? product.getProductCode():"")+
-								";"+(null != product.getBarcode()? product.getBarcode(): "")+
-								";"+string.split(":")[1];
-			SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject, messageText , messageType);
-			logger.info("+++++++++++退单推送成功+++++++++++++"); 
-		} catch (Exception e) {
-			e.printStackTrace();
-			errorLogs.error(e);
-			errorLogs.error("推送失败的退单+++++++++"+deleteOrder.getSpPurchaseNo()); 
-		}
+		String detail = deleteOrder.getDetail();
+		String string = detail.split(",")[0];			
+		String skuId = string.split(":")[0];
+		ProductDTO product = productSearchService.findProductForOrder(supplierId,skuId);
+		String subject = "cancelled order-shangpin";
+		//采购单号 尺码  skuId 货号  barcode 数量    
+		String messageText =deleteOrder.getSpPurchaseNo()+
+							";"+product.getSize()+
+							";"+skuId+
+							";"+(null != product.getProductCode()? product.getProductCode():"")+
+							";"+(null != product.getBarcode()? product.getBarcode(): "")+
+							";"+string.split(":")[1];
+		SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject, messageText , messageType);
+		
 	}
 	public static void main(String[] args) {
 		OrderDTO orderDTO = new OrderDTO();

@@ -267,7 +267,11 @@ public abstract class AbsUpdateProductStock {
 		}
 		loggerInfo.info("sku总数："+skuNoSet.size());
 		//logger.warn("需要更新ice,supplier sku关系是："+JSON.serialize(localAndIceSku));
-		final List<Integer> totoalFailCnt=Collections.synchronizedList(new ArrayList<Integer>());
+		final List<Integer> totoalFailCnt=Collections.synchronizedList(new ArrayList<Integer>());		
+		
+		//将供货商添加到UPDATE_STOCK表中
+		saveStockUpdateDTO(supplier);
+		
 		if(useThread){
 			int poolCnt=skuNoSet.size()/getSkuCount4Thread();
 			ExecutorService exe=Executors.newFixedThreadPool(poolCnt/4+1);//相当于跑4遍
@@ -285,7 +289,7 @@ public abstract class AbsUpdateProductStock {
 			for(int k=0;k<totoalFailCnt.size();k++){
 				fct+=totoalFailCnt.get(k);
 			}
-			loggerInfo.info("更新库存失败的数量==========="+fct);
+			loggerInfo.info("更新库存失败的数量==========="+fct);			
 			if(fct>=0){//待更新的库存失败数小于0时，不更新
 				this.updateStockTime(supplier);
 			}
@@ -293,7 +297,7 @@ public abstract class AbsUpdateProductStock {
 		}else{
 			Map<String,String> sopPriceMap = new HashMap<>();
 			int i= updateStock(supplier, localAndIceSku, skuNoSet,sopPriceMap);
-			loggerInfo.info("更新库存失败的数量==========="+i);
+			loggerInfo.info("更新库存失败的数量==========="+i);			
 			if(i>=0){//待更新的库存失败数小于0时，不更新
 				this.updateStockTime(supplier);
 			}
@@ -308,17 +312,36 @@ public abstract class AbsUpdateProductStock {
 	 */
 	private void updateStockTime(String supplier){
 		try {
-			if(null!=updateStockService){
+//			if(null!=updateStockService){
 //				updateStockService.updateTime(supplier);
 				loggerInfo.info("=========="+supplier+"开始更新库存时间========"); 
 				StockUpdateDTO stockUpdateDTO = new StockUpdateDTO();
 				stockUpdateDTO.setSupplierId(supplier);
 				stockUpdateDTO.setUpdateTime(new Date());
 
-				updateStockService.saveOrUpdateDTO(stockUpdateDTO);
-			}
+				updateStockService.updateStatus(stockUpdateDTO);
+//			}
 		} catch (Exception e) {
 			loggerError.error("更新库存更新时间业务失败======"+e);
+		}
+	}
+	
+	/**
+	 * 将供货商添加到UPDATE_STOCK表中
+	 * @param supplier
+	 */
+	private void saveStockUpdateDTO(String supplier){
+		try {
+//			if(null!=updateStockService){
+//				updateStockService.updateTime(supplier);
+//				loggerInfo.info("=========="+supplier+"开始更新库存时间========"); 
+				StockUpdateDTO stockUpdateDTO = new StockUpdateDTO();
+				stockUpdateDTO.setSupplierId(supplier);
+				stockUpdateDTO.setUpdateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2015-01-01 00:00:00"));
+				updateStockService.saveStockUpdateDTO(stockUpdateDTO);  
+//			}
+		} catch (Exception e) {
+			loggerError.error("添加供货商"+supplier+"到UPDATE_STOCK表时出错"); 
 		}
 	}
 

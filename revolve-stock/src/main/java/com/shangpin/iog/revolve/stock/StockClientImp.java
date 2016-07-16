@@ -14,10 +14,14 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.revolve.stock.dto.Item;
 import com.shangpin.iog.revolve.stock.dto.ProductDTO;
 import com.shangpin.iog.revolve.stock.schedule.AppContext;
 import com.shangpin.iog.revolve.stock.sepStrategy.ISepStrategy;
 import com.shangpin.iog.revolve.stock.sepStrategy.SepStrategyContext;
+import com.shangpin.iog.revolve.stock.util.CVSUtil;
 import com.shangpin.iog.revolve.stock.util.Csv2DTO;
 
 /**
@@ -48,26 +52,32 @@ public class StockClientImp extends AbsUpdateProductStock{
 
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-    	String skuId ="";
-    	String size = "";
+    	String skuId ="";    	
         Map<String, String> skustock = new HashMap<>();
-        Map<String, String> skuData = new HashMap<>();
+        Map<String, String> skuData = new HashMap<>();        
         
-        String sep = "\t";
-		Csv2DTO csv2 = new Csv2DTO();
-		//第一个为size and stock
-		String[] needColsNo = new String[]{"","","2","","","","","","","","","","","","","","","","20","",""};
-		//策略组
-		String[] strategys = new String[]{"","","","","","","","","","","","","","","","","","","","",""};
-		ISepStrategy[] iSepStrategies = new SepStrategyContext().operate(strategys);
-		List<ProductDTO> list = csv2.toDTO(url, filepath, sep, needColsNo, iSepStrategies, ProductDTO.class);
-        
-        for (ProductDTO dto : list) {
-        	skuData.put(dto.getSkuId(), dto.getStock());
-		}
-        
-        Iterator<String> it = skuNo.iterator();
-        
+//		Csv2DTO csv2 = new Csv2DTO();
+//		//第一个为size and stock
+//		String[] needColsNo = new String[]{"","","2","","","","","","","","","","","","","","","","20","",""};
+//		//策略组
+//		String[] strategys = new String[]{"","","","","","","","","","","","","","","","","","","","",""};
+//		ISepStrategy[] iSepStrategies = new SepStrategyContext().operate(strategys);
+//		List<ProductDTO> list = csv2.toDTO(url, filepath, sep, needColsNo, iSepStrategies, ProductDTO.class);
+//        
+//        for (ProductDTO dto : list) {
+//        	skuData.put(dto.getSkuId(), dto.getStock());
+//		}
+		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*60, 1000*60*60, 1000*60*60);
+		String data = HttpUtil45.get(url, outTimeConf, null);
+		List<Item> items = CVSUtil.readCSV(data, Item.class, '\t');
+		for(Item item :items){
+			try {
+				skuData.put(item.getItem_ID(),item.getSellableqty());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}        
+        Iterator<String> it = skuNo.iterator(); 
         
         while (it.hasNext()) {
             skuId = it.next();
