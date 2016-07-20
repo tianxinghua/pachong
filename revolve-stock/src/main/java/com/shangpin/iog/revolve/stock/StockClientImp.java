@@ -1,5 +1,8 @@
 package com.shangpin.iog.revolve.stock;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,7 +32,7 @@ import com.shangpin.iog.revolve.stock.util.Csv2DTO;
  */
 @Component("revolveStock")
 public class StockClientImp extends AbsUpdateProductStock{
-    private static Logger logger = Logger.getLogger("info");
+    private static Logger logger = Logger.getLogger("info");    
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -40,6 +43,7 @@ public class StockClientImp extends AbsUpdateProductStock{
     private static String supplierId;
     private static String url;
     private static String filepath;
+//    private static String savePath = null;
 
     static {
         if(null==bdl)
@@ -67,9 +71,21 @@ public class StockClientImp extends AbsUpdateProductStock{
 //        for (ProductDTO dto : list) {
 //        	skuData.put(dto.getSkuId(), dto.getStock());
 //		}
-		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*60, 1000*60*60, 1000*60*60);
+        logger.info("===============开始下载库存文件==============");
+        OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*60, 1000*60*60);
 		String data = HttpUtil45.get(url, outTimeConf, null);
+		int loop = 0;
+		while(HttpUtil45.errorResult.equals(data) && loop <100){
+			logger.info("==============="+loop+"==============");
+			Thread.sleep(1000*3); 
+			data = HttpUtil45.get(url, outTimeConf, null);
+			loop ++;
+		}
+		
+		save("products.txt",data);
+		
 		List<Item> items = CVSUtil.readCSV(data, Item.class, '\t');
+		logger.info("csv转换items.size=========="+items.size());
 		for(Item item :items){
 			try {
 				skuData.put(item.getItem_ID(),item.getSellableqty());
@@ -88,6 +104,39 @@ public class StockClientImp extends AbsUpdateProductStock{
 			}
         }
         return skustock;
+    }
+    
+    public void save(String name,String data){
+    	try {
+    		File file = new File(filepath+File.separator+name);
+//        	File file = new File("E://"+name);
+    		if (!file.exists()) {
+    			try {
+    				file.getParentFile().mkdirs();
+    				file.createNewFile();
+    				
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
+    		FileWriter fwriter = null;
+    		try {
+    			fwriter = new FileWriter(filepath+File.separator+name);
+    			fwriter.write(data);
+    		} catch (IOException ex) {
+    			ex.printStackTrace();
+    		} finally {
+    			try {
+    				fwriter.flush();
+    				fwriter.close();
+    			} catch (IOException ex) {
+    				ex.printStackTrace();
+    			}
+    		}
+		} catch (Exception e) {
+			e.printStackTrace();			
+		}
+    	
     }
 
     public static void main(String[] args) throws Exception {

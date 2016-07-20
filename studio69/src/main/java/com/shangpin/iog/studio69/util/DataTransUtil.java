@@ -58,7 +58,7 @@ public class DataTransUtil {
 			System.exit(0);
 		}
 		for(Category cate : goodsCategory.getCategory()){
-			returnMap.put(cate.getCID(), cate);
+			returnMap.put(cate.getCategoryID(), cate);
 		}
 		return returnMap;
 	}
@@ -119,6 +119,35 @@ public class DataTransUtil {
 		}
 		for(GoodDetail goodDetail :goodsDetail.getGoodDetials()){
 			returnMap.put(goodDetail.getID(), goodDetail);
+		}
+		return returnMap;
+	}
+	
+	public static Map<String,GoodDetail> getGoodsDetailListByCategoryID(Map<String, Category> goodsCategory){
+		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10);
+		Map<String,GoodDetail> returnMap = new HashMap<String, GoodDetail>();
+		logger.info("获取所有spu");
+		for(String key :goodsCategory.keySet()){
+			try {
+				//String categoryId = goodsCategory.get(key).getCategoryID();
+				Map<String, String> param = new HashMap<String, String>();
+				param.put("CategoryID", key);
+				String data = HttpUtil45.postAuth(url+"GetGoodsDetailListByCategoryID", param, outTimeConf, username, password);
+				save("GetGoodsDetailListByCategoryID_"+key+".txt",data);			
+				GoodsDetail goodsDetail = null;
+				try {
+					goodsDetail = ObjectXMLUtil.xml2Obj(GoodsDetail.class, data);
+				} catch (JAXBException e1) {
+					e1.printStackTrace();
+					logger.info("品类数据转换失败");
+					System.exit(0);
+				}
+				for(GoodDetail goodDetail :goodsDetail.getGoodDetials()){
+					returnMap.put(goodDetail.getID(), goodDetail);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
 		}
 		return returnMap;
 	}

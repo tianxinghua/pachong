@@ -194,6 +194,9 @@ public abstract class AbsUpdateProductStock {
 
 		boolean hasNext = true;
 		logger.warn("获取sku 开始");
+		//将采购异常的订单保存入库
+		setStockNotUpdateBySop(host, app_key, app_secret);
+		
 		Set<String> skuIds = new HashSet<String>();
 
 		// 获取已有的SPSKUID
@@ -1198,6 +1201,7 @@ public abstract class AbsUpdateProductStock {
 					spec.setSupplierSkuId(orderDetail.getSupplierSkuNo());
 					try {
 						logger.info("采购异常的信息：" + spec.toString());
+						System.out.println("采购异常的："+spec.getSupplierSkuId()+"=="+orderDetail.getSopPurchaseOrderNo());
 						specialSkuService.saveDTO(spec);
 					} catch (ServiceMessageException e) {
 						e.printStackTrace();

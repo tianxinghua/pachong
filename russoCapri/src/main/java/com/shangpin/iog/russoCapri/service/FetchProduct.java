@@ -1,5 +1,8 @@
 package com.shangpin.iog.russoCapri.service;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +38,7 @@ public class FetchProduct {
 	public static int day;
 	private static String username,password;
     private static ResourceBundle bdl=null;
+    private static String savePath = null;
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
@@ -43,6 +47,7 @@ public class FetchProduct {
         day = Integer.valueOf(bdl.getString("day"));
         username = bdl.getString("username");
 		password = bdl.getString("password");
+		savePath = bdl.getString("savePath");
     }
     @Autowired
     private ProductFetchService productFetchService;
@@ -62,10 +67,16 @@ public class FetchProduct {
         Map<String,String> map = new HashMap<>();
 //    	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
         
+        String imageData = HttpUtil45.postAuth(url+"GetAllImageMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+    	int ii = 0;
+    	while((StringUtils.isBlank(imageData) || HttpUtil45.errorResult.equals(imageData)) && ii <10){
+    		imageData = HttpUtil45.postAuth(url+"GetAllImageMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
+    		ii++;
+    	}
+    	save("GetAllImageMarketplace.txt",imageData);
+        
     	String skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
-    	
-    	String imageData = HttpUtil45.postAuth(url+"GetAllImageMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
-    	
+    	    	
     	String priceData = HttpUtil45.postAuth(url+"GetAllPricelistMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
     
     	String spuData = HttpUtil45.postAuth(url+"GetAllItemsMarketplace", map, new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600), username, password);
@@ -251,6 +262,38 @@ public class FetchProduct {
 //			}
 //		}
         logger.info("save product into DB success");
+    }
+    
+    public void save(String name,String data){
+    	try {
+    		File file = new File(savePath+File.separator+name);
+    		if (!file.exists()) {
+    			try {
+    				file.getParentFile().mkdirs();
+    				file.createNewFile();
+    				
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
+    		FileWriter fwriter = null;
+    		try {
+    			fwriter = new FileWriter(savePath+File.separator+name);
+    			fwriter.write(data);
+    		} catch (IOException ex) {
+    			ex.printStackTrace();
+    		} finally {
+    			try {
+    				fwriter.flush();
+    				fwriter.close();
+    			} catch (IOException ex) {
+    				ex.printStackTrace();
+    			}
+    		}
+		} catch (Exception e) {
+			e.printStackTrace();			
+		}
+    	
     }
 
     public static void main(String[] args){

@@ -38,12 +38,15 @@ public class FetchProduct {
     private static String url;
 	public static int day;
     private static ResourceBundle bdl=null;
+    private static String filepath  = null;
+    
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         url = bdl.getString("url");
         day = Integer.valueOf(bdl.getString("day"));
+        filepath = bdl.getString("filepath");
     }
     @Autowired
     private ProductFetchService productFetchService;
@@ -293,8 +296,8 @@ public class FetchProduct {
     
     public void save(String name,String data){
 //    	String filepath = "/usr/local/app/piccadilly/";
-    	String filepath = "E://piccadilly//";
-    	File file = new File(filepath+name);
+    	
+    	File file = new File(filepath+File.separator+name);
 //    	File file = new File("E://"+name);
 		if (!file.exists()) {
 			try {
@@ -307,7 +310,7 @@ public class FetchProduct {
 		}
 		FileWriter fwriter = null;
 		try {
-			fwriter = new FileWriter(filepath+name);
+			fwriter = new FileWriter(filepath+File.separator+name);
 			fwriter.write(data);
 		} catch (IOException ex) {
 			ex.printStackTrace();
