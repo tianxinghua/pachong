@@ -194,6 +194,9 @@ public abstract class AbsUpdateProductStock {
 
 		boolean hasNext = true;
 		logger.warn("获取sku 开始");
+		//将采购异常的订单保存入库
+		setStockNotUpdateBySop(host, app_key, app_secret);
+		
 		Set<String> skuIds = new HashSet<String>();
 
 		// 获取已有的SPSKUID
@@ -310,6 +313,10 @@ public abstract class AbsUpdateProductStock {
 		// logger.warn("需要更新ice,supplier sku关系是："+JSON.serialize(localAndIceSku));
 		final List<Integer> totoalFailCnt = Collections
 				.synchronizedList(new ArrayList<Integer>());
+		
+		//如果供货商不在UPDATE_STOCK表里，则添加到UPDATE_STOCK里
+		saveStockUpdateDTO(app_key);
+		
 		if (useThread) {
 			int poolCnt = skuNoSet.size() / getSkuCount4Thread();
 			ExecutorService exe = Executors.newFixedThreadPool(poolCnt / 4 + 1);// 相当于跑4遍
@@ -369,6 +376,10 @@ public abstract class AbsUpdateProductStock {
 		// logger.warn("需要更新ice,supplier sku关系是："+JSON.serialize(localAndIceSku));
 		final List<Integer> totoalFailCnt = Collections
 				.synchronizedList(new ArrayList<Integer>());
+		
+		//如果供货商不在UPDATE_STOCK表里，则添加到UPDATE_STOCK里
+		saveStockUpdateDTO(app_key);
+		
 		if (useThread) {
 			int poolCnt = skuNoSet.size() / getSkuCount4Thread();
 			ExecutorService exe = Executors.newFixedThreadPool(poolCnt / 4 + 1);// 相当于跑4遍
@@ -605,12 +616,31 @@ public abstract class AbsUpdateProductStock {
 	 */
 	private void updateStockTime(String supplier) {
 		try {
-			if (null != updateStockService) {
+//			if (null != updateStockService) {
 				loggerInfo.info("key=" + supplier + "记录更新时间开始");
 				updateStockService.updateTime(supplier);
-			}
+//			}
 		} catch (Exception e) {
 			loggerError.error("更新库存更新时间业务失败===" + e);
+		}
+	}
+	
+	/**
+	 * 将供货商添加到UPDATE_STOCK表中
+	 * @param supplier
+	 */
+	private void saveStockUpdateDTO(String supplier){
+		try {
+//			if(null!=updateStockService){
+//				updateStockService.updateTime(supplier);
+//				loggerInfo.info("=========="+supplier+"开始更新库存时间========"); 
+				StockUpdateDTO stockUpdateDTO = new StockUpdateDTO();
+				stockUpdateDTO.setSupplierId(supplier);
+				stockUpdateDTO.setUpdateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2015-01-01 00:00:00"));
+				updateStockService.saveStockUpdateDTO(stockUpdateDTO); 
+//			}
+		} catch (Exception e) {
+			loggerError.error("添加供货商"+supplier+"到UPDATE_STOCK表时出错"); 
 		}
 	}
 
@@ -1171,6 +1201,7 @@ public abstract class AbsUpdateProductStock {
 					spec.setSupplierSkuId(orderDetail.getSupplierSkuNo());
 					try {
 						logger.info("采购异常的信息：" + spec.toString());
+						System.out.println("采购异常的："+spec.getSupplierSkuId()+"=="+orderDetail.getSopPurchaseOrderNo());
 						specialSkuService.saveDTO(spec);
 					} catch (ServiceMessageException e) {
 						e.printStackTrace();

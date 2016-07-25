@@ -61,7 +61,7 @@ public class FetchProduct {
     public void fetchProductAndSave(){
     	
     	
-        /*	Date startDate,endDate= new Date();
+        	Date startDate,endDate= new Date();
 			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 			//获取原有的SKU 仅仅包含价格和库存
 			Map<String,SkuDTO> skuDTOMap = new HashedMap();
@@ -69,7 +69,7 @@ public class FetchProduct {
 				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
 			} catch (ServiceException e) {
 				e.printStackTrace();
-			}*/
+			}
 			//处理------------------------------
     	
     		String season = "";
@@ -83,101 +83,117 @@ public class FetchProduct {
     		
 			Map<String, String> brand = DataTransUtil.getBrand();
 			Map<String, Category> goodsCategory = DataTransUtil.getGoodsCategory();
-			Map<String, GoodDetail> goodsDetailList = DataTransUtil.getGoodsDetailList();
+//			Map<String, GoodDetail> goodsDetailList = DataTransUtil.getGoodsDetailList();
+			Map<String, GoodDetail> goodsDetailList = DataTransUtil.getGoodsDetailListByCategoryID(goodsCategory);
 			List<Good> goodsList = DataTransUtil.getGoodsList();
 			//StringUtils.isBlank(
 			for (Good good : goodsList) {
-				SpuDTO spu = new SpuDTO();
-				spu.setId(UUIDGenerator.getUUID());
-				spu.setSupplierId(supplierId);
-				spu.setSpuId(good.getID());
-				season = good.getSeason();
-				spu.setSeasonName(StringUtils.isBlank(season)?"":season);
-				
-				brandName = brand.get(good.getBrandID());
-				spu.setBrandName(StringUtils.isBlank(brandName)?"":brandName);
-				
-				category = goodsCategory.get(good.getCID()).getName();
-				spu.setCategoryName(StringUtils.isBlank(category)?"":category);
-				
-				spu.setCategoryGender(good.getTypeID().equals("2")?"man":"women");
-				
-				madein = goodsDetailList.get(good.getID()).getMadeIn();
-				spu.setProductOrigin(StringUtils.isBlank(madein)?"":madein);
-				
-				material = goodsDetailList.get(good.getID()).getComposition();
-				spu.setMaterial(StringUtils.isBlank(material)?"":material);
-				
-				
 				try {
-					productFetchService.saveSPU(spu);
-				} catch (ServiceException e) {
-				   try {
-						productFetchService.updateMaterial(spu);
-					} catch (ServiceException e1) {
-						e1.printStackTrace();
-					}
-				}
-				
-				List<Item> itemlist = goodsDetailList.get(good.getID()).getStock().getItemlist();
-				for (Item item : itemlist) {
-					SkuDTO sku = new SkuDTO();
-					sku.setId(UUIDGenerator.getUUID());
-					sku.setSupplierId(supplierId);
-					sku.setSpuId(spu.getSpuId());
-					String size = item.getSize();
-					if(size.indexOf("½")>0){
-						size=size.replace("½","+");
-					}
-					sku.setSkuId(spu.getSpuId()+"-"+size);
-					
-					productCode = good.getGoodsCode();
-					sku.setProductCode(StringUtils.isBlank(productCode)?"":productCode);
-					
-					color = goodsDetailList.get(good.getID()).getColor();
-					sku.setColor(StringUtils.isBlank(color)?"":color);
-					sku.setProductSize(size);
-					sku.setStock(item.getQty());
-					
-					productName = good.getGoodsName();
-					sku.setProductName(StringUtils.isBlank(productName)?"":productName);
-					//TODO 暂时设置为市场价
-					sku.setMarketPrice(good.getPrice());
-					//TODO 暂时设置为euro
-					sku.setSaleCurrency("EURO");
+					SpuDTO spu = new SpuDTO();
+					spu.setId(UUIDGenerator.getUUID());
+					spu.setSupplierId(supplierId);
+					spu.setSpuId(good.getID());
+					season = good.getSeason();
+					spu.setSeasonName(StringUtils.isBlank(season)?"":season);				
+					brandName = brand.get(good.getBrandID());
+					spu.setBrandName(StringUtils.isBlank(brandName)?"":brandName);
 					try {
-        				
-        				/*if(skuDTOMap.containsKey(sku.getSkuId())){
-    						skuDTOMap.remove(sku.getSkuId());
-    					}*/
-        				
-						productFetchService.saveSKU(sku);
-        			} catch (ServiceException e) {
-						try {
-	        				if (e.getMessage().equals("数据插入失败键重复")) {
-	        					//更新价格和库存
-	        					productFetchService.updatePriceAndStock(sku);
-	        				} else {
-	        					e.printStackTrace();
-	        				}
-	        			} catch (ServiceException e1) {
-	        				e1.printStackTrace();
-	        			}
+						category = goodsCategory.get(good.getCategoryID()).getName();
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				}
-				//保存图片
-				List<Picture> asList = goodsDetailList.get(good.getID()).getPictures().getPicturelist();
-				List<String> pic = new ArrayList<String>();
-				for (Picture picture : asList) {
-					pic.add(picture.getPictureUrl());
-				}
-				productFetchService.savePicture(supplierId, spu.getSpuId(), null,pic);
+					
+					spu.setCategoryName(StringUtils.isBlank(category)?"":category);
+					
+					spu.setCategoryGender(good.getTypeID().equals("2")?"man":"women");
+					try {
+						madein = goodsDetailList.get(good.getID()).getMadeIn();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}				
+					spu.setProductOrigin(StringUtils.isBlank(madein)?"":madein);
+					try {
+						material = goodsDetailList.get(good.getID()).getComposition();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}				
+					spu.setMaterial(StringUtils.isBlank(material)?"":material);
+					
+					
+					try {
+						productFetchService.saveSPU(spu);
+					} catch (ServiceException e) {
+					   try {
+							productFetchService.updateMaterial(spu);
+						} catch (ServiceException e1) {
+							e1.printStackTrace();
+						}
+					}
+					
+					List<Item> itemlist = goodsDetailList.get(good.getID()).getStock().getItemlist();
+					for (Item item : itemlist) {
+						SkuDTO sku = new SkuDTO();
+						sku.setId(UUIDGenerator.getUUID());
+						sku.setSupplierId(supplierId);
+						sku.setSpuId(spu.getSpuId());
+						String size = item.getSize();
+						if(size.indexOf("½")>0){
+							size=size.replace("½","+");
+						}
+						sku.setSkuId(spu.getSpuId()+"-"+size);
+						
+						productCode = good.getCode();
+						sku.setProductCode(StringUtils.isBlank(productCode)?"":productCode);
+						try {
+							color = goodsDetailList.get(good.getID()).getColor();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}					
+						sku.setColor(StringUtils.isBlank(color)?"":color);
+						sku.setProductSize(size);
+						sku.setStock(item.getQty());
+						
+						productName = good.getGoodsName();
+						sku.setProductName(StringUtils.isBlank(productName)?"":productName);
+						//TODO 暂时设置为市场价
+						sku.setMarketPrice(good.getPrice());
+						//TODO 暂时设置为euro
+						sku.setSaleCurrency("EURO");
+						try {
+	        				
+	        				if(skuDTOMap.containsKey(sku.getSkuId())){
+	    						skuDTOMap.remove(sku.getSkuId());
+	    					}        				
+							productFetchService.saveSKU(sku);
+	        			} catch (ServiceException e) {
+							try {
+		        				if (e.getMessage().equals("数据插入失败键重复")) {
+		        					//更新价格和库存
+		        					productFetchService.updatePriceAndStock(sku);
+		        				} else {
+		        					e.printStackTrace();
+		        				}
+		        			} catch (ServiceException e1) {
+		        				e1.printStackTrace();
+		        			}
+						}
+					}
+					//保存图片
+					List<Picture> asList = goodsDetailList.get(good.getID()).getPictures().getPicturelist();
+					List<String> pic = new ArrayList<String>();
+					for (Picture picture : asList) {
+						pic.add(picture.getPictureUrl());
+					}
+					productFetchService.savePicture(supplierId, spu.getSpuId(), null,pic);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}			
 				
 			}
 			
 		
         	//更新网站不再给信息的老数据
-	/*	for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
 			 Map.Entry<String,SkuDTO> entry =  itor.next();
 			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
 				entry.getValue().setStock("0");
@@ -187,7 +203,7 @@ public class FetchProduct {
 					e.printStackTrace();
 				}
 			}
-		}*/
+		}
     }
     public static void main(String[] args) {
     	new FetchProduct().fetchProductAndSave();

@@ -308,6 +308,7 @@
           sku.NEW_MARKET_PRICE as newMarketPrice,
           sku.NEW_SALE_PRICE as newSalePrice,
           sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
+          spu.SPU_ID as spuId,
           spu.BRAND_NAME as brand_name,
           spu.CATEGORY_NAME as category_name,
           spu.CATEGORY_GENDER as category_gender,
@@ -511,6 +512,36 @@
             </if>
         </where>
         order by brand_name, category_name
+	</select>
+	
+	<select id="findDiffPriceProducts" resultMap="ProductsResultMap">
+		select
+          sku.SKU_ID as sku_id,
+          sku.SUPPLIER_ID  as supplier_id,
+          
+          sku.MARKET_PRICE  as market_price,
+          sku.SALE_PRICE  as  sale_price,
+          sku.SUPPLIER_PRICE as supplier_price,
+          sku.PRODUCT_CODE as product_code,
+          
+          sku.NEW_MARKET_PRICE as newMarketPrice,
+          sku.NEW_SALE_PRICE as newSalePrice,
+          sku.NEW_SUPPLIER_PRICE as newSupplierPrice
+          
+		from SKU sku 
+        <where>
+        		sku.SUPPLIER_ID = #{supplier}
+				and (
+				IF(NEW_MARKET_PRICE !="",IF(NEW_MARKET_PRICE != MARKET_PRICE,TRUE,FALSE),FALSE)
+				OR IF(NEW_SALE_PRICE != "",IF(NEW_SALE_PRICE != SALE_PRICE,TRUE,FALSE),FALSE)
+				OR IF(NEW_SUPPLIER_PRICE != "",IF(NEW_SUPPLIER_PRICE != SUPPLIER_PRICE,TRUE,FALSE),FALSE))          
+          <if test="null!=startDate">
+                and sku.LAST_TIME >= #{startDate}
+          </if>
+          <if test="endDate!=null">
+                <![CDATA[ and sku.LAST_TIME <= #{endDate}    ]]>
+          </if>	
+        </where>
 	</select>
 	
 </mapper>

@@ -27,6 +27,7 @@ import com.shangpin.iog.smets.util.TXTUtil;
 public class StockClientImp extends AbsUpdateProductStock {
 
 	private static Logger logger = Logger.getLogger("info");
+	private static Logger errorLogs = Logger.getLogger("error");
 	 private static ApplicationContext factory;
 	    private static void loadSpringContext()
 	    {
@@ -55,25 +56,37 @@ public class StockClientImp extends AbsUpdateProductStock {
 		Map<String,String> stockMap = new HashMap<String, String>();
 		Map<String,String> returnMap = new HashMap<String, String>();
 		for (TxtDTO TxtDTO : skuLists) {
-			if (stockMap.containsKey(TxtDTO.getSkuId())) {
-				stock = Integer.valueOf(stockMap.get(TxtDTO.getSkuId()))+Integer.valueOf(TxtDTO.getStock());
-				stockMap.put(TxtDTO.getSkuId(), String.valueOf(stock));
-			}else{
-				stockMap.put(TxtDTO.getSkuId(), TxtDTO.getStock());
+			try {
+				if (stockMap.containsKey(TxtDTO.getSkuId())) {
+					stock = Integer.valueOf(stockMap.get(TxtDTO.getSkuId()))+Integer.valueOf(TxtDTO.getStock());
+					stockMap.put(TxtDTO.getSkuId(), String.valueOf(stock));
+				}else{
+					stockMap.put(TxtDTO.getSkuId(), TxtDTO.getStock());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorLogs.error(e); 
 			}
+			
 		}
 		Iterator<String> it = skuNo.iterator();
 		System.out.println("遍历填充"+skuNo.size());
 		int i =0;
 		while (it.hasNext()) {
-			i++;
-			skuId = it.next();
-			if (stockMap.containsKey(skuId)) {
-				returnMap.put(skuId, stockMap.get(skuId));
-			}else{
-				returnMap.put(skuId, "0");
+			try {
+				i++;
+				skuId = it.next();
+				if (stockMap.containsKey(skuId)) {
+					returnMap.put(skuId, stockMap.get(skuId));
+				}else{
+					returnMap.put(skuId, "0");
+				}
+				System.out.println("填充"+i);
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorLogs.error(e); 
 			}
-			System.out.println("填充"+i);
+			
 		}
 		System.out.println("loop successfully");
 		return returnMap;

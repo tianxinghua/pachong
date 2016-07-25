@@ -39,6 +39,7 @@ public class Startup
         try {
             fetchProduct.fetchProductAndSave();
         } catch (Exception e) {
+        	e.printStackTrace();
            loggerError.error("拉取失败。" + e.getMessage());
         }
 
