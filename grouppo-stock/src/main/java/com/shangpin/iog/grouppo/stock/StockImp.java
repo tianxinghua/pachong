@@ -1,25 +1,23 @@
 package com.shangpin.iog.grouppo.stock;
 
-import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.grouppo.schedule.AppContext;
-import com.shangpin.iog.grouppo.util.StockWSServiceStub;
-import com.shangpin.iog.grouppo.util.StockWSServiceStub.Stock_TabularQuery;
-import com.shangpin.iog.grouppo.util.StockWSServiceStub.Stock_TabularQueryResponse;
-import com.shangpin.iog.grouppo.util.StockWSServiceStub.Stock_TabularQueryResponseStructure;
-import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.shangpin.framework.ServiceException;
+import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import com.shangpin.iog.grouppo.schedule.AppContext;
+import com.shangpin.iog.grouppo.util.axis20.StockWSServiceStub;
+import com.shangpin.iog.grouppo.util.axis20.StockWSServiceStub.Stock_TabularQuery;
+import com.shangpin.iog.grouppo.util.axis20.StockWSServiceStub.Stock_TabularQueryResponse;
+import com.shangpin.iog.grouppo.util.axis20.StockWSServiceStub.Stock_TabularQueryResponseStructure;
 
 /**
  * Created by lubaijiang on 2015/9/14.
@@ -44,14 +42,14 @@ public class StockImp  extends AbsUpdateProductStock {
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
     	
-    	//获取库存元数据
-    	Map<String, String> skustock = new HashMap<String, String>();
+    	//获取库存元数据    	
 		Map<String,String> stockMap = new HashMap<String, String>();
+//		Map<String,Double> zeroStock = new HashMap<String, Double>();
         
         try{
         	//业务实现
         	StockWSServiceStub stockWSServiceStub = new StockWSServiceStub();
-        	stockWSServiceStub._getServiceClient().getOptions().setTimeOutInMilliSeconds(1000*60*60); 
+        	stockWSServiceStub._getServiceClient().getOptions().setTimeOutInMilliSeconds(1000*60); 
         	stockWSServiceStub._getServiceClient().getOptions().setProperty(org.apache.axis2.transport.http.HTTPConstants.SO_TIMEOUT,new Integer(1000*60*60));
         	stockWSServiceStub._getServiceClient().getOptions().setProperty(org.apache.axis2.transport.http.HTTPConstants.CONNECTION_TIMEOUT,new Integer(1000*60*60));
         	
@@ -59,58 +57,44 @@ public class StockImp  extends AbsUpdateProductStock {
         	stock_TabularQuery2.setM_UserName("shangpin");
         	stock_TabularQuery2.setM_Password("getDataWs16");
         	stock_TabularQuery2.setM_Company("PRITE");
-        	stock_TabularQuery2.setSkuId(""); 
-        	logger.info("=============开始获取response=============="); 
-        	Stock_TabularQueryResponse response = null;
-        	try {
-        		response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);
-			} catch (Exception e) {
-				logError.error("第1次异常===="+e);
-				try {
-					response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);
-				} catch (Exception e2) {
-					logError.error("第2次异常===="+e2);
-					try {
-						response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);
-					} catch (Exception e3) {
-						logError.error("第3次异常===="+e3);
-					}
-				}
-			}
-        	if(null != response){
-        		Stock_TabularQueryResponseStructure[] items = response.getRecords().getItem();
-            	logger.info("===========抓取的items.length========="+items.length); 
-            	for(Stock_TabularQueryResponseStructure item : items){
-            		try {
-            			stockMap.put(item.getSkuId(),""+item.getStock());
-    				} catch (Exception e) {
-    					e.printStackTrace();
-    				}
-            		
-            	}
-        	}else{
-        		logger.info("===========抓取的response为null========="); 
-        	}        	
+        	
+        	for(String skuId : skuNo){        		
+        		try {
+	        		stock_TabularQuery2.setSkuId(skuId); 
+	        		
+	            	Stock_TabularQueryResponse response = null;            	
+            		response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);            		
+            		Stock_TabularQueryResponseStructure[] items = response.getRecords().getItem();
+                	for(Stock_TabularQueryResponseStructure item : items){
+                		try {
+            				stockMap.put(skuId,""+(int)item.getStock());
+            				logger.info(skuId+"================"+(int)item.getStock());                     			
+        				} catch (Exception e) {
+        					stockMap.put(skuId,"0");            					
+        				}            		
+                	}
+                
+    			} catch (Exception e) {
+    				logError.error("第1次异常===="+e);
+    				stockMap.put(skuId,"0");
+    			}
+        	}    	
         
         }catch(Exception ex){
         	logError.error(ex);
         	ex.printStackTrace(); 
         }
-        
-        for (String skuno : skuNo) {
-            if(stockMap.containsKey(skuno)){
-                skustock.put(skuno, stockMap.get(skuno));
-            } else{
-                skustock.put(skuno, "0");
-            }
-        }
-        logger.info("==========返回的map大小========="+skustock.size()); 
-        return skustock;
+      
+        logger.info("==========返回的map大小========="+stockMap.size()); 
+        return stockMap;
     }
 
     public static void main(String[] args) throws Exception {
     	//加载spring
-        loadSpringContext();     
+        loadSpringContext();    
+
+//    	StockImp stockImp = new StockImp();
+//    	 stockImp.grabStock(null);
     	
     }
 }
