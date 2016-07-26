@@ -44,4 +44,38 @@ public class HttpUtils {
 		}
 		return json;
 	}
+
+
+	public static String  getOrderStatusSoap(){
+		String xx = "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">"
+				+ "<soap12:Body>"
+				+ " <GetStatusOrder xmlns=\"http://tempuri.org/\">\n" +
+				"      <CODE>201607244071807</CODE>\n" +
+				"      <ID_CUSTOMER>1461</ID_CUSTOMER>\n" +
+				"    </GetStatusOrder>" + "</soap12:Body>" +
+				"</soap12:Envelope>";
+		System.out.println(xx);
+		String json = null;
+		Map<String, String> map = new HashMap<String, String>();
+//		map.put("SOAPAction", "http://tempuri.org/CancelOrder");
+		map.put("Content-Type", "application/soap+xml; charset=utf-8");
+		System.out.println("=====================================================");
+		try {
+			json = HttpUtil45
+					.operateData(
+							"post",
+							"soap",
+							"http://188.11.248.175/WS_SITO_p15/WS_SITO_P15.ASMX?op=GetStatusOrder",
+							new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10,
+									1000 * 60 * 10), map, xx, "shangpin", "shang0807");
+			System.out.println(json);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		return json;
+	}
+
+	public static void main(String[] args){
+		HttpUtils.getOrderStatusSoap();
+	}
 }
