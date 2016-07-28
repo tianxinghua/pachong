@@ -24,7 +24,7 @@ public class Schedule {
 	@Scheduled(cron="${jobsSchedule}")
 	public void start(){
 		logger.info(new Date().toLocaleString()+"开始更新");
-		System.out.println(new Date().toLocaleString()+"开始更新");
+		System.out.println("定时间开始");
     	Murder mur = Murder.getMur();
     	mur.setStockImp(stockImp);
     	Thread t = new Thread(mur);

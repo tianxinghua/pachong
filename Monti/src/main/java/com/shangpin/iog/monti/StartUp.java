@@ -40,6 +40,6 @@ public class StartUp {
         fetchProduct.handleData("sku", supplierId, day, picpath);
         log.info("----拉取monti数据完成----");
         System.out.println("-------fetch end---------");
-        System.exit(0);
+//        System.exit(0);
     }
 }
