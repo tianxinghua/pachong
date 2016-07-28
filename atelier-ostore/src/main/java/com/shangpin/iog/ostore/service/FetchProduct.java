@@ -3,6 +3,8 @@ package com.shangpin.iog.ostore.service;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -84,6 +86,7 @@ public class FetchProduct {
     	
     	Map<String,Item> itemMap= new HashMap<String,Item>();
     	Map<String,String> priceMap= new HashMap<String,String>();
+    	Map<String,String> supplierPriceMap = new HashMap<String,String>();
         //获取产品信息
     	logger.info("get product starting....");
     	System.out.println("get product starting...."); 
@@ -181,33 +184,9 @@ public class FetchProduct {
         //映射数据并保存
         logger.info("save product into DB begin");
         String data = "";
+        Map<String,String> spuId_seasonM = new HashMap<String,String>();
         
-        //价格信息
-        String[] priceStrings = priceData.split("\\r\\n");
-        String[] priceArr = null;
-        for (int i = 1; i < priceStrings.length; i++) {
-        	try {
-				
-        		if (StringUtils.isNotBlank(priceStrings[i])) {
-    				if (i==1) {
-    				  data =  priceStrings[i].split("\\n")[1];
-    				}else {
-    				  data = priceStrings[i];
-    				}
-            	}
-    			priceArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
-    			priceMap.put(priceArr[0], priceArr[3]);
-    			
-        		
-			} catch (Exception e) {
-				e.printStackTrace();
-				errorLogger.error(e);
-			}
-        	
-        }
-        
-        
-        //得到所有的spu信息
+      //得到所有的spu信息
         String[] spuStrings = spuData.split("\\r\\n");
         String[] spuArr = null;
         logger.info("spu的总数是======="+spuStrings.length); 
@@ -221,6 +200,9 @@ public class FetchProduct {
 					  data = spuStrings[i];
 				}
 					spuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+					
+					spuId_seasonM.put(spuArr[0], spuArr[1]);
+					
 					SpuDTO spu = new SpuDTO();
 					Item item = new Item();
 				   item.setColor(StringUtils.isBlank(spuArr[10])?spuArr[4]:spuArr[10]);
@@ -260,6 +242,40 @@ public class FetchProduct {
 				errorLogger.error(i+" "+e);
 			}
 		}
+        
+        
+        
+        //价格信息
+        String[] priceStrings = priceData.split("\\r\\n");
+        String[] priceArr = null;
+        for (int i = 1; i < priceStrings.length; i++) {
+        	try {
+				
+        		if (StringUtils.isNotBlank(priceStrings[i])) {
+    				if (i==1) {
+    				  data =  priceStrings[i].split("\\n")[1];
+    				}else {
+    				  data = priceStrings[i];
+    				}
+            	}
+    			priceArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+    			if("A16".equals(spuId_seasonM.get(priceArr[0]))){
+    				priceMap.put(priceArr[0], priceArr[4]);
+    			}else{
+    				priceMap.put(priceArr[0], priceArr[3]);
+    			}
+    			
+    			supplierPriceMap.put(priceArr[0], priceArr[2]);
+        		
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorLogger.error(e);
+			}
+        	
+        }
+        
+        
+        
 		
 		//============================保存spu===================================
 		logger.info("开始保存spu，spuMap的大小是============"+spuMap.size()); 
@@ -337,7 +353,14 @@ public class FetchProduct {
 //							continue;
 							priceMap.put(item.getSpuId(), "0");
 						}
-	        			sku.setMarketPrice(priceMap.get(item.getSpuId()).replace(",", ""));
+	        			sku.setMarketPrice(priceMap.get(item.getSpuId()).replace(",", "."));
+	        			try {
+	        				String supplierPrice = supplierPriceMap.get(item.getSpuId()).replaceAll(",", ".");
+		        			double suPrice = new BigDecimal(Double.parseDouble(supplierPrice)).setScale(2, RoundingMode.HALF_UP).doubleValue();
+		        			sku.setSupplierPrice(String.valueOf(suPrice));  
+						} catch (Exception e) {
+							e.printStackTrace();
+						}	        			
 	        			sku.setColor(item.getColor());
 	        			sku.setProductDescription(item.getDescription());
 	        			sku.setSaleCurrency("EURO");
