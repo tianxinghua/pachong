@@ -44,7 +44,7 @@ public class StockImp  extends AbsUpdateProductStock {
     	
     	//获取库存元数据    	
 		Map<String,String> stockMap = new HashMap<String, String>();
-//		Map<String,Double> zeroStock = new HashMap<String, Double>();
+		Map<String,Double> notzeroStock = new HashMap<String, Double>();
         
         try{
         	//业务实现
@@ -67,7 +67,10 @@ public class StockImp  extends AbsUpdateProductStock {
             		Stock_TabularQueryResponseStructure[] items = response.getRecords().getItem();
                 	for(Stock_TabularQueryResponseStructure item : items){
                 		try {
-            				stockMap.put(skuId,""+(int)item.getStock());
+            				if(item.getStock() >0){
+            					notzeroStock.put(skuId, item.getStock());
+            				}
+                			stockMap.put(skuId,""+(int)item.getStock());
             				logger.info(skuId+"================"+(int)item.getStock());                     			
         				} catch (Exception e) {
         					stockMap.put(skuId,"0");            					
@@ -78,14 +81,16 @@ public class StockImp  extends AbsUpdateProductStock {
     				logError.error("第1次异常===="+e);
     				stockMap.put(skuId,"0");
     			}
-        	}    	
-        
+        	} 
+        	
+        	logger.info("notzeroStock.size==="+notzeroStock.size()); 
+        	
         }catch(Exception ex){
         	logError.error(ex);
         	ex.printStackTrace(); 
         }
       
-        logger.info("==========返回的map大小========="+stockMap.size()); 
+        logger.info("stockMap.size==="+stockMap.size()); 
         return stockMap;
     }
 

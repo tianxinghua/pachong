@@ -62,51 +62,51 @@ public class OrderSreviceImpl extends AbsOrderService{
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {		
 		
-		orderDTO.setStatus(OrderStatus.PAYED);
+		orderDTO.setStatus(OrderStatus.PLACED);
 		logger.info("下单成功!");
 	}
 
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
-		logger.info("给供应商推送订单================="+orderDTO.getSpPurchaseNo()+" "+orderDTO.getDetail());
-//		try {
-//			
-//			WS_SitoStub wS_SitoStub = new WS_SitoStub();
-//			OrdineConfermatoCliente ordineConfermato = new OrdineConfermatoCliente();
-//			String[] skuId_qty = orderDTO.getDetail().split(",")[0].split(":"); 
-//			String[] spuId_size = skuId_qty[0].split("-");
-//			ordineConfermato.setID_ARTICOLO(Long.parseLong(spuId_size[0]));//spuId
-//			ordineConfermato.setTAGLIA(spuId_size[1]);//尺码
-//			ordineConfermato.setQTA(Long.parseLong(skuId_qty[1]));//数量
-//			ordineConfermato.setCODICE(orderDTO.getSpPurchaseNo()); 
-//			ordineConfermato.setID_CLIENTE(20150918);
-//			logger.info("下单参数========spuId="+ordineConfermato.getID_ARTICOLO()+",尺码="+ordineConfermato.getTAGLIA()+",数量="+ordineConfermato.getQTA()+",采购单号="+ordineConfermato.getCODICE());
-//			OrdineConfermatoClienteResponse response = wS_SitoStub.ordineConfermatoCliente(ordineConfermato);
-//			String result = response.getOrdineConfermatoClienteResult();
-//			System.out.println(result); 
-//			logger.info("返回的结果======"+result);
-//			System.out.println(result); 			
-//			if(result.startsWith("OK")){
-//				orderDTO.setStatus(OrderStatus.CONFIRMED);
-//				orderDTO.setExcState("0");
-//			}else if(result.equals("ND")){//可能是没有库存
-//				orderDTO.setExcState("1");
-//				orderDTO.setExcDesc(result);
-//				orderDTO.setExcTime(new Date());
-//			}else{
-//				orderDTO.setExcState("1");
-//				orderDTO.setExcDesc(result);
-//				orderDTO.setExcTime(new Date());
-//			}
-//			
-//			
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			loggerError.error(e); 
-//			orderDTO.setExcState("1");
-//			orderDTO.setExcDesc(e.getMessage());
-//			orderDTO.setExcTime(new Date());
-//		}
+		
+		try {
+			
+			WS_SitoStub wS_SitoStub = new WS_SitoStub();
+			OrdineConfermatoCliente ordineConfermato = new OrdineConfermatoCliente();
+			String[] skuId_qty = orderDTO.getDetail().split(",")[0].split(":"); 
+			String[] spuId_size = skuId_qty[0].split("-");
+			ordineConfermato.setID_ARTICOLO(Long.parseLong(spuId_size[0]));//spuId
+			ordineConfermato.setTAGLIA(spuId_size[1].replaceAll("\\+", "½"));//尺码 
+			ordineConfermato.setQTA(Long.parseLong(skuId_qty[1]));//数量
+			ordineConfermato.setCODICE(orderDTO.getSpPurchaseNo()); 
+			ordineConfermato.setID_CLIENTE(20150918);
+			logger.info("下单参数========spuId="+ordineConfermato.getID_ARTICOLO()+",尺码="+ordineConfermato.getTAGLIA()+",数量="+ordineConfermato.getQTA()+",采购单号="+ordineConfermato.getCODICE());
+			OrdineConfermatoClienteResponse response = wS_SitoStub.ordineConfermatoCliente(ordineConfermato);
+			String result = response.getOrdineConfermatoClienteResult();
+			System.out.println(result); 
+			logger.info("返回的结果======"+result);
+			System.out.println(result); 			
+			if(result.startsWith("OK")){
+				orderDTO.setStatus(OrderStatus.CONFIRMED);
+				orderDTO.setExcState("0");
+			}else if(result.equals("ND")){//可能是没有库存
+				orderDTO.setExcState("1");
+				orderDTO.setExcDesc(result);
+				orderDTO.setExcTime(new Date());
+			}else{
+				orderDTO.setExcState("1");
+				orderDTO.setExcDesc(result);
+				orderDTO.setExcTime(new Date());
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			loggerError.error(e); 
+			orderDTO.setExcState("1");
+			orderDTO.setExcDesc(e.getMessage());
+			orderDTO.setExcTime(new Date());
+		}
 	}
 
 	@Override
@@ -135,11 +135,12 @@ public class OrderSreviceImpl extends AbsOrderService{
 	}
 	
 	public static void main(String[] args) {
-		OrderSreviceImpl order = new OrderSreviceImpl();
-		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setSpPurchaseNo("CGD2016071100291");
-		orderDTO.setDetail("9386103-42:1,");
-		order.handleConfirmOrder(orderDTO); 
+//		OrderSreviceImpl order = new OrderSreviceImpl();
+//		OrderDTO orderDTO = new OrderDTO();
+//		orderDTO.setSpPurchaseNo("CGD2016071100291");
+//		orderDTO.setDetail("9386103-42:1,");
+//		order.handleConfirmOrder(orderDTO); 
+//		System.out.println("41+".replaceAll("+", "½"));
 		
 	}
 	

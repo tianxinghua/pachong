@@ -14,14 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.EMonti.axisclient.MagentoService;
-import com.shangpin.iog.EMonti.axisclient.MagentoServiceLocator;
-import com.shangpin.iog.EMonti.axisclient.PortType;
-import com.shangpin.iog.EMonti.util.SoapXmlUtil;
+import com.shangpin.iog.EMonti.axisclient.axisclient20.MagentoService;
+import com.shangpin.iog.EMonti.axisclient.axisclient20.MagentoServiceLocator;
+import com.shangpin.iog.EMonti.axisclient.axisclient20.PortType;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 //import com.shangpin.iog.E-Monti.util.E-MontiUtil;
@@ -51,11 +48,11 @@ public class FetchProduct {
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 		//获取原有的SKU 仅仅包含价格和库存
 		Map<String,SkuDTO> skuDTOMap = new HashedMap();
-		try {
-			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+//		} catch (ServiceException e) {
+//			e.printStackTrace();
+//		}
 		
 		try {
 			

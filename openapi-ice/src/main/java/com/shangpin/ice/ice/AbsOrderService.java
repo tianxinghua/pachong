@@ -311,7 +311,7 @@ public abstract class AbsOrderService {
         String  startTime = "";
         Date tmpDate =  DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(startDateOfWMS,YYYY_MMDD_HH_WMS),-20,"m");
         startTime = DateTimeUtil.convertFormat(tmpDate,YYYY_MMDD_HH_WMS) ;
-        handleOrderOfSOPForSpecial(supplierId,supplierNo,startTime,endDateOfWMS);
+        handleOrderOfSOPForSpecial(skuMap,supplierId,supplierNo,startTime,endDateOfWMS);
 
         //处理退单
         handleCancelOfWMS(supplierNo, supplierId, skuMap, refundList,handleCancel);
@@ -937,7 +937,7 @@ public abstract class AbsOrderService {
      * @param startDate
      * @param endDate
      */
-    private void handleOrderOfSOPForSpecial(String supplierId, String supplierNo,String startDate,String endDate) {
+    private void handleOrderOfSOPForSpecial(Map<String,String> skuMap,String supplierId, String supplierNo,String startDate,String endDate) {
         //获取订单数组
         List<Integer> status = new ArrayList<>();
         status.add(1);
@@ -972,7 +972,11 @@ public abstract class AbsOrderService {
                 purchaseDetailNo = purchaseOrderDetail.SopPurchaseOrderDetailNo;
                 supplierSku = purchaseOrderDetail.SupplierSkuNo;
             }
-
+            
+            if(!skuMap.containsKey(spSku)){//如果skuv不在SKU_RELATION表里，则不插入
+            	logger.info(spSku+" 在SKU_RELATION关系表中找不到，不插入ORDER_DETAIL表");
+            	continue;
+            }
 
             List<OrderDetailDTO> detailDTOList =null;
             try {
@@ -1020,6 +1024,7 @@ public abstract class AbsOrderService {
 //            spOrder.setMemo(sopbuffer.toString().substring(0,sopbuffer.toString().length()-1));
 //            spOrder.setPurchasePriceDetail(purchsePrice);
 //            spOrder.setCreateTime(new Date());
+           
             OrderDetailDTO detailDTO = new OrderDetailDTO();
             detailDTO.setUuid(UUID.randomUUID().toString());
             detailDTO.setSupplierId(supplierId);
@@ -1101,8 +1106,11 @@ public abstract class AbsOrderService {
         }
 
         for(ICEWMSOrderDTO icewmsOrderDTO:orderLit){
-            if(!skuMap.containsKey(icewmsOrderDTO.getSkuNo()))
-                continue;
+            if(!skuMap.containsKey(icewmsOrderDTO.getSkuNo())){
+            	logger.info(icewmsOrderDTO.getSkuNo()+" 在SKU_RELATION关系表中找不到，不插入ORDER表");
+            	continue;
+            }
+                
 
             uuid= UUID.randomUUID().toString();
 

@@ -309,6 +309,7 @@ public abstract class AbsSaveProduct {
 			try {
 				productFetchService.saveSPU(spuDTO);
 			} catch (ServiceException e) {
+				e.printStackTrace();
 				try {
 //					isSpuChanged(spuDTO);//取消单个查询
 					productFetchService.updateMaterial(spuDTO);

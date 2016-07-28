@@ -521,18 +521,20 @@ public abstract class AbsUpdateProductStock {
 					boolean success = true;
 					for (int i = 0; i < 2; i++) {// 发生错误 允许再执行一次
 						try {
-							loggerInfo.info("待更新的数据：--------" + entry.getKey()
-									+ ":" + entry.getValue());
+							
 
 							result = SpClient.UpdateStock(host, app_key,
 									app_secret, new Date(), request_body);
-							if (null != result && !result.getResponse()) {
+							if (null==result || null==result.getResponse() || (null != result && !result.getResponse())) {
 								failCount++;
 								success = false;
 								logger.warn("更新iceSKU：{}，库存量：{}失败",
 										entry.getKey(), entry.getValue());
 								loggerError.error(entry.getKey() + ":"
 										+ entry.getValue() + "更新库存失败");
+							}else{
+								loggerInfo.info("待更新的数据：--------" + entry.getKey()
+										+ ":" + entry.getValue() + " 成功");
 							}
 						} catch (Exception e) {
 
