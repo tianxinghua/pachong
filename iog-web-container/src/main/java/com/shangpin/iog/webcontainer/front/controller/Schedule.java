@@ -93,6 +93,9 @@ public class Schedule {
 	@Autowired
     ProductSearchService productService;
 	
+	/**
+	 * 每天发送 价格发生变化了 的产品列表
+	 */
 	@Scheduled(cron="${sendmailSchedule}")
 	public void sendMailDiffProduct(){
 		
@@ -205,6 +208,9 @@ public class Schedule {
 		}
 	}
 	
+	/**
+	 * 发送每天拉取下来的所有信息完好的产品列表
+	 */
 	@Scheduled(cron="${goodproduct_Schedule}")
 	public void sendDailyGoodProducts(){
 		

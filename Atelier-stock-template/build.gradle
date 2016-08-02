@@ -17,7 +17,7 @@ jar {
 
     manifest {
 	
-   		 attributes 'Main-Class': 'com.shangpin.iog.Atelier-template.stock.StockImp'
+   		 attributes 'Main-Class': 'com.shangpin.iog.Atelier.stock.StockImp'
     
    
     }

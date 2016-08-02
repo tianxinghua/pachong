@@ -1,5 +1,6 @@
 package com.shangpin.iog.ostore.schedule;
 
+import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.ostore.order.OrderServiceImpl;
 
 import org.slf4j.Logger;
@@ -30,5 +31,13 @@ public class Schedule {
     public  void confirmOrder(){
     	orderService.confirmOrder();
     }
+    
+//    @Scheduled(cron="0 0/1 * * * ?")
+//    public void test(){
+//    	OrderDTO orderDTO = new OrderDTO();
+//    	orderDTO.setSpOrderId("201607254074169");
+//    	orderDTO.setDetail("6794202-2107151150283:1,");
+//    	orderService.handleConfirmOrder(orderDTO);
+//    }
     
 }

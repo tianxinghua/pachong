@@ -65,7 +65,8 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
 
         Map<String,String> mongMap = new HashMap<>();
         //从文件里获取
-        Map<String,String> stockMap2 = getStockList();
+//        Map<String,String> stockMap2 = getStockList();
+        Map<String,String> stockMap2 = new HashMap<String,String>();
         Map<String,String> lnccStockMap = getLnccStock();
 
         mongMap.put("supplierId",supplierId);
@@ -78,7 +79,7 @@ public class LevelGroupStockImp extends AbsUpdateProductStock {
         	try {
 				
         		if (StringUtils.isNotEmpty(stockMap2.get(skuno))){//先在weitzman里查找             	
-                    skustock.put(skuno, Integer.valueOf(stockMap2.get(skuno)));
+//                    skustock.put(skuno, Integer.valueOf(stockMap2.get(skuno)));
                 }else{//然后在lncc里找
                 	String stock2 = "";                
                     if(skuno.length()<15){

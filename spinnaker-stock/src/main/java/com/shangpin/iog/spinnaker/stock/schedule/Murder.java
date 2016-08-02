@@ -34,7 +34,7 @@ public class Murder extends TimerTask{
 		return murder;
 	}
 	
-	private static ExecutorService executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
+	private static ExecutorService executor = new ThreadPoolExecutor(1, 2, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(1),new ThreadPoolExecutor.DiscardPolicy());
 	@Override
 	public void run() {
 		System.out.println(Thread.currentThread().getName()+"执行murder");

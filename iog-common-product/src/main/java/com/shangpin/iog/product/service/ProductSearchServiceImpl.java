@@ -300,7 +300,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				+ "Category 品类翻译" + splitSign
 				+ "Category_No 品类编号" + splitSign + "BrandNo 品牌编号" + splitSign
 				+ "BrandName 品牌" + splitSign + "ProductModel 货号" + splitSign
-				+ "SupplierSkuNo 供应商SkuNo" + splitSign + " 性别 " + splitSign
+				+ "SupplierSkuNo 供应商sku编号" + splitSign + "尚品sku编号" + splitSign 
+				+ " 性别 " + splitSign
 				+ "SopProductName 商品名称" + splitSign + "BarCode 条形码" + splitSign
 				+ "ProductColor 颜色" + splitSign + "color 中文" + splitSign
 				+ "ProductSize 尺码" + splitSign + "material 材质" + splitSign
@@ -407,6 +408,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				// 供应商SKUID
 
 				buffer.append("\"\t" + dto.getSkuId() + "\"").append(splitSign);
+				//尚品sku编号
+				buffer.append(StringUtils.isNotBlank(dto.getSpSkuId())? dto.getSpSkuId():"").append(splitSign);
 				// 欧洲习惯 第一个先看 男女
 				buffer.append(
 						null == dto.getCategoryGender() ? "" : dto
@@ -1605,7 +1608,8 @@ buffer.append(dto.getMemo());
 				+ "Category 品类翻译" + splitSign
 				+ "Category_No 品类编号" + splitSign + "BrandNo 品牌编号" + splitSign
 				+ "BrandName 品牌" + splitSign + "ProductModel 货号" + splitSign
-				+ "SupplierSkuNo 供应商SkuNo" + splitSign + " 性别 " + splitSign
+				+ "SupplierSkuNo 供应商SkuNo" + splitSign + " 尚品sku编号 " + splitSign
+				+ " 性别 " + splitSign
 				+ "SopProductName 商品名称" + splitSign + "BarCode 条形码" + splitSign
 				+ "ProductColor 颜色" + splitSign + "color 中文" + splitSign
 				+ "ProductSize 尺码" + splitSign + "material 材质" + splitSign
@@ -1722,6 +1726,9 @@ buffer.append(dto.getMemo());
 									// 供应商SKUID
 	
 									buffer.append("\"\t" + dto.getSkuId() + "\"").append(splitSign);
+									//尚品sku编号
+									buffer.append(StringUtils.isNotBlank(dto.getSpSkuId())? dto.getSpSkuId():"").append(splitSign);
+									
 									// 欧洲习惯 第一个先看 男女
 									buffer.append(
 											null == dto.getCategoryGender() ? "" : dto

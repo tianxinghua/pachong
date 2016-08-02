@@ -116,6 +116,7 @@
           sku.NEW_MARKET_PRICE as newMarketPrice,
           sku.NEW_SALE_PRICE as newSalePrice,
           sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
+          sku.SP_SKU_ID as spSkuId,
           
           spu.CATEGORY_ID as category_id, 
           spu.CATEGORY_NAME as category_name,
@@ -126,7 +127,7 @@
           spu.SUB_CATEGORY_ID  as  sub_category_id,
           spu.SUB_CATEGORY_NAME  as  sub_category_name,
           spu.NEWSEASON_ID as newseasonId,
-          spu.NEWSEASON_NAME as newseasonName,
+          spu.NEWSEASON_NAME as newseasonName,          
 <!--           sku.MEMO  as  memo -->
           CONCAT(sku.MEMO) as memo
 		
@@ -431,6 +432,8 @@
           sku.NEW_MARKET_PRICE as newMarketPrice,
           sku.NEW_SALE_PRICE as newSalePrice,
           sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
+          
+          sku.SP_SKU_ID as spSkuId,
           
           spu.CATEGORY_ID as category_id, 
           spu.CATEGORY_NAME as category_name,
