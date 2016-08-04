@@ -160,7 +160,7 @@ public abstract class FetchProduct extends AbsSaveProduct{
 	 * @return
 	 */
 	private Map<String,AtelierSpu> handleSpuData(){
-		String spuData = getInterfaceData(spu_interface,new OutTimeConfig(1000*60*60,1000*60*5,1000*60*60));
+		String spuData = getInterfaceData(spu_interface,new OutTimeConfig(1000*60*90,1000*60*60,1000*60*90));
 		if(HttpUtil45.errorResult.equals(spuData)){
 			return null;
 		}else{

@@ -101,6 +101,26 @@ public class DataTransUtil {
 		}
 		return goods.getGood();
 	}
+	
+	/**
+	 * 根据spu id获取sku数据
+	 * @param goodsID
+	 * @return
+	 */
+	public static GoodsDetail getGoodsDetailByGoodsID(String goodsID){
+		try {
+			OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10);
+			Map<String,String> param = new HashMap<String,String>();
+			param.put("GoodsID", goodsID);
+			String data = HttpUtil45.postAuth(url+"GetGoodsDetailByGoodsID", param, outTimeConf, username, password);
+			GoodsDetail goodsDetail = ObjectXMLUtil.xml2Obj(GoodsDetail.class, data);
+			return goodsDetail;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static Map<String,GoodDetail> getGoodsDetailList(){
 		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10);
 		Map<String,GoodDetail> returnMap = new HashMap<String, GoodDetail>();

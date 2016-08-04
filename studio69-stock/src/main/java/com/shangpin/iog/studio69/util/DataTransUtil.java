@@ -46,7 +46,7 @@ public class DataTransUtil {
 			goodsStock = ObjectXMLUtil.xml2Obj(GoodsStock.class, data);
 		} catch (JAXBException e) {
 			logger.info("数据转换错误");
-			System.exit(0);
+			return returnMap;
 		}
 		String size = "";
 		List<Good> goodList = goodsStock.getGood();
