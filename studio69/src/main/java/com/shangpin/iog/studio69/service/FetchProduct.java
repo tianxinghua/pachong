@@ -96,7 +96,7 @@ public class FetchProduct {
 					brandName = brand.get(good.getBrandID());
 					spu.setBrandName(StringUtils.isBlank(brandName)?"":brandName);					
 					try {
-						category = goodsCategory.get(good.getCategoryID()).getName();
+						category = goodsCategory.get(good.getParentCategoryID()).getName();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -106,67 +106,71 @@ public class FetchProduct {
 					//sku
 					GoodsDetail goodsDetail = DataTransUtil.getGoodsDetailByGoodsID(good.getID());
 					if(null != goodsDetail){
-						for(GoodDetail goodDetail : goodsDetail.getGoodDetials()){
-							for(Item item : goodDetail.getStock().getItemlist()){
-								try {
-									SkuDTO sku = new SkuDTO();
-									sku.setId(UUIDGenerator.getUUID());
-									sku.setSupplierId(supplierId);
-									sku.setSpuId(spu.getSpuId());
-									String size = item.getSize();
-									if(size.indexOf("½")>0){
-										size=size.replace("½","+");
-									}
-									sku.setSkuId(spu.getSpuId()+"-"+size);									
-									productCode = good.getCode();
-									sku.setProductCode(StringUtils.isBlank(productCode)?"":productCode);										
-									sku.setColor(goodDetail.getColor());
-									sku.setProductSize(size);
-									sku.setStock(item.getQty());									
-									productName = good.getGoodsName();
-									sku.setProductName(StringUtils.isBlank(productName)?"":productName);
-									//TODO 暂时设置为市场价
-									sku.setMarketPrice(good.getPrice());
-									//TODO 暂时设置为euro
-									sku.setSaleCurrency("EURO");
+						try {
+							for(GoodDetail goodDetail : goodsDetail.getGoodDetials()){	
+								for(Item item : goodDetail.getStock().getItemlist()){
 									try {
-				        				
-				        				if(skuDTOMap.containsKey(sku.getSkuId())){
-				    						skuDTOMap.remove(sku.getSkuId());
-				    					}        				
-										productFetchService.saveSKU(sku);
-				        			} catch (ServiceException e) {
+										SkuDTO sku = new SkuDTO();
+										sku.setId(UUIDGenerator.getUUID());
+										sku.setSupplierId(supplierId);
+										sku.setSpuId(spu.getSpuId());
+										String size = item.getSize();
+										if(size.indexOf("½")>0){
+											size=size.replace("½","+");
+										}
+										sku.setSkuId(spu.getSpuId()+"-"+size);									
+										productCode = good.getCode();
+										sku.setProductCode(StringUtils.isBlank(productCode)?"":productCode);										
+										sku.setColor(goodDetail.getColor());
+										sku.setProductSize(size);
+										sku.setStock(item.getQty());									
+										productName = good.getGoodsName();
+										sku.setProductName(StringUtils.isBlank(productName)?"":productName);
+										//TODO 暂时设置为市场价
+										sku.setMarketPrice(good.getPrice());
+										//TODO 暂时设置为euro
+										sku.setSaleCurrency("EURO");
 										try {
-					        				if (e.getMessage().equals("数据插入失败键重复")) {
-					        					//更新价格和库存
-					        					productFetchService.updatePriceAndStock(sku);
-					        				} else {
-					        					e.printStackTrace();
-					        				}
-					        			} catch (ServiceException e1) {
-					        				e1.printStackTrace();
-					        			}
+					        				
+					        				if(skuDTOMap.containsKey(sku.getSkuId())){
+					    						skuDTOMap.remove(sku.getSkuId());
+					    					}        				
+											productFetchService.saveSKU(sku);
+					        			} catch (ServiceException e) {
+											try {
+						        				if (e.getMessage().equals("数据插入失败键重复")) {
+						        					//更新价格和库存
+						        					productFetchService.updatePriceAndStock(sku);
+						        				} else {
+						        					e.printStackTrace();
+						        				}
+						        			} catch (ServiceException e1) {
+						        				e1.printStackTrace();
+						        			}
+										}
+									
+									} catch (Exception e) {
+										e.printStackTrace();
 									}
+								}
+								madein = goodDetail.getMadeIn();
+								material = goodDetail.getComposition();
 								
+								//保存图片
+								try {
+									List<Picture> asList = goodDetail.getPictures().getPicturelist();
+									List<String> pic = new ArrayList<String>();
+									for (Picture picture : asList) {
+										pic.add(picture.getPictureUrl());
+									}
+									productFetchService.savePicture(supplierId, spu.getSpuId(), null,pic);
 								} catch (Exception e) {
 									e.printStackTrace();
-								}
-							}
-							madein = goodDetail.getMadeIn();
-							material = goodDetail.getComposition();
-							
-							//保存图片
-							try {
-								List<Picture> asList = goodDetail.getPictures().getPicturelist();
-								List<String> pic = new ArrayList<String>();
-								for (Picture picture : asList) {
-									pic.add(picture.getPictureUrl());
-								}
-								productFetchService.savePicture(supplierId, spu.getSpuId(), null,pic);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}							
-						}						
+								}							
+							}	
+						} catch (Exception e) {
+							e.printStackTrace(); 
+						}			
 					}
 					spu.setMaterial(material);
 					spu.setProductOrigin(madein);					

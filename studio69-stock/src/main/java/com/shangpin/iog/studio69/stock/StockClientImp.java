@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.studio69.schedule.AppContext;
 import com.shangpin.iog.studio69.util.DataTransUtil;
 
 /**
