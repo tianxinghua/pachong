@@ -24,11 +24,12 @@ public class Test {
 //		GoodDetail goodDetail = goodsDetailList.get("6");
 //		System.out.println(StringUtils.isBlank(goodDetail.getMadeIn()));
 		Map<String, String> param = new HashMap<String, String>();
-		param.put("CategoryID", "-1");
-		String priceData = HttpUtil45.postAuth("http://studio69.atelier98.net/api_studio69/api_studio69.asmx/GetGoodsDetailListByCategoryID",
+		param.put("GoodsID", "29223");
+		String priceData = HttpUtil45.postAuth("http://studio69.atelier98.net/api_studio69/api_studio69.asmx/GetGoodsDetailByGoodsID",
 				param ,new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),"SHANGPIN","2MWWKgNSxgf");
 		
 		try {
+//			GoodDetail goodDetail = ObjectXMLUtil.xml2Obj(GoodDetail.class, priceData);
 			GoodsDetail categorys = ObjectXMLUtil.xml2Obj(GoodsDetail.class, priceData);
 			System.out.println(categorys.getGoodDetials().get(0).getStock().getItemlist().size());
 		} catch (JAXBException e1) {

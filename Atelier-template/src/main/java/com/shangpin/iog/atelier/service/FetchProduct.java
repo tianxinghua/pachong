@@ -34,7 +34,7 @@ import com.shangpin.product.AbsSaveProduct;
  */
 
 @Component("Atelier-template")
-public class FetchProduct extends AbsSaveProduct{
+public abstract class FetchProduct extends AbsSaveProduct{
 
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger loggerError = Logger.getLogger("error");
@@ -66,6 +66,17 @@ public class FetchProduct extends AbsSaveProduct{
 		savePath = bdl.getString("savePath");
 	}
 	
+	/**
+	 * 不同的供应商处理价格的策略不同
+	 * @param sku
+	 * @param atelierSpu
+	 * @param atelierPrice
+	 */
+	public abstract void setProductPrice(SkuDTO sku,AtelierSpu atelierSpu,AtelierPrice atelierPrice);
+	
+	/**
+	 * 抓取主程序
+	 */
 	public Map<String, Object> fetchProductAndSave() {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		List<SkuDTO> skuList = new ArrayList<SkuDTO>();
@@ -89,15 +100,14 @@ public class FetchProduct extends AbsSaveProduct{
         			if(null !=spuMap && spuMap.containsKey(atelierSku.getSpuId()) && null != spuMap.get(atelierSku.getSpuId())){
         				AtelierSpu atelierSpu = spuMap.get(atelierSku.getSpuId());
         				sku.setProductName(atelierSpu.getCategoryName()+" "+atelierSpu.getBrandName());
-        				sku.setMarketPrice(atelierSpu.getSupplierPrice());
+        				setProductPrice(sku,atelierSpu,null);
         				sku.setProductCode(atelierSpu.getStyleCode()+"-"+atelierSpu.getColorCode());
         				sku.setColor(atelierSpu.getColorName());
         				sku.setProductDescription(atelierSpu.getDescription());        				
         			}
         			if(null != priceMap && priceMap.containsKey(atelierSku.getSpuId()) && null != priceMap.get(atelierSku.getSpuId())){
-        				sku.setSupplierPrice(priceMap.get(atelierSku.getSpuId()).getPrice1().replaceAll(",", ".")); 
+        				setProductPrice(sku,null,priceMap.get(atelierSku.getSpuId()));
         			}
-        			sku.setSalePrice("");
         			sku.setBarcode(atelierSku.getBarcode());
         			sku.setProductSize(atelierSku.getSize().replaceAll("½", "+")); 
         			sku.setStock(atelierSku.getStock()); 
@@ -150,7 +160,7 @@ public class FetchProduct extends AbsSaveProduct{
 	 * @return
 	 */
 	private Map<String,AtelierSpu> handleSpuData(){
-		String spuData = getInterfaceData(spu_interface,new OutTimeConfig(1000*60*60,1000*60*5,1000*60*60));
+		String spuData = getInterfaceData(spu_interface,new OutTimeConfig(1000*60*90,1000*60*60,1000*60*90));
 		if(HttpUtil45.errorResult.equals(spuData)){
 			return null;
 		}else{
@@ -364,11 +374,7 @@ public class FetchProduct extends AbsSaveProduct{
 		}
     	
     }
-	
-	public static void main(String[] args) {
-		FetchProduct fe = new FetchProduct();
-		fe.fetchProductAndSave();
-	}
+
 	
 }
 

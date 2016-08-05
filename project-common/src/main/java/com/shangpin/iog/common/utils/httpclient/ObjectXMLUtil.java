@@ -9,7 +9,7 @@ import java.io.*;
 public  class ObjectXMLUtil<T> {
 
 	//private static final String DECLARATION = "<?xml version='1.0' encoding='utf-8'?>";  
-	private static final String ENCODING = "GB18030"; 
+	private static final String ENCODING = "utf-8"; 
 	
 	/**
 	 * 将xml输入流转成object
