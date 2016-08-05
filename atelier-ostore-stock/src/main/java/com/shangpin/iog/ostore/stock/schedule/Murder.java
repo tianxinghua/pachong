@@ -2,10 +2,7 @@ package com.shangpin.iog.ostore.stock.schedule;
 
 import java.util.ResourceBundle;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import org.springframework.stereotype.Component;
 
@@ -32,8 +29,8 @@ public class Murder extends TimerTask{
 	public static Murder getMur(){
 		return murder;
 	}
-//	private static ExecutorService executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
-	private static ExecutorService executor =Executors.newCachedThreadPool(); 
+	private static ExecutorService executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
+//	private static ExecutorService executor =Executors.newCachedThreadPool();
 	@Override
 	public void run() {
 		System.out.println(Thread.currentThread().getName()+"执行murder");
