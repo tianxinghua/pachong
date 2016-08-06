@@ -33,6 +33,8 @@
 		<typeAlias alias="iog_orderDetail" type="com.shangpin.iog.dto.OrderDetailDTO"/>
 		<typeAlias alias="iog_csvSupplier" type="com.shangpin.iog.dto.CsvSupplierInfoDTO"/>
 		<typeAlias alias="iog_csvAttribute" type="com.shangpin.iog.dto.CsvAttributeInfoDTO"/>
+		<typeAlias alias="iog_buEpRule" type="com.shangpin.iog.dto.BuEpRuleDTO"/>
+		<typeAlias alias="iog_buEpValue" type="com.shangpin.iog.dto.BuEpValueDTO"/>
 		
 	</typeAliases>
 </configuration>

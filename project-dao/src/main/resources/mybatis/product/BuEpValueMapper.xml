@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.BuEpValueMapper">
+	<resultMap type="iog_buEpValue" id="buEpValueResultMap">
+		<result column="UUID" property="uuid"/>
+		<result column="BUID" property="buId"/>
+		<result column="VALUE" property="value"/>
+		<result column="ISEXPORT" property="isExport"/>
+	</resultMap>
+	<sql id="all_buEpValue_column">
+		UUID,
+		BUID,
+		VALUE,
+		ISEXPORT
+	</sql>
+	<select id="findValueByBuIdAndIsExport" resultMap="java.lang.String">
+		select VALUE
+		from BU_EP_VALUE
+		<where>
+			<if test="null != buId">
+				BUID = #{buId}
+			</if>
+			<if test="null != isExport">
+				and ISEXPORT = #{isExport}
+			</if>
+		</where>
+	</select>
+</mapper>
