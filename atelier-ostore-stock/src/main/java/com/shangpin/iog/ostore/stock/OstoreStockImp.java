@@ -84,7 +84,7 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
         		if (skuMap.containsKey(skuId)) {
         			stock = skuMap.get(skuId);
                     try {
-                        returnMap.put(skuId, Integer.valueOf(stock));
+                        returnMap.put(skuId, Integer.valueOf(stock)<0?0:Integer.valueOf(stock));
                     } catch (NumberFormatException e) {
                         returnMap.put(skuId, 0);
                     }

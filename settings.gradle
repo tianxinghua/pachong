@@ -25,4 +25,6 @@ include 'filippo-order'
 include 'bagheera-stock'
 include 'coltorti'
 include 'atelier-ostore-order'
+include 'biondini-stock'
+include 'atelier-ostore-stock'
 

@@ -79,8 +79,8 @@ public class StockImp extends AbsUpdateProductStock {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        logger.info("inviqa更新库存结束");
-        System.out.println("inviqa更新库存结束");
+        logger.info("biondini更新库存结束");
+        System.out.println("biondini更新库存结束");
         System.exit(0);
     }
 }
