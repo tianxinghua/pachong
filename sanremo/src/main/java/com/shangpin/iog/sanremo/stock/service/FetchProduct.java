@@ -160,7 +160,7 @@ public class FetchProduct {
 	                                    }else{
 	                                        skudto.setProductSize(sku.getItem_size());
 	                                    }
-	                                    skudto.setSkuId(sku.getItem_id());
+	                                    skudto.setSkuId(sku.getBarcode());
 	                                    itemID = sku.getItem_id();
 	                                    priceUrl = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetPriceByItemID?DBContext="+database+"&ItemID="+itemID+"&key=8IZk2x5tVN";
 	                                    try {

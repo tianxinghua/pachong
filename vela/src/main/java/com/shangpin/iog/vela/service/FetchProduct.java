@@ -109,7 +109,7 @@ public class FetchProduct {
                         e.printStackTrace();
                     }
                     if (list != null && list.getProduct() != null) {
-                        String priceUrl;
+                        String priceUrl,itemID="";
                         for (Spu spu : list.getProduct()) {
                             //spu入库
                             SpuDTO spudto = new SpuDTO();
@@ -150,8 +150,8 @@ public class FetchProduct {
                                 }else{
                                     skudto.setProductSize(sku.getItem_size());
                                 }
-                                skudto.setSkuId(sku.getItem_id());
-                                String itemID = sku.getItem_id();
+                                skudto.setSkuId(sku.getBarcode());  //sku.getItem_id()
+                                itemID = sku.getItem_id();
                                 priceUrl = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetPriceByItemID?DBContext=Default&ItemID="+itemID+"&key=MPm32XJp7M";
                                 try {
                                     json = HttpUtil45.get(priceUrl, new OutTimeConfig(), null);

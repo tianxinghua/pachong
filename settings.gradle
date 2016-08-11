@@ -21,10 +21,20 @@ include 'spinnaker-order'
 
 
 include 'iog-product-web'
-include 'filippo-order'
-include 'bagheera-stock'
+
 include 'coltorti'
 include 'atelier-ostore-order'
-include 'biondini-stock'
-include 'atelier-ostore-stock'
+include 'vela'
+include 'vela-stock'
+include 'vela-order'
+include 'sanremo'
+include 'sanremo-stock'
+include 'sanremo-order'
+
+include 'wokstore'
+include 'wokstore-stock'
+include 'efashion-order'
+
+
+
 
