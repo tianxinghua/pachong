@@ -57,6 +57,7 @@ public class StockImp extends AbsUpdateProductStock {
         mongMap.put("supplierName","sanremo");
         StringBuffer buffer = new StringBuffer();
         OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60,1000*60,1000*60);
+        String url ="",itemId="";
         for (String skuno : skuNo) {
 //            if (barcode_map.containsKey(skuno)) {
 //                continue;
@@ -64,9 +65,16 @@ public class StockImp extends AbsUpdateProductStock {
 //                barcode_map.put(skuno, null);
 //            }
 
-            String itemId = skuno;
+             itemId = skuno.trim();
             //根据供应商skuno获取库存，并更新我方sop库存
-            String url = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetQuantityByItemID?DBContext=sanremo&ItemID=[[itemId]]&key=8IZk2x5tVN";
+
+
+            if(itemId.length()<10){//item id
+                url = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetQuantityByItemID?DBContext=sanremo&ItemID=[[itemId]]&key=8IZk2x5tVN";
+            }else{   //baocode
+                url = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=sanremo&barcode=[[itemId]]&key=8IZk2x5tVN";
+            }
+
             url = url.replaceAll("\\[\\[itemId\\]\\]", itemId);
             String json = null;
             try {

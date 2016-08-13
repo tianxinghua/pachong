@@ -93,11 +93,12 @@ public class Schedule {
 	@Autowired
     ProductSearchService productService;
 	
+	/**
+	 * 每天发送 价格发生变化了 的产品列表
+	 */
 	@Scheduled(cron="${sendmailSchedule}")
 	public void sendMailDiffProduct(){
-		if(StringUtils.isBlank(supplierId)){
-			supplierId = "-1";
-		}
+		
 		Date endDate = new Date();
 //		Calendar calendar = Calendar.getInstance();		
 //		calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - Integer.parseInt(hour_of_day)); 
@@ -114,7 +115,7 @@ public class Schedule {
 		try {
 			if(StringUtils.isNotBlank(to)){
 				
-				StringBuffer buffer = productService.getDiffProduct(supplierId,startDate,endDate,null,null,"diff");
+				StringBuffer buffer = productService.getDiffProduct(startDate,endDate,null,null,"diff");
 				String messageText  = buffer.toString();
 				if(StringUtils.isNotBlank(messageText)){ 
 					try {
@@ -207,6 +208,9 @@ public class Schedule {
 		}
 	}
 	
+	/**
+	 * 发送每天拉取下来的所有信息完好的产品列表
+	 */
 	@Scheduled(cron="${goodproduct_Schedule}")
 	public void sendDailyGoodProducts(){
 		

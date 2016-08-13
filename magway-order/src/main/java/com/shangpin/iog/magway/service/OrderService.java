@@ -106,7 +106,10 @@ public class OrderService extends AbsOrderService{
 			orderDTO.setExcState("1");
 			orderDTO.setExcTime(new Date());
 			//采购异常处理
-			doOrderExc(orderDTO);
+			if(StringUtils.isNotBlank(orderResult.getMessage()) && orderResult.getMessage().contains("库存不足")){
+				doOrderExc(orderDTO);
+			}
+
 		}else if(status.equals("1")){//下单成功
 			orderDTO.setSupplierOrderNo(orderResult.getData().getTradeCode());
 			orderDTO.setStatus(OrderStatus.CONFIRMED);

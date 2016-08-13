@@ -100,10 +100,20 @@ public class TXTUtil {
             ftpClient.setDataTimeout(1000*60*20);
 			in = ftpClient.retrieveFileStream(filename);
 			dtoList = readLocalCSV(clazz, sep, in);
-            ftpClient.logout();
+            
         }catch(Exception ex){
         	log.error(ex);
         	ex.printStackTrace();
+        }finally{
+        	try {
+        		if(null != in){
+            		in.close();
+            	}
+        		ftpClient.logout();
+        		
+			} catch (Exception e) {
+				e.printStackTrace();
+			}        	
         }
         return dtoList;
 	}

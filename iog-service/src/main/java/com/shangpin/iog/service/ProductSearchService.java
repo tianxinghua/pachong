@@ -84,7 +84,6 @@ public interface ProductSearchService {
     public StringBuffer exportDiffProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
     /**
      * 获取价格变化了的产品   用于发邮件
-     * @param supplier
      * @param startDate
      * @param endDate
      * @param pageIndex
@@ -93,7 +92,7 @@ public interface ProductSearchService {
      * @return
      * @throws ServiceException
      */
-    public StringBuffer getDiffProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
+    public StringBuffer getDiffProduct(Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException;
     
     /**
      * 获取季节发生变化的产品

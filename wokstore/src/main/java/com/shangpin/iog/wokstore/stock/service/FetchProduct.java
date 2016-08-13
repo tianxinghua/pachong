@@ -159,7 +159,7 @@ public class FetchProduct {
 	                                    }else{
 	                                        skudto.setProductSize(sku.getItem_size());
 	                                    }
-	                                    skudto.setSkuId(sku.getItem_id());
+	                                    skudto.setSkuId(sku.getBarcode());
 	                                    itemID = sku.getItem_id();
 	                                    priceUrl = "http://net13server.net/wokapi/Myapi/Productslist/GetPriceByItemID?DBContext="+database+"&ItemID="+itemID+"&key=c8jNh6cIRK";
 	                                    try {

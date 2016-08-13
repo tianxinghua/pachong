@@ -12,6 +12,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -26,6 +29,7 @@ public class RussoCapriStockImp  extends AbsUpdateProductStock {
     private static String url;
     private static String username,password;
     private static ApplicationContext factory;
+    private static String savePath = null;
     private static void loadSpringContext()
     {
         factory = new AnnotationConfigApplicationContext(AppContext.class);
@@ -37,6 +41,7 @@ public class RussoCapriStockImp  extends AbsUpdateProductStock {
         url = bdl.getString("url");
         username = bdl.getString("username");
     	password = bdl.getString("password");
+    	savePath = bdl.getString("savePath");
     }
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
@@ -45,21 +50,29 @@ public class RussoCapriStockImp  extends AbsUpdateProductStock {
     	  Map<String,String> map = new HashMap<>();
     	String skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace", map,new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600),username,password);
     	
+    	save("skuData.txt",skuData);
+    	
 		String[] skuStrings = skuData.split("\\r\\n");
 		logger.info("待更新库存+++"+skuNo.size()+"读取库存+++"+skuStrings.length);
 		for (int i = 1; i < skuStrings.length; i++) {
-			if (StringUtils.isNotBlank(skuStrings[i])) {
-			
-				if (i==1) {
-				  data =  skuStrings[i].split("\\n")[1];
-				}else {
-				  data = skuStrings[i];
+			try {
+				if (StringUtils.isNotBlank(skuStrings[i])) {
+					
+					if (i==1) {
+					  data =  skuStrings[i].split("\\n")[1];
+					}else {
+					  data = skuStrings[i];
+					}
+					String[] skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+	    			String stock = skuArr[2];
+	    			String barCode = skuArr[5];
+	    			skuMap.put(skuArr[0]+"-"+barCode, stock);
 				}
-				String[] skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
-    			String stock = skuArr[2];
-    			String barCode = skuArr[5];
-    			skuMap.put(skuArr[0]+"-"+barCode, stock);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.info(e); 
 			}
+			
 		}
         Map<String,String> returnMap = new HashMap<String,String>();
         Iterator<String> iterator=skuNo.iterator();
@@ -82,6 +95,39 @@ public class RussoCapriStockImp  extends AbsUpdateProductStock {
         }
         logger.info("元数据包含的有"+num);
         return returnMap;
+    }
+    
+    public void save(String name,String data){
+    	try {
+    		File file = new File(savePath+File.separator+name);
+    		if (!file.exists()) {
+    			try {
+    				file.getParentFile().mkdirs();
+    				file.createNewFile();
+    				
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
+    		FileWriter fwriter = null;
+    		try {
+    			fwriter = new FileWriter(savePath+File.separator+name);
+    			fwriter.write(data);
+    		} catch (IOException ex) {
+    			ex.printStackTrace();
+    		} finally {
+    			try {
+    				fwriter.flush();
+    				fwriter.close();
+    			} catch (IOException ex) {
+    				ex.printStackTrace();
+    			}
+    		}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+		}
+    	
     }
 
     public static void main(String[] args) throws Exception {

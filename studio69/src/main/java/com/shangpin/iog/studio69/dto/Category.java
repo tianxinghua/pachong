@@ -4,11 +4,17 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @XmlRootElement(name="Category")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Getter
+@Setter
 public class Category {
 	private String CID;
 	private String Name;
+	private String CategoryID;
 	private String TypeID;
 	private String SKUCount;
 	public String getCID() {

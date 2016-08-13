@@ -1,5 +1,8 @@
 package com.shangpin.iog.revolve.stock;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,10 +17,14 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.revolve.stock.dto.Item;
 import com.shangpin.iog.revolve.stock.dto.ProductDTO;
 import com.shangpin.iog.revolve.stock.schedule.AppContext;
 import com.shangpin.iog.revolve.stock.sepStrategy.ISepStrategy;
 import com.shangpin.iog.revolve.stock.sepStrategy.SepStrategyContext;
+import com.shangpin.iog.revolve.stock.util.CVSUtil;
 import com.shangpin.iog.revolve.stock.util.Csv2DTO;
 
 /**
@@ -25,7 +32,7 @@ import com.shangpin.iog.revolve.stock.util.Csv2DTO;
  */
 @Component("revolveStock")
 public class StockClientImp extends AbsUpdateProductStock{
-    private static Logger logger = Logger.getLogger("info");
+    private static Logger logger = Logger.getLogger("info");    
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -36,6 +43,7 @@ public class StockClientImp extends AbsUpdateProductStock{
     private static String supplierId;
     private static String url;
     private static String filepath;
+//    private static String savePath = null;
 
     static {
         if(null==bdl)
@@ -48,26 +56,44 @@ public class StockClientImp extends AbsUpdateProductStock{
 
     @Override
     public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-    	String skuId ="";
-    	String size = "";
+    	String skuId ="";    	
         Map<String, String> skustock = new HashMap<>();
-        Map<String, String> skuData = new HashMap<>();
+        Map<String, String> skuData = new HashMap<>();        
         
-        String sep = "\t";
-		Csv2DTO csv2 = new Csv2DTO();
-		//第一个为size and stock
-		String[] needColsNo = new String[]{"","","2","","","","","","","","","","","","","","","","20","",""};
-		//策略组
-		String[] strategys = new String[]{"","","","","","","","","","","","","","","","","","","","",""};
-		ISepStrategy[] iSepStrategies = new SepStrategyContext().operate(strategys);
-		List<ProductDTO> list = csv2.toDTO(url, filepath, sep, needColsNo, iSepStrategies, ProductDTO.class);
-        
-        for (ProductDTO dto : list) {
-        	skuData.put(dto.getSkuId(), dto.getStock());
+//		Csv2DTO csv2 = new Csv2DTO();
+//		//第一个为size and stock
+//		String[] needColsNo = new String[]{"","","2","","","","","","","","","","","","","","","","20","",""};
+//		//策略组
+//		String[] strategys = new String[]{"","","","","","","","","","","","","","","","","","","","",""};
+//		ISepStrategy[] iSepStrategies = new SepStrategyContext().operate(strategys);
+//		List<ProductDTO> list = csv2.toDTO(url, filepath, sep, needColsNo, iSepStrategies, ProductDTO.class);
+//        
+//        for (ProductDTO dto : list) {
+//        	skuData.put(dto.getSkuId(), dto.getStock());
+//		}
+        logger.info("===============开始下载库存文件==============");
+        OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*60, 1000*60*60);
+		String data = HttpUtil45.get(url, outTimeConf, null);
+		int loop = 0;
+		while(HttpUtil45.errorResult.equals(data) && loop <100){
+			logger.info("==============="+loop+"==============");
+			Thread.sleep(1000*3); 
+			data = HttpUtil45.get(url, outTimeConf, null);
+			loop ++;
 		}
-        
-        Iterator<String> it = skuNo.iterator();
-        
+		
+		save("products.txt",data);
+		
+		List<Item> items = CVSUtil.readCSV(data, Item.class, '\t');
+		logger.info("csv转换items.size=========="+items.size());
+		for(Item item :items){
+			try {
+				skuData.put(item.getItem_ID(),item.getSellableqty());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}        
+        Iterator<String> it = skuNo.iterator(); 
         
         while (it.hasNext()) {
             skuId = it.next();
@@ -78,6 +104,39 @@ public class StockClientImp extends AbsUpdateProductStock{
 			}
         }
         return skustock;
+    }
+    
+    public void save(String name,String data){
+    	try {
+    		File file = new File(filepath+File.separator+name);
+//        	File file = new File("E://"+name);
+    		if (!file.exists()) {
+    			try {
+    				file.getParentFile().mkdirs();
+    				file.createNewFile();
+    				
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
+    		FileWriter fwriter = null;
+    		try {
+    			fwriter = new FileWriter(filepath+File.separator+name);
+    			fwriter.write(data);
+    		} catch (IOException ex) {
+    			ex.printStackTrace();
+    		} finally {
+    			try {
+    				fwriter.flush();
+    				fwriter.close();
+    			} catch (IOException ex) {
+    				ex.printStackTrace();
+    			}
+    		}
+		} catch (Exception e) {
+			e.printStackTrace();			
+		}
+    	
     }
 
     public static void main(String[] args) throws Exception {

@@ -53,6 +53,7 @@ public class StockImp extends AbsUpdateProductStock {
         mongMap.put("supplierName","wokstore");
         StringBuffer buffer = new StringBuffer();
         OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60,1000*60,1000*60);
+        String itemId="",json="",url="";
         for (String skuno : skuNo) {
 //            if (barcode_map.containsKey(skuno)) {
 //                continue;
@@ -60,11 +61,17 @@ public class StockImp extends AbsUpdateProductStock {
 //                barcode_map.put(skuno, null);
 //            }
 
-            String itemId = skuno;
+             itemId = skuno.trim();
             //根据供应商skuno获取库存，并更新我方sop库存
-            String url = "http://net13server.net/wokapi/Myapi/Productslist/GetQuantityByItemID?DBContext=Default&ItemID=[[itemId]]&key=c8jNh6cIRK";
+            if(itemId.length()<10){//item id
+                url = "http://net13server.net/wokapi/Myapi/Productslist/GetQuantityByItemID?DBContext=Default&ItemID=[[itemId]]&key=c8jNh6cIRK";
+            }else{
+                url = "http://net13server.net/wokapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=Default&barcode=[[itemId]]&key=c8jNh6cIRK";
+            }
+
+
             url = url.replaceAll("\\[\\[itemId\\]\\]", itemId);
-            String json = null;
+             json = null;
             try {
                 json = HttpUtil45.get(url, outTimeConfig, null);
                 buffer.append(json).append("|||");

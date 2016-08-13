@@ -119,9 +119,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			loggerError.error("拉取stefaniamode数据失败---" + e.getMessage());
 			throw new ServiceMessageException("拉取stefaniamode数据失败");
 
-		} finally {
-			HttpUtil45.closePool();
-		}
+		} 
 		String skuId = "";
 		for (Product product : productList) {
 
@@ -155,25 +153,25 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		return skustock;
 	}
 
-	public static void main(String[] args) throws Exception {
-
-		// 加载spring
-		loadSpringContext();
-		GrabStockImp grabStockImp = (GrabStockImp) factory
-				.getBean("stefaniamodeStock");
-		// AbsUpdateProductStock grabStockImp = new GrabStockImp();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		logger.info("stefaniamode更新数据库开始");
-		try {
-			grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
-					format.format(new Date()));
-			logger.info("stefaniamode更新数据库成功结束");
-		} catch (Exception e) {
-			loggerError.error("stefaniamode更新库存失败");
-		}
-
-		System.exit(0);
-
-	}
+//	public static void main(String[] args) throws Exception {
+//
+//		// 加载spring
+//		loadSpringContext();
+//		GrabStockImp grabStockImp = (GrabStockImp) factory
+//				.getBean("stefaniamodeStock");
+//		// AbsUpdateProductStock grabStockImp = new GrabStockImp();
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//		logger.info("stefaniamode更新数据库开始");
+//		try {
+//			grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
+//					format.format(new Date()));
+//			logger.info("stefaniamode更新数据库成功结束");
+//		} catch (Exception e) {
+//			loggerError.error("stefaniamode更新库存失败");
+//		}
+//
+//		System.exit(0);
+//
+//	}
 
 }

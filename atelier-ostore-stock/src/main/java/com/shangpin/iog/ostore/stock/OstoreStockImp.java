@@ -24,11 +24,15 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static String url ;
+    private static String user = "";
+    private static String password = "";
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("sop");
         supplierId = bdl.getString("supplierId");
         url = bdl.getString("url");
+        user = bdl.getString("user");
+        password = bdl.getString("password");
     }
     @Override
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
@@ -39,7 +43,16 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
     	Map<String,String> skuMap = new HashMap<>();
         int num = 0;
         String data = "";
-        String skuData = HttpUtil45.post(url + "GetAllAvailabilityMarketplace", new OutTimeConfig(7200000, 7200000, 7200000));
+        String skuData = HttpUtil45.postAuth(url + "GetAllAvailabilityMarketplace",null, new OutTimeConfig(7200000, 7200000, 7200000),user,password);
+        int ii=0;
+        while((StringUtils.isBlank(skuData) || HttpUtil45.errorResult.equals(skuData)) && ii<100){ 
+        	Thread.sleep(1000*3);
+        	System.out.println(ii+"---------------------");  
+        	skuData = HttpUtil45.postAuth(url + "GetAllAvailabilityMarketplace",null, new OutTimeConfig(7200000, 7200000, 7200000),user,password);
+        	ii++;
+        }
+        logger.info(skuData);
+        logger.info("ii============="+ii); 
 		String[] skuStrings = skuData.split("\\r\\n");
 		for (int i = 1; i < skuStrings.length; i++) {
 			if (StringUtils.isNotBlank(skuStrings[i])) {
@@ -71,7 +84,7 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
         		if (skuMap.containsKey(skuId)) {
         			stock = skuMap.get(skuId);
                     try {
-                        returnMap.put(skuId, Integer.valueOf(stock));
+                        returnMap.put(skuId, Integer.valueOf(stock)<0?0:Integer.valueOf(stock));
                     } catch (NumberFormatException e) {
                         returnMap.put(skuId, 0);
                     }

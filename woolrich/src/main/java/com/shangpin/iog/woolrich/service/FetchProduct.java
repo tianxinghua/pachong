@@ -86,9 +86,11 @@ public class FetchProduct {
 		    			sku.setSpuId(spuId);
 		    			sku.setSkuId(product.getVARIANT_SKU());
 		    			sku.setProductSize(product.getSIZE());
-		    			sku.setMarketPrice(product.getPRICE());
-		    			sku.setSalePrice(product.getSALEPRICE());
-		    			sku.setSupplierPrice(product.getPRICE());
+//		    			sku.setMarketPrice(product.getPRICE());
+//		    			sku.setSalePrice(product.getSALEPRICE());
+		    			sku.setSalePrice("0");
+		    			sku.setMarketPrice("0");
+		    			sku.setSupplierPrice(product.getSALEPRICE());
 		    			sku.setColor(product.getCOLOR());
 		    			sku.setProductDescription(product.getDESCRIPTION());
 		    			sku.setStock(product.getSTOCK_LEVEL());

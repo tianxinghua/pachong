@@ -46,7 +46,6 @@ public class FetchProduct extends AbsSaveProduct{
 	
 	private static String url_login = null;
 	private static String url_getProducts = null;
-//	private static String url_getStock = null;
 	private static String url_getAttributes = null;
 	
 	static {
@@ -55,7 +54,6 @@ public class FetchProduct extends AbsSaveProduct{
 		supplierId = bdl.getString("supplierId");
 		url_login = bdl.getString("url_login");
 		url_getProducts = bdl.getString("url_getProducts");
-//		url_getStock = bdl.getString("url_getStock");
 		url_getAttributes = bdl.getString("url_getAttributes");
 	}
 	
@@ -119,7 +117,7 @@ public class FetchProduct extends AbsSaveProduct{
 						spu.setSpuId(resultDTO.getSku());
 						spu.setCategoryGender(resultDTO.getAttributes().get(2).getValue());
 						spu.setCategoryName(resultDTO.getAttributes().get(7).getValue());
-						//spu.setBrandName(resultDTO.getAttributes().get(2).getValue());
+						spu.setBrandName(resultDTO.getAttributes().get(1).getValue());
 						spu.setSeasonName(resultDTO.getAttributes().get(4).getValue());
 						String material = resultDTO.getAttributes().get(9).getValue();
 						spu.setMaterial(StringUtils.isNotBlank(material)? material:resultDTO.getAttributes().get(9).getCode());
@@ -134,12 +132,12 @@ public class FetchProduct extends AbsSaveProduct{
 								sku.setId(UUIDGenerator.getUUID());
 		                        sku.setSupplierId(supplierId);
 		                        sku.setSpuId(spu.getSpuId());
-		                        sku.setSkuId(resultDTO.getSku()+"-"+sizes.getSizeIndex());
+		                        sku.setSkuId(resultDTO.getSku()+"-"+sizes.getLabel());
 		                        sku.setProductName(resultDTO.getName());
 		                        sku.setMarketPrice("");
-		                        sku.setSalePrice("");
-		                        sku.setSupplierPrice(sizes.getPrice()+""); 
-		                        sku.setProductCode(spu.getSpuId());
+		                        sku.setSalePrice(""+sizes.getPrice());
+		                        sku.setSupplierPrice(""); 
+		                        sku.setProductCode(resultDTO.getAttributes().get(5).getCode());
 		                        sku.setColor(resultDTO.getAttributes().get(8).getValue());
 		                        sku.setProductSize(sizes.getLabel());
 		                        sku.setStock(""+sizes.getQty());

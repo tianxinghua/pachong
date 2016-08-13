@@ -3,8 +3,10 @@ package com.shangpin.iog.product.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.PictureDTO;
 import com.shangpin.iog.mongodao.PictureDAO;
+import com.shangpin.iog.mongodao.PictureDAOImpl;
 import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.service.PictureOfMongoService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -19,6 +21,8 @@ public class PictureOfMongoServiceImpl implements PictureOfMongoService{
 
     @Autowired
     PictureDAO pictureDAO;
+    @Autowired
+    PictureDAOImpl pictureDAOImpl;
 
     @Override
     public boolean isHavePic(String supplierId, String picUrl) {
@@ -32,6 +36,12 @@ public class PictureOfMongoServiceImpl implements PictureOfMongoService{
             return false;
         }
     }
+
+	@Override
+	public void removePicBySupplierId(String supplierId) throws ServiceException {
+		pictureDAOImpl.removePicBySupplierId(supplierId);
+		
+	}
 
 
 }

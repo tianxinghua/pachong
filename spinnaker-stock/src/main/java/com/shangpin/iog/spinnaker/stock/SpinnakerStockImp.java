@@ -67,7 +67,7 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
              json = null;
             try {
                 json = HttpUtil45.get(url, outTimeConfig, null);
-                logger.info("json====="+json); 
+//                logger.info("json====="+json); 
             } catch (Exception e) {
                 stock_map.put(skuno, "0");  //读取失败的时候赋值为0
 //                loggerError.error("拉取失败 "+e.getMessage());

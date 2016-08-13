@@ -311,7 +311,7 @@ public abstract class AbsOrderService {
         String  startTime = "";
         Date tmpDate =  DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(startDateOfWMS,YYYY_MMDD_HH_WMS),-20,"m");
         startTime = DateTimeUtil.convertFormat(tmpDate,YYYY_MMDD_HH_WMS) ;
-        handleOrderOfSOPForSpecial(supplierId,supplierNo,startTime,endDateOfWMS);
+        handleOrderOfSOPForSpecial(skuMap,supplierId,supplierNo,startTime,endDateOfWMS);
 
         //处理退单
         handleCancelOfWMS(supplierNo, supplierId, skuMap, refundList,handleCancel);
@@ -571,11 +571,12 @@ public abstract class AbsOrderService {
                         } catch (Exception e1) {
                             loggerError.error("查询订单 " + spOrderNo  +" 采购单信息失败." +e1.getMessage(),e1);
                         }
-                        logger.info("查询是否支付，订单号:" + spOrderNo);
+//                        logger.info("查询是否支付，订单号:" + spOrderNo);
                         if (null != orderDetailSpecialPage && null != orderDetailSpecialPage.PurchaseOrderDetails && orderDetailSpecialPage.PurchaseOrderDetails.size() > 0) {  //存在采购单 就代表已支付
                             spMasterOrderNoMap.put(spOrderNo, "");
                             for (PurchaseOrderDetailSpecial orderDetail : orderDetailSpecialPage.PurchaseOrderDetails) {
                                 sopPurchaseOrderNo = orderDetail.SopPurchaseOrderNo;
+//                                logger.info("查询是否支付，订单号:" + spOrderNo +" 采购单号：" + sopPurchaseOrderNo);
                                 if (purchaseOrderMap.containsKey(sopPurchaseOrderNo)) {
                                     purchaseOrderMap.get(sopPurchaseOrderNo).add(orderDetail);
                                 } else {
@@ -586,7 +587,6 @@ public abstract class AbsOrderService {
                             }
                         }
                     }
-
                     StringBuffer purchaseOrderDetailbuffer = new StringBuffer();
                     StringBuffer purchaseNobuffer = new StringBuffer();
                     for (Iterator<Map.Entry<String, List<PurchaseOrderDetailSpecial>>> itor = purchaseOrderMap.entrySet().iterator(); itor.hasNext(); ) {
@@ -594,10 +594,10 @@ public abstract class AbsOrderService {
                         sopPurchaseOrderNo = entry.getKey();
                         List<PurchaseOrderDetailSpecial> purchaseOrderDetailSpecialList =  entry.getValue();
                         if(null!=purchaseOrderDetailSpecialList) {
+//                            logger.info("purchaseOrderDetailSpecialList size =" + purchaseOrderDetailSpecialList.size());
                             for (int i=0;i<purchaseOrderDetailSpecialList.size();i++) {
                                 PurchaseOrderDetailSpecial purchaseOrderDetail = purchaseOrderDetailSpecialList.get(i);
                                 if (detailDTO.getSpSku().equals(purchaseOrderDetail.SkuNo)) { //与ORDER 同一个商品
-
                                     //两种情况：1 新插入的,spPurchaseNo 为空 2 重新采购的 有值
 
                                     if (StringUtils.isEmpty(detailDTO.getSpPurchaseNo())) {
@@ -613,7 +613,7 @@ public abstract class AbsOrderService {
                                             continue;
                                         }
                                     }
-
+                                    logger.info("订单号:" + spOrderNo +" 采购单号：" + sopPurchaseOrderNo + " 采购单状态 =" +purchaseOrderDetail.DetailStatus);
                                     if (5 != purchaseOrderDetail.DetailStatus) { //5 为退款  1=待处理，2=待发货，3=待收货，4=待补发，5=已取消，6=已完成
                                         detailDTO.setStatus(OrderStatus.PAYED);
                                     } else {
@@ -623,6 +623,7 @@ public abstract class AbsOrderService {
 //                                i--;
                                     purchaseOrderMap.remove(sopPurchaseOrderNo);
                                     try {
+                                        logger.info("订单信息 =" +detailDTO.toString());
                                         orderDetailService.update(detailDTO);
                                         continue start;
                                     } catch (Exception e1) {
@@ -632,6 +633,8 @@ public abstract class AbsOrderService {
 
                                 }
                             }
+                        }else{
+                            logger.info("purchaseOrderDetailSpecialList is empty");
                         }
 
                     }
@@ -651,7 +654,7 @@ public abstract class AbsOrderService {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            loggerError.error("查询是否支付异常信息："+e.getMessage(),e);
         }
 
     }
@@ -934,7 +937,7 @@ public abstract class AbsOrderService {
      * @param startDate
      * @param endDate
      */
-    private void handleOrderOfSOPForSpecial(String supplierId, String supplierNo,String startDate,String endDate) {
+    private void handleOrderOfSOPForSpecial(Map<String,String> skuMap,String supplierId, String supplierNo,String startDate,String endDate) {
         //获取订单数组
         List<Integer> status = new ArrayList<>();
         status.add(1);
@@ -969,7 +972,11 @@ public abstract class AbsOrderService {
                 purchaseDetailNo = purchaseOrderDetail.SopPurchaseOrderDetailNo;
                 supplierSku = purchaseOrderDetail.SupplierSkuNo;
             }
-
+            
+            if(!skuMap.containsKey(spSku)){//如果skuv不在SKU_RELATION表里，则不插入
+            	logger.info(spSku+" 在SKU_RELATION关系表中找不到，不插入ORDER_DETAIL表");
+            	continue;
+            }
 
             List<OrderDetailDTO> detailDTOList =null;
             try {
@@ -1017,6 +1024,7 @@ public abstract class AbsOrderService {
 //            spOrder.setMemo(sopbuffer.toString().substring(0,sopbuffer.toString().length()-1));
 //            spOrder.setPurchasePriceDetail(purchsePrice);
 //            spOrder.setCreateTime(new Date());
+           
             OrderDetailDTO detailDTO = new OrderDetailDTO();
             detailDTO.setUuid(UUID.randomUUID().toString());
             detailDTO.setSupplierId(supplierId);
@@ -1098,8 +1106,11 @@ public abstract class AbsOrderService {
         }
 
         for(ICEWMSOrderDTO icewmsOrderDTO:orderLit){
-            if(!skuMap.containsKey(icewmsOrderDTO.getSkuNo()))
-                continue;
+            if(!skuMap.containsKey(icewmsOrderDTO.getSkuNo())){
+            	logger.info(icewmsOrderDTO.getSkuNo()+" 在SKU_RELATION关系表中找不到，不插入ORDER表");
+            	continue;
+            }
+                
 
             uuid= UUID.randomUUID().toString();
 

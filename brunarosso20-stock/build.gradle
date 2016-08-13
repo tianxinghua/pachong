@@ -1,0 +1,26 @@
+
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile(
+        	project(':project-common'),
+        project(':iog-sop'),
+		"commons-net:commons-net:3.3",
+         "commons-dbcp:commons-dbcp:1.4",
+         "org.jdom:jdom:2.0.2",
+ 
+    )
+}
+
+jar {
+
+    dependsOn copyToLib , copyResources ,dependsClassPath
+    exclude ("**/*.properties")
+
+    manifest {
+	
+   		 attributes 'Main-Class': 'com.shangpin.iog.brunarosso20.stock.StockImp'
+    
+   
+    }
+}

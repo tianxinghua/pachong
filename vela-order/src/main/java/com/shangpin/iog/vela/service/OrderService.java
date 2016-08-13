@@ -292,14 +292,18 @@ public class OrderService extends AbsOrderService {
 		order.setOrder_no(orderDTO.getSpOrderId());
 		
 		String skuId = details[0];
+		String barcode =skuId;
 		ProductOfSpecDTO pro = null;
 		try {
-			pro = productSpecSearchService.findProductBySupplierIdAndSkuId(supplierId, skuId);
+			if(skuId.length()<10) {
+				pro = productSpecSearchService.findProductBySupplierIdAndSkuId(supplierId, skuId);
+				barcode =   pro.getBarcode();
+			}
 		} catch (ServiceException e) {
 			loggerError.info(e);
 			e.printStackTrace();
 		}
-		order.setBarcode(pro.getBarcode());
+		order.setBarcode(barcode);
 		order.setOrdQty(details[1]);
 		order.setKey(key);
 //		String sPurchasePrice = StringUtils.isBlank(orderDTO.getPurchasePriceDetail())?"0":orderDTO.getPurchasePriceDetail();

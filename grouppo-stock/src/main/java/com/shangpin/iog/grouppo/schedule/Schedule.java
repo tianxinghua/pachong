@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.grouppo.stock.StockImp;
+import com.shangpin.iog.grouppo.stock.StockImpNotUseThread;
 
 @Component
 @PropertySource("classpath:conf.properties")
@@ -33,7 +34,7 @@ public class Schedule {
     private String time;
 
 	@Autowired	
-	StockImp stockImp;
+	StockImpNotUseThread stockImp;
 	
 	
 	@SuppressWarnings("deprecation")
@@ -75,6 +76,7 @@ public class Schedule {
 			} catch (Exception e) {
 				future.cancel(true);
 				e.printStackTrace();
+				logError.error(e); 
 				logError.error(Thread.currentThread().getName()+"超时销毁");
 				System.out.println(Thread.currentThread().getName()+"超时销毁");
 			}
@@ -97,7 +99,7 @@ public class Schedule {
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				logger.info("更新数据库开始");
 				try {
-					
+//					stockImp.setUseThread(true);
 					stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
 				} catch (Exception e) {
 					e.printStackTrace();

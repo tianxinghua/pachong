@@ -31,6 +31,7 @@ public class StockClientImp extends AbsUpdateProductStock{
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     public static final String PROPERTIES_FILE_NAME = "param";
+//    private static String supplierId = null;
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -319,6 +320,7 @@ public class StockClientImp extends AbsUpdateProductStock{
     	String host = sopBundle.getString("HOST");
         String app_key = sopBundle.getString("APP_KEY");
         String app_secret= sopBundle.getString("APP_SECRET");
+        String supplierId = sopBundle.getString("supplierId");
         if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
             logger.error("参数错误，无法执行更新库存");
         }
@@ -344,7 +346,7 @@ public class StockClientImp extends AbsUpdateProductStock{
         }
 
         try {
-        	stockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+        	stockImp.updateProductStock(host,app_key,app_secret,supplierId,"2015-01-01 00:00",format.format(new Date()));
 		} catch (Exception e) {
 			loggerError.error("BRUNAROSSO更新库存失败");
 			e.printStackTrace();

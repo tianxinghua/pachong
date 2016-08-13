@@ -1,98 +1,56 @@
 package com.shangpin.iog.monnierfreres.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class Item {
-	String sku;
-	String product_id;
-	String qty;
-	String category;
-	String category_url;
-	String category_sub_1;
-	String category_url_sub_1;
-	String category_sub_2;
-	String category_url_sub_2;
-	String category_sub_3;
-	String category_url_sub_3;
-	String category_sub_4;
-	String category_url_sub_4;
-	String category_sub_5;
-	String category_url_sub_5;
-	String category_breadcrumb;
-	String price_ttc;
-	String price_before_discount;
-	String discount_amount;
-	String discount_percent;
-	String start_date_discount;
-	String end_date_discount;
-	String shipping_name;
-	String shipping_price;
-	String image_url_1;
-	String image_url_2;
-	String image_url_3;
-	String image_url_4;
-	String image_url_5;
-	String name;
-	String product_url;
-	String description;
-	String short_description;
-	String parent_id;
-	String product_type;
-	String product_variation;
-	String image_default;
-	String child_name;
-	String box_type;
-	String brand;
-	String category_ids;
-	String characteristics1;
-	String characteristics2;
-	String characteristics3;
-	String characteristics4;
-	String color;
-	String country_of_manufacture;
-	String ean13;
-	String gtin;
-	String heel_size;
-	String height;
-	String hscode;
-	String hs_code;
-	String image;
-	String image_label;
-	String lengow_product;
-	String length;
-	String links_exist;
-	String links_title;
-	String manufacturer;
-	String material;
-	String merchandising_position;
-	String monnier_advice;
-	String price;
-	String price_type;
-	String product_class;
-	String shipment_type;
-	String shipping_code;
-	String size;
-	String sku_type;
-	String small_image;
-	String small_image_label;
-	String special_from_date;
-	String special_price;
-	String special_to_date;
-	String status;
-	String subtype;
-	String supply_date;
-	String thumbnail;
-	String thumbnail_label;
-	String type;
-	String url_key;
-	String url_path;
-	String use;
-	String visibility;
-	String watermark;
-	String weight;
-	String width;
-
+	//不要忘了存币种
+	private String itemCode;//sku->skuid
+	private String size;//size->sku:size
+	private String stock;//qty->stock
+	private String price;//sku
+	private String special_price;//sku
+	private String barCode;
+	private String currency;
+	
+	public String getCurrency() {
+		return currency;
+	}
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+	public String getBarCode() {
+		return barCode;
+	}
+	public void setBarCode(String barCode) {
+		this.barCode = barCode;
+	}
+	public String getPrice() {
+		return price;
+	}
+	public void setPrice(String price) {
+		this.price = price;
+	}
+	public String getSpecial_price() {
+		return special_price;
+	}
+	public void setSpecial_price(String special_price) {
+		this.special_price = special_price;
+	}
+	public String getItemCode() {
+		return itemCode;
+	}
+	public void setItemCode(String itemCode) {
+		this.itemCode = itemCode;
+	}
+	public String getSize() {
+		return size;
+	}
+	public void setSize(String size) {
+		this.size = size;
+	}
+	public String getStock() {
+		return stock;
+	}
+	public void setStock(String stock) {
+		this.stock = stock;
+	}
+	
 }

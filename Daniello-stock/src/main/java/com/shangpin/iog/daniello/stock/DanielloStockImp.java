@@ -59,10 +59,10 @@ public class DanielloStockImp  extends AbsUpdateProductStock {
     	int kk=0;
     	
     	String date2 = "";
-    	while(StringUtils.isBlank(skuData) && kk<100){
-    		Thread.sleep(1000*5); 
+    	while((StringUtils.isBlank(skuData) || HttpUtil45.errorResult.equals(skuData)) && kk<10){ 
+    		Thread.sleep(1000*3); 
     		date2 = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace", null,
-    				new OutTimeConfig(1000*60*10,1000*60*60,1000*60*60),user,password);
+    				new OutTimeConfig(1000*60*30,1000*60*60,1000*60*60),user,password);
     		kk++;
     	}
     	

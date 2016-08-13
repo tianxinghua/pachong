@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.BuEpRuleMapper">
+	<resultMap id="buEpRuleResultMap" type="iog_buEpRule">
+        <result column="BUID" property="buId"  />
+        <result column="SUPPLIERID" property="supplierId"  />
+        <result column="BU" property="bu"  />
+        <result column="GENDER" property="gender"  />
+        <result column="EP_FIELD" property="epField"  />
+        <result column="ISPECIAL" property="ispecial"  />
+        <result column="SPECLASS" property="speClass"  />
+	</resultMap>
+	<sql id="all_buEpRule_column">
+		BUID,
+		SUPPLIERID,
+		BU,
+		GENDER,
+		EP_FIELD,
+		ISPECIAL,
+		SPECLASS
+	</sql>
+	<select id="findBuEpRuleListBySupplierId" resultMap="buEpRuleResultMap">
+		select 
+		<include refid="all_buEpRule_column"></include>
+		from BU_EP_RULE
+		<where>
+			<if test="null != bu">
+				BU = #{bu}
+			</if>
+			<if test="supplierId">
+				and SUPPLIERID = #{supplierId}
+			</if>
+		</where>
+	</select>
+</mapper>

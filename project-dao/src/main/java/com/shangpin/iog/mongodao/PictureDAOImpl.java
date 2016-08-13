@@ -23,4 +23,8 @@ public class PictureDAOImpl {
     	mongoTemplate.remove(query(where("id").is( _id )),ProductPicture.class);
 //        mongoTemplate.updateFirst(query(where("name").is( _id )), update("age", 66),Test.class) ;
     };
+    
+    public void removePicBySupplierId(String supplierId) throws ServiceException {
+    	mongoTemplate.remove(query(where("supplierId").is( supplierId )), ProductPicture.class);
+    }
 }

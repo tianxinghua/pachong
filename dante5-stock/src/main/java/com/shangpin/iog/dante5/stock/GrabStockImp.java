@@ -16,6 +16,7 @@ import com.stanfy.gsonxml.GsonXml;
 import com.stanfy.gsonxml.GsonXmlBuilder;
 import com.stanfy.gsonxml.XmlParserCreator;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -29,29 +30,41 @@ import java.util.*;
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    private static ResourceBundle bdl = null;
-    private static String supplierId;
-
-    static {
-        if (bdl == null)
-            bdl = ResourceBundle.getBundle("conf");
-        supplierId = bdl.getString("supplierId");
-    }
+//    private static ResourceBundle bdl = null;
+//    private static String supplierId;
+//
+//    static {
+//        if (bdl == null)
+//            bdl = ResourceBundle.getBundle("conf");
+//        supplierId = bdl.getString("supplierId");
+//    }
 
     public Map<String, String> grabStock(Collection<String> skuNos) throws ServiceException {
-        Map<String, String> skuStock = new HashMap<>(skuNos.size());
+        Map<String, String> skuStock = new HashMap<>();
         Map<String, String> stockMap = new HashMap<>();
 
-        OutTimeConfig timeConfig = new OutTimeConfig(1000*60*10, 1000*60*20,1000*60*20);
+        OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30, 1000*60*30,1000*60*30);
         String url = "https://www.dante5.com/en-US/home/feedShangpin";
-        System.out.println(url);
+//        System.out.println(url);
+        logger.info("=============开始拉取信息===============");
         String result = HttpUtil45.get(url, timeConfig, null);
-        System.out.println(result.length()+"success");
-        if (result == null || "".equals(result)) {
-            logger.error("从接口未取到数据. url : " + url);
-            throw new ServiceException();
+        int i = 0;
+        while((StringUtils.isBlank(result) || HttpUtil45.errorResult.equals(result)) && i<10){
+        	try {
+				Thread.sleep(1000*3);
+				result = HttpUtil45.get(url, timeConfig, null); 
+			} catch (InterruptedException e) {
+				e.printStackTrace(); 
+			}finally{
+				i++;
+			}       	
         }
-
+        logger.info("==============="+i+"=================");  
+        if(StringUtils.isBlank(result) || HttpUtil45.errorResult.equals(result)){
+        	loggerError.error("拉取库存文件时超时异常,https://www.dante5.com/en-US/home/feedShangpin");
+        	return skuStock;
+        }
+        logger.info("================开始转换对象================="); 
         XmlParserCreator parserCreator = new XmlParserCreator() {
             @Override
             public XmlPullParser createParser() {
@@ -59,8 +72,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
                     return XmlPullParserFactory.newInstance().newPullParser();
                 } catch (Exception e) {
                 	e.printStackTrace();
-                    throw new RuntimeException(e);
+//                    throw new RuntimeException(e);
                 }
+				return null; 
             }
         };
 
@@ -74,9 +88,9 @@ public class GrabStockImp extends AbsUpdateProductStock {
         if (rss == null || rss.getChannel() == null) {
             return skuStock;
         }
-        System.out.println("拉取dante5数据开始");
+        logger.info("================转换成功================="); 
         try {
-            logger.info("拉取dante5数据开始");
+            //logger.info("拉取dante5数据开始");
 
 //            Map<String, String> mongMap = new HashMap<>();
 //            mongMap.put("supplierId", supplierId);
@@ -87,7 +101,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 //            } catch (Exception e) {
 //                e.printStackTrace();
 //            }
-
+        	logger.info("===============开始转换赋值===================");
             for (Item item : rss.getChannel().getItem()) {
                 if (item == null) {
                     continue;
@@ -97,6 +111,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
                 stockMap.put(skuId, stock);
             }
 
+            logger.info("供货商stockMap大小是==========="+stockMap.size());
             for (String skuNo : skuNos) {
                 if (stockMap.containsKey(skuNo)) {
                     skuStock.put(skuNo, stockMap.get(skuNo));
@@ -112,10 +127,11 @@ public class GrabStockImp extends AbsUpdateProductStock {
             loggerError.error("拉取dante5数据失败---" + e.getMessage());
             throw new ServiceMessageException("拉取dante5数据失败");
         }
+        logger.info("返回的map的大小是=============="+skuStock.size()); 
         return skuStock;
     }
 
-    public static void main(String[] args) throws Exception {
+//    public static void main(String[] args) throws Exception {
 //    	//加载spring
 //        loadSpringContext();
 //        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("dante5Stock");
@@ -130,6 +146,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 //        }
 //        logger.info("dante5更新数据库结束");
 //        System.exit(0);
-    }
+//    	new GrabStockImp().grabStock(null);
+//    }
 
 }

@@ -38,6 +38,25 @@ public class UpdateStockServiceImpl implements UpdateStockService{
 	public void saveDTO(StockUpdateDTO stockUpdateDTO) throws SQLException {
 		updateStockDao.saveStockUpdateDTO(stockUpdateDTO);
 	}
+	
+	/**
+	 * 保存updateStock 但是保存之前会判断有没有，若有则不保存
+	 * @param stockUpdateDTO
+	 * @throws SQLException
+	 */
+	public void saveStockUpdateDTO(StockUpdateDTO stockUpdateDTO) throws SQLException{
+		List<StockUpdateDTO> allData = updateStockDao.getAllData();
+		boolean flag = false;
+		for (StockUpdateDTO data : allData) {
+			if (data.getSupplierId().equals(stockUpdateDTO.getSupplierId())) {
+				flag = true;
+				break;
+			}
+		}
+		if(!flag){
+			updateStockDao.saveStockUpdateDTO(stockUpdateDTO);
+		}
+	}
 
 	@Override
 	public void saveOrUpdateDTO(StockUpdateDTO stockUpdateDTO)

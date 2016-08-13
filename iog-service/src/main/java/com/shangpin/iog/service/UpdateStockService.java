@@ -28,6 +28,14 @@ public interface UpdateStockService {
 	 * 保存updateStock
 	 */
 	public void saveDTO(StockUpdateDTO stockUpdateDTO) throws SQLException;
+	
+	/**
+	 * 保存updateStock 但是保存之前会判断有没有，若有则不保存
+	 * @param stockUpdateDTO
+	 * @throws SQLException
+	 */
+	public void saveStockUpdateDTO(StockUpdateDTO stockUpdateDTO) throws SQLException;
+	
 	/**
 	 * 保存或更新
 	 */

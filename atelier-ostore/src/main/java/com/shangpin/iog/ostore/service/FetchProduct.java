@@ -3,6 +3,8 @@ package com.shangpin.iog.ostore.service;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +43,8 @@ public class FetchProduct {
 	public static int day;
     private static ResourceBundle bdl=null;
     private static String savePath = null;
+    private static String user = "";
+    private static String password = "";
     
 //    private static String spuData = "";
 //    private static String skuData = "";
@@ -55,6 +59,8 @@ public class FetchProduct {
         oldurl = bdl.getString("oldurl");
         day = Integer.valueOf(bdl.getString("day"));
         savePath = bdl.getString("savePath");
+        user = bdl.getString("user");
+        password = bdl.getString("password");
     }
     @Autowired
     private ProductFetchService productFetchService;
@@ -80,54 +86,87 @@ public class FetchProduct {
     	
     	Map<String,Item> itemMap= new HashMap<String,Item>();
     	Map<String,String> priceMap= new HashMap<String,String>();
+    	Map<String,String> supplierPriceMap = new HashMap<String,String>();
         //获取产品信息
     	logger.info("get product starting....");
     	System.out.println("get product starting...."); 
-//    	Thread tSpu = new Thread(new Runnable() {			
-//			@Override
-//			public void run() {
-				System.out.println("++++++++++++++开始spu++++++++++++++++++++++");
-				String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
-						new OutTimeConfig(1000*60*60*24,1000*60*60*24,1000*60*60*24));
-				save("spuData.txt",spuData);
+		System.out.println("++++++++++++++开始spu++++++++++++++++++++++");
+		logger.info("++++++++++++++开始spu++++++++++++++++++++++");
+		String spuData = HttpUtil45.postAuth(url+"GetAllItemsMarketplace",null,
+				new OutTimeConfig(1000*60*60*24,1000*60*60*24,1000*60*60*24),user,password);
+		
+		int ii=0;
+        while((StringUtils.isBlank(spuData) || HttpUtil45.errorResult.equals(spuData)) && ii<50){ 
+        	try {
+        		Thread.sleep(1000*3);
+        		spuData = HttpUtil45.postAuth(url+"GetAllItemsMarketplace",null,
+						new OutTimeConfig(1000*60*60*24,1000*60*60*24,1000*60*60*24),user,password);
 				
-//			}
-//		});
-        
-//    	Thread tSku = new Thread(new Runnable() {			
-//			@Override
-//			public void run() {
-				System.out.println("++++++++++++++开始sku++++++++++++++++++++++");
-				String skuData = HttpUtil45.post(url+"GetAllAvailabilityMarketplace",
-						new OutTimeConfig(1000*60*60*24,1000*60*60*24,1000*60*60*24));
-				save("skuData.txt",skuData);
-//			}
-//		}); 
-    	
-//    	Thread tImage = new Thread(new Runnable() {			
-//			@Override
-//			public void run() {
-				System.out.println("++++++++++++++开始image++++++++++++++++++++++");
-				String imageData = HttpUtil45.post(url+"GetAllImageMarketplace",
-						new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
-				save("imageData.txt",imageData);		
-//			}
-//		});
-    	
-//    	Thread tPrice = new Thread(new Runnable() {			
-//			@Override
-//			public void run() {
-				System.out.println("++++++++++++++开始price++++++++++++++++++++++");
-				String priceData = HttpUtil45.post(url+"GetAllPricelistMarketplace",
-						new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120));
-				save("priceData.txt",priceData);			
-//			}
-//		});
-    	
-//    	tSpu.start();
-//    	tSku.start();
-//    	tImage.start();
-//    	tPrice.start();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				ii++;
+			}		        	
+        }
+        logger.info("拉取spu用了=="+ii+"次"); 
+		save("spuData.txt",spuData);
+		
+		System.out.println("++++++++++++++开始sku++++++++++++++++++++++");
+		logger.info("++++++++++++++开始sku++++++++++++++++++++++");
+		int jj = 0;
+		String skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace",null,
+				new OutTimeConfig(1000*60*60*24,1000*60*60*24,1000*60*60*24),user,password);
+		while((StringUtils.isBlank(skuData) || HttpUtil45.errorResult.equals(skuData)) && jj<50){
+			try {
+				Thread.sleep(1000*3);
+				skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace",null,
+						new OutTimeConfig(1000*60*60*24,1000*60*60*24,1000*60*60*24),user,password);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				jj++;
+			}
+		}
+		logger.info("拉取sku用了=="+jj+"次"); 
+		save("skuData.txt",skuData);
+		
+		System.out.println("++++++++++++++开始image++++++++++++++++++++++");
+		logger.info("++++++++++++++开始image++++++++++++++++++++++");
+		int kk = 0;
+		String imageData = HttpUtil45.postAuth(url+"GetAllImageMarketplace",null,
+				new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120),user,password);
+		while((StringUtils.isBlank(imageData) || HttpUtil45.errorResult.equals(imageData)) && kk<50){
+			try {
+				Thread.sleep(1000*3);
+				imageData = HttpUtil45.postAuth(url+"GetAllImageMarketplace",null,
+						new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120),user,password);
+			} catch (Exception e) { 
+				e.printStackTrace();
+			}finally{
+				kk++;
+			}
+		}
+		logger.info("拉取图片用了=="+kk+"次"); 
+		save("imageData.txt",imageData);
+		
+		System.out.println("++++++++++++++开始price++++++++++++++++++++++");
+		logger.info("++++++++++++++开始price++++++++++++++++++++++"); 
+		int ll = 0;		
+		String priceData = HttpUtil45.postAuth(url+"GetAllPricelistMarketplace",null,
+				new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120),user,password);
+		while((StringUtils.isBlank(priceData) || HttpUtil45.errorResult.equals(priceData)) && ll<50){
+			try {
+				Thread.sleep(1000*3);
+				priceData = HttpUtil45.postAuth(url+"GetAllPricelistMarketplace",null,
+						new OutTimeConfig(1000*60*120,1000*60*120,1000*60*120),user,password);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				ll++;
+			}
+		}
+		logger.info("拉取价格用了=="+ll+"次");  
+		save("priceData.txt",priceData);	
     	
     	Date startDate,endDate= new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
@@ -145,33 +184,9 @@ public class FetchProduct {
         //映射数据并保存
         logger.info("save product into DB begin");
         String data = "";
+        Map<String,String> spuId_seasonM = new HashMap<String,String>();
         
-        //价格信息
-        String[] priceStrings = priceData.split("\\r\\n");
-        String[] priceArr = null;
-        for (int i = 1; i < priceStrings.length; i++) {
-        	try {
-				
-        		if (StringUtils.isNotBlank(priceStrings[i])) {
-    				if (i==1) {
-    				  data =  priceStrings[i].split("\\n")[1];
-    				}else {
-    				  data = priceStrings[i];
-    				}
-            	}
-    			priceArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
-    			priceMap.put(priceArr[0], priceArr[3]);
-    			
-        		
-			} catch (Exception e) {
-				e.printStackTrace();
-				errorLogger.error(e);
-			}
-        	
-        }
-        
-        
-        //得到所有的spu信息
+      //得到所有的spu信息
         String[] spuStrings = spuData.split("\\r\\n");
         String[] spuArr = null;
         logger.info("spu的总数是======="+spuStrings.length); 
@@ -185,6 +200,9 @@ public class FetchProduct {
 					  data = spuStrings[i];
 				}
 					spuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+					
+					spuId_seasonM.put(spuArr[0], spuArr[1]);
+					
 					SpuDTO spu = new SpuDTO();
 					Item item = new Item();
 				   item.setColor(StringUtils.isBlank(spuArr[10])?spuArr[4]:spuArr[10]);
@@ -224,6 +242,40 @@ public class FetchProduct {
 				errorLogger.error(i+" "+e);
 			}
 		}
+        
+        
+        
+        //价格信息
+        String[] priceStrings = priceData.split("\\r\\n");
+        String[] priceArr = null;
+        for (int i = 1; i < priceStrings.length; i++) {
+        	try {
+				
+        		if (StringUtils.isNotBlank(priceStrings[i])) {
+    				if (i==1) {
+    				  data =  priceStrings[i].split("\\n")[1];
+    				}else {
+    				  data = priceStrings[i];
+    				}
+            	}
+    			priceArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+    			if("A16".equals(spuId_seasonM.get(priceArr[0]))){
+    				priceMap.put(priceArr[0], priceArr[4]);
+    			}else{
+    				priceMap.put(priceArr[0], priceArr[3]);
+    			}
+    			
+    			supplierPriceMap.put(priceArr[0], priceArr[2]);
+        		
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorLogger.error(e);
+			}
+        	
+        }
+        
+        
+        
 		
 		//============================保存spu===================================
 		logger.info("开始保存spu，spuMap的大小是============"+spuMap.size()); 
@@ -301,7 +353,14 @@ public class FetchProduct {
 //							continue;
 							priceMap.put(item.getSpuId(), "0");
 						}
-	        			sku.setMarketPrice(priceMap.get(item.getSpuId()).replace(",", ""));
+	        			sku.setMarketPrice(priceMap.get(item.getSpuId()).replace(",", "."));
+	        			try {
+	        				String supplierPrice = supplierPriceMap.get(item.getSpuId()).replaceAll(",", ".");
+		        			double suPrice = new BigDecimal(Double.parseDouble(supplierPrice)).setScale(2, RoundingMode.HALF_UP).doubleValue();
+		        			sku.setSupplierPrice(String.valueOf(suPrice));  
+						} catch (Exception e) {
+							e.printStackTrace();
+						}	        			
 	        			sku.setColor(item.getColor());
 	        			sku.setProductDescription(item.getDescription());
 	        			sku.setSaleCurrency("EURO");

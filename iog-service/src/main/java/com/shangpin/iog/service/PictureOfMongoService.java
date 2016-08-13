@@ -1,5 +1,6 @@
 package com.shangpin.iog.service;
 
+import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dto.PictureDTO;
 
 import java.util.List;
@@ -17,5 +18,10 @@ public interface PictureOfMongoService {
      */
     public boolean isHavePic(String supplierId, String picUrl) ;
 
+    /**
+     * 根据供货商门户id删除图片
+     * @param supplierId
+     */
+    public void removePicBySupplierId(String supplierId) throws ServiceException;
 
 }

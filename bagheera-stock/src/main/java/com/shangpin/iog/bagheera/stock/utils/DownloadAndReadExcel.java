@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -79,6 +80,19 @@ public class DownloadAndReadExcel {
 
 	public static List<BagheeraDTO> readLocalExcel() throws IOException {
 		String realPath = downloadNet();
+		
+		//若下载失败，重复10遍
+		int k = 0;
+		while(StringUtils.isBlank(realPath) && k<10){
+			try {
+				Thread.sleep(1000*3);
+				realPath = downloadNet();
+			} catch (Exception e) {				
+				e.printStackTrace();
+			}finally{
+				k++;
+			}
+		}
 		HSSFWorkbook wb = null;
 		HSSFSheet sheet = null;
 		FileInputStream fw = null;
