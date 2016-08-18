@@ -2,12 +2,12 @@ package com.shangpin.iog.report.client;
 
 import java.util.ResourceBundle;
 
+import com.shangpin.iog.report.service.ReportService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.service.OpenapiService;
-import com.shangpin.iog.service.SopService;
+
 
 public class StartUp {
 
@@ -20,7 +20,7 @@ public class StartUp {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		suppliers = bdl.getString("suppliers");	
-		isHK = bdl.getString("isHK");
+
 	}
 	private static ApplicationContext factory;
 	private static void loadSpringContext()
@@ -32,13 +32,10 @@ public class StartUp {
 	public static void main(String[] args) {
 		loadSpringContext();
 		loggerInfo.info("初始化成功，开始同步");
-		if("1".equals(isHK)){
-			SopService sopService = (SopService)factory.getBean("sopService");
-			sopService.dotheJob(suppliers); 
-		}else{
-			OpenapiService openapiService = (OpenapiService)factory.getBean("openapiService");
-			openapiService.dotheJob(suppliers);
-		}
+
+		ReportService reportService = (ReportService)factory.getBean("reportService");
+
+
 		
 		loggerInfo.info("===========同步完成========"); 
 	}
