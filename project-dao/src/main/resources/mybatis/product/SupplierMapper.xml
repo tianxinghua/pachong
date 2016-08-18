@@ -7,7 +7,8 @@
   <result column="SUPPLIER_ID" property="supplierId" />
   <result column="SUPPLIER_NAME" property="supplierName" />
   <result column="SUPPLIER_STATE" property="state" />
-
+  <result column="APP_KEY" property="appKey"/>
+  <result column="APP_SECRET" property="appSecret"/>
 
 
  </resultMap>
@@ -89,6 +90,18 @@
   <include refid="all_column"></include>
 
   from SUPPLIER
+</select>
+
+<select id="hkFindAllByState" resultMap="resultMap">
+	select SUPPLIER_ID ,SUPPLIER_NAME, SUPPLIER_STATE,APP_KEY,APP_SECRET
+	from SUPPLIER
+	where SUPPLIER_STATE = #{supplier_state}
+</select>
+
+<select id="hkFindBysupplierId" resultMap="resultMap">
+	select SUPPLIER_ID ,SUPPLIER_NAME, SUPPLIER_STATE,APP_KEY,APP_SECRET
+	from SUPPLIER
+	where SUPPLIER_ID = #{supplierId} and SUPPLIER_STATE = 1
 </select>
 
 

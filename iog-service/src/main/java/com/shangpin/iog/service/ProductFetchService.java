@@ -145,4 +145,12 @@ public interface ProductFetchService {
 	Map<String, String> findPictureBySupplierIdAndSkuIdOrSpuId(String supplierId, String skuId, String spuId);
 	public List<ProductDTO> findSkuBySupplierId(String supplier);
 	public List<ProductDTO> findProductByDate(String startDate, String endDate);
+	
+	/**
+	 * 根据供应商编号和供应商skuId更新商品skuId
+	 * @param supplierId
+	 * @param supplierSkuId
+	 * @param spSkuId
+	 */
+	public void updateSpSkuIdBySupplier(String supplierId,String supplierSkuId,String spSkuId,String skuStatus) throws ServiceException;
 }

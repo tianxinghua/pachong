@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.atelier.priceService.ItalianiPriceService;
 import com.shangpin.iog.atelier.priceService.LeamPriceService;
 import com.shangpin.iog.atelier.priceService.ViettiPriceService;
 import com.shangpin.iog.atelier.service.FetchProduct;
@@ -43,15 +44,14 @@ public class StartUp {
 	/**
 	 * 抓取产品开始主方法，必须要传入1个参数
 	 * 传入的参数代表启动那个service服务，如传入vi代表启动ViettiPriceService,可自行拓展<br>
-	 * 参数可取值为: vi,leam,dan,
+	 * 参数可取值为: vi,leam,dan,it
 	 * @param args
 	 */
 	public static void main(String[] args){	
-		args = new String[1];
-		args[0] = "dan";
+		
 		if(args.length==0 || StringUtils.isBlank(args[0])){
-			System.out.println("请传入参数，指定运行的供应商service"); 
-			log.info("请传入参数，指定运行的供应商service");
+			System.out.println("请传入参数，指定运行的供应商service,参数可取值为: vi,leam,dan,it"); 
+			log.info("请传入参数，指定运行的供应商service,参数可取值为: vi,leam,dan,it");
 		}else{
 			//加载spring
 	        log.info("----拉取Atelier-template数据开始----");
@@ -67,6 +67,9 @@ public class StartUp {
 	        }else if("dan".equals(args[0])){
 	        	//Daniello处理价格跟leam一样
 	        	LeamPriceService fetchProduct = (LeamPriceService) factory.getBean("leamPriceService");
+	        	fetchProduct.handleData("spu", supplierId, day, picpath);
+	        }else if("it".equals(args[0])){
+	        	ItalianiPriceService fetchProduct = (ItalianiPriceService) factory.getBean("italianiPriceService");
 	        	fetchProduct.handleData("spu", supplierId, day, picpath);
 	        }
 

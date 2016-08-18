@@ -35,6 +35,7 @@
 		<typeAlias alias="iog_csvAttribute" type="com.shangpin.iog.dto.CsvAttributeInfoDTO"/>
 		<typeAlias alias="iog_buEpRule" type="com.shangpin.iog.dto.BuEpRuleDTO"/>
 		<typeAlias alias="iog_buEpValue" type="com.shangpin.iog.dto.BuEpValueDTO"/>
+		<typeAlias alias="iog_buEpSpecial" type="com.shangpin.iog.dto.BuEpSpecialDTO"/>
 		
 	</typeAliases>
 </configuration>

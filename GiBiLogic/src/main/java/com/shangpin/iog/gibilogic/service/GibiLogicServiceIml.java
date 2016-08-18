@@ -74,41 +74,45 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 		Map<String,Object> returnMap = new HashMap<String, Object>();
 		
 		for (Entry<String, Product> entry : productMap.entrySet()) {
-			Product p = entry.getValue();
-			
-			SkuDTO sku = new SkuDTO();
-			SpuDTO spu = new SpuDTO();
-			
-			sku.setId(UUIDGenerator.getUUID());
-			sku.setSkuId(p.getSkuId());
-			sku.setSupplierId(supplierId);
-			sku.setSpuId(p.getSkuId());
-			sku.setColor(colorMap.get(p.getColore()));
-			sku.setStock(p.getStock());
-			sku.setMarketPrice(p.getProduct_price());
-			sku.setSupplierPrice("");
-			sku.setSalePrice("");
-			sku.setSaleCurrency("dollar");
-			sku.setProductSize(p.getSize());
-			sku.setProductName(p.getProduct_name());
-			sku.setProductDescription(p.getProduct_desc());
-			sku.setProductCode(p.getSkuId());
-			skuList.add(sku);
-			
-			spu.setId(UUIDGenerator.getUUID());
-			spu.setSupplierId(supplierId);
-			spu.setSpuId(p.getSkuId());
-			spu.setBrandName(p.getVendor_name());
-			spu.setCategoryName(getCategoryName(categoryMap, p.getCategory()));
-			spu.setMaterial(p.getMaterial());
-			spu.setProductOrigin(p.getMadein());
-			spu.setSeasonName(p.getSeason());
-			spu.setCategoryGender(p.getGender());
-			
-			spuList.add(spu);
-			
-			imgList.add(p.getImage());
-			imgMap.put(p.getSkuId()+";"+p.getSkuId(), imgList);
+			try {
+				Product p = entry.getValue();
+				
+				SkuDTO sku = new SkuDTO();
+				SpuDTO spu = new SpuDTO();
+				
+				sku.setId(UUIDGenerator.getUUID());
+				sku.setSkuId(p.getSkuId());
+				sku.setSupplierId(supplierId);
+				sku.setSpuId(p.getSkuId());
+				sku.setColor(colorMap.get(p.getColore()));
+				sku.setStock(p.getStock());
+				sku.setMarketPrice(p.getProduct_price());
+				sku.setSupplierPrice("");
+				sku.setSalePrice("");
+				sku.setSaleCurrency("dollar");
+				sku.setProductSize(p.getSize());
+				sku.setProductName(p.getProduct_name());
+				sku.setProductDescription(p.getProduct_desc());
+				sku.setProductCode(p.getSkuId());
+				skuList.add(sku);
+				
+				spu.setId(UUIDGenerator.getUUID());
+				spu.setSupplierId(supplierId);
+				spu.setSpuId(p.getSkuId());
+				spu.setBrandName(p.getVendor_name());
+				spu.setCategoryName(getCategoryName(categoryMap, p.getCategory()));
+				spu.setMaterial(p.getMaterial());
+				spu.setProductOrigin(p.getMadein());
+				spu.setSeasonName(p.getSeason());
+				spu.setCategoryGender(p.getGender());
+				
+				spuList.add(spu);
+				
+				imgList.add(p.getImage());
+				imgMap.put(p.getSkuId()+";"+p.getSkuId(), imgList);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
 		}
 		returnMap.put("sku", skuList);		
 		returnMap.put("spu", spuList);		

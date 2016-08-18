@@ -40,7 +40,7 @@ public class Test {
             //ASCII方式：传输xml文本文件
             ftp.setType(FTPTransferType.BINARY);
             // 获取 XML文件到本地
-            ftp.put("F:/level_order.txt","2016-06-22-14.csv");
+            ftp.put("F:/level_order.txt","2016-08-11-17.csv");
             //logger.info("上传成功!!");
             System.out.println("上传成功!!");
         } catch (IOException e) {

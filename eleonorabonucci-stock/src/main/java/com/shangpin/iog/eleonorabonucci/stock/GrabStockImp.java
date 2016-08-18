@@ -10,12 +10,13 @@ import com.shangpin.iog.eleonorabonucci.dto.Item;
 import com.shangpin.iog.eleonorabonucci.dto.Items;
 import com.shangpin.iog.eleonorabonucci.dto.Product;
 import com.shangpin.iog.eleonorabonucci.dto.Products;
-import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.eleonorabonucci.schedule.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.sop.AbsUpdateProductStock;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBException;
+
 import java.lang.String;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -65,7 +67,13 @@ public class GrabStockImp extends AbsUpdateProductStock {
 //            timeConfig.confSocketOutTime(600000);
             // http://www.eleonorabonucci.com/rss/demo.aspx
             String result = HttpUtil45.get("http://www.eleonorabonucci.com/FEED_PRODUCT/59950/HK", timeConfig, null);
-            HttpUtil45.closePool();
+            int i = 0;
+            while((StringUtils.isBlank(result) || HttpUtil45.errorResult.equals(result)) && i<10){
+            	result = HttpUtil45.get("http://www.eleonorabonucci.com/FEED_PRODUCT/59950/HK", timeConfig, null);
+            	i++;
+            }
+            logger.info("================="+i+"===================");
+//            HttpUtil45.closePool();
 
 
             //Remove BOM from String
@@ -89,7 +97,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
             throw new ServiceMessageException("拉取eleonorabonucci数据失败");
 
         } finally {
-            HttpUtil45.closePool();
+//            HttpUtil45.closePool();
         }
         List<Product> productList = products.getProducts();
         String skuId = "";
@@ -133,24 +141,24 @@ public class GrabStockImp extends AbsUpdateProductStock {
     public static void main(String[] args) throws Exception {
     	//加载spring
         loadSpringContext();
-        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("eleonorabonucciStock");
-
-        String host = bundle.getString("HOST");
-        String app_key = bundle.getString("APP_KEY");
-        String app_secret= bundle.getString("APP_SECRET");
-        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
-            logger.error("参数错误，无法执行更新库存");
-        }
-        //AbsUpdateProductStock grabStockImp = new GrabStockImp();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("eleonorabonucci更新数据库开始");
-        try {
-        	grabStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
-		} catch (Exception e) {
-			loggerError.error("eleonorabonucci更新库存失败"+e.getMessage());
-		}
-        logger.info("eleonorabonucci更新数据库结束");
-        System.exit(0);
+//        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("eleonorabonucciStock");
+//
+//        String host = bundle.getString("HOST");
+//        String app_key = bundle.getString("APP_KEY");
+//        String app_secret= bundle.getString("APP_SECRET");
+//        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
+//            logger.error("参数错误，无法执行更新库存");
+//        }
+//        //AbsUpdateProductStock grabStockImp = new GrabStockImp();
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("eleonorabonucci更新数据库开始");
+//        try {
+//        	grabStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+//		} catch (Exception e) {
+//			loggerError.error("eleonorabonucci更新库存失败"+e.getMessage());
+//		}
+//        logger.info("eleonorabonucci更新数据库结束");
+//        System.exit(0);
 
     }
 

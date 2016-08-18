@@ -1,6 +1,7 @@
 package com.shangpin.iog.product.dao;
 
 
+import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.dto.ProductDTO;
@@ -13,6 +14,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ProductsMapper extends IBaseDao<ProductDTO> {
@@ -154,7 +156,7 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
      * @param rowBounds
      * @return
      */
-    List<ProductDTO> findListInTheCategory(@Param("categories") List<String> categories ,@Param("supplier") String supplier, @Param("startDate") Date startDate,@Param("endDate") Date endDate,RowBounds rowBounds);
+    List<ProductDTO> findListInTheCategory(Map<String, Object> params,RowBounds rowBounds) throws ServiceException;
     
     /**
      * 根据指定的品类查询商品
@@ -164,7 +166,8 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
      * @param endDate
      * @return
      */
-    List<ProductDTO> findListInTheCategory(@Param("categories") List<String> categories ,@Param("supplier") String supplier, @Param("startDate") Date startDate,@Param("endDate") Date endDate);
+    List<ProductDTO> findListInTheCategory(Map<String, Object> params) throws ServiceException;
+    
 }
 
 

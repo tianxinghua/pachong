@@ -10,8 +10,9 @@ public class BuEpRuleDTO {
 	private String buId;
 	private String supplierId;
 	private String bu;
-	private String gender;
+//	private String gender;
 	private String epField;
+	private String isexport;
 	private String ispecial;
 	private String speClass;
 }

@@ -51,7 +51,7 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
         	skuData = HttpUtil45.postAuth(url + "GetAllAvailabilityMarketplace",null, new OutTimeConfig(7200000, 7200000, 7200000),user,password);
         	ii++;
         }
-        logger.info(skuData);
+//        logger.info(skuData);
         logger.info("ii============="+ii); 
 		String[] skuStrings = skuData.split("\\r\\n");
 		for (int i = 1; i < skuStrings.length; i++) {

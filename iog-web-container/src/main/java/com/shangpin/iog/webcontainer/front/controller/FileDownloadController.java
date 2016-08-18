@@ -109,8 +109,10 @@ public class FileDownloadController {
     public ModelAndView viewPage() throws Exception {
         ModelAndView mv = new ModelAndView("iog");
         List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
+        List<String> bus = productService.findAllBus();
 
         mv.addObject("supplierDTOList",supplierDTOList);
+        mv.addObject("BUs", bus);
         return mv;
     }
 

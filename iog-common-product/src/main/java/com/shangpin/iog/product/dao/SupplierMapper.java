@@ -29,5 +29,9 @@ public interface SupplierMapper extends IBaseDao<SupplierDTO> {
      * @throws ServiceException
      */
     public SupplierDTO findBysupplierId(@Param("supplierId") String supplierId);
+    
+    public List<SupplierDTO> hkFindAllByState(@Param("supplier_state") String supplier_state);
+    
+    public SupplierDTO hkFindBysupplierId(@Param("supplierId") String supplierId)throws ServiceException;
 
 }

@@ -154,26 +154,26 @@ public class OrderService extends AbsOrderService{
 					+ "</Good>"
 					+ "</GoodsList>";
 			
-			CreateNewOrder createNewOrder82 =  new CreateNewOrder();
-			createNewOrder82.setOrderID("201607204043660");
-			createNewOrder82.setBuyerInfo(buyerInfo);
-			createNewOrder82.setGoodsList(goodsList);
+//			CreateNewOrder createNewOrder82 =  new CreateNewOrder();
+//			createNewOrder82.setOrderID("201607204043660");
+//			createNewOrder82.setBuyerInfo(buyerInfo);
+//			createNewOrder82.setGoodsList(goodsList);
+//			
+//			ConfigurationContext configurationContext =  new ConfigurationContext(null);
+//			API_STUDIO69Stub api = new API_STUDIO69Stub();
+//			
+//			CreateNewOrderResponse response = api.createNewOrder(createNewOrder82);
+//			
+//			System.out.println(response); 
+//			logger.info(response);
 			
-			ConfigurationContext configurationContext =  new ConfigurationContext(null);
-			API_STUDIO69Stub api = new API_STUDIO69Stub();
-			api.
-			CreateNewOrderResponse response = api.createNewOrder(createNewOrder82);
-			
-			System.out.println(response); 
-			logger.info(response);
-			
-//			Map<String,String> param = new HashMap<String,String>();
-//			param.put("orderID", "201607204043660");
-//			param.put("buyerInfo", buyerInfo);
-//			param.put("goodsList", goodsList);
-//			String data = HttpUtil45.postAuth(url+"CreateNewOrder", param, outTimeConf, username, password);
-//			logger.info(data); 
-//			System.out.println(data); 
+			Map<String,String> param = new HashMap<String,String>();
+			param.put("orderID", "201607204043660");
+			param.put("buyerInfo", buyerInfo);
+			param.put("goodsList", goodsList);
+			String data = HttpUtil45.postAuth(url+"CreateNewOrder", param, outTimeConf, username, password);
+			logger.info(data); 
+			System.out.println(data); 
 			
 		} catch (Exception e) {
 			errorLog.error(e);

@@ -1,10 +1,11 @@
 package com.shangpin.iog.tessabit.stock;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.tessabit.stock.common.MyFtpClient;
 import com.shangpin.iog.tessabit.stock.common.StringUtil;
+import com.shangpin.iog.tessabit.stock.schedule.AppContext;
 import com.shangpin.sop.AbsUpdateProductStock;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -75,29 +76,29 @@ public class TessabitStockImp  extends AbsUpdateProductStock {
     }
 
     public static void main(String[] args) throws Exception {
-        String host = bundle.getString("HOST");
-        String app_key = bundle.getString("APP_KEY");
-        String app_secret= bundle.getString("APP_SECRET");
-        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
-            logger.error("参数错误，无法执行更新库存");
-        }
+//        String host = bundle.getString("HOST");
+//        String app_key = bundle.getString("APP_KEY");
+//        String app_secret= bundle.getString("APP_SECRET");
+//        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
+//            logger.error("参数错误，无法执行更新库存");
+//        }
 
 
         loadSpringContext();
         logger.info("----初始SPRING成功----");
         //拉取数据
-       TessabitStockImp tessabitStockImp =(TessabitStockImp)factory.getBean("tessabitStock");
-
-      SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("TESSABIT更新数据库开始");
-        try {
-            tessabitStockImp.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
-        } catch (Exception e) {
-            loggerError.error("更新库存失败");
-            e.printStackTrace();
-        }
-        logger.info("TESSABIT更新数据库结束");
-        System.exit(0);
+//       TessabitStockImp tessabitStockImp =(TessabitStockImp)factory.getBean("tessabitStock");
+//
+//      SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("TESSABIT更新数据库开始");
+//        try {
+//            tessabitStockImp.updateProductStock(host,app_key,app_secret, "2015-01-01 00:00", format.format(new Date()));
+//        } catch (Exception e) {
+//            loggerError.error("更新库存失败");
+//            e.printStackTrace();
+//        }
+//        logger.info("TESSABIT更新数据库结束");
+//        System.exit(0);
 
 /*
         List<String> skuNo = new ArrayList<>();

@@ -4,18 +4,18 @@
 	<resultMap id="buEpRuleResultMap" type="iog_buEpRule">
         <result column="BUID" property="buId"  />
         <result column="SUPPLIERID" property="supplierId"  />
-        <result column="BU" property="bu"  />
-        <result column="GENDER" property="gender"  />
+        <result column="BU" property="bu"  />        
         <result column="EP_FIELD" property="epField"  />
+        <result column="ISEXPORT" property="isexport"  />
         <result column="ISPECIAL" property="ispecial"  />
         <result column="SPECLASS" property="speClass"  />
 	</resultMap>
 	<sql id="all_buEpRule_column">
 		BUID,
 		SUPPLIERID,
-		BU,
-		GENDER,
+		BU,		
 		EP_FIELD,
+		ISEXPORT,
 		ISPECIAL,
 		SPECLASS
 	</sql>
@@ -27,9 +27,16 @@
 			<if test="null != bu">
 				BU = #{bu}
 			</if>
-			<if test="supplierId">
+			<if test="null != supplierId">
 				and SUPPLIERID = #{supplierId}
 			</if>
 		</where>
+	</select>	
+	<select id="findAllBus" resultType="java.lang.String">
+		select distinct BU from BU_EP_RULE
+	</select>
+	<select id="findAllSuppliersByBu" resultType="java.lang.String">
+		select distinct SUPPLIERID from BU_EP_RULE
+		where BU = #{bu}
 	</select>
 </mapper>

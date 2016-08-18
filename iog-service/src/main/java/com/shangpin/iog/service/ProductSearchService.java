@@ -149,5 +149,36 @@ public interface ProductSearchService {
 	 * @throws ServiceException
 	 */
 	public StringBuffer exportProductByEpRule(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+	
+	/**
+	 * BU根据新的ep规则导出产品
+	 * @param bu 选择哪个bu
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 */
+	public StringBuffer buExportProduct(String bu,String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+	
+	/**
+	 * 女鞋
+	 * @param bu
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 * @throws ServiceException
+	 */
+	public StringBuffer shoeExportProduct(String bu,String supplier, Date startDate,
+			Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException;
+	/**
+	 * 查找所有BU
+	 * @return
+	 */
+	public List<String> findAllBus() throws ServiceException;
 }
 

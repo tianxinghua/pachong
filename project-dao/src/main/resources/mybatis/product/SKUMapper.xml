@@ -279,4 +279,13 @@
      	  </foreach>
        </where>
     </update>
+    
+    <update id="updateSpSkuIdBySupplier">
+    	update SKU
+    	<set>
+    		SP_SKU_ID = #{spSkuId},
+    		SP_STATUS = #{skuStatus}
+    	</set>
+    	where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{supplierSkuId}
+    </update>
 </mapper>

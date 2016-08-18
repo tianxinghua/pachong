@@ -8,7 +8,7 @@ import com.shangpin.iog.acanfora.stock.dto.Item;
 import com.shangpin.iog.acanfora.stock.dto.Items;
 import com.shangpin.iog.acanfora.stock.dto.Product;
 import com.shangpin.iog.acanfora.stock.dto.Products;
-import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.acanfora.stock.schedule.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.HttpUtils;
 import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
@@ -33,14 +33,14 @@ import java.util.*;
 public class GrabStockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
+//    private static Logger logMongo = Logger.getLogger("mongodb");
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
         factory = new AnnotationConfigApplicationContext(AppContext.class);
     }
     private static ResourceBundle bdl=null;
-    private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
+//    private  static  ResourceBundle bundle = ResourceBundle.getBundle("sop");
     private static String supplierId;
     private static String grabStockUrl = "";
 
@@ -61,22 +61,22 @@ public class GrabStockImp extends AbsUpdateProductStock {
             logger.info("拉取ACANFORA数据开始");
 
 
-            Map<String,String> mongMap = new HashMap<>();
+//            Map<String,String> mongMap = new HashMap<>();
             OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
             timeConfig.confConnectOutTime(60*1000*5);
             timeConfig.confRequestOutTime(60*1000*5);
             timeConfig.confSocketOutTime(60*1000*5);
             String result = HttpUtil45.get(grabStockUrl, timeConfig, null);
 
-            mongMap.put("supplierId",supplierId);
-            mongMap.put("supplierName","acanfora");
-            mongMap.put("result",result) ;
+//            mongMap.put("supplierId",supplierId);
+//            mongMap.put("supplierName","acanfora");
+//            mongMap.put("result",result) ;
             logger.info("result = " +result);
-            try {
-//                logMongo.info(mongMap);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            try {
+////                logMongo.info(mongMap);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
             products = ObjectXMLUtil.xml2Obj(Products.class, result);
             logger.info("拉取ACANFORA数据成功");
         } catch (Exception e) {
@@ -85,7 +85,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
             throw new ServiceMessageException("拉取ACANFORA数据失败");
 
         } finally {
-            HttpUtil45.closePool();
+//            HttpUtil45.closePool();
         }
         List<Product> productList = products.getProducts();
         String skuId = "";
@@ -128,23 +128,23 @@ public class GrabStockImp extends AbsUpdateProductStock {
     public static void main(String[] args) throws Exception {
     	//加载spring
         loadSpringContext();
-        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("acanforaStock");
-    	String host = bundle.getString("HOST");
-        String app_key = bundle.getString("APP_KEY");
-        String app_secret= bundle.getString("APP_SECRET");
-        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
-            logger.error("参数错误，无法执行更新库存");
-        }
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");    	
-        //AbsUpdateProductStock grabStockImp = new GrabStockImp();
-        logger.info("ACANFORA更新数据库开始");
-        try {
-            grabStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
-        } catch (Exception e) {
-            loggerError.error("ACANFORA库存更新失败"+e.getMessage());
-            e.printStackTrace();
-        }
-        logger.info("ACANFORA更新数据库结束");
-        System.exit(0);
+//        GrabStockImp grabStockImp = (GrabStockImp)factory.getBean("acanforaStock");
+//    	String host = bundle.getString("HOST");
+//        String app_key = bundle.getString("APP_KEY");
+//        String app_secret= bundle.getString("APP_SECRET");
+//        if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
+//            logger.error("参数错误，无法执行更新库存");
+//        }
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");    	
+//        //AbsUpdateProductStock grabStockImp = new GrabStockImp();
+//        logger.info("ACANFORA更新数据库开始");
+//        try {
+//            grabStockImp.updateProductStock(host,app_key,app_secret,"2015-01-01 00:00",format.format(new Date()));
+//        } catch (Exception e) {
+//            loggerError.error("ACANFORA库存更新失败"+e.getMessage());
+//            e.printStackTrace();
+//        }
+//        logger.info("ACANFORA更新数据库结束");
+//        System.exit(0);
     }
 }

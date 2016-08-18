@@ -84,7 +84,7 @@ public class TXTUtil {
 		InputStream in = null;
         try {  
             ftpClient = new FTPClient();  
-            ftpClient.setConnectTimeout(1000*60*20);
+            ftpClient.setConnectTimeout(1000*60*30);
             System.out.println("开始连接");
             log.info("开始连接");
             ftpClient.connect("194.154.193.146");// 连接FTP服务器  
@@ -93,16 +93,37 @@ public class TXTUtil {
             log.info("连接"+login);
 			ftpClient.enterLocalPassiveMode();
 			ftpClient.changeWorkingDirectory("/Connexion CEGID");
-			String[] names = ftpClient.listNames();
+			String[] names = ftpClient.listNames("/Connexion CEGID");
+//			String[] names = ftpClient.listNames();
+			int wait = 0;
+			while(null == names && wait < 20){
+				try {					
+					names = ftpClient.listNames();					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}finally{
+					wait ++;
+				}
+			}
+			log.info("获取文件名列表的次数是=============="+wait); 
 			String filename = getFileName(names,new Date());
+			log.info("本次获取的文件名称是==========="+filename); 
             System.out.println("读取txt");
             ftpClient.setControlEncoding("UTF-8");
-            ftpClient.setDataTimeout(1000*60*20);
+            ftpClient.setDataTimeout(1000*60*30);
 			in = ftpClient.retrieveFileStream(filename);
-			dtoList = readLocalCSV(clazz, sep, in);
+			int i = 0;
+			while(null == in && i<10){
+				in = ftpClient.retrieveFileStream(filename);
+				i++;
+			}
+			log.info("================"+i+"==================="); 
+			if(in != null){
+				dtoList = readLocalCSV(clazz, sep, in);
+			}			
             
         }catch(Exception ex){
-        	log.error(ex);
+        	log.error(ex.toString());
         	ex.printStackTrace();
         }finally{
         	try {
@@ -120,6 +141,7 @@ public class TXTUtil {
 	private static String getFileName(String[] names,Date date){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HH");
 		String dateStr = sdf.format(date);
+		System.out.println(dateStr); 
         String file = "";
         for (int i = names.length-1; i>=0; i--) {
         	if (names[i].contains(dateStr)) {
