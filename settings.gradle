@@ -24,15 +24,9 @@ include 'iog-product-web'
 
 include 'coltorti'
 include 'atelier-ostore-order'
-include 'vela'
-include 'vela-stock'
-include 'vela-order'
-include 'sanremo'
-include 'sanremo-stock'
-include 'sanremo-order'
+include 'brunarosso'
 
-include 'wokstore'
-include 'wokstore-stock'
+
 include 'efashion-order'
 
 
