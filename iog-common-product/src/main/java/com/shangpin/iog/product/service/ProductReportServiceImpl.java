@@ -66,28 +66,34 @@ public class ProductReportServiceImpl implements ProductReportService {
             reasonMap.put(dto.getSupplierId()+"||"+dto.getSupplierSeason(),dto.getSpYear()+dto.getSpSeason());
 
         }
+        logger.warn("映射的季节："+reasonMap.toString());
+
         //品牌
         List<String> brandList = new ArrayList<String>();
         for(String brand:ePRuleDAO.findAll(2, 1)){
             brandList.add(brand.toUpperCase());
+            logger.warn("需要的品牌："+brandList.toString());
         }
         //品类 排除
         List<String> categeryList = new ArrayList<String>();
         for(String cat:ePRuleDAO.findAll(3, 0)){
             categeryList.add(cat.toUpperCase());
+            logger.warn("不需要的品类："+categeryList.toString());
         }
         //季节 排除
         List<String> seasonList = new ArrayList<String>();
         for(String season:ePRuleDAO.findAll(5, 0)){
             seasonList.add(season.toUpperCase());
+            logger.warn("不需要的季节："+seasonList.toString());
         }
         //性别 排除
         List<String> genderList = new ArrayList<String>();
         for(String gender:ePRuleDAO.findAll(6, 0)){
             genderList.add(gender.toUpperCase());
+            logger.warn("不需要的性别："+genderList.toString());
         }
 
-        String productSize, productDetail = "", brandName = "", brandId = "", color = "", material = "", productOrigin = "";
+
 
         String supplierName="", categoryName = "", productName = "";
         Map<String,Integer> suppliercountMap = new HashMap<>();
@@ -95,11 +101,15 @@ public class ProductReportServiceImpl implements ProductReportService {
         for (ProductDTO dto : productList) {
             try {
 
-                if(StringUtils.isBlank(dto.getSpSkuId()) && StringUtils.isNotBlank(dto.getColor()) && StringUtils.isNotBlank(dto.getSize()) && StringUtils.isNotBlank(dto.getMaterial()) ){
+
                     if(StringUtils.isNotBlank(dto.getCategoryGender()) && !genderList.contains(dto.getCategoryGender().toUpperCase())){
+                        logger.warn("getCategoryGender");
                         if((StringUtils.isNotBlank(dto.getSeasonId()) && !seasonList.contains(dto.getSeasonId().toUpperCase())) || (StringUtils.isNotBlank(dto.getSeasonName()) && !seasonList.contains(dto.getSeasonName().toUpperCase()))){
+                            logger.warn("getSeasonId");
                             if((StringUtils.isNotBlank(dto.getCategoryName()) && !categeryList.contains(dto.getCategoryName().toUpperCase())) || (StringUtils.isNotBlank(dto.getSubCategoryName()) && !categeryList.contains(dto.getSubCategoryName().toUpperCase()))){
+                                logger.warn("getCategoryName");
                                 if(null != dto.getBrandName() && (brandList.contains(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
+                                    logger.warn("getBrandName");
                                     try {
                                         //supplier 供货商
                                         supplierName = dto.getSupplierName();
@@ -113,6 +123,7 @@ public class ProductReportServiceImpl implements ProductReportService {
                                                     .findDistinctProductPictureBySupplierIdAndSpuIdAndSkuIdNull(
                                                             dto.getSupplierId(), dto.getSpuId());
                                             if (spuPictureList.isEmpty()) {
+                                                logger.warn("无图片");
                                                continue;
                                             }
                                         }
@@ -144,7 +155,7 @@ public class ProductReportServiceImpl implements ProductReportService {
                             }
                         }
                     }
-                }
+
             } catch (Exception e) {
                 logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
                 continue;
