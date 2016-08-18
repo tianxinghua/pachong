@@ -35,7 +35,7 @@ public class StartUp {
 
 		ReportService reportService = (ReportService)factory.getBean("reportService");
 
-
+		reportService.mail();
 		
 		loggerInfo.info("===========同步完成========"); 
 	}

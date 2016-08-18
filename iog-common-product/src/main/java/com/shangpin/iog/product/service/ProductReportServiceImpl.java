@@ -3,10 +3,12 @@ package com.shangpin.iog.product.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.dto.ProductDTO;
+import com.shangpin.iog.dto.SeasonRelationDTO;
 import com.shangpin.iog.mongodao.PictureDAO;
 import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.product.dao.*;
 import com.shangpin.iog.service.ProductReportService;
+import com.shangpin.iog.service.SeasonRelationService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +44,9 @@ public class ProductReportServiceImpl implements ProductReportService {
     @Autowired
     PictureDAO pictureDAO;
 
+    @Autowired
+    SeasonRelationService seasonRelationService;
+
 
     @Override
     public Map<String,Integer> findProductReport() throws ServiceException {
@@ -50,8 +55,11 @@ public class ProductReportServiceImpl implements ProductReportService {
         List<ProductDTO> productList =   productDAO.findReport();
         //获取季节map
         Map<String,String> reasonMap=new HashMap<>();
+        List<SeasonRelationDTO> currentSeasonList  =   seasonRelationService.getAllCurrentSeason();
+        for(SeasonRelationDTO dto:currentSeasonList){
+            reasonMap.put(dto.getSupplierId()+"||"+dto.getSupplierSeason(),dto.getSpYear()+dto.getSpSeason());
 
-
+        }
         //品牌
         List<String> brandList = new ArrayList<String>();
         for(String brand:ePRuleDAO.findAll(2, 1)){
@@ -77,10 +85,11 @@ public class ProductReportServiceImpl implements ProductReportService {
 
         String supplierName="", categoryName = "", productName = "";
         Map<String,Integer> suppliercountMap = new HashMap<>();
+        String reasonKey ="",reasonViewName ="";
         for (ProductDTO dto : productList) {
             try {
 
-                if(StringUtils.isBlank(dto.getSpSkuId()) && StringUtils.isNotBlank(dto.getColor()) && StringUtils.isNotBlank(dto.getSize()) && StringUtils.isNotBlank(dto.getMaterial()) && StringUtils.isNotBlank(dto.getItemPictureUrl1())){
+                if(StringUtils.isBlank(dto.getSpSkuId()) && StringUtils.isNotBlank(dto.getColor()) && StringUtils.isNotBlank(dto.getSize()) && StringUtils.isNotBlank(dto.getMaterial()) ){
                     if(StringUtils.isNotBlank(dto.getCategoryGender()) && !genderList.contains(dto.getCategoryGender().toUpperCase())){
                         if((StringUtils.isNotBlank(dto.getSeasonId()) && !seasonList.contains(dto.getSeasonId().toUpperCase())) || (StringUtils.isNotBlank(dto.getSeasonName()) && !seasonList.contains(dto.getSeasonName().toUpperCase()))){
                             if((StringUtils.isNotBlank(dto.getCategoryName()) && !categeryList.contains(dto.getCategoryName().toUpperCase())) || (StringUtils.isNotBlank(dto.getSubCategoryName()) && !categeryList.contains(dto.getSubCategoryName().toUpperCase()))){
@@ -88,7 +97,7 @@ public class ProductReportServiceImpl implements ProductReportService {
                                     try {
                                         //supplier 供货商
                                         supplierName = dto.getSupplierName();
-
+                                        //过滤图片
                                         List<ProductPicture> skuPictureList = pictureDAO
                                                 .findDistinctProductPictureBySupplierIdAndSkuId(
                                                         dto.getSupplierId(), dto.getSkuId());
@@ -102,7 +111,23 @@ public class ProductReportServiceImpl implements ProductReportService {
                                             }
                                         }
 
+                                        //获取数据
+                                        if(reasonMap.containsKey(dto.getSupplierId()+"||"+dto.getSeasonId())){
+                                            reasonKey =   dto.getSupplierId()+"||"+dto.getSeasonId();
+                                            reasonViewName =  reasonMap.get(reasonKey);
 
+                                        }else if (reasonMap.containsKey(dto.getSupplierId()+"||"+dto.getSeasonName())){
+                                            reasonKey =   dto.getSupplierId()+"||"+dto.getSeasonName();
+                                            reasonViewName =  reasonMap.get(reasonKey);
+                                        }else{
+                                            continue;
+                                        }
+
+                                        if(suppliercountMap.containsKey(supplierName+"||"+reasonViewName)){
+                                            suppliercountMap.put(supplierName+"||"+reasonViewName,suppliercountMap.get(supplierName+"||"+reasonViewName)+1);
+                                        }else{
+                                            suppliercountMap.put(supplierName+"||"+reasonViewName,1);
+                                        }
 
 
                                     } catch (Exception e) {
