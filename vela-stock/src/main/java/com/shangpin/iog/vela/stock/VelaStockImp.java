@@ -70,12 +70,21 @@ public class VelaStockImp extends AbsUpdateProductStock {
 //                barcode_map.put(skuno, null);
 //            }
 
-             itemId = skuno;
-            sopPrice="";
+             itemId = skuno.trim();
+
+
             //根据供应商skuno获取库存，并更新我方sop库存
-            url = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetQuantityByItemID?DBContext=Default&ItemID=[[itemId]]&key=MPm32XJp7M";
+             if(itemId.length()<10){//item id
+                 url = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetQuantityByItemID?DBContext=Default&ItemID=[[itemId]]&key=MPm32XJp7M";
+             }else{
+                 url = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=Default&barcode=[[itemId]]&key=MPm32XJp7M";
+             }
+//
+
             url = url.replaceAll("\\[\\[itemId\\]\\]", itemId);
-            priceUrl = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetPriceByItemID?DBContext=Default&ItemID="+itemId+"&key=MPm32XJp7M";
+
+//            sopPrice="";
+//            priceUrl = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetPriceByItemID?DBContext=Default&ItemID="+itemId+"&key=MPm32XJp7M";
 
             String json = null;
             try {
