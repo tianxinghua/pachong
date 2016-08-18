@@ -103,13 +103,13 @@ public class ProductReportServiceImpl implements ProductReportService {
 
 
                     if(StringUtils.isNotBlank(dto.getCategoryGender()) && !genderList.contains(dto.getCategoryGender().toUpperCase())){
-                        logger.warn("getCategoryGender");
+//                        logger.warn("getCategoryGender");
                         if((StringUtils.isNotBlank(dto.getSeasonId()) && !seasonList.contains(dto.getSeasonId().toUpperCase())) || (StringUtils.isNotBlank(dto.getSeasonName()) && !seasonList.contains(dto.getSeasonName().toUpperCase()))){
-                            logger.warn("getSeasonId");
+//                            logger.warn("getSeasonId");
                             if((StringUtils.isNotBlank(dto.getCategoryName()) && !categeryList.contains(dto.getCategoryName().toUpperCase())) || (StringUtils.isNotBlank(dto.getSubCategoryName()) && !categeryList.contains(dto.getSubCategoryName().toUpperCase()))){
-                                logger.warn("getCategoryName");
+//                                logger.warn("getCategoryName");
                                 if(null != dto.getBrandName() && (brandList.contains(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
-                                    logger.warn("getBrandName");
+//                                    logger.warn("getBrandName");
                                     try {
                                         //supplier 供货商
                                         supplierName = dto.getSupplierName();
@@ -123,7 +123,7 @@ public class ProductReportServiceImpl implements ProductReportService {
                                                     .findDistinctProductPictureBySupplierIdAndSpuIdAndSkuIdNull(
                                                             dto.getSupplierId(), dto.getSpuId());
                                             if (spuPictureList.isEmpty()) {
-                                                logger.warn("无图片");
+                                                logger.warn(dto.getSupplierId()+"----" + dto.getSkuId()+"---无图片");
                                                continue;
                                             }
                                         }
