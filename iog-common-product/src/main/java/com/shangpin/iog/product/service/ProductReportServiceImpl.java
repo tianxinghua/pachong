@@ -53,6 +53,12 @@ public class ProductReportServiceImpl implements ProductReportService {
 
 
         List<ProductDTO> productList =   productDAO.findReport();
+        if(null==productList||productList.size()==0){
+            logger.warn("未获得到数据");
+            return new HashMap<>();
+        }
+        logger.warn("获取部分过滤的数据量为："+productList.size());
+
         //获取季节map
         Map<String,String> reasonMap=new HashMap<>();
         List<SeasonRelationDTO> currentSeasonList  =   seasonRelationService.getAllCurrentSeason();
@@ -145,7 +151,7 @@ public class ProductReportServiceImpl implements ProductReportService {
             }
         }
 
-
+        logger.warn("获取过滤的数据量为："+suppliercountMap.toString());
         return suppliercountMap;
     }
 }
