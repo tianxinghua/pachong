@@ -36,6 +36,6 @@
 		<typeAlias alias="iog_buEpRule" type="com.shangpin.iog.dto.BuEpRuleDTO"/>
 		<typeAlias alias="iog_buEpValue" type="com.shangpin.iog.dto.BuEpValueDTO"/>
 		<typeAlias alias="iog_buEpSpecial" type="com.shangpin.iog.dto.BuEpSpecialDTO"/>
-		
+		<typeAlias alias="iog_season_relation" type="com.shangpin.iog.dto.SeasonRelationDTO"/>
 	</typeAliases>
 </configuration>
