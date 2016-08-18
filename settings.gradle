@@ -28,7 +28,5 @@ include 'brunarosso'
 
 
 include 'efashion-order'
-
-
-
+include 'report'
 
