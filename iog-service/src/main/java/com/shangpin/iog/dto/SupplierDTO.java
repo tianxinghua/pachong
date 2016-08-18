@@ -12,4 +12,6 @@ public class SupplierDTO {
     private String supplierId;
     private String supplierName;
     private String state;
+    private String appKey;
+    private String appSecret;
 }

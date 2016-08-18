@@ -589,22 +589,87 @@
         <where>
             sku.STOCK >0
           <if test="null!=supplier">
-            and   sku.SUPPLIER_ID = #{supplier}
-          </if>
+            and  sku.SUPPLIER_ID = #{supplier}
+          </if>          
           <if test="null!=startDate">
             and (sku.LAST_TIME >= #{startDate} )
           </if>
           <if test="endDate!=null">
             <![CDATA[ and (sku.LAST_TIME <= #{endDate}) ]]>
 		  </if>
-		  <if test="null != categories">
-		  	and spu.CATEGORY_NAME in
-		  	 <foreach collection="categories" index="index" item="item" open="(" separator="," close=")"> 
-            	#{item} 
-        	 </foreach>
+		  
+		  <choose>
+		  	<when test="BuParamDTO.isExport_gender == '1'.toString()">
+		  		<if test="null != BuParamDTO.genders and BuParamDTO.genders.size()>0">
+		          	and spu.CATEGORY_GENDER in
+		          	<foreach collection="BuParamDTO.genders" index="index" item="item" open="(" separator="," close=")"> 
+		            	#{item} 
+		        	 </foreach>
+		        </if>
+		  	</when>
+		  	<when test="BuParamDTO.isExport_gender == '0'.toString()">
+		  		<if test="null != BuParamDTO.genders and BuParamDTO.genders.size()>0">
+		          	and spu.CATEGORY_GENDER not in
+		          	<foreach collection="BuParamDTO.genders" index="index" item="item" open="(" separator="," close=")"> 
+		            	#{item} 
+		        	 </foreach>
+	          	</if>
+		  	</when>
+		  </choose>
+		            
+          <choose>
+          	<when test="BuParamDTO.isExport_cat == '1'.toString()">
+          		<if test="null != BuParamDTO.categories and BuParamDTO.categories.size()>0">
+			  	and (spu.SUB_CATEGORY_NAME in 
+	        	 <foreach collection="BuParamDTO.categories" index="index" item="item" open="(" separator="," close=")"> 
+	            	#{item} 
+	        	 </foreach> 
+	        	 or spu.CATEGORY_NAME in 
+	        	 <foreach collection="BuParamDTO.categories" index="index" item="item" open="(" separator="," close=")"> 
+	            	#{item} 
+	        	 </foreach> 
+	        	 )       	
+			  </if>	
+          	</when>
+          	<when test="BuParamDTO.isExport_cat == '0'.toString()">
+          		<if test="null != BuParamDTO.categories and BuParamDTO.categories.size()>0">
+			  	and (spu.SUB_CATEGORY_NAME not in 
+	        	 <foreach collection="BuParamDTO.categories" index="index" item="item" open="(" separator="," close=")"> 
+	            	#{item} 
+	        	 </foreach> 
+	        	 and spu.CATEGORY_NAME not in 
+	        	 <foreach collection="BuParamDTO.categories" index="index" item="item" open="(" separator="," close=")"> 
+	            	#{item} 
+	        	 </foreach> 
+	        	 )       	
+			  </if>
+          	</when>
+          </choose>
+		  	  
+		  <choose>
+		  	<when test="BuParamDTO.isExport_brand == '1'.toString()">
+		  		<if test="null != BuParamDTO.brands and BuParamDTO.brands.size()>0">
+				  	and spu.BRAND_NAME in
+		          	<foreach collection="BuParamDTO.brands" index="index" item="item" open="(" separator="," close=")"> 
+		            	#{item} 
+		        	 </foreach>
+		  		</if>	
+		  	</when>
+		  	<when test="BuParamDTO.isExport_brand == '0'.toString()">
+		  		<if test="null != BuParamDTO.brands and BuParamDTO.brands.size()>0">
+				  	and spu.BRAND_NAME not in
+		          	<foreach collection="BuParamDTO.brands" index="index" item="item" open="(" separator="," close=")"> 
+		            	#{item} 
+		        	 </foreach>
+		  		</if>
+		  	</when>
+		  </choose>
+		  
+		  <if test="'男鞋'== BU or '女鞋' == BU">
+		  	and (SELECT count(*) from SKU WHERE SUPPLIER_ID = #{supplier} and SPU_ID = spu.SPU_ID AND STOCK>2)>1
 		  </if>
         </where>
         order by brand_name, category_name
 	</select>
-	
+		
 </mapper>

@@ -34,7 +34,7 @@ public class Murder extends TimerTask{
 	public static Murder getMur(){
 		return murder;
 	}
-	private static ExecutorService executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
+	private static ExecutorService executor = new ThreadPoolExecutor(2, 3, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.DiscardPolicy());
 //	private static ExecutorService executor =Executors.newCachedThreadPool(); 
 	@Override
 	public void run() {
@@ -46,7 +46,7 @@ public class Murder extends TimerTask{
 			future.get(time, TimeUnit.MILLISECONDS);
 		} catch (Exception e) {
 			future.cancel(true);
-			logError.error(Thread.currentThread().getName()+"超时销毁");
+			logError.error(Thread.currentThread().getName()+"超时销毁"+e.toString());
 			System.out.println(Thread.currentThread().getName()+"超时销毁");
 		}
 	}

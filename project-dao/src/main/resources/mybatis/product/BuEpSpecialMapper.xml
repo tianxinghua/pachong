@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.BuEpSpecialMapper">
+	
+	<resultMap type="iog_buEpSpecial" id="buEpSpecialResultMap">
+		<result column="CATEGORY" property="category"/>
+		<result column="BRAND" property="brand"/>
+		<result column="EXCLUDED_SIZE" property="excludedSize"/>
+		<result column="MIN_SUPPLIER_PRICE" property="minSupplierPrice"/>
+		<result column="MAX_SUPPLIER_PRICE" property="maxSupplierPrice"/>
+		<result column="MIN_SALE_PRICE" property="minSalePrice"/>
+		<result column="MAX_SALE_PRICE" property="maxSalePrice"/>
+		<result column="MIN_MARKET_PRICE" property="minMarketPrice"/>
+		<result column="MAX_MARKET_PRICE" property="maxMarketPrice"/>		
+	</resultMap>
+	
+	<sql id="allColumn">
+		CATEGORY,
+		BRAND,
+		EXCLUDED_SIZE,
+		MIN_SUPPLIER_PRICE,
+		MAX_SUPPLIER_PRICE,
+		MIN_SALE_PRICE,
+		MAX_SALE_PRICE,
+		MIN_MARKET_PRICE,
+		MAX_MARKET_PRICE
+	</sql>
+	
+	<select id="findAll" resultMap="buEpSpecialResultMap">
+		select
+		<include refid="allColumn"></include>
+		from BU_EP_SPECIAL
+	</select>
+	
+	<select id="findCount" resultType="java.lang.Integer">
+		select count(*) from BU_EP_SPECIAL
+	</select>
+	
+</mapper>

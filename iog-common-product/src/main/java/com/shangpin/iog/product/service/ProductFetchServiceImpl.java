@@ -469,5 +469,9 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		return null;
 	}
 	
+	public void updateSpSkuIdBySupplier(String supplierId,String supplierSkuId,String spSkuId,String skuStatus) throws ServiceException{
+		skuDAO.updateSpSkuIdBySupplier(supplierId, supplierSkuId, spSkuId,skuStatus); 
+	}
+	
 
 }

@@ -34,12 +34,12 @@ public class StockImp extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     
-    private static ApplicationContext factory;
-    private static void loadSpringContext()
-    {
-
-        factory = new AnnotationConfigApplicationContext(AppContext.class);
-    }
+//    private static ApplicationContext factory;
+//    private static void loadSpringContext()
+//    {
+//
+//        factory = new AnnotationConfigApplicationContext(AppContext.class);
+//    }
 
     @Autowired
 	EventProductService eventProductService;
@@ -79,7 +79,7 @@ public class StockImp extends AbsUpdateProductStock {
     			}
     		}
     	}catch(Exception e){
-    		loggerError.info(e);
+    		loggerError.error(e);
     	}
     	
 	}
@@ -105,7 +105,7 @@ public class StockImp extends AbsUpdateProductStock {
                 		i = Integer.parseInt(map.get(tempSku));
                 	}
                 	if(i<0){
-            			loggerError.info("sku库存小于0："+tempSku+":"+map.get(tempSku));
+            			logger.info("sku库存小于0："+tempSku+":"+map.get(tempSku));
             			System.out.println("sku库存小于0："+tempSku+":"+map.get(tempSku));
             			stockMap.put(skuno,"0");
             		}else{
@@ -116,28 +116,28 @@ public class StockImp extends AbsUpdateProductStock {
                 }
             }
     	}catch(Exception e){
-    		loggerError.info(e);
+    		loggerError.error(e);
     	}
     	
         return stockMap;
     }
     
-    public static void main(String[] args) {
-    	//加载spring
-        loadSpringContext();
-        //拉取数据
-        StockImp stockImp =(StockImp)factory.getBean("efashion");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("efashiom更新库存开始");
-        System.out.println("efashiom更新库存开始");
-        try {
-			stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
-		} catch (Exception e) { 
-			loggerError.info(e);
-			e.printStackTrace();
-		}
-        logger.info("efashiom更新库存结束");
-        System.out.println("efashiom更新库存结束");
-        System.exit(0);
-    }
+//    public static void main(String[] args) {
+//    	//加载spring
+//        loadSpringContext();
+//        //拉取数据
+//        StockImp stockImp =(StockImp)factory.getBean("efashion");
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("efashiom更新库存开始");
+//        System.out.println("efashiom更新库存开始");
+//        try {
+//			stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
+//		} catch (Exception e) { 
+//			loggerError.info(e);
+//			e.printStackTrace();
+//		}
+//        logger.info("efashiom更新库存结束");
+//        System.out.println("efashiom更新库存结束");
+//        System.exit(0);
+//    }
 }
