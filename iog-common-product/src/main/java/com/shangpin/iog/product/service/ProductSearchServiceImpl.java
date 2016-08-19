@@ -1967,7 +1967,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	}
 	@Override
 	public List<ProductDTO> findPicName(String supplier,Date startDate, Date endDate, Integer pageIndex, Integer pageSize){
-		List<ProductDTO> pList = null;
+		List<ProductDTO> pList = new ArrayList<>();
 //		if (null != pageIndex && null != pageSize) {
 //			pList = productDAO.findPicNameListByEPRegularAndLastDate(supplier, startDate, endDate, new RowBounds(pageIndex, pageSize));
 //		}else{
