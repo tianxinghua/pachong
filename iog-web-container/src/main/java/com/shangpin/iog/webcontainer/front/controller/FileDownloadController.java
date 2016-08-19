@@ -659,6 +659,8 @@ public class FileDownloadController {
 		}
     	//遍历 获取要下载的图片 map<spskuid,url1,url2>
     	Map<String,String> imgMap = getMongoPic(productList);
+
+		log.error("imgMap message ="+imgMap.toString());
     	
     	//下载保存图片
     	BufferedInputStream in = null;
@@ -791,7 +793,7 @@ public class FileDownloadController {
 		for (ProductDTO productDTO : productList) {
 			skuspuMap.put(productDTO.getSkuId(),productDTO.getSpuId());
 		}
-
+		log.error("skuspuMap = " + skuspuMap.toString());
     	
     	Map<String, String> findMap = null;
     	for (ProductDTO productDTO : productList) {
@@ -812,14 +814,15 @@ public class FileDownloadController {
 				for (Entry<String, String> m : findMap.entrySet()) {
 
 					if(skuspuMap.containsKey(m.getKey())){//sku
-						imgMap.put(productDTO.getSupplierId()+"|||"+skuspuMap.get(m.getKey()), m.getValue());
+						imgMap.put("SPID"+productDTO.getSupplierId()+"|||"+skuspuMap.get(m.getKey()), m.getValue());
 					}else{//spu
-						imgMap.put(productDTO.getSupplierId()+"|||"+m.getKey(), m.getValue());
+						imgMap.put("SPID"+productDTO.getSupplierId()+"|||"+m.getKey(), m.getValue());
 					}
 				}
 
 			}
 		}
+
     	return imgMap;
     	
     }
