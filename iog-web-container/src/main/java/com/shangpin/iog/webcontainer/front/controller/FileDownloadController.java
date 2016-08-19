@@ -77,6 +77,7 @@ public class FileDownloadController {
 	private static String efashion = null;
 	private static String pavin = null;
 	private static String downloadpath = null;
+	private static String pictmpdownloadpath = null;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -86,6 +87,7 @@ public class FileDownloadController {
 		efashion = bdl.getString("efashion");
 		pavin = bdl.getString("pavin");
 		downloadpath = bdl.getString("downloadpath");
+		pictmpdownloadpath = bdl.getString("pictmpdownloadpath");
 	}
 	private Logger log = LoggerFactory.getLogger(FileDownloadController.class) ;
 	@Autowired
@@ -664,7 +666,7 @@ public class FileDownloadController {
     	String path = request.getSession().getServletContext().getRealPath("");  
     	ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 15, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(6),new ThreadPoolExecutor.CallerRunsPolicy());
 //    	String dirPath = "F:/usr/local/picturetem/"+new Date().getTime();
-    	String dirPath = "/usr/local/picturetem/"+new Date().getTime();
+    	String dirPath =pictmpdownloadpath + +new Date().getTime();   //  /usr/local
 		File f1 = new File(dirPath);
 		if (!f1.exists()) {
 			f1.mkdirs();
