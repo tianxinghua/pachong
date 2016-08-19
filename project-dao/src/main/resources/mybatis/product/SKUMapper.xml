@@ -47,6 +47,12 @@
 		<result column="newSupplierPrice" property="newSupplierPrice" />
 		<result column="newSalePrice" property="newSalePrice" />
 	</resultMap>
+	
+	<resultMap type="iog_sku" id="skuId_spSkuId">
+		<result column="SKU_ID" property="skuId"  />
+		<result column="SP_SKU_ID" property="spSkuId"  />
+		<result column="SP_PRODUCT_CODE" property="spProductCode"/>
+	</resultMap>
 
 	<sql id="all_sku_column">
 		ID ,
@@ -283,9 +289,15 @@
     <update id="updateSpSkuIdBySupplier">
     	update SKU
     	<set>
-    		SP_SKU_ID = #{spSkuId},
-    		SP_STATUS = #{skuStatus}
+    		<if test="null != spSkuId">SP_SKU_ID = #{spSkuId},</if>
+    		<if test="null != skuStatus">SP_STATUS = #{skuStatus},</if>
+    		<if test="null != spProductCode">SP_PRODUCT_CODE = #{spProductCode}</if>
     	</set>
     	where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{supplierSkuId}
     </update>
+    
+    <select id="findSpSkuIdsBySupplier" resultMap="skuId_spSkuId">
+    	select SKU_ID ,SP_SKU_ID ,SP_PRODUCT_CODE
+		from SKU where SUPPLIER_ID = #{supplierId}    
+    </select>
 </mapper>

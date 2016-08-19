@@ -329,7 +329,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				+ splitSign + "新进货价" + splitSign + "markerPrice" + splitSign
 				+ "sallPrice" + splitSign + "supplier Price 进货价" + splitSign
 				+ "Currency 币种" + splitSign + "新上市季节" + splitSign + "上市季节" + splitSign 
-				+ "活动开始时间"+ splitSign + "活动结束时间"+ splitSign + "备注").append("\r\n");
+				+ "活动开始时间"+ splitSign + "活动结束时间"+ splitSign + "SupplierSpuNo 供应商spu编号"+ splitSign + "备注").append("\r\n");
 		Page<ProductDTO> page = null;
 		if (flag.equals("same")) {
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,
@@ -627,8 +627,12 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 								.getEventStartTime()).append(splitSign);
 				// 活动结束时间
 				buffer.append(null == dto.getEventEndTime() ? " " : dto
-						.getEventEndTime()).append(splitSign);;
-buffer.append(dto.getMemo());
+						.getEventEndTime()).append(splitSign);
+				//供应商spuid
+				buffer.append(null == dto.getSpuId() ? " " : dto
+						.getSpuId()).append(splitSign);
+				
+				buffer.append(dto.getMemo());
 				buffer.append("\r\n");
 			} catch (Exception e) {
 				logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
@@ -1637,7 +1641,7 @@ buffer.append(dto.getMemo());
 				+ splitSign + "新进货价" + splitSign + "markerPrice" + splitSign
 				+ "sallPrice" + splitSign + "supplier Price 进货价" + splitSign
 				+ "Currency 币种" + splitSign + "新上市季节" + splitSign+ "上市季节" + splitSign + "活动开始时间"
-				+ splitSign + "活动结束时间"+ splitSign + "备注").append("\r\n");
+				+ splitSign + "活动结束时间"+ splitSign + "SupplierSpuNo 供应商spu编号" + splitSign + "备注").append("\r\n");
 		Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate,
 				endDate, pageIndex, pageSize, "same");
 		//品牌
@@ -1930,7 +1934,10 @@ buffer.append(dto.getMemo());
 										// 活动结束时间
 										buffer.append(null == dto.getEventEndTime() ? " " : dto
 												.getEventEndTime()).append(splitSign);;
-												buffer.append(dto.getMemo());
+										//供应商spuid
+										buffer.append(null == dto.getSpuId() ? " " : dto
+												.getSpuId()).append(splitSign);		
+										buffer.append(dto.getMemo());
 										buffer.append("\r\n");
 									} catch (Exception e) {
 										logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());

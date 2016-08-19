@@ -118,9 +118,9 @@ public class OrderSreviceImpl extends AbsOrderService {
 			String[] sku_stocks = spOrder.getDetail().split(",");
 			for(String sku_stock : sku_stocks){
 				String[] tem = sku_stock.split(":");
-				if(specialSkuService.checkBySupplierIdAndSkuId(supplierId, tem[0].trim())){
-					spOrder.setStatus(OrderStatus.YUSHOUCONFIRM);
-				}else{
+//				if(specialSkuService.checkBySupplierIdAndSkuId(supplierId, tem[0].trim())){
+//					spOrder.setStatus(OrderStatus.YUSHOUCONFIRM);
+//				}else{
 				
 					String soapRequestData =  "<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
 							"<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">"+
@@ -176,7 +176,7 @@ public class OrderSreviceImpl extends AbsOrderService {
 						e.printStackTrace();
 						// doOrderExc(spOrder);
 					}
-				}
+//				}
 				
 			}
 			

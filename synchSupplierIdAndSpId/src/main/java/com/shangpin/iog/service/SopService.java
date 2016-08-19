@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SupplierDTO;
+import com.shangpin.iog.product.dao.SkuMapper;
 import com.shangpin.openapi.api.sdk.client.SpClient;
 import com.shangpin.openapi.api.sdk.model.ApiResponse;
 import com.shangpin.openapi.api.sdk.model.SopProductSku;
@@ -38,6 +40,8 @@ public class SopService {
 	ProductFetchService productFetchService;
 	@Autowired
 	SupplierService supplierService;
+	@Autowired
+	SkuMapper skuDAO;
 	
 	public void dotheJob(String suppliers){
 		try {
@@ -88,6 +92,17 @@ public class SopService {
 				map.put(skuRelationDTO.getSopSkuId(), null);
 			}
 		}
+		Map<String,String> skuSpSkuMap = new HashMap<String,String>();
+		Map<String,String> skuSpProductCodeMap = new HashMap<String,String>();
+		if(null != skuDAO){
+			List<SkuDTO> skuList = skuDAO.findSpSkuIdsBySupplier(supplierId);
+			if(null != skuList && skuList.size()>0){
+				for(SkuDTO dto : skuList){
+					skuSpSkuMap.put(dto.getSkuId(), dto.getSpSkuId());
+					skuSpProductCodeMap.put(dto.getSkuId(), dto.getSpProductCode());
+				}				
+			}
+		}
 		Date date = new Date();
 		while (hasNext) {
 			long startDate = System.currentTimeMillis();
@@ -134,11 +149,12 @@ public class SopService {
 							loggerError.error(skuRelationDTO.toString() + "保存失败");
 						}
 					}
-					if (StringUtils.isNotBlank(ice.getSkuNo()) && StringUtils.isNotBlank(ice.getSupplierSkuNo())){
-						
+					if (StringUtils.isNotBlank(ice.getSkuNo()) && StringUtils.isNotBlank(ice.getSupplierSkuNo())){						
 						try {
-							productFetchService.updateSpSkuIdBySupplier(supplierId, ice.getSupplierSkuNo(), ice.getSkuNo(),""+ice.getSkuStatus());
-							loggerInfo.info(ice.getSupplierSkuNo()+"--------------"+ ice.getSkuNo());
+							if(StringUtils.isBlank(skuSpSkuMap.get(ice.getSupplierSkuNo())) || StringUtils.isBlank(skuSpProductCodeMap.get(ice.getSupplierSkuNo()))){
+								productFetchService.updateSpSkuIdBySupplier(supplierId, ice.getSupplierSkuNo(), ice.getSkuNo(),""+ice.getSkuStatus(),sku.getProductModel());
+								loggerInfo.info(ice.getSupplierSkuNo()+"--------------"+ ice.getSkuNo());
+							}							
 						} catch (Exception e) {
 							loggerError.error(e.getMessage()); 
 						}
