@@ -72,27 +72,30 @@ public class ProductReportServiceImpl implements ProductReportService {
         List<String> brandList = new ArrayList<String>();
         for(String brand:ePRuleDAO.findAll(2, 1)){
             brandList.add(brand.toUpperCase());
-            logger.warn("需要的品牌："+brandList.toString());
+
         }
+        logger.warn("需要的品牌："+brandList.toString());
         //品类 排除
         List<String> categeryList = new ArrayList<String>();
         for(String cat:ePRuleDAO.findAll(3, 0)){
             categeryList.add(cat.toUpperCase());
-            logger.warn("不需要的品类："+categeryList.toString());
+
         }
+        logger.warn("不需要的品类："+categeryList.toString());
         //季节 排除
         List<String> seasonList = new ArrayList<String>();
         for(String season:ePRuleDAO.findAll(5, 0)){
             seasonList.add(season.toUpperCase());
-            logger.warn("不需要的季节："+seasonList.toString());
+
         }
+        logger.warn("不需要的季节："+seasonList.toString());
         //性别 排除
         List<String> genderList = new ArrayList<String>();
         for(String gender:ePRuleDAO.findAll(6, 0)){
             genderList.add(gender.toUpperCase());
-            logger.warn("不需要的性别："+genderList.toString());
-        }
 
+        }
+        logger.warn("不需要的性别："+genderList.toString());
 
 
         String supplierName="", categoryName = "", productName = "";

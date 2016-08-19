@@ -169,6 +169,14 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
      * @throws ServiceException
      */
     List<ProductDTO> findReport() throws ServiceException;
+
+
+    /**
+     * 临时报表 返回所有的不可为空的数据
+     * @return
+     * @throws ServiceException
+     */
+//    List<ProductDTO> findReportBySupplierId(@Param("supplier") String supplierId) throws ServiceException;
     
 }
 
