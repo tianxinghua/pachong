@@ -2,6 +2,7 @@ package com.shangpin.iog.product.service;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.page.Page;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.SeasonRelationDTO;
 import com.shangpin.iog.mongodao.PictureDAO;
@@ -101,6 +102,9 @@ public class ProductReportServiceImpl implements ProductReportService {
         String supplierName="", categoryName = "", productName = "";
         Map<String,Integer> suppliercountMap = new HashMap<>();
         String reasonKey ="",reasonViewName ="";
+        Date today = DateTimeUtil.convertDateFormat(new Date(),"yyyy-MM-dd");
+        String daykey = "";
+        int diffDay = 0;
         for (ProductDTO dto : productList) {
             try {
 
@@ -143,6 +147,9 @@ public class ProductReportServiceImpl implements ProductReportService {
                                             continue;
                                         }
 
+                                        diffDay = DateTimeUtil.getDateifference(dto.getCreateTime(),today);
+
+                                        daykey = DateTimeUtil.shortFmt(dto.getCreateTime());
                                         if(suppliercountMap.containsKey(supplierName+"||"+reasonViewName)){
                                             suppliercountMap.put(supplierName+"||"+reasonViewName,suppliercountMap.get(supplierName+"||"+reasonViewName)+1);
                                         }else{

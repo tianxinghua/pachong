@@ -783,7 +783,13 @@ public class FileDownloadController {
     private Map<String,String> getMongoPic(List<ProductDTO> productList){
     	Map<String,String> imgMap = new HashMap<String,String>();
     	Map<String,String> idMap = new HashMap<String,String>();
-    	
+
+		Map<String,String > skuspuMap = new HashMap<>();
+
+		for (ProductDTO productDTO : productList) {
+			skuspuMap.put(productDTO.getSkuId(),productDTO.getSpuId());
+		}
+
     	
     	Map<String, String> findMap = null;
     	for (ProductDTO productDTO : productList) {
@@ -796,9 +802,20 @@ public class FileDownloadController {
 				findMap =pfs.findPictureBySupplierIdAndSkuIdOrSpuId(productDTO.getSupplierId(), null,productDTO.getSpuId());
 			}
 			if (null!=findMap&&findMap.size()>0) {
+				//换成尚品内部的SKU编号 现停 换成其它的 20160819
+//				for (Entry<String, String> m : findMap.entrySet()) {
+//					imgMap.put(idMap.get(m.getKey()), m.getValue());
+//				}
+
 				for (Entry<String, String> m : findMap.entrySet()) {
-					imgMap.put(idMap.get(m.getKey()), m.getValue());
+
+					if(skuspuMap.containsKey(m.getKey())){//sku
+						imgMap.put(productDTO.getSupplierId()+"|||"+skuspuMap.get(m.getKey()), m.getValue());
+					}else{//spu
+						imgMap.put(productDTO.getSupplierId()+"|||"+m.getKey(), m.getValue());
+					}
 				}
+
 			}
 		}
     	return imgMap;

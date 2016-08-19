@@ -732,7 +732,8 @@
         spu.SEASON_ID as season_id,spu.SEASON_NAME as season_name,
         spu.CATEGORY_GENDER as category_gender,
         spu.SUB_CATEGORY_ID  as  sub_category_id,
-        spu.SUB_CATEGORY_NAME  as  sub_category_name
+        spu.SUB_CATEGORY_NAME  as  sub_category_name,
+        date_format(sku.CREATE_TIME,'%Y-%m-%d') as createTime
 
         from SKU sku inner join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
         inner join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID and su.SUPPLIER_STATE='1'

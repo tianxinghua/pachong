@@ -1954,10 +1954,64 @@ buffer.append(dto.getMemo());
 	@Override
 	public List<ProductDTO> findPicName(String supplier,Date startDate, Date endDate, Integer pageIndex, Integer pageSize){
 		List<ProductDTO> pList = null;
-		if (null != pageIndex && null != pageSize) {
-			pList = productDAO.findPicNameListByEPRegularAndLastDate(supplier, startDate, endDate, new RowBounds(pageIndex, pageSize));
-		}else{
-			pList = productDAO.findPicNameListByEPRegularAndLastDate(supplier, startDate, endDate);
+//		if (null != pageIndex && null != pageSize) {
+//			pList = productDAO.findPicNameListByEPRegularAndLastDate(supplier, startDate, endDate, new RowBounds(pageIndex, pageSize));
+//		}else{
+//			pList = productDAO.findPicNameListByEPRegularAndLastDate(supplier, startDate, endDate);
+//		}
+		Page<ProductDTO> page = null;
+		try {
+			page = this.findProductPageBySupplierAndTime(supplier, startDate,
+                    endDate, pageIndex, pageSize, "same");
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		//品牌
+		List<String> brandList = new ArrayList<String>();
+		for(String brand:ePRuleDAO.findAll(2, 1)){
+			brandList.add(brand.toUpperCase());
+		}
+		//品类 排除
+		List<String> categeryList = new ArrayList<String>();
+		for(String cat:ePRuleDAO.findAll(3, 0)){
+			categeryList.add(cat.toUpperCase());
+		}
+		//季节 排除
+		List<String> seasonList = new ArrayList<String>();
+		for(String season:ePRuleDAO.findAll(5, 0)){
+			seasonList.add(season.toUpperCase());
+		}
+		//性别 排除
+		List<String> genderList = new ArrayList<String>();
+		for(String gender:ePRuleDAO.findAll(6, 0)){
+			genderList.add(gender.toUpperCase());
+		}
+
+
+
+		for (ProductDTO dto : page.getItems()) {
+			try {
+
+				if(StringUtils.isBlank(dto.getSpSkuId()) && StringUtils.isNotBlank(dto.getColor()) && StringUtils.isNotBlank(dto.getSize()) && StringUtils.isNotBlank(dto.getMaterial()) && StringUtils.isNotBlank(dto.getItemPictureUrl1())){
+					if(StringUtils.isNotBlank(dto.getCategoryGender()) && !genderList.contains(dto.getCategoryGender().toUpperCase())){
+						if((StringUtils.isNotBlank(dto.getSeasonId()) && !seasonList.contains(dto.getSeasonId().toUpperCase())) || (StringUtils.isNotBlank(dto.getSeasonName()) && !seasonList.contains(dto.getSeasonName().toUpperCase()))){
+							if((StringUtils.isNotBlank(dto.getCategoryName()) && !categeryList.contains(dto.getCategoryName().toUpperCase())) || (StringUtils.isNotBlank(dto.getSubCategoryName()) && !categeryList.contains(dto.getSubCategoryName().toUpperCase()))){
+								if(null != dto.getBrandName() && (brandList.contains(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
+									try {
+										pList.add(dto);
+									} catch (Exception e) {
+										logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
+										continue;
+									}
+								}
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
+				continue;
+			}
 		}
 		return pList;
 	}
@@ -2186,8 +2240,8 @@ buffer.append(dto.getMemo());
 	
 	/**
 	 * 根据指定条件查询产品列表
-	 * @param flag
-	 * @param condition
+	 * @param categories
+	 * @param brands
 	 * @param supplier
 	 * @param startDate
 	 * @param endDate
