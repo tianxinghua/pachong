@@ -1,12 +1,7 @@
 package com.shangpin.iog.webcontainer.front.controller;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -796,6 +791,7 @@ public class FileDownloadController {
 		log.error("skuspuMap = " + skuspuMap.toString());
     	
     	Map<String, String> findMap = null;
+		String sku="",spu="";
     	for (ProductDTO productDTO : productList) {
     		
     		//TODO 如果spskuid为空跳过
@@ -814,10 +810,21 @@ public class FileDownloadController {
 				for (Entry<String, String> m : findMap.entrySet()) {
 
 					if(skuspuMap.containsKey(m.getKey())){//sku
-						imgMap.put("SPID"+productDTO.getSupplierId()+"|||"+skuspuMap.get(m.getKey()), m.getValue());
+						try {
+							spu = URLEncoder.encode(skuspuMap.get(m.getKey()),"utf-8");
+						} catch (UnsupportedEncodingException e) {
+							e.printStackTrace();
+						}
 					}else{//spu
-						imgMap.put("SPID"+productDTO.getSupplierId()+"|||"+m.getKey(), m.getValue());
+
+						try {
+							spu = URLEncoder.encode(m.getKey(),"utf-8");
+						} catch (UnsupportedEncodingException e) {
+							e.printStackTrace();
+						}
+
 					}
+					imgMap.put("SPID"+productDTO.getSupplierId()+"-"+spu, m.getValue());
 				}
 
 			}
