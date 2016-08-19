@@ -20,8 +20,10 @@ import ShangPin.SOP.Servant.OpenApiServantPrx;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.IcePrxHelper;
+import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SupplierDTO;
+import com.shangpin.iog.product.dao.SkuMapper;
 
 @Component("openapiService")
 public class OpenapiService {
@@ -39,6 +41,8 @@ public class OpenapiService {
 	private ProductFetchService productFetchService;
 	@Autowired
 	SupplierService supplierService;
+	@Autowired
+	SkuMapper skuDAO;
 	
 	public void dotheJob(String suppliers){
 		try {
@@ -86,6 +90,17 @@ public class OpenapiService {
 				map.put(skuRelationDTO.getSopSkuId(),null);
 			}
 		}
+		Map<String,String> skuSpSkuMap = new HashMap<String,String>();
+		Map<String,String> skuSpProductCodeMap = new HashMap<String,String>();
+		if(null != skuDAO){
+			List<SkuDTO> skuList = skuDAO.findSpSkuIdsBySupplier(supplier);
+			if(null != skuList && skuList.size()>0){
+				for(SkuDTO dto : skuList){
+					skuSpSkuMap.put(dto.getSkuId(), dto.getSpSkuId());
+					skuSpProductCodeMap.put(dto.getSkuId(), dto.getSpProductCode());
+				}				
+			}
+		}
 		Date date  = new Date();
 		while(hasNext){
 			long startDate = System.currentTimeMillis();
@@ -127,8 +142,10 @@ public class OpenapiService {
 					if(null!=ice.SkuNo&&!"".equals(ice.SkuNo)&&null!=ice.SupplierSkuNo&&!"".equals(ice.SupplierSkuNo)){
 						if(1!=ice.IsDeleted){
 							try {
-								productFetchService.updateSpSkuIdBySupplier(supplier, ice.SupplierSkuNo, ice.SkuNo,""+ice.SkuStatus);
-								loggerInfo.info(ice.SupplierSkuNo+"------------------"+ice.SkuNo);
+								if(StringUtils.isBlank(skuSpSkuMap.get(ice.SupplierSkuNo)) || StringUtils.isBlank(skuSpProductCodeMap.get(ice.SupplierSkuNo))){
+									productFetchService.updateSpSkuIdBySupplier(supplier, ice.SupplierSkuNo, ice.SkuNo,""+ice.SkuStatus,sku.ProductModel);
+									loggerInfo.info(ice.SupplierSkuNo+"------------------"+ice.SkuNo);
+								}
 							} catch (Exception e) {
 								e.printStackTrace();
 								loggerError.error(e.getMessage()); 

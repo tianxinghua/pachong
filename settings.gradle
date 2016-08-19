@@ -35,6 +35,8 @@ include 'wokstore'
 include 'wokstore-stock'
 include 'efashion-order'
 
-
+include '-service'
+include 'synchSupplierIdAndSpId'
+include 'itemInfo-purchase'
 
 
