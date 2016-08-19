@@ -811,15 +811,18 @@ public class FileDownloadController {
 
 					if(skuspuMap.containsKey(m.getKey())){//sku
 						try {
-							spu = URLEncoder.encode(skuspuMap.get(m.getKey()),"utf-8");
-						} catch (UnsupportedEncodingException e) {
+//							spu = URLEncoder.encode(skuspuMap.get(m.getKey()),"utf-8");
+							spu = getBASE64(skuspuMap.get(m.getKey()));
+						} catch (Exception e) {
+							log.error("转码失败");
 							e.printStackTrace();
 						}
 					}else{//spu
 
 						try {
-							spu = URLEncoder.encode(m.getKey(),"utf-8");
-						} catch (UnsupportedEncodingException e) {
+							spu = getBASE64(m.getKey());
+						} catch (Exception e) {
+							log.error("转码失败");
 							e.printStackTrace();
 						}
 
@@ -833,7 +836,14 @@ public class FileDownloadController {
     	return imgMap;
     	
     }
-    private List<ProductDTO> getDownProductList(String queryJson){
+
+
+	public static String getBASE64(String s) {
+		if (s == null) return null;
+		return (new sun.misc.BASE64Encoder()).encode( s.getBytes() );
+	}
+
+	private List<ProductDTO> getDownProductList(String queryJson){
 
     	ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
     	if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
