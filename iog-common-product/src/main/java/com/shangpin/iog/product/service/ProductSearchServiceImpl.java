@@ -30,6 +30,7 @@ import com.shangpin.iog.dto.ColorContrastDTO;
 import com.shangpin.iog.dto.MaterialContrastDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
+import com.shangpin.iog.dto.SeasonRelationDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.dto.SupplierDTO;
@@ -51,6 +52,7 @@ import com.shangpin.iog.product.dao.SupplierMapper;
 import com.shangpin.iog.product.dto.BuParamDTO;
 import com.shangpin.iog.product.special.Special;
 import com.shangpin.iog.service.ProductSearchService;
+import com.shangpin.iog.service.SeasonRelationService;
 
 /**
  * Created by loyalty on 15/5/20.
@@ -97,6 +99,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	BuEpValueMapper BuEpValueDAO;
 	@Autowired
 	BuEpSpecialMapper BuEpSpecialDAO;
+	@Autowired
+    SeasonRelationService seasonRelationService;
 	
 	private static Map<String, String> spBrandMap = new HashMap<>();
 	private static Map<String, String> colorContrastMap = new HashMap<>();
@@ -329,7 +333,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				+ splitSign + "新进货价" + splitSign + "markerPrice" + splitSign
 				+ "sallPrice" + splitSign + "supplier Price 进货价" + splitSign
 				+ "Currency 币种" + splitSign + "新上市季节" + splitSign + "上市季节" + splitSign 
-				+ "活动开始时间"+ splitSign + "活动结束时间" +splitSign + "供应商门户编号"+ splitSign + "SupplierSpuNo 供应商spu编号" + splitSign + "SpuId" + splitSign + "备注").append("\r\n");
+				+ "活动开始时间"+ splitSign + "活动结束时间" + splitSign + "SupplierSpuNo 供应商spu编号" + splitSign + "供应商门户编号"+ splitSign + "SpuId" + splitSign + "备注").append("\r\n");
 		Page<ProductDTO> page = null;
 		if (flag.equals("same")) {
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,
@@ -627,14 +631,16 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 								.getEventStartTime()).append(splitSign);
 				// 活动结束时间
 				buffer.append(null == dto.getEventEndTime() ? " " : dto
-						.getEventEndTime()).append(splitSign);
-				//供应商门户编号
-				buffer.append(null == dto.getSupplierId() ? " " : dto
-						.getSupplierId()).append(splitSign);
+						.getEventEndTime()).append(splitSign);				
 				//供应商spuid
 				buffer.append(null == dto.getSpuId() ? " " : dto
 						.getSpuId()).append(splitSign);
-				buffer.append(null == dto.getSpuId() ? " " : getBASE64(dto.getSpuId())).append(splitSign);				
+				//供应商门户编号
+				buffer.append(null == dto.getSupplierId() ? " " : dto
+						.getSupplierId()).append(splitSign);
+				
+				buffer.append(null == dto.getSpuId() ? " " : "SPID"+dto.getSupplierId()+"-"+getBASE64(dto.getSpuId())).append(splitSign);	
+				
 				buffer.append(dto.getMemo());
 				buffer.append("\r\n");
 			} catch (Exception e) {
@@ -1622,7 +1628,354 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public StringBuffer exportProductByEpRule(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException{
+	
+	public StringBuffer exportReportProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException{
+		
+		StringBuffer buffer = new StringBuffer("SupplierId 供货商名称" + splitSign
+				+ "CategoryName 品类名称" + splitSign
+				+ "Category 品类翻译" + splitSign
+				+ "Category_No 品类编号" + splitSign + "BrandNo 品牌编号" + splitSign
+				+ "BrandName 品牌" + splitSign + "ProductModel 货号" + splitSign
+				+ "SupplierSkuNo 供应商SkuNo" + splitSign + " 尚品sku编号 " + splitSign
+				+ " 性别 " + splitSign
+				+ "SopProductName 商品名称" + splitSign + "BarCode 条形码" + splitSign
+				+ "ProductColor 颜色" + splitSign + "color 中文" + splitSign
+				+ "ProductSize 尺码" + splitSign + "material 材质" + splitSign
+				+ "material 中文材质" + splitSign + "ProductOrigin 产地" + splitSign
+				+ "productUrl1" + splitSign + "productUrl2" + splitSign
+				+ "productUrl3" + splitSign + "productUrl4" + splitSign
+				+ "productUrl5" + splitSign + "productUrl6" + splitSign
+				+ "productUrl7" + splitSign + "productUrl8" + splitSign
+				+ "productUrl9" + splitSign + "PcDesc 描述" + splitSign
+				+ "Stock 库存" + splitSign + "新市场价" + splitSign + "新销售价"
+				+ splitSign + "新进货价" + splitSign + "markerPrice" + splitSign
+				+ "sallPrice" + splitSign + "supplier Price 进货价" + splitSign
+				+ "Currency 币种" + splitSign + "新上市季节" + splitSign+ "上市季节" + splitSign + "活动开始时间"
+				+ splitSign + "活动结束时间"+ splitSign + "供应商门户编号"+ splitSign + "SupplierSpuNo 供应商spu编号" + splitSign + "SpuId" + splitSign + "备注").append("\r\n");
+		Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate,
+				endDate, pageIndex, pageSize, "same");
+		//品牌
+		List<String> brandList = new ArrayList<String>();
+		for(String brand:ePRuleDAO.findAll(2, 1)){
+			brandList.add(brand.toUpperCase());
+		}
+		//品类 排除
+		List<String> categeryList = new ArrayList<String>();
+		for(String cat:ePRuleDAO.findAll(3, 0)){
+			categeryList.add(cat.toUpperCase());
+		}
+		//季节 排除
+		List<String> seasonList = new ArrayList<String>();
+		for(String season:ePRuleDAO.findAll(5, 0)){
+			seasonList.add(season.toUpperCase());
+		}
+		//性别 排除
+		List<String> genderList = new ArrayList<String>();
+		for(String gender:ePRuleDAO.findAll(6, 0)){
+			genderList.add(gender.toUpperCase());
+		}
+		//需要的季节
+		List<String> supplierSeasonList = new ArrayList<String>();
+        List<SeasonRelationDTO> currentSeasonList  =   seasonRelationService.getAllCurrentSeason();
+        for(SeasonRelationDTO dto:currentSeasonList){
+        	if(StringUtils.isNotBlank(dto.getSupplierSeason())){
+        		supplierSeasonList.add(dto.getSupplierSeason().toUpperCase());
+        	}
+        }        
+		//品类map赋值
+		this.setCategoryMap();
+		// 设置尚品网品牌
+		this.setBrandMap();
+		// 颜色Map赋值
+		this.setColorContrastMap();
+		// 材质Map 赋值
+		this.setMaterialContrastMap();
+
+		String productSize, productDetail = "", brandName = "", brandId = "", color = "", material = "", productOrigin = "";
+
+		String supplierId="", categoryName = "", productName = "";	
+		for (ProductDTO dto : page.getItems()) {
+			try { 
+				
+				if(StringUtils.isBlank(dto.getSpSkuId()) && StringUtils.isNotBlank(dto.getColor()) && StringUtils.isNotBlank(dto.getSize()) && StringUtils.isNotBlank(dto.getMaterial()) && StringUtils.isNotBlank(dto.getItemPictureUrl1())){
+					if(StringUtils.isNotBlank(dto.getCategoryGender()) && !genderList.contains(dto.getCategoryGender().toUpperCase())){
+						if((StringUtils.isNotBlank(dto.getSeasonId()) && !seasonList.contains(dto.getSeasonId().toUpperCase()) && supplierSeasonList.contains(dto.getSeasonId().toUpperCase())) || (StringUtils.isNotBlank(dto.getSeasonName()) && !seasonList.contains(dto.getSeasonName().toUpperCase()) && supplierSeasonList.contains(dto.getSeasonName().toUpperCase()))){
+							if((StringUtils.isNotBlank(dto.getCategoryName()) && !categeryList.contains(dto.getCategoryName().toUpperCase())) || (StringUtils.isNotBlank(dto.getSubCategoryName()) && !categeryList.contains(dto.getSubCategoryName().toUpperCase()))){
+								if(null != dto.getBrandName() && (brandList.contains(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
+									try {
+										//supplierId 供货商
+										supplierId = dto.getSupplierName();
+										if(StringUtils.isNotBlank(supplierId)){
+											buffer.append(supplierId).append(splitSign);
+										}else{
+											buffer.append(dto.getSupplierId()).append(splitSign);
+										}
+										
+										// 品类名称
+										categoryName = dto.getSubCategoryName();
+										if (StringUtils.isBlank(categoryName)) {
+											categoryName = StringUtils.isBlank(dto.getCategoryName()) ? ""
+													: dto.getCategoryName();
+		
+										}
+										
+										//翻译
+										String categoryCH = "";
+										if(StringUtils.isNotBlank(categoryName)){
+											if(categoryContrastMap.containsKey(categoryName.toLowerCase())){
+												categoryCH = categoryContrastMap.get(categoryName.toLowerCase());
+											}
+										}
+										
+										categoryName = categoryName.replaceAll(splitSign, " ");
+										buffer.append(categoryName).append(splitSign);
+										
+										//品类翻译
+										buffer.append(categoryCH).append(splitSign);
+										
+										buffer.append("尚品网品类编号").append(splitSign);
+		
+										brandName = dto.getBrandName();
+										if (StringUtils.isNotBlank(brandName)) {
+											if (spBrandMap.containsKey(brandName.toLowerCase())) {
+												brandId = spBrandMap.get(brandName.toLowerCase());
+											} else {
+												brandId = "";
+											}
+										} else {
+											brandId = "";
+										}
+		
+										buffer.append(!"".equals(brandId) ? brandId : "尚品网品牌编号")
+												.append(splitSign);
+										buffer.append(brandName).append(splitSign);
+										// 货号
+										buffer.append(
+												null == dto.getProductCode() ? "" : dto
+														.getProductCode().replaceAll(",", " ")).append(
+												splitSign);
+										// 供应商SKUID
+		
+										buffer.append("\"\t" + dto.getSkuId() + "\"").append(splitSign);
+										//尚品sku编号
+										buffer.append(StringUtils.isNotBlank(dto.getSpSkuId())? dto.getSpSkuId():"").append(splitSign);
+										
+										// 欧洲习惯 第一个先看 男女
+										buffer.append(
+												null == dto.getCategoryGender() ? "" : dto
+														.getCategoryGender().replaceAll(splitSign, " "))
+												.append(splitSign);
+										// 产品名称
+										productName = dto.getProductName();
+										if (StringUtils.isBlank(productName)) {
+											productName = dto.getSpuName();
+										}
+		
+										if (StringUtils.isNotBlank(productName)) {
+		
+											productName = productName.replaceAll(splitSign, " ")
+													.replaceAll("\\r", "").replaceAll("\\n", "");
+										}
+		
+										buffer.append(productName).append(splitSign);
+		
+										buffer.append("\"\t" + dto.getBarcode() + "\"").append(
+												splitSign);
+		
+										// 获取颜色
+										color = dto.getColor()==null?"":dto.getColor().replace(",", " ").replaceAll("/", " "); 
+										buffer.append(null == color ? "" : color.replace(",", " ")).append(splitSign);
+										// 翻译中文
+										String colorCh = "";
+										if (StringUtils.isNotBlank(color)) {
+											if(colorContrastMap.containsKey(color.toLowerCase())){
+												colorCh = colorContrastMap.get(color.toLowerCase());
+											}else{
+												for(String co :color.split("\\s+")){
+													if (colorContrastMap.containsKey(co.toLowerCase())) {
+														colorCh += colorContrastMap.get(co.toLowerCase());
+													}else{
+														colorCh += co;
+													}
+												}
+											}	
+											
+										}
+										buffer.append(colorCh).append(splitSign);
+		
+										// 获取尺码
+										productSize = dto.getSize();
+										if (StringUtils.isNotBlank(productSize)) {
+											productSize=productSize.replace(",", ".");
+											if (productSize.indexOf("+") > 0) {
+												productSize = productSize.replace("+", ".5");
+											}
+											productSize = productSize.replaceAll(splitSign, " ");
+		
+										} else {
+											productSize = "";
+										}
+										buffer.append(productSize).append(splitSign);
+		
+										// 获取材质
+										material = dto.getMaterial();
+										if (StringUtils.isBlank(material)) {
+											material = "";
+										} else {
+	
+											material = material.replaceAll(splitSign, " ")
+													.replaceAll("\\r", "").replaceAll("\\n", "");
+										}
+	
+										buffer.append(material).append(splitSign);
+										// 材质 中文
+										if (StringUtils.isNotBlank(material)) {
+											
+											//先遍历带有空格的材质
+											Set<Map.Entry<String, String>> materialSet = materialContrastMap
+													.entrySet();
+											for (Map.Entry<String, String> entry : materialSet) {
+	
+												material = material.toLowerCase().replaceAll(
+														entry.getKey(), entry.getValue());
+											}
+											
+											//再遍历单个材质
+											Set<Map.Entry<String, String>> smallMaterialSet = smallMaterialContrastMap
+													.entrySet();
+											for (Map.Entry<String, String> entry : smallMaterialSet) {
+	
+												material = material.toLowerCase()
+														.replaceAll(entry.getKey(),
+																entry.getValue());
+											}
+										}
+	
+										buffer.append(material).append(splitSign);
+										// 获取产地
+										productOrigin = dto.getProductOrigin();
+										if (StringUtils.isNotBlank(productOrigin)) {
+											if (cityMap.containsKey(productOrigin.toLowerCase())) {
+												productOrigin = cityMap
+														.get(productOrigin.toLowerCase());
+											}
+										} else {
+											productOrigin = "";
+										}
+		
+										buffer.append(productOrigin).append(splitSign);
+		
+										// 图片
+										buffer.append(dto.getPicUrl()).append(splitSign);
+										buffer.append(dto.getItemPictureUrl1()).append(splitSign)
+												.append(dto.getItemPictureUrl2()).append(splitSign)
+												.append(dto.getItemPictureUrl3()).append(splitSign)
+												.append(dto.getItemPictureUrl4()).append(splitSign)
+												.append(dto.getItemPictureUrl5()).append(splitSign)
+												.append(dto.getItemPictureUrl6()).append(splitSign)
+												.append(dto.getItemPictureUrl7()).append(splitSign)
+												.append(dto.getItemPictureUrl8()).append(splitSign);
+										// 明细描述
+										productDetail = dto.getProductDescription();
+										if (StringUtils.isNotBlank(productDetail)) {					
+											productDetail = productDetail.replaceAll(splitSign, "  ");
+											productDetail = productDetail.replaceAll("\\r", "")
+													.replaceAll("\\n", "");
+										}
+		
+										buffer.append(productDetail).append(splitSign);
+		
+										buffer.append(dto.getStock()).append(splitSign);
+										// 新的价格
+										String newMarketPrice = dto.getNewMarketPrice();
+										String newSalePrice = dto.getNewSalePrice();
+										String newSupplierPrice = dto.getNewSupplierPrice();
+										if (StringUtils.isNotBlank(newMarketPrice)) {
+											newMarketPrice = newMarketPrice.replace(",", ".");
+										} else {
+											newMarketPrice = "";
+										}
+										if (StringUtils.isNotBlank(newSalePrice)) {
+											newSalePrice = newSalePrice.replace(",", ".");
+										} else {
+											newSalePrice = "";
+										}
+										if (StringUtils.isNotBlank(newSupplierPrice)) {
+											newSupplierPrice = newSupplierPrice.replace(",", ".");
+										} else {
+											newSupplierPrice = "";
+										}
+										buffer.append(newMarketPrice).append(splitSign);
+										buffer.append(newSalePrice).append(splitSign);
+										buffer.append(newSupplierPrice).append(splitSign);
+										// 价格
+										String marketPrice = dto.getMarketPrice();
+										String salePrice = dto.getSalePrice();
+										String supplierPrice = dto.getSupplierPrice();
+										if (StringUtils.isNotBlank( marketPrice)) {
+											marketPrice = marketPrice.replace(",", ".");
+										} else {
+											marketPrice = "";
+										}
+										if (StringUtils.isNotBlank(salePrice )) {
+											salePrice = salePrice.replace(",", ".");
+										} else {
+											salePrice = "";
+										}
+										if (StringUtils.isNotBlank(supplierPrice )) {
+											supplierPrice = supplierPrice.replace(",", ".");
+										} else {
+											supplierPrice = "";
+										}
+										buffer.append(marketPrice).append(splitSign);
+										buffer.append(salePrice).append(splitSign);
+										buffer.append(supplierPrice).append(splitSign);
+										buffer.append(dto.getSaleCurrency()).append(splitSign);								
+										//新季节
+										buffer.append(
+												null == dto.getNewseasonName() ? dto.getNewseasonId() : dto
+														.getNewseasonName()).append(splitSign);
+										// 季节
+										buffer.append(
+												null == dto.getSeasonName() ? dto.getSeasonId() : dto
+														.getSeasonName()).append(splitSign);
+										// 活动开始时间
+										buffer.append(
+												null == dto.getEventStartTime() ? " " : dto
+														.getEventStartTime()).append(splitSign);
+										// 活动结束时间
+										buffer.append(null == dto.getEventEndTime() ? " " : dto
+												.getEventEndTime()).append(splitSign);;
+										//供应商门户编号
+										buffer.append(null == dto.getSupplierId() ? " " : dto
+												.getSupplierId()).append(splitSign);
+										//供应商spuid
+										buffer.append(null == dto.getSpuId() ? " " : dto
+												.getSpuId()).append(splitSign);
+										buffer.append(null == dto.getSpuId() ? " " : getBASE64(dto.getSpuId())).append(splitSign);
+										buffer.append(dto.getMemo());
+										buffer.append("\r\n");
+									} catch (Exception e) {
+										logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
+										continue;
+									}
+								}
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
+				continue;
+			}
+		}
+		
+		
+		return buffer;
+				
+	}
+	
+public StringBuffer exportProductByEpRule(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException{
 		
 		StringBuffer buffer = new StringBuffer("SupplierId 供货商名称" + splitSign
 				+ "CategoryName 品类名称" + splitSign
@@ -1936,14 +2289,14 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 														.getEventStartTime()).append(splitSign);
 										// 活动结束时间
 										buffer.append(null == dto.getEventEndTime() ? " " : dto
-												.getEventEndTime()).append(splitSign);;
-										//供应商门户编号
-										buffer.append(null == dto.getSupplierId() ? " " : dto
-												.getSupplierId()).append(splitSign);
+												.getEventEndTime()).append(splitSign);										
 										//供应商spuid
 										buffer.append(null == dto.getSpuId() ? " " : dto
 												.getSpuId()).append(splitSign);
-										buffer.append(null == dto.getSpuId() ? " " : getBASE64(dto.getSpuId())).append(splitSign);
+										//供应商门户编号
+										buffer.append(null == dto.getSupplierId() ? " " : dto
+												.getSupplierId()).append(splitSign);
+										buffer.append(null == dto.getSpuId() ? " " : "SPID"+dto.getSupplierId()+"-"+getBASE64(dto.getSpuId())).append(splitSign);
 										buffer.append(dto.getMemo());
 										buffer.append("\r\n");
 									} catch (Exception e) {
@@ -1965,6 +2318,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		return buffer;
 				
 	}
+	
 	@Override
 	public List<ProductDTO> findPicName(String supplier,Date startDate, Date endDate, Integer pageIndex, Integer pageSize){
 		List<ProductDTO> pList = new ArrayList<>();

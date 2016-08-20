@@ -80,7 +80,7 @@
 	                return ;
 	            }
 	        }
-	        if(str == 'ep_rule'){
+	        if(str == 'ep_rule' || str == 'report'){
 	        	if("-1"== $('#supplier').val()){
 	        		alert("请选择KA或重点供应商");
 	            	return;
@@ -107,7 +107,12 @@
 	//下载图片
 	function downloadpicture(){
 		var search = filter("");
-	    window.open('downLoadPicture?queryJson='+$.toJSON(search), '','');
+		if(null != search.supplier){
+			window.open('downLoadPicture?queryJson='+$.toJSON(search), '','');
+		}else{
+			alert("请选择一个供应商！");
+		}
+	    
 	}
 	//下载图片
 	function OnlineDownLoad(){
@@ -187,6 +192,16 @@
     	}
 	}
 	
+	function downloadpicBySupplier(){		
+		if("-1"== $('#supplier').val()){
+	         alert("请选择供应商");
+	         return;
+	    }
+		var search = filter("");		
+		window.open('downloadpicBySupplier?queryJson='+$.toJSON(search), '','');
+		
+	}
+	
 </script>
 <script type="text/javascript"
 	src="<%=bathPath%>/js/DatePicker/config.js"></script>
@@ -250,8 +265,11 @@
 	href="javascript:void(0)" onclick="exportProduct('ep_rule')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>按条件导出</a> 
 	<a
+	href="javascript:void(0)" onclick="exportProduct('report')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>报表导出</a> 
+	<a
 	href="javascript:void(0)" onclick="buExport('buExport')" id="btn-save"
-	icon="icon-search" class='easyui-linkbutton'>选择BU导出</a> 
+	icon="icon-search" class='easyui-linkbutton'>选择BU导出</a> 	
 	<a
 	href="javascript:void(0)" onclick="exportDiffProduct('diff')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>价格变化导出</a>
@@ -261,8 +279,23 @@
 	<a href="javascript:void(0)" onclick="exportOrder('order')" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>导出订单</a>
 	<a href="javascript:void(0)" onclick="queryOrder()" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>查看订单</a>
 	<br><br><br>
-	<a href="javascript:void(0)" onclick="downloadpicture()" icon="icon-search" class='easyui-linkbutton'>下载图片</a>
-		<br><br><br>
+	<!-- <a href="javascript:void(0)" onclick="downloadpicture()" icon="icon-search" class='easyui-linkbutton'>下载图片</a> -->
+	<div>
+		<div
+			style="width: 30%; padding-left: 1; margin: 0; float: left; box-sizing: border-box;">
+			<form id="tmp111" action="uploadAndDownPics"
+				method="post" enctype="multipart/form-data">
+				<input type="file" name="tmpfffff" id="tmpfffff">
+				<input type="submit" value="上传" id="uploadAndDownPics">				
+			</form>
+		</div>	
+		<div
+			style="width:30%; padding-left: 1; margin: 0; float: left; box-sizing: border-box;">
+			<a href="javascript:void(0)" onclick="downloadpicBySupplier()" icon="icon-search" class='easyui-linkbutton'>选择供应商下载图片</a>
+		</div>		
+			
+	</div>
+	<br><br><br>
 	<a href="javascript:void(0)" onclick="OnlineDownLoad()" icon="icon-search" class='easyui-linkbutton' title="按条件导出产品的下载图片,命名为spskuid,失败重试10次">下载图片online</a>
 		<br><br><br>
 	<form action="uploadFileAndDown" method="post" enctype="multipart/form-data">
