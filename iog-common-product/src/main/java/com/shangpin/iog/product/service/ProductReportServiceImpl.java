@@ -263,23 +263,24 @@ public class ProductReportServiceImpl implements ProductReportService {
                             if(null != dto.getBrandName() && (brandList.contains(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
 //                                    logger.warn("getBrandName");
                                 try {
-
+                                    logger.info(dto.getSpuId() + " ---" + dto.getSkuId() +" 进入季节前验证");
                                     //获取数据
-                                    if(reasonMap.containsKey(dto.getSupplierId()+"||"+dto.getSeasonId())){
+                                    logger.info(dto.getSupplierId()+"||"+null==dto.getSeasonId()?"":dto.getSeasonId()+ "  -------   " + dto.getSupplierId()+"||"+null==dto.getSeasonName()?"":dto.getSeasonName());
+                                    if(reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonId()?"":dto.getSeasonId()))){
 
-                                    }else if (reasonMap.containsKey(dto.getSupplierId()+"||"+dto.getSeasonName())){
+                                    }else if (reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonName()?"":dto.getSeasonName()))){
 
                                     }else{
                                         continue;
                                     }
-
+                                    logger.info(dto.getSpuId() + " ---" + dto.getSkuId() +" 进入图片验证");
                                     findMap = pfs.findPictureBySupplierIdAndSkuIdOrSpuId(dto.getSupplierId(), dto.getSkuId(),null);
                                     if (null==findMap||findMap.size()<1) {
                                         findMap =pfs.findPictureBySupplierIdAndSkuIdOrSpuId(dto.getSupplierId(), null,dto.getSpuId());
                                     }
                                     if (null!=findMap&&findMap.size()>0) {
 
-
+                                        logger.warn( dto.getSpuId() + " ---" + dto.getSkuId() + "---- pic map size =" + findMap.size());
 
                                         for (Map.Entry<String, String> m : findMap.entrySet()) {
 
@@ -315,6 +316,8 @@ public class ProductReportServiceImpl implements ProductReportService {
 
 
 
+                                    }else{
+                                        logger.warn( dto.getSpuId() + " ---" + dto.getSkuId() + "---- 无图片" );
                                     }
 
 
