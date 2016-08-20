@@ -673,7 +673,7 @@
 	</select>
 
 
-    <!--  统计 -->
+    <!--  统计  inner join SEASON_RELATION season on spu.SUPPLIER_ID = season.SUPPLIER_ID AND   season.CURRENT_SEASON='1'-->
     <select id="findReport"  resultMap="ProductsResultMap">
 
         select
@@ -697,7 +697,7 @@
 
         from SKU sku inner join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
         inner join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID and su.SUPPLIER_STATE='1'
-        inner join SEASON_RELATION season on spu.SUPPLIER_ID = season.SUPPLIER_ID AND   season.CURRENT_SEASON='1'
+
 
         <where>
 
@@ -713,8 +713,11 @@
     </select>
 
 
-    <select id="findReportBySupplierId"  resultMap="ProductsResultMap">
 
+
+
+
+    <select id="findReportBySupplierIdAndCreateTime" resultMap="ProductsResultMap">
         select
         sku.ID as id,
         sku.SUPPLIER_ID  as supplier_id,
@@ -733,25 +736,26 @@
         spu.CATEGORY_GENDER as category_gender,
         spu.SUB_CATEGORY_ID  as  sub_category_id,
         spu.SUB_CATEGORY_NAME  as  sub_category_name,
-        date_format(sku.CREATE_TIME,'%Y-%m-%d') as createTime
+        date_format(sku.LAST_TIME,'%Y-%m-%d') as lastTime
 
         from SKU sku inner join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
         inner join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID and su.SUPPLIER_STATE='1'
-        inner join SEASON_RELATION season on spu.SUPPLIER_ID = season.SUPPLIER_ID AND   season.CURRENT_SEASON='1'
 
         <where>
-            <if test="null!=supplier">
-                   sku.SUPPLIER_ID = #{supplier} and
-            </if>
             sku.STOCK >0    and spu.MATERIAL is not null and sku.SP_SKU_ID is  null
             and sku.COLOR is not null    and  sku.PRODUCT_SIZE is not null
             and spu.CATEGORY_GENDER is not null
-
-
+            <if test="null!=supplier">
+                and   sku.SUPPLIER_ID = #{supplier}
+            </if>
+            <if test="null!=startDate">
+                and sku.LAST_TIME >= #{startDate}
+            </if>
+            <if test="endDate!=null">
+                <![CDATA[ and sku.LAST_TIME < #{endDate}     ]]>
+            </if>
         </where>
-        order by supplier_id
-
-
+        order by supplier_id , lastTime
     </select>
 		
 </mapper>

@@ -176,7 +176,7 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
      * @return
      * @throws ServiceException
      */
-//    List<ProductDTO> findReportBySupplierId(@Param("supplier") String supplierId) throws ServiceException;
+    List<ProductDTO> findReportBySupplierIdAndCreateTime(@Param("supplier") String supplierId,@Param("startDate") Date startDate,@Param("endDate") Date endDate) throws ServiceException;
     
 }
 

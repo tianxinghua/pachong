@@ -20,4 +20,11 @@ public interface ProductReportService {
      */
     public Map<String,Integer> findProductReport() throws ServiceException;
 
+    /**
+     * 获取未处理的图片
+     * @return    key:supplierId-date
+     * @throws ServiceException
+     */
+    public Map<String,String> findPicture(Map<String,String> picMap ,String supplierId ,String startDate,String endDate,String excludeSupplierId) throws ServiceException;
+
 }
