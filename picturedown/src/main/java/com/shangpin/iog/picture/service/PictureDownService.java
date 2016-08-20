@@ -71,6 +71,7 @@ public class PictureDownService {
         Map<String,String> picMap = new HashMap<>();
         Map<String,String> supplierDateMap = null;
         try {
+            if("".equals(supplierId)) supplierId=null;
             supplierDateMap = productReportService.findPicture(picMap,supplierId,startDate,endDate);
             if(null!=supplierDateMap&&supplierDateMap.size()>0){
                 //获取日期
