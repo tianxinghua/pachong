@@ -185,8 +185,10 @@ public class ProductReportServiceImpl implements ProductReportService {
         Date start = null;
         Date end = null;
         if(StringUtils.isNotBlank(startDate)) start=DateTimeUtil.convertFormat(startDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
-        endDate = DateTimeUtil.convertFormat(DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(endDate,"yyyy-MM-dd"),1,"D"),"yyyy-MM-dd");
-        if(StringUtils.isNotBlank(endDate)) end=DateTimeUtil.convertFormat(endDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
+        if(StringUtils.isNotBlank(endDate)){
+            endDate = DateTimeUtil.convertFormat(DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(endDate,"yyyy-MM-dd"),1,"D"),"yyyy-MM-dd");
+            end=DateTimeUtil.convertFormat(endDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
+        }
         List<ProductDTO> productList =   productDAO.findReportBySupplierIdAndCreateTime(supplierId,start,end);
         if(null==productList||productList.size()==0){
             logger.warn("未获得到数据");

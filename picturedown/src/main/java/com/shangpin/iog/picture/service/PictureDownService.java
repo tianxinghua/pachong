@@ -75,7 +75,7 @@ public class PictureDownService {
             if(null!=supplierDateMap&&supplierDateMap.size()>0){
                 //获取日期
                 String key = "",supplierId = "",date= "",spukeyValue = "";
-                ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 15, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(6),new ThreadPoolExecutor.CallerRunsPolicy());
+                ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 200, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(100),new ThreadPoolExecutor.CallerRunsPolicy());
                 PicQueue picQueue = new PicQueue();
                 for(Map.Entry<String,String> supplierDate:supplierDateMap.entrySet()){
                      key = supplierDate.getKey();

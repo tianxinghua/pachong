@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Map;
 
-public class DowmImage extends Thread{
+public class DowmImage implements Runnable{
 	private String urlString;
 	private String filename;
 	private String savePath;
