@@ -1260,6 +1260,97 @@ public class HttpUtil45 {
 	}
 
 
+
+	public static void downloadPicture(String url,Map<String,String> param,Map<String,String> headMap,String filePath ,String fileName ,OutTimeConfig outTimeConf,String username,String password) throws ServiceException{
+
+		HttpClientContext localContext =null;
+		if(StringUtils.isNotBlank(username)){
+			localContext = getAuthContext(url, username, password);
+		}else{
+			localContext = getPlainContext(url);
+		}
+
+		String urlStr=paramGetUrl(url, param);
+		HttpGet get = new HttpGet(urlStr);
+
+		setHeader(headMap, get);
+
+
+		CloseableHttpResponse resp=null;
+		BufferedInputStream bis =null;
+		BufferedOutputStream bos =null;
+		FileOutputStream fos = null;
+		try {
+//			filePath= URLDecoder.decode(filePath, "utf-8");
+			File directory = new File(filePath);
+			if(!directory.exists()){
+				directory.mkdirs();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+
+			if(null==localContext) localContext = getPlainContext(url);
+			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
+
+			resp=httpClient.execute(get,localContext);
+			int stateCode = resp.getStatusLine().getStatusCode();
+			logger.info("链接返回状态码：" + stateCode);
+			System.out.println("返回状态码：" + stateCode);
+			if(200==stateCode||201==stateCode||202==stateCode){
+				HttpEntity entity=resp.getEntity();
+
+				String file ="";
+
+				file = filePath+ "/" +fileName;
+
+				File writeFile = new File(file);
+				if(!writeFile.exists()){
+					try {
+						writeFile.createNewFile();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				fos = new FileOutputStream(writeFile,true);
+
+				bos = new BufferedOutputStream(fos);
+				entity.writeTo(bos);
+				EntityUtils.consume(entity);
+			}else{
+				logger.error("fileName 状态码不为200 ，无法下载");
+
+			}
+
+		}catch(Exception e){
+			logger.error("下载错误："+ e.getMessage(),e.getCause());
+			throw new ServiceMessageException("需要重新下载");
+
+
+		}finally{
+			try {
+				if(resp!=null)
+					resp.close();
+				if(null!=bos) bos.close();
+				if(null!=bis) bis.close();
+				if(null!=fos) fos.close();
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+
+
+
+
+	}
+
+
 	public  static void main(String[] args){
 		
 //		String user="shangpin",password="Daniello0203";

@@ -329,7 +329,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				+ splitSign + "新进货价" + splitSign + "markerPrice" + splitSign
 				+ "sallPrice" + splitSign + "supplier Price 进货价" + splitSign
 				+ "Currency 币种" + splitSign + "新上市季节" + splitSign + "上市季节" + splitSign 
-				+ "活动开始时间"+ splitSign + "活动结束时间"+ splitSign + "备注").append("\r\n");
+				+ "活动开始时间"+ splitSign + "活动结束时间" +splitSign + "供应商门户编号"+ splitSign + "SupplierSpuNo 供应商spu编号" + splitSign + "SpuId" + splitSign + "备注").append("\r\n");
 		Page<ProductDTO> page = null;
 		if (flag.equals("same")) {
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,
@@ -627,8 +627,15 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 								.getEventStartTime()).append(splitSign);
 				// 活动结束时间
 				buffer.append(null == dto.getEventEndTime() ? " " : dto
-						.getEventEndTime()).append(splitSign);;
-buffer.append(dto.getMemo());
+						.getEventEndTime()).append(splitSign);
+				//供应商门户编号
+				buffer.append(null == dto.getSupplierId() ? " " : dto
+						.getSupplierId()).append(splitSign);
+				//供应商spuid
+				buffer.append(null == dto.getSpuId() ? " " : dto
+						.getSpuId()).append(splitSign);
+				buffer.append(null == dto.getSpuId() ? " " : getBASE64(dto.getSpuId())).append(splitSign);				
+				buffer.append(dto.getMemo());
 				buffer.append("\r\n");
 			} catch (Exception e) {
 				logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
@@ -1637,7 +1644,7 @@ buffer.append(dto.getMemo());
 				+ splitSign + "新进货价" + splitSign + "markerPrice" + splitSign
 				+ "sallPrice" + splitSign + "supplier Price 进货价" + splitSign
 				+ "Currency 币种" + splitSign + "新上市季节" + splitSign+ "上市季节" + splitSign + "活动开始时间"
-				+ splitSign + "活动结束时间"+ splitSign + "备注").append("\r\n");
+				+ splitSign + "活动结束时间"+ splitSign + "供应商门户编号"+ splitSign + "SupplierSpuNo 供应商spu编号" + splitSign + "SpuId" + splitSign + "备注").append("\r\n");
 		Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate,
 				endDate, pageIndex, pageSize, "same");
 		//品牌
@@ -1930,7 +1937,14 @@ buffer.append(dto.getMemo());
 										// 活动结束时间
 										buffer.append(null == dto.getEventEndTime() ? " " : dto
 												.getEventEndTime()).append(splitSign);;
-												buffer.append(dto.getMemo());
+										//供应商门户编号
+										buffer.append(null == dto.getSupplierId() ? " " : dto
+												.getSupplierId()).append(splitSign);
+										//供应商spuid
+										buffer.append(null == dto.getSpuId() ? " " : dto
+												.getSpuId()).append(splitSign);
+										buffer.append(null == dto.getSpuId() ? " " : getBASE64(dto.getSpuId())).append(splitSign);
+										buffer.append(dto.getMemo());
 										buffer.append("\r\n");
 									} catch (Exception e) {
 										logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
@@ -1953,11 +1967,65 @@ buffer.append(dto.getMemo());
 	}
 	@Override
 	public List<ProductDTO> findPicName(String supplier,Date startDate, Date endDate, Integer pageIndex, Integer pageSize){
-		List<ProductDTO> pList = null;
-		if (null != pageIndex && null != pageSize) {
-			pList = productDAO.findPicNameListByEPRegularAndLastDate(supplier, startDate, endDate, new RowBounds(pageIndex, pageSize));
-		}else{
-			pList = productDAO.findPicNameListByEPRegularAndLastDate(supplier, startDate, endDate);
+		List<ProductDTO> pList = new ArrayList<>();
+//		if (null != pageIndex && null != pageSize) {
+//			pList = productDAO.findPicNameListByEPRegularAndLastDate(supplier, startDate, endDate, new RowBounds(pageIndex, pageSize));
+//		}else{
+//			pList = productDAO.findPicNameListByEPRegularAndLastDate(supplier, startDate, endDate);
+//		}
+		Page<ProductDTO> page = null;
+		try {
+			page = this.findProductPageBySupplierAndTime(supplier, startDate,
+                    endDate, pageIndex, pageSize, "same");
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		//品牌
+		List<String> brandList = new ArrayList<String>();
+		for(String brand:ePRuleDAO.findAll(2, 1)){
+			brandList.add(brand.toUpperCase());
+		}
+		//品类 排除
+		List<String> categeryList = new ArrayList<String>();
+		for(String cat:ePRuleDAO.findAll(3, 0)){
+			categeryList.add(cat.toUpperCase());
+		}
+		//季节 排除
+		List<String> seasonList = new ArrayList<String>();
+		for(String season:ePRuleDAO.findAll(5, 0)){
+			seasonList.add(season.toUpperCase());
+		}
+		//性别 排除
+		List<String> genderList = new ArrayList<String>();
+		for(String gender:ePRuleDAO.findAll(6, 0)){
+			genderList.add(gender.toUpperCase());
+		}
+
+
+
+		for (ProductDTO dto : page.getItems()) {
+			try {
+
+				if(StringUtils.isBlank(dto.getSpSkuId()) && StringUtils.isNotBlank(dto.getColor()) && StringUtils.isNotBlank(dto.getSize()) && StringUtils.isNotBlank(dto.getMaterial()) && StringUtils.isNotBlank(dto.getItemPictureUrl1())){
+					if(StringUtils.isNotBlank(dto.getCategoryGender()) && !genderList.contains(dto.getCategoryGender().toUpperCase())){
+						if((StringUtils.isNotBlank(dto.getSeasonId()) && !seasonList.contains(dto.getSeasonId().toUpperCase())) || (StringUtils.isNotBlank(dto.getSeasonName()) && !seasonList.contains(dto.getSeasonName().toUpperCase()))){
+							if((StringUtils.isNotBlank(dto.getCategoryName()) && !categeryList.contains(dto.getCategoryName().toUpperCase())) || (StringUtils.isNotBlank(dto.getSubCategoryName()) && !categeryList.contains(dto.getSubCategoryName().toUpperCase()))){
+								if(null != dto.getBrandName() && (brandList.contains(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
+									try {
+										pList.add(dto);
+									} catch (Exception e) {
+										logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
+										continue;
+									}
+								}
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
+				continue;
+			}
 		}
 		return pList;
 	}
@@ -2186,8 +2254,8 @@ buffer.append(dto.getMemo());
 	
 	/**
 	 * 根据指定条件查询产品列表
-	 * @param flag
-	 * @param condition
+	 * @param categories
+	 * @param brands
 	 * @param supplier
 	 * @param startDate
 	 * @param endDate
@@ -2546,5 +2614,22 @@ buffer.append(dto.getMemo());
 		}
 		
 	}
+	
+	public static String getBASE64(String s) { 
+		if (s == null) return null; 
+		return (new sun.misc.BASE64Encoder()).encode( s.getBytes() ); 
+	} 
+	
+	public static String getFromBASE64(String s) { 
+		if (s == null) return null; 
+		sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder(); 
+		try { 
+			byte[] b = decoder.decodeBuffer(s); 
+			return new String(b); 
+		} catch (Exception e) { 
+			return null; 
+		} 
+	} 
+
 	
 }

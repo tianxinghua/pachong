@@ -149,10 +149,7 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     
     /**
      * 根据指定的品类查询商品
-     * @param categories
-     * @param supplier
-     * @param startDate
-     * @param endDate
+
      * @param rowBounds
      * @return
      */
@@ -160,13 +157,26 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     
     /**
      * 根据指定的品类查询商品
-     * @param categories
-     * @param supplier
-     * @param startDate
-     * @param endDate
+     * @param params
+
      * @return
      */
     List<ProductDTO> findListInTheCategory(Map<String, Object> params) throws ServiceException;
+
+    /**
+     * 临时报表 返回所有的不可为空的数据
+     * @return
+     * @throws ServiceException
+     */
+    List<ProductDTO> findReport() throws ServiceException;
+
+
+    /**
+     * 临时报表 返回所有的不可为空的数据
+     * @return
+     * @throws ServiceException
+     */
+    List<ProductDTO> findReportBySupplierIdAndCreateTime(@Param("supplier") String supplierId,@Param("startDate") Date startDate,@Param("endDate") Date endDate) throws ServiceException;
     
 }
 

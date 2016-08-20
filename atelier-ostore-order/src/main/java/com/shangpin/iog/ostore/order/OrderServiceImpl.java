@@ -149,6 +149,7 @@ public class OrderServiceImpl extends AbsOrderService{
 						orderDTO.setExcState("1");
 						orderDTO.setExcDesc("库存不足!");
 						orderDTO.setExcTime(new Date()); 
+						orderDTO.setStatus(OrderStatus.NOHANDLE); 
 						sendMail(item_id+" 该产品库存不足!");
 					}
 				}else{

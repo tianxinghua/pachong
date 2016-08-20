@@ -524,5 +524,7 @@ public class ProductDTO {
 	public void setSpSkuId(String spSkuId) {
 		this.spSkuId = spSkuId;
 	}
+
+
     
 }

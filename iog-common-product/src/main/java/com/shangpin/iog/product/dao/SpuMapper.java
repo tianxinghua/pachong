@@ -27,5 +27,7 @@ public interface SpuMapper extends IBaseDao<SpuDTO> {
 	public void updateSeason(SpuDTO spuDTO);
 
 	public List<SpuDTO> findPartSPUListBySupplierId(@Param("supplierId") String supplierId);
+	
+	public void updateSpCategoryAndBrand(SpuDTO spuDTO);
 
 }

@@ -23,6 +23,8 @@
         <result column="LAST_TIME" property="lastTime" />
         <result column="NEWSEASON_ID" property="newseasonId" />
         <result column="NEWSEASON_NAME" property="newseasonName" />
+        <result column="SP_CATEGORY" property="spCategory" />
+        <result column="SP_BRAND" property="spBrand" />
 
 
 
@@ -174,6 +176,15 @@
 			 </set>
 		    where  SUPPLIER_ID = #{spu.supplierId}  and  SPU_ID = #{spu.spuId}
 	    </foreach>
+    </update>
+    
+    <update id="updateSpCategoryAndBrand" parameterType="iog_spu" >
+    	update SPU
+    	<set>
+    		<if test="null != spCategory">SP_CATEGORY = #{spCategory},</if>
+    		<if test="null != spBrand">SP_BRAND = #{spBrand},</if>
+    	</set>
+    	where SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
     </update>
     
     

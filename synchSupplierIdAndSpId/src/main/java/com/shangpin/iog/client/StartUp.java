@@ -1,4 +1,4 @@
-package com.shangpin.iog.client;
+package com.shangpin.iog.report.client;
 
 import java.util.ResourceBundle;
 
@@ -30,16 +30,20 @@ public class StartUp {
         factory = new AnnotationConfigApplicationContext(AppContext.class);
 	}
 	public static void main(String[] args) {
-		loadSpringContext();
-		loggerInfo.info("初始化成功，开始同步");
-		if("1".equals(isHK)){
-			SopService sopService = (SopService)factory.getBean("sopService");
-			sopService.dotheJob(suppliers); 
-		}else{
-			OpenapiService openapiService = (OpenapiService)factory.getBean("openapiService");
-			openapiService.dotheJob(suppliers);
-		}
-		
-		loggerInfo.info("===========同步完成========"); 
+		try {
+			loadSpringContext();
+			loggerInfo.info("初始化成功，开始同步");
+			if("1".equals(isHK)){
+				SopService sopService = (SopService)factory.getBean("sopService");
+				sopService.dotheJob(suppliers); 
+			}else{
+				OpenapiService openapiService = (OpenapiService)factory.getBean("openapiService");
+				openapiService.dotheJob(suppliers);
+			}
+			loggerInfo.info("===========同步完成========"); 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+		System.exit(0); 
 	}
 }

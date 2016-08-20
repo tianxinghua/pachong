@@ -76,7 +76,8 @@ public interface SkuMapper extends IBaseDao<SkuDTO> {
 	 * @param supplierSkuId
 	 * @param spSkuId
 	 */
-	public void updateSpSkuIdBySupplier(@Param("supplierId") String supplierId, @Param("supplierSkuId") String supplierSkuId, @Param("spSkuId") String spSkuId,@Param("skuStatus") String skuStatus) throws ServiceException;
+	public void updateSpSkuIdBySupplier(@Param("supplierId") String supplierId, @Param("supplierSkuId") String supplierSkuId, @Param("spSkuId") String spSkuId,@Param("skuStatus") String skuStatus,@Param("spProductCode") String spProductCode) throws ServiceException;
 
+	public List<SkuDTO> findSpSkuIdsBySupplier(@Param("supplierId") String supplierId);
 	
 }
