@@ -161,7 +161,17 @@ public interface ProductSearchService {
 	 * @return
 	 */
 	public StringBuffer buExportProduct(String bu,String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
-	
+	/**
+	 * 报表导出
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 * @throws ServiceException
+	 */
+	public StringBuffer exportReportProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
 	/**
 	 * 女鞋
 	 * @param bu
