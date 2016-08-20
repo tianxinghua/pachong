@@ -276,9 +276,9 @@ public class ProductReportServiceImpl implements ProductReportService {
                             if(null != dto.getBrandName() && (brandList.contains(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
 //                                    logger.warn("getBrandName");
                                 try {
-                                    logger.info(dto.getSpuId() + " ---" + dto.getSkuId() +" 进入季节前验证");
+//                                    logger.info(dto.getSpuId() + " ---" + dto.getSkuId() +" 进入季节前验证");
                                     //获取数据
-                                    logger.info(dto.getSupplierId()+"||"+null==dto.getSeasonId()?"":dto.getSeasonId()+ "  -------   " + dto.getSupplierId()+"||"+null==dto.getSeasonName()?"":dto.getSeasonName());
+//                                    logger.info(dto.getSupplierId()+"||"+null==dto.getSeasonId()?"":dto.getSeasonId()+ "  -------   " + dto.getSupplierId()+"||"+null==dto.getSeasonName()?"":dto.getSeasonName());
                                     if(reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonId()?"":dto.getSeasonId()))){
 
                                     }else if (reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonName()?"":dto.getSeasonName()))){
@@ -293,8 +293,8 @@ public class ProductReportServiceImpl implements ProductReportService {
                                     }
                                     if (null!=findMap&&findMap.size()>0) {
 
-                                        logger.warn( dto.getSpuId() + " ---" + dto.getSkuId() + "---- pic map size =" + findMap.size());
-
+//                                        logger.warn( dto.getSpuId() + " ---" + dto.getSkuId() + "---- pic map size =" + findMap.size());
+//
                                         for (Map.Entry<String, String> m : findMap.entrySet()) {
 
                                             if(skuspuMap.containsKey(m.getKey())){//sku
