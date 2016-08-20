@@ -42,7 +42,7 @@ public class PictureDownService {
     private static String downloadPath = null;
     private static String userName = null;
     private static String password = null;
-
+    private static String excludesupplierId = null;
     @Autowired
     ProductReportService productReportService;
 
@@ -65,6 +65,7 @@ public class PictureDownService {
         downloadPath = bdl.getString("downloadPath");
         userName = bdl.getString("userName");
         password = bdl.getString("password");
+        excludesupplierId = bdl.getString("excludesupplierId");
 
     }
     public void downPic(){
@@ -72,7 +73,7 @@ public class PictureDownService {
         Map<String,String> supplierDateMap = null;
         try {
             if("".equals(supplierId)) supplierId=null;
-            supplierDateMap = productReportService.findPicture(picMap,supplierId,startDate,endDate);
+            supplierDateMap = productReportService.findPicture(picMap,supplierId,startDate,endDate,excludesupplierId);
             if(null!=supplierDateMap&&supplierDateMap.size()>0){
                 //获取日期
                 String key = "",supplierId = "",date= "",spukeyValue = "";

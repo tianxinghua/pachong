@@ -181,7 +181,7 @@ public class ProductReportServiceImpl implements ProductReportService {
     }
 
     @Override
-    public  Map<String,String> findPicture(Map<String,String> picMap ,String supplierId ,String startDate,String endDate) throws ServiceException {
+    public  Map<String,String> findPicture(Map<String,String> picMap ,String supplierId ,String startDate,String endDate ,String excludeSupplierId) throws ServiceException {
         Date start = null;
         Date end = null;
         if(StringUtils.isNotBlank(startDate)) start=DateTimeUtil.convertFormat(startDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
@@ -189,6 +189,18 @@ public class ProductReportServiceImpl implements ProductReportService {
             endDate = DateTimeUtil.convertFormat(DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(endDate,"yyyy-MM-dd"),1,"D"),"yyyy-MM-dd");
             end=DateTimeUtil.convertFormat(endDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
         }
+
+        //排除的供货商
+        Map<String,String> excludeSupplierMap  = new HashMap<>();
+        if(StringUtils.isNotBlank(excludeSupplierId)){
+             String[] supplierArray = excludeSupplierId.split(",");
+             if(null!=supplierArray&&supplierArray.length>0){
+                 for(String supplier:supplierArray){
+                     excludeSupplierMap.put(supplier,"");
+                 }
+             }
+        }
+
         List<ProductDTO> productList =   productDAO.findReportBySupplierIdAndCreateTime(supplierId,start,end);
         if(null==productList||productList.size()==0){
             logger.warn("未获得到数据");
@@ -251,6 +263,7 @@ public class ProductReportServiceImpl implements ProductReportService {
         String spu= "",originSpu="",key="";
 
         for (ProductDTO dto : productList) {
+            if(excludeSupplierMap.containsKey(dto.getSupplierId())) continue;
             try {
                 //已处理过的SPU图片 不在处理
                 if(handledSpuPicMap.containsKey(dto.getSpuId())) continue;
