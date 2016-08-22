@@ -1,5 +1,6 @@
 package com.shangpin.iog.product.service;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -140,7 +141,16 @@ public  class ProductFetchServiceImpl implements ProductFetchService {
             throw new ServiceMessageException("数据插入失败"+e.getMessage());
         }
     }
-
+    @Override
+	public void update(SkuDTO sku) {
+		// TODO Auto-generated method stub
+    	 try {
+			skuDAO.update(sku);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
     @Override
     public void updatePriceAndStock(SkuDTO skuDTO) throws ServiceException {
         try {
@@ -372,4 +382,14 @@ public  class ProductFetchServiceImpl implements ProductFetchService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void updateSpSkuIdBySupplier(String supplierId,
+			String supplierSkuId, String spSkuId, String skuStatus)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }

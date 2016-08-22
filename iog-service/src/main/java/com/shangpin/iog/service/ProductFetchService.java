@@ -152,5 +152,7 @@ public interface ProductFetchService {
 	 * @param supplierSkuId
 	 * @param spSkuId
 	 */
+	public void updateSpSkuIdBySupplier(String supplierId,String supplierSkuId,String spSkuId,String skuStatus) throws ServiceException;
+	public void update(SkuDTO sku);
 	public void updateSpSkuIdBySupplier(String supplierId,String supplierSkuId,String spSkuId,String skuStatus,String spProductCode) throws ServiceException;
 }

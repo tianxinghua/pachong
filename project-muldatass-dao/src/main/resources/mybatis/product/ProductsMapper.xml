@@ -47,7 +47,8 @@
         <result column="product_size" property="size" />
         <result column="color" property="color" />
         <result column="stock" property="stock" />
-
+ 		<result column="sp_sku_id" property="spSkuId" />
+ 		<result column="sp_status" property="spStatus" />
         <result column="eventStartTime" property="eventStartTime" />
         <result column="eventEndTime" property="eventEndTime" />
 	
@@ -93,7 +94,8 @@
           sku.PRODUCT_DESCRIPTION as product_description,
           sku.SALE_CURRENCY as sale_currency,sku.PRODUCT_SIZE as product_size,
           sku.STOCK as stock ,
-          
+            sku.SP_SKU_ID as spSkuId,
+           sku.SP_STATUS as spStatus,
           sku.EVENT_START_DATE as eventStartTime,
           sku.EVENT_END_DATE as eventEndTime,
           
@@ -140,7 +142,8 @@
           
           sku.EVENT_START_DATE as eventStartTime,
           sku.EVENT_END_DATE as eventEndTime,
-          
+           sku.SP_SKU_ID as spSkuId,
+           sku.SP_STATUS as spStatus,
           sku.NEW_MARKET_PRICE as newMarketPrice,
           sku.NEW_SALE_PRICE as newSalePrice,
           sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
@@ -185,7 +188,8 @@
           sku.PRODUCT_DESCRIPTION as product_description,
           sku.SALE_CURRENCY as sale_currency,sku.PRODUCT_SIZE as product_size,
           sku.STOCK as stock ,
-          
+            sku.SP_SKU_ID as spSkuId,
+           sku.SP_STATUS as spStatus,
           sku.EVENT_START_DATE as eventStartTime,
           sku.EVENT_END_DATE as eventEndTime,
           
@@ -244,7 +248,8 @@
           sku.PRODUCT_DESCRIPTION as product_description,
           sku.SALE_CURRENCY as sale_currency,sku.PRODUCT_SIZE as product_size,
           sku.STOCK as stock ,
-          
+            sku.SP_SKU_ID as spSkuId,
+           sku.SP_STATUS as spStatus,
           sku.EVENT_START_DATE as eventStartTime,
           sku.EVENT_END_DATE as eventEndTime,
           

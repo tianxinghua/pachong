@@ -848,7 +848,7 @@ public  class ProductSearchServiceImpl implements ProductSearchService {
 		return null;
 	}
 
-	@Override
+//	@Override
 	public StringBuffer getDiffProduct(String supplier, Date startDate,
 			Date endDate, Integer pageIndex, Integer pageSize, String flag)
 			throws ServiceException {
@@ -896,6 +896,42 @@ public  class ProductSearchServiceImpl implements ProductSearchService {
 	public StringBuffer getDiffSeasonProducts(String supplier, Date startDate,
 			Date endDate, Integer pageIndex, Integer pageSize)
 			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StringBuffer getDiffProduct(Date startDate, Date endDate,
+			Integer pageIndex, Integer pageSize, String flag)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SpuDTO> findpartSpuListBySupplier(String supplierId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StringBuffer buExportProduct(String bu, String supplier,
+			Date startDate, Date endDate, Integer pageIndex, Integer pageSize)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StringBuffer shoeExportProduct(String bu, String supplier,
+			Date startDate, Date endDate, Integer pageIndex, Integer pageSize)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> findAllBus() throws ServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
