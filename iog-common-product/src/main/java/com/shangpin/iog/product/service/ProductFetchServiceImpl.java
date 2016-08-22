@@ -435,8 +435,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     		if (skuId!=null) {
     			pictureList = pictureDAO.findDistinctProductPictureBySupplierIdAndSkuId(supplierId, skuId);
 			}else{
-				pictureList = pictureDAO.findDistinctProductPictureBySupplierIdAndSkuId(supplierId, spuId);
-				
+				pictureList = pictureDAO.findDistinctProductPictureBySupplierIdAndSpuIdAndSkuIdNull(supplierId, spuId);
 			}
     		if(pictureList!=null){
     			String key = "";

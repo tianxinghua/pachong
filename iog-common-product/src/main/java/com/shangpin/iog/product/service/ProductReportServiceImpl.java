@@ -181,7 +181,7 @@ public class ProductReportServiceImpl implements ProductReportService {
     }
 
     @Override
-    public  Map<String,String> findPicture(Map<String,String> picMap ,String supplierId ,String startDate,String endDate) throws ServiceException {
+    public  Map<String,String> findPicture(Map<String,String> picMap ,String supplierId ,String startDate,String endDate ,String excludeSupplierId) throws ServiceException {
         Date start = null;
         Date end = null;
         if(StringUtils.isNotBlank(startDate)) start=DateTimeUtil.convertFormat(startDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
@@ -189,6 +189,18 @@ public class ProductReportServiceImpl implements ProductReportService {
             endDate = DateTimeUtil.convertFormat(DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(endDate,"yyyy-MM-dd"),1,"D"),"yyyy-MM-dd");
             end=DateTimeUtil.convertFormat(endDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
         }
+
+        //排除的供货商
+        Map<String,String> excludeSupplierMap  = new HashMap<>();
+        if(StringUtils.isNotBlank(excludeSupplierId)){
+             String[] supplierArray = excludeSupplierId.split(",");
+             if(null!=supplierArray&&supplierArray.length>0){
+                 for(String supplier:supplierArray){
+                     excludeSupplierMap.put(supplier,"");
+                 }
+             }
+        }
+
         List<ProductDTO> productList =   productDAO.findReportBySupplierIdAndCreateTime(supplierId,start,end);
         if(null==productList||productList.size()==0){
             logger.warn("未获得到数据");
@@ -251,6 +263,7 @@ public class ProductReportServiceImpl implements ProductReportService {
         String spu= "",originSpu="",key="";
 
         for (ProductDTO dto : productList) {
+            if(excludeSupplierMap.containsKey(dto.getSupplierId())) continue;
             try {
                 //已处理过的SPU图片 不在处理
                 if(handledSpuPicMap.containsKey(dto.getSpuId())) continue;
@@ -263,23 +276,24 @@ public class ProductReportServiceImpl implements ProductReportService {
                             if(null != dto.getBrandName() && (brandList.contains(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
 //                                    logger.warn("getBrandName");
                                 try {
-
+                                    logger.info(dto.getSpuId() + " ---" + dto.getSkuId() +" 进入季节前验证");
                                     //获取数据
-                                    if(reasonMap.containsKey(dto.getSupplierId()+"||"+dto.getSeasonId())){
+                                    logger.info(dto.getSupplierId()+"||"+null==dto.getSeasonId()?"":dto.getSeasonId()+ "  -------   " + dto.getSupplierId()+"||"+null==dto.getSeasonName()?"":dto.getSeasonName());
+                                    if(reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonId()?"":dto.getSeasonId()))){
 
-                                    }else if (reasonMap.containsKey(dto.getSupplierId()+"||"+dto.getSeasonName())){
+                                    }else if (reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonName()?"":dto.getSeasonName()))){
 
                                     }else{
                                         continue;
                                     }
-
+                                    logger.info(dto.getSpuId() + " ---" + dto.getSkuId() +" 进入图片验证");
                                     findMap = pfs.findPictureBySupplierIdAndSkuIdOrSpuId(dto.getSupplierId(), dto.getSkuId(),null);
                                     if (null==findMap||findMap.size()<1) {
                                         findMap =pfs.findPictureBySupplierIdAndSkuIdOrSpuId(dto.getSupplierId(), null,dto.getSpuId());
                                     }
                                     if (null!=findMap&&findMap.size()>0) {
 
-
+                                        logger.warn( dto.getSpuId() + " ---" + dto.getSkuId() + "---- pic map size =" + findMap.size());
 
                                         for (Map.Entry<String, String> m : findMap.entrySet()) {
 
@@ -315,6 +329,8 @@ public class ProductReportServiceImpl implements ProductReportService {
 
 
 
+                                    }else{
+                                        logger.warn( dto.getSpuId() + " ---" + dto.getSkuId() + "---- 无图片" );
                                     }
 
 

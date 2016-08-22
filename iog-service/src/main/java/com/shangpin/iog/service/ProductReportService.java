@@ -25,6 +25,6 @@ public interface ProductReportService {
      * @return    key:supplierId-date
      * @throws ServiceException
      */
-    public Map<String,String> findPicture(Map<String,String> picMap ,String supplierId ,String startDate,String endDate) throws ServiceException;
+    public Map<String,String> findPicture(Map<String,String> picMap ,String supplierId ,String startDate,String endDate,String excludeSupplierId) throws ServiceException;
 
 }
