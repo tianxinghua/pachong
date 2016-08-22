@@ -33,7 +33,16 @@ public class ProductDTO {
 
     private String memo;
     private String spSkuId;
-    public String getMemo() {
+    private String spStatus;
+    public String getSpStatus() {
+		return spStatus;
+	}
+
+	public void setSpStatus(String spStatus) {
+		this.spStatus = spStatus;
+	}
+
+	public String getMemo() {
 		return memo;
 	}
 

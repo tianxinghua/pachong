@@ -61,8 +61,9 @@ public class FetchProductFromHK {
 		FetchProductFromHK o = (FetchProductFromHK) factory
 				.getBean("fetchProductFromHK");
 		try {
-			o.fetchRelationFromHK();
+		
 			o.fetchProductFromHK();
+			o.fetchRelationFromHK();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -254,6 +255,8 @@ public class FetchProductFromHK {
 				sku.setSalePrice(pro.getSalePrice());
 				sku.setSkuId(pro.getSkuId());
 				sku.setSpuId(pro.getSpuId());
+				sku.setSpSkuId(pro.getSpSkuId());
+				sku.setSpStatus(pro.getSpStatus());
 				sku.setStock(pro.getStock());
 				sku.setSupplierId(pro.getSupplierId());
 				sku.setSupplierPrice(pro.getSupplierPrice());
@@ -264,6 +267,7 @@ public class FetchProductFromHK {
 					productFetchService.saveSKU(sku);
 					i++;
 				} catch (ServiceException e) {
+					productFetchService.update(sku);
 					j++;
 				}
 			}

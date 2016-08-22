@@ -124,7 +124,15 @@
           where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
 
     </update>
+ <update id="update" parameterType="iog_sku" >
+          update SKU
+          <set>
+              <if test="spSkuId != null"> SP_SKU_ID = #{spSkuId},</if>
+              <if test="spStatus != null"> SP_STATUS = #{spStatus}</if>
+          </set>
+          where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
 
+    </update>
     <insert id="saveList"  parameterType="java.util.List" >
 
 

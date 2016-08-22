@@ -5,6 +5,7 @@ import com.shangpin.iog.dto.PictureDTO;
 import com.shangpin.iog.mongodao.PictureDAO;
 import com.shangpin.iog.mongodomain.ProductPicture;
 import com.shangpin.iog.service.PictureOfMongoService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -32,6 +33,13 @@ public class PictureOfMongoServiceImpl implements PictureOfMongoService{
             return false;
         }
     }
+
+	@Override
+	public void removePicBySupplierId(String supplierId)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }
