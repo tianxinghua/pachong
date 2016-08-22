@@ -105,6 +105,9 @@ public class ReportService {
                             }
                             if(null != file){
                                 SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword, to, subject,"请查看附件", messageType,file);
+                                if(null!=file){
+                                    file.delete();
+                                }
                             }
 
                         } catch (Exception e) {
