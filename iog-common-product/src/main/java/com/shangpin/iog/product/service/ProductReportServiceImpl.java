@@ -197,13 +197,13 @@ public class ProductReportServiceImpl implements ProductReportService {
         Date start = null;
         Date end = null;
         if(StringUtils.isNotBlank(startDate)){
-            start=DateTimeUtil.convertFormat(startDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
+            start=DateTimeUtil.convertFormat(startDate+" 00:00:00","yyyy-MM-dd HH:mm:ss");
         }else{  //未指定时间 则统计当天新拉取的未处理的数据
-            start = DateTimeUtil.convertFormat(DateTimeUtil.convertFormat(new Date(),"yyyy-MM-dd") +" 00:00:00","yyyy-MM-dd HH;mm:ss");
+            start = DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(new Date()) +" 00:00:00","yyyy-MM-dd HH:mm:ss");
         }
         if(StringUtils.isNotBlank(endDate)){
             endDate = DateTimeUtil.convertFormat(DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(endDate,"yyyy-MM-dd"),1,"D"),"yyyy-MM-dd");
-            end=DateTimeUtil.convertFormat(endDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
+            end=DateTimeUtil.convertFormat(endDate+" 00:00:00","yyyy-MM-dd HH:mm:ss");
         }
 
         List<ProductDTO> productList =   productDAO.findReportBySupplierIdAndCreateTime(null,start,end);
@@ -227,10 +227,10 @@ public class ProductReportServiceImpl implements ProductReportService {
     public  Map<String,String> findPicture(Map<String,String> picMap ,String supplierId ,String startDate,String endDate ,String excludeSupplierId) throws ServiceException {
         Date start = null;
         Date end = null;
-        if(StringUtils.isNotBlank(startDate)) start=DateTimeUtil.convertFormat(startDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
+        if(StringUtils.isNotBlank(startDate)) start=DateTimeUtil.convertFormat(startDate+" 00:00:00","yyyy-MM-dd HH:mm:ss");
         if(StringUtils.isNotBlank(endDate)){
             endDate = DateTimeUtil.convertFormat(DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(endDate,"yyyy-MM-dd"),1,"D"),"yyyy-MM-dd");
-            end=DateTimeUtil.convertFormat(endDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
+            end=DateTimeUtil.convertFormat(endDate+" 00:00:00","yyyy-MM-dd HH:mm:ss");
         }
 
         //排除的供货商
