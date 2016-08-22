@@ -35,7 +35,8 @@ public class ReportService {
     private static String to = null;
     private static String subject = null;
     private static String messageType = null;
-
+    private static String startDate = null;
+    private static String endDate = null;
 
 
     static {
@@ -49,6 +50,9 @@ public class ReportService {
         subject = bdl.getString("subject");
         messageType = bdl.getString("messageType");
         filepath = bdl.getString("filepath");
+
+        startDate = bdl.getString("startDate");
+        endDate = bdl.getString("endDate");
     }
 
     @Autowired
@@ -58,7 +62,7 @@ public class ReportService {
 
     public  void mail(){
         try {
-            Map<String,Integer> map =  productReportService.findProductReport();
+            Map<String,Integer> map =  productReportService.findProductReport(startDate,endDate);
             String supplierName="",shangpinSeasonName="";
             StringBuffer buffer = new StringBuffer();
             if(null==map.keySet()||map.keySet().size()==0) return;

@@ -62,7 +62,22 @@ public class ProductReportServiceImpl implements ProductReportService {
             return new HashMap<>();
         }
         logger.warn("获取部分过滤的数据量为："+productList.size());
+        Map<String,Integer> suppliercountMap = new HashMap<>();
 
+        getNohandleCount(productList, suppliercountMap);
+
+
+        logger.warn("获取过滤的数据量为："+suppliercountMap.toString());
+        return suppliercountMap;
+    }
+
+    /**
+     * 获取未处理的数量
+     * @param productList
+     * @param suppliercountMap
+     * @throws ServiceException
+     */
+    private void getNohandleCount(List<ProductDTO> productList, Map<String, Integer> suppliercountMap) throws ServiceException {
         //获取季节map
         Map<String,String> reasonMap=new HashMap<>();
         List<SeasonRelationDTO> currentSeasonList  =   seasonRelationService.getAllCurrentSeason();
@@ -103,7 +118,7 @@ public class ProductReportServiceImpl implements ProductReportService {
 
 
         String supplierName="", categoryName = "", productName = "";
-        Map<String,Integer> suppliercountMap = new HashMap<>();
+
         String reasonKey ="",reasonViewName ="";
         Date today = DateTimeUtil.convertDateFormat(new Date(),"yyyy-MM-dd");
         String daykey = "";
@@ -175,6 +190,34 @@ public class ProductReportServiceImpl implements ProductReportService {
                 continue;
             }
         }
+    }
+
+    @Override
+    public Map<String, Integer> findProductReport(String startDate, String endDate) throws ServiceException {
+        Date start = null;
+        Date end = null;
+        if(StringUtils.isNotBlank(startDate)){
+            start=DateTimeUtil.convertFormat(startDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
+        }else{  //未指定时间 则统计当天新拉取的未处理的数据
+            start = DateTimeUtil.convertFormat(DateTimeUtil.convertFormat(new Date(),"yyyy-MM-dd") +" 00:00:00","yyyy-MM-dd HH;mm:ss");
+        }
+        if(StringUtils.isNotBlank(endDate)){
+            endDate = DateTimeUtil.convertFormat(DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(endDate,"yyyy-MM-dd"),1,"D"),"yyyy-MM-dd");
+            end=DateTimeUtil.convertFormat(endDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
+        }
+
+        List<ProductDTO> productList =   productDAO.findReportBySupplierIdAndCreateTime(null,start,end);
+        if(null==productList||productList.size()==0){
+            logger.warn("未获得到数据");
+            return new HashMap<>();
+        }
+        logger.warn("获取部分过滤的数据量为："+productList.size());
+
+
+        Map<String,Integer> suppliercountMap = new HashMap<>();
+
+        getNohandleCount(productList, suppliercountMap);
+
 
         logger.warn("获取过滤的数据量为："+suppliercountMap.toString());
         return suppliercountMap;
