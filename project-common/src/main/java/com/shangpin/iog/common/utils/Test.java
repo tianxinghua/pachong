@@ -5,6 +5,8 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import org.apache.log4j.Logger;
 
+import java.util.Date;
+
 /**
  * Created by lizhongren on 2016/1/29.
  */
@@ -26,9 +28,11 @@ public class Test {
 //                null,"RIX5NkHDIM25yUFZmDlVSdWEE7V3aSYv","");
 
 
-        String skuData = HttpUtil45.postAuth("http://79.62.242.6:8088/ws_sito/ws_sito_p15.asmx/GetAllAvailabilityMarketplace", null,
-                new OutTimeConfig(1000*60*10,1000*60*60,1000*60*60),"shangpin","Daniello0203");
-        System.out.println("skuData　＝"+ skuData);
+//        String skuData = HttpUtil45.postAuth("http://79.62.242.6:8088/ws_sito/ws_sito_p15.asmx/GetAllAvailabilityMarketplace", null,
+//                new OutTimeConfig(1000*60*10,1000*60*60,1000*60*60),"shangpin","Daniello0203");
+//        System.out.println("skuData　＝"+ skuData);
 
+       Date date =  DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(new Date()) +" 00:00:00","yyyy-MM-dd HH:mm:ss");
+       System.out.println("  == " + date.toString() );
     }
 }

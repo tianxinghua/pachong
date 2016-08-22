@@ -21,6 +21,15 @@ public interface ProductReportService {
     public Map<String,Integer> findProductReport() throws ServiceException;
 
     /**
+     * 根据日期获取供货商尚未处理的最新季节的数量
+     * @param startDate
+     * @param endDate
+     * @return
+     * @throws ServiceException
+     */
+    public Map<String,Integer> findProductReport(String startDate,String endDate) throws ServiceException;
+
+    /**
      * 获取未处理的图片
      * @return    key:supplierId-date
      * @throws ServiceException
