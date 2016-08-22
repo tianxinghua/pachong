@@ -639,7 +639,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				buffer.append(null == dto.getSupplierId() ? " " : dto
 						.getSupplierId()).append(splitSign);
 				
-				buffer.append(null == dto.getSpuId() ? " " : "SPID"+dto.getSupplierId()+"-"+getBASE64(dto.getSpuId())).append(splitSign);	
+				buffer.append(null == dto.getSpuId() ? " " : "SPID"+dto.getSupplierId()+"-"+getBASE64(dto.getSpuId())+"-"+getBASE64(dto.getColor())).append(splitSign);	
 				
 				buffer.append(dto.getMemo());
 				buffer.append("\r\n");
@@ -2296,7 +2296,7 @@ public StringBuffer exportProductByEpRule(String supplier,Date startDate,Date en
 										//供应商门户编号
 										buffer.append(null == dto.getSupplierId() ? " " : dto
 												.getSupplierId()).append(splitSign);
-										buffer.append(null == dto.getSpuId() ? " " : "SPID"+dto.getSupplierId()+"-"+getBASE64(dto.getSpuId())).append(splitSign);
+										buffer.append(null == dto.getSpuId() ? " " : "SPID"+dto.getSupplierId()+"-"+getBASE64(dto.getSpuId())+"-"+getBASE64(dto.getColor())).append(splitSign);
 										buffer.append(dto.getMemo());
 										buffer.append("\r\n");
 									} catch (Exception e) {

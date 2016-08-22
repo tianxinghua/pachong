@@ -2,8 +2,10 @@ package com.shangpin.iog.webcontainer.front.controller;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +23,8 @@ import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
 
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +41,8 @@ import com.shangpin.iog.webcontainer.front.util.excel.ReadExcel;
 @RequestMapping("/download")
 public class DowloadFileController {
 	
+	private Logger log = LoggerFactory.getLogger(DowloadFileController.class) ;
+	
 	private static ResourceBundle bdl = null;
 	private static String tmpfffff = null;
 	private static String pictmpdownloadpath = null;
@@ -51,14 +57,22 @@ public class DowloadFileController {
 	@RequestMapping("uploadAndDownPics") 
 	public void uploadAndDownPics(@RequestParam(value = "tmpfffff", required = false) MultipartFile file,HttpServletResponse response){
 		
+		//统计下载失败的链接.
+		BufferedWriter writer = null;
+		
 		BufferedInputStream in = null;
     	BufferedOutputStream out = null;    	
     	ZipFile zipfile = null;
     	if(null != file){    	
 	    	String fileName = file.getOriginalFilename();  
 	        File targetFile = new File(tmpfffff, fileName);  
-	        //保存  
-	        try {  
+	        ArrayList<File> filesToAdd = new ArrayList<File>();
+	        try {
+	        	//先创建一个新的log文件，用于记录下载情况
+	        	File logFile = new File(tmpfffff+File.separator+"piclog_"+new Date().getTime()+".log");
+	        	writer = new BufferedWriter(new FileWriter(logFile));  
+	        	writer.write("===============开始记录日志=================\r\n"); 
+	        	
 	        	if (!targetFile.exists()) {
 	        		targetFile.mkdirs(); 
 	        		targetFile.createNewFile();
@@ -66,6 +80,7 @@ public class DowloadFileController {
 	            file.transferTo(targetFile);  
 	            List<PicUrlDTO> picUrlDTOList =  ReadExcel.readExcel(PicUrlDTO.class, targetFile.getPath());
 	            if(null != picUrlDTOList && picUrlDTOList.size()>0){
+	            	
 	            	List<String> ruleUrlList = new ArrayList<String>();
 	            	for(PicUrlDTO pic : picUrlDTOList){
 	            		ruleUrlList.add(pic.getUrl());
@@ -81,51 +96,75 @@ public class DowloadFileController {
 	        					break;
 	        				}
 	        			}
+	        		}else{
+	        			writer.write(pictmpdownloadpath+"下无文件！！！！\r\n"); 
 	        		}
-	        		System.out.println("theSupplier========================"+theSupplier); 
-	        		//在选定的日期目录中查找符合规则的文件
-	        		ArrayList<File> filesToAdd = new ArrayList<File>();
+	        		System.out.println("需要下载的供应商supplierId=================="+picUrlDTOList.get(0).getSupplierId());
+	        		log.error("需要下载的供应商supplierId=================="+picUrlDTOList.get(0).getSupplierId()); 
+	        		System.out.println("找到对应的文件夹的名称========================"+theSupplier); 
+	        		log.error("找到对应的文件夹的名称========================"+theSupplier);
+	        		//在选定的日期目录中查找符合规则的文件	        		
 	        		if(org.apache.commons.lang.StringUtils.isNotBlank(theSupplier)){
 	        			File mySupplierFile = new File(pictmpdownloadpath+File.separator+theSupplier);    			
 	        			if(null != mySupplierFile.list() && mySupplierFile.list().length>0){
 	        				for(String dirName : mySupplierFile.list()){
 	        					File ffff = new File(pictmpdownloadpath+File.separator+theSupplier+File.separator+dirName);
-	            				if(null != ffff.listFiles() && ffff.listFiles().length>0){
-	            					if(null != ruleUrlList && ruleUrlList.size()>0){
-	            						for(File f : ffff.listFiles()){
-	            							for(String ruleName : ruleUrlList){
-	            								if(f.getName().contains(ruleName)){
-	            									filesToAdd.add(f);
+	            				File[] picFiles = ffff.listFiles();
+	        					if(null != picFiles && picFiles.length>0){	            					
+	            					if(null != ruleUrlList && ruleUrlList.size()>0){	            						
+	            						for(String ruleName : ruleUrlList){
+	            							for(int i= 0;i<picFiles.length;i++){
+	            								if(picFiles[i].getName().contains(ruleName)){
+	            									filesToAdd.add(picFiles[i]);
 	            									break;
+	            								}else if(i == picFiles.length-1){
+	            									writer.write(ruleName+"  没有找到对应的图片\r\n"); 
 	            								}
-	            							}    							
+	            							}
 	            						}
 	            					}
 	            				}
 	        				}     								
-	        			}    	
+	        			}else{
+	        				writer.write(theSupplier+"文件夹下没有找到文件或文件夹！！！！\r\n"); 
+	        			}  	
+	        		}else{
+	        			writer.write("未找到名称为 "+picUrlDTOList.get(0).getSupplierId()+" 的文件夹=================\r\n"); 
 	        		}
-	        		System.out.println("filesToAdd=========================="+filesToAdd.size()); 
 	        		
-	        		zipfile = new ZipFile(new File(new Date().getTime()+""));
-	            	
-	    			ZipParameters parameters = new ZipParameters();  
-	    		    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-	    		    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
-	    			zipfile.addFiles(filesToAdd, parameters);
-	    			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+new Date().getTime()+".zip", "UTF-8"));
-
-	    			in = new BufferedInputStream(new FileInputStream(zipfile.getFile()));
-
-	                out = new BufferedOutputStream(response.getOutputStream());
-	                byte[] data = new byte[1048576];
-	                int len = 0;
-	                while (-1 != (len=in.read(data, 0, data.length))) {
-	                    out.write(data, 0, len);
-	                }
+	        		System.out.println("filesToAdd=========================="+filesToAdd.size()); 
+	        		log.error("filesToAdd=========================="+filesToAdd.size());	        		
+	            }else{
+	            	writer.write("解析上传的规则文件时出错，下载图片失败");
 	            }
+	            writer.flush();
+        		filesToAdd.add(logFile); 
+        		zipfile = new ZipFile(new File(new Date().getTime()+""));
+            	
+    			ZipParameters parameters = new ZipParameters();  
+    		    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+    		    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
+    			try {
+    				zipfile.addFiles(filesToAdd, parameters);
+				} catch (Exception e) {
+					e.printStackTrace();
+					log.error(e.toString());
+				}
+    		    
+    			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+new Date().getTime()+".zip", "UTF-8"));
+
+    			in = new BufferedInputStream(new FileInputStream(zipfile.getFile()));
+
+                out = new BufferedOutputStream(response.getOutputStream());
+                byte[] data = new byte[1048576];
+                int len = 0;
+                while (-1 != (len=in.read(data, 0, data.length))) {
+                    out.write(data, 0, len);
+                }
+        		
 	        } catch (Exception e) {  
 	            e.printStackTrace();  
+	            log.error(e.toString());
 	        }finally{
 				try {
 					if(null != in){
@@ -133,7 +172,10 @@ public class DowloadFileController {
 					}
 					if(null != out){
 						out.close();
-					}				
+					}	
+					if(null != writer){
+						writer.close(); 
+					}
 					zipfile.getFile().delete();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -146,6 +188,8 @@ public class DowloadFileController {
 	
 	@RequestMapping("downloadpicBySupplier")
 	public void downloadpicBySupplier(HttpServletResponse response, String queryJson){
+		
+		BufferedWriter writer = null;
 		
 		BufferedInputStream in = null;
     	BufferedOutputStream out = null;
@@ -166,30 +210,11 @@ public class DowloadFileController {
         }    
        
         ZipFile zipfile = null;
-        List<String> ruleUrlList = new ArrayList<String>();
         try {
-        	//查找有没有图片名称规则文件
-//        	try {
-//        		File file = new File(tmpfffff);
-//            	if(!file.exists()){
-//            		file.mkdir();
-//            	}
-//            	File[] files = file.listFiles();
-//            	if(null != files && files.length>0){
-//            		for(File ruleFile : files){
-//            			if(ruleFile.getName().contains(supplier)){
-//            				List<PicUrlDTO> picUrlDTOList =  ReadExcel.readExcel(PicUrlDTO.class, ruleFile.getPath());
-//            				for(PicUrlDTO pic : picUrlDTOList){
-//            					ruleUrlList.add(pic.getUrl());
-//            				}
-//            				break;
-//            			}
-//            		}
-//            	}
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}  
-//        	System.out.println("ruleUrlList===================="+ruleUrlList.size()); 
+        	//先创建一个新的log文件，用于记录下载情况
+        	File logFile = new File(tmpfffff+File.separator+"piclog_"+new Date().getTime()+".log");
+        	writer = new BufferedWriter(new FileWriter(logFile));  
+        	writer.write("===============开始记录日志=================\r\n"); 
         	
     		//查找图片目录下有没有该供应商文件夹
     		File file = new File(pictmpdownloadpath);
@@ -202,9 +227,13 @@ public class DowloadFileController {
     					break;
     				}
     			}
+    		}else{
+    			writer.write(pictmpdownloadpath+"下无文件！！！！\r\n"); 
     		}
-    		System.out.println("supplier================="+supplier); 
-    		System.out.println("theSupplier========================="+theSupplier); 
+    		System.out.println("需要下载的供应商supplierId=================="+supplier);
+    		log.error("需要下载的供应商supplierId=================="+supplier); 
+    		System.out.println("找到对应的文件夹的名称========================"+theSupplier); 
+    		log.error("找到对应的文件夹的名称========================"+theSupplier);    		
     		//按照选择的日期选择文件夹
     		List<String> myDirs = new ArrayList<String>();
     		if(org.apache.commons.lang.StringUtils.isNotBlank(theSupplier)){
@@ -224,29 +253,23 @@ public class DowloadFileController {
     					Collections.addAll(myDirs, mySupplierFile.list());
     				}    				
     			}    			
+    		}else{
+    			writer.write("未找到名称为 "+supplier+" 的文件夹=================\r\n");
     		}
     		System.out.println("myDirs=========================="+myDirs.size());
-    		//在选定的日期目录中查找符合规则的文件
+    		//在选定的日期目录中添加文件
     		ArrayList<File> filesToAdd = new ArrayList<File>();
     		if(null != myDirs && myDirs.size()>0){
     			for(String dirName : myDirs){
     				File ffff = new File(pictmpdownloadpath+File.separator+theSupplier+File.separator+dirName);
-    				if(null != ffff.listFiles() && ffff.listFiles().length>0){
-    					if(null != ruleUrlList && ruleUrlList.size()>0){
-    						for(File f : ffff.listFiles()){
-    							for(String ruleName : ruleUrlList){
-    								if(f.getName().contains(ruleName)){
-    									filesToAdd.add(f);
-    									break;
-    								}
-    							}    							
-    						}
-    					}else{
-    						Collections.addAll(filesToAdd, ffff.listFiles());
-    					}
+    				if(null != ffff.listFiles() && ffff.listFiles().length>0){    					
+    					Collections.addAll(filesToAdd, ffff.listFiles());    					
     				}
     			}
     		}
+    		
+    		writer.flush();
+    		filesToAdd.add(logFile); 
     		System.out.println("filesToAdd=========================="+filesToAdd.size()); 
     		zipfile = new ZipFile(new File(new Date().getTime()+""));
         	
@@ -273,7 +296,10 @@ public class DowloadFileController {
 				}
 				if(null != out){
 					out.close();
-				}				
+				}		
+				if(null != writer){
+					writer.close();
+				}
 				zipfile.getFile().delete();
 			} catch (IOException e) {
 				e.printStackTrace();
