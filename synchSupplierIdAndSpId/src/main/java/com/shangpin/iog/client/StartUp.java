@@ -1,4 +1,4 @@
-package com.shangpin.iog.report.client;
+package com.shangpin.iog.client;
 
 import java.util.ResourceBundle;
 
