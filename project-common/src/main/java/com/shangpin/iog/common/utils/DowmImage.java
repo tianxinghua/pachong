@@ -5,6 +5,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.queue.PicQueue;
+
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URLEncoder;
 import java.util.Map;
 
 public class DowmImage implements Runnable{
@@ -93,9 +95,9 @@ public class DowmImage implements Runnable{
 		}
 
 		try {
-			HttpUtil45.downloadPicture(urlString,paraMap,headerMap,savePath,filename,new OutTimeConfig(1000*60,1000*60*5,1000*60*5),
+			HttpUtil45.downloadPicture(replaceSpecialChar(urlString),paraMap,headerMap,savePath,filename,new OutTimeConfig(1000*60,1000*60*5,1000*60*5),
                     userName,password);
-		} catch (ServiceException e) {
+		} catch (Exception e) {
 			String key = urlString+";"+savePath+";"+filename;
 			picQueue.addUnvisitedUrl(key);
 		}
