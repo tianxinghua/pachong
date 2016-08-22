@@ -729,6 +729,7 @@
         sku.SUPPLIER_PRICE as supplier_price,
 
         sku.PRODUCT_CODE as product_code,
+        sku.COLOR as color,
         spu.CATEGORY_ID as category_id,
         spu.CATEGORY_NAME as category_name,
         spu.BRAND_ID as brand_id,spu.BRAND_NAME as brand_name,

@@ -261,12 +261,12 @@ public class ProductReportServiceImpl implements ProductReportService {
         Map<String,String> handledSpuPicMap = new HashMap<>();
         if(null==picMap) picMap = new HashMap<>();
         String spu= "",originSpu="",key="";
-
+        String color = "",picMapKey="";
         for (ProductDTO dto : productList) {
             if(excludeSupplierMap.containsKey(dto.getSupplierId())) continue;
             try {
                 //已处理过的SPU图片 不在处理
-                if(handledSpuPicMap.containsKey(dto.getSpuId())) continue;
+                if(handledSpuPicMap.containsKey(dto.getSpuId()+dto.getColor())) continue;
                 if(StringUtils.isNotBlank(dto.getCategoryGender()) && !genderList.contains(dto.getCategoryGender().toUpperCase())){
 //                        logger.warn("getCategoryGender");
                     if((StringUtils.isNotBlank(dto.getSeasonId()) && !seasonList.contains(dto.getSeasonId().toUpperCase())) || (StringUtils.isNotBlank(dto.getSeasonName()) && !seasonList.contains(dto.getSeasonName().toUpperCase()))){
@@ -276,12 +276,12 @@ public class ProductReportServiceImpl implements ProductReportService {
                             if(null != dto.getBrandName() && (brandList.contains(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
 //                                    logger.warn("getBrandName");
                                 try {
-//                                    logger.info(dto.getSpuId() + " ---" + dto.getSkuId() +" 进入季节前验证");
+                                    logger.info(dto.getSpuId() + " ---" + dto.getSkuId() +" 进入季节前验证");
                                     //获取数据
-//                                    logger.info(dto.getSupplierId()+"||"+null==dto.getSeasonId()?"":dto.getSeasonId()+ "  -------   " + dto.getSupplierId()+"||"+null==dto.getSeasonName()?"":dto.getSeasonName());
-                                    if(reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonId()?"":dto.getSeasonId()))){
+                                    logger.info(dto.getSupplierId()+"||"+null==dto.getSeasonId()?"":dto.getSeasonId()+ "  -------" + dto.getSupplierId()+"||"+(null==dto.getSeasonName()?"":dto.getSeasonName())+"--");
+                                    if(reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonId()?"":dto.getSeasonId()).trim())){
 
-                                    }else if (reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonName()?"":dto.getSeasonName()))){
+                                    }else if (reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonName()?"":dto.getSeasonName()).trim())){
 
                                     }else{
                                         continue;
@@ -316,15 +316,17 @@ public class ProductReportServiceImpl implements ProductReportService {
                                                 }
 
                                             }
-                                            picMap.put("SPID"+dto.getSupplierId()+"-"+spu, m.getValue());
+
+                                            picMapKey =  "SPID"+dto.getSupplierId()+"-"+spu+"-"+getBASE64(dto.getColor());
+                                            picMap.put(picMapKey, m.getValue());
                                             key =dto.getSupplierId()+"|"+DateTimeUtil.convertFormat(dto.getLastTime(),"yyyy-MM-dd");
                                             if(supplierDateMap.containsKey(key)){
-                                                supplierDateMap.put(key,supplierDateMap.get(key)+"|||||"+"SPID"+dto.getSupplierId()+"-"+spu);
+                                                supplierDateMap.put(key,supplierDateMap.get(key)+"|||||"+picMapKey);
                                             }else {
-                                                supplierDateMap.put(key,"SPID"+dto.getSupplierId()+"-"+spu);
+                                                supplierDateMap.put(key,picMapKey);
                                             }
 
-                                            handledSpuPicMap.put(originSpu,"");
+                                            handledSpuPicMap.put(originSpu+dto.getColor(),"");
                                         }
 
 
