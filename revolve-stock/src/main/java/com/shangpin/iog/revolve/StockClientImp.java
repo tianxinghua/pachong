@@ -1,4 +1,4 @@
-package com.shangpin.iog.revolve.stock;
+package com.shangpin.iog.revolve;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -82,13 +82,13 @@ public class StockClientImp extends AbsUpdateProductStock{
 			loop ++;
 		}
 		
-		save("products.txt",data);
+		String path = save("products.txt",data);
 		
-		List<Item> items = CVSUtil.readCSV(data, Item.class, '\t');
+		List<ProductDTO> items = CVSUtil.readCSV(path, ProductDTO.class, '\t');
 		logger.info("csv转换items.size=========="+items.size());
-		for(Item item :items){
+		for(ProductDTO item :items){
 			try {
-				skuData.put(item.getItem_ID(),item.getSellableqty());
+				skuData.put(item.getId(),item.getSellableqty());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}			
@@ -106,9 +106,10 @@ public class StockClientImp extends AbsUpdateProductStock{
         return skustock;
     }
     
-    public void save(String name,String data){
+    public String save(String name,String data){
+    	String path = filepath+File.separator+name;
     	try {
-    		File file = new File(filepath+File.separator+name);
+    		File file = new File(path);
 //        	File file = new File("E://"+name);
     		if (!file.exists()) {
     			try {
@@ -136,6 +137,7 @@ public class StockClientImp extends AbsUpdateProductStock{
 		} catch (Exception e) {
 			e.printStackTrace();			
 		}
+    	return path;
     	
     }
 

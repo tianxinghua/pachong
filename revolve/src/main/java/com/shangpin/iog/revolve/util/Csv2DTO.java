@@ -22,6 +22,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 import com.csvreader.CsvReader;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.revolve.sepStrategy.ISepStrategy;
 
 public class Csv2DTO {
@@ -37,7 +39,8 @@ public class Csv2DTO {
 	 * @return List<DTO>
 	 */
 	@SuppressWarnings("resource")
-	public  <T> List<T> toDTO(String url,String filePath, String sep,String[] needColsNo,ISepStrategy[] iSepStrategies, Class<T> clazz) {
+	public  <T> List<T> toDTO(String url,String filePath, Class<T> clazz) {
+//		filePath = "F://code//products";
 		txtDownload(url,filePath);
 		List<T> dtoList = new ArrayList<T>();
 		CsvReader cr = null;
@@ -52,23 +55,20 @@ public class Csv2DTO {
 			while(cr.readRecord()){
 				rowString = cr.getRawRecord();
 				if (StringUtils.isNotBlank(rowString)) {
-					colValueList = fromCSVLinetoArray(rowString,sep.charAt(0));
+//					colValueList = fromCSVLinetoArray(rowString,sep.charAt(0));
 //					split = rowString.split(sep);
 //					colValueList = Arrays.asList(split);
-					T t = fillDTO(clazz.newInstance(),needColsNo,iSepStrategies, colValueList);
-					dtoList.add(t);
+//					T t = fillDTO(clazz.newInstance(),needColsNo,iSepStrategies, colValueList);
+//					dtoList.add(t);
 				}
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}catch (IOException e) {
 			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		
 		return dtoList;
 	}
@@ -132,7 +132,11 @@ public class Csv2DTO {
 	 * @throws MalformedURLException
 	 */
 	private void txtDownload(String url,String filepath){
+		
+//		String json = HttpUtil45.get(url, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),null);
+//		System.out.println(json);
 		String csvFile = getHttpStr(url);
+		System.out.println(csvFile.length());
 		if (csvFile.contains("发生错误异常")) {
 			try {
 				Thread.currentThread().sleep(5000l);

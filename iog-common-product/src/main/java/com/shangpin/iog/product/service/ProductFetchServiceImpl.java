@@ -420,6 +420,9 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 			e.printStackTrace();
 		}
 	}
+	public List<SkuRelationDTO> selectRelationFromHKBySupplierId(String supplier){
+		return null;
+	}
 	@Override
 	public String findBarCodeBySupplierIdAndSkuId(String supplierId,
 			String skuno){

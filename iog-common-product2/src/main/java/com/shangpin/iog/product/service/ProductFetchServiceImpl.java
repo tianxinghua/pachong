@@ -161,6 +161,9 @@ public  class ProductFetchServiceImpl implements ProductFetchService {
             throw new ServiceMessageException("数据更新失败"+e.getMessage());
         }
     }
+    public List<SkuRelationDTO> selectRelationFromHKBySupplierId(String supplier){
+		return skuRelationHKDAO.selectRelationFromHKBySupplierId(supplier);
+	}
     @Override
     public void updateMaterial(SpuDTO spuDTO) throws ServiceException {
         try {
@@ -383,10 +386,11 @@ public  class ProductFetchServiceImpl implements ProductFetchService {
 		return null;
 	}
 
+
 	@Override
 	public void updateSpSkuIdBySupplier(String supplierId,
-			String supplierSkuId, String spSkuId, String skuStatus)
-			throws ServiceException {
+			String supplierSkuId, String spSkuId, String skuStatus,
+			String spProductCode) throws ServiceException {
 		// TODO Auto-generated method stub
 		
 	}

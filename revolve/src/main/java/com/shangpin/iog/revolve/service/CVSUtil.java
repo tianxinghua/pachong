@@ -1,13 +1,15 @@
-package com.shangpin.iog.revolve.stock.util;
+package com.shangpin.iog.revolve.service;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import com.csvreader.CsvReader;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.revolve.stock.dto.ProductDTO;
+import com.shangpin.iog.revolve.dto.ProductDTO;
 
 public class CVSUtil {
 
@@ -104,8 +106,9 @@ private static void txtDownload(String url,String filepath){
 	 * @return
 	 * @throws Exception
 	 */
-	public static  List<ProductDTO> readCSV(String filePath,Class<ProductDTO> class1, char sep)
+	public static  List<ProductDTO> readCSV(String url,String filePath,Class<ProductDTO> class1, char sep)
 			throws Exception {
+		txtDownload(url,filePath);
 		InputStream in = new FileInputStream(filePath);
 		String rowString = null;
 		List<ProductDTO> dtoList = new ArrayList<ProductDTO>();

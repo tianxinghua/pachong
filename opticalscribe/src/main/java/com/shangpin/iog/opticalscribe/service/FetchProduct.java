@@ -4,7 +4,6 @@ package com.shangpin.iog.opticalscribe.service;
  * Created by zhaogenchun on 2015/11/26.
  */
 
-import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,18 +17,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.UUIDGenerator;
-import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.opticalscribe.dto.Channel;
-import com.shangpin.iog.opticalscribe.dto.Item;
 import com.shangpin.iog.opticalscribe.dto.Product;
-import com.shangpin.iog.opticalscribe.dto.Rss;
 import com.shangpin.iog.pavinGroup.util.HttpResponse;
 import com.shangpin.iog.pavinGroup.util.HttpUtils;
 import com.shangpin.iog.service.EventProductService;
@@ -38,7 +31,7 @@ import com.shangpin.iog.service.ProductFetchService;
 /**
  * Created by 赵根春 on 2015/9/25.
  */
-@Component("opticalscribe")
+//@Component("opticalscribe")
 public class FetchProduct {
 	@Autowired
 	ProductFetchService productFetchService;
@@ -123,13 +116,13 @@ private static List getProductList() {
 		getCategoryUrl();
 //		proUrlList.add("http://www.opticalscribe.com/prodotto/christian-dior-so-real-appdc-size-4822/");
 		for(String url :proUrlList){
-			Product pro = null;
+			com.shangpin.iog.opticalscribe.dto.Product pro = null;
 			try {
 				HttpResponse response = HttpUtils.get(url);
 				if (response.getStatus()==200) {
 					String htmlContent = response.getResponse();
 					Document doc = Jsoup.parse(htmlContent);
-					pro = new Product();
+					pro = new com.shangpin.iog.opticalscribe.dto.Product();
 					Element categorys = doc.select("#content > div").first();
 					
 					//商品spu

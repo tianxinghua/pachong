@@ -8,6 +8,7 @@ import java.util.TimeZone;
 
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.opticalscribe.service.FetchProduct;
+import com.shangpin.iog.opticalscribe.service.WangFetchProduct;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -30,8 +31,13 @@ public class StartSkuJob {
         //鎷夊彇鏁版嵁
         log.info("----拉取数据开始----");   
         System.out.println("-------fetch start---------");
-        FetchProduct fetchProduct =(FetchProduct)factory.getBean("opticalscribe");
-        fetchProduct.messMappingAndSave();
+        WangFetchProduct fetchProduct =(WangFetchProduct)factory.getBean("opticalscribe");
+        try {
+			fetchProduct.getUrlList();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         log.info("----拉取数据接受----");   
         System.out.println("-------fetch end---------");
         System.exit(0);
