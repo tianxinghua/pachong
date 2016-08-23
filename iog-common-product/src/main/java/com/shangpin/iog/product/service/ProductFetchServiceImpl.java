@@ -467,7 +467,9 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+
+
 	public void updateSpSkuIdBySupplier(String supplierId,String supplierSkuId,String spSkuId,String skuStatus,String spProductCode) throws ServiceException{
 		skuDAO.updateSpSkuIdBySupplier(supplierId, supplierSkuId, spSkuId,skuStatus,spProductCode); 
 	}

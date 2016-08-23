@@ -45,6 +45,12 @@ public class SkuDTO implements Serializable {
     private String spProductCode;
     
     
+	public String getSpProductCode() {
+		return spProductCode;
+	}
+	public void setSpProductCode(String spProductCode) {
+		this.spProductCode = spProductCode;
+	}
 	public String getSpStatus() {
 		return spStatus;
 	}

@@ -62,12 +62,27 @@ public class ProductReportServiceImpl implements ProductReportService {
             return new HashMap<>();
         }
         logger.warn("获取部分过滤的数据量为："+productList.size());
+        Map<String,Integer> suppliercountMap = new HashMap<>();
 
+        getNohandleCount(productList, suppliercountMap);
+
+
+        logger.warn("获取过滤的数据量为："+suppliercountMap.toString());
+        return suppliercountMap;
+    }
+
+    /**
+     * 获取未处理的数量
+     * @param productList
+     * @param suppliercountMap
+     * @throws ServiceException
+     */
+    private void getNohandleCount(List<ProductDTO> productList, Map<String, Integer> suppliercountMap) throws ServiceException {
         //获取季节map
         Map<String,String> reasonMap=new HashMap<>();
         List<SeasonRelationDTO> currentSeasonList  =   seasonRelationService.getAllCurrentSeason();
         for(SeasonRelationDTO dto:currentSeasonList){
-            reasonMap.put(dto.getSupplierId()+"||"+dto.getSupplierSeason(),dto.getSpYear()+dto.getSpSeason());
+            reasonMap.put(dto.getSupplierId()+"||"+(null==dto.getSupplierSeason()?"":dto.getSupplierSeason()),dto.getSpYear()+dto.getSpSeason());
 
         }
         logger.warn("映射的季节："+reasonMap.toString());
@@ -102,8 +117,8 @@ public class ProductReportServiceImpl implements ProductReportService {
         logger.warn("不需要的性别："+genderList.toString());
 
 
-        String supplierName="", categoryName = "", productName = "";
-        Map<String,Integer> suppliercountMap = new HashMap<>();
+        String supplierName="", seasonKey = "", productName = "";
+
         String reasonKey ="",reasonViewName ="";
         Date today = DateTimeUtil.convertDateFormat(new Date(),"yyyy-MM-dd");
         String daykey = "";
@@ -138,22 +153,22 @@ public class ProductReportServiceImpl implements ProductReportService {
                                                continue;
                                             }
                                         }
-
+                                        logger.info(dto.getSupplierId()+"----" + dto.getSkuId()+"---有图片");
                                         //获取数据
-                                        if(reasonMap.containsKey(dto.getSupplierId()+"||"+dto.getSeasonId())){
-                                            reasonKey =   dto.getSupplierId()+"||"+dto.getSeasonId();
+                                        if(reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonId()?"":dto.getSeasonId()))){
+                                            reasonKey =   dto.getSupplierId()+"||"+(null==dto.getSeasonId()?"":dto.getSeasonId());
                                             reasonViewName =  reasonMap.get(reasonKey);
 
-                                        }else if (reasonMap.containsKey(dto.getSupplierId()+"||"+dto.getSeasonName())){
-                                            reasonKey =   dto.getSupplierId()+"||"+dto.getSeasonName();
+                                        }else if (reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonName()?"":dto.getSeasonName()))){
+                                            reasonKey =   dto.getSupplierId()+"||"+(null==dto.getSeasonName()?"":dto.getSeasonName());
                                             reasonViewName =  reasonMap.get(reasonKey);
                                         }else{
                                             continue;
                                         }
 
-                                        diffDay = DateTimeUtil.getDateifference(dto.getCreateTime(),today);
+//                                        diffDay = DateTimeUtil.getDateifference(dto.getCreateTime(),today);
 
-                                        daykey = DateTimeUtil.shortFmt(dto.getCreateTime());
+//                                        daykey = DateTimeUtil.shortFmt(dto.getCreateTime());
                                         if(suppliercountMap.containsKey(supplierName+"||"+reasonViewName)){
                                             suppliercountMap.put(supplierName+"||"+reasonViewName,suppliercountMap.get(supplierName+"||"+reasonViewName)+1);
                                         }else{
@@ -175,6 +190,34 @@ public class ProductReportServiceImpl implements ProductReportService {
                 continue;
             }
         }
+    }
+
+    @Override
+    public Map<String, Integer> findProductReport(String startDate, String endDate) throws ServiceException {
+        Date start = null;
+        Date end = null;
+        if(StringUtils.isNotBlank(startDate)){
+            start=DateTimeUtil.convertFormat(startDate+" 00:00:00","yyyy-MM-dd HH:mm:ss");
+        }else{  //未指定时间 则统计当天新拉取的未处理的数据
+            start = DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(new Date()) +" 00:00:00","yyyy-MM-dd HH:mm:ss");
+        }
+        if(StringUtils.isNotBlank(endDate)){
+            endDate = DateTimeUtil.convertFormat(DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(endDate,"yyyy-MM-dd"),1,"D"),"yyyy-MM-dd");
+            end=DateTimeUtil.convertFormat(endDate+" 00:00:00","yyyy-MM-dd HH:mm:ss");
+        }
+
+        List<ProductDTO> productList =   productDAO.findReportBySupplierIdAndCreateTime(null,start,end);
+        if(null==productList||productList.size()==0){
+            logger.warn("未获得到数据");
+            return new HashMap<>();
+        }
+        logger.warn("获取部分过滤的数据量为："+productList.size());
+
+
+        Map<String,Integer> suppliercountMap = new HashMap<>();
+
+        getNohandleCount(productList, suppliercountMap);
+
 
         logger.warn("获取过滤的数据量为："+suppliercountMap.toString());
         return suppliercountMap;
@@ -184,10 +227,10 @@ public class ProductReportServiceImpl implements ProductReportService {
     public  Map<String,String> findPicture(Map<String,String> picMap ,String supplierId ,String startDate,String endDate ,String excludeSupplierId) throws ServiceException {
         Date start = null;
         Date end = null;
-        if(StringUtils.isNotBlank(startDate)) start=DateTimeUtil.convertFormat(startDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
+        if(StringUtils.isNotBlank(startDate)) start=DateTimeUtil.convertFormat(startDate+" 00:00:00","yyyy-MM-dd HH:mm:ss");
         if(StringUtils.isNotBlank(endDate)){
             endDate = DateTimeUtil.convertFormat(DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(endDate,"yyyy-MM-dd"),1,"D"),"yyyy-MM-dd");
-            end=DateTimeUtil.convertFormat(endDate+" 00:00:00","yyyy-MM-dd HH;mm:ss");
+            end=DateTimeUtil.convertFormat(endDate+" 00:00:00","yyyy-MM-dd HH:mm:ss");
         }
 
         //排除的供货商
@@ -218,7 +261,7 @@ public class ProductReportServiceImpl implements ProductReportService {
         Map<String,String> reasonMap=new HashMap<>();
         List<SeasonRelationDTO> currentSeasonList  =   seasonRelationService.getAllCurrentSeason();
         for(SeasonRelationDTO dto:currentSeasonList){
-            reasonMap.put(dto.getSupplierId()+"||"+dto.getSupplierSeason(),dto.getSpYear()+dto.getSpSeason());
+            reasonMap.put(dto.getSupplierId()+"||"+(null==dto.getSupplierSeason()?"":dto.getSupplierSeason()),dto.getSpYear()+dto.getSpSeason());
 
         }
         logger.warn("映射的季节："+reasonMap.toString());
