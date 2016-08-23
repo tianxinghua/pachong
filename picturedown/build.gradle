@@ -3,6 +3,10 @@ dependencies {
     compile(
             project(':project-common'),
             project(':iog-common-product'),
+            "commons-net:commons-net:3.3",
+         	"commons-dbcp:commons-dbcp:1.4",
+         	"org.jdom:jdom:2.0.2",
+         	"com.google.code.gson:gson:2.3.1",
     )
 }
 
