@@ -66,11 +66,7 @@ public class FtpDownPicService {
     }
 
 	public void downPic(){
-		//下载的文件名<-->图片链接
-		Map<String,String> toBeDownPicMap = new HashMap<String,String>();
-		Map<String,String> downLoadFailedMap = new HashMap<String,String>();
-		Map<String,String> picMap = new HashMap<>();
-        Map<String,String> supplierDateMap = null;
+		
         try {
         	File jsonFile = new File(jsonFilepath);
         	BufferedReader buffReader = null;//
@@ -97,79 +93,104 @@ public class FtpDownPicService {
             	loggerError.error("json文件为空或者解析失败"); 
             	return;
             }
+            loggerInfo.info("解析json文件成功，共有"+suppliers.getSuppliers().size()+"个供应商");  
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 200, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(100),new ThreadPoolExecutor.CallerRunsPolicy());
             for(Supplier supplier : suppliers.getSuppliers()){
-            	try {
-            		
-            		String suId = supplier.getSupplierId();
-            		String startDate = supplier.getStartDate();
-            		String endDate = supplier.getEndDate();
-            		
-            		if("".equals(suId)) suId=null;
-                    supplierDateMap = productReportService.findPicture(picMap,suId,startDate,endDate,null);
-                    if(null!=supplierDateMap&&supplierDateMap.size()>0){
-                        //获取日期
-                        String key = "",supplierId = "",date= "",spukeyValue = "";                
-                        for(Map.Entry<String,String> supplierDate:supplierDateMap.entrySet()){
-                             key = supplierDate.getKey();
-//            	String dirPath = "F:/usr/local/picturetem/"+new Date().getTime();
-                            supplierId  = key.substring(0,key.indexOf("|"));
-                            date = key.substring(key.indexOf("|")+1,key.length());
-                            String dirPath =downloadPath  + supplierId +"/" + date;
-                            File f1 = new File(dirPath);
-                            if (!f1.exists()) {
-                                f1.mkdirs();
-                            }
-                            spukeyValue=supplierDate.getValue();
-                            String[] spuArray = spukeyValue.split("\\|\\|\\|\\|\\|");
-                            for(String spu :spuArray){
-                                int a = 0;
-                                //下载保存图片
-                                System.out.println("++++"+a+"++++++");
-                                a++;
-                                String[] ingArr = picMap.get(spu).split(",");
-                                int i = 0;
-                                for (String img : ingArr) {
-                                    if (org.apache.commons.lang.StringUtils.isNotBlank(img)) {
-                                        try {
-                                            i++;
-                                            File f = new File(dirPath+"/"+spu+" ("+i+").jpg");
-                                            if (f.exists()) {
-                                                continue;
-                                            }
-                                            if(img.contains("/")){
-                                            	img = img.substring(img.lastIndexOf("/")+1);
-                    						}
-                                            toBeDownPicMap.put(dirPath+"/"+spu+" ("+i+").jpg", img);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    //去ftp下载图片
-                    FTPUtils.downFile(supplier.getFtpUrl(), 21, supplier.getUserName(), supplier.getPassword(), supplier.getRemote(), toBeDownPicMap, downLoadFailedMap);
-                    if(null != toBeDownPicMap && toBeDownPicMap.size()>0){
-                    	int port = 21;
-                    	if(StringUtils.isNotBlank(supplier.getPort())){
-                    		port = Integer.parseInt(supplier.getPort());
-                    	}
-                    	FTPUtils.downFile(supplier.getFtpUrl(), port, supplier.getUserName(), supplier.getPassword(), supplier.getRemote(), toBeDownPicMap, downLoadFailedMap);
-                    	//下载失败的再下载一遍
-                    	if(null != downLoadFailedMap && downLoadFailedMap.size()>0){
-                    		Map<String,String> failedMap = new HashMap<String,String>();
-                    		FTPUtils.downFile(supplier.getFtpUrl(), port, supplier.getUserName(), supplier.getPassword(), supplier.getRemote(), downLoadFailedMap, failedMap);
-                    		loggerError.error("第二次下载失败的链接有======"+failedMap.toString());
-                    	}
-                    }
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+            	executor.execute(new FtpDownPic(supplier)); 
             }
                         
         }catch(Exception e){
-        	
+        	e.printStackTrace();
+			loggerError.error(e.toString()); 
         }
+	}
+	
+	class FtpDownPic implements Runnable {
+		
+		private Supplier supplier;
+		
+		public FtpDownPic(Supplier supplier){
+			this.supplier = supplier;
+		}
+		@Override
+		public void run() {
+			try {
+				loggerInfo.info(supplier.getSupplierId()+"开始下载图片========"); 
+				//下载的文件名<-->图片链接
+				Map<String,String> toBeDownPicMap = new HashMap<String,String>();
+				Map<String,String> downLoadFailedMap = new HashMap<String,String>();
+				Map<String,String> picMap = new HashMap<>();
+		        Map<String,String> supplierDateMap = null;
+		        String supplier_id = supplier.getSupplierId();
+	    		String startDate = supplier.getStartDate();
+	    		String endDate = supplier.getEndDate();
+	    		
+	    		if("".equals(supplier_id)) supplier_id=null;
+	            supplierDateMap = productReportService.findPicture(picMap,supplier_id,startDate,endDate,null);
+	            if(null!=supplierDateMap&&supplierDateMap.size()>0){
+	                //获取日期
+	                String key = "",supplierId = "",date= "",spukeyValue = "";                
+	                for(Map.Entry<String,String> supplierDate:supplierDateMap.entrySet()){
+	                     key = supplierDate.getKey();
+	                    supplierId  = key.substring(0,key.indexOf("|"));
+	                    date = key.substring(key.indexOf("|")+1,key.length());
+	                    String dirPath =downloadPath  + supplierId +"/" + date;
+	                    File f1 = new File(dirPath);
+	                    if (!f1.exists()) {
+	                        f1.mkdirs();
+	                    }
+	                    spukeyValue=supplierDate.getValue();
+	                    String[] spuArray = spukeyValue.split("\\|\\|\\|\\|\\|");
+	                    for(String spu :spuArray){
+	                        int a = 0;
+	                        //下载保存图片
+	                        System.out.println("++++"+a+"++++++");
+	                        a++;
+	                        String[] ingArr = picMap.get(spu).split(",");
+	                        int i = 0;
+	                        for (String img : ingArr) {
+	                            if (org.apache.commons.lang.StringUtils.isNotBlank(img)) {
+	                                try {
+	                                    i++;
+	                                    File f = new File(dirPath+"/"+spu+" ("+i+").jpg");
+	                                    if (f.exists()) {
+	                                        continue;
+	                                    }
+	                                    if(img.contains("/")){
+	                                    	img = img.substring(img.lastIndexOf("/")+1);
+	            						}
+	                                    toBeDownPicMap.put(dirPath+"/"+spu+" ("+i+").jpg", img);
+	                                } catch (Exception e) {
+	                                    e.printStackTrace();
+	                                }
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+	            //去ftp下载图片        
+	            loggerInfo.info("需要下载的map的大小==============="+toBeDownPicMap.size());
+	            if(null != toBeDownPicMap && toBeDownPicMap.size()>0){
+	            	int port = 21;
+	            	if(StringUtils.isNotBlank(supplier.getPort())){
+	            		port = Integer.parseInt(supplier.getPort());
+	            	}	            	 
+	            	FTPUtils.downFile(supplier.getFtpUrl(), port, supplier.getUserName(), supplier.getPassword(), supplier.getRemote(), toBeDownPicMap, downLoadFailedMap);
+	            	//下载失败的再下载一遍
+	            	if(null != downLoadFailedMap && downLoadFailedMap.size()>0){
+	            		Map<String,String> failedMap = new HashMap<String,String>();
+	            		FTPUtils.downFile(supplier.getFtpUrl(), port, supplier.getUserName(), supplier.getPassword(), supplier.getRemote(), downLoadFailedMap, failedMap);
+	            		//还失败的记录日志
+	            		if(null != failedMap && failedMap.size()>0){
+	            			loggerError.error("第二次下载失败的链接有======"+failedMap.toString());
+	            		}            		
+	            	}
+	            	loggerInfo.info(supplier_id+"下载完成==============");
+	            }
+			} catch (Exception e) {
+				e.printStackTrace();
+				loggerError.error(e.toString()); 
+			}
+		}
 	}
 }

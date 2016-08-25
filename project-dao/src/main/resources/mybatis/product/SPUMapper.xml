@@ -187,5 +187,28 @@
     	where SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
     </update>
     
+    <select id="findAllBySupplierId" resultMap="spuMap">
+    	select ID ,
+		SUPPLIER_ID ,
+		SPU_ID,
+		SPU_NAME,CATEGORY_GENDER,
+        CATEGORY_ID,CATEGORY_NAME,SUB_CATEGORY_ID,SUB_CATEGORY_NAME,
+        BRAND_ID,BRAND_NAME,
+        SEASON_ID,SEASON_NAME,
+        PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME,
+        NEWSEASON_ID,NEWSEASON_NAME,SP_CATEGORY,SP_BRAND
+        
+        from SPU        
+        <where>
+        	SUPPLIER_ID = #{supplierId}  
+        	<if test="null != startTime">
+        		and LAST_TIME >= #{startTime}
+        	</if>
+        	<if test="null != endTime">
+        		<![CDATA[ and LAST_TIME <= #{endTime}    ]]>
+        	</if>
+        </where>
+    
+    </select>
     
 </mapper>

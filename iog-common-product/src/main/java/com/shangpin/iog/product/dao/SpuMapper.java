@@ -29,5 +29,7 @@ public interface SpuMapper extends IBaseDao<SpuDTO> {
 	public List<SpuDTO> findPartSPUListBySupplierId(@Param("supplierId") String supplierId);
 	
 	public void updateSpCategoryAndBrand(SpuDTO spuDTO);
+	
+	public List<SpuDTO> findAllBySupplierId(@Param("supplierId") String supplierId,@Param("startTime") Date startTime,@Param("endTime") Date endTime);
 
 }

@@ -3,16 +3,22 @@ package com.shangpin.iog.revolve.stock.util;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.StringReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.csvreader.CsvReader;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.revolve.stock.dto.ProductDTO;
 
 public class CVSUtil {
 
@@ -56,24 +62,57 @@ public class CVSUtil {
 		}
 	
 	}
+private static void txtDownload(String url,String filepath){
+		
+//		String json = HttpUtil45.get(url, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),null);
+//		System.out.println(json);
+		String csvFile =  HttpUtil45.get(url, new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30),null);
+		System.out.println(csvFile.length());
+		if (csvFile.contains("发生错误异常")) {
+			try {
+				Thread.currentThread().sleep(5000l);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			csvFile =  HttpUtil45.get(url, new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30),null);
+		}
+		FileWriter fwriter = null;
+		try {
+			File file = new File(filepath);
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			fwriter = new FileWriter(filepath);
+			fwriter.write(csvFile);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				fwriter.flush();
+				fwriter.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
 	
 	/**
 	 * 
-	 * @param file csv文件
-	 * @param clazz 映射的类
+	 * @param data csv文件
+	 * @param class1 映射的类
 	 * @param sep 分隔符
 	 * @return
 	 * @throws Exception
 	 */
-	public static <T> List<T> readCSV(String file,Class<T> clazz, char sep)
+	public static  List<ProductDTO> readCSV(String filePath,Class<ProductDTO> class1, char sep)
 			throws Exception {
-		
+		InputStream in = new FileInputStream(filePath);
 		String rowString = null;
-		List<T> dtoList = new ArrayList<T>();
+		List<ProductDTO> dtoList = new ArrayList<ProductDTO>();
 		List<String> colValueList = null;
 		CsvReader cr = null;
 		// 解析csv文件
-		cr = new CsvReader(new StringReader(file));
+		cr = new CsvReader(in, Charset.forName("utf-8"));
 		System.out.println("创建cr对象成功");
 		// 得到列名集合
 		cr.readRecord();
@@ -83,12 +122,11 @@ public class CVSUtil {
 			rowString = cr.getRawRecord();
 			if (StringUtils.isNotBlank(rowString)) {
 				colValueList = fromCSVLinetoArray(rowString,sep);
-				T t = fillDTO(clazz.newInstance(), colValueList);
+				ProductDTO t = fillDTO(class1.newInstance(), colValueList);
 				// 过滤重复的dto。。。sku,
 				// dtoSet.add(t);
 				dtoList.add(t);
 			}
-
 		}
 
 		return dtoList;
