@@ -936,4 +936,12 @@ public  class ProductSearchServiceImpl implements ProductSearchService {
 		return null;
 	}
 
+	@Override
+	public StringBuffer exportReportProduct(String supplier, Date startDate,
+			Date endDate, Integer pageIndex, Integer pageSize)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -420,6 +420,9 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 			e.printStackTrace();
 		}
 	}
+	public List<SkuRelationDTO> selectRelationFromHKBySupplierId(String supplier){
+		return null;
+	}
 	@Override
 	public String findBarCodeBySupplierIdAndSkuId(String supplierId,
 			String skuno){
@@ -472,7 +475,6 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 //	public void updateSpSkuIdBySupplier(String supplierId, String supplierSkuId, String spSkuId, String skuStatus) throws ServiceException {
 //
 //	}
-
 	public void updateSpSkuIdBySupplier(String supplierId,String supplierSkuId,String spSkuId,String skuStatus,String spProductCode) throws ServiceException{
 		skuDAO.updateSpSkuIdBySupplier(supplierId, supplierSkuId, spSkuId,skuStatus,spProductCode); 
 	}

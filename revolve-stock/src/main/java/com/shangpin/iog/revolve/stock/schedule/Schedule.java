@@ -8,7 +8,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.iog.revolve.stock.StockClientImp;
+import com.shangpin.iog.revolve.StockClientImp;
+
 
 @Component
 @PropertySource("classpath:conf.properties")

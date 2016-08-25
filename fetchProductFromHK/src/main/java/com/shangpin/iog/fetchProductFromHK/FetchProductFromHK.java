@@ -61,16 +61,33 @@ public class FetchProductFromHK {
 		FetchProductFromHK o = (FetchProductFromHK) factory
 				.getBean("fetchProductFromHK");
 		try {
-		
-			o.fetchProductFromHK();
 			o.fetchRelationFromHK();
+			o.fetchProductFromHK();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	private void fetchRelationFromHK() {
-		//false 表示按每天拉取
+		if(StringUtils.isNotBlank(supplierId)){
+			String [] arraySupplierId = supplierId.split(",",-1);
+			for(String supplier:arraySupplierId){
+				saveRelationFromHKBySupplierId(supplier);
+			}
+			
+		}else if ("false".equals(relationFlag)) {
+			System.out.println("false");
+			saveRelationDayFromHK();
+		} else {
+			//true 表示拉取所有的
+			System.out.println("true");
+			fetchAndsaveAllRelationFromHK();
+//			writeGrapDate("false", "initRelation.ini");
+
+		}
+		
+		
+//		//false 表示按每天拉取
 		if ("false".equals(relationFlag)) {
 			System.out.println("false");
 			saveRelationDayFromHK();
@@ -80,6 +97,18 @@ public class FetchProductFromHK {
 			fetchAndsaveAllRelationFromHK();
 //			writeGrapDate("false", "initRelation.ini");
 
+		}
+	}
+
+	private void saveRelationFromHKBySupplierId(String supplier) {
+		List<SkuRelationDTO> list = null;
+		try {
+			list = productFetchService.selectRelationFromHKBySupplierId(supplier);
+			logger.info("拉取"+supplier+"的relation总数："+list.size());
+			System.out.println("拉取"+supplier+"的relation总数："+list.size());
+			saveAllRelation(list);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -255,8 +284,6 @@ public class FetchProductFromHK {
 				sku.setSalePrice(pro.getSalePrice());
 				sku.setSkuId(pro.getSkuId());
 				sku.setSpuId(pro.getSpuId());
-				sku.setSpSkuId(pro.getSpSkuId());
-				sku.setSpStatus(pro.getSpStatus());
 				sku.setStock(pro.getStock());
 				sku.setSupplierId(pro.getSupplierId());
 				sku.setSupplierPrice(pro.getSupplierPrice());
@@ -267,7 +294,6 @@ public class FetchProductFromHK {
 					productFetchService.saveSKU(sku);
 					i++;
 				} catch (ServiceException e) {
-					productFetchService.update(sku);
 					j++;
 				}
 			}

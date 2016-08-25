@@ -82,7 +82,7 @@ public class ProductReportServiceImpl implements ProductReportService {
         Map<String,String> reasonMap=new HashMap<>();
         List<SeasonRelationDTO> currentSeasonList  =   seasonRelationService.getAllCurrentSeason();
         for(SeasonRelationDTO dto:currentSeasonList){
-            reasonMap.put(dto.getSupplierId()+"||"+dto.getSupplierSeason(),dto.getSpYear()+dto.getSpSeason());
+            reasonMap.put(dto.getSupplierId()+"||"+(null==dto.getSupplierSeason()?"":dto.getSupplierSeason()),dto.getSpYear()+dto.getSpSeason());
 
         }
         logger.warn("映射的季节："+reasonMap.toString());
@@ -117,7 +117,7 @@ public class ProductReportServiceImpl implements ProductReportService {
         logger.warn("不需要的性别："+genderList.toString());
 
 
-        String supplierName="", categoryName = "", productName = "";
+        String supplierName="", seasonKey = "", productName = "";
 
         String reasonKey ="",reasonViewName ="";
         Date today = DateTimeUtil.convertDateFormat(new Date(),"yyyy-MM-dd");
@@ -153,22 +153,22 @@ public class ProductReportServiceImpl implements ProductReportService {
                                                continue;
                                             }
                                         }
-
+                                        logger.info(dto.getSupplierId()+"----" + dto.getSkuId()+"---有图片");
                                         //获取数据
-                                        if(reasonMap.containsKey(dto.getSupplierId()+"||"+dto.getSeasonId())){
-                                            reasonKey =   dto.getSupplierId()+"||"+dto.getSeasonId();
+                                        if(reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonId()?"":dto.getSeasonId()))){
+                                            reasonKey =   dto.getSupplierId()+"||"+(null==dto.getSeasonId()?"":dto.getSeasonId());
                                             reasonViewName =  reasonMap.get(reasonKey);
 
-                                        }else if (reasonMap.containsKey(dto.getSupplierId()+"||"+dto.getSeasonName())){
-                                            reasonKey =   dto.getSupplierId()+"||"+dto.getSeasonName();
+                                        }else if (reasonMap.containsKey(dto.getSupplierId()+"||"+(null==dto.getSeasonName()?"":dto.getSeasonName()))){
+                                            reasonKey =   dto.getSupplierId()+"||"+(null==dto.getSeasonName()?"":dto.getSeasonName());
                                             reasonViewName =  reasonMap.get(reasonKey);
                                         }else{
                                             continue;
                                         }
 
-                                        diffDay = DateTimeUtil.getDateifference(dto.getCreateTime(),today);
+//                                        diffDay = DateTimeUtil.getDateifference(dto.getCreateTime(),today);
 
-                                        daykey = DateTimeUtil.shortFmt(dto.getCreateTime());
+//                                        daykey = DateTimeUtil.shortFmt(dto.getCreateTime());
                                         if(suppliercountMap.containsKey(supplierName+"||"+reasonViewName)){
                                             suppliercountMap.put(supplierName+"||"+reasonViewName,suppliercountMap.get(supplierName+"||"+reasonViewName)+1);
                                         }else{
@@ -261,7 +261,7 @@ public class ProductReportServiceImpl implements ProductReportService {
         Map<String,String> reasonMap=new HashMap<>();
         List<SeasonRelationDTO> currentSeasonList  =   seasonRelationService.getAllCurrentSeason();
         for(SeasonRelationDTO dto:currentSeasonList){
-            reasonMap.put(dto.getSupplierId()+"||"+dto.getSupplierSeason(),dto.getSpYear()+dto.getSpSeason());
+            reasonMap.put(dto.getSupplierId()+"||"+(null==dto.getSupplierSeason()?"":dto.getSupplierSeason()),dto.getSpYear()+dto.getSpSeason());
 
         }
         logger.warn("映射的季节："+reasonMap.toString());
