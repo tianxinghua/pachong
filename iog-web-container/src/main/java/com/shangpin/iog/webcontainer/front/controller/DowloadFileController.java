@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -80,10 +81,11 @@ public class DowloadFileController {
 	            file.transferTo(targetFile);  
 	            List<PicUrlDTO> picUrlDTOList =  ReadExcel.readExcel(PicUrlDTO.class, targetFile.getPath());
 	            if(null != picUrlDTOList && picUrlDTOList.size()>0){
-	            	
-	            	List<String> ruleUrlList = new ArrayList<String>();
+	            	Map<String,String> ruleUrlMap = new HashMap<>();
+//	            	List<String> ruleUrlList = new ArrayList<String>();
 	            	for(PicUrlDTO pic : picUrlDTOList){
-	            		ruleUrlList.add(pic.getUrl());
+//	            		ruleUrlList.add(pic.getUrl());
+	            		ruleUrlMap.put(pic.getUrl(), "");
 	            	}
 	            	//查找图片目录下有没有该供应商文件夹
 	            	File filef = new File(pictmpdownloadpath);
@@ -103,28 +105,45 @@ public class DowloadFileController {
 	        		log.error("需要下载的供应商supplierId=================="+picUrlDTOList.get(0).getSupplierId()); 
 	        		System.out.println("找到对应的文件夹的名称========================"+theSupplier); 
 	        		log.error("找到对应的文件夹的名称========================"+theSupplier);
-	        		//在选定的日期目录中查找符合规则的文件	        		
+	        		//在选定的日期目录中查找符合规则的文件
+	        		String tmpFileName="";
+	        		Map<String,String> findMap = new HashMap<>();
 	        		if(org.apache.commons.lang.StringUtils.isNotBlank(theSupplier)){
 	        			File mySupplierFile = new File(pictmpdownloadpath+File.separator+theSupplier);    			
 	        			if(null != mySupplierFile.list() && mySupplierFile.list().length>0){
 	        				for(String dirName : mySupplierFile.list()){
 	        					File ffff = new File(pictmpdownloadpath+File.separator+theSupplier+File.separator+dirName);
 	            				File[] picFiles = ffff.listFiles();
-	        					if(null != picFiles && picFiles.length>0){	            					
-	            					if(null != ruleUrlList && ruleUrlList.size()>0){	            						
-	            						for(String ruleName : ruleUrlList){
-	            							for(int i= 0;i<picFiles.length;i++){
-	            								if(picFiles[i].getName().contains(ruleName)){
-	            									filesToAdd.add(picFiles[i]);
-	            									break;
-	            								}else if(i == picFiles.length-1){
-	            									writer.write(ruleName+"  没有找到对应的图片\r\n"); 
-	            								}
-	            							}
-	            						}
-	            					}
+	        					if(null != picFiles && picFiles.length>0){
+	        						for(int i= 0;i<picFiles.length;i++){
+	        							tmpFileName = picFiles[i].getName();
+	        							if(ruleUrlMap.containsKey(tmpFileName.substring(0,tmpFileName.indexOf(" ")).trim())){
+	        								filesToAdd.add(picFiles[i]);
+	        								findMap.put(tmpFileName.substring(0,tmpFileName.indexOf(" ")).trim(), "");
+	        							}
+	        						}
+//	            					if(null != ruleUrlList && ruleUrlList.size()>0){	            						
+//	            						for(String ruleName : ruleUrlList){
+//	            							for(int i= 0;i<picFiles.length;i++){
+//	            								if(picFiles[i].getName().contains(ruleName)){
+//	            									filesToAdd.add(picFiles[i]);
+////	            									break;
+//	            								}else if(i == picFiles.length-1){
+//	            									writer.write(ruleName+"  没有找到对应的图片\r\n"); 
+//	            								}
+//	            							}
+//	            						}
+//	            					}
 	            				}
-	        				}     								
+	        					
+	        				}
+	        				for(String fileKey:ruleUrlMap.keySet() ){
+	        					if(findMap.containsKey(fileKey)){
+	        						
+	        					}else{
+	        						writer.write(fileKey+"  没有找到对应的图片\r\n"); 
+	        					}
+	        				}
 	        			}else{
 	        				writer.write(theSupplier+"文件夹下没有找到文件或文件夹！！！！\r\n"); 
 	        			}  	

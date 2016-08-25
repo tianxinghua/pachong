@@ -27,14 +27,10 @@ public class StartUp {
 	}
 	public static void main(String[] args) {
 		
-		if(args.length==0 || StringUtils.isBlank(args[0])){
-			System.out.println("请传入一个参数conf或者ftp");
-			loggerInfo.info("请传入一个参数conf或者ftp"); 
-			return;
-		}
 		loadSpringContext();
 		loggerInfo.info("初始化成功，开始同步");
-		if("conf".equals(args[0])){
+		
+		if(args.length==0 || StringUtils.isBlank(args[0])){
 			PictureDownService pictureDownService = (PictureDownService)factory.getBean("pictureDownService");
 			pictureDownService.downPic();
 			HttpUtil45.closePool();
@@ -42,6 +38,6 @@ public class StartUp {
 			FtpDownPicService ftpDownPicService = (FtpDownPicService)factory.getBean("ftpDownPicService");
 			ftpDownPicService.downPic(); 
 		}
-					
+				
 	}
 }
