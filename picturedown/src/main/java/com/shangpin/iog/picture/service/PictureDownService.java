@@ -94,7 +94,7 @@ public class PictureDownService {
                     spukeyValue=supplierDate.getValue();
                     String[] spuArray = spukeyValue.split("\\|\\|\\|\\|\\|");
                     int a = 0;
-                    loggerInfo.info("supplierId="+ supplierId);
+//                    loggerInfo.info("supplierId="+ supplierId);
                     for(String spu :spuArray){
 
                         //下载保存图片
@@ -111,8 +111,8 @@ public class PictureDownService {
                                 if (org.apache.commons.lang.StringUtils.isNotBlank(img)) {
                                     try {
                                         img=this.changeUrl(supplierId,img) ;
-                                        System.out.println("spu =" +spu + " 　img url  ="+ img);
-                                        loggerInfo.info("spu =" +spu + " 　img url  ="+ img);
+//                                        System.out.println("spu =" +spu + " 　img url  ="+ img);
+//                                        loggerInfo.info("spu =" +spu + " 　img url  ="+ img);
                                         i++;
                                         File f = new File(dirPath+"/"+spu+" ("+i+").jpg");
                                         if (f.exists()) {
