@@ -70,7 +70,7 @@ public class FetchProduct extends AbsSaveProduct{
 					sku.setId(UUIDGenerator.getUUID());
 					sku.setSupplierId(supplierId);
 					sku.setSkuId(getValue(item.get(4)));
-					sku.setSpuId(getValue(item.get(3)));
+					sku.setSpuId(getValue(item.get(3))+"-"+(null==getValue(item.get(7))?"":getValue(item.get(7))));
 					sku.setProductName(getValue(item.get(6)));
 					sku.setMarketPrice(getValue(item.get(16)));
 					sku.setSalePrice("");
@@ -102,7 +102,10 @@ public class FetchProduct extends AbsSaveProduct{
 						}
 						String url = getValue(item.get(i));
 						if(url!=null){
-							list1.add(url);
+							if(url.startsWith("http")){
+								list1.add(url);
+							}
+
 						}
 
 					}
