@@ -64,7 +64,7 @@ public class FetchProduct extends AbsSaveProduct{
 					sku.setId(UUIDGenerator.getUUID());
 					sku.setSupplierId(supplierId);
 					sku.setSkuId(item.getSkuNo());
-					sku.setSpuId(item.getProductModel());
+					sku.setSpuId(item.getProductModel()+"-"+item.getProductColor());
 					sku.setProductName(item.getProductName());
 					sku.setMarketPrice(item.getMarkerPrice());
 					sku.setSalePrice("");
@@ -91,15 +91,25 @@ public class FetchProduct extends AbsSaveProduct{
 					
 					List<String> list = new ArrayList<String>();
 					if(StringUtils.isNotBlank(item.getProductUrl1())){
-						list.add(item.getProductUrl1());
+						if(item.getProductUrl1().startsWith("http")){
+							list.add(item.getProductUrl1());
+						}
+
 					}
 					if(StringUtils.isNotBlank(item.getProductUrl2())){
-						list.add(item.getProductUrl2());
+						if(item.getProductUrl1().startsWith("http")) {
+							list.add(item.getProductUrl2());
+						}
 					}
 					if(StringUtils.isNotBlank(item.getProductUrl3())){
-						list.add(item.getProductUrl3());
+						if(item.getProductUrl1().startsWith("http")) {
+							list.add(item.getProductUrl3());
+						}
 					}
-					imageMap.put(spu.getSpuId()+";"+sku.getProductCode(), list);
+					if(list.size()>0){
+						imageMap.put(spu.getSpuId()+";"+sku.getProductCode(), list);
+					}
+
 					
 				} catch (Exception e) {
 					e.printStackTrace();
