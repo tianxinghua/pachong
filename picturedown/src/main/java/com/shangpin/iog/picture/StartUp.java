@@ -42,9 +42,6 @@ public class StartUp {
 			FtpDownPicService ftpDownPicService = (FtpDownPicService)factory.getBean("ftpDownPicService");
 			ftpDownPicService.downPic(); 
 		}
-		
-		
-		loggerInfo.info("===========下载图片完成========");		
-		System.exit(0);
+					
 	}
 }

@@ -249,6 +249,20 @@ public class DowloadFileController {
 								e.printStackTrace();
 							}        					
         				}
+    				}else if(null != startDate && null == endDate){
+    					File dayFile = new File (pictmpdownloadpath+File.separator+theSupplier+File.separator+DateTimeUtil.strForDateNew(startDate));
+    					if(dayFile.exists()){
+    						myDirs.add(dayFile.getName());
+    					}else{
+    						writer.write("未找到 "+DateTimeUtil.strForDateNew(startDate)+" 的文件夹=================\r\n");
+    					}
+    				}else if(null != endDate && null == startDate){
+    					File dayFile = new File (pictmpdownloadpath+File.separator+theSupplier+File.separator+DateTimeUtil.strForDateNew(endDate));
+    					if(dayFile.exists()){
+    						myDirs.add(dayFile.getName());
+    					}else{
+    						writer.write("未找到 "+DateTimeUtil.strForDateNew(endDate)+" 的文件夹=================\r\n");
+    					}
     				}else{
     					Collections.addAll(myDirs, mySupplierFile.list());
     				}    				

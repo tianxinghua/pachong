@@ -43,9 +43,10 @@ public class StockImp  extends AbsUpdateProductStock {
     	//获取库存元数据
     	Map<String, String> skuMap = new KIXUtil().getStockMap();
     	System.out.println(skuMap.size());
-    	for (Entry<String, String> string : skuMap.entrySet()) {
-			System.out.println(string.getKey()+"::::"+string.getValue()+";");
-		}
+    	logger.info("从供应商网站上拉下来的数据总数有==========="+skuMap.size());
+//    	for (Entry<String, String> string : skuMap.entrySet()) {
+//			System.out.println(string.getKey()+"::::"+string.getValue()+";");
+//		}
         Map<String,String> returnMap = new HashMap<String,String>();
         Iterator<String> iterator=skuNo.iterator();
         //为供应商循环赋值
@@ -63,6 +64,7 @@ public class StockImp  extends AbsUpdateProductStock {
 				}
 			}
         }
+        logger.info("返回的map的大小是==================="+returnMap.size()); 
         return returnMap;
     }
 
