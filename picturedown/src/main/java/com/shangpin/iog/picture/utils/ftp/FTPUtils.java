@@ -43,11 +43,16 @@ public class FTPUtils {
 		FTPClient ftp = new FTPClient();
 		logger.info("ip: "+ip+",port: "+port+",usr: "+usrName+",password: "+password+",remote: "+remotePath);
 		try {
-			ftp.setConnectTimeout(1000 * 60 * 60);
+			
 			ftp.connect(ip, port);
 			ftp.login(usrName, password);
 			ftp.setControlEncoding("UTF-8");
 			ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+			ftp.enterLocalPassiveMode();  
+			ftp.setConnectTimeout(1000*60*60*60); 
+			ftp.setDataTimeout(1000*60*60*60); 
+			ftp.setControlKeepAliveReplyTimeout(1000*60*60*60);
+			ftp.setControlKeepAliveTimeout(1000*60*60*60);  
 			if(StringUtils.isNotBlank(remotePath)){
 				ftp.changeWorkingDirectory(remotePath);
 			}				
@@ -104,7 +109,7 @@ public class FTPUtils {
 		toBeDownPicMap.put("F:\\tmp\\temp3.jpg", "31_G8GH1T_G7HQJ_S8292_9999901962436__SENZA_TITOLO__794_DI_1___49__.JPG");
 		toBeDownPicMap.put("F:\\tmp\\temp4.jpg", "31_2TO641_844_93_9999902016350__SENZA_TITOLO__1009_DI_1___94__.JPG");
 		toBeDownPicMap.put("F:\\tmp\\temp5.jpg", "31_PI0321U_19336_8000_9999902151662__532A1564__8__.JPG");
-		FTPUtils.downFile("92.223.134.2", 21, "mosuftp", "inter2015￡", "", toBeDownPicMap, downLoadFailedMap);
+		FTPUtils.downFile("92.223.134.2", 21, "mosuftp", "nter2015£", "", toBeDownPicMap, downLoadFailedMap);
 	}
 	
 }
