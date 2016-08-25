@@ -27,7 +27,16 @@ public class PicQueue {
 	}
 	//未访问过的出队列
 	public  String unVisitEdUrlDeQueue(){
-		return unVisitedUrl.deQueue();
+		if(unVisitedUrl.isQueueEmpty()){
+			return "";
+		}else{
+			try {
+				return unVisitedUrl.deQueue();
+			} catch (Exception e) {
+				return "";
+			}
+		}
+
 	}
 	public  String allSkuUrlDeQueue(){
 		return  allSkuUrl.deQueue();

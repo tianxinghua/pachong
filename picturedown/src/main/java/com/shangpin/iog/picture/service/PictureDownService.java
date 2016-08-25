@@ -4,6 +4,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.DowmImage;
 import com.shangpin.iog.common.utils.queue.PicQueue;
 import com.shangpin.iog.service.ProductReportService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -92,8 +93,10 @@ public class PictureDownService {
                     }
                     spukeyValue=supplierDate.getValue();
                     String[] spuArray = spukeyValue.split("\\|\\|\\|\\|\\|");
+                    int a = 0;
+                    loggerInfo.info("supplierId="+ supplierId);
                     for(String spu :spuArray){
-                        int a = 0;
+
                         //下载保存图片
 
 
@@ -102,8 +105,14 @@ public class PictureDownService {
                             String[] ingArr = picMap.get(spu).split(",");
                             int i = 0;
                             for (String img : ingArr) {
+
+
+
                                 if (org.apache.commons.lang.StringUtils.isNotBlank(img)) {
                                     try {
+                                        img=this.changeUrl(supplierId,img) ;
+                                        System.out.println("spu =" +spu + " 　img url  ="+ img);
+                                        loggerInfo.info("spu =" +spu + " 　img url  ="+ img);
                                         i++;
                                         File f = new File(dirPath+"/"+spu+" ("+i+").jpg");
                                         if (f.exists()) {
@@ -130,15 +139,20 @@ public class PictureDownService {
                     if (picQueue.unVisitedUrlsEmpty()&&executor.getActiveCount()>=0) {
                         System.out.println("============================================都为空=======================================================");
                         try {
-                            Thread.sleep(1000*15);
+                            Thread.sleep(1000*10);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                         continue;
                     }
                     failUrl = picQueue.unVisitEdUrlDeQueue();
+                    if(StringUtils.isBlank(failUrl)){
+                        continue;
+                    }
                     if (recordMap.containsKey(failUrl)) {
                         if (recordMap.get(failUrl)>10) {
+                            System.out.println("downloaderror="+failUrl);
+                            loggerInfo.info("downloaderror="+ failUrl);
                             continue;
                         }
                         recordMap.put(failUrl, recordMap.get(failUrl)+1);
@@ -146,6 +160,8 @@ public class PictureDownService {
                         recordMap.put(failUrl, 1);
                     }
                     split = failUrl.split(";");
+                    System.out.println("曾经下载失败的 spu =" +split[2] + " 　img url  ="+ split[0]);
+                    loggerInfo.info("曾经下载失败的 spu =" +split[2] + " 　img url  ="+ split[0]);
                     executor.execute(new DowmImage(split[0],split[2],split[1],picQueue,null, null,userName,password));
 
                 }
@@ -156,8 +172,21 @@ public class PictureDownService {
         }
     }
 
+    private String changeUrl(String supplierId,String url){
+        String resultRult = "";
+        if(StringUtils.isNotBlank(supplierId)){
+             if("2016032401823".equals(supplierId)){
+                 url=url.replace("\\", "/");
+             }
+        }
+        resultRult = this.replaceSpecialChar(url);
 
+        return resultRult;
+    }
 
+    private String replaceSpecialChar(String url){
+        return url.replace(" ", "%20");
+    }
     private void delay(ThreadPoolExecutor executor){
         while(true){
             if(executor.getActiveCount()==0){
