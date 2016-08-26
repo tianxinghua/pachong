@@ -111,8 +111,8 @@ public class PictureDownService {
                                 if (org.apache.commons.lang.StringUtils.isNotBlank(img)) {
                                     try {
                                         img=this.changeUrl(supplierId,img) ;
-//                                        System.out.println("spu =" +spu + " 　img url  ="+ img);
-//                                        loggerInfo.info("spu =" +spu + " 　img url  ="+ img);
+                                        System.out.println("spu =" +spu + " 　img url  ="+ img);
+                                        loggerInfo.info("spu =" +spu + " 　img url  ="+ img);
                                         i++;
                                         File f = new File(dirPath+"/"+spu+" ("+i+").jpg");
                                         if (f.exists()) {
@@ -177,6 +177,8 @@ public class PictureDownService {
         if(StringUtils.isNotBlank(supplierId)){
              if("2016032401823".equals(supplierId)){
                  url=url.replace("\\", "/");
+             }else if("2016030901801".equals(supplierId)){
+                 url="http://"+url;
              }
         }
         resultRult = this.replaceSpecialChar(url);

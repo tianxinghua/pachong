@@ -201,7 +201,7 @@ public class FetchProduct {
 							break;
 						}
 					}					
-//					spu.setSeasonName(seasonName);
+					spu.setSeasonName("carryover");
 					for(Map materralMap : materialArrs){
 						if(product.get("materiale").toString().equals(materralMap.get("value").toString())){
 							spu.setMaterial(materralMap.get("label").toString());
