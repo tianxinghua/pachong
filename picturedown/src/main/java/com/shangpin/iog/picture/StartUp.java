@@ -33,7 +33,7 @@ public class StartUp {
 		if(args.length==0 || StringUtils.isBlank(args[0])){
 			PictureDownService pictureDownService = (PictureDownService)factory.getBean("pictureDownService");
 			pictureDownService.downPic();
-			HttpUtil45.closePool();
+//			HttpUtil45.closePool();
 		}else if("ftp".equals(args[0])){
 			FtpDownPicService ftpDownPicService = (FtpDownPicService)factory.getBean("ftpDownPicService");
 			ftpDownPicService.downPic(); 

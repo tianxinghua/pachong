@@ -1322,7 +1322,7 @@ public class HttpUtil45 {
 				entity.writeTo(bos);
 				EntityUtils.consume(entity);
 			}else{
-				logger.error("fileName 状态码不为200 ，无法下载");
+				logger.error("地址:" + url +"  状态码不为200 ，无法下载");
 
 			}
 

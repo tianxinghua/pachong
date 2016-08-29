@@ -591,14 +591,16 @@ public class FileDownloadController {
 		} catch (Exception e) {
 			e.printStackTrace(); 
 		}
-        try {
+      
         	for(SpecialSkuDTO spec:list){
-        		specialSkuService.saveDTO(spec);
+	    		  try {
+	    			  specialSkuService.saveDTO(spec);
+	    		  } catch (ServiceMessageException e) {
+	    				e.printStackTrace(); 
+	    		  }
         	}
 			
-		} catch (ServiceMessageException e) {
-			e.printStackTrace(); 
-		}
+		
         List<SupplierDTO> availableSupplierDTOList = null ;
 		try {
 			availableSupplierDTOList = supplierService.findAllWithAvailable();

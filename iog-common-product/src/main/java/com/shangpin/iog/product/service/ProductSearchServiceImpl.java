@@ -616,15 +616,46 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				buffer.append(dto.getSaleCurrency()).append(splitSign);
 				
 				//新季节
-				buffer.append(
-						null == dto.getNewseasonName() ? dto.getNewseasonId() : dto
-								.getNewseasonName()).append(splitSign);
+//				buffer.append(
+//						null == dto.getNewseasonName() ? dto.getNewseasonId() : dto
+//								.getNewseasonName()).append(splitSign);
+				if(dto.getNewseasonName()!=null){
+					if(dto.getNewseasonId()!=null){
+						if(dto.getNewseasonName().trim().equals(dto.getNewseasonId().trim())){
+							buffer.append(dto.getNewseasonName()).append(splitSign);
+						}else{
+							buffer.append(dto.getNewseasonId()).append(" ").append(dto.getNewseasonName()).append(splitSign);
+						}
+					}else{
+						buffer.append(dto.getNewseasonName()).append(splitSign);
+					}
+					
+					
+				}else{
+					buffer.append(dto.getNewseasonId()).append(splitSign);
+				}
+				
+				if(dto.getSeasonName()!=null){
+					if(dto.getSeasonId()!=null){
+						if(dto.getSeasonName().trim().equals(dto.getSeasonId().trim())){
+							buffer.append(dto.getSeasonName()).append(splitSign);
+						}else{
+							buffer.append(dto.getSeasonId()).append(" ").append(dto.getSeasonName()).append(splitSign);
+						}
+					}else{
+						buffer.append(dto.getSeasonName()).append(splitSign);
+					}
+					
+					
+				}else{
+					buffer.append(dto.getSeasonId()).append(splitSign);
+				}
 				
 				// 季节
 
-				buffer.append(
-						null == dto.getSeasonName() ? dto.getSeasonId() : dto
-								.getSeasonName()).append(splitSign);
+//				buffer.append(
+//						null == dto.getSeasonName() ? dto.getSeasonId() : dto
+//								.getSeasonName()).append(splitSign);
 				// 活动开始时间
 				buffer.append(
 						null == dto.getEventStartTime() ? " " : dto

@@ -123,7 +123,7 @@ public class FetchProduct {
 	                                spudto.setSpuId(spu.getProduct_id());
 	                                spudto.setId(UUIDGenerator.getUUID());
 	                                spudto.setMaterial(spu.getProduct_detail());
-	                                spudto.setPicUrl(spu.getUrl());
+//	                                spudto.setPicUrl(spu.getUrl());
 	                                spudto.setSpuName(spu.getDescription());
 	                                try {
 	                                    pfs.saveSPU(spudto);
