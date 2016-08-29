@@ -32,7 +32,10 @@ public class Test {
 //                new OutTimeConfig(1000*60*10,1000*60*60,1000*60*60),"shangpin","Daniello0203");
 //        System.out.println("skuData　＝"+ skuData);
 
-       Date date =  DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(new Date()) +" 00:00:00","yyyy-MM-dd HH:mm:ss");
-       System.out.println("  == " + date.toString() );
+//       Date date =  DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(new Date()) +" 00:00:00","yyyy-MM-dd HH:mm:ss");
+//       System.out.println("  == " + date.toString() );
+    	String json = "{\"supplier\":\"2015111001657\",\"startDate\":\"2016-08-26 00:00:10\",\"endDate\":\"\",\"pageIndex\":\"\",\"pageSize\":\"\",\"supplierName\":\"efashion\",\"flag\":\"same\",\"bu\":\"-1\"}";
+    	String sss =  HttpUtil45.operateData("post", "json", "http://iog.shangpin.com/iog/download/csv", new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null, json, "", "");
+    	System.out.println(sss);
     }
 }

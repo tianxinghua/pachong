@@ -1,5 +1,8 @@
 package com.shangpin.iog.webcontainer.front.controller;
 
+/**
+ * 选择BU导出
+ */
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -23,7 +26,7 @@ import com.shangpin.iog.service.ProductSearchService;
 @RequestMapping("/download")
 public class ExportController {
 	
-	private Logger log = LoggerFactory.getLogger(FileDownloadController.class) ;
+	private Logger log = LoggerFactory.getLogger(ExportController.class) ;
 
 	@Autowired
     ProductSearchService productService;
@@ -35,6 +38,7 @@ public class ExportController {
         BufferedOutputStream out = null;
         StringBuffer productBuffer =null;
 		try {
+			log.error("==============进入主方法===============");
 			response.reset();
 	        response.setContentType("text/csv;charset=gb2312");
 	        ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
@@ -60,13 +64,15 @@ public class ExportController {
 	        	pageSize = productSearchDTO.getPageSize();
 	        }
 	        String bu = productSearchDTO.getBu();
+	        log.error("=====得到bu==================="+bu); 
 	        if(StringUtils.isEmpty(bu) || "-1".equals(bu)){
  	        	return;
 	        }
-	        if("女鞋".equals(bu)){
-	        	log.error("==============走这里===============");
+	        if("womanshoe".equals(bu.toLowerCase())){
+	        	log.error("==============走这里 女鞋===============");
 	        	productBuffer =productService.shoeExportProduct(bu, supplier, startDate, endDate, pageIndex, pageSize);
 	        }else{
+	        	log.error("==============走这里 非女鞋===============");
 	        	productBuffer =productService.buExportProduct(bu, supplier, startDate, endDate, pageIndex, pageSize);
 	        }	        
 	        response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode((StringUtils.isBlank(supplier) ? "All":productSearchDTO.getSupplierName())+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
