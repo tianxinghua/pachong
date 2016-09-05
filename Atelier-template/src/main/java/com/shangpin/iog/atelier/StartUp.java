@@ -9,9 +9,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.atelier.priceService.CommonPriceService;
-import com.shangpin.iog.atelier.priceService.LeamPriceService;
 import com.shangpin.iog.atelier.priceService.ViettiPriceService;
-import com.shangpin.iog.atelier.service.FetchProduct;
 
 /**
  * 
@@ -50,11 +48,11 @@ public class StartUp {
 	public static void main(String[] args){	
 		
 //		args = new String[1];
-//		args[0] = "wise";
+//		args[0] = "cr";
 		
 		if(args.length==0 || StringUtils.isBlank(args[0])){
-			System.out.println("请传入参数，指定运行的供应商service,参数可取值为: vi,leam,dan,it,wise"); 
-			log.info("请传入参数，指定运行的供应商service,参数可取值为: vi,leam,dan,it,wise");
+			System.out.println("请传入参数，指定运行的供应商service,参数可取值为: vi,leam,dan,it,wise,cr"); 
+			log.info("请传入参数，指定运行的供应商service,参数可取值为: vi,leam,dan,it,wise,cr");
 		}else{
 			//加载spring
 	        log.info("----拉取Atelier-template数据开始----");
@@ -65,7 +63,8 @@ public class StartUp {
 	        	ViettiPriceService fetchProduct =(ViettiPriceService)factory.getBean("viettiPriceService");
 		        fetchProduct.handleData("spu", supplierId, day, picpath);
 	        }else if("leam".equals(args[0])){
-	        	LeamPriceService fetchProduct = (LeamPriceService) factory.getBean("leamPriceService");
+	        	//Leam采用通用处理 第3列作为供价  第4列作为市场价
+	        	CommonPriceService fetchProduct = (CommonPriceService) factory.getBean("commonPriceService");
 	        	fetchProduct.handleData("spu", supplierId, day, picpath);
 	        }else if("dan".equals(args[0])){
 	        	//Daniello采用通用处理 第3列作为供价  第4列作为市场价
@@ -77,6 +76,10 @@ public class StartUp {
 	        	fetchProduct.handleData("spu", supplierId, day, picpath);
 	        }else if("wise".equals(args[0])){
 	        	//wise采用通用处理 第3列作为供价  第4列作为市场价
+	        	CommonPriceService fetchProduct = (CommonPriceService) factory.getBean("commonPriceService");
+	        	fetchProduct.handleData("spu", supplierId, day, picpath);
+	        }else if("cr".equals(args[0])){
+	        	//createve99采用通用处理 第3列作为供价  第4列作为市场价
 	        	CommonPriceService fetchProduct = (CommonPriceService) factory.getBean("commonPriceService");
 	        	fetchProduct.handleData("spu", supplierId, day, picpath);
 	        }
