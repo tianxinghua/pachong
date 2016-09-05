@@ -119,7 +119,9 @@ public class PictureDownService {
                                             continue;
                                         }
                                         //某些供货商特殊处理
-                                        if("2015092401528".equals(supplierId)){  //stefania
+                                        if("2015092401528".equals(supplierId)||"2015101501608".equals(supplierId)){
+                                            //2015092401528 stefania \
+                                            // 2015101501608  tony
                                              DownloadPicTool.downImage(img.trim(),dirPath,spu+" ("+i+").jpg");
                                         }else{
                                             executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,userName,password));
