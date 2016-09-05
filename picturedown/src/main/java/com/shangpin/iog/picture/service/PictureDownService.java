@@ -186,7 +186,7 @@ public class PictureDownService {
         if(StringUtils.isNotBlank(supplierId)){
              if("2016032401823".equals(supplierId)){
                  url=url.replace("\\", "/");
-             }else if("2016030901801".equals(supplierId)){
+             }else if("2016030901801".equals(supplierId)){   //deliberti
                  url="http://"+url;
              }
         }

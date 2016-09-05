@@ -76,4 +76,9 @@ public class DownloadPicTool {
     private static String replaceSpecialChar(String url) {
         return url.replace(" ", "%20");
     }
+
+    public static void main(String[] args){
+        //http://www.tonyboutique.com/media/catalog/product/8/4/84128003_a0299-2.jpg
+        downImage("http://www.tonyboutique.com/media/catalog/product/8/4/84128003_a0299-2.jpg","e:/tmp","SPID2015101501608-ODQxMjgwMDM=-Qmx1 (1).jpg");
+    }
 }
