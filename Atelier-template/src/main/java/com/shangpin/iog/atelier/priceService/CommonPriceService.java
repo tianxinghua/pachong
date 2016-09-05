@@ -7,8 +7,14 @@ import com.shangpin.iog.atelier.dto.AtelierSpu;
 import com.shangpin.iog.atelier.service.FetchProduct;
 import com.shangpin.iog.dto.SkuDTO;
 
-@Component("italianiPriceService")
-public class ItalianiPriceService  extends FetchProduct {
+/**
+ * 价格通用处理类
+ * @author lubaijiang
+ *
+ */
+
+@Component("commonPriceService")
+public class CommonPriceService  extends FetchProduct {
 
 	@Override
 	public void setProductPrice(SkuDTO sku, AtelierSpu atelierSpu,

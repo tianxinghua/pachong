@@ -30,6 +30,7 @@ import com.shangpin.iog.dto.OrderTimeUpdateDTO;
 import com.shangpin.iog.dto.StockUpdateDTO;
 import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.service.OrderService;
+import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SupplierService;
 import com.shangpin.iog.service.UpdateStockService;
 
@@ -47,7 +48,10 @@ public class ExceptionShowController {
 	@Autowired
 	OrderService orderService;
 	@Autowired
-	UpdateStockService updateStockService;
+	UpdateStockService updateStockService;	
+	@Autowired
+    ProductSearchService productService;
+	
 	private static ResourceBundle bdl = null;
 	private static String host;
 	private static String deleteSupplier;
@@ -69,8 +73,8 @@ public class ExceptionShowController {
     public ModelAndView viewPage() throws Exception {
         ModelAndView mv = new ModelAndView("exception");
         List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
-
-        mv.addObject("supplierDTOList",supplierDTOList);
+        
+        mv.addObject("supplierDTOList",supplierDTOList);        
         return mv;
     }
 ////
@@ -93,6 +97,7 @@ public class ExceptionShowController {
     	List<OrderTimeUpdateDTO> redList = new ArrayList<OrderTimeUpdateDTO>();
     	List<OrderTimeUpdateDTO> greenList = new ArrayList<OrderTimeUpdateDTO>();
     	List<SupplierDTO> supplierDTOList = supplierService.findByState(null);
+    	List<String> bus = productService.findAllBus();    	
     	List<SupplierDTO> availableSupplierDTOList = supplierService.findAllWithAvailable();
     	Map<String, String> nameMap = new HashMap<String, String>();
     	for (SupplierDTO supplierDTO : supplierDTOList) {
@@ -145,6 +150,7 @@ public class ExceptionShowController {
     	model.addAttribute("greenOrderList", greenList);
     	model.addAttribute("redOrderList", redList);
     	model.addAttribute("supplierDTOList", availableSupplierDTOList);
+    	model.addAttribute("BUs", bus);
 		return "iog";
     }
     @RequestMapping(value = "/stockUpdateException")
@@ -154,6 +160,7 @@ public class ExceptionShowController {
     	List<StockUpdateDTO> greenList = new ArrayList<StockUpdateDTO>();
     	List<SupplierDTO> availableSupplierDTOList = supplierService.findAllWithAvailable();
     	List<SupplierDTO> supplierDTOList = supplierService.findByState(null);
+    	List<String> bus = productService.findAllBus();
     	Map<String, String> nameMap = new HashMap<String, String>();
     	for (SupplierDTO supplierDTO : supplierDTOList) {
 			nameMap.put(supplierDTO.getSupplierId(), supplierDTO.getSupplierName());
@@ -174,6 +181,7 @@ public class ExceptionShowController {
     	model.addAttribute("greenList", greenList);
     	model.addAttribute("redList", redList);
     	model.addAttribute("supplierDTOList", availableSupplierDTOList);
+    	model.addAttribute("BUs", bus);
 		return "iog";
     }
     @RequestMapping(value="/changeErrReason")

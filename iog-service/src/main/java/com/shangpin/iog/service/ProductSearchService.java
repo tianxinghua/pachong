@@ -190,5 +190,17 @@ public interface ProductSearchService {
 	 * @return
 	 */
 	public List<String> findAllBus() throws ServiceException;
+	
+	/**
+	 * 临时导出
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 * @throws ServiceException
+	 */
+	public StringBuffer tempExport(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
 }
 
