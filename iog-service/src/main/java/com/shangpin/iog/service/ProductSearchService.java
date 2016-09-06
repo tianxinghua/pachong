@@ -202,5 +202,17 @@ public interface ProductSearchService {
 	 * @throws ServiceException
 	 */
 	public StringBuffer tempExport(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+	
+	/**
+	 * 生成带有图片的excel文件，并且保存本地
+	 * @param picPath
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @throws ServiceException
+	 */
+	public void exportAndSaveReportProduct(String picPath,String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String localFile) throws ServiceException;
 }
 

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -31,12 +32,14 @@ public class ExportService {
 	private static String usrName=null;
 	private static String password=null;
 	private static String remotePath=null;
+	private static String picpath = null;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		savepath = bdl.getString("savepath");
 		startDate = bdl.getString("startDate");
 		endDate = bdl.getString("endDate");
+		picpath = bdl.getString("picpath");
 	}
 
 	@Autowired
@@ -45,7 +48,9 @@ public class ExportService {
     ProductSearchService productService;
 	
 	public void writeFile(){
+		
 		 List<SupplierDTO> suppliers = supplierDAO.findByState("1");
+		 
 		 //2016-08-26
 		 Date startTime = null ;
 		 if(StringUtils.isNotBlank(startDate)){
@@ -62,7 +67,7 @@ public class ExportService {
 		 for(SupplierDTO supplier : suppliers){
 			 BufferedWriter writer = null;
 			 try {
-				 //查数据，存文件
+				 //查数据，生成csv文件
 				 StringBuffer productBuffer =productService.exportReportProduct(supplier.getSupplierId(),startTime,endTime,null,null);
 				 File localFile = new File(savepath+File.separator+supplier.getSupplierName()+"_"+DateTimeUtil.getShortCurrentDate()+".csv");
 				 localFile.getParentFile().mkdir();		
@@ -72,6 +77,8 @@ public class ExportService {
 //				 writer = new BufferedWriter(new FileWriter(localFile));
 //				 writer.write(productBuffer.toString()); 
 				 writer.flush();
+				 //生成带图片的excel文件
+				 productService.exportAndSaveReportProduct(picpath,supplier.getSupplierId(),startTime,endTime,null,null,savepath+File.separator+supplier.getSupplierName()+"_"+DateTimeUtil.getShortCurrentDate()+".xls");
 				 //上传ftp
 				 int myPort = 21;
 				 if(StringUtils.isNotBlank(port)){

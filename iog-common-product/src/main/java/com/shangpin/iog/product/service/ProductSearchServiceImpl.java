@@ -1,5 +1,12 @@
 package com.shangpin.iog.product.service;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,8 +18,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +43,7 @@ import org.springframework.stereotype.Service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.framework.page.Page;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.InVoke;
 import com.shangpin.iog.dto.BrandSpDTO;
 import com.shangpin.iog.dto.BuEpRuleDTO;
@@ -1658,6 +1681,392 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	public List<SpuDTO> findPartBySupAndSpuId(String supplierId) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public void exportAndSaveReportProduct(String picPath,String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize ,String localFile) throws ServiceException{
+		//第一步创建workbook  
+        HSSFWorkbook wb = new HSSFWorkbook();           
+        //第二步创建sheet  
+        HSSFSheet sheet = wb.createSheet("产品信息");            
+        //第三步创建行row:添加表头0行  
+        HSSFRow row = sheet.createRow(0);  
+        HSSFCellStyle  style = wb.createCellStyle();      
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);  //居中  
+        //第四步创建单元格  
+        String[] row0 = {"图片","SupplierId 供货商名称","CategoryName 品类名称","Category 品类翻译","Category_No 品类编号","BrandNo 品牌编号","BrandName 品牌","ProductModel 货号",
+        		"SupplierSkuNo 供应商SkuNo","尚品sku编号"," 性别 ","SopProductName 商品名称","BarCode 条形码","ProductColor 颜色","color 中文","ProductSize 尺码","material 材质",
+        		"material 中文材质","ProductOrigin 产地","productUrl1","productUrl2","productUrl3","productUrl4","productUrl5","productUrl6","productUrl7","productUrl8","productUrl9",
+        		"PcDesc 描述","Stock 库存","新市场价","新销售价","新进货价","markerPrice","sallPrice","supplier Price 进货价","Currency 币种","新上市季节","上市季节","活动开始时间",
+        		"活动结束时间","SupplierSpuNo 供应商spu编号","供应商门户编号","SpuId","备注"};
+        for(int i= 0;i<row0.length;i++){
+        	HSSFCell cell = row.createCell(i);         //第一个单元格  
+            cell.setCellValue(row0[i]);                  //设定值  
+            cell.setCellStyle(style);
+        }
+        Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate,
+				endDate, pageIndex, pageSize, "same");
+		//品牌
+		List<String> brandList = new ArrayList<String>();
+		for(String brand:ePRuleDAO.findAll(2, 1)){
+			brandList.add(brand.toUpperCase());
+		}
+		//品类 排除
+		List<String> categeryList = new ArrayList<String>();
+		for(String cat:ePRuleDAO.findAll(3, 0)){
+			categeryList.add(cat.toUpperCase());
+		}
+		//季节 排除
+		List<String> seasonList = new ArrayList<String>();
+		for(String season:ePRuleDAO.findAll(5, 0)){
+			seasonList.add(season.toUpperCase());
+		}
+		//性别 排除
+		List<String> genderList = new ArrayList<String>();
+		for(String gender:ePRuleDAO.findAll(6, 0)){
+			genderList.add(gender.toUpperCase());
+		}
+		//需要的季节
+		List<String> supplierSeasonList = new ArrayList<String>();
+        List<SeasonRelationDTO> currentSeasonList  =   seasonRelationService.getAllCurrentSeason();
+        for(SeasonRelationDTO dto:currentSeasonList){
+//        	if(StringUtils.isNotBlank(dto.getSupplierSeason())){
+//        		supplierSeasonList.add(dto.getSupplierSeason().toUpperCase());
+//        	}
+        	supplierSeasonList.add(dto.getSupplierId()+"-"+(null==dto.getSupplierSeason()?"":dto.getSupplierSeason()));
+        }        
+		//品类map赋值
+		this.setCategoryMap();
+		// 设置尚品网品牌
+		this.setBrandMap();
+		// 颜色Map赋值
+		this.setColorContrastMap();
+		// 材质Map 赋值
+		this.setMaterialContrastMap();
+
+		String productSize, productDetail = "", brandName = "", brandId = "", color = "", material = "", productOrigin = "";
+
+		String supplierId="", categoryName = "", productName = "";	
+		
+		Map<String,String> allMap = new HashMap<String,String>();
+		FileOutputStream fileOut = null;     
+	    BufferedImage bufferImg = null;  
+		int j = 0;
+		for (int i= 0;i<page.getItems().size();i++) {
+			ProductDTO dto = page.getItems().get(i);
+			try { 
+				if(supplierSeasonList.contains(dto.getSupplierId()+"-"+(null==dto.getSeasonId()?"":dto.getSeasonId()))){
+					
+				}else if(supplierSeasonList.contains(dto.getSupplierId()+"-"+(null==dto.getSeasonName()?"":dto.getSeasonName()))){
+					
+				}else{
+					continue;
+				}
+				if(StringUtils.isBlank(dto.getSpSkuId()) && StringUtils.isNotBlank(dto.getColor()) && StringUtils.isNotBlank(dto.getSize()) && StringUtils.isNotBlank(dto.getMaterial()) && (StringUtils.isNotBlank(dto.getPicUrl()) || StringUtils.isNotBlank(dto.getItemPictureUrl1()))){
+					if(StringUtils.isNotBlank(dto.getCategoryGender()) && !genderList.contains(dto.getCategoryGender().toUpperCase())){
+						if((StringUtils.isNotBlank(dto.getSeasonId()) && !seasonList.contains(dto.getSeasonId().toUpperCase())) || (StringUtils.isNotBlank(dto.getSeasonName()) && !seasonList.contains(dto.getSeasonName().toUpperCase()))){
+							if((StringUtils.isNotBlank(dto.getCategoryName()) && !categeryList.contains(dto.getCategoryName().toUpperCase())) || (StringUtils.isNotBlank(dto.getSubCategoryName()) && !categeryList.contains(dto.getSubCategoryName().toUpperCase()))){
+								if(null != dto.getBrandName() && (brandList.contains(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
+									try {
+										
+										if(allMap.containsKey(dto.getSpuId()+dto.getColor())){
+											continue;
+										}
+										j++;
+										row = sheet.createRow(j);  
+										row.setHeight((short) 1500);	
+										sheet.setColumnWidth(0, 36*150);
+										//第一个单元格：图片										
+										String fileName = picPath+File.separator+supplier+File.separator+DateTimeUtil.convertFormat(new Date(),"yyyy-MM-dd")+ File.separator +"SPID"+dto.getSupplierId()+"-"+getBASE64(dto.getSpuId())+"-"+getBASE64(dto.getColor())+" (1).jpg";
+										System.out.println(fileName);
+										File file = new File(fileName);
+										if(file.exists()){
+										   ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();     
+								           bufferImg = ImageIO.read(file);     
+								           ImageIO.write(bufferImg, "jpg", byteArrayOut); 									           
+								           //画图的顶级管理器，一个sheet只能获取一个（一定要注意这点）  
+								           HSSFPatriarch patriarch = sheet.createDrawingPatriarch();     
+								           //anchor主要用于设置图片的属性  
+								           HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 500, 255,(short) 0, j, (short) 0, j);     
+								           anchor.setAnchorType(AnchorType.MOVE_AND_RESIZE);     
+								           //插入图片    
+								           patriarch.createPicture(anchor, wb.addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));   
+										}else{
+											row.createCell(0).setCellValue("无图片");  
+										}															 
+										
+										//supplierId 供货商
+										supplierId = dto.getSupplierName();
+										if(StringUtils.isNotBlank(supplierId)){
+											row.createCell(1).setCellValue(supplierId);  
+										}else{
+											row.createCell(1).setCellValue(dto.getSupplierId()); 
+										}
+										
+										// 品类名称
+										categoryName = dto.getSubCategoryName();
+										if (StringUtils.isBlank(categoryName)) {
+											categoryName = StringUtils.isBlank(dto.getCategoryName()) ? ""
+													: dto.getCategoryName();
+		
+										}
+										
+										//翻译
+										String categoryCH = "";
+										if(StringUtils.isNotBlank(categoryName)){
+											if(categoryContrastMap.containsKey(categoryName.toLowerCase())){
+												categoryCH = categoryContrastMap.get(categoryName.toLowerCase());
+											}
+										}
+										
+										categoryName = categoryName.replaceAll(splitSign, " ");
+										row.createCell(2).setCellValue(categoryName);
+										
+										//品类翻译
+										row.createCell(3).setCellValue(categoryCH);
+										
+										row.createCell(4).setCellValue("尚品网品类编号");
+		
+										brandName = dto.getBrandName();
+										if (StringUtils.isNotBlank(brandName)) {
+											if (spBrandMap.containsKey(brandName.toLowerCase())) {
+												brandId = spBrandMap.get(brandName.toLowerCase());
+											} else {
+												brandId = "";
+											}
+										} else {
+											brandId = "";
+										}
+		
+										row.createCell(5).setCellValue(!"".equals(brandId) ? brandId : "尚品网品牌编号");
+										row.createCell(6).setCellValue(brandName);
+										// 货号
+										row.createCell(7).setCellValue(
+												null == dto.getProductCode() ? "" : dto
+														.getProductCode().replaceAll(",", " "));
+										// 供应商SKUID
+		
+										row.createCell(8).setCellValue("\"\t" + dto.getSkuId() + "\"");
+										//尚品sku编号
+										row.createCell(9).setCellValue(StringUtils.isNotBlank(dto.getSpSkuId())? dto.getSpSkuId():"");
+										
+										// 欧洲习惯 第一个先看 男女
+										row.createCell(10).setCellValue(
+												null == dto.getCategoryGender() ? "" : dto
+														.getCategoryGender().replaceAll(splitSign, " "));
+										// 产品名称
+										productName = dto.getProductName();
+										if (StringUtils.isBlank(productName)) {
+											productName = dto.getSpuName();
+										}
+		
+										if (StringUtils.isNotBlank(productName)) {
+		
+											productName = productName.replaceAll(splitSign, " ")
+													.replaceAll("\\r", "").replaceAll("\\n", "");
+										}
+		
+										row.createCell(11).setCellValue(productName);
+		
+										row.createCell(12).setCellValue("\"\t" + dto.getBarcode() + "\"");
+		
+										// 获取颜色
+										color = dto.getColor()==null?"":dto.getColor().replace(",", " ").replaceAll("/", " "); 
+										row.createCell(13).setCellValue(null == color ? "" : color.replace(",", " "));
+										// 翻译中文
+										String colorCh = "";
+										if (StringUtils.isNotBlank(color)) {
+											if(colorContrastMap.containsKey(color.toLowerCase())){
+												colorCh = colorContrastMap.get(color.toLowerCase());
+											}else{
+												for(String co :color.split("\\s+")){
+													if (colorContrastMap.containsKey(co.toLowerCase())) {
+														colorCh += colorContrastMap.get(co.toLowerCase());
+													}else{
+														colorCh += co;
+													}
+												}
+											}	
+											
+										}
+										row.createCell(14).setCellValue(colorCh);
+		
+										// 获取尺码
+										productSize = dto.getSize();
+										if (StringUtils.isNotBlank(productSize)) {
+											productSize=productSize.replace(",", ".");
+											if (productSize.indexOf("+") > 0) {
+												productSize = productSize.replace("+", ".5");
+											}
+											productSize = productSize.replaceAll(splitSign, " ");
+		
+										} else {
+											productSize = "";
+										}
+										row.createCell(15).setCellValue(productSize);
+		
+										// 获取材质
+										material = dto.getMaterial();
+										if (StringUtils.isBlank(material)) {
+											material = "";
+										} else {
+	
+											material = material.replaceAll(splitSign, " ")
+													.replaceAll("\\r", "").replaceAll("\\n", "");
+										}
+	
+										row.createCell(16).setCellValue(material);
+										// 材质 中文
+										if (StringUtils.isNotBlank(material)) {
+											
+											//先遍历带有空格的材质
+											Set<Map.Entry<String, String>> materialSet = materialContrastMap
+													.entrySet();
+											for (Map.Entry<String, String> entry : materialSet) {
+	
+												material = material.toLowerCase().replaceAll(
+														entry.getKey(), entry.getValue());
+											}
+											
+											//再遍历单个材质
+											Set<Map.Entry<String, String>> smallMaterialSet = smallMaterialContrastMap
+													.entrySet();
+											for (Map.Entry<String, String> entry : smallMaterialSet) {
+	
+												material = material.toLowerCase()
+														.replaceAll(entry.getKey(),
+																entry.getValue());
+											}
+										}
+	
+										row.createCell(17).setCellValue(material);
+										// 获取产地
+										productOrigin = dto.getProductOrigin();
+										if (StringUtils.isNotBlank(productOrigin)) {
+											if (cityMap.containsKey(productOrigin.toLowerCase())) {
+												productOrigin = cityMap
+														.get(productOrigin.toLowerCase());
+											}
+										} else {
+											productOrigin = "";
+										}
+		
+										row.createCell(18).setCellValue(productOrigin);
+		
+										// 图片
+										row.createCell(19).setCellValue(dto.getPicUrl());
+										row.createCell(20).setCellValue(dto.getItemPictureUrl1());
+										row.createCell(21).setCellValue(dto.getItemPictureUrl2());
+										row.createCell(22).setCellValue(dto.getItemPictureUrl3());
+										row.createCell(23).setCellValue(dto.getItemPictureUrl4());
+										row.createCell(24).setCellValue(dto.getItemPictureUrl5());
+										row.createCell(25).setCellValue(dto.getItemPictureUrl6());
+										row.createCell(26).setCellValue(dto.getItemPictureUrl7());
+										row.createCell(27).setCellValue(dto.getItemPictureUrl8());
+										// 明细描述
+										productDetail = dto.getProductDescription();
+										if (StringUtils.isNotBlank(productDetail)) {					
+											productDetail = productDetail.replaceAll(splitSign, "  ");
+											productDetail = productDetail.replaceAll("\\r", "")
+													.replaceAll("\\n", "");
+										}
+		
+										row.createCell(28).setCellValue(productDetail);
+		
+										row.createCell(29).setCellValue(dto.getStock());
+										// 新的价格
+										String newMarketPrice = dto.getNewMarketPrice();
+										String newSalePrice = dto.getNewSalePrice();
+										String newSupplierPrice = dto.getNewSupplierPrice();
+										if (StringUtils.isNotBlank(newMarketPrice)) {
+											newMarketPrice = newMarketPrice.replace(",", ".");
+										} else {
+											newMarketPrice = "";
+										}
+										if (StringUtils.isNotBlank(newSalePrice)) {
+											newSalePrice = newSalePrice.replace(",", ".");
+										} else {
+											newSalePrice = "";
+										}
+										if (StringUtils.isNotBlank(newSupplierPrice)) {
+											newSupplierPrice = newSupplierPrice.replace(",", ".");
+										} else {
+											newSupplierPrice = "";
+										}
+										row.createCell(30).setCellValue(newMarketPrice);
+										row.createCell(31).setCellValue(newSalePrice);
+										row.createCell(32).setCellValue(newSupplierPrice);
+										// 价格
+										String marketPrice = dto.getMarketPrice();
+										String salePrice = dto.getSalePrice();
+										String supplierPrice = dto.getSupplierPrice();
+										if (StringUtils.isNotBlank( marketPrice)) {
+											marketPrice = marketPrice.replace(",", ".");
+										} else {
+											marketPrice = "";
+										}
+										if (StringUtils.isNotBlank(salePrice )) {
+											salePrice = salePrice.replace(",", ".");
+										} else {
+											salePrice = "";
+										}
+										if (StringUtils.isNotBlank(supplierPrice )) {
+											supplierPrice = supplierPrice.replace(",", ".");
+										} else {
+											supplierPrice = "";
+										}
+										row.createCell(33).setCellValue(marketPrice);
+										row.createCell(34).setCellValue(salePrice);
+										row.createCell(35).setCellValue(supplierPrice);
+										row.createCell(36).setCellValue(dto.getSaleCurrency());								
+										//新季节
+										row.createCell(37).setCellValue(
+												null == dto.getNewseasonName() ? dto.getNewseasonId() : dto
+														.getNewseasonName());
+										// 季节
+										row.createCell(38).setCellValue(
+												null == dto.getSeasonName() ? dto.getSeasonId() : dto
+														.getSeasonName());
+										// 活动开始时间
+										row.createCell(39).setCellValue(
+												null == dto.getEventStartTime() ? " " : DateTimeUtil.convertFormat(dto.getEventStartTime(), "yyyy-MM-dd HH:mm:ss"));
+										// 活动结束时间
+										row.createCell(40).setCellValue(null == dto.getEventEndTime() ? " " : DateTimeUtil.convertFormat(dto.getEventEndTime(),"yyyy-MM-dd HH:mm:ss"));										
+										//供应商spuid
+										row.createCell(41).setCellValue(null == dto.getSpuId() ? " " : dto
+												.getSpuId());
+										//供应商门户编号
+										row.createCell(42).setCellValue(null == dto.getSupplierId() ? " " : dto
+												.getSupplierId());
+										//spuid
+										row.createCell(43).setCellValue(null == dto.getSpuId() ? " " : "SPID"+dto.getSupplierId()+"-"+getBASE64(dto.getSpuId())+"-"+getBASE64(dto.getColor()));
+										row.createCell(44).setCellValue(dto.getMemo());										
+									
+										allMap.put(dto.getSpuId()+dto.getColor(), null);
+									} catch (Exception e) {
+										e.printStackTrace();
+										logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
+										continue;
+									}
+								}
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
+				continue;
+			}
+		}
+		//保存文件
+		try {
+			FileOutputStream fout = new FileOutputStream(localFile);  
+	        wb.write(fout);  
+	        fout.close(); 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		 
+        
 	}
 	
 	public StringBuffer exportReportProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException{
@@ -3497,5 +3906,90 @@ public StringBuffer exportProductByEpRule(String supplier,Date startDate,Date en
 		return page;
 
 	}
+	
+	public static void main(String[] args) {  
+        FileOutputStream fileOut = null;     
+        BufferedImage bufferImg = null;     
+       //先把读进来的图片放到一个ByteArrayOutputStream中，以便产生ByteArray    
+//       try { 
+//    	   HSSFWorkbook wb = new HSSFWorkbook();     
+//           HSSFSheet sheet = wb.createSheet("test picture");    
+//           //画图的顶级管理器，一个sheet只能获取一个（一定要注意这点）  
+//           HSSFPatriarch patriarch = sheet.createDrawingPatriarch();    
+//    	   
+//    	   InputStream is = new FileInputStream(new File("F:\\testpics\\2016030401797\\2016-09-05\\SPID2016030401797-NDEwMA==-MTAwMCBORVJP (1).JPG"));  
+//			byte[] bytes = IOUtils.toByteArray(is);
+////			int pictureIdx = wb.addPicture(bytes, wb.PICTURE_TYPE_JPEG); 
+//			int pictureIdx = wb.addPicture(bytes, wb.PICTURE_TYPE_JPEG);  
+//			is.close();
+//			CreationHelper helper = wb.getCreationHelper();  
+//			Drawing drawing = sheet.createDrawingPatriarch();  
+//			ClientAnchor anchor = helper.createClientAnchor();
+//			// 图片插入坐标  
+//			anchor.setCol1(0);  
+//			anchor.setRow1(1);  
+//			// 插入图片  
+//			Picture pict = drawing.createPicture(anchor, pictureIdx);  
+//			pict.resize(); 
+//    	   
+//    	   
+////           ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();     
+////           bufferImg = ImageIO.read(new File("F:\\testpics\\2016030401797\\2016-09-05\\SPID2016030401797-NDEwMA==-MTAwMCBORVJP (1).JPG"));     
+////           ImageIO.write(bufferImg, "jpg", byteArrayOut);  
+//             
+//            
+//           //anchor主要用于设置图片的属性  
+////           HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 255, 255,(short) 1, 1, (short) 5, 8);     
+////           anchor.setAnchorType(AnchorType.MOVE_AND_RESIZE);     
+////           //插入图片    
+////           patriarch.createPicture(anchor, wb.addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));   
+//           fileOut = new FileOutputStream("D:/测试Excel.xls");     
+//           // 写入excel文件     
+//            wb.write(fileOut);     
+//            System.out.println("----Excle文件已生成------");  
+//       } catch (Exception e) {  
+//           e.printStackTrace();  
+//       }finally{  
+//           if(fileOut != null){  
+//                try {  
+//                   fileOut.close();  
+//               } catch (IOException e) {  
+//                   e.printStackTrace();  
+//               }  
+//           }  
+//       }  
+        
+       
+       //先把读进来的图片放到一个ByteArrayOutputStream中，以便产生ByteArray    
+       try {  
+           ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();     
+           bufferImg = ImageIO.read(new File("F:\\testpics\\2016030401797\\2016-09-05\\SPID2016030401797-NDEwMA==-MTAwMCBORVJP (1).JPG"));     
+           ImageIO.write(bufferImg, "jpg", byteArrayOut);  
+             
+           HSSFWorkbook wb = new HSSFWorkbook();     
+           HSSFSheet sheet1 = wb.createSheet("test picture");    
+           //画图的顶级管理器，一个sheet只能获取一个（一定要注意这点）  
+           HSSFPatriarch patriarch = sheet1.createDrawingPatriarch();     
+           //anchor主要用于设置图片的属性  
+           HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 255, 255,(short) 0, 0, (short) 0, 0);     
+           anchor.setAnchorType(AnchorType.MOVE_AND_RESIZE);     
+           //插入图片    
+           patriarch.createPicture(anchor, wb.addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));   
+           fileOut = new FileOutputStream("D:/测试Excel.xls");     
+           // 写入excel文件     
+            wb.write(fileOut);     
+            System.out.println("----Excle文件已生成------");  
+       } catch (Exception e) {  
+           e.printStackTrace();  
+       }finally{  
+           if(fileOut != null){  
+                try {  
+                   fileOut.close();  
+               } catch (IOException e) {  
+                   e.printStackTrace();  
+               }  
+           }  
+       }  
+   }  
 	
 }
