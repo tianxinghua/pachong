@@ -119,7 +119,9 @@ public class PictureDownService {
                                             continue;
                                         }
                                         //某些供货商特殊处理
-                                        if("2015092401528".equals(supplierId)){  //stefania
+                                        if("2015092401528".equals(supplierId)||"2015101501608".equals(supplierId)){
+                                            //2015092401528 stefania \
+                                            // 2015101501608  tony
                                              DownloadPicTool.downImage(img.trim(),dirPath,spu+" ("+i+").jpg");
                                         }else{
                                             executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,userName,password));
@@ -184,7 +186,7 @@ public class PictureDownService {
         if(StringUtils.isNotBlank(supplierId)){
              if("2016032401823".equals(supplierId)){
                  url=url.replace("\\", "/");
-             }else if("2016030901801".equals(supplierId)){
+             }else if("2016030901801".equals(supplierId)){   //deliberti
                  url="http://"+url;
              }
         }
