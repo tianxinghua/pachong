@@ -271,6 +271,25 @@
 	   </set>
 	    where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
     </update>
+    
+    
+    <update id="updateLastTime">
+       update SKU
+       <set>
+       		LAST_TIME = NOW()
+       </set>
+       <where>
+	            <if test="null!=supplierId">
+	                SUPPLIER_ID = #{supplierId}
+	            </if>
+	            <if test="null!=skuId">
+	                and SKU_ID = #{skuId}
+	            </if>
+	               <if test="null!=spuId">
+	                and SpU_ID = #{spuId}
+	            </if>
+	        </where>
+    </update>
 	<update id="updateSkuMemoList">
        update SKU
        <set>
