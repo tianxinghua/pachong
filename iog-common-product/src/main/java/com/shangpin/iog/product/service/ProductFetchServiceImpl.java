@@ -155,6 +155,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     public void updatePriceAndStock(SkuDTO skuDTO) throws ServiceException {
         try {
             if(null==skuDTO.getUpdateTime()) skuDTO.setUpdateTime(new Date());
+            skuDTO.setLastTime(null);
 			SkuDTO tmpDto = skuDAO.findSKUBySupplierAndSkuId(skuDTO.getSupplierId(),skuDTO.getSkuId());
 			if(null!=tmpDto){
 //				if(!InVoke.compile(skuDTO,tmpDto,new HashMap<String,String>(){
@@ -164,15 +165,18 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 //				})) {
 //					skuDTO.setLastTime(new Date());
 //				}
-				if(tmpDto.getColor()!=null){
+				
+				if(StringUtils.isNotBlank(tmpDto.getColor())){
 					if(!tmpDto.getColor().equals(skuDTO.getColor())){
 						skuDTO.setLastTime(new Date());
 					}
 				}else{
-					if(skuDTO.getColor()!=null){
+					if(StringUtils.isNotBlank(skuDTO.getColor())){
 						skuDTO.setLastTime(new Date());
 					}
 				}
+					
+				
 				
 			}
 
