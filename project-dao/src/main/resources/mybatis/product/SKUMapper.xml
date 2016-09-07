@@ -140,6 +140,7 @@
               <if test="color != null"> COLOR = #{color},</if>
               <if test="productDescription != null"> PRODUCT_DESCRIPTION = #{productDescription},</if>
               <if test="updateTime != null"> UPDATE_TIME = #{updateTime},</if>
+			  <if test="lastTime != null"> LAST_TIME = #{lastTime},</if>
               <if test="eventStartDate != null"> EVENT_START_DATE = #{eventStartDate},</if>
               <if test="eventEndDate != null"> EVENT_END_DATE = #{eventEndDate}</if>
           </set>

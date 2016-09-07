@@ -142,8 +142,13 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             if(null==skuDTO.getUpdateTime()) skuDTO.setUpdateTime(new Date());
 			SkuDTO tmpDto = skuDAO.findSKUBySupplierAndSkuId(skuDTO.getSupplierId(),skuDTO.getSkuId());
 			if(null!=tmpDto){
+				if(!InVoke.compile(skuDTO,tmpDto,new HashMap<String,String>(){
+					{ put("createTime","");put("lastTime","");put("updateTime","");
+					}
+				})) {
+					skuDTO.setLastTime(new Date());
+				}
 
-				skuDTO.setLastTime(new Date());
 			}
 
             skuDAO.updatePriceAndStock(skuDTO);
@@ -156,6 +161,17 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     public void updateMaterial(SpuDTO spuDTO) throws ServiceException {
         try {
 //            if(null==spuDTO.getLastTime()) spuDTO.setLastTime(new Date());
+
+			SpuDTO tmpDto = spuDAO.findPartBySupAndSpuId(spuDTO.getSupplierId(),spuDTO.getSpuId());
+			if(null!=tmpDto){
+				if(!InVoke.compile(spuDTO,tmpDto,new HashMap<String,String>(){
+					{ put("createTime","");put("lastTime","");put("updateTime","");
+					}
+				})) {
+
+				}
+
+			}
             spuDAO.updateMaterial(spuDTO);
         } catch ( Exception e) {
 
