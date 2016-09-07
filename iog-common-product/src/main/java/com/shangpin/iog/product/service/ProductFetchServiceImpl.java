@@ -84,6 +84,14 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     @Override
     public void saveSPU(List<SpuDTO> spuDTOList) throws ServiceException {
         try {
+			for(SpuDTO spuDTO:spuDTOList){
+				if(null==spuDTO.getNewseasonId()){
+					spuDTO.setNewseasonId(spuDTO.getSeasonId());
+				}
+				if(null==spuDTO.getNewseasonName()){
+					spuDTO.setNewseasonName(spuDTO.getNewseasonName());
+				}
+			}
             spuDAO.saveList(spuDTOList);
         } catch (Exception e) {
         	if(e instanceof DuplicateKeyException)
@@ -95,6 +103,12 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     @Override
     public void saveSPU(SpuDTO spuDTO) throws ServiceException {
         try {
+			if(null==spuDTO.getNewseasonId()){
+				spuDTO.setNewseasonId(spuDTO.getSeasonId());
+			}
+			if(null==spuDTO.getNewseasonName()){
+				spuDTO.setNewseasonName(spuDTO.getNewseasonName());
+			}
             spuDAO.save(spuDTO);
         } catch (Exception e) {
         	if(e instanceof DuplicateKeyException)
@@ -144,7 +158,8 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 			SkuDTO tmpDto = skuDAO.findSKUBySupplierAndSkuId(skuDTO.getSupplierId(),skuDTO.getSkuId());
 			if(null!=tmpDto){
 				if(!InVoke.compile(skuDTO,tmpDto,new HashMap<String,String>(){
-					{ put("id","");put("createTime","");put("lastTime","");put("updateTime","");
+					{ put("id","");put("createTime","");put("lastTime","");put("updateTime","");put("stock","");
+						put("stock",""); put("spSkuId","");put("spStatus","");put("spProductCode","");put("memo","");
 					}
 				})) {
 					skuDTO.setLastTime(new Date());
@@ -167,6 +182,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 			if(null!=tmpDto){
 				if(!InVoke.compile(spuDTO,tmpDto,new HashMap<String,String>(){
 					{ put("id","");put("createTime","");put("lastTime","");put("updateTime","");
+						put("spCategory","");put("spBrand","");put("memo","");put("updateTime","");
 					}
 				})) {
 					skuDAO.updateLastTime(spuDTO.getSupplierId(),null,spuDTO.getSpuId());
