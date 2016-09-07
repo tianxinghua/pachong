@@ -31,7 +31,7 @@ public class SkuDTO implements Serializable {
     private String stock;//库存  必填   如果库存等于0的 不存
     private String memo;  //备注
     private Date createTime = new Date();
-    private Date lastTime= new Date();//修改时间
+    private Date lastTime;//修改时间
      
     private String newMarketPrice; //新的市场价
     private String newSalePrice;

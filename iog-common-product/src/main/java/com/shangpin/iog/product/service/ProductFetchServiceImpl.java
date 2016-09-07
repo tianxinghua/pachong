@@ -108,7 +108,10 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     public void saveSKU(List<SkuDTO> skuDTOList) throws ServiceException {
 
         try {
-
+			Date date  = new Date();
+			for(SkuDTO skuDTO:skuDTOList){
+				skuDTO.setLastTime(date);
+			}
             skuDAO.saveList(skuDTOList);
         } catch (Exception e) {
         	if(e instanceof DuplicateKeyException)
@@ -137,6 +140,12 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     public void updatePriceAndStock(SkuDTO skuDTO) throws ServiceException {
         try {
             if(null==skuDTO.getUpdateTime()) skuDTO.setUpdateTime(new Date());
+			SkuDTO tmpDto = skuDAO.findSKUBySupplierAndSkuId(skuDTO.getSupplierId(),skuDTO.getSkuId());
+			if(null!=tmpDto){
+
+				skuDTO.setLastTime(new Date());
+			}
+
             skuDAO.updatePriceAndStock(skuDTO);
         } catch ( Exception e) {
 

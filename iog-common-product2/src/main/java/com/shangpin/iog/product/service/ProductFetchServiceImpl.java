@@ -168,6 +168,7 @@ public  class ProductFetchServiceImpl implements ProductFetchService {
     public void updateMaterial(SpuDTO spuDTO) throws ServiceException {
         try {
             if(null==spuDTO.getLastTime()) spuDTO.setLastTime(new Date());
+
             spuDAO.updateMaterial(spuDTO);
         } catch ( Exception e) {
 
