@@ -37,7 +37,7 @@ public class PictureDownService {
     private static String to = null;
     private static String subject = null;
     private static String messageType = null;
-    private static String supplierId = null;
+    private static String supplier_Id = null;
     private static String startDate = null;
     private static String endDate = null;
     private static String downloadPath = null;
@@ -60,7 +60,7 @@ public class PictureDownService {
 
         filepath = bdl.getString("filepath");
 
-        supplierId = bdl.getString("supplierId");
+        supplier_Id = bdl.getString("supplierId");
         startDate = bdl.getString("startDate");
         endDate = bdl.getString("endDate");
         downloadPath = bdl.getString("downloadPath");
@@ -73,8 +73,8 @@ public class PictureDownService {
         Map<String,String> picMap = new HashMap<>();
         Map<String,String> supplierDateMap = null;
         try {
-            if("".equals(supplierId)) supplierId=null;
-            supplierDateMap = productReportService.findPicture(picMap,supplierId,startDate,endDate,excludesupplierId);
+            if("".equals(supplier_Id)) supplier_Id=null;
+            supplierDateMap = productReportService.findPicture(picMap,supplier_Id,startDate,endDate,excludesupplierId);
             if(null!=supplierDateMap&&supplierDateMap.size()>0){
                 //获取日期
                 String key = "",supplierId = "",date= "",spukeyValue = "";
@@ -118,7 +118,16 @@ public class PictureDownService {
                                         if (f.exists()) {
                                             continue;
                                         }
-                                        executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,userName,password));
+                                        //某些供货商特殊处理
+                                        if("2015092401528".equals(supplierId)||"2015101501608".equals(supplierId)){
+                                            //2015092401528 stefania \
+                                            // 2015101501608  tony
+                                             DownloadPicTool.downImage(img.trim(),dirPath,spu+" ("+i+").jpg");
+                                        }else{
+                                            executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,userName,password));
+                                        }
+
+
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
@@ -177,7 +186,7 @@ public class PictureDownService {
         if(StringUtils.isNotBlank(supplierId)){
              if("2016032401823".equals(supplierId)){
                  url=url.replace("\\", "/");
-             }else if("2016030901801".equals(supplierId)){
+             }else if("2016030901801".equals(supplierId)){   //deliberti
                  url="http://"+url;
              }
         }

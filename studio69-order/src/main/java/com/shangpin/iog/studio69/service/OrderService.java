@@ -87,93 +87,47 @@ public class OrderService extends AbsOrderService{
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		
 		try {
-			// TODO 支付逻辑
-			
-//			Map<String, String> map = new HashMap<String, String>();
-//			map.put("SOAPAction", "http://tempuri.org/CreateNewOrder");
-//			map.put("Content-Type", "text/xml; charset=UTF-8");
-//			map.put("Content-Type", "application/soap+xml; charset=utf-8");
-//			System.out.println("=================tables fetch begin====================================");
-//			try {
-//				json = HttpUtil45
-//						.operateData(
-//								"post",
-//								"soap",
-//								"http://studio69.atelier98.net/api_studio69/api_studio69.asmx?op=CreateNewOrder",
-//								new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10,
-//										1000 * 60 * 10), map, xx, username, password);
-//				System.out.println("tables ："+json.length());
-//				System.out.println("=================tables fetch end====================================");
-//				logger.info("tables ："+json.length());
-//				logger.info("=================tables fetch end====================================");
-//			} catch (ServiceException e) {
-//				e.printStackTrace();
-//			}
-//			String sopAction = "http://tempuri.org/CreateNewOrder";
-//			String contentType = "text/xml; charset=UTF-8";
-//			String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"+
-//					"<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
-//					"  <soap:Body>\n"+
-//					"    <CreateNewOrder xmlns=\"http://tempuri.org/\">\n"+
-//					"      <OrderID>201607204043660</OrderID>\n"+
-//					"      <BuyerInfo>"
-//					+ "<Name>test</Name>"
-//					+ "<Address>shangpin</Address>"					
-//					+ "<zipcode>100000</zipcode>"
-//					+ "<Corriere></Corriere>"
-//					+ "<Notes></Notes>"
-//					+ "</BuyerInfo>\n"+
-//					"<GoodsList>"
-//					+ "<Good>"
-//					+ "<ID>65128</ID>"
-//					+ "<Size>UNI</Size>"
-//					+ "<Qty>1</Qty>"
-//					+ "<Price>1265</Price>"
-//					+ "</Good>"
-//					+ "</GoodsList>\n"+
-//					"</CreateNewOrder>\n"+
-//					"</soap:Body>\n"+
-//					"</soap:Envelope>";
-//			String url = "http://studio69.atelier98.net/api_studio69/api_studio69.asmx?op=CreateNewOrder";
-//			String sss = SoapXmlUtil.getSoapXml(url, sopAction, contentType, soapRequestData, username, password);
-//			System.out.println(sss); 
-		
-			String buyerInfo = "<BuyerInfo>"
+			// TODO 支付逻辑			
+			String param = "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">"
+					+ "<soap12:Body>"
+					+ "<CreateNewOrder xmlns=\"http://tempuri.org/\">"					
+					+ "<orderID>20160901001010</orderID>"
+					+ "<buyerInfo>"
 					+ "<Name>test</Name>"
 					+ "<Address>shangpin</Address>"
-					+ "<Corriere></Corriere>"
+					+ "<Mobile>15101515421</Mobile>"
 					+ "<zipcode>100000</zipcode>"
-					+ "<Notes></Notes>"
-					+ "</BuyerInfo>";
-			String goodsList = "<GoodsList>"
+					+ "<Country>china</Country>"
+					+ "</buyerInfo>"
+					+ "<goodsList>"
 					+ "<Good>"
-					+ "<ID>65128</ID>"
-					+ "<Size>UNI</Size>"
+					+ "<ID>32400</ID>"
+					+ "<Size>48</Size>"
 					+ "<Qty>1</Qty>"
-					+ "<Price>1265</Price>"
+					+ "<Price>305</Price>"
 					+ "</Good>"
-					+ "</GoodsList>";
-			
-//			CreateNewOrder createNewOrder82 =  new CreateNewOrder();
-//			createNewOrder82.setOrderID("201607204043660");
-//			createNewOrder82.setBuyerInfo(buyerInfo);
-//			createNewOrder82.setGoodsList(goodsList);
-//			
-//			ConfigurationContext configurationContext =  new ConfigurationContext(null);
-//			API_STUDIO69Stub api = new API_STUDIO69Stub();
-//			
-//			CreateNewOrderResponse response = api.createNewOrder(createNewOrder82);
-//			
-//			System.out.println(response); 
-//			logger.info(response);
-			
-			Map<String,String> param = new HashMap<String,String>();
-			param.put("orderID", "201607204043660");
-			param.put("buyerInfo", buyerInfo);
-			param.put("goodsList", goodsList);
-			String data = HttpUtil45.postAuth(url+"CreateNewOrder", param, outTimeConf, username, password);
-			logger.info(data); 
-			System.out.println(data); 
+					+ "</goodsList>"
+					+ "</CreateNewOrder>" + "</soap12:Body>" + "</soap12:Envelope>";
+			System.out.println("下单参数=================\n"+param);
+			logger.info("下单参数=================\n"+param); 
+			String json = null;
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("SOAPAction", "http://tempuri.org/CreateNewOrder");
+			map.put("Content-Type", "application/soap+xml; charset=utf-8");
+			System.out.println("=================tables fetch begin====================================");
+			try {
+				json = HttpUtil45
+						.operateData(
+								"post",
+								"soap",
+								"http://studio69.atelier98.net/api_studio69/api_studio69.asmx?op=CreateNewOrder",
+								new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10,
+										1000 * 60 * 10), map, param, "SHANGPIN", "2MWWKgNSxgf");
+				System.out.println("返回的结果===============\n"+json);
+				logger.info("返回的结果===============\n"+json);
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
 			
 		} catch (Exception e) {
 			errorLog.error(e);

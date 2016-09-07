@@ -99,7 +99,7 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 				spu.setId(UUIDGenerator.getUUID());
 				spu.setSupplierId(supplierId);
 				spu.setSpuId(p.getSkuId());
-				spu.setBrandName(p.getVendor_name());
+				spu.setBrandName(p.getManufacturer());
 				spu.setCategoryName(getCategoryName(categoryMap, p.getCategory()));
 				spu.setMaterial(p.getMaterial());
 				spu.setProductOrigin(p.getMadein());

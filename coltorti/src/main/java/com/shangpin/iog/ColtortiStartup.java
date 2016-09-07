@@ -86,6 +86,8 @@ public class ColtortiStartup {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		args = new String[1];
+		args[0] = "p";
 		String action=(args==null ||args.length<1)?null:args[0];
 		if(!"p".equals(action) && !"s".equals(action)){
 			System.out.println(":::::警告::::\r参数1必填,可为p或者s。p代表获取数据，s代表更新库存");

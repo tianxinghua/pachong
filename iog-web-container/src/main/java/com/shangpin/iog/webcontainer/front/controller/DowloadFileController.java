@@ -38,6 +38,15 @@ import com.shangpin.iog.dto.ProductSearchDTO;
 import com.shangpin.iog.webcontainer.front.dto.PicUrlDTO;
 import com.shangpin.iog.webcontainer.front.util.excel.ReadExcel;
 
+/**
+ * 下载图片
+ * 1.上传文件下载图片
+ * 2.选择供应商下载图片
+ * @author sunny
+ *
+ */
+
+
 @Controller
 @RequestMapping("/download")
 public class DowloadFileController {

@@ -184,6 +184,30 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
      */
     List<ProductDTO> findReportBySupplierIdAndCreateTime(@Param("supplier") String supplierId,@Param("startDate") Date startDate,@Param("endDate") Date endDate) throws ServiceException;
     
+    /**
+     * 临时导出 分页
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @param rowBounds
+     * @return
+     */
+    List<ProductDTO> tempFindListBySupplierAndLastDate(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            RowBounds rowBounds) throws ServiceException;
+    
+    /**
+     * 临时导出 不分页
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    List<ProductDTO> tempFindListBySupplierAndLastDate(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate) throws ServiceException;
+    
 }
 
 

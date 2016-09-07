@@ -43,15 +43,15 @@ public class SopService {
 	@Autowired
 	SkuMapper skuDAO;
 	
-	public void dotheJob(String suppliers){
+	public void dotheJob(String suppliers,String startDate,String endDate){
 		try {
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			
 			if(StringUtils.isNotBlank(suppliers)){
 				for(String supplier : suppliers.split(",")){
 					try {
 						loggerInfo.info("=================供应商"+supplier+"开始同步========================");
 						SupplierDTO dto = supplierService.hkFindBysupplierId(supplier);
-						synchAndSaveRalation("http://open.shangpin.com:8080",dto.getAppKey(),dto.getAppSecret(),supplier,"2015-01-01 00:00", format.format(new Date()));
+						synchAndSaveRalation("http://open.shangpin.com:8080",dto.getAppKey(),dto.getAppSecret(),supplier,startDate, endDate);
 						loggerInfo.info("=================供应商"+supplier+"同步结束========================");
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -63,7 +63,7 @@ public class SopService {
 				for(SupplierDTO supplier : sus){
 					try {
 						loggerInfo.info("=================供应商"+supplier.getSupplierId()+"开始同步========================");
-						synchAndSaveRalation("http://open.shangpin.com:8080",supplier.getAppKey(),supplier.getAppSecret(),supplier.getSupplierId(),"2015-01-01 00:00", format.format(new Date()));
+						synchAndSaveRalation("http://open.shangpin.com:8080",supplier.getAppKey(),supplier.getAppSecret(),supplier.getSupplierId(),startDate, endDate);
 						loggerInfo.info("=================供应商"+supplier.getSupplierId()+"同步结束========================");
 					} catch (Exception e) {
 						e.printStackTrace();

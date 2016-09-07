@@ -80,18 +80,24 @@ public class OrderService extends AbsOrderService{
 		
 		try {
 			// TODO 支付逻辑
+			System.setProperty("javax.net.ssl.trustStore", "E:\\jssecacerts");
 			Orders_v1_0Stub orders_v1_0Stub = new Orders_v1_0Stub();
 			CreateOrder createOrder = new CreateOrder();
 			createOrder.setAuthKey("270Api002#3gU8zXs");
 			createOrder.setChannel("SHANGPIN");
+			createOrder.setCustomerID("");
+			createOrder.setDestCustID("");
+			createOrder.setDestinationID(""); 
 			createOrder.setRefID(orderDTO.getSpPurchaseNo()); 
 			ArrayOfOrderDetail arrayOfOrderDetail =  new ArrayOfOrderDetail();
 			OrderDetail[] orderDetail = new OrderDetail[1];
-			orderDetail[0].setSKU(orderDTO.getDetail().split(",")[0].split(":")[0]);
-			orderDetail[0].setQTY(new BigDecimal(Integer.valueOf(orderDTO.getDetail().split(",")[0].split(":")[1]))); 
+			OrderDetail detail = new OrderDetail();
+			detail.setSKU(orderDTO.getDetail().split(",")[0].split(":")[0]);
+			detail.setQTY(new BigDecimal(Integer.valueOf(orderDTO.getDetail().split(",")[0].split(":")[1]))); 
 			//BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
 			//String price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
-			orderDetail[0].setPRICE(new BigDecimal(orderDTO.getPurchasePriceDetail()));
+			detail.setPRICE(new BigDecimal(orderDTO.getPurchasePriceDetail()));
+			orderDetail[0] = detail;
 			arrayOfOrderDetail.setOrderDetail(orderDetail); 
 			createOrder.setOrderDetailsList(arrayOfOrderDetail);
 			logger.info("下单参数=================AuthKey:"+createOrder.getAuthKey()+" Channel:"+createOrder.getChannel()+" RefID:"+createOrder.getRefID()+" SKU:"+createOrder.getOrderDetailsList().getOrderDetail()[0].getSKU()
@@ -117,6 +123,7 @@ public class OrderService extends AbsOrderService{
 			
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			errorLog.error(e);
 			orderDTO.setExcDesc(e.getMessage());
 			orderDTO.setExcState("1");
@@ -173,8 +180,10 @@ public class OrderService extends AbsOrderService{
 	public static void main(String[] args) {
 		OrderService orderService = new OrderService();
 		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setSpPurchaseNo("CGD2016082400193");
-		orderDTO.setDetail(":1,");
+		//CGD2016082400193 
+		orderDTO.setSpPurchaseNo("CGD2016082900003");
+		orderDTO.setDetail("I1W8182#F048700#I765######46:1,");
+		orderDTO.setPurchasePriceDetail("78.49");
 		orderService.handleConfirmOrder(orderDTO); 
 	}
 

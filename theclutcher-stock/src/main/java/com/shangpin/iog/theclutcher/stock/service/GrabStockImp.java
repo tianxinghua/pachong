@@ -134,7 +134,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 					} catch (NumberFormatException e) {
 						stockMap.put(skuId, 0);
 					}
-					logger.info(" skuId =" + skuId + ",stock ="+stock );
+//					logger.info(" skuId =" + skuId + ",stock ="+stock );
 //					System.out.println(stockMap.toString());
 				}
 

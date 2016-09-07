@@ -44,14 +44,14 @@ public class OpenapiService {
 	@Autowired
 	SkuMapper skuDAO;
 	
-	public void dotheJob(String suppliers){
+	public void dotheJob(String suppliers,String startDate,String endDate){
 		try {
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			
 			if(StringUtils.isNotBlank(suppliers)){
 				for(String supplier : suppliers.split(",")){
 					try {
 						loggerInfo.info("=================供应商"+supplier+"开始同步========================");
-						synchAndSaveRalation(supplier,"2015-01-01 00:00", format.format(new Date()));
+						synchAndSaveRalation(supplier,startDate, endDate);
 						loggerInfo.info("=================供应商"+supplier+"同步结束========================");
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -63,7 +63,7 @@ public class OpenapiService {
 				for(SupplierDTO supplier : sus){
 					try {
 						loggerInfo.info("=================供应商"+supplier.getSupplierId()+"开始同步========================");
-						synchAndSaveRalation(supplier.getSupplierId(),"2015-01-01 00:00", format.format(new Date()));
+						synchAndSaveRalation(supplier.getSupplierId(), startDate, endDate);
 						loggerInfo.info("=================供应商"+supplier.getSupplierId()+"同步结束========================");
 					} catch (Exception e) {
 						e.printStackTrace();

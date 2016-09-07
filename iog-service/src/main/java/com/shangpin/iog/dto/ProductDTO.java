@@ -99,7 +99,28 @@ public class ProductDTO {
     private String newSalePrice;
     private String newSupplierPrice;
     private String newseasonId;
-    public String getNewseasonId() {
+    
+    private String spCategory;
+    private String spBrand;
+    
+        
+    public String getSpCategory() {
+		return spCategory;
+	}
+
+	public void setSpCategory(String spCategory) {
+		this.spCategory = spCategory;
+	}
+
+	public String getSpBrand() {
+		return spBrand;
+	}
+
+	public void setSpBrand(String spBrand) {
+		this.spBrand = spBrand;
+	}
+
+	public String getNewseasonId() {
 		return newseasonId;
 	}
 
