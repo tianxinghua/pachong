@@ -27,9 +27,7 @@ public class StartSkuJob {
     }
     public static void main(String[] args){
         loadSpringContext();
-          log.info("----初始SPRING成功----");
         //鎷夊彇鏁版嵁
-        log.info("----拉取数据开始----");   
         System.out.println("-------fetch start---------");
         WangFetchProduct fetchProduct =(WangFetchProduct)factory.getBean("opticalscribe");
         try {
@@ -38,7 +36,6 @@ public class StartSkuJob {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        log.info("----拉取数据接受----");   
         System.out.println("-------fetch end---------");
         System.exit(0);
     }

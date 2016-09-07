@@ -23,14 +23,7 @@ public class StartSkuJob {
         factory = new AnnotationConfigApplicationContext(AppContext.class);
     }
     public static void main(String[] args){
-  //  	：http://qa.tmsservice.shangpin.com/LogisticDataService.svc/GetTask
 
-//    		联调地址：LogisticDataService.svc/GetTask
-
-    	Map m = new HashMap();
-    	m.put("OpUser","OpUser");
-    	m.put("SupplierOrderNoList","2016040707069");
-    	String ss = HttpUtil45.post("http://qa.tmsservice.shangpin.com/LogisticDataService.svc/CreateTask", m,new OutTimeConfig(1000*60,1000*60,1000*60));
         //鍔犺浇spring
         loadSpringContext();
         log.info("--------spring初始化成功------");

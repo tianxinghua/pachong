@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -61,20 +63,26 @@ public class WangFetchProduct {
 	private static String uri;
 	private static String sex;
 	private static String path;
-	private static int pageTem;
+	private static int pageStart;
+	private static int pageEnd;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
-		supplierId = bdl.getString("supplierId");
+//		supplierId = bdl.getString("supplierId");
 		uri = bdl.getString("uri");
 		sex = bdl.getString("gender");
 		path = bdl.getString("path");
-		pageTem = Integer.parseInt(bdl.getString("page"));
+		if(!bdl.getString("pageStart").isEmpty()){
+			pageStart = Integer.parseInt(bdl.getString("pageStart"));
+		}
+		if(!bdl.getString("pageEnd").isEmpty()){
+			pageEnd = Integer.parseInt(bdl.getString("pageEnd"));
+		}
 	}
 	public  void getUrlList() throws Exception {
 		
 		
-		
+		System.out.println("文件保存目录："+path);
 			String page = null;
 			int pageCount = 0;
 			try {
@@ -89,9 +97,12 @@ public class WangFetchProduct {
 				if(page!=null){
 					pageCount = Integer.parseInt(page);
 				}else{
-					pageCount = pageTem;
+					pageCount = pageEnd;
 				}
-				for(int i=1;i<=pageCount;i++){
+				if(pageStart==0){
+					pageStart = 1;
+				}
+				for(int i=pageStart;i<=pageCount;i++){
 					response = HttpUtils.get(uri+"&page="+i);
 //					HttpResponse response = HttpUtils.get("http://www.farfetch.com/cn/shopping/women/clothing-1/items.aspx?ffref=hd_mnav&discount=0-0&page=66");
 					System.out.println("第"+i+"页："+uri+"&page="+i);
@@ -116,7 +127,9 @@ public class WangFetchProduct {
 							String brand = product.select("h5").text();
 							String productName = product.select("p").text();
 							String price = product.select("span").last().text();
-							price = price.replace(",","").substring(1);
+							Pattern pattern = Pattern.compile("[^0-9]");
+					        Matcher matcher = pattern.matcher(price);
+					        price = matcher.replaceAll("");
 							Product pro = null;
 							pro = new Product();
 							pro.setBrand(brand);
@@ -151,7 +164,6 @@ public class WangFetchProduct {
 	            }
 	            out.flush();
 	            out.close();
-
 			
 	}
 	private static Map<String,String> getProductUrl(String url) {
@@ -162,6 +174,7 @@ public class WangFetchProduct {
 		String productCode = null;
 		String productName = null;
 		String made = null;
+		StringBuffer pic = new StringBuffer();
 		try {
 			HttpResponse response = HttpUtils.get(url);
 			if (response.getStatus()==200) {
@@ -169,8 +182,19 @@ public class WangFetchProduct {
 				Document doc = Jsoup.parse(htmlContent);
 				Elements categorys = doc.select("div .accordion").select(".accordion-xl").select(".product-detail");
 				Elements categoryPicUrl = doc.select("#PDPContainer") ;
-				Elements categoryPic = doc.select(".sliderProduct").select(".js-sliderProductFull").select("li").eq(0);
-				String pic = categoryPic.select("img").attr("data-fullsrc");
+				Elements categoryPics = doc.select(".sliderProduct").select(".js-sliderProductFull").select("li");
+			
+				int i=0;
+				for(Element categoryPic:categoryPics){
+					i++;
+					String pic1 = categoryPic.select("img").attr("data-fullsrc");
+					pic.append(pic1).append("|");
+					if(i==4){
+						break;
+					}
+				}
+				
+				
 				Elements category1 = doc.select("div .accordion-item"); 
 //				String category1 = categorys.select("div").attr("data-index");
 //				String s= category1.text(); 
@@ -184,11 +208,15 @@ public class WangFetchProduct {
 						
 						if("258".equals(trk)){
 							productName = descEle.select("p").eq(0).text();
+							productName = productName.replace(",",".");
 							Elements category4 = ele.select("span[data-tstid=MadeInLabel]");
 							if(category4!=null){
 								made = category4.text();
 								
 							}
+							Elements category5  = ele.select("p[itemprop=description]");
+							desc = category5.text();
+							desc = desc.replace(",",".");
 							Elements category2  = ele.select("span[itemprop=sku]");
 							Elements category3 = ele.select("p[data-tstid=designerStyleId]").select("span");
 							barCode = category2.text();
@@ -216,7 +244,7 @@ public class WangFetchProduct {
 					    	map.put("barCode", barCode);
 					    	map.put("desc", desc);
 					    	map.put("materl", materal);
-					    	map.put("picUrl", pic);
+					    	map.put("picUrl", pic.toString());
 					    	map.put("made", made);
 					    	map.put("productName", productName);
 					    	break;
