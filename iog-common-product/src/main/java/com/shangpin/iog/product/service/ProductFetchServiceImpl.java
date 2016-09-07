@@ -157,14 +157,23 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             if(null==skuDTO.getUpdateTime()) skuDTO.setUpdateTime(new Date());
 			SkuDTO tmpDto = skuDAO.findSKUBySupplierAndSkuId(skuDTO.getSupplierId(),skuDTO.getSkuId());
 			if(null!=tmpDto){
-				if(!InVoke.compile(skuDTO,tmpDto,new HashMap<String,String>(){
-					{ put("id","");put("createTime","");put("lastTime","");put("updateTime","");put("stock","");
-						put("stock",""); put("spSkuId","");put("spStatus","");put("spProductCode","");put("memo","");
+//				if(!InVoke.compile(skuDTO,tmpDto,new HashMap<String,String>(){
+//					{put("marketPrice","");put("salePrice","");put("supplierPrice","");put("id","");put("createTime","");put("lastTime","");put("updateTime","");put("stock","");
+//						put("stock",""); put("spSkuId","");put("spStatus","");put("spProductCode","");put("memo","");
+//					}
+//				})) {
+//					skuDTO.setLastTime(new Date());
+//				}
+				if(tmpDto.getColor()!=null){
+					if(!tmpDto.getColor().equals(skuDTO.getColor())){
+						skuDTO.setLastTime(new Date());
 					}
-				})) {
-					skuDTO.setLastTime(new Date());
+				}else{
+					if(skuDTO.getColor()!=null){
+						skuDTO.setLastTime(new Date());
+					}
 				}
-
+				
 			}
 
             skuDAO.updatePriceAndStock(skuDTO);
@@ -178,15 +187,34 @@ public class ProductFetchServiceImpl implements ProductFetchService {
         try {
 //            if(null==spuDTO.getLastTime()) spuDTO.setLastTime(new Date());
 
-			SpuDTO tmpDto = spuDAO.findPartBySupAndSpuId(spuDTO.getSupplierId(),spuDTO.getSpuId());
+			SpuDTO tmpDto = spuDAO.findSPUBySupplierAndSpuId(spuDTO.getSupplierId(),spuDTO.getSpuId());
 			if(null!=tmpDto){
-				if(!InVoke.compile(spuDTO,tmpDto,new HashMap<String,String>(){
-					{ put("id","");put("createTime","");put("lastTime","");put("updateTime","");
-						put("spCategory","");put("spBrand","");put("memo","");put("updateTime","");
+//				if(!InVoke.compile(spuDTO,tmpDto,new HashMap<String,String>(){
+//					{ put("id","");put("createTime","");put("lastTime","");put("updateTime","");
+//						put("spCategory","");put("spBrand","");put("memo","");put("updateTime","");
+//					}
+//				})) {
+//					skuDAO.updateLastTime(spuDTO.getSupplierId(),null,spuDTO.getSpuId());
+//				}
+				if(tmpDto.getMaterial()!=null){
+					if(!tmpDto.getMaterial().equals(spuDTO.getMaterial())){
+						skuDAO.updateLastTime(spuDTO.getSupplierId(),null,spuDTO.getSpuId());
 					}
-				})) {
-					skuDAO.updateLastTime(spuDTO.getSupplierId(),null,spuDTO.getSpuId());
+				}else{
+					if(spuDTO.getMaterial()!=null){
+						skuDAO.updateLastTime(spuDTO.getSupplierId(),null,spuDTO.getSpuId());
+					}
 				}
+				if(tmpDto.getProductOrigin()!=null){
+					if(!tmpDto.getProductOrigin().equals(spuDTO.getProductOrigin())){
+						skuDAO.updateLastTime(spuDTO.getSupplierId(),null,spuDTO.getSpuId());
+					}
+				}else{
+					if(spuDTO.getProductOrigin()!=null){
+						skuDAO.updateLastTime(spuDTO.getSupplierId(),null,spuDTO.getSpuId());
+					}
+				}
+				
 
 			}
             spuDAO.updateMaterial(spuDTO);
