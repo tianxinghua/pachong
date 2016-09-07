@@ -31,4 +31,5 @@ public class Product {
 	private String Madein;
 	private String Size;
 	private String gender;
+	private String manufacturer;
 }

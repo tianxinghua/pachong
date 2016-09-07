@@ -1776,8 +1776,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 										row.setHeight((short) 1500);	
 										sheet.setColumnWidth(0, 36*150);
 										//第一个单元格：图片										
-										String fileName = picPath+File.separator+supplier+File.separator+DateTimeUtil.convertFormat(new Date(),"yyyy-MM-dd")+ File.separator +"SPID"+dto.getSupplierId()+"-"+getBASE64(dto.getSpuId())+"-"+getBASE64(dto.getColor())+" (1).jpg";
-										System.out.println(fileName);
+										String fileName = picPath+File.separator+supplier+File.separator+DateTimeUtil.convertFormat(dto.getLastTime(),"yyyy-MM-dd")+ File.separator +"SPID"+dto.getSupplierId()+"-"+getBASE64(dto.getSpuId())+"-"+getBASE64(dto.getColor())+" (1).jpg";
+//										System.out.println(fileName);
 										File file = new File(fileName);
 										if(file.exists()){
 										   ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();     
@@ -2059,9 +2059,11 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		}
 		//保存文件
 		try {
-			FileOutputStream fout = new FileOutputStream(localFile);  
-	        wb.write(fout);  
-	        fout.close(); 
+			if(allMap.size()>0){
+				FileOutputStream fout = new FileOutputStream(localFile);  
+		        wb.write(fout);  
+		        fout.close(); 
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

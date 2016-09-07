@@ -62,6 +62,7 @@
         
         <result column="sp_categery" property="spCategory" />
         <result column="sp_brand" property="spBrand" />
+        <result column="last_time" property="lastTime" />
 
 
 	</resultMap>
@@ -130,7 +131,8 @@
           spu.SUB_CATEGORY_ID  as  sub_category_id,
           spu.SUB_CATEGORY_NAME  as  sub_category_name,
           spu.NEWSEASON_ID as newseasonId,
-          spu.NEWSEASON_NAME as newseasonName,          
+          spu.NEWSEASON_NAME as newseasonName, 
+          sku.LAST_TIME as last_time,         
 <!--           sku.MEMO  as  memo -->
           CONCAT(sku.MEMO) as memo
 		
