@@ -128,6 +128,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             if(StringUtils.isBlank(skuDTO.getNewMarketPrice())) skuDTO.setNewMarketPrice(skuDTO.getMarketPrice());
             if(StringUtils.isBlank(skuDTO.getNewSalePrice())) skuDTO.setNewSalePrice(skuDTO.getSalePrice());
             if(StringUtils.isBlank(skuDTO.getNewSupplierPrice())) skuDTO.setNewSupplierPrice(skuDTO.getSupplierPrice());
+			skuDTO.setLastTime(new Date());
             skuDAO.save(skuDTO);
         } catch ( Exception e) {
         	if(e instanceof DuplicateKeyException)
@@ -143,7 +144,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 			SkuDTO tmpDto = skuDAO.findSKUBySupplierAndSkuId(skuDTO.getSupplierId(),skuDTO.getSkuId());
 			if(null!=tmpDto){
 				if(!InVoke.compile(skuDTO,tmpDto,new HashMap<String,String>(){
-					{ put("createTime","");put("lastTime","");put("updateTime","");
+					{ put("id","");put("createTime","");put("lastTime","");put("updateTime","");
 					}
 				})) {
 					skuDTO.setLastTime(new Date());
@@ -165,10 +166,10 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 			SpuDTO tmpDto = spuDAO.findPartBySupAndSpuId(spuDTO.getSupplierId(),spuDTO.getSpuId());
 			if(null!=tmpDto){
 				if(!InVoke.compile(spuDTO,tmpDto,new HashMap<String,String>(){
-					{ put("createTime","");put("lastTime","");put("updateTime","");
+					{ put("id","");put("createTime","");put("lastTime","");put("updateTime","");
 					}
 				})) {
-
+					skuDAO.updateLastTime(spuDTO.getSupplierId(),null,spuDTO.getSpuId());
 				}
 
 			}
