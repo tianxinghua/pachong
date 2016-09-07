@@ -40,7 +40,7 @@ import com.shangpin.product.AbsSaveProduct;
 /**
  * Created by 赵根春 on 2015/9/25.
  */
-@Component("efashion")
+//@Component("efashion")
 public class efashionFrameFetchProduct extends AbsSaveProduct {
 
 	@Autowired

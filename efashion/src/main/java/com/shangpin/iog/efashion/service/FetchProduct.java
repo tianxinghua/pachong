@@ -51,7 +51,7 @@ import org.springframework.stereotype.Component;
 /**
  * Created by 赵根春 on 2015/9/25.
  */
-//@Component("efashion")
+@Component("efashion")
 public class FetchProduct {
 
 	@Autowired
@@ -76,7 +76,7 @@ public class FetchProduct {
 	}
 	static List<Item> retList = new ArrayList<Item>();
 	static int i=0;
-	public static void getProductList(int index){
+	public  void getProductList(int index){
 		String json = HttpUtil45
 				.get(url+"&limit="+max+"&offset="+index,
 						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
@@ -89,6 +89,7 @@ public class FetchProduct {
 			List<Item> item = result.getItems();
 			if(!item.isEmpty()){
 				retList.addAll(item);
+				messMappingAndSave(item);
 				i++;
 				System.out.println("------------------------第"+i+"页---------------------------");
 				System.out.println("商品数量："+item.size());
@@ -100,33 +101,49 @@ public class FetchProduct {
 	/**
 	 * fetch product and save into db
 	 */
+	Map<String,SkuDTO> skuDTOMap = new HashedMap();
 	public void fetchProductAndSave() {
+		Date startDate,endDate= new Date();
+		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
+		
+		try {
+			skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 		// 第一步：获取活动信息
 		getProductList(1);
 		System.out.println("总的商品数量："+retList.size());
 		logger.info("总的商品数量："+retList.size());
 		System.out.println("--拉取数据end--");
 		logger.info("--拉取数据end--");
-		messMappingAndSave();
+//		messMappingAndSave();
+	
+		//获取原有的SKU 仅仅包含价格和库存
+		
+		//更新网站不再给信息的老数据
+		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
+			 Map.Entry<String,SkuDTO> entry =  itor.next();
+			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
+				entry.getValue().setStock("0");
+				try {
+					productFetchService.updatePriceAndStock(entry.getValue());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		System.out.println("--正在保存中.....--");
 		logger.info("--正在保存中.....--");
 	}
 	/**
 	 * message mapping and save into DB
 	 */
-	private void messMappingAndSave() {
+	private  void messMappingAndSave(List<Item> item1) {
 		if(retList!=null){
-			Date startDate,endDate= new Date();
-			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
-			//获取原有的SKU 仅仅包含价格和库存
-			Map<String,SkuDTO> skuDTOMap = new HashedMap();
-			try {
-				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}
 			
-			for (Item item : retList) {
+			
+			for (Item item : item1) {
 				SpuDTO spu = new SpuDTO();
 				try {
 					spu.setId(UUIDGenerator.getUUID());
@@ -135,8 +152,15 @@ public class FetchProduct {
 					spu.setCategoryName(item.getFirst_category());
 					spu.setBrandName(item.getBrand());
 					spu.setSpuName(item.getItem_intro());
-//					spu.setMaterial(item.getTechnical_info());
-//					spu.setProductOrigin(item.getMade_in());
+					List<Material> list = item.getTechnical_info();
+					if(list!=null&&!list.isEmpty()){
+						StringBuffer str = new StringBuffer();
+						for(Material m:list){
+							str.append(",").append(m.getPercentage()).append(m.getName());
+						}
+						spu.setMaterial(str.substring(1));
+					}
+					spu.setProductOrigin(item.getMade_in());
 					spu.setSeasonName(item.getSeason_year()+item.getSeason_reference());
 					spu.setCategoryGender(item.getGender());
 					productFetchService.saveSPU(spu);
@@ -159,17 +183,18 @@ public class FetchProduct {
 					if(size==null){
 						size = "A";
 					}
-					skuId = item.getProduct_reference()+"|"+item.getColor_reference()+"|"+size;
+					skuId = item.getProduct_id()+"-"+size;
 					sku.setSkuId(skuId);
 					sku.setProductSize(size);
 					sku.setStock(item.getQuantity());
 					sku.setProductCode(item.getProduct_reference());
-					sku.setMarketPrice(item.getPrice_IT());
+					sku.setMarketPrice(item.getRetail_price());
+					sku.setSupplierPrice(item.getPrice());
 					sku.setColor(item.getColor());
 					sku.setProductName(item.getItem_intro());
 					sku.setProductDescription(item.getItem_description());
 					sku.setSaleCurrency(item.getCurrency());
-					
+					sku.setMemo(item.getProduct_reference()+"|"+item.getColor_reference()+"|"+item.getSize());
 					if(skuDTOMap.containsKey(sku.getSkuId())){
 						skuDTOMap.remove(sku.getSkuId());
 					}
@@ -191,24 +216,11 @@ public class FetchProduct {
 				
 				String [] picArray = item.getItem_images().getFull();
 				productFetchService.savePicture(supplierId, item.getProduct_id(), null,Arrays.asList(picArray));
-//			
 
-			}
-
-			//更新网站不再给信息的老数据
-			for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
-				 Map.Entry<String,SkuDTO> entry =  itor.next();
-				if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
-					entry.getValue().setStock("0");
-					try {
-						productFetchService.updatePriceAndStock(entry.getValue());
-					} catch (ServiceException e) {
-						e.printStackTrace();
-					}
-				}
-			}
+		
 		}
 		System.out.println("--保存end.....--");
 		logger.info("--保存end.....--");
+	}
 	}
 }

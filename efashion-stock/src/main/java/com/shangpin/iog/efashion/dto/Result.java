@@ -11,6 +11,6 @@ public class Result {
 	
 	private String reqCode;
 	private String count;
-	private List<Item> items;
+	private Item item;
 	
 }

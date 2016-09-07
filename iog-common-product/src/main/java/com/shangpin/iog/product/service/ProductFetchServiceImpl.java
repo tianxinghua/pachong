@@ -230,6 +230,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		}else if(skuId!=null){
 			map = findPictureBySupplierIdAndSkuId(supplierId, skuId);
 		}
+		boolean flag = false;
 		for(String pic:picUrl){
 			if(map==null||!map.containsKey(pic)){
 
@@ -244,10 +245,15 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 				}
 				try {
 					savePictureForMongo(dto);
+					flag = true;
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
 			}
+		}
+		if(flag){
+			skuDAO.updateLastTime(supplierId,skuId,spuId);
+			
 		}
 	}
 

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Item {
-
+	
 	private String sku_id;
 	private String quantity;
 }
