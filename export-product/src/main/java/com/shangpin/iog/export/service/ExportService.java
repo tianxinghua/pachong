@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -27,6 +28,8 @@ public class ExportService {
 	
 	private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger
 			.getLogger("error");
+	private static org.apache.log4j.Logger loggerInfo = org.apache.log4j.Logger
+			.getLogger("info");
 	private static ResourceBundle bdl = null;
 	private static String savepath = null;
 	private static String startDate = null;
@@ -44,6 +47,8 @@ public class ExportService {
 	private static String to = null;
 	private static String messageType = null;
 	
+	private static String conf_suppliers = null;
+	
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -57,6 +62,8 @@ public class ExportService {
 		to = bdl.getString("to");
 		messageType = bdl.getString("messageType");
 		smtpHost = bdl.getString("smtpHost");
+		
+		conf_suppliers = bdl.getString("conf_suppliers");
 	}
 
 	@Autowired
@@ -65,8 +72,20 @@ public class ExportService {
     ProductSearchService productService;
 	
 	public void writeFile(){
-		
-		 List<SupplierDTO> suppliers = supplierDAO.findByState("1");
+		String filePath = "";
+		 List<SupplierDTO> suppliers = null;
+		 
+		 if(StringUtils.isNotBlank(conf_suppliers)){
+			 filePath = savepath+File.separator+DateTimeUtil.getShortCurrentDate()+"_specified"+File.separator;
+			 suppliers = new ArrayList<SupplierDTO>();
+			 for(String supplier : conf_suppliers.split(",")){				 
+				 suppliers.add(supplierDAO.findBysupplierId(supplier));
+			 }
+		 }else{
+			 filePath = savepath+File.separator+DateTimeUtil.getShortCurrentDate()+File.separator;
+			 suppliers = supplierDAO.findByState("1");
+		 }
+		 
 		 
 		 //2016-08-26
 		 Date startTime = null ;
@@ -81,22 +100,27 @@ public class ExportService {
 		 }else{
 			 endTime = new Date();
 		 }
-		 String filePath = savepath+File.separator+DateTimeUtil.getShortCurrentDate()+File.separator;
+				 
 		 for(SupplierDTO supplier : suppliers){
 			 BufferedWriter writer = null;
-			 try {				
+			 try {	
+				 loggerInfo.info(supplier.getSupplierId()+" "+supplier.getSupplierName()+" 开始生成文件================");
+				 System.out.println(supplier.getSupplierId()+" "+supplier.getSupplierName()+" 开始生成文件================");
 				 String fileName = supplier.getSupplierName()+"_"+DateTimeUtil.getShortCurrentDate();
 				 //查数据，生成csv文件
 				 StringBuffer productBuffer =productService.exportReportProduct(supplier.getSupplierId(),startTime,endTime,null,null);
-				 File localFile = new File(filePath+fileName+".csv");
-				 localFile.getParentFile().mkdir();		
-				 OutputStreamWriter write = new OutputStreamWriter(new FileOutputStream(localFile),"gb2312");        
-			     writer=new BufferedWriter(write);  
-			     writer.write(productBuffer.toString());
-				 writer.flush();
+				 if(productBuffer.indexOf("\r\n") != productBuffer.lastIndexOf("\r\n")){
+					 File localFile = new File(filePath+fileName+".csv");
+					 localFile.getParentFile().mkdir();		
+					 OutputStreamWriter write = new OutputStreamWriter(new FileOutputStream(localFile),"gb2312");        
+				     writer=new BufferedWriter(write);  
+				     writer.write(productBuffer.toString());
+					 writer.flush();
+				 }
 				 //生成带图片的excel文件
 				 productService.exportAndSaveReportProduct(picpath,supplier.getSupplierId(),startTime,endTime,null,null,filePath+fileName+".xls");
-				 		 
+				 loggerInfo.info(supplier.getSupplierId()+" "+supplier.getSupplierName()+" 生成文件结束================"); 
+				 System.out.println(supplier.getSupplierId()+" "+supplier.getSupplierName()+" 生成文件结束================");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}finally{
