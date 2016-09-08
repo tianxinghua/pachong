@@ -84,6 +84,7 @@ public class ExportService {
 		 }else{
 			 filePath = savepath+File.separator+DateTimeUtil.getShortCurrentDate()+File.separator;
 			 suppliers = supplierDAO.findByState("1");
+			 suppliers.addAll(supplierDAO.findByState("2"));
 		 }
 		 
 		 
@@ -92,7 +93,7 @@ public class ExportService {
 		 if(StringUtils.isNotBlank(startDate)){
 			 startTime = DateTimeUtil.parse(startDate, "yyyy-MM-dd");
 		 }else{
-			 DateTimeUtil.getShortDate(DateTimeUtil.getShortCurrentDate());
+			 startTime = DateTimeUtil.getShortDate(DateTimeUtil.getShortCurrentDate());
 		 }
 		 Date endTime = null;
 		 if(StringUtils.isNotBlank(endDate)){
@@ -100,7 +101,10 @@ public class ExportService {
 		 }else{
 			 endTime = new Date();
 		 }
-				 
+		 
+		 loggerInfo.info("开始时间："+DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss")+"============ 结束时间："+DateTimeUtil.convertFormat(endTime, "yyyy-MM-dd HH:mm:ss"));		 
+		 System.out.println("开始时间："+DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss")+"============ 结束时间："+DateTimeUtil.convertFormat(endTime, "yyyy-MM-dd HH:mm:ss"));
+		 
 		 for(SupplierDTO supplier : suppliers){
 			 BufferedWriter writer = null;
 			 try {	
@@ -148,5 +152,7 @@ public class ExportService {
 			loggerError.error(e.toString()); 
 		}
 		 
-	} 
+		 
+	}
+	
 }
