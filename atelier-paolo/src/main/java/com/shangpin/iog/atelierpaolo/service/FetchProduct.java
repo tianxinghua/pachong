@@ -1,9 +1,12 @@
 package com.shangpin.iog.atelierpaolo.service;
 
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,7 +71,7 @@ public class FetchProduct {
     	
         logger.info("get product starting....");
         System.out.println("get product starting....");
-        OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600);
+        OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60*10,1000*60*30,1000*60*30);
         String skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace", null, outTimeConfig, "shangpin", "fiorillo1003");
         save("paolosku.txt",skuData);
         String imageData = HttpUtil45.postAuth(url+"GetAllImageMarketplace", null, outTimeConfig, "shangpin", "fiorillo1003");
@@ -76,7 +79,13 @@ public class FetchProduct {
         String priceData = HttpUtil45.postAuth(url+"GetAllPricelistMarketplace", null, outTimeConfig, "shangpin", "fiorillo1003");
         save("paolopriceData.txt",priceData);
         String spuData = HttpUtil45.postAuth(url+"GetAllItemsMarketplace", null, outTimeConfig, "shangpin", "fiorillo1003");
-        save("paolospu.txt",spuData);
+        if(HttpUtil45.errorResult.equals(spuData)){
+        	logger.info("===============spu下载失败============================="); 
+        	spuData = readTxt("paolospu.txt");
+        }else{
+        	save("paolospu.txt",spuData);
+        }
+        
     	
     	
     	Date startDate,endDate= new Date();
@@ -323,6 +332,28 @@ public class FetchProduct {
 			}
 		}
     }
+    
+    public String readTxt(String fileName){
+    	StringBuffer result = new StringBuffer();
+    	try {
+    		File file = new File(filepath+File.separator+fileName);
+        	if(file.exists()){
+        		InputStreamReader read = new InputStreamReader(
+                        new FileInputStream(file),"utf-8");//考虑到编码格式
+                BufferedReader bufferedReader = new BufferedReader(read);
+                String lineTxt = null;
+                while((lineTxt = bufferedReader.readLine()) != null){
+                	result.append(lineTxt).append("\r\n");
+                }                
+                read.close();
+        	}  
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info(e.toString());
+		}    	  	
+    	return result.toString();
+    }
+    
     public static void main(String[] args) {
     	String aaa= "00200 BIANCO OTTICO";
     	String[] split = aaa.split(" ");
