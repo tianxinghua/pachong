@@ -52,7 +52,6 @@ public class FetchProduct {
 
     public void fetchProductAndSave(String url){
 
-        String supplierId = "2015070301312";
         try {
             Map<String,String> mongMap = new HashMap<>();
 
