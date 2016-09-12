@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -166,21 +167,7 @@ public class FetchProduct {
 
                 //保存图片
                 if (item.getImageLinks() != null) {
-                    for (String imageUrl : item.getImageLinks().getLinks()) {
-                        if (imageUrl != null && !"".equals(imageUrl)) {
-                            ProductPictureDTO dto = new ProductPictureDTO();
-                            dto.setPicUrl(imageUrl);
-                            dto.setSupplierId(supplierId);
-                            dto.setId(UUIDGenerator.getUUID());
-                            dto.setSkuId(skuId);
-                            try {
-                                productFetchService.savePictureForMongo(dto);
-                                //productFetchService.savePicture(supplierId, null, skuId, picUrlList);
-                            } catch (ServiceException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
+                	 productFetchService.savePicture(supplierId, spuId, null, item.getImageLinks().getLinks());
                 }
 
                 //保存SPU
