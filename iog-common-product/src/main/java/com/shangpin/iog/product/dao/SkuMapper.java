@@ -82,4 +82,10 @@ public interface SkuMapper extends IBaseDao<SkuDTO> {
 
 	public void updateLastTime(@Param("supplierId") String supplierId,@Param("skuId")String skuId,@Param("spuId") String spuId);
 	
+	/**
+	 * 查找最大时间，以此判断产品是否更新
+	 * @param supplierId
+	 * @return
+	 */
+	public Date findMaxTimeBySupplier(@Param("supplierId") String supplierId);
 }

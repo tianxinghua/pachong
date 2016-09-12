@@ -320,4 +320,10 @@
     	select SKU_ID ,SP_SKU_ID ,SP_PRODUCT_CODE
 		from SKU where SUPPLIER_ID = #{supplierId}    
     </select>
+    
+    <select id="findMaxTimeBySupplier" resultType="java.util.Date">
+    	select max(UPDATE_TIME) from SKU 
+    	where SUPPLIER_ID = #{supplierId} and STOCK >0
+    </select>
+    
 </mapper>
