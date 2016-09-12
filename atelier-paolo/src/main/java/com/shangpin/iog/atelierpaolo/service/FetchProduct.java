@@ -1,9 +1,13 @@
 package com.shangpin.iog.atelierpaolo.service;
 
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.csvreader.CsvReader;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.atelierpaolo.dto.Item;
 import com.shangpin.iog.common.utils.DateTimeUtil;
@@ -39,6 +44,7 @@ public class FetchProduct {
 	public static int day;
     private static ResourceBundle bdl=null;
     private static String filepath  = null;
+    private static String isspu = null;
     
     static {
         if(null==bdl)
@@ -47,6 +53,7 @@ public class FetchProduct {
         url = bdl.getString("url");
         day = Integer.valueOf(bdl.getString("day"));
         filepath = bdl.getString("filepath");
+        isspu = bdl.getString("isspu");
     }
     @Autowired
     private ProductFetchService productFetchService;
@@ -68,17 +75,33 @@ public class FetchProduct {
     	
         logger.info("get product starting....");
         System.out.println("get product starting....");
-        OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600);
+        OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60*10,1000*60*30,1000*60*30);
         String skuData = HttpUtil45.postAuth(url+"GetAllAvailabilityMarketplace", null, outTimeConfig, "shangpin", "fiorillo1003");
         save("paolosku.txt",skuData);
         String imageData = HttpUtil45.postAuth(url+"GetAllImageMarketplace", null, outTimeConfig, "shangpin", "fiorillo1003");
         save("paoloimageData.txt",imageData);
         String priceData = HttpUtil45.postAuth(url+"GetAllPricelistMarketplace", null, outTimeConfig, "shangpin", "fiorillo1003");
         save("paolopriceData.txt",priceData);
-        String spuData = HttpUtil45.postAuth(url+"GetAllItemsMarketplace", null, outTimeConfig, "shangpin", "fiorillo1003");
-        save("paolospu.txt",spuData);
-    	
-    	
+        String spuData = HttpUtil45.errorResult;
+        if("1".equals(isspu)){
+        	spuData = HttpUtil45.postAuth(url+"GetAllItemsMarketplace", null, outTimeConfig, "shangpin", "fiorillo1003");
+        }        
+        
+        CsvReader cs = null;
+        
+        if(HttpUtil45.errorResult.equals(spuData)){
+        	logger.info("===============spu下载失败=============================");  
+        	System.out.println("===============spu下载失败=============================");
+        	try {
+				cs = new CsvReader(filepath+File.separator+"GetAllItemsMarketplace.xml");
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }else{
+        	save("paolospu.txt",spuData);
+        }
+        
     	Date startDate,endDate= new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 		
@@ -113,62 +136,124 @@ public class FetchProduct {
 			
         }
         
-        
-        //得到所有的spu信息
-        String[] spuStrings = spuData.split("\\r\\n");
-        String[] spuArr = null;
-		for (int i = 1; i < spuStrings.length; i++) {
-			if (StringUtils.isNotBlank(spuStrings[i])) {
-				if (i==1) {
-				  data =  spuStrings[i].split("\\n")[1];
-				}else {
-				  data = spuStrings[i];
-			}
-				spuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
-				SpuDTO spu = new SpuDTO();
-				Item item = new Item();
-			   item.setColor(StringUtils.isBlank(spuArr[10])?spuArr[4]:spuArr[10]);
-			   
-			   item.setSupplierPrice(spuArr[16]);
-			   item.setDescription(spuArr[15]);
-			   item.setSpuId(spuArr[0]);
-			   
-			   item.setStyleCode(spuArr[3]);
-			   item.setColorCode(spuArr[4]);
-			   
-			   itemMap.put(spuArr[0], item);
+        if(cs != null){
+        	String[] spuArr = null;
+        	try
+            {
+              cs.readRecord();
+              cs.readRecord();
+              while (cs.readRecord())
+              {
+                data = cs.getRawRecord();
+                spuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;", "").split(";");
+                SpuDTO spu = new SpuDTO();
+                Item item = new Item();
+                try
+                {
+                  item.setColor(spuArr[10]);
+                  item.setSupplierPrice(spuArr[16]);
+                  item.setDescription(spuArr[15]);
+                  item.setSpuId(spuArr[0]);
+                  
+                  item.setStyleCode(spuArr[3]);
+                  item.setColorCode(spuArr[4]);
+                  
+                  itemMap.put(spuArr[0], item);
+                  
+                  spu.setId(UUIDGenerator.getUUID());
+                  spu.setSupplierId(supplierId);
+                  spu.setSpuId(spuArr[0]);
+                  spu.setBrandName(spuArr[2]);
+                  spu.setCategoryName(spuArr[8]);
+                  
+                  spu.setSeasonId(spuArr[1]);
+                  
+                  StringBuffer material = new StringBuffer();
+                  if (StringUtils.isNotBlank(spuArr[11])) {
+                    material.append(spuArr[11]).append(";");
+                  } else if (StringUtils.isNotBlank(spuArr[15])) {
+                    material.append(spuArr[15]).append(";");
+                  } else if (StringUtils.isNotBlank(spuArr[42])) {
+                    material.append(spuArr[42]);
+                  }
+                  spu.setMaterial(material.toString());
+                  spu.setCategoryGender(spuArr[5]);
+                  spu.setProductOrigin(spuArr[40]);
+                  this.productFetchService.saveSPU(spu);
+                }catch (Exception e){
+                  try{
+                    this.productFetchService.updateMaterial(spu);
+                  }
+                  catch (ServiceException e1)
+                  {
+                    e1.printStackTrace();
+                  }
+                }
+              }
+            }
+            catch (IOException e2)
+            {
+              e2.printStackTrace();
+            }
+        }else{
+        	//得到所有的spu信息
+            String[] spuStrings = spuData.split("\\r\\n");
+            String[] spuArr = null;
+    		for (int i = 1; i < spuStrings.length; i++) {
+    			if (StringUtils.isNotBlank(spuStrings[i])) {
+    				if (i==1) {
+    				  data =  spuStrings[i].split("\\n")[1];
+    				}else {
+    				  data = spuStrings[i];
+    			}
+    				spuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+    				SpuDTO spu = new SpuDTO();
+    				Item item = new Item();
+    			   item.setColor(StringUtils.isBlank(spuArr[10])?spuArr[4]:spuArr[10]);
+    			   
+    			   item.setSupplierPrice(spuArr[16]);
+    			   item.setDescription(spuArr[15]);
+    			   item.setSpuId(spuArr[0]);
+    			   
+    			   item.setStyleCode(spuArr[3]);
+    			   item.setColorCode(spuArr[4]);
+    			   
+    			   itemMap.put(spuArr[0], item);
 
-			   spu.setId(UUIDGenerator.getUUID());
-               spu.setSupplierId(supplierId);
-               spu.setSpuId(spuArr[0]);
-               //TODO  品牌名更改
-               spu.setBrandName(spuArr[2]);
-               spu.setCategoryName(spuArr[8]);
-               spu.setSeasonId(spuArr[1]);
-               StringBuffer material = new StringBuffer() ;
-        	   material.append(spuArr[11]).append(";");
-        	   material.append(spuArr[15]).append(";");
-        	   material.append(spuArr[42]);
-               spu.setMaterial(material.toString());
-               spu.setCategoryGender(spuArr[5]);
-               spu.setProductOrigin(spuArr[40]);
-               //=====================================================================================
-               spuMap.put(spu.getSpuId(), spu);
-			}
-		}
-		
-		//============================保存spu===================================
-		for (Entry<String, SpuDTO> entry: spuMap.entrySet()) {
-			 try {
-				productFetchService.saveSPU(entry.getValue());
-			} catch (ServiceException e) {
-			   try {
-					productFetchService.updateMaterial(entry.getValue());
-				} catch (ServiceException e1) {
-					e1.printStackTrace();
-				}
-			}
-		}
+    			   spu.setId(UUIDGenerator.getUUID());
+                   spu.setSupplierId(supplierId);
+                   spu.setSpuId(spuArr[0]);
+                   //TODO  品牌名更改
+                   spu.setBrandName(spuArr[2]);
+                   spu.setCategoryName(spuArr[8]);
+                   spu.setSeasonId(spuArr[1]);
+                   StringBuffer material = new StringBuffer() ;
+            	   material.append(spuArr[11]).append(";");
+            	   material.append(spuArr[15]).append(";");
+            	   material.append(spuArr[42]);
+                   spu.setMaterial(material.toString());
+                   spu.setCategoryGender(spuArr[5]);
+                   spu.setProductOrigin(spuArr[40]);
+                   //=====================================================================================
+                   spuMap.put(spu.getSpuId(), spu);
+    			}
+    		}
+    		
+    		//============================保存spu===================================
+    		for (Entry<String, SpuDTO> entry: spuMap.entrySet()) {
+    			 try {
+    				productFetchService.saveSPU(entry.getValue());
+    			} catch (ServiceException e) {
+    			   try {
+    					productFetchService.updateMaterial(entry.getValue());
+    				} catch (ServiceException e1) {
+    					e1.printStackTrace();
+    				}
+    			}
+    		}
+        }
+        
+        
 		
 		//处理sku信息
 		//处理图片信息
@@ -323,6 +408,28 @@ public class FetchProduct {
 			}
 		}
     }
+    
+    public String readTxt(String fileName){
+    	StringBuffer result = new StringBuffer();
+    	try {
+    		File file = new File(filepath+File.separator+fileName);
+        	if(file.exists()){
+        		InputStreamReader read = new InputStreamReader(
+                        new FileInputStream(file),"utf-8");//考虑到编码格式
+                BufferedReader bufferedReader = new BufferedReader(read);
+                String lineTxt = null;
+                while((lineTxt = bufferedReader.readLine()) != null){
+                	result.append(lineTxt).append("\r\n");
+                }                
+                read.close();
+        	}  
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info(e.toString());
+		}    	  	
+    	return result.toString();
+    }
+    
     public static void main(String[] args) {
     	String aaa= "00200 BIANCO OTTICO";
     	String[] split = aaa.split(" ");

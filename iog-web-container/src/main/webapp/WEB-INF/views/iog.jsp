@@ -92,6 +92,13 @@
 	            	return;
 	        	}
 	        }
+	        if(str == 'everyday'){	 
+	        console.log("date="+$('#startDate').val());      
+	        	if('' == $('#startDate').val() && '' == $('#endDate').val()){
+	        		alert("请选择日期");
+	            	return;
+	        	}
+	        }
 	        var search = {
 	            supplier:   $('#supplier').val(),
 	            startDate:    $('#startDate').val(),
@@ -210,6 +217,14 @@
     		return;
     	}
     }
+    function everydayExport(everyday){
+    	var search = filter(everyday);
+    	if(null != search){
+    		window.open('exporteveryday?queryJson='+$.toJSON(search), '','');
+    	}else{
+    		return;
+    	}
+    }
 	
 </script>
 <script type="text/javascript"
@@ -287,6 +302,7 @@
 	<a href="javascript:void(0)" onclick="updatePrice()" id="btn-edit" icon="icon-edit" class='easyui-linkbutton'>更新价格</a>
 	<a href="javascript:void(0)" onclick="exportOrder('order')" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>导出订单</a>
 	<a href="javascript:void(0)" onclick="queryOrder()" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>查看订单</a>
+	<a href="javascript:void(0)" onclick="everydayExport('everyday')" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>每日导出</a>
 	<!-- <a
 	href="javascript:void(0)" onclick="tempExport('temp')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>临时导出</a>  -->
