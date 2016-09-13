@@ -5,7 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.transport.http.HttpTransportProperties;
+import org.apache.axis2.transport.http.impl.httpclient4.HttpTransportPropertiesImpl.Authenticator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -21,6 +25,7 @@ import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.studio69.util.API_STUDIO69Stub;
 import com.shangpin.iog.studio69.util.API_STUDIO69Stub.CreateNewOrder;
 import com.shangpin.iog.studio69.util.API_STUDIO69Stub.CreateNewOrderResponse;
+import com.shangpin.iog.studio69.util.API_STUDIO69Stub.CreateNewOrderResult_type0;
 import com.shangpin.iog.studio69.util.SoapXmlUtil;
 
 /**
@@ -184,8 +189,38 @@ public class OrderService extends AbsOrderService{
 	}
 	
 	public static void main(String[] args) {
-		OrderService o =  new OrderService();
-		o.handleConfirmOrder(null);
+//		OrderService o =  new OrderService();
+//		o.handleConfirmOrder(null);
+		
+		try {
+			API_STUDIO69Stub stub = new API_STUDIO69Stub();	
+			CreateNewOrder createNewOrder = new CreateNewOrder();
+			String buyerInfo = "<buyerInfo>"
+					+ "<Name>test</Name>"
+					+ "<Address>shangpin</Address>"					
+					+ "<zipcode>100000</zipcode>"
+					+ "<Corriere></Corriere>"
+					+ "<Notes></Notes>"
+					+ "</buyerInfo>";
+			String goodsList = "<GoodsList>"
+					+ "<Good>"
+					+ "<ID>32400</ID>"
+					+ "<Size>48</Size>"
+					+ "<Qty>1</Qty>"
+					+ "<Price>305</Price>"
+					+ "</Good>"
+					+ "</GoodsList>";
+			createNewOrder.setBuyerInfo(buyerInfo);
+			createNewOrder.setGoodsList(goodsList);
+			createNewOrder.setOrderID("20160901001010");
+			CreateNewOrderResponse  response = stub.createNewOrder(createNewOrder);
+			OMElement   ddd = response.getCreateNewOrderResult().getExtraElement();
+			System.out.println(ddd);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

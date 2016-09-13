@@ -73,18 +73,24 @@ public class ExportService {
 	
 	public void writeFile(){
 		String filePath = "";
-		 List<SupplierDTO> suppliers = null;
+		 List<SupplierDTO> suppliers = new ArrayList<SupplierDTO>();
 		 
 		 if(StringUtils.isNotBlank(conf_suppliers)){
 			 filePath = savepath+File.separator+DateTimeUtil.getShortCurrentDate()+"_specified"+File.separator;
-			 suppliers = new ArrayList<SupplierDTO>();
 			 for(String supplier : conf_suppliers.split(",")){				 
 				 suppliers.add(supplierDAO.findBysupplierId(supplier));
 			 }
 		 }else{
 			 filePath = savepath+File.separator+DateTimeUtil.getShortCurrentDate()+File.separator;
-			 suppliers = supplierDAO.findByState("1");
-			 suppliers.addAll(supplierDAO.findByState("2"));
+			 List<SupplierDTO> suppliers1 = supplierDAO.findByState("1");
+			 for(SupplierDTO supplier : suppliers1){
+				//排除brunarosso和Della
+				 if(!"2015091801507".equals(supplier.getSupplierId()) && !"2015112001671".equals(supplier.getSupplierId())){
+					 suppliers.add(supplier);
+				 }
+			 }
+			 
+//			 suppliers.addAll(supplierDAO.findByState("2"));
 		 }
 		 
 		 
@@ -108,6 +114,7 @@ public class ExportService {
 		 for(SupplierDTO supplier : suppliers){
 			 BufferedWriter writer = null;
 			 try {	
+				 
 				 loggerInfo.info(supplier.getSupplierId()+" "+supplier.getSupplierName()+" 开始生成文件================");
 				 System.out.println(supplier.getSupplierId()+" "+supplier.getSupplierName()+" 开始生成文件================");
 				 String fileName = supplier.getSupplierName()+"_"+DateTimeUtil.getShortCurrentDate();
@@ -139,18 +146,18 @@ public class ExportService {
 			 
 		 }
 		//压缩发邮件
-		 try {
-			 String zipfile  = ZipUtils.compressedFile(filePath, savepath);
-			 File zipFile = new File(savepath+File.separator+zipfile);
-			 if(zipFile.exists()){
-				 String messageText = "筛选产品列表见附件";
-				 SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword, to, "每天推送筛选产品", messageText , messageType,zipFile);
-			 }			 
-			 
-		} catch (Exception e) {
-			e.printStackTrace();
-			loggerError.error(e.toString()); 
-		}
+//		 try {
+//			 String zipfile  = ZipUtils.compressedFile(filePath, savepath);
+//			 File zipFile = new File(savepath+File.separator+zipfile);
+//			 if(zipFile.exists()){
+//				 String messageText = "筛选产品列表见附件";
+//				 SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword, to, "每天推送筛选产品", messageText , messageType,zipFile);
+//			 }			 
+//			 
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			loggerError.error(e.toString()); 
+//		}
 		 
 		 
 	}

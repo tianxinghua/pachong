@@ -73,6 +73,7 @@ public class FileDownloadController {
 	private static String pavin = null;
 	private static String downloadpath = null;
 	private static String pictmpdownloadpath = null;
+	private static String local_picturetem = null;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -83,6 +84,7 @@ public class FileDownloadController {
 		pavin = bdl.getString("pavin");
 		downloadpath = bdl.getString("downloadpath");
 		pictmpdownloadpath = bdl.getString("pictmpdownloadpath");
+		local_picturetem = bdl.getString("local_picturetem");
 	}
 	private Logger log = LoggerFactory.getLogger(FileDownloadController.class) ;
 	@Autowired
@@ -492,7 +494,7 @@ public class FileDownloadController {
         }  
         
         
-        String filePath = newSavePic.saveImg(targetFile,picQueue);
+        String filePath = newSavePic.saveImg(local_picturetem,targetFile,picQueue);
         log.error(targetFile.getName()+"下载路径为+++++++++++++++++++++++++++++++++"+filePath);
     	delay(executor);
     	
