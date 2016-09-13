@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.dto.ProductDTO;
@@ -161,6 +163,36 @@ public interface ProductSearchService {
 	 * @return
 	 */
 	public StringBuffer buExportProduct(String bu,String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+	
+	/**
+	 * 查找报表导出的产品
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 * @throws ServiceException
+	 */
+	public List<ProductDTO> findReportProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+	
+	/**
+	 * 将产品List转换成Excel
+	 * @param products
+	 * @param picPath
+	 * @return
+	 * @throws ServiceException
+	 */
+	public HSSFWorkbook reportProductToExcel(List<ProductDTO> products,String picPath) throws ServiceException;
+	
+	/**
+	 * 将产品list转换StringBuffer
+	 * @param products
+	 * @return
+	 * @throws ServiceException
+	 */
+	public StringBuffer reportProductToBuffer(List<ProductDTO> products) throws ServiceException;
+	
 	/**
 	 * 报表导出
 	 * @param supplier
@@ -202,17 +234,6 @@ public interface ProductSearchService {
 	 * @throws ServiceException
 	 */
 	public StringBuffer tempExport(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
-	
-	/**
-	 * 生成带有图片的excel文件，并且保存本地
-	 * @param picPath
-	 * @param supplier
-	 * @param startDate
-	 * @param endDate
-	 * @param pageIndex
-	 * @param pageSize
-	 * @throws ServiceException
-	 */
-	public void exportAndSaveReportProduct(String picPath,String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String localFile) throws ServiceException;
+		
 }
 
