@@ -18,9 +18,9 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
-import com.shangpin.iog.studio69.util.API_STUDIO69Stub;
-import com.shangpin.iog.studio69.util.API_STUDIO69Stub.CreateNewOrder;
-import com.shangpin.iog.studio69.util.API_STUDIO69Stub.CreateNewOrderResponse;
+//import com.shangpin.iog.studio69.util.API_STUDIO69Stub;
+//import com.shangpin.iog.studio69.util.API_STUDIO69Stub.CreateNewOrder;
+//import com.shangpin.iog.studio69.util.API_STUDIO69Stub.CreateNewOrderResponse;
 import com.shangpin.iog.studio69.util.SoapXmlUtil;
 
 /**
@@ -88,28 +88,62 @@ public class OrderService extends AbsOrderService{
 		
 		try {
 			// TODO 支付逻辑			
-			String param = "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">"
-					+ "<soap12:Body>"
-					+ "<CreateNewOrder xmlns=\"http://tempuri.org/\">"					
-					+ "<orderID>20160901001010</orderID>"
-					+ "<buyerInfo>"
-					+ "<Name>test</Name>"
-					+ "<Address>shangpin</Address>"
-					+ "<Mobile>15101515421</Mobile>"
-					+ "<zipcode>100000</zipcode>"
-					+ "<Country>china</Country>"
-					+ "</buyerInfo>"
-					+ "<goodsList>"
-					+ "<Good>"
-					+ "<ID>32400</ID>"
-					+ "<Size>48</Size>"
-					+ "<Qty>1</Qty>"
-					+ "<Price>305</Price>"
-					+ "</Good>"
-					+ "</goodsList>"
-					+ "</CreateNewOrder>" + "</soap12:Body>" + "</soap12:Envelope>";
-			System.out.println("下单参数=================\n"+param);
-			logger.info("下单参数=================\n"+param); 
+//			String param = "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">"
+//					+ "<soap12:Body>"
+//					+ "<CreateNewOrder xmlns=\"http://tempuri.org/\">"
+//					+ "<orderID>20160901001010</orderID>"
+//					+ "<buyerInfo>"
+//					+ "<Name>test</Name>"
+//					+ "<Address>shangpin</Address>"
+//					+ "<Mobile>15101515421</Mobile>"
+//					+ "<zipcode>100000</zipcode>"
+//					+ "<Country>china</Country>"
+//					+ "</buyerInfo>"
+//					+ "<goodsList>"
+//					+ "<Good>"
+//					+ "<ID>32400</ID>"
+//					+ "<Size>48</Size>"
+//					+ "<Qty>1</Qty>"
+//					+ "<Price>305</Price>"
+//					+ "</Good>"
+//					+ "</goodsList>"
+//					+ "</CreateNewOrder>" + "</soap12:Body>" + "</soap12:Envelope>";
+			String param = "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\"><soap12:Body><CreateNewOrder xmlns=\"http://tempuri.org/\">\n" +
+					"<orderID>20160909001010</orderID>\n" +
+//					"<BuyerInfo>\n" +
+//					"<Name>test</Name>\n" +
+//					"<Address>shangpin 100000 china</Address>\n" +
+//					"<Mobile>15101515421</Mobile>\n" +
+//					"<Corriere>100000</Corriere>\n" +
+//					"<Notes></Notes>\n" +
+//					"</BuyerInfo>\n" +
+					"<BuyerInfo>\n" +
+			" <Name>test</Name>\n" +
+			" <Address>Via Edgardo Macrelli 107</Address> \n" +
+			" <Mobile>47521</Mobile>\n" +
+			"  <Corriere>100000</Corriere> \n" +
+			"   <Notes></Notes>\n" +
+			"</BuyerInfo>\n" +
+//					"<GoodsList>\n" +
+//					"<Good>\n" +
+//					"<ID>65128</ID>\n" +
+//					"<Size>UNI</Size>\n" +
+//					"<Qty>1</Qty>\n" +
+//					"<Price>1265</Price>\n" +
+//					"</Good>\n" +
+//					"</GoodsList>\n" +
+					" <GoodsList>\n" +
+			      " <Good>\n"+
+			"     <ID>36894</ID>\n" +
+			"     <Size>42</Size>\n" +
+			"     <Qty>1</Qty>\n" +
+			"     <Price>1265</Price>\n" +
+			" </Good>\n" +
+			" </GoodsList>\n"+
+					"</CreateNewOrder>\n" +
+					"</soap12:Body></soap12:Envelope>";
+			System.out.println("request parameter=================\n"+param);
+			logger.info("request parameter=================\n"+param);
 			String json = null;
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("SOAPAction", "http://tempuri.org/CreateNewOrder");
@@ -123,8 +157,8 @@ public class OrderService extends AbsOrderService{
 								"http://studio69.atelier98.net/api_studio69/api_studio69.asmx?op=CreateNewOrder",
 								new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10,
 										1000 * 60 * 10), map, param, "SHANGPIN", "2MWWKgNSxgf");
-				System.out.println("返回的结果===============\n"+json);
-				logger.info("返回的结果===============\n"+json);
+				System.out.println("response result ===============\n"+json);
+				logger.info("response result===============\n"+json);
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}

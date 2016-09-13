@@ -510,7 +510,7 @@ public class HttpUtil45 {
 				try {
 					s = new StringEntity(value);
 					s.setContentEncoding("UTF-8");
-					s.setContentType("application/soap+xml");//发送json数据需要设置contentType
+					s.setContentType("application/soap+xml");//
 					method.setEntity(s);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();

@@ -1698,8 +1698,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         		"material 中文材质","ProductOrigin 产地","productUrl1","productUrl2","productUrl3","productUrl4","productUrl5","productUrl6","productUrl7","productUrl8","productUrl9",
         		"PcDesc 描述","Stock 库存","新市场价","新销售价","新进货价","markerPrice","sallPrice","supplier Price 进货价","Currency 币种","新上市季节","上市季节","活动开始时间",
         		"活动结束时间","SupplierSpuNo 供应商spu编号","供应商门户编号","SpuId","备注"};
-        for(int i= 0;i<row0.length;i++){
-        	HSSFCell cell = row.createCell(i);         //第一个单元格  
+        for(short i= 0;i<row0.length;i++){
+        	HSSFCell cell = row.createCell(i);         //第一个单元格
             cell.setCellValue(row0[i]);                  //设定值  
             cell.setCellStyle(style);
         }
@@ -1840,7 +1840,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 										row.createCell(5).setCellValue(!"".equals(brandId) ? brandId : "尚品网品牌编号");
 										row.createCell(6).setCellValue(brandName);
 										// 货号
-										row.createCell(7).setCellValue(
+										row.createCell((short) 7).setCellValue(
 												null == dto.getProductCode() ? "" : dto
 														.getProductCode().replaceAll(",", " "));
 										// 供应商SKUID

@@ -24,11 +24,14 @@ include 'iog-product-web'
 
 include 'coltorti'
 include 'atelier-ostore-order'
-include 'brunarosso'
+include 'brunarosso-stock'
 
 
 include 'efashion-order'
 include 'report'
 include 'picturedown'
 include 'optical'
+include 'studio69'
+include 'studio69-order'
+
 

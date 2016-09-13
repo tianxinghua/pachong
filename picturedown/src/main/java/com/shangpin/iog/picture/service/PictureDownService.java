@@ -3,16 +3,15 @@ package com.shangpin.iog.picture.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.DowmImage;
 import com.shangpin.iog.common.utils.queue.PicQueue;
+import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.service.ProductReportService;
+import com.shangpin.iog.service.SupplierService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -44,8 +43,24 @@ public class PictureDownService {
     private static String userName = null;
     private static String password = null;
     private static String excludesupplierId = null;
+
+    private static Map<String,String> supplierUserPassMap= new HashMap<String,String>(){
+        {
+             put("2016030701799","at98w-IIS,Polo2012");
+        }
+    };
+
+    private static Map<String,String> supplierAuthType= new HashMap<String,String>(){
+        {
+            put("2016030701799","NT");
+        }
+    };
+
     @Autowired
     ProductReportService productReportService;
+
+    @Autowired
+    SupplierService supplierService;
 
     static {
         if (null == bdl) {
@@ -70,15 +85,44 @@ public class PictureDownService {
 
     }
     public void downPic(){
-        Map<String,String> picMap = new HashMap<>();
-        Map<String,String> supplierDateMap = null;
+        if("".equals(supplier_Id)) supplier_Id=null;
+        //用的线程过多 httpclient的连接池 不够用 现放慢速度 一个供货商一个供货商的来操作
+        if(null==supplier_Id) {
+            try {
+                Map excludeSupplierMap = new HashMap();
+                if(StringUtils.isNotBlank(excludesupplierId)) {
+                    String[] supplierArray = excludesupplierId.split(",");
+                    if(null!=supplierArray){
+                        for(String supplierId:supplierArray){
+                            excludeSupplierMap.put(supplierId,"");
+                        }
+                    }
+
+                }
+                List<SupplierDTO> supplierDTOs =  supplierService.findByState("1");
+                for(SupplierDTO dto:supplierDTOs){
+                    if(excludeSupplierMap.containsKey(dto.getSupplierId())) continue;//排除不拉取的
+                    downloadPic(dto.getSupplierId());
+                }
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+        }else{
+            downloadPic(supplier_Id);
+        }
+
+    }
+
+    private void downloadPic(String supplierIdPam) {
         try {
-            if("".equals(supplier_Id)) supplier_Id=null;
-            supplierDateMap = productReportService.findPicture(picMap,supplier_Id,startDate,endDate,excludesupplierId);
+
+            Map<String,String> picMap = new HashMap<>();
+            Map<String,String> supplierDateMap = null;
+            supplierDateMap = productReportService.findPicture(picMap,supplierIdPam,startDate,endDate,excludesupplierId);
             if(null!=supplierDateMap&&supplierDateMap.size()>0){
                 //获取日期
                 String key = "",supplierId = "",date= "",spukeyValue = "";
-                ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 200, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(100),new ThreadPoolExecutor.CallerRunsPolicy());
+                ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 150, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(100),new ThreadPoolExecutor.CallerRunsPolicy());
                 PicQueue picQueue = new PicQueue();
                 for(Map.Entry<String,String> supplierDate:supplierDateMap.entrySet()){
                      key = supplierDate.getKey();
@@ -108,7 +152,7 @@ public class PictureDownService {
 
 
 
-                                if (org.apache.commons.lang.StringUtils.isNotBlank(img)) {
+                                if (StringUtils.isNotBlank(img)) {
                                     try {
                                         img=this.changeUrl(supplierId,img) ;
                                         System.out.println("spu =" +spu + " 　img url  ="+ img);
@@ -123,8 +167,12 @@ public class PictureDownService {
                                             //2015092401528 stefania \
                                             // 2015101501608  tony    暂不需要
                                              DownloadPicTool.downImage(img.trim(),dirPath,spu+" ("+i+").jpg");
-                                        }else{
-                                            executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,userName,password));
+                                        }else  if("2016030701799".equals(supplierId)) {   //russocapri
+
+                                            executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"NT","at98w-IIS","Polo2012"));
+                                        }else
+                                        {
+                                            executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"",userName,password));
                                         }
 
 
@@ -141,7 +189,7 @@ public class PictureDownService {
                 }
                 delay(executor);
                 //重新下载失败的
-                String failUrl = "";
+                String failUrl = "",path="",user="",pass="";
                 String[] split = null;
                 Map<String,Integer> recordMap = new HashMap<String, Integer>();
                 while(executor.getActiveCount()>0||!picQueue.unVisitedUrlsEmpty()){
@@ -161,7 +209,8 @@ public class PictureDownService {
                     if (recordMap.containsKey(failUrl)) {
                         if (recordMap.get(failUrl)>10) {
                             System.out.println("downloaderror="+failUrl);
-                            loggerInfo.info("downloaderror="+ failUrl);
+//                            loggerInfo.info("downloaderror="+ failUrl);
+                            loggerError.error("downloaderror="+ failUrl);
                             continue;
                         }
                         recordMap.put(failUrl, recordMap.get(failUrl)+1);
@@ -171,7 +220,16 @@ public class PictureDownService {
                     split = failUrl.split(";");
                     System.out.println("曾经下载失败的 spu =" +split[2] + " 　img url  ="+ split[0]);
                     loggerInfo.info("曾经下载失败的 spu =" +split[2] + " 　img url  ="+ split[0]);
-                    executor.execute(new DowmImage(split[0],split[2],split[1],picQueue,null, null,userName,password));
+                    path = split[1].substring(0,split[1].lastIndexOf("/"));
+                    supplierId = path.substring(path.lastIndexOf("/")+1,path.length());
+                    if(supplierUserPassMap.containsKey(supplierId)){
+                        user =   (supplierUserPassMap.get(supplierId).split(","))[0];
+                        pass =   (supplierUserPassMap.get(supplierId).split(","))[1];
+                        executor.execute(new DowmImage(split[0],split[2],split[1],picQueue,null, null,supplierAuthType.get(supplierId),user,pass));
+                    }else{
+                        executor.execute(new DowmImage(split[0],split[2],split[1],picQueue,null, null,"",userName,password));
+                    }
+
 
                 }
                 delay(executor);
