@@ -8,17 +8,27 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +38,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.omg.IOP.Encoding;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -65,6 +77,10 @@ public class WangFetchProduct {
 	private static String path;
 	private static int pageStart;
 	private static int pageEnd;
+//	private static FileWriter out = null; 
+	private static OutputStreamWriter  out= null;
+	static String splitSign = ",";
+	
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -78,11 +94,110 @@ public class WangFetchProduct {
 		if(!bdl.getString("pageEnd").isEmpty()){
 			pageEnd = Integer.parseInt(bdl.getString("pageEnd"));
 		}
+		
+		try {
+			out = new OutputStreamWriter(new FileOutputStream(path, true),"gb2312");
+//			out = new FileWriter(new File(path),true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private List<Collection<String>> subCollection(Collection<String> skuNoSet) {
+		int thcnt = 100;
+		List<Collection<String>> list=new ArrayList<>();
+		int count=0;int currentSet=0;
+		for (Iterator<String> iterator = skuNoSet.iterator(); iterator
+				.hasNext();) {
+			String skuNo = iterator.next();
+			if(count==thcnt)
+				count=0;
+			if(count==0){
+				Collection<String> e = new ArrayList<>();
+				list.add(e);
+				currentSet++;
+			}
+			list.get(currentSet-1).add(skuNo);
+			count++;
+		}
+		return list;
+	}
+//	class UpdateThread extends Thread{
+//		private Collection<String> skuNos;
+//		private Map<String, String> localAndIceSkuId;
+//		private String html;
+//		private List<Integer> totoalFailCnt;
+//		private Map<String,String> sopPriceMap;
+//
+//		public UpdateThread(String html) {
+//			this.html = html;
+//		}
+//		@Override
+//		public void run() {
+//			try {
+//				fetch(html);
+//			} catch (Exception e) {
+//				logger.warn(Thread.currentThread().getName() + "处理出错", e);
+//			}
+//		}
+//
+//	}
+	int j=0;
+	private void fetch(String htmlContent){
+		Document doc = Jsoup.parse(htmlContent);
+		Elements pageEle  = doc.select("span[data-tstid=paginationTotal]");
+		Elements categorys = doc.select("div.listing-flexbox");
+		Elements category1 = categorys.select("div .baseline").select(".col9").select(".col-md-8");
+		Elements category2 = category1.select("section");
+		Elements category3 = category2.select("article");
+		
+		for (Element category : category3) {
+			j=j+1;
+			Elements picUrl1 = category.select("div");
+			Elements picUrl2 = picUrl1.select("a");
+			String proUrl ="http://www.farfetch.com"+ picUrl2.attr("href");
+			String picUrl = picUrl2.select("noscript").select("img").attr("src");
+			Map<String,String> map = getProductUrl(proUrl);
+			
+			Element product = category.select("a").last();
+			String brand = product.select("h5").text();
+			String productName = product.select("p").text();
+			String price = product.select("span").last().text();
+			Pattern pattern = Pattern.compile("[^0-9]");
+	        Matcher matcher = pattern.matcher(price);
+	        price = matcher.replaceAll("");
+			Product pro = null;
+			pro = new Product();
+			pro.setBrand(brand);
+			pro.setMaterl(map.get("materl"));
+			pro.setProductCode(map.get("productCode"));
+			pro.setDescript(map.get("desc"));
+			pro.setProductname(productName);
+			pro.setUrl(map.get("picUrl"));
+			pro.setBarCode(map.get("barCode"));
+			pro.setMade(map.get("made"));
+			pro.setSize(map.get("size"));
+			pro.setPrice(price);
+			pro.setMemo("第"+i+"页第"+j+"数据");
+			messMappingAndSave(pro);
+		}
+		System.out.println("供拉取商品数量："+j+"个");
 	}
 	public  void getUrlList() throws Exception {
 		
 		
 		System.out.println("文件保存目录："+path);
+		
+			 StringBuffer buffer = new StringBuffer("BrandName 品牌" + splitSign + "ProductModel 货号" + splitSign
+					+ "SopProductName 商品名称" + splitSign + "BarCode 条形码" + splitSign
+					+  "material 材质" + splitSign
+					+  "size尺码" + splitSign
+					  + "ProductOrigin 产地" + splitSign
+					+ "Gender 性别" + splitSign+ "新市场价"+ splitSign  
+					 + "PcDesc 描述" + splitSign
+					+ "图片" + splitSign+  "备注").append("\r\n");
+			 out.write(buffer.toString());
 			String page = null;
 			int pageCount = 0;
 			try {
@@ -102,68 +217,39 @@ public class WangFetchProduct {
 				if(pageStart==0){
 					pageStart = 1;
 				}
+				
+//				int poolCnt=pageCount;
+//				ExecutorService exe=Executors.newFixedThreadPool(poolCnt/4+1);//相当于跑4遍
+//				final List<Collection<String>> subSkuNos=subCollection();
+//				logger.warn("线程池数："+(poolCnt/4+1));
+//				for(int i = 0 ; i <subSkuNos.size();i++){
+//					Map<String,String> sopPriceMap = new HashMap<>();
+//					
+//				}
+				
 				for(int i=pageStart;i<=pageCount;i++){
 					response = HttpUtils.get(uri+"&page="+i);
 //					HttpResponse response = HttpUtils.get("http://www.farfetch.com/cn/shopping/women/clothing-1/items.aspx?ffref=hd_mnav&discount=0-0&page=66");
 					System.out.println("第"+i+"页："+uri+"&page="+i);
 					if (response.getStatus()==200) {
+						i=i+1;
 						String htmlContent = response.getResponse();
-						Document doc = Jsoup.parse(htmlContent);
-						Elements pageEle  = doc.select("span[data-tstid=paginationTotal]");
-						Elements categorys = doc.select("div.listing-flexbox");
-						Elements category1 = categorys.select("div .baseline").select(".col9").select(".col-md-8");
-						Elements category2 = category1.select("section");
-						Elements category3 = category2.select("article");
-						int j=0;
-						for (Element category : category3) {
-							j=j+1;
-							Elements picUrl1 = category.select("div");
-							Elements picUrl2 = picUrl1.select("a");
-							String proUrl ="http://www.farfetch.com"+ picUrl2.attr("href");
-							String picUrl = picUrl2.select("noscript").select("img").attr("src");
-							Map<String,String> map = getProductUrl(proUrl);
-							
-							Element product = category.select("a").last();
-							String brand = product.select("h5").text();
-							String productName = product.select("p").text();
-							String price = product.select("span").last().text();
-							Pattern pattern = Pattern.compile("[^0-9]");
-					        Matcher matcher = pattern.matcher(price);
-					        price = matcher.replaceAll("");
-							Product pro = null;
-							pro = new Product();
-							pro.setBrand(brand);
-							pro.setMaterl(map.get("materl"));
-							pro.setProductCode(map.get("productCode"));
-							pro.setDescript(map.get("desc"));
-							pro.setProductname(productName);
-							pro.setUrl(map.get("picUrl"));
-							pro.setBarCode(map.get("barCode"));
-							pro.setMade(map.get("made"));
-							pro.setPrice(price);
-							pro.setMemo("第"+i+"页第"+j+"数据");
-							messMappingAndSave(pro);
-						}
-						System.out.println("供拉取商品数量："+j+"个");
+//						exe.execute(new UpdateThread(htmlContent));
+						fetch(htmlContent);
+						
 					}
 				}
+				out.close();
+//				exe.shutdown();
+//				while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
+//
+//				}
+				
 				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-			
-			
-			   InputStream in = new BufferedInputStream(new ByteArrayInputStream(buffer.toString().getBytes("gb2312")));
-			   File file = new File(path);
-			   FileOutputStream out = new FileOutputStream(file);
-	            byte[] data = new byte[1024];
-	            int len = 0;
-	            while (-1 != (len=in.read(data, 0, data.length))) {
-	                out.write(data, 0, len);
-	            }
-	            out.flush();
-	            out.close();
+		    
 			
 	}
 	private static Map<String,String> getProductUrl(String url) {
@@ -174,6 +260,7 @@ public class WangFetchProduct {
 		String productCode = null;
 		String productName = null;
 		String made = null;
+		String size = null;
 		StringBuffer pic = new StringBuffer();
 		try {
 			HttpResponse response = HttpUtils.get(url);
@@ -223,6 +310,15 @@ public class WangFetchProduct {
 							productCode = category3.text();
 							
 						} 
+						if("233".equals(trk)){
+							Elements categorySize = ele.select("div .product-detail-dl");
+							Element category4 = categorySize.select("dd").get(0);
+							if(category4!=null){
+								size = category4.text();
+								size = size.replace(",",".");
+							}
+							
+						} 
 						if("29".equals(trk)){ 
 							
 							Elements category2 = ele.select("div .product-detail-dl");
@@ -237,7 +333,6 @@ public class WangFetchProduct {
 								materal = ss.substring(0);
 							}else{
 								materal = ss.substring(0,ss.indexOf("洗涤说明"));
-								desc= ss.substring(ss.indexOf("洗涤说明"));
 							}
 					    	//品牌编号
 					    	map.put("productCode", productCode);
@@ -246,7 +341,9 @@ public class WangFetchProduct {
 					    	map.put("materl", materal);
 					    	map.put("picUrl", pic.toString());
 					    	map.put("made", made);
+					    	map.put("size", size);
 					    	map.put("productName", productName);
+					    	
 					    	break;
 						}
 					
@@ -264,10 +361,11 @@ public class WangFetchProduct {
 	/**
 	 * message mapping and save into DB
 	 */
-	int i=0;
+	int i=1;
+	
 	public void messMappingAndSave(Product item) {
 	
-		String bs=exportExvel(item);
+		exportExvel(item);
 //			SpuDTO spu = new SpuDTO();
 //			try {
 //				i=i+1;
@@ -314,20 +412,29 @@ public class WangFetchProduct {
 //				}
 //			}
 		}
-	static String splitSign = ",";
 	
-	static StringBuffer buffer = new StringBuffer("BrandName 品牌" + splitSign + "ProductModel 货号" + splitSign
-			+ "SopProductName 商品名称" + splitSign + "BarCode 条形码" + splitSign
-			+  "material 材质" + splitSign
-			  + "ProductOrigin 产地" + splitSign
-			+ "Gender 性别" + splitSign+ "新市场价"+ splitSign  
-			 + "PcDesc 描述" + splitSign
-			+ "图片" + splitSign+  "备注").append("\r\n");
-	private static String exportExvel(Product dto){
-
+	
+	private static void exportExvel(Product dto){
+		 //此处设置为true即可追加
+        //继续追加
+     
+//		   InputStream in = new BufferedInputStream(new ByteArrayInputStream(buffer.toString().getBytes("gb2312")));
+//		   File file = new File(path);
+//		   FileOutputStream out = new FileOutputStream(file);
+//            byte[] data = new byte[1024];
+//            int len = 0;
+//            while (-1 != (len=in.read(data, 0, data.length))) {
+//                out.write(data, 0, len);
+//            }
+//            out.flush();
+//            out.close();
+//		
+//		
+		
+		StringBuffer buffer  = new StringBuffer();
 			try {
 				//supplierId 供货商
-
+				 
 				String brandName = dto.getBrand();
 				buffer.append(brandName).append(splitSign);
 				// 货号
@@ -355,7 +462,8 @@ public class WangFetchProduct {
 				}
 
 				buffer.append(material).append(splitSign);
-		
+				buffer.append(dto.getSize()).append(
+						splitSign);
 				// 获取产地
 				String productOrigin = dto.getMade();
 
@@ -373,12 +481,10 @@ public class WangFetchProduct {
 						splitSign);
 				buffer.append(dto.getMemo());
 				buffer.append("\r\n");
+				 out.write(buffer.toString());
+			    out.flush();
 			} catch (Exception e) {
 			}
-
-		return buffer.toString();
-		
-		
 	}
 }
 

@@ -17,6 +17,7 @@ public class Product {
 	private String barCode;
 	private String made;
 	private String sex;
+	private String size;
 	private String memo;
 	
 	
