@@ -384,13 +384,13 @@ public class DowloadFileController {
 			if(null != startDate && null != endDate){
 				for(File localFile : mySupplierFile.listFiles()){
 					try {
-						if(localFile.isFile()){
+						if(localFile.isDirectory()){
 							String fileDate = "";
 							String fileName = localFile.getName();
 							if(fileName.contains("specified")){
-								fileDate = fileName.substring(fileName.indexOf("_")+1, fileName.lastIndexOf("_"));
+								fileDate = fileName.substring(0, fileName.lastIndexOf("_"));
 							}else{
-								fileDate = fileName.substring(fileName.indexOf("_")+1, fileName.lastIndexOf("."));
+								fileDate = fileName;
 							}
 							if(startDate.getTime() <= DateTimeUtil.convertFormat(fileDate, "yyyy-MM-dd").getTime() && DateTimeUtil.convertFormat(fileDate, "yyyy-MM-dd").getTime()<=endDate.getTime()){
 								filesToAdd.add(localFile);
@@ -403,32 +403,37 @@ public class DowloadFileController {
 				}
 			}else if(null != startDate && null == endDate){
 				for(File localFile : mySupplierFile.listFiles()){
-					if(localFile.isFile() && localFile.getName().contains(DateTimeUtil.convertFormat(startDate, "yyyy-MM-dd"))){
+					if(localFile.isDirectory() && localFile.getName().contains(DateTimeUtil.convertFormat(startDate, "yyyy-MM-dd"))){
 						filesToAdd.add(localFile);
 					}
 				}
 			}else if(null != endDate && null == startDate){
 				for(File localFile : mySupplierFile.listFiles()){
-					if(localFile.isFile() && localFile.getName().contains(DateTimeUtil.convertFormat(endDate, "yyyy-MM-dd"))){
+					if(localFile.isDirectory() && localFile.getName().contains(DateTimeUtil.convertFormat(endDate, "yyyy-MM-dd"))){
 						filesToAdd.add(localFile);
 					}
 				}
 			}
 			
     		System.out.println("filesToAdd=========================="+filesToAdd.size()); 
-    		if(filesToAdd.size() == 0){    			
-    			File logFile = new File(tmpfffff+File.separator+"productLog_"+new Date().getTime()+".log");
-            	writer = new BufferedWriter(new FileWriter(logFile));  
-            	writer.write("=================没有文件========================"); 
-            	writer.flush();
-            	filesToAdd.add(logFile);
-    		}
+    		
     		zipfile = new ZipFile(new File(new Date().getTime()+""));
         	
 			ZipParameters parameters = new ZipParameters();  
 		    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
 		    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
-			zipfile.addFiles(filesToAdd, parameters);
+		    if(filesToAdd.size()>0){
+		    	for(File path : filesToAdd){
+		    		zipfile.addFolder(path, parameters);
+		    	}
+		    }else{
+		    	File logFile = new File(tmpfffff+File.separator+"productLog_"+new Date().getTime()+".log");
+            	writer = new BufferedWriter(new FileWriter(logFile));  
+            	writer.write("=================没有文件========================"); 
+            	writer.flush();  
+		    	zipfile.addFile(logFile, parameters);
+		    }
+			
 			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("product"+new Date().getTime()+".zip", "UTF-8"));
 
 			in = new BufferedInputStream(new FileInputStream(zipfile.getFile()));
