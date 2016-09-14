@@ -33,7 +33,7 @@ public class StockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    
+//    
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -57,38 +57,45 @@ public class StockImp extends AbsUpdateProductStock {
   	
   	Map<String,String> stockMap = new HashMap<String,String>();
   	try{
+  		 System.out.println("待更新总数："+skuNo.size());
           //定义三方
           for (String skuno : skuNo) {
+        	  System.out.println("待更新de："+skuno);
         		String tempSku = null;
             	String [] skuArray = skuno.split("-");
-            	tempSku = skuArray[0];
-            	String size = URLEncoder.encode(skuArray[1],"UTF-8");
-            	size = size.replace("+","%20");
-        	  String json = HttpUtil45
-      				.get("http://geb-production.edstema.it/api/v3.0/sku/"+tempSku+"/id/"+size+"/size/stock?storeCode=DW3LT",
-      						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
-      						null);
-      		ReturnObject obj = new Gson().fromJson(json, ReturnObject.class);
-      		if(obj!=null){
-      			Result re = obj.getResults();
-      			if(re!=null&&"200".equals(re.getReqCode())&&!"0".equals(re.getCount())){
-      				int i = Integer.parseInt(re.getItems().get(0).getQuantity());
-      				System.out.println(skuno+"======"+i);
-      				if(i<0){
-              			loggerError.info("sku库存小于0："+tempSku+":"+i);
-              			System.out.println("sku库存小于0："+tempSku+":"+i);
-              			stockMap.put(skuno,"0");
-              		}else{
-              			stockMap.put(skuno,i+"");
+            	if(skuArray.length==2){
+            		tempSku = skuArray[0];
+                	String size = URLEncoder.encode(skuArray[1],"UTF-8");
+                	size = size.replace("+","%20");
+            	  String json = HttpUtil45
+          				.get("http://geb-production.edstema.it/api/v3.0/sku/"+tempSku+"/id/"+size+"/size/stock?storeCode=DW3LT",
+          						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
+          						null);
+            	  System.out.println(json);
+          		ReturnObject obj = new Gson().fromJson(json, ReturnObject.class);
+          		if(obj!=null){
+          			Result re = obj.getResults();
+          			if(re!=null&&"200".equals(re.getReqCode())&&!"0".equals(re.getCount())){
+          				int i = Integer.parseInt(re.getItems().get(0).getQuantity());
+          				System.out.println(skuno+"======"+i);
+          				if(i<0){
+                  			loggerError.info("sku库存小于0："+tempSku+":"+i);
+                  			System.out.println("sku库存小于0："+tempSku+":"+i);
+                  			stockMap.put(skuno,"0");
+                  		}else{
+                  			stockMap.put(skuno,i+"");
+                  		}
+          			}else{
+          				stockMap.put(skuno,"0");
               		}
-      			}else{
-      				stockMap.put(skuno,"0");
+          		}else{
+          			stockMap.put(skuno,"0");
           		}
-      		}else{
-      			stockMap.put(skuno,"0");
-      		}
+            	}
+            	
           }
   	}catch(Exception e){
+  		System.out.println(e.getMessage());
   		loggerError.info(e);
   	}
       return stockMap;
@@ -98,6 +105,8 @@ public class StockImp extends AbsUpdateProductStock {
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("efashion");
+        stockImp.setUseThread(true);
+        stockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("efashiom更新库存开始");
         System.out.println("efashiom更新库存开始");

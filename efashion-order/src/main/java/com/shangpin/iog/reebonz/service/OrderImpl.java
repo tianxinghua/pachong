@@ -479,7 +479,7 @@ public class OrderImpl extends AbsOrderService {
 				String price = priceInt.divide(new BigDecimal(1.05), 2)
 						.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 
-				item.setPurchase_price((Double.parseDouble(price) - 3) + "");
+				item.setPurchase_price(price);
 			}
 			if(flag){
 				item.setPurchase_price("1");
@@ -511,7 +511,7 @@ public class OrderImpl extends AbsOrderService {
 		orderDTO1.setCreateTime(new Date());
 		orderDTO1.setPurchasePriceDetail("1.11");
 //		orderDTO.setSpPurchaseDetailNo("CGD2016090100392");
-//		ompl.handleConfirmOrder(orderDTO1);//(orderDTO);
-//		ompl.handleRefundlOrder(orderDTO);//(orderDTO);
+		ompl.handleConfirmOrder(orderDTO1);//(orderDTO);
+		ompl.handleRefundlOrder(orderDTO);//(orderDTO);
 	}
 }
