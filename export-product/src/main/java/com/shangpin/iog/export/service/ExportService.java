@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -27,6 +28,8 @@ public class ExportService {
 	
 	private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger
 			.getLogger("error");
+	private static org.apache.log4j.Logger loggerInfo = org.apache.log4j.Logger
+			.getLogger("info");
 	private static ResourceBundle bdl = null;
 	private static String savepath = null;
 	private static String startDate = null;
@@ -44,6 +47,8 @@ public class ExportService {
 	private static String to = null;
 	private static String messageType = null;
 	
+	private static String conf_suppliers = null;
+	
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -57,6 +62,8 @@ public class ExportService {
 		to = bdl.getString("to");
 		messageType = bdl.getString("messageType");
 		smtpHost = bdl.getString("smtpHost");
+		
+		conf_suppliers = bdl.getString("conf_suppliers");
 	}
 
 	@Autowired
@@ -65,15 +72,34 @@ public class ExportService {
     ProductSearchService productService;
 	
 	public void writeFile(){
-		
-		 List<SupplierDTO> suppliers = supplierDAO.findByState("1");
+		String filePath = "";
+		 List<SupplierDTO> suppliers = new ArrayList<SupplierDTO>();
+		 
+		 if(StringUtils.isNotBlank(conf_suppliers)){
+			 filePath = savepath+File.separator+DateTimeUtil.getShortCurrentDate()+"_specified"+File.separator;
+			 for(String supplier : conf_suppliers.split(",")){				 
+				 suppliers.add(supplierDAO.findBysupplierId(supplier));
+			 }
+		 }else{
+			 filePath = savepath+File.separator+DateTimeUtil.getShortCurrentDate()+File.separator;
+			 List<SupplierDTO> suppliers1 = supplierDAO.findByState("1");
+			 for(SupplierDTO supplier : suppliers1){
+				//排除brunarosso和Della
+				 if(!"2015091801507".equals(supplier.getSupplierId()) && !"2015112001671".equals(supplier.getSupplierId())){
+					 suppliers.add(supplier);
+				 }
+			 }
+			 
+//			 suppliers.addAll(supplierDAO.findByState("2"));
+		 }
+		 
 		 
 		 //2016-08-26
 		 Date startTime = null ;
 		 if(StringUtils.isNotBlank(startDate)){
 			 startTime = DateTimeUtil.parse(startDate, "yyyy-MM-dd");
 		 }else{
-			 DateTimeUtil.getShortDate(DateTimeUtil.getShortCurrentDate());
+			 startTime = DateTimeUtil.getShortDate(DateTimeUtil.getShortCurrentDate());
 		 }
 		 Date endTime = null;
 		 if(StringUtils.isNotBlank(endDate)){
@@ -81,22 +107,31 @@ public class ExportService {
 		 }else{
 			 endTime = new Date();
 		 }
-		 String filePath = savepath+File.separator+DateTimeUtil.getShortCurrentDate()+File.separator;
+		 
+		 loggerInfo.info("开始时间："+DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss")+"============ 结束时间："+DateTimeUtil.convertFormat(endTime, "yyyy-MM-dd HH:mm:ss"));		 
+		 System.out.println("开始时间："+DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss")+"============ 结束时间："+DateTimeUtil.convertFormat(endTime, "yyyy-MM-dd HH:mm:ss"));
+		 
 		 for(SupplierDTO supplier : suppliers){
 			 BufferedWriter writer = null;
-			 try {				
+			 try {	
+				 
+				 loggerInfo.info(supplier.getSupplierId()+" "+supplier.getSupplierName()+" 开始生成文件================");
+				 System.out.println(supplier.getSupplierId()+" "+supplier.getSupplierName()+" 开始生成文件================");
 				 String fileName = supplier.getSupplierName()+"_"+DateTimeUtil.getShortCurrentDate();
 				 //查数据，生成csv文件
 				 StringBuffer productBuffer =productService.exportReportProduct(supplier.getSupplierId(),startTime,endTime,null,null);
-				 File localFile = new File(filePath+fileName+".csv");
-				 localFile.getParentFile().mkdir();		
-				 OutputStreamWriter write = new OutputStreamWriter(new FileOutputStream(localFile),"gb2312");        
-			     writer=new BufferedWriter(write);  
-			     writer.write(productBuffer.toString());
-				 writer.flush();
+				 if(productBuffer.indexOf("\r\n") != productBuffer.lastIndexOf("\r\n")){
+					 File localFile = new File(filePath+fileName+".csv");
+					 localFile.getParentFile().mkdir();		
+					 OutputStreamWriter write = new OutputStreamWriter(new FileOutputStream(localFile),"gb2312");        
+				     writer=new BufferedWriter(write);  
+				     writer.write(productBuffer.toString());
+					 writer.flush();
+				 }
 				 //生成带图片的excel文件
 				 productService.exportAndSaveReportProduct(picpath,supplier.getSupplierId(),startTime,endTime,null,null,filePath+fileName+".xls");
-				 		 
+				 loggerInfo.info(supplier.getSupplierId()+" "+supplier.getSupplierName()+" 生成文件结束================"); 
+				 System.out.println(supplier.getSupplierId()+" "+supplier.getSupplierName()+" 生成文件结束================");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}finally{
@@ -111,18 +146,20 @@ public class ExportService {
 			 
 		 }
 		//压缩发邮件
-		 try {
-			 String zipfile  = ZipUtils.compressedFile(filePath, savepath);
-			 File zipFile = new File(savepath+File.separator+zipfile);
-			 if(zipFile.exists()){
-				 String messageText = "筛选产品列表见附件";
-				 SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword, to, "每天推送筛选产品", messageText , messageType,zipFile);
-			 }			 
-			 
-		} catch (Exception e) {
-			e.printStackTrace();
-			loggerError.error(e.toString()); 
-		}
+//		 try {
+//			 String zipfile  = ZipUtils.compressedFile(filePath, savepath);
+//			 File zipFile = new File(savepath+File.separator+zipfile);
+//			 if(zipFile.exists()){
+//				 String messageText = "筛选产品列表见附件";
+//				 SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword, to, "每天推送筛选产品", messageText , messageType,zipFile);
+//			 }			 
+//			 
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			loggerError.error(e.toString()); 
+//		}
 		 
-	} 
+		 
+	}
+	
 }

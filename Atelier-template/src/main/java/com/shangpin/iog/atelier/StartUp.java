@@ -48,7 +48,7 @@ public class StartUp {
 	public static void main(String[] args){	
 		
 //		args = new String[1];
-//		args[0] = "cr";
+//		args[0] = "bagh";
 		
 		if(args.length==0 || StringUtils.isBlank(args[0])){
 			System.out.println("请传入参数，指定运行的供应商service,参数可取值为: vi,leam,dan,it,wise,cr"); 
@@ -80,6 +80,10 @@ public class StartUp {
 	        	fetchProduct.handleData("spu", supplierId, day, picpath);
 	        }else if("cr".equals(args[0])){
 	        	//createve99采用通用处理 第3列作为供价  第4列作为市场价
+	        	CommonPriceService fetchProduct = (CommonPriceService) factory.getBean("commonPriceService");
+	        	fetchProduct.handleData("spu", supplierId, day, picpath);
+	        }else if("bagh".equals(args[0])){
+	        	//bagheera采用通用处理 第3列作为供价  第4列作为市场价
 	        	CommonPriceService fetchProduct = (CommonPriceService) factory.getBean("commonPriceService");
 	        	fetchProduct.handleData("spu", supplierId, day, picpath);
 	        }

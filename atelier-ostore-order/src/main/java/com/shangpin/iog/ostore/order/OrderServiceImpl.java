@@ -146,25 +146,26 @@ public class OrderServiceImpl extends AbsOrderService{
 							orderDTO.setExcTime(new Date()); 				
 						}
 					}else{
-						orderDTO.setExcState("1");
+						orderDTO.setExcState("0");
 						orderDTO.setExcDesc("库存不足!");
 						orderDTO.setExcTime(new Date()); 
 						orderDTO.setStatus(OrderStatus.NOHANDLE); 
-						sendMail(item_id+" 该产品库存不足!");
+						sendMail(item_id+" 该产品库存不足!采购单号是："+orderDTO.getSpPurchaseNo());
 					}
 				}else{
-					orderDTO.setExcState("1");
-					orderDTO.setExcDesc("查询对方库存接口失败,"+stockData);
+					orderDTO.setExcState("0");
+					orderDTO.setStatus(OrderStatus.NOHANDLE); 
+					orderDTO.setExcDesc("查询对方库存接口失败,对方返回的信息是："+stockData);
 					orderDTO.setExcTime(new Date()); 
-					sendMail("查询对方库存接口失败,"+stockData);
+					sendMail("订单 "+orderDTO.getSpPurchaseNo()+" spuid等于 "+item_id+" 查询对方库存接口 GetItemStockBySizeMarketPlace 失败,对方返回的信息是："+stockData+",请与供应商联系。 ");
 				}
 			}else{
 				orderDTO.setStatus(OrderStatus.NOHANDLE); 
-				orderDTO.setExcState("1");
+				orderDTO.setExcState("0");
 				orderDTO.setExcDesc("查询数据库失败,未找到该商品 "+skuId);
 				logger.info("查询数据库失败,未找到该商品=========== "+skuId);
 				orderDTO.setExcTime(new Date()); 
-				sendMail("查询数据库失败,未找到该商品=========== "+skuId);
+				sendMail("订单 "+orderDTO.getSpPurchaseNo()+" 查询数据库失败,未找到该商品=========== "+skuId);
 			}
 			
 		} catch (Exception e) {
@@ -320,7 +321,7 @@ public class OrderServiceImpl extends AbsOrderService{
 		orderDTO.setSpOrderId("201607254074169");
     	orderDTO.setDetail("6794202-2107151150283:1,");
 //    	orderDTO.setPurchasePriceDetail("170.41");
-    	orderService.handleConfirmOrder(orderDTO);
+//    	orderService.handleConfirmOrder(orderDTO);
 		//201607284050007L, "2111344053718"
 		//201607284050011L, "2016398420885"
 //		orderService.newOrderMarketPlace(201607284050015L, "2109449363719", 1);
@@ -328,7 +329,12 @@ public class OrderServiceImpl extends AbsOrderService{
 //		orderService.setStatusOrderMarketplace("201607284050015", "CANCELED"); 
 //		orderService.getStatusOrderMarketplace("201607284050011");
 		
-//		orderService.getItemStockBySizeMarketPlace("384938");
+		try {
+			orderService.getItemStockBySizeMarketPlace("4164573");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	

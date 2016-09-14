@@ -150,13 +150,14 @@ public class OrderServiceImpl extends AbsOrderService{
 						orderDTO.setExcDesc("库存不足!");
 						orderDTO.setExcTime(new Date()); 
 						orderDTO.setStatus(OrderStatus.NOHANDLE); 
-						sendMail(item_id+" 该产品库存不足!");
+						sendMail(item_id+" 该产品库存不足!采购单号是："+orderDTO.getSpPurchaseNo());
 					}
 				}else{
-					orderDTO.setExcState("1");
-					orderDTO.setExcDesc("查询对方库存接口失败,"+stockData);
+					orderDTO.setExcState("0");
+					orderDTO.setStatus(OrderStatus.NOHANDLE); 
+					orderDTO.setExcDesc("查询对方库存接口失败,对方返回的信息是："+stockData);
 					orderDTO.setExcTime(new Date()); 
-					sendMail("查询对方库存接口失败,"+stockData);
+					sendMail("订单 "+orderDTO.getSpPurchaseNo()+" spuid等于 "+item_id+" 查询对方库存接口 GetItemStockBySizeMarketPlace 失败,对方返回的信息是："+stockData+",请与供应商联系。 ");
 				}
 			}else{
 				orderDTO.setStatus(OrderStatus.NOHANDLE); 
@@ -164,7 +165,7 @@ public class OrderServiceImpl extends AbsOrderService{
 				orderDTO.setExcDesc("查询数据库失败,未找到该商品 "+skuId);
 				logger.info("查询数据库失败,未找到该商品=========== "+skuId);
 				orderDTO.setExcTime(new Date()); 
-				sendMail("查询数据库失败,未找到该商品=========== "+skuId);
+				sendMail("订单 "+orderDTO.getSpPurchaseNo()+" 查询数据库失败,未找到该商品=========== "+skuId);
 			}
 			
 		} catch (Exception e) {

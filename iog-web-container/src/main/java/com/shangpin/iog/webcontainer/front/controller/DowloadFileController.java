@@ -56,11 +56,14 @@ public class DowloadFileController {
 	private static ResourceBundle bdl = null;
 	private static String tmpfffff = null;
 	private static String pictmpdownloadpath = null;
+	private static String data_product = null;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		tmpfffff = bdl.getString("tmpfffff");
 		pictmpdownloadpath = bdl.getString("pictmpdownloadpath");
+		
+		data_product = bdl.getString("data_product");
 		
 	}
 
@@ -348,4 +351,117 @@ public class DowloadFileController {
 			}
 		}
 	}
+	
+	
+	
+	@RequestMapping("exporteveryday")
+	public void download(HttpServletResponse response, String queryJson){
+		
+		BufferedWriter writer = null;
+		
+		BufferedInputStream in = null;
+    	BufferedOutputStream out = null;
+    	
+		ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);    	
+    	if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
+        
+        Date startDate  =null;
+        if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
+            startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd");
+        }
+        Date endDate = null;
+        if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
+            endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd");
+        }    
+       
+        ZipFile zipfile = null;
+        try {
+        		
+    		//按照选择的日期选择文件夹
+    		List<String> myDirs = new ArrayList<String>();    		
+			File mySupplierFile = new File(data_product);
+			ArrayList<File> filesToAdd = new ArrayList<File>();
+			if(null != startDate && null != endDate){
+				for(File localFile : mySupplierFile.listFiles()){
+					try {
+						if(localFile.isDirectory()){
+							String fileDate = "";
+							String fileName = localFile.getName();
+							if(fileName.contains("specified")){
+								fileDate = fileName.substring(0, fileName.lastIndexOf("_"));
+							}else{
+								fileDate = fileName;
+							}
+							if(startDate.getTime() <= DateTimeUtil.convertFormat(fileDate, "yyyy-MM-dd").getTime() && DateTimeUtil.convertFormat(fileDate, "yyyy-MM-dd").getTime()<=endDate.getTime()){
+								filesToAdd.add(localFile);
+	    					}
+						}
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}        					
+				}
+			}else if(null != startDate && null == endDate){
+				for(File localFile : mySupplierFile.listFiles()){
+					if(localFile.isDirectory() && localFile.getName().contains(DateTimeUtil.convertFormat(startDate, "yyyy-MM-dd"))){
+						filesToAdd.add(localFile);
+					}
+				}
+			}else if(null != endDate && null == startDate){
+				for(File localFile : mySupplierFile.listFiles()){
+					if(localFile.isDirectory() && localFile.getName().contains(DateTimeUtil.convertFormat(endDate, "yyyy-MM-dd"))){
+						filesToAdd.add(localFile);
+					}
+				}
+			}
+			
+    		System.out.println("filesToAdd=========================="+filesToAdd.size()); 
+    		
+    		zipfile = new ZipFile(new File(new Date().getTime()+""));
+        	
+			ZipParameters parameters = new ZipParameters();  
+		    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+		    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
+		    if(filesToAdd.size()>0){
+		    	for(File path : filesToAdd){
+		    		zipfile.addFolder(path, parameters);
+		    	}
+		    }else{
+		    	File logFile = new File(tmpfffff+File.separator+"productLog_"+new Date().getTime()+".log");
+            	writer = new BufferedWriter(new FileWriter(logFile));  
+            	writer.write("=================没有文件========================"); 
+            	writer.flush();  
+		    	zipfile.addFile(logFile, parameters);
+		    }
+			
+			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("product"+new Date().getTime()+".zip", "UTF-8"));
+
+			in = new BufferedInputStream(new FileInputStream(zipfile.getFile()));
+
+            out = new BufferedOutputStream(response.getOutputStream());
+            byte[] data = new byte[1048576];
+            int len = 0;
+            while (-1 != (len=in.read(data, 0, data.length))) {
+                out.write(data, 0, len);
+            }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				if(null != in){
+					in.close();
+				}
+				if(null != out){
+					out.close();
+				}
+				if(null != writer){
+					writer.close();
+				}
+				zipfile.getFile().delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 }
