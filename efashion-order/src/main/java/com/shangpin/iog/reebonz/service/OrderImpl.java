@@ -500,18 +500,20 @@ public class OrderImpl extends AbsOrderService {
 
 	public static void main(String[] args) {
 		OrderImpl ompl = new OrderImpl();
-		ReturnOrderDTO orderDTO = new ReturnOrderDTO();
+//		ReturnOrderDTO orderDTO = new ReturnOrderDTO();
+		String d = "573212332b33300afbc402ed-TU:1";
+//		orderDTO.setDetail(d);
+//		orderDTO.setSpOrderId("201609134249189");
+//		orderDTO.setCreateTime(new Date());
+		
 		OrderDTO orderDTO1 = new OrderDTO();
-		String d = "5731b9622b33300afbc3b4b6-40:1";
-		orderDTO.setDetail(d);
-		orderDTO.setSpOrderId("201609011112111");
-		orderDTO.setCreateTime(new Date());
+	
 		orderDTO1.setDetail(d);
-		orderDTO1.setSpOrderId("201609011112111");
+		orderDTO1.setSpOrderId("CGD2016091300338-201609134249189");
 		orderDTO1.setCreateTime(new Date());
-		orderDTO1.setPurchasePriceDetail("1.11");
-//		orderDTO.setSpPurchaseDetailNo("CGD2016090100392");
+		orderDTO1.setPurchasePriceDetail("173.09");
+		
+//		ompl.handleRefundlOrder(orderDTO);//(orderDTO);
 		ompl.handleConfirmOrder(orderDTO1);//(orderDTO);
-		ompl.handleRefundlOrder(orderDTO);//(orderDTO);
 	}
 }
