@@ -1,4 +1,4 @@
-package com.shangpin.iog.revolve.stock.util;
+package com.shangpin.iog.revolve.stock.util1;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -123,8 +123,6 @@ private static void txtDownload(String url,String filepath){
 			if (StringUtils.isNotBlank(rowString)) {
 				colValueList = fromCSVLinetoArray(rowString,sep);
 				ProductDTO t = fillDTO(class1.newInstance(), colValueList);
-				// 过滤重复的dto。。。sku,
-				// dtoSet.add(t);
 				dtoList.add(t);
 			}
 		}
