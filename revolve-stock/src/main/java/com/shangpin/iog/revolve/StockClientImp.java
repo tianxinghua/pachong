@@ -38,7 +38,8 @@ public class StockClientImp extends AbsUpdateProductStock
     factory = new AnnotationConfigApplicationContext(new Class[] { AppContext.class });
   }
 
-  public Map<String, String> grabStock(Collection<String> skuNo)
+  @SuppressWarnings("unchecked")
+public Map<String, String> grabStock(Collection<String> skuNo)
     throws ServiceException, Exception
   {
     String skuId = "";
@@ -62,13 +63,16 @@ public class StockClientImp extends AbsUpdateProductStock
     logger.info("csv转换items.size==========" + items.size());
     for (ProductDTO item : items) {
       try {
-    	  if(item.getSellableqty()!=null){
+    	  String reg = "^\\d+$";
+    	  System.out.println(item.getId()+"==>"+item.getSellableqty());
+    	  if(item.getSellableqty()!=null&&item.getSellableqty().matches(reg)){
+    		  
     		  int stock = Integer.parseInt(item.getSellableqty());
     		  if(stock<3){
-    			  System.out.println(item.getId()+"==>"+stock);
+    			
     			  stock = 0;
     		  }
-    		  skuData.put(item.getId(),stock);
+    		  skuData.put(item.getId(),stock+"");
     	  }
       } catch (Exception e) {
         e.printStackTrace();
