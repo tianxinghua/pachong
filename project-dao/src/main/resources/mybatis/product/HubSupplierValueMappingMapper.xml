@@ -271,6 +271,11 @@
         WHERE    SpValueType = #{spvalueType}
 
       </select>
+      
+      <select id="findCountOfSpvalueType" resultType="java.lang.Integer" parameterType="java.lang.String">
+      	select count(1) from HubSupplierValueMapping
+      	WHERE    SpValueType = #{spvalueType}
+      </select>
 
 
   <select id="getMappingBySpBrandIdAndSupplierBrandName" resultMap="BaseResultMap" parameterType="java.lang.String"  >
