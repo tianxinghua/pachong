@@ -32,4 +32,10 @@ public interface SpuMapper extends IBaseDao<SpuDTO> {
 	
 	public List<SpuDTO> findAllBySupplierId(@Param("supplierId") String supplierId,@Param("startTime") Date startTime,@Param("endTime") Date endTime);
 
+	/**
+	 * 查询供货商所有品牌
+	 * @return
+     */
+	public List<String> findDistinctBrand();
+
 }

@@ -24,7 +24,7 @@ include 'iog-product-web'
 
 include 'coltorti'
 include 'atelier-ostore-order'
-include 'brunarosso-stock'
+
 
 
 include 'efashion-order'
@@ -34,4 +34,6 @@ include 'optical'
 include 'studio69'
 include 'studio69-order'
 
+include 'brunarosso20-stock'
+include 'attribute-mapping'
 

@@ -155,9 +155,17 @@
                 SUPPLIER_ID = #{supplierId}
             </if>
         </where>
-	</select>	
-	
-	<update id="updateSpuMemo">
+	</select>
+
+
+    <select id="findDistinctBrand" resultType="java.lang.String" >
+        select
+        DISTINCT BRAND_NAME
+        from SPU
+
+    </select>
+
+    <update id="updateSpuMemo">
 	    update SPU
        <set>
 		  MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",#{memo}), 
