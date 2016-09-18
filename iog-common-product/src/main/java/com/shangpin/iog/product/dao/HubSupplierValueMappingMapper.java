@@ -10,6 +10,8 @@ import java.util.List;
 
 @Mapper
 public interface HubSupplierValueMappingMapper extends IBaseDao<HubSupplierValueMappingDTO> {
+	
+	public int findCountOfSpvalueType(@Param("spvalueType") Integer spvalueType);
 
      public List<HubSupplierValueMappingDTO>  findListBySpvalueType(@Param("spvalueType") Integer spvalueType);
 

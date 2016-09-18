@@ -51,6 +51,7 @@ import com.shangpin.iog.dto.BuEpRuleDTO;
 import com.shangpin.iog.dto.BuEpSpecialDTO;
 import com.shangpin.iog.dto.CategoryContrastDTO;
 import com.shangpin.iog.dto.ColorContrastDTO;
+import com.shangpin.iog.dto.HubSupplierValueMappingDTO;
 import com.shangpin.iog.dto.MaterialContrastDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
@@ -67,6 +68,7 @@ import com.shangpin.iog.product.dao.BuEpValueMapper;
 import com.shangpin.iog.product.dao.CategoryContrastMapper;
 import com.shangpin.iog.product.dao.ColorContrastMapper;
 import com.shangpin.iog.product.dao.EPRuleMapper;
+import com.shangpin.iog.product.dao.HubSupplierValueMappingMapper;
 import com.shangpin.iog.product.dao.MaterialContrastMapper;
 import com.shangpin.iog.product.dao.ProductPictureMapper;
 import com.shangpin.iog.product.dao.ProductsMapper;
@@ -125,6 +127,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	BuEpSpecialMapper BuEpSpecialDAO;
 	@Autowired
 	SeasonRelationService seasonRelationService;
+	@Autowired
+	HubSupplierValueMappingMapper hubSupplierValueMappingService;
 
 	private static Map<String, String> spBrandMap = new HashMap<>();
 	private static Map<String, String> colorContrastMap = new HashMap<>();
@@ -132,6 +136,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	private static Map<String, String> smallMaterialContrastMap= new HashMap<>();
 	private static Map<String, String> categoryContrastMap = new HashMap<>();
 	private static List<BuEpSpecialDTO> BuEpSpecialList = new ArrayList<BuEpSpecialDTO>();
+	private static Map<String, String> hubBrandMap = new HashMap<>();
 
 
 	String splitSign = ",";
@@ -375,7 +380,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		//品类map赋值
 		this.setCategoryMap();
 		// 设置尚品网品牌
-		this.setBrandMap();
+//		this.setBrandMap();
+		this.setHubBrandMap(); 
 		// 颜色Map赋值
 		this.setColorContrastMap();
 		// 材质Map 赋值
@@ -421,8 +427,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 				brandName = dto.getBrandName();
 				if (StringUtils.isNotBlank(brandName)) {
-					if (spBrandMap.containsKey(brandName.toLowerCase())) {
-						brandId = spBrandMap.get(brandName.toLowerCase());
+					if (hubBrandMap.containsKey(brandName.toLowerCase())) {
+						brandId = hubBrandMap.get(brandName.toLowerCase());
 					} else {
 						brandId = "";
 					}
@@ -430,7 +436,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					brandId = "";
 				}
 
-				buffer.append(!"".equals(brandId) ? brandId : "尚品网品牌编号")
+				buffer.append(!"".equals(brandId.split(";")[0]) ? brandId : "尚品网品牌编号")
 						.append(splitSign);
 
 				if(supplier== "2015081701437"){
@@ -748,6 +754,24 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 						dto.getBrandId());
 			}
 		}
+	}
+	
+	/**
+	 * 新的设置尚品品牌方法
+	 */
+	private void setHubBrandMap(){
+		try {
+			int num = hubSupplierValueMappingService.findCountOfSpvalueType(1);
+		    if(hubBrandMap.size() != num){		    	
+	    		List<HubSupplierValueMappingDTO> list = hubSupplierValueMappingService.findListBySpvalueType(1);
+	    		for(HubSupplierValueMappingDTO dto : list){
+	    			hubBrandMap.put(dto.getSupplierValue().toLowerCase(), dto.getSpValueNo()+";"+dto.getSpValue());
+	    		}
+		    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	/**
