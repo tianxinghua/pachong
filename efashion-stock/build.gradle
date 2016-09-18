@@ -14,6 +14,7 @@ jar {
     exclude ("**/*.properties")
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.efashion.stock.StockImp'
+      attributes 'Main-Class': 'com.shangpin.iog.efashion.stock.StockImp'
+        //  attributes 'Main-Class': 'com.shangpin.iog.efashion.stock.schedule.Startup'
     }
 }

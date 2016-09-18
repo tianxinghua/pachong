@@ -2,6 +2,7 @@ package com.shangpin.iog.efashion.dto;
 
 import java.util.List;
 
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,6 @@ public class Result {
 	
 	private String reqCode;
 	private String count;
-	private Item item;
+	private List<Item> items;
 	
 }

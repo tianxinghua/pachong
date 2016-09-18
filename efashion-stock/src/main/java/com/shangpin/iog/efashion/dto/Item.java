@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 public class Item {
 	
-	private String sku_id;
+	private String product_id;
 	private String quantity;
+	private String size;
 }

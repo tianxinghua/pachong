@@ -479,7 +479,7 @@ public class OrderImpl extends AbsOrderService {
 				String price = priceInt.divide(new BigDecimal(1.05), 2)
 						.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 
-				item.setPurchase_price((Double.parseDouble(price) - 3) + "");
+				item.setPurchase_price(price);
 			}
 			if(flag){
 				item.setPurchase_price("1");
@@ -500,18 +500,20 @@ public class OrderImpl extends AbsOrderService {
 
 	public static void main(String[] args) {
 		OrderImpl ompl = new OrderImpl();
-		ReturnOrderDTO orderDTO = new ReturnOrderDTO();
+//		ReturnOrderDTO orderDTO = new ReturnOrderDTO();
+		String d = "573219862b33300afbc41c69-39:1";
+//		orderDTO.setDetail(d);
+//		orderDTO.setSpOrderId("201609134249189");
+//		orderDTO.setCreateTime(new Date());
+		
 		OrderDTO orderDTO1 = new OrderDTO();
-		String d = "5731b9622b33300afbc3b4b6-40:1";
-		orderDTO.setDetail(d);
-		orderDTO.setSpOrderId("201609011112111");
-		orderDTO.setCreateTime(new Date());
+	
 		orderDTO1.setDetail(d);
-		orderDTO1.setSpOrderId("201609011112111");
+		orderDTO1.setSpOrderId("201609104242101");
 		orderDTO1.setCreateTime(new Date());
-		orderDTO1.setPurchasePriceDetail("1.11");
-//		orderDTO.setSpPurchaseDetailNo("CGD2016090100392");
-//		ompl.handleConfirmOrder(orderDTO1);//(orderDTO);
+		orderDTO1.setPurchasePriceDetail("402.78");
+		
 //		ompl.handleRefundlOrder(orderDTO);//(orderDTO);
+		ompl.handleConfirmOrder(orderDTO1);//(orderDTO);
 	}
 }

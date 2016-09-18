@@ -163,12 +163,13 @@ public class OrderImpl extends AbsOrderService {
 		ProductDTO product = productSearchService.findProductForOrder(supplierId,skuId);
 		String subject = "wise-order-shangpin";
 		//采购单号 尺码  skuId 货号  barcode 数量    
-		String messageText =orderDTO.getSpPurchaseNo()+
-							";"+product.getSize()+
-							";"+skuId+
-							";"+(null != product.getProductCode()? product.getProductCode():"")+
-							";"+(null != product.getBarcode()? product.getBarcode():"")+
-							";"+string.split(":")[1];
+		String messageText ="Shangpin OrderNo: "+orderDTO.getSpPurchaseNo()+"<br>"+
+							"ProductSize: "+product.getSize()+"<br>"+
+							"SpuId-SkuId: "+skuId+"<br>"+
+							"StyleCode-ColorCode: "+(null != product.getProductCode()? product.getProductCode():"")+"<br>"+
+							"Barcode: "+skuId.substring(skuId.indexOf("-")+1)+"<br>"+
+							"Qty: "+string.split(":")[1]+"<br>"+
+							"Status: confirmed";
 		SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject, messageText , messageType);
 			
 	}
@@ -185,12 +186,13 @@ public class OrderImpl extends AbsOrderService {
 		ProductDTO product = productSearchService.findProductForOrder(supplierId,skuId);
 		String subject = "wise-cancelled order-shangpin";
 		//采购单号 尺码  skuId 货号  barcode 数量    
-		String messageText =deleteOrder.getSpPurchaseNo()+
-							";"+product.getSize()+
-							";"+skuId+
-							";"+(null != product.getProductCode()? product.getProductCode():"")+
-							";"+(null != product.getBarcode()? product.getBarcode(): "")+
-							";"+string.split(":")[1];
+		String messageText ="Shangpin OrderNo: "+deleteOrder.getSpPurchaseNo()+"<br>"+
+							"ProductSize: "+product.getSize()+"<br>"+
+							"SpuId-SkuId: "+skuId+"<br>"+
+							"StyleCode-ColorCode: "+(null != product.getProductCode()? product.getProductCode():"")+"<br>"+
+							"Barcode: "+skuId.substring(skuId.indexOf("-")+1)+"<br>"+
+							"Qty: "+string.split(":")[1]+"<br>"+
+							"Status: cancelled";;
 		SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, subject, messageText , messageType);
 		
 	}
