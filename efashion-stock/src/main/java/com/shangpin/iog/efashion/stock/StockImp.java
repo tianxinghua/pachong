@@ -7,7 +7,6 @@ import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.EventProductDTO;
-import com.shangpin.iog.efashion.dto.Item;
 import com.shangpin.iog.efashion.dto.Result;
 import com.shangpin.iog.efashion.dto.ReturnObject;
 import com.shangpin.iog.product.service.EventProductServiceImpl;
@@ -21,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -33,12 +33,14 @@ public class StockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
+//    
     private static ApplicationContext factory;
-  private static void loadSpringContext()
-  {
+    private static void loadSpringContext()
+    {
 
-      factory = new AnnotationConfigApplicationContext(AppContext.class);
-  }
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
+
     @Autowired
 	EventProductService eventProductService;
     private static ResourceBundle bdl=null;
@@ -46,69 +48,69 @@ public class StockImp extends AbsUpdateProductStock {
 	private static String url;
 	public static int day;
 	public static int max;
-	public static int i=0;;
     static {
         if(null==bdl)
          bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
-		url = bdl.getString("url");
     }
-    @Override
-    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-    	
-    	Map<String,String> stockMap = new HashMap<String,String>();
-    	try{
-            //定义三方
-    		
-            for (String skuno : skuNo) {
-            	i++;
-            	//skuno格式：skuId|proCode|colorCode|size
-            	String tempSku = null;
-            	String [] skuArray = skuno.split("\\|");
-            	tempSku = skuArray[0];
-            	//389977|BBUCKLE35MT6200222|REDBEIGE|80
-            	String json = HttpUtil45
-          				.get("http://api.gebnegozi.com/api/v2/skus/"+tempSku+"/stock.json?storeCode=DW3LT",
+  public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+  	
+  	Map<String,String> stockMap = new HashMap<String,String>();
+  	try{
+  		 System.out.println("待更新总数："+skuNo.size());
+          //定义三方
+          for (String skuno : skuNo) {
+        	  System.out.println("待更新de："+skuno);
+        		String tempSku = null;
+            	String [] skuArray = skuno.split("-");
+            	if(skuArray.length==2){
+            		tempSku = skuArray[0];
+                	String size = URLEncoder.encode(skuArray[1],"UTF-8");
+                	size = size.replace("+","%20");
+            	  String json = HttpUtil45
+          				.get("http://geb-production.edstema.it/api/v3.0/sku/"+tempSku+"/id/"+size+"/size/stock?storeCode=DW3LT",
           						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
           						null);
-            	System.out.println("===第"+i+"个===");
-            	ReturnObject obj = new Gson().fromJson(json, ReturnObject.class);
-            	if(obj!=null){
-            		
-            		Item item = obj.getResults().getItem();
-            		if(item!=null){
-            			System.out.println("skuId:qty==="+tempSku+":"+item.getQuantity());
-            			if(tempSku.equals(item.getSku_id())){
-            				stockMap.put(skuno,item.getQuantity());
-            			}else{
-            				stockMap.put(skuno,"0");
-            			}
-            		}else{
-            			stockMap.put(skuno,"0");
-            		}
-            		
-            	}else{
-            		stockMap.put(skuno,"0");
+            	  System.out.println(json);
+          		ReturnObject obj = new Gson().fromJson(json, ReturnObject.class);
+          		if(obj!=null){
+          			Result re = obj.getResults();
+          			if(re!=null&&"200".equals(re.getReqCode())&&!"0".equals(re.getCount())){
+          				int i = Integer.parseInt(re.getItems().get(0).getQuantity());
+          				System.out.println(skuno+"======"+i);
+          				if(i<0){
+                  			loggerError.info("sku库存小于0："+tempSku+":"+i);
+                  			System.out.println("sku库存小于0："+tempSku+":"+i);
+                  			stockMap.put(skuno,"0");
+                  		}else{
+                  			stockMap.put(skuno,i+"");
+                  		}
+          			}else{
+          				stockMap.put(skuno,"0");
+              		}
+          		}else{
+          			stockMap.put(skuno,"0");
+          		}
             	}
-            }
-            System.out.println("===拉取完成===");
-    	}catch(Exception e){
-    		loggerError.error(e);
-    	}
-    	
-        return stockMap;
-    }
+            	
+          }
+  	}catch(Exception e){
+  		System.out.println(e.getMessage());
+  		loggerError.info(e);
+  	}
+      return stockMap;
+  }
     public static void main(String[] args) {
     	//加载spring
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("efashion");
+        stockImp.setUseThread(true);
+        stockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("efashiom更新库存开始");
         System.out.println("efashiom更新库存开始");
         try {
-			stockImp.setUseThread(true);
-			stockImp.setSkuCount4Thread(500);
 			stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new Date()));
 		} catch (Exception e) { 
 			loggerError.info(e);

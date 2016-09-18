@@ -27,7 +27,7 @@ jar {
     exclude ("**/*.properties")
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.efashion.service.efashionFrameFetchProduct'
+        attributes 'Main-Class': 'com.shangpin.iog.efashion.StartSkuJob'
     }
 
 }

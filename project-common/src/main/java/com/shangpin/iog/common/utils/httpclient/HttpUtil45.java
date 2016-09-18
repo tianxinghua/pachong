@@ -510,7 +510,7 @@ public class HttpUtil45 {
 				try {
 					s = new StringEntity(value);
 					s.setContentEncoding("UTF-8");
-					s.setContentType("application/soap+xml");//发送json数据需要设置contentType
+					s.setContentType("application/soap+xml");//
 					method.setEntity(s);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
@@ -1260,12 +1260,29 @@ public class HttpUtil45 {
 	}
 
 
-
-	public static void downloadPicture(String url,Map<String,String> param,Map<String,String> headMap,String filePath ,String fileName ,OutTimeConfig outTimeConf,String username,String password) throws ServiceException{
+	/**
+	 * 下载图片
+	 * @param url
+	 * @param param
+	 * @param headMap
+	 * @param filePath
+	 * @param fileName
+	 * @param outTimeConf
+	 * @param authType  NT：NTCredentials   ,  other :UsernamePasswordCredentials
+	 * @param username
+	 * @param password
+     * @throws ServiceException
+     */
+	public static void downloadPicture(String url,Map<String,String> param,Map<String,String> headMap,String filePath ,String fileName ,OutTimeConfig outTimeConf,String authType,String username,String password) throws ServiceException{
 
 		HttpClientContext localContext =null;
 		if(StringUtils.isNotBlank(username)){
-			localContext = getAuthContext(url, username, password);
+			if("NT".equals(authType)){
+				localContext = getNTAuthContext(url, username, password);
+			}else{
+				localContext = getAuthContext(url, username, password);
+			}
+
 		}else{
 			localContext = getPlainContext(url);
 		}

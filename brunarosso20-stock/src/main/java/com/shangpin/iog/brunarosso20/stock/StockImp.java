@@ -1,6 +1,10 @@
 package com.shangpin.iog.brunarosso20.stock;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
+import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.dto.SupplierStockDTO;
+import com.shangpin.iog.service.SupplierStockService;
 import com.shangpin.sop.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -14,6 +18,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -34,9 +39,13 @@ public class StockImp  extends AbsUpdateProductStock {
     private static ResourceBundle bdl=null;
     private static String supplierId;
     private static ApplicationContext factory;
+
+
+	static SupplierStockService supplierStockService;
     private static void loadSpringContext()
     {
         factory = new AnnotationConfigApplicationContext(AppContext.class);
+		supplierStockService = (SupplierStockService)factory.getBean("supplierStockServiceImpl");
     }
     
     private static String ip = null;
@@ -115,17 +124,61 @@ public class StockImp  extends AbsUpdateProductStock {
 			throws JDOMException, IOException {
 		SAXBuilder builder = new SAXBuilder();
 		Document doc = builder.build(new File(localPath+File.separator+fileName));
-		Element foo =doc.getRootElement();                
+		Element foo =doc.getRootElement();
+		Map<String, Integer> stockMapTmp = new HashMap<>();
 		for (Element element:foo.getChildren()){                    
 			try {
 				String size =  element.getChildText("MM_TAGLIA").replaceAll("½", "+");
-				stockMap.put(element.getChildText("ID_ARTICOLO")+"-"+size, Integer.parseInt(element.getChildText("ESI")));
+				stockMapTmp.put(element.getChildText("ID_ARTICOLO")+"-"+size, Integer.parseInt(element.getChildText("ESI")));
 			} catch (Exception e) {
 				e.printStackTrace();
 				logError.error(e.getMessage()); 
 			}
 			
 		}
+
+		//供货商库存存入预备表中，防止供货商库存变化后，尚品尚为上架 无法更新库存
+		Set<String> keySet = stockMapTmp.keySet();
+
+		for(String skuId:keySet) {
+			SupplierStockDTO supplierStockDTO = new SupplierStockDTO();
+			supplierStockDTO.setSupplierId(supplierId);
+			supplierStockDTO.setId(UUIDGenerator.getUUID());
+
+			supplierStockDTO.setSupplierSkuId(skuId.replace("½","+"));
+			supplierStockDTO.setQuantity(stockMapTmp.get(skuId));
+			supplierStockDTO.setOptTime(new Date());
+
+			try {
+				supplierStockService.saveStock(supplierStockDTO);
+
+			} catch (ServiceMessageException e) {
+				try {
+					if(e.getMessage().equals("数据插入失败键重复")){
+						//update
+						supplierStockService.updateStock(supplierStockDTO);
+						logger.info(supplierStockDTO.getSupplierSkuId() + " : 更新库存" + supplierStockDTO.getQuantity());
+						//
+
+					} else{
+						logError.error(supplierStockDTO.getSupplierSkuId() + "库存更新失败");
+					}
+
+				} catch (ServiceException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+		//获取所有的库存信息去更新
+		try {
+			List<SupplierStockDTO>  stockDTOs= supplierStockService.findBySupplierId(supplierId);
+			for(SupplierStockDTO dto: stockDTOs){
+				stockMap.put(dto.getSupplierSkuId(),dto.getQuantity());
+			}
+		} catch (ServiceMessageException e) {
+			e.printStackTrace();
+		}
+
 	}
 
     public static void main(String[] args) throws Exception {

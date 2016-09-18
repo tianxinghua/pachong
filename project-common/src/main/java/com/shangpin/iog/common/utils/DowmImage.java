@@ -28,7 +28,9 @@ public class DowmImage implements Runnable{
 	private String savePath;
 	private String userName;
 	private String password;
+	private String authType;
 	private PicQueue picQueue;
+
 
 	private Map<String,String> paraMap ;
 	private Map<String,String> headerMap ;
@@ -96,7 +98,7 @@ public class DowmImage implements Runnable{
 
 		try {
 			HttpUtil45.downloadPicture(replaceSpecialChar(urlString),paraMap,headerMap,savePath,filename,new OutTimeConfig(1000*60,1000*60*5,1000*60*5),
-                    userName,password);
+					authType, userName,password);
 		} catch (Exception e) {
 			String key = urlString+";"+savePath+";"+filename;
 			picQueue.addUnvisitedUrl(key);
@@ -126,7 +128,7 @@ public class DowmImage implements Runnable{
 
 
 	public DowmImage(String urlString, String filename, String savePath,
-					 PicQueue picQueue,Map<String,String> paraMap,Map<String,String> headMap,String userName,String password) {
+					 PicQueue picQueue,Map<String,String> paraMap,Map<String,String> headMap,String authType,String userName,String password) {
 		super();
 		this.urlString = urlString;
 		this.filename = filename;
@@ -134,6 +136,7 @@ public class DowmImage implements Runnable{
 		this.picQueue = picQueue;
 		this.paraMap  = paraMap;
 		this.headerMap = headMap;
+		this.authType = authType;
 		this.userName  =userName;
 		this.password = password;
 	}

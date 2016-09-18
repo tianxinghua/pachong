@@ -8,15 +8,20 @@ import com.enterprisedt.net.ftp.FTPConnectMode;
 import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FTPTransferType;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.app.AppContext;
 //import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.SendMail;
+import com.shangpin.iog.common.utils.UUIDGenerator;
+import com.shangpin.iog.dto.SupplierStockDTO;
+import com.shangpin.iog.service.SupplierStockService;
 import com.shangpin.sop.AbsUpdateProductStock;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.jdom2.input.SAXBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -31,7 +36,6 @@ public class StockClientImp extends AbsUpdateProductStock{
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
     public static final String PROPERTIES_FILE_NAME = "param";
-//    private static String supplierId = null;
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -42,10 +46,20 @@ public class StockClientImp extends AbsUpdateProductStock{
     private static String HOST="ftp.backend.brunarosso.com",PORT="21",USER="backend.brunarosso.com_shang",PASSWORD="1Lt53Vf6",FILE_PATH="/public/stockftp";
     static String localFilePath = bundle.getString("localFilePath");
     static String email = bundle.getString("email");
+    static  String supplierId = sopBundle.getString("supplierId");
+
+
+
     @Override
     public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
         //String url="E:\\brunarosso"+"Disponibilita.xml";
-        Map<String,Integer>map=getSizeByPath("");
+        Map<String,Integer> map=getSizeByPath("");
+
+
+
+
+
+
         Map<String,Integer>returnMap=new HashMap<>();
 
         logger.info("供货商库存数量 =" + map.size());
@@ -320,7 +334,7 @@ public class StockClientImp extends AbsUpdateProductStock{
     	String host = sopBundle.getString("HOST");
         String app_key = sopBundle.getString("APP_KEY");
         String app_secret= sopBundle.getString("APP_SECRET");
-        String supplierId = sopBundle.getString("supplierId");
+
         if(StringUtils.isBlank(host)||StringUtils.isBlank(app_key)||StringUtils.isBlank(app_secret)){
             logger.error("参数错误，无法执行更新库存");
         }
