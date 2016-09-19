@@ -257,7 +257,7 @@
 <!--       <include refid="Example_Where_Clause" /> -->
 <!--     </if> -->
 <!--   </select> -->
-      <select id="findListBySpvalueType" resultMap="BaseResultMap" parameterType="java.lang.String"  >
+      <select id="findListBySpvalueType" resultMap="BaseResultMap" parameterType="java.lang.Integer"  >
         select
         ColMappingId, SupplierId,
         SupplierValueNo, SupplierValueParentNo,
@@ -272,8 +272,8 @@
 
       </select>
       
-      <select id="findCountOfSpvalueType" resultType="java.lang.Integer" parameterType="java.lang.String">
-      	select count(1) from HubSupplierValueMapping
+      <select id="findCountOfSpvalueType" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+      	select count(SupplierValue) from HubSupplierValueMapping
       	WHERE    SpValueType = #{spvalueType}
       </select>
 

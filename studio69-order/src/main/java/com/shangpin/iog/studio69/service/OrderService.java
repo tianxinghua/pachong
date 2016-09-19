@@ -110,7 +110,7 @@ public class OrderService extends AbsOrderService{
 			String goodsList = "<GoodsList>"
 					+ "<Good>"
 					+ "<ID>"+orderDTO.getDetail().split(",")[0].split(":")[0].split("-")[0]+"</ID>"
-					+ "<Size>"+orderDTO.getDetail().split(",")[0].split(":")[0].split("-")[1]+"</Size>"
+					+ "<Size>"+(orderDTO.getDetail().split(",")[0].split(":")[0].split("-")[1]).replaceAll("+", "½")+"</Size>" 
 					+ "<Qty>"+orderDTO.getDetail().split(",")[0].split(":")[1]+"</Qty>"
 					+ "<Price>"+orderDTO.getPurchasePriceDetail()+"</Price>"
 					+ "</Good>"
