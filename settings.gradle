@@ -36,4 +36,5 @@ include 'studio69-order'
 
 include 'brunarosso20-stock'
 include 'attribute-mapping'
+include 'smets-stock'
 

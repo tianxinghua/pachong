@@ -1379,5 +1379,12 @@ public class HttpUtil45 {
 //		String spuData = HttpUtil45.postAuth("http://79.60.136.177/ws_sito/ws_sito_p15.asmx/GetAllItemsMarketplace",
 //				null, new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600), "shangpin", "creative99");
 //		System.out.println("img =" + spuData);
+
+		try {
+			HttpUtil45.downloadPicture("http://185.54.173.11/docs/reposImages/PO2160Cerruti_U/801109987285_454/801109987285_454-1.jpg",null,null,"e:/tmp","801109987285_454-1.jpg",new OutTimeConfig(1000*60,1000*60*5,1000*60*5),
+                    "", "","");
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 	}
 }

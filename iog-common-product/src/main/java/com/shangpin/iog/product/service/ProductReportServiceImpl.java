@@ -3,6 +3,7 @@ package com.shangpin.iog.product.service;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.common.utils.DateTimeUtil;
+import com.shangpin.iog.dto.HubSupplierValueMappingDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.SeasonRelationDTO;
 import com.shangpin.iog.mongodao.PictureDAO;
@@ -51,6 +52,9 @@ public class ProductReportServiceImpl implements ProductReportService {
 
     @Autowired
     ProductFetchService pfs;
+
+    @Autowired
+    HubSupplierValueMappingMapper hubSupplierValueMappingService;
 
     @Override
     public Map<String,Integer> findProductReport() throws ServiceException {
@@ -232,7 +236,7 @@ public class ProductReportServiceImpl implements ProductReportService {
             endDate = DateTimeUtil.convertFormat(DateTimeUtil.getAppointDayFromSpecifiedDay(DateTimeUtil.convertFormat(endDate,"yyyy-MM-dd"),1,"D"),"yyyy-MM-dd");
             end=DateTimeUtil.convertFormat(endDate+" 00:00:00","yyyy-MM-dd HH:mm:ss");
         }
-
+        Map<String,String> supplierDateMap = new HashMap<>();
         //排除的供货商
         Map<String,String> excludeSupplierMap  = new HashMap<>();
         if(StringUtils.isNotBlank(excludeSupplierId)){
@@ -243,7 +247,9 @@ public class ProductReportServiceImpl implements ProductReportService {
                  }
              }
         }
-
+        if(StringUtils.isNotBlank(supplierId)){
+            if(excludeSupplierMap.containsKey(supplierId)) return supplierDateMap;
+        }
         List<ProductDTO> productList =   productDAO.findReportBySupplierIdAndCreateTime(supplierId,start,end);
         if(null==productList||productList.size()==0){
             logger.warn("未获得到数据");
@@ -267,12 +273,13 @@ public class ProductReportServiceImpl implements ProductReportService {
         logger.warn("映射的季节："+reasonMap.toString());
 
         //品牌
-        List<String> brandList = new ArrayList<String>();
-        for(String brand:ePRuleDAO.findAll(2, 1)){
-            brandList.add(brand.toUpperCase());
+        Map<String,String> brandMap = this.getHubBrandMap();
+//        for(String brand:ePRuleDAO.findAll(2, 1)){
+//            brandList.add(brand.toUpperCase());
+//
+//        }
 
-        }
-        logger.warn("需要的品牌："+brandList.toString());
+        logger.warn("需要的品牌："+brandMap.toString());
         //品类 排除
         List<String> categeryList = new ArrayList<String>();
         for(String cat:ePRuleDAO.findAll(3, 0)){
@@ -297,7 +304,7 @@ public class ProductReportServiceImpl implements ProductReportService {
 
 
 
-        Map<String,String> supplierDateMap = new HashMap<>();
+
 
         int diffDay = 0;
         Map<String, String> findMap = null;
@@ -316,7 +323,7 @@ public class ProductReportServiceImpl implements ProductReportService {
 //                            logger.warn("getSeasonId");
                         if((StringUtils.isNotBlank(dto.getCategoryName()) && !categeryList.contains(dto.getCategoryName().toUpperCase())) || (StringUtils.isNotBlank(dto.getSubCategoryName()) && !categeryList.contains(dto.getSubCategoryName().toUpperCase()))){
 //                                logger.warn("getCategoryName");
-                            if(null != dto.getBrandName() && (brandList.contains(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
+                            if(null != dto.getBrandName() && (brandMap.containsKey(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
 //                                    logger.warn("getBrandName");
                                 try {
                                     logger.info(dto.getSpuId() + " ---" + dto.getSkuId() +" 进入季节前验证");
@@ -403,6 +410,26 @@ public class ProductReportServiceImpl implements ProductReportService {
     public static String getBASE64(String s) {
         if (s == null) return null;
         return (new sun.misc.BASE64Encoder()).encode( s.getBytes() );
+    }
+
+
+    /**
+     * 新的设置尚品品牌方法
+     */
+    private Map<String,String> getHubBrandMap(){
+        Map<String,String> brandMap = new HashMap();
+        try {
+
+                List<HubSupplierValueMappingDTO> list = hubSupplierValueMappingService.findListBySpvalueType(1);
+                for(HubSupplierValueMappingDTO dto : list){
+                    brandMap.put(dto.getSupplierValue().toUpperCase(),"");
+                }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return brandMap;
+
     }
 
 }

@@ -1811,7 +1811,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					j++;
 					row = sheet.createRow(j);
 					row.setHeight((short) 1500);
-					sheet.setColumnWidth(0, 36*150);
+					sheet.setColumnWidth((short)0, (short)  (36*150));
 					//第一个单元格：图片
 					String fileName = picPath+File.separator+dto.getSupplierId()+File.separator+DateTimeUtil.convertFormat(dto.getLastTime(),"yyyy-MM-dd")+ File.separator +"SPID"+dto.getSupplierId()+"-"+JavaUtils.getBASE64(dto.getSpuId())+"-"+JavaUtils.getBASE64(dto.getColor())+" (1).jpg";
 //					System.out.println(fileName);
