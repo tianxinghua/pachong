@@ -381,7 +381,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		this.setCategoryMap();
 		// 设置尚品网品牌
 //		this.setBrandMap();
-		this.setHubBrandMap(); 
+		this.setHubBrandMap(); 		
 		// 颜色Map赋值
 		this.setColorContrastMap();
 		// 材质Map 赋值
@@ -427,8 +427,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 				brandName = dto.getBrandName();
 				if (StringUtils.isNotBlank(brandName)) {
-					if (hubBrandMap.containsKey(brandName.toLowerCase())) {
-						brandId = hubBrandMap.get(brandName.toLowerCase());
+					
+					if (hubBrandMap.containsKey(brandName.toLowerCase())) {						
+						brandId = hubBrandMap.get(brandName.toLowerCase());						
 					} else {
 						brandId = "";
 					}
@@ -436,7 +437,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					brandId = "";
 				}
 
-				buffer.append(!"".equals(brandId.split(";")[0]) ? brandId : "尚品网品牌编号")
+				buffer.append(!"".equals(brandId.split(";")[0]) ? brandId.split(";")[0] : "尚品网品牌编号")
 						.append(splitSign);
 
 				if(supplier== "2015081701437"){
@@ -762,7 +763,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	private void setHubBrandMap(){
 		try {
 			int num = hubSupplierValueMappingService.findCountOfSpvalueType(1);
-		    if(hubBrandMap.size() != num){		    	
+			if(hubBrandMap.size() != num){		    	
 	    		List<HubSupplierValueMappingDTO> list = hubSupplierValueMappingService.findListBySpvalueType(1);
 	    		for(HubSupplierValueMappingDTO dto : list){
 	    			hubBrandMap.put(dto.getSupplierValue().toLowerCase(), dto.getSpValueNo()+";"+dto.getSpValue());
@@ -1715,10 +1716,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate,
 				endDate, pageIndex, pageSize, "same");
 		//品牌
-		List<String> brandList = new ArrayList<String>();
-		for(String brand:ePRuleDAO.findAll(2, 1)){
-			brandList.add(brand.toUpperCase());
-		}
+//		List<String> brandList = new ArrayList<String>();
+//		for(String brand:ePRuleDAO.findAll(2, 1)){
+//			brandList.add(brand.toUpperCase());
+//		}
 		//品类 排除
 		List<String> categeryList = new ArrayList<String>();
 		for(String cat:ePRuleDAO.findAll(3, 0)){
@@ -1743,7 +1744,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		//品类map赋值
 		this.setCategoryMap();
 		// 设置尚品网品牌
-		this.setBrandMap();
+//		this.setBrandMap();
+		this.setHubBrandMap();
 		// 颜色Map赋值
 		this.setColorContrastMap();
 		// 材质Map 赋值
@@ -1761,7 +1763,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					if(StringUtils.isNotBlank(dto.getCategoryGender()) && !genderList.contains(dto.getCategoryGender().toUpperCase())){
 						if((StringUtils.isNotBlank(dto.getSeasonId()) && !seasonList.contains(dto.getSeasonId().toUpperCase())) || (StringUtils.isNotBlank(dto.getSeasonName()) && !seasonList.contains(dto.getSeasonName().toUpperCase()))){
 							if((StringUtils.isNotBlank(dto.getCategoryName()) && !categeryList.contains(dto.getCategoryName().toUpperCase())) || (StringUtils.isNotBlank(dto.getSubCategoryName()) && !categeryList.contains(dto.getSubCategoryName().toUpperCase()))){
-								if(null != dto.getBrandName() && (brandList.contains(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
+								if(null != dto.getBrandName() && (hubBrandMap.containsKey(dto.getBrandName().toLowerCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
 									products.add(dto);
 								}
 							}
@@ -1865,16 +1867,16 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 					brandName = dto.getBrandName();
 					if (StringUtils.isNotBlank(brandName)) {
-						if (spBrandMap.containsKey(brandName.toLowerCase())) {
-							brandId = spBrandMap.get(brandName.toLowerCase());
+						
+						if (hubBrandMap.containsKey(brandName.toLowerCase())) {						
+							brandId = hubBrandMap.get(brandName.toLowerCase());						
 						} else {
 							brandId = "";
 						}
 					} else {
 						brandId = "";
 					}
-
-					row.createCell(5).setCellValue(!"".equals(brandId) ? brandId : "尚品网品牌编号");
+					row.createCell(5).setCellValue(!"".equals(brandId.split(";")[0]) ? brandId.split(";")[0] : "尚品网品牌编号");
 					row.createCell(6).setCellValue(brandName);
 					// 货号
 					row.createCell(7).setCellValue(
@@ -2155,8 +2157,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 					brandName = dto.getBrandName();
 					if (StringUtils.isNotBlank(brandName)) {
-						if (spBrandMap.containsKey(brandName.toLowerCase())) {
-							brandId = spBrandMap.get(brandName.toLowerCase());
+						
+						if (hubBrandMap.containsKey(brandName.toLowerCase())) {						
+							brandId = hubBrandMap.get(brandName.toLowerCase());						
 						} else {
 							brandId = "";
 						}
@@ -2164,7 +2167,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 						brandId = "";
 					}
 
-					buffer.append(!"".equals(brandId) ? brandId : "尚品网品牌编号")
+					buffer.append(!"".equals(brandId.split(";")[0]) ? brandId.split(";")[0] : "尚品网品牌编号")
 							.append(splitSign);
 					buffer.append(brandName).append(splitSign);
 					// 货号
@@ -2418,10 +2421,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate,
 				endDate, pageIndex, pageSize, "same");
 		//品牌
-		List<String> brandList = new ArrayList<String>();
-		for(String brand:ePRuleDAO.findAll(2, 1)){
-			brandList.add(brand.toUpperCase());
-		}
+//		List<String> brandList = new ArrayList<String>();
+//		for(String brand:ePRuleDAO.findAll(2, 1)){
+//			brandList.add(brand.toUpperCase());
+//		}
 		//品类 排除
 		List<String> categeryList = new ArrayList<String>();
 		for(String cat:ePRuleDAO.findAll(3, 0)){
@@ -2446,7 +2449,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		//品类map赋值
 		this.setCategoryMap();
 		// 设置尚品网品牌
-		this.setBrandMap();
+//		this.setBrandMap();
+		this.setHubBrandMap(); 		
 		// 颜色Map赋值
 		this.setColorContrastMap();
 		// 材质Map 赋值
@@ -2462,7 +2466,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					if(StringUtils.isNotBlank(dto.getCategoryGender()) && !genderList.contains(dto.getCategoryGender().toUpperCase())){
 						if((StringUtils.isNotBlank(dto.getSeasonId()) && !seasonList.contains(dto.getSeasonId().toUpperCase())) || (StringUtils.isNotBlank(dto.getSeasonName()) && !seasonList.contains(dto.getSeasonName().toUpperCase()))){
 							if((StringUtils.isNotBlank(dto.getCategoryName()) && !categeryList.contains(dto.getCategoryName().toUpperCase())) || (StringUtils.isNotBlank(dto.getSubCategoryName()) && !categeryList.contains(dto.getSubCategoryName().toUpperCase()))){
-								if(null != dto.getBrandName() && (brandList.contains(dto.getBrandName().toUpperCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
+								if(null != dto.getBrandName() && (hubBrandMap.containsKey(dto.getBrandName().toLowerCase()) || dto.getBrandName().equals("Chloé") || dto.getBrandName().equals("Chloe'"))){
 									try {
 										//supplierId 供货商
 										supplierId = dto.getSupplierName();
@@ -2498,8 +2502,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 										brandName = dto.getBrandName();
 										if (StringUtils.isNotBlank(brandName)) {
-											if (spBrandMap.containsKey(brandName.toLowerCase())) {
-												brandId = spBrandMap.get(brandName.toLowerCase());
+											
+											if (hubBrandMap.containsKey(brandName.toLowerCase())) {						
+												brandId = hubBrandMap.get(brandName.toLowerCase());						
 											} else {
 												brandId = "";
 											}
@@ -2507,7 +2512,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 											brandId = "";
 										}
 
-										buffer.append(!"".equals(brandId) ? brandId : "尚品网品牌编号")
+										buffer.append(!"".equals(brandId.split(";")[0]) ? brandId.split(";")[0] : "尚品网品牌编号")
 												.append(splitSign);
 										buffer.append(brandName).append(splitSign);
 										// 货号

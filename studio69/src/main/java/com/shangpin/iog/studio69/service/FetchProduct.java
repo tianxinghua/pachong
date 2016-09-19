@@ -211,7 +211,7 @@ public class FetchProduct {
      */
     private String guolv(String origin){
     	if(StringUtils.isNotBlank(origin)){
-    		return origin.replaceAll(origin, "\r").replaceAll(origin, "\n").trim();
+    		return origin.replaceAll("\r","").replaceAll("\n","").trim(); 
     	}else{
     		return "";
     	}
