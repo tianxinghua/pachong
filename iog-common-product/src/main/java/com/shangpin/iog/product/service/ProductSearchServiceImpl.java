@@ -2090,6 +2090,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 					allMap.put(dto.getSpuId()+dto.getColor(), null);
 				} catch (Exception e) {
+					j--;
 					e.printStackTrace();
 					logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
 					continue;
