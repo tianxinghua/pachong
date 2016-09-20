@@ -16,4 +16,8 @@ public interface HubSupplierValueMappingMapper extends IBaseDao<HubSupplierValue
      public List<HubSupplierValueMappingDTO>  findListBySpvalueType(@Param("spvalueType") Integer spvalueType);
 
     public  HubSupplierValueMappingDTO getMappingBySpBrandIdAndSupplierBrandName(@Param("spValueNo") String spValueNo,@Param("supplierValue") String  supplierValue);
+
+    public  HubSupplierValueMappingDTO getMappingBySupplierBrandName(@Param("supplierValue") String  supplierValue);
+
+
 }

@@ -31,10 +31,12 @@ include 'efashion-order'
 include 'report'
 include 'picturedown'
 include 'optical'
-include 'studio69'
-include 'studio69-order'
+
 
 include 'brunarosso20-stock'
 include 'attribute-mapping'
 include 'smets-stock'
+include 'project-mq'
+
+include 'dellogliostore'
 

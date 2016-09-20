@@ -22,7 +22,7 @@ public class AttributeMappingServiceImpl implements AttributeMappingService {
     @Override
     public Boolean saveBrand(HubSupplierValueMappingDTO dto) throws ServiceException {
         if(null==dto) return false;
-        HubSupplierValueMappingDTO tmp =mappingMapperDAO.getMappingBySpBrandIdAndSupplierBrandName(dto.getSpValueNo(),dto.getSupplierValue());
+        HubSupplierValueMappingDTO tmp =mappingMapperDAO.getMappingBySupplierBrandName(dto.getSupplierValue());
         if(null==tmp){
 
             try {

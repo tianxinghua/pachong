@@ -74,6 +74,8 @@ environments{
             redis.url='172.20.10.127'
             redis.port='6379'
             redis.password=''
+
+            rabbitmq.host=''
         }
     }
 

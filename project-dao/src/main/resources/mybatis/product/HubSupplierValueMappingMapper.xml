@@ -294,6 +294,22 @@
   </select>
 
 
+  <select id="getMappingBySupplierBrandName" resultMap="BaseResultMap" parameterType="java.lang.String"  >
+    select
+    ColMappingId, SupplierId,
+    SupplierValueNo, SupplierValueParentNo,
+    SupplierValue, SpValueNo, SpValue,
+    SpValueType, MappingType, MappingStatus,
+    SortValue, DataState, CreateTime,
+    CreateUser, UpdateTime, UpdateUser,
+    Memo
+    from HubSupplierValueMapping
+
+    WHERE      SupplierValue=#{supplierValue}
+
+  </select>
+
+
 <!--   <update id="updateByExampleSelective" parameterType="map" > -->
 <!--     update HubSupplierValueMapping -->
 <!--     <set > -->

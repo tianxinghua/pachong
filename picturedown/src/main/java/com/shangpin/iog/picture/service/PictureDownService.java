@@ -1,6 +1,7 @@
 package com.shangpin.iog.picture.service;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.DowmImage;
 import com.shangpin.iog.common.utils.queue.PicQueue;
 import com.shangpin.iog.dto.SupplierDTO;
@@ -110,6 +111,7 @@ public class PictureDownService {
         }else{
             downloadPic(supplier_Id);
         }
+        System.exit(0);
 
     }
 
@@ -118,11 +120,16 @@ public class PictureDownService {
 
             Map<String,String> picMap = new HashMap<>();
             Map<String,String> supplierDateMap = null;
+            //如果开始日期为空 只拉取当天的数据
+//            if(StringUtils.isBlank(startDate)){
+//                startDate = DateTimeUtil.strForDateNew(new Date());
+//            }
+
             supplierDateMap = productReportService.findPicture(picMap,supplierIdPam,startDate,endDate,excludesupplierId);
             if(null!=supplierDateMap&&supplierDateMap.size()>0){
                 //获取日期
                 String key = "",supplierId = "",date= "",spukeyValue = "";
-                ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 200, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(150),new ThreadPoolExecutor.CallerRunsPolicy());
+                ThreadPoolExecutor executor = new ThreadPoolExecutor(50, 150, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(100),new ThreadPoolExecutor.CallerRunsPolicy());
                 PicQueue picQueue = new PicQueue();
                 for(Map.Entry<String,String> supplierDate:supplierDateMap.entrySet()){
                      key = supplierDate.getKey();
@@ -154,7 +161,7 @@ public class PictureDownService {
 
                                 if (StringUtils.isNotBlank(img)) {
                                     try {
-                                        img=this.changeUrl(supplierId,img) ;
+                                        img=this.changeUrl(supplierId,img.trim()) ;
                                         System.out.println("spu =" +spu + " 　img url  ="+ img);
                                         loggerInfo.info("spu =" +spu + " 　img url  ="+ img);
                                         i++;
@@ -169,9 +176,11 @@ public class PictureDownService {
                                              DownloadPicTool.downImage(img.trim(),dirPath,spu+" ("+i+").jpg");
                                         }else  if("2016030701799".equals(supplierId)) {   //russocapri
 
+                                            Thread.sleep(500);
                                             executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"NT","at98w-IIS","Polo2012"));
                                         }else
                                         {
+                                            Thread.sleep(500);
                                             executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"",userName,password));
                                         }
 
@@ -259,11 +268,11 @@ public class PictureDownService {
     private void delay(ThreadPoolExecutor executor){
         while(true){
             if(executor.getActiveCount()==0){
-                loggerInfo.error("线程活动数为0");
+                loggerInfo.info("线程活动数为0");
                 break;
             }
             try {
-                Thread.sleep(1000*30);
+                Thread.sleep(1000*10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
