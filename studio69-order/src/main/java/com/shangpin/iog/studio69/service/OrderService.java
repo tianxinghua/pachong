@@ -18,11 +18,15 @@ import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.ObjectXMLUtil;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
+import com.shangpin.iog.studio69.dto.Response;
 import com.shangpin.iog.studio69.util.API_STUDIO69Stub;
+import com.shangpin.iog.studio69.util.API_STUDIO69Stub.CancelOrder;
+import com.shangpin.iog.studio69.util.API_STUDIO69Stub.CancelOrderResponse;
 import com.shangpin.iog.studio69.util.API_STUDIO69Stub.CreateNewOrder;
 import com.shangpin.iog.studio69.util.API_STUDIO69Stub.CreateNewOrderResponse;
 import com.shangpin.iog.studio69.util.API_STUDIO69Stub.CreateNewOrderResult_type0;
@@ -77,7 +81,8 @@ public class OrderService extends AbsOrderService{
 			
 		try {
 			// TODO 锁库存逻辑
-			
+			orderDTO.setExcState("0");
+			orderDTO.setStatus(OrderStatus.PLACED); 
 			
 		} catch (Exception e) {
 			errorLog.error(e);
@@ -93,45 +98,44 @@ public class OrderService extends AbsOrderService{
 		
 		try {
 			// TODO 支付逻辑			
-			String param = "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">"
-					+ "<soap12:Body>"
-					+ "<CreateNewOrder xmlns=\"http://tempuri.org/\">"					
-					+ "<orderID>20160901001010</orderID>"
-					+ "<buyerInfo>"
-					+ "<Name>test</Name>"
-					+ "<Address>shangpin</Address>"
-					+ "<Mobile>15101515421</Mobile>"
-					+ "<zipcode>100000</zipcode>"
-					+ "<Country>china</Country>"
-					+ "</buyerInfo>"
-					+ "<goodsList>"
+			API_STUDIO69Stub stub = new API_STUDIO69Stub();	
+			CreateNewOrder createNewOrder = new CreateNewOrder();
+			String buyerInfo = "<buyerInfo>"
+					+ "<Name>Genertec Italia S.r.l.</Name>"
+					+ "<Address>Via Leopardi 27</Address>"					
+					+ "<zipcode>22075</zipcode>"
+					+ "<Corriere>Fedex 0123456789</Corriere>"
+					+ "<Notes>"+orderDTO.getSpPurchaseNo()+"</Notes>"
+					+ "</buyerInfo>";
+			String goodsList = "<GoodsList>"
 					+ "<Good>"
-					+ "<ID>32400</ID>"
-					+ "<Size>48</Size>"
-					+ "<Qty>1</Qty>"
-					+ "<Price>305</Price>"
+					+ "<ID>"+orderDTO.getDetail().split(",")[0].split(":")[0].split("-")[0]+"</ID>"
+					+ "<Size>"+(orderDTO.getDetail().split(",")[0].split(":")[0].split("-")[1]).replaceAll("+", "½")+"</Size>" 
+					+ "<Qty>"+orderDTO.getDetail().split(",")[0].split(":")[1]+"</Qty>"
+					+ "<Price>"+orderDTO.getPurchasePriceDetail()+"</Price>"
 					+ "</Good>"
-					+ "</goodsList>"
-					+ "</CreateNewOrder>" + "</soap12:Body>" + "</soap12:Envelope>";
-			System.out.println("下单参数=================\n"+param);
-			logger.info("下单参数=================\n"+param); 
-			String json = null;
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("SOAPAction", "http://tempuri.org/CreateNewOrder");
-			map.put("Content-Type", "application/soap+xml; charset=utf-8");
-			System.out.println("=================tables fetch begin====================================");
-			try {
-				json = HttpUtil45
-						.operateData(
-								"post",
-								"soap",
-								"http://studio69.atelier98.net/api_studio69/api_studio69.asmx?op=CreateNewOrder",
-								new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10,
-										1000 * 60 * 10), map, param, "SHANGPIN", "2MWWKgNSxgf");
-				System.out.println("返回的结果===============\n"+json);
-				logger.info("返回的结果===============\n"+json);
-			} catch (ServiceException e) {
-				e.printStackTrace();
+					+ "</GoodsList>";			
+			createNewOrder.setBuyerInfo(buyerInfo);
+			createNewOrder.setGoodsList(goodsList);
+			createNewOrder.setOrderID(orderDTO.getSpPurchaseNo());
+			System.out.println("goodsList================="+orderDTO.getSpPurchaseNo()+":"+goodsList);
+			logger.info("goodsList================="+orderDTO.getSpPurchaseNo()+":"+goodsList); 
+			CreateNewOrderResponse  cresponse = stub.createNewOrder(createNewOrder);
+			OMElement   result = cresponse.getCreateNewOrderResult().getExtraElement();
+			System.out.println(result.toString());
+			logger.info("下单返回结果============="+result.toString());
+			Response response = ObjectXMLUtil.xml2Obj(Response.class, result.toString());
+			if("Success".equals(response.getResult())){
+				orderDTO.setExcState("0");
+				orderDTO.setStatus(OrderStatus.CONFIRMED);
+			}else if("Failed".equals(response.getResult()) && "Goods Stock doesn't enough".equals(response.getMessage())){//库存不足
+				orderDTO.setExcState("0");
+				orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+				orderDTO.setExcDesc(response.getMessage()); 
+			}else{
+				orderDTO.setExcState("1");
+				orderDTO.setExcDesc(response.getMessage());
+				orderDTO.setExcTime(new Date()); 
 			}
 			
 		} catch (Exception e) {
@@ -148,7 +152,8 @@ public class OrderService extends AbsOrderService{
 		
 		try {
 			// TODO 退单逻辑
-			
+			deleteOrder.setExcState("0"); 
+			deleteOrder.setStatus(OrderStatus.CANCELLED); 
 			
 		} catch (Exception e) {
 			errorLog.error(e);
@@ -164,7 +169,23 @@ public class OrderService extends AbsOrderService{
 		
 		try {
 			// TODO 退款逻辑
-			
+			API_STUDIO69Stub stub = new API_STUDIO69Stub();	
+			CancelOrder cancelOrder = new CancelOrder();
+			cancelOrder.setOrderID(deleteOrder.getSpPurchaseNo());
+			logger.info("退款的订单是==========="+deleteOrder.getSpPurchaseNo()); 
+			CancelOrderResponse resonse = stub.cancelOrder(cancelOrder);
+			OMElement result = resonse.getCancelOrderResult().getExtraElement();
+			System.out.println(result.toString());
+			logger.info("取消返回结果==========="+result.toString()); 
+			Response response = ObjectXMLUtil.xml2Obj(Response.class, result.toString());
+			if("Success".equals(response.getResult())){
+				deleteOrder.setExcState("0");
+				deleteOrder.setStatus(OrderStatus.REFUNDED);
+			}else{
+				deleteOrder.setExcState("1");
+				deleteOrder.setExcDesc(response.getMessage());
+				deleteOrder.setExcTime(new Date()); 
+			}
 			
 		} catch (Exception e) {
 			errorLog.error(e);
@@ -189,33 +210,34 @@ public class OrderService extends AbsOrderService{
 	}
 	
 	public static void main(String[] args) {
-//		OrderService o =  new OrderService();
-//		o.handleConfirmOrder(null);
 		
 		try {
-			API_STUDIO69Stub stub = new API_STUDIO69Stub();	
-			CreateNewOrder createNewOrder = new CreateNewOrder();
-			String buyerInfo = "<buyerInfo>"
-					+ "<Name>test</Name>"
-					+ "<Address>shangpin</Address>"					
-					+ "<zipcode>100000</zipcode>"
-					+ "<Corriere></Corriere>"
-					+ "<Notes></Notes>"
-					+ "</buyerInfo>";
-			String goodsList = "<GoodsList>"
-					+ "<Good>"
-					+ "<ID>32400</ID>"
-					+ "<Size>48</Size>"
-					+ "<Qty>1</Qty>"
-					+ "<Price>305</Price>"
-					+ "</Good>"
-					+ "</GoodsList>";
-			createNewOrder.setBuyerInfo(buyerInfo);
-			createNewOrder.setGoodsList(goodsList);
-			createNewOrder.setOrderID("20160901001010");
-			CreateNewOrderResponse  response = stub.createNewOrder(createNewOrder);
-			OMElement   ddd = response.getCreateNewOrderResult().getExtraElement();
-			System.out.println(ddd);
+			//下单=================================
+			OrderService order = new OrderService();
+			OrderDTO orderDTO = new OrderDTO();
+			orderDTO.setDetail("116467-XL:1,");
+			orderDTO.setSpPurchaseNo("CGD2016091400874");
+			orderDTO.setPurchasePriceDetail("160");
+			order.handleConfirmOrder(orderDTO); 
+			
+			
+			//取消=================================
+			ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
+			deleteOrder.setSpPurchaseNo("CGD2016091400874");//CGD2016091400169
+			order.handleRefundlOrder(deleteOrder); 
+			
+			
+//			API_STUDIO69Stub stub = new API_STUDIO69Stub();	
+//			CancelOrder cancelOrder = new CancelOrder();
+//			cancelOrder.setOrderID("CGD2016091200298");
+//			CancelOrderResponse resonse = stub.cancelOrder(cancelOrder);
+//			OMElement result = resonse.getCancelOrderResult().getExtraElement();
+//			System.out.println(result.toString());
+//			logger.info("取消返回结果==========="+result.toString()); 
+//			String result = "<Response><Result>Failed</Result><Message>order id not exist</Message></Response>";
+//			Response response = ObjectXMLUtil.xml2Obj(Response.class, result.toString());
+//			
+//			System.out.println(response.getResult());
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

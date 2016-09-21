@@ -17,5 +17,6 @@ public class SupplierStockDTO {
     private String supplierSkuId;
     private Integer quantity;
     private Date optTime;//操作时间
+    private String status;//状态  1、待处理 2、已处理
 
 }

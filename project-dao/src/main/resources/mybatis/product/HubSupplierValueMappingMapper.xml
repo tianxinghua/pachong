@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.HubSupplierValueMappingMapper" >
+  <resultMap id="BaseResultMap" type="iog_supplierValue_mapping" >
+    <id column="ValueMappingId" property="id" jdbcType="BIGINT" />
+    <result column="ColMappingId" property="colMappingId" jdbcType="BIGINT" />
+    <result column="SupplierId" property="supplierId" jdbcType="VARCHAR" />
+    <result column="SupplierValueNo" property="supplierValueNo" jdbcType="VARCHAR" />
+    <result column="SupplierValueParentNo" property="supplierValueParentNo" jdbcType="VARCHAR" />
+    <result column="SupplierValue" property="supplierValue" jdbcType="VARCHAR" />
+    <result column="SpValueNo" property="spValueNo" jdbcType="VARCHAR" />
+    <result column="SpValue" property="spValue" jdbcType="VARCHAR" />
+    <result column="SpValueType" property="spValueType" jdbcType="TINYINT" />
+    <result column="MappingType" property="mappingType" jdbcType="TINYINT" />
+    <result column="MappingStatus" property="mappingStatus" jdbcType="TINYINT" />
+    <result column="SortValue" property="sortValue" jdbcType="SMALLINT" />
+    <result column="DataState" property="dataState" jdbcType="TINYINT" />
+    <result column="CreateTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="CreateUser" property="createUser" jdbcType="VARCHAR" />
+    <result column="UpdateTime" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="UpdateUser" property="updateUser" jdbcType="VARCHAR" />
+    <result column="Memo" property="memo" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <!--<sql id="Example_Where_Clause" > -->
+     <!--<where > -->
+       <!--<foreach collection="oredCriteria" item="criteria" separator="or" > -->
+         <!--<if test="criteria.valid" > -->
+           <!--<trim prefix="(" suffix=")" prefixOverrides="and" > -->
+             <!--<foreach collection="criteria.criteria" item="criterion" > -->
+               <!--<choose > -->
+                 <!--<when test="criterion.noValue" > -->
+                   <!--and ${criterion.condition} -->
+                 <!--</when> -->
+                 <!--<when test="criterion.singleValue" > -->
+                   <!--and ${criterion.condition} #{criterion.value} -->
+                 <!--</when> -->
+                 <!--<when test="criterion.betweenValue" > -->
+                   <!--and ${criterion.condition} #{criterion.value} and #{criterion.secondValue} -->
+                 <!--</when> -->
+                 <!--<when test="criterion.listValue" > -->
+                   <!--and ${criterion.condition} -->
+                   <!--<foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," > -->
+                     <!--#{listItem} -->
+                   <!--</foreach> -->
+                 <!--</when> -->
+               <!--</choose> -->
+             <!--</foreach> -->
+           <!--</trim> -->
+         <!--</if> -->
+       <!--</foreach> -->
+     <!--</where> -->
+   <!--</sql> -->
+<!--   <sql id="Update_By_Example_Where_Clause" > -->
+<!--     <where > -->
+<!--       <foreach collection="example.oredCriteria" item="criteria" separator="or" > -->
+<!--         <if test="criteria.valid" > -->
+<!--           <trim prefix="(" suffix=")" prefixOverrides="and" > -->
+<!--             <foreach collection="criteria.criteria" item="criterion" > -->
+<!--               <choose > -->
+<!--                 <when test="criterion.noValue" > -->
+<!--                   and ${criterion.condition} -->
+<!--                 </when> -->
+<!--                 <when test="criterion.singleValue" > -->
+<!--                   and ${criterion.condition} #{criterion.value} -->
+<!--                 </when> -->
+<!--                 <when test="criterion.betweenValue" > -->
+<!--                   and ${criterion.condition} #{criterion.value} and #{criterion.secondValue} -->
+<!--                 </when> -->
+<!--                 <when test="criterion.listValue" > -->
+<!--                   and ${criterion.condition} -->
+<!--                   <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," > -->
+<!--                     #{listItem} -->
+<!--                   </foreach> -->
+<!--                 </when> -->
+<!--               </choose> -->
+<!--             </foreach> -->
+<!--           </trim> -->
+<!--         </if> -->
+<!--       </foreach> -->
+<!--     </where> -->
+<!--   </sql> -->
+<!--   <sql id="Base_Column_List" > -->
+<!--     <if test="fields == null" > -->
+<!--       ValueMappingId, ColMappingId, SupplierId, SupplierValueNo, SupplierValueParentNo,  -->
+<!--       SupplierValue, SpValueNo, SpValue, SpValueType, MappingType, MappingStatus, SortValue,  -->
+<!--       DataState, CreateTime, CreateUser, UpdateTime, UpdateUser, Memo -->
+<!--     </if> -->
+<!--     <if test="fields != null" > -->
+<!--       ${fields} -->
+<!--     </if> -->
+<!--   </sql> -->
+<!--   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.iog.product20.dto.HubSupplierValueMappingCondition" > -->
+<!--     select -->
+<!--     <if test="distinct" > -->
+<!--       distinct -->
+<!--     </if> -->
+<!--     <include refid="Base_Column_List" /> -->
+<!--     from HubSupplierValueMapping -->
+<!--     <if test="_parameter != null" > -->
+<!--       <include refid="Example_Where_Clause" /> -->
+<!--     </if> -->
+<!--     <if test="orderByClause != null" > -->
+<!--       order by ${orderByClause} -->
+<!--     </if> -->
+<!--   </select> -->
+<!--   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" > -->
+<!--     select  -->
+<!--     ValueMappingId,ColMappingId,SupplierId,SupplierValueNo,SupplierValueParentNo,SupplierValue,SpValueNo,SpValue,SpValueType,MappingType,MappingStatus,SortValue,DataState,CreateTime,CreateUser,UpdateTime,UpdateUser,Memo -->
+<!--     from HubSupplierValueMapping -->
+<!--     where ValueMappingId = #{valuemappingid,jdbcType=BIGINT} -->
+<!--   </select> -->
+<!--   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" > -->
+<!--     delete from HubSupplierValueMapping -->
+<!--     where ValueMappingId = #{valuemappingid,jdbcType=BIGINT} -->
+<!--   </delete> -->
+<!--   <delete id="deleteByExample" parameterType="com.shangpin.iog.product20.dto.HubSupplierValueMappingCondition" > -->
+<!--     delete from HubSupplierValueMapping -->
+<!--     <if test="_parameter != null" > -->
+<!--       <include refid="Example_Where_Clause" /> -->
+<!--     </if> -->
+<!--   </delete> -->
+   <insert id="save" parameterType="iog_supplierValue_mapping" >
+     insert into HubSupplierValueMapping ( ColMappingId, SupplierId,
+       SupplierValueNo, SupplierValueParentNo,
+       SupplierValue, SpValueNo, SpValue,
+       SpValueType, MappingType, MappingStatus,
+       SortValue, DataState, CreateTime,
+       CreateUser, UpdateTime, UpdateUser,
+       Memo)
+     values ( #{colMappingId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR},
+       #{supplierValueNo,jdbcType=VARCHAR}, #{supplierValueParentNo,jdbcType=VARCHAR},
+       #{supplierValue,jdbcType=VARCHAR}, #{spValueNo,jdbcType=VARCHAR}, #{spValue,jdbcType=VARCHAR},
+       #{spValueType,jdbcType=TINYINT}, #{mappingType,jdbcType=TINYINT}, #{mappingStatus,jdbcType=TINYINT},
+       #{sortValue,jdbcType=SMALLINT}, #{dataState,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP},
+       #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR},
+       #{memo,jdbcType=VARCHAR})
+   </insert>
+<!--   <insert id="insertSelective" parameterType="com.shangpin.iog.product20.dto.HubSupplierValueMapping" > -->
+<!--     insert into HubSupplierValueMapping -->
+<!--     <trim prefix="(" suffix=")" suffixOverrides="," > -->
+<!--       <if test="valuemappingid != null" > -->
+<!--         ValueMappingId, -->
+<!--       </if> -->
+<!--       <if test="colmappingid != null" > -->
+<!--         ColMappingId, -->
+<!--       </if> -->
+<!--       <if test="supplierid != null" > -->
+<!--         SupplierId, -->
+<!--       </if> -->
+<!--       <if test="suppliervalueno != null" > -->
+<!--         SupplierValueNo, -->
+<!--       </if> -->
+<!--       <if test="suppliervalueparentno != null" > -->
+<!--         SupplierValueParentNo, -->
+<!--       </if> -->
+<!--       <if test="suppliervalue != null" > -->
+<!--         SupplierValue, -->
+<!--       </if> -->
+<!--       <if test="spvalueno != null" > -->
+<!--         SpValueNo, -->
+<!--       </if> -->
+<!--       <if test="spvalue != null" > -->
+<!--         SpValue, -->
+<!--       </if> -->
+<!--       <if test="spvaluetype != null" > -->
+<!--         SpValueType, -->
+<!--       </if> -->
+<!--       <if test="mappingtype != null" > -->
+<!--         MappingType, -->
+<!--       </if> -->
+<!--       <if test="mappingstatus != null" > -->
+<!--         MappingStatus, -->
+<!--       </if> -->
+<!--       <if test="sortvalue != null" > -->
+<!--         SortValue, -->
+<!--       </if> -->
+<!--       <if test="datastate != null" > -->
+<!--         DataState, -->
+<!--       </if> -->
+<!--       <if test="createtime != null" > -->
+<!--         CreateTime, -->
+<!--       </if> -->
+<!--       <if test="createuser != null" > -->
+<!--         CreateUser, -->
+<!--       </if> -->
+<!--       <if test="updatetime != null" > -->
+<!--         UpdateTime, -->
+<!--       </if> -->
+<!--       <if test="updateuser != null" > -->
+<!--         UpdateUser, -->
+<!--       </if> -->
+<!--       <if test="memo != null" > -->
+<!--         Memo, -->
+<!--       </if> -->
+<!--     </trim> -->
+<!--     <trim prefix="values (" suffix=")" suffixOverrides="," > -->
+<!--       <if test="valuemappingid != null" > -->
+<!--         #{valuemappingid,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="colmappingid != null" > -->
+<!--         #{colmappingid,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="supplierid != null" > -->
+<!--         #{supplierid,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="suppliervalueno != null" > -->
+<!--         #{suppliervalueno,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="suppliervalueparentno != null" > -->
+<!--         #{suppliervalueparentno,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="suppliervalue != null" > -->
+<!--         #{suppliervalue,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="spvalueno != null" > -->
+<!--         #{spvalueno,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="spvalue != null" > -->
+<!--         #{spvalue,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="spvaluetype != null" > -->
+<!--         #{spvaluetype,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="mappingtype != null" > -->
+<!--         #{mappingtype,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="mappingstatus != null" > -->
+<!--         #{mappingstatus,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="sortvalue != null" > -->
+<!--         #{sortvalue,jdbcType=SMALLINT}, -->
+<!--       </if> -->
+<!--       <if test="datastate != null" > -->
+<!--         #{datastate,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="createtime != null" > -->
+<!--         #{createtime,jdbcType=TIMESTAMP}, -->
+<!--       </if> -->
+<!--       <if test="createuser != null" > -->
+<!--         #{createuser,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="updatetime != null" > -->
+<!--         #{updatetime,jdbcType=TIMESTAMP}, -->
+<!--       </if> -->
+<!--       <if test="updateuser != null" > -->
+<!--         #{updateuser,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="memo != null" > -->
+<!--         #{memo,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--     </trim> -->
+<!--   </insert> -->
+<!--   <select id="countByExample" parameterType="com.shangpin.iog.product20.dto.HubSupplierValueMappingCondition" resultType="java.lang.Integer" > -->
+<!--     select count(*) from HubSupplierValueMapping -->
+<!--     <if test="_parameter != null" > -->
+<!--       <include refid="Example_Where_Clause" /> -->
+<!--     </if> -->
+<!--   </select> -->
+      <select id="findListBySpvalueType" resultMap="BaseResultMap" parameterType="java.lang.Integer"  >
+        select
+        ColMappingId, SupplierId,
+        SupplierValueNo, SupplierValueParentNo,
+        SupplierValue, SpValueNo, SpValue,
+        SpValueType, MappingType, MappingStatus,
+        SortValue, DataState, CreateTime,
+        CreateUser, UpdateTime, UpdateUser,
+        Memo
+        from HubSupplierValueMapping
+
+        WHERE    SpValueType = #{spvalueType}
+
+      </select>
+      
+      <select id="findCountOfSpvalueType" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+      	select count(SupplierValue) from HubSupplierValueMapping
+      	WHERE    SpValueType = #{spvalueType}
+      </select>
+
+
+  <select id="getMappingBySpBrandIdAndSupplierBrandName" resultMap="BaseResultMap" parameterType="java.lang.String"  >
+    select
+    ColMappingId, SupplierId,
+    SupplierValueNo, SupplierValueParentNo,
+    SupplierValue, SpValueNo, SpValue,
+    SpValueType, MappingType, MappingStatus,
+    SortValue, DataState, CreateTime,
+    CreateUser, UpdateTime, UpdateUser,
+    Memo
+    from HubSupplierValueMapping
+
+    WHERE    SpValueNo = #{spValueNo}  and  SupplierValue=#{supplierValue}
+
+  </select>
+
+
+<!--   <update id="updateByExampleSelective" parameterType="map" > -->
+<!--     update HubSupplierValueMapping -->
+<!--     <set > -->
+<!--       <if test="record.valuemappingid != null" > -->
+<!--         ValueMappingId = #{record.valuemappingid,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="record.colmappingid != null" > -->
+<!--         ColMappingId = #{record.colmappingid,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="record.supplierid != null" > -->
+<!--         SupplierId = #{record.supplierid,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="record.suppliervalueno != null" > -->
+<!--         SupplierValueNo = #{record.suppliervalueno,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="record.suppliervalueparentno != null" > -->
+<!--         SupplierValueParentNo = #{record.suppliervalueparentno,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="record.suppliervalue != null" > -->
+<!--         SupplierValue = #{record.suppliervalue,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="record.spvalueno != null" > -->
+<!--         SpValueNo = #{record.spvalueno,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="record.spvalue != null" > -->
+<!--         SpValue = #{record.spvalue,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="record.spvaluetype != null" > -->
+<!--         SpValueType = #{record.spvaluetype,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="record.mappingtype != null" > -->
+<!--         MappingType = #{record.mappingtype,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="record.mappingstatus != null" > -->
+<!--         MappingStatus = #{record.mappingstatus,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="record.sortvalue != null" > -->
+<!--         SortValue = #{record.sortvalue,jdbcType=SMALLINT}, -->
+<!--       </if> -->
+<!--       <if test="record.datastate != null" > -->
+<!--         DataState = #{record.datastate,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="record.createtime != null" > -->
+<!--         CreateTime = #{record.createtime,jdbcType=TIMESTAMP}, -->
+<!--       </if> -->
+<!--       <if test="record.createuser != null" > -->
+<!--         CreateUser = #{record.createuser,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="record.updatetime != null" > -->
+<!--         UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP}, -->
+<!--       </if> -->
+<!--       <if test="record.updateuser != null" > -->
+<!--         UpdateUser = #{record.updateuser,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="record.memo != null" > -->
+<!--         Memo = #{record.memo,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--     </set> -->
+<!--     <if test="_parameter != null" > -->
+<!--       <include refid="Update_By_Example_Where_Clause" /> -->
+<!--     </if> -->
+<!--   </update> -->
+<!--   <update id="updateByExample" parameterType="map" > -->
+<!--     update HubSupplierValueMapping -->
+<!--     set ValueMappingId = #{record.valuemappingid,jdbcType=BIGINT}, -->
+<!--       ColMappingId = #{record.colmappingid,jdbcType=BIGINT}, -->
+<!--       SupplierId = #{record.supplierid,jdbcType=VARCHAR}, -->
+<!--       SupplierValueNo = #{record.suppliervalueno,jdbcType=VARCHAR}, -->
+<!--       SupplierValueParentNo = #{record.suppliervalueparentno,jdbcType=VARCHAR}, -->
+<!--       SupplierValue = #{record.suppliervalue,jdbcType=VARCHAR}, -->
+<!--       SpValueNo = #{record.spvalueno,jdbcType=VARCHAR}, -->
+<!--       SpValue = #{record.spvalue,jdbcType=VARCHAR}, -->
+<!--       SpValueType = #{record.spvaluetype,jdbcType=TINYINT}, -->
+<!--       MappingType = #{record.mappingtype,jdbcType=TINYINT}, -->
+<!--       MappingStatus = #{record.mappingstatus,jdbcType=TINYINT}, -->
+<!--       SortValue = #{record.sortvalue,jdbcType=SMALLINT}, -->
+<!--       DataState = #{record.datastate,jdbcType=TINYINT}, -->
+<!--       CreateTime = #{record.createtime,jdbcType=TIMESTAMP}, -->
+<!--       CreateUser = #{record.createuser,jdbcType=VARCHAR}, -->
+<!--       UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP}, -->
+<!--       UpdateUser = #{record.updateuser,jdbcType=VARCHAR}, -->
+<!--       Memo = #{record.memo,jdbcType=VARCHAR} -->
+<!--     <if test="_parameter != null" > -->
+<!--       <include refid="Update_By_Example_Where_Clause" /> -->
+<!--     </if> -->
+<!--   </update> -->
+<!--   <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.iog.product20.dto.HubSupplierValueMapping" > -->
+<!--     update HubSupplierValueMapping -->
+<!--     <set > -->
+<!--       <if test="colmappingid != null" > -->
+<!--         ColMappingId = #{colmappingid,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="supplierid != null" > -->
+<!--         SupplierId = #{supplierid,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="suppliervalueno != null" > -->
+<!--         SupplierValueNo = #{suppliervalueno,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="suppliervalueparentno != null" > -->
+<!--         SupplierValueParentNo = #{suppliervalueparentno,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="suppliervalue != null" > -->
+<!--         SupplierValue = #{suppliervalue,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="spvalueno != null" > -->
+<!--         SpValueNo = #{spvalueno,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="spvalue != null" > -->
+<!--         SpValue = #{spvalue,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="spvaluetype != null" > -->
+<!--         SpValueType = #{spvaluetype,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="mappingtype != null" > -->
+<!--         MappingType = #{mappingtype,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="mappingstatus != null" > -->
+<!--         MappingStatus = #{mappingstatus,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="sortvalue != null" > -->
+<!--         SortValue = #{sortvalue,jdbcType=SMALLINT}, -->
+<!--       </if> -->
+<!--       <if test="datastate != null" > -->
+<!--         DataState = #{datastate,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="createtime != null" > -->
+<!--         CreateTime = #{createtime,jdbcType=TIMESTAMP}, -->
+<!--       </if> -->
+<!--       <if test="createuser != null" > -->
+<!--         CreateUser = #{createuser,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="updatetime != null" > -->
+<!--         UpdateTime = #{updatetime,jdbcType=TIMESTAMP}, -->
+<!--       </if> -->
+<!--       <if test="updateuser != null" > -->
+<!--         UpdateUser = #{updateuser,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="memo != null" > -->
+<!--         Memo = #{memo,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--     </set> -->
+<!--     where ValueMappingId = #{valuemappingid,jdbcType=BIGINT} -->
+<!--   </update> -->
+<!--   <update id="updateByPrimaryKey" parameterType="com.shangpin.iog.product20.dto.HubSupplierValueMapping" > -->
+<!--     update HubSupplierValueMapping -->
+<!--     set ColMappingId = #{colmappingid,jdbcType=BIGINT}, -->
+<!--       SupplierId = #{supplierid,jdbcType=VARCHAR}, -->
+<!--       SupplierValueNo = #{suppliervalueno,jdbcType=VARCHAR}, -->
+<!--       SupplierValueParentNo = #{suppliervalueparentno,jdbcType=VARCHAR}, -->
+<!--       SupplierValue = #{suppliervalue,jdbcType=VARCHAR}, -->
+<!--       SpValueNo = #{spvalueno,jdbcType=VARCHAR}, -->
+<!--       SpValue = #{spvalue,jdbcType=VARCHAR}, -->
+<!--       SpValueType = #{spvaluetype,jdbcType=TINYINT}, -->
+<!--       MappingType = #{mappingtype,jdbcType=TINYINT}, -->
+<!--       MappingStatus = #{mappingstatus,jdbcType=TINYINT}, -->
+<!--       SortValue = #{sortvalue,jdbcType=SMALLINT}, -->
+<!--       DataState = #{datastate,jdbcType=TINYINT}, -->
+<!--       CreateTime = #{createtime,jdbcType=TIMESTAMP}, -->
+<!--       CreateUser = #{createuser,jdbcType=VARCHAR}, -->
+<!--       UpdateTime = #{updatetime,jdbcType=TIMESTAMP}, -->
+<!--       UpdateUser = #{updateuser,jdbcType=VARCHAR}, -->
+<!--       Memo = #{memo,jdbcType=VARCHAR} -->
+<!--     where ValueMappingId = #{valuemappingid,jdbcType=BIGINT} -->
+<!--   </update> -->
+</mapper>

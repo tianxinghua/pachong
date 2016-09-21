@@ -37,5 +37,6 @@
 		<typeAlias alias="iog_buEpValue" type="com.shangpin.iog.dto.BuEpValueDTO"/>
 		<typeAlias alias="iog_buEpSpecial" type="com.shangpin.iog.dto.BuEpSpecialDTO"/>
 		<typeAlias alias="iog_season_relation" type="com.shangpin.iog.dto.SeasonRelationDTO"/>
+		<typeAlias alias="iog_supplierValue_mapping" type="com.shangpin.iog.dto.HubSupplierValueMappingDTO"/>
 	</typeAliases>
 </configuration>
