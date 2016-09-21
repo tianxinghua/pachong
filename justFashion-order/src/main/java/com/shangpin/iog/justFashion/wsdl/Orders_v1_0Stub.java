@@ -60,14 +60,14 @@ public class Orders_v1_0Stub extends org.apache.axis2.client.Stub {
         org.apache.axis2.context.ConfigurationContext configurationContext)
         throws org.apache.axis2.AxisFault {
         this(configurationContext,
-            "https://s2.just-fashion.co.uk/JF/API/Orders.1.0.asmx");
+            "https://s1.just-fashion.co.uk/JF/API/Orders.1.0.asmx");
     }
 
     /**
      * Default Constructor
      */
     public Orders_v1_0Stub() throws org.apache.axis2.AxisFault {
-        this("https://s2.just-fashion.co.uk/JF/API/Orders.1.0.asmx");
+        this("https://s1.just-fashion.co.uk/JF/API/Orders.1.0.asmx");
     }
 
     /**
@@ -479,7 +479,7 @@ public class Orders_v1_0Stub extends org.apache.axis2.client.Stub {
         return null;
     }
 
-    //https://s2.just-fashion.co.uk/JF/API/Orders.1.0.asmx
+    //https://s1.just-fashion.co.uk/JF/API/Orders.1.0.asmx
     public static class JFapiResultBase implements org.apache.axis2.databinding.ADBBean {
         /* This type was generated from the piece of schema that had
            name = JFapiResultBase
