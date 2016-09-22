@@ -50,7 +50,7 @@ public class BrandMappingService {
                 if(StringUtils.isBlank(brand)) continue;
                 for(BrandSpDTO brandSpDTO:brandSpDTOs){
                     try {
-                        if(brand.toLowerCase().startsWith(brandSpDTO.getBrandName().toLowerCase())) {
+                        if(brand.toLowerCase().replaceAll("\\s*", "").startsWith(brandSpDTO.getBrandName().toLowerCase().replaceAll("\\s*", ""))) {
                             HubSupplierValueMappingDTO mappingDTO = new HubSupplierValueMappingDTO();
                             mappingDTO.setSpValueNo(brandSpDTO.getBrandId());
                             mappingDTO.setSpValue(brandSpDTO.getBrandName());
