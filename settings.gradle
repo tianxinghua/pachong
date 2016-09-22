@@ -39,4 +39,5 @@ include 'smets-stock'
 include 'project-mq'
 
 include 'dellogliostore'
+include 'efashion'
 

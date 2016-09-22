@@ -13,5 +13,7 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToString
 public class ProductDTO {
-
+    String supplierId;
+    String spSkuNo;
+    String price;//供货价
 }

@@ -64,11 +64,13 @@ public class RabbitMQConf {
 	public SimpleMessageListenerContainer messageListenerContainer() {
 		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory());
-		container.setQueueNames(Queue.QUEUE_PRODUCT_PRICE_QUEUE.getMessageName());
+		container.setQueueNames(Queue.QUEUE_PRODUCT_PRICE_QUEUE.getMessageName(),
+				Queue.QUEUE_PRODUCT_SUPPLIER_PRICE_QUEUE.getMessageName());
 		container.setConcurrentConsumers(rabbitMqConfig.getConcurrentConsumerNums());
 		MessageListenerAdapter messageListener = new MessageListenerAdapter(messageConsumer);
 		// messageListener.setMessageConverter(convert());
 		messageListener.addQueueOrTagToMethodName(Queue.QUEUE_PRODUCT_PRICE_QUEUE.getMessageName(), "priceProductQueueConsumer");
+		messageListener.addQueueOrTagToMethodName(Queue.QUEUE_PRODUCT_SUPPLIER_PRICE_QUEUE.getMessageName(), "supplierPriceProductQueueConsumer");
 
 		container.setMessageListener(messageListener);
 		return container;

@@ -2,6 +2,7 @@ package com.shangpin.iog.mq.service.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.mq.dto.ProductDTO;
 import com.shangpin.iog.mq.service.ProductPriceService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +30,34 @@ public class MessageConsumer {
 	
 
 	/**
-	 * 消息队列消费者
+	 *  消息队列消费者
 	 */
 	public ProductDTO priceProductQueueConsumer(byte[] bytes) throws Throwable{
+		ProductDTO messageBody = null;
+		try {
+			long start = System.currentTimeMillis();
+			ObjectMapper om = new ObjectMapper();
+			messageBody = om.readValue(bytes, ProductDTO.class);
+			//TODO 调用接口
+//			HttpUtil45.post();
+			// TODO 修改状态
+
+
+
+			long end = System.currentTimeMillis();
+			loggerInfo.info("Successfully handling of message 【 "+messageBody+" 】 , and spend time : "+(end-start)+" milliseconds");
+		} catch (Exception e) {
+			e.printStackTrace();
+			loggerError.error("获取内容失败" + e.getMessage(),e);
+		}
+		return messageBody;
+	}
+
+
+	/**
+	 *  消息队列消费者
+	 */
+	public ProductDTO supplierPriceProductQueueConsumer(byte[] bytes) throws Throwable{
 		ProductDTO messageBody = null;
 		try {
 			long start = System.currentTimeMillis();
@@ -45,8 +71,6 @@ public class MessageConsumer {
 		}
 		return messageBody;
 	}
-	
-
 	/**
 	 * 默认没有消费者的消息接收处理
 	 * @throws Exception

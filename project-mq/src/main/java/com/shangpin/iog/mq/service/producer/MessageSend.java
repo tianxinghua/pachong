@@ -27,15 +27,26 @@ public class MessageSend {
     @Autowired
     RabbitTemplate rabbitTemplate;
 
-    public Boolean  sendMessage(ProductDTO dto)  {
+    /**
+     * 根据类型 通送数据到不同的消息队列
+     * @param dto
+     * @param type   1:市场价  2：供价
+     * @return
+     */
+    public Boolean  sendMessage(ProductDTO dto,String type)  {
         String body ="";
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-            body = mapper.writeValueAsString(dto);
+//            ObjectMapper mapper = new ObjectMapper();
+//            mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+//            body = mapper.writeValueAsString(dto);
+            if("1".equals(type)){
+                rabbitTemplate.convertAndSend(Queue.QUEUE_PRODUCT_PRICE_EXCHANGE.getMessageName(),
+                        Queue.QUEUE_PRODUCT_PRICE_ROUTE.getMessageName(),dto);
+            }else if("2".equals(type)){
+                rabbitTemplate.convertAndSend(Queue.QUEUE_PRODUCT_PRICE_EXCHANGE.getMessageName(),
+                        Queue.QUEUE_PRODUCT_PRICE_ROUTE.getMessageName(),dto);
+            }
 
-            rabbitTemplate.convertAndSend(Queue.QUEUE_PRODUCT_PRICE_EXCHANGE.getMessageName(),
-                    Queue.QUEUE_PRODUCT_PRICE_ROUTE.getMessageName(),body);
 
              return true;
         } catch (Exception e) {
