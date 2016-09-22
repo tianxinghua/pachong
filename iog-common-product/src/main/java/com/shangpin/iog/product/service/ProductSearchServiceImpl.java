@@ -1819,16 +1819,24 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 //					System.out.println(fileName);
 					File file = new File(fileName);
 					if(file.exists()){
-						ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
-						bufferImg = ImageIO.read(file);
-						ImageIO.write(bufferImg, "jpg", byteArrayOut);
-						//画图的顶级管理器，一个sheet只能获取一个（一定要注意这点）
-						HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
-						//anchor主要用于设置图片的属性
-						HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 500, 255,(short) 0, j, (short) 0, j);
-						anchor.setAnchorType(AnchorType.MOVE_AND_RESIZE);
-						//插入图片
-						patriarch.createPicture(anchor, wb.addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
+						try {
+							bufferImg = ImageIO.read(file);
+							ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();							
+							ImageIO.write(bufferImg, "jpg", byteArrayOut);
+							//画图的顶级管理器，一个sheet只能获取一个（一定要注意这点）
+							HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+							//anchor主要用于设置图片的属性
+							HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 500, 255,(short) 0, j, (short) 0, j);
+							anchor.setAnchorType(AnchorType.MOVE_AND_RESIZE);
+							//插入图片
+							patriarch.createPicture(anchor, wb.addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
+						} catch (Exception e) {
+							e.printStackTrace();
+							bufferImg = null;
+							row.createCell(0).setCellValue("图片错误");
+							
+						}
+						
 					}else{
 						row.createCell(0).setCellValue("无图片");
 					}
@@ -2082,6 +2090,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 					allMap.put(dto.getSpuId()+dto.getColor(), null);
 				} catch (Exception e) {
+					j--;
 					e.printStackTrace();
 					logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
 					continue;

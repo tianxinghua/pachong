@@ -1,5 +1,6 @@
 package com.shangpin.iog.justFashion.service;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
@@ -37,12 +38,20 @@ public class OrderService extends AbsOrderService{
 	private static ResourceBundle bdl=null;
     private static String supplierId = "";
     private static String supplierNo = "";
+    
+    private static String authKey = null;
+    private static String channel = null;
+    private static String jssecacerts = null;
        
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         supplierNo = bdl.getString("supplierNo");
+        
+        authKey = bdl.getString("authKey");
+        channel = bdl.getString("channel");
+        jssecacerts = bdl.getString("jssecacerts");
     }
 	
 	/**
@@ -80,11 +89,11 @@ public class OrderService extends AbsOrderService{
 		
 		try {
 			// TODO 支付逻辑
-			System.setProperty("javax.net.ssl.trustStore", "E:\\jssecacerts");
+			System.setProperty("javax.net.ssl.trustStore", jssecacerts+File.separator+"jssecacerts");
 			Orders_v1_0Stub orders_v1_0Stub = new Orders_v1_0Stub();
 			CreateOrder createOrder = new CreateOrder();
-			createOrder.setAuthKey("270Api002#3gU8zXs");
-			createOrder.setChannel("SHANGPIN");
+			createOrder.setAuthKey(authKey);
+			createOrder.setChannel(channel);
 			createOrder.setCustomerID("");
 			createOrder.setDestCustID("");
 			createOrder.setDestinationID(""); 
@@ -115,6 +124,11 @@ public class OrderService extends AbsOrderService{
 				orderDTO.setSupplierOrderNo(createOrderResponse.getCreateOrderResult().getMessageTxt());
 				orderDTO.setExcState("0");
 				orderDTO.setStatus(OrderStatus.CONFIRMED); 
+			}else if("Items in the returned list are not found available on stock.".equals(createOrderResponse.getCreateOrderResult().getErrorTxt())){
+				orderDTO.setExcState("0");
+				orderDTO.setExcTime(new Date()); 
+				orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+				orderDTO.setExcDesc(createOrderResponse.getCreateOrderResult().getErrorTxt());
 			}else{
 				orderDTO.setExcState("1");
 				orderDTO.setExcTime(new Date()); 
@@ -137,6 +151,7 @@ public class OrderService extends AbsOrderService{
 		
 		try {
 			// TODO 退单逻辑
+			deleteOrder.setExcState("0");
 			deleteOrder.setStatus(OrderStatus.CANCELLED); 
 			
 		} catch (Exception e) {
@@ -153,6 +168,7 @@ public class OrderService extends AbsOrderService{
 		
 		try {
 			// TODO 退款逻辑
+			deleteOrder.setExcState("0");
 			deleteOrder.setStatus(OrderStatus.REFUNDED); 
 			
 		} catch (Exception e) {

@@ -180,14 +180,27 @@ public class ExportService {
 	 */
 	private void saveExcelFile(String picPath,List<ProductDTO> products,String localFilePath){
 	
+		FileOutputStream fout = null;
+		HSSFWorkbook wb = null;
 		try {
-			HSSFWorkbook wb = productService.reportProductToExcel(products, picPath);			
-			FileOutputStream fout = new FileOutputStream(new File(localFilePath));  
-	        wb.write(fout);  
-	        fout.close(); 
-				
+			wb = productService.reportProductToExcel(products, picPath);			
+			fout = new FileOutputStream(new File(localFilePath));  
+	        wb.write(fout); 
+	        
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally{
+			try {
+				if(null != wb){
+					wb.close();
+				}
+				if(null != fout){
+					fout.close(); 
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace(); 
+			}
+			
 		}
 	}
 	

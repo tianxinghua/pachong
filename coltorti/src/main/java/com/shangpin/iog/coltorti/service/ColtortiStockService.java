@@ -108,7 +108,7 @@ public class ColtortiStockService {
 		};
 		for (String record : x) {
 			try{
-				Map<String, Map<String, Integer>> stok = getStock("151481DCW000007",null);
+				Map<String, Map<String, Integer>> stok = getStock("162481FBS000020",null);
 				System.out.println(new Gson().toJson(stok));
 			}catch(Exception e){
 				if(e instanceof ServiceException){

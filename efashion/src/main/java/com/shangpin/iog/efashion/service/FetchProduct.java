@@ -5,6 +5,7 @@ package com.shangpin.iog.efashion.service;
  */
 
 import java.io.File;
+import java.io.FileWriter;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -81,21 +82,29 @@ public class FetchProduct {
 				.get(url+"&limit="+max+"&offset="+index,
 						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
 						null);
-		System.out.println(json);
-		ReturnObject obj = new Gson().fromJson(json, ReturnObject.class);
-		// 第一步：获取活动信息
-		if(obj!=null){
-			Result result = obj.getResults();
-			List<Item> item = result.getItems();
-			if(!item.isEmpty()){
-				messMappingAndSave(item);
-				i++;
-				j++;
-				System.out.println("------------------------第"+i+"页---------------------------");
-				System.out.println("商品数量："+item.size());
-				getProductList(max*i+1);
+		try{
+			ReturnObject obj = new Gson().fromJson(json, ReturnObject.class);
+			// 第一步：获取活动信息
+			if(obj!=null){
+				Result result = obj.getResults();
+				List<Item> item = result.getItems();
+				if(!item.isEmpty()){
+				
+					i++;
+					System.out.println("------------------------第"+i+"页---------------------------");
+					
+					messMappingAndSave(item);
+					j = j+item.size();
+					System.out.println("商品数量："+item.size());
+					getProductList(max*i+1);
+				}
 			}
+		}catch(Exception e){
+			i++;
+			getProductList(max*i+1);
 		}
+		
+		
 	}
 	/**
 	 * fetch product and save into db
@@ -132,8 +141,6 @@ public class FetchProduct {
 				}
 			}
 		}
-		System.out.println("--正在保存中.....--");
-		logger.info("--正在保存中.....--");
 	}
 	/**
 	 * message mapping and save into DB
@@ -186,7 +193,7 @@ public class FetchProduct {
 					sku.setSkuId(skuId);
 					sku.setProductSize(size);
 					sku.setStock(item.getQuantity());
-					sku.setProductCode(item.getProduct_reference());
+					sku.setProductCode(item.getProduct_reference()+" "+item.getColor_reference());
 					sku.setMarketPrice(item.getRetail_price());
 					sku.setSupplierPrice(item.getPrice());
 					sku.setColor(item.getColor());
