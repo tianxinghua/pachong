@@ -18,7 +18,7 @@ environments{
 
 //            wmsUrl='http://wmsinventory.liantiao.com'
             wmsUrl='qa.wmsinventory.shangpin.com'
-			redisUrl='192.168.20.241'
+			
 			
 			
 			redis.url='192.168.20.241'
@@ -45,7 +45,7 @@ environments{
 
             wmsUrl='http://spwmsinventory.spidc1.com'
             
-            redisUrl='172.20.10.127'
+            
             
             redis.url='172.20.10.127'
             redis.port='6379'
@@ -69,9 +69,9 @@ environments{
             zookeeper.address='172.20.10.51:2181,172.20.10.52:2181,172.20.10.54:2181,172.20.10.55:2181,172.20.10.56:2181'
 
             wmsUrl='http://spwmsinventory.spidc1.com'
-            redisUrl='172.20.10.127'
+          
             
-            redis.url='172.20.10.127'
+            redis.url='redis.sp.com'
             redis.port='6379'
             redis.password=''
 
@@ -99,7 +99,7 @@ environments{
             zookeeper.address='192.168.20.40:2181,192.168.20.41:2181,192.168.20.42:2181'
 
             wmsUrl='http://spwmsinventory.spidc1.com'
-			redisUrl='10.11.20.140'
+			
 			
 			
             redis.url='10.11.20.140'
