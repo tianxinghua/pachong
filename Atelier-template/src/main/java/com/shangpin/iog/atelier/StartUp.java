@@ -93,6 +93,10 @@ public class StartUp {
 	        	//genteroma采用通用处理 第3列作为供价  第4列作为市场价
 	        	CommonPriceService fetchProduct = (CommonPriceService) factory.getBean("commonPriceService");
 	        	fetchProduct.handleData("spu", supplierId, day, picpath);
+	        }else if("common".equals(identity)){
+	        	//以后通用标识就是common，不用再写代码了。采用通用处理 第3列作为供价  第4列作为市场价.
+	        	CommonPriceService fetchProduct = (CommonPriceService) factory.getBean("commonPriceService");
+	        	fetchProduct.handleData("spu", supplierId, day, picpath);
 	        }
 
 	        log.info("----拉取Atelier-template数据完成----");
