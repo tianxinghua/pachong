@@ -19,31 +19,36 @@ public class HttpUtils {
 				+ "xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">"
 				+ "<soap:Body>"
 				+ "<LectureDuStock xmlns=\"urn:LcvMagWS\">"
+				+  "<sArticle xsd:type=\"xsd:string\">"
+				+ "</sArticle>"
 				+ "<bCData xsd:type=\"xsd:string\">"
 				+ "</bCData>"
 				+ "<sUser xsd:type=\"xsd:string\">BION456</sUser>"
 				+ "<sMdp xsd:type=\"xsd:string\">INI123</sMdp>"
 				+ "</LectureDuStock>" + "</soap:Body>" + "</soap:Envelope>";
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("SOAPAction", "urn:LcvMagWS/LectureDuStock");
+		map.put("SOAPAction", "urn:LcvMagWS/LectureDuStock1");
 		map.put("Content-Type", "text/xml; charset=UTF-8");
 		map.put("Content-Type", "application/soap+xml; charset=utf-8");
 		String json = null;
 		System.out.println("=================Stock fetch begin====================================");
 		try {
+			//"http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDuStock",  废弃的
 			json = HttpUtil45
 					.operateData(
 							"post",
 							"soap",
-							"http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDuStock",
-							new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10,
-									1000 * 60 * 10), map, xx, null, null);
-			System.out.println("=================Stock fetch end====================================");
+							"http://81.161.58.250:8080/LCVMAGWSV8_WEB/awws/LcvMagWS.awws",
+							new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 30,
+									1000 * 60 * 30), map, xx, null, null);
+			System.out.println("=================Stock fetch end====================================" + json);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
 		return json;
 	}
+
+
 
 
 	public static String  getOrderStatusSoap(){
@@ -76,6 +81,6 @@ public class HttpUtils {
 	}
 
 	public static void main(String[] args){
-		HttpUtils.getOrderStatusSoap();
+		HttpUtils.getProductStocksBySoap();
 	}
 }

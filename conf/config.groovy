@@ -24,6 +24,14 @@ environments{
 			redis.url='192.168.20.241'
             redis.port='6379'
             redis.password=''
+
+            rabbitMq.host=''
+            rabbitMq.port=''
+            rabbitMq.username=''
+            rabbitMq.password=''
+            rabbitMq.virtualHost=''
+            rabbitMq.concurrentConsumerNums=''
+
         }
     }
 
@@ -50,6 +58,13 @@ environments{
             redis.url='172.20.10.127'
             redis.port='6379'
             redis.password=''
+
+            rabbitMq.host=''
+            rabbitMq.port=''
+            rabbitMq.username=''
+            rabbitMq.password=''
+            rabbitMq.virtualHost=''
+            rabbitMq.concurrentConsumerNums=''
         }
     }
 
@@ -75,7 +90,12 @@ environments{
             redis.port='6379'
             redis.password=''
 
-            rabbitmq.host=''
+            rabbitMq.host=''
+            rabbitMq.port=''
+            rabbitMq.username=''
+            rabbitMq.password=''
+            rabbitMq.virtualHost=''
+            rabbitMq.concurrentConsumerNums=''
         }
     }
 
@@ -105,6 +125,14 @@ environments{
             redis.url='10.11.20.140'
             redis.port='6379'
             redis.password=''
+
+
+            rabbitMq.host=''
+            rabbitMq.port=''
+            rabbitMq.username=''
+            rabbitMq.password=''
+            rabbitMq.virtualHost=''
+            rabbitMq.concurrentConsumerNums=''
         }
     }
 

@@ -895,6 +895,13 @@ public abstract class AbsUpdateProductStock {
 					} catch (ServiceMessageException e) {
 						e.printStackTrace();
 					}
+					//直接调用库存更新  库存为0
+					try {
+						servant.UpdateStock(supplierId, orderDetail.SkuNo, 0);
+					} catch (Exception e) {
+						loggerError.error("采购异常的商品 "+ orderDetail.SkuNo + " 库存更新失败。");
+					}
+
 				}
 			} catch (Exception e) {
 				if(orderDetails==null){

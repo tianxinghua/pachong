@@ -1222,6 +1222,36 @@ public abstract class AbsUpdateProductStock {
 					} catch (ServiceMessageException e) {
 						e.printStackTrace();
 					}
+					ApiResponse<Boolean> result = null;
+					StockInfo request_body = null;
+					request_body = new StockInfo();
+					request_body.setSkuNo(orderDetail.getSkuNo());
+					request_body.setInventoryQuantity(0);
+					boolean success = true;
+					for (int i = 0; i < 2; i++) {// 发生错误 允许再执行一次
+						try {
+							result = SpClient.UpdateStock(host, app_key,
+									app_secret, new Date(), request_body);
+							if (null==result || null==result.getResponse() || (null != result && !result.getResponse())) {
+
+								success = false;
+
+								loggerError.error("采购异常的商品：--------"+orderDetail.getSkuNo() + " 库存为0 ，更新库存失败");
+							}else{
+								loggerInfo.info("采购异常的商品：--------" + orderDetail.getSkuNo()
+										+ " 库存为0 ，更新库存成功");
+							}
+						} catch (Exception e) {
+
+
+							loggerError.error("采购异常的商品：--------"+orderDetail.getSkuNo() + " 库存为0 ，更新库存失败");
+						}
+						if (success) { // 成功直接跳出
+							i = 2;
+						}
+					}
+
+
 				}
 			} else {
 				loggerError.error("两次获取采购单均失败");
