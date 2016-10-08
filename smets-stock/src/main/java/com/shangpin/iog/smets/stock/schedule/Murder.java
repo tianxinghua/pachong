@@ -48,6 +48,7 @@ public class Murder extends TimerTask{
 			future.cancel(true);
 			logError.error(Thread.currentThread().getName()+"超时销毁");
 			System.out.println(Thread.currentThread().getName()+"超时销毁");
+			logError.error(e.toString()); 
 		}
 	}
 }

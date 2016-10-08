@@ -103,9 +103,9 @@ public class OrderService extends AbsOrderService{
 			OrderDetail detail = new OrderDetail();
 			detail.setSKU(orderDTO.getDetail().split(",")[0].split(":")[0]);
 			detail.setQTY(new BigDecimal(Integer.valueOf(orderDTO.getDetail().split(",")[0].split(":")[1]))); 
-			//BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
-			//String price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
-			detail.setPRICE(new BigDecimal(orderDTO.getPurchasePriceDetail()));
+			BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
+			BigDecimal price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP);
+			detail.setPRICE(price);
 			orderDetail[0] = detail;
 			arrayOfOrderDetail.setOrderDetail(orderDetail); 
 			createOrder.setOrderDetailsList(arrayOfOrderDetail);
