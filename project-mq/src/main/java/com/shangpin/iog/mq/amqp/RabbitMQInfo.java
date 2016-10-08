@@ -50,7 +50,7 @@ public class RabbitMQInfo {
 	private String virtualHost;
 	
 	/**
-	 * 消费者线程数（应设置为18的倍数，18个队列）
+	 * 消费者线程数
 	 */
 	@Value("${concurrentConsumerNums}")
 	private int concurrentConsumerNums ;
