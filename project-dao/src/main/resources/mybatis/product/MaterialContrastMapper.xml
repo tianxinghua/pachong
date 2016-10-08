@@ -26,5 +26,12 @@
 
         from MATERIAL_CONTRAST
     </select>
+    
+    <select id="findByRank" resultMap="MaterialContrastResultMap">
+    	select
+        <include refid="all_MaterialContrast_column"></include>
+        from MATERIAL_CONTRAST
+        where RANK = #{rank}
+    </select>
 	
 </mapper>

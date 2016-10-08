@@ -8,6 +8,8 @@ import com.shangpin.iog.dto.MaterialContrastDTO;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 /**
  * Created by fanhaiying on 2015/6/15.
  */
@@ -20,6 +22,13 @@ public interface MaterialContrastMapper extends IBaseDao<MaterialContrastDTO> {
      * @throws ServiceException
      */
     List<MaterialContrastDTO>  findAll() ;
+    
+    /**
+     * 根据材质级别查找
+     * @param rank
+     * @return
+     */
+    public List<MaterialContrastDTO> findByRank(@Param("rank") int rank); 
 
     public int findCount();
 

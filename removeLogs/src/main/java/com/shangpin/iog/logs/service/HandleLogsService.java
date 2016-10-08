@@ -21,6 +21,22 @@ public class HandleLogsService {
 		setMaxValue = bdl.getString("setMaxValue");
 	}
 	
+	/**
+	 * 定时压缩每天的日志，然后删除源文件
+	 */
+	public void zipLogs(){
+		try {
+			File file = new File(filepath);
+			if(!file.isDirectory()){
+				throw new Exception("没有找到该文件夹 "+filepath);
+			}
+			//file.listFiles()
+			
+		} catch (Exception e) {
+			log.info(e.toString()); 
+		}
+	}
+	
 	private void dothejob(){
 		File file = new File(filepath);
 		double size = getDirSize(file);
