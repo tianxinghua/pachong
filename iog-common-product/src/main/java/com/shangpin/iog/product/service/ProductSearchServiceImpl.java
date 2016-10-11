@@ -54,6 +54,7 @@ import com.shangpin.iog.dto.ColorContrastDTO;
 import com.shangpin.iog.dto.HubSupplierValueMappingDTO;
 import com.shangpin.iog.dto.MaterialContrastDTO;
 import com.shangpin.iog.dto.ProductDTO;
+import com.shangpin.iog.dto.ProductOriginConstrastDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SeasonRelationDTO;
 import com.shangpin.iog.dto.SkuDTO;
@@ -70,6 +71,7 @@ import com.shangpin.iog.product.dao.ColorContrastMapper;
 import com.shangpin.iog.product.dao.EPRuleMapper;
 import com.shangpin.iog.product.dao.HubSupplierValueMappingMapper;
 import com.shangpin.iog.product.dao.MaterialContrastMapper;
+import com.shangpin.iog.product.dao.ProductOriginConstrastMapper;
 import com.shangpin.iog.product.dao.ProductPictureMapper;
 import com.shangpin.iog.product.dao.ProductsMapper;
 import com.shangpin.iog.product.dao.SkuMapper;
@@ -77,6 +79,7 @@ import com.shangpin.iog.product.dao.SpuMapper;
 import com.shangpin.iog.product.dao.SupplierMapper;
 import com.shangpin.iog.product.dto.BuParamDTO;
 import com.shangpin.iog.product.special.Special;
+import com.shangpin.iog.service.ProductOriginConstrastService;
 import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SeasonRelationService;
 
@@ -129,120 +132,128 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	SeasonRelationService seasonRelationService;
 	@Autowired
 	HubSupplierValueMappingMapper hubSupplierValueMappingService;
+	@Autowired
+	ProductOriginConstrastMapper originConstrastDAO;
 
 	private static Map<String, String> spBrandMap = new HashMap<>();
 	private static Map<String, String> colorContrastMap = new HashMap<>();
 	private static Map<String, String> materialContrastMap = new HashMap<>();
 	private static Map<String, String> middleMaterialContrastMap = new HashMap<>();
+	private static Map<String, String> middleMaterialContrastMap21 = new HashMap<>();
 	private static Map<String, String> smallMaterialContrastMap= new HashMap<>();
+	private static Map<String, String> smallMaterialContrastMap31= new HashMap<>();
 	private static Map<String, String> categoryContrastMap = new HashMap<>();
 	private static List<BuEpSpecialDTO> BuEpSpecialList = new ArrayList<BuEpSpecialDTO>();
 	private static Map<String, String> hubBrandMap = new HashMap<>();
+	
+	private static int materialCount = 0;
+	private static int madeInCount = 0;
 
 
 	String splitSign = ",";
 
 	// key 均为小写 以便匹配
-	private static Map<String, String> cityMap = new HashMap<String, String>() {
-		{
-			put("italia", "意大利");
-			put("stati Uniti d", "美国");
-			put("gran Bretagna", "英国");
-			put("canada", "加拿大");
-			put("brazil", "巴西");
-			put("argentina", "阿根廷");
-			put("mexico", "墨西哥");
-			put("germany", "德国");
-			put("francia", "法国");
-			put("russia", "俄罗斯");
-			put("giappone", "日本");
-			put("australia", "澳大利亚");
-			put("corea", "韩国");
-			put("cina", "中国");
-			put("finland", "芬兰");
-			put("svizzera", "瑞士");
-			put("sweden", "瑞典");
-			put("singapore", "新加坡");
-			put("tailandia", "泰国");
-			put("new zealand", "新西兰");
-			put("ireland", "爱尔兰");
-			put("arabia Saudita", "沙特阿拉伯");
-			put("armenia", "亚美尼亚");
-			put("belgio", "比利时");
-			put("bosnia-Erzegovina", "波斯尼亚-黑塞哥维那");
-			put("bulgaria", "保加利亚");
-			put("cambogia", "柬埔寨");
-			put("croazia", "克罗地亚");
-			put("filippine", "菲律宾");
-			put("georgia", "格鲁吉亚");
-			put("hongkong", "香港");
-			put("india", "印度");
-			put("indonesia", "印度尼西亚");
-			put("kenya", "肯尼亚");
-			put("lituania", "立陶宛");
-			put("madagascar", "马达加斯加");
-			put("marocco", "摩洛哥");
-			put("mauritius", "毛里求斯");
-			put("moldavia", "摩尔多瓦共和国");
-			put("myanmar(Unione)", "缅甸");
-			put("polonia", "波兰");
-			put("portogallo", "葡萄牙");
-			put("romania", "罗马尼亚");
-			put("serbia", "塞尔维亚");
-			put("slovacca", "斯洛伐克");
-			put("spagna", "西班牙");
-			put("sri Lanka", "斯里兰卡");
-			put("tunisia", "突尼斯");
-			put("turchia", "土耳其");
-			put("ucraina", "乌克兰");
-			put("ungheria", "匈牙利");
-			put("vietnam", "越南");
-			put("Made in China".toLowerCase(),"中国");
-			put("Made in Italy".toLowerCase(),"意大利");
-			put("Made in Romania".toLowerCase(),"罗马尼亚");
-			put("Bangladesh".toLowerCase(),"孟加拉国");
-			put("BD".toLowerCase(),"孟加拉国");
-			put("China".toLowerCase(),"中国");
-			put("CN".toLowerCase(),"中国");
-			put("Colombia".toLowerCase(),"哥伦比亚");
-			put("Dominican Republic".toLowerCase(),"多米尼加共和国");
-			put("France".toLowerCase(),"法国");
-			put("Gran Bretagna".toLowerCase(),"法国");
-			put("IN".toLowerCase(),"印度");
-			put("IT".toLowerCase(),"意大利");
-			put("Italy".toLowerCase(),"意大利");
-			put("JAPAN".toLowerCase(),"日本");
-			put("MADE IN BOSNIA E HERZEGOVINA".toLowerCase(),"波黑");
-			put("Made In Brasil".toLowerCase(),"巴西");
-			put("Made In CEE".toLowerCase(),"欧洲经济共同体");
-			put("MADE IN CHINA".toLowerCase(),"中国");
-			put("MADE IN EU".toLowerCase(),"欧盟");
-			put("MADE IN INDIA".toLowerCase(),"印度");
-			put("Made in Indonesia".toLowerCase(),"印度尼西亚");
-			put("made in italy".toLowerCase(),"意大利");
-			put("made in italyLI".toLowerCase(),"意大利");
-			put("made in madagascar".toLowerCase(),"马达加斯加岛");
-			put("Made in Messico".toLowerCase(),"墨西哥");
-			put("MADE IN PORTOGALLO".toLowerCase(),"波托加洛");
-			put("MADE IN PRC".toLowerCase(),"中国");
-			put("Made in Spain".toLowerCase(),"西班牙");
-			put("MADE IN THAILANDIA".toLowerCase(),"泰国");
-			put("MADE IN TURKEY".toLowerCase(),"土耳其");
-			put("MADE IN U.S.A.".toLowerCase(),"美国");
-			put("MADE IN UNITED KINGDOM".toLowerCase(),"英国");
-			put("MADE IN VIETNAM".toLowerCase(),"越南");
-			put("Philippines".toLowerCase(),"菲律宾");
-			put("Portugal".toLowerCase(),"葡萄牙");
-			put("RO".toLowerCase(),"罗马尼亚");
-			put("SPAIN".toLowerCase(),"西班牙");
-			put("Taiwan".toLowerCase(),"台湾");
-			put("TH".toLowerCase(),"泰国");
-			put("Thailand".toLowerCase(),"泰国");
-			put("UNITED KINGDOM".toLowerCase(),"英国");
-			put("US".toLowerCase(),"美国");
-			
-		}
-	};
+	private static Map<String, String> cityMap = new HashMap<String, String>() ;
+//			{
+//		{
+//			put("italia", "意大利");
+//			put("stati Uniti d", "美国");
+//			put("gran Bretagna", "英国");
+//			put("canada", "加拿大");
+//			put("brazil", "巴西");
+//			put("argentina", "阿根廷");
+//			put("mexico", "墨西哥");
+//			put("germany", "德国");
+//			put("francia", "法国");
+//			put("russia", "俄罗斯");
+//			put("giappone", "日本");
+//			put("australia", "澳大利亚");
+//			put("corea", "韩国");
+//			put("cina", "中国");
+//			put("finland", "芬兰");
+//			put("svizzera", "瑞士");
+//			put("sweden", "瑞典");
+//			put("singapore", "新加坡");
+//			put("tailandia", "泰国");
+//			put("new zealand", "新西兰");
+//			put("ireland", "爱尔兰");
+//			put("arabia Saudita", "沙特阿拉伯");
+//			put("armenia", "亚美尼亚");
+//			put("belgio", "比利时");
+//			put("bosnia-Erzegovina", "波斯尼亚-黑塞哥维那");
+//			put("bulgaria", "保加利亚");
+//			put("cambogia", "柬埔寨");
+//			put("croazia", "克罗地亚");
+//			put("filippine", "菲律宾");
+//			put("georgia", "格鲁吉亚");
+//			put("hongkong", "香港");
+//			put("india", "印度");
+//			put("indonesia", "印度尼西亚");
+//			put("kenya", "肯尼亚");
+//			put("lituania", "立陶宛");
+//			put("madagascar", "马达加斯加");
+//			put("marocco", "摩洛哥");
+//			put("mauritius", "毛里求斯");
+//			put("moldavia", "摩尔多瓦共和国");
+//			put("myanmar(Unione)", "缅甸");
+//			put("polonia", "波兰");
+//			put("portogallo", "葡萄牙");
+//			put("romania", "罗马尼亚");
+//			put("serbia", "塞尔维亚");
+//			put("slovacca", "斯洛伐克");
+//			put("spagna", "西班牙");
+//			put("sri Lanka", "斯里兰卡");
+//			put("tunisia", "突尼斯");
+//			put("turchia", "土耳其");
+//			put("ucraina", "乌克兰");
+//			put("ungheria", "匈牙利");
+//			put("vietnam", "越南");
+//			put("Made in China".toLowerCase(),"中国");
+//			put("Made in Italy".toLowerCase(),"意大利");
+//			put("Made in Romania".toLowerCase(),"罗马尼亚");
+//			put("Bangladesh".toLowerCase(),"孟加拉国");
+//			put("BD".toLowerCase(),"孟加拉国");
+//			put("China".toLowerCase(),"中国");
+//			put("CN".toLowerCase(),"中国");
+//			put("Colombia".toLowerCase(),"哥伦比亚");
+//			put("Dominican Republic".toLowerCase(),"多米尼加共和国");
+//			put("France".toLowerCase(),"法国");
+//			put("Gran Bretagna".toLowerCase(),"法国");
+//			put("IN".toLowerCase(),"印度");
+//			put("IT".toLowerCase(),"意大利");
+//			put("Italy".toLowerCase(),"意大利");
+//			put("JAPAN".toLowerCase(),"日本");
+//			put("MADE IN BOSNIA E HERZEGOVINA".toLowerCase(),"波黑");
+//			put("Made In Brasil".toLowerCase(),"巴西");
+//			put("Made In CEE".toLowerCase(),"欧洲经济共同体");
+//			put("MADE IN CHINA".toLowerCase(),"中国");
+//			put("MADE IN EU".toLowerCase(),"欧盟");
+//			put("MADE IN INDIA".toLowerCase(),"印度");
+//			put("Made in Indonesia".toLowerCase(),"印度尼西亚");
+//			put("made in italy".toLowerCase(),"意大利");
+//			put("made in italyLI".toLowerCase(),"意大利");
+//			put("made in madagascar".toLowerCase(),"马达加斯加岛");
+//			put("Made in Messico".toLowerCase(),"墨西哥");
+//			put("MADE IN PORTOGALLO".toLowerCase(),"波托加洛");
+//			put("MADE IN PRC".toLowerCase(),"中国");
+//			put("Made in Spain".toLowerCase(),"西班牙");
+//			put("MADE IN THAILANDIA".toLowerCase(),"泰国");
+//			put("MADE IN TURKEY".toLowerCase(),"土耳其");
+//			put("MADE IN U.S.A.".toLowerCase(),"美国");
+//			put("MADE IN UNITED KINGDOM".toLowerCase(),"英国");
+//			put("MADE IN VIETNAM".toLowerCase(),"越南");
+//			put("Philippines".toLowerCase(),"菲律宾");
+//			put("Portugal".toLowerCase(),"葡萄牙");
+//			put("RO".toLowerCase(),"罗马尼亚");
+//			put("SPAIN".toLowerCase(),"西班牙");
+//			put("Taiwan".toLowerCase(),"台湾");
+//			put("TH".toLowerCase(),"泰国");
+//			put("Thailand".toLowerCase(),"泰国");
+//			put("UNITED KINGDOM".toLowerCase(),"英国");
+//			put("US".toLowerCase(),"美国");
+//			
+//		}
+//	};
 
 	@Override
 	public Page<ProductDTO> findProductPageBySupplierAndTime(String supplier,
@@ -431,6 +442,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		this.setColorContrastMap();
 		// 材质Map 赋值
 		this.setMaterialContrastMap();
+		//产地翻译
+		this.setMadeInMap();
 
 		String productSize, season = "", productDetail = "", brandName = "", brandId = "", color = "", material = "", productOrigin = "";
 
@@ -814,10 +827,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	/**
 	 * 设置materialContrastMap
 	 */
-	private void setMaterialContrastMap() {
-		Map<String, String> material = new HashMap<>();
+	private void setMaterialContrastMap() {		
 		int num = materialContrastDAO.findCount();
-		if (material.size() != num) {
+		if (materialCount != num) {
+			materialCount = num;
 			try {
 				//先查找1级
 				List<MaterialContrastDTO> materialContrastDTOList = materialContrastDAO.findByRank(1);
@@ -827,11 +840,27 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 								dto.getMaterialCh());
 					}
 				}
+				//再查找2级中的长词组
+				List<MaterialContrastDTO> materialContrastDTOList21 = materialContrastDAO.findByRank(21);
+				if(materialContrastDTOList21 != null && materialContrastDTOList21.size()>0){
+					for (MaterialContrastDTO dto : materialContrastDTOList21) {					
+						middleMaterialContrastMap21.put(dto.getMaterial().trim().toLowerCase(),
+								dto.getMaterialCh());
+					}
+				}
 				//再查找2级
 				List<MaterialContrastDTO> materialContrastDTOList2 = materialContrastDAO.findByRank(2);
 				if(materialContrastDTOList2 != null && materialContrastDTOList2.size()>0){
 					for (MaterialContrastDTO dto : materialContrastDTOList2) {					
 						middleMaterialContrastMap.put(dto.getMaterial().trim().toLowerCase(),
+								dto.getMaterialCh());
+					}
+				}
+				//再查找3级中的长单词
+				List<MaterialContrastDTO> materialContrastDTOList31 = materialContrastDAO.findByRank(31);
+				if(materialContrastDTOList31 != null && materialContrastDTOList31.size()>0){
+					for (MaterialContrastDTO dto : materialContrastDTOList31) {					
+						smallMaterialContrastMap31.put(dto.getMaterial().trim().toLowerCase(),
 								dto.getMaterialCh());
 					}
 				}
@@ -866,14 +895,35 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				return materialContrastMap.get(materialOrg.toLowerCase());
 				
 			}else{
+				if(middleMaterialContrastMap21.size()>0){
+					//先遍历2级中的长词组
+					Set<Map.Entry<String, String>> materialSet = middleMaterialContrastMap21
+							.entrySet();
+					for (Map.Entry<String, String> entry : materialSet) {
+
+						materialOrg = materialOrg.toLowerCase().replaceAll(
+								entry.getKey(), entry.getValue());
+					}
+				}
 				if(middleMaterialContrastMap.size()>0){
-					//先遍历带有空格的材质
+					//再遍历2级词组
 					Set<Map.Entry<String, String>> materialSet = middleMaterialContrastMap
 							.entrySet();
 					for (Map.Entry<String, String> entry : materialSet) {
 
 						materialOrg = materialOrg.toLowerCase().replaceAll(
 								entry.getKey(), entry.getValue());
+					}
+				}
+				if(smallMaterialContrastMap31.size()>0){
+					//再遍历3级单词中的长单词
+					Set<Map.Entry<String, String>> smallMaterialSet = smallMaterialContrastMap31
+							.entrySet();
+					for (Map.Entry<String, String> entry : smallMaterialSet) {
+
+						materialOrg = materialOrg.toLowerCase()
+								.replaceAll(entry.getKey(),
+										entry.getValue());
 					}
 				}
 				if(smallMaterialContrastMap.size()>0){
@@ -894,6 +944,24 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			e.printStackTrace();
 		}
 		return materialOrg;
+	}
+	
+	private void setMadeInMap(){
+		try {
+			int num = originConstrastDAO.findCount();
+			if(madeInCount != num){
+				madeInCount = num;
+				List<ProductOriginConstrastDTO> lists = originConstrastDAO.findByRank(1);
+				if(null != lists && lists.size()>0){
+					for(ProductOriginConstrastDTO product : lists){
+						cityMap.put(product.getProductOrigin().trim().toLowerCase(), product.getProductOriginCH().trim());
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	private String transforMadeIn(String madeinOrg){
@@ -1832,6 +1900,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		this.setColorContrastMap();
 		// 材质Map 赋值
 		this.setMaterialContrastMap();
+		//产地翻译
+		this.setMadeInMap();
 		for (ProductDTO dto : page.getItems()) {
 			try {
 				if(supplierSeasonList.contains(dto.getSupplierId()+"-"+(null==dto.getSeasonId()?"":dto.getSeasonId()))){
@@ -2515,6 +2585,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		this.setColorContrastMap();
 		// 材质Map 赋值
 		this.setMaterialContrastMap();
+		//产地翻译
+		this.setMadeInMap();
 
 		String productSize, productDetail = "", brandName = "", brandId = "", color = "", material = "", productOrigin = "";
 
