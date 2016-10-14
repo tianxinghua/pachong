@@ -104,12 +104,12 @@ public class StockImpNotUseThread  extends AbsUpdateProductStock {
         return skustock;
     }
 
-//    public static void main(String[] args) throws Exception {
-//    	//加载spring
-////        loadSpringContext();    
-//
-//    	StockImp stockImp = new StockImp();
-//    	 stockImp.grabStock(null);
-//    	
-//    }
+    public static void main(String[] args) throws Exception {
+    	//加载spring
+//        loadSpringContext();    
+
+    	StockImp stockImp = new StockImp();
+    	 stockImp.grabStock(null);
+    	
+    }
 }
