@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.StockUpdateLimitMapper" >
+  <resultMap id="stockUpdateLimitMap" type="iog_stockUpdateLimit" >
+    <result column="SUPPLIER_ID" property="supplierId" />
+    <result column="CREATE_TIME" property="createTime" />
+    <result column="LIMIT_NUM" property="limitNum"/>
+    <result column="UPDATE_TIME" property="updateTime"  />
+  </resultMap>
+  <sql id="allColumn">
+  	SUPPLIER_ID,
+  	CREATE_TIME,
+  	LIMIT_NUM,
+  	UPDATE_TIME
+  </sql>
+  
+  <insert id="save" parameterType="iog_stockUpdateLimit" >
+    insert into STOCK_UPDATE_LIMIT (SUPPLIER_ID,CREATE_TIME,LIMIT_NUM,UPDATE_TIME)
+    values (#{supplierId}, #{createTime},#{limitNum},now())
+  </insert>
+  <select id="findBySupplierId" resultMap="stockUpdateLimitMap" >
+    select 
+    LIMIT_NUM,UPDATE_TIME,CREATE_TIME,SUPPLIER_ID
+    from STOCK_UPDATE_LIMIT
+    where SUPPLIER_ID = #{supplierId} and CREATE_TIME = #{nowDate}
+  </select>
+  <update id="updateLimitNum" parameterType="iog_stockUpdateLimit" >
+    update STOCK_UPDATE_LIMIT
+    
+    set 
+      LIMIT_NUM = #{limitNum},
+      UPDATE_TIME = #{updateTime}
+    where SUPPLIER_ID = #{supplierId} 
+  </update>
+  
+</mapper>
