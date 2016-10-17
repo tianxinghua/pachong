@@ -303,6 +303,9 @@
 	<a href="javascript:void(0)" onclick="exportOrder('order')" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>导出订单</a>
 	<a href="javascript:void(0)" onclick="queryOrder()" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>查看订单</a>
 	<a href="javascript:void(0)" onclick="everydayExport('everyday')" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>每日导出</a>
+	<a
+	href="javascript:void(0)" onclick="exportProduct('all')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>全部导出</a> 
 	<!-- <a
 	href="javascript:void(0)" onclick="tempExport('temp')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>临时导出</a>  -->

@@ -127,6 +127,30 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     List<ProductDTO> findListOfAllSupplier(@Param("startDate") Date startDate,
             @Param("endDate") Date endDate,
             RowBounds rowBounds);
+    
+    /**
+     * 查找所有的产品，包括有库存的和没库存的
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @param rowBounds
+     * @return
+     */
+    List<ProductDTO> findAllOfProducts(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            RowBounds rowBounds);
+    
+    /**
+     * 查找所有的产品，包括有库存的和没库存的
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    List<ProductDTO> findAllOfProducts(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate);
     /**
      * 按照ep规则查询所有图片名
      */

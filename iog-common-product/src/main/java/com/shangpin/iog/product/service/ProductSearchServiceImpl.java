@@ -273,9 +273,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 						productList = productDAO.findListOfAllSupplier(startDate, endDate, new RowBounds(
 								pageIndex, pageSize));
 					}
-
-
-
+				}else if(flag.equals("all")){
+					productList = productDAO.findAllOfProducts(supplier, startDate, endDate, new RowBounds(pageIndex, pageSize));
+					
 				}else if(flag.equals("ep_regular")){//根据ep规则查找product
 					productList = productDAO.findListByEPRegularAndLastDate(
 							supplier, startDate, endDate, new RowBounds(
@@ -292,6 +292,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					productList = productDAO.findListBySupplierAndLastDate(
 							supplier, startDate, endDate);
 
+				}else if(flag.equals("all")){
+					System.out.println(flag); 
+					productList = productDAO.findAllOfProducts(supplier, startDate, endDate);
+					
 				}else if(flag.equals("ep_regular")){//根据ep规则查找product
 
 					productList = productDAO.findListByEPRegularAndLastDate(
@@ -420,10 +424,15 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				+ "Currency 币种" + splitSign + "新上市季节" + splitSign + "上市季节" + splitSign
 				+ "活动开始时间"+ splitSign + "活动结束时间" + splitSign + "SupplierSpuNo 供应商spu编号" + splitSign + "供应商门户编号"+ splitSign + "SpuId" + splitSign + "备注").append("\r\n");
 		Page<ProductDTO> page = null;
+		System.out.println(flag); 
 		if (flag.equals("same")) {
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,
 					endDate, pageIndex, pageSize, "same");
 
+		}else if(flag.equals("all")){
+			page = this.findProductPageBySupplierAndTime(supplier, startDate,
+					endDate, pageIndex, pageSize, "all");
+			
 		}else if(flag.equals("ep_regular")){
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,
 					endDate, pageIndex, pageSize, "ep_regular");
@@ -2115,41 +2124,43 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 					row.createCell(16).setCellValue(material);
 					// 材质 中文
-					if (StringUtils.isNotBlank(material)) {
-
-						//先遍历带有空格的材质
-						Set<Map.Entry<String, String>> materialSet = materialContrastMap
-								.entrySet();
-						for (Map.Entry<String, String> entry : materialSet) {
-
-							material = material.toLowerCase().replaceAll(
-									entry.getKey(), entry.getValue());
-						}
-
-						//再遍历单个材质
-						Set<Map.Entry<String, String>> smallMaterialSet = smallMaterialContrastMap
-								.entrySet();
-						for (Map.Entry<String, String> entry : smallMaterialSet) {
-
-							material = material.toLowerCase()
-									.replaceAll(entry.getKey(),
-											entry.getValue());
-						}
-					}
-
-					row.createCell(17).setCellValue(material);
+					row.createCell(17).setCellValue(transforMaterial(material));
+//					if (StringUtils.isNotBlank(material)) {
+//
+//						//先遍历带有空格的材质
+//						Set<Map.Entry<String, String>> materialSet = materialContrastMap
+//								.entrySet();
+//						for (Map.Entry<String, String> entry : materialSet) {
+//
+//							material = material.toLowerCase().replaceAll(
+//									entry.getKey(), entry.getValue());
+//						}
+//
+//						//再遍历单个材质
+//						Set<Map.Entry<String, String>> smallMaterialSet = smallMaterialContrastMap
+//								.entrySet();
+//						for (Map.Entry<String, String> entry : smallMaterialSet) {
+//
+//							material = material.toLowerCase()
+//									.replaceAll(entry.getKey(),
+//											entry.getValue());
+//						}
+//					}
+//
+//					row.createCell(17).setCellValue(material);
 					// 获取产地
 					productOrigin = dto.getProductOrigin();
-					if (StringUtils.isNotBlank(productOrigin)) {
-						if (cityMap.containsKey(productOrigin.toLowerCase())) {
-							productOrigin = cityMap
-									.get(productOrigin.toLowerCase());
-						}
-					} else {
-						productOrigin = "";
-					}
-
-					row.createCell(18).setCellValue(productOrigin);
+					row.createCell(18).setCellValue(transforMadeIn(productOrigin)); 
+//					if (StringUtils.isNotBlank(productOrigin)) {
+//						if (cityMap.containsKey(productOrigin.toLowerCase())) {
+//							productOrigin = cityMap
+//									.get(productOrigin.toLowerCase());
+//						}
+//					} else {
+//						productOrigin = "";
+//					}
+//
+//					row.createCell(18).setCellValue(productOrigin);
 
 					// 图片
 					row.createCell(19).setCellValue(dto.getPicUrl());
