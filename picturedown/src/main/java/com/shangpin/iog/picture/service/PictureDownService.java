@@ -88,18 +88,19 @@ public class PictureDownService {
     public void downPic(){
         if("".equals(supplier_Id)) supplier_Id=null;
         //用的线程过多 httpclient的连接池 不够用 现放慢速度 一个供货商一个供货商的来操作
+        Map excludeSupplierMap = new HashMap();
+        if(StringUtils.isNotBlank(excludesupplierId)) {
+            String[] supplierArray = excludesupplierId.split(",");
+            if(null!=supplierArray){
+                for(String supplierId:supplierArray){
+                    excludeSupplierMap.put(supplierId,"");
+                }
+            }
+
+        }
         if(null==supplier_Id) {
             try {
-                Map excludeSupplierMap = new HashMap();
-                if(StringUtils.isNotBlank(excludesupplierId)) {
-                    String[] supplierArray = excludesupplierId.split(",");
-                    if(null!=supplierArray){
-                        for(String supplierId:supplierArray){
-                            excludeSupplierMap.put(supplierId,"");
-                        }
-                    }
 
-                }
                 List<SupplierDTO> supplierDTOs =  supplierService.findByState("1");
                 for(SupplierDTO dto:supplierDTOs){
                     if(excludeSupplierMap.containsKey(dto.getSupplierId())) continue;//排除不拉取的
@@ -109,7 +110,12 @@ public class PictureDownService {
                 e.printStackTrace();
             }
         }else{
-            downloadPic(supplier_Id);
+            String[] supplierArray = supplier_Id.split(",");
+            for(String supplierId : supplierArray){
+                if(excludeSupplierMap.containsKey(supplierId)) continue;//排除不拉取的
+                downloadPic(supplierId);
+            }
+
         }
         System.exit(0);
 
@@ -117,7 +123,7 @@ public class PictureDownService {
 
     private void downloadPic(String supplierIdPam) {
         try {
-
+            loggerInfo.info("供货商:"+ supplierIdPam +" 开始下载");
             Map<String,String> picMap = new HashMap<>();
             Map<String,String> supplierDateMap = null;
             //如果开始日期为空 只拉取当天的数据
@@ -243,6 +249,7 @@ public class PictureDownService {
                 }
                 delay(executor);
             }
+            loggerInfo.info("供货商:"+ supplierIdPam +" 下载完毕");
         } catch (ServiceException e) {
             e.printStackTrace();
         }

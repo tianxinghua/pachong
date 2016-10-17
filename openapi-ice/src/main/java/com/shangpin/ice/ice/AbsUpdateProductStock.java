@@ -25,10 +25,8 @@ import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SpecialSkuDTO;
 import com.shangpin.iog.dto.StockUpdateDTO;
-import com.shangpin.iog.service.SkuPriceService;
-import com.shangpin.iog.service.SkuRelationService;
-import com.shangpin.iog.service.SpecialSkuService;
-import com.shangpin.iog.service.UpdateStockService;
+import com.shangpin.iog.dto.StockUpdateLimitDTO;
+import com.shangpin.iog.service.*;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -108,6 +106,9 @@ public abstract class AbsUpdateProductStock {
 
 	@Autowired
 	SpecialSkuService specialSkuService;
+
+	@Autowired
+	StockUpdateLimitService stockUpdateLimitService;
 
 
 	/**
@@ -254,6 +255,7 @@ public abstract class AbsUpdateProductStock {
 	 * @throws Exception
 	 */
 	public int updateProductStock(final String supplier,String start,String end) throws Exception{
+		loggerInfo.info("进入更新库存程序");
 		//初始化 sopMarketPriceMap
 		getSopMarketPriceMap(supplier);
 
@@ -411,6 +413,35 @@ public abstract class AbsUpdateProductStock {
 //			}
 		}
 
+		//获取允许更新的数量
+		int updateTimes=0;
+		int updateCount=0;
+		if(null!=stockUpdateLimitService){
+			StockUpdateLimitDTO limitDTO =  stockUpdateLimitService.findBySupplierId(supplier);
+			if(null!=limitDTO){
+				updateTimes = limitDTO.getLimitNum();
+			}else{
+				//插入新的记录
+				StockUpdateLimitDTO saveDto =new StockUpdateLimitDTO();
+				saveDto.setSupplierId(supplier);
+				saveDto.setCreateTime(DateTimeUtil.convertFormat(new Date(),"yyyy-MM-dd"));
+				saveDto.setUpdateTime(new Date());
+				saveDto.setLimitNum(500000);
+
+				try {
+					stockUpdateLimitService.save(saveDto);
+					updateTimes = saveDto.getLimitNum();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			//发邮件或者退出不更新
+			if(updateTimes<0){
+				Thread t = new Thread(new StockLimitMail(supplier));
+				t.start();
+			}
+		}
+
 		OpenApiServantPrx servant = null;
 		try {
 			servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
@@ -435,6 +466,7 @@ public abstract class AbsUpdateProductStock {
 
 				Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
 				loggerInfo.info("待更新的数据总和：--------"+toUpdateIce.size());
+				updateCount = updateCount+toUpdateIce.size();
 				while (iter.hasNext()) {
 					Entry<String, Integer> entry = iter.next();
 					Boolean result =true;
@@ -476,6 +508,7 @@ public abstract class AbsUpdateProductStock {
 
 		Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
 		loggerInfo.info("待更新的数据总和：--------"+toUpdateIce.size());
+		updateCount = updateCount+toUpdateIce.size();
 		while (iter.hasNext()) {
 			Entry<String, Integer> entry = iter.next();
 			Boolean result =true;
@@ -506,6 +539,20 @@ public abstract class AbsUpdateProductStock {
 			}
 		}
 		loggerInfo.info("更新库存 失败的数量：" + failCount);
+
+		//更新可更新的数量
+		if(null!=stockUpdateLimitService){
+			StockUpdateLimitDTO updateDate =new StockUpdateLimitDTO();
+			updateDate.setSupplierId(supplier);
+
+			updateDate.setUpdateTime(new Date());
+			updateDate.setLimitNum(updateTimes-updateCount);
+			try {
+				stockUpdateLimitService.updateLimitNum(updateDate);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		return failCount;
 	}
 	/**
@@ -950,6 +997,28 @@ public abstract class AbsUpdateProductStock {
 				SendMail.sendGroupMail("smtp.shangpin.com", "chengxu@shangpin.com",
 						"shangpin001", email, "海外对接供货商无法链接",
 						"门户编号：" + supplier + "，链接异常。请手工拉取库存",
+						"text/html;charset=utf-8");
+			} catch (Exception e) {
+//				e.printStackTrace();
+			}
+		}
+	}
+
+
+	class StockLimitMail implements  Runnable{
+
+		String supplier = "";
+
+		public StockLimitMail(String  supplierId){
+			this.supplier = supplierId;
+		}
+
+		@Override
+		public void run() {
+			try {
+				SendMail.sendGroupMail("smtp.shangpin.com", "chengxu@shangpin.com",
+						"shangpin001", email, "海外对接供货商更新超出限制",
+						"门户编号：" + supplier + "，供货商更新超出限制",
 						"text/html;charset=utf-8");
 			} catch (Exception e) {
 //				e.printStackTrace();
