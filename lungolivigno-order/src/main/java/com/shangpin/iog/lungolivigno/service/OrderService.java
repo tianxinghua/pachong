@@ -180,7 +180,7 @@ public class OrderService extends AbsOrderService{
 		ResponseSaveOrderDTO orderResult = new Gson().fromJson(result, ResponseSaveOrderDTO.class);
 		String supplierOrderNo = orderResult.getResult();		
 		if(StringUtils.isNotBlank(supplierOrderNo) && orderResult.isStatus()){//下单成功
-			orderDTO.setSupplierOrderNo(supplierOrderNo);
+			orderDTO.setSupplierOrderNo(supplierOrderNo.trim());
 			orderDTO.setStatus(OrderStatus.CONFIRMED);
 			orderDTO.setExcState("0");
 		
@@ -203,11 +203,12 @@ public class OrderService extends AbsOrderService{
 			
 			String cancleUrl = url_cancelOrder+getSessionId();
 			logger.info("退单url============="+cancleUrl);
-			String paramJson = "{\"ID\":"+deleteOrder.getSupplierOrderNo()+"}";
-			String result = HttpUtil45.operateData("post", "json", cancleUrl, outTimeConf, null, paramJson,"", "");
+			String jsonParam = "{\"ID\":\""+deleteOrder.getSupplierOrderNo()+"\"}";
+			logger.info("退单参数============"+jsonParam); 
+			String result = HttpUtil45.operateData("post", "json", cancleUrl, outTimeConf, null, jsonParam,"", "");
 			logger.info("退单返回结果============"+result);
 			ResponseCancelOrder responseCancelOrder = new Gson().fromJson(result, ResponseCancelOrder.class);
-			if(responseCancelOrder.isResult() && responseCancelOrder.isStatus()){
+			if(1 == responseCancelOrder.getResult()){
 				deleteOrder.setExcState("0");
 				deleteOrder.setStatus(OrderStatus.REFUNDED);
 			}else{
@@ -261,14 +262,14 @@ public class OrderService extends AbsOrderService{
 	}
 	
 	public static void main(String[] args){
-//		OrderDTO orderDTO = new OrderDTO();
-//		orderDTO.setDetail("105020171162015-XL:10,");
-//		orderDTO.setSpPurchaseNo("CGD2016092600095"); 
-//		orderDTO.setPurchasePriceDetail("152");
+		OrderDTO orderDTO = new OrderDTO();
+		orderDTO.setDetail("100001812111001-34:1,");
+		orderDTO.setSpPurchaseNo("CGD2016101700000"); 
+		orderDTO.setPurchasePriceDetail("158");
 		
 		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
-		deleteOrder.setSpPurchaseNo("CGD2016092600095");
-		deleteOrder.setSupplierOrderNo("92600095"); 
+		deleteOrder.setSpPurchaseNo("CGD2016101700000");
+		deleteOrder.setSupplierOrderNo("01700000"); 
 		
 		OrderService order = new OrderService();
 //		order.handleSupplierOrder(orderDTO); 

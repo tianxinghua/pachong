@@ -4,10 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
@@ -47,6 +48,8 @@ public class ExportService {
 	
 	private static String conf_suppliers = null;
 	
+	private static String exclude_suppliers = null;
+	
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -62,6 +65,7 @@ public class ExportService {
 //		smtpHost = bdl.getString("smtpHost");
 		
 		conf_suppliers = bdl.getString("conf_suppliers");
+		exclude_suppliers = bdl.getString("exclude_suppliers");
 	}
 
 	@Autowired
@@ -79,11 +83,19 @@ public class ExportService {
 				 suppliers.add(supplierDAO.findBysupplierId(supplier));
 			 }
 		 }else{
+			 Map<String,String> excludeSuppliers = new HashMap<String,String>();
+			 excludeSuppliers.put("2015091801507", null);
+			 excludeSuppliers.put("2015112001671", null);
+			 if(StringUtils.isNotBlank(exclude_suppliers)){
+				 for(String str : exclude_suppliers.split(",")){
+					 excludeSuppliers.put(str, null);
+				 }
+			 }
 			 filePath = savepath+File.separator+DateTimeUtil.getShortCurrentDate()+File.separator;
 			 List<SupplierDTO> suppliers1 = supplierDAO.findByState("1");
 			 for(SupplierDTO supplier : suppliers1){
-				//排除brunarosso和Della
-				 if(!"2015091801507".equals(supplier.getSupplierId()) && !"2015112001671".equals(supplier.getSupplierId())){
+				//排除不需要拉取的供应商
+				 if(!excludeSuppliers.containsKey(supplier.getSupplierId())){ 
 					 suppliers.add(supplier);
 				 }
 			 }
