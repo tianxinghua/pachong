@@ -42,4 +42,5 @@ include 'dellogliostore'
 include 'efashion'
 include 'project-mq'
 include 'biondini-stock'
+include 'GiBiLogic'
 

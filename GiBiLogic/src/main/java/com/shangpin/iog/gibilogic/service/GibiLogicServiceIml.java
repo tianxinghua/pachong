@@ -72,7 +72,7 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 		ArrayList<String> imgList = new ArrayList<String>();
 		Map<String,List<String>> imgMap = new HashMap<String, List<String>>();
 		Map<String,Object> returnMap = new HashMap<String, Object>();
-		
+		String spuId="";
 		for (Entry<String, Product> entry : productMap.entrySet()) {
 			try {
 				Product p = entry.getValue();
@@ -83,7 +83,12 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 				sku.setId(UUIDGenerator.getUUID());
 				sku.setSkuId(p.getSkuId());
 				sku.setSupplierId(supplierId);
-				sku.setSpuId(p.getSkuId());
+				if("0".equals(p.getProduct_parent_id())){
+					spuId = p.getVirtuemart_product_id();
+				}else{
+					spuId=p.getProduct_parent_id();
+				}
+				sku.setSpuId(spuId);
 				sku.setColor(colorMap.get(p.getColore()));
 				sku.setStock(p.getStock());
 				sku.setMarketPrice(p.getProduct_price());
@@ -98,7 +103,7 @@ public class GibiLogicServiceIml extends AbsSaveProduct{
 				
 				spu.setId(UUIDGenerator.getUUID());
 				spu.setSupplierId(supplierId);
-				spu.setSpuId(p.getSkuId());
+				spu.setSpuId(spuId);
 				spu.setBrandName(p.getManufacturer());
 				spu.setCategoryName(getCategoryName(categoryMap, p.getCategory()));
 				spu.setMaterial(p.getMaterial());
