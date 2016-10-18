@@ -53,7 +53,7 @@ public class HttpUtils {
 					.operateData(
 							"post",
 							"soap",
-							"http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDesTables",
+							"http://81.161.58.250:8080/LCVMAGWSV8_WEB/awws/LcvMagWS.awws?op=LectureDesTables",
 							new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10,
 									1000 * 60 * 10), map, xx, null, null);
 			System.out.println("tables ："+json.length());
@@ -93,7 +93,7 @@ public class HttpUtils {
 					.operateData(
 							"post",
 							"soap",
-							"http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDuStock",
+							"http://81.161.58.250:8080/LCVMAGWSV8_WEB/awws/LcvMagWS.awws?op=LectureDuStock",
 							new OutTimeConfig(1000 * 60 * 10, 1000 * 60 * 10,
 									1000 * 60 * 10), map, xx, null, null);
 			System.out.println("Stock ："+json.length());
