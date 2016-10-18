@@ -72,7 +72,7 @@ public class FetchProduct {
     	
         Gson gson = new Gson();
         
-        String[]  databaseArray = new String[] {"arte","forte","default"}; //"default","forte",
+        String[]  databaseArray = new String[] {"default"}; //"default","forte",
         OutTimeConfig outTimeConfig  = new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2);
         for(String database:databaseArray){
         	int m=0;

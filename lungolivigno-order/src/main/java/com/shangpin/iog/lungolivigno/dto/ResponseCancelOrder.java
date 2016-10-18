@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 public class ResponseCancelOrder {
 
-	boolean Result;
+	Integer Result;
 	String ErrMessage;
 	boolean Status;
 	Integer ErrCode;

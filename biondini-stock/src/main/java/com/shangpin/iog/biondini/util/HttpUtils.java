@@ -33,6 +33,7 @@ public class HttpUtils {
 		String json = null;
 		System.out.println("=================Stock fetch begin====================================");
 		try {
+			//http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDesModelesAvecPrix
 			//"http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDuStock",  废弃的
 			json = HttpUtil45
 					.operateData(

@@ -48,6 +48,7 @@ public class HttpUtils {
 		map.put("Content-Type", "application/soap+xml; charset=utf-8");
 		System.out.println("=================tables fetch begin====================================");
 		try {
+			//http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDesTables
 			json = HttpUtil45
 					.operateData(
 							"post",
@@ -87,6 +88,7 @@ public class HttpUtils {
 		String json = null;
 		System.out.println("=================Stock fetch begin====================================");
 		try {
+			//http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDuStock
 			json = HttpUtil45
 					.operateData(
 							"post",
@@ -128,6 +130,7 @@ public class HttpUtils {
 		String json = null;
 		System.out.println("=================product fetch begin====================================");
 		try {
+			//http://80.12.82.220:8080/LCVMAGWS_WEB/awws/LcvMagWS.awws?op=LectureDesModelesAvecPrix
 			json = HttpUtil45
 					.operateData(
 							"post",
