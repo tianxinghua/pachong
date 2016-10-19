@@ -43,4 +43,5 @@ include 'efashion'
 include 'project-mq'
 include 'biondini-stock'
 include 'GiBiLogic'
+include 'spinnaker-stock'
 
