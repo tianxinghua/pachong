@@ -304,15 +304,15 @@ public class OrderImpl extends AbsOrderService {
 		try {
 		     String detail = orderDTO.getDetail();
 		        
-		        String[] details = detail.split(",");
+//		        String[] details = detail.split(",");
 				logger.info("detail数据格式:"+detail);
 				int num = 0;
 				String skuNo = null;
-				for (int i = 0; i < details.length; i++) {
+//				for (int i = 0; i < details.length; i++) {
 					// detail[i]数据格式==>skuId:数量
-					num = Integer.parseInt(details[i].split(":")[1]);
-					skuNo = details[i].split(":")[0];
-				}
+					num = Integer.parseInt(detail.split(":")[1]);
+					skuNo = detail.split(":")[0];
+//				}
 				
 			
 			Map tempmap = skuPriceService.getNewSkuPriceBySku(Constant.SUPPLIER_ID, skuNo);
