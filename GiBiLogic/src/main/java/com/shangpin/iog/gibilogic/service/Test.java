@@ -52,7 +52,8 @@ public class Test {
 
 			for (Map.Entry<String, Product> entry : json.entrySet()) {
 				Product product = entry.getValue();
-				kk.append(" vir_product_id:" + product.getVirtuemart_product_id() + " sku:" + product.getSkuId() + " parent_id:" + product.getProduct_parent_id() +  " size:" +  product.getSize() + " color:" +  product.getColore() +  "  pic:" + product.getImage());
+				kk.append(" vir_product_id:" + product.getVirtuemart_product_id() + " sku:" + product.getSkuId() + " parent_id:" + product.getProduct_parent_id()
+						+  " size:" +  product.getSize() + " color:" +  product.getColore() +  "  pic:" + product.getImage());
 				kk.append("\r\n");
 //				if (jsonMap.containsKey(entry.getValue().getSkuId())) {
 //					Product product = jsonMap.get(entry.getValue().getSkuId());
