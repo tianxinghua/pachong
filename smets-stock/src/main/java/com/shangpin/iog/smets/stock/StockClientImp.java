@@ -50,9 +50,11 @@ public class StockClientImp extends AbsUpdateProductStock {
 		String skuId ="";
 		int stock = 0;
 		System.out.println("开始获取sku");
+		logger.info("===================开始抓取主站信息===================");
 		List<TxtDTO> skuLists = TXTUtil.downloadFTP(TxtDTO.class, ";");
-		System.out.println("获取sku完毕");
-		logger.info("获取sku完毕");
+		logger.info("抓取主站信息结束,获取的skuLists大小是=========="+skuLists.size()); 
+		//System.out.println("获取sku完毕");
+		//logger.info("获取sku完毕");
 		Map<String,String> stockMap = new HashMap<String, String>();
 		Map<String,String> returnMap = new HashMap<String, String>();
 		for (TxtDTO TxtDTO : skuLists) {
