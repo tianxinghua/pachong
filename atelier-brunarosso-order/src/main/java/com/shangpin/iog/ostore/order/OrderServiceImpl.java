@@ -115,6 +115,9 @@ public class OrderServiceImpl extends AbsOrderService{
 			ProductDTO product = productSearchService.findProductForOrder(supplierId,skuId);
 			if(null != product && StringUtils.isNotBlank(product.getSize())){
 				String size = product.getSize().replaceAll("\\+", "½");
+				if(size.contains(".5")){
+					size = size.replaceAll(".5", "½");
+				}
 				//查询对方库存接口
 				String stockData = getItemStockBySizeMarketPlace(item_id);
 				if(!HttpUtil45.errorResult.equals(stockData)){

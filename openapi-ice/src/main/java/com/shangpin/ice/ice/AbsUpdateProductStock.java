@@ -286,15 +286,25 @@ public abstract class AbsUpdateProductStock {
 			exe.shutdown();
 			while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
 
-			}
-			int fct=0;
-			for(int k=0;k<totoalFailCnt.size();k++){
-				fct+=totoalFailCnt.get(k);
-			}
-			loggerInfo.info("更新库存失败的数量==========="+fct);			
-			if(fct>=0){//待更新的库存失败数小于0时，不更新
+			}			
+			boolean isOk = false;
+			for(int k=0;k<totoalFailCnt.size();k++){				
+				if(totoalFailCnt.get(k) == 0){
+					loggerInfo.info("---------------第==="+k+"===组更新成功------------"); 
+					isOk = true;
+					break;
+				}
+			}	
+			loggerInfo.info("isOk============="+isOk); 
+			if(isOk){//多线程更新库存,有一个更新成功,则视为更新库存成功.
 				this.updateStockTime(supplier);
 			}
+			
+			int fct=0;
+			for(int k=0;k<totoalFailCnt.size();k++){
+				fct+=totoalFailCnt.get(k);				
+			}
+			loggerInfo.info("更新库存失败的数量==========="+fct);
 			return fct;
 		}else{
 			Map<String,String> sopPriceMap = new HashMap<>();

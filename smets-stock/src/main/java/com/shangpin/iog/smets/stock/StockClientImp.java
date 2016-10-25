@@ -52,6 +52,9 @@ public class StockClientImp extends AbsUpdateProductStock {
 		System.out.println("开始获取sku");
 		logger.info("===================开始抓取主站信息===================");
 		List<TxtDTO> skuLists = TXTUtil.downloadFTP(TxtDTO.class, ";");
+		if(null == skuLists || skuLists.size()== 0){
+			throw new Exception("===========从主站抓取的供应商sku信息list为null或者size等于0============");
+		}
 		logger.info("抓取主站信息结束,获取的skuLists大小是=========="+skuLists.size()); 
 		//System.out.println("获取sku完毕");
 		//logger.info("获取sku完毕");
