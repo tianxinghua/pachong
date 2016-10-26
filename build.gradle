@@ -3,8 +3,11 @@ import java.rmi.server.Operation;
 import com.sun.tracing.dtrace.DependencyClass;
 
 apply plugin: 'java'
+apply plugin: 'maven'
 
 sourceCompatibility = 1.7
+group = 'com.shangpin'
+
 version = '1.0'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -29,13 +32,15 @@ allprojects {
 //            url "http://192.168.1.110:8888/nexus/content/groups/public/"
 //        }
         maven {
-        	url "http://192.168.1.212:8081/nexus/content/groups/public/"
+        	url "http://192.168.4.203:8181/nexus/content/groups/public/"
         }
 //        maven {
 //            url 'https://repo.spring.io/libs-milestone'
 //        }
         
     }
+
+
 
 
 }
@@ -50,6 +55,12 @@ ext {
     } else {
         profile = "development"
     }
+
+    nexusUrl="http://192.168.20.223:8081"
+    nexusUsername="admin"
+    nexusPassword="admin123"
+
+
     springVersion='4.2.5.RELEASE'
     slf4jversion='1.7.12'
     codehaus_jackson_version='1.9.13'
@@ -59,8 +70,24 @@ ext {
     jedis_version='2.6.2'
 	resteasy_version='3.0.7.Final'
 	spring_data_mongo='1.9.1.RELEASE'
+
+
 }
 
+
+uploadArchives {
+    repositories {
+
+        mavenDeployer {
+            repository(url: "${nexusUrl}/repository/maven-releases/") {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+            snapshotRepository(url: "${nexusUrl}/repository/maven-snapshots") {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+        }
+    }
+}
 
 
 def loadGroovy(){
