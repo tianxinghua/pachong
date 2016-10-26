@@ -32,7 +32,7 @@ allprojects {
 //            url "http://192.168.1.110:8888/nexus/content/groups/public/"
 //        }
         maven {
-        	url "http://192.168.4.203:8181/nexus/content/groups/public/"
+        	url "http://192.168.20.223:8081/nexus/content/groups/public/"
         }
 //        maven {
 //            url 'https://repo.spring.io/libs-milestone'
