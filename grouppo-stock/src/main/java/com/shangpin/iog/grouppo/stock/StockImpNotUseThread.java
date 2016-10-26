@@ -49,6 +49,7 @@ public class StockImpNotUseThread  extends AbsUpdateProductStock {
         
         try{
         	//业务实现
+        	logger.info("=================开始拉取供应商库存信息==================");
         	StockWSServiceStub stockWSServiceStub = new StockWSServiceStub();
         	stockWSServiceStub._getServiceClient().getOptions().setTimeOutInMilliSeconds(1000*60*60); 
         	stockWSServiceStub._getServiceClient().getOptions().setProperty(org.apache.axis2.transport.http.HTTPConstants.SO_TIMEOUT,new Integer(1000*60*60));
@@ -63,15 +64,19 @@ public class StockImpNotUseThread  extends AbsUpdateProductStock {
     		try {    			           	
         		response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);
 			} catch (Exception e) {
+				logger.info("第1次异常===="+e.toString());
 				logError.error("第1次异常===="+e);
 				try {
 					response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);	
 				} catch (Exception e2) {
-					logError.error("第2次异常===="+e);
+					logger.info("第2次异常===="+e2.toString());
+					logError.error("第2次异常===="+e2);
 					try {
 						response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);	
 					} catch (Exception e3) {
-						logError.error("第3次异常===="+e);
+						logger.info("第3次异常===="+e3.toString());
+						logError.error("第3次异常===="+e3);
+						throw new Exception("========拉取供应商库存信息失败==========="+e.toString());
 					}
 				}
 			}
@@ -104,11 +109,12 @@ public class StockImpNotUseThread  extends AbsUpdateProductStock {
         return skustock;
     }
 
+    //test main
     public static void main(String[] args) throws Exception {
     	//加载spring
 //        loadSpringContext();    
 
-    	StockImp stockImp = new StockImp();
+    	StockImpNotUseThread stockImp = new StockImpNotUseThread();
     	 stockImp.grabStock(null);
     	
     }

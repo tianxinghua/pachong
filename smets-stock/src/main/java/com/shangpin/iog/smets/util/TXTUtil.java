@@ -123,7 +123,7 @@ public class TXTUtil {
 			}			
             
         }catch(Exception ex){
-        	log.error(ex.toString());
+        	log.info("从ftp上下载库存文件出错================"+ex.toString());
         	ex.printStackTrace();
         }finally{
         	try {

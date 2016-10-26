@@ -184,7 +184,11 @@ public class PictureDownService {
 
                                             Thread.sleep(500);
                                             executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"NT","at98w-IIS","Polo2012"));
-                                        }else
+                                        }else if("2016083001937".equals(supplierId)){
+                                        	Thread.sleep(500);
+                                        	executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"","shangpin","Shang1808"));
+                                        }
+                                        else
                                         {
                                             Thread.sleep(500);
                                             executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"",userName,password));

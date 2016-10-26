@@ -6,6 +6,8 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.iog.common.utils.DateTimeUtil;
+
 @Service
 public class HandleLogsService {
 
@@ -63,4 +65,10 @@ public class HandleLogsService {
             return 0.0;     
         }     
     }
+	
+	public static void main(String[] args) {
+		System.out.println(DateTimeUtil.getPreviouseDate());
+	}
 }
+
+

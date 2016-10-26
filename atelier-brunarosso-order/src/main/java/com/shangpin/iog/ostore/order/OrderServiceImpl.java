@@ -23,7 +23,7 @@ import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.service.ProductSearchService;
 
-@Component("atelierLeamServiceImpl") 
+@Component("atelierGentServiceImpl") 
 public class OrderServiceImpl extends AbsOrderService{
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger errorLog = Logger.getLogger("error");
@@ -160,7 +160,7 @@ public class OrderServiceImpl extends AbsOrderService{
 //					orderDTO.setStatus(OrderStatus.NOHANDLE); 
 					orderDTO.setExcDesc("查询对方库存接口失败,对方返回的信息是："+stockData);
 					orderDTO.setExcTime(new Date()); 
-					sendMail("订单 "+orderDTO.getSpPurchaseNo()+" spuid等于 "+item_id+" 查询对方库存接口 GetItemStockBySizeMarketPlace 失败,对方返回的信息是："+stockData+",请与供应商联系。 2分钟后会再推一次。");
+					sendMail("订单 "+orderDTO.getSpPurchaseNo()+" spuid等于 "+item_id+" 查询对方库存接口 GetItemStockBySizeMarketPlace 失败,对方返回的信息是："+stockData+",请与供应商联系。2分钟后会再推一次。 ");
 				}
 			}else{
 				orderDTO.setStatus(OrderStatus.NOHANDLE); 
@@ -293,7 +293,7 @@ public class OrderServiceImpl extends AbsOrderService{
 	private void sendMail(String messageText){
 		try {
 			
-			SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, "!!! Leam订单推送异常", messageText , messageType);
+			SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, "!!! brunarosso订单推送异常", messageText , messageType);
 			
 		} catch (Exception e) {
 			errorLog.error(e.toString()); 
@@ -301,38 +301,38 @@ public class OrderServiceImpl extends AbsOrderService{
 	}
 	
 	public static void main(String[] args) {
-		try {
-			
-		
-		OrderServiceImpl orderService = new OrderServiceImpl();
-		OrderDTO orderDTO = new OrderDTO();
-//    	orderDTO.setSpPurchaseNo("CGD2016072500097");
-		orderDTO.setSpOrderId("201607254074169");
-    	orderDTO.setDetail("6794202-2107151150283:1,");
-//    	orderDTO.setPurchasePriceDetail("170.41");
-//    	orderService.handleConfirmOrder(orderDTO);
-		//201607284050007L, "2111344053718"
-		//201607284050011L, "2016398420885"
 //		try {
-//			orderService.newOrderMarketPlace(201607284050015L, "2109590957966", 1);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		orderService.getStatusOrderMarketplace("201607284050011");
-//		orderService.setStatusOrderMarketplace("201607284050015", "CANCELED"); 
-//		orderService.getStatusOrderMarketplace("201607284050011");
-		
+//			
+//		
+		OrderServiceImpl orderService = new OrderServiceImpl();
+//		OrderDTO orderDTO = new OrderDTO();
+////    	orderDTO.setSpPurchaseNo("CGD2016072500097");
+//		orderDTO.setSpOrderId("201609264074169");
+//    	orderDTO.setDetail("6137974-2015343123475:1,");
+//    	orderDTO.setPurchasePriceDetail("685.24");
+//    	orderService.handleConfirmOrder(orderDTO);
+//		//201607284050007L, "2111344053718"
+//		//201607284050011L, "2016398420885"
+////		try {
+////			orderService.newOrderMarketPlace(201607284050015L, "2109590957966", 1);
+////		} catch (Exception e) {
+////			// TODO Auto-generated catch block
+////			e.printStackTrace();
+////		}
+////		orderService.getStatusOrderMarketplace("201607284050011");
+////		orderService.setStatusOrderMarketplace("201607284050015", "CANCELED"); 
+////		orderService.getStatusOrderMarketplace("201607284050011");
+//		
 		try {
-			String result = orderService.getItemStockBySizeMarketPlace("1841085");
+			String result = orderService.getItemStockBySizeMarketPlace("51246722");
 			System.out.println(result);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 	
