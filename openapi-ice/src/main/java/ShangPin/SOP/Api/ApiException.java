@@ -31,14 +31,16 @@ public class ApiException extends Ice.UserException
         super(__cause);
     }
 
-    public ApiException(String Message)
+    public ApiException(String ErrorCode, String Message)
     {
+        this.ErrorCode = ErrorCode;
         this.Message = Message;
     }
 
-    public ApiException(String Message, Throwable __cause)
+    public ApiException(String ErrorCode, String Message, Throwable __cause)
     {
         super(__cause);
+        this.ErrorCode = ErrorCode;
         this.Message = Message;
     }
 
@@ -48,12 +50,15 @@ public class ApiException extends Ice.UserException
         return "ShangPin::SOP::Api::ApiException";
     }
 
+    public String ErrorCode;
+
     public String Message;
 
     protected void
     __writeImpl(IceInternal.BasicStream __os)
     {
         __os.startWriteSlice("::ShangPin::SOP::Api::ApiException", -1, true);
+        __os.writeString(ErrorCode);
         __os.writeString(Message);
         __os.endWriteSlice();
     }
@@ -62,9 +67,10 @@ public class ApiException extends Ice.UserException
     __readImpl(IceInternal.BasicStream __is)
     {
         __is.startReadSlice();
+        ErrorCode = __is.readString();
         Message = __is.readString();
         __is.endReadSlice();
     }
 
-    public static final long serialVersionUID = -944463144L;
+    public static final long serialVersionUID = 1589533002L;
 }

@@ -941,22 +941,26 @@ public abstract class AbsUpdateProductStock {
 						servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
 				orderDetails = orderDetailPage.PurchaseOrderDetails;
 				for (PurchaseOrderDetail orderDetail : orderDetails) {
+				    if(7!=orderDetail.GiveupType){
+						SpecialSkuDTO spec = new SpecialSkuDTO();
+						String supplierSkuNo  = orderDetail.SupplierSkuNo;
+						spec.setSupplierId(supplierId);
+						spec.setSupplierSkuId(supplierSkuNo);
+						try {
+							logger.info("采购异常的信息："+spec.toString());
+							specialSkuService.saveDTO(spec);
+						} catch (ServiceMessageException e) {
+							e.printStackTrace();
+						}
+						//直接调用库存更新  库存为0
+						try {
+							servant.UpdateStock(supplierId, orderDetail.SkuNo, 0);
+						} catch (Exception e) {
+							loggerError.error("采购异常的商品 "+ orderDetail.SkuNo + " 库存更新失败。");
+						}
 
-					SpecialSkuDTO spec = new SpecialSkuDTO();
-					String supplierSkuNo  = orderDetail.SupplierSkuNo;
-					spec.setSupplierId(supplierId);
-					spec.setSupplierSkuId(supplierSkuNo);
-					try {
-						logger.info("采购异常的信息："+spec.toString());
-						specialSkuService.saveDTO(spec);
-					} catch (ServiceMessageException e) {
-						e.printStackTrace();
-					}
-					//直接调用库存更新  库存为0
-					try {
-						servant.UpdateStock(supplierId, orderDetail.SkuNo, 0);
-					} catch (Exception e) {
-						loggerError.error("采购异常的商品 "+ orderDetail.SkuNo + " 库存更新失败。");
+					}else{
+						logger.info("异常采购信息："+ orderDetail.SopPurchaseOrderNo + " 因质量问题采购异常，可继续更新库存");
 					}
 
 				}
