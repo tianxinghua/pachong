@@ -301,6 +301,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					productList = productDAO.findListByEPRegularAndLastDate(
 							supplier, startDate, endDate);
 
+				}else if(flag.equals("hasSpSkuId")){
+					productList = productDAO.findProductOfHasSpSkuId(supplier, startDate, endDate);
 				}
 				else {
 					productList = productDAO.findDiffListBySupplierAndLastDate(
@@ -4061,6 +4063,29 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				}
 			}
 		}
+	}
+
+	@Override
+	public List<ProductDTO> findProductOfHasSpSkuId(String supplier,
+			Date startDate, Date endDate, Integer pageIndex, Integer pageSize)
+			throws ServiceException {
+		
+		
+		Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate,
+				endDate, pageIndex, pageSize, "hasSpSkuId");
+		
+		//品类map赋值
+		this.setCategoryMap();
+		// 设置尚品网品牌
+		this.setHubBrandMap();
+		// 颜色Map赋值
+		this.setColorContrastMap();
+		// 材质Map 赋值
+		this.setMaterialContrastMap();
+		//产地翻译
+		this.setMadeInMap();
+		
+		return page.getItems();
 	}
 
 }
