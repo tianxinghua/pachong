@@ -1212,46 +1212,48 @@ public abstract class AbsUpdateProductStock {
 				detilApiDtos = purchaseOrderInfoApiDto
 						.getPurchaseOrderDetails();
 				for (PurchaseOrderDetail orderDetail : detilApiDtos) {
+                    if(7!=orderDetail.getGiveupType()){
+                    	SpecialSkuDTO spec = new SpecialSkuDTO();
+    					spec.setSupplierId(app_key);
+    					spec.setSupplierSkuId(orderDetail.getSupplierSkuNo());
+    					try {
+    						logger.info("采购异常的信息：" + spec.toString());
+    						System.out.println("采购异常的："+spec.getSupplierSkuId()+"=="+orderDetail.getSopPurchaseOrderNo());
+    						specialSkuService.saveDTO(spec);
+    					} catch (ServiceMessageException e) {
+    						e.printStackTrace();
+    					}
+    					ApiResponse<Boolean> result = null;
+    					StockInfo request_body = null;
+    					request_body = new StockInfo();
+    					request_body.setSkuNo(orderDetail.getSkuNo());
+    					request_body.setInventoryQuantity(0);
+    					boolean success = true;
+    					for (int i = 0; i < 2; i++) {// 发生错误 允许再执行一次
+    						try {
+    							result = SpClient.UpdateStock(host, app_key,
+    									app_secret, new Date(), request_body);
+    							if (null==result || null==result.getResponse() || (null != result && !result.getResponse())) {
 
-					SpecialSkuDTO spec = new SpecialSkuDTO();
-					spec.setSupplierId(app_key);
-					spec.setSupplierSkuId(orderDetail.getSupplierSkuNo());
-					try {
-						logger.info("采购异常的信息：" + spec.toString());
-						System.out.println("采购异常的："+spec.getSupplierSkuId()+"=="+orderDetail.getSopPurchaseOrderNo());
-						specialSkuService.saveDTO(spec);
-					} catch (ServiceMessageException e) {
-						e.printStackTrace();
-					}
-					ApiResponse<Boolean> result = null;
-					StockInfo request_body = null;
-					request_body = new StockInfo();
-					request_body.setSkuNo(orderDetail.getSkuNo());
-					request_body.setInventoryQuantity(0);
-					boolean success = true;
-					for (int i = 0; i < 2; i++) {// 发生错误 允许再执行一次
-						try {
-							result = SpClient.UpdateStock(host, app_key,
-									app_secret, new Date(), request_body);
-							if (null==result || null==result.getResponse() || (null != result && !result.getResponse())) {
+    								success = false;
 
-								success = false;
-
-								loggerError.error("采购异常的商品：--------"+orderDetail.getSkuNo() + " 库存为0 ，更新库存失败");
-							}else{
-								loggerInfo.info("采购异常的商品：--------" + orderDetail.getSkuNo()
-										+ " 库存为0 ，更新库存成功");
-							}
-						} catch (Exception e) {
+    								loggerError.error("采购异常的商品：--------"+orderDetail.getSkuNo() + " 库存为0 ，更新库存失败");
+    							}else{
+    								loggerInfo.info("采购异常的商品：--------" + orderDetail.getSkuNo()
+    										+ " 库存为0 ，更新库存成功");
+    							}
+    						} catch (Exception e) {
 
 
-							loggerError.error("采购异常的商品：--------"+orderDetail.getSkuNo() + " 库存为0 ，更新库存失败");
-						}
-						if (success) { // 成功直接跳出
-							i = 2;
-						}
-					}
+    							loggerError.error("采购异常的商品：--------"+orderDetail.getSkuNo() + " 库存为0 ，更新库存失败");
+    						}
+    						if (success) { // 成功直接跳出
+    							i = 2;
+    						}
+    					}
 
+                    }
+					
 
 				}
 			} else {
