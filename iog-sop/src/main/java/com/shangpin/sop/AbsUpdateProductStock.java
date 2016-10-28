@@ -848,16 +848,16 @@ public abstract class AbsUpdateProductStock {
 				return iceStock;
 			}
 
-			// 获取采购单信息
-			try {
-				loggerInfo.info("获取采购单开始");
-				if (!ORDER)
-					sopPurchaseMap = this.getPurchaseOrder(host, app_key,
-							app_secret);
-			} catch (Exception e) {
-				// e.printStackTrace();
-				loggerError.error("获取采购单失败" + e.getMessage(), e);
-			}
+			// 获取采购单信息  现更新接口内实现
+//			try {
+//				loggerInfo.info("获取采购单开始");
+//				if (!ORDER)
+//					sopPurchaseMap = this.getPurchaseOrder(host, app_key,
+//							app_secret);
+//			} catch (Exception e) {
+//				// e.printStackTrace();
+//				loggerError.error("获取采购单失败" + e.getMessage(), e);
+//			}
 
 			String iceSku = "";
 			for (String skuNo : skuNos) {
@@ -876,7 +876,8 @@ public abstract class AbsUpdateProductStock {
 							stock = 0;
 						loggerInfo.info(skuNo + "供货商库存：" + stock + " 采购单数量 : "
 								+ sopPurchaseMap.get(iceSku));
-						stock = stock - sopPurchaseMap.get(iceSku);
+//						stock = stock - sopPurchaseMap.get(iceSku);
+						
 						loggerInfo.info("最终库存 ：" + stock);
 						if (stock < 0)
 							stock = 0;
@@ -1257,7 +1258,7 @@ public abstract class AbsUpdateProductStock {
 				loggerError.error("两次获取采购单均失败");
 			}
 			pageIndex++;
-			hasNext = (pageSize == detilApiDtos.size());
+			hasNext = (null != detilApiDtos && pageSize == detilApiDtos.size());
 		}
 	}
 
