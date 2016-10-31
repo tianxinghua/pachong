@@ -1,9 +1,12 @@
 package com.shangpin.iog.studio69.service;
 
+import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import javax.xml.bind.JAXBException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
@@ -97,9 +100,9 @@ public class OrderService extends AbsOrderService{
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		
 		try {
-			// TODO 支付逻辑			
-			API_STUDIO69Stub stub = new API_STUDIO69Stub();	
+			// TODO 支付逻辑				
 			CreateNewOrder createNewOrder = new CreateNewOrder();
+			String size = orderDTO.getDetail().split(",")[0].split(":")[0].split("-")[1];
 			String buyerInfo = "<buyerInfo>"
 					+ "<Name>Genertec Italia S.r.l.</Name>"
 					+ "<Address>Via Leopardi 27</Address>"					
@@ -110,33 +113,42 @@ public class OrderService extends AbsOrderService{
 			String goodsList = "<GoodsList>"
 					+ "<Good>"
 					+ "<ID>"+orderDTO.getDetail().split(",")[0].split(":")[0].split("-")[0]+"</ID>"
-					+ "<Size>"+(orderDTO.getDetail().split(",")[0].split(":")[0].split("-")[1]).replaceAll("\\+", "½")+"</Size>" 
+					+ "<Size>"+size+"</Size>" 
 					+ "<Qty>"+orderDTO.getDetail().split(",")[0].split(":")[1]+"</Qty>"
 					+ "<Price>"+orderDTO.getPurchasePriceDetail()+"</Price>"
 					+ "</Good>"
 					+ "</GoodsList>";			
-			createNewOrder.setBuyerInfo(buyerInfo);
-			createNewOrder.setGoodsList(goodsList);
-			createNewOrder.setOrderID(orderDTO.getSpPurchaseNo());
-			System.out.println("goodsList================="+orderDTO.getSpPurchaseNo()+":"+goodsList);
-			logger.info("goodsList================="+orderDTO.getSpPurchaseNo()+":"+goodsList); 
-			CreateNewOrderResponse  cresponse = stub.createNewOrder(createNewOrder);
-			OMElement   result = cresponse.getCreateNewOrderResult().getExtraElement();
-			System.out.println(result.toString());
-			logger.info("下单返回结果============="+result.toString());
-			Response response = ObjectXMLUtil.xml2Obj(Response.class, result.toString());
-			if("Success".equals(response.getResult())){
-				orderDTO.setExcState("0");
-				orderDTO.setStatus(OrderStatus.CONFIRMED);
-			}else if("Failed".equals(response.getResult()) && "Goods Stock doesn't enough".equals(response.getMessage())){//库存不足
-				orderDTO.setExcState("0");
-				orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
-				orderDTO.setExcDesc(response.getMessage()); 
-			}else{
-				orderDTO.setExcState("1");
-				orderDTO.setExcDesc(response.getMessage());
-				orderDTO.setExcTime(new Date()); 
+			if(size.contains("+")){
+				createNewOrder.setBuyerInfo(buyerInfo);
+				createNewOrder.setGoodsList(goodsList);
+				createNewOrder.setOrderID(orderDTO.getSpPurchaseNo());
+				System.out.println("goodsList================="+orderDTO.getSpPurchaseNo()+":"+goodsList);
+				logger.info("goodsList================="+orderDTO.getSpPurchaseNo()+":"+goodsList); 
+				Response response = createOrder(orderDTO, createNewOrder);
+				//如果尺码为+时下单失败，那么有有可能是½类型的尺码。
+				if("Failed".equals(response.getResult()) && "Goods Stock doesn't enough".equals(response.getMessage())){
+					size = size.replaceAll("\\+", "½");
+					String newGoodsList = "<GoodsList>"
+							+ "<Good>"
+							+ "<ID>"+orderDTO.getDetail().split(",")[0].split(":")[0].split("-")[0]+"</ID>"
+							+ "<Size>"+size+"</Size>" 
+							+ "<Qty>"+orderDTO.getDetail().split(",")[0].split(":")[1]+"</Qty>"
+							+ "<Price>"+orderDTO.getPurchasePriceDetail()+"</Price>"
+							+ "</Good>"
+							+ "</GoodsList>";	
+					logger.info("含有+号的sku第一次下单失败，第二次下单参数======"+newGoodsList); 
+					createNewOrder.setGoodsList(newGoodsList);
+					createOrder(orderDTO, createNewOrder);
+				}
+			}else{				
+				createNewOrder.setBuyerInfo(buyerInfo);
+				createNewOrder.setGoodsList(goodsList);
+				createNewOrder.setOrderID(orderDTO.getSpPurchaseNo());
+				System.out.println("goodsList================="+orderDTO.getSpPurchaseNo()+":"+goodsList);
+				logger.info("goodsList================="+orderDTO.getSpPurchaseNo()+":"+goodsList); 
+				createOrder(orderDTO, createNewOrder);
 			}
+			
 			
 		} catch (Exception e) {
 			errorLog.error(e);
@@ -145,6 +157,30 @@ public class OrderService extends AbsOrderService{
 			orderDTO.setExcTime(new Date());
 		}
 				
+	}
+
+	private Response createOrder(OrderDTO orderDTO, CreateNewOrder createNewOrder)
+			throws AxisFault, RemoteException, JAXBException {
+		API_STUDIO69Stub stub = new API_STUDIO69Stub();	
+		CreateNewOrderResponse  cresponse = stub.createNewOrder(createNewOrder);
+		OMElement   result = cresponse.getCreateNewOrderResult().getExtraElement();
+		System.out.println(result.toString());
+		logger.info("下单返回结果============="+result.toString());
+		Response response = ObjectXMLUtil.xml2Obj(Response.class, result.toString());
+		if("Success".equals(response.getResult())){
+			orderDTO.setExcState("0");
+			orderDTO.setStatus(OrderStatus.CONFIRMED);
+			orderDTO.setExcDesc(" "); 
+		}else if("Failed".equals(response.getResult()) && "Goods Stock doesn't enough".equals(response.getMessage())){//库存不足
+			orderDTO.setExcState("0");
+			orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+			orderDTO.setExcDesc(response.getMessage()); 
+		}else{
+			orderDTO.setExcState("1");
+			orderDTO.setExcDesc(response.getMessage());
+			orderDTO.setExcTime(new Date()); 
+		}
+		return response;
 	}
 
 	@Override
@@ -215,15 +251,15 @@ public class OrderService extends AbsOrderService{
 			//下单=================================
 			OrderService order = new OrderService();
 			OrderDTO orderDTO = new OrderDTO();
-			orderDTO.setDetail("116467-XL:1,");
-			orderDTO.setSpPurchaseNo("CGD2016091400874");
+			orderDTO.setDetail("2366-38+:1,");
+			orderDTO.setSpPurchaseNo("CGD2016103106874");
 			orderDTO.setPurchasePriceDetail("160");
 			order.handleConfirmOrder(orderDTO); 
 			
 			
 			//取消=================================
 			ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
-			deleteOrder.setSpPurchaseNo("CGD2016091400874");//CGD2016091400169
+			deleteOrder.setSpPurchaseNo("CGD2016103106874");//CGD2016091400169
 			order.handleRefundlOrder(deleteOrder); 
 			
 			
