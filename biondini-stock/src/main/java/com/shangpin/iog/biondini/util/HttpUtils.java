@@ -211,7 +211,5 @@ public class HttpUtils {
 		return json;
 	}
 
-	public static void main(String[] args){
-		HttpUtils.getOrderStatusSoap();
-	}
+
 }

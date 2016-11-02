@@ -28,4 +28,5 @@ include 'atelier-ostore-order'
 include 'biondini-stock'
 include 'grouppo-stock'
 include 'grouppo'
+include 'atelier-ostore'
 
