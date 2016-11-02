@@ -232,6 +232,18 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
             @Param("startDate") Date startDate,
             @Param("endDate") Date endDate) throws ServiceException;
     
+    /**
+     * 查找已经生成过尚品sku，并且库存大于0的数据
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     * @throws ServiceException
+     */
+    public List<ProductDTO> findProductOfHasSpSkuId(@Param("supplier") String supplier,@Param("startDate") Date startDate,@Param("endDate") Date endDate) throws ServiceException;
+    
 }
 
 

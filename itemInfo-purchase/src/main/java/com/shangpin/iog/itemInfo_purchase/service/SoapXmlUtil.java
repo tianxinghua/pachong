@@ -37,17 +37,18 @@ public class SoapXmlUtil {
 	 */
 	public static String getSoapXml(String serviceUrl ,String sopAction,String contentType,String soapRequestData){
 		
-		HttpClient httpClient = new HttpClient();
-		PostMethod postMethod = new PostMethod(serviceUrl);
-        postMethod.setRequestHeader("SOAPAction", sopAction);
-        postMethod.setRequestHeader("Content-Type", contentType);
-        StringRequestEntity requestEntity=new StringRequestEntity(soapRequestData);
-        postMethod.setRequestEntity(requestEntity);
-        
-        int returnCode=0;
-        InputStream in = null;
-        try {
-
+		InputStream in = null;
+		try {
+			HttpClient httpClient = new HttpClient();
+			httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(1000*60*10);
+			httpClient.getHttpConnectionManager().getParams().setSoTimeout(1000*60*10);
+			PostMethod postMethod = new PostMethod(serviceUrl);
+	        postMethod.setRequestHeader("SOAPAction", sopAction);
+	        postMethod.setRequestHeader("Content-Type", contentType);	        
+	        StringRequestEntity requestEntity=new StringRequestEntity(soapRequestData);
+	        
+	        postMethod.setRequestEntity(requestEntity);	        
+	        int returnCode=0;
             returnCode = httpClient.executeMethod(postMethod);
             logger.info("getSoapXml.returnCode=="+returnCode);
             
@@ -60,7 +61,7 @@ public class SoapXmlUtil {
             }
             
         } catch (Exception e) {
-        	loggerError.error(e); 
+        	loggerError.error("推送时，发生错误============"+e.toString()); 
         }finally{
         	try {
         		if(in != null){

@@ -286,15 +286,25 @@ public abstract class AbsUpdateProductStock {
 			exe.shutdown();
 			while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
 
-			}
-			int fct=0;
-			for(int k=0;k<totoalFailCnt.size();k++){
-				fct+=totoalFailCnt.get(k);
-			}
-			loggerInfo.info("更新库存失败的数量==========="+fct);			
-			if(fct>=0){//待更新的库存失败数小于0时，不更新
+			}			
+			boolean isOk = false;
+			for(int k=0;k<totoalFailCnt.size();k++){				
+				if(totoalFailCnt.get(k) == 0){
+					loggerInfo.info("---------------第==="+k+"===组更新成功------------"); 
+					isOk = true;
+					break;
+				}
+			}	
+			loggerInfo.info("isOk============="+isOk); 
+			if(isOk){//多线程更新库存,有一个更新成功,则视为更新库存成功.
 				this.updateStockTime(supplier);
 			}
+			
+			int fct=0;
+			for(int k=0;k<totoalFailCnt.size();k++){
+				fct+=totoalFailCnt.get(k);				
+			}
+			loggerInfo.info("更新库存失败的数量==========="+fct);
 			return fct;
 		}else{
 			Map<String,String> sopPriceMap = new HashMap<>();
@@ -931,22 +941,26 @@ public abstract class AbsUpdateProductStock {
 						servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
 				orderDetails = orderDetailPage.PurchaseOrderDetails;
 				for (PurchaseOrderDetail orderDetail : orderDetails) {
+				    if(7!=orderDetail.GiveupType){
+						SpecialSkuDTO spec = new SpecialSkuDTO();
+						String supplierSkuNo  = orderDetail.SupplierSkuNo;
+						spec.setSupplierId(supplierId);
+						spec.setSupplierSkuId(supplierSkuNo);
+						try {
+							logger.info("采购异常的信息："+spec.toString());
+							specialSkuService.saveDTO(spec);
+						} catch (ServiceMessageException e) {
+							e.printStackTrace();
+						}
+						//直接调用库存更新  库存为0
+						try {
+							servant.UpdateStock(supplierId, orderDetail.SkuNo, 0);
+						} catch (Exception e) {
+							loggerError.error("采购异常的商品 "+ orderDetail.SkuNo + " 库存更新失败。");
+						}
 
-					SpecialSkuDTO spec = new SpecialSkuDTO();
-					String supplierSkuNo  = orderDetail.SupplierSkuNo;
-					spec.setSupplierId(supplierId);
-					spec.setSupplierSkuId(supplierSkuNo);
-					try {
-						logger.info("采购异常的信息："+spec.toString());
-						specialSkuService.saveDTO(spec);
-					} catch (ServiceMessageException e) {
-						e.printStackTrace();
-					}
-					//直接调用库存更新  库存为0
-					try {
-						servant.UpdateStock(supplierId, orderDetail.SkuNo, 0);
-					} catch (Exception e) {
-						loggerError.error("采购异常的商品 "+ orderDetail.SkuNo + " 库存更新失败。");
+					}else{
+						logger.info("异常采购信息："+ orderDetail.SopPurchaseOrderNo + " 因质量问题采购异常，可继续更新库存");
 					}
 
 				}

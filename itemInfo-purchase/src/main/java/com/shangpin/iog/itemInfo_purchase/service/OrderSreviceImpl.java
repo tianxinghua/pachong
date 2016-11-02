@@ -112,78 +112,72 @@ public class OrderSreviceImpl extends AbsOrderService {
 	 */
 	@Override
 	public void handleConfirmOrder(OrderDTO spOrder) {
-		String order = spOrder.getSpPurchaseNo();
+		
 		try{
-			
+			String order = spOrder.getSpPurchaseNo();
 			String[] sku_stocks = spOrder.getDetail().split(",");
-			for(String sku_stock : sku_stocks){
-				String[] tem = sku_stock.split(":");
-//				if(specialSkuService.checkBySupplierIdAndSkuId(supplierId, tem[0].trim())){
-//					spOrder.setStatus(OrderStatus.YUSHOUCONFIRM);
-//				}else{
-				
+			for(String sku_stock : sku_stocks){				
+				try {
+					String[] tem = sku_stock.split(":");
 					String soapRequestData =  "<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
 							"<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">"+
 							"  <soap12:Body>"+
 							"    <InsertOrder xmlns=\"http://service.alducadaosta.com/EcSrv\">"+
 							"      <Identifier>"+identifier+"</Identifier>"+
-							"      <Order>"+order+"</Order>"+     //"+order+"
+							"      <Order>"+order+"</Order>"+  
 							"      <SkuID>"+tem[0].trim()+"</SkuID>"+
-							"      <Quantity>"+tem[1].trim()+"</Quantity>"+  //
+							"      <Quantity>"+tem[1].trim()+"</Quantity>"+  
 							"    </InsertOrder>"+
 							"  </soap12:Body>"+
 							"</soap12:Envelope>";
 					logger.info("推送的订单=========="+soapRequestData);
-					try {
-
-						String str = SoapXmlUtil.getSoapXml(serviceUrl,
-								sopAction, contentType, soapRequestData);
-						logger.info("返回的结果========" + str);
-						if (StringUtils.isNotBlank(str)) {
-							String startStr = "<InsertOrderResult>";
-							String endStr = "</InsertOrderResult>";
-							String retMessage = str.substring(
-									str.indexOf(startStr) + startStr.length(),
-									str.indexOf(endStr));
-							logger.info("retMessage====" + retMessage);
-							if (retMessage.toUpperCase().equals("OK")) {// 下单成功
-								spOrder.setStatus(OrderStatus.CONFIRMED);
-							}else if(retMessage.equals("Fail, No Stock!")){//无库存
-								spOrder.setExcState("0");
-								spOrder.setExcDesc("无库存：" + retMessage);
-								spOrder.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
-								
-							}else {// 下单失败								
-								spOrder.setExcState("1");
-								spOrder.setExcDesc("下单失败：" + retMessage);								
-								spOrder.setExcTime(new Date()); 
-							}
-						} else {
+					String str = SoapXmlUtil.getSoapXml(serviceUrl,
+							sopAction, contentType, soapRequestData);
+					logger.info("返回的结果========" + str);
+					if (StringUtils.isNotBlank(str)) {
+						String startStr = "<InsertOrderResult>";
+						String endStr = "</InsertOrderResult>";
+						String retMessage = str.substring(
+								str.indexOf(startStr) + startStr.length(),
+								str.indexOf(endStr));
+						logger.info("retMessage====" + retMessage);
+						if (retMessage.toUpperCase().equals("OK")) {// 下单成功
+							spOrder.setStatus(OrderStatus.CONFIRMED);
+						}else if(retMessage.equals("Fail, No Stock!")){//无库存
 							spOrder.setExcState("0");
-							spOrder.setExcDesc("采购单：" + order
-									+ " 在请求验证时发生错误，未返回响应信息");
-							loggerError.error("采购单：" + order
-									+ " 在请求验证时发生错误，未返回响应信息");
-							// doOrderExc(spOrder);
+							spOrder.setExcDesc("无库存：" + retMessage);
+							spOrder.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+							
+						}else {// 下单失败								
+							spOrder.setExcState("1");
+							spOrder.setExcDesc("下单失败：" + retMessage);								
+							spOrder.setExcTime(new Date()); 
 						}
-
-					} catch (Exception e) {
-						// 下单失败
-						spOrder.setExcState("0");
-						spOrder.setExcDesc("发生异常:" + e.getMessage());
-						loggerError.error("发生异常:" + e.getMessage());
-						e.printStackTrace();
+					} else {
+						spOrder.setExcTime(new Date()); 
+						spOrder.setExcState("1");
+						spOrder.setExcDesc("采购单：" + order
+								+ " 在请求验证时发生错误，未返回响应信息");
+						loggerError.error("采购单：" + order
+								+ " 在请求验证时发生错误，未返回响应信息");
 						// doOrderExc(spOrder);
 					}
-//				}
-				
+
+				} catch (Exception e) {
+					// 下单失败
+					spOrder.setExcState("1");
+					spOrder.setExcDesc("发生异常:" + e.getMessage());
+					loggerError.error("发生异常:" + e.getMessage());
+					e.printStackTrace();
+					// doOrderExc(spOrder);
+				}
 			}
 			
 		}catch(Exception ex){
 			//下单失败
-			spOrder.setExcState("0");
+			spOrder.setExcState("1");
 			spOrder.setExcDesc(ex.getMessage());
-            loggerError.error(ex);
+            loggerError.error(ex.toString());
             ex.printStackTrace();
 //            doOrderExc(spOrder);
 		}

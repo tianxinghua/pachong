@@ -177,6 +177,18 @@ public interface ProductSearchService {
 	public List<ProductDTO> findReportProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
 	
 	/**
+	 * 导出已经生成了尚品sku的产品
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 * @throws ServiceException
+	 */
+	public List<ProductDTO> findProductOfHasSpSkuId(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+	
+	/**
 	 * 将产品List转换成Excel
 	 * @param products
 	 * @param picPath

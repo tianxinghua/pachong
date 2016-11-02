@@ -848,16 +848,16 @@ public abstract class AbsUpdateProductStock {
 				return iceStock;
 			}
 
-			// 获取采购单信息
-			try {
-				loggerInfo.info("获取采购单开始");
-				if (!ORDER)
-					sopPurchaseMap = this.getPurchaseOrder(host, app_key,
-							app_secret);
-			} catch (Exception e) {
-				// e.printStackTrace();
-				loggerError.error("获取采购单失败" + e.getMessage(), e);
-			}
+			// 获取采购单信息  现更新接口内实现
+//			try {
+//				loggerInfo.info("获取采购单开始");
+//				if (!ORDER)
+//					sopPurchaseMap = this.getPurchaseOrder(host, app_key,
+//							app_secret);
+//			} catch (Exception e) {
+//				// e.printStackTrace();
+//				loggerError.error("获取采购单失败" + e.getMessage(), e);
+//			}
 
 			String iceSku = "";
 			for (String skuNo : skuNos) {
@@ -876,7 +876,8 @@ public abstract class AbsUpdateProductStock {
 							stock = 0;
 						loggerInfo.info(skuNo + "供货商库存：" + stock + " 采购单数量 : "
 								+ sopPurchaseMap.get(iceSku));
-						stock = stock - sopPurchaseMap.get(iceSku);
+//						stock = stock - sopPurchaseMap.get(iceSku);
+						
 						loggerInfo.info("最终库存 ：" + stock);
 						if (stock < 0)
 							stock = 0;
@@ -1211,53 +1212,55 @@ public abstract class AbsUpdateProductStock {
 				detilApiDtos = purchaseOrderInfoApiDto
 						.getPurchaseOrderDetails();
 				for (PurchaseOrderDetail orderDetail : detilApiDtos) {
+                    if(7!=orderDetail.getGiveupType()){
+                    	SpecialSkuDTO spec = new SpecialSkuDTO();
+    					spec.setSupplierId(app_key);
+    					spec.setSupplierSkuId(orderDetail.getSupplierSkuNo());
+    					try {
+    						logger.info("采购异常的信息：" + spec.toString());
+    						System.out.println("采购异常的："+spec.getSupplierSkuId()+"=="+orderDetail.getSopPurchaseOrderNo());
+    						specialSkuService.saveDTO(spec);
+    					} catch (ServiceMessageException e) {
+    						e.printStackTrace();
+    					}
+    					ApiResponse<Boolean> result = null;
+    					StockInfo request_body = null;
+    					request_body = new StockInfo();
+    					request_body.setSkuNo(orderDetail.getSkuNo());
+    					request_body.setInventoryQuantity(0);
+    					boolean success = true;
+    					for (int i = 0; i < 2; i++) {// 发生错误 允许再执行一次
+    						try {
+    							result = SpClient.UpdateStock(host, app_key,
+    									app_secret, new Date(), request_body);
+    							if (null==result || null==result.getResponse() || (null != result && !result.getResponse())) {
 
-					SpecialSkuDTO spec = new SpecialSkuDTO();
-					spec.setSupplierId(app_key);
-					spec.setSupplierSkuId(orderDetail.getSupplierSkuNo());
-					try {
-						logger.info("采购异常的信息：" + spec.toString());
-						System.out.println("采购异常的："+spec.getSupplierSkuId()+"=="+orderDetail.getSopPurchaseOrderNo());
-						specialSkuService.saveDTO(spec);
-					} catch (ServiceMessageException e) {
-						e.printStackTrace();
-					}
-					ApiResponse<Boolean> result = null;
-					StockInfo request_body = null;
-					request_body = new StockInfo();
-					request_body.setSkuNo(orderDetail.getSkuNo());
-					request_body.setInventoryQuantity(0);
-					boolean success = true;
-					for (int i = 0; i < 2; i++) {// 发生错误 允许再执行一次
-						try {
-							result = SpClient.UpdateStock(host, app_key,
-									app_secret, new Date(), request_body);
-							if (null==result || null==result.getResponse() || (null != result && !result.getResponse())) {
+    								success = false;
 
-								success = false;
-
-								loggerError.error("采购异常的商品：--------"+orderDetail.getSkuNo() + " 库存为0 ，更新库存失败");
-							}else{
-								loggerInfo.info("采购异常的商品：--------" + orderDetail.getSkuNo()
-										+ " 库存为0 ，更新库存成功");
-							}
-						} catch (Exception e) {
+    								loggerError.error("采购异常的商品：--------"+orderDetail.getSkuNo() + " 库存为0 ，更新库存失败");
+    							}else{
+    								loggerInfo.info("采购异常的商品：--------" + orderDetail.getSkuNo()
+    										+ " 库存为0 ，更新库存成功");
+    							}
+    						} catch (Exception e) {
 
 
-							loggerError.error("采购异常的商品：--------"+orderDetail.getSkuNo() + " 库存为0 ，更新库存失败");
-						}
-						if (success) { // 成功直接跳出
-							i = 2;
-						}
-					}
+    							loggerError.error("采购异常的商品：--------"+orderDetail.getSkuNo() + " 库存为0 ，更新库存失败");
+    						}
+    						if (success) { // 成功直接跳出
+    							i = 2;
+    						}
+    					}
 
+                    }
+					
 
 				}
 			} else {
 				loggerError.error("两次获取采购单均失败");
 			}
 			pageIndex++;
-			hasNext = (pageSize == detilApiDtos.size());
+			hasNext = (null != detilApiDtos && pageSize == detilApiDtos.size());
 		}
 	}
 

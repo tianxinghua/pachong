@@ -138,7 +138,7 @@ $(function(){
 	        		return 'font-size:15px';
 	        		}	
 				,formatter: function (value, row, index) {
-		        	var time = getDate(new Date(row.createTime.time));
+		        	var time = getDate(new Date(row.updateTime.time));
 	                 return time;                                 
 	            }
 			}, 

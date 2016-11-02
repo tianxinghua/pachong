@@ -245,4 +245,20 @@ public interface _OpenApiServantDel extends Ice._ObjectDel
     ShangPin.SOP.Entity.DTO.PurchaseOrderInfoApiDto FindPurchaseOrderDetailCountPaged(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto queryDto, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException;
+
+    String FindNetworkSpreadOrders(String appKey, String appSerect, String startDate, String endDate, String orderNo, String supplierOrderNo, String skuNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    boolean UpdateStockList(String supplierId, ShangPin.SOP.Entity.Api.Product.SopInventoryQuantityDto[] updateList, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    String AddSkuChangeMarketPriceMsg(String supplierId, ShangPin.SOP.Entity.Api.Product.SopSkuChangeMarketPriceMsgEntity[] priceMsgList, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
+
+    ShangPin.SOP.Entity.Api.Supplier.SopInfoAPIEntity GetSupplierInfo(String supplierId, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __obsv)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException;
 }

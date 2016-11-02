@@ -129,6 +129,11 @@ public class OrderService extends AbsOrderService{
 				orderDTO.setExcTime(new Date()); 
 				orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
 				orderDTO.setExcDesc(createOrderResponse.getCreateOrderResult().getErrorTxt());
+			}else if(createOrderResponse.getCreateOrderResult().getError() == 310 && createOrderResponse.getCreateOrderResult().getErrorTxt().contains("Duplicate order ID")){
+				orderDTO.setExcState("0");
+				orderDTO.setExcTime(new Date()); 
+				orderDTO.setStatus(OrderStatus.NOHANDLE);
+				orderDTO.setExcDesc("该订单已经推送过去。"+createOrderResponse.getCreateOrderResult().getErrorTxt());
 			}else{
 				orderDTO.setExcState("1");
 				orderDTO.setExcTime(new Date()); 
