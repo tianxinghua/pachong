@@ -7,7 +7,6 @@ import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.dto.EventProductDTO;
-import com.shangpin.iog.efashion.dto.Item;
 import com.shangpin.iog.efashion.dto.Result;
 import com.shangpin.iog.efashion.dto.ReturnObject;
 import com.shangpin.iog.product.service.EventProductServiceImpl;
@@ -21,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -33,7 +33,7 @@ public class StockImp extends AbsUpdateProductStock {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    
+//    
     private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -52,81 +52,65 @@ public class StockImp extends AbsUpdateProductStock {
         if(null==bdl)
          bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
-		max = Integer.valueOf(bdl.getString("max"));
-		url = bdl.getString("url");
     }
-    static Map<String,String> map = new HashMap<String,String>();
-    static int i=0;
-    public static void getProductList(int index){
-    	try{
-    		String json = HttpUtil45
-    				.get(url+"&limit="+max+"&offset="+index,
-    						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
-    						null);
-    		ReturnObject obj = new Gson().fromJson(json, ReturnObject.class);
-    		// 第一步：获取活动信息
-    		if(obj!=null){
-    			Result result = obj.getResults();
-    			List<Item> item = result.getItems();
-    			if(!item.isEmpty()){
-    				for(Item ite:item){
-    					map.put(ite.getSku_id(), ite.getQuantity());
-    				}
-    				i++;
-    				System.out.println("---------第"+i+"页-------------");
-    				System.out.println("商品数量："+item.size());
-    				getProductList(max*i+1);
-    			}
-    		}
-    	}catch(Exception e){
-    		loggerError.info(e);
-    	}
-    	
-	}
-    
-    @Override
-    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-    	
-    	Map<String,String> stockMap = new HashMap<String,String>();
-    	try{
-    		getProductList(1);
-        	System.out.println("总的商品数量："+map.size());
-        	logger.info("总的商品数量："+map.size());
-        	System.out.println("拉取完成");
-            //定义三方
-            for (String skuno : skuNo) {
-            	//skuno格式：skuId|proCode|colorCode|size
-            	String tempSku = null;
-            	String [] skuArray = skuno.split("\\|");
-            	tempSku = skuArray[0];
-                if(map.containsKey(tempSku)){
-                	int i =0;
-                	if(map.get(tempSku)!=null){
-                		i = Integer.parseInt(map.get(tempSku));
-                	}
-                	if(i<0){
-            			loggerError.info("sku库存小于0："+tempSku+":"+map.get(tempSku));
-            			System.out.println("sku库存小于0："+tempSku+":"+map.get(tempSku));
-            			stockMap.put(skuno,"0");
-            		}else{
-            			stockMap.put(skuno,map.get(tempSku));
-            		}
-                }else{
-                	stockMap.put(skuno,"0");
-                }
-            }
-    	}catch(Exception e){
-    		loggerError.info(e);
-    	}
-    	
-        return stockMap;
-    }
-    
+  public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+  	
+  	Map<String,String> stockMap = new HashMap<String,String>();
+  	try{
+  		logger.info("================开始拉取供应商库存信息====================="); 
+  		 System.out.println("待更新总数："+skuNo.size());
+          //定义三方
+          for (String skuno : skuNo) {
+        	  //System.out.println("待更新de："+skuno);
+        		String tempSku = null;
+            	String [] skuArray = skuno.split("-");
+            	if(skuArray.length==2){
+            		tempSku = skuArray[0];
+                	String size = URLEncoder.encode(skuArray[1],"UTF-8");
+                	size = size.replace("+","%20");
+            	  String json = HttpUtil45
+          				.get("http://geb-production.edstema.it/api/v3.0/sku/"+tempSku+"/id/"+size+"/size/stock?storeCode=DW3LT",
+          						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
+          						null);
+//            	  System.out.println(json);
+            	logger.info(tempSku+"---------------"+size);
+          		ReturnObject obj = new Gson().fromJson(json, ReturnObject.class);
+          		if(obj!=null){
+          			Result re = obj.getResults();
+          			if(re!=null&&"200".equals(re.getReqCode())&&!"0".equals(re.getCount())){
+          				int i = Integer.parseInt(re.getItems().get(0).getQuantity());
+          				logger.info("返回的库存======="+i);
+//          				System.out.println(skuno+"======"+i);
+          				if(i<0){
+                  			loggerError.info("sku库存小于0："+tempSku+":"+i);
+                  			System.out.println("sku库存小于0："+tempSku+":"+i);
+                  			stockMap.put(skuno,"0");
+                  		}else{
+                  			stockMap.put(skuno,i+"");
+                  		}
+          			}else{
+          				stockMap.put(skuno,"0");
+              		}
+          		}else{
+          			stockMap.put(skuno,"0");
+          		}
+            	}
+            	
+          }
+  	}catch(Exception e){
+  		System.out.println(e.getMessage());
+  		logger.info("拉取库存信息是发生异常==========="+e.toString()); 
+  		loggerError.info(e.toString());
+  	}
+      return stockMap;
+  }
     public static void main(String[] args) {
     	//加载spring
         loadSpringContext();
         //拉取数据
         StockImp stockImp =(StockImp)factory.getBean("efashion");
+        stockImp.setUseThread(true);
+        stockImp.setSkuCount4Thread(500);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         logger.info("efashiom更新库存开始");
         System.out.println("efashiom更新库存开始");

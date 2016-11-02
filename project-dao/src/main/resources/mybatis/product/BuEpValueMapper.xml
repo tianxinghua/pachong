@@ -13,7 +13,7 @@
 		VALUE,
 		ISEXPORT
 	</sql>
-	<select id="findValueByBuIdAndIsExport" resultMap="java.lang.String">
+	<select id="findValueByBuIdAndIsExport" resultType="java.lang.String">
 		select VALUE
 		from BU_EP_VALUE
 		<where>

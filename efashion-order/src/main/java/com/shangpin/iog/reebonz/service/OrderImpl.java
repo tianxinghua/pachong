@@ -50,7 +50,8 @@ public class OrderImpl extends AbsOrderService {
 	private static ResourceBundle bdl = null;
 	private static String supplierId = null;
 	private static String supplierNo = null;
-	private static String url = null;
+	private static String cancelUrl = null;
+	private static String placeUrl = null;
 
 	private static String smtpHost = null;
 	private static String from = null;
@@ -69,7 +70,8 @@ public class OrderImpl extends AbsOrderService {
 		}
 		supplierId = bdl.getString("supplierId");
 		supplierNo = bdl.getString("supplierNo");
-		url = bdl.getString("url");
+		cancelUrl = bdl.getString("cancelUrl");
+		placeUrl = bdl.getString("placeUrl");
 
 		smtpHost = bdl.getString("smtpHost");
 		from = bdl.getString("from");
@@ -111,7 +113,7 @@ public class OrderImpl extends AbsOrderService {
 				|| orderId.startsWith("20160209")) {
 			orderDTO.setStatus(OrderStatus.CONFIRMED);
 		} else {
-			String rtnData = pushOrder(orderDTO);
+			String rtnData = pushOrder(orderDTO,placeUrl,false);
 			logger.info("rtnData====" + rtnData);
 			System.out.println("rtnData====" + rtnData);
 			String[] data = rtnData.split("\\|");
@@ -272,11 +274,12 @@ public class OrderImpl extends AbsOrderService {
 		}
 	}
 
-	private String pushOrder(OrderDTO orderDTO) {
+	private String pushOrder(OrderDTO orderDTO,String url,boolean flag) {
 
 		System.out.println("order info:"+orderDTO.toString());
-		String json = getJsonData(orderDTO);
+		String json = getJsonData(orderDTO,flag);
 		logger.info("推送的数据：" + json);
+		System.out.println("推送的数据：" + json);
 		HttpResponse response = null;
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		CloseableHttpClient httpClient = httpClientBuilder.build();
@@ -348,7 +351,93 @@ public class OrderImpl extends AbsOrderService {
 	@Override
 	public void handleRefundlOrder(ReturnOrderDTO deleteOrder) {
 		// TODO Auto-generated method stub
-		deleteOrder.setStatus(OrderStatus.REFUNDED);
+		final OrderDTO orderDTO = new OrderDTO();
+		orderDTO.setSpOrderId(deleteOrder.getSpOrderId());
+		orderDTO.setDetail(deleteOrder.getDetail());
+		orderDTO.setCreateTime(deleteOrder.getCreateTime());
+		orderDTO.setPurchasePriceDetail(null);
+		String orderId = orderDTO.getSpOrderId();
+
+			String rtnData = pushOrder(orderDTO,cancelUrl,true);
+			logger.info("rtnData====" + rtnData);
+			System.out.println("rtnData====" + rtnData);
+			String[] data = rtnData.split("\\|");
+			String code = data[0];
+			String res = data[1];
+			if ("400".equals(code)) {
+				System.out.println("result===我是else 200");
+				Result result = new Gson().fromJson(res, Result.class);
+				System.out.println("result==="+result.toString());
+				if ("400".equals(result.getReqCode())) {
+					System.out.println("返回结果：" + result.getResult());
+					loggerError.info(result.getResult());
+				}
+			} else if ("200".equals(code)) {
+				System.out.println("result===我是else 200");
+				ReturnObject obj = new Gson().fromJson(res, ReturnObject.class);
+				if (obj != null) {
+					Result r = obj.getResults();
+					if (r != null) {
+						if ("200".equals(r.getReqCode())) {
+							orderDTO.setExcState("0");
+							orderDTO.setSupplierOrderNo(r.getDescription());
+							orderDTO.setStatus(OrderStatus.CONFIRMED);
+						} else if ("400".equals(r.getReqCode())) {
+
+							orderDTO.setExcState("0");
+							orderDTO.setExcDesc(r.getDescription());
+							logger.info("返回结果：" + r.getDescription());
+							// 供应商返回信息有误，暂时设置成不处理
+							if (r.getDescription().indexOf("Quantity") > 0) {
+								if ("yes".equals(isPurchaseExp)) {
+									String reResult = setPurchaseOrderExc(orderDTO);
+									if ("-1".equals(reResult)) {
+										orderDTO.setStatus(OrderStatus.NOHANDLE);
+									} else if ("1".equals(reResult)) {
+										orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
+									} else if ("0".equals(reResult)) {
+										orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
+									}
+								} else {
+									orderDTO.setStatus(OrderStatus.NOHANDLE);
+								}
+							} else {
+								orderDTO.setStatus(OrderStatus.NOHANDLE);
+							}
+						}
+					}
+				}
+			} else {
+				System.out.println("result===我是else");
+				loggerError.info(res);
+				if (res.length() > 200) {
+					res = res.substring(0, 200);
+				}
+				orderDTO.setExcDesc(res);
+				orderDTO.setExcState("0");
+				orderDTO.setStatus(OrderStatus.NOHANDLE);
+				Thread t = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							SendMail.sendMessage(
+									smtpHost,
+									from,
+									fromUserPassword,
+									to,
+									subject,
+									"推送efashion订单" + orderDTO.getSpOrderId()
+											+ "出现错误,已置为不做处理，原因："
+											+ orderDTO.getExcDesc(),
+									messageType);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				t.start();
+
+		}
 	}
 
 	@Override
@@ -356,7 +445,7 @@ public class OrderImpl extends AbsOrderService {
 
 	}
 
-	private String getJsonData(OrderDTO orderDTO) {
+	private String getJsonData(OrderDTO orderDTO,boolean flag) {
 
 		JSONObject array = null;
 		try {
@@ -377,20 +466,24 @@ public class OrderImpl extends AbsOrderService {
 			// item.getSku_id()+"|"+item.getProduct_reference()+"|"+item.getColor_reference()+"|"+size
 //			item.setSku_id(skuNo.split("\\|")[0]);
 //			item.setColor_reference(skuNo.split("\\|")[2]);
-			item.setProduct(skuNo.split("\\|")[0]);
+			item.setProduct(skuNo.split("-")[0]);
 			item.setQuantity(num);
-			String size = skuNo.split("\\|")[2];
+			String size = skuNo.split("-")[1];
 			if ("A".equals(size)) {
 				size = null;
 			}
 			item.setSize(size);
+			if(orderDTO.getPurchasePriceDetail()!=null){
+				BigDecimal priceInt = new BigDecimal(
+						orderDTO.getPurchasePriceDetail());
+				String price = priceInt.divide(new BigDecimal(1.05), 2)
+						.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 
-			BigDecimal priceInt = new BigDecimal(
-					orderDTO.getPurchasePriceDetail());
-			String price = priceInt.divide(new BigDecimal(1.05), 2)
-					.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-
-			item.setPurchase_price((Double.parseDouble(price) - 3) + "");
+				item.setPurchase_price(price);
+			}
+			if(flag){
+				item.setPurchase_price("1");
+			}
 			Item[] i = { item };
 			obj.setItems(i);
 			array = JSONObject.fromObject(obj);
@@ -407,14 +500,20 @@ public class OrderImpl extends AbsOrderService {
 
 	public static void main(String[] args) {
 		OrderImpl ompl = new OrderImpl();
-		OrderDTO orderDTO = new OrderDTO();
-		String d = "5731bc812b33300afbc3ba22|469|36:1";
-		orderDTO.setDetail(d);
-		orderDTO.setSpOrderId("2016021012");
-		orderDTO.setCreateTime(new Date());
-		orderDTO.setPurchasePriceDetail("1.11");
+//		ReturnOrderDTO orderDTO = new ReturnOrderDTO();
+		String d = "573219862b33300afbc41c69-39:1";
+//		orderDTO.setDetail(d);
+//		orderDTO.setSpOrderId("201609134249189");
+//		orderDTO.setCreateTime(new Date());
 		
-		orderDTO.setSpPurchaseDetailNo("CGD2016052000392");
-		ompl.handleConfirmOrder(orderDTO);
+		OrderDTO orderDTO1 = new OrderDTO();
+	
+		orderDTO1.setDetail(d);
+		orderDTO1.setSpOrderId("201609104242101");
+		orderDTO1.setCreateTime(new Date());
+		orderDTO1.setPurchasePriceDetail("402.78");
+		
+//		ompl.handleRefundlOrder(orderDTO);//(orderDTO);
+		ompl.handleConfirmOrder(orderDTO1);//(orderDTO);
 	}
 }

@@ -973,9 +973,18 @@ public abstract class AbsOrderService {
                 supplierSku = purchaseOrderDetail.SupplierSkuNo;
             }
             
-            if(!skuMap.containsKey(spSku)){//如果skuv不在SKU_RELATION表里，则不插入
-            	logger.info(spSku+" 在SKU_RELATION关系表中找不到，不插入ORDER_DETAIL表");
-            	continue;
+            if(!skuMap.containsKey(spSku)){
+                SkuRelationDTO skuRelationDTO= null;
+                try {
+                    //因为是补单 不是从订单信息来的 所以需要重新查询下
+                    skuRelationDTO = skuRelationService.getSkuRelationBySupplierIdAndSkuId(supplierId,spSku);
+                    if(null==skuRelationDTO){  //如果不在SKU_RELATION表里，则不插入
+                        logger.info(spSku+" 在SKU_RELATION关系表中找不到，不插入ORDER_DETAIL表");
+                        continue;
+                    }
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                }
             }
 
             List<OrderDetailDTO> detailDTOList =null;

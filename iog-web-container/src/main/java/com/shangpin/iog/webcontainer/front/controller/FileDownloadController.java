@@ -1,12 +1,7 @@
 package com.shangpin.iog.webcontainer.front.controller;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -77,6 +72,8 @@ public class FileDownloadController {
 	private static String efashion = null;
 	private static String pavin = null;
 	private static String downloadpath = null;
+	private static String pictmpdownloadpath = null;
+	private static String local_picturetem = null;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -86,6 +83,8 @@ public class FileDownloadController {
 		efashion = bdl.getString("efashion");
 		pavin = bdl.getString("pavin");
 		downloadpath = bdl.getString("downloadpath");
+		pictmpdownloadpath = bdl.getString("pictmpdownloadpath");
+		local_picturetem = bdl.getString("local_picturetem");
 	}
 	private Logger log = LoggerFactory.getLogger(FileDownloadController.class) ;
 	@Autowired
@@ -109,8 +108,10 @@ public class FileDownloadController {
     public ModelAndView viewPage() throws Exception {
         ModelAndView mv = new ModelAndView("iog");
         List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
+        List<String> bus = productService.findAllBus();
 
         mv.addObject("supplierDTOList",supplierDTOList);
+        mv.addObject("BUs", bus);
         return mv;
     }
 
@@ -201,7 +202,15 @@ public class FileDownloadController {
 				productBuffer =productService.exportProductByEpRule(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize());
             	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 			
-			}			
+			}
+			else if(productSearchDTO.getFlag().equals("report")){//报表导出
+				productBuffer =productService.exportReportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize());
+            	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+			
+			}else if (productSearchDTO.getFlag().equals("all")) {//全部导出
+            	productBuffer =productService.exportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
+            	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+			}
 			else{//价格变化导出
 				productBuffer =productService.exportDiffProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
 				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
@@ -488,7 +497,7 @@ public class FileDownloadController {
         }  
         
         
-        String filePath = newSavePic.saveImg(targetFile,picQueue);
+        String filePath = newSavePic.saveImg(local_picturetem,targetFile,picQueue);
         log.error(targetFile.getName()+"下载路径为+++++++++++++++++++++++++++++++++"+filePath);
     	delay(executor);
     	
@@ -587,14 +596,16 @@ public class FileDownloadController {
 		} catch (Exception e) {
 			e.printStackTrace(); 
 		}
-        try {
+      
         	for(SpecialSkuDTO spec:list){
-        		specialSkuService.saveDTO(spec);
+	    		  try {
+	    			  specialSkuService.saveDTO(spec);
+	    		  } catch (ServiceMessageException e) {
+	    				e.printStackTrace(); 
+	    		  }
         	}
 			
-		} catch (ServiceMessageException e) {
-			e.printStackTrace(); 
-		}
+		
         List<SupplierDTO> availableSupplierDTOList = null ;
 		try {
 			availableSupplierDTOList = supplierService.findAllWithAvailable();
@@ -655,6 +666,8 @@ public class FileDownloadController {
 		}
     	//遍历 获取要下载的图片 map<spskuid,url1,url2>
     	Map<String,String> imgMap = getMongoPic(productList);
+
+		log.error("imgMap message ="+imgMap.toString());
     	
     	//下载保存图片
     	BufferedInputStream in = null;
@@ -662,7 +675,7 @@ public class FileDownloadController {
     	String path = request.getSession().getServletContext().getRealPath("");  
     	ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 15, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(6),new ThreadPoolExecutor.CallerRunsPolicy());
 //    	String dirPath = "F:/usr/local/picturetem/"+new Date().getTime();
-    	String dirPath = "/usr/local/picturetem/"+new Date().getTime();
+    	String dirPath =pictmpdownloadpath + +new Date().getTime();   //  /usr/local
 		File f1 = new File(dirPath);
 		if (!f1.exists()) {
 			f1.mkdirs();
@@ -781,9 +794,16 @@ public class FileDownloadController {
     private Map<String,String> getMongoPic(List<ProductDTO> productList){
     	Map<String,String> imgMap = new HashMap<String,String>();
     	Map<String,String> idMap = new HashMap<String,String>();
-    	
+
+		Map<String,String > skuspuMap = new HashMap<>();
+
+		for (ProductDTO productDTO : productList) {
+			skuspuMap.put(productDTO.getSkuId(),productDTO.getSpuId());
+		}
+		log.error("skuspuMap = " + skuspuMap.toString());
     	
     	Map<String, String> findMap = null;
+		String sku="",spu="";
     	for (ProductDTO productDTO : productList) {
     		
     		//TODO 如果spskuid为空跳过
@@ -794,15 +814,48 @@ public class FileDownloadController {
 				findMap =pfs.findPictureBySupplierIdAndSkuIdOrSpuId(productDTO.getSupplierId(), null,productDTO.getSpuId());
 			}
 			if (null!=findMap&&findMap.size()>0) {
+				//换成尚品内部的SKU编号 现停 换成其它的 20160819
+//				for (Entry<String, String> m : findMap.entrySet()) {
+//					imgMap.put(idMap.get(m.getKey()), m.getValue());
+//				}
+
 				for (Entry<String, String> m : findMap.entrySet()) {
-					imgMap.put(idMap.get(m.getKey()), m.getValue());
+
+					if(skuspuMap.containsKey(m.getKey())){//sku
+						try {
+//							spu = URLEncoder.encode(skuspuMap.get(m.getKey()),"utf-8");
+							spu = getBASE64(skuspuMap.get(m.getKey()));
+						} catch (Exception e) {
+							log.error("转码失败");
+							e.printStackTrace();
+						}
+					}else{//spu
+
+						try {
+							spu = getBASE64(m.getKey());
+						} catch (Exception e) {
+							log.error("转码失败");
+							e.printStackTrace();
+						}
+
+					}
+					imgMap.put("SPID"+productDTO.getSupplierId()+"-"+spu, m.getValue());
 				}
+
 			}
 		}
+
     	return imgMap;
     	
     }
-    private List<ProductDTO> getDownProductList(String queryJson){
+
+
+	public static String getBASE64(String s) {
+		if (s == null) return null;
+		return (new sun.misc.BASE64Encoder()).encode( s.getBytes() );
+	}
+
+	private List<ProductDTO> getDownProductList(String queryJson){
 
     	ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
     	if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();

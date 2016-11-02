@@ -105,25 +105,25 @@ public class PozzileiStockImp extends AbsUpdateProductStock {
 		return stock_map;
 	}
 
-	public static void main(String[] args) throws Exception {
-		// 加载spring
-		loadSpringContext();
-		// //拉取数据
-		 PozzileiStockImp stockImp
-		 =(PozzileiStockImp)factory.getBean("pozzilei");
-		// AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
-		 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		 logger.info("pozzilei更新数据库开始");
-		 try {
-		 stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new
-		 Date()));
-		 } catch (Exception e) {
-		 loggerError.error("pozzilei更新库存失败."+e.getMessage());
-		 e.printStackTrace();
-		 }
-		 logger.info("pozzilei更新数据库结束");
-		 System.exit(0);
-
-	}
+//	public static void main(String[] args) throws Exception {
+//		// 加载spring
+//		loadSpringContext();
+//		// //拉取数据
+//		 PozzileiStockImp stockImp
+//		 =(PozzileiStockImp)factory.getBean("pozzilei");
+//		// AbsUpdateProductStock grabStockImp = new SpinnakerStockImp();
+//		 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//		 logger.info("pozzilei更新数据库开始");
+//		 try {
+//		 stockImp.updateProductStock(supplierId,"2015-01-01 00:00",format.format(new
+//		 Date()));
+//		 } catch (Exception e) {
+//		 loggerError.error("pozzilei更新库存失败."+e.getMessage());
+//		 e.printStackTrace();
+//		 }
+//		 logger.info("pozzilei更新数据库结束");
+//		 System.exit(0);
+//
+//	}
 
 }

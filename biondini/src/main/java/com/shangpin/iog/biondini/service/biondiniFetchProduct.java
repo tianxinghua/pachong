@@ -4,6 +4,7 @@ package com.shangpin.iog.biondini.service;
  * Created by wang on 2015/9/21.
  */
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,9 +13,12 @@ import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.biondini.dao.Article;
 import com.shangpin.iog.biondini.dao.IdTable;
 import com.shangpin.iog.biondini.dao.Modele;
@@ -32,12 +36,15 @@ import com.shangpin.product.AbsSaveProduct;
 /**
  * Created by 赵根春 on 2015/12/25.
  */
-@Component("biondini")
+@Component
 public class biondiniFetchProduct extends AbsSaveProduct {
 
 	@Autowired
 	ProductFetchService productFetchService;
-
+	private static String picpath;
+	public static int day;
+	public static int max;
+	
 	@Autowired
 	EventProductService eventProductService;
 	private static Logger logger = Logger.getLogger("info");
@@ -47,6 +54,10 @@ public class biondiniFetchProduct extends AbsSaveProduct {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
+		
+		day = Integer.valueOf(bdl.getString("day"));
+		max = Integer.valueOf(bdl.getString("max"));
+		picpath = bdl.getString("picpath");
 	}
 
 	/**
@@ -197,5 +208,17 @@ public class biondiniFetchProduct extends AbsSaveProduct {
 		returnMap.put("image", imageMap);
 		return returnMap;
 
+	}
+	private static ApplicationContext factory;
+    private static void loadSpringContext()
+    {
+        factory = new AnnotationConfigApplicationContext(AppContext.class);
+    }
+	public static void main(String[] args) throws Exception {
+	  	//加载spring
+        loadSpringContext();
+        biondiniFetchProduct stockImp =(biondiniFetchProduct)factory.getBean("biondini");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		stockImp.handleData("spu", supplierId, day, picpath);
 	}
 }

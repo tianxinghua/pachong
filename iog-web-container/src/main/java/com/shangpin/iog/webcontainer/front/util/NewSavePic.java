@@ -28,9 +28,9 @@ public class NewSavePic {
 		this.executor = executor;
 	}
 
-	public String saveImg(File file){
+	public String saveImg(String local_picturetem,File file){
 		Short[] needColsNo = new Short[]{0,1,2,3,4,5,6,7,8,9};
-		String dirPath = "/usr/local/picturetem/"+new Date().getTime();
+		String dirPath = local_picturetem+File.separator+new Date().getTime();
 		File f1 = new File(dirPath);
 		if (!f1.exists()) {
 			f1.mkdirs();
@@ -59,9 +59,9 @@ public class NewSavePic {
 		}
 		return dirPath;
 	}
-	public String saveImg(File file,PicQueue picQueue){
+	public String saveImg(String local_picturetem, File file,PicQueue picQueue){
 		Short[] needColsNo = new Short[]{0,1,2,3,4,5,6,7,8,9};
-		String dirPath = "/usr/local/picturetem/"+new Date().getTime();
+		String dirPath = local_picturetem+File.separator+new Date().getTime();
 		File f1 = new File(dirPath);
 		if (!f1.exists()) {
 			f1.mkdirs();

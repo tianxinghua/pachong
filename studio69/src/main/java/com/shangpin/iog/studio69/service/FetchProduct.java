@@ -92,16 +92,16 @@ public class FetchProduct {
 					spu.setSupplierId(supplierId);
 					spu.setSpuId(good.getID());
 					season = good.getSeason();
-					spu.setSeasonName(StringUtils.isBlank(season)?"":season);				
+					spu.setSeasonName(guolv(season));				
 					brandName = brand.get(good.getBrandID());
-					spu.setBrandName(StringUtils.isBlank(brandName)?"":brandName);					
+					spu.setBrandName(guolv(brandName));					
 					try {
 						category = goodsCategory.get(good.getParentCategoryID()).getName();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					spu.setCategoryId(good.getCategoryID()); 
-					spu.setCategoryName(StringUtils.isBlank(category)?"":category);					
+					spu.setCategoryName(guolv(category));					
 					spu.setCategoryGender(good.getTypeID().equals("2")?"man":"women");					
 					//sku
 					GoodsDetail goodsDetail = DataTransUtil.getGoodsDetailByGoodsID(good.getID());
@@ -121,11 +121,11 @@ public class FetchProduct {
 										sku.setSkuId(spu.getSpuId()+"-"+size);									
 										productCode = good.getCode();
 										sku.setProductCode(StringUtils.isBlank(productCode)?"":productCode);										
-										sku.setColor(goodDetail.getColor());
-										sku.setProductSize(size);
-										sku.setStock(item.getQty());									
+										sku.setColor(guolv(goodDetail.getColor()));
+										sku.setProductSize(guolv(size));
+										sku.setStock(guolv(item.getQty()));									
 										productName = good.getGoodsName();
-										sku.setProductName(StringUtils.isBlank(productName)?"":productName);
+										sku.setProductName(guolv(productName));
 										//TODO 暂时设置为市场价
 										sku.setMarketPrice(good.getPrice());
 										//TODO 暂时设置为euro
@@ -203,6 +203,21 @@ public class FetchProduct {
 			}
 		}
     }
+    
+    /**
+     * 过滤字\r \n 多余空格
+     * @param origin
+     * @return
+     */
+    private String guolv(String origin){
+    	if(StringUtils.isNotBlank(origin)){
+    		return origin.replaceAll("\r","").replaceAll("\n","").trim(); 
+    	}else{
+    		return "";
+    	}
+    	
+    }
+    
     public static void main(String[] args) {
     	new FetchProduct().fetchProductAndSave();
     }

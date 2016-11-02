@@ -20,12 +20,23 @@ public interface SpuMapper extends IBaseDao<SpuDTO> {
 	
 	public SpuDTO findPartBySupAndSpuId(@Param("supplierId") String supplierId,@Param("spuId") String spuId);
 	
-	public void updateSpuMemo(@Param("supplierId") String supplierId,@Param("spuId") String spuId,@Param("memo") String memo,@Param("lastTime") Date date);
+	public void
+	updateSpuMemo(@Param("supplierId") String supplierId,@Param("spuId") String spuId,@Param("memo") String memo,@Param("lastTime") Date date);
 
 	public void updateSpuMemoList(@Param("list") List<SpuDTO> spuList);
 	
 	public void updateSeason(SpuDTO spuDTO);
 
 	public List<SpuDTO> findPartSPUListBySupplierId(@Param("supplierId") String supplierId);
+	
+	public void updateSpCategoryAndBrand(SpuDTO spuDTO);
+	
+	public List<SpuDTO> findAllBySupplierId(@Param("supplierId") String supplierId,@Param("startTime") Date startTime,@Param("endTime") Date endTime);
+
+	/**
+	 * 查询供货商所有品牌
+	 * @return
+     */
+	public List<String> findDistinctBrand();
 
 }

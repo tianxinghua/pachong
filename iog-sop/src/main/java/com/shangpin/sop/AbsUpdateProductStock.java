@@ -2,12 +2,15 @@ package com.shangpin.sop;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
+import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SpecialSkuDTO;
 import com.shangpin.iog.dto.StockUpdateDTO;
+import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.service.SkuRelationService;
 import com.shangpin.iog.service.SpecialSkuService;
 import com.shangpin.iog.service.UpdateStockService;
+import com.shangpin.iog.service.SupplierService;
 import com.shangpin.openapi.api.sdk.client.SpClient;
 import com.shangpin.openapi.api.sdk.model.*;
 
@@ -17,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -56,6 +60,9 @@ public abstract class AbsUpdateProductStock {
 
 	@Autowired
 	SpecialSkuService specialSkuService;
+	
+	@Autowired
+	SupplierService SupplierService;
 
 	/**
 	 * 抓取供应商库存数据
@@ -477,8 +484,8 @@ public abstract class AbsUpdateProductStock {
 			Map<String, Integer> iceStock) throws Exception {
 		
 		//待更新的库存为0时查询超时时间，如果超时时间大于某一个特定值，则继续往下执行，避免超卖
-		if (iceStock.size() == 0) {
-			loggerError.error("查询供货商的库存为全部为0");
+		if (!this.supplierSkuIdMain && iceStock.size() == 0) {
+			loggerError.error("查询供货商的库存map为空 或者 全部为0========");
 //			StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(app_key);
 //			if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
 //				long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
@@ -791,42 +798,49 @@ public abstract class AbsUpdateProductStock {
 
 				if (supplierStock.size() == 0) {
 					loggerError.error("抓取供货商信息返回的supplierStock.size为0");
-					StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(app_key);
-					if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
-						long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
-			    		long hours = diff / (1000 * 60 * 60);
-			    		//待更新的库存为0时查询超时时间，如果超时时间大于某一个特定值，则继续往下执行，避免超卖
-			    		if(hours < 5){
-			    			return iceStock;
-			    		}else{
-			    			loggerError.error("该供货商出错已经超过"+hours+"小时，所有库存将会被置为0，避免超卖");
-			    		}
-					}
+					return iceStock;
+//					StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(app_key);
+//					if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
+//						long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+//			    		long hours = diff / (1000 * 60 * 60);
+//			    		//待更新的库存为0时查询超时时间，如果超时时间大于某一个特定值，则继续往下执行，避免超卖
+//			    		if(hours < 5){
+//			    			return iceStock;
+//			    		}else{
+//			    			loggerError.error("该供货商出错已经超过"+hours+"小时，所有库存将会被置为0，避免超卖");
+//			    		}
+//					}
 					
 				} else {
-					boolean isNUll = true;
-					for (Map.Entry<String, Integer> entry : supplierStock
-							.entrySet()) {
-						if (null != entry.getValue() && 0 != entry.getValue()) {
-							isNUll = false;
-							break;
+					if(!this.supplierSkuIdMain){//不是以供应商为主的，才去检测是否全为0
+						boolean isNUll = true;
+						for (Map.Entry<String, Integer> entry : supplierStock
+								.entrySet()) {
+							if (null != entry.getValue() && 0 != entry.getValue()) {
+								isNUll = false;
+								break;
+							}
 						}
-					}
 
-					if (isNUll) {// supplierStock的值全为0,则返回空的map
-						loggerInfo.info("获取到的商品库存均为0");
-						StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(app_key);
-						if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
-							long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
-				    		long hours = diff / (1000 * 60 * 60);
-				    		//待更新的库存为0时查询超时时间，如果超时时间大于某一个特定值，则继续往下执行，避免超卖
-				    		if(hours < 5){
-				    			return iceStock;
-				    		}else{
-				    			loggerError.error("该供货商出错已经超过"+hours+"小时，所有库存将会被置为0，避免超卖");
-				    		}
+						if (isNUll) {// supplierStock的值全为0,则返回空的map
+							loggerInfo.info("获取到的供货商的商品库存均为0============");
+							loggerError.error("获取到的供货商的商品库存均为0===========");
+							return iceStock;
+//							StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(app_key);
+//							if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
+//								long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+//					    		long hours = diff / (1000 * 60 * 60);
+//					    		//待更新的库存为0时查询超时时间，如果超时时间大于某一个特定值，则继续往下执行，避免超卖
+//					    		if(hours < 5){
+//					    			return iceStock;
+//					    		}else{
+//					    			
+//					    			loggerError.error("该供货商出错已经超过"+hours+"小时，所有库存将会被置为0，避免超卖");
+//					    		}
+//							}
 						}
 					}
+					
 				}
 			} catch (Exception e) { // 获取库存信息时失败 直接退出
 				loggerError.error("获取库存信息时发生异常 " + e.getMessage(), e);
@@ -834,16 +848,16 @@ public abstract class AbsUpdateProductStock {
 				return iceStock;
 			}
 
-			// 获取采购单信息
-			try {
-				loggerInfo.info("获取采购单开始");
-				if (!ORDER)
-					sopPurchaseMap = this.getPurchaseOrder(host, app_key,
-							app_secret);
-			} catch (Exception e) {
-				// e.printStackTrace();
-				loggerError.error("获取采购单失败" + e.getMessage(), e);
-			}
+			// 获取采购单信息  现更新接口内实现
+//			try {
+//				loggerInfo.info("获取采购单开始");
+//				if (!ORDER)
+//					sopPurchaseMap = this.getPurchaseOrder(host, app_key,
+//							app_secret);
+//			} catch (Exception e) {
+//				// e.printStackTrace();
+//				loggerError.error("获取采购单失败" + e.getMessage(), e);
+//			}
 
 			String iceSku = "";
 			for (String skuNo : skuNos) {
@@ -862,7 +876,8 @@ public abstract class AbsUpdateProductStock {
 							stock = 0;
 						loggerInfo.info(skuNo + "供货商库存：" + stock + " 采购单数量 : "
 								+ sopPurchaseMap.get(iceSku));
-						stock = stock - sopPurchaseMap.get(iceSku);
+//						stock = stock - sopPurchaseMap.get(iceSku);
+						
 						loggerInfo.info("最终库存 ：" + stock);
 						if (stock < 0)
 							stock = 0;
@@ -1197,23 +1212,55 @@ public abstract class AbsUpdateProductStock {
 				detilApiDtos = purchaseOrderInfoApiDto
 						.getPurchaseOrderDetails();
 				for (PurchaseOrderDetail orderDetail : detilApiDtos) {
+                    if(7!=orderDetail.getGiveupType()){
+                    	SpecialSkuDTO spec = new SpecialSkuDTO();
+    					spec.setSupplierId(app_key);
+    					spec.setSupplierSkuId(orderDetail.getSupplierSkuNo());
+    					try {
+    						logger.info("采购异常的信息：" + spec.toString());
+    						System.out.println("采购异常的："+spec.getSupplierSkuId()+"=="+orderDetail.getSopPurchaseOrderNo());
+    						specialSkuService.saveDTO(spec);
+    					} catch (ServiceMessageException e) {
+    						e.printStackTrace();
+    					}
+    					ApiResponse<Boolean> result = null;
+    					StockInfo request_body = null;
+    					request_body = new StockInfo();
+    					request_body.setSkuNo(orderDetail.getSkuNo());
+    					request_body.setInventoryQuantity(0);
+    					boolean success = true;
+    					for (int i = 0; i < 2; i++) {// 发生错误 允许再执行一次
+    						try {
+    							result = SpClient.UpdateStock(host, app_key,
+    									app_secret, new Date(), request_body);
+    							if (null==result || null==result.getResponse() || (null != result && !result.getResponse())) {
 
-					SpecialSkuDTO spec = new SpecialSkuDTO();
-					spec.setSupplierId(app_key);
-					spec.setSupplierSkuId(orderDetail.getSupplierSkuNo());
-					try {
-						logger.info("采购异常的信息：" + spec.toString());
-						System.out.println("采购异常的："+spec.getSupplierSkuId()+"=="+orderDetail.getSopPurchaseOrderNo());
-						specialSkuService.saveDTO(spec);
-					} catch (ServiceMessageException e) {
-						e.printStackTrace();
-					}
+    								success = false;
+
+    								loggerError.error("采购异常的商品：--------"+orderDetail.getSkuNo() + " 库存为0 ，更新库存失败");
+    							}else{
+    								loggerInfo.info("采购异常的商品：--------" + orderDetail.getSkuNo()
+    										+ " 库存为0 ，更新库存成功");
+    							}
+    						} catch (Exception e) {
+
+
+    							loggerError.error("采购异常的商品：--------"+orderDetail.getSkuNo() + " 库存为0 ，更新库存失败");
+    						}
+    						if (success) { // 成功直接跳出
+    							i = 2;
+    						}
+    					}
+
+                    }
+					
+
 				}
 			} else {
 				loggerError.error("两次获取采购单均失败");
 			}
 			pageIndex++;
-			hasNext = (pageSize == detilApiDtos.size());
+			hasNext = (null != detilApiDtos && pageSize == detilApiDtos.size());
 		}
 	}
 
@@ -1254,4 +1301,21 @@ public abstract class AbsUpdateProductStock {
 	public void setUseThread(boolean useThread) {
 		this.useThread = useThread;
 	}
+		
+	private static String smtpHost = "smtp.shangpin.com";
+	private static String from = "chengxu@shangpin.com";
+	private static String fromUserPassword = "shangpin001";
+	private static String to = "lizhongren@shangpin.com,lubaijiang@shangpin.com,zhaogenchun@shangpin.com,amanda.lee@shangpin.com,wangsaying@shangpin.com,maggie.zhang@shangpin.com,liufang@shangpin.com";
+	private static String messageType = "text/html;charset=utf-8";
+	
+	private void sendMail(String app_key,long hours){
+		try {	
+			SupplierDTO supplier = SupplierService.findBysupplierId(app_key);
+			SendMail.sendGroupMail(smtpHost, from, fromUserPassword, to, supplier.getSupplierName()+"库存更新异常超过5小时", supplier.getSupplierName()+" 该供货商出错已经超过"+hours+"小时，所有库存将会被置为0，避免超卖" , messageType);
+			
+		} catch (Exception e) {
+			loggerError.error(e.toString()); 
+		}
+	}
+	
 }

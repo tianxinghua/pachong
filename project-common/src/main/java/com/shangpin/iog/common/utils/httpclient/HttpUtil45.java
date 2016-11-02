@@ -510,7 +510,7 @@ public class HttpUtil45 {
 				try {
 					s = new StringEntity(value);
 					s.setContentEncoding("UTF-8");
-					s.setContentType("application/soap+xml");//发送json数据需要设置contentType
+					s.setContentType("application/soap+xml");//
 					method.setEntity(s);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
@@ -1260,6 +1260,114 @@ public class HttpUtil45 {
 	}
 
 
+	/**
+	 * 下载图片
+	 * @param url
+	 * @param param
+	 * @param headMap
+	 * @param filePath
+	 * @param fileName
+	 * @param outTimeConf
+	 * @param authType  NT：NTCredentials   ,  other :UsernamePasswordCredentials
+	 * @param username
+	 * @param password
+     * @throws ServiceException
+     */
+	public static void downloadPicture(String url,Map<String,String> param,Map<String,String> headMap,String filePath ,String fileName ,OutTimeConfig outTimeConf,String authType,String username,String password) throws ServiceException{
+
+		HttpClientContext localContext =null;
+		if(StringUtils.isNotBlank(username)){
+			if("NT".equals(authType)){
+				localContext = getNTAuthContext(url, username, password);
+			}else{
+				localContext = getAuthContext(url, username, password);
+			}
+
+		}else{
+			localContext = getPlainContext(url);
+		}
+
+		String urlStr=paramGetUrl(url, param);
+		HttpGet get = new HttpGet(urlStr);
+
+		setHeader(headMap, get);
+
+
+		CloseableHttpResponse resp=null;
+		BufferedInputStream bis =null;
+		BufferedOutputStream bos =null;
+		FileOutputStream fos = null;
+		try {
+//			filePath= URLDecoder.decode(filePath, "utf-8");
+			File directory = new File(filePath);
+			if(!directory.exists()){
+				directory.mkdirs();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+
+			if(null==localContext) localContext = getPlainContext(url);
+			localContext.setRequestConfig(defaultRequestConfig(outTimeConf));
+
+			resp=httpClient.execute(get,localContext);
+			int stateCode = resp.getStatusLine().getStatusCode();
+			logger.info("链接返回状态码：" + stateCode);
+			System.out.println("返回状态码：" + stateCode);
+			if(200==stateCode||201==stateCode||202==stateCode){
+				HttpEntity entity=resp.getEntity();
+
+				String file ="";
+
+				file = filePath+ "/" +fileName;
+
+				File writeFile = new File(file);
+				if(!writeFile.exists()){
+					try {
+						writeFile.createNewFile();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				fos = new FileOutputStream(writeFile,true);
+
+				bos = new BufferedOutputStream(fos);
+				entity.writeTo(bos);
+				EntityUtils.consume(entity);
+			}else{
+				logger.error("地址:" + url +"  状态码不为200 ，无法下载");
+
+			}
+
+		}catch(Exception e){
+			logger.error("下载错误："+ e.getMessage(),e.getCause());
+			throw new ServiceMessageException("需要重新下载");
+
+
+		}finally{
+			try {
+				if(resp!=null)
+					resp.close();
+				if(null!=bos) bos.close();
+				if(null!=bis) bis.close();
+				if(null!=fos) fos.close();
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+
+
+
+
+	}
+
+
 	public  static void main(String[] args){
 		
 //		String user="shangpin",password="Daniello0203";
@@ -1271,5 +1379,12 @@ public class HttpUtil45 {
 //		String spuData = HttpUtil45.postAuth("http://79.60.136.177/ws_sito/ws_sito_p15.asmx/GetAllItemsMarketplace",
 //				null, new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600), "shangpin", "creative99");
 //		System.out.println("img =" + spuData);
+
+		try {
+			HttpUtil45.downloadPicture("http://185.54.173.11/docs/reposImages/PO2160Cerruti_U/801109987285_454/801109987285_454-1.jpg",null,null,"e:/tmp","801109987285_454-1.jpg",new OutTimeConfig(1000*60,1000*60*5,1000*60*5),
+                    "", "","");
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 	}
 }

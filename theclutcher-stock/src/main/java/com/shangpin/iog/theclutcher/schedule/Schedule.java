@@ -70,7 +70,7 @@ public class Schedule {
 			return murder;
 		}
 		
-		private static ExecutorService executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
+		private static ExecutorService executor = new ThreadPoolExecutor(2, 3, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.DiscardPolicy());
 		@Override
 		public void run() {				
 			System.out.println(Thread.currentThread().getName()+"执行murder");

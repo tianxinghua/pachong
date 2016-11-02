@@ -72,7 +72,7 @@ public class PozzileiFrameFetchProduct extends AbsSaveProduct {
 		Map<String, List<String>> imageMap = new HashMap<String, List<String>>();
 		
         Gson gson = new Gson();
-        String[]  databaseArray = new String[] {"default","forte","arte"}; //"default",,"arte"
+        String[]  databaseArray = new String[] {"default"}; //"default",,"arte"
         OutTimeConfig outTimeConfig  = new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2);
         for(String database:databaseArray){
         	int m=0;

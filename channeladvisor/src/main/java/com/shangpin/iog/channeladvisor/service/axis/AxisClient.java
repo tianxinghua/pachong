@@ -140,13 +140,53 @@ public class AxisClient {
 
     public static void main(String[] args){
 
-        String url = "https://api.channeladvisor.com/ChannelAdvisorAPI/v7/AdminService.asmx?WSDL";
+//        String url = "https://api.channeladvisor.com/ChannelAdvisorAPI/v7/AdminService.asmx?WSDL";
+//
+//        Options options = new Options();
+//        // 指定调用WebService的URL
+//        EndpointReference targetEPR = new EndpointReference(url);
+//        options.setTo(targetEPR);
+//        options.setAction("web:Ping");
+//
+//        ServiceClient client = null;
+//        try {
+//            client = new ServiceClient();
+//        } catch (AxisFault axisFault) {
+//            axisFault.printStackTrace();
+//        }
+//        client.setOptions(options);
+//
+//
+//        // 向Soap Header中添加校验信息
+//        client.addHeader(createHeaderOMElement());
+//
+//        OMFactory fac = OMAbstractFactory.getOMFactory();
+//        String tns = "http://api.channeladvisor.com/webservices/";
+//        // 命名空间，有时命名空间不增加没事，不过最好加上，因为有时有事，你懂的
+//        OMNamespace omNs = fac.createOMNamespace(tns, "");
+//
+//        OMElement method = fac.createOMElement("Ping", omNs);
+////        OMElement symbol = fac.createOMElement("symbol", omNs);
+////        symbol.addChild(fac.createOMText(symbol, "Axis2 Echo String "));
+////        method.addChild(symbol);
+//        method.build();
+//
+//        OMElement result = null;
+//        try {
+//            result = client.sendReceive(method);
+//        } catch (AxisFault axisFault) {
+//            axisFault.printStackTrace();
+//        }
+//
+//        System.out.println(result);
+
+        String url = "http://studio69.atelier98.net/api_studio69/api_studio69.asmx?wsdl";
 
         Options options = new Options();
         // 指定调用WebService的URL
         EndpointReference targetEPR = new EndpointReference(url);
         options.setTo(targetEPR);
-        options.setAction("web:Ping");
+        options.setAction("CreateNewOrder");
 
         ServiceClient client = null;
         try {
@@ -158,14 +198,14 @@ public class AxisClient {
 
 
         // 向Soap Header中添加校验信息
-        client.addHeader(createHeaderOMElement());
+        client.addHeader(createHeaderOMElementNew());
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
-        String tns = "http://api.channeladvisor.com/webservices/";
+        String tns = "http://tempuri.org/";
         // 命名空间，有时命名空间不增加没事，不过最好加上，因为有时有事，你懂的
         OMNamespace omNs = fac.createOMNamespace(tns, "");
 
-        OMElement method = fac.createOMElement("Ping", omNs);
+        OMElement method = fac.createOMElement("CreateNewOrder", omNs);
 //        OMElement symbol = fac.createOMElement("symbol", omNs);
 //        symbol.addChild(fac.createOMText(symbol, "Axis2 Echo String "));
 //        method.addChild(symbol);
@@ -181,7 +221,22 @@ public class AxisClient {
         System.out.println(result);
 
 
+    }
 
 
+    public static OMElement createHeaderOMElementNew(){
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+        OMNamespace SecurityElementNamespace = factory.createOMNamespace("http://tempuri.org/","requestAccess");
+        OMElement authenticationOM = factory.createOMElement("APICredentials",
+                SecurityElementNamespace);
+        OMElement usernameOM = factory.createOMElement("DeveloperKey",
+                SecurityElementNamespace);
+        OMElement passwordOM = factory.createOMElement("Password",
+                SecurityElementNamespace);
+        usernameOM.setText("SHANGPIN");
+        passwordOM.setText("2MWWKgNSxgf");  //      L1zhongren!
+        authenticationOM.addChild(usernameOM);
+        authenticationOM.addChild(passwordOM);
+        return authenticationOM;
     }
 }

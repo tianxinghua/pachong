@@ -8,9 +8,11 @@
   <result column="SUPPLIER_SKU_ID" property="supplierSkuId" />
   <result column="QUANTITY" property="quantity" />
   <result column="OPT_TIME" property="optTime" />
+  <result column="STATUS" property="status" />
+
  </resultMap>
  <sql id="all_column">
-  ID,SUPPLIER_ID , SUPPLIER_SKU_ID,QUANTITY,OPT_TIME
+  ID,SUPPLIER_ID , SUPPLIER_SKU_ID,QUANTITY,OPT_TIME , STATUS
  </sql>
 
 
@@ -21,7 +23,7 @@
   <include refid="all_column"></include>
   )
   values( #{id},#{supplierId}, #{supplierSkuId},
-  #{quantity},#{optTime})
+  #{quantity},#{optTime}),#{status}
 
  </insert>
 
@@ -35,7 +37,7 @@
   <foreach collection="list" index="index" item="item"
    separator=",">
    ( #{item.id},#{item.supplierId}, #{item.supplierSkuId},
-   #{item.quantity},#{item.optTime}
+   #{item.quantity},#{item.optTime},#{item.status}
    )
   </foreach>
  </insert>

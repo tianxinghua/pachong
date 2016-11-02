@@ -58,6 +58,8 @@ public class FetchProduct {
 		
 		try {
 			List<Product> allProducts = MyUtil.readLocalCSV(url,Product.class);
+			System.out.println("List<Product>的大小是=============="+allProducts.size());
+			logger.info("List<Product>的大小是=============="+allProducts.size()); 
 		
 			for (Product pro : allProducts) {
 				System.out.println(pro.getSpuId());

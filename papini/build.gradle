@@ -5,6 +5,8 @@ dependencies {
     compile(
 			"com.google.code.gson:gson:2.3.1",
             project(':iog-common-product'),
+            project(':iog-product-framework'),
+            
     )
 }
 

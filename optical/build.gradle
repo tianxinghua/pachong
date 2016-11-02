@@ -5,9 +5,9 @@ dependencies {
     compile(
                 project(':iog-common-product'),
         	project(':iog-product-framework'),
-        	'org.apache.poi:poi:3.13',
-      		'org.apache.poi:poi-excelant:3.13',
- 
+        
+				'jaxen:jaxen:1.1.1',
+ 		'dom4j:dom4j:1.6'
     )
 }
 

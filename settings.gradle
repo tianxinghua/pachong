@@ -25,8 +25,31 @@ include 'filippo-order'
 include 'bagheera-stock'
 include 'coltorti'
 include 'atelier-ostore-order'
+<<<<<<< HEAD
 include 'biondini-stock'
 include 'grouppo-stock'
 include 'grouppo'
 include 'atelier-ostore'
+=======
+
+
+
+include 'efashion-order'
+include 'report'
+include 'picturedown'
+include 'optical'
+
+
+include 'brunarosso20-stock'
+include 'attribute-mapping'
+include 'smets-stock'
+include 'project-mq'
+
+include 'dellogliostore'
+include 'efashion'
+include 'project-mq'
+include 'biondini-stock'
+include 'GiBiLogic'
+include 'spinnaker-stock'
+>>>>>>> a76b673c242d420c01f1431e8c2a5c73d15201c4
 

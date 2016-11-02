@@ -84,6 +84,14 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     @Override
     public void saveSPU(List<SpuDTO> spuDTOList) throws ServiceException {
         try {
+			for(SpuDTO spuDTO:spuDTOList){
+				if(null==spuDTO.getNewseasonId()){
+					spuDTO.setNewseasonId(spuDTO.getSeasonId());
+				}
+				if(null==spuDTO.getNewseasonName()){
+					spuDTO.setNewseasonName(spuDTO.getNewseasonName());
+				}
+			}
             spuDAO.saveList(spuDTOList);
         } catch (Exception e) {
         	if(e instanceof DuplicateKeyException)
@@ -95,6 +103,12 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     @Override
     public void saveSPU(SpuDTO spuDTO) throws ServiceException {
         try {
+			if(null==spuDTO.getNewseasonId()){
+				spuDTO.setNewseasonId(spuDTO.getSeasonId());
+			}
+			if(null==spuDTO.getNewseasonName()){
+				spuDTO.setNewseasonName(spuDTO.getNewseasonName());
+			}
             spuDAO.save(spuDTO);
         } catch (Exception e) {
         	if(e instanceof DuplicateKeyException)
@@ -108,7 +122,10 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     public void saveSKU(List<SkuDTO> skuDTOList) throws ServiceException {
 
         try {
-
+			Date date  = new Date();
+			for(SkuDTO skuDTO:skuDTOList){
+				skuDTO.setLastTime(date);
+			}
             skuDAO.saveList(skuDTOList);
         } catch (Exception e) {
         	if(e instanceof DuplicateKeyException)
@@ -125,6 +142,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
             if(StringUtils.isBlank(skuDTO.getNewMarketPrice())) skuDTO.setNewMarketPrice(skuDTO.getMarketPrice());
             if(StringUtils.isBlank(skuDTO.getNewSalePrice())) skuDTO.setNewSalePrice(skuDTO.getSalePrice());
             if(StringUtils.isBlank(skuDTO.getNewSupplierPrice())) skuDTO.setNewSupplierPrice(skuDTO.getSupplierPrice());
+			skuDTO.setLastTime(new Date());
             skuDAO.save(skuDTO);
         } catch ( Exception e) {
         	if(e instanceof DuplicateKeyException)
@@ -137,6 +155,31 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     public void updatePriceAndStock(SkuDTO skuDTO) throws ServiceException {
         try {
             if(null==skuDTO.getUpdateTime()) skuDTO.setUpdateTime(new Date());
+            skuDTO.setLastTime(null);
+			SkuDTO tmpDto = skuDAO.findSKUBySupplierAndSkuId(skuDTO.getSupplierId(),skuDTO.getSkuId());
+			if(null!=tmpDto){
+//				if(!InVoke.compile(skuDTO,tmpDto,new HashMap<String,String>(){
+//					{put("marketPrice","");put("salePrice","");put("supplierPrice","");put("id","");put("createTime","");put("lastTime","");put("updateTime","");put("stock","");
+//						put("stock",""); put("spSkuId","");put("spStatus","");put("spProductCode","");put("memo","");
+//					}
+//				})) {
+//					skuDTO.setLastTime(new Date());
+//				}
+				
+				if(StringUtils.isNotBlank(tmpDto.getColor())){
+					if(!tmpDto.getColor().equals(skuDTO.getColor())){
+						skuDTO.setLastTime(new Date());
+					}
+				}else{
+					if(StringUtils.isNotBlank(skuDTO.getColor())){
+						skuDTO.setLastTime(new Date());
+					}
+				}
+					
+				
+				
+			}
+
             skuDAO.updatePriceAndStock(skuDTO);
         } catch ( Exception e) {
 
@@ -147,6 +190,37 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     public void updateMaterial(SpuDTO spuDTO) throws ServiceException {
         try {
 //            if(null==spuDTO.getLastTime()) spuDTO.setLastTime(new Date());
+
+			SpuDTO tmpDto = spuDAO.findSPUBySupplierAndSpuId(spuDTO.getSupplierId(),spuDTO.getSpuId());
+			if(null!=tmpDto){
+//				if(!InVoke.compile(spuDTO,tmpDto,new HashMap<String,String>(){
+//					{ put("id","");put("createTime","");put("lastTime","");put("updateTime","");
+//						put("spCategory","");put("spBrand","");put("memo","");put("updateTime","");
+//					}
+//				})) {
+//					skuDAO.updateLastTime(spuDTO.getSupplierId(),null,spuDTO.getSpuId());
+//				}
+				if(tmpDto.getMaterial()!=null){
+					if(!tmpDto.getMaterial().equals(spuDTO.getMaterial())){
+						skuDAO.updateLastTime(spuDTO.getSupplierId(),null,spuDTO.getSpuId());
+					}
+				}else{
+					if(spuDTO.getMaterial()!=null){
+						skuDAO.updateLastTime(spuDTO.getSupplierId(),null,spuDTO.getSpuId());
+					}
+				}
+				if(tmpDto.getProductOrigin()!=null){
+					if(!tmpDto.getProductOrigin().equals(spuDTO.getProductOrigin())){
+						skuDAO.updateLastTime(spuDTO.getSupplierId(),null,spuDTO.getSpuId());
+					}
+				}else{
+					if(spuDTO.getProductOrigin()!=null){
+						skuDAO.updateLastTime(spuDTO.getSupplierId(),null,spuDTO.getSpuId());
+					}
+				}
+				
+
+			}
             spuDAO.updateMaterial(spuDTO);
         } catch ( Exception e) {
 
@@ -221,6 +295,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 		}else if(skuId!=null){
 			map = findPictureBySupplierIdAndSkuId(supplierId, skuId);
 		}
+		boolean flag = false;
 		for(String pic:picUrl){
 			if(map==null||!map.containsKey(pic)){
 
@@ -235,10 +310,15 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 				}
 				try {
 					savePictureForMongo(dto);
+					flag = true;
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
 			}
+		}
+		if(flag){
+			skuDAO.updateLastTime(supplierId,skuId,spuId);
+			
 		}
 	}
 
@@ -332,6 +412,8 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 	public void updateSpuOrSkuMemoAndTime(String supplierId,String id,String memo,String flag) {
 		if (flag.equals("spu")) {
 			spuDAO.updateSpuMemo(supplierId, id, memo, new Date());
+			//同时更新此SKU表中此供货商的下的SPU对应的所有SKU的时间
+			 skuDAO.updateLastTime(supplierId,null,id);
 		}else{
 			skuDAO.updateSkuMemo(supplierId, id, memo, new Date());
 		}
@@ -420,6 +502,9 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 			e.printStackTrace();
 		}
 	}
+	public List<SkuRelationDTO> selectRelationFromHKBySupplierId(String supplier){
+		return null;
+	}
 	@Override
 	public String findBarCodeBySupplierIdAndSkuId(String supplierId,
 			String skuno){
@@ -435,8 +520,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
     		if (skuId!=null) {
     			pictureList = pictureDAO.findDistinctProductPictureBySupplierIdAndSkuId(supplierId, skuId);
 			}else{
-				pictureList = pictureDAO.findDistinctProductPictureBySupplierIdAndSkuId(supplierId, spuId);
-				
+				pictureList = pictureDAO.findDistinctProductPictureBySupplierIdAndSpuIdAndSkuIdNull(supplierId, spuId);
 			}
     		if(pictureList!=null){
     			String key = "";
@@ -467,6 +551,20 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 	public List<ProductDTO> findProductByDate(String startDate, String endDate) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+//	@Override
+//	public void updateSpSkuIdBySupplier(String supplierId, String supplierSkuId, String spSkuId, String skuStatus) throws ServiceException {
+//
+//	}
+	public void updateSpSkuIdBySupplier(String supplierId,String supplierSkuId,String spSkuId,String skuStatus,String spProductCode) throws ServiceException{
+		skuDAO.updateSpSkuIdBySupplier(supplierId, supplierSkuId, spSkuId,skuStatus,spProductCode); 
+	}
+
+	@Override
+	public void update(SkuDTO sku) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 

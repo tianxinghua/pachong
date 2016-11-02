@@ -6,6 +6,7 @@ import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -437,5 +438,60 @@ public class InVoke<R,T> {
             }
         }
     }
+
+
+	/**
+	 * 查找同一对象属性是否相等
+	 *
+	 * @param db
+	 * @param new_
+	 * @param extendProperty
+     * @return
+     */
+	public static boolean  compile(Object db,
+															Object new_,Map<String,String> extendProperty) {
+
+		Class<Object> cDb = (Class<Object>) db.getClass();
+		Field[] filesDb = cDb.getDeclaredFields();
+		Class<Object> cNew_ = (Class<Object>) new_.getClass();
+
+		for (Field field : filesDb) {
+			if(extendProperty.containsKey(field.getName())) {
+				continue;
+			}
+			String getMethodName = "get"
+					+ field.getName().substring(0, 1).toUpperCase()
+					+ field.getName().substring(1);
+			try {
+				Method mdb = (Method) cDb.getMethod(getMethodName);
+				Method mNew_ = (Method) cNew_.getMethod(getMethodName);
+
+				try {
+
+					Object valDb = mdb.invoke(db);
+					Object valNew = mNew_.invoke(new_);
+					if (valDb != null) {
+						if (!valDb.equals(valNew)) {
+							return false;
+						}
+					}
+
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			} catch (NoSuchMethodException e) {
+
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		return true;
+
+
+	}
 
 }

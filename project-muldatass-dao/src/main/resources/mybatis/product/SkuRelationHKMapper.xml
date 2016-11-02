@@ -131,5 +131,15 @@
         from SKU_RELATION
         where CREATE_TIME>=CURDATE()
     </select>
-	
+		
+	<select id="selectRelationFromHKBySupplierId"  resultMap="skuMap">
+        select
+        SUPPLIER_ID ,
+        SOP_NO,
+        SOP_SKU_ID,
+        SUPPLIER_SKU_ID,
+        CREATE_TIME
+        from SKU_RELATION
+         where SUPPLIER_ID = #{supplierId}
+    </select>
 </mapper>

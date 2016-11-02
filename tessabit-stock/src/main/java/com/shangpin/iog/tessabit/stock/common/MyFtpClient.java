@@ -51,7 +51,7 @@ public class MyFtpClient {
             ftp.get(new StringUtil().getLocalFileName(),Constant.REMOTE_PATH + "/"+ Constant.SERVER_FILE);
         } catch (Exception e){
             loggerError.error("Exception:"+e.getMessage());
-            System.exit(0);
+//            System.exit(0);
         } finally {
             close(ftp);
         }

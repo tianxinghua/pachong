@@ -15,6 +15,7 @@ public class Product {
 	private String material;
 	@SerializedName("product_sku")
 	private String skuId;
+	private String product_parent_id;
 	@SerializedName("virtuemart_category_id")
 	private String category;
 	private String product_name;
@@ -31,4 +32,5 @@ public class Product {
 	private String Madein;
 	private String Size;
 	private String gender;
+	private String manufacturer;
 }

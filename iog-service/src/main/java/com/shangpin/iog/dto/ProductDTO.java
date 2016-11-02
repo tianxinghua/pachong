@@ -33,7 +33,16 @@ public class ProductDTO {
 
     private String memo;
     private String spSkuId;
-    public String getMemo() {
+    private String spStatus;
+    public String getSpStatus() {
+		return spStatus;
+	}
+
+	public void setSpStatus(String spStatus) {
+		this.spStatus = spStatus;
+	}
+
+	public String getMemo() {
 		return memo;
 	}
 
@@ -90,7 +99,28 @@ public class ProductDTO {
     private String newSalePrice;
     private String newSupplierPrice;
     private String newseasonId;
-    public String getNewseasonId() {
+    
+    private String spCategory;
+    private String spBrand;
+    
+        
+    public String getSpCategory() {
+		return spCategory;
+	}
+
+	public void setSpCategory(String spCategory) {
+		this.spCategory = spCategory;
+	}
+
+	public String getSpBrand() {
+		return spBrand;
+	}
+
+	public void setSpBrand(String spBrand) {
+		this.spBrand = spBrand;
+	}
+
+	public String getNewseasonId() {
 		return newseasonId;
 	}
 
@@ -515,5 +545,7 @@ public class ProductDTO {
 	public void setSpSkuId(String spSkuId) {
 		this.spSkuId = spSkuId;
 	}
+
+
     
 }

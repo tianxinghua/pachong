@@ -332,8 +332,8 @@ public class DateTimeUtil {
    */
   public static String getPreviouseDate(){
       Date ndate = new Date();
-      /**一天共86400 毫秒*/
-      long currentdate = ndate.getTime() - 86400 ;
+      /**一天共86400000 毫秒*/
+      long currentdate = ndate.getTime() - 86400000 ;
       Date dd = new Date(currentdate);
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
       String dt = sdf.format(dd);

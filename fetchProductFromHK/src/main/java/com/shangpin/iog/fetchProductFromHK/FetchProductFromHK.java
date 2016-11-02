@@ -69,7 +69,25 @@ public class FetchProductFromHK {
 	}
 
 	private void fetchRelationFromHK() {
-		//false 表示按每天拉取
+		if(StringUtils.isNotBlank(supplierId)){
+			String [] arraySupplierId = supplierId.split(",",-1);
+			for(String supplier:arraySupplierId){
+				saveRelationFromHKBySupplierId(supplier);
+			}
+			
+		}else if ("false".equals(relationFlag)) {
+			System.out.println("false");
+			saveRelationDayFromHK();
+		} else {
+			//true 表示拉取所有的
+			System.out.println("true");
+			fetchAndsaveAllRelationFromHK();
+//			writeGrapDate("false", "initRelation.ini");
+
+		}
+		
+		
+//		//false 表示按每天拉取
 		if ("false".equals(relationFlag)) {
 			System.out.println("false");
 			saveRelationDayFromHK();
@@ -79,6 +97,18 @@ public class FetchProductFromHK {
 			fetchAndsaveAllRelationFromHK();
 //			writeGrapDate("false", "initRelation.ini");
 
+		}
+	}
+
+	private void saveRelationFromHKBySupplierId(String supplier) {
+		List<SkuRelationDTO> list = null;
+		try {
+			list = productFetchService.selectRelationFromHKBySupplierId(supplier);
+			logger.info("拉取"+supplier+"的relation总数："+list.size());
+			System.out.println("拉取"+supplier+"的relation总数："+list.size());
+			saveAllRelation(list);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

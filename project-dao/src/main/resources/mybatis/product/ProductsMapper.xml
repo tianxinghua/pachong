@@ -59,6 +59,10 @@
         <result column="newSalePrice" property="newSalePrice" />
         <result column="newSupplierPrice" property="newSupplierPrice" />
         <result column="spSkuId" property="spSkuId" />
+        
+        <result column="sp_categery" property="spCategory" />
+        <result column="sp_brand" property="spBrand" />
+        <result column="last_time" property="lastTime" />
 
 
 	</resultMap>
@@ -127,7 +131,8 @@
           spu.SUB_CATEGORY_ID  as  sub_category_id,
           spu.SUB_CATEGORY_NAME  as  sub_category_name,
           spu.NEWSEASON_ID as newseasonId,
-          spu.NEWSEASON_NAME as newseasonName,          
+          spu.NEWSEASON_NAME as newseasonName, 
+          sku.LAST_TIME as last_time,         
 <!--           sku.MEMO  as  memo -->
           CONCAT(sku.MEMO) as memo
 		
@@ -139,6 +144,70 @@
 
           <if test="null!=supplier">
             and   sku.SUPPLIER_ID = #{supplier}
+          </if>
+            <if test="null!=startDate">
+                and (sku.LAST_TIME >= #{startDate} )
+            </if>
+           <if test="endDate!=null">
+
+                <![CDATA[ and (sku.LAST_TIME <= #{endDate})    ]]>
+
+            </if>
+
+
+
+        </where>
+        order by brand_name, category_name
+
+
+	</select>
+	
+	<select id="findAllOfProducts"  resultMap="ProductsResultMap">
+		
+		select
+          sku.ID as id,
+          sku.SUPPLIER_ID  as supplier_id,
+          su.SUPPLIER_NAME as supplier_name,
+          sku.SPU_ID  as spu_id,
+          sku.SKU_ID as sku_id,spu.SPU_NAME as spu_name,
+
+          sku.PRODUCT_NAME as product_name,
+          sku.MARKET_PRICE  as market_price,
+          sku.SALE_PRICE  as  sale_price,
+          sku.SUPPLIER_PRICE as supplier_price,sku.BARCODE as barcode,
+          sku.PRODUCT_CODE as product_code,sku.COLOR as color,
+          sku.PRODUCT_DESCRIPTION as product_description,
+          sku.SALE_CURRENCY as sale_currency,sku.PRODUCT_SIZE as product_size,
+          sku.STOCK as stock ,
+          
+          sku.EVENT_START_DATE as eventStartTime,
+          sku.EVENT_END_DATE as eventEndTime,
+          
+          sku.NEW_MARKET_PRICE as newMarketPrice,
+          sku.NEW_SALE_PRICE as newSalePrice,
+          sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
+          sku.SP_SKU_ID as spSkuId,
+          
+          spu.CATEGORY_ID as category_id, 
+          spu.CATEGORY_NAME as category_name,
+          spu.BRAND_ID as brand_id,spu.BRAND_NAME as brand_name,
+          spu.SEASON_ID as season_id,spu.SEASON_NAME as season_name,
+          spu.PIC_URL as pic_url,spu.MATERIAL as material,spu.PRODUCT_ORIGIN as product_origin ,
+          spu.CATEGORY_GENDER as category_gender,
+          spu.SUB_CATEGORY_ID  as  sub_category_id,
+          spu.SUB_CATEGORY_NAME  as  sub_category_name,
+          spu.NEWSEASON_ID as newseasonId,
+          spu.NEWSEASON_NAME as newseasonName, 
+          sku.LAST_TIME as last_time,         
+<!--           sku.MEMO  as  memo -->
+          CONCAT(sku.MEMO) as memo
+		
+		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+					 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID
+        <where>
+
+          <if test="null!=supplier">
+              sku.SUPPLIER_ID = #{supplier}
           </if>
             <if test="null!=startDate">
                 and (sku.LAST_TIME >= #{startDate} )
@@ -589,22 +658,308 @@
         <where>
             sku.STOCK >0
           <if test="null!=supplier">
-            and   sku.SUPPLIER_ID = #{supplier}
-          </if>
+            and  sku.SUPPLIER_ID = #{supplier}
+          </if>          
           <if test="null!=startDate">
             and (sku.LAST_TIME >= #{startDate} )
           </if>
           <if test="endDate!=null">
             <![CDATA[ and (sku.LAST_TIME <= #{endDate}) ]]>
 		  </if>
-		  <if test="null != categories">
-		  	and spu.CATEGORY_NAME in
-		  	 <foreach collection="categories" index="index" item="item" open="(" separator="," close=")"> 
-            	#{item} 
-        	 </foreach>
+		  
+		  <choose>
+		  	<when test="BuParamDTO.isExport_gender == '1'.toString()">
+		  		<if test="null != BuParamDTO.genders and BuParamDTO.genders.size()>0">
+		          	and spu.CATEGORY_GENDER in
+		          	<foreach collection="BuParamDTO.genders" index="index" item="item" open="(" separator="," close=")"> 
+		            	#{item} 
+		        	 </foreach>
+		        </if>
+		  	</when>
+		  	<when test="BuParamDTO.isExport_gender == '0'.toString()">
+		  		<if test="null != BuParamDTO.genders and BuParamDTO.genders.size()>0">
+		          	and spu.CATEGORY_GENDER not in
+		          	<foreach collection="BuParamDTO.genders" index="index" item="item" open="(" separator="," close=")"> 
+		            	#{item} 
+		        	 </foreach>
+	          	</if>
+		  	</when>
+		  </choose>
+		            
+          <choose>
+          	<when test="BuParamDTO.isExport_cat == '1'.toString()">
+          		<if test="null != BuParamDTO.categories and BuParamDTO.categories.size()>0">
+			  	and (spu.SUB_CATEGORY_NAME in 
+	        	 <foreach collection="BuParamDTO.categories" index="index" item="item" open="(" separator="," close=")"> 
+	            	#{item} 
+	        	 </foreach> 
+	        	 or spu.CATEGORY_NAME in 
+	        	 <foreach collection="BuParamDTO.categories" index="index" item="item" open="(" separator="," close=")"> 
+	            	#{item} 
+	        	 </foreach> 
+	        	 )       	
+			  </if>	
+          	</when>
+          	<when test="BuParamDTO.isExport_cat == '0'.toString()">
+          		<if test="null != BuParamDTO.categories and BuParamDTO.categories.size()>0">
+			  	and (spu.SUB_CATEGORY_NAME not in 
+	        	 <foreach collection="BuParamDTO.categories" index="index" item="item" open="(" separator="," close=")"> 
+	            	#{item} 
+	        	 </foreach> 
+	        	 and spu.CATEGORY_NAME not in 
+	        	 <foreach collection="BuParamDTO.categories" index="index" item="item" open="(" separator="," close=")"> 
+	            	#{item} 
+	        	 </foreach> 
+	        	 )       	
+			  </if>
+          	</when>
+          </choose>
+		  	  
+		  <choose>
+		  	<when test="BuParamDTO.isExport_brand == '1'.toString()">
+		  		<if test="null != BuParamDTO.brands and BuParamDTO.brands.size()>0">
+				  	and spu.BRAND_NAME in
+		          	<foreach collection="BuParamDTO.brands" index="index" item="item" open="(" separator="," close=")"> 
+		            	#{item} 
+		        	 </foreach>
+		  		</if>	
+		  	</when>
+		  	<when test="BuParamDTO.isExport_brand == '0'.toString()">
+		  		<if test="null != BuParamDTO.brands and BuParamDTO.brands.size()>0">
+				  	and spu.BRAND_NAME not in
+		          	<foreach collection="BuParamDTO.brands" index="index" item="item" open="(" separator="," close=")"> 
+		            	#{item} 
+		        	 </foreach>
+		  		</if>
+		  	</when>
+		  </choose>
+		  
+		  <if test="'男鞋'== BU or '女鞋' == BU">
+		  	and (SELECT count(*) from SKU WHERE SUPPLIER_ID = #{supplier} and SPU_ID = spu.SPU_ID AND STOCK>2)>1
 		  </if>
         </where>
         order by brand_name, category_name
 	</select>
+
+
+    <!--  统计  inner join SEASON_RELATION season on spu.SUPPLIER_ID = season.SUPPLIER_ID AND   season.CURRENT_SEASON='1'-->
+    <select id="findReport"  resultMap="ProductsResultMap">
+
+        select
+        sku.ID as id,
+        sku.SUPPLIER_ID  as supplier_id,
+        su.SUPPLIER_NAME as supplier_name,
+        sku.SKU_ID as sku_id,
+        sku.SPU_ID  as spu_id,
+        sku.MARKET_PRICE  as market_price,
+        sku.SALE_PRICE  as  sale_price,
+        sku.SUPPLIER_PRICE as supplier_price,
+
+        sku.PRODUCT_CODE as product_code,
+        spu.CATEGORY_ID as category_id,
+        spu.CATEGORY_NAME as category_name,
+        spu.BRAND_ID as brand_id,spu.BRAND_NAME as brand_name,
+        spu.SEASON_ID as season_id,spu.SEASON_NAME as season_name,
+        spu.CATEGORY_GENDER as category_gender,
+        spu.SUB_CATEGORY_ID  as  sub_category_id,
+        spu.SUB_CATEGORY_NAME  as  sub_category_name
+
+        from SKU sku inner join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+        inner join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID and su.SUPPLIER_STATE='1'
+
+
+        <where>
+
+            sku.STOCK >0    and spu.MATERIAL is not null and sku.SP_SKU_ID is  null
+            and sku.COLOR is not null    and  sku.PRODUCT_SIZE is not null
+            and spu.CATEGORY_GENDER is not null
+
+
+        </where>
+        order by supplier_id
+
+
+    </select>
+
+
+
+
+
+
+    <select id="findReportBySupplierIdAndCreateTime" resultMap="ProductsResultMap">
+        select
+        sku.ID as id,
+        sku.SUPPLIER_ID  as supplier_id,
+        su.SUPPLIER_NAME as supplier_name,
+        sku.SKU_ID as sku_id,
+        sku.SPU_ID  as spu_id,
+        sku.MARKET_PRICE  as market_price,
+        sku.SALE_PRICE  as  sale_price,
+        sku.SUPPLIER_PRICE as supplier_price,
+
+        sku.PRODUCT_CODE as product_code,
+        sku.COLOR as color,
+        spu.CATEGORY_ID as category_id,
+        spu.CATEGORY_NAME as category_name,
+        spu.BRAND_ID as brand_id,spu.BRAND_NAME as brand_name,
+        spu.SEASON_ID as season_id,spu.SEASON_NAME as season_name,
+        spu.CATEGORY_GENDER as category_gender,
+        spu.SUB_CATEGORY_ID  as  sub_category_id,
+        spu.SUB_CATEGORY_NAME  as  sub_category_name,
+        date_format(sku.LAST_TIME,'%Y-%m-%d') as lastTime
+
+        from SKU sku inner join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+        inner join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID and su.SUPPLIER_STATE='1'
+
+        <where>
+            sku.STOCK >0    and spu.MATERIAL is not null and sku.SP_SKU_ID is  null
+            and sku.COLOR is not null    and  sku.PRODUCT_SIZE is not null
+            and spu.CATEGORY_GENDER is not null
+            <if test="null!=supplier">
+                and   sku.SUPPLIER_ID = #{supplier}
+            </if>
+            <if test="null!=startDate">
+                and sku.LAST_TIME >= #{startDate}
+            </if>
+            <if test="endDate!=null">
+                <![CDATA[ and sku.LAST_TIME < #{endDate}     ]]>
+            </if>
+        </where>
+        order by supplier_id , lastTime
+    </select>
+    
+    <select id="tempFindListBySupplierAndLastDate"  resultMap="ProductsResultMap">
+		
+		select
+          sku.ID as id,
+          sku.SUPPLIER_ID  as supplier_id,
+          su.SUPPLIER_NAME as supplier_name,
+          sku.SPU_ID  as spu_id,
+          sku.SKU_ID as sku_id,spu.SPU_NAME as spu_name,
+
+          sku.PRODUCT_NAME as product_name,
+          sku.MARKET_PRICE  as market_price,
+          sku.SALE_PRICE  as  sale_price,
+          sku.SUPPLIER_PRICE as supplier_price,sku.BARCODE as barcode,
+          sku.PRODUCT_CODE as product_code,sku.COLOR as color,
+          sku.PRODUCT_DESCRIPTION as product_description,
+          sku.SALE_CURRENCY as sale_currency,sku.PRODUCT_SIZE as product_size,
+          sku.STOCK as stock ,
+          
+          sku.EVENT_START_DATE as eventStartTime,
+          sku.EVENT_END_DATE as eventEndTime,
+          
+          sku.NEW_MARKET_PRICE as newMarketPrice,
+          sku.NEW_SALE_PRICE as newSalePrice,
+          sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
+          sku.SP_SKU_ID as spSkuId,
+          
+          spu.CATEGORY_ID as category_id, 
+          spu.CATEGORY_NAME as category_name,
+          spu.BRAND_ID as brand_id,spu.BRAND_NAME as brand_name,
+          spu.SEASON_ID as season_id,spu.SEASON_NAME as season_name,
+          spu.PIC_URL as pic_url,spu.MATERIAL as material,spu.PRODUCT_ORIGIN as product_origin ,
+          spu.CATEGORY_GENDER as category_gender,
+          spu.SUB_CATEGORY_ID  as  sub_category_id,
+          spu.SUB_CATEGORY_NAME  as  sub_category_name,
+          spu.NEWSEASON_ID as newseasonId,
+          spu.NEWSEASON_NAME as newseasonName,          
+          
+          spu.SP_CATEGORY as sp_category,
+          spu.SP_BRAND as sp_brand,          
+<!--           sku.MEMO  as  memo -->
+          CONCAT(sku.MEMO) as memo
+		
+		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+					 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID
+        <where>
+
+            sku.STOCK >0
+
+          <if test="null!=supplier">
+            and   sku.SUPPLIER_ID = #{supplier}
+          </if>
+            <if test="null!=startDate">
+                and (sku.LAST_TIME >= #{startDate} )
+            </if>
+           <if test="endDate!=null">
+
+                <![CDATA[ and (sku.LAST_TIME <= #{endDate})    ]]>
+
+            </if>
+
+
+
+        </where>
+        order by brand_name, category_name
+
+
+	</select>
 	
+	<select id="findProductOfHasSpSkuId"  resultMap="ProductsResultMap">
+		
+		select
+          sku.ID as id,
+          sku.SUPPLIER_ID  as supplier_id,
+          su.SUPPLIER_NAME as supplier_name,
+          sku.SPU_ID  as spu_id,
+          sku.SKU_ID as sku_id,spu.SPU_NAME as spu_name,
+
+          sku.PRODUCT_NAME as product_name,
+          sku.MARKET_PRICE  as market_price,
+          sku.SALE_PRICE  as  sale_price,
+          sku.SUPPLIER_PRICE as supplier_price,sku.BARCODE as barcode,
+          sku.PRODUCT_CODE as product_code,sku.COLOR as color,
+          sku.PRODUCT_DESCRIPTION as product_description,
+          sku.SALE_CURRENCY as sale_currency,sku.PRODUCT_SIZE as product_size,
+          sku.STOCK as stock ,
+          
+          sku.EVENT_START_DATE as eventStartTime,
+          sku.EVENT_END_DATE as eventEndTime,
+          
+          sku.NEW_MARKET_PRICE as newMarketPrice,
+          sku.NEW_SALE_PRICE as newSalePrice,
+          sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
+          sku.SP_SKU_ID as spSkuId,
+          
+          spu.CATEGORY_ID as category_id, 
+          spu.CATEGORY_NAME as category_name,
+          spu.BRAND_ID as brand_id,spu.BRAND_NAME as brand_name,
+          spu.SEASON_ID as season_id,spu.SEASON_NAME as season_name,
+          spu.PIC_URL as pic_url,spu.MATERIAL as material,spu.PRODUCT_ORIGIN as product_origin ,
+          spu.CATEGORY_GENDER as category_gender,
+          spu.SUB_CATEGORY_ID  as  sub_category_id,
+          spu.SUB_CATEGORY_NAME  as  sub_category_name,
+          spu.NEWSEASON_ID as newseasonId,
+          spu.NEWSEASON_NAME as newseasonName, 
+          sku.LAST_TIME as last_time,         
+<!--           sku.MEMO  as  memo -->
+          CONCAT(sku.MEMO) as memo
+		
+		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+					 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID
+        <where>
+
+            sku.STOCK >0 and sku.SP_SKU_ID is not null
+
+          <if test="null!=supplier">
+            and   sku.SUPPLIER_ID = #{supplier}
+          </if>
+            <if test="null!=startDate">
+                and (sku.LAST_TIME >= #{startDate} )
+            </if>
+           <if test="endDate!=null">
+
+                <![CDATA[ and (sku.LAST_TIME <= #{endDate})    ]]>
+
+            </if>
+
+
+
+        </where>
+        order by brand_name, category_name
+
+
+	</select>
+		
 </mapper>

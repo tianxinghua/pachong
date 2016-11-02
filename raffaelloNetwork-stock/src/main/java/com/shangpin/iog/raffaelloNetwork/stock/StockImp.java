@@ -59,7 +59,7 @@ public class StockImp  extends AbsUpdateProductStock {
     							for (int i = 0; i < size.length; i++) {
     								try {
     									stockMap.put(pro.getMpn()+"_"+size[i], stock[i].trim());
-        								logger.info("SkuId="+pro.getMpn()+"_"+size[i]+"------stock="+stock[i]);
+//        								logger.info("SkuId="+pro.getMpn()+"_"+size[i]+"------stock="+stock[i]);
 									} catch (Exception e) {
 										// TODO: handle exception
 									}
@@ -71,7 +71,7 @@ public class StockImp  extends AbsUpdateProductStock {
     						}
             		}else{
             			stockMap.put(pro.getMpn()+"_"+pro.getSize(),pro.getQuantity());
-            			logger.info("SkuId="+pro.getMpn()+"_"+pro.getSize()+"------stock="+pro.getQuantity());
+//            			logger.info("SkuId="+pro.getMpn()+"_"+pro.getSize()+"------stock="+pro.getQuantity());
             			
             		}
 				} catch (Exception e) {
@@ -85,10 +85,10 @@ public class StockImp  extends AbsUpdateProductStock {
         for (String skuno : skuNo) {
         	try {
         		if(stockMap.containsKey(skuno)){
-                	logger.info("skuNo1="+skuno + " stock="+ stockMap.get(skuno));
+//                	logger.info("skuNo1="+skuno + " stock="+ stockMap.get(skuno));
                     skustock.put(skuno, stockMap.get(skuno));
                 } else{
-                	logger.info("skuNo2="+skuno);
+//                	logger.info("skuNo2="+skuno);
                     skustock.put(skuno, "0");
                 }
 			} catch (Exception e) {

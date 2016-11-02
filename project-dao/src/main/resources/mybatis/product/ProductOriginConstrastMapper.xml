@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.ProductOriginConstrastMapper">
+
+	<resultMap id="OriginContrastResultMap" type="iog_productOrigin_contrast">
+
+        <result column="PRODUCT_ORIGIN" property="productOrigin"  />
+        <result column="PRODUCT_ORIGIN_CH" property="productOriginCH"  />
+        <result column="RANK" property="rank"  />
+
+	</resultMap>
+
+	
+	<sql id="all_originContrast_column">
+		PRODUCT_ORIGIN,
+		PRODUCT_ORIGIN_CH,
+		RANK
+	</sql>
+
+    <select id="findCount" resultType="java.lang.Integer">
+        SELECT  COUNT(PRODUCT_ORIGIN) from PRODUCT_ORIGIN_CONTRAST
+    </select>
+
+
+    <select id="findByRank" resultMap="OriginContrastResultMap">
+        select
+        <include refid="all_originContrast_column"></include>
+
+        from PRODUCT_ORIGIN_CONTRAST
+        where RANK = #{rank}
+    </select>
+   	
+</mapper>

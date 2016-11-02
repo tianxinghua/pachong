@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.SeasonRelationMapper">
+
+	<resultMap id="seasonRelationMap" type="iog_season_relation">
+		<result column="SUPPLIER_ID" property="supplierId"  />
+		<result column="SUPPLIER_NO" property="supplierNo"  />
+        <result column="SUPPLIER_SEASON" property="supplierSeason"  />
+		<result column="SP_YEAR" property="spYear"  />
+		<result column="SP_SEASON" property="spSeason" />
+        <result column="CURRENT_SEASON" property="currentSeason" />
+	</resultMap>
+
+	<sql id="all_season_column">
+		SUPPLIER_ID,
+		SUPPLIER_NO ,
+		SUPPLIER_SEASON,
+		SP_YEAR,
+		SP_SEASON,
+        CURRENT_SEASON
+	</sql>
+
+    <insert id="save"  parameterType="iog_sku_relation" >
+
+
+
+        insert into SEASON_RELATION(
+
+        <include refid="all_season_column"></include>
+        )
+        values(
+           #{supplierId}, #{sopNo}, #{sopSkuId},
+            #{supplierSkuId},#{createTime}
+        )
+
+
+    </insert>
+
+    <select id="findListBySupplierNo"  resultMap="seasonRelationMap">
+        select
+        <include refid="all_season_column"></include>
+        from SEASON_RELATION
+        <where>
+            <if test="null!=supplierId">
+                SUPPLIER_ID = #{supplierId}
+            </if>
+
+        </where>
+
+    </select>
+
+    <select id="getSupplierCurrentSeasonBySupplierNo"  resultMap="seasonRelationMap">
+        select
+        <include refid="all_season_column"></include>
+        from SEASON_RELATION
+        <where>
+            <if test="null!=supplierId">
+                SUPPLIER_ID = #{supplierId}  and
+            </if>
+             <if test="null!=supplierId">
+                CURRENT_SEASON = #{currentSeason}  
+            </if>
+       
+        </where>
+
+    </select>
+
+    <select id="getSupplierSeasonBySupNoAndSpYearSeason"  resultMap="seasonRelationMap">
+        select
+        <include refid="all_season_column"></include>
+		from SEASON_RELATION
+        <where>
+            <if test="null!=supplierId">
+                SUPPLIER_ID = #{supplierId}  
+            </if>
+           <if test="null!=spYear">
+               and  SP_YEAR = #{spYear} 
+            </if>
+             <if test="null!=spSeason">
+              and  SP_SEASON = #{spSeason}  
+            </if>
+
+        </where>
+
+    </select>
+
+
+
+    <select id="getAllCurrentSeason"  resultMap="seasonRelationMap">
+        select
+     <include refid="all_season_column"></include>
+        from SEASON_RELATION
+
+        where   CURRENT_SEASON='1'
+
+    </select>
+
+
+    <select id="getAllSeason"  resultMap="seasonRelationMap">
+        select
+         <include refid="all_season_column"></include>
+        from SEASON_RELATION
+   
+    </select>
+	  <select id="findSpSeasonBySupplierSeason"  resultMap="seasonRelationMap">
+          select
+        <include refid="all_season_column"></include>
+		from SEASON_RELATION
+        <where>
+            <if test="null!=supplierId">
+                SUPPLIER_ID = #{supplierId}  
+            </if>
+           <if test="null!=supplierSeason">
+               and  SUPPLIER_SEASON = #{supplierSeason} 
+            </if>
+            
+
+        </where>
+   
+    </select>
+	
+</mapper>

@@ -57,4 +57,7 @@ public interface SkuRelationHKMapper extends HKIBaseDao<SkuRelationDTO> {
 
 	public List<SkuRelationDTO> selectRalationDayFromHK();
 
+
+	public List<SkuRelationDTO> selectRelationFromHKBySupplierId(String supplier);
+
 }

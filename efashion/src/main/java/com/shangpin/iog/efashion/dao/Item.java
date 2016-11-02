@@ -23,12 +23,12 @@ public class Item {
 	private String item_description;
 	private List<Material> technical_info;
 //	private String suitable;
-//	private String made_in;
+	private String made_in;
 	private String quantity;
 	private String season_year;
 	private String season_reference;
 
-
+	private String retail_price;
 	private Item_images item_images;
 	private String color;
 	private String size;

@@ -163,9 +163,23 @@ public class FetchProduct {
                 spu.setCategoryName(product.getCategory());
                 spu.setSpuName(product.getProduct_name());
                 spu.setSeasonId(product.getSeason_code());
+                System.out.println(product.getSeason_code()); 
+                spu.setSeasonName(product.getSeason_code()); 
                 spu.setMaterial(product.getProduct_material());
                 spu.setCategoryGender(product.getGender());
-                productFetchService.saveSPU(spu);
+//                productFetchService.saveSPU(spu);
+                try {
+    				productFetchService.saveSPU(spu);
+    			} catch (ServiceException e) {
+    				//e.printStackTrace();
+    				try {
+//    					isSpuChanged(spuDTO);//取消单个查询
+    					productFetchService.updateMaterial(spu);
+    				} catch (ServiceException e1) {
+    					System.out.println("spu更新材质信息失败"); 
+    					loggerError.info("spu更新材质信息失败");
+    				}
+    			}
                 if(pictureMap!=null){
                     String proId = product.getProductId();
                     if(pictureMap.containsKey(proId)&&pictureMap.get(proId)!=null){
@@ -184,7 +198,7 @@ public class FetchProduct {
                         }
                     }
                 }
-            } catch (ServiceException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             

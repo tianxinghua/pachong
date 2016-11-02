@@ -23,6 +23,8 @@
         <result column="LAST_TIME" property="lastTime" />
         <result column="NEWSEASON_ID" property="newseasonId" />
         <result column="NEWSEASON_NAME" property="newseasonName" />
+        <result column="SP_CATEGORY" property="spCategory" />
+        <result column="SP_BRAND" property="spBrand" />
 
 
 
@@ -38,7 +40,7 @@
 		SPU_ID,
 		SPU_NAME,CATEGORY_GENDER,
         CATEGORY_ID,CATEGORY_NAME,SUB_CATEGORY_ID,SUB_CATEGORY_NAME,
-        BRAND_ID,BRAND_NAME,
+        BRAND_ID,BRAND_NAME,MATERIAL,
         SEASON_ID,SEASON_NAME,
         PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME
 	</sql>
@@ -153,9 +155,17 @@
                 SUPPLIER_ID = #{supplierId}
             </if>
         </where>
-	</select>	
-	
-	<update id="updateSpuMemo">
+	</select>
+
+
+    <select id="findDistinctBrand" resultType="java.lang.String" >
+        select
+        DISTINCT BRAND_NAME
+        from SPU
+
+    </select>
+
+    <update id="updateSpuMemo">
 	    update SPU
        <set>
 		  MEMO = CONCAT(IF(MEMO IS NULL ,"",MEMO)," ",#{memo}), 
@@ -176,5 +186,37 @@
 	    </foreach>
     </update>
     
+    <update id="updateSpCategoryAndBrand" parameterType="iog_spu" >
+    	update SPU
+    	<set>
+    		<if test="null != spCategory">SP_CATEGORY = #{spCategory},</if>
+    		<if test="null != spBrand">SP_BRAND = #{spBrand},</if>
+    	</set>
+    	where SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
+    </update>
+    
+    <select id="findAllBySupplierId" resultMap="spuMap">
+    	select ID ,
+		SUPPLIER_ID ,
+		SPU_ID,
+		SPU_NAME,CATEGORY_GENDER,
+        CATEGORY_ID,CATEGORY_NAME,SUB_CATEGORY_ID,SUB_CATEGORY_NAME,
+        BRAND_ID,BRAND_NAME,
+        SEASON_ID,SEASON_NAME,
+        PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME,
+        NEWSEASON_ID,NEWSEASON_NAME,SP_CATEGORY,SP_BRAND
+        
+        from SPU        
+        <where>
+        	SUPPLIER_ID = #{supplierId}  
+        	<if test="null != startTime">
+        		and LAST_TIME >= #{startTime}
+        	</if>
+        	<if test="null != endTime">
+        		<![CDATA[ and LAST_TIME <= #{endTime}    ]]>
+        	</if>
+        </where>
+    
+    </select>
     
 </mapper>

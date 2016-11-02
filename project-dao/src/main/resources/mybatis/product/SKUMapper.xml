@@ -47,6 +47,12 @@
 		<result column="newSupplierPrice" property="newSupplierPrice" />
 		<result column="newSalePrice" property="newSalePrice" />
 	</resultMap>
+	
+	<resultMap type="iog_sku" id="skuId_spSkuId">
+		<result column="SKU_ID" property="skuId"  />
+		<result column="SP_SKU_ID" property="spSkuId"  />
+		<result column="SP_PRODUCT_CODE" property="spProductCode"/>
+	</resultMap>
 
 	<sql id="all_sku_column">
 		ID ,
@@ -134,6 +140,7 @@
               <if test="color != null"> COLOR = #{color},</if>
               <if test="productDescription != null"> PRODUCT_DESCRIPTION = #{productDescription},</if>
               <if test="updateTime != null"> UPDATE_TIME = #{updateTime},</if>
+			  <if test="lastTime != null"> LAST_TIME = #{lastTime},</if>
               <if test="eventStartDate != null"> EVENT_START_DATE = #{eventStartDate},</if>
               <if test="eventEndDate != null"> EVENT_END_DATE = #{eventEndDate}</if>
           </set>
@@ -265,6 +272,25 @@
 	   </set>
 	    where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{skuId}
     </update>
+    
+    
+    <update id="updateLastTime">
+       update SKU
+       <set>
+       		LAST_TIME = NOW()
+       </set>
+       <where>
+	            <if test="null!=supplierId">
+	                SUPPLIER_ID = #{supplierId}
+	            </if>
+	            <if test="null!=skuId">
+	                and SKU_ID = #{skuId}
+	            </if>
+	               <if test="null!=spuId">
+	                and SpU_ID = #{spuId}
+	            </if>
+	        </where>
+    </update>
 	<update id="updateSkuMemoList">
        update SKU
        <set>
@@ -279,4 +305,25 @@
      	  </foreach>
        </where>
     </update>
+    
+    <update id="updateSpSkuIdBySupplier">
+    	update SKU
+    	<set>
+    		<if test="null != spSkuId">SP_SKU_ID = #{spSkuId},</if>
+    		<if test="null != skuStatus">SP_STATUS = #{skuStatus},</if>
+    		<if test="null != spProductCode">SP_PRODUCT_CODE = #{spProductCode}</if>
+    	</set>
+    	where  SUPPLIER_ID = #{supplierId}   and   SKU_ID = #{supplierSkuId}
+    </update>
+    
+    <select id="findSpSkuIdsBySupplier" resultMap="skuId_spSkuId">
+    	select SKU_ID ,SP_SKU_ID ,SP_PRODUCT_CODE
+		from SKU where SUPPLIER_ID = #{supplierId}    
+    </select>
+    
+    <select id="findMaxTimeBySupplier" resultType="java.util.Date">
+    	select max(UPDATE_TIME) from SKU 
+    	where SUPPLIER_ID = #{supplierId} and STOCK >0
+    </select>
+    
 </mapper>

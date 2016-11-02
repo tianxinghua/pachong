@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.dto.ProductDTO;
@@ -149,5 +151,101 @@ public interface ProductSearchService {
 	 * @throws ServiceException
 	 */
 	public StringBuffer exportProductByEpRule(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+	
+	/**
+	 * BU根据新的ep规则导出产品
+	 * @param bu 选择哪个bu
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 */
+	public StringBuffer buExportProduct(String bu,String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+	
+	/**
+	 * 查找报表导出的产品
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 * @throws ServiceException
+	 */
+	public List<ProductDTO> findReportProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+	
+	/**
+	 * 导出已经生成了尚品sku的产品
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 * @throws ServiceException
+	 */
+	public List<ProductDTO> findProductOfHasSpSkuId(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+	
+	/**
+	 * 将产品List转换成Excel
+	 * @param products
+	 * @param picPath
+	 * @return
+	 * @throws ServiceException
+	 */
+	public HSSFWorkbook reportProductToExcel(List<ProductDTO> products,String picPath) throws ServiceException;
+	
+	/**
+	 * 将产品list转换StringBuffer
+	 * @param products
+	 * @return
+	 * @throws ServiceException
+	 */
+	public StringBuffer reportProductToBuffer(List<ProductDTO> products) throws ServiceException;
+	
+	/**
+	 * 报表导出
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 * @throws ServiceException
+	 */
+	public StringBuffer exportReportProduct(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+	/**
+	 * 女鞋
+	 * @param bu
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 * @throws ServiceException
+	 */
+	public StringBuffer shoeExportProduct(String bu,String supplier, Date startDate,
+			Date endDate, Integer pageIndex, Integer pageSize) throws ServiceException;
+	/**
+	 * 查找所有BU
+	 * @return
+	 */
+	public List<String> findAllBus() throws ServiceException;
+	
+	/**
+	 * 临时导出
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 * @throws ServiceException
+	 */
+	public StringBuffer tempExport(String supplier,Date startDate,Date endDate,Integer pageIndex,Integer pageSize) throws ServiceException;
+		
 }
 

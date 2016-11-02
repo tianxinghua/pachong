@@ -80,9 +80,22 @@
 	                return ;
 	            }
 	        }
-	        if(str == 'ep_rule'){
+	        if(str == 'ep_rule' || str == 'report'){
 	        	if("-1"== $('#supplier').val()){
 	        		alert("请选择KA或重点供应商");
+	            	return;
+	        	}
+	        }
+	        if(str == 'buExport'){
+	        	if("-1"== $('#bus').val()){
+	        		alert("请选择一个BU");
+	            	return;
+	        	}
+	        }
+	        if(str == 'everyday'){	 
+	        console.log("date="+$('#startDate').val());      
+	        	if('' == $('#startDate').val() && '' == $('#endDate').val()){
+	        		alert("请选择日期");
 	            	return;
 	        	}
 	        }
@@ -93,14 +106,20 @@
 	            pageIndex: $('#pageIndex').val(),
 	            pageSize:$('#pageSize').val(),
 	            supplierName:$ ('#supplier').find("option:selected").text(),
-	            flag:str
+	            flag:str,
+	            bu:    $('#bus').val()
 	        };
 	        return search;
 	}
 	//下载图片
 	function downloadpicture(){
 		var search = filter("");
-	    window.open('downLoadPicture?queryJson='+$.toJSON(search), '','');
+		if(null != search.supplier){
+			window.open('downLoadPicture?queryJson='+$.toJSON(search), '','');
+		}else{
+			alert("请选择一个供应商！");
+		}
+	    
 	}
 	//下载图片
 	function OnlineDownLoad(){
@@ -168,6 +187,45 @@
 		$.get("changeErrReason",{"supplierId":id,"reason":reason,"opeation":opeation})
 	}
 	
+	/**
+	*选择BU导出
+	*/
+	function buExport(str){
+		var search = filter(str);
+    	if(null != search){
+    		window.open('buexport?queryJson='+$.toJSON(search), '','');
+    	}else{
+    		return;
+    	}
+	}
+	
+	function downloadpicBySupplier(){		
+		if("-1"== $('#supplier').val()){
+	         alert("请选择供应商");
+	         return;
+	    }
+		var search = filter("");		
+		window.open('downloadpicBySupplier?queryJson='+$.toJSON(search), '','');
+		
+	}
+	
+	function tempExport(str){
+		var search = filter(str);
+    	if(null != search){
+    		window.open('export?queryJson='+$.toJSON(search), '','');
+    	}else{
+    		return;
+    	}
+    }
+    function everydayExport(everyday){
+    	var search = filter(everyday);
+    	if(null != search){
+    		window.open('exporteveryday?queryJson='+$.toJSON(search), '','');
+    	}else{
+    		return;
+    	}
+    }
+	
 </script>
 <script type="text/javascript"
 	src="<%=bathPath%>/js/DatePicker/config.js"></script>
@@ -181,7 +239,7 @@
 			<table>
 				<tr>
 					<td>选择供应商</td>
-					<td colspan="3"><select id="supplier">
+					<td colspan="3"><select id="supplier" style="width: 130px;height: 21px">
 							<option value="-1">请选择</option>
 							<c:forEach var="supplier" items="${supplierDTOList}">
 								<option value="${supplier.supplierId}">${supplier.supplierName}</option>
@@ -192,19 +250,33 @@
 				<tr>
 
 					<td>导出时间:</td>
-					<td colspan="3"><input id="startDate" name="startDate"
+					<td>
+						<input id="startDate" name="startDate"
 						style="width: 130px;"
 						onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}',minDate:'#F{$dp.$D(\'endDate\',{M:-1})}'})">
-
+					</td>
+					<td>至</td>
+					<td>
 						<input id="endDate" name="endDate" style="width: 130px;"
-						onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDate\')}',maxDate:'#F{$dp.$D(\'startDate\',{M:+1})}'})"></td>
+							onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDate\')}',maxDate:'#F{$dp.$D(\'startDate\',{M:+1})}'})">
+					</td>
 
 				</tr>
 				<tr>
 					<td>开始行数</td>
-					<td><input type="text" id="pageIndex" name="pageIndex" /></td>
+					<td><input type="text" id="pageIndex" name="pageIndex" style="width: 130px;height: 21px"/></td>
 					<td>导出行数</td>
-					<td><input type="text" id="pageSize" name="pageSize" /></td>
+					<td><input type="text" id="pageSize" name="pageSize" style="width: 130px;height: 21px"/></td>
+				</tr>
+				<tr>
+					<td>选择BU</td>
+					<td colspan="3" style="width: 130px;height: 21px"><select id="bus" style="width: 130px;height: 21px">
+							<option value="-1">请选择</option>
+							<c:forEach var="bu" items="${BUs}">
+								<option value="${bu}">${bu}</option>
+							</c:forEach>
+
+					</select></td>
 				</tr>
 			</table>
 		</form>
@@ -217,6 +289,12 @@
 	href="javascript:void(0)" onclick="exportProduct('ep_rule')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>按条件导出</a> 
 	<a
+	href="javascript:void(0)" onclick="exportProduct('report')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>报表导出</a> 
+	<a
+	href="javascript:void(0)" onclick="buExport('buExport')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>选择BU导出</a> 	
+	<a
 	href="javascript:void(0)" onclick="exportDiffProduct('diff')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>价格变化导出</a>
 	<a href="javascript:void(0)"
@@ -224,9 +302,31 @@
 	<a href="javascript:void(0)" onclick="updatePrice()" id="btn-edit" icon="icon-edit" class='easyui-linkbutton'>更新价格</a>
 	<a href="javascript:void(0)" onclick="exportOrder('order')" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>导出订单</a>
 	<a href="javascript:void(0)" onclick="queryOrder()" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>查看订单</a>
+	<a href="javascript:void(0)" onclick="everydayExport('everyday')" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>每日导出</a>
+	<a
+	href="javascript:void(0)" onclick="exportProduct('all')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>全部导出</a> 
+	<!-- <a
+	href="javascript:void(0)" onclick="tempExport('temp')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>临时导出</a>  -->
 	<br><br><br>
-	<a href="javascript:void(0)" onclick="downloadpicture()" icon="icon-search" class='easyui-linkbutton'>下载图片</a>
-		<br><br><br>
+	<!-- <a href="javascript:void(0)" onclick="downloadpicture()" icon="icon-search" class='easyui-linkbutton'>下载图片</a> -->
+	<div>
+		<div
+			style="width: 30%; padding-left: 1; margin: 0; float: left; box-sizing: border-box;">
+			<form id="tmp111" action="uploadAndDownPics"
+				method="post" enctype="multipart/form-data">
+				<input type="file" name="tmpfffff" id="tmpfffff">
+				<input type="submit" value="上传" id="uploadAndDownPics">				
+			</form>
+		</div>	
+		<div
+			style="width:30%; padding-left: 1; margin: 0; float: left; box-sizing: border-box;">
+			<a href="javascript:void(0)" onclick="downloadpicBySupplier()" icon="icon-search" class='easyui-linkbutton'>选择供应商下载图片</a>
+		</div>		
+			
+	</div>
+	<br><br><br>
 	<a href="javascript:void(0)" onclick="OnlineDownLoad()" icon="icon-search" class='easyui-linkbutton' title="按条件导出产品的下载图片,命名为spskuid,失败重试10次">下载图片online</a>
 		<br><br><br>
 	<form action="uploadFileAndDown" method="post" enctype="multipart/form-data">
@@ -262,8 +362,33 @@
 						onmouseenter="showSkuExcel()" onmouseleave="unshowSkuExcel()"
 						data-options="iconCls:'icon-save'">预售商品上传</a>
 				</form>
-			</div>
+			</div>			
 		</div>
+		<%-- <br>
+		<div>		
+			<div
+				style="width: 30%; padding: 0; margin: 0; float: left; box-sizing: border-box;">
+				<form id="uploadPreSaleFileAndDown"
+					action="uploadPreSaleFileAndDown" method="post"
+					enctype="multipart/form-data">
+					<input type="file" name="uploadPreSaleFile" id="uploadPreSaleFile">
+
+					<a href="#" class="easyui-linkbutton" id="submitSku"						
+						data-options="iconCls:'icon-save'">BU规则导入</a>
+				</form>
+			</div>
+			<div
+				style="width: 70%; padding: 0; margin: 0; float: left; box-sizing: border-box;">
+				<form id="uploadPreSaleFileAndDown"
+					action="uploadPreSaleFileAndDown" method="post"
+					enctype="multipart/form-data">
+					<input type="file" name="uploadPreSaleFile" id="uploadPreSaleFile">
+
+					<a href="#" class="easyui-linkbutton" id="submitSku"						
+						data-options="iconCls:'icon-save'">BU需要特殊处理的品牌导入</a>
+				</form>
+			</div>		
+		</div> --%>
 	<br><br><br>
 	<a href="stockUpdateException" onclick="stock()" id="btn-save" icon="icon-search" class='easyui-linkbutton'>库存更新异常查看</a> 
 	<a href="orderUpdateException" id="btn-save" icon="icon-search" class='easyui-linkbutton'>订单更新异常查看</a>

@@ -38,6 +38,8 @@ public class SpuDTO implements Serializable {
     private String memo;
     private String newseasonId;
     private String newseasonName;
+    private String spCategory;
+    private String spBrand;
 
     public String getId() {
         return id;

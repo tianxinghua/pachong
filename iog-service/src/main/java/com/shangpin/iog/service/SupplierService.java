@@ -31,4 +31,10 @@ public interface SupplierService {
      * @throws ServiceException
      */
     public SupplierDTO findBysupplierId(String supplierId) throws ServiceException;
+    
+    public List<SupplierDTO> hkFindAllByState(String supplier_state);
+    
+    public List<SupplierDTO> findAll() throws Exception;
+    
+    public SupplierDTO hkFindBysupplierId(String supplier)throws ServiceException;
 }

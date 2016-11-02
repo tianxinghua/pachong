@@ -55,4 +55,18 @@ public class UpdateStockServiceImpl implements UpdateStockService{
 			updateStockDao.saveStockUpdateDTO(stockUpdateDTO);
 		}
 	}
+
+	@Override
+	public void saveStockUpdateDTO(StockUpdateDTO stockUpdateDTO)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public StockUpdateDTO findStockUpdateBySUpplierId(String supplierId)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -92,11 +92,12 @@ public class GrabStockImp extends AbsUpdateProductStock {
         }
 		String filePath = null;
 		try{
+			logger.info("开始下载文件，文件保存在============="+localPath); 
 
 			filePath = SoapXmlUtil.downloadSoapXmlAsFile(serviceUrl,soapAction,contentType,soapRequestData,localPath);
 
 		}catch(Exception ex){
-			ex.printStackTrace();
+			logger.info("第一次下载失败，正在尝试第二次================"+ex.toString()); 
 			System.out.println("下载失败，正在重新下载...");
 			try{
 
@@ -104,6 +105,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
 			}catch(Exception e){
 				e.printStackTrace();
+				logger.info("第二次拉取alduca daosta数据失败---" + e.getMessage());
 				logError.error("拉取alduca daosta数据失败---" + e.getMessage());
 				return skustock;
 			}

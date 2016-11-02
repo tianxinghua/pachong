@@ -17,6 +17,7 @@
 		<typeAlias alias="iog_brand_sp" type="com.shangpin.iog.dto.BrandSpDTO"/>
 		<typeAlias alias="iog_color_contrast" type="com.shangpin.iog.dto.ColorContrastDTO"/>
 		<typeAlias alias="iog_material_contrast" type="com.shangpin.iog.dto.MaterialContrastDTO"/>
+		<typeAlias alias="iog_productOrigin_contrast" type="com.shangpin.iog.dto.ProductOriginConstrastDTO"/>
 		<typeAlias alias="iog_discount" type="com.shangpin.iog.dto.DiscountDTO"/>
 		<typeAlias alias="iog_discount_history" type="com.shangpin.iog.dto.DiscountHistoryDTO"/>
 		<typeAlias alias="iog_order" type="com.shangpin.iog.dto.OrderDTO"/>
@@ -35,6 +36,10 @@
 		<typeAlias alias="iog_csvAttribute" type="com.shangpin.iog.dto.CsvAttributeInfoDTO"/>
 		<typeAlias alias="iog_buEpRule" type="com.shangpin.iog.dto.BuEpRuleDTO"/>
 		<typeAlias alias="iog_buEpValue" type="com.shangpin.iog.dto.BuEpValueDTO"/>
+		<typeAlias alias="iog_buEpSpecial" type="com.shangpin.iog.dto.BuEpSpecialDTO"/>
+		<typeAlias alias="iog_season_relation" type="com.shangpin.iog.dto.SeasonRelationDTO"/>
+		<typeAlias alias="iog_supplierValue_mapping" type="com.shangpin.iog.dto.HubSupplierValueMappingDTO"/>
 		
+				<typeAlias alias="iog_stockUpdateLimit" type="com.shangpin.iog.dto.StockUpdateLimitDTO"/>
 	</typeAliases>
 </configuration>

@@ -13,16 +13,16 @@ import com.shangpin.iog.linde.schedule.AppContext;
  */
 public class Startup {
 
-    private static   Logger logger = LoggerFactory.getLogger(Startup.class);
-    private static ApplicationContext factory;
-    private static void loadSpringContext()
-    {
-        factory = new AnnotationConfigApplicationContext(AppContext.class);
-    }
-
-    public static void main(String[] args)
-    {
-        loadSpringContext();
-        logger.info(" schedule start  ");
-    }
+//    private static   Logger logger = LoggerFactory.getLogger(Startup.class);
+//    private static ApplicationContext factory;
+//    private static void loadSpringContext()
+//    {
+//        factory = new AnnotationConfigApplicationContext(AppContext.class);
+//    }
+//
+//    public static void main(String[] args)
+//    {
+//        loadSpringContext();
+//        logger.info(" schedule start  ");
+//    }
 }

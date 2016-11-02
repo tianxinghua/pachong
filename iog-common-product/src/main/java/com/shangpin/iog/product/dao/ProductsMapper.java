@@ -1,6 +1,7 @@
 package com.shangpin.iog.product.dao;
 
 
+import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.dto.ProductDTO;
@@ -13,6 +14,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ProductsMapper extends IBaseDao<ProductDTO> {
@@ -125,6 +127,30 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     List<ProductDTO> findListOfAllSupplier(@Param("startDate") Date startDate,
             @Param("endDate") Date endDate,
             RowBounds rowBounds);
+    
+    /**
+     * 查找所有的产品，包括有库存的和没库存的
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @param rowBounds
+     * @return
+     */
+    List<ProductDTO> findAllOfProducts(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            RowBounds rowBounds);
+    
+    /**
+     * 查找所有的产品，包括有库存的和没库存的
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    List<ProductDTO> findAllOfProducts(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate);
     /**
      * 按照ep规则查询所有图片名
      */
@@ -147,24 +173,77 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     
     /**
      * 根据指定的品类查询商品
-     * @param categories
+
+     * @param rowBounds
+     * @return
+     */
+    List<ProductDTO> findListInTheCategory(Map<String, Object> params,RowBounds rowBounds) throws ServiceException;
+    
+    /**
+     * 根据指定的品类查询商品
+     * @param params
+
+     * @return
+     */
+    List<ProductDTO> findListInTheCategory(Map<String, Object> params) throws ServiceException;
+
+
+    /**
+     * 获取所有不包含图片的完整数据
+     * @return
+     * @throws ServiceException
+     */
+    List<ProductDTO> findReport() throws ServiceException;
+
+
+
+
+    /**
+     * 返回数据完整的sku
+     * @param supplierId
+     * @param startDate
+     * @param endDate
+     * @return
+     * @throws ServiceException
+     */
+    List<ProductDTO> findReportBySupplierIdAndCreateTime(@Param("supplier") String supplierId,@Param("startDate") Date startDate,@Param("endDate") Date endDate) throws ServiceException;
+    
+    /**
+     * 临时导出 分页
      * @param supplier
      * @param startDate
      * @param endDate
      * @param rowBounds
      * @return
      */
-    List<ProductDTO> findListInTheCategory(@Param("categories") List<String> categories ,@Param("supplier") String supplier, @Param("startDate") Date startDate,@Param("endDate") Date endDate,RowBounds rowBounds);
+    List<ProductDTO> tempFindListBySupplierAndLastDate(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            RowBounds rowBounds) throws ServiceException;
     
     /**
-     * 根据指定的品类查询商品
-     * @param categories
+     * 临时导出 不分页
      * @param supplier
      * @param startDate
      * @param endDate
      * @return
      */
-    List<ProductDTO> findListInTheCategory(@Param("categories") List<String> categories ,@Param("supplier") String supplier, @Param("startDate") Date startDate,@Param("endDate") Date endDate);
+    List<ProductDTO> tempFindListBySupplierAndLastDate(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate) throws ServiceException;
+    
+    /**
+     * 查找已经生成过尚品sku，并且库存大于0的数据
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     * @throws ServiceException
+     */
+    public List<ProductDTO> findProductOfHasSpSkuId(@Param("supplier") String supplier,@Param("startDate") Date startDate,@Param("endDate") Date endDate) throws ServiceException;
+    
 }
 
 

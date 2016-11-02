@@ -19,7 +19,7 @@ public class Schedule {
 	private static Logger logger = Logger.getLogger("info");
 
 	@Autowired
-	StockImp stockImp;
+	StockImp biondini;
 	
 	
 	@SuppressWarnings("deprecation")
@@ -28,7 +28,7 @@ public class Schedule {
 		logger.info(new Date().toLocaleString()+"开始更新");
 		System.out.println(new Date().toLocaleString()+"开始更新");
     	Murder mur = Murder.getMur();
-    	mur.setStockImp(stockImp);
+    	mur.setStockImp(biondini);
     	Thread t = new Thread(mur);
     	t.start();
 	}

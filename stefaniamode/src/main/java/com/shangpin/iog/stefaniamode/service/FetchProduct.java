@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -301,5 +302,43 @@ public class FetchProduct {
 
 		return content;
 	}
+	
+	public static void main(String[] args) {
+		String xml = HttpUtil45.get(url,new OutTimeConfig(1000 * 60*60, 1000 * 60*60, 1000 * 60*60),null);
+		saveData("stefo.txt",xml);
+		System.out.println("ok----------");
+	}
+	
+	private static void saveData(String name,String data){
+    	try {
+    		File file = new File("E:\\"+File.separator+name);
+    		if (!file.exists()) {
+    			try {
+    				file.getParentFile().mkdirs();
+    				file.createNewFile();
+    				
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
+    		FileWriter fwriter = null;
+    		try {
+    			fwriter = new FileWriter("E:\\"+File.separator+name);
+    			fwriter.write(data);
+    		} catch (IOException ex) {
+    			ex.printStackTrace();
+    		} finally {
+    			try {
+    				fwriter.flush();
+    				fwriter.close();
+    			} catch (IOException ex) {
+    				ex.printStackTrace();
+    			}
+    		}
+		} catch (Exception e) {
+			e.printStackTrace();			
+		}
+    	
+    }
 
 }
