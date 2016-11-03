@@ -87,14 +87,14 @@ public class ReadExcel {
 						if (xssfRow.getCell(0) != null) {
 							xssfRow.getCell(0).setCellType(
 									Cell.CELL_TYPE_STRING);
-							item.setSupplierId(xssfRow.getCell(0).toString());
+							item.setSupplierId(xssfRow.getCell(0).toString().trim());
 						}else{
 							flag = false;
 						}
 						if (xssfRow.getCell(1) != null) {
 							xssfRow.getCell(1).setCellType(
 									Cell.CELL_TYPE_STRING);
-							item.setSupplierSkuId(xssfRow.getCell(1).toString());
+							item.setSupplierSkuId(xssfRow.getCell(1).toString().trim());
 						}else{
 							flag = false;
 						}
