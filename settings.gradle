@@ -44,4 +44,5 @@ include 'project-mq'
 include 'biondini-stock'
 include 'GiBiLogic'
 include 'spinnaker-stock'
+include 'stockclean'
 
