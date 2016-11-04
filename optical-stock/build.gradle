@@ -4,9 +4,11 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile(
     		    	project(':iog-common-product'),
-		        project(':openapi-ice'),
+		        project(':iog-sop'),
 				'org.apache.poi:poi:3.13',
       		'org.apache.poi:poi-excelant:3.13',
+      		'jaxen:jaxen:1.1.1',
+ 		'dom4j:dom4j:1.6'
  
     )
 }
