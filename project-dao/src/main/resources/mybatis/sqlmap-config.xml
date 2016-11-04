@@ -39,7 +39,7 @@
 		<typeAlias alias="iog_buEpSpecial" type="com.shangpin.iog.dto.BuEpSpecialDTO"/>
 		<typeAlias alias="iog_season_relation" type="com.shangpin.iog.dto.SeasonRelationDTO"/>
 		<typeAlias alias="iog_supplierValue_mapping" type="com.shangpin.iog.dto.HubSupplierValueMappingDTO"/>
-		
-				<typeAlias alias="iog_stockUpdateLimit" type="com.shangpin.iog.dto.StockUpdateLimitDTO"/>
+		<typeAlias alias="iog_productCode" type="com.shangpin.iog.dto.ProductCodeDTO"/>
+		<typeAlias alias="iog_stockUpdateLimit" type="com.shangpin.iog.dto.StockUpdateLimitDTO"/>
 	</typeAliases>
 </configuration>
