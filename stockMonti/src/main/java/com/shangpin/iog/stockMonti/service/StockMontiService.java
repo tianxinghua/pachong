@@ -85,17 +85,14 @@ public class StockMontiService {
 			    		long maxHousr = Long.parseLong(hours);
 			    		logger.info("供应商："+stockUpdateDTO.getSupplierId()+"未更新时间："+hour);
 			    		if(hour >= maxHousr){
-			    			System.out.println("供应商："+stockUpdateDTO.getSupplierId()+"未更新时间："+hour);
-			    			
-			    			SendMail.sendGroupMail(smtpHost, from,  
-			    					fromUserPassword, to, "【重要】库存更新异常",
-    								"供应商"+stockUpdateDTO.getSupplierId()+"库存已超过"+hours
-    								+ "未更新,现已把库存全部更新为0",  
-						            "text/html;charset=utf-8");
-			    			System.out.println("已发邮件");
 			    			Map<String,String> stocks = new HashMap<String,String>();
 			    			Collection<String> skuNo = grabProduct(stockUpdateDTO.getSupplierId(), "2015-01-01 00:00", format.format(new Date()), stocks);
 			    			updateStock(stockUpdateDTO.getSupplierId(),skuNo,stocks);
+			    			SendMail.sendGroupMail(smtpHost, from,  
+			    					fromUserPassword, to, "【重要】库存更新异常",
+    								"供应商"+stockUpdateDTO.getSupplierId()+"库存已超过"+hour
+    								+ "小时未更新,现已把库存全部更新为0",  
+						            "text/html;charset=utf-8");
 			    		}
 					}
 				}
@@ -128,7 +125,6 @@ public class StockMontiService {
 						stock = entry.getValue();
 					}
 					result = servant.UpdateStock(supplier, entry.getKey(), stock);
-					logger.info("待更新的数据：--------"+entry.getKey()+":"+stock);
 					if(!result){
 						faileCount++;
 					}else{
@@ -175,8 +171,6 @@ public class StockMontiService {
 				startDate = System.currentTimeMillis();
 				try {
 					SopProductSkuPage products = servant.FindCommodityInfoPage(supplier, query);
-					logger.warn("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
-					logger.info("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
 					skus = products.SopProductSkuIces;
 					if(skus!=null){
 						i=5;

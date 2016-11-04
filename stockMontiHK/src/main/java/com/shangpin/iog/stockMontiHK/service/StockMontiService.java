@@ -90,28 +90,15 @@ public class StockMontiService {
 			    		long maxHousr = Long.parseLong(hours);
 			    		logger.info("供应商："+stockUpdateDTO.getSupplierId()+"未更新时间："+hour +"maxHousr:"+maxHousr);
 			    		if(hour >= maxHousr){
-			    			Thread t = new Thread(new Runnable() {
-			    				@Override
-			    				public void run() {
-			    					try {
-			    						SendMail.sendGroupMail(
-			    								smtpHost,
-			    								from,
-			    								fromUserPassword,
-			    								to,
-			    								"【重要】库存更新异常",
-			    								"供应商"+supplierId+"库存已超过"+hours
-			    								+ "未更新,现已把库存全部更新为0",
-			    								messageType);
-			    					} catch (Exception e) {
-			    						logger.error(e.getMessage());
-			    					}
-			    				}
-			    			});
-//			    			t.start();
+			    			
 			    			Map<String,String> stocks = new HashMap<String,String>();
 			    			Collection<String> skuNo = grabProduct(stockUpdateDTO.getSupplierId(),map.get(stockUpdateDTO.getSupplierId()),"2015-01-01 00:00", format.format(new Date()), stocks);
 			    			updateIceStock(stockUpdateDTO.getSupplierId(),map.get(stockUpdateDTO.getSupplierId()),skuNo,stocks);
+			    			SendMail.sendGroupMail(smtpHost, from,  
+			    					fromUserPassword, to, "【重要】库存更新异常",
+    								"供应商"+stockUpdateDTO.getSupplierId()+"库存已超过"+hour
+    								+ "小时未更新,现已把库存全部更新为0",  
+						            "text/html;charset=utf-8");
 			    		}
 					}
 				}
