@@ -10,8 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Component;
 
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import com.shangpin.sop.AbsUpdateProductStock;
 
 @Component
 public class Murder extends TimerTask{
@@ -19,7 +19,7 @@ public class Murder extends TimerTask{
 	private static int time;
     static {
         if(null==bdl)
-         bdl=ResourceBundle.getBundle("conf");
+         bdl=ResourceBundle.getBundle("sop");
         time = Integer.valueOf(bdl.getString("time"));
     }
     

@@ -66,6 +66,13 @@
 
 
 	</resultMap>
+	
+	<resultMap type="iog_productCode" id="ProductCode">
+		<result column="SUPPLIER_ID" property="supplierid"/>
+		<result column="BRAND_NAME" property="brandName"/>
+		<result column="SPU_ID" property="spuId"/>
+		<result column="PRODUCT_CODE" property="productCode"/> 
+	</resultMap>
 
     <resultMap id="barcodeResultMap" type="iog_spec_product">
 
@@ -95,6 +102,30 @@
         item_id,barcode,item_size,color,stock,pictures,product_detail
 	</sql>
 	
+	<select id="findBySpBrandName" resultMap="ProductCode">
+			SELECT DISTINCT
+			s.SUPPLIER_ID SUPPLIER_ID,
+			s.BRAND_NAME BRAND_NAME,
+			s.SPU_ID SPU_ID,
+			k.PRODUCT_CODE PRODUCT_CODE
+		FROM
+			SPU s,
+			SKU k
+		WHERE
+			s.SUPPLIER_ID = k.SUPPLIER_ID
+		AND s.SPU_ID = k.SPU_ID
+		AND s.BRAND_NAME IN (
+			SELECT
+				SupplierValue
+			FROM
+				HubSupplierValueMapping
+			WHERE
+				SpValue = #{brandName}
+		)
+		ORDER BY
+			SUPPLIER_ID,
+			BRAND_NAME
+	</select>
 
 	<select id="findListBySupplierAndLastDate"  resultMap="ProductsResultMap">
 		

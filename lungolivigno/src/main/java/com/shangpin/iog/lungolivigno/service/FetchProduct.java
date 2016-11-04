@@ -47,6 +47,9 @@ public class FetchProduct extends AbsSaveProduct{
 	private static String url_login = null;
 	private static String url_getProducts = null;
 	private static String url_getAttributes = null;
+	private static String user_name = null;
+	private static String user_password = null;
+	private static String url_getPriceList = null;
 	
 	static {
 		if (null == bdl)
@@ -55,6 +58,9 @@ public class FetchProduct extends AbsSaveProduct{
 		url_login = bdl.getString("url_login");
 		url_getProducts = bdl.getString("url_getProducts");
 		url_getAttributes = bdl.getString("url_getAttributes");
+		user_name = bdl.getString("user_name");
+		user_password = bdl.getString("user_password");
+		url_getPriceList = bdl.getString("url_getPriceList");
 	}
 	
 	public Map<String, Object> fetchProductAndSave() {
@@ -75,8 +81,8 @@ public class FetchProduct extends AbsSaveProduct{
 			System.out.println("-------------开始登陆----------------");
 			OutTimeConfig outTimeConf = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
 			User user = new User();
-			user.setUserName("ll_web");
-			user.setPassword("lng.r45h");			
+			user.setUserName(user_name);
+			user.setPassword(user_password);			
 			String jsonValue = new Gson().toJson(user); 			
 			String result = HttpUtil45.operateData("post", "json", url_login, outTimeConf, null, jsonValue, "", "");
 			logger.info("login result==="+result);
@@ -116,11 +122,11 @@ public class FetchProduct extends AbsSaveProduct{
 						spu.setSupplierId(supplierId);
 						spu.setSpuId(resultDTO.getSku());
 						spu.setCategoryGender(resultDTO.getAttributes().get(2).getValue());
-						spu.setCategoryName(resultDTO.getAttributes().get(7).getValue());
+						spu.setCategoryName(resultDTO.getAttributes().get(8).getValue().trim());
 						spu.setBrandName(resultDTO.getAttributes().get(1).getValue());
 						spu.setSeasonName(resultDTO.getAttributes().get(4).getValue());
-						String material = resultDTO.getAttributes().get(9).getValue();
-						spu.setMaterial(StringUtils.isNotBlank(material)? material:resultDTO.getAttributes().get(9).getCode());
+						String material = resultDTO.getAttributes().get(10).getValue().trim();
+						spu.setMaterial(StringUtils.isNotBlank(material)? material:resultDTO.getAttributes().get(10).getCode().trim());
 						String origin = resultDTO.getAttributes().get(6).getValue();
 						spu.setProductOrigin(StringUtils.isNotBlank(origin)? origin:resultDTO.getAttributes().get(6).getCode());
 						spuList.add(spu);
@@ -135,10 +141,10 @@ public class FetchProduct extends AbsSaveProduct{
 		                        sku.setSkuId(resultDTO.getSku()+"-"+sizes.getLabel());
 		                        sku.setProductName(resultDTO.getName());
 		                        sku.setMarketPrice("");
-		                        sku.setSalePrice(""+sizes.getPrice());
-		                        sku.setSupplierPrice(""); 
+		                        sku.setSalePrice("");
+		                        sku.setSupplierPrice(""+sizes.getPrice()); 
 		                        sku.setProductCode(resultDTO.getAttributes().get(5).getCode());
-		                        sku.setColor(resultDTO.getAttributes().get(8).getValue());
+		                        sku.setColor(resultDTO.getAttributes().get(9).getValue().trim());
 		                        sku.setProductSize(sizes.getLabel());
 		                        sku.setStock(""+sizes.getQty());
 		                        skuList.add(sku);

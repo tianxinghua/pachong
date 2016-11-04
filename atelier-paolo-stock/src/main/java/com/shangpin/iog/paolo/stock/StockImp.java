@@ -1,10 +1,10 @@
 package com.shangpin.iog.paolo.stock;
 
 import com.shangpin.framework.ServiceException;
-import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.sop.AbsUpdateProductStock;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -36,7 +36,7 @@ public class StockImp  extends AbsUpdateProductStock {
         url = bdl.getString("url");
     }
     @Override
-    public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+    public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
     	Map<String,String> skuMap = new HashMap<String,String>();
     	String data = "";
     	OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60*60,1000*60*600,1000*60*600);
@@ -57,7 +57,7 @@ public class StockImp  extends AbsUpdateProductStock {
     			skuMap.put(skuArr[0]+"-"+barCode, stock);
 			}
 		}
-        Map<String,String> returnMap = new HashMap<String,String>();
+        Map<String,Integer> returnMap = new HashMap<String,Integer>();
         Iterator<String> iterator=skuNo.iterator();
         //为供应商循环赋值
         logger.info("循环赋值");
@@ -69,10 +69,10 @@ public class StockImp  extends AbsUpdateProductStock {
         	if (StringUtils.isNotBlank(skuId)) {
         		if (skuMap.containsKey(skuId)) {
         			stock = skuMap.get(skuId);
-        			returnMap.put(skuId, stock);
+        			returnMap.put(skuId, Integer.parseInt(stock));
         			num++;
 				}else{
-					returnMap.put(skuId, "0");
+					returnMap.put(skuId, 0);
 				}
 			}
         }
@@ -80,18 +80,18 @@ public class StockImp  extends AbsUpdateProductStock {
         return returnMap;
     }
 
-    public static void main(String[] args) throws Exception {
-    	//加载spring
-        loadSpringContext();
-        StockImp stockImp =(StockImp)factory.getBean("atelierpaolo");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        logger.info("russoCapri ATELIER更新数据库开始");
-        try {
-			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
-		} catch (Exception e) {
-			logger.info("russoCapri ATELIER更新库存数据库出错"+e.toString());
-		}
-        logger.info("russoCapri ATELIER更新数据库结束");
-        System.exit(0);
-    }
+//    public static void main(String[] args) throws Exception {
+//    	//加载spring
+//        loadSpringContext();
+//        StockImp stockImp =(StockImp)factory.getBean("atelierpaolo");
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        logger.info("russoCapri ATELIER更新数据库开始");
+//        try {
+//			stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+//		} catch (Exception e) {
+//			logger.info("russoCapri ATELIER更新库存数据库出错"+e.toString());
+//		}
+//        logger.info("russoCapri ATELIER更新数据库结束");
+//        System.exit(0);
+//    }
 }
