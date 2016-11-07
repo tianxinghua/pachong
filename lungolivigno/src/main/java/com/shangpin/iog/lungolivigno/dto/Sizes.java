@@ -22,7 +22,7 @@ public class Sizes {
     @JsonProperty("Label")
     private String Label;
     @JsonProperty("Price")
-    private int Price;
+    private String Price;
     @JsonProperty("Qty")
     private int Qty;
     @JsonProperty("StockDetail")

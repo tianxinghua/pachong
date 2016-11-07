@@ -27,6 +27,8 @@ import ShangPin.SOP.Servant.OpenApiServantPrx;
 import com.shangpin.ice.ice.IcePrxHelper;
 import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.dto.StockUpdateDTO;
+import com.shangpin.iog.dto.SupplierDTO;
+import com.shangpin.iog.product.dao.SupplierMapper;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.UpdateStockService;
 
@@ -67,6 +69,8 @@ public class StockMontiService {
     
 	@Autowired
 	SkuPriceService skuPriceService;
+	@Autowired
+	SupplierMapper supplierDAO;
 	
 	public void findSupplier(){
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -85,12 +89,21 @@ public class StockMontiService {
 			    		long maxHousr = Long.parseLong(hours);
 			    		logger.info("供应商："+stockUpdateDTO.getSupplierId()+"未更新时间："+hour);
 			    		if(hour >= maxHousr){
+			    			
+			    			String supplierName = "";
+			    			try {
+			    				SupplierDTO supplier = supplierDAO.findBysupplierId(stockUpdateDTO.getSupplierId());
+			    				supplierName = supplier.getSupplierName();
+			    			} catch (Exception e) {
+								// TODO: handle exception
+							}
+			    			
 			    			Map<String,String> stocks = new HashMap<String,String>();
 			    			Collection<String> skuNo = grabProduct(stockUpdateDTO.getSupplierId(), "2015-01-01 00:00", format.format(new Date()), stocks);
 			    			updateStock(stockUpdateDTO.getSupplierId(),skuNo,stocks);
 			    			SendMail.sendGroupMail(smtpHost, from,  
 			    					fromUserPassword, to, "【重要】库存更新异常",
-    								"供应商"+stockUpdateDTO.getSupplierId()+"库存已超过"+hour
+    								"供应商"+supplierName+" 门户编号"+stockUpdateDTO.getSupplierId()+"库存已超过"+hour
     								+ "小时未更新,现已把库存全部更新为0",  
 						            "text/html;charset=utf-8");
 			    		}

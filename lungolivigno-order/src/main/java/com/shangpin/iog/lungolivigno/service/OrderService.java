@@ -99,34 +99,34 @@ public class OrderService extends AbsOrderService{
 			RequestSaveOrderDTO requestSaveOrderDTO = new RequestSaveOrderDTO();
 			requestSaveOrderDTO.setID(orderDTO.getSpPurchaseNo());
 			requestSaveOrderDTO.setOrderDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
-//			Billingcustomer billingCustomer = new Billingcustomer();
-//			//ID??
-//			billingCustomer.setFirstName("");
-//			billingCustomer.setLastName("");
-//			billingCustomer.setAddress("");
-//			billingCustomer.setZipCode("");
-//			billingCustomer.setCity("");
-//			billingCustomer.setState("");
-//			billingCustomer.setCountry("");
-//			billingCustomer.setPhone("");
-//			billingCustomer.setEmail("");
-//			billingCustomer.setVatNumber("");//增值税税号
-//			billingCustomer.setFiscalCode(""); //财政代码
-//			requestSaveOrderDTO.setBillingCustomer(billingCustomer);
-//			Shippingcustomer Shippingcustomer = new Shippingcustomer();
-//			//ID??
-//			Shippingcustomer.setFirstName("");
-//			Shippingcustomer.setLastName("");
-//			Shippingcustomer.setAddress("");
-//			Shippingcustomer.setZipCode("");
-//			Shippingcustomer.setCity("");
-//			Shippingcustomer.setState("");
-//			Shippingcustomer.setCountry("");
-//			Shippingcustomer.setPhone("");
-//			Shippingcustomer.setEmail("");
-//			Shippingcustomer.setVatNumber("");//增值税税号
-//			Shippingcustomer.setFiscalCode(""); //财政代码
-//			requestSaveOrderDTO.setShippingCustomer(Shippingcustomer);
+			Billingcustomer billingCustomer = new Billingcustomer();
+			billingCustomer.setID(orderDTO.getSpOrderId());
+			billingCustomer.setFirstName("SHANGPIN.COM");
+			billingCustomer.setLastName("SHANGPIN.COM");
+			billingCustomer.setAddress("SHANGPIN.COM");
+			billingCustomer.setZipCode("100000");
+			billingCustomer.setCity("BEIJING");
+			billingCustomer.setState("");
+			billingCustomer.setCountry("CHINA");
+			billingCustomer.setPhone("00852-24249188");
+			billingCustomer.setEmail("");
+			billingCustomer.setVatNumber("");//增值税税号
+			billingCustomer.setFiscalCode(""); //财政代码
+			requestSaveOrderDTO.setBillingCustomer(billingCustomer);
+			Shippingcustomer Shippingcustomer = new Shippingcustomer();
+			Shippingcustomer.setID(orderDTO.getSpOrderId());
+			Shippingcustomer.setFirstName("Cindy Chan");
+			Shippingcustomer.setLastName("");
+			Shippingcustomer.setAddress("Flat 303-309,Hi-Tech Centre,9 Choi Yuen Road,Sheung Shui,N.T.");
+			Shippingcustomer.setZipCode("");
+			Shippingcustomer.setCity("Yoursender International Logistics (HongKong) LMD.CO.,");
+			Shippingcustomer.setState("");
+			Shippingcustomer.setCountry("China");
+			Shippingcustomer.setPhone("00852-24249188");
+			Shippingcustomer.setEmail("");
+			Shippingcustomer.setVatNumber("");//增值税税号
+			Shippingcustomer.setFiscalCode(""); //财政代码
+			requestSaveOrderDTO.setShippingCustomer(Shippingcustomer);
 			List<Rows> rows = new ArrayList<Rows>();
 			Rows row = new Rows();
 			row.setSku(sku.substring(0, sku.indexOf("-")));
@@ -211,9 +211,8 @@ public class OrderService extends AbsOrderService{
 				boolean found = false;  
 				for(int i=0;i<response.getResult().size() && !found;i++){
 					Result resultDTO = response.getResult().get(i); 
-					for(Sizes sizeDTO : resultDTO.getSizes()){
-						String tag = sizeDTO.getTag().trim();
-						if(size.equals(tag)){
+					for(Sizes sizeDTO : resultDTO.getSizes()){						
+						if(Integer.parseInt(size) == sizeDTO.getSizeIndex()){
 							if(sizeDTO.getQty()>0){
 								storeCode = resultDTO.getStoreCode();
 								found = true;
@@ -332,27 +331,27 @@ public class OrderService extends AbsOrderService{
 	
 	public static void main(String[] args){
 		OrderService order = new OrderService();
-		String storecode = "";
-		try {
-			storecode = order.getStoreCode("708074982162062","TU");
-		} catch (ServiceMessageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println(storecode); 
+//		String storecode = "";
+//		try {
+//			storecode = order.getStoreCode("708074982162062","TU");
+//		} catch (ServiceMessageException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		System.out.println(storecode); 
 //		OrderDTO orderDTO = new OrderDTO();
-//		orderDTO.setDetail("100001812111001-34:1,");
-//		orderDTO.setSpPurchaseNo("CGD2016101700000"); 
-//		orderDTO.setPurchasePriceDetail("158");
+//		orderDTO.setDetail("708074982162037-1:1,");
+//		orderDTO.setSpPurchaseNo("CGD20161107675218"); 
+//		orderDTO.setPurchasePriceDetail("852");
 //		
-//		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
-//		deleteOrder.setSpPurchaseNo("CGD2016101700000");
-//		deleteOrder.setSupplierOrderNo("01700000"); 
+		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
+		deleteOrder.setSpPurchaseNo("CGD20161107675218");
+		deleteOrder.setSupplierOrderNo("07675218"); 
 //		
 //		OrderService order = new OrderService();
 ////		order.handleSupplierOrder(orderDTO); 
-////		order.handleConfirmOrder(orderDTO); 
-//		order.handleRefundlOrder(deleteOrder); 
+//		order.handleConfirmOrder(orderDTO); 
+		order.handleRefundlOrder(deleteOrder); 
 	}
 
 }
