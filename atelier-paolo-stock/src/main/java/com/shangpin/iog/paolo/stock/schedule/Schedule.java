@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import com.shangpin.iog.paolo.stock.StockImp;
 
 @Component
-@PropertySource("classpath:conf.properties")
+@PropertySource("classpath:sop.properties")
 public class Schedule {
 
 	private static Logger logger = Logger.getLogger("info");

@@ -4,7 +4,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile(
     		    	project(':iog-common-product'),
-		        project(':openapi-ice'),
+		        project(':iog-sop'),
 				'org.apache.axis2:axis2-kernel:1.7.2',
            	'org.apache.axis2:axis2-adb:1.7.2',
            	'org.apache.axis2:axis2-transport-local:1.7.2',

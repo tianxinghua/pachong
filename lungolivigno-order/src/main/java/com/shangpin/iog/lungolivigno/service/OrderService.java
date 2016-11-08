@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -23,10 +24,14 @@ import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.lungolivigno.dto.Billingcustomer;
 import com.shangpin.iog.lungolivigno.dto.LoginDTO;
 import com.shangpin.iog.lungolivigno.dto.RequestSaveOrderDTO;
+import com.shangpin.iog.lungolivigno.dto.RequestStoreCode;
 import com.shangpin.iog.lungolivigno.dto.ResponseCancelOrder;
 import com.shangpin.iog.lungolivigno.dto.ResponseSaveOrderDTO;
+import com.shangpin.iog.lungolivigno.dto.ResponseStoreCode;
+import com.shangpin.iog.lungolivigno.dto.Result;
 import com.shangpin.iog.lungolivigno.dto.Rows;
 import com.shangpin.iog.lungolivigno.dto.Shippingcustomer;
+import com.shangpin.iog.lungolivigno.dto.Sizes;
 import com.shangpin.iog.lungolivigno.dto.User;
 @Component
 public class OrderService extends AbsOrderService{
@@ -44,6 +49,7 @@ public class OrderService extends AbsOrderService{
     private static String user_name = null;
     private static String user_password = null;
     private static String url_cancelOrder = null;
+    private static String url_getStock = null;
     
     static {
         if(null==bdl)
@@ -55,6 +61,7 @@ public class OrderService extends AbsOrderService{
         user_name = bdl.getString("user_name");
         user_password = bdl.getString("user_password");
         url_cancelOrder = bdl.getString("url_cancelOrder");
+        url_getStock = bdl.getString("url_getStock");
         
         sessionId = getSessionId();
     }
@@ -83,46 +90,51 @@ public class OrderService extends AbsOrderService{
 
 		try{
 			//构造下单参数
+			//1、获取storecode
+			String sku_stock = orderDTO.getDetail().split(",")[0];
+			String sku = sku_stock.split(":")[0];
+			String stock = sku_stock.split(":")[1];			
+			String storecode = getStoreCode(sku.substring(0, sku.indexOf("-")),sku.substring(sku.indexOf("-")+1));
+			//2、下单参数
 			RequestSaveOrderDTO requestSaveOrderDTO = new RequestSaveOrderDTO();
 			requestSaveOrderDTO.setID(orderDTO.getSpPurchaseNo());
 			requestSaveOrderDTO.setOrderDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
-//			Billingcustomer billingCustomer = new Billingcustomer();
-//			//ID??
-//			billingCustomer.setFirstName("");
-//			billingCustomer.setLastName("");
-//			billingCustomer.setAddress("");
-//			billingCustomer.setZipCode("");
-//			billingCustomer.setCity("");
-//			billingCustomer.setState("");
-//			billingCustomer.setCountry("");
-//			billingCustomer.setPhone("");
-//			billingCustomer.setEmail("");
-//			billingCustomer.setVatNumber("");//增值税税号
-//			billingCustomer.setFiscalCode(""); //财政代码
-//			requestSaveOrderDTO.setBillingCustomer(billingCustomer);
-//			Shippingcustomer Shippingcustomer = new Shippingcustomer();
-//			//ID??
-//			Shippingcustomer.setFirstName("");
-//			Shippingcustomer.setLastName("");
-//			Shippingcustomer.setAddress("");
-//			Shippingcustomer.setZipCode("");
-//			Shippingcustomer.setCity("");
-//			Shippingcustomer.setState("");
-//			Shippingcustomer.setCountry("");
-//			Shippingcustomer.setPhone("");
-//			Shippingcustomer.setEmail("");
-//			Shippingcustomer.setVatNumber("");//增值税税号
-//			Shippingcustomer.setFiscalCode(""); //财政代码
-//			requestSaveOrderDTO.setShippingCustomer(Shippingcustomer);
+			Billingcustomer billingCustomer = new Billingcustomer();
+			billingCustomer.setID(orderDTO.getSpOrderId());
+			billingCustomer.setFirstName("SHANGPIN.COM");
+			billingCustomer.setLastName("SHANGPIN.COM");
+			billingCustomer.setAddress("SHANGPIN.COM");
+			billingCustomer.setZipCode("100000");
+			billingCustomer.setCity("BEIJING");
+			billingCustomer.setState("");
+			billingCustomer.setCountry("CHINA");
+			billingCustomer.setPhone("00852-24249188");
+			billingCustomer.setEmail("");
+			billingCustomer.setVatNumber("");//增值税税号
+			billingCustomer.setFiscalCode(""); //财政代码
+			requestSaveOrderDTO.setBillingCustomer(billingCustomer);
+			Shippingcustomer Shippingcustomer = new Shippingcustomer();
+			Shippingcustomer.setID(orderDTO.getSpOrderId());
+			Shippingcustomer.setFirstName("Cindy Chan");
+			Shippingcustomer.setLastName("");
+			Shippingcustomer.setAddress("Flat 303-309,Hi-Tech Centre,9 Choi Yuen Road,Sheung Shui,N.T.");
+			Shippingcustomer.setZipCode("");
+			Shippingcustomer.setCity("Yoursender International Logistics (HongKong) LMD.CO.,");
+			Shippingcustomer.setState("");
+			Shippingcustomer.setCountry("China");
+			Shippingcustomer.setPhone("00852-24249188");
+			Shippingcustomer.setEmail("");
+			Shippingcustomer.setVatNumber("");//增值税税号
+			Shippingcustomer.setFiscalCode(""); //财政代码
+			requestSaveOrderDTO.setShippingCustomer(Shippingcustomer);
 			List<Rows> rows = new ArrayList<Rows>();
-			Rows row = new Rows();								
-			String sku_stock = orderDTO.getDetail().split(",")[0];
-			String sku = sku_stock.split(":")[0];
-			String stock = sku_stock.split(":")[1];
+			Rows row = new Rows();
 			row.setSku(sku.substring(0, sku.indexOf("-")));
 			row.setSizeIndex(sku.substring(sku.indexOf("-")+1)); 
 			row.setQty(Integer.parseInt(stock));
 			row.setPrice(Long.valueOf(orderDTO.getPurchasePriceDetail())); 
+			row.setFinalPrice(Long.valueOf(orderDTO.getPurchasePriceDetail())); 
+			row.setPickStoreCode(storecode); 
 			rows.add(row);
 			requestSaveOrderDTO.setRows(rows);	
 			String createOrderStr = new Gson().toJson(requestSaveOrderDTO);
@@ -162,6 +174,62 @@ public class OrderService extends AbsOrderService{
 			orderDTO.setExcState("1");
 			orderDTO.setExcTime(new Date());
 		}
+	}
+	
+	private String getStoreCode(String skuId,String size) throws ServiceMessageException{
+		
+		String storeCode = null;
+		RequestStoreCode requestStoreCode = new RequestStoreCode();
+		List<String> sku = new ArrayList<String>();
+		sku.add(skuId);
+		requestStoreCode.setSku(sku);
+		requestStoreCode.setWithDetail(true);
+		String requestParam = new Gson().toJson(requestStoreCode);
+		String getStockUrl = url_getStock+sessionId;
+		logger.info("获取storecode url====="+getStockUrl+" 参数======="+requestParam); 
+		String result = null;
+		try {
+			result = HttpUtil45.operateData("post", "json", getStockUrl, outTimeConf, null, requestParam,"", "");
+		} catch (ServiceException e) {
+			if(e.getMessage().equals("状态码:401")){//sessionId 过期
+				sessionId = getSessionId();
+				getStockUrl = url_getStock+sessionId;
+				try {
+					result = HttpUtil45.operateData("post", "json", getStockUrl, outTimeConf, null, requestParam,"", "");
+				} catch (ServiceException e1) {
+					error.error(e1.toString()); 
+					throw new ServiceMessageException("获取storecode失败,发生异常:"+e1.toString());
+				}
+			}else{
+				throw new ServiceMessageException("获取storecode失败,发生异常:"+e.toString());
+			}
+		}
+		logger.info("获取storecode==========="+result); 
+		if(StringUtils.isNotBlank(result) || HttpUtil45.errorResult.equals(result)){ 
+			ResponseStoreCode response = new Gson().fromJson(result, ResponseStoreCode.class);			
+			if(response != null && response.getResult().size()>0){
+				boolean found = false;  
+				for(int i=0;i<response.getResult().size() && !found;i++){
+					Result resultDTO = response.getResult().get(i); 
+					for(Sizes sizeDTO : resultDTO.getSizes()){						
+						if(Integer.parseInt(size) == sizeDTO.getSizeIndex()){
+							if(sizeDTO.getQty()>0){
+								storeCode = resultDTO.getStoreCode();
+								found = true;
+								break;
+							}
+						}
+					}
+				}
+				logger.info("返回storeCode=========="+storeCode+" found==="+found); 
+				return storeCode;
+			}else{
+				throw new ServiceMessageException("获取storecode失败,发生异常:"+response.getErrMessage());
+			}			
+		}else{
+			throw new ServiceMessageException("获取storecode失败,发生异常。");
+		}
+		
 	}
 	
 	/**
@@ -262,17 +330,26 @@ public class OrderService extends AbsOrderService{
 	}
 	
 	public static void main(String[] args){
-		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setDetail("100001812111001-34:1,");
-		orderDTO.setSpPurchaseNo("CGD2016101700000"); 
-		orderDTO.setPurchasePriceDetail("158");
-		
-		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
-		deleteOrder.setSpPurchaseNo("CGD2016101700000");
-		deleteOrder.setSupplierOrderNo("01700000"); 
-		
 		OrderService order = new OrderService();
-//		order.handleSupplierOrder(orderDTO); 
+//		String storecode = "";
+//		try {
+//			storecode = order.getStoreCode("708074982162062","TU");
+//		} catch (ServiceMessageException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		System.out.println(storecode); 
+//		OrderDTO orderDTO = new OrderDTO();
+//		orderDTO.setDetail("708074982162037-1:1,");
+//		orderDTO.setSpPurchaseNo("CGD20161107675218"); 
+//		orderDTO.setPurchasePriceDetail("852");
+//		
+		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
+		deleteOrder.setSpPurchaseNo("CGD20161107675218");
+		deleteOrder.setSupplierOrderNo("07675218"); 
+//		
+//		OrderService order = new OrderService();
+////		order.handleSupplierOrder(orderDTO); 
 //		order.handleConfirmOrder(orderDTO); 
 		order.handleRefundlOrder(deleteOrder); 
 	}

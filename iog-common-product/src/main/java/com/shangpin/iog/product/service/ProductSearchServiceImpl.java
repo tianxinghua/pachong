@@ -901,6 +901,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			
 			if(StringUtils.isBlank(materialOrg)){
 				return "";
+			}else{
+				materialOrg = materialOrg.trim().replaceAll("\n", "").replaceAll("\r", "");
 			}
 			if(materialContrastMap.containsKey(materialOrg.toLowerCase())){
 				return materialContrastMap.get(materialOrg.toLowerCase());

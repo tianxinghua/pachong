@@ -39,9 +39,9 @@ include 'smets-stock'
 include 'project-mq'
 
 include 'dellogliostore'
-include 'efashion'
+include 'stockMonti'
 include 'project-mq'
 include 'biondini-stock'
-include 'GiBiLogic'
+include 'stockMontiHK'
 include 'spinnaker-stock'
 
