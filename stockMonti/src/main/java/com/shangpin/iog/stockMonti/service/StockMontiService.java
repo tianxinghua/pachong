@@ -9,11 +9,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +33,8 @@ import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.dto.StockUpdateDTO;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.UpdateStockService;
-
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 
 
 @Component("stockMontiService")
@@ -64,43 +69,66 @@ public class StockMontiService {
 			logger.error("ICE 代理失败");
 		}
     }
-    
+    ExecutorService exe = new ThreadPoolExecutor(10, Integer.MAX_VALUE, 500, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(100),new ThreadPoolExecutor.CallerRunsPolicy());
 	@Autowired
 	SkuPriceService skuPriceService;
 	
 	public void findSupplier(){
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		
 		List<StockUpdateDTO> list = null;
 		try {
 			list = updateStockService.getAll();
 			
+//			ExecutorService exe=Executors.newFixedThreadPool(10);//相当于跑4遍
 			for(final StockUpdateDTO stockUpdateDTO:list){
 				if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
 					if(stockUpdateDTO.getSupplierId().equals(supplierId)){
 						continue;
 					}
+					
 					if("1".equals(stockUpdateDTO.getStatus())){
-						long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
-			    		long hour = diff / (1000 * 60 * 60);
-			    		long maxHousr = Long.parseLong(hours);
-			    		logger.info("供应商："+stockUpdateDTO.getSupplierId()+"未更新时间："+hour);
-			    		if(hour >= maxHousr){
-			    			Map<String,String> stocks = new HashMap<String,String>();
-			    			Collection<String> skuNo = grabProduct(stockUpdateDTO.getSupplierId(), "2015-01-01 00:00", format.format(new Date()), stocks);
-			    			updateStock(stockUpdateDTO.getSupplierId(),skuNo,stocks);
-			    			SendMail.sendGroupMail(smtpHost, from,  
-			    					fromUserPassword, to, "【重要】库存更新异常",
-    								"供应商"+stockUpdateDTO.getSupplierId()+"库存已超过"+hour
-    								+ "小时未更新,现已把库存全部更新为0",  
-						            "text/html;charset=utf-8");
-			    		}
+						exe.execute(new UpdateThread(stockUpdateDTO));
 					}
 				}
 			}
-		
+			exe.shutdown();
+			while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
+
+			}		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	class UpdateThread extends Thread{
+		private StockUpdateDTO stockUpdateDTO;
+
+		public UpdateThread(StockUpdateDTO stockUpdateDTO) {
+			this.stockUpdateDTO=stockUpdateDTO;
+		}
+		@Override
+		public void run() {
+			try {
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+				long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+	    		long hour = diff / (1000 * 60 * 60);
+	    		long maxHousr = Long.parseLong(hours);
+	    		logger.info("供应商："+stockUpdateDTO.getSupplierId()+"未更新时间："+hour);
+	    		if(hour >= maxHousr){
+	    			Map<String,String> stocks = new HashMap<String,String>();
+	    			Collection<String> skuNo = grabProduct(stockUpdateDTO.getSupplierId(), "2015-01-01 00:00", format.format(new Date()), stocks);
+	    			updateStock(stockUpdateDTO.getSupplierId(),skuNo,stocks);
+	    			SendMail.sendGroupMail(smtpHost, from,  
+	    					fromUserPassword, to, "【重要】库存更新异常",
+							"供应商"+stockUpdateDTO.getSupplierId()+"库存已超过"+hour
+							+ "小时未更新,现已把库存全部更新为0",  
+				            "text/html;charset=utf-8");
+	    		}
+			} catch (Exception e) {
+				logger.warn(Thread.currentThread().getName() + "处理出错", e);
+			}
+		}
+
 	}
 
 	private  void updateStock(String supplier,Collection<String> skuNo,Map<String,String> skuSupplier){
@@ -199,7 +227,7 @@ public class StockMontiService {
 			hasNext=(pageSize==skus.size());
 
 		}
-		logger.warn("获取icesku 结束");
+		logger.warn(supplier+"获取icesku 结束："+skuIds.size());
 
 		return skuIds;
 	}
