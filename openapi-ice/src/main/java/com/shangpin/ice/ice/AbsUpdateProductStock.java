@@ -29,10 +29,10 @@ import com.shangpin.iog.dto.StockUpdateLimitDTO;
 import com.shangpin.iog.service.*;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 
 import ShangPin.SOP.Api.ApiException;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
@@ -79,6 +79,23 @@ public abstract class AbsUpdateProductStock {
 		expStartTime = bdl.getString("expStartTime");
 		expEndTime = bdl.getString("expEndTime");
 	}
+	
+	private static ResourceBundle bd = null;
+	private static String spe_supplier = null;
+	private static Map<String,String> speMap = new HashMap<String,String>();	
+	static {
+	        try {
+	            if(null==bd){
+	                bd=ResourceBundle.getBundle("special");
+	            }
+	            spe_supplier = bd.getString("spe_supplier");
+	            if(StringUtils.isNotBlank(spe_supplier)){
+	            	speMap.put(spe_supplier, null);
+	            }
+	        }catch (Exception e) {
+	            loggerError.error("读取special.properties失败 "+e.toString()); 
+	        }
+	 }
 
 
 	private  void  getSopMarketPriceMap(String supplierId) throws ServiceException {
@@ -618,7 +635,19 @@ public abstract class AbsUpdateProductStock {
 				if(iceStock.containsKey(skuIce.SkuNo)){
 					loggerInfo.info("sop skuNo ：--------" + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
 					if( iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
-						toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
+						
+						//一些供应商需要特殊处理的，比如dellogliostore，只需要在供应商的库存小于现有库存时，才能更新sop。
+						if(speMap.containsKey(supplier)){
+							if(iceStock.get(skuIce.SkuNo) < skuIce.InventoryQuantity){
+								toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
+							}else{
+								loggerInfo.info(">>>>>>特殊的供应商，供应商库存大于现有，不更新>>>>>sop skuNo: " + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
+							}
+							
+						}else{
+							toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
+						}
+						
 					}
 				}else{
 					logger.error(" iceStock not contains  "+"sop skuNo ：--------"+skuIce.SkuNo +" suppliersku: "+ skuIce.SupplierSkuNo );

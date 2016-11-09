@@ -7,21 +7,23 @@ import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.sop.AbsUpdateProductStock;
 
 
 @Component
+@PropertySource("classpath:sop.properties")
 public class Worker implements Runnable{
 	private static Logger logger = Logger.getLogger("info");
-	private static ResourceBundle bdl=null;
-    private static String supplierId = "";
-    static {
-        if(null==bdl)
-         bdl=ResourceBundle.getBundle("sop");
-        supplierId = bdl.getString("supplierId");
-    }
+//	private static ResourceBundle bdl=null;
+//    private static String supplierId = "";
+//    static {
+//        if(null==bdl)
+//         bdl=ResourceBundle.getBundle("sop");
+//        supplierId = bdl.getString("supplierId");
+//    }
     
     @Value("${HOST}")
 	private String host;
