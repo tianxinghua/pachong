@@ -75,8 +75,11 @@ public class StockMontiService {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		List<StockUpdateDTO> list = null;
 		try {
-			list = updateStockService.getAll();
 			
+			StringBuffer messageText = new StringBuffer();
+			List<StockUpdateDTO> toUpdateSuppliers = new ArrayList<StockUpdateDTO>();//待更新的供应商，也就是超时的供应商
+						
+			list = updateStockService.getAll();			
 			List<SupplierDTO> listSupp = supplierService.findByState("1");
 			Map<String,String> map = new HashMap<String,String>();
 			for(SupplierDTO supp:listSupp){
@@ -94,24 +97,33 @@ public class StockMontiService {
 			    		logger.info("供应商："+stockUpdateDTO.getSupplierId()+"未更新时间："+hour +"maxHousr:"+maxHousr);
 			    		if(hour >= maxHousr){
 			    			
+			    			toUpdateSuppliers.add(stockUpdateDTO);
+			    			
 			    			String supplierName = "";
 			    			try {
 			    				SupplierDTO supplier = supplierDAO.findBysupplierId(stockUpdateDTO.getSupplierId());
 			    				supplierName = supplier.getSupplierName();
-			    			} catch (Exception e) {
-								// TODO: handle exception
+			    			} catch (Exception e) {								
 							}
+			    			messageText.append("供应商"+supplierName+" 门户编号："+stockUpdateDTO.getSupplierId()+"，即将所有库存更新为0，库存已超过"+hour+"小时。").append("<br>");
 			    			
-			    			Map<String,String> stocks = new HashMap<String,String>();
-			    			Collection<String> skuNo = grabProduct(stockUpdateDTO.getSupplierId(),map.get(stockUpdateDTO.getSupplierId()),"2015-01-01 00:00", format.format(new Date()), stocks);
-			    			updateIceStock(stockUpdateDTO.getSupplierId(),map.get(stockUpdateDTO.getSupplierId()),skuNo,stocks);
-			    			SendMail.sendGroupMail(smtpHost, from,  
-			    					fromUserPassword, to, "【重要】库存更新异常",
-    								"供应商"+supplierName+"门户编号 "+stockUpdateDTO.getSupplierId()+"库存已超过"+hour
-    								+ "小时未更新,现已把库存全部更新为0",  
-						            "text/html;charset=utf-8");
 			    		}
 					}
+				}
+			}
+			
+			if(toUpdateSuppliers.size()>0){
+				
+				//发邮件
+				SendMail.sendGroupMail(smtpHost, from,  
+    					fromUserPassword, to, "【重要】库存更新异常",
+    					messageText.toString(),  
+			            "text/html;charset=utf-8");
+				//更新				
+				for(StockUpdateDTO stockUpdateDTO : toUpdateSuppliers){
+	    			Map<String,String> stocks = new HashMap<String,String>();
+	    			Collection<String> skuNo = grabProduct(stockUpdateDTO.getSupplierId(),map.get(stockUpdateDTO.getSupplierId()),"2015-01-01 00:00", format.format(new Date()), stocks);
+	    			updateIceStock(stockUpdateDTO.getSupplierId(),map.get(stockUpdateDTO.getSupplierId()),skuNo,stocks);
 				}
 			}
 		

@@ -1,6 +1,7 @@
 package com.shangpin.iog.stockMonti.service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.product.dao.SupplierMapper;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.UpdateStockService;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -81,20 +83,51 @@ public class StockMontiService {
 		
 		List<StockUpdateDTO> list = null;
 		try {
-			list = updateStockService.getAll();
 			
-//			ExecutorService exe=Executors.newFixedThreadPool(10);//相当于跑4遍
-			for(final StockUpdateDTO stockUpdateDTO:list){
+			StringBuffer messageText = new StringBuffer();
+			List<StockUpdateDTO> toUpdateSuppliers = new ArrayList<StockUpdateDTO>();//待更新的供应商，也就是超时的供应商
+			
+			list = updateStockService.getAll();
+			for(StockUpdateDTO stockUpdateDTO:list){
 				if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
 					if(stockUpdateDTO.getSupplierId().equals(supplierId)){
 						continue;
 					}
 					
-					if("1".equals(stockUpdateDTO.getStatus())){
-						exe.execute(new UpdateThread(stockUpdateDTO));
+					if("1".equals(stockUpdateDTO.getStatus())){						
+						long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+			    		long hour = diff / (1000 * 60 * 60);
+			    		long maxHousr = Long.parseLong(hours);
+			    		logger.info("供应商："+stockUpdateDTO.getSupplierId()+"未更新时间："+hour);
+			    		
+			    		if(hour >= maxHousr){
+			    			//将超时的供应商添加到待更新列表中
+			    			toUpdateSuppliers.add(stockUpdateDTO);
+			    			String supplierName = "";
+			    			try {
+			    				SupplierDTO supplier = supplierDAO.findBysupplierId(stockUpdateDTO.getSupplierId());
+			    				supplierName = supplier.getSupplierName();
+			    			} catch (Exception e) {
+							}
+			    			messageText.append("供应商"+supplierName+" 门户编号："+stockUpdateDTO.getSupplierId()+"，即将所有库存更新为0，库存已超过"+hour+"小时。").append("<br>");
+			    		}
 					}
+					
 				}
 			}
+			
+			if(toUpdateSuppliers.size()>0){
+				//发邮件
+				SendMail.sendGroupMail(smtpHost, from,  
+    					fromUserPassword, to, "【重要】库存更新异常",
+    					messageText.toString(),  
+			            "text/html;charset=utf-8");
+				//更新
+				for(StockUpdateDTO stockUpdateDTO : toUpdateSuppliers){
+					exe.execute(new UpdateThread(stockUpdateDTO));				
+				}
+				
+			}			
 			exe.shutdown();
 			while (!exe.awaitTermination(60, TimeUnit.SECONDS)) {
 
@@ -114,28 +147,10 @@ public class StockMontiService {
 		public void run() {
 			try {
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
-	    		long hour = diff / (1000 * 60 * 60);
-	    		long maxHousr = Long.parseLong(hours);
-	    		logger.info("供应商："+stockUpdateDTO.getSupplierId()+"未更新时间："+hour);
-	    		if(hour >= maxHousr){
-	    			
-	    			String supplierName = "";
-	    			try {
-	    				SupplierDTO supplier = supplierDAO.findBysupplierId(stockUpdateDTO.getSupplierId());
-	    				supplierName = supplier.getSupplierName();
-	    			} catch (Exception e) {
-					}
-	    			
-	    			Map<String,String> stocks = new HashMap<String,String>();
-	    			Collection<String> skuNo = grabProduct(stockUpdateDTO.getSupplierId(), "2015-01-01 00:00", format.format(new Date()), stocks);
-	    			updateStock(stockUpdateDTO.getSupplierId(),skuNo,stocks);
-	    			SendMail.sendGroupMail(smtpHost, from,  
-	    					fromUserPassword, to, "【重要】库存更新异常",
-	    					"供应商"+supplierName+"供应商"+stockUpdateDTO.getSupplierId()+"库存已超过"+hour
-							+ "小时未更新,现已把库存全部更新为0",  
-				            "text/html;charset=utf-8");
-	    		}
+    			Map<String,String> stocks = new HashMap<String,String>();
+    			Collection<String> skuNo = grabProduct(stockUpdateDTO.getSupplierId(), "2015-01-01 00:00", format.format(new Date()), stocks);
+    			updateStock(stockUpdateDTO.getSupplierId(),skuNo,stocks);
+    			
 			} catch (Exception e) {
 				logger.warn(Thread.currentThread().getName() + "处理出错", e);
 			}
