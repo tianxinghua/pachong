@@ -19,16 +19,20 @@ public class StartSkuJob {
     }
     public static void main(String[] args){
     	
-        //鍔犺浇spring
-        loadSpringContext();
-        log.info("--------spring初始化成功------");
-        //鎷夊彇鏁版嵁
-        log.info("----拉取数据开始----");              
-        System.out.println("-------fetch start---------");
-        StockMontiService fetchProduct =(StockMontiService)factory.getBean("stockMontiService");
-        fetchProduct.findSupplier();
-        log.info("----拉取数据结束----");
-        System.out.println("-------fetch end---------");
+    	try {
+    		//初始化spring
+            loadSpringContext();
+            log.info("--------spring初始化成功------");
+            //
+            log.info("----拉取数据开始----");              
+            System.out.println("-------fetch start---------");
+            StockMontiService fetchProduct =(StockMontiService)factory.getBean("stockMontiService");
+            fetchProduct.findSupplier();
+            log.info("----拉取数据结束----");
+            System.out.println("-------fetch end---------");
+		} catch (Exception e) {
+			log.info(e.toString()); 
+		}
         System.exit(0);
     }
     

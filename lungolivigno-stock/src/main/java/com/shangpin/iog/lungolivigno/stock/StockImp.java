@@ -87,7 +87,7 @@ public class StockImp  extends AbsUpdateProductStock {
 				}
 				
 				Pagination pagination = new Pagination();
-				pagination.setCount(100);
+				pagination.setCount(100000);
 				pagination.setOffset(1);
 				RequestStokDTO  requestStokDTO = new RequestStokDTO();
 				requestStokDTO.setSku(set); 
@@ -102,9 +102,10 @@ public class StockImp  extends AbsUpdateProductStock {
 					try {
 						for(Sizes size :resultDto.getSizes()){
 							try {
-								
-								stockMap.put(resultDto.getSku()+"-"+size.getSizeIndex(), size.getQty()+""); 
-								
+								if(size.getQty()>0){
+									stockMap.put(resultDto.getSku()+"-"+size.getSizeIndex(), size.getQty()+"");									
+									logger.info(resultDto.getSku()+"-"+size.getSizeIndex()+"--------------"+resultDto.getStoreCode()+" Qty:"+size.getQty());
+								}
 							} catch (Exception e) {
 								// TODO: handle exception
 							}
@@ -136,10 +137,10 @@ public class StockImp  extends AbsUpdateProductStock {
 
     public static void main(String[] args) throws Exception {
     	//加载spring
-//        loadSpringContext();    
-    	StockImp s = new StockImp();
-    	List<String> ll = new ArrayList<String>();
-    	ll.add("103041872162001-1");
-    	s.grabStock(ll);
+        loadSpringContext();    
+//    	StockImp s = new StockImp();
+//    	List<String> ll = new ArrayList<String>();
+//    	ll.add("708074982162038-1");
+//    	s.grabStock(ll);
     }
 }

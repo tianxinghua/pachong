@@ -15,10 +15,12 @@ import com.shangpin.openapi.api.sdk.client.SpClient;
 import com.shangpin.openapi.api.sdk.model.*;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
+
+
 
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -43,6 +45,25 @@ public abstract class AbsUpdateProductStock {
 			.getLogger("info");
 	private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger
 			.getLogger("error");
+	
+	private static ResourceBundle bdl = null;
+	private static String spe_supplier = null;
+	private static Map<String,String> speMap = new HashMap<String,String>();
+	
+	 static {
+	        try {
+	            if(null==bdl){
+	                bdl=ResourceBundle.getBundle("special");
+	            }
+	            spe_supplier = bdl.getString("spe_supplier");
+	            if(StringUtils.isNotBlank(spe_supplier)){
+	            	speMap.put(spe_supplier, null);
+	            }
+	        }catch (Exception e) {
+	            loggerError.error("读取special.properties失败 "+e.toString()); 
+	        }
+	 }
+	
 	private boolean useThread = false;
 	private int skuCount4Thread = 100;
 
@@ -745,8 +766,23 @@ public abstract class AbsUpdateProductStock {
 					// " shangpin quantity = "+ skuIce.InventoryQuantity);
 					if (!iceStock.get(skuIce.getSkuNo()).toString()
 							.equals(skuIce.getInventoryQuantity())) {
-						toUpdateIce.put(skuIce.getSkuNo(),
-								iceStock.get(skuIce.getSkuNo()));
+						
+						//一些供应商需要特殊处理的，比如dellogliostore，只需要在供应商的库存小于现有库存时，才能更新sop。
+						if(speMap.containsKey(app_key)){ 
+							if(iceStock.get(skuIce.getSkuNo()) < Integer.parseInt(skuIce.getInventoryQuantity())){
+								toUpdateIce.put(skuIce.getSkuNo(),iceStock.get(skuIce.getSkuNo()));
+							}else{
+								loggerInfo.info(">>>>>>特殊的供应商，供应商库存大于现有，不更新>>>>>skuNo: " + skuIce.getSkuNo()
+										+ " supplierIdsku :" + skuIce.getSupplierSkuNo()
+										+ " supplier quantity ="
+										+ iceStock.get(skuIce.getSkuNo())
+										+ " shangpin quantity = "
+										+ skuIce.getInventoryQuantity());
+							}	
+						}else{
+							toUpdateIce.put(skuIce.getSkuNo(),iceStock.get(skuIce.getSkuNo()));
+						}
+											
 					}
 				} else {
 					loggerError.error("  skuNo ：--------" + skuIce.getSkuNo()

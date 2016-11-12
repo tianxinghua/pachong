@@ -297,21 +297,21 @@ public class OrderServiceImpl extends AbsOrderService{
 		}
 	}
 	
-//	public static void main(String[] args) {
-//		try {
+	public static void main(String[] args) {
+		try {
 //			
 //		
-//		OrderServiceImpl orderService = new OrderServiceImpl();
+		OrderServiceImpl orderService = new OrderServiceImpl();
 //		OrderDTO orderDTO = new OrderDTO();
-////    	orderDTO.setSpPurchaseNo("CGD2016072500097");
+//    	orderDTO.setSpPurchaseNo("CGD2016110775697");
 //		orderDTO.setSpOrderId("201609264074169");
-//    	orderDTO.setDetail("6137974-2015343123475:1,");
-//    	orderDTO.setPurchasePriceDetail("685.24");
+//    	orderDTO.setDetail("14738059-2003784437701:1,");
+//    	orderDTO.setPurchasePriceDetail("154.57");
 //    	orderService.handleConfirmOrder(orderDTO);
 //		//201607284050007L, "2111344053718"
 //		//201607284050011L, "2016398420885"
 ////		try {
-////			orderService.newOrderMarketPlace(201607284050015L, "2109590957966", 1);
+			orderService.newOrderMarketPlace(201611074074169L, "2003784437701", 1);
 ////		} catch (Exception e) {
 ////			// TODO Auto-generated catch block
 ////			e.printStackTrace();
@@ -327,10 +327,10 @@ public class OrderServiceImpl extends AbsOrderService{
 ////			// TODO Auto-generated catch block
 ////			e.printStackTrace();
 ////		}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 }
