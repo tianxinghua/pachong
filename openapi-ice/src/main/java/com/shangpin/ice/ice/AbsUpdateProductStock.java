@@ -170,6 +170,7 @@ public abstract class AbsUpdateProductStock {
 	 * @throws Exception
 	 */
 	private Collection<String> grabProduct(String supplier,String start,String end,Map<String,String> stocks) throws Exception{
+		loggerInfo.info("抓取主站商品SKU信息开始");
 		int pageIndex=1,pageSize=100;
 		OpenApiServantPrx servant = null;
 		try {
@@ -186,6 +187,7 @@ public abstract class AbsUpdateProductStock {
 		Set<String> skuIds = new HashSet<String>();
 
 		//获取已有的SPSKUID
+		loggerInfo.info("从关系表中获取已有的spSku"); 
 		Map<String,String> map = new HashMap<>();
 		if(null!=skuRelationService){
 			List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
@@ -194,6 +196,7 @@ public abstract class AbsUpdateProductStock {
 				map.put(skuRelationDTO.getSopSkuId(),null);
 			}
 		}
+		loggerInfo.info("从关系表中获取已有的spSku结束"); 
 
 		Date date  = new Date();
 		while(hasNext){
@@ -438,6 +441,9 @@ public abstract class AbsUpdateProductStock {
 //	    			return -1;
 //	    		}
 //			}
+		}else{
+			//更新库存时间
+			updateStockTime(supplier);
 		}
 
 		//获取允许更新的数量
@@ -944,6 +950,7 @@ public abstract class AbsUpdateProductStock {
      */
 	private void setStockNotUpdateBySop(String supplierId,OpenApiServantPrx servant){
 
+		loggerInfo.info("获取采购异常的商品开始"); 
 		List<PurchaseOrderDetail> orderDetails = null;
 		boolean hasNext=true;
 		String endTime = "";
@@ -1002,6 +1009,7 @@ public abstract class AbsUpdateProductStock {
 			pageIndex++;
 			hasNext=(pageSize==orderDetails.size());
 		}
+		loggerInfo.info("获取采购异常的商品结束"); 
 
 	}
 
