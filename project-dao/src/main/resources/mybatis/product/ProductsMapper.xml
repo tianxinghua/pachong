@@ -395,6 +395,7 @@
           sku.ID as id,
           sku.SKU_ID as sku_id,
           sku.SUPPLIER_ID  as supplier_id,
+          sku.SP_SKU_ID as spSkuId,
 
           sku.PRODUCT_NAME as product_name,
           sku.MARKET_PRICE  as market_price,
@@ -621,6 +622,7 @@
 		select
           sku.SKU_ID as sku_id,
           sku.SUPPLIER_ID  as supplier_id,
+          sku.SP_SKU_ID as spSkuId,
           
           sku.MARKET_PRICE  as market_price,
           sku.SALE_PRICE  as  sale_price,
