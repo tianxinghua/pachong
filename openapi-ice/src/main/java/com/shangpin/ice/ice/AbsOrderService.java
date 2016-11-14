@@ -1717,7 +1717,10 @@ public abstract class AbsOrderService {
 
 
                 orderDetails = orderDetailPage.PurchaseOrderDetails;
+                if(null==orderDetails){
+                    orderDetails = new ArrayList<>();
 
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
