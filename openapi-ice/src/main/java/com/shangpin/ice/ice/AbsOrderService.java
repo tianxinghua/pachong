@@ -948,6 +948,7 @@ public abstract class AbsOrderService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if(null==orderMap) orderMap= new HashMap();
         start:
         for(Iterator<Map.Entry<String,List<PurchaseOrderDetailSpecial>>> itor = orderMap.entrySet().iterator();itor.hasNext();){
             Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();

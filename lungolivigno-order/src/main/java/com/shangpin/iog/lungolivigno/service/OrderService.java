@@ -132,8 +132,8 @@ public class OrderService extends AbsOrderService{
 			row.setSku(sku.substring(0, sku.indexOf("-")));
 			row.setSizeIndex(sku.substring(sku.indexOf("-")+1)); 
 			row.setQty(Integer.parseInt(stock));
-			row.setPrice(Long.valueOf(orderDTO.getPurchasePriceDetail())); 
-			row.setFinalPrice(Long.valueOf(orderDTO.getPurchasePriceDetail())); 
+			row.setPrice(Double.valueOf(orderDTO.getPurchasePriceDetail())); 
+			row.setFinalPrice(Double.valueOf(orderDTO.getPurchasePriceDetail())); 
 			row.setPickStoreCode(storecode); 
 			rows.add(row);
 			requestSaveOrderDTO.setRows(rows);	
@@ -340,20 +340,21 @@ public class OrderService extends AbsOrderService{
 //			e.printStackTrace();
 //		}
 //		System.out.println(storecode); 
-		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setDetail("703025002162001-8:1,");
+//		OrderDTO orderDTO = new OrderDTO();
+//		orderDTO.setDetail("705045002162002-5:1,");
 //		orderDTO.setSpPurchaseNo("CGD20161107675218"); 
-		orderDTO.setSpOrderId("201611104650865");
-		orderDTO.setPurchasePriceDetail("399");
+//		orderDTO.setSpOrderId("201611104650865");
+//		orderDTO.setPurchasePriceDetail("567");
 //		
-//		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
+		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
 //		deleteOrder.setSpPurchaseNo("CGD20161107675218");
-//		deleteOrder.setSupplierOrderNo("07675218"); 
+		deleteOrder.setSpOrderId("201611104650865"); 
+		deleteOrder.setSupplierOrderNo("04650865"); 
 //		
 //		OrderService order = new OrderService();
 ////		order.handleSupplierOrder(orderDTO); 
-		order.handleConfirmOrder(orderDTO); 
-//		order.handleRefundlOrder(deleteOrder); 
+//		order.handleConfirmOrder(orderDTO); 
+		order.handleRefundlOrder(deleteOrder); 
 	}
 
 }
