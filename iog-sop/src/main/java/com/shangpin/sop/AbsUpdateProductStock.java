@@ -15,10 +15,14 @@ import com.shangpin.openapi.api.sdk.client.SpClient;
 import com.shangpin.openapi.api.sdk.model.*;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
+
+
+
+
 
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -43,6 +47,25 @@ public abstract class AbsUpdateProductStock {
 			.getLogger("info");
 	private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger
 			.getLogger("error");
+	
+	private static ResourceBundle bdl = null;
+//	private static String spe_supplier = null;
+//	private static Map<String,String> speMap = new HashMap<String,String>();
+	private static String startTime = null;
+	private static String endTime = null;
+	
+	 static {
+	        try {
+	            if(null==bdl){
+	                bdl=ResourceBundle.getBundle("special");
+	            }
+	            startTime = bdl.getString("startTime");
+	            endTime = bdl.getString("endTime");
+	        }catch (Exception e) {
+	            loggerError.error("读取special.properties失败 "+e.toString()); 
+	        }
+	 }
+	
 	private boolean useThread = false;
 	private int skuCount4Thread = 100;
 
@@ -495,6 +518,8 @@ public abstract class AbsUpdateProductStock {
 //	    		}
 //			}
 			return -1;
+		}else{
+			updateStockTime(app_key);
 		}
 
 		// logger.warn("{}---更新ice--,数量：{}",Thread.currentThread().getName(),iceStock.size());
@@ -725,6 +750,17 @@ public abstract class AbsUpdateProductStock {
 		}
 
 		// 排除无用的库存
+		
+		Date nowTime = new Date();
+		loggerInfo.info("nowTime============="+com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime,"yyyy-MM-dd HH:mm:ss")); 
+		long theStart = 0;
+		long theEnd = 0;
+		if(StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)){
+			loggerInfo.info("在"+startTime+"到"+endTime+"时间段内，只更新供应商库存小于尚品库存的sku"); 
+			theStart = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime),"yyyy-MM-dd HH:mm:ss").getTime();
+			theEnd = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime),"yyyy-MM-dd HH:mm:ss").getTime();
+		}
+		
 		if (null != skuArray) {
 			for (SopSkuInventory skuIce : skuArray) {
 				if (iceStock.containsKey(skuIce.getSkuNo())) {
@@ -745,8 +781,23 @@ public abstract class AbsUpdateProductStock {
 					// " shangpin quantity = "+ skuIce.InventoryQuantity);
 					if (!iceStock.get(skuIce.getSkuNo()).toString()
 							.equals(skuIce.getInventoryQuantity())) {
-						toUpdateIce.put(skuIce.getSkuNo(),
-								iceStock.get(skuIce.getSkuNo()));
+						
+						//在8:00:00到23:59:59时间段内，只有当供应商库存小于尚品库存时，才去更新尚品库存
+						if(theStart != 0 && theEnd != 0 && nowTime.getTime() >= theStart && nowTime.getTime() <= theEnd){
+							if(iceStock.get(skuIce.getSkuNo()) < Integer.parseInt(skuIce.getInventoryQuantity())){
+								toUpdateIce.put(skuIce.getSkuNo(),iceStock.get(skuIce.getSkuNo()));
+							}else{
+								loggerInfo.info(">>>>>>特殊的供应商，供应商库存大于现有，不更新>>>>>skuNo: " + skuIce.getSkuNo()
+										+ " supplierIdsku :" + skuIce.getSupplierSkuNo()
+										+ " supplier quantity ="
+										+ iceStock.get(skuIce.getSkuNo())
+										+ " shangpin quantity = "
+										+ skuIce.getInventoryQuantity());
+							}
+						}else{
+							toUpdateIce.put(skuIce.getSkuNo(),iceStock.get(skuIce.getSkuNo()));
+						}
+																	
 					}
 				} else {
 					loggerError.error("  skuNo ：--------" + skuIce.getSkuNo()

@@ -2,7 +2,6 @@ package com.shangpin.iog.spinnaker.service;
 
 
 import java.util.HashMap;
-
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -10,8 +9,8 @@ import java.util.ResourceBundle;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.iog.common.utils.SendMail;
-
 import com.shangpin.iog.spinnaker.dto.OrderInfoDTO;
+
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +24,7 @@ import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.spinnaker.dto.Parameters;
 import com.shangpin.iog.spinnaker.dto.Parameters2;
+import com.shangpin.iog.spinnaker.dto.Quantity;
 import com.shangpin.iog.spinnaker.dto.ResponseObject;
 
 
@@ -54,6 +54,7 @@ public class OrderService extends AbsOrderService {
 	private static String subject = null;
 	private static String messageText = null;
 	private static String messageType = null;
+	private static String isPurchaseExp = null;
 	static {
 		if (null == bdl) {
 			bdl = ResourceBundle.getBundle("param");
@@ -65,6 +66,7 @@ public class OrderService extends AbsOrderService {
 		cancelUrl = bdl.getString("cancelUrl");
 		dBContext = bdl.getString("dBContext");
 		key = bdl.getString("key");
+		isPurchaseExp = bdl.getString("isPurchaseExp");
 
 
 
@@ -136,11 +138,15 @@ public class OrderService extends AbsOrderService {
 	}
 
 	private void createOrder( OrderDTO orderDTO) {
-
+		
 		// 获取订单信息
 		Parameters order = getOrder( orderDTO);
 		Gson gson = new Gson();
-
+		
+		//下单前查询下库存
+		int stock = getSearchStock(order.getBarcode());
+		logger.info("下单前查询库存结果>>>>>>>>>>"+order.getBarcode()+":"+stock);
+		
 		String json = gson.toJson(order, Parameters.class);
 		System.out.println("request json == " + json);
 		String rtnData = null;
@@ -187,7 +193,11 @@ public class OrderService extends AbsOrderService {
 //				}
 				if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
 				    orderDTO.setExcState("0");
-					this.setPurchaseExc(orderDTO);
+				    if("yes".equals(isPurchaseExp)){
+				    	this.setPurchaseExc(orderDTO);
+				    }else{
+				    	orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
+				    }
 
 				}else{
 					orderDTO.setExcState("1");
@@ -198,6 +208,11 @@ public class OrderService extends AbsOrderService {
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
 				orderDTO.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
 			}
+			
+			//下单后查询下库存
+			int stockAfter = getSearchStock(order.getBarcode());
+			logger.info("下单后查询库存结果>>>>>>>>>>"+order.getBarcode()+":"+stockAfter);
+			
 		} catch (Exception e) {
 			// loggerError.error("Failed Response ：" + e.getMessage() + ",
 			// shopOrderId:"+order.getBarcode());
@@ -361,6 +376,45 @@ public class OrderService extends AbsOrderService {
 		});
 		t.start();
 
+	}
+	
+	public int getSearchStock(String supplierSkuNo){
+
+		try {		
+			String url = "http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=Default&barcode=[[barcode]]&key=8IZk2x5tVN";
+			url = url.replaceAll("\\[\\[barcode\\]\\]", supplierSkuNo);
+			String json = null;
+			OutTimeConfig outTimeConfig = new OutTimeConfig(1000 * 60, 1000 * 60,
+					1000 * 60);
+			try {
+				json = HttpUtil45.get(url, outTimeConfig, null);
+				logger.info("下单前查询库存返回结果>>>>>>>>>>" + json);
+			} catch (Exception e) {
+				json = HttpUtil45.get(url, outTimeConfig, null);
+				logger.info("下单前查询库存返回结果>>>>>>>>>>" + json);
+			}
+			try {
+				if (json != null && !json.isEmpty()) {
+					Gson gson = new Gson();
+					if (json.equals("{\"Result\":\"No Record Found\"}")) { // 未找到
+						return 0;
+					} else {// 找到赋值
+	
+						Quantity result = gson.fromJson(json,
+								new TypeToken<Quantity>() {
+								}.getType());
+						return Integer.parseInt(result.getResult());
+					}
+				} else {
+					return -1;
+				}
+			} catch (Exception e) {
+				return -1;
+			}
+		} catch (Exception e) {
+			loggerError.error(e.toString());
+		}
+		return -1;
 	}
 
 }

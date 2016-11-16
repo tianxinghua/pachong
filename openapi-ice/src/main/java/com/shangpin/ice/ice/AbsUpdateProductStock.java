@@ -29,10 +29,10 @@ import com.shangpin.iog.dto.StockUpdateLimitDTO;
 import com.shangpin.iog.service.*;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 
 import ShangPin.SOP.Api.ApiException;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
@@ -79,6 +79,25 @@ public abstract class AbsUpdateProductStock {
 		expStartTime = bdl.getString("expStartTime");
 		expEndTime = bdl.getString("expEndTime");
 	}
+	
+	private static ResourceBundle bd = null;
+//	private static String spe_supplier = null;
+//	private static Map<String,String> speMap = new HashMap<String,String>();	
+	private static String startTime = null;
+	private static String endTime = null;
+	
+	static {
+	        try {
+	            if(null==bd){
+	                bd=ResourceBundle.getBundle("special");
+	            }	           
+	            startTime = bd.getString("startTime");
+	            endTime = bd.getString("endTime");
+	            
+	        }catch (Exception e) {
+	            loggerError.error("读取special.properties失败 "+e.toString()); 
+	        }
+	 }
 
 
 	private  void  getSopMarketPriceMap(String supplierId) throws ServiceException {
@@ -153,6 +172,7 @@ public abstract class AbsUpdateProductStock {
 	 * @throws Exception
 	 */
 	private Collection<String> grabProduct(String supplier,String start,String end,Map<String,String> stocks) throws Exception{
+		loggerInfo.info("抓取主站商品SKU信息开始");
 		int pageIndex=1,pageSize=100;
 		OpenApiServantPrx servant = null;
 		try {
@@ -169,6 +189,7 @@ public abstract class AbsUpdateProductStock {
 		Set<String> skuIds = new HashSet<String>();
 
 		//获取已有的SPSKUID
+		loggerInfo.info("从关系表中获取已有的spSku"); 
 		Map<String,String> map = new HashMap<>();
 		if(null!=skuRelationService){
 			List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
@@ -177,6 +198,7 @@ public abstract class AbsUpdateProductStock {
 				map.put(skuRelationDTO.getSopSkuId(),null);
 			}
 		}
+		loggerInfo.info("从关系表中获取已有的spSku结束"); 
 
 		Date date  = new Date();
 		while(hasNext){
@@ -421,6 +443,9 @@ public abstract class AbsUpdateProductStock {
 //	    			return -1;
 //	    		}
 //			}
+		}else{
+			//更新库存时间
+			updateStockTime(supplier);
 		}
 
 		//获取允许更新的数量
@@ -613,13 +638,34 @@ public abstract class AbsUpdateProductStock {
 		}
 
 		//排除无用的库存
+		Date nowTime = new Date();
+		loggerInfo.info("nowTime============="+com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime,"yyyy-MM-dd HH:mm:ss")); 
+		long theStart = 0;
+		long theEnd = 0;
+		if(StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)){
+			loggerInfo.info("在"+startTime+"到"+endTime+"时间段内，只更新供应商库存小于尚品库存的sku"); 
+			theStart = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime),"yyyy-MM-dd HH:mm:ss").getTime();
+			theEnd = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime),"yyyy-MM-dd HH:mm:ss").getTime();
+		}
 		if(null!=skuIceArray){
 			for(SopSkuInventoryIce skuIce:skuIceArray){
 				if(iceStock.containsKey(skuIce.SkuNo)){
 					loggerInfo.info("sop skuNo ：--------" + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
 					if( iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
-						toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
+						
+						//在8:00:00到23:59:59时间段内，只有当供应商库存小于尚品库存时，才去更新尚品库存
+						if(theStart != 0 && theEnd != 0 && nowTime.getTime() >= theStart && nowTime.getTime() <= theEnd){
+							if(iceStock.get(skuIce.SkuNo) < skuIce.InventoryQuantity){
+								toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
+							}else{
+								loggerInfo.info(">>>>>>特殊的供应商，供应商库存大于现有，不更新>>>>>sop skuNo: " + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
+							}
+						}else{
+							
+							toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
+						}
 					}
+					
 				}else{
 					logger.error(" iceStock not contains  "+"sop skuNo ：--------"+skuIce.SkuNo +" suppliersku: "+ skuIce.SupplierSkuNo );
 				}
@@ -915,6 +961,7 @@ public abstract class AbsUpdateProductStock {
      */
 	private void setStockNotUpdateBySop(String supplierId,OpenApiServantPrx servant){
 
+		loggerInfo.info("获取采购异常的商品开始"); 
 		List<PurchaseOrderDetail> orderDetails = null;
 		boolean hasNext=true;
 		String endTime = "";
@@ -973,6 +1020,7 @@ public abstract class AbsUpdateProductStock {
 			pageIndex++;
 			hasNext=(pageSize==orderDetails.size());
 		}
+		loggerInfo.info("获取采购异常的商品结束"); 
 
 	}
 
@@ -1116,4 +1164,16 @@ public abstract class AbsUpdateProductStock {
 	public void setUseThread(boolean useThread) {
 		this.useThread = useThread;
 	}
+	
+	public static void main(String[] args) {
+		Date nowTime =com.shangpin.iog.common.utils.DateTimeUtil.convertFormat("2016-11-16 07:59:59", "yyyy-MM-dd HH:mm:ss");
+		System.out.println(com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime),"yyyy-MM-dd HH:mm:ss"));
+		System.out.println(com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime),"yyyy-MM-dd HH:mm:ss"));
+		long theStart = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime),"yyyy-MM-dd HH:mm:ss").getTime();
+		long theEnd = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime),"yyyy-MM-dd HH:mm:ss").getTime();
+		if(nowTime.getTime() >=theStart && nowTime.getTime() <= theEnd){
+			System.out.println("true"); 
+		}
+	}
+		
 }

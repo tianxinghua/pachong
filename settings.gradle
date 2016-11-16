@@ -44,4 +44,6 @@ include 'project-mq'
 include 'biondini-stock'
 include 'stockMontiHK'
 include 'spinnaker-stock'
+include 'stockclean'
+include 'OpenTest'
 

@@ -296,5 +296,4 @@
 		</where>
 		order by UPDATE_TIME desc
     </select>
-	
 </mapper>

@@ -1,7 +1,9 @@
 package com.shangpin.iog.grouppo.stock;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -23,7 +25,7 @@ import com.shangpin.sop.AbsUpdateProductStock;
  * Created by lubaijiang on 2015/9/14.
  */
 @Component("grouppostock")
-public class StockImp  extends AbsUpdateProductStock {
+public class StockImp {
     private static Logger logger = Logger.getLogger("info");
     private static LoggerUtil logError = LoggerUtil.getLogger("error");
     
@@ -39,74 +41,81 @@ public class StockImp  extends AbsUpdateProductStock {
             bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
     }
-//    @Override
-//    public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
-//    	
-//    	//获取库存元数据    	
-//		Map<String,String> stockMap = new HashMap<String, String>();
-//		Map<String,Double> notzeroStock = new HashMap<String, Double>();
-//        
-//        try{
-//        	//业务实现
-//        	StockWSServiceStub stockWSServiceStub = new StockWSServiceStub();
-//        	stockWSServiceStub._getServiceClient().getOptions().setTimeOutInMilliSeconds(1000*60*30); 
-//        	stockWSServiceStub._getServiceClient().getOptions().setProperty(org.apache.axis2.transport.http.HTTPConstants.SO_TIMEOUT,new Integer(1000*60*60));
-//        	stockWSServiceStub._getServiceClient().getOptions().setProperty(org.apache.axis2.transport.http.HTTPConstants.CONNECTION_TIMEOUT,new Integer(1000*60*60));
-//        	
-//        	Stock_TabularQuery stock_TabularQuery2 = new StockWSServiceStub.Stock_TabularQuery();
-//        	stock_TabularQuery2.setM_UserName("shangpin");
-//        	stock_TabularQuery2.setM_Password("getDataWs16");
-//        	stock_TabularQuery2.setM_Company("PRITE");
-//        	
-//        	for(String skuId : skuNo){        		
-//        		try {
-//	        		stock_TabularQuery2.setSkuId(skuId); 
-//	        		
-//	            	Stock_TabularQueryResponse response = null;            	
-//            		response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);            		
-//            		Stock_TabularQueryResponseStructure[] items = response.getRecords().getItem();
-//                	for(Stock_TabularQueryResponseStructure item : items){
-//                		try {
-//            				if(item.getStock() >0){
-//            					notzeroStock.put(skuId, item.getStock());
-//            				}
-//                			stockMap.put(skuId,""+(int)item.getStock());
-//            				logger.info(skuId+"================"+(int)item.getStock());                     			
-//        				} catch (Exception e) {
-//        					stockMap.put(skuId,"0");            					
-//        				}            		
-//                	}
-//                
-//    			} catch (Exception e) {
-//    				logError.error("第1次异常===="+e);
-//    				stockMap.put(skuId,"0");
-//    			}
-//        	} 
-//        	
-//        	logger.info("notzeroStock.size==="+notzeroStock.size()); 
-//        	
-//        }catch(Exception ex){
-//        	logError.error(ex);
-//        	ex.printStackTrace(); 
-//        }
-//      
-//        logger.info("stockMap.size==="+stockMap.size()); 
-//        return stockMap;
-//    }
+   
+    public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+    	
+    	//获取库存元数据    	
+		Map<String,String> stockMap = new HashMap<String, String>();
+		Map<String,Double> notzeroStock = new HashMap<String, Double>();
+        
+        try{
+        	//业务实现
+        	StockWSServiceStub stockWSServiceStub = new StockWSServiceStub();
+        	stockWSServiceStub._getServiceClient().getOptions().setTimeOutInMilliSeconds(1000*60*30); 
+        	stockWSServiceStub._getServiceClient().getOptions().setProperty(org.apache.axis2.transport.http.HTTPConstants.SO_TIMEOUT,new Integer(1000*60*60));
+        	stockWSServiceStub._getServiceClient().getOptions().setProperty(org.apache.axis2.transport.http.HTTPConstants.CONNECTION_TIMEOUT,new Integer(1000*60*60));
+        	
+        	Stock_TabularQuery stock_TabularQuery2 = new StockWSServiceStub.Stock_TabularQuery();
+        	stock_TabularQuery2.setM_UserName("shangpin");
+        	stock_TabularQuery2.setM_Password("getDataWs16");
+        	stock_TabularQuery2.setM_Company("PRITE");
+        	
+        	for(String skuId : skuNo){        		
+        		try {
+	        		stock_TabularQuery2.setSkuId(skuId); 
+	        		
+	            	Stock_TabularQueryResponse response = null;            	
+            		response = stockWSServiceStub.stock_TabularQuery(stock_TabularQuery2);            		
+            		Stock_TabularQueryResponseStructure[] items = response.getRecords().getItem();
+                	for(Stock_TabularQueryResponseStructure item : items){
+                		try {
+            				if(item.getStock() >0){
+            					notzeroStock.put(skuId, item.getStock());
+            				}
+                			stockMap.put(skuId,""+(int)item.getStock());
+                			System.out.println(skuId+"================"+(int)item.getStock()); 
+            				logger.info(skuId+"================"+(int)item.getStock());                     			
+        				} catch (Exception e) {
+        					stockMap.put(skuId,"0");            					
+        				}            		
+                	}
+                
+    			} catch (Exception e) {
+    				logError.error("第1次异常===="+e);
+    				stockMap.put(skuId,"0");
+    			}
+        	} 
+        	
+        	logger.info("notzeroStock.size==="+notzeroStock.size()); 
+        	
+        }catch(Exception ex){
+        	logError.error(ex);
+        	ex.printStackTrace(); 
+        }
+      
+        logger.info("stockMap.size==="+stockMap.size()); 
+        return stockMap;
+    }
 
     public static void main(String[] args) throws Exception {
     	//加载spring
-        loadSpringContext();    
+//        loadSpringContext();    
+    	
+    	List<String> list = new ArrayList<String>();
+    	list.add("9923740511609");
+    	list.add("9923740532413");
+    	list.add("9923740532383");
+    	list.add("9923740534486");
 
-//    	StockImp stockImp = new StockImp();
-//    	 stockImp.grabStock(null);
+    	StockImp stockImp = new StockImp();
+    	 stockImp.grabStock(list);
     	
     }
 
-	@Override
-	public Map<String, Integer> grabStock(Collection<String> skuNo)
-			throws ServiceException, Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public Map<String, Integer> grabStock(Collection<String> skuNo)
+//			throws ServiceException, Exception {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 }

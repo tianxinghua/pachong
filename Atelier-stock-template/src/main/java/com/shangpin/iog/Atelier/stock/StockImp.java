@@ -184,7 +184,7 @@ public class StockImp  extends AbsUpdateProductStock {
     	
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
     	//加载spring
         loadSpringContext();       
     }

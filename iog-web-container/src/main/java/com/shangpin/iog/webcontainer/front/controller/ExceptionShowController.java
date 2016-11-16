@@ -172,7 +172,7 @@ public class ExceptionShowController {
     		long minutes = (diff-days*(1000 * 60 * 60 * 24)-hours*(1000* 60 * 60))/(1000* 60);
     		stockUpdateDTO.setDif(days+"天"+hours+"小时"+minutes+"分");
     		stockUpdateDTO.setSupplierName(nameMap.get(stockUpdateDTO.getSupplierId()));
-    		if (hours<=2&&days<1) {
+    		if (hours<2&&days<1) {
     			redList.add(stockUpdateDTO);
 			}else {
 				greenList.add(stockUpdateDTO);

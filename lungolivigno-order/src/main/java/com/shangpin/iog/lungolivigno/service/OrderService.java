@@ -97,10 +97,10 @@ public class OrderService extends AbsOrderService{
 			String storecode = getStoreCode(sku.substring(0, sku.indexOf("-")),sku.substring(sku.indexOf("-")+1));
 			//2、下单参数
 			RequestSaveOrderDTO requestSaveOrderDTO = new RequestSaveOrderDTO();
-			requestSaveOrderDTO.setID(orderDTO.getSpPurchaseNo());
+			requestSaveOrderDTO.setID(orderDTO.getSpOrderId());
 			requestSaveOrderDTO.setOrderDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
 			Billingcustomer billingCustomer = new Billingcustomer();
-			billingCustomer.setID(orderDTO.getSpOrderId());
+			billingCustomer.setID("4646305");
 			billingCustomer.setFirstName("SHANGPIN.COM");
 			billingCustomer.setLastName("SHANGPIN.COM");
 			billingCustomer.setAddress("SHANGPIN.COM");
@@ -114,7 +114,7 @@ public class OrderService extends AbsOrderService{
 			billingCustomer.setFiscalCode(""); //财政代码
 			requestSaveOrderDTO.setBillingCustomer(billingCustomer);
 			Shippingcustomer Shippingcustomer = new Shippingcustomer();
-			Shippingcustomer.setID(orderDTO.getSpOrderId());
+			Shippingcustomer.setID("4645773");
 			Shippingcustomer.setFirstName("Cindy Chan");
 			Shippingcustomer.setLastName("");
 			Shippingcustomer.setAddress("Flat 303-309,Hi-Tech Centre,9 Choi Yuen Road,Sheung Shui,N.T.");
@@ -132,11 +132,12 @@ public class OrderService extends AbsOrderService{
 			row.setSku(sku.substring(0, sku.indexOf("-")));
 			row.setSizeIndex(sku.substring(sku.indexOf("-")+1)); 
 			row.setQty(Integer.parseInt(stock));
-			row.setPrice(Long.valueOf(orderDTO.getPurchasePriceDetail())); 
-			row.setFinalPrice(Long.valueOf(orderDTO.getPurchasePriceDetail())); 
+			row.setPrice(Double.valueOf(orderDTO.getPurchasePriceDetail())); 
+			row.setFinalPrice(Double.valueOf(orderDTO.getPurchasePriceDetail())); 
 			row.setPickStoreCode(storecode); 
 			rows.add(row);
 			requestSaveOrderDTO.setRows(rows);	
+			requestSaveOrderDTO.setPaymentMode("monthly payment");
 			String createOrderStr = new Gson().toJson(requestSaveOrderDTO);
 			if(StringUtils.isNotBlank(sessionId)){			
 				try{
@@ -340,13 +341,15 @@ public class OrderService extends AbsOrderService{
 //		}
 //		System.out.println(storecode); 
 //		OrderDTO orderDTO = new OrderDTO();
-//		orderDTO.setDetail("708074982162037-1:1,");
+//		orderDTO.setDetail("705045002162002-5:1,");
 //		orderDTO.setSpPurchaseNo("CGD20161107675218"); 
-//		orderDTO.setPurchasePriceDetail("852");
+//		orderDTO.setSpOrderId("201611104650865");
+//		orderDTO.setPurchasePriceDetail("567");
 //		
 		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
-		deleteOrder.setSpPurchaseNo("CGD20161107675218");
-		deleteOrder.setSupplierOrderNo("07675218"); 
+//		deleteOrder.setSpPurchaseNo("CGD20161107675218");
+		deleteOrder.setSpOrderId("201611104650865"); 
+		deleteOrder.setSupplierOrderNo("04650865"); 
 //		
 //		OrderService order = new OrderService();
 ////		order.handleSupplierOrder(orderDTO); 

@@ -1234,7 +1234,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 //		}
 		System.out.println("supplierList.size===="+supplierList.size());
 		StringBuffer buffer = new StringBuffer("供应商" + splitSign
-				+ "ProductModel 货号" + splitSign + "供货商skuid" + splitSign+ "新上市季节" + splitSign+ "上市季节").append("\r\n");
+				+ "ProductModel 货号" + splitSign + "供货商skuid" + splitSign+ "尚品skuid"+ splitSign + "新上市季节" + splitSign+ "上市季节").append("\r\n");
 		for(SupplierDTO supplier : supplierList){
 			if(StringUtils.isNotBlank(supplier.getSupplierId())){
 				final List<ProductDTO> products = productDAO.findDiffSeasonProducts(supplier.getSupplierId(),startDate,endDate);
@@ -1260,6 +1260,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 						buffer.append(
 								null == dto.getSkuId() ? "" : dto.getSkuId())
 								.append(splitSign);
+						//尚品skuid
+						buffer.append(null == dto.getSpSkuId()?"": dto.getSpSkuId()).append(splitSign);
 						//新季节
 						buffer.append(
 								null == dto.getNewseasonName() ? dto.getNewseasonId() : dto
@@ -1305,7 +1307,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	public StringBuffer getDiffProduct(Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException{
 //		Map<String, String> supMap = new HashMap<String, String>();
 		StringBuffer buffer = new StringBuffer("供应商" + splitSign
-				+ "ProductModel 货号" + splitSign + "供货商skuid" + splitSign+ "新市场价" + splitSign
+				+ "ProductModel 货号" + splitSign + "供货商skuid" + splitSign+ "尚品skuid" +splitSign + "新市场价" + splitSign
 				+ "新销售价" + splitSign + "新进货价" + splitSign + "市场价"
 				+ splitSign + "销售价" + splitSign + "进货价").append("\r\n");
 
@@ -1333,6 +1335,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 							buffer.append(
 									null == dto.getSkuId() ? "" : dto.getSkuId())
 									.append(splitSign);
+							
+							//尚品skuid
+							buffer.append(null == dto.getSpSkuId()?"": dto.getSpSkuId()).append(splitSign);
 
 							// 新的价格
 							String newMarketPrice = dto.getNewMarketPrice();

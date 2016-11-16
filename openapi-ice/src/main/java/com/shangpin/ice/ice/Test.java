@@ -209,12 +209,90 @@ public class Test {
 //        } catch (ServiceException e) {
 //            e.printStackTrace();
 //        }
-        Test tesst = new Test();
+        Test test = new Test();
         try {
-            tesst.getSopPuchase("2015111001657");//2015081701443       2015081701440    2015111601665
+            test.getSopPuchase("2015082701461");//2015081701443       2015081701440    2015111601665
+            List<Integer> status = new ArrayList<>();
+            status.add(1);
+
+            Map<String,List<PurchaseOrderDetailSpecial>> orderMap = null;
+            orderMap =test.getPurchaseOrderSpecial("2015082701461","2016-11-13 00:00:00","2016-11-14 00:00:00",status);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    public  Map<String,List<PurchaseOrderDetailSpecial>> getPurchaseOrderSpecial(String supplierId,String startTime ,String endTime,List<Integer> statusList) throws Exception{
+        int pageIndex=1,pageSize=20;
+        OpenApiServantPrx servant = null;
+        try {
+            servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+        boolean hasNext=true;
+
+        Set<String> skuIds = new HashSet<String>();
+        Map<String,String>  purchaseTempMap = new HashMap<>();
+        Map<String,List<PurchaseOrderDetailSpecial>>  purchaseOrderMap=  new HashMap<>();
+        String sopPurchaseOrderNo = "";
+
+        while(hasNext){
+            List<PurchaseOrderDetail> orderDetails = null;
+            try {
+
+                PurchaseOrderQueryDto  orderQueryDto = new PurchaseOrderQueryDto(startTime,endTime,statusList
+                        ,pageIndex,pageSize);
+                PurchaseOrderDetailPage orderDetailPage=
+                        servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
+
+
+                orderDetails = orderDetailPage.PurchaseOrderDetails;
+                if(null==orderDetails){
+                    orderDetails = new ArrayList<>();
+
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            for (PurchaseOrderDetail orderDetail : orderDetails) {
+                sopPurchaseOrderNo  = orderDetail.SopPurchaseOrderNo;
+                if(purchaseTempMap.containsKey(sopPurchaseOrderNo)){
+                    continue;
+                }else{
+                    purchaseTempMap.put(sopPurchaseOrderNo,"");
+                    //转化为带订单号的采购单信息
+                    PurchaseOrderDetailSpecialPage  orderDetailSpecialPage = servant.FindPurchaseOrderDetailSpecial(supplierId,sopPurchaseOrderNo,"");
+
+                    if(null!=orderDetailSpecialPage&&null!=orderDetailSpecialPage.PurchaseOrderDetails&&orderDetailSpecialPage.PurchaseOrderDetails.size()>0) {  //存在采购单 就代表已支付
+
+                        for (PurchaseOrderDetailSpecial purchaseOrderDetailSpecial : orderDetailSpecialPage.PurchaseOrderDetails) {
+                            sopPurchaseOrderNo = purchaseOrderDetailSpecial.SopPurchaseOrderNo;
+                            if (purchaseOrderMap.containsKey(sopPurchaseOrderNo)) {
+                                purchaseOrderMap.get(sopPurchaseOrderNo).add(purchaseOrderDetailSpecial);
+                            } else {
+                                List<PurchaseOrderDetailSpecial> orderList = new ArrayList<>();
+                                orderList.add(purchaseOrderDetailSpecial);
+                                purchaseOrderMap.put(sopPurchaseOrderNo, orderList);
+
+                            }
+                        }
+                    }
+
+                }
+
+            }
+            pageIndex++;
+            hasNext=(pageSize==orderDetails.size());
+
+        }
+
+
+
+        return purchaseOrderMap;
 
     }
 
