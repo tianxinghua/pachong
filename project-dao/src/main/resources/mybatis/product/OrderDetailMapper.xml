@@ -279,5 +279,22 @@
 			<if test="null!= status">and ddd.STATUS=#{status}</if>
         </where>
     </select>
+    <select id="findPushFailOrdersByUpdateTime" resultMap="OrderResultMap">
+    	select
+		ID, UUID,EP_MASTER_ORDER_NO,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_NO,
+		SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO, SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU,
+		SUPPLIER_SKU, QUANTITY, PURCHASE_PRICE_DETAIL, STATUS, DELIVERY_NO, CREATE_TIME,
+		UPDATE_TIME, EXC_STATE, EXC_DESC, EXC_TIME
+		from ORDER_DETAIL ddd 
+		<where>
+			ddd.SUPPLIER_ID=#{supplierId}
+			and (ddd.STATUS = 'nohandle' or ddd.STATUS = 'refunded' or ddd.STATUS = 'SHpurExp')			
+			<if test="null!=startDate">and UPDATE_TIME >=#{startDate}</if>
+			<if test="null!=endDate">
+				<![CDATA[ and UPDATE_TIME <=#{endDate}    ]]>
+			</if>
+		</where>
+		order by UPDATE_TIME desc
+    </select>
 	
 </mapper>
