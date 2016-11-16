@@ -66,7 +66,7 @@ public class StockImp extends AbsUpdateProductStock {
             	String size = URLEncoder.encode(skuArray[1],"UTF-8");
             	size = size.replace("+","%20");
         	  String json = HttpUtil45
-      				.get("http://ballin.edstema.it/api/v3.0/sku/"+tempSku+"/id/"+size+"/size/stock?storeCode=8CJXT",
+      				.get("http://lamborghini.edstema.it/api/v3.0/sku/"+tempSku+"/id/"+size+"/size/stock?storeCode=8CJXT",
       						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
       						null);
       		ReturnObject obj = new Gson().fromJson(json, ReturnObject.class);

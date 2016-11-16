@@ -358,8 +358,8 @@ public class FileDownloadController {
             int pageIndex1 = Integer.parseInt(page);
     		int pageSize1 = Integer.parseInt(rows);
     		List<OrderDetailDTO> orderList = null;
-            orderList = orderDetailService.getOrderBySupplierIdAndTime(supplier, null, null, (pageIndex1-1)*pageSize1,pageSize1 );	
-            int total = orderDetailService.getOrderTotalBySupplierIdAndTime(supplier, null, null);
+            orderList = orderDetailService.getOrderBySupplierIdAndTime(supplier, null, null,null, null,null, null, (pageIndex1-1)*pageSize1,pageSize1 );	
+            int total = orderDetailService.getOrderTotalBySupplierIdAndTime(supplier, null, null,null, null,null, null);
             
             for (OrderDetailDTO orderDTO : orderList) {
             	if(nameMap.containsKey(orderDTO.getStatus().toLowerCase())){
@@ -379,6 +379,75 @@ public class FileDownloadController {
     	return null;
     }
     
+    @RequestMapping(value = "orderList")
+    @ResponseBody
+    public String queryOrdersList(HttpServletRequest request,
+                         HttpServletResponse response){
+    	
+    	Map<String, String> nameMap = new HashMap<String, String>();
+    	nameMap.put("placed", "下订单成功");
+    	nameMap.put("payed", "支付");
+    	nameMap.put("cancelled", "取消成功");
+    	nameMap.put("confirmed", "支付成功");
+    	nameMap.put("nohandle", "超时不处理");
+    	nameMap.put("waitplaced", "待下订单");
+    	nameMap.put("waitcancel", "待取消");
+    	nameMap.put("refunded", "退款成功");
+    	nameMap.put("waitrefund", "待退款");
+    	nameMap.put("purexpsuc", "采购异常Suc");
+    	nameMap.put("purexperr", "采购异常Err");
+    	nameMap.put("shipped", "shipped");
+    	nameMap.put("should purExp", "应该采购异常");
+    	ModelAndView modelAndView = new ModelAndView();
+    
+    	try{
+    		String supplierId = null;
+    		if(!request.getParameter("supplierId").isEmpty()){
+    			supplierId = request.getParameter("supplierId");	
+    		}
+    		String CGD = null;
+    		if(!request.getParameter("CGD").isEmpty()){
+    			CGD = request.getParameter("CGD");
+    		}
+    		String supplierSkuId = null;
+    		if(!request.getParameter("supplierSkuId").isEmpty()){
+    			supplierSkuId = request.getParameter("supplierSkuId");
+    		}
+    		String spSkuId = null;
+    		if(!request.getParameter("spSkuId").isEmpty()){
+    			spSkuId = request.getParameter("spSkuId");
+    		}
+    		String status = null;
+    		if(request.getParameter("status")!=null&&!request.getParameter("status").isEmpty()){
+    			status = request.getParameter("status");
+    		}
+    		
+    		String page = request.getParameter("page");
+    		String rows = request.getParameter("rows");
+    		System.out.println(page+rows);
+            int pageIndex1 = Integer.parseInt(page);
+    		int pageSize1 = Integer.parseInt(rows);
+    		List<OrderDetailDTO> orderList = null;
+            orderList = orderDetailService.getOrderBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status, (pageIndex1-1)*pageSize1,pageSize1 );	
+            int total = orderDetailService.getOrderTotalBySupplierIdAndTime(supplierId,CGD,spSkuId,supplierSkuId,status, null, null);
+            
+            for (OrderDetailDTO orderDTO : orderList) {
+            	if(nameMap.containsKey(orderDTO.getStatus().toLowerCase())){
+            		orderDTO.setStatus(nameMap.get(orderDTO.getStatus().toLowerCase()));
+            	}				
+			}
+            modelAndView.addObject("orderList", orderList);
+    		modelAndView.setViewName("orders");
+    		 JSONObject result = new JSONObject();  
+    	      result.put("rows", orderList);  
+             result.put("total",total);
+             return result.toString();//这个就是你在ajax成功的时候返回的数据，我在那边进行了一个对象封装
+    	}catch(Exception ex){
+    		log.error(ex.getMessage());
+    		ex.printStackTrace();
+    	}        
+    	return null;
+    }
     
     
     @RequestMapping(value = "downLoadPicture")

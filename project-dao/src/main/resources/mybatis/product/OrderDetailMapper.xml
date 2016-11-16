@@ -198,6 +198,10 @@
 			<if test="null!=endDate">
 				<![CDATA[ and CREATE_TIME <=#{endDate}    ]]>
 			</if>
+				<if test="null!= CGD">and ddd.SP_PURCHASE_NO=#{CGD}</if>
+				<if test="null!= spSkuId">and ddd.SP_SKU=#{spSkuId}</if>
+				<if test="null!= supplierSkuId">and ddd.SUPPLIER_SKU=#{supplierSkuId}</if>
+				<if test="null!= status">and ddd.STATUS=#{status}</if>
 		</where>
 		order by CREATE_TIME desc
 	</select>
@@ -265,6 +269,14 @@
             <if test="null!=supplierId">
                 ddd.SUPPLIER_ID=#{supplierId}
             </if>         
+            <if test="null!=startDate">and CREATE_TIME >=#{startDate}</if>
+			<if test="null!=endDate">
+				<![CDATA[ and CREATE_TIME <=#{endDate}    ]]>
+			</if>
+            <if test="null!= CGD">and ddd.SP_PURCHASE_NO=#{CGD}</if>
+			<if test="null!= spSkuId">and ddd.SP_SKU=#{spSkuId}</if>
+			<if test="null!= supplierSkuId">and ddd.SUPPLIER_SKU=#{supplierSkuId}</if>
+			<if test="null!= status">and ddd.STATUS=#{status}</if>
         </where>
     </select>
 	
