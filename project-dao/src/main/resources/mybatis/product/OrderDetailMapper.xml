@@ -264,10 +264,11 @@
 	<select id="getOrderTotalBySupplierIdAndTime"  resultType="int">
         select
         count(*)
-        from ORDER_DETAIL ddd
-        <where>
+        from ORDER_DETAIL ddd left join SUPPLIER su on ddd.SUPPLIER_ID = su.SUPPLIER_ID
+		<where>
+			su.SUPPLIER_STATE = '1'
             <if test="null!=supplierId">
-                ddd.SUPPLIER_ID=#{supplierId}
+              and  ddd.SUPPLIER_ID=#{supplierId}
             </if>         
             <if test="null!=startDate">and CREATE_TIME >=#{startDate}</if>
 			<if test="null!=endDate">

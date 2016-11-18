@@ -23,7 +23,7 @@ function test(){
         type : "POST",
         dataType : "json",
         async: false,
-        url : "orderPage",
+        url : "orderList",
         data : {
             'page' : 1,
             'rows' : 100,
@@ -124,7 +124,24 @@ $(function(){
         	styler: function(index,row,index){
         		return 'font-size:15px';
         		}	}, 
-	       
+	        {field:'createTime',title:'CreateTime',width:'150',
+	        	styler: function(index,row,index){
+	        		return 'font-size:15px';
+	        		}	
+        	,formatter: function (value, row, index) {
+	        	var time = getDate(new Date(value.time));
+                 return time;                                 
+            }
+		}, 
+        {field:'updateTime',title:'UpdateTime',width:'150',
+        	styler: function(index,row,index){
+        		return 'font-size:15px';
+        		}	
+			,formatter: function (value, row, index) {
+	        	var time = getDate(new Date(value.time));
+                 return time;                                 
+            }
+		}, 
 	        {field:'excDesc',title:'异常原因',width:'300',
 	        	styler: function(index,row,index){
 	        		return 'font-size:15px';
@@ -137,18 +154,18 @@ $(function(){
 	}); 
 	
     var pager=$('#dg').datagrid('getPager');
-//     find(1,10);
     	pager.pagination({
         pageNumber : 1,
         pageSize:100,
-        pageList : [ 10,20,30,50,100 ],// 可以设置每页记录条数的列表
+        pageList : [50,100,300,500],// 可以设置每页记录条数的列表
         onSelectPage: function (pageNumber, pageSize) {//分页触发  
             find(pageNumber, pageSize);  
-            query(pageNumber, pageSize);
+            //query(pageNumber, pageSize);
         }
-    });
+    });		
 
 });
+
 	function find(pageNumber, pageSize)
 	{
 	        $("#dg").datagrid('getPager').pagination({pageSize : pageSize, pageNumber : pageNumber});//重置
@@ -156,11 +173,16 @@ $(function(){
 	        $.ajax({
 	            type : "POST",
 	            dataType : "json",
-	            url : "orderPage",
+	            url : "orderList",
 	            data : {
-	                'page' : pageNumber,
-	                'rows' : pageSize,
-	                'supplierId':'${supplierId}'
+                	 'page' : pageNumber,
+                     'rows' : pageSize,
+                     'supplierId':'${supplierId}',
+                     'CGD':	$("#CGD").val(),
+                     'supplierSkuId':$("#supplierSkuId").val(),
+                     'spSkuId':$("#spSkuId").val(),
+                     'status':$("#status").val()
+	                
 	            },
 	            success : function(data) {
 	                $("#dg").datagrid('loadData',pageData(data.rows,data.total));//这里的pageData是我自己创建的一个对象，用来封装获取的总条数，和数据，data.rows是我在控制器里面添加的一个map集合的键的名称
@@ -184,6 +206,7 @@ $(function(){
 	function query(pageNumber, pageSize){
 		$("#dg").datagrid('getPager').pagination({pageSize : pageSize, pageNumber : pageNumber});//重置
         $("#dg").datagrid("loading"); //加屏蔽
+
         $.ajax({
             type : "POST",
             dataType : "json",
@@ -194,7 +217,8 @@ $(function(){
                 'supplierId':'${supplierId}',
                 'CGD':	$("#CGD").val(),
                 'supplierSkuId':$("#supplierSkuId").val(),
-                'spSkuId':$("#spSkuId").val()
+                'spSkuId':$("#spSkuId").val(),
+                'status':$("#status").val()
                 
             },
             success : function(data) {
@@ -202,10 +226,6 @@ $(function(){
                 var total =data.total;
                 console.info(data);
                 $("#dg").datagrid('getPager').pagination({total : total});//重置
-                $("#dg").datagrid("loaded"); //移除屏蔽
-            },
-            error : function(err) {
-                $.messager.alert('操作提示', '获取信息失败...请联系管理员!', 'error');
                 $("#dg").datagrid("loaded"); //移除屏蔽
             }
         });
@@ -217,11 +237,7 @@ $(function(){
 
 	<body class="easyui-layout" onload="test();">  
 	 <div data-options="region:'north'">
-	
-		 <form name="searchform" method="post" id ="searchform">
 		 
-		  		<strong>supplierId：</strong>
-			           <input class="easyui-validatebox" type="text" name="supplierId" id="supplierId"></input>
 		  	<strong>CGD：</strong>
 			           <input class="easyui-validatebox" type="text" name="CGD" id="CGD"></input>
 			   <strong>supplierSkuId：</strong>
@@ -229,13 +245,16 @@ $(function(){
 			            <strong>spSkuId：</strong>
 			  
 			            <input class="easyui-validatebox" type="text" name="spSkuId" id="spSkuId" ></input>
-			        <select name="search_type" id="search_type" >
-			            <option value="-1">--请选择--</option>
-			            <option value="be_name" >success</option>
+			        <select name="search_type" id="status" >
+			            <option value="">--请选择--</option>
+			            <option value="confirmed" >confirmed</option>
+			            <option value="nohandle" >nohandle</option>
+			            <option value="purExpSuc" >purExpSuc</option>
+			            <option value="SHpurExp" >SHpurExp</option>
+			            <option value="yuShou" >yuShou</option>
+			            <option value="purExpErr" >purExpErr</option>
 			        </select>
 			        <button value="ssss" onclick="query(1,100)">Query</button>
-			      		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btn">Query</a>
-			  </form>
 		 </div>
 	    <div data-options="region:'center'">
 			<table id="dg"></table>

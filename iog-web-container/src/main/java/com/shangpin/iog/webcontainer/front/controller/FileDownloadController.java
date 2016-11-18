@@ -353,7 +353,7 @@ public class FileDownloadController {
     	try{
     		String page = request.getParameter("page");
     		String rows = request.getParameter("rows");
-    		String supplier = request.getParameter("supplierId");
+    		String supplier = request.getParameter("supplierid");
     		System.out.println(page+rows);
             int pageIndex1 = Integer.parseInt(page);
     		int pageSize1 = Integer.parseInt(rows);
@@ -402,23 +402,23 @@ public class FileDownloadController {
     
     	try{
     		String supplierId = null;
-    		if(!request.getParameter("supplierId").isEmpty()){
+    		if(!request.getParameter("supplierId").equals("-1")){
     			supplierId = request.getParameter("supplierId");	
     		}
     		String CGD = null;
-    		if(!request.getParameter("CGD").isEmpty()){
+    		if(request.getParameter("CGD")!=null&&!request.getParameter("CGD").isEmpty()){
     			CGD = request.getParameter("CGD");
     		}
     		String supplierSkuId = null;
-    		if(!request.getParameter("supplierSkuId").isEmpty()){
+    		if(request.getParameter("supplierSkuId")!=null&&!request.getParameter("supplierSkuId").isEmpty()){
     			supplierSkuId = request.getParameter("supplierSkuId");
     		}
     		String spSkuId = null;
-    		if(!request.getParameter("spSkuId").isEmpty()){
+    		if(request.getParameter("spSkuId")!=null&&!request.getParameter("spSkuId").isEmpty()){
     			spSkuId = request.getParameter("spSkuId");
     		}
     		String status = null;
-    		if(request.getParameter("status")!=null&&!request.getParameter("status").isEmpty()){
+    		if(request.getParameter("status")!=null&&request.getParameter("status")!=null&&!request.getParameter("status").isEmpty()){
     			status = request.getParameter("status");
     		}
     		
@@ -429,7 +429,7 @@ public class FileDownloadController {
     		int pageSize1 = Integer.parseInt(rows);
     		List<OrderDetailDTO> orderList = null;
             orderList = orderDetailService.getOrderBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status, (pageIndex1-1)*pageSize1,pageSize1 );	
-            int total = orderDetailService.getOrderTotalBySupplierIdAndTime(supplierId,CGD,spSkuId,supplierSkuId,status, null, null);
+            int total = orderDetailService.getOrderTotalBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status);
             
             for (OrderDetailDTO orderDTO : orderList) {
             	if(nameMap.containsKey(orderDTO.getStatus().toLowerCase())){
