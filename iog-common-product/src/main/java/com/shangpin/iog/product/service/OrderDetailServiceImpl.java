@@ -132,10 +132,10 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
 	@Override
 	public List<OrderDetailDTO> getOrderBySupplierIdAndTime(String supplier,
-			Date startDate, Date endDate, Integer pageIndex, Integer pageSize) {
+			Date startDate, Date endDate,String CGD,String spSkuId,String supplierSkuId,String status, Integer pageIndex, Integer pageSize) {
 
 		return orderDetailDao.getOrderBySupplierIdAndTime(supplier, startDate,
-				endDate, new RowBounds(pageIndex, pageSize));
+				endDate,CGD,spSkuId,supplierSkuId,status, new RowBounds(pageIndex, pageSize));
 	}
 
 	@Override
@@ -209,8 +209,8 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 	}
 	
 	@Override
-	public int getOrderTotalBySupplierIdAndTime(String supplier, String object,
-			String object2){
-		return orderDetailDao.getOrderTotalBySupplierIdAndTime(supplier);
+	public int getOrderTotalBySupplierIdAndTime(String supplier, String startTime,
+			String endTime,String CGD,String spSkuId,String supplierSkuId,String status){
+		return orderDetailDao.getOrderTotalBySupplierIdAndTime(supplier,startTime,endTime,CGD,spSkuId,supplierSkuId,status);
 	}
 }

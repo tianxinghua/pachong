@@ -198,6 +198,10 @@
 			<if test="null!=endDate">
 				<![CDATA[ and CREATE_TIME <=#{endDate}    ]]>
 			</if>
+				<if test="null!= CGD">and ddd.SP_PURCHASE_NO=#{CGD}</if>
+				<if test="null!= spSkuId">and ddd.SP_SKU=#{spSkuId}</if>
+				<if test="null!= supplierSkuId">and ddd.SUPPLIER_SKU=#{supplierSkuId}</if>
+				<if test="null!= status">and ddd.STATUS=#{status}</if>
 		</where>
 		order by CREATE_TIME desc
 	</select>
@@ -260,14 +264,22 @@
 	<select id="getOrderTotalBySupplierIdAndTime"  resultType="int">
         select
         count(*)
-        from ORDER_DETAIL ddd
-        <where>
+        from ORDER_DETAIL ddd left join SUPPLIER su on ddd.SUPPLIER_ID = su.SUPPLIER_ID
+		<where>
+			su.SUPPLIER_STATE = '1'
             <if test="null!=supplierId">
-                ddd.SUPPLIER_ID=#{supplierId}
+              and  ddd.SUPPLIER_ID=#{supplierId}
             </if>         
+            <if test="null!=startDate">and CREATE_TIME >=#{startDate}</if>
+			<if test="null!=endDate">
+				<![CDATA[ and CREATE_TIME <=#{endDate}    ]]>
+			</if>
+            <if test="null!= CGD">and ddd.SP_PURCHASE_NO=#{CGD}</if>
+			<if test="null!= spSkuId">and ddd.SP_SKU=#{spSkuId}</if>
+			<if test="null!= supplierSkuId">and ddd.SUPPLIER_SKU=#{supplierSkuId}</if>
+			<if test="null!= status">and ddd.STATUS=#{status}</if>
         </where>
     </select>
-    
     <select id="findPushFailOrdersByUpdateTime" resultMap="OrderResultMap">
     	select
 		ID, UUID,EP_MASTER_ORDER_NO,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_NO,
@@ -285,5 +297,4 @@
 		</where>
 		order by UPDATE_TIME desc
     </select>
-	
 </mapper>
