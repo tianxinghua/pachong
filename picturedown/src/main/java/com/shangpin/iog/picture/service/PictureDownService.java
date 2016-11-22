@@ -87,7 +87,7 @@ public class PictureDownService {
     }
     public void downPic(){
         if("".equals(supplier_Id)) supplier_Id=null;
-        //用的线程过多 httpclient的连接池 不够用 现放慢速度 一个供货商一个供货商的来操作
+        //鐢ㄧ殑绾跨▼杩囧 httpclient鐨勮繛鎺ユ睜 涓嶅鐢�鐜版斁鎱㈤�搴�涓�釜渚涜揣鍟嗕竴涓緵璐у晢鐨勬潵鎿嶄綔
         Map excludeSupplierMap = new HashMap();
         if(StringUtils.isNotBlank(excludesupplierId)) {
             String[] supplierArray = excludesupplierId.split(",");
@@ -103,7 +103,7 @@ public class PictureDownService {
 
                 List<SupplierDTO> supplierDTOs =  supplierService.findByState("1");
                 for(SupplierDTO dto:supplierDTOs){
-                    if(excludeSupplierMap.containsKey(dto.getSupplierId())) continue;//排除不拉取的
+                    if(excludeSupplierMap.containsKey(dto.getSupplierId())) continue;//鎺掗櫎涓嶆媺鍙栫殑
                     downloadPic(dto.getSupplierId());
                 }
             } catch (ServiceException e) {
@@ -112,7 +112,7 @@ public class PictureDownService {
         }else{
             String[] supplierArray = supplier_Id.split(",");
             for(String supplierId : supplierArray){
-                if(excludeSupplierMap.containsKey(supplierId)) continue;//排除不拉取的
+                if(excludeSupplierMap.containsKey(supplierId)) continue;//鎺掗櫎涓嶆媺鍙栫殑
                 downloadPic(supplierId);
             }
 
@@ -123,17 +123,17 @@ public class PictureDownService {
 
     private void downloadPic(String supplierIdPam) {
         try {
-            loggerInfo.info("供货商:"+ supplierIdPam +" 开始下载");
+            loggerInfo.info("渚涜揣鍟�"+ supplierIdPam +" 寮�涓嬭浇");
             Map<String,String> picMap = new HashMap<>();
             Map<String,String> supplierDateMap = null;
-            //如果开始日期为空 只拉取当天的数据
+            //濡傛灉寮�鏃ユ湡涓虹┖ 鍙媺鍙栧綋澶╃殑鏁版嵁
 //            if(StringUtils.isBlank(startDate)){
 //                startDate = DateTimeUtil.strForDateNew(new Date());
 //            }
 
             supplierDateMap = productReportService.findPicture(picMap,supplierIdPam,startDate,endDate,excludesupplierId);
             if(null!=supplierDateMap&&supplierDateMap.size()>0){
-                //获取日期
+                //鑾峰彇鏃ユ湡
                 String key = "",supplierId = "",date= "",spukeyValue = "";
                 ThreadPoolExecutor executor = new ThreadPoolExecutor(50, 150, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(100),new ThreadPoolExecutor.CallerRunsPolicy());
                 PicQueue picQueue = new PicQueue();
@@ -154,7 +154,7 @@ public class PictureDownService {
 //                    loggerInfo.info("supplierId="+ supplierId);
                     for(String spu :spuArray){
 
-                        //下载保存图片
+                        //涓嬭浇淇濆瓨鍥剧墖
 
 
                             System.out.println("++++"+a+"++++++");
@@ -168,17 +168,17 @@ public class PictureDownService {
                                 if (StringUtils.isNotBlank(img)) {
                                     try {
                                         img=this.changeUrl(supplierId,img.trim()) ;
-                                        System.out.println("spu =" +spu + " 　img url  ="+ img);
-                                        loggerInfo.info("spu =" +spu + " 　img url  ="+ img);
+                                        System.out.println("spu =" +spu + " 銆�mg url  ="+ img);
+                                        loggerInfo.info("spu =" +spu + " 銆�mg url  ="+ img);
                                         i++;
                                         File f = new File(dirPath+"/"+spu+" ("+i+").jpg");
                                         if (f.exists()) {
                                             continue;
                                         }
-                                        //某些供货商特殊处理
+                                        //鏌愪簺渚涜揣鍟嗙壒娈婂鐞�
                                         if("2015092401528".equals(supplierId)){
                                             //2015092401528 stefania \
-                                            // 2015101501608  tony    暂不需要
+                                            // 2015101501608  tony    鏆備笉闇�
                                              DownloadPicTool.downImage(img.trim(),dirPath,spu+" ("+i+").jpg");
                                         }else  if("2016030701799".equals(supplierId)) {   //russocapri
 
@@ -187,9 +187,15 @@ public class PictureDownService {
                                         }else if("2016083001937".equals(supplierId)){
                                         	Thread.sleep(500);
                                         	executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"","shangpin","Shang1808"));
-                                        }
-                                        else
-                                        {
+                                        }else if("2016030901801".equals(supplierId)){
+                                        	img = img.trim();
+                                        	if(!img.startsWith("http")){
+                                        		img = "http://"+img;
+                                        	}
+                                        	Thread.sleep(500);
+                                            executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"",userName,password));
+                                        	
+                                        }else{
                                             Thread.sleep(500);
                                             executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"",userName,password));
                                         }
@@ -207,13 +213,13 @@ public class PictureDownService {
                     }
                 }
                 delay(executor);
-                //重新下载失败的
+                //閲嶆柊涓嬭浇澶辫触鐨�
                 String failUrl = "",path="",user="",pass="";
                 String[] split = null;
                 Map<String,Integer> recordMap = new HashMap<String, Integer>();
                 while(executor.getActiveCount()>0||!picQueue.unVisitedUrlsEmpty()){
                     if (picQueue.unVisitedUrlsEmpty()&&executor.getActiveCount()>=0) {
-                        System.out.println("============================================都为空=======================================================");
+                        System.out.println("============================================閮戒负绌�======================================================");
                         try {
                             Thread.sleep(1000*10);
                         } catch (InterruptedException e) {
@@ -237,8 +243,8 @@ public class PictureDownService {
                         recordMap.put(failUrl, 1);
                     }
                     split = failUrl.split(";");
-                    System.out.println("曾经下载失败的 spu =" +split[2] + " 　img url  ="+ split[0]);
-                    loggerInfo.info("曾经下载失败的 spu =" +split[2] + " 　img url  ="+ split[0]);
+                    System.out.println("鏇剧粡涓嬭浇澶辫触鐨�spu =" +split[2] + " 銆�mg url  ="+ split[0]);
+                    loggerInfo.info("鏇剧粡涓嬭浇澶辫触鐨�spu =" +split[2] + " 銆�mg url  ="+ split[0]);
                     path = split[1].substring(0,split[1].lastIndexOf("/"));
                     supplierId = path.substring(path.lastIndexOf("/")+1,path.length());
                     if(supplierUserPassMap.containsKey(supplierId)){
@@ -253,7 +259,7 @@ public class PictureDownService {
                 }
                 delay(executor);
             }
-            loggerInfo.info("供货商:"+ supplierIdPam +" 下载完毕");
+            loggerInfo.info("渚涜揣鍟�"+ supplierIdPam +" 涓嬭浇瀹屾瘯");
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -279,7 +285,7 @@ public class PictureDownService {
     private void delay(ThreadPoolExecutor executor){
         while(true){
             if(executor.getActiveCount()==0){
-                loggerInfo.info("线程活动数为0");
+                loggerInfo.info("绾跨▼娲诲姩鏁颁负0");
                 break;
             }
             try {
