@@ -1,0 +1,29 @@
+server.port: 9820
+spring:
+  data: 
+      mongodb: 
+             uri: mongodb://192.168.9.135:27017/order-stock-message-service-qa
+  rabbitmq: 
+           host: 192.168.20.175
+           port: 5672
+           username: scm-message-service-qa
+           password: scm-message-service-qa
+           virtual-host: /scm-message-service-qa
+  cloud: 
+        stream: 
+              bindings: 
+                        orders: 
+                              destination: SupplierOrderSync
+                              content-type: application/json
+              rabbit: 
+                      bindings: 
+                        orders: 
+                              producer: 
+                                       prefix: HA.
+  jackson: 
+       date-format: yyyy-MM-dd HH:mm:ss
+banner: 
+       charset: UTF-8 # Banner file encoding.
+       location: classpath:banner/banner.txt # Banner file location.
+       image: 
+             location: classpath:banner/yan.png # Banner image file location (jpg/png can also be used).
