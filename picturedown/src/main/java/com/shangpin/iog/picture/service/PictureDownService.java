@@ -123,7 +123,7 @@ public class PictureDownService {
 
     private void downloadPic(String supplierIdPam) {
         try {
-            loggerInfo.info("渚涜揣鍟�"+ supplierIdPam +" 寮�涓嬭浇");
+        	loggerInfo.info("供货商:" + supplierIdPam + " 开始下载");
             Map<String,String> picMap = new HashMap<>();
             Map<String,String> supplierDateMap = null;
             //濡傛灉寮�鏃ユ湡涓虹┖ 鍙媺鍙栧綋澶╃殑鏁版嵁
@@ -168,8 +168,8 @@ public class PictureDownService {
                                 if (StringUtils.isNotBlank(img)) {
                                     try {
                                         img=this.changeUrl(supplierId,img.trim()) ;
-                                        System.out.println("spu =" +spu + " 銆�mg url  ="+ img);
-                                        loggerInfo.info("spu =" +spu + " 銆�mg url  ="+ img);
+                                        System.out.println("spu =" + spu + " 　img url  =" + img);
+                                        loggerInfo.info("spu =" + spu + " 　img url  =" + img);
                                         i++;
                                         File f = new File(dirPath+"/"+spu+" ("+i+").jpg");
                                         if (f.exists()) {
@@ -195,6 +195,18 @@ public class PictureDownService {
                                         	Thread.sleep(500);
                                             executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"",userName,password));
                                         	
+                                        }else if ("2016051201892".equals(supplierId)){
+                                        	img = img.trim().replaceAll("\r", "").replaceAll("\n", "").trim();
+                                        	if(img.contains("|")){
+                                        		String[] urls = img.split("\\|");
+                                        		for(int j=0;j<urls.length;j++){
+                                        			executor.execute(new DowmImage(urls[j].trim(),spu+" ("+(j+1)+").jpg",dirPath,picQueue,null, null,"",userName,password));
+                                        		}
+                                        	}else{
+                                        		executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"",userName,password));
+                                        	}
+                                        	Thread.sleep(500);
+                                        	
                                         }else{
                                             Thread.sleep(500);
                                             executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"",userName,password));
@@ -219,7 +231,7 @@ public class PictureDownService {
                 Map<String,Integer> recordMap = new HashMap<String, Integer>();
                 while(executor.getActiveCount()>0||!picQueue.unVisitedUrlsEmpty()){
                     if (picQueue.unVisitedUrlsEmpty()&&executor.getActiveCount()>=0) {
-                        System.out.println("============================================閮戒负绌�======================================================");
+                        System.out.println("============================================都为空======================================================");
                         try {
                             Thread.sleep(1000*10);
                         } catch (InterruptedException e) {
@@ -243,8 +255,8 @@ public class PictureDownService {
                         recordMap.put(failUrl, 1);
                     }
                     split = failUrl.split(";");
-                    System.out.println("鏇剧粡涓嬭浇澶辫触鐨�spu =" +split[2] + " 銆�mg url  ="+ split[0]);
-                    loggerInfo.info("鏇剧粡涓嬭浇澶辫触鐨�spu =" +split[2] + " 銆�mg url  ="+ split[0]);
+                    System.out.println("曾经下载失败的 spu =" + split[2] + " 　img url  =" + split[0]);
+                    loggerInfo.info("曾经下载失败的 spu =" + split[2] + " 　img url  =" + split[0]);
                     path = split[1].substring(0,split[1].lastIndexOf("/"));
                     supplierId = path.substring(path.lastIndexOf("/")+1,path.length());
                     if(supplierUserPassMap.containsKey(supplierId)){
@@ -259,7 +271,7 @@ public class PictureDownService {
                 }
                 delay(executor);
             }
-            loggerInfo.info("渚涜揣鍟�"+ supplierIdPam +" 涓嬭浇瀹屾瘯");
+            loggerInfo.info("供货商:" + supplierIdPam + " 下载完毕");
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -285,7 +297,7 @@ public class PictureDownService {
     private void delay(ThreadPoolExecutor executor){
         while(true){
             if(executor.getActiveCount()==0){
-                loggerInfo.info("绾跨▼娲诲姩鏁颁负0");
+            	loggerInfo.info("线程活动数为0");
                 break;
             }
             try {

@@ -36,172 +36,140 @@ import com.shangpin.iog.studio69.dto.GoodsCategory;
 import com.shangpin.iog.studio69.dto.GoodsDetail;
 import com.shangpin.iog.studio69.dto.Item;
 import com.shangpin.iog.studio69.dto.Picture;
+import com.shangpin.iog.studio69.dto.SecondCategory;
 import com.shangpin.iog.studio69.util.DataTransUtil;
+import com.shangpin.product.AbsSaveProduct;
 
 /**
  * Created by houkun on 2016/01/25.
  */
 @Component("studio69")
-public class FetchProduct {
+public class FetchProduct extends AbsSaveProduct{
 	private static Logger logger = Logger.getLogger("info");
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
-	public static int day;
 
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
-		supplierId = bdl.getString("supplierId");
-		day = Integer.valueOf(bdl.getString("day"));
-		
+		supplierId = bdl.getString("supplierId");		
 	}
 	@Autowired
 	ProductSearchService productSearchService;
 	@Autowired
 	private ProductFetchService productFetchService;
-    public void fetchProductAndSave(){
-    	
-    	
-        	Date startDate,endDate= new Date();
-			startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
-			//获取原有的SKU 仅仅包含价格和库存
-			Map<String,SkuDTO> skuDTOMap = new HashedMap();
+    public  Map<String, Object> fetchProductAndSave(){
+    	Map<String, Object> returnMap = new HashMap<String, Object>();
+		List<SkuDTO> skuList = new ArrayList<SkuDTO>();
+		List<SpuDTO> spuList = new ArrayList<SpuDTO>();
+		Map<String,List<String>> imageMap = new HashMap<String, List<String>>();
+	
+		//处理------------------------------	
+		String season = "";
+		String brandName = "";
+		String category = "";
+		String productName = "";
+		String madein = "";
+		String material = "";
+		String productCode = "";	
+		
+		Map<String, String> brand = DataTransUtil.getBrand();
+		Map<String, SecondCategory> goodsCategory = DataTransUtil.getSecondCategory();
+		List<Good> goodsList = DataTransUtil.getGoodsList();			
+		for (Good good : goodsList) {
 			try {
-				skuDTOMap = productSearchService.findStockAndPriceOfSkuObjectMap(supplierId,startDate,endDate);
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}
-			//处理------------------------------
-    	
-    		String season = "";
-    		String brandName = "";
-    		String category = "";
-    		String productName = "";
-    		String madein = "";
-    		String material = "";
-    		String productCode = "";
-    	
-    		
-			Map<String, String> brand = DataTransUtil.getBrand();
-			Map<String, Category> goodsCategory = DataTransUtil.getGoodsCategory();
-			List<Good> goodsList = DataTransUtil.getGoodsList();			
-			for (Good good : goodsList) {
+				SpuDTO spu = new SpuDTO();
+				spu.setId(UUIDGenerator.getUUID());
+				spu.setSupplierId(supplierId);
+				spu.setSpuId(good.getID());
+				season = good.getSeason();
+				spu.setSeasonName(guolv(season));				
+				brandName = brand.get(good.getBrandID());
+				spu.setBrandName(guolv(brandName));					
 				try {
-					SpuDTO spu = new SpuDTO();
-					spu.setId(UUIDGenerator.getUUID());
-					spu.setSupplierId(supplierId);
-					spu.setSpuId(good.getID());
-					season = good.getSeason();
-					spu.setSeasonName(guolv(season));				
-					brandName = brand.get(good.getBrandID());
-					spu.setBrandName(guolv(brandName));					
-					try {
-						category = goodsCategory.get(good.getParentCategoryID()).getName();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					spu.setCategoryId(good.getCategoryID()); 
-					spu.setCategoryName(guolv(category));					
-					spu.setCategoryGender(good.getTypeID().equals("2")?"man":"women");					
-					//sku
-					GoodsDetail goodsDetail = DataTransUtil.getGoodsDetailByGoodsID(good.getID());
-					if(null != goodsDetail){
-						try {
-							for(GoodDetail goodDetail : goodsDetail.getGoodDetials()){	
-								for(Item item : goodDetail.getStock().getItemlist()){
-									try {
-										SkuDTO sku = new SkuDTO();
-										sku.setId(UUIDGenerator.getUUID());
-										sku.setSupplierId(supplierId);
-										sku.setSpuId(spu.getSpuId());
-										String size = item.getSize();
-										if(size.indexOf("½")>0){
-											size=size.replace("½","+");
-										}
-										sku.setSkuId(spu.getSpuId()+"-"+size);									
-										productCode = good.getCode();
-										sku.setProductCode(StringUtils.isBlank(productCode)?"":productCode);										
-										sku.setColor(guolv(goodDetail.getColor()));
-										sku.setProductSize(guolv(size));
-										sku.setStock(guolv(item.getQty()));									
-										productName = good.getGoodsName();
-										sku.setProductName(guolv(productName));
-										//TODO 暂时设置为市场价
-										sku.setMarketPrice(good.getPrice());
-										//TODO 暂时设置为euro
-										sku.setSaleCurrency("EURO");
-										try {
-					        				
-					        				if(skuDTOMap.containsKey(sku.getSkuId())){
-					    						skuDTOMap.remove(sku.getSkuId());
-					    					}        				
-											productFetchService.saveSKU(sku);
-					        			} catch (ServiceException e) {
-											try {
-						        				if (e.getMessage().equals("数据插入失败键重复")) {
-						        					//更新价格和库存
-						        					productFetchService.updatePriceAndStock(sku);
-						        				} else {
-						        					e.printStackTrace();
-						        				}
-						        			} catch (ServiceException e1) {
-						        				e1.printStackTrace();
-						        			}
-										}
-									
-									} catch (Exception e) {
-										e.printStackTrace();
-									}
-								}
-								madein = goodDetail.getMadeIn();
-								material = goodDetail.getComposition();
-								
-								//保存图片
-								try {
-									List<Picture> asList = goodDetail.getPictures().getPicturelist();
-									List<String> pic = new ArrayList<String>();
-									for (Picture picture : asList) {
-										pic.add(picture.getPictureUrl());
-									}
-									productFetchService.savePicture(supplierId, spu.getSpuId(), null,pic);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}							
-							}	
-						} catch (Exception e) {
-							e.printStackTrace(); 
-						}			
-					}
-					spu.setMaterial(material);
-					spu.setProductOrigin(madein);					
-					try {
-						productFetchService.saveSPU(spu);
-					} catch (ServiceException e) {
-					   try {
-							productFetchService.updateMaterial(spu);
-						} catch (ServiceException e1) {
-							e1.printStackTrace();
-						}
-					}
+					category = goodsCategory.get(good.getCategoryID()).getName();
 				} catch (Exception e) {
 					e.printStackTrace();
-				}			
-				
-			}
-			
-		
-        //更新网站不再给信息的老数据
-		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
-			 Map.Entry<String,SkuDTO> entry =  itor.next();
-			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
-				entry.getValue().setStock("0");
-				try {
-					productFetchService.updatePriceAndStock(entry.getValue());
-				} catch (ServiceException e) {
-					e.printStackTrace();
 				}
-			}
+				spu.setCategoryId(good.getCategoryID()); 
+				spu.setCategoryName(guolv(category));
+				String gender = "";
+				if(good.getTypeID().equals("2")){
+					gender = "man";
+				}else if(good.getTypeID().equals("1")){
+					gender = "woman";
+				}else if(good.getTypeID().equals("21617687")){
+					gender = "kids";
+				}
+				spu.setCategoryGender(gender);					
+				//sku
+				GoodsDetail goodsDetail = DataTransUtil.getGoodsDetailByGoodsID(good.getID());
+				if(null != goodsDetail){
+					try {
+						for(GoodDetail goodDetail : goodsDetail.getGoodDetials()){	
+							for(Item item : goodDetail.getStock().getItemlist()){
+								try {
+									SkuDTO sku = new SkuDTO();
+									sku.setId(UUIDGenerator.getUUID());
+									sku.setSupplierId(supplierId);
+									sku.setSpuId(spu.getSpuId());
+									String size = item.getSize();
+									if(size.indexOf("½")>0){
+										size=size.replace("½","+");
+									}
+									sku.setSkuId(spu.getSpuId()+"-"+size);									
+									productCode = good.getCode();
+									sku.setProductCode(StringUtils.isBlank(productCode)?"":productCode);										
+									sku.setColor(guolv(goodDetail.getColor()));
+									sku.setProductSize(guolv(size));
+									sku.setStock(guolv(item.getQty()));									
+									productName = good.getGoodsName();
+									sku.setProductName(guolv(productName));
+									//TODO 暂时设置为市场价
+									sku.setMarketPrice(good.getPrice());
+									//TODO 暂时设置为euro
+									sku.setSaleCurrency("EURO");
+									logger.info(sku.getSkuId()+" save good------------"); 
+									skuList.add(sku);								
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+							madein = goodDetail.getMadeIn();
+							material = goodDetail.getComposition();
+							
+							//保存图片
+							try {
+								List<Picture> asList = goodDetail.getPictures().getPicturelist();
+								List<String> pic = new ArrayList<String>();
+								for (Picture picture : asList) {
+									pic.add(picture.getPictureUrl());
+								}
+								imageMap.put(spu.getSpuId()+";"+good.getCode(), pic);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}							
+						}	
+					} catch (Exception e) {
+						e.printStackTrace(); 
+					}			
+				}
+				spu.setMaterial(material);
+				spu.setProductOrigin(madein);					
+				
+				spuList.add(spu);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+			
 		}
+		
+		returnMap.put("sku", skuList);
+		returnMap.put("spu", spuList);
+		returnMap.put("image", imageMap);
+		return returnMap;		
+		
     }
     
     /**

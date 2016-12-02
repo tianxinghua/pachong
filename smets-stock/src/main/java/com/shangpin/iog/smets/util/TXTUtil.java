@@ -2,6 +2,7 @@ package com.shangpin.iog.smets.util;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
@@ -13,7 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.log4j.Logger;
 
 import com.csvreader.CsvReader;
@@ -93,12 +97,14 @@ public class TXTUtil {
             log.info("连接"+login);
 			ftpClient.enterLocalPassiveMode();
 			ftpClient.changeWorkingDirectory("/Connexion CEGID");
-			String[] names = ftpClient.listNames("/Connexion CEGID");
+//			String[] names = ftpClient.listNames("/Connexion CEGID");
+			FTPFile[] files = ftpClient.listFiles("/Connexion CEGID", getFilter());
+			
 //			String[] names = ftpClient.listNames();
 			int wait = 0;
-			while(null == names && wait < 20){
+			while(null == files && wait < 20){
 				try {					
-					names = ftpClient.listNames();					
+					files = ftpClient.listFiles("/Connexion CEGID", getFilter());	
 				} catch (Exception e) {
 					e.printStackTrace();
 				}finally{
@@ -106,18 +112,15 @@ public class TXTUtil {
 				}
 			}
 			log.info("获取文件名列表的次数是=============="+wait); 
-			String filename = getFileName(names,new Date());
-			log.info("本次获取的文件名称是==========="+filename); 
+			FTPFile filename = getFileName(files,new Date());
+			log.info("本次获取的文件名称是==========="+filename.getName()); 
             System.out.println("读取txt");
             ftpClient.setControlEncoding("UTF-8");
             ftpClient.setDataTimeout(1000*60*30);
-			in = ftpClient.retrieveFileStream(filename);
-			int i = 0;
-			while(null == in && i<10){
-				in = ftpClient.retrieveFileStream(filename);
-				i++;
-			}
-			log.info("================"+i+"==================="); 
+            
+            ftpClient.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out), true));
+            
+			in = ftpClient.retrieveFileStream("/Connexion CEGID/"+filename.getName());			
 			if(in != null){
 				dtoList = readLocalCSV(clazz, sep, in);
 			}			
@@ -138,19 +141,38 @@ public class TXTUtil {
         }
         return dtoList;
 	}
-	private static String getFileName(String[] names,Date date){
+	
+	private static FTPFileFilter getFilter() {
+		
+		FTPFileFilter filter = new FTPFileFilter() {			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");	
+			Date now = new Date();
+			String dateStr = sdf.format(now);
+			String lastDay = sdf.format(new Date(now.getTime()-86400000));
+			@Override
+			public boolean accept(FTPFile file) {
+				if (file.getName().contains(dateStr) || file.getName().contains(lastDay)) {
+	                return true;
+	            }	            
+				return false;
+			}
+		};
+		return filter;
+	}
+	
+	private static FTPFile getFileName(FTPFile[] files,Date date){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HH");
 		String dateStr = sdf.format(date);
 		System.out.println(dateStr); 
-        String file = "";
-        for (int i = names.length-1; i>=0; i--) {
-        	if (names[i].contains(dateStr)) {
-				file = names[i];
+		FTPFile file = null;
+        for (int i = files.length-1; i>=0; i--) {
+        	if (files[i].getName().contains(dateStr)) {
+				file = files[i];
 				break;
 			}
 		}
-        if (StringUtils.isBlank(file)) {
-			file = getFileName(names, new Date(date.getTime()-3600000));
+        if (null == file) {
+			file = getFileName(files, new Date(date.getTime()-3600000));
 		}
 		return file;
 	}
@@ -158,7 +180,7 @@ public class TXTUtil {
 		
 ////		String aaa= "3000003587604,3000003587611,3000003587628,3000003587635,3000003587642,3000003587659,3000003587666";
 //		try {
-//			List<TxtDTO> list = TXTUtil.downloadFTP(TxtDTO.class, ";");
+			List<TxtDTO> list = TXTUtil.downloadFTP(TxtDTO.class, ";");
 //			Short[] needColsNo = new Short[]{0};
 //			File file = new File("F://smets.xlsx");
 //			List<TxtDTO> dto = new Excel2DTO().toDTO(file, 0, needColsNo, TxtDTO.class);

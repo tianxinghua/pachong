@@ -97,7 +97,7 @@ public class StockClientImp extends AbsUpdateProductStock {
 		return returnMap;
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args){
 		//加载spring
 //		System.out.println("加载spring");
 //        loadSpringContext();
@@ -114,7 +114,15 @@ public class StockClientImp extends AbsUpdateProductStock {
 //		System.out.println("更新数据库结束");
 //		logger.info("更新数据库结束");
 //		System.exit(0);
-		new StockClientImp().grabStock(null);
+		try {
+			new StockClientImp().grabStock(null);
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 
