@@ -289,7 +289,7 @@
 		from ORDER_DETAIL ddd 
 		<where>
 			ddd.SUPPLIER_ID=#{supplierId}
-			and (ddd.STATUS = 'nohandle' or ddd.STATUS = 'refunded' or ddd.STATUS = 'SHpurExp')			
+			and (ddd.STATUS = 'nohandle' or ddd.STATUS = 'SHpurExp')			
 			<if test="null!=startDate">and UPDATE_TIME >=#{startDate}</if>
 			<if test="null!=endDate">
 				<![CDATA[ and UPDATE_TIME <=#{endDate}    ]]>

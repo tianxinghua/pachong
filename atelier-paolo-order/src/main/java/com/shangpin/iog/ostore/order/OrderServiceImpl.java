@@ -142,6 +142,7 @@ public class OrderServiceImpl extends AbsOrderService{
 						if (returnData.contains("OK")) {
 							 orderDTO.setExcState("0");				 
 							 orderDTO.setStatus(OrderStatus.CONFIRMED);
+							 logger.info("更新"+id_order_mrkp+"状态为======"+OrderStatus.CONFIRMED);
 						} else {
 							//推送订单失败
 							orderDTO.setExcState("1");
@@ -303,8 +304,13 @@ public class OrderServiceImpl extends AbsOrderService{
 	public static void main(String[] args) {
 //		try {
 //			
-//		
+		
+		String testStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?><string xmlns=\"http://tempuri.org/\">OK</string>";
+		if(testStr.contains("OK")){
+			System.out.println("---------------------");
+		}
 		OrderServiceImpl orderService = new OrderServiceImpl();
+		
 //		OrderDTO orderDTO = new OrderDTO();
 ////    	orderDTO.setSpPurchaseNo("CGD2016072500097");
 //		orderDTO.setSpOrderId("201609264074169");

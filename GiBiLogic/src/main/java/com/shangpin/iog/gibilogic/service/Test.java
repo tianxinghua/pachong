@@ -44,8 +44,9 @@ public class Test {
 		StringBuffer kk  = new StringBuffer();
 		while(true){
 			System.out.println("pageNum=="+pageNum);
-			productJson = HttpUtil45.get("http://shop.areadocks.it/en/api/product?pagesize=100&page="+pageNum++, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10),null);
+			productJson = HttpUtil45.get("http://shop.areadocks.it/en/api/product?pagesize=5000&page="+pageNum++, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10),null);
 			json = gson.fromJson(productJson, new TypeToken<Map<String, Product>>(){}.getType());
+			System.out.println("size====="+json.size());
 			if (json.size()==0) {
 				break;
 			}

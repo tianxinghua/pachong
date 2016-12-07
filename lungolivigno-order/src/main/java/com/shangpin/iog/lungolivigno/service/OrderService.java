@@ -97,34 +97,38 @@ public class OrderService extends AbsOrderService{
 			String storecode = getStoreCode(sku.substring(0, sku.indexOf("-")),sku.substring(sku.indexOf("-")+1));
 			//2、下单参数
 			RequestSaveOrderDTO requestSaveOrderDTO = new RequestSaveOrderDTO();
-			requestSaveOrderDTO.setID(orderDTO.getSpOrderId());
+			String spOrderId = orderDTO.getSpOrderId();
+			if(spOrderId.contains("-")){
+				spOrderId = spOrderId.substring(0,spOrderId.indexOf("-"));
+			}
+			requestSaveOrderDTO.setID(spOrderId);
 			requestSaveOrderDTO.setOrderDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
 			Billingcustomer billingCustomer = new Billingcustomer();
 			billingCustomer.setID("4646305");
-			billingCustomer.setFirstName("SHANGPIN.COM");
-			billingCustomer.setLastName("SHANGPIN.COM");
-			billingCustomer.setAddress("SHANGPIN.COM");
-			billingCustomer.setZipCode("100000");
-			billingCustomer.setCity("BEIJING");
+			billingCustomer.setFirstName("Cindy");
+			billingCustomer.setLastName("Chan");
+			billingCustomer.setAddress("Flat 303-309,Hi-Tech Centre,9 Choi Yuen Road,Sheung Shui,N.T.");
+			billingCustomer.setZipCode("");
+			billingCustomer.setCity("Yoursender International Logistics (HongKong) LMD.CO.");
 			billingCustomer.setState("");
 			billingCustomer.setCountry("CHINA");
 			billingCustomer.setPhone("00852-24249188");
-			billingCustomer.setEmail("");
-			billingCustomer.setVatNumber("");//增值税税号
+			billingCustomer.setEmail("amanda.lee@shangpin.com");
+			billingCustomer.setVatNumber("235865");//增值税税号
 			billingCustomer.setFiscalCode(""); //财政代码
 			requestSaveOrderDTO.setBillingCustomer(billingCustomer);
 			Shippingcustomer Shippingcustomer = new Shippingcustomer();
 			Shippingcustomer.setID("4645773");
-			Shippingcustomer.setFirstName("Cindy Chan");
-			Shippingcustomer.setLastName("");
+			Shippingcustomer.setFirstName("Cindy");
+			Shippingcustomer.setLastName("Chan");
 			Shippingcustomer.setAddress("Flat 303-309,Hi-Tech Centre,9 Choi Yuen Road,Sheung Shui,N.T.");
 			Shippingcustomer.setZipCode("");
-			Shippingcustomer.setCity("Yoursender International Logistics (HongKong) LMD.CO.,");
+			Shippingcustomer.setCity("Yoursender International Logistics (HongKong) LMD.CO.");
 			Shippingcustomer.setState("");
 			Shippingcustomer.setCountry("China");
 			Shippingcustomer.setPhone("00852-24249188");
-			Shippingcustomer.setEmail("");
-			Shippingcustomer.setVatNumber("");//增值税税号
+			Shippingcustomer.setEmail("amanda.lee@shangpin.com");
+			Shippingcustomer.setVatNumber("235865");//增值税税号
 			Shippingcustomer.setFiscalCode(""); //财政代码
 			requestSaveOrderDTO.setShippingCustomer(Shippingcustomer);
 			List<Rows> rows = new ArrayList<Rows>();
@@ -192,41 +196,40 @@ public class OrderService extends AbsOrderService{
 		try {
 			result = HttpUtil45.operateData("post", "json", getStockUrl, outTimeConf, null, requestParam,"", "");
 		} catch (ServiceException e) {
-			if(e.getMessage().equals("状态码:401")){//sessionId 过期
-				sessionId = getSessionId();
-				getStockUrl = url_getStock+sessionId;
-				try {
-					result = HttpUtil45.operateData("post", "json", getStockUrl, outTimeConf, null, requestParam,"", "");
-				} catch (ServiceException e1) {
-					error.error(e1.toString()); 
-					throw new ServiceMessageException("获取storecode失败,发生异常:"+e1.toString());
-				}
-			}else{
-				throw new ServiceMessageException("获取storecode失败,发生异常:"+e.toString());
-			}
+			throw new ServiceMessageException("获取storecode失败,发生异常:"+e.toString());			
 		}
 		logger.info("获取storecode==========="+result); 
 		if(StringUtils.isNotBlank(result) || HttpUtil45.errorResult.equals(result)){ 
 			ResponseStoreCode response = new Gson().fromJson(result, ResponseStoreCode.class);			
-			if(response != null && response.getResult().size()>0){
-				boolean found = false;  
-				for(int i=0;i<response.getResult().size() && !found;i++){
-					Result resultDTO = response.getResult().get(i); 
-					for(Sizes sizeDTO : resultDTO.getSizes()){						
-						if(Integer.parseInt(size) == sizeDTO.getSizeIndex()){
-							if(sizeDTO.getQty()>0){
-								storeCode = resultDTO.getStoreCode();
-								found = true;
-								break;
-							}
+			//session过期,重新刷新session
+			if(response == null || response.getResult().size()==0){
+				sessionId = getSessionId();
+				getStockUrl = url_getStock+sessionId;
+				try {
+					result = HttpUtil45.operateData("post", "json", getStockUrl, outTimeConf, null, requestParam,"", "");
+					response = new Gson().fromJson(result, ResponseStoreCode.class);
+				} catch (ServiceException e1) {
+					error.error(e1.toString()); 
+					throw new ServiceMessageException("获取storecode失败,发生异常:"+e1.toString());
+				}
+			}
+			
+			boolean found = false;  
+			for(int i=0;i<response.getResult().size() && !found;i++){
+				Result resultDTO = response.getResult().get(i); 
+				for(Sizes sizeDTO : resultDTO.getSizes()){						
+					if(Integer.parseInt(size) == sizeDTO.getSizeIndex()){
+						if(sizeDTO.getQty()>0){
+							storeCode = resultDTO.getStoreCode();
+							found = true;
+							break;
 						}
 					}
 				}
-				logger.info("返回storeCode=========="+storeCode+" found==="+found); 
-				return storeCode;
-			}else{
-				throw new ServiceMessageException("获取storecode失败,发生异常:"+response.getErrMessage());
-			}			
+			}
+			logger.info("返回storeCode=========="+storeCode+" found==="+found); 
+			return storeCode;
+			
 		}else{
 			throw new ServiceMessageException("获取storecode失败,发生异常。");
 		}
@@ -331,7 +334,21 @@ public class OrderService extends AbsOrderService{
 	}
 	
 	public static void main(String[] args){
+		
+//		String spOrderId = "1234567-89";
+//		if(spOrderId.contains("-")){
+//			spOrderId = spOrderId.substring(0,spOrderId.indexOf("-"));
+//		}
+//		System.out.println(spOrderId);
+		
 		OrderService order = new OrderService();
+		try {
+			String storcode = order.getStoreCode("708074982162033", "1");
+			System.out.println(storcode); 
+		} catch (ServiceMessageException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //		String storecode = "";
 //		try {
 //			storecode = order.getStoreCode("708074982162062","TU");

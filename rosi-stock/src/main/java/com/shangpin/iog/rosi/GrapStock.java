@@ -51,6 +51,7 @@ public class GrapStock extends AbsUpdateProductStock {
 		String result  = "";
 		Channel channel = null;
 		try{
+			System.setProperty("jsse.enableSNIExtension", "false");
 			result = HttpUtil45.get(uri, outTimeConf, null);
 			result = result.replaceAll("Discounted-price", "Discounted_price");
 			result = result.replaceAll("product-code", "product_code");		
@@ -92,6 +93,16 @@ public class GrapStock extends AbsUpdateProductStock {
 	public static void main(String[] args) {
 
 		loadSpringContext();
+		
+//		try {
+//			new GrapStock().grabStock(null);
+//		} catch (ServiceException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 //		GrapStock grabStockImp = (GrapStock)factory.getBean("rosiStock");
 //		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 //		logger.info("-----rosiStock update stock start-------");
