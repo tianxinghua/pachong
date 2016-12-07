@@ -129,7 +129,7 @@ public interface OrderDetailService {
      * @return
      */
     public List<OrderDetailDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate,
-			Date endDate,Integer pageIndex, Integer pageSize);
+			Date endDate,String CGD,String spSkuId,String supplierSkuId,String status,Integer pageIndex, Integer pageSize);
     
     /**
      * 查询订单，不分页
@@ -190,8 +190,8 @@ public interface OrderDetailService {
     public List<OrderDetailDTO> getDetailDTOByEpMasterOrderNo(String epMasterOrderNo) throws ServiceException;
 
 
-	public int getOrderTotalBySupplierIdAndTime(String supplier, String object,
-			String object2);
+	public int getOrderTotalBySupplierIdAndTime(String supplier, String startTime,
+			String endTime,String CGD,String spSkuId,String supplierSkuId,String status);
 
 
 	public int getOrderTotalBySpPurchaseNo(String supplierId, String startTime,

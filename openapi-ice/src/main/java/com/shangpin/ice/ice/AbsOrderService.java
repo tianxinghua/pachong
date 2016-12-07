@@ -1201,7 +1201,7 @@ public abstract class AbsOrderService {
 //            productOrderService.updateOrderMsg(map);
             orderDetailService.updateDetailMsg(map);
         } catch (ServiceException e) {
-            logger.error("订单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");
+            loggerError.error("订单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");
             System.out.println("订单：" + spOrder.getSpOrderId() + " 下单成功。但更新订单状态失败");
         }
     }

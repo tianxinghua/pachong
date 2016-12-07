@@ -23,6 +23,8 @@ import com.shangpin.iog.studio69.dto.GoodDetail;
 import com.shangpin.iog.studio69.dto.Goods;
 import com.shangpin.iog.studio69.dto.GoodsCategory;
 import com.shangpin.iog.studio69.dto.GoodsDetail;
+import com.shangpin.iog.studio69.dto.SecondCategory;
+import com.shangpin.iog.studio69.dto.SecondGoodsCategory;
 
 public class DataTransUtil {
 	private static Logger logger = Logger.getLogger("info");
@@ -42,6 +44,10 @@ public class DataTransUtil {
 		password = bdl.getString("password");
 		savePath = bdl.getString("savePath");
 	}
+	/**
+	 * 获取一级品类
+	 * @return
+	 */
 	public static Map<String,Category> getGoodsCategory(){
 		//处理------------------------------
 		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10);
@@ -62,6 +68,35 @@ public class DataTransUtil {
 		}
 		return returnMap;
 	}
+	
+	/**
+	 * 获取二级品类
+	 * @return
+	 */
+	public static Map<String,SecondCategory> getSecondCategory(){
+		String goodsCategorys = HttpUtil45.postAuth(url+"GetGoodsCategory", null, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10), username, password);
+		logger.info("获取所有二级品类");
+		Map<String,SecondCategory> returnMap = new HashMap<String, SecondCategory>();
+		save("GetGoodsCategory.txt",goodsCategorys);
+		SecondGoodsCategory  goodsCategory = null;
+		try {
+			goodsCategory = ObjectXMLUtil.xml2Obj(SecondGoodsCategory.class, goodsCategorys);
+		} catch (JAXBException e1) {
+			e1.printStackTrace();
+			logger.info("品类数据转换失败");
+			System.exit(0);
+		}
+		for(SecondCategory cate : goodsCategory.getSecondCategory()){
+			returnMap.put(cate.getID(), cate);
+		}
+		return returnMap;
+		
+	}
+	
+	/**
+	 * 获取品牌
+	 * @return
+	 */
 	public static Map<String,String> getBrand(){
 		//处理------------------------------
 		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10);
@@ -109,7 +144,7 @@ public class DataTransUtil {
 	 */
 	public static GoodsDetail getGoodsDetailByGoodsID(String goodsID){
 		try {
-			OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10);
+			OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*3, 1000*60*3, 1000*60*3);
 			Map<String,String> param = new HashMap<String,String>();
 			param.put("GoodsID", goodsID);
 			String data = HttpUtil45.postAuth(url+"GetGoodsDetailByGoodsID", param, outTimeConf, username, password);
@@ -205,4 +240,10 @@ public class DataTransUtil {
 		}
     	
     }
+	
+	public static void main(String[] args) {
+		String goodsCategorys = HttpUtil45.postAuth(url+"GetGoodsCategory", null, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10), username, password);
+		save("GetGoodsCatg.txt",goodsCategorys);
+		System.out.println(goodsCategorys); 
+	}
 }
