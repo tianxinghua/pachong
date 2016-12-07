@@ -1,0 +1,26 @@
+server.port: 9821
+spring:
+  rabbitmq: 
+           host: 192.168.20.175
+           port: 5672
+           username: scm-message-service
+           password: scm-message-service
+           virtual-host: /scm-message-service
+  cloud: 
+        stream: 
+              bindings: 
+                        gebOriginalProduct: 
+                              destination: geb.original.product
+                              content-type: application/json
+              rabbit: 
+                      bindings: 
+                        gebOriginalProduct: 
+                              producer: 
+                                       prefix: HA.
+  jackson: 
+       date-format: yyyy-MM-dd HH:mm:ss
+banner: 
+       charset: UTF-8 # Banner file encoding.
+       location: classpath:banner/banner.txt # Banner file location.
+       image: 
+             location: classpath:banner/yan.png # Banner image file location (jpg/png can also be used).

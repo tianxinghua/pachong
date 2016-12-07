@@ -1,0 +1,4 @@
+﻿spring:
+  profiles: 
+    active: dev
+  application.name: supplier-product-message-service

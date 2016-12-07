@@ -1,0 +1,48 @@
+<configuration>
+	<property name="LOG_HOME" value="/usr/local/share/applications/supplier-product-message-service/logs/" />  
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_ERROR"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+       	<filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 级别过滤器，根据日志级别进行过滤。NEUTRAL会传递给下一个只打印错误日志 -->
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<file>${LOG_HOME}/shangpin-supplier-product-message-service-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/shangpin-supplier-product-message-service-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+             <MaxHistory>5</MaxHistory>
+        </rollingPolicy>
+       <encoder>
+            <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="FILE_INFO"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">   <!-- 临界值过滤器，过滤掉低于指定临界值的日志，NEUTRAL会传递给下一个 -->
+			<level>INFO</level>
+		</filter>
+		<file>${LOG_HOME}/shangpin-supplier-product-message-service-info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy" >
+            <fileNamePattern>${LOG_HOME}/shangpin-supplier-product-message-service-info.%d{yyyy-MM-dd}.log</fileNamePattern>
+             <MaxHistory>5</MaxHistory>
+        </rollingPolicy>
+       <encoder>
+            <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+	<logger name="com.shangpin" level="DEGUG" ></logger>
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE_INFO"/>
+    </root>
+    <root level="ERROR">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE_ERROR"/>
+    </root>
+</configuration>

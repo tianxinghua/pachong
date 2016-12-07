@@ -12,5 +12,4 @@ public class SupplierProductMessageServiceApplicationTests {
 	@Test
 	public void contextLoads() {
 	}
-
 }
