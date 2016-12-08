@@ -85,7 +85,7 @@ public class FetchProduct extends AbsSaveProduct{
 	        Gson gson = new Gson();
 	
 	        String[]  databaseArray = new String[] {"Default"}; //
-	        OutTimeConfig outTimeConfig  = new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2);
+	        OutTimeConfig outTimeConfig  = new OutTimeConfig(1000*60*20,1000*60*20,1000*60*20);
 	        for(String database:databaseArray){
 	        	String seasonUrl = seasonUri.replace("@database@", database);
 	            String season_json = HttpUtil45.get(seasonUrl,outTimeConfig,null);
