@@ -31,7 +31,7 @@ public class Item {
 	private String season_year;
 	private String season_reference;
 	private String made_in;
-	private Suitable suitable;
+	private List<Measure> suitable;
 	private List<Material> technical_info;
 	private String price;
 	private String currency;
