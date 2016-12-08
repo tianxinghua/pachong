@@ -41,12 +41,14 @@ import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.json.JsonUtil;
+import com.shangpin.iog.dto.HubOrderDetailDTO;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.OrderDetailDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductSearchDTO;
 import com.shangpin.iog.dto.SpecialSkuDTO;
 import com.shangpin.iog.dto.SupplierDTO;
+import com.shangpin.iog.service.HubOrderDetailService;
 import com.shangpin.iog.service.OrderDetailService;
 import com.shangpin.iog.service.OrderService;
 import com.shangpin.iog.service.ProductFetchService;
@@ -103,6 +105,8 @@ public class FileDownloadController {
     
     @Autowired
     OrderDetailService orderDetailService;
+    @Autowired
+    HubOrderDetailService hubOrderDetailService;
     
     @RequestMapping(value = "view")
     public ModelAndView viewPage() throws Exception {
@@ -375,9 +379,13 @@ public class FileDownloadController {
     		if(request.getParameter("spSkuId")!=null&&!request.getParameter("spSkuId").isEmpty()){
     			spSkuId = request.getParameter("spSkuId");
     		}
-    		String status = null;
-    		if(request.getParameter("status")!=null&&request.getParameter("status")!=null&&!request.getParameter("status").isEmpty()){
-    			status = request.getParameter("status");
+    		String orderStatus = null;
+    		if(request.getParameter("orderStatus")!=null&&!request.getParameter("orderStatus").isEmpty()){
+    			orderStatus = request.getParameter("orderStatus");
+    		}
+    		String pushStatus = null;
+    		if(request.getParameter("pushStatus")!=null&&!request.getParameter("pushStatus").isEmpty()){
+    			pushStatus = request.getParameter("pushStatus");
     		}
     		
     		String page = request.getParameter("page");
@@ -385,17 +393,20 @@ public class FileDownloadController {
     		System.out.println(page+rows);
             int pageIndex1 = Integer.parseInt(page);
     		int pageSize1 = Integer.parseInt(rows);
-    		List<OrderDetailDTO> orderList = null;
-            orderList = orderDetailService.getOrderBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status, (pageIndex1-1)*pageSize1,pageSize1 );	
-            int total = orderDetailService.getOrderTotalBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status);
+    		List<HubOrderDetailDTO> orderList = null;
+            orderList = hubOrderDetailService.getOrderBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,orderStatus,pushStatus, (pageIndex1-1)*pageSize1,pageSize1 );	
+            int total = hubOrderDetailService.getOrderTotalBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,orderStatus,pushStatus);
             
-            for (OrderDetailDTO orderDTO : orderList) {
-//            	if(nameMap.containsKey(orderDTO.getStatus().toLowerCase())){
-////            		orderDTO.setStatus(nameMap.get(orderDTO.getStatus().toLowerCase()));
-//            	}				
+            for (HubOrderDetailDTO orderDTO : orderList) {
+            	if(orderStatusMap.containsKey(orderDTO.getOrderStatus())){
+            		orderDTO.setOrderStatus(orderStatusMap.get(orderDTO.getOrderStatus()));
+            	}	
+            	if(pushStatusMap.containsKey(orderDTO.getPushStatus())){
+            		orderDTO.setPushStatus(pushStatusMap.get(orderDTO.getPushStatus()));
+            	}
 			}
             modelAndView.addObject("orderList", orderList);
-    		modelAndView.setViewName("orders");
+    		modelAndView.setViewName("hubOrders");
     		 JSONObject result = new JSONObject();  
     	      result.put("rows", orderList);  
              result.put("total",total);
@@ -405,7 +416,7 @@ public class FileDownloadController {
        		ex.printStackTrace();
        	}        
        	return null;
-       }
+    }
        
     @RequestMapping(value = "orderList")
     @ResponseBody

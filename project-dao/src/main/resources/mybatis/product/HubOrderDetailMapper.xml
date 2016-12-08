@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.HubOrderDetailMapper">
+	<resultMap id="OrderResultMap" type="iog_hubOrderDetail">
+		<id column="ID" property="id" />
+		<result column="UUID" property="uuid"  />
+		<result column="supplier_id" property="supplierId"  />
+		<result column="supplier_no" property="supplierNo"  />
+<!-- 		<result column="sp_master_order_no" property="epMasterOrderNo" /> -->
+		<result column="order_no" property="orderNo" />
+		<result column="supplier_order_no" property="supplierOrderNo"  />
+		<result column="sp_master_order_no" property="spMasterOrderNo"  />
+		<result column="sp_order_detail_no" property="spOrderDetailNo" />
+		<result column="purchase_no" property="spPurchaseNo" />
+		<result column="purchase_detail_no" property="spPurchaseDetailNo" />
+		<result column="sp_sku_no" property="spSku" />
+		<result column="supplier_sku_no" property="supplierSku" />
+		<result column="quantity" property="quantity" />
+		<result column="purchase_price" property="purchasePriceDetail"  />
+		<result column="order_status" property="orderStatus"/>
+		<result column="push_status" property="pushStatus"/>
+<!-- 		<result column="DELIVERY_NO" property="deliveryNo"/> -->
+		<result column="CREATE_TIME" property="createTime"  />
+		<result column="pay_time" property="payTime"/>
+		<result column="lock_stock_time" property="lockTime"/>
+		<result column="confirm_time" property="confirmTime"/>
+		<result column="refund_time" property="refundTime"/>
+<!-- 		<result column="EXC_STATE" property="excState"  /> -->
+		<result column="description" property="excDesc"  />
+<!-- 		<result column="EXC_TIME" property="excTime" /> -->
+		<result column="SUPPLIER_NAME" property="supplierName" />
+	</resultMap>
+	
+	
+	<select id="getOrderBySupplierIdAndTime"  resultMap="OrderResultMap">
+		select
+		*
+		from HUB_ORDER_DETAIL ddd left join SUPPLIER su on ddd.SUPPLIER_ID = su.SUPPLIER_ID
+		<where>
+			su.SUPPLIER_STATE = '1'
+			<if test="null!=supplierId">and ddd.SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=startDate">and ddd.create_time >=#{startDate}</if>
+			<if test="null!=endDate">
+				<![CDATA[ and ddd.create_time <=#{endDate}    ]]>
+			</if>
+				<if test="null!= CGD">and ddd.purchase_no=#{CGD}</if>
+				<if test="null!= spSkuId">and ddd.sp_sku_no=#{spSkuId}</if>
+				<if test="null!= supplierSkuId">and ddd.supplier_sku_no=#{supplierSkuId}</if>
+				<if test="null!= orderStatus">and ddd.order_status=#{orderStatus}</if>
+				<if test="null!= pushStatus">and ddd.push_status=#{pushStatus}</if>
+		</where>
+		order by CREATE_TIME desc
+	</select>
+	
+	
+	<select id="getOrderTotalBySupplierIdAndTime"  resultType="int">
+        select
+        count(*)
+        from HUB_ORDER_DETAIL ddd left join SUPPLIER su on ddd.SUPPLIER_ID = su.SUPPLIER_ID
+		<where>
+			su.SUPPLIER_STATE = '1'
+            <if test="null!=supplierId">
+              and  ddd.SUPPLIER_ID=#{supplierId}
+            </if>         
+            <if test="null!=startDate">and CREATE_TIME >=#{startDate}</if>
+			<if test="null!=endDate">
+				<![CDATA[ and CREATE_TIME <=#{endDate}    ]]>
+			</if>
+            <if test="null!= CGD">and ddd.purchase_no = #{CGD}</if>
+			<if test="null!= spSkuId">and ddd.sp_sku_no=#{spSkuId}</if>
+			<if test="null!= supplierSkuId">and ddd.supplier_sku_no=#{supplierSkuId}</if>
+			<if test="null!= orderStatus">and ddd.order_status=#{orderStatus}</if>
+				<if test="null!= pushStatus">and ddd.push_status=#{pushStatus}</if>
+        </where>
+    </select>
+    
+</mapper>
