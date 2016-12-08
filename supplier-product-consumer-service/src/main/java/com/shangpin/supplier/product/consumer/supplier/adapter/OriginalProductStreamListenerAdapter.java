@@ -3,9 +3,11 @@ package com.shangpin.supplier.product.consumer.supplier.adapter;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
+import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.stefania.StefaniaHandler;
 
 /**
@@ -19,7 +21,13 @@ import com.shangpin.supplier.product.consumer.supplier.stefania.StefaniaHandler;
 public class OriginalProductStreamListenerAdapter {
 	
 	@Autowired
-	private StefaniaHandler stefaniaHandler;
+	@Qualifier("stefaniaHandler")
+	private ISupplierHandler stefaniaHandler;
+	
+	@Autowired
+	@Qualifier("ostoreHandler")
+	private ISupplierHandler ostoreHandler;
+	
 	/**
 	 * biondioni供货商原始数据监听方法
 	 * @param message 消息体
@@ -62,7 +70,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void ostoreStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		ostoreHandler.handleOriginalProduct(message, headers);
 		
 	}
 	/**
