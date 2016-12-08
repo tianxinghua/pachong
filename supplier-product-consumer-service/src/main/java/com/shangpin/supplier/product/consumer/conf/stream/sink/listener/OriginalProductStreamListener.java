@@ -2,6 +2,7 @@ package com.shangpin.supplier.product.consumer.conf.stream.sink.listener;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Headers;
@@ -9,8 +10,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 
 import com.shangpin.supplier.product.consumer.conf.stream.sink.channel.OriginalProductSink;
 import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
-
-import lombok.extern.slf4j.Slf4j;
+import com.shangpin.supplier.product.consumer.supplier.adapter.OriginalProductStreamListenerAdapter;
 
 /**
  * 订单流处理配置
@@ -21,8 +21,10 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2016年11月9日 下午6:07:52
  */
 @EnableBinding({OriginalProductSink.class})
-@Slf4j
 public class OriginalProductStreamListener {
+	
+	@Autowired
+	private OriginalProductStreamListenerAdapter adapter;
 	/**
 	 * 供应商BIONDIONI原始商品数据流通道监听者
 	 * @param message 消息
@@ -30,7 +32,7 @@ public class OriginalProductStreamListener {
 	 */
 	@StreamListener(OriginalProductSink.BIONDIONI)
     public void biondioniStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
-		// TODO
+		adapter.biondioniStreamListen(message,headers);
     }
 	/**
 	 * 供应商BRUNAROSSO原始商品数据流通道监听者
@@ -39,7 +41,7 @@ public class OriginalProductStreamListener {
 	 */
 	@StreamListener(OriginalProductSink.BRUNAROSSO)
     public void brunarossoStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
-		// TODO
+		adapter.brunarossoStreamListen(message,headers);
     }
 	/**
 	 * 供应商COLTORTI原始商品数据流通道监听者
@@ -48,7 +50,7 @@ public class OriginalProductStreamListener {
 	 */
 	@StreamListener(OriginalProductSink.COLTORTI)
     public void coltortiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
-		// TODO
+		adapter.coltortiStreamListen(message,headers);
     }
 	/**
 	 * 供应商GEB原始商品数据流通道监听者
@@ -57,7 +59,7 @@ public class OriginalProductStreamListener {
 	 */
 	@StreamListener(OriginalProductSink.GEB)
     public void gebStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
-		// TODO
+		adapter.gebStreamListen(message,headers);
     }
 	/**
 	 * 供应商OSTORE原始商品数据流通道监听者
@@ -66,7 +68,7 @@ public class OriginalProductStreamListener {
 	 */
 	@StreamListener(OriginalProductSink.OSTORE)
     public void ostoreStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
-		// TODO
+		adapter.ostoreStreamListen(message,headers);
     }
 	/**
 	 * 供应商SPINNAKER原始商品数据流通道监听者
@@ -75,7 +77,7 @@ public class OriginalProductStreamListener {
 	 */
 	@StreamListener(OriginalProductSink.SPINNAKER)
     public void spinnakerStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
-		// TODO
+		adapter.spinnakerStreamListen(message,headers);
     }
 	/**
 	 * 供应商STEFANIA原始商品数据流通道监听者
@@ -84,7 +86,7 @@ public class OriginalProductStreamListener {
 	 */
 	@StreamListener(OriginalProductSink.STEFANIA)
     public void stefaniaStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
-		// TODO
+		adapter.stefaniaStreamListen(message,headers);
     }
 	/**
 	 * 供应商TONY原始商品数据流通道监听者
@@ -93,6 +95,6 @@ public class OriginalProductStreamListener {
 	 */
 	@StreamListener(OriginalProductSink.TONY)
     public void tonyStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
-		// TODO
+		adapter.tonyStreamListen(message,headers);
     }
 }
