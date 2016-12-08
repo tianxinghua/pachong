@@ -18,15 +18,24 @@ jar {
 	baseName = 'ephub-data-mysql-service'
 	version = '0.0.1-SNAPSHOT'
 }
+
+sourceSets {
+  main {
+    resources.srcDirs = ["src/main/java","src/main/resources"]
+  }
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
 	mavenCentral()
+	maven { url "http://192.168.20.223:8081/nexus/content/repositories/releases/" }
 }
 
-
 dependencies {
+	compile('com.shangpin.common:commons-redis:1.0.2.RELEASE')
+	compile('com.shangpin.common:commons-rdbms:2.0.0.RELEASE')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-actuator-docs')
 	compile('org.springframework.boot:spring-boot-starter-aop')
