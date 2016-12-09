@@ -568,14 +568,21 @@ public class OrderCommonUtil {
         //先获取缓存中的数据
         String supplierMsg = shangpinRedis.get(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo);
         ObjectMapper om = new ObjectMapper();
-//        if(StringUtils.isNotBlank(supplierMsg)){
-//            try {
-//                dto = om.readValue(supplierMsg, SupplierDTO.class);
-//                return dto;
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
+        if(StringUtils.isNotBlank(supplierMsg)){
+            try {
+                dto = om.readValue(supplierMsg, SupplierDTO.class);
+                SupplierCommon supplierCommon = orderHandleSearch.getSupplierProperty(dto.getSupplierId());
+                if(null!=supplierCommon){
+                    dto.setOpenApiKey(supplierCommon.getOpenApiKey());
+                    dto.setOpenApiSecret(supplierCommon.getOpenApiSecret());
+                    dto.setIsPurchaseException("true".equals(supplierCommon.getIsPurchaseExp())?true:false);
+                    dto.setInterfaceType(3);
+                }
+                return dto;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         //调用接口获取供货商信息
         Map<String, String> paraMap = new HashMap<>();
@@ -629,7 +636,7 @@ public class OrderCommonUtil {
         //记录到REDIS缓存中
 
         try {
-            shangpinRedis.set(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo,om.writeValueAsString(dto));
+            shangpinRedis.setex(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo,1000*60*5,om.writeValueAsString(dto));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
