@@ -1,4 +1,4 @@
 ﻿spring:
   profiles: 
-    active: pro
+    active: dev
   application.name: order-stock-message-service
