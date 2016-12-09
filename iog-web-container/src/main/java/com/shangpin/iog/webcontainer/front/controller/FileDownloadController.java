@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.shangpin.iog.service.*;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
@@ -47,12 +48,6 @@ import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductSearchDTO;
 import com.shangpin.iog.dto.SpecialSkuDTO;
 import com.shangpin.iog.dto.SupplierDTO;
-import com.shangpin.iog.service.OrderDetailService;
-import com.shangpin.iog.service.OrderService;
-import com.shangpin.iog.service.ProductFetchService;
-import com.shangpin.iog.service.ProductSearchService;
-import com.shangpin.iog.service.SpecialSkuService;
-import com.shangpin.iog.service.SupplierService;
 import com.shangpin.iog.webcontainer.front.strategy.NameGenContext;
 import com.shangpin.iog.webcontainer.front.util.DowmImage;
 import com.shangpin.iog.webcontainer.front.util.NewSavePic;
@@ -103,6 +98,10 @@ public class FileDownloadController {
     
     @Autowired
     OrderDetailService orderDetailService;
+
+
+	@Autowired
+	HubOrderDetailService hubOrderDetailService;
     
     @RequestMapping(value = "view")
     public ModelAndView viewPage() throws Exception {
@@ -455,10 +454,19 @@ public class FileDownloadController {
     		System.out.println(page+rows);
             int pageIndex1 = Integer.parseInt(page);
     		int pageSize1 = Integer.parseInt(rows);
-    		List<OrderDetailDTO> orderList = null;
-            orderList = orderDetailService.getOrderBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status, (pageIndex1-1)*pageSize1,pageSize1 );	
-            int total = orderDetailService.getOrderTotalBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status);
-            
+    		List<OrderDetailDTO> orderList = new ArrayList<>();
+
+			List<OrderDetailDTO> newOrderList =  hubOrderDetailService.getOrderBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status, (pageIndex1-1)*pageSize1,pageSize1 );
+		    if(null!=newOrderList){
+				orderList.addAll(newOrderList);
+			}
+			int newTotal = hubOrderDetailService.getOrderTotalBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status);
+			List<OrderDetailDTO> oldOrderList  = orderDetailService.getOrderBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status, (pageIndex1-1)*pageSize1,pageSize1 );
+			if(null!=oldOrderList){
+				orderList.addAll(oldOrderList);
+			}
+            int oldTotal = orderDetailService.getOrderTotalBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status);
+            int total = newTotal + oldTotal;
             for (OrderDetailDTO orderDTO : orderList) {
             	if(nameMap.containsKey(orderDTO.getStatus().toLowerCase())){
             		orderDTO.setStatus(nameMap.get(orderDTO.getStatus().toLowerCase()));
