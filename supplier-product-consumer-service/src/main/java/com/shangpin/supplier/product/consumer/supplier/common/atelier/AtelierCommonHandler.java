@@ -1,35 +1,89 @@
 package com.shangpin.supplier.product.consumer.supplier.common.atelier;
 
-import java.util.Map;
+import java.math.BigDecimal;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.google.gson.Gson;
-import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
-import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierDate;
+import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
+import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierPrice;
+import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSku;
+import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSpu;
 /**
  * <p>Title:AtelierCommonHandler </p>
- * <p>Description: atelier供应商通用处理逻辑类</p>
+ * <p>Description: atelier供应商一般处理逻辑类</p>
  * <p>Company: www.shangpin.com</p> 
  * @author lubaijiang
  * @date 2016年12月8日 下午8:54:28
  *
  */
 @Component
-public class AtelierCommonHandler {
-
-	/**
-	 * atelier通用处理主流程
-	 * @param message
-	 * @param headers
-	 */
-	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers){
-		if(!StringUtils.isEmpty(message.getData())){
-			AtelierDate atelierDate = new Gson().fromJson(message.getData(),AtelierDate.class);
-			
+public class AtelierCommonHandler extends IAtelierHandler {
+	
+	@Override
+	public AtelierSpu handleSpuData(String spuColumn){
+		if(!StringUtils.isEmpty(spuColumn)){
+			String[] spuArr = spuColumn.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+			AtelierSpu atelierSpu = new AtelierSpu();
+			atelierSpu.setSpuId(spuArr[0]);
+			atelierSpu.setSeasonName(spuArr[1]);
+			atelierSpu.setBrandName(spuArr[2]);
+			atelierSpu.setStyleCode(spuArr[3]);
+			atelierSpu.setColorCode(spuArr[4]);
+			atelierSpu.setCategoryGender(spuArr[5]);
+			atelierSpu.setCategoryName(spuArr[8]);
+			atelierSpu.setColorName(spuArr[10]);
+			atelierSpu.setMaterial1(spuArr[11]);
+			atelierSpu.setDescription(spuArr[15]); 
+			atelierSpu.setSupplierPrice(spuArr[16]);
+			atelierSpu.setMaterial3(spuArr[42]);
+			atelierSpu.setProductOrigin(spuArr[40]); 
+			return atelierSpu;
+		}else{
+			return null;
 		}
+	}
+	
+	@Override
+	public AtelierSku handleSkuData(String skuColumn){
+		if(!StringUtils.isEmpty(skuColumn)){
+			String[] skuArr = skuColumn.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+			AtelierSku atelierSku = new AtelierSku();
+			atelierSku.setSpuId(skuArr[0]);
+			atelierSku.setSize(skuArr[1]);
+			atelierSku.setStock(skuArr[2]);
+			atelierSku.setBarcode(skuArr[5]); 
+			return atelierSku;
+		}else{
+			return null;
+		}
+	}
+	
+	@Override
+	public AtelierPrice handlePriceData(String priceColumn){
+		if(!StringUtils.isEmpty(priceColumn)){
+			String[] priceArr = priceColumn.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+			AtelierPrice atelierPrice = new AtelierPrice();
+			atelierPrice.setPrice1(priceArr[2].replaceAll(",", "."));
+			atelierPrice.setPrice2(priceArr[3].replaceAll(",", "."));
+			atelierPrice.setPrice3(priceArr[4].replaceAll(",", "."));
+			atelierPrice.setPrice4(priceArr[5].replaceAll(",", "."));
+			atelierPrice.setPrice5(priceArr[6].replaceAll(",", "."));
+			atelierPrice.setPrice6(priceArr[7].replaceAll(",", "."));
+			return atelierPrice;
+		}else{
+			return null;
+		}
+	}
+	
+	@Override
+	public void setProductPrice(HubSupplierSku sku, AtelierSpu atelierSpu,
+			AtelierPrice atelierPrice) {
 		
+		if(null != atelierPrice){
+			sku.setSupplyPrice(new BigDecimal(atelierPrice.getPrice1()));
+			sku.setMarketPrice(new BigDecimal(atelierPrice.getPrice2())); 
+		}
 	}
 	
 }

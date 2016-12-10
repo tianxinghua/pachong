@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
-import com.shangpin.supplier.product.consumer.supplier.stefania.StefaniaHandler;
 
 /**
  * <p>Title:OriginalProductStreamListenerAdapter.java </p>
@@ -22,11 +21,13 @@ public class OriginalProductStreamListenerAdapter {
 	
 	@Autowired
 	@Qualifier("stefaniaHandler")
-	private ISupplierHandler stefaniaHandler;
-	
+	private ISupplierHandler stefaniaHandler;	
 	@Autowired
 	@Qualifier("ostoreHandler")
 	private ISupplierHandler ostoreHandler;
+	@Autowired
+	@Qualifier("brunarossoHandler")
+	private ISupplierHandler brunarossoHandler;
 	
 	/**
 	 * biondioni供货商原始数据监听方法
@@ -43,8 +44,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void brunarossoStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
-		
+		brunarossoHandler.handleOriginalProduct(message, headers);		
 	}
 	/**
 	 * coltorti供货商原始数据监听方法
@@ -70,8 +70,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void ostoreStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		ostoreHandler.handleOriginalProduct(message, headers);
-		
+		ostoreHandler.handleOriginalProduct(message, headers);		
 	}
 	/**
 	 * spinnaker供货商原始数据监听方法
