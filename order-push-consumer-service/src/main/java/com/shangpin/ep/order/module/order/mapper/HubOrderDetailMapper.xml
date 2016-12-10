@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ep.order.module.order.mapper.HubOrderDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ep.order.module.order.bean.HubOrderDetail" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="sp_master_order_no" property="spMasterOrderNo" jdbcType="VARCHAR" />
+    <result column="sp_order_detail_no" property="spOrderDetailNo" jdbcType="VARCHAR" />
+    <result column="supplier_order_no" property="supplierOrderNo" jdbcType="VARCHAR" />
+    <result column="sp_sku_no" property="spSkuNo" jdbcType="VARCHAR" />
+    <result column="supplier_sku_no" property="supplierSkuNo" jdbcType="VARCHAR" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="purchase_price" property="purchasePrice" jdbcType="DECIMAL" />
+    <result column="order_status" property="orderStatus" jdbcType="INTEGER" />
+    <result column="push_status" property="pushStatus" jdbcType="INTEGER" />
+    <result column="error_type" property="errorType" jdbcType="INTEGER" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="purchase_no" property="purchaseNo" jdbcType="VARCHAR" />
+    <result column="purchase_detail_no" property="purchaseDetailNo" jdbcType="VARCHAR" />
+    <result column="lock_stock_time" property="lockStockTime" jdbcType="TIMESTAMP" />
+    <result column="cancel_time" property="cancelTime" jdbcType="TIMESTAMP" />
+    <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+    <result column="confirm_time" property="confirmTime" jdbcType="TIMESTAMP" />
+    <result column="delivery_time" property="deliveryTime" jdbcType="TIMESTAMP" />
+    <result column="refund_time" property="refundTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="delete_status" property="deleteStatus" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      id, uuid, supplier_id, supplier_no, order_no, sp_master_order_no, sp_order_detail_no, 
+      supplier_order_no, sp_sku_no, supplier_sku_no, quantity, purchase_price, order_status, 
+      push_status, error_type, description, purchase_no, purchase_detail_no, lock_stock_time, 
+      cancel_time, pay_time, confirm_time, delivery_time, refund_time, create_time, update_time, 
+      delete_status
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ep.order.module.order.bean.HubOrderDetailCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from HUB_ORDER_DETAIL
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    id,uuid,supplier_id,supplier_no,order_no,sp_master_order_no,sp_order_detail_no,supplier_order_no,sp_sku_no,supplier_sku_no,quantity,purchase_price,order_status,push_status,error_type,description,purchase_no,purchase_detail_no,lock_stock_time,cancel_time,pay_time,confirm_time,delivery_time,refund_time,create_time,update_time,delete_status
+    from HUB_ORDER_DETAIL
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from HUB_ORDER_DETAIL
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ep.order.module.order.bean.HubOrderDetailCriteria" >
+    delete from HUB_ORDER_DETAIL
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ep.order.module.order.bean.HubOrderDetail" >
+    <selectKey keyColumn="id" keyProperty="id" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS id
+    </selectKey>
+    insert into HUB_ORDER_DETAIL (id, uuid, supplier_id, 
+      supplier_no, order_no, sp_master_order_no, 
+      sp_order_detail_no, supplier_order_no, sp_sku_no, 
+      supplier_sku_no, quantity, purchase_price, 
+      order_status, push_status, error_type, 
+      description, purchase_no, purchase_detail_no, 
+      lock_stock_time, cancel_time, pay_time, 
+      confirm_time, delivery_time, refund_time, 
+      create_time, update_time, delete_status
+      )
+    values (#{id,jdbcType=BIGINT}, #{uuid,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, 
+      #{supplierNo,jdbcType=VARCHAR}, #{orderNo,jdbcType=VARCHAR}, #{spMasterOrderNo,jdbcType=VARCHAR}, 
+      #{spOrderDetailNo,jdbcType=VARCHAR}, #{supplierOrderNo,jdbcType=VARCHAR}, #{spSkuNo,jdbcType=VARCHAR}, 
+      #{supplierSkuNo,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, #{purchasePrice,jdbcType=DECIMAL}, 
+      #{orderStatus,jdbcType=INTEGER}, #{pushStatus,jdbcType=INTEGER}, #{errorType,jdbcType=INTEGER}, 
+      #{description,jdbcType=VARCHAR}, #{purchaseNo,jdbcType=VARCHAR}, #{purchaseDetailNo,jdbcType=VARCHAR}, 
+      #{lockStockTime,jdbcType=TIMESTAMP}, #{cancelTime,jdbcType=TIMESTAMP}, #{payTime,jdbcType=TIMESTAMP}, 
+      #{confirmTime,jdbcType=TIMESTAMP}, #{deliveryTime,jdbcType=TIMESTAMP}, #{refundTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{deleteStatus,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ep.order.module.order.bean.HubOrderDetail" >
+    insert into HUB_ORDER_DETAIL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="supplierId != null" >
+        supplier_id,
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="spMasterOrderNo != null" >
+        sp_master_order_no,
+      </if>
+      <if test="spOrderDetailNo != null" >
+        sp_order_detail_no,
+      </if>
+      <if test="supplierOrderNo != null" >
+        supplier_order_no,
+      </if>
+      <if test="spSkuNo != null" >
+        sp_sku_no,
+      </if>
+      <if test="supplierSkuNo != null" >
+        supplier_sku_no,
+      </if>
+      <if test="quantity != null" >
+        quantity,
+      </if>
+      <if test="purchasePrice != null" >
+        purchase_price,
+      </if>
+      <if test="orderStatus != null" >
+        order_status,
+      </if>
+      <if test="pushStatus != null" >
+        push_status,
+      </if>
+      <if test="errorType != null" >
+        error_type,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="purchaseNo != null" >
+        purchase_no,
+      </if>
+      <if test="purchaseDetailNo != null" >
+        purchase_detail_no,
+      </if>
+      <if test="lockStockTime != null" >
+        lock_stock_time,
+      </if>
+      <if test="cancelTime != null" >
+        cancel_time,
+      </if>
+      <if test="payTime != null" >
+        pay_time,
+      </if>
+      <if test="confirmTime != null" >
+        confirm_time,
+      </if>
+      <if test="deliveryTime != null" >
+        delivery_time,
+      </if>
+      <if test="refundTime != null" >
+        refund_time,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="deleteStatus != null" >
+        delete_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spMasterOrderNo != null" >
+        #{spMasterOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spOrderDetailNo != null" >
+        #{spOrderDetailNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierOrderNo != null" >
+        #{supplierOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spSkuNo != null" >
+        #{spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuNo != null" >
+        #{supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="purchasePrice != null" >
+        #{purchasePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=INTEGER},
+      </if>
+      <if test="pushStatus != null" >
+        #{pushStatus,jdbcType=INTEGER},
+      </if>
+      <if test="errorType != null" >
+        #{errorType,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="purchaseNo != null" >
+        #{purchaseNo,jdbcType=VARCHAR},
+      </if>
+      <if test="purchaseDetailNo != null" >
+        #{purchaseDetailNo,jdbcType=VARCHAR},
+      </if>
+      <if test="lockStockTime != null" >
+        #{lockStockTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cancelTime != null" >
+        #{cancelTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="confirmTime != null" >
+        #{confirmTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deliveryTime != null" >
+        #{deliveryTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="refundTime != null" >
+        #{refundTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteStatus != null" >
+        #{deleteStatus,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ep.order.module.order.bean.HubOrderDetailCriteria" resultType="java.lang.Integer" >
+    select count(*) from HUB_ORDER_DETAIL
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update HUB_ORDER_DETAIL
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.uuid != null" >
+        uuid = #{record.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierId != null" >
+        supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierNo != null" >
+        supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orderNo != null" >
+        order_no = #{record.orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spMasterOrderNo != null" >
+        sp_master_order_no = #{record.spMasterOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spOrderDetailNo != null" >
+        sp_order_detail_no = #{record.spOrderDetailNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierOrderNo != null" >
+        supplier_order_no = #{record.supplierOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spSkuNo != null" >
+        sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSkuNo != null" >
+        supplier_sku_no = #{record.supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.quantity != null" >
+        quantity = #{record.quantity,jdbcType=INTEGER},
+      </if>
+      <if test="record.purchasePrice != null" >
+        purchase_price = #{record.purchasePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.orderStatus != null" >
+        order_status = #{record.orderStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.pushStatus != null" >
+        push_status = #{record.pushStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.errorType != null" >
+        error_type = #{record.errorType,jdbcType=INTEGER},
+      </if>
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.purchaseNo != null" >
+        purchase_no = #{record.purchaseNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.purchaseDetailNo != null" >
+        purchase_detail_no = #{record.purchaseDetailNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lockStockTime != null" >
+        lock_stock_time = #{record.lockStockTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.cancelTime != null" >
+        cancel_time = #{record.cancelTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.payTime != null" >
+        pay_time = #{record.payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.confirmTime != null" >
+        confirm_time = #{record.confirmTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.deliveryTime != null" >
+        delivery_time = #{record.deliveryTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.refundTime != null" >
+        refund_time = #{record.refundTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.deleteStatus != null" >
+        delete_status = #{record.deleteStatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update HUB_ORDER_DETAIL
+    set id = #{record.id,jdbcType=BIGINT},
+      uuid = #{record.uuid,jdbcType=VARCHAR},
+      supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      order_no = #{record.orderNo,jdbcType=VARCHAR},
+      sp_master_order_no = #{record.spMasterOrderNo,jdbcType=VARCHAR},
+      sp_order_detail_no = #{record.spOrderDetailNo,jdbcType=VARCHAR},
+      supplier_order_no = #{record.supplierOrderNo,jdbcType=VARCHAR},
+      sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
+      supplier_sku_no = #{record.supplierSkuNo,jdbcType=VARCHAR},
+      quantity = #{record.quantity,jdbcType=INTEGER},
+      purchase_price = #{record.purchasePrice,jdbcType=DECIMAL},
+      order_status = #{record.orderStatus,jdbcType=INTEGER},
+      push_status = #{record.pushStatus,jdbcType=INTEGER},
+      error_type = #{record.errorType,jdbcType=INTEGER},
+      description = #{record.description,jdbcType=VARCHAR},
+      purchase_no = #{record.purchaseNo,jdbcType=VARCHAR},
+      purchase_detail_no = #{record.purchaseDetailNo,jdbcType=VARCHAR},
+      lock_stock_time = #{record.lockStockTime,jdbcType=TIMESTAMP},
+      cancel_time = #{record.cancelTime,jdbcType=TIMESTAMP},
+      pay_time = #{record.payTime,jdbcType=TIMESTAMP},
+      confirm_time = #{record.confirmTime,jdbcType=TIMESTAMP},
+      delivery_time = #{record.deliveryTime,jdbcType=TIMESTAMP},
+      refund_time = #{record.refundTime,jdbcType=TIMESTAMP},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      delete_status = #{record.deleteStatus,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ep.order.module.order.bean.HubOrderDetail" >
+    update HUB_ORDER_DETAIL
+    <set >
+      <if test="uuid != null" >
+        uuid = #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        supplier_id = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spMasterOrderNo != null" >
+        sp_master_order_no = #{spMasterOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spOrderDetailNo != null" >
+        sp_order_detail_no = #{spOrderDetailNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierOrderNo != null" >
+        supplier_order_no = #{supplierOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spSkuNo != null" >
+        sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuNo != null" >
+        supplier_sku_no = #{supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        quantity = #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="purchasePrice != null" >
+        purchase_price = #{purchasePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="orderStatus != null" >
+        order_status = #{orderStatus,jdbcType=INTEGER},
+      </if>
+      <if test="pushStatus != null" >
+        push_status = #{pushStatus,jdbcType=INTEGER},
+      </if>
+      <if test="errorType != null" >
+        error_type = #{errorType,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="purchaseNo != null" >
+        purchase_no = #{purchaseNo,jdbcType=VARCHAR},
+      </if>
+      <if test="purchaseDetailNo != null" >
+        purchase_detail_no = #{purchaseDetailNo,jdbcType=VARCHAR},
+      </if>
+      <if test="lockStockTime != null" >
+        lock_stock_time = #{lockStockTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cancelTime != null" >
+        cancel_time = #{cancelTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payTime != null" >
+        pay_time = #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="confirmTime != null" >
+        confirm_time = #{confirmTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deliveryTime != null" >
+        delivery_time = #{deliveryTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="refundTime != null" >
+        refund_time = #{refundTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteStatus != null" >
+        delete_status = #{deleteStatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ep.order.module.order.bean.HubOrderDetail" >
+    update HUB_ORDER_DETAIL
+    set uuid = #{uuid,jdbcType=VARCHAR},
+      supplier_id = #{supplierId,jdbcType=VARCHAR},
+      supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      order_no = #{orderNo,jdbcType=VARCHAR},
+      sp_master_order_no = #{spMasterOrderNo,jdbcType=VARCHAR},
+      sp_order_detail_no = #{spOrderDetailNo,jdbcType=VARCHAR},
+      supplier_order_no = #{supplierOrderNo,jdbcType=VARCHAR},
+      sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
+      supplier_sku_no = #{supplierSkuNo,jdbcType=VARCHAR},
+      quantity = #{quantity,jdbcType=INTEGER},
+      purchase_price = #{purchasePrice,jdbcType=DECIMAL},
+      order_status = #{orderStatus,jdbcType=INTEGER},
+      push_status = #{pushStatus,jdbcType=INTEGER},
+      error_type = #{errorType,jdbcType=INTEGER},
+      description = #{description,jdbcType=VARCHAR},
+      purchase_no = #{purchaseNo,jdbcType=VARCHAR},
+      purchase_detail_no = #{purchaseDetailNo,jdbcType=VARCHAR},
+      lock_stock_time = #{lockStockTime,jdbcType=TIMESTAMP},
+      cancel_time = #{cancelTime,jdbcType=TIMESTAMP},
+      pay_time = #{payTime,jdbcType=TIMESTAMP},
+      confirm_time = #{confirmTime,jdbcType=TIMESTAMP},
+      delivery_time = #{deliveryTime,jdbcType=TIMESTAMP},
+      refund_time = #{refundTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      delete_status = #{deleteStatus,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ep.order.module.order.bean.HubOrderDetailCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from HUB_ORDER_DETAIL
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <!-- 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方 -->
+  <resultMap id="skuCountMap" type="com.shangpin.ep.order.module.order.bean.SkuCountDTO" >
+    <result column="sp_sku_no" property="skuNo" jdbcType="VARCHAR" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+  </resultMap>
+
+  <select resultMap="skuCountMap"  id="getSkuCountOfNoOrderApiBySupplierId" >
+    select   sp_sku_no as skuNo ,
+    count(*)   as   quantity
+    from HUB_ORDER_DETAIL
+   WHERE
+      supplier_id=#{supplierId}   and (order_status = 0 or order_status = 2)
+--     0   未支付
+--     2、 订单状态（PAYED）
+    group by  sp_sku_no
+  </select>
+
+
+  <select resultMap="skuCountMap"  id="getSkuCountOfOrderApiBySupplierId" >
+   select   sp_sku_no as skuNo ,
+    count(*)   as   quantity
+    from HUB_ORDER_DETAIL
+   WHERE
+--     1、  订单状态（NO_PAY）
+--     2:、 订单状态（PAYED）+ 推送状态（NO_LOCK_API、LOCK_PLACED）
+      supplier_id=#{supplierId}   and (order_status = 0 or ( order_status = 2 and (push_status=0 or push_status=1  )))
+    group by  sp_sku_no
+
+  </select>
+
+  <select resultMap="skuCountMap"  id="getSkuCountOfOrderApiBySupplierIdAndSpSkuNo" >
+    select   sp_sku_no as skuNo ,
+    count(*)   as   quantity
+    from HUB_ORDER_DETAIL
+    WHERE
+    --     1、  订单状态（NO_PAY）
+    --     2:、 订单状态（PAYED）+ 推送状态（NO_LOCK_API、LOCK_PLACED）
+    supplier_id=#{supplierId}   and (order_status = 0 or ( order_status = 2 and (push_status=0 or push_status=1  )))
+
+    and sp_sku_no in
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    group by  sp_sku_no
+
+  </select>
+
+  <select resultMap="skuCountMap"  id="getSkuCountOfOrderApiBySupplierIdAndSupplierSkuNo" >
+    select   supplier_sku_no as skuNo ,
+    count(*)   as   quantity
+    from HUB_ORDER_DETAIL
+    WHERE
+    --     1、  订单状态（NO_PAY）
+    --     2:、 订单状态（PAYED）+ 推送状态（NO_LOCK_API、LOCK_PLACED）
+    supplier_id=#{supplierId}   and (order_status = 0 or ( order_status = 2 and (push_status=0 or push_status=1  )))
+
+    and supplier_sku_no in
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    group by  supplier_sku_no
+
+  </select>
+</mapper>
