@@ -1,4 +1,8 @@
 package com.shangpin.supplier.product.consumer.conf.stream.source.channel;
+
+import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.messaging.MessageChannel;
+
 /**
  * <p>Title:PictureProductSource.java </p>
  * <p>Description: 供货商商品图片通道配置</p>
@@ -8,4 +12,11 @@ package com.shangpin.supplier.product.consumer.conf.stream.source.channel;
  */
 public interface PictureProductSource {
 
+	public String COMMON = "commonPictureProduct";
+	
+	/**
+	 * @return 供应商商品通用图片数据流通道组件
+	 */
+	@Output(value = PictureProductSource.COMMON)
+    public MessageChannel commonPictureProduct();
 }
