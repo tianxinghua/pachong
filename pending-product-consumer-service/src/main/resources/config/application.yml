@@ -2,4 +2,4 @@
 spring:
   profiles: 
     active: dev
-  application.name: ep-order-service
+  application.name: pending-product-consumer-service

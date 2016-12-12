@@ -13,9 +13,8 @@ import com.shangpin.pending.product.consumer.conf.stream.sink.message.PendingPro
 import com.shangpin.pending.product.consumer.supplier.adapter.PendingProductStreamListenerAdapter;
 
 /**
- * 订单流处理配置
  * <p>Title:StreamConf.java </p>
- * <p>Description: 订单流数据处理</p>
+ * <p>Description: 待处理商品数据流监听器配置</p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
  * @date 2016年11月9日 下午6:07:52
@@ -26,7 +25,7 @@ public class PendingProductStreamListener {
 	@Autowired
 	private PendingProductStreamListenerAdapter adapter;
 	/**
-	 * 供应商BIONDIONI原始商品数据流通道监听者
+	 * 供应商BIONDIONI待处理商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头
 	 */
@@ -35,7 +34,7 @@ public class PendingProductStreamListener {
 		adapter.biondioniPendingProductStreamListen(message,headers);
     }
 	/**
-	 * 供应商BRUNAROSSO原始商品数据流通道监听者
+	 * 供应商BRUNAROSSO待处理商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头
 	 */
@@ -44,7 +43,7 @@ public class PendingProductStreamListener {
 		adapter.brunarossoPendingProductStreamListen(message,headers);
     }
 	/**
-	 * 供应商COLTORTI原始商品数据流通道监听者
+	 * 供应商COLTORTI待处理商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头
 	 */
@@ -53,7 +52,7 @@ public class PendingProductStreamListener {
 		adapter.coltortiPendingProductStreamListen(message,headers);
     }
 	/**
-	 * 供应商GEB原始商品数据流通道监听者
+	 * 供应商GEB待处理商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头
 	 */
@@ -62,7 +61,7 @@ public class PendingProductStreamListener {
 		adapter.gebPendingProductStreamListen(message,headers);
     }
 	/**
-	 * 供应商OSTORE原始商品数据流通道监听者
+	 * 供应商OSTORE待处理商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头
 	 */
@@ -71,7 +70,7 @@ public class PendingProductStreamListener {
 		adapter.ostorePendingProductStreamListen(message,headers);
     }
 	/**
-	 * 供应商SPINNAKER原始商品数据流通道监听者
+	 * 供应商SPINNAKER待处理商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头
 	 */
@@ -80,7 +79,7 @@ public class PendingProductStreamListener {
 		adapter.spinnakerPendingProductStreamListen(message,headers);
     }
 	/**
-	 * 供应商STEFANIA原始商品数据流通道监听者
+	 * 供应商STEFANIA待处理商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头
 	 */
@@ -89,7 +88,7 @@ public class PendingProductStreamListener {
 		adapter.stefaniaPendingProductStreamListen(message,headers);
     }
 	/**
-	 * 供应商TONY原始商品数据流通道监听者
+	 * 供应商TONY待处理商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头
 	 */

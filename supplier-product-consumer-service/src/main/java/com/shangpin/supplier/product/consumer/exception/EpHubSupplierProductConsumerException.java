@@ -6,30 +6,30 @@ package com.shangpin.supplier.product.consumer.exception;
  * @author yanxiaobin
  * @date 2016年12月6日 下午7:44:06
  */
-public class EPHubException extends Exception {
+public class EpHubSupplierProductConsumerException extends Exception {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2800875797601132706L;
 
-	public EPHubException() {
+	public EpHubSupplierProductConsumerException() {
 		super();
 	}
 
-	public EPHubException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public EpHubSupplierProductConsumerException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 
-	public EPHubException(String message, Throwable cause) {
+	public EpHubSupplierProductConsumerException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public EPHubException(String message) {
+	public EpHubSupplierProductConsumerException(String message) {
 		super(message);
 	}
 
-	public EPHubException(Throwable cause) {
+	public EpHubSupplierProductConsumerException(Throwable cause) {
 		super(cause);
 	}
 
