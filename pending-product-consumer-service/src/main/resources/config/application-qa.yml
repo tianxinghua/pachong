@@ -1,0 +1,333 @@
+spring: 
+  rabbitmq: 
+           host: 192.168.20.175
+           port: 5672
+           username: scm-message-service-qa
+           password: scm-message-service-qa
+           virtual-host: /scm-message-service-qa
+  cloud: 
+        stream: 
+              bindings: 
+                        orders: 
+                              destination: SupplierOrderSync
+                              group: push-order
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+              rabbit: 
+                      bindings: 
+                        orders: 
+                              consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: true
+                                       requeueRejected: false
+                                       republishToDlq: true
+  jackson: 
+       date-format: yyyy-MM-dd HH:mm:ss
+  mail: 
+       default-recipient: zhaogenchun@shangpin.com
+       default-sender: yanxiaobin@shangpin.com
+       default-encoding: UTF-8 # Default MimeMessage encoding.
+       host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
+       port: 25 # SMTP server port.
+       protocol: smtp # Protocol used by the SMTP server.
+       username: yanxiaobin@shangpin.com # Login user of the SMTP server.
+       password: 123.com # Login password of the SMTP server.
+       test-connection: false # Test that the mail server is available on startup.
+shangpin: 
+  hub: 
+    dataSource: 
+      clusters: 
+        - 
+            id: ep-order-service
+            clustertype: READWRITE
+            strategy: RANDOM
+            retrytime: 200
+            minimumConnectionCount: 3
+            maximumConnectionCount: 10
+            trace: true
+            prototypeCount: 10
+            houseKeepingTestSql: select 1 from dual
+            simultaneousBuildThrottle: 100
+            maximumActiveTime: 600000
+            nodes: 
+               - 
+                  id: shangpin-coupon-read-write-db-cluster-one
+                  driver: com.mysql.jdbc.Driver
+                  url: "jdbc:mysql://192.168.9.135:3306/iog?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true"
+                  user: writer
+                  password: wt@sp520
+                  trailnumber: 
+    OpenApi:
+      host: http://192.168.20.83:9090
+      updatestock: /stock/updatestock
+      findporder: /purchase/findporder
+      cancelpurchase: /purchase/cancelpurchase
+    Supplier: #以下配置为各个供货商的配置
+      aladuca: 
+              serviceUrl: http://service.alducadaosta.com/EcSrv/Services.asmx?op=InsertOrder
+              sopAction: http://service.alducadaosta.com/EcSrv/InsertOrder
+              contentType: text/xml;charset=utf-8
+              identifier: Shangpin
+              deleteOrderUrl: http://service.alducadaosta.com/EcSrv/Services.asmx?op=DeleteOrder
+              deleteOrderSop: http\://service.alducadaosta.com/EcSrv/DeleteOrder
+              openApiKey: 
+              openApiSecret: 
+      brunarosso: 
+              url: http://213.144.71.1/WS_Sito_p15/WS_Sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: Shangpin
+              password: shang2609
+              messageType: text/html;charset=utf-8
+              openApiKey: 
+              openApiSecret: 
+      coltorti: 
+              userName: SHANGPIN
+              password: 12345678
+              auth: https://api.orderlink.it/v1/user/token
+              product: https://api.orderlink.it/v1/products
+              stock: https://api.orderlink.it/v1/stocks
+              attributes: https://api.orderlink.it/v1/attributes
+              discountCat: https://api.orderlink.it/v1/discount-categories
+              promo: https://api.orderlink.it/v1/promo
+              outFits: https://api.orderlink.it/v1/outfits
+              openApiKey: 
+              openApiSecret: 
+      creative99: 
+              url: http://79.60.136.177/ws_sito/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: creative99
+              messageType: text/html;charset=utf-8
+              openApiKey: 
+              openApiSecret: 
+      daniello: 
+              url: http://79.62.242.6:8088/ws_sito/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: Daniello0203
+              messageType: text/html;charset=utf-8
+              openApiKey: 
+              openApiSecret: 
+      deliberti: 
+              url: http://www.gicos.it/gettest.php
+              openApiKey: 
+              openApiSecret: 
+      divo: 
+              url: http://185.5.180.90/ws_sito/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: shang1210
+              openApiKey: 
+              openApiSecret: 
+      russoCapri: 
+              url: http://95.110.163.155:8580/ws_sito_shang/ws_sito_P15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: Shang2016
+              isPurchaseExp:
+              openApiKey: 07ea500a2c344766b6b727c6d1fc5917
+              openApiSecret: 5f5ac541bfaf4d699f58f3919264661e
+      efashionConf: 
+              url: http://api.gebnegozi.com/api/v2/place/order.json?storeCode=DW3LT
+              cancelUrl: http://geb-production.edstema.it/api/v3.0/cancel/order.json?storeCode=DW3LT
+              placeUrl: http://geb-production.edstema.it/api/v3.0/place/order.json?storeCode=DW3LT
+              isPurchaseExp: true
+              openApiKey: 0f2c32ad59974f3491015af961940df1
+              openApiSecret: 4b21ee81b8b74727880f5ecb18589efa
+      genteroma: 
+              url: http://extcloud.genteroma.net:8088/ws_sito/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: Shang1807
+              openApiKey: 
+              openApiSecret: 
+      inviqaConf: 
+              magentoApiKey: drmuhfgxtg9uyfc0gd0zr9r9litnl1p6
+              magentoApiSecret: vqtk7uipwa67a9wde31k5db4k1qbeela
+              magentoRestApiUrl: http://www.glamorous.com/api/rest/shangpin/
+              token: sqdl7cx7hp1ti6k6w112yo5wnbzxigm0
+              secret: htrrblkx5nmcbd2chm708jq1xcpxudw8
+              isPurchaseExp: no
+              openApiKey: 
+              openApiSecret: 
+      leam: 
+              url: http://62.101.102.194:1080/ws_sito_p15/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: Leam1803
+              isPurchaseExp:
+              openApiKey: 3f898445714a486687277b6a51151e0e
+              openApiSecret: d57ff5e3733c43b4a9f4cd878bfa2f61
+      linde: 
+              url: http://2.229.66.138/ws_sito_p15/WS_Sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: Shangpin
+              password: Shang$linde01
+              openApiKey: 
+              openApiSecret: 
+      montiParam: 
+              setOrderUrl: http://net13server2.net/MontiApi/Myapi/Productslist/setOrder
+              queryOrderUrl: http://net13server2.net/MontiApi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+              cancelUrl: http://net13server2.net/MontiApi/Myapi/Productslist/CancelOrder
+              qtyUrl: http://net13server2.net/MontiApi/Myapi/Productslist/GetQuantityByBarcode
+              dBContext: Default
+              key: jAXO6D34vh
+              openApiKey: 
+              openApiSecret: 
+      ostore: 
+              url: http://188.11.248.175/WS_SITO_p15/WS_SITO_P15.ASMX/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: shang0807
+              openApiKey: 
+              openApiSecret: 
+      paolo: 
+              url: http://95.110.163.89:8580/ws_sito_shang/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: Atelier2015
+              openApiKey: 
+              openApiSecret: 
+      papiniConf: 
+              setOrderUrl: http://80.88.89.209/papiniapi/Myapi/Productslist/setOrder
+              queryOrderUrl: http://80.88.89.209/papiniapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+              cancelUrl: http://80.88.89.209/papiniapi/Myapi/Productslist/CancelOrder
+              qtyUrl: http://80.88.89.209/papiniapi/Myapi/Productslist/GetQuantityByBarcode
+              dBContext: Default
+              key: doV3IeZ6bz
+              openApiKey: 
+              openApiSecret: 
+      pozzileiArte: 
+              setOrderUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/setOrder
+              queryOrderUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+              cancelUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/CancelOrder
+              qtyUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/GetQuantityByBarcode
+              key: 5jq3vkBd7d
+              dBContext: Arte
+              isPurchaseExp: no
+              openApiKey: 
+              openApiSecret: 
+      pozzileiForte: 
+              setOrderUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/setOrder
+              queryOrderUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+              cancelUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/CancelOrder
+              qtyUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/GetQuantityByBarcode
+              key: 5jq3vkBd7d
+              dBContext: Forte
+              isPurchaseExp: no
+              openApiKey: 
+              openApiSecret: 
+      pozzileiParam: 
+              setOrderUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/setOrder
+              queryOrderUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+              cancelUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/CancelOrder
+              qtyUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/GetQuantityByBarcode
+              key: 5jq3vkBd7d
+              dBContext: Default
+              isPurchaseExp: no
+              openApiKey: 
+              openApiSecret: 
+      sanremoParam: 
+              setOrderUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/setOrder
+              queryOrderUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+              cancelUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/CancelOrder
+              qtyUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetQuantityByBarcode
+              key: 8IZk2x5tVN
+              dBContext: Default
+              isPurchaseExp: no
+              openApiKey: 
+              openApiSecret: 
+      spinnakerParam: 
+              setOrderUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/setOrder
+              queryOrderUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+              cancelUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/CancelOrder
+              qtyUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetQuantityByBarcode
+              key: 8IZk2x5tVN
+              dBContext: Default
+              openApiKey: 
+              openApiSecret: 
+      stefania: 
+              authKey: "270Api002#3gU8zXs" #后期注意一下这个地方能否读取
+              channel: SHANGPIN
+              jssecacerts: E\:\\           #后期注意一下这个地方能否读取
+              openApiKey: 
+              openApiSecret: 
+      studio69: 
+              url: http://studio69.atelier98.net/api_studio69/api_studio69.asmx/
+              username: SHANGPIN
+              password: 2MWWKgNSxgf
+              wsdlUrl: http\://studio69.atelier98.net/api_studio69/api_studio69.asmx?wsdl
+              openApiKey: 
+              openApiSecret: 
+      tonyConf: 
+              url: http://www.cloudstore.srl/ws/
+              key: fb8ea6839b486dba8c5cabb374c03d9d
+              period: 30
+              merchantId: 55f707f6b49dbbe14ec6354d
+              token: d355cd8701b2ebc54d6c8811e03a3229
+              isPurchaseExp: no
+              openApiKey: 
+              openApiSecret: 
+      tonySub: 
+              url: http://www.cloudstore.srl/ws/
+              key: fb8ea6839b486dba8c5cabb374c03d9d
+              period: 30
+              merchantId: 56e95bb7f868647d13873d98
+              token: ec1ebaa88fbcb0e5fa02ad42bdcc5be4
+              openApiKey: 
+              openApiSecret: 
+      velaParam: 
+              setOrderUrl: http://185.58.119.177/velashopapi/Myapi/Productslist/setOrder
+              queryOrderUrl: http://185.58.119.177/velashopapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+              cancelUrl: http://185.58.119.177/velashopapi/Myapi/Productslist/CancelOrder
+              qtyUrl: http://185.58.119.177/velashopapi/Myapi/Productslist/GetQuantityByBarcode
+              dBContext: Default
+              key: MPm32XJp7M
+              isPurchaseExp: no
+              openApiKey: 
+              openApiSecret: 
+      supplier:
+              delayTime: 1000
+              retry: 120
+              serviceUrl: http://qa.scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo=
+              stockSupplierMapping:
+              orderSupplierMapping: S0000779:2016102701834
+
+mybatis: 
+  configLocation: classpath:mybatis/mybatis-configuration.xml
+banner: 
+       charset: UTF-8 # Banner file encoding.
+       location: classpath:banner/banner.txt # Banner file location.
+       image:
+             location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).
