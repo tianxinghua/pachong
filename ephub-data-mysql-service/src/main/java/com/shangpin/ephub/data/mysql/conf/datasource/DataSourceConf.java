@@ -29,7 +29,7 @@ import com.shangpin.rdbms.config.RDBMSConfigHelper;
 @EnableConfigurationProperties(DataSourceProperties.class)
 public class DataSourceConf {
 
-	private static final String DATASOURCEID = "ep-order-service";
+	private static final String DATASOURCEID = "ephub-data-mysql-service";
 
 	@Autowired
 	private DataSourceProperties properties;

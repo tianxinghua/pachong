@@ -1,0 +1,44 @@
+spring: 
+  jackson: 
+       date-format: yyyy-MM-dd HH:mm:ss
+  mail: 
+       default-recipient: yan_xiao_bin@126.com
+       default-sender: yanxiaobin@shangpin.com
+       default-encoding: UTF-8 # Default MimeMessage encoding.
+       host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
+       port: 25 # SMTP server port.
+       protocol: smtp # Protocol used by the SMTP server.
+       username: yanxiaobin@shangpin.com # Login user of the SMTP server.
+       password: 123.com # Login password of the SMTP server.
+       test-connection: true # Test that the mail server is available on startup.
+shangpin: 
+  hub:
+    dataSource:
+      clusters: 
+        - 
+            id: ephub-data-mysql-service
+            clustertype: READWRITE
+            strategy: RANDOM
+            retrytime: 200
+            minimumConnectionCount: 3
+            maximumConnectionCount: 10
+            trace: true
+            prototypeCount: 10
+            houseKeepingTestSql: select 1 from dual
+            simultaneousBuildThrottle: 100
+            maximumActiveTime: 600000
+            nodes: 
+               - 
+                  id: shangpin-coupon-read-write-db-cluster-one
+                  driver: com.mysql.jdbc.Driver
+                  url: "jdbc:mysql://192.168.20.82:3306/ephub?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true"
+                  user: root
+                  password: 123456
+                  trailnumber: 
+mybatis: 
+  configLocation: classpath:mybatis/mybatis-configuration.xml
+banner: 
+       charset: UTF-8 # Banner file encoding.
+       location: classpath:banner/banner.txt # Banner file location.
+       image:
+             location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).
