@@ -98,7 +98,7 @@ public abstract class IAtelierHandler implements ISupplierHandler {
 	 */
 	public boolean convertSku(String supplierId,Long supplierSpuId, AtelierSpu atelierSpu,AtelierSku atelierSku,AtelierPrice atelierPrice, HubSupplierSku hubSku){
 		if(null != atelierSku){
-			hubSku.setSupplierSkuId(1L);//TODO 
+			
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(atelierSku.getSpuId()+"-"+atelierSku.getBarcode());
@@ -117,7 +117,7 @@ public abstract class IAtelierHandler implements ISupplierHandler {
 	 */
 	public boolean convertSpu(String supplierId,AtelierSpu atelierSpu,HubSupplierSpu hubSpu){
 		if(null != atelierSpu){
-			hubSpu.setSupplierSpuId(1L);//TODO 
+			
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(atelierSpu.getSpuId());
 			hubSpu.setSupplierSpuModel(atelierSpu.getStyleCode()+" "+atelierSpu.getColorCode());

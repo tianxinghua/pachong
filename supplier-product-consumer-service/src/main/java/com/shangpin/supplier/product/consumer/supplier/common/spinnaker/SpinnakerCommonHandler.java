@@ -24,7 +24,7 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 	@Override
 	public boolean convertSpu(String supplierId, Spu spu, Sku sku, HubSupplierSpu hubSpu) {
 		if(null != spu){
-			hubSpu.setSupplierSpuId(1L);//TODO 
+			
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(spu.getProduct_id()+"-"+sku.getItem_id());
 			hubSpu.setSupplierSpuModel(spu.getProduct_name());
@@ -46,7 +46,7 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 	@Override
 	public boolean convertSku(String supplierId, Long supplierSpuId, Sku sku, HubSupplierSku hubSku) {
 		if(null != sku){
-			hubSku.setSupplierSkuId(1L);//TODO 
+			
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(sku.getBarcode());
