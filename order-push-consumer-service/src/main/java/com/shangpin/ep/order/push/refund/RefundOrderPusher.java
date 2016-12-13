@@ -223,18 +223,23 @@ public class RefundOrderPusher extends AbstractPusher{
 				}
 			}
 		}else if((handleStep.getIndex()==HandleStep.HANDLE_PUSH.getIndex())){//推送处理
-			if(orderDTO.getPushStatus().getIndex()!=orderDTO.getExceptionPushStatus().getIndex()){ //推送状态不等
-				if(orderDTO.getExceptionPushStatus().getIndex()!=PushStatus.REFUNDED_ERROR.getIndex()){//更新数据库即可
-					isNeed = false;
-				}
+			if(null==orderDTO.getPushStatus()){  //原来未对接 后来对接了 没有推送状态  可以去退款
+
 			}else{
-				if(orderDTO.getPushStatus().getIndex()==PushStatus.REFUNDED_ERROR.getIndex()){ //推送异常 重新推送
+				if(orderDTO.getPushStatus().getIndex()!=orderDTO.getExceptionPushStatus().getIndex()){ //推送状态不等
+					if(orderDTO.getExceptionPushStatus().getIndex()!=PushStatus.REFUNDED_ERROR.getIndex()){//更新数据库即可
+						isNeed = false;
+					}
+				}else{
+					if(orderDTO.getPushStatus().getIndex()==PushStatus.REFUNDED_ERROR.getIndex()){ //推送异常 重新推送
 
-				}else{ //不是推送出错
-					isNeed = false;
+					}else{ //不是推送出错
+						isNeed = false;
+					}
+
 				}
-
 			}
+
 		}
 		return isNeed;
 	}
