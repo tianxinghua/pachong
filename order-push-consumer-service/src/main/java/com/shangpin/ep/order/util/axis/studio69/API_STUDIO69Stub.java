@@ -6,6 +6,7 @@
  */
 package com.shangpin.ep.order.util.axis.studio69;
 
+import org.apache.axis2.transport.http.impl.httpclient4.HttpTransportPropertiesImpl.Authenticator;
 
 /*
  *  API_STUDIO69Stub java implementation
@@ -42,6 +43,11 @@ public class API_STUDIO69Stub extends org.apache.axis2.client.Stub {
 
         _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,
                 _service);
+        Authenticator basicauth = new Authenticator();
+
+        basicauth.setUsername("SHANGPIN");
+
+        basicauth.setPassword("2MWWKgNSxgf");
 
         _serviceClient.getOptions()
                       .setTo(new org.apache.axis2.addressing.EndpointReference(

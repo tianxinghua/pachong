@@ -90,4 +90,10 @@ public class SupplierProperties {
 	
 	private Clutcher clutcher;
 	
+	private Carofiglio carofiglio;
+	
+	private Tufano tufano;
+	
+	private Lungolivigno lungolivigno;
+	
 }
