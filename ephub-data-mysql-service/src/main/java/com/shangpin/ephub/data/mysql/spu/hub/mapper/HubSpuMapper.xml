@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.spu.hub.mapper.HubSpuMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
+    <id column="spu_id" property="spuId" jdbcType="BIGINT" />
+    <result column="spu_model" property="spuModel" jdbcType="VARCHAR" />
+    <result column="spu_name" property="spuName" jdbcType="VARCHAR" />
+    <result column="gender" property="gender" jdbcType="VARCHAR" />
+    <result column="category_no" property="categoryNo" jdbcType="VARCHAR" />
+    <result column="brand_no" property="brandNo" jdbcType="VARCHAR" />
+    <result column="market_time" property="marketTime" jdbcType="VARCHAR" />
+    <result column="season" property="season" jdbcType="VARCHAR" />
+    <result column="spu_desc" property="spuDesc" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="spu_state" property="spuState" jdbcType="TINYINT" />
+    <result column="spu_select_state" property="spuSelectState" jdbcType="TINYINT" />
+    <result column="new_type" property="newType" jdbcType="TINYINT" />
+    <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
+    <result column="spu_no" property="spuNo" jdbcType="VARCHAR" />
+    <result column="info_from" property="infoFrom" jdbcType="TINYINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      spu_id, spu_model, spu_name, gender, category_no, brand_no, market_time, season, 
+      spu_desc, create_time, create_user, update_time, update_user, spu_state, spu_select_state, 
+      new_type, pic_url, spu_no, info_from, memo, data_state, version
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_spu
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    spu_id,spu_model,spu_name,gender,category_no,brand_no,market_time,season,spu_desc,create_time,create_user,update_time,update_user,spu_state,spu_select_state,new_type,pic_url,spu_no,info_from,memo,data_state,version
+    from hub_spu
+    where spu_id = #{spuId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from hub_spu
+    where spu_id = #{spuId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria" >
+    delete from hub_spu
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
+    insert into hub_spu (spu_id, spu_model, spu_name, 
+      gender, category_no, brand_no, 
+      market_time, season, spu_desc, 
+      create_time, create_user, update_time, 
+      update_user, spu_state, spu_select_state, 
+      new_type, pic_url, spu_no, 
+      info_from, memo, data_state, 
+      version)
+    values (#{spuId,jdbcType=BIGINT}, #{spuModel,jdbcType=VARCHAR}, #{spuName,jdbcType=VARCHAR}, 
+      #{gender,jdbcType=VARCHAR}, #{categoryNo,jdbcType=VARCHAR}, #{brandNo,jdbcType=VARCHAR}, 
+      #{marketTime,jdbcType=VARCHAR}, #{season,jdbcType=VARCHAR}, #{spuDesc,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{spuState,jdbcType=TINYINT}, #{spuSelectState,jdbcType=TINYINT}, 
+      #{newType,jdbcType=TINYINT}, #{picUrl,jdbcType=VARCHAR}, #{spuNo,jdbcType=VARCHAR}, 
+      #{infoFrom,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
+      #{version,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
+    insert into hub_spu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="spuId != null" >
+        spu_id,
+      </if>
+      <if test="spuModel != null" >
+        spu_model,
+      </if>
+      <if test="spuName != null" >
+        spu_name,
+      </if>
+      <if test="gender != null" >
+        gender,
+      </if>
+      <if test="categoryNo != null" >
+        category_no,
+      </if>
+      <if test="brandNo != null" >
+        brand_no,
+      </if>
+      <if test="marketTime != null" >
+        market_time,
+      </if>
+      <if test="season != null" >
+        season,
+      </if>
+      <if test="spuDesc != null" >
+        spu_desc,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="spuState != null" >
+        spu_state,
+      </if>
+      <if test="spuSelectState != null" >
+        spu_select_state,
+      </if>
+      <if test="newType != null" >
+        new_type,
+      </if>
+      <if test="picUrl != null" >
+        pic_url,
+      </if>
+      <if test="spuNo != null" >
+        spu_no,
+      </if>
+      <if test="infoFrom != null" >
+        info_from,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="dataState != null" >
+        data_state,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="spuId != null" >
+        #{spuId,jdbcType=BIGINT},
+      </if>
+      <if test="spuModel != null" >
+        #{spuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="spuName != null" >
+        #{spuName,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryNo != null" >
+        #{categoryNo,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="marketTime != null" >
+        #{marketTime,jdbcType=VARCHAR},
+      </if>
+      <if test="season != null" >
+        #{season,jdbcType=VARCHAR},
+      </if>
+      <if test="spuDesc != null" >
+        #{spuDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="spuState != null" >
+        #{spuState,jdbcType=TINYINT},
+      </if>
+      <if test="spuSelectState != null" >
+        #{spuSelectState,jdbcType=TINYINT},
+      </if>
+      <if test="newType != null" >
+        #{newType,jdbcType=TINYINT},
+      </if>
+      <if test="picUrl != null" >
+        #{picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="spuNo != null" >
+        #{spuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="infoFrom != null" >
+        #{infoFrom,jdbcType=TINYINT},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria" resultType="java.lang.Integer" >
+    select count(*) from hub_spu
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update hub_spu
+    <set >
+      <if test="record.spuId != null" >
+        spu_id = #{record.spuId,jdbcType=BIGINT},
+      </if>
+      <if test="record.spuModel != null" >
+        spu_model = #{record.spuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spuName != null" >
+        spu_name = #{record.spuName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gender != null" >
+        gender = #{record.gender,jdbcType=VARCHAR},
+      </if>
+      <if test="record.categoryNo != null" >
+        category_no = #{record.categoryNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.brandNo != null" >
+        brand_no = #{record.brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marketTime != null" >
+        market_time = #{record.marketTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.season != null" >
+        season = #{record.season,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spuDesc != null" >
+        spu_desc = #{record.spuDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createUser != null" >
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spuState != null" >
+        spu_state = #{record.spuState,jdbcType=TINYINT},
+      </if>
+      <if test="record.spuSelectState != null" >
+        spu_select_state = #{record.spuSelectState,jdbcType=TINYINT},
+      </if>
+      <if test="record.newType != null" >
+        new_type = #{record.newType,jdbcType=TINYINT},
+      </if>
+      <if test="record.picUrl != null" >
+        pic_url = #{record.picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spuNo != null" >
+        spu_no = #{record.spuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.infoFrom != null" >
+        info_from = #{record.infoFrom,jdbcType=TINYINT},
+      </if>
+      <if test="record.memo != null" >
+        memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataState != null" >
+        data_state = #{record.dataState,jdbcType=TINYINT},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update hub_spu
+    set spu_id = #{record.spuId,jdbcType=BIGINT},
+      spu_model = #{record.spuModel,jdbcType=VARCHAR},
+      spu_name = #{record.spuName,jdbcType=VARCHAR},
+      gender = #{record.gender,jdbcType=VARCHAR},
+      category_no = #{record.categoryNo,jdbcType=VARCHAR},
+      brand_no = #{record.brandNo,jdbcType=VARCHAR},
+      market_time = #{record.marketTime,jdbcType=VARCHAR},
+      season = #{record.season,jdbcType=VARCHAR},
+      spu_desc = #{record.spuDesc,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      spu_state = #{record.spuState,jdbcType=TINYINT},
+      spu_select_state = #{record.spuSelectState,jdbcType=TINYINT},
+      new_type = #{record.newType,jdbcType=TINYINT},
+      pic_url = #{record.picUrl,jdbcType=VARCHAR},
+      spu_no = #{record.spuNo,jdbcType=VARCHAR},
+      info_from = #{record.infoFrom,jdbcType=TINYINT},
+      memo = #{record.memo,jdbcType=VARCHAR},
+      data_state = #{record.dataState,jdbcType=TINYINT},
+      version = #{record.version,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
+    update hub_spu
+    <set >
+      <if test="spuModel != null" >
+        spu_model = #{spuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="spuName != null" >
+        spu_name = #{spuName,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        gender = #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryNo != null" >
+        category_no = #{categoryNo,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        brand_no = #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="marketTime != null" >
+        market_time = #{marketTime,jdbcType=VARCHAR},
+      </if>
+      <if test="season != null" >
+        season = #{season,jdbcType=VARCHAR},
+      </if>
+      <if test="spuDesc != null" >
+        spu_desc = #{spuDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="spuState != null" >
+        spu_state = #{spuState,jdbcType=TINYINT},
+      </if>
+      <if test="spuSelectState != null" >
+        spu_select_state = #{spuSelectState,jdbcType=TINYINT},
+      </if>
+      <if test="newType != null" >
+        new_type = #{newType,jdbcType=TINYINT},
+      </if>
+      <if test="picUrl != null" >
+        pic_url = #{picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="spuNo != null" >
+        spu_no = #{spuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="infoFrom != null" >
+        info_from = #{infoFrom,jdbcType=TINYINT},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        data_state = #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=BIGINT},
+      </if>
+    </set>
+    where spu_id = #{spuId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
+    update hub_spu
+    set spu_model = #{spuModel,jdbcType=VARCHAR},
+      spu_name = #{spuName,jdbcType=VARCHAR},
+      gender = #{gender,jdbcType=VARCHAR},
+      category_no = #{categoryNo,jdbcType=VARCHAR},
+      brand_no = #{brandNo,jdbcType=VARCHAR},
+      market_time = #{marketTime,jdbcType=VARCHAR},
+      season = #{season,jdbcType=VARCHAR},
+      spu_desc = #{spuDesc,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      spu_state = #{spuState,jdbcType=TINYINT},
+      spu_select_state = #{spuSelectState,jdbcType=TINYINT},
+      new_type = #{newType,jdbcType=TINYINT},
+      pic_url = #{picUrl,jdbcType=VARCHAR},
+      spu_no = #{spuNo,jdbcType=VARCHAR},
+      info_from = #{infoFrom,jdbcType=TINYINT},
+      memo = #{memo,jdbcType=VARCHAR},
+      data_state = #{dataState,jdbcType=TINYINT},
+      version = #{version,jdbcType=BIGINT}
+    where spu_id = #{spuId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_spu
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>

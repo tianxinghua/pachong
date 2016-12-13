@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.mapping.value.mapper.HubSupplierValueMappingMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMapping" >
+    <id column="value_mapping_id" property="valueMappingId" jdbcType="BIGINT" />
+    <result column="col_mapping_id" property="colMappingId" jdbcType="BIGINT" />
+    <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="supplier_value_no" property="supplierValueNo" jdbcType="VARCHAR" />
+    <result column="supplier_value_parent_no" property="supplierValueParentNo" jdbcType="VARCHAR" />
+    <result column="supplier_value" property="supplierValue" jdbcType="VARCHAR" />
+    <result column="hub_value_no" property="hubValueNo" jdbcType="VARCHAR" />
+    <result column="hub_value" property="hubValue" jdbcType="VARCHAR" />
+    <result column="hub_value_type" property="hubValueType" jdbcType="TINYINT" />
+    <result column="mapping_type" property="mappingType" jdbcType="TINYINT" />
+    <result column="mapping_state" property="mappingState" jdbcType="TINYINT" />
+    <result column="sort_value" property="sortValue" jdbcType="SMALLINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      value_mapping_id, col_mapping_id, supplier_id, supplier_value_no, supplier_value_parent_no, 
+      supplier_value, hub_value_no, hub_value, hub_value_type, mapping_type, mapping_state, 
+      sort_value, create_time, create_user, update_time, update_user, memo, data_state, 
+      version
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMappingCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_supplier_value_mapping
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    value_mapping_id,col_mapping_id,supplier_id,supplier_value_no,supplier_value_parent_no,supplier_value,hub_value_no,hub_value,hub_value_type,mapping_type,mapping_state,sort_value,create_time,create_user,update_time,update_user,memo,data_state,version
+    from hub_supplier_value_mapping
+    where value_mapping_id = #{valueMappingId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from hub_supplier_value_mapping
+    where value_mapping_id = #{valueMappingId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMappingCriteria" >
+    delete from hub_supplier_value_mapping
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMapping" >
+    insert into hub_supplier_value_mapping (value_mapping_id, col_mapping_id, supplier_id, 
+      supplier_value_no, supplier_value_parent_no, 
+      supplier_value, hub_value_no, hub_value, 
+      hub_value_type, mapping_type, mapping_state, 
+      sort_value, create_time, create_user, 
+      update_time, update_user, memo, 
+      data_state, version)
+    values (#{valueMappingId,jdbcType=BIGINT}, #{colMappingId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, 
+      #{supplierValueNo,jdbcType=VARCHAR}, #{supplierValueParentNo,jdbcType=VARCHAR}, 
+      #{supplierValue,jdbcType=VARCHAR}, #{hubValueNo,jdbcType=VARCHAR}, #{hubValue,jdbcType=VARCHAR}, 
+      #{hubValueType,jdbcType=TINYINT}, #{mappingType,jdbcType=TINYINT}, #{mappingState,jdbcType=TINYINT}, 
+      #{sortValue,jdbcType=SMALLINT}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMapping" >
+    insert into hub_supplier_value_mapping
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="valueMappingId != null" >
+        value_mapping_id,
+      </if>
+      <if test="colMappingId != null" >
+        col_mapping_id,
+      </if>
+      <if test="supplierId != null" >
+        supplier_id,
+      </if>
+      <if test="supplierValueNo != null" >
+        supplier_value_no,
+      </if>
+      <if test="supplierValueParentNo != null" >
+        supplier_value_parent_no,
+      </if>
+      <if test="supplierValue != null" >
+        supplier_value,
+      </if>
+      <if test="hubValueNo != null" >
+        hub_value_no,
+      </if>
+      <if test="hubValue != null" >
+        hub_value,
+      </if>
+      <if test="hubValueType != null" >
+        hub_value_type,
+      </if>
+      <if test="mappingType != null" >
+        mapping_type,
+      </if>
+      <if test="mappingState != null" >
+        mapping_state,
+      </if>
+      <if test="sortValue != null" >
+        sort_value,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="dataState != null" >
+        data_state,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="valueMappingId != null" >
+        #{valueMappingId,jdbcType=BIGINT},
+      </if>
+      <if test="colMappingId != null" >
+        #{colMappingId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierValueNo != null" >
+        #{supplierValueNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierValueParentNo != null" >
+        #{supplierValueParentNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierValue != null" >
+        #{supplierValue,jdbcType=VARCHAR},
+      </if>
+      <if test="hubValueNo != null" >
+        #{hubValueNo,jdbcType=VARCHAR},
+      </if>
+      <if test="hubValue != null" >
+        #{hubValue,jdbcType=VARCHAR},
+      </if>
+      <if test="hubValueType != null" >
+        #{hubValueType,jdbcType=TINYINT},
+      </if>
+      <if test="mappingType != null" >
+        #{mappingType,jdbcType=TINYINT},
+      </if>
+      <if test="mappingState != null" >
+        #{mappingState,jdbcType=TINYINT},
+      </if>
+      <if test="sortValue != null" >
+        #{sortValue,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMappingCriteria" resultType="java.lang.Integer" >
+    select count(*) from hub_supplier_value_mapping
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update hub_supplier_value_mapping
+    <set >
+      <if test="record.valueMappingId != null" >
+        value_mapping_id = #{record.valueMappingId,jdbcType=BIGINT},
+      </if>
+      <if test="record.colMappingId != null" >
+        col_mapping_id = #{record.colMappingId,jdbcType=BIGINT},
+      </if>
+      <if test="record.supplierId != null" >
+        supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierValueNo != null" >
+        supplier_value_no = #{record.supplierValueNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierValueParentNo != null" >
+        supplier_value_parent_no = #{record.supplierValueParentNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierValue != null" >
+        supplier_value = #{record.supplierValue,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hubValueNo != null" >
+        hub_value_no = #{record.hubValueNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hubValue != null" >
+        hub_value = #{record.hubValue,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hubValueType != null" >
+        hub_value_type = #{record.hubValueType,jdbcType=TINYINT},
+      </if>
+      <if test="record.mappingType != null" >
+        mapping_type = #{record.mappingType,jdbcType=TINYINT},
+      </if>
+      <if test="record.mappingState != null" >
+        mapping_state = #{record.mappingState,jdbcType=TINYINT},
+      </if>
+      <if test="record.sortValue != null" >
+        sort_value = #{record.sortValue,jdbcType=SMALLINT},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createUser != null" >
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.memo != null" >
+        memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataState != null" >
+        data_state = #{record.dataState,jdbcType=TINYINT},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update hub_supplier_value_mapping
+    set value_mapping_id = #{record.valueMappingId,jdbcType=BIGINT},
+      col_mapping_id = #{record.colMappingId,jdbcType=BIGINT},
+      supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      supplier_value_no = #{record.supplierValueNo,jdbcType=VARCHAR},
+      supplier_value_parent_no = #{record.supplierValueParentNo,jdbcType=VARCHAR},
+      supplier_value = #{record.supplierValue,jdbcType=VARCHAR},
+      hub_value_no = #{record.hubValueNo,jdbcType=VARCHAR},
+      hub_value = #{record.hubValue,jdbcType=VARCHAR},
+      hub_value_type = #{record.hubValueType,jdbcType=TINYINT},
+      mapping_type = #{record.mappingType,jdbcType=TINYINT},
+      mapping_state = #{record.mappingState,jdbcType=TINYINT},
+      sort_value = #{record.sortValue,jdbcType=SMALLINT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      memo = #{record.memo,jdbcType=VARCHAR},
+      data_state = #{record.dataState,jdbcType=TINYINT},
+      version = #{record.version,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMapping" >
+    update hub_supplier_value_mapping
+    <set >
+      <if test="colMappingId != null" >
+        col_mapping_id = #{colMappingId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierId != null" >
+        supplier_id = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierValueNo != null" >
+        supplier_value_no = #{supplierValueNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierValueParentNo != null" >
+        supplier_value_parent_no = #{supplierValueParentNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierValue != null" >
+        supplier_value = #{supplierValue,jdbcType=VARCHAR},
+      </if>
+      <if test="hubValueNo != null" >
+        hub_value_no = #{hubValueNo,jdbcType=VARCHAR},
+      </if>
+      <if test="hubValue != null" >
+        hub_value = #{hubValue,jdbcType=VARCHAR},
+      </if>
+      <if test="hubValueType != null" >
+        hub_value_type = #{hubValueType,jdbcType=TINYINT},
+      </if>
+      <if test="mappingType != null" >
+        mapping_type = #{mappingType,jdbcType=TINYINT},
+      </if>
+      <if test="mappingState != null" >
+        mapping_state = #{mappingState,jdbcType=TINYINT},
+      </if>
+      <if test="sortValue != null" >
+        sort_value = #{sortValue,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        data_state = #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=BIGINT},
+      </if>
+    </set>
+    where value_mapping_id = #{valueMappingId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMapping" >
+    update hub_supplier_value_mapping
+    set col_mapping_id = #{colMappingId,jdbcType=BIGINT},
+      supplier_id = #{supplierId,jdbcType=VARCHAR},
+      supplier_value_no = #{supplierValueNo,jdbcType=VARCHAR},
+      supplier_value_parent_no = #{supplierValueParentNo,jdbcType=VARCHAR},
+      supplier_value = #{supplierValue,jdbcType=VARCHAR},
+      hub_value_no = #{hubValueNo,jdbcType=VARCHAR},
+      hub_value = #{hubValue,jdbcType=VARCHAR},
+      hub_value_type = #{hubValueType,jdbcType=TINYINT},
+      mapping_type = #{mappingType,jdbcType=TINYINT},
+      mapping_state = #{mappingState,jdbcType=TINYINT},
+      sort_value = #{sortValue,jdbcType=SMALLINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      memo = #{memo,jdbcType=VARCHAR},
+      data_state = #{dataState,jdbcType=TINYINT},
+      version = #{version,jdbcType=BIGINT}
+    where value_mapping_id = #{valueMappingId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMappingCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_supplier_value_mapping
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>

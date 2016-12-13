@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.sku.supplier.mapper.HubSupplierSkuMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku" >
+    <id column="supplier_sku_id" property="supplierSkuId" jdbcType="BIGINT" />
+    <result column="supplier_spu_id" property="supplierSpuId" jdbcType="BIGINT" />
+    <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="supplier_sku_no" property="supplierSkuNo" jdbcType="VARCHAR" />
+    <result column="supplier_sku_name" property="supplierSkuName" jdbcType="VARCHAR" />
+    <result column="market_price" property="marketPrice" jdbcType="DECIMAL" />
+    <result column="market_price_currencyOrg" property="marketPriceCurrencyorg" jdbcType="VARCHAR" />
+    <result column="sales_price" property="salesPrice" jdbcType="DECIMAL" />
+    <result column="sales_price_currency" property="salesPriceCurrency" jdbcType="VARCHAR" />
+    <result column="supply_price" property="supplyPrice" jdbcType="DECIMAL" />
+    <result column="supply_price_currency" property="supplyPriceCurrency" jdbcType="VARCHAR" />
+    <result column="supplier_barcode" property="supplierBarcode" jdbcType="VARCHAR" />
+    <result column="supplier_sku_size" property="supplierSkuSize" jdbcType="VARCHAR" />
+    <result column="stock" property="stock" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="last_pull_time" property="lastPullTime" jdbcType="TIMESTAMP" />
+    <result column="push_state" property="pushState" jdbcType="TINYINT" />
+    <result column="push_result" property="pushResult" jdbcType="VARCHAR" />
+    <result column="filter_flag" property="filterFlag" jdbcType="TINYINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      supplier_sku_id, supplier_spu_id, supplier_id, supplier_sku_no, supplier_sku_name, 
+      market_price, market_price_currencyOrg, sales_price, sales_price_currency, supply_price, 
+      supply_price_currency, supplier_barcode, supplier_sku_size, stock, create_time, update_time, 
+      last_pull_time, push_state, push_result, filter_flag, memo, data_state, version
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_supplier_sku
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    supplier_sku_id,supplier_spu_id,supplier_id,supplier_sku_no,supplier_sku_name,market_price,market_price_currencyOrg,sales_price,sales_price_currency,supply_price,supply_price_currency,supplier_barcode,supplier_sku_size,stock,create_time,update_time,last_pull_time,push_state,push_result,filter_flag,memo,data_state,version
+    from hub_supplier_sku
+    where supplier_sku_id = #{supplierSkuId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from hub_supplier_sku
+    where supplier_sku_id = #{supplierSkuId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria" >
+    delete from hub_supplier_sku
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku" >
+    insert into hub_supplier_sku (supplier_sku_id, supplier_spu_id, supplier_id, 
+      supplier_sku_no, supplier_sku_name, market_price, 
+      market_price_currencyOrg, sales_price, sales_price_currency, 
+      supply_price, supply_price_currency, supplier_barcode, 
+      supplier_sku_size, stock, create_time, 
+      update_time, last_pull_time, push_state, 
+      push_result, filter_flag, memo, 
+      data_state, version)
+    values (#{supplierSkuId,jdbcType=BIGINT}, #{supplierSpuId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, 
+      #{supplierSkuNo,jdbcType=VARCHAR}, #{supplierSkuName,jdbcType=VARCHAR}, #{marketPrice,jdbcType=DECIMAL}, 
+      #{marketPriceCurrencyorg,jdbcType=VARCHAR}, #{salesPrice,jdbcType=DECIMAL}, #{salesPriceCurrency,jdbcType=VARCHAR}, 
+      #{supplyPrice,jdbcType=DECIMAL}, #{supplyPriceCurrency,jdbcType=VARCHAR}, #{supplierBarcode,jdbcType=VARCHAR}, 
+      #{supplierSkuSize,jdbcType=VARCHAR}, #{stock,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{lastPullTime,jdbcType=TIMESTAMP}, #{pushState,jdbcType=TINYINT}, 
+      #{pushResult,jdbcType=VARCHAR}, #{filterFlag,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku" >
+    insert into hub_supplier_sku
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="supplierSkuId != null" >
+        supplier_sku_id,
+      </if>
+      <if test="supplierSpuId != null" >
+        supplier_spu_id,
+      </if>
+      <if test="supplierId != null" >
+        supplier_id,
+      </if>
+      <if test="supplierSkuNo != null" >
+        supplier_sku_no,
+      </if>
+      <if test="supplierSkuName != null" >
+        supplier_sku_name,
+      </if>
+      <if test="marketPrice != null" >
+        market_price,
+      </if>
+      <if test="marketPriceCurrencyorg != null" >
+        market_price_currencyOrg,
+      </if>
+      <if test="salesPrice != null" >
+        sales_price,
+      </if>
+      <if test="salesPriceCurrency != null" >
+        sales_price_currency,
+      </if>
+      <if test="supplyPrice != null" >
+        supply_price,
+      </if>
+      <if test="supplyPriceCurrency != null" >
+        supply_price_currency,
+      </if>
+      <if test="supplierBarcode != null" >
+        supplier_barcode,
+      </if>
+      <if test="supplierSkuSize != null" >
+        supplier_sku_size,
+      </if>
+      <if test="stock != null" >
+        stock,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="lastPullTime != null" >
+        last_pull_time,
+      </if>
+      <if test="pushState != null" >
+        push_state,
+      </if>
+      <if test="pushResult != null" >
+        push_result,
+      </if>
+      <if test="filterFlag != null" >
+        filter_flag,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="dataState != null" >
+        data_state,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="supplierSkuId != null" >
+        #{supplierSkuId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierSpuId != null" >
+        #{supplierSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuNo != null" >
+        #{supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuName != null" >
+        #{supplierSkuName,jdbcType=VARCHAR},
+      </if>
+      <if test="marketPrice != null" >
+        #{marketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="marketPriceCurrencyorg != null" >
+        #{marketPriceCurrencyorg,jdbcType=VARCHAR},
+      </if>
+      <if test="salesPrice != null" >
+        #{salesPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="salesPriceCurrency != null" >
+        #{salesPriceCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyPrice != null" >
+        #{supplyPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="supplyPriceCurrency != null" >
+        #{supplyPriceCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierBarcode != null" >
+        #{supplierBarcode,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuSize != null" >
+        #{supplierSkuSize,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null" >
+        #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastPullTime != null" >
+        #{lastPullTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pushState != null" >
+        #{pushState,jdbcType=TINYINT},
+      </if>
+      <if test="pushResult != null" >
+        #{pushResult,jdbcType=VARCHAR},
+      </if>
+      <if test="filterFlag != null" >
+        #{filterFlag,jdbcType=TINYINT},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria" resultType="java.lang.Integer" >
+    select count(*) from hub_supplier_sku
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update hub_supplier_sku
+    <set >
+      <if test="record.supplierSkuId != null" >
+        supplier_sku_id = #{record.supplierSkuId,jdbcType=BIGINT},
+      </if>
+      <if test="record.supplierSpuId != null" >
+        supplier_spu_id = #{record.supplierSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="record.supplierId != null" >
+        supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSkuNo != null" >
+        supplier_sku_no = #{record.supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSkuName != null" >
+        supplier_sku_name = #{record.supplierSkuName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marketPrice != null" >
+        market_price = #{record.marketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.marketPriceCurrencyorg != null" >
+        market_price_currencyOrg = #{record.marketPriceCurrencyorg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.salesPrice != null" >
+        sales_price = #{record.salesPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.salesPriceCurrency != null" >
+        sales_price_currency = #{record.salesPriceCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyPrice != null" >
+        supply_price = #{record.supplyPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.supplyPriceCurrency != null" >
+        supply_price_currency = #{record.supplyPriceCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierBarcode != null" >
+        supplier_barcode = #{record.supplierBarcode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSkuSize != null" >
+        supplier_sku_size = #{record.supplierSkuSize,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stock != null" >
+        stock = #{record.stock,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lastPullTime != null" >
+        last_pull_time = #{record.lastPullTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.pushState != null" >
+        push_state = #{record.pushState,jdbcType=TINYINT},
+      </if>
+      <if test="record.pushResult != null" >
+        push_result = #{record.pushResult,jdbcType=VARCHAR},
+      </if>
+      <if test="record.filterFlag != null" >
+        filter_flag = #{record.filterFlag,jdbcType=TINYINT},
+      </if>
+      <if test="record.memo != null" >
+        memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataState != null" >
+        data_state = #{record.dataState,jdbcType=TINYINT},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update hub_supplier_sku
+    set supplier_sku_id = #{record.supplierSkuId,jdbcType=BIGINT},
+      supplier_spu_id = #{record.supplierSpuId,jdbcType=BIGINT},
+      supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      supplier_sku_no = #{record.supplierSkuNo,jdbcType=VARCHAR},
+      supplier_sku_name = #{record.supplierSkuName,jdbcType=VARCHAR},
+      market_price = #{record.marketPrice,jdbcType=DECIMAL},
+      market_price_currencyOrg = #{record.marketPriceCurrencyorg,jdbcType=VARCHAR},
+      sales_price = #{record.salesPrice,jdbcType=DECIMAL},
+      sales_price_currency = #{record.salesPriceCurrency,jdbcType=VARCHAR},
+      supply_price = #{record.supplyPrice,jdbcType=DECIMAL},
+      supply_price_currency = #{record.supplyPriceCurrency,jdbcType=VARCHAR},
+      supplier_barcode = #{record.supplierBarcode,jdbcType=VARCHAR},
+      supplier_sku_size = #{record.supplierSkuSize,jdbcType=VARCHAR},
+      stock = #{record.stock,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      last_pull_time = #{record.lastPullTime,jdbcType=TIMESTAMP},
+      push_state = #{record.pushState,jdbcType=TINYINT},
+      push_result = #{record.pushResult,jdbcType=VARCHAR},
+      filter_flag = #{record.filterFlag,jdbcType=TINYINT},
+      memo = #{record.memo,jdbcType=VARCHAR},
+      data_state = #{record.dataState,jdbcType=TINYINT},
+      version = #{record.version,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku" >
+    update hub_supplier_sku
+    <set >
+      <if test="supplierSpuId != null" >
+        supplier_spu_id = #{supplierSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierId != null" >
+        supplier_id = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuNo != null" >
+        supplier_sku_no = #{supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuName != null" >
+        supplier_sku_name = #{supplierSkuName,jdbcType=VARCHAR},
+      </if>
+      <if test="marketPrice != null" >
+        market_price = #{marketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="marketPriceCurrencyorg != null" >
+        market_price_currencyOrg = #{marketPriceCurrencyorg,jdbcType=VARCHAR},
+      </if>
+      <if test="salesPrice != null" >
+        sales_price = #{salesPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="salesPriceCurrency != null" >
+        sales_price_currency = #{salesPriceCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyPrice != null" >
+        supply_price = #{supplyPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="supplyPriceCurrency != null" >
+        supply_price_currency = #{supplyPriceCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierBarcode != null" >
+        supplier_barcode = #{supplierBarcode,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuSize != null" >
+        supplier_sku_size = #{supplierSkuSize,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null" >
+        stock = #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastPullTime != null" >
+        last_pull_time = #{lastPullTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pushState != null" >
+        push_state = #{pushState,jdbcType=TINYINT},
+      </if>
+      <if test="pushResult != null" >
+        push_result = #{pushResult,jdbcType=VARCHAR},
+      </if>
+      <if test="filterFlag != null" >
+        filter_flag = #{filterFlag,jdbcType=TINYINT},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        data_state = #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=BIGINT},
+      </if>
+    </set>
+    where supplier_sku_id = #{supplierSkuId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku" >
+    update hub_supplier_sku
+    set supplier_spu_id = #{supplierSpuId,jdbcType=BIGINT},
+      supplier_id = #{supplierId,jdbcType=VARCHAR},
+      supplier_sku_no = #{supplierSkuNo,jdbcType=VARCHAR},
+      supplier_sku_name = #{supplierSkuName,jdbcType=VARCHAR},
+      market_price = #{marketPrice,jdbcType=DECIMAL},
+      market_price_currencyOrg = #{marketPriceCurrencyorg,jdbcType=VARCHAR},
+      sales_price = #{salesPrice,jdbcType=DECIMAL},
+      sales_price_currency = #{salesPriceCurrency,jdbcType=VARCHAR},
+      supply_price = #{supplyPrice,jdbcType=DECIMAL},
+      supply_price_currency = #{supplyPriceCurrency,jdbcType=VARCHAR},
+      supplier_barcode = #{supplierBarcode,jdbcType=VARCHAR},
+      supplier_sku_size = #{supplierSkuSize,jdbcType=VARCHAR},
+      stock = #{stock,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      last_pull_time = #{lastPullTime,jdbcType=TIMESTAMP},
+      push_state = #{pushState,jdbcType=TINYINT},
+      push_result = #{pushResult,jdbcType=VARCHAR},
+      filter_flag = #{filterFlag,jdbcType=TINYINT},
+      memo = #{memo,jdbcType=VARCHAR},
+      data_state = #{dataState,jdbcType=TINYINT},
+      version = #{version,jdbcType=BIGINT}
+    where supplier_sku_id = #{supplierSkuId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_supplier_sku
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>

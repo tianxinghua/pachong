@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.dictionary.season.mapper.HubSeasonDicMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.dictionary.season.po.HubSeasonDic" >
+    <id column="season_dic_id" property="seasonDicId" jdbcType="BIGINT" />
+    <result column="supplierid" property="supplierid" jdbcType="VARCHAR" />
+    <result column="supplier_season" property="supplierSeason" jdbcType="VARCHAR" />
+    <result column="hub_market_time" property="hubMarketTime" jdbcType="VARCHAR" />
+    <result column="hub_season" property="hubSeason" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="push_state" property="pushState" jdbcType="TINYINT" />
+    <result column="push_time" property="pushTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      season_dic_id, supplierid, supplier_season, hub_market_time, hub_season, create_time, 
+      create_user, update_time, update_user, data_state, version, memo, push_state, push_time
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.dictionary.season.po.HubSeasonDicCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_season_dic
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    season_dic_id,supplierid,supplier_season,hub_market_time,hub_season,create_time,create_user,update_time,update_user,data_state,version,memo,push_state,push_time
+    from hub_season_dic
+    where season_dic_id = #{seasonDicId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from hub_season_dic
+    where season_dic_id = #{seasonDicId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.dictionary.season.po.HubSeasonDicCriteria" >
+    delete from hub_season_dic
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.dictionary.season.po.HubSeasonDic" >
+    insert into hub_season_dic (season_dic_id, supplierid, supplier_season, 
+      hub_market_time, hub_season, create_time, 
+      create_user, update_time, update_user, 
+      data_state, version, memo, 
+      push_state, push_time)
+    values (#{seasonDicId,jdbcType=BIGINT}, #{supplierid,jdbcType=VARCHAR}, #{supplierSeason,jdbcType=VARCHAR}, 
+      #{hubMarketTime,jdbcType=VARCHAR}, #{hubSeason,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, #{memo,jdbcType=VARCHAR}, 
+      #{pushState,jdbcType=TINYINT}, #{pushTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.dictionary.season.po.HubSeasonDic" >
+    insert into hub_season_dic
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="seasonDicId != null" >
+        season_dic_id,
+      </if>
+      <if test="supplierid != null" >
+        supplierid,
+      </if>
+      <if test="supplierSeason != null" >
+        supplier_season,
+      </if>
+      <if test="hubMarketTime != null" >
+        hub_market_time,
+      </if>
+      <if test="hubSeason != null" >
+        hub_season,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="dataState != null" >
+        data_state,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="pushState != null" >
+        push_state,
+      </if>
+      <if test="pushTime != null" >
+        push_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="seasonDicId != null" >
+        #{seasonDicId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierid != null" >
+        #{supplierid,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSeason != null" >
+        #{supplierSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="hubMarketTime != null" >
+        #{hubMarketTime,jdbcType=VARCHAR},
+      </if>
+      <if test="hubSeason != null" >
+        #{hubSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=BIGINT},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="pushState != null" >
+        #{pushState,jdbcType=TINYINT},
+      </if>
+      <if test="pushTime != null" >
+        #{pushTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.dictionary.season.po.HubSeasonDicCriteria" resultType="java.lang.Integer" >
+    select count(*) from hub_season_dic
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update hub_season_dic
+    <set >
+      <if test="record.seasonDicId != null" >
+        season_dic_id = #{record.seasonDicId,jdbcType=BIGINT},
+      </if>
+      <if test="record.supplierid != null" >
+        supplierid = #{record.supplierid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSeason != null" >
+        supplier_season = #{record.supplierSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hubMarketTime != null" >
+        hub_market_time = #{record.hubMarketTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hubSeason != null" >
+        hub_season = #{record.hubSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createUser != null" >
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataState != null" >
+        data_state = #{record.dataState,jdbcType=TINYINT},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=BIGINT},
+      </if>
+      <if test="record.memo != null" >
+        memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pushState != null" >
+        push_state = #{record.pushState,jdbcType=TINYINT},
+      </if>
+      <if test="record.pushTime != null" >
+        push_time = #{record.pushTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update hub_season_dic
+    set season_dic_id = #{record.seasonDicId,jdbcType=BIGINT},
+      supplierid = #{record.supplierid,jdbcType=VARCHAR},
+      supplier_season = #{record.supplierSeason,jdbcType=VARCHAR},
+      hub_market_time = #{record.hubMarketTime,jdbcType=VARCHAR},
+      hub_season = #{record.hubSeason,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      data_state = #{record.dataState,jdbcType=TINYINT},
+      version = #{record.version,jdbcType=BIGINT},
+      memo = #{record.memo,jdbcType=VARCHAR},
+      push_state = #{record.pushState,jdbcType=TINYINT},
+      push_time = #{record.pushTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.dictionary.season.po.HubSeasonDic" >
+    update hub_season_dic
+    <set >
+      <if test="supplierid != null" >
+        supplierid = #{supplierid,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSeason != null" >
+        supplier_season = #{supplierSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="hubMarketTime != null" >
+        hub_market_time = #{hubMarketTime,jdbcType=VARCHAR},
+      </if>
+      <if test="hubSeason != null" >
+        hub_season = #{hubSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        data_state = #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=BIGINT},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="pushState != null" >
+        push_state = #{pushState,jdbcType=TINYINT},
+      </if>
+      <if test="pushTime != null" >
+        push_time = #{pushTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where season_dic_id = #{seasonDicId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.dictionary.season.po.HubSeasonDic" >
+    update hub_season_dic
+    set supplierid = #{supplierid,jdbcType=VARCHAR},
+      supplier_season = #{supplierSeason,jdbcType=VARCHAR},
+      hub_market_time = #{hubMarketTime,jdbcType=VARCHAR},
+      hub_season = #{hubSeason,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      data_state = #{dataState,jdbcType=TINYINT},
+      version = #{version,jdbcType=BIGINT},
+      memo = #{memo,jdbcType=VARCHAR},
+      push_state = #{pushState,jdbcType=TINYINT},
+      push_time = #{pushTime,jdbcType=TIMESTAMP}
+    where season_dic_id = #{seasonDicId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.dictionary.season.po.HubSeasonDicCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_season_dic
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>

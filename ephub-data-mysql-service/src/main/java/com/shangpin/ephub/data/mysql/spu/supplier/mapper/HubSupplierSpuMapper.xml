@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.spu.supplier.mapper.HubSupplierSpuMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu" >
+    <id column="supplier_spu_id" property="supplierSpuId" jdbcType="BIGINT" />
+    <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="supplier_spu_no" property="supplierSpuNo" jdbcType="VARCHAR" />
+    <result column="supplier_spu_model" property="supplierSpuModel" jdbcType="VARCHAR" />
+    <result column="supplier_spu_name" property="supplierSpuName" jdbcType="VARCHAR" />
+    <result column="supplier_spu_color" property="supplierSpuColor" jdbcType="VARCHAR" />
+    <result column="supplier_gender" property="supplierGender" jdbcType="VARCHAR" />
+    <result column="supplier_categoryno" property="supplierCategoryno" jdbcType="VARCHAR" />
+    <result column="supplier_categoryname" property="supplierCategoryname" jdbcType="VARCHAR" />
+    <result column="supplier_brandno" property="supplierBrandno" jdbcType="VARCHAR" />
+    <result column="supplier_brandname" property="supplierBrandname" jdbcType="VARCHAR" />
+    <result column="supplier_seasonno" property="supplierSeasonno" jdbcType="VARCHAR" />
+    <result column="supplier_seasonname" property="supplierSeasonname" jdbcType="VARCHAR" />
+    <result column="isexistpic" property="isexistpic" jdbcType="TINYINT" />
+    <result column="supplier_material" property="supplierMaterial" jdbcType="VARCHAR" />
+    <result column="supplier_origin" property="supplierOrigin" jdbcType="VARCHAR" />
+    <result column="supplier_spu_desc" property="supplierSpuDesc" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="info_state" property="infoState" jdbcType="TINYINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      supplier_spu_id, supplier_id, supplier_spu_no, supplier_spu_model, supplier_spu_name, 
+      supplier_spu_color, supplier_gender, supplier_categoryno, supplier_categoryname, 
+      supplier_brandno, supplier_brandname, supplier_seasonno, supplier_seasonname, isexistpic, 
+      supplier_material, supplier_origin, supplier_spu_desc, create_time, update_time, 
+      info_state, memo, data_state, version
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_supplier_spu
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    supplier_spu_id,supplier_id,supplier_spu_no,supplier_spu_model,supplier_spu_name,supplier_spu_color,supplier_gender,supplier_categoryno,supplier_categoryname,supplier_brandno,supplier_brandname,supplier_seasonno,supplier_seasonname,isexistpic,supplier_material,supplier_origin,supplier_spu_desc,create_time,update_time,info_state,memo,data_state,version
+    from hub_supplier_spu
+    where supplier_spu_id = #{supplierSpuId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from hub_supplier_spu
+    where supplier_spu_id = #{supplierSpuId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuCriteria" >
+    delete from hub_supplier_spu
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu" >
+    insert into hub_supplier_spu (supplier_spu_id, supplier_id, supplier_spu_no, 
+      supplier_spu_model, supplier_spu_name, supplier_spu_color, 
+      supplier_gender, supplier_categoryno, supplier_categoryname, 
+      supplier_brandno, supplier_brandname, supplier_seasonno, 
+      supplier_seasonname, isexistpic, supplier_material, 
+      supplier_origin, supplier_spu_desc, create_time, 
+      update_time, info_state, memo, 
+      data_state, version)
+    values (#{supplierSpuId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, #{supplierSpuNo,jdbcType=VARCHAR}, 
+      #{supplierSpuModel,jdbcType=VARCHAR}, #{supplierSpuName,jdbcType=VARCHAR}, #{supplierSpuColor,jdbcType=VARCHAR}, 
+      #{supplierGender,jdbcType=VARCHAR}, #{supplierCategoryno,jdbcType=VARCHAR}, #{supplierCategoryname,jdbcType=VARCHAR}, 
+      #{supplierBrandno,jdbcType=VARCHAR}, #{supplierBrandname,jdbcType=VARCHAR}, #{supplierSeasonno,jdbcType=VARCHAR}, 
+      #{supplierSeasonname,jdbcType=VARCHAR}, #{isexistpic,jdbcType=TINYINT}, #{supplierMaterial,jdbcType=VARCHAR}, 
+      #{supplierOrigin,jdbcType=VARCHAR}, #{supplierSpuDesc,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{infoState,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu" >
+    insert into hub_supplier_spu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="supplierSpuId != null" >
+        supplier_spu_id,
+      </if>
+      <if test="supplierId != null" >
+        supplier_id,
+      </if>
+      <if test="supplierSpuNo != null" >
+        supplier_spu_no,
+      </if>
+      <if test="supplierSpuModel != null" >
+        supplier_spu_model,
+      </if>
+      <if test="supplierSpuName != null" >
+        supplier_spu_name,
+      </if>
+      <if test="supplierSpuColor != null" >
+        supplier_spu_color,
+      </if>
+      <if test="supplierGender != null" >
+        supplier_gender,
+      </if>
+      <if test="supplierCategoryno != null" >
+        supplier_categoryno,
+      </if>
+      <if test="supplierCategoryname != null" >
+        supplier_categoryname,
+      </if>
+      <if test="supplierBrandno != null" >
+        supplier_brandno,
+      </if>
+      <if test="supplierBrandname != null" >
+        supplier_brandname,
+      </if>
+      <if test="supplierSeasonno != null" >
+        supplier_seasonno,
+      </if>
+      <if test="supplierSeasonname != null" >
+        supplier_seasonname,
+      </if>
+      <if test="isexistpic != null" >
+        isexistpic,
+      </if>
+      <if test="supplierMaterial != null" >
+        supplier_material,
+      </if>
+      <if test="supplierOrigin != null" >
+        supplier_origin,
+      </if>
+      <if test="supplierSpuDesc != null" >
+        supplier_spu_desc,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="infoState != null" >
+        info_state,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="dataState != null" >
+        data_state,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="supplierSpuId != null" >
+        #{supplierSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuNo != null" >
+        #{supplierSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuModel != null" >
+        #{supplierSpuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuName != null" >
+        #{supplierSpuName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuColor != null" >
+        #{supplierSpuColor,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierGender != null" >
+        #{supplierGender,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCategoryno != null" >
+        #{supplierCategoryno,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCategoryname != null" >
+        #{supplierCategoryname,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierBrandno != null" >
+        #{supplierBrandno,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierBrandname != null" >
+        #{supplierBrandname,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSeasonno != null" >
+        #{supplierSeasonno,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSeasonname != null" >
+        #{supplierSeasonname,jdbcType=VARCHAR},
+      </if>
+      <if test="isexistpic != null" >
+        #{isexistpic,jdbcType=TINYINT},
+      </if>
+      <if test="supplierMaterial != null" >
+        #{supplierMaterial,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierOrigin != null" >
+        #{supplierOrigin,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuDesc != null" >
+        #{supplierSpuDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="infoState != null" >
+        #{infoState,jdbcType=TINYINT},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuCriteria" resultType="java.lang.Integer" >
+    select count(*) from hub_supplier_spu
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update hub_supplier_spu
+    <set >
+      <if test="record.supplierSpuId != null" >
+        supplier_spu_id = #{record.supplierSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="record.supplierId != null" >
+        supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSpuNo != null" >
+        supplier_spu_no = #{record.supplierSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSpuModel != null" >
+        supplier_spu_model = #{record.supplierSpuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSpuName != null" >
+        supplier_spu_name = #{record.supplierSpuName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSpuColor != null" >
+        supplier_spu_color = #{record.supplierSpuColor,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierGender != null" >
+        supplier_gender = #{record.supplierGender,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierCategoryno != null" >
+        supplier_categoryno = #{record.supplierCategoryno,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierCategoryname != null" >
+        supplier_categoryname = #{record.supplierCategoryname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierBrandno != null" >
+        supplier_brandno = #{record.supplierBrandno,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierBrandname != null" >
+        supplier_brandname = #{record.supplierBrandname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSeasonno != null" >
+        supplier_seasonno = #{record.supplierSeasonno,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSeasonname != null" >
+        supplier_seasonname = #{record.supplierSeasonname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isexistpic != null" >
+        isexistpic = #{record.isexistpic,jdbcType=TINYINT},
+      </if>
+      <if test="record.supplierMaterial != null" >
+        supplier_material = #{record.supplierMaterial,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierOrigin != null" >
+        supplier_origin = #{record.supplierOrigin,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSpuDesc != null" >
+        supplier_spu_desc = #{record.supplierSpuDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.infoState != null" >
+        info_state = #{record.infoState,jdbcType=TINYINT},
+      </if>
+      <if test="record.memo != null" >
+        memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataState != null" >
+        data_state = #{record.dataState,jdbcType=TINYINT},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update hub_supplier_spu
+    set supplier_spu_id = #{record.supplierSpuId,jdbcType=BIGINT},
+      supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      supplier_spu_no = #{record.supplierSpuNo,jdbcType=VARCHAR},
+      supplier_spu_model = #{record.supplierSpuModel,jdbcType=VARCHAR},
+      supplier_spu_name = #{record.supplierSpuName,jdbcType=VARCHAR},
+      supplier_spu_color = #{record.supplierSpuColor,jdbcType=VARCHAR},
+      supplier_gender = #{record.supplierGender,jdbcType=VARCHAR},
+      supplier_categoryno = #{record.supplierCategoryno,jdbcType=VARCHAR},
+      supplier_categoryname = #{record.supplierCategoryname,jdbcType=VARCHAR},
+      supplier_brandno = #{record.supplierBrandno,jdbcType=VARCHAR},
+      supplier_brandname = #{record.supplierBrandname,jdbcType=VARCHAR},
+      supplier_seasonno = #{record.supplierSeasonno,jdbcType=VARCHAR},
+      supplier_seasonname = #{record.supplierSeasonname,jdbcType=VARCHAR},
+      isexistpic = #{record.isexistpic,jdbcType=TINYINT},
+      supplier_material = #{record.supplierMaterial,jdbcType=VARCHAR},
+      supplier_origin = #{record.supplierOrigin,jdbcType=VARCHAR},
+      supplier_spu_desc = #{record.supplierSpuDesc,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      info_state = #{record.infoState,jdbcType=TINYINT},
+      memo = #{record.memo,jdbcType=VARCHAR},
+      data_state = #{record.dataState,jdbcType=TINYINT},
+      version = #{record.version,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu" >
+    update hub_supplier_spu
+    <set >
+      <if test="supplierId != null" >
+        supplier_id = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuNo != null" >
+        supplier_spu_no = #{supplierSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuModel != null" >
+        supplier_spu_model = #{supplierSpuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuName != null" >
+        supplier_spu_name = #{supplierSpuName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuColor != null" >
+        supplier_spu_color = #{supplierSpuColor,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierGender != null" >
+        supplier_gender = #{supplierGender,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCategoryno != null" >
+        supplier_categoryno = #{supplierCategoryno,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCategoryname != null" >
+        supplier_categoryname = #{supplierCategoryname,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierBrandno != null" >
+        supplier_brandno = #{supplierBrandno,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierBrandname != null" >
+        supplier_brandname = #{supplierBrandname,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSeasonno != null" >
+        supplier_seasonno = #{supplierSeasonno,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSeasonname != null" >
+        supplier_seasonname = #{supplierSeasonname,jdbcType=VARCHAR},
+      </if>
+      <if test="isexistpic != null" >
+        isexistpic = #{isexistpic,jdbcType=TINYINT},
+      </if>
+      <if test="supplierMaterial != null" >
+        supplier_material = #{supplierMaterial,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierOrigin != null" >
+        supplier_origin = #{supplierOrigin,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuDesc != null" >
+        supplier_spu_desc = #{supplierSpuDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="infoState != null" >
+        info_state = #{infoState,jdbcType=TINYINT},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        data_state = #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=BIGINT},
+      </if>
+    </set>
+    where supplier_spu_id = #{supplierSpuId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu" >
+    update hub_supplier_spu
+    set supplier_id = #{supplierId,jdbcType=VARCHAR},
+      supplier_spu_no = #{supplierSpuNo,jdbcType=VARCHAR},
+      supplier_spu_model = #{supplierSpuModel,jdbcType=VARCHAR},
+      supplier_spu_name = #{supplierSpuName,jdbcType=VARCHAR},
+      supplier_spu_color = #{supplierSpuColor,jdbcType=VARCHAR},
+      supplier_gender = #{supplierGender,jdbcType=VARCHAR},
+      supplier_categoryno = #{supplierCategoryno,jdbcType=VARCHAR},
+      supplier_categoryname = #{supplierCategoryname,jdbcType=VARCHAR},
+      supplier_brandno = #{supplierBrandno,jdbcType=VARCHAR},
+      supplier_brandname = #{supplierBrandname,jdbcType=VARCHAR},
+      supplier_seasonno = #{supplierSeasonno,jdbcType=VARCHAR},
+      supplier_seasonname = #{supplierSeasonname,jdbcType=VARCHAR},
+      isexistpic = #{isexistpic,jdbcType=TINYINT},
+      supplier_material = #{supplierMaterial,jdbcType=VARCHAR},
+      supplier_origin = #{supplierOrigin,jdbcType=VARCHAR},
+      supplier_spu_desc = #{supplierSpuDesc,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      info_state = #{infoState,jdbcType=TINYINT},
+      memo = #{memo,jdbcType=VARCHAR},
+      data_state = #{dataState,jdbcType=TINYINT},
+      version = #{version,jdbcType=BIGINT}
+    where supplier_spu_id = #{supplierSpuId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_supplier_spu
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>
