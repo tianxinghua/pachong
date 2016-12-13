@@ -3,6 +3,8 @@ spring:
        consul: 
          discovery: 
            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+           prefer-ip-address: true
+           ip-address: 192.168.4.225
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   mail: 
@@ -44,5 +46,5 @@ mybatis:
 banner: 
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.
-       image:
+       image: 
              location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).
