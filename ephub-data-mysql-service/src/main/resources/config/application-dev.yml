@@ -5,6 +5,8 @@ spring:
            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
            prefer-ip-address: true
            ip-address: 192.168.4.225
+           hostname: 192.168.4.225
+           port: ${server.port}
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   mail: 
