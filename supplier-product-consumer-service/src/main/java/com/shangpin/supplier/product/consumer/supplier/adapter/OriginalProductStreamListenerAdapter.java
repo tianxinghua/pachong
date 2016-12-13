@@ -28,6 +28,15 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("brunarossoHandler")
 	private ISupplierHandler brunarossoHandler;
+	@Autowired
+	@Qualifier("spinnakerHandler")
+	private ISupplierHandler spinnakerHandler;	
+	@Autowired
+	@Qualifier("gebHandler")
+	private ISupplierHandler gebHandler;
+	@Autowired
+	@Qualifier("biondioniHandler")
+	private ISupplierHandler biondioniHandler;
 	
 	/**
 	 * biondioni供货商原始数据监听方法
@@ -35,7 +44,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void biondioniStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		biondioniHandler.handleOriginalProduct(message, headers); 
 		
 	}
 	/**
@@ -61,7 +70,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void gebStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		gebHandler.handleOriginalProduct(message, headers); 
 		
 	}
 	/**
@@ -78,7 +87,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void spinnakerStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		spinnakerHandler.handleOriginalProduct(message, headers); 
 		
 	}
 	/**
