@@ -294,7 +294,7 @@ shangpin:
           stefania:
                   authKey: "270Api002#3gU8zXs" #后期注意一下这个地方能否读取
                   channel: SHANGPIN
-                  jssecacerts: E\:\\           #后期注意一下这个地方能否读取
+                  jssecacerts: /usr/local/share/applications/ep-order-service/lib/stefania         #后期注意一下这个地方能否读取
                   isPurchaseExp:
                   openApiKey: a7a7da16e7d0434a91087e6611e9c40d
                   openApiSecret: 02bf0770b03b4e189869046c588ad8da
