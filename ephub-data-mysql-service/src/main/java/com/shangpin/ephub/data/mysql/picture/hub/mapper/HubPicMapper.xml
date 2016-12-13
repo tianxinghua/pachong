@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.picture.hub.mapper.HubPicMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.picture.hub.po.HubPic" >
+    <id column="pic_id" property="picId" jdbcType="BIGINT" />
+    <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
+    <result column="sp_pic_url" property="spPicUrl" jdbcType="VARCHAR" />
+    <result column="sort_value" property="sortValue" jdbcType="TINYINT" />
+    <result column="pic_type" property="picType" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="pic_state" property="picState" jdbcType="TINYINT" />
+    <result column="pic_no" property="picNo" jdbcType="VARCHAR" />
+    <result column="pic_handle_state" property="picHandleState" jdbcType="TINYINT" />
+    <result column="pic_extension" property="picExtension" jdbcType="VARCHAR" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      pic_id, pic_url, sp_pic_url, sort_value, pic_type, create_time, update_time, pic_state, 
+      pic_no, pic_handle_state, pic_extension, memo, data_state, version
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.picture.hub.po.HubPicCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_pic
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    pic_id,pic_url,sp_pic_url,sort_value,pic_type,create_time,update_time,pic_state,pic_no,pic_handle_state,pic_extension,memo,data_state,version
+    from hub_pic
+    where pic_id = #{picId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from hub_pic
+    where pic_id = #{picId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.picture.hub.po.HubPicCriteria" >
+    delete from hub_pic
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.picture.hub.po.HubPic" >
+    insert into hub_pic (pic_id, pic_url, sp_pic_url, 
+      sort_value, pic_type, create_time, 
+      update_time, pic_state, pic_no, 
+      pic_handle_state, pic_extension, memo, 
+      data_state, version)
+    values (#{picId,jdbcType=BIGINT}, #{picUrl,jdbcType=VARCHAR}, #{spPicUrl,jdbcType=VARCHAR}, 
+      #{sortValue,jdbcType=TINYINT}, #{picType,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{picState,jdbcType=TINYINT}, #{picNo,jdbcType=VARCHAR}, 
+      #{picHandleState,jdbcType=TINYINT}, #{picExtension,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.picture.hub.po.HubPic" >
+    insert into hub_pic
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="picId != null" >
+        pic_id,
+      </if>
+      <if test="picUrl != null" >
+        pic_url,
+      </if>
+      <if test="spPicUrl != null" >
+        sp_pic_url,
+      </if>
+      <if test="sortValue != null" >
+        sort_value,
+      </if>
+      <if test="picType != null" >
+        pic_type,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="picState != null" >
+        pic_state,
+      </if>
+      <if test="picNo != null" >
+        pic_no,
+      </if>
+      <if test="picHandleState != null" >
+        pic_handle_state,
+      </if>
+      <if test="picExtension != null" >
+        pic_extension,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="dataState != null" >
+        data_state,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="picId != null" >
+        #{picId,jdbcType=BIGINT},
+      </if>
+      <if test="picUrl != null" >
+        #{picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="spPicUrl != null" >
+        #{spPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sortValue != null" >
+        #{sortValue,jdbcType=TINYINT},
+      </if>
+      <if test="picType != null" >
+        #{picType,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="picState != null" >
+        #{picState,jdbcType=TINYINT},
+      </if>
+      <if test="picNo != null" >
+        #{picNo,jdbcType=VARCHAR},
+      </if>
+      <if test="picHandleState != null" >
+        #{picHandleState,jdbcType=TINYINT},
+      </if>
+      <if test="picExtension != null" >
+        #{picExtension,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.picture.hub.po.HubPicCriteria" resultType="java.lang.Integer" >
+    select count(*) from hub_pic
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update hub_pic
+    <set >
+      <if test="record.picId != null" >
+        pic_id = #{record.picId,jdbcType=BIGINT},
+      </if>
+      <if test="record.picUrl != null" >
+        pic_url = #{record.picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spPicUrl != null" >
+        sp_pic_url = #{record.spPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sortValue != null" >
+        sort_value = #{record.sortValue,jdbcType=TINYINT},
+      </if>
+      <if test="record.picType != null" >
+        pic_type = #{record.picType,jdbcType=TINYINT},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.picState != null" >
+        pic_state = #{record.picState,jdbcType=TINYINT},
+      </if>
+      <if test="record.picNo != null" >
+        pic_no = #{record.picNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.picHandleState != null" >
+        pic_handle_state = #{record.picHandleState,jdbcType=TINYINT},
+      </if>
+      <if test="record.picExtension != null" >
+        pic_extension = #{record.picExtension,jdbcType=VARCHAR},
+      </if>
+      <if test="record.memo != null" >
+        memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataState != null" >
+        data_state = #{record.dataState,jdbcType=TINYINT},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update hub_pic
+    set pic_id = #{record.picId,jdbcType=BIGINT},
+      pic_url = #{record.picUrl,jdbcType=VARCHAR},
+      sp_pic_url = #{record.spPicUrl,jdbcType=VARCHAR},
+      sort_value = #{record.sortValue,jdbcType=TINYINT},
+      pic_type = #{record.picType,jdbcType=TINYINT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      pic_state = #{record.picState,jdbcType=TINYINT},
+      pic_no = #{record.picNo,jdbcType=VARCHAR},
+      pic_handle_state = #{record.picHandleState,jdbcType=TINYINT},
+      pic_extension = #{record.picExtension,jdbcType=VARCHAR},
+      memo = #{record.memo,jdbcType=VARCHAR},
+      data_state = #{record.dataState,jdbcType=TINYINT},
+      version = #{record.version,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.picture.hub.po.HubPic" >
+    update hub_pic
+    <set >
+      <if test="picUrl != null" >
+        pic_url = #{picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="spPicUrl != null" >
+        sp_pic_url = #{spPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sortValue != null" >
+        sort_value = #{sortValue,jdbcType=TINYINT},
+      </if>
+      <if test="picType != null" >
+        pic_type = #{picType,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="picState != null" >
+        pic_state = #{picState,jdbcType=TINYINT},
+      </if>
+      <if test="picNo != null" >
+        pic_no = #{picNo,jdbcType=VARCHAR},
+      </if>
+      <if test="picHandleState != null" >
+        pic_handle_state = #{picHandleState,jdbcType=TINYINT},
+      </if>
+      <if test="picExtension != null" >
+        pic_extension = #{picExtension,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        data_state = #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=BIGINT},
+      </if>
+    </set>
+    where pic_id = #{picId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.picture.hub.po.HubPic" >
+    update hub_pic
+    set pic_url = #{picUrl,jdbcType=VARCHAR},
+      sp_pic_url = #{spPicUrl,jdbcType=VARCHAR},
+      sort_value = #{sortValue,jdbcType=TINYINT},
+      pic_type = #{picType,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      pic_state = #{picState,jdbcType=TINYINT},
+      pic_no = #{picNo,jdbcType=VARCHAR},
+      pic_handle_state = #{picHandleState,jdbcType=TINYINT},
+      pic_extension = #{picExtension,jdbcType=VARCHAR},
+      memo = #{memo,jdbcType=VARCHAR},
+      data_state = #{dataState,jdbcType=TINYINT},
+      version = #{version,jdbcType=BIGINT}
+    where pic_id = #{picId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.picture.hub.po.HubPicCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_pic
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>

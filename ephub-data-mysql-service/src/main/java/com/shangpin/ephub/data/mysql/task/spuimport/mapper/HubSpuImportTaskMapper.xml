@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.task.spuimport.mapper.HubSpuImportTaskMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.task.spuimport.po.HubSpuImportTask" >
+    <id column="spu_import_task_id" property="spuImportTaskId" jdbcType="BIGINT" />
+    <result column="task_no" property="taskNo" jdbcType="VARCHAR" />
+    <result column="task_ftp_file_path" property="taskFtpFilePath" jdbcType="VARCHAR" />
+    <result column="local_file_name" property="localFileName" jdbcType="VARCHAR" />
+    <result column="sys_file_name" property="sysFileName" jdbcType="VARCHAR" />
+    <result column="task_state" property="taskState" jdbcType="TINYINT" />
+    <result column="result_file_path" property="resultFilePath" jdbcType="VARCHAR" />
+    <result column="process_info" property="processInfo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      spu_import_task_id, task_no, task_ftp_file_path, local_file_name, sys_file_name, 
+      task_state, result_file_path, process_info, create_time, create_user, update_time, 
+      update_user, data_state, version, memo
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.task.spuimport.po.HubSpuImportTaskCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_spu_import_task
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    spu_import_task_id,task_no,task_ftp_file_path,local_file_name,sys_file_name,task_state,result_file_path,process_info,create_time,create_user,update_time,update_user,data_state,version,memo
+    from hub_spu_import_task
+    where spu_import_task_id = #{spuImportTaskId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from hub_spu_import_task
+    where spu_import_task_id = #{spuImportTaskId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.task.spuimport.po.HubSpuImportTaskCriteria" >
+    delete from hub_spu_import_task
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.task.spuimport.po.HubSpuImportTask" >
+    insert into hub_spu_import_task (spu_import_task_id, task_no, task_ftp_file_path, 
+      local_file_name, sys_file_name, task_state, 
+      result_file_path, process_info, create_time, 
+      create_user, update_time, update_user, 
+      data_state, version, memo
+      )
+    values (#{spuImportTaskId,jdbcType=BIGINT}, #{taskNo,jdbcType=VARCHAR}, #{taskFtpFilePath,jdbcType=VARCHAR}, 
+      #{localFileName,jdbcType=VARCHAR}, #{sysFileName,jdbcType=VARCHAR}, #{taskState,jdbcType=TINYINT}, 
+      #{resultFilePath,jdbcType=VARCHAR}, #{processInfo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, #{memo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.task.spuimport.po.HubSpuImportTask" >
+    insert into hub_spu_import_task
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="spuImportTaskId != null" >
+        spu_import_task_id,
+      </if>
+      <if test="taskNo != null" >
+        task_no,
+      </if>
+      <if test="taskFtpFilePath != null" >
+        task_ftp_file_path,
+      </if>
+      <if test="localFileName != null" >
+        local_file_name,
+      </if>
+      <if test="sysFileName != null" >
+        sys_file_name,
+      </if>
+      <if test="taskState != null" >
+        task_state,
+      </if>
+      <if test="resultFilePath != null" >
+        result_file_path,
+      </if>
+      <if test="processInfo != null" >
+        process_info,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="dataState != null" >
+        data_state,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="spuImportTaskId != null" >
+        #{spuImportTaskId,jdbcType=BIGINT},
+      </if>
+      <if test="taskNo != null" >
+        #{taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="taskFtpFilePath != null" >
+        #{taskFtpFilePath,jdbcType=VARCHAR},
+      </if>
+      <if test="localFileName != null" >
+        #{localFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="sysFileName != null" >
+        #{sysFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskState != null" >
+        #{taskState,jdbcType=TINYINT},
+      </if>
+      <if test="resultFilePath != null" >
+        #{resultFilePath,jdbcType=VARCHAR},
+      </if>
+      <if test="processInfo != null" >
+        #{processInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=BIGINT},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.task.spuimport.po.HubSpuImportTaskCriteria" resultType="java.lang.Integer" >
+    select count(*) from hub_spu_import_task
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update hub_spu_import_task
+    <set >
+      <if test="record.spuImportTaskId != null" >
+        spu_import_task_id = #{record.spuImportTaskId,jdbcType=BIGINT},
+      </if>
+      <if test="record.taskNo != null" >
+        task_no = #{record.taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskFtpFilePath != null" >
+        task_ftp_file_path = #{record.taskFtpFilePath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.localFileName != null" >
+        local_file_name = #{record.localFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sysFileName != null" >
+        sys_file_name = #{record.sysFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskState != null" >
+        task_state = #{record.taskState,jdbcType=TINYINT},
+      </if>
+      <if test="record.resultFilePath != null" >
+        result_file_path = #{record.resultFilePath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.processInfo != null" >
+        process_info = #{record.processInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createUser != null" >
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataState != null" >
+        data_state = #{record.dataState,jdbcType=TINYINT},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=BIGINT},
+      </if>
+      <if test="record.memo != null" >
+        memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update hub_spu_import_task
+    set spu_import_task_id = #{record.spuImportTaskId,jdbcType=BIGINT},
+      task_no = #{record.taskNo,jdbcType=VARCHAR},
+      task_ftp_file_path = #{record.taskFtpFilePath,jdbcType=VARCHAR},
+      local_file_name = #{record.localFileName,jdbcType=VARCHAR},
+      sys_file_name = #{record.sysFileName,jdbcType=VARCHAR},
+      task_state = #{record.taskState,jdbcType=TINYINT},
+      result_file_path = #{record.resultFilePath,jdbcType=VARCHAR},
+      process_info = #{record.processInfo,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      data_state = #{record.dataState,jdbcType=TINYINT},
+      version = #{record.version,jdbcType=BIGINT},
+      memo = #{record.memo,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.task.spuimport.po.HubSpuImportTask" >
+    update hub_spu_import_task
+    <set >
+      <if test="taskNo != null" >
+        task_no = #{taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="taskFtpFilePath != null" >
+        task_ftp_file_path = #{taskFtpFilePath,jdbcType=VARCHAR},
+      </if>
+      <if test="localFileName != null" >
+        local_file_name = #{localFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="sysFileName != null" >
+        sys_file_name = #{sysFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskState != null" >
+        task_state = #{taskState,jdbcType=TINYINT},
+      </if>
+      <if test="resultFilePath != null" >
+        result_file_path = #{resultFilePath,jdbcType=VARCHAR},
+      </if>
+      <if test="processInfo != null" >
+        process_info = #{processInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        data_state = #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=BIGINT},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where spu_import_task_id = #{spuImportTaskId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.task.spuimport.po.HubSpuImportTask" >
+    update hub_spu_import_task
+    set task_no = #{taskNo,jdbcType=VARCHAR},
+      task_ftp_file_path = #{taskFtpFilePath,jdbcType=VARCHAR},
+      local_file_name = #{localFileName,jdbcType=VARCHAR},
+      sys_file_name = #{sysFileName,jdbcType=VARCHAR},
+      task_state = #{taskState,jdbcType=TINYINT},
+      result_file_path = #{resultFilePath,jdbcType=VARCHAR},
+      process_info = #{processInfo,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      data_state = #{dataState,jdbcType=TINYINT},
+      version = #{version,jdbcType=BIGINT},
+      memo = #{memo,jdbcType=VARCHAR}
+    where spu_import_task_id = #{spuImportTaskId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.task.spuimport.po.HubSpuImportTaskCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_spu_import_task
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>
