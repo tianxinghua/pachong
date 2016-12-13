@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,7 +39,7 @@ public class HubBrandDicController {
     	return hubBrandDicMapper.deleteByPrimaryKey(brandDicId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(HubBrandDic hubBrandDic){
+    public int insert(@RequestBody HubBrandDic hubBrandDic){
     	return hubBrandDicMapper.insert(hubBrandDic);
     }
 	@RequestMapping(value = "/insert-selective")
