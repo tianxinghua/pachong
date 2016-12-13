@@ -126,8 +126,8 @@ shangpin:
           deliberti:
                   url: http://www.gicos.it/gettest.php
                   isPurchaseExp:
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: 23f2549070394d47a6f82aa3f5c0922f
+                  openApiSecret: 174c5788112c4b1984e1dc06adc73f37
           divo:
                   url: http://185.5.180.90/ws_sito/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
@@ -207,8 +207,8 @@ shangpin:
                   dBContext: Default
                   key: jAXO6D34vh
                   isPurchaseExp:
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: 8abb28decd6645008a810d8da47a10f8
+                  openApiSecret: bb3c35b4c06a4de19a8e9652cba61fee
           ostore:
                   url: http://188.11.248.175/WS_SITO_p15/WS_SITO_P15.ASMX/
                   createOrderInterface: NewOrderMarketPlace
@@ -239,8 +239,8 @@ shangpin:
                   dBContext: Default
                   key: doV3IeZ6bz
                   isPurchaseExp:
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: 7fdfa416c6204c4c94ff9d1b4a00d1eb
+                  openApiSecret: 8e85b5a7343a4ec88d8352e063a8f469
           pozzileiArte:
                   setOrderUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/setOrder
                   queryOrderUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
@@ -249,8 +249,8 @@ shangpin:
                   key: 5jq3vkBd7d
                   dBContext: Arte
                   isPurchaseExp: no
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: 4f94d7310cc94d3ead2267ced407c38b
+                  openApiSecret: 7c868e28c5424d84b01bd22c7609c4c1
           pozzileiForte:
                   setOrderUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/setOrder
                   queryOrderUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
@@ -259,8 +259,8 @@ shangpin:
                   key: 5jq3vkBd7d
                   dBContext: Forte
                   isPurchaseExp: no
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: 53e3ec85c5aa4104bcf8bc9cca084a6d
+                  openApiSecret: 489f32e489314bc4ac863322c214a813
           pozzileiParam:
                   setOrderUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/setOrder
                   queryOrderUrl: http://net13serverpo.net/pozziapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
@@ -269,8 +269,8 @@ shangpin:
                   key: 5jq3vkBd7d
                   dBContext: Default
                   isPurchaseExp: no
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: 388bd73a1d114ba4a61478cbb2f18fd3
+                  openApiSecret: f0b0e45a2da148538f218f77e80d8636
           sanremoParam:
                   setOrderUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/setOrder
                   queryOrderUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
@@ -279,8 +279,8 @@ shangpin:
                   key: 8IZk2x5tVN
                   dBContext: Default
                   isPurchaseExp: no
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: d2bc1936983b4ed3843dfaf989d2c6ce
+                  openApiSecret: 9027a364e8cb4204a6819d5cdb57889b
           spinnakerParam:
                   setOrderUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/setOrder
                   queryOrderUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
@@ -296,16 +296,16 @@ shangpin:
                   channel: SHANGPIN
                   jssecacerts: E\:\\           #后期注意一下这个地方能否读取
                   isPurchaseExp:
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: a7a7da16e7d0434a91087e6611e9c40d
+                  openApiSecret: 02bf0770b03b4e189869046c588ad8da
           studio69:
                   url: http://studio69.atelier98.net/api_studio69/api_studio69.asmx/
                   username: SHANGPIN
                   password: 2MWWKgNSxgf
                   wsdlUrl: http\://studio69.atelier98.net/api_studio69/api_studio69.asmx?wsdl
                   isPurchaseExp:
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: 7e879235ab0f41cf9a928bfde195e14c
+                  openApiSecret: 7cfabdcdc91744aaa43e07c313caef6e
           tonyConf:
                   url: http://www.cloudstore.srl/ws/
                   key: fb8ea6839b486dba8c5cabb374c03d9d
@@ -313,8 +313,8 @@ shangpin:
                   merchantId: 55f707f6b49dbbe14ec6354d
                   token: d355cd8701b2ebc54d6c8811e03a3229
                   isPurchaseExp: no
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: dbfd41bd18a14daba52751a2bcc7daf9
+                  openApiSecret: f50d85deb3ee445bb7ed8d0927a2e7ea
           tonySub:
                   url: http://www.cloudstore.srl/ws/
                   key: fb8ea6839b486dba8c5cabb374c03d9d
@@ -322,8 +322,8 @@ shangpin:
                   merchantId: 56e95bb7f868647d13873d98
                   token: ec1ebaa88fbcb0e5fa02ad42bdcc5be4
                   isPurchaseExp:
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: 8f2201ddb0a94ffaa4ff2377d641021d
+                  openApiSecret: 2cd95ecb55a0457fafa2cc2d50cb4b8f
           velaParam:
                   setOrderUrl: http://185.58.119.177/velashopapi/Myapi/Productslist/setOrder
                   queryOrderUrl: http://185.58.119.177/velashopapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
@@ -332,8 +332,8 @@ shangpin:
                   dBContext: Default
                   key: MPm32XJp7M
                   isPurchaseExp: no
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: 807644d0434643b9a45477db74384e8e
+                  openApiSecret: 21b731d9c55d40f48bcd49479f3192ee
           clutcher:
                   openApiKey: 6327ccd73b584d6082955d536ec12690
                   openApiSecret: c0b555b7d20247678efd565d0fe2ff32
