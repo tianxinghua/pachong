@@ -261,8 +261,10 @@ public class TonyOrderImpl implements IOrderService {
                  } 
             }
         } catch (Exception e) {
-            loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
             orderDTO.setPushStatus(PushStatus.LOCK_PLACED_ERROR);
+            orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
+            orderDTO.setLogContent(e.getMessage());
+            logCommon.recordLog(e.getMessage(), e);
         } 
     }
     /**

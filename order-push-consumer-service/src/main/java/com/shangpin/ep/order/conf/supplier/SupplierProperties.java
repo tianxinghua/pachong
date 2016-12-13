@@ -89,5 +89,6 @@ public class SupplierProperties {
 	private RussoCapri russoCapri;
 	
 	private Clutcher clutcher;
+	private Kix kix;
 	
 }

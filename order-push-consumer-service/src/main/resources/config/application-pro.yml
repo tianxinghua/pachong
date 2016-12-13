@@ -338,6 +338,10 @@ shangpin:
                   openApiKey: 6327ccd73b584d6082955d536ec12690
                   openApiSecret: c0b555b7d20247678efd565d0fe2ff32
                   isPurchaseExp: no
+          kix:
+                  openApiKey: 3ad363bca5f945629b31f1ab238ec73e
+                  openApiSecret: dd9a3156581d4b9ba87f293f61148361
+                  isPurchaseExp: no
           supplier:
                   delayTime: 1000
                   retry: 120

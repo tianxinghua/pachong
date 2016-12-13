@@ -124,6 +124,10 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("paoloServiceImpl")
 	PaoloServiceImpl paoloServiceImpl;
+	
+	@Autowired
+	@Qualifier("kixOrderImpl")
+	IOrderService kixOrderImpl;
 
 	public  IOrderService getHander(String supplierId){
 
@@ -169,6 +173,8 @@ public class OrderHandleSearch {
 			return ostoreServiceImpl;
 		}else if("2016012101751".equals(supplierId)){ 
 			return paoloServiceImpl;
+		}else if("2016042501870".equals(supplierId)){ 
+			return kixOrderImpl;
 		}else{
 			return null;
 		}
@@ -345,6 +351,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getOstore();
 		}else if("2016012101751".equals(supplierId)){ 
 			return supplierProperties.getPaolo();
+		}else if("2016042501870".equals(supplierId)){ 
+			return supplierProperties.getKix();
 		}else{
 			return null;
 		}
