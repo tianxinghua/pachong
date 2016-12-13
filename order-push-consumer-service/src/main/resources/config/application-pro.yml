@@ -209,8 +209,8 @@ shangpin:
                   token: sqdl7cx7hp1ti6k6w112yo5wnbzxigm0
                   secret: htrrblkx5nmcbd2chm708jq1xcpxudw8
                   isPurchaseExp: no
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: bbe7f9392d9148f697241b82e6e1f394
+                  openApiSecret: 932aafdc45ad477f9d20b0ebb9a22f2a
           leam:
                   url: http://62.101.102.194:1080/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
@@ -328,7 +328,7 @@ shangpin:
           stefania:
                   authKey: "270Api002#3gU8zXs" #后期注意一下这个地方能否读取
                   channel: SHANGPIN
-                  jssecacerts: E\:\\           #后期注意一下这个地方能否读取
+                  jssecacerts: /usr/local/share/applications/order-push-consumer-service/conf/stefania         #后期注意一下这个地方能否读取
                   isPurchaseExp:
                   openApiKey: a7a7da16e7d0434a91087e6611e9c40d
                   openApiSecret: 02bf0770b03b4e189869046c588ad8da
@@ -371,6 +371,10 @@ shangpin:
           clutcher:
                   openApiKey: 6327ccd73b584d6082955d536ec12690
                   openApiSecret: c0b555b7d20247678efd565d0fe2ff32
+                  isPurchaseExp: no
+          kix:
+                  openApiKey: 3ad363bca5f945629b31f1ab238ec73e
+                  openApiSecret: dd9a3156581d4b9ba87f293f61148361
                   isPurchaseExp: no
           supplier:
                   delayTime: 1000
