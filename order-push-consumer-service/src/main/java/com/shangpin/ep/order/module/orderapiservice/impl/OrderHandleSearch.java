@@ -126,15 +126,28 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("palomaBarceloOrderImpl")
 	IOrderService palomaBarceloOrderImpl;
-	
 	@Autowired
 	@Qualifier("lamborghiniOrderImpl")
 	IOrderService lamborghiniOrderImpl;
-	
+	@Autowired
+	@Qualifier("tufanoOrderImpl")
+	IOrderService tufanoOrderImpl;
+	@Autowired
+	@Qualifier("lungolivignoOrderService")
+	IOrderService lungolivignoOrderService;
+	@Autowired
+	@Qualifier("carofiglioOrderImpl")
+	IOrderService carofiglioOrderImpl;
 	public IOrderService getHander(String supplierId) {
 
 		if ("2015102201625".equals(supplierId)) {// 预锁库存随机返回值
 			return clutcherOrderImpl;
+		} else if ("2016102401951".equals(supplierId)) {
+			return carofiglioOrderImpl;
+		} else if ("2016110101955".equals(supplierId)) {
+			return lungolivignoOrderService;
+		} else if ("2016090601940".equals(supplierId)) {
+			return tufanoOrderImpl;
 		} else if ("2016030701799".equals(supplierId)) {
 			return russoCapriServiceImpl;
 		} else if ("2015111001657".equals(supplierId)) {
@@ -346,6 +359,12 @@ public class OrderHandleSearch {
 
 		if ("2015102201625".equals(supplierId)) {
 			return supplierProperties.getClutcher();
+		}  else if ("2016102401951".equals(supplierId)) {
+			return supplierProperties.getCarofiglio();
+		} else if ("2016110101955".equals(supplierId)) {
+			return supplierProperties.getLungolivigno();
+		} else if ("2016090601940".equals(supplierId)) {
+			return supplierProperties.getTufano();
 		} else if ("2016030701799".equals(supplierId)) {
 			return supplierProperties.getRussoCapri();
 		} else if ("2015111001657".equals(supplierId)) {

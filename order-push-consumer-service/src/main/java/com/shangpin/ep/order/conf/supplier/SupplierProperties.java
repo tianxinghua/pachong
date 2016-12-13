@@ -93,5 +93,8 @@ public class SupplierProperties {
 	
 	private Lamborghini lamborghiniConf;
 	private PalomaBarcelo palomaBarceloConf;
+	private Carofiglio carofiglio;
+	private Tufano tufano;
+	private Lungolivigno lungolivigno;
 	
 }
