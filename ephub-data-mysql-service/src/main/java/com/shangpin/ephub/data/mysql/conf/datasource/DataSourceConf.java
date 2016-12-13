@@ -25,7 +25,7 @@ import com.shangpin.rdbms.config.RDBMSConfigHelper;
  * @date 2016年11月8日 下午5:38:09
  */
 @Configuration
-@MapperScan(annotationClass = Mapper.class ,basePackages = {"com.shangpin.ep.order.module.*.mapper"})
+@MapperScan(annotationClass = Mapper.class ,basePackages = {"com.shangpin.ephub.data.mysql.*.*.mapper"})
 @EnableConfigurationProperties(DataSourceProperties.class)
 public class DataSourceConf {
 

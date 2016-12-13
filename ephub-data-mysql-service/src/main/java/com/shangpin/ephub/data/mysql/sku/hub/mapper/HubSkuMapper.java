@@ -3,9 +3,18 @@ package com.shangpin.ephub.data.mysql.sku.hub.mapper;
 import com.shangpin.ephub.data.mysql.sku.hub.po.HubSku;
 import com.shangpin.ephub.data.mysql.sku.hub.po.HubSkuCriteria;
 import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
-
+/**
+ * <p>Title:HubBrandDicMapper.java </p>
+ * <p>Description: </p>
+ * <p>Company: www.shangpin.com</p> 
+ * @author yanxiaobin
+ * @date 2016年12月13日 下午2:12:01
+ */
+@Mapper
 public interface HubSkuMapper {
     int countByExample(HubSkuCriteria example);
 
