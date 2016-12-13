@@ -123,6 +123,14 @@ public class OrderHandleSearch {
 	@Qualifier("kixOrderImpl")
 	IOrderService kixOrderImpl;
 
+	@Autowired
+	@Qualifier("palomaBarceloOrderImpl")
+	IOrderService palomaBarceloOrderImpl;
+	
+	@Autowired
+	@Qualifier("lamborghiniOrderImpl")
+	IOrderService lamborghiniOrderImpl;
+	
 	public IOrderService getHander(String supplierId) {
 
 		if ("2015102201625".equals(supplierId)) {// 预锁库存随机返回值
@@ -196,7 +204,11 @@ public class OrderHandleSearch {
 		}
 		else if ("2016080901915".equals(supplierId)) {
 			return studio69Serviceimpl;
-		} else {
+		}  else if ("2016080301912".equals(supplierId)) {
+			return lamborghiniOrderImpl;
+		} else if ("2016080301913".equals(supplierId)) {
+			return palomaBarceloOrderImpl;
+		}else {
 			return null;
 		}
 
@@ -403,6 +415,10 @@ public class OrderHandleSearch {
 		}
 		else if ("2016080901915".equals(supplierId)) {
 			return supplierProperties.getStudio69();
+		} else if ("2016080301912".equals(supplierId)) {
+			return supplierProperties.getLamborghiniConf();
+		} else if ("2016080301913".equals(supplierId)) {
+			return supplierProperties.getPalomaBarceloConf();
 		} else {
 			return null;
 		}
