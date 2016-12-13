@@ -22,7 +22,7 @@ import java.util.Map;
 public class LogCommon {
 
 
-    private static String logFormat ="{\"messageId\": {},\"parentMessageId\":{},\"businessType\":{},\"supplierId\":{}," +
+    private static String logFormat ="{\"messageId\": {},\"parentMessageId\":{},\"businessType\":{},\"spMasterOrderNo\":{},\"purchaseNo\":{},\"supplierId\":{}," +
             "\"supplierNo\":{},\"skuNo:\":{},\"supplierSkuNo:\":{},\"orderStatus\":{},\"pushStatus\":{},\"logContent\":{},\"handleTime\":{}}";
     /**
      * 记录订单相关的错误日志
@@ -106,23 +106,25 @@ public class LogCommon {
      * @return
      */
     private static String[]  getLogContent(OrderDTO orderDTO){
-        //"{\"messageId\": %s,\"parentMessageId\":%s,\"businessType\":%s,\"supplierId\":%s," +
-       // "\"supplierNo\":%s,\"skuNo:\":%s,\"supplierSkuNo:\":%s,\"orderStatus\":%s,\"pushStatus\":%s,\"handleTime\":%s}";
-        String[] contentArray = new  String[11];
+       // "{\"messageId\": {},\"parentMessageId\":{},\"businessType\":{},\"spMasterOrderNo\":{},\"purchaseNo\":{},\"supplierId\":{}," +
+       //         "\"supplierNo\":{},\"skuNo:\":{},\"supplierSkuNo:\":{},\"orderStatus\":{},\"pushStatus\":{},\"logContent\":{},\"handleTime\":{}}";
+        String[] contentArray = new  String[13];
         contentArray[0] = orderDTO.getMessageId();
         contentArray[1] = orderDTO.getParentMessageId();
         contentArray[2] = null==orderDTO.getBusinessType()?"":orderDTO.getBusinessType().getDescription();
-        contentArray[3] = orderDTO.getSupplierId();
-        contentArray[4] = orderDTO.getSupplierNo();
-        contentArray[5] = orderDTO.getSpSkuNo();
-        contentArray[6] = orderDTO.getSupplierSkuNo();
-        contentArray[7] = null==orderDTO.getOrderStatus()?"":orderDTO.getOrderStatus().getDescription();
-        contentArray[8] = null==orderDTO.getPushStatus()?"":orderDTO.getPushStatus().getDescription();
-        contentArray[9] = orderDTO.getLogContent();
+        contentArray[3] = null==orderDTO.getSpMasterOrderNo()?"":orderDTO.getSpMasterOrderNo();
+        contentArray[4] = null==orderDTO.getPurchaseNo()?"":orderDTO.getPurchaseNo();
+        contentArray[5] = orderDTO.getSupplierId();
+        contentArray[6] = orderDTO.getSupplierNo();
+        contentArray[7] = orderDTO.getSpSkuNo();
+        contentArray[8] = orderDTO.getSupplierSkuNo();
+        contentArray[9] = null==orderDTO.getOrderStatus()?"":orderDTO.getOrderStatus().getDescription();
+        contentArray[10] = null==orderDTO.getPushStatus()?"":orderDTO.getPushStatus().getDescription();
+        contentArray[11] = orderDTO.getLogContent();
         if(null!=orderDTO.getUpdateTime()){
-            contentArray[10] =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(orderDTO.getUpdateTime()) ;
+            contentArray[12] =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(orderDTO.getUpdateTime()) ;
         }else{
-            contentArray[10] = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            contentArray[12] = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         }
         return contentArray;
     }

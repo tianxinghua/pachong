@@ -6,6 +6,9 @@ spring:
            password: scm-message-service
            virtual-host: /scm-message-service
   cloud: 
+        consul: 
+          discovery: 
+            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
         stream: 
               bindings: 
                         spinnakerOriginalProduct: 
@@ -14,48 +17,72 @@ spring:
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
+                        spinnakerPendingProduct: 
+                              destination: spinnaker.pending.product
+                              content-type: application/json
                         ostoreOriginalProduct: 
                               destination: ostore.original.product
                               group: one
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
+                        ostorePendingProduct: 
+                              destination: ostore.pending.product
+                              content-type: application/json                        
                         brunarossoOriginalProduct: 
                               destination: brunarosso.original.product
                               group: one
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
+                        brunarossoPendingProduct: 
+                              destination: brunarosso.pending.product
+                              content-type: application/json                        
                         stefaniaOriginalProduct: 
                               destination: stefania.original.product
                               group: one
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
+                        stefaniaPendingProduct: 
+                              destination: stefania.pending.product
+                              content-type: application/json                        
                         gebOriginalProduct: 
                               destination: geb.original.product
                               group: one
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
+                        gebPendingProduct: 
+                              destination: geb.pending.product
+                              content-type: application/json                        
                         coltortiOriginalProduct: 
                               destination: coltorti.original.product
                               group: one
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
+                        coltortiPendingProduct: 
+                              destination: coltorti.pending.product
+                              content-type: application/json                        
                         tonyOriginalProduct: 
                               destination: tony.original.product
                               group: one
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
+                        tonyPendingProduct: 
+                              destination: tony.pending.product
+                              content-type: application/json                        
                         biondioniOriginalProduct: 
                               destination: biondioni.original.product
                               group: one
                               consumer: 
                                        concurrency: 5
-                                       maxAttempts: 1                                                                                                                                                                                                                                                                                 
+                                       maxAttempts: 1
+                        biondioniPendingProduct: 
+                              destination: biondioni.pending.product
+                              content-type: application/json                                                                                                                                                                                                                                                                                                          
               rabbit: 
                       bindings: 
                             spinnakerOriginalProduct: 
@@ -64,48 +91,72 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            spinnakerPendingProduct: 
+                                  producer: 
+                                       prefix: HA.                                    
                             ostoreOriginalProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            ostorePendingProduct: 
+                                  producer: 
+                                       prefix: HA.                                        
                             brunarossoOriginalProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            brunarossoPendingProduct: 
+                                  producer: 
+                                       prefix: HA.                                        
                             stefaniaOriginalProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            stefaniaPendingProduct: 
+                                  producer: 
+                                       prefix: HA.                                        
                             gebOriginalProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            gebPendingProduct: 
+                                  producer: 
+                                       prefix: HA.                                       
                             coltortiOriginalProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            coltortiPendingProduct: 
+                                  producer: 
+                                       prefix: HA.                                        
                             tonyOriginalProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            tonyPendingProduct: 
+                                  producer: 
+                                       prefix: HA.                                          
                             biondioniOriginalProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false                                                                                                                                                                                                                                                                          
+                                       republishToDlq: false
+                            biondioniPendingProduct: 
+                                  producer: 
+                                       prefix: HA.                                                                                                                                                                                                                                                                                                                 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   mail: 

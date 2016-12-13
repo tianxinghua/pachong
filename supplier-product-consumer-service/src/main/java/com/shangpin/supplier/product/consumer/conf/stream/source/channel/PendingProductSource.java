@@ -32,47 +32,47 @@ public interface PendingProductSource {
 	 * @return 供货商SPINNAKER通道组件
 	 */
 	@Output(value = PendingProductSource.SPINNAKER)
-    public MessageChannel spinnaker();
+    public MessageChannel spinnakerPendingProduct();
 	/**
 	 * 供货商OSTORE通道组件配置
 	 * @return 供货商OSTORE通道组件
 	 */
 	@Output(value = PendingProductSource.OSTORE)
-    public MessageChannel ostore();
+    public MessageChannel ostorePendingProduct();
 	/**
 	 * 供货商BRUNAROSSO通道组件配置
 	 * @return 供货商BRUNAROSSO通道组件
 	 */
 	@Output(value = PendingProductSource.BRUNAROSSO)
-    public MessageChannel brunarosso();
+    public MessageChannel brunarossoPendingProduct();
 	/**
 	 * 供货商STEFANIA通道组件配置
 	 * @return 供货商STEFANIA通道组件
 	 */
 	@Output(value = PendingProductSource.STEFANIA)
-    public MessageChannel stefania();
+    public MessageChannel stefaniaPendingProduct();
 	/**
 	 * 供货商GEB通道组件配置
 	 * @return 供货商GEB通道组件
 	 */
 	@Output(value = PendingProductSource.GEB)
-    public MessageChannel geb();
+    public MessageChannel gebPendingProduct();
 	/**
 	 * 供货商COLTORTI通道组件配置
 	 * @return 供货商COLTORTI通道组件
 	 */
 	@Output(value = PendingProductSource.COLTORTI)
-    public MessageChannel coltorti();
+    public MessageChannel coltortiPendingProduct();
 	/**
 	 * 供货商TONY通道组件配置
 	 * @return 供货商TONY通道组件
 	 */
 	@Output(value = PendingProductSource.TONY)
-    public MessageChannel tony();
+    public MessageChannel tonyPendingProduct();
 	/**
 	 * 供货商BIONDIONI通道组件配置
 	 * @return 供货商BIONDIONI通道组件
 	 */
 	@Output(value = PendingProductSource.BIONDIONI)
-    public MessageChannel biondioni();
+    public MessageChannel biondioniPendingProduct();
 }
