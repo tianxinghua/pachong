@@ -17,7 +17,7 @@ public class TonyItems {
     private String color;
     private String sex;
     private String title;
-    private Object cat_ids;
+    private String cat_ids;
     private String shopCatId;
     private String season;
     private String shopId;
