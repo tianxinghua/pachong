@@ -323,7 +323,7 @@ shangpin:
                   cancelUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/CancelOrder
                   qtyUrl: http://185.58.119.177/spinnakerapi/Myapi/Productslist/GetQuantityByBarcode
                   key: 8IZk2x5tVN
-                  dBContext: Default
+                  dBContext: sanremo
                   isPurchaseExp: no
                   openApiKey: d2bc1936983b4ed3843dfaf989d2c6ce
                   openApiSecret: 9027a364e8cb4204a6819d5cdb57889b
