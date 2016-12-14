@@ -1,2 +1,2 @@
 
-include "ephub-data-mysql-service", "ephub-data-mongodb-service", "ephub-product-business-service"
+include "ephub-data-mysql-service", "ephub-data-mongodb-service", "ephub-product-business-service", "ephub-common-rpc-connector"
