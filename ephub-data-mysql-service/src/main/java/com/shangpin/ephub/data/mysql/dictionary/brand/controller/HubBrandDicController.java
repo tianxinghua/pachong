@@ -2,16 +2,16 @@ package com.shangpin.ephub.data.mysql.dictionary.brand.controller;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.data.mysql.dictionary.brand.mapper.HubBrandDicMapper;
+import com.shangpin.ephub.data.mysql.dictionary.brand.bean.HubBrandDicCriteriaWithRowBounds;
+import com.shangpin.ephub.data.mysql.dictionary.brand.bean.HubBrandDicWithCriteria;
 import com.shangpin.ephub.data.mysql.dictionary.brand.po.HubBrandDic;
 import com.shangpin.ephub.data.mysql.dictionary.brand.po.HubBrandDicCriteria;
+import com.shangpin.ephub.data.mysql.dictionary.brand.service.HubBrandDicService;
 
 /**
  * <p>Title:HubBrandDicController.java </p>
@@ -25,53 +25,54 @@ import com.shangpin.ephub.data.mysql.dictionary.brand.po.HubBrandDicCriteria;
 public class HubBrandDicController {
 	
 	@Autowired
-	private HubBrandDicMapper hubBrandDicMapper;
+	private HubBrandDicService hubBrandDicService;
+	
 	@RequestMapping(value = "/count-by-criteria")
-    public int countByExample(HubBrandDicCriteria criteria){
-    	return hubBrandDicMapper.countByExample(criteria);
+    public int countByCriteria(@RequestBody HubBrandDicCriteria criteria){
+    	return hubBrandDicService.countByCriteria(criteria);
     }
 	@RequestMapping(value = "/delete-by-criteria")
-    public int deleteByExample(HubBrandDicCriteria criteria){
-    	return hubBrandDicMapper.deleteByExample(criteria);
+    public int deleteByCriteria(@RequestBody HubBrandDicCriteria criteria){
+    	return hubBrandDicService.deleteByCriteria(criteria);
     }
 	@RequestMapping(value = "/delete-by-primary-key")
     public int deleteByPrimaryKey(Long brandDicId){
-    	return hubBrandDicMapper.deleteByPrimaryKey(brandDicId);
+    	return hubBrandDicService.deleteByPrimaryKey(brandDicId);
     }
 	@RequestMapping(value = "/insert")
     public int insert(@RequestBody HubBrandDic hubBrandDic){
-    	return hubBrandDicMapper.insert(hubBrandDic);
+    	return hubBrandDicService.insert(hubBrandDic);
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(HubBrandDic hubBrandDic){
-    	return hubBrandDicMapper.insertSelective(hubBrandDic);
+    public int insertSelective(@RequestBody HubBrandDic hubBrandDic){
+    	return hubBrandDicService.insertSelective(hubBrandDic);
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
-    public List<HubBrandDic> selectByExampleWithRowbounds(HubBrandDicCriteria criteria, RowBounds rowBounds){
-    	return hubBrandDicMapper.selectByExampleWithRowbounds(criteria, rowBounds);
+    public List<HubBrandDic> selectByCriteriaWithRowbounds(@RequestBody HubBrandDicCriteriaWithRowBounds criteriaWithRowBounds){
+    	return hubBrandDicService.selectByCriteriaWithRowbounds(criteriaWithRowBounds);
     }
 	@RequestMapping(value = "/select-by-criteria")
-    public List<HubBrandDic> selectByExample(HubBrandDicCriteria criteria){
-    	return hubBrandDicMapper.selectByExample(criteria);
+    public List<HubBrandDic> selectByCriteria(@RequestBody HubBrandDicCriteria criteria){
+    	return hubBrandDicService.selectByCriteria(criteria);
     }
 	@RequestMapping(value = "/select-by-primary-key")
     public HubBrandDic selectByPrimaryKey(Long brandDicId){
-    	return hubBrandDicMapper.selectByPrimaryKey(brandDicId);
+    	return hubBrandDicService.selectByPrimaryKey(brandDicId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")
-    public int updateByExampleSelective(@Param("record") HubBrandDic hubBrandDic, @Param("example") HubBrandDicCriteria criteria){
-    	return hubBrandDicMapper.updateByExample(hubBrandDic, criteria);
+    public int updateByCriteriaSelective(@RequestBody HubBrandDicWithCriteria hubBrandDicWithCriteria){
+    	return hubBrandDicService.updateByCriteriaSelective(hubBrandDicWithCriteria);
     }
 	@RequestMapping(value = "/update-by-criteria")
-    public int updateByExample(@Param("record") HubBrandDic hubBrandDic, @Param("example") HubBrandDicCriteria criteria){
-    	return hubBrandDicMapper.updateByExample(hubBrandDic, criteria);
+    public int updateByCriteria(@RequestBody HubBrandDicWithCriteria hubBrandDicWithCriteria){
+    	return hubBrandDicService.updateByCriteria(hubBrandDicWithCriteria);
     }
 	@RequestMapping(value = "/update-by-primary-key-selective")
-    public int updateByPrimaryKeySelective(HubBrandDic hubBrandDic){
-    	return hubBrandDicMapper.updateByPrimaryKeySelective(hubBrandDic);
+    public int updateByPrimaryKeySelective(@RequestBody HubBrandDic hubBrandDic){
+    	return hubBrandDicService.updateByPrimaryKeySelective(hubBrandDic);
     }
 	@RequestMapping(value = "/update-by-primary-key")
-    public int updateByPrimaryKey(HubBrandDic hubBrandDic){
-    	return hubBrandDicMapper.updateByPrimaryKey(hubBrandDic);
+    public int updateByPrimaryKey(@RequestBody HubBrandDic hubBrandDic){
+    	return hubBrandDicService.updateByPrimaryKey(hubBrandDic);
     }
 }
