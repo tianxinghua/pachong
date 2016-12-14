@@ -158,7 +158,7 @@ shangpin:
                   openApiKey: ea5601c5b1d145dfbe9ea7d07de16db4
                   openApiSecret: 95c5c8ac6ffd486fba8b98586bc0a6fe
           deliberti:
-                  url: http://www.gicos.it/gettest.php
+                  url: http://www.gicos.it/get.php
                   isPurchaseExp:
                   openApiKey: 23f2549070394d47a6f82aa3f5c0922f
                   openApiSecret: 174c5788112c4b1984e1dc06adc73f37

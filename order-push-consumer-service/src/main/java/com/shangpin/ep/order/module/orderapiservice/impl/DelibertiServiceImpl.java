@@ -93,7 +93,7 @@ public class DelibertiServiceImpl implements IOrderService {
 							String jsonValue = sb.toString();
 							logger.info("推送参数 ：" + jsonValue);
 							try {
-								rtnData = HttpUtil45.operateData("post", "json", supplierProperties.getDeliberti().getUrl(), defaultConfig, null, jsonValue,null, "", "");
+								rtnData = HttpUtil45.operateData("post", "json",supplierProperties.getDeliberti().getUrl(), defaultConfig, null, jsonValue,null, "", "");
 								logger.info("返回结果 ：" + rtnData);
 								if("ok".equals(rtnData)){
 									orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
@@ -133,15 +133,24 @@ public class DelibertiServiceImpl implements IOrderService {
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		createOrder(orderDTO);
 	}
-
+	public static void main(String[] args) {
+		OrderDTO o = new OrderDTO();
+		o.setPurchasePriceDetail("1");
+		o.setPurchaseNo("CGDF2016121484380");
+		o.setDetail("252826-UNI:1");
+		o.setSpOrderId("201612145135376");
+		new DelibertiServiceImpl().createOrder(o);
+	}
 	@Override
 	public void handleCancelOrder(OrderDTO deleteOrder) {
-		
+		deleteOrder.setPushStatus(PushStatus.NO_LOCK_CANCELLED_API);
+		deleteOrder.setCancelTime(new Date());
 	}
 
 	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
-		
+		deleteOrder.setPushStatus(PushStatus.NO_REFUNDED_API);
+		deleteOrder.setRefundTime(new Date());
 	}
 
 

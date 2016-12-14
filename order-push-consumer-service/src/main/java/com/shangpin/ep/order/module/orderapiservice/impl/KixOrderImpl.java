@@ -209,19 +209,19 @@ public class KixOrderImpl  implements IOrderService {
 	public static void main(String[] args) {
 		KixOrderImpl ompl = new KixOrderImpl();
 //		ReturnOrderDTO orderDTO = new ReturnOrderDTO();
-		String d = "580a5c94b55c3db5aa59a06d-38:1";
+		String d = "728590487:1";
 //		orderDTO.setDetail(d);
 //		orderDTO.setSpOrderId("201609134249189");
 //		orderDTO.setCreateTime(new Date());
 		
 		OrderDTO orderDTO1 = new OrderDTO();
 		orderDTO1.setDetail(d);
-		orderDTO1.setSpOrderId("201612085111311");
+		orderDTO1.setSpOrderId("201612145135193");
 		orderDTO1.setCreateTime(new Date());
 		orderDTO1.setPurchasePriceDetail("1");
 		
 //		ompl.handleRefundlOrder(orderDTO);//(orderDTO);
-		ompl.handleConfirmOrder(orderDTO1);//(orderDTO);
+		ompl.handleSupplierOrder(orderDTO1);//(orderDTO);
 	}
 
 }
