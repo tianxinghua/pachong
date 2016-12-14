@@ -136,9 +136,9 @@ public class DelibertiServiceImpl implements IOrderService {
 	public static void main(String[] args) {
 		OrderDTO o = new OrderDTO();
 		o.setPurchasePriceDetail("1");
-		o.setPurchaseNo("CGDF2016121484380");
-		o.setDetail("252826-UNI:1");
-		o.setSpOrderId("201612145135376");
+		o.setPurchaseNo("CGDF2016121484493");
+		o.setDetail("256227-37:1");
+		o.setSpOrderId("201612145135570");
 		new DelibertiServiceImpl().createOrder(o);
 	}
 	@Override
