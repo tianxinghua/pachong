@@ -16,6 +16,7 @@ import org.apache.ibatis.session.RowBounds;
  */
 @Mapper
 public interface HubSupplierSpuMapper {
+	
     int countByExample(HubSupplierSpuCriteria example);
 
     int deleteByExample(HubSupplierSpuCriteria example);

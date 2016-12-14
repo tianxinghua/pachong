@@ -16,6 +16,7 @@ import org.apache.ibatis.session.RowBounds;
  */
 @Mapper
 public interface HubSkuPendingMapper {
+	
     int countByExample(HubSkuPendingCriteria example);
 
     int deleteByExample(HubSkuPendingCriteria example);
