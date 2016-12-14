@@ -53,7 +53,7 @@ public class KixOrderImpl  implements IOrderService {
 		String jsonValue = genOrderStr("pending", qty, skuId);
 		try {
 //			String operateData = HttpUtil45.operateData("post", "json", url, outTimeConf , null, jsonValue , null,null, null);
-			String operateData = kixPushOrder(orderDTO, url,jsonValue);
+			String operateData = kixPushOrder(orderDTO,"post", url,jsonValue);
 			orderDTO.setLogContent("锁库存推送返回结果=="+operateData+"，锁库存推送的数据："+jsonValue);
         	logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 			Data fromJson = gson.fromJson(operateData, Data.class);
@@ -86,7 +86,7 @@ public class KixOrderImpl  implements IOrderService {
 		try {
 			//不会有库存不足的情况，全部是网络异常支付失败，先判断异常状态
 //				String operateData = HttpUtil45.operateData("put", "json", url, outTimeConf , null, jsonValue , null, null,null);
-			String operateData = kixPushOrder(orderDTO, url,jsonValue);
+			String operateData = kixPushOrder(orderDTO,"put", url,jsonValue);
 				orderDTO.setLogContent("confirm返回的结果=" + operateData+",推送的参数="+jsonValue);
 				logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 				//确认订单成功
@@ -101,7 +101,6 @@ public class KixOrderImpl  implements IOrderService {
 		}
 		
 	}
-
 
 	/**
 	 * 解除库存锁
@@ -144,7 +143,7 @@ public class KixOrderImpl  implements IOrderService {
 		String transfaction = "{\"transaction\":{\"kind\":\"refund\",\"amount\":\""+price+"\"}}";
 		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10);
 		try {
-			String operateData = kixPushOrder(deleteOrder, url,transfaction);
+			String operateData = kixPushOrder(deleteOrder,"put", url,transfaction);
 			//HttpUtil45.operateData("put", "json", url, outTimeConf , null, transfaction , null,null,  null);
 	    	 deleteOrder.setLogContent("退款返回结果=="+transfaction+"，退款推送的数据："+operateData);
 	     	 logCommon.loggerOrder(deleteOrder, LogTypeStatus.LOCK_LOG);
@@ -185,12 +184,12 @@ public class KixOrderImpl  implements IOrderService {
 	 * @throws Exception
 	 */
 //    @HystrixCommand(fallbackMethod = "handleException")
-	private String kixPushOrder(OrderDTO orderDTO, String url, String json)  throws Exception{
+	private String kixPushOrder(OrderDTO orderDTO, String type,String url, String json)  throws Exception{
 		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10);
-		return HttpUtil45.operateData("put", "json", url, outTimeConf , null, json , null,null,  null);
+		return HttpUtil45.operateData(type, "json", url, outTimeConf , null, json , null,null,  null);
 	}
 	
-	public String handleException(OrderDTO orderDTO, String url, String json,Throwable e){		
+	public String handleException(OrderDTO orderDTO,String type, String url, String json,Throwable e){		
 		handleException.handleException(orderDTO, e); 
 		return null;
 	}
@@ -209,16 +208,17 @@ public class KixOrderImpl  implements IOrderService {
 	public static void main(String[] args) {
 		KixOrderImpl ompl = new KixOrderImpl();
 //		ReturnOrderDTO orderDTO = new ReturnOrderDTO();
-		String d = "580a5c94b55c3db5aa59a06d-38:1";
+		String d = "728590487:1";
 //		orderDTO.setDetail(d);
 //		orderDTO.setSpOrderId("201609134249189");
 //		orderDTO.setCreateTime(new Date());
 		
 		OrderDTO orderDTO1 = new OrderDTO();
 		orderDTO1.setDetail(d);
-		orderDTO1.setSpOrderId("201612085111311");
+		orderDTO1.setSpOrderId("201612145135193");
 		orderDTO1.setCreateTime(new Date());
 		orderDTO1.setPurchasePriceDetail("1");
+		orderDTO1.setSupplierOrderNo("4389802446");
 		
 //		ompl.handleRefundlOrder(orderDTO);//(orderDTO);
 		ompl.handleConfirmOrder(orderDTO1);//(orderDTO);
