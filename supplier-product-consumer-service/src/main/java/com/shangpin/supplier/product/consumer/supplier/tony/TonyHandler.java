@@ -1,8 +1,11 @@
 package com.shangpin.supplier.product.consumer.supplier.tony;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -10,6 +13,7 @@ import com.google.gson.Gson;
 import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
 import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
 import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
+import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.tony.dto.TonyItems;
 
@@ -23,6 +27,9 @@ import com.shangpin.supplier.product.consumer.supplier.tony.dto.TonyItems;
  */
 @Component("tonyHandler")
 public class TonyHandler implements ISupplierHandler {
+	
+	@Autowired
+	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
@@ -30,14 +37,16 @@ public class TonyHandler implements ISupplierHandler {
 			TonyItems tonyItems = new Gson().fromJson(message.getData(), TonyItems.class);
 			HubSupplierSpu hubSpu = new HubSupplierSpu();
 			boolean success = convertSpu(message.getData(), tonyItems, hubSpu);
-			if(success){
-				//TODO save hubSpu
-			}
+			List<HubSupplierSku> hubSkus = new ArrayList<HubSupplierSku>();
 			HubSupplierSku hubSku = new HubSupplierSku();
 			boolean skuSucc = convertSku(message.getData(), hubSpu.getSupplierSpuId(), tonyItems, hubSku);
 			if(skuSucc){
-				// TODO save hub sku
+				hubSkus.add(hubSku);
 			}
+			if(success){
+				supplierProductSaveAndSendToPending.tonySaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
+			}
+			
 		}
 		
 	}

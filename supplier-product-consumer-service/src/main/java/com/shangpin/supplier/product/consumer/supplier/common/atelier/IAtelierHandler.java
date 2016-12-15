@@ -1,7 +1,10 @@
 package com.shangpin.supplier.product.consumer.supplier.common.atelier;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -9,6 +12,7 @@ import com.google.gson.Gson;
 import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
 import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
 import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
+import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierDate;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierPrice;
@@ -26,6 +30,9 @@ import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.Atelie
  */
 @Component
 public abstract class IAtelierHandler implements ISupplierHandler {
+	
+	@Autowired
+	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 
 	/**
 	 * 处理spu行数据，返回一个spu对象
@@ -68,19 +75,20 @@ public abstract class IAtelierHandler implements ISupplierHandler {
 			AtelierSpu atelierSpu = handleSpuData(atelierDate.getSpu());			
 			HubSupplierSpu hubSpu =  new HubSupplierSpu();
 			boolean success = convertSpu(message.getSupplierId(),atelierSpu,hubSpu);
-			if(success){
-				//TODO 保存 hubSpu
-			}
-			if(null != atelierDate.getSku()){
+			List<HubSupplierSku> hubSkus = new ArrayList<HubSupplierSku>();
+			if(null != atelierDate.getSku()){				
 				AtelierPrice atelierPrice = handlePriceData(atelierDate.getPrice());
 				for(String skuColumn : atelierDate.getSku()){
 					HubSupplierSku hubSku = new HubSupplierSku();
 					AtelierSku atelierSku = handleSkuData(skuColumn);					
 					boolean skuSucc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),atelierSpu,atelierSku,atelierPrice,hubSku);
 					if(skuSucc){
-						//TODO 保存 hubSku
+						hubSkus.add(hubSku);
 					}					
 				}
+			}
+			if(success){
+				supplierProductSaveAndSendToPending.atelierSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 			}
 		}
 		

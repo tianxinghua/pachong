@@ -1,8 +1,11 @@
 package com.shangpin.supplier.product.consumer.supplier.stefania;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -10,6 +13,7 @@ import com.google.gson.Gson;
 import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
 import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
 import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
+import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.stefania.dto.StefItem;
 import com.shangpin.supplier.product.consumer.supplier.stefania.dto.StefProduct;
@@ -24,6 +28,9 @@ import com.shangpin.supplier.product.consumer.supplier.stefania.dto.StefProduct;
 @Component("stefaniaHandler")
 public class StefaniaHandler implements ISupplierHandler{
 	
+	@Autowired
+	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
+	
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		if(StringUtils.isEmpty(message.getData())){
@@ -31,13 +38,14 @@ public class StefaniaHandler implements ISupplierHandler{
 			for(StefItem stefItem :stefProduct.getItems().getItems()){
 				HubSupplierSpu hubSpu = new HubSupplierSpu();
 				boolean success = convertSpu(message.getSupplierId(), stefProduct, stefItem, hubSpu);
-				if(success){
-					//save hubSpu
-				}
+				List<HubSupplierSku> hubSkus = new ArrayList<HubSupplierSku>();
 				HubSupplierSku hubSku = new HubSupplierSku();
 				boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), stefItem, hubSku);
 				if(skuSucc){
-					//save hubSku
+					hubSkus.add(hubSku);
+				}
+				if(success){
+					supplierProductSaveAndSendToPending.stefaniaSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 				}
 			}
 		}		
