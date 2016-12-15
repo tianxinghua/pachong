@@ -54,7 +54,13 @@ public class PapiniOrderService implements IOrderService {
 	/**
 	 * 锁库存
 	 */
-
+public static void main(String[] args) {
+	OrderDTO o = new OrderDTO();
+	o.setDetail("5001086000023:1");
+	o.setSpOrderId("201612145136107");
+	o.setPurchaseNo("CGDF2016121485004");
+	new PapiniOrderService().handleConfirmOrder(o);
+}
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		orderDTO.setLockStockTime(new Date());
@@ -108,14 +114,14 @@ public class PapiniOrderService implements IOrderService {
 		String rtnData = null;
 		try {
 			 Map<String, String> map =new HashMap<String, String>();
-			 map.put("DBContext", dBContext);
+			 map.put("DBContext", "Default");
 			 map.put("purchase_no", orderDTO.getPurchaseNo());
 			 map.put("order_no", orderDTO.getSpOrderId());
 			 map.put("barcode", skuId);
 			 map.put("ordQty", qty);
-			 map.put("key", key);
+			 map.put("key", "doV3IeZ6bz");
 			 map.put("sellPrice", "0");
-			 rtnData =papiniPushOrder(setOrderUrl,orderDTO, map);
+			 rtnData =papiniPushOrder("http://80.88.89.209/papiniapi/Myapi/Productslist/setOrder",orderDTO, map);
 			 orderDTO.setLogContent("推送订单返回结果="+rtnData+"推送的订单="+map.toString());
 			 logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			
