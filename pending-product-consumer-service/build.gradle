@@ -23,10 +23,13 @@ targetCompatibility = 1.8
 
 repositories {
 	mavenCentral()
+	maven { url "http://192.168.20.223:8081/nexus/content/repositories/releases/" }
+	maven { url "http://192.168.20.223:8081/nexus/content/repositories/snapshots/" }
 }
 
 
 dependencies {
+	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.0.7-SNAPSHOT')
 	compile('org.springframework.cloud:spring-cloud-starter-feign')
     compile('org.apache.commons:commons-lang3:3.4')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
