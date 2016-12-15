@@ -1,9 +1,11 @@
 package com.shangpin.supplier.product.consumer.supplier.geb;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -11,12 +13,16 @@ import com.google.gson.Gson;
 import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
 import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
 import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
+import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.geb.dto.Item;
 import com.shangpin.supplier.product.consumer.supplier.geb.dto.Material;
 
 @Component("gebHandler")
 public class GebHandler implements ISupplierHandler {
+	
+	@Autowired
+	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
@@ -24,13 +30,14 @@ public class GebHandler implements ISupplierHandler {
 			Item item = new Gson().fromJson(message.getData(), Item.class);
 			HubSupplierSpu hubSpu = new HubSupplierSpu();
 			boolean success = convertSpu(message.getSupplierId(),item,hubSpu);
-			if(success){
-				//TODO save hubSpu
-			}
+			List<HubSupplierSku> hubSkus = new ArrayList<HubSupplierSku>();
 			HubSupplierSku hubSku = new HubSupplierSku();
 			boolean skuSuc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),item,hubSku);
 			if(skuSuc){
-				//TODO save hubSku
+				hubSkus.add(hubSku);
+			}
+			if(success){
+				supplierProductSaveAndSendToPending.gebSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 			}
 		}	
 		

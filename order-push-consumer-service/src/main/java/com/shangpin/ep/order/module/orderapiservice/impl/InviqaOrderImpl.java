@@ -20,6 +20,7 @@ import com.shangpin.ep.order.common.HandleException;
 import com.shangpin.ep.order.common.LogCommon;
 import com.shangpin.ep.order.conf.supplier.SupplierProperties;
 import com.shangpin.ep.order.enumeration.ErrorStatus;
+import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.enumeration.OrderStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
@@ -73,8 +74,6 @@ public class InviqaOrderImpl implements IOrderService {
 			qty = Integer.parseInt(detail.split(":")[1]);
 			
 			String json = "{\"order_no\":\""+orderDTO.getSpOrderId()+"\",\"order_items\":[{\"sku_id\":\""+skuId+"\",\"quantity\":"+qty+"}]}";
-			System.out.println("推送的数据:"+json);
-			logger.info("推送的数据:"+json);
 			OAuthService service = new ServiceBuilder().provider(API.class)
 					.apiKey(MAGENTO_API_KEY).apiSecret(MAGENTO_API_SECRET).build();
 			Token accessToken = new Token(token,
@@ -92,6 +91,8 @@ public class InviqaOrderImpl implements IOrderService {
 			int code = response.getCode();
 			String message = null;
 			message = response.getBody();
+			orderDTO.setLogContent("confirm返回的结果=" + message+",推送的参数="+json);
+			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			if(code==200){
 				Result obj = new Gson().fromJson(message, Result.class); 
 				if(obj!=null){

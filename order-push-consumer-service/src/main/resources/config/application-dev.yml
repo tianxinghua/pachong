@@ -63,7 +63,42 @@ shangpin:
       updatestock: /stock/updatestock
       findporder: /purchase/findporder
       cancelpurchase: /purchase/cancelpurchase
+      supplyfindinfo: /supply/findinfo
     Supplier: #以下配置为各个供货商的配置
+      lungolivigno:
+              url_login: http://lungolivigno.vdr-s.com/BSWebApi20/api/User/Login
+              url_saveOrder: http\://lungolivigno.vdr-s.com/BSWebApi20/api/Order/SaveOrder?SessionId\=
+              user_name: ll_web
+              user_password: lng.r45h
+              url_cancelOrder: http\://lungolivigno.vdr-s.com/BSWebApi20/api/Order/CancelOrder?SessionId\=
+              url_getStock: http\://lungolivigno.vdr-s.com/BSWebApi20/api/Stock/GetStock?SessionId\=
+              isPurchaseExp:
+              openApiKey: 1c071674e24c4ad2a81424bc46c6e968
+              openApiSecret: 8d873268a0f44294a73750d747dd0b60
+      tufano: 
+              url: http://79.9.69.28/ws_sito/ws_sito_P15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: shang2016
+              messageType: text/html;charset=utf-8
+              isPurchaseExp:
+              openApiKey: f2cf3a2514ce407dba4711a18d777261
+              openApiSecret: a731152e2790448985182d00f8798387
+      carofiglio: 
+              url: http://37.159.226.146:8080/ws_sito_p15/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: Shang3110
+              messageType: text/html;charset=utf-8
+              isPurchaseExp:
+              openApiKey: d784754d702b40a297ace8c5ac7c1260
+              openApiSecret: cc477338a5564b3996873ddf91487a13
       aladuca: 
               serviceUrl: http://service.alducadaosta.com/EcSrv/Services.asmx?op=InsertOrder
               sopAction: http://service.alducadaosta.com/EcSrv/InsertOrder

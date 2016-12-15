@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.shangpin.pending.product.consumer.conf.stream.sink.message.PendingProduct;
+import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 
 /**
  * <p>Title:PendingProductStreamListenerAdapter.java </p>

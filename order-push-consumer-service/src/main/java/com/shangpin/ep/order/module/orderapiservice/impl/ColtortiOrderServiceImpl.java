@@ -176,26 +176,11 @@ public class ColtortiOrderServiceImpl implements IOrderService {
 //	}
 	public static void main(String[] args) {
 		try {
-			Gson gson = new Gson();
-			OrderJson oj = new OrderJson();
-			oj.setCustomer(new Customer("FilippoTroina", "test", "VIAG.LEOPARDI 27，22075 LURATE CACCIVIO (COMO)", "22075", "LURATE CACCIVIO", "COMO", "Italy"));
-			oj.setOrder_id("CGD2016012700569");
-			List<Product> products = new ArrayList<Product>();
-			Map<String,String> param2=new HashMap<String, String>();
-			param2.put("8", "1");
-			products.add(new Product("152328NCX000011-F0002","",param2));
-			oj.setProducts(products );
-			String json = gson.toJson(oj);
-			System.out.println(json);
-			Map<String,String> param=ColtortiUtil.getCommonParam(0,0);
-			Map<String,String> param1=new HashMap<String, String>();
-			param1.put("Authorization", "Bearer "+param.get("access_token"));
-
-
-			String jsonValue = json;
-			String operateData = HttpUtil45.operateData("post", "json", "https://api.orderlink.it/v1/orders",new OutTimeConfig(10000,10000,10000), null, jsonValue,param1,"SHANGPIN", "12345678");
-			System.out.println("+++++++++++++++++++++"+operateData);
-		} catch (ServiceException e) {
+			OrderDTO o = new OrderDTO();
+			o.setPurchaseNo("CGDF2016121383811");
+			o.setDetail("162414ABS000029-08QU#1:1");
+			new ColtortiOrderServiceImpl().handleConfirmOrder(o);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

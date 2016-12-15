@@ -6,6 +6,7 @@
  */
 package com.shangpin.ep.order.util.axis.studio69;
 
+import org.apache.axis2.transport.http.impl.httpclient4.HttpTransportPropertiesImpl.Authenticator;
 
 /*
  *  API_STUDIO69Stub java implementation
@@ -32,6 +33,34 @@ public class API_STUDIO69Stub extends org.apache.axis2.client.Stub {
     /**
      * Constructor that takes in a configContext  and useseperate listner
      */
+//    public API_STUDIO69Stub(
+//        org.apache.axis2.context.ConfigurationContext configurationContext,
+//        java.lang.String targetEndpoint, boolean useSeparateListener)
+//        throws org.apache.axis2.AxisFault {
+//        //To populate AxisService
+//        populateAxisService();
+//        populateFaults();
+//
+//        _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,
+//                _service);
+//        Authenticator basicauth = new Authenticator();
+//
+//        basicauth.setUsername("SHANGPIN");
+//
+//        basicauth.setPassword("2MWWKgNSxgf");
+//
+//        _serviceClient.getOptions()
+//                      .setTo(new org.apache.axis2.addressing.EndpointReference(
+//                targetEndpoint));
+//        _serviceClient.getOptions().setUseSeparateListener(useSeparateListener);
+//
+//        //Set the soap version
+//        _serviceClient.getOptions()
+//                      .setSoapVersionURI(org.apache.axiom.soap.SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+//    }
+    /**
+     * Constructor that takes in a configContext  and useseperate listner
+     */
     public API_STUDIO69Stub(
         org.apache.axis2.context.ConfigurationContext configurationContext,
         java.lang.String targetEndpoint, boolean useSeparateListener)
@@ -42,6 +71,11 @@ public class API_STUDIO69Stub extends org.apache.axis2.client.Stub {
 
         _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,
                 _service);
+        Authenticator basicauth = new Authenticator();
+
+        basicauth.setUsername("SHANGPIN");
+
+        basicauth.setPassword("2MWWKgNSxgf");
 
         _serviceClient.getOptions()
                       .setTo(new org.apache.axis2.addressing.EndpointReference(
@@ -51,6 +85,7 @@ public class API_STUDIO69Stub extends org.apache.axis2.client.Stub {
         //Set the soap version
         _serviceClient.getOptions()
                       .setSoapVersionURI(org.apache.axiom.soap.SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        _serviceClient.getOptions().setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE,basicauth);
     }
 
     /**
