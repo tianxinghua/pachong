@@ -153,7 +153,7 @@ public class PayedOrderPusher extends AbstractPusher{
 			this.handlePushStauts(orderDTO, headers);
 			//推送发生错误 需要重新发送
 			if(null!=orderDTO.getErrorType()){
-				throw new Exception("订单确认推送出错，需要重试.错误原因： " +  orderDTO.getLogContent());
+				throw new Exception("订单后锁库推送出错，需要重试.错误原因： " +  orderDTO.getLogContent());
 			}
 		}else{
 			if(isNeedHandleLockStatus(orderDTO)){
@@ -250,7 +250,7 @@ public class PayedOrderPusher extends AbstractPusher{
 
 	private boolean isNeedHandleLock(OrderDTO orderDTO){
 		Boolean isNeed = false;
-		if(null==orderDTO.getPushStatus()){ //需要锁库  (下单消息还未处理 支付消息已经来了 )
+		if(null==orderDTO.getPushStatus()){ //需要锁库  (下单消息还未处理 支付消息已经来了 或者尚未锁库，支付信息已经来了  )
 			if(null==orderDTO.getExceptionPushStatus()) {//新的消息 需要处理
 				isNeed = true;
 			}else {
