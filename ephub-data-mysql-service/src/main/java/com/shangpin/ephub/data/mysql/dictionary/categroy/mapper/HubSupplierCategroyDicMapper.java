@@ -16,6 +16,7 @@ import org.apache.ibatis.session.RowBounds;
  */
 @Mapper
 public interface HubSupplierCategroyDicMapper {
+	
     int countByExample(HubSupplierCategroyDicCriteria example);
 
     int deleteByExample(HubSupplierCategroyDicCriteria example);

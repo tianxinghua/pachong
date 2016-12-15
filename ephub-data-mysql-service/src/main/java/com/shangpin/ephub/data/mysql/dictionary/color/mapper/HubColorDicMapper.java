@@ -16,6 +16,7 @@ import org.apache.ibatis.session.RowBounds;
  */
 @Mapper
 public interface HubColorDicMapper {
+	
     int countByExample(HubColorDicCriteria example);
 
     int deleteByExample(HubColorDicCriteria example);
