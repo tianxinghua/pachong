@@ -1,5 +1,6 @@
 package com.shangpin.ep.order.module.order.service.impl;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -118,12 +119,49 @@ public class OpenApiService {
 		 }
 
     }
+
+	public BigDecimal getPurchasePrice(String app_key, String app_secret,String purchaseNo, String skuNo)  throws Exception{
+		String request = "",url="";
+		request = "{\"Endtime\":\"\",\"Starttime\":\"\",\"SkuNos\":\"" + skuNo +"\"}";
+		url= openApiProperties.getOpenApi().getSupplyfindinfo();
+		//"/purchase/findporder";
+//		url = "/supply/findinfo";
+		String result = getResponseJson(app_key,app_secret,request,url);
+		String purchasePrice = "10";  //默认给个值
+		int priceStatus=0;
+
+		//获取采购单明细
+		if(result!=null){
+			JSONObject json = JSONObject.parseObject(result);
+			if("0".equals(json.getString("responseCode"))){
+
+				JSONArray arr = json.getJSONArray("response");
+				if(null!=arr&&arr.size()>0){
+					for(int i=0;i<arr.size();i++){
+						priceStatus  = arr.getJSONObject(i).getIntValue("PriceStatus");
+						if(1==priceStatus){
+							purchasePrice = arr.getJSONObject(i).getString("SupplyPrice");
+						}
+					}
+
+				}else{
+
+					throw new Exception("采购单：" + purchaseNo+"获取采购价失败,返回内容==" + result );
+				}
+			}else{
+				LogCommon.recordLog("采购单：" + purchaseNo+"获取采购价失败,返回内容==" + result,LogLeve.ERROR);
+			}
+		}
+		return new BigDecimal(purchasePrice);
+
+	}
+
     
     private String getResponseJson(String app_key, String app_secret,String request,String url){
     	
     	String req_body = null;
         String host = openApiProperties.getOpenApi().getHost(); //."http://192.168.20.83:9090";
-        
+//		String host = "http://192.168.20.83:9090";
         if (request != null) req_body = request;
         Map<String, String> params = new LinkedHashMap<String, String>();
         params.put("app_key", app_key);
@@ -158,4 +196,13 @@ public class OpenApiService {
         }
 		return result;
     }
+
+	public static void main(String[] args){
+		OpenApiService openApiService = new OpenApiService();
+		try {
+			openApiService.getPurchasePrice("9369033bd69d4cde83ede7ef46565a13","80f0f9ef3e514aa6abfd81c680cde989","","30389454003");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

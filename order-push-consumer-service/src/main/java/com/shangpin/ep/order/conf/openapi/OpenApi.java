@@ -34,5 +34,9 @@ public class OpenApi {
 	 * 查询采购单明细
 	 */
 	private String findporder;
+	/**
+	 * 供货价格查询s
+	 */
+	private String supplyfindinfo;
 
 }
