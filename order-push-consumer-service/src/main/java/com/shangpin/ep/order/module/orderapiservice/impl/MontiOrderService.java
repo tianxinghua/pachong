@@ -132,6 +132,7 @@ public class MontiOrderService implements IOrderService {
 					orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 					orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);							
 					orderDTO.setDescription(orderDTO.getLogContent());
+					orderDTO.setLogContent(orderDTO.getLogContent());
 				}
 
 			} else {
@@ -142,6 +143,7 @@ public class MontiOrderService implements IOrderService {
 		} catch (Exception e) {
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 			orderDTO.setDescription(orderDTO.getLogContent());	
+			orderDTO.setLogContent(e.getMessage());
 			handleException.handleException(orderDTO,e);
 		}
 	}
@@ -159,48 +161,42 @@ public class MontiOrderService implements IOrderService {
 			 rtnData2 =montiPushOrder(queryOrderUrl,deleteOrder, map);
 			 deleteOrder.setLogContent("查询订单返回结果="+rtnData2+"推送的订单="+map.toString());
 			 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
+			 
+			// 获取退单信息
+			Gson gson = new Gson();
+
+			ResponseObject response = gson.fromJson(rtnData2, ResponseObject.class);
+			if("HO".equals(response.getStatus())){
+				try {
+					 String rtnData1 =montiPushOrder(cancelUrl,deleteOrder, map);
+					 deleteOrder.setLogContent("退单返回结果==" + rtnData1+",推送参数："+map.toString());
+					 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
+
+					ResponseObject responseObject = gson.fromJson(rtnData1, ResponseObject.class);
+					if ("OK".equals(responseObject.getStatus())) {
+						deleteOrder.setRefundTime(new Date());
+						deleteOrder.setPushStatus(PushStatus.REFUNDED);
+					} else {
+						deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
+						deleteOrder.setErrorType(ErrorStatus.API_ERROR);
+						deleteOrder.setDescription(deleteOrder.getLogContent());
+					}
+				} catch (Exception e) {
+					deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
+					deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
+					deleteOrder.setDescription(deleteOrder.getLogContent());
+				}
+			}else{
+				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
+				deleteOrder.setErrorType(ErrorStatus.API_ERROR);
+				deleteOrder.setDescription(deleteOrder.getLogContent());
+			}
 		}catch(Exception e){
 			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 			deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
-			deleteOrder.setDescription(deleteOrder.getLogContent());
+			deleteOrder.setDescription(e.getMessage());
+			deleteOrder.setLogContent(e.getMessage());
 		}
-		
-		// 获取退单信息
-		Gson gson = new Gson();
-
-		ResponseObject response = gson.fromJson(rtnData2, ResponseObject.class);
-		if("HO".equals(response.getStatus())){
-			try {
-				 Map<String, String> map =new HashMap<String, String>();
-				 map.put("DBContext", dBContext);
-				 map.put("purchase_no", deleteOrder.getPurchaseNo());
-				 map.put("order_no", deleteOrder.getSpOrderId());
-				 map.put("key", key);
-				 String rtnData1 =montiPushOrder(cancelUrl,deleteOrder, map);
-				 deleteOrder.setLogContent("退单返回结果==" + rtnData1+",推送参数："+map.toString());
-				 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
-
-				ResponseObject responseObject = gson.fromJson(rtnData1, ResponseObject.class);
-				if ("OK".equals(responseObject.getStatus())) {
-					deleteOrder.setRefundTime(new Date());
-					deleteOrder.setPushStatus(PushStatus.REFUNDED);
-				} else {
-					deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-					deleteOrder.setErrorType(ErrorStatus.API_ERROR);
-					deleteOrder.setDescription(deleteOrder.getLogContent());
-				}
-			} catch (Exception e) {
-				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-				deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
-				deleteOrder.setDescription(deleteOrder.getLogContent());
-			}
-		}else{
-			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-			deleteOrder.setErrorType(ErrorStatus.API_ERROR);
-			deleteOrder.setDescription(deleteOrder.getLogContent());
-		}
-		
-		
 	}
 
 }

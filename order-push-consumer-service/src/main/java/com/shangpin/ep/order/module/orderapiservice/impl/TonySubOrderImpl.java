@@ -101,7 +101,7 @@ public class TonySubOrderImpl implements IOrderService {
 	        try {
 	        	
 	        	 rtnData = tonySubPushOrder(orderDTO,url+"updateOrderStatus", json);
-	         	 orderDTO.setLogContent("取消订单推送返回结果=="+json+"，取消订单推送的数据："+json);
+	         	 orderDTO.setLogContent("取消订单推送返回结果=="+rtnData+"，取消订单推送的数据："+json);
 	         	 logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 	        	
 	            if(HttpUtil45.errorResult.equals(rtnData)){
@@ -122,12 +122,14 @@ public class TonySubOrderImpl implements IOrderService {
 	                	 orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED_ERROR);
 	                	 orderDTO.setErrorType(ErrorStatus.API_ERROR);
 	                	 orderDTO.setDescription(orderDTO.getLogContent());
+	                	 orderDTO.setLogContent(orderDTO.getLogContent());
 	                 } 
 	            }
 	        } catch (Exception e) {
 	        	orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED_ERROR);
 	        	orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
 	        	orderDTO.setDescription(orderDTO.getLogContent());
+	        	orderDTO.setLogContent(e.getMessage());
 	        } 
 	    }
 	   
@@ -147,7 +149,7 @@ public class TonySubOrderImpl implements IOrderService {
 	        try {
 	        	
 	       	 rtnData = tonySubPushOrder(deleteOrder,url+"updateOrderStatus", json);
-	       	 deleteOrder.setLogContent("退款返回结果=="+json+"，退款推送的数据："+json);
+	       	 deleteOrder.setLogContent("退款返回结果=="+rtnData+"，退款推送的数据："+json);
 	     	 logCommon.loggerOrder(deleteOrder, LogTypeStatus.LOCK_LOG);
 	        	
 	            if(HttpUtil45.errorResult.equals(rtnData)){
@@ -161,6 +163,7 @@ public class TonySubOrderImpl implements IOrderService {
 	            	deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 	            	deleteOrder.setErrorType(ErrorStatus.API_ERROR);
 	                deleteOrder.setDescription(deleteOrder.getLogContent());
+	                deleteOrder.setLogContent(deleteOrder.getLogContent());
 	            } else {
 	            	deleteOrder.setRefundTime(new Date());
 	                deleteOrder.setPushStatus(PushStatus.REFUNDED);
@@ -168,6 +171,7 @@ public class TonySubOrderImpl implements IOrderService {
 	        } catch (Exception e) {
 	        	deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 	        	deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
+	        	deleteOrder.setLogContent(e.getMessage());
 	            deleteOrder.setDescription(deleteOrder.getLogContent());
 	        }
 			
@@ -197,7 +201,7 @@ public class TonySubOrderImpl implements IOrderService {
 	        String rtnData = null;
 	        try {
 	            rtnData = tonySubPushOrder(orderDTO,url+"updateOrderStatus", json);
-	        	orderDTO.setLogContent("支付订单推送返回结果=="+json+"，支付订单推送的数据："+json);
+	        	orderDTO.setLogContent("支付订单推送返回结果=="+rtnData+"，支付订单推送的数据："+json);
 	        	logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 	            
 	            if(HttpUtil45.errorResult.equals(rtnData)){
@@ -216,7 +220,7 @@ public class TonySubOrderImpl implements IOrderService {
 	                if ("ko".equals(returnDataDTO.getStatus())){
 	                	orderDTO.setDescription(orderDTO.getLogContent());
 	                	orderDTO.setPushStatus(PushStatus.NO_STOCK);
-	                
+	                	 orderDTO.setLogContent(orderDTO.getLogContent());
 	                }
 	            }
 	        
@@ -224,6 +228,7 @@ public class TonySubOrderImpl implements IOrderService {
 	        	orderDTO.setDescription(ex.getMessage());
 	        	orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
 	        	orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+	        	orderDTO.setLogContent(ex.getMessage());
 	        } 
 	    }
 	    /**
@@ -241,7 +246,7 @@ public class TonySubOrderImpl implements IOrderService {
 	        String rtnData = null;
 	        try {
 	        	rtnData = tonySubPushOrder(orderDTO,url+"createOrder", json);
-	        	orderDTO.setLogContent("锁库存推送返回结果=="+json+"，锁库存推送的数据："+json);
+	        	orderDTO.setLogContent("锁库存推送返回结果=="+rtnData+"，锁库存推送的数据："+json);
 	        	logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 		    	  if(HttpUtil45.errorResult.equals(rtnData)){
 		    		  orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
@@ -259,11 +264,17 @@ public class TonySubOrderImpl implements IOrderService {
 	                 if ("ko".equals(returnDataDTO.getStatus())){
 	                	 orderDTO.setDescription(returnDataDTO.getMessages().toString());
 	                	 orderDTO.setPushStatus(PushStatus.NO_STOCK);
+	                	 orderDTO.setLogContent(orderDTO.getLogContent());
 	                 } 
 	            }
 	        } catch (Exception e) {
 	            loggerError.error("Failed Response ：" + e.getMessage() + ", shopOrderId:"+order.getShopOrderId());
 	            orderDTO.setPushStatus(PushStatus.LOCK_PLACED_ERROR);
+	            orderDTO.setPushStatus(PushStatus.LOCK_PLACED_ERROR);
+	            orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
+	            orderDTO.setDescription(e.getMessage());
+	            orderDTO.setLogContent(e.getMessage());
+	            
 	        } 
 	    }
 	    /**

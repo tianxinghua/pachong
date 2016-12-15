@@ -8,8 +8,8 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 
+import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.pending.product.consumer.conf.stream.sink.channel.PendingProductSink;
-import com.shangpin.pending.product.consumer.conf.stream.sink.message.PendingProduct;
 import com.shangpin.pending.product.consumer.supplier.adapter.PendingProductStreamListenerAdapter;
 
 /**

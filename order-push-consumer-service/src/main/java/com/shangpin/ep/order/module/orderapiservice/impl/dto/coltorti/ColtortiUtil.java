@@ -25,16 +25,15 @@ import com.shangpin.ep.order.util.httpclient.HttpUtil45;
  */
 public class ColtortiUtil {
 
-	private static ResourceBundle bdl=null;
-	public static String supplier;
-	public static String productSupplierId;//拉取产品和线上的SUPPLIER_ID 分开
-
-	static {
-		if(null==bdl)
-			bdl=ResourceBundle.getBundle("coltorti");
-		supplier = bdl.getString("supplierId");
-		productSupplierId = bdl.getString("productSupplierId");
-	}
+//	public static String supplier;
+//	public static String productSupplierId;//拉取产品和线上的SUPPLIER_ID 分开
+//
+//	static {
+//		if(null==bdl)
+//			bdl=ResourceBundle.getBundle("coltorti");
+//		supplier = bdl.getString("supplierId");
+//		productSupplierId = bdl.getString("productSupplierId");
+//	}
 
 	static String tokenExpire="token has expired";
 	static String noResult="no results found";

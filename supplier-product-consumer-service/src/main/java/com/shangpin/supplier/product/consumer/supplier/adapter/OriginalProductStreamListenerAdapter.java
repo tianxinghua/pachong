@@ -37,6 +37,9 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("biondioniHandler")
 	private ISupplierHandler biondioniHandler;
+	@Autowired
+	@Qualifier("tonyHandler")
+	private ISupplierHandler tonyHandler;
 	
 	/**
 	 * biondioni供货商原始数据监听方法
@@ -104,7 +107,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void tonyStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		tonyHandler.handleOriginalProduct(message, headers); 
 		
 	}
 

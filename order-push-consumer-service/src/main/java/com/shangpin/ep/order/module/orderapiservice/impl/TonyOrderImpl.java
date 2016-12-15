@@ -71,6 +71,11 @@ public class TonyOrderImpl implements IOrderService {
         createOrder(PENDING,orderDTO);
         //设置异常信息
     }	
+    
+    public static void main(String[] args) {
+    	OrderDTO orderDTO = new OrderDTO();
+		new TonyOrderImpl().updateOrder(CONFIRMED, orderDTO);
+	}
     /**
      * 推送订单
      */
@@ -100,7 +105,7 @@ public class TonyOrderImpl implements IOrderService {
         try {
         	
         	 rtnData = tonyPushOrder(orderDTO,url+"updateOrderStatus", json);
-         	 orderDTO.setLogContent("取消订单推送返回结果=="+json+"，取消订单推送的数据："+json);
+         	 orderDTO.setLogContent("取消订单推送返回结果=="+rtnData+"，取消订单推送的数据："+json);
          	 logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
         	
             if(HttpUtil45.errorResult.equals(rtnData)){
@@ -109,24 +114,20 @@ public class TonyOrderImpl implements IOrderService {
             	orderDTO.setDescription(orderDTO.getLogContent());
             	return ;
             }
-            
-            //上线之前需要放开
-            String returnStatus = getReturnOrder(orderDTO.getSpOrderId());
-            if(CANCELED.equals(returnStatus)){
+            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+            if ("ok".equals(returnDataDTO.getStatus())){
             	orderDTO.setCancelTime(new Date());
             	orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED);
-            }else{
-            	 ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
-                 if ("ko".equals(returnDataDTO.getStatus())){
-                	 orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED_ERROR);
-                	 orderDTO.setErrorType(ErrorStatus.API_ERROR);
-                	 orderDTO.setDescription(orderDTO.getLogContent());
-                 } 
+            } else{
+            	 orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED_ERROR);
+               	 orderDTO.setErrorType(ErrorStatus.API_ERROR);
+               	 orderDTO.setDescription(orderDTO.getLogContent());
             }
         } catch (Exception e) {
         	orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED_ERROR);
         	orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
-        	orderDTO.setDescription(orderDTO.getLogContent());
+        	orderDTO.setDescription(e.getMessage());
+        	orderDTO.setLogContent(e.getMessage());
         } 
     }
    
@@ -146,7 +147,7 @@ public class TonyOrderImpl implements IOrderService {
         try {
         	
        	 rtnData = tonyPushOrder(deleteOrder,url+"updateOrderStatus", json);
-       	 deleteOrder.setLogContent("退款返回结果=="+json+"，退款推送的数据："+json);
+       	 deleteOrder.setLogContent("退款返回结果=="+rtnData+"，退款推送的数据："+json);
      	 logCommon.loggerOrder(deleteOrder, LogTypeStatus.LOCK_LOG);
         	
             if(HttpUtil45.errorResult.equals(rtnData)){
@@ -156,18 +157,19 @@ public class TonyOrderImpl implements IOrderService {
             	return ;
             }
             ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
-            if ("ko".equals(returnDataDTO.getStatus())){
+            if ("ok".equals(returnDataDTO.getStatus())){
+            	deleteOrder.setRefundTime(new Date());
+                deleteOrder.setPushStatus(PushStatus.REFUNDED);
+            } else {
             	deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
             	deleteOrder.setErrorType(ErrorStatus.API_ERROR);
                 deleteOrder.setDescription(deleteOrder.getLogContent());
-            } else {
-            	deleteOrder.setRefundTime(new Date());
-                deleteOrder.setPushStatus(PushStatus.REFUNDED);
             }
         } catch (Exception e) {
         	deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
         	deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
-            deleteOrder.setDescription(deleteOrder.getLogContent());
+            deleteOrder.setDescription(e.getMessage());
+            deleteOrder.setLogContent(e.getMessage());
         }
 		
 	}
@@ -202,27 +204,28 @@ public class TonyOrderImpl implements IOrderService {
             if(HttpUtil45.errorResult.equals(rtnData)){
             	orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
             	orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
+            	orderDTO.setLogContent(rtnData);
             	return ;
             }
-            //上线之前需要放开
-            String returnStatus = getReturnOrder(orderDTO.getSpOrderId());
-           
-            if(CONFIRMED.equals(returnStatus)){
+            
+            ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+            if ("ok".equals(returnDataDTO.getStatus())){
             	 orderDTO.setConfirmTime(new Date());
-            	orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
-            }else{
-                ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
-                if ("ko".equals(returnDataDTO.getStatus())){
+             	 orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
+            } else {
+            	if("[Quota exceeded]".equals(returnDataDTO.getMessages().toString())){
+            		orderDTO.setDescription(orderDTO.getLogContent());
+                	orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+            	}else{
                 	orderDTO.setDescription(orderDTO.getLogContent());
                 	orderDTO.setPushStatus(PushStatus.NO_STOCK);
-                
-                }
+            	}
             }
-        
         } catch (Exception ex) {
         	orderDTO.setDescription(ex.getMessage());
         	orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
         	orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+        	orderDTO.setLogContent(ex.getMessage());
         } 
     }
     /**
@@ -247,24 +250,24 @@ public class TonyOrderImpl implements IOrderService {
 	    		  orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED_ERROR);
 	    		  return;
 	          }
-    		
-            String returnStatus = getReturnOrder(orderDTO.getSpOrderId());
-        	orderDTO.setLockStockTime(new Date());
-            if(PENDING.equals(returnStatus)){
-            	orderDTO.setLockStockTime(new Date());
-            	orderDTO.setPushStatus(PushStatus.LOCK_PLACED);
-            }else{
-            	 ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
-                 if ("ko".equals(returnDataDTO.getStatus())){
-                	 orderDTO.setDescription(returnDataDTO.getMessages().toString());
-                	 orderDTO.setPushStatus(PushStatus.NO_STOCK);
-                 } 
-            }
+	    	 
+	          ReturnDataDTO returnDataDTO = gson.fromJson(rtnData,ReturnDataDTO.class);
+	          if ("ok".equals(returnDataDTO.getStatus())){
+	        	  	orderDTO.setLockStockTime(new Date());
+	            	orderDTO.setPushStatus(PushStatus.LOCK_PLACED);
+	            }else {
+	            	if("[Quota exceeded]".equals(returnDataDTO.getMessages().toString())){
+	            		orderDTO.setDescription(orderDTO.getLogContent());
+	                	orderDTO.setPushStatus(PushStatus.LOCK_PLACED_ERROR);
+	            	}else{
+	                	orderDTO.setDescription(orderDTO.getLogContent());
+	                	orderDTO.setPushStatus(PushStatus.NO_STOCK);
+	            	}
+	            }
         } catch (Exception e) {
             orderDTO.setPushStatus(PushStatus.LOCK_PLACED_ERROR);
             orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
             orderDTO.setLogContent(e.getMessage());
-            logCommon.recordLog(e.getMessage(), e);
         } 
     }
     /**
