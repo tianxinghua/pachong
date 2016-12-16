@@ -5,4 +5,6 @@ package com.shangpin.pending.product.consumer.common;
  */
 public class ConstantProperty {
    public  static String PENDING_PRODUCT_MAP_KEY ="PENDING_PRODUCT_MAP_KEY";
+
+   public  static String DATA_CREATE_USER = "pendingService";
 }

@@ -2,6 +2,7 @@ package com.shangpin.pending.product.consumer.common.enumeration;
 
 /**
  * Created by loyalty on 16/12/13.
+ * 传入pending 消息投中各个信息的状态
  */
 public enum MessageType {
 

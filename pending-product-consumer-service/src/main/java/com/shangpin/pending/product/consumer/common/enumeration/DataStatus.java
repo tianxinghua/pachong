@@ -1,16 +1,14 @@
 package com.shangpin.pending.product.consumer.common.enumeration;
 
 /**
- * Created by loyalty on 16/12/14.
- * 业务状态
+ * Created by loyalty on 16/12/16.
+ * 数据库中各个表中的数据状态
+ *
  */
-public enum PropertyStatus {
+public enum DataStatus {
+    DATA_STATUS_DELETE(0,"已删除"),
+    DATA_STATUS_NORMAL(1,"未删除");
 
-   // =0 信息待完善 =1 信息已完善
-
-    MESSAGE_WAIT_HANDLE(0,"信息待完善"),
-    MESSAGE_HANDLED(1,"信息已完善"),
-    MESSAGE_NO_COMPLETE(2,"部分完善");
     /**
      * 数字索引标识
      */
@@ -31,7 +29,7 @@ public enum PropertyStatus {
     public void setDescription(String description) {
         this.description = description;
     }
-    private PropertyStatus(Integer index, String description) {
+    private DataStatus(Integer index, String description) {
         this.index = index;
         this.description = description;
     }

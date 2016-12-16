@@ -2,20 +2,26 @@ package com.shangpin.pending.product.consumer.supplier.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
+import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
+import com.shangpin.ephub.client.message.pending.body.PendingProduct;
+import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
+import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.DateUtils;
 import com.shangpin.pending.product.consumer.common.enumeration.MessageType;
 import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
 import com.shangpin.pending.product.consumer.conf.clients.mysql.sku.bean.HubSkuPending;
 import com.shangpin.pending.product.consumer.conf.clients.mysql.spu.bean.HubSpuPending;
-import com.shangpin.pending.product.consumer.conf.stream.sink.message.PendingProduct;
-import com.shangpin.pending.product.consumer.conf.stream.sink.message.sku.PendingSku;
-import com.shangpin.pending.product.consumer.conf.stream.sink.message.spu.PendingSpu;
+
 import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSku;
 import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSpu;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -27,6 +33,7 @@ import java.util.*;
  */
 @Component
 @Slf4j
+
 public class PendingHandler {
 
 
@@ -34,9 +41,17 @@ public class PendingHandler {
     IShangpinRedis shangpinRedis;
 
 
+    @Autowired
+    DataServiceHandler dataServiceHandler;
+
+
+
+
+
+
     static Map<String,Map<String,String>> supplierGenderStaticMap = null;
 
-    static Map<String,Map<String,String>> categoryMappingStaticMap = null;
+    static Map<String,Map<String,String>> supplierCategoryMappingStaticMap = null;
 
     static Map<String,String> brandStaticMap = null;
 
@@ -210,7 +225,7 @@ public class PendingHandler {
         return result;
     }
 
-    private boolean  setBrandMapping(PendingSpu spu, HubSpuPending hubSpuPending) {
+    private boolean  setBrandMapping(PendingSpu spu, HubSpuPending hubSpuPending) throws Exception {
         boolean result = true;
         Map<String, String> brandMap = this.getBrandMap();
         if(brandMap.containsKey(spu.getHubBrandNo())){
@@ -218,9 +233,11 @@ public class PendingHandler {
             hubSpuPending.setHubBrandNo(brandMap.get(spu.getHubBrandNo()));
             hubSpuPending.setSpuBrandState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 
-        }else{//TODO 未包含 此供货商 需要添加到品牌字典 以及 供货商的品牌字典人工维护
+        }else{
             result = false;
             hubSpuPending.setSpuBrandState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+            dataServiceHandler.saveBrand(spu.getSupplierId(),spu.getHubBrandNo());
+
         }
         return  result;
     }
@@ -345,16 +362,29 @@ public class PendingHandler {
      * key 供货商品牌名称  value 尚品的品牌编号
      * @return
      */
-    private Map<String,String>  getBrandMap(){
+    private Map<String,String>  getBrandMap() throws Exception {
+
+
         if(null==brandStaticMap){
+            for (HubBrandDicDto hubBrandDicDto : dataServiceHandler.getBrand()) {
+                brandStaticMap.put(hubBrandDicDto.getSupplierBrand(),hubBrandDicDto.getHubBrandNo());
+            }
+            ;
 
         }else{
             if(isNeedHandle()){
+                for (HubBrandDicDto hubBrandDicDto : dataServiceHandler.getBrand()) {
+                    brandStaticMap.put(hubBrandDicDto.getSupplierBrand(),hubBrandDicDto.getHubBrandNo());
+                }
+                ;
+                //无用的内容 暂时不考虑
 
             }
         }
         return brandStaticMap;
     }
+
+
 
 
     private Map<String,String> getColorMap(){
