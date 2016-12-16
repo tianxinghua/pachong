@@ -1,0 +1,1 @@
+Hub页面的controller放置于此包下
