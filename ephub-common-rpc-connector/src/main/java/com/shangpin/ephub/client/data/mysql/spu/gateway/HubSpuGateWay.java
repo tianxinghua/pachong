@@ -18,7 +18,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuWithCriteriaDto;
  * @date 2016年12月14日 下午5:18:04
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubSpuController {
+public interface HubSpuGateWay {
 
 	@RequestMapping(value = "/count-by-criteria")
     public int countByCriteria(@RequestBody HubSpuCriteriaDto criteria);

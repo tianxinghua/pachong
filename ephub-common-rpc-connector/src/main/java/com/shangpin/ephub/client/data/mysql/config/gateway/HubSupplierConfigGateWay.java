@@ -19,7 +19,7 @@ import com.shangpin.ephub.client.data.mysql.config.dto.HubSupplierConfigWithCrit
  * @date 2016年12月14日 下午5:23:34
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubSupplierConfigController {
+public interface HubSupplierConfigGateWay {
 
 	
 	@RequestMapping(value = "/count-by-criteria")

@@ -19,7 +19,7 @@ import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicW
  * @date 2016年12月14日 下午4:19:55
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubSupplierCategroyDicController {
+public interface HubSupplierCategroyDicGateWay {
 
 	@RequestMapping(value = "/count-by-criteria")
     public int countByCriteria(@RequestBody HubSupplierCategroyDicCriteriaDto criteria);

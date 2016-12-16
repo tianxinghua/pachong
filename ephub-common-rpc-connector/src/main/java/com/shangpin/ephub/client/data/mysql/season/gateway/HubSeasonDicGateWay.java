@@ -18,7 +18,7 @@ import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicWithCriteriaD
  * @date 2016年12月14日 下午4:37:10
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubSeasonDicController {
+public interface HubSeasonDicGateWay {
 
 	
 	@RequestMapping(value = "/count-by-criteria")

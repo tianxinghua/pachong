@@ -18,7 +18,7 @@ import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicWithCriteriaD
  * @date 2016年12月14日 下午4:30:46
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubGenderDicController {
+public interface HubGenderDicGateWay {
 
 	
 	@RequestMapping(value = "/count-by-criteria")

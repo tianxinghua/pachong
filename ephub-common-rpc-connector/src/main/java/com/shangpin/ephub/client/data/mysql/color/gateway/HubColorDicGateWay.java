@@ -19,7 +19,7 @@ import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicWithCriteriaDto
  * @date 2016年12月14日 下午4:24:58
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubColorDicController {
+public interface HubColorDicGateWay {
 
 	
 	@RequestMapping(value = "/count-by-criteria")

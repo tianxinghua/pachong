@@ -18,7 +18,7 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierColMappingWit
  * @date 2016年12月14日 下午4:39:37
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubSupplierColMappingController {
+public interface HubSupplierColMappingGateWay {
 
 	
 	@RequestMapping(value = "/count-by-criteria")

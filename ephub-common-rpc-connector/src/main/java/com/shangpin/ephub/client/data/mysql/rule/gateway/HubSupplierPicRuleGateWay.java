@@ -19,7 +19,7 @@ import com.shangpin.ephub.client.data.mysql.rule.dto.HubSupplierPicRuleWithCrite
  * @date 2016年12月14日 下午4:58:33
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubSupplierPicRuleController {
+public interface HubSupplierPicRuleGateWay {
 
 	
 	@RequestMapping(value = "/count-by-criteria")

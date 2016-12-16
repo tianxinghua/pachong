@@ -19,7 +19,7 @@ import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleWithCriter
  * @date 2016年12月14日 下午4:56:41
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubBrandModelRuleControlller {
+public interface HubBrandModelRuleGateWay {
 
 	
 	@RequestMapping(value = "/count-by-criteria")

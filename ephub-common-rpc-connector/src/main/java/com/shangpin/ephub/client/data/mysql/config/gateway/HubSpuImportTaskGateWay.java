@@ -19,7 +19,7 @@ import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskWithCrite
  * @date 2016年12月14日 下午5:25:30
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubSpuImportTaskController {
+public interface HubSpuImportTaskGateWay {
 
 	
 	@RequestMapping(value = "/count-by-criteria")

@@ -19,7 +19,7 @@ import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicWithCrite
  * @date 2016年12月15日 下午3:02:13
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubMaterialDicController {
+public interface HubMaterialDicGateWay {
 
 	
 	@RequestMapping(value = "/count-by-criteria")
