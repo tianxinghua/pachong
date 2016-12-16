@@ -67,11 +67,11 @@ shangpin:
     Supplier: #以下配置为各个供货商的配置
           lungolivigno:
                   url_login: http://lungolivigno.vdr-s.com/BSWebApi20/api/User/Login
-                  url_saveOrder: http\://lungolivigno.vdr-s.com/BSWebApi20/api/Order/SaveOrder?SessionId\=
+                  url_saveOrder: http://lungolivigno.vdr-s.com/BSWebApi20/api/Order/SaveOrder?SessionId=
                   user_name: ll_web
                   user_password: lng.r45h
-                  url_cancelOrder: http\://lungolivigno.vdr-s.com/BSWebApi20/api/Order/CancelOrder?SessionId\=
-                  url_getStock: http\://lungolivigno.vdr-s.com/BSWebApi20/api/Stock/GetStock?SessionId\=
+                  url_cancelOrder: http://lungolivigno.vdr-s.com/BSWebApi20/api/Order/CancelOrder?SessionId=
+                  url_getStock: http://lungolivigno.vdr-s.com/BSWebApi20/api/Stock/GetStock?SessionId=
                   isPurchaseExp:
                   openApiKey: 1c071674e24c4ad2a81424bc46c6e968
                   openApiSecret: 8d873268a0f44294a73750d747dd0b60
@@ -105,7 +105,7 @@ shangpin:
                   contentType: text/xml;charset=utf-8
                   identifier: Shangpin
                   deleteOrderUrl: http://service.alducadaosta.com/EcSrv/Services.asmx?op=DeleteOrder
-                  deleteOrderSop: http\://service.alducadaosta.com/EcSrv/DeleteOrder
+                  deleteOrderSop: http://service.alducadaosta.com/EcSrv/DeleteOrder
                   isPurchaseExp:
                   openApiKey: 7f4d33d331354be38feb21a4ab047d16
                   openApiSecret: bb759a375e6f40e69eb1ac677439c136
@@ -349,7 +349,7 @@ shangpin:
                   url: http://studio69.atelier98.net/api_studio69/api_studio69.asmx/
                   username: SHANGPIN
                   password: 2MWWKgNSxgf
-                  wsdlUrl: http\://studio69.atelier98.net/api_studio69/api_studio69.asmx?wsdl
+                  wsdlUrl: http://studio69.atelier98.net/api_studio69/api_studio69.asmx?wsdl
                   isPurchaseExp:
                   openApiKey: 7e879235ab0f41cf9a928bfde195e14c
                   openApiSecret: 7cfabdcdc91744aaa43e07c313caef6e
