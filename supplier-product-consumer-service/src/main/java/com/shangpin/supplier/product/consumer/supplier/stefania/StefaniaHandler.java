@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
-import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.stefania.dto.StefItem;
@@ -36,10 +36,10 @@ public class StefaniaHandler implements ISupplierHandler{
 		if(StringUtils.isEmpty(message.getData())){
 			StefProduct stefProduct = new Gson().fromJson(message.getData(), StefProduct.class);
 			for(StefItem stefItem :stefProduct.getItems().getItems()){
-				HubSupplierSpu hubSpu = new HubSupplierSpu();
+				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				boolean success = convertSpu(message.getSupplierId(), stefProduct, stefItem, hubSpu);
-				List<HubSupplierSku> hubSkus = new ArrayList<HubSupplierSku>();
-				HubSupplierSku hubSku = new HubSupplierSku();
+				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
+				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 				boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), stefItem, hubSku);
 				if(skuSucc){
 					hubSkus.add(hubSku);
@@ -60,7 +60,7 @@ public class StefaniaHandler implements ISupplierHandler{
 	 * @param hubSpu hub spu
 	 * @return
 	 */
-	public boolean convertSpu(String supplierId,StefProduct stefProduct,StefItem stefItem,HubSupplierSpu hubSpu){
+	public boolean convertSpu(String supplierId,StefProduct stefProduct,StefItem stefItem,HubSupplierSpuDto hubSpu){
 		if(null != stefProduct && stefItem != null){
 			String productModle = findProductModleByItemId(stefItem.getItem_id());
 			if(!StringUtils.isEmpty(productModle)){
@@ -94,7 +94,7 @@ public class StefaniaHandler implements ISupplierHandler{
 	 * @param hubSku
 	 * @return
 	 */
-	public boolean convertSku(String supplierId,Long supplierSpuId,StefItem stefItem,HubSupplierSku hubSku){
+	public boolean convertSku(String supplierId,Long supplierSpuId,StefItem stefItem,HubSupplierSkuDto hubSku){
 		if(null != stefItem){
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);

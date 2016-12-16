@@ -9,11 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
+import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.supplier.product.consumer.conf.stream.source.sender.PendingProductStreamSender;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.service.dto.Sku;
@@ -41,7 +42,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void atelierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpu hubSpu,List<HubSupplierSku> hubSkus){
+	public void atelierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus){
 		/**
 		 * 消息体
 		 */
@@ -65,7 +66,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void spinnakerSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpu hubSpu,List<HubSupplierSku> hubSkus){
+	public void spinnakerSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus){
 		/**
 		 * 消息体
 		 */
@@ -88,7 +89,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void biondioniSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpu hubSpu,List<HubSupplierSku> hubSkus){
+	public void biondioniSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus){
 		/**
 		 * 消息体
 		 */
@@ -107,7 +108,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void gebSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpu hubSpu,List<HubSupplierSku> hubSkus){
+	public void gebSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus){
 		/**
 		 * 消息体
 		 */
@@ -126,7 +127,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void stefaniaSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpu hubSpu,List<HubSupplierSku> hubSkus){
+	public void stefaniaSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus){
 		/**
 		 * 消息体
 		 */
@@ -145,7 +146,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void tonySaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpu hubSpu,List<HubSupplierSku> hubSkus){
+	public void tonySaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus){
 		/**
 		 * 消息体
 		 */
@@ -164,12 +165,12 @@ public class SupplierProductSaveAndSendToPending {
 	 * 保存hubSpu以及hubSku，并且构造消息体和消息头
 	 * @param supplierId 供应商门户id
 	 * @param supplierName 供应商名称
-	 * @param hubSpu HubSupplierSpu对象
-	 * @param hubSkus HubSupplierSku对象集合
+	 * @param hubSpu HubSupplierSpuDto对象
+	 * @param hubSkus HubSupplierSkuDto对象集合
 	 * @param pendingProduct 消息体对象
 	 * @param headers 消息头
 	 */
-	public void supplierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpu hubSpu,List<HubSupplierSku> hubSkus,PendingProduct pendingProduct,Map<String,String> headers){
+	public void supplierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,PendingProduct pendingProduct,Map<String,String> headers){
 		
 		PendingSpu pendingSpu = new PendingSpu();		
 		List<PendingSku> skus = new ArrayList<PendingSku>();
@@ -179,7 +180,7 @@ public class SupplierProductSaveAndSendToPending {
 		Spu spuHead = setSpuHead(supplierId,hubSpu.getSupplierSpuNo(),productStatus.getIndex());
 		List<Sku> headSkus = new ArrayList<Sku>();		
 		if(hubSkus != null && hubSkus.size()>0){
-			for(HubSupplierSku hubSku : hubSkus){
+			for(HubSupplierSkuDto hubSku : hubSkus){
 				try {					
 					Sku headSku = new Sku();
 					PendingSku pendingSku = new PendingSku();
@@ -198,7 +199,7 @@ public class SupplierProductSaveAndSendToPending {
 		pendingSpu.setSkus(skus);
 		pendingProduct.setData(pendingSpu);		
 		spuHead.setSkus(headSkus);		
-		headers.put("PENDING_PRODUCT_MAP_KEY", new Gson().toJson(spuHead));
+		headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, new Gson().toJson(spuHead));
 	}
 	
 	

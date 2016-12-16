@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierPrice;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSku;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSpu;
@@ -77,7 +77,7 @@ public class AtelierCommonHandler extends IAtelierHandler {
 	}
 	
 	@Override
-	public void setProductPrice(HubSupplierSku sku, AtelierSpu atelierSpu,
+	public void setProductPrice(HubSupplierSkuDto sku, AtelierSpu atelierSpu,
 			AtelierPrice atelierPrice) {
 		
 		if(null != atelierPrice){

@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
-import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierDate;
@@ -61,7 +61,7 @@ public abstract class IAtelierHandler implements ISupplierHandler {
 	 * @param atelierSpu atelierSpu对象
 	 * @param atelierPrice atelierSku对象
 	 */
-	public abstract void setProductPrice(HubSupplierSku hubSku, AtelierSpu atelierSpu, AtelierPrice atelierPrice);
+	public abstract void setProductPrice(HubSupplierSkuDto hubSku, AtelierSpu atelierSpu, AtelierPrice atelierPrice);
 	
 	/**
 	 * atelier通用处理主流程
@@ -73,13 +73,13 @@ public abstract class IAtelierHandler implements ISupplierHandler {
 		if(!StringUtils.isEmpty(message.getData())){
 			AtelierDate atelierDate = new Gson().fromJson(message.getData(),AtelierDate.class);
 			AtelierSpu atelierSpu = handleSpuData(atelierDate.getSpu());			
-			HubSupplierSpu hubSpu =  new HubSupplierSpu();
+			HubSupplierSpuDto hubSpu =  new HubSupplierSpuDto();
 			boolean success = convertSpu(message.getSupplierId(),atelierSpu,hubSpu);
-			List<HubSupplierSku> hubSkus = new ArrayList<HubSupplierSku>();
+			List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 			if(null != atelierDate.getSku()){				
 				AtelierPrice atelierPrice = handlePriceData(atelierDate.getPrice());
 				for(String skuColumn : atelierDate.getSku()){
-					HubSupplierSku hubSku = new HubSupplierSku();
+					HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 					AtelierSku atelierSku = handleSkuData(skuColumn);					
 					boolean skuSucc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),atelierSpu,atelierSku,atelierPrice,hubSku);
 					if(skuSucc){
@@ -104,7 +104,7 @@ public abstract class IAtelierHandler implements ISupplierHandler {
 	 * @param hubSku hub sku对象
 	 * @return
 	 */
-	public boolean convertSku(String supplierId,Long supplierSpuId, AtelierSpu atelierSpu,AtelierSku atelierSku,AtelierPrice atelierPrice, HubSupplierSku hubSku){
+	public boolean convertSku(String supplierId,Long supplierSpuId, AtelierSpu atelierSpu,AtelierSku atelierSku,AtelierPrice atelierPrice, HubSupplierSkuDto hubSku){
 		if(null != atelierSku){
 			
 			hubSku.setSupplierSpuId(supplierSpuId);
@@ -123,7 +123,7 @@ public abstract class IAtelierHandler implements ISupplierHandler {
 	 * @param atelierSpu atelier spu对象
 	 * @param hubSpu hub spu对象
 	 */
-	public boolean convertSpu(String supplierId,AtelierSpu atelierSpu,HubSupplierSpu hubSpu){
+	public boolean convertSpu(String supplierId,AtelierSpu atelierSpu,HubSupplierSpuDto hubSpu){
 		if(null != atelierSpu){
 			
 			hubSpu.setSupplierId(supplierId);

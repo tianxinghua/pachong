@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
-import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.geb.dto.Item;
@@ -28,10 +28,10 @@ public class GebHandler implements ISupplierHandler {
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		if(!StringUtils.isEmpty(message.getData())){
 			Item item = new Gson().fromJson(message.getData(), Item.class);
-			HubSupplierSpu hubSpu = new HubSupplierSpu();
+			HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 			boolean success = convertSpu(message.getSupplierId(),item,hubSpu);
-			List<HubSupplierSku> hubSkus = new ArrayList<HubSupplierSku>();
-			HubSupplierSku hubSku = new HubSupplierSku();
+			List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
+			HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 			boolean skuSuc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),item,hubSku);
 			if(skuSuc){
 				hubSkus.add(hubSku);
@@ -49,7 +49,7 @@ public class GebHandler implements ISupplierHandler {
 	 * @param item 供应商原始dto
 	 * @param hubSpu hub spu表
 	 */
-	public boolean convertSpu(String supplierId,Item item, HubSupplierSpu hubSpu){
+	public boolean convertSpu(String supplierId,Item item, HubSupplierSpuDto hubSpu){
 		if(null != item){			
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(item.getProduct_id());
@@ -84,7 +84,7 @@ public class GebHandler implements ISupplierHandler {
 	 * @param hubSku
 	 * @return
 	 */
-	public boolean convertSku(String supplierId, Long supplierSpuId,Item item, HubSupplierSku hubSku){
+	public boolean convertSku(String supplierId, Long supplierSpuId,Item item, HubSupplierSkuDto hubSku){
 		if(null != item){			
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);

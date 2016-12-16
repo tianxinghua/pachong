@@ -1,14 +1,11 @@
 package com.shangpin.supplier.product.consumer.supplier.ostore;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
-import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
-import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.AtelierCommonHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.IAtelierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierPrice;
@@ -49,7 +46,7 @@ public class OstoreHandler extends IAtelierHandler{
 	}
 
 	@Override
-	public void setProductPrice(HubSupplierSku hubSku, AtelierSpu atelierSpu, AtelierPrice atelierPrice) {
+	public void setProductPrice(HubSupplierSkuDto hubSku, AtelierSpu atelierSpu, AtelierPrice atelierPrice) {
 		if("A16".equals(atelierSpu.getSeasonName())){			
 			hubSku.setMarketPrice(new BigDecimal(atelierPrice.getPrice3()));
 		}else{			

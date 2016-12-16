@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
-import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Sku;
@@ -39,7 +39,7 @@ public abstract class ISpinnakerHandler implements ISupplierHandler {
 	 * @param hubSpu hub spu
 	 * @return
 	 */
-	public abstract boolean convertSpu(String supplierId, Spu spu, Sku sku, HubSupplierSpu hubSpu);
+	public abstract boolean convertSpu(String supplierId, Spu spu, Sku sku, HubSupplierSpuDto hubSpu);
 	
 	/**
 	 * 将原始对象转换成hub对象
@@ -49,7 +49,7 @@ public abstract class ISpinnakerHandler implements ISupplierHandler {
 	 * @param hubSku hub sku
 	 * @return
 	 */
-	public abstract boolean convertSku(String supplierId, Long supplierSpuId, Sku sku, HubSupplierSku hubSku);
+	public abstract boolean convertSku(String supplierId, Long supplierSpuId, Sku sku, HubSupplierSkuDto hubSku);
 
 	/**
 	 * spinnaker通用处理主流程
@@ -62,11 +62,11 @@ public abstract class ISpinnakerHandler implements ISupplierHandler {
 			Spu spu = new Gson().fromJson(message.getData(), Spu.class);			
 			if(null != spu.getItems() && null != spu.getItems().getItem() && spu.getItems().getItem().size()>0){
 				for(Sku sku : spu.getItems().getItem()){
-					HubSupplierSpu hubSpu =  new HubSupplierSpu();
+					HubSupplierSpuDto hubSpu =  new HubSupplierSpuDto();
 					boolean success = convertSpu(message.getSupplierId(),spu,sku,hubSpu);
-					HubSupplierSku hubSku = new HubSupplierSku();
+					HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 					boolean skuSucc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),sku,hubSku);
-					List<HubSupplierSku> hubSkus = new ArrayList<HubSupplierSku>();
+					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 					if(skuSucc){
 						hubSkus.add(hubSku);
 					}

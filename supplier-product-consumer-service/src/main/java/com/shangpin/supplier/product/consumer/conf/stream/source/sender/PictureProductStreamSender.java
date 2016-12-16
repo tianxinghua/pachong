@@ -2,9 +2,7 @@ package com.shangpin.supplier.product.consumer.conf.stream.source.sender;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.messaging.support.MessageBuilder;
 
-import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
 import com.shangpin.supplier.product.consumer.conf.stream.source.channel.PictureProductSource;
 
 /**
@@ -25,7 +23,7 @@ public class PictureProductStreamSender {
 	 * @param supplierProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
-    public boolean commonPictureProductStream(SupplierProduct supplierProduct) {
+   /* public boolean commonPictureProductStream(SupplierProduct supplierProduct) {
     	return pictureProductSource.commonPictureProduct().send(MessageBuilder.withPayload(supplierProduct).build());
-    }
+    }*/
 }
