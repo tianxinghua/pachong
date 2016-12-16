@@ -457,6 +457,11 @@ public class HubOrderService implements IHubOrderService {
         if(null!=orderDTO.getSupplierOrderNo()){
             hubOrderDetail.setSupplierOrderNo(orderDTO.getSupplierOrderNo());
         }
+        
+        if(null!=orderDTO.getPurchasePriceDetail()){
+            hubOrderDetail.setPurchasePrice(new BigDecimal(orderDTO.getPurchasePriceDetail()));
+        }
+        
         HubOrderDetailCriteria criteria = new HubOrderDetailCriteria();
         HubOrderDetailCriteria.Criteria criterion =criteria.createCriteria();
         criterion.andIdEqualTo(orderDTO.getId());

@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
-import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.biondioni.dto.Article;
@@ -38,12 +38,12 @@ public class BiondioniHandler implements ISupplierHandler {
 			Modele modele = new Gson().fromJson(message.getData(),Modele.class);
 			List<Article> artList = modele.getArticleList();
 			for(Article article : artList){
-				HubSupplierSpu hubSpu = new HubSupplierSpu();
+				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				boolean success = convertSpu(message.getSupplierId(), modele, article, hubSpu);
 				List<QtTaille> qtys = article.getTarifMagInternet().getList();
-				List<HubSupplierSku> hubSkus = new ArrayList<HubSupplierSku>();
+				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				for(QtTaille qty : qtys){
-					HubSupplierSku hubSku = new HubSupplierSku();
+					HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 					boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), modele, article, qty, hubSku);
 					if(skuSucc){
 						hubSkus.add(hubSku);
@@ -66,7 +66,7 @@ public class BiondioniHandler implements ISupplierHandler {
 	 * @param hubSpu
 	 * @return
 	 */
-	public boolean convertSpu(String supplierId,Modele modele, Article article, HubSupplierSpu hubSpu){
+	public boolean convertSpu(String supplierId,Modele modele, Article article, HubSupplierSpuDto hubSpu){
 		if(modele != null && article != null){
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(modele.getNumMdle()+article.getNumArti());
@@ -96,7 +96,7 @@ public class BiondioniHandler implements ISupplierHandler {
 	 * @param hubSku
 	 * @return
 	 */
-	public boolean convertSku(String supplierId, Long supplierSpuId, Modele modele, Article article,QtTaille qty,HubSupplierSku hubSku){
+	public boolean convertSku(String supplierId, Long supplierSpuId, Modele modele, Article article,QtTaille qty,HubSupplierSkuDto hubSku){
 		if(modele != null && article != null){
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSpuId(supplierSpuId);

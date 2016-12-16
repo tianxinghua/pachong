@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
-import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.tony.dto.TonyItems;
@@ -35,10 +35,10 @@ public class TonyHandler implements ISupplierHandler {
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		if(!StringUtils.isEmpty(message.getData())){
 			TonyItems tonyItems = new Gson().fromJson(message.getData(), TonyItems.class);
-			HubSupplierSpu hubSpu = new HubSupplierSpu();
+			HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 			boolean success = convertSpu(message.getData(), tonyItems, hubSpu);
-			List<HubSupplierSku> hubSkus = new ArrayList<HubSupplierSku>();
-			HubSupplierSku hubSku = new HubSupplierSku();
+			List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
+			HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 			boolean skuSucc = convertSku(message.getData(), hubSpu.getSupplierSpuId(), tonyItems, hubSku);
 			if(skuSucc){
 				hubSkus.add(hubSku);
@@ -58,7 +58,7 @@ public class TonyHandler implements ISupplierHandler {
 	 * @param hubSpu
 	 * @return
 	 */
-	public boolean convertSpu(String supplierId,TonyItems tonyItems,HubSupplierSpu hubSpu){
+	public boolean convertSpu(String supplierId,TonyItems tonyItems,HubSupplierSpuDto hubSpu){
 		if(null != tonyItems){
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(getSpuId(tonyItems.getSku()));
@@ -84,7 +84,7 @@ public class TonyHandler implements ISupplierHandler {
 	 * @param hubSku
 	 * @return
 	 */
-	public boolean convertSku(String supplierId,Long supplierSpuId, TonyItems tonyItems,HubSupplierSku hubSku){
+	public boolean convertSku(String supplierId,Long supplierSpuId, TonyItems tonyItems,HubSupplierSkuDto hubSku){
 		if(null != tonyItems){
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSpuId(supplierSpuId);

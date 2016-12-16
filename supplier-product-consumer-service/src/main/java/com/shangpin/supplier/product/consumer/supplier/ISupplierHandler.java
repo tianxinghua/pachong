@@ -2,7 +2,7 @@ package com.shangpin.supplier.product.consumer.supplier;
 
 import java.util.Map;
 
-import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
+import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 
 /**
  * <p>Title:ISupplierHandler </p>

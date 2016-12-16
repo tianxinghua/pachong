@@ -1,12 +1,14 @@
 package com.shangpin.supplier.product.consumer.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 /**
  * <p>Title:SupplierProductMysqlService </p>
@@ -19,21 +21,24 @@ import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 @Component
 public class SupplierProductMysqlService {
 
+	@Autowired
+	private HubSupplierSpuGateWay hubSupplierSpuGateWay;
 	/**
 	 * 判断hubSpu是否存在或主要信息发生变化
 	 * @param hubSpu
 	 * @param pendingSpu 把hubSpu发生变化了的信息记录到这个对象中
 	 * @return
 	 */
-	public ProductStatus isHubSpuChanged(HubSupplierSpu hubSpu,PendingSpu pendingSpu){
+	public ProductStatus isHubSpuChanged(HubSupplierSpuDto hubSpu,PendingSpu pendingSpu){
 					
-		HubSupplierSpu hubSpuSel = hasHadTheHubSpu(hubSpu);
+		HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 		if(null == hubSpuSel){
 			//TODO insert(hubSpu)
+			hubSupplierSpuGateWay.insert(hubSpu);
 			convertHubSpuToPendingSpu(hubSpu,pendingSpu);
 			return ProductStatus.NEW;
 		}else{
-			HubSupplierSpu hubSpuUpdated = new HubSupplierSpu();
+			HubSupplierSpuDto hubSpuUpdated = new HubSupplierSpuDto();
 			boolean isChanged = comparisonHubSpu(hubSpu, hubSpuSel, pendingSpu,hubSpuUpdated);
 			if(isChanged){
 				updateHubSpu(hubSpuUpdated);
@@ -51,14 +56,14 @@ public class SupplierProductMysqlService {
 	 * @param pendingSku 把hubSku发生变化的价格信息记录到这个对象中
 	 * @return
 	 */
-	public ProductStatus isHubSkuChanged(HubSupplierSku hubSku,PendingSku pendingSku){
-		HubSupplierSku hubSkuSel = hasHadTheHubSku(hubSku);
+	public ProductStatus isHubSkuChanged(HubSupplierSkuDto hubSku,PendingSku pendingSku){
+		HubSupplierSkuDto hubSkuSel = hasHadTheHubSku(hubSku);
 		if(null == hubSkuSel){
 			//TODO insert(hubSku)
 			convertHubSkuToPendingSku(hubSku,pendingSku);
 			return ProductStatus.NEW;
 		}else{
-			HubSupplierSku hubSkuUpdated = new HubSupplierSku();
+			HubSupplierSkuDto hubSkuUpdated = new HubSupplierSkuDto();
 			boolean isChanged = comparisonHubSku(hubSku,hubSkuSel,pendingSku,hubSkuUpdated);
 			if(isChanged){
 				updateHubSku(hubSkuUpdated);
@@ -70,14 +75,14 @@ public class SupplierProductMysqlService {
 	}	
 
 	/**
-	 * 对比两个HubSupplierSku对象的价格
+	 * 对比两个HubSupplierSkuDto对象的价格
 	 * @param hubSku 新抓取的对象
 	 * @param hubSkuSel 从数据库中查出来的对象（作比较用）
 	 * @param pendingSku 待更新的对象，推送消息给Pending用
 	 * @param hubSkuUpdated 待更新的对象，用来更新本地库
 	 * @return
 	 */
-	private boolean comparisonHubSku(HubSupplierSku hubSku, HubSupplierSku hubSkuSel, PendingSku pendingSku,HubSupplierSku hubSkuUpdated) {
+	private boolean comparisonHubSku(HubSupplierSkuDto hubSku, HubSupplierSkuDto hubSkuSel, PendingSku pendingSku,HubSupplierSkuDto hubSkuUpdated) {
 		boolean isChanged = false;
 		pendingSku.setSupplierId(hubSku.getSupplierId());
 		pendingSku.setSupplierSkuNo(hubSku.getSupplierSkuNo());
@@ -108,7 +113,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSku
 	 * @param pendingSku
 	 */
-	private void convertHubSkuToPendingSku(HubSupplierSku hubSku, PendingSku pendingSku) {
+	private void convertHubSkuToPendingSku(HubSupplierSkuDto hubSku, PendingSku pendingSku) {
 		pendingSku.setSupplierId(hubSku.getSupplierId());
 		pendingSku.setSupplierSkuNo(hubSku.getSupplierSkuNo());
 		pendingSku.setHubSkuSize(hubSku.getSupplierSkuSize());
@@ -127,7 +132,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSku
 	 * @return
 	 */
-	private HubSupplierSku hasHadTheHubSku(HubSupplierSku hubSku) {
+	private HubSupplierSkuDto hasHadTheHubSku(HubSupplierSkuDto hubSku) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -136,7 +141,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSpu
 	 * @return
 	 */
-	private HubSupplierSpu hasHadTheHubSpu(HubSupplierSpu hubSpu) {
+	private HubSupplierSpuDto hasHadTheHubSpu(HubSupplierSpuDto hubSpu) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -144,7 +149,7 @@ public class SupplierProductMysqlService {
 	 * 更新
 	 * @param hubSpuUpdated
 	 */
-	private void updateHubSpu(HubSupplierSpu hubSpuUpdated) {
+	private void updateHubSpu(HubSupplierSpuDto hubSpuUpdated) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -152,7 +157,7 @@ public class SupplierProductMysqlService {
 	 * 更新
 	 * @param hubSkuUpdated
 	 */
-	private void updateHubSku(HubSupplierSku hubSkuUpdated) {
+	private void updateHubSku(HubSupplierSkuDto hubSkuUpdated) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -161,7 +166,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSpu
 	 * @param pendingSpu
 	 */
-	private void convertHubSpuToPendingSpu(HubSupplierSpu hubSpu, PendingSpu pendingSpu) {
+	private void convertHubSpuToPendingSpu(HubSupplierSpuDto hubSpu, PendingSpu pendingSpu) {
 		pendingSpu.setSupplierId(hubSpu.getSupplierId());
 		pendingSpu.setSupplierSpuNo(hubSpu.getSupplierSpuNo());
 		pendingSpu.setSupplierSpuId(hubSpu.getSupplierSpuId());
@@ -179,14 +184,14 @@ public class SupplierProductMysqlService {
 	}
 	
 	/**
-	 * 比对两个HubSupplierSpu对象
+	 * 比对两个HubSupplierSpuDto对象
 	 * @param hubSpu 新抓取的对象
 	 * @param hubSpuSel 数据库中查找出来的对象
 	 * @param pendingSpu 带更新的对象，发送消息用
 	 * @param hubSpuUpdated 待更新的对象 更新本地库用
 	 * @return 发生变化则返回true,否则false
 	 */
-	private boolean comparisonHubSpu(HubSupplierSpu hubSpu,HubSupplierSpu hubSpuSel,PendingSpu pendingSpu,HubSupplierSpu hubSpuUpdated){
+	private boolean comparisonHubSpu(HubSupplierSpuDto hubSpu,HubSupplierSpuDto hubSpuSel,PendingSpu pendingSpu,HubSupplierSpuDto hubSpuUpdated){
 		boolean isChanged = false;	
 		pendingSpu.setSupplierId(hubSpu.getSupplierId());
 		pendingSpu.setSupplierSpuNo(hubSpu.getSupplierSpuNo());

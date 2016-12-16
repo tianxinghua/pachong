@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
-import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Sku;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Spu;
 
@@ -22,7 +22,7 @@ import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Spu;
 public class SpinnakerCommonHandler extends ISpinnakerHandler {
 
 	@Override
-	public boolean convertSpu(String supplierId, Spu spu, Sku sku, HubSupplierSpu hubSpu) {
+	public boolean convertSpu(String supplierId, Spu spu, Sku sku, HubSupplierSpuDto hubSpu) {
 		if(null != spu){
 			
 			hubSpu.setSupplierId(supplierId);
@@ -44,7 +44,7 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 	}
 
 	@Override
-	public boolean convertSku(String supplierId, Long supplierSpuId, Sku sku, HubSupplierSku hubSku) {
+	public boolean convertSku(String supplierId, Long supplierSpuId, Sku sku, HubSupplierSkuDto hubSku) {
 		if(null != sku){
 			
 			hubSku.setSupplierSpuId(supplierSpuId);

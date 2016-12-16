@@ -7,6 +7,7 @@ import com.shangpin.ep.order.enumeration.ErrorStatus;
 import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
+import com.shangpin.ep.order.module.order.service.impl.OpenApiService;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.sku.mapper.HubSkuMapper;
 import com.shangpin.ep.order.util.axis.Orders_v1_0Stub;
@@ -37,6 +38,8 @@ public class StefaniaService implements IOrderService {
     HandleException handleException;
     @Autowired
     HubSkuMapper skuDAO;
+    @Autowired
+    OpenApiService openApiService;
     
     /**
      * 推送订单
@@ -82,8 +85,10 @@ public class StefaniaService implements IOrderService {
 			OrderDetail detail = new OrderDetail();
 			detail.setSKU(orderDTO.getDetail().split(",")[0].split(":")[0]);
 			detail.setQTY(new BigDecimal(Integer.valueOf(orderDTO.getDetail().split(",")[0].split(":")[1])));
-			BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
+			
+			BigDecimal priceInt = openApiService.getPurchasePrice(supplierProperties.getStefania().getOpenApiKey(), supplierProperties.getStefania().getOpenApiSecret(), orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
 			BigDecimal price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP);
+			orderDTO.setPurchasePriceDetail(price.toString());
 			detail.setPRICE(price);
 			orderDetail[0] = detail;
 			arrayOfOrderDetail.setOrderDetail(orderDetail); 
