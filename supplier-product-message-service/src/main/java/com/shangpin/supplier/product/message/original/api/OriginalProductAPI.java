@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.supplier.product.message.common.e.Code;
 import com.shangpin.supplier.product.message.common.response.APIRsponse;
-import com.shangpin.supplier.product.message.original.conf.message.SupplierProduct;
 import com.shangpin.supplier.product.message.original.service.OriginalProductService;
 
 import lombok.extern.slf4j.Slf4j;

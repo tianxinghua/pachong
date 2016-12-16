@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.messaging.support.MessageBuilder;
 
+import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.supplier.product.message.original.conf.channel.OriginalProductSource;
-import com.shangpin.supplier.product.message.original.conf.message.SupplierProduct;
 /**
  * <p>Title:OrderStreamSender.java </p>
  * <p>Description: 订单流发送器</p>

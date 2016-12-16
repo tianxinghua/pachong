@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.supplier.product.message.original.conf.message.SupplierProduct;
+import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.supplier.product.message.original.conf.sender.OriginalProductStreamSender;
 
 import lombok.extern.slf4j.Slf4j;
