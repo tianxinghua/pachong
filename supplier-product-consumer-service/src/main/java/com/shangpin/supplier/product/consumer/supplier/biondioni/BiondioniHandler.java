@@ -1,9 +1,11 @@
 package com.shangpin.supplier.product.consumer.supplier.biondioni;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -11,6 +13,7 @@ import com.google.gson.Gson;
 import com.shangpin.supplier.product.consumer.conf.client.mysql.sku.bean.HubSupplierSku;
 import com.shangpin.supplier.product.consumer.conf.client.mysql.spu.bean.HubSupplierSpu;
 import com.shangpin.supplier.product.consumer.conf.stream.sink.message.SupplierProduct;
+import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.biondioni.dto.Article;
 import com.shangpin.supplier.product.consumer.supplier.biondioni.dto.Modele;
@@ -25,6 +28,9 @@ import com.shangpin.supplier.product.consumer.supplier.biondioni.dto.QtTaille;
  */
 @Component("biondioniHandler")
 public class BiondioniHandler implements ISupplierHandler {
+	
+	@Autowired
+	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
@@ -34,17 +40,18 @@ public class BiondioniHandler implements ISupplierHandler {
 			for(Article article : artList){
 				HubSupplierSpu hubSpu = new HubSupplierSpu();
 				boolean success = convertSpu(message.getSupplierId(), modele, article, hubSpu);
-				if(success){
-					//TODO save hubSpu
-				}
 				List<QtTaille> qtys = article.getTarifMagInternet().getList();
+				List<HubSupplierSku> hubSkus = new ArrayList<HubSupplierSku>();
 				for(QtTaille qty : qtys){
 					HubSupplierSku hubSku = new HubSupplierSku();
 					boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), modele, article, qty, hubSku);
 					if(skuSucc){
-						//TODO save hubSku
+						hubSkus.add(hubSku);
 					}
-				}				
+				}
+				if(success){
+					supplierProductSaveAndSendToPending.biondioniSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
+				}
 			}
 			
 		}
