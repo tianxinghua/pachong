@@ -12,7 +12,7 @@ public class PendingProductConsumerServiceApplicationTests {
 	
 	@Test
 	public void contextLoads() {
-		
+		System.out.println(" test  ");
 	}
 
 }
