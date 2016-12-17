@@ -135,7 +135,7 @@ public class PendingHandler {
             try {
                 PendingHeaderSpu spu =  om.readValue(value,PendingHeaderSpu.class);
                 if(null!=spu){
-                    result.put(spu.getSpuNo(),spu.getStatus());
+                    result.put(spu.getSupplierId(),spu.getStatus());
                     List<PendingHeaderSku> skus = spu.getSkus();
                     for(PendingHeaderSku sku:skus){
                         result.put(sku.getSkuNo(),sku.getStatus());
