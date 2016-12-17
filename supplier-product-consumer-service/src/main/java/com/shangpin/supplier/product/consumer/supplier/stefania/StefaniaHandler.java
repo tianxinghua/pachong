@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.google.gson.Gson;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.stefania.dto.StefItem;
@@ -34,7 +34,7 @@ public class StefaniaHandler implements ISupplierHandler{
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		if(StringUtils.isEmpty(message.getData())){
-			StefProduct stefProduct = new Gson().fromJson(message.getData(), StefProduct.class);
+			StefProduct stefProduct = JsonUtil.deserialize(message.getData(), StefProduct.class);
 			for(StefItem stefItem :stefProduct.getItems().getItems()){
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				boolean success = convertSpu(message.getSupplierId(), stefProduct, stefItem, hubSpu);
