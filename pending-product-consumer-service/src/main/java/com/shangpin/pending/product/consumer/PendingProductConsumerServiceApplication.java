@@ -27,10 +27,10 @@ public class PendingProductConsumerServiceApplication implements ApplicationRunn
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		// TODO Auto-generated method stub
-//		HubBrandDicDto hubBrandDic = new HubBrandDicDto();
-//		hubBrandDic.setCreateTime(new Date());
-//		hubBrandDic.setCreateUser("yanxiaobin");
-//		int i = client.insert(hubBrandDic);
-//		System.out.println(i);
+		HubBrandDicDto hubBrandDic = new HubBrandDicDto();
+		hubBrandDic.setCreateTime(new Date());
+		hubBrandDic.setCreateUser("yanxiaobin");
+		int i = client.insert(hubBrandDic);
+		System.out.println(i);
 	}
 }
