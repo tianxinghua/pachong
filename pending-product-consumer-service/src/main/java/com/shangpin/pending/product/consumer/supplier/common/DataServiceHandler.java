@@ -28,8 +28,11 @@ import com.shangpin.ephub.client.data.mysql.material.gateway.HubMaterialDicItemG
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
@@ -87,6 +90,9 @@ public class DataServiceHandler {
 
     @Autowired
     private HubSpuPendingGateWay hubSpuPendingGateWay;
+
+    @Autowired
+    private HubSkuPendingGateWay hubSkuPendingGateWay;
 
 
     public void saveBrand(String supplierId,String supplierBrandName) throws Exception{
@@ -255,7 +261,8 @@ public class DataServiceHandler {
     public List<MaterialDTO> getMaterialDTO(){
 
         HubMaterialDicItemCriteriaDto criteria = new HubMaterialDicItemCriteriaDto();
-
+        HubMaterialDicItemCriteriaDto.Criteria criterio =criteria.createCriteria();
+        criteria.setOrderByClause("memo");// 完全的最小  单个单词最大
         List<HubMaterialDicItemDto> hubMaterialDicItemDtos = hubMaterialDicItemGateWay.selectByCriteria(criteria);
 
         HubMaterialDicCriteriaDto dicCriteriaDto = new HubMaterialDicCriteriaDto();
@@ -286,4 +293,23 @@ public class DataServiceHandler {
     public void savePendingSpu(HubSpuPendingDto spuPending) throws  Exception{
         hubSpuPendingGateWay.insert(spuPending);
     }
+
+
+    public HubSpuPendingDto getSpuPendingDTO(String supplierId,String supplierSpuNo) {
+        HubSpuPendingCriteriaDto criterial = new HubSpuPendingCriteriaDto();
+        HubSpuPendingCriteriaDto.Criteria criterion= criterial.createCriteria();
+        criterion.andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
+        List<HubSpuPendingDto> hubSpuPendingDtos = hubSpuPendingGateWay.selectByCriteria(criterial);
+        if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
+            return hubSpuPendingDtos.get(0);
+        }else{
+
+          return null;
+        }
+    }
+
+    public void savePendingSku(HubSkuPendingDto skuPendingDto) throws Exception{
+        hubSkuPendingGateWay.insert(skuPendingDto);
+    }
+
 }
