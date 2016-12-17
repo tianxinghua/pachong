@@ -16,7 +16,6 @@ import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients("com.shangpin.ephub")
-//
 public class PendingProductConsumerServiceApplication implements ApplicationRunner{
 
 	public static void main(String[] args) {
