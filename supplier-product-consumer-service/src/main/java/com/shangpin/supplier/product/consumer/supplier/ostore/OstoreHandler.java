@@ -11,6 +11,7 @@ import com.shangpin.supplier.product.consumer.supplier.common.atelier.IAtelierHa
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierPrice;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSku;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSpu;
+import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 
 /**
  * * 
@@ -48,11 +49,11 @@ public class OstoreHandler extends IAtelierHandler{
 	@Override
 	public void setProductPrice(HubSupplierSkuDto hubSku, AtelierSpu atelierSpu, AtelierPrice atelierPrice) {
 		if("A16".equals(atelierSpu.getSeasonName())){			
-			hubSku.setMarketPrice(new BigDecimal(atelierPrice.getPrice3()));
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(atelierPrice.getPrice3())));
 		}else{			
-			hubSku.setMarketPrice(new BigDecimal(atelierPrice.getPrice2()));
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(atelierPrice.getPrice2())));
 		}
-		hubSku.setSupplyPrice(new BigDecimal(atelierPrice.getPrice1()));
+		hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(atelierPrice.getPrice1())));
 		
 	}
 

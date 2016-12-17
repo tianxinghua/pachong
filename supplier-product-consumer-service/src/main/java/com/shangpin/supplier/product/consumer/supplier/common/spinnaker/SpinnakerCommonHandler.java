@@ -9,6 +9,7 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Sku;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Spu;
+import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 
 /**
  * <p>Title:SpinnakerCommonHandler </p>
@@ -50,8 +51,8 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(sku.getBarcode());
-			hubSku.setMarketPrice(new BigDecimal(sku.getPrice().getMarket_price().replaceAll(",", ".")));
-			hubSku.setSupplyPrice(new BigDecimal(sku.getPrice().getSuply_price().replaceAll(",", "."))); 
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(sku.getPrice().getMarket_price())));
+			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(sku.getPrice().getSuply_price()))); 
 			hubSku.setSupplierBarcode(sku.getBarcode());
 			if(sku.getItem_size().length()>4) {
 				hubSku.setSupplierSkuSize(sku.getItem_size().substring(0,sku.getItem_size().length()-4));

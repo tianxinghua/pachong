@@ -15,6 +15,7 @@ import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
+import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.geb.dto.Item;
 import com.shangpin.supplier.product.consumer.supplier.geb.dto.Material;
 
@@ -96,12 +97,12 @@ public class GebHandler implements ISupplierHandler {
 			String supplierSkuNo = item.getProduct_id()+"-"+size;
 			hubSku.setSupplierSkuNo(supplierSkuNo);
 			hubSku.setSupplierSkuName(item.getItem_intro());
-			hubSku.setMarketPrice(new BigDecimal(item.getRetail_price()));
-			hubSku.setSupplyPrice(new BigDecimal(item.getPrice()));
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getRetail_price())));
+			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(item.getPrice())));
 			hubSku.setMarketPriceCurrencyorg(item.getCurrency());
 			hubSku.setSupplyPriceCurrency(item.getCurrency());
 			hubSku.setSupplierSkuSize(size);
-			hubSku.setStock(Integer.parseInt(item.getQuantity()));
+			hubSku.setStock(StringUtil.verifyStock((item.getQuantity())));
 			return true;
 		}else{
 			return false;
