@@ -15,23 +15,23 @@ import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-//@EnableFeignClients("com.shangpin.ephub")
-//implements ApplicationRunner
-public class PendingProductConsumerServiceApplication {
+@EnableFeignClients("com.shangpin.ephub")
+//
+public class PendingProductConsumerServiceApplication implements ApplicationRunner{
 
 	public static void main(String[] args) {
 
 		SpringApplication.run(PendingProductConsumerServiceApplication.class, args);
 	}
-//	@Autowired
-//	private HubBrandDicGateway client;
-//	@Override
-//	public void run(ApplicationArguments args) throws Exception {
-		// TODO Auto-generated method stub
-//		HubBrandDicDto hubBrandDic = new HubBrandDicDto();
-//		hubBrandDic.setCreateTime(new Date());
-//		hubBrandDic.setCreateUser("yanxiaobin");
-//		int i = client.insert(hubBrandDic);
-//		System.out.println(i);
-//	}
+	@Autowired
+	private HubBrandDicGateway client;
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+
+		HubBrandDicDto hubBrandDic = new HubBrandDicDto();
+		hubBrandDic.setCreateTime(new Date());
+		hubBrandDic.setCreateUser("yanxiaobin");
+		int i = client.insert(hubBrandDic);
+		System.out.println(i);
+	}
 }
