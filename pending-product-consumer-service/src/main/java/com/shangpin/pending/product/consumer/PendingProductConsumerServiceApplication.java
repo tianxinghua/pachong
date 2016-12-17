@@ -19,6 +19,7 @@ import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
 public class PendingProductConsumerServiceApplication implements ApplicationRunner{
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(PendingProductConsumerServiceApplication.class, args);
 	}
 	@Autowired
@@ -26,10 +27,10 @@ public class PendingProductConsumerServiceApplication implements ApplicationRunn
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		// TODO Auto-generated method stub
-		HubBrandDicDto hubBrandDic = new HubBrandDicDto();
-		hubBrandDic.setCreateTime(new Date());
-		hubBrandDic.setCreateUser("yanxiaobin");
-		int i = client.insert(hubBrandDic);
-		System.out.println(i);
+//		HubBrandDicDto hubBrandDic = new HubBrandDicDto();
+//		hubBrandDic.setCreateTime(new Date());
+//		hubBrandDic.setCreateUser("yanxiaobin");
+//		int i = client.insert(hubBrandDic);
+//		System.out.println(i);
 	}
 }
