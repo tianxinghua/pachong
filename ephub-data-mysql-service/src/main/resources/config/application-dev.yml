@@ -3,11 +3,7 @@ spring:
        consul: 
          discovery: 
            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
-           prefer-ip-address: true
-           ip-address: 127.0.0.1
-           hostname: localhost
-           port: ${server.port}
-           healthCheckUrl: http://localhost:9090/info 
+           healthCheckUrl: http://192.168.3.211:9090/info 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   mail: 
