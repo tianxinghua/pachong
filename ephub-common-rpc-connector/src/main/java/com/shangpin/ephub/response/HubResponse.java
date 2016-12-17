@@ -11,7 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class ResponseContent<T> extends ResponseContentBase{
+public class HubResponse<T> extends HubBaseResponse{
 
 	private static final long serialVersionUID = 1L;
 
@@ -22,8 +22,8 @@ public class ResponseContent<T> extends ResponseContentBase{
 	 * @param t t
 	 * @return ResponseContentOne
 	 */
-	public static <T> ResponseContent<T> successResp(T t){
-		ResponseContent<T> resp = new ResponseContent<T>();
+	public static <T> HubResponse<T> successResp(T t){
+		HubResponse<T> resp = new HubResponse<T>();
 		resp.setCode("0");
 		resp.setMsg("success");
 		resp.setContent(t);
@@ -35,7 +35,7 @@ public class ResponseContent<T> extends ResponseContentBase{
 	 * @param msg msg
 	 * @return ResponseContentOne
 	 */
-	public static <T> ResponseContent<T> errorResp(String msg){
+	public static <T> HubResponse<T> errorResp(String msg){
 		return errorResp("1", msg);
 	}
 
@@ -44,8 +44,8 @@ public class ResponseContent<T> extends ResponseContentBase{
 	 * @param msg msg
 	 * @return ResponseContentOne
 	 */
-	public static <T> ResponseContent<T> errorResp(String code, String msg){
-		ResponseContent<T> resp = new ResponseContent<>();
+	public static <T> HubResponse<T> errorResp(String code, String msg){
+		HubResponse<T> resp = new HubResponse<>();
 		resp.setCode(code);
 		resp.setMsg(msg);
 		return resp;

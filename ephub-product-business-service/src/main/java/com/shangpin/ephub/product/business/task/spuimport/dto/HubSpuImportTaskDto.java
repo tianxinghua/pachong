@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.hubPage.task.spuimport.dto;
+package com.shangpin.ephub.product.business.task.spuimport.dto;
 
 import java.io.Serializable;
 
@@ -17,13 +17,13 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubSpuImportTask implements Serializable {
+public class HubSpuImportTaskDto implements Serializable {
 	private static final long serialVersionUID = -9080013205013160520L;
     /**
      * 原始文件名
      */
     private String fileName;
     private String createUser;
-    private String uploadfile;
+    private Byte uploadfile;
 
 }

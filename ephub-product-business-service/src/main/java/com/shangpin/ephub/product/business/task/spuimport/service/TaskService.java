@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.hubPage.task.spuimport.service;
+package com.shangpin.ephub.product.business.task.spuimport.service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.shangpin.ephub.product.business.hubPage.task.spuimport.dto.HubSpuImportTask;
+import com.shangpin.ephub.product.business.task.spuimport.dto.HubSpuImportTaskDto;
 
 
 /**
@@ -34,7 +34,7 @@ import com.shangpin.ephub.product.business.hubPage.task.spuimport.dto.HubSpuImpo
 @Service
 public class TaskService {
 
-	public boolean uploadFileAndSave(HubSpuImportTask task) {
+	public boolean uploadFileAndSave(HubSpuImportTaskDto task) {
 		
 		
 		return true;

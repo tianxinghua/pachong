@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.hubPage.task.spuimport.util;
+package com.shangpin.ephub.product.business.task.spuimport.util;
 import java.io.File;  
 import java.io.FileInputStream;
 

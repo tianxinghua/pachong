@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class ResponseContentBase implements Serializable{
+public class HubBaseResponse implements Serializable{
 
 	/**
 	 * serialVersionUID

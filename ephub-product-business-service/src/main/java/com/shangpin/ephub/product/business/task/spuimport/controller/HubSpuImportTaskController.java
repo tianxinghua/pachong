@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.hubPage.task.spuimport.controller;
+package com.shangpin.ephub.product.business.task.spuimport.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.product.business.hubPage.task.spuimport.dto.HubSpuImportTask;
-import com.shangpin.ephub.product.business.hubPage.task.spuimport.service.TaskService;
+import com.shangpin.ephub.product.business.task.spuimport.dto.HubSpuImportTaskDto;
+import com.shangpin.ephub.product.business.task.spuimport.service.TaskService;
 import com.shangpin.ephub.response.ResponseContent;
 
 
@@ -27,7 +27,7 @@ public class HubSpuImportTaskController {
 	
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/importSpu",method = RequestMethod.POST)
-    public ResponseContent countByCriteria(@RequestBody HubSpuImportTask dto){
+    public ResponseContent countByCriteria(@RequestBody HubSpuImportTaskDto dto){
 	        	
 		boolean flag = taskService.uploadFileAndSave(dto);
 		if(flag){
