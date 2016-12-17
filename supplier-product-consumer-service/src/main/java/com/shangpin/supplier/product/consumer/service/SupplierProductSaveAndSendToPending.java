@@ -8,13 +8,13 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.conf.stream.source.sender.PendingProductStreamSender;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.service.dto.Sku;
@@ -199,7 +199,7 @@ public class SupplierProductSaveAndSendToPending {
 		pendingSpu.setSkus(skus);
 		pendingProduct.setData(pendingSpu);		
 		spuHead.setSkus(headSkus);		
-		headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, new Gson().toJson(spuHead));
+		headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
 	}
 	
 	

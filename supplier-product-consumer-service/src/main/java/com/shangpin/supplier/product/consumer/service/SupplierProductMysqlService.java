@@ -1,11 +1,18 @@
 package com.shangpin.supplier.product.consumer.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
@@ -23,6 +30,8 @@ public class SupplierProductMysqlService {
 
 	@Autowired
 	private HubSupplierSpuGateWay hubSupplierSpuGateWay;
+	@Autowired 
+	private HubSupplierSkuGateWay hubSupplierSkuGateWay;
 	/**
 	 * 判断hubSpu是否存在或主要信息发生变化
 	 * @param hubSpu
@@ -33,7 +42,6 @@ public class SupplierProductMysqlService {
 					
 		HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 		if(null == hubSpuSel){
-			//TODO insert(hubSpu)
 			hubSupplierSpuGateWay.insert(hubSpu);
 			convertHubSpuToPendingSpu(hubSpu,pendingSpu);
 			return ProductStatus.NEW;
@@ -59,7 +67,7 @@ public class SupplierProductMysqlService {
 	public ProductStatus isHubSkuChanged(HubSupplierSkuDto hubSku,PendingSku pendingSku){
 		HubSupplierSkuDto hubSkuSel = hasHadTheHubSku(hubSku);
 		if(null == hubSkuSel){
-			//TODO insert(hubSku)
+			hubSupplierSkuGateWay.insert(hubSku);
 			convertHubSkuToPendingSku(hubSku,pendingSku);
 			return ProductStatus.NEW;
 		}else{
@@ -133,8 +141,14 @@ public class SupplierProductMysqlService {
 	 * @return
 	 */
 	private HubSupplierSkuDto hasHadTheHubSku(HubSupplierSkuDto hubSku) {
-		// TODO Auto-generated method stub
-		return null;
+		HubSupplierSkuCriteriaDto criteriaDto = new HubSupplierSkuCriteriaDto();
+		criteriaDto.createCriteria().andSupplierIdEqualTo(hubSku.getSupplierId()).andSupplierSkuNoEqualTo(hubSku.getSupplierSkuNo());
+		List<HubSupplierSkuDto> hubSkus = hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
+		if(null == hubSkus || hubSkus.size() == 0){
+			return null;
+		}else{
+			return hubSkus.get(0);
+		}
 	}
 	/**
 	 * 查找hubSpu是否存在，如果存在则返回查询结果
@@ -142,24 +156,38 @@ public class SupplierProductMysqlService {
 	 * @return
 	 */
 	private HubSupplierSpuDto hasHadTheHubSpu(HubSupplierSpuDto hubSpu) {
-		// TODO Auto-generated method stub
-		return null;
+		HubSupplierSpuCriteriaDto criteriaDto = new HubSupplierSpuCriteriaDto();
+		criteriaDto.createCriteria().andSupplierIdEqualTo(hubSpu.getSupplierId()).andSupplierSpuNoEqualTo(hubSpu.getSupplierSpuNo());
+		List<HubSupplierSpuDto> hubSpus = hubSupplierSpuGateWay.selectByCriteria(criteriaDto);
+		if(null == hubSpus || hubSpus.size() == 0){
+			return null;
+		}else{
+			return hubSpus.get(0);
+		}
 	}
 	/**
 	 * 更新
 	 * @param hubSpuUpdated
 	 */
 	private void updateHubSpu(HubSupplierSpuDto hubSpuUpdated) {
-		// TODO Auto-generated method stub
-		
+		HubSupplierSpuWithCriteriaDto criteriaDto = new HubSupplierSpuWithCriteriaDto();
+		HubSupplierSpuCriteriaDto hubSupplierSpuCriteriaDto = new HubSupplierSpuCriteriaDto();
+		hubSupplierSpuCriteriaDto.createCriteria().andSupplierIdEqualTo(hubSpuUpdated.getSupplierId()).andSupplierSpuNoEqualTo(hubSpuUpdated.getSupplierSpuNo());
+		criteriaDto.setCriteria(hubSupplierSpuCriteriaDto);
+		criteriaDto.setHubSupplierSpu(hubSpuUpdated);
+		hubSupplierSpuGateWay.updateByCriteriaSelective(criteriaDto);
 	}
 	/**
 	 * 更新
 	 * @param hubSkuUpdated
 	 */
 	private void updateHubSku(HubSupplierSkuDto hubSkuUpdated) {
-		// TODO Auto-generated method stub
-		
+		HubSupplierSkuWithCriteriaDto criteriaDto = new HubSupplierSkuWithCriteriaDto();
+		HubSupplierSkuCriteriaDto hubSupplierSkuCriteriaDto = new HubSupplierSkuCriteriaDto();
+		hubSupplierSkuCriteriaDto.createCriteria().andSupplierIdEqualTo(hubSkuUpdated.getSupplierId()).andSupplierSkuNoEqualTo(hubSkuUpdated.getSupplierSkuNo());
+		criteriaDto.setHubSupplierSku(hubSkuUpdated);
+		criteriaDto.setCriteria(hubSupplierSkuCriteriaDto);
+		hubSupplierSkuGateWay.updateByCriteriaSelective(criteriaDto);		
 	}
 	/**
 	 * 将hubSpu转换成pendingSpu

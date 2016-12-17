@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.google.gson.Gson;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Sku;
@@ -59,7 +59,7 @@ public abstract class ISpinnakerHandler implements ISupplierHandler {
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		if(!StringUtils.isEmpty(message.getData())){
-			Spu spu = new Gson().fromJson(message.getData(), Spu.class);			
+			Spu spu = JsonUtil.deserialize(message.getData(), Spu.class);			
 			if(null != spu.getItems() && null != spu.getItems().getItem() && spu.getItems().getItem().size()>0){
 				for(Sku sku : spu.getItems().getItem()){
 					HubSupplierSpuDto hubSpu =  new HubSupplierSpuDto();
