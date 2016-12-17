@@ -150,9 +150,7 @@ public class DataServiceHandler {
 
     public List<HubGenderDicDto> getHubGenderDicBySupplierId(String supplierId){
         HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
-        HubGenderDicCriteriaDto.Criteria criterion = criteria.createCriteria();
-        criterion.andSupplierIdEqualTo(supplierId)
-                .andPushStateEqualTo(DataBusinessStatus.PUSH.getIndex().byteValue());
+        criteria.createCriteria().andSupplierIdEqualTo(supplierId).andPushStateEqualTo(DataBusinessStatus.PUSH.getIndex().byteValue());
         return hubGenderDicGateWay.selectByCriteria(criteria);
     }
 
