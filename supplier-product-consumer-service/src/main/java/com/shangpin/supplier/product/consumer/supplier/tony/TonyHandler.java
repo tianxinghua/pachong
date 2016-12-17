@@ -15,6 +15,7 @@ import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
+import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.tony.dto.TonyItems;
 
 /**
@@ -89,10 +90,10 @@ public class TonyHandler implements ISupplierHandler {
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierSkuNo(tonyItems.getSku());
-			hubSku.setMarketPrice(new BigDecimal(tonyItems.getStock_price()));
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(tonyItems.getStock_price())));
 			hubSku.setSupplierBarcode(tonyItems.getBarcode());
 			hubSku.setSupplierSkuSize(getProductSize(tonyItems.getSku()));
-			hubSku.setStock(Integer.parseInt(tonyItems.getQty()));
+			hubSku.setStock(StringUtil.verifyStock(tonyItems.getQty()));
 			return true;
 		}else{
 			return false;

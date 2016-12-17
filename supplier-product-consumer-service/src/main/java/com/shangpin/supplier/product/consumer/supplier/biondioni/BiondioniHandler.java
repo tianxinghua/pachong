@@ -18,6 +18,7 @@ import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.biondioni.dto.Article;
 import com.shangpin.supplier.product.consumer.supplier.biondioni.dto.Modele;
 import com.shangpin.supplier.product.consumer.supplier.biondioni.dto.QtTaille;
+import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 /**
  * <p>Title:BiondioniHandler </p>
  * <p>Description: 供应商biondioni数据处理器</p>
@@ -109,9 +110,9 @@ public class BiondioniHandler implements ISupplierHandler {
 				size = "A";
 			}
 			hubSku.setSupplierSkuNo(modele.getNumMdle()+article.getNumArti()+ "|" + size);
-			hubSku.setSalesPrice(new BigDecimal(qty.getPrixVente()));
+			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(qty.getPrixVente())));
 			hubSku.setSupplierSkuSize(size);
-			hubSku.setStock(Integer.parseInt(qty.getQty()));
+			hubSku.setStock(StringUtil.verifyStock(qty.getQty()));
 			return true;
 		}else{
 			
