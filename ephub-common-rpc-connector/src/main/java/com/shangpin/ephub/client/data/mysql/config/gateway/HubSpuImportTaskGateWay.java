@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskCriteriaWithRowBoundsDto;
@@ -22,39 +23,39 @@ import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskWithCrite
 public interface HubSpuImportTaskGateWay {
 
 	
-	@RequestMapping(value = "/count-by-criteria")
+	@RequestMapping(value = "/hub-spu-import-task/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int countByCriteria(@RequestBody HubSpuImportTaskCriteriaDto criteria);
 	
-	@RequestMapping(value = "/delete-by-criteria")
+	@RequestMapping(value = "/hub-spu-import-task/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody HubSpuImportTaskCriteriaDto criteria);
 	
-	@RequestMapping(value = "/delete-by-primary-key")
+	@RequestMapping(value = "/hub-spu-import-task/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByPrimaryKey(Long spuImportTaskId);
 	
-	@RequestMapping(value = "/insert")
+	@RequestMapping(value = "/hub-spu-import-task/insert", method = RequestMethod.POST,consumes = "application/json")
     public int insert(@RequestBody HubSpuImportTaskDto hubSpuImportTask);
 	
-	@RequestMapping(value = "/insert-selective")
+	@RequestMapping(value = "/hub-spu-import-task/insert-selective", method = RequestMethod.POST,consumes = "application/json")
     public int insertSelective(@RequestBody HubSpuImportTaskDto hubSpuImportTask);
 	
-	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
+	@RequestMapping(value = "/hub-spu-import-task/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSpuImportTaskDto> selectByCriteriaWithRowbounds(@RequestBody HubSpuImportTaskCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
-	@RequestMapping(value = "/select-by-criteria")
+	@RequestMapping(value = "/hub-spu-import-task/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSpuImportTaskDto> selectByCriteria(@RequestBody HubSpuImportTaskCriteriaDto criteria);
 	
-	@RequestMapping(value = "/select-by-primary-key")
+	@RequestMapping(value = "/hub-spu-import-task/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public HubSpuImportTaskDto selectByPrimaryKey(Long spuImportTaskId);
 	
-	@RequestMapping(value = "/update-by-criteria-selective")
+	@RequestMapping(value = "/hub-spu-import-task/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubSpuImportTaskWithCriteriaDto hubSpuImportTaskWithCriteria);
 	
-	@RequestMapping(value = "/update-by-criteria")
+	@RequestMapping(value = "/hub-spu-import-task/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteria(@RequestBody HubSpuImportTaskWithCriteriaDto hubSpuImportTaskWithCriteria);
 	
-	@RequestMapping(value = "/update-by-primary-key-selective")
+	@RequestMapping(value = "/hub-spu-import-task/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKeySelective(@RequestBody HubSpuImportTaskDto hubBrandDic);
 	
-	@RequestMapping(value = "/update-by-primary-key")
+	@RequestMapping(value = "/hub-spu-import-task/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody HubSpuImportTaskDto hubBrandDic);
 }

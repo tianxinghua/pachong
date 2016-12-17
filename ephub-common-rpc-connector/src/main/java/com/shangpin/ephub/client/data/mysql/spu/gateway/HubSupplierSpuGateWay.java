@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaWithRowBoundsDto;
@@ -20,39 +21,39 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuWithCriteriaDt
 @FeignClient("ephub-data-mysql-service")
 public interface HubSupplierSpuGateWay {
 
-	@RequestMapping(value = "/count-by-criteria")
+	@RequestMapping(value = "/hub-supplier-spu/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int countByCriteria(@RequestBody HubSupplierSpuCriteriaDto criteria);
 	
-	@RequestMapping(value = "/delete-by-criteria")
+	@RequestMapping(value = "/hub-supplier-spu/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody HubSupplierSpuCriteriaDto criteria);
 	
-	@RequestMapping(value = "/delete-by-primary-key")
+	@RequestMapping(value = "/hub-supplier-spu/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByPrimaryKey(Long supplierSpuId);
 	
-	@RequestMapping(value = "/insert")
+	@RequestMapping(value = "/hub-supplier-spu/insert", method = RequestMethod.POST,consumes = "application/json")
     public int insert(@RequestBody HubSupplierSpuDto hubSupplierSpu);
 	
-	@RequestMapping(value = "/insert-selective")
+	@RequestMapping(value = "/hub-supplier-spu/insert-selective", method = RequestMethod.POST,consumes = "application/json")
     public int insertSelective(@RequestBody HubSupplierSpuDto hubSupplierSpu);
 	
-	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
+	@RequestMapping(value = "/hub-supplier-spu/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSupplierSpuDto> selectByCriteriaWithRowbounds(@RequestBody HubSupplierSpuCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
-	@RequestMapping(value = "/select-by-criteria")
+	@RequestMapping(value = "/hub-supplier-spu/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSupplierSpuDto> selectByCriteria(@RequestBody HubSupplierSpuCriteriaDto criteria);
 	
-	@RequestMapping(value = "/select-by-primary-key")
+	@RequestMapping(value = "/hub-supplier-spu/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public HubSupplierSpuDto selectByPrimaryKey(Long supplierSpuId);
 	
-	@RequestMapping(value = "/update-by-criteria-selective")
+	@RequestMapping(value = "/hub-supplier-spu/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubSupplierSpuWithCriteriaDto hubSupplierSpuWithCriteria);
 	
-	@RequestMapping(value = "/update-by-criteria")
+	@RequestMapping(value = "/hub-supplier-spu/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteria(@RequestBody HubSupplierSpuWithCriteriaDto hubSupplierSpuWithCriteria);
 	
-	@RequestMapping(value = "/update-by-primary-key-selective")
+	@RequestMapping(value = "/hub-supplier-spu/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKeySelective(@RequestBody HubSupplierSpuDto hubSupplierSpu);
 	
-	@RequestMapping(value = "/update-by-primary-key")
+	@RequestMapping(value = "/hub-supplier-spu/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody HubSupplierSpuDto hubSupplierSpu);
 }
