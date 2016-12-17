@@ -18,6 +18,7 @@ import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.Atelie
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierPrice;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSku;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSpu;
+import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 
 /**
  * * 
@@ -111,6 +112,7 @@ public abstract class IAtelierHandler implements ISupplierHandler {
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(atelierSku.getSpuId()+"-"+atelierSku.getBarcode());
 			setProductPrice(hubSku,atelierSpu,atelierPrice);
+			hubSku.setStock(StringUtil.verifyStock(atelierSku.getStock()));
 			return true;
 		}else{
 			return false;

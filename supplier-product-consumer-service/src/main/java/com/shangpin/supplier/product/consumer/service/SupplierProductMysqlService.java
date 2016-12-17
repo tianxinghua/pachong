@@ -3,6 +3,8 @@ package com.shangpin.supplier.product.consumer.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -25,6 +27,8 @@ import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
  * @date 2016年12月14日 下午7:24:08
  *
  */
+@EnableDiscoveryClient
+@EnableFeignClients("com.shangpin.ephub")
 @Component
 public class SupplierProductMysqlService {
 

@@ -15,6 +15,7 @@ import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
+import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.stefania.dto.StefItem;
 import com.shangpin.supplier.product.consumer.supplier.stefania.dto.StefProduct;
 
@@ -99,12 +100,12 @@ public class StefaniaHandler implements ISupplierHandler{
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(stefItem.getItem_id().replaceAll("½", "+"));
-			hubSku.setMarketPrice(new BigDecimal(stefItem.getMarket_price()));
-			hubSku.setSupplyPrice(new BigDecimal(stefItem.getSupply_price()));
-			hubSku.setSalesPrice(new BigDecimal(stefItem.getSell_price()));
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(stefItem.getMarket_price())));
+			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(stefItem.getSupply_price())));
+			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(stefItem.getSell_price())));
 			hubSku.setSupplierBarcode(stefItem.getBarcode());
 			hubSku.setSupplierSkuSize(stefItem.getItem_size().replaceAll("½", "+"));
-			hubSku.setStock(Integer.parseInt(stefItem.getStock()));
+			hubSku.setStock(StringUtil.verifyStock(stefItem.getStock()));
 			return true;
 		}else{
 			return false;

@@ -9,6 +9,7 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierPrice;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSku;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSpu;
+import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 /**
  * <p>Title:AtelierCommonHandler </p>
  * <p>Description: atelier供应商一般处理逻辑类</p>
@@ -81,8 +82,8 @@ public class AtelierCommonHandler extends IAtelierHandler {
 			AtelierPrice atelierPrice) {
 		
 		if(null != atelierPrice){
-			sku.setSupplyPrice(new BigDecimal(atelierPrice.getPrice1()));
-			sku.setMarketPrice(new BigDecimal(atelierPrice.getPrice2())); 
+			sku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(atelierPrice.getPrice1())));
+			sku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(atelierPrice.getPrice2()))); 
 		}
 	}
 	

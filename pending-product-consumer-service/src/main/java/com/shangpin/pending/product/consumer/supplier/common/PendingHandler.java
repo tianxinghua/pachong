@@ -44,8 +44,8 @@ import java.util.*;
 public class PendingHandler {
 
 
-    @Autowired
-    IShangpinRedis shangpinRedis;
+    //@Autowired
+    //IShangpinRedis shangpinRedis;
 
 
     @Autowired
