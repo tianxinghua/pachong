@@ -41,8 +41,12 @@ import java.util.*;
  */
 @Component
 @Slf4j
+
 public class PendingHandler {
 
+
+    @Autowired
+    IShangpinRedis shangpinRedis;
 
 
     @Autowired
@@ -123,7 +127,7 @@ public class PendingHandler {
 
 
     }
-//
+
     private  Map<String,Integer> getMessageStatus(Map<String, Object> headers){
 
         Map<String,Integer> result = new HashMap<>();
