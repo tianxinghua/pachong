@@ -96,8 +96,12 @@ public class GebHandler implements ISupplierHandler {
 			String supplierSkuNo = item.getProduct_id()+"-"+size;
 			hubSku.setSupplierSkuNo(supplierSkuNo);
 			hubSku.setSupplierSkuName(item.getItem_intro());
-			hubSku.setMarketPrice(new BigDecimal(item.getRetail_price()));
-			hubSku.setSupplyPrice(new BigDecimal(item.getPrice()));
+			if(item.getRetail_price()!=null){
+				hubSku.setMarketPrice(new BigDecimal(item.getRetail_price()));	
+			}
+			if(item.getPrice()!=null){
+				hubSku.setSupplyPrice(new BigDecimal(item.getPrice()));	
+			}
 			hubSku.setMarketPriceCurrencyorg(item.getCurrency());
 			hubSku.setSupplyPriceCurrency(item.getCurrency());
 			hubSku.setSupplierSkuSize(size);
