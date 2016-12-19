@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.product.business.task.spuimport.dto.HubSpuImportTaskDto;
+import com.shangpin.ephub.product.business.task.spuimport.dto.HubSpuImportTaskParam;
 import com.shangpin.ephub.product.business.task.spuimport.service.TaskService;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -18,32 +18,23 @@ import com.shangpin.ephub.response.HubResponse;
  * @author zhaogenchun
  * @date 2016年12月17日 下午5:25:30
  */
+@SuppressWarnings("rawtypes")
 @RestController
-@RequestMapping("/hub-import-task")
+@RequestMapping("/hub-task")
 public class HubSpuImportTaskController {
 	
 	@Autowired
 	TaskService taskService;
 	
-	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/import-spu",method = RequestMethod.POST)
-    public HubResponse importSpu(@RequestBody HubSpuImportTaskDto dto){
+    public HubResponse importSpu(@RequestBody HubSpuImportTaskParam dto){
 	        	
-		boolean flag = taskService.uploadFileAndSave(dto);
-		if(flag){
-			return HubResponse.successResp(null);
-		}else{
+		try {
+			return taskService.uploadFileAndSave(dto);
+		} catch (Exception e) {
 			return HubResponse.errorResp("上传文件失败，请重新上传");
 		}
 		
-    }
-	
-	@SuppressWarnings("rawtypes")
-	@RequestMapping(value = "/test",method = RequestMethod.POST)
-    public HubResponse test(byte dto){
-	        	
-		System.out.println();
-		return null;
     }
 	
 }

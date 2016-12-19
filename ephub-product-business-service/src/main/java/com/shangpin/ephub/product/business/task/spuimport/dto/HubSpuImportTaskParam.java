@@ -17,7 +17,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubSpuImportTaskDto implements Serializable {
+public class HubSpuImportTaskParam implements Serializable {
 	private static final long serialVersionUID = -9080013205013160520L;
     /**
      * 原始文件名
