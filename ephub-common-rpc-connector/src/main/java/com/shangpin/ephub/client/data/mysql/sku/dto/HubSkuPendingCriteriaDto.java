@@ -110,7 +110,7 @@ public class HubSkuPendingCriteriaDto {
     protected abstract static class GeneratedCriteria {
         protected List<Criterion> criteria;
 
-        protected GeneratedCriteria() {
+        public GeneratedCriteria() {
             super();
             criteria = new ArrayList<Criterion>();
         }
@@ -1891,13 +1891,18 @@ public class HubSkuPendingCriteriaDto {
 
     public static class Criteria extends GeneratedCriteria {
 
-        protected Criteria() {
+    	public Criteria() {
             super();
         }
     }
 
     public static class Criterion {
-        private String condition;
+    	
+        public Criterion() {
+			super();
+		}
+
+		private String condition;
 
         private Object value;
 
