@@ -7,6 +7,7 @@ import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
+import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
@@ -51,9 +52,8 @@ public class PendingHandler {
     @Autowired
     DataServiceHandler dataServiceHandler;
 
-
-
-
+    @Autowired
+    ValidationRuleUtil  validationRuleUtil;
 
 
     static Map<String,Map<String,String>> supplierGenderStaticMap = null;
@@ -67,6 +67,13 @@ public class PendingHandler {
     static Map<String,String> seasonStaticMap = null;
 
     static Map<String,String> materialStaticMap = null;
+
+
+    /**
+     * 品牌货号映射表
+     * key :  hub的品牌编号   value：Map<String,String> key:正则表单规则  value ： 品类值
+     */
+    static Map<String,Map<String,String>>  brandModelStaticMap = null;//
 
 
     static Map<String,String> hubGenderStaticMap = null;
@@ -174,6 +181,10 @@ public class PendingHandler {
 
             BeanUtils.copyProperties(spu,hubSpuPending);
             boolean allStatus=true;
+
+
+
+
             //设置性别
             if(!setGenderMapping(spu, hubSpuPending)) allStatus=false;
 
@@ -182,6 +193,9 @@ public class PendingHandler {
 
             //获取品牌
             if(!setBrandMapping(spu, hubSpuPending)) allStatus=false;
+
+
+            //todo 货号验证
 
             //获取颜色
             if(!setColorMapping(spu, hubSpuPending)) allStatus = false;
@@ -308,6 +322,77 @@ public class PendingHandler {
         return result;
     }
 
+
+    public  boolean setBrandModel(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception{
+        boolean result = true;
+
+        Map<String,Map<String,String>>  brandModelMap = this.getBrandModelMap(hubSpuPending.getHubBrandNo());
+        if(brandModelMap.containsKey(hubSpuPending.getHubBrandNo())){
+            Map<String, String> modelRegMap = brandModelMap.get(hubSpuPending.getHubBrandNo());
+
+
+            Set<String> regSet = modelRegMap.keySet();
+            for(String reg:regSet){
+//               if(validationRuleUtil.judageSpuMode(hubSpuPending.getHubBrandNo(),"",))
+            }
+
+//            if(modelRegMap.containsKey(hubSpuPending.getHubBrandNo())){
+//                //包含时转化赋值
+//                hubSpuPending.setHubGender(genderMap.get(spu.getHubGender()));
+//                hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+//            }else{
+//                result = false;
+//                hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+//                dataServiceHandler.saveHubGender(spu.getSupplierId(),spu.getHubGender());
+//
+//            }
+        }else{
+            result = false;
+            hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+            dataServiceHandler.saveHubGender(spu.getSupplierId(),spu.getHubGender());
+        }
+        return result;
+    }
+
+    private Map<String,Map<String,String>> getBrandModelMap(String hubBrandNo) {
+
+        if(null==brandModelStaticMap){//初始化
+            brandModelStaticMap = new HashMap<>();
+
+            this.setBrandModelValueToMap(hubBrandNo);
+
+        }else{
+            if(!brandModelStaticMap.containsKey(hubBrandNo)){//未包含
+                this.setBrandModelValueToMap(hubBrandNo);
+            }else{
+                if(isNeedHandle()){//包含 需要重新拉取
+                    this.setBrandModelValueToMap(hubBrandNo);
+                }
+            }
+        }
+        return brandModelStaticMap;
+    }
+
+    private void setBrandModelValueToMap(String hubBrandNo) {
+        List<HubBrandModelRuleDto> brandModles = dataServiceHandler.getBrandModle(hubBrandNo);
+        if(null!=brandModles&&brandModles.size()>0){
+
+            Map<String,String> brandModelMap = new HashMap<>();
+            for(HubBrandModelRuleDto dto:brandModles){
+                if(dto.getRuleState().intValue()==PropertyStatus.MESSAGE_HANDLED.getIndex()){//已确认
+
+                   brandModelMap.put(dto.getModelRex(),dto.getHubCategoryNo());
+                }
+
+            }
+            brandModelStaticMap.put(hubBrandNo,brandModelMap);
+
+        }
+
+
+    }
+
+
     public  boolean setGenderMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         boolean result = true;
         //获取性别
@@ -388,7 +473,7 @@ public class PendingHandler {
                 }
             }
         }
-          return null;
+        return supplierCategoryMappingStaticMap;
     }
 
     private void setSupplierCategoryValueToMap(String supplierId)  throws Exception{

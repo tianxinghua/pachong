@@ -25,6 +25,9 @@ import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicItemCrite
 import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicItemDto;
 import com.shangpin.ephub.client.data.mysql.material.gateway.HubMaterialDicGateWay;
 import com.shangpin.ephub.client.data.mysql.material.gateway.HubMaterialDicItemGateWay;
+import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
+import com.shangpin.ephub.client.data.mysql.rule.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
@@ -93,6 +96,9 @@ public class DataServiceHandler {
 
     @Autowired
     private HubSkuPendingGateWay hubSkuPendingGateWay;
+
+    @Autowired
+    private HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
 
 
     public void saveBrand(String supplierId,String supplierBrandName) throws Exception{
@@ -308,6 +314,15 @@ public class DataServiceHandler {
 
     public void savePendingSku(HubSkuPendingDto skuPendingDto) throws Exception{
         hubSkuPendingGateWay.insert(skuPendingDto);
+    }
+
+    public List<HubBrandModelRuleDto> getBrandModle(String hubBrandNo){
+
+        HubBrandModelRuleCriteriaDto criterial = new HubBrandModelRuleCriteriaDto();
+        criterial.createCriteria().andHubBrandNoEqualTo(hubBrandNo).andRuleStateEqualTo(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+
+        return  hubBrandModelRuleGateWay.selectByCriteria(criterial);
+
     }
 
 }
