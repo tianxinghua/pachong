@@ -1,10 +1,21 @@
 package com.shangpin.pending.product.consumer.supplier.common;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
-import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
@@ -16,24 +27,17 @@ import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
-import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.DateUtils;
 import com.shangpin.pending.product.consumer.common.enumeration.MessageType;
 import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
-import com.shangpin.pending.product.consumer.conf.clients.mysql.sku.bean.HubSkuPending;
-import com.shangpin.pending.product.consumer.conf.clients.mysql.spu.bean.HubSpuPending;
+import com.shangpin.pending.product.consumer.supplier.dto.CategoryScreenSizeDom;
+import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
+import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
+import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSku;
+import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSpu;
+import com.shangpin.pending.product.consumer.supplier.dto.SizeStandardItem;
 
-import com.shangpin.pending.product.consumer.supplier.dto.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Created by loyalty on 16/12/13.
