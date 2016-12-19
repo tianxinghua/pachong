@@ -3,10 +3,10 @@ spring:
        consul: 
          discovery: 
            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
-           #prefer-ip-address: true
-           #ip-address: 192.168.20.110
-           #hostname: 192.168.20.110
-           #port: ${server.port}
+           prefer-ip-address: true
+           ip-address: 192.168.20.110
+           hostname: 192.168.20.110
+           port: ${server.port}
            healthCheckUrl: http://localhost:9093/info 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
