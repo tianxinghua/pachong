@@ -24,6 +24,6 @@ public class HubSpuImportTaskDto implements Serializable {
      */
     private String fileName;
     private String createUser;
-    private Byte uploadfile;
+    private byte [] uploadfile;
 
 }

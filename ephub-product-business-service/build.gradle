@@ -29,7 +29,7 @@ repositories {
 
 
 dependencies {
-	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.1.4-SNAPSHOT')
+	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.1.7-SNAPSHOT')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-actuator-docs')
 	compile('org.springframework.boot:spring-boot-starter-aop')
@@ -41,6 +41,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-mail')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('commons-net:commons-net:3.3')
+	compile('org.apache.poi:poi-ooxml:3.8')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	
 	

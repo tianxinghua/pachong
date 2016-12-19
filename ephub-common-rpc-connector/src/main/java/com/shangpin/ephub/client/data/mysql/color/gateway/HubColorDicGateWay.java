@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicCriteriaWithRowBoundsDto;
@@ -22,39 +23,39 @@ import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicWithCriteriaDto
 public interface HubColorDicGateWay {
 
 	
-	@RequestMapping(value = "/count-by-criteria")
+	@RequestMapping(value = "/hub-color-dic/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int countByCriteria(@RequestBody HubColorDicCriteriaDto criteria);
 	
-	@RequestMapping(value = "/delete-by-criteria")
+	@RequestMapping(value = "/hub-color-dic/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody HubColorDicCriteriaDto criteria);
 	
-	@RequestMapping(value = "/delete-by-primary-key")
+	@RequestMapping(value = "/hub-color-dic/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByPrimaryKey(Long colorDicId);
 	
-	@RequestMapping(value = "/insert")
+	@RequestMapping(value = "/hub-color-dic/insert", method = RequestMethod.POST,consumes = "application/json")
     public int insert(@RequestBody HubColorDicDto hubColorDic);
 	
-	@RequestMapping(value = "/insert-selective")
+	@RequestMapping(value = "/hub-color-dic/insert-selective", method = RequestMethod.POST,consumes = "application/json")
     public int insertSelective(@RequestBody HubColorDicDto hubColorDic);
 	
-	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
+	@RequestMapping(value = "/hub-color-dic/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubColorDicDto> selectByCriteriaWithRowbounds(@RequestBody HubColorDicCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
-	@RequestMapping(value = "/select-by-criteria")
+	@RequestMapping(value = "/hub-color-dic/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubColorDicDto> selectByCriteria(@RequestBody HubColorDicCriteriaDto criteria);
 	
-	@RequestMapping(value = "/select-by-primary-key")
+	@RequestMapping(value = "/hub-color-dic/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public HubColorDicDto selectByPrimaryKey(Long colorDicId);
 	
-	@RequestMapping(value = "/update-by-criteria-selective")
+	@RequestMapping(value = "/hub-color-dic/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubColorDicWithCriteriaDto hubColorDicWithCriteria);
 	
-	@RequestMapping(value = "/update-by-criteria")
+	@RequestMapping(value = "/hub-color-dic/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteria(@RequestBody HubColorDicWithCriteriaDto hubColorDicWithCriteria);
 	
-	@RequestMapping(value = "/update-by-primary-key-selective")
+	@RequestMapping(value = "/hub-color-dic/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKeySelective(@RequestBody HubColorDicDto hubColorDic);
 	
-	@RequestMapping(value = "/update-by-primary-key")
+	@RequestMapping(value = "/hub-color-dic/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody HubColorDicDto hubColorDic);
 }

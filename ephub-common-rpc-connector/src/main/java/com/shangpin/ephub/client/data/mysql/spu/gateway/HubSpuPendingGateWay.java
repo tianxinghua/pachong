@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaWithRowBoundsDto;
@@ -20,38 +21,38 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto
 @FeignClient("ephub-data-mysql-service")
 public interface HubSpuPendingGateWay {
 
-	@RequestMapping(value = "/count-by-criteria")
+	@RequestMapping(value = "/hub-spu-pending/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int countByCriteria(@RequestBody HubSpuPendingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/delete-by-criteria")
+	@RequestMapping(value = "/hub-spu-pending/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody HubSpuPendingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/delete-by-primary-key")
+	@RequestMapping(value = "/hub-spu-pending/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByPrimaryKey(Long spuPendingId);
 	
-	@RequestMapping(value = "/insert")
+	@RequestMapping(value = "/hub-spu-pending/insert", method = RequestMethod.POST,consumes = "application/json")
     public int insert(@RequestBody HubSpuPendingDto hubSpuPending);
 	
-	@RequestMapping(value = "/insert-selective")
+	@RequestMapping(value = "/hub-spu-pending/insert-selective", method = RequestMethod.POST,consumes = "application/json")
     public int insertSelective(@RequestBody HubSpuPendingDto hubSpuPending);
-	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
+	@RequestMapping(value = "/hub-spu-pending/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSpuPendingDto> selectByCriteriaWithRowbounds(@RequestBody HubSpuPendingCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
-	@RequestMapping(value = "/select-by-criteria")
+	@RequestMapping(value = "/hub-spu-pending/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSpuPendingDto> selectByCriteria(@RequestBody HubSpuPendingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/select-by-primary-key")
+	@RequestMapping(value = "/hub-spu-pending/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public HubSpuPendingDto selectByPrimaryKey(Long spuPendingId);
 	
-	@RequestMapping(value = "/update-by-criteria-selective")
+	@RequestMapping(value = "/hub-spu-pending/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubSpuPendingWithCriteriaDto hubSpuPendingWithCriteria);
 	
-	@RequestMapping(value = "/update-by-criteria")
+	@RequestMapping(value = "/hub-spu-pending/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteria(@RequestBody HubSpuPendingWithCriteriaDto hubSpuPendingWithCriteria);
 	
-	@RequestMapping(value = "/update-by-primary-key-selective")
+	@RequestMapping(value = "/hub-spu-pending/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKeySelective(@RequestBody HubSpuPendingDto hubSpuPending);
 	
-	@RequestMapping(value = "/update-by-primary-key")
+	@RequestMapping(value = "/hub-spu-pending/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody HubSpuPendingDto hubSpuPending);
 }
