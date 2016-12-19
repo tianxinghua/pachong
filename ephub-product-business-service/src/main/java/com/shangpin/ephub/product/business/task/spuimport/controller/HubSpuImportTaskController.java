@@ -38,4 +38,12 @@ public class HubSpuImportTaskController {
 		
     }
 	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value = "/test",method = RequestMethod.POST)
+    public HubResponse test(byte dto){
+	        	
+		System.out.println();
+		return null;
+    }
+	
 }

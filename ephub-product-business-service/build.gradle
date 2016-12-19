@@ -41,6 +41,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-mail')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('commons-net:commons-net:3.3')
+	compile('org.apache.poi:poi-ooxml:3.8')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	
 	
