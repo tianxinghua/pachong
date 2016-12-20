@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.pendingCrud.service;
+package com.shangpin.ephub.product.business.pendingCrud.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +20,14 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.product.business.pendingCrud.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.pendingCrud.emumeration.ProductState;
+import com.shangpin.ephub.product.business.pendingCrud.service.IPendingProductService;
 import com.shangpin.ephub.product.business.pendingCrud.util.JavaUtil;
 import com.shangpin.ephub.product.business.pendingCrud.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.util.DateTimeUtil;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
 
 @Service
-public class PendingProductService {
+public class PendingProductService implements IPendingProductService{
 	
 	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
 	@Autowired
@@ -34,11 +35,7 @@ public class PendingProductService {
 	@Autowired
 	private HubSkuPendingGateWay hubSkuPendingGateWay;
 
-	/**
-	 * 根据页面查询条件查询待处理表产品
-	 * @param pendingQuryDto
-	 * @return
-	 */
+	@Override
 	public List<PendingProductDto> findPendingProduct(PendingQuryDto pendingQuryDto){
 		List<PendingProductDto> products = new ArrayList<PendingProductDto>();
 		if(null !=pendingQuryDto){
@@ -55,25 +52,40 @@ public class PendingProductService {
 			}
 		}
 		return products;
-	}
-	/**
-	 * 根据spu查找sku
-	 * @param spuPendingId
-	 * @return
-	 */
+	}	
+	@Override
 	public List<HubSkuPendingDto> findPendingSkuBySpuPendingId(Long spuPendingId){
 		HubSkuPendingCriteriaDto criteriaDto = new HubSkuPendingCriteriaDto();
 		criteriaDto.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
-		criteriaDto.setFields("hub_sku_size,sp_sku_size_state");
+		criteriaDto.setFields("sku_pending_id,hub_sku_size,sp_sku_size_state");
 		return hubSkuPendingGateWay.selectByCriteria(criteriaDto);		
 	}
+	@Override
+	public void updatePendingProduct(PendingProductDto pendingProductDto){
+		if(null != pendingProductDto){
+			//TODO 先验证，验证通过则更新
+			hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+			List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
+			if(null != pengdingSkus && pengdingSkus.size()>0){
+				for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
+					//TODO 先验证，验证通过则更新
+					hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+				}
+			}
+		}
+	}
+	
+	
+	/***************************************************************************************************************************/
+						//以下为内部调用私有方法
+	/**************************************************************************************************************************/
 	
 	/**
 	 * 将pendingSpu转化为pendingProduct
 	 * @param pendingSpu
 	 * @return
 	 */
-	public PendingProductDto convertHubSpuPendingDto2PendingProductDto(HubSpuPendingDto pendingSpu){
+	private PendingProductDto convertHubSpuPendingDto2PendingProductDto(HubSpuPendingDto pendingSpu){
 		PendingProductDto pendingProduct = new PendingProductDto();		
 		JavaUtil.fatherToChild(pendingSpu, pendingProduct); 
 		return pendingProduct;
