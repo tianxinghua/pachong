@@ -767,6 +767,66 @@ public class HubSpuPendingCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andSpSkuSizeStateIsNull() {
+            addCriterion("sp_sku_size_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateIsNotNull() {
+            addCriterion("sp_sku_size_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateEqualTo(Byte value) {
+            addCriterion("sp_sku_size_state =", value, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateNotEqualTo(Byte value) {
+            addCriterion("sp_sku_size_state <>", value, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateGreaterThan(Byte value) {
+            addCriterion("sp_sku_size_state >", value, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("sp_sku_size_state >=", value, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateLessThan(Byte value) {
+            addCriterion("sp_sku_size_state <", value, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateLessThanOrEqualTo(Byte value) {
+            addCriterion("sp_sku_size_state <=", value, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateIn(List<Byte> values) {
+            addCriterion("sp_sku_size_state in", values, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateNotIn(List<Byte> values) {
+            addCriterion("sp_sku_size_state not in", values, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateBetween(Byte value1, Byte value2) {
+            addCriterion("sp_sku_size_state between", value1, value2, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("sp_sku_size_state not between", value1, value2, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
         public Criteria andSpuStateIsNull() {
             addCriterion("spu_state is null");
             return (Criteria) this;

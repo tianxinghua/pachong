@@ -11,6 +11,7 @@
     <result column="hub_category_no" property="hubCategoryNo" jdbcType="VARCHAR" />
     <result column="hub_brand_no" property="hubBrandNo" jdbcType="VARCHAR" />
     <result column="hub_season" property="hubSeason" jdbcType="VARCHAR" />
+    <result column="sp_sku_size_state" property="spSkuSizeState" jdbcType="TINYINT" />
     <result column="spu_state" property="spuState" jdbcType="TINYINT" />
     <result column="pic_state" property="picState" jdbcType="TINYINT" />
     <result column="is_current_season" property="isCurrentSeason" jdbcType="TINYINT" />
@@ -94,10 +95,10 @@
   <sql id="Base_Column_List" >
     <if test="fields == null" >
       spu_pending_id, supplier_id, supplier_spu_no, spu_model, spu_name, hub_gender, hub_category_no, 
-      hub_brand_no, hub_season, spu_state, pic_state, is_current_season, is_new_data, hub_material, 
-      hub_origin, create_time, update_time, spu_desc, hub_spu_no, spu_model_state, catgory_state, 
-      supplier_spu_id, memo, data_state, version, spu_brand_state, spu_gender_state, spu_season_state, 
-      hub_color, spu_color_state
+      hub_brand_no, hub_season, sp_sku_size_state, spu_state, pic_state, is_current_season, 
+      is_new_data, hub_material, hub_origin, create_time, update_time, spu_desc, hub_spu_no, 
+      spu_model_state, catgory_state, supplier_spu_id, memo, data_state, version, spu_brand_state, 
+      spu_gender_state, spu_season_state, hub_color, spu_color_state
     </if>
     <if test="fields != null" >
       ${fields}
@@ -122,7 +123,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    spu_pending_id,supplier_id,supplier_spu_no,spu_model,spu_name,hub_gender,hub_category_no,hub_brand_no,hub_season,spu_state,pic_state,is_current_season,is_new_data,hub_material,hub_origin,create_time,update_time,spu_desc,hub_spu_no,spu_model_state,catgory_state,supplier_spu_id,memo,data_state,version,spu_brand_state,spu_gender_state,spu_season_state,hub_color,spu_color_state
+    spu_pending_id,supplier_id,supplier_spu_no,spu_model,spu_name,hub_gender,hub_category_no,hub_brand_no,hub_season,sp_sku_size_state,spu_state,pic_state,is_current_season,is_new_data,hub_material,hub_origin,create_time,update_time,spu_desc,hub_spu_no,spu_model_state,catgory_state,supplier_spu_id,memo,data_state,version,spu_brand_state,spu_gender_state,spu_season_state,hub_color,spu_color_state
     from hub_spu_pending
     where spu_pending_id = #{spuPendingId,jdbcType=BIGINT}
   </select>
@@ -140,25 +141,25 @@
     insert into hub_spu_pending (spu_pending_id, supplier_id, supplier_spu_no, 
       spu_model, spu_name, hub_gender, 
       hub_category_no, hub_brand_no, hub_season, 
-      spu_state, pic_state, is_current_season, 
-      is_new_data, hub_material, hub_origin, 
-      create_time, update_time, spu_desc, 
-      hub_spu_no, spu_model_state, catgory_state, 
-      supplier_spu_id, memo, data_state, 
-      version, spu_brand_state, spu_gender_state, 
-      spu_season_state, hub_color, spu_color_state
-      )
+      sp_sku_size_state, spu_state, pic_state, 
+      is_current_season, is_new_data, hub_material, 
+      hub_origin, create_time, update_time, 
+      spu_desc, hub_spu_no, spu_model_state, 
+      catgory_state, supplier_spu_id, memo, 
+      data_state, version, spu_brand_state, 
+      spu_gender_state, spu_season_state, hub_color, 
+      spu_color_state)
     values (#{spuPendingId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, #{supplierSpuNo,jdbcType=VARCHAR}, 
       #{spuModel,jdbcType=VARCHAR}, #{spuName,jdbcType=VARCHAR}, #{hubGender,jdbcType=VARCHAR}, 
       #{hubCategoryNo,jdbcType=VARCHAR}, #{hubBrandNo,jdbcType=VARCHAR}, #{hubSeason,jdbcType=VARCHAR}, 
-      #{spuState,jdbcType=TINYINT}, #{picState,jdbcType=TINYINT}, #{isCurrentSeason,jdbcType=TINYINT}, 
-      #{isNewData,jdbcType=TINYINT}, #{hubMaterial,jdbcType=VARCHAR}, #{hubOrigin,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{spuDesc,jdbcType=VARCHAR}, 
-      #{hubSpuNo,jdbcType=VARCHAR}, #{spuModelState,jdbcType=TINYINT}, #{catgoryState,jdbcType=TINYINT}, 
-      #{supplierSpuId,jdbcType=BIGINT}, #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
-      #{version,jdbcType=BIGINT}, #{spuBrandState,jdbcType=TINYINT}, #{spuGenderState,jdbcType=TINYINT}, 
-      #{spuSeasonState,jdbcType=TINYINT}, #{hubColor,jdbcType=VARCHAR}, #{spuColorState,jdbcType=TINYINT}
-      )
+      #{spSkuSizeState,jdbcType=TINYINT}, #{spuState,jdbcType=TINYINT}, #{picState,jdbcType=TINYINT}, 
+      #{isCurrentSeason,jdbcType=TINYINT}, #{isNewData,jdbcType=TINYINT}, #{hubMaterial,jdbcType=VARCHAR}, 
+      #{hubOrigin,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{spuDesc,jdbcType=VARCHAR}, #{hubSpuNo,jdbcType=VARCHAR}, #{spuModelState,jdbcType=TINYINT}, 
+      #{catgoryState,jdbcType=TINYINT}, #{supplierSpuId,jdbcType=BIGINT}, #{memo,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, #{spuBrandState,jdbcType=TINYINT}, 
+      #{spuGenderState,jdbcType=TINYINT}, #{spuSeasonState,jdbcType=TINYINT}, #{hubColor,jdbcType=VARCHAR}, 
+      #{spuColorState,jdbcType=TINYINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
     insert into hub_spu_pending
@@ -189,6 +190,9 @@
       </if>
       <if test="hubSeason != null" >
         hub_season,
+      </if>
+      <if test="spSkuSizeState != null" >
+        sp_sku_size_state,
       </if>
       <if test="spuState != null" >
         spu_state,
@@ -281,6 +285,9 @@
       </if>
       <if test="hubSeason != null" >
         #{hubSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="spSkuSizeState != null" >
+        #{spSkuSizeState,jdbcType=TINYINT},
       </if>
       <if test="spuState != null" >
         #{spuState,jdbcType=TINYINT},
@@ -383,6 +390,9 @@
       <if test="record.hubSeason != null" >
         hub_season = #{record.hubSeason,jdbcType=VARCHAR},
       </if>
+      <if test="record.spSkuSizeState != null" >
+        sp_sku_size_state = #{record.spSkuSizeState,jdbcType=TINYINT},
+      </if>
       <if test="record.spuState != null" >
         spu_state = #{record.spuState,jdbcType=TINYINT},
       </if>
@@ -462,6 +472,7 @@
       hub_category_no = #{record.hubCategoryNo,jdbcType=VARCHAR},
       hub_brand_no = #{record.hubBrandNo,jdbcType=VARCHAR},
       hub_season = #{record.hubSeason,jdbcType=VARCHAR},
+      sp_sku_size_state = #{record.spSkuSizeState,jdbcType=TINYINT},
       spu_state = #{record.spuState,jdbcType=TINYINT},
       pic_state = #{record.picState,jdbcType=TINYINT},
       is_current_season = #{record.isCurrentSeason,jdbcType=TINYINT},
@@ -513,6 +524,9 @@
       </if>
       <if test="hubSeason != null" >
         hub_season = #{hubSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="spSkuSizeState != null" >
+        sp_sku_size_state = #{spSkuSizeState,jdbcType=TINYINT},
       </if>
       <if test="spuState != null" >
         spu_state = #{spuState,jdbcType=TINYINT},
@@ -590,6 +604,7 @@
       hub_category_no = #{hubCategoryNo,jdbcType=VARCHAR},
       hub_brand_no = #{hubBrandNo,jdbcType=VARCHAR},
       hub_season = #{hubSeason,jdbcType=VARCHAR},
+      sp_sku_size_state = #{spSkuSizeState,jdbcType=TINYINT},
       spu_state = #{spuState,jdbcType=TINYINT},
       pic_state = #{picState,jdbcType=TINYINT},
       is_current_season = #{isCurrentSeason,jdbcType=TINYINT},

@@ -8,11 +8,11 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 /**
- * <p>Title:HubBrandDicMapper.java </p>
+ * <p>Title:HubSpuImportTaskMapper.java </p>
  * <p>Description: </p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
- * @date 2016年12月13日 下午2:12:01
+ * @date 2016年12月20日 上午11:05:41
  */
 @Mapper
 public interface HubSpuImportTaskMapper {
