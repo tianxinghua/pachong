@@ -1,5 +1,5 @@
 <configuration>
-	<property name="LOG_HOME" value="/usr/local/share/applications/ephub-data-mysql-service/logs/" />  
+	<property name="LOG_HOME" value="/Users/loyalty/log/applications/ephub-data-mysql-service/logs/" />
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>

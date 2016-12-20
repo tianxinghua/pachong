@@ -817,6 +817,66 @@ public class HubSpuImportTaskCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andImportTypeIsNull() {
+            addCriterion("import_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTypeIsNotNull() {
+            addCriterion("import_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTypeEqualTo(Byte value) {
+            addCriterion("import_type =", value, "importType");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTypeNotEqualTo(Byte value) {
+            addCriterion("import_type <>", value, "importType");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTypeGreaterThan(Byte value) {
+            addCriterion("import_type >", value, "importType");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTypeGreaterThanOrEqualTo(Byte value) {
+            addCriterion("import_type >=", value, "importType");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTypeLessThan(Byte value) {
+            addCriterion("import_type <", value, "importType");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTypeLessThanOrEqualTo(Byte value) {
+            addCriterion("import_type <=", value, "importType");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTypeIn(List<Byte> values) {
+            addCriterion("import_type in", values, "importType");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTypeNotIn(List<Byte> values) {
+            addCriterion("import_type not in", values, "importType");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTypeBetween(Byte value1, Byte value2) {
+            addCriterion("import_type between", value1, value2, "importType");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTypeNotBetween(Byte value1, Byte value2) {
+            addCriterion("import_type not between", value1, value2, "importType");
+            return (Criteria) this;
+        }
+
         public Criteria andUpdateTimeIsNull() {
             addCriterion("update_time is null");
             return (Criteria) this;

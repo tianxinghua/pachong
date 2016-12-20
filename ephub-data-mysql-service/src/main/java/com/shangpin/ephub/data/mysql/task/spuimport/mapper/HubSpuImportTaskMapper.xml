@@ -12,6 +12,7 @@
     <result column="process_info" property="processInfo" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="import_type" property="importType" jdbcType="TINYINT" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
     <result column="data_state" property="dataState" jdbcType="TINYINT" />
@@ -79,8 +80,8 @@
   <sql id="Base_Column_List" >
     <if test="fields == null" >
       spu_import_task_id, task_no, task_ftp_file_path, local_file_name, sys_file_name, 
-      task_state, result_file_path, process_info, create_time, create_user, update_time, 
-      update_user, data_state, version, memo
+      task_state, result_file_path, process_info, create_time, create_user, import_type, 
+      update_time, update_user, data_state, version, memo
     </if>
     <if test="fields != null" >
       ${fields}
@@ -105,7 +106,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    spu_import_task_id,task_no,task_ftp_file_path,local_file_name,sys_file_name,task_state,result_file_path,process_info,create_time,create_user,update_time,update_user,data_state,version,memo
+    spu_import_task_id,task_no,task_ftp_file_path,local_file_name,sys_file_name,task_state,result_file_path,process_info,create_time,create_user,import_type,update_time,update_user,data_state,version,memo
     from hub_spu_import_task
     where spu_import_task_id = #{spuImportTaskId,jdbcType=BIGINT}
   </select>
@@ -123,15 +124,15 @@
     insert into hub_spu_import_task (spu_import_task_id, task_no, task_ftp_file_path, 
       local_file_name, sys_file_name, task_state, 
       result_file_path, process_info, create_time, 
-      create_user, update_time, update_user, 
-      data_state, version, memo
-      )
+      create_user, import_type, update_time, 
+      update_user, data_state, version, 
+      memo)
     values (#{spuImportTaskId,jdbcType=BIGINT}, #{taskNo,jdbcType=VARCHAR}, #{taskFtpFilePath,jdbcType=VARCHAR}, 
       #{localFileName,jdbcType=VARCHAR}, #{sysFileName,jdbcType=VARCHAR}, #{taskState,jdbcType=TINYINT}, 
       #{resultFilePath,jdbcType=VARCHAR}, #{processInfo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
-      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, #{memo,jdbcType=VARCHAR}
-      )
+      #{createUser,jdbcType=VARCHAR}, #{importType,jdbcType=TINYINT}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, 
+      #{memo,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.task.spuimport.po.HubSpuImportTask" >
     insert into hub_spu_import_task
@@ -165,6 +166,9 @@
       </if>
       <if test="createUser != null" >
         create_user,
+      </if>
+      <if test="importType != null" >
+        import_type,
       </if>
       <if test="updateTime != null" >
         update_time,
@@ -212,6 +216,9 @@
       </if>
       <if test="createUser != null" >
         #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="importType != null" >
+        #{importType,jdbcType=TINYINT},
       </if>
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
@@ -269,6 +276,9 @@
       <if test="record.createUser != null" >
         create_user = #{record.createUser,jdbcType=VARCHAR},
       </if>
+      <if test="record.importType != null" >
+        import_type = #{record.importType,jdbcType=TINYINT},
+      </if>
       <if test="record.updateTime != null" >
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
@@ -301,6 +311,7 @@
       process_info = #{record.processInfo,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
+      import_type = #{record.importType,jdbcType=TINYINT},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       data_state = #{record.dataState,jdbcType=TINYINT},
@@ -340,6 +351,9 @@
       <if test="createUser != null" >
         create_user = #{createUser,jdbcType=VARCHAR},
       </if>
+      <if test="importType != null" >
+        import_type = #{importType,jdbcType=TINYINT},
+      </if>
       <if test="updateTime != null" >
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
@@ -369,6 +383,7 @@
       process_info = #{processInfo,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},
+      import_type = #{importType,jdbcType=TINYINT},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},

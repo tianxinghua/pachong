@@ -1,4 +1,4 @@
-package com.shangpin.ephub.client.data.mysql.config.dto;
+package com.shangpin.ephub.client.data.mysql.task.dto;
 
 import java.io.Serializable;
 

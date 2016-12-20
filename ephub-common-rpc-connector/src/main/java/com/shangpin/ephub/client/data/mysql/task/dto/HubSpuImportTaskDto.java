@@ -1,4 +1,4 @@
-package com.shangpin.ephub.client.data.mysql.config.dto;
+package com.shangpin.ephub.client.data.mysql.task.dto;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -30,7 +30,7 @@ public class HubSpuImportTaskDto implements Serializable {
     private String sysFileName;
 
     /**
-     * 任务状态
+     * 任务状态:0代表未处理；1代表正在处理；2部分处理完毕；3代表全部处理完毕；
      */
     private Byte taskState;
 
@@ -53,6 +53,11 @@ public class HubSpuImportTaskDto implements Serializable {
      * 创建人
      */
     private String createUser;
+
+    /**
+     * 导入类型：=0 无类型 =1 pending导入处理 =2 hub导入处理
+     */
+    private Byte importType;
 
     /**
      * 更新时间
@@ -161,6 +166,14 @@ public class HubSpuImportTaskDto implements Serializable {
         this.createUser = createUser == null ? null : createUser.trim();
     }
 
+    public Byte getImportType() {
+        return importType;
+    }
+
+    public void setImportType(Byte importType) {
+        this.importType = importType;
+    }
+
     public Date getUpdateTime() {
         return updateTime;
     }
@@ -217,6 +230,7 @@ public class HubSpuImportTaskDto implements Serializable {
         sb.append(", processInfo=").append(processInfo);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
+        sb.append(", importType=").append(importType);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", updateUser=").append(updateUser);
         sb.append(", dataState=").append(dataState);
@@ -249,6 +263,7 @@ public class HubSpuImportTaskDto implements Serializable {
             && (this.getProcessInfo() == null ? other.getProcessInfo() == null : this.getProcessInfo().equals(other.getProcessInfo()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
+            && (this.getImportType() == null ? other.getImportType() == null : this.getImportType().equals(other.getImportType()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
             && (this.getUpdateUser() == null ? other.getUpdateUser() == null : this.getUpdateUser().equals(other.getUpdateUser()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
@@ -270,6 +285,7 @@ public class HubSpuImportTaskDto implements Serializable {
         result = prime * result + ((getProcessInfo() == null) ? 0 : getProcessInfo().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());
+        result = prime * result + ((getImportType() == null) ? 0 : getImportType().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         result = prime * result + ((getUpdateUser() == null) ? 0 : getUpdateUser().hashCode());
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());

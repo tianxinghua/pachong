@@ -12,32 +12,32 @@ public enum CatgoryState {
 	/**
 	 * 完全不匹配
 	 */
-	entirelyMismatching(0,"entirelyMismatching"),
+	ENTIRELY_MISMATCHING((byte)0,"entirelyMismatching"),
 	/**
 	 * 匹配到4级
 	 */
-	perfectMatched(1,"perfectMatched"),
+	PERFECT_MATCHED((byte)1,"perfectMatched"),
 	/**
 	 * 不能匹配到末级
 	 */
-	mismatching(2,"mismatching");
+	MISMATCHING((byte)2,"mismatching");
 	/**
      * 数字索引标识
      */
-    private Integer index;
+    private byte index;
     /**
      * 描述信息
      */
     private String description;
     
-    CatgoryState(Integer index,String description){
+    CatgoryState(byte index,String description){
 		this.index = index;
 		this.description = description;
 	}
-    public Integer getIndex() {
+    public byte getIndex() {
         return index;
     }
-    public void setIndex(Integer index) {
+    public void setIndex(byte index) {
         this.index = index;
     }
     public String getDescription() {

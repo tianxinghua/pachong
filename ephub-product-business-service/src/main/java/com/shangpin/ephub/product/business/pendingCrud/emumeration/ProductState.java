@@ -2,14 +2,47 @@ package com.shangpin.ephub.product.business.pendingCrud.emumeration;
 
 public enum ProductState {
 
+	/**
+	 * 图片状态
+	 */
+	PICTURE_STATE(0,"pictureState"),
+	/**
+	 * 货号状态
+	 */
+	SPU_MODEL_STATE(1,"spuModelState"),
+	/**
+	 * 品类状态
+	 */
+	CATGORY_STATE(2,"catgoryState"),
+	/**
+	 * 品牌状态
+	 */
+	SPU_BRAND_STATE(3,"spuBrandState"),
+	/**
+	 * 性别状态
+	 */
+	SPU_GENDER_STATE(4,"spuGenderState"),
+	/**
+	 * 上市季节状态
+	 */
+	SPU_SEASON_STATE(5,"spuSeasonState"),
+	/**
+	 * 颜色状态
+	 */
+	SPU_COLOR_STATE(6,"spuColorState"),
+	/**
+	 * 材质状态
+	 */
+	MATERIAL_STATE(7,"materialState"),
+	/**
+	 * 产地状态
+	 */
+	ORIGIN_STATE(8,"originState"),
+	/**
+	 * 尺码状态
+	 */
+	SIZE_STATE(9,"sizeState");
 	
-	pictureState(0,"pictureState"),
-	spuModelState(1,"spuModelState"),
-	catgoryState(2,"catgoryState"),
-	spuBrandState(3,"spuBrandState"),
-	spuGenderState(4,"spuGenderState"),
-	spuSeasonState(5,"spuSeasonState"),
-	spuColorState(6,"spuColorState");
 	/**
      * 数字索引标识
      */
