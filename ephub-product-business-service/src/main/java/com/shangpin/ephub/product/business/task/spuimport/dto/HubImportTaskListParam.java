@@ -17,13 +17,16 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubSpuImportTaskDto implements Serializable {
+public class HubImportTaskListParam implements Serializable {
 	private static final long serialVersionUID = -9080013205013160520L;
     /**
      * 原始文件名
      */
-    private String fileName;
-    private String createUser;
-    private byte [] uploadfile;
+    private String localFileName;
+    private byte taskState;
+    private String startDate;
+    private String endDate;
+    private int pageIndex;
+    private int pageSize;
 
 }
