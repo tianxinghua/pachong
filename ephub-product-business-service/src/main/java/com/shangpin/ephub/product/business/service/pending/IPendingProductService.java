@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.pendingCrud.service;
+package com.shangpin.ephub.product.business.service.pending;
 
 import java.util.List;
 
