@@ -49,6 +49,7 @@ import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -102,19 +103,19 @@ public class DataServiceHandler {
 
 
     public void saveBrand(String supplierId,String supplierBrandName) throws Exception{
-        HubBrandDicDto brandDicDto = new HubBrandDicDto();
-        brandDicDto.setCreateTime(new Date());
-        brandDicDto.setSupplierBrand(supplierBrandName);
-        brandDicDto.setCreateUser(ConstantProperty.DATA_CREATE_USER);
-        brandDicDto.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
-        int insert = brandDicGateway.insert(brandDicDto);
+//        HubBrandDicDto brandDicDto = new HubBrandDicDto();
+//        brandDicDto.setCreateTime(new Date());
+//        brandDicDto.setSupplierBrand(supplierBrandName);
+//        brandDicDto.setCreateUser(ConstantProperty.DATA_CREATE_USER);
+//        brandDicDto.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
+//        int insert = brandDicGateway.insert(brandDicDto);
 
-//        HubSupplierBrandDicDto supplierBrandDicDto = new HubSupplierBrandDicDto();
-//        supplierBrandDicDto.setSupplierId(supplierId);
-//        supplierBrandDicDto.setSupplierBrand(supplierBrandName);
-//        supplierBrandDicDto.setCreateUser(ConstantProperty.DATA_CREATE_USER);
-//        supplierBrandDicDto.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
-//        supplierBrandDicGateWay.insert(supplierBrandDicDto);
+        HubSupplierBrandDicDto supplierBrandDicDto = new HubSupplierBrandDicDto();
+        supplierBrandDicDto.setSupplierId(supplierId);
+        supplierBrandDicDto.setSupplierBrand(supplierBrandName);
+        supplierBrandDicDto.setCreateUser(ConstantProperty.DATA_CREATE_USER);
+        supplierBrandDicDto.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
+        supplierBrandDicGateWay.insert(supplierBrandDicDto);
 
     }
 
@@ -167,7 +168,17 @@ public class DataServiceHandler {
         hubGenderDicDto.setSupplierId(supplierId);
         hubGenderDicDto.setSupplierGender(supplierGender);
         hubGenderDicDto.setPushState(DataBusinessStatus.NO_PUSH.getIndex().byteValue());
-        hubGenderDicGateWay.insert(hubGenderDicDto);
+        try {
+            hubGenderDicGateWay.insert(hubGenderDicDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            if(e instanceof DuplicateKeyException){
+
+            }else{
+                throw e;
+            }
+
+        }
     }
 
     public HubGenderDicDto  getHubGenderDicBySupplierIdAndSupplierGender(String supplierId,String supplierGender){
@@ -224,6 +235,7 @@ public class DataServiceHandler {
         for(HubColorDicItemDto itemDto:hubColorDicItemDtos){
             ColorDTO colorDTO = new ColorDTO();
             colorDTO.setColorItemId(itemDto.getColorDicItemId());
+            colorDTO.setSupplierColor(itemDto.getColorItemName());
             if (colorDicMap.containsKey(itemDto.getColorDicId())) {
                colorDTO.setColorDicId(itemDto.getColorDicId());
                colorDTO.setHubColorNo(colorDicMap.get(itemDto.getColorDicId()).getColorNo());

@@ -48,7 +48,7 @@ public class SupplierProductConsumerServiceApplicationTests {
 		List<PendingSku> skus = new ArrayList<PendingSku>();
 		PendingSku sku =  new PendingSku();
 		sku.setSupplierId("2015111001657");
-		sku.setHubSkuNo("5732265b2b33300afbc4444f-XXL");
+		sku.setSupplierSkuNo("5732265b2b33300afbc4444f-XXL");
 		sku.setMarketPrice(new BigDecimal("456.00"));
 		sku.setSupplyPrice(new BigDecimal("355.00"));
 		sku.setStock(1);

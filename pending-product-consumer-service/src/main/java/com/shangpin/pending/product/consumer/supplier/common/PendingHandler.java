@@ -248,7 +248,7 @@ public class PendingHandler {
         }else{//
             result = false;
             hubSpuPending.setSpuSeasonState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-            dataServiceHandler.saveBrand(spu.getSupplierId(),spu.getHubSeason());
+            dataServiceHandler.saveSeason(spu.getSupplierId(),spu.getHubSeason());
         }
         return  result;
     }
@@ -459,7 +459,7 @@ public class PendingHandler {
     }
 
     /**
-     * 按供货商获取品类的映射关系  主键  supplier_category_gender  value 尚品的品类编号+"_"+匹配状态
+     * 按供货商获取品类的映射关系  主键  category_gender  value 尚品的品类编号+"_"+匹配状态
      * @param supplierId
      * @return
      */
@@ -510,6 +510,7 @@ public class PendingHandler {
     private Map<String,Map<String,String>> getGenderMap(String supplierId){
         if(null==supplierGenderStaticMap){
             supplierGenderStaticMap = new HashMap<>();
+            hubGenderStaticMap = new HashMap<>();
             setGenderValueToMap(supplierId);
         }else{
             if(!supplierGenderStaticMap.containsKey(supplierId)){
@@ -535,7 +536,7 @@ public class PendingHandler {
                 hubGenderStaticMap.put(dto.getHubGender(),"");
             }
             supplierGenderStaticMap.put(supplierId,genderMap);
-
+//            shangpinRedis.hset
         }
     }
 
@@ -547,6 +548,8 @@ public class PendingHandler {
 
 
         if(null==brandStaticMap){
+            brandStaticMap = new HashMap<>();
+            hubBrandStaticMap = new HashMap<>();
             for (HubBrandDicDto hubBrandDicDto : dataServiceHandler.getBrand()) {
                 brandStaticMap.put(hubBrandDicDto.getSupplierBrand(),hubBrandDicDto.getHubBrandNo());
                 hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo(),"");
@@ -573,6 +576,7 @@ public class PendingHandler {
     private Map<String,String> getColorMap(){
         if(null==colorStaticMap){
             colorStaticMap = new HashMap<>();
+            hubColorStaticMap = new HashMap<>();
             List<ColorDTO> colorDTOS = dataServiceHandler.getColorDTO();
             for(ColorDTO dto:colorDTOS){
                 colorStaticMap.put(dto.getSupplierColor(),dto.getHubColorName());
@@ -601,6 +605,7 @@ public class PendingHandler {
     private  Map<String,String> getSeasonMap(String supplierId){
         if(null==seasonStaticMap){
             seasonStaticMap = new HashMap<>();
+            hubBrandStaticMap = new HashMap<>();
             List<HubSeasonDicDto> hubSeasonDics = dataServiceHandler.getHubSeasonDic();
             for(HubSeasonDicDto dicDto:hubSeasonDics){
                 seasonStaticMap.put(dicDto.getSupplierid()+"_"+dicDto.getSupplierSeason(),
@@ -650,8 +655,17 @@ public class PendingHandler {
         String result = "";
         //TODO CALL API OF SOP
         ObjectMapper objectMapper =new ObjectMapper();
-        CategoryScreenSizeDom sizeDom = objectMapper.readValue(result,CategoryScreenSizeDom.class);
-        List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
+        CategoryScreenSizeDom sizeDom = null;
+        try {
+            sizeDom = objectMapper.readValue(result,CategoryScreenSizeDom.class);
+            if(null!=sizeDom){
+                List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         return result;
     }

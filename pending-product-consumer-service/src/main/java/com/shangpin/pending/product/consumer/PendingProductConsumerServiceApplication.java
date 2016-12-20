@@ -25,8 +25,8 @@ public class PendingProductConsumerServiceApplication implements ApplicationRunn
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 
-		HubGenderDicCriteriaDto arg0 = new HubGenderDicCriteriaDto();
-		arg0.createCriteria().andSupplierIdEqualTo("123424");
-		client.selectByCriteria(arg0 );
+//		HubGenderDicCriteriaDto arg0 = new HubGenderDicCriteriaDto();
+//		arg0.createCriteria().andSupplierIdEqualTo("123424");
+//		client.selectByCriteria(arg0 );
 	}
 }
