@@ -45,6 +45,16 @@ public class HubColorDicItemDto implements Serializable {
     private String memo;
 
     /**
+     * 发布时间
+     */
+    private Date pushTime;
+
+    /**
+     * 发布状态
+     */
+    private Byte pushState;
+
+    /**
      * 数据状态：1未删除 0已删除
      */
     private Byte dataState;
@@ -120,6 +130,22 @@ public class HubColorDicItemDto implements Serializable {
         this.memo = memo == null ? null : memo.trim();
     }
 
+    public Date getPushTime() {
+        return pushTime;
+    }
+
+    public void setPushTime(Date pushTime) {
+        this.pushTime = pushTime;
+    }
+
+    public Byte getPushState() {
+        return pushState;
+    }
+
+    public void setPushState(Byte pushState) {
+        this.pushState = pushState;
+    }
+
     public Byte getDataState() {
         return dataState;
     }
@@ -150,6 +176,8 @@ public class HubColorDicItemDto implements Serializable {
         sb.append(", updateTime=").append(updateTime);
         sb.append(", updateUser=").append(updateUser);
         sb.append(", memo=").append(memo);
+        sb.append(", pushTime=").append(pushTime);
+        sb.append(", pushState=").append(pushState);
         sb.append(", dataState=").append(dataState);
         sb.append(", version=").append(version);
         sb.append(", serialVersionUID=").append(serialVersionUID);
@@ -177,6 +205,8 @@ public class HubColorDicItemDto implements Serializable {
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
             && (this.getUpdateUser() == null ? other.getUpdateUser() == null : this.getUpdateUser().equals(other.getUpdateUser()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
+            && (this.getPushTime() == null ? other.getPushTime() == null : this.getPushTime().equals(other.getPushTime()))
+            && (this.getPushState() == null ? other.getPushState() == null : this.getPushState().equals(other.getPushState()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
             && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
     }
@@ -193,6 +223,8 @@ public class HubColorDicItemDto implements Serializable {
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         result = prime * result + ((getUpdateUser() == null) ? 0 : getUpdateUser().hashCode());
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
+        result = prime * result + ((getPushTime() == null) ? 0 : getPushTime().hashCode());
+        result = prime * result + ((getPushState() == null) ? 0 : getPushState().hashCode());
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
