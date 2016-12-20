@@ -116,17 +116,20 @@ public class PendingHandler {
 
         List<PendingSku> skus = pendingSpu.getSkus();
         Integer skuStatus = 0;
-        for(PendingSku sku:skus){
-            if(messageMap.containsKey(sku.getSupplierSkuNo())){
-                skuStatus = messageMap.get(sku.getSupplierSkuNo());
-                if(skuStatus== MessageType.NEW.getIndex()){
-                    this.addNewSku(sku,hubSpuPending.getHubCategoryNo(),hubSpuPending.getHubBrandNo(),headers);
+        if(null!=hubSpuPending){
 
-                }else if(skuStatus==MessageType.UPDATE.getIndex()){
-                    //TODO UPDATE OLD
+            for(PendingSku sku:skus){
+                if(messageMap.containsKey(sku.getSupplierSkuNo())){
+                    skuStatus = messageMap.get(sku.getSupplierSkuNo());
+                    if(skuStatus== MessageType.NEW.getIndex()){
+                        this.addNewSku(hubSpuPending,sku,headers);
 
-                }else if(skuStatus==MessageType.MODIFY_PRICE.getIndex()){
-                   //TODO 处理自动调整价格
+                    }else if(skuStatus==MessageType.UPDATE.getIndex()){
+                        //TODO UPDATE OLD
+
+                    }else if(skuStatus==MessageType.MODIFY_PRICE.getIndex()){
+                       //TODO 处理自动调整价格
+                    }
                 }
             }
         }
@@ -200,6 +203,8 @@ public class PendingHandler {
 
 
             //todo 货号验证
+
+            if(!setBrandModel(spu, hubSpuPending)) allStatus=false;
 
             //获取颜色
             if(!setColorMapping(spu, hubSpuPending)) allStatus = false;
@@ -330,31 +335,35 @@ public class PendingHandler {
     public  boolean setBrandModel(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception{
         boolean result = true;
 
-        Map<String,Map<String,String>>  brandModelMap = this.getBrandModelMap(hubSpuPending.getHubBrandNo());
-        if(brandModelMap.containsKey(hubSpuPending.getHubBrandNo())){
-            Map<String, String> modelRegMap = brandModelMap.get(hubSpuPending.getHubBrandNo());
+        if(!StringUtils.isEmpty(hubSpuPending.getHubBrandNo())){
+
+            Map<String,Map<String,String>>  brandModelMap = this.getBrandModelMap(hubSpuPending.getHubBrandNo());
+            if(brandModelMap.containsKey(hubSpuPending.getHubBrandNo())){
+                Map<String, String> modelRegMap = brandModelMap.get(hubSpuPending.getHubBrandNo());
 
 
-            Set<String> regSet = modelRegMap.keySet();
-            for(String reg:regSet){
-//               if(validationRuleUtil.judageSpuMode(hubSpuPending.getHubBrandNo(),"",))
+                Set<String> regSet = modelRegMap.keySet();
+                for(String reg:regSet){
+    //               if(validationRuleUtil.judageSpuMode(hubSpuPending.getHubBrandNo(),"",))
+                }
+
+    //            if(modelRegMap.containsKey(hubSpuPending.getHubBrandNo())){
+    //                //包含时转化赋值
+//                    hubSpuPending.setSpuModel("");
+    //                hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+    //            }else{
+    //                result = false;
+    //                hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+    //
+    //
+    //            }
+            }else{
+                result = false;
+                hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+
             }
-
-//            if(modelRegMap.containsKey(hubSpuPending.getHubBrandNo())){
-//                //包含时转化赋值
-//                hubSpuPending.setHubGender(genderMap.get(spu.getHubGender()));
-//                hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-//            }else{
-//                result = false;
-//                hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-//                dataServiceHandler.saveHubGender(spu.getSupplierId(),spu.getHubGender());
-//
-//            }
-        }else{
-            result = false;
-            hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-            dataServiceHandler.saveHubGender(spu.getSupplierId(),spu.getHubGender());
         }
+
         return result;
     }
 
@@ -431,10 +440,11 @@ public class PendingHandler {
 
     }
 
-    private void addNewSku(PendingSku sku,String categoryNo,String brandNo, Map<String, Object> headers) throws Exception{
+    private void addNewSku(HubSpuPendingDto hubSpuPending ,PendingSku sku, Map<String, Object> headers) throws Exception{
         HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
         BeanUtils.copyProperties(sku,hubSkuPending);
-        String hubSize=this.getHubSize(categoryNo,brandNo,sku.getSupplierId(),sku.getHubSkuSize());
+        hubSkuPending.setSpuPendingId(hubSpuPending.getSpuPendingId());
+        String hubSize=this.getHubSize(hubSpuPending.getHubCategoryNo(),hubSpuPending.getHubBrandNo(),sku.getSupplierId(),sku.getHubSkuSize());
         if("".equals(hubSize)){
             hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
         }else{
@@ -605,7 +615,7 @@ public class PendingHandler {
     private  Map<String,String> getSeasonMap(String supplierId){
         if(null==seasonStaticMap){
             seasonStaticMap = new HashMap<>();
-            hubBrandStaticMap = new HashMap<>();
+            hubSeasonStaticMap = new HashMap<>();
             List<HubSeasonDicDto> hubSeasonDics = dataServiceHandler.getHubSeasonDic();
             for(HubSeasonDicDto dicDto:hubSeasonDics){
                 seasonStaticMap.put(dicDto.getSupplierid()+"_"+dicDto.getSupplierSeason(),
@@ -656,15 +666,15 @@ public class PendingHandler {
         //TODO CALL API OF SOP
         ObjectMapper objectMapper =new ObjectMapper();
         CategoryScreenSizeDom sizeDom = null;
-        try {
-            sizeDom = objectMapper.readValue(result,CategoryScreenSizeDom.class);
-            if(null!=sizeDom){
-                List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            sizeDom = objectMapper.readValue(result,CategoryScreenSizeDom.class);
+//            if(null!=sizeDom){
+//                List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
 
         return result;

@@ -115,7 +115,16 @@ public class DataServiceHandler {
         supplierBrandDicDto.setSupplierBrand(supplierBrandName);
         supplierBrandDicDto.setCreateUser(ConstantProperty.DATA_CREATE_USER);
         supplierBrandDicDto.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
-        supplierBrandDicGateWay.insert(supplierBrandDicDto);
+        try {
+            supplierBrandDicGateWay.insert(supplierBrandDicDto);
+        } catch (Exception e) {
+            if(e instanceof DuplicateKeyException){
+
+            }else{
+                e.printStackTrace();
+                throw e;
+            }
+        }
 
     }
 
@@ -209,7 +218,16 @@ public class DataServiceHandler {
         dto.setSupplierCategory(supplierCategory);
         dto.setMappingState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
         dto.setGenderDicId(null==hubGenderDicDto?null:hubGenderDicDto.getGenderDicId());
-        hubSupplierCategroyDicGateWay.insert(dto);
+        try {
+            hubSupplierCategroyDicGateWay.insert(dto);
+        } catch (Exception e) {
+            if(e instanceof DuplicateKeyException){
+
+            }else{
+                e.printStackTrace();
+                throw e;
+            }
+        }
 
     }
 
@@ -253,7 +271,16 @@ public class DataServiceHandler {
         dto.setCreateTime(new Date());
         dto.setCreateUser(ConstantProperty.DATA_CREATE_USER);
         dto.setColorItemName(supplierColor);
-        hubColorDicItemGateWay.insert(dto);
+        try {
+            hubColorDicItemGateWay.insert(dto);
+        } catch (Exception e) {
+            if(e instanceof DuplicateKeyException){
+
+            }else{
+                e.printStackTrace();
+                throw e;
+            }
+        }
     }
 
     public List<HubSeasonDicDto> getHubSeasonDic(){
@@ -270,7 +297,16 @@ public class DataServiceHandler {
         dto.setPushState(DataBusinessStatus.NO_PUSH.getIndex().byteValue());
         dto.setSupplierid(supplierId);
         dto.setSupplierSeason(supplierSeason);
-        hubSeasonDicGateWay.insert(dto);
+        try {
+            hubSeasonDicGateWay.insert(dto);
+        } catch (Exception e) {
+            if(e instanceof DuplicateKeyException){
+
+            }else{
+                e.printStackTrace();
+                throw e;
+            }
+        }
     }
 
 
@@ -307,7 +343,16 @@ public class DataServiceHandler {
 
 
     public void savePendingSpu(HubSpuPendingDto spuPending) throws  Exception{
-        hubSpuPendingGateWay.insert(spuPending);
+        try {
+            hubSpuPendingGateWay.insert(spuPending);
+        } catch (Exception e) {
+            if(e instanceof DuplicateKeyException){
+
+            }else{
+                e.printStackTrace();
+                throw e;
+            }
+        }
     }
 
 
@@ -325,7 +370,16 @@ public class DataServiceHandler {
     }
 
     public void savePendingSku(HubSkuPendingDto skuPendingDto) throws Exception{
-        hubSkuPendingGateWay.insert(skuPendingDto);
+        try {
+            hubSkuPendingGateWay.insert(skuPendingDto);
+        } catch (Exception e) {
+            if(e instanceof DuplicateKeyException){
+
+            }else{
+                e.printStackTrace();
+                throw e;
+            }
+        }
     }
 
     public List<HubBrandModelRuleDto> getBrandModle(String hubBrandNo){
