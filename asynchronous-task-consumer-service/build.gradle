@@ -15,7 +15,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 
 jar {
-	baseName = 'pending-product-consumer-service'
+	baseName = 'asynchronous-task-consumer-service'
 	version = '0.0.1-SNAPSHOT'
 }
 sourceCompatibility = 1.8
@@ -30,20 +30,18 @@ repositories {
 
 dependencies {
 	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.2.0-SNAPSHOT')
-	compile('org.springframework.cloud:spring-cloud-starter-feign')
-    compile('org.apache.commons:commons-lang3:3.4')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
-	compile('org.springframework.boot:spring-boot-actuator-docs')
 	compile('org.springframework.boot:spring-boot-starter-aop')
+	compile('org.springframework.cloud:spring-cloud-starter-feign')
+	compile('org.springframework.cloud:spring-cloud-starter-hystrix')
+	compile('org.springframework.cloud:spring-cloud-starter-ribbon')
 	compile('org.springframework.cloud:spring-cloud-starter-consul-discovery')
 	compile('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
+	compile('org.springframework.cloud:spring-cloud-starter-zuul')
 	compile('org.springframework.boot:spring-boot-starter-mail')
-	compile('com.shangpin.common:commons-redis:1.0.2.RELEASE')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
-	testCompile('junit:junit:4.12')
 }
 
 dependencyManagement {
