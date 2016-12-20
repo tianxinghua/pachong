@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.pendingCrud.util;
+package com.shangpin.ephub.product.business.ui.pendingCrud.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

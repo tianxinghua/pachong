@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.pendingCrud.dto;
+package com.shangpin.ephub.product.business.ui.pendingCrud.dto;
 
 import java.util.List;
 
