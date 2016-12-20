@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaWithRowBoundsDto;
@@ -22,39 +23,39 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingWit
 public interface HubSkuSupplierMappingGateWay {
 
 	
-	@RequestMapping(value = "/count-by-criteria")
+	@RequestMapping(value = "/hub-sku-supplier-mapping/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int countByCriteria(@RequestBody HubSkuSupplierMappingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/delete-by-criteria")
+	@RequestMapping(value = "/hub-sku-supplier-mapping/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody HubSkuSupplierMappingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/delete-by-primary-key")
+	@RequestMapping(value = "/hub-sku-supplier-mapping/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByPrimaryKey(Long skuSupplierMappingId);
 	
-	@RequestMapping(value = "/insert")
+	@RequestMapping(value = "/hub-sku-supplier-mapping/insert", method = RequestMethod.POST,consumes = "application/json")
     public int insert(@RequestBody HubSkuSupplierMappingDto hubSkuSupplierMapping);
 	
-	@RequestMapping(value = "/insert-selective")
+	@RequestMapping(value = "/hub-sku-supplier-mapping/insert-selective", method = RequestMethod.POST,consumes = "application/json")
     public int insertSelective(@RequestBody HubSkuSupplierMappingDto hubSkuSupplierMapping);
 	
-	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
+	@RequestMapping(value = "/hub-sku-supplier-mapping/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSkuSupplierMappingDto> selectByCriteriaWithRowbounds(@RequestBody HubSkuSupplierMappingCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
-	@RequestMapping(value = "/select-by-criteria")
+	@RequestMapping(value = "/hub-sku-supplier-mapping/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSkuSupplierMappingDto> selectByCriteria(@RequestBody HubSkuSupplierMappingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/select-by-primary-key")
+	@RequestMapping(value = "/hub-sku-supplier-mapping/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public HubSkuSupplierMappingDto selectByPrimaryKey(Long skuSupplierMappingId);
 	
-	@RequestMapping(value = "/update-by-criteria-selective")
+	@RequestMapping(value = "/hub-sku-supplier-mapping/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubSkuSupplierMappingWithCriteriaDto hubSkuSupplierMappingWithCriteria);
 	
-	@RequestMapping(value = "/update-by-criteria")
+	@RequestMapping(value = "/hub-sku-supplier-mapping/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteria(@RequestBody HubSkuSupplierMappingWithCriteriaDto hubSkuSupplierMappingWithCriteria);
 	
-	@RequestMapping(value = "/update-by-primary-key-selective")
+	@RequestMapping(value = "/hub-sku-supplier-mapping/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKeySelective(@RequestBody HubSkuSupplierMappingDto hubBrandDic);
 	
-	@RequestMapping(value = "/update-by-primary-key")
+	@RequestMapping(value = "/hub-sku-supplier-mapping/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody HubSkuSupplierMappingDto hubBrandDic);
 }

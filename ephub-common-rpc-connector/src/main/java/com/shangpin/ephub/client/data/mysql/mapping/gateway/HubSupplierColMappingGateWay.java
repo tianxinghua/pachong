@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierColMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierColMappingCriteriaWithRowBoundsDto;
@@ -21,39 +22,39 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierColMappingWit
 public interface HubSupplierColMappingGateWay {
 
 	
-	@RequestMapping(value = "/count-by-criteria")
+	@RequestMapping(value = "/hub-supplier-col-mapping/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int countByCriteria(@RequestBody HubSupplierColMappingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/delete-by-criteria")
+	@RequestMapping(value = "/hub-supplier-col-mapping/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody HubSupplierColMappingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/delete-by-primary-key")
+	@RequestMapping(value = "/hub-supplier-col-mapping/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByPrimaryKey(Long supplierColMappingId);
 	
-	@RequestMapping(value = "/insert")
+	@RequestMapping(value = "/hub-supplier-col-mapping/insert", method = RequestMethod.POST,consumes = "application/json")
     public int insert(@RequestBody HubSupplierColMappingDto hubSupplierColMapping);
 	
-	@RequestMapping(value = "/insert-selective")
+	@RequestMapping(value = "/hub-supplier-col-mapping/insert-selective", method = RequestMethod.POST,consumes = "application/json")
     public int insertSelective(@RequestBody HubSupplierColMappingDto hubSupplierColMapping);
 	
-	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
+	@RequestMapping(value = "/hub-supplier-col-mapping/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSupplierColMappingDto> selectByCriteriaWithRowbounds(@RequestBody HubSupplierColMappingCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
-	@RequestMapping(value = "/select-by-criteria")
+	@RequestMapping(value = "/hub-supplier-col-mapping/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSupplierColMappingDto> selectByCriteria(@RequestBody HubSupplierColMappingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/select-by-primary-key")
+	@RequestMapping(value = "/hub-supplier-col-mapping/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public HubSupplierColMappingDto selectByPrimaryKey(Long supplierColMappingId);
 	
-	@RequestMapping(value = "/update-by-criteria-selective")
+	@RequestMapping(value = "/hub-supplier-col-mapping/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubSupplierColMappingWithCriteriaDto hubSupplierColMappingWithCriteria);
 	
-	@RequestMapping(value = "/update-by-criteria")
+	@RequestMapping(value = "/hub-supplier-col-mapping/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteria(@RequestBody HubSupplierColMappingWithCriteriaDto hubSupplierColMappingWithCriteria);
 	
-	@RequestMapping(value = "/update-by-primary-key-selective")
+	@RequestMapping(value = "/hub-supplier-col-mapping/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKeySelective(@RequestBody HubSupplierColMappingDto hubSupplierColMapping);
 	
-	@RequestMapping(value = "/update-by-primary-key")
+	@RequestMapping(value = "/hub-supplier-col-mapping/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody HubSupplierColMappingDto hubSupplierColMapping);
 }

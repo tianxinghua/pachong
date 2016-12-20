@@ -140,6 +140,11 @@ public class HubSkuPendingDto implements Serializable {
      */
     private Byte spSkuSizeState;
 
+    /**
+     * 筛选尺码
+     */
+    private String screenSize;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSkuPendingId() {
@@ -358,6 +363,14 @@ public class HubSkuPendingDto implements Serializable {
         this.spSkuSizeState = spSkuSizeState;
     }
 
+    public String getScreenSize() {
+        return screenSize;
+    }
+
+    public void setScreenSize(String screenSize) {
+        this.screenSize = screenSize == null ? null : screenSize.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -391,6 +404,7 @@ public class HubSkuPendingDto implements Serializable {
         sb.append(", version=").append(version);
         sb.append(", infoFrom=").append(infoFrom);
         sb.append(", spSkuSizeState=").append(spSkuSizeState);
+        sb.append(", screenSize=").append(screenSize);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -434,7 +448,8 @@ public class HubSkuPendingDto implements Serializable {
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
             && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
             && (this.getInfoFrom() == null ? other.getInfoFrom() == null : this.getInfoFrom().equals(other.getInfoFrom()))
-            && (this.getSpSkuSizeState() == null ? other.getSpSkuSizeState() == null : this.getSpSkuSizeState().equals(other.getSpSkuSizeState()));
+            && (this.getSpSkuSizeState() == null ? other.getSpSkuSizeState() == null : this.getSpSkuSizeState().equals(other.getSpSkuSizeState()))
+            && (this.getScreenSize() == null ? other.getScreenSize() == null : this.getScreenSize().equals(other.getScreenSize()));
     }
 
     @Override
@@ -468,6 +483,7 @@ public class HubSkuPendingDto implements Serializable {
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         result = prime * result + ((getInfoFrom() == null) ? 0 : getInfoFrom().hashCode());
         result = prime * result + ((getSpSkuSizeState() == null) ? 0 : getSpSkuSizeState().hashCode());
+        result = prime * result + ((getScreenSize() == null) ? 0 : getScreenSize().hashCode());
         return result;
     }
 }

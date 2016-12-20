@@ -110,7 +110,7 @@ public class HubSkuPendingCriteria {
     protected abstract static class GeneratedCriteria {
         protected List<Criterion> criteria;
 
-        protected GeneratedCriteria() {
+        public GeneratedCriteria() {
             super();
             criteria = new ArrayList<Criterion>();
         }
@@ -1887,17 +1887,92 @@ public class HubSkuPendingCriteria {
             addCriterion("sp_sku_size_state not between", value1, value2, "spSkuSizeState");
             return (Criteria) this;
         }
+
+        public Criteria andScreenSizeIsNull() {
+            addCriterion("screen_size is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andScreenSizeIsNotNull() {
+            addCriterion("screen_size is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andScreenSizeEqualTo(String value) {
+            addCriterion("screen_size =", value, "screenSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andScreenSizeNotEqualTo(String value) {
+            addCriterion("screen_size <>", value, "screenSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andScreenSizeGreaterThan(String value) {
+            addCriterion("screen_size >", value, "screenSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andScreenSizeGreaterThanOrEqualTo(String value) {
+            addCriterion("screen_size >=", value, "screenSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andScreenSizeLessThan(String value) {
+            addCriterion("screen_size <", value, "screenSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andScreenSizeLessThanOrEqualTo(String value) {
+            addCriterion("screen_size <=", value, "screenSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andScreenSizeLike(String value) {
+            addCriterion("screen_size like", value, "screenSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andScreenSizeNotLike(String value) {
+            addCriterion("screen_size not like", value, "screenSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andScreenSizeIn(List<String> values) {
+            addCriterion("screen_size in", values, "screenSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andScreenSizeNotIn(List<String> values) {
+            addCriterion("screen_size not in", values, "screenSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andScreenSizeBetween(String value1, String value2) {
+            addCriterion("screen_size between", value1, value2, "screenSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andScreenSizeNotBetween(String value1, String value2) {
+            addCriterion("screen_size not between", value1, value2, "screenSize");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
 
-        protected Criteria() {
+    	public Criteria() {
             super();
         }
     }
 
     public static class Criterion {
-        private String condition;
+    	
+        public Criterion() {
+			super();
+		}
+
+		private String condition;
 
         private Object value;
 
