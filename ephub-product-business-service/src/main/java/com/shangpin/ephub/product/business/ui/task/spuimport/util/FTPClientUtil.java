@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.task.spuimport.util;
+package com.shangpin.ephub.product.business.ui.task.spuimport.util;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;

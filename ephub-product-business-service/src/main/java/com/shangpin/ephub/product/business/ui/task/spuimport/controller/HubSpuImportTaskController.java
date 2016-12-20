@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.task.spuimport.controller;
+package com.shangpin.ephub.product.business.ui.task.spuimport.controller;
 
 import java.util.List;
 
@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskDto;
-import com.shangpin.ephub.product.business.task.spuimport.dto.HubImportTaskListParam;
-import com.shangpin.ephub.product.business.task.spuimport.dto.HubImportTaskParam;
-import com.shangpin.ephub.product.business.task.spuimport.service.TaskService;
-import com.shangpin.ephub.product.business.task.spuimport.vo.HubTaskProductResponseDTO;
+import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
+import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
+import com.shangpin.ephub.product.business.ui.task.spuimport.service.TaskService;
+import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseDTO;
 import com.shangpin.ephub.response.HubResponse;
 
 
@@ -32,7 +31,7 @@ public class HubSpuImportTaskController {
 	TaskService taskService;
 	
 	@RequestMapping(value = "/import-spu",method = RequestMethod.POST)
-    public HubResponse importSpu(@RequestBody HubImportTaskParam dto){
+    public HubResponse importSpu(@RequestBody HubImportTaskRequestDto dto){
 	        	
 		try {
 			return taskService.uploadFileAndSave(dto);
@@ -42,7 +41,7 @@ public class HubSpuImportTaskController {
 		
     }
 	@RequestMapping(value = "/import-spu-list",method = RequestMethod.POST)
-    public HubResponse importSpuList(@RequestBody HubImportTaskListParam dto){
+    public HubResponse importSpuList(@RequestBody HubImportTaskListRequestDto dto){
 	        	
 		try {
 			List<HubTaskProductResponseDTO> list = taskService.findHubTaskList(dto);
