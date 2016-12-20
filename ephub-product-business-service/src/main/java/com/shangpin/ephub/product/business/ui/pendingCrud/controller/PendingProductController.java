@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.pendingCrud.controller;
+package com.shangpin.ephub.product.business.ui.pendingCrud.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.shangpin.ephub.product.business.pendingCrud.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pendingCrud.dto.PendingQuryDto;
 import com.shangpin.ephub.response.HubResponse;
 
 @Controller

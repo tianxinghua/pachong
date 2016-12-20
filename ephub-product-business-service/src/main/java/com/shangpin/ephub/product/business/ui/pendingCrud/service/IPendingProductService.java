@@ -1,10 +1,10 @@
-package com.shangpin.ephub.product.business.service.pending;
+package com.shangpin.ephub.product.business.ui.pendingCrud.service;
 
 import java.util.List;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
-import com.shangpin.ephub.product.business.pendingCrud.dto.PendingQuryDto;
-import com.shangpin.ephub.product.business.pendingCrud.vo.PendingProductDto;
+import com.shangpin.ephub.product.business.ui.pendingCrud.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProductDto;
 
 /**
  * <p>Title:IPendingProductService </p>

@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.service.pending.impl;
+package com.shangpin.ephub.product.business.ui.pendingCrud.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +18,11 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Cri
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
-import com.shangpin.ephub.product.business.pendingCrud.dto.PendingQuryDto;
-import com.shangpin.ephub.product.business.pendingCrud.emumeration.ProductState;
-import com.shangpin.ephub.product.business.pendingCrud.util.JavaUtil;
-import com.shangpin.ephub.product.business.pendingCrud.vo.PendingProductDto;
-import com.shangpin.ephub.product.business.service.pending.IPendingProductService;
+import com.shangpin.ephub.product.business.ui.pendingCrud.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pendingCrud.enumeration.ProductState;
+import com.shangpin.ephub.product.business.ui.pendingCrud.service.IPendingProductService;
+import com.shangpin.ephub.product.business.ui.pendingCrud.util.JavaUtil;
+import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.util.DateTimeUtil;
 
 @Service

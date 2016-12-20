@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.pendingCrud.vo;
+package com.shangpin.ephub.product.business.ui.pendingCrud.vo;
 
 import java.util.List;
 
