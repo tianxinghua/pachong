@@ -33,4 +33,9 @@ public interface IPendingProductService {
 	 * @param pendingProductDto
 	 */
 	public void updatePendingProduct(PendingProductDto pendingProductDto);
+	/**
+	 * 批量更新pending数据
+	 * @param pendingProductDto
+	 */
+	public void batchUpdatePendingProduct(List<PendingProductDto> pendingProducts);
 }

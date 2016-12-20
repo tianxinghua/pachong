@@ -75,6 +75,9 @@ public class PendingProductService implements IPendingProductService{
 		}
 	}
 	
+	public void batchUpdatePendingProduct(List<PendingProductDto> pendingProducts){
+		
+	}
 	
 	/***************************************************************************************************************************/
 						//以下为内部调用私有方法
