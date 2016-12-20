@@ -10,6 +10,8 @@
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
     <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="push_time" property="pushTime" jdbcType="TIMESTAMP" />
+    <result column="push_state" property="pushState" jdbcType="TINYINT" />
     <result column="data_state" property="dataState" jdbcType="TINYINT" />
     <result column="version" property="version" jdbcType="BIGINT" />
   </resultMap>
@@ -74,7 +76,7 @@
   <sql id="Base_Column_List" >
     <if test="fields == null" >
       color_dic_item_id, color_item_name, color_dic_id, create_time, create_user, update_time, 
-      update_user, memo, data_state, version
+      update_user, memo, push_time, push_state, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -99,7 +101,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    color_dic_item_id,color_item_name,color_dic_id,create_time,create_user,update_time,update_user,memo,data_state,version
+    color_dic_item_id,color_item_name,color_dic_id,create_time,create_user,update_time,update_user,memo,push_time,push_state,data_state,version
     from hub_color_dic_item
     where color_dic_item_id = #{colorDicItemId,jdbcType=BIGINT}
   </select>
@@ -116,12 +118,14 @@
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.dictionary.color.po.HubColorDicItem" >
     insert into hub_color_dic_item (color_dic_item_id, color_item_name, color_dic_id, 
       create_time, create_user, update_time, 
-      update_user, memo, data_state, 
-      version)
+      update_user, memo, push_time, 
+      push_state, data_state, version
+      )
     values (#{colorDicItemId,jdbcType=BIGINT}, #{colorItemName,jdbcType=VARCHAR}, #{colorDicId,jdbcType=BIGINT}, 
       #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
-      #{version,jdbcType=BIGINT})
+      #{updateUser,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, #{pushTime,jdbcType=TIMESTAMP}, 
+      #{pushState,jdbcType=TINYINT}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.dictionary.color.po.HubColorDicItem" >
     insert into hub_color_dic_item
@@ -149,6 +153,12 @@
       </if>
       <if test="memo != null" >
         memo,
+      </if>
+      <if test="pushTime != null" >
+        push_time,
+      </if>
+      <if test="pushState != null" >
+        push_state,
       </if>
       <if test="dataState != null" >
         data_state,
@@ -181,6 +191,12 @@
       </if>
       <if test="memo != null" >
         #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="pushTime != null" >
+        #{pushTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pushState != null" >
+        #{pushState,jdbcType=TINYINT},
       </if>
       <if test="dataState != null" >
         #{dataState,jdbcType=TINYINT},
@@ -223,6 +239,12 @@
       <if test="record.memo != null" >
         memo = #{record.memo,jdbcType=VARCHAR},
       </if>
+      <if test="record.pushTime != null" >
+        push_time = #{record.pushTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.pushState != null" >
+        push_state = #{record.pushState,jdbcType=TINYINT},
+      </if>
       <if test="record.dataState != null" >
         data_state = #{record.dataState,jdbcType=TINYINT},
       </if>
@@ -244,6 +266,8 @@
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       memo = #{record.memo,jdbcType=VARCHAR},
+      push_time = #{record.pushTime,jdbcType=TIMESTAMP},
+      push_state = #{record.pushState,jdbcType=TINYINT},
       data_state = #{record.dataState,jdbcType=TINYINT},
       version = #{record.version,jdbcType=BIGINT}
     <if test="_parameter != null" >
@@ -274,6 +298,12 @@
       <if test="memo != null" >
         memo = #{memo,jdbcType=VARCHAR},
       </if>
+      <if test="pushTime != null" >
+        push_time = #{pushTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pushState != null" >
+        push_state = #{pushState,jdbcType=TINYINT},
+      </if>
       <if test="dataState != null" >
         data_state = #{dataState,jdbcType=TINYINT},
       </if>
@@ -292,6 +322,8 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR},
       memo = #{memo,jdbcType=VARCHAR},
+      push_time = #{pushTime,jdbcType=TIMESTAMP},
+      push_state = #{pushState,jdbcType=TINYINT},
       data_state = #{dataState,jdbcType=TINYINT},
       version = #{version,jdbcType=BIGINT}
     where color_dic_item_id = #{colorDicItemId,jdbcType=BIGINT}
