@@ -12,28 +12,28 @@ public enum DataState {
 	/**
 	 * 已删除
 	 */
-	deleted(0,"deleted"),
+	DELETED((byte)0,"deleted"),
 	/**
 	 * 未删除
 	 */
-	notDeleted(1,"notDeleted");
+	NOT_DELETED((byte)1,"notDeleted");
 	/**
      * 数字索引标识
      */
-    private Integer index;
+    private byte index;
     /**
      * 描述信息
      */
     private String description;
     
-    DataState(Integer index,String description){
+    DataState(byte index,String description){
 		this.index = index;
 		this.description = description;
 	}
-    public Integer getIndex() {
+    public byte getIndex() {
         return index;
     }
-    public void setIndex(Integer index) {
+    public void setIndex(byte index) {
         this.index = index;
     }
     public String getDescription() {

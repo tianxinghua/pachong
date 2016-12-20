@@ -11,30 +11,30 @@ public enum IsCurrentSeason {
 	/**
 	 * 非当前季
 	 */
-	notCurrentSeason(0,"notCurrentSeason"),
+	NOT_CURRENT_SEASON((byte)0,"notCurrentSeason"),
 
 	/**
 	 * 当前季
 	 */
-	currentSeason(1,"currentSeason");
+	CURRENT_SEASON((byte)1,"currentSeason");
 	
 	/**
      * 数字索引标识
      */
-    private Integer index;
+    private byte index;
     /**
      * 描述信息
      */
     private String description;
     
-    IsCurrentSeason(Integer index,String description){
+    IsCurrentSeason(byte index,String description){
 		this.index = index;
 		this.description = description;
 	}
-    public Integer getIndex() {
+    public byte getIndex() {
         return index;
     }
-    public void setIndex(Integer index) {
+    public void setIndex(byte index) {
         this.index = index;
     }
     public String getDescription() {

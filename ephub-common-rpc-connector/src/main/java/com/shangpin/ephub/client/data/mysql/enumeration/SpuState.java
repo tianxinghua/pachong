@@ -13,30 +13,30 @@ public enum SpuState {
 	/**
 	 * 信息待完善
 	 */
-	infoPeccable(0,"infoPeccable"),
+	INFO_PECCABLE((byte)0,"infoPeccable"),
 	
 	/**
 	 * 信息已完善
 	 */
-	infoImpeccable(1,"infoImpeccable");
+	INFO_IMPECCABLE((byte)1,"infoImpeccable");
 
 	/**
      * 数字索引标识
      */
-    private Integer index;
+    private byte index;
     /**
      * 描述信息
      */
     private String description;
     
-    SpuState(Integer index,String description){
+    SpuState(byte index,String description){
 		this.index = index;
 		this.description = description;
 	}
-    public Integer getIndex() {
+    public byte getIndex() {
         return index;
     }
-    public void setIndex(Integer index) {
+    public void setIndex(byte index) {
         this.index = index;
     }
     public String getDescription() {
