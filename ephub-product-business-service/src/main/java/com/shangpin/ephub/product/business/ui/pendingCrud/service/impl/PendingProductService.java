@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import com.shangpin.ephub.client.common.dto.RowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
@@ -73,9 +74,31 @@ public class PendingProductService implements IPendingProductService{
 			}
 		}
 	}
-	
+	@Override
 	public void batchUpdatePendingProduct(List<PendingProductDto> pendingProducts){
+		if(null != pendingProducts && pendingProducts.size()>0){
+			for(PendingProductDto pendingProductDto : pendingProducts){
+				updatePendingProduct(pendingProductDto);
+			}
+		}
+	}
+	@Override
+	public void updatePendingProductToUnableToProcess(Long spuPendingId){
+		if(!StringUtils.isEmpty(spuPendingId)){
+			HubSpuPendingDto hubSpuPendingDto = new HubSpuPendingDto();
+			hubSpuPendingDto.setSpuPendingId(spuPendingId);
+			hubSpuPendingDto.setSpuState(SpuState.UNABLE_TO_PROCESS.getIndex());
+			hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
+		}
 		
+	}
+	@Override
+	public void batchUpdatePendingProductToUnableToProcess(List<Long> spuPendingIds){
+		if(null != spuPendingIds && spuPendingIds.size()>0){
+			for(Long spuPendingId : spuPendingIds){
+				updatePendingProductToUnableToProcess(spuPendingId);
+			}
+		}
 	}
 	
 	/***************************************************************************************************************************/

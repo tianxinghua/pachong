@@ -38,4 +38,14 @@ public interface IPendingProductService {
 	 * @param pendingProductDto
 	 */
 	public void batchUpdatePendingProduct(List<PendingProductDto> pendingProducts);
+	/**
+	 * 将HubSpuPendingDto更新为无法处理
+	 * @param spuPendingId
+	 */
+	public void updatePendingProductToUnableToProcess(Long spuPendingId);
+	/**
+	 * 批量更新为无法处理
+	 * @param spuPendingIds
+	 */
+	public void batchUpdatePendingProductToUnableToProcess(List<Long> spuPendingIds);
 }
