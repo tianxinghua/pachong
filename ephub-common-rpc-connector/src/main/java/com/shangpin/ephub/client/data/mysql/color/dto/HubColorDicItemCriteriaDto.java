@@ -667,6 +667,126 @@ public class HubColorDicItemCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andPushTimeIsNull() {
+            addCriterion("push_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTimeIsNotNull() {
+            addCriterion("push_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTimeEqualTo(Date value) {
+            addCriterion("push_time =", value, "pushTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTimeNotEqualTo(Date value) {
+            addCriterion("push_time <>", value, "pushTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTimeGreaterThan(Date value) {
+            addCriterion("push_time >", value, "pushTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("push_time >=", value, "pushTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTimeLessThan(Date value) {
+            addCriterion("push_time <", value, "pushTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTimeLessThanOrEqualTo(Date value) {
+            addCriterion("push_time <=", value, "pushTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTimeIn(List<Date> values) {
+            addCriterion("push_time in", values, "pushTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTimeNotIn(List<Date> values) {
+            addCriterion("push_time not in", values, "pushTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTimeBetween(Date value1, Date value2) {
+            addCriterion("push_time between", value1, value2, "pushTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTimeNotBetween(Date value1, Date value2) {
+            addCriterion("push_time not between", value1, value2, "pushTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushStateIsNull() {
+            addCriterion("push_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushStateIsNotNull() {
+            addCriterion("push_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushStateEqualTo(Byte value) {
+            addCriterion("push_state =", value, "pushState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushStateNotEqualTo(Byte value) {
+            addCriterion("push_state <>", value, "pushState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushStateGreaterThan(Byte value) {
+            addCriterion("push_state >", value, "pushState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("push_state >=", value, "pushState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushStateLessThan(Byte value) {
+            addCriterion("push_state <", value, "pushState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushStateLessThanOrEqualTo(Byte value) {
+            addCriterion("push_state <=", value, "pushState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushStateIn(List<Byte> values) {
+            addCriterion("push_state in", values, "pushState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushStateNotIn(List<Byte> values) {
+            addCriterion("push_state not in", values, "pushState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushStateBetween(Byte value1, Byte value2) {
+            addCriterion("push_state between", value1, value2, "pushState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("push_state not between", value1, value2, "pushState");
+            return (Criteria) this;
+        }
+
         public Criteria andDataStateIsNull() {
             addCriterion("data_state is null");
             return (Criteria) this;

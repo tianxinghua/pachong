@@ -11,30 +11,30 @@ public enum SpuModelState {
 	/**
 	 * 验证不通过
 	 */
-	verifyFailed(0,"verifyFailed"),
+	VERIFY_FAILED((byte)0,"verifyFailed"),
 	/**
 	 * 验证已通过
 	 */
-	verifyPassed(1,"verifyPassed");
+	VERIFY_PASSED((byte)1,"verifyPassed");
 	
 
 	/**
      * 数字索引标识
      */
-    private Integer index;
+    private byte index;
     /**
      * 描述信息
      */
     private String description;
     
-    SpuModelState(Integer index,String description){
+    SpuModelState(byte index,String description){
 		this.index = index;
 		this.description = description;
 	}
-    public Integer getIndex() {
+    public byte getIndex() {
         return index;
     }
-    public void setIndex(Integer index) {
+    public void setIndex(byte index) {
         this.index = index;
     }
     public String getDescription() {
