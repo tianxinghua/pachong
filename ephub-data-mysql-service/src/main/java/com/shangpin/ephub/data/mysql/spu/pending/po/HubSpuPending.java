@@ -50,6 +50,11 @@ public class HubSpuPending implements Serializable {
     private String hubSeason;
 
     /**
+     * 该款下尺码处理状态:0 未全部映射成功 ；1 全部映射成功
+     */
+    private Byte spSkuSizeState;
+
+    /**
      * =0 信息待完善 =1 信息已完善
      */
     private Byte spuState;
@@ -227,6 +232,14 @@ public class HubSpuPending implements Serializable {
 
     public void setHubSeason(String hubSeason) {
         this.hubSeason = hubSeason == null ? null : hubSeason.trim();
+    }
+
+    public Byte getSpSkuSizeState() {
+        return spSkuSizeState;
+    }
+
+    public void setSpSkuSizeState(Byte spSkuSizeState) {
+        this.spSkuSizeState = spSkuSizeState;
     }
 
     public Byte getSpuState() {
@@ -412,6 +425,7 @@ public class HubSpuPending implements Serializable {
         sb.append(", hubCategoryNo=").append(hubCategoryNo);
         sb.append(", hubBrandNo=").append(hubBrandNo);
         sb.append(", hubSeason=").append(hubSeason);
+        sb.append(", spSkuSizeState=").append(spSkuSizeState);
         sb.append(", spuState=").append(spuState);
         sb.append(", picState=").append(picState);
         sb.append(", isCurrentSeason=").append(isCurrentSeason);
@@ -459,6 +473,7 @@ public class HubSpuPending implements Serializable {
             && (this.getHubCategoryNo() == null ? other.getHubCategoryNo() == null : this.getHubCategoryNo().equals(other.getHubCategoryNo()))
             && (this.getHubBrandNo() == null ? other.getHubBrandNo() == null : this.getHubBrandNo().equals(other.getHubBrandNo()))
             && (this.getHubSeason() == null ? other.getHubSeason() == null : this.getHubSeason().equals(other.getHubSeason()))
+            && (this.getSpSkuSizeState() == null ? other.getSpSkuSizeState() == null : this.getSpSkuSizeState().equals(other.getSpSkuSizeState()))
             && (this.getSpuState() == null ? other.getSpuState() == null : this.getSpuState().equals(other.getSpuState()))
             && (this.getPicState() == null ? other.getPicState() == null : this.getPicState().equals(other.getPicState()))
             && (this.getIsCurrentSeason() == null ? other.getIsCurrentSeason() == null : this.getIsCurrentSeason().equals(other.getIsCurrentSeason()))
@@ -495,6 +510,7 @@ public class HubSpuPending implements Serializable {
         result = prime * result + ((getHubCategoryNo() == null) ? 0 : getHubCategoryNo().hashCode());
         result = prime * result + ((getHubBrandNo() == null) ? 0 : getHubBrandNo().hashCode());
         result = prime * result + ((getHubSeason() == null) ? 0 : getHubSeason().hashCode());
+        result = prime * result + ((getSpSkuSizeState() == null) ? 0 : getSpSkuSizeState().hashCode());
         result = prime * result + ((getSpuState() == null) ? 0 : getSpuState().hashCode());
         result = prime * result + ((getPicState() == null) ? 0 : getPicState().hashCode());
         result = prime * result + ((getIsCurrentSeason() == null) ? 0 : getIsCurrentSeason().hashCode());
