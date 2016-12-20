@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.task.spuimport.vo;
+package com.shangpin.ephub.product.business.ui.task.spuimport.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
