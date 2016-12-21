@@ -18,13 +18,13 @@ public class PendingQuryDto {
 
 	private Integer pageIndex;
     private Integer pageSize;
-    private String supplierName;
+    private String supplierNo;
     private String spuModel;
-    private String hubCategory;
-    private String hubBrand;
+    private String hubCategoryNo;
+    private String hubBrandNo;
     private String hubSeason;
     private String hubYear;
-    private List<Integer> inconformities;
+    private List<Integer> inconformities;//不符合的项
     private String statTime;
     private String endTime;
 }
