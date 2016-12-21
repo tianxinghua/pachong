@@ -319,6 +319,7 @@ public class DataServiceHandler {
 
     public  HubColorDicItemDto  getHubColorDicItem(String supplierColor){
         HubColorDicItemCriteriaDto criteria = new HubColorDicItemCriteriaDto();
+
         criteria.createCriteria().andColorItemNameEqualTo(supplierColor);
         List<HubColorDicItemDto> hubColorDicItemDtos = hubColorDicItemGateWay.selectByCriteria(criteria);
         if(null!=hubColorDicItemDtos&&hubColorDicItemDtos.size()>0){
