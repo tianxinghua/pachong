@@ -33,7 +33,14 @@ import com.shangpin.ephub.product.business.ui.pendingCrud.service.IPendingProduc
 import com.shangpin.ephub.product.business.ui.pendingCrud.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.util.DateTimeUtil;
-
+/**
+ * <p>Title:PendingProductService </p>
+ * <p>Description: 待处理页面Service实现类</p>
+ * <p>Company: www.shangpin.com</p> 
+ * @author lubaijiang
+ * @date 2016年12月21日 下午5:17:57
+ *
+ */
 @Service
 public class PendingProductService implements IPendingProductService{
 	

@@ -16,7 +16,14 @@ import com.shangpin.ephub.product.business.ui.pendingCrud.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pendingCrud.service.impl.PendingProductService;
 import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProductDto;
 import com.shangpin.ephub.response.HubResponse;
-
+/**
+ * <p>Title:PendingProductController </p>
+ * <p>Description: 待处理页面</p>
+ * <p>Company: www.shangpin.com</p> 
+ * @author lubaijiang
+ * @date 2016年12月21日 下午5:15:48
+ *
+ */
 @Controller
 @RequestMapping("/pending-product")
 public class PendingProductController {
