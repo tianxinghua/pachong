@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.common.dto.RowBoundsDto;
-import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskCriteriaDto.Criteria;
-import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskCriteriaWithRowBoundsDto;
-import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskDto;
-import com.shangpin.ephub.client.data.mysql.config.gateway.HubSpuImportTaskGateWay;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto.Criteria;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaWithRowBoundsDto;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
+import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.util.FTPClientUtil;
