@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.task.spuimport.dto;
+package com.shangpin.ephub.product.business.ui.task.pendingimport.dto;
 
 import java.io.Serializable;
 
@@ -17,13 +17,16 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubImportTaskParam implements Serializable {
+public class PendingImportTaskListRequestDto implements Serializable {
 	private static final long serialVersionUID = -9080013205013160520L;
     /**
      * 原始文件名
      */
-    private String fileName;
-    private String createUser;
-    private byte [] uploadfile;
+    private String localFileName;
+    private byte taskState;
+    private String startDate;
+    private String endDate;
+    private int pageIndex;
+    private int pageSize;
 
 }

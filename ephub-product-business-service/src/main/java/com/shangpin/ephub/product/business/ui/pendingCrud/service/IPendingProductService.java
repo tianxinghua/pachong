@@ -32,10 +32,20 @@ public interface IPendingProductService {
 	 * 更新单个pending数据，一个pending数据包括一个PengdingSpu和对应的多个PendingSku
 	 * @param pendingProductDto
 	 */
-	public void updatePendingProduct(PendingProductDto pendingProductDto);
+	public boolean updatePendingProduct(PendingProductDto pendingProductDto);
 	/**
 	 * 批量更新pending数据
 	 * @param pendingProductDto
 	 */
-	public void batchUpdatePendingProduct(List<PendingProductDto> pendingProducts);
+	public boolean batchUpdatePendingProduct(List<PendingProductDto> pendingProducts);
+	/**
+	 * 将HubSpuPendingDto更新为无法处理
+	 * @param spuPendingId
+	 */
+	public boolean updatePendingProductToUnableToProcess(Long spuPendingId);
+	/**
+	 * 批量更新为无法处理
+	 * @param spuPendingIds
+	 */
+	public boolean batchUpdatePendingProductToUnableToProcess(List<Long> spuPendingIds);
 }

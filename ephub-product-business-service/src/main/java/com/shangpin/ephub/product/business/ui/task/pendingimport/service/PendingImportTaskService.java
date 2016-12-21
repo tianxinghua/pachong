@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.task.spuimport.service;
+package com.shangpin.ephub.product.business.ui.task.pendingimport.service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,16 +11,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.common.dto.RowBoundsDto;
-import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskCriteriaDto.Criteria;
-import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskCriteriaWithRowBoundsDto;
-import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskDto;
-import com.shangpin.ephub.client.data.mysql.config.gateway.HubSpuImportTaskGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaWithRowBoundsDto;
-import com.shangpin.ephub.product.business.task.spuimport.dto.HubImportTaskListParam;
-import com.shangpin.ephub.product.business.task.spuimport.dto.HubImportTaskParam;
-import com.shangpin.ephub.product.business.task.spuimport.util.FTPClientUtil;
-import com.shangpin.ephub.product.business.task.spuimport.vo.HubTaskProductResponseDTO;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto.Criteria;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaWithRowBoundsDto;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
+import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
+import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
+import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
+import com.shangpin.ephub.product.business.ui.task.spuimport.util.FTPClientUtil;
+import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseDTO;
 import com.shangpin.ephub.product.business.util.DateTimeUtil;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -40,12 +39,12 @@ import com.shangpin.ephub.response.HubResponse;
  */
 @SuppressWarnings("rawtypes")
 @Service
-public class TaskService {
+public class PendingImportTaskService {
 	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
 	@Autowired 
 	HubSpuImportTaskGateWay spuImportGateway;
 	private static String ftpPath = "F://";
-	public HubResponse uploadFileAndSave(HubImportTaskParam task) throws Exception{
+	public HubResponse uploadFileAndSave(HubImportTaskRequestDto task) throws Exception{
 		
 		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		Date date = new Date();
@@ -60,7 +59,7 @@ public class TaskService {
 		}
 		return flag;
 	}
-	private boolean saveTask(HubImportTaskParam task) throws Exception{
+	private boolean saveTask(HubImportTaskRequestDto task) throws Exception{
 		// TODO Auto-generated method stub
 		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
@@ -76,7 +75,7 @@ public class TaskService {
 		return true;
 	}
 	
-	public List<HubTaskProductResponseDTO> findHubTaskList(HubImportTaskListParam param) {
+	public List<HubTaskProductResponseDTO> findHubTaskList(HubImportTaskListRequestDto param) {
 		
 		HubSpuImportTaskCriteriaWithRowBoundsDto dto = new HubSpuImportTaskCriteriaWithRowBoundsDto();
 		if(!StringUtils.isEmpty(param.getPageIndex()) && !StringUtils.isEmpty(param.getPageSize())){

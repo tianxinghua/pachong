@@ -2017,6 +2017,76 @@ public class HubSpuPendingCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andHubColorNoIsNull() {
+            addCriterion("hub_color_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoIsNotNull() {
+            addCriterion("hub_color_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoEqualTo(String value) {
+            addCriterion("hub_color_no =", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoNotEqualTo(String value) {
+            addCriterion("hub_color_no <>", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoGreaterThan(String value) {
+            addCriterion("hub_color_no >", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoGreaterThanOrEqualTo(String value) {
+            addCriterion("hub_color_no >=", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoLessThan(String value) {
+            addCriterion("hub_color_no <", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoLessThanOrEqualTo(String value) {
+            addCriterion("hub_color_no <=", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoLike(String value) {
+            addCriterion("hub_color_no like", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoNotLike(String value) {
+            addCriterion("hub_color_no not like", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoIn(List<String> values) {
+            addCriterion("hub_color_no in", values, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoNotIn(List<String> values) {
+            addCriterion("hub_color_no not in", values, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoBetween(String value1, String value2) {
+            addCriterion("hub_color_no between", value1, value2, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoNotBetween(String value1, String value2) {
+            addCriterion("hub_color_no not between", value1, value2, "hubColorNo");
+            return (Criteria) this;
+        }
+
         public Criteria andHubColorIsNull() {
             addCriterion("hub_color is null");
             return (Criteria) this;
