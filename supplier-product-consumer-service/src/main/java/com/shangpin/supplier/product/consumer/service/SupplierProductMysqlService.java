@@ -43,7 +43,9 @@ public class SupplierProductMysqlService {
 	 * @return
 	 */
 	public ProductStatus isHubSpuChanged(HubSupplierSpuDto hubSpu,PendingSpu pendingSpu){
-					
+		try {
+			
+				
 		HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 		if(null == hubSpuSel){
 			hubSupplierSpuGateWay.insert(hubSpu);
@@ -59,7 +61,12 @@ public class SupplierProductMysqlService {
 				return ProductStatus.NO_NEED_HANDLE;
 			}
 		}
+		} catch (Exception e) {
+			System.out.println("supplierid============="+hubSpu.getSupplierId());
+			e.printStackTrace();
+		}	
 			
+		return null;
 	}	
 	
 	/**
