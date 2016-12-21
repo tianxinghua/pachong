@@ -55,7 +55,7 @@ public class HubSpuPending implements Serializable {
     private Byte spSkuSizeState;
 
     /**
-     * =0 信息待完善 =1 信息已完善
+     * =0 信息待完善 =1 信息已完善 =2无法处理
      */
     private Byte spuState;
 
@@ -149,6 +149,11 @@ public class HubSpuPending implements Serializable {
      * 上市时间及季节状态
      */
     private Byte spuSeasonState;
+
+    /**
+     * 颜色码
+     */
+    private String hubColorNo;
 
     /**
      * 颜色
@@ -394,6 +399,14 @@ public class HubSpuPending implements Serializable {
         this.spuSeasonState = spuSeasonState;
     }
 
+    public String getHubColorNo() {
+        return hubColorNo;
+    }
+
+    public void setHubColorNo(String hubColorNo) {
+        this.hubColorNo = hubColorNo == null ? null : hubColorNo.trim();
+    }
+
     public String getHubColor() {
         return hubColor;
     }
@@ -445,6 +458,7 @@ public class HubSpuPending implements Serializable {
         sb.append(", spuBrandState=").append(spuBrandState);
         sb.append(", spuGenderState=").append(spuGenderState);
         sb.append(", spuSeasonState=").append(spuSeasonState);
+        sb.append(", hubColorNo=").append(hubColorNo);
         sb.append(", hubColor=").append(hubColor);
         sb.append(", spuColorState=").append(spuColorState);
         sb.append(", serialVersionUID=").append(serialVersionUID);
@@ -493,6 +507,7 @@ public class HubSpuPending implements Serializable {
             && (this.getSpuBrandState() == null ? other.getSpuBrandState() == null : this.getSpuBrandState().equals(other.getSpuBrandState()))
             && (this.getSpuGenderState() == null ? other.getSpuGenderState() == null : this.getSpuGenderState().equals(other.getSpuGenderState()))
             && (this.getSpuSeasonState() == null ? other.getSpuSeasonState() == null : this.getSpuSeasonState().equals(other.getSpuSeasonState()))
+            && (this.getHubColorNo() == null ? other.getHubColorNo() == null : this.getHubColorNo().equals(other.getHubColorNo()))
             && (this.getHubColor() == null ? other.getHubColor() == null : this.getHubColor().equals(other.getHubColor()))
             && (this.getSpuColorState() == null ? other.getSpuColorState() == null : this.getSpuColorState().equals(other.getSpuColorState()));
     }
@@ -530,6 +545,7 @@ public class HubSpuPending implements Serializable {
         result = prime * result + ((getSpuBrandState() == null) ? 0 : getSpuBrandState().hashCode());
         result = prime * result + ((getSpuGenderState() == null) ? 0 : getSpuGenderState().hashCode());
         result = prime * result + ((getSpuSeasonState() == null) ? 0 : getSpuSeasonState().hashCode());
+        result = prime * result + ((getHubColorNo() == null) ? 0 : getHubColorNo().hashCode());
         result = prime * result + ((getHubColor() == null) ? 0 : getHubColor().hashCode());
         result = prime * result + ((getSpuColorState() == null) ? 0 : getSpuColorState().hashCode());
         return result;

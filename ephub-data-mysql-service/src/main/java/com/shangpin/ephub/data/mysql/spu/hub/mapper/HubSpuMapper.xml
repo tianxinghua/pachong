@@ -9,6 +9,8 @@
     <result column="category_no" property="categoryNo" jdbcType="VARCHAR" />
     <result column="brand_no" property="brandNo" jdbcType="VARCHAR" />
     <result column="market_time" property="marketTime" jdbcType="VARCHAR" />
+    <result column="hub_color" property="hubColor" jdbcType="VARCHAR" />
+    <result column="hub_color_no" property="hubColorNo" jdbcType="VARCHAR" />
     <result column="season" property="season" jdbcType="VARCHAR" />
     <result column="spu_desc" property="spuDesc" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -85,9 +87,10 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      spu_id, spu_model, spu_name, gender, category_no, brand_no, market_time, season, 
-      spu_desc, create_time, create_user, update_time, update_user, spu_state, spu_select_state, 
-      new_type, pic_url, spu_no, info_from, memo, data_state, version
+      spu_id, spu_model, spu_name, gender, category_no, brand_no, market_time, hub_color, 
+      hub_color_no, season, spu_desc, create_time, create_user, update_time, update_user, 
+      spu_state, spu_select_state, new_type, pic_url, spu_no, info_from, memo, data_state, 
+      version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -112,7 +115,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    spu_id,spu_model,spu_name,gender,category_no,brand_no,market_time,season,spu_desc,create_time,create_user,update_time,update_user,spu_state,spu_select_state,new_type,pic_url,spu_no,info_from,memo,data_state,version
+    spu_id,spu_model,spu_name,gender,category_no,brand_no,market_time,hub_color,hub_color_no,season,spu_desc,create_time,create_user,update_time,update_user,spu_state,spu_select_state,new_type,pic_url,spu_no,info_from,memo,data_state,version
     from hub_spu
     where spu_id = #{spuId,jdbcType=BIGINT}
   </select>
@@ -129,20 +132,22 @@
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
     insert into hub_spu (spu_id, spu_model, spu_name, 
       gender, category_no, brand_no, 
-      market_time, season, spu_desc, 
-      create_time, create_user, update_time, 
-      update_user, spu_state, spu_select_state, 
-      new_type, pic_url, spu_no, 
-      info_from, memo, data_state, 
-      version)
+      market_time, hub_color, hub_color_no, 
+      season, spu_desc, create_time, 
+      create_user, update_time, update_user, 
+      spu_state, spu_select_state, new_type, 
+      pic_url, spu_no, info_from, 
+      memo, data_state, version
+      )
     values (#{spuId,jdbcType=BIGINT}, #{spuModel,jdbcType=VARCHAR}, #{spuName,jdbcType=VARCHAR}, 
       #{gender,jdbcType=VARCHAR}, #{categoryNo,jdbcType=VARCHAR}, #{brandNo,jdbcType=VARCHAR}, 
-      #{marketTime,jdbcType=VARCHAR}, #{season,jdbcType=VARCHAR}, #{spuDesc,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR}, #{spuState,jdbcType=TINYINT}, #{spuSelectState,jdbcType=TINYINT}, 
-      #{newType,jdbcType=TINYINT}, #{picUrl,jdbcType=VARCHAR}, #{spuNo,jdbcType=VARCHAR}, 
-      #{infoFrom,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
-      #{version,jdbcType=BIGINT})
+      #{marketTime,jdbcType=VARCHAR}, #{hubColor,jdbcType=VARCHAR}, #{hubColorNo,jdbcType=VARCHAR}, 
+      #{season,jdbcType=VARCHAR}, #{spuDesc,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
+      #{spuState,jdbcType=TINYINT}, #{spuSelectState,jdbcType=TINYINT}, #{newType,jdbcType=TINYINT}, 
+      #{picUrl,jdbcType=VARCHAR}, #{spuNo,jdbcType=VARCHAR}, #{infoFrom,jdbcType=TINYINT}, 
+      #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
     insert into hub_spu
@@ -167,6 +172,12 @@
       </if>
       <if test="marketTime != null" >
         market_time,
+      </if>
+      <if test="hubColor != null" >
+        hub_color,
+      </if>
+      <if test="hubColorNo != null" >
+        hub_color_no,
       </if>
       <if test="season != null" >
         season,
@@ -235,6 +246,12 @@
       </if>
       <if test="marketTime != null" >
         #{marketTime,jdbcType=VARCHAR},
+      </if>
+      <if test="hubColor != null" >
+        #{hubColor,jdbcType=VARCHAR},
+      </if>
+      <if test="hubColorNo != null" >
+        #{hubColorNo,jdbcType=VARCHAR},
       </if>
       <if test="season != null" >
         #{season,jdbcType=VARCHAR},
@@ -313,6 +330,12 @@
       <if test="record.marketTime != null" >
         market_time = #{record.marketTime,jdbcType=VARCHAR},
       </if>
+      <if test="record.hubColor != null" >
+        hub_color = #{record.hubColor,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hubColorNo != null" >
+        hub_color_no = #{record.hubColorNo,jdbcType=VARCHAR},
+      </if>
       <if test="record.season != null" >
         season = #{record.season,jdbcType=VARCHAR},
       </if>
@@ -372,6 +395,8 @@
       category_no = #{record.categoryNo,jdbcType=VARCHAR},
       brand_no = #{record.brandNo,jdbcType=VARCHAR},
       market_time = #{record.marketTime,jdbcType=VARCHAR},
+      hub_color = #{record.hubColor,jdbcType=VARCHAR},
+      hub_color_no = #{record.hubColorNo,jdbcType=VARCHAR},
       season = #{record.season,jdbcType=VARCHAR},
       spu_desc = #{record.spuDesc,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -411,6 +436,12 @@
       </if>
       <if test="marketTime != null" >
         market_time = #{marketTime,jdbcType=VARCHAR},
+      </if>
+      <if test="hubColor != null" >
+        hub_color = #{hubColor,jdbcType=VARCHAR},
+      </if>
+      <if test="hubColorNo != null" >
+        hub_color_no = #{hubColorNo,jdbcType=VARCHAR},
       </if>
       <if test="season != null" >
         season = #{season,jdbcType=VARCHAR},
@@ -468,6 +499,8 @@
       category_no = #{categoryNo,jdbcType=VARCHAR},
       brand_no = #{brandNo,jdbcType=VARCHAR},
       market_time = #{marketTime,jdbcType=VARCHAR},
+      hub_color = #{hubColor,jdbcType=VARCHAR},
+      hub_color_no = #{hubColorNo,jdbcType=VARCHAR},
       season = #{season,jdbcType=VARCHAR},
       spu_desc = #{spuDesc,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},

@@ -40,6 +40,16 @@ public class HubSpuDto implements Serializable {
     private String marketTime;
 
     /**
+     * 颜色
+     */
+    private String hubColor;
+
+    /**
+     * 颜色码
+     */
+    private String hubColorNo;
+
+    /**
      * 上市季节
      */
     private String season;
@@ -170,6 +180,22 @@ public class HubSpuDto implements Serializable {
 
     public void setMarketTime(String marketTime) {
         this.marketTime = marketTime == null ? null : marketTime.trim();
+    }
+
+    public String getHubColor() {
+        return hubColor;
+    }
+
+    public void setHubColor(String hubColor) {
+        this.hubColor = hubColor == null ? null : hubColor.trim();
+    }
+
+    public String getHubColorNo() {
+        return hubColorNo;
+    }
+
+    public void setHubColorNo(String hubColorNo) {
+        this.hubColorNo = hubColorNo == null ? null : hubColorNo.trim();
     }
 
     public String getSeason() {
@@ -305,6 +331,8 @@ public class HubSpuDto implements Serializable {
         sb.append(", categoryNo=").append(categoryNo);
         sb.append(", brandNo=").append(brandNo);
         sb.append(", marketTime=").append(marketTime);
+        sb.append(", hubColor=").append(hubColor);
+        sb.append(", hubColorNo=").append(hubColorNo);
         sb.append(", season=").append(season);
         sb.append(", spuDesc=").append(spuDesc);
         sb.append(", createTime=").append(createTime);
@@ -344,6 +372,8 @@ public class HubSpuDto implements Serializable {
             && (this.getCategoryNo() == null ? other.getCategoryNo() == null : this.getCategoryNo().equals(other.getCategoryNo()))
             && (this.getBrandNo() == null ? other.getBrandNo() == null : this.getBrandNo().equals(other.getBrandNo()))
             && (this.getMarketTime() == null ? other.getMarketTime() == null : this.getMarketTime().equals(other.getMarketTime()))
+            && (this.getHubColor() == null ? other.getHubColor() == null : this.getHubColor().equals(other.getHubColor()))
+            && (this.getHubColorNo() == null ? other.getHubColorNo() == null : this.getHubColorNo().equals(other.getHubColorNo()))
             && (this.getSeason() == null ? other.getSeason() == null : this.getSeason().equals(other.getSeason()))
             && (this.getSpuDesc() == null ? other.getSpuDesc() == null : this.getSpuDesc().equals(other.getSpuDesc()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
@@ -372,6 +402,8 @@ public class HubSpuDto implements Serializable {
         result = prime * result + ((getCategoryNo() == null) ? 0 : getCategoryNo().hashCode());
         result = prime * result + ((getBrandNo() == null) ? 0 : getBrandNo().hashCode());
         result = prime * result + ((getMarketTime() == null) ? 0 : getMarketTime().hashCode());
+        result = prime * result + ((getHubColor() == null) ? 0 : getHubColor().hashCode());
+        result = prime * result + ((getHubColorNo() == null) ? 0 : getHubColorNo().hashCode());
         result = prime * result + ((getSeason() == null) ? 0 : getSeason().hashCode());
         result = prime * result + ((getSpuDesc() == null) ? 0 : getSpuDesc().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
