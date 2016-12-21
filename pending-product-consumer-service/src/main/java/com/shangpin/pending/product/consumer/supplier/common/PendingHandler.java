@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
+import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
+import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.pending.product.consumer.util.BurberryModelRule;
 import com.shangpin.pending.product.consumer.util.PradaModelRule;
 import org.springframework.beans.BeanUtils;
@@ -64,8 +67,10 @@ public class PendingHandler {
     @Autowired
     BurberryModelRule burberryModelRule;
 
+
+
     @Autowired
-    PradaModelRule pradaModelRule;
+    HubBrandModelRuleGateWay brandModelRuleGateWay;
 
 
     static Map<String,Map<String,String>> supplierGenderStaticMap = null;
@@ -142,7 +147,7 @@ public class PendingHandler {
 
 
                     }else if(skuStatus==MessageType.UPDATE.getIndex()){
-                        //TODO UPDATE OLD
+                        this.updateSku(hubSpuPending,sku,headers);
 
                     }else if(skuStatus==MessageType.MODIFY_PRICE.getIndex()){
                        //TODO 处理自动调整价格
@@ -205,7 +210,7 @@ public class PendingHandler {
 
             BeanUtils.copyProperties(spu,hubSpuPending);
             boolean allStatus=true;
-
+            boolean brandmapping = true;
 
 
 
@@ -216,12 +221,15 @@ public class PendingHandler {
             if(!setCategoryMapping(spu, hubSpuPending)) allStatus=false;
 
             //获取品牌
-            if(!setBrandMapping(spu, hubSpuPending)) allStatus=false;
+            brandmapping = setBrandMapping(spu, hubSpuPending);
+            if(!brandmapping) allStatus=false;
 
 
             //todo 货号验证
+            if(brandmapping){
+                if(!setBrandModel(spu, hubSpuPending)) allStatus=false;
+            }
 
-            if(!setBrandModel(spu, hubSpuPending)) allStatus=false;
 
             //获取颜色
             if(!setColorMapping(spu, hubSpuPending)) allStatus = false;
@@ -354,23 +362,22 @@ public class PendingHandler {
         String spuModel = "";
 
         if(!StringUtils.isEmpty(hubSpuPending.getHubBrandNo())){
-
-            if("BOOO5".equals(hubSpuPending.getHubBrandNo())){
-
-                spuModel= burberryModelRule.checkModelRule(hubSpuPending.getSpuModel());
-
-            }else if("BOOO2".equals(hubSpuPending.getHubBrandNo())){
-
-                spuModel = pradaModelRule.checkModelRule(hubSpuPending.getSpuModel());
+            BrandModelDto queryDto = new BrandModelDto();
+            queryDto.setBrandMode(spu.getSpuModel());
+            queryDto.setHubBrandNo(hubSpuPending.getHubBrandNo());
+            queryDto.setHubCategoryNo(hubSpuPending.getHubCategoryNo());
+            BrandModelResult verify = brandModelRuleGateWay.verify(queryDto);
+            if(null!=verify){
+                if(verify.isPassing()){
+                    hubSpuPending.setSpuModel(verify.getBrandMode());
+                    hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+                }else{
+                    hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+                }
 
 
             }else{
                 hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-                return false;
-            }
-            if(null!=spuModel){
-                hubSpuPending.setSpuModel(spuModel);
-                hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
             }
 
 //            Map<String,Map<String,String>>  brandModelMap = this.getBrandModelMap(hubSpuPending.getHubBrandNo());
@@ -500,7 +507,7 @@ public class PendingHandler {
     }
 
 
-    private void updateSku(PendingSku sku, Map<String, Object> headers) throws Exception{
+    private void updateSku(HubSpuPendingDto hubSpuPending,PendingSku sku, Map<String, Object> headers) throws Exception{
         //TODO 判断状态 是否可以修改
 
     }
