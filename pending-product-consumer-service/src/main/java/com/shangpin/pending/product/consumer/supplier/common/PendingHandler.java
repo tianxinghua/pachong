@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.shangpin.pending.product.consumer.util.BurberryModelRule;
+import com.shangpin.pending.product.consumer.util.PradaModelRule;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,6 +61,12 @@ public class PendingHandler {
     @Autowired
     ValidationRuleUtil  validationRuleUtil;
 
+    @Autowired
+    BurberryModelRule burberryModelRule;
+
+    @Autowired
+    PradaModelRule pradaModelRule;
+
 
     static Map<String,Map<String,String>> supplierGenderStaticMap = null;
 
@@ -103,8 +111,13 @@ public class PendingHandler {
         if(messageMap.containsKey(pendingSpu.getSupplierId())){
 
             Integer spuStatus = messageMap.get(pendingSpu.getSupplierId());
+            //防止数据传入错误，需要先查询pending表中是否存在
+            HubSpuPendingDto tmp = dataServiceHandler.getHubSpuPending(message.getSupplierId(),message.getData().getSupplierSpuNo());
             if(spuStatus== MessageType.NEW.getIndex()){
-                hubSpuPending = this.addNewSpu(pendingSpu,headers);
+                if(null==tmp){
+                    hubSpuPending = this.addNewSpu(pendingSpu,headers);
+                }
+
 
             }else if(spuStatus==MessageType.UPDATE.getIndex()){
                 hubSpuPending = this.updateSpu(pendingSpu,headers);
@@ -120,9 +133,13 @@ public class PendingHandler {
 
             for(PendingSku sku:skus){
                 if(messageMap.containsKey(sku.getSupplierSkuNo())){
+                    HubSkuPendingDto hubSkuPending = dataServiceHandler.getHubSkuPending(sku.getSupplierId(), sku.getSupplierSkuNo());
                     skuStatus = messageMap.get(sku.getSupplierSkuNo());
                     if(skuStatus== MessageType.NEW.getIndex()){
-                        this.addNewSku(hubSpuPending,sku,headers);
+                        if(null==hubSkuPending){
+                            this.addNewSku(hubSpuPending,sku,headers);
+                        }
+
 
                     }else if(skuStatus==MessageType.UPDATE.getIndex()){
                         //TODO UPDATE OLD
@@ -334,34 +351,53 @@ public class PendingHandler {
 
     public  boolean setBrandModel(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception{
         boolean result = true;
+        String spuModel = "";
 
         if(!StringUtils.isEmpty(hubSpuPending.getHubBrandNo())){
 
-            Map<String,Map<String,String>>  brandModelMap = this.getBrandModelMap(hubSpuPending.getHubBrandNo());
-            if(brandModelMap.containsKey(hubSpuPending.getHubBrandNo())){
-                Map<String, String> modelRegMap = brandModelMap.get(hubSpuPending.getHubBrandNo());
+            if("BOOO5".equals(hubSpuPending.getHubBrandNo())){
+
+                spuModel= burberryModelRule.checkModelRule(hubSpuPending.getSpuModel());
+
+            }else if("BOOO2".equals(hubSpuPending.getHubBrandNo())){
+
+                spuModel = pradaModelRule.checkModelRule(hubSpuPending.getSpuModel());
 
 
-                Set<String> regSet = modelRegMap.keySet();
-                for(String reg:regSet){
-    //               if(validationRuleUtil.judageSpuMode(hubSpuPending.getHubBrandNo(),"",))
-                }
-
-    //            if(modelRegMap.containsKey(hubSpuPending.getHubBrandNo())){
-    //                //包含时转化赋值
-//                    hubSpuPending.setSpuModel("");
-    //                hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-    //            }else{
-    //                result = false;
-    //                hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-    //
-    //
-    //            }
             }else{
-                result = false;
-                hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-
+                hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+                return false;
             }
+            if(null!=spuModel){
+                hubSpuPending.setSpuModel(spuModel);
+                hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+            }
+
+//            Map<String,Map<String,String>>  brandModelMap = this.getBrandModelMap(hubSpuPending.getHubBrandNo());
+//            if(brandModelMap.containsKey(hubSpuPending.getHubBrandNo())){
+//                Map<String, String> modelRegMap = brandModelMap.get(hubSpuPending.getHubBrandNo());
+//
+//
+//                Set<String> regSet = modelRegMap.keySet();
+//                for(String reg:regSet){
+//    //               if(validationRuleUtil.judageSpuMode(hubSpuPending.getHubBrandNo(),"",))
+//                }
+//
+//    //            if(modelRegMap.containsKey(hubSpuPending.getHubBrandNo())){
+//    //                //包含时转化赋值
+////                    hubSpuPending.setSpuModel("");
+//    //                hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+//    //            }else{
+//    //                result = false;
+//    //                hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+//    //
+//    //
+//    //            }
+//            }else{
+//                result = false;
+//                hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+//
+//            }
         }
 
         return result;
@@ -436,7 +472,12 @@ public class PendingHandler {
 
         HubSpuPendingDto spuPendingDto = null;
         //TODO 判断状态 是否可以修改
-        return  null;
+        spuPendingDto =dataServiceHandler.getHubSpuPending(spu.getSupplierId(),spu.getSupplierSpuNo());
+        if(null!=spuPendingDto){
+//            if(spuPendingDto.getSpuState().intValue()==PropertyStatus.)
+
+        }
+        return  spuPendingDto;
 
     }
 

@@ -2,6 +2,7 @@ package com.shangpin.pending.product.consumer.supplier.common;
 
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
+import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
 import com.shangpin.ephub.client.data.mysql.brand.gateway.HubSupplierBrandDicGateWay;
@@ -31,6 +32,7 @@ import com.shangpin.ephub.client.data.mysql.rule.gateway.HubBrandModelRuleGateWa
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
@@ -46,6 +48,7 @@ import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
 import com.shangpin.pending.product.consumer.conf.clients.mysql.spu.bean.HubSpuPending;
 import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
 import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
@@ -60,6 +63,7 @@ import java.util.*;
 @Service
 @EnableDiscoveryClient
 @EnableFeignClients("com.shangpin.ephub")
+@Slf4j
 public class DataServiceHandler {
 
     @Autowired
@@ -102,6 +106,18 @@ public class DataServiceHandler {
     private HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
 
 
+    public HubSupplierBrandDicDto getHubSupplierBrand(String supplierId,String supplierBrandName){
+        HubSupplierBrandDicCriteriaDto criteria = new HubSupplierBrandDicCriteriaDto();
+        criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierBrandEqualTo(supplierBrandName);
+        List<HubSupplierBrandDicDto> hubSupplierBrandDicDtos = supplierBrandDicGateWay.selectByCriteria(criteria);
+        if(null!=hubSupplierBrandDicDtos&&hubSupplierBrandDicDtos.size()>0){
+            return hubSupplierBrandDicDtos.get(0);
+        }else{
+            return null;
+        }
+    }
+
+
     public void saveBrand(String supplierId,String supplierBrandName) throws Exception{
 //        HubBrandDicDto brandDicDto = new HubBrandDicDto();
 //        brandDicDto.setCreateTime(new Date());
@@ -110,6 +126,9 @@ public class DataServiceHandler {
 //        brandDicDto.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
 //        int insert = brandDicGateway.insert(brandDicDto);
 
+        if(null!=getHubSupplierBrand(supplierId, supplierBrandName)){//重复不做处理
+            return;
+        }
         HubSupplierBrandDicDto supplierBrandDicDto = new HubSupplierBrandDicDto();
         supplierBrandDicDto.setSupplierId(supplierId);
         supplierBrandDicDto.setSupplierBrand(supplierBrandName);
@@ -170,7 +189,14 @@ public class DataServiceHandler {
         return hubGenderDicGateWay.selectByCriteria(criteria);
     }
 
+
+
+
     public void saveHubGender(String  supplierId,String supplierGender) throws Exception{
+        //如果存在 不再保存
+        if(null!=this.getHubGenderDicBySupplierIdAndSupplierGender(supplierId,supplierGender)){
+            return ;
+        }
         HubGenderDicDto hubGenderDicDto = new HubGenderDicDto();
         hubGenderDicDto.setCreateTime(new Date());
         hubGenderDicDto.setCreateUser(ConstantProperty.DATA_CREATE_USER);
@@ -210,10 +236,36 @@ public class DataServiceHandler {
         return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
     }
 
+    public HubSupplierCategroyDicDto getSupplierCategoryBySupplierIdAndSupplierCategoryAndHubGender(String supplierId,String supplierCategory,Long hubGenderId){
+        HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
+        HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
+        criterion.andSupplierIdEqualTo(supplierId).andSupplierCategoryEqualTo(supplierCategory).andGenderDicIdEqualTo(hubGenderId);
+        List<HubSupplierCategroyDicDto> hubSupplierCategroyDicDtos = hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
+        if(null!=hubSupplierCategroyDicDtos&&hubSupplierCategroyDicDtos.size()>0){
+            return  hubSupplierCategroyDicDtos.get(0);
+        }else{
+            return null;
+        }
+    }
+
+
     public void saveHubCategory(String supplierId,String supplierCategory,String  supplierGender) throws Exception{
+
         HubGenderDicDto hubGenderDicDto = this.getHubGenderDicBySupplierIdAndSupplierGender(supplierId, supplierGender);
 
         HubSupplierCategroyDicDto dto = new HubSupplierCategroyDicDto();
+
+        if(null!=hubGenderDicDto){
+            //如果已经存在  不做处理
+            if(null!=getSupplierCategoryBySupplierIdAndSupplierCategoryAndHubGender(supplierId,supplierCategory,hubGenderDicDto.getGenderDicId())){
+                 return ;
+            }
+        }else{
+
+            throw new Exception("can't save category ,because not save supplier gender");
+        }
+
+
         dto.setSupplierId(supplierId);
         dto.setSupplierCategory(supplierCategory);
         dto.setMappingState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
@@ -265,8 +317,23 @@ public class DataServiceHandler {
 
     }
 
+    public  HubColorDicItemDto  getHubColorDicItem(String supplierColor){
+        HubColorDicItemCriteriaDto criteria = new HubColorDicItemCriteriaDto();
+        criteria.createCriteria().andColorItemNameEqualTo(supplierColor);
+        List<HubColorDicItemDto> hubColorDicItemDtos = hubColorDicItemGateWay.selectByCriteria(criteria);
+        if(null!=hubColorDicItemDtos&&hubColorDicItemDtos.size()>0){
+            return  hubColorDicItemDtos.get(0);
+        }else{
+            return null;
+        }
+    }
+
 
     public void saveColorItem(String supplierColor)  throws  Exception{
+        //查询是否存在
+        if(null!=this.getHubColorDicItem(supplierColor)){
+            return;
+        }
         HubColorDicItemDto dto = new HubColorDicItemDto();
         dto.setCreateTime(new Date());
         dto.setCreateUser(ConstantProperty.DATA_CREATE_USER);
@@ -290,7 +357,24 @@ public class DataServiceHandler {
 
     }
 
+
+    public HubSeasonDicDto getHubSeasonDicBySupplierIdAndsupplierSeason(String supplierId,String supplierSeason){
+        HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
+        criteria.createCriteria().andSupplieridEqualTo(supplierId).andSupplierSeasonEqualTo(supplierSeason);
+        List<HubSeasonDicDto> hubSeasonDicDtos = hubSeasonDicGateWay.selectByCriteria(criteria);
+        if(null!=hubSeasonDicDtos&&hubSeasonDicDtos.size()>0){
+            return  hubSeasonDicDtos.get(0);
+        }else{
+            return null;
+        }
+
+    }
+
     public void saveSeason(String supplierId,String supplierSeason){
+        //先查询实付存在 存在不做处理
+        if(null!=this.getHubSeasonDicBySupplierIdAndsupplierSeason(supplierId,supplierSeason)){
+            return;
+        }
         HubSeasonDicDto dto = new HubSeasonDicDto();
         dto.setCreateUser(ConstantProperty.DATA_CREATE_USER);
         dto.setCreateTime(new Date());
@@ -389,6 +473,29 @@ public class DataServiceHandler {
 
         return  hubBrandModelRuleGateWay.selectByCriteria(criterial);
 
+    }
+
+    public HubSpuPendingDto getHubSpuPending(String supplierId,String supplierSpuNo){
+        HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
+        criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
+        List<HubSpuPendingDto> hubSpuPendingDtos = hubSpuPendingGateWay.selectByCriteria(criteria);
+        if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
+            return hubSpuPendingDtos.get(0);
+        }else{
+            return null;
+        }
+    }
+
+
+    public HubSkuPendingDto getHubSkuPending(String supplierId,String supplierSkuNo){
+        HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
+        criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
+        List<HubSkuPendingDto> hubSkuPendingDtos = hubSkuPendingGateWay.selectByCriteria(criteria);
+        if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
+            return hubSkuPendingDtos.get(0);
+        }else{
+            return null;
+        }
     }
 
 }
