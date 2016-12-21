@@ -1,6 +1,9 @@
 package com.shangpin.ephub.product.business.rest.model.manager;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.shangpin.ephub.client.data.mysql.rule.gateway.HubBrandModelRuleGateWay;
 
 /**
  * <p>Title:HubBrandModelRuleManager.java </p>
@@ -12,4 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class HubBrandModelRuleManager {
 
+	@Autowired
+	private HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
+	
 }
