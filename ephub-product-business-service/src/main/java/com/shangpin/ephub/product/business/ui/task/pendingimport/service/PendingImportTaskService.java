@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.task.spuimport.service;
+package com.shangpin.ephub.product.business.ui.task.pendingimport.service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import com.shangpin.ephub.response.HubResponse;
  */
 @SuppressWarnings("rawtypes")
 @Service
-public class TaskService {
+public class PendingImportTaskService {
 	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
 	@Autowired 
 	HubSpuImportTaskGateWay spuImportGateway;

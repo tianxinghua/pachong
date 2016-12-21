@@ -39,7 +39,7 @@ import com.shangpin.ephub.response.HubResponse;
  */
 @SuppressWarnings("rawtypes")
 @Service
-public class TaskService {
+public class HubImportTaskService {
 	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
 	@Autowired 
 	HubSpuImportTaskGateWay spuImportGateway;
