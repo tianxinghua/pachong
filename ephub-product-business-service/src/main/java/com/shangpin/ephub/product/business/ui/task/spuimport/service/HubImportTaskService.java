@@ -78,8 +78,8 @@ public class HubImportTaskService {
 	public List<HubTaskProductResponseDTO> findHubTaskList(HubImportTaskListRequestDto param) {
 		
 		HubSpuImportTaskCriteriaWithRowBoundsDto dto = new HubSpuImportTaskCriteriaWithRowBoundsDto();
-		if(!StringUtils.isEmpty(param.getPageIndex()) && !StringUtils.isEmpty(param.getPageSize())){
-			RowBoundsDto rowBounds = new RowBoundsDto(param.getPageIndex(),param.getPageSize());
+		if(!StringUtils.isEmpty(param.getPageNo()) && !StringUtils.isEmpty(param.getPageSize())){
+			RowBoundsDto rowBounds = new RowBoundsDto(param.getPageNo(),param.getPageSize());
 			dto.setRowBounds(rowBounds);
 		}
 		HubSpuImportTaskCriteriaDto hubSpuImportTaskCriteriaDto = new HubSpuImportTaskCriteriaDto();

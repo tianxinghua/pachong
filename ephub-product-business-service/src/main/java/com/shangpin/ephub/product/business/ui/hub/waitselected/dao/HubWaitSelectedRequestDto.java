@@ -1,6 +1,8 @@
-package com.shangpin.ephub.product.business.ui.task.spuimport.dto;
+package com.shangpin.ephub.product.business.ui.hub.waitselected.dao;
 
 import java.io.Serializable;
+
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -15,13 +17,16 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubImportTaskListRequestDto implements Serializable {
+public class HubWaitSelectedRequestDto implements Serializable {
 	private static final long serialVersionUID = -9080013205013160520L;
     /**
-     * 原始文件名
+     * 供应商
      */
-    private String localFileName;
-    private byte taskState;
+    private String supplierNo;
+    private String productCode;
+    private String brandNo;
+    private String categoryNo;
+    private String productState;
     private String startDate;
     private String endDate;
     private int pageNo;
