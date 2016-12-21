@@ -597,6 +597,146 @@ public class HubBrandModelRuleCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andExcludeRexIsNull() {
+            addCriterion("exclude_rex is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExcludeRexIsNotNull() {
+            addCriterion("exclude_rex is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExcludeRexEqualTo(String value) {
+            addCriterion("exclude_rex =", value, "excludeRex");
+            return (Criteria) this;
+        }
+
+        public Criteria andExcludeRexNotEqualTo(String value) {
+            addCriterion("exclude_rex <>", value, "excludeRex");
+            return (Criteria) this;
+        }
+
+        public Criteria andExcludeRexGreaterThan(String value) {
+            addCriterion("exclude_rex >", value, "excludeRex");
+            return (Criteria) this;
+        }
+
+        public Criteria andExcludeRexGreaterThanOrEqualTo(String value) {
+            addCriterion("exclude_rex >=", value, "excludeRex");
+            return (Criteria) this;
+        }
+
+        public Criteria andExcludeRexLessThan(String value) {
+            addCriterion("exclude_rex <", value, "excludeRex");
+            return (Criteria) this;
+        }
+
+        public Criteria andExcludeRexLessThanOrEqualTo(String value) {
+            addCriterion("exclude_rex <=", value, "excludeRex");
+            return (Criteria) this;
+        }
+
+        public Criteria andExcludeRexLike(String value) {
+            addCriterion("exclude_rex like", value, "excludeRex");
+            return (Criteria) this;
+        }
+
+        public Criteria andExcludeRexNotLike(String value) {
+            addCriterion("exclude_rex not like", value, "excludeRex");
+            return (Criteria) this;
+        }
+
+        public Criteria andExcludeRexIn(List<String> values) {
+            addCriterion("exclude_rex in", values, "excludeRex");
+            return (Criteria) this;
+        }
+
+        public Criteria andExcludeRexNotIn(List<String> values) {
+            addCriterion("exclude_rex not in", values, "excludeRex");
+            return (Criteria) this;
+        }
+
+        public Criteria andExcludeRexBetween(String value1, String value2) {
+            addCriterion("exclude_rex between", value1, value2, "excludeRex");
+            return (Criteria) this;
+        }
+
+        public Criteria andExcludeRexNotBetween(String value1, String value2) {
+            addCriterion("exclude_rex not between", value1, value2, "excludeRex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorIsNull() {
+            addCriterion("separator is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorIsNotNull() {
+            addCriterion("separator is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorEqualTo(String value) {
+            addCriterion("separator =", value, "separator");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorNotEqualTo(String value) {
+            addCriterion("separator <>", value, "separator");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorGreaterThan(String value) {
+            addCriterion("separator >", value, "separator");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorGreaterThanOrEqualTo(String value) {
+            addCriterion("separator >=", value, "separator");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorLessThan(String value) {
+            addCriterion("separator <", value, "separator");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorLessThanOrEqualTo(String value) {
+            addCriterion("separator <=", value, "separator");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorLike(String value) {
+            addCriterion("separator like", value, "separator");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorNotLike(String value) {
+            addCriterion("separator not like", value, "separator");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorIn(List<String> values) {
+            addCriterion("separator in", values, "separator");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorNotIn(List<String> values) {
+            addCriterion("separator not in", values, "separator");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorBetween(String value1, String value2) {
+            addCriterion("separator between", value1, value2, "separator");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeparatorNotBetween(String value1, String value2) {
+            addCriterion("separator not between", value1, value2, "separator");
+            return (Criteria) this;
+        }
+
         public Criteria andHubCategoryNoIsNull() {
             addCriterion("hub_category_no is null");
             return (Criteria) this;

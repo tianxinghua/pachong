@@ -8,15 +8,14 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 /**
- * <p>Title:HubBrandDicMapper.java </p>
+ * <p>Title:HubBrandModelRuleMapper.java </p>
  * <p>Description: </p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
- * @date 2016年12月13日 下午2:12:01
+ * @date 2016年12月21日 下午2:29:58
  */
 @Mapper
 public interface HubBrandModelRuleMapper {
-	
     int countByExample(HubBrandModelRuleCriteria example);
 
     int deleteByExample(HubBrandModelRuleCriteria example);
