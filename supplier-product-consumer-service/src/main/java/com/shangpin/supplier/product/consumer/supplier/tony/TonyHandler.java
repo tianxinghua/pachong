@@ -37,10 +37,10 @@ public class TonyHandler implements ISupplierHandler {
 		if(!StringUtils.isEmpty(message.getData())){
 			TonyItems tonyItems = JsonUtil.deserialize(message.getData(), TonyItems.class);
 			HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-			boolean success = convertSpu(message.getData(), tonyItems, hubSpu);
+			boolean success = convertSpu(message.getSupplierId(), tonyItems, hubSpu);
 			List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 			HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-			boolean skuSucc = convertSku(message.getData(), hubSpu.getSupplierSpuId(), tonyItems, hubSku);
+			boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), tonyItems, hubSku);
 			if(skuSucc){
 				hubSkus.add(hubSku);
 			}
