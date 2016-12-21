@@ -61,44 +61,66 @@ public class PendingProductService implements IPendingProductService{
 		return hubSkuPendingGateWay.selectByCriteria(criteriaDto);		
 	}
 	@Override
-	public void updatePendingProduct(PendingProductDto pendingProductDto){
-		if(null != pendingProductDto){
-			//TODO 先验证，验证通过则更新
-			hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-			List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
-			if(null != pengdingSkus && pengdingSkus.size()>0){
-				for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
-					//TODO 先验证，验证通过则更新
-					hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+	public boolean updatePendingProduct(PendingProductDto pendingProductDto){
+		try {
+			if(null != pendingProductDto){
+				//TODO 先验证，验证通过则更新
+				hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+				List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
+				if(null != pengdingSkus && pengdingSkus.size()>0){
+					for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
+						//TODO 先验证，验证通过则更新
+						int result = hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+					}
 				}
 			}
-		}
+			return true;
+		} catch (Exception e) {
+			return false;
+		}		
 	}
 	@Override
-	public void batchUpdatePendingProduct(List<PendingProductDto> pendingProducts){
-		if(null != pendingProducts && pendingProducts.size()>0){
-			for(PendingProductDto pendingProductDto : pendingProducts){
-				updatePendingProduct(pendingProductDto);
+	public boolean batchUpdatePendingProduct(List<PendingProductDto> pendingProducts){
+		try {
+			if(null != pendingProducts && pendingProducts.size()>0){
+				for(PendingProductDto pendingProductDto : pendingProducts){
+					updatePendingProduct(pendingProductDto);
+				}
 			}
-		}
-	}
-	@Override
-	public void updatePendingProductToUnableToProcess(Long spuPendingId){
-		if(!StringUtils.isEmpty(spuPendingId)){
-			HubSpuPendingDto hubSpuPendingDto = new HubSpuPendingDto();
-			hubSpuPendingDto.setSpuPendingId(spuPendingId);
-			hubSpuPendingDto.setSpuState(SpuState.UNABLE_TO_PROCESS.getIndex());
-			hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
+			return true;
+		} catch (Exception e) {
+			return false;
 		}
 		
 	}
 	@Override
-	public void batchUpdatePendingProductToUnableToProcess(List<Long> spuPendingIds){
-		if(null != spuPendingIds && spuPendingIds.size()>0){
-			for(Long spuPendingId : spuPendingIds){
-				updatePendingProductToUnableToProcess(spuPendingId);
+	public boolean updatePendingProductToUnableToProcess(Long spuPendingId){
+		try {
+			if(!StringUtils.isEmpty(spuPendingId)){
+				HubSpuPendingDto hubSpuPendingDto = new HubSpuPendingDto();
+				hubSpuPendingDto.setSpuPendingId(spuPendingId);
+				hubSpuPendingDto.setSpuState(SpuState.UNABLE_TO_PROCESS.getIndex());
+				hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
 			}
+			return true;
+		} catch (Exception e) {
+			return false;
 		}
+		
+	}
+	@Override
+	public boolean batchUpdatePendingProductToUnableToProcess(List<Long> spuPendingIds){
+		try {
+			if(null != spuPendingIds && spuPendingIds.size()>0){
+				for(Long spuPendingId : spuPendingIds){
+					updatePendingProductToUnableToProcess(spuPendingId);
+				}
+			}
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+		
 	}
 	
 	/***************************************************************************************************************************/
