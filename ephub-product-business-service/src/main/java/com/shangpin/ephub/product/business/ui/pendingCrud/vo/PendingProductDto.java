@@ -16,6 +16,8 @@ public class PendingProductDto extends HubSpuPendingDto {
 	 */
 	private static final long serialVersionUID = -656519843276622266L;
 
+	private String hubBrandName;
+	private String hubCategoryName;
 	private List<HubSkuPendingDto> hubSkus;
 	
 }

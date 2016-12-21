@@ -6,8 +6,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import com.shangpin.ephub.client.common.dto.RowBoundsDto;
+import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
+import com.shangpin.ephub.client.data.mysql.brand.gateway.HubSupplierBrandDicGateWay;
+import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
+import com.shangpin.ephub.client.data.mysql.categroy.gateway.HubSupplierCategroyDicGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
@@ -20,6 +27,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaWithRow
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.product.business.ui.pendingCrud.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pendingCrud.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.ui.pendingCrud.enumeration.ProductState;
 import com.shangpin.ephub.product.business.ui.pendingCrud.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pendingCrud.util.JavaUtil;
@@ -34,6 +42,12 @@ public class PendingProductService implements IPendingProductService{
 	private HubSpuPendingGateWay hubSpuPendingGateWay;
 	@Autowired
 	private HubSkuPendingGateWay hubSkuPendingGateWay;
+	@Autowired
+	private HubSupplierCategroyDicGateWay categroyDicGateWay;
+	@Autowired
+	private HubSupplierBrandDicGateWay brandDicGateWay;
+	@Autowired
+	private RestTemplate httpClient;
 
 	@Override
 	public List<PendingProductDto> findPendingProduct(PendingQuryDto pendingQuryDto){
@@ -44,8 +58,9 @@ public class PendingProductService implements IPendingProductService{
 			if(null != pendingSpus && pendingSpus.size()>0){				
 				for(HubSpuPendingDto pendingSpu : pendingSpus){
 					PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
+					pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
+					pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
 					List<HubSkuPendingDto> hubSkus = findPendingSkuBySpuPendingId(pendingSpu.getSpuPendingId());
-					
 					pendingProduct.setHubSkus(hubSkus);
 					products.add(pendingProduct);
 				}
@@ -126,6 +141,44 @@ public class PendingProductService implements IPendingProductService{
 	/***************************************************************************************************************************/
 						//以下为内部调用私有方法
 	/**************************************************************************************************************************/
+	/**
+	 * 根据门户id和品牌编号查找品牌名称
+	 * @param supplierId
+	 * @param hubBrandNo
+	 * @return
+	 */
+	private String getHubBrandName(String supplierId,String hubBrandNo){
+		if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(hubBrandNo)){
+			return "";
+		}
+		HubSupplierBrandDicCriteriaDto brandDicCriteriaDto = new HubSupplierBrandDicCriteriaDto();
+		brandDicCriteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andHubBrandNoEqualTo(hubBrandNo);
+		List<HubSupplierBrandDicDto> brandNames = brandDicGateWay.selectByCriteria(brandDicCriteriaDto);
+		if(null != brandNames && brandNames.size()>0){
+			return brandNames.get(0).getSupplierBrand();
+		}else{
+			return "";
+		}
+	}
+	/**
+	 * 根据供应商门户id和品类编号查找品类名称
+	 * @param supplierId
+	 * @param categoryNo
+	 * @return
+	 */
+	private String getHubCategoryName(String supplierId,String categoryNo){
+		if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(categoryNo)){
+			return "";
+		}
+		HubSupplierCategroyDicCriteriaDto categroyDicCriteriaDto = new HubSupplierCategroyDicCriteriaDto();
+		categroyDicCriteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andHubCategoryNoEqualTo(categoryNo);
+		List<HubSupplierCategroyDicDto> categoryNames = categroyDicGateWay.selectByCriteria(categroyDicCriteriaDto);
+		if(null != categoryNames && categoryNames.size()>0){
+			return categoryNames.get(0).getSupplierCategory();
+		}else{
+			return "";
+		}
+	}
 	
 	/**
 	 * 将pendingSpu转化为pendingProduct
@@ -151,24 +204,29 @@ public class PendingProductService implements IPendingProductService{
 		}
 		HubSpuPendingCriteriaDto hubSpuPendingCriteriaDto = new HubSpuPendingCriteriaDto();
 		Criteria criteria = hubSpuPendingCriteriaDto.createCriteria();
-		if(!StringUtils.isEmpty(pendingQuryDto.getSupplierName())){
-//			criteria.andsupplierid
+		
+		if(!StringUtils.isEmpty(pendingQuryDto.getSupplierNo())){
+			String supplierId = getSupplierIdBySupplierNo(pendingQuryDto.getSupplierNo());
+			if(!StringUtils.isEmpty(supplierId)){
+				criteria = criteria.andSupplierIdEqualTo(supplierId);
+			}
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getSpuModel())){
 			criteria = criteria.andSpuModelEqualTo(pendingQuryDto.getSpuModel());
 		}
-		if(!StringUtils.isEmpty(pendingQuryDto.getHubCategory())){
-			criteria = criteria.andHubCategoryNoLike(pendingQuryDto.getHubCategory());
+		if(!StringUtils.isEmpty(pendingQuryDto.getHubCategoryNo())){
+			criteria = criteria.andHubCategoryNoLike(pendingQuryDto.getHubCategoryNo());
 		}
-		if(!StringUtils.isEmpty(pendingQuryDto.getHubBrand())){
-			criteria = criteria.andHubBrandNoLike(pendingQuryDto.getHubBrand());
+		if(!StringUtils.isEmpty(pendingQuryDto.getHubBrandNo())){
+			criteria = criteria.andHubBrandNoLike(pendingQuryDto.getHubBrandNo());
 		}
-		if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason())){
-			criteria = criteria.andHubSeasonEqualTo(pendingQuryDto.getHubSeason());
-		}
-		if(!StringUtils.isEmpty(pendingQuryDto.getHubYear())){
-//			criteria = criteria.and
-		}
+		if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason()) && !StringUtils.isEmpty(pendingQuryDto.getHubYear())){
+			criteria = criteria.andHubSeasonEqualTo(pendingQuryDto.getHubYear()+"_"+pendingQuryDto.getHubSeason());
+		}else if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason()) && StringUtils.isEmpty(pendingQuryDto.getHubYear())){
+			criteria = criteria.andHubSeasonLike(pendingQuryDto.getHubSeason());
+		}else if(StringUtils.isEmpty(pendingQuryDto.getHubSeason()) && !StringUtils.isEmpty(pendingQuryDto.getHubYear())){
+			criteria = criteria.andHubSeasonLike(pendingQuryDto.getHubYear());
+		}		
 		if(!StringUtils.isEmpty(pendingQuryDto.getStatTime())){
 			criteria = criteria.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.convertFormat(pendingQuryDto.getStatTime(), dateFormat));
 		}
@@ -188,15 +246,9 @@ public class PendingProductService implements IPendingProductService{
 		if(null != pendingQuryDto.getInconformities() && pendingQuryDto.getInconformities().size()>0){
 			for(Integer item : pendingQuryDto.getInconformities()){
 				if(item == ProductState.PICTURE_STATE.getIndex()){
-					if(pendingProduct.getPicState() == PicState.NO_PIC.getIndex() || pendingProduct.getPicState() == PicState.PIC_INFO_NOT_COMPLETED.getIndex()){
-						products.add(pendingProduct);
-						break;
-					}					
+					
 				}else if(item == ProductState.SPU_MODEL_STATE.getIndex()){
-					if(pendingProduct.getSpuModelState() == SpuModelState.VERIFY_FAILED.getIndex()){
-						products.add(pendingProduct);
-						break;
-					}
+					
 				}else if(item == ProductState.CATGORY_STATE.getIndex()){
 					
 				}else if(item == ProductState.SPU_BRAND_STATE.getIndex()){
@@ -211,8 +263,24 @@ public class PendingProductService implements IPendingProductService{
 
 				}else if(item == ProductState.ORIGIN_STATE.getIndex()){
 
+				}else if(item == ProductState.SIZE_STATE.getIndex()){
+					
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 通过api接口查询供应商门户id
+	 * @param supplierNo
+	 * @return
+	 */
+	private String getSupplierIdBySupplierNo(String supplierNo){
+		String url = "http://scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo="+supplierNo;
+		SupplierDTO supplierDto = httpClient.getForEntity(url, SupplierDTO.class).getBody();
+		if(null != supplierDto){
+			return supplierDto.getSupplierNo();
+		}
+		return "";
 	}
 }
