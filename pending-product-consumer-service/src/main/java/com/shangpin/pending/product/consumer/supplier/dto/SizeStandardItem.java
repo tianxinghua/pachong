@@ -3,11 +3,13 @@ package com.shangpin.pending.product.consumer.supplier.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 /**
  * Created by lizhongren on 2016/12/17.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SizeStandardItem {
+public class SizeStandardItem implements Serializable {
 
     private int sortIndex;
     private String sizeStandardValue;

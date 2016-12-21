@@ -1,7 +1,5 @@
 package com.shangpin.pending.product.consumer;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -10,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
-import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
+import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
 
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -23,14 +21,12 @@ public class PendingProductConsumerServiceApplication implements ApplicationRunn
 		SpringApplication.run(PendingProductConsumerServiceApplication.class, args);
 	}
 	@Autowired
-	private HubBrandDicGateway client;
+	private HubGenderDicGateWay client;
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		// TODO Auto-generated method stub
-//		HubBrandDicDto hubBrandDic = new HubBrandDicDto();
-//		hubBrandDic.setCreateTime(new Date());
-//		hubBrandDic.setCreateUser("yanxiaobin");
-//		int i = client.insert(hubBrandDic);
-//		System.out.println(i);
+
+//		HubGenderDicCriteriaDto arg0 = new HubGenderDicCriteriaDto();
+//		arg0.createCriteria().andSupplierIdEqualTo("123424");
+//		client.selectByCriteria(arg0 );
 	}
 }

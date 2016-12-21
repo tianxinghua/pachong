@@ -3,13 +3,14 @@ package com.shangpin.pending.product.consumer.supplier.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by lizhongren on 2016/12/17.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CategoryScreenSizeDom {
+public class CategoryScreenSizeDom implements Serializable{
     private String categoryNo;
     private List<SizeStandardItem> sizeStandardItemList;
     private String fourLevelCategoryName;

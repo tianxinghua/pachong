@@ -1,4 +1,4 @@
-package com.shangpin.pending.product.consumer;
+package com.shangpin.asynchronous.task.consumer;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,12 +7,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PendingProductConsumerServiceApplicationTests {
+public class AsynchronousTaskConsumerServiceApplicationTests {
 
-	
 	@Test
 	public void contextLoads() {
-		System.out.println(" test  ");
 	}
 
 }

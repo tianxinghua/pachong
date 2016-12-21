@@ -1,0 +1,5 @@
+﻿server.port: 9091
+spring:
+  profiles: 
+    active: dev
+  application.name: asynchronous-task-consumer-service

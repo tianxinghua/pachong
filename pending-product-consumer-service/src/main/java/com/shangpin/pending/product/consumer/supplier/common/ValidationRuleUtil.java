@@ -25,11 +25,18 @@ import java.util.regex.Pattern;
 @Component
 public class ValidationRuleUtil {
 
-    public static boolean judageSpuMode(String spBrandNo,String spCategoryNo,String spuMode){
+    /**
+     * 验证是否匹配
+     * @param regex 验证规则（正则表达式）
+     * @param spCategoryNo
+     * @param spuModel
+     * @return
+     */
+    public static boolean judageSpuMode(String regex,String spCategoryNo,String spuModel){
         //TODO 获取验证规则
-        String regex = "";
+
         Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(spuMode);
+        Matcher matcher = pattern.matcher(spuModel);
         return  matcher.matches();
 
 

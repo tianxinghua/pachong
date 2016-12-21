@@ -19,3 +19,4 @@ dist/
 nbdist/
 .nb-gradle/
 /bin/
+supplier-product-consumer-service/src/test/java/com/shangpin/supplier/product/consumer/.gitignore

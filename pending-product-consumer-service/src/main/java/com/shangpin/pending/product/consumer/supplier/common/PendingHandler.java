@@ -1,38 +1,45 @@
 package com.shangpin.pending.product.consumer.supplier.common;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.shangpin.pending.product.consumer.util.BurberryModelRule;
+import com.shangpin.pending.product.consumer.util.PradaModelRule;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
-import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
+import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
-import com.shangpin.pending.product.consumer.common.ConstantProperty;
+import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.pending.product.consumer.common.DateUtils;
 import com.shangpin.pending.product.consumer.common.enumeration.MessageType;
 import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
-import com.shangpin.pending.product.consumer.conf.clients.mysql.sku.bean.HubSkuPending;
-import com.shangpin.pending.product.consumer.conf.clients.mysql.spu.bean.HubSpuPending;
-
+import com.shangpin.pending.product.consumer.supplier.dto.CategoryScreenSizeDom;
 import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
+import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
 import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSku;
 import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSpu;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import com.shangpin.pending.product.consumer.supplier.dto.SizeStandardItem;
 
-import java.io.IOException;
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by loyalty on 16/12/13.
@@ -44,16 +51,21 @@ import java.util.*;
 public class PendingHandler {
 
 
-    //@Autowired
-    //IShangpinRedis shangpinRedis;
+    @Autowired
+    IShangpinRedis shangpinRedis;
 
 
     @Autowired
     DataServiceHandler dataServiceHandler;
 
+    @Autowired
+    ValidationRuleUtil  validationRuleUtil;
 
+    @Autowired
+    BurberryModelRule burberryModelRule;
 
-
+    @Autowired
+    PradaModelRule pradaModelRule;
 
 
     static Map<String,Map<String,String>> supplierGenderStaticMap = null;
@@ -69,6 +81,25 @@ public class PendingHandler {
     static Map<String,String> materialStaticMap = null;
 
 
+    /**
+     * 品牌货号映射表
+     * key :  hub的品牌编号   value：Map<String,String> key:正则表单规则  value ： 品类值
+     */
+    static Map<String,Map<String,String>>  brandModelStaticMap = null;//
+
+
+    static Map<String,String> hubGenderStaticMap = null;
+
+    static Map<String,String> hubCategoryMappingStaticMap = null;
+
+    static Map<String,String> hubBrandStaticMap = null;
+
+    static Map<String,String> hubColorStaticMap = null;
+
+    static Map<String,String> hubSeasonStaticMap = null;
+
+
+
     public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception{
         log.info("receive message :" + message.toString() + " message header :"+
         headers.toString());
@@ -77,11 +108,16 @@ public class PendingHandler {
 
         PendingSpu pendingSpu = message.getData();
         HubSpuPendingDto hubSpuPending = null;
-        if(messageMap.containsKey(pendingSpu.getSupplierSpuId())){
+        if(messageMap.containsKey(pendingSpu.getSupplierId())){
 
-            Integer spuStatus = messageMap.get(pendingSpu.getSupplierSpuId());
+            Integer spuStatus = messageMap.get(pendingSpu.getSupplierId());
+            //防止数据传入错误，需要先查询pending表中是否存在
+            HubSpuPendingDto tmp = dataServiceHandler.getHubSpuPending(message.getSupplierId(),message.getData().getSupplierSpuNo());
             if(spuStatus== MessageType.NEW.getIndex()){
-                hubSpuPending = this.addNewSpu(pendingSpu,headers);
+                if(null==tmp){
+                    hubSpuPending = this.addNewSpu(pendingSpu,headers);
+                }
+
 
             }else if(spuStatus==MessageType.UPDATE.getIndex()){
                 hubSpuPending = this.updateSpu(pendingSpu,headers);
@@ -93,17 +129,24 @@ public class PendingHandler {
 
         List<PendingSku> skus = pendingSpu.getSkus();
         Integer skuStatus = 0;
-        for(PendingSku sku:skus){
-            if(messageMap.containsKey(sku.getSupplierSkuNo())){
-                skuStatus = messageMap.get(sku.getSupplierSkuNo());
-                if(skuStatus== MessageType.NEW.getIndex()){
-                    this.addNewSku(sku,hubSpuPending.getHubCategoryNo(),hubSpuPending.getHubBrandNo(),headers);
+        if(null!=hubSpuPending){
 
-                }else if(skuStatus==MessageType.UPDATE.getIndex()){
-                    //TODO UPDATE OLD
+            for(PendingSku sku:skus){
+                if(messageMap.containsKey(sku.getSupplierSkuNo())){
+                    HubSkuPendingDto hubSkuPending = dataServiceHandler.getHubSkuPending(sku.getSupplierId(), sku.getSupplierSkuNo());
+                    skuStatus = messageMap.get(sku.getSupplierSkuNo());
+                    if(skuStatus== MessageType.NEW.getIndex()){
+                        if(null==hubSkuPending){
+                            this.addNewSku(hubSpuPending,sku,headers);
+                        }
 
-                }else if(skuStatus==MessageType.MODIFY_PRICE.getIndex()){
-                   //TODO 处理自动调整价格
+
+                    }else if(skuStatus==MessageType.UPDATE.getIndex()){
+                        //TODO UPDATE OLD
+
+                    }else if(skuStatus==MessageType.MODIFY_PRICE.getIndex()){
+                       //TODO 处理自动调整价格
+                    }
                 }
             }
         }
@@ -118,7 +161,7 @@ public class PendingHandler {
     private  Map<String,Integer> getMessageStatus(Map<String, Object> headers){
 
         Map<String,Integer> result = new HashMap<>();
-        String key = ConstantProperty.PENDING_PRODUCT_MAP_KEY;
+        String key = MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY;
         String value = "";
         if(headers.containsKey(key)){
             value = (String) headers.get(key);
@@ -126,7 +169,7 @@ public class PendingHandler {
             try {
                 PendingHeaderSpu spu =  om.readValue(value,PendingHeaderSpu.class);
                 if(null!=spu){
-                    result.put(spu.getSpuNo(),spu.getStatus());
+                    result.put(spu.getSupplierId(),spu.getStatus());
                     List<PendingHeaderSku> skus = spu.getSkus();
                     for(PendingHeaderSku sku:skus){
                         result.put(sku.getSkuNo(),sku.getStatus());
@@ -149,7 +192,11 @@ public class PendingHandler {
         //judage in hub_spu by product_code  ,if exist ,set value from hub_spu and set spu status value is 1
          String productCode = spu.getSpuModel();
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
-        HubSpuDto hubSpuDto = dataServiceHandler.getHubSpuByProductModel(spu.getSpuModel());
+        HubSpuDto hubSpuDto = null;
+        if(null!=spu.getSpuModel()){
+            hubSpuDto = dataServiceHandler.getHubSpuByProductModel(spu.getSpuModel());
+        }
+
         if(null!=hubSpuDto){
               //TODO  直接复制HUB-SPU里的信息  ，SPU状态 直接为审核通过
             hubSpuPending.setHubBrandNo(hubSpuDto.getBrandNo());
@@ -158,6 +205,10 @@ public class PendingHandler {
 
             BeanUtils.copyProperties(spu,hubSpuPending);
             boolean allStatus=true;
+
+
+
+
             //设置性别
             if(!setGenderMapping(spu, hubSpuPending)) allStatus=false;
 
@@ -166,6 +217,11 @@ public class PendingHandler {
 
             //获取品牌
             if(!setBrandMapping(spu, hubSpuPending)) allStatus=false;
+
+
+            //todo 货号验证
+
+            if(!setBrandModel(spu, hubSpuPending)) allStatus=false;
 
             //获取颜色
             if(!setColorMapping(spu, hubSpuPending)) allStatus = false;
@@ -214,7 +270,7 @@ public class PendingHandler {
         }else{//
             result = false;
             hubSpuPending.setSpuSeasonState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-            dataServiceHandler.saveBrand(spu.getSupplierId(),spu.getHubSeason());
+            dataServiceHandler.saveSeason(spu.getSupplierId(),spu.getHubSeason());
         }
         return  result;
     }
@@ -292,6 +348,100 @@ public class PendingHandler {
         return result;
     }
 
+
+    public  boolean setBrandModel(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception{
+        boolean result = true;
+        String spuModel = "";
+
+        if(!StringUtils.isEmpty(hubSpuPending.getHubBrandNo())){
+
+            if("BOOO5".equals(hubSpuPending.getHubBrandNo())){
+
+                spuModel= burberryModelRule.checkModelRule(hubSpuPending.getSpuModel());
+
+            }else if("BOOO2".equals(hubSpuPending.getHubBrandNo())){
+
+                spuModel = pradaModelRule.checkModelRule(hubSpuPending.getSpuModel());
+
+
+            }else{
+                hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+                return false;
+            }
+            if(null!=spuModel){
+                hubSpuPending.setSpuModel(spuModel);
+                hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+            }
+
+//            Map<String,Map<String,String>>  brandModelMap = this.getBrandModelMap(hubSpuPending.getHubBrandNo());
+//            if(brandModelMap.containsKey(hubSpuPending.getHubBrandNo())){
+//                Map<String, String> modelRegMap = brandModelMap.get(hubSpuPending.getHubBrandNo());
+//
+//
+//                Set<String> regSet = modelRegMap.keySet();
+//                for(String reg:regSet){
+//    //               if(validationRuleUtil.judageSpuMode(hubSpuPending.getHubBrandNo(),"",))
+//                }
+//
+//    //            if(modelRegMap.containsKey(hubSpuPending.getHubBrandNo())){
+//    //                //包含时转化赋值
+////                    hubSpuPending.setSpuModel("");
+//    //                hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+//    //            }else{
+//    //                result = false;
+//    //                hubSpuPending.setSpuModelState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+//    //
+//    //
+//    //            }
+//            }else{
+//                result = false;
+//                hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+//
+//            }
+        }
+
+        return result;
+    }
+
+    private Map<String,Map<String,String>> getBrandModelMap(String hubBrandNo) {
+
+        if(null==brandModelStaticMap){//初始化
+            brandModelStaticMap = new HashMap<>();
+
+            this.setBrandModelValueToMap(hubBrandNo);
+
+        }else{
+            if(!brandModelStaticMap.containsKey(hubBrandNo)){//未包含
+                this.setBrandModelValueToMap(hubBrandNo);
+            }else{
+                if(isNeedHandle()){//包含 需要重新拉取
+                    this.setBrandModelValueToMap(hubBrandNo);
+                }
+            }
+        }
+        return brandModelStaticMap;
+    }
+
+    private void setBrandModelValueToMap(String hubBrandNo) {
+        List<HubBrandModelRuleDto> brandModles = dataServiceHandler.getBrandModle(hubBrandNo);
+        if(null!=brandModles&&brandModles.size()>0){
+
+            Map<String,String> brandModelMap = new HashMap<>();
+            for(HubBrandModelRuleDto dto:brandModles){
+                if(dto.getRuleState().intValue()==PropertyStatus.MESSAGE_HANDLED.getIndex()){//已确认
+
+                   brandModelMap.put(dto.getModelRex(),dto.getHubCategoryNo());
+                }
+
+            }
+            brandModelStaticMap.put(hubBrandNo,brandModelMap);
+
+        }
+
+
+    }
+
+
     public  boolean setGenderMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         boolean result = true;
         //获取性别
@@ -320,15 +470,22 @@ public class PendingHandler {
 
     private HubSpuPendingDto updateSpu(PendingSpu spu, Map<String, Object> headers) throws Exception{
 
+        HubSpuPendingDto spuPendingDto = null;
         //TODO 判断状态 是否可以修改
-        return  null;
+        spuPendingDto =dataServiceHandler.getHubSpuPending(spu.getSupplierId(),spu.getSupplierSpuNo());
+        if(null!=spuPendingDto){
+//            if(spuPendingDto.getSpuState().intValue()==PropertyStatus.)
+
+        }
+        return  spuPendingDto;
 
     }
 
-    private void addNewSku(PendingSku sku,String categoryNo,String brandNo, Map<String, Object> headers) throws Exception{
-        HubSkuPending hubSkuPending = new HubSkuPending();
+    private void addNewSku(HubSpuPendingDto hubSpuPending ,PendingSku sku, Map<String, Object> headers) throws Exception{
+        HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
         BeanUtils.copyProperties(sku,hubSkuPending);
-        String hubSize=this.getHubSize(categoryNo,brandNo,sku.getHubSkuSize());
+        hubSkuPending.setSpuPendingId(hubSpuPending.getSpuPendingId());
+        String hubSize=this.getHubSize(hubSpuPending.getHubCategoryNo(),hubSpuPending.getHubBrandNo(),sku.getSupplierId(),sku.getHubSkuSize());
         if("".equals(hubSize)){
             hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
         }else{
@@ -337,7 +494,8 @@ public class PendingHandler {
             hubSkuPending.setCreateTime(new Date());
 
         }
-        //TODO 增加SKU
+
+        dataServiceHandler.savePendingSku(hubSkuPending);
 
     }
 
@@ -352,7 +510,7 @@ public class PendingHandler {
     }
 
     /**
-     * 按供货商获取品类的映射关系  主键  supplier_category_gender  value 尚品的品类编号+"_"+匹配状态
+     * 按供货商获取品类的映射关系  主键  category_gender  value 尚品的品类编号+"_"+匹配状态
      * @param supplierId
      * @return
      */
@@ -370,7 +528,7 @@ public class PendingHandler {
                 }
             }
         }
-          return null;
+        return supplierCategoryMappingStaticMap;
     }
 
     private void setSupplierCategoryValueToMap(String supplierId)  throws Exception{
@@ -403,6 +561,7 @@ public class PendingHandler {
     private Map<String,Map<String,String>> getGenderMap(String supplierId){
         if(null==supplierGenderStaticMap){
             supplierGenderStaticMap = new HashMap<>();
+            hubGenderStaticMap = new HashMap<>();
             setGenderValueToMap(supplierId);
         }else{
             if(!supplierGenderStaticMap.containsKey(supplierId)){
@@ -425,9 +584,10 @@ public class PendingHandler {
             Map<String,String> genderMap = new HashMap<>();
             for(HubGenderDicDto dto:hubGenderDics){
                 genderMap.put(dto.getSupplierGender(),dto.getHubGender());
+                hubGenderStaticMap.put(dto.getHubGender(),"");
             }
             supplierGenderStaticMap.put(supplierId,genderMap);
-
+//            shangpinRedis.hset
         }
     }
 
@@ -439,8 +599,11 @@ public class PendingHandler {
 
 
         if(null==brandStaticMap){
+            brandStaticMap = new HashMap<>();
+            hubBrandStaticMap = new HashMap<>();
             for (HubBrandDicDto hubBrandDicDto : dataServiceHandler.getBrand()) {
                 brandStaticMap.put(hubBrandDicDto.getSupplierBrand(),hubBrandDicDto.getHubBrandNo());
+                hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo(),"");
             }
             ;
 
@@ -448,6 +611,7 @@ public class PendingHandler {
             if(isNeedHandle()){
                 for (HubBrandDicDto hubBrandDicDto : dataServiceHandler.getBrand()) {
                     brandStaticMap.put(hubBrandDicDto.getSupplierBrand(),hubBrandDicDto.getHubBrandNo());
+                    hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo(),"");
                 }
                 ;
                 //无用的内容 暂时不考虑
@@ -463,15 +627,18 @@ public class PendingHandler {
     private Map<String,String> getColorMap(){
         if(null==colorStaticMap){
             colorStaticMap = new HashMap<>();
+            hubColorStaticMap = new HashMap<>();
             List<ColorDTO> colorDTOS = dataServiceHandler.getColorDTO();
             for(ColorDTO dto:colorDTOS){
                 colorStaticMap.put(dto.getSupplierColor(),dto.getHubColorName());
+                hubColorStaticMap.put(dto.getHubColorName(),"");
             }
 
         }else{
             if(isNeedHandle()){
                 for (ColorDTO dto : dataServiceHandler.getColorDTO()) {
                     colorStaticMap.put(dto.getSupplierColor(),dto.getHubColorName());
+                    hubColorStaticMap.put(dto.getHubColorName(),"");
                 }
 
                 //无用的内容 暂时不考虑
@@ -489,10 +656,12 @@ public class PendingHandler {
     private  Map<String,String> getSeasonMap(String supplierId){
         if(null==seasonStaticMap){
             seasonStaticMap = new HashMap<>();
+            hubSeasonStaticMap = new HashMap<>();
             List<HubSeasonDicDto> hubSeasonDics = dataServiceHandler.getHubSeasonDic();
             for(HubSeasonDicDto dicDto:hubSeasonDics){
                 seasonStaticMap.put(dicDto.getSupplierid()+"_"+dicDto.getSupplierSeason(),
                         dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason());
+                hubSeasonStaticMap.put(dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason(),"");
             }
 
         }else{
@@ -501,6 +670,7 @@ public class PendingHandler {
                 for(HubSeasonDicDto dicDto:hubSeasonDics){
                     seasonStaticMap.put(dicDto.getSupplierid()+"_"+dicDto.getSupplierSeason(),
                             dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason());
+                    hubSeasonStaticMap.put(dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason(),"");
                 }
             }
 
@@ -516,16 +686,38 @@ public class PendingHandler {
      */
     private Map<String,String> getMaterialMap(){
         if(null==materialStaticMap){
-            materialStaticMap = new HashMap<>();
+            materialStaticMap = new LinkedHashMap<>();
+            List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialDTO();
+            for(MaterialDTO dto:materialDTOS){
+                materialStaticMap.put(dto.getSupplierMaterial(),dto.getHubMaterial());
+            }
         }else{
-
+            if(isNeedHandle()){
+                List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialDTO();
+                for(MaterialDTO dto:materialDTOS){
+                    materialStaticMap.put(dto.getSupplierMaterial(),dto.getHubMaterial());
+                }
+            }
         }
         return materialStaticMap;
     }
 
-    private  String getHubSize(String hubCategoryNo,String hubBrandNo,String supplierSize){
+    private  String getHubSize(String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize) throws IOException {
         String result = "";
         //TODO CALL API OF SOP
+        ObjectMapper objectMapper =new ObjectMapper();
+        CategoryScreenSizeDom sizeDom = null;
+//        try {
+//            sizeDom = objectMapper.readValue(result,CategoryScreenSizeDom.class);
+//            if(null!=sizeDom){
+//                List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+
         return result;
     }
 
