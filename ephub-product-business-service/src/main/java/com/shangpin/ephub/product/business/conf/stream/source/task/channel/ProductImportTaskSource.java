@@ -11,12 +11,21 @@ import org.springframework.messaging.MessageChannel;
  */
 public interface ProductImportTaskSource {
 	
-	public String PRODUCT_IMPORT_TASK = "productImportTask";
 	
+	public String PENDING_IMPORT = "pendingProductImportTask";
+	
+	public String HUB_IMPORT = "hubProductImportTask";
+	
+    /**
+     * pending导入处理
+     * @return 通道
+     */
+	@Output(value = ProductImportTaskSource.PENDING_IMPORT)
+    public MessageChannel pendingProductImportTask();
 	/**
-	 * 商品导入任务通道
-	 * @return 消息通道
+	 * hub导入处理
+	 * @return 通道
 	 */
-	@Output(value = ProductImportTaskSource.PRODUCT_IMPORT_TASK)
-    public MessageChannel productImportTask();
+	@Output(value = ProductImportTaskSource.HUB_IMPORT)
+    public MessageChannel hubProductImportTask();
 }

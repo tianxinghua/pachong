@@ -17,12 +17,18 @@ spring:
             healthCheckUrl: http://localhost:9094/info 
         stream: 
               bindings: 
-                        productImportTask: 
-                              destination: product.import.task
+                        pendingProductImportTask: 
+                              destination: pending.product.import.task
+                              content-type: application/json
+                        hubProductImportTask: 
+                              destination: hub.product.import.task
                               content-type: application/json
               rabbit: 
                       bindings: 
-                            productImportTask: 
+                            pendingProductImportTask: 
+                                  producer: 
+                                           prefix: HA.
+                            hubProductImportTask: 
                                   producer: 
                                            prefix: HA.
   jackson: 
