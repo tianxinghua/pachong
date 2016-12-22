@@ -77,7 +77,8 @@ public class SupplierProductSaveAndSendToPending {
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
 		if("2015081701439".equals(supplierId)){
-			pendingProductStreamSender.spinnakerPendingProductStream(pendingProduct, headers);
+			boolean isOk = pendingProductStreamSender.spinnakerPendingProductStream(pendingProduct, headers);
+			System.out.println("spinnaker isOk ======="+isOk);
 		}
 		
 	}
@@ -99,7 +100,8 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
-		pendingProductStreamSender.biondioniPendingProductStream(pendingProduct, headers);		
+		boolean isOk = pendingProductStreamSender.biondioniPendingProductStream(pendingProduct, headers);
+		System.out.println("biondioni isOk========="+isOk);
 	}	
 	/**
 	 * geb供应商保存数据以及发送消息给Pending
@@ -118,7 +120,8 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
-		pendingProductStreamSender.gebPendingProductStream(pendingProduct, headers);
+		boolean isOk = pendingProductStreamSender.gebPendingProductStream(pendingProduct, headers);
+		System.out.println("geb isOk==========="+isOk);
 	}
 	/**
 	 * stefania供应商保存数据以及发送消息给Pending
@@ -137,7 +140,8 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
-		pendingProductStreamSender.stefaniaPendingProductStream(pendingProduct, headers);
+		boolean isOk = pendingProductStreamSender.stefaniaPendingProductStream(pendingProduct, headers);
+		System.out.println("stefania isOk========"+isOk);
 	}
 	/**
 	 * tony供应商保存数据以及发送消息给Pending
@@ -156,7 +160,8 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
-		pendingProductStreamSender.tonyPendingProductStream(pendingProduct, headers);
+		boolean isOk = pendingProductStreamSender.tonyPendingProductStream(pendingProduct, headers);
+		System.out.println("tony isOk========"+isOk);
 	}
 	
 	

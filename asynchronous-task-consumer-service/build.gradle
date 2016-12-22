@@ -41,6 +41,8 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-mail')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compileOnly('org.projectlombok:lombok')
+		compile('org.apache.poi:poi-ooxml:3.8')
+		compile('commons-net:commons-net:3.3')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 

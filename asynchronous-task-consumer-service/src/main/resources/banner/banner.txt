@@ -1,6 +1,6 @@
-*************************************************EPHUB子系统pending-product-consumer-service项目工程****************************************
+*************************************************EPHUB子系统asynchronous-task-consumer-service项目工程****************************************
 
-项目描述：该项目为EPHUB子系统pending-product-consumer-service系统
+项目描述：该项目为EPHUB子系统asynchronous-task-consumer-service系统
 
 技术要求：
       1.jdk1.8
