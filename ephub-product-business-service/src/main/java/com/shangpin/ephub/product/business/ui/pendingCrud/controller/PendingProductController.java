@@ -10,11 +10,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.ui.pendingCrud.dto.Ids;
 import com.shangpin.ephub.product.business.ui.pendingCrud.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pendingCrud.service.impl.PendingProductService;
 import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProductDto;
+import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProducts;
 import com.shangpin.ephub.response.HubResponse;
 /**
  * <p>Title:PendingProductController </p>
@@ -34,12 +37,14 @@ public class PendingProductController {
 	@Autowired
 	private PendingProductService pendingProductService;
 
-	@RequestMapping(value="list",method=RequestMethod.GET)
+	@RequestMapping(value="/list",method=RequestMethod.POST)
+	@ResponseBody
 	public HubResponse pendingList(@RequestBody PendingQuryDto pendingQuryDto){
-		List<PendingProductDto> produts = pendingProductService.findPendingProduct(pendingQuryDto);
-		return HubResponse.successResp(produts);
+		PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto);
+		System.out.println("查询的数据========="+JsonUtil.serialize(pendingProducts));
+		return HubResponse.successResp(pendingProducts); 
 	}
-	@RequestMapping(value="update",method=RequestMethod.POST)
+	@RequestMapping(value="/update",method=RequestMethod.POST)
 	public HubResponse updateProduct(@RequestBody PendingProductDto pendingProductDto){
 		boolean result = pendingProductService.updatePendingProduct(pendingProductDto);
 		if(result){
@@ -48,7 +53,7 @@ public class PendingProductController {
 			return HubResponse.successResp(resultFail);
 		}
 	}
-	@RequestMapping(value="batch-update",method=RequestMethod.POST)
+	@RequestMapping(value="/batch-update",method=RequestMethod.POST)
 	public HubResponse batchUpdateProduct(@RequestBody List<PendingProductDto> pendingProducts){
 		boolean result = pendingProductService.batchUpdatePendingProduct(pendingProducts);
 		if(result){
@@ -57,7 +62,7 @@ public class PendingProductController {
 			return HubResponse.successResp(resultFail);
 		}
 	}
-	@RequestMapping(value="unable-to-process",method=RequestMethod.POST)
+	@RequestMapping(value="/unable-to-process",method=RequestMethod.POST)
 	public HubResponse updateProductToUnableToProcess(@RequestBody Ids ids){
 		boolean result = pendingProductService.updatePendingProductToUnableToProcess(ids.getIds().get(0));
 		if(result){
@@ -66,7 +71,7 @@ public class PendingProductController {
 			return HubResponse.successResp(resultFail);
 		}
 	}
-	@RequestMapping(value="batch-unable-to-process",method=RequestMethod.POST)
+	@RequestMapping(value="/batch-unable-to-process",method=RequestMethod.POST)
 	public HubResponse batchUpdateProductToUnableToProcess(@RequestBody Ids ids){
 		boolean result = pendingProductService.batchUpdatePendingProductToUnableToProcess(ids.getIds());
 		if(result){

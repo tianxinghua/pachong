@@ -7,9 +7,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Created by lizhongren on 2016/10/25.
+ * 
+ * <p>Title:SupplierDTO </p>
+ * <p>Description: 通过请求sop api获取supplierid等信息返回的实体对象</p>
+ * <p>Company: www.shangpin.com</p> 
+ * @author lubaijiang
+ * @date 2016年12月22日 下午2:22:50
+ *
  */
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SupplierDTO {
 

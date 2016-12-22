@@ -1,4 +1,8 @@
 package com.shangpin.ephub.product.business.ui.hubcrud.service;
+
+import com.shangpin.ephub.product.business.ui.common.dto.HubQuryDto;
+import com.shangpin.ephub.product.business.ui.hubcrud.vo.HubProducts;
+
 /**
  * <p>Title:IHubProductService </p>
  * <p>Description: hub页面service接口</p>
@@ -9,4 +13,10 @@ package com.shangpin.ephub.product.business.ui.hubcrud.service;
  */
 public interface IHubProductService {
 
+	/**
+	 * 根据页面请求参数，返回hub表产品
+	 * @param hubQuryDto 查询条件
+	 * @return
+	 */
+	public HubProducts findHubProductds(HubQuryDto hubQuryDto);
 }
