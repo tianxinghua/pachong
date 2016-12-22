@@ -12,27 +12,27 @@ spring:
             instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
         stream: 
               bindings: 
-                        pendingProductImport: 
-                              destination: pending.product.import
+                        pendingProductImportTask: 
+                              destination: pending.product.import.task
                               group: one
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
-                        hubProductImport: 
-                              destination: hub.product.import
+                        hubProductImportTask: 
+                              destination: hub.product.import.task
                               group: one
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
               rabbit: 
                       bindings: 
-                            pendingProductImport: 
+                            pendingProductImportTask: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            hubProductImport: 
+                            hubProductImportTask: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false

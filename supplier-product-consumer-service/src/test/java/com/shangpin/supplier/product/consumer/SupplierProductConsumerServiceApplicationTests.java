@@ -1,43 +1,61 @@
 package com.shangpin.supplier.product.consumer;
 
+import com.shangpin.ephub.client.message.pending.body.PendingProduct;
+import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
+import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
+import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
+import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
+import com.shangpin.supplier.product.consumer.service.dto.Sku;
+import com.shangpin.supplier.product.consumer.service.dto.Spu;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
+import com.shangpin.supplier.product.consumer.conf.stream.source.sender.PendingProductStreamSender;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import com.shangpin.ephub.client.message.pending.body.PendingProduct;
-import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
-import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
-import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
-import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.conf.stream.source.sender.PendingProductStreamSender;
-import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
-import com.shangpin.supplier.product.consumer.service.dto.Sku;
-import com.shangpin.supplier.product.consumer.service.dto.Spu;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@EnableDiscoveryClient
+@EnableFeignClients("com.shangpin.ephub")
 public class SupplierProductConsumerServiceApplicationTests {
 	
 	@Autowired
 	private PendingProductStreamSender pendingProductStreamSender;
+	@Autowired
+	private HubSupplierSpuGateWay hubSupplierSpuGateWay;
 
 	@Test
 	public void contextLoads() {
+//		try {
+//			HubSupplierSpuDto dto = new HubSupplierSpuDto();
+//			dto.setSupplierId("99999999999999");
+//			dto.setSupplierSpuId(1111111111111111L);
+//			dto.setSupplierSpuNo("kkkkkkkkkkkkk");
+//			hubSupplierSpuGateWay.insert(dto);
+//			System.out.println("==================good================");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		PendingProduct pendingProduct = new PendingProduct();
 		pendingProduct.setSupplierId("2015111001657");
 		pendingProduct.setSupplierName("geb");
 		pendingProduct.setMessageId("123456");
 		PendingSpu data = new PendingSpu();
 		data.setSupplierId("2015111001657");
-		data.setHubSpuNo("5732265b2b33300afbc4444f");
+		data.setSupplierSpuNo("5732265b2b33300afbc4444f");
 		data.setHubBrandNo("PHILLIP LIM");
 		data.setHubCategoryNo("shoot");
 		data.setHubColor("red");
@@ -52,7 +70,7 @@ public class SupplierProductConsumerServiceApplicationTests {
 		sku.setMarketPrice(new BigDecimal("456.00"));
 		sku.setSupplyPrice(new BigDecimal("355.00"));
 		sku.setStock(1);
-		sku.setHubSkuSize("XXL"); 
+		sku.setHubSkuSize("XXL");
 		skus.add(sku);
 		data.setSkus(skus);
 		pendingProduct.setData(data);
@@ -68,12 +86,13 @@ public class SupplierProductConsumerServiceApplicationTests {
 		List<Sku> pendingSkus = new ArrayList<Sku>();
 		pendingSkus.add(pendingSkuHeader);
 		pendingSpuHeader.setSkus(pendingSkus);
-		System.out.println("消息头===="+JsonUtil.serialize(pendingSpuHeader));
+		System.out.println("消息头===="+ JsonUtil.serialize(pendingSpuHeader));
 		System.out.println("消息体====="+JsonUtil.serialize(pendingProduct));
 		headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(pendingSpuHeader));
-		
+
 		pendingProductStreamSender.gebPendingProductStream(pendingProduct, headers);
 		System.out.println("ok===============");
+
 	}
 
 }
