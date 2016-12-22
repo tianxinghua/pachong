@@ -667,73 +667,73 @@ public class HubBrandModelRuleCriteriaDto {
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorIsNull() {
-            addCriterion("separator is null");
+        public Criteria andFormatSeparatorIsNull() {
+            addCriterion("format_separator is null");
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorIsNotNull() {
-            addCriterion("separator is not null");
+        public Criteria andFormatSeparatorIsNotNull() {
+            addCriterion("format_separator is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorEqualTo(String value) {
-            addCriterion("separator =", value, "separator");
+        public Criteria andFormatSeparatorEqualTo(String value) {
+            addCriterion("format_separator =", value, "formatSeparator");
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorNotEqualTo(String value) {
-            addCriterion("separator <>", value, "separator");
+        public Criteria andFormatSeparatorNotEqualTo(String value) {
+            addCriterion("format_separator <>", value, "formatSeparator");
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorGreaterThan(String value) {
-            addCriterion("separator >", value, "separator");
+        public Criteria andFormatSeparatorGreaterThan(String value) {
+            addCriterion("format_separator >", value, "formatSeparator");
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorGreaterThanOrEqualTo(String value) {
-            addCriterion("separator >=", value, "separator");
+        public Criteria andFormatSeparatorGreaterThanOrEqualTo(String value) {
+            addCriterion("format_separator >=", value, "formatSeparator");
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorLessThan(String value) {
-            addCriterion("separator <", value, "separator");
+        public Criteria andFormatSeparatorLessThan(String value) {
+            addCriterion("format_separator <", value, "formatSeparator");
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorLessThanOrEqualTo(String value) {
-            addCriterion("separator <=", value, "separator");
+        public Criteria andFormatSeparatorLessThanOrEqualTo(String value) {
+            addCriterion("format_separator <=", value, "formatSeparator");
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorLike(String value) {
-            addCriterion("separator like", value, "separator");
+        public Criteria andFormatSeparatorLike(String value) {
+            addCriterion("format_separator like", value, "formatSeparator");
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorNotLike(String value) {
-            addCriterion("separator not like", value, "separator");
+        public Criteria andFormatSeparatorNotLike(String value) {
+            addCriterion("format_separator not like", value, "formatSeparator");
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorIn(List<String> values) {
-            addCriterion("separator in", values, "separator");
+        public Criteria andFormatSeparatorIn(List<String> values) {
+            addCriterion("format_separator in", values, "formatSeparator");
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorNotIn(List<String> values) {
-            addCriterion("separator not in", values, "separator");
+        public Criteria andFormatSeparatorNotIn(List<String> values) {
+            addCriterion("format_separator not in", values, "formatSeparator");
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorBetween(String value1, String value2) {
-            addCriterion("separator between", value1, value2, "separator");
+        public Criteria andFormatSeparatorBetween(String value1, String value2) {
+            addCriterion("format_separator between", value1, value2, "formatSeparator");
             return (Criteria) this;
         }
 
-        public Criteria andSeparatorNotBetween(String value1, String value2) {
-            addCriterion("separator not between", value1, value2, "separator");
+        public Criteria andFormatSeparatorNotBetween(String value1, String value2) {
+            addCriterion("format_separator not between", value1, value2, "formatSeparator");
             return (Criteria) this;
         }
 

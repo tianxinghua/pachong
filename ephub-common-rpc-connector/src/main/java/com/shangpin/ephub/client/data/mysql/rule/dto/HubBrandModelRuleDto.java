@@ -47,7 +47,7 @@ public class HubBrandModelRuleDto implements Serializable {
     /**
      * 分隔符
      */
-    private String separator;
+    private String formatSeparator;
 
     /**
      * 尚品品类编号
@@ -160,12 +160,12 @@ public class HubBrandModelRuleDto implements Serializable {
         this.excludeRex = excludeRex == null ? null : excludeRex.trim();
     }
 
-    public String getSeparator() {
-        return separator;
+    public String getFormatSeparator() {
+        return formatSeparator;
     }
 
-    public void setSeparator(String separator) {
-        this.separator = separator == null ? null : separator.trim();
+    public void setFormatSeparator(String formatSeparator) {
+        this.formatSeparator = formatSeparator == null ? null : formatSeparator.trim();
     }
 
     public String getHubCategoryNo() {
@@ -254,7 +254,7 @@ public class HubBrandModelRuleDto implements Serializable {
         sb.append(", isJoinCategory=").append(isJoinCategory);
         sb.append(", categoryType=").append(categoryType);
         sb.append(", excludeRex=").append(excludeRex);
-        sb.append(", separator=").append(separator);
+        sb.append(", formatSeparator=").append(formatSeparator);
         sb.append(", hubCategoryNo=").append(hubCategoryNo);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
@@ -289,7 +289,7 @@ public class HubBrandModelRuleDto implements Serializable {
             && (this.getIsJoinCategory() == null ? other.getIsJoinCategory() == null : this.getIsJoinCategory().equals(other.getIsJoinCategory()))
             && (this.getCategoryType() == null ? other.getCategoryType() == null : this.getCategoryType().equals(other.getCategoryType()))
             && (this.getExcludeRex() == null ? other.getExcludeRex() == null : this.getExcludeRex().equals(other.getExcludeRex()))
-            && (this.getSeparator() == null ? other.getSeparator() == null : this.getSeparator().equals(other.getSeparator()))
+            && (this.getFormatSeparator() == null ? other.getFormatSeparator() == null : this.getFormatSeparator().equals(other.getFormatSeparator()))
             && (this.getHubCategoryNo() == null ? other.getHubCategoryNo() == null : this.getHubCategoryNo().equals(other.getHubCategoryNo()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
@@ -313,7 +313,7 @@ public class HubBrandModelRuleDto implements Serializable {
         result = prime * result + ((getIsJoinCategory() == null) ? 0 : getIsJoinCategory().hashCode());
         result = prime * result + ((getCategoryType() == null) ? 0 : getCategoryType().hashCode());
         result = prime * result + ((getExcludeRex() == null) ? 0 : getExcludeRex().hashCode());
-        result = prime * result + ((getSeparator() == null) ? 0 : getSeparator().hashCode());
+        result = prime * result + ((getFormatSeparator() == null) ? 0 : getFormatSeparator().hashCode());
         result = prime * result + ((getHubCategoryNo() == null) ? 0 : getHubCategoryNo().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());

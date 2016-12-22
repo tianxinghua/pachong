@@ -10,7 +10,7 @@
     <result column="is_join_category" property="isJoinCategory" jdbcType="TINYINT" />
     <result column="category_type" property="categoryType" jdbcType="TINYINT" />
     <result column="exclude_rex" property="excludeRex" jdbcType="VARCHAR" />
-    <result column="separator" property="separator" jdbcType="VARCHAR" />
+    <result column="format_separator" property="formatSeparator" jdbcType="VARCHAR" />
     <result column="hub_category_no" property="hubCategoryNo" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
@@ -82,7 +82,7 @@
   <sql id="Base_Column_List" >
     <if test="fields == null" >
       brand_model_rule_id, hub_brand_no, model_rule, model_rex, rule_state, is_join_category, 
-      category_type, exclude_rex, separator, hub_category_no, create_time, create_user, 
+      category_type, exclude_rex, format_separator, hub_category_no, create_time, create_user, 
       update_time, update_user, push_time, memo, data_state, version
     </if>
     <if test="fields != null" >
@@ -108,7 +108,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    brand_model_rule_id,hub_brand_no,model_rule,model_rex,rule_state,is_join_category,category_type,exclude_rex,separator,hub_category_no,create_time,create_user,update_time,update_user,push_time,memo,data_state,version
+    brand_model_rule_id,hub_brand_no,model_rule,model_rex,rule_state,is_join_category,category_type,exclude_rex,format_separator,hub_category_no,create_time,create_user,update_time,update_user,push_time,memo,data_state,version
     from hub_brand_model_rule
     where brand_model_rule_id = #{brandModelRuleId,jdbcType=BIGINT}
   </select>
@@ -125,14 +125,14 @@
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.rule.model.po.HubBrandModelRule" >
     insert into hub_brand_model_rule (brand_model_rule_id, hub_brand_no, model_rule, 
       model_rex, rule_state, is_join_category, 
-      category_type, exclude_rex, separator, 
+      category_type, exclude_rex, format_separator, 
       hub_category_no, create_time, create_user, 
       update_time, update_user, push_time, 
       memo, data_state, version
       )
     values (#{brandModelRuleId,jdbcType=BIGINT}, #{hubBrandNo,jdbcType=VARCHAR}, #{modelRule,jdbcType=VARCHAR}, 
       #{modelRex,jdbcType=VARCHAR}, #{ruleState,jdbcType=TINYINT}, #{isJoinCategory,jdbcType=TINYINT}, 
-      #{categoryType,jdbcType=TINYINT}, #{excludeRex,jdbcType=VARCHAR}, #{separator,jdbcType=VARCHAR}, 
+      #{categoryType,jdbcType=TINYINT}, #{excludeRex,jdbcType=VARCHAR}, #{formatSeparator,jdbcType=VARCHAR}, 
       #{hubCategoryNo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{pushTime,jdbcType=TIMESTAMP}, 
       #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
@@ -165,8 +165,8 @@
       <if test="excludeRex != null" >
         exclude_rex,
       </if>
-      <if test="separator != null" >
-        separator,
+      <if test="formatSeparator != null" >
+        format_separator,
       </if>
       <if test="hubCategoryNo != null" >
         hub_category_no,
@@ -221,8 +221,8 @@
       <if test="excludeRex != null" >
         #{excludeRex,jdbcType=VARCHAR},
       </if>
-      <if test="separator != null" >
-        #{separator,jdbcType=VARCHAR},
+      <if test="formatSeparator != null" >
+        #{formatSeparator,jdbcType=VARCHAR},
       </if>
       <if test="hubCategoryNo != null" >
         #{hubCategoryNo,jdbcType=VARCHAR},
@@ -286,8 +286,8 @@
       <if test="record.excludeRex != null" >
         exclude_rex = #{record.excludeRex,jdbcType=VARCHAR},
       </if>
-      <if test="record.separator != null" >
-        separator = #{record.separator,jdbcType=VARCHAR},
+      <if test="record.formatSeparator != null" >
+        format_separator = #{record.formatSeparator,jdbcType=VARCHAR},
       </if>
       <if test="record.hubCategoryNo != null" >
         hub_category_no = #{record.hubCategoryNo,jdbcType=VARCHAR},
@@ -331,7 +331,7 @@
       is_join_category = #{record.isJoinCategory,jdbcType=TINYINT},
       category_type = #{record.categoryType,jdbcType=TINYINT},
       exclude_rex = #{record.excludeRex,jdbcType=VARCHAR},
-      separator = #{record.separator,jdbcType=VARCHAR},
+      format_separator = #{record.formatSeparator,jdbcType=VARCHAR},
       hub_category_no = #{record.hubCategoryNo,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -369,8 +369,8 @@
       <if test="excludeRex != null" >
         exclude_rex = #{excludeRex,jdbcType=VARCHAR},
       </if>
-      <if test="separator != null" >
-        separator = #{separator,jdbcType=VARCHAR},
+      <if test="formatSeparator != null" >
+        format_separator = #{formatSeparator,jdbcType=VARCHAR},
       </if>
       <if test="hubCategoryNo != null" >
         hub_category_no = #{hubCategoryNo,jdbcType=VARCHAR},
@@ -411,7 +411,7 @@
       is_join_category = #{isJoinCategory,jdbcType=TINYINT},
       category_type = #{categoryType,jdbcType=TINYINT},
       exclude_rex = #{excludeRex,jdbcType=VARCHAR},
-      separator = #{separator,jdbcType=VARCHAR},
+      format_separator = #{formatSeparator,jdbcType=VARCHAR},
       hub_category_no = #{hubCategoryNo,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},

@@ -1,8 +1,14 @@
+feign.hystrix.enabled: false
 spring: 
   cloud:
        consul: 
          discovery: 
            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+           prefer-ip-address: true
+           ip-address: 192.168.20.110
+           hostname: 192.168.20.110
+           port: ${server.port}
+           healthCheckUrl: http://localhost:9094/info 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   mail: 
@@ -14,7 +20,7 @@ spring:
        protocol: smtp # Protocol used by the SMTP server.
        username: yanxiaobin@shangpin.com # Login user of the SMTP server.
        password: 123.com # Login password of the SMTP server.
-       test-connection: true # Test that the mail server is available on startup.
+       test-connection: false # Test that the mail server is available on startup.
 banner: 
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.

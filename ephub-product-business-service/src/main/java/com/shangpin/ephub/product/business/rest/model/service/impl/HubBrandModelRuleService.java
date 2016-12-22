@@ -50,7 +50,7 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 			for (HubBrandModelRuleDto hubBrandModelRuleDto : hubBrandModelRuleDtoList) {
 				String modelRex = hubBrandModelRuleDto.getModelRex();
 				String excludeRex = hubBrandModelRuleDto.getExcludeRex();
-				String separator = hubBrandModelRuleDto.getSeparator();
+				String separator = hubBrandModelRuleDto.getFormatSeparator();
 				if (StringUtils.isBlank(modelRex) || StringUtils.isBlank(excludeRex) || StringUtils.isBlank(separator)) {
 					continue;
 				}
