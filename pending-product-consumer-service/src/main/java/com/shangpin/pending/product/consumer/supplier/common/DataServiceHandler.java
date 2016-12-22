@@ -449,13 +449,15 @@ public class DataServiceHandler {
     public List<MaterialDTO> getMaterialMapping(){
 
         HubMaterialMappingCriteriaDto criteria = new HubMaterialMappingCriteriaDto();
-        criteria.setOrderByClause("mappingLevel");
+        criteria.setOrderByClause("mapping_level");
         criteria.setPageSize(ConstantProperty.MAX_MATERIAL_QUERY_NUM);
         List<HubMaterialMappingDto> hubMaterialMappingDtos = hubMaterialMappingGateWay.selectByCriteria(criteria);
         List<MaterialDTO>  materialDTOS = new ArrayList<>();
 
         for(HubMaterialMappingDto itemDto:hubMaterialMappingDtos){
             MaterialDTO materialDTO = new MaterialDTO();
+            if(StringUtils.isBlank(itemDto.getSupplierMaterial())||StringUtils.isBlank(itemDto.getHubMaterial())) continue;
+
             materialDTO.setSupplierMaterial(itemDto.getSupplierMaterial());
             materialDTO.setHubMaterial(itemDto.getHubMaterial());
 

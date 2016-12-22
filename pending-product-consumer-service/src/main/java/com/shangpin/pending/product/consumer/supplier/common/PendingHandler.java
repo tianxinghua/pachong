@@ -261,10 +261,16 @@ public class PendingHandler {
     private void replaceMaterial(PendingSpu spu, HubSpuPendingDto hubSpuPending) {
         Map<String, String> materialMap = this.getMaterialMap();
         Set<String> materialSet = materialMap.keySet();
+        String supplierMaterial= "";
         for(String material:materialSet){
-            if(spu.getHubMaterial().toLowerCase().indexOf(material.toLowerCase())>=0){
-                 spu.setHubMaterial(spu.getHubMaterial().toLowerCase().replaceAll(material.toLowerCase(),
-                         materialMap.get(material.toLowerCase())));
+            if(StringUtils.isBlank(material)) continue;
+            if(StringUtils.isNotBlank(spu.getHubMaterial())){
+                supplierMaterial = spu.getHubMaterial().toLowerCase();
+                if(supplierMaterial.indexOf(material.toLowerCase())>=0){
+
+                     spu.setHubMaterial(supplierMaterial.replaceAll(material.toLowerCase(),
+                             materialMap.get(material)));
+                }
             }
         }
         hubSpuPending.setHubMaterial(spu.getHubMaterial());
@@ -749,6 +755,7 @@ public class PendingHandler {
             materialStaticMap = new LinkedHashMap<>();
             List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialMapping();
             for(MaterialDTO dto:materialDTOS){
+
                 materialStaticMap.put(dto.getSupplierMaterial(),dto.getHubMaterial());
             }
         }else{
