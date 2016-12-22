@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.ui.task.spuimport.service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,43 +45,37 @@ public class HubImportTaskService {
 	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
 	@Autowired 
 	HubSpuImportTaskGateWay spuImportGateway;
-	private static String ftpPath = "F://";
 	public HubResponse uploadFileAndSave(HubImportTaskRequestDto task) throws Exception{
 		
-		String []fileName = task.getFileName().split(".");
-		if(fileName!=null&&fileName.length>2){
-			if("xlsl".equals(fileName[1])||"xls".equals(fileName[1])){
+		String []fileName = task.getFileName().split("\\.");
+		if(fileName!=null&&fileName.length==2){
+			if("xlsx".equals(fileName[1])||"xls".equals(fileName[1])){
+				
 				SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 				Date date = new Date();
-				String systemFileName = ftpPath+sim.format(date)+task.getFileName().split(".")[1];
-				//第一步 ： 上传ftp
-				HubResponse flag = FTPClientUtil.uploadFile(task.getUploadfile(),ftpPath,systemFileName);
-				//第二步 ： 保存数据库
-				if("0".equals(flag.getCode())){
-					saveTask(task);
-					//第三步 ： 发送到hub消息队列
-					
-				}
-				return flag;
 				
-			}else{
-				return HubResponse.errorResp("文件格式有误，请下载模板");
+				String taskNo = sim.format(date);
+				String systemFileName = taskNo +"."+fileName[1];
+				
+				//第一步 ： 上传ftp
+				String ftpPath = FTPClientUtil.uploadFile(task.getUploadfile(),systemFileName);
+				//第二步 ： 保存数据库
+				saveTask(task,taskNo,ftpPath,systemFileName);
+				//TODO 第三步 ：发送到hub消息队列
+				
+				return HubResponse.successResp(null);
 			}
-		}else{
-			return HubResponse.errorResp("文件格式有误，请下载模板");
 		}
-		
+		return HubResponse.errorResp("文件格式有误，请下载模板");
 	}
-	private boolean saveTask(HubImportTaskRequestDto task) throws Exception{
+	private boolean saveTask(HubImportTaskRequestDto task,String taskNo,String ftpPath,String systemFileName) throws Exception{
 		// TODO Auto-generated method stub
-		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
-		Date date = new Date();
-		hubSpuTask.setTaskNo(sim.format(date));
-		hubSpuTask.setTaskFtpFilePath(ftpPath+sim.format(date)+task.getFileName().split(".")[1]);
-		hubSpuTask.setSysFileName(sim.format(date)+task.getFileName().split(".")[1]);
+		hubSpuTask.setTaskNo(taskNo);
+		hubSpuTask.setTaskFtpFilePath(ftpPath+systemFileName);
+		hubSpuTask.setSysFileName(systemFileName);
 	    hubSpuTask.setLocalFileName(task.getFileName());
-	    hubSpuTask.setCreateTime(date);
+	    hubSpuTask.setCreateTime(new Date());
 	    hubSpuTask.setCreateUser(task.getCreateUser());
 	    hubSpuTask.setTaskState((byte) 0);
 	    spuImportGateway.insert(hubSpuTask);
@@ -122,6 +118,19 @@ public class HubImportTaskService {
 			}
 		}
 		return responseList;
+	}
+	public HubResponse<byte[]> downResultFile(String resultFilePath) throws Exception{
+		// TODO Auto-generated method stub
+		InputStream in = FTPClientUtil.downFile(resultFilePath);
+		ByteArrayOutputStream swapStream = new ByteArrayOutputStream(); 
+		byte[] buff = new byte[1024]; //buff用于存放循环读取的临时数据 
+		int rc = 0; 
+		while ((rc = in.read(buff, 0, 100)) > 0) { 
+		swapStream.write(buff, 0, rc); 
+		} 
+		swapStream.flush();
+		byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果 
+		return HubResponse.successResp(in_b);
 	}
 
 }
