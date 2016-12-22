@@ -117,6 +117,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.dictionary.origin.po.HubOriginDic" >
+    <selectKey keyColumn="origin_dic_id" keyProperty="originDicId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS origin_dic_id
+  	</selectKey>
     insert into hub_origin_dic (origin_dic_id, supplier_origin, hub_origin, 
       hub_origin_no, push_state, push_time, 
       create_time, create_user, update_time, 
@@ -129,6 +132,9 @@
       #{memo,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.dictionary.origin.po.HubOriginDic" >
+    <selectKey keyColumn="origin_dic_id" keyProperty="originDicId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS origin_dic_id
+  	</selectKey>
     insert into hub_origin_dic
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="originDicId != null" >

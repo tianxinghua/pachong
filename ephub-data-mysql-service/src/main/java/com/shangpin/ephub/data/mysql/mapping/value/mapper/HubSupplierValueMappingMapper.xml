@@ -125,6 +125,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMapping" >
+    <selectKey keyColumn="value_mapping_id" keyProperty="valueMappingId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS value_mapping_id
+  	</selectKey>
     insert into hub_supplier_value_mapping (value_mapping_id, col_mapping_id, supplier_id, 
       supplier_value_no, supplier_value_parent_no, 
       supplier_value, hub_value_no, hub_value, 
@@ -141,6 +144,9 @@
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMapping" >
+    <selectKey keyColumn="value_mapping_id" keyProperty="valueMappingId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS value_mapping_id
+  	</selectKey>
     insert into hub_supplier_value_mapping
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="valueMappingId != null" >

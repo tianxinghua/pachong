@@ -135,6 +135,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.sku.pending.po.HubSkuPending" >
+    <selectKey keyColumn="sku_pending_id" keyProperty="skuPendingId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS sku_pending_id
+  	</selectKey>
     insert into hub_sku_pending (sku_pending_id, spu_pending_id, supplier_id, 
       supplier_sku_no, sku_name, market_price, 
       market_price_currencyOrg, sales_price, sales_price_currency, 
@@ -157,6 +160,9 @@
       #{screenSize,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.sku.pending.po.HubSkuPending" >
+    <selectKey keyColumn="sku_pending_id" keyProperty="skuPendingId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS sku_pending_id
+  	</selectKey>
     insert into hub_sku_pending
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="skuPendingId != null" >

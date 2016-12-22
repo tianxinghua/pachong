@@ -130,6 +130,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu" >
+    <selectKey keyColumn="supplier_spu_id" keyProperty="supplierSpuId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS supplier_spu_id
+  	</selectKey>
     insert into hub_supplier_spu (supplier_spu_id, supplier_id, supplier_spu_no, 
       supplier_spu_model, supplier_spu_name, supplier_spu_color, 
       supplier_gender, supplier_categoryno, supplier_categoryname, 
@@ -148,6 +151,9 @@
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu" >
+    <selectKey keyColumn="supplier_spu_id" keyProperty="supplierSpuId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS supplier_spu_id
+  	</selectKey>
     insert into hub_supplier_spu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="supplierSpuId != null" >

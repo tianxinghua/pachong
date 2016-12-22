@@ -116,6 +116,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.mapping.column.po.HubSupplierColMapping" >
+    <selectKey keyColumn="supplier_col_mapping_id" keyProperty="supplierColMappingId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS supplier_col_mapping_id
+  	</selectKey>
     insert into hub_supplier_col_mapping (supplier_col_mapping_id, supplier_id, 
       supplier_col_name, hub_col_name, sort_value, 
       create_time, create_user, update_time, 
@@ -128,6 +131,9 @@
       #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.mapping.column.po.HubSupplierColMapping" >
+    <selectKey keyColumn="supplier_col_mapping_id" keyProperty="supplierColMappingId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS supplier_col_mapping_id
+  	</selectKey>
     insert into hub_supplier_col_mapping
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="supplierColMappingId != null" >

@@ -123,6 +123,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.rule.model.po.HubBrandModelRule" >
+    <selectKey keyColumn="brand_model_rule_id" keyProperty="brandModelRuleId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS brand_model_rule_id
+  	</selectKey>
     insert into hub_brand_model_rule (brand_model_rule_id, hub_brand_no, model_rule, 
       model_rex, rule_state, is_join_category, 
       category_type, exclude_rex, format_separator, 
@@ -139,6 +142,9 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.rule.model.po.HubBrandModelRule" >
+    <selectKey keyColumn="brand_model_rule_id" keyProperty="brandModelRuleId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS brand_model_rule_id
+  	</selectKey>
     insert into hub_brand_model_rule
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="brandModelRuleId != null" >

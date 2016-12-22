@@ -112,6 +112,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.supplier.config.po.HubSupplierConfig" >
+    <selectKey keyColumn="supplier_config_id" keyProperty="supplierConfigId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS supplier_config_id
+  	</selectKey>
     insert into hub_supplier_config (supplier_config_id, supplier_id, config_string, 
       create_time, update_time, memo, 
       data_state, version)
@@ -120,6 +123,9 @@
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.supplier.config.po.HubSupplierConfig" >
+    <selectKey keyColumn="supplier_config_id" keyProperty="supplierConfigId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS supplier_config_id
+  	</selectKey>
     insert into hub_supplier_config
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="supplierConfigId != null" >

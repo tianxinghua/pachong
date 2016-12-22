@@ -121,6 +121,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.task.spuimport.po.HubSpuImportTask" >
+    <selectKey keyColumn="spu_import_task_id" keyProperty="spuImportTaskId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS spu_import_task_id
+  	</selectKey>
     insert into hub_spu_import_task (spu_import_task_id, task_no, task_ftp_file_path, 
       local_file_name, sys_file_name, task_state, 
       result_file_path, process_info, create_time, 
@@ -135,6 +138,9 @@
       #{memo,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.task.spuimport.po.HubSpuImportTask" >
+    <selectKey keyColumn="spu_import_task_id" keyProperty="spuImportTaskId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS spu_import_task_id
+  	</selectKey>
     insert into hub_spu_import_task
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="spuImportTaskId != null" >

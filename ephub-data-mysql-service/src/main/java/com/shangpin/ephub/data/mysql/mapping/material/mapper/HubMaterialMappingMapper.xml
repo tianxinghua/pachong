@@ -115,6 +115,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.mapping.material.po.HubMaterialMapping" >
+    <selectKey keyColumn="material_mapping_id" keyProperty="materialMappingId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS material_mapping_id
+  	</selectKey>
     insert into hub_material_mapping (material_mapping_id, supplier_material, 
       hub_material, mapping_level, create_time, 
       create_user, update_time, update_user, 
@@ -127,6 +130,9 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.mapping.material.po.HubMaterialMapping" >
+    <selectKey keyColumn="material_mapping_id" keyProperty="materialMappingId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS material_mapping_id
+  	</selectKey>
     insert into hub_material_mapping
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="materialMappingId != null" >

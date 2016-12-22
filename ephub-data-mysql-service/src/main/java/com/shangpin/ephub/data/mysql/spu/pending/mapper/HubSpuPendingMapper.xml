@@ -141,6 +141,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
+    <selectKey keyColumn="spu_pending_id" keyProperty="spuPendingId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS spu_pending_id
+  	</selectKey>
     insert into hub_spu_pending (spu_pending_id, supplier_no, supplier_id, 
       supplier_spu_no, spu_model, spu_name, 
       hub_gender, hub_category_no, hub_brand_no, 
@@ -167,6 +170,9 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
+    <selectKey keyColumn="spu_pending_id" keyProperty="spuPendingId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS spu_pending_id
+  	</selectKey>
     insert into hub_spu_pending
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="spuPendingId != null" >
