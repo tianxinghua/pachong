@@ -17,14 +17,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.asynchronous.task.consumer.productimport.hub.dto.HubProductImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.util.FTPClientUtil;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.dto.HubPendingProductImportDTO;
-import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskDto;
-import com.shangpin.ephub.client.data.mysql.config.dto.HubSpuImportTaskWithCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.config.gateway.HubSpuImportTaskGateWay;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 
 /**
