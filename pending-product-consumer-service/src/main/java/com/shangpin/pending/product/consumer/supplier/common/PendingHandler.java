@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.pending.product.consumer.common.enumeration.SpuStatus;
+import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
 import com.shangpin.pending.product.consumer.util.BurberryModelRule;
 import com.shangpin.pending.product.consumer.util.PradaModelRule;
 import org.apache.commons.lang.StringUtils;
@@ -88,6 +90,8 @@ public class PendingHandler {
     static Map<String,String> seasonStaticMap = null;
 
     static Map<String,String> materialStaticMap = null;
+
+    static Map<String,String> originStaticMap = null;
 
 
     /**
@@ -229,7 +233,7 @@ public class PendingHandler {
             if(!brandmapping) allStatus=false;
 
 
-            //todo 货号验证
+            //货号验证
             if(brandmapping){
                 if(!setBrandModel(spu, hubSpuPending)) allStatus=false;
             }
@@ -243,6 +247,9 @@ public class PendingHandler {
 
             //获取材质
             replaceMaterial(spu, hubSpuPending);
+
+            //产地映射
+            setOriginMapping(spu,hubSpuPending);
 
             if(allStatus){
                 hubSpuPending.setSpuState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
@@ -276,7 +283,7 @@ public class PendingHandler {
         hubSpuPending.setHubMaterial(spu.getHubMaterial());
     }
 
-    private boolean setSeasonMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
+    public  boolean setSeasonMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         Map<String, String> seasonMap = this.getSeasonMap(spu.getSupplierId());
         boolean result = true;
 
@@ -330,17 +337,54 @@ public class PendingHandler {
         return  result;
     }
 
+
+    public void setOriginMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception{
+        Map<String,String> originMap = this.getOriginMap();
+        if(StringUtils.isNotBlank(spu.getHubOrigin())){
+            if(originMap.containsKey(spu.getHubOrigin().trim())){
+                hubSpuPending.setHubOrigin(originMap.get(spu.getHubOrigin().trim()));
+            }
+        }
+    }
+
+    private Map<String,String> getOriginMap() {
+        if(null==originStaticMap){
+            originStaticMap = new HashMap<>();
+
+            List<HubSupplierValueMappingDto> valueMappingDtos= dataServiceHandler.getHubSupplierValueMappingByType(SupplierValueMappingType.TYPE_ORIGIN.getIndex());
+            for (HubSupplierValueMappingDto dto : valueMappingDtos) {
+                originStaticMap.put(dto.getSupplierValue(),dto.getHubValue());
+
+            }
+
+
+        }else{
+            if(isNeedHandle()){
+                List<HubSupplierValueMappingDto> valueMappingDtos= dataServiceHandler.getHubSupplierValueMappingByType(SupplierValueMappingType.TYPE_ORIGIN.getIndex());
+                for (HubSupplierValueMappingDto dto : valueMappingDtos) {
+                    originStaticMap.put(dto.getSupplierValue(),dto.getHubValue());
+
+                }
+            }
+        }
+        return originStaticMap;
+    }
+
     public  boolean  setCategoryMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         boolean result = true;
         String categoryAndStatus="";
         Integer mapStatus=0;
+        //无品类 无性别时 直接返回
+        if(StringUtils.isBlank(spu.getHubCategoryNo())||StringUtils.isBlank(spu.getHubGender())){
+            return false;
+        }
         Map<String, Map<String,String>> supplierCategoryMappingMap = this.getCategoryMappingMap(spu.getSupplierId());
         if(supplierCategoryMappingMap.containsKey(spu.getSupplierId())){
             Map<String, String> categoryMappingMap = supplierCategoryMappingMap.get(spu.getSupplierId());
 
-            if(categoryMappingMap.containsKey(spu.getHubCategoryNo()+"_"+spu.getHubGender())){
+            if(categoryMappingMap.containsKey(spu.getHubCategoryNo().trim()+"_"+spu.getHubGender().trim())){
                 //包含时转化赋值
-                categoryAndStatus = categoryMappingMap.get(spu.getHubCategoryNo()+"_"+spu.getHubGender());
+                categoryAndStatus = categoryMappingMap.get(spu.getHubCategoryNo().trim()+"_"+spu.getHubGender().trim());
                 if(categoryAndStatus.contains("_")){
                     hubSpuPending.setHubCategoryNo(categoryAndStatus.substring(0,categoryAndStatus.indexOf("_")));
                     mapStatus = Integer.valueOf(categoryAndStatus.substring(categoryAndStatus.indexOf("_")+1));
@@ -598,22 +642,27 @@ public class PendingHandler {
         return supplierCategoryMappingStaticMap;
     }
 
+    /**
+     * 冗余供货商的性别，直接查询
+     * @param supplierId
+     * @throws Exception
+     */
     private void setSupplierCategoryValueToMap(String supplierId)  throws Exception{
 
-        List<HubGenderDicDto> hubGenderDicDtos = dataServiceHandler.getHubGenderDicBySupplierId(null);
-        Map<Long,String> hubGenderMap = new HashMap<>();
-        for(HubGenderDicDto dto:hubGenderDicDtos){
-            hubGenderMap.put(dto.getGenderDicId(),dto.getSupplierGender());
-        }
+//        List<HubGenderDicDto> hubGenderDicDtos = dataServiceHandler.getHubGenderDicBySupplierId(null);
+//        Map<Long,String> hubGenderMap = new HashMap<>();
+//        for(HubGenderDicDto dto:hubGenderDicDtos){
+//            hubGenderMap.put(dto.getGenderDicId(),dto.getSupplierGender());
+//        }
 
         List<HubSupplierCategroyDicDto> hubSupplierCategroyDicDtos = dataServiceHandler.getSupplierCategoryBySupplierId(supplierId);
         if(null!=hubSupplierCategroyDicDtos&&hubSupplierCategroyDicDtos.size()>0){
             Map<String,String> categoryMap = new HashMap<>();
             for(HubSupplierCategroyDicDto dto:hubSupplierCategroyDicDtos){
-                // map 的key 供货商的品类 + "_"+供货商的性别 ，value ： 尚品的品类 + "_"+ 匹配状态
-                if(hubGenderMap.containsKey(dto.getGenderDicId())){
-                    categoryMap.put(dto.getSupplierCategory()+"_"+hubGenderMap.get(dto.getGenderDicId()),dto.getHubCategoryNo()+"_"+dto.getMappingState());
-                }
+                // map 的key 供货商的品类 + "_"+供货商的性别 ，value ： 尚品的品类 + "_"+ 匹配状态 (1 :匹配到4级  2：可以匹配但未匹配到4级）
+//                if(hubGenderMap.containsKey(dto.getGenderDicId())){
+                    categoryMap.put(dto.getSupplierCategory()+"_"+dto.getSupplierGender(),dto.getHubCategoryNo()+"_"+dto.getMappingState());
+//                }
             }
             supplierCategoryMappingStaticMap.put(supplierId,categoryMap);
         }

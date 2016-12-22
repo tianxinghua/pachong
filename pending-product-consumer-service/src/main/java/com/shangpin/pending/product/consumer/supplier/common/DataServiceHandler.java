@@ -22,7 +22,10 @@ import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicWithCriteriaD
 import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubMaterialMappingGateWay;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicDto;
 import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicItemCriteriaDto;
@@ -108,6 +111,9 @@ public class DataServiceHandler {
 
     @Autowired
     private HubMaterialMappingGateWay hubMaterialMappingGateWay;
+
+    @Autowired
+    private HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
 
 
     public HubSupplierBrandDicDto getHubSupplierBrand(String supplierId,String supplierBrandName){
@@ -248,14 +254,14 @@ public class DataServiceHandler {
         HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
         criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
         HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
-        criterion.andSupplierIdEqualTo(supplierId);
+        criterion.andSupplierIdEqualTo(supplierId).andPushStateEqualTo(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
         return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
     }
 
-    public HubSupplierCategroyDicDto getSupplierCategoryBySupplierIdAndSupplierCategoryAndHubGender(String supplierId,String supplierCategory,Long hubGenderId){
+    public HubSupplierCategroyDicDto getSupplierCategoryBySupplierIdAndSupplierCategoryAndSupplierGender(String supplierId,String supplierCategory,String  supplierGender){
         HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
         HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
-        criterion.andSupplierIdEqualTo(supplierId).andSupplierCategoryEqualTo(supplierCategory).andGenderDicIdEqualTo(hubGenderId);
+        criterion.andSupplierIdEqualTo(supplierId).andSupplierCategoryEqualTo(supplierCategory).andSupplierGenderEqualTo(supplierGender);
         List<HubSupplierCategroyDicDto> hubSupplierCategroyDicDtos = hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
         if(null!=hubSupplierCategroyDicDtos&&hubSupplierCategroyDicDtos.size()>0){
             return  hubSupplierCategroyDicDtos.get(0);
@@ -267,18 +273,14 @@ public class DataServiceHandler {
 
     public void saveHubCategory(String supplierId,String supplierCategory,String  supplierGender) throws Exception{
 
+        //先获取性别字典的值 目的是品类映射表需要性别字典的主键
         HubGenderDicDto hubGenderDicDto = this.getHubGenderDicBySupplierIdAndSupplierGender(null, supplierGender);
 
         HubSupplierCategroyDicDto dto = new HubSupplierCategroyDicDto();
 
-        if(null!=hubGenderDicDto){
-            //如果已经存在  不做处理
-            if(null!=getSupplierCategoryBySupplierIdAndSupplierCategoryAndHubGender(supplierId,supplierCategory,hubGenderDicDto.getGenderDicId())){
-                 return ;
-            }
-        }else{
 
-            throw new Exception("can't save category ,because not save supplier gender");
+        if(null!=getSupplierCategoryBySupplierIdAndSupplierCategoryAndSupplierGender(supplierId,supplierCategory,supplierGender)){
+            return ;
         }
 
 
@@ -562,5 +564,13 @@ public class DataServiceHandler {
             return null;
         }
     }
+
+
+    public List<HubSupplierValueMappingDto> getHubSupplierValueMappingByType(Integer type){
+        HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
+        criteria.createCriteria().andHubValueTypeEqualTo(type.byteValue());
+        return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
+    }
+
 
 }
