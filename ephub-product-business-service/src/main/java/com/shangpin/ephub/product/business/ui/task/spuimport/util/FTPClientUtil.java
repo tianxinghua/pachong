@@ -1,10 +1,14 @@
 package com.shangpin.ephub.product.business.ui.task.spuimport.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -57,10 +61,13 @@ public class FTPClientUtil {
 	 * @throws Exception
 	 */
 	public static HubResponse uploadFile(byte[] data, String path, String fileName) throws Exception {
-		InputStream sbs = new ByteArrayInputStream(data);
-//		HubResponse flag = checkFileTemplet(sbs);
+//		InputStream sbs = new ByteArrayInputStream(data);
+		InputStream sbs = new FileInputStream(new File("C://Hub商品导入模板 - 副本.xlsx"));
+//		InputStream sb = sbs;
+//		HubResponse flag = checkFileTemplet(sb);
 //		if(flag.getCode().equals("0")){
 		ftp.changeWorkingDirectory(path);
+		System.out.println(ftp.getStatus());
 		ftp.storeFile(fileName, sbs);
 		ftp.quit();
 //		}
@@ -117,10 +124,21 @@ public class FTPClientUtil {
 			return HubResponse.errorResp("导入文件格式与模板不一致，请下载标准模板");			
 		}
 	}
+	public static InputStream downFile(String remotePath) throws Exception{
+		
+    	InputStream in = null;
+		if(null != ftp){
+	        if(StringUtils.isNotBlank(remotePath)){
+	        	in = ftp.retrieveFileStream(remotePath);
+	        	ftp.quit();
+	        }
+		}
+		return in;
+	}
 	public static void main(String[] args) throws Exception {
-		// FTPClientUtil t = new FTPClientUtil();
-		// t.connect("", "localhost", 21, "yhh", "yhhazr");
-		// File file = new File("e:\\uploadify");
-		// t.upload(file);
+		 FTPClientUtil t = new FTPClientUtil();
+		 t.connect("192.168.20.110", 21, "dev", "shangpin@123");
+//		 t.downFile("ftpLoad/test.txt");
+		 t.uploadFile(null, "ftpLoad","test.xlsx");
 	}
 }
