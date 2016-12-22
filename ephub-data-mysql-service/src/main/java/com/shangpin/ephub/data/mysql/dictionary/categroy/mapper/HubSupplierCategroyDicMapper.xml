@@ -121,6 +121,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.dictionary.categroy.po.HubSupplierCategroyDic" >
+    <selectKey keyColumn="supplier_category_dic_id" keyProperty="supplierCategoryDicId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS supplier_category_dic_id
+  	</selectKey>
     insert into hub_supplier_categroy_dic (supplier_category_dic_id, supplier_id, 
       supplier_category, hub_category_no, category_type, 
       mapping_state, push_state, create_time, 
@@ -135,6 +138,9 @@
       #{version,jdbcType=BIGINT}, #{genderDicId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.dictionary.categroy.po.HubSupplierCategroyDic" >
+    <selectKey keyColumn="supplier_category_dic_id" keyProperty="supplierCategoryDicId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS supplier_category_dic_id
+  	</selectKey>
     insert into hub_supplier_categroy_dic
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="supplierCategoryDicId != null" >

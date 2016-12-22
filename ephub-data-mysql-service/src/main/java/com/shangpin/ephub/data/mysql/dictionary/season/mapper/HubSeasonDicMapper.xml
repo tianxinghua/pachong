@@ -118,6 +118,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.dictionary.season.po.HubSeasonDic" >
+    <selectKey keyColumn="season_dic_id" keyProperty="seasonDicId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS season_dic_id
+  	</selectKey>
     insert into hub_season_dic (season_dic_id, supplierid, supplier_season, 
       hub_market_time, hub_season, create_time, 
       create_user, update_time, update_user, 
@@ -130,6 +133,9 @@
       #{pushState,jdbcType=TINYINT}, #{pushTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.dictionary.season.po.HubSeasonDic" >
+    <selectKey keyColumn="season_dic_id" keyProperty="seasonDicId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS season_dic_id
+  	</selectKey>
     insert into hub_season_dic
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="seasonDicId != null" >
