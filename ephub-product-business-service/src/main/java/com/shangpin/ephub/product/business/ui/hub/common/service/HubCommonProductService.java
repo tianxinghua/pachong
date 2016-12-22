@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.common.service;
+package com.shangpin.ephub.product.business.ui.hub.common.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -7,7 +7,7 @@ import com.shangpin.ephub.client.common.dto.RowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaWithRowBoundsDto;
-import com.shangpin.ephub.product.business.ui.common.dto.HubQuryDto;
+import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 import com.shangpin.ephub.product.business.util.DateTimeUtil;
 /**
  * <p>Title:HubCommonProductService </p>

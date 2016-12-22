@@ -1,14 +1,36 @@
 feign.hystrix.enabled: false
 spring: 
+  rabbitmq: 
+           host: 192.168.20.175
+           port: 5672
+           username: scm-message-service
+           password: scm-message-service
+           virtual-host: /scm-message-service
   cloud:
-       consul: 
-         discovery: 
-           instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
-           prefer-ip-address: true
-           ip-address: 192.168.20.110
-           hostname: 192.168.20.110
-           port: ${server.port}
-           healthCheckUrl: http://localhost:9094/info 
+        consul: 
+          discovery: 
+            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+            prefer-ip-address: true
+            ip-address: 192.168.20.110
+            hostname: 192.168.20.110
+            port: ${server.port}
+            healthCheckUrl: http://localhost:9094/info 
+        stream: 
+              bindings: 
+                        pendingProductImportTask: 
+                              destination: pending.product.import.task
+                              content-type: application/json
+                        hubProductImportTask: 
+                              destination: hub.product.import.task
+                              content-type: application/json
+              rabbit: 
+                      bindings: 
+                            pendingProductImportTask: 
+                                  producer: 
+                                           prefix: HA.
+                            hubProductImportTask: 
+                                  producer: 
+                                           prefix: HA.
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   ftp:

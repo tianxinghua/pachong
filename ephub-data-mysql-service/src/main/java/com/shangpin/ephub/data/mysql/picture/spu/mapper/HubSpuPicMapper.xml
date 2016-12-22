@@ -113,6 +113,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.picture.spu.po.HubSpuPic" >
+    <selectKey keyColumn="spu_pic_id" keyProperty="spuPicId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS spu_pic_id
+  	</selectKey>
     insert into hub_spu_pic (spu_pic_id, spu_id, pic_id, 
       create_time, update_time, data_state, 
       sp_pic_url, memo, version
@@ -123,6 +126,9 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.picture.spu.po.HubSpuPic" >
+    <selectKey keyColumn="spu_pic_id" keyProperty="spuPicId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS spu_pic_id
+  	</selectKey>
     insert into hub_spu_pic
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="spuPicId != null" >

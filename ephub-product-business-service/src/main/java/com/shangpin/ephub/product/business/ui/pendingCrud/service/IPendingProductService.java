@@ -5,6 +5,7 @@ import java.util.List;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.product.business.ui.pendingCrud.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProductDto;
+import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProducts;
 
 /**
  * <p>Title:IPendingProductService </p>
@@ -21,7 +22,7 @@ public interface IPendingProductService {
 	 * @param pendingQuryDto
 	 * @return
 	 */
-	public List<PendingProductDto> findPendingProduct(PendingQuryDto pendingQuryDto);
+	public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto);
 	/**
 	 * 根据spu查找sku
 	 * @param spuPendingId

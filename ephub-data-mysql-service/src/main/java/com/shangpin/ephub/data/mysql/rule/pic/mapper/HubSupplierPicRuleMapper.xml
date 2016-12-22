@@ -115,6 +115,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.rule.pic.po.HubSupplierPicRule" >
+    <selectKey keyColumn="supplier_pic_rule_id" keyProperty="supplierPicRuleId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS supplier_pic_rule_id
+  	</selectKey>
     insert into hub_supplier_pic_rule (supplier_pic_rule_id, supplier_id, pull_sort, 
       pic_type, create_time, create_user, 
       update_time, update_user, memo, 
@@ -125,6 +128,9 @@
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.rule.pic.po.HubSupplierPicRule" >
+    <selectKey keyColumn="supplier_pic_rule_id" keyProperty="supplierPicRuleId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS supplier_pic_rule_id
+  	</selectKey>
     insert into hub_supplier_pic_rule
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="supplierPicRuleId != null" >

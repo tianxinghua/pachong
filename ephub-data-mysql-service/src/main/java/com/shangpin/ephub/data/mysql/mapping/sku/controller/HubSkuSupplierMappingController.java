@@ -68,11 +68,11 @@ public class HubSkuSupplierMappingController {
     	return hubSkuSupplierMappingService.updateByCriteria(hubSkuSupplierMappingWithCriteria);
     }
 	@RequestMapping(value = "/update-by-primary-key-selective")
-    public int updateByPrimaryKeySelective(@RequestBody HubSkuSupplierMapping hubBrandDic){
-    	return hubSkuSupplierMappingService.updateByPrimaryKeySelective(hubBrandDic);
+    public int updateByPrimaryKeySelective(@RequestBody HubSkuSupplierMapping hubSkuSupplierMapping){
+    	return hubSkuSupplierMappingService.updateByPrimaryKeySelective(hubSkuSupplierMapping);
     }
 	@RequestMapping(value = "/update-by-primary-key")
-    public int updateByPrimaryKey(@RequestBody HubSkuSupplierMapping hubBrandDic){
-    	return hubSkuSupplierMappingService.updateByPrimaryKey(hubBrandDic);
+    public int updateByPrimaryKey(@RequestBody HubSkuSupplierMapping hubSkuSupplierMapping){
+    	return hubSkuSupplierMappingService.updateByPrimaryKey(hubSkuSupplierMapping);
     }
 }

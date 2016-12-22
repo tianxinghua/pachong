@@ -32,6 +32,7 @@ import com.shangpin.ephub.product.business.ui.pendingCrud.enumeration.ProductSta
 import com.shangpin.ephub.product.business.ui.pendingCrud.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pendingCrud.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProductDto;
+import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProducts;
 import com.shangpin.ephub.product.business.util.DateTimeUtil;
 /**
  * <p>Title:PendingProductService </p>
@@ -53,16 +54,18 @@ public class PendingProductService implements IPendingProductService{
 	private HubSupplierCategroyDicGateWay categroyDicGateWay;
 	@Autowired
 	private HubSupplierBrandDicGateWay brandDicGateWay;
-	@Autowired
+//	@Autowired
 	private RestTemplate httpClient;
 
 	@Override
-	public List<PendingProductDto> findPendingProduct(PendingQuryDto pendingQuryDto){
+	public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto){
+		PendingProducts pendingProducts = new PendingProducts();
 		List<PendingProductDto> products = new ArrayList<PendingProductDto>();
 		if(null !=pendingQuryDto){
 			HubSpuPendingCriteriaWithRowBoundsDto rowBoundsDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
-			List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteriaWithRowbounds(rowBoundsDto);
-			if(null != pendingSpus && pendingSpus.size()>0){				
+			int total = hubSpuPendingGateWay.countByCriteria(rowBoundsDto.getCriteria());
+			if(total>0){
+				List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteriaWithRowbounds(rowBoundsDto);
 				for(HubSpuPendingDto pendingSpu : pendingSpus){
 					PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
 					pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
@@ -71,9 +74,11 @@ public class PendingProductService implements IPendingProductService{
 					pendingProduct.setHubSkus(hubSkus);
 					products.add(pendingProduct);
 				}
+				pendingProducts.setProduts(products);
 			}
+			pendingProducts.setTotal(total); 
 		}
-		return products;
+		return pendingProducts;
 	}	
 	@Override
 	public List<HubSkuPendingDto> findPendingSkuBySpuPendingId(Long spuPendingId){
@@ -193,8 +198,40 @@ public class PendingProductService implements IPendingProductService{
 	 * @return
 	 */
 	private PendingProductDto convertHubSpuPendingDto2PendingProductDto(HubSpuPendingDto pendingSpu){
-		PendingProductDto pendingProduct = new PendingProductDto();		
-		JavaUtil.fatherToChild(pendingSpu, pendingProduct); 
+		PendingProductDto pendingProduct = new PendingProductDto();	
+		pendingProduct.setSpuPendingId(pendingSpu.getSpuPendingId());
+		pendingProduct.setSupplierId(pendingSpu.getSupplierId());
+		pendingProduct.setSupplierSpuNo(pendingSpu.getSupplierSpuNo());
+		pendingProduct.setSpuModel(pendingSpu.getSpuModel());
+		pendingProduct.setSpuName(pendingSpu.getSpuName());
+		pendingProduct.setHubGender(pendingSpu.getHubGender());
+		pendingProduct.setHubCategoryNo(pendingSpu.getHubCategoryNo());
+		pendingProduct.setHubBrandNo(pendingSpu.getHubBrandNo());
+		pendingProduct.setHubSeason(pendingSpu.getHubSeason());
+		pendingProduct.setSpSkuSizeState(pendingSpu.getSpSkuSizeState());
+		pendingProduct.setSpuState(pendingSpu.getSpuState());
+		pendingProduct.setPicState(pendingSpu.getPicState());
+		pendingProduct.setIsCurrentSeason(pendingSpu.getIsCurrentSeason());
+		pendingProduct.setIsNewData(pendingSpu.getIsNewData());
+		pendingProduct.setHubMaterial(pendingSpu.getHubMaterial());
+		pendingProduct.setHubOrigin(pendingSpu.getHubOrigin());
+		pendingProduct.setCreateTime(pendingSpu.getCreateTime());
+		pendingProduct.setUpdateTime(pendingSpu.getUpdateTime());
+		pendingProduct.setSpuDesc(pendingSpu.getSpuDesc());
+		pendingProduct.setHubSpuNo(pendingSpu.getHubSpuNo());
+		pendingProduct.setSpuModelState(pendingSpu.getSpuModelState());
+		pendingProduct.setCatgoryState(pendingSpu.getCatgoryState());
+		pendingProduct.setSupplierSpuId(pendingSpu.getSupplierSpuId());
+		pendingProduct.setMemo(pendingSpu.getMemo());
+		pendingProduct.setDataState(pendingSpu.getDataState());
+		pendingProduct.setVersion(pendingSpu.getVersion());
+		pendingProduct.setSpuBrandState(pendingSpu.getSpuBrandState());
+		pendingProduct.setSpuGenderState(pendingSpu.getSpuGenderState());
+		pendingProduct.setSpuSeasonState(pendingSpu.getSpuSeasonState());
+		pendingProduct.setHubColorNo(pendingSpu.getHubColorNo());
+		pendingProduct.setHubColor(pendingSpu.getHubColor());
+		pendingProduct.setSpuColorState(pendingSpu.getSpuColorState());
+//		JavaUtil.fatherToChild(pendingSpu, pendingProduct); 
 		return pendingProduct;
 	}
 	
