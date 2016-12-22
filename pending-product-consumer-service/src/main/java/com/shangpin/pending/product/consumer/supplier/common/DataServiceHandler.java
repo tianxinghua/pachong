@@ -149,6 +149,7 @@ public class DataServiceHandler {
 
     public List<HubBrandDicDto> getBrand() throws Exception{
         HubBrandDicCriteriaDto criteria = new HubBrandDicCriteriaDto();
+        criteria.setPageSize(ConstantProperty.MAX_BRANDK_MAPPING_QUERY_NUM);
         HubBrandDicCriteriaDto.Criteria criterion =criteria.createCriteria();
 
         return brandDicGateway.selectByCriteria(criteria);
@@ -185,6 +186,7 @@ public class DataServiceHandler {
 
     public List<HubGenderDicDto> getHubGenderDicBySupplierId(String supplierId){
         HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
+        criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
         criteria.createCriteria().andSupplierIdEqualTo(supplierId).andPushStateEqualTo(DataBusinessStatus.PUSH.getIndex().byteValue());
         return hubGenderDicGateWay.selectByCriteria(criteria);
     }
@@ -231,6 +233,7 @@ public class DataServiceHandler {
 
     public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierId(String supplierId){
         HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
+        criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
         HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
         criterion.andSupplierIdEqualTo(supplierId);
         return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
@@ -290,10 +293,12 @@ public class DataServiceHandler {
     public List<ColorDTO> getColorDTO(){
 
         HubColorDicItemCriteriaDto criteria = new HubColorDicItemCriteriaDto();
+        criteria.setPageSize(ConstantProperty.MAX_COLOR_ITEM_QUERY_NUM);
 
         List<HubColorDicItemDto> hubColorDicItemDtos = hubColorDicItemGateWay.selectByCriteria(criteria);
 
         HubColorDicCriteriaDto colorDicCriteriaDto = new HubColorDicCriteriaDto();
+        colorDicCriteriaDto.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
         List<HubColorDicDto> dicDtos = hubColorDicGateWay.selectByCriteria(colorDicCriteriaDto);
         Map<Long,HubColorDicDto> colorDicMap = new HashMap<>();
         for(HubColorDicDto colorDicDto:dicDtos){
@@ -305,7 +310,7 @@ public class DataServiceHandler {
         for(HubColorDicItemDto itemDto:hubColorDicItemDtos){
             ColorDTO colorDTO = new ColorDTO();
             colorDTO.setColorItemId(itemDto.getColorDicItemId());
-            colorDTO.setSupplierColor(itemDto.getColorItemName());
+            colorDTO.setSupplierColor(itemDto.getColorItemName().trim());
             if (colorDicMap.containsKey(itemDto.getColorDicId())) {
                colorDTO.setColorDicId(itemDto.getColorDicId());
                colorDTO.setHubColorNo(colorDicMap.get(itemDto.getColorDicId()).getColorNo());
@@ -319,6 +324,7 @@ public class DataServiceHandler {
 
     public  HubColorDicItemDto  getHubColorDicItem(String supplierColor){
         HubColorDicItemCriteriaDto criteria = new HubColorDicItemCriteriaDto();
+
         criteria.createCriteria().andColorItemNameEqualTo(supplierColor);
         List<HubColorDicItemDto> hubColorDicItemDtos = hubColorDicItemGateWay.selectByCriteria(criteria);
         if(null!=hubColorDicItemDtos&&hubColorDicItemDtos.size()>0){
@@ -352,6 +358,7 @@ public class DataServiceHandler {
 
     public List<HubSeasonDicDto> getHubSeasonDic(){
         HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
+        criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
         HubSeasonDicCriteriaDto.Criteria criterion= criteria.createCriteria();
         return  hubSeasonDicGateWay.selectByCriteria(criteria);
 
@@ -397,6 +404,7 @@ public class DataServiceHandler {
     public List<MaterialDTO> getMaterialDTO(){
 
         HubMaterialDicItemCriteriaDto criteria = new HubMaterialDicItemCriteriaDto();
+        criteria.setPageSize(ConstantProperty.MAX_MATERIAL_QUERY_NUM);
         HubMaterialDicItemCriteriaDto.Criteria criterio =criteria.createCriteria();
         criteria.setOrderByClause("memo");// 完全的最小  单个单词最大
         List<HubMaterialDicItemDto> hubMaterialDicItemDtos = hubMaterialDicItemGateWay.selectByCriteria(criteria);
@@ -469,6 +477,7 @@ public class DataServiceHandler {
     public List<HubBrandModelRuleDto> getBrandModle(String hubBrandNo){
 
         HubBrandModelRuleCriteriaDto criterial = new HubBrandModelRuleCriteriaDto();
+        criterial.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
         criterial.createCriteria().andHubBrandNoEqualTo(hubBrandNo).andRuleStateEqualTo(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 
         return  hubBrandModelRuleGateWay.selectByCriteria(criterial);
