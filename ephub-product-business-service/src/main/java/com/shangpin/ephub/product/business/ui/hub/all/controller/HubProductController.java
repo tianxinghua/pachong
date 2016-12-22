@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.shangpin.ephub.product.business.ui.hub.all.dto.Id;
 import com.shangpin.ephub.product.business.ui.hub.all.service.IHubProductService;
 import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 import com.shangpin.ephub.response.HubResponse;
@@ -24,9 +25,18 @@ public class HubProductController {
 	@Autowired
 	private IHubProductService hubProductService;
 
+	@SuppressWarnings("rawtypes")
 	@RequestMapping(value="/list",method=RequestMethod.POST)
 	@ResponseBody
-	public HubResponse hubList(@RequestBody HubQuryDto hubQuryDto){
-		return HubResponse.successResp("");
+	public HubResponse hubList(@RequestBody HubQuryDto hubQuryDto){	
+		
+		return HubResponse.successResp(hubProductService.findHubProductds(hubQuryDto));
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value="/detail",method=RequestMethod.POST)
+	public HubResponse productDetail(@RequestBody Id id){
+		
+		return HubResponse.successResp(hubProductService.findProductDtails(id.getId()));
 	}
 }
