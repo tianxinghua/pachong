@@ -303,16 +303,19 @@ public class PendingHandler {
     public  boolean  setBrandMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         boolean result = true;
         Map<String, String> brandMap = this.getBrandMap();
-        if(brandMap.containsKey(spu.getHubBrandNo())){
-            //包含时转化赋值
-            hubSpuPending.setHubBrandNo(brandMap.get(spu.getHubBrandNo()));
-            hubSpuPending.setSpuBrandState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+        if(!StringUtils.isEmpty(spu.getHubBrandNo())){
 
-        }else{
-            result = false;
-            hubSpuPending.setSpuBrandState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-            dataServiceHandler.saveBrand(spu.getSupplierId(),spu.getHubBrandNo());
+            if(brandMap.containsKey(spu.getHubBrandNo().trim().toUpperCase())){
+                //包含时转化赋值
+                hubSpuPending.setHubBrandNo(brandMap.get(spu.getHubBrandNo().trim().toUpperCase()));
+                hubSpuPending.setSpuBrandState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 
+            }else{
+                result = false;
+                hubSpuPending.setSpuBrandState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+                dataServiceHandler.saveBrand(spu.getSupplierId(),spu.getHubBrandNo().trim());
+
+            }
         }
         return  result;
     }
@@ -608,17 +611,19 @@ public class PendingHandler {
         if(null==brandStaticMap){
             brandStaticMap = new HashMap<>();
             hubBrandStaticMap = new HashMap<>();
-            for (HubBrandDicDto hubBrandDicDto : dataServiceHandler.getBrand()) {
-                brandStaticMap.put(hubBrandDicDto.getSupplierBrand(),hubBrandDicDto.getHubBrandNo());
-                hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo(),"");
+            List<HubBrandDicDto> brandDicDtos= dataServiceHandler.getBrand();
+            for (HubBrandDicDto hubBrandDicDto : brandDicDtos) {
+                brandStaticMap.put(hubBrandDicDto.getSupplierBrand().trim().toUpperCase(),hubBrandDicDto.getHubBrandNo());
+                hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo().trim(),"");
             }
             ;
 
         }else{
             if(isNeedHandle()){
-                for (HubBrandDicDto hubBrandDicDto : dataServiceHandler.getBrand()) {
-                    brandStaticMap.put(hubBrandDicDto.getSupplierBrand(),hubBrandDicDto.getHubBrandNo());
-                    hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo(),"");
+                List<HubBrandDicDto> brandDicDtos= dataServiceHandler.getBrand();
+                for (HubBrandDicDto hubBrandDicDto : brandDicDtos) {
+                    brandStaticMap.put(hubBrandDicDto.getSupplierBrand().trim().toUpperCase(),hubBrandDicDto.getHubBrandNo());
+                    hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo().trim(),"");
                 }
                 ;
                 //无用的内容 暂时不考虑
