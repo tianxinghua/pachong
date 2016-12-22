@@ -11,9 +11,9 @@ import org.springframework.messaging.SubscribableChannel;
  */
 public interface ProductImportTaskSink {
 	
-	public String PENDING_IMPORT = "pendingProductImport";
+	public String PENDING_IMPORT = "pendingProductImportTask";
 	
-	public String HUB_IMPORT = "hubProductImport";
+	public String HUB_IMPORT = "hubProductImportTask";
 	
     /**
      * pending导入处理
