@@ -63,6 +63,7 @@ public class SupplierProductMysqlService {
 		}
 		} catch (Exception e) {
 			System.out.println("supplierid============="+hubSpu.getSupplierId());
+			System.out.println(hubSpu.getSupplierMaterial());
 			e.printStackTrace();
 		}	
 			

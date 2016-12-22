@@ -92,7 +92,7 @@ public class TonyHandler implements ISupplierHandler {
 			hubSku.setSupplierSkuNo(tonyItems.getSku());
 			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(tonyItems.getStock_price())));
 			hubSku.setSupplierBarcode(tonyItems.getBarcode());
-			hubSku.setSupplierSkuSize(getProductSize(tonyItems.getSku()));
+			hubSku.setSupplierSkuSize(tonyItems.getSize());
 			hubSku.setStock(StringUtil.verifyStock(tonyItems.getQty()));
 			return true;
 		}else{
@@ -139,24 +139,34 @@ public class TonyHandler implements ISupplierHandler {
         for (String s: descArr){
             if (s.contains("%,")){
                 material = s;
+                break;
             } else if ( s.contains("Leather")){	                
                 material = s;
+                break;
             } else  if (s.contains("leather")){
                 material = "leather";
+                break;
             } else if (s.contains("Nylon")){
                 material = s;
+                break;
             } else if (s.contains("brass")){
                 material = s;
+                break;
             } else if (s.contains("PVC")){
                 material = "PVC";
+                break;
             } else if (s.contains("fox")||s.contains("calfskin")){
                 material = s;
+                break;
             } else if (s.contains("Sheared fabric")){
                 material = "Sheared fabric";
+                break;
             } else if (s.contains("GG fabric")){
                 material = "GG fabric";
+                break;
             } else if (s.contains("Elaphe snakeskin")){
                 material = "Elaphe snakeskin";
+                break;
             }
         }
         return material;
