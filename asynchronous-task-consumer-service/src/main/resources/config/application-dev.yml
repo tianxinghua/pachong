@@ -40,6 +40,13 @@ spring:
                                        republishToDlq: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
+  ftp:
+       host: 192.168.20.110
+       port: 21
+       userName: dev
+       password: shangpin@123
+       ftpHubPath: hub/
+       ftpPendingPath: pending/
   mail: 
        default-recipient: yan_xiao_bin@126.com
        default-sender: yanxiaobin@shangpin.com
