@@ -347,6 +347,76 @@ public class HubSupplierCategroyDicCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andSupplierGenderIsNull() {
+            addCriterion("supplier_gender is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierGenderIsNotNull() {
+            addCriterion("supplier_gender is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierGenderEqualTo(String value) {
+            addCriterion("supplier_gender =", value, "supplierGender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierGenderNotEqualTo(String value) {
+            addCriterion("supplier_gender <>", value, "supplierGender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierGenderGreaterThan(String value) {
+            addCriterion("supplier_gender >", value, "supplierGender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierGenderGreaterThanOrEqualTo(String value) {
+            addCriterion("supplier_gender >=", value, "supplierGender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierGenderLessThan(String value) {
+            addCriterion("supplier_gender <", value, "supplierGender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierGenderLessThanOrEqualTo(String value) {
+            addCriterion("supplier_gender <=", value, "supplierGender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierGenderLike(String value) {
+            addCriterion("supplier_gender like", value, "supplierGender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierGenderNotLike(String value) {
+            addCriterion("supplier_gender not like", value, "supplierGender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierGenderIn(List<String> values) {
+            addCriterion("supplier_gender in", values, "supplierGender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierGenderNotIn(List<String> values) {
+            addCriterion("supplier_gender not in", values, "supplierGender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierGenderBetween(String value1, String value2) {
+            addCriterion("supplier_gender between", value1, value2, "supplierGender");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierGenderNotBetween(String value1, String value2) {
+            addCriterion("supplier_gender not between", value1, value2, "supplierGender");
+            return (Criteria) this;
+        }
+
         public Criteria andHubCategoryNoIsNull() {
             addCriterion("hub_category_no is null");
             return (Criteria) this;

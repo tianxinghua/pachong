@@ -20,6 +20,11 @@ public class HubSupplierCategroyDic implements Serializable {
     private String supplierCategory;
 
     /**
+     * 供货商性别
+     */
+    private String supplierGender;
+
+    /**
      * 尚品品类编号
      */
     private String hubCategoryNo;
@@ -108,6 +113,14 @@ public class HubSupplierCategroyDic implements Serializable {
 
     public void setSupplierCategory(String supplierCategory) {
         this.supplierCategory = supplierCategory == null ? null : supplierCategory.trim();
+    }
+
+    public String getSupplierGender() {
+        return supplierGender;
+    }
+
+    public void setSupplierGender(String supplierGender) {
+        this.supplierGender = supplierGender == null ? null : supplierGender.trim();
     }
 
     public String getHubCategoryNo() {
@@ -223,6 +236,7 @@ public class HubSupplierCategroyDic implements Serializable {
         sb.append(", supplierCategoryDicId=").append(supplierCategoryDicId);
         sb.append(", supplierId=").append(supplierId);
         sb.append(", supplierCategory=").append(supplierCategory);
+        sb.append(", supplierGender=").append(supplierGender);
         sb.append(", hubCategoryNo=").append(hubCategoryNo);
         sb.append(", categoryType=").append(categoryType);
         sb.append(", mappingState=").append(mappingState);
@@ -256,6 +270,7 @@ public class HubSupplierCategroyDic implements Serializable {
         return (this.getSupplierCategoryDicId() == null ? other.getSupplierCategoryDicId() == null : this.getSupplierCategoryDicId().equals(other.getSupplierCategoryDicId()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
             && (this.getSupplierCategory() == null ? other.getSupplierCategory() == null : this.getSupplierCategory().equals(other.getSupplierCategory()))
+            && (this.getSupplierGender() == null ? other.getSupplierGender() == null : this.getSupplierGender().equals(other.getSupplierGender()))
             && (this.getHubCategoryNo() == null ? other.getHubCategoryNo() == null : this.getHubCategoryNo().equals(other.getHubCategoryNo()))
             && (this.getCategoryType() == null ? other.getCategoryType() == null : this.getCategoryType().equals(other.getCategoryType()))
             && (this.getMappingState() == null ? other.getMappingState() == null : this.getMappingState().equals(other.getMappingState()))
@@ -278,6 +293,7 @@ public class HubSupplierCategroyDic implements Serializable {
         result = prime * result + ((getSupplierCategoryDicId() == null) ? 0 : getSupplierCategoryDicId().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
         result = prime * result + ((getSupplierCategory() == null) ? 0 : getSupplierCategory().hashCode());
+        result = prime * result + ((getSupplierGender() == null) ? 0 : getSupplierGender().hashCode());
         result = prime * result + ((getHubCategoryNo() == null) ? 0 : getHubCategoryNo().hashCode());
         result = prime * result + ((getCategoryType() == null) ? 0 : getCategoryType().hashCode());
         result = prime * result + ((getMappingState() == null) ? 0 : getMappingState().hashCode());
