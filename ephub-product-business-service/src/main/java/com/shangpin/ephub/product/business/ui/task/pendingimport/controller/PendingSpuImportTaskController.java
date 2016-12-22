@@ -41,6 +41,18 @@ public class PendingSpuImportTaskController {
 		}
 		
     }
+	
+	@RequestMapping(value = "/import-spu-s",method = RequestMethod.POST)
+    public HubResponse down(@RequestBody HubImportTaskListRequestDto dto){
+	        	
+		try {
+			List<HubTaskProductResponseDTO> list = pendingImportTaskService.findHubTaskList(dto);
+			return HubResponse.successResp(list);
+		} catch (Exception e) {
+			return HubResponse.errorResp("获取列表失败");
+		}
+    }
+	
 	@RequestMapping(value = "/import-spu-list",method = RequestMethod.POST)
     public HubResponse importSpuList(@RequestBody HubImportTaskListRequestDto dto){
 	        	

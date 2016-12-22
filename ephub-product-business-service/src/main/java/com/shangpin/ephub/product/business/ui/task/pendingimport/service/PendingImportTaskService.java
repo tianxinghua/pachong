@@ -50,14 +50,11 @@ public class PendingImportTaskService {
 		Date date = new Date();
 		String systemFileName = ftpPath+sim.format(date)+task.getFileName().split(".")[1];
 		//第一步 ： 上传ftp
-		HubResponse flag = FTPClientUtil.uploadFile(task.getUploadfile(),ftpPath,systemFileName);
+		String flag = FTPClientUtil.uploadFile(task.getUploadfile(),systemFileName);
 		//第二步 ： 保存数据库
-		if("0".equals(flag.getCode())){
-			saveTask(task);
-			//第三步 ： 发送到hub消息队列
-			
-		}
-		return flag;
+		saveTask(task);
+		//第三步 ： 发送到hub消息队列
+		return null;
 	}
 	private boolean saveTask(HubImportTaskRequestDto task) throws Exception{
 		// TODO Auto-generated method stub

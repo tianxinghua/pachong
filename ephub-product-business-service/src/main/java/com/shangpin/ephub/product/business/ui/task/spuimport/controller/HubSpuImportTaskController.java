@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
@@ -31,6 +32,7 @@ public class HubSpuImportTaskController {
 	HubImportTaskService taskService;
 	
 	@RequestMapping(value = "/import-spu",method = RequestMethod.POST)
+//	@ResponseBody
     public HubResponse importSpu(@RequestBody HubImportTaskRequestDto dto){
 	        	
 		try {
@@ -38,8 +40,18 @@ public class HubSpuImportTaskController {
 		} catch (Exception e) {
 			return HubResponse.errorResp("上传文件失败，请重新上传");
 		}
-		
     }
+	@RequestMapping(value = "/down-import-result",method = RequestMethod.POST)
+//	@ResponseBody
+    public HubResponse<byte[]> downResult(String dto){
+	        	
+		try {
+			return taskService.downResultFile(dto);
+		} catch (Exception e) {
+			return HubResponse.errorResp("下载失败，请重新上传");
+		}
+    }
+	
 	@RequestMapping(value = "/import-spu-list",method = RequestMethod.POST)
     public HubResponse importSpuList(@RequestBody HubImportTaskListRequestDto dto){
 	        	

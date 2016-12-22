@@ -5,6 +5,7 @@
     <id column="supplier_category_dic_id" property="supplierCategoryDicId" jdbcType="BIGINT" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
     <result column="supplier_category" property="supplierCategory" jdbcType="VARCHAR" />
+    <result column="supplier_gender" property="supplierGender" jdbcType="VARCHAR" />
     <result column="hub_category_no" property="hubCategoryNo" jdbcType="VARCHAR" />
     <result column="category_type" property="categoryType" jdbcType="TINYINT" />
     <result column="mapping_state" property="mappingState" jdbcType="TINYINT" />
@@ -79,9 +80,9 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      supplier_category_dic_id, supplier_id, supplier_category, hub_category_no, category_type, 
-      mapping_state, push_state, create_time, create_user, update_time, update_user, push_time, 
-      memo, data_state, version, gender_dic_id
+      supplier_category_dic_id, supplier_id, supplier_category, supplier_gender, hub_category_no, 
+      category_type, mapping_state, push_state, create_time, create_user, update_time, 
+      update_user, push_time, memo, data_state, version, gender_dic_id
     </if>
     <if test="fields != null" >
       ${fields}
@@ -106,7 +107,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    supplier_category_dic_id,supplier_id,supplier_category,hub_category_no,category_type,mapping_state,push_state,create_time,create_user,update_time,update_user,push_time,memo,data_state,version,gender_dic_id
+    supplier_category_dic_id,supplier_id,supplier_category,supplier_gender,hub_category_no,category_type,mapping_state,push_state,create_time,create_user,update_time,update_user,push_time,memo,data_state,version,gender_dic_id
     from hub_supplier_categroy_dic
     where supplier_category_dic_id = #{supplierCategoryDicId,jdbcType=BIGINT}
   </select>
@@ -125,17 +126,19 @@
   		SELECT LAST_INSERT_ID() AS supplier_category_dic_id
   	</selectKey>
     insert into hub_supplier_categroy_dic (supplier_category_dic_id, supplier_id, 
-      supplier_category, hub_category_no, category_type, 
-      mapping_state, push_state, create_time, 
-      create_user, update_time, update_user, 
-      push_time, memo, data_state, 
-      version, gender_dic_id)
+      supplier_category, supplier_gender, hub_category_no, 
+      category_type, mapping_state, push_state, 
+      create_time, create_user, update_time, 
+      update_user, push_time, memo, 
+      data_state, version, gender_dic_id
+      )
     values (#{supplierCategoryDicId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, 
-      #{supplierCategory,jdbcType=VARCHAR}, #{hubCategoryNo,jdbcType=VARCHAR}, #{categoryType,jdbcType=TINYINT}, 
-      #{mappingState,jdbcType=TINYINT}, #{pushState,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
-      #{pushTime,jdbcType=TIMESTAMP}, #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
-      #{version,jdbcType=BIGINT}, #{genderDicId,jdbcType=BIGINT})
+      #{supplierCategory,jdbcType=VARCHAR}, #{supplierGender,jdbcType=VARCHAR}, #{hubCategoryNo,jdbcType=VARCHAR}, 
+      #{categoryType,jdbcType=TINYINT}, #{mappingState,jdbcType=TINYINT}, #{pushState,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{pushTime,jdbcType=TIMESTAMP}, #{memo,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, #{genderDicId,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.dictionary.categroy.po.HubSupplierCategroyDic" >
     <selectKey keyColumn="supplier_category_dic_id" keyProperty="supplierCategoryDicId" order="AFTER" resultType="long">
@@ -151,6 +154,9 @@
       </if>
       <if test="supplierCategory != null" >
         supplier_category,
+      </if>
+      <if test="supplierGender != null" >
+        supplier_gender,
       </if>
       <if test="hubCategoryNo != null" >
         hub_category_no,
@@ -201,6 +207,9 @@
       </if>
       <if test="supplierCategory != null" >
         #{supplierCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierGender != null" >
+        #{supplierGender,jdbcType=VARCHAR},
       </if>
       <if test="hubCategoryNo != null" >
         #{hubCategoryNo,jdbcType=VARCHAR},
@@ -261,6 +270,9 @@
       <if test="record.supplierCategory != null" >
         supplier_category = #{record.supplierCategory,jdbcType=VARCHAR},
       </if>
+      <if test="record.supplierGender != null" >
+        supplier_gender = #{record.supplierGender,jdbcType=VARCHAR},
+      </if>
       <if test="record.hubCategoryNo != null" >
         hub_category_no = #{record.hubCategoryNo,jdbcType=VARCHAR},
       </if>
@@ -310,6 +322,7 @@
     set supplier_category_dic_id = #{record.supplierCategoryDicId,jdbcType=BIGINT},
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
       supplier_category = #{record.supplierCategory,jdbcType=VARCHAR},
+      supplier_gender = #{record.supplierGender,jdbcType=VARCHAR},
       hub_category_no = #{record.hubCategoryNo,jdbcType=VARCHAR},
       category_type = #{record.categoryType,jdbcType=TINYINT},
       mapping_state = #{record.mappingState,jdbcType=TINYINT},
@@ -335,6 +348,9 @@
       </if>
       <if test="supplierCategory != null" >
         supplier_category = #{supplierCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierGender != null" >
+        supplier_gender = #{supplierGender,jdbcType=VARCHAR},
       </if>
       <if test="hubCategoryNo != null" >
         hub_category_no = #{hubCategoryNo,jdbcType=VARCHAR},
@@ -382,6 +398,7 @@
     update hub_supplier_categroy_dic
     set supplier_id = #{supplierId,jdbcType=VARCHAR},
       supplier_category = #{supplierCategory,jdbcType=VARCHAR},
+      supplier_gender = #{supplierGender,jdbcType=VARCHAR},
       hub_category_no = #{hubCategoryNo,jdbcType=VARCHAR},
       category_type = #{categoryType,jdbcType=TINYINT},
       mapping_state = #{mappingState,jdbcType=TINYINT},

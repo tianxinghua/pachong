@@ -8,123 +8,75 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.product.business.conf.ftp.FtpProperties;
 import com.shangpin.ephub.response.HubResponse;
 
-@Service
+@Component
 public class FTPClientUtil {
 
-	private static FTPClient ftp;
+	@Autowired
+	FtpProperties ftpProperties;
 
+	private static String host;
+	private static String port;
+	private static String userName;
+	private static String password;
+	private static String ftpHubPatht;
+	
+	@PostConstruct
+	public void init(){
+		host = ftpProperties.getHost();
+		port = ftpProperties.getPort();
+		userName = ftpProperties.getUserName();
+		password = ftpProperties.getPassword();
+		ftpHubPatht = ftpProperties.getFtpHubPath();
+	}
 	/**
 	 * 
-	 * @param path
-	 *            上传到ftp服务器哪个路径下
-	 * @param addr
-	 *            地址
-	 * @param port
-	 *            端口号
-	 * @param username
-	 *            用户名
-	 * @param password
-	 *            密码
-	 * @return
+	 * @param file
+	 *            上传的文件
 	 * @throws Exception
 	 */
-	private boolean connect(String host, int port, String username, String password) throws Exception {
-		boolean result = false;
-		ftp = new FTPClient();
+	public static String uploadFile(byte[] data,String fileName) throws Exception {
+		
+		FTPClient ftp = new FTPClient();
 		int reply;
-		ftp.connect(host, port);
-		ftp.login(username, password);
+		ftp.connect(host, Integer.parseInt(port));
+		ftp.login(userName, password);
 		ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
 		reply = ftp.getReplyCode();
 		if (!FTPReply.isPositiveCompletion(reply)) {
 			ftp.disconnect();
-			return result;
 		}
-		result = true;
-		return result;
-	}
-
-	/**
-	 * 
-	 * @param file
-	 *            上传的文件或文件夹
-	 * @throws Exception
-	 */
-	public static HubResponse uploadFile(byte[] data, String path, String fileName) throws Exception {
-//		InputStream sbs = new ByteArrayInputStream(data);
-		InputStream sbs = new FileInputStream(new File("C://Hub商品导入模板 - 副本.xlsx"));
-//		InputStream sb = sbs;
-//		HubResponse flag = checkFileTemplet(sb);
-//		if(flag.getCode().equals("0")){
-		ftp.changeWorkingDirectory(path);
-		System.out.println(ftp.getStatus());
+		InputStream sbs = new ByteArrayInputStream(data);
+		ftp.changeWorkingDirectory(ftpHubPatht);
 		ftp.storeFile(fileName, sbs);
 		ftp.quit();
-//		}
-		// BufferedOutputStream bos = null;
-		// FileOutputStream fos = null;
-			// File file = new File(fileName);
-			// fos = new FileOutputStream(file);
-			// bos = new BufferedOutputStream(fos);
-			// bos.write(data);
-			// bos.flush();
-			// bos.close();
-			// FileInputStream input = new FileInputStream(file);
-			// ftp.storeFile(file.getName(), input);
-			// input.close();
-		
-		return HubResponse.successResp(null);
-	}
-	private static HubResponse checkFileTemplet(InputStream sbs) throws Exception{
-		
-		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(sbs);
-		XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
-		XSSFRow  xssfRow = xssfSheet.getRow(0);
-		if (xssfRow == null) {
-			return HubResponse.errorResp("文件内容为空");
-		}
-		
-		Map<Integer,String> map = new HashMap<Integer,String>();
-		map.put(0,"品类名称");
-		map.put(1,"品类编号*");
-		map.put(2,"品牌编号*");
-		map.put(3,"品牌名称");
-		map.put(4,"货号*");
-		map.put(5,"适应性别*");
-		map.put(6,"颜色*");
-		map.put(7,"原尺码类型");
-		map.put(8,"原尺码值");
-		map.put(9,"材质*");
-		map.put(10,"产地*");
-		map.put(11,"市场价");
-		map.put(12,"市场价币种");
-		
-		boolean flag = true;
-		for(int i=0;i<map.size();i++){
-			if (xssfRow.getCell(i) != null) {
-				String fieldName = xssfRow.getCell(i).toString();
-				if(!map.get(i).equals(fieldName)){
-					flag = false;
-				}
-			}
-		}
-		if(flag){
-			return HubResponse.successResp(null);
-		}else{
-			return HubResponse.errorResp("导入文件格式与模板不一致，请下载标准模板");			
-		}
+		return ftpHubPatht;
 	}
 	public static InputStream downFile(String remotePath) throws Exception{
+		
+		FTPClient ftp = new FTPClient();
+		int reply;
+		ftp.connect(host, Integer.parseInt(port));
+		ftp.login(userName, password);
+		ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+		reply = ftp.getReplyCode();
+		if (!FTPReply.isPositiveCompletion(reply)) {
+			ftp.disconnect();
+		}
 		
     	InputStream in = null;
 		if(null != ftp){
@@ -135,10 +87,5 @@ public class FTPClientUtil {
 		}
 		return in;
 	}
-	public static void main(String[] args) throws Exception {
-		 FTPClientUtil t = new FTPClientUtil();
-		 t.connect("192.168.20.110", 21, "dev", "shangpin@123");
-//		 t.downFile("ftpLoad/test.txt");
-		 t.uploadFile(null, "ftpLoad","test.xlsx");
-	}
+	
 }
