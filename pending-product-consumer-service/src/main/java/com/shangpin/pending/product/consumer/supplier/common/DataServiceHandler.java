@@ -35,10 +35,7 @@ import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.*;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.pending.product.consumer.common.ConstantProperty;
@@ -49,6 +46,7 @@ import com.shangpin.pending.product.consumer.conf.clients.mysql.spu.bean.HubSpuP
 import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
 import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
@@ -187,7 +185,13 @@ public class DataServiceHandler {
     public List<HubGenderDicDto> getHubGenderDicBySupplierId(String supplierId){
         HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
         criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
-        criteria.createCriteria().andSupplierIdEqualTo(supplierId).andPushStateEqualTo(DataBusinessStatus.PUSH.getIndex().byteValue());
+
+        HubGenderDicCriteriaDto.Criteria criterion = criteria.createCriteria();
+        criterion.andPushStateEqualTo(DataBusinessStatus.PUSH.getIndex().byteValue());
+        if(StringUtils.isNotBlank(supplierId)){
+            criterion.andSupplierIdEqualTo(supplierId);
+
+        }
         return hubGenderDicGateWay.selectByCriteria(criteria);
     }
 
@@ -202,7 +206,7 @@ public class DataServiceHandler {
         HubGenderDicDto hubGenderDicDto = new HubGenderDicDto();
         hubGenderDicDto.setCreateTime(new Date());
         hubGenderDicDto.setCreateUser(ConstantProperty.DATA_CREATE_USER);
-        hubGenderDicDto.setSupplierId(supplierId);
+        hubGenderDicDto.setSupplierId(null);
         hubGenderDicDto.setSupplierGender(supplierGender);
         hubGenderDicDto.setPushState(DataBusinessStatus.NO_PUSH.getIndex().byteValue());
         try {
@@ -221,8 +225,11 @@ public class DataServiceHandler {
     public HubGenderDicDto  getHubGenderDicBySupplierIdAndSupplierGender(String supplierId,String supplierGender){
         HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
         HubGenderDicCriteriaDto.Criteria criterion = criteria.createCriteria();
-        criterion.andSupplierIdEqualTo(supplierId)
-                .andSupplierGenderEqualTo(supplierGender);
+        if(StringUtils.isNotBlank(supplierId)){
+            criterion.andSupplierIdEqualTo(supplierId);
+        }
+
+        criterion.andSupplierGenderEqualTo(supplierGender);
         List<HubGenderDicDto> hubGenderDicDtos = hubGenderDicGateWay.selectByCriteria(criteria);
         if(null!=hubGenderDicDtos&&hubGenderDicDtos.size()>0){
             return hubGenderDicDtos.get(0);
@@ -254,7 +261,7 @@ public class DataServiceHandler {
 
     public void saveHubCategory(String supplierId,String supplierCategory,String  supplierGender) throws Exception{
 
-        HubGenderDicDto hubGenderDicDto = this.getHubGenderDicBySupplierIdAndSupplierGender(supplierId, supplierGender);
+        HubGenderDicDto hubGenderDicDto = this.getHubGenderDicBySupplierIdAndSupplierGender(null, supplierGender);
 
         HubSupplierCategroyDicDto dto = new HubSupplierCategroyDicDto();
 
@@ -446,6 +453,28 @@ public class DataServiceHandler {
             }
         }
     }
+
+
+
+    public void updatePendingSpu(Long spuKey,HubSpuPendingDto spuPending) throws  Exception{
+        try {
+
+            HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
+            criteria.createCriteria().andSpuPendingIdEqualTo(spuKey);
+
+            HubSpuPendingWithCriteriaDto updateByCriteriaSelective = new HubSpuPendingWithCriteriaDto(spuPending,criteria);
+            hubSpuPendingGateWay.updateByCriteriaSelective(updateByCriteriaSelective);
+            hubSpuPendingGateWay.insert(spuPending);
+        } catch (Exception e) {
+            if(e instanceof DuplicateKeyException){
+
+            }else{
+                e.printStackTrace();
+                throw e;
+            }
+        }
+    }
+
 
 
     public HubSpuPendingDto getSpuPendingDTO(String supplierId,String supplierSpuNo) {

@@ -11,12 +11,14 @@ import java.util.Set;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
+import com.shangpin.pending.product.consumer.common.enumeration.SpuStatus;
 import com.shangpin.pending.product.consumer.util.BurberryModelRule;
 import com.shangpin.pending.product.consumer.util.PradaModelRule;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
@@ -74,6 +76,8 @@ public class PendingHandler {
 
 
     static Map<String,Map<String,String>> supplierGenderStaticMap = null;
+
+    static Map<String,String> genderStaticMap = null;
 
     static Map<String,Map<String,String>> supplierCategoryMappingStaticMap = null;
 
@@ -455,25 +459,20 @@ public class PendingHandler {
     public  boolean setGenderMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         boolean result = true;
         //获取性别
-        Map<String,Map<String,String>>  supplierGenderMap = this.getGenderMap(spu.getSupplierId());
-        if(supplierGenderMap.containsKey(spu.getSupplierId())){
-            Map<String, String> genderMap = supplierGenderMap.get(spu.getSupplierId());
+        Map<String,String>  genderMap = this.getGenderMap(null);
 
-            if(genderMap.containsKey(spu.getHubGender())){
-                 //包含时转化赋值
-                hubSpuPending.setHubGender(genderMap.get(spu.getHubGender()));
-                hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-            }else{
-                result = false;
-                hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-                dataServiceHandler.saveHubGender(spu.getSupplierId(),spu.getHubGender());
 
-            }
+        if(genderMap.containsKey(spu.getHubGender().trim())){
+             //包含时转化赋值
+            hubSpuPending.setHubGender(genderMap.get(spu.getHubGender()));
+            hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
         }else{
             result = false;
             hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-            dataServiceHandler.saveHubGender(spu.getSupplierId(),spu.getHubGender());
+            dataServiceHandler.saveHubGender(null,spu.getHubGender());
+
         }
+
         return  result;
     }
 
@@ -481,10 +480,62 @@ public class PendingHandler {
     private HubSpuPendingDto updateSpu(PendingSpu spu, Map<String, Object> headers) throws Exception{
 
         HubSpuPendingDto spuPendingDto = null;
-        //TODO 判断状态 是否可以修改
+
         spuPendingDto =dataServiceHandler.getHubSpuPending(spu.getSupplierId(),spu.getSupplierSpuNo());
         if(null!=spuPendingDto){
-//            if(spuPendingDto.getSpuState().intValue()==PropertyStatus.)
+            if(spuPendingDto.getSpuState().intValue()== SpuStatus.SPU_WAIT_AUDIT.getIndex()||spuPendingDto.getSpuState().intValue()== SpuStatus.SPU_HANDLED.getIndex()){
+                //审核中或者已处理,不能做修改
+
+            }else{
+                HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
+
+                BeanUtils.copyProperties(spu,hubSpuPending);
+
+                boolean allStatus = true;
+                //设置性别
+                if(StringUtils.isNotBlank(spu.getHubGender())) {
+                    if (!setGenderMapping(spu, hubSpuPending)) allStatus = false;
+                }
+
+                //获取品类
+                if(StringUtils.isNotBlank(spu.getHubGender())) {
+                    if (!setCategoryMapping(spu, hubSpuPending)) allStatus = false;
+                }
+
+                //获取品牌
+                boolean brandmapping = setBrandMapping(spu, hubSpuPending);
+                if(!brandmapping) allStatus=false;
+
+
+                //todo 货号验证
+                if(brandmapping){
+                    if(!setBrandModel(spu, hubSpuPending)) allStatus=false;
+                }
+
+
+                //获取颜色
+                if(StringUtils.isNotBlank(spu.getHubColor())){
+
+                    if(!setColorMapping(spu, hubSpuPending)) allStatus = false;
+                }
+
+                //获取季节
+                if(StringUtils.isNotBlank(spu.getHubSeason())){
+
+                    if(!setSeasonMapping(spu, hubSpuPending)) allStatus = false;
+                }
+
+                //获取材质
+                if(StringUtils.isNotBlank(spu.getHubMaterial())){
+
+                  replaceMaterial(spu, hubSpuPending);
+                }
+
+
+
+                dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(),hubSpuPending);
+
+            }
 
         }
         return  spuPendingDto;
@@ -543,7 +594,7 @@ public class PendingHandler {
 
     private void setSupplierCategoryValueToMap(String supplierId)  throws Exception{
 
-        List<HubGenderDicDto> hubGenderDicDtos = dataServiceHandler.getHubGenderDicBySupplierId(supplierId);
+        List<HubGenderDicDto> hubGenderDicDtos = dataServiceHandler.getHubGenderDicBySupplierId(null);
         Map<Long,String> hubGenderMap = new HashMap<>();
         for(HubGenderDicDto dto:hubGenderDicDtos){
             hubGenderMap.put(dto.getGenderDicId(),dto.getSupplierGender());
@@ -568,23 +619,20 @@ public class PendingHandler {
      * @param supplierId
      * @return
      */
-    private Map<String,Map<String,String>> getGenderMap(String supplierId){
-        if(null==supplierGenderStaticMap){
-            supplierGenderStaticMap = new HashMap<>();
+    private Map<String,String> getGenderMap(String supplierId){
+        if(null==genderStaticMap){
+            genderStaticMap = new HashMap<>();
             hubGenderStaticMap = new HashMap<>();
             setGenderValueToMap(supplierId);
         }else{
-            if(!supplierGenderStaticMap.containsKey(supplierId)){
+
+            if(isNeedHandle()){
                 setGenderValueToMap(supplierId);
-            }else{
-                if(isNeedHandle()){
-                    setGenderValueToMap(supplierId);
-                }
             }
 
         }
 
-        return supplierGenderStaticMap;
+        return genderStaticMap;
     }
 
     private void setGenderValueToMap(String supplierId) {
@@ -593,11 +641,11 @@ public class PendingHandler {
 
             Map<String,String> genderMap = new HashMap<>();
             for(HubGenderDicDto dto:hubGenderDics){
-                genderMap.put(dto.getSupplierGender(),dto.getHubGender());
+                genderStaticMap.put(dto.getSupplierGender().trim(),dto.getHubGender().trim());
                 hubGenderStaticMap.put(dto.getHubGender(),"");
             }
-            supplierGenderStaticMap.put(supplierId,genderMap);
-//            shangpinRedis.hset
+
+//           shangpinRedis.hset
         }
     }
 

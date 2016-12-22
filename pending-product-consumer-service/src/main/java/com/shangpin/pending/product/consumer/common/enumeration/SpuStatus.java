@@ -6,8 +6,10 @@ package com.shangpin.pending.product.consumer.common.enumeration;
 public enum SpuStatus {
 
     SPU_WAIT_HANDLE(0,"信息待完善"),
-    SPU_HANDLED(1,"信息已完善"),
-    SPU_NO_(2,"部分完善");
+    SPU_WAIT_AUDIT(1,"待复核"),
+    SPU_HANDLED(2,"已处理"),
+    SPU_NO_WAY_HANDLE(3,"无法处理"),
+    SPU_FILTER(4,"过滤不处理");
     /**
      * 数字索引标识
      */
