@@ -26,11 +26,21 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 	public boolean convertSpu(String supplierId, Spu spu, Sku sku, HubSupplierSpuDto hubSpu) {
 		if(null != spu){
 			
+			String colorCode = "";
+			String colorName = "";
+			String color = sku.getColor();
+			if(color.contains("\\s+")){
+				colorCode = color.substring(0, color.indexOf("\\s+"));
+				colorName = color.substring(color.indexOf("\\s+")).trim();
+			}else{
+				colorName = color;
+			}
+			
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(spu.getProduct_id()+"-"+sku.getItem_id());
-			hubSpu.setSupplierSpuModel(spu.getProduct_name());
+			hubSpu.setSupplierSpuModel(spu.getProduct_name()+" "+colorCode);
 			hubSpu.setSupplierSpuName(spu.getDescription());
-			hubSpu.setSupplierSpuColor(sku.getColor());
+			hubSpu.setSupplierSpuColor(colorName);
 			hubSpu.setSupplierGender(spu.getType());
 			hubSpu.setSupplierCategoryname(spu.getCategory());
 			hubSpu.setSupplierBrandname(spu.getProducer_id());
