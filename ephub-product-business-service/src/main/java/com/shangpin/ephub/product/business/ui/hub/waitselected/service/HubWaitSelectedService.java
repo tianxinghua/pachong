@@ -36,16 +36,22 @@ public class HubWaitSelectedService {
 	@Autowired 
 	HubSpuGateWay spuImportGateway;
 	@Autowired
-	HubSpuService hubSpuService;
+	HubProductService hubSpuService;
 	public List<HubWaitSelectedResponseDto> findHubWaitSelectedList(HubWaitSelectedRequestDto dto) {
 		
 		String supplierId = dto.getSupplierNo();
 		List<HubSkuSupplierMappingDto> hubSkuSuppMapplist = null;
+		//如果供应商为空
 		if(StringUtils.isNotBlank(supplierId)){
 			HubSkuSupplierMappingCriteriaDto HubSkuSupplierMappingDto = new HubSkuSupplierMappingCriteriaDto();
 			HubSkuSupplierMappingDto.createCriteria().andSupplierIdEqualTo(supplierId);
 			HubSkuSupplierMappingDto.setFields("sku_no");
+			HubSkuSupplierMappingDto.setFields("supplier_id");
 			hubSkuSuppMapplist = hubSkuSupplierMappingGateWay.selectByCriteria(HubSkuSupplierMappingDto);
+			
+			for(HubSkuSupplierMappingDto hubSkuSupplierMappingDto:hubSkuSuppMapplist){
+				long hubSkuNo = hubSkuSupplierMappingDto.getSkuNo();
+			}
 		}
 		List<HubSpuDto> hubSpuList = hubSpuService.findHubSpuList(dto);
 //		hubSpuService.find

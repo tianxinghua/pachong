@@ -5,6 +5,11 @@ import java.util.Date;
 
 public class HubSpuPendingDto implements Serializable {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6102549599637233552L;
+
+	/**
      * 主键
      */
     private Long spuPendingId;
@@ -165,7 +170,6 @@ public class HubSpuPendingDto implements Serializable {
      */
     private Byte spuColorState;
 
-    private static final long serialVersionUID = 1L;
 
     public Long getSpuPendingId() {
         return spuPendingId;

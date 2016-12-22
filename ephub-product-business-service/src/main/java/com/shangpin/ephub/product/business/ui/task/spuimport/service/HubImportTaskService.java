@@ -46,18 +46,29 @@ public class HubImportTaskService {
 	private static String ftpPath = "F://";
 	public HubResponse uploadFileAndSave(HubImportTaskRequestDto task) throws Exception{
 		
-		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-		Date date = new Date();
-		String systemFileName = ftpPath+sim.format(date)+task.getFileName().split(".")[1];
-		//第一步 ： 上传ftp
-		HubResponse flag = FTPClientUtil.uploadFile(task.getUploadfile(),ftpPath,systemFileName);
-		//第二步 ： 保存数据库
-		if("0".equals(flag.getCode())){
-			saveTask(task);
-			//第三步 ： 发送到hub消息队列
-			
+		String []fileName = task.getFileName().split(".");
+		if(fileName!=null&&fileName.length>2){
+			if("xlsl".equals(fileName[1])||"xls".equals(fileName[1])){
+				SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+				Date date = new Date();
+				String systemFileName = ftpPath+sim.format(date)+task.getFileName().split(".")[1];
+				//第一步 ： 上传ftp
+				HubResponse flag = FTPClientUtil.uploadFile(task.getUploadfile(),ftpPath,systemFileName);
+				//第二步 ： 保存数据库
+				if("0".equals(flag.getCode())){
+					saveTask(task);
+					//第三步 ： 发送到hub消息队列
+					
+				}
+				return flag;
+				
+			}else{
+				return HubResponse.errorResp("文件格式有误，请下载模板");
+			}
+		}else{
+			return HubResponse.errorResp("文件格式有误，请下载模板");
 		}
-		return flag;
+		
 	}
 	private boolean saveTask(HubImportTaskRequestDto task) throws Exception{
 		// TODO Auto-generated method stub

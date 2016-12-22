@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.ui.task.spuimport.util;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class FTPClientUtil {
 		ftp = new FTPClient();
 		int reply;
 		ftp.connect(host, port);
-//		ftp.login(username, password);
+		ftp.login(username, password);
 		ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
 		reply = ftp.getReplyCode();
 		if (!FTPReply.isPositiveCompletion(reply)) {
@@ -60,9 +61,10 @@ public class FTPClientUtil {
 	 * @throws Exception
 	 */
 	public static HubResponse uploadFile(byte[] data, String path, String fileName) throws Exception {
-		InputStream sbs = new ByteArrayInputStream(data);
-//		InputStream sbs = new FileInputStream(new File("C://new.txt"));
-//		HubResponse flag = checkFileTemplet(sbs);
+//		InputStream sbs = new ByteArrayInputStream(data);
+		InputStream sbs = new FileInputStream(new File("C://Hub商品导入模板 - 副本.xlsx"));
+//		InputStream sb = sbs;
+//		HubResponse flag = checkFileTemplet(sb);
 //		if(flag.getCode().equals("0")){
 		ftp.changeWorkingDirectory(path);
 		System.out.println(ftp.getStatus());
@@ -125,7 +127,6 @@ public class FTPClientUtil {
 	public static InputStream downFile(String remotePath) throws Exception{
 		
     	InputStream in = null;
-    	in = new FileInputStream(new File("C:\\ftp\\e.txt"));
 		if(null != ftp){
 	        if(StringUtils.isNotBlank(remotePath)){
 	        	in = ftp.retrieveFileStream(remotePath);
@@ -136,7 +137,8 @@ public class FTPClientUtil {
 	}
 	public static void main(String[] args) throws Exception {
 		 FTPClientUtil t = new FTPClientUtil();
-		 t.connect("192.168.3.189", 21, "moon", "123456");
-		 t.downFile("/ftpDown/aa.txt");
+		 t.connect("192.168.20.110", 21, "dev", "shangpin@123");
+//		 t.downFile("ftpLoad/test.txt");
+		 t.uploadFile(null, "ftpLoad","test.xlsx");
 	}
 }
