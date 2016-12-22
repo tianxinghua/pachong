@@ -20,6 +20,9 @@ import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubMaterialMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicDto;
 import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicItemCriteriaDto;
@@ -102,6 +105,9 @@ public class DataServiceHandler {
 
     @Autowired
     private HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
+
+    @Autowired
+    private HubMaterialMappingGateWay hubMaterialMappingGateWay;
 
 
     public HubSupplierBrandDicDto getHubSupplierBrand(String supplierId,String supplierBrandName){
@@ -433,6 +439,25 @@ public class DataServiceHandler {
                 materialDTO.setMaterialDicId(itemDto.getMaterialDicId());
                 materialDTO.setHubMaterial(materialDicMap.get(itemDto.getMaterialDicId()).getMaterialName());
             }
+
+            materialDTOS.add(materialDTO);
+        }
+        return materialDTOS;
+
+    }
+
+    public List<MaterialDTO> getMaterialMapping(){
+
+        HubMaterialMappingCriteriaDto criteria = new HubMaterialMappingCriteriaDto();
+        criteria.setOrderByClause("mappingLevel");
+        criteria.setPageSize(ConstantProperty.MAX_MATERIAL_QUERY_NUM);
+        List<HubMaterialMappingDto> hubMaterialMappingDtos = hubMaterialMappingGateWay.selectByCriteria(criteria);
+        List<MaterialDTO>  materialDTOS = new ArrayList<>();
+
+        for(HubMaterialMappingDto itemDto:hubMaterialMappingDtos){
+            MaterialDTO materialDTO = new MaterialDTO();
+            materialDTO.setSupplierMaterial(itemDto.getSupplierMaterial());
+            materialDTO.setHubMaterial(itemDto.getHubMaterial());
 
             materialDTOS.add(materialDTO);
         }

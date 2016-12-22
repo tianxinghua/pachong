@@ -747,13 +747,13 @@ public class PendingHandler {
     private Map<String,String> getMaterialMap(){
         if(null==materialStaticMap){
             materialStaticMap = new LinkedHashMap<>();
-            List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialDTO();
+            List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialMapping();
             for(MaterialDTO dto:materialDTOS){
                 materialStaticMap.put(dto.getSupplierMaterial(),dto.getHubMaterial());
             }
         }else{
             if(isNeedHandle()){
-                List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialDTO();
+                List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialMapping();
                 for(MaterialDTO dto:materialDTOS){
                     materialStaticMap.put(dto.getSupplierMaterial(),dto.getHubMaterial());
                 }
