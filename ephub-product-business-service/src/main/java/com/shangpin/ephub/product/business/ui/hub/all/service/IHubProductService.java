@@ -1,7 +1,7 @@
-package com.shangpin.ephub.product.business.ui.hubcrud.service;
+package com.shangpin.ephub.product.business.ui.hub.all.service;
 
-import com.shangpin.ephub.product.business.ui.common.dto.HubQuryDto;
-import com.shangpin.ephub.product.business.ui.hubcrud.vo.HubProducts;
+import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProducts;
+import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 
 /**
  * <p>Title:IHubProductService </p>

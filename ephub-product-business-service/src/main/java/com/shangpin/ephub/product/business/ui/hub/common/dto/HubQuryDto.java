@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.common.dto;
+package com.shangpin.ephub.product.business.ui.hub.common.dto;
 
 import lombok.Getter;
 import lombok.Setter;

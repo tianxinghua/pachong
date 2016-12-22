@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.hubcrud.vo;
+package com.shangpin.ephub.product.business.ui.hub.all.vo;
 
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 
