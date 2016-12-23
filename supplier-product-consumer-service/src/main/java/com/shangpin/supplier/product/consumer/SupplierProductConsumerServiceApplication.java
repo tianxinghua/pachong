@@ -1,16 +1,9 @@
 package com.shangpin.supplier.product.consumer;
 
-import java.util.Date;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 /**
  * <p>Title:SupplierProductConsumerServiceApplication.java </p>
  * <p>Description: 项目启动入口</p>
@@ -20,6 +13,7 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
+@EnableFeignClients("com.shangpin.ephub")
 public class SupplierProductConsumerServiceApplication {
 
 	public static void main(String[] args) {
