@@ -1,27 +1,17 @@
-package com.shangpin.ephub.product.business.ui.task.spuimport.util;
+package com.shangpin.ephub.product.business.ui.task.common.util;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.product.business.conf.ftp.FtpProperties;
-import com.shangpin.ephub.response.HubResponse;
 
 @Component
 public class FTPClientUtil {
