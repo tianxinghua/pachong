@@ -23,5 +23,6 @@ public class HubTaskProductResponseDTO {
 	private String createUser;
 	private String updateUser;
 	private String updateTime;
+	private String taskFtpFilePath;
 	private String resultFilePath;
 }

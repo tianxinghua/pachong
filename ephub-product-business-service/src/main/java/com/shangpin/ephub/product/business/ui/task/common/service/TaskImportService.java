@@ -94,7 +94,7 @@ public class TaskImportService {
 		return true;
 	}
 	
-	public HubTaskProductResponseWithPageDTO findHubTaskList(HubImportTaskListRequestDto param,List<Byte> listImportType1) {
+	public HubTaskProductResponseWithPageDTO findHubTaskList(HubImportTaskListRequestDto param,List<Byte> listImportType) {
 		
 		HubSpuImportTaskCriteriaWithRowBoundsDto dto = new HubSpuImportTaskCriteriaWithRowBoundsDto();
 		HubSpuImportTaskCriteriaDto hubSpuImportTaskCriteriaDto = new HubSpuImportTaskCriteriaDto();
@@ -110,20 +110,13 @@ public class TaskImportService {
 		if(!StringUtils.isEmpty(param.getStartDate())){
 			criteria.andCreateTimeBetween(DateTimeUtil.convertFormat(param.getStartDate(),dateFormat),DateTimeUtil.convertFormat(param.getEndDate(),dateFormat));
 		}
-		List<Byte> listImportType = new ArrayList<Byte>();
-		listImportType.add((byte)1);
-		listImportType.add((byte)2);
-//		criteria.andImportTypeIn
-		criteria.andImportTypeIn(listImportType1);
-//		criteria.andImportTypeEqualTo((byte)2);
+		criteria.andImportTypeIn(listImportType);
 		dto.setCriteria(hubSpuImportTaskCriteriaDto);
 		int total = spuImportGateway.countByCriteria(hubSpuImportTaskCriteriaDto);
 		if(total<1){
 			return null;
 		}
-		
 		List<HubSpuImportTaskDto>  list = spuImportGateway.selectByCriteriaWithRowbounds(dto);
-		
 		HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = new HubTaskProductResponseWithPageDTO();
 		List<HubTaskProductResponseDTO> responseList = convertTaskDTO2ResponseDTO(list);
 		hubTaskProductResponseWithPageDTO.setTotal(total);
