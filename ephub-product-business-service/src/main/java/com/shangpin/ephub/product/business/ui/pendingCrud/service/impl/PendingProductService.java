@@ -8,29 +8,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.shangpin.ephub.client.common.dto.RowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.gateway.HubSupplierBrandDicGateWay;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.categroy.gateway.HubSupplierCategroyDicGateWay;
-import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.product.business.ui.pendingCrud.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pendingCrud.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.ui.pendingCrud.enumeration.ProductState;
 import com.shangpin.ephub.product.business.ui.pendingCrud.service.IPendingProductService;
-import com.shangpin.ephub.product.business.ui.pendingCrud.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProducts;
 import com.shangpin.ephub.product.business.util.DateTimeUtil;
@@ -54,7 +49,7 @@ public class PendingProductService implements IPendingProductService{
 	private HubSupplierCategroyDicGateWay categroyDicGateWay;
 	@Autowired
 	private HubSupplierBrandDicGateWay brandDicGateWay;
-//	@Autowired
+	@Autowired
 	private RestTemplate httpClient;
 
 	@Override
@@ -62,10 +57,10 @@ public class PendingProductService implements IPendingProductService{
 		PendingProducts pendingProducts = new PendingProducts();
 		List<PendingProductDto> products = new ArrayList<PendingProductDto>();
 		if(null !=pendingQuryDto){
-			HubSpuPendingCriteriaWithRowBoundsDto rowBoundsDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
-			int total = hubSpuPendingGateWay.countByCriteria(rowBoundsDto.getCriteria());
+			HubSpuPendingCriteriaDto rowBoundsDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
+			int total = hubSpuPendingGateWay.countByCriteria(rowBoundsDto);
 			if(total>0){
-				List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteriaWithRowbounds(rowBoundsDto);
+				List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(rowBoundsDto);
 				for(HubSpuPendingDto pendingSpu : pendingSpus){
 					PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
 					pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
@@ -240,13 +235,13 @@ public class PendingProductService implements IPendingProductService{
 	 * @param pendingQuryDto UI查询条件对象
 	 * @return
 	 */
-	private HubSpuPendingCriteriaWithRowBoundsDto findhubSpuPendingCriteriaFromPendingQury(PendingQuryDto pendingQuryDto){
-		HubSpuPendingCriteriaWithRowBoundsDto rowBoundsDto = new HubSpuPendingCriteriaWithRowBoundsDto();
-		if(!StringUtils.isEmpty(pendingQuryDto.getPageIndex()) && !StringUtils.isEmpty(pendingQuryDto.getPageSize())){
-			RowBoundsDto rowBounds = new RowBoundsDto(pendingQuryDto.getPageIndex(),pendingQuryDto.getPageSize());
-			rowBoundsDto.setRowBounds(rowBounds);
-		}
+	private HubSpuPendingCriteriaDto findhubSpuPendingCriteriaFromPendingQury(PendingQuryDto pendingQuryDto){
+		
 		HubSpuPendingCriteriaDto hubSpuPendingCriteriaDto = new HubSpuPendingCriteriaDto();
+		if(!StringUtils.isEmpty(pendingQuryDto.getPageIndex()) && !StringUtils.isEmpty(pendingQuryDto.getPageSize())){
+			hubSpuPendingCriteriaDto.setPageNo(pendingQuryDto.getPageIndex());
+			hubSpuPendingCriteriaDto.setPageSize(pendingQuryDto.getPageSize());
+		}
 		Criteria criteria = hubSpuPendingCriteriaDto.createCriteria();
 		
 		if(!StringUtils.isEmpty(pendingQuryDto.getSupplierNo())){
@@ -277,8 +272,7 @@ public class PendingProductService implements IPendingProductService{
 		if(!StringUtils.isEmpty(pendingQuryDto.getEndTime())){
 			criteria = criteria.andUpdateTimeLessThan(DateTimeUtil.convertFormat(pendingQuryDto.getEndTime(),dateFormat));
 		}			
-		rowBoundsDto.setCriteria(hubSpuPendingCriteriaDto);
-		return rowBoundsDto;
+		return hubSpuPendingCriteriaDto;
 	}
 	/**
 	 * 跟据不符合項，筛选不符合的产品

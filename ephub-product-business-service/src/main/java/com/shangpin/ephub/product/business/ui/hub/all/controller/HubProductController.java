@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shangpin.ephub.product.business.ui.hub.all.dto.Id;
 import com.shangpin.ephub.product.business.ui.hub.all.service.IHubProductService;
-import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetail;
+import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetails;
 import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -48,8 +48,13 @@ public class HubProductController {
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	@ResponseBody
-	public HubResponse editProductDetail(@RequestBody HubProductDetail hubProductDetail){
+	public HubResponse editProductDetail(@RequestBody HubProductDetails hubProductDetails){
+		boolean ifSucc = hubProductService.updateHubProductDetails(hubProductDetails);
+		if(ifSucc){
+			return HubResponse.successResp(resultSuccess);
+		}else{
+			return HubResponse.errorResp(resultFail);
+		}
 		
-		return HubResponse.successResp(resultSuccess);
 	}
 }

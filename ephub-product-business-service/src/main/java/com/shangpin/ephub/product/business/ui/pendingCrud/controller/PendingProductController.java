@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.ui.pendingCrud.dto.Ids;
 import com.shangpin.ephub.product.business.ui.pendingCrud.dto.PendingQuryDto;
-import com.shangpin.ephub.product.business.ui.pendingCrud.service.impl.PendingProductService;
+import com.shangpin.ephub.product.business.ui.pendingCrud.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProducts;
 import com.shangpin.ephub.response.HubResponse;
@@ -32,7 +32,7 @@ public class PendingProductController {
 	private static String resultFail = "{\"result\":\"fail\"}";
 	
 	@Autowired
-	private PendingProductService pendingProductService;
+	private IPendingProductService pendingProductService;
 
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value="/list",method=RequestMethod.POST)
