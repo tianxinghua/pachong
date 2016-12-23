@@ -1,5 +1,8 @@
 package com.shangpin.ephub.product.business.ui.hub.all.service;
 
+import java.util.List;
+
+import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDto;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProducts;
 import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 
@@ -19,4 +22,10 @@ public interface IHubProductService {
 	 * @return
 	 */
 	public HubProducts findHubProductds(HubQuryDto hubQuryDto);
+	/**
+	 * 根据spuId查询该spu下所有sku详情
+	 * @param spuId
+	 * @return
+	 */
+	public List<HubProductDto> findProductDtails(Long spuId);
 }
