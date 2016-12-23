@@ -26,6 +26,7 @@ import com.shangpin.ephub.product.business.ui.task.common.util.FTPClientUtil;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseDTO;
+import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseWithPageDTO;
 import com.shangpin.ephub.product.business.util.DateTimeUtil;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -93,17 +94,15 @@ public class TaskImportService {
 		return true;
 	}
 	
-	public List<HubTaskProductResponseDTO> findHubTaskList(HubImportTaskListRequestDto param,List<Byte> listImportType) {
+	public HubTaskProductResponseWithPageDTO findHubTaskList(HubImportTaskListRequestDto param,List<Byte> listImportType1) {
 		
 		HubSpuImportTaskCriteriaWithRowBoundsDto dto = new HubSpuImportTaskCriteriaWithRowBoundsDto();
-		if(!StringUtils.isEmpty(param.getPageNo()) && !StringUtils.isEmpty(param.getPageSize())){
-			RowBoundsDto rowBounds = new RowBoundsDto(param.getPageNo(),param.getPageSize());
-			dto.setRowBounds(rowBounds);
-		}
 		HubSpuImportTaskCriteriaDto hubSpuImportTaskCriteriaDto = new HubSpuImportTaskCriteriaDto();
+		hubSpuImportTaskCriteriaDto.setPageNo(param.getPageNo());
+		hubSpuImportTaskCriteriaDto.setPageSize(param.getPageSize());
 		Criteria criteria = hubSpuImportTaskCriteriaDto.createCriteria();
-		if(!StringUtils.isEmpty(param.getTaskState())){
-			criteria.andTaskStateNotEqualTo((byte)param.getTaskState());
+		if(param.getTaskState()!=-1){
+			criteria.andTaskStateEqualTo((byte)param.getTaskState());
 		}
 		if(!StringUtils.isEmpty(param.getLocalFileName())){
 			criteria.andLocalFileNameEqualTo(param.getLocalFileName());
@@ -111,11 +110,25 @@ public class TaskImportService {
 		if(!StringUtils.isEmpty(param.getStartDate())){
 			criteria.andCreateTimeBetween(DateTimeUtil.convertFormat(param.getStartDate(),dateFormat),DateTimeUtil.convertFormat(param.getEndDate(),dateFormat));
 		}
-//		criteria.andImportTypeIn(listImportType);
+		List<Byte> listImportType = new ArrayList<Byte>();
+		listImportType.add((byte)1);
+		listImportType.add((byte)2);
+//		criteria.andImportTypeIn
+		criteria.andImportTypeIn(listImportType1);
+//		criteria.andImportTypeEqualTo((byte)2);
 		dto.setCriteria(hubSpuImportTaskCriteriaDto);
+		int total = spuImportGateway.countByCriteria(hubSpuImportTaskCriteriaDto);
+		if(total<1){
+			return null;
+		}
+		
 		List<HubSpuImportTaskDto>  list = spuImportGateway.selectByCriteriaWithRowbounds(dto);
+		
+		HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = new HubTaskProductResponseWithPageDTO();
 		List<HubTaskProductResponseDTO> responseList = convertTaskDTO2ResponseDTO(list);
-		return responseList;
+		hubTaskProductResponseWithPageDTO.setTotal(total);
+		hubTaskProductResponseWithPageDTO.setTaskNoList(responseList);
+		return hubTaskProductResponseWithPageDTO;
 	}
 	
 	private List<HubTaskProductResponseDTO> convertTaskDTO2ResponseDTO(List<HubSpuImportTaskDto> list) {
