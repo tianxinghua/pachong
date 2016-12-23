@@ -55,8 +55,8 @@ public class ExportExcelUtils {
 	        // 生成一个字体  
 	        HSSFFont font = workbook.createFont();  
 	        font.setColor(HSSFColor.VIOLET.index);  
-	        //font.setFontHeightInPoints((short) 12);  
-	        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);  
+	        font.setFontHeightInPoints((short) 12);  
+//	        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);  
 	        // 把字体应用到当前的样式  
 	        style.setFont(font);  
 	        // 指定当单元格内容显示不下时自动换行  
@@ -112,9 +112,9 @@ public class ExportExcelUtils {
         sheet.setDefaultColumnWidth(20);  
         // 生成一个样式  
         HSSFCellStyle style = workbook.createCellStyle();  
-        HSSFFont font = workbook.createFont();  
-        style.setFont(font);  
-        style.setWrapText(true);  
+//        HSSFFont font = workbook.createFont();  
+//        style.setFont(font);  
+//        style.setWrapText(true);  
         // 产生表格标题行  
         HSSFRow row = sheet.createRow(0);  
         for (int i = 0; i < headers.length; i++) {  

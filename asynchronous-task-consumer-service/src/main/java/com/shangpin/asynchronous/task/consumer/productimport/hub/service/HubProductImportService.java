@@ -17,9 +17,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.asynchronous.task.consumer.productimport.common.TaskService;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.dto.HubProductImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.util.FTPClientUtil;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
@@ -47,28 +49,30 @@ public class HubProductImportService {
 	@Autowired
 	HubSpuImportTaskGateWay spuImportGateway;
 	
+	@Autowired
+	TaskService taskService;
+	
 	//1、更新任务表，把task_state更新成正在处理  2、从ftp下载文件并解析成对象   3、公共类校验hub数据并把校验结果写入excel   4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
 	public void handMessage(ProductImportTask task) throws Exception{
 		
 		//1、更新任务表，把task_state更新成正在处理
-		updateHubSpuImportStatusByTaskNo(task.getTaskNo());
+		taskService.updateHubSpuImportStatusByTaskNo(TaskState.HANDLEING.getIndex(),task.getTaskNo(),null);
 		// 2、从ftp下载文件并解析成对象
-		List<HubProductImportDTO> listHubProduct = handleHubExcel(task.getTaskFtpFilePath());
+		List<HubProductImportDTO> listHubProduct = handleHubExcel(task.getTaskFtpFilePath(),task.getTaskNo());
 		//3、公共类校验hub数据并把校验结果写入excel
 		 List<Map<String, String>> result = checkAndsaveHubProduct(task.getTaskNo(),listHubProduct);
 		
 		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		String resultFileName = sim.format(new Date());
-		FileOutputStream out = new FileOutputStream(new File(resultFileName+".xlsx"));
-		
+		File file = new File(resultFileName+".xls");
+		FileOutputStream out = new FileOutputStream(file);
 		String[] headers = { "任务编号", "货号", "任务状态", "任务说明"};
 		String[] columns = { "taskNo", "spuModel","taskState", "processInfo"};
 		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result,
 				out);
-		
 		//4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-		String path = FTPClientUtil.uploadFile(new File(resultFileName+".xlsx"), resultFileName+".xlsx");
-		
+		String path = FTPClientUtil.uploadFile(file, resultFileName+".xls");
+		file.delete();
 		out.close();
 		int status;
 		if(result!=null&&result.size()>0){
@@ -78,7 +82,7 @@ public class HubProductImportService {
 			//全部成功
 			status = 3;
 		}
-		updateHubSpuImportByTaskNo(task.getTaskNo(),path+resultFileName+".xlsx",status);
+		taskService.updateHubSpuImportByTaskNo(task.getTaskNo(),path+resultFileName+".xls",status);
 	}
 
 
@@ -100,20 +104,23 @@ public class HubProductImportService {
 	}
 
 	//解析excel转换为对象
-	private List<HubProductImportDTO> handleHubExcel(String taskFtpFilePath)  throws Exception {
+	private List<HubProductImportDTO> handleHubExcel(String taskFtpFilePath,String taskNo)  throws Exception {
 		
 		InputStream in = FTPClientUtil.downFile(taskFtpFilePath);
 		if(in==null){
-			
+			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo,"从ftp下载失败");
+			return null;
 		}
 		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(in);
 		XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
 		if (xssfSheet.getRow(0) == null) {
+			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo,"下载的excel数据为空");
 			return null;
 		}
 		boolean flag = checkFileTemplet(xssfSheet.getRow(0));
 		if(!flag){
 			//TODO 上传文件与模板不一致
+			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo,"上传文件与模板不一致");
 			return null;
 		}
 		List<HubProductImportDTO> listHubProduct = new ArrayList<>();
@@ -228,29 +235,5 @@ private static boolean checkFileTemplet(XSSFRow xssfRow) {
 		}
 		return flag;
 	}
-	private boolean updateHubSpuImportStatusByTaskNo(String taskNo) {
-		// TODO Auto-generated method stub
-		HubSpuImportTaskWithCriteriaDto dto = new HubSpuImportTaskWithCriteriaDto();
-		
-		HubSpuImportTaskDto hubSpuImportTaskDto = new HubSpuImportTaskDto();
-		//1代表正在处理
-		hubSpuImportTaskDto.setTaskState((byte)1);
-		dto.setHubSpuImportTask(hubSpuImportTaskDto);
-		HubSpuImportTaskCriteriaDto hubSpuImportTaskCriteriaDto = new HubSpuImportTaskCriteriaDto();
-		HubSpuImportTaskCriteriaDto.Criteria criteria = hubSpuImportTaskCriteriaDto.createCriteria().andTaskNoEqualTo(taskNo);
-		dto.setCriteria(hubSpuImportTaskCriteriaDto);
-		int result = spuImportGateway.updateByCriteriaSelective(dto);
-		return true;
-	}
-	private void updateHubSpuImportByTaskNo(String taskNo, String resultFilePath, int status) {
-		HubSpuImportTaskWithCriteriaDto dto = new HubSpuImportTaskWithCriteriaDto();
-		HubSpuImportTaskDto hubSpuImportTaskDto = new HubSpuImportTaskDto();
-		hubSpuImportTaskDto.setTaskState((byte)status);
-		hubSpuImportTaskDto.setResultFilePath(resultFilePath);
-		dto.setHubSpuImportTask(hubSpuImportTaskDto);
-		HubSpuImportTaskCriteriaDto hubSpuImportTaskCriteriaDto = new HubSpuImportTaskCriteriaDto();
-		HubSpuImportTaskCriteriaDto.Criteria criteria = hubSpuImportTaskCriteriaDto.createCriteria().andTaskNoEqualTo(taskNo);
-		dto.setCriteria(hubSpuImportTaskCriteriaDto);
-		int result = spuImportGateway.updateByCriteriaSelective(dto);
-	}
+
 }
