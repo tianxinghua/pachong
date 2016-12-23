@@ -21,7 +21,6 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingW
 @FeignClient("ephub-data-mysql-service")
 public interface HubSupplierValueMappingGateWay {
 
-	
 	@RequestMapping(value = "/hub-supplier-value-mapping/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int countByCriteria(@RequestBody HubSupplierValueMappingCriteriaDto criteria);
 	
@@ -41,7 +40,7 @@ public interface HubSupplierValueMappingGateWay {
     public List<HubSupplierValueMappingDto> selectByCriteriaWithRowbounds(@RequestBody HubSupplierValueMappingCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
 	@RequestMapping(value = "/hub-supplier-value-mapping/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public List<HubSupplierValueMappingDto> selectByCriteria(@RequestBody HubSupplierValueMappingCriteriaDto criteria);
+    public List<HubSupplierValueMappingDto> selectByCriteria(@RequestBody HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteria);
 	
 	@RequestMapping(value = "/hub-supplier-value-mapping/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public HubSupplierValueMappingDto selectByPrimaryKey(Long valueMappingId);
