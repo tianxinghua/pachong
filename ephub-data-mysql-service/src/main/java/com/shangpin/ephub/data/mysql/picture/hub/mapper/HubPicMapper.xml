@@ -118,6 +118,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.picture.hub.po.HubPic" >
+    <selectKey keyColumn="pic_id" keyProperty="picId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS pic_id
+  	</selectKey>
     insert into hub_pic (pic_id, pic_url, sp_pic_url, 
       sort_value, pic_type, create_time, 
       update_time, pic_state, pic_no, 
@@ -130,6 +133,9 @@
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.picture.hub.po.HubPic" >
+    <selectKey keyColumn="pic_id" keyProperty="picId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS pic_id
+  	</selectKey>
     insert into hub_pic
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="picId != null" >

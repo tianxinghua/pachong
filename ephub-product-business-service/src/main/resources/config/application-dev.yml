@@ -1,10 +1,45 @@
+feign.hystrix.enabled: false
 spring: 
+  rabbitmq: 
+           host: 192.168.20.175
+           port: 5672
+           username: scm-message-service
+           password: scm-message-service
+           virtual-host: /scm-message-service
   cloud:
-       consul: 
-         discovery: 
-           instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+        consul: 
+          discovery: 
+            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+            prefer-ip-address: true
+            ip-address: 192.168.20.110
+            hostname: 192.168.20.110
+            port: ${server.port}
+            healthCheckUrl: http://localhost:9094/info 
+        stream: 
+              bindings: 
+                        pendingProductImportTask: 
+                              destination: pending.product.import.task
+                              content-type: application/json
+                        hubProductImportTask: 
+                              destination: hub.product.import.task
+                              content-type: application/json
+              rabbit: 
+                      bindings: 
+                            pendingProductImportTask: 
+                                  producer: 
+                                           prefix: HA.
+                            hubProductImportTask: 
+                                  producer: 
+                                           prefix: HA.
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
+  ftp:
+       host: 192.168.20.110
+       port: 21
+       userName: dev
+       password: shangpin@123
+       ftpHubPath: hub/
+       ftpPendingPath: pending/
   mail: 
        default-recipient: yan_xiao_bin@126.com
        default-sender: yanxiaobin@shangpin.com
@@ -14,7 +49,7 @@ spring:
        protocol: smtp # Protocol used by the SMTP server.
        username: yanxiaobin@shangpin.com # Login user of the SMTP server.
        password: 123.com # Login password of the SMTP server.
-       test-connection: true # Test that the mail server is available on startup.
+       test-connection: false # Test that the mail server is available on startup.
 banner: 
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.

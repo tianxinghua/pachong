@@ -1,4 +1,4 @@
-﻿server.port: 9090
+﻿server.port: 9094
 spring:
   profiles: 
     active: dev

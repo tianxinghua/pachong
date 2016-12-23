@@ -1,22 +1,22 @@
 package com.shangpin.ephub.data.mysql.dictionary.categroy.mapper;
 
-import com.shangpin.ephub.data.mysql.dictionary.categroy.po.HubSupplierCategroyDic;
-import com.shangpin.ephub.data.mysql.dictionary.categroy.po.HubSupplierCategroyDicCriteria;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
+
+import com.shangpin.ephub.data.mysql.dictionary.categroy.po.HubSupplierCategroyDic;
+import com.shangpin.ephub.data.mysql.dictionary.categroy.po.HubSupplierCategroyDicCriteria;
 /**
- * <p>Title:HubBrandDicMapper.java </p>
+ * <p>Title:HubSupplierCategroyDicMapper.java </p>
  * <p>Description: </p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
- * @date 2016年12月13日 下午2:12:01
+ * @date 2016年12月23日 上午11:17:20
  */
 @Mapper
 public interface HubSupplierCategroyDicMapper {
-	
     int countByExample(HubSupplierCategroyDicCriteria example);
 
     int deleteByExample(HubSupplierCategroyDicCriteria example);

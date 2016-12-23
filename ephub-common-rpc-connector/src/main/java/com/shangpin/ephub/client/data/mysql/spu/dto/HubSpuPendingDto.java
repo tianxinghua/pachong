@@ -5,9 +5,19 @@ import java.util.Date;
 
 public class HubSpuPendingDto implements Serializable {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6102549599637233552L;
+
+	/**
      * 主键
      */
     private Long spuPendingId;
+
+    /**
+     * 供应商NO
+     */
+    private String supplierNo;
 
     /**
      * 供应商Id
@@ -165,7 +175,6 @@ public class HubSpuPendingDto implements Serializable {
      */
     private Byte spuColorState;
 
-    private static final long serialVersionUID = 1L;
 
     public Long getSpuPendingId() {
         return spuPendingId;
@@ -173,6 +182,14 @@ public class HubSpuPendingDto implements Serializable {
 
     public void setSpuPendingId(Long spuPendingId) {
         this.spuPendingId = spuPendingId;
+    }
+
+    public String getSupplierNo() {
+        return supplierNo;
+    }
+
+    public void setSupplierNo(String supplierNo) {
+        this.supplierNo = supplierNo == null ? null : supplierNo.trim();
     }
 
     public String getSupplierId() {
@@ -430,6 +447,7 @@ public class HubSpuPendingDto implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", spuPendingId=").append(spuPendingId);
+        sb.append(", supplierNo=").append(supplierNo);
         sb.append(", supplierId=").append(supplierId);
         sb.append(", supplierSpuNo=").append(supplierSpuNo);
         sb.append(", spuModel=").append(spuModel);
@@ -479,6 +497,7 @@ public class HubSpuPendingDto implements Serializable {
         }
         HubSpuPendingDto other = (HubSpuPendingDto) that;
         return (this.getSpuPendingId() == null ? other.getSpuPendingId() == null : this.getSpuPendingId().equals(other.getSpuPendingId()))
+            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
             && (this.getSupplierSpuNo() == null ? other.getSupplierSpuNo() == null : this.getSupplierSpuNo().equals(other.getSupplierSpuNo()))
             && (this.getSpuModel() == null ? other.getSpuModel() == null : this.getSpuModel().equals(other.getSpuModel()))
@@ -517,6 +536,7 @@ public class HubSpuPendingDto implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getSpuPendingId() == null) ? 0 : getSpuPendingId().hashCode());
+        result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
         result = prime * result + ((getSupplierSpuNo() == null) ? 0 : getSupplierSpuNo().hashCode());
         result = prime * result + ((getSpuModel() == null) ? 0 : getSpuModel().hashCode());

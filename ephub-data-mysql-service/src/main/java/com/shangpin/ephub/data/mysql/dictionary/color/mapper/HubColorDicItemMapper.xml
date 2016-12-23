@@ -116,6 +116,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.dictionary.color.po.HubColorDicItem" >
+    <selectKey keyColumn="color_dic_item_id" keyProperty="colorDicItemId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS color_dic_item_id
+  	</selectKey>
     insert into hub_color_dic_item (color_dic_item_id, color_item_name, color_dic_id, 
       create_time, create_user, update_time, 
       update_user, memo, push_time, 
@@ -128,6 +131,9 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.dictionary.color.po.HubColorDicItem" >
+    <selectKey keyColumn="color_dic_item_id" keyProperty="colorDicItemId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS color_dic_item_id
+  	</selectKey>
     insert into hub_color_dic_item
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="colorDicItemId != null" >

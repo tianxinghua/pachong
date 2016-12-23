@@ -121,6 +121,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping" >
+    <selectKey keyColumn="sku_supplier_mapping_id" keyProperty="skuSupplierMappingId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS sku_supplier_mapping_id
+  	</selectKey>
     insert into hub_sku_supplier_mapping (sku_supplier_mapping_id, sku_no, supplier_sku_no, 
       barcode, supplier_id, new_spu_type, 
       is_new_supplier, create_time, create_user, 
@@ -135,6 +138,9 @@
       #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping" >
+    <selectKey keyColumn="sku_supplier_mapping_id" keyProperty="skuSupplierMappingId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS sku_supplier_mapping_id
+  	</selectKey>
     insert into hub_sku_supplier_mapping
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="skuSupplierMappingId != null" >

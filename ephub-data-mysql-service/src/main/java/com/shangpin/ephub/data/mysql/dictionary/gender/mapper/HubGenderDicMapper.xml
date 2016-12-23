@@ -117,6 +117,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.dictionary.gender.po.HubGenderDic" >
+    <selectKey keyColumn="gender_dic_id" keyProperty="genderDicId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS gender_dic_id
+  	</selectKey>
     insert into hub_gender_dic (gender_dic_id, supplier_id, supplier_gender, 
       hub_gender, create_time, create_user, 
       update_time, update_user, data_state, 
@@ -129,6 +132,9 @@
       #{pushTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.dictionary.gender.po.HubGenderDic" >
+    <selectKey keyColumn="gender_dic_id" keyProperty="genderDicId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS gender_dic_id
+  	</selectKey>
     insert into hub_gender_dic
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="genderDicId != null" >

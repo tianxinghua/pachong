@@ -114,6 +114,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.dictionary.material.po.HubMaterialDicItem" >
+    <selectKey keyColumn="material_dic_item_id" keyProperty="materialDicItemId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS material_dic_item_id
+  	</selectKey>
     insert into hub_material_dic_item (material_dic_item_id, material_item_name, 
       material_dic_id, create_time, create_user, 
       update_time, update_user, memo, 
@@ -124,6 +127,9 @@
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.dictionary.material.po.HubMaterialDicItem" >
+    <selectKey keyColumn="material_dic_item_id" keyProperty="materialDicItemId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS material_dic_item_id
+  	</selectKey>
     insert into hub_material_dic_item
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="materialDicItemId != null" >

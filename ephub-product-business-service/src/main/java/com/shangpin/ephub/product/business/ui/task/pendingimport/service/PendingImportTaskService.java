@@ -16,9 +16,9 @@ import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
+import com.shangpin.ephub.product.business.ui.task.common.util.FTPClientUtil;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
-import com.shangpin.ephub.product.business.ui.task.spuimport.util.FTPClientUtil;
 import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseDTO;
 import com.shangpin.ephub.product.business.util.DateTimeUtil;
 import com.shangpin.ephub.response.HubResponse;
@@ -50,14 +50,11 @@ public class PendingImportTaskService {
 		Date date = new Date();
 		String systemFileName = ftpPath+sim.format(date)+task.getFileName().split(".")[1];
 		//第一步 ： 上传ftp
-		HubResponse flag = FTPClientUtil.uploadFile(task.getUploadfile(),ftpPath,systemFileName);
+		String flag = FTPClientUtil.uploadFile(task.getUploadfile(),systemFileName);
 		//第二步 ： 保存数据库
-		if("0".equals(flag.getCode())){
-			saveTask(task);
-			//第三步 ： 发送到hub消息队列
-			
-		}
-		return flag;
+		saveTask(task);
+		//第三步 ： 发送到hub消息队列
+		return null;
 	}
 	private boolean saveTask(HubImportTaskRequestDto task) throws Exception{
 		// TODO Auto-generated method stub
@@ -78,8 +75,8 @@ public class PendingImportTaskService {
 	public List<HubTaskProductResponseDTO> findHubTaskList(HubImportTaskListRequestDto param) {
 		
 		HubSpuImportTaskCriteriaWithRowBoundsDto dto = new HubSpuImportTaskCriteriaWithRowBoundsDto();
-		if(!StringUtils.isEmpty(param.getPageIndex()) && !StringUtils.isEmpty(param.getPageSize())){
-			RowBoundsDto rowBounds = new RowBoundsDto(param.getPageIndex(),param.getPageSize());
+		if(!StringUtils.isEmpty(param.getPageNo()) && !StringUtils.isEmpty(param.getPageSize())){
+			RowBoundsDto rowBounds = new RowBoundsDto(param.getPageNo(),param.getPageSize());
 			dto.setRowBounds(rowBounds);
 		}
 		HubSpuImportTaskCriteriaDto hubSpuImportTaskCriteriaDto = new HubSpuImportTaskCriteriaDto();

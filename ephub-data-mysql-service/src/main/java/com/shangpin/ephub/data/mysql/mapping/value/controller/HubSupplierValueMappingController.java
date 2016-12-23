@@ -51,8 +51,8 @@ public class HubSupplierValueMappingController {
     	return hubSupplierValueMappingService.selectByCriteriaWithRowbounds(criteriaWithRowBounds);
     }
 	@RequestMapping(value = "/select-by-criteria")
-    public List<HubSupplierValueMapping> selectByCriteria(@RequestBody HubSupplierValueMappingCriteria criteria){
-    	return hubSupplierValueMappingService.selectByCriteria(criteria);
+    public List<HubSupplierValueMapping> selectByCriteria(@RequestBody HubSupplierValueMappingCriteria hubSupplierValueMappingCriteria){
+    	return hubSupplierValueMappingService.selectByCriteria(hubSupplierValueMappingCriteria);
     }
 	@RequestMapping(value = "/select-by-primary-key")
     public HubSupplierValueMapping selectByPrimaryKey(Long valueMappingId){
