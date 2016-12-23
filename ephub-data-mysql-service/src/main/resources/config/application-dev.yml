@@ -30,7 +30,7 @@ shangpin:
             strategy: RANDOM
             retrytime: 200
             minimumConnectionCount: 500
-            maximumConnectionCount: 3000
+            maximumConnectionCount: 500
             trace: true
             prototypeCount: 10
             houseKeepingTestSql: select 1 from dual

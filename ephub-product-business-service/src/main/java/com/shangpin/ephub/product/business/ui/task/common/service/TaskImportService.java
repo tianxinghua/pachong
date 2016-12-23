@@ -1,9 +1,12 @@
-package com.shangpin.ephub.product.business.ui.task.pendingimport.service;
+package com.shangpin.ephub.product.business.ui.task.common.service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,9 @@ import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
+import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
+import com.shangpin.ephub.product.business.ui.task.common.enumeration.TaskStatus;
 import com.shangpin.ephub.product.business.ui.task.common.util.FTPClientUtil;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
@@ -39,40 +45,55 @@ import com.shangpin.ephub.response.HubResponse;
  */
 @SuppressWarnings("rawtypes")
 @Service
-public class PendingImportTaskService {
+public class TaskImportService {
 	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
 	@Autowired 
 	HubSpuImportTaskGateWay spuImportGateway;
-	private static String ftpPath = "F://";
-	public HubResponse uploadFileAndSave(HubImportTaskRequestDto task) throws Exception{
+	@Autowired
+	ProductImportTaskStreamSender productImportTaskStreamSender;
+	public HubResponse uploadFileAndSave(HubImportTaskRequestDto task,int importType) throws Exception{
 		
-		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-		Date date = new Date();
-		String systemFileName = ftpPath+sim.format(date)+task.getFileName().split(".")[1];
-		//第一步 ： 上传ftp
-		String flag = FTPClientUtil.uploadFile(task.getUploadfile(),systemFileName);
-		//第二步 ： 保存数据库
-		saveTask(task);
-		//第三步 ： 发送到hub消息队列
-		return null;
+		String []fileName = task.getFileName().split("\\.");
+		if(fileName!=null&&fileName.length==2){
+			if("xlsx".equals(fileName[1])||"xls".equals(fileName[1])){
+				
+				SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+				Date date = new Date();
+				String taskNo = sim.format(date);
+				String systemFileName = taskNo +"."+fileName[1];
+				
+				//第一步 ： 上传ftp
+				String ftpPath = FTPClientUtil.uploadFile(task.getUploadfile(),systemFileName);
+				//第二步 ： 保存数据库
+				saveTask(task,taskNo,ftpPath,systemFileName,importType);
+				//TODO 第三步 ：发送到hub消息队列
+				ProductImportTask productImportTask = new ProductImportTask();
+				productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
+				productImportTask.setMessageId(UUID.randomUUID().toString());
+				productImportTask.setTaskNo(taskNo);
+				productImportTask.setTaskFtpFilePath(ftpPath+systemFileName);
+				productImportTaskStreamSender.hubProductImportTaskStream(productImportTask, null);
+				return HubResponse.successResp(null);
+			}
+		}
+		return HubResponse.errorResp("文件格式有误，请下载模板");
 	}
-	private boolean saveTask(HubImportTaskRequestDto task) throws Exception{
+	private boolean saveTask(HubImportTaskRequestDto task,String taskNo,String ftpPath,String systemFileName,int importType) throws Exception{
 		// TODO Auto-generated method stub
-		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
-		Date date = new Date();
-		hubSpuTask.setTaskNo(sim.format(date));
-		hubSpuTask.setTaskFtpFilePath(ftpPath+sim.format(date)+task.getFileName().split(".")[1]);
-		hubSpuTask.setSysFileName(sim.format(date)+task.getFileName().split(".")[1]);
+		hubSpuTask.setTaskNo(taskNo);
+		hubSpuTask.setTaskFtpFilePath(ftpPath+systemFileName);
+		hubSpuTask.setSysFileName(systemFileName);
 	    hubSpuTask.setLocalFileName(task.getFileName());
-	    hubSpuTask.setCreateTime(date);
+	    hubSpuTask.setCreateTime(new Date());
 	    hubSpuTask.setCreateUser(task.getCreateUser());
-	    hubSpuTask.setTaskState((byte) 0);
+	    hubSpuTask.setTaskState((byte) TaskStatus.NO_HANDLE.getIndex());
+	    hubSpuTask.setImportType((byte)importType);
 	    spuImportGateway.insert(hubSpuTask);
 		return true;
 	}
 	
-	public List<HubTaskProductResponseDTO> findHubTaskList(HubImportTaskListRequestDto param) {
+	public List<HubTaskProductResponseDTO> findHubTaskList(HubImportTaskListRequestDto param,List<Byte> listImportType) {
 		
 		HubSpuImportTaskCriteriaWithRowBoundsDto dto = new HubSpuImportTaskCriteriaWithRowBoundsDto();
 		if(!StringUtils.isEmpty(param.getPageNo()) && !StringUtils.isEmpty(param.getPageSize())){
@@ -90,6 +111,7 @@ public class PendingImportTaskService {
 		if(!StringUtils.isEmpty(param.getStartDate())){
 			criteria.andCreateTimeBetween(DateTimeUtil.convertFormat(param.getStartDate(),dateFormat),DateTimeUtil.convertFormat(param.getEndDate(),dateFormat));
 		}
+		criteria.andImportTypeIn(listImportType);
 		dto.setCriteria(hubSpuImportTaskCriteriaDto);
 		List<HubSpuImportTaskDto>  list = spuImportGateway.selectByCriteriaWithRowbounds(dto);
 		List<HubTaskProductResponseDTO> responseList = convertTaskDTO2ResponseDTO(list);
@@ -108,6 +130,19 @@ public class PendingImportTaskService {
 			}
 		}
 		return responseList;
+	}
+	public HubResponse<byte[]> downResultFile(String resultFilePath) throws Exception{
+		// TODO Auto-generated method stub
+		InputStream in = FTPClientUtil.downFile(resultFilePath);
+		ByteArrayOutputStream swapStream = new ByteArrayOutputStream(); 
+		byte[] buff = new byte[1024]; //buff用于存放循环读取的临时数据 
+		int rc = 0; 
+		while ((rc = in.read(buff, 0, 100)) > 0) { 
+		swapStream.write(buff, 0, rc); 
+		} 
+		swapStream.flush();
+		byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果 
+		return HubResponse.successResp(in_b);
 	}
 
 }
