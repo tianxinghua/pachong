@@ -362,23 +362,23 @@ public class PendingHandler {
         if(null==originStaticMap){
             originStaticMap = new HashMap<>();
 
-            List<HubSupplierValueMappingDto> valueMappingDtos= dataServiceHandler.getHubSupplierValueMappingByType(SupplierValueMappingType.TYPE_ORIGIN.getIndex());
-            for (HubSupplierValueMappingDto dto : valueMappingDtos) {
-                originStaticMap.put(dto.getSupplierValue(),dto.getHubValue());
-
-            }
+            setOriginStaticMap();
 
 
         }else{
             if(isNeedHandle()){
-                List<HubSupplierValueMappingDto> valueMappingDtos= dataServiceHandler.getHubSupplierValueMappingByType(SupplierValueMappingType.TYPE_ORIGIN.getIndex());
-                for (HubSupplierValueMappingDto dto : valueMappingDtos) {
-                    originStaticMap.put(dto.getSupplierValue(),dto.getHubValue());
-
-                }
+                setOriginStaticMap();
             }
         }
         return originStaticMap;
+    }
+
+    private void setOriginStaticMap() {
+        List<HubSupplierValueMappingDto> valueMappingDtos= dataServiceHandler.getHubSupplierValueMappingByType(SupplierValueMappingType.TYPE_ORIGIN.getIndex());
+        for (HubSupplierValueMappingDto dto : valueMappingDtos) {
+            originStaticMap.put(dto.getSupplierVal(),dto.getHubVal());
+
+        }
     }
 
     public  boolean  setCategoryMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
