@@ -29,7 +29,7 @@ import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
  * @date 2016年12月21日 下午4:17:15
  */
 @Component
-public class HubProductCheckRuleManager {
+public class HubProductCheckManager {
 
 	@Autowired
 	HubBrandDicGateway hubBrandDicGateway;
