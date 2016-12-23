@@ -568,6 +568,7 @@ public class DataServiceHandler {
 
     public List<HubSupplierValueMappingDto> getHubSupplierValueMappingByType(Integer type){
         HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
+        criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
         criteria.createCriteria().andHubValueTypeEqualTo(type.byteValue());
         return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
     }
