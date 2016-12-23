@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.rest.checkHub.dao;
+package com.shangpin.ephub.product.business.rest.hubproduct.dto;
 
 import java.io.Serializable;
 

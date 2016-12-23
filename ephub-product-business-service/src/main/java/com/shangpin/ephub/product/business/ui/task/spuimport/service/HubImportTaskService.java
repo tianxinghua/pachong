@@ -6,18 +6,22 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerators.UUIDGenerator;
 import com.shangpin.ephub.client.common.dto.RowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
+import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.util.FTPClientUtil;
@@ -45,6 +49,8 @@ public class HubImportTaskService {
 	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
 	@Autowired 
 	HubSpuImportTaskGateWay spuImportGateway;
+	@Autowired
+	ProductImportTaskStreamSender productImportTaskStreamSender;
 	public HubResponse uploadFileAndSave(HubImportTaskRequestDto task) throws Exception{
 		
 		String []fileName = task.getFileName().split("\\.");
@@ -62,7 +68,12 @@ public class HubImportTaskService {
 				//第二步 ： 保存数据库
 				saveTask(task,taskNo,ftpPath,systemFileName);
 				//TODO 第三步 ：发送到hub消息队列
-				
+				ProductImportTask productImportTask = new ProductImportTask();
+				productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
+				productImportTask.setMessageId(UUID.randomUUID().toString());
+				productImportTask.setTaskNo(taskNo);
+				productImportTask.setTaskFtpFilePath(ftpPath+systemFileName);
+				productImportTaskStreamSender.hubProductImportTaskStream(productImportTask, null);
 				return HubResponse.successResp(null);
 			}
 		}
