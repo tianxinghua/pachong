@@ -2,9 +2,7 @@ package com.shangpin.ephub.product.business.ui.pendingCrud.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.shangpin.ephub.product.business.ui.pendingCrud.vo.SpuPendingAuditQueryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,4 +66,11 @@ public class PendingProductController {
 			return HubResponse.successResp(resultFail);
 		}
 	}
+
+	@RequestMapping(value="query-spumodel",method=RequestMethod.POST)
+	public HubResponse querySpuModel(@RequestBody SpuPendingAuditQueryVO queryVO){
+		return null;
+	}
+
+
 }
