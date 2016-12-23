@@ -12,8 +12,7 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingD
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
-import com.shangpin.pending.product.consumer.common.enumeration.SpuStatus;
-import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
+import com.shangpin.pending.product.consumer.common.enumeration.*;
 import com.shangpin.pending.product.consumer.util.BurberryModelRule;
 import com.shangpin.pending.product.consumer.util.PradaModelRule;
 import org.apache.commons.lang.StringUtils;
@@ -37,8 +36,6 @@ import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.pending.product.consumer.common.DateUtils;
-import com.shangpin.pending.product.consumer.common.enumeration.MessageType;
-import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
 import com.shangpin.pending.product.consumer.supplier.dto.CategoryScreenSizeDom;
 import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
 import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
@@ -206,8 +203,13 @@ public class PendingHandler {
          String productCode = spu.getSpuModel();
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         HubSpuDto hubSpuDto = null;
-        if(null!=spu.getSpuModel()){
-            hubSpuDto = dataServiceHandler.getHubSpuByProductModel(spu.getSpuModel());
+
+
+        boolean brandmapping = true;
+        //首先映射品牌 ，否则无法查询SPU
+        brandmapping = setBrandMapping(spu, hubSpuPending);
+        if(brandmapping&&null!=spu.getSpuModel()){
+            hubSpuDto = dataServiceHandler.getHubSpuByHubBrandNoAndProductModel(hubSpuPending.getHubBrandNo(),spu.getSpuModel());
         }
 
         if(null!=hubSpuDto){
@@ -218,7 +220,7 @@ public class PendingHandler {
 
             BeanUtils.copyProperties(spu,hubSpuPending);
             boolean allStatus=true;
-            boolean brandmapping = true;
+
 
 
 
@@ -228,8 +230,7 @@ public class PendingHandler {
             //获取品类
             if(!setCategoryMapping(spu, hubSpuPending)) allStatus=false;
 
-            //获取品牌
-            brandmapping = setBrandMapping(spu, hubSpuPending);
+
             if(!brandmapping) allStatus=false;
 
 
@@ -286,10 +287,20 @@ public class PendingHandler {
     public  boolean setSeasonMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         Map<String, String> seasonMap = this.getSeasonMap(spu.getSupplierId());
         boolean result = true;
-
-        if(seasonMap.containsKey(spu.getSupplierId()+"_"+ spu.getHubSeason())){
+        String spSeason="",seasonSign="";
+        if(seasonMap.containsKey(spu.getSupplierId()+"_"+ spu.getHubSeason().trim())){
             //包含时转化赋值
-            hubSpuPending.setHubSeason(seasonMap.get(spu.getSupplierId()+"_"+ spu.getHubSeason()));
+            spSeason = seasonMap.get(spu.getSupplierId()+"_"+ spu.getHubSeason().trim());
+            if(spSeason.indexOf("|")>0){
+                seasonSign = spSeason.substring(spSeason.indexOf("|")+1,spSeason.length());
+                hubSpuPending.setHubSeason(spSeason.substring(0,spSeason.indexOf("|")));
+                if(SeasonType.SEASON_CURRENT.getIndex().toString().equals(seasonSign)){
+                    hubSpuPending.setIsCurrentSeason(SeasonType.SEASON_CURRENT.getIndex().byteValue());
+                }else{
+                    hubSpuPending.setIsCurrentSeason(SeasonType.SEASON_NOT_CURRENT.getIndex().byteValue());
+                }
+            }
+
             hubSpuPending.setSpuSeasonState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 
         }else{//
@@ -764,7 +775,8 @@ public class PendingHandler {
     }
 
     /**
-     * key :supplierId+"_"+supplierSeason value:hub_year+"_"+hub_season
+     * key :supplierId+"_"+supplierSeason value:hub_year+"_"+hub_season+"_"+memo
+     * meme = 1: current season 0: preview season
      * @param supplierId
      * @return
      */
@@ -772,25 +784,28 @@ public class PendingHandler {
         if(null==seasonStaticMap){
             seasonStaticMap = new HashMap<>();
             hubSeasonStaticMap = new HashMap<>();
-            List<HubSeasonDicDto> hubSeasonDics = dataServiceHandler.getHubSeasonDic();
-            for(HubSeasonDicDto dicDto:hubSeasonDics){
-                seasonStaticMap.put(dicDto.getSupplierid()+"_"+dicDto.getSupplierSeason(),
-                        dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason());
-                hubSeasonStaticMap.put(dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason(),"");
-            }
+            setSeasonStaticMap();
 
         }else{
             if(isNeedHandle()){
-                List<HubSeasonDicDto> hubSeasonDics = dataServiceHandler.getHubSeasonDic();
-                for(HubSeasonDicDto dicDto:hubSeasonDics){
-                    seasonStaticMap.put(dicDto.getSupplierid()+"_"+dicDto.getSupplierSeason(),
-                            dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason());
-                    hubSeasonStaticMap.put(dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason(),"");
-                }
+                setSeasonStaticMap();
             }
 
         }
        return seasonStaticMap;
+    }
+
+    private void setSeasonStaticMap() {
+        List<HubSeasonDicDto> hubSeasonDics = dataServiceHandler.getHubSeasonDic();
+        for(HubSeasonDicDto dicDto:hubSeasonDics){
+            if(StringUtils.isNotBlank(dicDto.getHubMarketTime())&&StringUtils.isNotBlank(dicDto.getHubSeason())&&
+                    StringUtils.isNotBlank(dicDto.getMemo())){
+
+                seasonStaticMap.put(dicDto.getSupplierid()+"_"+dicDto.getSupplierSeason().trim(),
+                        dicDto.getHubMarketTime().trim()+"_"+dicDto.getHubSeason().trim()+"|"+dicDto.getMemo().trim());
+                hubSeasonStaticMap.put(dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason(),"");
+            }
+        }
     }
 
     /**

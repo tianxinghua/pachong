@@ -180,11 +180,11 @@ public class DataServiceHandler {
         }
     }
 
-    public HubSpuDto getHubSpuByProductModel(String spuModel){
+    public HubSpuDto getHubSpuByHubBrandNoAndProductModel(String brandNo,String spuModel){
         HubSpuCriteriaDto criteria = new HubSpuCriteriaDto();
         HubSpuCriteriaDto.Criteria criterion = criteria.createCriteria();
 
-        criterion.andSpuModelEqualTo(spuModel);
+        criterion.andSpuModelEqualTo(spuModel).andBrandNoEqualTo(brandNo);
 
         List<HubSpuDto> hubSpuDtos = hubSpuGateWay.selectByCriteria(criteria);
         if(null!=hubSpuDtos&&hubSpuDtos.size()>0){
