@@ -1,6 +1,6 @@
 package com.shangpin.ephub.product.business.ui.task.spuimport.vo;
 
-import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -16,15 +16,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubTaskProductResponseDTO {
+public class HubTaskProductResponseWithPageDTO {
 
-	private String taskNo;
-	private String localFileName;
-	private byte taskState;
-	private Date createTime;
-	private String createUser;
-	private String updateUser;
-	private Date updateTime;
-	private String taskFtpFilePath;
-	private String resultFilePath;
+	private int total;
+	private List<HubTaskProductResponseDTO> taskNoList;
 }

@@ -14,6 +14,7 @@ import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportServ
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseDTO;
+import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseWithPageDTO;
 import com.shangpin.ephub.response.HubResponse;
 
 
@@ -57,8 +58,8 @@ public class PendingSpuImportTaskController {
 	        	
 		try {
 			Byte [] list1 = {1,2};
-			List<HubTaskProductResponseDTO> list = pendingImportTaskService.findHubTaskList(dto,Arrays.asList(list1));
-			return HubResponse.successResp(list);
+			HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = pendingImportTaskService.findHubTaskList(dto,Arrays.asList(list1));
+			return HubResponse.successResp(hubTaskProductResponseWithPageDTO);
 		} catch (Exception e) {
 			return HubResponse.errorResp("获取列表失败");
 		}

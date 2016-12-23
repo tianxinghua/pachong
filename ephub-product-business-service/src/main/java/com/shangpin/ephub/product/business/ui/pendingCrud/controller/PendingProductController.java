@@ -19,7 +19,7 @@ import com.shangpin.ephub.response.HubResponse;
 /**
  * <p>Title:PendingProductController </p>
  * <p>Description: 待处理页面</p>
- * <p>Company: www.shangpin.com</p> 
+ * <p>Company: www.shangpin.com</p>
  * @author lubaijiang
  * @date 2016年12月21日 下午5:15:48
  *
@@ -34,52 +34,52 @@ public class PendingProductController {
 	@Autowired
 	private IPendingProductService pendingProductService;
 
-	@SuppressWarnings("rawtypes")
-	@RequestMapping(value="/list",method=RequestMethod.POST)
-	@ResponseBody
-	public HubResponse pendingList(@RequestBody PendingQuryDto pendingQuryDto){
-		PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto);
-		System.out.println("查询的数据========="+JsonUtil.serialize(pendingProducts));
-		return HubResponse.successResp(pendingProducts); 
-	}
-	@SuppressWarnings("rawtypes")
-	@RequestMapping(value="/update",method=RequestMethod.POST)
-	public HubResponse updateProduct(@RequestBody PendingProductDto pendingProductDto){
-		boolean result = pendingProductService.updatePendingProduct(pendingProductDto);
-		if(result){
-			return HubResponse.successResp(resultSuccess);
-		}else{
-			return HubResponse.successResp(resultFail);
-		}
-	}
-	@SuppressWarnings("rawtypes")
-	@RequestMapping(value="/batch-update",method=RequestMethod.POST)
-	public HubResponse batchUpdateProduct(@RequestBody List<PendingProductDto> pendingProducts){
-		boolean result = pendingProductService.batchUpdatePendingProduct(pendingProducts);
-		if(result){
-			return HubResponse.successResp(resultSuccess);
-		}else{
-			return HubResponse.successResp(resultFail);
-		}
-	}
-	@SuppressWarnings("rawtypes")
-	@RequestMapping(value="/unable-to-process",method=RequestMethod.POST)
-	public HubResponse updateProductToUnableToProcess(@RequestBody Ids ids){
-		boolean result = pendingProductService.updatePendingProductToUnableToProcess(ids.getIds().get(0));
-		if(result){
-			return HubResponse.successResp(resultSuccess);
-		}else{
-			return HubResponse.successResp(resultFail);
-		}
-	}
-	@SuppressWarnings("rawtypes")
-	@RequestMapping(value="/batch-unable-to-process",method=RequestMethod.POST)
-	public HubResponse batchUpdateProductToUnableToProcess(@RequestBody Ids ids){
-		boolean result = pendingProductService.batchUpdatePendingProductToUnableToProcess(ids.getIds());
-		if(result){
-			return HubResponse.successResp(resultSuccess);
-		}else{
-			return HubResponse.successResp(resultFail);
-		}
-	}
+    @SuppressWarnings("rawtypes")
+    @RequestMapping(value="/list",method=RequestMethod.POST)
+    @ResponseBody
+    public HubResponse pendingList(@RequestBody PendingQuryDto pendingQuryDto){
+        PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto);
+        System.out.println("查询的数据========="+JsonUtil.serialize(pendingProducts));
+        return HubResponse.successResp(pendingProducts);
+    }
+    @SuppressWarnings("rawtypes")
+    @RequestMapping(value="/update",method=RequestMethod.POST)
+    public HubResponse updateProduct(@RequestBody PendingProductDto pendingProductDto){
+        boolean result = pendingProductService.updatePendingProduct(pendingProductDto);
+        if(result){
+            return HubResponse.successResp(resultSuccess);
+        }else{
+            return HubResponse.successResp(resultFail);
+        }
+    }
+    @SuppressWarnings("rawtypes")
+    @RequestMapping(value="/batch-update",method=RequestMethod.POST)
+    public HubResponse batchUpdateProduct(@RequestBody List<PendingProductDto> pendingProducts){
+        boolean result = pendingProductService.batchUpdatePendingProduct(pendingProducts);
+        if(result){
+            return HubResponse.successResp(resultSuccess);
+        }else{
+            return HubResponse.successResp(resultFail);
+        }
+    }
+    @SuppressWarnings("rawtypes")
+    @RequestMapping(value="/unable-to-process",method=RequestMethod.POST)
+    public HubResponse updateProductToUnableToProcess(@RequestBody Ids ids){
+        boolean result = pendingProductService.updatePendingProductToUnableToProcess(ids.getIds().get(0));
+        if(result){
+            return HubResponse.successResp(resultSuccess);
+        }else{
+            return HubResponse.successResp(resultFail);
+        }
+    }
+    @SuppressWarnings("rawtypes")
+    @RequestMapping(value="/batch-unable-to-process",method=RequestMethod.POST)
+    public HubResponse batchUpdateProductToUnableToProcess(@RequestBody Ids ids){
+        boolean result = pendingProductService.batchUpdatePendingProductToUnableToProcess(ids.getIds());
+        if(result){
+            return HubResponse.successResp(resultSuccess);
+        }else{
+            return HubResponse.successResp(resultFail);
+        }
+    }
 }

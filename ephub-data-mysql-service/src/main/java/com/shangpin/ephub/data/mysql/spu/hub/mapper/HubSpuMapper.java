@@ -39,4 +39,6 @@ public interface HubSpuMapper {
     int updateByPrimaryKeySelective(HubSpu record);
 
     int updateByPrimaryKey(HubSpu record);
+
+    String getMaxSpuNo();
 }

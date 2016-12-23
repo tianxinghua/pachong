@@ -41,7 +41,7 @@ public class HubWaitSelectedService {
 		
 		String supplierId = dto.getSupplierNo();
 		List<HubSkuSupplierMappingDto> hubSkuSuppMapplist = null;
-		//如果供应商为空
+		//如果供应商不为空
 		if(StringUtils.isNotBlank(supplierId)){
 			HubSkuSupplierMappingCriteriaDto HubSkuSupplierMappingDto = new HubSkuSupplierMappingCriteriaDto();
 			HubSkuSupplierMappingDto.createCriteria().andSupplierIdEqualTo(supplierId);
