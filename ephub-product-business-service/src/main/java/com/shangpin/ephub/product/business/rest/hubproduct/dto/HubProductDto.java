@@ -43,4 +43,12 @@ public class HubProductDto implements Serializable {
     private String color;
     private String material;
     private String madeIn;
+	public String getSeason() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public String getSeasonYear() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

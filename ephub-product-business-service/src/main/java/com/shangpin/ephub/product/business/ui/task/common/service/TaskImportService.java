@@ -111,7 +111,7 @@ public class TaskImportService {
 		if(!StringUtils.isEmpty(param.getStartDate())){
 			criteria.andCreateTimeBetween(DateTimeUtil.convertFormat(param.getStartDate(),dateFormat),DateTimeUtil.convertFormat(param.getEndDate(),dateFormat));
 		}
-		criteria.andImportTypeIn(listImportType);
+//		criteria.andImportTypeIn(listImportType);
 		dto.setCriteria(hubSpuImportTaskCriteriaDto);
 		List<HubSpuImportTaskDto>  list = spuImportGateway.selectByCriteriaWithRowbounds(dto);
 		List<HubTaskProductResponseDTO> responseList = convertTaskDTO2ResponseDTO(list);
