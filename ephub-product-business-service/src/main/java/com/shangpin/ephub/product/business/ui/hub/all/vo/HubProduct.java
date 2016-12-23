@@ -15,7 +15,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class HubProductDto extends HubSkuDto {
+public class HubProduct extends HubSkuDto {
 
 	/**
 	 * 

@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 public class JavaUtil {
 
 	/**
-	 * 将父类的属性全部复制给子类
+	 * 将父类的属性的值全部复制给子类
 	 * @param father 父类
 	 * @param child 子类
 	 */
@@ -17,8 +17,11 @@ public class JavaUtil {
             Field ff[]= fatherClass.getDeclaredFields();  
             for(int i=0;i<ff.length;i++){  
                 Field f=ff[i];//取出每一个属性，如deleteDate
-                Class<?> type=f.getType();
+//                Class<?> type=f.getType();
                 try {
+                	if("serialVersionUID".equals(f.getName())){
+                		continue;
+                	}
                     Method m = fatherClass.getMethod("get"+upperHeadChar(f.getName()));//方法getDeleteDate  
                     Object obj=m.invoke(father);//取出属性值         
                     f.setAccessible(true);
