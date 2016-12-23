@@ -1,15 +1,15 @@
 package com.shangpin.pending.product.consumer.common.enumeration;
 
 /**
- * Created by loyalty on 16/12/21.
+ * Created by loyalty on 16/12/22.
  */
-public enum SpuStatus {
+public enum SupplierValueMappingType {
 
-    SPU_WAIT_HANDLE(0,"信息待完善"),
-    SPU_WAIT_AUDIT(1,"待复核"),
-    SPU_HANDLED(2,"已处理"),
-    SPU_NO_WAY_HANDLE(3,"无法处理"),
-    SPU_FILTER(4,"过滤不处理");
+    TYPE_BRAND(1,"品牌类型"),
+    TYPE_CATEGORY(2,"品类类型"),
+    TYPE_ORIGIN(3,"产地类型");
+
+
     /**
      * 数字索引标识
      */
@@ -30,7 +30,7 @@ public enum SpuStatus {
     public void setDescription(String description) {
         this.description = description;
     }
-    private SpuStatus(Integer index, String description) {
+    private SupplierValueMappingType(Integer index, String description) {
         this.index = index;
         this.description = description;
     }

@@ -1,13 +1,11 @@
 package com.shangpin.supplier.product.consumer;
 
-import com.shangpin.ephub.client.message.pending.body.PendingProduct;
-import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
-import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
-import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
-import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
-import com.shangpin.supplier.product.consumer.service.dto.Sku;
-import com.shangpin.supplier.product.consumer.service.dto.Spu;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +14,16 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
+import com.shangpin.ephub.client.message.pending.body.PendingProduct;
+import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
+import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
+import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.conf.stream.source.sender.PendingProductStreamSender;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
+import com.shangpin.supplier.product.consumer.service.dto.Sku;
+import com.shangpin.supplier.product.consumer.service.dto.Spu;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -66,7 +65,7 @@ public class SupplierProductConsumerServiceApplicationTests {
 		List<PendingSku> skus = new ArrayList<PendingSku>();
 		PendingSku sku =  new PendingSku();
 		sku.setSupplierId("2015111001657");
-		sku.setHubSkuNo("5732265b2b33300afbc4444f-XXL");
+		sku.setSupplierSkuNo("5732265b2b33300afbc4444f-XXL");
 		sku.setMarketPrice(new BigDecimal("456.00"));
 		sku.setSupplyPrice(new BigDecimal("355.00"));
 		sku.setStock(1);

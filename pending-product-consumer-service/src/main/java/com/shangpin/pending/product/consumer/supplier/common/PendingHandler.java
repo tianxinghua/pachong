@@ -8,15 +8,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
+import com.shangpin.pending.product.consumer.common.enumeration.*;
 import com.shangpin.pending.product.consumer.util.BurberryModelRule;
 import com.shangpin.pending.product.consumer.util.PradaModelRule;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
@@ -33,8 +36,6 @@ import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.pending.product.consumer.common.DateUtils;
-import com.shangpin.pending.product.consumer.common.enumeration.MessageType;
-import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
 import com.shangpin.pending.product.consumer.supplier.dto.CategoryScreenSizeDom;
 import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
 import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
@@ -75,6 +76,8 @@ public class PendingHandler {
 
     static Map<String,Map<String,String>> supplierGenderStaticMap = null;
 
+    static Map<String,String> genderStaticMap = null;
+
     static Map<String,Map<String,String>> supplierCategoryMappingStaticMap = null;
 
     static Map<String,String> brandStaticMap = null;
@@ -84,6 +87,8 @@ public class PendingHandler {
     static Map<String,String> seasonStaticMap = null;
 
     static Map<String,String> materialStaticMap = null;
+
+    static Map<String,String> originStaticMap = null;
 
 
     /**
@@ -121,6 +126,8 @@ public class PendingHandler {
             if(spuStatus== MessageType.NEW.getIndex()){
                 if(null==tmp){
                     hubSpuPending = this.addNewSpu(pendingSpu,headers);
+                }else{
+                    hubSpuPending = tmp;
                 }
 
 
@@ -198,8 +205,13 @@ public class PendingHandler {
          String productCode = spu.getSpuModel();
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         HubSpuDto hubSpuDto = null;
-        if(null!=spu.getSpuModel()){
-            hubSpuDto = dataServiceHandler.getHubSpuByProductModel(spu.getSpuModel());
+
+
+        boolean brandmapping = true;
+        //首先映射品牌 ，否则无法查询SPU
+        brandmapping = setBrandMapping(spu, hubSpuPending);
+        if(brandmapping&&null!=spu.getSpuModel()){
+            hubSpuDto = dataServiceHandler.getHubSpuByHubBrandNoAndProductModel(hubSpuPending.getHubBrandNo(),spu.getSpuModel());
         }
 
         if(null!=hubSpuDto){
@@ -210,7 +222,7 @@ public class PendingHandler {
 
             BeanUtils.copyProperties(spu,hubSpuPending);
             boolean allStatus=true;
-            boolean brandmapping = true;
+
 
 
 
@@ -220,12 +232,11 @@ public class PendingHandler {
             //获取品类
             if(!setCategoryMapping(spu, hubSpuPending)) allStatus=false;
 
-            //获取品牌
-            brandmapping = setBrandMapping(spu, hubSpuPending);
+
             if(!brandmapping) allStatus=false;
 
 
-            //todo 货号验证
+            //货号验证
             if(brandmapping){
                 if(!setBrandModel(spu, hubSpuPending)) allStatus=false;
             }
@@ -239,6 +250,9 @@ public class PendingHandler {
 
             //获取材质
             replaceMaterial(spu, hubSpuPending);
+
+            //产地映射
+            setOriginMapping(spu,hubSpuPending);
 
             if(allStatus){
                 hubSpuPending.setSpuState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
@@ -257,22 +271,38 @@ public class PendingHandler {
     private void replaceMaterial(PendingSpu spu, HubSpuPendingDto hubSpuPending) {
         Map<String, String> materialMap = this.getMaterialMap();
         Set<String> materialSet = materialMap.keySet();
+        String supplierMaterial= "";
         for(String material:materialSet){
-            if(spu.getHubMaterial().toLowerCase().indexOf(material.toLowerCase())>=0){
-                 spu.setHubMaterial(spu.getHubMaterial().toLowerCase().replaceAll(material.toLowerCase(),
-                         materialMap.get(material.toLowerCase())));
+            if(StringUtils.isBlank(material)) continue;
+            if(StringUtils.isNotBlank(spu.getHubMaterial())){
+                supplierMaterial = spu.getHubMaterial().toLowerCase();
+                if(supplierMaterial.indexOf(material.toLowerCase())>=0){
+
+                     spu.setHubMaterial(supplierMaterial.replaceAll(material.toLowerCase(),
+                             materialMap.get(material)));
+                }
             }
         }
         hubSpuPending.setHubMaterial(spu.getHubMaterial());
     }
 
-    private boolean setSeasonMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
+    public  boolean setSeasonMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         Map<String, String> seasonMap = this.getSeasonMap(spu.getSupplierId());
         boolean result = true;
-
-        if(seasonMap.containsKey(spu.getSupplierId()+"_"+ spu.getHubSeason())){
+        String spSeason="",seasonSign="";
+        if(seasonMap.containsKey(spu.getSupplierId()+"_"+ spu.getHubSeason().trim())){
             //包含时转化赋值
-            hubSpuPending.setHubSeason(seasonMap.get(spu.getSupplierId()+"_"+ spu.getHubSeason()));
+            spSeason = seasonMap.get(spu.getSupplierId()+"_"+ spu.getHubSeason().trim());
+            if(spSeason.indexOf("|")>0){
+                seasonSign = spSeason.substring(spSeason.indexOf("|")+1,spSeason.length());
+                hubSpuPending.setHubSeason(spSeason.substring(0,spSeason.indexOf("|")));
+                if(SeasonType.SEASON_CURRENT.getIndex().toString().equals(seasonSign)){
+                    hubSpuPending.setIsCurrentSeason(SeasonType.SEASON_CURRENT.getIndex().byteValue());
+                }else{
+                    hubSpuPending.setIsCurrentSeason(SeasonType.SEASON_NOT_CURRENT.getIndex().byteValue());
+                }
+            }
+
             hubSpuPending.setSpuSeasonState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 
         }else{//
@@ -320,17 +350,54 @@ public class PendingHandler {
         return  result;
     }
 
+
+    public void setOriginMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception{
+        Map<String,String> originMap = this.getOriginMap();
+        if(StringUtils.isNotBlank(spu.getHubOrigin())){
+            if(originMap.containsKey(spu.getHubOrigin().trim())){
+                hubSpuPending.setHubOrigin(originMap.get(spu.getHubOrigin().trim()));
+            }
+        }
+    }
+
+    private Map<String,String> getOriginMap() {
+        if(null==originStaticMap){
+            originStaticMap = new HashMap<>();
+
+            setOriginStaticMap();
+
+
+        }else{
+            if(isNeedHandle()){
+                setOriginStaticMap();
+            }
+        }
+        return originStaticMap;
+    }
+
+    private void setOriginStaticMap() {
+        List<HubSupplierValueMappingDto> valueMappingDtos= dataServiceHandler.getHubSupplierValueMappingByType(SupplierValueMappingType.TYPE_ORIGIN.getIndex());
+        for (HubSupplierValueMappingDto dto : valueMappingDtos) {
+            originStaticMap.put(dto.getSupplierVal(),dto.getHubVal());
+
+        }
+    }
+
     public  boolean  setCategoryMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         boolean result = true;
         String categoryAndStatus="";
         Integer mapStatus=0;
+        //无品类 无性别时 直接返回
+        if(StringUtils.isBlank(spu.getHubCategoryNo())||StringUtils.isBlank(spu.getHubGender())){
+            return false;
+        }
         Map<String, Map<String,String>> supplierCategoryMappingMap = this.getCategoryMappingMap(spu.getSupplierId());
         if(supplierCategoryMappingMap.containsKey(spu.getSupplierId())){
             Map<String, String> categoryMappingMap = supplierCategoryMappingMap.get(spu.getSupplierId());
 
-            if(categoryMappingMap.containsKey(spu.getHubCategoryNo()+"_"+spu.getHubGender())){
+            if(categoryMappingMap.containsKey(spu.getHubCategoryNo().trim()+"_"+spu.getHubGender().trim())){
                 //包含时转化赋值
-                categoryAndStatus = categoryMappingMap.get(spu.getHubCategoryNo()+"_"+spu.getHubGender());
+                categoryAndStatus = categoryMappingMap.get(spu.getHubCategoryNo().trim()+"_"+spu.getHubGender().trim());
                 if(categoryAndStatus.contains("_")){
                     hubSpuPending.setHubCategoryNo(categoryAndStatus.substring(0,categoryAndStatus.indexOf("_")));
                     mapStatus = Integer.valueOf(categoryAndStatus.substring(categoryAndStatus.indexOf("_")+1));
@@ -455,25 +522,20 @@ public class PendingHandler {
     public  boolean setGenderMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         boolean result = true;
         //获取性别
-        Map<String,Map<String,String>>  supplierGenderMap = this.getGenderMap(spu.getSupplierId());
-        if(supplierGenderMap.containsKey(spu.getSupplierId())){
-            Map<String, String> genderMap = supplierGenderMap.get(spu.getSupplierId());
+        Map<String,String>  genderMap = this.getGenderMap(null);
 
-            if(genderMap.containsKey(spu.getHubGender())){
-                 //包含时转化赋值
-                hubSpuPending.setHubGender(genderMap.get(spu.getHubGender()));
-                hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-            }else{
-                result = false;
-                hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-                dataServiceHandler.saveHubGender(spu.getSupplierId(),spu.getHubGender());
 
-            }
+        if(genderMap.containsKey(spu.getHubGender().trim())){
+             //包含时转化赋值
+            hubSpuPending.setHubGender(genderMap.get(spu.getHubGender()));
+            hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
         }else{
             result = false;
             hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-            dataServiceHandler.saveHubGender(spu.getSupplierId(),spu.getHubGender());
+            dataServiceHandler.saveHubGender(null,spu.getHubGender());
+
         }
+
         return  result;
     }
 
@@ -481,10 +543,62 @@ public class PendingHandler {
     private HubSpuPendingDto updateSpu(PendingSpu spu, Map<String, Object> headers) throws Exception{
 
         HubSpuPendingDto spuPendingDto = null;
-        //TODO 判断状态 是否可以修改
+
         spuPendingDto =dataServiceHandler.getHubSpuPending(spu.getSupplierId(),spu.getSupplierSpuNo());
         if(null!=spuPendingDto){
-//            if(spuPendingDto.getSpuState().intValue()==PropertyStatus.)
+            if(spuPendingDto.getSpuState().intValue()== SpuStatus.SPU_WAIT_AUDIT.getIndex()||spuPendingDto.getSpuState().intValue()== SpuStatus.SPU_HANDLED.getIndex()){
+                //审核中或者已处理,不能做修改
+
+            }else{
+                HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
+
+                BeanUtils.copyProperties(spu,hubSpuPending);
+
+                boolean allStatus = true;
+                //设置性别
+                if(StringUtils.isNotBlank(spu.getHubGender())) {
+                    if (!setGenderMapping(spu, hubSpuPending)) allStatus = false;
+                }
+
+                //获取品类
+                if(StringUtils.isNotBlank(spu.getHubGender())) {
+                    if (!setCategoryMapping(spu, hubSpuPending)) allStatus = false;
+                }
+
+                //获取品牌
+                boolean brandmapping = setBrandMapping(spu, hubSpuPending);
+                if(!brandmapping) allStatus=false;
+
+
+                //todo 货号验证
+                if(brandmapping){
+                    if(!setBrandModel(spu, hubSpuPending)) allStatus=false;
+                }
+
+
+                //获取颜色
+                if(StringUtils.isNotBlank(spu.getHubColor())){
+
+                    if(!setColorMapping(spu, hubSpuPending)) allStatus = false;
+                }
+
+                //获取季节
+                if(StringUtils.isNotBlank(spu.getHubSeason())){
+
+                    if(!setSeasonMapping(spu, hubSpuPending)) allStatus = false;
+                }
+
+                //获取材质
+                if(StringUtils.isNotBlank(spu.getHubMaterial())){
+
+                  replaceMaterial(spu, hubSpuPending);
+                }
+
+
+
+                dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(),hubSpuPending);
+
+            }
 
         }
         return  spuPendingDto;
@@ -541,22 +655,27 @@ public class PendingHandler {
         return supplierCategoryMappingStaticMap;
     }
 
+    /**
+     * 冗余供货商的性别，直接查询
+     * @param supplierId
+     * @throws Exception
+     */
     private void setSupplierCategoryValueToMap(String supplierId)  throws Exception{
 
-        List<HubGenderDicDto> hubGenderDicDtos = dataServiceHandler.getHubGenderDicBySupplierId(supplierId);
-        Map<Long,String> hubGenderMap = new HashMap<>();
-        for(HubGenderDicDto dto:hubGenderDicDtos){
-            hubGenderMap.put(dto.getGenderDicId(),dto.getSupplierGender());
-        }
+//        List<HubGenderDicDto> hubGenderDicDtos = dataServiceHandler.getHubGenderDicBySupplierId(null);
+//        Map<Long,String> hubGenderMap = new HashMap<>();
+//        for(HubGenderDicDto dto:hubGenderDicDtos){
+//            hubGenderMap.put(dto.getGenderDicId(),dto.getSupplierGender());
+//        }
 
         List<HubSupplierCategroyDicDto> hubSupplierCategroyDicDtos = dataServiceHandler.getSupplierCategoryBySupplierId(supplierId);
         if(null!=hubSupplierCategroyDicDtos&&hubSupplierCategroyDicDtos.size()>0){
             Map<String,String> categoryMap = new HashMap<>();
             for(HubSupplierCategroyDicDto dto:hubSupplierCategroyDicDtos){
-                // map 的key 供货商的品类 + "_"+供货商的性别 ，value ： 尚品的品类 + "_"+ 匹配状态
-                if(hubGenderMap.containsKey(dto.getGenderDicId())){
-                    categoryMap.put(dto.getSupplierCategory()+"_"+hubGenderMap.get(dto.getGenderDicId()),dto.getHubCategoryNo()+"_"+dto.getMappingState());
-                }
+                // map 的key 供货商的品类 + "_"+供货商的性别 ，value ： 尚品的品类 + "_"+ 匹配状态 (1 :匹配到4级  2：可以匹配但未匹配到4级）
+//                if(hubGenderMap.containsKey(dto.getGenderDicId())){
+                    categoryMap.put(dto.getSupplierCategory()+"_"+dto.getSupplierGender(),dto.getHubCategoryNo()+"_"+dto.getMappingState());
+//                }
             }
             supplierCategoryMappingStaticMap.put(supplierId,categoryMap);
         }
@@ -568,23 +687,20 @@ public class PendingHandler {
      * @param supplierId
      * @return
      */
-    private Map<String,Map<String,String>> getGenderMap(String supplierId){
-        if(null==supplierGenderStaticMap){
-            supplierGenderStaticMap = new HashMap<>();
+    private Map<String,String> getGenderMap(String supplierId){
+        if(null==genderStaticMap){
+            genderStaticMap = new HashMap<>();
             hubGenderStaticMap = new HashMap<>();
             setGenderValueToMap(supplierId);
         }else{
-            if(!supplierGenderStaticMap.containsKey(supplierId)){
+
+            if(isNeedHandle()){
                 setGenderValueToMap(supplierId);
-            }else{
-                if(isNeedHandle()){
-                    setGenderValueToMap(supplierId);
-                }
             }
 
         }
 
-        return supplierGenderStaticMap;
+        return genderStaticMap;
     }
 
     private void setGenderValueToMap(String supplierId) {
@@ -593,11 +709,11 @@ public class PendingHandler {
 
             Map<String,String> genderMap = new HashMap<>();
             for(HubGenderDicDto dto:hubGenderDics){
-                genderMap.put(dto.getSupplierGender(),dto.getHubGender());
+                genderStaticMap.put(dto.getSupplierGender().trim(),dto.getHubGender().trim());
                 hubGenderStaticMap.put(dto.getHubGender(),"");
             }
-            supplierGenderStaticMap.put(supplierId,genderMap);
-//            shangpinRedis.hset
+
+//           shangpinRedis.hset
         }
     }
 
@@ -661,7 +777,8 @@ public class PendingHandler {
     }
 
     /**
-     * key :supplierId+"_"+supplierSeason value:hub_year+"_"+hub_season
+     * key :supplierId+"_"+supplierSeason value:hub_year+"_"+hub_season+"_"+memo
+     * meme = 1: current season 0: preview season
      * @param supplierId
      * @return
      */
@@ -669,25 +786,28 @@ public class PendingHandler {
         if(null==seasonStaticMap){
             seasonStaticMap = new HashMap<>();
             hubSeasonStaticMap = new HashMap<>();
-            List<HubSeasonDicDto> hubSeasonDics = dataServiceHandler.getHubSeasonDic();
-            for(HubSeasonDicDto dicDto:hubSeasonDics){
-                seasonStaticMap.put(dicDto.getSupplierid()+"_"+dicDto.getSupplierSeason(),
-                        dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason());
-                hubSeasonStaticMap.put(dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason(),"");
-            }
+            setSeasonStaticMap();
 
         }else{
             if(isNeedHandle()){
-                List<HubSeasonDicDto> hubSeasonDics = dataServiceHandler.getHubSeasonDic();
-                for(HubSeasonDicDto dicDto:hubSeasonDics){
-                    seasonStaticMap.put(dicDto.getSupplierid()+"_"+dicDto.getSupplierSeason(),
-                            dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason());
-                    hubSeasonStaticMap.put(dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason(),"");
-                }
+                setSeasonStaticMap();
             }
 
         }
        return seasonStaticMap;
+    }
+
+    private void setSeasonStaticMap() {
+        List<HubSeasonDicDto> hubSeasonDics = dataServiceHandler.getHubSeasonDic();
+        for(HubSeasonDicDto dicDto:hubSeasonDics){
+            if(StringUtils.isNotBlank(dicDto.getHubMarketTime())&&StringUtils.isNotBlank(dicDto.getHubSeason())&&
+                    StringUtils.isNotBlank(dicDto.getMemo())){
+
+                seasonStaticMap.put(dicDto.getSupplierid()+"_"+dicDto.getSupplierSeason().trim(),
+                        dicDto.getHubMarketTime().trim()+"_"+dicDto.getHubSeason().trim()+"|"+dicDto.getMemo().trim());
+                hubSeasonStaticMap.put(dicDto.getHubMarketTime()+"_"+dicDto.getHubSeason(),"");
+            }
+        }
     }
 
     /**
@@ -699,13 +819,14 @@ public class PendingHandler {
     private Map<String,String> getMaterialMap(){
         if(null==materialStaticMap){
             materialStaticMap = new LinkedHashMap<>();
-            List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialDTO();
+            List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialMapping();
             for(MaterialDTO dto:materialDTOS){
+
                 materialStaticMap.put(dto.getSupplierMaterial(),dto.getHubMaterial());
             }
         }else{
             if(isNeedHandle()){
-                List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialDTO();
+                List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialMapping();
                 for(MaterialDTO dto:materialDTOS){
                     materialStaticMap.put(dto.getSupplierMaterial(),dto.getHubMaterial());
                 }

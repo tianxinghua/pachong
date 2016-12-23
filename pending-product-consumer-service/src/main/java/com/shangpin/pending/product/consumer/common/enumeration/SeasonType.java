@@ -1,15 +1,13 @@
 package com.shangpin.pending.product.consumer.common.enumeration;
 
 /**
- * Created by loyalty on 16/12/21.
+ * Created by loyalty on 16/12/23.
  */
-public enum SpuStatus {
+public enum SeasonType {
 
-    SPU_WAIT_HANDLE(0,"信息待完善"),
-    SPU_WAIT_AUDIT(1,"待复核"),
-    SPU_HANDLED(2,"已处理"),
-    SPU_NO_WAY_HANDLE(3,"无法处理"),
-    SPU_FILTER(4,"过滤不处理");
+    SEASON_NOT_CURRENT(0,"非当季"),
+    SEASON_CURRENT(1,"当季");
+
     /**
      * 数字索引标识
      */
@@ -30,7 +28,7 @@ public enum SpuStatus {
     public void setDescription(String description) {
         this.description = description;
     }
-    private SpuStatus(Integer index, String description) {
+    private SeasonType(Integer index, String description) {
         this.index = index;
         this.description = description;
     }
