@@ -8,11 +8,11 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 /**
- * <p>Title:HubBrandDicMapper.java </p>
+ * <p>Title:HubSupplierValueMappingMapper.java </p>
  * <p>Description: </p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
- * @date 2016年12月13日 下午2:12:01
+ * @date 2016年12月23日 下午1:46:35
  */
 @Mapper
 public interface HubSupplierValueMappingMapper {
@@ -20,7 +20,7 @@ public interface HubSupplierValueMappingMapper {
 
     int deleteByExample(HubSupplierValueMappingCriteria example);
 
-    int deleteByPrimaryKey(Long valueMappingId);
+    int deleteByPrimaryKey(Long hubSupplierValMappingId);
 
     int insert(HubSupplierValueMapping record);
 
@@ -30,7 +30,7 @@ public interface HubSupplierValueMappingMapper {
 
     List<HubSupplierValueMapping> selectByExample(HubSupplierValueMappingCriteria example);
 
-    HubSupplierValueMapping selectByPrimaryKey(Long valueMappingId);
+    HubSupplierValueMapping selectByPrimaryKey(Long hubSupplierValMappingId);
 
     int updateByExampleSelective(@Param("record") HubSupplierValueMapping record, @Param("example") HubSupplierValueMappingCriteria example);
 

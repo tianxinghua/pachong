@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shangpin.ephub.product.business.ui.hub.all.dto.Id;
 import com.shangpin.ephub.product.business.ui.hub.all.service.IHubProductService;
+import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetail;
 import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -22,6 +23,9 @@ import com.shangpin.ephub.response.HubResponse;
 @RequestMapping("/hub-product")
 public class HubProductController {
 	
+	private static String resultSuccess = "{\"result\":\"success\"}";
+	private static String resultFail = "{\"result\":\"fail\"}";
+	
 	@Autowired
 	private IHubProductService hubProductService;
 
@@ -35,8 +39,17 @@ public class HubProductController {
 	
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value="/detail",method=RequestMethod.POST)
+	@ResponseBody
 	public HubResponse productDetail(@RequestBody Id id){
 		
 		return HubResponse.successResp(hubProductService.findProductDtails(id.getId()));
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value="/edit",method=RequestMethod.POST)
+	@ResponseBody
+	public HubResponse editProductDetail(@RequestBody HubProductDetail hubProductDetail){
+		
+		return HubResponse.successResp(resultSuccess);
 	}
 }

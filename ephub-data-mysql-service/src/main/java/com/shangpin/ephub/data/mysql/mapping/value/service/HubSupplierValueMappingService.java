@@ -2,6 +2,7 @@ package com.shangpin.ephub.data.mysql.mapping.value.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.data.mysql.mapping.value.bean.HubSupplierValueMappingCriteriaWithRowBounds;
@@ -20,6 +21,7 @@ import com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMappingCri
 @Service
 public class HubSupplierValueMappingService {
 
+	@Autowired
 	private HubSupplierValueMappingMapper hubSupplierValueMappingMapper;
 
 	public int countByCriteria(HubSupplierValueMappingCriteria criteria) {
@@ -47,8 +49,8 @@ public class HubSupplierValueMappingService {
 		return hubSupplierValueMappingMapper.selectByExampleWithRowbounds(criteriaWithRowBounds.getCriteria(), criteriaWithRowBounds.getRowBounds());
 	}
 
-	public List<HubSupplierValueMapping> selectByCriteria(HubSupplierValueMappingCriteria criteria) {
-		return hubSupplierValueMappingMapper.selectByExample(criteria);
+	public List<HubSupplierValueMapping> selectByCriteria(HubSupplierValueMappingCriteria hubSupplierValueMappingCriteria) {
+		return hubSupplierValueMappingMapper.selectByExample(hubSupplierValueMappingCriteria);
 	}
 
 	public HubSupplierValueMapping selectByPrimaryKey(Long valueMappingId) {
