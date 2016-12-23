@@ -44,7 +44,7 @@ dependencies {
 	compile('commons-net:commons-net:3.3')
 	compile('org.apache.poi:poi-ooxml:3.8')
 	runtime('org.springframework.boot:spring-boot-devtools')
-	
+	compile('com.shangpin.common:commons-redis:1.0.2.RELEASE')
 	
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
