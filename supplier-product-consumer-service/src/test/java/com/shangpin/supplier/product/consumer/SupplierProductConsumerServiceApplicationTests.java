@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
@@ -25,6 +27,8 @@ import com.shangpin.supplier.product.consumer.service.dto.Spu;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@EnableDiscoveryClient
+@EnableFeignClients("com.shangpin.ephub")
 public class SupplierProductConsumerServiceApplicationTests {
 	
 	@Autowired
