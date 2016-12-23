@@ -5,9 +5,9 @@ package com.shangpin.pending.product.consumer.common.enumeration;
  */
 public enum SupplierValueMappingType {
 
-    TYPE_BRAND(0,"品牌类型"),
-    TYPE_CATEGORY(1,"品类类型"),
-    TYPE_ORIGIN(2,"产地类型");
+    TYPE_BRAND(1,"品牌类型"),
+    TYPE_CATEGORY(2,"品类类型"),
+    TYPE_ORIGIN(3,"产地类型");
 
 
     /**

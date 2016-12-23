@@ -126,6 +126,8 @@ public class PendingHandler {
             if(spuStatus== MessageType.NEW.getIndex()){
                 if(null==tmp){
                     hubSpuPending = this.addNewSpu(pendingSpu,headers);
+                }else{
+                    hubSpuPending = tmp;
                 }
 
 
