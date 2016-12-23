@@ -1,6 +1,6 @@
 package com.shangpin.ephub.product.business.ui.hub.all.service;
 
-import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetail;
+import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetails;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProducts;
 import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 
@@ -25,11 +25,11 @@ public interface IHubProductService {
 	 * @param spuId
 	 * @return
 	 */
-	public HubProductDetail findProductDtails(Long spuId);
+	public HubProductDetails findProductDtails(Long spuId);
 	/**
 	 * hub详情页的编辑，更新涉及的表有：hub_sku/hub_spu
 	 * @param hubProductDetail
 	 * @return
 	 */
-	public boolean updateHubProductDetails(HubProductDetail hubProductDetail);
+	public boolean updateHubProductDetails(HubProductDetails hubProductDetail);
 }
