@@ -68,16 +68,19 @@ public class TaskImportService {
 				//第二步 ： 保存数据库
 				saveTask(task,taskNo,ftpPath,systemFileName,importType);
 				//TODO 第三步 ：发送到hub消息队列
-				ProductImportTask productImportTask = new ProductImportTask();
-				productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
-				productImportTask.setMessageId(UUID.randomUUID().toString());
-				productImportTask.setTaskNo(taskNo);
-				productImportTask.setTaskFtpFilePath(ftpPath+systemFileName);
-				productImportTaskStreamSender.hubProductImportTaskStream(productImportTask, null);
+				sendTaskMessage(taskNo,ftpPath+systemFileName);
 				return HubResponse.successResp(null);
 			}
 		}
 		return HubResponse.errorResp("文件格式有误，请下载模板");
+	}
+	private void sendTaskMessage(String taskNo,String ftpFilePath){
+		ProductImportTask productImportTask = new ProductImportTask();
+		productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
+		productImportTask.setMessageId(UUID.randomUUID().toString());
+		productImportTask.setTaskNo(taskNo);
+		productImportTask.setTaskFtpFilePath(ftpFilePath);
+		productImportTaskStreamSender.hubProductImportTaskStream(productImportTask, null);
 	}
 	private boolean saveTask(HubImportTaskRequestDto task,String taskNo,String ftpPath,String systemFileName,int importType) throws Exception{
 		// TODO Auto-generated method stub

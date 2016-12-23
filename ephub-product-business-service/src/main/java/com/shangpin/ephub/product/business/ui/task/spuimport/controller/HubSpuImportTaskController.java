@@ -34,7 +34,7 @@ public class HubSpuImportTaskController {
 	@Autowired
 	TaskImportService taskService;
 	
-	@RequestMapping(value = "/import-product",method = RequestMethod.POST)
+	@RequestMapping(value = "/import-product",method = RequestMethod.POST,produces = "text/html;charset=UTF-8")
 	@ResponseBody
     public HubResponse importSpu(@RequestBody HubImportTaskRequestDto dto){
 	        	
