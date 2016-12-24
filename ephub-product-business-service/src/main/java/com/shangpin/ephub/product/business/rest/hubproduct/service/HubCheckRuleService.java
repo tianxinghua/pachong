@@ -39,24 +39,34 @@ public class HubCheckRuleService {
 		
 		StringBuffer str = new StringBuffer();
 		//校验品牌
-		if(!checkHubBrand(hubProduct.getBrandNo())){
-			str.append("品牌编号有误") ;
+		if(hubProduct.getBrandNo()!=null){
+			if(!checkHubBrand(hubProduct.getBrandNo())){
+				str.append("品牌编号有误") ;
+			}	
 		}
+		
 		//校验品类
 		
 		//校验颜色
-		if(!checkHubColor(hubProduct.getColor())){
-			str.append("颜色编号有误") ;
+		if(hubProduct.getColor()!=null){
+			if(!checkHubColor(hubProduct.getColor())){
+				str.append("颜色编号有误") ;
+			}
 		}
+		
 		//校验季节
-		if(!checkHubSeason(hubProduct.getSeason(),hubProduct.getSeasonYear())){
-			str.append("季节编号有误") ;
+		if(hubProduct.getSeason()!=null){
+			if(!checkHubSeason(hubProduct.getSeason(),hubProduct.getSeasonYear())){
+				str.append("季节编号有误") ;
+			}
 		}
 		//校验尺码
 		
 		//校验性别
-		if(!checkHubGender(hubProduct.getGender())){
-			str.append("性别编号有误") ;
+		if(hubProduct.getGender()!=null){
+			if(!checkHubGender(hubProduct.getGender())){
+				str.append("性别编号有误") ;
+			}	
 		}
 		//校验产地
 		return str.toString();
