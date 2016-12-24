@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.pending.dto;
+package com.shangpin.ephub.product.business.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,7 +27,7 @@ public class SupplierDTO {
     @JsonIgnore
     private String supplierType;//对接类型
     @JsonIgnore
-    private String supplierName;//对接类型
+    private String supplierName;//供应商名称
     @JsonIgnore
     private long buttJointId;
     @JsonIgnore

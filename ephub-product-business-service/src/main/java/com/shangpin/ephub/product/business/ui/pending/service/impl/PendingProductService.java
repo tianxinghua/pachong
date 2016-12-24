@@ -3,10 +3,14 @@ package com.shangpin.ephub.product.business.ui.pending.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
 
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
@@ -22,8 +26,8 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
-import com.shangpin.ephub.product.business.ui.pending.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
@@ -50,19 +54,41 @@ public class PendingProductService implements IPendingProductService{
 	@Autowired
 	private HubSupplierBrandDicGateWay brandDicGateWay;
 	@Autowired
-	private RestTemplate httpClient;
+	private SupplierService supplierService;
+	
+	@Override
+	public HSSFWorkbook exportSpu(PendingQuryDto pendingQuryDto){
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("产品信息");
+		HSSFRow row = sheet.createRow(0);
+		HSSFCellStyle  style = wb.createCellStyle();
+		style.setAlignment(HSSFCellStyle.ALIGN_CENTER);//居中
+		String[] row0 = {"图片","SupplierId 供货商名称","CategoryName 品类名称","Category 品类翻译","Category_No 品类编号","BrandNo 品牌编号","BrandName 品牌","ProductModel 货号",
+				"SupplierSkuNo 供应商SkuNo","尚品sku编号"," 性别 ","SopProductName 商品名称","BarCode 条形码","ProductColor 颜色","color 中文","ProductSize 尺码","material 材质",
+				"material 中文材质","ProductOrigin 产地","productUrl1","productUrl2","productUrl3","productUrl4","productUrl5","productUrl6","productUrl7","productUrl8","productUrl9",
+				"PcDesc 描述","Stock 库存","新市场价","新销售价","新进货价","markerPrice","sallPrice","supplier Price 进货价","Currency 币种","新上市季节","上市季节","活动开始时间",
+				"活动结束时间","SupplierSpuNo 供应商spu编号","供应商门户编号","SpuId","备注"};
+		for(int i= 0;i<row0.length;i++){
+			HSSFCell cell = row.createCell(i);
+			cell.setCellValue(row0[i]);
+			cell.setCellStyle(style);
+		}
+		
+		return null;
+	}
 
 	@Override
 	public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto){
 		PendingProducts pendingProducts = new PendingProducts();
 		List<PendingProductDto> products = new ArrayList<PendingProductDto>();
 		if(null !=pendingQuryDto){
-			HubSpuPendingCriteriaDto rowBoundsDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
-			int total = hubSpuPendingGateWay.countByCriteria(rowBoundsDto);
+			HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
+			int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
 			if(total>0){
-				List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(rowBoundsDto);
+				List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
 				for(HubSpuPendingDto pendingSpu : pendingSpus){
 					PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
+					pendingProduct.setSupplierName(supplierService.getSupplier(pendingSpu.getSupplierNo()).getSupplierName());
 					pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
 					pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
 					List<HubSkuPendingDto> hubSkus = findPendingSkuBySpuPendingId(pendingSpu.getSpuPendingId());
@@ -245,10 +271,7 @@ public class PendingProductService implements IPendingProductService{
 		Criteria criteria = hubSpuPendingCriteriaDto.createCriteria();
 		
 		if(!StringUtils.isEmpty(pendingQuryDto.getSupplierNo())){
-			String supplierId = getSupplierIdBySupplierNo(pendingQuryDto.getSupplierNo());
-			if(!StringUtils.isEmpty(supplierId)){
-				criteria = criteria.andSupplierIdEqualTo(supplierId);
-			}
+			criteria = criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getSpuModel())){
 			criteria = criteria.andSpuModelEqualTo(pendingQuryDto.getSpuModel());
@@ -308,17 +331,4 @@ public class PendingProductService implements IPendingProductService{
 		}
 	}
 	
-	/**
-	 * 通过api接口查询供应商门户id
-	 * @param supplierNo
-	 * @return
-	 */
-	private String getSupplierIdBySupplierNo(String supplierNo){
-		String url = "http://scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo="+supplierNo;
-		SupplierDTO supplierDto = httpClient.getForEntity(url, SupplierDTO.class).getBody();
-		if(null != supplierDto){
-			return supplierDto.getSupplierNo();
-		}
-		return "";
-	}
 }
