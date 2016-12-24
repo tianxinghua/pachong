@@ -1,13 +1,12 @@
 package com.shangpin.ephub.client.product.business.hubproduct.gateway;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.shangpin.ephub.client.product.business.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.client.product.business.hubproduct.result.HubProductCheckResult;
-import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
-import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 
 /**
  * <p>Title:HubBrandModelRuleController.java </p>
@@ -24,6 +23,6 @@ public interface HubProductCheckGateWay {
 	 * @param dto 数据传输对象
 	 * @return 校验结果：
 	 */
-	@RequestMapping(value = "/hub-check/product", method = RequestMethod.POST,consumes = "application/json")
-	public HubProductCheckResult checkProduct(HubProductDto dto);
+	@RequestMapping(value = "/hub-product-check/check-product", method = RequestMethod.POST,consumes = "application/json")
+	public HubProductCheckResult checkProduct(@RequestBody HubProductDto dto);
 }

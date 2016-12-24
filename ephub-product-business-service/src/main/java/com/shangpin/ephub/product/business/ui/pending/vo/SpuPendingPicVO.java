@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.pendingCrud.vo;
+package com.shangpin.ephub.product.business.ui.pending.vo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +13,11 @@ import java.io.Serializable;
 public class SpuPendingPicVO implements Serializable {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 9154713134184232038L;
+
+	/**
      * spuPengding表主键
      */
     private Long spuPendingId;

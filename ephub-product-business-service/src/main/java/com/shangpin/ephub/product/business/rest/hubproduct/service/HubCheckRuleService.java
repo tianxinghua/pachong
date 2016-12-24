@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 public class HubCheckRuleService {
 	
 	@Autowired
-	HubProductCheckManager hubProductCheckRuleManager;
+	private HubProductCheckManager hubProductCheckRuleManager;
 	
 	
 	public String checkHubProduct(HubProductDto hubProduct){

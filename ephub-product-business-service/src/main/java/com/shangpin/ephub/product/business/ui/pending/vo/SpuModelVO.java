@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.pendingCrud.vo;
+package com.shangpin.ephub.product.business.ui.pending.vo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +14,12 @@ import java.util.List;
 @Setter
 public class SpuModelVO implements Serializable {
 
-   private String spuModel;//货号
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5147199192561457186L;
+
+private String spuModel;//货号
 
    private String brandNo;
 }

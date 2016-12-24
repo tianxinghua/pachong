@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.pendingCrud.enumeration;
+package com.shangpin.ephub.product.business.ui.pending.enumeration;
 
 public enum ProductState {
 
