@@ -15,7 +15,7 @@ import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.product.business.rest.hubproduct.dto.HubProductDto;
-import com.shangpin.ephub.product.business.rest.hubproduct.manager.HubProductCheckRuleManager;
+import com.shangpin.ephub.product.business.rest.hubproduct.manager.HubProductCheckManager;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 public class HubCheckRuleService {
 	
 	@Autowired
-	HubProductCheckRuleManager hubProductCheckRuleManager;
+	HubProductCheckManager hubProductCheckRuleManager;
 	
 	
 	public String checkHubProduct(HubProductDto hubProduct){

@@ -17,7 +17,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubProductCheckRuleResult implements Serializable {
+public class HubProductCheckResult implements Serializable {
 
 	/**
 	 * 
