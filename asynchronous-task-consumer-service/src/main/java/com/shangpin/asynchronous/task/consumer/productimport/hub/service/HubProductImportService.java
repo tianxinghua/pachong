@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +23,13 @@ import com.shangpin.asynchronous.task.consumer.productimport.hub.dto.HubProductI
 import com.shangpin.asynchronous.task.consumer.productimport.hub.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.util.FTPClientUtil;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
-import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
-import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.product.business.hubproduct.dto.HubProductDto;
+import com.shangpin.ephub.client.product.business.hubproduct.gateway.HubProductCheckGateWay;
+import com.shangpin.ephub.client.product.business.hubproduct.result.HubProductCheckResult;
 
+import ch.qos.logback.core.joran.util.beans.BeanUtil;
 /**
  * <p>
  * Title:SupplierOrderService.java
@@ -48,7 +50,8 @@ public class HubProductImportService {
 	
 	@Autowired
 	HubSpuImportTaskGateWay spuImportGateway;
-	
+	@Autowired
+	HubProductCheckGateWay HubProductCheckGateWay;
 	@Autowired
 	TaskService taskService;
 	
@@ -91,17 +94,32 @@ public class HubProductImportService {
 
 		List<Map<String, String>> listMap = new ArrayList<Map<String,String>>();
 		for(HubProductImportDTO product:listHubProduct){
-			Map<String, String> map = new HashMap<String, String>();
+			
 			//TODO hub商品入库前的公共校验方法
 			
-			map.put("taskNo",taskNo);
-			map.put("spuModel",product.getProductCode());
-			map.put("taskState","校验失败");
-			map.put("processInfo","不合格");
-			listMap.add(map);
+			HubProductDto hubProductDto = convertHubImportProduct2HupProduct(product);
+			HubProductCheckResult hubProductCheckResult = HubProductCheckGateWay.checkProduct(hubProductDto);
+			if(hubProductCheckResult.isPassing()){
+				
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("taskNo",taskNo);
+				map.put("spuModel",product.getProductCode());
+				map.put("taskState","校验失败");
+				map.put("processInfo",hubProductCheckResult.getResult());
+				listMap.add(map);
+			}
+		
 		}
 		return listMap;
 	}
+
+	private HubProductDto convertHubImportProduct2HupProduct(HubProductImportDTO product) {
+		
+		HubProductDto hubProductDto = new HubProductDto();
+		BeanUtils.copyProperties(product, hubProductDto);
+		return hubProductDto;
+	}
+
 
 	//解析excel转换为对象
 	private List<HubProductImportDTO> handleHubExcel(String taskFtpFilePath,String taskNo)  throws Exception {
