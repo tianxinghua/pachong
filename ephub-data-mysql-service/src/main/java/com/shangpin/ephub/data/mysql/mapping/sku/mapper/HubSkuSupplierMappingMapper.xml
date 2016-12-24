@@ -3,11 +3,13 @@
 <mapper namespace="com.shangpin.ephub.data.mysql.mapping.sku.mapper.HubSkuSupplierMappingMapper" >
   <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping" >
     <id column="sku_supplier_mapping_id" property="skuSupplierMappingId" jdbcType="BIGINT" />
-    <result column="sku_no" property="skuNo" jdbcType="BIGINT" />
+    <result column="sku_no" property="skuNo" jdbcType="VARCHAR" />
     <result column="supplier_sku_no" property="supplierSkuNo" jdbcType="VARCHAR" />
     <result column="barcode" property="barcode" jdbcType="VARCHAR" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
     <result column="new_spu_type" property="newSpuType" jdbcType="TINYINT" />
+    <result column="supplier_select_state" property="supplierSelectState" jdbcType="TINYINT" />
+    <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="is_new_supplier" property="isNewSupplier" jdbcType="TINYINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
@@ -80,8 +82,8 @@
   <sql id="Base_Column_List" >
     <if test="fields == null" >
       sku_supplier_mapping_id, sku_no, supplier_sku_no, barcode, supplier_id, new_spu_type, 
-      is_new_supplier, create_time, create_user, update_time, update_user, supplier_spu_model, 
-      supplier_sku_id, memo, data_state, version
+      supplier_select_state, supplier_no, is_new_supplier, create_time, create_user, update_time, 
+      update_user, supplier_spu_model, supplier_sku_id, memo, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -106,7 +108,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    sku_supplier_mapping_id,sku_no,supplier_sku_no,barcode,supplier_id,new_spu_type,is_new_supplier,create_time,create_user,update_time,update_user,supplier_spu_model,supplier_sku_id,memo,data_state,version
+    sku_supplier_mapping_id,sku_no,supplier_sku_no,barcode,supplier_id,new_spu_type,supplier_select_state,supplier_no,is_new_supplier,create_time,create_user,update_time,update_user,supplier_spu_model,supplier_sku_id,memo,data_state,version
     from hub_sku_supplier_mapping
     where sku_supplier_mapping_id = #{skuSupplierMappingId,jdbcType=BIGINT}
   </select>
@@ -126,16 +128,18 @@
   	</selectKey>
     insert into hub_sku_supplier_mapping (sku_supplier_mapping_id, sku_no, supplier_sku_no, 
       barcode, supplier_id, new_spu_type, 
-      is_new_supplier, create_time, create_user, 
-      update_time, update_user, supplier_spu_model, 
-      supplier_sku_id, memo, data_state, 
-      version)
-    values (#{skuSupplierMappingId,jdbcType=BIGINT}, #{skuNo,jdbcType=BIGINT}, #{supplierSkuNo,jdbcType=VARCHAR}, 
+      supplier_select_state, supplier_no, is_new_supplier, 
+      create_time, create_user, update_time, 
+      update_user, supplier_spu_model, supplier_sku_id, 
+      memo, data_state, version
+      )
+    values (#{skuSupplierMappingId,jdbcType=BIGINT}, #{skuNo,jdbcType=VARCHAR}, #{supplierSkuNo,jdbcType=VARCHAR}, 
       #{barcode,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{newSpuType,jdbcType=TINYINT}, 
-      #{isNewSupplier,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{supplierSpuModel,jdbcType=VARCHAR}, 
-      #{supplierSkuId,jdbcType=BIGINT}, #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
-      #{version,jdbcType=BIGINT})
+      #{supplierSelectState,jdbcType=TINYINT}, #{supplierNo,jdbcType=VARCHAR}, #{isNewSupplier,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{supplierSpuModel,jdbcType=VARCHAR}, #{supplierSkuId,jdbcType=BIGINT}, 
+      #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping" >
     <selectKey keyColumn="sku_supplier_mapping_id" keyProperty="skuSupplierMappingId" order="AFTER" resultType="long">
@@ -160,6 +164,12 @@
       </if>
       <if test="newSpuType != null" >
         new_spu_type,
+      </if>
+      <if test="supplierSelectState != null" >
+        supplier_select_state,
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no,
       </if>
       <if test="isNewSupplier != null" >
         is_new_supplier,
@@ -197,7 +207,7 @@
         #{skuSupplierMappingId,jdbcType=BIGINT},
       </if>
       <if test="skuNo != null" >
-        #{skuNo,jdbcType=BIGINT},
+        #{skuNo,jdbcType=VARCHAR},
       </if>
       <if test="supplierSkuNo != null" >
         #{supplierSkuNo,jdbcType=VARCHAR},
@@ -210,6 +220,12 @@
       </if>
       <if test="newSpuType != null" >
         #{newSpuType,jdbcType=TINYINT},
+      </if>
+      <if test="supplierSelectState != null" >
+        #{supplierSelectState,jdbcType=TINYINT},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
       </if>
       <if test="isNewSupplier != null" >
         #{isNewSupplier,jdbcType=TINYINT},
@@ -256,7 +272,7 @@
         sku_supplier_mapping_id = #{record.skuSupplierMappingId,jdbcType=BIGINT},
       </if>
       <if test="record.skuNo != null" >
-        sku_no = #{record.skuNo,jdbcType=BIGINT},
+        sku_no = #{record.skuNo,jdbcType=VARCHAR},
       </if>
       <if test="record.supplierSkuNo != null" >
         supplier_sku_no = #{record.supplierSkuNo,jdbcType=VARCHAR},
@@ -269,6 +285,12 @@
       </if>
       <if test="record.newSpuType != null" >
         new_spu_type = #{record.newSpuType,jdbcType=TINYINT},
+      </if>
+      <if test="record.supplierSelectState != null" >
+        supplier_select_state = #{record.supplierSelectState,jdbcType=TINYINT},
+      </if>
+      <if test="record.supplierNo != null" >
+        supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       </if>
       <if test="record.isNewSupplier != null" >
         is_new_supplier = #{record.isNewSupplier,jdbcType=TINYINT},
@@ -308,11 +330,13 @@
   <update id="updateByExample" parameterType="map" >
     update hub_sku_supplier_mapping
     set sku_supplier_mapping_id = #{record.skuSupplierMappingId,jdbcType=BIGINT},
-      sku_no = #{record.skuNo,jdbcType=BIGINT},
+      sku_no = #{record.skuNo,jdbcType=VARCHAR},
       supplier_sku_no = #{record.supplierSkuNo,jdbcType=VARCHAR},
       barcode = #{record.barcode,jdbcType=VARCHAR},
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
       new_spu_type = #{record.newSpuType,jdbcType=TINYINT},
+      supplier_select_state = #{record.supplierSelectState,jdbcType=TINYINT},
+      supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       is_new_supplier = #{record.isNewSupplier,jdbcType=TINYINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -331,7 +355,7 @@
     update hub_sku_supplier_mapping
     <set >
       <if test="skuNo != null" >
-        sku_no = #{skuNo,jdbcType=BIGINT},
+        sku_no = #{skuNo,jdbcType=VARCHAR},
       </if>
       <if test="supplierSkuNo != null" >
         supplier_sku_no = #{supplierSkuNo,jdbcType=VARCHAR},
@@ -344,6 +368,12 @@
       </if>
       <if test="newSpuType != null" >
         new_spu_type = #{newSpuType,jdbcType=TINYINT},
+      </if>
+      <if test="supplierSelectState != null" >
+        supplier_select_state = #{supplierSelectState,jdbcType=TINYINT},
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no = #{supplierNo,jdbcType=VARCHAR},
       </if>
       <if test="isNewSupplier != null" >
         is_new_supplier = #{isNewSupplier,jdbcType=TINYINT},
@@ -380,11 +410,13 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping" >
     update hub_sku_supplier_mapping
-    set sku_no = #{skuNo,jdbcType=BIGINT},
+    set sku_no = #{skuNo,jdbcType=VARCHAR},
       supplier_sku_no = #{supplierSkuNo,jdbcType=VARCHAR},
       barcode = #{barcode,jdbcType=VARCHAR},
       supplier_id = #{supplierId,jdbcType=VARCHAR},
       new_spu_type = #{newSpuType,jdbcType=TINYINT},
+      supplier_select_state = #{supplierSelectState,jdbcType=TINYINT},
+      supplier_no = #{supplierNo,jdbcType=VARCHAR},
       is_new_supplier = #{isNewSupplier,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},

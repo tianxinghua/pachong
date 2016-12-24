@@ -40,12 +40,14 @@ public class HubBrandDicController {
     	return hubBrandDicService.deleteByPrimaryKey(brandDicId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubBrandDic hubBrandDic){
-    	return hubBrandDicService.insert(hubBrandDic);
+    public Long insert(@RequestBody HubBrandDic hubBrandDic){
+    	hubBrandDicService.insert(hubBrandDic);
+    	return hubBrandDic.getBrandDicId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubBrandDic hubBrandDic){
-    	return hubBrandDicService.insertSelective(hubBrandDic);
+    public Long insertSelective(@RequestBody HubBrandDic hubBrandDic){
+    	hubBrandDicService.insertSelective(hubBrandDic);
+    	return hubBrandDic.getBrandDicId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubBrandDic> selectByCriteriaWithRowbounds(@RequestBody HubBrandDicCriteriaWithRowBounds criteriaWithRowBounds){

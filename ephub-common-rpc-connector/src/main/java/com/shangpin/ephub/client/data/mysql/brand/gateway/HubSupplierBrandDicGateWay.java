@@ -32,10 +32,10 @@ public interface HubSupplierBrandDicGateWay {
     public int deleteByPrimaryKey(Long supplierBrandDicId);
 	
 	@RequestMapping(value = "/hub-supplier-brand-dic/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubSupplierBrandDicDto hubSupplierBrandDic);
+    public Long insert(@RequestBody HubSupplierBrandDicDto hubSupplierBrandDic);
 	
 	@RequestMapping(value = "/hub-supplier-brand-dic/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubSupplierBrandDicDto hubSupplierBrandDic);
+    public Long insertSelective(@RequestBody HubSupplierBrandDicDto hubSupplierBrandDic);
 	
 	@RequestMapping(value = "/hub-supplier-brand-dic/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSupplierBrandDicDto> selectByCriteriaWithRowbounds(@RequestBody HubSupplierBrandDicCriteriaWithRowBoundsDto criteriaWithRowBounds);

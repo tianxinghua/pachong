@@ -99,6 +99,13 @@ public class HubSpu implements Serializable {
      */
     private String picUrl;
 
+    private String origin;
+
+    /**
+     * 材质
+     */
+    private String material;
+
     /**
      * hubspuno
      */
@@ -278,6 +285,22 @@ public class HubSpu implements Serializable {
         this.picUrl = picUrl == null ? null : picUrl.trim();
     }
 
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin == null ? null : origin.trim();
+    }
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(String material) {
+        this.material = material == null ? null : material.trim();
+    }
+
     public String getSpuNo() {
         return spuNo;
     }
@@ -343,6 +366,8 @@ public class HubSpu implements Serializable {
         sb.append(", spuSelectState=").append(spuSelectState);
         sb.append(", newType=").append(newType);
         sb.append(", picUrl=").append(picUrl);
+        sb.append(", origin=").append(origin);
+        sb.append(", material=").append(material);
         sb.append(", spuNo=").append(spuNo);
         sb.append(", infoFrom=").append(infoFrom);
         sb.append(", memo=").append(memo);
@@ -384,6 +409,8 @@ public class HubSpu implements Serializable {
             && (this.getSpuSelectState() == null ? other.getSpuSelectState() == null : this.getSpuSelectState().equals(other.getSpuSelectState()))
             && (this.getNewType() == null ? other.getNewType() == null : this.getNewType().equals(other.getNewType()))
             && (this.getPicUrl() == null ? other.getPicUrl() == null : this.getPicUrl().equals(other.getPicUrl()))
+            && (this.getOrigin() == null ? other.getOrigin() == null : this.getOrigin().equals(other.getOrigin()))
+            && (this.getMaterial() == null ? other.getMaterial() == null : this.getMaterial().equals(other.getMaterial()))
             && (this.getSpuNo() == null ? other.getSpuNo() == null : this.getSpuNo().equals(other.getSpuNo()))
             && (this.getInfoFrom() == null ? other.getInfoFrom() == null : this.getInfoFrom().equals(other.getInfoFrom()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
@@ -414,6 +441,8 @@ public class HubSpu implements Serializable {
         result = prime * result + ((getSpuSelectState() == null) ? 0 : getSpuSelectState().hashCode());
         result = prime * result + ((getNewType() == null) ? 0 : getNewType().hashCode());
         result = prime * result + ((getPicUrl() == null) ? 0 : getPicUrl().hashCode());
+        result = prime * result + ((getOrigin() == null) ? 0 : getOrigin().hashCode());
+        result = prime * result + ((getMaterial() == null) ? 0 : getMaterial().hashCode());
         result = prime * result + ((getSpuNo() == null) ? 0 : getSpuNo().hashCode());
         result = prime * result + ((getInfoFrom() == null) ? 0 : getInfoFrom().hashCode());
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());

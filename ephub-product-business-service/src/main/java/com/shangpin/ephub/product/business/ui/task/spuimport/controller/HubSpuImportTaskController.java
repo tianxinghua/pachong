@@ -1,7 +1,6 @@
 package com.shangpin.ephub.product.business.ui.task.spuimport.controller;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +13,6 @@ import com.shangpin.ephub.product.business.ui.task.common.enumeration.TaskImport
 import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
-import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseDTO;
 import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseWithPageDTO;
 import com.shangpin.ephub.response.HubResponse;
 

@@ -1417,6 +1417,146 @@ public class HubSpuCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andOriginIsNull() {
+            addCriterion("origin is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIsNotNull() {
+            addCriterion("origin is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginEqualTo(String value) {
+            addCriterion("origin =", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginNotEqualTo(String value) {
+            addCriterion("origin <>", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGreaterThan(String value) {
+            addCriterion("origin >", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGreaterThanOrEqualTo(String value) {
+            addCriterion("origin >=", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginLessThan(String value) {
+            addCriterion("origin <", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginLessThanOrEqualTo(String value) {
+            addCriterion("origin <=", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginLike(String value) {
+            addCriterion("origin like", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginNotLike(String value) {
+            addCriterion("origin not like", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIn(List<String> values) {
+            addCriterion("origin in", values, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginNotIn(List<String> values) {
+            addCriterion("origin not in", values, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginBetween(String value1, String value2) {
+            addCriterion("origin between", value1, value2, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginNotBetween(String value1, String value2) {
+            addCriterion("origin not between", value1, value2, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialIsNull() {
+            addCriterion("material is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialIsNotNull() {
+            addCriterion("material is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialEqualTo(String value) {
+            addCriterion("material =", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialNotEqualTo(String value) {
+            addCriterion("material <>", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialGreaterThan(String value) {
+            addCriterion("material >", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialGreaterThanOrEqualTo(String value) {
+            addCriterion("material >=", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialLessThan(String value) {
+            addCriterion("material <", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialLessThanOrEqualTo(String value) {
+            addCriterion("material <=", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialLike(String value) {
+            addCriterion("material like", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialNotLike(String value) {
+            addCriterion("material not like", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialIn(List<String> values) {
+            addCriterion("material in", values, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialNotIn(List<String> values) {
+            addCriterion("material not in", values, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialBetween(String value1, String value2) {
+            addCriterion("material between", value1, value2, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialNotBetween(String value1, String value2) {
+            addCriterion("material not between", value1, value2, "material");
+            return (Criteria) this;
+        }
+
         public Criteria andSpuNoIsNull() {
             addCriterion("spu_no is null");
             return (Criteria) this;

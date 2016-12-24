@@ -6,6 +6,7 @@
     <result column="spu_no" property="spuNo" jdbcType="VARCHAR" />
     <result column="color" property="color" jdbcType="VARCHAR" />
     <result column="sku_size" property="skuSize" jdbcType="VARCHAR" />
+    <result column="sku_no" property="skuNo" jdbcType="VARCHAR" />
     <result column="sku_size_id" property="skuSizeId" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
@@ -76,7 +77,7 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      sku_id, spu_no, color, sku_size, sku_size_id, create_time, create_user, update_time, 
+      sku_id, spu_no, color, sku_size, sku_no, sku_size_id, create_time, create_user, update_time, 
       update_user, spu_no_org, memo, data_state, version
     </if>
     <if test="fields != null" >
@@ -102,7 +103,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    sku_id,spu_no,color,sku_size,sku_size_id,create_time,create_user,update_time,update_user,spu_no_org,memo,data_state,version
+    sku_id,spu_no,color,sku_size,sku_no,sku_size_id,create_time,create_user,update_time,update_user,spu_no_org,memo,data_state,version
     from hub_sku
     where sku_id = #{skuId,jdbcType=BIGINT}
   </select>
@@ -121,15 +122,15 @@
   		SELECT LAST_INSERT_ID() AS sku_id
   	</selectKey>
     insert into hub_sku (sku_id, spu_no, color, 
-      sku_size, sku_size_id, create_time, 
-      create_user, update_time, update_user, 
-      spu_no_org, memo, data_state, 
-      version)
+      sku_size, sku_no, sku_size_id, 
+      create_time, create_user, update_time, 
+      update_user, spu_no_org, memo, 
+      data_state, version)
     values (#{skuId,jdbcType=BIGINT}, #{spuNo,jdbcType=VARCHAR}, #{color,jdbcType=VARCHAR}, 
-      #{skuSize,jdbcType=VARCHAR}, #{skuSizeId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
-      #{spuNoOrg,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
-      #{version,jdbcType=BIGINT})
+      #{skuSize,jdbcType=VARCHAR}, #{skuNo,jdbcType=VARCHAR}, #{skuSizeId,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{spuNoOrg,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.sku.hub.po.HubSku" >
     <selectKey keyColumn="sku_id" keyProperty="skuId" order="AFTER" resultType="long">
@@ -148,6 +149,9 @@
       </if>
       <if test="skuSize != null" >
         sku_size,
+      </if>
+      <if test="skuNo != null" >
+        sku_no,
       </if>
       <if test="skuSizeId != null" >
         sku_size_id,
@@ -189,6 +193,9 @@
       </if>
       <if test="skuSize != null" >
         #{skuSize,jdbcType=VARCHAR},
+      </if>
+      <if test="skuNo != null" >
+        #{skuNo,jdbcType=VARCHAR},
       </if>
       <if test="skuSizeId != null" >
         #{skuSizeId,jdbcType=VARCHAR},
@@ -240,6 +247,9 @@
       <if test="record.skuSize != null" >
         sku_size = #{record.skuSize,jdbcType=VARCHAR},
       </if>
+      <if test="record.skuNo != null" >
+        sku_no = #{record.skuNo,jdbcType=VARCHAR},
+      </if>
       <if test="record.skuSizeId != null" >
         sku_size_id = #{record.skuSizeId,jdbcType=VARCHAR},
       </if>
@@ -278,6 +288,7 @@
       spu_no = #{record.spuNo,jdbcType=VARCHAR},
       color = #{record.color,jdbcType=VARCHAR},
       sku_size = #{record.skuSize,jdbcType=VARCHAR},
+      sku_no = #{record.skuNo,jdbcType=VARCHAR},
       sku_size_id = #{record.skuSizeId,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -302,6 +313,9 @@
       </if>
       <if test="skuSize != null" >
         sku_size = #{skuSize,jdbcType=VARCHAR},
+      </if>
+      <if test="skuNo != null" >
+        sku_no = #{skuNo,jdbcType=VARCHAR},
       </if>
       <if test="skuSizeId != null" >
         sku_size_id = #{skuSizeId,jdbcType=VARCHAR},
@@ -338,6 +352,7 @@
     set spu_no = #{spuNo,jdbcType=VARCHAR},
       color = #{color,jdbcType=VARCHAR},
       sku_size = #{skuSize,jdbcType=VARCHAR},
+      sku_no = #{skuNo,jdbcType=VARCHAR},
       sku_size_id = #{skuSizeId,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},
