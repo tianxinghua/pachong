@@ -98,17 +98,22 @@ public class HubProductImportService {
 			//TODO hub商品入库前的公共校验方法
 			
 			HubProductDto hubProductDto = convertHubImportProduct2HupProduct(product);
+			hubProductDto.setSeason("AW");
+			hubProductDto.setSeasonYear("2016");
 			HubProductCheckResult hubProductCheckResult = HubProductCheckGateWay.checkProduct(hubProductDto);
-			if(hubProductCheckResult.isPassing()){
-				
-				Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<String, String>();
+			if(hubProductCheckResult.isPassing()!=true){
 				map.put("taskNo",taskNo);
 				map.put("spuModel",product.getProductCode());
 				map.put("taskState","校验失败");
 				map.put("processInfo",hubProductCheckResult.getResult());
-				listMap.add(map);
+			}else{
+				map.put("taskNo",taskNo);
+				map.put("spuModel",product.getProductCode());
+				map.put("taskState","校验成功");
+				map.put("processInfo","校验通过");
 			}
-		
+			listMap.add(map);
 		}
 		return listMap;
 	}
