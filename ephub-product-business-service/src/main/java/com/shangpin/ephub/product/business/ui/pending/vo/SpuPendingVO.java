@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.pendingCrud.vo;
+package com.shangpin.ephub.product.business.ui.pending.vo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +17,11 @@ public class SpuPendingVO extends  SpuPendingCommonVO implements Serializable {
 
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8208612922999639039L;
+
+	/**
      * 是否默认供货商
      */
     private Boolean isDefaultSupplier;
