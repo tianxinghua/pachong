@@ -3,6 +3,7 @@ package com.shangpin.asynchronous.task.consumer.productimport.pending.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -22,6 +24,10 @@ import com.shangpin.asynchronous.task.consumer.productimport.hub.util.ExportExce
 import com.shangpin.asynchronous.task.consumer.productimport.hub.util.FTPClientUtil;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.dto.HubPendingProductImportDTO;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
@@ -50,6 +56,9 @@ public class PendingProductImportService {
 	HubSpuImportTaskGateWay spuImportGateway;
 
 	@Autowired
+	HubSkuPendingGateWay hubSkuPendingGateWay;
+	
+	@Autowired
 	TaskService taskService;
 	
 	//1、更新任务表，把task_state更新成正在处理  2、从ftp下载文件并解析成对象   3、公共类校验hub数据并把校验结果写入excel   4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
@@ -62,7 +71,7 @@ public class PendingProductImportService {
 		List<HubPendingProductImportDTO> listHubProduct = handleHubExcel(task.getTaskFtpFilePath(),task.getTaskNo());
 		
 		//3、公共类校验hub数据并把校验结果写入excel
-		 List<Map<String, String>> result = checkAndsaveHubProduct(task.getTaskNo(),listHubProduct);
+		 List<Map<String, String>> result = checkAndsaveHubPendingProduct(task.getTaskNo(),listHubProduct);
 		 
 		//4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
 		 convertExcel(result,task.getTaskNo());
@@ -94,13 +103,22 @@ public class PendingProductImportService {
 	}
 
 	//校验数据以及保存到hub表
-	private List<Map<String, String>> checkAndsaveHubProduct(String taskNo,List<HubPendingProductImportDTO> listHubProduct) {
+	private List<Map<String, String>> checkAndsaveHubPendingProduct(String taskNo,List<HubPendingProductImportDTO> listHubProduct) {
 
 		List<Map<String, String>> listMap = new ArrayList<Map<String,String>>();
 		for(HubPendingProductImportDTO product:listHubProduct){
 			Map<String, String> map = new HashMap<String, String>();
 			//TODO hub商品入库前的公共校验方法
+			HubSkuPendingDto hubSkuPendingDto = convertHubPendingProduct2Sku(product);
+			HubSpuPendingDto hubSpuPendingDto = convertHubPendingProduct2Spu(product);
 			
+			Long id = findHubSkuPending(hubSkuPendingDto.getSupplierId(),hubSkuPendingDto.getSupplierSkuNo());
+			if(id!=null){
+				hubSkuPendingDto.setSkuPendingId(id);
+				hubSkuPendingGateWay.updateByPrimaryKey(hubSkuPendingDto);
+			}else{
+				hubSkuPendingGateWay.insert(hubSkuPendingDto);	
+			}
 			map.put("taskNo",taskNo);
 			map.put("spuModel",product.getProductCode());
 			map.put("taskState","校验失败");
@@ -108,6 +126,56 @@ public class PendingProductImportService {
 			listMap.add(map);
 		}
 		return listMap;
+	}
+
+	private HubSpuPendingDto convertHubPendingProduct2Spu(HubPendingProductImportDTO product) {
+		
+		HubSpuPendingDto hubSpuPendingDto = new HubSpuPendingDto();
+		hubSpuPendingDto.setSupplierId(product.getSupplierNo());
+		hubSpuPendingDto.setHubCategoryNo(product.getBrandNo());
+		hubSpuPendingDto.setHubBrandNo(product.getBrandNo());
+		hubSpuPendingDto.setSpuModel(product.getProductCode());
+		
+		hubSpuPendingDto.setHubSeason(product.getSeasonName());
+//		hubSpuPendingDto
+		
+		return null;
+	}
+
+	private Long findHubSkuPending(String supplierId, String supplierSkuNo) {
+		
+		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
+		criteria.setFields("supplier_id,supplier_sku_no");
+		List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criteria);
+		if(list!=null&&list.size()>0){
+			return list.get(0).getSkuPendingId();
+		}
+		return null;
+	}
+
+	private HubSkuPendingDto convertHubPendingProduct2Sku(
+			HubPendingProductImportDTO product) {
+		HubSkuPendingDto hubSkuPendingDto = new HubSkuPendingDto();
+		hubSkuPendingDto.setCreateTime(new Date());
+		hubSkuPendingDto.setDataState((byte)1);
+		String marketPrice = product.getMarketPrice();
+		if(StringUtils.isNotBlank(marketPrice)){
+			hubSkuPendingDto.setMarketPrice(new BigDecimal(marketPrice));	
+		}
+		hubSkuPendingDto.setMarketPriceCurrencyorg(product.getMarketCurrency());
+		String supplyPrice = product.getSupplierPrice();
+		if(StringUtils.isNotBlank(supplyPrice)){
+			hubSkuPendingDto.setSupplyPrice(new BigDecimal(supplyPrice));	
+		}
+		hubSkuPendingDto.setSupplyPriceCurrency(product.getSupplierCurrency());
+		hubSkuPendingDto.setHubSkuSize(product.getSize());
+		hubSkuPendingDto.setMeasurement(product.getMeasure());
+		hubSkuPendingDto.setSkuName(product.getProductName());
+		hubSkuPendingDto.setSupplierBarcode(product.getBarcode());
+		hubSkuPendingDto.setSupplierSkuNo(product.getSupplierSkuNo());
+		hubSkuPendingDto.setSupplierId(product.getSupplierNo());
+		return hubSkuPendingDto;
 	}
 
 	//解析excel转换为对象
