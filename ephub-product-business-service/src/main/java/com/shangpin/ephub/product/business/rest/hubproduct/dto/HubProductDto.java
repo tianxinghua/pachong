@@ -23,7 +23,8 @@ public class HubProductDto implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 2215182249308660796L;
-
+	
+	private String supplierNo;
 	/**
 	 * 货号
 	 */
@@ -41,9 +42,10 @@ public class HubProductDto implements Serializable {
      */
     private String gender;
     /**
-     * 性别
+     * 颜色
      */
     private String color;
+    private String size;
     private String material;
     private String madeIn;
     private String season;
