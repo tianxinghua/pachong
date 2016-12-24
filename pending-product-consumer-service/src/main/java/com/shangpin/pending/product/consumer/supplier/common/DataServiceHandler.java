@@ -472,7 +472,8 @@ public class DataServiceHandler {
 
     public void savePendingSpu(HubSpuPendingDto spuPending) throws  Exception{
         try {
-            hubSpuPendingGateWay.insert(spuPending);
+           Long spuPendingId =  hubSpuPendingGateWay.insert(spuPending);
+           spuPending.setSpuPendingId(spuPendingId);
         } catch (Exception e) {
             if(e instanceof DuplicateKeyException){
 
@@ -521,7 +522,8 @@ public class DataServiceHandler {
 
     public void savePendingSku(HubSkuPendingDto skuPendingDto) throws Exception{
         try {
-            hubSkuPendingGateWay.insert(skuPendingDto);
+           Long skuPendingId =  hubSkuPendingGateWay.insert(skuPendingDto);
+            skuPendingDto.setSpuPendingId(skuPendingId);
         } catch (Exception e) {
             if(e instanceof DuplicateKeyException){
 
