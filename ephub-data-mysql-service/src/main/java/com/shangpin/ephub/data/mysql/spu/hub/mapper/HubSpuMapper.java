@@ -12,7 +12,7 @@ import org.apache.ibatis.session.RowBounds;
  * <p>Description: </p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
- * @date 2016年12月21日 下午2:39:52
+ * @date 2016年12月24日 下午2:54:18
  */
 @Mapper
 public interface HubSpuMapper {
@@ -39,6 +39,4 @@ public interface HubSpuMapper {
     int updateByPrimaryKeySelective(HubSpu record);
 
     int updateByPrimaryKey(HubSpu record);
-
-    String getMaxSpuNo();
 }

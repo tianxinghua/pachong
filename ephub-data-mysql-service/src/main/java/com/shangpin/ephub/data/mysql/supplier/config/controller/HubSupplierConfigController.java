@@ -40,12 +40,14 @@ public class HubSupplierConfigController {
     	return hubSupplierConfigService.deleteByPrimaryKey(supplierConfigId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubSupplierConfig hubSupplierConfig){
-    	return hubSupplierConfigService.insert(hubSupplierConfig);
+    public Long insert(@RequestBody HubSupplierConfig hubSupplierConfig){
+    	hubSupplierConfigService.insert(hubSupplierConfig);
+    	return hubSupplierConfig.getSupplierConfigId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubSupplierConfig hubSupplierConfig){
-    	return hubSupplierConfigService.insertSelective(hubSupplierConfig);
+    public Long insertSelective(@RequestBody HubSupplierConfig hubSupplierConfig){
+    	hubSupplierConfigService.insertSelective(hubSupplierConfig);
+    	return hubSupplierConfig.getSupplierConfigId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubSupplierConfig> selectByCriteriaWithRowbounds(@RequestBody HubSupplierConfigCriteriaWithRowBounds criteriaWithRowBounds){

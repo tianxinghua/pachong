@@ -40,12 +40,14 @@ public class HubSpuImportTaskController {
     	return hubSpuImportTaskService.deleteByPrimaryKey(spuImportTaskId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubSpuImportTask hubSpuImportTask){
-    	return hubSpuImportTaskService.insert(hubSpuImportTask);
+    public Long insert(@RequestBody HubSpuImportTask hubSpuImportTask){
+    	hubSpuImportTaskService.insert(hubSpuImportTask);
+    	return hubSpuImportTask.getSpuImportTaskId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubSpuImportTask hubSpuImportTask){
-    	return hubSpuImportTaskService.insertSelective(hubSpuImportTask);
+    public Long insertSelective(@RequestBody HubSpuImportTask hubSpuImportTask){
+    	hubSpuImportTaskService.insertSelective(hubSpuImportTask);
+    	return hubSpuImportTask.getSpuImportTaskId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubSpuImportTask> selectByCriteriaWithRowbounds(@RequestBody HubSpuImportTaskCriteriaWithRowBounds criteriaWithRowBounds){

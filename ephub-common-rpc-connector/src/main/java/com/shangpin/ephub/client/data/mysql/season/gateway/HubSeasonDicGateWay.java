@@ -32,10 +32,10 @@ public interface HubSeasonDicGateWay {
     public int deleteByPrimaryKey(Long seasonDicId);
 	
 	@RequestMapping(value = "/hub-season-dic/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubSeasonDicDto hubSeasonDic);
+    public Long insert(@RequestBody HubSeasonDicDto hubSeasonDic);
 	
 	@RequestMapping(value = "/hub-season-dic/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubSeasonDicDto hubSeasonDic);
+    public Long insertSelective(@RequestBody HubSeasonDicDto hubSeasonDic);
 	
 	@RequestMapping(value = "/hub-season-dic/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSeasonDicDto> selectByCriteriaWithRowbounds(@RequestBody HubSeasonDicCriteriaWithRowBoundsDto criteriaWithRowBounds);

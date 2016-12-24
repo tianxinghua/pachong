@@ -32,10 +32,10 @@ public interface HubSkuPendingGateWay {
     public int deleteByPrimaryKey(Long skuPendingId);
 	
 	@RequestMapping(value = "/hub-sku-pending/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubSkuPendingDto hubSkuPending);
+    public Long insert(@RequestBody HubSkuPendingDto hubSkuPending);
 	
 	@RequestMapping(value = "/hub-sku-pending/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubSkuPendingDto hubSkuPending);
+    public Long insertSelective(@RequestBody HubSkuPendingDto hubSkuPending);
 	
 	@RequestMapping(value = "/hub-sku-pending/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSkuPendingDto> selectByCriteriaWithRowbounds(@RequestBody HubSkuPendingCriteriaWithRowBoundsDto criteriaWithRowBounds);

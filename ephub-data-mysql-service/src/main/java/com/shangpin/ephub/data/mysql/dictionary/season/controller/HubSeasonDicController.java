@@ -39,12 +39,14 @@ public class HubSeasonDicController {
     	return hubSeasonDicService.deleteByPrimaryKey(seasonDicId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubSeasonDic hubSeasonDic){
-    	return hubSeasonDicService.insert(hubSeasonDic);
+    public Long insert(@RequestBody HubSeasonDic hubSeasonDic){
+    	hubSeasonDicService.insert(hubSeasonDic);
+    	return hubSeasonDic.getSeasonDicId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubSeasonDic hubSeasonDic){
-    	return hubSeasonDicService.insertSelective(hubSeasonDic);
+    public Long insertSelective(@RequestBody HubSeasonDic hubSeasonDic){
+    	hubSeasonDicService.insertSelective(hubSeasonDic);
+    	return hubSeasonDic.getSeasonDicId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubSeasonDic> selectByCriteriaWithRowbounds(@RequestBody HubSeasonDicCriteriaWithRowBounds criteriaWithRowBounds){
