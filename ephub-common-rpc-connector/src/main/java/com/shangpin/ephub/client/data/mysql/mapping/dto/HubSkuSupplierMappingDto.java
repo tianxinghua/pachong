@@ -12,7 +12,7 @@ public class HubSkuSupplierMappingDto implements Serializable {
     /**
      * Sku编号
      */
-    private Long skuNo;
+    private String skuNo;
 
     /**
      * 供应商SkuNo
@@ -33,6 +33,16 @@ public class HubSkuSupplierMappingDto implements Serializable {
      * 新品类型
      */
     private Byte newSpuType;
+
+    /**
+     * 供应商选择状态
+     */
+    private Byte supplierSelectState;
+
+    /**
+     * 供应商编号
+     */
+    private String supplierNo;
 
     /**
      * 是否新供应商供货
@@ -94,12 +104,12 @@ public class HubSkuSupplierMappingDto implements Serializable {
         this.skuSupplierMappingId = skuSupplierMappingId;
     }
 
-    public Long getSkuNo() {
+    public String getSkuNo() {
         return skuNo;
     }
 
-    public void setSkuNo(Long skuNo) {
-        this.skuNo = skuNo;
+    public void setSkuNo(String skuNo) {
+        this.skuNo = skuNo == null ? null : skuNo.trim();
     }
 
     public String getSupplierSkuNo() {
@@ -132,6 +142,22 @@ public class HubSkuSupplierMappingDto implements Serializable {
 
     public void setNewSpuType(Byte newSpuType) {
         this.newSpuType = newSpuType;
+    }
+
+    public Byte getSupplierSelectState() {
+        return supplierSelectState;
+    }
+
+    public void setSupplierSelectState(Byte supplierSelectState) {
+        this.supplierSelectState = supplierSelectState;
+    }
+
+    public String getSupplierNo() {
+        return supplierNo;
+    }
+
+    public void setSupplierNo(String supplierNo) {
+        this.supplierNo = supplierNo == null ? null : supplierNo.trim();
     }
 
     public Byte getIsNewSupplier() {
@@ -226,6 +252,8 @@ public class HubSkuSupplierMappingDto implements Serializable {
         sb.append(", barcode=").append(barcode);
         sb.append(", supplierId=").append(supplierId);
         sb.append(", newSpuType=").append(newSpuType);
+        sb.append(", supplierSelectState=").append(supplierSelectState);
+        sb.append(", supplierNo=").append(supplierNo);
         sb.append(", isNewSupplier=").append(isNewSupplier);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
@@ -259,6 +287,8 @@ public class HubSkuSupplierMappingDto implements Serializable {
             && (this.getBarcode() == null ? other.getBarcode() == null : this.getBarcode().equals(other.getBarcode()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
             && (this.getNewSpuType() == null ? other.getNewSpuType() == null : this.getNewSpuType().equals(other.getNewSpuType()))
+            && (this.getSupplierSelectState() == null ? other.getSupplierSelectState() == null : this.getSupplierSelectState().equals(other.getSupplierSelectState()))
+            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getIsNewSupplier() == null ? other.getIsNewSupplier() == null : this.getIsNewSupplier().equals(other.getIsNewSupplier()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
@@ -281,6 +311,8 @@ public class HubSkuSupplierMappingDto implements Serializable {
         result = prime * result + ((getBarcode() == null) ? 0 : getBarcode().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
         result = prime * result + ((getNewSpuType() == null) ? 0 : getNewSpuType().hashCode());
+        result = prime * result + ((getSupplierSelectState() == null) ? 0 : getSupplierSelectState().hashCode());
+        result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getIsNewSupplier() == null) ? 0 : getIsNewSupplier().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());

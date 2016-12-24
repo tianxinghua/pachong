@@ -417,6 +417,76 @@ public class HubSkuCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andSkuNoIsNull() {
+            addCriterion("sku_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoIsNotNull() {
+            addCriterion("sku_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoEqualTo(String value) {
+            addCriterion("sku_no =", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoNotEqualTo(String value) {
+            addCriterion("sku_no <>", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoGreaterThan(String value) {
+            addCriterion("sku_no >", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoGreaterThanOrEqualTo(String value) {
+            addCriterion("sku_no >=", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoLessThan(String value) {
+            addCriterion("sku_no <", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoLessThanOrEqualTo(String value) {
+            addCriterion("sku_no <=", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoLike(String value) {
+            addCriterion("sku_no like", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoNotLike(String value) {
+            addCriterion("sku_no not like", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoIn(List<String> values) {
+            addCriterion("sku_no in", values, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoNotIn(List<String> values) {
+            addCriterion("sku_no not in", values, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoBetween(String value1, String value2) {
+            addCriterion("sku_no between", value1, value2, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoNotBetween(String value1, String value2) {
+            addCriterion("sku_no not between", value1, value2, "skuNo");
+            return (Criteria) this;
+        }
+
         public Criteria andSkuSizeIdIsNull() {
             addCriterion("sku_size_id is null");
             return (Criteria) this;
