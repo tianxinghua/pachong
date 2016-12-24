@@ -32,10 +32,10 @@ public interface HubColorDicItemGateWay {
     public int deleteByPrimaryKey(Long colorDicItemId);
 	
 	@RequestMapping(value = "/hub-color-dic-item/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubColorDicItemDto hubColorDicItem);
+    public Long insert(@RequestBody HubColorDicItemDto hubColorDicItem);
 	
 	@RequestMapping(value = "/hub-color-dic-item/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubColorDicItemDto hubColorDicItem);
+    public Long insertSelective(@RequestBody HubColorDicItemDto hubColorDicItem);
 	
 	@RequestMapping(value = "/hub-color-dic-item/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubColorDicItemDto> selectByCriteriaWithRowbounds(@RequestBody HubColorDicItemCriteriaWithRowBoundsDto criteriaWithRowBounds);

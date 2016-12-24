@@ -40,12 +40,14 @@ public class HubOriginDicController {
     	return hubOriginDicService.deleteByPrimaryKey(originDicId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubOriginDic hubOriginDic){
-    	return hubOriginDicService.insert(hubOriginDic);
+    public Long insert(@RequestBody HubOriginDic hubOriginDic){
+    	hubOriginDicService.insert(hubOriginDic);
+    	return hubOriginDic.getOriginDicId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubOriginDic hubOriginDic){
-    	return hubOriginDicService.insertSelective(hubOriginDic);
+    public Long insertSelective(@RequestBody HubOriginDic hubOriginDic){
+    	hubOriginDicService.insertSelective(hubOriginDic);
+    	return hubOriginDic.getOriginDicId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubOriginDic> selectByCriteriaWithRowbounds(@RequestBody HubOriginDicCriteriaWithRowBounds criteriaWithRowBounds){

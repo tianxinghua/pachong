@@ -33,10 +33,10 @@ public interface HubColorDicGateWay {
     public int deleteByPrimaryKey(Long colorDicId);
 	
 	@RequestMapping(value = "/hub-color-dic/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubColorDicDto hubColorDic);
+    public Long insert(@RequestBody HubColorDicDto hubColorDic);
 	
 	@RequestMapping(value = "/hub-color-dic/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubColorDicDto hubColorDic);
+    public Long insertSelective(@RequestBody HubColorDicDto hubColorDic);
 	
 	@RequestMapping(value = "/hub-color-dic/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubColorDicDto> selectByCriteriaWithRowbounds(@RequestBody HubColorDicCriteriaWithRowBoundsDto criteriaWithRowBounds);

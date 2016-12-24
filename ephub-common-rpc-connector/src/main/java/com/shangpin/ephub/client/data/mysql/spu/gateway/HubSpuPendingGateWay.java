@@ -31,10 +31,10 @@ public interface HubSpuPendingGateWay {
     public int deleteByPrimaryKey(Long spuPendingId);
 	
 	@RequestMapping(value = "/hub-spu-pending/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubSpuPendingDto hubSpuPending);
+    public Long insert(@RequestBody HubSpuPendingDto hubSpuPending);
 	
 	@RequestMapping(value = "/hub-spu-pending/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubSpuPendingDto hubSpuPending);
+    public Long insertSelective(@RequestBody HubSpuPendingDto hubSpuPending);
 	@RequestMapping(value = "/hub-spu-pending/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSpuPendingDto> selectByCriteriaWithRowbounds(@RequestBody HubSpuPendingCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	

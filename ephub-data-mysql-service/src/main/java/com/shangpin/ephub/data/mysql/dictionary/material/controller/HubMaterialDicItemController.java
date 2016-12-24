@@ -41,12 +41,14 @@ public class HubMaterialDicItemController {
     	return hubMaterialDicItemService.deleteByPrimaryKey(materialDicItemId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubMaterialDicItem hubMaterialDicItem){
-    	return hubMaterialDicItemService.insert(hubMaterialDicItem);
+    public Long insert(@RequestBody HubMaterialDicItem hubMaterialDicItem){
+    	hubMaterialDicItemService.insert(hubMaterialDicItem);
+    	return hubMaterialDicItem.getMaterialDicItemId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubMaterialDicItem hubMaterialDicItem){
-    	return hubMaterialDicItemService.insertSelective(hubMaterialDicItem);
+    public Long insertSelective(@RequestBody HubMaterialDicItem hubMaterialDicItem){
+    	hubMaterialDicItemService.insertSelective(hubMaterialDicItem);
+    	return hubMaterialDicItem.getMaterialDicItemId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubMaterialDicItem> selectByCriteriaWithRowbounds(@RequestBody HubMaterialDicItemCriteriaWithRowBounds criteriaWithRowBounds){

@@ -40,12 +40,14 @@ public class HubMaterialMappingController {
     	return hubMaterialMappingService.deleteByPrimaryKey(materialMappingId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubMaterialMapping hubMaterialMapping){
-    	return hubMaterialMappingService.insert(hubMaterialMapping);
+    public Long insert(@RequestBody HubMaterialMapping hubMaterialMapping){
+    	hubMaterialMappingService.insert(hubMaterialMapping);
+    	return hubMaterialMapping.getMaterialMappingId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubMaterialMapping hubMaterialMapping){
-    	return hubMaterialMappingService.insertSelective(hubMaterialMapping);
+    public Long insertSelective(@RequestBody HubMaterialMapping hubMaterialMapping){
+    	hubMaterialMappingService.insertSelective(hubMaterialMapping);
+    	return hubMaterialMapping.getMaterialMappingId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubMaterialMapping> selectByCriteriaWithRowbounds(@RequestBody HubMaterialMappingCriteriaWithRowBounds criteriaWithRowBounds){

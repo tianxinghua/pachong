@@ -31,10 +31,10 @@ public interface HubBrandDicGateway {
     public int deleteByPrimaryKey(Long brandDicId);
 	
 	@RequestMapping(value = "/hub-brand-dic/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public Long insert(@RequestBody HubBrandDicDto HubBrandDicDto);
 	
 	@RequestMapping(value = "/hub-brand-dic/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public Long insertSelective(@RequestBody HubBrandDicDto HubBrandDicDto);
 	
 	@RequestMapping(value = "/hub-brand-dic/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubBrandDicDto> selectByCriteriaWithRowbounds(@RequestBody HubBrandDicCriteriaWithRowBoundsDto criteriaWithRowBounds);

@@ -40,12 +40,14 @@ public class HubSkuSupplierMappingController {
     	return hubSkuSupplierMappingService.deleteByPrimaryKey(skuSupplierMappingId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubSkuSupplierMapping hubSkuSupplierMapping){
-    	return hubSkuSupplierMappingService.insert(hubSkuSupplierMapping);
+    public Long insert(@RequestBody HubSkuSupplierMapping hubSkuSupplierMapping){
+    	hubSkuSupplierMappingService.insert(hubSkuSupplierMapping);
+    	return hubSkuSupplierMapping.getSkuSupplierMappingId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubSkuSupplierMapping hubSkuSupplierMapping){
-    	return hubSkuSupplierMappingService.insertSelective(hubSkuSupplierMapping);
+    public Long insertSelective(@RequestBody HubSkuSupplierMapping hubSkuSupplierMapping){
+    	hubSkuSupplierMappingService.insertSelective(hubSkuSupplierMapping);
+    	return hubSkuSupplierMapping.getSkuSupplierMappingId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubSkuSupplierMapping> selectByCriteriaWithRowbounds(@RequestBody HubSkuSupplierMappingCriteriaWithRowBounds criteriaWithRowBounds){

@@ -39,12 +39,14 @@ public class HubSpuPendingController {
     	return hubSpuPendingService.deleteByPrimaryKey(spuPendingId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubSpuPending hubSpuPending){
-    	return hubSpuPendingService.insert(hubSpuPending);
+    public Long insert(@RequestBody HubSpuPending hubSpuPending){
+    	 hubSpuPendingService.insert(hubSpuPending);
+    	 return hubSpuPending.getSpuPendingId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubSpuPending hubSpuPending){
-    	return hubSpuPendingService.insertSelective(hubSpuPending);
+    public Long insertSelective(@RequestBody HubSpuPending hubSpuPending){
+    	 hubSpuPendingService.insertSelective(hubSpuPending);
+    	 return hubSpuPending.getSpuPendingId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubSpuPending> selectByCriteriaWithRowbounds(@RequestBody HubSpuPendingCriteriaWithRowBounds criteriaWithRowBounds){

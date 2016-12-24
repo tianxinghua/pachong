@@ -39,12 +39,14 @@ public class HubSpuController {
     	return hubSpuService.deleteByPrimaryKey(spuId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubSpu hubSpu){
-    	return hubSpuService.insert(hubSpu);
+    public Long insert(@RequestBody HubSpu hubSpu){
+    	hubSpuService.insert(hubSpu);
+    	return hubSpu.getSpuId(); 
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubSpu hubSpu){
-    	return hubSpuService.insertSelective(hubSpu);
+    public Long insertSelective(@RequestBody HubSpu hubSpu){
+    	hubSpuService.insertSelective(hubSpu);
+    	return hubSpu.getSpuId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubSpu> selectByCriteriaWithRowbounds(@RequestBody HubSpuCriteriaWithRowBounds criteriaWithRowBounds){

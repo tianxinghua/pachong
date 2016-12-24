@@ -33,10 +33,10 @@ public interface HubSkuGateWay {
     public int deleteByPrimaryKey(Long skuId);
 	
 	@RequestMapping(value = "/hub-sku/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubSkuDto hubSku);
+    public Long insert(@RequestBody HubSkuDto hubSku);
 	
 	@RequestMapping(value = "/hub-sku/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubSkuDto hubSku);
+    public Long insertSelective(@RequestBody HubSkuDto hubSku);
 	
 	@RequestMapping(value = "/hub-sku/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSkuDto> selectByCriteriaWithRowbounds(@RequestBody HubSkuCriteriaWithRowBoundsDto criteriaWithRowBounds);

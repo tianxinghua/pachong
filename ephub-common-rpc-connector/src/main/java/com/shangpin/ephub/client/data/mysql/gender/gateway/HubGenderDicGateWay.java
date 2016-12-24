@@ -32,10 +32,10 @@ public interface HubGenderDicGateWay {
     public int deleteByPrimaryKey(Long genderDicId);
 	
 	@RequestMapping(value = "/hub-gender-dic/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubGenderDicDto hubGenderDic);
+    public Long insert(@RequestBody HubGenderDicDto hubGenderDic);
 	
 	@RequestMapping(value = "/hub-gender-dic/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubGenderDicDto hubGenderDic);
+    public Long insertSelective(@RequestBody HubGenderDicDto hubGenderDic);
 	
 	@RequestMapping(value = "/hub-gender-dic/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubGenderDicDto> selectByCriteriaWithRowbounds(@RequestBody HubGenderDicCriteriaWithRowBoundsDto criteriaWithRowBounds);

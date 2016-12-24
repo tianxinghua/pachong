@@ -33,10 +33,10 @@ public interface HubSpuImportTaskGateWay {
     public int deleteByPrimaryKey(Long spuImportTaskId);
 	
 	@RequestMapping(value = "/hub-spu-import-task/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubSpuImportTaskDto hubSpuImportTask);
+    public Long insert(@RequestBody HubSpuImportTaskDto hubSpuImportTask);
 	
 	@RequestMapping(value = "/hub-spu-import-task/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubSpuImportTaskDto hubSpuImportTask);
+    public Long insertSelective(@RequestBody HubSpuImportTaskDto hubSpuImportTask);
 	
 	@RequestMapping(value = "/hub-spu-import-task/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSpuImportTaskDto> selectByCriteriaWithRowbounds(@RequestBody HubSpuImportTaskCriteriaWithRowBoundsDto criteriaWithRowBounds);

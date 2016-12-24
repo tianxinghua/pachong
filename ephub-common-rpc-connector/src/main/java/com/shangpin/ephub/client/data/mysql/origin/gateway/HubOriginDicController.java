@@ -32,10 +32,10 @@ public interface HubOriginDicController {
     public int deleteByPrimaryKey(Long originDicId);
 	
 	@RequestMapping(value = "/hub-origin-dic/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubOriginDicDto hubOriginDicDto);
+    public Long insert(@RequestBody HubOriginDicDto hubOriginDicDto);
 	
 	@RequestMapping(value = "/hub-origin-dic/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubOriginDicDto hubOriginDicDto);
+    public Long insertSelective(@RequestBody HubOriginDicDto hubOriginDicDto);
 	
 	@RequestMapping(value = "/hub-origin-dic/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubOriginDicDto> selectByCriteriaWithRowbounds(@RequestBody HubOriginDicCriteriaWithRowBoundsDto criteriaWithRowBounds);

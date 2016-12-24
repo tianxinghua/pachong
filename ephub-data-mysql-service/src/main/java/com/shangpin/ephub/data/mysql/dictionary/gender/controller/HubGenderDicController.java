@@ -39,12 +39,14 @@ public class HubGenderDicController {
     	return hubGenderDicService.deleteByPrimaryKey(genderDicId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubGenderDic hubGenderDic){
-    	return hubGenderDicService.insert(hubGenderDic);
+    public Long insert(@RequestBody HubGenderDic hubGenderDic){
+    	hubGenderDicService.insert(hubGenderDic);
+    	return hubGenderDic.getGenderDicId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubGenderDic hubGenderDic){
-    	return hubGenderDicService.insertSelective(hubGenderDic);
+    public Long insertSelective(@RequestBody HubGenderDic hubGenderDic){
+    	hubGenderDicService.insertSelective(hubGenderDic);
+    	return hubGenderDic.getGenderDicId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubGenderDic> selectByCriteriaWithRowbounds(@RequestBody HubGenderDicCriteriaWithRowBounds criteriaWithRowBounds){
