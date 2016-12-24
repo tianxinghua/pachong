@@ -20,11 +20,23 @@ import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 public interface IPendingProductService {
 	
 	/**
+	 * 待处理页面导出sku
+	 * @param pendingQuryDto
+	 * @return
+	 */
+	public HSSFWorkbook exportSku(PendingQuryDto pendingQuryDto);
+	/**
 	 * 待处理页面导出spu
 	 * @param pendingQuryDto
 	 * @return
 	 */
 	public HSSFWorkbook exportSpu(PendingQuryDto pendingQuryDto);
+	/**
+	 * 根据页面查询条件查询pending spu信息
+	 * @param pendingQuryDto
+	 * @return
+	 */
+	public List<PendingProductDto> findPengdingSpu(PendingQuryDto pendingQuryDto);
 
 	/**
 	 * 根据页面查询条件查询待处理表产品
