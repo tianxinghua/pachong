@@ -24,7 +24,7 @@ import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetails;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProducts;
 import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 import com.shangpin.ephub.product.business.ui.hub.common.service.HubCommonProductService;
-import com.shangpin.ephub.product.business.ui.pendingCrud.util.JavaUtil;
+import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 
 /**
  * <p>Title:HubProductServiceImpl </p>

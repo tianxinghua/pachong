@@ -1,9 +1,12 @@
-package com.shangpin.ephub.product.business.ui.pendingCrud.controller;
+package com.shangpin.ephub.product.business.ui.pending.controller;
 
-import com.shangpin.ephub.product.business.ui.pendingCrud.dto.Ids;
-import com.shangpin.ephub.product.business.ui.pendingCrud.dto.PendingQuryDto;
-import com.shangpin.ephub.product.business.ui.pendingCrud.service.impl.PendingProductService;
-import com.shangpin.ephub.product.business.ui.pendingCrud.vo.*;
+import com.shangpin.ephub.product.business.ui.pending.dto.Ids;
+import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pending.service.impl.PendingProductService;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditQueryVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.*;
 import com.shangpin.ephub.response.HubResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

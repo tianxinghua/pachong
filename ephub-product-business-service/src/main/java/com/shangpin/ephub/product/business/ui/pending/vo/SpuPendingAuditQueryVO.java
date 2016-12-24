@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.pendingCrud.vo;
+package com.shangpin.ephub.product.business.ui.pending.vo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,12 @@ import java.io.Serializable;
 @Getter
 public class SpuPendingAuditQueryVO implements Serializable {
 
-    private String brandNo;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6102475825182786546L;
+
+	private String brandNo;
 
     private String categroyNo;
     /**

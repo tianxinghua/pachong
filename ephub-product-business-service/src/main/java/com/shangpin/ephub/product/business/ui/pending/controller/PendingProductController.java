@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.pendingCrud.controller;
+package com.shangpin.ephub.product.business.ui.pending.controller;
 
 import java.util.List;
 
@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.ephub.product.business.ui.pendingCrud.dto.Ids;
-import com.shangpin.ephub.product.business.ui.pendingCrud.dto.PendingQuryDto;
-import com.shangpin.ephub.product.business.ui.pendingCrud.service.IPendingProductService;
-import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProductDto;
-import com.shangpin.ephub.product.business.ui.pendingCrud.vo.PendingProducts;
+import com.shangpin.ephub.product.business.ui.pending.dto.Ids;
+import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.response.HubResponse;
 /**
  * <p>Title:PendingProductController </p>
