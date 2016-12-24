@@ -2,8 +2,6 @@ package com.shangpin.ephub.product.business.rest.hubproduct.dto;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;

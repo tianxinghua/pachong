@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shangpin.ephub.product.business.rest.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.product.business.rest.hubproduct.result.HubProductCheckResult;
 import com.shangpin.ephub.product.business.rest.hubproduct.service.HubCheckRuleService;
-import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
-import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,15 +20,16 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2016年12月22 下午3:52:56
  */
 @RestController
-@RequestMapping(value = "/hub-check")
+@RequestMapping(value = "/hub-product-check")
 @Slf4j
 public class HubProductCheckController {
 	
 	@Autowired
-	HubCheckRuleService hubCheckRuleService;
+	private HubCheckRuleService hubCheckRuleService;
 	
-	@RequestMapping(value = "/product")
+	@RequestMapping(value = "/check-product")
 	public HubProductCheckResult checkProduct(@RequestBody HubProductDto dto){
+		log.info("");
 		HubProductCheckResult result = new HubProductCheckResult();
 		String returnStr = hubCheckRuleService.checkHubProduct(dto);
 		if(StringUtils.isNotBlank(returnStr)){
