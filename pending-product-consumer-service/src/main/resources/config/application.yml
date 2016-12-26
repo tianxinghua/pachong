@@ -1,5 +1,4 @@
-﻿server.port: 9091
-spring:
+﻿spring:
   profiles: 
-    active: dev
+    active: qa
   application.name: pending-product-consumer-service

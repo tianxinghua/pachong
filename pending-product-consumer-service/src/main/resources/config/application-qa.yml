@@ -1,3 +1,5 @@
+server.port: 8002
+feign.hystrix.enabled: false
 spring: 
   rabbitmq: 
            host: 192.168.20.175
@@ -6,6 +8,14 @@ spring:
            password: scm-message-service
            virtual-host: /scm-message-service
   cloud: 
+        consul: 
+          discovery: 
+            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+            prefer-ip-address: true
+            ip-address: 192.168.20.176
+            hostname: 192.168.20.176
+            port: ${server.port}
+            healthCheckUrl: http://192.168.20.176:8002/info 
         stream: 
               bindings: 
                         spinnakerPendingProduct: 
@@ -117,7 +127,7 @@ spring:
        protocol: smtp # Protocol used by the SMTP server.
        username: yanxiaobin@shangpin.com # Login user of the SMTP server.
        password: 123.com # Login password of the SMTP server.
-       test-connection: true # Test that the mail server is available on startup.
+       test-connection: false # Test that the mail server is available on startup.
 banner: 
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.
