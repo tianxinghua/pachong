@@ -18,6 +18,7 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
+import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.ui.hub.all.service.IHubProductService;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetail;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetails;
@@ -45,6 +46,8 @@ public class HubProductServiceImpl implements IHubProductService {
 	private HubSkuSupplierMappingGateWay hubSkuSupplierMappingClient;
 	@Autowired
 	private HubCommonProductService hubCommonProductService;
+	@Autowired
+	private SupplierService supplierService;
 
 	@Override
 	public HubProducts findHubProductds(HubQuryDto hubQuryDto) {
@@ -105,7 +108,7 @@ public class HubProductServiceImpl implements IHubProductService {
 				for(HubProductDetail hubSku : hubProducts){
 					if(!StringUtils.isEmpty(hubSku.getSkuId())){
 						HubSkuSupplierMappingDto hubSkuSupplierMappingDto = new HubSkuSupplierMappingDto();
-						hubSkuSupplierMappingDto.setSkuNo(hubSku.getSkuId());
+						hubSkuSupplierMappingDto.setSkuNo(hubSku.getSkuNo());
 						hubSkuSupplierMappingDto.setSupplierId(hubSku.getSupplierId());
 						if(!StringUtils.isEmpty(hubSku.getSupplierSkuNo())){
 							hubSkuSupplierMappingDto.setSupplierSkuNo(hubSku.getSupplierSkuNo());
@@ -173,18 +176,18 @@ public class HubProductServiceImpl implements IHubProductService {
 	private List<HubProductDetail> getProductDetailsByHubSku(HubSpuDto hubSpu,HubSkuDto hubSku){
 		
 		List<HubProductDetail> productDetails = new ArrayList<HubProductDetail>();
-		List<HubSkuSupplierMappingDto> mappings = findHubSkuSupplierMappingDtoByHubSkuNo(hubSku.getSkuId());
+		List<HubSkuSupplierMappingDto> mappings = findHubSkuSupplierMappingDtoByHubSkuNo(hubSku.getSkuNo());
 		for(HubSkuSupplierMappingDto mappingDto : mappings){
-			HubProductDetail hubProuct = new HubProductDetail();
-			JavaUtil.fatherToChild(mappingDto, hubProuct);			
-			hubProuct.setSupplierName("");//TODO 
-			hubProuct.setSkuId(hubSku.getSkuId());
-			hubProuct.setSkuSize(hubSku.getSkuSize());
-			hubProuct.setColor(hubSpu.getHubColor()); 	
+			HubProductDetail hubProuctDetail = new HubProductDetail();
+			JavaUtil.fatherToChild(mappingDto, hubProuctDetail);			
+			hubProuctDetail.setSupplierName(supplierService.getSupplier(mappingDto.getSupplierNo()).getSupplierName());
+			hubProuctDetail.setSkuId(hubSku.getSkuId());
+			hubProuctDetail.setSkuSize(hubSku.getSkuSize());
+			hubProuctDetail.setColor(hubSpu.getHubColor()); 	
 			if(HubSpuState.ON_SALE.getIndex() == hubSpu.getSpuState()){
-				hubProuct.setSpuState(HubSpuState.ON_SALE.getDescription());
+				hubProuctDetail.setSpuState(HubSpuState.ON_SALE.getDescription());
 			}	
-			productDetails.add(hubProuct);
+			productDetails.add(hubProuctDetail);
 		}
 		return productDetails;
 	}
@@ -194,7 +197,7 @@ public class HubProductServiceImpl implements IHubProductService {
 	 * @param hubSkuNo
 	 * @return
 	 */
-	private List<HubSkuSupplierMappingDto> findHubSkuSupplierMappingDtoByHubSkuNo(Long hubSkuNo){
+	private List<HubSkuSupplierMappingDto> findHubSkuSupplierMappingDtoByHubSkuNo(String hubSkuNo){
 		HubSkuSupplierMappingCriteriaDto criteriaDto = new HubSkuSupplierMappingCriteriaDto();
 		criteriaDto.createCriteria().andSkuNoEqualTo(hubSkuNo);
 		List<HubSkuSupplierMappingDto>  lists = hubSkuSupplierMappingClient.selectByCriteria(criteriaDto);
