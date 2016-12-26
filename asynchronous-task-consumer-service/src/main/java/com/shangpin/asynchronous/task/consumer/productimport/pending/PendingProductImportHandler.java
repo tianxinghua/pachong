@@ -9,6 +9,8 @@ import com.shangpin.asynchronous.task.consumer.productimport.hub.service.HubProd
 import com.shangpin.asynchronous.task.consumer.productimport.pending.service.PendingProductImportService;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * <p>Title:PendingProductImportHandler.java </p>
  * <p>Description: pending商品导入处理</p>
@@ -17,6 +19,7 @@ import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
  * @date 2016年12月19日 下午8:03:57
  */
 @Component
+@Slf4j
 public class PendingProductImportHandler {
 	
 	@Autowired
@@ -29,6 +32,7 @@ public class PendingProductImportHandler {
 	public void pendingImportStreamListen(ProductImportTask message, Map<String, Object> headers) {
 		// TODO Auto-generated method stub
 		try {
+			log.info("接受到消息：{}",message);
 			pendingProductImportService.handMessage(message);
 		} catch (Exception e) {
 			e.printStackTrace();

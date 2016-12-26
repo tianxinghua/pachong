@@ -139,7 +139,10 @@ public class OrderHandleSearch {
 	@Qualifier("carofiglioOrderImpl")
 	IOrderService carofiglioOrderImpl;
 	public IOrderService getHander(String supplierId) {
-
+		//tonySub暂停
+//		if ("2015092201518".equals(supplierId)) {
+//			return tonySubOrderImpl;
+//		}else
 		if ("2015102201625".equals(supplierId)) {// 预锁库存随机返回值
 			return clutcherOrderImpl;
 		} else if ("2016102401951".equals(supplierId)) {
@@ -205,9 +208,6 @@ public class OrderHandleSearch {
 		}
 		else if ("2016101401948".equals(supplierId)) {
 			return pozzileiForteOrderService;
-		}
-		else if ("2015092201518".equals(supplierId)) {
-			return tonySubOrderImpl;
 		}else if ("2016032401822".equals(supplierId)) {
 			return montiOrderService;
 		}else if ("2016012801758".equals(supplierId)) {
