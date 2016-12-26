@@ -221,6 +221,7 @@ public class PendingHandler {
         }else{
 
             BeanUtils.copyProperties(spu,hubSpuPending);
+            hubSpuPending.setCreateTime(new Date());
             boolean allStatus=true;
 
 

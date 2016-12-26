@@ -261,7 +261,12 @@ public class DataServiceHandler {
     public HubSupplierCategroyDicDto getSupplierCategoryBySupplierIdAndSupplierCategoryAndSupplierGender(String supplierId,String supplierCategory,String  supplierGender){
         HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
         HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
-        criterion.andSupplierIdEqualTo(supplierId).andSupplierCategoryEqualTo(supplierCategory).andSupplierGenderEqualTo(supplierGender);
+        criterion.andSupplierIdEqualTo(supplierId).andSupplierCategoryEqualTo(supplierCategory);
+        if(StringUtils.isBlank(supplierCategory)){
+            criterion.andSupplierGenderIsNull();
+        }else{
+            criterion.andSupplierGenderEqualTo(supplierGender);
+        }
         List<HubSupplierCategroyDicDto> hubSupplierCategroyDicDtos = hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
         if(null!=hubSupplierCategroyDicDtos&&hubSupplierCategroyDicDtos.size()>0){
             return  hubSupplierCategroyDicDtos.get(0);
@@ -472,7 +477,8 @@ public class DataServiceHandler {
 
     public void savePendingSpu(HubSpuPendingDto spuPending) throws  Exception{
         try {
-            hubSpuPendingGateWay.insert(spuPending);
+           Long spuPendingId =  hubSpuPendingGateWay.insert(spuPending);
+           spuPending.setSpuPendingId(spuPendingId);
         } catch (Exception e) {
             if(e instanceof DuplicateKeyException){
 
@@ -521,7 +527,8 @@ public class DataServiceHandler {
 
     public void savePendingSku(HubSkuPendingDto skuPendingDto) throws Exception{
         try {
-            hubSkuPendingGateWay.insert(skuPendingDto);
+           Long skuPendingId =  hubSkuPendingGateWay.insert(skuPendingDto);
+            skuPendingDto.setSpuPendingId(skuPendingId);
         } catch (Exception e) {
             if(e instanceof DuplicateKeyException){
 
