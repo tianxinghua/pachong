@@ -2,6 +2,8 @@ server.port: 8001
 spring: 
   cloud: 
        consul: 
+         host: 192.168.20.176
+         port: 8500
          discovery: 
            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
            prefer-ip-address: true
