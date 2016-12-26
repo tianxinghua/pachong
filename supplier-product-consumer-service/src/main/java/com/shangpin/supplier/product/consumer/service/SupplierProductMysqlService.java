@@ -48,7 +48,8 @@ public class SupplierProductMysqlService {
 				
 		HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 		if(null == hubSpuSel){
-			hubSupplierSpuGateWay.insert(hubSpu);
+			Long spuId = hubSupplierSpuGateWay.insert(hubSpu);
+			hubSpu.setSupplierSpuId(spuId); 
 			convertHubSpuToPendingSpu(hubSpu,pendingSpu);
 			return ProductStatus.NEW;
 		}else{
@@ -79,7 +80,8 @@ public class SupplierProductMysqlService {
 	public ProductStatus isHubSkuChanged(HubSupplierSkuDto hubSku,PendingSku pendingSku){
 		HubSupplierSkuDto hubSkuSel = hasHadTheHubSku(hubSku);
 		if(null == hubSkuSel){
-			hubSupplierSkuGateWay.insert(hubSku);
+			Long skuId = hubSupplierSkuGateWay.insert(hubSku);
+			hubSku.setSupplierSkuId(skuId); 
 			convertHubSkuToPendingSku(hubSku,pendingSku);
 			return ProductStatus.NEW;
 		}else{

@@ -1,5 +1,12 @@
 package com.shangpin.supplier.product.consumer.enumeration;
-
+/**
+ * <p>Title:ProductStatus </p>
+ * <p>Description: 产品的状态，分为 新品/有更新/价格发生变化/无变化 </p>
+ * <p>Company: www.shangpin.com</p> 
+ * @author lubaijiang
+ * @date 2016年12月26日 上午10:23:09
+ *
+ */
 public enum ProductStatus {
 	/**
 	 * 新品
