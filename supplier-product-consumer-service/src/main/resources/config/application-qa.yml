@@ -4,18 +4,15 @@ spring:
   rabbitmq: 
            host: 192.168.20.175
            port: 5672
-           username: scm-message-service
-           password: scm-message-service
-           virtual-host: /scm-message-service
+           username: ephub-message-service-qa
+           password: ephub-message-service-qa
+           virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
+          host: 192.168.20.176
+          port: 8500
           discovery: 
             instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
-            prefer-ip-address: true
-            ip-address: 192.168.20.176
-            hostname: 192.168.20.176
-            port: ${server.port}
-            healthCheckUrl: http://192.168.20.176:8005/info 
         stream: 
               bindings: 
                         spinnakerOriginalProduct: 
