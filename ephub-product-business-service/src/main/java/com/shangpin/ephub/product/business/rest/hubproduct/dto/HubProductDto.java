@@ -16,7 +16,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubProductDto implements Serializable {
-	private String supplierNo;
 	private String categoryNo;
 	private String brandNo;
 	private String spuModel;
