@@ -261,7 +261,12 @@ public class DataServiceHandler {
     public HubSupplierCategroyDicDto getSupplierCategoryBySupplierIdAndSupplierCategoryAndSupplierGender(String supplierId,String supplierCategory,String  supplierGender){
         HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
         HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
-        criterion.andSupplierIdEqualTo(supplierId).andSupplierCategoryEqualTo(supplierCategory).andSupplierGenderEqualTo(supplierGender);
+        criterion.andSupplierIdEqualTo(supplierId).andSupplierCategoryEqualTo(supplierCategory);
+        if(StringUtils.isBlank(supplierCategory)){
+            criterion.andSupplierGenderIsNull();
+        }else{
+            criterion.andSupplierGenderEqualTo(supplierGender);
+        }
         List<HubSupplierCategroyDicDto> hubSupplierCategroyDicDtos = hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
         if(null!=hubSupplierCategroyDicDtos&&hubSupplierCategroyDicDtos.size()>0){
             return  hubSupplierCategroyDicDtos.get(0);

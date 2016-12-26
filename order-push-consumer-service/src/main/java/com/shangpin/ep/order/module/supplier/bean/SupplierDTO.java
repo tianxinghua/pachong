@@ -22,7 +22,7 @@ public class SupplierDTO {
     @JsonIgnore
     private String supplierType;//对接类型
     @JsonIgnore
-    private String supplierName;//对接类型
+    private String supplierName;//供货商名称
     @JsonIgnore
     private long buttJointId;
     @JsonIgnore

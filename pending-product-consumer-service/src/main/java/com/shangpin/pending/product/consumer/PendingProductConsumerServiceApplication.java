@@ -53,7 +53,7 @@ public class PendingProductConsumerServiceApplication implements ApplicationRunn
 	public void run(ApplicationArguments args) throws Exception {
 		HubSpuPendingDto arg0 = new HubSpuPendingDto();
 		arg0.setHubColorNo("FDFDf");
-		Long   i= clients2.insert(arg0 );
+		Long  i= clients2.insert(arg0 );
 		System.out.println(arg0);
 	}
 }

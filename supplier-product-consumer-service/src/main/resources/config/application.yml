@@ -1,5 +1,4 @@
-﻿server.port: 9090
-spring: 
+﻿spring: 
   profiles: 
-    active: dev
+    active: qa
   application.name: supplier-product-consumer-service

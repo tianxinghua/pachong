@@ -3,9 +3,7 @@ package com.shangpin.supplier.product.consumer.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
@@ -19,6 +17,8 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
+
+import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:SupplierProductMysqlService </p>
  * <p>Description: Supplier表的增删改查Service</p>
@@ -27,9 +27,8 @@ import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
  * @date 2016年12月14日 下午7:24:08
  *
  */
-@EnableDiscoveryClient
-@EnableFeignClients("com.shangpin.ephub")
-@Component
+@Service
+@Slf4j
 public class SupplierProductMysqlService {
 
 	@Autowired
@@ -48,7 +47,11 @@ public class SupplierProductMysqlService {
 				
 		HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 		if(null == hubSpuSel){
-			hubSupplierSpuGateWay.insert(hubSpu);
+			if(!StringUtils.isEmpty(hubSpu.getSupplierMaterial()) && hubSpu.getSupplierMaterial().length()>500){
+				hubSpu.setSupplierMaterial(hubSpu.getSupplierMaterial().substring(0, 499)); 
+			}
+			Long spuId = hubSupplierSpuGateWay.insert(hubSpu);
+			hubSpu.setSupplierSpuId(spuId); 
 			convertHubSpuToPendingSpu(hubSpu,pendingSpu);
 			return ProductStatus.NEW;
 		}else{
@@ -62,9 +65,10 @@ public class SupplierProductMysqlService {
 			}
 		}
 		} catch (Exception e) {
-			System.out.println("supplierid============="+hubSpu.getSupplierId());
-			System.out.println(hubSpu.getSupplierMaterial());
+			/*System.out.println("supplierid============="+hubSpu.getSupplierId());
+			System.out.println(hubSpu.getSupplierMaterial());*/
 			e.printStackTrace();
+			log.error("系统在保存待处理spu时发生异常：异常为"+e.getMessage(), e);
 		}	
 			
 		return null;
@@ -79,7 +83,8 @@ public class SupplierProductMysqlService {
 	public ProductStatus isHubSkuChanged(HubSupplierSkuDto hubSku,PendingSku pendingSku){
 		HubSupplierSkuDto hubSkuSel = hasHadTheHubSku(hubSku);
 		if(null == hubSkuSel){
-			hubSupplierSkuGateWay.insert(hubSku);
+			Long skuId = hubSupplierSkuGateWay.insert(hubSku);
+			hubSku.setSupplierSkuId(skuId); 
 			convertHubSkuToPendingSku(hubSku,pendingSku);
 			return ProductStatus.NEW;
 		}else{

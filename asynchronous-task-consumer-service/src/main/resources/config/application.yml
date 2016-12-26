@@ -1,5 +1,5 @@
 ﻿server.port: 9095
 spring:
   profiles: 
-    active: dev
+    active: qa
   application.name: asynchronous-task-consumer-service
