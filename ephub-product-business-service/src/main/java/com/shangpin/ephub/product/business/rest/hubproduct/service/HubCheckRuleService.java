@@ -48,15 +48,15 @@ public class HubCheckRuleService {
 		//校验品类
 		
 		//校验颜色
-		if(hubProduct.getColor()!=null){
-			if(!checkHubColor(hubProduct.getColor())){
+		if(hubProduct.getHubColor()!=null){
+			if(!checkHubColor(hubProduct.getHubColor())){	
 				str.append("颜色编号有误") ;
 			}
 		}
 		
 		//校验季节
 		if(hubProduct.getSeason()!=null){
-			if(!checkHubSeason(hubProduct.getSeason(),hubProduct.getSeasonYear())){
+			if(!checkHubSeason(hubProduct.getSeason(),hubProduct.getMarketTime())){
 				str.append("季节编号有误") ;
 			}
 		}
