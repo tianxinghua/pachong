@@ -50,7 +50,7 @@ public class HubWaitSelectedService {
 			hubSkuSuppMapplist = hubSkuSupplierMappingGateWay.selectByCriteria(HubSkuSupplierMappingDto);
 			
 			for(HubSkuSupplierMappingDto hubSkuSupplierMappingDto:hubSkuSuppMapplist){
-				long hubSkuNo = hubSkuSupplierMappingDto.getSkuNo();
+				String hubSkuNo = hubSkuSupplierMappingDto.getSkuNo();
 			}
 		}
 		List<HubSpuDto> hubSpuList = hubSpuService.findHubSpuList(dto);
