@@ -28,13 +28,13 @@ public class PendingExportController {
 	@Autowired
 	private IPendingProductService pendingProductService;
 
-	@RequestMapping(value="/spu",method=RequestMethod.POST)
+	@RequestMapping(value="/spu",method=RequestMethod.GET)
 	public void exportSpu(@RequestBody PendingQuryDto pendingQuryDto,HttpServletResponse response){
 		OutputStream ouputStream = null;
 		try {
 			HSSFWorkbook wb = pendingProductService.exportSpu(pendingQuryDto);
 			response.setContentType("application/vnd.ms-excel");    
-	        response.setHeader("Content-disposition", "attachment;filename="+"pending_spu_product_" + System.currentTimeMillis()+".xls");    
+	        response.setHeader("Content-Disposition", "attachment;filename="+"pending_spu_product_" + System.currentTimeMillis()+".xls");    
 	        ouputStream = response.getOutputStream();    
 	        wb.write(ouputStream);    
 	        ouputStream.flush();    
@@ -49,7 +49,7 @@ public class PendingExportController {
 			}
 		}
 	}
-	@RequestMapping(value="/sku",method=RequestMethod.POST)
+	@RequestMapping(value="/sku",method=RequestMethod.GET)
 	public void exportSku(@RequestBody PendingQuryDto pendingQuryDto,HttpServletResponse response){
 		OutputStream ouputStream = null;
 		try {

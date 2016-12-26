@@ -28,6 +28,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.util.TaskImportTemplate;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
@@ -65,28 +66,34 @@ public class PendingProductService implements IPendingProductService{
 		HSSFRow row = sheet.createRow(0);
 		HSSFCellStyle  style = wb.createCellStyle();
 		style.setAlignment(HSSFCellStyle.ALIGN_CENTER);//居中
-		String[] row0 = new String[0];//TaskImportTemplate.getPendingSpuTemplate();
+		String[] row0 = TaskImportTemplate.getPendingSkuTemplate();
 		for(int i= 0;i<row0.length;i++){
 			HSSFCell cell = row.createCell(i);
 			cell.setCellValue(row0[i]);
 			cell.setCellStyle(style);
 		}
-		PendingProducts products = findPendingProducts(pendingQuryDto);
-		if(null != products && products.getProduts().size()>0){
-			int j = 0;
-			for(PendingProductDto product : products.getProduts()){
-				for(HubSkuPendingDto sku : product.getHubSkus()){
-					try {
-						j++;
-						row = sheet.createRow(j);
-						row.setHeight((short) 1500);					
-						insertProductSkuOfRow(row,product,sku);
-					} catch (Exception e) {
-						j--;
-					}
-				}				
+		try {
+			PendingProducts products = findPendingProducts(pendingQuryDto);
+			if(null != products && products.getProduts().size()>0){
+				int j = 0;
+				for(PendingProductDto product : products.getProduts()){
+					for(HubSkuPendingDto sku : product.getHubSkus()){
+						try {
+							j++;
+							row = sheet.createRow(j);
+							row.setHeight((short) 1500);					
+							insertProductSkuOfRow(row,product,sku);
+						} catch (Exception e) {
+							e.printStackTrace();
+							j--;
+						}
+					}				
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace(); 
 		}
+		
 		return wb;
 	}
 	@Override
@@ -96,26 +103,31 @@ public class PendingProductService implements IPendingProductService{
 		HSSFRow row = sheet.createRow(0);
 		HSSFCellStyle  style = wb.createCellStyle();
 		style.setAlignment(HSSFCellStyle.ALIGN_CENTER);//居中
-		String[] row0 = new String[0];//TaskImportTemplate.getPendingSpuTemplate();
+		String[] row0 = TaskImportTemplate.getPendingSpuTemplate();
 		for(int i= 0;i<row0.length;i++){
 			HSSFCell cell = row.createCell(i);
 			cell.setCellValue(row0[i]);
 			cell.setCellStyle(style);
 		}
-		List<PendingProductDto> products = findPengdingSpu(pendingQuryDto);
-		if(null != products && products.size()>0){
-			int j = 0;
-			for(PendingProductDto product : products){
-				try {
-					j++;
-					row = sheet.createRow(j);
-					row.setHeight((short) 1500);					
-					insertProductSpuOfRow(row,product);
-				} catch (Exception e) {
-					j--;
+		try {
+			List<PendingProductDto> products = findPengdingSpu(pendingQuryDto);
+			if(null != products && products.size()>0){
+				int j = 0;
+				for(PendingProductDto product : products){
+					try {
+						j++;
+						row = sheet.createRow(j);
+						insertProductSpuOfRow(row,product);
+					} catch (Exception e) {
+						e.printStackTrace();
+						j--;
+					}
 				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		
 		return wb;
 	}
 	@Override
@@ -421,7 +433,7 @@ public class PendingProductService implements IPendingProductService{
 		row.createCell(14).setCellValue(product.getSpuDesc());
 		StringBuffer buffer = new StringBuffer();
 		String comma = ",";
-		if(!PicState.PIC_INFO_COMPLETED.equals(product.getPicState())){
+		if(PicState.NO_PIC.getIndex() == product.getPicState() || PicState.PIC_INFO_NOT_COMPLETED.getIndex() == product.getPicState()){
 			buffer = buffer.append("图片").append(comma);
 		}
 		if(CatgoryState.PERFECT_MATCHED.equals(product.getCatgoryState())){
