@@ -1,5 +1,4 @@
-﻿server.port: 9094
-spring:
+﻿spring: 
   profiles: 
-    active: dev
+    active: qa
   application.name: ephub-product-business-service
