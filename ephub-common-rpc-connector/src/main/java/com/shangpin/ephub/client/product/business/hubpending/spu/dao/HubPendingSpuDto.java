@@ -1,4 +1,4 @@
-package com.shangpin.ephub.client.product.business.hubproduct.dto;
+package com.shangpin.ephub.client.product.business.hubpending.spu.dao;
 
 import java.io.Serializable;
 
@@ -15,8 +15,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubProductDto implements Serializable {
-	
+public class HubPendingSpuDto implements Serializable {
+	private String supplierNo;
 	private String categoryNo;
 	private String brandNo;
 	private String spuModel;

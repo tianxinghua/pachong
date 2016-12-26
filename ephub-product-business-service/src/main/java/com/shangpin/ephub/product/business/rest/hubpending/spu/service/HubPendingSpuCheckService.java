@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.rest.hubproduct.service;
+package com.shangpin.ephub.product.business.rest.hubpending.spu.service;
 
 import java.util.List;
 
@@ -7,21 +7,21 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
-import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
-import com.shangpin.ephub.product.business.rest.hubproduct.dto.HubProductDto;
+import com.shangpin.ephub.product.business.rest.hubpending.spu.dto.HubPendingSpuDto;
+import com.shangpin.ephub.product.business.rest.hubpending.spu.manager.HubPendingSpuCheckManager;
 import com.shangpin.ephub.product.business.rest.hubproduct.manager.HubProductCheckManager;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>Title:HubCheckRuleService.java </p>
- * <p>Description: hua商品校验实现</p>
+ * <p>Description: huaPendingSpu校验实现</p>
  * <p>Company: www.shangpin.com</p> 
  * @author zhaogenchun
  * @date 2016年12月23日 下午4:15:16
@@ -29,13 +29,13 @@ import lombok.extern.slf4j.Slf4j;
 @SuppressWarnings("unused")
 @Service
 @Slf4j
-public class HubCheckRuleService {
+public class HubPendingSpuCheckService {
 	
 	@Autowired
-	private HubProductCheckManager hubProductCheckRuleManager;
+	private HubPendingSpuCheckManager hubPendingSpuCheckManager;
 	
 	
-	public String checkHubProduct(HubProductDto hubProduct){
+	public String checkHubPendingSpu(HubPendingSpuDto hubProduct){
 		
 		StringBuffer str = new StringBuffer();
 		//校验品牌
@@ -75,7 +75,7 @@ public class HubCheckRuleService {
 	private boolean checkHubBrand(String brandNo){
 		HubBrandDicCriteriaDto hubBrandDicCriteriaDto = new HubBrandDicCriteriaDto();
 		hubBrandDicCriteriaDto.createCriteria().andHubBrandNoEqualTo(brandNo);
-		List<HubBrandDicDto> list = hubProductCheckRuleManager.findBrandByCriteria(hubBrandDicCriteriaDto);
+		List<HubBrandDicDto> list = hubPendingSpuCheckManager.findBrandByCriteria(hubBrandDicCriteriaDto);
 		if(list!=null&&list.size()>0){
 			return true;
 		}else{
@@ -85,7 +85,7 @@ public class HubCheckRuleService {
 	private boolean checkHubColor(String color){
 		HubColorDicCriteriaDto hubColorDicCriteriaDto = new HubColorDicCriteriaDto();
 		hubColorDicCriteriaDto.createCriteria().andColorNoEqualTo(color);
-		List<HubColorDicDto> list = hubProductCheckRuleManager.findColorByCriteria(hubColorDicCriteriaDto);
+		List<HubColorDicDto> list = hubPendingSpuCheckManager.findColorByCriteria(hubColorDicCriteriaDto);
 		if(list!=null&&list.size()>0){
 			return true;
 		}else{
@@ -95,7 +95,7 @@ public class HubCheckRuleService {
 	private boolean checkHubSeason(String season,String seasonYear){
 		HubSeasonDicCriteriaDto hubSeasonDicCriteriaDto = new HubSeasonDicCriteriaDto();
 		hubSeasonDicCriteriaDto.createCriteria().andHubSeasonEqualTo(season).andHubMarketTimeEqualTo(seasonYear);
-		List<HubSeasonDicDto> list = hubProductCheckRuleManager.findSeasonByCriteria(hubSeasonDicCriteriaDto);
+		List<HubSeasonDicDto> list = hubPendingSpuCheckManager.findSeasonByCriteria(hubSeasonDicCriteriaDto);
 		if(list!=null&&list.size()>0){
 			return true;
 		}else{
@@ -105,7 +105,7 @@ public class HubCheckRuleService {
 	private boolean checkHubGender(String gender){
 		HubGenderDicCriteriaDto hubGenderDicCriteriaDto = new HubGenderDicCriteriaDto();
 		hubGenderDicCriteriaDto.createCriteria().andHubGenderEqualTo(gender);
-		List<HubGenderDicDto> list = hubProductCheckRuleManager.findGenderByCriteria(hubGenderDicCriteriaDto);
+		List<HubGenderDicDto> list = hubPendingSpuCheckManager.findGenderByCriteria(hubGenderDicCriteriaDto);
 		if(list!=null&&list.size()>0){
 			return true;
 		}else{

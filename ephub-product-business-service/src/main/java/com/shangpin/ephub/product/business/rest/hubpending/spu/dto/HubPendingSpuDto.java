@@ -1,4 +1,4 @@
-package com.shangpin.ephub.client.product.business.hubproduct.dto;
+package com.shangpin.ephub.product.business.rest.hubpending.spu.dto;
 
 import java.io.Serializable;
 
@@ -15,8 +15,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubProductDto implements Serializable {
-	
+public class HubPendingSpuDto implements Serializable {
 	private String categoryNo;
 	private String brandNo;
 	private String spuModel;
@@ -24,10 +23,7 @@ public class HubProductDto implements Serializable {
 	private String hubColor;
 	private String season;
 	private String marketTime;
-	private String skuSize;
 	private String material;
 	private String origin;
-	private String marketPrice;
-	private String marketCurrency;
 	private static final long serialVersionUID = 2215182249308660796L;
 }
