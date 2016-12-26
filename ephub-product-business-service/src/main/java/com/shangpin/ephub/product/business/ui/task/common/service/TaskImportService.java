@@ -30,6 +30,8 @@ import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductRe
 import com.shangpin.ephub.product.business.util.DateTimeUtil;
 import com.shangpin.ephub.response.HubResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * <p>
  * Title:SupplierOrderService.java
@@ -46,6 +48,7 @@ import com.shangpin.ephub.response.HubResponse;
  */
 @SuppressWarnings("rawtypes")
 @Service
+@Slf4j
 public class TaskImportService {
 	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
 	@Autowired 
@@ -114,10 +117,12 @@ public class TaskImportService {
 		}
 		criteria.andImportTypeIn(listImportType);
 		int total = spuImportGateway.countByCriteria(hubSpuImportTaskCriteriaDto);
+		log.info("查询到数量："+total);
 		if(total<1){
 			return null;
 		}
 		List<HubSpuImportTaskDto>  list = spuImportGateway.selectByCriteria(hubSpuImportTaskCriteriaDto);
+		log.info("查询到数据："+list);
 		HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = new HubTaskProductResponseWithPageDTO();
 		List<HubTaskProductResponseDTO> responseList = convertTaskDTO2ResponseDTO(list);
 		hubTaskProductResponseWithPageDTO.setTotal(total);
