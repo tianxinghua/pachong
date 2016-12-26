@@ -1,4 +1,4 @@
-server.port: 9821
+server.port: 8000
 spring:
   rabbitmq: 
            host: 192.168.20.175
@@ -9,14 +9,56 @@ spring:
   cloud: 
         stream: 
               bindings: 
+                        spinnakerOriginalProduct: 
+                              destination: spinnaker.original.product
+                              content-type: application/json
+                        ostoreOriginalProduct: 
+                              destination: ostore.original.product
+                              content-type: application/json
+                        brunarossoOriginalProduct: 
+                              destination: brunarosso.original.product
+                              content-type: application/json
+                        stefaniaOriginalProduct: 
+                              destination: stefania.original.product
+                              content-type: application/json
                         gebOriginalProduct: 
                               destination: geb.original.product
                               content-type: application/json
+                        coltortiOriginalProduct: 
+                              destination: coltorti.original.product
+                              content-type: application/json
+                        tonyOriginalProduct: 
+                              destination: tony.original.product
+                              content-type: application/json
+                        biondioniOriginalProduct: 
+                              destination: biondioni.original.product
+                              content-type: application/json                                                                                                                                                                                                              
               rabbit: 
                       bindings: 
-                        gebOriginalProduct: 
-                              producer: 
-                                       prefix: HA.
+                            spinnakerOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            ostoreOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            brunarossoOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            stefaniaOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            gebOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            coltortiOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            tonyOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            biondioniOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.                                                                                                                                                                                                                                                                                
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
