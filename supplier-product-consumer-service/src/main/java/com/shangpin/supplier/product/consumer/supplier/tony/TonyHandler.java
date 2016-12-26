@@ -13,10 +13,13 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.tony.dto.TonyItems;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>Title:TonyHandler </p>
@@ -27,6 +30,7 @@ import com.shangpin.supplier.product.consumer.supplier.tony.dto.TonyItems;
  *
  */
 @Component("tonyHandler")
+@Slf4j
 public class TonyHandler implements ISupplierHandler {
 	
 	@Autowired
@@ -34,22 +38,25 @@ public class TonyHandler implements ISupplierHandler {
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
-		if(!StringUtils.isEmpty(message.getData())){
-			TonyItems tonyItems = JsonUtil.deserialize(message.getData(), TonyItems.class);
-			HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-			boolean success = convertSpu(message.getSupplierId(), tonyItems, hubSpu);
-			List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
-			HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-			boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), tonyItems, hubSku);
-			if(skuSucc){
-				hubSkus.add(hubSku);
+		try {
+			if(!StringUtils.isEmpty(message.getData())){
+				TonyItems tonyItems = JsonUtil.deserialize(message.getData(), TonyItems.class);
+				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
+				boolean success = convertSpu(message.getSupplierId(), tonyItems, hubSpu);
+				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
+				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
+				boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), tonyItems, hubSku);
+				if(skuSucc){
+					hubSkus.add(hubSku);
+				}
+				if(success){
+					supplierProductSaveAndSendToPending.tonySaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
+				}
+				
 			}
-			if(success){
-				supplierProductSaveAndSendToPending.tonySaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
-			}
-			
-		}
-		
+		} catch (EpHubSupplierProductConsumerException e) {
+			log.error("tony异常："+e.getMessage(),e);
+		} 
 	}
 	
 	/**

@@ -17,8 +17,7 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
-
-import lombok.extern.slf4j.Slf4j;
+import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 /**
  * <p>Title:SupplierProductMysqlService </p>
  * <p>Description: Supplier表的增删改查Service</p>
@@ -28,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @Service
-@Slf4j
 public class SupplierProductMysqlService {
 
 	@Autowired
@@ -41,37 +39,33 @@ public class SupplierProductMysqlService {
 	 * @param pendingSpu 把hubSpu发生变化了的信息记录到这个对象中
 	 * @return
 	 */
-	public ProductStatus isHubSpuChanged(HubSupplierSpuDto hubSpu,PendingSpu pendingSpu){
-		try {
-			
-				
-		HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
-		if(null == hubSpuSel){
-			if(!StringUtils.isEmpty(hubSpu.getSupplierMaterial()) && hubSpu.getSupplierMaterial().length()>500){
-				hubSpu.setSupplierMaterial(hubSpu.getSupplierMaterial().substring(0, 499)); 
-			}
-			Long spuId = hubSupplierSpuGateWay.insert(hubSpu);
-			hubSpu.setSupplierSpuId(spuId); 
-			convertHubSpuToPendingSpu(hubSpu,pendingSpu);
-			return ProductStatus.NEW;
-		}else{
-			HubSupplierSpuDto hubSpuUpdated = new HubSupplierSpuDto();
-			boolean isChanged = comparisonHubSpu(hubSpu, hubSpuSel, pendingSpu,hubSpuUpdated);
-			if(isChanged){
-				updateHubSpu(hubSpuUpdated);
-				return ProductStatus.UPDATE;
+	public ProductStatus isHubSpuChanged(HubSupplierSpuDto hubSpu,PendingSpu pendingSpu) throws EpHubSupplierProductConsumerException{
+		try {	
+			HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
+			if(null == hubSpuSel){
+				String material = hubSpu.getSupplierMaterial();
+				if(!StringUtils.isEmpty(material) && material.length()>=500){
+					hubSpu.setSupplierMaterial(material.substring(0, 500)); 
+				}
+				Long spuId = hubSupplierSpuGateWay.insert(hubSpu);
+				hubSpu.setSupplierSpuId(spuId); 
+				convertHubSpuToPendingSpu(hubSpu,pendingSpu);
+				return ProductStatus.NEW;
 			}else{
-				return ProductStatus.NO_NEED_HANDLE;
+				HubSupplierSpuDto hubSpuUpdated = new HubSupplierSpuDto();
+				boolean isChanged = comparisonHubSpu(hubSpu, hubSpuSel, pendingSpu,hubSpuUpdated);
+				if(isChanged){
+					updateHubSpu(hubSpuUpdated);
+					return ProductStatus.UPDATE;
+				}else{
+					return ProductStatus.NO_NEED_HANDLE;
+				}
 			}
-		}
 		} catch (Exception e) {
 			/*System.out.println("supplierid============="+hubSpu.getSupplierId());
 			System.out.println(hubSpu.getSupplierMaterial());*/
-			e.printStackTrace();
-			log.error("系统在保存待处理spu时发生异常：异常为"+e.getMessage(), e);
-		}	
-			
-		return null;
+			throw new EpHubSupplierProductConsumerException("系统在保存待处理spu时发生异常：异常为"+e.getMessage(), e);
+		}			
 	}	
 	
 	/**
@@ -80,23 +74,28 @@ public class SupplierProductMysqlService {
 	 * @param pendingSku 把hubSku发生变化的价格信息记录到这个对象中
 	 * @return
 	 */
-	public ProductStatus isHubSkuChanged(HubSupplierSkuDto hubSku,PendingSku pendingSku){
-		HubSupplierSkuDto hubSkuSel = hasHadTheHubSku(hubSku);
-		if(null == hubSkuSel){
-			Long skuId = hubSupplierSkuGateWay.insert(hubSku);
-			hubSku.setSupplierSkuId(skuId); 
-			convertHubSkuToPendingSku(hubSku,pendingSku);
-			return ProductStatus.NEW;
-		}else{
-			HubSupplierSkuDto hubSkuUpdated = new HubSupplierSkuDto();
-			boolean isChanged = comparisonHubSku(hubSku,hubSkuSel,pendingSku,hubSkuUpdated);
-			if(isChanged){
-				updateHubSku(hubSkuUpdated);
-				return ProductStatus.MODIFY_PRICE;
+	public ProductStatus isHubSkuChanged(HubSupplierSkuDto hubSku,PendingSku pendingSku) throws EpHubSupplierProductConsumerException{
+		try {
+			HubSupplierSkuDto hubSkuSel = hasHadTheHubSku(hubSku);
+			if(null == hubSkuSel){
+				Long skuId = hubSupplierSkuGateWay.insert(hubSku);
+				hubSku.setSupplierSkuId(skuId); 
+				convertHubSkuToPendingSku(hubSku,pendingSku);
+				return ProductStatus.NEW;
 			}else{
-				return ProductStatus.NO_NEED_HANDLE;
+				HubSupplierSkuDto hubSkuUpdated = new HubSupplierSkuDto();
+				boolean isChanged = comparisonHubSku(hubSku,hubSkuSel,pendingSku,hubSkuUpdated);
+				if(isChanged){
+					updateHubSku(hubSkuUpdated);
+					return ProductStatus.MODIFY_PRICE;
+				}else{
+					return ProductStatus.NO_NEED_HANDLE;
+				}
 			}
+		} catch (Exception e) {
+			throw new EpHubSupplierProductConsumerException("系统在保存待处理sku时发生异常：异常为"+e.getMessage(), e);
 		}
+		
 	}	
 
 	/**
@@ -107,7 +106,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSkuUpdated 待更新的对象，用来更新本地库
 	 * @return
 	 */
-	private boolean comparisonHubSku(HubSupplierSkuDto hubSku, HubSupplierSkuDto hubSkuSel, PendingSku pendingSku,HubSupplierSkuDto hubSkuUpdated) {
+	private boolean comparisonHubSku(HubSupplierSkuDto hubSku, HubSupplierSkuDto hubSkuSel, PendingSku pendingSku,HubSupplierSkuDto hubSkuUpdated) throws Exception {
 		boolean isChanged = false;
 		pendingSku.setSupplierId(hubSku.getSupplierId());
 		pendingSku.setSupplierSkuNo(hubSku.getSupplierSkuNo());
@@ -138,7 +137,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSku
 	 * @param pendingSku
 	 */
-	private void convertHubSkuToPendingSku(HubSupplierSkuDto hubSku, PendingSku pendingSku) {
+	private void convertHubSkuToPendingSku(HubSupplierSkuDto hubSku, PendingSku pendingSku) throws Exception {
 		pendingSku.setSupplierId(hubSku.getSupplierId());
 		pendingSku.setSupplierSkuNo(hubSku.getSupplierSkuNo());
 		pendingSku.setHubSkuSize(hubSku.getSupplierSkuSize());
@@ -157,7 +156,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSku
 	 * @return
 	 */
-	private HubSupplierSkuDto hasHadTheHubSku(HubSupplierSkuDto hubSku) {
+	private HubSupplierSkuDto hasHadTheHubSku(HubSupplierSkuDto hubSku) throws Exception {
 		HubSupplierSkuCriteriaDto criteriaDto = new HubSupplierSkuCriteriaDto();
 		criteriaDto.createCriteria().andSupplierIdEqualTo(hubSku.getSupplierId()).andSupplierSkuNoEqualTo(hubSku.getSupplierSkuNo());
 		List<HubSupplierSkuDto> hubSkus = hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
@@ -172,7 +171,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSpu
 	 * @return
 	 */
-	private HubSupplierSpuDto hasHadTheHubSpu(HubSupplierSpuDto hubSpu) {
+	private HubSupplierSpuDto hasHadTheHubSpu(HubSupplierSpuDto hubSpu) throws Exception {
 		HubSupplierSpuCriteriaDto criteriaDto = new HubSupplierSpuCriteriaDto();
 		criteriaDto.createCriteria().andSupplierIdEqualTo(hubSpu.getSupplierId()).andSupplierSpuNoEqualTo(hubSpu.getSupplierSpuNo());
 		List<HubSupplierSpuDto> hubSpus = hubSupplierSpuGateWay.selectByCriteria(criteriaDto);
@@ -186,7 +185,7 @@ public class SupplierProductMysqlService {
 	 * 更新
 	 * @param hubSpuUpdated
 	 */
-	private void updateHubSpu(HubSupplierSpuDto hubSpuUpdated) {
+	private void updateHubSpu(HubSupplierSpuDto hubSpuUpdated)  throws Exception{
 		HubSupplierSpuWithCriteriaDto criteriaDto = new HubSupplierSpuWithCriteriaDto();
 		HubSupplierSpuCriteriaDto hubSupplierSpuCriteriaDto = new HubSupplierSpuCriteriaDto();
 		hubSupplierSpuCriteriaDto.createCriteria().andSupplierIdEqualTo(hubSpuUpdated.getSupplierId()).andSupplierSpuNoEqualTo(hubSpuUpdated.getSupplierSpuNo());
@@ -198,7 +197,7 @@ public class SupplierProductMysqlService {
 	 * 更新
 	 * @param hubSkuUpdated
 	 */
-	private void updateHubSku(HubSupplierSkuDto hubSkuUpdated) {
+	private void updateHubSku(HubSupplierSkuDto hubSkuUpdated) throws Exception {
 		HubSupplierSkuWithCriteriaDto criteriaDto = new HubSupplierSkuWithCriteriaDto();
 		HubSupplierSkuCriteriaDto hubSupplierSkuCriteriaDto = new HubSupplierSkuCriteriaDto();
 		hubSupplierSkuCriteriaDto.createCriteria().andSupplierIdEqualTo(hubSkuUpdated.getSupplierId()).andSupplierSkuNoEqualTo(hubSkuUpdated.getSupplierSkuNo());
@@ -211,7 +210,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSpu
 	 * @param pendingSpu
 	 */
-	private void convertHubSpuToPendingSpu(HubSupplierSpuDto hubSpu, PendingSpu pendingSpu) {
+	private void convertHubSpuToPendingSpu(HubSupplierSpuDto hubSpu, PendingSpu pendingSpu) throws Exception {
 		pendingSpu.setSupplierId(hubSpu.getSupplierId());
 		pendingSpu.setSupplierSpuNo(hubSpu.getSupplierSpuNo());
 		pendingSpu.setSupplierSpuId(hubSpu.getSupplierSpuId());
@@ -236,7 +235,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSpuUpdated 待更新的对象 更新本地库用
 	 * @return 发生变化则返回true,否则false
 	 */
-	private boolean comparisonHubSpu(HubSupplierSpuDto hubSpu,HubSupplierSpuDto hubSpuSel,PendingSpu pendingSpu,HubSupplierSpuDto hubSpuUpdated){
+	private boolean comparisonHubSpu(HubSupplierSpuDto hubSpu,HubSupplierSpuDto hubSpuSel,PendingSpu pendingSpu,HubSupplierSpuDto hubSpuUpdated) throws Exception{
 		boolean isChanged = false;	
 		pendingSpu.setSupplierId(hubSpu.getSupplierId());
 		pendingSpu.setSupplierSpuNo(hubSpu.getSupplierSpuNo());

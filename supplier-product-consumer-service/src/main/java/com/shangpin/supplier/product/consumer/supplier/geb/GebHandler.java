@@ -13,13 +13,18 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
+import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.geb.dto.Item;
 import com.shangpin.supplier.product.consumer.supplier.geb.dto.Material;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component("gebHandler")
+@Slf4j
 public class GebHandler implements ISupplierHandler {
 	
 	@Autowired
@@ -27,20 +32,24 @@ public class GebHandler implements ISupplierHandler {
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
-		if(!StringUtils.isEmpty(message.getData())){
-			Item item = JsonUtil.deserialize(message.getData(), Item.class);
-			HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-			boolean success = convertSpu(message.getSupplierId(),item,hubSpu);
-			List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
-			HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-			boolean skuSuc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),item,hubSku);
-			if(skuSuc){
-				hubSkus.add(hubSku);
-			}
-			if(success){
-				supplierProductSaveAndSendToPending.gebSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
-			}
-		}	
+		try {
+			if(!StringUtils.isEmpty(message.getData())){
+				Item item = JsonUtil.deserialize(message.getData(), Item.class);
+				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
+				boolean success = convertSpu(message.getSupplierId(),item,hubSpu);
+				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
+				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
+				boolean skuSuc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),item,hubSku);
+				if(skuSuc){
+					hubSkus.add(hubSku);
+				}
+				if(success){
+					supplierProductSaveAndSendToPending.gebSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
+				}
+			}	
+		} catch (EpHubSupplierProductConsumerException e) {
+			log.error("geb异常："+e.getMessage(),e); 
+		}
 		
 	}
 	
@@ -50,7 +59,7 @@ public class GebHandler implements ISupplierHandler {
 	 * @param item 供应商原始dto
 	 * @param hubSpu hub spu表
 	 */
-	public boolean convertSpu(String supplierId,Item item, HubSupplierSpuDto hubSpu){
+	public boolean convertSpu(String supplierId,Item item, HubSupplierSpuDto hubSpu) throws EpHubSupplierProductConsumerRuntimeException{
 		if(null != item){			
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(item.getProduct_id());
@@ -85,7 +94,7 @@ public class GebHandler implements ISupplierHandler {
 	 * @param hubSku
 	 * @return
 	 */
-	public boolean convertSku(String supplierId, Long supplierSpuId,Item item, HubSupplierSkuDto hubSku){
+	public boolean convertSku(String supplierId, Long supplierSpuId,Item item, HubSupplierSkuDto hubSku) throws EpHubSupplierProductConsumerRuntimeException{
 		if(null != item){			
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);

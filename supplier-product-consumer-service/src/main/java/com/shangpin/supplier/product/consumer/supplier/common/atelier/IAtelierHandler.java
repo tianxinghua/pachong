@@ -12,6 +12,7 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierDate;
@@ -19,6 +20,8 @@ import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.Atelie
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSku;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSpu;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * * 
@@ -30,6 +33,7 @@ import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
  *
  */
 @Component
+@Slf4j
 public abstract class IAtelierHandler implements ISupplierHandler {
 	
 	@Autowired
@@ -71,27 +75,32 @@ public abstract class IAtelierHandler implements ISupplierHandler {
 	 */
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers){
-		if(!StringUtils.isEmpty(message.getData())){
-			AtelierDate atelierDate = JsonUtil.deserialize(message.getData(),AtelierDate.class);
-			AtelierSpu atelierSpu = handleSpuData(atelierDate.getSpu());			
-			HubSupplierSpuDto hubSpu =  new HubSupplierSpuDto();
-			boolean success = convertSpu(message.getSupplierId(),atelierSpu,hubSpu);
-			List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
-			if(null != atelierDate.getSku()){				
-				AtelierPrice atelierPrice = handlePriceData(atelierDate.getPrice());
-				for(String skuColumn : atelierDate.getSku()){
-					HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-					AtelierSku atelierSku = handleSkuData(skuColumn);					
-					boolean skuSucc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),atelierSpu,atelierSku,atelierPrice,hubSku);
-					if(skuSucc){
-						hubSkus.add(hubSku);
-					}					
+		try {
+			if(!StringUtils.isEmpty(message.getData())){
+				AtelierDate atelierDate = JsonUtil.deserialize(message.getData(),AtelierDate.class);
+				AtelierSpu atelierSpu = handleSpuData(atelierDate.getSpu());			
+				HubSupplierSpuDto hubSpu =  new HubSupplierSpuDto();
+				boolean success = convertSpu(message.getSupplierId(),atelierSpu,hubSpu);
+				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
+				if(null != atelierDate.getSku()){				
+					AtelierPrice atelierPrice = handlePriceData(atelierDate.getPrice());
+					for(String skuColumn : atelierDate.getSku()){
+						HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
+						AtelierSku atelierSku = handleSkuData(skuColumn);					
+						boolean skuSucc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),atelierSpu,atelierSku,atelierPrice,hubSku);
+						if(skuSucc){
+							hubSkus.add(hubSku);
+						}					
+					}
+				}
+				if(success){
+					supplierProductSaveAndSendToPending.atelierSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 				}
 			}
-			if(success){
-				supplierProductSaveAndSendToPending.atelierSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
-			}
+		} catch (EpHubSupplierProductConsumerException e) {
+			log.error("Atelier系统供应商 "+message.getSupplierName()+"异常："+e.getMessage(),e); 
 		}
+		
 		
 	}
 	
