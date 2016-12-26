@@ -55,7 +55,7 @@ public class PendingExportController {
 		try {
 			HSSFWorkbook wb = pendingProductService.exportSku(pendingQuryDto);
 			response.setContentType("application/vnd.ms-excel");    
-	        response.setHeader("Content-disposition", "attachment;filename="+"pending_spu_product_" + System.currentTimeMillis()+".xls");    
+	        response.setHeader("Content-disposition", "attachment;filename="+"pending_sku_product_" + System.currentTimeMillis()+".xls");    
 	        ouputStream = response.getOutputStream();    
 	        wb.write(ouputStream);    
 	        ouputStream.flush();    
