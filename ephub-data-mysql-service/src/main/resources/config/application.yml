@@ -1,5 +1,4 @@
-﻿server.port: 9093
-spring:
+﻿spring: 
   profiles: 
-    active: dev
+    active: qa
   application.name: ephub-data-mysql-service
