@@ -62,7 +62,7 @@ public class HubProductImportService {
 	HubSpuGateWay hubSpuGateWay;
 	private static String[] hubKeyTemplate = null;
 	static {
-		hubKeyTemplate = TaskImportTemplate.getHubProductTemplate();
+		hubKeyTemplate = TaskImportTemplate.getPendingSkuTemplate();
 	}
 
 	// 1、更新任务表，把task_state更新成正在处理 2、从ftp下载文件并解析成对象 3、公共类校验hub数据并把校验结果写入excel
@@ -73,6 +73,9 @@ public class HubProductImportService {
 		taskService.updateHubSpuImportStatusByTaskNo(TaskState.HANDLEING.getIndex(), task.getTaskNo(), null);
 		// 2、从ftp下载文件并解析成对象
 		List<HubProductImportDTO> listHubProduct = handleHubExcel(task.getTaskFtpFilePath(), task.getTaskNo());
+		if(listHubProduct==null){
+			return;
+		}
 		// 3、公共类校验hub数据并把校验结果写入excel
 		List<Map<String, String>> result = checkAndsaveHubProduct(task.getTaskNo(), listHubProduct);
 
@@ -102,6 +105,7 @@ public class HubProductImportService {
 	private List<Map<String, String>> checkAndsaveHubProduct(String taskNo, List<HubProductImportDTO> listHubProduct) {
 
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
+	
 		for (HubProductImportDTO product : listHubProduct) {
 
 			boolean flag = false;

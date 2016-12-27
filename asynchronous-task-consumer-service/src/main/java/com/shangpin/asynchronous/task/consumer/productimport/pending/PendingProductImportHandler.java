@@ -32,7 +32,8 @@ public class PendingProductImportHandler {
 	public void pendingImportStreamListen(ProductImportTask message, Map<String, Object> headers) {
 		// TODO Auto-generated method stub
 		try {
-			log.info("接受到消息：{}",message);
+			log.info("pending任务接受到消息：{}",message);
+			String index = (String)headers.get("0");
 			pendingProductImportService.handMessage(message);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -29,22 +27,19 @@ import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
-import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
-import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubPendingSkuDto;
-import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubSkuPendingCheckGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.dao.HubPendingSpuDto;
-import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubSpuPendingCheckGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
-import com.shangpin.ephub.client.product.business.hubproduct.result.HubProductCheckResult;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -62,6 +57,7 @@ import com.shangpin.ephub.client.util.TaskImportTemplate;
  */
 @SuppressWarnings("rawtypes")
 @Service
+@Slf4j
 public class PendingProductImportService {
 	
 	@Autowired
@@ -77,9 +73,9 @@ public class PendingProductImportService {
 	HubSpuPendingGateWay hubSpuPendingGateWay;
 	
 	@Autowired
-	HubSkuPendingCheckGateWay pendingSkuCheckGateWay;
+	HubPendingSkuCheckGateWay pendingSkuCheckGateWay;
 	@Autowired
-	HubSpuPendingCheckGateWay pendingSpuCheckGateWay;
+	HubPendingSpuCheckGateWay pendingSpuCheckGateWay;
 	
 	private static String[] pendingSkuTemplate = null;
 	static {
@@ -91,7 +87,7 @@ public class PendingProductImportService {
 		
 		//1、更新任务表，把task_state更新成正在处理
 		taskService.updateHubSpuImportStatusByTaskNo(TaskState.HANDLEING.getIndex(),task.getTaskNo(),null);
-		
+		log.info("任务编号："+task.getTaskNo()+"状态更新成正在处理");
 		// 2、从ftp下载文件并解析成对象
 		List<HubPendingProductImportDTO> listHubProduct = handleHubExcel(task.getTaskFtpFilePath(),task.getTaskNo());
 		
@@ -134,30 +130,35 @@ public class PendingProductImportService {
 			
 			Map<String, String> map = new HashMap<String, String>();
 			//处理spu信息
+			
+			updateOrSaveSku(product);
+			
 			HubPendingSpuCheckResult hubPendingSpuCheckResult = handlePendingSpu(product);
 			
 			
 			if(hubPendingSpuCheckResult.isPassing()==true){
-				
+				log.info(taskNo+"spu校验通过");
 				//校验sku信息
 				HubPendingSkuCheckResult hubPendingSkuCheckResult = handlePendingSku(product);
 				if (hubPendingSkuCheckResult.isPassing() == true) {
-					
+					log.info(taskNo+"sku校验通过");
 					updateOrSaveSku(product);
 					
-//					updateOrSaveSpu(product);
+					updateOrSaveSpu(product);
 					
 					map.put("taskNo",taskNo);
 					map.put("spuModel",product.getSpuModel());
 					map.put("taskState","校验成功");
 					map.put("processInfo","校验通过");
 				}else {
+					log.info(taskNo+"sku校验不通过");
 					map.put("taskNo", taskNo);
 					map.put("spuModel", product.getSpuModel());
 					map.put("taskState", "校验失败");
 					map.put("processInfo", hubPendingSkuCheckResult.getResult());
 				}
 			}else {
+				log.info(taskNo+"spu校验不通过");
 				map.put("taskNo", taskNo);
 				map.put("spuModel", product.getSpuModel());
 				map.put("taskState", "校验失败");
@@ -170,18 +171,18 @@ public class PendingProductImportService {
 	}
 
 	
-//	private void updateOrSaveSpu(HubPendingProductImportDTO product) {
-//		//查询数据库spu信息是否已存在，存在则更新，反之插入
-//		HubSpuPendingDto hubSpuPendingDto = convertHubPendingProduct2Spu(product);
-//		Long ll = hubSpuPendingDto.getSpuPendingId();
-//		Long spuId = findHubSpuPending(ll);
-//		if(spuId!=null){
-//			hubSpuPendingDto.setSpuPendingId(spuId);
-//			hubSpuPendingGateWay.updateByPrimaryKey(hubSpuPendingDto);
-//		}else{
-//			hubSpuPendingGateWay.insert(hubSpuPendingDto);	
-//		}
-//	}
+	private void updateOrSaveSpu(HubPendingProductImportDTO product) {
+		//查询数据库spu信息是否已存在，存在则更新，反之插入
+		HubSpuPendingDto hubSpuPendingDto = convertHubPendingProduct2Spu(product);
+		Long ll = hubSpuPendingDto.getSpuPendingId();
+		Long spuId = findHubSpuPending(ll);
+		if(spuId!=null){
+			hubSpuPendingDto.setSpuPendingId(spuId);
+			hubSpuPendingGateWay.updateByPrimaryKey(hubSpuPendingDto);
+		}else{
+			hubSpuPendingGateWay.insert(hubSpuPendingDto);	
+		}
+	}
 
 	private void updateOrSaveSku(HubPendingProductImportDTO product) {
 		
@@ -199,13 +200,13 @@ public class PendingProductImportService {
 
 	private HubPendingSkuCheckResult handlePendingSku(HubPendingProductImportDTO product) {
 		HubPendingSkuDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
-		return pendingSkuCheckGateWay.checkPendingSku(HubPendingSkuDto);
+		return pendingSkuCheckGateWay.checkSku(HubPendingSkuDto);
 	}
 
 	private HubPendingSpuCheckResult handlePendingSpu(HubPendingProductImportDTO product) {
 		//校验spu信息
 		HubPendingSpuDto HubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
-		return pendingSpuCheckGateWay.checkPendingSpu(HubPendingSpuDto);
+		return pendingSpuCheckGateWay.checkSpu(HubPendingSpuDto);
 		
 	}
 
@@ -261,17 +262,20 @@ public class PendingProductImportService {
 		
 		InputStream in = FTPClientUtil.downFile(taskFtpFilePath);
 		if(in==null){
+			log.info("任务编号："+taskNo+","+taskFtpFilePath+"从ftp下载失败数据为空");
 			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo,"从ftp下载失败");
 		}
 		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(in);
 		XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
 		if (xssfSheet.getRow(0) == null) {
+			log.info("任务编号："+taskNo+","+taskFtpFilePath+"下载的excel数据为空");
 			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo,"下载的excel数据为空");
 			return null;
 		}
 		boolean flag = checkFileTemplet(xssfSheet.getRow(0));
 		if(!flag){
 			//TODO 上传文件与模板不一致
+			log.info("任务编号："+taskNo+","+taskFtpFilePath+"上传文件与模板不一致");
 			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo,"上传文件与模板不一致");
 			return null;
 		}
