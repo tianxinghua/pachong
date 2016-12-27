@@ -22,10 +22,8 @@ import com.shangpin.ephub.response.HubResponse;
  * @author zhaogenchun
  * @date 2016年11月23日 下午4:06:52
  */
-@SuppressWarnings("rawtypes")
 @Service
 public class HubImportTaskService {
-	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
 	public HubResponse<byte[]> downResultFile(String resultFilePath) throws Exception{
 		// TODO Auto-generated method stub
 		InputStream in = FTPClientUtil.downFile(resultFilePath);

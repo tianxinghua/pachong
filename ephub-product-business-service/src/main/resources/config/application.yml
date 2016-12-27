@@ -1,4 +1,4 @@
 ﻿spring: 
   profiles: 
-    active: qa
+    active: dev
   application.name: ephub-product-business-service

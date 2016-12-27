@@ -2,8 +2,6 @@ package com.shangpin.ephub.product.business.ui.task.pendingimport.dto;
 
 import java.io.Serializable;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.shangpin.ephub.client.product.business.hubpending.spu.gateway;
+package com.shangpin.ephub.client.product.business.hubpending.sku.gateway;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubPendingSkuDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
-import com.shangpin.ephub.client.product.business.hubpending.spu.dao.HubPendingSpuDto;
-import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 
 /**
  * <p>Title:HubBrandModelRuleController.java </p>
@@ -18,13 +16,13 @@ import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendi
  * @date 2016年12月23日 下午3:52:56
  */
 @FeignClient("ephub-product-business-service")
-public interface HubSpuPendingCheckGateWay {
+public interface HubPendingSkuCheckGateWay {
 	
 	/**
 	 * HUB数据入库前校验
 	 * @param dto 数据传输对象
 	 * @return 校验结果：
 	 */
-	@RequestMapping(value = "/hub-pending-spu/check-spu", method = RequestMethod.POST,consumes = "application/json")
-	public HubPendingSpuCheckResult checkPendingSpu(@RequestBody HubPendingSpuDto dto);
+	@RequestMapping(value = "/hub-pending-sku-check/check-sku", method = RequestMethod.POST,consumes = "application/json")
+	public HubPendingSkuCheckResult checkSku(@RequestBody HubPendingSkuDto dto);
 }

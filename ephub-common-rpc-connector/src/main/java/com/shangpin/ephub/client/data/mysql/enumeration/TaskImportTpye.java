@@ -1,38 +1,38 @@
-package com.shangpin.ephub.product.business.ui.task.common.enumeration;
+package com.shangpin.ephub.client.data.mysql.enumeration;
 
-public enum TaskStatus {
+public enum TaskImportTpye {
 
 	/**
 	 * 图片状态
 	 */
-	NO_HANDLE(0,"NO_HANDLE"),
+	NO_TYPE(0,"NO_TYPE"),
 	/**
 	 * 货号状态
 	 */
-	HANDLEING(1,"HANDLEING"),
+	PENDING_SPU(1,"PENDING_SPU"),
 	/**
 	 * 品类状态
 	 */
-	SOME_SUCCESS(2,"SOME_SUCCESS"),
+	PENDING_SKU(2,"PENDING_SKU"),
 	/**
 	 * 品牌状态
 	 */
-	ALL_SUCCESS(3,"ALL_SUCCESS");
+	HUB_PRODUCT(3,"HUB_PRODUCT");
 	
 	/**
      * 数字索引标识
      */
-    private int index;
+    private Integer index;
     /**
      * 描述信息
      */
     private String description;
     
-    TaskStatus(Integer index,String description){
+    TaskImportTpye(Integer index,String description){
 		this.index = index;
 		this.description = description;
 	}
-    public int getIndex() {
+    public Integer getIndex() {
         return index;
     }
     public void setIndex(Integer index) {

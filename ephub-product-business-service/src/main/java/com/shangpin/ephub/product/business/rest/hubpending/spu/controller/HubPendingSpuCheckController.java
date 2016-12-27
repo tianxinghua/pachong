@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2016年12月22 下午3:52:56
  */
 @RestController
-@RequestMapping(value = "/hub-pending-spu")
+@RequestMapping(value = "/hub-pending-spu-check")
 @Slf4j
 public class HubPendingSpuCheckController {
 	
@@ -28,7 +28,7 @@ public class HubPendingSpuCheckController {
 	private HubPendingSpuCheckService hubCheckRuleService;
 	
 	@RequestMapping(value = "/check-spu")
-	public HubPendingSpuCheckResult checkPendingSpu(@RequestBody HubPendingSpuDto dto){
+	public HubPendingSpuCheckResult checkSpu(@RequestBody HubPendingSpuDto dto){
 		log.info("");
 		HubPendingSpuCheckResult result = new HubPendingSpuCheckResult();
 		String returnStr = hubCheckRuleService.checkHubPendingSpu(dto);

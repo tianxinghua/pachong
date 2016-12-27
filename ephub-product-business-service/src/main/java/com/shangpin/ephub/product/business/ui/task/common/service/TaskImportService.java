@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
@@ -13,15 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.shangpin.ephub.client.common.dto.RowBoundsDto;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto.Criteria;
-import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
-import com.shangpin.ephub.product.business.ui.task.common.enumeration.TaskStatus;
 import com.shangpin.ephub.product.business.ui.task.common.util.FTPClientUtil;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
@@ -65,25 +66,26 @@ public class TaskImportService {
 				Date date = new Date();
 				String taskNo = sim.format(date);
 				String systemFileName = taskNo +"."+fileName[1];
-				
 				//第一步 ： 上传ftp
 				String ftpPath = FTPClientUtil.uploadFile(task.getUploadfile(),systemFileName);
 				//第二步 ： 保存数据库
 				saveTask(task,taskNo,ftpPath,systemFileName,importType);
 				//TODO 第三步 ：发送到hub消息队列
-				sendTaskMessage(taskNo,ftpPath+systemFileName);
+				sendTaskMessage(taskNo,ftpPath+systemFileName,importType);
 				return HubResponse.successResp(null);
 			}
 		}
 		return HubResponse.errorResp("文件格式有误，请下载模板");
 	}
-	private void sendTaskMessage(String taskNo,String ftpFilePath){
+	private void sendTaskMessage(String taskNo,String ftpFilePath,int importType){
 		ProductImportTask productImportTask = new ProductImportTask();
 		productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
 		productImportTask.setMessageId(UUID.randomUUID().toString());
 		productImportTask.setTaskNo(taskNo);
 		productImportTask.setTaskFtpFilePath(ftpFilePath);
-		productImportTaskStreamSender.hubProductImportTaskStream(productImportTask, null);
+		Map<String,String> map = new HashMap<String,String>();
+		map.put(importType+"",TaskImportTpye.PENDING_SPU.getDescription());
+		productImportTaskStreamSender.pendingProductImportTaskStream(productImportTask, map);
 	}
 	private boolean saveTask(HubImportTaskRequestDto task,String taskNo,String ftpPath,String systemFileName,int importType) throws Exception{
 		// TODO Auto-generated method stub
@@ -94,7 +96,7 @@ public class TaskImportService {
 	    hubSpuTask.setLocalFileName(task.getFileName());
 	    hubSpuTask.setCreateTime(new Date());
 	    hubSpuTask.setCreateUser(task.getCreateUser());
-	    hubSpuTask.setTaskState((byte) TaskStatus.NO_HANDLE.getIndex());
+	    hubSpuTask.setTaskState((byte) TaskState.NO_HANDLE.getIndex());
 	    hubSpuTask.setImportType((byte)importType);
 	    spuImportGateway.insert(hubSpuTask);
 		return true;
