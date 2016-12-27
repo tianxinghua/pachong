@@ -29,7 +29,9 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Cri
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
@@ -208,24 +210,31 @@ public class PendingProductService implements IPendingProductService{
 			
 	}
 	@Override
-	public boolean updatePendingProduct(PendingProductDto pendingProductDto){
+	public boolean updatePendingProduct(PendingProductDto pendingProductDto) throws Exception{
 		try {
 			if(null != pendingProductDto){
-				//TODO 先验证，验证通过则更新
-				hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+				HubPendingSpuCheckResult spuResult = pendingSpuCheckGateWay.checkSpu(pendingProductDto);
+				if(spuResult.isPassing()){
+					hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+				}else{
+					log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
+				}
 				List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
 				if(null != pengdingSkus && pengdingSkus.size()>0){
 					for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
-						//TODO 先验证，验证通过则更新
-						pendingSkuCheckGateWay.checkSku(hubSkuPendingDto);
-						hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+						HubPendingSkuCheckResult result = pendingSkuCheckGateWay.checkSku(hubSkuPendingDto);
+						if(result.isPassing()){
+							hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+						}else{
+							log.info("pending sku校验失败，不更新："+result.getResult()+"|原始数据："+JsonUtil.serialize(hubSkuPendingDto));  
+						}
 					}
 				}
 			}
 			return true;
 		} catch (Exception e) {
 			log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage(),e);
-			return false;
+			throw new Exception("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage(),e);
 		}		
 	}
 	@Override
@@ -238,35 +247,38 @@ public class PendingProductService implements IPendingProductService{
 			}
 			return true;
 		} catch (Exception e) {
+			log.error("待更新页面批量提交异常："+e.getMessage(),e); 
 			return false;
 		}
 		
 	}
 	@Override
-	public boolean updatePendingProductToUnableToProcess(Long spuPendingId){
+	public boolean updatePendingProductToUnableToProcess(String spuPendingId) throws Exception{
 		try {
 			if(!StringUtils.isEmpty(spuPendingId)){
 				HubSpuPendingDto hubSpuPendingDto = new HubSpuPendingDto();
-				hubSpuPendingDto.setSpuPendingId(spuPendingId);
+				hubSpuPendingDto.setSpuPendingId(Long.parseLong(spuPendingId));
 				hubSpuPendingDto.setSpuState(SpuState.UNABLE_TO_PROCESS.getIndex());
 				hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
 			}
 			return true;
 		} catch (Exception e) {
-			return false;
+			log.error("单个产品更新无法处理时异常："+e.getMessage(),e); 
+			throw new Exception("单个产品更新无法处理时异常："+e.getMessage(),e);
 		}
 		
 	}
 	@Override
-	public boolean batchUpdatePendingProductToUnableToProcess(List<Long> spuPendingIds){
+	public boolean batchUpdatePendingProductToUnableToProcess(List<String> spuPendingIds){
 		try {
 			if(null != spuPendingIds && spuPendingIds.size()>0){
-				for(Long spuPendingId : spuPendingIds){
+				for(String spuPendingId : spuPendingIds){
 					updatePendingProductToUnableToProcess(spuPendingId);
 				}
 			}
 			return true;
 		} catch (Exception e) {
+			log.error("批量更新无法处理时异常："+e.getMessage(),e); 
 			return false;
 		}
 		
