@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.dao.HubWaitSelectedRequestDto;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.service.HubWaitSelectedService;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponseDto;
+import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponseWithPageDto;
 import com.shangpin.ephub.response.HubResponse;
 
 
@@ -34,7 +35,10 @@ public class HubWaitSelectedController {
 	        	
 		try {
 			List<HubWaitSelectedResponseDto> list = hubWaitSelectedService.findHubWaitSelectedList(dto);
-			return HubResponse.successResp(list);
+			HubWaitSelectedResponseWithPageDto HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPageDto();
+			HubWaitSelectedResponseWithPageDto.setTotal(1);
+			HubWaitSelectedResponseWithPageDto.setList(list);
+			return HubResponse.successResp(HubWaitSelectedResponseWithPageDto);
 		} catch (Exception e) {
 			return HubResponse.errorResp("获取列表失败");
 		}

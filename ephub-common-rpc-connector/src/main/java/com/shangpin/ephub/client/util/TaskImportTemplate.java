@@ -15,7 +15,7 @@ public class TaskImportTemplate {
 	 }
 	 
 	 public static String [] getPendingSpuTemplate(){
-		 String[] headers = { "供应商编号", "供应商名称", "品类名称","品类编号", "品牌编号*","品牌名称","货号*","上市年份*","上市季节*","适应性别*","商品名称*",
+		 String[] headers = { "供应商编号", "供应商名称","pendingSpuId", "品类名称","品类编号", "品牌编号*","品牌名称","货号*","上市年份*","上市季节*","适应性别*","商品名称*",
 					"颜色*","材质*","产地*","描述","不符合项","商品状态"};
 		 return headers;
 	 }
