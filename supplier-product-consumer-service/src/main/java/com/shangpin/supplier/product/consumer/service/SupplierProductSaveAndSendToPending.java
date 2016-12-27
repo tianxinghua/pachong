@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
@@ -17,8 +17,11 @@ import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.conf.stream.source.sender.PendingProductStreamSender;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
+import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.service.dto.Sku;
 import com.shangpin.supplier.product.consumer.service.dto.Spu;
+
+import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:SupplierProductSaveAndSendToPending </p>
  * <p>Description: 各个供应商保存数据并且发消息给Pending</p>
@@ -27,7 +30,8 @@ import com.shangpin.supplier.product.consumer.service.dto.Spu;
  * @date 2016年12月15日 下午2:23:47
  *
  */
-@Component
+@Service
+@Slf4j
 public class SupplierProductSaveAndSendToPending {
 
 	@Autowired
@@ -42,7 +46,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void atelierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus){
+	public void atelierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
@@ -52,11 +56,13 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
+		boolean result = false;
 		if("2015091801507".equals(supplierId)){
-			pendingProductStreamSender.brunarossoPendingProductStream(pendingProduct, headers);
+			result = pendingProductStreamSender.brunarossoPendingProductStream(pendingProduct, headers);
 		}else if("2015082701461".equals(supplierId)){
-			pendingProductStreamSender.ostorePendingProductStream(pendingProduct, headers);
+			result = pendingProductStreamSender.ostorePendingProductStream(pendingProduct, headers);
 		}
+		log.info("供应商："+supplierName+" 保存数据成功，并发送消息队列返回结果："+result); 
 		
 	}
 	/**
@@ -66,7 +72,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void spinnakerSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus){
+	public void spinnakerSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
@@ -76,10 +82,11 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
+		boolean result = false;
 		if("2015081701439".equals(supplierId)){
-			boolean isOk = pendingProductStreamSender.spinnakerPendingProductStream(pendingProduct, headers);
-			System.out.println("spinnaker isOk ======="+isOk);
+			result = pendingProductStreamSender.spinnakerPendingProductStream(pendingProduct, headers);
 		}
+		log.info("供应商："+supplierName+" 保存数据成功，并发送消息队列返回结果："+result); 
 		
 	}
 	
@@ -90,7 +97,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void biondioniSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus){
+	public void biondioniSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
@@ -100,8 +107,8 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
-		boolean isOk = pendingProductStreamSender.biondioniPendingProductStream(pendingProduct, headers);
-		System.out.println("biondioni isOk========="+isOk);
+		boolean result = pendingProductStreamSender.biondioniPendingProductStream(pendingProduct, headers);
+		log.info("供应商："+supplierName+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}	
 	/**
 	 * geb供应商保存数据以及发送消息给Pending
@@ -110,7 +117,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void gebSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus){
+	public void gebSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
@@ -120,8 +127,8 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
-		boolean isOk = pendingProductStreamSender.gebPendingProductStream(pendingProduct, headers);
-		System.out.println("geb isOk==========="+isOk);
+		boolean result = pendingProductStreamSender.gebPendingProductStream(pendingProduct, headers);
+		log.info("供应商："+supplierName+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}
 	/**
 	 * stefania供应商保存数据以及发送消息给Pending
@@ -130,7 +137,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void stefaniaSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus){
+	public void stefaniaSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
@@ -140,8 +147,8 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
-		boolean isOk = pendingProductStreamSender.stefaniaPendingProductStream(pendingProduct, headers);
-		System.out.println("stefania isOk========"+isOk);
+		boolean result = pendingProductStreamSender.stefaniaPendingProductStream(pendingProduct, headers);
+		log.info("供应商："+supplierName+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}
 	/**
 	 * tony供应商保存数据以及发送消息给Pending
@@ -150,7 +157,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void tonySaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus){
+	public void tonySaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException {
 		/**
 		 * 消息体
 		 */
@@ -160,8 +167,8 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
-		boolean isOk = pendingProductStreamSender.tonyPendingProductStream(pendingProduct, headers);
-		System.out.println("tony isOk========"+isOk);
+		boolean result = pendingProductStreamSender.tonyPendingProductStream(pendingProduct, headers);
+		log.info("供应商："+supplierName+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}
 	
 	
@@ -175,36 +182,40 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param pendingProduct 消息体对象
 	 * @param headers 消息头
 	 */
-	public void supplierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,PendingProduct pendingProduct,Map<String,String> headers){
+	public void supplierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,PendingProduct pendingProduct,Map<String,String> headers) throws EpHubSupplierProductConsumerException{
+		try {
+			PendingSpu pendingSpu = new PendingSpu();		
+			List<PendingSku> skus = new ArrayList<PendingSku>();
+			//保存hubSpu到数据库
+			ProductStatus productStatus = supplierProductMysqlService.isHubSpuChanged(hubSpu,pendingSpu);
+			//开始构造消息头
+			Spu spuHead = setSpuHead(supplierId,hubSpu.getSupplierSpuNo(),productStatus.getIndex());
+			List<Sku> headSkus = new ArrayList<Sku>();		
+			if(hubSkus != null && hubSkus.size()>0){
+				for(HubSupplierSkuDto hubSku : hubSkus){
+					try {					
+						Sku headSku = new Sku();
+						PendingSku pendingSku = new PendingSku();
+						//开始保存hubSku到数据库
+						ProductStatus skuStatus = supplierProductMysqlService.isHubSkuChanged(hubSku, pendingSku);
+						skus.add(pendingSku);
+						headSku.setSupplierId(supplierId);
+						headSku.setSkuNo(hubSku.getSupplierSkuNo());
+						headSku.setStatus(skuStatus.getIndex());
+						headSkus.add(headSku);
+					} catch (Exception e) {
+						log.error(e.getMessage(), e);
+					}				
+				}
+			}		
+			pendingSpu.setSkus(skus);
+			pendingProduct.setData(pendingSpu);		
+			spuHead.setSkus(headSkus);		
+			headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
+		} catch (Exception e) {
+			throw new EpHubSupplierProductConsumerException(e.getMessage(),e);
+		}
 		
-		PendingSpu pendingSpu = new PendingSpu();		
-		List<PendingSku> skus = new ArrayList<PendingSku>();
-		//保存hubSpu到数据库
-		ProductStatus productStatus = supplierProductMysqlService.isHubSpuChanged(hubSpu,pendingSpu);
-		//开始构造消息头
-		Spu spuHead = setSpuHead(supplierId,hubSpu.getSupplierSpuNo(),productStatus.getIndex());
-		List<Sku> headSkus = new ArrayList<Sku>();		
-		if(hubSkus != null && hubSkus.size()>0){
-			for(HubSupplierSkuDto hubSku : hubSkus){
-				try {					
-					Sku headSku = new Sku();
-					PendingSku pendingSku = new PendingSku();
-					//开始保存hubSku到数据库
-					ProductStatus skuStatus = supplierProductMysqlService.isHubSkuChanged(hubSku, pendingSku);
-					skus.add(pendingSku);
-					headSku.setSupplierId(supplierId);
-					headSku.setSkuNo(hubSku.getSupplierSkuNo());
-					headSku.setStatus(skuStatus.getIndex());
-					headSkus.add(headSku);
-				} catch (Exception e) {
-					// TODO: handle exception
-				}				
-			}
-		}		
-		pendingSpu.setSkus(skus);
-		pendingProduct.setData(pendingSpu);		
-		spuHead.setSkus(headSkus);		
-		headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
 	}
 	
 	
@@ -215,7 +226,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param productStatus
 	 * @return
 	 */
-	private Spu setSpuHead(String supplierId,String supplierSpuNo,int productStatus){
+	private Spu setSpuHead(String supplierId,String supplierSpuNo,int productStatus) throws EpHubSupplierProductConsumerException {
 		Spu spuHead = new Spu();
 		spuHead.setSupplierId(supplierId);
 		spuHead.setSpuNo(supplierSpuNo);
@@ -229,7 +240,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierName
 	 * @return
 	 */
-	private PendingProduct initPendingProduct(String supplierId, String supplierName) {
+	private PendingProduct initPendingProduct(String supplierId, String supplierName) throws EpHubSupplierProductConsumerException {
 		PendingProduct pendingProduct = new PendingProduct();
 		pendingProduct.setSupplierId(supplierId);
 		pendingProduct.setSupplierName(supplierName);

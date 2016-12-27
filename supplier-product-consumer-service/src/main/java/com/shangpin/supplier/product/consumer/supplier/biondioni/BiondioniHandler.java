@@ -13,12 +13,16 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
+import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.biondioni.dto.Article;
 import com.shangpin.supplier.product.consumer.supplier.biondioni.dto.Modele;
 import com.shangpin.supplier.product.consumer.supplier.biondioni.dto.QtTaille;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
+
+import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:BiondioniHandler </p>
  * <p>Description: 供应商biondioni数据处理器</p>
@@ -28,6 +32,7 @@ import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
  *
  */
 @Component("biondioniHandler")
+@Slf4j
 public class BiondioniHandler implements ISupplierHandler {
 	
 	@Autowired
@@ -35,28 +40,31 @@ public class BiondioniHandler implements ISupplierHandler {
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
-		if(!StringUtils.isEmpty(message.getData())){
-			Modele modele = JsonUtil.deserialize(message.getData(),Modele.class);
-			List<Article> artList = modele.getArticleList();
-			for(Article article : artList){
-				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(), modele, article, hubSpu);
-				List<QtTaille> qtys = article.getTarifMagInternet().getList();
-				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
-				for(QtTaille qty : qtys){
-					HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-					boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), modele, article, qty, hubSku);
-					if(skuSucc){
-						hubSkus.add(hubSku);
+		try {
+			if(!StringUtils.isEmpty(message.getData())){
+				Modele modele = JsonUtil.deserialize(message.getData(),Modele.class);
+				List<Article> artList = modele.getArticleList();
+				for(Article article : artList){
+					HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
+					boolean success = convertSpu(message.getSupplierId(), modele, article, hubSpu);
+					List<QtTaille> qtys = article.getTarifMagInternet().getList();
+					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
+					for(QtTaille qty : qtys){
+						HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
+						boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), modele, article, qty, hubSku);
+						if(skuSucc){
+							hubSkus.add(hubSku);
+						}
+					}
+					if(success){
+						supplierProductSaveAndSendToPending.biondioniSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 					}
 				}
-				if(success){
-					supplierProductSaveAndSendToPending.biondioniSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
-				}
+				
 			}
-			
+		} catch (EpHubSupplierProductConsumerException e) {
+			log.error("biondioni异常："+e.getMessage(), e); 
 		}
-		
 	}
 	
 	/**
@@ -67,7 +75,7 @@ public class BiondioniHandler implements ISupplierHandler {
 	 * @param hubSpu
 	 * @return
 	 */
-	public boolean convertSpu(String supplierId,Modele modele, Article article, HubSupplierSpuDto hubSpu){
+	public boolean convertSpu(String supplierId,Modele modele, Article article, HubSupplierSpuDto hubSpu) throws EpHubSupplierProductConsumerRuntimeException{
 		if(modele != null && article != null){
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(modele.getNumMdle()+article.getNumArti());
@@ -97,7 +105,7 @@ public class BiondioniHandler implements ISupplierHandler {
 	 * @param hubSku
 	 * @return
 	 */
-	public boolean convertSku(String supplierId, Long supplierSpuId, Modele modele, Article article,QtTaille qty,HubSupplierSkuDto hubSku){
+	public boolean convertSku(String supplierId, Long supplierSpuId, Modele modele, Article article,QtTaille qty,HubSupplierSkuDto hubSku) throws EpHubSupplierProductConsumerRuntimeException{
 		if(modele != null && article != null){
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSpuId(supplierSpuId);

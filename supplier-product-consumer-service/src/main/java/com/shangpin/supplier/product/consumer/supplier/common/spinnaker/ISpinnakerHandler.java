@@ -12,10 +12,13 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Sku;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Spu;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>Title:ISpinnakerHandler </p>
@@ -26,6 +29,7 @@ import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Spu;
  *
  */
 @Component
+@Slf4j
 public abstract class ISpinnakerHandler implements ISupplierHandler {
 	
 	@Autowired
@@ -58,25 +62,28 @@ public abstract class ISpinnakerHandler implements ISupplierHandler {
 	 */
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
-		if(!StringUtils.isEmpty(message.getData())){
-			Spu spu = JsonUtil.deserialize(message.getData(), Spu.class);			
-			if(null != spu.getItems() && null != spu.getItems().getItem() && spu.getItems().getItem().size()>0){
-				for(Sku sku : spu.getItems().getItem()){
-					HubSupplierSpuDto hubSpu =  new HubSupplierSpuDto();
-					boolean success = convertSpu(message.getSupplierId(),spu,sku,hubSpu);
-					HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-					boolean skuSucc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),sku,hubSku);
-					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
-					if(skuSucc){
-						hubSkus.add(hubSku);
-					}
-					if(success){
-						supplierProductSaveAndSendToPending.spinnakerSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
+		try {
+			if(!StringUtils.isEmpty(message.getData())){
+				Spu spu = JsonUtil.deserialize(message.getData(), Spu.class);			
+				if(null != spu.getItems() && null != spu.getItems().getItem() && spu.getItems().getItem().size()>0){
+					for(Sku sku : spu.getItems().getItem()){
+						HubSupplierSpuDto hubSpu =  new HubSupplierSpuDto();
+						boolean success = convertSpu(message.getSupplierId(),spu,sku,hubSpu);
+						HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
+						boolean skuSucc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),sku,hubSku);
+						List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
+						if(skuSucc){
+							hubSkus.add(hubSku);
+						}
+						if(success){
+							supplierProductSaveAndSendToPending.spinnakerSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
+						}
 					}
 				}
 			}
+		} catch (EpHubSupplierProductConsumerException e) {
+			log.error("Spinnaker系统供应商 "+message.getSupplierName()+"异常："+e.getMessage(),e); 
 		}
-		
 	}
 
 }
