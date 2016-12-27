@@ -32,14 +32,14 @@ public interface IPendingProductService {
 	 */
 	public HSSFWorkbook exportSpu(PendingQuryDto pendingQuryDto);
 	/**
-	 * 根据页面查询条件查询pending spu信息
+	 * 根据页面查询条件查询待处理表，只包含spu信息
 	 * @param pendingQuryDto
 	 * @return
 	 */
 	public List<PendingProductDto> findPengdingSpu(PendingQuryDto pendingQuryDto);
 
 	/**
-	 * 根据页面查询条件查询待处理表产品
+	 * 根据页面查询条件查询待处理表产品，包括spu/sku信息
 	 * @param pendingQuryDto
 	 * @return
 	 */
@@ -49,7 +49,7 @@ public interface IPendingProductService {
 	 * @param spuPendingId
 	 * @return
 	 */
-	public List<HubSkuPendingDto> findPendingSkuBySpuPendingId(Long spuPendingId);
+	public List<HubSkuPendingDto> findPendingSkuBySpuPendingId(Long spuPendingId) throws Exception;
 	/**
 	 * 更新单个pending数据，一个pending数据包括一个PengdingSpu和对应的多个PendingSku
 	 * @param pendingProductDto
@@ -59,7 +59,7 @@ public interface IPendingProductService {
 	 * 批量更新pending数据
 	 * @param pendingProductDto
 	 */
-	public boolean batchUpdatePendingProduct(List<PendingProductDto> pendingProducts);
+	public boolean batchUpdatePendingProduct(PendingProducts pendingProducts);
 	/**
 	 * 将HubSpuPendingDto更新为无法处理
 	 * @param spuPendingId
