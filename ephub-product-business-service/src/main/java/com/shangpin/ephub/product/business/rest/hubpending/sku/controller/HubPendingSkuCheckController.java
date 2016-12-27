@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.HubPendingSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.service.HubPendingSkuCheckService;
 
@@ -28,7 +28,7 @@ public class HubPendingSkuCheckController {
 	private HubPendingSkuCheckService hubCheckRuleService;
 	
 	@RequestMapping(value = "/check-sku")
-	public HubPendingSkuCheckResult checkSku(@RequestBody HubPendingSkuDto dto){
+	public HubPendingSkuCheckResult checkSku(@RequestBody HubSkuPendingDto dto){
 		log.info("");
 		HubPendingSkuCheckResult result = new HubPendingSkuCheckResult();
 		String returnStr = hubCheckRuleService.checkHubPendingSku(dto);

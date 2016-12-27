@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.ui.pending.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,8 +26,8 @@ import com.shangpin.ephub.response.HubResponse;
 @RequestMapping("/pending-product")
 public class PendingProductController {
 	
-	private static String resultSuccess = "{\"result\":\"success\"}";
-	private static String resultFail = "{\"result\":\"fail\"}";
+	private static String resultSuccess = "success";
+	private static String resultFail = "fail";
 	
 	@Autowired
 	private IPendingProductService pendingProductService;
@@ -37,12 +39,16 @@ public class PendingProductController {
     }
     @RequestMapping(value="/update",method=RequestMethod.POST)
     public HubResponse<?> updateProduct(@RequestBody PendingProductDto pendingProductDto){
-        boolean result = pendingProductService.updatePendingProduct(pendingProductDto);
-        if(result){
-            return HubResponse.successResp(resultSuccess);
-        }else{
-            return HubResponse.successResp(resultFail);
-        }
+        try {
+        	boolean result = pendingProductService.updatePendingProduct(pendingProductDto);
+            if(result){
+                return HubResponse.successResp(resultSuccess);
+            }else{
+                return HubResponse.successResp(resultFail);
+            }
+		} catch (Exception e) {
+			return HubResponse.successResp(resultFail);
+		}
     }
     @RequestMapping(value="/batch-update",method=RequestMethod.POST)
     public HubResponse<?> batchUpdateProduct(@RequestBody PendingProducts pendingProducts){
@@ -54,17 +60,22 @@ public class PendingProductController {
         }
     }
     @RequestMapping(value="/unable-to-process",method=RequestMethod.POST)
-    public HubResponse<?> updateProductToUnableToProcess(@RequestBody Ids ids){
-        boolean result = pendingProductService.updatePendingProductToUnableToProcess(ids.getIds().get(0));
-        if(result){
-            return HubResponse.successResp(resultSuccess);
-        }else{
-            return HubResponse.successResp(resultFail);
-        }
+    public HubResponse<?> updateProductToUnableToProcess(@RequestBody String id){
+    	try {
+    		boolean result = pendingProductService.updatePendingProductToUnableToProcess(id);
+	        if(result){
+	            return HubResponse.successResp(resultSuccess);
+	        }else{
+	            return HubResponse.successResp(resultFail);
+	        }
+		} catch (Exception e) {
+			return HubResponse.successResp(resultFail);
+		}
+       
     }
     @RequestMapping(value="/batch-unable-to-process",method=RequestMethod.POST)
-    public HubResponse<?> batchUpdateProductToUnableToProcess(@RequestBody Ids ids){
-        boolean result = pendingProductService.batchUpdatePendingProductToUnableToProcess(ids.getIds());
+    public HubResponse<?> batchUpdateProductToUnableToProcess(@RequestBody List<String> ids){
+        boolean result = pendingProductService.batchUpdatePendingProductToUnableToProcess(ids);
         if(result){
             return HubResponse.successResp(resultSuccess);
         }else{

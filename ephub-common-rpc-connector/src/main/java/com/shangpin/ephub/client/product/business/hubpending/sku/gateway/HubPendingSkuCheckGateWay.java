@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubPendingSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 
 /**
@@ -24,5 +24,5 @@ public interface HubPendingSkuCheckGateWay {
 	 * @return 校验结果：
 	 */
 	@RequestMapping(value = "/pending-sku/check-sku", method = RequestMethod.POST,consumes = "application/json")
-	public HubPendingSkuCheckResult checkSku(@RequestBody HubPendingSkuDto dto);
+	public HubPendingSkuCheckResult checkSku(@RequestBody HubSkuPendingDto dto);
 }
