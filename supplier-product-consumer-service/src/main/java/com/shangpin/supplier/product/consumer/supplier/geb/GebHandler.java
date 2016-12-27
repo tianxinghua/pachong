@@ -44,7 +44,7 @@ public class GebHandler implements ISupplierHandler {
 					hubSkus.add(hubSku);
 				}
 				if(success){
-					supplierProductSaveAndSendToPending.gebSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
+					supplierProductSaveAndSendToPending.gebSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 				}
 			}	
 		} catch (EpHubSupplierProductConsumerException e) {

@@ -41,16 +41,17 @@ public class SupplierProductSaveAndSendToPending {
 		
 	/**
 	 * atelier系列供应商保存数据以及发送消息给Pending
-	 * @param supplierId
+	 * @param supplierNo 供应商编号
+	 * @param supplierId 供应商门户编号
 	 * @param supplierName
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void atelierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
+	public void atelierSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
-		PendingProduct pendingProduct = initPendingProduct(supplierId, supplierName);
+		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		/**
 		 * 消息头
 		 */
@@ -67,16 +68,17 @@ public class SupplierProductSaveAndSendToPending {
 	}
 	/**
 	 * spinnaker系列供应商保存数据以及发送消息给Pending
-	 * @param supplierId
+	 * @param supplierNo 供应商编号
+	 * @param supplierId 供应商门户编号
 	 * @param supplierName
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void spinnakerSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
+	public void spinnakerSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
-		PendingProduct pendingProduct = initPendingProduct(supplierId, supplierName);
+		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		/**
 		 * 消息头
 		 */
@@ -92,16 +94,17 @@ public class SupplierProductSaveAndSendToPending {
 	
 	/**
 	 * biondioni供应商保存数据以及发送消息给Pending
-	 * @param supplierId
+	 * @param supplierNo 供应商编号
+	 * @param supplierId 供应商门户编号
 	 * @param supplierName
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void biondioniSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
+	public void biondioniSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
-		PendingProduct pendingProduct = initPendingProduct(supplierId, supplierName);
+		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		/**
 		 * 消息头
 		 */
@@ -112,16 +115,17 @@ public class SupplierProductSaveAndSendToPending {
 	}	
 	/**
 	 * geb供应商保存数据以及发送消息给Pending
+	 * @param supplierNo 供应商编号
 	 * @param supplierId
 	 * @param supplierName
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void gebSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
+	public void gebSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
-		PendingProduct pendingProduct = initPendingProduct(supplierId, supplierName);
+		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		/**
 		 * 消息头
 		 */
@@ -132,16 +136,17 @@ public class SupplierProductSaveAndSendToPending {
 	}
 	/**
 	 * stefania供应商保存数据以及发送消息给Pending
+	 * @param supplierNo 供应商编号
 	 * @param supplierId
 	 * @param supplierName
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void stefaniaSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
+	public void stefaniaSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
-		PendingProduct pendingProduct = initPendingProduct(supplierId, supplierName);
+		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		/**
 		 * 消息头
 		 */
@@ -152,16 +157,17 @@ public class SupplierProductSaveAndSendToPending {
 	}
 	/**
 	 * tony供应商保存数据以及发送消息给Pending
+	 * @param supplierNo 供应商编号
 	 * @param supplierId
 	 * @param supplierName
 	 * @param hubSpu
 	 * @param hubSkus
 	 */
-	public void tonySaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException {
+	public void tonySaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException {
 		/**
 		 * 消息体
 		 */
-		PendingProduct pendingProduct = initPendingProduct(supplierId, supplierName);
+		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		/**
 		 * 消息头
 		 */
@@ -241,8 +247,9 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierName
 	 * @return
 	 */
-	private PendingProduct initPendingProduct(String supplierId, String supplierName) throws EpHubSupplierProductConsumerException {
+	private PendingProduct initPendingProduct(String supplierNo,String supplierId, String supplierName) throws EpHubSupplierProductConsumerException {
 		PendingProduct pendingProduct = new PendingProduct();
+		pendingProduct.setSupplierNo(supplierNo); 
 		pendingProduct.setSupplierId(supplierId);
 		pendingProduct.setSupplierName(supplierName);
 		return pendingProduct;
