@@ -50,7 +50,7 @@ public class TonyHandler implements ISupplierHandler {
 					hubSkus.add(hubSku);
 				}
 				if(success){
-					supplierProductSaveAndSendToPending.tonySaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
+					supplierProductSaveAndSendToPending.tonySaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 				}
 				
 			}

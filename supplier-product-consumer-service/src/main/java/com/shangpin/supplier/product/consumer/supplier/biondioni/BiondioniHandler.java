@@ -57,7 +57,7 @@ public class BiondioniHandler implements ISupplierHandler {
 						}
 					}
 					if(success){
-						supplierProductSaveAndSendToPending.biondioniSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
+						supplierProductSaveAndSendToPending.biondioniSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 					}
 				}
 				

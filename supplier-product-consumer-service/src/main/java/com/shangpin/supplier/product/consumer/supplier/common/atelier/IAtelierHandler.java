@@ -94,7 +94,7 @@ public abstract class IAtelierHandler implements ISupplierHandler {
 					}
 				}
 				if(success){
-					supplierProductSaveAndSendToPending.atelierSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
+					supplierProductSaveAndSendToPending.atelierSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 				}
 			}
 		} catch (EpHubSupplierProductConsumerException e) {
