@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 public class SpuModelMsgVO implements Serializable {
 
-   private Integer count;//总数
+   private Integer total;//总数
 
    private List<SpuModelVO> spuModels;
 }

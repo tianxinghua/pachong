@@ -8,7 +8,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
-import com.shangpin.ephub.product.business.util.DateTimeUtil;
+import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 /**
  * <p>Title:HubCommonProductService </p>
  * <p>Description: 针对hub_spu/hub_sku这两张表有公用的功能，写到这里</p>

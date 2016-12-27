@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.service;
+package com.shangpin.ephub.product.business.service.hub.impl;
 
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;

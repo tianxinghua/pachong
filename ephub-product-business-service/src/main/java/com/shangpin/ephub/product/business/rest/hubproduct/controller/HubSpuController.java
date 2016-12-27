@@ -1,14 +1,10 @@
 package com.shangpin.ephub.product.business.rest.hubproduct.controller;
 
-import com.shangpin.ephub.product.business.rest.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.product.business.rest.hubproduct.dto.SpuNoDTO;
 import com.shangpin.ephub.product.business.rest.hubproduct.dto.SpuNoQueryDTO;
-import com.shangpin.ephub.product.business.rest.hubproduct.result.HubProductCheckRuleResult;
-import com.shangpin.ephub.product.business.rest.hubproduct.service.HubCheckRuleService;
-import com.shangpin.ephub.product.business.service.HubProductHandler;
+import com.shangpin.ephub.product.business.service.hub.impl.HubProductHandler;
 import com.shangpin.ephub.response.HubResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
