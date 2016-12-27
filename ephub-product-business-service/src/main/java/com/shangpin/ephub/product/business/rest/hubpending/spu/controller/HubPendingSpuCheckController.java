@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2016年12月22 下午3:52:56
  */
 @RestController
-@RequestMapping(value = "/hub-pending-spu-check")
+@RequestMapping(value = "/pending-spu")
 @Slf4j
 public class HubPendingSpuCheckController {
 	
