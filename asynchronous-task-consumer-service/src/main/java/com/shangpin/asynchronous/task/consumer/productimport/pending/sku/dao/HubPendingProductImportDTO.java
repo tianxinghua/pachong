@@ -1,4 +1,4 @@
-package com.shangpin.asynchronous.task.consumer.productimport.pending.dto;
+package com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao;
 
 import java.math.BigDecimal;
 

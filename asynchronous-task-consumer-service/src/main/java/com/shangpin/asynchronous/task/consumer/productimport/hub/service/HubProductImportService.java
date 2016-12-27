@@ -19,10 +19,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.asynchronous.task.consumer.productimport.common.TaskService;
+import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskService;
+import com.shangpin.asynchronous.task.consumer.productimport.common.util.ExportExcelUtils;
+import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.dto.HubProductImportDTO;
-import com.shangpin.asynchronous.task.consumer.productimport.hub.util.ExportExcelUtils;
-import com.shangpin.asynchronous.task.consumer.productimport.hub.util.FTPClientUtil;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;

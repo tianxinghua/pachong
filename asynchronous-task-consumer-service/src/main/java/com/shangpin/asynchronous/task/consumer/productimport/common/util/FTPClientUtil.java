@@ -1,4 +1,4 @@
-package com.shangpin.asynchronous.task.consumer.productimport.hub.util;
+package com.shangpin.asynchronous.task.consumer.productimport.common.util;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,4 +1,4 @@
-package com.shangpin.asynchronous.task.consumer.productimport.hub.util;
+package com.shangpin.asynchronous.task.consumer.productimport.common.util;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;

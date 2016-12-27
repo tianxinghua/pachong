@@ -1,4 +1,4 @@
-package com.shangpin.asynchronous.task.consumer.productimport.pending.service;
+package com.shangpin.asynchronous.task.consumer.productimport.pending.common;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,10 +19,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.asynchronous.task.consumer.productimport.common.TaskService;
-import com.shangpin.asynchronous.task.consumer.productimport.hub.util.ExportExcelUtils;
-import com.shangpin.asynchronous.task.consumer.productimport.hub.util.FTPClientUtil;
-import com.shangpin.asynchronous.task.consumer.productimport.pending.dto.HubPendingProductImportDTO;
+import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskService;
+import com.shangpin.asynchronous.task.consumer.productimport.common.util.ExportExcelUtils;
+import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
+import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
@@ -83,14 +83,16 @@ public class PendingProductImportService {
 	}
 	
 	//1、更新任务表，把task_state更新成正在处理  2、从ftp下载文件并解析成对象   3、公共类校验hub数据并把校验结果写入excel   4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-	public void handMessage(ProductImportTask task) throws Exception{
+	public void handMessage(ProductImportTask task,String type) throws Exception{
 		
 		//1、更新任务表，把task_state更新成正在处理
 		taskService.updateHubSpuImportStatusByTaskNo(TaskState.HANDLEING.getIndex(),task.getTaskNo(),null);
 		log.info("任务编号："+task.getTaskNo()+"状态更新成正在处理");
 		// 2、从ftp下载文件并解析成对象
 		List<HubPendingProductImportDTO> listHubProduct = handleHubExcel(task.getTaskFtpFilePath(),task.getTaskNo());
-		
+		if(listHubProduct==null){
+			return ;
+		}
 		//3、公共类校验hub数据并把校验结果写入excel
 		 List<Map<String, String>> result = checkAndsaveHubPendingProduct(task.getTaskNo(),listHubProduct);
 		 
@@ -101,14 +103,15 @@ public class PendingProductImportService {
 	private void convertExcel(List<Map<String, String>> result, String taskNo) throws Exception{
 		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		String resultFileName = sim.format(new Date());
-		FileOutputStream out = new FileOutputStream(new File(resultFileName+".xlsx"));
+		File file = new File(resultFileName+".xls");
+		FileOutputStream out = new FileOutputStream(file);
 		
 		String[] headers = { "任务编号", "货号", "任务状态", "任务说明"};
 		String[] columns = { "taskNo", "spuModel","taskState", "processInfo"};
 		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result,
 				out);
 		//4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-		String path = FTPClientUtil.uploadFile(new File(resultFileName+".xlsx"), resultFileName+".xlsx");
+		String path = FTPClientUtil.uploadFile(file, resultFileName+".xls");
 		
 		int status;
 		if(result!=null&&result.size()>0){
@@ -118,7 +121,9 @@ public class PendingProductImportService {
 			//全部成功
 			status = TaskState.ALL_SUCCESS.getIndex();
 		}
-		taskService.updateHubSpuImportByTaskNo(taskNo,path+resultFileName+".xlsx",status);
+		file.delete();
+		
+		taskService.updateHubSpuImportByTaskNo(taskNo,path+resultFileName+".xls",status);
 		
 	}
 
@@ -130,8 +135,6 @@ public class PendingProductImportService {
 			
 			Map<String, String> map = new HashMap<String, String>();
 			//处理spu信息
-			
-			updateOrSaveSku(product);
 			
 			HubPendingSpuCheckResult hubPendingSpuCheckResult = handlePendingSpu(product);
 			
