@@ -28,6 +28,8 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
@@ -62,6 +64,11 @@ public class PendingProductService implements IPendingProductService{
 	private HubSupplierBrandDicGateWay brandDicGateWay;
 	@Autowired
 	private SupplierService supplierService;
+	@Autowired
+	private HubPendingSkuCheckGateWay pendingSkuCheckGateWay;
+	@Autowired
+	private HubPendingSpuCheckGateWay pendingSpuCheckGateWay;
+
 	
 	@Override
 	public HSSFWorkbook exportSku(PendingQuryDto pendingQuryDto){
@@ -210,6 +217,7 @@ public class PendingProductService implements IPendingProductService{
 				if(null != pengdingSkus && pengdingSkus.size()>0){
 					for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
 						//TODO 先验证，验证通过则更新
+						pendingSkuCheckGateWay.checkSku(hubSkuPendingDto);
 						hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
 					}
 				}
