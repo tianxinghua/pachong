@@ -23,6 +23,6 @@ public interface HubPendingSkuCheckGateWay {
 	 * @param dto 数据传输对象
 	 * @return 校验结果：
 	 */
-	@RequestMapping(value = "/hub-pending-sku-check/check-sku", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/pending-sku/check-sku", method = RequestMethod.POST,consumes = "application/json")
 	public HubPendingSkuCheckResult checkSku(@RequestBody HubPendingSkuDto dto);
 }

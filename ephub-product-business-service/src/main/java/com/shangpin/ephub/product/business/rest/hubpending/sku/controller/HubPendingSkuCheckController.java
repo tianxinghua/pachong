@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2016年12月22 下午3:52:56
  */
 @RestController
-@RequestMapping(value = "/hub-pending-sku-check")
+@RequestMapping(value = "/pending-sku")
 @Slf4j
 public class HubPendingSkuCheckController {
 	

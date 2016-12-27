@@ -23,6 +23,6 @@ public interface HubPendingSpuCheckGateWay {
 	 * @param dto 数据传输对象
 	 * @return 校验结果：
 	 */
-	@RequestMapping(value = "/hub-pending-spu-check/check-spu", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/pending-spu/check-spu", method = RequestMethod.POST,consumes = "application/json")
 	public HubPendingSpuCheckResult checkSpu(@RequestBody HubPendingSpuDto dto);
 }
