@@ -109,7 +109,7 @@ public class SupplierProductMysqlService {
 		
 		hubSkuUpdated.setSupplierId(hubSku.getSupplierId());
 		hubSkuUpdated.setSupplierSkuNo(hubSku.getSupplierSkuNo());
-		hubSkuUpdated.setSupplierSkuId(hubSku.getSupplierSkuId()); 
+		hubSkuUpdated.setSupplierSkuId(hubSkuSel.getSupplierSkuId()); 
 		
 		if(!StringUtils.isEmpty(hubSku.getSupplyPrice()) && !hubSku.getSupplyPrice().equals(hubSkuSel.getSupplyPrice())){
 			pendingSku.setSupplyPrice(hubSku.getSupplyPrice());
@@ -235,11 +235,11 @@ public class SupplierProductMysqlService {
 		boolean isChanged = false;	
 		pendingSpu.setSupplierId(hubSpu.getSupplierId());
 		pendingSpu.setSupplierSpuNo(hubSpu.getSupplierSpuNo());
-		pendingSpu.setSupplierSpuId(hubSpu.getSupplierSpuId());
+		pendingSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId());
 		
 		hubSpuUpdated.setSupplierId(hubSpu.getSupplierId());
 		hubSpuUpdated.setSupplierSpuId(hubSpu.getSupplierSpuId());
-		hubSpuUpdated.setSupplierSpuNo(hubSpu.getSupplierSpuNo());
+		hubSpuUpdated.setSupplierSpuNo(hubSpuSel.getSupplierSpuNo());
 		
 		if(!StringUtils.isEmpty(hubSpu.getSupplierSpuModel()) && !hubSpu.getSupplierSpuModel().equals(hubSpuSel.getSupplierSpuModel())){
 			pendingSpu.setSpuModel(hubSpu.getSupplierSpuModel());
