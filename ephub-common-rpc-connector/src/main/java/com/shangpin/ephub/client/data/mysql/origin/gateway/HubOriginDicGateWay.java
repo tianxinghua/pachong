@@ -20,7 +20,7 @@ import com.shangpin.ephub.client.data.mysql.origin.dto.HubOriginDicWithCriteriaD
  * @date 2016年12月22日 下午12:25:04
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubOriginDicController {
+public interface HubOriginDicGateWay {
 	
 	@RequestMapping(value = "/hub-origin-dic/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int countByCriteria(@RequestBody HubOriginDicCriteriaDto criteria);
