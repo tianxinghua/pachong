@@ -43,10 +43,6 @@ public class SupplierProductMysqlService {
 		try {	
 			HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 			if(null == hubSpuSel){
-				String material = hubSpu.getSupplierMaterial();
-				if(!StringUtils.isEmpty(material) && material.length()>=500){
-					hubSpu.setSupplierMaterial(material.substring(0, 500)); 
-				}
 				Long spuId = hubSupplierSpuGateWay.insert(hubSpu);
 				hubSpu.setSupplierSpuId(spuId); 
 				convertHubSpuToPendingSpu(hubSpu,pendingSpu);
