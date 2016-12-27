@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.asynchronous.task.consumer.productimport.hub.service.HubProductImportService;
-import com.shangpin.asynchronous.task.consumer.productimport.pending.PendingProductImportHandler;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 
 import lombok.extern.slf4j.Slf4j;

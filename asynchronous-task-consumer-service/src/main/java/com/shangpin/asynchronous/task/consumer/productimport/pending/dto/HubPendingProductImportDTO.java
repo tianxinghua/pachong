@@ -46,6 +46,7 @@ public class HubPendingProductImportDTO {
 	private String marketPriceCurrencyOrg;
 	private String measurement;
 	private String spuDesc;
+	private String supplierId;
 	public String[] getHubProductTemplate() {
 		String [] temp = {"supplierNo","supplierName","categoryName","categoryNo","brandNo","brandName","spuModel","seasonYear","hubSeason","hubGender","supplierSkuNo","skuName","supplierBarcode",
 				"hubColor","specificationType","sizeType","hubSkuSize","hubMaterial","hubOrigin","supplyPrice","supplyPriceCurrency","marketPrice","marketPriceCurrencyOrg","measurement","spuDesc"};

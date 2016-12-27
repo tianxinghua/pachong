@@ -185,7 +185,7 @@ public class PendingProductImportService {
 	}
 
 	private void updateOrSaveSku(HubPendingProductImportDTO product) {
-		
+		product.setSupplierId("201612271520");
 		HubSkuPendingDto hubSkuPendingDto = convertHubPendingProduct2Sku(product);
 		//查询数据库sku信息是否已存在
 		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),hubSkuPendingDto.getSupplierSkuNo());

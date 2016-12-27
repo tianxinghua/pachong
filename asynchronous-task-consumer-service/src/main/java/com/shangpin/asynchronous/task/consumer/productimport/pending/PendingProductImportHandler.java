@@ -5,7 +5,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.asynchronous.task.consumer.productimport.hub.service.HubProductImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.service.PendingProductImportService;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 
@@ -33,7 +32,7 @@ public class PendingProductImportHandler {
 		// TODO Auto-generated method stub
 		try {
 			log.info("pending任务接受到消息：{}",message);
-			String index = (String)headers.get("0");
+//			String index = (String)headers.get("0");
 			pendingProductImportService.handMessage(message);
 		} catch (Exception e) {
 			e.printStackTrace();
