@@ -2,7 +2,7 @@ package com.shangpin.ephub.product.business.rest.hubpending.spu.service;
 
 import org.springframework.stereotype.Service;
 
-import com.shangpin.ephub.product.business.rest.hubpending.spu.dto.HubPendingSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HubPendingSpuCheckService {
 	
-	public String checkHubPendingSpu(HubPendingSpuDto hubProduct){
+	public String checkHubPendingSpu(HubSpuPendingDto hubProduct){
 		
 		StringBuffer str = new StringBuffer();
 		return str.toString();
