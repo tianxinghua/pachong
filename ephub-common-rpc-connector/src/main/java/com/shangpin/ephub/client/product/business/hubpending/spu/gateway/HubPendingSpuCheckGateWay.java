@@ -18,13 +18,13 @@ import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendi
  * @date 2016年12月23日 下午3:52:56
  */
 @FeignClient("ephub-product-business-service")
-public interface HubSpuPendingCheckGateWay {
+public interface HubPendingSpuCheckGateWay {
 	
 	/**
 	 * HUB数据入库前校验
 	 * @param dto 数据传输对象
 	 * @return 校验结果：
 	 */
-	@RequestMapping(value = "/hub-pending-spu/check-spu", method = RequestMethod.POST,consumes = "application/json")
-	public HubPendingSpuCheckResult checkPendingSpu(@RequestBody HubPendingSpuDto dto);
+	@RequestMapping(value = "/hub-pending-spu-check/check-spu", method = RequestMethod.POST,consumes = "application/json")
+	public HubPendingSpuCheckResult checkSpu(@RequestBody HubPendingSpuDto dto);
 }

@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2016年12月22 下午3:52:56
  */
 @RestController
-@RequestMapping(value = "/hub-pending-sku")
+@RequestMapping(value = "/hub-pending-sku-check")
 @Slf4j
 public class HubPendingSkuCheckController {
 	
@@ -28,7 +28,7 @@ public class HubPendingSkuCheckController {
 	private HubPendingSkuCheckService hubCheckRuleService;
 	
 	@RequestMapping(value = "/check-sku")
-	public HubPendingSkuCheckResult checkPendingSku(@RequestBody HubPendingSkuDto dto){
+	public HubPendingSkuCheckResult checkSku(@RequestBody HubPendingSkuDto dto){
 		log.info("");
 		HubPendingSkuCheckResult result = new HubPendingSkuCheckResult();
 		String returnStr = hubCheckRuleService.checkHubPendingSku(dto);
