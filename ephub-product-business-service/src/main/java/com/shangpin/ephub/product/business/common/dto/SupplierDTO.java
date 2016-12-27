@@ -3,8 +3,6 @@ package com.shangpin.ephub.product.business.common.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * 
@@ -49,27 +47,27 @@ public class SupplierDTO {
 
     @JsonProperty("ButtJointId")
     public void setButtJointId(long buttJointId) {
-        buttJointId = buttJointId;
+        this.buttJointId = buttJointId;
     }
     @JsonProperty("ButtJointNo")
     public void setButtJointNo(String buttJointNo) {
-        buttJointNo = buttJointNo;
+        this.buttJointNo = buttJointNo;
     }
     @JsonProperty("InterfaceAddress")
     public void setInterfaceAddress(String interfaceAddress) {
-        interfaceAddress = interfaceAddress;
+        this.interfaceAddress = interfaceAddress;
     }
     @JsonProperty("InterfaceDesc")
     public void setInterfaceDesc(String interfaceDesc) {
-        interfaceDesc = interfaceDesc;
+        this.interfaceDesc = interfaceDesc;
     }
     @JsonProperty("InterfaceStatus")
     public void setInterfaceStatus(int interfaceStatus) {
-        interfaceStatus = interfaceStatus;
+        this.interfaceStatus = interfaceStatus;
     }
     @JsonProperty("InterfaceType")
     public void setInterfaceType(int interfaceType) {
-        interfaceType = interfaceType;
+        this.interfaceType = interfaceType;
     }
 
     public void setIsPurchaseException(Boolean purchaseException) {

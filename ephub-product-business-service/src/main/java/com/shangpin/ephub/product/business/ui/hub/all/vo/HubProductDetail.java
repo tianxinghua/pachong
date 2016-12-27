@@ -1,7 +1,6 @@
 package com.shangpin.ephub.product.business.ui.hub.all.vo;
 
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 
 import lombok.Getter;
 import lombok.Setter;

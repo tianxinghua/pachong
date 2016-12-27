@@ -26,11 +26,9 @@ import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelecte
  * @author zhaogenchun
  * @date 2016年12月21日 下午4:06:52
  */
-@SuppressWarnings("rawtypes")
 @Service
 public class HubWaitSelectedService {
 	
-	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
 	
 	@Autowired
 	HubSkuSupplierMappingGateWay hubSkuSupplierMappingGateWay;
