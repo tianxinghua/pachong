@@ -1,16 +1,11 @@
 package com.shangpin.asynchronous.task.consumer.common.util;
-import java.io.BufferedOutputStream;
-import java.io.File;  
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPReply;
-
-import com.shangpin.ephub.response.HubResponse;  
+import org.apache.commons.net.ftp.FTPReply;  
 
 public class FTPClientUtil {    
      
