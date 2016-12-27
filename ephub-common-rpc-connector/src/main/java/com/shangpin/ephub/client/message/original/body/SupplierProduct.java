@@ -35,6 +35,10 @@ public class SupplierProduct {
 	 */
 	private String supplierId;
 	/**
+	 * 供应商编号
+	 */
+	private String supplierNo;
+	/**
 	 * 供货商名称
 	 */
 	private String supplierName;

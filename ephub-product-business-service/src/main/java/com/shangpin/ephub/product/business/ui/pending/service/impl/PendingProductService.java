@@ -28,6 +28,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
@@ -36,6 +37,8 @@ import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductSer
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.product.business.util.DateTimeUtil;
+
+import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:PendingProductService </p>
  * <p>Description: 待处理页面Service实现类</p>
@@ -45,6 +48,7 @@ import com.shangpin.ephub.product.business.util.DateTimeUtil;
  *
  */
 @Service
+@Slf4j
 public class PendingProductService implements IPendingProductService{
 	
 	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
@@ -91,7 +95,7 @@ public class PendingProductService implements IPendingProductService{
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace(); 
+			log.error("待处理页导出sku异常："+e.getMessage(),e); 
 		}
 		
 		return wb;
@@ -125,7 +129,7 @@ public class PendingProductService implements IPendingProductService{
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("待处理页导出spu异常："+e.getMessage(),e); 
 		}
 		
 		return wb;
@@ -133,52 +137,68 @@ public class PendingProductService implements IPendingProductService{
 	@Override
 	public List<PendingProductDto> findPengdingSpu(PendingQuryDto pendingQuryDto){
 		List<PendingProductDto> products = new ArrayList<PendingProductDto>();
-		if(null !=pendingQuryDto){
-			HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
-			int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
-			if(total>0){
-				List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
-				for(HubSpuPendingDto pendingSpu : pendingSpus){
-					PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
-					pendingProduct.setSupplierName(supplierService.getSupplier(pendingSpu.getSupplierNo()).getSupplierName());
-					pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
-					pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
-					products.add(pendingProduct);
+		try {
+			if(null !=pendingQuryDto){
+				HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
+				int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
+				if(total>0){
+					List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
+					for(HubSpuPendingDto pendingSpu : pendingSpus){
+						PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
+						pendingProduct.setSupplierName(supplierService.getSupplier(pendingSpu.getSupplierNo()).getSupplierName());
+						pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
+						pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
+						products.add(pendingProduct);
+					}
 				}
 			}
+		} catch (Exception e) {
+			log.error("待处理页面查询pending_spu异常："+e.getMessage(),e); 
 		}
 		return products;
 	}
 	@Override
 	public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto){
+		log.info("待处理页面查询条件："+JsonUtil.serialize(pendingQuryDto)); 
 		PendingProducts pendingProducts = new PendingProducts();
 		List<PendingProductDto> products = new ArrayList<PendingProductDto>();
-		if(null !=pendingQuryDto){
-			HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
-			int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
-			if(total>0){
-				List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
-				for(HubSpuPendingDto pendingSpu : pendingSpus){
-					PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
-					pendingProduct.setSupplierName(supplierService.getSupplier(pendingSpu.getSupplierNo()).getSupplierName());
-					pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
-					pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
-					List<HubSkuPendingDto> hubSkus = findPendingSkuBySpuPendingId(pendingSpu.getSpuPendingId());
-					pendingProduct.setHubSkus(hubSkus);
-					products.add(pendingProduct);
+		try {
+			if(null !=pendingQuryDto){
+				HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
+				int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
+				log.info("待处理页面查询返回数据个数================"+total); 
+				if(total>0){
+					List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
+					for(HubSpuPendingDto pendingSpu : pendingSpus){
+						PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
+						pendingProduct.setSupplierName(supplierService.getSupplier(pendingSpu.getSupplierNo()).getSupplierName());
+						pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
+						pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
+						List<HubSkuPendingDto> hubSkus = findPendingSkuBySpuPendingId(pendingSpu.getSpuPendingId());
+						pendingProduct.setHubSkus(hubSkus);
+						products.add(pendingProduct);
+					}
+					pendingProducts.setProduts(products);
 				}
-				pendingProducts.setProduts(products);
+				pendingProducts.setTotal(total); 
 			}
-			pendingProducts.setTotal(total); 
-		}
+		} catch (Exception e) {
+			log.error("待处理页面查询异常："+e.getMessage(),e); 
+		}		
 		return pendingProducts;
 	}	
 	@Override
-	public List<HubSkuPendingDto> findPendingSkuBySpuPendingId(Long spuPendingId){
-		HubSkuPendingCriteriaDto criteriaDto = new HubSkuPendingCriteriaDto();
-		criteriaDto.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
-		criteriaDto.setFields("sku_pending_id,hub_sku_size,sp_sku_size_state");
-		return hubSkuPendingGateWay.selectByCriteria(criteriaDto);		
+	public List<HubSkuPendingDto> findPendingSkuBySpuPendingId(Long spuPendingId) throws Exception{
+		try {
+			HubSkuPendingCriteriaDto criteriaDto = new HubSkuPendingCriteriaDto();
+			criteriaDto.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
+			criteriaDto.setFields("sku_pending_id,hub_sku_size,sp_sku_size_state");
+			return hubSkuPendingGateWay.selectByCriteria(criteriaDto);	
+		} catch (Exception e) {
+			log.error("pending表根据spu id查询sku时出错："+e.getMessage(),e); 
+			throw new Exception("pending表根据spu id查询sku时出错："+e.getMessage(),e);
+		}
+			
 	}
 	@Override
 	public boolean updatePendingProduct(PendingProductDto pendingProductDto){
@@ -190,20 +210,21 @@ public class PendingProductService implements IPendingProductService{
 				if(null != pengdingSkus && pengdingSkus.size()>0){
 					for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
 						//TODO 先验证，验证通过则更新
-						int result = hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+						hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
 					}
 				}
 			}
 			return true;
 		} catch (Exception e) {
+			log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage(),e);
 			return false;
 		}		
 	}
 	@Override
-	public boolean batchUpdatePendingProduct(List<PendingProductDto> pendingProducts){
+	public boolean batchUpdatePendingProduct(PendingProducts pendingProducts){
 		try {
-			if(null != pendingProducts && pendingProducts.size()>0){
-				for(PendingProductDto pendingProductDto : pendingProducts){
+			if(null != pendingProducts && null != pendingProducts.getProduts() && pendingProducts.getProduts().size()>0){
+				for(PendingProductDto pendingProductDto : pendingProducts.getProduts()){
 					updatePendingProduct(pendingProductDto);
 				}
 			}
@@ -290,7 +311,7 @@ public class PendingProductService implements IPendingProductService{
 	 * @param pendingSpu
 	 * @return
 	 */
-	private PendingProductDto convertHubSpuPendingDto2PendingProductDto(HubSpuPendingDto pendingSpu){
+	private PendingProductDto convertHubSpuPendingDto2PendingProductDto(HubSpuPendingDto pendingSpu) throws Exception{
 		PendingProductDto pendingProduct = new PendingProductDto();	
 		pendingProduct.setSpuPendingId(pendingSpu.getSpuPendingId());
 		pendingProduct.setSupplierId(pendingSpu.getSupplierId());
