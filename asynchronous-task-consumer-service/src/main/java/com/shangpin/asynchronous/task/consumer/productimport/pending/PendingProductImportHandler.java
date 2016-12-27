@@ -29,7 +29,6 @@ public class PendingProductImportHandler {
 	 * @param headers 消息头
 	 */
 	public void pendingImportStreamListen(ProductImportTask message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
 		try {
 			log.info("pending任务接受到消息：{}",message);
 //			String index = (String)headers.get("0");
