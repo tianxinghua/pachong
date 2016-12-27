@@ -1,10 +1,11 @@
 package com.shangpin.ephub.product.business.common.util;
 
-import com.shangpin.commons.redis.IShangpinRedis;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.shangpin.commons.redis.IShangpinRedis;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by loyalty on 16/12/20.
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class HubSpuUtil {
 
-//    @Autowired
+    @Autowired
     IShangpinRedis shangpinRedis;
 
 

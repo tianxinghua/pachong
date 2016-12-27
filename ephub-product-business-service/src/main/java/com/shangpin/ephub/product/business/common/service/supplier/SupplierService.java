@@ -12,7 +12,14 @@ import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
-
+/**
+ * <p>Title:SupplierService </p>
+ * <p>Description: 通过供应商编号获取供应商信息的service</p>
+ * <p>Company: www.shangpin.com</p> 
+ * @author lubaijiang
+ * @date 2016年12月27日 下午2:29:21
+ *
+ */
 @Component
 public class SupplierService {
 	
