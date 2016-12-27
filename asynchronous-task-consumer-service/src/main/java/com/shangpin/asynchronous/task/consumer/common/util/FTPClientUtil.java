@@ -20,7 +20,7 @@ public class FTPClientUtil {
      * @return 
      * @throws Exception 
      */  
-    private  boolean connect(String host,int port,String username,String password) throws Exception {    
+    public  boolean connect(String host,int port,String username,String password) throws Exception {    
         boolean result = false;    
         ftpClient = new FTPClient();    
         int reply;    
@@ -58,11 +58,4 @@ public class FTPClientUtil {
   		ftpClient.storeFile(fileName, sbs);
   		ftpClient.quit();
   	}
-	
-   public static void main(String[] args) throws Exception{  
-//	   FTPClientUtil t = new FTPClientUtil();  
-//      t.connect("", "localhost", 21, "yhh", "yhhazr");  
-//      File file = new File("e:\\uploadify");  
-//      t.upload(file);  
-   }  
 }  
