@@ -20,18 +20,31 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubProductImportDTO {
 	
+	private String supplierNo;
+	private String supplierName;
 	private String categoryName;
 	private String categoryNo;
 	private String brandNo;
 	private String brandName;
-	private String productCode;
+	private String spuModel;
 	private String gender;
-	private String color;
+	private String hubColor;
+	private String season;
+	private String marketTime;
 	private String sizeType;
-	private String size;
+	private String skuSize;
 	private String material;
-	private String madeIn;
+	private String origin;
 	private String marketPrice;
 	private String marketCurrency;
 
+	 /**
+	  * 和上面的属性保持一致
+	  * @return
+	  */
+	 public static String [] getHubProductTemplate(){
+		 String[] headers = { "supplierNo", "supplierName", "categoryName", "categoryNo","brandNo","brandName","spuModel","gender",
+					"hubColor","season","marketTime","sizeType","skuSize","material","origin","marketPrice","marketCurrency"};
+		 return headers;
+	 }
 }

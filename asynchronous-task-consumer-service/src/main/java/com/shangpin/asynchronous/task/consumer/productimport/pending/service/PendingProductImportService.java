@@ -3,7 +3,7 @@ package com.shangpin.asynchronous.task.consumer.productimport.pending.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.math.BigDecimal;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,11 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +28,18 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
-import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubPendingSkuDto;
+import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
+import com.shangpin.ephub.client.product.business.hubpending.spu.dao.HubPendingSpuDto;
+import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
+import com.shangpin.ephub.client.util.TaskImportTemplate;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -50,6 +57,7 @@ import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
  */
 @SuppressWarnings("rawtypes")
 @Service
+@Slf4j
 public class PendingProductImportService {
 	
 	@Autowired
@@ -61,12 +69,25 @@ public class PendingProductImportService {
 	@Autowired
 	TaskService taskService;
 	
+	@Autowired
+	HubSpuPendingGateWay hubSpuPendingGateWay;
+	
+	@Autowired
+	HubPendingSkuCheckGateWay pendingSkuCheckGateWay;
+	@Autowired
+	HubPendingSpuCheckGateWay pendingSpuCheckGateWay;
+	
+	private static String[] pendingSkuTemplate = null;
+	static {
+		pendingSkuTemplate = TaskImportTemplate.getPendingSkuTemplate();
+	}
+	
 	//1、更新任务表，把task_state更新成正在处理  2、从ftp下载文件并解析成对象   3、公共类校验hub数据并把校验结果写入excel   4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
 	public void handMessage(ProductImportTask task) throws Exception{
 		
 		//1、更新任务表，把task_state更新成正在处理
 		taskService.updateHubSpuImportStatusByTaskNo(TaskState.HANDLEING.getIndex(),task.getTaskNo(),null);
-		
+		log.info("任务编号："+task.getTaskNo()+"状态更新成正在处理");
 		// 2、从ftp下载文件并解析成对象
 		List<HubPendingProductImportDTO> listHubProduct = handleHubExcel(task.getTaskFtpFilePath(),task.getTaskNo());
 		
@@ -75,7 +96,6 @@ public class PendingProductImportService {
 		 
 		//4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
 		 convertExcel(result,task.getTaskNo());
-		 
 	}
 
 	private void convertExcel(List<Map<String, String>> result, String taskNo) throws Exception{
@@ -93,10 +113,10 @@ public class PendingProductImportService {
 		int status;
 		if(result!=null&&result.size()>0){
 			//部分成功
-			status = 2;
+			status = TaskState.SOME_SUCCESS.getIndex();
 		}else{
 			//全部成功
-			status = 3;
+			status = TaskState.ALL_SUCCESS.getIndex();
 		}
 		taskService.updateHubSpuImportByTaskNo(taskNo,path+resultFileName+".xlsx",status);
 		
@@ -107,49 +127,125 @@ public class PendingProductImportService {
 
 		List<Map<String, String>> listMap = new ArrayList<Map<String,String>>();
 		for(HubPendingProductImportDTO product:listHubProduct){
-			Map<String, String> map = new HashMap<String, String>();
-			//TODO hub商品入库前的公共校验方法
-			HubSkuPendingDto hubSkuPendingDto = convertHubPendingProduct2Sku(product);
-			HubSpuPendingDto hubSpuPendingDto = convertHubPendingProduct2Spu(product);
 			
-			Long id = findHubSkuPending(hubSkuPendingDto.getSupplierId(),hubSkuPendingDto.getSupplierSkuNo());
-			if(id!=null){
-				hubSkuPendingDto.setSkuPendingId(id);
-				hubSkuPendingGateWay.updateByPrimaryKey(hubSkuPendingDto);
-			}else{
-				hubSkuPendingGateWay.insert(hubSkuPendingDto);	
+			Map<String, String> map = new HashMap<String, String>();
+			//处理spu信息
+			
+			updateOrSaveSku(product);
+			
+			HubPendingSpuCheckResult hubPendingSpuCheckResult = handlePendingSpu(product);
+			
+			
+			if(hubPendingSpuCheckResult.isPassing()==true){
+				log.info(taskNo+"spu校验通过");
+				//校验sku信息
+				HubPendingSkuCheckResult hubPendingSkuCheckResult = handlePendingSku(product);
+				if (hubPendingSkuCheckResult.isPassing() == true) {
+					log.info(taskNo+"sku校验通过");
+					updateOrSaveSku(product);
+					
+					updateOrSaveSpu(product);
+					
+					map.put("taskNo",taskNo);
+					map.put("spuModel",product.getSpuModel());
+					map.put("taskState","校验成功");
+					map.put("processInfo","校验通过");
+				}else {
+					log.info(taskNo+"sku校验不通过");
+					map.put("taskNo", taskNo);
+					map.put("spuModel", product.getSpuModel());
+					map.put("taskState", "校验失败");
+					map.put("processInfo", hubPendingSkuCheckResult.getResult());
+				}
+			}else {
+				log.info(taskNo+"spu校验不通过");
+				map.put("taskNo", taskNo);
+				map.put("spuModel", product.getSpuModel());
+				map.put("taskState", "校验失败");
+				map.put("processInfo", hubPendingSpuCheckResult.getResult());
 			}
-			map.put("taskNo",taskNo);
-			map.put("spuModel",product.getProductCode());
-			map.put("taskState","校验失败");
-			map.put("processInfo","不合格");
+			
 			listMap.add(map);
 		}
 		return listMap;
 	}
 
+	
+	private void updateOrSaveSpu(HubPendingProductImportDTO product) {
+		//查询数据库spu信息是否已存在，存在则更新，反之插入
+		HubSpuPendingDto hubSpuPendingDto = convertHubPendingProduct2Spu(product);
+		Long ll = hubSpuPendingDto.getSpuPendingId();
+		Long spuId = findHubSpuPending(ll);
+		if(spuId!=null){
+			hubSpuPendingDto.setSpuPendingId(spuId);
+			hubSpuPendingGateWay.updateByPrimaryKey(hubSpuPendingDto);
+		}else{
+			hubSpuPendingGateWay.insert(hubSpuPendingDto);	
+		}
+	}
+
+	private void updateOrSaveSku(HubPendingProductImportDTO product) {
+		product.setSupplierId("201612271520");
+		HubSkuPendingDto hubSkuPendingDto = convertHubPendingProduct2Sku(product);
+		//查询数据库sku信息是否已存在
+		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),hubSkuPendingDto.getSupplierSkuNo());
+		if(hubSkuPendingTempDto!=null){
+			hubSkuPendingDto.setSkuPendingId(hubSkuPendingTempDto.getSkuPendingId());
+			hubSkuPendingGateWay.updateByPrimaryKey(hubSkuPendingDto);
+		}else{
+			hubSkuPendingGateWay.insert(hubSkuPendingDto);	
+		}
+		
+	}
+
+	private HubPendingSkuCheckResult handlePendingSku(HubPendingProductImportDTO product) {
+		HubPendingSkuDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
+		return pendingSkuCheckGateWay.checkSku(HubPendingSkuDto);
+	}
+
+	private HubPendingSpuCheckResult handlePendingSpu(HubPendingProductImportDTO product) {
+		//校验spu信息
+		HubPendingSpuDto HubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
+		return pendingSpuCheckGateWay.checkSpu(HubPendingSpuDto);
+		
+	}
+
+	private HubPendingSpuDto convertHubPendingProduct2PendingSpu(
+			HubPendingProductImportDTO product) {
+		HubPendingSpuDto HubPendingSpuDto = new HubPendingSpuDto();
+		BeanUtils.copyProperties(product, HubPendingSpuDto);
+		return HubPendingSpuDto;
+	}
+
+	private HubPendingSkuDto convertHubPendingProduct2PendingSku(
+			HubPendingProductImportDTO product) {
+		HubPendingSkuDto HubPendingSkuDto = new HubPendingSkuDto();
+		BeanUtils.copyProperties(product, HubPendingSkuDto);
+		return HubPendingSkuDto;
+	}
+
 	private HubSpuPendingDto convertHubPendingProduct2Spu(HubPendingProductImportDTO product) {
 		
 		HubSpuPendingDto hubSpuPendingDto = new HubSpuPendingDto();
-		hubSpuPendingDto.setSupplierId(product.getSupplierNo());
-		hubSpuPendingDto.setHubCategoryNo(product.getBrandNo());
-		hubSpuPendingDto.setHubBrandNo(product.getBrandNo());
-		hubSpuPendingDto.setSpuModel(product.getProductCode());
-		
-		hubSpuPendingDto.setHubSeason(product.getSeasonName());
-//		hubSpuPendingDto
-		
-		return null;
+		BeanUtils.copyProperties(product, hubSpuPendingDto);
+		return hubSpuPendingDto;
 	}
 
-	private Long findHubSkuPending(String supplierId, String supplierSkuNo) {
+	private HubSkuPendingDto findHubSkuPending(String supplierId, String supplierSkuNo) {
 		
 		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
 		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
 		criteria.setFields("supplier_id,supplier_sku_no");
 		List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criteria);
 		if(list!=null&&list.size()>0){
-			return list.get(0).getSkuPendingId();
+			return list.get(0);
+		}
+		return null;
+	}
+	private Long findHubSpuPending(Long spuId) {
+		HubSpuPendingDto list = hubSpuPendingGateWay.selectByPrimaryKey(spuId);
+		if(list!=null){
+			return list.getSpuPendingId();
 		}
 		return null;
 	}
@@ -157,24 +253,7 @@ public class PendingProductImportService {
 	private HubSkuPendingDto convertHubPendingProduct2Sku(
 			HubPendingProductImportDTO product) {
 		HubSkuPendingDto hubSkuPendingDto = new HubSkuPendingDto();
-		hubSkuPendingDto.setCreateTime(new Date());
-		hubSkuPendingDto.setDataState((byte)1);
-		String marketPrice = product.getMarketPrice();
-		if(StringUtils.isNotBlank(marketPrice)){
-			hubSkuPendingDto.setMarketPrice(new BigDecimal(marketPrice));	
-		}
-		hubSkuPendingDto.setMarketPriceCurrencyorg(product.getMarketCurrency());
-		String supplyPrice = product.getSupplierPrice();
-		if(StringUtils.isNotBlank(supplyPrice)){
-			hubSkuPendingDto.setSupplyPrice(new BigDecimal(supplyPrice));	
-		}
-		hubSkuPendingDto.setSupplyPriceCurrency(product.getSupplierCurrency());
-		hubSkuPendingDto.setHubSkuSize(product.getSize());
-		hubSkuPendingDto.setMeasurement(product.getMeasure());
-		hubSkuPendingDto.setSkuName(product.getProductName());
-		hubSkuPendingDto.setSupplierBarcode(product.getBarcode());
-		hubSkuPendingDto.setSupplierSkuNo(product.getSupplierSkuNo());
-		hubSkuPendingDto.setSupplierId(product.getSupplierNo());
+		BeanUtils.copyProperties(product, hubSkuPendingDto);
 		return hubSkuPendingDto;
 	}
 
@@ -183,17 +262,20 @@ public class PendingProductImportService {
 		
 		InputStream in = FTPClientUtil.downFile(taskFtpFilePath);
 		if(in==null){
+			log.info("任务编号："+taskNo+","+taskFtpFilePath+"从ftp下载失败数据为空");
 			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo,"从ftp下载失败");
 		}
 		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(in);
 		XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
 		if (xssfSheet.getRow(0) == null) {
+			log.info("任务编号："+taskNo+","+taskFtpFilePath+"下载的excel数据为空");
 			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo,"下载的excel数据为空");
 			return null;
 		}
 		boolean flag = checkFileTemplet(xssfSheet.getRow(0));
 		if(!flag){
 			//TODO 上传文件与模板不一致
+			log.info("任务编号："+taskNo+","+taskFtpFilePath+"上传文件与模板不一致");
 			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo,"上传文件与模板不一致");
 			return null;
 		}
@@ -210,154 +292,31 @@ public class PendingProductImportService {
 		if (xssfRow != null) {
 			try {
 				item = new HubPendingProductImportDTO();
-				if (xssfRow.getCell(0) != null) {
-					xssfRow.getCell(0).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setSupplierNo(xssfRow.getCell(0).toString());
+				String [] hubValueTemplate = item.getHubProductTemplate();
+				Class c = item.getClass();
+				for (int i = 0; i < hubValueTemplate.length; i++) {
+					if (xssfRow.getCell(i) != null) {
+						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
+						String setMethodName = "set" + hubValueTemplate[i].toUpperCase().charAt(0)
+								+ hubValueTemplate[i].substring(1);
+						Method setMethod = c.getDeclaredMethod(setMethodName, String.class);
+						setMethod.invoke(item, xssfRow.getCell(i).toString());
+					}
 				}
-				if (xssfRow.getCell(1) != null) {
-					xssfRow.getCell(1).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setCategoryName(xssfRow.getCell(1).toString());
-				}
-				if (xssfRow.getCell(2) != null) {
-					xssfRow.getCell(2).setCellType(
-							Cell.CELL_TYPE_STRING);
-					xssfRow.getCell(3).setCellType(
-							Cell.CELL_TYPE_STRING);
-					String categoryNo = xssfRow.getCell(2).toString();
-					String brandNo = xssfRow.getCell(3).toString();
-					item.setCategoryNo(categoryNo);
-					item.setBrandNo(brandNo);
-				}
-				if (xssfRow.getCell(4) != null) {
-					xssfRow.getCell(4).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setBrandName(xssfRow.getCell(4).toString());
-				}
-				if (xssfRow.getCell(5) != null) {
-					xssfRow.getCell(5).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setProductCode(xssfRow.getCell(5).toString());
-				}
-				if (xssfRow.getCell(6) != null) {
-					xssfRow.getCell(6).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setSeasonYear(xssfRow.getCell(6).toString());
-				}
-				if (xssfRow.getCell(7) != null) {
-					xssfRow.getCell(7).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setSeasonName(xssfRow.getCell(7).toString());
-				}
-				if (xssfRow.getCell(8) != null) {
-					xssfRow.getCell(8).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setGender(xssfRow.getCell(8).toString());
-				}
-				if (xssfRow.getCell(9) != null) {
-					xssfRow.getCell(9).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setSupplierSkuNo(xssfRow.getCell(9).toString());
-				}
-				if (xssfRow.getCell(10) != null) {
-					xssfRow.getCell(10).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setProductName(xssfRow.getCell(10).toString());
-				}
-				if (xssfRow.getCell(11) != null) {
-					xssfRow.getCell(11).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setBarcode(xssfRow.getCell(11).toString());
-				}
-				if (xssfRow.getCell(12) != null) {
-					xssfRow.getCell(12).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setColor(xssfRow.getCell(12).toString());
-				}
-				if (xssfRow.getCell(13) != null) {
-					xssfRow.getCell(13).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setSpecificationType(xssfRow.getCell(13).toString());
-				}
-				if (xssfRow.getCell(14) != null) {
-					xssfRow.getCell(14).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setSizeType(xssfRow.getCell(14).toString());
-				}
-				if (xssfRow.getCell(15) != null) {
-					xssfRow.getCell(15).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setSize(xssfRow.getCell(15).toString());
-				}
-				if (xssfRow.getCell(16) != null) {
-					xssfRow.getCell(16).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setMaterial(xssfRow.getCell(16).toString());
-				}
-				if (xssfRow.getCell(17) != null) {
-					xssfRow.getCell(17).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setMadeIn(xssfRow.getCell(17).toString());
-				}
-				if (xssfRow.getCell(18) != null) {
-					xssfRow.getCell(18).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setSupplierPrice(xssfRow.getCell(18).toString());
-				}
-				if (xssfRow.getCell(19) != null) {
-					xssfRow.getCell(19).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setSupplierCurrency(xssfRow.getCell(18).toString());
-				}
-				if (xssfRow.getCell(20) != null) {
-					xssfRow.getCell(20).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setMarketPrice(xssfRow.getCell(20).toString());
-				}
-				if (xssfRow.getCell(21) != null) {
-					xssfRow.getCell(21).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setMarketCurrency(xssfRow.getCell(21).toString());
-				}
-				if (xssfRow.getCell(22) != null) {
-					xssfRow.getCell(22).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setMeasure(xssfRow.getCell(22).toString());
-				}
-				if (xssfRow.getCell(23) != null) {
-					xssfRow.getCell(23).setCellType(
-							Cell.CELL_TYPE_STRING);
-					item.setDescription(xssfRow.getCell(23).toString());
-				}
+				
 			} catch (Exception ex) {
 				ex.getStackTrace();
 			}
 		}
 		return item;
 	}
-private static boolean checkFileTemplet(XSSFRow xssfRow) {
-		
-		Map<Integer,String> excelMappingMap = new HashMap<Integer,String>();
-		excelMappingMap.put(0,"供应商名称");
-		excelMappingMap.put(0,"品类名称");
-		excelMappingMap.put(1,"品类编号*");
-		excelMappingMap.put(2,"品牌编号*");
-		excelMappingMap.put(3,"品牌名称");
-		excelMappingMap.put(4,"货号*");
-		excelMappingMap.put(5,"适应性别*");
-		excelMappingMap.put(6,"颜色*");
-		excelMappingMap.put(7,"原尺码类型");
-		excelMappingMap.put(8,"原尺码值");
-		excelMappingMap.put(9,"材质*");
-		excelMappingMap.put(10,"产地*");
-		excelMappingMap.put(11,"市场价");
-		excelMappingMap.put(12,"市场价币种");
+	private static boolean checkFileTemplet(XSSFRow xssfRow) {
+			
 		boolean flag = true;
-		for(int i=0;i<excelMappingMap.size();i++){
+		for (int i = 0; i < pendingSkuTemplate.length; i++) {
 			if (xssfRow.getCell(i) != null) {
 				String fieldName = xssfRow.getCell(i).toString();
-				if(!excelMappingMap.get(i).equals(fieldName)){
+				if (!pendingSkuTemplate[i].equals(fieldName)) {
 					flag = false;
 					break;
 				}

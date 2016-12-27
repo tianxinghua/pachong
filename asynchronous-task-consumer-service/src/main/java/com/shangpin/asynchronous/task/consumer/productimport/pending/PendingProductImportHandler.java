@@ -5,9 +5,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.asynchronous.task.consumer.productimport.hub.service.HubProductImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.service.PendingProductImportService;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>Title:PendingProductImportHandler.java </p>
@@ -17,6 +18,7 @@ import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
  * @date 2016年12月19日 下午8:03:57
  */
 @Component
+@Slf4j
 public class PendingProductImportHandler {
 	
 	@Autowired
@@ -27,8 +29,9 @@ public class PendingProductImportHandler {
 	 * @param headers 消息头
 	 */
 	public void pendingImportStreamListen(ProductImportTask message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
 		try {
+			log.info("pending任务接受到消息：{}",message);
+//			String index = (String)headers.get("0");
 			pendingProductImportService.handMessage(message);
 		} catch (Exception e) {
 			e.printStackTrace();

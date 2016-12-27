@@ -1,5 +1,7 @@
 package com.shangpin.asynchronous.task.consumer.productimport.pending.dto;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
@@ -20,28 +22,35 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubPendingProductImportDTO {
 	private String supplierNo;
+	private String supplierName;
 	private String categoryName;
 	private String categoryNo;
 	private String brandNo;
 	private String brandName;
-	private String productCode;
+	private String spuModel;
 	private String seasonYear;
-	private String seasonName;
-	private String gender;
+	private String hubSeason;
+	private String hubGender;
 	private String supplierSkuNo;
-	private String productName;
-	private String barcode;
-	private String color;
+	private String skuName;
+	private String supplierBarcode;
+	private String hubColor;
 	private String specificationType;
 	private String sizeType;
-	private String size;
-	private String material;
-	private String madeIn;
-	private String supplierPrice;
-	private String supplierCurrency;
-	private String marketPrice;
-	private String marketCurrency;
-	private String measure;
-	private String description;
+	private String hubSkuSize;
+	private String hubMaterial;
+	private String hubOrigin;
+	private BigDecimal supplyPrice;
+	private String supplyPriceCurrency;
+	private BigDecimal marketPrice;
+	private String marketPriceCurrencyOrg;
+	private String measurement;
+	private String spuDesc;
+	private String supplierId;
+	public String[] getHubProductTemplate() {
+		String [] temp = {"supplierNo","supplierName","categoryName","categoryNo","brandNo","brandName","spuModel","seasonYear","hubSeason","hubGender","supplierSkuNo","skuName","supplierBarcode",
+				"hubColor","specificationType","sizeType","hubSkuSize","hubMaterial","hubOrigin","supplyPrice","supplyPriceCurrency","marketPrice","marketPriceCurrencyOrg","measurement","spuDesc"};
+		return temp;
+	}
 
 }
