@@ -22,22 +22,8 @@ public class HubWaitSelectRequestWithPageDto {
     private String spuModel;
     private String brandNo;
     private String categoryNo;
-    private int spuState;
+    private Byte spuState;
     private String startDate;
     private String endDate;
-    
-    public Integer getPageNo() {
-        return pageNo;
-    }
-    public void setPageNo(Integer pageNo) {
-        this.pageNo = (pageNo-1)*this.pageSize;
-    }
-    public void setPageSize(Integer pageSize) {
-        this.pageSize=pageSize;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-	  
+    private Byte spuSelectState;
 }

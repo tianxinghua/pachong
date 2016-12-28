@@ -21,9 +21,10 @@ public class HubWaitSelectRequestWithPage {
     private String spuModel;
     private String brandNo;
     private String categoryNo;
-    private int spuState;
+    private Byte spuState;
     private String startDate;
     private String endDate;
+    private Byte spuSelectState;
     
     public Integer getPageNo() {
         return pageNo;

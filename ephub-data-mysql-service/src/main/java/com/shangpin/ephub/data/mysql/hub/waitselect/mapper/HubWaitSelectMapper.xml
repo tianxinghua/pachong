@@ -41,7 +41,7 @@
    	map.supplier_no,map.supplier_id,spu.spu_no,sku.sku_no,sku.sku_size,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,spu.market_time,spu.season,spu.hub_color,spu.spu_state,spu.pic_url,spu.origin,spu.material
     from hub_spu spu LEFT JOIN hub_sku sku on sku.spu_no = spu.spu_no left join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
-    1 = 1
+    	spu.spu_select_state = #{spuSelectState}
      <if test="null!= supplierNo">
 	        and        map.supplier_no = #{supplierNo}
 	 </if>
@@ -71,14 +71,16 @@
    	count(*)
     from hub_spu spu LEFT JOIN hub_sku sku on sku.spu_no = spu.spu_no left join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
+    
+    spu.spu_select_state = #{spuSelectState}
      <if test="null!= supplierNo">
-	                map.supplier_no = #{supplierNo}
+	             and   map.supplier_no = #{supplierNo}
 	 </if>
 	   <if test="null!= brandNo">
-	                spu.brand_no = #{brandNo}
+	          and      spu.brand_no = #{brandNo}
 	 </if>
 	   <if test="null!= categoryNo">
-	                spu.category_no = #{categoryNo}
+	            and    spu.category_no = #{categoryNo}
 	 </if>
 	  <if test="null!= spuModel">
 	           and  spu.spu_model = #{spuModel}
