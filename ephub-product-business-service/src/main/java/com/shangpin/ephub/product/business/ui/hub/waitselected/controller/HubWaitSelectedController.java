@@ -2,18 +2,19 @@ package com.shangpin.ephub.product.business.ui.hub.waitselected.controller;
 
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.product.business.ui.hub.waitselected.dao.HubWaitSelectedRequestDto;
-import com.shangpin.ephub.product.business.ui.hub.waitselected.service.HubWaitSelectedService;
-import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponseDto;
-import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponseWithPageDto;
+import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
+import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
+import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
+import com.shangpin.ephub.client.data.mysql.hub.gateway.HubWaitSelectGateWay;
+import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponseWithPage;
 import com.shangpin.ephub.response.HubResponse;
-
 
 /**
  * <p>HubSpuImportTaskController </p>
@@ -26,19 +27,26 @@ import com.shangpin.ephub.response.HubResponse;
 @RestController
 @RequestMapping("/hub-waitSelected")
 public class HubWaitSelectedController {
-	
 	@Autowired
-	HubWaitSelectedService hubWaitSelectedService;
+	HubWaitSelectGateWay HubWaitSelectGateWay;
 	
 	@RequestMapping(value = "/list",method = RequestMethod.POST)
-    public HubResponse importSpuList(@RequestBody HubWaitSelectedRequestDto dto){
+    public HubResponse importSpuList(@RequestBody HubWaitSelectRequestWithPageDto dto){
 	        	
 		try {
-			List<HubWaitSelectedResponseDto> list = hubWaitSelectedService.findHubWaitSelectedList(dto);
-			HubWaitSelectedResponseWithPageDto HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPageDto();
-			HubWaitSelectedResponseWithPageDto.setTotal(1);
-			HubWaitSelectedResponseWithPageDto.setList(list);
-			return HubResponse.successResp(HubWaitSelectedResponseWithPageDto);
+			HubWaitSelectRequestDto hubWaitSelectRequest = new HubWaitSelectRequestDto();
+			BeanUtils.copyProperties(dto, hubWaitSelectRequest);
+			int total = HubWaitSelectGateWay.count(hubWaitSelectRequest);
+			if(total<0){
+				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
+				HubWaitSelectedResponseWithPage HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPage();
+				HubWaitSelectedResponseWithPageDto.setTotal(total);
+				HubWaitSelectedResponseWithPageDto.setList(list);
+				return HubResponse.successResp(HubWaitSelectedResponseWithPageDto);
+			}else{
+				return HubResponse.successResp("列表页为空");
+			}
+			
 		} catch (Exception e) {
 			return HubResponse.errorResp("获取列表失败");
 		}
