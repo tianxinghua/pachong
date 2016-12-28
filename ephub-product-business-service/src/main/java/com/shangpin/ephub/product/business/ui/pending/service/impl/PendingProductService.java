@@ -453,25 +453,26 @@ public class PendingProductService implements IPendingProductService{
 	private void insertProductSpuOfRow(HSSFRow row,PendingProductDto product) throws Exception{
 		row.createCell(0).setCellValue(product.getSupplierId());
 		row.createCell(1).setCellValue(product.getSupplierName());
-		row.createCell(2).setCellValue(product.getHubCategoryName());
-		row.createCell(3).setCellValue(product.getHubCategoryNo());
-		row.createCell(4).setCellValue(product.getHubBrandNo());
-		row.createCell(5).setCellValue(product.getHubBrandName());
-		row.createCell(6).setCellValue(product.getSpuModel());
+		row.createCell(2).setCellValue(product.getSupplierSpuNo()); 
+		row.createCell(3).setCellValue(product.getHubCategoryName());
+		row.createCell(4).setCellValue(product.getHubCategoryNo());
+		row.createCell(5).setCellValue(product.getHubBrandNo());
+		row.createCell(6).setCellValue(product.getHubBrandName());
+		row.createCell(7).setCellValue(product.getSpuModel());
 		if(!StringUtils.isEmpty(product.getHubSeason())){
 			if(product.getHubSeason().contains("-")){
-				row.createCell(7).setCellValue(product.getHubSeason().substring(0, product.getHubSeason().indexOf("-"))); 
-				row.createCell(8).setCellValue(product.getHubSeason().substring(product.getHubSeason().indexOf("-")+1)); 
+				row.createCell(8).setCellValue(product.getHubSeason().substring(0, product.getHubSeason().indexOf("-"))); 
+				row.createCell(9).setCellValue(product.getHubSeason().substring(product.getHubSeason().indexOf("-")+1)); 
 			}else{
-				row.createCell(8).setCellValue(product.getHubSeason()); 
+				row.createCell(9).setCellValue(product.getHubSeason()); 
 			}
 		}
-		row.createCell(9).setCellValue(product.getHubGender());
-		row.createCell(10).setCellValue(product.getSpuName());
-		row.createCell(11).setCellValue(product.getHubColor());
-		row.createCell(12).setCellValue(product.getHubMaterial());
-		row.createCell(13).setCellValue(product.getHubOrigin());
-		row.createCell(14).setCellValue(product.getSpuDesc());
+		row.createCell(10).setCellValue(product.getHubGender());
+		row.createCell(11).setCellValue(product.getSpuName());
+		row.createCell(12).setCellValue(product.getHubColor());
+		row.createCell(13).setCellValue(product.getHubMaterial());
+		row.createCell(14).setCellValue(product.getHubOrigin());
+		row.createCell(15).setCellValue(product.getSpuDesc());
 		StringBuffer buffer = new StringBuffer();
 		String comma = ",";
 		if(PicState.NO_PIC.getIndex() == product.getPicState() || PicState.PIC_INFO_NOT_COMPLETED.getIndex() == product.getPicState()){
@@ -480,7 +481,7 @@ public class PendingProductService implements IPendingProductService{
 		if(CatgoryState.PERFECT_MATCHED.equals(product.getCatgoryState())){
 			buffer = buffer.append("品类").append(comma);
 		}
-		row.createCell(15).setCellValue(buffer.toString()); 
+		row.createCell(16).setCellValue(buffer.toString()); 
 	}
 	/**
 	 * 将sku信息插入Excel的一行
@@ -490,20 +491,21 @@ public class PendingProductService implements IPendingProductService{
 	 */
 	public void insertProductSkuOfRow(HSSFRow row,PendingProductDto product,HubSkuPendingDto sku) throws Exception{
 		insertProductSpuOfRow(row,product);
-		row.createCell(10).setCellValue(sku.getSupplierSkuNo());
-		row.createCell(11).setCellValue(sku.getSupplierBarcode());
-		row.createCell(12).setCellValue(product.getHubColor());
-		row.createCell(13).setCellValue("规格类型");
-		row.createCell(14).setCellValue("原尺码类型");
-		row.createCell(15).setCellValue(sku.getHubSkuSize());
-		row.createCell(16).setCellValue(product.getHubMaterial());
-		row.createCell(17).setCellValue(product.getHubOrigin());
-		row.createCell(18).setCellValue(sku.getSupplyPrice().toString());
-		row.createCell(19).setCellValue(sku.getSupplyPriceCurrency());
-		row.createCell(20).setCellValue(sku.getMarketPrice().toString());
-		row.createCell(21).setCellValue(sku.getMarketPriceCurrencyorg());
-		row.createCell(22).setCellValue("尺寸");
-		row.createCell(23).setCellValue(product.getSpuDesc()); 
+		row.createCell(11).setCellValue(sku.getSupplierSkuNo());
+		row.createCell(12).setCellValue(product.getSupplierSpuNo()); 
+		row.createCell(13).setCellValue(sku.getSupplierBarcode());
+		row.createCell(14).setCellValue(product.getHubColor());
+		row.createCell(15).setCellValue("规格类型");
+		row.createCell(16).setCellValue("原尺码类型");
+		row.createCell(17).setCellValue(sku.getHubSkuSize());
+		row.createCell(18).setCellValue(product.getHubMaterial());
+		row.createCell(19).setCellValue(product.getHubOrigin());
+		row.createCell(20).setCellValue(sku.getSupplyPrice().toString());
+		row.createCell(21).setCellValue(sku.getSupplyPriceCurrency());
+		row.createCell(22).setCellValue(sku.getMarketPrice().toString());
+		row.createCell(23).setCellValue(sku.getMarketPriceCurrencyorg());
+		row.createCell(24).setCellValue("尺寸");
+		row.createCell(25).setCellValue(product.getSpuDesc()); 
 	}
 	
 }
