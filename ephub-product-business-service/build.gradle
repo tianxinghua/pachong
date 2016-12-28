@@ -29,11 +29,9 @@ repositories {
 
 
 dependencies {
-<<<<<<< Updated upstream
+
 	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.5.4-SNAPSHOT')
-=======
-	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.5.2-SNAPSHOT')
->>>>>>> Stashed changes
+
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-actuator-docs')
 	compile('org.springframework.boot:spring-boot-starter-aop')
