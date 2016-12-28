@@ -3,7 +3,6 @@ package com.shangpin.ephub.product.business.ui.pending.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -29,6 +28,10 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
+import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
@@ -37,6 +40,7 @@ import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
+import com.shangpin.ephub.product.business.util.DateTimeUtil;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -62,6 +66,11 @@ public class PendingProductService implements IPendingProductService{
     private HubSupplierBrandDicGateWay brandDicGateWay;
     @Autowired
     private SupplierService supplierService;
+    @Autowired
+    private HubPendingSkuCheckGateWay pendingSkuCheckGateWay;
+    @Autowired
+    private HubPendingSpuCheckGateWay pendingSpuCheckGateWay;
+
 
     @Override
     public HSSFWorkbook exportSku(PendingQuryDto pendingQuryDto){
@@ -201,23 +210,31 @@ public class PendingProductService implements IPendingProductService{
 
     }
     @Override
-    public boolean updatePendingProduct(PendingProductDto pendingProductDto){
+    public boolean updatePendingProduct(PendingProductDto pendingProductDto) throws Exception{
         try {
             if(null != pendingProductDto){
-                //TODO 先验证，验证通过则更新
-                hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+                HubPendingSpuCheckResult spuResult = pendingSpuCheckGateWay.checkSpu(pendingProductDto);
+                if(spuResult.isPassing()){
+                    hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+                }else{
+                    log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
+                }
                 List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
                 if(null != pengdingSkus && pengdingSkus.size()>0){
                     for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
-                        //TODO 先验证，验证通过则更新
-                        hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+                        HubPendingSkuCheckResult result = pendingSkuCheckGateWay.checkSku(hubSkuPendingDto);
+                        if(result.isPassing()){
+                            hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+                        }else{
+                            log.info("pending sku校验失败，不更新："+result.getResult()+"|原始数据："+JsonUtil.serialize(hubSkuPendingDto));
+                        }
                     }
                 }
             }
             return true;
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage(),e);
-            return false;
+            throw new Exception("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage(),e);
         }
     }
     @Override
@@ -230,35 +247,38 @@ public class PendingProductService implements IPendingProductService{
             }
             return true;
         } catch (Exception e) {
+            log.error("待更新页面批量提交异常："+e.getMessage(),e);
             return false;
         }
 
     }
     @Override
-    public boolean updatePendingProductToUnableToProcess(Long spuPendingId){
+    public boolean updatePendingProductToUnableToProcess(String spuPendingId) throws Exception{
         try {
             if(!StringUtils.isEmpty(spuPendingId)){
                 HubSpuPendingDto hubSpuPendingDto = new HubSpuPendingDto();
-                hubSpuPendingDto.setSpuPendingId(spuPendingId);
+                hubSpuPendingDto.setSpuPendingId(Long.parseLong(spuPendingId));
                 hubSpuPendingDto.setSpuState(SpuState.UNABLE_TO_PROCESS.getIndex());
                 hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
             }
             return true;
         } catch (Exception e) {
-            return false;
+            log.error("单个产品更新无法处理时异常："+e.getMessage(),e);
+            throw new Exception("单个产品更新无法处理时异常："+e.getMessage(),e);
         }
 
     }
     @Override
-    public boolean batchUpdatePendingProductToUnableToProcess(List<Long> spuPendingIds){
+    public boolean batchUpdatePendingProductToUnableToProcess(List<String> spuPendingIds){
         try {
             if(null != spuPendingIds && spuPendingIds.size()>0){
-                for(Long spuPendingId : spuPendingIds){
+                for(String spuPendingId : spuPendingIds){
                     updatePendingProductToUnableToProcess(spuPendingId);
                 }
             }
             return true;
         } catch (Exception e) {
+            log.error("批量更新无法处理时异常："+e.getMessage(),e);
             return false;
         }
 
@@ -433,25 +453,26 @@ public class PendingProductService implements IPendingProductService{
     private void insertProductSpuOfRow(HSSFRow row,PendingProductDto product) throws Exception{
         row.createCell(0).setCellValue(product.getSupplierId());
         row.createCell(1).setCellValue(product.getSupplierName());
-        row.createCell(2).setCellValue(product.getHubCategoryName());
-        row.createCell(3).setCellValue(product.getHubCategoryNo());
-        row.createCell(4).setCellValue(product.getHubBrandNo());
-        row.createCell(5).setCellValue(product.getHubBrandName());
-        row.createCell(6).setCellValue(product.getSpuModel());
+        row.createCell(2).setCellValue(product.getSupplierSpuNo());
+        row.createCell(3).setCellValue(product.getHubCategoryName());
+        row.createCell(4).setCellValue(product.getHubCategoryNo());
+        row.createCell(5).setCellValue(product.getHubBrandNo());
+        row.createCell(6).setCellValue(product.getHubBrandName());
+        row.createCell(7).setCellValue(product.getSpuModel());
         if(!StringUtils.isEmpty(product.getHubSeason())){
             if(product.getHubSeason().contains("-")){
-                row.createCell(7).setCellValue(product.getHubSeason().substring(0, product.getHubSeason().indexOf("-")));
-                row.createCell(8).setCellValue(product.getHubSeason().substring(product.getHubSeason().indexOf("-")+1));
+                row.createCell(8).setCellValue(product.getHubSeason().substring(0, product.getHubSeason().indexOf("-")));
+                row.createCell(9).setCellValue(product.getHubSeason().substring(product.getHubSeason().indexOf("-")+1));
             }else{
-                row.createCell(8).setCellValue(product.getHubSeason());
+                row.createCell(9).setCellValue(product.getHubSeason());
             }
         }
-        row.createCell(9).setCellValue(product.getHubGender());
-        row.createCell(10).setCellValue(product.getSpuName());
-        row.createCell(11).setCellValue(product.getHubColor());
-        row.createCell(12).setCellValue(product.getHubMaterial());
-        row.createCell(13).setCellValue(product.getHubOrigin());
-        row.createCell(14).setCellValue(product.getSpuDesc());
+        row.createCell(10).setCellValue(product.getHubGender());
+        row.createCell(11).setCellValue(product.getSpuName());
+        row.createCell(12).setCellValue(product.getHubColor());
+        row.createCell(13).setCellValue(product.getHubMaterial());
+        row.createCell(14).setCellValue(product.getHubOrigin());
+        row.createCell(15).setCellValue(product.getSpuDesc());
         StringBuffer buffer = new StringBuffer();
         String comma = ",";
         if(PicState.NO_PIC.getIndex() == product.getPicState() || PicState.PIC_INFO_NOT_COMPLETED.getIndex() == product.getPicState()){
@@ -460,7 +481,7 @@ public class PendingProductService implements IPendingProductService{
         if(CatgoryState.PERFECT_MATCHED.equals(product.getCatgoryState())){
             buffer = buffer.append("品类").append(comma);
         }
-        row.createCell(15).setCellValue(buffer.toString());
+        row.createCell(16).setCellValue(buffer.toString());
     }
     /**
      * 将sku信息插入Excel的一行
@@ -470,20 +491,21 @@ public class PendingProductService implements IPendingProductService{
      */
     public void insertProductSkuOfRow(HSSFRow row,PendingProductDto product,HubSkuPendingDto sku) throws Exception{
         insertProductSpuOfRow(row,product);
-        row.createCell(10).setCellValue(sku.getSupplierSkuNo());
-        row.createCell(11).setCellValue(sku.getSupplierBarcode());
-        row.createCell(12).setCellValue(product.getHubColor());
-        row.createCell(13).setCellValue("规格类型");
-        row.createCell(14).setCellValue("原尺码类型");
-        row.createCell(15).setCellValue(sku.getHubSkuSize());
-        row.createCell(16).setCellValue(product.getHubMaterial());
-        row.createCell(17).setCellValue(product.getHubOrigin());
-        row.createCell(18).setCellValue(sku.getSupplyPrice().toString());
-        row.createCell(19).setCellValue(sku.getSupplyPriceCurrency());
-        row.createCell(20).setCellValue(sku.getMarketPrice().toString());
-        row.createCell(21).setCellValue(sku.getMarketPriceCurrencyorg());
-        row.createCell(22).setCellValue("尺寸");
-        row.createCell(23).setCellValue(product.getSpuDesc());
+        row.createCell(11).setCellValue(sku.getSupplierSkuNo());
+        row.createCell(12).setCellValue(product.getSupplierSpuNo());
+        row.createCell(13).setCellValue(sku.getSupplierBarcode());
+        row.createCell(14).setCellValue(product.getHubColor());
+        row.createCell(15).setCellValue("规格类型");
+        row.createCell(16).setCellValue("原尺码类型");
+        row.createCell(17).setCellValue(sku.getHubSkuSize());
+        row.createCell(18).setCellValue(product.getHubMaterial());
+        row.createCell(19).setCellValue(product.getHubOrigin());
+        row.createCell(20).setCellValue(sku.getSupplyPrice().toString());
+        row.createCell(21).setCellValue(sku.getSupplyPriceCurrency());
+        row.createCell(22).setCellValue(sku.getMarketPrice().toString());
+        row.createCell(23).setCellValue(sku.getMarketPriceCurrencyorg());
+        row.createCell(24).setCellValue("尺寸");
+        row.createCell(25).setCellValue(product.getSpuDesc());
     }
 
 }

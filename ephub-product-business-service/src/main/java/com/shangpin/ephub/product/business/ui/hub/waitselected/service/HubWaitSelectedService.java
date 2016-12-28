@@ -41,7 +41,9 @@ public class HubWaitSelectedService {
 	public List<HubWaitSelectedResponseDto> findHubWaitSelectedList(HubWaitSelectedRequestDto dto) {
 		
 		List<HubWaitSelectedResponseDto> returnList = new ArrayList<HubWaitSelectedResponseDto>();
-		
+		HubWaitSelectedResponseDto hubWaitSelectedResponseDto = new HubWaitSelectedResponseDto();
+		hubWaitSelectedResponseDto.setBrandName("s");
+		returnList.add(hubWaitSelectedResponseDto);
 		String supplierNo = dto.getSupplierNo();
 		List<HubSkuSupplierMappingDto> hubSkuSuppMapplist = null;
 		//如果供应商不为空
@@ -55,7 +57,7 @@ public class HubWaitSelectedService {
 			hubSkuSuppMapplist = hubSkuSupplierMappingGateWay.selectByCriteria(HubSkuSupplierMappingDto);
 			
 			if(hubSkuSuppMapplist!=null&&hubSkuSuppMapplist.size()>0){
-				HubWaitSelectedResponseDto hubWaitSelectedResponseDto = new HubWaitSelectedResponseDto();
+				
 				for(HubSkuSupplierMappingDto hubSkuSupplierMappingDto:hubSkuSuppMapplist){
 					String hubSkuNo = hubSkuSupplierMappingDto.getSkuNo();
 					HubSkuCriteriaDto criteria = new HubSkuCriteriaDto();
@@ -80,7 +82,7 @@ public class HubWaitSelectedService {
 		}
 		List<HubSpuDto> hubSpuList = hubSpuService.findHubSpuList(dto);
 //		hubSpuService.find
-		return null;
+		return returnList;
 	}
 
 }

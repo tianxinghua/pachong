@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.product.business.rest.hubpending.spu.dto.HubPendingSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendingSpuCheckService;
 
@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2016年12月22 下午3:52:56
  */
 @RestController
-@RequestMapping(value = "/hub-pending-spu-check")
+@RequestMapping(value = "/pending-spu")
 @Slf4j
 public class HubPendingSpuCheckController {
 	
@@ -28,7 +28,7 @@ public class HubPendingSpuCheckController {
 	private HubPendingSpuCheckService hubCheckRuleService;
 	
 	@RequestMapping(value = "/check-spu")
-	public HubPendingSpuCheckResult checkSpu(@RequestBody HubPendingSpuDto dto){
+	public HubPendingSpuCheckResult checkSpu(@RequestBody HubSpuPendingDto dto){
 		log.info("");
 		HubPendingSpuCheckResult result = new HubPendingSpuCheckResult();
 		String returnStr = hubCheckRuleService.checkHubPendingSpu(dto);

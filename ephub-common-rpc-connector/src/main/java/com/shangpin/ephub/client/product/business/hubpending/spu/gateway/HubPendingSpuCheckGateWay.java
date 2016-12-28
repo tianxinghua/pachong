@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.shangpin.ephub.client.product.business.hubpending.spu.dao.HubPendingSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 
 /**
@@ -23,6 +23,6 @@ public interface HubPendingSpuCheckGateWay {
 	 * @param dto 数据传输对象
 	 * @return 校验结果：
 	 */
-	@RequestMapping(value = "/hub-pending-spu-check/check-spu", method = RequestMethod.POST,consumes = "application/json")
-	public HubPendingSpuCheckResult checkSpu(@RequestBody HubPendingSpuDto dto);
+	@RequestMapping(value = "/pending-spu/check-spu", method = RequestMethod.POST,consumes = "application/json")
+	public HubPendingSpuCheckResult checkSpu(@RequestBody HubSpuPendingDto dto);
 }
