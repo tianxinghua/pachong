@@ -1,29 +1,40 @@
 package com.shangpin.ephub.product.business.service.pending.impl;
 
-import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
-import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
-import com.shangpin.ephub.client.data.mysql.service.gateway.PengdingToHubGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
-import com.shangpin.ephub.product.business.common.SpuStatus;
-import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
-import com.shangpin.ephub.product.business.ui.pending.vo.*;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
+
+import com.shangpin.ephub.client.data.mysql.product.dto.SpuPendingAuditDto;
+import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.product.business.common.SpuStatus;
+import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelMsgVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditQueryVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingCommonVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingPicVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by loyalty on 16/12/24.
+ * @param
  */
 @Service
 @Slf4j
@@ -39,7 +50,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     @Autowired
     PengdingToHubGateWay pengdingToHubGateWay;
 
-    @Autowired
+//    @Autowired
     private TaskExecutor executor;
 
 
@@ -234,8 +245,8 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         List<SpuModelVO> spuModels = spuModelMsgVO.getSpuModels();
         for(SpuModelVO spuModelVO:spuModels){
             //TODO 扔进消息队列中
-//            CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,auditVO);
-//            executor.execute(task);
+            CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,auditVO);
+            executor.execute(task);
         }
 
 
@@ -255,6 +266,8 @@ class CreateSpuAndSkuTask implements Runnable{
 
     @Override
     public void run() {
-
+        SpuPendingAuditDto dto  =new SpuPendingAuditDto();
+        BeanUtils.copyProperties(spuPendingAuditVO,dto);
+        pengdingToHubGateWay.auditPending(dto);
     }
 }

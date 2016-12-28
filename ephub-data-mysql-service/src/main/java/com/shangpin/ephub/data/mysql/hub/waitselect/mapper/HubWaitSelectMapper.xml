@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.hub.waitselect.mapper.HubWaitSelectMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.hub.waitselect.po.HubWaitSelect" >
+    
+    <result column="spu_no" property="spuNo" jdbcType="VARCHAR" />
+    <result column="color" property="color" jdbcType="VARCHAR" />
+    <result column="sku_size" property="skuSize" jdbcType="VARCHAR" />
+    <result column="sku_no" property="skuNo" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    
+    <result column="spu_model" property="spuModel" jdbcType="VARCHAR" />
+    <result column="spu_name" property="spuName" jdbcType="VARCHAR" />
+    <result column="gender" property="gender" jdbcType="VARCHAR" />
+    <result column="category_no" property="categoryNo" jdbcType="VARCHAR" />
+    <result column="brand_no" property="brandNo" jdbcType="VARCHAR" />
+    <result column="market_time" property="marketTime" jdbcType="VARCHAR" />
+    <result column="hub_color" property="hubColor" jdbcType="VARCHAR" />
+    <result column="hub_color_no" property="hubColorNo" jdbcType="VARCHAR" />
+    <result column="season" property="season" jdbcType="VARCHAR" />
+    <result column="spu_desc" property="spuDesc" jdbcType="VARCHAR" />
+    <result column="spu_state" property="spuState" jdbcType="TINYINT" />
+    <result column="spu_select_state" property="spuSelectState" jdbcType="TINYINT" />
+    <result column="new_type" property="newType" jdbcType="TINYINT" />
+    <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
+    <result column="origin" property="origin" jdbcType="VARCHAR" />
+    <result column="material" property="material" jdbcType="VARCHAR" />
+    <result column="info_from" property="infoFrom" jdbcType="TINYINT" />
+    
+    <result column="supplier_sku_no" property="supplierSkuNo" jdbcType="VARCHAR" />
+    <result column="barcode" property="barcode" jdbcType="VARCHAR" />
+    <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="new_spu_type" property="newSpuType" jdbcType="TINYINT" />
+    <result column="supplier_select_state" property="supplierSelectState" jdbcType="TINYINT" />
+    <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="is_new_supplier" property="isNewSupplier" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <select id="selectList" resultMap="BaseResultMap" >
+    select
+   	map.supplier_no,map.supplier_id,spu.spu_no,sku.sku_no,sku.sku_size,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,spu.market_time,spu.season,spu.hub_color,spu.spu_state,spu.pic_url,spu.origin,spu.material
+    from hub_spu spu LEFT JOIN hub_sku sku on sku.spu_no = spu.spu_no left join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
+    where 
+    1 = 1
+     <if test="null!= supplierNo">
+	        and        map.supplier_no = #{supplierNo}
+	 </if>
+	   <if test="null!= brandNo">
+	          and        spu.brand_no = #{brandNo}
+	 </if>
+	   <if test="null!= categoryNo">
+	           and  spu.category_no = #{categoryNo}
+	 </if>
+	   <if test="null!= spuModel">
+	           and  spu.spu_model = #{spuModel}
+	 </if>
+	   <if test="null != spuState">
+	           and  spu.spu_state = #{spuState}
+	 </if>
+	   <if test="null!=startDate">
+                and update_time >=#{startDate}
+      </if>      
+            
+      <if test="null!=endDate">
+           <![CDATA[ and update_time <=#{endDate}    ]]>
+      </if>
+      limit #{pageNo} , #{pageSize}
+  </select>
+   <select id="count" resultType="Integer">
+    select
+   	count(*)
+    from hub_spu spu LEFT JOIN hub_sku sku on sku.spu_no = spu.spu_no left join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
+    where 
+     <if test="null!= supplierNo">
+	                map.supplier_no = #{supplierNo}
+	 </if>
+	   <if test="null!= brandNo">
+	                spu.brand_no = #{brandNo}
+	 </if>
+	   <if test="null!= categoryNo">
+	                spu.category_no = #{categoryNo}
+	 </if>
+	  <if test="null!= spuModel">
+	           and  spu.spu_model = #{spuModel}
+	 </if>
+	  <if test="null!=startDate">
+                and update_time >=#{startDate}
+      </if>            
+      <if test="null!=endDate">
+           <![CDATA[ and update_time <=#{endDate}    ]]>
+      </if>
+	 
+  </select>
+</mapper>
