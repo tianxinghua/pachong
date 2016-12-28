@@ -365,7 +365,7 @@ public class PendingProductService implements IPendingProductService{
         pendingProduct.setHubColorNo(pendingSpu.getHubColorNo());
         pendingProduct.setHubColor(pendingSpu.getHubColor());
         pendingProduct.setSpuColorState(pendingSpu.getSpuColorState());
-//		JavaUtil.fatherToChild(pendingSpu, pendingProduct);
+//		JavaUtil.fatherToChild(pendingSpu, pendingProduct); 
         return pendingProduct;
     }
 
