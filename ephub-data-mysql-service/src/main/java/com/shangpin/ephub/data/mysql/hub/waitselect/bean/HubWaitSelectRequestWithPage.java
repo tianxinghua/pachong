@@ -24,6 +24,7 @@ public class HubWaitSelectRequestWithPage {
     private int spuState;
     private String startDate;
     private String endDate;
+    private int spuSelectState;
     
     public Integer getPageNo() {
         return pageNo;

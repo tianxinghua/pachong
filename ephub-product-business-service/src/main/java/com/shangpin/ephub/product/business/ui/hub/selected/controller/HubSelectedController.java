@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.hub.waitselected.controller;
+package com.shangpin.ephub.product.business.ui.hub.selected.controller;
 
 import java.util.List;
 
@@ -26,8 +26,8 @@ import com.shangpin.ephub.response.HubResponse;
  */
 @SuppressWarnings("rawtypes")
 @RestController
-@RequestMapping("/hub-waitSelected")
-public class HubWaitSelectedController {
+@RequestMapping("/hub-selected")
+public class HubSelectedController {
 	@Autowired
 	HubWaitSelectGateWay HubWaitSelectGateWay;
 	
@@ -37,7 +37,7 @@ public class HubWaitSelectedController {
 		try {
 			HubWaitSelectRequestDto hubWaitSelectRequest = new HubWaitSelectRequestDto();
 			BeanUtils.copyProperties(dto, hubWaitSelectRequest);
-			hubWaitSelectRequest.setSpuSelectState(SpuSelectState.WAIT_SELECT.getIndex());
+			hubWaitSelectRequest.setSpuSelectState(SpuSelectState.SELECTED.getIndex());
 			int total = HubWaitSelectGateWay.count(hubWaitSelectRequest);
 			if(total<0){
 				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);

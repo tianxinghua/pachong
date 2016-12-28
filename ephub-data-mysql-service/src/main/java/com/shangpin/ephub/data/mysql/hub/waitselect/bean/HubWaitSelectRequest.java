@@ -23,5 +23,5 @@ public class HubWaitSelectRequest {
     private int spuState;
     private String startDate;
     private String endDate;
-	  
+    private int spuSelectState;
 }
