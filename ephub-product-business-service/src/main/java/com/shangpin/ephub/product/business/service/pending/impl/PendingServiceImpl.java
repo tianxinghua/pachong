@@ -132,7 +132,10 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 spuPendingVO.setCategoryNo(spuPendingDto.getHubCategoryNo());
                 spuPendingVO.setMaterial(spuPendingDto.getHubMaterial());
                 spuPendingVO.setOrigin(spuPendingDto.getHubOrigin());
-                spuPendingVO.setUpdateTime(DateTimeUtil.convertFormat(spuPendingDto.getUpdateTime(),"yyyy-MM-dd HH:mm:ss"));
+                if(null!=spuPendingDto.getUpdateTime()){
+
+                    spuPendingVO.setUpdateTime(DateTimeUtil.convertFormat(spuPendingDto.getUpdateTime(),"yyyy-MM-dd HH:mm:ss"));
+                }
 
                 //获取图片
                 HubSpuPendingPicCriteriaDto criteriaPic = new HubSpuPendingPicCriteriaDto();
