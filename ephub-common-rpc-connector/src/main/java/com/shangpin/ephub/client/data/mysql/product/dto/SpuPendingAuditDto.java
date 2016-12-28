@@ -19,6 +19,15 @@ public class SpuPendingAuditDto extends SpuPendingDto {
      */
     private String  auditStatus;
 
+    private String startDate;
+
+    private String endDate;
+    /**
+     * 单个更新 还是按查询条件多个更新
+     * 按查询条件:true 单个:false
+     */
+    private boolean isMulti;
+
 
 
 

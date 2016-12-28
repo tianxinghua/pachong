@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
+
+import com.shangpin.ephub.client.data.mysql.product.dto.SpuPendingAuditDto;
 import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
@@ -32,11 +34,11 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by loyalty on 16/12/24.
- * @param <PengdingToHubGateWay>
+ * @param
  */
 @Service
 @Slf4j
-public class PendingServiceImpl<PengdingToHubGateWay> implements com.shangpin.ephub.product.business.service.pending.PendingService {
+public class PendingServiceImpl implements com.shangpin.ephub.product.business.service.pending.PendingService {
 
     @Autowired
     HubSpuPendingGateWay spuPendingGateWay;
@@ -45,7 +47,7 @@ public class PendingServiceImpl<PengdingToHubGateWay> implements com.shangpin.ep
     HubSpuPendingPicGateWay spuPendingPicGateWay;
 
 
-//    @Autowired
+    @Autowired
     PengdingToHubGateWay pengdingToHubGateWay;
 
 //    @Autowired
@@ -242,8 +244,8 @@ public class PendingServiceImpl<PengdingToHubGateWay> implements com.shangpin.ep
         List<SpuModelVO> spuModels = spuModelMsgVO.getSpuModels();
         for(SpuModelVO spuModelVO:spuModels){
             //TODO 扔进消息队列中
-//            CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,auditVO);
-//            executor.execute(task);
+            CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,auditVO);
+            executor.execute(task);
         }
 
 
@@ -263,6 +265,8 @@ class CreateSpuAndSkuTask implements Runnable{
 
     @Override
     public void run() {
-
+        SpuPendingAuditDto dto  =new SpuPendingAuditDto();
+        BeanUtils.copyProperties(spuPendingAuditVO,dto);
+        pengdingToHubGateWay.auditPending(dto);
     }
 }
