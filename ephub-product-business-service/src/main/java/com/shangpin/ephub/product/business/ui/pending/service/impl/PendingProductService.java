@@ -35,6 +35,7 @@ import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPend
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
+import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
@@ -155,7 +156,8 @@ public class PendingProductService implements IPendingProductService{
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                         PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
-                        pendingProduct.setSupplierName(supplierService.getSupplier(pendingSpu.getSupplierNo()).getSupplierName());
+                        SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
+                        pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
                         pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
                         pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
                         products.add(pendingProduct);
@@ -181,7 +183,8 @@ public class PendingProductService implements IPendingProductService{
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                         PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
-                        pendingProduct.setSupplierName(supplierService.getSupplier(pendingSpu.getSupplierNo()).getSupplierName());
+                        SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
+                        pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
                         pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
                         pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
                         List<HubSkuPendingDto> hubSkus = findPendingSkuBySpuPendingId(pendingSpu.getSpuPendingId());

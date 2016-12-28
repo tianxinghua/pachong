@@ -18,6 +18,7 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
+import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.ui.hub.all.service.IHubProductService;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetail;
@@ -187,8 +188,9 @@ public class HubProductServiceImpl implements IHubProductService {
 		List<HubSkuSupplierMappingDto> mappings = findHubSkuSupplierMappingDtoByHubSkuNo(hubSku.getSkuNo());
 		for(HubSkuSupplierMappingDto mappingDto : mappings){
 			HubProductDetail hubProuctDetail = new HubProductDetail();
-			JavaUtil.fatherToChild(mappingDto, hubProuctDetail);			
-			hubProuctDetail.setSupplierName(supplierService.getSupplier(mappingDto.getSupplierNo()).getSupplierName());
+			JavaUtil.fatherToChild(mappingDto, hubProuctDetail);
+			SupplierDTO supplierDTO = supplierService.getSupplier(mappingDto.getSupplierNo());
+			hubProuctDetail.setSupplierName(null != supplierDTO? supplierDTO.getSupplierName():"");
 			hubProuctDetail.setSkuId(hubSku.getSkuId());
 			hubProuctDetail.setSkuSize(hubSku.getSkuSize());
 			hubProuctDetail.setColor(hubSpu.getHubColor()); 	
