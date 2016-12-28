@@ -8,11 +8,9 @@ jar {
 	version = '0.0.1-SNAPSHOT'
 }
 
-<<<<<<< Updated upstream
+
 version = '0.5.4-SNAPSHOT'
-=======
-version = '0.5.2-SNAPSHOT'
->>>>>>> Stashed changes
+
 
 jar {
     manifest {
