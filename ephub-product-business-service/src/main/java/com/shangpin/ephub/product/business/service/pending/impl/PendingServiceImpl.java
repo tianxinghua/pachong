@@ -19,6 +19,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -183,6 +184,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         //更新状态
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         hubSpuPending.setSpuState(SpuStatus.SPU_HANDLING.getIndex().byteValue());
+        hubSpuPending.setUpdateTime(new Date());
 
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         HubSpuPendingCriteriaDto.Criteria criterion = criteria.createCriteria();
@@ -200,11 +202,11 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             if(StringUtils.isNotBlank(auditVO.getEndDate())){
                 criterion.andUpdateTimeLessThanOrEqualTo(DateTimeUtil.getDateTimeFormate(auditVO.getEndDate()));
             }
-            if(StringUtils.isBlank(auditVO.getSpuModel())){
+            if(StringUtils.isNotBlank(auditVO.getSpuModel())){
                 criterion.andSpuModelEqualTo(auditVO.getSpuModel());
             }
         }else{
-            if(StringUtils.isBlank(auditVO.getSpuModel())){//单个货号更新
+            if(StringUtils.isNotBlank(auditVO.getSpuModel())){//单个货号更新
                 criterion.andSpuModelEqualTo(auditVO.getSpuModel());
                 if(StringUtils.isNotBlank(auditVO.getColor())){
 

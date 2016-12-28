@@ -1,16 +1,15 @@
-package com.shangpin.ephub.data.mysql.service.common;
+package com.shangpin.ephub.data.mysql.product.common;
 
 /**
  * Created by loyalty on 16/12/21.
+ * 数据的逻辑状态
  */
-public enum HubSpuStatus {
+public enum DataStatus {
 
-    WAIT_HANDLE(0,"信息待完善"),
-    WAIT_AUDIT(1,"待复核"),
-    HANDLED(2,"已处理"),
-    NO_WAY_HANDLE(3,"无法处理"),
-    FILTER(4,"过滤不处理"),
-    HANDLING(5,"复核中");
+    DELETE(0,"逻辑删除"),
+
+    NOT_DELETE(1,"未删除")
+    ;
     /**
      * 数字索引标识
      */
@@ -31,7 +30,7 @@ public enum HubSpuStatus {
     public void setDescription(String description) {
         this.description = description;
     }
-    private HubSpuStatus(Integer index, String description) {
+    private DataStatus(Integer index, String description) {
         this.index = index;
         this.description = description;
     }
