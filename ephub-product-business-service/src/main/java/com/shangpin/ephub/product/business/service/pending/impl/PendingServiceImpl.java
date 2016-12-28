@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.service.pending.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,9 +31,6 @@ import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingPicVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
 
 import lombok.extern.slf4j.Slf4j;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by loyalty on 16/12/24.
