@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,10 +18,10 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubWaitSelectedResponseWithPageDto implements Serializable {
+public class HubWaitSelectedResponseWithPage implements Serializable {
 	private static final long serialVersionUID = -9080013205013160520L;
 
 	private int total;
-	private List<HubWaitSelectedResponseDto> list;
+	private List<HubWaitSelectResponseDto> list;
 
 }
