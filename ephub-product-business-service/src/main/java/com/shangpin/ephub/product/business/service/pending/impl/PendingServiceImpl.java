@@ -64,13 +64,13 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     @Override
     public SpuModelMsgVO getSpuModel(SpuPendingAuditQueryVO queryVO) {
 
-        HubSpuPendingCriteriaDto criteria = getHubSpuPendingCount(queryVO);
+        HubSpuPendingCriteriaDto criteria = getHubSpuPendingCriteria(queryVO);
         if(null==queryVO.getPage()) queryVO.setPage(1);
         if(null==queryVO.getPageSize()) queryVO.setPageSize(10);
         criteria.setPageSize(queryVO.getPageSize());
         criteria.setPageNo(queryVO.getPage());
 
-        HubSpuPendingCriteriaDto criteriaCount = getHubSpuPendingCount(queryVO);
+        HubSpuPendingCriteriaDto criteriaCount = getHubSpuPendingCriteria(queryVO);
         Integer count = spuPendingGateWay.countByCriteria(criteriaCount);
         List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
 
@@ -95,7 +95,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
     }
 
-    private HubSpuPendingCriteriaDto getHubSpuPendingCount(SpuPendingAuditQueryVO queryVO) {
+    private HubSpuPendingCriteriaDto getHubSpuPendingCriteria(SpuPendingAuditQueryVO queryVO) {
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         HubSpuPendingCriteriaDto.Criteria criterion = criteria.createCriteria();
 
