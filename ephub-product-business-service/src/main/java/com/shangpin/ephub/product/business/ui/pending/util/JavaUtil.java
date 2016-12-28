@@ -3,6 +3,9 @@ package com.shangpin.ephub.product.business.ui.pending.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class JavaUtil {
 
 	/**
@@ -31,7 +34,7 @@ public class JavaUtil {
                 }
             }  
         }else{
-        	System.out.println(father.getClass().getName()+" 不是 "+child.getClass().getName()+"的父类。");
+        	log.info(father.getClass().getName()+" 不是 "+child.getClass().getName()+"的父类。");
         } 
         
     }  
