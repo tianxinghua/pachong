@@ -54,6 +54,8 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         HubSpuPendingCriteriaDto.Criteria criterion = criteria.createCriteria();
+        if(null==queryVO.getPage()) queryVO.setPage(1);
+        if(null==queryVO.getPageSize()) queryVO.setPageSize(10);
         criteria.setPageSize(queryVO.getPageSize());
         criteria.setPageNo(queryVO.getPage());
         criteria.setDistinct(true);
@@ -125,6 +127,13 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 HubSpuPendingDto spuPendingDto = hubSpuPendingDtos.get(i);
                 SpuPendingVO spuPendingVO = new SpuPendingVO();
                 BeanUtils.copyProperties(spuPendingDto,spuPendingVO);
+                spuPendingVO.setColor(spuPendingDto.getHubColor());
+                spuPendingVO.setBrandNo(spuPendingDto.getHubBrandNo());
+                spuPendingVO.setCategoryNo(spuPendingDto.getHubCategoryNo());
+                spuPendingVO.setMaterial(spuPendingDto.getHubMaterial());
+                spuPendingVO.setOrigin(spuPendingDto.getHubOrigin());
+                spuPendingVO.setUpdateTime(DateTimeUtil.convertFormat(spuPendingDto.getUpdateTime(),"yyyy-MM-dd HH:mm:ss"));
+
                 //获取图片
                 HubSpuPendingPicCriteriaDto criteriaPic = new HubSpuPendingPicCriteriaDto();
 
