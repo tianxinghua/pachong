@@ -1,7 +1,7 @@
-package com.shangpin.ephub.data.mysql.service.vo;
+package com.shangpin.ephub.client.data.mysql.product.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -10,9 +10,13 @@ import java.io.Serializable;
  * spu pending
  */
 
-@Getter
 @Setter
-public class SpuPendingCommonVO implements Serializable{
+@Getter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class SpuPendingCommonDto implements Serializable{
 
     private Long spuPendingId;//spuPending表主键
 

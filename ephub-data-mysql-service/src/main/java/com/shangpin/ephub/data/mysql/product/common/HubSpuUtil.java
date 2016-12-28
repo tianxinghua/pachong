@@ -1,4 +1,4 @@
-package com.shangpin.ephub.data.mysql.service.common;
+package com.shangpin.ephub.data.mysql.product.common;
 
 import com.shangpin.commons.redis.IShangpinRedis;
 import lombok.extern.slf4j.Slf4j;

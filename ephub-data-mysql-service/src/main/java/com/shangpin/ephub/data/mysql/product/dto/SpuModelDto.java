@@ -1,4 +1,4 @@
-package com.shangpin.ephub.data.mysql.service.vo;
+package com.shangpin.ephub.data.mysql.product.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class SpuModelVO implements Serializable {
+public class SpuModelDto implements Serializable {
 
    /**
 	 * 

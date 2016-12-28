@@ -1,12 +1,11 @@
-package com.shangpin.ephub.data.mysql.service.impl;
+package com.shangpin.ephub.data.mysql.product.service.impl;
 
 import com.shangpin.ephub.data.mysql.mapping.sku.mapper.HubSkuSupplierMappingMapper;
 import com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping;
-import com.shangpin.ephub.data.mysql.service.PengingToHubService;
-import com.shangpin.ephub.data.mysql.service.common.*;
-import com.shangpin.ephub.data.mysql.service.vo.SpuModelVO;
-import com.shangpin.ephub.data.mysql.service.vo.SpuPendingAuditVO;
-import com.shangpin.ephub.data.mysql.service.vo.SpuPendingPicVO;
+
+import com.shangpin.ephub.data.mysql.product.common.*;
+import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
+import com.shangpin.ephub.data.mysql.product.service.PengingToHubService;
 import com.shangpin.ephub.data.mysql.sku.hub.mapper.HubSkuMapper;
 import com.shangpin.ephub.data.mysql.sku.hub.po.HubSku;
 import com.shangpin.ephub.data.mysql.sku.pending.mapper.HubSkuPendingMapper;
@@ -30,8 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-
-import static com.shangpin.ephub.data.mysql.service.common.ConstantProperty.DATA_CREATE_USER;
 
 /**
  * Created by loyalty on 16/12/27.
@@ -69,7 +66,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean auditPending(SpuModelVO auditVO) throws Exception {
+    public boolean auditPending(SpuModelDto auditVO) throws Exception {
         //第一步 根据货号和品牌 获取相同的信息下的hubSpu
         List<Long> spuPendingIds = getSpuPendIdList(auditVO);
 
@@ -80,7 +77,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         return false;
     }
 
-    private void createHubData(SpuModelVO auditVO, List<Long> spuPendingIds) {
+    private void createHubData(SpuModelDto auditVO, List<Long> spuPendingIds) {
         //查询是否存在
         HubSpuCriteria criteria = new HubSpuCriteria();
         criteria.createCriteria().andSpuModelEqualTo(auditVO.getSpuModel())
@@ -202,7 +199,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         hubSpuMapper.insert(hubSpu);
     }
 
-    private List<Long> getSpuPendIdList(SpuModelVO spuModelVO) {
+    private List<Long> getSpuPendIdList(SpuModelDto spuModelVO) {
 
         //获取spuPendingID 列表 以便后续得到SKUPENDING
 

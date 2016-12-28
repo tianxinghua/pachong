@@ -1,16 +1,21 @@
-package com.shangpin.ephub.data.mysql.service.vo;
+package com.shangpin.ephub.client.data.mysql.product.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
 
 import java.io.Serializable;
 
 /**
  * Created by loyalty on 16/12/23.
  */
-@Getter
+
 @Setter
-public class SpuPendingPicVO implements Serializable {
+@Getter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class SpuPendingPicDto implements Serializable {
 
     /**
      * spuPengding表主键

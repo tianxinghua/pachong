@@ -1,4 +1,4 @@
-package com.shangpin.ephub.data.mysql.service.vo;
+package com.shangpin.ephub.data.mysql.product.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class SpuPendingAuditVO  extends SpuPendingVO{
+public class SpuPendingAuditDto extends SpuPendingDto {
 
     /**
      * 0 :信息待完善 1 : 待复核 2 :已处理(审核通过) 3：无法处理 4:过滤不处理
