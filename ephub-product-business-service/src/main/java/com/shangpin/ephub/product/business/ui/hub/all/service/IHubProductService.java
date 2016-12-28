@@ -25,7 +25,7 @@ public interface IHubProductService {
 	 * @param spuId
 	 * @return
 	 */
-	public HubProductDetails findProductDtails(Long spuId);
+	public HubProductDetails findProductDtails(String spuId);
 	/**
 	 * hub详情页的编辑，更新涉及的表有：hub_sku/hub_spu
 	 * @param hubProductDetail

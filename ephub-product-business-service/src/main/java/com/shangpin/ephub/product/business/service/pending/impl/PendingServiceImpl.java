@@ -28,6 +28,9 @@ import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingPicVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
 
 import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by loyalty on 16/12/24.
@@ -63,6 +66,8 @@ public class PendingServiceImpl<PengdingToHubGateWay> implements com.shangpin.ep
 
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         HubSpuPendingCriteriaDto.Criteria criterion = criteria.createCriteria();
+        if(null==queryVO.getPage()) queryVO.setPage(1);
+        if(null==queryVO.getPageSize()) queryVO.setPageSize(10);
         criteria.setPageSize(queryVO.getPageSize());
         criteria.setPageNo(queryVO.getPage());
         criteria.setDistinct(true);
@@ -134,6 +139,16 @@ public class PendingServiceImpl<PengdingToHubGateWay> implements com.shangpin.ep
                 HubSpuPendingDto spuPendingDto = hubSpuPendingDtos.get(i);
                 SpuPendingVO spuPendingVO = new SpuPendingVO();
                 BeanUtils.copyProperties(spuPendingDto,spuPendingVO);
+                spuPendingVO.setColor(spuPendingDto.getHubColor());
+                spuPendingVO.setBrandNo(spuPendingDto.getHubBrandNo());
+                spuPendingVO.setCategoryNo(spuPendingDto.getHubCategoryNo());
+                spuPendingVO.setMaterial(spuPendingDto.getHubMaterial());
+                spuPendingVO.setOrigin(spuPendingDto.getHubOrigin());
+                if(null!=spuPendingDto.getUpdateTime()){
+
+                    spuPendingVO.setUpdateTime(DateTimeUtil.convertFormat(spuPendingDto.getUpdateTime(),"yyyy-MM-dd HH:mm:ss"));
+                }
+
                 //获取图片
                 HubSpuPendingPicCriteriaDto criteriaPic = new HubSpuPendingPicCriteriaDto();
 
@@ -180,6 +195,7 @@ public class PendingServiceImpl<PengdingToHubGateWay> implements com.shangpin.ep
         //更新状态
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         hubSpuPending.setSpuState(SpuStatus.SPU_HANDLING.getIndex().byteValue());
+        hubSpuPending.setUpdateTime(new Date());
 
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         HubSpuPendingCriteriaDto.Criteria criterion = criteria.createCriteria();
@@ -197,11 +213,11 @@ public class PendingServiceImpl<PengdingToHubGateWay> implements com.shangpin.ep
             if(StringUtils.isNotBlank(auditVO.getEndDate())){
                 criterion.andUpdateTimeLessThanOrEqualTo(DateTimeUtil.getDateTimeFormate(auditVO.getEndDate()));
             }
-            if(StringUtils.isBlank(auditVO.getSpuModel())){
+            if(StringUtils.isNotBlank(auditVO.getSpuModel())){
                 criterion.andSpuModelEqualTo(auditVO.getSpuModel());
             }
         }else{
-            if(StringUtils.isBlank(auditVO.getSpuModel())){//单个货号更新
+            if(StringUtils.isNotBlank(auditVO.getSpuModel())){//单个货号更新
                 criterion.andSpuModelEqualTo(auditVO.getSpuModel());
                 if(StringUtils.isNotBlank(auditVO.getColor())){
 

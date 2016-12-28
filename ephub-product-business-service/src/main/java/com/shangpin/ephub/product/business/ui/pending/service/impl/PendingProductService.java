@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.ui.pending.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -34,13 +35,14 @@ import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPend
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
+import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
-import com.shangpin.ephub.product.business.util.DateTimeUtil;
+
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -154,7 +156,8 @@ public class PendingProductService implements IPendingProductService{
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                         PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
-                        pendingProduct.setSupplierName(supplierService.getSupplier(pendingSpu.getSupplierNo()).getSupplierName());
+                        SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
+                        pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
                         pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
                         pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
                         products.add(pendingProduct);
@@ -180,7 +183,8 @@ public class PendingProductService implements IPendingProductService{
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                         PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
-                        pendingProduct.setSupplierName(supplierService.getSupplier(pendingSpu.getSupplierNo()).getSupplierName());
+                        SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
+                        pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
                         pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
                         pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
                         List<HubSkuPendingDto> hubSkus = findPendingSkuBySpuPendingId(pendingSpu.getSpuPendingId());

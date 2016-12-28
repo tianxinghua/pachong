@@ -1,4 +1,4 @@
-package com.shangpin.ephub.client.data.mysql.service.dto;
+package com.shangpin.ephub.data.mysql.product.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class SpuPendingVO extends  SpuPendingCommonVO implements Serializable {
+public class SpuPendingDto extends SpuPendingCommonDto implements Serializable {
 
 
 
@@ -25,7 +25,7 @@ public class SpuPendingVO extends  SpuPendingCommonVO implements Serializable {
      * 供货商图片信息
      */
 
-    private List<SpuPendingPicVO>  picVOs;
+    private List<SpuPendingPicDto>  picVOs;
 
 
 

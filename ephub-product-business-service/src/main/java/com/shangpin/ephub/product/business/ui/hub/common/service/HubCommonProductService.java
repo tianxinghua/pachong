@@ -44,7 +44,11 @@ public class HubCommonProductService {
 	 * @return
 	 */
 	public HubSpuCriteriaDto getHubSpuCriteriaDtoByHubQuryDto(HubQuryDto hubQuryDto){
-		HubSpuCriteriaDto criteriaDto = new HubSpuCriteriaDto();
+		HubSpuCriteriaDto criteriaDto = new HubSpuCriteriaDto();		
+		if(!StringUtils.isEmpty(hubQuryDto.getPageIndex()) && !StringUtils.isEmpty(hubQuryDto.getPageSize())){
+			criteriaDto.setPageNo(hubQuryDto.getPageIndex());
+			criteriaDto.setPageSize(hubQuryDto.getPageSize()); 
+		}
 		Criteria criteria = criteriaDto.createCriteria();
 		if(!StringUtils.isEmpty(hubQuryDto.getSpuModel())){
 			criteria = criteria.andSpuModelEqualTo(hubQuryDto.getSpuModel());

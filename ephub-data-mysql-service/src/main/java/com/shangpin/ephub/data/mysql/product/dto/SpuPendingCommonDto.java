@@ -1,4 +1,4 @@
-package com.shangpin.ephub.client.data.mysql.service.dto;
+package com.shangpin.ephub.data.mysql.product.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-public class SpuPendingCommonVO implements Serializable{
+public class SpuPendingCommonDto implements Serializable{
 
     private Long spuPendingId;//spuPending表主键
 

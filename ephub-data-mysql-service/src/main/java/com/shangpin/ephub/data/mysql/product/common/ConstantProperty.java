@@ -1,4 +1,4 @@
-package com.shangpin.ephub.data.mysql.service.common;
+package com.shangpin.ephub.data.mysql.product.common;
 
 /**
  * Created by loyalty on 16/12/20.
