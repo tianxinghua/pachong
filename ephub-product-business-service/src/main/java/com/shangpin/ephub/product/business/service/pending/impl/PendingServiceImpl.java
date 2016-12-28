@@ -133,6 +133,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 spuPendingVO.setCategoryNo(spuPendingDto.getHubCategoryNo());
                 spuPendingVO.setMaterial(spuPendingDto.getHubMaterial());
                 spuPendingVO.setOrigin(spuPendingDto.getHubOrigin());
+                spuPendingVO.setIsDefaultSupplier(false);
                 if(null!=spuPendingDto.getUpdateTime()){
 
                     spuPendingVO.setUpdateTime(DateTimeUtil.convertFormat(spuPendingDto.getUpdateTime(),"yyyy-MM-dd HH:mm:ss"));
