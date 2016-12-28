@@ -5,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-<<<<<<< Updated upstream
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class EphubProductBusinessServiceApplicationTests {
@@ -15,14 +14,3 @@ public class EphubProductBusinessServiceApplicationTests {
 	}
 
 }
-=======
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
-//public class EphubProductBusinessServiceApplicationTests {
-//
-//	//@Test
-//	public void contextLoads() {
-//	}
-//
-//}
->>>>>>> Stashed changes

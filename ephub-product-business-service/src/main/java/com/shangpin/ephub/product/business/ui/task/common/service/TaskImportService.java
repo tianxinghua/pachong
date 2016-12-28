@@ -22,13 +22,13 @@ import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
 import com.shangpin.ephub.product.business.ui.task.common.util.FTPClientUtil;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseDTO;
 import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseWithPageDTO;
-import com.shangpin.ephub.product.business.util.DateTimeUtil;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
