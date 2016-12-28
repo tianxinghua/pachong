@@ -15,7 +15,7 @@ import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappin
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaWithRowBoundsDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
@@ -27,6 +27,8 @@ import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 import com.shangpin.ephub.product.business.ui.hub.common.service.HubCommonProductService;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * <p>Title:HubProductServiceImpl </p>
  * <p>Description: hub页面service实现类</p>
@@ -36,6 +38,7 @@ import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
  *
  */
 @Service
+@Slf4j
 public class HubProductServiceImpl implements IHubProductService {
 	
 	@Autowired
@@ -54,44 +57,48 @@ public class HubProductServiceImpl implements IHubProductService {
 		try {
 			if(null != hubQuryDto){
 				HubProducts hubProducts = new HubProducts();
-				HubSpuCriteriaWithRowBoundsDto rowBoundsDto = hubCommonProductService.getHubSpuCriteriaWithRowBoundsByHubQuryDto(hubQuryDto);
-				int total = hubSpuClient.countByCriteria(rowBoundsDto.getCriteria());
+				HubSpuCriteriaDto hubSpuCriteria = hubCommonProductService.getHubSpuCriteriaDtoByHubQuryDto(hubQuryDto);
+				int total = hubSpuClient.countByCriteria(hubSpuCriteria);
 				if(total>0){
-					List<HubSpuDto> hubSpus = hubSpuClient.selectByCriteriaWithRowbounds(rowBoundsDto);
+					List<HubSpuDto> hubSpus = hubSpuClient.selectByCriteria(hubSpuCriteria);
 					hubProducts.setHubProducts(hubSpus);
 				}
 				hubProducts.setTotal(total);
 				return hubProducts;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("全部hub商品页获取产品时异常："+e.getMessage(),e);
 		}
 		return null;
 	}
 	@Override
-	public HubProductDetails findProductDtails(Long spuId){
-		HubSpuDto hubSpu = hubSpuClient.selectByPrimaryKey(spuId);
-		if(null != hubSpu){
-			HubProductDetails hubProductDetails = getHubProductDetailsFromHubSpu(hubSpu);
-			List<HubProductDetail> details = new ArrayList<HubProductDetail>();
-			
-			HubSkuCriteriaDto criteriaDto = new HubSkuCriteriaDto();
-			criteriaDto.createCriteria().andSpuNoEqualTo(hubSpu.getSpuNo());
-			List<HubSkuDto> hubSkus =  hubSkuClient.selectByCriteria(criteriaDto);
-			if(null != hubSkus && hubSkus.size()>0){
-				for(HubSkuDto hubSku : hubSkus){
-					List<HubProductDetail> productDetails = getProductDetailsByHubSku(hubSpu,hubSku);
-					for(HubProductDetail hubProductDetail : productDetails){
-						details.add(hubProductDetail);
+	public HubProductDetails findProductDtails(String spuId){
+		try {
+			HubSpuDto hubSpu = hubSpuClient.selectByPrimaryKey(Long.parseLong(spuId));
+			if(null != hubSpu){
+				HubProductDetails hubProductDetails = getHubProductDetailsFromHubSpu(hubSpu);
+				List<HubProductDetail> details = new ArrayList<HubProductDetail>();
+				
+				HubSkuCriteriaDto criteriaDto = new HubSkuCriteriaDto();
+				criteriaDto.createCriteria().andSpuNoEqualTo(hubSpu.getSpuNo());
+				List<HubSkuDto> hubSkus =  hubSkuClient.selectByCriteria(criteriaDto);
+				if(null != hubSkus && hubSkus.size()>0){
+					for(HubSkuDto hubSku : hubSkus){
+						List<HubProductDetail> productDetails = getProductDetailsByHubSku(hubSpu,hubSku);
+						for(HubProductDetail hubProductDetail : productDetails){
+							details.add(hubProductDetail);
+						}
+						
 					}
-					
+					hubProductDetails.setHubDetails(details);
 				}
-				hubProductDetails.setHubDetails(details);
+				return hubProductDetails;
 			}
-			return hubProductDetails;
-		}else{
-			return null;
+		} catch (Exception e) {
+			log.error("全部Hub商品页点击详情查询详细信息时异常："+e.getMessage()+" Id="+spuId,e);
 		}
+		return null;
+		
 	}
 	@Override
 	public boolean updateHubProductDetails(HubProductDetails hubProductDetails){
@@ -123,6 +130,7 @@ public class HubProductServiceImpl implements IHubProductService {
 			}
 			return true;
 		} catch (Exception e) {
+			log.error("全部Hub商品详情页编辑失败，发生异常："+e.getMessage(),e);
 			return false;
 		}
 	}
@@ -195,7 +203,7 @@ public class HubProductServiceImpl implements IHubProductService {
 	/**
 	 * 根据HubSkuNo查找供应商原始的一些信息
 	 * @param hubSkuNo
-	 * @return
+	 * @return hubSku与供应商对应关系表中的信息 失败返回null
 	 */
 	private List<HubSkuSupplierMappingDto> findHubSkuSupplierMappingDtoByHubSkuNo(String hubSkuNo){
 		HubSkuSupplierMappingCriteriaDto criteriaDto = new HubSkuSupplierMappingCriteriaDto();
