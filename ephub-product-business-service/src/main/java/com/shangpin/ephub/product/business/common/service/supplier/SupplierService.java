@@ -38,6 +38,10 @@ public class SupplierService {
      */
     public SupplierDTO getSupplier(String supplierNo) {
     	try {
+    		if(StringUtils.isEmpty(supplierNo)){
+    			log.error("通过供应商编号查询供应商信息时，请传入有效的编号");
+    			return null;
+    		}
     		//先获取缓存中的数据
             String supplierMsg = shangpinRedis.get(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo);
             if(!StringUtils.isEmpty(supplierMsg)){
@@ -46,7 +50,7 @@ public class SupplierService {
             	//调用接口获取供货商信息
                 Map<String, String> paraMap = new HashMap<>();
                 paraMap.put("supplierNo", supplierNo);
-                String url = "http://scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo="+supplierNo;
+                String url = "http://qa.scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo="+supplierNo;
                 SupplierDTO supplierDto = httpClient.getForEntity(url, SupplierDTO.class).getBody();
                 try {
                 	//缓存到redis中
