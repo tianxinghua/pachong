@@ -36,11 +36,11 @@ import java.util.List;
 
 /**
  * Created by loyalty on 16/12/24.
- * @param <PengdingToHubGateWay>
+ * @param
  */
 @Service
 @Slf4j
-public class PendingServiceImpl<PengdingToHubGateWay> implements com.shangpin.ephub.product.business.service.pending.PendingService {
+public class PendingServiceImpl implements com.shangpin.ephub.product.business.service.pending.PendingService {
 
     @Autowired
     HubSpuPendingGateWay spuPendingGateWay;
@@ -49,7 +49,7 @@ public class PendingServiceImpl<PengdingToHubGateWay> implements com.shangpin.ep
     HubSpuPendingPicGateWay spuPendingPicGateWay;
 
 
-//    @Autowired
+    @Autowired
     PengdingToHubGateWay pengdingToHubGateWay;
 
 //    @Autowired
