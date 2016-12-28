@@ -64,35 +64,14 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     @Override
     public SpuModelMsgVO getSpuModel(SpuPendingAuditQueryVO queryVO) {
 
-        HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
-        HubSpuPendingCriteriaDto.Criteria criterion = criteria.createCriteria();
+        HubSpuPendingCriteriaDto criteria = getHubSpuPendingCount(queryVO);
         if(null==queryVO.getPage()) queryVO.setPage(1);
         if(null==queryVO.getPageSize()) queryVO.setPageSize(10);
         criteria.setPageSize(queryVO.getPageSize());
         criteria.setPageNo(queryVO.getPage());
-        criteria.setDistinct(true);
-        criteria.setFields(" spu_model,hub_brand_no  ");
-        if(StringUtils.isNotBlank(queryVO.getSpuModel())){
-            criterion.andSpuModelLike(queryVO.getSpuModel());
 
-        }
-        if(StringUtils.isNotBlank(queryVO.getBrandNo())){
-            criterion.andHubBrandNoEqualTo(queryVO.getBrandNo());
-        }
-        if(StringUtils.isNotBlank(queryVO.getCategoryNo())){
-            criterion.andHubCategoryNoEqualTo(queryVO.getCategoryNo());
-        }
-        if(StringUtils.isNotBlank(queryVO.getStartDate())){
-            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate()));
-        }
-        if(StringUtils.isNotBlank(queryVO.getEndDate())){
-            criterion.andUpdateTimeLessThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getEndDate()));
-        }
-
-        criterion.andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
-
-
-        Integer count = spuPendingGateWay.countByCriteria(criteria);
+        HubSpuPendingCriteriaDto criteriaCount = getHubSpuPendingCount(queryVO);
+        Integer count = spuPendingGateWay.countByCriteria(criteriaCount);
         List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
 
 
@@ -114,6 +93,33 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         spuModelMsgVO.setSpuModels(spuModelVOS);
         return spuModelMsgVO;
 
+    }
+
+    private HubSpuPendingCriteriaDto getHubSpuPendingCount(SpuPendingAuditQueryVO queryVO) {
+        HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
+        HubSpuPendingCriteriaDto.Criteria criterion = criteria.createCriteria();
+
+        criteria.setDistinct(true);
+        criteria.setFields(" spu_model,hub_brand_no  ");
+        if(StringUtils.isNotBlank(queryVO.getSpuModel())){
+            criterion.andSpuModelLike(queryVO.getSpuModel());
+
+        }
+        if(StringUtils.isNotBlank(queryVO.getBrandNo())){
+            criterion.andHubBrandNoEqualTo(queryVO.getBrandNo());
+        }
+        if(StringUtils.isNotBlank(queryVO.getCategoryNo())){
+            criterion.andHubCategoryNoEqualTo(queryVO.getCategoryNo());
+        }
+        if(StringUtils.isNotBlank(queryVO.getStartDate())){
+            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate()));
+        }
+        if(StringUtils.isNotBlank(queryVO.getEndDate())){
+            criterion.andUpdateTimeLessThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getEndDate()));
+        }
+
+        criterion.andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+        return criteria;
     }
 
     @Override
