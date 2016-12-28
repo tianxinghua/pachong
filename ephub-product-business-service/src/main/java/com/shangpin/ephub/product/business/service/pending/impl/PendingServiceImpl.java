@@ -3,7 +3,9 @@ package com.shangpin.ephub.product.business.service.pending.impl;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
-import com.shangpin.ephub.client.data.mysql.service.gateway.PengdingToHubGateWay;
+
+import com.shangpin.ephub.client.data.mysql.product.dto.SpuPendingAuditDto;
+import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
@@ -233,8 +235,8 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         List<SpuModelVO> spuModels = spuModelMsgVO.getSpuModels();
         for(SpuModelVO spuModelVO:spuModels){
             //TODO 扔进消息队列中
-//            CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,auditVO);
-//            executor.execute(task);
+            CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,auditVO);
+            executor.execute(task);
         }
 
 
@@ -254,6 +256,8 @@ class CreateSpuAndSkuTask implements Runnable{
 
     @Override
     public void run() {
-
+        SpuPendingAuditDto dto  =new SpuPendingAuditDto();
+        BeanUtils.copyProperties(spuPendingAuditVO,dto);
+        pengdingToHubGateWay.auditPending(dto);
     }
 }
