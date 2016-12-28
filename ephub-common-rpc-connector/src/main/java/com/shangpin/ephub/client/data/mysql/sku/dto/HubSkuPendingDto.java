@@ -19,6 +19,10 @@ public class HubSkuPendingDto implements Serializable {
      * 供货商id
      */
     private String supplierId;
+    /**
+     * 供货商编号
+     */
+    private String supplierNo;
 
     /**
      * 供应商SkuNo
@@ -369,6 +373,14 @@ public class HubSkuPendingDto implements Serializable {
 
     public void setScreenSize(String screenSize) {
         this.screenSize = screenSize == null ? null : screenSize.trim();
+    }
+
+    public String getSupplierNo() {
+        return supplierNo;
+    }
+
+    public void setSupplierNo(String supplierNo) {
+        this.supplierNo = supplierNo;
     }
 
     @Override
