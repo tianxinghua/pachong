@@ -21,6 +21,8 @@
     <result column="spu_select_state" property="spuSelectState" jdbcType="TINYINT" />
     <result column="new_type" property="newType" jdbcType="TINYINT" />
     <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
+    <result column="origin" property="origin" jdbcType="VARCHAR" />
+    <result column="material" property="material" jdbcType="VARCHAR" />
     <result column="spu_no" property="spuNo" jdbcType="VARCHAR" />
     <result column="info_from" property="infoFrom" jdbcType="TINYINT" />
     <result column="memo" property="memo" jdbcType="VARCHAR" />
@@ -89,8 +91,8 @@
     <if test="fields == null" >
       spu_id, spu_model, spu_name, gender, category_no, brand_no, market_time, hub_color, 
       hub_color_no, season, spu_desc, create_time, create_user, update_time, update_user, 
-      spu_state, spu_select_state, new_type, pic_url, spu_no, info_from, memo, data_state, 
-      version
+      spu_state, spu_select_state, new_type, pic_url, origin, material, spu_no, info_from, 
+      memo, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -115,7 +117,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    spu_id,spu_model,spu_name,gender,category_no,brand_no,market_time,hub_color,hub_color_no,season,spu_desc,create_time,create_user,update_time,update_user,spu_state,spu_select_state,new_type,pic_url,spu_no,info_from,memo,data_state,version
+    spu_id,spu_model,spu_name,gender,category_no,brand_no,market_time,hub_color,hub_color_no,season,spu_desc,create_time,create_user,update_time,update_user,spu_state,spu_select_state,new_type,pic_url,origin,material,spu_no,info_from,memo,data_state,version
     from hub_spu
     where spu_id = #{spuId,jdbcType=BIGINT}
   </select>
@@ -130,7 +132,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
-    <selectKey keyColumn="spu_id" keyProperty="spuId" order="AFTER" resultType="long">
+    <selectKey keyColumn="spu_id" keyProperty="spuId" order="AFTER" resultType="java.lang.Long">
   		SELECT LAST_INSERT_ID() AS spu_id
   	</selectKey>
     insert into hub_spu (spu_id, spu_model, spu_name, 
@@ -139,21 +141,21 @@
       season, spu_desc, create_time, 
       create_user, update_time, update_user, 
       spu_state, spu_select_state, new_type, 
-      pic_url, spu_no, info_from, 
-      memo, data_state, version
-      )
+      pic_url, origin, material, 
+      spu_no, info_from, memo, 
+      data_state, version)
     values (#{spuId,jdbcType=BIGINT}, #{spuModel,jdbcType=VARCHAR}, #{spuName,jdbcType=VARCHAR}, 
       #{gender,jdbcType=VARCHAR}, #{categoryNo,jdbcType=VARCHAR}, #{brandNo,jdbcType=VARCHAR}, 
       #{marketTime,jdbcType=VARCHAR}, #{hubColor,jdbcType=VARCHAR}, #{hubColorNo,jdbcType=VARCHAR}, 
       #{season,jdbcType=VARCHAR}, #{spuDesc,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
       #{spuState,jdbcType=TINYINT}, #{spuSelectState,jdbcType=TINYINT}, #{newType,jdbcType=TINYINT}, 
-      #{picUrl,jdbcType=VARCHAR}, #{spuNo,jdbcType=VARCHAR}, #{infoFrom,jdbcType=TINYINT}, 
-      #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
-      )
+      #{picUrl,jdbcType=VARCHAR}, #{origin,jdbcType=VARCHAR}, #{material,jdbcType=VARCHAR}, 
+      #{spuNo,jdbcType=VARCHAR}, #{infoFrom,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
-    <selectKey keyColumn="spu_id" keyProperty="spuId" order="AFTER" resultType="long">
+    <selectKey keyColumn="spu_id" keyProperty="spuId" order="AFTER" resultType="java.lang.Long">
   		SELECT LAST_INSERT_ID() AS spu_id
   	</selectKey>
     insert into hub_spu
@@ -214,6 +216,12 @@
       </if>
       <if test="picUrl != null" >
         pic_url,
+      </if>
+      <if test="origin != null" >
+        origin,
+      </if>
+      <if test="material != null" >
+        material,
       </if>
       <if test="spuNo != null" >
         spu_no,
@@ -288,6 +296,12 @@
       </if>
       <if test="picUrl != null" >
         #{picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="origin != null" >
+        #{origin,jdbcType=VARCHAR},
+      </if>
+      <if test="material != null" >
+        #{material,jdbcType=VARCHAR},
       </if>
       <if test="spuNo != null" >
         #{spuNo,jdbcType=VARCHAR},
@@ -372,6 +386,12 @@
       <if test="record.picUrl != null" >
         pic_url = #{record.picUrl,jdbcType=VARCHAR},
       </if>
+      <if test="record.origin != null" >
+        origin = #{record.origin,jdbcType=VARCHAR},
+      </if>
+      <if test="record.material != null" >
+        material = #{record.material,jdbcType=VARCHAR},
+      </if>
       <if test="record.spuNo != null" >
         spu_no = #{record.spuNo,jdbcType=VARCHAR},
       </if>
@@ -413,6 +433,8 @@
       spu_select_state = #{record.spuSelectState,jdbcType=TINYINT},
       new_type = #{record.newType,jdbcType=TINYINT},
       pic_url = #{record.picUrl,jdbcType=VARCHAR},
+      origin = #{record.origin,jdbcType=VARCHAR},
+      material = #{record.material,jdbcType=VARCHAR},
       spu_no = #{record.spuNo,jdbcType=VARCHAR},
       info_from = #{record.infoFrom,jdbcType=TINYINT},
       memo = #{record.memo,jdbcType=VARCHAR},
@@ -479,6 +501,12 @@
       <if test="picUrl != null" >
         pic_url = #{picUrl,jdbcType=VARCHAR},
       </if>
+      <if test="origin != null" >
+        origin = #{origin,jdbcType=VARCHAR},
+      </if>
+      <if test="material != null" >
+        material = #{material,jdbcType=VARCHAR},
+      </if>
       <if test="spuNo != null" >
         spu_no = #{spuNo,jdbcType=VARCHAR},
       </if>
@@ -517,6 +545,8 @@
       spu_select_state = #{spuSelectState,jdbcType=TINYINT},
       new_type = #{newType,jdbcType=TINYINT},
       pic_url = #{picUrl,jdbcType=VARCHAR},
+      origin = #{origin,jdbcType=VARCHAR},
+      material = #{material,jdbcType=VARCHAR},
       spu_no = #{spuNo,jdbcType=VARCHAR},
       info_from = #{infoFrom,jdbcType=TINYINT},
       memo = #{memo,jdbcType=VARCHAR},
@@ -541,14 +571,4 @@
       limit #{startRow} , #{pageSize}
     </if>
   </select>
-
-  <!-- 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方 -->
-
-
-  <select   id="getMaxSpuNo" resultType="java.lang.String">
-    select   max(spu_no)
-    from hub_spu
-
-  </select>
-
 </mapper>

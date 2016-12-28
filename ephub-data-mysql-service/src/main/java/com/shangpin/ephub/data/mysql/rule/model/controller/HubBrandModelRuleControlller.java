@@ -40,12 +40,14 @@ public class HubBrandModelRuleControlller {
     	return hubBrandModelRuleService.deleteByPrimaryKey(brandModelRuleId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubBrandModelRule hubBrandModelRule){
-    	return hubBrandModelRuleService.insert(hubBrandModelRule);
+    public Long insert(@RequestBody HubBrandModelRule hubBrandModelRule){
+    	hubBrandModelRuleService.insert(hubBrandModelRule);
+    	return hubBrandModelRule.getBrandModelRuleId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubBrandModelRule hubBrandModelRule){
-    	return hubBrandModelRuleService.insertSelective(hubBrandModelRule);
+    public Long insertSelective(@RequestBody HubBrandModelRule hubBrandModelRule){
+    	hubBrandModelRuleService.insertSelective(hubBrandModelRule);
+    	return hubBrandModelRule.getBrandModelRuleId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubBrandModelRule> selectByCriteriaWithRowbounds(@RequestBody HubBrandModelRuleCriteriaWithRowBounds criteriaWithRowBounds){

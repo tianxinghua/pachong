@@ -33,10 +33,10 @@ public interface HubSupplierConfigGateWay {
     public int deleteByPrimaryKey(Long supplierConfigId);
 	
 	@RequestMapping(value = "/hub-supplier-config/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubSupplierConfigDto hubSupplierConfig);
+    public Long insert(@RequestBody HubSupplierConfigDto hubSupplierConfig);
 	
 	@RequestMapping(value = "/hub-supplier-config/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubSupplierConfigDto hubSupplierConfig);
+    public Long insertSelective(@RequestBody HubSupplierConfigDto hubSupplierConfig);
 	
 	@RequestMapping(value = "/hub-supplier-config/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSupplierConfigDto> selectByCriteriaWithRowbounds(@RequestBody HubSupplierConfigCriteriaWithRowBoundsDto criteriaWithRowBounds);

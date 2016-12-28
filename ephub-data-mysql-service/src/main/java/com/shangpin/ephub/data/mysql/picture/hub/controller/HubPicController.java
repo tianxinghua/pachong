@@ -40,12 +40,14 @@ public class HubPicController {
     	return hubPicService.deleteByPrimaryKey(picId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubPic hubPic){
-    	return hubPicService.insert(hubPic);
+    public Long insert(@RequestBody HubPic hubPic){
+    	hubPicService.insert(hubPic);
+    	return hubPic.getPicId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubPic hubPic){
-    	return hubPicService.insertSelective(hubPic);
+    public Long insertSelective(@RequestBody HubPic hubPic){
+    	hubPicService.insertSelective(hubPic);
+    	return hubPic.getPicId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubPic> selectByCriteriaWithRowbounds(@RequestBody HubPicCriteriaWithRowBounds criteriaWithRowBounds){

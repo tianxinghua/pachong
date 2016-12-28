@@ -1,7 +1,6 @@
 package com.shangpin.ephub.product.business.ui.task.spuimport.controller;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,13 +9,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.product.business.ui.task.common.enumeration.TaskImportTpye;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
-import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseDTO;
 import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseWithPageDTO;
 import com.shangpin.ephub.response.HubResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -29,16 +29,18 @@ import com.shangpin.ephub.response.HubResponse;
 @SuppressWarnings("rawtypes")
 @RestController
 @RequestMapping("/hub-task")
+@Slf4j
 public class HubSpuImportTaskController {
 	
 	@Autowired
 	TaskImportService taskService;
 	
-	@RequestMapping(value = "/import-product",method = RequestMethod.POST)
+	@RequestMapping(value = "/import-product",method = RequestMethod.POST,produces = "text/html;charset=UTF-8")
 	@ResponseBody
     public HubResponse importSpu(@RequestBody HubImportTaskRequestDto dto){
 	        	
 		try {
+			log.info("导入接受到的参数："+dto.toString());
 			return taskService.uploadFileAndSave(dto,TaskImportTpye.HUB_PRODUCT.getIndex());
 		} catch (Exception e) {
 			return HubResponse.errorResp("上传文件失败，请重新上传");
@@ -49,6 +51,7 @@ public class HubSpuImportTaskController {
     public HubResponse<byte[]> downResult(String dto){
 	        	
 		try {
+			log.info("接受到的参数："+dto.toString());
 			return taskService.downResultFile(dto);
 		} catch (Exception e) {
 			return HubResponse.errorResp("下载失败，请重新上传");
@@ -59,6 +62,7 @@ public class HubSpuImportTaskController {
 	@ResponseBody
     public HubResponse importSpuList(@RequestBody HubImportTaskListRequestDto dto){
 	        	
+		log.info("列表接受到的参数："+dto.toString());
 		try {
 			Byte [] list1 = {3};
 			HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = taskService.findHubTaskList(dto,Arrays.asList(list1));

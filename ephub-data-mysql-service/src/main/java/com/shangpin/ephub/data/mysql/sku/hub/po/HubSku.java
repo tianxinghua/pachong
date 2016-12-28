@@ -25,6 +25,11 @@ public class HubSku implements Serializable {
     private String skuSize;
 
     /**
+     * hubskuno
+     */
+    private String skuNo;
+
+    /**
      * 尺码Id
      */
     private String skuSizeId;
@@ -101,6 +106,14 @@ public class HubSku implements Serializable {
 
     public void setSkuSize(String skuSize) {
         this.skuSize = skuSize == null ? null : skuSize.trim();
+    }
+
+    public String getSkuNo() {
+        return skuNo;
+    }
+
+    public void setSkuNo(String skuNo) {
+        this.skuNo = skuNo == null ? null : skuNo.trim();
     }
 
     public String getSkuSizeId() {
@@ -185,6 +198,7 @@ public class HubSku implements Serializable {
         sb.append(", spuNo=").append(spuNo);
         sb.append(", color=").append(color);
         sb.append(", skuSize=").append(skuSize);
+        sb.append(", skuNo=").append(skuNo);
         sb.append(", skuSizeId=").append(skuSizeId);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
@@ -215,6 +229,7 @@ public class HubSku implements Serializable {
             && (this.getSpuNo() == null ? other.getSpuNo() == null : this.getSpuNo().equals(other.getSpuNo()))
             && (this.getColor() == null ? other.getColor() == null : this.getColor().equals(other.getColor()))
             && (this.getSkuSize() == null ? other.getSkuSize() == null : this.getSkuSize().equals(other.getSkuSize()))
+            && (this.getSkuNo() == null ? other.getSkuNo() == null : this.getSkuNo().equals(other.getSkuNo()))
             && (this.getSkuSizeId() == null ? other.getSkuSizeId() == null : this.getSkuSizeId().equals(other.getSkuSizeId()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
@@ -234,6 +249,7 @@ public class HubSku implements Serializable {
         result = prime * result + ((getSpuNo() == null) ? 0 : getSpuNo().hashCode());
         result = prime * result + ((getColor() == null) ? 0 : getColor().hashCode());
         result = prime * result + ((getSkuSize() == null) ? 0 : getSkuSize().hashCode());
+        result = prime * result + ((getSkuNo() == null) ? 0 : getSkuNo().hashCode());
         result = prime * result + ((getSkuSizeId() == null) ? 0 : getSkuSizeId().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());

@@ -31,10 +31,10 @@ public interface HubSpuGateWay {
     public int deleteByPrimaryKey(Long spuId);
 	
 	@RequestMapping(value = "/hub-spu/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubSpuDto hubSpu);
+    public Long insert(@RequestBody HubSpuDto hubSpu);
 	
 	@RequestMapping(value = "/hub-spu/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubSpuDto hubSpu);
+    public Long insertSelective(@RequestBody HubSpuDto hubSpu);
 	
 	@RequestMapping(value = "/hub-spu/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSpuDto> selectByCriteriaWithRowbounds(@RequestBody HubSpuCriteriaWithRowBoundsDto criteriaWithRowBounds);

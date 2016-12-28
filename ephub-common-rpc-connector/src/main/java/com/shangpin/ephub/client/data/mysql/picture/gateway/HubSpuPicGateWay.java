@@ -33,10 +33,10 @@ public interface HubSpuPicGateWay {
     public int deleteByPrimaryKey(Long spuPicId);
 	
 	@RequestMapping(value = "/hub-spu-pic/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubSpuPicDto hubSpuPic);
+    public Long insert(@RequestBody HubSpuPicDto hubSpuPic);
 	
 	@RequestMapping(value = "/hub-spu-pic/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubSpuPicDto hubSpuPic);
+    public Long insertSelective(@RequestBody HubSpuPicDto hubSpuPic);
 	
 	@RequestMapping(value = "/hub-spu-pic/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSpuPicDto> selectByCriteriaWithRowbounds(@RequestBody HubSpuPicCriteriaWithRowBoundsDto criteriaWithRowBounds);

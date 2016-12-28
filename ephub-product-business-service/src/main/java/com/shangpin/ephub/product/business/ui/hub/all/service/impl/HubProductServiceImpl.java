@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import com.shangpin.ephub.client.data.mysql.enumeration.HubSpuState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
@@ -17,13 +18,14 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
+import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.ui.hub.all.service.IHubProductService;
-import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProduct;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetail;
+import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetails;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProducts;
 import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 import com.shangpin.ephub.product.business.ui.hub.common.service.HubCommonProductService;
-import com.shangpin.ephub.product.business.ui.pendingCrud.util.JavaUtil;
+import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 
 /**
  * <p>Title:HubProductServiceImpl </p>
@@ -44,6 +46,8 @@ public class HubProductServiceImpl implements IHubProductService {
 	private HubSkuSupplierMappingGateWay hubSkuSupplierMappingClient;
 	@Autowired
 	private HubCommonProductService hubCommonProductService;
+	@Autowired
+	private SupplierService supplierService;
 
 	@Override
 	public HubProducts findHubProductds(HubQuryDto hubQuryDto) {
@@ -65,38 +69,54 @@ public class HubProductServiceImpl implements IHubProductService {
 		return null;
 	}
 	@Override
-	public HubProductDetail findProductDtails(Long spuId){
+	public HubProductDetails findProductDtails(Long spuId){
 		HubSpuDto hubSpu = hubSpuClient.selectByPrimaryKey(spuId);
 		if(null != hubSpu){
-			HubProductDetail hubProductDetail = getHubProductDetailFromHubSpu(hubSpu);
-			List<HubProduct> hubProducts = new ArrayList<HubProduct>();
+			HubProductDetails hubProductDetails = getHubProductDetailsFromHubSpu(hubSpu);
+			List<HubProductDetail> details = new ArrayList<HubProductDetail>();
+			
 			HubSkuCriteriaDto criteriaDto = new HubSkuCriteriaDto();
 			criteriaDto.createCriteria().andSpuNoEqualTo(hubSpu.getSpuNo());
 			List<HubSkuDto> hubSkus =  hubSkuClient.selectByCriteria(criteriaDto);
 			if(null != hubSkus && hubSkus.size()>0){
 				for(HubSkuDto hubSku : hubSkus){
-					HubProduct hubProuct = covertHubSpuToHubProduct(hubSpu,hubSku);
-					hubProducts.add(hubProuct);
+					List<HubProductDetail> productDetails = getProductDetailsByHubSku(hubSpu,hubSku);
+					for(HubProductDetail hubProductDetail : productDetails){
+						details.add(hubProductDetail);
+					}
+					
 				}
-				hubProductDetail.setHubDetails(hubProducts);
+				hubProductDetails.setHubDetails(details);
 			}
-			return hubProductDetail;
+			return hubProductDetails;
 		}else{
 			return null;
 		}
 	}
-	
-	public boolean updateHubProductDetails(HubProductDetail hubProductDetail){
-		try {
-			hubProductDetail.getProductName();
-			List<HubProduct> hubProducts = hubProductDetail.getHubDetails();
+	@Override
+	public boolean updateHubProductDetails(HubProductDetails hubProductDetails){
+		try {			
+			if(!StringUtils.isEmpty(hubProductDetails.getProductName())){
+				HubSpuDto hubSpuDto = new HubSpuDto();
+				hubSpuDto.setSpuId(hubProductDetails.getSpuId());
+				hubSpuDto.setSpuName(hubProductDetails.getProductName()); 
+				updateHubSpu(hubSpuDto);
+			}			
+			hubProductDetails.getProductName();
+			List<HubProductDetail> hubProducts = hubProductDetails.getHubDetails();
 			if(null != hubProducts && hubProducts.size()>0){
-				for(HubProduct hubSku : hubProducts){
+				for(HubProductDetail hubSku : hubProducts){
 					if(!StringUtils.isEmpty(hubSku.getSkuId())){
-						HubProduct newHubSku = new HubProduct();
-						newHubSku.setSkuId(hubSku.getSkuId());
-						if(!StringUtils.isEmpty(hubSku.getSpuNoOrg())){}
-						updateHubSkuDto(hubSku);
+						HubSkuSupplierMappingDto hubSkuSupplierMappingDto = new HubSkuSupplierMappingDto();
+						hubSkuSupplierMappingDto.setSkuNo(hubSku.getSkuNo());
+						hubSkuSupplierMappingDto.setSupplierId(hubSku.getSupplierId());
+						if(!StringUtils.isEmpty(hubSku.getSupplierSkuNo())){
+							hubSkuSupplierMappingDto.setSupplierSkuNo(hubSku.getSupplierSkuNo());
+						}
+						if(!StringUtils.isEmpty(hubSku.getBarcode())){
+							hubSkuSupplierMappingDto.setBarcode(hubSku.getBarcode());
+						}
+						updateHubSkuSupplierMapping(hubSkuSupplierMappingDto);
 					}
 					
 				}
@@ -107,8 +127,27 @@ public class HubProductServiceImpl implements IHubProductService {
 		}
 	}
 	
-	private void updateHubSkuDto(HubSkuDto hubSkuDto) throws Exception{
-		hubSkuClient.updateByPrimaryKeySelective(hubSkuDto);
+	/**
+	 * 根据主键更新hub_spu字段
+	 * @param hubSpuDto
+	 * @throws Exception
+	 */
+	private void updateHubSpu(HubSpuDto hubSpuDto) throws Exception{
+		hubSpuClient.updateByPrimaryKeySelective(hubSpuDto);
+	}
+	
+	/**
+	 * 根据sku_no和供应商门户编号更新hub_sku_supplier_mapping中的供应商SkuNo或条码
+	 * @param hubSkuSupplierMappingDto
+	 * @throws Exception
+	 */
+	private void updateHubSkuSupplierMapping(HubSkuSupplierMappingDto hubSkuSupplierMappingDto) throws Exception{
+		HubSkuSupplierMappingWithCriteriaDto hubSkuSupplierMappingWithCriteriaDto = new HubSkuSupplierMappingWithCriteriaDto();
+		HubSkuSupplierMappingCriteriaDto criteria = new HubSkuSupplierMappingCriteriaDto();
+		criteria.createCriteria().andSkuNoEqualTo(hubSkuSupplierMappingDto.getSkuNo()).andSupplierIdEqualTo(hubSkuSupplierMappingDto.getSupplierId());
+		hubSkuSupplierMappingWithCriteriaDto.setCriteria(criteria);
+		hubSkuSupplierMappingWithCriteriaDto.setHubSkuSupplierMapping(hubSkuSupplierMappingDto);
+		hubSkuSupplierMappingClient.updateByCriteriaSelective(hubSkuSupplierMappingWithCriteriaDto);
 	}
 	
 	/**
@@ -116,15 +155,16 @@ public class HubProductServiceImpl implements IHubProductService {
 	 * @param hubSpu
 	 * @return
 	 */
-	private HubProductDetail getHubProductDetailFromHubSpu(HubSpuDto hubSpu){
-		HubProductDetail hubProductDetail = new HubProductDetail();
-		hubProductDetail.setBrandNo(hubSpu.getBrandNo());
-		hubProductDetail.setCategoryNo(hubSpu.getCategoryNo());
-		hubProductDetail.setHomeMarketPrice("");//TODO
-		hubProductDetail.setOriginalProductModle("");//TODO
-		hubProductDetail.setProductName(hubSpu.getSpuName());
-		hubProductDetail.setProductUnit("");//TODO
-		return hubProductDetail;
+	private HubProductDetails getHubProductDetailsFromHubSpu(HubSpuDto hubSpu){
+		HubProductDetails hubProductDetails = new HubProductDetails();
+		hubProductDetails.setSpuId(hubSpu.getSpuId()); 
+		hubProductDetails.setBrandNo(hubSpu.getBrandNo());
+		hubProductDetails.setCategoryNo(hubSpu.getCategoryNo());
+		hubProductDetails.setHomeMarketPrice("");//TODO
+		hubProductDetails.setOriginalProductModle("");//TODO
+		hubProductDetails.setProductName(hubSpu.getSpuName());
+		hubProductDetails.setProductUnit("");//TODO
+		return hubProductDetails;
 	}
 	
 	/**
@@ -133,38 +173,38 @@ public class HubProductServiceImpl implements IHubProductService {
 	 * @param hubSku
 	 * @return
 	 */
-	private HubProduct covertHubSpuToHubProduct(HubSpuDto hubSpu,HubSkuDto hubSku){
-		HubProduct hubProuct = new HubProduct();
-		if(null != hubSpu){
-			hubProuct.setSupplierName("");//TODO 
-			hubProuct.setSupplierProductModle(findSupplierSpuModelByHubSkuNo(hubSku.getSkuId()));
-			hubProuct.setColor(hubSpu.getHubColor());
-			hubProuct.setMaterial("");//TODO 
-			hubProuct.setProductOrigin("");//TODO 
+	private List<HubProductDetail> getProductDetailsByHubSku(HubSpuDto hubSpu,HubSkuDto hubSku){
+		
+		List<HubProductDetail> productDetails = new ArrayList<HubProductDetail>();
+		List<HubSkuSupplierMappingDto> mappings = findHubSkuSupplierMappingDtoByHubSkuNo(hubSku.getSkuNo());
+		for(HubSkuSupplierMappingDto mappingDto : mappings){
+			HubProductDetail hubProuctDetail = new HubProductDetail();
+			JavaUtil.fatherToChild(mappingDto, hubProuctDetail);			
+			hubProuctDetail.setSupplierName(supplierService.getSupplier(mappingDto.getSupplierNo()).getSupplierName());
+			hubProuctDetail.setSkuId(hubSku.getSkuId());
+			hubProuctDetail.setSkuSize(hubSku.getSkuSize());
+			hubProuctDetail.setColor(hubSpu.getHubColor()); 	
 			if(HubSpuState.ON_SALE.getIndex() == hubSpu.getSpuState()){
-				hubProuct.setSpuState(HubSpuState.ON_SALE.getDescription());
-			}
-			
+				hubProuctDetail.setSpuState(HubSpuState.ON_SALE.getDescription());
+			}	
+			productDetails.add(hubProuctDetail);
 		}
-		if(null != hubSku){
-			JavaUtil.fatherToChild(hubSku, hubProuct);
-		}
-		return hubProuct;
+		return productDetails;
 	}
 	
 	/**
-	 * 根据HubSkuNo查找供应商原始货号
+	 * 根据HubSkuNo查找供应商原始的一些信息
 	 * @param hubSkuNo
 	 * @return
 	 */
-	private String findSupplierSpuModelByHubSkuNo(Long hubSkuNo){
+	private List<HubSkuSupplierMappingDto> findHubSkuSupplierMappingDtoByHubSkuNo(String hubSkuNo){
 		HubSkuSupplierMappingCriteriaDto criteriaDto = new HubSkuSupplierMappingCriteriaDto();
 		criteriaDto.createCriteria().andSkuNoEqualTo(hubSkuNo);
 		List<HubSkuSupplierMappingDto>  lists = hubSkuSupplierMappingClient.selectByCriteria(criteriaDto);
 		if(null != lists && lists.size()>0){
-			return lists.get(0).getSupplierSpuModel();
+			return lists;
 		}else{
-			return "";
+			return null;
 		}
 			
 	}

@@ -32,10 +32,10 @@ public interface HubMaterialMappingGateWay {
     public int deleteByPrimaryKey(Long materialMappingId);
 	
 	@RequestMapping(value = "/hub-material-mapping/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubMaterialMappingDto hubMaterialMappingDto);
+    public Long insert(@RequestBody HubMaterialMappingDto hubMaterialMappingDto);
 	
 	@RequestMapping(value = "/hub-material-mapping/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubMaterialMappingDto hubMaterialMappingDto);
+    public Long insertSelective(@RequestBody HubMaterialMappingDto hubMaterialMappingDto);
 	
 	@RequestMapping(value = "/hub-material-mapping/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubMaterialMappingDto> selectByCriteriaWithRowbounds(@RequestBody HubMaterialMappingCriteriaWithRowBoundsDto criteriaWithRowBounds);

@@ -33,10 +33,10 @@ public interface HubBrandModelRuleGateWay {
     public int deleteByPrimaryKey(Long brandModelRuleId);
 	
 	@RequestMapping(value = "/hub-brand-model-rule/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubBrandModelRuleDto hubBrandModelRule);
+    public Long insert(@RequestBody HubBrandModelRuleDto hubBrandModelRule);
     
 	@RequestMapping(value = "/hub-brand-model-rule/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubBrandModelRuleDto hubBrandModelRule);
+    public Long insertSelective(@RequestBody HubBrandModelRuleDto hubBrandModelRule);
 	
 	@RequestMapping(value = "/hub-brand-model-rule/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubBrandModelRuleDto> selectByCriteriaWithRowbounds(@RequestBody HubBrandModelRuleCriteriaWithRowBoundsDto criteriaWithRowBounds);

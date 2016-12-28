@@ -34,10 +34,10 @@ public interface HubMaterialDicItemGateWay {
     public int deleteByPrimaryKey(Long materialDicItemId);
 	
 	@RequestMapping(value = "/hub-material-dic-item/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubMaterialDicItemDto hubMaterialDicItem);
+    public Long insert(@RequestBody HubMaterialDicItemDto hubMaterialDicItem);
 	
 	@RequestMapping(value = "/hub-material-dic-item/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubMaterialDicItemDto hubMaterialDicItem);
+    public Long insertSelective(@RequestBody HubMaterialDicItemDto hubMaterialDicItem);
 	
 	@RequestMapping(value = "/hub-material-dic-item/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubMaterialDicItemDto> selectByCriteriaWithRowbounds(@RequestBody HubMaterialDicItemCriteriaWithRowBoundsDto criteriaWithRowBounds);

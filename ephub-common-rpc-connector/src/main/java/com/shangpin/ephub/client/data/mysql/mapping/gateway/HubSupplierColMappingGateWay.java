@@ -32,10 +32,10 @@ public interface HubSupplierColMappingGateWay {
     public int deleteByPrimaryKey(Long supplierColMappingId);
 	
 	@RequestMapping(value = "/hub-supplier-col-mapping/insert", method = RequestMethod.POST,consumes = "application/json")
-    public int insert(@RequestBody HubSupplierColMappingDto hubSupplierColMapping);
+    public Long insert(@RequestBody HubSupplierColMappingDto hubSupplierColMapping);
 	
 	@RequestMapping(value = "/hub-supplier-col-mapping/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int insertSelective(@RequestBody HubSupplierColMappingDto hubSupplierColMapping);
+    public Long insertSelective(@RequestBody HubSupplierColMappingDto hubSupplierColMapping);
 	
 	@RequestMapping(value = "/hub-supplier-col-mapping/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSupplierColMappingDto> selectByCriteriaWithRowbounds(@RequestBody HubSupplierColMappingCriteriaWithRowBoundsDto criteriaWithRowBounds);

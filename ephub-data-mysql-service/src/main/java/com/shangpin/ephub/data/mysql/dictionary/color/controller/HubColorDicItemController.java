@@ -39,12 +39,14 @@ public class HubColorDicItemController {
     	return hubColorDicItemService.deleteByPrimaryKey(colorDicItemId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubColorDicItem hubColorDicItem){
-    	return hubColorDicItemService.insert(hubColorDicItem);
+    public Long insert(@RequestBody HubColorDicItem hubColorDicItem){
+    	hubColorDicItemService.insert(hubColorDicItem);
+    	return hubColorDicItem.getColorDicItemId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubColorDicItem hubColorDicItem){
-    	return hubColorDicItemService.insertSelective(hubColorDicItem);
+    public Long insertSelective(@RequestBody HubColorDicItem hubColorDicItem){
+    	hubColorDicItemService.insertSelective(hubColorDicItem);
+    	return hubColorDicItem.getColorDicItemId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubColorDicItem> selectByCriteriaWithRowbounds(@RequestBody HubColorDicItemCriteriaWithRowBounds criteriaWithRowBounds){
