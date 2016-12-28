@@ -1,19 +1,5 @@
 package com.shangpin.ephub.client.data.mysql.hub.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@Setter
-@Getter
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class HubWaitSelectRequestWithPageDto {
 	
 	private int pageNo;
@@ -27,17 +13,17 @@ public class HubWaitSelectRequestWithPageDto {
     private String endDate;
     private Byte spuSelectState;
     
-    public Integer getPageNo() {
+    public int getPageNo() {
         return pageNo;
     }
-    public void setPageNo(Integer pageNo) {
+    public void setPageNo(int pageNo) {
         this.pageNo = (pageNo-1)*this.pageSize;
     }
-    public void setPageSize(Integer pageSize) {
+    public void setPageSize(int pageSize) {
         this.pageSize=pageSize;
     }
 
-    public Integer getPageSize() {
+    public int getPageSize() {
         return pageSize;
     }
 	  

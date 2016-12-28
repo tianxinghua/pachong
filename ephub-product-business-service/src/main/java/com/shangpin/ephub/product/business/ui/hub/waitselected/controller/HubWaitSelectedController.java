@@ -39,7 +39,9 @@ public class HubWaitSelectedController {
 			BeanUtils.copyProperties(dto, hubWaitSelectRequest);
 			hubWaitSelectRequest.setSpuSelectState((byte)SpuSelectState.WAIT_SELECT.getIndex());
 			int total = HubWaitSelectGateWay.count(hubWaitSelectRequest);
-			if(total<0){
+			if(total>0){
+				dto.setPageNo(dto.getPageNo()-1);
+				dto.setSpuSelectState((byte)SpuSelectState.WAIT_SELECT.getIndex());
 				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
 				HubWaitSelectedResponseWithPage HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPage();
 				HubWaitSelectedResponseWithPageDto.setTotal(total);
