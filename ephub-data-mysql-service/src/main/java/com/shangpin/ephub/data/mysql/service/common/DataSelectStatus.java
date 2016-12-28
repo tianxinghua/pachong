@@ -2,12 +2,13 @@ package com.shangpin.ephub.data.mysql.service.common;
 
 /**
  * Created by loyalty on 16/12/21.
+ * 选品状态
  */
-public enum DataStatus {
+public enum DataSelectStatus {
 
-    DELETE(0,"逻辑删除"),
+    NOT_SELECT(0,"未选品"),
 
-    NOT_DELETE(1,"未删除")
+    SELECTED(1,"已选品")
     ;
     /**
      * 数字索引标识
@@ -29,7 +30,7 @@ public enum DataStatus {
     public void setDescription(String description) {
         this.description = description;
     }
-    private DataStatus(Integer index, String description) {
+    private DataSelectStatus(Integer index, String description) {
         this.index = index;
         this.description = description;
     }

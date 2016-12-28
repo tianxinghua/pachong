@@ -9,7 +9,8 @@ public enum SpuStatus {
     SPU_WAIT_AUDIT(1,"待复核"),
     SPU_HANDLED(2,"已处理"),
     SPU_NO_WAY_HANDLE(3,"无法处理"),
-    SPU_FILTER(4,"过滤不处理");
+    SPU_FILTER(4,"过滤不处理"),
+    SPU_HANDLING(5,"审核中");
     /**
      * 数字索引标识
      */

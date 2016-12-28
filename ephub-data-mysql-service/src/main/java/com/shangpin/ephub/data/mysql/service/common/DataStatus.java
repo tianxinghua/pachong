@@ -2,12 +2,13 @@ package com.shangpin.ephub.data.mysql.service.common;
 
 /**
  * Created by loyalty on 16/12/21.
+ * 数据的逻辑状态
  */
-public enum DataBusinessStatus {
+public enum DataStatus {
 
-    WAIT_HANDLE(0,"信息待完善"),
+    DELETE(0,"逻辑删除"),
 
-    HANDLED(1,"信息已完善")
+    NOT_DELETE(1,"未删除")
     ;
     /**
      * 数字索引标识
@@ -29,7 +30,7 @@ public enum DataBusinessStatus {
     public void setDescription(String description) {
         this.description = description;
     }
-    private DataBusinessStatus(Integer index, String description) {
+    private DataStatus(Integer index, String description) {
         this.index = index;
         this.description = description;
     }

@@ -1,5 +1,6 @@
 package com.shangpin.ephub.data.mysql.service;
 
+import com.shangpin.ephub.data.mysql.service.vo.SpuModelVO;
 import com.shangpin.ephub.data.mysql.service.vo.SpuPendingAuditVO;
 
 /**
@@ -8,7 +9,7 @@ import com.shangpin.ephub.data.mysql.service.vo.SpuPendingAuditVO;
 public interface PengingToHubService {
 
 
-    public boolean auditPending(SpuPendingAuditVO auditVO) throws Exception;
+    public boolean auditPending(SpuModelVO spuModelVO) throws Exception;
 
 
 }

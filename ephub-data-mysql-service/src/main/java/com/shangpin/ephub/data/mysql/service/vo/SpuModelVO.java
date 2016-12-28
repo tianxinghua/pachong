@@ -1,10 +1,9 @@
-package com.shangpin.ephub.product.business.ui.pending.vo;
+package com.shangpin.ephub.data.mysql.service.vo;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by loyalty on 16/12/23.

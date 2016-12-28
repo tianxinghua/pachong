@@ -1,6 +1,9 @@
 package com.shangpin.ephub.product.business.service.pending;
 
-import com.shangpin.ephub.product.business.ui.pendingCrud.vo.*;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelMsgVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditQueryVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
 
 import java.util.List;
 

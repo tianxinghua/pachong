@@ -2,8 +2,9 @@ package com.shangpin.ephub.data.mysql.service.common;
 
 /**
  * Created by loyalty on 16/12/21.
+ * 数据业务处理状态
  */
-public enum DataCommonStatus {
+public enum DataBusinessStatus {
 
     WAIT_HANDLE(0,"信息待完善"),
 
@@ -29,7 +30,7 @@ public enum DataCommonStatus {
     public void setDescription(String description) {
         this.description = description;
     }
-    private DataCommonStatus(Integer index, String description) {
+    private DataBusinessStatus(Integer index, String description) {
         this.index = index;
         this.description = description;
     }
