@@ -19,7 +19,7 @@ public class SpuPendingAuditQueryVO implements Serializable {
 
 	private String brandNo;
 
-    private String categroyNo;
+    private String categoryNo;
     /**
      * 货号
      */

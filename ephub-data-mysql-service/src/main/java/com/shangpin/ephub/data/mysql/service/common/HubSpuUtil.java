@@ -1,7 +1,6 @@
-package com.shangpin.ephub.product.business.common.util;
+package com.shangpin.ephub.data.mysql.service.common;
 
 import com.shangpin.commons.redis.IShangpinRedis;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,7 @@ public class HubSpuUtil {
 
     /**
      * 创建SPU编号
-     *
+     * 无法获取时 返回空值
      * @return
      */
     public String createHubSpuNo(Long num){

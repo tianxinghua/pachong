@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.pending.vo;
+package com.shangpin.ephub.data.mysql.service.vo;
 
 import lombok.Getter;
 import lombok.Setter;

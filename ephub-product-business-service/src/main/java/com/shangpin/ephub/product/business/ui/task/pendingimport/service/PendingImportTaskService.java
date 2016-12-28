@@ -20,7 +20,7 @@ import com.shangpin.ephub.product.business.ui.task.common.util.FTPClientUtil;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseDTO;
-import com.shangpin.ephub.product.business.util.DateTimeUtil;
+import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.response.HubResponse;
 
 /**

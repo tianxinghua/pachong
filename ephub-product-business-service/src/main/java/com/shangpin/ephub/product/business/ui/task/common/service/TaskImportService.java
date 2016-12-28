@@ -43,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p>
  * Company: www.shangpin.com
  * </p>
- * 
+ *
  * @author zhaogenchun
  * @date 2016年11月23日 下午4:06:52
  */
@@ -51,112 +51,112 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class TaskImportService {
-	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
-	@Autowired 
-	HubSpuImportTaskGateWay spuImportGateway;
-	@Autowired
-	ProductImportTaskStreamSender productImportTaskStreamSender;
-	public HubResponse uploadFileAndSave(HubImportTaskRequestDto task,int importType) throws Exception{
-		
-		String []fileName = task.getFileName().split("\\.");
-		if(fileName!=null&&fileName.length==2){
-			if("xlsx".equals(fileName[1])||"xls".equals(fileName[1])){
-				
-				SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-				Date date = new Date();
-				String taskNo = sim.format(date);
-				String systemFileName = taskNo +"."+fileName[1];
-				//第一步 ： 上传ftp
-				String ftpPath = FTPClientUtil.uploadFile(task.getUploadfile(),systemFileName);
-				//第二步 ： 保存数据库
-				saveTask(task,taskNo,ftpPath,systemFileName,importType);
-				//TODO 第三步 ：发送到hub消息队列
-				sendTaskMessage(taskNo,ftpPath+systemFileName,importType);
-				return HubResponse.successResp(null);
-			}
-		}
-		return HubResponse.errorResp("文件格式有误，请下载模板");
-	}
-	private void sendTaskMessage(String taskNo,String ftpFilePath,int importType){
-		ProductImportTask productImportTask = new ProductImportTask();
-		productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
-		productImportTask.setMessageId(UUID.randomUUID().toString());
-		productImportTask.setTaskNo(taskNo);
-		productImportTask.setTaskFtpFilePath(ftpFilePath);
-		Map<String,String> map = new HashMap<String,String>();
-		map.put(importType+"",TaskImportTpye.PENDING_SPU.getDescription());
-		productImportTaskStreamSender.pendingProductImportTaskStream(productImportTask, map);
-	}
-	private boolean saveTask(HubImportTaskRequestDto task,String taskNo,String ftpPath,String systemFileName,int importType) throws Exception{
-		// TODO Auto-generated method stub
-		HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
-		hubSpuTask.setTaskNo(taskNo);
-		hubSpuTask.setTaskFtpFilePath(ftpPath+systemFileName);
-		hubSpuTask.setSysFileName(systemFileName);
-	    hubSpuTask.setLocalFileName(task.getFileName());
-	    hubSpuTask.setCreateTime(new Date());
-	    hubSpuTask.setCreateUser(task.getCreateUser());
-	    hubSpuTask.setTaskState((byte) TaskState.NO_HANDLE.getIndex());
-	    hubSpuTask.setImportType((byte)importType);
-	    spuImportGateway.insert(hubSpuTask);
-		return true;
-	}
-	
-	public HubTaskProductResponseWithPageDTO findHubTaskList(HubImportTaskListRequestDto param,List<Byte> listImportType) {
-		
-		HubSpuImportTaskCriteriaDto hubSpuImportTaskCriteriaDto = new HubSpuImportTaskCriteriaDto();
-		hubSpuImportTaskCriteriaDto.setPageNo(param.getPageNo());
-		hubSpuImportTaskCriteriaDto.setPageSize(param.getPageSize());
-		Criteria criteria = hubSpuImportTaskCriteriaDto.createCriteria();
-		if(param.getTaskState()!=-1){
-			criteria.andTaskStateEqualTo((byte)param.getTaskState());
-		}
-		if(!StringUtils.isEmpty(param.getLocalFileName())){
-			criteria.andLocalFileNameEqualTo(param.getLocalFileName());
-		}
-		if(!StringUtils.isEmpty(param.getStartDate())){
-			criteria.andCreateTimeBetween(DateTimeUtil.convertFormat(param.getStartDate(),dateFormat),DateTimeUtil.convertFormat(param.getEndDate(),dateFormat));
-		}
-		criteria.andImportTypeIn(listImportType);
-		int total = spuImportGateway.countByCriteria(hubSpuImportTaskCriteriaDto);
-		log.info("查询到数量："+total);
-		if(total<1){
-			return null;
-		}
-		List<HubSpuImportTaskDto>  list = spuImportGateway.selectByCriteria(hubSpuImportTaskCriteriaDto);
-		log.info("查询到数据："+list);
-		HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = new HubTaskProductResponseWithPageDTO();
-		List<HubTaskProductResponseDTO> responseList = convertTaskDTO2ResponseDTO(list);
-		hubTaskProductResponseWithPageDTO.setTotal(total);
-		hubTaskProductResponseWithPageDTO.setTaskNoList(responseList);
-		return hubTaskProductResponseWithPageDTO;
-	}
-	
-	private List<HubTaskProductResponseDTO> convertTaskDTO2ResponseDTO(List<HubSpuImportTaskDto> list) {
-		
-		List<HubTaskProductResponseDTO> responseList = null;
-		if(list!=null&&list.size()>0){
-			responseList = new ArrayList<HubTaskProductResponseDTO>();
-			for(HubSpuImportTaskDto dto : list){
-				HubTaskProductResponseDTO response = new HubTaskProductResponseDTO();
-				BeanUtils.copyProperties(dto,response);
-				responseList.add(response);
-			}
-		}
-		return responseList;
-	}
-	public HubResponse<byte[]> downResultFile(String resultFilePath) throws Exception{
-		// TODO Auto-generated method stub
-		InputStream in = FTPClientUtil.downFile(resultFilePath);
-		ByteArrayOutputStream swapStream = new ByteArrayOutputStream(); 
-		byte[] buff = new byte[1024]; //buff用于存放循环读取的临时数据 
-		int rc = 0; 
-		while ((rc = in.read(buff, 0, 100)) > 0) { 
-		swapStream.write(buff, 0, rc); 
-		} 
-		swapStream.flush();
-		byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果 
-		return HubResponse.successResp(in_b);
-	}
+    private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
+    @Autowired
+    HubSpuImportTaskGateWay spuImportGateway;
+    @Autowired
+    ProductImportTaskStreamSender productImportTaskStreamSender;
+    public HubResponse uploadFileAndSave(HubImportTaskRequestDto task,int importType) throws Exception{
+
+        String []fileName = task.getFileName().split("\\.");
+        if(fileName!=null&&fileName.length==2){
+            if("xlsx".equals(fileName[1])||"xls".equals(fileName[1])){
+
+                SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+                Date date = new Date();
+                String taskNo = sim.format(date);
+                String systemFileName = taskNo +"."+fileName[1];
+                //第一步 ： 上传ftp
+                String ftpPath = FTPClientUtil.uploadFile(task.getUploadfile(),systemFileName);
+                //第二步 ： 保存数据库
+                saveTask(task,taskNo,ftpPath,systemFileName,importType);
+                //TODO 第三步 ：发送到hub消息队列
+                sendTaskMessage(taskNo,ftpPath+systemFileName,importType);
+                return HubResponse.successResp(null);
+            }
+        }
+        return HubResponse.errorResp("文件格式有误，请下载模板");
+    }
+    private void sendTaskMessage(String taskNo,String ftpFilePath,int importType){
+        ProductImportTask productImportTask = new ProductImportTask();
+        productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
+        productImportTask.setMessageId(UUID.randomUUID().toString());
+        productImportTask.setTaskNo(taskNo);
+        productImportTask.setTaskFtpFilePath(ftpFilePath);
+        Map<String,String> map = new HashMap<String,String>();
+        map.put(importType+"",TaskImportTpye.PENDING_SPU.getDescription());
+        productImportTaskStreamSender.pendingProductImportTaskStream(productImportTask, map);
+    }
+    private boolean saveTask(HubImportTaskRequestDto task,String taskNo,String ftpPath,String systemFileName,int importType) throws Exception{
+        // TODO Auto-generated method stub
+        HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
+        hubSpuTask.setTaskNo(taskNo);
+        hubSpuTask.setTaskFtpFilePath(ftpPath+systemFileName);
+        hubSpuTask.setSysFileName(systemFileName);
+        hubSpuTask.setLocalFileName(task.getFileName());
+        hubSpuTask.setCreateTime(new Date());
+        hubSpuTask.setCreateUser(task.getCreateUser());
+        hubSpuTask.setTaskState((byte) TaskState.NO_HANDLE.getIndex());
+        hubSpuTask.setImportType((byte)importType);
+        spuImportGateway.insert(hubSpuTask);
+        return true;
+    }
+
+    public HubTaskProductResponseWithPageDTO findHubTaskList(HubImportTaskListRequestDto param,List<Byte> listImportType) {
+
+        HubSpuImportTaskCriteriaDto hubSpuImportTaskCriteriaDto = new HubSpuImportTaskCriteriaDto();
+        hubSpuImportTaskCriteriaDto.setPageNo(param.getPageNo());
+        hubSpuImportTaskCriteriaDto.setPageSize(param.getPageSize());
+        Criteria criteria = hubSpuImportTaskCriteriaDto.createCriteria();
+        if(param.getTaskState()!=-1){
+            criteria.andTaskStateEqualTo((byte)param.getTaskState());
+        }
+        if(!StringUtils.isEmpty(param.getLocalFileName())){
+            criteria.andLocalFileNameEqualTo(param.getLocalFileName());
+        }
+        if(!StringUtils.isEmpty(param.getStartDate())){
+            criteria.andCreateTimeBetween(DateTimeUtil.convertFormat(param.getStartDate(),dateFormat),DateTimeUtil.convertFormat(param.getEndDate(),dateFormat));
+        }
+        criteria.andImportTypeIn(listImportType);
+        int total = spuImportGateway.countByCriteria(hubSpuImportTaskCriteriaDto);
+        log.info("查询到数量："+total);
+        if(total<1){
+            return null;
+        }
+        List<HubSpuImportTaskDto>  list = spuImportGateway.selectByCriteria(hubSpuImportTaskCriteriaDto);
+        log.info("查询到数据："+list);
+        HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = new HubTaskProductResponseWithPageDTO();
+        List<HubTaskProductResponseDTO> responseList = convertTaskDTO2ResponseDTO(list);
+        hubTaskProductResponseWithPageDTO.setTotal(total);
+        hubTaskProductResponseWithPageDTO.setTaskNoList(responseList);
+        return hubTaskProductResponseWithPageDTO;
+    }
+
+    private List<HubTaskProductResponseDTO> convertTaskDTO2ResponseDTO(List<HubSpuImportTaskDto> list) {
+
+        List<HubTaskProductResponseDTO> responseList = null;
+        if(list!=null&&list.size()>0){
+            responseList = new ArrayList<HubTaskProductResponseDTO>();
+            for(HubSpuImportTaskDto dto : list){
+                HubTaskProductResponseDTO response = new HubTaskProductResponseDTO();
+                BeanUtils.copyProperties(dto,response);
+                responseList.add(response);
+            }
+        }
+        return responseList;
+    }
+    public HubResponse<byte[]> downResultFile(String resultFilePath) throws Exception{
+        // TODO Auto-generated method stub
+        InputStream in = FTPClientUtil.downFile(resultFilePath);
+        ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+        byte[] buff = new byte[1024]; //buff用于存放循环读取的临时数据
+        int rc = 0;
+        while ((rc = in.read(buff, 0, 100)) > 0) {
+            swapStream.write(buff, 0, rc);
+        }
+        swapStream.flush();
+        byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果
+        return HubResponse.successResp(in_b);
+    }
 
 }

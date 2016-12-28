@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.service;
+package com.shangpin.ephub.product.business.service.hub.impl;
 
 import java.util.List;
 
@@ -55,9 +55,30 @@ public class HubProductHandler {
        String spuNo =  hubSpuUtil.createHubSpuNo(0L);
        if(StringUtils.isBlank(spuNo)){//redis 出现问题 从数据库中获取最大值
 
+           spuNo = hubSpuGateWay.getMaxSpuNo();
+           spuNo = String.valueOf(Long.valueOf(spuNo.substring(1,spuNo.length())) + 1);
+
+           spuNo = "00000000" + String.valueOf(spuNo);
+           spuNo = "9"+spuNo.substring(spuNo.length()-9,spuNo.length());
 
        }
        return spuNo;
+    }
+
+
+    public String getHubSkuNo(String spuNo,int total){
+        String skuNo =  hubSpuUtil.createHubSkuNo(spuNo,total);
+        if(StringUtils.isBlank(skuNo)){//redis 出现问题 从数据库中获取最大值
+
+            spuNo = hubSpuGateWay.getMaxSpuNo();
+            spuNo = String.valueOf(Long.valueOf(spuNo.substring(1,spuNo.length())) + 1);
+
+            spuNo = "00000000" + String.valueOf(spuNo);
+            spuNo = "9"+spuNo.substring(spuNo.length()-9,spuNo.length());
+
+        }
+
+        return skuNo;
     }
 
 
