@@ -40,6 +40,7 @@ public class HubSelectedController {
 			hubWaitSelectRequest.setSpuSelectState((byte)SpuSelectState.SELECTED.getIndex());
 			int total = HubWaitSelectGateWay.count(hubWaitSelectRequest);
 			if(total<0){
+				dto.setSpuSelectState((byte)SpuSelectState.SELECTED.getIndex());
 				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
 				HubWaitSelectedResponseWithPage HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPage();
 				HubWaitSelectedResponseWithPageDto.setTotal(total);
