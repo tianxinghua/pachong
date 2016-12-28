@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.util;
+package com.shangpin.ephub.product.business.common.util;
 
 
 import org.apache.commons.lang.time.DateUtils;
@@ -154,7 +154,7 @@ public class DateTimeUtil {
     * @param param datetime string, pattern: "yyyy-MM-dd HH:mm:ss".
     * @return java.util.Date
     */
-   public static Date getDateFomate(String param) {
+   public static Date getDateTimeFormate(String param) {
      Date date = null;
      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
      try {
@@ -386,7 +386,7 @@ public static Date getLastDay(String dateDay)
 	Calendar c   =   Calendar.getInstance();
 	Date date = null;
 	dateDay=dateDay+" 00:00:00";
-	c.setTime(getDateFomate(dateDay));
+	c.setTime(getDateTimeFormate(dateDay));
 	c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
 	date=c.getTime();
 	return date;
@@ -402,7 +402,7 @@ public static Date getFirstDay(String dateDay)
 	Calendar c   =   Calendar.getInstance();
 	Date date = null;
 	dateDay=dateDay+" 00:00:00";
-	c.setTime(getDateFomate(dateDay));
+	c.setTime(getDateTimeFormate(dateDay));
 	c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
 	date=c.getTime();
 	return date;
@@ -412,7 +412,7 @@ public static String getCurrentFirstDay()
 	String dateDay=getDateTime();
 	Calendar c   =   Calendar.getInstance();
 	Date date = null;
-	c.setTime(getDateFomate(dateDay));
+	c.setTime(getDateTimeFormate(dateDay));
 	c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
 	date=c.getTime();
 	return shortFmt(date);
@@ -423,7 +423,7 @@ public static String getCurrentLastDay()
 	String dateDay=getDateTime();
 	Calendar c   =   Calendar.getInstance();
 	Date date = null;
-	c.setTime(getDateFomate(dateDay));
+	c.setTime(getDateTimeFormate(dateDay));
 	c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
 	date=c.getTime();
 	return shortFmt(date);

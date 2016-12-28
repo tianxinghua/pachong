@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.pending.vo;
+package com.shangpin.ephub.data.mysql.product.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,9 +12,9 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class SpuModelMsgVO implements Serializable {
+public class SpuModelMsgDto implements Serializable {
 
    private Integer total;//总数
 
-   private List<SpuModelVO> spuModels;
+   private List<SpuModelDto> spuModels;
 }
