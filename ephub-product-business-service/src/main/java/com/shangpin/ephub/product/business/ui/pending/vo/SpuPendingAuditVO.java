@@ -17,7 +17,7 @@ public class SpuPendingAuditVO  extends SpuPendingVO{
 	/**
      * 0 :信息待完善 1 : 待复核 2 :已处理(审核通过) 3：无法处理 4:过滤不处理
      */
-    private String  auditStatus;
+    private Integer   auditStatus;
 
     private String startDate;
 

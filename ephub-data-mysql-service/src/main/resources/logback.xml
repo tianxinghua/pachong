@@ -37,6 +37,14 @@
         </encoder>
     </appender>
 	<logger name="com.shangpin" level="DEGUG" ></logger>
+	
+	<logger name="org.apache.ibatis" level="DEBUG">  
+    	<appender-ref ref="STDOUT"/>  
+	</logger>  
+	<logger name="java.sql" level="debug">  
+    	<appender-ref ref="STDOUT"/>  
+	</logger> 
+	
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE_INFO"/>

@@ -74,7 +74,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         createHubData(auditVO, spuPendingIds);
 
 
-        return false;
+        return true;
     }
 
     private void createHubData(SpuModelDto auditVO, List<Long> spuPendingIds) {
@@ -83,95 +83,101 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         criteria.createCriteria().andSpuModelEqualTo(auditVO.getSpuModel())
                 .andBrandNoEqualTo(auditVO.getBrandNo());
         List<HubSpu> hubSpus = hubSpuMapper.selectByExample(criteria);
-        if(null==hubSpus||(null!=hubSpus&&hubSpus.size()==0)){//不存在插入新的SPU记录 以及 SKU 记录
+        if(null==hubSpus||(null!=hubSpus&&hubSpus.size()==0)){ //不存在插入新的SPU记录 以及 SKU 记录
             //合并sku pending的尺码 生成HUBSKU
             Map<String,List<HubSkuPending>> sizeSkuMap = new HashMap<>();
-            for(Long spuPendingId:spuPendingIds){
-                HubSkuPendingCriteria skuPendingCriteria = new HubSkuPendingCriteria();
-                skuPendingCriteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
-                List<HubSkuPending> hubSkuPendings = hubSkuPendingMapper.selectByExample(skuPendingCriteria);
-                for(HubSkuPending hubSkuPending:hubSkuPendings){
-                    if(hubSkuPending.getSkuState().intValue()== DataBusinessStatus.HANDLED.getIndex()){//信息已完善
-                        if(sizeSkuMap.containsKey(hubSkuPending.getHubSkuSize())){
-                            sizeSkuMap.get(hubSkuPending.getHubSkuSize()).add(hubSkuPending);
-                        }else{
-                            List<HubSkuPending> hubSkuPendingList = new ArrayList<>();
-                            hubSkuPendingList.add(hubSkuPending);
-                            sizeSkuMap.put(hubSkuPending.getHubSkuSize(),hubSkuPendingList);
-                        }
-                    }
-                }
-            }
-
+            //根据尺码合并不同供货商的SKU信息
+            setSizeSkuMap(spuPendingIds, sizeSkuMap);
             //插入新的SPU
             HubSpu hubSpu = new HubSpu();
             HubSpuPending spuPending = null;
-
             spuPending = this.getHubSpuPendingById(spuPendingIds.get(0));
-
             if(null!=spuPending){
+                //创建hubspu
                 createHubSpu(hubSpu, spuPending);
-
-                //插入SKU
-
+                //插入hubSKU 和 供货商的对应关系
                 Set<String> sizeSet = sizeSkuMap.keySet();
-
                 if(sizeSet.size()>0){
-
-                    String skuNoAll = hubSpuUtil.createHubSkuNo(hubSpu.getSpuNo(),sizeSet.size());
-                    if(StringUtils.isNotBlank(skuNoAll)){
-                        String[] skuNoArray = skuNoAll.split(",");
-                        String[] sizeArray = (String[])sizeSet.toArray();
-                        String size="",skuNo="";
-                        Date date = new Date();
-
-                        if(null!=skuNoArray&&skuNoArray.length>0){
-                            for(int i =0;i<skuNoArray.length;i++){
-                                List<HubSkuPending> hubSkuPendings = sizeSkuMap.get(sizeArray[i]);
-                                HubSku hubSku = new HubSku();
-                                hubSku.setSpuNo(hubSpu.getSpuNo());
-                                hubSku.setColor(hubSpu.getCategoryNo());
-                                hubSku.setSkuSize(sizeArray[i]);
-                                hubSku.setSkuSizeId(hubSkuPendings.get(0).getScreenSize());
-                                hubSku.setCreateTime(date);
-                                hubSku.setCreateUser(ConstantProperty.DATA_CREATE_USER);
-                                hubSku.setUpdateTime(date);
-                                hubSkuMapper.insert(hubSku);
-                                //增加SKU的营生关系
-                                for(HubSkuPending skuPending:hubSkuPendings){
-
-                                    HubSkuSupplierMapping hubSkuSupplierMapping = new HubSkuSupplierMapping();
-                                    BeanUtils.copyProperties(skuPending,hubSkuSupplierMapping);
-                                    hubSkuSupplierMapping.setSupplierSelectState(DataSelectStatus.NOT_SELECT.getIndex().byteValue());
-                                    HubSpuPending spuPendingTmp =  this.getHubSpuPendingById(skuPending.getSpuPendingId());
-                                    hubSkuSupplierMapping.setSupplierNo(spuPendingTmp.getSupplierNo());
-//                                    hubSkuSupplierMapping.setIsNewSupplier();  //不知从哪里获取值
-                                    hubSkuSupplierMapping.setCreateTime(date);
-                                    hubSkuSupplierMapping.setCreateUser(ConstantProperty.DATA_CREATE_USER);
-                                    hubSkuSupplierMapping.setUpdateTime(date);
-                                    HubSupplierSku supplierSku = this.getSupplierSku(skuPending.getSupplierId(), skuPending.getSupplierSkuNo());
-
-                                    if(null!=supplierSku){
-                                        HubSupplierSpu supplierSpu = this.getSupplierSpuById(supplierSku.getSupplierSpuId());
-                                        hubSkuSupplierMapping.setSupplierSkuId(supplierSku.getSupplierSkuId());
-                                        hubSkuSupplierMapping.setSupplierSpuModel(supplierSpu.getSupplierSpuModel());
-                                    }
-                                    hubSkuSupplierMapping.setDataState(DataStatus.NOT_DELETE.getIndex().byteValue());
-                                    hubSkuSupplierMappingMapper.insert(hubSkuSupplierMapping);
-                                }
-
-                            }
-                        }
-
-                    }
-
-
-
+                    createHubSkuAndMapping(sizeSkuMap, hubSpu, sizeSet);
                 }
-
             }
 
 
+        }else{ //TODO 已存在
+
+        }
+    }
+
+    private void createHubSkuAndMapping(Map<String, List<HubSkuPending>> sizeSkuMap, HubSpu hubSpu, Set<String> sizeSet) {
+        String skuNoAll = hubSpuUtil.createHubSkuNo(hubSpu.getSpuNo(),sizeSet.size());
+        if(StringUtils.isNotBlank(skuNoAll)){
+            String[] skuNoArray = skuNoAll.split(",");
+            Object[] sizeArray = sizeSet.toArray();
+            String size="",skuNo="";
+            Date date = new Date();
+
+            if(null!=skuNoArray&&skuNoArray.length>0){
+                for(int i =0;i<skuNoArray.length;i++){
+                    List<HubSkuPending> hubSkuPendings = sizeSkuMap.get(sizeArray[i]);
+                    HubSku hubSku = new HubSku();
+                    hubSku.setSpuNo(hubSpu.getSpuNo());
+                    hubSku.setColor(hubSpu.getCategoryNo());
+                    hubSku.setSkuSize((String)sizeArray[i]);
+                    hubSku.setSkuSizeId(hubSkuPendings.get(0).getScreenSize());
+                    hubSku.setCreateTime(date);
+                    hubSku.setCreateUser(ConstantProperty.DATA_CREATE_USER);
+                    hubSku.setUpdateTime(date);
+                    hubSkuMapper.insert(hubSku);
+                    //增加SKU的营生关系
+                    for(HubSkuPending skuPending:hubSkuPendings){
+
+                        HubSkuSupplierMapping hubSkuSupplierMapping = new HubSkuSupplierMapping();
+                        BeanUtils.copyProperties(skuPending,hubSkuSupplierMapping);
+                        hubSkuSupplierMapping.setSupplierSelectState(DataSelectStatus.NOT_SELECT.getIndex().byteValue());
+                        HubSpuPending spuPendingTmp =  this.getHubSpuPendingById(skuPending.getSpuPendingId());
+                        hubSkuSupplierMapping.setSupplierNo(spuPendingTmp.getSupplierNo());
+//                                    hubSkuSupplierMapping.setIsNewSupplier();  //不知从哪里获取值
+                        hubSkuSupplierMapping.setCreateTime(date);
+                        hubSkuSupplierMapping.setCreateUser(ConstantProperty.DATA_CREATE_USER);
+                        hubSkuSupplierMapping.setUpdateTime(date);
+                        HubSupplierSku supplierSku = this.getSupplierSku(skuPending.getSupplierId(), skuPending.getSupplierSkuNo());
+
+                        if(null!=supplierSku){
+                            HubSupplierSpu supplierSpu = this.getSupplierSpuById(supplierSku.getSupplierSpuId());
+                            hubSkuSupplierMapping.setSupplierSkuId(supplierSku.getSupplierSkuId());
+                            hubSkuSupplierMapping.setSupplierSpuModel(supplierSpu.getSupplierSpuModel());
+                        }
+                        hubSkuSupplierMapping.setDataState(DataStatus.NOT_DELETE.getIndex().byteValue());
+                        hubSkuSupplierMappingMapper.insert(hubSkuSupplierMapping);
+                    }
+
+                }
+            }
+
+        }
+    }
+
+    /**
+     * 根据尺码合并不同供货商的SKU信息
+     * @param spuPendingIds
+     * @param sizeSkuMap
+     */
+    private void setSizeSkuMap(List<Long> spuPendingIds, Map<String, List<HubSkuPending>> sizeSkuMap) {
+        for(Long spuPendingId:spuPendingIds){
+            HubSkuPendingCriteria skuPendingCriteria = new HubSkuPendingCriteria();
+            skuPendingCriteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
+            List<HubSkuPending> hubSkuPendings = hubSkuPendingMapper.selectByExample(skuPendingCriteria);
+            for(HubSkuPending hubSkuPending:hubSkuPendings){
+                if(null!=hubSkuPending.getSkuState()&&hubSkuPending.getSkuState().intValue()== DataBusinessStatus.HANDLED.getIndex()){//信息已完善
+                    if(sizeSkuMap.containsKey(hubSkuPending.getHubSkuSize())){
+                        sizeSkuMap.get(hubSkuPending.getHubSkuSize()).add(hubSkuPending);
+                    }else{
+                        List<HubSkuPending> hubSkuPendingList = new ArrayList<>();
+                        hubSkuPendingList.add(hubSkuPending);
+                        sizeSkuMap.put(hubSkuPending.getHubSkuSize(),hubSkuPendingList);
+                    }
+                }
+            }
         }
     }
 

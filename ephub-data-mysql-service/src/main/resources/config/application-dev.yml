@@ -6,10 +6,10 @@ spring:
          discovery: 
            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
            prefer-ip-address: true
-           ip-address: 192.168.20.110
-           hostname: 192.168.20.110
+           ip-address: 192.168.3.211
+           hostname: 192.168.3.211
            port: ${server.port}
-           healthCheckUrl: http://localhost:9093/info 
+           healthCheckUrl: http://192.168.3.211:8001/info 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   mail: 
@@ -31,8 +31,8 @@ shangpin:
             clustertype: READWRITE
             strategy: RANDOM
             retrytime: 200
-            minimumConnectionCount: 500
-            maximumConnectionCount: 500
+            minimumConnectionCount: 20
+            maximumConnectionCount: 20
             trace: true
             prototypeCount: 10
             houseKeepingTestSql: select 1 from dual

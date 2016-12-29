@@ -7,7 +7,12 @@ import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
  */
 public interface PengingToHubService {
 
-
+    /**
+     * 审核后产生HUBSPU和hubsku
+     * @param spuModelVO
+     * @return
+     * @throws Exception
+     */
     public boolean auditPending(SpuModelDto spuModelVO) throws Exception;
 
 
