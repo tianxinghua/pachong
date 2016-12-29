@@ -1,4 +1,4 @@
-package com.shangpin.asynchronous.task.consumer.productimport.common;
+package com.shangpin.asynchronous.task.consumer.productimport.common.service;
 
 import java.util.Date;
 

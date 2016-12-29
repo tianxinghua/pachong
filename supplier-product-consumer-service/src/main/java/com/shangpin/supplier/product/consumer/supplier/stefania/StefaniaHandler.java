@@ -51,7 +51,7 @@ public class StefaniaHandler implements ISupplierHandler{
 						hubSkus.add(hubSku);
 					}
 					if(success){
-						supplierProductSaveAndSendToPending.stefaniaSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
+						supplierProductSaveAndSendToPending.stefaniaSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 					}
 				}
 			}	

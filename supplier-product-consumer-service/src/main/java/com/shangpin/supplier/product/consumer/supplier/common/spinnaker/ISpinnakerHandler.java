@@ -76,7 +76,7 @@ public abstract class ISpinnakerHandler implements ISupplierHandler {
 							hubSkus.add(hubSku);
 						}
 						if(success){
-							supplierProductSaveAndSendToPending.spinnakerSaveAndSendToPending(message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
+							supplierProductSaveAndSendToPending.spinnakerSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 						}
 					}
 				}

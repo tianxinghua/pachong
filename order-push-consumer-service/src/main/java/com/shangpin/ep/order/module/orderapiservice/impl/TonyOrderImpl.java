@@ -198,7 +198,7 @@ public class TonyOrderImpl implements IOrderService {
         String rtnData = null;
         try {
             rtnData = tonyPushOrder(orderDTO,url+"updateOrderStatus", json);
-        	orderDTO.setLogContent("支付订单推送返回结果=="+json+"，支付订单推送的数据："+json);
+        	orderDTO.setLogContent("支付订单推送返回结果=="+rtnData+"，支付订单推送的数据："+json);
         	logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
             
             if(HttpUtil45.errorResult.equals(rtnData)){
@@ -243,7 +243,7 @@ public class TonyOrderImpl implements IOrderService {
         String rtnData = null;
         try {
         	rtnData = tonyPushOrder(orderDTO,url+"createOrder", json);
-        	orderDTO.setLogContent("锁库存推送返回结果=="+json+"，锁库存推送的数据："+json);
+        	orderDTO.setLogContent("锁库存推送返回结果=="+rtnData+"，锁库存推送的数据："+json);
         	logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 	    	  if(HttpUtil45.errorResult.equals(rtnData)){
 	    		  orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
