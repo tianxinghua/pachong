@@ -211,10 +211,14 @@ public class DataServiceHandler {
 
 
     public void saveHubGender(String  supplierId,String supplierGender) throws Exception{
+        if(StringUtils.isBlank(supplierGender)){//供货商的性别为空时  不做处理
+            return ;
+        }
         //如果存在 不再保存
         if(null!=this.getHubGenderDicBySupplierIdAndSupplierGender(supplierId,supplierGender)){
             return ;
         }
+
         HubGenderDicDto hubGenderDicDto = new HubGenderDicDto();
         hubGenderDicDto.setCreateTime(new Date());
         hubGenderDicDto.setCreateUser(ConstantProperty.DATA_CREATE_USER);
@@ -235,6 +239,10 @@ public class DataServiceHandler {
     }
 
     public HubGenderDicDto  getHubGenderDicBySupplierIdAndSupplierGender(String supplierId,String supplierGender){
+        if(StringUtils.isBlank(supplierGender)){
+            return null;
+        }
+
         HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
         HubGenderDicCriteriaDto.Criteria criterion = criteria.createCriteria();
         if(StringUtils.isNotBlank(supplierId)){
@@ -476,17 +484,10 @@ public class DataServiceHandler {
 
 
     public void savePendingSpu(HubSpuPendingDto spuPending) throws  Exception{
-        try {
+
            Long spuPendingId =  hubSpuPendingGateWay.insert(spuPending);
            spuPending.setSpuPendingId(spuPendingId);
-        } catch (Exception e) {
-            if(e instanceof DuplicateKeyException){
 
-            }else{
-                e.printStackTrace();
-                throw e;
-            }
-        }
     }
 
 
