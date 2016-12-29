@@ -609,14 +609,20 @@ public class PendingHandler {
     private void addNewSku(HubSpuPendingDto hubSpuPending ,PendingSku sku, Map<String, Object> headers) throws Exception{
         HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
         BeanUtils.copyProperties(sku,hubSkuPending);
+        Date date = new Date();
+        hubSkuPending.setCreateTime(date);
+        hubSkuPending.setUpdateTime(date);
+
         hubSkuPending.setSpuPendingId(hubSpuPending.getSpuPendingId());
+        hubSkuPending.setSkuState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+        hubSkuPending.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
         String hubSize=this.getHubSize(hubSpuPending.getHubCategoryNo(),hubSpuPending.getHubBrandNo(),sku.getSupplierId(),sku.getHubSkuSize());
         if("".equals(hubSize)){
             hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
         }else{
             hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
             hubSkuPending.setHubSkuSize(hubSize);
-            hubSkuPending.setCreateTime(new Date());
+
 
         }
 
