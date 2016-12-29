@@ -25,7 +25,9 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
+import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
+import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
@@ -149,18 +151,20 @@ public class PendingHandler {
         Integer skuStatus = 0;
         if(null!=hubSpuPending){
 
+        	byte filterFlag = screenSupplierBrandEffectiveOrNot(pendingSpu.getSupplierId(),pendingSpu.getHubBrandNo());
+        	
             for(PendingSku sku:skus){
                 if(messageMap.containsKey(sku.getSupplierSkuNo())){
                     HubSkuPendingDto hubSkuPending = dataServiceHandler.getHubSkuPending(sku.getSupplierId(), sku.getSupplierSkuNo());
                     skuStatus = messageMap.get(sku.getSupplierSkuNo());
                     if(skuStatus== MessageType.NEW.getIndex()){
                         if(null==hubSkuPending){
-                            this.addNewSku(hubSpuPending,sku,headers);
+                            this.addNewSku(hubSpuPending,sku,headers,filterFlag);
                         }
 
 
                     }else if(skuStatus==MessageType.UPDATE.getIndex()){
-                        this.updateSku(hubSpuPending,sku,headers);
+                        this.updateSku(hubSpuPending,sku,headers,filterFlag);
 
                     }else if(skuStatus==MessageType.MODIFY_PRICE.getIndex()){
                        //TODO 处理自动调整价格
@@ -632,7 +636,7 @@ public class PendingHandler {
 
     }
 
-    private void addNewSku(HubSpuPendingDto hubSpuPending ,PendingSku sku, Map<String, Object> headers) throws Exception{
+    private void addNewSku(HubSpuPendingDto hubSpuPending ,PendingSku sku, Map<String, Object> headers,byte filterFlag) throws Exception{
         HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
         BeanUtils.copyProperties(sku,hubSkuPending);
         Date date = new Date();
@@ -652,13 +656,14 @@ public class PendingHandler {
             hubSkuPending.setScreenSize(sizeAndIdArray[0]);
 
         }
+        hubSkuPending.setFilterFlag(filterFlag); 
 
         dataServiceHandler.savePendingSku(hubSkuPending);
 
     }
 
 
-    private void updateSku(HubSpuPendingDto hubSpuPending,PendingSku sku, Map<String, Object> headers) throws Exception{
+    private void updateSku(HubSpuPendingDto hubSpuPending,PendingSku sku, Map<String, Object> headers,byte filterFlag) throws Exception{
         //TODO 判断状态 是否可以修改
 
     }
@@ -901,6 +906,21 @@ public class PendingHandler {
         }
 
 
+    }
+    
+    /**
+     * 判断供应商的品牌是不是有效品牌
+     * @param supplierId 供应商门户编号
+     * @param supplierBrandName 供应商品牌名称
+     * @param hubSkuPending
+     */
+    private byte screenSupplierBrandEffectiveOrNot(String supplierId,String supplierBrandName){
+    	HubSupplierBrandDicDto supplierBrandDic = dataServiceHandler.getHubSupplierBrand(supplierId,supplierBrandName);
+    	if(null != supplierBrandDic && supplierBrandDic.getFilterFlag() == FilterFlag.EFFECTIVE.getIndex()){
+    		return FilterFlag.EFFECTIVE.getIndex();
+    	}else{
+    		return FilterFlag.INVALID.getIndex(); 
+    	}
     }
 
 
