@@ -219,6 +219,7 @@ public class PendingProductService implements IPendingProductService{
             if(null != pendingProductDto){
                 HubPendingSpuCheckResult spuResult = pendingSpuCheckGateWay.checkSpu(pendingProductDto);
                 if(spuResult.isPassing()){
+                	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
                     hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
                 }else{
                     log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
