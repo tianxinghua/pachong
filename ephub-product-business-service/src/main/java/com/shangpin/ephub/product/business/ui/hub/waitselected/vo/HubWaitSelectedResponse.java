@@ -20,7 +20,7 @@ public class HubWaitSelectedResponse implements Serializable {
 	private static final long serialVersionUID = -9080013205013160520L;
 	private Long skuSupplierMappingId;
 	private String supplierNo;
-	private String skuNo;
+	private String spuNo;
     private String picUrl;
     private String brandNo;
     private String spuModel;
