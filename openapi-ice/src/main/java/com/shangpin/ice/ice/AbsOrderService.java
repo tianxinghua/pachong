@@ -543,7 +543,7 @@ public abstract class AbsOrderService {
             start:
             for(OrderDetailDTO detailDTO:orderDetailDTOList) {
 
-                if ( detailDTO.getEpMasterOrderNo().indexOf("-") > 0) {//重新采购 或者 财务确认重新生成的采购单
+                if ( detailDTO.getOrderNo().indexOf("-") > 0) {//重新采购 或者 财务确认重新生成的采购单
                     detailDTO.setStatus(OrderStatus.PAYED);//如果退款了 无所谓 临时保存为支付状态 后续有退款的处理
                     try {
                         orderDetailService.update(detailDTO);

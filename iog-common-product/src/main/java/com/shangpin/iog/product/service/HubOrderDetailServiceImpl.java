@@ -24,24 +24,24 @@ import com.shangpin.iog.service.OrderDetailService;
 
 @Service
 public class HubOrderDetailServiceImpl implements HubOrderDetailService {
-	final Logger logger = LoggerFactory.getLogger(this.getClass());
-	private final static String UPDATE_ERROR = "更新订单状态失败";
-	private final static String UPDATE_EXCEPTON_MSG_ERROR = "更新订单异常信息时失败";
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final static String UPDATE_ERROR = "更新订单状态失败";
+    private final static String UPDATE_EXCEPTON_MSG_ERROR = "更新订单异常信息时失败";
 
-	@Autowired
-	HubOrderDetailMapper orderDetailDao;
+    @Autowired
+    HubOrderDetailMapper orderDetailDao;
 
-	@Override
-	public List<HubOrderDetailDTO> getOrderBySupplierIdAndTime(String supplier,
-			Date startDate, Date endDate,String CGD,String spSkuId,String supplierSkuId,String orderStatus,String pushStatus, Integer pageIndex, Integer pageSize) {
+    @Override
+    public List<HubOrderDetailDTO> getOrderBySupplierIdAndTime(String supplier,
+                                                               Date startDate, Date endDate,String CGD,String spSkuId,String supplierSkuId,String orderStatus,String pushStatus, Integer pageIndex, Integer pageSize) {
 
-		return orderDetailDao.getOrderBySupplierIdAndTime(supplier, startDate,
-				endDate,CGD,spSkuId,supplierSkuId,orderStatus,pushStatus, new RowBounds(pageIndex, pageSize));
-	}
-	
-	@Override
-	public int getOrderTotalBySupplierIdAndTime(String supplier, String startTime,
-			String endTime,String CGD,String spSkuId,String supplierSkuId,String orderStatus,String pushStatus){
-		return orderDetailDao.getOrderTotalBySupplierIdAndTime(supplier,startTime,endTime,CGD,spSkuId,supplierSkuId,orderStatus,pushStatus);
-	}
+        return orderDetailDao.getOrderBySupplierIdAndTime(supplier, startDate,
+                endDate,CGD,spSkuId,supplierSkuId,orderStatus,pushStatus, new RowBounds(pageIndex, pageSize));
+    }
+
+    @Override
+    public int getOrderTotalBySupplierIdAndTime(String supplier, String startTime,
+                                                String endTime,String CGD,String spSkuId,String supplierSkuId,String orderStatus,String pushStatus){
+        return orderDetailDao.getOrderTotalBySupplierIdAndTime(supplier,startTime,endTime,CGD,spSkuId,supplierSkuId,orderStatus,pushStatus);
+    }
 }

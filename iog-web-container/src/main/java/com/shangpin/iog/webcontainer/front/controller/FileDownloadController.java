@@ -91,478 +91,478 @@ public class FileDownloadController {
 	private Logger log = LoggerFactory.getLogger(FileDownloadController.class) ;
 	@Autowired
 	ProductFetchService pfs;
-    @Autowired
-    ProductSearchService productService;
+	@Autowired
+	ProductSearchService productService;
 
-    @Autowired
-    SpecialSkuService specialSkuService;
-    
-    @Autowired
-    SupplierService supplierService;
-    
-    @Autowired
-    OrderService orderService;
-    
-    @Autowired
-    OrderDetailService orderDetailService;
-    @Autowired
-    HubOrderDetailService hubOrderDetailService;
-    
-    @RequestMapping(value = "view")
-    public ModelAndView viewPage() throws Exception {
-        ModelAndView mv = new ModelAndView("iog");
-        List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
-        List<String> bus = productService.findAllBus();
+	@Autowired
+	SpecialSkuService specialSkuService;
 
-        mv.addObject("supplierDTOList",supplierDTOList);
-        mv.addObject("BUs", bus);
-        return mv;
-    }
+	@Autowired
+	SupplierService supplierService;
+
+	@Autowired
+	OrderService orderService;
+
+	@Autowired
+	OrderDetailService orderDetailService;
+	@Autowired
+	HubOrderDetailService hubOrderDetailService;
+
+	@RequestMapping(value = "view")
+	public ModelAndView viewPage() throws Exception {
+		ModelAndView mv = new ModelAndView("iog");
+		List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
+		List<String> bus = productService.findAllBus();
+
+		mv.addObject("supplierDTOList",supplierDTOList);
+		mv.addObject("BUs", bus);
+		return mv;
+	}
 
 
-    @RequestMapping(value = "code")
-    public void setCode(HttpServletRequest request,HttpServletResponse response) throws Exception {
-        String code =   request.getParameter("code");
-        System.out.println("code = " +code );
-        log.error("code =" + code);
+	@RequestMapping(value = "code")
+	public void setCode(HttpServletRequest request,HttpServletResponse response) throws Exception {
+		String code =   request.getParameter("code");
+		System.out.println("code = " +code );
+		log.error("code =" + code);
 
-        OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
-        timeConfig.confRequestOutTime(1000*60);
-        timeConfig.confSocketOutTime(1000*60);
-        
-        //An access token is returned as a JSON response along with the time (in seconds) till expiration.
-        String application_id = "qwmmx12wu7ug39a97uter3dz29jbij3j";
-        String shared_secret = "TqMSdN6-LkCFA0n7g7DWuQ";
-        Map<String,String> map = new HashMap<>();
-        map.put("grant_type","authorization_code");
-        map.put("code",code);
-        map.put("redirect_uri","https://49.213.13.167:8443/iog/download/code");
-        String kk = HttpUtil45.postAuth("https://api.channeladvisor.com/oauth2/token", map, timeConfig,application_id,shared_secret);
-        System.out.println("kk = "  + kk);
-        log.error(kk);
-        
-        PrintWriter out = response.getWriter();
-        out.println("GET ACCESS TOKEN SUCCESSFUL");
-        out.println("code=="+code);
-        out.println("token=="+kk);
-    }
-    
+		OutTimeConfig timeConfig = OutTimeConfig.defaultOutTimeConfig();
+		timeConfig.confRequestOutTime(1000*60);
+		timeConfig.confSocketOutTime(1000*60);
 
-    @RequestMapping(value = "csv")
-    public void downloadCsv(
-                         HttpServletResponse response,
-                         String queryJson) throws Exception {
-        BufferedInputStream in = null;
-        BufferedOutputStream out = null;
-        StringBuffer productBuffer =null;
-        try {
+		//An access token is returned as a JSON response along with the time (in seconds) till expiration.
+		String application_id = "qwmmx12wu7ug39a97uter3dz29jbij3j";
+		String shared_secret = "TqMSdN6-LkCFA0n7g7DWuQ";
+		Map<String,String> map = new HashMap<>();
+		map.put("grant_type","authorization_code");
+		map.put("code",code);
+		map.put("redirect_uri","https://49.213.13.167:8443/iog/download/code");
+		String kk = HttpUtil45.postAuth("https://api.channeladvisor.com/oauth2/token", map, timeConfig,application_id,shared_secret);
+		System.out.println("kk = "  + kk);
+		log.error(kk);
 
-        	response.reset();
+		PrintWriter out = response.getWriter();
+		out.println("GET ACCESS TOKEN SUCCESSFUL");
+		out.println("code=="+code);
+		out.println("token=="+kk);
+	}
 
-            response.setContentType("text/csv;charset=gb2312");
 
-            ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
+	@RequestMapping(value = "csv")
+	public void downloadCsv(
+			HttpServletResponse response,
+			String queryJson) throws Exception {
+		BufferedInputStream in = null;
+		BufferedOutputStream out = null;
+		StringBuffer productBuffer =null;
+		try {
 
-            if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
+			response.reset();
 
-            String supplier = null;
-            if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
-            	supplier = productSearchDTO.getSupplier();
-            }
-            Date startDate  =null;
-            if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
-                startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
-            }
+			response.setContentType("text/csv;charset=gb2312");
 
-            Date endDate = null;
-            if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
-                endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
-            }
-            
-            Integer pageIndex = -1;
-            if(null !=productSearchDTO.getPageIndex()){
-            	pageIndex = productSearchDTO.getPageIndex();
-            }
-            
-            Integer pageSize = -1;
-            if(null != productSearchDTO.getPageSize()){
-            	pageSize = productSearchDTO.getPageSize();
-            }
-            
-            if (productSearchDTO.getFlag().equals("same")) {//导出功能
-            	productBuffer =productService.exportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
-            	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+			ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
+
+			if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
+
+			String supplier = null;
+			if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
+				supplier = productSearchDTO.getSupplier();
+			}
+			Date startDate  =null;
+			if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
+				startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
+			}
+
+			Date endDate = null;
+			if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
+				endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
+			}
+
+			Integer pageIndex = -1;
+			if(null !=productSearchDTO.getPageIndex()){
+				pageIndex = productSearchDTO.getPageIndex();
+			}
+
+			Integer pageSize = -1;
+			if(null != productSearchDTO.getPageSize()){
+				pageSize = productSearchDTO.getPageSize();
+			}
+
+			if (productSearchDTO.getFlag().equals("same")) {//导出功能
+				productBuffer =productService.exportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
+				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 			}else if(productSearchDTO.getFlag().equals("order")){
-				
+
 				productBuffer =orderService.exportOrder(supplier,startDate,endDate,pageIndex,pageSize,productSearchDTO.getFlag());
 				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_order" + System.currentTimeMillis() + ".csv", "UTF-8"));
-				
+
 //			}else if(productSearchDTO.getFlag().equals("ep_regular")){//按条件导出
 //				productBuffer =productService.exportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
 //            	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 
-			
+
 			}else if(productSearchDTO.getFlag().equals("ep_rule")){//按条件导出
 				productBuffer =productService.exportProductByEpRule(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize());
-            	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
-			
+				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+
 			}
 			else if(productSearchDTO.getFlag().equals("report")){//报表导出
 				productBuffer =productService.exportReportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize());
-            	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
-			
+				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+
 			}else if (productSearchDTO.getFlag().equals("all")) {//全部导出
-            	productBuffer =productService.exportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
-            	response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
+				productBuffer =productService.exportProduct(supplier,startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
+				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 			}
 			else{//价格变化导出
 				productBuffer =productService.exportDiffProduct(productSearchDTO.getSupplier(),startDate,endDate,productSearchDTO.getPageIndex(),productSearchDTO.getPageSize(),productSearchDTO.getFlag());
 				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode(null==productSearchDTO.getSupplier()?"All":productSearchDTO.getSupplierName()+ "_product" + System.currentTimeMillis() + ".csv", "UTF-8"));
 			}
 
-            
 
-            
+
+
 
 //            System.out.print("kk ----------------- " + productBuffer.toString());
-            in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("gb2312")));
+			in = new BufferedInputStream(new ByteArrayInputStream(productBuffer.toString().getBytes("gb2312")));
 
-            out = new BufferedOutputStream(response.getOutputStream());
-            byte[] data = new byte[1024];
-            int len = 0;
-            while (-1 != (len=in.read(data, 0, data.length))) {
-                out.write(data, 0, len);
-            }
+			out = new BufferedOutputStream(response.getOutputStream());
+			byte[] data = new byte[1024];
+			int len = 0;
+			while (-1 != (len=in.read(data, 0, data.length))) {
+				out.write(data, 0, len);
+			}
 
 //            response.getOutputStream().write(productBuffer.toString().getBytes("gb2312"));
 //            response.getOutputStream().flush();
 //            response.getOutputStream().close();
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            if (in != null) {
-                in.close();
-            }
-            if (out != null) {
-                out.close();
-            }
-        }
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally {
+			if (in != null) {
+				in.close();
+			}
+			if (out != null) {
+				out.close();
+			}
+		}
 
 
 
-    }
-    
-    
-    @RequestMapping(value = "hubOrders")
-    @ResponseBody
-    public ModelAndView queryHubOrders(HttpServletRequest request,
-                         HttpServletResponse response,
-                         String queryJson){
-    	ModelAndView modelAndView = new ModelAndView();
-    	
-        modelAndView.addObject("supplierId", request.getParameter("supplierId"));
-    	modelAndView.setViewName("hubOrders");
+	}
+
+
+	@RequestMapping(value = "hubOrders")
+	@ResponseBody
+	public ModelAndView queryHubOrders(HttpServletRequest request,
+									   HttpServletResponse response,
+									   String queryJson){
+		ModelAndView modelAndView = new ModelAndView();
+
+		modelAndView.addObject("supplierId", request.getParameter("supplierId"));
+		modelAndView.setViewName("hubOrders");
 		return modelAndView;
-    }
-    
-    @RequestMapping(value = "orders")
-    @ResponseBody
-    public ModelAndView queryOrders(HttpServletRequest request,
-                         HttpServletResponse response,
-                         String queryJson){
-    	ModelAndView modelAndView = new ModelAndView();
-    	
-            modelAndView.addObject("supplierId", request.getParameter("supplierId"));
-    		modelAndView.setViewName("orders");
-    	modelAndView.setViewName("orders");
+	}
+
+	@RequestMapping(value = "orders")
+	@ResponseBody
+	public ModelAndView queryOrders(HttpServletRequest request,
+									HttpServletResponse response,
+									String queryJson){
+		ModelAndView modelAndView = new ModelAndView();
+
+		modelAndView.addObject("supplierId", request.getParameter("supplierId"));
+		modelAndView.setViewName("orders");
+		modelAndView.setViewName("orders");
 		return modelAndView;
-    }
-    
-    
-    @RequestMapping(value = "orderPage")
-    @ResponseBody
-    public String queryOrdersPage(HttpServletRequest request,
-                         HttpServletResponse response){
-    	
-    	Map<String, String> nameMap = new HashMap<String, String>();
-    	nameMap.put("placed", "下订单成功");
-    	nameMap.put("payed", "支付");
-    	nameMap.put("cancelled", "取消成功");
-    	nameMap.put("confirmed", "支付成功");
-    	nameMap.put("nohandle", "超时不处理");
-    	nameMap.put("waitplaced", "待下订单");
-    	nameMap.put("waitcancel", "待取消");
-    	nameMap.put("refunded", "退款成功");
-    	nameMap.put("waitrefund", "待退款");
-    	nameMap.put("purexpsuc", "采购异常Suc");
-    	nameMap.put("purexperr", "采购异常Err");
-    	nameMap.put("shipped", "shipped");
-    	nameMap.put("should purExp", "应该采购异常");
-    	ModelAndView modelAndView = new ModelAndView();
-    
-    	try{
-    		String page = request.getParameter("page");
-    		String rows = request.getParameter("rows");
-    		String supplier = request.getParameter("supplierid");
-    		System.out.println(page+rows);
-            int pageIndex1 = Integer.parseInt(page);
-    		int pageSize1 = Integer.parseInt(rows);
-    		List<OrderDetailDTO> orderList = null;
-            orderList = orderDetailService.getOrderBySupplierIdAndTime(supplier, null, null,null, null,null, null, (pageIndex1-1)*pageSize1,pageSize1 );	
-            int total = orderDetailService.getOrderTotalBySupplierIdAndTime(supplier, null, null,null, null,null, null);
-            
-            for (OrderDetailDTO orderDTO : orderList) {
-            	if(nameMap.containsKey(orderDTO.getStatus().toLowerCase())){
-            		orderDTO.setStatus(nameMap.get(orderDTO.getStatus().toLowerCase()));
-            	}				
-			}
-            modelAndView.addObject("orderList", orderList);
-    		modelAndView.setViewName("orders");
-    		 JSONObject result = new JSONObject();  
-    	      result.put("rows", orderList);  
-             result.put("total",total);
-             return result.toString();//这个就是你在ajax成功的时候返回的数据，我在那边进行了一个对象封装
-    	}catch(Exception ex){
-    		log.error(ex.getMessage());
-    		ex.printStackTrace();
-    	}        
-    	return null;
-    }
+	}
 
-    
-    @RequestMapping(value = "hubOrderPage")
-       @ResponseBody
-       public String queryHubOrdersPage(HttpServletRequest request,
-                            HttpServletResponse response){
-       	
-       	Map<String, String> pushStatusMap = new HashMap<String, String>();
-       	pushStatusMap.put("0", "无锁库API");
-       	pushStatusMap.put("1", "锁库");
-       	pushStatusMap.put("2", "无库存");
-       	pushStatusMap.put("3", "锁库失败");
-       	pushStatusMap.put("4", "订单推送确认");
-       	pushStatusMap.put("5", "订单推送失败");
-       	pushStatusMap.put("6", "锁库取消");
-       	pushStatusMap.put("7", "锁库取消失败");
-       	pushStatusMap.put("8", "无锁库取消API");
-       	pushStatusMap.put("9", "退单");
-       	pushStatusMap.put("10", "退单失败");
-       	pushStatusMap.put("11", "无退单API");
-       	
-       	Map<String, String> orderStatusMap = new HashMap<String, String>();
-       	orderStatusMap.put("0", "未支付");
-       	orderStatusMap.put("1", "未支付取消");
-       	orderStatusMap.put("2", "支付");
-       	orderStatusMap.put("3", "退款");
-       	orderStatusMap.put("4", "已发货");
-       	orderStatusMap.put("5", "采购异常");
-       	orderStatusMap.put("6", "应该采购异常");
-       	orderStatusMap.put("7", "采购异常失败");
-       	ModelAndView modelAndView = new ModelAndView();
-       
-       	try{
-       		String supplierId = null;
-    		if(!request.getParameter("supplierId").equals("-1")){
-    			supplierId = request.getParameter("supplierId");	
-    		}
-    		String CGD = null;
-    		if(request.getParameter("CGD")!=null&&!request.getParameter("CGD").isEmpty()){
-    			CGD = request.getParameter("CGD");
-    		}
-    		String supplierSkuId = null;
-    		if(request.getParameter("supplierSkuId")!=null&&!request.getParameter("supplierSkuId").isEmpty()){
-    			supplierSkuId = request.getParameter("supplierSkuId");
-    		}
-    		String spSkuId = null;
-    		if(request.getParameter("spSkuId")!=null&&!request.getParameter("spSkuId").isEmpty()){
-    			spSkuId = request.getParameter("spSkuId");
-    		}
-    		String orderStatus = null;
-    		if(request.getParameter("orderStatus")!=null&&!request.getParameter("orderStatus").isEmpty()){
-    			orderStatus = request.getParameter("orderStatus");
-    		}
-    		String pushStatus = null;
-    		if(request.getParameter("pushStatus")!=null&&!request.getParameter("pushStatus").isEmpty()){
-    			pushStatus = request.getParameter("pushStatus");
-    		}
-    		
-    		String page = request.getParameter("page");
-    		String rows = request.getParameter("rows");
-    		System.out.println(page+rows);
-            int pageIndex1 = Integer.parseInt(page);
-    		int pageSize1 = Integer.parseInt(rows);
-    		List<HubOrderDetailDTO> orderList = null;
-            orderList = hubOrderDetailService.getOrderBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,orderStatus,pushStatus, (pageIndex1-1)*pageSize1,pageSize1 );	
-            int total = hubOrderDetailService.getOrderTotalBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,orderStatus,pushStatus);
-            
-            for (HubOrderDetailDTO orderDTO : orderList) {
-            	if(orderStatusMap.containsKey(orderDTO.getOrderStatus())){
-            		orderDTO.setOrderStatus(orderStatusMap.get(orderDTO.getOrderStatus()));
-            	}	
-            	if(pushStatusMap.containsKey(orderDTO.getPushStatus())){
-            		orderDTO.setPushStatus(pushStatusMap.get(orderDTO.getPushStatus()));
-            	}
-			}
-            modelAndView.addObject("orderList", orderList);
-    		modelAndView.setViewName("hubOrders");
-    		 JSONObject result = new JSONObject();  
-    	      result.put("rows", orderList);  
-             result.put("total",total);
-             return result.toString();//这个就是你在ajax成功的时候返回的数据，我在那边进行了一个对象封装
-       	}catch(Exception ex){
-       		log.error(ex.getMessage());
-       		ex.printStackTrace();
-       	}        
-       	return null;
-    }
-       
-    @RequestMapping(value = "orderList")
-    @ResponseBody
-    public String queryOrdersList(HttpServletRequest request,
-                         HttpServletResponse response){
-    	
-    	Map<String, String> nameMap = new HashMap<String, String>();
-    	nameMap.put("placed", "下订单成功");
-    	nameMap.put("payed", "支付");
-    	nameMap.put("cancelled", "取消成功");
-    	nameMap.put("confirmed", "支付成功");
-    	nameMap.put("nohandle", "超时不处理");
-    	nameMap.put("waitplaced", "待下订单");
-    	nameMap.put("waitcancel", "待取消");
-    	nameMap.put("refunded", "退款成功");
-    	nameMap.put("waitrefund", "待退款");
-    	nameMap.put("purexpsuc", "采购异常Suc");
-    	nameMap.put("purexperr", "采购异常Err");
-    	nameMap.put("shipped", "shipped");
-    	nameMap.put("should purExp", "应该采购异常");
-    	ModelAndView modelAndView = new ModelAndView();
-    
-    	try{
-    		String supplierId = null;
-    		if(!request.getParameter("supplierId").equals("-1")){
-    			supplierId = request.getParameter("supplierId");	
-    		}
-    		String CGD = null;
-    		if(request.getParameter("CGD")!=null&&!request.getParameter("CGD").isEmpty()){
-    			CGD = request.getParameter("CGD");
-    		}
-    		String supplierSkuId = null;
-    		if(request.getParameter("supplierSkuId")!=null&&!request.getParameter("supplierSkuId").isEmpty()){
-    			supplierSkuId = request.getParameter("supplierSkuId");
-    		}
-    		String spSkuId = null;
-    		if(request.getParameter("spSkuId")!=null&&!request.getParameter("spSkuId").isEmpty()){
-    			spSkuId = request.getParameter("spSkuId");
-    		}
-    		String status = null;
-    		if(request.getParameter("status")!=null&&request.getParameter("status")!=null&&!request.getParameter("status").isEmpty()){
-    			status = request.getParameter("status");
-    		}
-    		
-    		String page = request.getParameter("page");
-    		String rows = request.getParameter("rows");
-    		System.out.println(page+rows);
-            int pageIndex1 = Integer.parseInt(page);
-    		int pageSize1 = Integer.parseInt(rows);
-    		List<OrderDetailDTO> orderList = null;
-            orderList = orderDetailService.getOrderBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status, (pageIndex1-1)*pageSize1,pageSize1 );	
-            int total = orderDetailService.getOrderTotalBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status);
-            
-            for (OrderDetailDTO orderDTO : orderList) {
-            	if(nameMap.containsKey(orderDTO.getStatus().toLowerCase())){
-            		orderDTO.setStatus(nameMap.get(orderDTO.getStatus().toLowerCase()));
-            	}				
-			}
-            modelAndView.addObject("orderList", orderList);
-    		modelAndView.setViewName("orders");
-    		 JSONObject result = new JSONObject();  
-    	      result.put("rows", orderList);  
-             result.put("total",total);
-             return result.toString();//这个就是你在ajax成功的时候返回的数据，我在那边进行了一个对象封装
-    	}catch(Exception ex){
-    		log.error(ex.getMessage());
-    		ex.printStackTrace();
-    	}        
-    	return null;
-    }
-    
-    
-    @RequestMapping(value = "downLoadPicture")
-    public void dowmLoadPic(HttpServletResponse response, String queryJson){
-    	ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
-    	BufferedInputStream in = null;
-    	BufferedOutputStream out = null;
-    	if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
 
-        String supplier = null;
-        if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
-        	supplier = productSearchDTO.getSupplier();
-        }
-        Date startDate  =null;
-        if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
-            startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
-        }
+	@RequestMapping(value = "orderPage")
+	@ResponseBody
+	public String queryOrdersPage(HttpServletRequest request,
+								  HttpServletResponse response){
 
-        Date endDate = null;
-        if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
-            endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
-        }
-        
-        Integer pageIndex = productSearchDTO.getPageIndex();
-        
-        Integer pageSize = productSearchDTO.getPageSize();
-        Map<String,List<File>> nameMap = null;
-        ZipFile zipfile = null;
-        try {
-        	//要下载的文件列表
-        	List<ProductDTO> pList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
-        	
-        	NameGenContext context = new NameGenContext(supplier);
-        	nameMap = context.operate(pList);
-        	for (Entry<String, List<File>> productDTO : nameMap.entrySet()) {
-        		log.error(productDTO.getKey());
-			}
-        	zipfile = new ZipFile(new File(new Date().getTime()+""));
-        	ArrayList<File> filesToAdd = new ArrayList<File>();
-    		//供应商pic的文件夹
-    		File dir = new File(downloadpath+productSearchDTO.getSupplierName()+"/");
-    		String key = "";
-    		if (dir.isDirectory()) {
-    			File[] files = dir.listFiles();
-    			for (File file : files) {
-    				//TODO  替换filename中的转义字符
-    				if (nameMap.containsKey(file.getName().split("_")[0])) {
-    					key = file.getName().split("_")[0];
-    					if(null==nameMap.get(key)){
-    						nameMap.put(key, new ArrayList<File>());
-    					}
-    					nameMap.get(key).add(file);
-					}
-    			}
-			}
-    		//添加map中要下载的文件
-    		for (Entry<String, List<File>> entry : nameMap.entrySet()) {
-    			if (entry.getValue()!=null&&entry.getValue().size()>0) {
-    				filesToAdd.addAll(entry.getValue());
+		Map<String, String> nameMap = new HashMap<String, String>();
+		nameMap.put("placed", "下订单成功");
+		nameMap.put("payed", "支付");
+		nameMap.put("cancelled", "取消成功");
+		nameMap.put("confirmed", "支付成功");
+		nameMap.put("nohandle", "超时不处理");
+		nameMap.put("waitplaced", "待下订单");
+		nameMap.put("waitcancel", "待取消");
+		nameMap.put("refunded", "退款成功");
+		nameMap.put("waitrefund", "待退款");
+		nameMap.put("purexpsuc", "采购异常Suc");
+		nameMap.put("purexperr", "采购异常Err");
+		nameMap.put("shipped", "shipped");
+		nameMap.put("should purExp", "应该采购异常");
+		ModelAndView modelAndView = new ModelAndView();
+
+		try{
+			String page = request.getParameter("page");
+			String rows = request.getParameter("rows");
+			String supplier = request.getParameter("supplierid");
+			System.out.println(page+rows);
+			int pageIndex1 = Integer.parseInt(page);
+			int pageSize1 = Integer.parseInt(rows);
+			List<OrderDetailDTO> orderList = null;
+			orderList = orderDetailService.getOrderBySupplierIdAndTime(supplier, null, null,null, null,null, null, (pageIndex1-1)*pageSize1,pageSize1 );
+			int total = orderDetailService.getOrderTotalBySupplierIdAndTime(supplier, null, null,null, null,null, null);
+
+			for (OrderDetailDTO orderDTO : orderList) {
+				if(nameMap.containsKey(orderDTO.getStatus().toLowerCase())){
+					orderDTO.setStatus(nameMap.get(orderDTO.getStatus().toLowerCase()));
 				}
-    		}
-    		
-			ZipParameters parameters = new ZipParameters();  
-		    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-		    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
+			}
+			modelAndView.addObject("orderList", orderList);
+			modelAndView.setViewName("orders");
+			JSONObject result = new JSONObject();
+			result.put("rows", orderList);
+			result.put("total",total);
+			return result.toString();//这个就是你在ajax成功的时候返回的数据，我在那边进行了一个对象封装
+		}catch(Exception ex){
+			log.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+		return null;
+	}
+
+
+	@RequestMapping(value = "hubOrderPage")
+	@ResponseBody
+	public String queryHubOrdersPage(HttpServletRequest request,
+									 HttpServletResponse response){
+
+		Map<String, String> pushStatusMap = new HashMap<String, String>();
+		pushStatusMap.put("0", "无锁库API");
+		pushStatusMap.put("1", "锁库");
+		pushStatusMap.put("2", "无库存");
+		pushStatusMap.put("3", "锁库失败");
+		pushStatusMap.put("4", "订单推送确认");
+		pushStatusMap.put("5", "订单推送失败");
+		pushStatusMap.put("6", "锁库取消");
+		pushStatusMap.put("7", "锁库取消失败");
+		pushStatusMap.put("8", "无锁库取消API");
+		pushStatusMap.put("9", "退单");
+		pushStatusMap.put("10", "退单失败");
+		pushStatusMap.put("11", "无退单API");
+
+		Map<String, String> orderStatusMap = new HashMap<String, String>();
+		orderStatusMap.put("0", "未支付");
+		orderStatusMap.put("1", "未支付取消");
+		orderStatusMap.put("2", "支付");
+		orderStatusMap.put("3", "退款");
+		orderStatusMap.put("4", "已发货");
+		orderStatusMap.put("5", "采购异常");
+		orderStatusMap.put("6", "应该采购异常");
+		orderStatusMap.put("7", "采购异常失败");
+		ModelAndView modelAndView = new ModelAndView();
+
+		try{
+			String supplierId = null;
+			if(!request.getParameter("supplierId").equals("-1")){
+				supplierId = request.getParameter("supplierId");
+			}
+			String CGD = null;
+			if(request.getParameter("CGD")!=null&&!request.getParameter("CGD").isEmpty()){
+				CGD = request.getParameter("CGD");
+			}
+			String supplierSkuId = null;
+			if(request.getParameter("supplierSkuId")!=null&&!request.getParameter("supplierSkuId").isEmpty()){
+				supplierSkuId = request.getParameter("supplierSkuId");
+			}
+			String spSkuId = null;
+			if(request.getParameter("spSkuId")!=null&&!request.getParameter("spSkuId").isEmpty()){
+				spSkuId = request.getParameter("spSkuId");
+			}
+			String orderStatus = null;
+			if(request.getParameter("orderStatus")!=null&&!request.getParameter("orderStatus").isEmpty()){
+				orderStatus = request.getParameter("orderStatus");
+			}
+			String pushStatus = null;
+			if(request.getParameter("pushStatus")!=null&&!request.getParameter("pushStatus").isEmpty()){
+				pushStatus = request.getParameter("pushStatus");
+			}
+
+			String page = request.getParameter("page");
+			String rows = request.getParameter("rows");
+			System.out.println(page+rows);
+			int pageIndex1 = Integer.parseInt(page);
+			int pageSize1 = Integer.parseInt(rows);
+			List<HubOrderDetailDTO> orderList = null;
+			orderList = hubOrderDetailService.getOrderBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,orderStatus,pushStatus, (pageIndex1-1)*pageSize1,pageSize1 );
+			int total = hubOrderDetailService.getOrderTotalBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,orderStatus,pushStatus);
+
+			for (HubOrderDetailDTO orderDTO : orderList) {
+				if(orderStatusMap.containsKey(orderDTO.getOrderStatus())){
+					orderDTO.setOrderStatus(orderStatusMap.get(orderDTO.getOrderStatus()));
+				}
+				if(pushStatusMap.containsKey(orderDTO.getPushStatus())){
+					orderDTO.setPushStatus(pushStatusMap.get(orderDTO.getPushStatus()));
+				}
+			}
+			modelAndView.addObject("orderList", orderList);
+			modelAndView.setViewName("hubOrders");
+			JSONObject result = new JSONObject();
+			result.put("rows", orderList);
+			result.put("total",total);
+			return result.toString();//这个就是你在ajax成功的时候返回的数据，我在那边进行了一个对象封装
+		}catch(Exception ex){
+			log.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+		return null;
+	}
+
+	@RequestMapping(value = "orderList")
+	@ResponseBody
+	public String queryOrdersList(HttpServletRequest request,
+								  HttpServletResponse response){
+
+		Map<String, String> nameMap = new HashMap<String, String>();
+		nameMap.put("placed", "下订单成功");
+		nameMap.put("payed", "支付");
+		nameMap.put("cancelled", "取消成功");
+		nameMap.put("confirmed", "支付成功");
+		nameMap.put("nohandle", "超时不处理");
+		nameMap.put("waitplaced", "待下订单");
+		nameMap.put("waitcancel", "待取消");
+		nameMap.put("refunded", "退款成功");
+		nameMap.put("waitrefund", "待退款");
+		nameMap.put("purexpsuc", "采购异常Suc");
+		nameMap.put("purexperr", "采购异常Err");
+		nameMap.put("shipped", "shipped");
+		nameMap.put("should purExp", "应该采购异常");
+		ModelAndView modelAndView = new ModelAndView();
+
+		try{
+			String supplierId = null;
+			if(!request.getParameter("supplierId").equals("-1")){
+				supplierId = request.getParameter("supplierId");
+			}
+			String CGD = null;
+			if(request.getParameter("CGD")!=null&&!request.getParameter("CGD").isEmpty()){
+				CGD = request.getParameter("CGD");
+			}
+			String supplierSkuId = null;
+			if(request.getParameter("supplierSkuId")!=null&&!request.getParameter("supplierSkuId").isEmpty()){
+				supplierSkuId = request.getParameter("supplierSkuId");
+			}
+			String spSkuId = null;
+			if(request.getParameter("spSkuId")!=null&&!request.getParameter("spSkuId").isEmpty()){
+				spSkuId = request.getParameter("spSkuId");
+			}
+			String status = null;
+			if(request.getParameter("status")!=null&&request.getParameter("status")!=null&&!request.getParameter("status").isEmpty()){
+				status = request.getParameter("status");
+			}
+
+			String page = request.getParameter("page");
+			String rows = request.getParameter("rows");
+			System.out.println(page+rows);
+			int pageIndex1 = Integer.parseInt(page);
+			int pageSize1 = Integer.parseInt(rows);
+			List<OrderDetailDTO> orderList = null;
+			orderList = orderDetailService.getOrderBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status, (pageIndex1-1)*pageSize1,pageSize1 );
+			int total = orderDetailService.getOrderTotalBySupplierIdAndTime(supplierId, null, null,CGD,spSkuId,supplierSkuId,status);
+
+			for (OrderDetailDTO orderDTO : orderList) {
+				if(nameMap.containsKey(orderDTO.getStatus().toLowerCase())){
+					orderDTO.setStatus(nameMap.get(orderDTO.getStatus().toLowerCase()));
+				}
+			}
+			modelAndView.addObject("orderList", orderList);
+			modelAndView.setViewName("orders");
+			JSONObject result = new JSONObject();
+			result.put("rows", orderList);
+			result.put("total",total);
+			return result.toString();//这个就是你在ajax成功的时候返回的数据，我在那边进行了一个对象封装
+		}catch(Exception ex){
+			log.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+		return null;
+	}
+
+
+	@RequestMapping(value = "downLoadPicture")
+	public void dowmLoadPic(HttpServletResponse response, String queryJson){
+		ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
+		BufferedInputStream in = null;
+		BufferedOutputStream out = null;
+		if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
+
+		String supplier = null;
+		if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
+			supplier = productSearchDTO.getSupplier();
+		}
+		Date startDate  =null;
+		if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
+			startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
+		}
+
+		Date endDate = null;
+		if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
+			endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
+		}
+
+		Integer pageIndex = productSearchDTO.getPageIndex();
+
+		Integer pageSize = productSearchDTO.getPageSize();
+		Map<String,List<File>> nameMap = null;
+		ZipFile zipfile = null;
+		try {
+			//要下载的文件列表
+			List<ProductDTO> pList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
+
+			NameGenContext context = new NameGenContext(supplier);
+			nameMap = context.operate(pList);
+			for (Entry<String, List<File>> productDTO : nameMap.entrySet()) {
+				log.error(productDTO.getKey());
+			}
+			zipfile = new ZipFile(new File(new Date().getTime()+""));
+			ArrayList<File> filesToAdd = new ArrayList<File>();
+			//供应商pic的文件夹
+			File dir = new File(downloadpath+productSearchDTO.getSupplierName()+"/");
+			String key = "";
+			if (dir.isDirectory()) {
+				File[] files = dir.listFiles();
+				for (File file : files) {
+					//TODO  替换filename中的转义字符
+					if (nameMap.containsKey(file.getName().split("_")[0])) {
+						key = file.getName().split("_")[0];
+						if(null==nameMap.get(key)){
+							nameMap.put(key, new ArrayList<File>());
+						}
+						nameMap.get(key).add(file);
+					}
+				}
+			}
+			//添加map中要下载的文件
+			for (Entry<String, List<File>> entry : nameMap.entrySet()) {
+				if (entry.getValue()!=null&&entry.getValue().size()>0) {
+					filesToAdd.addAll(entry.getValue());
+				}
+			}
+
+			ZipParameters parameters = new ZipParameters();
+			parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+			parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
 			zipfile.addFiles(filesToAdd, parameters);
 			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+new Date().getTime()+".zip", "UTF-8"));
 
 			in = new BufferedInputStream(new FileInputStream(zipfile.getFile()));
 
-            out = new BufferedOutputStream(response.getOutputStream());
-            byte[] data = new byte[1048576];
-            int len = 0;
-            while (-1 != (len=in.read(data, 0, data.length))) {
-                out.write(data, 0, len);
-            }
+			out = new BufferedOutputStream(response.getOutputStream());
+			byte[] data = new byte[1048576];
+			int len = 0;
+			while (-1 != (len=in.read(data, 0, data.length))) {
+				out.write(data, 0, len);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
@@ -574,90 +574,90 @@ public class FileDownloadController {
 				e.printStackTrace();
 			}
 		}
-    }
-    @RequestMapping("uploadFileAndDown")
-    public void uploadFileAndDown(@RequestParam(value = "uploadFile", required = false) MultipartFile file, HttpServletRequest request,HttpServletResponse response){
-    	BufferedInputStream in = null;
-    	BufferedOutputStream out = null;
-    	String path = request.getSession().getServletContext().getRealPath("");  
-    	
-    	String parameter = request.getParameter("threadnum");
-    	ThreadPoolExecutor executor = null;
-    	if (parameter.equals("")||parameter.contains("-")) {
-    		executor = new ThreadPoolExecutor(3, 15, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(6),new ThreadPoolExecutor.CallerRunsPolicy());
+	}
+	@RequestMapping("uploadFileAndDown")
+	public void uploadFileAndDown(@RequestParam(value = "uploadFile", required = false) MultipartFile file, HttpServletRequest request,HttpServletResponse response){
+		BufferedInputStream in = null;
+		BufferedOutputStream out = null;
+		String path = request.getSession().getServletContext().getRealPath("");
+
+		String parameter = request.getParameter("threadnum");
+		ThreadPoolExecutor executor = null;
+		if (parameter.equals("")||parameter.contains("-")) {
+			executor = new ThreadPoolExecutor(3, 15, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(6),new ThreadPoolExecutor.CallerRunsPolicy());
 		}else{
 			executor = new ThreadPoolExecutor(Integer.valueOf(parameter), Integer.valueOf(parameter),0L, TimeUnit.MILLISECONDS,new LinkedBlockingQueue<Runnable>());
 		}
-    	PicQueue picQueue = new PicQueue();
-        NewSavePic newSavePic = new NewSavePic(picQueue,executor);
-        
-    	String fileName = file.getOriginalFilename();  
-        File targetFile = new File(path, fileName);  
-        //保存  
-        try {  
-        	if (!targetFile.exists()) {
-        		targetFile.mkdirs(); 
-        		targetFile.createNewFile();
+		PicQueue picQueue = new PicQueue();
+		NewSavePic newSavePic = new NewSavePic(picQueue,executor);
+
+		String fileName = file.getOriginalFilename();
+		File targetFile = new File(path, fileName);
+		//保存
+		try {
+			if (!targetFile.exists()) {
+				targetFile.mkdirs();
+				targetFile.createNewFile();
 			}
-            file.transferTo(targetFile);  
-        } catch (Exception e) {  
-            e.printStackTrace();  
-        }  
-        
-        
-        String filePath = newSavePic.saveImg(local_picturetem,targetFile,picQueue);
-        log.error(targetFile.getName()+"下载路径为+++++++++++++++++++++++++++++++++"+filePath);
-    	delay(executor);
-    	
-    	//重新下载失败的
-		 String failUrl = "";
-		 String[] split = null;
-		 Map<String,Integer> recordMap = new HashMap<String, Integer>();
-		 while(executor.getActiveCount()>0||!picQueue.unVisitedUrlsEmpty()){
-			 if (picQueue.unVisitedUrlsEmpty()&&executor.getActiveCount()>=0) {
-				 log.error("============================================都为空=======================================================");
+			file.transferTo(targetFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
+		String filePath = newSavePic.saveImg(local_picturetem,targetFile,picQueue);
+		log.error(targetFile.getName()+"下载路径为+++++++++++++++++++++++++++++++++"+filePath);
+		delay(executor);
+
+		//重新下载失败的
+		String failUrl = "";
+		String[] split = null;
+		Map<String,Integer> recordMap = new HashMap<String, Integer>();
+		while(executor.getActiveCount()>0||!picQueue.unVisitedUrlsEmpty()){
+			if (picQueue.unVisitedUrlsEmpty()&&executor.getActiveCount()>=0) {
+				log.error("============================================都为空=======================================================");
 				try {
-	 				Thread.sleep(1000*15);
-	 			} catch (InterruptedException e) {
-	 				e.printStackTrace();
-	 			}
+					Thread.sleep(1000*15);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				continue;
-			 }
-			 failUrl = picQueue.unVisitEdUrlDeQueue();
-			 if (recordMap.containsKey(failUrl)) {
-				 if (recordMap.get(failUrl)>10) {
+			}
+			failUrl = picQueue.unVisitEdUrlDeQueue();
+			if (recordMap.containsKey(failUrl)) {
+				if (recordMap.get(failUrl)>10) {
 					continue;
-				 }
-				 recordMap.put(failUrl, recordMap.get(failUrl)+1);
-			 }else{
-				 recordMap.put(failUrl, 1);
-			 }
-			 split = failUrl.split(";");
-			 executor.execute(new DowmImage(split[0],split[2],split[1],picQueue));
-		 }
-		 delay(executor);
-    	
-        ZipFile zipfile = null;
-        
-        try {
-        	log.error("下载路径为+++++++++++++++++++++++++++++++++"+filePath);
-        	long time = new Date().getTime();
+				}
+				recordMap.put(failUrl, recordMap.get(failUrl)+1);
+			}else{
+				recordMap.put(failUrl, 1);
+			}
+			split = failUrl.split(";");
+			executor.execute(new DowmImage(split[0],split[2],split[1],picQueue));
+		}
+		delay(executor);
+
+		ZipFile zipfile = null;
+
+		try {
+			log.error("下载路径为+++++++++++++++++++++++++++++++++"+filePath);
+			long time = new Date().getTime();
 			zipfile = new ZipFile(time+"");
 
-			ZipParameters parameters = new ZipParameters();  
-		    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-		    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
+			ZipParameters parameters = new ZipParameters();
+			parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+			parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
 			zipfile.addFolder(filePath, parameters);
 			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+time+".zip", "UTF-8"));
 
 			in = new BufferedInputStream(new FileInputStream (zipfile.getFile()));
 
-            out = new BufferedOutputStream(response.getOutputStream());
-            byte[] data = new byte[2048];
-            int len = 0;
-            while (-1 != (len=in.read(data, 0, data.length))) {
-                out.write(data, 0, len);
-            }
+			out = new BufferedOutputStream(response.getOutputStream());
+			byte[] data = new byte[2048];
+			int len = 0;
+			while (-1 != (len=in.read(data, 0, data.length))) {
+				out.write(data, 0, len);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
@@ -666,124 +666,124 @@ public class FileDownloadController {
 				out.close();
 				zipfile.getFile().delete();
 				targetFile.delete();
-			    File delfiledir = new File(filePath);
-	            for (File b : delfiledir.listFiles()) {
+				File delfiledir = new File(filePath);
+				for (File b : delfiledir.listFiles()) {
 					b.delete();
 				}
-	            delfiledir.delete();
+				delfiledir.delete();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-    }
-    
-    
-    @RequestMapping("uploadPreSaleFileAndDown")
-    public String uploadPreSaleFileAndDown(@RequestParam(value = "uploadPreSaleFile", required = false) MultipartFile file, HttpServletRequest request,HttpServletResponse response,Model model){
-    	BufferedInputStream in = null;
-    	BufferedOutputStream out = null;
-    	String path = request.getSession().getServletContext().getRealPath("");  
-    	
-    	String fileName = file.getOriginalFilename();  
-        File targetFile = new File(path, fileName);  
-        //保存  
-        try {  
-        	if (!targetFile.exists()) {
-        		targetFile.mkdirs(); 
-        		targetFile.createNewFile();
+	}
+
+
+	@RequestMapping("uploadPreSaleFileAndDown")
+	public String uploadPreSaleFileAndDown(@RequestParam(value = "uploadPreSaleFile", required = false) MultipartFile file, HttpServletRequest request,HttpServletResponse response,Model model){
+		BufferedInputStream in = null;
+		BufferedOutputStream out = null;
+		String path = request.getSession().getServletContext().getRealPath("");
+
+		String fileName = file.getOriginalFilename();
+		File targetFile = new File(path, fileName);
+		//保存
+		try {
+			if (!targetFile.exists()) {
+				targetFile.mkdirs();
+				targetFile.createNewFile();
 			}
-            file.transferTo(targetFile);  
-        } catch (Exception e) {  
-            e.printStackTrace();  
-        }  
-        List<SpecialSkuDTO> list = null;
-        try {
-        	list = ReadExcel.readXlsx(path+"/"+fileName);
-        	System.out.println(list.size());
-        	targetFile.delete();
+			file.transferTo(targetFile);
 		} catch (Exception e) {
-			e.printStackTrace(); 
+			e.printStackTrace();
 		}
-      
-        	for(SpecialSkuDTO spec:list){
-	    		  try {
-	    			  specialSkuService.saveDTO(spec);
-	    		  } catch (ServiceMessageException e) {
-	    				e.printStackTrace(); 
-	    		  }
-        	}
-			
-		
-        List<SupplierDTO> availableSupplierDTOList = null ;
+		List<SpecialSkuDTO> list = null;
+		try {
+			list = ReadExcel.readXlsx(path+"/"+fileName);
+			System.out.println(list.size());
+			targetFile.delete();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		for(SpecialSkuDTO spec:list){
+			try {
+				specialSkuService.saveDTO(spec);
+			} catch (ServiceMessageException e) {
+				e.printStackTrace();
+			}
+		}
+
+
+		List<SupplierDTO> availableSupplierDTOList = null ;
 		try {
 			availableSupplierDTOList = supplierService.findAllWithAvailable();
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        model.addAttribute("supplierDTOList", availableSupplierDTOList);
-        model.addAttribute("resultMessage", "save success");
-        return "iog";
-    }
-    
-    @RequestMapping("deletePreSaleFile")
-    public String deletePreSaleFile(@RequestParam(value = "deletePreSaleFile", required = false) MultipartFile file, HttpServletRequest request,HttpServletResponse response,Model model){
-    	BufferedInputStream in = null;
-    	BufferedOutputStream out = null;
-    	String path = request.getSession().getServletContext().getRealPath("");  
-    	
-    	String fileName = file.getOriginalFilename();  
-        File targetFile = new File(path, fileName);  
-        //保存  
-        try {  
-        	if (!targetFile.exists()) {
-        		targetFile.mkdirs(); 
-        		targetFile.createNewFile();
+		model.addAttribute("supplierDTOList", availableSupplierDTOList);
+		model.addAttribute("resultMessage", "save success");
+		return "iog";
+	}
+
+	@RequestMapping("deletePreSaleFile")
+	public String deletePreSaleFile(@RequestParam(value = "deletePreSaleFile", required = false) MultipartFile file, HttpServletRequest request,HttpServletResponse response,Model model){
+		BufferedInputStream in = null;
+		BufferedOutputStream out = null;
+		String path = request.getSession().getServletContext().getRealPath("");
+
+		String fileName = file.getOriginalFilename();
+		File targetFile = new File(path, fileName);
+		//保存
+		try {
+			if (!targetFile.exists()) {
+				targetFile.mkdirs();
+				targetFile.createNewFile();
 			}
-            file.transferTo(targetFile);  
-        } catch (Exception e) {  
-            e.printStackTrace();  
-        }  
-        List<SpecialSkuDTO> list = null;
-        try {
-        	list = ReadExcel.readXlsx(path+"/"+fileName);
-        	System.out.println(list.size());
-        	targetFile.delete();
+			file.transferTo(targetFile);
 		} catch (Exception e) {
-			e.printStackTrace(); 
+			e.printStackTrace();
 		}
-			specialSkuService.deleteSkuBySupplierId(list);
-        List<SupplierDTO> availableSupplierDTOList = null ;
+		List<SpecialSkuDTO> list = null;
+		try {
+			list = ReadExcel.readXlsx(path+"/"+fileName);
+			System.out.println(list.size());
+			targetFile.delete();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		specialSkuService.deleteSkuBySupplierId(list);
+		List<SupplierDTO> availableSupplierDTOList = null ;
 		try {
 			availableSupplierDTOList = supplierService.findAllWithAvailable();
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        model.addAttribute("supplierDTOList", availableSupplierDTOList);
-        model.addAttribute("resultMessage", "save success");
-        return "iog";
-    }
-    
-    @RequestMapping(value = "OnlineDownLoad")
-    public void dowmLoadPicOnline(HttpServletResponse response,HttpServletRequest request, String queryJson){
-    	//获取要下载的产品
-    	List<ProductDTO> productList = getDownProductList(queryJson);
-    	if (null==productList||productList.size()<1) {
+		model.addAttribute("supplierDTOList", availableSupplierDTOList);
+		model.addAttribute("resultMessage", "save success");
+		return "iog";
+	}
+
+	@RequestMapping(value = "OnlineDownLoad")
+	public void dowmLoadPicOnline(HttpServletResponse response,HttpServletRequest request, String queryJson){
+		//获取要下载的产品
+		List<ProductDTO> productList = getDownProductList(queryJson);
+		if (null==productList||productList.size()<1) {
 			return;
 		}
-    	//遍历 获取要下载的图片 map<spskuid,url1,url2>
-    	Map<String,String> imgMap = getMongoPic(productList);
+		//遍历 获取要下载的图片 map<spskuid,url1,url2>
+		Map<String,String> imgMap = getMongoPic(productList);
 
 		log.error("imgMap message ="+imgMap.toString());
-    	
-    	//下载保存图片
-    	BufferedInputStream in = null;
-    	BufferedOutputStream out = null;
-    	String path = request.getSession().getServletContext().getRealPath("");  
-    	ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 15, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(6),new ThreadPoolExecutor.CallerRunsPolicy());
+
+		//下载保存图片
+		BufferedInputStream in = null;
+		BufferedOutputStream out = null;
+		String path = request.getSession().getServletContext().getRealPath("");
+		ThreadPoolExecutor executor = new ThreadPoolExecutor(3, 15, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(6),new ThreadPoolExecutor.CallerRunsPolicy());
 //    	String dirPath = "F:/usr/local/picturetem/"+new Date().getTime();
-    	String dirPath =pictmpdownloadpath + +new Date().getTime();   //  /usr/local
+		String dirPath =pictmpdownloadpath + +new Date().getTime();   //  /usr/local
 		File f1 = new File(dirPath);
 		if (!f1.exists()) {
 			f1.mkdirs();
@@ -812,96 +812,96 @@ public class FileDownloadController {
 		}
 		delay(executor);
 		//重新下载失败的
-		 String failUrl = "";
-		 String[] split = null;
-		 Map<String,Integer> recordMap = new HashMap<String, Integer>();
-		 while(executor.getActiveCount()>0||!picQueue.unVisitedUrlsEmpty()){
-			 if (picQueue.unVisitedUrlsEmpty()&&executor.getActiveCount()>=0) {
-				 System.out.println("============================================都为空=======================================================");
+		String failUrl = "";
+		String[] split = null;
+		Map<String,Integer> recordMap = new HashMap<String, Integer>();
+		while(executor.getActiveCount()>0||!picQueue.unVisitedUrlsEmpty()){
+			if (picQueue.unVisitedUrlsEmpty()&&executor.getActiveCount()>=0) {
+				System.out.println("============================================都为空=======================================================");
 				try {
-	 				Thread.sleep(1000*15);
-	 			} catch (InterruptedException e) {
-	 				e.printStackTrace();
-	 			}
+					Thread.sleep(1000*15);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				continue;
-			 }
-			 failUrl = picQueue.unVisitEdUrlDeQueue();
-			 if (recordMap.containsKey(failUrl)) {
-				 if (recordMap.get(failUrl)>10) {
+			}
+			failUrl = picQueue.unVisitEdUrlDeQueue();
+			if (recordMap.containsKey(failUrl)) {
+				if (recordMap.get(failUrl)>10) {
 					continue;
-				 }
-				 recordMap.put(failUrl, recordMap.get(failUrl)+1);
-			 }else{
-				 recordMap.put(failUrl, 1);
-			 }
-			 split = failUrl.split(";");
-			 executor.execute(new DowmImage(split[0],split[2],split[1],picQueue));
+				}
+				recordMap.put(failUrl, recordMap.get(failUrl)+1);
+			}else{
+				recordMap.put(failUrl, 1);
+			}
+			split = failUrl.split(";");
+			executor.execute(new DowmImage(split[0],split[2],split[1],picQueue));
 //			try {
 // 				Thread.sleep(500);
 // 			} catch (InterruptedException e) {
 // 				e.printStackTrace();
 // 			}
-		 }
-		 delay(executor);
-		
-	       ZipFile zipfile = null;
-	        
-	        try {
-	        	log.error("下载路径为+++++++++++++++++++++++++++++++++"+dirPath);
-	        	long time = new Date().getTime();
-				zipfile = new ZipFile(time+"");
+		}
+		delay(executor);
 
-				ZipParameters parameters = new ZipParameters();  
-			    parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-			    parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);  
-				zipfile.addFolder(dirPath, parameters);
-				response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+time+".zip", "UTF-8"));
+		ZipFile zipfile = null;
 
-				in = new BufferedInputStream(new FileInputStream (zipfile.getFile()));
+		try {
+			log.error("下载路径为+++++++++++++++++++++++++++++++++"+dirPath);
+			long time = new Date().getTime();
+			zipfile = new ZipFile(time+"");
 
-	            out = new BufferedOutputStream(response.getOutputStream());
-	            byte[] data = new byte[2048];
-	            int len = 0;
-	            while (-1 != (len=in.read(data, 0, data.length))) {
-	                out.write(data, 0, len);
-	            }
-			} catch (Exception e) {
-				e.printStackTrace();
-			}finally{
-				try {
-					in.close();
-					out.close();
-					zipfile.getFile().delete();
-				    File delfiledir = new File(dirPath);
-		            for (File b : delfiledir.listFiles()) {
-						b.delete();
-					}
-		            delfiledir.delete();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			ZipParameters parameters = new ZipParameters();
+			parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+			parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
+			zipfile.addFolder(dirPath, parameters);
+			response.setHeader("Content-Disposition", "attachment;filename="+java.net.URLEncoder.encode("picture"+time+".zip", "UTF-8"));
+
+			in = new BufferedInputStream(new FileInputStream (zipfile.getFile()));
+
+			out = new BufferedOutputStream(response.getOutputStream());
+			byte[] data = new byte[2048];
+			int len = 0;
+			while (-1 != (len=in.read(data, 0, data.length))) {
+				out.write(data, 0, len);
 			}
-		 
-		 
-		
-		
-    }
-    private void delay(ThreadPoolExecutor executor){
-    	 while(true){
-         	if(executor.getActiveCount()==0){
-         		log.error("线程活动数为0");
-         		break;
-         	}
-         	try {
- 				Thread.sleep(1000*30);
- 			} catch (InterruptedException e) {
- 				e.printStackTrace();
- 			}
-         }
-    }
-    private Map<String,String> getMongoPic(List<ProductDTO> productList){
-    	Map<String,String> imgMap = new HashMap<String,String>();
-    	Map<String,String> idMap = new HashMap<String,String>();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				in.close();
+				out.close();
+				zipfile.getFile().delete();
+				File delfiledir = new File(dirPath);
+				for (File b : delfiledir.listFiles()) {
+					b.delete();
+				}
+				delfiledir.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+
+
+
+	}
+	private void delay(ThreadPoolExecutor executor){
+		while(true){
+			if(executor.getActiveCount()==0){
+				log.error("线程活动数为0");
+				break;
+			}
+			try {
+				Thread.sleep(1000*30);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	private Map<String,String> getMongoPic(List<ProductDTO> productList){
+		Map<String,String> imgMap = new HashMap<String,String>();
+		Map<String,String> idMap = new HashMap<String,String>();
 
 		Map<String,String > skuspuMap = new HashMap<>();
 
@@ -909,15 +909,15 @@ public class FileDownloadController {
 			skuspuMap.put(productDTO.getSkuId(),productDTO.getSpuId());
 		}
 		log.error("skuspuMap = " + skuspuMap.toString());
-    	
-    	Map<String, String> findMap = null;
+
+		Map<String, String> findMap = null;
 		String sku="",spu="";
-    	for (ProductDTO productDTO : productList) {
-    		
-    		//TODO 如果spskuid为空跳过
-    		idMap.put(productDTO.getSpuId(), productDTO.getSpSkuId());
-    		idMap.put(productDTO.getSkuId(), productDTO.getSpSkuId());
-    		findMap = pfs.findPictureBySupplierIdAndSkuIdOrSpuId(productDTO.getSupplierId(), productDTO.getSkuId(),null);
+		for (ProductDTO productDTO : productList) {
+
+			//TODO 如果spskuid为空跳过
+			idMap.put(productDTO.getSpuId(), productDTO.getSpSkuId());
+			idMap.put(productDTO.getSkuId(), productDTO.getSpSkuId());
+			findMap = pfs.findPictureBySupplierIdAndSkuIdOrSpuId(productDTO.getSupplierId(), productDTO.getSkuId(),null);
 			if (null==findMap||findMap.size()<1) {
 				findMap =pfs.findPictureBySupplierIdAndSkuIdOrSpuId(productDTO.getSupplierId(), null,productDTO.getSpuId());
 			}
@@ -953,9 +953,9 @@ public class FileDownloadController {
 			}
 		}
 
-    	return imgMap;
-    	
-    }
+		return imgMap;
+
+	}
 
 
 	public static String getBASE64(String s) {
@@ -965,28 +965,28 @@ public class FileDownloadController {
 
 	private List<ProductDTO> getDownProductList(String queryJson){
 
-    	ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
-    	if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
+		ProductSearchDTO productSearchDTO = (ProductSearchDTO) JsonUtil.getObject4JsonString(queryJson, ProductSearchDTO.class);
+		if(null==productSearchDTO) productSearchDTO = new ProductSearchDTO();
 
-        String supplier = null;
-        if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
-        	supplier = productSearchDTO.getSupplier();
-        }
-        Date startDate  =null;
-        if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
-            startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
-        }
+		String supplier = null;
+		if(!StringUtils.isEmpty(productSearchDTO.getSupplier()) && !productSearchDTO.getSupplier().equals("-1")){
+			supplier = productSearchDTO.getSupplier();
+		}
+		Date startDate  =null;
+		if(!StringUtils.isEmpty(productSearchDTO.getStartDate())){
+			startDate =  DateTimeUtil.convertFormat(productSearchDTO.getStartDate(),"yyyy-MM-dd HH:mm:ss");
+		}
 
-        Date endDate = null;
-        if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
-            endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
-        }
-        
-        Integer pageIndex = productSearchDTO.getPageIndex();
-        
-        Integer pageSize = productSearchDTO.getPageSize();
-        List<ProductDTO> pList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
-        return pList;
-    }
+		Date endDate = null;
+		if(!StringUtils.isEmpty(productSearchDTO.getEndDate())){
+			endDate= DateTimeUtil.convertFormat(productSearchDTO.getEndDate(), "yyyy-MM-dd HH:mm:ss");
+		}
+
+		Integer pageIndex = productSearchDTO.getPageIndex();
+
+		Integer pageSize = productSearchDTO.getPageSize();
+		List<ProductDTO> pList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
+		return pList;
+	}
 
 }
