@@ -74,6 +74,11 @@ public class HubSupplierBrandDicDto implements Serializable {
      */
     private Long version;
 
+    /**
+     * =0 无效品牌 =1 有效品牌
+     */
+    private Byte filterFlag;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSupplierBrandDicId() {
@@ -188,6 +193,14 @@ public class HubSupplierBrandDicDto implements Serializable {
         this.version = version;
     }
 
+    public Byte getFilterFlag() {
+        return filterFlag;
+    }
+
+    public void setFilterFlag(Byte filterFlag) {
+        this.filterFlag = filterFlag;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -208,6 +221,7 @@ public class HubSupplierBrandDicDto implements Serializable {
         sb.append(", memo=").append(memo);
         sb.append(", dataState=").append(dataState);
         sb.append(", version=").append(version);
+        sb.append(", filterFlag=").append(filterFlag);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -238,7 +252,8 @@ public class HubSupplierBrandDicDto implements Serializable {
             && (this.getPushTime() == null ? other.getPushTime() == null : this.getPushTime().equals(other.getPushTime()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
+            && (this.getFilterFlag() == null ? other.getFilterFlag() == null : this.getFilterFlag().equals(other.getFilterFlag()));
     }
 
     @Override
@@ -259,6 +274,7 @@ public class HubSupplierBrandDicDto implements Serializable {
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
+        result = prime * result + ((getFilterFlag() == null) ? 0 : getFilterFlag().hashCode());
         return result;
     }
 }

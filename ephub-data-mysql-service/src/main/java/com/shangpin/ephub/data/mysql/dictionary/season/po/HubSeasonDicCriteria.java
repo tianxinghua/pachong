@@ -1056,6 +1056,66 @@ public class HubSeasonDicCriteria {
             addCriterion("push_time not between", value1, value2, "pushTime");
             return (Criteria) this;
         }
+
+        public Criteria andFilterFlagIsNull() {
+            addCriterion("filter_flag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagIsNotNull() {
+            addCriterion("filter_flag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagEqualTo(Byte value) {
+            addCriterion("filter_flag =", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagNotEqualTo(Byte value) {
+            addCriterion("filter_flag <>", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagGreaterThan(Byte value) {
+            addCriterion("filter_flag >", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagGreaterThanOrEqualTo(Byte value) {
+            addCriterion("filter_flag >=", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagLessThan(Byte value) {
+            addCriterion("filter_flag <", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagLessThanOrEqualTo(Byte value) {
+            addCriterion("filter_flag <=", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagIn(List<Byte> values) {
+            addCriterion("filter_flag in", values, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagNotIn(List<Byte> values) {
+            addCriterion("filter_flag not in", values, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagBetween(Byte value1, Byte value2) {
+            addCriterion("filter_flag between", value1, value2, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagNotBetween(Byte value1, Byte value2) {
+            addCriterion("filter_flag not between", value1, value2, "filterFlag");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

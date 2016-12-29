@@ -1957,6 +1957,136 @@ public class HubSkuPendingCriteriaDto {
             addCriterion("screen_size not between", value1, value2, "screenSize");
             return (Criteria) this;
         }
+
+        public Criteria andSupplierNoIsNull() {
+            addCriterion("supplier_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoIsNotNull() {
+            addCriterion("supplier_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoEqualTo(String value) {
+            addCriterion("supplier_no =", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoNotEqualTo(String value) {
+            addCriterion("supplier_no <>", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoGreaterThan(String value) {
+            addCriterion("supplier_no >", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoGreaterThanOrEqualTo(String value) {
+            addCriterion("supplier_no >=", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoLessThan(String value) {
+            addCriterion("supplier_no <", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoLessThanOrEqualTo(String value) {
+            addCriterion("supplier_no <=", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoLike(String value) {
+            addCriterion("supplier_no like", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoNotLike(String value) {
+            addCriterion("supplier_no not like", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoIn(List<String> values) {
+            addCriterion("supplier_no in", values, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoNotIn(List<String> values) {
+            addCriterion("supplier_no not in", values, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoBetween(String value1, String value2) {
+            addCriterion("supplier_no between", value1, value2, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoNotBetween(String value1, String value2) {
+            addCriterion("supplier_no not between", value1, value2, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagIsNull() {
+            addCriterion("filter_flag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagIsNotNull() {
+            addCriterion("filter_flag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagEqualTo(Byte value) {
+            addCriterion("filter_flag =", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagNotEqualTo(Byte value) {
+            addCriterion("filter_flag <>", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagGreaterThan(Byte value) {
+            addCriterion("filter_flag >", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagGreaterThanOrEqualTo(Byte value) {
+            addCriterion("filter_flag >=", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagLessThan(Byte value) {
+            addCriterion("filter_flag <", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagLessThanOrEqualTo(Byte value) {
+            addCriterion("filter_flag <=", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagIn(List<Byte> values) {
+            addCriterion("filter_flag in", values, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagNotIn(List<Byte> values) {
+            addCriterion("filter_flag not in", values, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagBetween(Byte value1, Byte value2) {
+            addCriterion("filter_flag between", value1, value2, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagNotBetween(Byte value1, Byte value2) {
+            addCriterion("filter_flag not between", value1, value2, "filterFlag");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
