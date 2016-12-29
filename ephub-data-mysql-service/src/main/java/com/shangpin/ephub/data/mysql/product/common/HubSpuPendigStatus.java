@@ -3,7 +3,7 @@ package com.shangpin.ephub.data.mysql.product.common;
 /**
  * Created by loyalty on 16/12/21.
  */
-public enum HubSpuStatus {
+public enum HubSpuPendigStatus {
 
     WAIT_HANDLE(0,"信息待完善"),
     WAIT_AUDIT(1,"待复核"),
@@ -31,7 +31,7 @@ public enum HubSpuStatus {
     public void setDescription(String description) {
         this.description = description;
     }
-    private HubSpuStatus(Integer index, String description) {
+    private HubSpuPendigStatus(Integer index, String description) {
         this.index = index;
         this.description = description;
     }

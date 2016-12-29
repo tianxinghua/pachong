@@ -22,6 +22,7 @@ import com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending;
 import com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPendingCriteria;
 import com.shangpin.ephub.data.mysql.spu.supplier.mapper.HubSupplierSpuMapper;
 import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import java.util.*;
  * Created by loyalty on 16/12/27.
  */
 @Service
+@Slf4j
 public class PengdingToHubServiceImpl implements PengingToHubService {
 
     @Autowired
@@ -120,8 +122,10 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                 for(int i =0;i<skuNoArray.length;i++){
                     List<HubSkuPending> hubSkuPendings = sizeSkuMap.get(sizeArray[i]);
                     HubSku hubSku = new HubSku();
+
                     hubSku.setSpuNo(hubSpu.getSpuNo());
                     hubSku.setColor(hubSpu.getCategoryNo());
+                    hubSku.setSkuNo(skuNoArray[i]);
                     hubSku.setSkuSize((String)sizeArray[i]);
                     hubSku.setSkuSizeId(hubSkuPendings.get(0).getScreenSize());
                     hubSku.setCreateTime(date);
@@ -165,6 +169,8 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
     private void setSizeSkuMap(List<Long> spuPendingIds, Map<String, List<HubSkuPending>> sizeSkuMap) {
         for(Long spuPendingId:spuPendingIds){
             HubSkuPendingCriteria skuPendingCriteria = new HubSkuPendingCriteria();
+            skuPendingCriteria.setPageNo(1);
+            skuPendingCriteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
             skuPendingCriteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
             List<HubSkuPending> hubSkuPendings = hubSkuPendingMapper.selectByExample(skuPendingCriteria);
             for(HubSkuPending hubSkuPending:hubSkuPendings){
@@ -213,11 +219,14 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         criteriaForId.setFields("spu_pending_id");
         HubSpuPendingCriteria.Criteria criterionForId = criteriaForId.createCriteria();
         criterionForId.andSpuModelEqualTo(spuModelVO.getSpuModel()).andHubBrandNoEqualTo(spuModelVO.getBrandNo())
-                .andSpuStateEqualTo(HubSpuStatus.WAIT_AUDIT.getIndex().byteValue());
-
+                .andSpuStateEqualTo(HubSpuPendigStatus.HANDLING.getIndex().byteValue());
+        criteriaForId.setPageNo(1);
+        criteriaForId.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
         List<HubSpuPending> hubSpuPendingIds = hubSpuPendingMapper.selectByExample(criteriaForId);
         List<Long> pendIdList = new ArrayList<>();
         for(HubSpuPending spuPending:hubSpuPendingIds){
+            log.info("spuPending.getSpuPendingId()= "+ spuPending.getSpuPendingId());
+
             pendIdList.add(spuPending.getSpuPendingId());
         }
 //        //处理spuPending 数据
