@@ -26,14 +26,13 @@ public class PurchaseOrderDetail extends Ice.ObjectImpl
     {
     }
 
-    public PurchaseOrderDetail(String SopPurchaseOrderNo, String SopPurchaseOrderDetailNo, String SkuNo, String SupplierSkuNo, int DetailStatus, int GiveupType, String WarehouseNo, String WarehouseName, String DateStart, String DateEnd, String SkuPrice, String SkuPriceCurrency, String WarehouseAddress, String WarehousePost, String WarehouseContactPerson, String WarehouseContactMobile)
+    public PurchaseOrderDetail(String SopPurchaseOrderNo, String SopPurchaseOrderDetailNo, String SkuNo, String SupplierSkuNo, int DetailStatus, String WarehouseNo, String WarehouseName, String DateStart, String DateEnd, String SkuPrice, String SkuPriceCurrency, String WarehouseAddress, String WarehousePost, String WarehouseContactPerson, String WarehouseContactMobile)
     {
         this.SopPurchaseOrderNo = SopPurchaseOrderNo;
         this.SopPurchaseOrderDetailNo = SopPurchaseOrderDetailNo;
         this.SkuNo = SkuNo;
         this.SupplierSkuNo = SupplierSkuNo;
         this.DetailStatus = DetailStatus;
-        this.GiveupType = GiveupType;
         this.WarehouseNo = WarehouseNo;
         this.WarehouseName = WarehouseName;
         this.DateStart = DateStart;
@@ -67,10 +66,10 @@ public class PurchaseOrderDetail extends Ice.ObjectImpl
     }
 
     public static final String[] __ids =
-    {
-        "::Ice::Object",
-        "::ShangPin::SOP::Entity::Api::Purchase::PurchaseOrderDetail"
-    };
+            {
+                    "::Ice::Object",
+                    "::ShangPin::SOP::Entity::Api::Purchase::PurchaseOrderDetail"
+            };
 
     public boolean ice_isA(String s)
     {
@@ -115,7 +114,6 @@ public class PurchaseOrderDetail extends Ice.ObjectImpl
         __os.writeString(SkuNo);
         __os.writeString(SupplierSkuNo);
         __os.writeInt(DetailStatus);
-        __os.writeInt(GiveupType);
         __os.writeString(WarehouseNo);
         __os.writeString(WarehouseName);
         __os.writeString(DateStart);
@@ -137,7 +135,6 @@ public class PurchaseOrderDetail extends Ice.ObjectImpl
         SkuNo = __is.readString();
         SupplierSkuNo = __is.readString();
         DetailStatus = __is.readInt();
-        GiveupType = __is.readInt();
         WarehouseNo = __is.readString();
         WarehouseName = __is.readString();
         DateStart = __is.readString();
@@ -161,8 +158,6 @@ public class PurchaseOrderDetail extends Ice.ObjectImpl
 
     public int DetailStatus;
 
-    public int GiveupType;
-
     public String WarehouseNo;
 
     public String WarehouseName;
@@ -183,5 +178,5 @@ public class PurchaseOrderDetail extends Ice.ObjectImpl
 
     public String WarehouseContactMobile;
 
-    public static final long serialVersionUID = 258321264L;
+    public static final long serialVersionUID = -907883785L;
 }

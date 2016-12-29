@@ -987,34 +987,40 @@ public abstract class AbsUpdateProductStock {
 				PurchaseOrderDetailPage orderDetailPage=
 						servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
 				orderDetails = orderDetailPage.PurchaseOrderDetails;
+				if(null!=orderDetails){
+					loggerInfo.info("采购异常数量为: " + orderDetails.size());
+				}else{
+					loggerInfo.info(startTime +"-到-" + endTime +" 无采购异常数据");
+				}
 				for (PurchaseOrderDetail orderDetail : orderDetails) {
-				    if(7!=orderDetail.GiveupType){
-						SpecialSkuDTO spec = new SpecialSkuDTO();
-						String supplierSkuNo  = orderDetail.SupplierSkuNo;
-						spec.setSupplierId(supplierId);
-						spec.setSupplierSkuId(supplierSkuNo);
-						try {
-							logger.info("采购异常的信息："+spec.toString());
-							specialSkuService.saveDTO(spec);
-						} catch (ServiceMessageException e) {
-							e.printStackTrace();
-						}
-						//直接调用库存更新  库存为0
-						try {
-							servant.UpdateStock(supplierId, orderDetail.SkuNo, 0);
-						} catch (Exception e) {
-							loggerError.error("采购异常的商品 "+ orderDetail.SkuNo + " 库存更新失败。");
-						}
 
-					}else{
-						logger.info("异常采购信息："+ orderDetail.SopPurchaseOrderNo + " 因质量问题采购异常，可继续更新库存");
+					SpecialSkuDTO spec = new SpecialSkuDTO();
+					String supplierSkuNo  = orderDetail.SupplierSkuNo;
+					spec.setSupplierId(supplierId);
+					spec.setSupplierSkuId(supplierSkuNo);
+					try {
+						logger.info("采购异常的信息："+spec.toString());
+						specialSkuService.saveDTO(spec);
+					} catch (ServiceMessageException e) {
+						e.printStackTrace();
 					}
+					//直接调用库存更新  库存为0
+					try {
+						servant.UpdateStock(supplierId, orderDetail.SkuNo, 0);
+					} catch (Exception e) {
+						loggerError.error("采购异常的商品 "+ orderDetail.SkuNo + " 库存更新失败。");
+					}
+//					if(7!=orderDetail.GiveupType){
+//					}else{
+//						logger.info("异常采购信息："+ orderDetail.SopPurchaseOrderNo + " 因质量问题采购异常，可继续更新库存");
+//					}
 
 				}
 			} catch (Exception e) {
 				if(orderDetails==null){
 					orderDetails = new ArrayList<PurchaseOrderDetail>();
 				}
+				loggerError.error("获取采购异常错误："+ e.getMessage());
 				e.printStackTrace();
 			}
 			pageIndex++;
