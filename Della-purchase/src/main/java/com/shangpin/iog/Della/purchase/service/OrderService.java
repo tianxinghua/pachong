@@ -1,9 +1,18 @@
 package com.shangpin.iog.Della.purchase.service;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.Della.purchase.common.MyFtpUtil;
-import com.shangpin.iog.Della.purchase.common.MyFtpUtil2;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.OrderDetailDTO;
@@ -12,13 +21,6 @@ import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.service.OrderDetailService;
 import com.shangpin.iog.service.ProductSearchService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Created by Administrator on 2015/11/20.
@@ -33,8 +35,8 @@ public class OrderService extends AbsOrderService {
     private static  String supplierId = null;
     private static String supplierNo = null;
     private static String localFile = null;
-    private static String startTime = null;
-    private static String endTime = null;
+//    private static String startTime = null;
+//    private static String endTime = null;
 
     static {
         if(null==bdl){
