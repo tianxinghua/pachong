@@ -41,5 +41,6 @@
 		<typeAlias alias="iog_supplierValue_mapping" type="com.shangpin.iog.dto.HubSupplierValueMappingDTO"/>
 		<typeAlias alias="iog_productCode" type="com.shangpin.iog.dto.ProductCodeDTO"/>
 		<typeAlias alias="iog_stockUpdateLimit" type="com.shangpin.iog.dto.StockUpdateLimitDTO"/>
+		<typeAlias alias="iog_hubOrderDetail" type="com.shangpin.iog.dto.HubOrderDetailDTO"/>
 	</typeAliases>
 </configuration>

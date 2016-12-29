@@ -181,9 +181,14 @@ public class PictureDownService {
                                             // 2015101501608  tony    鏆備笉闇�
                                              DownloadPicTool.downImage(img.trim(),dirPath,spu+" ("+i+").jpg");
                                         }else  if("2016030701799".equals(supplierId)) {   //russocapri
+                                        	Thread.sleep(500);
+                                        	if(img.contains("82.185.221.164")){                                        		
+                                                executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"NT","at98w-IIS","Polo2012"));
+                                        	}else{
+                                        		executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"","shangpin","Shang2016"));
+                                        	}
 
-                                            Thread.sleep(500);
-                                            executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"NT","at98w-IIS","Polo2012"));
+                                            
                                         }else if("2016083001937".equals(supplierId)){
                                         	Thread.sleep(500);
                                         	executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"","shangpin","Shang1808"));
@@ -207,6 +212,9 @@ public class PictureDownService {
                                         	}
                                         	Thread.sleep(500);
                                         	
+                                        }else if("2016011201731".equals(supplierId)){//daniello
+                                        	Thread.sleep(500);
+                                        	executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"","shangpin","Atelier2015"));                                        	
                                         }else{
                                             Thread.sleep(500);
                                             executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"",userName,password));

@@ -1,20 +1,18 @@
 package com.shangpin.iog.service;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ShangPin.SOP.Entity.Api.Product.*;
 import ShangPin.SOP.Api.ApiException;
 import ShangPin.SOP.Entity.Api.Product.SopProductSkuIce;
+import ShangPin.SOP.Entity.Api.Product.SopProductSkuPage;
+import ShangPin.SOP.Entity.Api.Product.SopProductSkuPageQuery;
 import ShangPin.SOP.Entity.Api.Product.SopSkuIce;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
 
@@ -142,9 +140,13 @@ public class OpenapiService {
 					if(null!=ice.SkuNo&&!"".equals(ice.SkuNo)&&null!=ice.SupplierSkuNo&&!"".equals(ice.SupplierSkuNo)){
 						if(1!=ice.IsDeleted){
 							try {
-								if(StringUtils.isBlank(skuSpSkuMap.get(ice.SupplierSkuNo)) || StringUtils.isBlank(skuSpProductCodeMap.get(ice.SupplierSkuNo))){
-									productFetchService.updateSpSkuIdBySupplier(supplier, ice.SupplierSkuNo, ice.SkuNo,""+ice.SkuStatus,sku.ProductModel);
+								if(!skuSpSkuMap.containsKey(ice.SupplierSkuNo) || !skuSpSkuMap.get(ice.SupplierSkuNo).equals(ice.SkuNo)){ 
+									productFetchService.updateSpSkuIdBySupplier(supplier, ice.SupplierSkuNo, ice.SkuNo,String.valueOf(ice.SkuStatus),null);
 									loggerInfo.info(ice.SupplierSkuNo+"------------------"+ice.SkuNo);
+								}
+								if(!skuSpProductCodeMap.containsKey(ice.SupplierSkuNo)){
+									productFetchService.updateSpSkuIdBySupplier(supplier, ice.SupplierSkuNo, null,String.valueOf(ice.SkuStatus),sku.ProductModel);
+									loggerInfo.info(ice.SupplierSkuNo+"------------------"+sku.ProductModel);
 								}
 							} catch (Exception e) {
 								e.printStackTrace();

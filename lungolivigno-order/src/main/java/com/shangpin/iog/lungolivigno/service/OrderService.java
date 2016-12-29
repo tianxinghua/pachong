@@ -342,13 +342,13 @@ public class OrderService extends AbsOrderService{
 //		System.out.println(spOrderId);
 		
 		OrderService order = new OrderService();
-		try {
-			String storcode = order.getStoreCode("708074982162033", "1");
-			System.out.println(storcode); 
-		} catch (ServiceMessageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			String storcode = order.getStoreCode("708074982162033", "1");
+//			System.out.println(storcode); 
+//		} catch (ServiceMessageException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 //		String storecode = "";
 //		try {
 //			storecode = order.getStoreCode("708074982162062","TU");
@@ -357,21 +357,20 @@ public class OrderService extends AbsOrderService{
 //			e.printStackTrace();
 //		}
 //		System.out.println(storecode); 
-//		OrderDTO orderDTO = new OrderDTO();
-//		orderDTO.setDetail("705045002162002-5:1,");
-//		orderDTO.setSpPurchaseNo("CGD20161107675218"); 
-//		orderDTO.setSpOrderId("201611104650865");
-//		orderDTO.setPurchasePriceDetail("567");
+		OrderDTO orderDTO = new OrderDTO();
+		orderDTO.setDetail("703045002162002-6:1,");
+		orderDTO.setSpOrderId("201612175142218");
+		orderDTO.setPurchasePriceDetail("693.00");
 //		
-		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
-//		deleteOrder.setSpPurchaseNo("CGD20161107675218");
-		deleteOrder.setSpOrderId("201611104650865"); 
-		deleteOrder.setSupplierOrderNo("04650865"); 
+//		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
+////		deleteOrder.setSpPurchaseNo("CGD20161107675218");
+//		deleteOrder.setSpOrderId("201611104650865"); 
+//		deleteOrder.setSupplierOrderNo("04650865"); 
 //		
 //		OrderService order = new OrderService();
 ////		order.handleSupplierOrder(orderDTO); 
-//		order.handleConfirmOrder(orderDTO); 
-		order.handleRefundlOrder(deleteOrder); 
+		order.handleConfirmOrder(orderDTO); 
+//		order.handleRefundlOrder(deleteOrder); 
 	}
 
 }

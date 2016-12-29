@@ -251,16 +251,16 @@ public class OrderService extends AbsOrderService{
 			//下单=================================
 			OrderService order = new OrderService();
 			OrderDTO orderDTO = new OrderDTO();
-			orderDTO.setDetail("2366-38+:1,");
-			orderDTO.setSpPurchaseNo("CGD2016103106874");
-			orderDTO.setPurchasePriceDetail("160");
+			orderDTO.setDetail("35298-38:1,");
+			orderDTO.setSpPurchaseNo("CGDF2016121383941");
+			orderDTO.setPurchasePriceDetail("169.98");
 			order.handleConfirmOrder(orderDTO); 
 			
 			
 			//取消=================================
-			ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
-			deleteOrder.setSpPurchaseNo("CGD2016103106874");//CGD2016091400169
-			order.handleRefundlOrder(deleteOrder); 
+//			ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
+//			deleteOrder.setSpPurchaseNo("CGD2016103106874");//CGD2016091400169
+//			order.handleRefundlOrder(deleteOrder); 
 			
 			
 //			API_STUDIO69Stub stub = new API_STUDIO69Stub();	

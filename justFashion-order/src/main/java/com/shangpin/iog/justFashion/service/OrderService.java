@@ -202,9 +202,9 @@ public class OrderService extends AbsOrderService{
 		OrderService orderService = new OrderService();
 		OrderDTO orderDTO = new OrderDTO();
 		//CGD2016082400193 
-		orderDTO.setSpPurchaseNo("CGD2016082900003");
-		orderDTO.setDetail("I1W8182#F048700#I765######46:1,");
-		orderDTO.setPurchasePriceDetail("78.49");
+		orderDTO.setSpPurchaseNo("CGDF2016121586187");
+		orderDTO.setDetail("F662TS733#4YB#SM000######S:1,");
+		orderDTO.setPurchasePriceDetail("46.99");
 		orderService.handleConfirmOrder(orderDTO); 
 	}
 

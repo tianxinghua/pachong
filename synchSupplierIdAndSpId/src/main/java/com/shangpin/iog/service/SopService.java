@@ -1,12 +1,9 @@
 package com.shangpin.iog.service;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,10 +148,14 @@ public class SopService {
 					}
 					if (StringUtils.isNotBlank(ice.getSkuNo()) && StringUtils.isNotBlank(ice.getSupplierSkuNo())){						
 						try {
-							if(StringUtils.isBlank(skuSpSkuMap.get(ice.getSupplierSkuNo())) || StringUtils.isBlank(skuSpProductCodeMap.get(ice.getSupplierSkuNo()))){
-								productFetchService.updateSpSkuIdBySupplier(supplierId, ice.getSupplierSkuNo(), ice.getSkuNo(),""+ice.getSkuStatus(),sku.getProductModel());
+							if(!skuSpSkuMap.containsKey(ice.getSupplierSkuNo()) || !skuSpSkuMap.get(ice.getSupplierSkuNo()).equals(ice.getSkuNo())){
+								productFetchService.updateSpSkuIdBySupplier(supplierId, ice.getSupplierSkuNo(), ice.getSkuNo(),String.valueOf(ice.getSkuStatus()),null);
 								loggerInfo.info(ice.getSupplierSkuNo()+"--------------"+ ice.getSkuNo());
-							}							
+							}	
+							if(!skuSpProductCodeMap.containsKey(ice.getSupplierSkuNo())){
+								productFetchService.updateSpSkuIdBySupplier(supplierId, ice.getSupplierSkuNo(), null,String.valueOf(ice.getSkuStatus()),sku.getProductModel());
+								loggerInfo.info(ice.getSupplierSkuNo()+"--------------"+ sku.getProductModel());
+							}	
 						} catch (Exception e) {
 							loggerError.error(e.getMessage()); 
 						}
