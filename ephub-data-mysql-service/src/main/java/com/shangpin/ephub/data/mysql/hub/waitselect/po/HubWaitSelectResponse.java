@@ -22,6 +22,7 @@ public class HubWaitSelectResponse {
 	     * 尺码
 	     */
 	    private String skuSize;
+	    private String skuSizeId;
 	    /**
 	     * hubskuno
 	     */

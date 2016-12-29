@@ -6,6 +6,7 @@
     <result column="spu_no" property="spuNo" jdbcType="VARCHAR" />
     <result column="color" property="color" jdbcType="VARCHAR" />
     <result column="sku_size" property="skuSize" jdbcType="VARCHAR" />
+    <result column="sku_size_id" property="skuSizeId" jdbcType="VARCHAR" />
     <result column="sku_no" property="skuNo" jdbcType="VARCHAR" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     
@@ -28,6 +29,7 @@
     <result column="info_from" property="infoFrom" jdbcType="TINYINT" />
     
     <result column="supplier_sku_no" property="supplierSkuNo" jdbcType="VARCHAR" />
+    <result column="sku_supplier_mapping_id" property="skuSupplierMappingId" jdbcType="VARCHAR" />
     <result column="barcode" property="barcode" jdbcType="VARCHAR" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
     <result column="new_spu_type" property="newSpuType" jdbcType="TINYINT" />
@@ -38,7 +40,7 @@
   
   <select id="selectList" resultMap="BaseResultMap" >
     select
-   	map.supplier_no,map.supplier_id,spu.spu_no,sku.sku_no,sku.sku_size,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,spu.market_time,spu.season,spu.hub_color,spu.spu_state,spu.pic_url,spu.origin,spu.material
+   	map.supplier_no,map.sku_supplier_mapping_id,map.supplier_id,spu.spu_no,sku.sku_no,sku.sku_size,sku.sku_size_id,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,spu.market_time,spu.season,spu.hub_color,spu.hub_color_no,spu.spu_state,spu.pic_url,spu.origin,spu.material
     from hub_spu spu LEFT JOIN hub_sku sku on sku.spu_no = spu.spu_no left join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
     	spu.spu_select_state = #{spuSelectState}

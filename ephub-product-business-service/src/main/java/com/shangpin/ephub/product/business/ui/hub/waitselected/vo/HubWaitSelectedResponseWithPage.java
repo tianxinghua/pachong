@@ -22,6 +22,6 @@ public class HubWaitSelectedResponseWithPage implements Serializable {
 	private static final long serialVersionUID = -9080013205013160520L;
 
 	private int total;
-	private List<HubWaitSelectResponseDto> list;
+	private List<HubWaitSelectedResponse> list;
 
 }

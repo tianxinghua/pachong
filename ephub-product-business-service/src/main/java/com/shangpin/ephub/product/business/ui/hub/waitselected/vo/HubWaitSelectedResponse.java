@@ -18,10 +18,10 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubWaitSelectedResponse implements Serializable {
 	private static final long serialVersionUID = -9080013205013160520L;
-	private String skuSupplierMappingId;
+	private Long skuSupplierMappingId;
 	private String supplierNo;
 	private String skuNo;
-    private String url;
+    private String picUrl;
     private String brandNo;
     private String spuModel;
     private String categoryNo;
