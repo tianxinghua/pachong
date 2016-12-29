@@ -46,12 +46,12 @@ public class HubWaitSelectedController {
 			log.info("待选品请求参数：{}",dto);
 			HubWaitSelectRequestDto hubWaitSelectRequest = new HubWaitSelectRequestDto();
 			BeanUtils.copyProperties(dto, hubWaitSelectRequest);
-			hubWaitSelectRequest.setSpuSelectState((byte)SpuSelectState.WAIT_SELECT.getIndex());
-			int total = HubWaitSelectGateWay.count(hubWaitSelectRequest);
+			hubWaitSelectRequest.setSupplierSelectState((byte)0);
+			Long total = HubWaitSelectGateWay.count(hubWaitSelectRequest);
 			log.info("待选品查询到数据总数："+total);
 			if(total>0){
 				dto.setPageNo(dto.getPageNo()-1);
-				dto.setSpuSelectState((byte)SpuSelectState.WAIT_SELECT.getIndex());
+				dto.setSupplierSelectState((byte)0);
 				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
 				List<HubWaitSelectedResponse> arr = new ArrayList<HubWaitSelectedResponse>();
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
@@ -60,7 +60,7 @@ public class HubWaitSelectedController {
 					arr.add(HubWaitSelectResponse);
 				}
 				HubWaitSelectedResponseWithPage HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPage();
-				HubWaitSelectedResponseWithPageDto.setTotal(total);
+				HubWaitSelectedResponseWithPageDto.setTotal(Integer.parseInt(String.valueOf(total)));
 				HubWaitSelectedResponseWithPageDto.setList(arr);
 				return HubResponse.successResp(HubWaitSelectedResponseWithPageDto);
 			}else{

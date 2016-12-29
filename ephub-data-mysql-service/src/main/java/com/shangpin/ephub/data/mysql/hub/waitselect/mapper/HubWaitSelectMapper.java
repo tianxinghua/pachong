@@ -16,6 +16,6 @@ import com.shangpin.ephub.data.mysql.hub.waitselect.po.HubWaitSelectResponse;
  */
 @Mapper
 public interface HubWaitSelectMapper {
-    int count(HubWaitSelectRequest hubWaitSelect);
+    Long count(HubWaitSelectRequest hubWaitSelect);
     List<HubWaitSelectResponse> selectList(HubWaitSelectRequestWithPage hubWaitSelectWithPage);
 }
