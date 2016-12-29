@@ -12,7 +12,7 @@ import org.apache.ibatis.session.RowBounds;
  * <p>Description: </p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
- * @date 2016年12月28日 下午3:13:15
+ * @date 2016年12月29日 上午10:33:59
  */
 @Mapper
 public interface HubSkuPendingMapper {

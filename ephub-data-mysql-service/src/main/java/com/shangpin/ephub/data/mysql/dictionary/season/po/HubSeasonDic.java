@@ -74,6 +74,11 @@ public class HubSeasonDic implements Serializable {
      */
     private Date pushTime;
 
+    /**
+     * =0 无效季节 =1 有效季节
+     */
+    private Byte filterFlag;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSeasonDicId() {
@@ -188,6 +193,14 @@ public class HubSeasonDic implements Serializable {
         this.pushTime = pushTime;
     }
 
+    public Byte getFilterFlag() {
+        return filterFlag;
+    }
+
+    public void setFilterFlag(Byte filterFlag) {
+        this.filterFlag = filterFlag;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -208,6 +221,7 @@ public class HubSeasonDic implements Serializable {
         sb.append(", memo=").append(memo);
         sb.append(", pushState=").append(pushState);
         sb.append(", pushTime=").append(pushTime);
+        sb.append(", filterFlag=").append(filterFlag);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -238,7 +252,8 @@ public class HubSeasonDic implements Serializable {
             && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getPushState() == null ? other.getPushState() == null : this.getPushState().equals(other.getPushState()))
-            && (this.getPushTime() == null ? other.getPushTime() == null : this.getPushTime().equals(other.getPushTime()));
+            && (this.getPushTime() == null ? other.getPushTime() == null : this.getPushTime().equals(other.getPushTime()))
+            && (this.getFilterFlag() == null ? other.getFilterFlag() == null : this.getFilterFlag().equals(other.getFilterFlag()));
     }
 
     @Override
@@ -259,6 +274,7 @@ public class HubSeasonDic implements Serializable {
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
         result = prime * result + ((getPushState() == null) ? 0 : getPushState().hashCode());
         result = prime * result + ((getPushTime() == null) ? 0 : getPushTime().hashCode());
+        result = prime * result + ((getFilterFlag() == null) ? 0 : getFilterFlag().hashCode());
         return result;
     }
 }

@@ -1,5 +1,6 @@
 package com.shangpin.ephub.client.data.mysql.product.gateway;
 
+import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.client.data.mysql.product.dto.SpuPendingAuditDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface PengdingToHubGateWay {
 
 	@RequestMapping(value = "/penging-to-hub/create-hubspu-and-hubsku", method = RequestMethod.POST,consumes = "application/json")
-    public boolean auditPending(@RequestBody SpuPendingAuditDto dto);
+    public boolean auditPending(@RequestBody SpuModelDto dto);
 	
 
 	

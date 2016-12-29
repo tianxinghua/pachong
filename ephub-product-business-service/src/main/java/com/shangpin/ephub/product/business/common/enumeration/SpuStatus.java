@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.common;
+package com.shangpin.ephub.product.business.common.enumeration;
 
 /**
  * Created by loyalty on 16/12/21.
@@ -34,5 +34,14 @@ public enum SpuStatus {
     private SpuStatus(Integer index, String description) {
         this.index = index;
         this.description = description;
+    }
+    // 获取枚举实例
+    public static SpuStatus getOrderStatus(int index) {
+        for (SpuStatus c : SpuStatus.values()) {
+            if (c.getIndex() == index) {
+                return c;
+            }
+        }
+        return null;
     }
 }

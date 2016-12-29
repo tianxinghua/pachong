@@ -16,6 +16,7 @@
     <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="data_state" property="dataState" jdbcType="TINYINT" />
     <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="filter_flag" property="filterFlag" jdbcType="TINYINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -79,7 +80,7 @@
     <if test="fields == null" >
       supplier_brand_dic_id, supplier_id, supplier_brand, hub_brand_no, mapping_state, 
       push_state, create_time, create_user, update_time, update_user, push_time, memo, 
-      data_state, version
+      data_state, version, filter_flag
     </if>
     <if test="fields != null" >
       ${fields}
@@ -104,7 +105,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    supplier_brand_dic_id,supplier_id,supplier_brand,hub_brand_no,mapping_state,push_state,create_time,create_user,update_time,update_user,push_time,memo,data_state,version
+    supplier_brand_dic_id,supplier_id,supplier_brand,hub_brand_no,mapping_state,push_state,create_time,create_user,update_time,update_user,push_time,memo,data_state,version,filter_flag
     from hub_supplier_brand_dic
     where supplier_brand_dic_id = #{supplierBrandDicId,jdbcType=BIGINT}
   </select>
@@ -126,12 +127,14 @@
       hub_brand_no, mapping_state, push_state, 
       create_time, create_user, update_time, 
       update_user, push_time, memo, 
-      data_state, version)
+      data_state, version, filter_flag
+      )
     values (#{supplierBrandDicId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, #{supplierBrand,jdbcType=VARCHAR}, 
       #{hubBrandNo,jdbcType=VARCHAR}, #{mappingState,jdbcType=TINYINT}, #{pushState,jdbcType=TINYINT}, 
       #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{updateUser,jdbcType=VARCHAR}, #{pushTime,jdbcType=TIMESTAMP}, #{memo,jdbcType=VARCHAR}, 
-      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, #{filterFlag,jdbcType=TINYINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.dictionary.brand.po.HubSupplierBrandDic" >
     <selectKey keyColumn="supplier_brand_dic_id" keyProperty="supplierBrandDicId" order="AFTER" resultType="long">
@@ -181,6 +184,9 @@
       <if test="version != null" >
         version,
       </if>
+      <if test="filterFlag != null" >
+        filter_flag,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="supplierBrandDicId != null" >
@@ -224,6 +230,9 @@
       </if>
       <if test="version != null" >
         #{version,jdbcType=BIGINT},
+      </if>
+      <if test="filterFlag != null" >
+        #{filterFlag,jdbcType=TINYINT},
       </if>
     </trim>
   </insert>
@@ -278,6 +287,9 @@
       <if test="record.version != null" >
         version = #{record.version,jdbcType=BIGINT},
       </if>
+      <if test="record.filterFlag != null" >
+        filter_flag = #{record.filterFlag,jdbcType=TINYINT},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -298,7 +310,8 @@
       push_time = #{record.pushTime,jdbcType=TIMESTAMP},
       memo = #{record.memo,jdbcType=VARCHAR},
       data_state = #{record.dataState,jdbcType=TINYINT},
-      version = #{record.version,jdbcType=BIGINT}
+      version = #{record.version,jdbcType=BIGINT},
+      filter_flag = #{record.filterFlag,jdbcType=TINYINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -345,6 +358,9 @@
       <if test="version != null" >
         version = #{version,jdbcType=BIGINT},
       </if>
+      <if test="filterFlag != null" >
+        filter_flag = #{filterFlag,jdbcType=TINYINT},
+      </if>
     </set>
     where supplier_brand_dic_id = #{supplierBrandDicId,jdbcType=BIGINT}
   </update>
@@ -362,7 +378,8 @@
       push_time = #{pushTime,jdbcType=TIMESTAMP},
       memo = #{memo,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},
-      version = #{version,jdbcType=BIGINT}
+      version = #{version,jdbcType=BIGINT},
+      filter_flag = #{filterFlag,jdbcType=TINYINT}
     where supplier_brand_dic_id = #{supplierBrandDicId,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.dictionary.brand.po.HubSupplierBrandDicCriteria" id="selectByExampleWithRowbounds" >
