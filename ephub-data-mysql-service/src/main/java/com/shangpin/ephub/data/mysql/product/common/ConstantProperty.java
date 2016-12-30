@@ -10,4 +10,6 @@ public class ConstantProperty {
 
     public final static String  DATA_CREATE_USER = "pendingToHubService";
 
+    public final static Integer MAX_COMMON_QUERY_NUM = 10000;
+
 }

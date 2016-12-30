@@ -2,6 +2,7 @@ package com.shangpin.ephub.data.mysql.product.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@ToString
 public class SpuModelDto implements Serializable {
 
    /**
@@ -18,7 +20,7 @@ public class SpuModelDto implements Serializable {
 	 */
 	private static final long serialVersionUID = 5147199192561457186L;
 
-private String spuModel;//货号
+	private String spuModel;//货号
 
    private String brandNo;
 }
