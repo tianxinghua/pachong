@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseWithPageDTO;
 import com.shangpin.ephub.response.HubResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -26,6 +29,7 @@ import com.shangpin.ephub.response.HubResponse;
 @SuppressWarnings("rawtypes")
 @RestController
 @RequestMapping("/pending-task")
+@Slf4j
 public class PendingSpuImportTaskController {
 	
 	@Autowired
@@ -35,8 +39,11 @@ public class PendingSpuImportTaskController {
     public HubResponse importSpu(@RequestBody HubImportTaskRequestDto dto){
 	        	
 		try {
+			log.info("pendingSpu上传参数：{}",dto);
 			return pendingImportTaskService.uploadFileAndSave(dto,TaskImportTpye.PENDING_SPU.getIndex());
 		} catch (Exception e) {
+			log.error("pendingSpu上传文件失败",e);
+			e.printStackTrace();
 			return HubResponse.errorResp("上传文件失败，请重新上传");
 		}
     }
@@ -45,6 +52,7 @@ public class PendingSpuImportTaskController {
     public HubResponse importSku(@RequestBody HubImportTaskRequestDto dto){
 	        	
 		try {
+			log.info("pendingSku上传参数：{}",dto);
 			return pendingImportTaskService.uploadFileAndSave(dto,TaskImportTpye.PENDING_SKU.getIndex());
 		} catch (Exception e) {
 			return HubResponse.errorResp("上传文件失败，请重新上传");
