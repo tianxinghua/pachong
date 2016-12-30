@@ -50,7 +50,7 @@ public class PendingAuditController {
 			pendingService.audit(auditVO);
 		} catch (Exception e) {
 //			e.printStackTrace();
-			log.error("待审核失败 ：" + " reason :" +  e.getMessage());
+			log.error("待审核失败 ：" + " reason :" +  e.getMessage(),e);
 			return HubResponse.errorResp(e.getMessage());
 		}
 		return HubResponse.successResp(true);

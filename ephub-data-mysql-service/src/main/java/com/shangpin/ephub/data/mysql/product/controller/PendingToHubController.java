@@ -31,7 +31,7 @@ public class PendingToHubController {
             pengingToHubService.auditPending(dto);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("audit error . Reason : " + e.getMessage());
+            log.error("audit error . Reason : " + e.getMessage(),e);
             return false;
         }
         return true;
