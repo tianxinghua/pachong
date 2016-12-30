@@ -23,7 +23,7 @@ public class HubWaitSelectService {
 	@Autowired
 	private HubWaitSelectMapper hubSkuMapper;
 
-	public int count(HubWaitSelectRequest criteria) {
+	public Long count(HubWaitSelectRequest criteria) {
 		return hubSkuMapper.count(criteria);
 	}
 

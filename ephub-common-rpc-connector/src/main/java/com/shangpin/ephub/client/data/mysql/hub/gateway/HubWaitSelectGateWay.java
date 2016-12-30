@@ -22,7 +22,7 @@ import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 public interface HubWaitSelectGateWay {
 
 	@RequestMapping(value = "/hub-waitselect/count", method = RequestMethod.POST,consumes = "application/json")
-    public int count(@RequestBody HubWaitSelectRequestDto criteria);
+    public Long count(@RequestBody HubWaitSelectRequestDto criteria);
 	
 	@RequestMapping(value = "/hub-waitselect/select-with-page", method = RequestMethod.POST,consumes = "application/json")
     public List<HubWaitSelectResponseDto> selectByPage(@RequestBody HubWaitSelectRequestWithPageDto criteria);

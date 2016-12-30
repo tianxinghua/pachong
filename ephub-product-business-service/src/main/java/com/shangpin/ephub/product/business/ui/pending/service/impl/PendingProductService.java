@@ -21,6 +21,7 @@ import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicD
 import com.shangpin.ephub.client.data.mysql.categroy.gateway.HubSupplierCategroyDicGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
@@ -229,6 +230,7 @@ public class PendingProductService implements IPendingProductService{
                     for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
                         HubPendingSkuCheckResult result = pendingSkuCheckGateWay.checkSku(hubSkuPendingDto);
                         if(result.isPassing()){
+                        	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
                             hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
                         }else{
                             log.info("pending sku校验失败，不更新："+result.getResult()+"|原始数据："+JsonUtil.serialize(hubSkuPendingDto));

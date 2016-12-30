@@ -25,5 +25,5 @@ public class HubWaitSelectRequestWithPageDto {
     private Byte spuState;
     private String startDate;
     private String endDate;
-    private Byte spuSelectState;
+    private Byte supplierSelectState;
 }

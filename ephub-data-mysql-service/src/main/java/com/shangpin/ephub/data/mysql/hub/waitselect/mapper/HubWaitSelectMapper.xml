@@ -41,9 +41,9 @@
   <select id="selectList" resultMap="BaseResultMap" >
     select
    	map.supplier_no,map.sku_supplier_mapping_id,map.supplier_id,spu.spu_no,sku.sku_no,sku.sku_size,sku.sku_size_id,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,spu.market_time,spu.season,spu.hub_color,spu.hub_color_no,spu.spu_state,spu.pic_url,spu.origin,spu.material
-    from hub_spu spu LEFT JOIN hub_sku sku on sku.spu_no = spu.spu_no left join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
+    from hub_spu spu  JOIN hub_sku sku on sku.spu_no = spu.spu_no  join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
-    	spu.spu_select_state = #{spuSelectState}
+    	map.supplier_select_state = #{supplierSelectState}
      <if test="null!= supplierNo">
 	        and        map.supplier_no = #{supplierNo}
 	 </if>
@@ -68,13 +68,13 @@
       </if>
       limit #{pageNo} , #{pageSize}
   </select>
-   <select id="count" resultType="Integer">
+   <select id="count" resultType="java.lang.Long" parameterType="com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectRequest">
     select
    	count(*)
-    from hub_spu spu LEFT JOIN hub_sku sku on sku.spu_no = spu.spu_no left join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
+    from hub_spu spu  JOIN hub_sku sku on sku.spu_no = spu.spu_no  join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
     
-    spu.spu_select_state = #{spuSelectState}
+    supplier_select_state = #{supplierSelectState}
      <if test="null!= supplierNo">
 	             and   map.supplier_no = #{supplierNo}
 	 </if>

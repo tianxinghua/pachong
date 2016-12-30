@@ -26,7 +26,7 @@ public class HubWaitSelectController {
 	private HubWaitSelectService hubSkuService;
 	
 	@RequestMapping(value = "/count")
-    public int countByCriteria(@RequestBody HubWaitSelectRequest criteria){
+    public Long countByCriteria(@RequestBody HubWaitSelectRequest criteria){
     	return hubSkuService.count(criteria);
     }
 	
