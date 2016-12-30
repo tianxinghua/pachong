@@ -38,5 +38,11 @@ public class SpuPendingAuditQueryVO implements Serializable {
 
     private Integer pageSize; //每页显示数量
 
+    /**
+     *
+     * 查询状态 内部使用
+     */
+    private Integer status;
+
 
 }

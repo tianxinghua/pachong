@@ -27,10 +27,11 @@ public class PendingToHubController {
     @RequestMapping(value = "/create-hubspu-and-hubsku")
     public boolean auditPending(@RequestBody SpuModelDto dto){
         try {
+            log.info("spumodeldto = "+ dto.toString());
             pengingToHubService.auditPending(dto);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("audit error . Reason : " + e.getMessage());
+            log.error("audit error . Reason : " + e.getMessage(),e);
             return false;
         }
         return true;

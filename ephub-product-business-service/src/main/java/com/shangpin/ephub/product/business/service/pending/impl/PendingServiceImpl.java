@@ -108,8 +108,12 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         if(StringUtils.isNotBlank(queryVO.getEndDate())){
             criterion.andUpdateTimeLessThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getEndDate()));
         }
+        if(null==queryVO.getStatus()){
+            criterion.andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+        }else{
+            criterion.andSpuStateEqualTo(queryVO.getStatus().byteValue());
+        }
 
-        criterion.andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
         return criteria;
     }
 
@@ -191,7 +195,12 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     public boolean audit(SpuPendingAuditVO auditVO) throws Exception {
         //更新状态
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
-        hubSpuPending.setSpuState(auditVO.getAuditStatus().byteValue());
+        if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()){ //审核成功的 赋值为审核中
+
+            hubSpuPending.setSpuState(SpuStatus.SPU_HANDLING.getIndex().byteValue());
+        }else{
+            hubSpuPending.setSpuState(auditVO.getAuditStatus().byteValue());
+        }
         hubSpuPending.setUpdateTime(new Date());
 
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
@@ -238,6 +247,8 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
              //获取
              SpuPendingAuditQueryVO queryVO = new SpuPendingAuditQueryVO();
              BeanUtils.copyProperties(auditVO,queryVO);
+             //查询审核中的
+             queryVO.setStatus(SpuStatus.SPU_HANDLING.getIndex());
              SpuModelMsgVO spuModelMsgVO=this.getSpuModel(queryVO);
 
              List<SpuModelVO> spuModels = spuModelMsgVO.getSpuModels();
