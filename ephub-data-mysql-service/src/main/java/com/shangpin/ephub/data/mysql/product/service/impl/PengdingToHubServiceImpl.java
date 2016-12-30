@@ -86,6 +86,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                 .andBrandNoEqualTo(auditVO.getBrandNo());
         List<HubSpu> hubSpus = hubSpuMapper.selectByExample(criteria);
         if(null==hubSpus||(null!=hubSpus&&hubSpus.size()==0)){ //不存在插入新的SPU记录 以及 SKU 记录
+            log.info("不存在spu");
             //合并sku pending的尺码 生成HUBSKU
             Map<String,List<HubSkuPending>> sizeSkuMap = new HashMap<>();
             //根据尺码合并不同供货商的SKU信息
@@ -106,7 +107,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
 
         }else{ //TODO 已存在
-
+            log.info("存在spu");
         }
     }
 
