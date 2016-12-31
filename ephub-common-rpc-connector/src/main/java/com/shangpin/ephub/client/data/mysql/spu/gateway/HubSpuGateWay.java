@@ -60,4 +60,8 @@ public interface HubSpuGateWay {
 
     @RequestMapping(value = "/hub-spu/get-max-spu-no", method = RequestMethod.POST,consumes = "application/json")
 	public String getMaxSpuNo();
+
+
+    @RequestMapping(value = "/hub-spu/get-spuno", method = RequestMethod.POST,consumes = "application/json")
+    public String getSpuNo();
 }

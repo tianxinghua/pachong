@@ -1,7 +1,5 @@
 package com.shangpin.ephub.product.business.ui.hub.waitselected.dto;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
@@ -19,5 +17,6 @@ import lombok.ToString;
 public class HubWaitSelectStateDto {
 
 	private Long skuSupplierMappingId;
-	private String spuNo;
+	private Long spuId;
+	private Long skuId;
 }

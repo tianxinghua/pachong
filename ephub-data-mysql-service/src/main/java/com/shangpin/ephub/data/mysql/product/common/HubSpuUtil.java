@@ -1,7 +1,10 @@
 package com.shangpin.ephub.data.mysql.product.common;
 
 import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.data.mysql.sku.hub.mapper.HubSkuMapper;
+import com.shangpin.ephub.data.mysql.spu.hub.mapper.HubSpuMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +18,11 @@ public class HubSpuUtil {
     @Autowired
     IShangpinRedis shangpinRedis;
 
+    @Autowired
+    HubSpuMapper hubSpuMapper;
 
+    @Autowired
+    HubSkuMapper hubSkuMapper;
 
     /**
      * 创建SPU编号
@@ -34,10 +41,9 @@ public class HubSpuUtil {
         } catch (Exception e) {
 
             e.printStackTrace();
-
             log.error("redis 出错，无法获取spu编号");
-            return  "";
-            //TODO ADD EMAIL
+            String spuNo = hubSpuMapper.getMaxSpuNo();
+            tmpSpuNo = Long.valueOf(spuNo.substring(1,spuNo.length())) + 1;
         }
         String result = "";
         result = "00000000" + String.valueOf(tmpSpuNo);
@@ -72,12 +78,27 @@ public class HubSpuUtil {
         } catch (Exception e) {
 
             e.printStackTrace();
-
             log.error("redis 出错，无法获取sku编号");
-            return  "";
-            //TODO ADD EMAIL
+            String skuMaxNo = hubSkuMapper.getMaxSkuNo(spuNo);
+            String tmpSku="";
+            tmpSpuNo = Long.valueOf(skuMaxNo.substring(10,skuMaxNo.length()));
+            for(int i=1;i<=total;i++){
+                tmpSpuNo  = tmpSpuNo +i;
+                tmpSku = "000" + String.valueOf(tmpSpuNo);
+                tmpSku = tmpSku.substring(tmpSku.length()-3,tmpSku.length());
+                buffer.append(tmpSku).append(",");
+            }
+            result = buffer.toString().substring(0,buffer.toString().length()-1);
+
+            return  result;
+
         }
 
         return result;
     }
+
+
+
+
+
 }

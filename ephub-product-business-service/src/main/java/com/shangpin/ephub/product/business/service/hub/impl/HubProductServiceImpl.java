@@ -3,11 +3,14 @@ package com.shangpin.ephub.product.business.service.hub.impl;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.product.business.common.enumeration.ScmGenderType;
+import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.service.hub.HubProductService;
 import com.shangpin.ephub.product.business.service.hub.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +38,13 @@ public class HubProductServiceImpl implements HubProductService {
     @Autowired
     HubSkuPendingGateWay skuPendingGateWay;
 
+
+
     @Autowired
     HubSkuSupplierMappingGateWay supplierMappingGateWay;
+
+    @Autowired
+    ApiAddressProperties apiAddressProperties;
 
     @Override
     public void sendHubProuctToScm(HubProductIdDto hubProductIdDto) throws Exception {
@@ -70,17 +78,67 @@ public class HubProductServiceImpl implements HubProductService {
 
                     supplierId  = supplierIdDto.getId();
                     HubSkuSupplierMappingDto hubSkuSupplierMappingDto = supplierMappingGateWay.selectByPrimaryKey(supplierId);
-                    ApiSkuOrgDom  skuOrgDom =new ApiSkuOrgDom();
-                    skuOrgDom.setSkuOrgName("");
-                    skuOrgDom.setBarCode(hubSkuSupplierMappingDto.getBarcode());
-                    skuOrgDom.setSupplierSkuNo(hubSkuSupplierMappingDto.getSupplierSkuNo());
-                    skuOrgDom.setSupplierNo(hubSkuSupplierMappingDto.getSupplierNo());
-                    skuOrgDoms.add(skuOrgDom);
+                    //组装sku
+                    setScmSku(hubSpuDto,hubSkuDto,spSpuInfo, skuOrgDoms, hubSkuSupplierMappingDto);
 
                 }
             }
+            //推送
+            HubResponseDto responseDto = new HubResponseDto<String>();
+            restTemplate.postForObject(apiAddressProperties.getGmsAddProductUrl(),productDto,responseDto.getClass());
+            if(responseDto.getIsSuccess()){  //创建成功
+
+            }else{ //创建失败
+
+            }
         }
 
+
+    }
+
+    private void setScmSku(HubSpuDto hubSpuDto,HubSkuDto hubSkuDto,SpProductOrgInfoEntity spSpuInfo, List<ApiSkuOrgDom> skuOrgDoms, HubSkuSupplierMappingDto hubSkuSupplierMappingDto) {
+        ApiSkuOrgDom  skuOrgDom =new ApiSkuOrgDom();
+        skuOrgDom.setProductOrgInfoId(0L);
+        skuOrgDom.setSkuOrgInfoId(0L);
+        skuOrgDom.setSkuOrgName("");
+        skuOrgDom.setBarCode(hubSkuSupplierMappingDto.getBarcode());
+        skuOrgDom.setSupplierSkuNo(hubSkuSupplierMappingDto.getSupplierSkuNo());
+        skuOrgDom.setSkuNo("");
+        skuOrgDom.setSupplierNo(hubSkuSupplierMappingDto.getSupplierNo());
+
+        HubSkuPendingDto hubSkuPendingDto = getHubSkuPendingBySupplierIdAndSuppierSkuNo(hubSkuSupplierMappingDto.getSupplierId(), hubSkuSupplierMappingDto.getSupplierSkuNo());
+        if(null!=hubSkuPendingDto){
+            spSpuInfo.setProductMarketPrice(hubSkuPendingDto.getMarketPrice());
+            spSpuInfo.setMarketPriceCurreny(hubSkuPendingDto.getMarketPriceCurrencyorg());
+            //TODO 如果没有 填默认值
+            skuOrgDom.setMarketPrice(hubSkuPendingDto.getMarketPrice());
+            skuOrgDom.setMarketPriceUnit(hubSkuPendingDto.getMarketPriceCurrencyorg());
+
+            skuOrgDom.setScreenSize(hubSkuPendingDto.getScreenSize());
+            List<String> sizeList = new ArrayList<>();
+            sizeList.add(hubSkuPendingDto.getHubSkuSize());
+            skuOrgDom.setProductSize(sizeList);
+        }
+
+        skuOrgDom.setColourScheme("");
+        skuOrgDom.setMemo("");
+        List<String> colorList = new ArrayList<>();
+        colorList.add(hubSpuDto.getHubColor());
+        skuOrgDom.setProColor(colorList);
+
+        List<String> materialList = new ArrayList<>();
+        materialList.add(hubSpuDto.getMaterial());
+        skuOrgDom.setMaterialList(materialList);
+
+        List<PlaceOrigin> originList = new ArrayList<>();
+        PlaceOrigin placeOrigin =new PlaceOrigin();
+        placeOrigin.setPlaceOriginId(0);
+        placeOrigin.setPlaceOriginValue(hubSpuDto.getOrigin());
+        originList.add(placeOrigin);
+        skuOrgDom.setPlaceOriginList(originList);
+
+
+        skuOrgDoms.add(skuOrgDom);
 
     }
 
@@ -145,5 +203,18 @@ public class HubProductServiceImpl implements HubProductService {
         spSpuInfo.setSecurityCategory("");
         //TODO 币种
         spSpuInfo.setSaleType(0);
+    }
+
+
+    public HubSkuPendingDto getHubSkuPendingBySupplierIdAndSuppierSkuNo(String supplierId,String supplierSkuNo){
+        HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
+        criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
+        List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteria);
+        if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
+            return hubSkuPendingDtos.get(0);
+        }else{
+            return null;
+        }
+
     }
 }
