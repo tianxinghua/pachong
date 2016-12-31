@@ -18,6 +18,8 @@ import com.shangpin.ephub.product.business.service.hub.dto.HubProductIdDto;
 import com.shangpin.ephub.product.business.service.hub.impl.HubProductServiceImpl;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelectStateDto;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * <p>
  * Title:SupplierOrderService.java
@@ -26,6 +28,7 @@ import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelect
  * @date 2016年12月21日 下午4:06:52
  */
 @Service
+@Slf4j
 public class HubWaitSelectedService {
 	
 	
@@ -73,8 +76,10 @@ public class HubWaitSelectedService {
 			spuDto.setSubProduct(skulist);
 			
 			try {
+				log.info("推送scm参数",spuDto);
 				hubCommonProductServiceImpl.sendHubProuctToScm(spuDto);
 			} catch (Exception e) {
+				log.error("推送scm出错",e);
 				e.printStackTrace();
 			}
 			
