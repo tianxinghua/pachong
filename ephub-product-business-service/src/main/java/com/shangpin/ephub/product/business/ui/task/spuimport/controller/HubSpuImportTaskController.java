@@ -40,21 +40,10 @@ public class HubSpuImportTaskController {
     public HubResponse importSpu(@RequestBody HubImportTaskRequestDto dto){
 	        	
 		try {
-			log.info("导入接受到的参数："+dto.toString());
+			log.info("hub导入接受到的参数："+dto.toString());
 			return taskService.uploadFileAndSave(dto,TaskImportTpye.HUB_PRODUCT.getIndex());
 		} catch (Exception e) {
 			return HubResponse.errorResp("上传文件失败，请重新上传");
-		}
-    }
-	@RequestMapping(value = "/down-import-result",method = RequestMethod.POST)
-	@ResponseBody
-    public HubResponse<byte[]> downResult(String dto){
-	        	
-		try {
-			log.info("接受到的参数："+dto.toString());
-			return taskService.downResultFile(dto);
-		} catch (Exception e) {
-			return HubResponse.errorResp("下载失败，请重新上传");
 		}
     }
 	
@@ -62,7 +51,7 @@ public class HubSpuImportTaskController {
 	@ResponseBody
     public HubResponse importSpuList(@RequestBody HubImportTaskListRequestDto dto){
 	        	
-		log.info("列表接受到的参数："+dto.toString());
+		log.info("hub任务列表接受到的参数："+dto.toString());
 		try {
 			Byte [] list1 = {3};
 			HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = taskService.findHubTaskList(dto,Arrays.asList(list1));
