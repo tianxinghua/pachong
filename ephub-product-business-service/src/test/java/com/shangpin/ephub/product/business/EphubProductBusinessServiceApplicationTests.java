@@ -53,15 +53,15 @@ public class EphubProductBusinessServiceApplicationTests {
 			StringWriter w = new StringWriter();
 			om.writeValue(w, request);
 			System.out.println(w.toString());
-//			HttpEntity<BrandRequstDto> requestEntity = new HttpEntity<BrandRequstDto>(request);
-//			
-//			ResponseEntity<BasicDataResponse<BrandDom>> entity = httpClient.exchange("http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetBrands", HttpMethod.POST, requestEntity, new ParameterizedTypeReference<BasicDataResponse<BrandDom>>() {
-//			});
-//			BasicDataResponse<BrandDom> body = entity.getBody();
-//			System.out.println(body.getResDatas());
+			HttpEntity<BrandRequstDto> requestEntity = new HttpEntity<BrandRequstDto>(request);
 			
-			String response = httpClient.postForObject("http://192.168.3.225/ShangPin.GMS.Api/ProductBasicData/GetBrands", request, String.class);
-			System.out.println(response);
+			ResponseEntity<BasicDataResponse<BrandDom>> entity = httpClient.exchange("http://192.168.3.225/ShangPin.GMS.Api/ProductBasicData/GetBrands", HttpMethod.POST, requestEntity, new ParameterizedTypeReference<BasicDataResponse<BrandDom>>() {
+			});
+			BasicDataResponse<BrandDom> body = entity.getBody();
+			System.out.println(body.getResDatas());
+			
+//			String response = httpClient.postForObject("http://192.168.3.225/ShangPin.GMS.Api/ProductBasicData/GetBrands", request, String.class);
+//			System.out.println(response);
 		} catch (Exception e) {
 			e.printStackTrace(); 
 		}		 
