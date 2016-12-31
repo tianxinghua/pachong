@@ -4,31 +4,41 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BrandRequstDto {
 
 	@JsonIgnore
 	public String brandNo;  //单个查询
-    public List<String> BrandNos;//编号查询
-    public String BrandEnName; //品牌英文名称
+	@JsonIgnore
+    public List<String> brandNos;//编号查询
+	@JsonIgnore
+    public String brandEnName; //品牌英文名称
+	
+    @JsonProperty("BrandNo")
 	public String getBrandNo() {
 		return brandNo;
 	}
+	 @JsonProperty("BrandNo")
 	public void setBrandNo(String brandNo) {
 		this.brandNo = brandNo;
 	}
+	 @JsonProperty("BrandNos")
 	public List<String> getBrandNos() {
-		return BrandNos;
+		return brandNos;
 	}
+	 @JsonProperty("BrandNos")
 	public void setBrandNos(List<String> brandNos) {
-		BrandNos = brandNos;
+		this.brandNos = brandNos;
 	}
+	 @JsonProperty("BrandEnName")
 	public String getBrandEnName() {
-		return BrandEnName;
+		return brandEnName;
 	}
+	 @JsonProperty("BrandEnName")
 	public void setBrandEnName(String brandEnName) {
-		BrandEnName = brandEnName;
+		this.brandEnName = brandEnName;
 	}
     
 		

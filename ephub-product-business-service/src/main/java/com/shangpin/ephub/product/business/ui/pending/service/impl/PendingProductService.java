@@ -224,6 +224,7 @@ public class PendingProductService implements IPendingProductService{
                     hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
                 }else{
                     log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
+                    throw new Exception("spu校验失败");
                 }
                 List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
                 if(null != pengdingSkus && pengdingSkus.size()>0){
@@ -234,6 +235,10 @@ public class PendingProductService implements IPendingProductService{
                             hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
                         }else{
                             log.info("pending sku校验失败，不更新："+result.getResult()+"|原始数据："+JsonUtil.serialize(hubSkuPendingDto));
+                            //回滚spu状态
+                            pendingProductDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
+                            hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+                            throw new Exception("sku校验失败");
                         }
                     }
                 }
@@ -241,7 +246,7 @@ public class PendingProductService implements IPendingProductService{
             return true;
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage(),e);
-            throw new Exception("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage(),e);
+            throw new Exception(e.getMessage());
         }
     }
     @Override

@@ -1,15 +1,20 @@
 spring: 
   cloud: 
        consul: 
-         host: 192.168.20.110
+         host: localhost
          port: 8500
          discovery: 
-           instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+           prefer-agent-address: true
            prefer-ip-address: true
-           ip-address: 192.168.3.211
-           hostname: 192.168.3.211
-           port: ${server.port}
-           healthCheckUrl: http://192.168.3.211:8001/info 
+           health-check-interval: 10s
+           register: true
+           register-health-check: true
+           #health-check-timeout: 5s
+           #instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+           #ip-address: 192.168.3.211
+           #hostname: 192.168.3.211
+           #port: ${server.port}
+           #healthCheckUrl: http://192.168.3.211:8001/info 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   mail: 
