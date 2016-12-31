@@ -18,6 +18,7 @@ import com.shangpin.pending.product.consumer.util.PradaModelRule;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 
@@ -127,7 +128,7 @@ public class PendingHandler {
             HubSpuPendingDto tmp = dataServiceHandler.getHubSpuPending(message.getSupplierId(),message.getData().getSupplierSpuNo());
             if(spuStatus== MessageType.NEW.getIndex()){
                 if(null==tmp){
-                    hubSpuPending = this.addNewSpu(pendingSpu,headers);
+                    hubSpuPending = createNewSpu(message, headers, pendingSpu);
                 }else{
                     hubSpuPending = tmp;
                 }
@@ -137,7 +138,12 @@ public class PendingHandler {
                 hubSpuPending = this.updateSpu(pendingSpu,headers);
 
             }else{
-                //TODO  获取hubspu对象
+                //不需要处理  已存在
+                if(null!=tmp){
+                    hubSpuPending = tmp;
+                }else{//如果不存在 说明是消息队列混乱了
+                    hubSpuPending = createNewSpu(message, headers, pendingSpu);
+                }
             }
         }
 
@@ -172,6 +178,28 @@ public class PendingHandler {
 
 
 
+    }
+
+    private HubSpuPendingDto createNewSpu(PendingProduct message, Map<String, Object> headers, PendingSpu pendingSpu) throws Exception {
+        HubSpuPendingDto hubSpuPending = null;
+        try {
+
+            hubSpuPending = this.addNewSpu(pendingSpu,headers);
+        } catch (Exception e) {
+
+            if(e instanceof DuplicateKeyException){//并发造成的
+                HubSpuPendingDto spuDto = dataServiceHandler.getHubSpuPending(message.getSupplierId(),message.getData().getSupplierSpuNo());
+                if(null!=spuDto){
+                    hubSpuPending = spuDto;
+                }
+            }else{
+                e.printStackTrace();
+                throw e;
+            }
+
+
+        }
+        return hubSpuPending;
     }
 
     private  Map<String,Integer> getMessageStatus(Map<String, Object> headers){
@@ -210,12 +238,19 @@ public class PendingHandler {
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         HubSpuDto hubSpuDto = null;
 
-
+        BeanUtils.copyProperties(spu,hubSpuPending);
         boolean brandmapping = true;
         //首先映射品牌 ，否则无法查询SPU
         brandmapping = setBrandMapping(spu, hubSpuPending);
+
+        //验证货号
+        boolean spuModelJudge = true;
+        if(brandmapping){
+            spuModelJudge  = setBrandModel(spu, hubSpuPending);
+        }
+
         if(brandmapping&&null!=spu.getSpuModel()){
-            hubSpuDto = dataServiceHandler.getHubSpuByHubBrandNoAndProductModel(hubSpuPending.getHubBrandNo(),spu.getSpuModel());
+            hubSpuDto = dataServiceHandler.getHubSpuByHubBrandNoAndProductModel(hubSpuPending.getHubBrandNo(),hubSpuPending.getSpuModel());
         }
 
         if(null!=hubSpuDto){
@@ -224,28 +259,16 @@ public class PendingHandler {
             hubSpuPending.setHubCategoryNo(hubSpuDto.getCategoryNo());
         }else{
 
-            BeanUtils.copyProperties(spu,hubSpuPending);
+
             hubSpuPending.setCreateTime(new Date());
             boolean allStatus=true;
-
-
-
-
+            if(!brandmapping) allStatus=false;
+            if(!spuModelJudge) allStatus = false;
             //设置性别
             if(!setGenderMapping(spu, hubSpuPending)) allStatus=false;
 
             //获取品类
             if(!setCategoryMapping(spu, hubSpuPending)) allStatus=false;
-
-
-            if(!brandmapping) allStatus=false;
-
-
-            //货号验证
-            if(brandmapping){
-                if(!setBrandModel(spu, hubSpuPending)) allStatus=false;
-            }
-
 
             //获取颜色
             if(!setColorMapping(spu, hubSpuPending)) allStatus = false;
@@ -265,6 +288,9 @@ public class PendingHandler {
                 hubSpuPending.setSpuState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
             }
 
+            Date date = new Date();
+            hubSpuPending.setCreateTime(date);
+            hubSpuPending.setUpdateTime(date);
 
             dataServiceHandler.savePendingSpu(hubSpuPending);
 
@@ -530,7 +556,7 @@ public class PendingHandler {
         Map<String,String>  genderMap = this.getGenderMap(null);
 
 
-        if(genderMap.containsKey(spu.getHubGender().trim())){
+        if(null!=spu.getHubGender()&&genderMap.containsKey(spu.getHubGender().trim())){
              //包含时转化赋值
             hubSpuPending.setHubGender(genderMap.get(spu.getHubGender()));
             hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
@@ -624,9 +650,10 @@ public class PendingHandler {
         if("".equals(hubSize)){
             hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
         }else{
+            String[] sizeAndIdArray = hubSize.split(",");
             hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-            hubSkuPending.setHubSkuSize(hubSize);
-
+            hubSkuPending.setHubSkuSize(sizeAndIdArray[1]);
+            hubSkuPending.setScreenSize(sizeAndIdArray[0]);
 
         }
         hubSkuPending.setFilterFlag(filterFlag); 

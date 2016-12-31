@@ -29,6 +29,7 @@ import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.rule.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 
@@ -49,11 +50,17 @@ public class PendingProductConsumerServiceApplication implements ApplicationRunn
 	private HubBrandDicGateway clients;
 	@Autowired
 	private HubSpuPendingGateWay clients2;
+	@Autowired
+	private HubSpuGateWay clients3;
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		HubSpuPendingDto arg0 = new HubSpuPendingDto();
-		arg0.setHubColorNo("FDFDf");
-		Long  i= clients2.insert(arg0 );
-		System.out.println(arg0);
+//		HubSpuPendingDto arg0 = new HubSpuPendingDto();
+//		arg0.setHubColorNo("FDFDf");
+//		Long  i= clients2.insert(arg0 );
+//		System.out.println(arg0);
+		for (int i = 0; i < 1000; i++) {
+			System.out.println(clients3.selectByPrimaryKey(1L));
+		}
+		System.out.println("over");
 	}
 }
