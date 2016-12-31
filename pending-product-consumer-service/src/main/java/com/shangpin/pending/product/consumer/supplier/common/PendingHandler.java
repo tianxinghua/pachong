@@ -145,7 +145,7 @@ public class PendingHandler {
         Integer skuStatus = 0;
         if(null!=hubSpuPending){
 
-        	byte filterFlag = screenSupplierBrandEffectiveOrNot(pendingSpu.getSupplierId(),pendingSpu.getHubBrandNo());
+        	byte filterFlag = screenSupplierBrandAndSeasonEffectiveOrNot(pendingSpu.getSupplierId(),pendingSpu.getHubBrandNo(),pendingSpu.getHubSeason());
         	
             for(PendingSku sku:skus){
                 if(messageMap.containsKey(sku.getSupplierSkuNo())){
@@ -885,15 +885,16 @@ public class PendingHandler {
      * 判断供应商的品牌是不是有效品牌
      * @param supplierId 供应商门户编号
      * @param supplierBrandName 供应商品牌名称
-     * @param hubSkuPending
+     * @param supplierSeason 供应商季节名称
      */
-    private byte screenSupplierBrandEffectiveOrNot(String supplierId,String supplierBrandName){
-    	HubSupplierBrandDicDto supplierBrandDic = dataServiceHandler.getHubSupplierBrand(supplierId,supplierBrandName);
-    	if(null != supplierBrandDic && supplierBrandDic.getFilterFlag() == FilterFlag.EFFECTIVE.getIndex()){
-    		return FilterFlag.EFFECTIVE.getIndex();
-    	}else{
-    		return FilterFlag.INVALID.getIndex(); 
-    	}
+    private byte screenSupplierBrandAndSeasonEffectiveOrNot(String supplierId,String supplierBrandName,String supplierSeason){
+//    	HubSupplierBrandDicDto supplierBrandDic = dataServiceHandler.getHubSupplierBrand(supplierId,supplierBrandName);
+//    	if(null != supplierBrandDic && supplierBrandDic.getFilterFlag() == FilterFlag.EFFECTIVE.getIndex()){
+//    		return FilterFlag.EFFECTIVE.getIndex();
+//    	}else{
+//    		return FilterFlag.INVALID.getIndex(); 
+//    	}
+    	return FilterFlag.EFFECTIVE.getIndex();
     }
 
 
