@@ -3,15 +3,12 @@ package com.shangpin.ephub.client.data.mysql.sku.gateway;
 import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuWithCriteriaDto;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * <p>Title:HubSkuController.java </p>
@@ -45,8 +42,8 @@ public interface HubSkuGateWay {
 	@RequestMapping(value = "/hub-sku/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSkuDto> selectByCriteria(@RequestBody HubSkuCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-sku/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public HubSkuDto selectByPrimaryKey(Long skuId);
+	@RequestMapping(value = "/hub-sku/select-by-primary-key/{skuId}", method = RequestMethod.POST,consumes = "application/json")
+    public HubSkuDto selectByPrimaryKey(@PathVariable("skuId") Long skuId);
 	
 	@RequestMapping(value = "/hub-sku/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubSkuWithCriteriaDto hubSkuWithCriteria);
@@ -60,6 +57,10 @@ public interface HubSkuGateWay {
 	@RequestMapping(value = "/hub-sku/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody HubSkuDto hubSku);
 
+
+
+
+    //---------------------- 人工处理
     @RequestMapping(value = "/hub-sku/get-skuno", method = RequestMethod.POST)
     public String createSkuNo(@RequestParam(value = "spuno")  String  spuno);
 }

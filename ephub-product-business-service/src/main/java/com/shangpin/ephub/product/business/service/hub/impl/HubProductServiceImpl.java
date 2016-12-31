@@ -51,7 +51,7 @@ public class HubProductServiceImpl implements HubProductService {
         Long  spuId = hubProductIdDto.getId();
         List<HubProductIdDto> skus = hubProductIdDto.getSubProduct();
         Long skuId = 0L;
-        Long supplierId = 0L;
+        Long supplierMappingId = 0L;
         //推送对象初始化
         HubProductDto productDto = new HubProductDto();
         SpProductOrgInfoEntity spSpuInfo = new SpProductOrgInfoEntity(); //SCM需要的SPU对象
@@ -76,8 +76,8 @@ public class HubProductServiceImpl implements HubProductService {
                 List<HubProductIdDto> supplierSkuMapping =  idDto.getSubProduct();
                 for(HubProductIdDto supplierIdDto :supplierSkuMapping) {
 
-                    supplierId  = supplierIdDto.getId();
-                    HubSkuSupplierMappingDto hubSkuSupplierMappingDto = supplierMappingGateWay.selectByPrimaryKey(supplierId);
+                    supplierMappingId  = supplierIdDto.getId();
+                    HubSkuSupplierMappingDto hubSkuSupplierMappingDto = supplierMappingGateWay.selectByPrimaryKey(supplierMappingId);
                     //组装sku
                     setScmSku(hubSpuDto,hubSkuDto,spSpuInfo, skuOrgDoms, hubSkuSupplierMappingDto);
 
