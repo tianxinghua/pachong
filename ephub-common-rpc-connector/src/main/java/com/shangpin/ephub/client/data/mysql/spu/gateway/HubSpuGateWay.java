@@ -44,7 +44,7 @@ public interface HubSpuGateWay {
     public List<HubSpuDto> selectByCriteria(@RequestBody HubSpuCriteriaDto criteria);
 	
 	@RequestMapping(value = "/hub-spu/select-by-primary-key/{spuId}", method = RequestMethod.POST,consumes = "application/json")
-    public HubSpuDto selectByPrimaryKey(@PathVariable Long spuId);
+    public HubSpuDto selectByPrimaryKey(@PathVariable("spuId") Long spuId);
 	
 	@RequestMapping(value = "/hub-spu/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubSpuWithCriteriaDto hubSpuWithCriteria);
