@@ -2,7 +2,9 @@ package com.shangpin.ephub.product.business.ui.hub.waitselected.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,9 +12,7 @@ import org.springframework.stereotype.Service;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.product.business.service.hub.dto.HubProductIdDto;
 import com.shangpin.ephub.product.business.service.hub.impl.HubProductServiceImpl;
@@ -45,42 +45,32 @@ public class HubWaitSelectedService {
 			HubSkuSupplierMappingDto.setSkuSupplierMappingId(dto.getSkuSupplierMappingId());
 			hubSkuSupplierMappingGateWay.updateByPrimaryKeySelective(HubSkuSupplierMappingDto);
 			
-			HubSpuWithCriteriaDto HubSpuWithCriteriaDto = new HubSpuWithCriteriaDto();
-			HubSpuCriteriaDto HubSpuCriteriaDto = new HubSpuCriteriaDto();
-			HubSpuCriteriaDto.createCriteria().andSpuNoEqualTo(dto.getSpuNo());
 			HubSpuDto hubSpu = new HubSpuDto();
 			hubSpu.setSpuSelectState((byte)1);
+			hubSpu.setSpuId(dto.getSpuId());
 			hubSpu.setUpdateTime(new Date());
-			HubSpuWithCriteriaDto.setHubSpu(hubSpu);
-			HubSpuWithCriteriaDto.setCriteria(HubSpuCriteriaDto);
-			hubSpuGateway.updateByCriteriaSelective(HubSpuWithCriteriaDto);
+			hubSpuGateway.updateByPrimaryKeySelective(hubSpu);
 			
-			String spuNo = dto.getSpuNo();
+			Long spuId = dto.getSpuId();
 			Long mappId = dto.getSkuSupplierMappingId();
+			Long skuId = dto.getSkuId();
 			
-			HubSpuCriteriaDto CriteriaDto = new HubSpuCriteriaDto();
-			CriteriaDto.createCriteria().andSpuNoEqualTo(spuNo);
-			HubSpuDto hubSpuDto = hubSpuGateway.selectByCriteria(CriteriaDto).get(0);
-			Long spuId = hubSpuDto.getSpuId();
-			
-//			hubSkuGateWay.selectByCriteria()
-			
-			Long skuId = null;
 			List<HubProductIdDto> skulist = new ArrayList<HubProductIdDto>();
+		
 			HubProductIdDto skuDto = new HubProductIdDto();
 			skuDto.setId(skuId);
 			
+			List<HubProductIdDto> mapplist = new ArrayList<HubProductIdDto>();
 			HubProductIdDto mappDto = new HubProductIdDto();
 			mappDto.setId(mappId);
+			mapplist.add(mappDto);
 			
+			skuDto.setSubProduct(mapplist);
 			skulist.add(skuDto);
-			
 			
 			HubProductIdDto spuDto = new HubProductIdDto();
 			spuDto.setId(spuId);
 			spuDto.setSubProduct(skulist);
-			
-		
 			
 			try {
 				hubCommonProductServiceImpl.sendHubProuctToScm(spuDto);
