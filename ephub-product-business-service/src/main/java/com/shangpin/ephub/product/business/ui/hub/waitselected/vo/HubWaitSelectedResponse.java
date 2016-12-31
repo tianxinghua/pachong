@@ -21,6 +21,8 @@ public class HubWaitSelectedResponse implements Serializable {
 	private Long skuSupplierMappingId;
 	private String supplierNo;
 	private String spuNo;
+	private Long skuId;
+	private Long spuId;
     private String picUrl;
     private String brandNo;
     private String spuModel;

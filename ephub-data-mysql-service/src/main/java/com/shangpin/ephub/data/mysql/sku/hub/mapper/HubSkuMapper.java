@@ -39,4 +39,6 @@ public interface HubSkuMapper {
     int updateByPrimaryKeySelective(HubSku record);
 
     int updateByPrimaryKey(HubSku record);
+
+    String getMaxSkuNo(@Param("spuNo") String  spuNo);
 }

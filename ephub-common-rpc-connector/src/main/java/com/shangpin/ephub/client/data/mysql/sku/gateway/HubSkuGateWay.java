@@ -11,6 +11,7 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuWithCriteriaDto;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * <p>Title:HubSkuController.java </p>
@@ -58,4 +59,7 @@ public interface HubSkuGateWay {
 	
 	@RequestMapping(value = "/hub-sku/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody HubSkuDto hubSku);
+
+    @RequestMapping(value = "/hub-sku/get-skuno", method = RequestMethod.POST)
+    public String createSkuNo(@RequestParam(value = "spuno")  String  spuno);
 }

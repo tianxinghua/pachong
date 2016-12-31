@@ -19,10 +19,15 @@ public enum TaskState {
 	 * 部分成功
 	 */
 	SOME_SUCCESS(2,"SOME_SUCCESS"),
+
 	/**
 	 * 全部成功
 	 */
-	ALL_SUCCESS(3,"ALL_SUCCESS");
+	ALL_SUCCESS(3,"ALL_SUCCESS"),
+	/**
+	 * 部分成功
+	 */
+	ALL_FAIL(4,"SOME_SUCCESS");
 	
 	/**
      * 数字索引标识

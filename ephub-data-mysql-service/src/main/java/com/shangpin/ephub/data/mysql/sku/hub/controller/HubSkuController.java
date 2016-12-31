@@ -2,9 +2,11 @@ package com.shangpin.ephub.data.mysql.sku.hub.controller;
 
 import java.util.List;
 
+import com.shangpin.ephub.data.mysql.product.common.HubSpuUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.data.mysql.sku.hub.bean.HubSkuCriteriaWithRowBounds;
@@ -26,6 +28,9 @@ public class HubSkuController {
 
 	@Autowired
 	private HubSkuService hubSkuService;
+
+	@Autowired
+	HubSpuUtil hubSpuUtil;
 	
 	@RequestMapping(value = "/count-by-criteria")
     public int countByCriteria(@RequestBody HubSkuCriteria criteria){
@@ -75,4 +80,9 @@ public class HubSkuController {
     public int updateByPrimaryKey(@RequestBody HubSku hubSku){
     	return hubSkuService.updateByPrimaryKey(hubSku);
     }
+
+	@RequestMapping(value = "/get-skuno")
+	public String createSkuNo(@RequestParam(value = "spuno")  String  spuno){
+		return   hubSpuUtil.createHubSkuNo(spuno,1);
+	}
 }

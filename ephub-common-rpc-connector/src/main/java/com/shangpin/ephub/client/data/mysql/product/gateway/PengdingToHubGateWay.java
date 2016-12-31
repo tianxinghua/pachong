@@ -17,7 +17,7 @@ public interface PengdingToHubGateWay {
 
 	@RequestMapping(value = "/penging-to-hub/create-hubspu-and-hubsku", method = RequestMethod.POST,consumes = "application/json")
     public boolean auditPending(@RequestBody SpuModelDto dto);
-	
+
 
 	
 

@@ -58,7 +58,8 @@ public class TaskImportService {
     ProductImportTaskStreamSender productImportTaskStreamSender;
     public HubResponse uploadFileAndSave(HubImportTaskRequestDto task,int importType) throws Exception{
 
-        String []fileName = task.getFileName().split("\\.");
+    	String name  = new String(task.getFileName().getBytes("UTF-8"));
+        String []fileName = name.split("\\.");
         if(fileName!=null&&fileName.length==2){
             if("xlsx".equals(fileName[1])||"xls".equals(fileName[1])){
 
@@ -75,6 +76,7 @@ public class TaskImportService {
                 return HubResponse.successResp(null);
             }
         }
+        log.info("上传文件为"+task.getFileName()+"，格式有误，请下载模板");
         return HubResponse.errorResp("文件格式有误，请下载模板");
     }
     private void sendTaskMessage(String taskNo,String ftpFilePath,int importType){
@@ -119,12 +121,11 @@ public class TaskImportService {
         }
         criteria.andImportTypeIn(listImportType);
         int total = spuImportGateway.countByCriteria(hubSpuImportTaskCriteriaDto);
-        log.info("查询到数量："+total);
+        log.info("hub任务列表查询到数量："+total);
         if(total<1){
             return null;
         }
         List<HubSpuImportTaskDto>  list = spuImportGateway.selectByCriteria(hubSpuImportTaskCriteriaDto);
-        log.info("查询到数据："+list);
         HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = new HubTaskProductResponseWithPageDTO();
         List<HubTaskProductResponseDTO> responseList = convertTaskDTO2ResponseDTO(list);
         hubTaskProductResponseWithPageDTO.setTotal(total);
@@ -144,19 +145,6 @@ public class TaskImportService {
             }
         }
         return responseList;
-    }
-    public HubResponse<byte[]> downResultFile(String resultFilePath) throws Exception{
-        // TODO Auto-generated method stub
-        InputStream in = FTPClientUtil.downFile(resultFilePath);
-        ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
-        byte[] buff = new byte[1024]; //buff用于存放循环读取的临时数据
-        int rc = 0;
-        while ((rc = in.read(buff, 0, 100)) > 0) {
-            swapStream.write(buff, 0, rc);
-        }
-        swapStream.flush();
-        byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果
-        return HubResponse.successResp(in_b);
     }
 
 }
