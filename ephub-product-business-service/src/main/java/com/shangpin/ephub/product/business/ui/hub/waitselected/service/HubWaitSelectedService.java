@@ -76,10 +76,10 @@ public class HubWaitSelectedService {
 			spuDto.setSubProduct(skulist);
 			
 			try {
-				log.info("推送scm参数",spuDto);
+				log.info("推送scm参数{}",spuDto);
 				hubCommonProductServiceImpl.sendHubProuctToScm(spuDto);
 			} catch (Exception e) {
-				log.error("推送scm出错",e);
+				log.error("推送scm出错{}",e);
 				e.printStackTrace();
 			}
 			
