@@ -1,5 +1,6 @@
 package com.shangpin.ephub.data.mysql.product.controller;
 
+import com.shangpin.ephub.data.mysql.product.common.HubSpuUtil;
 import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.data.mysql.product.dto.SpuPendingAuditDto;
 import com.shangpin.ephub.data.mysql.product.service.PengingToHubService;
@@ -7,10 +8,7 @@ import com.shangpin.ephub.data.mysql.sku.pending.bean.HubSkuPendingCriteriaWithR
 import com.shangpin.ephub.data.mysql.sku.pending.po.HubSkuPending;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,6 +22,9 @@ public class PendingToHubController {
 
     @Autowired
     PengingToHubService pengingToHubService;
+
+
+
     @RequestMapping(value = "/create-hubspu-and-hubsku")
     public boolean auditPending(@RequestBody SpuModelDto dto){
         try {
@@ -36,4 +37,10 @@ public class PendingToHubController {
         }
         return true;
     }
+
+
+
+
+
+
 }

@@ -2,6 +2,7 @@ package com.shangpin.ephub.data.mysql.spu.hub.controller;
 
 import java.util.List;
 
+import com.shangpin.ephub.data.mysql.product.common.HubSpuUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,9 @@ public class HubSpuController {
 
 	@Autowired
 	private HubSpuService hubSpuService;
+
+	@Autowired
+	HubSpuUtil hubSpuUtil;
 	
 	@RequestMapping(value = "/count-by-criteria")
     public int countByCriteria(@RequestBody HubSpuCriteria criteria){
@@ -76,4 +80,9 @@ public class HubSpuController {
     public int updateByPrimaryKey(@RequestBody HubSpu hubSpu){
     	return hubSpuService.updateByPrimaryKey(hubSpu);
     }
+
+	@RequestMapping(value = "/get-spuno")
+	public String createSpuNo(){
+		return   hubSpuUtil.createHubSpuNo(0L);
+	}
 }
