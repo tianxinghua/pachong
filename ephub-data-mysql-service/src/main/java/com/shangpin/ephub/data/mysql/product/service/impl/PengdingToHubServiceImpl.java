@@ -138,6 +138,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
                         HubSkuSupplierMapping hubSkuSupplierMapping = new HubSkuSupplierMapping();
                         BeanUtils.copyProperties(skuPending,hubSkuSupplierMapping);
+                        hubSkuSupplierMapping.setSkuNo(hubSku.getSkuNo());
                         hubSkuSupplierMapping.setSupplierSelectState(DataSelectStatus.NOT_SELECT.getIndex().byteValue());
                         HubSpuPending spuPendingTmp =  this.getHubSpuPendingById(skuPending.getSpuPendingId());
                         hubSkuSupplierMapping.setSupplierNo(spuPendingTmp.getSupplierNo());
@@ -148,9 +149,13 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                         HubSupplierSku supplierSku = this.getSupplierSku(skuPending.getSupplierId(), skuPending.getSupplierSkuNo());
 
                         if(null!=supplierSku){
-                            HubSupplierSpu supplierSpu = this.getSupplierSpuById(supplierSku.getSupplierSpuId());
                             hubSkuSupplierMapping.setSupplierSkuId(supplierSku.getSupplierSkuId());
-                            hubSkuSupplierMapping.setSupplierSpuModel(supplierSpu.getSupplierSpuModel());
+                            if(null!=supplierSku.getSupplierSpuId()){
+                                HubSupplierSpu supplierSpu = this.getSupplierSpuById(supplierSku.getSupplierSpuId());
+                                if(null!=supplierSpu){
+                                    hubSkuSupplierMapping.setSupplierSpuModel(supplierSpu.getSupplierSpuModel());
+                                }
+                            }
                         }
                         hubSkuSupplierMapping.setDataState(DataStatus.NOT_DELETE.getIndex().byteValue());
                         hubSkuSupplierMappingMapper.insert(hubSkuSupplierMapping);
