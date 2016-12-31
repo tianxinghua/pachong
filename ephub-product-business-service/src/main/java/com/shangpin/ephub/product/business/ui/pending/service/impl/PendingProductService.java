@@ -224,6 +224,7 @@ public class PendingProductService implements IPendingProductService{
                     hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
                 }else{
                     log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
+                    return false;
                 }
                 List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
                 if(null != pengdingSkus && pengdingSkus.size()>0){
@@ -234,6 +235,7 @@ public class PendingProductService implements IPendingProductService{
                             hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
                         }else{
                             log.info("pending sku校验失败，不更新："+result.getResult()+"|原始数据："+JsonUtil.serialize(hubSkuPendingDto));
+                            return false;
                         }
                     }
                 }

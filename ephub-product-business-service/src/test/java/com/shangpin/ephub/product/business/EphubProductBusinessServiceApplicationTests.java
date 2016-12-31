@@ -59,6 +59,7 @@ public class EphubProductBusinessServiceApplicationTests {
 		}
 	}
 	
+	@Test
 	public void testGetProductSize(){
 		try {
 			SizeRequestDto request = new SizeRequestDto();
