@@ -3,6 +3,7 @@ package com.shangpin.ephub.client.data.mysql.spu.gateway;
 import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,8 +43,8 @@ public interface HubSpuGateWay {
 	@RequestMapping(value = "/hub-spu/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSpuDto> selectByCriteria(@RequestBody HubSpuCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-spu/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public HubSpuDto selectByPrimaryKey(Long spuId);
+	@RequestMapping(value = "/hub-spu/select-by-primary-key/{spuId}", method = RequestMethod.POST,consumes = "application/json")
+    public HubSpuDto selectByPrimaryKey(@PathVariable Long spuId);
 	
 	@RequestMapping(value = "/hub-spu/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubSpuWithCriteriaDto hubSpuWithCriteria);
