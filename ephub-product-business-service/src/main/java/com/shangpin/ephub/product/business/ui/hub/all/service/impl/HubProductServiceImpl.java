@@ -60,6 +60,7 @@ public class HubProductServiceImpl implements IHubProductService {
 				HubProducts hubProducts = new HubProducts();
 				HubSpuCriteriaDto hubSpuCriteria = hubCommonProductService.getHubSpuCriteriaDtoByHubQuryDto(hubQuryDto);
 				int total = hubSpuClient.countByCriteria(hubSpuCriteria);
+				log.info("hub全部页返回的数据个数============"+total);
 				if(total>0){
 					List<HubSpuDto> hubSpus = hubSpuClient.selectByCriteria(hubSpuCriteria);
 					hubProducts.setHubProducts(hubSpus);
