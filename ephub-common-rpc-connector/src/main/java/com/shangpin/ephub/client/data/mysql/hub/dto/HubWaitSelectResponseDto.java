@@ -11,6 +11,8 @@ public class HubWaitSelectResponseDto {
 	  /**
      * hubspuno
      */
+	private Long skuId;
+	private Long spuId;
     private String spuNo;
 
     /**
