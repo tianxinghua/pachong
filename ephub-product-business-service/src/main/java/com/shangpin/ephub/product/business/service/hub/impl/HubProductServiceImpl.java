@@ -13,6 +13,7 @@ import com.shangpin.ephub.product.business.common.enumeration.ScmGenderType;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.service.hub.HubProductService;
 import com.shangpin.ephub.product.business.service.hub.dto.*;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -85,7 +86,7 @@ public class HubProductServiceImpl implements HubProductService {
             }
             //推送
             HubResponseDto responseDto = new HubResponseDto<String>();
-            restTemplate.postForObject(apiAddressProperties.getGmsAddProductUrl(),productDto,responseDto.getClass());
+//            HubResponseDto<T> result  = restTemplate.postForObject(apiAddressProperties.getGmsAddProductUrl(),productDto,responseDto.getClass());
             if(responseDto.getIsSuccess()){  //创建成功
 
             }else{ //创建失败
