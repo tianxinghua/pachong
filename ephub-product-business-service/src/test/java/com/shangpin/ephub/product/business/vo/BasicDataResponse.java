@@ -10,6 +10,28 @@ import lombok.Setter;
 @Setter
 public class BasicDataResponse <T> {
 
+	public BasicDataResponse() {
+		super();
+	}
+	
+	public BasicDataResponse(T resDatas, boolean isSuccess, String resMsg) {
+		super();
+		this.resDatas = resDatas;
+		this.isSuccess = isSuccess;
+		this.resMsg = resMsg;
+	}
+
+	public BasicDataResponse(T resDatas, boolean isSuccess) {
+		super();
+		this.resDatas = resDatas;
+		this.isSuccess = isSuccess;
+	}
+
+	public BasicDataResponse(T resDatas) {
+		super();
+		this.resDatas = resDatas;
+	}
+
 	@JsonIgnore
 	private T resDatas;
 	@JsonIgnore
