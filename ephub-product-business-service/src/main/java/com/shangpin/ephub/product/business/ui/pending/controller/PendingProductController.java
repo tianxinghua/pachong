@@ -46,7 +46,7 @@ public class PendingProductController {
                 return HubResponse.successResp(resultFail);
             }
 		} catch (Exception e) {
-			return HubResponse.successResp(resultFail);
+			return HubResponse.errorResp(e.getMessage());
 		}
     }
     @RequestMapping(value="/batch-update",method=RequestMethod.POST)

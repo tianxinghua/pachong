@@ -40,5 +40,7 @@ public interface HubSpuMapper {
 
     int updateByPrimaryKey(HubSpu record);
 
+
+    //------------------- 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方 -------------
     String getMaxSpuNo();
 }
