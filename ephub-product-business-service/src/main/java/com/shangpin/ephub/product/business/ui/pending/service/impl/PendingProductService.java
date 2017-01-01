@@ -25,6 +25,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
@@ -241,6 +242,15 @@ public class PendingProductService implements IPendingProductService{
                             throw new Exception(result.getResult());
                         }
                     }
+                }else{//TODO 这块要去掉！！！！！
+                	HubSkuPendingWithCriteriaDto criteria  = new HubSkuPendingWithCriteriaDto();
+                	HubSkuPendingCriteriaDto dto = new HubSkuPendingCriteriaDto();
+                	dto.createCriteria().andSpuPendingIdEqualTo(pendingProductDto.getSpuPendingId());
+                	criteria.setCriteria(dto);
+                	HubSkuPendingDto hubSkuPending  = new HubSkuPendingDto();
+                	hubSkuPending.setSkuState(SkuState.INFO_IMPECCABLE.getIndex()); 
+                	criteria.setHubSkuPending(hubSkuPending);
+                	hubSkuPendingGateWay.updateByCriteriaSelective(criteria);
                 }
             }
             return true;
