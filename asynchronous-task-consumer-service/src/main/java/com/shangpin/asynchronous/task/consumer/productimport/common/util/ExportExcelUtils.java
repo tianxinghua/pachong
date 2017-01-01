@@ -16,9 +16,9 @@ import org.apache.poi.hssf.util.HSSFColor;
 
  * 导出EXCEL工具类，适用于单行表头的表格 
 
- * @author wanghua
+ * @author zhaogenchun
 
- * @since 2016-02-01
+ * @since 2016-12-22
 
  */  
 public class ExportExcelUtils {  
@@ -80,6 +80,7 @@ public class ExportExcelUtils {
 	            }     
 	        }  
 	        workbook.write(out);  
+	        out.close();
 	    }  
 
     /** 

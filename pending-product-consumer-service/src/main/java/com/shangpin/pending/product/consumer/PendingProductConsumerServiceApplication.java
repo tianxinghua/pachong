@@ -37,23 +37,23 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 @EnableFeignClients("com.shangpin.ephub")
 public class PendingProductConsumerServiceApplication  {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		SpringApplication.run(PendingProductConsumerServiceApplication.class, args);
-	}
+        SpringApplication.run(PendingProductConsumerServiceApplication.class, args);
+    }
 
-	@Autowired
-	private HubSupplierValueMappingGateWay client;
+    @Autowired
+    private HubSupplierValueMappingGateWay client;
 
-	@Autowired
-	private HubBrandDicGateway clients;
-	@Autowired
-	private HubSpuPendingGateWay clients2;
-//	@Override
-	public void run(ApplicationArguments args) throws Exception {
+    @Autowired
+    private HubBrandDicGateway clients;
+    @Autowired
+    private HubSpuPendingGateWay clients2;
+    //	@Override
+    public void run(ApplicationArguments args) throws Exception {
 //		HubSpuPendingDto arg0 = new HubSpuPendingDto();
 //		arg0.setHubColorNo("FDFDf");
 //		Long  i= clients2.insert(arg0 );
 //		System.out.println(arg0);
-	}
+    }
 }

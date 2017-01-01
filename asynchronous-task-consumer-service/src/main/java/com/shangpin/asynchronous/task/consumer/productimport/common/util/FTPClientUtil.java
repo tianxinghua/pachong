@@ -9,10 +9,13 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 
 @Component
 public class FTPClientUtil {
@@ -80,5 +83,6 @@ public class FTPClientUtil {
 		}
 		return in;
 	}
+	
 	
 }

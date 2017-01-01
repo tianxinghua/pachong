@@ -73,6 +73,22 @@ public class PozzileiOrderService implements IOrderService {
    		createOrder(orderDTO);
    	}
 
+   	public static void main(String[] args) {
+//   		OrderDTO orderDTO =new OrderDTO();
+//		new PozzileiOrderService().handleConfirmOrder(orderDTO);
+		
+		 Map<String, String> map =new HashMap<String, String>();
+		 map.put("DBContext", "Default");
+		 map.put("purchase_no", "CGDF2016122808354");
+		 map.put("order_no", "2016122808354");
+		 map.put("barcode", "1000293100035");
+		 map.put("ordQty", "1");
+		 map.put("key", "5jq3vkBd7d");
+		 map.put("sellPrice", "0");
+		 String rtnData =HttpUtil45.get("http://net13serverpo.net/pozziapi/Myapi/Productslist/setOrder", new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2) ,map);
+		 System.out.println(rtnData);
+		
+	}
    	@Override
    	public void handleCancelOrder(OrderDTO deleteOrder) {
    		deleteOrder.setPushStatus(PushStatus.LOCK_CANCELLED);

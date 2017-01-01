@@ -34,15 +34,20 @@ public class PendingProductImportHandler {
 	 */
 	public void pendingImportStreamListen(ProductImportTask message, Map<String, Object> headers) {
 		try {
+			
 			log.info("pending任务接受到消息：{}",message);
-			String index = (String)headers.get(TaskImportTpye.PENDING_SKU.getIndex());
-			if(headers.get(TaskImportTpye.PENDING_SKU.getIndex())!=null){
+			long start = System.currentTimeMillis();
+			
+			String index = String.valueOf(TaskImportTpye.PENDING_SKU.getIndex());
+			if(headers.get(index)!=null){
 				PendingSkuImportService.handMessage(message);
-			}else if(headers.get(TaskImportTpye.PENDING_SPU.getIndex())!=null){
+			}else{
 				PendingSpuImportService.handMessage(message);
 			}
-			
+			 log.info("pending任务编号："+message.getTaskNo()+"处理结束，耗时："+(System.currentTimeMillis()-start));
+
 		} catch (Exception e) {
+			log.error("pending任务编号："+message.getTaskNo()+"处理时发生异常",e);
 			e.printStackTrace();
 		}
 	}

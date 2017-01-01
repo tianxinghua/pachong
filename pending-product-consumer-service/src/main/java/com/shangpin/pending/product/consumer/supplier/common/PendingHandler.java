@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
@@ -116,6 +117,15 @@ public class PendingHandler {
     static Map<String,String> hubColorStaticMap = null;
 
     static Map<String,String> hubSeasonStaticMap = null;
+    
+    /**
+     * 存放 supplierId_supplierBrand，filterFlag 对应关系
+     */
+    static Map<String,Byte> hubSupplierBrandFlag = null;
+    /**
+     * 存放 supplierId_supplierSeason，filterFlag 对应关系
+     */
+    static Map<String,Byte> hubSeasonFlag = null;
 
 
 
@@ -157,7 +167,7 @@ public class PendingHandler {
         Integer skuStatus = 0;
         if(null!=hubSpuPending){
 
-        	byte filterFlag = screenSupplierBrandEffectiveOrNot(pendingSpu.getSupplierId(),pendingSpu.getHubBrandNo());
+        	byte filterFlag = screenSupplierBrandAndSeasonEffectiveOrNot(pendingSpu.getSupplierId(),pendingSpu.getHubBrandNo(),pendingSpu.getHubSeason());
         	
             for(PendingSku sku:skus){
                 if(messageMap.containsKey(sku.getSupplierSkuNo())){
@@ -937,20 +947,81 @@ public class PendingHandler {
     }
     
     /**
-     * 判断供应商的品牌是不是有效品牌
+     * 判断供应商的品牌和季节是不是有效
      * @param supplierId 供应商门户编号
      * @param supplierBrandName 供应商品牌名称
-     * @param hubSkuPending
+     * @param supplierSeason 供应商季节名称
      */
-    private byte screenSupplierBrandEffectiveOrNot(String supplierId,String supplierBrandName){
-    	HubSupplierBrandDicDto supplierBrandDic = dataServiceHandler.getHubSupplierBrand(supplierId,supplierBrandName);
-    	if(null != supplierBrandDic && supplierBrandDic.getFilterFlag() == FilterFlag.EFFECTIVE.getIndex()){
-    		return FilterFlag.EFFECTIVE.getIndex();
-    	}else{
-    		return FilterFlag.INVALID.getIndex(); 
+    private byte screenSupplierBrandAndSeasonEffectiveOrNot(String supplierId,String supplierBrandName,String supplierSeason){
+
+    	getHubSupplierBrandFlag();
+    	if(hubSupplierBrandFlag.containsKey(supplierId+"_"+supplierBrandName)){
+    		getHubSeasonFlag();
+    		if(hubSeasonFlag.containsKey(supplierId+"_"+supplierSeason)){
+    			return FilterFlag.EFFECTIVE.getIndex();
+    		}
     	}
+    	return FilterFlag.INVALID.getIndex();
     }
 
+    /**
+     * 初始化hubSupplierBrandFlag<br>
+     * 获取有效的供应商品牌，key是supplierId_supplierBrand，value是filterFlag
+     * @return
+     */
+    private Map<String,Byte> getHubSupplierBrandFlag(){
+    	if(null == hubSupplierBrandFlag){
+    		hubSupplierBrandFlag = new ConcurrentHashMap<>();
+    		setHubSupplierBrandFlag();
+    	}else{
+    		if(isNeedHandle()){
+    			setHubSupplierBrandFlag();
+    		}
+    	}    	
+    	return hubSupplierBrandFlag;
+    }
+
+    /**
+     * 设置 hubSupplierBrandFlag的值，key是supplierId_supplierBrand，value是filterFlag
+     */
+	private void setHubSupplierBrandFlag() {
+		List<HubSupplierBrandDicDto> brandsDic = dataServiceHandler.getEffectiveHubSupplierBrands();
+		if(null != brandsDic && brandsDic.size()>0){
+			for(HubSupplierBrandDicDto brandDic : brandsDic){
+				hubSupplierBrandFlag.put(brandDic.getSupplierId()+"_"+brandDic.getSupplierBrand(), brandDic.getFilterFlag());
+			}
+		}
+	}
+	
+	/**
+	 * 初始化hubSeasonFlag<br>
+	 * 获取有效的供应商季节，key是supplierId_supplierSeason，value是filterFlag
+	 * @return
+	 */
+	private Map<String,Byte> getHubSeasonFlag(){
+		if(null == hubSeasonFlag){
+			hubSeasonFlag = new ConcurrentHashMap<>();
+			setHubSeasonFlag();
+		}else{
+			if(isNeedHandle()){
+				setHubSeasonFlag();
+			}
+		}
+		
+		return hubSeasonFlag;
+	}
+
+	/**
+	 * 设置有效的供应商季节，key是supplierId_supplierSeason，value是filterFlag
+	 */
+	private void setHubSeasonFlag() {
+		List<HubSeasonDicDto> supplierSeasons =  dataServiceHandler.getEffectiveHubSeasons();
+		if(null != supplierSeasons && supplierSeasons.size()>0){
+			for(HubSeasonDicDto season : supplierSeasons){
+				hubSeasonFlag.put(season.getSupplierid()+"_"+season.getSupplierSeason(), season.getFilterFlag());
+			}
+		}
+	}
 
 
 }
