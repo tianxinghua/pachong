@@ -487,7 +487,7 @@ public class PendingProductService implements IPendingProductService{
         row.createCell(15).setCellValue(product.getSpuDesc());
         StringBuffer buffer = new StringBuffer();
         String comma = ",";
-        if(PicState.NO_PIC.getIndex() == product.getPicState() || PicState.PIC_INFO_NOT_COMPLETED.getIndex() == product.getPicState()){
+        if((null != product.getPicState() && PicState.NO_PIC.getIndex() == product.getPicState()) || (null != product.getPicState() && PicState.PIC_INFO_NOT_COMPLETED.getIndex() == product.getPicState())){
             buffer = buffer.append("图片").append(comma);
         }
         if(CatgoryState.PERFECT_MATCHED.equals(product.getCatgoryState())){
