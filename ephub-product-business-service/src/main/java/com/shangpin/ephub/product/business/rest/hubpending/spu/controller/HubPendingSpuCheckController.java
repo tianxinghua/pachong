@@ -29,7 +29,7 @@ public class HubPendingSpuCheckController {
 	
 	@RequestMapping(value = "/check-spu")
 	public HubPendingSpuCheckResult checkSpu(@RequestBody HubSpuPendingDto dto){
-		log.info("");
+		log.info("pendingSpu校验接受到数据：{}",dto);
 		HubPendingSpuCheckResult result = new HubPendingSpuCheckResult();
 		String returnStr = hubCheckRuleService.checkHubPendingSpu(dto);
 		if(StringUtils.isNotBlank(returnStr)){
