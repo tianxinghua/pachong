@@ -199,7 +199,7 @@ public class PendingHandler {
     private HubSpuPendingDto createNewSpu(PendingProduct message, Map<String, Object> headers, PendingSpu pendingSpu) throws Exception {
         HubSpuPendingDto hubSpuPending = null;
         try {
-
+            pendingSpu.setSupplierNo(message.getSupplierNo());
             hubSpuPending = this.addNewSpu(pendingSpu,headers);
         } catch (Exception e) {
 
@@ -308,8 +308,7 @@ public class PendingHandler {
             hubSpuPending.setCreateTime(date);
             hubSpuPending.setUpdateTime(date);
 
-            log.info("org supplierNo =" + hubSpuPending.getSupplierNo());
-            log.info("supplierNo =" + hubSpuPending.getSupplierNo());
+
 
             dataServiceHandler.savePendingSpu(hubSpuPending);
 
