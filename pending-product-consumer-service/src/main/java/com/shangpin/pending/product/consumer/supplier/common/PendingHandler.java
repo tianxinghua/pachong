@@ -14,12 +14,18 @@ import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.pending.product.consumer.common.enumeration.*;
+import com.shangpin.pending.product.consumer.conf.rpc.ApiAddressProperties;
+import com.shangpin.pending.product.consumer.supplier.dto.*;
 import com.shangpin.pending.product.consumer.util.BurberryModelRule;
 import com.shangpin.pending.product.consumer.util.PradaModelRule;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 
@@ -40,14 +46,9 @@ import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.pending.product.consumer.common.DateUtils;
-import com.shangpin.pending.product.consumer.supplier.dto.CategoryScreenSizeDom;
-import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
-import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
-import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSku;
-import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSpu;
-import com.shangpin.pending.product.consumer.supplier.dto.SizeStandardItem;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Created by loyalty on 16/12/13.
@@ -76,6 +77,11 @@ public class PendingHandler {
 
     @Autowired
     HubBrandModelRuleGateWay brandModelRuleGateWay;
+
+    @Autowired
+    RestTemplate httpClient;
+    @Autowired
+    ApiAddressProperties apiAddressProperties;
 
 
     static Map<String,Map<String,String>> supplierGenderStaticMap = null;
@@ -193,7 +199,7 @@ public class PendingHandler {
     private HubSpuPendingDto createNewSpu(PendingProduct message, Map<String, Object> headers, PendingSpu pendingSpu) throws Exception {
         HubSpuPendingDto hubSpuPending = null;
         try {
-
+            pendingSpu.setSupplierNo(message.getSupplierNo());
             hubSpuPending = this.addNewSpu(pendingSpu,headers);
         } catch (Exception e) {
 
@@ -301,6 +307,8 @@ public class PendingHandler {
             Date date = new Date();
             hubSpuPending.setCreateTime(date);
             hubSpuPending.setUpdateTime(date);
+
+
 
             dataServiceHandler.savePendingSpu(hubSpuPending);
 
@@ -669,6 +677,25 @@ public class PendingHandler {
         hubSkuPending.setFilterFlag(filterFlag); 
 
         dataServiceHandler.savePendingSku(hubSkuPending);
+
+    }
+
+    private void callScmSize(String brandNo,String categoryNo){
+
+        SizeRequestDto request = new SizeRequestDto();
+        request.setBrandNo(brandNo);
+        request.setCategoryNo(categoryNo);
+
+        HttpEntity<SizeRequestDto> requestEntity = new HttpEntity<SizeRequestDto>(request);
+
+        ResponseEntity<BasicDataResponse<SizeStandardItem>> entity = httpClient.exchange(apiAddressProperties.getGmsSizeUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<BasicDataResponse<SizeStandardItem>>() {
+        });
+        BasicDataResponse<SizeStandardItem> body = entity.getBody();
+        if(body.getIsSuccess()){
+            List<SizeStandardItem> resDatas = body.getResDatas();
+
+        }
+
 
     }
 
