@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.vo;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,37 +16,37 @@ public class BasicDataResponse <T> {
 		super();
 	}
 	
-	public BasicDataResponse(T resDatas, boolean isSuccess, String resMsg) {
+	public BasicDataResponse(List<T> resDatas, boolean isSuccess, String resMsg) {
 		super();
 		this.resDatas = resDatas;
 		this.isSuccess = isSuccess;
 		this.resMsg = resMsg;
 	}
 
-	public BasicDataResponse(T resDatas, boolean isSuccess) {
+	public BasicDataResponse(List<T> resDatas, boolean isSuccess) {
 		super();
 		this.resDatas = resDatas;
 		this.isSuccess = isSuccess;
 	}
 
-	public BasicDataResponse(T resDatas) {
+	public BasicDataResponse(List<T> resDatas) {
 		super();
 		this.resDatas = resDatas;
 	}
 
 	@JsonIgnore
-	private T resDatas;
+	private List<T> resDatas;
 	@JsonIgnore
 	private boolean isSuccess;
 	@JsonIgnore
 	private String resMsg;
 	
 	@JsonProperty("ResDatas")
-	public T getResDatas(){
+	public List<T> getResDatas(){
 		return this.resDatas;
 	}
 	@JsonProperty("ResDatas")
-	public void setResDatas(T resDatas){
+	public void setResDatas(List<T> resDatas){
 		this.resDatas = resDatas;
 	}
 	@JsonProperty("IsSuccess")

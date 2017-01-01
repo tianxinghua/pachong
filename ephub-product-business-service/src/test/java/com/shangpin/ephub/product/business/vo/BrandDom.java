@@ -13,4 +13,5 @@ public class BrandDom {
      public String BrandCnName;
      public String BrandEnName;
      public byte IsValid;
+     
 }
