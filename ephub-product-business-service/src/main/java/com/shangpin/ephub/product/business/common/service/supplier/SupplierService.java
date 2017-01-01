@@ -45,7 +45,7 @@ public class SupplierService {
     		//先获取缓存中的数据
             String supplierMsg = shangpinRedis.get(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo);
             if(!StringUtils.isEmpty(supplierMsg)){
-            	return JsonUtil.deserialize2(supplierMsg, SupplierDTO.class);
+            	return JsonUtil.deserialize(supplierMsg, SupplierDTO.class);
             }else{
             	//调用接口获取供货商信息
                 Map<String, String> paraMap = new HashMap<>();
