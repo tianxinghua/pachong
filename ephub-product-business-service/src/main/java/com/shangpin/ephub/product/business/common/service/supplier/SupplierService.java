@@ -45,13 +45,14 @@ public class SupplierService {
     		//先获取缓存中的数据
             String supplierMsg = shangpinRedis.get(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo);
             if(!StringUtils.isEmpty(supplierMsg)){
-            	return JsonUtil.deserialize(supplierMsg, SupplierDTO.class);
+            	return JsonUtil.deserialize2(supplierMsg, SupplierDTO.class);
             }else{
             	//调用接口获取供货商信息
                 Map<String, String> paraMap = new HashMap<>();
                 paraMap.put("supplierNo", supplierNo);
                 String url = "http://qa.scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo="+supplierNo;
-                SupplierDTO supplierDto = httpClient.getForEntity(url, SupplierDTO.class).getBody();
+                String reSupplierMsg = httpClient.getForObject(url, String.class);
+                SupplierDTO supplierDto = JsonUtil.deserialize2(reSupplierMsg, SupplierDTO.class);
                 try {
                 	//缓存到redis中
                     shangpinRedis.setex(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo,1000*60*5,JsonUtil.serialize(supplierDto));

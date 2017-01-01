@@ -1,6 +1,7 @@
 package com.shangpin.ephub.client.util;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * <p>Title:JsonUtil.java </p>
@@ -26,5 +27,26 @@ public final class JsonUtil {
 	 */
 	public static <T> T deserialize(String json, Class<T> clazz){
 		return JSON.parseObject(json, clazz);
+	}
+	/**
+	 * 使用sprinmvc的方式序列化json
+	 * @param object 需要序列化的对象
+	 * @return json
+	 * @throws Exception 序列化时发生的异常
+	 */
+	public static String serialize2(Object object) throws Exception{
+		ObjectMapper om = new ObjectMapper();
+		return om.writeValueAsString(object);
+	}
+	/**
+	 * 
+	 * @param json
+	 * @param clazz
+	 * @return
+	 * @throws Exception
+	 */
+	public static <T> T deserialize2(String json, Class<T> clazz)throws Exception {
+		ObjectMapper om = new ObjectMapper();
+		return om.readValue(json, clazz);
 	}
 }

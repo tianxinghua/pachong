@@ -1,8 +1,5 @@
 package com.shangpin.ephub.product.business;
 
-import java.io.StringWriter;
-import java.net.URI;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
+import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.dto.BrandRequstDto;
 import com.shangpin.ephub.product.business.dto.CategoryRequestDto;
 import com.shangpin.ephub.product.business.dto.SizeRequestDto;
@@ -49,10 +48,6 @@ public class EphubProductBusinessServiceApplicationTests {
 		try {
 			BrandRequstDto request = new BrandRequstDto();
 			request.setBrandNo("B0005");
-			ObjectMapper om = new ObjectMapper();
-			StringWriter w = new StringWriter();
-			om.writeValue(w, request);
-			System.out.println(w.toString());
 			HttpEntity<BrandRequstDto> requestEntity = new HttpEntity<BrandRequstDto>(request);
 			
 			ResponseEntity<BasicDataResponse<BrandDom>> entity = httpClient.exchange("http://192.168.3.225/ShangPin.GMS.Api/ProductBasicData/GetBrands", HttpMethod.POST, requestEntity, new ParameterizedTypeReference<BasicDataResponse<BrandDom>>() {
@@ -90,6 +85,23 @@ public class EphubProductBusinessServiceApplicationTests {
 		} catch (Exception e) {
 			e.printStackTrace(); 
 		}				
+	}
+	
+	@Autowired
+	SupplierService supplierService;
+	@Test
+	public void testSupplier(){
+		SupplierDTO dto = supplierService.getSupplier("S0000802");
+		System.out.println(dto);
+	}
+	
+	public static void main(String[] args) {
+		SupplierDTO dto = new SupplierDTO();
+		dto.setAccount("account");
+		dto.setAccountBank("accountBank");
+		String json = JsonUtil.serialize(dto);
+		SupplierDTO dto2 = JsonUtil.deserialize(json, SupplierDTO.class);
+		System.out.println(dto2);
 	}
 
 }
