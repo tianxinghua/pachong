@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.service.hub.impl;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
@@ -22,8 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by lizhongren on 2016/12/30.
@@ -43,10 +43,8 @@ public class HubProductServiceImpl implements HubProductService {
     @Autowired
     HubSkuPendingGateWay skuPendingGateWay;
 
-
-
     @Autowired
-    HubSkuSupplierMappingGateWay supplierMappingGateWay;
+    HubSkuSupplierMappingGateWay skuSupplierMappingGateWay;
 
     @Autowired
     ApiAddressProperties apiAddressProperties;
@@ -58,14 +56,8 @@ public class HubProductServiceImpl implements HubProductService {
         Long skuId = 0L;
         Long supplierMappingId = 0L;
         //推送对象初始化
-        HubProductDto productDto = new HubProductDto();
         SpProductOrgInfoEntity spSpuInfo = new SpProductOrgInfoEntity(); //SCM需要的SPU对象
         ApiProductOrgExtendDom spSpuExtendInfo = new ApiProductOrgExtendDom();//  扩展对象
-        productDto.setProductOrgInfo(spSpuInfo);
-        productDto.setProductOrgInfoExtend(spSpuExtendInfo);
-        List<ApiSkuOrgDom> skuOrgDoms = new ArrayList<>();
-        productDto.setSkuList(skuOrgDoms);
-
 
         //获取HUBSPU
         HubSpuDto hubSpuDto = hubSpuGateWay.selectByPrimaryKey(spuId);
@@ -75,6 +67,7 @@ public class HubProductServiceImpl implements HubProductService {
             //scmspu 扩展对象赋值
             setScmSpuExtendProperty(spSpuExtendInfo, hubSpuDto);
 
+            Map<String,Map<String,ApiSkuOrgDom>> supplierSizeMap = new HashMap<>();
             for(HubProductIdDto idDto :skus){
                 skuId = idDto.getId();
                 HubSkuDto hubSkuDto = hubSkuGateWay.selectByPrimaryKey(skuId);
@@ -82,33 +75,65 @@ public class HubProductServiceImpl implements HubProductService {
                 for(HubProductIdDto supplierIdDto :supplierSkuMapping) {
 
                     supplierMappingId  = supplierIdDto.getId();
-                    HubSkuSupplierMappingDto hubSkuSupplierMappingDto = supplierMappingGateWay.selectByPrimaryKey(supplierMappingId);
-                    //组装sku
-                    setScmSku(hubSpuDto,hubSkuDto,spSpuInfo, skuOrgDoms, hubSkuSupplierMappingDto);
+                    HubSkuSupplierMappingDto hubSkuSupplierMappingDto = skuSupplierMappingGateWay.selectByPrimaryKey(supplierMappingId);
+                    if(null!=hubSkuSupplierMappingDto){
+                        //组装sku并返回
+                        ApiSkuOrgDom apiSkuOrgDom = setScmSku(hubSpuDto,hubSkuDto,spSpuInfo, hubSkuSupplierMappingDto);
+
+                        //以供货商为维度
+                        if(supplierSizeMap.containsKey(hubSkuSupplierMappingDto.getSupplierNo())){ //相同供货商 肯定不同尺码 直接赋值
+                            supplierSizeMap.get(hubSkuSupplierMappingDto.getSupplierNo()).put(hubSkuDto.getSkuSize(),apiSkuOrgDom);
+                        }else{
+                            Map<String,ApiSkuOrgDom> supplierApiSkuMap = new HashMap<>();
+                            supplierApiSkuMap.put(hubSkuDto.getSkuSize(),apiSkuOrgDom);
+                            supplierSizeMap.put(hubSkuSupplierMappingDto.getSupplierNo(),supplierApiSkuMap);
+                        }
+                    }
 
                 }
             }
-            //推送
-            HttpEntity<HubProductDto> requestEntity = new HttpEntity<HubProductDto>(productDto);
-			ResponseEntity<HubResponseDto<String>> entity = restTemplate.exchange(apiAddressProperties.getGmsAddProductUrl(), HttpMethod.POST,
-                    requestEntity, new ParameterizedTypeReference<HubResponseDto<String>>() {
-			});
-            HubResponseDto<String> responseDto = entity.getBody();
-            if(responseDto.getIsSuccess()){  //创建成功
+            Set<String> supplierNoSet = supplierSizeMap.keySet();
+            if(null!=supplierNoSet){//以供货商的维度推送数据
+                for(String supplierNo :supplierNoSet){
+                    Map<String, ApiSkuOrgDom> apiSkuOrgDomMap = supplierSizeMap.get(supplierNo);
 
-            }else{ //创建失败
-
+                    List<ApiSkuOrgDom> skuOrgDoms = new ArrayList<>();
+                    Set<Map.Entry<String, ApiSkuOrgDom>> entries = apiSkuOrgDomMap.entrySet();
+                    for(Map.Entry<String,ApiSkuOrgDom> entry:entries){
+                        skuOrgDoms.add(entry.getValue());
+                    }
+                    HubProductDto productDto = new HubProductDto();
+                    productDto.setProductOrgInfo(spSpuInfo);
+                    productDto.setProductOrgInfoExtend(spSpuExtendInfo);
+                    productDto.setSkuList(skuOrgDoms);
+                    //推送
+                    HttpEntity<HubProductDto> requestEntity = new HttpEntity<HubProductDto>(productDto);
+                    ResponseEntity<HubResponseDto<String>> entity = restTemplate.exchange(apiAddressProperties.getGmsAddProductUrl(), HttpMethod.POST,
+                            requestEntity, new ParameterizedTypeReference<HubResponseDto<String>>() {
+                            });
+                    HubResponseDto<String> responseDto = entity.getBody();
+                    if(responseDto.getIsSuccess()){  //创建成功
+                         for(ApiSkuOrgDom skuOrg:skuOrgDoms){
+                             updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTED);
+                         }
+                    }else{ //创建失败
+                        for(ApiSkuOrgDom skuOrg:skuOrgDoms){
+                            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.NO_SELECTED);
+                        }
+                    }
+                }
             }
+
         }
 
 
     }
 
-    private void setScmSku(HubSpuDto hubSpuDto,HubSkuDto hubSkuDto,SpProductOrgInfoEntity spSpuInfo, List<ApiSkuOrgDom> skuOrgDoms, HubSkuSupplierMappingDto hubSkuSupplierMappingDto) {
+    private ApiSkuOrgDom setScmSku(HubSpuDto hubSpuDto,HubSkuDto hubSkuDto,SpProductOrgInfoEntity spSpuInfo, HubSkuSupplierMappingDto hubSkuSupplierMappingDto) {
         ApiSkuOrgDom  skuOrgDom =new ApiSkuOrgDom();
         skuOrgDom.setProductOrgInfoId(0L);
         skuOrgDom.setSkuOrgInfoId(0L);
-        skuOrgDom.setSkuOrgName("");
+        skuOrgDom.setSkuOrgName(hubSpuDto.getSpuName());
         skuOrgDom.setBarCode(hubSkuSupplierMappingDto.getBarcode());
         skuOrgDom.setSupplierSkuNo(hubSkuSupplierMappingDto.getSupplierSkuNo());
         skuOrgDom.setSkuNo("");
@@ -116,6 +141,7 @@ public class HubProductServiceImpl implements HubProductService {
 
         HubSkuPendingDto hubSkuPendingDto = getHubSkuPendingBySupplierIdAndSuppierSkuNo(hubSkuSupplierMappingDto.getSupplierId(), hubSkuSupplierMappingDto.getSupplierSkuNo());
         if(null!=hubSkuPendingDto){
+//            skuOrgDom.setSkuOrgName("");
             spSpuInfo.setProductMarketPrice(hubSkuPendingDto.getMarketPrice());
             spSpuInfo.setMarketPriceCurreny(hubSkuPendingDto.getMarketPriceCurrencyorg());
             //TODO 如果没有 填默认值
@@ -144,9 +170,10 @@ public class HubProductServiceImpl implements HubProductService {
         placeOrigin.setPlaceOriginValue(hubSpuDto.getOrigin());
         originList.add(placeOrigin);
         skuOrgDom.setPlaceOriginList(originList);
+        skuOrgDom.setSkuOrginalFromId(hubSkuSupplierMappingDto.getSkuSupplierMappingId().toString());
 
 
-        skuOrgDoms.add(skuOrgDom);
+        return skuOrgDom;
 
     }
 
@@ -176,7 +203,7 @@ public class HubProductServiceImpl implements HubProductService {
      */
     private void setScmSpu(SpProductOrgInfoEntity spSpuInfo, HubSpuDto hubSpuDto) {
         spSpuInfo.setProductOrgInfoId(0L);
-        spSpuInfo.setProductOriginalName(hubSpuDto.getSpuName());
+        spSpuInfo.setProductOriginalName(null==hubSpuDto.getSpuName()?"":hubSpuDto.getSpuName());
         spSpuInfo.setProductOriginalModel(hubSpuDto.getSpuModel());
         spSpuInfo.setProductOriginalUnit( 3);
         spSpuInfo.setCategoryOriginalNo(hubSpuDto.getCategoryNo());
@@ -224,5 +251,13 @@ public class HubProductServiceImpl implements HubProductService {
             return null;
         }
 
+    }
+
+
+    private void updateSkuMappingStatus(Long id,SupplierSelectState status){
+        HubSkuSupplierMappingDto skuSupplierMapping = new HubSkuSupplierMappingDto();
+        skuSupplierMapping.setSkuSupplierMappingId(id);
+        skuSupplierMapping.setSupplierSelectState(Integer.valueOf(status.getIndex()).byteValue());
+        skuSupplierMappingGateWay.updateByPrimaryKeySelective(skuSupplierMapping);
     }
 }
