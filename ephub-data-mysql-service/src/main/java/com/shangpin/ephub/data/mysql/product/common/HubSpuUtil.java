@@ -70,7 +70,7 @@ public class HubSpuUtil {
                 tmpSpuNo= shangpinRedis.incr(ConstantProperty.EP_HUB_SPU_NO_CREATE_KEY+"_"+ spuNo);
                 tmpSku = "000" + String.valueOf(tmpSpuNo);
                 tmpSku = tmpSku.substring(tmpSku.length()-3,tmpSku.length());
-                buffer.append(tmpSku).append(",");
+                buffer.append(spuNo+tmpSku).append(",");
             }
             result = buffer.toString().substring(0,buffer.toString().length()-1);
 
@@ -86,7 +86,7 @@ public class HubSpuUtil {
                 tmpSpuNo  = tmpSpuNo +i;
                 tmpSku = "000" + String.valueOf(tmpSpuNo);
                 tmpSku = tmpSku.substring(tmpSku.length()-3,tmpSku.length());
-                buffer.append(tmpSku).append(",");
+                buffer.append(spuNo+tmpSku).append(",");
             }
             result = buffer.toString().substring(0,buffer.toString().length()-1);
 

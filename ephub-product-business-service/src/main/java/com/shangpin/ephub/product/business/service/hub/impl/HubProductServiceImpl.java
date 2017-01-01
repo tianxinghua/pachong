@@ -13,7 +13,12 @@ import com.shangpin.ephub.product.business.common.enumeration.ScmGenderType;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.service.hub.HubProductService;
 import com.shangpin.ephub.product.business.service.hub.dto.*;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -51,7 +56,7 @@ public class HubProductServiceImpl implements HubProductService {
         Long  spuId = hubProductIdDto.getId();
         List<HubProductIdDto> skus = hubProductIdDto.getSubProduct();
         Long skuId = 0L;
-        Long supplierId = 0L;
+        Long supplierMappingId = 0L;
         //推送对象初始化
         HubProductDto productDto = new HubProductDto();
         SpProductOrgInfoEntity spSpuInfo = new SpProductOrgInfoEntity(); //SCM需要的SPU对象
@@ -76,16 +81,19 @@ public class HubProductServiceImpl implements HubProductService {
                 List<HubProductIdDto> supplierSkuMapping =  idDto.getSubProduct();
                 for(HubProductIdDto supplierIdDto :supplierSkuMapping) {
 
-                    supplierId  = supplierIdDto.getId();
-                    HubSkuSupplierMappingDto hubSkuSupplierMappingDto = supplierMappingGateWay.selectByPrimaryKey(supplierId);
+                    supplierMappingId  = supplierIdDto.getId();
+                    HubSkuSupplierMappingDto hubSkuSupplierMappingDto = supplierMappingGateWay.selectByPrimaryKey(supplierMappingId);
                     //组装sku
                     setScmSku(hubSpuDto,hubSkuDto,spSpuInfo, skuOrgDoms, hubSkuSupplierMappingDto);
 
                 }
             }
             //推送
-            HubResponseDto responseDto = new HubResponseDto<String>();
-            restTemplate.postForObject(apiAddressProperties.getGmsAddProductUrl(),productDto,responseDto.getClass());
+            HttpEntity<HubProductDto> requestEntity = new HttpEntity<HubProductDto>(productDto);
+			ResponseEntity<HubResponseDto<String>> entity = restTemplate.exchange(apiAddressProperties.getGmsAddProductUrl(), HttpMethod.POST,
+                    requestEntity, new ParameterizedTypeReference<HubResponseDto<String>>() {
+			});
+            HubResponseDto<String> responseDto = entity.getBody();
             if(responseDto.getIsSuccess()){  //创建成功
 
             }else{ //创建失败

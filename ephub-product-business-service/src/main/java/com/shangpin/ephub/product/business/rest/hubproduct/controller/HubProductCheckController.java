@@ -29,7 +29,7 @@ public class HubProductCheckController {
 	
 	@RequestMapping(value = "/check-product")
 	public HubProductCheckResult checkProduct(@RequestBody HubProductDto dto){
-		log.info("");
+		log.info("校验hub商品参数：{}",dto);
 		HubProductCheckResult result = new HubProductCheckResult();
 		String returnStr = hubCheckRuleService.checkHubProduct(dto);
 		if(StringUtils.isNotBlank(returnStr)){

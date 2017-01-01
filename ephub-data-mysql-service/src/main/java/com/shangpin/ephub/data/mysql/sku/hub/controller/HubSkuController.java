@@ -4,10 +4,7 @@ import java.util.List;
 
 import com.shangpin.ephub.data.mysql.product.common.HubSpuUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.shangpin.ephub.data.mysql.sku.hub.bean.HubSkuCriteriaWithRowBounds;
 import com.shangpin.ephub.data.mysql.sku.hub.bean.HubSkuWithCriteria;
@@ -60,8 +57,8 @@ public class HubSkuController {
     public List<HubSku> selectByCriteria(@RequestBody HubSkuCriteria criteria){
     	return hubSkuService.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key")
-    public HubSku selectByPrimaryKey(Long skuId){
+	@RequestMapping(value = "/select-by-primary-key/{skuId}")
+    public HubSku selectByPrimaryKey(@PathVariable(value = "skuId") Long skuId){
     	return hubSkuService.selectByPrimaryKey(skuId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")

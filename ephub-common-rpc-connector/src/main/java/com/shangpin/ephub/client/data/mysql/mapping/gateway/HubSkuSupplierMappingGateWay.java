@@ -3,6 +3,7 @@ package com.shangpin.ephub.client.data.mysql.mapping.gateway;
 import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,8 +45,8 @@ public interface HubSkuSupplierMappingGateWay {
 	@RequestMapping(value = "/hub-sku-supplier-mapping/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSkuSupplierMappingDto> selectByCriteria(@RequestBody HubSkuSupplierMappingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-sku-supplier-mapping/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public HubSkuSupplierMappingDto selectByPrimaryKey(Long skuSupplierMappingId);
+	@RequestMapping(value = "/hub-sku-supplier-mapping/select-by-primary-key/{skuSupplierMappingId}", method = RequestMethod.POST,consumes = "application/json")
+    public HubSkuSupplierMappingDto selectByPrimaryKey(@PathVariable("skuSupplierMappingId") Long skuSupplierMappingId);
 	
 	@RequestMapping(value = "/hub-sku-supplier-mapping/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubSkuSupplierMappingWithCriteriaDto hubSkuSupplierMappingWithCriteria);
