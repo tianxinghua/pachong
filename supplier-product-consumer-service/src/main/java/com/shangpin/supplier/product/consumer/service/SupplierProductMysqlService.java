@@ -1,5 +1,6 @@
 package com.shangpin.supplier.product.consumer.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ public class SupplierProductMysqlService {
 		try {	
 			HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 			if(null == hubSpuSel){
+				hubSpu.setCreateTime(new Date());
 				Long spuId = hubSupplierSpuGateWay.insert(hubSpu);
 				hubSpu.setSupplierSpuId(spuId); 
 				convertHubSpuToPendingSpu(hubSpu,pendingSpu);
@@ -51,6 +53,7 @@ public class SupplierProductMysqlService {
 				HubSupplierSpuDto hubSpuUpdated = new HubSupplierSpuDto();
 				boolean isChanged = comparisonHubSpu(hubSpu, hubSpuSel, pendingSpu,hubSpuUpdated);
 				if(isChanged){
+					hubSpuUpdated.setUpdateTime(new Date()); 
 					updateHubSpu(hubSpuUpdated);
 					return ProductStatus.UPDATE;
 				}else{
@@ -74,6 +77,7 @@ public class SupplierProductMysqlService {
 		try {
 			HubSupplierSkuDto hubSkuSel = hasHadTheHubSku(hubSku);
 			if(null == hubSkuSel){
+				hubSku.setCreateTime(new Date());
 				Long skuId = hubSupplierSkuGateWay.insert(hubSku);
 				hubSku.setSupplierSkuId(skuId); 
 				convertHubSkuToPendingSku(hubSku,pendingSku);
@@ -82,6 +86,7 @@ public class SupplierProductMysqlService {
 				HubSupplierSkuDto hubSkuUpdated = new HubSupplierSkuDto();
 				boolean isChanged = comparisonHubSku(hubSku,hubSkuSel,pendingSku,hubSkuUpdated);
 				if(isChanged){
+					hubSkuUpdated.setUpdateTime(new Date()); 
 					updateHubSku(hubSkuUpdated);
 					return ProductStatus.MODIFY_PRICE;
 				}else{
