@@ -16,6 +16,7 @@ import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemCriteriaDto
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemDto;
 import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicGateWay;
 import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicItemGateWay;
+import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicWithCriteriaDto;
@@ -114,7 +115,19 @@ public class DataServiceHandler {
 
     @Autowired
     private HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
+    
+    
 
+    /**
+     * 查询所有有效的供应商品牌
+     * @return
+     */
+    public List<HubSupplierBrandDicDto> getEffectiveHubSupplierBrands(){
+    	HubSupplierBrandDicCriteriaDto criteria = new HubSupplierBrandDicCriteriaDto();
+    	criteria.createCriteria().andFilterFlagEqualTo(FilterFlag.EFFECTIVE.getIndex());
+    	criteria.setFields("supplier_id,supplier_brand,filter_flag");
+    	return supplierBrandDicGateWay.selectByCriteria(criteria);
+    }
 
     public HubSupplierBrandDicDto getHubSupplierBrand(String supplierId,String supplierBrandName){
         HubSupplierBrandDicCriteriaDto criteria = new HubSupplierBrandDicCriteriaDto();
@@ -382,6 +395,17 @@ public class DataServiceHandler {
                 throw e;
             }
         }
+    }
+    
+    /**
+     * 查询所有有效的供应商季节
+     * @return
+     */
+    public List<HubSeasonDicDto> getEffectiveHubSeasons(){
+    	HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
+    	criteria.createCriteria().andFilterFlagEqualTo(FilterFlag.EFFECTIVE.getIndex());
+    	criteria.setFields("supplierid,supplier_season,filter_flag");
+    	 return  hubSeasonDicGateWay.selectByCriteria(criteria);
     }
 
     public List<HubSeasonDicDto> getHubSeasonDic(){
