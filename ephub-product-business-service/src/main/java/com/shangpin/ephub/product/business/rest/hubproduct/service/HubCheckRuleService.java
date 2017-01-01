@@ -53,7 +53,7 @@ public class HubCheckRuleService {
 		
 		//校验季节
 		if(hubProduct.getSeason()!=null){
-			if(!hubCheckService.checkHubSeason(hubProduct.getSeason(),hubProduct.getMarketTime())){
+			if(!hubCheckService.checkHubSeason(hubProduct.getSeason())){
 				str.append("季节编号有误") ;
 			}
 		}
