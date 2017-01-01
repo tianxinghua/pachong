@@ -21,14 +21,14 @@ import lombok.ToString;
 public class HubPendingSpuImportDTO {
 	private String supplierId;
 	private String supplierName;
-	private String spuPendingId;
+	private String supplierSpuNo;
 	private String categoryName;
-	private String categoryNo;
-	private String brandNo;
+	private String hubCategoryNo;
+	private String hubBrandNo;
 	private String brandName;
 	private String spuModel;
 	private String seasonYear;
-	private String hubSeason;
+	private String seasonName;
 	private String hubGender;
 	private String spuName;
 	private String hubColor;
@@ -36,7 +36,7 @@ public class HubPendingSpuImportDTO {
 	private String hubOrigin;
 	private String spuDesc;
 	public String[] getPendingSpuTemplate() {
-		String [] temp = {"supplierId","supplierName","categoryName","categoryNo","brandNo","brandName","spuModel","seasonYear","hubSeason","hubGender",
+		String [] temp = {"supplierId","supplierName","supplierSpuNo","categoryName","hubCategoryNo","hubBrandNo","brandName","spuModel","seasonYear","seasonName","hubGender",
 				"spuName","hubColor","hubMaterial","hubOrigin","spuDesc"};
 		return temp;
 	}

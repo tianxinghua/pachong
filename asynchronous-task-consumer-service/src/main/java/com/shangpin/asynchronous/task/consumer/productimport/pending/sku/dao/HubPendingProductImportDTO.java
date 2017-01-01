@@ -21,15 +21,16 @@ import lombok.ToString;
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubPendingProductImportDTO {
-	private String supplierNo;
+	private String supplierId;
 	private String supplierName;
+	private String supplierSpuNo;
 	private String categoryName;
 	private String categoryNo;
 	private String brandNo;
 	private String brandName;
 	private String spuModel;
 	private String seasonYear;
-	private String hubSeason;
+	private String seasonName;
 	private String hubGender;
 	private String supplierSkuNo;
 	private String skuName;
@@ -46,9 +47,8 @@ public class HubPendingProductImportDTO {
 	private String marketPriceCurrencyOrg;
 	private String measurement;
 	private String spuDesc;
-	private String supplierId;
 	public String[] getHubProductTemplate() {
-		String [] temp = {"supplierNo","supplierName","categoryName","categoryNo","brandNo","brandName","spuModel","seasonYear","hubSeason","hubGender","supplierSkuNo","skuName","supplierBarcode",
+		String [] temp = {"supplierId","supplierName","supplierSpuNo","categoryName","categoryNo","brandNo","brandName","spuModel","seasonYear","seasonName","hubGender","supplierSkuNo","skuName","supplierBarcode",
 				"hubColor","specificationType","sizeType","hubSkuSize","hubMaterial","hubOrigin","supplyPrice","supplyPriceCurrency","marketPrice","marketPriceCurrencyOrg","measurement","spuDesc"};
 		return temp;
 	}
