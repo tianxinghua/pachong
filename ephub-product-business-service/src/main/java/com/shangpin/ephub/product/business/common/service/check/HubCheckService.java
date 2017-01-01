@@ -116,7 +116,7 @@ public class HubCheckService {
 	 */
 	public boolean checkHubColor(String color){
 		HubColorDicCriteriaDto hubColorDicCriteriaDto = new HubColorDicCriteriaDto();
-		hubColorDicCriteriaDto.createCriteria().andColorNoEqualTo(color);
+		hubColorDicCriteriaDto.createCriteria().andColorNameEqualTo(color);
 		List<HubColorDicDto> list = hubColorDicGateway.selectByCriteria(hubColorDicCriteriaDto);
 		if(list!=null&&list.size()>0){
 			return true;
