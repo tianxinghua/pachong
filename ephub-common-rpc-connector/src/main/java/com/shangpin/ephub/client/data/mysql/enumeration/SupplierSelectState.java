@@ -1,14 +1,13 @@
 package com.shangpin.ephub.client.data.mysql.enumeration;
-
 /**
- * <p>Title:SpuState </p>
- * <p>Description: spu状态</p>
+ * <p>Title:SpuSeasonState </p>
+ * <p>Description: 供应商选品状态 </p>
  * <p>Company: www.shangpin.com</p> 
  * @author lubaijiang
- * @date 2016年12月19日 下午7:33:24
+ * @date 2016年12月19日 下午7:36:24
  *
  */
-public enum SpuSelectState {
+public enum SupplierSelectState {
 	
 	WAIT_SELECT(0,"待选品"),
 	SELECTING(1,"选品中"),
@@ -23,7 +22,7 @@ public enum SpuSelectState {
      */
     private String description;
     
-    SpuSelectState(int index,String description){
+    SupplierSelectState(int index,String description){
 		this.index = index;
 		this.description = description;
 	}

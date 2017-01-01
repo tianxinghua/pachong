@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
@@ -48,15 +49,9 @@ public class HubWaitSelectedService {
 		for (HubWaitSelectStateDto dto : list) {
 
 			HubSkuSupplierMappingDto HubSkuSupplierMappingDto = new HubSkuSupplierMappingDto();
-			HubSkuSupplierMappingDto.setSupplierSelectState((byte) 1);
+			HubSkuSupplierMappingDto.setSupplierSelectState((byte)SupplierSelectState.SELECTING.getIndex());
 			HubSkuSupplierMappingDto.setSkuSupplierMappingId(dto.getSkuSupplierMappingId());
 			hubSkuSupplierMappingGateWay.updateByPrimaryKeySelective(HubSkuSupplierMappingDto);
-
-			HubSpuDto hubSpu = new HubSpuDto();
-			hubSpu.setSpuSelectState((byte) 1);
-			hubSpu.setSpuId(dto.getSpuId());
-			hubSpu.setUpdateTime(new Date());
-			hubSpuGateway.updateByPrimaryKeySelective(hubSpu);
 
 			Long spuId = dto.getSpuId();
 			Long mappId = dto.getSkuSupplierMappingId();
@@ -70,7 +65,6 @@ public class HubWaitSelectedService {
 					skuMap.put(skuId, mappMap);
 					spuIdMap.put(spuId, skuMap);
 				} else {
-					Map<Long, Map<Long, String>> skuNewMap = new HashMap<Long, Map<Long, String>>();
 					Map<Long, String> mappMap = new HashMap<Long, String>();
 					mappMap.put(mappId, null);
 					skuMap.put(skuId, mappMap);
