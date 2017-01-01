@@ -33,7 +33,7 @@ public class HubPendingSpuCheckService {
 					str.append("brandNo在尚品品牌库中不存在,");
 				}
 			}else{
-				str.append("brandNo为空");
+				str.append("brandNo为空,");
 			}
 			//颜色
 			if(hubProduct.getHubColor()!=null){
@@ -42,8 +42,18 @@ public class HubPendingSpuCheckService {
 					str.append("hubColor在尚品颜色库中不存在,");
 				}
 			}else{
-				str.append("hubColor为空");
+				str.append("hubColor为空,");
 			}
+			
+			//校验品类
+			if(hubProduct.getHubCategoryNo()!=null){
+				if(!hubCheckService.checkHubCategory(hubProduct.getHubCategoryNo())){
+					str.append("品类编号:"+hubProduct.getHubCategoryNo()+"不存在,") ;
+				}	
+			}else{
+				str.append("品类为空,");
+			}
+			
 			
 			//性别
 			if(hubProduct.getHubGender()!=null){
@@ -52,17 +62,17 @@ public class HubPendingSpuCheckService {
 					str.append("hubGender在尚品性别库中不存在,");
 				}
 			}else{
-				str.append("hubGender为空");
+				str.append("hubGender为空,");
 			}
 			
-			//性别
-			if(hubProduct.getHubGender()!=null){
-				flag = hubCheckService.checkHubSeason(hubProduct.getHubSeason(),hubProduct.getHubSeason());
+			//季节
+			if(hubProduct.getHubSeason()!=null){
+				flag = hubCheckService.checkHubSeason(hubProduct.getHubSeason());
 				if(!flag){
 					str.append("hubGender在尚品性别库中不存在,");
 				}
 			}else{
-				str.append("hubGender为空");
+				str.append("hubGender为空,");
 			}
 			
 		}
