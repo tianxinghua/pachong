@@ -51,7 +51,7 @@ public class SupplierService {
                 Map<String, String> paraMap = new HashMap<>();
                 paraMap.put("supplierNo", supplierNo);
                 String url = "http://qa.scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo="+supplierNo;
-                SupplierDTO supplierDto = httpClient.getForEntity(url, SupplierDTO.class).getBody();
+                SupplierDTO supplierDto = httpClient.getForObject(url, SupplierDTO.class);
                 try {
                 	//缓存到redis中
                     shangpinRedis.setex(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo,1000*60*5,JsonUtil.serialize(supplierDto));
