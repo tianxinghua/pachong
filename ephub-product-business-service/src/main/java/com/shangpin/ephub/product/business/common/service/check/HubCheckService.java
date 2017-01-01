@@ -20,6 +20,7 @@ import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.rest.model.service.impl.HubBrandModelRuleService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,54 @@ public class HubCheckService {
 	@Autowired
 	HubBrandModelRuleService HubBrandModelRuleService;
 	
+	public String checkSpu(HubSpuPendingDto hubProduct){
+		boolean flag = false;
+		StringBuffer str = new StringBuffer();
+		if(hubProduct.getHubBrandNo()!=null){
+			flag = checkHubBrand(hubProduct.getHubBrandNo());
+			if(!flag){
+				str.append("brandNo在尚品品牌库中不存在,");
+			}
+		}else{
+			str.append("brandNo为空");
+		}
+		//颜色
+		if(hubProduct.getHubColor()!=null){
+			flag = checkHubColor(hubProduct.getHubColor());
+			if(!flag){
+				str.append("hubColor在尚品颜色库中不存在,");
+			}
+		}else{
+			str.append("hubColor为空");
+		}
+		
+		//性别
+		if(hubProduct.getHubGender()!=null){
+			flag = checkHubGender(hubProduct.getHubGender());
+			if(!flag){
+				str.append("hubGender在尚品性别库中不存在,");
+			}
+		}else{
+			str.append("hubGender为空");
+		}
+		
+		//性别
+		if(hubProduct.getHubGender()!=null){
+			flag = checkHubSeason(hubProduct.getHubSeason(),hubProduct.getHubSeason());
+			if(!flag){
+				str.append("hubGender在尚品性别库中不存在,");
+			}
+		}else{
+			str.append("hubGender为空");
+		}
+		return str.toString();
+	}
+	
+	/**
+	 * 校验品牌编号
+	 * @param brandNo
+	 * @return
+	 */
 	public boolean checkHubBrand(String brandNo){
 		HubBrandDicCriteriaDto hubBrandDicCriteriaDto = new HubBrandDicCriteriaDto();
 		hubBrandDicCriteriaDto.createCriteria().andHubBrandNoEqualTo(brandNo);
@@ -59,6 +108,12 @@ public class HubCheckService {
 			return false;
 		}
 	}
+	
+	/**
+	 * 校验颜色
+	 * @param color
+	 * @return
+	 */
 	public boolean checkHubColor(String color){
 		HubColorDicCriteriaDto hubColorDicCriteriaDto = new HubColorDicCriteriaDto();
 		hubColorDicCriteriaDto.createCriteria().andColorNoEqualTo(color);
@@ -69,6 +124,12 @@ public class HubCheckService {
 			return false;
 		}
 	}
+	/**
+	 * 校验季节
+	 * @param season
+	 * @param seasonYear
+	 * @return
+	 */
 	public boolean checkHubSeason(String season,String seasonYear){
 		HubSeasonDicCriteriaDto hubSeasonDicCriteriaDto = new HubSeasonDicCriteriaDto();
 		hubSeasonDicCriteriaDto.createCriteria().andHubSeasonEqualTo(season).andHubMarketTimeEqualTo(seasonYear);
@@ -79,6 +140,12 @@ public class HubCheckService {
 			return false;
 		}
 	}
+	
+	/**
+	 * 校验性别
+	 * @param gender
+	 * @return
+	 */
 	public boolean checkHubGender(String gender){
 		HubGenderDicCriteriaDto hubGenderDicCriteriaDto = new HubGenderDicCriteriaDto();
 		hubGenderDicCriteriaDto.createCriteria().andHubGenderEqualTo(gender);
@@ -89,7 +156,13 @@ public class HubCheckService {
 			return false;
 		}
 	}
-	private boolean checkHubCategory(String categoryNo){
+	
+	/**
+	 * 校验品类
+	 * @param categoryNo
+	 * @return
+	 */
+	public boolean checkHubCategory(String categoryNo){
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
 		criteria.createCriteria().andHubCategoryNoEqualTo(categoryNo);
 		List<HubSupplierCategroyDicDto> list = hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
@@ -99,6 +172,12 @@ public class HubCheckService {
 			return false;
 		}
 	}
+	
+	/**
+	 * 校验尺码
+	 * @param hubSkuSize
+	 * @return
+	 */
 	public boolean checkHubSize(String hubSkuSize) {
 		return true;
 	}

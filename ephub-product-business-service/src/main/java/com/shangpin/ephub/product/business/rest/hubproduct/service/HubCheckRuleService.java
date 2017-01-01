@@ -1,19 +1,9 @@
 package com.shangpin.ephub.product.business.rest.hubproduct.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
-import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
-import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicDto;
-import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
-import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
+import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 import com.shangpin.ephub.product.business.rest.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.product.business.rest.hubproduct.manager.HubProductCheckManager;
 
@@ -34,93 +24,54 @@ public class HubCheckRuleService {
 	@Autowired
 	private HubProductCheckManager hubProductCheckRuleManager;
 	
+	@Autowired
+	HubCheckService hubCheckService;
 	
 	public String checkHubProduct(HubProductDto hubProduct){
 		
 		StringBuffer str = new StringBuffer();
 		//校验品牌
 		if(hubProduct.getBrandNo()!=null){
-			if(!checkHubBrand(hubProduct.getBrandNo())){
-				str.append("品牌编号有误") ;
+			if(!hubCheckService.checkHubBrand(hubProduct.getBrandNo())){
+				str.append("品牌编号不存在，") ;
 			}	
 		}
 		
 		//校验品类
+		if(hubProduct.getCategoryNo()!=null){
+			if(!hubCheckService.checkHubCategory(hubProduct.getCategoryNo())){
+				str.append("品类编号有误") ;
+			}	
+		}
 		
 		//校验颜色
 		if(hubProduct.getHubColor()!=null){
-			if(!checkHubColor(hubProduct.getHubColor())){	
+			if(!hubCheckService.checkHubColor(hubProduct.getHubColor())){	
 				str.append("颜色编号有误") ;
 			}
 		}
 		
 		//校验季节
 		if(hubProduct.getSeason()!=null){
-			if(!checkHubSeason(hubProduct.getSeason(),hubProduct.getMarketTime())){
+			if(!hubCheckService.checkHubSeason(hubProduct.getSeason(),hubProduct.getMarketTime())){
 				str.append("季节编号有误") ;
 			}
 		}
+		
 		//校验尺码
+		if(hubProduct.getSkuSize()!=null){
+			if(!hubCheckService.checkHubSize(hubProduct.getSkuSize())){
+				str.append("尺码编号有误") ;
+			}	
+		}
 		
 		//校验性别
 		if(hubProduct.getGender()!=null){
-			if(!checkHubGender(hubProduct.getGender())){
+			if(!hubCheckService.checkHubGender(hubProduct.getGender())){
 				str.append("性别编号有误") ;
 			}	
 		}
 		//校验产地
 		return str.toString();
 	}
-	
-	private boolean checkHubBrand(String brandNo){
-		HubBrandDicCriteriaDto hubBrandDicCriteriaDto = new HubBrandDicCriteriaDto();
-		hubBrandDicCriteriaDto.createCriteria().andHubBrandNoEqualTo(brandNo);
-		List<HubBrandDicDto> list = hubProductCheckRuleManager.findBrandByCriteria(hubBrandDicCriteriaDto);
-		if(list!=null&&list.size()>0){
-			return true;
-		}else{
-			return false;
-		}
-	}
-	private boolean checkHubColor(String color){
-		HubColorDicCriteriaDto hubColorDicCriteriaDto = new HubColorDicCriteriaDto();
-		hubColorDicCriteriaDto.createCriteria().andColorNoEqualTo(color);
-		List<HubColorDicDto> list = hubProductCheckRuleManager.findColorByCriteria(hubColorDicCriteriaDto);
-		if(list!=null&&list.size()>0){
-			return true;
-		}else{
-			return false;
-		}
-	}
-	private boolean checkHubSeason(String season,String seasonYear){
-		HubSeasonDicCriteriaDto hubSeasonDicCriteriaDto = new HubSeasonDicCriteriaDto();
-		hubSeasonDicCriteriaDto.createCriteria().andHubSeasonEqualTo(season).andHubMarketTimeEqualTo(seasonYear);
-		List<HubSeasonDicDto> list = hubProductCheckRuleManager.findSeasonByCriteria(hubSeasonDicCriteriaDto);
-		if(list!=null&&list.size()>0){
-			return true;
-		}else{
-			return false;
-		}
-	}
-	private boolean checkHubGender(String gender){
-		HubGenderDicCriteriaDto hubGenderDicCriteriaDto = new HubGenderDicCriteriaDto();
-		hubGenderDicCriteriaDto.createCriteria().andHubGenderEqualTo(gender);
-		List<HubGenderDicDto> list = hubProductCheckRuleManager.findGenderByCriteria(hubGenderDicCriteriaDto);
-		if(list!=null&&list.size()>0){
-			return true;
-		}else{
-			return false;
-		}
-	}
-//	private boolean checkHubCategory(String categoryNo){
-//		HubCat\CriteriaDto hubBrandDicCriteriaDto = new HubBrandDicCriteriaDto();
-//		hubBrandDicCriteriaDto.createCriteria().andHubBrandNoEqualTo(categoryNo);
-//		List<HubBrandDicDto> list = hubProductCheckRuleManager.findByCriteria(hubBrandDicCriteriaDto);
-//		if(list!=null&&list.size()>0){
-//			return true;
-//		}else{
-//			return false;
-//		}
-//	}
-
 }
