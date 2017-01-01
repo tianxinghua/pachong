@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.service.hub.impl;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
@@ -112,9 +113,13 @@ public class HubProductServiceImpl implements HubProductService {
                             });
                     HubResponseDto<String> responseDto = entity.getBody();
                     if(responseDto.getIsSuccess()){  //创建成功
-
+                         for(ApiSkuOrgDom skuOrg:skuOrgDoms){
+                             updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTED);
+                         }
                     }else{ //创建失败
-
+                        for(ApiSkuOrgDom skuOrg:skuOrgDoms){
+                            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.NO_SELECTED);
+                        }
                     }
                 }
             }
@@ -165,6 +170,7 @@ public class HubProductServiceImpl implements HubProductService {
         placeOrigin.setPlaceOriginValue(hubSpuDto.getOrigin());
         originList.add(placeOrigin);
         skuOrgDom.setPlaceOriginList(originList);
+        skuOrgDom.setSkuOrginalFromId(hubSkuSupplierMappingDto.getSkuSupplierMappingId().toString());
 
 
         return skuOrgDom;
@@ -248,10 +254,10 @@ public class HubProductServiceImpl implements HubProductService {
     }
 
 
-    private void updateSkuMappingStatus(Long id,Long status){
+    private void updateSkuMappingStatus(Long id,SupplierSelectState status){
         HubSkuSupplierMappingDto skuSupplierMapping = new HubSkuSupplierMappingDto();
         skuSupplierMapping.setSkuSupplierMappingId(id);
-
+        skuSupplierMapping.setSupplierSelectState(Integer.valueOf(status.getIndex()).byteValue());
         skuSupplierMappingGateWay.updateByPrimaryKeySelective(skuSupplierMapping);
     }
 }
