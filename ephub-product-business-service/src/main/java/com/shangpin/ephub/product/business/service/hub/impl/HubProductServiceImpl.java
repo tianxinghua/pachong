@@ -15,6 +15,10 @@ import com.shangpin.ephub.product.business.service.hub.HubProductService;
 import com.shangpin.ephub.product.business.service.hub.dto.*;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -85,8 +89,11 @@ public class HubProductServiceImpl implements HubProductService {
                 }
             }
             //推送
-            HubResponseDto responseDto = new HubResponseDto<String>();
-//            HubResponseDto<T> result  = restTemplate.postForObject(apiAddressProperties.getGmsAddProductUrl(),productDto,responseDto.getClass());
+            HttpEntity<HubProductDto> requestEntity = new HttpEntity<HubProductDto>(productDto);
+			ResponseEntity<HubResponseDto<String>> entity = restTemplate.exchange(apiAddressProperties.getGmsAddProductUrl(), HttpMethod.POST,
+                    requestEntity, new ParameterizedTypeReference<HubResponseDto<String>>() {
+			});
+            HubResponseDto<String> responseDto = entity.getBody();
             if(responseDto.getIsSuccess()){  //创建成功
 
             }else{ //创建失败

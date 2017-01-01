@@ -58,7 +58,7 @@ public class HubSkuController {
     	return hubSkuService.selectByCriteria(criteria);
     }
 	@RequestMapping(value = "/select-by-primary-key/{skuId}")
-    public HubSku selectByPrimaryKey(@PathVariable(value = "spuId") Long skuId){
+    public HubSku selectByPrimaryKey(@PathVariable(value = "skuId") Long skuId){
     	return hubSkuService.selectByPrimaryKey(skuId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")
