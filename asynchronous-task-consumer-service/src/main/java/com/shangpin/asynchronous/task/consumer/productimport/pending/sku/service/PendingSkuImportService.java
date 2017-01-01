@@ -1,10 +1,9 @@
 package com.shangpin.asynchronous.task.consumer.productimport.pending.sku.service;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,22 +18,22 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskService;
-import com.shangpin.asynchronous.task.consumer.productimport.common.util.ExportExcelUtils;
+import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
+import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
-import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubPendingSkuDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
-import com.shangpin.ephub.client.product.business.hubpending.spu.dao.HubPendingSpuDto;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
@@ -65,7 +64,7 @@ public class PendingSkuImportService {
 	@Autowired
 	HubSkuPendingGateWay hubSkuPendingGateWay;
 	@Autowired
-	TaskService taskService;
+	TaskImportService taskService;
 	@Autowired
 	HubSpuPendingGateWay hubSpuPendingGateWay;
 	@Autowired
@@ -84,54 +83,35 @@ public class PendingSkuImportService {
 		taskService.updateHubSpuImportStatusByTaskNo(TaskState.HANDLEING.getIndex(), task.getTaskNo(), null);
 		log.info("任务编号：" + task.getTaskNo() + "状态更新成正在处理");
 
+
+		// 2、从ftp下载文件并校验模板
+		XSSFSheet xssfSheet = taskService.checkExcel(task.getTaskFtpFilePath(),task.getTaskNo(),"spu");
+		// 3、excel解析成java对象
+		
 		// 2、从ftp下载文件并解析成对象
-		List<HubPendingProductImportDTO> listHubProduct = handleHubExcel(task.getTaskFtpFilePath(), task.getTaskNo());
-		if (listHubProduct == null) {
-			return;
-		}
+		List<HubPendingProductImportDTO> listHubProduct = handleHubExcel(xssfSheet);
 
 		// 3、公共类校验hub数据并把校验结果写入excel
-		List<Map<String, String>> result = checkAndsaveHubPendingProduct(task.getTaskNo(), listHubProduct);
+		checkAndsaveHubPendingProduct(task.getTaskNo(), listHubProduct);
 
-		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
-		convertExcel(result, task.getTaskNo());
-	}
-
-	private void convertExcel(List<Map<String, String>> result, String taskNo) throws Exception {
-		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-		String resultFileName = sim.format(new Date());
-		File file = new File(resultFileName + ".xls");
-		FileOutputStream out = new FileOutputStream(file);
-
-		String[] headers = { "任务编号", "货号", "任务状态", "任务说明" };
-		String[] columns = { "taskNo", "spuModel", "taskState", "processInfo" };
-		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
-		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
-
-		int status;
-		if (result != null && result.size() > 0) {
-			// 部分成功
-			status = TaskState.SOME_SUCCESS.getIndex();
-		} else {
-			// 全部成功
-			status = TaskState.ALL_SUCCESS.getIndex();
-		}
-		file.delete();
-
-		taskService.updateHubSpuImportByTaskNo(taskNo, path + resultFileName + ".xls", status);
-
+		
 	}
 
 	// 校验数据以及保存到hub表
-	private List<Map<String, String>> checkAndsaveHubPendingProduct(String taskNo,
-			List<HubPendingProductImportDTO> listHubProduct) {
+	private void checkAndsaveHubPendingProduct(String taskNo,
+			List<HubPendingProductImportDTO> listHubProduct)  throws Exception {
 
+		if (listHubProduct == null) {
+			return;
+		}
+		//校验全通过为true
+		boolean flag = true;
+		
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 		for (HubPendingProductImportDTO product : listHubProduct) {
-
 			Map<String, String> map = new HashMap<String, String>();
-			// 处理sku信息
+			
+			// 校验sku信息
 			HubPendingSkuCheckResult hubPendingSkuCheckResult = handlePendingSku(product);
 
 			if (hubPendingSkuCheckResult.isPassing() == true) {
@@ -140,14 +120,52 @@ public class PendingSkuImportService {
 				HubPendingSpuCheckResult hubPendingSpuCheckResult = handlePendingSpu(product);
 				if (hubPendingSpuCheckResult.isPassing() == true) {
 					log.info(taskNo + "spu校验通过");
-					Long pendingSpuId = updateOrSaveSku(product);
-					updateOrSaveSpu(product, pendingSpuId);
+					HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(product.getSupplierId(),
+							product.getSupplierSkuNo());
+					HubSkuPendingDto hubSkuPendingDto = convertHubPendingProduct2Sku(product);
+					HubSpuPendingDto hubSpuPendingDto = convertHubPendingProduct2PendingSpu(product);
+					if(hubSkuPendingTempDto!=null){
+						log.info(hubSkuPendingTempDto.getSupplierId()+"sku存在"+"，更新操作");
+						hubSkuPendingDto.setSkuPendingId(hubSkuPendingTempDto.getSkuPendingId());
+						hubSkuPendingDto.setUpdateTime(new Date());
+						hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+						
+ 						hubSpuPendingDto.setUpdateTime(new Date());
+						hubSpuPendingDto.setSpuPendingId(hubSkuPendingTempDto.getSpuPendingId());
+						hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
+					}else{
+						
+						HubSpuPendingCriteriaDto HubSpuPendingCriteriaDto = new HubSpuPendingCriteriaDto();
+						HubSpuPendingCriteriaDto.createCriteria().andSupplierSpuNoEqualTo(product.getSupplierSpuNo()).andSupplierIdEqualTo(product.getSupplierId());
+						
+						List<HubSpuPendingDto> listSpu = hubSpuPendingGateWay.selectByCriteria(HubSpuPendingCriteriaDto);
+						
+						Long pendingSpuId = null;
+						if(listSpu!=null&&listSpu.size()>0){
+							log.info(product.getSupplierId()+"spu存在、sku不存在"+"，更新插入操作");
+							pendingSpuId = listSpu.get(0).getSpuPendingId();
+							hubSpuPendingDto.setSpuPendingId(pendingSpuId);
+							hubSpuPendingDto.setUpdateTime(new Date());
+							hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
+						}else{
+							log.info(product.getSupplierId()+"spu、sku不存在"+"，插入操作");
+							hubSpuPendingDto.setCreateTime(new Date());
+							hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
+							pendingSpuId = hubSpuPendingGateWay.insert(hubSpuPendingDto);
+						}
+						
+						hubSkuPendingDto.setSpuPendingId(pendingSpuId);
+						hubSkuPendingDto.setCreateTime(new Date());
+						hubSkuPendingDto.setDataState((byte)1);
+						hubSkuPendingGateWay.insert(hubSkuPendingDto);
+					}
 					map.put("taskNo", taskNo);
 					map.put("spuModel", product.getSpuModel());
 					map.put("taskState", "校验成功");
 					map.put("processInfo", "校验通过");
 				} else {
 					log.info(taskNo + "sku校验不通过");
+					flag = false;
 					map.put("taskNo", taskNo);
 					map.put("spuModel", product.getSpuModel());
 					map.put("taskState", "校验失败");
@@ -163,66 +181,35 @@ public class PendingSkuImportService {
 
 			listMap.add(map);
 		}
-		return listMap;
-	}
-
-	private void updateOrSaveSpu(HubPendingProductImportDTO product, Long pendingSpuId) {
-		// 查询数据库spu信息是否已存在，存在则更新，反之插入
-		HubSpuPendingDto hubSpuPendingDto = convertHubPendingProduct2Spu(product);
-		if (pendingSpuId != null) {
-			hubSpuPendingDto.setSpuPendingId(pendingSpuId);
-			hubSpuPendingGateWay.updateByPrimaryKey(hubSpuPendingDto);
-		} else {
-			hubSpuPendingGateWay.insert(hubSpuPendingDto);
-		}
-	}
-
-	private Long updateOrSaveSku(HubPendingProductImportDTO product) {
-		HubSkuPendingDto hubSkuPendingDto = convertHubPendingProduct2Sku(product);
-		// 查询数据库sku信息是否已存在
-		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),
-				hubSkuPendingDto.getSupplierSkuNo());
-		if (hubSkuPendingTempDto != null) {
-			hubSkuPendingDto.setSkuPendingId(hubSkuPendingTempDto.getSkuPendingId());
-			hubSkuPendingGateWay.updateByPrimaryKey(hubSkuPendingDto);
-			return hubSkuPendingTempDto.getSpuPendingId();
-		} else {
-			hubSkuPendingGateWay.insert(hubSkuPendingDto);
-			return null;
-		}
-
+		
+		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
+		taskService.convertExcel(listMap,taskNo,flag);
 	}
 
 	private HubPendingSkuCheckResult handlePendingSku(HubPendingProductImportDTO product) {
-		HubPendingSkuDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
+		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
 		return pendingSkuCheckGateWay.checkSku(HubPendingSkuDto);
 	}
 
 	private HubPendingSpuCheckResult handlePendingSpu(HubPendingProductImportDTO product) {
 		// 校验spu信息
-		HubPendingSpuDto HubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
+		HubSpuPendingDto HubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
 		return pendingSpuCheckGateWay.checkSpu(HubPendingSpuDto);
 
 	}
 
-	private HubPendingSpuDto convertHubPendingProduct2PendingSpu(HubPendingProductImportDTO product) {
-		HubPendingSpuDto HubPendingSpuDto = new HubPendingSpuDto();
+	private HubSpuPendingDto convertHubPendingProduct2PendingSpu(HubPendingProductImportDTO product) {
+		HubSpuPendingDto HubPendingSpuDto = new HubSpuPendingDto();
 		BeanUtils.copyProperties(product, HubPendingSpuDto);
 		return HubPendingSpuDto;
 	}
 
-	private HubPendingSkuDto convertHubPendingProduct2PendingSku(HubPendingProductImportDTO product) {
-		HubPendingSkuDto HubPendingSkuDto = new HubPendingSkuDto();
+	private HubSkuPendingDto convertHubPendingProduct2PendingSku(HubPendingProductImportDTO product) {
+		HubSkuPendingDto HubPendingSkuDto = new HubSkuPendingDto();
 		BeanUtils.copyProperties(product, HubPendingSkuDto);
 		return HubPendingSkuDto;
 	}
 
-	private HubSpuPendingDto convertHubPendingProduct2Spu(HubPendingProductImportDTO product) {
-
-		HubSpuPendingDto hubSpuPendingDto = new HubSpuPendingDto();
-		BeanUtils.copyProperties(product, hubSpuPendingDto);
-		return hubSpuPendingDto;
-	}
 
 	private HubSkuPendingDto findHubSkuPending(String supplierId, String supplierSkuNo) {
 
@@ -234,13 +221,6 @@ public class PendingSkuImportService {
 		}
 		return null;
 	}
-	// private Long findHubSpuPending(Long spuId) {
-	// HubSpuPendingDto list = hubSpuPendingGateWay.selectByPrimaryKey(spuId);
-	// if(list!=null){
-	// return list.getSpuPendingId();
-	// }
-	// return null;
-	// }
 
 	private HubSkuPendingDto convertHubPendingProduct2Sku(HubPendingProductImportDTO product) {
 		HubSkuPendingDto hubSkuPendingDto = new HubSkuPendingDto();
@@ -249,25 +229,9 @@ public class PendingSkuImportService {
 	}
 
 	// 解析excel转换为对象
-	private List<HubPendingProductImportDTO> handleHubExcel(String taskFtpFilePath, String taskNo) throws Exception {
+	private List<HubPendingProductImportDTO> handleHubExcel(XSSFSheet xssfSheet) throws Exception {
 
-		InputStream in = FTPClientUtil.downFile(taskFtpFilePath);
-		if (in == null) {
-			log.info("任务编号：" + taskNo + "," + taskFtpFilePath + "从ftp下载失败数据为空");
-			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(), taskNo, "从ftp下载失败");
-		}
-		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(in);
-		XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
-		if (xssfSheet.getRow(0) == null) {
-			log.info("任务编号：" + taskNo + "," + taskFtpFilePath + "下载的excel数据为空");
-			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(), taskNo, "下载的excel数据为空");
-			return null;
-		}
-		boolean flag = checkFileTemplet(xssfSheet.getRow(0));
-		if (!flag) {
-			// TODO 上传文件与模板不一致
-			log.info("任务编号：" + taskNo + "," + taskFtpFilePath + "上传文件与模板不一致");
-			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(), taskNo, "上传文件与模板不一致");
+		if(xssfSheet==null){
 			return null;
 		}
 		List<HubPendingProductImportDTO> listHubProduct = new ArrayList<>();
@@ -285,16 +249,50 @@ public class PendingSkuImportService {
 			try {
 				item = new HubPendingProductImportDTO();
 				String[] hubValueTemplate = item.getHubProductTemplate();
-				Class c = item.getClass();
-				for (int i = 0; i < hubValueTemplate.length; i++) {
-					if (xssfRow.getCell(i) != null) {
-						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
-						String setMethodName = "set" + hubValueTemplate[i].toUpperCase().charAt(0)
-								+ hubValueTemplate[i].substring(1);
-						Method setMethod = c.getDeclaredMethod(setMethodName, String.class);
-						setMethod.invoke(item, xssfRow.getCell(i).toString());
-					}
-				}
+				Class cls = item.getClass();
+				
+				  Field[] fields = cls.getDeclaredFields();  
+				  int i=0;
+			        for (Field field : fields) {  
+			            try {  
+			                String fieldSetName = parSetName(field.getName());  
+			                @SuppressWarnings("unchecked")
+							Method fieldSetMet = cls.getMethod(fieldSetName,  
+			                        field.getType());  
+			                if(!hubValueTemplate[i].equals(field.getName())){
+			                	return null;
+			                }
+			                xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
+			                String value = xssfRow.getCell(i).toString();  
+			                if (null != value && !"".equals(value)) {  
+			                    String fieldType = field.getType().getSimpleName();  
+			                    if ("String".equals(fieldType)) {  
+			                        fieldSetMet.invoke(item, value);  
+			                    } else if ("Integer".equals(fieldType)  
+			                            || "int".equals(fieldType)) {  
+			                        Integer intval = Integer.parseInt(value);  
+			                        fieldSetMet.invoke(item, intval);  
+			                    } else if ("Long".equalsIgnoreCase(fieldType)) {  
+			                        Long temp = Long.parseLong(value);  
+			                        fieldSetMet.invoke(item, temp);  
+			                    } else if ("Double".equalsIgnoreCase(fieldType)) {  
+			                        Double temp = Double.parseDouble(value);  
+			                        fieldSetMet.invoke(item, temp);  
+			                    } else if ("Boolean".equalsIgnoreCase(fieldType)) {  
+			                        Boolean temp = Boolean.parseBoolean(value);  
+			                        fieldSetMet.invoke(item, temp);  
+			                    }else if ("BigDecimal".equalsIgnoreCase(fieldType)) {  
+			                    	BigDecimal temp =new BigDecimal(value);  
+			                        fieldSetMet.invoke(item, temp);  
+			                    }  else {  
+			                        log.info("not supper type" + fieldType);  
+			                    }  
+			                }  
+			            } catch (Exception e) {  
+			                continue;  
+			            }  
+			            i++;
+			        }  
 
 			} catch (Exception ex) {
 				ex.getStackTrace();
@@ -302,7 +300,26 @@ public class PendingSkuImportService {
 		}
 		return item;
 	}
-
+   
+    public static boolean checkSetMet(Method[] methods, String fieldSetMet) {  
+        for (Method met : methods) {  
+            if (fieldSetMet.equals(met.getName())) {  
+                return true;  
+            }  
+        }  
+        return false;  
+    }  
+    public static String parSetName(String fieldName) {  
+        if (null == fieldName || "".equals(fieldName)) {  
+            return null;  
+        }  
+        int startIndex = 0;  
+        if (fieldName.charAt(0) == '_')  
+            startIndex = 1;  
+        return "set"  
+                + fieldName.substring(startIndex, startIndex + 1).toUpperCase()  
+                + fieldName.substring(startIndex + 1);  
+    }  
 	private static boolean checkFileTemplet(XSSFRow xssfRow) {
 
 		boolean flag = true;

@@ -1,10 +1,6 @@
 package com.shangpin.asynchronous.task.consumer.productimport.hub.service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,16 +10,17 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskService;
-import com.shangpin.asynchronous.task.consumer.productimport.common.util.ExportExcelUtils;
-import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
+import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.dto.HubProductImportDTO;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
@@ -57,9 +54,11 @@ public class HubProductImportService {
 	@Autowired
 	HubProductCheckGateWay HubProductCheckGateWay;
 	@Autowired
-	TaskService taskService;
+	TaskImportService taskService;
 	@Autowired
 	HubSpuGateWay hubSpuGateWay;
+	@Autowired
+	HubSkuGateWay hubSkuGateWay;
 	private static String[] hubKeyTemplate = null;
 	static {
 		hubKeyTemplate = TaskImportTemplate.getPendingSkuTemplate();
@@ -71,85 +70,102 @@ public class HubProductImportService {
 
 		// 1、更新任务表，把task_state更新成正在处理
 		taskService.updateHubSpuImportStatusByTaskNo(TaskState.HANDLEING.getIndex(), task.getTaskNo(), null);
-		// 2、从ftp下载文件并解析成对象
-		List<HubProductImportDTO> listHubProduct = handleHubExcel(task.getTaskFtpFilePath(), task.getTaskNo());
-		if(listHubProduct==null){
-			return;
-		}
+		
+		// 2、从ftp下载文件并校验模板，并校验
+		XSSFSheet xssfSheet = taskService.checkExcel(task.getTaskFtpFilePath(),task.getTaskNo(),"hub");
+		
+		List<HubProductImportDTO> listHubProduct = excelToObject(xssfSheet);
+		
 		// 3、公共类校验hub数据并把校验结果写入excel
-		List<Map<String, String>> result = checkAndsaveHubProduct(task.getTaskNo(), listHubProduct);
-
-		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-		String resultFileName = sim.format(new Date());
-		File file = new File(resultFileName + ".xls");
-		FileOutputStream out = new FileOutputStream(file);
-		String[] headers = { "任务编号", "货号", "任务状态", "任务说明" };
-		String[] columns = { "taskNo", "spuModel", "taskState", "processInfo" };
-		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
-		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
-		file.delete();
-		out.close();
-		int status;
-		if (result != null && result.size() > 0) {
-			// 部分成功
-			status = 2;
-		} else {
-			// 全部成功
-			status = 3;
-		}
-		taskService.updateHubSpuImportByTaskNo(task.getTaskNo(), path + resultFileName + ".xls", status);
+		checkAndsaveHubProduct(task.getTaskNo(), listHubProduct);
+		
 	}
 
 	// 校验数据以及保存到hub表
-	private List<Map<String, String>> checkAndsaveHubProduct(String taskNo, List<HubProductImportDTO> listHubProduct) {
+	private void checkAndsaveHubProduct(String taskNo, List<HubProductImportDTO> listHubProduct) throws Exception{
 
+		if(listHubProduct==null){
+			return;
+		}
+		//true全部校验成功，
+		boolean flag = false;
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 	
 		for (HubProductImportDTO product : listHubProduct) {
 
-			boolean flag = false;
-			// TODO hub商品入库前的公共校验方法
-			
-			HubProductDto hubProductDto = convertHubImportProduct2HupProduct(product);
-			HubProductCheckResult hubProductCheckResult = HubProductCheckGateWay.checkProduct(hubProductDto);
-			
-			
+//			boolean isExist = false;
 			Map<String, String> map = new HashMap<String, String>();
+			HubProductDto hubProductDto = convertHubImportProduct2HupProduct(product);
+			//校验hub
+			HubProductCheckResult hubProductCheckResult = HubProductCheckGateWay.checkProduct(hubProductDto);
 			if (hubProductCheckResult.isPassing() == true) {
 				
-				Long hubSpuId = null;
-				List<HubSpuDto> hub = findHubSpuDto(product);
+				HubSpuDto hubSpuDto = convertHubImportProduct2HupSpu(product);
+				//查询hubSpu是否存在
+				String hubSpuNo = null;
+				List<HubSpuDto> hub = findHubSpuDto(hubSpuDto);
 				if (hub != null && hub.size() > 0) {
-					hubSpuId = hub.get(0).getSpuId();
-					flag = true;
+					hubSpuNo = hub.get(0).getSpuNo();
+					hubSpuDto.setSpuId(hub.get(0).getSpuId());
+					hubSpuGateWay.updateByPrimaryKeySelective(hubSpuDto);
+				}else {
+					
+					hubSpuDto.setCreateTime(new Date());
+					hubSpuDto.setDataState((byte)1);
+					hubSpuDto.setSpuSelectState((byte)0);
+					//调用接口生成spuNo
+					hubSpuNo = hubSpuGateWay.getSpuNo();
+					hubSpuDto.setSpuNo(hubSpuNo);
+					hubSpuGateWay.insert(hubSpuDto);
+				}
+				
+				List<HubSkuDto> hubSkuList = findHubSkuDto(hubSpuNo,product.getSkuSize());
+				if(hubSkuList!=null&&hubSkuList.size()>0){
+					HubSkuWithCriteriaDto HubSkuWithCriteriaDto = new HubSkuWithCriteriaDto();
+					HubSkuCriteriaDto HubSkuCriteriaDto = new HubSkuCriteriaDto();
+					HubSkuCriteriaDto.createCriteria().andSpuNoEqualTo(hubSpuNo);
+					HubSkuDto hubSku = new HubSkuDto();
+					hubSku.setSkuSize(product.getSkuSize());
+					hubSku.setUpdateTime(new Date());
+					HubSkuWithCriteriaDto.setHubSku(hubSku);
+					HubSkuWithCriteriaDto.setCriteria(HubSkuCriteriaDto);
+					hubSkuGateWay.updateByCriteriaSelective(HubSkuWithCriteriaDto);
+				}else{
+					HubSkuDto hubSku = new HubSkuDto();
+					hubSku.setSkuSize(product.getSkuSize());
+					hubSku.setSpuNo(hubSpuNo);
+					hubSku.setCreateTime(new Date());
+					hubSku.setDataState((byte)1);
+					//生成skuNo调用接口
+					String skuNo = hubSkuGateWay.createSkuNo(hubSpuNo);
+					hubSku.setSkuNo(skuNo);
+					hubSkuGateWay.insert(hubSku);
 				}
 				
 				map.put("taskNo", taskNo);
 				map.put("spuModel", product.getSpuModel());
 				map.put("taskState", "校验成功");
 				map.put("processInfo", "校验通过");
-				HubSpuDto hubSpuDto = convertHubImportProduct2HupSpu(product);
-				if (flag) {
-					// 已存在，更新
-					hubSpuDto.setSpuId(hubSpuId);
-					hubSpuGateWay.updateByPrimaryKeySelective(hubSpuDto);
-				} else {
-					// 不存在，save
-					hubSpuGateWay.insert(hubSpuDto);
-				}
+				
 			} else {
 				map.put("taskNo", taskNo);
 				map.put("spuModel", product.getSpuModel());
 				map.put("taskState", "校验失败");
 				map.put("processInfo", hubProductCheckResult.getResult());
+				flag = false;
 			}
 			listMap.add(map);
 		}
-		return listMap;
+		taskService.convertExcel(listMap,taskNo,flag);
 	}
 
-	private List<HubSpuDto> findHubSpuDto(HubProductImportDTO product) {
+	private List<HubSkuDto> findHubSkuDto(String hubSpuNo, String skuSize) {
+		HubSkuCriteriaDto criteria = new HubSkuCriteriaDto();
+		criteria.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(skuSize);
+		return hubSkuGateWay.selectByCriteria(criteria);
+	}
+
+	private List<HubSpuDto> findHubSpuDto(HubSpuDto product) {
 		HubSpuCriteriaDto hubSpuCriteriaDto = new HubSpuCriteriaDto();
 		hubSpuCriteriaDto.createCriteria().andBrandNoEqualTo(product.getBrandNo())
 				.andSpuModelEqualTo(product.getSpuModel());
@@ -171,23 +187,9 @@ public class HubProductImportService {
 	}
 
 	// 解析excel转换为对象
-	private List<HubProductImportDTO> handleHubExcel(String taskFtpFilePath, String taskNo) throws Exception {
+	private List<HubProductImportDTO> excelToObject(XSSFSheet xssfSheet) throws Exception {
 
-		InputStream in = FTPClientUtil.downFile(taskFtpFilePath);
-		if (in == null) {
-			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(), taskNo, "从ftp下载失败");
-			return null;
-		}
-		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(in);
-		XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
-		if (xssfSheet.getRow(0) == null) {
-			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(), taskNo, "下载的excel数据为空");
-			return null;
-		}
-		boolean flag = checkFileTemplet(xssfSheet.getRow(0));
-		if (!flag) {
-			// TODO 上传文件与模板不一致
-			taskService.updateHubSpuImportStatusByTaskNo(TaskState.SOME_SUCCESS.getIndex(), taskNo, "上传文件与模板不一致");
+		if(xssfSheet==null){
 			return null;
 		}
 		List<HubProductImportDTO> listHubProduct = new ArrayList<>();
@@ -197,6 +199,7 @@ public class HubProductImportService {
 			listHubProduct.add(product);
 		}
 		return listHubProduct;
+	
 	}
 	@SuppressWarnings("all")
 	private static HubProductImportDTO convertSpuDTO(XSSFRow xssfRow) {
