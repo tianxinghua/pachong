@@ -125,11 +125,14 @@ public class HubCheckService {
 	}
 	/**
 	 * 校验季节
-	 * @param season
-	 * @param seasonYear
+	 * @param season 例如：2016_春夏
 	 * @return
 	 */
 	public boolean checkHubSeason(String season){
+		
+		if(season.split("_").length<2){
+			return false;
+		}
 		HubSeasonDicCriteriaDto hubSeasonDicCriteriaDto = new HubSeasonDicCriteriaDto();
 		
 		hubSeasonDicCriteriaDto.createCriteria().andHubSeasonEqualTo(season.split("_")[1]).andHubMarketTimeEqualTo(season.split("_")[0]);

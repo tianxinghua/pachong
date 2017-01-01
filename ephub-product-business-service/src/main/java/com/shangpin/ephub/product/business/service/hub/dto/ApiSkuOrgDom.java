@@ -89,4 +89,6 @@ public class ApiSkuOrgDom implements Serializable {
     /// 产地
     /// </summary>
     private List<PlaceOrigin> PlaceOriginList;
+
+    private String SkuOrginalFromId; //skuMappingId
 }
