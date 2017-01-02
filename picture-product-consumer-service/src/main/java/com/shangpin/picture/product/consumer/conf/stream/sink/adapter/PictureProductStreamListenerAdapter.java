@@ -2,9 +2,11 @@ package com.shangpin.picture.product.consumer.conf.stream.sink.adapter;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.ephub.client.message.pending.body.PendingProduct;
+import com.shangpin.picture.product.consumer.processor.SupplierProductPictureProcessor;
 
 /**
  * <p>Title:PendingProductStreamListenerAdapter.java </p>
@@ -15,14 +17,16 @@ import com.shangpin.ephub.client.message.pending.body.PendingProduct;
  */
 @Component
 public class PictureProductStreamListenerAdapter {
+	
+	@Autowired
+	private SupplierProductPictureProcessor supplierProductPictureProcessor;
 	/**
 	 * 监听供应商原始商品图片数据流
 	 * @param message 消息体
 	 * @param headers 消息头 请注意，避免修改此消息头，否则将会抛出运行时异常。
 	 */
 	public void supplierPictureProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
-		
+		supplierProductPictureProcessor.processProductPicture(message,headers);
 	}
 
 }
