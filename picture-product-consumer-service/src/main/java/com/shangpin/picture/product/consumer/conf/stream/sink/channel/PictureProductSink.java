@@ -1,7 +1,7 @@
-package com.shangpin.supplier.product.consumer.conf.stream.source.channel;
+package com.shangpin.picture.product.consumer.conf.stream.sink.channel;
 
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.messaging.MessageChannel;
+import org.springframework.cloud.stream.annotation.Input;
+import org.springframework.messaging.SubscribableChannel;
 
 /**
  * <p>Title:PictureProductSource.java </p>
@@ -10,13 +10,13 @@ import org.springframework.messaging.MessageChannel;
  * @author yanxiaobin
  * @date 2016年12月7日 下午3:24:36
  */
-public interface PictureProductSource {
+public interface PictureProductSink {
 
 	public String SUPPLIER_PICTURE = "supplierPictureProduct";
 	
 	/**
 	 * @return 供应商商品通用图片数据流通道组件
 	 */
-	@Output(value = PictureProductSource.SUPPLIER_PICTURE)
-    public MessageChannel supplierPictureProduct();
+	@Input(value = PictureProductSink.SUPPLIER_PICTURE)
+    public SubscribableChannel supplierPictureProduct();
 }
