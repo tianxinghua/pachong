@@ -147,63 +147,63 @@ public class HubSpuPendingPicCriteria {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
-        public Criteria andSpuPicIdIsNull() {
-            addCriterion("spu_pic_id is null");
+        public Criteria andSpuPendingPicIdIsNull() {
+            addCriterion("spu_pending_pic_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andSpuPicIdIsNotNull() {
-            addCriterion("spu_pic_id is not null");
+        public Criteria andSpuPendingPicIdIsNotNull() {
+            addCriterion("spu_pending_pic_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSpuPicIdEqualTo(Long value) {
-            addCriterion("spu_pic_id =", value, "spuPicId");
+        public Criteria andSpuPendingPicIdEqualTo(Long value) {
+            addCriterion("spu_pending_pic_id =", value, "spuPendingPicId");
             return (Criteria) this;
         }
 
-        public Criteria andSpuPicIdNotEqualTo(Long value) {
-            addCriterion("spu_pic_id <>", value, "spuPicId");
+        public Criteria andSpuPendingPicIdNotEqualTo(Long value) {
+            addCriterion("spu_pending_pic_id <>", value, "spuPendingPicId");
             return (Criteria) this;
         }
 
-        public Criteria andSpuPicIdGreaterThan(Long value) {
-            addCriterion("spu_pic_id >", value, "spuPicId");
+        public Criteria andSpuPendingPicIdGreaterThan(Long value) {
+            addCriterion("spu_pending_pic_id >", value, "spuPendingPicId");
             return (Criteria) this;
         }
 
-        public Criteria andSpuPicIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("spu_pic_id >=", value, "spuPicId");
+        public Criteria andSpuPendingPicIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("spu_pending_pic_id >=", value, "spuPendingPicId");
             return (Criteria) this;
         }
 
-        public Criteria andSpuPicIdLessThan(Long value) {
-            addCriterion("spu_pic_id <", value, "spuPicId");
+        public Criteria andSpuPendingPicIdLessThan(Long value) {
+            addCriterion("spu_pending_pic_id <", value, "spuPendingPicId");
             return (Criteria) this;
         }
 
-        public Criteria andSpuPicIdLessThanOrEqualTo(Long value) {
-            addCriterion("spu_pic_id <=", value, "spuPicId");
+        public Criteria andSpuPendingPicIdLessThanOrEqualTo(Long value) {
+            addCriterion("spu_pending_pic_id <=", value, "spuPendingPicId");
             return (Criteria) this;
         }
 
-        public Criteria andSpuPicIdIn(List<Long> values) {
-            addCriterion("spu_pic_id in", values, "spuPicId");
+        public Criteria andSpuPendingPicIdIn(List<Long> values) {
+            addCriterion("spu_pending_pic_id in", values, "spuPendingPicId");
             return (Criteria) this;
         }
 
-        public Criteria andSpuPicIdNotIn(List<Long> values) {
-            addCriterion("spu_pic_id not in", values, "spuPicId");
+        public Criteria andSpuPendingPicIdNotIn(List<Long> values) {
+            addCriterion("spu_pending_pic_id not in", values, "spuPendingPicId");
             return (Criteria) this;
         }
 
-        public Criteria andSpuPicIdBetween(Long value1, Long value2) {
-            addCriterion("spu_pic_id between", value1, value2, "spuPicId");
+        public Criteria andSpuPendingPicIdBetween(Long value1, Long value2) {
+            addCriterion("spu_pending_pic_id between", value1, value2, "spuPendingPicId");
             return (Criteria) this;
         }
 
-        public Criteria andSpuPicIdNotBetween(Long value1, Long value2) {
-            addCriterion("spu_pic_id not between", value1, value2, "spuPicId");
+        public Criteria andSpuPendingPicIdNotBetween(Long value1, Long value2) {
+            addCriterion("spu_pending_pic_id not between", value1, value2, "spuPendingPicId");
             return (Criteria) this;
         }
 
@@ -264,66 +264,6 @@ public class HubSpuPendingPicCriteria {
 
         public Criteria andSpuPendingIdNotBetween(Long value1, Long value2) {
             addCriterion("spu_pending_id not between", value1, value2, "spuPendingId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPicIdIsNull() {
-            addCriterion("pic_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPicIdIsNotNull() {
-            addCriterion("pic_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPicIdEqualTo(Long value) {
-            addCriterion("pic_id =", value, "picId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPicIdNotEqualTo(Long value) {
-            addCriterion("pic_id <>", value, "picId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPicIdGreaterThan(Long value) {
-            addCriterion("pic_id >", value, "picId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPicIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("pic_id >=", value, "picId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPicIdLessThan(Long value) {
-            addCriterion("pic_id <", value, "picId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPicIdLessThanOrEqualTo(Long value) {
-            addCriterion("pic_id <=", value, "picId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPicIdIn(List<Long> values) {
-            addCriterion("pic_id in", values, "picId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPicIdNotIn(List<Long> values) {
-            addCriterion("pic_id not in", values, "picId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPicIdBetween(Long value1, Long value2) {
-            addCriterion("pic_id between", value1, value2, "picId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPicIdNotBetween(Long value1, Long value2) {
-            addCriterion("pic_id not between", value1, value2, "picId");
             return (Criteria) this;
         }
 
@@ -704,6 +644,536 @@ public class HubSpuPendingPicCriteria {
 
         public Criteria andVersionNotBetween(Long value1, Long value2) {
             addCriterion("version not between", value1, value2, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeIsNull() {
+            addCriterion("pic_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeIsNotNull() {
+            addCriterion("pic_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeEqualTo(Byte value) {
+            addCriterion("pic_type =", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeNotEqualTo(Byte value) {
+            addCriterion("pic_type <>", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeGreaterThan(Byte value) {
+            addCriterion("pic_type >", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeGreaterThanOrEqualTo(Byte value) {
+            addCriterion("pic_type >=", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeLessThan(Byte value) {
+            addCriterion("pic_type <", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeLessThanOrEqualTo(Byte value) {
+            addCriterion("pic_type <=", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeIn(List<Byte> values) {
+            addCriterion("pic_type in", values, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeNotIn(List<Byte> values) {
+            addCriterion("pic_type not in", values, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeBetween(Byte value1, Byte value2) {
+            addCriterion("pic_type between", value1, value2, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeNotBetween(Byte value1, Byte value2) {
+            addCriterion("pic_type not between", value1, value2, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSortValueIsNull() {
+            addCriterion("sort_value is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSortValueIsNotNull() {
+            addCriterion("sort_value is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSortValueEqualTo(Byte value) {
+            addCriterion("sort_value =", value, "sortValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andSortValueNotEqualTo(Byte value) {
+            addCriterion("sort_value <>", value, "sortValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andSortValueGreaterThan(Byte value) {
+            addCriterion("sort_value >", value, "sortValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andSortValueGreaterThanOrEqualTo(Byte value) {
+            addCriterion("sort_value >=", value, "sortValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andSortValueLessThan(Byte value) {
+            addCriterion("sort_value <", value, "sortValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andSortValueLessThanOrEqualTo(Byte value) {
+            addCriterion("sort_value <=", value, "sortValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andSortValueIn(List<Byte> values) {
+            addCriterion("sort_value in", values, "sortValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andSortValueNotIn(List<Byte> values) {
+            addCriterion("sort_value not in", values, "sortValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andSortValueBetween(Byte value1, Byte value2) {
+            addCriterion("sort_value between", value1, value2, "sortValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andSortValueNotBetween(Byte value1, Byte value2) {
+            addCriterion("sort_value not between", value1, value2, "sortValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlIsNull() {
+            addCriterion("pic_url is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlIsNotNull() {
+            addCriterion("pic_url is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlEqualTo(String value) {
+            addCriterion("pic_url =", value, "picUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlNotEqualTo(String value) {
+            addCriterion("pic_url <>", value, "picUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlGreaterThan(String value) {
+            addCriterion("pic_url >", value, "picUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlGreaterThanOrEqualTo(String value) {
+            addCriterion("pic_url >=", value, "picUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlLessThan(String value) {
+            addCriterion("pic_url <", value, "picUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlLessThanOrEqualTo(String value) {
+            addCriterion("pic_url <=", value, "picUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlLike(String value) {
+            addCriterion("pic_url like", value, "picUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlNotLike(String value) {
+            addCriterion("pic_url not like", value, "picUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlIn(List<String> values) {
+            addCriterion("pic_url in", values, "picUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlNotIn(List<String> values) {
+            addCriterion("pic_url not in", values, "picUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlBetween(String value1, String value2) {
+            addCriterion("pic_url between", value1, value2, "picUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicUrlNotBetween(String value1, String value2) {
+            addCriterion("pic_url not between", value1, value2, "picUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoIsNull() {
+            addCriterion("pic_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoIsNotNull() {
+            addCriterion("pic_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoEqualTo(String value) {
+            addCriterion("pic_no =", value, "picNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoNotEqualTo(String value) {
+            addCriterion("pic_no <>", value, "picNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoGreaterThan(String value) {
+            addCriterion("pic_no >", value, "picNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoGreaterThanOrEqualTo(String value) {
+            addCriterion("pic_no >=", value, "picNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoLessThan(String value) {
+            addCriterion("pic_no <", value, "picNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoLessThanOrEqualTo(String value) {
+            addCriterion("pic_no <=", value, "picNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoLike(String value) {
+            addCriterion("pic_no like", value, "picNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoNotLike(String value) {
+            addCriterion("pic_no not like", value, "picNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoIn(List<String> values) {
+            addCriterion("pic_no in", values, "picNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoNotIn(List<String> values) {
+            addCriterion("pic_no not in", values, "picNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoBetween(String value1, String value2) {
+            addCriterion("pic_no between", value1, value2, "picNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicNoNotBetween(String value1, String value2) {
+            addCriterion("pic_no not between", value1, value2, "picNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionIsNull() {
+            addCriterion("pic_extension is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionIsNotNull() {
+            addCriterion("pic_extension is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionEqualTo(String value) {
+            addCriterion("pic_extension =", value, "picExtension");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionNotEqualTo(String value) {
+            addCriterion("pic_extension <>", value, "picExtension");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionGreaterThan(String value) {
+            addCriterion("pic_extension >", value, "picExtension");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionGreaterThanOrEqualTo(String value) {
+            addCriterion("pic_extension >=", value, "picExtension");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionLessThan(String value) {
+            addCriterion("pic_extension <", value, "picExtension");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionLessThanOrEqualTo(String value) {
+            addCriterion("pic_extension <=", value, "picExtension");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionLike(String value) {
+            addCriterion("pic_extension like", value, "picExtension");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionNotLike(String value) {
+            addCriterion("pic_extension not like", value, "picExtension");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionIn(List<String> values) {
+            addCriterion("pic_extension in", values, "picExtension");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionNotIn(List<String> values) {
+            addCriterion("pic_extension not in", values, "picExtension");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionBetween(String value1, String value2) {
+            addCriterion("pic_extension between", value1, value2, "picExtension");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicExtensionNotBetween(String value1, String value2) {
+            addCriterion("pic_extension not between", value1, value2, "picExtension");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicHandleStateIsNull() {
+            addCriterion("pic_handle_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicHandleStateIsNotNull() {
+            addCriterion("pic_handle_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicHandleStateEqualTo(Byte value) {
+            addCriterion("pic_handle_state =", value, "picHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicHandleStateNotEqualTo(Byte value) {
+            addCriterion("pic_handle_state <>", value, "picHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicHandleStateGreaterThan(Byte value) {
+            addCriterion("pic_handle_state >", value, "picHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicHandleStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("pic_handle_state >=", value, "picHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicHandleStateLessThan(Byte value) {
+            addCriterion("pic_handle_state <", value, "picHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicHandleStateLessThanOrEqualTo(Byte value) {
+            addCriterion("pic_handle_state <=", value, "picHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicHandleStateIn(List<Byte> values) {
+            addCriterion("pic_handle_state in", values, "picHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicHandleStateNotIn(List<Byte> values) {
+            addCriterion("pic_handle_state not in", values, "picHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicHandleStateBetween(Byte value1, Byte value2) {
+            addCriterion("pic_handle_state between", value1, value2, "picHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicHandleStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("pic_handle_state not between", value1, value2, "picHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdIsNull() {
+            addCriterion("suupplier_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdIsNotNull() {
+            addCriterion("suupplier_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdEqualTo(String value) {
+            addCriterion("suupplier_id =", value, "suupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdNotEqualTo(String value) {
+            addCriterion("suupplier_id <>", value, "suupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdGreaterThan(String value) {
+            addCriterion("suupplier_id >", value, "suupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdGreaterThanOrEqualTo(String value) {
+            addCriterion("suupplier_id >=", value, "suupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdLessThan(String value) {
+            addCriterion("suupplier_id <", value, "suupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdLessThanOrEqualTo(String value) {
+            addCriterion("suupplier_id <=", value, "suupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdLike(String value) {
+            addCriterion("suupplier_id like", value, "suupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdNotLike(String value) {
+            addCriterion("suupplier_id not like", value, "suupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdIn(List<String> values) {
+            addCriterion("suupplier_id in", values, "suupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdNotIn(List<String> values) {
+            addCriterion("suupplier_id not in", values, "suupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdBetween(String value1, String value2) {
+            addCriterion("suupplier_id between", value1, value2, "suupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuupplierIdNotBetween(String value1, String value2) {
+            addCriterion("suupplier_id not between", value1, value2, "suupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoIsNull() {
+            addCriterion("supplier_spu_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoIsNotNull() {
+            addCriterion("supplier_spu_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoEqualTo(String value) {
+            addCriterion("supplier_spu_no =", value, "supplierSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoNotEqualTo(String value) {
+            addCriterion("supplier_spu_no <>", value, "supplierSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoGreaterThan(String value) {
+            addCriterion("supplier_spu_no >", value, "supplierSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoGreaterThanOrEqualTo(String value) {
+            addCriterion("supplier_spu_no >=", value, "supplierSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoLessThan(String value) {
+            addCriterion("supplier_spu_no <", value, "supplierSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoLessThanOrEqualTo(String value) {
+            addCriterion("supplier_spu_no <=", value, "supplierSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoLike(String value) {
+            addCriterion("supplier_spu_no like", value, "supplierSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoNotLike(String value) {
+            addCriterion("supplier_spu_no not like", value, "supplierSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoIn(List<String> values) {
+            addCriterion("supplier_spu_no in", values, "supplierSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoNotIn(List<String> values) {
+            addCriterion("supplier_spu_no not in", values, "supplierSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoBetween(String value1, String value2) {
+            addCriterion("supplier_spu_no between", value1, value2, "supplierSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuNoNotBetween(String value1, String value2) {
+            addCriterion("supplier_spu_no not between", value1, value2, "supplierSpuNo");
             return (Criteria) this;
         }
     }

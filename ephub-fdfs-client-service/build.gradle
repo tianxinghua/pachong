@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '1.4.3.RELEASE'
+		springBootVersion = '1.4.2.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -21,14 +21,15 @@ jar {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-repositories {
+repositories { 
 	mavenCentral()
-	maven { url "https://repo.spring.io/snapshot" }
-	maven { url "https://repo.spring.io/milestone" }
+	maven { url "http://192.168.20.223:8081/nexus/content/repositories/releases/" }
+	maven { url "http://192.168.20.223:8081/nexus/content/repositories/snapshots/" }
 }
 
 
 dependencies {
+	compile('com.github.tobato:fastdfs-client:1.25.2-RELEASE')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-aop')
 	compile('org.springframework.cloud:spring-cloud-starter-hystrix')
@@ -42,6 +43,6 @@ dependencies {
 
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Camden.BUILD-SNAPSHOT"
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Camden.SR3"
 	}
 }

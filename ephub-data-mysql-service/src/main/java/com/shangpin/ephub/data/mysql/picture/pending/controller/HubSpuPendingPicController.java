@@ -41,12 +41,12 @@ public class HubSpuPendingPicController {
 	@RequestMapping(value = "/insert")
     public Long insert(@RequestBody HubSpuPendingPic hubSpuPendingPic){
     	hubSpuPendingPicService.insert(hubSpuPendingPic);
-    	return hubSpuPendingPic.getSpuPicId();
+    	return hubSpuPendingPic.getSpuPendingId();
     }
 	@RequestMapping(value = "/insert-selective")
     public Long insertSelective(@RequestBody HubSpuPendingPic hubSpuPendingPic){
     	hubSpuPendingPicService.insertSelective(hubSpuPendingPic);
-    	return hubSpuPendingPic.getSpuPicId();
+    	return hubSpuPendingPic.getSpuPendingId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubSpuPendingPic> selectByCriteriaWithRowbounds(@RequestBody HubSpuPendingPicCriteriaWithRowBounds criteriaWithRowBounds){

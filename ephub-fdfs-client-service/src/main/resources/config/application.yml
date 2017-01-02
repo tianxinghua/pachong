@@ -1,0 +1,5 @@
+﻿server.port: 8007
+spring: 
+  profiles: 
+    active: dev
+  application.name: ephub-fdfs-client-service
