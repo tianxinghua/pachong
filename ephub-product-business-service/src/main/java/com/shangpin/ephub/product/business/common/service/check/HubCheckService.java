@@ -21,6 +21,9 @@ import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
+import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
+import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
 import com.shangpin.ephub.product.business.rest.model.service.impl.HubBrandModelRuleService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,8 +50,7 @@ public class HubCheckService {
 	@Autowired
 	HubSupplierCategroyDicGateWay hubSupplierCategroyDicGateWay;
 	@Autowired
-	HubBrandModelRuleService HubBrandModelRuleService;
-	
+	HubBrandModelRuleController HubBrandModelRuleService;
 	public String checkSpu(HubSpuPendingDto hubProduct){
 		boolean flag = false;
 		StringBuffer str = new StringBuffer();
@@ -61,6 +63,20 @@ public class HubCheckService {
 		}else{
 			str.append("brandNo为空");
 		}
+		
+		//货号
+//		if(hubProduct.getSpuModel()!=null){
+//			BrandModelDto BrandModelDto = new BrandModelDto();
+//			BrandModelDto.setBrandMode(hubProduct.getSpuModel());
+//			BrandModelDto.setHubBrandNo(hubProduct.getHubBrandNo());
+//			BrandModelDto.setHubCategoryNo(hubProduct.getHubCategoryNo());
+//			BrandModelResult result= checkSpuModel(BrandModelDto);
+//			if(!result.isPassing()){
+//				str.append("spuModel："+hubProduct.getSpuModel()+"校验失败,校验结果："+result.getBrandMode());
+//			}
+//		}else{
+//			str.append("spuModel为空");
+//		}
 		
 		//校验品类
 		if(hubProduct.getHubCategoryNo()!=null){
@@ -103,6 +119,11 @@ public class HubCheckService {
 		return str.toString();
 	}
 	
+	private BrandModelResult checkSpuModel(BrandModelDto BrandModelDto) {
+		return HubBrandModelRuleService.verify(BrandModelDto);
+		
+	}
+
 	/**
 	 * 校验品牌编号
 	 * @param brandNo
