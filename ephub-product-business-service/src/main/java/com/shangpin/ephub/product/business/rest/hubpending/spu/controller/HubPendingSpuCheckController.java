@@ -32,6 +32,7 @@ public class HubPendingSpuCheckController {
 		log.info("pendingSpu校验接受到数据：{}",dto);
 		HubPendingSpuCheckResult result = new HubPendingSpuCheckResult();
 		String returnStr = hubCheckRuleService.checkHubPendingSpu(dto);
+		log.info("pendingSpu校验结果：{}",returnStr);
 		if(StringUtils.isNotBlank(returnStr)){
 			result.setResult(returnStr);
 			result.setPassing(false);
