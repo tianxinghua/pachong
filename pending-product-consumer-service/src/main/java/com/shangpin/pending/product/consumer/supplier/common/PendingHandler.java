@@ -7,18 +7,25 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.pending.product.consumer.common.enumeration.*;
+import com.shangpin.pending.product.consumer.conf.rpc.ApiAddressProperties;
+import com.shangpin.pending.product.consumer.supplier.dto.*;
 import com.shangpin.pending.product.consumer.util.BurberryModelRule;
 import com.shangpin.pending.product.consumer.util.PradaModelRule;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 
@@ -39,14 +46,9 @@ import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.pending.product.consumer.common.DateUtils;
-import com.shangpin.pending.product.consumer.supplier.dto.CategoryScreenSizeDom;
-import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
-import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
-import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSku;
-import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSpu;
-import com.shangpin.pending.product.consumer.supplier.dto.SizeStandardItem;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Created by loyalty on 16/12/13.
@@ -75,6 +77,11 @@ public class PendingHandler {
 
     @Autowired
     HubBrandModelRuleGateWay brandModelRuleGateWay;
+
+    @Autowired
+    RestTemplate httpClient;
+    @Autowired
+    ApiAddressProperties apiAddressProperties;
 
 
     static Map<String,Map<String,String>> supplierGenderStaticMap = null;
@@ -110,6 +117,15 @@ public class PendingHandler {
     static Map<String,String> hubColorStaticMap = null;
 
     static Map<String,String> hubSeasonStaticMap = null;
+    
+    /**
+     * 存放 supplierId_supplierBrand，filterFlag 对应关系
+     */
+    static Map<String,Byte> hubSupplierBrandFlag = null;
+    /**
+     * 存放 supplierId_supplierSeason，filterFlag 对应关系
+     */
+    static Map<String,Byte> hubSeasonFlag = null;
 
 
 
@@ -183,7 +199,7 @@ public class PendingHandler {
     private HubSpuPendingDto createNewSpu(PendingProduct message, Map<String, Object> headers, PendingSpu pendingSpu) throws Exception {
         HubSpuPendingDto hubSpuPending = null;
         try {
-
+            pendingSpu.setSupplierNo(message.getSupplierNo());
             hubSpuPending = this.addNewSpu(pendingSpu,headers);
         } catch (Exception e) {
 
@@ -291,6 +307,8 @@ public class PendingHandler {
             Date date = new Date();
             hubSpuPending.setCreateTime(date);
             hubSpuPending.setUpdateTime(date);
+
+
 
             dataServiceHandler.savePendingSpu(hubSpuPending);
 
@@ -662,6 +680,25 @@ public class PendingHandler {
 
     }
 
+    private void callScmSize(String brandNo,String categoryNo){
+
+        SizeRequestDto request = new SizeRequestDto();
+        request.setBrandNo(brandNo);
+        request.setCategoryNo(categoryNo);
+
+        HttpEntity<SizeRequestDto> requestEntity = new HttpEntity<SizeRequestDto>(request);
+
+        ResponseEntity<BasicDataResponse<SizeStandardItem>> entity = httpClient.exchange(apiAddressProperties.getGmsSizeUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<BasicDataResponse<SizeStandardItem>>() {
+        });
+        BasicDataResponse<SizeStandardItem> body = entity.getBody();
+        if(body.getIsSuccess()){
+            List<SizeStandardItem> resDatas = body.getResDatas();
+
+        }
+
+
+    }
+
 
     private void updateSku(HubSpuPendingDto hubSpuPending,PendingSku sku, Map<String, Object> headers,byte filterFlag) throws Exception{
         //TODO 判断状态 是否可以修改
@@ -909,21 +946,81 @@ public class PendingHandler {
     }
     
     /**
-     * 判断供应商的品牌是不是有效品牌
+     * 判断供应商的品牌和季节是不是有效
      * @param supplierId 供应商门户编号
      * @param supplierBrandName 供应商品牌名称
      * @param supplierSeason 供应商季节名称
      */
     private byte screenSupplierBrandAndSeasonEffectiveOrNot(String supplierId,String supplierBrandName,String supplierSeason){
-//    	HubSupplierBrandDicDto supplierBrandDic = dataServiceHandler.getHubSupplierBrand(supplierId,supplierBrandName);
-//    	if(null != supplierBrandDic && supplierBrandDic.getFilterFlag() == FilterFlag.EFFECTIVE.getIndex()){
-//    		return FilterFlag.EFFECTIVE.getIndex();
-//    	}else{
-//    		return FilterFlag.INVALID.getIndex(); 
-//    	}
-    	return FilterFlag.EFFECTIVE.getIndex();
+
+    	getHubSupplierBrandFlag();
+    	if(hubSupplierBrandFlag.containsKey(supplierId+"_"+supplierBrandName)){
+    		getHubSeasonFlag();
+    		if(hubSeasonFlag.containsKey(supplierId+"_"+supplierSeason)){
+    			return FilterFlag.EFFECTIVE.getIndex();
+    		}
+    	}
+    	return FilterFlag.INVALID.getIndex();
     }
 
+    /**
+     * 初始化hubSupplierBrandFlag<br>
+     * 获取有效的供应商品牌，key是supplierId_supplierBrand，value是filterFlag
+     * @return
+     */
+    private Map<String,Byte> getHubSupplierBrandFlag(){
+    	if(null == hubSupplierBrandFlag){
+    		hubSupplierBrandFlag = new ConcurrentHashMap<>();
+    		setHubSupplierBrandFlag();
+    	}else{
+    		if(isNeedHandle()){
+    			setHubSupplierBrandFlag();
+    		}
+    	}    	
+    	return hubSupplierBrandFlag;
+    }
+
+    /**
+     * 设置 hubSupplierBrandFlag的值，key是supplierId_supplierBrand，value是filterFlag
+     */
+	private void setHubSupplierBrandFlag() {
+		List<HubSupplierBrandDicDto> brandsDic = dataServiceHandler.getEffectiveHubSupplierBrands();
+		if(null != brandsDic && brandsDic.size()>0){
+			for(HubSupplierBrandDicDto brandDic : brandsDic){
+				hubSupplierBrandFlag.put(brandDic.getSupplierId()+"_"+brandDic.getSupplierBrand(), brandDic.getFilterFlag());
+			}
+		}
+	}
+	
+	/**
+	 * 初始化hubSeasonFlag<br>
+	 * 获取有效的供应商季节，key是supplierId_supplierSeason，value是filterFlag
+	 * @return
+	 */
+	private Map<String,Byte> getHubSeasonFlag(){
+		if(null == hubSeasonFlag){
+			hubSeasonFlag = new ConcurrentHashMap<>();
+			setHubSeasonFlag();
+		}else{
+			if(isNeedHandle()){
+				setHubSeasonFlag();
+			}
+		}
+		
+		return hubSeasonFlag;
+	}
+
+	/**
+	 * 设置有效的供应商季节，key是supplierId_supplierSeason，value是filterFlag
+	 */
+	private void setHubSeasonFlag() {
+		List<HubSeasonDicDto> supplierSeasons =  dataServiceHandler.getEffectiveHubSeasons();
+		if(null != supplierSeasons && supplierSeasons.size()>0){
+			for(HubSeasonDicDto season : supplierSeasons){
+				hubSeasonFlag.put(season.getSupplierid()+"_"+season.getSupplierSeason(), season.getFilterFlag());
+			}
+		}
+	}
 
 
 }

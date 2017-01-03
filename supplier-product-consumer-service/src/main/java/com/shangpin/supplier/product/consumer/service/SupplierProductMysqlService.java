@@ -50,6 +50,7 @@ public class SupplierProductMysqlService {
 				convertHubSpuToPendingSpu(hubSpu,pendingSpu);
 				return ProductStatus.NEW;
 			}else{
+				hubSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId()); 
 				HubSupplierSpuDto hubSpuUpdated = new HubSupplierSpuDto();
 				boolean isChanged = comparisonHubSpu(hubSpu, hubSpuSel, pendingSpu,hubSpuUpdated);
 				if(isChanged){
@@ -83,6 +84,7 @@ public class SupplierProductMysqlService {
 				convertHubSkuToPendingSku(hubSku,pendingSku);
 				return ProductStatus.NEW;
 			}else{
+				hubSku.setSupplierSkuId(hubSkuSel.getSupplierSkuId()); 
 				HubSupplierSkuDto hubSkuUpdated = new HubSupplierSkuDto();
 				boolean isChanged = comparisonHubSku(hubSku,hubSkuSel,pendingSku,hubSkuUpdated);
 				if(isChanged){

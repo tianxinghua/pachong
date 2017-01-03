@@ -29,38 +29,31 @@ import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.rule.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients("com.shangpin.ephub")
-public class PendingProductConsumerServiceApplication implements ApplicationRunner {
+public class PendingProductConsumerServiceApplication  {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		SpringApplication.run(PendingProductConsumerServiceApplication.class, args);
-	}
+        SpringApplication.run(PendingProductConsumerServiceApplication.class, args);
+    }
 
-	@Autowired
-	private HubSupplierValueMappingGateWay client;
+    @Autowired
+    private HubSupplierValueMappingGateWay client;
 
-	@Autowired
-	private HubBrandDicGateway clients;
-	@Autowired
-	private HubSpuPendingGateWay clients2;
-	@Autowired
-	private HubSpuGateWay clients3;
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
+    @Autowired
+    private HubBrandDicGateway clients;
+    @Autowired
+    private HubSpuPendingGateWay clients2;
+    //	@Override
+    public void run(ApplicationArguments args) throws Exception {
 //		HubSpuPendingDto arg0 = new HubSpuPendingDto();
 //		arg0.setHubColorNo("FDFDf");
 //		Long  i= clients2.insert(arg0 );
 //		System.out.println(arg0);
-		for (int i = 0; i < 1000; i++) {
-			System.out.println(clients3.selectByPrimaryKey(1L));
-		}
-		System.out.println("over");
-	}
+    }
 }

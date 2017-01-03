@@ -14,6 +14,9 @@ spring:
             instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
         stream: 
               bindings: 
+                        supplierPictureProduct: 
+                              destination: supplier.product.picture
+                              content-type: application/json
                         spinnakerOriginalProduct: 
                               destination: spinnaker.original.product
                               group: one
@@ -88,6 +91,9 @@ spring:
                               content-type: application/json                                                                                                                                                                                                                                                                                                          
               rabbit: 
                       bindings: 
+                            supplierPictureProduct: 
+                                  producer: 
+                                       prefix: HA.
                             spinnakerOriginalProduct: 
                                   consumer: 
                                        prefix: HA.
