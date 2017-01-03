@@ -106,17 +106,39 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             }
 
 
-        }else{ //TODO 已存在
+        }else{ //
             log.info("存在spu");
+            Map<String,List<HubSkuPending>> sizeSkuMap = new HashMap<>();
+            //根据尺码合并不同供货商的SKU信息
+            setSizeSkuMap(spuPendingIds, sizeSkuMap);
+            //插入新的SPU
+            HubSpu hubSpu = hubSpus.get(0);
+            HubSpuPending spuPending = null;
+            spuPending = this.getHubSpuPendingById(spuPendingIds.get(0));
+            if(null!=spuPending){
+                //插入hubSKU 和 供货商的对应关系
+                Set<String> sizeSet = sizeSkuMap.keySet();
+                if(sizeSet.size()>0){
+                    createHubSkuAndMapping(sizeSkuMap, hubSpu, sizeSet);
+                }
+            }
         }
     }
+
+
+    private void searchAndCreateHubSkuAndMapping(Map<String, List<HubSkuPending>> sizeSkuMap, HubSpu hubSpu, Set<String> sizeSet) {
+         //首先 查询尺码是否存在
+
+        //存在 查询映射是否存在  不存在插入
+    }
+
 
     private void createHubSkuAndMapping(Map<String, List<HubSkuPending>> sizeSkuMap, HubSpu hubSpu, Set<String> sizeSet) {
         String skuNoAll = hubSpuUtil.createHubSkuNo(hubSpu.getSpuNo(),sizeSet.size());
         if(StringUtils.isNotBlank(skuNoAll)){
             String[] skuNoArray = skuNoAll.split(",");
             Object[] sizeArray = sizeSet.toArray();
-            String size="",skuNo="";
+
             Date date = new Date();
 
             if(null!=skuNoArray&&skuNoArray.length>0){
