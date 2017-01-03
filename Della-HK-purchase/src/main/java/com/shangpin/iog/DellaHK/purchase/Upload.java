@@ -138,4 +138,10 @@ public class Upload {
         
 
 }
+	
+	public static void main(String[] args) {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH");
+		String dateStr = format.format(new Date());
+		System.out.println(dateStr);
+	}
 }

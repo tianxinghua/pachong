@@ -45,4 +45,8 @@ include 'coltorti'
 include 'studio69'
 include 'smets-hk-stock'
 include 'smets-stock'
+include 'synchSupplierIdAndSpId'
+include 'eleonorabonucci'
+include 'Della-purchase'
+include 'linoricci'
 

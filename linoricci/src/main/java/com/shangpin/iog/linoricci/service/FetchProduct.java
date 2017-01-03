@@ -1,4 +1,5 @@
-package com.shangpin.iog.ostore.service;
+package com.shangpin.iog.linoricci.service;
+
 
 import java.util.Arrays;
 import java.util.Date;
@@ -18,20 +19,19 @@ import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.ostore.dto.Item;
+import com.shangpin.iog.linoricci.dto.Item;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 
 /**
  * Created by houkun on 2015/11/26.
  */
-@Component("ostore")
+@Component("linoricci")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
-    private static Logger logMongo = Logger.getLogger("mongodb");
+//    private static Logger logMongo = Logger.getLogger("mongodb");
     private static String supplierId;
     private static String url;
 	public static int day;
