@@ -5,6 +5,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +45,9 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
     @Autowired
     HubSpuPendingGateWay spuPendingGateWay;
+
+    @Autowired
+    HubSkuPendingGateWay skuPendingGateWay;
 
     @Autowired
     HubSpuPendingPicGateWay spuPendingPicGateWay;
@@ -202,7 +209,43 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             hubSpuPending.setSpuState(auditVO.getAuditStatus().byteValue());
         }
         hubSpuPending.setUpdateTime(new Date());
+        //设置查询条件
+        HubSpuPendingCriteriaDto criteria = getHubSpuPendingCriteriaDto(auditVO, hubSpuPending);
 
+        //查询出spuPending ，以便查询出skuPending
+        List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
+
+
+        HubSpuPendingWithCriteriaDto criteriaDto = new HubSpuPendingWithCriteriaDto( hubSpuPending,  criteria);
+        //更新spuPending 状态
+        spuPendingGateWay.updateByCriteriaSelective(criteriaDto);
+        //更新 skuPendign 状态
+        setSkuPendingSkuStatus(auditVO, hubSpuPendingDtos);
+
+          //只有审核通过的才处理
+         if(SpuStatus.getOrderStatus(auditVO.getAuditStatus()).getIndex()==SpuStatus.SPU_HANDLED.getIndex()){
+             //获取
+             SpuPendingAuditQueryVO queryVO = new SpuPendingAuditQueryVO();
+             BeanUtils.copyProperties(auditVO,queryVO);
+             //查询审核中的
+             queryVO.setStatus(SpuStatus.SPU_HANDLING.getIndex());
+             SpuModelMsgVO spuModelMsgVO=this.getSpuModel(queryVO);
+
+             List<SpuModelVO> spuModels = spuModelMsgVO.getSpuModels();
+             for(SpuModelVO spuModelVO:spuModels){
+                 //TODO 扔进消息队列中
+                 CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,spuModelVO,spuPendingGateWay,skuPendingGateWay);
+                 executor.execute(task);
+             }
+         }
+
+
+
+
+        return true;
+    }
+
+    private HubSpuPendingCriteriaDto getHubSpuPendingCriteriaDto(SpuPendingAuditVO auditVO, HubSpuPendingDto hubSpuPending) {
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         HubSpuPendingCriteriaDto.Criteria criterion = criteria.createCriteria();
         if(auditVO.isMulti()){//批量的更新
@@ -239,30 +282,25 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 }
             }
         }
-        HubSpuPendingWithCriteriaDto criteriaDto = new HubSpuPendingWithCriteriaDto( hubSpuPending,  criteria);
+        return criteria;
+    }
 
-        spuPendingGateWay.updateByCriteriaSelective(criteriaDto);
-          //只有审核通过的才处理
-         if(SpuStatus.getOrderStatus(auditVO.getAuditStatus()).getIndex()==SpuStatus.SPU_HANDLED.getIndex()){
-             //获取
-             SpuPendingAuditQueryVO queryVO = new SpuPendingAuditQueryVO();
-             BeanUtils.copyProperties(auditVO,queryVO);
-             //查询审核中的
-             queryVO.setStatus(SpuStatus.SPU_HANDLING.getIndex());
-             SpuModelMsgVO spuModelMsgVO=this.getSpuModel(queryVO);
+    private void setSkuPendingSkuStatus(SpuPendingAuditVO auditVO, List<HubSpuPendingDto> hubSpuPendingDtos) {
+        List<Long> spuIdList = new ArrayList<>();
+        for(HubSpuPendingDto spuDto:hubSpuPendingDtos){
+            spuIdList.add(spuDto.getSpuPendingId());
+        }
+        HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
+        if(auditVO.getAuditStatus()== SpuStatus.SPU_HANDLED.getIndex()){ //审核成功的 赋值为审核中  状态借用SPU的状态
 
-             List<SpuModelVO> spuModels = spuModelMsgVO.getSpuModels();
-             for(SpuModelVO spuModelVO:spuModels){
-                 //TODO 扔进消息队列中
-                 CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,spuModelVO,spuPendingGateWay);
-                 executor.execute(task);
-             }
-         }
-
-
-
-
-        return true;
+            hubSkuPending.setSkuState(SpuStatus.SPU_HANDLING.getIndex().byteValue());
+        }else{
+            hubSkuPending.setSkuState(auditVO.getAuditStatus().byteValue());
+        }
+        HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
+        criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList).andSkuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+        HubSkuPendingWithCriteriaDto criteriaSkuDto = new HubSkuPendingWithCriteriaDto(hubSkuPending,criteriaSku);
+        skuPendingGateWay.updateByCriteriaSelective(criteriaSkuDto);
     }
 }
 
@@ -271,11 +309,13 @@ class CreateSpuAndSkuTask implements Runnable{
     PengdingToHubGateWay pengdingToHubGateWay;
     SpuModelVO spuModelVO;
     HubSpuPendingGateWay spuPendingGateWay;
+    HubSkuPendingGateWay skuPendingGateWay;
 
-    CreateSpuAndSkuTask(PengdingToHubGateWay pengdingToHubGateWay,SpuModelVO spuModelVO, HubSpuPendingGateWay spuPendingGateWay){
+    CreateSpuAndSkuTask(PengdingToHubGateWay pengdingToHubGateWay,SpuModelVO spuModelVO, HubSpuPendingGateWay spuPendingGateWay, HubSkuPendingGateWay skuPendingGateWay){
         this.pengdingToHubGateWay = pengdingToHubGateWay;
         this.spuModelVO = spuModelVO;
         this.spuPendingGateWay = spuPendingGateWay;
+        this.skuPendingGateWay = skuPendingGateWay;
     }
 
     @Override
@@ -291,18 +331,40 @@ class CreateSpuAndSkuTask implements Runnable{
     }
 
     private void updateHubSpuState(SpuModelDto spuModelDto,byte spuStatus){
-        //获取所有的审核中的数据
+        Date date = new Date() ;
+        //获取所有的审核中的spupending数据
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         criteria.createCriteria().andSpuStateEqualTo(SpuStatus.SPU_HANDLING.getIndex().byteValue())
         .andHubBrandNoEqualTo(spuModelDto.getBrandNo()).andSpuModelEqualTo(spuModelDto.getSpuModel());
 
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         hubSpuPending.setSpuState(spuStatus);
-        hubSpuPending.setUpdateTime(new Date());
+        hubSpuPending.setUpdateTime(date);
+
+
+        List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
 
         HubSpuPendingWithCriteriaDto criteriaDto = new HubSpuPendingWithCriteriaDto( hubSpuPending,  criteria);
 
         spuPendingGateWay.updateByCriteriaSelective(criteriaDto);
+
+        //操作所有的审核中的skupending数据
+
+        List<Long> spuIdList = new ArrayList<>();
+        for(HubSpuPendingDto spuDto:hubSpuPendingDtos){
+            spuIdList.add(spuDto.getSpuPendingId());
+        }
+        HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
+
+        hubSkuPending.setSkuState(spuStatus);
+        hubSkuPending.setUpdateTime(date);
+
+        HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
+        criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList).andSkuStateEqualTo(SpuStatus.SPU_HANDLING.getIndex().byteValue());
+
+        HubSkuPendingWithCriteriaDto criteriaSkuDto = new HubSkuPendingWithCriteriaDto(hubSkuPending,criteriaSku);
+        skuPendingGateWay.updateByCriteriaSelective(criteriaSkuDto);
+
 
     }
 }

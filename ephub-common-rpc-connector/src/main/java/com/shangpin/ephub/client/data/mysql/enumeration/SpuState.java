@@ -20,9 +20,12 @@ public enum SpuState {
 	 */
 	INFO_IMPECCABLE((byte)1,"infoImpeccable"),
 	/**
-	 * 无法处理
+	 *
 	 */
 	UNABLE_TO_PROCESS((byte)2,"unableToProcess");
+
+
+
 
 	/**
      * 数字索引标识
