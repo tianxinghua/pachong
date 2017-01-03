@@ -1,9 +1,7 @@
 package com.shangpin.picture.product.consumer.processor;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -11,10 +9,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.fastjson.util.IOUtils;
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.message.picture.ProductPicture;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
+import com.shangpin.picture.product.consumer.e.PicHandleState;
 import com.shangpin.picture.product.consumer.service.SupplierProductPictureService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,26 +38,49 @@ public class SupplierProductPictureProcessor {
 	 * @param headers 接收到的消息头
 	 */
 	public void processProductPicture(SupplierPicture message, Map<String, Object> headers) {
-		log.info("图片处理系统接收到数据：{}",message);
-		String supplierId = message.getSupplierId();
-		String supplierName = message.getSupplierName();
-		ProductPicture productPicture = message.getProductPicture();
-		String supplierSpuNo = productPicture.getSupplierSpuNo();
-		List<Image> images = productPicture.getImages();
-		if (CollectionUtils.isNotEmpty(images)) {
-			for (Image image : images) {
-				try {
-					URL url = new URL(image.getUrl());
-					InputStream inputStream = url.openStream();
-					// TODO 调用接口上传图片 
-				} catch (Exception e) {
-					e.printStackTrace();
-					log.error("下载图片失败", e);
-				}
-			}
+		long start = System.currentTimeMillis();
+		String messageId = message.getMessageId();
+		if (log.isDebugEnabled()) {
+			log.debug("图片处理系统接收到消息数据======:{}",message);
 		} else {
-			log.warn("图片处理系统接收到的消息中没有图片数据");
+			log.info("系统接收到消息,编号为{},发送时间为{}",messageId,message.getMessageDate());
+		}
+		try {
+			List<HubSpuPendingPicDto> picDtos = transform(message);
+			supplierProductPictureService.processProductPicture(picDtos);
+			log.info("系统处理消息完毕，耗时{}",System.currentTimeMillis() - start);
+		} catch (Throwable e) {
+			log.error("系统处理编号为"+messageId+"的消息时发生异常",e);
+			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * 将消息格式转换为数据传输对象格式
+	 * @param message 消息体格式数据
+	 * @return 数据传输格式数据
+	 */
+	private List<HubSpuPendingPicDto> transform(SupplierPicture message) {
+		List<HubSpuPendingPicDto> dtos = null;
+		String supplierId = message.getSupplierId();
+		ProductPicture productPicture = message.getProductPicture();
+		if (productPicture != null &&  CollectionUtils.isNotEmpty(productPicture.getImages())) {
+			List<Image> images = productPicture.getImages();
+			String supplierSpuNo = productPicture.getSupplierSpuNo();
+			dtos = new ArrayList<>();
+			for (Image image : images) {
+				String url = image.getUrl();
+				HubSpuPendingPicDto dto = new HubSpuPendingPicDto();
+				dto.setCreateTime(new Date());
+				dto.setDataState(DataState.NOT_DELETED.getIndex());
+				dto.setPicHandleState(PicHandleState.UNHANDLED.getIndex());
+				dto.setPicUrl(url);
+				dto.setSupplierSpuNo(supplierSpuNo);
+				dto.setSuupplierId(supplierId);
+				dtos.add(dto);
+			}
+		} else {
+			log.warn("图片处理系统接收到的消息数据中没有图片地址，消息编号为{},消息发送时间为{}",message.getMessageId(),message.getMessageDate());
+		}
+		return dtos;
+	}
 }

@@ -5,7 +5,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.ephub.client.message.pending.body.PendingProduct;
+import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.picture.product.consumer.processor.SupplierProductPictureProcessor;
 
 /**
@@ -25,7 +25,7 @@ public class PictureProductStreamListenerAdapter {
 	 * @param message 消息体
 	 * @param headers 消息头 请注意，避免修改此消息头，否则将会抛出运行时异常。
 	 */
-	public void supplierPictureProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+	public void supplierPictureProductStreamListen(SupplierPicture message, Map<String, Object> headers) {
 		supplierProductPictureProcessor.processProductPicture(message,headers);
 	}
 

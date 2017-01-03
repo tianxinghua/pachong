@@ -8,7 +8,7 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 
-import com.shangpin.ephub.client.message.pending.body.PendingProduct;
+import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.picture.product.consumer.conf.stream.sink.adapter.PictureProductStreamListenerAdapter;
 import com.shangpin.picture.product.consumer.conf.stream.sink.channel.PictureProductSink;
 
@@ -26,7 +26,7 @@ public class PictureProductStreamListener {
 	private PictureProductStreamListenerAdapter pictureProductStreamListenerAdapter;
 	
 	@StreamListener(PictureProductSink.SUPPLIER_PICTURE)
-    public void supplierPictureProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+    public void supplierPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
 		pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
     }
 }
