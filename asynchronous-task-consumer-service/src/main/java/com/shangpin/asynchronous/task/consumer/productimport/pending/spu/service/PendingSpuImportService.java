@@ -78,7 +78,7 @@ public class PendingSpuImportService {
 		
 		//1、更新任务表，把task_state更新成正在处理
 		taskService.updateHubSpuImportStatusByTaskNo(TaskState.HANDLEING.getIndex(),task.getTaskNo(),null);
-		log.info("任务编号："+task.getTaskNo()+"状态更新成正在处理");
+		log.info("任务编号："+task.getTaskNo()+"状态更新为正在处理");
 		
 		// 2、从ftp下载文件并校验模板
 		XSSFSheet xssfSheet = taskService.checkExcel(task.getTaskFtpFilePath(),task.getTaskNo(),"spu");
@@ -88,10 +88,6 @@ public class PendingSpuImportService {
 		//3、公共类校验hub数据并把校验结果写入excel
 		 checkAndsaveHubPendingProduct(task.getTaskNo(),listHubProduct);
 	}
-
-	
-
-	
 
 	//校验数据以及保存到hub表
 	private void checkAndsaveHubPendingProduct(String taskNo,List<HubPendingSpuImportDTO> listHubProduct) throws Exception{
