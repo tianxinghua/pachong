@@ -3,8 +3,12 @@ package com.shangpin.iog.common.utils;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Date;
 
 /**
@@ -38,6 +42,30 @@ public class Test {
 //    	String sss =  HttpUtil45.operateData("post", "json", "http://iog.shangpin.com/iog/download/csv", new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10), null, json, "", "");
 //    	System.out.println(sss);
 //        HttpUtil45.postAuth("/api_studio69/api_studio69.asmx/CreateNewOrder",)
+        String kk = (HttpUtil45.get("https://www.stefaniamode.com/newfeeds/StefaniaMode.xml", new OutTimeConfig(1000*60*10,1000*60*60,1000*60*60),null));
+//        File f = new File("d:/tmp/sta.txt");
+        byte[] result = kk.getBytes();
+        BufferedOutputStream bw = null;
+        try {
+
+
+            // 写入文件
+            bw = new BufferedOutputStream(new FileOutputStream("d:/tmp/sta.txt"));
+            bw.write(result);
+        } catch (Exception e) {
+            System.out.println("保存图片出错");
+
+        } finally {
+            try {
+                if (bw != null)
+                    bw.close();
+            } catch (Exception e) {
+                System.out.println("关闭出错");
+            }
+        }
+
+
+
 
     }
 }
