@@ -19,13 +19,11 @@ public class FastDFSConf {
 	public static final String HTTP_PRODOCOL = "http://";
 
 	public String getFdfsStoragePort() {
-		// TODO Auto-generated method stub
-		return null;
+		return "80";
 	}
 
 	public String getResHost() {
-		// TODO Auto-generated method stub
-		return null;
+		return "192.168.9.71";
 	}
 
 }
