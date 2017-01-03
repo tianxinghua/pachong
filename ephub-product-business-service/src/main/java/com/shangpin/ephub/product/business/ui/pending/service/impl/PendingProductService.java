@@ -25,6 +25,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
@@ -224,7 +225,7 @@ public class PendingProductService implements IPendingProductService{
                     hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
                 }else{
                     log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
-                    throw new Exception("spu校验失败");
+                    throw new Exception(spuResult.getResult());
                 }
                 List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
                 if(null != pengdingSkus && pengdingSkus.size()>0){
@@ -238,9 +239,18 @@ public class PendingProductService implements IPendingProductService{
                             //回滚spu状态
                             pendingProductDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
                             hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-                            throw new Exception("sku校验失败");
+                            throw new Exception(result.getResult());
                         }
                     }
+                }else{//TODO 这块要去掉！！！！！
+                	HubSkuPendingWithCriteriaDto criteria  = new HubSkuPendingWithCriteriaDto();
+                	HubSkuPendingCriteriaDto dto = new HubSkuPendingCriteriaDto();
+                	dto.createCriteria().andSpuPendingIdEqualTo(pendingProductDto.getSpuPendingId());
+                	criteria.setCriteria(dto);
+                	HubSkuPendingDto hubSkuPending  = new HubSkuPendingDto();
+                	hubSkuPending.setSkuState(SkuState.INFO_IMPECCABLE.getIndex()); 
+                	criteria.setHubSkuPending(hubSkuPending);
+                	hubSkuPendingGateWay.updateByCriteriaSelective(criteria);
                 }
             }
             return true;
@@ -487,7 +497,7 @@ public class PendingProductService implements IPendingProductService{
         row.createCell(15).setCellValue(product.getSpuDesc());
         StringBuffer buffer = new StringBuffer();
         String comma = ",";
-        if(PicState.NO_PIC.getIndex() == product.getPicState() || PicState.PIC_INFO_NOT_COMPLETED.getIndex() == product.getPicState()){
+        if((null != product.getPicState() && PicState.NO_PIC.getIndex() == product.getPicState()) || (null != product.getPicState() && PicState.PIC_INFO_NOT_COMPLETED.getIndex() == product.getPicState())){
             buffer = buffer.append("图片").append(comma);
         }
         if(CatgoryState.PERFECT_MATCHED.equals(product.getCatgoryState())){

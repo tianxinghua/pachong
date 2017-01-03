@@ -36,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class HubCheckService {
-	
 	@Autowired
 	HubBrandDicGateway hubBrandDicGateway;
 	@Autowired
@@ -56,7 +55,7 @@ public class HubCheckService {
 		if(hubProduct.getHubBrandNo()!=null){
 			flag = checkHubBrand(hubProduct.getHubBrandNo());
 			if(!flag){
-				str.append("brandNo在尚品品牌库中不存在,");
+				str.append("brandNo："+hubProduct.getHubBrandNo()+"在尚品品牌库中不存在,");
 			}
 		}else{
 			str.append("brandNo为空");
@@ -65,7 +64,7 @@ public class HubCheckService {
 		if(hubProduct.getHubColor()!=null){
 			flag = checkHubColor(hubProduct.getHubColor());
 			if(!flag){
-				str.append("hubColor在尚品颜色库中不存在,");
+				str.append("hubColor:"+hubProduct.getHubColor()+"在尚品颜色库中不存在,");
 			}
 		}else{
 			str.append("hubColor为空");
@@ -75,17 +74,17 @@ public class HubCheckService {
 		if(hubProduct.getHubGender()!=null){
 			flag = checkHubGender(hubProduct.getHubGender());
 			if(!flag){
-				str.append("hubGender在尚品性别库中不存在,");
+				str.append("hubGender:"+hubProduct.getHubGender()+"在尚品性别库中不存在,");
 			}
 		}else{
-			str.append("hubGender为空");
+			str.append("hubGender为空,");
 		}
 		
 		//性别
 		if(hubProduct.getHubGender()!=null){
-			flag = checkHubSeason(hubProduct.getHubSeason(),hubProduct.getHubSeason());
+			flag = checkHubSeason(hubProduct.getHubSeason());
 			if(!flag){
-				str.append("hubGender在尚品性别库中不存在,");
+				str.append("hubSeason:"+hubProduct.getHubSeason()+"不存在,");
 			}
 		}else{
 			str.append("hubGender为空");
@@ -116,7 +115,7 @@ public class HubCheckService {
 	 */
 	public boolean checkHubColor(String color){
 		HubColorDicCriteriaDto hubColorDicCriteriaDto = new HubColorDicCriteriaDto();
-		hubColorDicCriteriaDto.createCriteria().andColorNoEqualTo(color);
+		hubColorDicCriteriaDto.createCriteria().andColorNameEqualTo(color);
 		List<HubColorDicDto> list = hubColorDicGateway.selectByCriteria(hubColorDicCriteriaDto);
 		if(list!=null&&list.size()>0){
 			return true;
@@ -130,9 +129,10 @@ public class HubCheckService {
 	 * @param seasonYear
 	 * @return
 	 */
-	public boolean checkHubSeason(String season,String seasonYear){
+	public boolean checkHubSeason(String season){
 		HubSeasonDicCriteriaDto hubSeasonDicCriteriaDto = new HubSeasonDicCriteriaDto();
-		hubSeasonDicCriteriaDto.createCriteria().andHubSeasonEqualTo(season).andHubMarketTimeEqualTo(seasonYear);
+		
+		hubSeasonDicCriteriaDto.createCriteria().andHubSeasonEqualTo(season.split("_")[1]).andHubMarketTimeEqualTo(season.split("_")[0]);
 		List<HubSeasonDicDto> list = hubSeasonDicGateWay.selectByCriteria(hubSeasonDicCriteriaDto);
 		if(list!=null&&list.size()>0){
 			return true;

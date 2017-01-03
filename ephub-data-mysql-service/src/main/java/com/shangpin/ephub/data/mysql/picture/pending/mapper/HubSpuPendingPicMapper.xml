@@ -2,15 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shangpin.ephub.data.mysql.picture.pending.mapper.HubSpuPendingPicMapper" >
   <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPic" >
-    <id column="spu_pic_id" property="spuPicId" jdbcType="BIGINT" />
+    <id column="spu_pending_pic_id" property="spuPendingPicId" jdbcType="BIGINT" />
     <result column="spu_pending_id" property="spuPendingId" jdbcType="BIGINT" />
-    <result column="pic_id" property="picId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="sp_pic_url" property="spPicUrl" jdbcType="VARCHAR" />
     <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="data_state" property="dataState" jdbcType="TINYINT" />
     <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="pic_type" property="picType" jdbcType="TINYINT" />
+    <result column="sort_value" property="sortValue" jdbcType="TINYINT" />
+    <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
+    <result column="pic_no" property="picNo" jdbcType="VARCHAR" />
+    <result column="pic_extension" property="picExtension" jdbcType="VARCHAR" />
+    <result column="pic_handle_state" property="picHandleState" jdbcType="TINYINT" />
+    <result column="suupplier_id" property="suupplierId" jdbcType="VARCHAR" />
+    <result column="supplier_spu_no" property="supplierSpuNo" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -72,8 +79,9 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      spu_pic_id, spu_pending_id, pic_id, create_time, update_time, sp_pic_url, memo, data_state, 
-      version
+      spu_pending_pic_id, spu_pending_id, create_time, update_time, sp_pic_url, memo, data_state, 
+      version, pic_type, sort_value, pic_url, pic_no, pic_extension, pic_handle_state, 
+      suupplier_id, supplier_spu_no
     </if>
     <if test="fields != null" >
       ${fields}
@@ -98,13 +106,13 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    spu_pic_id,spu_pending_id,pic_id,create_time,update_time,sp_pic_url,memo,data_state,version
+    spu_pending_pic_id,spu_pending_id,create_time,update_time,sp_pic_url,memo,data_state,version,pic_type,sort_value,pic_url,pic_no,pic_extension,pic_handle_state,suupplier_id,supplier_spu_no
     from hub_spu_pending_pic
-    where spu_pic_id = #{spuPicId,jdbcType=BIGINT}
+    where spu_pending_pic_id = #{spuPendingPicId,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from hub_spu_pending_pic
-    where spu_pic_id = #{spuPicId,jdbcType=BIGINT}
+    where spu_pending_pic_id = #{spuPendingPicId,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPicCriteria" >
     delete from hub_spu_pending_pic
@@ -113,32 +121,33 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPic" >
-    <selectKey keyColumn="spu_pic_id" keyProperty="spuPicId" order="AFTER" resultType="long">
-  		SELECT LAST_INSERT_ID() AS spu_pic_id
+    <selectKey keyColumn="spu_pending_pic_id" keyProperty="spuPendingPicId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS spu_pending_pic_id
   	</selectKey>
-    insert into hub_spu_pending_pic (spu_pic_id, spu_pending_id, pic_id, 
-      create_time, update_time, sp_pic_url, 
-      memo, data_state, version
-      )
-    values (#{spuPicId,jdbcType=BIGINT}, #{spuPendingId,jdbcType=BIGINT}, #{picId,jdbcType=BIGINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{spPicUrl,jdbcType=VARCHAR}, 
-      #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
-      )
+    insert into hub_spu_pending_pic (spu_pending_pic_id, spu_pending_id, create_time, 
+      update_time, sp_pic_url, memo, 
+      data_state, version, pic_type, 
+      sort_value, pic_url, pic_no, 
+      pic_extension, pic_handle_state, suupplier_id, 
+      supplier_spu_no)
+    values (#{spuPendingPicId,jdbcType=BIGINT}, #{spuPendingId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{spPicUrl,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, #{picType,jdbcType=TINYINT}, 
+      #{sortValue,jdbcType=TINYINT}, #{picUrl,jdbcType=VARCHAR}, #{picNo,jdbcType=VARCHAR}, 
+      #{picExtension,jdbcType=VARCHAR}, #{picHandleState,jdbcType=TINYINT}, #{suupplierId,jdbcType=VARCHAR}, 
+      #{supplierSpuNo,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPic" >
-    <selectKey keyColumn="spu_pic_id" keyProperty="spuPicId" order="AFTER" resultType="long">
-  		SELECT LAST_INSERT_ID() AS spu_pic_id
+    <selectKey keyColumn="spu_pending_pic_id" keyProperty="spuPendingPicId" order="AFTER" resultType="long">
+  		SELECT LAST_INSERT_ID() AS spu_pending_pic_id
   	</selectKey>
     insert into hub_spu_pending_pic
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="spuPicId != null" >
-        spu_pic_id,
+      <if test="spuPendingPicId != null" >
+        spu_pending_pic_id,
       </if>
       <if test="spuPendingId != null" >
         spu_pending_id,
-      </if>
-      <if test="picId != null" >
-        pic_id,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -158,16 +167,37 @@
       <if test="version != null" >
         version,
       </if>
+      <if test="picType != null" >
+        pic_type,
+      </if>
+      <if test="sortValue != null" >
+        sort_value,
+      </if>
+      <if test="picUrl != null" >
+        pic_url,
+      </if>
+      <if test="picNo != null" >
+        pic_no,
+      </if>
+      <if test="picExtension != null" >
+        pic_extension,
+      </if>
+      <if test="picHandleState != null" >
+        pic_handle_state,
+      </if>
+      <if test="suupplierId != null" >
+        suupplier_id,
+      </if>
+      <if test="supplierSpuNo != null" >
+        supplier_spu_no,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="spuPicId != null" >
-        #{spuPicId,jdbcType=BIGINT},
+      <if test="spuPendingPicId != null" >
+        #{spuPendingPicId,jdbcType=BIGINT},
       </if>
       <if test="spuPendingId != null" >
         #{spuPendingId,jdbcType=BIGINT},
-      </if>
-      <if test="picId != null" >
-        #{picId,jdbcType=BIGINT},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -187,6 +217,30 @@
       <if test="version != null" >
         #{version,jdbcType=BIGINT},
       </if>
+      <if test="picType != null" >
+        #{picType,jdbcType=TINYINT},
+      </if>
+      <if test="sortValue != null" >
+        #{sortValue,jdbcType=TINYINT},
+      </if>
+      <if test="picUrl != null" >
+        #{picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="picNo != null" >
+        #{picNo,jdbcType=VARCHAR},
+      </if>
+      <if test="picExtension != null" >
+        #{picExtension,jdbcType=VARCHAR},
+      </if>
+      <if test="picHandleState != null" >
+        #{picHandleState,jdbcType=TINYINT},
+      </if>
+      <if test="suupplierId != null" >
+        #{suupplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuNo != null" >
+        #{supplierSpuNo,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPicCriteria" resultType="java.lang.Integer" >
@@ -198,14 +252,11 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update hub_spu_pending_pic
     <set >
-      <if test="record.spuPicId != null" >
-        spu_pic_id = #{record.spuPicId,jdbcType=BIGINT},
+      <if test="record.spuPendingPicId != null" >
+        spu_pending_pic_id = #{record.spuPendingPicId,jdbcType=BIGINT},
       </if>
       <if test="record.spuPendingId != null" >
         spu_pending_id = #{record.spuPendingId,jdbcType=BIGINT},
-      </if>
-      <if test="record.picId != null" >
-        pic_id = #{record.picId,jdbcType=BIGINT},
       </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -225,6 +276,30 @@
       <if test="record.version != null" >
         version = #{record.version,jdbcType=BIGINT},
       </if>
+      <if test="record.picType != null" >
+        pic_type = #{record.picType,jdbcType=TINYINT},
+      </if>
+      <if test="record.sortValue != null" >
+        sort_value = #{record.sortValue,jdbcType=TINYINT},
+      </if>
+      <if test="record.picUrl != null" >
+        pic_url = #{record.picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.picNo != null" >
+        pic_no = #{record.picNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.picExtension != null" >
+        pic_extension = #{record.picExtension,jdbcType=VARCHAR},
+      </if>
+      <if test="record.picHandleState != null" >
+        pic_handle_state = #{record.picHandleState,jdbcType=TINYINT},
+      </if>
+      <if test="record.suupplierId != null" >
+        suupplier_id = #{record.suupplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSpuNo != null" >
+        supplier_spu_no = #{record.supplierSpuNo,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -232,15 +307,22 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update hub_spu_pending_pic
-    set spu_pic_id = #{record.spuPicId,jdbcType=BIGINT},
+    set spu_pending_pic_id = #{record.spuPendingPicId,jdbcType=BIGINT},
       spu_pending_id = #{record.spuPendingId,jdbcType=BIGINT},
-      pic_id = #{record.picId,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       sp_pic_url = #{record.spPicUrl,jdbcType=VARCHAR},
       memo = #{record.memo,jdbcType=VARCHAR},
       data_state = #{record.dataState,jdbcType=TINYINT},
-      version = #{record.version,jdbcType=BIGINT}
+      version = #{record.version,jdbcType=BIGINT},
+      pic_type = #{record.picType,jdbcType=TINYINT},
+      sort_value = #{record.sortValue,jdbcType=TINYINT},
+      pic_url = #{record.picUrl,jdbcType=VARCHAR},
+      pic_no = #{record.picNo,jdbcType=VARCHAR},
+      pic_extension = #{record.picExtension,jdbcType=VARCHAR},
+      pic_handle_state = #{record.picHandleState,jdbcType=TINYINT},
+      suupplier_id = #{record.suupplierId,jdbcType=VARCHAR},
+      supplier_spu_no = #{record.supplierSpuNo,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -250,9 +332,6 @@
     <set >
       <if test="spuPendingId != null" >
         spu_pending_id = #{spuPendingId,jdbcType=BIGINT},
-      </if>
-      <if test="picId != null" >
-        pic_id = #{picId,jdbcType=BIGINT},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -272,20 +351,51 @@
       <if test="version != null" >
         version = #{version,jdbcType=BIGINT},
       </if>
+      <if test="picType != null" >
+        pic_type = #{picType,jdbcType=TINYINT},
+      </if>
+      <if test="sortValue != null" >
+        sort_value = #{sortValue,jdbcType=TINYINT},
+      </if>
+      <if test="picUrl != null" >
+        pic_url = #{picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="picNo != null" >
+        pic_no = #{picNo,jdbcType=VARCHAR},
+      </if>
+      <if test="picExtension != null" >
+        pic_extension = #{picExtension,jdbcType=VARCHAR},
+      </if>
+      <if test="picHandleState != null" >
+        pic_handle_state = #{picHandleState,jdbcType=TINYINT},
+      </if>
+      <if test="suupplierId != null" >
+        suupplier_id = #{suupplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuNo != null" >
+        supplier_spu_no = #{supplierSpuNo,jdbcType=VARCHAR},
+      </if>
     </set>
-    where spu_pic_id = #{spuPicId,jdbcType=BIGINT}
+    where spu_pending_pic_id = #{spuPendingPicId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPic" >
     update hub_spu_pending_pic
     set spu_pending_id = #{spuPendingId,jdbcType=BIGINT},
-      pic_id = #{picId,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       sp_pic_url = #{spPicUrl,jdbcType=VARCHAR},
       memo = #{memo,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},
-      version = #{version,jdbcType=BIGINT}
-    where spu_pic_id = #{spuPicId,jdbcType=BIGINT}
+      version = #{version,jdbcType=BIGINT},
+      pic_type = #{picType,jdbcType=TINYINT},
+      sort_value = #{sortValue,jdbcType=TINYINT},
+      pic_url = #{picUrl,jdbcType=VARCHAR},
+      pic_no = #{picNo,jdbcType=VARCHAR},
+      pic_extension = #{picExtension,jdbcType=VARCHAR},
+      pic_handle_state = #{picHandleState,jdbcType=TINYINT},
+      suupplier_id = #{suupplierId,jdbcType=VARCHAR},
+      supplier_spu_no = #{supplierSpuNo,jdbcType=VARCHAR}
+    where spu_pending_pic_id = #{spuPendingPicId,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPicCriteria" id="selectByExampleWithRowbounds" >
     select
