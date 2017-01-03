@@ -55,6 +55,7 @@ public class FetchProduct {
     	Map<String,Item> spuMap= new HashMap<String,Item>();
     	Map<String,String> imgMap= new HashMap<String,String>();
     	Map<String,String> priceMap= new HashMap<String,String>();
+		Map<String,String> supplierPriceMap = new HashMap<String,String>();
         //获取产品信息
         logger.info("get product starting....");
     	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
@@ -94,6 +95,7 @@ public class FetchProduct {
         	}
 			priceArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
 			priceMap.put(priceArr[0], priceArr[3]);
+			supplierPriceMap.put(priceArr[0], priceArr[2]);
 			
         }
         
@@ -189,7 +191,7 @@ public class FetchProduct {
 //        			sku.setSalePrice(priceMap.get(item.getSpuId()));
         			sku.setMarketPrice(priceMap.get(item.getSpuId()));
 //        			sku.setSalePrice(item.getSalePrice());
-//        			sku.setSupplierPrice(item.getSupplierPrice());
+        			sku.setSupplierPrice(supplierPriceMap.get(item.getSpuId()));
         			sku.setColor(item.getColor());
         			sku.setProductDescription(item.getDescription());
         			sku.setSaleCurrency("EURO");
