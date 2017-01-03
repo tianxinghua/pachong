@@ -43,7 +43,7 @@ public class PendingProductController {
             if(result){
                 return HubResponse.successResp(resultSuccess);
             }else{
-                return HubResponse.successResp(resultFail);
+                return HubResponse.errorResp(resultFail);
             }
 		} catch (Exception e) {
 			return HubResponse.errorResp(e.getMessage());
