@@ -28,7 +28,7 @@ public class PendingExportController {
 	@Autowired
 	private IPendingProductService pendingProductService;
 
-	@RequestMapping(value="/spu",method=RequestMethod.GET)
+	@RequestMapping(value="/spu",method=RequestMethod.POST)
 	public void exportSpu(@RequestBody PendingQuryDto pendingQuryDto,HttpServletResponse response){
 		OutputStream ouputStream = null;
 		try {
@@ -49,7 +49,7 @@ public class PendingExportController {
 			}
 		}
 	}
-	@RequestMapping(value="/sku",method=RequestMethod.GET)
+	@RequestMapping(value="/sku",method=RequestMethod.POST)
 	public void exportSku(@RequestBody PendingQuryDto pendingQuryDto,HttpServletResponse response){
 		OutputStream ouputStream = null;
 		try {

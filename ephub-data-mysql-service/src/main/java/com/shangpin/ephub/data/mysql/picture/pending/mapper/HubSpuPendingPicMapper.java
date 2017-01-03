@@ -8,11 +8,11 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 /**
- * <p>Title:HubBrandDicMapper.java </p>
+ * <p>Title:HubSpuPendingPicMapper.java </p>
  * <p>Description: </p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
- * @date 2016年12月13日 下午2:12:01
+ * @date 2017年1月2日 下午6:21:21
  */
 @Mapper
 public interface HubSpuPendingPicMapper {
@@ -20,7 +20,7 @@ public interface HubSpuPendingPicMapper {
 
     int deleteByExample(HubSpuPendingPicCriteria example);
 
-    int deleteByPrimaryKey(Long spuPicId);
+    int deleteByPrimaryKey(Long spuPendingPicId);
 
     int insert(HubSpuPendingPic record);
 
@@ -30,7 +30,7 @@ public interface HubSpuPendingPicMapper {
 
     List<HubSpuPendingPic> selectByExample(HubSpuPendingPicCriteria example);
 
-    HubSpuPendingPic selectByPrimaryKey(Long spuPicId);
+    HubSpuPendingPic selectByPrimaryKey(Long spuPendingPicId);
 
     int updateByExampleSelective(@Param("record") HubSpuPendingPic record, @Param("example") HubSpuPendingPicCriteria example);
 
