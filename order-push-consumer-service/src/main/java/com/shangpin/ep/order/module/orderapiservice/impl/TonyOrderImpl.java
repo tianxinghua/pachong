@@ -72,10 +72,6 @@ public class TonyOrderImpl implements IOrderService {
         //设置异常信息
     }	
     
-    public static void main(String[] args) {
-    	OrderDTO orderDTO = new OrderDTO();
-		new TonyOrderImpl().updateOrder(CONFIRMED, orderDTO);
-	}
     /**
      * 推送订单
      */
@@ -182,7 +178,8 @@ public class TonyOrderImpl implements IOrderService {
 		handleException.handleException(orderDTO, e); 
 		return null;
 	}
-    private void updateOrder(String status, OrderDTO orderDTO){
+    @SuppressWarnings("static-access")
+	private void updateOrder(String status, OrderDTO orderDTO){
     	
     	UpdateOrderStatusDTO updateOrder = new UpdateOrderStatusDTO();
         updateOrder.setMerchantId(merchantId);
@@ -215,10 +212,15 @@ public class TonyOrderImpl implements IOrderService {
             } else {
             	if("[Quota exceeded]".equals(returnDataDTO.getMessages().toString())){
             		orderDTO.setDescription(orderDTO.getLogContent());
+            		orderDTO.setErrorType(ErrorStatus.API_ERROR);
                 	orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-            	}else{
+            	}else if("Shop order id - Shop order id - Order not found".equals(returnDataDTO.getMessages().toString())){
+            		orderDTO.setErrorType(ErrorStatus.API_ERROR);
                 	orderDTO.setDescription(orderDTO.getLogContent());
                 	orderDTO.setPushStatus(PushStatus.NO_STOCK);
+            	}else{
+                	orderDTO.setDescription(orderDTO.getLogContent());
+                	orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
             	}
             }
         } catch (Exception ex) {
@@ -228,6 +230,7 @@ public class TonyOrderImpl implements IOrderService {
         	orderDTO.setLogContent(ex.getMessage());
         } 
     }
+    
     /**
      * 在线推送订单:
      * status未支付：锁库存						
@@ -247,7 +250,7 @@ public class TonyOrderImpl implements IOrderService {
         	logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 	    	  if(HttpUtil45.errorResult.equals(rtnData)){
 	    		  orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
-	    		  orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED_ERROR);
+	    		  orderDTO.setPushStatus(PushStatus.LOCK_PLACED_ERROR);
 	    		  return;
 	          }
 	    	 
@@ -258,10 +261,16 @@ public class TonyOrderImpl implements IOrderService {
 	            }else {
 	            	if("[Quota exceeded]".equals(returnDataDTO.getMessages().toString())){
 	            		orderDTO.setDescription(orderDTO.getLogContent());
+	            		orderDTO.setErrorType(ErrorStatus.API_ERROR);
 	                	orderDTO.setPushStatus(PushStatus.LOCK_PLACED_ERROR);
-	            	}else{
-	                	orderDTO.setDescription(orderDTO.getLogContent());
+	            	}else if(returnDataDTO.getMessages().toString().endsWith("quantity not available in the stock")){
+	            		orderDTO.setDescription(orderDTO.getLogContent());
 	                	orderDTO.setPushStatus(PushStatus.NO_STOCK);
+	            		
+	            	}else{
+	            		orderDTO.setErrorType(ErrorStatus.API_ERROR);
+	            		orderDTO.setDescription(orderDTO.getLogContent());
+	                	orderDTO.setPushStatus(PushStatus.LOCK_PLACED_ERROR);
 	            	}
 	            }
         } catch (Exception e) {

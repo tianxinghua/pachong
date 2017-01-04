@@ -22,8 +22,12 @@ import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
+import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
+import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
+import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
@@ -72,6 +76,9 @@ public class PendingSkuImportService {
 	@Autowired
 	HubPendingSpuCheckGateWay pendingSpuCheckGateWay;
 
+	@Autowired
+	PengdingToHubGateWay pengdingToHubGateWay;
+	
 	private static String[] pendingSkuTemplate = null;
 	static {
 		pendingSkuTemplate = TaskImportTemplate.getPendingSkuTemplate();
@@ -85,7 +92,7 @@ public class PendingSkuImportService {
 
 
 		// 2、从ftp下载文件并校验模板
-		XSSFSheet xssfSheet = taskService.checkExcel(task.getTaskFtpFilePath(),task.getTaskNo(),"spu");
+		XSSFSheet xssfSheet = taskService.checkExcel(task.getTaskFtpFilePath(),task.getTaskNo(),"sku");
 		// 3、excel解析成java对象
 		
 		// 2、从ftp下载文件并解析成对象
@@ -104,86 +111,98 @@ public class PendingSkuImportService {
 		if (listHubProduct == null) {
 			return;
 		}
+		
 		//校验全通过为true
 		boolean flag = true;
-		
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 		for (HubPendingProductImportDTO product : listHubProduct) {
 			Map<String, String> map = new HashMap<String, String>();
-			
 			// 校验sku信息
 			HubPendingSkuCheckResult hubPendingSkuCheckResult = handlePendingSku(product);
 
+			map.put("taskNo", taskNo);
+			map.put("spuModel", product.getSpuModel());
 			if (hubPendingSkuCheckResult.isPassing() == true) {
 				log.info(taskNo + "sku校验通过");
 				// 校验spu信息
 				HubPendingSpuCheckResult hubPendingSpuCheckResult = handlePendingSpu(product);
 				if (hubPendingSpuCheckResult.isPassing() == true) {
+					
 					log.info(taskNo + "spu校验通过");
-					HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(product.getSupplierId(),
-							product.getSupplierSkuNo());
-					HubSkuPendingDto hubSkuPendingDto = convertHubPendingProduct2Sku(product);
-					HubSpuPendingDto hubSpuPendingDto = convertHubPendingProduct2PendingSpu(product);
-					if(hubSkuPendingTempDto!=null){
-						log.info(hubSkuPendingTempDto.getSupplierId()+"sku存在"+"，更新操作");
-						hubSkuPendingDto.setSkuPendingId(hubSkuPendingTempDto.getSkuPendingId());
-						hubSkuPendingDto.setUpdateTime(new Date());
-						hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
-						
- 						hubSpuPendingDto.setUpdateTime(new Date());
-						hubSpuPendingDto.setSpuPendingId(hubSkuPendingTempDto.getSpuPendingId());
-						hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
-					}else{
-						
-						HubSpuPendingCriteriaDto HubSpuPendingCriteriaDto = new HubSpuPendingCriteriaDto();
-						HubSpuPendingCriteriaDto.createCriteria().andSupplierSpuNoEqualTo(product.getSupplierSpuNo()).andSupplierIdEqualTo(product.getSupplierId());
-						
-						List<HubSpuPendingDto> listSpu = hubSpuPendingGateWay.selectByCriteria(HubSpuPendingCriteriaDto);
-						
-						Long pendingSpuId = null;
-						if(listSpu!=null&&listSpu.size()>0){
-							log.info(product.getSupplierId()+"spu存在、sku不存在"+"，更新插入操作");
-							pendingSpuId = listSpu.get(0).getSpuPendingId();
-							hubSpuPendingDto.setSpuPendingId(pendingSpuId);
-							hubSpuPendingDto.setUpdateTime(new Date());
-							hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
-						}else{
-							log.info(product.getSupplierId()+"spu、sku不存在"+"，插入操作");
-							hubSpuPendingDto.setCreateTime(new Date());
-							hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
-							pendingSpuId = hubSpuPendingGateWay.insert(hubSpuPendingDto);
-						}
-						
-						hubSkuPendingDto.setSpuPendingId(pendingSpuId);
-						hubSkuPendingDto.setCreateTime(new Date());
-						hubSkuPendingDto.setDataState((byte)1);
-						hubSkuPendingGateWay.insert(hubSkuPendingDto);
-					}
-					map.put("taskNo", taskNo);
-					map.put("spuModel", product.getSpuModel());
+					//更新pending并推送到hub
+					saveHubPendingProduct(product);
+					
 					map.put("taskState", "校验成功");
 					map.put("processInfo", "校验通过");
+					
 				} else {
 					log.info(taskNo + "sku校验不通过");
 					flag = false;
-					map.put("taskNo", taskNo);
-					map.put("spuModel", product.getSpuModel());
 					map.put("taskState", "校验失败");
 					map.put("processInfo", hubPendingSpuCheckResult.getResult());
 				}
 			} else {
 				log.info(taskNo + "spu校验不通过");
-				map.put("taskNo", taskNo);
-				map.put("spuModel", product.getSpuModel());
 				map.put("taskState", "校验失败");
 				map.put("processInfo", hubPendingSkuCheckResult.getResult());
 			}
-
 			listMap.add(map);
 		}
 		
 		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
 		taskService.convertExcel(listMap,taskNo,flag);
+	}
+
+	private void saveHubPendingProduct(HubPendingProductImportDTO product) {
+
+		SpuModelDto spuModelDto = null;
+		
+		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(product.getSupplierId(),
+				product.getSupplierSkuNo());
+		HubSkuPendingDto hubSkuPendingDto = convertHubPendingProduct2Sku(product);
+		HubSpuPendingDto hubSpuPendingDto = convertHubPendingProduct2PendingSpu(product);
+		if(hubSkuPendingTempDto!=null){
+			log.info(hubSkuPendingTempDto.getSupplierId()+"sku存在"+"，更新操作");
+			hubSkuPendingDto.setSkuPendingId(hubSkuPendingTempDto.getSkuPendingId());
+			hubSkuPendingDto.setUpdateTime(new Date());
+			hubSkuPendingDto.setSkuState((byte)SkuState.INFO_IMPECCABLE.getIndex());
+			hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+			
+				hubSpuPendingDto.setUpdateTime(new Date());
+			hubSpuPendingDto.setSpuPendingId(hubSkuPendingTempDto.getSpuPendingId());
+			hubSpuPendingDto.setSpuState((byte)SpuState.INFO_IMPECCABLE.getIndex());
+			hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
+		}else{
+			
+			HubSpuPendingCriteriaDto HubSpuPendingCriteriaDto = new HubSpuPendingCriteriaDto();
+			HubSpuPendingCriteriaDto.createCriteria().andSupplierSpuNoEqualTo(product.getSupplierSpuNo()).andSupplierIdEqualTo(product.getSupplierId());
+			
+			List<HubSpuPendingDto> listSpu = hubSpuPendingGateWay.selectByCriteria(HubSpuPendingCriteriaDto);
+			
+			Long pendingSpuId = null;
+			if(listSpu!=null&&listSpu.size()>0){
+				log.info(product.getSupplierId()+"spu存在、sku不存在"+"，更新插入操作");
+				pendingSpuId = listSpu.get(0).getSpuPendingId();
+				hubSpuPendingDto.setSpuPendingId(pendingSpuId);
+				hubSpuPendingDto.setUpdateTime(new Date());
+				hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
+			}else{
+				log.info(product.getSupplierId()+"spu、sku不存在"+"，插入操作");
+				hubSpuPendingDto.setCreateTime(new Date());
+				hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
+				pendingSpuId = hubSpuPendingGateWay.insert(hubSpuPendingDto);
+			}
+			
+			hubSkuPendingDto.setSpuPendingId(pendingSpuId);
+			hubSkuPendingDto.setCreateTime(new Date());
+			hubSkuPendingDto.setDataState((byte)1);
+			hubSkuPendingGateWay.insert(hubSkuPendingDto);
+		}
+		
+		spuModelDto = new SpuModelDto();
+		spuModelDto.setBrandNo(product.getHubBrandNo());
+		spuModelDto.setSpuModel(product.getSpuModel());
+		pengdingToHubGateWay.auditPending(spuModelDto);
 	}
 
 	private HubPendingSkuCheckResult handlePendingSku(HubPendingProductImportDTO product) {
@@ -201,6 +220,7 @@ public class PendingSkuImportService {
 	private HubSpuPendingDto convertHubPendingProduct2PendingSpu(HubPendingProductImportDTO product) {
 		HubSpuPendingDto HubPendingSpuDto = new HubSpuPendingDto();
 		BeanUtils.copyProperties(product, HubPendingSpuDto);
+		HubPendingSpuDto.setHubSeason(product.getSeasonYear()+"_"+product.getSeasonName());
 		return HubPendingSpuDto;
 	}
 
