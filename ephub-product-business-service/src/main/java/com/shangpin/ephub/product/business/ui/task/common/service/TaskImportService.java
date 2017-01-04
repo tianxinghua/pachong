@@ -86,6 +86,10 @@ public class TaskImportService {
         productImportTask.setTaskNo(taskNo);
         productImportTask.setTaskFtpFilePath(ftpFilePath);
         Map<String,String> map = new HashMap<String,String>();
+        if(TaskImportTpye.HUB_PRODUCT.getIndex()==importType){
+        	productImportTaskStreamSender.hubProductImportTaskStream(productImportTask, null);
+        	return;
+        }
         map.put(importType+"",TaskImportTpye.PENDING_SPU.getDescription());
         productImportTaskStreamSender.pendingProductImportTaskStream(productImportTask, map);
     }

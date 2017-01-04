@@ -48,6 +48,9 @@ public enum SpuState {
     SPU_HANDLING(5,"审核中");
 	 */
 
+
+
+
 	/**
      * 数字索引标识
      */

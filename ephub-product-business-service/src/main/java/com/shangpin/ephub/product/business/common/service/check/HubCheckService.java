@@ -21,6 +21,9 @@ import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
+import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
+import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
 import com.shangpin.ephub.product.business.rest.model.service.impl.HubBrandModelRuleService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,24 +50,48 @@ public class HubCheckService {
 	@Autowired
 	HubSupplierCategroyDicGateWay hubSupplierCategroyDicGateWay;
 	@Autowired
-	HubBrandModelRuleService HubBrandModelRuleService;
-	
+	HubBrandModelRuleController HubBrandModelRuleService;
 	public String checkSpu(HubSpuPendingDto hubProduct){
 		boolean flag = false;
 		StringBuffer str = new StringBuffer();
+		//品牌
 		if(hubProduct.getHubBrandNo()!=null){
 			flag = checkHubBrand(hubProduct.getHubBrandNo());
 			if(!flag){
-				str.append("brandNo："+hubProduct.getHubBrandNo()+"在尚品品牌库中不存在,");
+				str.append("brandNo："+hubProduct.getHubBrandNo()+"不存在,");
 			}
 		}else{
 			str.append("brandNo为空");
 		}
+		
+		//货号
+//		if(hubProduct.getSpuModel()!=null){
+//			BrandModelDto BrandModelDto = new BrandModelDto();
+//			BrandModelDto.setBrandMode(hubProduct.getSpuModel());
+//			BrandModelDto.setHubBrandNo(hubProduct.getHubBrandNo());
+//			BrandModelDto.setHubCategoryNo(hubProduct.getHubCategoryNo());
+//			BrandModelResult result= checkSpuModel(BrandModelDto);
+//			if(!result.isPassing()){
+//				str.append("spuModel："+hubProduct.getSpuModel()+"校验失败,校验结果："+result.getBrandMode());
+//			}
+//		}else{
+//			str.append("spuModel为空");
+//		}
+		
+		//校验品类
+		if(hubProduct.getHubCategoryNo()!=null){
+			if(!checkHubCategory(hubProduct.getHubCategoryNo())){
+				str.append("品类编号:"+hubProduct.getHubCategoryNo()+"不存在,") ;
+			}	
+		}else{
+			str.append("品类为空,");
+		}
+		
 		//颜色
 		if(hubProduct.getHubColor()!=null){
 			flag = checkHubColor(hubProduct.getHubColor());
 			if(!flag){
-				str.append("hubColor:"+hubProduct.getHubColor()+"在尚品颜色库中不存在,");
+				str.append("hubColor:"+hubProduct.getHubColor()+"不存在,");
 			}
 		}else{
 			str.append("hubColor为空");
@@ -74,24 +101,29 @@ public class HubCheckService {
 		if(hubProduct.getHubGender()!=null){
 			flag = checkHubGender(hubProduct.getHubGender());
 			if(!flag){
-				str.append("hubGender:"+hubProduct.getHubGender()+"在尚品性别库中不存在,");
+				str.append("hubGender:"+hubProduct.getHubGender()+"不存在,");
 			}
 		}else{
 			str.append("hubGender为空,");
 		}
 		
-		//性别
-		if(hubProduct.getHubGender()!=null){
+		//季节
+		if(hubProduct.getHubSeason()!=null){
 			flag = checkHubSeason(hubProduct.getHubSeason());
 			if(!flag){
 				str.append("hubSeason:"+hubProduct.getHubSeason()+"不存在,");
 			}
 		}else{
-			str.append("hubGender为空");
+			str.append("hubSeason为空");
 		}
 		return str.toString();
 	}
 	
+	private BrandModelResult checkSpuModel(BrandModelDto BrandModelDto) {
+		return HubBrandModelRuleService.verify(BrandModelDto);
+		
+	}
+
 	/**
 	 * 校验品牌编号
 	 * @param brandNo
