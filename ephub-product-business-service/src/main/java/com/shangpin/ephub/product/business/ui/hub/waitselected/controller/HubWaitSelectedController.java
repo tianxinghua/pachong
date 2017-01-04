@@ -62,6 +62,7 @@ public class HubWaitSelectedController {
 				HubWaitSelectedResponseWithPage HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPage();
 				HubWaitSelectedResponseWithPageDto.setTotal(Integer.parseInt(String.valueOf(total)));
 				HubWaitSelectedResponseWithPageDto.setList(arr);
+				log.info("待选品返回的数据：{}",HubWaitSelectedResponseWithPageDto);
 				return HubResponse.successResp(HubWaitSelectedResponseWithPageDto);
 			}else{
 				return HubResponse.successResp("列表页为空");
@@ -72,6 +73,31 @@ public class HubWaitSelectedController {
 			return HubResponse.errorResp("获取列表失败");
 		}
     }
+	
+//	@RequestMapping(value = "/detail",method = RequestMethod.POST)
+//    public HubResponse detail(@RequestBody HubWaitSelectStateDto dto){
+//	        	
+//		try {
+//			log.info("待选品详情请求参数：{}",dto);
+//				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectHubWaitSelectDetail(dto);
+//				List<HubWaitSelectedResponse> arr = new ArrayList<HubWaitSelectedResponse>();
+//				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
+//					HubWaitSelectedResponse HubWaitSelectResponse = new HubWaitSelectedResponse();
+//					BeanUtils.copyProperties(hubWaitSelectResponseDto, HubWaitSelectResponse);
+//					arr.add(HubWaitSelectResponse);
+//				}
+//				HubWaitSelectedResponseWithPage HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPage();
+//				HubWaitSelectedResponseWithPageDto.setTotal(Integer.parseInt(String.valueOf(total)));
+//				HubWaitSelectedResponseWithPageDto.setList(arr);
+//				log.info("待选品返回的数据：{}",HubWaitSelectedResponseWithPageDto);
+//				return HubResponse.successResp(HubWaitSelectedResponseWithPageDto);
+//			
+//		} catch (Exception e) {
+//			log.error("待选品获取列表失败：{}",e);
+//			return HubResponse.errorResp("获取列表失败");
+//		}
+//    }
+	
 	@RequestMapping(value = "/update-select-state",method = RequestMethod.POST)
     public HubResponse updateSelectState(@RequestBody List<HubWaitSelectStateDto> dto){
 		try{

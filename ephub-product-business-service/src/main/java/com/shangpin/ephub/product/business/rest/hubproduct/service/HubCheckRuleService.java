@@ -71,6 +71,7 @@ public class HubCheckRuleService {
 				str.append("性别编号有误") ;
 			}	
 		}
+		
 		//校验产地
 		return str.toString();
 	}

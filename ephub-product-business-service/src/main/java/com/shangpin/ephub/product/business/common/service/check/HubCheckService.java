@@ -65,18 +65,18 @@ public class HubCheckService {
 		}
 		
 		//货号
-//		if(hubProduct.getSpuModel()!=null){
-//			BrandModelDto BrandModelDto = new BrandModelDto();
-//			BrandModelDto.setBrandMode(hubProduct.getSpuModel());
-//			BrandModelDto.setHubBrandNo(hubProduct.getHubBrandNo());
-//			BrandModelDto.setHubCategoryNo(hubProduct.getHubCategoryNo());
-//			BrandModelResult result= checkSpuModel(BrandModelDto);
-//			if(!result.isPassing()){
-//				str.append("spuModel："+hubProduct.getSpuModel()+"校验失败,校验结果："+result.getBrandMode());
-//			}
-//		}else{
-//			str.append("spuModel为空");
-//		}
+		if(hubProduct.getSpuModel()!=null){
+			BrandModelDto BrandModelDto = new BrandModelDto();
+			BrandModelDto.setBrandMode(hubProduct.getSpuModel());
+			BrandModelDto.setHubBrandNo(hubProduct.getHubBrandNo());
+			BrandModelDto.setHubCategoryNo(hubProduct.getHubCategoryNo());
+			BrandModelResult result= checkSpuModel(BrandModelDto);
+			if(!result.isPassing()){
+				str.append("spuModel："+hubProduct.getSpuModel()+"校验失败,校验结果："+result.getBrandMode());
+			}
+		}else{
+			str.append("spuModel为空");
+		}
 		
 		//校验品类
 		if(hubProduct.getHubCategoryNo()!=null){
