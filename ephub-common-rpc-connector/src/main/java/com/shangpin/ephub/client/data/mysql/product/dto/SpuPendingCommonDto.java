@@ -18,7 +18,12 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SpuPendingCommonDto implements Serializable{
 
-    private Long spuPendingId;//spuPending表主键
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7596677954605182860L;
+
+	private Long spuPendingId;//spuPending表主键
 
     private String spuModel;//货号
 

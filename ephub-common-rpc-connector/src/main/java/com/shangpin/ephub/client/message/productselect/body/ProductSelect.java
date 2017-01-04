@@ -16,7 +16,12 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductSelect implements Serializable {
 
-    Long id;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1211970863310802254L;
+
+	Long id;
 
     List<ProductSelect> subProduct;
 
