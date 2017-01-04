@@ -26,7 +26,7 @@ public enum SpuState {
 	/**
 	 * 无法处理
 	 */
-	NO_WAY_HANDLE((byte)3,"无法处理"),
+	UNABLE_TO_PROCESS((byte)3,"无法处理"),
 	/**
 	 * 过滤不处理
 	 */
