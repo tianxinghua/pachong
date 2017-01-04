@@ -34,6 +34,6 @@ public class HubWaitSelectedResponse implements Serializable {
     private String gender;
     private String skuSize;
     private byte spuState;
-    private Date updateTime;
+    private String updateTime;
 
 }

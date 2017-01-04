@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.hub.waitselected.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/hub-waitSelected")
 @Slf4j
 public class HubWaitSelectedController {
+	
+	SimpleDateFormat sim  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	@Autowired
 	HubWaitSelectGateWay HubWaitSelectGateWay;
 	@Autowired
@@ -57,6 +60,7 @@ public class HubWaitSelectedController {
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
 					HubWaitSelectedResponse HubWaitSelectResponse = new HubWaitSelectedResponse();
 					BeanUtils.copyProperties(hubWaitSelectResponseDto, HubWaitSelectResponse);
+					HubWaitSelectResponse.setUpdateTime(sim.format(hubWaitSelectResponseDto.getUpdateTime()));
 					arr.add(HubWaitSelectResponse);
 				}
 				HubWaitSelectedResponseWithPage HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPage();

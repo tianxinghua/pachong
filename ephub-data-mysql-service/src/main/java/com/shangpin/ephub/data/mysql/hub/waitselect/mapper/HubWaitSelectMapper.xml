@@ -8,8 +8,8 @@
     <result column="sku_size_id" property="skuSizeId" jdbcType="VARCHAR" />
     <result column="sku_no" property="skuNo" jdbcType="VARCHAR" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-       <result column="sku_id" property="skuId" jdbcType="VARCHAR" />
-       <result column="spu_id" property="spuId" jdbcType="VARCHAR" />
+    <result column="sku_id" property="skuId" jdbcType="VARCHAR" />
+    <result column="spu_id" property="spuId" jdbcType="VARCHAR" />
     <result column="spu_model" property="spuModel" jdbcType="VARCHAR" />
     <result column="spu_name" property="spuName" jdbcType="VARCHAR" />
     <result column="gender" property="gender" jdbcType="VARCHAR" />
@@ -96,6 +96,6 @@
       <if test="null!=endDate">
            <![CDATA[ and sku.update_time <=#{endDate}    ]]>
       </if>
-	 
+	 order by 
   </select>
 </mapper>
