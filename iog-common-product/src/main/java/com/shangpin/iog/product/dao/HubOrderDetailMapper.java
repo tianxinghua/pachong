@@ -17,17 +17,17 @@ import com.shangpin.iog.dto.OrderDetailDTO;
 public interface HubOrderDetailMapper extends IBaseDao<HubOrderDetailDTO> {
 
 
-    public List<HubOrderDetailDTO> getOrderBySupplierIdAndTime(@Param("supplierId")String supplier, @Param("startDate")Date startDate,
-    		@Param("endDate")Date endDate,@Param("CGD")String CGD,@Param("spSkuId")String spSkuId,
-    		@Param("supplierSkuId")String supplierSkuId,@Param("orderStatus")String orderStatus,@Param("pushStatus") String pushStatus,RowBounds rowBounds);
-    
-    /**
-     * 通过epMasterOrderNo查询
-     * @param epMasterOrderNo
-     * @return
-     */
+	public List<HubOrderDetailDTO> getOrderBySupplierIdAndTime(@Param("supplierId")String supplier, @Param("startDate")Date startDate,
+															   @Param("endDate")Date endDate,@Param("CGD")String CGD,@Param("spSkuId")String spSkuId,
+															   @Param("supplierSkuId")String supplierSkuId,@Param("orderStatus")String orderStatus,@Param("pushStatus") String pushStatus,RowBounds rowBounds);
+
+	/**
+	 * 通过epMasterOrderNo查询
+	 * @param epMasterOrderNo
+	 * @return
+	 */
 
 	public int getOrderTotalBySupplierIdAndTime(@Param("supplierId") String supplier,@Param("startDate") String startTime,@Param("endDate") String endTime,@Param("CGD") String CGD,
-					@Param("spSkuId") String spSkuId,@Param("supplierSkuId") String supplierSkuId,@Param("orderStatus") String orderStatus,@Param("pushStatus") String pushStatus);
+												@Param("spSkuId") String spSkuId,@Param("supplierSkuId") String supplierSkuId,@Param("orderStatus") String orderStatus,@Param("pushStatus") String pushStatus);
 
 }

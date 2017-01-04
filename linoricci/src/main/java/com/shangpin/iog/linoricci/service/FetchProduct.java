@@ -1,4 +1,5 @@
-package com.shangpin.iog.ostore.service;
+package com.shangpin.iog.linoricci.service;
+
 
 import java.util.Arrays;
 import java.util.Date;
@@ -18,20 +19,19 @@ import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.ostore.dto.Item;
+import com.shangpin.iog.linoricci.dto.Item;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
 
 /**
  * Created by houkun on 2015/11/26.
  */
-@Component("ostore")
+@Component("linoricci")
 public class FetchProduct {
     final Logger logger = Logger.getLogger(this.getClass());
-    private static Logger logMongo = Logger.getLogger("mongodb");
+//    private static Logger logMongo = Logger.getLogger("mongodb");
     private static String supplierId;
     private static String url;
 	public static int day;
@@ -55,6 +55,7 @@ public class FetchProduct {
     	Map<String,Item> spuMap= new HashMap<String,Item>();
     	Map<String,String> imgMap= new HashMap<String,String>();
     	Map<String,String> priceMap= new HashMap<String,String>();
+		Map<String,String> supplierPriceMap = new HashMap<String,String>();
         //获取产品信息
         logger.info("get product starting....");
     	String spuData = HttpUtil45.post(url+"GetAllItemsMarketplace",
@@ -94,6 +95,7 @@ public class FetchProduct {
         	}
 			priceArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
 			priceMap.put(priceArr[0], priceArr[3]);
+			supplierPriceMap.put(priceArr[0], priceArr[2]);
 			
         }
         
@@ -189,7 +191,7 @@ public class FetchProduct {
 //        			sku.setSalePrice(priceMap.get(item.getSpuId()));
         			sku.setMarketPrice(priceMap.get(item.getSpuId()));
 //        			sku.setSalePrice(item.getSalePrice());
-//        			sku.setSupplierPrice(item.getSupplierPrice());
+        			sku.setSupplierPrice(supplierPriceMap.get(item.getSpuId()));
         			sku.setColor(item.getColor());
         			sku.setProductDescription(item.getDescription());
         			sku.setSaleCurrency("EURO");

@@ -7,8 +7,8 @@
   <result column="SUPPLIER_ID" property="supplierId" />
   <result column="SUPPLIER_NAME" property="supplierName" />
   <result column="SUPPLIER_STATE" property="state" />
-
-
+  <result column="APP_KEY" property="appKey" />
+  <result column="APP_SECRET" property="appSecret" />
  </resultMap>
 
 

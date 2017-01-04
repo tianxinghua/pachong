@@ -10,7 +10,7 @@ import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.OrderDetailDTO;
 
 public interface HubOrderDetailService {
- /**
+    /**
      * 查询订单
      * @param supplier
      * @param startDate
@@ -20,10 +20,10 @@ public interface HubOrderDetailService {
      * @return
      */
     public List<HubOrderDetailDTO> getOrderBySupplierIdAndTime(String supplier, Date startDate,
-			Date endDate,String CGD,String spSkuId,String supplierSkuId,String orderStatus,String pushStatus,Integer pageIndex, Integer pageSize);
-    
+                                                               Date endDate,String CGD,String spSkuId,String supplierSkuId,String orderStatus,String pushStatus,Integer pageIndex, Integer pageSize);
 
-	public int getOrderTotalBySupplierIdAndTime(String supplier, String startTime,
-			String endTime,String CGD,String spSkuId,String supplierSkuId,String orderStatus,String pushStatus);
+
+    public int getOrderTotalBySupplierIdAndTime(String supplier, String startTime,
+                                                String endTime,String CGD,String spSkuId,String supplierSkuId,String orderStatus,String pushStatus);
 
 }

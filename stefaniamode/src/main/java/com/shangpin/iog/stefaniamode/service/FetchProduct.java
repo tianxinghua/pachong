@@ -311,7 +311,7 @@ public class FetchProduct {
 	
 	private static void saveData(String name,String data){
     	try {
-    		File file = new File("E:\\"+File.separator+name);
+    		File file = new File("E:\\其他\\下载的内容"+File.separator+name);
     		if (!file.exists()) {
     			try {
     				file.getParentFile().mkdirs();
@@ -323,7 +323,7 @@ public class FetchProduct {
     		}
     		FileWriter fwriter = null;
     		try {
-    			fwriter = new FileWriter("E:\\"+File.separator+name);
+    			fwriter = new FileWriter("E:\\其他\\下载的内容"+File.separator+name);
     			fwriter.write(data);
     		} catch (IOException ex) {
     			ex.printStackTrace();

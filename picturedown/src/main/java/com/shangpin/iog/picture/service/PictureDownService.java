@@ -212,6 +212,9 @@ public class PictureDownService {
                                         	}
                                         	Thread.sleep(500);
                                         	
+                                        }else if("2016011201731".equals(supplierId)){//daniello
+                                        	Thread.sleep(500);
+                                        	executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"","shangpin","Atelier2015"));                                        	
                                         }else{
                                             Thread.sleep(500);
                                             executor.execute(new DowmImage(img.trim(),spu+" ("+i+").jpg",dirPath,picQueue,null, null,"",userName,password));
