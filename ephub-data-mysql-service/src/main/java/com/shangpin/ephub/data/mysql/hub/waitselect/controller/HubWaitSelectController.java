@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectDetailRequest;
 import com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectRequest;
 import com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectRequestWithPage;
 import com.shangpin.ephub.data.mysql.hub.waitselect.po.HubWaitSelectResponse;
@@ -33,6 +34,10 @@ public class HubWaitSelectController {
 	@RequestMapping(value = "/select-with-page")
     public List<HubWaitSelectResponse> selectByCriteriaWithRowbounds(@RequestBody HubWaitSelectRequestWithPage criteriaWithRowBounds){
     	return hubSkuService.selectList(criteriaWithRowBounds);
+    }
+	@RequestMapping(value = "/select-detail")
+    public List<HubWaitSelectResponse> selectDetail(@RequestBody HubWaitSelectDetailRequest criteriaWithRowBounds){
+    	return hubSkuService.selectDetail(criteriaWithRowBounds);
     }
 	
 }
