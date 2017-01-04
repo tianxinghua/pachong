@@ -1,12 +1,17 @@
 package com.shangpin.ephub.fdfs.client.service.upload.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
+import com.shangpin.ephub.fdfs.client.service.upload.dto.UploadPicDto;
 import com.shangpin.ephub.fdfs.client.service.upload.service.UploadPicService;
+
+import sun.misc.BASE64Decoder;
 
 /**
  * <p>Title:UploadController.java </p>
@@ -30,7 +35,14 @@ public class UploadPicController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public String upload(MultipartFile file) throws Exception {
-		return uploadPicService.uploadFile(file);
+	public String upload(@RequestBody UploadPicDto uploadPicDto) {
+		byte[] buffer = null;
+		try {
+			buffer = new BASE64Decoder().decodeBuffer(uploadPicDto.getBase64());
+			return uploadPicService.uploadFile(buffer);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
     }
 }

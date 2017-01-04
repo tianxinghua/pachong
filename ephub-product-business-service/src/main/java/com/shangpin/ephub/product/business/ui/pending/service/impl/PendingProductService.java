@@ -404,6 +404,7 @@ public class PendingProductService implements IPendingProductService{
             hubSpuPendingCriteriaDto.setPageSize(pendingQuryDto.getPageSize());
         }
         Criteria criteria = hubSpuPendingCriteriaDto.createCriteria();
+        criteria = criteria.andSpuStateEqualTo(SpuState.INFO_PECCABLE.getIndex());
 
         if(!StringUtils.isEmpty(pendingQuryDto.getSupplierNo())){
             criteria = criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());
