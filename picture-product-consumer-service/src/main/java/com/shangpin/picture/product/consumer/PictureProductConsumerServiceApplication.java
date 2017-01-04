@@ -17,7 +17,6 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
 import com.shangpin.ephub.client.fdfs.gateway.UploadPicGateway;
-import com.sun.mail.util.BASE64EncoderStream;
 /**
  * <p>Title:PictureProductConsumerServiceApplication.java </p>
  * <p>Description: 图片处理消费者</p>
@@ -38,8 +37,9 @@ public class PictureProductConsumerServiceApplication implements ApplicationRunn
 	private UploadPicGateway uploadPicGateway;
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		InputStream resourceAsStream = this.getClass().getResourceAsStream("/banner/logo.jpg");
-		String base64 = new BASE64Encoder().encode(IOUtils.toByteArray(resourceAsStream));
+		//InputStream resourceAsStream = this.getClass().getResourceAsStream("/banner/gtl.jpg");
+		URL url = new URL("http://img4.cache.netease.com/photo/0026/2012-11-29/8HGDQHHG3QV10026.JPG");
+		String base64 = new BASE64Encoder().encode(IOUtils.toByteArray(url.openStream()));
 		UploadPicDto file = new UploadPicDto();
 		file.setBase64(base64);
 		String upload = uploadPicGateway.upload(file);
