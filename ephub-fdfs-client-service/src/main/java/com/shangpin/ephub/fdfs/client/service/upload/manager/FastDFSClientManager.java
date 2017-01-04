@@ -38,7 +38,7 @@ public class FastDFSClientManager {
      * @throws IOException
      */
     public String uploadFile(byte[] buffer) {
-    	StorePath storePath = storageClient.uploadFile("group2", new ByteArrayInputStream(buffer), buffer.length, ".jpg");
+    	StorePath storePath = storageClient.uploadFile("group2", new ByteArrayInputStream(buffer), buffer.length, "jpg");
       //  StorePath storePath = storageClient.uploadFile(file.getInputStream(),file.getSize(), FilenameUtils.getExtension(file.getOriginalFilename()),null);
         return getResAccessUrl(storePath);
     }

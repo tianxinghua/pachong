@@ -15,6 +15,11 @@ import lombok.*;
 public class SpuPendingAuditDto extends SpuPendingDto {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1578903744073525308L;
+
+	/**
      * 0 :信息待完善 1 : 待复核 2 :已处理(审核通过) 3：无法处理 4:过滤不处理
      */
     private String  auditStatus;
