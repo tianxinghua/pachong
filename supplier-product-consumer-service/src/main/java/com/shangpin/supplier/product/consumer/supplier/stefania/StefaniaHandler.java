@@ -9,13 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
+import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
+import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
+import com.shangpin.supplier.product.consumer.service.PictureProductService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
+import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.stefania.dto.StefItem;
 import com.shangpin.supplier.product.consumer.supplier.stefania.dto.StefProduct;
@@ -35,6 +40,10 @@ public class StefaniaHandler implements ISupplierHandler{
 	
 	@Autowired
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
+	@Autowired
+	private PictureHandler pictureHandler;
+	@Autowired
+	private PictureProductService pictureProductService;
 	
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
@@ -43,6 +52,12 @@ public class StefaniaHandler implements ISupplierHandler{
 				StefProduct stefProduct = JsonUtil.deserialize(message.getData(), StefProduct.class);
 				for(StefItem stefItem :stefProduct.getItems().getItems()){
 					HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
+					List<Image> images = converImage(stefItem.getPicture());
+					if(null == images){
+						hubSpu.setIsexistpic(PicState.NO_PIC.getIndex());
+					}else{
+						hubSpu.setIsexistpic(PicState.PIC_INFO_COMPLETED.getIndex()); 
+					}
 					boolean success = convertSpu(message.getSupplierId(), stefProduct, stefItem, hubSpu);
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 					HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
@@ -53,11 +68,35 @@ public class StefaniaHandler implements ISupplierHandler{
 					if(success){
 						supplierProductSaveAndSendToPending.stefaniaSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 					}
+					//处理图片
+					SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
+					pictureProductService.sendSupplierPicture(supplierPicture, null); 
 				}
 			}	
 		} catch (EpHubSupplierProductConsumerException e) {
 			log.error("stefania异常："+e.getMessage(),e); 
 		}		
+		
+	}
+	
+	/**
+	 * stefania处理图片
+	 * @param stefPicture
+	 * @return
+	 */
+	private List<Image> converImage(String stefPicture){
+		if(StringUtils.isEmpty(stefPicture)){
+			return null;
+		}else{
+			List<Image> images = new ArrayList<Image>();
+			String[] picArray = stefPicture.split("\\|");
+			for(String url : picArray){
+				Image image = new Image();
+				image.setUrl(url);
+				images.add(image);
+			}
+			return images;
+		}
 		
 	}
 	
