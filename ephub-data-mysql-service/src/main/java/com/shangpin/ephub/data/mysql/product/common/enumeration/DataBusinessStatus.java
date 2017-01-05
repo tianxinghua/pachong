@@ -1,14 +1,14 @@
-package com.shangpin.ephub.data.mysql.product.common;
+package com.shangpin.ephub.data.mysql.product.common.enumeration;
 
 /**
  * Created by loyalty on 16/12/21.
- * 选品状态
+ * 数据业务处理状态
  */
-public enum DataSelectStatus {
+public enum DataBusinessStatus {
 
-    NOT_SELECT(0,"未选品"),
+    WAIT_HANDLE(0,"信息待完善"),
 
-    SELECTED(1,"已选品")
+    HANDLED(1,"信息已完善")
     ;
     /**
      * 数字索引标识
@@ -30,7 +30,7 @@ public enum DataSelectStatus {
     public void setDescription(String description) {
         this.description = description;
     }
-    private DataSelectStatus(Integer index, String description) {
+    private DataBusinessStatus(Integer index, String description) {
         this.index = index;
         this.description = description;
     }

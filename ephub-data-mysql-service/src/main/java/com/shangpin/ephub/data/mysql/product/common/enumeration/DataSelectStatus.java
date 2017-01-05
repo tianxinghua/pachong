@@ -1,16 +1,15 @@
-package com.shangpin.ephub.data.mysql.product.common;
+package com.shangpin.ephub.data.mysql.product.common.enumeration;
 
 /**
  * Created by loyalty on 16/12/21.
+ * 选品状态
  */
-public enum HubSpuPendigStatus {
+public enum DataSelectStatus {
 
-    WAIT_HANDLE(0,"信息待完善"),
-    WAIT_AUDIT(1,"待复核"),
-    HANDLED(2,"已处理"),
-    NO_WAY_HANDLE(3,"无法处理"),
-    FILTER(4,"过滤不处理"),
-    HANDLING(5,"复核中");
+    NOT_SELECT(0,"未选品"),
+
+    SELECTED(1,"已选品")
+    ;
     /**
      * 数字索引标识
      */
@@ -31,7 +30,7 @@ public enum HubSpuPendigStatus {
     public void setDescription(String description) {
         this.description = description;
     }
-    private HubSpuPendigStatus(Integer index, String description) {
+    private DataSelectStatus(Integer index, String description) {
         this.index = index;
         this.description = description;
     }

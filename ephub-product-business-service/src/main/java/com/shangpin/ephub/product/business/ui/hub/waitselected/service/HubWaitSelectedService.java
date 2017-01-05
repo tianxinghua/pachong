@@ -1,23 +1,26 @@
 package com.shangpin.ephub.product.business.ui.hub.waitselected.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
+import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
+import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
+import com.shangpin.ephub.client.data.mysql.hub.gateway.HubWaitSelectGateWay;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.product.business.service.hub.dto.HubProductIdDto;
 import com.shangpin.ephub.product.business.service.hub.impl.HubProductServiceImpl;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelectStateDto;
+import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,6 +41,8 @@ public class HubWaitSelectedService {
 	HubSpuGateWay hubSpuGateway;
 	@Autowired
 	HubSkuGateWay hubSkuGateWay;
+	@Autowired
+	HubWaitSelectGateWay hubWaitSelectGateWay;
 	@Autowired
 	HubProductServiceImpl hubCommonProductServiceImpl;
 
@@ -84,7 +89,6 @@ public class HubWaitSelectedService {
 			HubProductIdDto spu = new HubProductIdDto();
 			Long spuId = spuEntry.getKey();
 			spu.setId(spuId);
-
 			List<HubProductIdDto> skulist = new ArrayList<HubProductIdDto>();
 			Map<Long, Map<Long, String>> skuMap = spuEntry.getValue();
 			for (Map.Entry<Long, Map<Long, String>> skuEntry : skuMap.entrySet()) {
@@ -112,28 +116,20 @@ public class HubWaitSelectedService {
 			}
 
 		}
-		// List<HubProductIdDto> skulist = new ArrayList<HubProductIdDto>();
-		// HubProductIdDto skuDto = new HubProductIdDto();
-		// skuDto.setId(skuId);
-		// List<HubProductIdDto> mapplist = new ArrayList<HubProductIdDto>();
-		// HubProductIdDto mappDto = new HubProductIdDto();
-		// mappDto.setId(mappId);
-		// mapplist.add(mappDto);
-		// skuDto.setSubProduct(mapplist);
-		// skulist.add(skuDto);
-		// HubProductIdDto spuDto = new HubProductIdDto();
-		// spuDto.setId(spuId);
-		// spuDto.setSubProduct(skulist);
-		// if(!spuIdMap.containsKey(spuId)){
-		// try {
-		// log.info("推送scm参数{}",spuDto);
-		// hubCommonProductServiceImpl.sendHubProuctToScm(spuDto);
-		// } catch (Exception e) {
-		// log.error("推送scm出错{}",e);
-		// e.printStackTrace();
-		// }
-		// }
+	}
 
+	public void batchUpdateSelectState(HubWaitSelectRequestWithPageDto requestDto) {
+		requestDto.setPageNo(0);
+		requestDto.setPageSize(100000);
+		requestDto.setSupplierSelectState((byte)SupplierSelectState.NO_SELECTED.getIndex());
+		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(requestDto);
+		for(HubWaitSelectResponseDto dto:list){
+			Long spuId = dto.getSpuId();
+			Long mappId = dto.getSkuSupplierMappingId();
+			Long skuId = dto.getSkuId();
+			
+			
+		}
 	}
 
 }

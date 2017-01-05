@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
+import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,11 +23,11 @@ public class HubPendingSpuCheckService {
 	
 	@Autowired
 	HubCheckService hubCheckService;
-	public String checkHubPendingSpu(HubSpuPendingDto hubProduct){
+	public HubPendingSpuCheckResult  checkHubPendingSpu(HubSpuPendingDto hubProduct){
 		
-		String result = hubCheckService.checkSpu(hubProduct);
+		HubPendingSpuCheckResult returnStr = hubCheckService.checkSpu(hubProduct);
 		
-		return result;
+		return returnStr;
 	}
 	
 

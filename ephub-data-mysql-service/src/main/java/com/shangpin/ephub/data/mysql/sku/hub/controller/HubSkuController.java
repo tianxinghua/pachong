@@ -78,8 +78,8 @@ public class HubSkuController {
     	return hubSkuService.updateByPrimaryKey(hubSku);
     }
 
-	@RequestMapping(value = "/get-skuno")
-	public String createSkuNo(@RequestParam(value = "spuno")  String  spuno){
+	@RequestMapping(value = "/get-skuno/${spuno}")
+	public String createSkuNo(@PathVariable(value = "spuno")  String  spuno){
 		return   hubSpuUtil.createHubSkuNo(spuno,1);
 	}
 }

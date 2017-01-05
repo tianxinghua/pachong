@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
@@ -159,8 +160,11 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
                 //获取图片
                 HubSpuPendingPicCriteriaDto criteriaPic = new HubSpuPendingPicCriteriaDto();
-
-                criteriaPic.createCriteria().andSpuPendingIdEqualTo(spuPendingDto.getSpuPendingId());
+                criteriaPic.setPageNo(1);
+                criteriaPic.setPageSize(100);
+                criteriaPic.createCriteria().andSuupplierIdEqualTo(spuPendingDto.getSupplierId())
+                        .andSupplierSpuNoEqualTo(spuPendingDto.getSupplierSpuNo())
+                        .andDataStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
 
                 List<HubSpuPendingPicDto> hubSpuPendingPicDtos = spuPendingPicGateWay.selectByCriteria(criteriaPic);
                 if(null!=hubSpuPendingDtos){
@@ -168,9 +172,21 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                         maxPic = hubSpuPendingPicDtos.size();
                         index = i;//获取拥有图片数量最多的spupending
                     }
+
+
                     List<SpuPendingPicVO>  picVOs = new ArrayList<>();
 
                     for(HubSpuPendingPicDto picDto:hubSpuPendingPicDtos){
+                        //首先查询 图片是否已经有spuPending编号，如果没有反写进去
+                        if(null==picDto.getSpuPendingId()){
+                            HubSpuPendingPicDto tmp = new HubSpuPendingPicDto();
+                            tmp.setSpuPendingPicId(picDto.getSpuPendingPicId());
+                            tmp.setSpuPendingId(spuPendingDto.getSpuPendingId());
+                            spuPendingPicGateWay.updateByPrimaryKeySelective(tmp);
+                            picDto.setSpuPendingId(tmp.getSpuPendingId());
+                        }
+
+
                         SpuPendingPicVO picVO = new SpuPendingPicVO();
                         picVO.setSpuPendingId(picDto.getSpuPendingId());
                         picVO.setPicId(picDto.getSpuPendingPicId());
