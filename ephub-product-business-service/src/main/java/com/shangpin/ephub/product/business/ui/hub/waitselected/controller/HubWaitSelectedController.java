@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuSelectState;
+import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectDetailRequest;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 import com.shangpin.ephub.client.data.mysql.hub.gateway.HubWaitSelectGateWay;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelectStateDto;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.service.HubWaitSelectedService;
+import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedDetailResponse;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponse;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponseWithPage;
 import com.shangpin.ephub.response.HubResponse;
@@ -78,29 +80,26 @@ public class HubWaitSelectedController {
 		}
     }
 	
-//	@RequestMapping(value = "/detail",method = RequestMethod.POST)
-//    public HubResponse detail(@RequestBody HubWaitSelectStateDto dto){
-//	        	
-//		try {
-//			log.info("待选品详情请求参数：{}",dto);
-//				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectHubWaitSelectDetail(dto);
-//				List<HubWaitSelectedResponse> arr = new ArrayList<HubWaitSelectedResponse>();
-//				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
-//					HubWaitSelectedResponse HubWaitSelectResponse = new HubWaitSelectedResponse();
-//					BeanUtils.copyProperties(hubWaitSelectResponseDto, HubWaitSelectResponse);
-//					arr.add(HubWaitSelectResponse);
-//				}
-//				HubWaitSelectedResponseWithPage HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPage();
-//				HubWaitSelectedResponseWithPageDto.setTotal(Integer.parseInt(String.valueOf(total)));
-//				HubWaitSelectedResponseWithPageDto.setList(arr);
-//				log.info("待选品返回的数据：{}",HubWaitSelectedResponseWithPageDto);
-//				return HubResponse.successResp(HubWaitSelectedResponseWithPageDto);
-//			
-//		} catch (Exception e) {
-//			log.error("待选品获取列表失败：{}",e);
-//			return HubResponse.errorResp("获取列表失败");
-//		}
-//    }
+	@RequestMapping(value = "/detail",method = RequestMethod.POST)
+    public HubResponse detail(@RequestBody HubWaitSelectDetailRequest dto){
+	        	
+		try {
+			log.info("待选品详情请求参数：{}",dto);
+				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectDetail(dto);
+				List<HubWaitSelectedDetailResponse> arr = new ArrayList<HubWaitSelectedDetailResponse>();
+				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
+					HubWaitSelectedDetailResponse HubWaitSelectResponse = new HubWaitSelectedDetailResponse();
+					BeanUtils.copyProperties(hubWaitSelectResponseDto, HubWaitSelectResponse);
+					arr.add(HubWaitSelectResponse);
+				}
+				log.info("待选品详情返回的数据：{}",arr);
+				return HubResponse.successResp(arr);
+			
+		} catch (Exception e) {
+			log.error("待选品获取列表失败：{}",e);
+			return HubResponse.errorResp("获取列表失败");
+		}
+    }
 	
 	@RequestMapping(value = "/update-select-state",method = RequestMethod.POST)
     public HubResponse updateSelectState(@RequestBody List<HubWaitSelectStateDto> dto){
