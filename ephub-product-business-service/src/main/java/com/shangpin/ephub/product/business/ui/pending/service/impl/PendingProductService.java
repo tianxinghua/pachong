@@ -499,7 +499,7 @@ public class PendingProductService implements IPendingProductService{
 					row.createCell(i).setCellValue(null != value ? value.toString() : "");
             	}
 			} catch (Exception e) {
-				log.error("待处理页导出sku时异常："+e.getMessage(),e); 
+				log.error("待处理页导出sku时异常："+e.getMessage()); 
 			}        	
         }    	
     }
@@ -536,7 +536,7 @@ public class PendingProductService implements IPendingProductService{
 					row.createCell(i).setCellValue(null != value ? value.toString() : "");
 				}				
 			} catch (Exception e) {
-				log.error("待处理页导出spu时异常："+e.getMessage(),e); 
+				log.error("待处理页导出spu时异常："+e.getMessage()); 
 				continue;
 			}
 		}
