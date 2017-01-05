@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
@@ -162,7 +163,8 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 criteriaPic.setPageNo(1);
                 criteriaPic.setPageSize(100);
                 criteriaPic.createCriteria().andSuupplierIdEqualTo(spuPendingDto.getSupplierId())
-                        .andSupplierSpuNoEqualTo(spuPendingDto.getSupplierSpuNo());
+                        .andSupplierSpuNoEqualTo(spuPendingDto.getSupplierSpuNo())
+                        .andDataStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
 
                 List<HubSpuPendingPicDto> hubSpuPendingPicDtos = spuPendingPicGateWay.selectByCriteria(criteriaPic);
                 if(null!=hubSpuPendingDtos){
