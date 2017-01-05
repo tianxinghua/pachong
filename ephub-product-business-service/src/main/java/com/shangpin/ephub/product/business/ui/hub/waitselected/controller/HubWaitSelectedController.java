@@ -112,9 +112,9 @@ public class HubWaitSelectedController {
 	}
 	
 	@RequestMapping(value = "/batch-update-select-state",method = RequestMethod.POST)
-    public HubResponse batchUpdateSelectState(@RequestBody List<HubWaitSelectStateDto> dto){
+    public HubResponse batchUpdateSelectState(@RequestBody HubWaitSelectRequestWithPageDto dto){
 		try{
-			hubWaitSelectedService.updateSelectState(dto);
+			hubWaitSelectedService.batchUpdateSelectState(dto);
 	        return HubResponse.successResp(null);
 		}catch(Exception e){
 			 return HubResponse.errorResp("选品失败，请重新选品");

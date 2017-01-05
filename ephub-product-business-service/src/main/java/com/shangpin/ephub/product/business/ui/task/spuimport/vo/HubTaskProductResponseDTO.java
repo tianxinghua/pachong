@@ -1,7 +1,5 @@
 package com.shangpin.ephub.product.business.ui.task.spuimport.vo;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
@@ -21,10 +19,10 @@ public class HubTaskProductResponseDTO {
 	private String taskNo;
 	private String localFileName;
 	private byte taskState;
-	private Date createTime;
+	private String createTime;
 	private String createUser;
 	private String updateUser;
-	private Date updateTime;
+	private String updateTime;
 	private String taskFtpFilePath;
 	private String resultFilePath;
 }

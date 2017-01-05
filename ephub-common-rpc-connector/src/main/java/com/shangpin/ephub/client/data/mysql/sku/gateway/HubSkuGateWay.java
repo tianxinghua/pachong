@@ -61,6 +61,6 @@ public interface HubSkuGateWay {
 
 
     //---------------------- 人工处理
-    @RequestMapping(value = "/hub-sku/get-skuno", method = RequestMethod.POST)
-    public String createSkuNo(@RequestParam(value = "spuno")  String  spuno);
+    @RequestMapping(value = "/hub-sku/get-skuno/{spuno}", method = RequestMethod.POST,consumes = "application/json")
+    public String createSkuNo(@PathVariable("spuno")  String  spuno);
 }
