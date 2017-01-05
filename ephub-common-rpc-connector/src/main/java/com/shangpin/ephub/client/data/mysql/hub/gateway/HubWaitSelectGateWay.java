@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectDetailRequest;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
@@ -26,5 +27,10 @@ public interface HubWaitSelectGateWay {
 	
 	@RequestMapping(value = "/hub-waitselect/select-with-page", method = RequestMethod.POST,consumes = "application/json")
     public List<HubWaitSelectResponseDto> selectByPage(@RequestBody HubWaitSelectRequestWithPageDto criteria);
+	
+	@RequestMapping(value = "/hub-waitselect/select-detail", method = RequestMethod.POST,consumes = "application/json")
+    public List<HubWaitSelectResponseDto> selectDetail(@RequestBody HubWaitSelectDetailRequest criteria);
+	
+	
 	
 }

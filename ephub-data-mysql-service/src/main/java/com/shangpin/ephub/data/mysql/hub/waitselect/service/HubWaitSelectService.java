@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectDetailRequest;
 import com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectRequest;
 import com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectRequestWithPage;
 import com.shangpin.ephub.data.mysql.hub.waitselect.mapper.HubWaitSelectMapper;
@@ -29,5 +30,9 @@ public class HubWaitSelectService {
 
 	public List<HubWaitSelectResponse> selectList(HubWaitSelectRequestWithPage criteriaWithRowBounds) {
 		return hubSkuMapper.selectList(criteriaWithRowBounds);
+	}
+
+	public List<HubWaitSelectResponse> selectDetail(HubWaitSelectDetailRequest criteriaWithRowBounds) {
+		return hubSkuMapper.selectDetail(criteriaWithRowBounds);
 	}
 }

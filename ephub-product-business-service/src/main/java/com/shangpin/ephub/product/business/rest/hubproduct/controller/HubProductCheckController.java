@@ -1,6 +1,5 @@
 package com.shangpin.ephub.product.business.rest.hubproduct.controller;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,14 +29,7 @@ public class HubProductCheckController {
 	@RequestMapping(value = "/check-product")
 	public HubProductCheckResult checkProduct(@RequestBody HubProductDto dto){
 		log.info("校验hub商品参数：{}",dto);
-		HubProductCheckResult result = new HubProductCheckResult();
-		String returnStr = hubCheckRuleService.checkHubProduct(dto);
-		if(StringUtils.isNotBlank(returnStr)){
-			result.setResult(returnStr);
-			result.setPassing(false);
-		}else{
-			result.setPassing(true);
-		}
-		return result;
+		HubProductCheckResult returnStr = hubCheckRuleService.checkHubProduct(dto);
+		return returnStr;
 	}
 }
