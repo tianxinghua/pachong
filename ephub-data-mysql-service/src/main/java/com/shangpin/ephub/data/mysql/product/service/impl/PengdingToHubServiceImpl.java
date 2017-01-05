@@ -250,7 +250,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             skuPendingCriteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId).andSkuStateEqualTo(HubSpuPendigStatus.HANDLING.getIndex().byteValue()); //spu 和 sku 状态保持一致
             List<HubSkuPending> hubSkuPendings = hubSkuPendingMapper.selectByExample(skuPendingCriteria);
             for(HubSkuPending hubSkuPending:hubSkuPendings){
-                if(null!=hubSkuPending.getSkuState()&&hubSkuPending.getSkuState().intValue()== DataBusinessStatus.HANDLED.getIndex()){//信息已完善
+                if(null!=hubSkuPending.getSkuState()&&hubSkuPending.getSkuState().intValue()== HubSpuPendigStatus.HANDLING.getIndex()){//信息已完善
                     if(sizeSkuMap.containsKey(hubSkuPending.getHubSkuSize())){
                         sizeSkuMap.get(hubSkuPending.getHubSkuSize()).add(hubSkuPending);
                     }else{
