@@ -29,8 +29,6 @@ public class HubProductImportDTO {
 	private String spuModel;
 	private String gender;
 	private String hubColor;
-	private String season;
-	private String marketTime;
 	private String sizeType;
 	private String skuSize;
 	private String material;
@@ -44,7 +42,7 @@ public class HubProductImportDTO {
 	  */
 	 public static String [] getHubProductTemplate(){
 		 String[] headers = { "supplierNo", "supplierName", "categoryName", "categoryNo","brandNo","brandName","spuModel","gender",
-					"hubColor","season","marketTime","sizeType","skuSize","material","origin","marketPrice","marketCurrency"};
+					"hubColor","sizeType","skuSize","material","origin","marketPrice","marketCurrency"};
 		 return headers;
 	 }
 }

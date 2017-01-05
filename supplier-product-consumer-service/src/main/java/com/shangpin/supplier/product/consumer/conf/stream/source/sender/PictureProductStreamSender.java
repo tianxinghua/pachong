@@ -1,8 +1,12 @@
 package com.shangpin.supplier.product.consumer.conf.stream.source.sender;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.messaging.support.MessageBuilder;
 
+import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.supplier.product.consumer.conf.stream.source.channel.PictureProductSource;
 
 /**
@@ -20,10 +24,11 @@ public class PictureProductStreamSender {
 	
 	/**
 	 * 发送供应商biondioni商品流数据
+	 * @param headers 
 	 * @param supplierProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
-   /* public boolean commonPictureProductStream(SupplierProduct supplierProduct) {
-    	return pictureProductSource.commonPictureProduct().send(MessageBuilder.withPayload(supplierProduct).build());
-    }*/
+    public boolean supplierPictureProductStream(SupplierPicture supplierPicture, Map<String, ?> headers) {
+    	return pictureProductSource.supplierPictureProduct().send(MessageBuilder.withPayload(supplierPicture).copyHeaders(headers).build());
+    }
 }

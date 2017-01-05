@@ -12,11 +12,11 @@ import org.springframework.messaging.MessageChannel;
  */
 public interface PictureProductSource {
 
-	public String COMMON = "commonPictureProduct";
+	public String SUPPLIER_PICTURE = "supplierPictureProduct";
 	
 	/**
 	 * @return 供应商商品通用图片数据流通道组件
 	 */
-	@Output(value = PictureProductSource.COMMON)
-    public MessageChannel commonPictureProduct();
+	@Output(value = PictureProductSource.SUPPLIER_PICTURE)
+    public MessageChannel supplierPictureProduct();
 }

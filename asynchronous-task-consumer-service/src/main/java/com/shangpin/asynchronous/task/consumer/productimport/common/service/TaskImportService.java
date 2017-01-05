@@ -62,6 +62,11 @@ public class TaskImportService {
 		pendingSkuTemplate = TaskImportTemplate.getPendingSkuTemplate();
 	}
 	
+	private static String[] hubProductTemplate = null;
+	static {
+		hubProductTemplate = TaskImportTemplate.getHubProductTemplate();
+	}
+	
 	public boolean updateHubSpuImportStatusByTaskNo(int status,String taskNo,String processInfo) {
 		HubSpuImportTaskWithCriteriaDto dto = new HubSpuImportTaskWithCriteriaDto();
 		HubSpuImportTaskDto hubSpuImportTaskDto = new HubSpuImportTaskDto();
@@ -161,7 +166,18 @@ public class TaskImportService {
 			for (int i = 0; i < pendingSkuTemplate.length; i++) {
 				if (xssfRow.getCell(i) != null) {
 					String fieldName = xssfRow.getCell(i).toString();
-					if (!pendingSpuTemplate[i].equals(fieldName)) {
+					if (!pendingSkuTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if("hub".equals(type)){
+			for (int i = 0; i < hubProductTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!hubProductTemplate[i].equals(fieldName)) {
 						flag = false;
 						break;
 					}

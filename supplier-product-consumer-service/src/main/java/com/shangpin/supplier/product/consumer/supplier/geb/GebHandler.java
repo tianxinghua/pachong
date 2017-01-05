@@ -12,13 +12,18 @@ import org.springframework.util.StringUtils;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
+import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
+import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
+import com.shangpin.supplier.product.consumer.service.PictureProductService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
+import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.geb.dto.Item;
+import com.shangpin.supplier.product.consumer.supplier.geb.dto.Item_images;
 import com.shangpin.supplier.product.consumer.supplier.geb.dto.Material;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +34,10 @@ public class GebHandler implements ISupplierHandler {
 	
 	@Autowired
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
+	@Autowired
+	private PictureHandler pictureHandler;
+	@Autowired
+	private PictureProductService pictureProductService;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
@@ -46,11 +55,40 @@ public class GebHandler implements ISupplierHandler {
 				if(success){
 					supplierProductSaveAndSendToPending.gebSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 				}
+				//处理图片				
+				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item.getItem_images()));
+				pictureProductService.sendSupplierPicture(supplierPicture, null); 
 			}	
 		} catch (EpHubSupplierProductConsumerException e) {
 			log.error("geb异常："+e.getMessage(),e); 
 		}
 		
+	}
+	
+	/**
+	 * geb处理图片
+	 * @param itemImages
+	 * @return
+	 */
+	private List<Image> converImage(Item_images itemImages){
+		List<Image> images = new ArrayList<Image>();
+		if(null != itemImages){			
+			if(null != itemImages.getFull()){
+				for(String url : itemImages.getFull()){
+					Image image = new Image();
+					image.setUrl(url);
+					images.add(image);
+				}
+			}
+			if(null != itemImages.getThumb()){
+				for(String url : itemImages.getThumb()){
+					Image image = new Image();
+					image.setUrl(url);
+					images.add(image);
+				}
+			}
+		}
+		return images;
 	}
 	
 	/**

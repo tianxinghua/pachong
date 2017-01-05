@@ -1,11 +1,13 @@
 package com.shangpin.supplier.product.consumer.supplier.ostore;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.AtelierCommonHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.IAtelierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierPrice;
@@ -55,6 +57,11 @@ public class OstoreHandler extends IAtelierHandler{
 		}
 		hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(atelierPrice.getPrice1())));
 		
+	}
+
+	@Override
+	public List<Image> converImage(List<String> atelierImags) {
+		return atelierCommonHandler.converImage(atelierImags);
 	}
 
 	
