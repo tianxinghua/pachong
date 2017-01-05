@@ -66,7 +66,6 @@ public class HubSpuController {
     }
 	@RequestMapping(value = "/select-by-primary-key/{spuId}")
     public HubSpu selectByPrimaryKey(@PathVariable(value = "spuId") Long spuId){
-		log.info("spuId--------->"+spuId);
     	return hubSpuService.selectByPrimaryKey(spuId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")

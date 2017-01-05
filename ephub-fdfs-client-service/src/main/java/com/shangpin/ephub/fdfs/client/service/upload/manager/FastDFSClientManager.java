@@ -37,8 +37,8 @@ public class FastDFSClientManager {
      * @return 文件访问地址
      * @throws IOException
      */
-    public String uploadFile(byte[] buffer) {
-    	StorePath storePath = storageClient.uploadFile("group2", new ByteArrayInputStream(buffer), buffer.length, "jpg");
+    public String uploadFile(byte[] buffer, String extension) {
+    	StorePath storePath = storageClient.uploadFile("group2", new ByteArrayInputStream(buffer), buffer.length, extension);
       //  StorePath storePath = storageClient.uploadFile(file.getInputStream(),file.getSize(), FilenameUtils.getExtension(file.getOriginalFilename()),null);
         return getResAccessUrl(storePath);
     }
