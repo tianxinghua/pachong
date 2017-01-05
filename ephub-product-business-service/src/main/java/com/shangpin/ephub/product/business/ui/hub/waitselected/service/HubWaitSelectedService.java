@@ -112,28 +112,10 @@ public class HubWaitSelectedService {
 			}
 
 		}
-		// List<HubProductIdDto> skulist = new ArrayList<HubProductIdDto>();
-		// HubProductIdDto skuDto = new HubProductIdDto();
-		// skuDto.setId(skuId);
-		// List<HubProductIdDto> mapplist = new ArrayList<HubProductIdDto>();
-		// HubProductIdDto mappDto = new HubProductIdDto();
-		// mappDto.setId(mappId);
-		// mapplist.add(mappDto);
-		// skuDto.setSubProduct(mapplist);
-		// skulist.add(skuDto);
-		// HubProductIdDto spuDto = new HubProductIdDto();
-		// spuDto.setId(spuId);
-		// spuDto.setSubProduct(skulist);
-		// if(!spuIdMap.containsKey(spuId)){
-		// try {
-		// log.info("推送scm参数{}",spuDto);
-		// hubCommonProductServiceImpl.sendHubProuctToScm(spuDto);
-		// } catch (Exception e) {
-		// log.error("推送scm出错{}",e);
-		// e.printStackTrace();
-		// }
-		// }
+	}
 
+	public void updateProductDetail(List<HubWaitSelectStateDto> dto) {
+		
 	}
 
 }

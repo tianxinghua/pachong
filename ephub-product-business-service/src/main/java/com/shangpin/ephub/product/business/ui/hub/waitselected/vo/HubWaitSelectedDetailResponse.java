@@ -1,7 +1,6 @@
 package com.shangpin.ephub.product.business.ui.hub.waitselected.vo;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -24,15 +23,20 @@ public class HubWaitSelectedDetailResponse implements Serializable {
 	private String skuNo;
 	private Long skuId;
 	private Long spuId;
-    private String picUrl;
-    private String skuName;
+    private String spuName;
     private String brandNo;
+    private String barcode;
+   
     private String supplierSkuNo;
-    private String supplierSpuModel;
+    private String spuModel;
     private String hubColor;
     private String material;
     private String origin;
     private String gender;
-    private String price;
     private String skuSize;
+    
+    private String price;
+    private String currency;
+    private String[] picUrl;
+   
 }
