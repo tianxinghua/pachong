@@ -614,9 +614,23 @@ public class PendingHandler {
         HubSpuPendingDto spuPendingDto = null;
 
         spuPendingDto =dataServiceHandler.getHubSpuPending(spu.getSupplierId(),spu.getSupplierSpuNo());
+        HubSpuDto hubSpuDto = null;
         if(null!=spuPendingDto){
             if(spuPendingDto.getSpuState().intValue()== SpuStatus.SPU_WAIT_AUDIT.getIndex()||spuPendingDto.getSpuState().intValue()== SpuStatus.SPU_HANDLED.getIndex()){
                 //审核中或者已处理,不能做修改
+                boolean brandmapping = true;
+                //首先映射品牌 ，否则无法查询SPU
+                brandmapping = setBrandMapping(spu, spuPendingDto);
+
+                //验证货号
+                boolean spuModelJudge = true;
+                if(brandmapping){
+                    spuModelJudge  = setBrandModel(spu, spuPendingDto);
+                }
+
+                if(brandmapping&&null!=spu.getSpuModel()){
+                    hubSpuDto = dataServiceHandler.getHubSpuByHubBrandNoAndProductModel(spuPendingDto.getHubBrandNo(),spuPendingDto.getSpuModel());
+                }
 
             }else{
                 HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
@@ -624,6 +638,22 @@ public class PendingHandler {
                 BeanUtils.copyProperties(spu,hubSpuPending);
 
                 boolean allStatus = true;
+                //获取品牌
+                boolean brandmapping = setBrandMapping(spu, hubSpuPending);
+                if(!brandmapping) allStatus=false;
+
+
+                //货号验证
+                if(brandmapping){
+                    if(!setBrandModel(spu, hubSpuPending)) allStatus=false;
+                }
+
+
+                if(brandmapping&&null!=spu.getSpuModel()){
+                    hubSpuDto = dataServiceHandler.getHubSpuByHubBrandNoAndProductModel(spuPendingDto.getHubBrandNo(),spuPendingDto.getSpuModel());
+                }
+
+
                 //设置性别
                 if(StringUtils.isNotBlank(spu.getHubGender())) {
                     if (!setGenderMapping(spu, hubSpuPending)) allStatus = false;
@@ -634,15 +664,7 @@ public class PendingHandler {
                     if (!setCategoryMapping(spu, hubSpuPending)) allStatus = false;
                 }
 
-                //获取品牌
-                boolean brandmapping = setBrandMapping(spu, hubSpuPending);
-                if(!brandmapping) allStatus=false;
 
-
-                //货号验证
-                if(brandmapping){
-                    if(!setBrandModel(spu, hubSpuPending)) allStatus=false;
-                }
 
 
                 //获取颜色
@@ -663,15 +685,18 @@ public class PendingHandler {
                   replaceMaterial(spu, hubSpuPending);
                 }
 
-
-
                 dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(),hubSpuPending);
 
             }
 
+
         }
         SpuPending  spuPending = new SpuPending();
         BeanUtils.copyProperties(spuPendingDto,spuPending);
+        if(null!=hubSpuDto){
+            spuPending.setHubSpuNo(hubSpuDto.getSpuNo());
+        }
+
         return  spuPending;
 
     }
