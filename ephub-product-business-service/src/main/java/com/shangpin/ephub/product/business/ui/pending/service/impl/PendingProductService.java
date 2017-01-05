@@ -1,9 +1,10 @@
 package com.shangpin.ephub.product.business.ui.pending.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -39,12 +40,13 @@ import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
+import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
+import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
-
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -60,6 +62,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PendingProductService implements IPendingProductService{
 
     private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
+    private static String comma = ",";
     @Autowired
     private HubSpuPendingGateWay hubSpuPendingGateWay;
     @Autowired
@@ -90,8 +93,9 @@ public class PendingProductService implements IPendingProductService{
             cell.setCellStyle(style);
         }
         try {
+        	String[] rowTemplate = TaskImportTemplate.getPendingSkuValueTemplate();
             PendingProducts products = findPendingProducts(pendingQuryDto);
-            if(null != products && products.getProduts().size()>0){
+            if(null != products && null != products.getProduts() && products.getProduts().size()>0){
                 int j = 0;
                 for(PendingProductDto product : products.getProduts()){
                     for(HubSkuPendingDto sku : product.getHubSkus()){
@@ -99,9 +103,9 @@ public class PendingProductService implements IPendingProductService{
                             j++;
                             row = sheet.createRow(j);
                             row.setHeight((short) 1500);
-                            insertProductSkuOfRow(row,product,sku);
+                            insertProductSkuOfRow(row,product,sku,rowTemplate);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                        	log.error("insertProductSkuOfRow异常："+e.getMessage(),e);
                             j--;
                         }
                     }
@@ -127,6 +131,7 @@ public class PendingProductService implements IPendingProductService{
             cell.setCellStyle(style);
         }
         try {
+        	String[] rowTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
             List<PendingProductDto> products = findPengdingSpu(pendingQuryDto);
             if(null != products && products.size()>0){
                 int j = 0;
@@ -134,9 +139,9 @@ public class PendingProductService implements IPendingProductService{
                     try {
                         j++;
                         row = sheet.createRow(j);
-                        insertProductSpuOfRow(row,product);
+                        insertProductSpuOfRow(row,product,rowTemplate);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                    	 log.error("insertProductSpuOfRow异常："+e.getMessage(),e);
                         j--;
                     }
                 }
@@ -221,6 +226,7 @@ public class PendingProductService implements IPendingProductService{
             if(null != pendingProductDto){
                 HubPendingSpuCheckResult spuResult = pendingSpuCheckGateWay.checkSpu(pendingProductDto);
                 if(spuResult.isPassing()){
+                	pendingProductDto.setSpuModel(spuResult.getResult());
                 	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
                     hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
                 }else{
@@ -255,7 +261,7 @@ public class PendingProductService implements IPendingProductService{
             }
             return true;
         } catch (Exception e) {
-            log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage(),e);
+            log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
             throw new Exception(e.getMessage());
         }
     }
@@ -269,7 +275,7 @@ public class PendingProductService implements IPendingProductService{
             }
             return true;
         } catch (Exception e) {
-            log.error("待更新页面批量提交异常："+e.getMessage(),e);
+            log.error("待更新页面批量提交异常："+e.getMessage());
             return false;
         }
 
@@ -355,39 +361,7 @@ public class PendingProductService implements IPendingProductService{
      */
     private PendingProductDto convertHubSpuPendingDto2PendingProductDto(HubSpuPendingDto pendingSpu) throws Exception{
         PendingProductDto pendingProduct = new PendingProductDto();
-        pendingProduct.setSpuPendingId(pendingSpu.getSpuPendingId());
-        pendingProduct.setSupplierId(pendingSpu.getSupplierId());
-        pendingProduct.setSupplierSpuNo(pendingSpu.getSupplierSpuNo());
-        pendingProduct.setSpuModel(pendingSpu.getSpuModel());
-        pendingProduct.setSpuName(pendingSpu.getSpuName());
-        pendingProduct.setHubGender(pendingSpu.getHubGender());
-        pendingProduct.setHubCategoryNo(pendingSpu.getHubCategoryNo());
-        pendingProduct.setHubBrandNo(pendingSpu.getHubBrandNo());
-        pendingProduct.setHubSeason(pendingSpu.getHubSeason());
-        pendingProduct.setSpSkuSizeState(pendingSpu.getSpSkuSizeState());
-        pendingProduct.setSpuState(pendingSpu.getSpuState());
-        pendingProduct.setPicState(pendingSpu.getPicState());
-        pendingProduct.setIsCurrentSeason(pendingSpu.getIsCurrentSeason());
-        pendingProduct.setIsNewData(pendingSpu.getIsNewData());
-        pendingProduct.setHubMaterial(pendingSpu.getHubMaterial());
-        pendingProduct.setHubOrigin(pendingSpu.getHubOrigin());
-        pendingProduct.setCreateTime(pendingSpu.getCreateTime());
-        pendingProduct.setUpdateTime(pendingSpu.getUpdateTime());
-        pendingProduct.setSpuDesc(pendingSpu.getSpuDesc());
-        pendingProduct.setHubSpuNo(pendingSpu.getHubSpuNo());
-        pendingProduct.setSpuModelState(pendingSpu.getSpuModelState());
-        pendingProduct.setCatgoryState(pendingSpu.getCatgoryState());
-        pendingProduct.setSupplierSpuId(pendingSpu.getSupplierSpuId());
-        pendingProduct.setMemo(pendingSpu.getMemo());
-        pendingProduct.setDataState(pendingSpu.getDataState());
-        pendingProduct.setVersion(pendingSpu.getVersion());
-        pendingProduct.setSpuBrandState(pendingSpu.getSpuBrandState());
-        pendingProduct.setSpuGenderState(pendingSpu.getSpuGenderState());
-        pendingProduct.setSpuSeasonState(pendingSpu.getSpuSeasonState());
-        pendingProduct.setHubColorNo(pendingSpu.getHubColorNo());
-        pendingProduct.setHubColor(pendingSpu.getHubColor());
-        pendingProduct.setSpuColorState(pendingSpu.getSpuColorState());
-//		JavaUtil.fatherToChild(pendingSpu, pendingProduct); 
+		JavaUtil.fatherToChild(pendingSpu, pendingProduct); 
         return pendingProduct;
     }
 
@@ -466,69 +440,115 @@ public class PendingProductService implements IPendingProductService{
             }
         }
     }
-
-    /**
-     * 将spu信息插入Excel的一行
-     * @param row
-     * @param product
-     * @throws Exception
-     */
-    private void insertProductSpuOfRow(HSSFRow row,PendingProductDto product) throws Exception{
-        row.createCell(0).setCellValue(product.getSupplierId());
-        row.createCell(1).setCellValue(product.getSupplierName());
-        row.createCell(2).setCellValue(product.getSupplierSpuNo());
-        row.createCell(3).setCellValue(product.getHubCategoryName());
-        row.createCell(4).setCellValue(product.getHubCategoryNo());
-        row.createCell(5).setCellValue(product.getHubBrandNo());
-        row.createCell(6).setCellValue(product.getHubBrandName());
-        row.createCell(7).setCellValue(product.getSpuModel());
-        if(!StringUtils.isEmpty(product.getHubSeason())){
-            if(product.getHubSeason().contains("-")){
-                row.createCell(8).setCellValue(product.getHubSeason().substring(0, product.getHubSeason().indexOf("-")));
-                row.createCell(9).setCellValue(product.getHubSeason().substring(product.getHubSeason().indexOf("-")+1));
-            }else{
-                row.createCell(9).setCellValue(product.getHubSeason());
-            }
-        }
-        row.createCell(10).setCellValue(product.getHubGender());
-        row.createCell(11).setCellValue(product.getSpuName());
-        row.createCell(12).setCellValue(product.getHubColor());
-        row.createCell(13).setCellValue(product.getHubMaterial());
-        row.createCell(14).setCellValue(product.getHubOrigin());
-        row.createCell(15).setCellValue(product.getSpuDesc());
-        StringBuffer buffer = new StringBuffer();
-        String comma = ",";
-        if((null != product.getPicState() && PicState.NO_PIC.getIndex() == product.getPicState()) || (null != product.getPicState() && PicState.PIC_INFO_NOT_COMPLETED.getIndex() == product.getPicState())){
-            buffer = buffer.append("图片").append(comma);
-        }
-        if(CatgoryState.PERFECT_MATCHED.equals(product.getCatgoryState())){
-            buffer = buffer.append("品类").append(comma);
-        }
-        row.createCell(16).setCellValue(buffer.toString());
-    }
     /**
      * 将sku信息插入Excel的一行
      * @param row
      * @param product
      * @throws Exception
      */
-    public void insertProductSkuOfRow(HSSFRow row,PendingProductDto product,HubSkuPendingDto sku) throws Exception{
-        insertProductSpuOfRow(row,product);
-        row.createCell(11).setCellValue(sku.getSupplierSkuNo());
-        row.createCell(12).setCellValue(product.getSupplierSpuNo());
-        row.createCell(13).setCellValue(sku.getSupplierBarcode());
-        row.createCell(14).setCellValue(product.getHubColor());
-        row.createCell(15).setCellValue("规格类型");
-        row.createCell(16).setCellValue("原尺码类型");
-        row.createCell(17).setCellValue(sku.getHubSkuSize());
-        row.createCell(18).setCellValue(product.getHubMaterial());
-        row.createCell(19).setCellValue(product.getHubOrigin());
-        row.createCell(20).setCellValue(sku.getSupplyPrice().toString());
-        row.createCell(21).setCellValue(sku.getSupplyPriceCurrency());
-        row.createCell(22).setCellValue(sku.getMarketPrice().toString());
-        row.createCell(23).setCellValue(sku.getMarketPriceCurrencyorg());
-        row.createCell(24).setCellValue("尺寸");
-        row.createCell(25).setCellValue(product.getSpuDesc());
+    public void insertProductSkuOfRow(HSSFRow row,PendingProductDto product,HubSkuPendingDto sku,String[] rowTemplate) throws Exception{
+    	Class<?> spuClazz = product.getClass();
+    	Class<?> skuClazz = sku.getClass();
+    	Method fieldSetMet = null;
+		Object value = null;
+    	for(int i=0;i<rowTemplate.length;i++){
+    		try {
+    			String fileName = JavaUtil.parSetName(rowTemplate[i]);
+    			if("supplierSkuNo".equals(rowTemplate[i]) || "skuName".equals(rowTemplate[i]) || "supplierBarcode".equals(rowTemplate[i]) || "supplyPrice".equals(rowTemplate[i])
+            			|| "supplyPriceCurrency".equals(rowTemplate[i]) || "marketPrice".equals(rowTemplate[i]) || "marketPriceCurrencyorg".equals(rowTemplate[i]) || "hubSkuSize".equals(rowTemplate[i])){
+    				//所有sku的属性
+    				fieldSetMet = skuClazz.getMethod(fileName);
+					value = fieldSetMet.invoke(sku);
+					row.createCell(i).setCellValue(null != value ? value.toString() : "");
+            	}else if("seasonYear".equals(rowTemplate[i])){
+            		setRowOfSeasonYear(row, product, spuClazz, i);
+            	}else if("seasonName".equals(rowTemplate[i])){
+            		setRowOfSeasonName(row, product, spuClazz, i); 
+            	}else if("specification".equals(rowTemplate[i]) || "originalProductSizeType".equals(rowTemplate[i]) || "originalProductSizeValue".equals(rowTemplate[i]) ){
+            		//TODO 规格类型 原尺码类型 原尺码值 从哪取值？
+            		row.createCell(i).setCellValue("");
+            	}else{
+            		//所有spu的属性
+            		fieldSetMet = spuClazz.getMethod(fileName);
+					value = fieldSetMet.invoke(product);
+					row.createCell(i).setCellValue(null != value ? value.toString() : "");
+            	}
+			} catch (Exception e) {
+				log.error("待处理页导出sku时异常："+e.getMessage(),e); 
+			}        	
+        }    	
     }
+    /**
+     * 将spu信息插入Excel的一行
+     * @param row
+     * @param product
+     * @param rowTemplate 导入模板
+     * @throws Exception
+     */
+    private void insertProductSpuOfRow(HSSFRow row,PendingProductDto product,String[] rowTemplate) throws Exception{		
+		Class<?> cls = product.getClass();
+		StringBuffer buffer = new StringBuffer();  
+		Method fieldSetMet = null;
+		Object value = null;
+		for (int i=0;i<rowTemplate.length;i++) {
+			try {
+				String fileName = JavaUtil.parSetName(rowTemplate[i]);
+				if("seasonYear".equals(rowTemplate[i])){
+					setRowOfSeasonYear(row, product, cls, i);
+				}else if("seasonName".equals(rowTemplate[i])){
+					setRowOfSeasonName(row, product, cls, i); 
+				}else if("memo".equals(rowTemplate[i])){
+					if((null != product.getPicState() && PicState.NO_PIC.getIndex() == product.getPicState()) || (null != product.getPicState() && PicState.PIC_INFO_NOT_COMPLETED.getIndex() == product.getPicState())){
+			            buffer = buffer.append("图片").append(comma);
+			        }
+			        if(CatgoryState.PERFECT_MATCHED.equals(product.getCatgoryState())){
+			            buffer = buffer.append("品类").append(comma);
+			        }
+			        row.createCell(i).setCellValue(buffer.toString()); 
+				}else{
+					fieldSetMet = cls.getMethod(fileName);
+					value = fieldSetMet.invoke(product);
+					row.createCell(i).setCellValue(null != value ? value.toString() : "");
+				}				
+			} catch (Exception e) {
+				log.error("待处理页导出spu时异常："+e.getMessage(),e); 
+				continue;
+			}
+		}
+    }	
+    /**
+     * 设置导出上市季节的值，这个字段比较特殊，是从hubSeason字段拆解出来的
+     * @param row
+     * @param product
+     * @param clazz
+     * @param i
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    private void setRowOfSeasonName(HSSFRow row, PendingProductDto product, Class<?> clazz, int i)
+			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		String fileName = "getHubSeason";
+		Method fieldSetMet = clazz.getMethod(fileName);
+		Object value = fieldSetMet.invoke(product);
+		row.createCell(i).setCellValue((null != value && value.toString().contains("_")) ? value.toString().split("_")[1] : (null != value ? value.toString() : ""));
+	}
+    /**
+     * 设置导出上市年份的值，这个字段比较特殊，是从hubSeason字段拆解出来的
+     * @param row
+     * @param product
+     * @param clazz
+     * @param i
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+	private void setRowOfSeasonYear(HSSFRow row, PendingProductDto product, Class<?> clazz, int i)
+			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		String fileName = "getHubSeason";
+		Method fieldSetMet = clazz.getMethod(fileName);
+		Object value = fieldSetMet.invoke(product);
+		row.createCell(i).setCellValue((null != value && value.toString().contains("_")) ? value.toString().split("_")[0] : "");
+	}
 
 }

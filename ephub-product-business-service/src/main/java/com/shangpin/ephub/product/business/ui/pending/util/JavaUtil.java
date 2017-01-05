@@ -46,5 +46,21 @@ public class JavaUtil {
         String out=head.toUpperCase()+in.substring(1,in.length());  
         return out;  
     } 
+    
+    /**
+     * 构造属性的get方法，比如传入name，返回getName
+     * @param fieldName
+     * @return
+     */
+    public static String parSetName(String fieldName) {
+		if (null == fieldName || "".equals(fieldName)) {
+			return null;
+		}
+		int startIndex = 0;
+		if (fieldName.charAt(0) == '_')
+			startIndex = 1;
+		return "get" + fieldName.substring(startIndex, startIndex + 1).toUpperCase()
+				+ fieldName.substring(startIndex + 1);
+	}
  
 }

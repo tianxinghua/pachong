@@ -55,7 +55,7 @@ public class PendingProductController {
         if(result){
             return HubResponse.successResp(resultSuccess);
         }else{
-            return HubResponse.successResp(resultFail);
+            return HubResponse.errorResp(resultFail);
         }
     }
     @RequestMapping(value="/unable-to-process",method=RequestMethod.POST)
@@ -65,10 +65,10 @@ public class PendingProductController {
 	        if(result){
 	            return HubResponse.successResp(resultSuccess);
 	        }else{
-	            return HubResponse.successResp(resultFail);
+	            return HubResponse.errorResp(resultFail);
 	        }
 		} catch (Exception e) {
-			return HubResponse.successResp(resultFail);
+			return HubResponse.errorResp(e.getMessage());
 		}
        
     }
@@ -78,7 +78,7 @@ public class PendingProductController {
         if(result){
             return HubResponse.successResp(resultSuccess);
         }else{
-            return HubResponse.successResp(resultFail);
+            return HubResponse.errorResp(resultFail);
         }
     }
 }
