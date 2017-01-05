@@ -2,6 +2,8 @@ package com.shangpin.asynchronous.task.consumer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 /**
@@ -11,7 +13,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
  * @author yanxiaobin
  * @date 2016年12月19日 下午7:08:33
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = {RedisAutoConfiguration.class,RedisRepositoriesAutoConfiguration.class})
 @EnableDiscoveryClient
 @EnableFeignClients("com.shangpin.ephub")
 public class AsynchronousTaskConsumerServiceApplication {
