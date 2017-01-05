@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.esotericsoftware.minlog.Log;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.dto.HubProductImportDTO;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
@@ -29,6 +30,9 @@ import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.product.business.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.client.product.business.hubproduct.gateway.HubProductCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubproduct.result.HubProductCheckResult;
+import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
+import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
+import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 
 /**
@@ -59,6 +63,9 @@ public class HubProductImportService {
 	HubSpuGateWay hubSpuGateWay;
 	@Autowired
 	HubSkuGateWay hubSkuGateWay;
+	@Autowired
+	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
+	
 	private static String[] hubKeyTemplate = null;
 	static {
 		hubKeyTemplate = TaskImportTemplate.getPendingSkuTemplate();
@@ -93,67 +100,69 @@ public class HubProductImportService {
 	
 		for (HubProductImportDTO product : listHubProduct) {
 
-//			boolean isExist = false;
 			Map<String, String> map = new HashMap<String, String>();
 			HubProductDto hubProductDto = convertHubImportProduct2HupProduct(product);
-			//校验hub
-			HubProductCheckResult hubProductCheckResult = HubProductCheckGateWay.checkProduct(hubProductDto);
-			if (hubProductCheckResult.isPassing() == true) {
+			
+			map.put("taskNo", taskNo);
+			map.put("spuModel", product.getSpuModel());
+			
+			//校验货号
+				Log.info("货号校验通过");
+				//校验hub	
 				
-				HubSpuDto hubSpuDto = convertHubImportProduct2HupSpu(product);
-				//查询hubSpu是否存在
-				String hubSpuNo = null;
-				List<HubSpuDto> hub = findHubSpuDto(hubSpuDto);
-				if (hub != null && hub.size() > 0) {
-					hubSpuNo = hub.get(0).getSpuNo();
-					hubSpuDto.setSpuId(hub.get(0).getSpuId());
-					hubSpuGateWay.updateByPrimaryKeySelective(hubSpuDto);
-				}else {
+				HubProductCheckResult hubProductCheckResult = HubProductCheckGateWay.checkProduct(hubProductDto);
+				if (hubProductCheckResult.isPassing() == true) {
+					Log.info("hub校验通过");
+					hubProductDto.setSpuModel(hubProductCheckResult.getResult());
+					HubSpuDto hubSpuDto = convertHubImportProduct2HupSpu(product);
+					//查询hubSpu是否存在
+					String hubSpuNo = null;
+					List<HubSpuDto> hub = findHubSpuDto(hubSpuDto);
+					if (hub != null && hub.size() > 0) {
+						hubSpuNo = hub.get(0).getSpuNo();
+						hubSpuDto.setSpuId(hub.get(0).getSpuId());
+						hubSpuGateWay.updateByPrimaryKeySelective(hubSpuDto);
+					}else {
+						hubSpuDto.setCreateTime(new Date());
+						hubSpuDto.setDataState((byte)1);
+						hubSpuDto.setSpuSelectState((byte)0);
+						//调用接口生成spuNo
+						hubSpuNo = hubSpuGateWay.getSpuNo();
+						hubSpuDto.setSpuNo(hubSpuNo);
+						hubSpuGateWay.insert(hubSpuDto);
+					}
 					
-					hubSpuDto.setCreateTime(new Date());
-					hubSpuDto.setDataState((byte)1);
-					hubSpuDto.setSpuSelectState((byte)0);
-					//调用接口生成spuNo
-					hubSpuNo = hubSpuGateWay.getSpuNo();
-					hubSpuDto.setSpuNo(hubSpuNo);
-					hubSpuGateWay.insert(hubSpuDto);
+					List<HubSkuDto> hubSkuList = findHubSkuDto(hubSpuNo,product.getSkuSize());
+					if(hubSkuList!=null&&hubSkuList.size()>0){
+						HubSkuWithCriteriaDto HubSkuWithCriteriaDto = new HubSkuWithCriteriaDto();
+						HubSkuCriteriaDto HubSkuCriteriaDto = new HubSkuCriteriaDto();
+						HubSkuCriteriaDto.createCriteria().andSpuNoEqualTo(hubSpuNo);
+						HubSkuDto hubSku = new HubSkuDto();
+						hubSku.setSkuSize(product.getSkuSize());
+						hubSku.setUpdateTime(new Date());
+						HubSkuWithCriteriaDto.setHubSku(hubSku);
+						HubSkuWithCriteriaDto.setCriteria(HubSkuCriteriaDto);
+						hubSkuGateWay.updateByCriteriaSelective(HubSkuWithCriteriaDto);
+					}else{
+						HubSkuDto hubSku = new HubSkuDto();
+						hubSku.setSkuSize(product.getSkuSize());
+						hubSku.setSpuNo(hubSpuNo);
+						hubSku.setCreateTime(new Date());
+						hubSku.setDataState((byte)1);
+						//生成skuNo调用接口
+						String skuNo = hubSkuGateWay.createSkuNo(hubSpuNo);
+						hubSku.setSkuNo(skuNo);
+						hubSkuGateWay.insert(hubSku);
+					}
+					
+					map.put("taskState", "校验成功");
+					map.put("processInfo", "校验通过");
+					
+				} else {
+					map.put("taskState", "校验失败");
+					map.put("processInfo", hubProductCheckResult.getResult());
+					flag = false;
 				}
-				
-				List<HubSkuDto> hubSkuList = findHubSkuDto(hubSpuNo,product.getSkuSize());
-				if(hubSkuList!=null&&hubSkuList.size()>0){
-					HubSkuWithCriteriaDto HubSkuWithCriteriaDto = new HubSkuWithCriteriaDto();
-					HubSkuCriteriaDto HubSkuCriteriaDto = new HubSkuCriteriaDto();
-					HubSkuCriteriaDto.createCriteria().andSpuNoEqualTo(hubSpuNo);
-					HubSkuDto hubSku = new HubSkuDto();
-					hubSku.setSkuSize(product.getSkuSize());
-					hubSku.setUpdateTime(new Date());
-					HubSkuWithCriteriaDto.setHubSku(hubSku);
-					HubSkuWithCriteriaDto.setCriteria(HubSkuCriteriaDto);
-					hubSkuGateWay.updateByCriteriaSelective(HubSkuWithCriteriaDto);
-				}else{
-					HubSkuDto hubSku = new HubSkuDto();
-					hubSku.setSkuSize(product.getSkuSize());
-					hubSku.setSpuNo(hubSpuNo);
-					hubSku.setCreateTime(new Date());
-					hubSku.setDataState((byte)1);
-					//生成skuNo调用接口
-					String skuNo = hubSkuGateWay.createSkuNo(hubSpuNo);
-					hubSku.setSkuNo(skuNo);
-					hubSkuGateWay.insert(hubSku);
-				}
-				
-				map.put("taskNo", taskNo);
-				map.put("spuModel", product.getSpuModel());
-				map.put("taskState", "校验成功");
-				map.put("processInfo", "校验通过");
-				
-			} else {
-				map.put("taskNo", taskNo);
-				map.put("spuModel", product.getSpuModel());
-				map.put("taskState", "校验失败");
-				map.put("processInfo", hubProductCheckResult.getResult());
-				flag = false;
-			}
 			listMap.add(map);
 		}
 		taskService.convertExcel(listMap,taskNo,flag);
