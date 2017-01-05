@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
+import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
@@ -114,7 +115,7 @@ public class HubWaitSelectedService {
 		}
 	}
 
-	public void updateProductDetail(List<HubWaitSelectStateDto> dto) {
+	public void batchUpdateSelectState(HubWaitSelectRequestWithPageDto dto) {
 		
 	}
 

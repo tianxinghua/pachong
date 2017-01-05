@@ -31,14 +31,8 @@ public class HubPendingSpuCheckController {
 	public HubPendingSpuCheckResult checkSpu(@RequestBody HubSpuPendingDto dto){
 		log.info("pendingSpu校验接受到数据：{}",dto);
 		HubPendingSpuCheckResult result = new HubPendingSpuCheckResult();
-		String returnStr = hubCheckRuleService.checkHubPendingSpu(dto);
+		HubPendingSpuCheckResult returnStr = hubCheckRuleService.checkHubPendingSpu(dto);
 		log.info("pendingSpu校验结果：{}",returnStr);
-		if(StringUtils.isNotBlank(returnStr)){
-			result.setResult(returnStr);
-			result.setPassing(false);
-		}else{
-			result.setPassing(true);
-		}
-		return result;
+		return returnStr;
 	}
 }

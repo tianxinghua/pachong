@@ -3,13 +3,14 @@ package com.shangpin.ephub.product.business.rest.hubproduct.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
+import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
+import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 import com.shangpin.ephub.product.business.rest.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.product.business.rest.hubproduct.manager.HubProductCheckManager;
 import com.shangpin.ephub.product.business.rest.hubproduct.result.HubProductCheckResult;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
-import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
-import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +32,7 @@ public class HubCheckRuleService {
 	@Autowired
 	HubCheckService hubCheckService;
 	@Autowired
-	HubBrandModelRuleController HubBrandModelRuleController;
+	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
 	
 	public HubProductCheckResult checkHubProduct(HubProductDto hubProduct){
 		HubProductCheckResult result = new HubProductCheckResult();
@@ -111,7 +112,7 @@ public class HubCheckRuleService {
 			BrandModelDto.setBrandMode(hubProduct.getSpuModel());
 			BrandModelDto.setHubBrandNo(hubProduct.getBrandNo());
 			BrandModelDto.setHubCategoryNo(hubProduct.getCategoryNo());
-			brandModelResult=  HubBrandModelRuleController.verify(BrandModelDto);
+			brandModelResult=  hubBrandModelRuleGateWay.verify(BrandModelDto);
 		}else{
 			str.append("spuModel为空");
 			result.setPassing(false);
