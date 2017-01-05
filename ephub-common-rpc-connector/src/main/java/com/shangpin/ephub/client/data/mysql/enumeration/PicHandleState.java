@@ -1,4 +1,4 @@
-package com.shangpin.picture.product.consumer.e;
+package com.shangpin.ephub.client.data.mysql.enumeration;
 /**
  * <p>Title:PicHandleState.java </p>
  * <p>Description: 图片处理状态枚举类</p>

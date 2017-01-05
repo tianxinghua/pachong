@@ -178,7 +178,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         HubSku hubSku = new HubSku();
 
         hubSku.setSpuNo(hubSpu.getSpuNo());
-        hubSku.setColor(hubSpu.getCategoryNo());
+        hubSku.setColor(hubSpu.getHubColor());
         hubSku.setSkuNo(skuNo);
         hubSku.setSkuSize((String) o);
         hubSku.setSkuSizeId(hubSkuPendings.get(0).getScreenSize());
