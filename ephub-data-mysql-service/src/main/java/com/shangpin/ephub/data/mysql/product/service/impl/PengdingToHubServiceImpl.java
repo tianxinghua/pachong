@@ -1,9 +1,19 @@
 package com.shangpin.ephub.data.mysql.product.service.impl;
 
+import com.shangpin.ephub.data.mysql.common.enumeration.PicState;
 import com.shangpin.ephub.data.mysql.mapping.sku.mapper.HubSkuSupplierMappingMapper;
 import com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping;
 
+import com.shangpin.ephub.data.mysql.picture.pending.mapper.HubSpuPendingPicMapper;
+import com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPic;
+import com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPicCriteria;
+import com.shangpin.ephub.data.mysql.picture.spu.mapper.HubSpuPicMapper;
+import com.shangpin.ephub.data.mysql.picture.spu.po.HubSpuPic;
 import com.shangpin.ephub.data.mysql.product.common.*;
+import com.shangpin.ephub.data.mysql.product.common.enumeration.DataBusinessStatus;
+import com.shangpin.ephub.data.mysql.product.common.enumeration.DataSelectStatus;
+import com.shangpin.ephub.data.mysql.product.common.enumeration.DataStatus;
+import com.shangpin.ephub.data.mysql.product.common.enumeration.HubSpuPendigStatus;
 import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.data.mysql.product.service.PengingToHubService;
 import com.shangpin.ephub.data.mysql.sku.hub.mapper.HubSkuMapper;
@@ -63,6 +73,11 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
     @Autowired
     private HubSpuUtil hubSpuUtil;
 
+    @Autowired
+    private HubSpuPendingPicMapper  hubSpuPendingPicMapper;
+
+    @Autowired
+    private HubSpuPicMapper hubSpuPicMapper;
 
     public PengdingToHubServiceImpl() {
     }
@@ -99,6 +114,10 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             if(null!=spuPending){
                 //创建hubspu
                 createHubSpu(hubSpu, spuPending);
+                //在spupending中反写spuNo
+                updatespuPending(spuPendingIds,hubSpu.getSpuNo());
+                //创建SPU图片
+                createSpuPic(spuPendingIds,hubSpu.getSpuId());
                 //插入hubSKU 和 供货商的对应关系
                 Set<String> sizeSet = sizeSkuMap.keySet();
                 if(sizeSet.size()>0){
@@ -112,7 +131,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             Map<String,List<HubSkuPending>> sizeSkuMap = new HashMap<>();
             //根据尺码合并不同供货商的SKU信息
             setSizeSkuMap(spuPendingIds, sizeSkuMap);
-            //插入新的SPU
+            //获取SPU
             HubSpu hubSpu = hubSpus.get(0);
             HubSpuPending spuPending = null;
             spuPending = this.getHubSpuPendingById(spuPendingIds.get(0));
@@ -178,7 +197,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         HubSku hubSku = new HubSku();
 
         hubSku.setSpuNo(hubSpu.getSpuNo());
-        hubSku.setColor(hubSpu.getCategoryNo());
+        hubSku.setColor(hubSpu.getHubColor());
         hubSku.setSkuNo(skuNo);
         hubSku.setSkuSize((String) o);
         hubSku.setSkuSizeId(hubSkuPendings.get(0).getScreenSize());
@@ -266,6 +285,8 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         hubSpu.setDataState(DataStatus.NOT_DELETE.getIndex().byteValue());
         hubSpu.setSpuNo(hubSpuUtil.createHubSpuNo(0L));//插入SPU编号
         hubSpuMapper.insert(hubSpu);
+
+        //生成 spupic
     }
 
     private List<Long> getSpuPendIdList(SpuModelDto spuModelVO) {
@@ -316,6 +337,59 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
     private HubSpuPending getHubSpuPendingById(Long id){
 
         return  hubSpuPendingMapper.selectByPrimaryKey(id);
+
+    }
+    //更改spupending的hubspu编号
+    private void updatespuPending(List<Long> spuPendingIds,String spuNo){
+        HubSpuPendingCriteria criteria = new HubSpuPendingCriteria();
+        criteria.createCriteria().andSpuPendingIdIn(spuPendingIds);
+        HubSpuPending record = new HubSpuPending();
+        record.setHubSpuNo(spuNo);
+        hubSpuPendingMapper.updateByExampleSelective(record,criteria);
+
+
+    }
+
+    private void createSpuPic(List<Long> spuPendingIds,Long spuId){
+        //循环查找最多的图片
+
+        int i=0;
+        int max=0;
+        Long maxCountSpuPendingId =0L;
+        for(Long spuPendId:spuPendingIds){
+            HubSpuPendingPicCriteria criteria = new HubSpuPendingPicCriteria();
+            criteria.createCriteria().andSpuPendingIdEqualTo(spuPendId)
+                    .andDataStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
+            i = hubSpuPendingPicMapper.countByExample(criteria);
+            if(i>max){
+                max = i;
+                maxCountSpuPendingId = spuPendId;
+            }
+        }
+        HubSpuPendingPicCriteria criteria = new HubSpuPendingPicCriteria();
+        criteria.setPageSize(20);
+        criteria.setPageNo(1);
+        criteria.createCriteria().andSpuPendingIdEqualTo(maxCountSpuPendingId);
+        List<HubSpuPendingPic> hubSpuPendingPics = hubSpuPendingPicMapper.selectByExample(criteria);
+        Date date = new Date();
+        String url = "";
+        for(HubSpuPendingPic spuPendingPic:hubSpuPendingPics){
+            HubSpuPic hubSpuPic= new HubSpuPic();
+            hubSpuPic.setCreateTime(date);
+            hubSpuPic.setUpdateTime(date);
+            hubSpuPic.setSpPicUrl(spuPendingPic.getSpPicUrl());
+            url = spuPendingPic.getSpPicUrl();
+            hubSpuPic.setSpuId(spuId);
+            hubSpuPic.setDataState(DataStatus.NOT_DELETE.getIndex().byteValue());
+            hubSpuPic.setPicId(spuPendingPic.getSpuPendingPicId());
+            hubSpuPicMapper.insert(hubSpuPic);
+
+        }
+        //更新HUBSPU 增加图片地址
+        HubSpu hubspu=new HubSpu();
+        hubspu.setSpuId(spuId);
+        hubspu.setPicUrl(url);
+        hubSpuMapper.updateByPrimaryKeySelective(hubspu);
 
     }
 
