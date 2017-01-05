@@ -43,6 +43,12 @@ public class HubWaitSelectedController {
 	HubWaitSelectGateWay HubWaitSelectGateWay;
 	@Autowired
 	HubWaitSelectedService hubWaitSelectedService;
+	
+	/**
+	 * 待选品列表
+	 * @param dto
+	 * @return
+	 */
 	@RequestMapping(value = "/list",method = RequestMethod.POST)
     public HubResponse importSpuList(@RequestBody HubWaitSelectRequestWithPageDto dto){
 	        	
@@ -79,6 +85,11 @@ public class HubWaitSelectedController {
 		}
     }
 	
+	/**
+	 * 待选品详情页
+	 * @param dto
+	 * @return
+	 */
 	@RequestMapping(value = "/detail",method = RequestMethod.POST)
     public HubResponse detail(@RequestBody HubWaitSelectDetailRequest dto){
 	        	
@@ -100,7 +111,11 @@ public class HubWaitSelectedController {
 		}
     }
 
-	
+	/**
+	 * 待选品选中更新
+	 * @param dto
+	 * @return
+	 */
 	@RequestMapping(value = "/update-select-state",method = RequestMethod.POST)
     public HubResponse updateProductDetail(@RequestBody List<HubWaitSelectStateDto> dto){
 		try{
@@ -111,6 +126,11 @@ public class HubWaitSelectedController {
 		}
 	}
 	
+	/**
+	 * 待选品批量更新
+	 * @param dto
+	 * @return
+	 */
 	@RequestMapping(value = "/batch-update-select-state",method = RequestMethod.POST)
     public HubResponse batchUpdateSelectState(@RequestBody HubWaitSelectRequestWithPageDto dto){
 		try{

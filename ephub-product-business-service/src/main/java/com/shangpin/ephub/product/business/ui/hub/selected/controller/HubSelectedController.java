@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +18,6 @@ import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 import com.shangpin.ephub.client.data.mysql.hub.gateway.HubWaitSelectGateWay;
-import com.shangpin.ephub.product.business.common.util.ExportExcelUtils;
 import com.shangpin.ephub.product.business.ui.hub.selected.service.HubSelectedService;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponse;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponseWithPage;
@@ -88,7 +86,7 @@ public class HubSelectedController {
     public void exportProduct(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
 	        	
 		try {
-			log.info("已选品请求参数：{}",dto);
+			log.info("导出查询商品请求参数：{}",dto);
 			dto.setSupplierSelectState((byte)SupplierSelectState.SELECTED.getIndex());
 			dto.setPageNo(dto.getPageNo()-1);
 			List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
@@ -99,7 +97,7 @@ public class HubSelectedController {
 			HubSelectedService.exportExcel(list,ouputStream);
 			
 		} catch (Exception e) {
-			log.error("已选品获取列表失败：{}",e);
+			log.error("导出查询商品失败：{}",e);
 		}
     }
 	
@@ -110,17 +108,13 @@ public class HubSelectedController {
 	 * @return
 	 */
 	@RequestMapping(value = "/export-select-pic",method = RequestMethod.POST)
-    public HubResponse exportSelectPic(@RequestBody HubWaitSelectRequestWithPageDto dto){
+    public void exportSelectPic(@RequestBody HubWaitSelectRequestWithPageDto dto){
 	        	
 		try {
-			log.info("已选品请求参数：{}",dto);
-		
-				return HubResponse.successResp(null);
-			
+			log.info("导出查询图片请求参数：{}",dto);
 			
 		} catch (Exception e) {
-			log.error("已选品获取列表失败：{}",e);
-			return HubResponse.errorResp("获取列表失败");
+			log.error("导出查询图片获取失败：{}",e);
 		}
     }
 	/**
@@ -129,17 +123,14 @@ public class HubSelectedController {
 	 * @return
 	 */
 	@RequestMapping(value = "/export-check-pic",method = RequestMethod.POST)
-    public HubResponse exportCheckPic(@RequestBody HubWaitSelectRequestWithPageDto dto){
+    public void exportCheckPic(@RequestBody HubWaitSelectRequestWithPageDto dto){
 	        	
 		try {
-			log.info("已选品请求参数：{}",dto);
+			log.info("导出勾选图片请求参数：{}",dto);
 		
-				return HubResponse.successResp(null);
-			
 			
 		} catch (Exception e) {
-			log.error("已选品获取列表失败：{}",e);
-			return HubResponse.errorResp("获取列表失败");
+			log.error("导出勾选图片失败：{}",e);
 		}
     }
 }

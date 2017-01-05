@@ -14,7 +14,12 @@ import java.util.List;
 @Getter
 public class HubProductIdDto implements Serializable {
 
-    Long id;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8668507034516041167L;
+
+	Long id;
 
     List<HubProductIdDto> subProduct;
 
