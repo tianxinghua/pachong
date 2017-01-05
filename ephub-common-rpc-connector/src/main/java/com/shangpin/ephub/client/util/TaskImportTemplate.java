@@ -14,7 +14,7 @@ public class TaskImportTemplate {
 		 return headers;
 	 }
 	 public static String[] getPendingSkuValueTemplate() {
-			String [] temp = {"supplierId","supplierNo","supplierName","supplierSpuNo","categoryName","hubCategoryNo","hubBrandNo","brandName","spuModel","seasonYear","seasonName","hubGender",
+			String [] temp = {"supplierId","supplierNo","supplierName","supplierSpuNo","hubCategoryName","hubCategoryNo","hubBrandNo","hubBrandName","spuModel","seasonYear","seasonName","hubGender",
 					"supplierSkuNo","skuName","supplierBarcode","hubColor","specification","originalProductSizeType","originalProductSizeValue","hubMaterial","hubOrigin","supplyPrice","supplyPriceCurrency",
 					"marketPrice","marketPriceCurrencyorg","hubSkuSize","spuDesc"};
 			return temp;
@@ -26,7 +26,7 @@ public class TaskImportTemplate {
 		 return headers;
 	 }
 	 public static String[] getPendingSpuValueTemplate() {
-			String [] temp = {"supplierId","supplierNo","supplierName","supplierSpuNo","categoryName","hubCategoryNo","hubBrandNo","brandName","spuModel","seasonYear","seasonName","hubGender",
+			String [] temp = {"supplierId","supplierNo","supplierName","supplierSpuNo","hubCategoryName","hubCategoryNo","hubBrandNo","hubBrandName","spuModel","seasonYear","seasonName","hubGender",
 					"spuName","hubColor","hubMaterial","hubOrigin","spuDesc","memo","spuState"};
 			return temp;
 		}
