@@ -13,9 +13,10 @@ public class TaskImportTemplate {
 					"描述"};
 		 return headers;
 	 }
-	 public String[] getPendingSkuValueTemplate() {
+	 public static String[] getPendingSkuValueTemplate() {
 			String [] temp = {"supplierId","supplierNo","supplierName","supplierSpuNo","categoryName","hubCategoryNo","hubBrandNo","brandName","spuModel","seasonYear","seasonName","hubGender",
-					"spuName","hubColor","hubMaterial","hubOrigin","spuDesc"};
+					"supplierSkuNo","skuName","supplierBarcode","hubColor","specification","originalProductSizeType","originalProductSizeValue","hubMaterial","hubOrigin","supplyPrice","supplyPriceCurrency",
+					"marketPrice","marketPriceCurrencyorg","hubSkuSize","spuDesc"};
 			return temp;
 	}
 	 
@@ -24,7 +25,7 @@ public class TaskImportTemplate {
 				 "商品名称*","颜色*","材质*","产地*","描述","不符合项","商品状态"};
 		 return headers;
 	 }
-	 public String[] getPendingSpuValueTemplate() {
+	 public static String[] getPendingSpuValueTemplate() {
 			String [] temp = {"supplierId","supplierNo","supplierName","supplierSpuNo","categoryName","hubCategoryNo","hubBrandNo","brandName","spuModel","seasonYear","seasonName","hubGender",
 					"spuName","hubColor","hubMaterial","hubOrigin","spuDesc","memo","spuState"};
 			return temp;
