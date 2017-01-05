@@ -27,7 +27,7 @@ public interface IHubProductService {
 	 */
 	public HubProductDetails findProductDtails(String spuId);
 	/**
-	 * hub详情页的编辑，更新涉及的表有：hub_sku/hub_spu
+	 * hub详情页的编辑，更新涉及的表有：hub_sku/hub_spu/hub_spu_pic
 	 * @param hubProductDetail
 	 * @return
 	 */

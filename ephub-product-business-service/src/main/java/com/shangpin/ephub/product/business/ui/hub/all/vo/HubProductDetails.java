@@ -2,6 +2,8 @@ package com.shangpin.ephub.product.business.ui.hub.all.vo;
 
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicDto;
+
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -24,4 +26,5 @@ public class HubProductDetails {
 	private String productName;//商品名称 spu_name
 	private String productUnit;//商品单位
 	private String homeMarketPrice;//国内市场价
+	private List<HubSpuPicDto> spPicUrls;
 }
