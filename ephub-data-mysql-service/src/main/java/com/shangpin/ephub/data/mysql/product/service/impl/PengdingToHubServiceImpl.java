@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.product.service.impl;
 import com.shangpin.ephub.data.mysql.mapping.sku.mapper.HubSkuSupplierMappingMapper;
 import com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping;
 
+import com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPicCriteria;
 import com.shangpin.ephub.data.mysql.product.common.*;
 import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.data.mysql.product.service.PengingToHubService;
@@ -99,6 +100,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             if(null!=spuPending){
                 //创建hubspu
                 createHubSpu(hubSpu, spuPending);
+                updatespuPending(spuPendingIds,hubSpu.getSpuNo());
                 //插入hubSKU 和 供货商的对应关系
                 Set<String> sizeSet = sizeSkuMap.keySet();
                 if(sizeSet.size()>0){
@@ -266,6 +268,8 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         hubSpu.setDataState(DataStatus.NOT_DELETE.getIndex().byteValue());
         hubSpu.setSpuNo(hubSpuUtil.createHubSpuNo(0L));//插入SPU编号
         hubSpuMapper.insert(hubSpu);
+
+        //生成 spupic
     }
 
     private List<Long> getSpuPendIdList(SpuModelDto spuModelVO) {
@@ -316,6 +320,25 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
     private HubSpuPending getHubSpuPendingById(Long id){
 
         return  hubSpuPendingMapper.selectByPrimaryKey(id);
+
+    }
+    //更改spupending的hubspu编号
+    private void updatespuPending(List<Long> spuPendingIds,String spuNo){
+        HubSpuPendingCriteria criteria = new HubSpuPendingCriteria();
+        criteria.createCriteria().andSpuPendingIdIn(spuPendingIds);
+        HubSpuPending record = new HubSpuPending();
+        record.setHubSpuNo(spuNo);
+        hubSpuPendingMapper.updateByExampleSelective(record,criteria);
+
+
+    }
+
+    private void createSpuPic(List<Long> spuPendingIds,Long spuId){
+        //循环查找最多的图片
+        HubSpuPendingPicCriteria criteria = new HubSpuPendingPicCriteria();
+        for(Long spuPendId:spuPendingIds){
+            criteria.createCriteria().andSpuPendingIdEqualTo(spuPendId);
+        }
 
     }
 
