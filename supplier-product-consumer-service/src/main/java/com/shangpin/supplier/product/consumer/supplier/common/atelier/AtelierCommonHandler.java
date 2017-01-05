@@ -1,15 +1,20 @@
 package com.shangpin.supplier.product.consumer.supplier.common.atelier;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierPrice;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSku;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSpu;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
+
+import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:AtelierCommonHandler </p>
  * <p>Description: atelier供应商一般处理逻辑类</p>
@@ -19,6 +24,7 @@ import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
  *
  */
 @Component
+@Slf4j
 public class AtelierCommonHandler extends IAtelierHandler {
 	
 	@Override
@@ -84,6 +90,27 @@ public class AtelierCommonHandler extends IAtelierHandler {
 		if(null != atelierPrice){
 			sku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(atelierPrice.getPrice1())));
 			sku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(atelierPrice.getPrice2()))); 
+		}
+	}
+
+	@Override
+	public List<Image> converImage(List<String> atelierImags) {
+		try {
+			if(null == atelierImags || atelierImags.size() == 0){
+				return null;
+			}else{
+				List<Image> images = new ArrayList<Image>();
+				for(String imageStr : atelierImags){
+					String[] imageArr = imageStr.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+					Image image = new Image();
+					image.setUrl(imageArr[2]);
+					images.add(image);
+				}
+				return images;
+			}
+		} catch (Exception e) {
+			log.error("Atelier在处理图片时异常："+e.getMessage(),e);
+			return null;
 		}
 	}
 	

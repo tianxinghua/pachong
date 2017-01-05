@@ -21,11 +21,9 @@ import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingDto;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.*;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubMaterialMappingGateWay;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicDto;
@@ -39,19 +37,23 @@ import com.shangpin.ephub.client.data.mysql.rule.gateway.HubBrandModelRuleGateWa
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.*;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.*;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
+import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.enumeration.DataBusinessStatus;
 import com.shangpin.pending.product.consumer.common.enumeration.DataStatus;
 import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
-import com.shangpin.pending.product.consumer.conf.clients.mysql.spu.bean.HubSpuPending;
+import com.shangpin.pending.product.consumer.common.enumeration.SupplierSelectState;
 import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
 import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
+import com.shangpin.pending.product.consumer.supplier.dto.SpuPending;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +117,15 @@ public class DataServiceHandler {
 
     @Autowired
     private HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
+
+    @Autowired
+    private HubSkuGateWay hubSkuGateWay;
+
+    @Autowired
+    private HubSkuSupplierMappingGateWay skuSupplierMappingGateWay;
+
+    @Autowired
+    private HubSupplierSkuGateWay supplierSkuGateWay;
     
     
 
@@ -604,6 +615,71 @@ public class DataServiceHandler {
         criteria.createCriteria().andHubValTypeEqualTo(type.byteValue());
         return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
     }
+
+    public HubSkuDto getHubSku(String spuNo,String skuSizeId){
+        HubSkuCriteriaDto criteria = new HubSkuCriteriaDto();
+        criteria.createCriteria().andSpuNoEqualTo(spuNo).andSkuSizeIdEqualTo(skuSizeId);
+        List<HubSkuDto> hubSkuDtos = hubSkuGateWay.selectByCriteria(criteria);
+        if(null!=hubSkuDtos&&hubSkuDtos.size()>0){
+            return hubSkuDtos.get(0);
+        }else{
+            return null;
+        }
+    }
+
+
+    public void saveSkuSupplierMapping(SpuPending hubSpuPending, HubSkuPendingDto skuPendingDto, PendingSpu supplierSpu, PendingSku sku){
+
+        HubSkuSupplierMappingDto skuSupplierMapping = new HubSkuSupplierMappingDto();
+        skuSupplierMapping.setBarcode(skuPendingDto.getSupplierBarcode());
+        skuSupplierMapping.setCreateTime(skuPendingDto.getCreateTime());
+        skuSupplierMapping.setUpdateTime(skuPendingDto.getCreateTime());
+        skuSupplierMapping.setCreateUser(ConstantProperty.DATA_CREATE_USER);
+        skuSupplierMapping.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
+        skuSupplierMapping.setSupplierSpuModel(supplierSpu.getSpuModel());
+        skuSupplierMapping.setSupplierSkuNo(sku.getSupplierSkuNo());
+        HubSupplierSkuDto supplierSkuDto = this.getSupplierSku(sku.getSupplierId(),sku.getSupplierSkuNo());
+        if(null!=supplierSkuDto){
+                skuSupplierMapping.setSupplierSkuId(supplierSkuDto.getSupplierSkuId());
+
+        }
+        skuSupplierMapping.setSupplierSelectState(SupplierSelectState.WAIT_SELECT.getIndex().byteValue());
+
+
+        skuSupplierMappingGateWay.insert(skuSupplierMapping);
+
+    }
+
+
+    public  HubSkuDto insertHubSku(String hubSpuNo, String color, Date date, HubSkuPendingDto hubSkuPending) throws Exception {
+        HubSkuDto hubSku = new HubSkuDto();
+
+        hubSku.setSpuNo(hubSpuNo);
+        hubSku.setSkuNo(hubSkuGateWay.createSkuNo(hubSpuNo));
+        hubSku.setColor(color);
+        hubSku.setSkuSize(hubSkuPending.getHubSkuSize());
+        hubSku.setSkuSizeId(hubSkuPending.getScreenSize());
+        hubSku.setCreateTime(date);
+        hubSku.setCreateUser(ConstantProperty.DATA_CREATE_USER);
+        hubSku.setUpdateTime(date);
+        hubSkuGateWay.insert(hubSku);
+        return hubSku;
+    }
+
+
+    private HubSupplierSkuDto getSupplierSku(String supplierId,String supplierSkuNo){
+        HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+        criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
+        List<HubSupplierSkuDto> hubSupplierSkuDtos = supplierSkuGateWay.selectByCriteria(criteria);
+        if(null!=hubSupplierSkuDtos&&hubSupplierSkuDtos.size()>0){
+            return hubSupplierSkuDtos.get(0);
+        }else{
+            return null;
+        }
+    }
+
+
+
 
 
 }

@@ -40,6 +40,9 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("tonyHandler")
 	private ISupplierHandler tonyHandler;
+	@Autowired
+	@Qualifier("coltortiHandler")
+	private ISupplierHandler coltortiHandler;
 	
 	/**
 	 * biondioni供货商原始数据监听方法
@@ -64,8 +67,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void coltortiStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
-		
+		coltortiHandler.handleOriginalProduct(message, headers); 
 	}
 	/**
 	 * geb供货商原始数据监听方法

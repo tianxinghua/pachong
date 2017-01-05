@@ -8,13 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
+import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
+import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
+import com.shangpin.supplier.product.consumer.service.PictureProductService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
+import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Sku;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Spu;
 
@@ -34,6 +39,10 @@ public abstract class ISpinnakerHandler implements ISupplierHandler {
 	
 	@Autowired
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
+	@Autowired
+	private PictureHandler pictureHandler;
+	@Autowired
+	private PictureProductService pictureProductService;
 	
 	/**
 	 * 将原始对象转换成hub对象
@@ -54,6 +63,12 @@ public abstract class ISpinnakerHandler implements ISupplierHandler {
 	 * @return
 	 */
 	public abstract boolean convertSku(String supplierId, Long supplierSpuId, Sku sku, HubSupplierSkuDto hubSku);
+	/**
+	 * spinnaker处理图片
+	 * @param sku
+	 * @return
+	 */
+	public abstract List<Image> converImage(Sku sku);
 
 	/**
 	 * spinnaker通用处理主流程
@@ -68,6 +83,12 @@ public abstract class ISpinnakerHandler implements ISupplierHandler {
 				if(null != spu.getItems() && null != spu.getItems().getItem() && spu.getItems().getItem().size()>0){
 					for(Sku sku : spu.getItems().getItem()){
 						HubSupplierSpuDto hubSpu =  new HubSupplierSpuDto();
+						List<Image> images =  converImage(sku);
+						if(null == images){
+							hubSpu.setIsexistpic(PicState.NO_PIC.getIndex());
+						}else{
+							hubSpu.setIsexistpic(PicState.PIC_INFO_COMPLETED.getIndex()); 
+						}
 						boolean success = convertSpu(message.getSupplierId(),spu,sku,hubSpu);
 						HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 						boolean skuSucc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),sku,hubSku);
@@ -78,6 +99,10 @@ public abstract class ISpinnakerHandler implements ISupplierHandler {
 						if(success){
 							supplierProductSaveAndSendToPending.spinnakerSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
 						}
+						//处理图片
+						SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
+						pictureProductService.sendSupplierPicture(supplierPicture, null); 
+						
 					}
 				}
 			}

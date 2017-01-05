@@ -1,12 +1,15 @@
 package com.shangpin.supplier.product.consumer.supplier.common.spinnaker;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Sku;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Spu;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
@@ -79,6 +82,21 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 			return true;
 		}else{
 			return false;
+		}
+	}
+
+	@Override
+	public List<Image> converImage(Sku sku) {
+		if(null == sku || null == sku.getPictures() || sku.getPictures().size() == 0){
+			return null;
+		}else{
+			List<Image> images = new ArrayList<Image>();
+			for(String url : sku.getPictures()){
+				Image image = new Image();
+				image.setUrl(url);
+				images.add(image);
+			}
+			return images;
 		}
 	}
 
