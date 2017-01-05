@@ -8,8 +8,8 @@
     <result column="sku_size_id" property="skuSizeId" jdbcType="VARCHAR" />
     <result column="sku_no" property="skuNo" jdbcType="VARCHAR" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-       <result column="sku_id" property="skuId" jdbcType="VARCHAR" />
-       <result column="spu_id" property="spuId" jdbcType="VARCHAR" />
+    <result column="sku_id" property="skuId" jdbcType="VARCHAR" />
+    <result column="spu_id" property="spuId" jdbcType="VARCHAR" />
     <result column="spu_model" property="spuModel" jdbcType="VARCHAR" />
     <result column="spu_name" property="spuName" jdbcType="VARCHAR" />
     <result column="gender" property="gender" jdbcType="VARCHAR" />
@@ -35,12 +35,16 @@
     <result column="new_spu_type" property="newSpuType" jdbcType="TINYINT" />
     <result column="supplier_select_state" property="supplierSelectState" jdbcType="TINYINT" />
     <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="supplier_spu_model" property="supplierSpuModel" jdbcType="VARCHAR" />
     <result column="is_new_supplier" property="isNewSupplier" jdbcType="TINYINT" />
   </resultMap>
   
   <select id="selectList" resultMap="BaseResultMap" >
     select
-   	map.supplier_no,map.sku_supplier_mapping_id,map.supplier_id,sku.sku_id,spu.spu_id,spu.spu_no,sku.sku_no,sku.sku_size,sku.sku_size_id,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,spu.market_time,spu.season,spu.hub_color,spu.hub_color_no,spu.spu_state,spu.pic_url,spu.origin,spu.material
+   	map.supplier_no,map.sku_supplier_mapping_id,map.supplier_id,
+   	sku.sku_id,sku.sku_no,sku.sku_size,sku.sku_size_id,sku.update_time,
+   	spu.spu_id,spu.spu_no,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,
+   	spu.market_time,spu.season,spu.hub_color,spu.hub_color_no,spu.spu_state,spu.pic_url,spu.origin,spu.material
     from hub_spu spu  JOIN hub_sku sku on sku.spu_no = spu.spu_no  join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
     	map.supplier_select_state = #{supplierSelectState}
@@ -60,11 +64,11 @@
 	           and  spu.spu_state = #{spuState}
 	 </if>
 	   <if test="null!=startDate">
-                and update_time >=#{startDate}
+                and sku.update_time >=#{startDate}
       </if>      
             
       <if test="null!=endDate">
-           <![CDATA[ and update_time <=#{endDate}    ]]>
+           <![CDATA[ and sku.update_time <=#{endDate}    ]]>
       </if>
       limit #{pageNo} , #{pageSize}
   </select>
@@ -74,7 +78,7 @@
     from hub_spu spu  JOIN hub_sku sku on sku.spu_no = spu.spu_no  join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
     
-    supplier_select_state = #{supplierSelectState}
+    	map.supplier_select_state = #{supplierSelectState}
      <if test="null!= supplierNo">
 	             and   map.supplier_no = #{supplierNo}
 	 </if>
@@ -88,11 +92,28 @@
 	           and  spu.spu_model = #{spuModel}
 	 </if>
 	  <if test="null!=startDate">
-                and update_time >=#{startDate}
+                and sku.update_time >=#{startDate}
       </if>            
       <if test="null!=endDate">
-           <![CDATA[ and update_time <=#{endDate}    ]]>
+           <![CDATA[ and sku.update_time <=#{endDate}    ]]>
       </if>
-	 
+	
   </select>
+  
+   <select id="selectDetail" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectDetailRequest">
+    select
+   	map.supplier_no,map.sku_supplier_mapping_id,map.supplier_id,map.supplier_sku_no,map.supplier_spu_model,
+   	sku.sku_id,sku.sku_no,sku.sku_size,sku.sku_size_id,sku.update_time,
+   	spu.spu_id,spu.spu_no,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,
+   	spu.market_time,spu.season,spu.hub_color,spu.hub_color_no,spu.spu_state,spu.pic_url,spu.origin,spu.material
+    from hub_spu spu  JOIN hub_sku sku on sku.spu_no = spu.spu_no  join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
+    where 
+    
+     <if test="null!= skuSupplierMappingId">
+	            map.sku_supplier_mapping_id = #{skuSupplierMappingId}
+	 </if>
+
+  </select>
+  
+  
 </mapper>

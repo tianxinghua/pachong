@@ -1,7 +1,6 @@
 package com.shangpin.ephub.product.business.ui.hub.waitselected.vo;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -16,7 +15,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubWaitSelectedResponse implements Serializable {
+public class HubWaitSelectedDetailResponse implements Serializable {
 	private static final long serialVersionUID = -9080013205013160520L;
 	private Long skuSupplierMappingId;
 	private String supplierNo;
@@ -24,16 +23,20 @@ public class HubWaitSelectedResponse implements Serializable {
 	private String skuNo;
 	private Long skuId;
 	private Long spuId;
-    private String picUrl;
+    private String spuName;
     private String brandNo;
+    private String barcode;
+   
+    private String supplierSkuNo;
     private String spuModel;
-    private String categoryNo;
     private String hubColor;
     private String material;
     private String origin;
     private String gender;
     private String skuSize;
-    private byte spuState;
-    private String updateTime;
-
+    
+    private String price;
+    private String currency;
+    private String[] picUrl;
+   
 }

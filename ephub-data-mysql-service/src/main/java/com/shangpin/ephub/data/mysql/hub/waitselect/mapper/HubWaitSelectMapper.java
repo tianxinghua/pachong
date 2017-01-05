@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectDetailRequest;
 import com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectRequest;
 import com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectRequestWithPage;
 import com.shangpin.ephub.data.mysql.hub.waitselect.po.HubWaitSelectResponse;
@@ -18,4 +19,5 @@ import com.shangpin.ephub.data.mysql.hub.waitselect.po.HubWaitSelectResponse;
 public interface HubWaitSelectMapper {
     Long count(HubWaitSelectRequest hubWaitSelect);
     List<HubWaitSelectResponse> selectList(HubWaitSelectRequestWithPage hubWaitSelectWithPage);
+	List<HubWaitSelectResponse> selectDetail(HubWaitSelectDetailRequest criteriaWithRowBounds);
 }

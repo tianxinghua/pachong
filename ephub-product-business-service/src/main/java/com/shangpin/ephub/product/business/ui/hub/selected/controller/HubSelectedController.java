@@ -1,8 +1,12 @@
 package com.shangpin.ephub.product.business.ui.hub.selected.controller;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuSelectState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 import com.shangpin.ephub.client.data.mysql.hub.gateway.HubWaitSelectGateWay;
+import com.shangpin.ephub.product.business.common.util.ExportExcelUtils;
+import com.shangpin.ephub.product.business.ui.hub.selected.service.HubSelectedService;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponse;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponseWithPage;
 import com.shangpin.ephub.response.HubResponse;
@@ -35,15 +41,17 @@ import lombok.extern.slf4j.Slf4j;
 public class HubSelectedController {
 	@Autowired
 	HubWaitSelectGateWay HubWaitSelectGateWay;
+	@Autowired
+	HubSelectedService HubSelectedService;
 	
 	@RequestMapping(value = "/list",method = RequestMethod.POST)
-    public HubResponse importSpuList(@RequestBody HubWaitSelectRequestWithPageDto dto){
+    public HubResponse selectList(@RequestBody HubWaitSelectRequestWithPageDto dto){
 	        	
 		try {
 			log.info("已选品请求参数：{}",dto);
 			HubWaitSelectRequestDto hubWaitSelectRequest = new HubWaitSelectRequestDto();
 			BeanUtils.copyProperties(dto, hubWaitSelectRequest);
-			hubWaitSelectRequest.setSupplierSelectState((byte)1);
+			hubWaitSelectRequest.setSupplierSelectState((byte)SupplierSelectState.SELECTED.getIndex());
 			Long total = HubWaitSelectGateWay.count(hubWaitSelectRequest);
 			log.info("已选品查询到总数："+total);
 			if(total>0){
@@ -65,6 +73,69 @@ public class HubSelectedController {
 			}else{
 				return HubResponse.successResp("列表页为空");
 			}
+			
+		} catch (Exception e) {
+			log.error("已选品获取列表失败：{}",e);
+			return HubResponse.errorResp("获取列表失败");
+		}
+    }
+	/**
+	 * 导出查询商品
+	 * @param dto
+	 * @return
+	 */
+	@RequestMapping(value = "/export-product",method ={RequestMethod.POST,RequestMethod.GET})
+    public void exportProduct(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
+	        	
+		try {
+			log.info("已选品请求参数：{}",dto);
+			dto.setSupplierSelectState((byte)SupplierSelectState.SELECTED.getIndex());
+			dto.setPageNo(dto.getPageNo()-1);
+			List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
+			response.setContentType("application/vnd.ms-excel");    
+	        response.setHeader("Content-Disposition", "attachment;filename="+"selected_product_" + System.currentTimeMillis()+".xls");    
+			OutputStream ouputStream = response.getOutputStream();
+			  
+			HubSelectedService.exportExcel(list,ouputStream);
+			
+		} catch (Exception e) {
+			log.error("已选品获取列表失败：{}",e);
+		}
+    }
+	
+
+	/**
+	 * 导出查询图片
+	 * @param dto
+	 * @return
+	 */
+	@RequestMapping(value = "/export-select-pic",method = RequestMethod.POST)
+    public HubResponse exportSelectPic(@RequestBody HubWaitSelectRequestWithPageDto dto){
+	        	
+		try {
+			log.info("已选品请求参数：{}",dto);
+		
+				return HubResponse.successResp(null);
+			
+			
+		} catch (Exception e) {
+			log.error("已选品获取列表失败：{}",e);
+			return HubResponse.errorResp("获取列表失败");
+		}
+    }
+	/**
+	 * 导出勾选图片
+	 * @param dto
+	 * @return
+	 */
+	@RequestMapping(value = "/export-check-pic",method = RequestMethod.POST)
+    public HubResponse exportCheckPic(@RequestBody HubWaitSelectRequestWithPageDto dto){
+	        	
+		try {
+			log.info("已选品请求参数：{}",dto);
+		
+				return HubResponse.successResp(null);
+			
 			
 		} catch (Exception e) {
 			log.error("已选品获取列表失败：{}",e);

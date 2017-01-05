@@ -65,11 +65,11 @@ public class HubCommonProductService {
 		if(!StringUtils.isEmpty(hubQuryDto.getEndUpdateTime())){
 			criteria = criteria.andUpdateTimeLessThan(DateTimeUtil.convertFormat(hubQuryDto.getEndUpdateTime(),dateFormat));
 		}
-		if(hubQuryDto.getSpuState() == (byte)1){//TODO 这块要写枚举
-			criteria = criteria.andSpuStateEqualTo((byte)1);
-		}else if(hubQuryDto.getSpuState() == (byte)0){
-			criteria = criteria.andSpuStateEqualTo((byte)0);
-		}
+//		if(hubQuryDto.getSpuState() == (byte)1){//TODO 这块要写枚举
+//			criteria = criteria.andSpuStateEqualTo((byte)1);
+//		}else if(hubQuryDto.getSpuState() == (byte)0){
+//			criteria = criteria.andSpuStateEqualTo((byte)0);
+//		}
 		return criteriaDto;
 
 	}
