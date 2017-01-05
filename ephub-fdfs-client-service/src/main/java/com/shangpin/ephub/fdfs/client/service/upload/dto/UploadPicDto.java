@@ -32,5 +32,8 @@ public class UploadPicDto implements Serializable {
 	 * 图片BASE64编码之后的字符串
 	 */
 	private String base64;
-
+	/**
+	 * 文件扩张名
+	 */
+	private String extension;
 }

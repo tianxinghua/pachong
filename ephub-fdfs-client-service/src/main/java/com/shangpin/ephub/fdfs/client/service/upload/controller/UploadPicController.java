@@ -39,7 +39,7 @@ public class UploadPicController {
 		byte[] buffer = null;
 		try {
 			buffer = new BASE64Decoder().decodeBuffer(uploadPicDto.getBase64());
-			return uploadPicService.uploadFile(buffer);
+			return uploadPicService.uploadFile(buffer,uploadPicDto.getExtension());
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.ui.hub.all.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -12,6 +13,9 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCri
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
@@ -52,6 +56,8 @@ public class HubProductServiceImpl implements IHubProductService {
 	private HubCommonProductService hubCommonProductService;
 	@Autowired
 	private SupplierService supplierService;
+	@Autowired
+	private HubSpuPicGateWay hubSpuPicClient;
 
 	@Override
 	public HubProducts findHubProductds(HubQuryDto hubQuryDto) {
@@ -78,21 +84,25 @@ public class HubProductServiceImpl implements IHubProductService {
 		try {
 			HubSpuDto hubSpu = hubSpuClient.selectByPrimaryKey(Long.parseLong(spuId));
 			if(null != hubSpu){
+				//查询文字详情
 				HubProductDetails hubProductDetails = getHubProductDetailsFromHubSpu(hubSpu);
 				List<HubProductDetail> details = new ArrayList<HubProductDetail>();
-				
 				HubSkuCriteriaDto criteriaDto = new HubSkuCriteriaDto();
 				criteriaDto.createCriteria().andSpuNoEqualTo(hubSpu.getSpuNo());
 				List<HubSkuDto> hubSkus =  hubSkuClient.selectByCriteria(criteriaDto);
-				if(null != hubSkus && hubSkus.size()>0){
+				if(CollectionUtils.isNotEmpty(hubSkus)){
 					for(HubSkuDto hubSku : hubSkus){
 						List<HubProductDetail> productDetails = getProductDetailsByHubSku(hubSpu,hubSku);
 						for(HubProductDetail hubProductDetail : productDetails){
 							details.add(hubProductDetail);
 						}
-						
 					}
 					hubProductDetails.setHubDetails(details);
+				}
+				//查询图片详情
+				List<HubSpuPicDto> spuPics = findHubSpuPics(Long.parseLong(spuId));
+				if(CollectionUtils.isNotEmpty(spuPics)){
+					hubProductDetails.setSpPicUrls(spuPics); 
 				}
 				return hubProductDetails;
 			}
@@ -135,6 +145,17 @@ public class HubProductServiceImpl implements IHubProductService {
 			log.error("全部Hub商品详情页编辑失败，发生异常："+e.getMessage(),e);
 			return false;
 		}
+	}
+	
+	/**
+	 * 根据spuid查找图片详情
+	 * @param spuId
+	 * @return
+	 */
+	private List<HubSpuPicDto> findHubSpuPics(Long spuId){
+		HubSpuPicCriteriaDto criteria = new HubSpuPicCriteriaDto();
+		criteria.createCriteria().andSpuIdEqualTo(spuId);
+		return hubSpuPicClient.selectByCriteria(criteria);
 	}
 	
 	/**

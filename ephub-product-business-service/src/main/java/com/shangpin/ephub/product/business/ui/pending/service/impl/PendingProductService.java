@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -24,6 +25,9 @@ import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
@@ -77,6 +81,8 @@ public class PendingProductService implements IPendingProductService{
     private HubPendingSkuCheckGateWay pendingSkuCheckGateWay;
     @Autowired
     private HubPendingSpuCheckGateWay pendingSpuCheckGateWay;
+    @Autowired
+    private HubSpuPendingPicGateWay hubSpuPendingPicGateWay;
 
 
     @Override
@@ -196,6 +202,7 @@ public class PendingProductService implements IPendingProductService{
                         pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
                         List<HubSkuPendingDto> hubSkus = findPendingSkuBySpuPendingId(pendingSpu.getSpuPendingId());
                         pendingProduct.setHubSkus(hubSkus);
+                        pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
                         products.add(pendingProduct);
                     }
                     pendingProducts.setProduts(products);
@@ -315,6 +322,24 @@ public class PendingProductService implements IPendingProductService{
     /***************************************************************************************************************************/
     //以下为内部调用私有方法
     /**************************************************************************************************************************/
+    
+    /**
+     * 根据供应商门户编号/供应商spu编号查询图片地址
+     * @param supplierId
+     * @param supplierSpuNo
+     * @return
+     */
+    private String findSpPicUrl(String supplierId,String supplierSpuNo){
+    	HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
+    	criteria.setFields("sp_pic_url");
+    	criteria.createCriteria().andSuupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
+    	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
+    	if(CollectionUtils.isNotEmpty(spuPendingPics)){
+    		return spuPendingPics.get(0).getSpPicUrl();
+    	}else{
+    		return "";
+    	}
+    }
     /**
      * 根据门户id和品牌编号查找品牌名称
      * @param supplierId
@@ -474,7 +499,7 @@ public class PendingProductService implements IPendingProductService{
 					row.createCell(i).setCellValue(null != value ? value.toString() : "");
             	}
 			} catch (Exception e) {
-				log.error("待处理页导出sku时异常："+e.getMessage(),e); 
+				log.error("待处理页导出sku时异常："+e.getMessage()); 
 			}        	
         }    	
     }
@@ -511,7 +536,7 @@ public class PendingProductService implements IPendingProductService{
 					row.createCell(i).setCellValue(null != value ? value.toString() : "");
 				}				
 			} catch (Exception e) {
-				log.error("待处理页导出spu时异常："+e.getMessage(),e); 
+				log.error("待处理页导出spu时异常："+e.getMessage()); 
 				continue;
 			}
 		}
