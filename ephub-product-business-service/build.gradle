@@ -30,7 +30,7 @@ repositories {
 
 dependencies {
 
-	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.8.5-SNAPSHOT')
+	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.8.7-SNAPSHOT')
 
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-actuator-docs')
