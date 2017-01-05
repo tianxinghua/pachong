@@ -181,7 +181,7 @@ public class PendingSkuImportService {
 			List<HubSpuPendingDto> listSpu = hubSpuPendingGateWay.selectByCriteria(HubSpuPendingCriteriaDto);
 			
 			if(isPassing){
-				hubSpuPendingDto.setSpuState((byte)SpuState.HANDLED.getIndex());	
+				hubSpuPendingDto.setSpuState((byte)SpuState.HANDLING.getIndex());	
 			}else{
 				hubSpuPendingDto.setSpuState((byte)SpuState.INFO_PECCABLE.getIndex());
 			}
