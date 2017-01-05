@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuSelectState;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectDetailRequest;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
@@ -100,9 +99,20 @@ public class HubWaitSelectedController {
 			return HubResponse.errorResp("获取列表失败");
 		}
     }
+
 	
 	@RequestMapping(value = "/update-select-state",method = RequestMethod.POST)
-    public HubResponse updateSelectState(@RequestBody List<HubWaitSelectStateDto> dto){
+    public HubResponse updateProductDetail(@RequestBody List<HubWaitSelectStateDto> dto){
+		try{
+			hubWaitSelectedService.updateSelectState(dto);
+	        return HubResponse.successResp(null);
+		}catch(Exception e){
+			 return HubResponse.errorResp("选品失败，请重新选品");
+		}
+	}
+	
+	@RequestMapping(value = "/batch-update-select-state",method = RequestMethod.POST)
+    public HubResponse batchUpdateSelectState(@RequestBody List<HubWaitSelectStateDto> dto){
 		try{
 			hubWaitSelectedService.updateSelectState(dto);
 	        return HubResponse.successResp(null);
