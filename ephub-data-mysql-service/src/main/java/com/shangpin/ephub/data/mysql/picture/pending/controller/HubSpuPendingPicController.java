@@ -41,7 +41,7 @@ public class HubSpuPendingPicController {
 	@RequestMapping(value = "/insert")
     public Long insert(@RequestBody HubSpuPendingPic hubSpuPendingPic){
     	hubSpuPendingPicService.insert(hubSpuPendingPic);
-    	return hubSpuPendingPic.getSpuPendingId();
+    	return hubSpuPendingPic.getSpuPendingPicId();
     }
 	@RequestMapping(value = "/insert-selective")
     public Long insertSelective(@RequestBody HubSpuPendingPic hubSpuPendingPic){
