@@ -192,7 +192,7 @@ public class HubProductServiceImpl implements IHubProductService {
 		hubProductDetails.setBrandNo(hubSpu.getBrandNo());
 		hubProductDetails.setCategoryNo(hubSpu.getCategoryNo());
 		hubProductDetails.setHomeMarketPrice("");//TODO
-		hubProductDetails.setOriginalProductModle("");//TODO
+		hubProductDetails.setOriginalProductModle(hubSpu.getSpuModel());
 		hubProductDetails.setProductName(hubSpu.getSpuName());
 		hubProductDetails.setProductUnit("");//TODO
 		return hubProductDetails;

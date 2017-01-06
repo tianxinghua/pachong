@@ -173,6 +173,7 @@ public class PendingProductService implements IPendingProductService{
                         pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
                         pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
                         pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
+                        pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
                         products.add(pendingProduct);
                     }
                 }
