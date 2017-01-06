@@ -267,9 +267,11 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
     private void createHubSpu(HubSpu hubSpu, HubSpuPending spuPending) {
         BeanUtils.copyProperties(spuPending,hubSpu);
         Date date  = new Date();
+
         hubSpu.setCreateTime(date);
         hubSpu.setUpdateTime(date);
         hubSpu.setCategoryNo(spuPending.getHubCategoryNo());
+        hubSpu.setGender(spuPending.getHubGender());
         hubSpu.setBrandNo(spuPending.getHubBrandNo());
         String pendingSeason = spuPending.getHubSeason();
         if(StringUtils.isNotBlank(pendingSeason)&&pendingSeason.indexOf("_")>0){
