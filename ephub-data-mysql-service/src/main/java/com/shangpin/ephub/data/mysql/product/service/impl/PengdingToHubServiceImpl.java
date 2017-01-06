@@ -359,7 +359,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         for(Long spuPendId:spuPendingIds){
             HubSpuPendingPicCriteria criteria = new HubSpuPendingPicCriteria();
             criteria.createCriteria().andSpuPendingIdEqualTo(spuPendId)
-                    .andDataStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
+                    .andPicHandleStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
             i = hubSpuPendingPicMapper.countByExample(criteria);
             if(i>max){
                 max = i;
