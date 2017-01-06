@@ -173,6 +173,7 @@ public class PendingProductService implements IPendingProductService{
                         pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
                         pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
                         pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
+                        pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
                         products.add(pendingProduct);
                     }
                 }
@@ -332,9 +333,9 @@ public class PendingProductService implements IPendingProductService{
     private String findSpPicUrl(String supplierId,String supplierSpuNo){
     	HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
     	criteria.setFields("sp_pic_url");
-    	criteria.createCriteria().andSuupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
+    	criteria.createCriteria().andSuupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andPicHandleStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
     	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
-    	if(CollectionUtils.isNotEmpty(spuPendingPics)){
+    	if(CollectionUtils.isNotEmpty(spuPendingPics)&&spuPendingPics.size()>0){
     		return spuPendingPics.get(0).getSpPicUrl();
     	}else{
     		return "";
