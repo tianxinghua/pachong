@@ -11,7 +11,11 @@ spring:
           host: localhost
           port: 8500
           discovery: 
-            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+            prefer-agent-address: true
+            prefer-ip-address: true
+            health-check-interval: 10s
+            register: false
+            register-health-check: false
         stream: 
               bindings: 
                         spinnakerPendingProduct: 
