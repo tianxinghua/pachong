@@ -3,115 +3,35 @@ spring:
   rabbitmq: 
            host: 192.168.20.175
            port: 5672
-           username: ephub-message-service-qa
-           password: ephub-message-service-qa
-           virtual-host: /ephub-message-service-qa
+           username: scm-message-service-qa
+           password: scm-message-service-qa
+           virtual-host: /scm-message-service-qa
   cloud: 
         consul: 
-          host: 192.168.20.176
+          host: localhost
           port: 8500
           discovery: 
-            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+            prefer-agent-address: true
+            prefer-ip-address: true
+            health-check-interval: 10s
+            register: false
+            register-health-check: false
         stream: 
               bindings: 
-                        spinnakerPendingProduct: 
-                              destination: spinnaker.pending.product
+                        supplierPictureProduct: 
+                              destination: supplier.product.picture
                               group: one
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
-                        ostorePendingProduct: 
-                              destination: ostore.pending.product
-                              group: one
-                              consumer: 
-                                       concurrency: 5
-                                       maxAttempts: 1
-                        brunarossoPendingProduct: 
-                              destination: brunarosso.pending.product
-                              group: one
-                              consumer: 
-                                       concurrency: 5
-                                       maxAttempts: 1
-                        stefaniaPendingProduct: 
-                              destination: stefania.pending.product
-                              group: one
-                              consumer: 
-                                       concurrency: 5
-                                       maxAttempts: 1
-                        gebPendingProduct: 
-                              destination: geb.pending.product
-                              group: one
-                              consumer: 
-                                       concurrency: 5
-                                       maxAttempts: 1
-                        coltortiPendingProduct: 
-                              destination: coltorti.pending.product
-                              group: one
-                              consumer: 
-                                       concurrency: 5
-                                       maxAttempts: 1
-                        tonyPendingProduct: 
-                              destination: tony.pending.product
-                              group: one
-                              consumer: 
-                                       concurrency: 5
-                                       maxAttempts: 1
-                        biondioniPendingProduct: 
-                              destination: biondioni.pending.product
-                              group: one
-                              consumer: 
-                                       concurrency: 5
-                                       maxAttempts: 1                                                                                                                                                                                                                                                                                 
               rabbit: 
                       bindings: 
-                            spinnakerPendingProduct: 
+                            supplierPictureProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            ostorePendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            brunarossoPendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            stefaniaPendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            gebPendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            coltortiPendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            tonyPendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            biondioniPendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false                                                                                                                                                                                                                                                                          
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   mail: 
@@ -129,10 +49,3 @@ banner:
        location: classpath:banner/banner.txt # Banner file location.
        image:
              location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).
-shangpin:
-   hub:
-       callAddress:
-             gmsAddProductUrl: http://qa.scmapi.shangpin.com/gms/Product/AddProduct
-             gmsSizeUrl: http://qa.scmapi.shangpin.com/gms/GetProductSize
-             gmsBrandUrl: http://qa.scmapi.shangpin.com/gms/GetBrands
-             gmsCategoryUrl: http://qa.scmapi.shangpin.com/gms/GetCategory
