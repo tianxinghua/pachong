@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.service.hub.impl;
 
+import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
@@ -14,6 +15,9 @@ import com.shangpin.ephub.product.business.common.enumeration.ScmGenderType;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.service.hub.HubProductService;
 import com.shangpin.ephub.product.business.service.hub.dto.*;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -29,6 +33,7 @@ import java.util.*;
  * Created by lizhongren on 2016/12/30.
  */
 @Service("hubCommonProductServiceImpl")
+@Slf4j
 public class HubProductServiceImpl implements HubProductService {
 
     @Autowired
@@ -134,7 +139,8 @@ public class HubProductServiceImpl implements HubProductService {
         skuOrgDom.setProductOrgInfoId(0L);
         skuOrgDom.setSkuOrgInfoId(0L);
         skuOrgDom.setSkuOrgName(hubSpuDto.getSpuName());
-        skuOrgDom.setBarCode(hubSkuSupplierMappingDto.getBarcode());
+        skuOrgDom.setBarCode(null==hubSkuSupplierMappingDto.getBarcode()?"":hubSkuSupplierMappingDto.getBarcode());
+        log.info("barcode ="+ skuOrgDom.getBarCode());
         skuOrgDom.setSupplierSkuNo(hubSkuSupplierMappingDto.getSupplierSkuNo());
         skuOrgDom.setSkuNo("");
         skuOrgDom.setSupplierNo(hubSkuSupplierMappingDto.getSupplierNo());
