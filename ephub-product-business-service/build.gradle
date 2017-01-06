@@ -46,6 +46,7 @@ dependencies {
 	compile('org.apache.poi:poi-ooxml:3.8')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compile('com.shangpin.common:commons-redis:1.0.2.RELEASE')
+	compile group: 'org.apache.poi', name: 'poi', version: '3.16-beta1'
 	
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
