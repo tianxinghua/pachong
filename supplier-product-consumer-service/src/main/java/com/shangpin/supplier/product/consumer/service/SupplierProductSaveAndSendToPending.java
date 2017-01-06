@@ -63,7 +63,7 @@ public class SupplierProductSaveAndSendToPending {
 		}else if("2015082701461".equals(supplierId)){
 			result = pendingProductStreamSender.ostorePendingProductStream(pendingProduct, headers);
 		}
-		log.info("供应商："+supplierName+" 保存数据成功，并发送消息队列返回结果："+result); 
+		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 		
 	}
 	/**
@@ -88,7 +88,7 @@ public class SupplierProductSaveAndSendToPending {
 		if("2015081701439".equals(supplierId)){
 			result = pendingProductStreamSender.spinnakerPendingProductStream(pendingProduct, headers);
 		}
-		log.info("供应商："+supplierName+" 保存数据成功，并发送消息队列返回结果："+result); 
+		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 		
 	}
 	
@@ -111,7 +111,7 @@ public class SupplierProductSaveAndSendToPending {
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
 		boolean result = pendingProductStreamSender.biondioniPendingProductStream(pendingProduct, headers);
-		log.info("供应商："+supplierName+" 保存数据成功，并发送消息队列返回结果："+result); 
+		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}	
 	/**
 	 * geb供应商保存数据以及发送消息给Pending
@@ -132,7 +132,7 @@ public class SupplierProductSaveAndSendToPending {
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
 		boolean result = pendingProductStreamSender.gebPendingProductStream(pendingProduct, headers);
-		log.info("供应商："+supplierName+" 保存数据成功，并发送消息队列返回结果："+result); 
+		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}
 	/**
 	 * stefania供应商保存数据以及发送消息给Pending
@@ -153,7 +153,7 @@ public class SupplierProductSaveAndSendToPending {
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
 		boolean result = pendingProductStreamSender.stefaniaPendingProductStream(pendingProduct, headers);
-		log.info("供应商："+supplierName+" 保存数据成功，并发送消息队列返回结果："+result); 
+		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}
 	/**
 	 * tony供应商保存数据以及发送消息给Pending
@@ -174,7 +174,7 @@ public class SupplierProductSaveAndSendToPending {
 		Map<String,String> headers = new HashMap<String,String>();	
 		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
 		boolean result = pendingProductStreamSender.tonyPendingProductStream(pendingProduct, headers);
-		log.info("供应商："+supplierName+" 保存数据成功，并发送消息队列返回结果："+result); 
+		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}
 	
 	
