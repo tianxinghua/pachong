@@ -183,6 +183,7 @@ public class DataServiceHandler {
 
     public List<HubBrandDicDto> getBrand() throws Exception{
         HubBrandDicCriteriaDto criteria = new HubBrandDicCriteriaDto();
+        criteria.setPageNo(1);
         criteria.setPageSize(ConstantProperty.MAX_BRANDK_MAPPING_QUERY_NUM);
         HubBrandDicCriteriaDto.Criteria criterion =criteria.createCriteria();
 
@@ -346,11 +347,12 @@ public class DataServiceHandler {
 
         HubColorDicItemCriteriaDto criteria = new HubColorDicItemCriteriaDto();
         criteria.setPageSize(ConstantProperty.MAX_COLOR_ITEM_QUERY_NUM);
-
+        criteria.setPageNo(1);
         List<HubColorDicItemDto> hubColorDicItemDtos = hubColorDicItemGateWay.selectByCriteria(criteria);
 
         HubColorDicCriteriaDto colorDicCriteriaDto = new HubColorDicCriteriaDto();
         colorDicCriteriaDto.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
+        colorDicCriteriaDto.setPageNo(1);
         List<HubColorDicDto> dicDtos = hubColorDicGateWay.selectByCriteria(colorDicCriteriaDto);
         Map<Long,HubColorDicDto> colorDicMap = new HashMap<>();
         for(HubColorDicDto colorDicDto:dicDtos){
@@ -365,6 +367,7 @@ public class DataServiceHandler {
             colorDTO.setSupplierColor(itemDto.getColorItemName().trim());
             if (colorDicMap.containsKey(itemDto.getColorDicId())) {
                colorDTO.setColorDicId(itemDto.getColorDicId());
+               colorDTO.setSupplierColor(itemDto.getColorItemName());
                colorDTO.setHubColorNo(colorDicMap.get(itemDto.getColorDicId()).getColorNo());
                colorDTO.setHubColorName(colorDicMap.get(itemDto.getColorDicId()).getColorName());
             }
