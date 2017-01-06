@@ -1,6 +1,5 @@
 package com.shangpin.asynchronous.task.consumer.productimport.pending.sku.service;
 
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -13,16 +12,12 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
-import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
-import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
@@ -114,38 +109,41 @@ public class PendingSkuImportService {
 		
 		//校验全通过为true
 		boolean flag = true;
+		
+		HubPendingSkuCheckResult hubPendingSkuCheckResult = null;
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
+		Map<String, String> map = null;
 		for (HubPendingProductImportDTO product : listHubProduct) {
-			Map<String, String> map = new HashMap<String, String>();
+			map = new HashMap<String, String>();
 			// 校验sku信息
-			HubPendingSkuCheckResult hubPendingSkuCheckResult = handlePendingSku(product);
+			hubPendingSkuCheckResult = handlePendingSku(product);
 
 			map.put("taskNo", taskNo);
 			map.put("spuModel", product.getSpuModel());
+			boolean isPassing = false;
 			if (hubPendingSkuCheckResult.isPassing() == true) {
-				log.info(taskNo + "sku校验通过");
+				log.info(taskNo + ":sku校验通过");
 				// 校验spu信息
 				HubPendingSpuCheckResult hubPendingSpuCheckResult = handlePendingSpu(product);
 				if (hubPendingSpuCheckResult.isPassing() == true) {
-					
+					product.setSpuModel(hubPendingSpuCheckResult.getResult());
 					log.info(taskNo + "spu校验通过");
 					//更新pending并推送到hub
-					saveHubPendingProduct(product);
-					
+					isPassing = true;
 					map.put("taskState", "校验成功");
 					map.put("processInfo", "校验通过");
-					
 				} else {
-					log.info(taskNo + "sku校验不通过");
+					log.info(taskNo + "spu校验不通过");
 					flag = false;
 					map.put("taskState", "校验失败");
 					map.put("processInfo", hubPendingSpuCheckResult.getResult());
 				}
 			} else {
-				log.info(taskNo + "spu校验不通过");
+				log.info(taskNo + "sku校验不通过");
 				map.put("taskState", "校验失败");
 				map.put("processInfo", hubPendingSkuCheckResult.getResult());
 			}
+			saveHubPendingProduct(product,isPassing);
 			listMap.add(map);
 		}
 		
@@ -153,10 +151,9 @@ public class PendingSkuImportService {
 		taskService.convertExcel(listMap,taskNo,flag);
 	}
 
-	private void saveHubPendingProduct(HubPendingProductImportDTO product) {
+	private void saveHubPendingProduct(HubPendingProductImportDTO product,boolean isPassing) {
 
 		SpuModelDto spuModelDto = null;
-		
 		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(product.getSupplierId(),
 				product.getSupplierSkuNo());
 		HubSkuPendingDto hubSkuPendingDto = convertHubPendingProduct2Sku(product);
@@ -168,9 +165,13 @@ public class PendingSkuImportService {
 			hubSkuPendingDto.setSkuState((byte)SkuState.INFO_IMPECCABLE.getIndex());
 			hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
 			
-				hubSpuPendingDto.setUpdateTime(new Date());
+			hubSpuPendingDto.setUpdateTime(new Date());
 			hubSpuPendingDto.setSpuPendingId(hubSkuPendingTempDto.getSpuPendingId());
-			hubSpuPendingDto.setSpuState((byte)SpuState.INFO_IMPECCABLE.getIndex());
+			if(isPassing){
+				hubSpuPendingDto.setSpuState((byte)SpuState.HANDLED.getIndex());	
+			}else{
+				hubSpuPendingDto.setSpuState((byte)SpuState.INFO_PECCABLE.getIndex());
+			}
 			hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
 		}else{
 			
@@ -179,30 +180,40 @@ public class PendingSkuImportService {
 			
 			List<HubSpuPendingDto> listSpu = hubSpuPendingGateWay.selectByCriteria(HubSpuPendingCriteriaDto);
 			
+			if(isPassing){
+				hubSpuPendingDto.setSpuState((byte)SpuState.HANDLING.getIndex());	
+			}else{
+				hubSpuPendingDto.setSpuState((byte)SpuState.INFO_PECCABLE.getIndex());
+			}
+			
 			Long pendingSpuId = null;
 			if(listSpu!=null&&listSpu.size()>0){
 				log.info(product.getSupplierId()+"spu存在、sku不存在"+"，更新插入操作");
 				pendingSpuId = listSpu.get(0).getSpuPendingId();
 				hubSpuPendingDto.setSpuPendingId(pendingSpuId);
 				hubSpuPendingDto.setUpdateTime(new Date());
+				
 				hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
 			}else{
 				log.info(product.getSupplierId()+"spu、sku不存在"+"，插入操作");
 				hubSpuPendingDto.setCreateTime(new Date());
-				hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
+				hubSpuPendingDto.setSpuSeasonState((byte)1);
 				pendingSpuId = hubSpuPendingGateWay.insert(hubSpuPendingDto);
 			}
+			
 			
 			hubSkuPendingDto.setSpuPendingId(pendingSpuId);
 			hubSkuPendingDto.setCreateTime(new Date());
 			hubSkuPendingDto.setDataState((byte)1);
 			hubSkuPendingGateWay.insert(hubSkuPendingDto);
 		}
-		
-		spuModelDto = new SpuModelDto();
-		spuModelDto.setBrandNo(product.getHubBrandNo());
-		spuModelDto.setSpuModel(product.getSpuModel());
-		pengdingToHubGateWay.auditPending(spuModelDto);
+		if(isPassing){
+			spuModelDto = new SpuModelDto();
+			spuModelDto.setBrandNo(product.getHubBrandNo());
+			spuModelDto.setSpuModel(product.getSpuModel());
+			pengdingToHubGateWay.auditPending(spuModelDto);
+			log.info("pendingToHub推送参数:{}",spuModelDto);
+		}
 	}
 
 	private HubPendingSkuCheckResult handlePendingSku(HubPendingProductImportDTO product) {
@@ -270,7 +281,6 @@ public class PendingSkuImportService {
 				item = new HubPendingProductImportDTO();
 				String[] hubValueTemplate = item.getHubProductTemplate();
 				Class cls = item.getClass();
-				
 				  Field[] fields = cls.getDeclaredFields();  
 				  int i=0;
 			        for (Field field : fields) {  

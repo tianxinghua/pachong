@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sun.misc.BASE64Encoder;
@@ -43,12 +44,14 @@ public class SupplierProductPictureService {
 				updateDto.setSpuPendingPicId(spuPendingPicId);
 				try {
 					String base64 = new BASE64Encoder().encode(IOUtils.toByteArray(new URL(picUrl)));
-					UploadPicDto uploadPicDto = new UploadPicDto(base64);
+					UploadPicDto uploadPicDto = new UploadPicDto();
+					uploadPicDto.setBase64(base64);
+					uploadPicDto.setExtension(getExtension(picUrl));
 					String spPicUrl = supplierProductPictureManager.uploadPic(uploadPicDto);
 					updateDto.setSpPicUrl(spPicUrl);
 					updateDto.setPicHandleState(PicHandleState.HANDLED.getIndex());
 					updateDto.setMemo("图片拉取成功");
-				} catch (IOException e) {
+				} catch (Throwable e) {
 					log.error("系统拉取图片时发生异常",e);
 					e.printStackTrace();
 					updateDto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
@@ -57,6 +60,14 @@ public class SupplierProductPictureService {
 				updateDto.setUpdateTime(new Date());
 				supplierProductPictureManager.updateSelective(updateDto);
 			}
+		}
+	}
+	
+	private String getExtension(String url){
+		if (StringUtils.isNoneBlank(url)) {
+			 return url.substring(url.lastIndexOf(".")+1);
+		} else {
+			return null;
 		}
 	}
 }

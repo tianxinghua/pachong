@@ -19,17 +19,4 @@ public class SupplierProductConsumerServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SupplierProductConsumerServiceApplication.class, args);
 	}
-//	@Autowired
-//	private HubSupplierSpuGateWay client;
-//	@Override
-//	public void run(ApplicationArguments args) throws Exception {
-//		HubSupplierSpuDto arg0 = new HubSupplierSpuDto();
-//		arg0.setSupplierId("S666666");
-//		arg0.setCreateTime(new Date());
-//		arg0.setSupplierBrandname("YANXIAOBIN");
-//		client.insert(arg0 );
-////		HubSupplierSpuDto dto = client.selectByPrimaryKey(1L);
-////		System.out.println(dto);
-//		
-//	}
 }
