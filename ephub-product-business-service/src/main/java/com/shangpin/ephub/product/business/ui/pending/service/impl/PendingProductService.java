@@ -168,8 +168,7 @@ public class PendingProductService implements IPendingProductService{
                 if(total>0){
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
-                        PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
-                        pendingProduct.setUpdateTimeStr(DateTimeUtil.getTime(pendingSpu.getUpdateTime()));
+                        PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
                         SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
                         pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
                         String categoryName = getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo());
@@ -209,6 +208,7 @@ public class PendingProductService implements IPendingProductService{
                         List<HubSkuPendingDto> hubSkus = findPendingSkuBySpuPendingId(pendingSpu.getSpuPendingId());
                         pendingProduct.setHubSkus(hubSkus);
                         pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
+                        pendingProduct.setUpdateTimeStr(DateTimeUtil.getTime(pendingSpu.getUpdateTime()));
                         products.add(pendingProduct);
                     }
                     pendingProducts.setProduts(products);
