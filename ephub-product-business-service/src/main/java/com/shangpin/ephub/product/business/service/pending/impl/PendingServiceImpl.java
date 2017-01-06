@@ -164,7 +164,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 criteriaPic.setPageSize(100);
                 criteriaPic.createCriteria().andSuupplierIdEqualTo(spuPendingDto.getSupplierId())
                         .andSupplierSpuNoEqualTo(spuPendingDto.getSupplierSpuNo())
-                        .andDataStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
+                        .andPicHandleStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
 
                 List<HubSpuPendingPicDto> hubSpuPendingPicDtos = spuPendingPicGateWay.selectByCriteria(criteriaPic);
                 if(null!=hubSpuPendingDtos){

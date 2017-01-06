@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectDetailRequest;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
@@ -51,17 +52,16 @@ public class HubWaitSelectedController {
 	 */
 	@RequestMapping(value = "/list",method = RequestMethod.POST)
     public HubResponse importSpuList(@RequestBody HubWaitSelectRequestWithPageDto dto){
-	        	
 		try {
-			log.info("待选品请求参数：{}",dto);
 			HubWaitSelectRequestDto hubWaitSelectRequest = new HubWaitSelectRequestDto();
 			BeanUtils.copyProperties(dto, hubWaitSelectRequest);
-			hubWaitSelectRequest.setSupplierSelectState((byte)0);
+			hubWaitSelectRequest.setSupplierSelectState((byte)SupplierSelectState.WAIT_SELECT.getIndex());
+			log.info("待选品请求参数：{}",hubWaitSelectRequest);
 			Long total = HubWaitSelectGateWay.count(hubWaitSelectRequest);
 			log.info("待选品查询到数据总数："+total);
 			if(total>0){
 				dto.setPageNo(dto.getPageNo()-1);
-				dto.setSupplierSelectState((byte)0);
+				dto.setSupplierSelectState((byte)SupplierSelectState.WAIT_SELECT.getIndex());
 				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
 				List<HubWaitSelectedResponse> arr = new ArrayList<HubWaitSelectedResponse>();
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
@@ -73,7 +73,6 @@ public class HubWaitSelectedController {
 				HubWaitSelectedResponseWithPage HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPage();
 				HubWaitSelectedResponseWithPageDto.setTotal(Integer.parseInt(String.valueOf(total)));
 				HubWaitSelectedResponseWithPageDto.setList(arr);
-				log.info("待选品返回的数据：{}",HubWaitSelectedResponseWithPageDto);
 				return HubResponse.successResp(HubWaitSelectedResponseWithPageDto);
 			}else{
 				return HubResponse.successResp("列表页为空");
