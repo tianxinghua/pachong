@@ -52,17 +52,16 @@ public class HubWaitSelectedController {
 	 */
 	@RequestMapping(value = "/list",method = RequestMethod.POST)
     public HubResponse importSpuList(@RequestBody HubWaitSelectRequestWithPageDto dto){
-	        	
 		try {
-			log.info("待选品请求参数：{}",dto);
 			HubWaitSelectRequestDto hubWaitSelectRequest = new HubWaitSelectRequestDto();
 			BeanUtils.copyProperties(dto, hubWaitSelectRequest);
-			hubWaitSelectRequest.setSupplierSelectState((byte)SupplierSelectState.NO_SELECTED.getIndex());
+			hubWaitSelectRequest.setSupplierSelectState((byte)SupplierSelectState.WAIT_SELECT.getIndex());
+			log.info("待选品请求参数：{}",hubWaitSelectRequest);
 			Long total = HubWaitSelectGateWay.count(hubWaitSelectRequest);
 			log.info("待选品查询到数据总数："+total);
 			if(total>0){
 				dto.setPageNo(dto.getPageNo()-1);
-				dto.setSupplierSelectState((byte)SupplierSelectState.NO_SELECTED.getIndex());
+				dto.setSupplierSelectState((byte)SupplierSelectState.WAIT_SELECT.getIndex());
 				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
 				List<HubWaitSelectedResponse> arr = new ArrayList<HubWaitSelectedResponse>();
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
