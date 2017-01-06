@@ -8,7 +8,8 @@ spring:
           discovery: 
             prefer-agent-address: true
             prefer-ip-address: true
-            health-check-interval: 10s
+            health-check-interval: 15s
+            health-check-timeout: 15s
             register: true
             register-health-check: true 
   jackson: 
