@@ -594,9 +594,9 @@ public class PendingHandler {
         Map<String,String>  genderMap = this.getGenderMap(null);
 
 
-        if(null!=spu.getHubGender()&&genderMap.containsKey(spu.getHubGender().trim())){
+        if(null!=spu.getHubGender()&&genderMap.containsKey(spu.getHubGender().trim().toUpperCase())){
              //包含时转化赋值
-            hubSpuPending.setHubGender(genderMap.get(spu.getHubGender()));
+            hubSpuPending.setHubGender(genderMap.get(spu.getHubGender().toUpperCase()));
             hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
         }else{
             result = false;
@@ -885,7 +885,7 @@ public class PendingHandler {
 
             Map<String,String> genderMap = new HashMap<>();
             for(HubGenderDicDto dto:hubGenderDics){
-                genderStaticMap.put(dto.getSupplierGender().trim(),dto.getHubGender().trim());
+                genderStaticMap.put(dto.getSupplierGender().trim().toUpperCase(),dto.getHubGender().trim());
                 hubGenderStaticMap.put(dto.getHubGender(),"");
             }
 
