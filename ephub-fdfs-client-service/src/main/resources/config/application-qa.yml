@@ -14,16 +14,16 @@ spring:
             register-health-check: true 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
-  mail: 
-       default-recipient: yan_xiao_bin@126.com
-       default-sender: yanxiaobin@shangpin.com
-       default-encoding: UTF-8 # Default MimeMessage encoding.
-       host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
-       port: 25 # SMTP server port.
-       protocol: smtp # Protocol used by the SMTP server.
-       username: yanxiaobin@shangpin.com # Login user of the SMTP server.
-       password: 123.com # Login password of the SMTP server.
-       test-connection: false # Test that the mail server is available on startup.
+  #mail: 
+       #default-recipient: yan_xiao_bin@126.com
+       #default-sender: yanxiaobin@shangpin.com
+       #default-encoding: UTF-8 # Default MimeMessage encoding.
+       #host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
+       #port: 25 # SMTP server port.
+       #protocol: smtp # Protocol used by the SMTP server.
+       #username: yanxiaobin@shangpin.com # Login user of the SMTP server.
+       #password: 123.com # Login password of the SMTP server.
+       #test-connection: false # Test that the mail server is available on startup.
 # ===================================================================
 # 分布式文件系统FDFS配置
 # ===================================================================

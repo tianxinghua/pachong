@@ -13,7 +13,8 @@ spring:
           discovery: 
             prefer-agent-address: true
             prefer-ip-address: true
-            health-check-interval: 10s
+            health-check-interval: 15s
+            health-check-timeout: 15s            
             register: true
             register-health-check: true
         stream: 
@@ -41,16 +42,16 @@ spring:
        password: shangpin@123
        ftpHubPath: hub/
        ftpPendingPath: pending/
-  mail: 
-       default-recipient: yan_xiao_bin@126.com
-       default-sender: yanxiaobin@shangpin.com
-       default-encoding: UTF-8 # Default MimeMessage encoding.
-       host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
-       port: 25 # SMTP server port.
-       protocol: smtp # Protocol used by the SMTP server.
-       username: yanxiaobin@shangpin.com # Login user of the SMTP server.
-       password: 123.com # Login password of the SMTP server.
-       test-connection: false # Test that the mail server is available on startup.
+  #mail: 
+       #default-recipient: yan_xiao_bin@126.com
+       #default-sender: yanxiaobin@shangpin.com
+       #default-encoding: UTF-8 # Default MimeMessage encoding.
+       #host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
+       #port: 25 # SMTP server port.
+       #protocol: smtp # Protocol used by the SMTP server.
+       #username: yanxiaobin@shangpin.com # Login user of the SMTP server.
+       #password: 123.com # Login password of the SMTP server.
+       #test-connection: false # Test that the mail server is available on startup.
 banner: 
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.

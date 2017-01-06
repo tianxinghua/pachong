@@ -169,10 +169,14 @@ public class PendingProductService implements IPendingProductService{
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                         PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
+                        pendingProduct.setUpdateTimeStr(DateTimeUtil.getTime(pendingSpu.getUpdateTime()));
                         SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
                         pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
-                        pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
-                        pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
+                        String categoryName = getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo());
+                        pendingProduct.setHubCategoryName(!StringUtils.isEmpty(categoryName) ? categoryName : pendingProduct.getHubCategoryNo());
+                        String brandName = getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo());
+                        pendingProduct.setHubBrandName(!StringUtils.isEmpty(brandName) ? brandName : pendingProduct.getHubBrandNo());
+                        pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
                         products.add(pendingProduct);
                     }
                 }
@@ -198,8 +202,10 @@ public class PendingProductService implements IPendingProductService{
                         PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
                         SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
                         pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
-                        pendingProduct.setHubCategoryName(getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo()));
-                        pendingProduct.setHubBrandName(getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo()));
+                        String categoryName = getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo());
+                        pendingProduct.setHubCategoryName(!StringUtils.isEmpty(categoryName) ? categoryName : pendingProduct.getHubCategoryNo());
+                        String brandName = getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo());
+                        pendingProduct.setHubBrandName(!StringUtils.isEmpty(brandName) ? brandName : pendingProduct.getHubBrandNo());
                         List<HubSkuPendingDto> hubSkus = findPendingSkuBySpuPendingId(pendingSpu.getSpuPendingId());
                         pendingProduct.setHubSkus(hubSkus);
                         pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
