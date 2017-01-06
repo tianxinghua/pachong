@@ -340,8 +340,13 @@ public class PendingProductService implements IPendingProductService{
     	criteria.setFields("sp_pic_url");
     	criteria.createCriteria().andSuupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andPicHandleStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
     	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
-    	if(CollectionUtils.isNotEmpty(spuPendingPics)&&spuPendingPics.size()>0){
-    		return spuPendingPics.get(0).getSpPicUrl();
+    	if(spuPendingPics!=null&&spuPendingPics.size()>0){
+    		if(spuPendingPics.get(0)!=null){
+    			return spuPendingPics.get(0).getSpPicUrl();
+    		}else{
+    			return "";
+    		}
+    	
     	}else{
     		return "";
     	}
