@@ -1,5 +1,5 @@
 ﻿server.port: 8006
 spring:
   profiles: 
-    active: qa
+    active: dev
   application.name: picture-product-consumer-service
