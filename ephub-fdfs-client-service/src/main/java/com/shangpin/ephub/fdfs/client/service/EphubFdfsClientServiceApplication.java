@@ -2,6 +2,8 @@ package com.shangpin.ephub.fdfs.client.service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 /**
  * <p>Title:EphubFdfsClientServiceApplication.java </p>
@@ -10,7 +12,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * @author yanxiaobin
  * @date 2017年1月2日 下午5:19:15
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = {RedisAutoConfiguration.class,RedisRepositoriesAutoConfiguration.class})
 @EnableDiscoveryClient
 public class EphubFdfsClientServiceApplication {
 
