@@ -41,13 +41,18 @@
   
   <select id="selectList" resultMap="BaseResultMap" >
     select
-   	map.supplier_no,map.sku_supplier_mapping_id,map.supplier_id,
+   	map.supplier_no,map.sku_supplier_mapping_id,map.supplier_id,map.supplier_select_state,
    	sku.sku_id,sku.sku_no,sku.sku_size,sku.sku_size_id,sku.update_time,
    	spu.spu_id,spu.spu_no,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,
    	spu.market_time,spu.season,spu.hub_color,spu.hub_color_no,spu.spu_state,spu.pic_url,spu.origin,spu.material
     from hub_spu spu  JOIN hub_sku sku on sku.spu_no = spu.spu_no  join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
-    	map.supplier_select_state = #{supplierSelectState}
+    
+    	1=1
+    	 <if test="null!= supplierSelectState">
+	       and   map.supplier_select_state = #{supplierSelectState}
+	 </if>
+    	
      <if test="null!= supplierNo">
 	        and        map.supplier_no = #{supplierNo}
 	 </if>
@@ -78,7 +83,11 @@
     from hub_spu spu  JOIN hub_sku sku on sku.spu_no = spu.spu_no  join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
     
-    	map.supplier_select_state = #{supplierSelectState}
+    		1=1
+    	 <if test="null!= supplierSelectState">
+	             and   map.supplier_select_state = #{supplierSelectState}
+	 </if>
+    	
      <if test="null!= supplierNo">
 	             and   map.supplier_no = #{supplierNo}
 	 </if>
@@ -97,12 +106,11 @@
       <if test="null!=endDate">
            <![CDATA[ and sku.update_time <=#{endDate}    ]]>
       </if>
-	
   </select>
   
    <select id="selectDetail" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectDetailRequest">
     select
-   	map.supplier_no,map.sku_supplier_mapping_id,map.supplier_id,map.supplier_sku_no,map.supplier_spu_model,
+   	map.supplier_no,map.sku_supplier_mapping_id,map.supplier_id,map.supplier_sku_no,map.supplier_spu_model,map.supplier_select_state,
    	sku.sku_id,sku.sku_no,sku.sku_size,sku.sku_size_id,sku.update_time,
    	spu.spu_id,spu.spu_no,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,
    	spu.market_time,spu.season,spu.hub_color,spu.hub_color_no,spu.spu_state,spu.pic_url,spu.origin,spu.material
