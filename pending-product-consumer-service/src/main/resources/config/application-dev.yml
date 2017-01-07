@@ -8,10 +8,14 @@ spring:
            virtual-host: /scm-message-service
   cloud: 
         consul: 
-          host: 192.168.20.110
+          host: 192.168.20.235
           port: 8500
           discovery: 
-            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+            prefer-agent-address: true
+            prefer-ip-address: true
+            health-check-interval: 10s
+            register: true
+            register-health-check: true
         stream: 
               bindings: 
                         spinnakerPendingProduct: 

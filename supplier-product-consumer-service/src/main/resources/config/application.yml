@@ -1,5 +1,5 @@
 ﻿server.port: 8005
 spring: 
   profiles: 
-    active: qa
+    active: dev
   application.name: supplier-product-consumer-service
