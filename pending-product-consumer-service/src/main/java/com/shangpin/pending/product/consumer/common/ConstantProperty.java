@@ -29,4 +29,10 @@ public class ConstantProperty {
    public static int MAX_MATERIAL_QUERY_NUM = 20000;
 
    public static String REDIS_EPHUB_PENDING_CATEGORY_KEY="REDIS_EPHUB_PENDING_CATEGORY_KEY";
+
+
+   public static String REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_KEY="REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_KEY";
+
+   public static int  REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_TIME = 60;
+
 }

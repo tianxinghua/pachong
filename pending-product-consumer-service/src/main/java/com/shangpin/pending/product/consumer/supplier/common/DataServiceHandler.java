@@ -66,11 +66,12 @@ import java.util.*;
 
 /**
  * Created by loyalty on 16/12/16.
+ * 数据层的处理
  */
 @Service
-@EnableDiscoveryClient
-@EnableFeignClients("com.shangpin.ephub")
+
 @Slf4j
+
 public class DataServiceHandler {
 
     @Autowired
@@ -616,6 +617,15 @@ public class DataServiceHandler {
         HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
         criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
         criteria.createCriteria().andHubValTypeEqualTo(type.byteValue());
+        return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
+    }
+
+
+    public List<HubSupplierValueMappingDto> getHubSupplierValueMappingBySupplierIdAndType(String supplierId,Integer type){
+        HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
+        criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
+        criteria.setPageNo(1);
+        criteria.createCriteria().andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(type.byteValue());
         return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
     }
 
