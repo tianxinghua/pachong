@@ -14,6 +14,7 @@ import com.shangpin.ephub.data.mysql.product.common.enumeration.DataBusinessStat
 import com.shangpin.ephub.data.mysql.product.common.enumeration.DataSelectStatus;
 import com.shangpin.ephub.data.mysql.product.common.enumeration.DataStatus;
 import com.shangpin.ephub.data.mysql.product.common.enumeration.HubSpuPendigStatus;
+import com.shangpin.ephub.data.mysql.product.dto.HubPendingDto;
 import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.data.mysql.product.service.PengingToHubService;
 import com.shangpin.ephub.data.mysql.sku.hub.mapper.HubSkuMapper;
@@ -95,6 +96,31 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         return true;
     }
 
+    @Override
+    public boolean addSkuOrSkuSupplierMapping(HubPendingDto hubPendingDto) throws Exception {
+
+        List<Long> spuPendingIds = new ArrayList<>();
+        spuPendingIds.add(hubPendingDto.getHubSpuPendingId());
+
+        log.info("存在spu");
+        Map<String,List<HubSkuPending>> sizeSkuMap = new HashMap<>();
+        //根据尺码合并不同供货商的SKU信息
+        setSizeSkuMap(spuPendingIds, sizeSkuMap);
+        //获取SPU
+        HubSpu hubSpu = hubSpuMapper.selectByPrimaryKey(hubPendingDto.getHubSpuId());
+        HubSpuPending spuPending = null;
+        spuPending = this.getHubSpuPendingById(hubPendingDto.getHubSpuPendingId());
+        if(null!=spuPending){
+            //插入hubSKU 和 供货商的对应关系
+            Set<String> sizeSet = sizeSkuMap.keySet();
+            if(sizeSet.size()>0){
+                searchAndCreateHubSkuAndMapping(sizeSkuMap, hubSpu);
+            }
+        }
+
+        return false;
+    }
+
     private void createHubData(SpuModelDto auditVO, List<Long> spuPendingIds) throws Exception{
         //查询是否存在
         HubSpuCriteria criteria = new HubSpuCriteria();
@@ -149,26 +175,40 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
     private void searchAndCreateHubSkuAndMapping(Map<String, List<HubSkuPending>> sizeSkuMap, HubSpu hubSpu) throws Exception {
          //首先 查询尺码是否存在
         Set<String> sizeSet = sizeSkuMap.keySet();
-        HubSkuCriteria hubSkuCriteria =new HubSkuCriteria();
+
         Date date = new Date();
         for(String size:sizeSet){
+            HubSkuCriteria hubSkuCriteria =new HubSkuCriteria();
             hubSkuCriteria.createCriteria().andSkuSizeEqualTo(size);
             List<HubSku> hubSkus = hubSkuMapper.selectByExample(hubSkuCriteria);
 
             List<HubSkuPending> hubSkuPendings = sizeSkuMap.get(size);
-
+            HubSku hubSku = null;
             if(null!=hubSkus&&hubSkus.size()>0){  //已存在
-                HubSku hubSku = hubSkus.get(0);
+                 hubSku = hubSkus.get(0);
             }else{
                 String skuNo = hubSpuUtil.createHubSkuNo(hubSpu.getSpuNo(),1);
-                HubSku hubSku = insertHubSku(hubSpu, skuNo, size, date, hubSkuPendings);
-                //增加SKU的映射关系
-                inserSkuSupplierMapping(date, hubSkuPendings, hubSku);
+                hubSku = insertHubSku(hubSpu, skuNo, size, date, hubSkuPendings);
+
             }
+            //增加SKU的映射关系
+            inserSkuSupplierMapping(date, hubSkuPendings, hubSku);
+            //修改SKUPENDING 的skustatus状态
+            updateSkuPendingSkuStatus(hubSkuPendings);
+
         }
 
 
-        //存在 查询映射是否存在  不存在插入
+
+    }
+
+    private void updateSkuPendingSkuStatus(List<HubSkuPending> hubSkuPendings) {
+        for(HubSkuPending skuPendingDto:hubSkuPendings){
+            HubSkuPending skuPengding = new HubSkuPending();
+            skuPengding.setSkuPendingId(skuPengding.getSkuPendingId());
+            skuPengding.setSkuState(HubSpuPendigStatus.HANDLED.getIndex().byteValue());//sku 可使用SPU的状态码
+            hubSkuPendingMapper.updateByPrimaryKeySelective(skuPengding);
+        }
     }
 
 
@@ -247,10 +287,12 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             HubSkuPendingCriteria skuPendingCriteria = new HubSkuPendingCriteria();
             skuPendingCriteria.setPageNo(1);
             skuPendingCriteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
-            skuPendingCriteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId).andSkuStateEqualTo(HubSpuPendigStatus.HANDLING.getIndex().byteValue()); //spu 和 sku 状态保持一致
+            skuPendingCriteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId)
+                    .andSkuStateEqualTo(HubSpuPendigStatus.HANDLING.getIndex().byteValue())   //spu 和 sku 状态保持一致
+                    .andSpSkuSizeStateEqualTo(DataBusinessStatus.HANDLED.getIndex().byteValue()); //尺码已映射
             List<HubSkuPending> hubSkuPendings = hubSkuPendingMapper.selectByExample(skuPendingCriteria);
             for(HubSkuPending hubSkuPending:hubSkuPendings){
-                if(null!=hubSkuPending.getSkuState()&&hubSkuPending.getSkuState().intValue()== HubSpuPendigStatus.HANDLING.getIndex()){//信息已完善
+                if(null!=hubSkuPending.getSkuState()&&hubSkuPending.getSkuState().intValue()== HubSpuPendigStatus.HANDLING.getIndex()){//信息已完善 处理中
                     if(sizeSkuMap.containsKey(hubSkuPending.getHubSkuSize())){
                         sizeSkuMap.get(hubSkuPending.getHubSkuSize()).add(hubSkuPending);
                     }else{

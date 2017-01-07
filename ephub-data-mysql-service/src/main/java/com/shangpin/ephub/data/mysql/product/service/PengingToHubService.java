@@ -1,5 +1,6 @@
 package com.shangpin.ephub.data.mysql.product.service;
 
+import com.shangpin.ephub.data.mysql.product.dto.HubPendingDto;
 import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
 
 /**
@@ -14,6 +15,8 @@ public interface PengingToHubService {
      * @throws Exception
      */
     public boolean auditPending(SpuModelDto spuModelVO) throws Exception;
+
+    public boolean addSkuOrSkuSupplierMapping(HubPendingDto hubPendingDto) throws Exception;
 
 
 }
