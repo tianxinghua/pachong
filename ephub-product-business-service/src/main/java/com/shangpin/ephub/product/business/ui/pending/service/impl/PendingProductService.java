@@ -5,12 +5,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -45,6 +45,7 @@ import com.shangpin.ephub.client.util.TaskImportTemplate;
 import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
+import com.shangpin.ephub.product.business.common.util.ExportExcelUtils;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
@@ -91,7 +92,7 @@ public class PendingProductService implements IPendingProductService{
         HSSFSheet sheet = wb.createSheet("产品信息");
         HSSFRow row = sheet.createRow(0);
         HSSFCellStyle  style = wb.createCellStyle();
-        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);//居中
+        style.setAlignment(HorizontalAlignment.CENTER);//居中
         String[] row0 = TaskImportTemplate.getPendingSkuTemplate();
         for(int i= 0;i<row0.length;i++){
             HSSFCell cell = row.createCell(i);
@@ -129,13 +130,15 @@ public class PendingProductService implements IPendingProductService{
         HSSFSheet sheet = wb.createSheet("产品信息");
         HSSFRow row = sheet.createRow(0);
         HSSFCellStyle  style = wb.createCellStyle();
-        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);//居中
+        style.setAlignment(HorizontalAlignment.CENTER);//居中
         String[] row0 = TaskImportTemplate.getPendingSpuTemplate();
         for(int i= 0;i<row0.length;i++){
             HSSFCell cell = row.createCell(i);
             cell.setCellValue(row0[i]);
             cell.setCellStyle(style);
         }
+        row.setHeight((short) 1500);
+		sheet.setColumnWidth((short)0, (short)  (36*150));
         try {
         	String[] rowTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
             List<PendingProductDto> products = findPengdingSpu(pendingQuryDto);
@@ -144,7 +147,7 @@ public class PendingProductService implements IPendingProductService{
                 for(PendingProductDto product : products){
                     try {
                         j++;
-                        row = sheet.createRow(j);
+                        row = sheet.createRow(j);                        
                         insertProductSpuOfRow(row,product,rowTemplate);
                     } catch (Exception e) {
                     	 log.error("insertProductSpuOfRow异常："+e.getMessage(),e);
@@ -340,8 +343,12 @@ public class PendingProductService implements IPendingProductService{
     	criteria.setFields("sp_pic_url");
     	criteria.createCriteria().andSuupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andPicHandleStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
     	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
-    	if(CollectionUtils.isNotEmpty(spuPendingPics)&&spuPendingPics.size()>0){
-    		return spuPendingPics.get(0).getSpPicUrl();
+    	if(spuPendingPics!=null&&spuPendingPics.size()>0){
+    		if(spuPendingPics.get(0)!=null){
+    			return spuPendingPics.get(0).getSpPicUrl();
+    		}else{
+    			return "";
+    		}
     	}else{
     		return "";
     	}
@@ -523,8 +530,9 @@ public class PendingProductService implements IPendingProductService{
 		Object value = null;
 		for (int i=0;i<rowTemplate.length;i++) {
 			try {
-				String fileName = JavaUtil.parSetName(rowTemplate[i]);
-				if("seasonYear".equals(rowTemplate[i])){
+				if("spPicUrl".equals(rowTemplate[i])){
+					ExportExcelUtils.insertImageToExcel(product.getSpPicUrl(),row, (short)i); 
+				}else if("seasonYear".equals(rowTemplate[i])){
 					setRowOfSeasonYear(row, product, cls, i);
 				}else if("seasonName".equals(rowTemplate[i])){
 					setRowOfSeasonName(row, product, cls, i); 
@@ -537,6 +545,7 @@ public class PendingProductService implements IPendingProductService{
 			        }
 			        row.createCell(i).setCellValue(buffer.toString()); 
 				}else{
+					String fileName = JavaUtil.parSetName(rowTemplate[i]);
 					fieldSetMet = cls.getMethod(fileName);
 					value = fieldSetMet.invoke(product);
 					row.createCell(i).setCellValue(null != value ? value.toString() : "");
@@ -581,5 +590,5 @@ public class PendingProductService implements IPendingProductService{
 		Object value = fieldSetMet.invoke(product);
 		row.createCell(i).setCellValue((null != value && value.toString().contains("_")) ? value.toString().split("_")[0] : "");
 	}
-
+	
 }

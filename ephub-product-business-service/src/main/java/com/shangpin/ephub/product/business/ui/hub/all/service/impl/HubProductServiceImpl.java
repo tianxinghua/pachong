@@ -215,7 +215,9 @@ public class HubProductServiceImpl implements IHubProductService {
 			hubProuctDetail.setSupplierName(null != supplierDTO? supplierDTO.getSupplierName():"");
 			hubProuctDetail.setSkuId(hubSku.getSkuId());
 			hubProuctDetail.setSkuSize(hubSku.getSkuSize());
-			hubProuctDetail.setColor(hubSpu.getHubColor()); 	
+			hubProuctDetail.setColor(hubSpu.getHubColor()); 
+			hubProuctDetail.setMaterial(hubSpu.getMaterial());
+			hubProuctDetail.setProductOrigin(hubSpu.getOrigin()); 
 			if(HubSpuState.ON_SALE.getIndex() == hubSpu.getSpuState()){
 				hubProuctDetail.setSpuState(HubSpuState.ON_SALE.getDescription());
 			}	

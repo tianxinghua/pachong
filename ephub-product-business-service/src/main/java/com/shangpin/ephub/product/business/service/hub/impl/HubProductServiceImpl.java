@@ -123,7 +123,7 @@ public class HubProductServiceImpl implements HubProductService {
                          }
                     }else{ //创建失败
                         for(ApiSkuOrgDom skuOrg:skuOrgDoms){
-                            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.NO_SELECTED);
+                            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTE_FAIL);
                         }
                     }
                 }
