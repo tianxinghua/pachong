@@ -50,7 +50,10 @@
     
     	1=1
     	 <if test="null!= supplierSelectState">
-	       and   map.supplier_select_state = #{supplierSelectState}
+    	 
+    	 <foreach collection="supplierSelectState" item="item" open="AND map.supplier_select_state IN (" close=")" separator=",">
+			#{item}       
+     	  </foreach>
 	 </if>
     	
      <if test="null!= supplierNo">
@@ -65,9 +68,7 @@
 	   <if test="null!= spuModel">
 	           and  spu.spu_model = #{spuModel}
 	 </if>
-	   <if test="null != spuState">
-	           and  spu.spu_state = #{spuState}
-	 </if>
+	
 	   <if test="null!=startDate">
                 and sku.update_time >=#{startDate}
       </if>      
@@ -84,10 +85,12 @@
     where 
     
     		1=1
-    	 <if test="null!= supplierSelectState">
-	             and   map.supplier_select_state = #{supplierSelectState}
+    	 	 <if test="null!= supplierSelectState">
+    	 
+    	 <foreach collection="supplierSelectState" item="item" open="AND map.supplier_select_state IN (" close=")" separator=",">
+			#{item}       
+     	  </foreach>
 	 </if>
-    	
      <if test="null!= supplierNo">
 	             and   map.supplier_no = #{supplierNo}
 	 </if>

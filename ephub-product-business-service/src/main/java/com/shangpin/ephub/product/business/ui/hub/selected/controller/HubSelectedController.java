@@ -50,38 +50,21 @@ public class HubSelectedController {
 			log.info("已选品请求参数：{}",dto);
 			HubWaitSelectRequestDto hubWaitSelectRequest = new HubWaitSelectRequestDto();
 			BeanUtils.copyProperties(dto, hubWaitSelectRequest);
-			if(dto.getSupplierSelectState().intValue()==-1){
-				hubWaitSelectRequest.setSupplierSelectState(null);	
-			}
+//			if(dto.getSupplierSelectState().intValue()==-1){
+//				hubWaitSelectRequest.setSupplierSelectState(null);	
+//			}
 			Long total = HubWaitSelectGateWay.count(hubWaitSelectRequest);
 			log.info("已选品查询到总数："+total);
 			if(total>0){
 				dto.setPageNo(dto.getPageNo()-1);
-				if(dto.getSupplierSelectState().intValue()==-1){
-					hubWaitSelectRequest.setSupplierSelectState(null);	
-				}
+//				if(dto.getSupplierSelectState().intValue()==-1){
+//					hubWaitSelectRequest.setSupplierSelectState(null);	
+//				}
 				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
-				
 				List<HubWaitSelectedResponse> arr = new ArrayList<HubWaitSelectedResponse>();
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
 					HubWaitSelectedResponse HubWaitSelectResponse = new HubWaitSelectedResponse();
 					BeanUtils.copyProperties(hubWaitSelectResponseDto, HubWaitSelectResponse);
-//					HubWaitSelectResponse.setBrandNo(hubWaitSelectResponseDto.getBrandNo());
-//					HubWaitSelectResponse.setCategoryNo(hubWaitSelectResponseDto.getCategoryNo());
-//					HubWaitSelectResponse.setGender(hubWaitSelectResponseDto.getGender());
-//					HubWaitSelectResponse.setHubColor(hubWaitSelectResponseDto.getHubColor());
-//					HubWaitSelectResponse.setMaterial(hubWaitSelectResponseDto.getMaterial());
-//					HubWaitSelectResponse.setOrigin(hubWaitSelectResponseDto.getOrigin());
-//					HubWaitSelectResponse.setPicUrl(hubWaitSelectResponseDto.getPicUrl());
-//					HubWaitSelectResponse.setSkuId(hubWaitSelectResponseDto.getSkuId());
-//					HubWaitSelectResponse.setSkuNo(hubWaitSelectResponseDto.getSkuNo());
-//					HubWaitSelectResponse.setSkuSize(hubWaitSelectResponseDto.getSkuSize());
-//					HubWaitSelectResponse.setSkuSupplierMappingId(hubWaitSelectResponseDto.getSkuSupplierMappingId());
-//					HubWaitSelectResponse.setSpuId(hubWaitSelectResponseDto.getSpuId());
-//					HubWaitSelectResponse.setSpuModel(hubWaitSelectResponseDto.getSpuModel());
-//					HubWaitSelectResponse.setSpuNo(hubWaitSelectResponseDto.getSpuNo());
-//					HubWaitSelectResponse.setSupplierNo(hubWaitSelectResponseDto.getSupplierNo());
-//					HubWaitSelectResponse.setSupplierSelectState(hubWaitSelectResponseDto.getSpuSelectState());
 					HubWaitSelectResponse.setUpdateTime(DateTimeUtil.getTime(hubWaitSelectResponseDto.getUpdateTime()));
 					arr.add(HubWaitSelectResponse);
 				}
@@ -109,8 +92,9 @@ public class HubSelectedController {
 	        	
 		try {
 			log.info("导出查询商品请求参数：{}",dto);
-			dto.setSupplierSelectState((byte)SupplierSelectState.SELECTED.getIndex());
-			dto.setPageNo(dto.getPageNo()-1);
+//			dto.setSupplierSelectState((byte)SupplierSelectState.SELECTED.getIndex());
+			dto.setPageNo(0);
+			dto.setPageSize(100000);
 			List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
 			response.setContentType("application/vnd.ms-excel");    
 	        response.setHeader("Content-Disposition", "attachment;filename="+"selected_product_" + System.currentTimeMillis()+".xls");    
@@ -133,8 +117,9 @@ public class HubSelectedController {
     public void exportSelectPic(@RequestBody HubWaitSelectRequestWithPageDto dto){
 	        	
 		try {
+			dto.setPageNo(0);
+			dto.setPageSize(100000);
 			log.info("导出查询图片请求参数：{}",dto);
-			
 		} catch (Exception e) {
 			log.error("导出查询图片获取失败：{}",e);
 		}

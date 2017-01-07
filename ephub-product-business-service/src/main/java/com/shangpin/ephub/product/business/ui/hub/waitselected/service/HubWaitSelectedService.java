@@ -121,7 +121,7 @@ public class HubWaitSelectedService {
 	public void batchUpdateSelectState(HubWaitSelectRequestWithPageDto requestDto) {
 		requestDto.setPageNo(0);
 		requestDto.setPageSize(100000);
-		requestDto.setSupplierSelectState((byte)SupplierSelectState.NO_SELECTED.getIndex());
+//		requestDto.setSupplierSelectState((byte)SupplierSelectState.NO_SELECTED.getIndex());
 		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(requestDto);
 		for(HubWaitSelectResponseDto dto:list){
 			Long spuId = dto.getSpuId();
