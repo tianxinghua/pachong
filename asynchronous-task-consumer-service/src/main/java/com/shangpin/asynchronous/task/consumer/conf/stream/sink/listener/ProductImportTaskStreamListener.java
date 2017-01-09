@@ -7,8 +7,10 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.support.MessageBuilder;
 
 import com.shangpin.asynchronous.task.consumer.conf.stream.sink.channel.ProductImportTaskSink;
+import com.shangpin.asynchronous.task.consumer.productexport.ProductExportHandler;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.HubProductImportHandler;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.PendingProductImportHandler;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
@@ -27,6 +29,8 @@ public class ProductImportTaskStreamListener {
 	private PendingProductImportHandler pendingProductImportHandler;
 	@Autowired
 	private HubProductImportHandler hubProductImportHandler;
+	@Autowired
+	private ProductExportHandler productExportHandler;
 	/**
 	 * pending导入处理
 	 * @param message
@@ -46,5 +50,15 @@ public class ProductImportTaskStreamListener {
 	@StreamListener(ProductImportTaskSink.HUB_IMPORT)
     public void brunarossoPendingProductStreamListen(@Payload ProductImportTask message, @Headers Map<String,Object> headers) throws Exception  {
 		hubProductImportHandler.hubProductImportStreamListen(message,headers);
+    }
+	
+	/**
+	 * 待处理商品导入任务数据流发送
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	@StreamListener(ProductImportTaskSink.PRODUCT_EXPORT)
+    public void productStreamListen(@Payload ProductImportTask message, @Headers Map<String,Object> headers) throws Exception  {
+		productExportHandler.productExportTask(message,headers);
     }
 }
