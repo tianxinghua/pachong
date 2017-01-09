@@ -32,9 +32,9 @@ public class ProductImportTask {
 	private String messageDate;
 	
 	/**
-	 * 任务类型  =0 无类型  =1 pending-spu =2 pending-sku 导入处理   =3 hub导入处理  =4导出
+	 * 任务类型  =0 一般任务  =1 pending-spu导入 =2 pending-sku导入处   =3 hub导入  =4 pending-spu导出  =5 pending-sku导出
 	 */
-	private String type;
+	private int type;
 	
     /**
      * 任务编号
