@@ -10,7 +10,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.support.MessageBuilder;
 
 import com.shangpin.asynchronous.task.consumer.conf.stream.sink.channel.ProductImportTaskSink;
-import com.shangpin.asynchronous.task.consumer.productexport.ProductExportHandler;
+import com.shangpin.asynchronous.task.consumer.productexport.adapter.ProductExportHandler;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.HubProductImportHandler;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.PendingProductImportHandler;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
