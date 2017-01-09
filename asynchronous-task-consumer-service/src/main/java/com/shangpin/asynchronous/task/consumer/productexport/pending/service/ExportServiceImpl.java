@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -76,7 +75,7 @@ public class ExportServiceImpl {
 	 * 待处理页面导出spu
 	 * @param pendingQuryDto
 	 */
-	public void exportSpu(List<PendingProductDto> products){
+	public void exportSpu(PendingProducts products){
 		HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("产品信息");
         HSSFRow row = sheet.createRow(0);
@@ -92,9 +91,9 @@ public class ExportServiceImpl {
 		sheet.setColumnWidth(0, (36*150));
         try {
         	String[] rowTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
-            if(null != products && products.size()>0){
+            if(null != products && null != products.getProduts() && products.getProduts().size()>0){
                 int j = 0;
-                for(PendingProductDto product : products){
+                for(PendingProductDto product : products.getProduts()){
                     try {
                         j++;
                         row = sheet.createRow(j);                        
