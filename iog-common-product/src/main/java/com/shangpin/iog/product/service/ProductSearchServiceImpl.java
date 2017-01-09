@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -548,11 +549,14 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				buffer.append(productName).append(splitSign);
 
 				buffer.append("\"\t" + dto.getBarcode() + "\"").append(
-						splitSign);
+						splitSign+"\t");
 
 				// 获取颜色
 				color = dto.getColor()==null?"":dto.getColor().replace(",", " ").replaceAll("/", " ");
-				buffer.append(null == color ? "" : color.replace(",", " ")).append(splitSign);
+				DecimalFormat format = new DecimalFormat("00000");
+				String s = format.format(3);
+				
+				buffer.append(null == color ? "" : color.replace(",", " ")).append(splitSign+"\t");
 				// 翻译中文
 				String colorCh = "";
 				if (StringUtils.isNotBlank(color)) {
