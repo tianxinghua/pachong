@@ -92,7 +92,7 @@ public class PendingProductService implements IPendingProductService{
         HSSFSheet sheet = wb.createSheet("产品信息");
         HSSFRow row = sheet.createRow(0);
         HSSFCellStyle  style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER);//居中
+//        style.setAlignment(HorizontalAlignment.CENTER);//居中
         String[] row0 = TaskImportTemplate.getPendingSkuTemplate();
         for(int i= 0;i<row0.length;i++){
             HSSFCell cell = row.createCell(i);
@@ -130,7 +130,7 @@ public class PendingProductService implements IPendingProductService{
         HSSFSheet sheet = wb.createSheet("产品信息");
         HSSFRow row = sheet.createRow(0);
         HSSFCellStyle  style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER);//居中
+//        style.setAlignment(HorizontalAlignment.CENTER);//居中
         String[] row0 = TaskImportTemplate.getPendingSpuTemplate();
         for(int i= 0;i<row0.length;i++){
             HSSFCell cell = row.createCell(i);
