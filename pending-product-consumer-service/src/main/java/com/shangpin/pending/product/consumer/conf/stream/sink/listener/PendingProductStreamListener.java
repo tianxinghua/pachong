@@ -96,7 +96,6 @@ public class PendingProductStreamListener {
     public void tonyPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.tonyPendingProductStreamListen(message,headers);
     }
-	//====================================
 	/**
 	 * 供应商POZZILEI待处理商品数据流通道监听者
 	 * @param message 消息
@@ -502,5 +501,4 @@ public class PendingProductStreamListener {
     public void theclutcherPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.theclutcherPendingProductStreamListen(message,headers);
     }
-	//====================================
 }
