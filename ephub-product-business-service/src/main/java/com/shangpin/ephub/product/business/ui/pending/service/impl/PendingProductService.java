@@ -249,37 +249,28 @@ public class PendingProductService implements IPendingProductService{
     public boolean updatePendingProduct(PendingProductDto pendingProductDto) throws Exception{
         try {
             if(null != pendingProductDto){
-            	String spuModel = null;
-            	BrandModelDto BrandModelDto = null;
-        		BrandModelResult brandModelResult= null;
-        		if(pendingProductDto.getSpuModel()!=null){
-        			BrandModelDto = new BrandModelDto();
-        			BrandModelDto.setBrandMode(pendingProductDto.getSpuModel());
-        			BrandModelDto.setHubBrandNo(pendingProductDto.getHubBrandNo());
-        			BrandModelDto.setHubCategoryNo(pendingProductDto.getHubCategoryNo());
-        			brandModelResult=  hubBrandModelRuleGateWay.verify(BrandModelDto);
-        			if(brandModelResult.isPassing()){
-        				pendingProductDto.setSpuModel(brandModelResult.getBrandMode());
-        				List<HubSpuDto> hubSpus = selectHubSpu(pendingProductDto);
-        				if(null != hubSpus && hubSpus.size()>0){
-        					//TODO 
-                        	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
-                            hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-        				}else{
-        					HubPendingSpuCheckResult spuResult = pendingSpuCheckGateWay.checkSpu(pendingProductDto);
-        	                if(spuResult.isPassing()){
-        	                	pendingProductDto.setSpuModel(spuModel);
-        	                	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
-        	                    hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-        	                }else{
-        	                    log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
-        	                    throw new Exception(spuResult.getResult());
-        	                }
-        				}
-            		}else{
-            		     log.info("pending spu校验失败，不更新：货号校验不通过。|原始数据："+JsonUtil.serialize(pendingProductDto));
-                         throw new Exception("货号校验不通过");
-            		}
+    			BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
+    			if(brandModelResult.isPassing()){
+    				pendingProductDto.setSpuModel(brandModelResult.getBrandMode());
+    				List<HubSpuDto> hubSpus = selectHubSpu(pendingProductDto);
+    				if(null != hubSpus && hubSpus.size()>0){
+    					convertHubSpuDtoToPendingSpu(hubSpus.get(0),pendingProductDto);
+                    	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
+                        hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+    				}else{
+    					HubPendingSpuCheckResult spuResult = pendingSpuCheckGateWay.checkSpu(pendingProductDto);
+    	                if(spuResult.isPassing()){
+    	                	pendingProductDto.setSpuModel(brandModelResult.getBrandMode());
+    	                	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
+    	                    hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+    	                }else{
+    	                    log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
+    	                    throw new Exception(spuResult.getResult());
+    	                }
+    				}
+        		}else{
+        		     log.info("pending spu校验失败，不更新：货号校验不通过。|原始数据："+JsonUtil.serialize(pendingProductDto));
+                     throw new Exception("货号校验不通过");
         		}
                 List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
                 if(null != pengdingSkus && pengdingSkus.size()>0){
@@ -355,7 +346,37 @@ public class PendingProductService implements IPendingProductService{
     /***************************************************************************************************************************/
     //以下为内部调用私有方法
     /**************************************************************************************************************************/
-    
+    /**
+     * 验证货号
+     * @param pendingProductDto
+     * @return
+     */
+    private BrandModelResult verifyProductModle(PendingProductDto pendingProductDto) {
+		BrandModelDto BrandModelDto = new BrandModelDto();
+		BrandModelDto.setBrandMode(pendingProductDto.getSpuModel());
+		BrandModelDto.setHubBrandNo(pendingProductDto.getHubBrandNo());
+		BrandModelDto.setHubCategoryNo(pendingProductDto.getHubCategoryNo());
+		BrandModelResult brandModelResult=  hubBrandModelRuleGateWay.verify(BrandModelDto);
+		return brandModelResult;
+	}
+    /**
+     * 将hub_spu中的信息付给pending_spu
+     * @param hubSpuDto
+     * @param pendingProductDto
+     */
+    private void convertHubSpuDtoToPendingSpu(HubSpuDto hubSpuDto,PendingProductDto hubPendingSpuDto){
+    	hubPendingSpuDto.setHubBrandNo(hubSpuDto.getBrandNo());
+		hubPendingSpuDto.setHubCategoryNo(hubSpuDto.getCategoryNo());
+		hubPendingSpuDto.setHubColor(hubSpuDto.getHubColor());
+		hubPendingSpuDto.setHubColorNo(hubSpuDto.getHubColorNo());
+		hubPendingSpuDto.setHubGender(hubSpuDto.getGender());
+		hubPendingSpuDto.setHubMaterial(hubSpuDto.getMaterial());
+		hubPendingSpuDto.setHubOrigin(hubSpuDto.getOrigin());
+		hubPendingSpuDto.setHubSeason(hubSpuDto.getSeason());
+		hubPendingSpuDto.setHubSpuNo(hubSpuDto.getSpuNo());
+		hubPendingSpuDto.setSpuModel(hubSpuDto.getSpuModel());
+		hubPendingSpuDto.setSpuName(hubSpuDto.getSpuName());
+    }
     /**
      * 根据品牌和货号查找hub_spu表中的记录
      * @param hubPendingSpuDto
