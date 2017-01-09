@@ -70,7 +70,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         criteria.setPageNo(queryVO.getPage());
 
         HubSpuPendingCriteriaDto criteriaCount = getHubSpuPendingCriteria(queryVO);
-        Integer count = spuPendingGateWay.countDistinctBrandNoAndSpuModelByExample(criteriaCount);
+        Integer count = spuPendingGateWay.countDistinctBrandNoAndSpuModelByCriteria(criteriaCount);
         List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
 
 
