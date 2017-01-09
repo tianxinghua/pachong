@@ -61,12 +61,14 @@ import org.springframework.web.client.RestTemplate;
 public class PendingHandler {
 
 
-    @Autowired
-    IShangpinRedis shangpinRedis;
+
 
 
     @Autowired
     DataServiceHandler dataServiceHandler;
+
+    @Autowired
+    DataSverviceUtil dataSverviceUtil;
 
     @Autowired
     ValidationRuleUtil  validationRuleUtil;
@@ -80,7 +82,7 @@ public class PendingHandler {
     HubBrandModelRuleGateWay brandModelRuleGateWay;
 
     @Autowired
-    RestTemplate httpClient;
+    RestTemplate restTemplate;
     @Autowired
     ApiAddressProperties apiAddressProperties;
 
@@ -127,6 +129,9 @@ public class PendingHandler {
      * 存放 supplierId_supplierSeason，filterFlag 对应关系
      */
     static Map<String,Byte> hubSeasonFlag = null;
+
+
+
 
 
 
@@ -594,9 +599,9 @@ public class PendingHandler {
         Map<String,String>  genderMap = this.getGenderMap(null);
 
 
-        if(null!=spu.getHubGender()&&genderMap.containsKey(spu.getHubGender().trim())){
+        if(null!=spu.getHubGender()&&genderMap.containsKey(spu.getHubGender().trim().toUpperCase())){
              //包含时转化赋值
-            hubSpuPending.setHubGender(genderMap.get(spu.getHubGender()));
+            hubSpuPending.setHubGender(genderMap.get(spu.getHubGender().toUpperCase()));
             hubSpuPending.setSpuGenderState( PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
         }else{
             result = false;
@@ -706,6 +711,12 @@ public class PendingHandler {
         //公共属性
         HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
         BeanUtils.copyProperties(supplierSku,hubSkuPending);
+        //baracode  需要特殊处理
+
+        if(StringUtils.isBlank(hubSkuPending.getSupplierBarcode())){
+            hubSkuPending.setSupplierBarcode(supplierSku.getSupplierSkuNo());
+        }
+
         Date date = new Date();
         hubSkuPending.setCreateTime(date);
         hubSkuPending.setUpdateTime(date);
@@ -713,7 +724,14 @@ public class PendingHandler {
         hubSkuPending.setFilterFlag(filterFlag);
         hubSkuPending.setSpuPendingId(hubSpuPending.getSpuPendingId());
         hubSkuPending.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
-        String hubSize=this.getHubSize(hubSpuPending.getHubCategoryNo(),hubSpuPending.getHubBrandNo(),supplierSku.getSupplierId(),supplierSku.getHubSkuSize());
+
+        Map<String,String> sizeMap=dataSverviceUtil.getSupplierSizeMapping(hubSpuPending.getSupplierId());
+        if(sizeMap.containsKey(supplierSku.getHubSkuSize())){
+            hubSkuPending.setHubSkuSize(sizeMap.get(supplierSku.getHubSkuSize()));
+        }
+
+
+        String hubSize=this.getHubSize(hubSpuPending.getHubCategoryNo(),hubSpuPending.getHubBrandNo(),supplierSku.getSupplierId(),hubSkuPending.getHubSkuSize());
 
 
         if(hubSpuPending.getSpuState().intValue()==SpuStatus.SPU_HANDLED.getIndex()){//hubspu 已经存在了
@@ -788,9 +806,9 @@ public class PendingHandler {
 
         HttpEntity<SizeRequestDto> requestEntity = new HttpEntity<SizeRequestDto>(request);
 
-        ResponseEntity<BasicDataResponse<SizeStandardItem>> entity = httpClient.exchange(apiAddressProperties.getGmsSizeUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<BasicDataResponse<SizeStandardItem>>() {
+        ResponseEntity<HubResponseDto<SizeStandardItem>> entity = restTemplate.exchange(apiAddressProperties.getGmsSizeUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<SizeStandardItem>>() {
         });
-        BasicDataResponse<SizeStandardItem> body = entity.getBody();
+        HubResponseDto<SizeStandardItem> body = entity.getBody();
         if(body.getIsSuccess()){
             List<SizeStandardItem> resDatas = body.getResDatas();
 
@@ -885,7 +903,7 @@ public class PendingHandler {
 
             Map<String,String> genderMap = new HashMap<>();
             for(HubGenderDicDto dto:hubGenderDics){
-                genderStaticMap.put(dto.getSupplierGender().trim(),dto.getHubGender().trim());
+                genderStaticMap.put(dto.getSupplierGender().trim().toUpperCase(),dto.getHubGender().trim());
                 hubGenderStaticMap.put(dto.getHubGender(),"");
             }
 
@@ -1013,18 +1031,42 @@ public class PendingHandler {
 
     private  String getHubSize(String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize) throws IOException {
         String result = "";
-        //TODO CALL API OF SOP
-        ObjectMapper objectMapper =new ObjectMapper();
-        CategoryScreenSizeDom sizeDom = null;
-//        try {
-//            sizeDom = objectMapper.readValue(result,CategoryScreenSizeDom.class);
-//            if(null!=sizeDom){
-//                List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
-//            }
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+
+        SizeRequestDto requestDto = new SizeRequestDto();
+        requestDto.setBrandNo(hubBrandNo);
+        requestDto.setCategoryNo(hubCategoryNo);
+
+        HttpEntity<SizeRequestDto> requestEntity = new HttpEntity<SizeRequestDto>(requestDto);
+        ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsSizeUrl(), HttpMethod.POST,
+                requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {
+                });
+        HubResponseDto<CategoryScreenSizeDom> responseDto = entity.getBody();
+
+
+        try {
+            List<CategoryScreenSizeDom> sizeDomList = responseDto.getResDatas();
+            if(null!=sizeDomList&&sizeDomList.size()>0){
+                List<SizeStandardItem> sizeStandardItemList = sizeDomList.get(0).getSizeStandardItemList();
+                boolean find=false;
+                for(SizeStandardItem sizeItem:sizeStandardItemList){
+                    if(sizeItem.getSizeStandardValue().equals(supplierSize)){
+
+                        if(!find){
+                            result = sizeItem.getScreenSizeStandardValueId() + "," + sizeItem.getSizeStandardName() + ":" +sizeItem.getSizeStandardValue();
+
+                        }else{
+                            log.error("品牌：" + hubBrandNo + " 品类: " + hubCategoryNo + " 的尺码对照有错误。");
+                            return "";
+                        }
+                        find = true;
+
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         return result;

@@ -3,19 +3,10 @@ spring:
   rabbitmq: 
            host: 192.168.20.175
            port: 5672
-           username: scm-message-service-qa
-           password: scm-message-service-qa
-           virtual-host: /scm-message-service-qa
+           username: ephub-message-service-qa
+           password: ephub-message-service-qa
+           virtual-host: /ephub-message-service-qa
   cloud: 
-        consul: 
-          host: localhost
-          port: 8500
-          discovery: 
-            prefer-agent-address: true
-            prefer-ip-address: true
-            health-check-interval: 10s
-            register: false
-            register-health-check: false
         stream: 
               bindings: 
                         supplierPictureProduct: 
@@ -25,7 +16,7 @@ spring:
                               destination: spinnaker.original.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 2
                                        maxAttempts: 1
                         spinnakerPendingProduct: 
                               destination: spinnaker.pending.product
@@ -34,7 +25,7 @@ spring:
                               destination: ostore.original.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 2
                                        maxAttempts: 1
                         ostorePendingProduct: 
                               destination: ostore.pending.product
@@ -43,7 +34,7 @@ spring:
                               destination: brunarosso.original.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 2
                                        maxAttempts: 1
                         brunarossoPendingProduct: 
                               destination: brunarosso.pending.product
@@ -52,7 +43,7 @@ spring:
                               destination: stefania.original.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 2
                                        maxAttempts: 1
                         stefaniaPendingProduct: 
                               destination: stefania.pending.product
@@ -61,7 +52,7 @@ spring:
                               destination: geb.original.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 2
                                        maxAttempts: 1
                         gebPendingProduct: 
                               destination: geb.pending.product
@@ -70,7 +61,7 @@ spring:
                               destination: coltorti.original.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 2
                                        maxAttempts: 1
                         coltortiPendingProduct: 
                               destination: coltorti.pending.product
@@ -79,7 +70,7 @@ spring:
                               destination: tony.original.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 2
                                        maxAttempts: 1
                         tonyPendingProduct: 
                               destination: tony.pending.product
@@ -88,88 +79,93 @@ spring:
                               destination: biondioni.original.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 2
                                        maxAttempts: 1
                         biondioniPendingProduct: 
                               destination: biondioni.pending.product
                               content-type: application/json                                                                                                                                                                                                                                                                                                          
               rabbit: 
-                      bindings: 
-                            supplierPictureProduct: 
-                                  producer: 
-                                       prefix: HA.
-                            spinnakerOriginalProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            spinnakerPendingProduct: 
-                                  producer: 
-                                       prefix: HA.                                    
-                            ostoreOriginalProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            ostorePendingProduct: 
-                                  producer: 
-                                       prefix: HA.                                        
-                            brunarossoOriginalProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            brunarossoPendingProduct: 
-                                  producer: 
-                                       prefix: HA.                                        
-                            stefaniaOriginalProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            stefaniaPendingProduct: 
-                                  producer: 
-                                       prefix: HA.                                        
-                            gebOriginalProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            gebPendingProduct: 
-                                  producer: 
-                                       prefix: HA.                                       
-                            coltortiOriginalProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            coltortiPendingProduct: 
-                                  producer: 
-                                       prefix: HA.                                        
-                            tonyOriginalProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            tonyPendingProduct: 
-                                  producer: 
-                                       prefix: HA.                                          
-                            biondioniOriginalProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            biondioniPendingProduct: 
-                                  producer: 
-                                       prefix: HA.                                                                                                                                                                                                                                                                                                                 
+                        bindings: 
+                              supplierPictureProduct: 
+                                    producer: 
+                                         prefix: HA.
+                              spinnakerOriginalProduct: 
+                                      consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              spinnakerPendingProduct: 
+                                    producer: 
+                                         prefix: HA.                                    
+                              ostoreOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              ostorePendingProduct: 
+                                    producer: 
+                                         prefix: HA.                                        
+                              brunarossoOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              brunarossoPendingProduct: 
+                                    producer: 
+                                         prefix: HA.                                        
+                              stefaniaOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              stefaniaPendingProduct: 
+                                    producer: 
+                                         prefix: HA.                                        
+                              gebOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              gebPendingProduct: 
+                                    producer: 
+                                         prefix: HA.                                       
+                              coltortiOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              coltortiPendingProduct: 
+                                    producer: 
+                                         prefix: HA.                                        
+                              tonyOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              tonyPendingProduct: 
+                                    producer: 
+                                         prefix: HA.                                          
+                              biondioniOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              biondioniPendingProduct: 
+                                    producer: 
+                                         prefix: HA.                                                                                                                                                                                                                                                                                                                 
+        consul: 
+          host: localhost
+          port: 8500
+          discovery: 
+              register: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   mail: 

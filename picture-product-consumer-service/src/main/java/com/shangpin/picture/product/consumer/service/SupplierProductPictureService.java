@@ -1,7 +1,8 @@
 package com.shangpin.picture.product.consumer.service;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 
@@ -10,13 +11,14 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.misc.BASE64Encoder;
+
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
 import com.shangpin.picture.product.consumer.e.PicHandleState;
 import com.shangpin.picture.product.consumer.manager.SupplierProductPictureManager;
 
 import lombok.extern.slf4j.Slf4j;
+import sun.misc.BASE64Encoder;
 
 /**
  * <p>Title:SupplierProductPictureService.java </p>
@@ -29,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SupplierProductPictureService {
 
+	private static final int TIMEOUT = 10*60*1000;
 	@Autowired
 	private SupplierProductPictureManager supplierProductPictureManager;
 	/**
@@ -43,7 +46,12 @@ public class SupplierProductPictureService {
 				HubSpuPendingPicDto updateDto = new HubSpuPendingPicDto();
 				updateDto.setSpuPendingPicId(spuPendingPicId);
 				try {
-					String base64 = new BASE64Encoder().encode(IOUtils.toByteArray(new URL(picUrl)));
+					URL url = new URL(picUrl);
+					URLConnection openConnection = url.openConnection();
+					openConnection.setConnectTimeout(TIMEOUT);
+					openConnection.setReadTimeout(TIMEOUT);
+					InputStream inputStream = openConnection.getInputStream();
+					String base64 = new BASE64Encoder().encode(IOUtils.toByteArray(inputStream));
 					UploadPicDto uploadPicDto = new UploadPicDto();
 					uploadPicDto.setBase64(base64);
 					uploadPicDto.setExtension(getExtension(picUrl));
@@ -51,7 +59,7 @@ public class SupplierProductPictureService {
 					updateDto.setSpPicUrl(spPicUrl);
 					updateDto.setPicHandleState(PicHandleState.HANDLED.getIndex());
 					updateDto.setMemo("图片拉取成功");
-				} catch (IOException e) {
+				} catch (Throwable e) {
 					log.error("系统拉取图片时发生异常",e);
 					e.printStackTrace();
 					updateDto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());

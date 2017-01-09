@@ -2,8 +2,6 @@ package com.shangpin.supplier.product.consumer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 /**
@@ -13,7 +11,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
  * @author yanxiaobin
  * @date 2016年12月12日 下午7:23:28
  */
-@SpringBootApplication(exclude = {RedisAutoConfiguration.class,RedisRepositoriesAutoConfiguration.class})
+@SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients("com.shangpin.ephub")
 public class SupplierProductConsumerServiceApplication {

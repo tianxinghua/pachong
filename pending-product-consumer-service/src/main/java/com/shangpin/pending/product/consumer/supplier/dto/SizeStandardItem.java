@@ -8,13 +8,13 @@ public class SizeStandardItem {
 	@JsonIgnore
 	public int sortIndex;
 	@JsonIgnore
-    public String sizeStandardValue;
+    public String sizeStandardValue; //尺码值
 	@JsonIgnore
     public long sizeStandardValueId;
 	@JsonIgnore
     public long sizeStandardId;
 	@JsonIgnore
-    public String sizeStandardName;
+    public String sizeStandardName;// 国家名称
 	@JsonIgnore
     public byte isScreening;
 	@JsonIgnore
