@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
@@ -77,10 +78,14 @@ public class PendingSpuImportService {
 	
 	public void handMessage(ProductImportTask task) throws Exception {
 
+		JSONObject json = JSONObject.parseObject(task.getData());
+		String filePath = json.get("taskFtpFilePath").toString();
+		task.setData(filePath);
+		
 		InputStream in = taskService.downFileFromFtp(task);
 		// 2、从ftp下载文件并校验模板
 		List<HubPendingSpuImportDTO> listHubProduct = null;
-		String fileFormat = task.getTaskFtpFilePath().split("\\.")[1];
+		String fileFormat =filePath.split("\\.")[1];
 		if ("xls".equals(fileFormat)) {
 			listHubProduct = handlePendingSpuXls(in, task, "spu");
 		} else if ("xlsx".equals(fileFormat)) {

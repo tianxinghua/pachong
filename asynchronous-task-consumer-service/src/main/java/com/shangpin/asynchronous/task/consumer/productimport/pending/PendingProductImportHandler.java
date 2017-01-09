@@ -46,18 +46,15 @@ public class PendingProductImportHandler {
 			taskService.updateHubSpuImportByTaskNo(TaskState.HANDLEING.getIndex(), message.getTaskNo(), null,null);
 			log.info("任务编号：" + message.getTaskNo() + "状态更新为正在处理");
 			
-			String index = String.valueOf(TaskImportTpye.PENDING_SKU.getIndex());
-			if(headers.get(index)!=null){
+			if(TaskImportTpye.PENDING_SKU.getDescription().equals(message.getType())){
 				PendingSkuImportService.handMessage(message);
-			}else{
+			}else if(TaskImportTpye.PENDING_SPU.getDescription().equals(message.getType())){
 				PendingSpuImportService.handMessage(message);
 			}
 			log.info("pending任务编号："+message.getTaskNo()+"处理结束，耗时："+(System.currentTimeMillis()-start));
-
 		} catch (Exception e) {
 			taskService.updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), message.getTaskNo(), "处理任务时发生异常："+e.getMessage(),null);
 			log.error("pending任务编号："+message.getTaskNo()+"处理时发生异常",e);
-			e.printStackTrace();
 		}
 	}
 

@@ -471,7 +471,7 @@ public class PendingHandler {
 
             if(categoryMappingMap.containsKey(spu.getHubCategoryNo().trim()+"_"+spu.getHubGender().trim())){
                 //包含时转化赋值
-                categoryAndStatus = categoryMappingMap.get(spu.getHubCategoryNo().trim()+"_"+spu.getHubGender().trim());
+                categoryAndStatus = categoryMappingMap.get(spu.getHubCategoryNo().trim().toUpperCase()+"_"+spu.getHubGender().trim().toUpperCase());
                 if(categoryAndStatus.contains("_")){
                     hubSpuPending.setHubCategoryNo(categoryAndStatus.substring(0,categoryAndStatus.indexOf("_")));
                     mapStatus = Integer.valueOf(categoryAndStatus.substring(categoryAndStatus.indexOf("_")+1));
@@ -724,16 +724,14 @@ public class PendingHandler {
         hubSkuPending.setFilterFlag(filterFlag);
         hubSkuPending.setSpuPendingId(hubSpuPending.getSpuPendingId());
         hubSkuPending.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
-
+        //尺码映射
         Map<String,String> sizeMap=dataSverviceUtil.getSupplierSizeMapping(hubSpuPending.getSupplierId());
         if(sizeMap.containsKey(supplierSku.getHubSkuSize())){
             hubSkuPending.setHubSkuSize(sizeMap.get(supplierSku.getHubSkuSize()));
+        }else{
+            hubSkuPending.setHubSkuSize(dataSverviceUtil.sizeCommonReplace(supplierSku.getHubSkuSize()));
         }
-
-
         String hubSize=this.getHubSize(hubSpuPending.getHubCategoryNo(),hubSpuPending.getHubBrandNo(),supplierSku.getSupplierId(),hubSkuPending.getHubSkuSize());
-
-
         if(hubSpuPending.getSpuState().intValue()==SpuStatus.SPU_HANDLED.getIndex()){//hubspu 已经存在了
             //查询HUBSKU
 
@@ -750,9 +748,6 @@ public class PendingHandler {
                     dataServiceHandler.savePendingSku(hubSkuPending);
                     //保存对应关系
                     dataServiceHandler.saveSkuSupplierMapping(hubSpuPending,hubSkuPending,supplierSpu,supplierSku);
-
-
-
                 }else{ //不存在 创建hubsku 并创建 对应关系
 
                     dataServiceHandler.savePendingSku(hubSkuPending);
@@ -870,8 +865,10 @@ public class PendingHandler {
             for(HubSupplierCategroyDicDto dto:hubSupplierCategroyDicDtos){
                 // map 的key 供货商的品类 + "_"+供货商的性别 ，value ： 尚品的品类 + "_"+ 匹配状态 (1 :匹配到4级  2：可以匹配但未匹配到4级）
 //                if(hubGenderMap.containsKey(dto.getGenderDicId())){
+                if(StringUtils.isBlank(dto.getSupplierCategory()))  continue;
+                if(StringUtils.isBlank(dto.getSupplierGender()))  continue;
                 spCategory = (null==dto.getHubCategoryNo()?"":dto.getHubCategoryNo());
-                    categoryMap.put(dto.getSupplierCategory()+"_"+dto.getSupplierGender(),spCategory+"_"+dto.getMappingState());
+                    categoryMap.put(dto.getSupplierCategory().trim().toUpperCase()+"_"+dto.getSupplierGender().trim().toUpperCase(),spCategory+"_"+dto.getMappingState());
 //                }
             }
             supplierCategoryMappingStaticMap.put(supplierId,categoryMap);
