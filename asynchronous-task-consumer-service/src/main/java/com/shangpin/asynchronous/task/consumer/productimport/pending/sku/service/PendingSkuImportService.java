@@ -19,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
@@ -88,10 +89,13 @@ public class PendingSkuImportService {
 	public void handMessage(ProductImportTask task) throws Exception {
 		
 		//ftp下载文件
-		InputStream in = taskService.downFileFromFtp(task);
+		JSONObject json = JSONObject.parseObject(task.getData());
+		String filePath = json.get("taskFtpFilePath").toString();
+		task.setData(filePath);
 		
+		InputStream in = taskService.downFileFromFtp(task);
 		List<HubPendingProductImportDTO> listHubProduct = null;
-		String fileFormat = task.getTaskFtpFilePath().split("\\.")[1];
+		String fileFormat = filePath.split("\\.")[1];
 		if ("xls".equals(fileFormat)) {
 			listHubProduct = handleHubXlsExcel(in, task, "sku");
 		} else if ("xlsx".equals(fileFormat)) {
@@ -135,7 +139,7 @@ public class PendingSkuImportService {
 		HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
 		Long spuPendingId = null; 
 		taskService.checkPendingSpu(hubPendingSpuDto,map,spuPendingId,isPassing,isSaveHub,hubSpuId);
-		
+		log.info("返回的spuPendingId:"+spuPendingId);
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
 		HubPendingSkuDto.setSpuPendingId(spuPendingId);

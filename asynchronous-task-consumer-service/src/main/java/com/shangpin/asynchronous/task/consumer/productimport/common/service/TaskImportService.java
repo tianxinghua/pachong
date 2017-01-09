@@ -137,13 +137,13 @@ public class TaskImportService {
 		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(in);
 		XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
 		if (xssfSheet.getRow(0) == null) {
-			log.info("任务编号：" + task.getTaskNo() + "," + task.getTaskFtpFilePath() + "下载的excel数据为空");
+			log.info("任务编号：" + task.getTaskNo() + "," + task.getData() + "下载的excel数据为空");
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "下载的excel数据为空", null);
 			return null;
 		}
 		boolean flag = checkXlsxFileTemplet(xssfSheet.getRow(0), type);
 		if (!flag) {
-			log.info("任务编号：" + task.getTaskNo() + "," + task.getTaskFtpFilePath() + "上传文件与模板不一致");
+			log.info("任务编号：" + task.getTaskNo() + "," + task.getData() + "上传文件与模板不一致");
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "上传文件与模板不一致", null);
 			return null;
 		}
@@ -155,13 +155,13 @@ public class TaskImportService {
 		HSSFWorkbook xssfWorkbook = new HSSFWorkbook(in);
 		HSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
 		if (xssfSheet.getRow(0) == null) {
-			log.info("任务编号：" + task.getTaskNo() + "," + task.getTaskFtpFilePath() + "下载的excel数据为空");
+			log.info("任务编号：" + task.getTaskNo() + "," + task.getData() + "下载的excel数据为空");
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "下载的excel数据为空", null);
 			return null;
 		}
 		boolean flag = checkXlsFileTemplet(xssfSheet.getRow(0), type);
 		if (!flag) {
-			log.info("任务编号：" + task.getTaskNo() + "," + task.getTaskFtpFilePath() + "上传文件与模板不一致");
+			log.info("任务编号：" + task.getTaskNo() + "," + task.getData() + "上传文件与模板不一致");
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "上传文件与模板不一致", null);
 			return null;
 		}
@@ -248,9 +248,9 @@ public class TaskImportService {
 	}
 
 	public InputStream downFileFromFtp(ProductImportTask task) throws Exception {
-		InputStream in = FTPClientUtil.downFile(task.getTaskFtpFilePath());
+		InputStream in = FTPClientUtil.downFile(task.getData());
 		if (in == null) {
-			log.info("任务编号：" + task.getTaskNo() + "," + task.getTaskFtpFilePath() + "从ftp下载失败数据为空");
+			log.info("任务编号：" + task.getTaskNo() + "," + task.getData() + "从ftp下载失败数据为空");
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "从ftp下载失败", null);
 			return null;
 		}
@@ -269,6 +269,7 @@ public class TaskImportService {
 				log.info(hubPendingSpuDto.getSupplierSpuNo() + "spu状态为已处理，不再操作");
 				map.put("taskState", "校验通过");
 				map.put("processInfo", "spu状态为已处理，不再操作");
+				pendingSpuId = listSpu.get(0).getSpuPendingId();
 				isSaveHub = false;
 				isPassing = true;
 				return;
@@ -368,6 +369,7 @@ public class TaskImportService {
 			hubPendingSpuDto.setSpuSeasonState((byte) 1);
 			hubPendingSpuDto.setUpdateTime(new Date());
 			pengingSpuId = hubSpuPendingGateWay.insert(hubPendingSpuDto);
+			log.info("插入pengingSpuId:"+pengingSpuId);
 		}
 		return pengingSpuId;
 	}
