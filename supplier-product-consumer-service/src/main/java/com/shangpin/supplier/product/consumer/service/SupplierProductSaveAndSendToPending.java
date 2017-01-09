@@ -176,6 +176,28 @@ public class SupplierProductSaveAndSendToPending {
 		boolean result = pendingProductStreamSender.tonyPendingProductStream(pendingProduct, headers);
 		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}
+	/**
+	 * coltorti供应商保存数据以及发送消息给Pending
+	 * @param supplierNo
+	 * @param supplierId
+	 * @param supplierName
+	 * @param hubSpu
+	 * @param hubSkus
+	 * @throws EpHubSupplierProductConsumerException
+	 */
+	public void coltortiSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
+		/**
+		 * 消息体
+		 */
+		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
+		/**
+		 * 消息头
+		 */
+		Map<String,String> headers = new HashMap<String,String>();	
+		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
+		boolean result = pendingProductStreamSender.coltortiPendingProductStream(pendingProduct, headers);
+		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
+	}
 	
 	
 	
