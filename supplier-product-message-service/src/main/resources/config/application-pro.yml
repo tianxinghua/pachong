@@ -1,11 +1,10 @@
-server.port: 8000
-spring:
+spring: 
   rabbitmq: 
            host: 192.168.20.175
            port: 5672
-           username: scm-message-service
-           password: scm-message-service
-           virtual-host: /scm-message-service
+           username: ephub-message-service-qa
+           password: ephub-message-service-qa
+           virtual-host: /ephub-message-service-qa
   cloud: 
         stream: 
               bindings: 
@@ -32,7 +31,142 @@ spring:
                               content-type: application/json
                         biondioniOriginalProduct: 
                               destination: biondioni.original.product
-                              content-type: application/json                                                                                                                                                                                                              
+                              content-type: application/json
+                        pozzileiOriginalProduct: 
+                              destination: pozzilei.original.product
+                              content-type: application/json
+                        pozzileiarteOriginalProduct: 
+                              destination: pozzileiarte.original.product
+                              content-type: application/json
+                        pozzileiforteOriginalProduct: 
+                              destination: pozzileiforte.original.product
+                              content-type: application/json
+                        carofiglioOriginalProduct: 
+                              destination: carofiglio.original.product
+                              content-type: application/json
+                        genteromaOriginalProduct: 
+                              destination: genteroma.original.product
+                              content-type: application/json
+                        danielloOriginalProduct: 
+                              destination: daniello.original.product
+                              content-type: application/json
+                        italianiOriginalProduct: 
+                              destination: italiani.original.product
+                              content-type: application/json
+                        tufanoOriginalProduct: 
+                              destination: tufano.original.product
+                              content-type: application/json
+                        monnierfreresOriginalProduct: 
+                              destination: monnierfreres.original.product
+                              content-type: application/json
+                        eleonorabonucciOriginalProduct: 
+                              destination: eleonorabonucci.original.product
+                              content-type: application/json
+                        russocapriOriginalProduct: 
+                              destination: russocapri.original.product
+                              content-type: application/json
+                        giglioOriginalProduct: 
+                              destination: giglio.original.product
+                              content-type: application/json
+                        divoOriginalProduct: 
+                              destination: divo.original.product
+                              content-type: application/json
+                        biondiniOriginalProduct: 
+                              destination: biondini.original.product
+                              content-type: application/json
+                        dellogliostoreOriginalProduct: 
+                              destination: dellogliostore.original.product
+                              content-type: application/json
+                        francescomassaOriginalProduct: 
+                              destination: francescomassa.original.product
+                              content-type: application/json
+                        tessabitOriginalProduct: 
+                              destination: tessabit.original.product
+                              content-type: application/json
+                        alducadaostaOriginalProduct: 
+                              destination: alducadaosta.original.product
+                              content-type: application/json
+                        sanremoOriginalProduct: 
+                              destination: sanremo.original.product
+                              content-type: application/json
+                        paolofiorilloOriginalProduct: 
+                              destination: paolofiorillo.original.product
+                              content-type: application/json
+                        viettiOriginalProduct: 
+                              destination: vietti.original.product
+                              content-type: application/json
+                        anielloOriginalProduct: 
+                              destination: aniello.original.product
+                              content-type: application/json
+                        lindelepalaisOriginalProduct: 
+                              destination: lindelepalais.original.product
+                              content-type: application/json
+                        pritelliOriginalProduct: 
+                              destination: pritelli.original.product
+                              content-type: application/json
+                        piccadillyOriginalProduct: 
+                              destination: piccadilly.original.product
+                              content-type: application/json
+                        velaOriginalProduct: 
+                              destination: vela.original.product
+                              content-type: application/json
+                        montiOriginalProduct: 
+                              destination: monti.original.product
+                              content-type: application/json
+                        creative99OriginalProduct: 
+                              destination: creative99.original.product
+                              content-type: application/json
+                        leamOriginalProduct: 
+                              destination: leam.original.product
+                              content-type: application/json
+                        bagheeraOriginalProduct: 
+                              destination: bagheera.original.product
+                              content-type: application/json
+                        papiniOriginalProduct: 
+                              destination: papini.original.product
+                              content-type: application/json
+                        zitafabianiOriginalProduct: 
+                              destination: zitafabiani.original.product
+                              content-type: application/json
+                        wiseOriginalProduct: 
+                              destination: wise.original.product
+                              content-type: application/json
+                        basebluOriginalProduct: 
+                              destination: baseblu.original.product
+                              content-type: application/json
+                        raffaellonetworkOriginalProduct: 
+                              destination: raffaellonetwork.original.product
+                              content-type: application/json
+                        frmodaOriginalProduct: 
+                              destination: frmoda.original.product
+                              content-type: application/json
+                        studio69OriginalProduct: 
+                              destination: studio69.original.product
+                              content-type: application/json
+                        delibertiOriginalProduct: 
+                              destination: deliberti.original.product
+                              content-type: application/json
+                        smetsOriginalProduct: 
+                              destination: smets.original.product
+                              content-type: application/json
+                        sarenzaOriginalProduct: 
+                              destination: sarenza.original.product
+                              content-type: application/json
+                        soleplacenewOriginalProduct: 
+                              destination: soleplacenew.original.product
+                              content-type: application/json
+                        honestdousaOriginalProduct: 
+                              destination: honestdousa.original.product
+                              content-type: application/json
+                        opticalOriginalProduct: 
+                              destination: optical.original.product
+                              content-type: application/json
+                        tizianafaustiOriginalProduct: 
+                              destination: tizianafausti.original.product
+                              content-type: application/json
+                        theclutcherOriginalProduct: 
+                              destination: theclutcher.original.product
+                              content-type: application/json                                                                                                                                                                                                                                            
               rabbit: 
                       bindings: 
                             spinnakerOriginalProduct: 
@@ -58,7 +192,142 @@ spring:
                                            prefix: HA. 
                             biondioniOriginalProduct: 
                                   producer: 
-                                           prefix: HA.                                                                                                                                                                                                                                                                                
+                                           prefix: HA.
+                            pozzileiOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            pozzileiarteOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            pozzileiforteOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            carofiglioOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            genteromaOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            danielloOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            italianiOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            tufanoOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            monnierfreresOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            eleonorabonucciOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            russocapriOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            giglioOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            divoOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            biondiniOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            dellogliostoreOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            francescomassaOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            tessabitOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            alducadaostaOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            sanremoOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            paolofiorilloOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            viettiOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            anielloOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            lindelepalaisOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            pritelliOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            piccadillyOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            velaOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            montiOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            creative99OriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            leamOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            bagheeraOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            papiniOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            zitafabianiOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            wiseOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            basebluOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            raffaellonetworkOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            frmodaOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            studio69OriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            delibertiOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            smetsOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            sarenzaOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            soleplacenewOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            honestdousaOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            opticalOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            tizianafaustiOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            theclutcherOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.                                                                                                                                                                                                                                                                                                                           
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
