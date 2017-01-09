@@ -296,6 +296,7 @@ public class DataServiceHandler {
 
     public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierId(String supplierId){
         HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
+        criteria.setPageNo(1);
         criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
         HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
         criterion.andSupplierIdEqualTo(supplierId).andPushStateEqualTo(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
