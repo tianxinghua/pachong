@@ -55,4 +55,7 @@ public interface HubSpuPendingGateWay {
 	
 	@RequestMapping(value = "/hub-spu-pending/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody HubSpuPendingDto hubSpuPending);
+
+    @RequestMapping(value = "/hub-spu-pending/count-distinct-brandno-and-spumodel-by-criteria", method = RequestMethod.POST,consumes = "application/json")
+    public int countDistinctBrandNoAndSpuModelByCriteria(@RequestBody HubSpuPendingCriteriaDto criteria);
 }

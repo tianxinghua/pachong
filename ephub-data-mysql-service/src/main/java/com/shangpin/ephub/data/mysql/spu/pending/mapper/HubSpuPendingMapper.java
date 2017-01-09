@@ -39,4 +39,8 @@ public interface HubSpuPendingMapper {
     int updateByPrimaryKeySelective(HubSpuPending record);
 
     int updateByPrimaryKey(HubSpuPending record);
+
+
+    // 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方
+    int countDistinctBrandNoAndSpuModelByExample(HubSpuPendingCriteria example);
 }

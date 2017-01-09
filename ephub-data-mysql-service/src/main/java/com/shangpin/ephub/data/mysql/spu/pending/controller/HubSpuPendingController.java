@@ -76,4 +76,10 @@ public class HubSpuPendingController {
     public int updateByPrimaryKey(@RequestBody HubSpuPending hubSpuPending){
     	return hubSpuPendingService.updateByPrimaryKey(hubSpuPending);
     }
+
+
+	@RequestMapping(value = "/count-distinct-brandno-and-spumodel-by-criteria")
+	public int countDistinctBrandNoAndSpuModelByCriteria(@RequestBody HubSpuPendingCriteria criteria){
+		return hubSpuPendingService.countDistinctBrandNoAndSpuModelByCriteria(criteria);
+	}
 }

@@ -685,4 +685,12 @@
     </if>
   </select>
 
+
+  <!-- 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方 -->
+  <select id="countDistinctBrandNoAndSpuModelByExample" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPendingCriteria" resultType="java.lang.Integer" >
+    select count(distinct spu_model,hub_brand_no) from hub_spu_pending
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
 </mapper>
