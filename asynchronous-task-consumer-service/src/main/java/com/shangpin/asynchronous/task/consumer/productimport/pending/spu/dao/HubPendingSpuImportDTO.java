@@ -19,14 +19,15 @@ import lombok.ToString;
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubPendingSpuImportDTO {
+	private String spPicUrl;
 	private String supplierId;
 	private String supplierNo;
 	private String supplierName;
 	private String supplierSpuNo;
-	private String categoryName;
+	private String hubCategoryName;
 	private String hubCategoryNo;
 	private String hubBrandNo;
-	private String brandName;
+	private String hubBrandName;
 	private String spuModel;
 	private String seasonYear;
 	private String seasonName;
@@ -36,10 +37,6 @@ public class HubPendingSpuImportDTO {
 	private String hubMaterial;
 	private String hubOrigin;
 	private String spuDesc;
-	public String[] getPendingSpuTemplate() {
-		String [] temp = {"supplierId","supplierNo","supplierName","supplierSpuNo","categoryName","hubCategoryNo","hubBrandNo","brandName","spuModel","seasonYear","seasonName","hubGender",
-				"spuName","hubColor","hubMaterial","hubOrigin","spuDesc"};
-		return temp;
-	}
-
+	private String memo;
+	private String spuState;
 }

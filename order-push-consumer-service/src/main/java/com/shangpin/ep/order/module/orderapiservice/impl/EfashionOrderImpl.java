@@ -89,6 +89,7 @@ public class EfashionOrderImpl  implements IOrderService {
 		try{
 			String rtnData= null;
 			rtnData = efashionPushOrder(orderDTO,placeUrl,json);
+//			rtnData = efashionPushOrder(orderDTO,"http://geb-production.edstema.it/api/v3.0/place/order.json?storeCode=DW3LT",json);
 			orderDTO.setLogContent("confirm返回的结果=" + rtnData+",推送的参数="+json);
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			
@@ -244,13 +245,15 @@ public class EfashionOrderImpl  implements IOrderService {
 				size = null;
 			}
 			item.setSize(size);
-			BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
-			String price = priceInt.divide(new BigDecimal(1.05), 2)
-					.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-			orderDTO.setPurchasePriceDetail(price);
-			item.setPurchase_price(price);
+//			item.setPurchase_price(orderDTO.getPurchasePriceDetail());
 			if(flag){
 				item.setPurchase_price("1");
+			}else{
+				BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+				String price = priceInt.divide(new BigDecimal(1.05), 2)
+						.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+				orderDTO.setPurchasePriceDetail(price);
+				item.setPurchase_price(price);
 			}
 			Item[] i = { item };
 			obj.setItems(i);
@@ -313,16 +316,16 @@ public class EfashionOrderImpl  implements IOrderService {
 	public static void main(String[] args) {
 		EfashionOrderImpl ompl = new EfashionOrderImpl();
 //		ReturnOrderDTO orderDTO = new ReturnOrderDTO();
-		String d = "580a5c94b55c3db5aa59a06d-38:1";
+		String d = "57fdf307b55c3db5aa5986aa-39:1";
 //		orderDTO.setDetail(d);
 //		orderDTO.setSpOrderId("201609134249189");
 //		orderDTO.setCreateTime(new Date());
 		
 		OrderDTO orderDTO1 = new OrderDTO();
 		orderDTO1.setDetail(d);
-		orderDTO1.setSpOrderId("201612085111311");
+		orderDTO1.setSpOrderId("201701085193725");
 		orderDTO1.setCreateTime(new Date());
-		orderDTO1.setPurchasePriceDetail("1");
+		orderDTO1.setPurchasePriceDetail("110.45");
 		
 //		ompl.handleRefundlOrder(orderDTO);//(orderDTO);
 		ompl.handleConfirmOrder(orderDTO1);//(orderDTO);

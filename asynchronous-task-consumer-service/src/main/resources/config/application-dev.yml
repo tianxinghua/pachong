@@ -8,7 +8,7 @@ spring:
            virtual-host: /scm-message-service
   cloud: 
         consul: 
-          host: 192.168.20.110
+          host: 192.168.20.235
           port: 8500
           discovery: 
             instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
@@ -49,6 +49,7 @@ spring:
        password: shangpin@123
        ftpHubPath: hub/
        ftpPendingPath: pending/
+       localResultPath: /usr/local/share/applications/asynchronous-task-consumer-service/ftp/
   mail: 
        default-recipient: yan_xiao_bin@126.com
        default-sender: yanxiaobin@shangpin.com

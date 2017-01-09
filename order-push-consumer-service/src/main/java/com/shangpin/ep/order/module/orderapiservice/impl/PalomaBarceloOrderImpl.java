@@ -12,6 +12,7 @@ import com.shangpin.ep.order.enumeration.OrderStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.order.bean.ReturnOrderDTO;
+import com.shangpin.ep.order.module.order.service.impl.OpenApiService;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Item;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.RequestObject;
@@ -50,13 +51,18 @@ public class PalomaBarceloOrderImpl  implements IOrderService {
     SupplierProperties supplierProperties;
     @Autowired
     HandleException handleException;  
+    @Autowired
+    OpenApiService openApiService; 
     private  String cancelUrl;
     private  String placeUrl;
-    
+    private  String appKey;
+    private  String appSe;
     @PostConstruct
     public void init(){
     	cancelUrl = supplierProperties.getPalomaBarceloConf().getCancelUrl();
     	placeUrl =  supplierProperties.getPalomaBarceloConf().getPlaceUrl();
+    	appKey =  supplierProperties.getPalomaBarceloConf().getOpenApiKey();
+    	appSe =  supplierProperties.getPalomaBarceloConf().getOpenApiSecret();
     }
 	/**
 	 * 锁库存
@@ -237,7 +243,16 @@ public class PalomaBarceloOrderImpl  implements IOrderService {
 				size = null;
 			}
 			item.setSize(size);
-			item.setPurchase_price(orderDTO.getPurchasePriceDetail());
+//			item.setPurchase_price(orderDTO.getPurchasePriceDetail());
+			if(flag){
+				item.setPurchase_price("1");
+			}else{
+				BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+				String price = priceInt.divide(new BigDecimal(1.05), 2)
+						.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+				orderDTO.setPurchasePriceDetail(price);
+				item.setPurchase_price(price);
+			}
 			Item[] i = { item };
 			obj.setItems(i);
 			
