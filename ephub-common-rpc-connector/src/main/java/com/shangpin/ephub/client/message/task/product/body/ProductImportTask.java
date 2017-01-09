@@ -30,13 +30,20 @@ public class ProductImportTask {
 	 * 消息发送时间
 	 */
 	private String messageDate;
+	
+	/**
+	 * 任务类型  =0 无类型  =1 pending-spu =2 pending-sku 导入处理   =3 hub导入处理  =4导出
+	 */
+	private String type;
+	
     /**
      * 任务编号
      */
 	private String taskNo;
-    /**
-     * 文件存储路径
-     */	
-	private String taskFtpFilePath;
+	
+	/**
+	 * json格式的数据
+	 */
+	private String data;
 
 }

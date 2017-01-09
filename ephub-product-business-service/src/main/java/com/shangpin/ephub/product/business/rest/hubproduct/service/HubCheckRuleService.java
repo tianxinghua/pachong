@@ -103,32 +103,31 @@ public class HubCheckRuleService {
 			str.append("性别为空，");
 			result.setPassing(false);
 		}
-		
-		//货号
-		BrandModelDto BrandModelDto = null;
-		BrandModelResult brandModelResult= null;
-		if(hubProduct.getSpuModel()!=null){
-			BrandModelDto = new BrandModelDto();
-			BrandModelDto.setBrandMode(hubProduct.getSpuModel());
-			BrandModelDto.setHubBrandNo(hubProduct.getBrandNo());
-			BrandModelDto.setHubCategoryNo(hubProduct.getCategoryNo());
-			brandModelResult=  hubBrandModelRuleGateWay.verify(BrandModelDto);
-		}else{
-			str.append("spuModel为空");
-			result.setPassing(false);
-		}
-			
-		if(brandModelResult.isPassing()){
-			if(result.isPassing()){
-				result.setResult(brandModelResult.getBrandMode());
-			}else{
-				result.setResult(str.toString());
-			}
-		}else{
-			str.append("spuModel："+hubProduct.getSpuModel()+"校验失败,校验结果："+brandModelResult.getBrandMode());
-			result.setPassing(false);
-			result.setResult(str.toString());
-		}
+//		//货号
+//		BrandModelDto BrandModelDto = null;
+//		BrandModelResult brandModelResult= null;
+//		if(hubProduct.getSpuModel()!=null){
+//			BrandModelDto = new BrandModelDto();
+//			BrandModelDto.setBrandMode(hubProduct.getSpuModel());
+//			BrandModelDto.setHubBrandNo(hubProduct.getBrandNo());
+//			BrandModelDto.setHubCategoryNo(hubProduct.getCategoryNo());
+//			brandModelResult=  hubBrandModelRuleGateWay.verify(BrandModelDto);
+//		}else{
+//			str.append("spuModel为空");
+//			result.setPassing(false);
+//		}
+//			
+//		if(brandModelResult.isPassing()){
+//			if(result.isPassing()){
+//				result.setResult(brandModelResult.getBrandMode());
+//			}else{
+//				result.setResult(str.toString());
+//			}
+//		}else{
+//			str.append("spuModel："+hubProduct.getSpuModel()+"校验失败,校验结果："+brandModelResult.getBrandMode());
+//			result.setPassing(false);
+//			result.setResult(str.toString());
+//		}
 		
 		//校验产地
 		return result;

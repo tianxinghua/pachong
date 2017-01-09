@@ -18,7 +18,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+//import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.util.StringUtils;
 
@@ -50,7 +50,7 @@ public class ExportExcelUtils {
 				ImageIO.write(bufferImg, "jpg", byteArrayOut);
 				HSSFPatriarch patriarch = row.getSheet().createDrawingPatriarch();
 				HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 500, 255,startColumn, row.getRowNum(), startColumn, row.getRowNum());
-				anchor.setAnchorType(AnchorType.MOVE_AND_RESIZE);
+//				anchor.setAnchorType(AnchorType.MOVE_AND_RESIZE);
 				patriarch.createPicture(anchor, row.getSheet().getWorkbook().addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
 			}else{
 				row.createCell(startColumn).setCellValue("无图片");
@@ -79,7 +79,7 @@ public class ExportExcelUtils {
 	        style.setBorderLeft(HSSFCellStyle.BORDER_THIN);  
 	        style.setBorderRight(HSSFCellStyle.BORDER_THIN);  
 	        style.setBorderTop(HSSFCellStyle.BORDER_THIN);  
-	        style.setAlignment(HorizontalAlignment.CENTER);  
+//	        style.setAlignment(HorizontalAlignment.CENTER);  
 	        // 生成一个字体  
 	        HSSFFont font = workbook.createFont();  
 	        font.setColor(HSSFColor.VIOLET.index);  

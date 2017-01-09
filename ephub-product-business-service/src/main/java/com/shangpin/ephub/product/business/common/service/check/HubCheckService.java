@@ -63,7 +63,7 @@ public class HubCheckService {
 		//校验品牌
 		if(hubProduct.getHubBrandNo()!=null){
 			if(!checkHubBrand(hubProduct.getHubBrandNo())){
-				str.append("品牌编号不存在，") ;
+				str.append("品牌编号:"+hubProduct.getHubBrandNo()+"不存在,") ;
 				result.setPassing(false);
 			}	
 		}else{
@@ -74,7 +74,7 @@ public class HubCheckService {
 		//校验品类
 		if(hubProduct.getHubCategoryNo()!=null){
 			if(!checkHubCategory(hubProduct.getHubCategoryNo())){
-				str.append("品类编号有误") ;
+				str.append("品类编号"+hubProduct.getHubCategoryNo()+"不存在,") ;
 				result.setPassing(false);
 			}	
 		}else{
@@ -85,7 +85,7 @@ public class HubCheckService {
 		//校验颜色
 		if(hubProduct.getHubColor()!=null){
 			if(!checkHubColor(hubProduct.getHubColor())){	
-				str.append("颜色编号有误") ;
+				str.append("颜色编号"+hubProduct.getHubColor()+"不存在,") ;
 				result.setPassing(false);
 			}
 		}else{
@@ -96,7 +96,7 @@ public class HubCheckService {
 		//校验季节
 		if(hubProduct.getHubSeason()!=null){
 			if(!checkHubSeason(hubProduct.getHubSeason())){
-				str.append("季节编号有误") ;
+				str.append("季节编号"+hubProduct.getHubSeason()+"不存在,") ;
 				result.setPassing(false);
 			}
 		}else{
@@ -107,38 +107,12 @@ public class HubCheckService {
 		//校验性别
 		if(hubProduct.getHubGender()!=null){
 			if(!checkHubGender(hubProduct.getHubGender())){
-				str.append("性别编号有误") ;
+				str.append("性别编号"+hubProduct.getHubGender()+"不存在") ;
 				result.setPassing(false);
 			}	
 		}else{
 			str.append("性别为空，");
 			result.setPassing(false);
-		}
-		
-		//货号
-		BrandModelDto BrandModelDto = null;
-		BrandModelResult brandModelResult= null;
-		if(hubProduct.getSpuModel()!=null){
-			BrandModelDto = new BrandModelDto();
-			BrandModelDto.setBrandMode(hubProduct.getSpuModel());
-			BrandModelDto.setHubBrandNo(hubProduct.getHubBrandNo());
-			BrandModelDto.setHubCategoryNo(hubProduct.getHubCategoryNo());
-			brandModelResult=  hubBrandModelRuleGateWay.verify(BrandModelDto);
-		}else{
-			str.append("spuModel为空");
-			result.setPassing(false);
-		}
-			
-		if(brandModelResult.isPassing()){
-			if(result.isPassing()){
-				result.setResult(brandModelResult.getBrandMode());
-			}else{
-				result.setResult(str.toString());
-			}
-		}else{
-			str.append("spuModel："+hubProduct.getSpuModel()+"校验失败,校验结果："+brandModelResult.getBrandMode());
-			result.setPassing(false);
-			result.setResult(str.toString());
 		}
 		
 		//校验产地

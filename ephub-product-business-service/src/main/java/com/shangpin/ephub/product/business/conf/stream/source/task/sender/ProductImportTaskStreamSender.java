@@ -36,4 +36,13 @@ public class ProductImportTaskStreamSender {
     public boolean hubProductImportTaskStream(ProductImportTask productImportTask, Map<String, ?> headers) {
 		return productImportTaskSource.hubProductImportTask().send(MessageBuilder.withPayload(productImportTask).copyHeaders(headers).build());
     }
+    
+    /**
+	 * 待处理商品导入任务数据流发送
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+    public boolean productExportTaskStream(ProductImportTask productImportTask, Map<String, ?> headers) {
+		return productImportTaskSource.productExportTask().send(MessageBuilder.withPayload(productImportTask).copyHeaders(headers).build());
+    }
 }
