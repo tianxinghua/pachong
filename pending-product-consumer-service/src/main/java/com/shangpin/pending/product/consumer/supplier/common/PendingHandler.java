@@ -711,6 +711,12 @@ public class PendingHandler {
         //公共属性
         HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
         BeanUtils.copyProperties(supplierSku,hubSkuPending);
+        //baracode  需要特殊处理
+
+        if(StringUtils.isBlank(hubSkuPending.getSupplierBarcode())){
+            hubSkuPending.setSupplierBarcode(supplierSku.getSupplierSkuNo());
+        }
+
         Date date = new Date();
         hubSkuPending.setCreateTime(date);
         hubSkuPending.setUpdateTime(date);

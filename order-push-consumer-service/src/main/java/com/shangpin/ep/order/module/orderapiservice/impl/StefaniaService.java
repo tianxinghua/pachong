@@ -71,9 +71,11 @@ public class StefaniaService implements IOrderService {
 		
 		try {
 			// TODO 支付逻辑
-			System.setProperty("javax.net.ssl.trustStore", supplierProperties.getStefania().getJssecacerts()+ File.separator+"jssecacerts");
+//			System.setProperty("javax.net.ssl.trustStore", supplierProperties.getStefania().getJssecacerts()+ File.separator+"jssecacerts");
 			
 			CreateOrder createOrder = new CreateOrder();
+//			createOrder.setAuthKey("270Api002#3gU8zXs");
+//			createOrder.setChannel("SHANGPIN");
 			createOrder.setAuthKey(supplierProperties.getStefania().getAuthKey());
 			createOrder.setChannel(supplierProperties.getStefania().getChannel());
 			createOrder.setCustomerID("");
@@ -89,6 +91,7 @@ public class StefaniaService implements IOrderService {
 			BigDecimal priceInt = openApiService.getPurchasePrice(supplierProperties.getStefania().getOpenApiKey(), supplierProperties.getStefania().getOpenApiSecret(), orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
 			BigDecimal price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP);
 			orderDTO.setPurchasePriceDetail(price.toString());
+//			detail.setPRICE(new BigDecimal(orderDTO.getPurchasePriceDetail()));
 			detail.setPRICE(price);
 			orderDetail[0] = detail;
 			arrayOfOrderDetail.setOrderDetail(orderDetail); 
@@ -150,9 +153,9 @@ public class StefaniaService implements IOrderService {
 		StefaniaService orderService = new StefaniaService();
 		OrderDTO orderDTO = new OrderDTO();
 		//CGD2016082400193 
-		orderDTO.setPurchaseNo("CGD2016082900003");
-		orderDTO.setDetail("I1W8182#F048700#I765######46:1,");
-		orderDTO.setPurchasePriceDetail("78.49");
+		orderDTO.setPurchaseNo("CGDF2017010829445");
+		orderDTO.setDetail("LW0S0A04#VNW#N91######35:1,");
+		orderDTO.setPurchasePriceDetail("242.21");
 		orderService.handleConfirmOrder(orderDTO); 
 	}
 

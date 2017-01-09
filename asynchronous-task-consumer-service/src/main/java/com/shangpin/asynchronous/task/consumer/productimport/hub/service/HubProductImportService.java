@@ -1,5 +1,6 @@
 package com.shangpin.asynchronous.task.consumer.productimport.hub.service;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,9 +31,7 @@ import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.product.business.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.client.product.business.hubproduct.gateway.HubProductCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubproduct.result.HubProductCheckResult;
-import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
-import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 
 /**
@@ -75,17 +74,12 @@ public class HubProductImportService {
 	// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
 	public void handMessage(ProductImportTask task) throws Exception {
 
-		// 1、更新任务表，把task_state更新成正在处理
-		taskService.updateHubSpuImportStatusByTaskNo(TaskState.HANDLEING.getIndex(), task.getTaskNo(), null);
-		
+		InputStream in = taskService.downFileFromFtp(task);
 		// 2、从ftp下载文件并校验模板，并校验
-		XSSFSheet xssfSheet = taskService.checkExcel(task.getTaskFtpFilePath(),task.getTaskNo(),"hub");
-		
+		XSSFSheet xssfSheet = taskService.checkXlsxExcel(in,task,"hub");
 		List<HubProductImportDTO> listHubProduct = excelToObject(xssfSheet);
-		
 		// 3、公共类校验hub数据并把校验结果写入excel
 		checkAndsaveHubProduct(task.getTaskNo(), listHubProduct);
-		
 	}
 
 	// 校验数据以及保存到hub表
@@ -95,7 +89,6 @@ public class HubProductImportService {
 			return;
 		}
 		//true全部校验成功，
-		boolean flag = false;
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 	
 		for (HubProductImportDTO product : listHubProduct) {
@@ -109,7 +102,6 @@ public class HubProductImportService {
 			//校验货号
 				Log.info("货号校验通过");
 				//校验hub	
-				
 				HubProductCheckResult hubProductCheckResult = HubProductCheckGateWay.checkProduct(hubProductDto);
 				if (hubProductCheckResult.isPassing() == true) {
 					Log.info("hub校验通过");
@@ -161,11 +153,10 @@ public class HubProductImportService {
 				} else {
 					map.put("taskState", "校验失败");
 					map.put("processInfo", hubProductCheckResult.getResult());
-					flag = false;
 				}
 			listMap.add(map);
 		}
-		taskService.convertExcel(listMap,taskNo,flag);
+		taskService.convertExcel(listMap,taskNo);
 	}
 
 	private List<HubSkuDto> findHubSkuDto(String hubSpuNo, String skuSize) {

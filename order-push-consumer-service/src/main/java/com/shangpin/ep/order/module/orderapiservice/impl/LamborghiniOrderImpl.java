@@ -1,22 +1,17 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
-import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.shangpin.ep.order.common.HandleException;
-import com.shangpin.ep.order.common.LogCommon;
-import com.shangpin.ep.order.conf.supplier.SupplierProperties;
-import com.shangpin.ep.order.enumeration.ErrorStatus;
-import com.shangpin.ep.order.enumeration.LogTypeStatus;
-import com.shangpin.ep.order.enumeration.OrderStatus;
-import com.shangpin.ep.order.enumeration.PushStatus;
-import com.shangpin.ep.order.module.order.bean.OrderDTO;
-import com.shangpin.ep.order.module.order.bean.ReturnOrderDTO;
-import com.shangpin.ep.order.module.orderapiservice.IOrderService;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Item;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.RequestObject;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Result;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.ReturnObject;
+import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -31,13 +26,21 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Map.Entry;
-
-import javax.annotation.PostConstruct;
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.shangpin.ep.order.common.HandleException;
+import com.shangpin.ep.order.common.LogCommon;
+import com.shangpin.ep.order.conf.supplier.SupplierProperties;
+import com.shangpin.ep.order.enumeration.ErrorStatus;
+import com.shangpin.ep.order.enumeration.LogTypeStatus;
+import com.shangpin.ep.order.enumeration.PushStatus;
+import com.shangpin.ep.order.module.order.bean.OrderDTO;
+import com.shangpin.ep.order.module.order.service.impl.OpenApiService;
+import com.shangpin.ep.order.module.orderapiservice.IOrderService;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Item;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.RequestObject;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Result;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.ReturnObject;
 
 @Component("lamborghiniOrderImpl")
 public class LamborghiniOrderImpl  implements IOrderService {
@@ -52,11 +55,16 @@ public class LamborghiniOrderImpl  implements IOrderService {
     HandleException handleException;  
     private  String cancelUrl;
     private  String placeUrl;
-    
+    private  String appKey;
+    private  String appSe;
+    @Autowired
+    private OpenApiService openApiService;  
     @PostConstruct
     public void init(){
     	cancelUrl = supplierProperties.getLamborghiniConf().getCancelUrl();
     	placeUrl =  supplierProperties.getLamborghiniConf().getPlaceUrl();
+    	appKey =  supplierProperties.getLamborghiniConf().getOpenApiKey();
+    	appSe =  supplierProperties.getLamborghiniConf().getOpenApiSecret();
     }
 	/**
 	 * 锁库存
@@ -237,7 +245,16 @@ public class LamborghiniOrderImpl  implements IOrderService {
 				size = null;
 			}
 			item.setSize(size);
-			item.setPurchase_price(orderDTO.getPurchasePriceDetail());
+			if(flag){
+				item.setPurchase_price("10");
+			}else{
+				BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+				String price = priceInt.divide(new BigDecimal(1.05), 2)
+						.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+				orderDTO.setPurchasePriceDetail(price);
+				item.setPurchase_price(price);
+			}
+			
 			Item[] i = { item };
 			obj.setItems(i);
 			

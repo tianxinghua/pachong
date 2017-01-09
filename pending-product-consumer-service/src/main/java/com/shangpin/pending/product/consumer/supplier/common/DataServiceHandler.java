@@ -1,5 +1,16 @@
 package com.shangpin.pending.product.consumer.supplier.common;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicCriteriaDto;
@@ -8,7 +19,6 @@ import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
 import com.shangpin.ephub.client.data.mysql.brand.gateway.HubSupplierBrandDicGateWay;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
-import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.categroy.gateway.HubSupplierCategroyDicGateWay;
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicDto;
@@ -19,9 +29,12 @@ import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicItemGateWay
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
-import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.*;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubMaterialMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
@@ -37,11 +50,20 @@ import com.shangpin.ephub.client.data.mysql.rule.gateway.HubBrandModelRuleGateWa
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.dto.*;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.*;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
@@ -54,24 +76,12 @@ import com.shangpin.pending.product.consumer.common.enumeration.SupplierSelectSt
 import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
 import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
 import com.shangpin.pending.product.consumer.supplier.dto.SpuPending;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 /**
  * Created by loyalty on 16/12/16.
  * 数据层的处理
  */
 @Service
-
-@Slf4j
-
 public class DataServiceHandler {
 
     @Autowired
