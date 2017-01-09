@@ -84,7 +84,7 @@ public class TaskImportService {
         productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
         productImportTask.setMessageId(UUID.randomUUID().toString());
         productImportTask.setTaskNo(taskNo);
-        productImportTask.setTaskFtpFilePath(ftpFilePath);
+        productImportTask.setData("{\"taskFtpFilePath\":\""+ftpFilePath+"\"}");
         Map<String,String> map = new HashMap<String,String>();
         if(TaskImportTpye.HUB_PRODUCT.getIndex()==importType){
         	productImportTaskStreamSender.hubProductImportTaskStream(productImportTask, null);
