@@ -108,6 +108,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         setSizeSkuMap(spuPendingIds, sizeSkuMap);
         //获取SPU
         HubSpu hubSpu = hubSpuMapper.selectByPrimaryKey(hubPendingDto.getHubSpuId());
+        log.info("hubSpu:{}",hubSpu);
         HubSpuPending spuPending = null;
         spuPending = this.getHubSpuPendingById(hubPendingDto.getHubSpuPendingId());
         if(null!=spuPending){
@@ -146,6 +147,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                 createSpuPic(spuPendingIds,hubSpu.getSpuId());
                 //插入hubSKU 和 供货商的对应关系
                 Set<String> sizeSet = sizeSkuMap.keySet();
+                log.info(sizeSet.size()+"");
                 if(sizeSet.size()>0){
                     createHubSkuAndMapping(sizeSkuMap, hubSpu, sizeSet);
                 }
@@ -290,7 +292,11 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             skuPendingCriteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId)
                     .andSkuStateEqualTo(HubSpuPendigStatus.HANDLING.getIndex().byteValue())   //spu 和 sku 状态保持一致
                     .andSpSkuSizeStateEqualTo(DataBusinessStatus.HANDLED.getIndex().byteValue()); //尺码已映射
+            
+            log.info("hubSkuPendings:{}",spuPendingId+"-"+HubSpuPendigStatus.HANDLING.getIndex().byteValue()+"-"+DataBusinessStatus.HANDLED.getIndex().byteValue());
             List<HubSkuPending> hubSkuPendings = hubSkuPendingMapper.selectByExample(skuPendingCriteria);
+            log.info("hubSkuPendings:{}",hubSkuPendings);
+            
             for(HubSkuPending hubSkuPending:hubSkuPendings){
                 if(null!=hubSkuPending.getSkuState()&&hubSkuPending.getSkuState().intValue()== HubSpuPendigStatus.HANDLING.getIndex()){//信息已完善 处理中
                     if(sizeSkuMap.containsKey(hubSkuPending.getHubSkuSize())){
