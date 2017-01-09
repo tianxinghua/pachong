@@ -19,7 +19,7 @@ import com.shangpin.pending.product.consumer.supplier.adapter.PendingProductStre
  * @author yanxiaobin
  * @date 2016年11月9日 下午6:07:52
  */
-@EnableBinding({PendingProductSink.class})
+@EnableBinding(PendingProductSink.class)
 public class PendingProductStreamListener {
 	
 	@Autowired
