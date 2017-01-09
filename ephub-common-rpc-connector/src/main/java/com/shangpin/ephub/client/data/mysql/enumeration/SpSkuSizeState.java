@@ -9,4 +9,5 @@ package com.shangpin.ephub.client.data.mysql.enumeration;
  */
 public enum SpSkuSizeState {
 
+	
 }

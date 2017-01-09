@@ -32,14 +32,20 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
+import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
+import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
+import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
@@ -84,7 +90,10 @@ public class PendingProductService implements IPendingProductService{
     private HubPendingSpuCheckGateWay pendingSpuCheckGateWay;
     @Autowired
     private HubSpuPendingPicGateWay hubSpuPendingPicGateWay;
-
+    @Autowired
+    private HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
+    @Autowired
+    private HubSpuGateWay hubSpuGateway;
 
     @Override
     public HSSFWorkbook exportSku(PendingQuryDto pendingQuryDto){
@@ -138,7 +147,7 @@ public class PendingProductService implements IPendingProductService{
             cell.setCellStyle(style);
         }
         row.setHeight((short) 1500);
-		sheet.setColumnWidth((short)0, (short)  (36*150));
+		sheet.setColumnWidth(0, (36*150));
         try {
         	String[] rowTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
             List<PendingProductDto> products = findPengdingSpu(pendingQuryDto);
@@ -240,21 +249,45 @@ public class PendingProductService implements IPendingProductService{
     public boolean updatePendingProduct(PendingProductDto pendingProductDto) throws Exception{
         try {
             if(null != pendingProductDto){
-                HubPendingSpuCheckResult spuResult = pendingSpuCheckGateWay.checkSpu(pendingProductDto);
-                if(spuResult.isPassing()){
-                	pendingProductDto.setSpuModel(spuResult.getResult());
-                	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
-                    hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-                }else{
-                    log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
-                    throw new Exception(spuResult.getResult());
-                }
+            	String spuModel = null;
+            	BrandModelDto BrandModelDto = null;
+        		BrandModelResult brandModelResult= null;
+        		if(pendingProductDto.getSpuModel()!=null){
+        			BrandModelDto = new BrandModelDto();
+        			BrandModelDto.setBrandMode(pendingProductDto.getSpuModel());
+        			BrandModelDto.setHubBrandNo(pendingProductDto.getHubBrandNo());
+        			BrandModelDto.setHubCategoryNo(pendingProductDto.getHubCategoryNo());
+        			brandModelResult=  hubBrandModelRuleGateWay.verify(BrandModelDto);
+        			if(brandModelResult.isPassing()){
+        				pendingProductDto.setSpuModel(brandModelResult.getBrandMode());
+        				List<HubSpuDto> hubSpus = selectHubSpu(pendingProductDto);
+        				if(null != hubSpus && hubSpus.size()>0){
+        					//TODO 
+                        	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
+                            hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+        				}else{
+        					HubPendingSpuCheckResult spuResult = pendingSpuCheckGateWay.checkSpu(pendingProductDto);
+        	                if(spuResult.isPassing()){
+        	                	pendingProductDto.setSpuModel(spuModel);
+        	                	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
+        	                    hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+        	                }else{
+        	                    log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
+        	                    throw new Exception(spuResult.getResult());
+        	                }
+        				}
+            		}else{
+            		     log.info("pending spu校验失败，不更新：货号校验不通过。|原始数据："+JsonUtil.serialize(pendingProductDto));
+                         throw new Exception("货号校验不通过");
+            		}
+        		}
                 List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
                 if(null != pengdingSkus && pengdingSkus.size()>0){
                     for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
                         HubPendingSkuCheckResult result = pendingSkuCheckGateWay.checkSku(hubSkuPendingDto);
                         if(result.isPassing()){
                         	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
+                        	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
                             hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
                         }else{
                             log.info("pending sku校验失败，不更新："+result.getResult()+"|原始数据："+JsonUtil.serialize(hubSkuPendingDto));
@@ -264,15 +297,6 @@ public class PendingProductService implements IPendingProductService{
                             throw new Exception(result.getResult());
                         }
                     }
-                }else{//TODO 这块要去掉！！！！！
-                	HubSkuPendingWithCriteriaDto criteria  = new HubSkuPendingWithCriteriaDto();
-                	HubSkuPendingCriteriaDto dto = new HubSkuPendingCriteriaDto();
-                	dto.createCriteria().andSpuPendingIdEqualTo(pendingProductDto.getSpuPendingId());
-                	criteria.setCriteria(dto);
-                	HubSkuPendingDto hubSkuPending  = new HubSkuPendingDto();
-                	hubSkuPending.setSkuState(SkuState.INFO_IMPECCABLE.getIndex()); 
-                	criteria.setHubSkuPending(hubSkuPending);
-                	hubSkuPendingGateWay.updateByCriteriaSelective(criteria);
                 }
             }
             return true;
@@ -332,6 +356,16 @@ public class PendingProductService implements IPendingProductService{
     //以下为内部调用私有方法
     /**************************************************************************************************************************/
     
+    /**
+     * 根据品牌和货号查找hub_spu表中的记录
+     * @param hubPendingSpuDto
+     * @return
+     */
+    private List<HubSpuDto> selectHubSpu(HubSpuPendingDto hubPendingSpuDto) {
+		HubSpuCriteriaDto criteria = new HubSpuCriteriaDto();
+		criteria.createCriteria().andSpuModelEqualTo(hubPendingSpuDto.getSpuModel()).andBrandNoEqualTo(hubPendingSpuDto.getHubBrandNo());
+		return  hubSpuGateway.selectByCriteria(criteria);
+	}
     /**
      * 根据供应商门户编号/供应商spu编号查询图片地址
      * @param supplierId

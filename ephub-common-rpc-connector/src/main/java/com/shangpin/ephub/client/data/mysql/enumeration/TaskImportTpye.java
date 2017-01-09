@@ -3,21 +3,30 @@ package com.shangpin.ephub.client.data.mysql.enumeration;
 public enum TaskImportTpye {
 
 	/**
-	 * 图片状态
+	 * 一般任务
 	 */
 	NO_TYPE(0,"NO_TYPE"),
 	/**
-	 * 货号状态
+	 * pending-spu导入
 	 */
 	PENDING_SPU(1,"PENDING_SPU"),
 	/**
-	 * 品类状态
+	 * pending-sku导入
 	 */
 	PENDING_SKU(2,"PENDING_SKU"),
 	/**
-	 * 品牌状态
+	 * hub导入
 	 */
-	HUB_PRODUCT(3,"HUB_PRODUCT");
+	HUB_PRODUCT(3,"HUB_PRODUCT"),
+	
+	/**
+	 * pending-spu导出
+	 */
+	EXPORT_PENDING_SPU(4,"pending-spu导出"),
+	/**
+	 * pending-sku导出
+	 */
+	EXPORT_PENDING_SKU(5,"pending-sku导出");
 	
 	/**
      * 数字索引标识
