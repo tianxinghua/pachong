@@ -12,7 +12,7 @@ dependencies {
 }
 
 jar {
-    dependsOn copyToLib, copyResources, copyResourcesToClasses
+    dependsOn copyToLib, copyResources
     exclude ("**/*.properties")
 
     def manifestCp = configurations.compile.files.collect  {

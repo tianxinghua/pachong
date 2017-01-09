@@ -6,6 +6,8 @@ dependencies {
             project(':iog-common-product'),
             project(':openapi-ice'),
     )
+    compile('com.alibaba:fastjson:1.2.22')
+    
 }
 
 jar{
