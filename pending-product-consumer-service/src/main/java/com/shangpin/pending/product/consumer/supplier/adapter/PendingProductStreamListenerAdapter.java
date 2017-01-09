@@ -29,7 +29,7 @@ public class PendingProductStreamListenerAdapter {
 			pendingHandler.receiveMsg(message,headers);
 		} catch (Exception e) {
 			log.error(" exception message = message boday : "  + message.toString()
-					+ "  message header :" + headers.toString() + " exception reason :" + e.getMessage());
+					+ "  message header :" + headers.toString() + " exception reason :" + e.getMessage(),e);
 			e.printStackTrace();
 		}
 	}
