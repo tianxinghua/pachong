@@ -1,16 +1,11 @@
 package com.shangpin.ephub.product.business.ui.pending.service.impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -21,16 +16,16 @@ import com.shangpin.ephub.client.data.mysql.brand.gateway.HubSupplierBrandDicGat
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.categroy.gateway.HubSupplierCategroyDicGateWay;
-import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
@@ -39,6 +34,9 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Cri
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
+import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
+import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
@@ -47,11 +45,10 @@ import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.ephub.client.util.TaskImportTemplate;
 import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
-import com.shangpin.ephub.product.business.common.util.ExportExcelUtils;
+import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
@@ -73,7 +70,6 @@ import lombok.extern.slf4j.Slf4j;
 public class PendingProductService implements IPendingProductService{
 
     private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
-    private static String comma = ",";
     @Autowired
     private HubSpuPendingGateWay hubSpuPendingGateWay;
     @Autowired
@@ -94,81 +90,22 @@ public class PendingProductService implements IPendingProductService{
     private HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
     @Autowired
     private HubSpuGateWay hubSpuGateway;
+    @Autowired 
+	private HubSpuImportTaskGateWay spuImportGateway;
+    
+    private ProductImportTaskStreamSender tastSender;
 
     @Override
-    public HSSFWorkbook exportSku(PendingQuryDto pendingQuryDto){
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("产品信息");
-        HSSFRow row = sheet.createRow(0);
-        HSSFCellStyle  style = wb.createCellStyle();
-//        style.setAlignment(HorizontalAlignment.CENTER);//居中
-        String[] row0 = TaskImportTemplate.getPendingSkuTemplate();
-        for(int i= 0;i<row0.length;i++){
-            HSSFCell cell = row.createCell(i);
-            cell.setCellValue(row0[i]);
-            cell.setCellStyle(style);
-        }
-        try {
-        	String[] rowTemplate = TaskImportTemplate.getPendingSkuValueTemplate();
-            PendingProducts products = findPendingProducts(pendingQuryDto);
-            if(null != products && null != products.getProduts() && products.getProduts().size()>0){
-                int j = 0;
-                for(PendingProductDto product : products.getProduts()){
-                    for(HubSkuPendingDto sku : product.getHubSkus()){
-                        try {
-                            j++;
-                            row = sheet.createRow(j);
-                            row.setHeight((short) 1500);
-                            insertProductSkuOfRow(row,product,sku,rowTemplate);
-                        } catch (Exception e) {
-                        	log.error("insertProductSkuOfRow异常："+e.getMessage(),e);
-                            j--;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("待处理页导出sku异常："+e.getMessage(),e);
-        }
-
-        return wb;
+    public void exportSku(PendingQuryDto pendingQuryDto){
+    	PendingProducts products = findPendingProducts(pendingQuryDto);
+    	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
+    	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(products)); 
     }
     @Override
-    public HSSFWorkbook exportSpu(PendingQuryDto pendingQuryDto){
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("产品信息");
-        HSSFRow row = sheet.createRow(0);
-        HSSFCellStyle  style = wb.createCellStyle();
-//        style.setAlignment(HorizontalAlignment.CENTER);//居中
-        String[] row0 = TaskImportTemplate.getPendingSpuTemplate();
-        for(int i= 0;i<row0.length;i++){
-            HSSFCell cell = row.createCell(i);
-            cell.setCellValue(row0[i]);
-            cell.setCellStyle(style);
-        }
-        row.setHeight((short) 1500);
-		sheet.setColumnWidth(0, (36*150));
-        try {
-        	String[] rowTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
-            List<PendingProductDto> products = findPengdingSpu(pendingQuryDto);
-            if(null != products && products.size()>0){
-                int j = 0;
-                for(PendingProductDto product : products){
-                    try {
-                        j++;
-                        row = sheet.createRow(j);                        
-                        insertProductSpuOfRow(row,product,rowTemplate);
-                    } catch (Exception e) {
-                    	 log.error("insertProductSpuOfRow异常："+e.getMessage(),e);
-                        j--;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("待处理页导出spu异常："+e.getMessage(),e);
-        }
-
-        return wb;
+    public void exportSpu(PendingQuryDto pendingQuryDto){
+    	List<PendingProductDto> products = findPengdingSpu(pendingQuryDto);
+    	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
+    	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex(),JsonUtil.serialize(products)); 
     }
     @Override
     public List<PendingProductDto> findPengdingSpu(PendingQuryDto pendingQuryDto){
@@ -533,117 +470,25 @@ public class PendingProductService implements IPendingProductService{
             }
         }
     }
-    /**
-     * 将sku信息插入Excel的一行
-     * @param row
-     * @param product
-     * @throws Exception
-     */
-    public void insertProductSkuOfRow(HSSFRow row,PendingProductDto product,HubSkuPendingDto sku,String[] rowTemplate) throws Exception{
-    	Class<?> spuClazz = product.getClass();
-    	Class<?> skuClazz = sku.getClass();
-    	Method fieldSetMet = null;
-		Object value = null;
-    	for(int i=0;i<rowTemplate.length;i++){
-    		try {
-    			String fileName = JavaUtil.parSetName(rowTemplate[i]);
-    			if("supplierSkuNo".equals(rowTemplate[i]) || "skuName".equals(rowTemplate[i]) || "supplierBarcode".equals(rowTemplate[i]) || "supplyPrice".equals(rowTemplate[i])
-            			|| "supplyPriceCurrency".equals(rowTemplate[i]) || "marketPrice".equals(rowTemplate[i]) || "marketPriceCurrencyorg".equals(rowTemplate[i]) || "hubSkuSize".equals(rowTemplate[i])){
-    				//所有sku的属性
-    				fieldSetMet = skuClazz.getMethod(fileName);
-					value = fieldSetMet.invoke(sku);
-					row.createCell(i).setCellValue(null != value ? value.toString() : "");
-            	}else if("seasonYear".equals(rowTemplate[i])){
-            		setRowOfSeasonYear(row, product, spuClazz, i);
-            	}else if("seasonName".equals(rowTemplate[i])){
-            		setRowOfSeasonName(row, product, spuClazz, i); 
-            	}else if("specification".equals(rowTemplate[i]) || "originalProductSizeType".equals(rowTemplate[i]) || "originalProductSizeValue".equals(rowTemplate[i]) ){
-            		//TODO 规格类型 原尺码类型 原尺码值 从哪取值？
-            		row.createCell(i).setCellValue("");
-            	}else{
-            		//所有spu的属性
-            		fieldSetMet = spuClazz.getMethod(fileName);
-					value = fieldSetMet.invoke(product);
-					row.createCell(i).setCellValue(null != value ? value.toString() : "");
-            	}
-			} catch (Exception e) {
-				log.error("待处理页导出sku时异常："+e.getMessage()); 
-			}        	
-        }    	
+    
+    private HubSpuImportTaskDto saveTaskIntoMysql(String createUser){
+    	HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
+    	Date date = new Date();
+		hubSpuTask.setTaskNo(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date));
+		hubSpuTask.setTaskState((byte)TaskState.HANDLEING.getIndex());
+		hubSpuTask.setCreateTime(date);
+		hubSpuTask.setCreateUser(createUser); 
+		Long spuImportTaskId = spuImportGateway.insert(hubSpuTask);
+		hubSpuTask.setSpuImportTaskId(spuImportTaskId);
+		return hubSpuTask;
     }
-    /**
-     * 将spu信息插入Excel的一行
-     * @param row
-     * @param product
-     * @param rowTemplate 导入模板
-     * @throws Exception
-     */
-    private void insertProductSpuOfRow(HSSFRow row,PendingProductDto product,String[] rowTemplate) throws Exception{		
-		Class<?> cls = product.getClass();
-		StringBuffer buffer = new StringBuffer();  
-		Method fieldSetMet = null;
-		Object value = null;
-		for (int i=0;i<rowTemplate.length;i++) {
-			try {
-				if("spPicUrl".equals(rowTemplate[i])){
-					ExportExcelUtils.insertImageToExcel(product.getSpPicUrl(),row, (short)i); 
-				}else if("seasonYear".equals(rowTemplate[i])){
-					setRowOfSeasonYear(row, product, cls, i);
-				}else if("seasonName".equals(rowTemplate[i])){
-					setRowOfSeasonName(row, product, cls, i); 
-				}else if("memo".equals(rowTemplate[i])){
-					if((null != product.getPicState() && PicState.NO_PIC.getIndex() == product.getPicState()) || (null != product.getPicState() && PicState.PIC_INFO_NOT_COMPLETED.getIndex() == product.getPicState())){
-			            buffer = buffer.append("图片").append(comma);
-			        }
-			        if(CatgoryState.PERFECT_MATCHED.equals(product.getCatgoryState())){
-			            buffer = buffer.append("品类").append(comma);
-			        }
-			        row.createCell(i).setCellValue(buffer.toString()); 
-				}else{
-					String fileName = JavaUtil.parSetName(rowTemplate[i]);
-					fieldSetMet = cls.getMethod(fileName);
-					value = fieldSetMet.invoke(product);
-					row.createCell(i).setCellValue(null != value ? value.toString() : "");
-				}				
-			} catch (Exception e) {
-				log.error("待处理页导出spu时异常："+e.getMessage()); 
-				continue;
-			}
-		}
-    }	
-    /**
-     * 设置导出上市季节的值，这个字段比较特殊，是从hubSeason字段拆解出来的
-     * @param row
-     * @param product
-     * @param clazz
-     * @param i
-     * @throws NoSuchMethodException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     */
-    private void setRowOfSeasonName(HSSFRow row, PendingProductDto product, Class<?> clazz, int i)
-			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		String fileName = "getHubSeason";
-		Method fieldSetMet = clazz.getMethod(fileName);
-		Object value = fieldSetMet.invoke(product);
-		row.createCell(i).setCellValue((null != value && value.toString().contains("_")) ? value.toString().split("_")[1] : (null != value ? value.toString() : ""));
-	}
-    /**
-     * 设置导出上市年份的值，这个字段比较特殊，是从hubSeason字段拆解出来的
-     * @param row
-     * @param product
-     * @param clazz
-     * @param i
-     * @throws NoSuchMethodException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     */
-	private void setRowOfSeasonYear(HSSFRow row, PendingProductDto product, Class<?> clazz, int i)
-			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		String fileName = "getHubSeason";
-		Method fieldSetMet = clazz.getMethod(fileName);
-		Object value = fieldSetMet.invoke(product);
-		row.createCell(i).setCellValue((null != value && value.toString().contains("_")) ? value.toString().split("_")[0] : "");
-	}
 	
+    private void sendMessageToTask(String taskNo,int type,String data){
+    	ProductImportTask productImportTask = new ProductImportTask();
+    	productImportTask.setMessageId(UUID.randomUUID().toString());
+    	productImportTask.setTaskNo(taskNo);
+    	productImportTask.setData(data);
+    	productImportTask.setType(type);
+    	tastSender.productExportTaskStream(productImportTask, null);
+    }
 }
