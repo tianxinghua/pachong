@@ -865,10 +865,13 @@ public class PendingHandler {
         List<HubSupplierCategroyDicDto> hubSupplierCategroyDicDtos = dataServiceHandler.getSupplierCategoryBySupplierId(supplierId);
         if(null!=hubSupplierCategroyDicDtos&&hubSupplierCategroyDicDtos.size()>0){
             Map<String,String> categoryMap = new HashMap<>();
+            String spCategory ="";
+
             for(HubSupplierCategroyDicDto dto:hubSupplierCategroyDicDtos){
                 // map 的key 供货商的品类 + "_"+供货商的性别 ，value ： 尚品的品类 + "_"+ 匹配状态 (1 :匹配到4级  2：可以匹配但未匹配到4级）
 //                if(hubGenderMap.containsKey(dto.getGenderDicId())){
-                    categoryMap.put(dto.getSupplierCategory()+"_"+dto.getSupplierGender(),dto.getHubCategoryNo()+"_"+dto.getMappingState());
+                spCategory = (null==dto.getHubCategoryNo()?"":dto.getHubCategoryNo());
+                    categoryMap.put(dto.getSupplierCategory()+"_"+dto.getSupplierGender(),spCategory+"_"+dto.getMappingState());
 //                }
             }
             supplierCategoryMappingStaticMap.put(supplierId,categoryMap);
