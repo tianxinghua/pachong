@@ -1,6 +1,5 @@
 package com.shangpin.pending.product.consumer.common;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
