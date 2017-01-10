@@ -17,6 +17,11 @@ public class SpuPendingDto extends SpuPendingCommonDto implements Serializable {
 
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1872818682287887565L;
+
+	/**
      * 是否默认供货商
      */
     private Boolean isDefaultSupplier;
