@@ -30,14 +30,8 @@ public class HubPendingSkuCheckController {
 	@RequestMapping(value = "/check-sku")
 	public HubPendingSkuCheckResult checkSku(@RequestBody HubSkuPendingDto dto){
 		log.info("校验pendingSku接受到参数:{}",dto);
-		HubPendingSkuCheckResult result = new HubPendingSkuCheckResult();
-		String returnStr = hubCheckRuleService.checkHubPendingSku(dto);
-		if(StringUtils.isNotBlank(returnStr)){
-			result.setResult(returnStr);
-			result.setPassing(false);
-		}else{
-			result.setPassing(true);
-		}
+		
+		HubPendingSkuCheckResult result = hubCheckRuleService.checkHubPendingSku(dto);
 		return result;
 	}
 

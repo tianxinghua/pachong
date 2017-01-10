@@ -73,10 +73,15 @@ public class HubCheckRuleService {
 		
 		//校验尺码
 		if(hubProduct.getSkuSize()!=null){
-			if(!hubCheckService.checkHubSize(hubProduct.getSkuSize())){
+			//String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize
+			String size = hubCheckService.checkHubSize(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),null,hubProduct.getSkuSize());
+			if(size!=null){
+				str.append(size) ;
+				result.setPassing(true);
+			}else{
 				str.append("尺码编号"+hubProduct.getSkuSize()+"不存在,") ;
 				result.setPassing(false);
-			}	
+			}
 		}else{
 			str.append("尺码为空，");
 			result.setPassing(false);
