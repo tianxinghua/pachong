@@ -77,7 +77,9 @@ public class HubSpuPendingPicDto implements Serializable {
     /**
      * 供应商Id
      */
-    private String suupplierId;
+    private String supplierId;
+
+    private Long supplierSpuId;
 
     /**
      * 供应商Spu编号
@@ -198,12 +200,20 @@ public class HubSpuPendingPicDto implements Serializable {
         this.picHandleState = picHandleState;
     }
 
-    public String getSuupplierId() {
-        return suupplierId;
+    public String getSupplierId() {
+        return supplierId;
     }
 
-    public void setSuupplierId(String suupplierId) {
-        this.suupplierId = suupplierId == null ? null : suupplierId.trim();
+    public void setSupplierId(String supplierId) {
+        this.supplierId = supplierId == null ? null : supplierId.trim();
+    }
+
+    public Long getSupplierSpuId() {
+        return supplierSpuId;
+    }
+
+    public void setSupplierSpuId(Long supplierSpuId) {
+        this.supplierSpuId = supplierSpuId;
     }
 
     public String getSupplierSpuNo() {
@@ -234,7 +244,8 @@ public class HubSpuPendingPicDto implements Serializable {
         sb.append(", picNo=").append(picNo);
         sb.append(", picExtension=").append(picExtension);
         sb.append(", picHandleState=").append(picHandleState);
-        sb.append(", suupplierId=").append(suupplierId);
+        sb.append(", supplierId=").append(supplierId);
+        sb.append(", supplierSpuId=").append(supplierSpuId);
         sb.append(", supplierSpuNo=").append(supplierSpuNo);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
@@ -267,7 +278,8 @@ public class HubSpuPendingPicDto implements Serializable {
             && (this.getPicNo() == null ? other.getPicNo() == null : this.getPicNo().equals(other.getPicNo()))
             && (this.getPicExtension() == null ? other.getPicExtension() == null : this.getPicExtension().equals(other.getPicExtension()))
             && (this.getPicHandleState() == null ? other.getPicHandleState() == null : this.getPicHandleState().equals(other.getPicHandleState()))
-            && (this.getSuupplierId() == null ? other.getSuupplierId() == null : this.getSuupplierId().equals(other.getSuupplierId()))
+            && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
+            && (this.getSupplierSpuId() == null ? other.getSupplierSpuId() == null : this.getSupplierSpuId().equals(other.getSupplierSpuId()))
             && (this.getSupplierSpuNo() == null ? other.getSupplierSpuNo() == null : this.getSupplierSpuNo().equals(other.getSupplierSpuNo()));
     }
 
@@ -289,7 +301,8 @@ public class HubSpuPendingPicDto implements Serializable {
         result = prime * result + ((getPicNo() == null) ? 0 : getPicNo().hashCode());
         result = prime * result + ((getPicExtension() == null) ? 0 : getPicExtension().hashCode());
         result = prime * result + ((getPicHandleState() == null) ? 0 : getPicHandleState().hashCode());
-        result = prime * result + ((getSuupplierId() == null) ? 0 : getSuupplierId().hashCode());
+        result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
+        result = prime * result + ((getSupplierSpuId() == null) ? 0 : getSupplierSpuId().hashCode());
         result = prime * result + ((getSupplierSpuNo() == null) ? 0 : getSupplierSpuNo().hashCode());
         return result;
     }

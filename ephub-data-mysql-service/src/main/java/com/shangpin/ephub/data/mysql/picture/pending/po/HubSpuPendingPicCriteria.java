@@ -1037,73 +1037,133 @@ public class HubSpuPendingPicCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdIsNull() {
-            addCriterion("suupplier_id is null");
+        public Criteria andSupplierIdIsNull() {
+            addCriterion("supplier_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdIsNotNull() {
-            addCriterion("suupplier_id is not null");
+        public Criteria andSupplierIdIsNotNull() {
+            addCriterion("supplier_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdEqualTo(String value) {
-            addCriterion("suupplier_id =", value, "suupplierId");
+        public Criteria andSupplierIdEqualTo(String value) {
+            addCriterion("supplier_id =", value, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdNotEqualTo(String value) {
-            addCriterion("suupplier_id <>", value, "suupplierId");
+        public Criteria andSupplierIdNotEqualTo(String value) {
+            addCriterion("supplier_id <>", value, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdGreaterThan(String value) {
-            addCriterion("suupplier_id >", value, "suupplierId");
+        public Criteria andSupplierIdGreaterThan(String value) {
+            addCriterion("supplier_id >", value, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdGreaterThanOrEqualTo(String value) {
-            addCriterion("suupplier_id >=", value, "suupplierId");
+        public Criteria andSupplierIdGreaterThanOrEqualTo(String value) {
+            addCriterion("supplier_id >=", value, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdLessThan(String value) {
-            addCriterion("suupplier_id <", value, "suupplierId");
+        public Criteria andSupplierIdLessThan(String value) {
+            addCriterion("supplier_id <", value, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdLessThanOrEqualTo(String value) {
-            addCriterion("suupplier_id <=", value, "suupplierId");
+        public Criteria andSupplierIdLessThanOrEqualTo(String value) {
+            addCriterion("supplier_id <=", value, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdLike(String value) {
-            addCriterion("suupplier_id like", value, "suupplierId");
+        public Criteria andSupplierIdLike(String value) {
+            addCriterion("supplier_id like", value, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdNotLike(String value) {
-            addCriterion("suupplier_id not like", value, "suupplierId");
+        public Criteria andSupplierIdNotLike(String value) {
+            addCriterion("supplier_id not like", value, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdIn(List<String> values) {
-            addCriterion("suupplier_id in", values, "suupplierId");
+        public Criteria andSupplierIdIn(List<String> values) {
+            addCriterion("supplier_id in", values, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdNotIn(List<String> values) {
-            addCriterion("suupplier_id not in", values, "suupplierId");
+        public Criteria andSupplierIdNotIn(List<String> values) {
+            addCriterion("supplier_id not in", values, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdBetween(String value1, String value2) {
-            addCriterion("suupplier_id between", value1, value2, "suupplierId");
+        public Criteria andSupplierIdBetween(String value1, String value2) {
+            addCriterion("supplier_id between", value1, value2, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSuupplierIdNotBetween(String value1, String value2) {
-            addCriterion("suupplier_id not between", value1, value2, "suupplierId");
+        public Criteria andSupplierIdNotBetween(String value1, String value2) {
+            addCriterion("supplier_id not between", value1, value2, "supplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuIdIsNull() {
+            addCriterion("supplier_spu_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuIdIsNotNull() {
+            addCriterion("supplier_spu_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuIdEqualTo(Long value) {
+            addCriterion("supplier_spu_id =", value, "supplierSpuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuIdNotEqualTo(Long value) {
+            addCriterion("supplier_spu_id <>", value, "supplierSpuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuIdGreaterThan(Long value) {
+            addCriterion("supplier_spu_id >", value, "supplierSpuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("supplier_spu_id >=", value, "supplierSpuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuIdLessThan(Long value) {
+            addCriterion("supplier_spu_id <", value, "supplierSpuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuIdLessThanOrEqualTo(Long value) {
+            addCriterion("supplier_spu_id <=", value, "supplierSpuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuIdIn(List<Long> values) {
+            addCriterion("supplier_spu_id in", values, "supplierSpuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuIdNotIn(List<Long> values) {
+            addCriterion("supplier_spu_id not in", values, "supplierSpuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuIdBetween(Long value1, Long value2) {
+            addCriterion("supplier_spu_id between", value1, value2, "supplierSpuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSpuIdNotBetween(Long value1, Long value2) {
+            addCriterion("supplier_spu_id not between", value1, value2, "supplierSpuId");
             return (Criteria) this;
         }
 

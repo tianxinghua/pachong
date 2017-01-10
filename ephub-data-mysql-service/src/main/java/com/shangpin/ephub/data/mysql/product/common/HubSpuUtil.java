@@ -1,12 +1,13 @@
 package com.shangpin.ephub.data.mysql.product.common;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.data.mysql.sku.hub.mapper.HubSkuMapper;
 import com.shangpin.ephub.data.mysql.spu.hub.mapper.HubSpuMapper;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * Created by loyalty on 16/12/20.
