@@ -120,7 +120,7 @@ public class HubProductServiceImpl implements HubProductService {
                     HubResponseDto<String> responseDto = entity.getBody();
                     if(responseDto.getIsSuccess()){  //创建成功
                          for(ApiSkuOrgDom skuOrg:skuOrgDoms){
-                             updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTED,"");
+                             updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.WAIT_SCM_AUDIT,"");
                          }
                     }else{ //创建失败
                         for(ApiSkuOrgDom skuOrg:skuOrgDoms){
@@ -265,9 +265,9 @@ public class HubProductServiceImpl implements HubProductService {
         HubSkuSupplierMappingDto skuSupplierMapping = new HubSkuSupplierMappingDto();
         skuSupplierMapping.setSkuSupplierMappingId(id);
         skuSupplierMapping.setSupplierSelectState(Integer.valueOf(status.getIndex()).byteValue());
-        if(StringUtils.isNotBlank(reason)) {
-            skuSupplierMapping.setMemo(reason);
-        }
+
+        skuSupplierMapping.setMemo(reason);
+
         skuSupplierMappingGateWay.updateByPrimaryKeySelective(skuSupplierMapping);
     }
 }
