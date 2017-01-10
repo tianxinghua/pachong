@@ -62,6 +62,7 @@ public class SupplierProductPictureProcessor {
 	private List<HubSpuPendingPicDto> transform(SupplierPicture message) {
 		List<HubSpuPendingPicDto> dtos = null;
 		String supplierId = message.getSupplierId();
+		Long supplierSpuId = message.getSupplierSpuId();
 		ProductPicture productPicture = message.getProductPicture();
 		if (productPicture != null &&  CollectionUtils.isNotEmpty(productPicture.getImages())) {
 			List<Image> images = productPicture.getImages();
@@ -75,7 +76,8 @@ public class SupplierProductPictureProcessor {
 				dto.setPicHandleState(PicHandleState.UNHANDLED.getIndex());
 				dto.setPicUrl(url);
 				dto.setSupplierSpuNo(supplierSpuNo);
-				dto.setSuupplierId(supplierId);
+				dto.setSupplierId(supplierId);
+				dto.setSupplierSpuId(supplierSpuId);
 				dtos.add(dto);
 			}
 		} else {
