@@ -1,19 +1,22 @@
 package com.shangpin.ephub.product.business.ui.pending.controller;
 
-import com.shangpin.ephub.product.business.service.pending.PendingService;
-import com.shangpin.ephub.product.business.ui.pending.vo.*;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import com.shangpin.ephub.product.business.ui.pending.service.impl.PendingProductService;
-import com.shangpin.ephub.response.HubResponse;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.shangpin.ephub.product.business.service.pending.PendingService;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelMsgVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditQueryVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
+import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
+import com.shangpin.ephub.response.HubResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/pending-audit")
@@ -25,7 +28,7 @@ public class PendingAuditController {
 
 
 	@RequestMapping(value="query-spumodel",method=RequestMethod.POST)
-	public HubResponse querySpuModel(@RequestBody SpuPendingAuditQueryVO queryVO){
+	public HubResponse<?> querySpuModel(@RequestBody SpuPendingAuditQueryVO queryVO){
 
 		SpuModelMsgVO spuModel = pendingService.getSpuModel(queryVO);
 
@@ -36,7 +39,7 @@ public class PendingAuditController {
 
 
 	@RequestMapping(value="query-spupending",method=RequestMethod.POST)
-	public HubResponse querySpuPending(@RequestBody SpuModelVO queryVO){
+	public HubResponse<?> querySpuPending(@RequestBody SpuModelVO queryVO){
 
 		List<SpuPendingVO> spuPendingVOList = pendingService.getSpuPendingByBrandNoAndSpuModel(queryVO.getBrandNo(), queryVO.getSpuModel());
 		return HubResponse.successResp(spuPendingVOList);
@@ -44,7 +47,7 @@ public class PendingAuditController {
 
 
 	@RequestMapping(value="audit-spupendig",method=RequestMethod.POST)
-	public HubResponse querySpuPending(@RequestBody SpuPendingAuditVO auditVO){
+	public HubResponse<?> querySpuPending(@RequestBody SpuPendingAuditVO auditVO){
 
 		try {
 			pendingService.audit(auditVO);

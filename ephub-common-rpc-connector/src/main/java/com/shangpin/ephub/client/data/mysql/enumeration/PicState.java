@@ -10,41 +10,28 @@ package com.shangpin.ephub.client.data.mysql.enumeration;
 public enum PicState {
 	
 	/**
-	 * 无图片
+	 * 未处理
 	 */
-	NO_PIC((byte)0,"noPic"),
+	UNHANDLED(Byte.valueOf("0")),
 	/**
-	 * 图片信息已完成
+	 * 处理异常
 	 */
-	PIC_INFO_COMPLETED((byte)1,"picInfoCompleted"),
+	HANDLE_ERROR(Byte.valueOf("1")),
 	/**
-	 * 图片信息未完成
+	 * 处理完成
 	 */
-	PIC_INFO_NOT_COMPLETED((byte)2,"picInfoNotCompleted");
+	HANDLED(Byte.valueOf("2"));
+	private Byte index;
 
-	/**
-     * 数字索引标识
-     */
-    private byte index;
-    /**
-     * 描述信息
-     */
-    private String description;
-    
-    PicState(byte index,String description){
+	private PicState(Byte index) {
 		this.index = index;
-		this.description = description;
 	}
-    public byte getIndex() {
-        return index;
-    }
-    public void setIndex(byte index) {
-        this.index = index;
-    }
-    public String getDescription() {
-        return description;
-    }
-    public void setDescription(String description) {
-        this.description = description;
-    }
+
+	public Byte getIndex() {
+		return index;
+	}
+
+	public void setIndex(Byte index) {
+		this.index = index;
+	}
 }
