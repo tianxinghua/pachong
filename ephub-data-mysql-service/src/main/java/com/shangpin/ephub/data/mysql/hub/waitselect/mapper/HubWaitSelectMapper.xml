@@ -46,7 +46,7 @@
    	sku.sku_id,sku.sku_no,sku.sp_sku_no,sku.sku_size,sku.sku_size_id,sku.update_time,
    	spu.spu_id,spu.spu_no,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,
    	spu.market_time,spu.season,spu.hub_color,spu.hub_color_no,spu.spu_state,spu.pic_url,spu.origin,spu.material
-    from hub_spu spu  INNER JOIN hub_sku sku on sku.spu_no = spu.spu_no  left join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
+    from hub_spu spu  INNER JOIN hub_sku sku on sku.spu_no = spu.spu_no  INNER JOIN  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
     
     	1=1
@@ -82,7 +82,7 @@
    <select id="count" resultType="java.lang.Long" parameterType="com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectRequest">
     select
    	count(*)
-    from hub_spu spu INNER JOIN hub_sku sku on sku.spu_no = spu.spu_no  left join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
+    from hub_spu spu INNER JOIN hub_sku sku on sku.spu_no = spu.spu_no  INNER JOIN  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
     
     		1=1
@@ -118,7 +118,7 @@
    	sku.sku_id,sku.sku_no,sku.sku_size,sku.sku_size_id,sku.update_time,
    	spu.spu_id,spu.spu_no,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,
    	spu.market_time,spu.season,spu.hub_color,spu.hub_color_no,spu.spu_state,spu.pic_url,spu.origin,spu.material
-    from hub_spu spu  INNER JOIN hub_sku sku on sku.spu_no = spu.spu_no  left join  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
+    from hub_spu spu  INNER JOIN hub_sku sku on sku.spu_no = spu.spu_no  INNER JOIN  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
     
      <if test="null!= skuSupplierMappingId">
