@@ -112,7 +112,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void pozzileiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -121,7 +121,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void pozzileiartePendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -130,7 +130,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void pozzileifortePendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -139,7 +139,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void carofiglioPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -148,7 +148,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void genteromaPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -157,7 +157,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void danielloPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -166,7 +166,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void italianiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -175,7 +175,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void tufanoPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -184,7 +184,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void monnierfreresPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -193,7 +193,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void eleonorabonucciPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -202,7 +202,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void russocapriPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -211,7 +211,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void giglioPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -220,7 +220,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void divoPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -229,7 +229,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void biondiniPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -238,7 +238,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void dellogliostorePendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -247,7 +247,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void francescomassaPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -256,7 +256,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void tessabitPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -265,7 +265,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void alducadaostaPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -274,7 +274,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void sanremoPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -283,7 +283,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void paolofiorilloPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -292,7 +292,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void viettiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -301,7 +301,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void anielloPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -310,7 +310,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void lindelepalaisPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -319,7 +319,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void pritelliPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -328,7 +328,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void piccadillyPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -337,7 +337,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void velaPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -346,7 +346,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void montiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -355,7 +355,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void creative99PendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -364,7 +364,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void leamPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -373,7 +373,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void bagheeraPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -382,7 +382,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void papiniPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -391,7 +391,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void zitafabianiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -400,7 +400,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void wisePendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -409,7 +409,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void basebluPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -418,7 +418,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void raffaellonetworkPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -427,7 +427,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void frmodaPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -436,7 +436,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void studio69PendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -445,7 +445,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void delibertiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -454,7 +454,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void smetsPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -463,7 +463,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void sarenzaPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -472,7 +472,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void soleplacenewPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -481,7 +481,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void honestdousaPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -490,7 +490,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void opticalPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -499,7 +499,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void tizianafaustiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 	/**
@@ -508,7 +508,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void theclutcherPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		this.messageHandle(message, headers);
 		
 	}
 

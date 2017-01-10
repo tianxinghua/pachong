@@ -14,10 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by loyalty on 17/1/7.
@@ -25,6 +24,32 @@ import java.util.Map;
 @Component
 @Slf4j
 public class DataSverviceUtil {
+    //有顺序的 不能打乱顺序
+    static Map<String,String> sizeMap = new LinkedHashMap<String,String>(){
+        {
+            put("½U",".5");
+            put("½",".5");
+            put("VIII","8");
+            put("VI","6");
+            put("III","3");
+            put("II","2");
+            put("I","1");
+            put("2/3",".5");
+            put("UNIQUE","均码");
+            put("Unica","均码");
+            put("One size","均码");
+            put("UNI","均码");
+            put("TU","均码");
+            put("U","均码");
+            put("Medium","M");
+            put("Small","S");
+
+
+
+
+        }
+    };
+
     @Autowired
     IShangpinRedis shangpinRedis;
 
@@ -78,6 +103,16 @@ public class DataSverviceUtil {
         }
         return map;
 
+    }
+
+    public String sizeCommonReplace(String size){
+        Set<String> sizeSet  = sizeMap.keySet();
+        for(String sizeKey:sizeSet){
+            if(size.indexOf(sizeKey)>=0){
+                size = size.replaceAll(sizeKey,sizeMap.get(sizeKey));
+            }
+        }
+        return size;
     }
 
 
