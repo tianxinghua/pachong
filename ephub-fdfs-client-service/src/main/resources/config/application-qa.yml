@@ -40,3 +40,9 @@ banner:
        location: classpath:banner/banner.txt # Banner file location.
        image:
              location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).
+shangpin:
+   hub:
+       fdfs:
+             port: 80
+             resHost: 192.168.9.71
+             groupName: group2

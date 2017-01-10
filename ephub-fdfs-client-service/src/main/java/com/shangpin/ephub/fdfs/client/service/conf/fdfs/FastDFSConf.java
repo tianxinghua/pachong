@@ -1,5 +1,6 @@
 package com.shangpin.ephub.fdfs.client.service.conf.fdfs;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -15,15 +16,18 @@ import com.github.tobato.fastdfs.FdfsClientConfig;
 @Configuration
 @Import(FdfsClientConfig.class)
 public class FastDFSConf {
-	
+
+	@Autowired
+	ApiAddressProperties apiAddressProperties;
+
 	public static final String HTTP_PRODOCOL = "http://";
 
 	public String getFdfsStoragePort() {
-		return "80";
+		return apiAddressProperties.getPort();
 	}
 
 	public String getResHost() {
-		return "192.168.9.71";
+		return apiAddressProperties.getResHost();
 	}
 
 }

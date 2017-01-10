@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import com.shangpin.ephub.fdfs.client.service.conf.fdfs.ApiAddressProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,9 @@ public class FastDFSClientManager {
 
     @Autowired
     private FastDFSConf appConfig;
+
+    @Autowired
+    ApiAddressProperties apiAddressProperties;
     /**
      * 上传文件
      * @param buffer 文件对象
@@ -38,7 +42,7 @@ public class FastDFSClientManager {
      * @throws IOException
      */
     public String uploadFile(byte[] buffer, String extension) {
-    	StorePath storePath = storageClient.uploadFile("group2", new ByteArrayInputStream(buffer), buffer.length, extension);
+    	StorePath storePath = storageClient.uploadFile(apiAddressProperties.getGroupName(), new ByteArrayInputStream(buffer), buffer.length, extension);
       //  StorePath storePath = storageClient.uploadFile(file.getInputStream(),file.getSize(), FilenameUtils.getExtension(file.getOriginalFilename()),null);
         return getResAccessUrl(storePath);
     }
