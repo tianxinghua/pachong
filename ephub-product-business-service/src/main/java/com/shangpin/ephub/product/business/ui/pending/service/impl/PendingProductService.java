@@ -352,7 +352,7 @@ public class PendingProductService implements IPendingProductService{
     private String findSpPicUrl(String supplierId,String supplierSpuNo){
     	HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
     	criteria.setFields("sp_pic_url");
-    	criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andPicHandleStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
+    	criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andPicHandleStateEqualTo(PicState.HANDLED.getIndex());
     	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
     	if(spuPendingPics!=null&&spuPendingPics.size()>0){
     		if(spuPendingPics.get(0)!=null){
