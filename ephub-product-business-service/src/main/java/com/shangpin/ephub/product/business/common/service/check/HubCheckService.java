@@ -1,6 +1,5 @@
 package com.shangpin.ephub.product.business.common.service.check;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +25,15 @@ import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
-import com.shangpin.ephub.product.business.dto.SizeRequestDto;
+import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.CategoryScreenSizeDom;
+import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.SizeRequestDto;
+import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
-import com.shangpin.ephub.product.business.service.hub.dto.HubResponseDto;
-import com.shangpin.ephub.product.business.vo.CategoryScreenSizeDom;
-import com.shangpin.ephub.product.business.vo.SizeStandardItem;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -17,7 +17,6 @@ import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 import com.shangpin.ephub.client.data.mysql.hub.gateway.HubWaitSelectGateWay;
-import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.ui.hub.selected.service.HubSelectedService;
@@ -121,8 +120,7 @@ public class HubSelectedController {
 			response.setContentType("application/vnd.ms-excel");    
 	        response.setHeader("Content-Disposition", "attachment;filename="+"selected_product_" + System.currentTimeMillis()+".xls");    
 			OutputStream ouputStream = response.getOutputStream();
-			  
-			HubSelectedService.exportExcel(list,ouputStream);
+			HubSelectedService.exportPicExcel(list,ouputStream);
 		} catch (Exception e) {
 			log.error("导出查询图片获取失败：{}",e);
 		}
@@ -137,15 +135,11 @@ public class HubSelectedController {
 	        	
 		try {
 			log.info("导出勾选图片请求参数：{}",dto);
-			HubSpuPicCriteriaDto criteria = new HubSpuPicCriteriaDto();
-//			criteria.createCriteria().andSpuIdEqualTo();
-//			hubSpuPicGateWay.selectByCriteria(arg0);
-//			List<HubWaitSelectResponseDto> list = hubSpuPicGateWay.selectByPage(dto);
 			response.setContentType("application/vnd.ms-excel");    
 	        response.setHeader("Content-Disposition", "attachment;filename="+"selected_product_" + System.currentTimeMillis()+".xls");    
 			OutputStream ouputStream = response.getOutputStream();
 			  
-//			HubSelectedService.exportExcel(list,ouputStream);
+			HubSelectedService.exportSelectPicExcel(dto,ouputStream);
 		} catch (Exception e) {
 			log.error("导出勾选图片失败：{}",e);
 		}

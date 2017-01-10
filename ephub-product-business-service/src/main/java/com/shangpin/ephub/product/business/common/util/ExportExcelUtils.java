@@ -136,6 +136,7 @@ public class ExportExcelUtils {
         HSSFWorkbook workbook = new HSSFWorkbook();  
         // 生成一个表格  
         HSSFSheet sheet = workbook.createSheet(title);  
+        
         // 设置表格默认列宽度为20个字节  
         sheet.setDefaultColumnWidth(20);  
         // 生成一个样式  
