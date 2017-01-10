@@ -55,6 +55,7 @@ import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductSer
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
+import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -92,20 +93,34 @@ public class PendingProductService implements IPendingProductService{
     private HubSpuGateWay hubSpuGateway;
     @Autowired 
 	private HubSpuImportTaskGateWay spuImportGateway;
-    
+    @Autowired 
     private ProductImportTaskStreamSender tastSender;
 
     @Override
-    public void exportSku(PendingQuryDto pendingQuryDto){
-    	PendingProducts products = findPendingProducts(pendingQuryDto);
-    	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
-    	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(products)); 
+    public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto){
+    	try {
+    		PendingProducts products = findPendingProducts(pendingQuryDto);
+        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
+        	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(products)); 
+        	return HubResponse.successResp(taskDto.getTaskNo()+":"+"pending_product_" + taskDto.getTaskNo()+".xlsx");
+		} catch (Exception e) {
+			log.error("导出sku失败，服务器发生错误:"+e.getMessage(),e);
+			return HubResponse.errorResp("导出失败，服务器发生错误");
+		}
     }
     @Override
-    public void exportSpu(PendingQuryDto pendingQuryDto){
-    	List<PendingProductDto> products = findPengdingSpu(pendingQuryDto);
-    	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
-    	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex(),JsonUtil.serialize(products)); 
+    public HubResponse<?> exportSpu(PendingQuryDto pendingQuryDto){
+    	try {
+    		PendingProducts products = new PendingProducts();
+        	List<PendingProductDto> productList = findPengdingSpu(pendingQuryDto);
+        	products.setProduts(productList); 
+        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
+        	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex(),JsonUtil.serialize(products)); 
+        	return HubResponse.successResp(taskDto.getTaskNo()+":"+"pending_product_" + taskDto.getTaskNo()+".xlsx");
+		} catch (Exception e) {
+			log.error("导出spu失败，服务器发生错误:"+e.getMessage(),e);
+			return HubResponse.errorResp("导出失败，服务器发生错误");
+		}
     }
     @Override
     public List<PendingProductDto> findPengdingSpu(PendingQuryDto pendingQuryDto){
@@ -335,7 +350,7 @@ public class PendingProductService implements IPendingProductService{
     private String findSpPicUrl(String supplierId,String supplierSpuNo){
     	HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
     	criteria.setFields("sp_pic_url");
-    	criteria.createCriteria().andSuupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andPicHandleStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
+    	criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andPicHandleStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
     	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
     	if(spuPendingPics!=null&&spuPendingPics.size()>0){
     		if(spuPendingPics.get(0)!=null){

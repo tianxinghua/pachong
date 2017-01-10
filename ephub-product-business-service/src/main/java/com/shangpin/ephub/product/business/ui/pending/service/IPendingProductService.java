@@ -8,6 +8,7 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
+import com.shangpin.ephub.response.HubResponse;
 
 /**
  * <p>Title:IPendingProductService </p>
@@ -24,13 +25,13 @@ public interface IPendingProductService {
 	 * @param pendingQuryDto
 	 * @return
 	 */
-	public void exportSku(PendingQuryDto pendingQuryDto);
+	public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto);
 	/**
 	 * 待处理页面导出spu
 	 * @param pendingQuryDto
 	 * @return
 	 */
-	public void exportSpu(PendingQuryDto pendingQuryDto);
+	public HubResponse<?> exportSpu(PendingQuryDto pendingQuryDto);
 	/**
 	 * 根据页面查询条件查询待处理表，只包含spu信息
 	 * @param pendingQuryDto

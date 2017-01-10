@@ -15,6 +15,7 @@
     <result column="spu_no_org" property="spuNoOrg" jdbcType="VARCHAR" />
     <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="data_state" property="dataState" jdbcType="TINYINT" />
+    <result column="sp_sku_no" property="spSkuNo" jdbcType="VARCHAR" />
     <result column="version" property="version" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -78,7 +79,7 @@
   <sql id="Base_Column_List" >
     <if test="fields == null" >
       sku_id, spu_no, color, sku_size, sku_no, sku_size_id, create_time, create_user, update_time, 
-      update_user, spu_no_org, memo, data_state, version
+      update_user, spu_no_org, memo, data_state, sp_sku_no, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -103,7 +104,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    sku_id,spu_no,color,sku_size,sku_no,sku_size_id,create_time,create_user,update_time,update_user,spu_no_org,memo,data_state,version
+    sku_id,spu_no,color,sku_size,sku_no,sku_size_id,create_time,create_user,update_time,update_user,spu_no_org,memo,data_state,sp_sku_no,version
     from hub_sku
     where sku_id = #{skuId,jdbcType=BIGINT}
   </select>
@@ -125,12 +126,14 @@
       sku_size, sku_no, sku_size_id, 
       create_time, create_user, update_time, 
       update_user, spu_no_org, memo, 
-      data_state, version)
+      data_state, sp_sku_no, version
+      )
     values (#{skuId,jdbcType=BIGINT}, #{spuNo,jdbcType=VARCHAR}, #{color,jdbcType=VARCHAR}, 
       #{skuSize,jdbcType=VARCHAR}, #{skuNo,jdbcType=VARCHAR}, #{skuSizeId,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{updateUser,jdbcType=VARCHAR}, #{spuNoOrg,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
-      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
+      #{dataState,jdbcType=TINYINT}, #{spSkuNo,jdbcType=VARCHAR}, #{version,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.sku.hub.po.HubSku" >
     <selectKey keyColumn="sku_id" keyProperty="skuId" order="AFTER" resultType="long">
@@ -177,6 +180,9 @@
       <if test="dataState != null" >
         data_state,
       </if>
+      <if test="spSkuNo != null" >
+        sp_sku_no,
+      </if>
       <if test="version != null" >
         version,
       </if>
@@ -220,6 +226,9 @@
       </if>
       <if test="dataState != null" >
         #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="spSkuNo != null" >
+        #{spSkuNo,jdbcType=VARCHAR},
       </if>
       <if test="version != null" >
         #{version,jdbcType=BIGINT},
@@ -274,6 +283,9 @@
       <if test="record.dataState != null" >
         data_state = #{record.dataState,jdbcType=TINYINT},
       </if>
+      <if test="record.spSkuNo != null" >
+        sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
+      </if>
       <if test="record.version != null" >
         version = #{record.version,jdbcType=BIGINT},
       </if>
@@ -297,6 +309,7 @@
       spu_no_org = #{record.spuNoOrg,jdbcType=VARCHAR},
       memo = #{record.memo,jdbcType=VARCHAR},
       data_state = #{record.dataState,jdbcType=TINYINT},
+      sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
       version = #{record.version,jdbcType=BIGINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -341,6 +354,9 @@
       <if test="dataState != null" >
         data_state = #{dataState,jdbcType=TINYINT},
       </if>
+      <if test="spSkuNo != null" >
+        sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
+      </if>
       <if test="version != null" >
         version = #{version,jdbcType=BIGINT},
       </if>
@@ -361,6 +377,7 @@
       spu_no_org = #{spuNoOrg,jdbcType=VARCHAR},
       memo = #{memo,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},
+      sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
       version = #{version,jdbcType=BIGINT}
     where sku_id = #{skuId,jdbcType=BIGINT}
   </update>
@@ -387,7 +404,5 @@
     select   max(sku_no)
     from hub_sku
     where spu_no = #{spuNo}
-
   </select>
-
 </mapper>

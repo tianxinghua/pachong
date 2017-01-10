@@ -12,7 +12,7 @@ import org.apache.ibatis.session.RowBounds;
  * <p>Description: </p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
- * @date 2016年12月24日 下午2:57:18
+ * @date 2017年1月10日 下午12:21:09
  */
 @Mapper
 public interface HubSkuMapper {
@@ -39,7 +39,7 @@ public interface HubSkuMapper {
     int updateByPrimaryKeySelective(HubSku record);
 
     int updateByPrimaryKey(HubSku record);
-
-  // 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方
+    
+    // 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方
     String getMaxSkuNo(@Param("spuNo") String  spuNo);
 }
