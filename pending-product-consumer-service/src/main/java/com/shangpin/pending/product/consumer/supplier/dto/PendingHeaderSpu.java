@@ -1,10 +1,10 @@
 package com.shangpin.pending.product.consumer.supplier.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.io.Serializable;
 import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by loyalty on 16/12/14.

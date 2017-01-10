@@ -1,6 +1,17 @@
 package com.shangpin.pending.product.consumer.supplier.common;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
@@ -8,15 +19,8 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingD
 import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
 import com.shangpin.pending.product.consumer.supplier.dto.SupplierSizeMappingDto;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by loyalty on 17/1/7.

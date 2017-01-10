@@ -9,16 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
-import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
-import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
-import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
-import com.shangpin.pending.product.consumer.common.enumeration.*;
-import com.shangpin.pending.product.consumer.conf.rpc.ApiAddressProperties;
-import com.shangpin.pending.product.consumer.supplier.dto.*;
-import com.shangpin.pending.product.consumer.util.BurberryModelRule;
-import com.shangpin.pending.product.consumer.util.PradaModelRule;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,17 +18,18 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
@@ -46,10 +37,29 @@ import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
+import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
+import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
+import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.pending.product.consumer.common.DateUtils;
+import com.shangpin.pending.product.consumer.common.enumeration.DataStatus;
+import com.shangpin.pending.product.consumer.common.enumeration.MessageType;
+import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
+import com.shangpin.pending.product.consumer.common.enumeration.SeasonType;
+import com.shangpin.pending.product.consumer.common.enumeration.SpuStatus;
+import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
+import com.shangpin.pending.product.consumer.conf.rpc.ApiAddressProperties;
+import com.shangpin.pending.product.consumer.supplier.dto.CategoryScreenSizeDom;
+import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
+import com.shangpin.pending.product.consumer.supplier.dto.HubResponseDto;
+import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
+import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSku;
+import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSpu;
+import com.shangpin.pending.product.consumer.supplier.dto.SizeRequestDto;
+import com.shangpin.pending.product.consumer.supplier.dto.SizeStandardItem;
+import com.shangpin.pending.product.consumer.supplier.dto.SpuPending;
+import com.shangpin.pending.product.consumer.util.BurberryModelRule;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Created by loyalty on 16/12/13.

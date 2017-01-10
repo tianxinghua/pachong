@@ -9,13 +9,10 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 
 @Component
 public class FTPClientUtil {
@@ -28,6 +25,7 @@ public class FTPClientUtil {
 	private static String userName;
 	private static String password;
 	private static String ftpHubPatht;
+	private static String exportPath;
 	
 	@PostConstruct
 	public void init(){
@@ -36,7 +34,34 @@ public class FTPClientUtil {
 		userName = ftpProperties.getUserName();
 		password = ftpProperties.getPassword();
 		ftpHubPatht = ftpProperties.getFtpHubPath();
+		exportPath = ftpProperties.getExportPath();
 	}
+	
+	/**
+	 * 上传文件到导出目录（pending_export）
+	 * @param file
+	 * @param fileName
+	 * @return
+	 * @throws Exception
+	 */
+	public static String uploadToExportPath(File file,String fileName) throws Exception {
+		FTPClient ftp = new FTPClient();
+		int reply;
+		ftp.connect(host, Integer.parseInt(port));
+		ftp.login(userName, password);
+		ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+		reply = ftp.getReplyCode();
+		if (!FTPReply.isPositiveCompletion(reply)) {
+			ftp.disconnect();
+		}
+		InputStream sbs = new FileInputStream(file);
+		ftp.changeWorkingDirectory(exportPath);
+		ftp.storeFile(fileName, sbs);
+		sbs.close();
+		ftp.quit();
+		return exportPath;
+	}
+	
 	/**
 	 * 
 	 * @param file

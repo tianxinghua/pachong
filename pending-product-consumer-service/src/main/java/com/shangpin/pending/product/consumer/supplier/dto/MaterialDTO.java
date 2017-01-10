@@ -1,9 +1,9 @@
 package com.shangpin.pending.product.consumer.supplier.dto;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.Serializable;
 
 /**
  * Created by loyalty on 16/12/16.
@@ -12,7 +12,12 @@ import java.io.Serializable;
 @Getter
 public class MaterialDTO implements Serializable {
 
-    private Long materialItemId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7251517498181329087L;
+
+	private Long materialItemId;
 
     private Long  materialDicId;
 

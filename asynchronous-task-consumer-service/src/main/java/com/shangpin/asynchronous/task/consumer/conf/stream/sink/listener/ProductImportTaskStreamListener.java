@@ -3,7 +3,6 @@ package com.shangpin.asynchronous.task.consumer.conf.stream.sink.listener;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -21,7 +20,6 @@ import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
  * @author yanxiaobin
  * @date 2016年12月19日 下午7:56:23
  */
-@EnableBinding({ProductImportTaskSink.class})
 public class ProductImportTaskStreamListener {
 	
 	@Autowired
