@@ -259,8 +259,8 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             hubSkuSupplierMapping.setBarcode(skuPending.getSupplierBarcode());
             hubSkuSupplierMapping.setSkuNo(hubSku.getSkuNo());
             hubSkuSupplierMapping.setSupplierSelectState(DataSelectStatus.NOT_SELECT.getIndex().byteValue());
-            HubSpuPending spuPendingTmp =  this.getHubSpuPendingById(skuPending.getSpuPendingId());
-            hubSkuSupplierMapping.setSupplierNo(spuPendingTmp.getSupplierNo());
+//            HubSpuPending spuPendingTmp =  this.getHubSpuPendingById(skuPending.getSpuPendingId());
+            hubSkuSupplierMapping.setSupplierNo(skuPending.getSupplierNo());
 //                                    hubSkuSupplierMapping.setIsNewSupplier();  //不知从哪里获取值
             hubSkuSupplierMapping.setCreateTime(date);
             hubSkuSupplierMapping.setCreateUser(ConstantProperty.DATA_CREATE_USER);
