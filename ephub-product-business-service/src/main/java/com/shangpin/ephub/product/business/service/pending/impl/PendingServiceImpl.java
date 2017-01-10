@@ -178,13 +178,13 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
                     for(HubSpuPendingPicDto picDto:hubSpuPendingPicDtos){
                         //首先查询 图片是否已经有spuPending编号，如果没有反写进去
-                        if(null==picDto.getSpuPendingId()){
-                            HubSpuPendingPicDto tmp = new HubSpuPendingPicDto();
-                            tmp.setSpuPendingPicId(picDto.getSpuPendingPicId());
-                            tmp.setSpuPendingId(spuPendingDto.getSpuPendingId());
-                            spuPendingPicGateWay.updateByPrimaryKeySelective(tmp);
-                            picDto.setSpuPendingId(tmp.getSpuPendingId());
-                        }
+//                        if(null==picDto.getSpuPendingId()){
+//                            HubSpuPendingPicDto tmp = new HubSpuPendingPicDto();
+//                            tmp.setSpuPendingPicId(picDto.getSpuPendingPicId());
+//                            tmp.setSpuPendingId(spuPendingDto.getSpuPendingId());
+//                            spuPendingPicGateWay.updateByPrimaryKeySelective(tmp);
+//                            picDto.setSpuPendingId(tmp.getSpuPendingId());
+//                        }
 
 
                         SpuPendingPicVO picVO = new SpuPendingPicVO();
