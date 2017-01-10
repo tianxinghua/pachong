@@ -18,9 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
-import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
-import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
@@ -31,8 +29,6 @@ import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPend
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>

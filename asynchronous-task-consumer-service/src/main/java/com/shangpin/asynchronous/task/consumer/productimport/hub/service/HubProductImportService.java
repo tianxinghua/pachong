@@ -19,7 +19,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.esotericsoftware.minlog.Log;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.dto.HubProductImportDTO;
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuWithCriteriaDto;
