@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
@@ -53,8 +54,7 @@ public class HubSpuImportTaskController {
 	        	
 		log.info("hub任务列表接受到的参数："+dto.toString());
 		try {
-			Byte [] list1 = {3};
-			HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = taskService.findHubTaskList(dto,Arrays.asList(list1));
+			HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = taskService.findHubTaskList(dto);
 			return HubResponse.successResp(hubTaskProductResponseWithPageDTO);	
 		} catch (Exception e) {
 			return HubResponse.errorResp("获取列表分页失败");

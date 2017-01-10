@@ -70,9 +70,8 @@ public class PendingSpuImportTaskController {
     public HubResponse importSpuList(@RequestBody HubImportTaskListRequestDto dto){
 	        	
 		try {
-			Byte [] list1 = {1,2};
 			log.info("pending列表参数：{}",dto);
-			HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = pendingImportTaskService.findHubTaskList(dto,Arrays.asList(list1));
+			HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = pendingImportTaskService.findHubTaskList(dto);
 			return HubResponse.successResp(hubTaskProductResponseWithPageDTO);
 		} catch (Exception e) {
 			return HubResponse.errorResp("获取列表失败");

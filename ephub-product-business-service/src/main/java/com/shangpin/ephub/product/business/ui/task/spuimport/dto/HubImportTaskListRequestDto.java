@@ -26,5 +26,6 @@ public class HubImportTaskListRequestDto implements Serializable {
     private String endDate;
     private int pageNo;
     private int pageSize;
+    private Byte importType;
 
 }
