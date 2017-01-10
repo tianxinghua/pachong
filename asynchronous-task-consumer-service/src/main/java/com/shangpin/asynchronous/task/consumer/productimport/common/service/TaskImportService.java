@@ -337,6 +337,13 @@ public class TaskImportService {
 		String checkResult = null;
 		HubSpuPendingDto isExist = null;
 		
+		// 查询是否已存在pendingSpu表中
+		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
+		if (listSpu != null && listSpu.size() > 0) {
+			isExist = listSpu.get(0);
+		}
+		
+		
 		// 校验货号
 		HubPendingSpuCheckResult hubPendingSpuCheckResult = null;
 		BrandModelResult result = dataHandleService.checkSpuModel(hubPendingSpuDto);
@@ -352,7 +359,11 @@ public class TaskImportService {
 				hubSpuId = list.get(0).getSpuId();
 				log.info("hubSpu已存在，hubSpuId:"+hubSpuId);
 				isPassing = true;
-				hubIsExist = true;
+				if(isExist!=null){
+					hubIsExist = true;	
+				}else{
+					hubIsExist = false;
+				}
 				checkResult = spuModel+"已存在选品";
 			} else {
 				// 货号不存在hubSpu中,继续校验其它信息，查询pendingSpu是否存在==》保存或更新pendingSpu表
@@ -374,11 +385,7 @@ public class TaskImportService {
 			checkResult = "货号校验失败";
 		}
 
-		// 查询是否已存在pendingSpu表中
-		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
-		if (listSpu != null && listSpu.size() > 0) {
-			isExist = listSpu.get(0);
-		}
+		
 		pendingSpuId = saveOrUpdatePendingSpu(isExist, hubPendingSpuDto, isPassing);
 		if (isPassing) {
 			map.put("taskState", "校验通过");
@@ -399,7 +406,7 @@ public class TaskImportService {
 		hubPendingSpuDto.setHubGender(hubSpuDto.getGender());
 		hubPendingSpuDto.setHubMaterial(hubSpuDto.getMaterial());
 		hubPendingSpuDto.setHubOrigin(hubSpuDto.getOrigin());
-		hubPendingSpuDto.setHubSeason(hubSpuDto.getSeason());
+		hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
 		hubPendingSpuDto.setHubSpuNo(hubSpuDto.getSpuNo());
 		hubPendingSpuDto.setSpuModel(hubSpuDto.getSpuModel());
 		hubPendingSpuDto.setSpuName(hubSpuDto.getSpuName());
