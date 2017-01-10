@@ -26,7 +26,7 @@ spring:
                               destination: hub.product.import.task
                               content-type: application/json
                         productExportTask: 
-                              destination: hub.product.import.task
+                              destination: product.export.task
                               content-type: application/json
               rabbit: 
                       bindings: 
