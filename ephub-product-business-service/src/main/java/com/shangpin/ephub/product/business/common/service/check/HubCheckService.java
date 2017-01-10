@@ -1,9 +1,15 @@
 package com.shangpin.ephub.product.business.common.service.check;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
@@ -20,12 +26,16 @@ import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
-import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
+import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
+import com.shangpin.ephub.product.business.dto.SizeRequestDto;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
+import com.shangpin.ephub.product.business.service.hub.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.vo.CategoryScreenSizeDom;
+import com.shangpin.ephub.product.business.vo.SizeStandardItem;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +50,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class HubCheckService {
+	
+    @Autowired
+    ApiAddressProperties apiAddressProperties;
+    @Autowired
+    RestTemplate restTemplate;
 	@Autowired
 	HubBrandDicGateway hubBrandDicGateway;
 	@Autowired
@@ -114,7 +129,7 @@ public class HubCheckService {
 			str.append("性别为空，");
 			result.setPassing(false);
 		}
-		
+		result.setResult(str.toString());
 		//校验产地
 		return result;
 	}
@@ -208,8 +223,37 @@ public class HubCheckService {
 	 * @param hubSkuSize
 	 * @return
 	 */
-	public boolean checkHubSize(String hubSkuSize) {
-		return true;
+	public String checkHubSize(String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize) {
+		String result = null;
+        SizeRequestDto requestDto = new SizeRequestDto();
+        requestDto.setBrandNo(hubBrandNo);
+        requestDto.setCategoryNo(hubCategoryNo);
+        HttpEntity<SizeRequestDto> requestEntity = new HttpEntity<SizeRequestDto>(requestDto);
+        ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsSizeUrl(), HttpMethod.POST,
+                requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {
+                });
+        HubResponseDto<CategoryScreenSizeDom> responseDto = entity.getBody();
+        try {
+            List<CategoryScreenSizeDom> sizeDomList = responseDto.getResDatas();
+            if(null!=sizeDomList&&sizeDomList.size()>0){
+                List<SizeStandardItem> sizeStandardItemList = sizeDomList.get(0).getSizeStandardItemList();
+                boolean find=false;
+                for(SizeStandardItem sizeItem:sizeStandardItemList){
+                    if(sizeItem.getSizeStandardValue().equals(supplierSize)){
+
+                        if(!find){
+                            result = sizeItem.getScreenSizeStandardValueId() + "," + sizeItem.getSizeStandardName() + ":" +sizeItem.getSizeStandardValue();
+                        }else{
+                            log.error("品牌：" + hubBrandNo + " 品类: " + hubCategoryNo + " 的尺码对照有错误。");
+                            result = null;
+                        }
+                        find = true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		return result;
 	}
-	
 }
