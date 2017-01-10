@@ -1,8 +1,11 @@
 package com.shangpin.picture.product.consumer.manager;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
@@ -44,6 +47,20 @@ public class SupplierProductPictureManager {
 	 */
 	public void updateSelective(HubSpuPendingPicDto updateDto) {
 		hubSpuPendingPicGateWay.updateByPrimaryKeySelective(updateDto);
+	}
+	/**
+	 * @param picUrl 原始图片地址
+	 * @return 检查是否存在，如果存在则返回true，否则返回false
+	 */
+	public boolean exists(String picUrl) {
+		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
+		criteria.createCriteria().andPicUrlEqualTo(picUrl).andPicHandleStateEqualTo(PicHandleState.HANDLED.getIndex());
+		criteria.setFields("spu_pending_pic_id");
+		if (CollectionUtils.isEmpty(hubSpuPendingPicGateWay.selectByCriteria(criteria))) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

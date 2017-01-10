@@ -17,7 +17,6 @@ import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
-import com.shangpin.supplier.product.consumer.service.PictureProductService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
@@ -36,9 +35,7 @@ public class GebHandler implements ISupplierHandler {
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
-	@Autowired
-	private PictureProductService pictureProductService;
-
+	
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
@@ -52,12 +49,11 @@ public class GebHandler implements ISupplierHandler {
 				if(skuSuc){
 					hubSkus.add(hubSku);
 				}
-				if(success){
-					supplierProductSaveAndSendToPending.gebSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
-				}
 				//处理图片				
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item.getItem_images()));
-				pictureProductService.sendSupplierPicture(supplierPicture, null); 
+				if(success){
+					supplierProductSaveAndSendToPending.gebSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+				}
 			}	
 		} catch (EpHubSupplierProductConsumerException e) {
 			log.error("geb异常："+e.getMessage(),e); 

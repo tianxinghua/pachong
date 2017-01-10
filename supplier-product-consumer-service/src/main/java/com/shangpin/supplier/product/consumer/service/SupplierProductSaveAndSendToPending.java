@@ -14,6 +14,7 @@ import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
+import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.conf.stream.source.sender.PendingProductStreamSender;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
@@ -38,6 +39,8 @@ public class SupplierProductSaveAndSendToPending {
 	private SupplierProductMysqlService supplierProductMysqlService;
 	@Autowired
 	private PendingProductStreamSender pendingProductStreamSender;
+	@Autowired
+	private PictureProductService pictureProductService;
 		
 	/**
 	 * atelier系列供应商保存数据以及发送消息给Pending
@@ -46,8 +49,9 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierName
 	 * @param hubSpu
 	 * @param hubSkus
+	 * @param supplierPicture 图片消息体
 	 */
-	public void atelierSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
+	public void atelierSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
@@ -56,7 +60,7 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
+		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		boolean result = false;
 		if("2015091801507".equals(supplierId)){
 			result = pendingProductStreamSender.brunarossoPendingProductStream(pendingProduct, headers);
@@ -73,8 +77,9 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierName
 	 * @param hubSpu
 	 * @param hubSkus
+	 * @param supplierPicture 图片消息体
 	 */
-	public void spinnakerSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
+	public void spinnakerSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
@@ -83,7 +88,7 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
+		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		boolean result = false;
 		if("2015081701439".equals(supplierId)){
 			result = pendingProductStreamSender.spinnakerPendingProductStream(pendingProduct, headers);
@@ -99,8 +104,9 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierName
 	 * @param hubSpu
 	 * @param hubSkus
+	 * @param supplierPicture 图片消息体
 	 */
-	public void biondioniSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
+	public void biondioniSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
@@ -109,7 +115,7 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
+		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		boolean result = pendingProductStreamSender.biondioniPendingProductStream(pendingProduct, headers);
 		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}	
@@ -120,8 +126,9 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierName
 	 * @param hubSpu
 	 * @param hubSkus
+	 * @param supplierPicture 图片消息体
 	 */
-	public void gebSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
+	public void gebSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
@@ -130,7 +137,7 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
+		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		boolean result = pendingProductStreamSender.gebPendingProductStream(pendingProduct, headers);
 		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}
@@ -141,8 +148,9 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierName
 	 * @param hubSpu
 	 * @param hubSkus
+	 * @param supplierPicture 图片消息体
 	 */
-	public void stefaniaSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
+	public void stefaniaSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
@@ -151,7 +159,7 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
+		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		boolean result = pendingProductStreamSender.stefaniaPendingProductStream(pendingProduct, headers);
 		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}
@@ -162,8 +170,9 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierName
 	 * @param hubSpu
 	 * @param hubSkus
+	 * @param supplierPicture 图片消息体
 	 */
-	public void tonySaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException {
+	public void tonySaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException {
 		/**
 		 * 消息体
 		 */
@@ -172,7 +181,7 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
+		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		boolean result = pendingProductStreamSender.tonyPendingProductStream(pendingProduct, headers);
 		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}
@@ -183,9 +192,10 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierName
 	 * @param hubSpu
 	 * @param hubSkus
+	 * @param supplierPicture 图片消息体
 	 * @throws EpHubSupplierProductConsumerException
 	 */
-	public void coltortiSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus) throws EpHubSupplierProductConsumerException{
+	public void coltortiSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		/**
 		 * 消息体
 		 */
@@ -194,7 +204,7 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers); 
+		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		boolean result = pendingProductStreamSender.coltortiPendingProductStream(pendingProduct, headers);
 		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 	}
@@ -209,8 +219,9 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param hubSkus HubSupplierSkuDto对象集合
 	 * @param pendingProduct 消息体对象
 	 * @param headers 消息头
+	 * @param supplierPicture 图片的消息体
 	 */
-	public void supplierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,PendingProduct pendingProduct,Map<String,String> headers) throws EpHubSupplierProductConsumerException{
+	public void supplierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,PendingProduct pendingProduct,Map<String,String> headers,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		try {
 			PendingSpu pendingSpu = new PendingSpu();		
 			List<PendingSku> skus = new ArrayList<PendingSku>();
@@ -241,6 +252,11 @@ public class SupplierProductSaveAndSendToPending {
 			pendingProduct.setData(pendingSpu);		
 			spuHead.setSkus(headSkus);		
 			headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
+			//发送图片
+			if(null != supplierPicture){
+				supplierPicture.setSupplierSpuId(hubSpu.getSupplierSpuId()); 
+				pictureProductService.sendSupplierPicture(supplierPicture, null); 
+			}
 		} catch (Exception e) {
 			throw new EpHubSupplierProductConsumerException(e.getMessage(),e);
 		}

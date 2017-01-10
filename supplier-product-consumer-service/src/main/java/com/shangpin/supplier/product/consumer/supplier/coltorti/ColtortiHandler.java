@@ -15,7 +15,6 @@ import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.service.PictureProductService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.coltorti.convert.ColtortiProductConvert;
@@ -32,8 +31,6 @@ public class ColtortiHandler implements ISupplierHandler {
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
-	@Autowired
-	private PictureProductService pictureProductService;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
@@ -50,9 +47,8 @@ public class ColtortiHandler implements ISupplierHandler {
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				HubSupplierSkuDto supplierSkuDto = ColtortiProductConvert.product2sku(message.getSupplierId(), p);
 				hubSkus.add(supplierSkuDto);
-				supplierProductSaveAndSendToPending.coltortiSaveAndSendToPending(message.getSupplierNo(), message.getSupplierId(), message.getSupplierName(), supplierSpuDto, hubSkus);
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, supplierSpuDto, images);
-				pictureProductService.sendSupplierPicture(supplierPicture, null); 				
+				supplierProductSaveAndSendToPending.coltortiSaveAndSendToPending(message.getSupplierNo(), message.getSupplierId(), message.getSupplierName(), supplierSpuDto, hubSkus,supplierPicture);
 			}
 		} catch (Exception e) {
 			log.error("coltorti异常："+e.getMessage(),e); 
