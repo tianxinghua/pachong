@@ -69,6 +69,8 @@ public class HubSku implements Serializable {
      */
     private Byte dataState;
 
+    private String spSkuNo;
+
     /**
      * 版本字段
      */
@@ -180,6 +182,14 @@ public class HubSku implements Serializable {
         this.dataState = dataState;
     }
 
+    public String getSpSkuNo() {
+        return spSkuNo;
+    }
+
+    public void setSpSkuNo(String spSkuNo) {
+        this.spSkuNo = spSkuNo == null ? null : spSkuNo.trim();
+    }
+
     public Long getVersion() {
         return version;
     }
@@ -207,6 +217,7 @@ public class HubSku implements Serializable {
         sb.append(", spuNoOrg=").append(spuNoOrg);
         sb.append(", memo=").append(memo);
         sb.append(", dataState=").append(dataState);
+        sb.append(", spSkuNo=").append(spSkuNo);
         sb.append(", version=").append(version);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
@@ -238,6 +249,7 @@ public class HubSku implements Serializable {
             && (this.getSpuNoOrg() == null ? other.getSpuNoOrg() == null : this.getSpuNoOrg().equals(other.getSpuNoOrg()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
+            && (this.getSpSkuNo() == null ? other.getSpSkuNo() == null : this.getSpSkuNo().equals(other.getSpSkuNo()))
             && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
     }
 
@@ -258,6 +270,7 @@ public class HubSku implements Serializable {
         result = prime * result + ((getSpuNoOrg() == null) ? 0 : getSpuNoOrg().hashCode());
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());
+        result = prime * result + ((getSpSkuNo() == null) ? 0 : getSpSkuNo().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
     }

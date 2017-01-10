@@ -1,6 +1,9 @@
 package com.shangpin.ephub.product.business.ui.task.pendingimport.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
+import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
+import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
 import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
@@ -31,7 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/pending-task")
 @Slf4j
 public class PendingSpuImportTaskController {
-	
+	@Autowired
+	ProductImportTaskStreamSender productImportTaskStreamSender;
 	@Autowired
 	TaskImportService pendingImportTaskService;
 	
