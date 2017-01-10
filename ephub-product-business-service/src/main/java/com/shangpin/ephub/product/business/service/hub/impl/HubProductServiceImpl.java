@@ -18,6 +18,7 @@ import com.shangpin.ephub.product.business.service.hub.dto.*;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -119,11 +120,11 @@ public class HubProductServiceImpl implements HubProductService {
                     HubResponseDto<String> responseDto = entity.getBody();
                     if(responseDto.getIsSuccess()){  //创建成功
                          for(ApiSkuOrgDom skuOrg:skuOrgDoms){
-                             updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTED);
+                             updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTED,"");
                          }
                     }else{ //创建失败
                         for(ApiSkuOrgDom skuOrg:skuOrgDoms){
-                            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTE_FAIL);
+                            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTE_FAIL,responseDto.getResMsg());
                         }
                     }
                 }
@@ -260,10 +261,13 @@ public class HubProductServiceImpl implements HubProductService {
     }
 
 
-    private void updateSkuMappingStatus(Long id,SupplierSelectState status){
+    private void updateSkuMappingStatus(Long id,SupplierSelectState status,String reason){
         HubSkuSupplierMappingDto skuSupplierMapping = new HubSkuSupplierMappingDto();
         skuSupplierMapping.setSkuSupplierMappingId(id);
         skuSupplierMapping.setSupplierSelectState(Integer.valueOf(status.getIndex()).byteValue());
+        if(StringUtils.isNotBlank(reason)) {
+            skuSupplierMapping.setMemo(reason);
+        }
         skuSupplierMappingGateWay.updateByPrimaryKeySelective(skuSupplierMapping);
     }
 }

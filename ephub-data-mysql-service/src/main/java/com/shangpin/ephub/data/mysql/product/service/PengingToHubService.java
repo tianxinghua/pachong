@@ -16,6 +16,12 @@ public interface PengingToHubService {
      */
     public boolean auditPending(SpuModelDto spuModelVO) throws Exception;
 
+    /**
+     * 如果有相同的hubspu　增加hubsku or hubskumapping
+     * @param hubPendingDto
+     * @return
+     * @throws Exception
+     */
     public boolean addSkuOrSkuSupplierMapping(HubPendingDto hubPendingDto) throws Exception;
 
 
