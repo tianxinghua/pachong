@@ -257,7 +257,7 @@ public class TaskImportService {
 		return in;
 	}
 
-	public void checkPendingSpu(HubSpuPendingDto hubPendingSpuDto, Map<String, String> map) {
+	public void checkPendingSpu1(HubSpuPendingDto hubPendingSpuDto, Map<String, String> map) {
 		Long pendingSpuId = null;
 		boolean isPassing = false;
 		boolean hubIsExist= false;
@@ -328,7 +328,7 @@ public class TaskImportService {
 		map.put("isPassing",isPassing+"");
 		map.put("hubSpuId",hubSpuId+"");
 	}
-	public void checkPendingSpu1(HubSpuPendingDto hubPendingSpuDto, Map<String, String> map) {
+	public void checkPendingSpu(HubSpuPendingDto hubPendingSpuDto, Map<String, String> map) {
 		
 		Long pendingSpuId = null;
 		boolean isPassing = false;
@@ -350,6 +350,7 @@ public class TaskImportService {
 				// 货号已存在hubSpu中,不需要推送hub，直接把hubSpu信息拿过来，查询pendingSpu是否存在==》保存或更新pendingSpu表
 				convertHubSpuToPendingSpu(hubPendingSpuDto, list.get(0));
 				hubSpuId = list.get(0).getSpuId();
+				log.info("hubSpu已存在，hubSpuId:"+hubSpuId);
 				isPassing = true;
 				hubIsExist = true;
 				checkResult = spuModel+"已存在选品";
@@ -442,19 +443,18 @@ public class TaskImportService {
 			hubPendingSpuDto.setSpuState((byte) SpuState.INFO_PECCABLE.getIndex());
 		}
 		if (isExist != null) {
-			log.info("spu:" + isExist.getSupplierId() + "存在");
+			log.info("spu:" + isExist.getSpuModel()+ "," +isExist.getSupplierSpuNo() + "存在");
 			pengingSpuId = isExist.getSpuPendingId();
 			hubPendingSpuDto.setUpdateTime(new Date());
 			hubPendingSpuDto.setSpuPendingId(pengingSpuId);
 			hubSpuPendingGateWay.updateByPrimaryKeySelective(hubPendingSpuDto);
 		} else {
-			log.info("spu:" + hubPendingSpuDto.getSupplierId() + "不存在");
+			log.info("spu:" + hubPendingSpuDto.getSpuModel() + "不存在");
 			hubPendingSpuDto.setCreateTime(new Date());
 			hubPendingSpuDto.setUpdateTime(new Date());
 			hubPendingSpuDto.setSpuSeasonState((byte) 1);
 			hubPendingSpuDto.setUpdateTime(new Date());
 			pengingSpuId = hubSpuPendingGateWay.insert(hubPendingSpuDto);
-			log.info("插入pengingSpuId:"+pengingSpuId);
 		}
 		log.info("pengingSpuId:"+pengingSpuId);
 		return pengingSpuId;
