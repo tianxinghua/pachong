@@ -8,11 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.response.HubResponse;
+
+import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:PendingProductController </p>
  * <p>Description: 待处理页面</p>
@@ -23,6 +26,7 @@ import com.shangpin.ephub.response.HubResponse;
  */
 @RestController
 @RequestMapping("/pending-product")
+@Slf4j
 public class PendingProductController {
 	
 	private static String resultSuccess = "success";
@@ -39,6 +43,7 @@ public class PendingProductController {
     @RequestMapping(value="/update",method=RequestMethod.POST)
     public HubResponse<?> updateProduct(@RequestBody PendingProductDto pendingProductDto){
         try {
+        	log.info("更新接受到数据{}",pendingProductDto);
         	boolean result = pendingProductService.updatePendingProduct(pendingProductDto);
             if(result){
                 return HubResponse.successResp(resultSuccess);

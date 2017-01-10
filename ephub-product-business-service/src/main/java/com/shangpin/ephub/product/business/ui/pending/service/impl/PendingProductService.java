@@ -225,9 +225,11 @@ public class PendingProductService implements IPendingProductService{
                      throw new Exception("货号校验不通过");
         		}
                 List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
+                log.info("pengdingSkus:{}",pengdingSkus);
                 if(null != pengdingSkus && pengdingSkus.size()>0){
                     for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
                         HubPendingSkuCheckResult result = pendingSkuCheckGateWay.checkSku(hubSkuPendingDto);
+                        log.info("HubPendingSkuCheckResult:{}",result);
                         if(result.isPassing()){
                         	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
                         	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());

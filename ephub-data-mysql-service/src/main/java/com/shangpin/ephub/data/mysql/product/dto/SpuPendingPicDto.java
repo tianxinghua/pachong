@@ -13,6 +13,11 @@ import java.io.Serializable;
 public class SpuPendingPicDto implements Serializable {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3480863918749960936L;
+
+	/**
      * spuPengding表主键
      */
     private Long spuPendingId;

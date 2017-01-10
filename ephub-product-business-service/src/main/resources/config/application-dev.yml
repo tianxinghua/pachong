@@ -24,12 +24,18 @@ spring:
                         hubProductImportTask: 
                               destination: hub.product.import.task
                               content-type: application/json
+                        productExportTask: 
+                              destination: hub.product.import.task
+                              content-type: application/json
               rabbit: 
                       bindings: 
                             pendingProductImportTask: 
                                   producer: 
                                            prefix: HA.
                             hubProductImportTask: 
+                                  producer: 
+                                           prefix: HA.
+                            productExportTask: 
                                   producer: 
                                            prefix: HA.
   jackson: 

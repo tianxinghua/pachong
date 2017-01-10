@@ -2,20 +2,18 @@ package com.shangpin.ephub.data.mysql.spu.hub.controller;
 
 import java.util.List;
 
-import com.shangpin.ephub.data.mysql.product.common.HubSpuUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.data.mysql.product.common.HubSpuUtil;
 import com.shangpin.ephub.data.mysql.spu.hub.bean.HubSpuCriteriaWithRowBounds;
 import com.shangpin.ephub.data.mysql.spu.hub.bean.HubSpuWithCriteria;
 import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu;
 import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria;
 import com.shangpin.ephub.data.mysql.spu.hub.service.HubSpuService;
-
-import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:HubSpuController.java </p>
  * <p>Description: </p>
@@ -25,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @RequestMapping("/hub-spu")
-@Slf4j
 public class HubSpuController {
 
 	@Autowired
