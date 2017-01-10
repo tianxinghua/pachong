@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Date;
 
 import javax.imageio.ImageIO;
 
@@ -82,7 +83,7 @@ public class ExportServiceImpl {
                     }
                 }
             }
-            saveAndUploadExcel(taskNo,wb);
+            saveAndUploadExcel(taskNo,products.getCreateUser(),wb);
         } catch (Exception e) {
             log.error("待处理页导出sku异常："+e.getMessage(),e);
         }
@@ -121,7 +122,7 @@ public class ExportServiceImpl {
                     }
                 }
             }
-            saveAndUploadExcel(taskNo,wb);
+            saveAndUploadExcel(taskNo,products.getCreateUser(),wb);
         } catch (Exception e) {
             log.error("待处理页导出spu异常："+e.getMessage(),e);
         }
@@ -131,10 +132,11 @@ public class ExportServiceImpl {
 	 * 上传Excel到ftp
 	 * @param wb
 	 */
-	private void saveAndUploadExcel(String taskNo, HSSFWorkbook wb){
+	private void saveAndUploadExcel(String taskNo, String createUser, HSSFWorkbook wb){
 		FileOutputStream fout = null;
+		File file = null;
 		try {
-			File file = new File(ftpProperties.getLocalResultPath()+"pending_product_" + taskNo+".xlsx");
+			file = new File(ftpProperties.getExportPath()+createUser+"_" + taskNo+".xls");
 			fout = new FileOutputStream(file);  
 	        wb.write(fout); 
 	        FTPClientUtil.uploadToExportPath(file, file.getName());
@@ -145,6 +147,9 @@ public class ExportServiceImpl {
 			try {
 				if(null != fout){
 					fout.close(); 
+				}
+				if(null != file && file.exists()){
+					file.delete();
 				}
 			} catch (Exception e2) {
 				e2.printStackTrace(); 
@@ -163,6 +168,7 @@ public class ExportServiceImpl {
 		taskDto.setCriteria(criteria);
 		HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
 		hubSpuTask.setTaskState((byte)TaskState.ALL_SUCCESS.getIndex());
+		hubSpuTask.setUpdateTime(new Date());
 		taskDto.setHubSpuImportTask(hubSpuTask); 
 		spuImportGateway.updateByCriteriaSelective(taskDto);
 	}
@@ -298,12 +304,12 @@ public class ExportServiceImpl {
 //				anchor.setAnchorType(AnchorType.MOVE_AND_RESIZE);
 				patriarch.createPicture(anchor, row.getSheet().getWorkbook().addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
 			}else{
-				row.createCell(startColumn).setCellValue("无图片");
+				row.createCell((int)startColumn).setCellValue("无图片");
 			}
 		} catch (Exception e) {
 			log.error("插入图片异常："+e.getMessage()); 
 			bufferImg = null;
-			row.createCell(startColumn).setCellValue("图片错误");
+			row.createCell((int)startColumn).setCellValue("图片错误");
 		}
 	}
 	
