@@ -1,5 +1,0 @@
-﻿server.port: 8002
-spring:
-  profiles: 
-    active: qa
-  application.name: pending-product-consumer-service
