@@ -677,6 +677,6 @@ shangpin:
    hub:
        callAddress:
              gmsAddProductUrl: http://qa.scmapi.shangpin.com/gms/Product/AddProduct
-             gmsSizeUrl: http://qa.scmapi.shangpin.com/gms/GetProductSize
-             gmsBrandUrl: http://qa.scmapi.shangpin.com/gms/GetBrands
-             gmsCategoryUrl: http://qa.scmapi.shangpin.com/gms/GetCategory
+             gmsSizeUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetProductSize
+             gmsBrandUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetBrands
+             gmsCategoryUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetCategory

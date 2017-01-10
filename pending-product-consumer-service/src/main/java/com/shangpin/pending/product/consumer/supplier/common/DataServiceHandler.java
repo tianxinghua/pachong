@@ -390,8 +390,9 @@ public class DataServiceHandler {
     }
 
     public  HubColorDicItemDto  getHubColorDicItem(String supplierColor){
-        HubColorDicItemCriteriaDto criteria = new HubColorDicItemCriteriaDto();
+        if(StringUtils.isBlank(supplierColor)) return null;
 
+        HubColorDicItemCriteriaDto criteria = new HubColorDicItemCriteriaDto();
         criteria.createCriteria().andColorItemNameEqualTo(supplierColor);
         List<HubColorDicItemDto> hubColorDicItemDtos = hubColorDicItemGateWay.selectByCriteria(criteria);
         if(null!=hubColorDicItemDtos&&hubColorDicItemDtos.size()>0){
@@ -403,6 +404,9 @@ public class DataServiceHandler {
 
 
     public void saveColorItem(String supplierColor)  throws  Exception{
+        //供货商数据为空 不插入
+        if(StringUtils.isBlank(supplierColor)) return;
+
         //查询是否存在
         if(null!=this.getHubColorDicItem(supplierColor)){
             return;
