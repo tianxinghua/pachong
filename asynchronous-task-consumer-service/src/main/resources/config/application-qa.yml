@@ -30,6 +30,12 @@ spring:
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
+                        productExportTask: 
+                              destination: product.export.task
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit: 
                       bindings: 
                             pendingProductImportTask: 
@@ -39,6 +45,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             hubProductImportTask: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            productExportTask: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false

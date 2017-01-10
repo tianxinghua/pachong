@@ -257,8 +257,11 @@ public class TaskImportService {
 		return in;
 	}
 
-	public void checkPendingSpu(HubSpuPendingDto hubPendingSpuDto, Map<String, String> map,Long pendingSpuId,boolean isPassing,boolean isSaveHub,Long hubSpuId) {
-
+	public void checkPendingSpu(HubSpuPendingDto hubPendingSpuDto, Map<String, String> map) {
+		Long pendingSpuId = null;
+		boolean isPassing = false;
+		boolean isSaveHub= false;
+		Long hubSpuId= null;
 		String checkResult = null;
 		HubSpuPendingDto isExist = null;
 		// 查询是否已存在pendingSpu表中
@@ -272,6 +275,9 @@ public class TaskImportService {
 				pendingSpuId = listSpu.get(0).getSpuPendingId();
 				isSaveHub = false;
 				isPassing = true;
+				map.put("pendingSpuId",pendingSpuId+"");
+				map.put("isSaveHub",isSaveHub+"");
+				map.put("isPassing",isPassing+"");
 				return;
 			}
 			isExist = listSpu.get(0);
@@ -314,6 +320,10 @@ public class TaskImportService {
 			map.put("taskState", "校验失败");
 		}
 		map.put("processInfo", checkResult);
+		map.put("pendingSpuId",pendingSpuId+"");
+		map.put("isSaveHub",isSaveHub+"");
+		map.put("isPassing",isPassing+"");
+		map.put("hubSpuId",hubSpuId+"");
 	}
 
 	private void convertHubSpuToPendingSpu(HubSpuPendingDto hubPendingSpuDto, HubSpuDto hubSpuDto) {
@@ -330,7 +340,7 @@ public class TaskImportService {
 		hubPendingSpuDto.setSpuName(hubSpuDto.getSpuName());
 	}
 
-	public void sendToHub(HubSpuPendingDto hubPendingSpuDto, boolean isSaveHub, Long hubSpuId) {
+	public void sendToHub(HubSpuPendingDto hubPendingSpuDto, boolean isSaveHub, String hubSpuId) {
 		if (isSaveHub) {
 			SpuModelDto spuModelDto = new SpuModelDto();
 			spuModelDto.setBrandNo(hubPendingSpuDto.getHubBrandNo());
@@ -340,7 +350,7 @@ public class TaskImportService {
 
 		} else {
 			HubPendingDto hubPendingDto = new HubPendingDto();
-			hubPendingDto.setHubSpuId(hubSpuId);
+			hubPendingDto.setHubSpuId(Long.parseLong(hubSpuId));
 			hubPendingDto.setHubSpuPendingId(hubPendingSpuDto.getSpuPendingId());
 			log.info("pendingToHub.addSkuOrSkuSupplierMapping推送参数:{}", hubPendingDto);
 			pengdingToHubGateWay.addSkuOrSkuSupplierMapping(hubPendingDto);
@@ -371,6 +381,7 @@ public class TaskImportService {
 			pengingSpuId = hubSpuPendingGateWay.insert(hubPendingSpuDto);
 			log.info("插入pengingSpuId:"+pengingSpuId);
 		}
+		log.info("pengingSpuId:"+pengingSpuId);
 		return pengingSpuId;
 	}
 

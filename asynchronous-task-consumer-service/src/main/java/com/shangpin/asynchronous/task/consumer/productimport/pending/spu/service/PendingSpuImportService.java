@@ -18,9 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
-import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
-import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
@@ -31,8 +29,6 @@ import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPend
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -133,10 +129,6 @@ public class PendingSpuImportService {
 	// 校验数据以及保存到hub表
 	private void checkAndsaveHubPendingProduct(String taskNo, List<HubPendingSpuImportDTO> listHubProduct)
 			throws Exception {
-		boolean isPassing = false;
-		boolean isSaveHub = false;
-		Long spuPendingId = null;
-		Long hubSpuId = null;
 		if (listHubProduct == null) {
 			return;
 		}
@@ -148,10 +140,10 @@ public class PendingSpuImportService {
 			map.put("taskNo", taskNo);
 			map.put("spuModel", product.getSpuModel());
 			HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
-			taskService.checkPendingSpu(hubPendingSpuDto,map,spuPendingId,isPassing,isSaveHub,hubSpuId);
+			taskService.checkPendingSpu(hubPendingSpuDto,map);
 			
-			if (isPassing) {
-				taskService.sendToHub(hubPendingSpuDto, isSaveHub, hubSpuId);
+			if (Boolean.parseBoolean(map.get("isPassing"))) {
+				taskService.sendToHub(hubPendingSpuDto, Boolean.parseBoolean(map.get("isSaveHub")), map.get("hubSpuId"));
 			}
 			listMap.add(map);
 		}

@@ -25,28 +25,16 @@ import com.shangpin.asynchronous.task.consumer.productimport.common.service.Task
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
-import com.shangpin.ephub.client.data.mysql.product.dto.HubPendingDto;
-import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
-import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
-import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
-import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
-import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
-import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
-import com.shangpin.ephub.client.util.TaskImportTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -129,25 +117,22 @@ public class PendingSkuImportService {
 	}
 
 	private void checkProduct(String taskNo,HubPendingProductImportDTO product, Map<String, String> map) {
-		boolean isPassing = false;
-		boolean isSaveHub = false;
-		Long hubSpuId = null;
 		map.put("taskNo", taskNo);
 		map.put("spuModel", product.getSpuModel());
 		
 		// 校验spu信息
 		HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
-		Long spuPendingId = null; 
-		taskService.checkPendingSpu(hubPendingSpuDto,map,spuPendingId,isPassing,isSaveHub,hubSpuId);
-		log.info("返回的spuPendingId:"+spuPendingId);
+		taskService.checkPendingSpu(hubPendingSpuDto,map);
+		log.info("返回的pendingSpuId:"+map.get("pendingSpuId"));
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
-		HubPendingSkuDto.setSpuPendingId(spuPendingId);
+		HubPendingSkuDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
 		checkPendingSku(HubPendingSkuDto,map);
 		
-		if (isPassing) {
-			taskService.sendToHub(hubPendingSpuDto, isSaveHub, hubSpuId);
+		if (Boolean.parseBoolean(map.get("isPassing"))) {
+			taskService.sendToHub(hubPendingSpuDto, Boolean.parseBoolean(map.get("isSaveHub")), map.get("hubSpuId"));
 		}
+		
 	}
 
 	private void checkPendingSku(HubSkuPendingDto hubSkuPendingDto, Map<String, String> map) {
