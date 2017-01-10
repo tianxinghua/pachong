@@ -13,13 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 import com.shangpin.ephub.client.data.mysql.hub.gateway.HubWaitSelectGateWay;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.ui.hub.selected.service.HubSelectedService;
+import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelectStateDto;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponse;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponseWithPage;
 import com.shangpin.ephub.response.HubResponse;
@@ -41,6 +43,8 @@ public class HubSelectedController {
 	@Autowired
 	HubWaitSelectGateWay HubWaitSelectGateWay;
 	@Autowired
+	HubSpuPicGateWay hubSpuPicGateWay;
+	@Autowired
 	HubSelectedService HubSelectedService;
 	
 	@RequestMapping(value = "/list",method = RequestMethod.POST)
@@ -50,16 +54,10 @@ public class HubSelectedController {
 			log.info("已选品请求参数：{}",dto);
 			HubWaitSelectRequestDto hubWaitSelectRequest = new HubWaitSelectRequestDto();
 			BeanUtils.copyProperties(dto, hubWaitSelectRequest);
-//			if(dto.getSupplierSelectState().intValue()==-1){
-//				hubWaitSelectRequest.setSupplierSelectState(null);	
-//			}
 			Long total = HubWaitSelectGateWay.count(hubWaitSelectRequest);
 			log.info("已选品查询到总数："+total);
 			if(total>0){
 				dto.setPageNo(dto.getPageNo()-1);
-//				if(dto.getSupplierSelectState().intValue()==-1){
-//					hubWaitSelectRequest.setSupplierSelectState(null);	
-//				}
 				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
 				List<HubWaitSelectedResponse> arr = new ArrayList<HubWaitSelectedResponse>();
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
@@ -92,7 +90,6 @@ public class HubSelectedController {
 	        	
 		try {
 			log.info("导出查询商品请求参数：{}",dto);
-//			dto.setSupplierSelectState((byte)SupplierSelectState.SELECTED.getIndex());
 			dto.setPageNo(0);
 			dto.setPageSize(100000);
 			List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
@@ -114,12 +111,18 @@ public class HubSelectedController {
 	 * @return
 	 */
 	@RequestMapping(value = "/export-select-pic",method = RequestMethod.POST)
-    public void exportSelectPic(@RequestBody HubWaitSelectRequestWithPageDto dto){
+    public void exportSelectPic(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
 	        	
 		try {
 			dto.setPageNo(0);
 			dto.setPageSize(100000);
 			log.info("导出查询图片请求参数：{}",dto);
+			List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
+			response.setContentType("application/vnd.ms-excel");    
+	        response.setHeader("Content-Disposition", "attachment;filename="+"selected_product_" + System.currentTimeMillis()+".xls");    
+			OutputStream ouputStream = response.getOutputStream();
+			  
+			HubSelectedService.exportExcel(list,ouputStream);
 		} catch (Exception e) {
 			log.error("导出查询图片获取失败：{}",e);
 		}
@@ -130,12 +133,19 @@ public class HubSelectedController {
 	 * @return
 	 */
 	@RequestMapping(value = "/export-check-pic",method = RequestMethod.POST)
-    public void exportCheckPic(@RequestBody HubWaitSelectRequestWithPageDto dto){
+    public void exportCheckPic(@RequestBody List<HubWaitSelectStateDto> dto,HttpServletResponse response){
 	        	
 		try {
 			log.info("导出勾选图片请求参数：{}",dto);
-		
-			
+			HubSpuPicCriteriaDto criteria = new HubSpuPicCriteriaDto();
+//			criteria.createCriteria().andSpuIdEqualTo();
+//			hubSpuPicGateWay.selectByCriteria(arg0);
+//			List<HubWaitSelectResponseDto> list = hubSpuPicGateWay.selectByPage(dto);
+			response.setContentType("application/vnd.ms-excel");    
+	        response.setHeader("Content-Disposition", "attachment;filename="+"selected_product_" + System.currentTimeMillis()+".xls");    
+			OutputStream ouputStream = response.getOutputStream();
+			  
+//			HubSelectedService.exportExcel(list,ouputStream);
 		} catch (Exception e) {
 			log.error("导出勾选图片失败：{}",e);
 		}
