@@ -121,14 +121,21 @@ public class HubWaitSelectedService {
 	public void batchUpdateSelectState(HubWaitSelectRequestWithPageDto requestDto) {
 		requestDto.setPageNo(0);
 		requestDto.setPageSize(100000);
-//		requestDto.setSupplierSelectState((byte)SupplierSelectState.NO_SELECTED.getIndex());
 		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(requestDto);
-		for(HubWaitSelectResponseDto dto:list){
-			Long spuId = dto.getSpuId();
-			Long mappId = dto.getSkuSupplierMappingId();
-			Long skuId = dto.getSkuId();
-			
-			
+		if(list!=null&&list.size()>0){
+			List<HubWaitSelectStateDto> listState = new ArrayList<HubWaitSelectStateDto>();
+			HubWaitSelectStateDto stateDto = null;
+			for(HubWaitSelectResponseDto dto:list){
+				stateDto = new HubWaitSelectStateDto();
+				Long spuId = dto.getSpuId();
+				Long mappId = dto.getSkuSupplierMappingId();
+				Long skuId = dto.getSkuId();
+				stateDto.setSkuId(skuId);
+				stateDto.setSkuSupplierMappingId(mappId);
+				stateDto.setSpuId(spuId);
+				listState.add(stateDto);
+			}
+			updateSelectState(listState);
 		}
 	}
 

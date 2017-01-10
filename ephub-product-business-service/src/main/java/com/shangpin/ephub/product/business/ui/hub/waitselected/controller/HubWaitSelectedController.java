@@ -55,7 +55,6 @@ public class HubWaitSelectedController {
 		try {
 			HubWaitSelectRequestDto hubWaitSelectRequest = new HubWaitSelectRequestDto();
 			BeanUtils.copyProperties(dto, hubWaitSelectRequest);
-//			hubWaitSelectRequest.setSupplierSelectState(Byte.valueOf("0"));
 			log.info("待选品请求参数：{}",hubWaitSelectRequest);
 			Long total = HubWaitSelectGateWay.count(hubWaitSelectRequest);
 			log.info("待选品查询到数据总数："+total);
@@ -66,22 +65,6 @@ public class HubWaitSelectedController {
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
 					HubWaitSelectedResponse HubWaitSelectResponse = new HubWaitSelectedResponse();
 					BeanUtils.copyProperties(hubWaitSelectResponseDto, HubWaitSelectResponse);
-//					HubWaitSelectResponse.setBrandNo(hubWaitSelectResponseDto.getBrandNo());
-//					HubWaitSelectResponse.setCategoryNo(hubWaitSelectResponseDto.getCategoryNo());
-//					HubWaitSelectResponse.setGender(hubWaitSelectResponseDto.getGender());
-//					HubWaitSelectResponse.setHubColor(hubWaitSelectResponseDto.getHubColor());
-//					HubWaitSelectResponse.setMaterial(hubWaitSelectResponseDto.getMaterial());
-//					HubWaitSelectResponse.setOrigin(hubWaitSelectResponseDto.getOrigin());
-//					HubWaitSelectResponse.setPicUrl(hubWaitSelectResponseDto.getPicUrl());
-//					HubWaitSelectResponse.setSkuId(hubWaitSelectResponseDto.getSkuId());
-//					HubWaitSelectResponse.setSkuNo(hubWaitSelectResponseDto.getSkuNo());
-//					HubWaitSelectResponse.setSkuSize(hubWaitSelectResponseDto.getSkuSize());
-//					HubWaitSelectResponse.setSkuSupplierMappingId(hubWaitSelectResponseDto.getSkuSupplierMappingId());
-//					HubWaitSelectResponse.setSpuId(hubWaitSelectResponseDto.getSpuId());
-//					HubWaitSelectResponse.setSpuModel(hubWaitSelectResponseDto.getSpuModel());
-//					HubWaitSelectResponse.setSpuNo(hubWaitSelectResponseDto.getSpuNo());
-//					HubWaitSelectResponse.setSupplierNo(hubWaitSelectResponseDto.getSupplierNo());
-					//HubWaitSelectResponse.setSupplierSelectState(hubWaitSelectResponseDto.getSpuSelectState());
 					HubWaitSelectResponse.setUpdateTime(sim.format(hubWaitSelectResponseDto.getUpdateTime()));
 					arr.add(HubWaitSelectResponse);
 				}
@@ -148,8 +131,10 @@ public class HubWaitSelectedController {
 	@RequestMapping(value = "/batch-update-select-state",method = RequestMethod.POST)
     public HubResponse batchUpdateSelectState(@RequestBody HubWaitSelectRequestWithPageDto dto){
 		try{
-			hubWaitSelectedService.batchUpdateSelectState(dto);
-	        return HubResponse.successResp(null);
+			
+				log.info("待选品请求参数：{}",dto);
+					hubWaitSelectedService.batchUpdateSelectState(dto);
+					return HubResponse.successResp(null);
 		}catch(Exception e){
 			 return HubResponse.errorResp("选品失败，请重新选品");
 		}
