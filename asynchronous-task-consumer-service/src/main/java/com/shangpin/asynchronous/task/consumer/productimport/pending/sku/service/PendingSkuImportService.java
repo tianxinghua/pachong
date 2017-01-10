@@ -138,11 +138,13 @@ public class PendingSkuImportService {
 		log.info("返回的pendingSpuId:"+map.get("pendingSpuId"));
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
-		HubPendingSkuDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
+		if(map.get("pendingSpuId")!=null){
+			HubPendingSkuDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));	
+		}
 		checkPendingSku(HubPendingSkuDto,map);
 		
 		if (Boolean.parseBoolean(map.get("isPassing"))) {
-			taskService.sendToHub(hubPendingSpuDto, Boolean.parseBoolean(map.get("isSaveHub")), map.get("hubSpuId"));
+			taskService.sendToHub(hubPendingSpuDto, Boolean.parseBoolean(map.get("hubIsExist")), map.get("hubSpuId"));
 		}
 		
 	}
