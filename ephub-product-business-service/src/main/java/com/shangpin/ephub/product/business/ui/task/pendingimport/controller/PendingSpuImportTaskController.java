@@ -78,4 +78,17 @@ public class PendingSpuImportTaskController {
 			return HubResponse.errorResp("获取列表失败");
 		}
     }
+	@RequestMapping(value = "/test",method = RequestMethod.POST)
+	public HubResponse test(){
+		  ProductImportTask productImportTask = new ProductImportTask();
+	        productImportTask.setMessageDate(DateTimeUtil.getTime(new Date()));
+	        productImportTask.setMessageId(UUID.randomUUID().toString());
+	        productImportTask.setTaskNo("201701101207");
+	        productImportTask.setType(4);
+	        productImportTask.setData("{\"taskFtpFilePath\":\"11\"}");
+	        log.info("推送任务的参数：{}",productImportTask);
+	        productImportTaskStreamSender.productExportTaskStream(productImportTask, null);
+	        return HubResponse.successResp(null);
+	}
+	
 }
