@@ -133,10 +133,6 @@ public class PendingSpuImportService {
 	// 校验数据以及保存到hub表
 	private void checkAndsaveHubPendingProduct(String taskNo, List<HubPendingSpuImportDTO> listHubProduct)
 			throws Exception {
-		boolean isPassing = false;
-		boolean isSaveHub = false;
-		Long spuPendingId = null;
-		Long hubSpuId = null;
 		if (listHubProduct == null) {
 			return;
 		}
@@ -148,10 +144,10 @@ public class PendingSpuImportService {
 			map.put("taskNo", taskNo);
 			map.put("spuModel", product.getSpuModel());
 			HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
-			taskService.checkPendingSpu(hubPendingSpuDto,map,spuPendingId,isPassing,isSaveHub,hubSpuId);
+			taskService.checkPendingSpu(hubPendingSpuDto,map);
 			
-			if (isPassing) {
-				taskService.sendToHub(hubPendingSpuDto, isSaveHub, hubSpuId);
+			if (Boolean.parseBoolean(map.get("isPassing"))) {
+				taskService.sendToHub(hubPendingSpuDto, Boolean.parseBoolean(map.get("isSaveHub")), map.get("hubSpuId"));
 			}
 			listMap.add(map);
 		}

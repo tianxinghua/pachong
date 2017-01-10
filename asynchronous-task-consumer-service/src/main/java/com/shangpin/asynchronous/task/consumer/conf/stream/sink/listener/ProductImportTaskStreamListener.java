@@ -7,7 +7,6 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.support.MessageBuilder;
 
 import com.shangpin.asynchronous.task.consumer.conf.stream.sink.channel.ProductImportTaskSink;
 import com.shangpin.asynchronous.task.consumer.productexport.adapter.ProductExportHandler;

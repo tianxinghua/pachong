@@ -129,25 +129,22 @@ public class PendingSkuImportService {
 	}
 
 	private void checkProduct(String taskNo,HubPendingProductImportDTO product, Map<String, String> map) {
-		boolean isPassing = false;
-		boolean isSaveHub = false;
-		Long hubSpuId = null;
 		map.put("taskNo", taskNo);
 		map.put("spuModel", product.getSpuModel());
 		
 		// 校验spu信息
 		HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
-		Long spuPendingId = null; 
-		taskService.checkPendingSpu(hubPendingSpuDto,map,spuPendingId,isPassing,isSaveHub,hubSpuId);
-		log.info("返回的spuPendingId:"+spuPendingId);
+		taskService.checkPendingSpu(hubPendingSpuDto,map);
+		log.info("返回的pendingSpuId:"+map.get("pendingSpuId"));
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
-		HubPendingSkuDto.setSpuPendingId(spuPendingId);
+		HubPendingSkuDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
 		checkPendingSku(HubPendingSkuDto,map);
 		
-		if (isPassing) {
-			taskService.sendToHub(hubPendingSpuDto, isSaveHub, hubSpuId);
+		if (Boolean.parseBoolean(map.get("isPassing"))) {
+			taskService.sendToHub(hubPendingSpuDto, Boolean.parseBoolean(map.get("isSaveHub")), map.get("hubSpuId"));
 		}
+		
 	}
 
 	private void checkPendingSku(HubSkuPendingDto hubSkuPendingDto, Map<String, String> map) {
