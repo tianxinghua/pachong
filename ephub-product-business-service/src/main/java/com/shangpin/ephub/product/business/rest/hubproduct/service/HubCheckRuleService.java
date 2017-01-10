@@ -41,7 +41,7 @@ public class HubCheckRuleService {
 		//校验品牌
 		if(hubProduct.getBrandNo()!=null){
 			if(!hubCheckService.checkHubBrand(hubProduct.getBrandNo())){
-				str.append("品牌编号不存在，") ;
+				str.append("品牌编号"+hubProduct.getBrandNo()+"不存在,") ;
 				result.setPassing(false);
 			}	
 		}else{
@@ -52,7 +52,7 @@ public class HubCheckRuleService {
 		//校验品类
 		if(hubProduct.getCategoryNo()!=null){
 			if(!hubCheckService.checkHubCategory(hubProduct.getCategoryNo())){
-				str.append("品类编号有误") ;
+				str.append("品类编号"+hubProduct.getCategoryNo()+"不存在,") ;
 				result.setPassing(false);
 			}	
 		}else{
@@ -63,7 +63,7 @@ public class HubCheckRuleService {
 		//校验颜色
 		if(hubProduct.getHubColor()!=null){
 			if(!hubCheckService.checkHubColor(hubProduct.getHubColor())){	
-				str.append("颜色编号有误") ;
+				str.append("颜色"+hubProduct.getHubColor()+"不存在,") ;
 				result.setPassing(false);
 			}
 		}else{
@@ -71,21 +71,10 @@ public class HubCheckRuleService {
 			result.setPassing(false);
 		}
 		
-		//校验季节
-		if(hubProduct.getSeason()!=null){
-			if(!hubCheckService.checkHubSeason(hubProduct.getSeason())){
-				str.append("季节编号有误") ;
-				result.setPassing(false);
-			}
-		}else{
-			str.append("季节为空，");
-			result.setPassing(false);
-		}
-		
 		//校验尺码
 		if(hubProduct.getSkuSize()!=null){
 			if(!hubCheckService.checkHubSize(hubProduct.getSkuSize())){
-				str.append("尺码编号有误") ;
+				str.append("尺码编号"+hubProduct.getSkuSize()+"不存在,") ;
 				result.setPassing(false);
 			}	
 		}else{
@@ -96,15 +85,14 @@ public class HubCheckRuleService {
 		//校验性别
 		if(hubProduct.getGender()!=null){
 			if(!hubCheckService.checkHubGender(hubProduct.getGender())){
-				str.append("性别编号有误") ;
+				str.append("性别"+hubProduct.getGender()+"不存在") ;
 				result.setPassing(false);
 			}	
 		}else{
 			str.append("性别为空，");
 			result.setPassing(false);
 		}
-		
-		//货号
+//		//货号
 		BrandModelDto BrandModelDto = null;
 		BrandModelResult brandModelResult= null;
 		if(hubProduct.getSpuModel()!=null){

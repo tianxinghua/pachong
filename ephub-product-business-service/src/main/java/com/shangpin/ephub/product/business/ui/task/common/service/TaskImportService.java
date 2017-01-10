@@ -56,7 +56,7 @@ public class TaskImportService {
     HubSpuImportTaskGateWay spuImportGateway;
     @Autowired
     ProductImportTaskStreamSender productImportTaskStreamSender;
-    public HubResponse uploadFileAndSave(HubImportTaskRequestDto task,int importType) throws Exception{
+    public HubResponse uploadFileAndSave(HubImportTaskRequestDto task,TaskImportTpye importType) throws Exception{
 
     	String name  = new String(task.getFileName().getBytes("UTF-8"));
         String []fileName = name.split("\\.");
@@ -70,7 +70,7 @@ public class TaskImportService {
                 //第一步 ： 上传ftp
                 String ftpPath = FTPClientUtil.uploadFile(task.getUploadfile(),systemFileName);
                 //第二步 ： 保存数据库
-                saveTask(task,taskNo,ftpPath,systemFileName,importType);
+                saveTask(task,taskNo,ftpPath,systemFileName,importType.getIndex());
                 //TODO 第三步 ：发送到hub消息队列
                 sendTaskMessage(taskNo,ftpPath+systemFileName,importType);
                 return HubResponse.successResp(null);
@@ -79,19 +79,19 @@ public class TaskImportService {
         log.info("上传文件为"+task.getFileName()+"，格式有误，请下载模板");
         return HubResponse.errorResp("文件格式有误，请下载模板");
     }
-    private void sendTaskMessage(String taskNo,String ftpFilePath,int importType){
+    private void sendTaskMessage(String taskNo,String ftpFilePath,TaskImportTpye importType){
         ProductImportTask productImportTask = new ProductImportTask();
         productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
         productImportTask.setMessageId(UUID.randomUUID().toString());
         productImportTask.setTaskNo(taskNo);
-        productImportTask.setTaskFtpFilePath(ftpFilePath);
-        Map<String,String> map = new HashMap<String,String>();
-        if(TaskImportTpye.HUB_PRODUCT.getIndex()==importType){
+        productImportTask.setType(importType.getIndex());
+        productImportTask.setData("{\"taskFtpFilePath\":\""+ftpFilePath+"\"}");
+        log.info("推送任务的参数：{}",productImportTask);
+        if(TaskImportTpye.HUB_PRODUCT.getIndex()==importType.getIndex()){
         	productImportTaskStreamSender.hubProductImportTaskStream(productImportTask, null);
         	return;
         }
-        map.put(importType+"",TaskImportTpye.PENDING_SPU.getDescription());
-        productImportTaskStreamSender.pendingProductImportTaskStream(productImportTask, map);
+        productImportTaskStreamSender.pendingProductImportTaskStream(productImportTask, null);
     }
     private boolean saveTask(HubImportTaskRequestDto task,String taskNo,String ftpPath,String systemFileName,int importType) throws Exception{
         // TODO Auto-generated method stub

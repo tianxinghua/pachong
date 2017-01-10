@@ -40,7 +40,7 @@ public class PendingSpuImportTaskController {
 	        	
 		try {
 			log.info("pendingSpu上传参数：{}",dto);
-			return pendingImportTaskService.uploadFileAndSave(dto,TaskImportTpye.PENDING_SPU.getIndex());
+			return pendingImportTaskService.uploadFileAndSave(dto,TaskImportTpye.PENDING_SPU);
 		} catch (Exception e) {
 			log.error("pendingSpu上传文件失败",e);
 			e.printStackTrace();
@@ -53,7 +53,7 @@ public class PendingSpuImportTaskController {
 	        	
 		try {
 			log.info("pendingSku上传参数：{}",dto);
-			return pendingImportTaskService.uploadFileAndSave(dto,TaskImportTpye.PENDING_SKU.getIndex());
+			return pendingImportTaskService.uploadFileAndSave(dto,TaskImportTpye.PENDING_SKU);
 		} catch (Exception e) {
 			return HubResponse.errorResp("上传文件失败，请重新上传");
 		}
@@ -64,6 +64,7 @@ public class PendingSpuImportTaskController {
 	        	
 		try {
 			Byte [] list1 = {1,2};
+			log.info("pending列表参数：{}",dto);
 			HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = pendingImportTaskService.findHubTaskList(dto,Arrays.asList(list1));
 			return HubResponse.successResp(hubTaskProductResponseWithPageDTO);
 		} catch (Exception e) {

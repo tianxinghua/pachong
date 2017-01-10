@@ -41,7 +41,7 @@ public class HubSpuImportTaskController {
 	        	
 		try {
 			log.info("hub导入接受到的参数："+dto.toString());
-			return taskService.uploadFileAndSave(dto,TaskImportTpye.HUB_PRODUCT.getIndex());
+			return taskService.uploadFileAndSave(dto,TaskImportTpye.HUB_PRODUCT);
 		} catch (Exception e) {
 			return HubResponse.errorResp("上传文件失败，请重新上传");
 		}

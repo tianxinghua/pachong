@@ -30,7 +30,7 @@ repositories {
 
 dependencies {
 
-	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.9.5-SNAPSHOT')
+	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.9.7-SNAPSHOT')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-actuator-docs')
 	compile('org.springframework.boot:spring-boot-starter-aop')
@@ -46,7 +46,7 @@ dependencies {
 	compile('org.apache.poi:poi-ooxml:3.8')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compile('com.shangpin.common:commons-redis:1.0.2.RELEASE')
-	compile('org.apache.poi:poi:3.15')
+	//compile('org.apache.poi:poi:3.15')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('junit:junit:4.12')

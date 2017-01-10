@@ -14,7 +14,12 @@ import java.io.Serializable;
 @ToString
 public class HubPendingDto implements Serializable {
 
-    private Long hubSpuId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4128065735330641356L;
+
+	private Long hubSpuId;
 
     private Long hubSpuPendingId;
 

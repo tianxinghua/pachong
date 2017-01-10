@@ -15,6 +15,7 @@ public interface ProductImportTaskSource {
 	public String PENDING_IMPORT = "pendingProductImportTask";
 	
 	public String HUB_IMPORT = "hubProductImportTask";
+	public String PRODUCT_EXPORT = "productExportTask";
 	
     /**
      * pending导入处理
@@ -28,4 +29,11 @@ public interface ProductImportTaskSource {
 	 */
 	@Output(value = ProductImportTaskSource.HUB_IMPORT)
     public MessageChannel hubProductImportTask();
+	
+	/**
+	 * 导出处理
+	 * @return 通道
+	 */
+	@Output(value = ProductImportTaskSource.PRODUCT_EXPORT)
+    public MessageChannel productExportTask();
 }
