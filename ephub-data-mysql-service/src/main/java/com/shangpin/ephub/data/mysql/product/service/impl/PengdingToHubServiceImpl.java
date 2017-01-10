@@ -5,6 +5,7 @@ import com.shangpin.ephub.data.mysql.common.enumeration.SpuState;
 import com.shangpin.ephub.data.mysql.mapping.sku.mapper.HubSkuSupplierMappingMapper;
 import com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping;
 
+import com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMappingCriteria;
 import com.shangpin.ephub.data.mysql.picture.pending.mapper.HubSpuPendingPicMapper;
 import com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPic;
 import com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPicCriteria;
@@ -208,7 +209,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
     private void updateSkuPendingSkuStatus(List<HubSkuPending> hubSkuPendings) {
         for(HubSkuPending skuPendingDto:hubSkuPendings){
             HubSkuPending skuPengding = new HubSkuPending();
-            skuPengding.setSkuPendingId(skuPengding.getSkuPendingId());
+            skuPengding.setSkuPendingId(skuPendingDto.getSkuPendingId());
             skuPengding.setSkuState(HubSpuPendigStatus.HANDLED.getIndex().byteValue());//sku 可使用SPU的状态码
             hubSkuPendingMapper.updateByPrimaryKeySelective(skuPengding);
         }
@@ -253,6 +254,12 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
     private void inserSkuSupplierMapping(Date date, List<HubSkuPending> hubSkuPendings, HubSku hubSku) throws Exception{
         for(HubSkuPending skuPending:hubSkuPendings){
+
+            HubSkuSupplierMapping skuSupplierMapping = getSkuSupplierMappint(skuPending.getSupplierId(), skuPending.getSupplierSkuNo());
+            if(null!=skuSupplierMapping){
+                 continue;
+            }
+
 
             HubSkuSupplierMapping hubSkuSupplierMapping = new HubSkuSupplierMapping();
             BeanUtils.copyProperties(skuPending,hubSkuSupplierMapping);
@@ -463,6 +470,18 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             return null;
         }
     }
+
+    private HubSkuSupplierMapping getSkuSupplierMappint(String supplierId,String supplierSkuNo){
+        HubSkuSupplierMappingCriteria example = new HubSkuSupplierMappingCriteria();
+        example.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
+        List<HubSkuSupplierMapping> skuSupplierMappings = hubSkuSupplierMappingMapper.selectByExample(example);
+        if(null!=skuSupplierMappings&&skuSupplierMappings.size()>0){
+            return skuSupplierMappings.get(0);
+        }else{
+            return null;
+        }
+    }
+
     private HubSupplierSpu getSupplierSpuById(Long supplierSpuId) {
        return hubSupplierSpuMapper.selectByPrimaryKey(supplierSpuId);
     }
