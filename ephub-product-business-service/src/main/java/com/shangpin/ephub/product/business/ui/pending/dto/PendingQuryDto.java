@@ -27,4 +27,5 @@ public class PendingQuryDto {
     private List<Integer> inconformities;//不符合的项
     private String statTime;
     private String endTime;
+    private String createUser;
 }

@@ -24,13 +24,13 @@ public interface IPendingProductService {
 	 * @param pendingQuryDto
 	 * @return
 	 */
-	public HSSFWorkbook exportSku(PendingQuryDto pendingQuryDto);
+	public void exportSku(PendingQuryDto pendingQuryDto);
 	/**
 	 * 待处理页面导出spu
 	 * @param pendingQuryDto
 	 * @return
 	 */
-	public HSSFWorkbook exportSpu(PendingQuryDto pendingQuryDto);
+	public void exportSpu(PendingQuryDto pendingQuryDto);
 	/**
 	 * 根据页面查询条件查询待处理表，只包含spu信息
 	 * @param pendingQuryDto
