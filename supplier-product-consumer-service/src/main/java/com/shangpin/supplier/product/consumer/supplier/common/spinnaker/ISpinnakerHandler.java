@@ -16,7 +16,6 @@ import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
-import com.shangpin.supplier.product.consumer.service.PictureProductService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
@@ -41,8 +40,6 @@ public abstract class ISpinnakerHandler implements ISupplierHandler {
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
-	@Autowired
-	private PictureProductService pictureProductService;
 	
 	/**
 	 * 将原始对象转换成hub对象
@@ -96,12 +93,11 @@ public abstract class ISpinnakerHandler implements ISupplierHandler {
 						if(skuSucc){
 							hubSkus.add(hubSku);
 						}
-						if(success){
-							supplierProductSaveAndSendToPending.spinnakerSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus);
-						}
 						//处理图片
 						SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
-						pictureProductService.sendSupplierPicture(supplierPicture, null); 
+						if(success){
+							supplierProductSaveAndSendToPending.spinnakerSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+						}
 						
 					}
 				}
