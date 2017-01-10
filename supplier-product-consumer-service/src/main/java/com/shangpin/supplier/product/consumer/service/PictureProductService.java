@@ -43,9 +43,9 @@ public class PictureProductService {
 		try {
 			if(toPush(supplierPicture)){
 				boolean result = pictureProductStreamSender.supplierPictureProductStream(supplierPicture, headers);
-				log.info(supplierPicture.getSupplierName()+":"+supplierPicture.getProductPicture().getSupplierSpuNo()+" 发送图片 "+result);
+				log.info(supplierPicture.getSupplierName()+":"+supplierPicture.getSupplierSpuId()+" 发送图片 "+result);
 			}else{
-				log.info(supplierPicture.getSupplierName()+":"+supplierPicture.getProductPicture().getSupplierSpuNo()+" 下所有图片已存在，不推送");
+				log.info(supplierPicture.getSupplierName()+":"+supplierPicture.getSupplierSpuId()+" 下所有图片已存在，不推送");
 			}
 		} catch (Exception e) {
 			log.error(supplierPicture.getSupplierName()+":"+supplierPicture.getProductPicture().getSupplierSpuNo()+" 发送图片异常："+e.getMessage(),e); 
@@ -65,6 +65,7 @@ public class PictureProductService {
 			}
 			if(images.size() > 0){
 				ProductPicture productPicture = new ProductPicture();
+				productPicture.setSupplierSpuNo(supplierPicture.getProductPicture().getSupplierSpuNo()); 
 				productPicture.setImages(images); 
 				supplierPicture.setProductPicture(productPicture);
 				return true;
