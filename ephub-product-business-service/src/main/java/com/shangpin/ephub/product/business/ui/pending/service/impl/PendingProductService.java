@@ -103,7 +103,7 @@ public class PendingProductService implements IPendingProductService{
     		products.setCreateUser(pendingQuryDto.getCreateUser());
         	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
         	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(products)); 
-        	return HubResponse.successResp(taskDto.getTaskNo()+":"+"pending_product_" + taskDto.getTaskNo()+".xls");
+        	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
 			log.error("导出sku失败，服务器发生错误:"+e.getMessage(),e);
 			return HubResponse.errorResp("导出失败，服务器发生错误");
@@ -118,7 +118,7 @@ public class PendingProductService implements IPendingProductService{
         	products.setProduts(productList); 
         	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
         	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex(),JsonUtil.serialize(products)); 
-        	return HubResponse.successResp(taskDto.getTaskNo()+":"+"pending_product_" + taskDto.getTaskNo()+".xls");
+        	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
 			log.error("导出spu失败，服务器发生错误:"+e.getMessage(),e);
 			return HubResponse.errorResp("导出失败，服务器发生错误");
