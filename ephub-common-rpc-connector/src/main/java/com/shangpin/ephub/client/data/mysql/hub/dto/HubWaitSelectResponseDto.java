@@ -29,6 +29,7 @@ public class HubWaitSelectResponseDto {
      * hubskuno
      */
     private String skuNo;
+    private String spSkuNo;
     
     /**
      * 货号
