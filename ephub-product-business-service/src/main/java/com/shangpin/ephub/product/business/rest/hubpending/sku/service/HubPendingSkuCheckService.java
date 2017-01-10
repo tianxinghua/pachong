@@ -28,7 +28,8 @@ public class HubPendingSkuCheckService {
 		StringBuffer str = new StringBuffer();
 		HubPendingSkuCheckResult result = new HubPendingSkuCheckResult();
 //		String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize
-		String flag = hubCheckService.checkHubSize(null,null,null,null);
+//		String flag = hubCheckService.checkHubSize(null,null,null,null);
+		String flag = null;
 		if(flag!=null){
 			result.setPassing(true);
 			result.setResult(flag);

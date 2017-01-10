@@ -1,6 +1,5 @@
 package com.shangpin.ephub.product.business.rest.hubpending.sku.controller;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
