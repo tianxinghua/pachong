@@ -93,7 +93,7 @@ public class PendingProductService implements IPendingProductService{
     private HubSpuGateWay hubSpuGateway;
     @Autowired 
 	private HubSpuImportTaskGateWay spuImportGateway;
-    
+    @Autowired 
     private ProductImportTaskStreamSender tastSender;
 
     @Override
