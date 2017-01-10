@@ -11,4 +11,5 @@ public class PendingProducts {
 
 	private List<PendingProductDto> produts;
 	private int total;
+	private String createUser;
 }

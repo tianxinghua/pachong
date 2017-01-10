@@ -45,6 +45,10 @@ public class SupplierPicture implements Serializable {
 	 * 供货商名称
 	 */
 	private String supplierName;
+	/**
+	 * 供应商原始数据表主键id
+	 */
+	private Long supplierSpuId;
 	
 	private ProductPicture productPicture;
 }

@@ -100,9 +100,10 @@ public class PendingProductService implements IPendingProductService{
     public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto){
     	try {
     		PendingProducts products = findPendingProducts(pendingQuryDto);
+    		products.setCreateUser(pendingQuryDto.getCreateUser());
         	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
         	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(products)); 
-        	return HubResponse.successResp(taskDto.getTaskNo()+":"+"pending_product_" + taskDto.getTaskNo()+".xlsx");
+        	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
 			log.error("导出sku失败，服务器发生错误:"+e.getMessage(),e);
 			return HubResponse.errorResp("导出失败，服务器发生错误");
@@ -112,11 +113,12 @@ public class PendingProductService implements IPendingProductService{
     public HubResponse<?> exportSpu(PendingQuryDto pendingQuryDto){
     	try {
     		PendingProducts products = new PendingProducts();
+    		products.setCreateUser(pendingQuryDto.getCreateUser());
         	List<PendingProductDto> productList = findPengdingSpu(pendingQuryDto);
         	products.setProduts(productList); 
         	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
         	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex(),JsonUtil.serialize(products)); 
-        	return HubResponse.successResp(taskDto.getTaskNo()+":"+"pending_product_" + taskDto.getTaskNo()+".xlsx");
+        	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
 			log.error("导出spu失败，服务器发生错误:"+e.getMessage(),e);
 			return HubResponse.errorResp("导出失败，服务器发生错误");
@@ -172,7 +174,7 @@ public class PendingProductService implements IPendingProductService{
                         List<HubSkuPendingDto> hubSkus = findPendingSkuBySpuPendingId(pendingSpu.getSpuPendingId());
                         pendingProduct.setHubSkus(hubSkus);
                         pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
-                        pendingProduct.setUpdateTimeStr(DateTimeUtil.getTime(pendingSpu.getUpdateTime()));
+                        pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
                         products.add(pendingProduct);
                     }
                     pendingProducts.setProduts(products);
@@ -487,7 +489,11 @@ public class PendingProductService implements IPendingProductService{
             }
         }
     }
-    
+    /**
+     * 将任务记录保存到数据库
+     * @param createUser
+     * @return
+     */
     private HubSpuImportTaskDto saveTaskIntoMysql(String createUser){
     	HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
     	Date date = new Date();
@@ -499,11 +505,17 @@ public class PendingProductService implements IPendingProductService{
 		hubSpuTask.setSpuImportTaskId(spuImportTaskId);
 		return hubSpuTask;
     }
-	
+	/**
+	 * 构造消息体，并发送消息队列
+	 * @param taskNo
+	 * @param type
+	 * @param data
+	 */
     private void sendMessageToTask(String taskNo,int type,String data){
     	ProductImportTask productImportTask = new ProductImportTask();
     	productImportTask.setMessageId(UUID.randomUUID().toString());
     	productImportTask.setTaskNo(taskNo);
+    	productImportTask.setMessageDate(DateTimeUtil.getTime(new Date())); 
     	productImportTask.setData(data);
     	productImportTask.setType(type);
     	tastSender.productExportTaskStream(productImportTask, null);
