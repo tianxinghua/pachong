@@ -16,17 +16,18 @@ import lombok.ToString;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubProductDto implements Serializable {
+	private String categoryName;
 	private String categoryNo;
 	private String brandNo;
+	private String brandName;
 	private String spuModel;
+	private String marketTime;
+	private String season;
 	private String gender;
 	private String hubColor;
-	private String season;
-	private String marketTime;
+	private String sizeType;
 	private String skuSize;
 	private String material;
 	private String origin;
-	private String marketPrice;
-	private String marketCurrency;
 	private static final long serialVersionUID = 2215182249308660796L;
 }

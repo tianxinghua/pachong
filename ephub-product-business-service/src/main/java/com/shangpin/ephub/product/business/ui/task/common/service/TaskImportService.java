@@ -108,7 +108,7 @@ public class TaskImportService {
         return true;
     }
 
-    public HubTaskProductResponseWithPageDTO findHubTaskList(HubImportTaskListRequestDto param,List<Byte> listImportType) {
+    public HubTaskProductResponseWithPageDTO findHubTaskList(HubImportTaskListRequestDto param) {
 
         HubSpuImportTaskCriteriaDto hubSpuImportTaskCriteriaDto = new HubSpuImportTaskCriteriaDto();
         hubSpuImportTaskCriteriaDto.setPageNo(param.getPageNo());
@@ -117,13 +117,15 @@ public class TaskImportService {
         if(param.getTaskState()!=-1){
             criteria.andTaskStateEqualTo((byte)param.getTaskState());
         }
+        if(param.getImportType()!=null){
+            criteria.andImportTypeEqualTo(param.getImportType());
+        }
         if(!StringUtils.isEmpty(param.getLocalFileName())){
             criteria.andLocalFileNameEqualTo(param.getLocalFileName());
         }
         if(!StringUtils.isEmpty(param.getStartDate())){
             criteria.andCreateTimeBetween(DateTimeUtil.convertFormat(param.getStartDate(),dateFormat),DateTimeUtil.convertFormat(param.getEndDate(),dateFormat));
         }
-        criteria.andImportTypeIn(listImportType);
         int total = spuImportGateway.countByCriteria(hubSpuImportTaskCriteriaDto);
         log.info("hub任务列表查询到数量："+total);
         if(total<1){

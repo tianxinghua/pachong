@@ -27,6 +27,8 @@ public class HubWaitSelectedResponse implements Serializable {
     private String picUrl;
     private String brandNo;
     private String spuModel;
+    private String marketTime;
+    private String season;
     private String categoryNo;
     private String hubColor;
     private String material;

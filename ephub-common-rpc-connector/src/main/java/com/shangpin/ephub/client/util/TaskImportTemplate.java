@@ -30,15 +30,4 @@ public class TaskImportTemplate {
 					"spuName","hubColor","hubMaterial","hubOrigin","spuDesc","memo","spuState"};
 			return temp;
 		}
-	 
-	 public static String [] getHubProductTemplate(){
-		 String[] headers = {"品类名称","品类编号*" ,"品牌编号*","品牌名称","货号*","上市年份*","上市季节*","适应性别*",
-					"颜色*","原尺码类型","原尺码值","材质*","产地*"};
-		 return headers;
-	 }
-	 public static String [] getHubProductValueTemplate(){
-		 String[] headers = { "categoryName", "categoryNo","brandNo","brandName","spuModel","marketTime","season","gender",
-					"hubColor","sizeType","skuSize","material","origin"};
-		 return headers;
-	 }
 }
