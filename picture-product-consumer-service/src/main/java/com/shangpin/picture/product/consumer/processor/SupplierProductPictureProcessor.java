@@ -40,6 +40,7 @@ public class SupplierProductPictureProcessor {
 	public void processProductPicture(SupplierPicture message, Map<String, Object> headers) {
 		long start = System.currentTimeMillis();
 		String messageId = message.getMessageId();
+		log.info("图片处理系统接收到消息数据======:{}",message);
 		if (log.isDebugEnabled()) {
 			log.debug("图片处理系统接收到消息数据======:{}",message);
 		} else {
