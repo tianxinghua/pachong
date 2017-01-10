@@ -1,6 +1,7 @@
 package com.shangpin.ephub.data.mysql.product.service.impl;
 
 import com.shangpin.ephub.data.mysql.common.enumeration.PicState;
+import com.shangpin.ephub.data.mysql.common.enumeration.SpuState;
 import com.shangpin.ephub.data.mysql.mapping.sku.mapper.HubSkuSupplierMappingMapper;
 import com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping;
 
@@ -141,7 +142,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             if(null!=spuPending){
                 //创建hubspu
                 createHubSpu(hubSpu, spuPending);
-                //在spupending中反写spuNo
+                //在spupending中反写spuNo以及状态
                 updatespuPending(spuPendingIds,hubSpu.getSpuNo());
                 //创建SPU图片
                 createSpuPic(spuPendingIds,hubSpu.getSpuId());
@@ -390,12 +391,13 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         return  hubSpuPendingMapper.selectByPrimaryKey(id);
 
     }
-    //更改spupending的hubspu编号
+    //更改spupending的hubspu编号 以及spuState状态
     private void updatespuPending(List<Long> spuPendingIds,String spuNo){
         HubSpuPendingCriteria criteria = new HubSpuPendingCriteria();
         criteria.createCriteria().andSpuPendingIdIn(spuPendingIds);
         HubSpuPending record = new HubSpuPending();
         record.setHubSpuNo(spuNo);
+        record.setSpuState(SpuState.HANDLED.getIndex());
         hubSpuPendingMapper.updateByExampleSelective(record,criteria);
 
 
