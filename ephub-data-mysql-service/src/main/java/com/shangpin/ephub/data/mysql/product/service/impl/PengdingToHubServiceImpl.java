@@ -119,7 +119,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             }
         }
 
-        return false;
+        return true;
     }
 
     private void createHubData(SpuModelDto auditVO, List<Long> spuPendingIds) throws Exception{
@@ -255,6 +255,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
             HubSkuSupplierMapping hubSkuSupplierMapping = new HubSkuSupplierMapping();
             BeanUtils.copyProperties(skuPending,hubSkuSupplierMapping);
+            hubSkuSupplierMapping.setBarcode(skuPending.getSupplierBarcode());
             hubSkuSupplierMapping.setSkuNo(hubSku.getSkuNo());
             hubSkuSupplierMapping.setSupplierSelectState(DataSelectStatus.NOT_SELECT.getIndex().byteValue());
             HubSpuPending spuPendingTmp =  this.getHubSpuPendingById(skuPending.getSpuPendingId());
