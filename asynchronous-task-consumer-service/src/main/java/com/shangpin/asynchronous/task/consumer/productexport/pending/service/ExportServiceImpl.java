@@ -2,6 +2,8 @@ package com.shangpin.asynchronous.task.consumer.productexport.pending.service;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -15,14 +17,22 @@ import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productexport.pending.vo.PendingProductDto;
 import com.shangpin.asynchronous.task.consumer.productexport.pending.vo.PendingProducts;
+import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +41,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ExportServiceImpl {
 	
-	private String comma = ",";
+	private static String comma = ",";
+	@Autowired
+	private FtpProperties ftpProperties;
+	@Autowired 
+	private HubSpuImportTaskGateWay spuImportGateway;
 
 	/**
 	 * 待处理页面导出sku
-	 * @param pendingQuryDto
+	 * @param taskNo 任务编号
+	 * @param products
 	 */
-	public void exportSku(PendingProducts products){
+	public void exportSku(String taskNo,PendingProducts products){
 		HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("产品信息");
         HSSFRow row = sheet.createRow(0);
@@ -67,15 +82,17 @@ public class ExportServiceImpl {
                     }
                 }
             }
+            saveAndUploadExcel(taskNo,wb);
         } catch (Exception e) {
             log.error("待处理页导出sku异常："+e.getMessage(),e);
         }
 	}
 	/**
 	 * 待处理页面导出spu
-	 * @param pendingQuryDto
+	 * @param taskNo 任务编号
+	 * @param products
 	 */
-	public void exportSpu(PendingProducts products){
+	public void exportSpu(String taskNo,PendingProducts products){
 		HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("产品信息");
         HSSFRow row = sheet.createRow(0);
@@ -104,9 +121,50 @@ public class ExportServiceImpl {
                     }
                 }
             }
+            saveAndUploadExcel(taskNo,wb);
         } catch (Exception e) {
             log.error("待处理页导出spu异常："+e.getMessage(),e);
         }
+	}
+	
+	/**
+	 * 上传Excel到ftp
+	 * @param wb
+	 */
+	private void saveAndUploadExcel(String taskNo, HSSFWorkbook wb){
+		FileOutputStream fout = null;
+		try {
+			File file = new File(ftpProperties.getLocalResultPath()+"pending_product_" + taskNo+".xlsx");
+			fout = new FileOutputStream(file);  
+	        wb.write(fout); 
+	        FTPClientUtil.uploadToExportPath(file, file.getName());
+	        updateHubSpuImportTask(taskNo); 
+		} catch (Exception e) {
+			log.error("保存并上传ftp时异常："+e.getMessage(),e); 
+		}finally{
+			try {
+				if(null != fout){
+					fout.close(); 
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace(); 
+			}
+			
+		}
+	}
+	/**
+	 * 更新任务的状态
+	 * @param taskNo
+	 */
+	private void updateHubSpuImportTask(String taskNo){
+		HubSpuImportTaskWithCriteriaDto taskDto = new HubSpuImportTaskWithCriteriaDto();
+		HubSpuImportTaskCriteriaDto criteria = new HubSpuImportTaskCriteriaDto();
+		criteria.createCriteria().andTaskNoEqualTo(taskNo);
+		taskDto.setCriteria(criteria);
+		HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
+		hubSpuTask.setTaskState((byte)TaskState.ALL_SUCCESS.getIndex());
+		taskDto.setHubSpuImportTask(hubSpuTask); 
+		spuImportGateway.updateByCriteriaSelective(taskDto);
 	}
 	
 	/**
@@ -115,7 +173,7 @@ public class ExportServiceImpl {
      * @param product
      * @throws Exception
      */
-    public void insertProductSkuOfRow(HSSFRow row,PendingProductDto product,HubSkuPendingDto sku,String[] rowTemplate) throws Exception{
+    private void insertProductSkuOfRow(HSSFRow row,PendingProductDto product,HubSkuPendingDto sku,String[] rowTemplate) throws Exception{
     	Class<?> spuClazz = product.getClass();
     	Class<?> skuClazz = sku.getClass();
     	Method fieldSetMet = null;

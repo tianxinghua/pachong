@@ -1,15 +1,12 @@
 package com.shangpin.asynchronous.task.consumer.productexport.adapter;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.shangpin.asynchronous.task.consumer.productexport.pending.dto.PendingQuryDto;
 import com.shangpin.asynchronous.task.consumer.productexport.pending.service.ExportServiceImpl;
-import com.shangpin.asynchronous.task.consumer.productexport.pending.vo.PendingProductDto;
 import com.shangpin.asynchronous.task.consumer.productexport.pending.vo.PendingProducts;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
@@ -40,9 +37,9 @@ public class ProductExportHandler {
 		if(!StringUtils.isEmpty(message.getData())){
 			PendingProducts products = JsonUtil.deserialize(message.getData(), PendingProducts.class);
 			if(message.getType() == TaskImportTpye.EXPORT_PENDING_SKU.getIndex()){
-				exportServiceImpl.exportSku(products);
+				exportServiceImpl.exportSku(message.getTaskNo(),products);
 			}else if(message.getType() == TaskImportTpye.EXPORT_PENDING_SPU.getIndex()){
-				exportServiceImpl.exportSpu(products); 
+				exportServiceImpl.exportSpu(message.getTaskNo(),products); 
 			}
 		}else{
 			log.error("待处理页导出请传入参数！！！"); 

@@ -53,6 +53,7 @@ spring:
        password: shangpin@123
        ftpHubPath: hub/
        ftpPendingPath: pending/
+       exportPath: pending_export/
        localResultPath: /usr/local/share/applications/asynchronous-task-consumer-service/ftp/
   mail: 
        default-recipient: yan_xiao_bin@126.com
