@@ -1,5 +1,7 @@
 package com.shangpin.supplier.product.message.original.service;
 
+import java.lang.reflect.Method;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,21 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OriginalProductService {
 	
-	public static final String SPINNAKER = "spinnaker";
-	
-	public static final String OSTORE = "ostore";
-	
-	public static final String BRUNAROSSO = "brunarosso";
-	
-	public static final String STEFANIA = "stefania";
-	
-	public static final String GEB = "geb";
-	
-	public static final String COLTORTI = "coltorti";
-	
-	public static final String TONY = "tony";
-	
-	public static final String BIONDIONI = "biondioni";
+	public static final String METHOD_SUFFIX = "Stream";
 
 	@Autowired
 	private OriginalProductStreamSender originalProductStreamSender;
@@ -47,27 +35,25 @@ public class OriginalProductService {
 		String supplierName = supplierProduct.getSupplierName();
 		if (StringUtils.isBlank(supplierName)) {
 			log.error("系统检接收到的供应商名称为空");
-			throw new RuntimeException("系统检接收到的供应商名称为空");
-		}else if (SPINNAKER.equals(supplierName)){
-			flag = originalProductStreamSender.spinnakerStream(supplierProduct);
-		}else if (OSTORE.equals(supplierName)){
-			flag = originalProductStreamSender.ostoreStream(supplierProduct);
-		} else if (BRUNAROSSO.equals(supplierName)){
-			flag = originalProductStreamSender.brunarossoStream(supplierProduct);
-		} else if (STEFANIA.equals(supplierName)){
-			flag = originalProductStreamSender.stefaniaStream(supplierProduct);
-		} else if (GEB.equals(supplierName)){
-			flag = originalProductStreamSender.gebStream(supplierProduct);
-		} else if (COLTORTI.equals(supplierName)){
-			flag = originalProductStreamSender.coltortiStream(supplierProduct);
-		} else if (TONY.equals(supplierName)){
-			flag = originalProductStreamSender.tonyStream(supplierProduct);
-		} else if (BIONDIONI.equals(supplierName)){
-			flag = originalProductStreamSender.biondioniStream(supplierProduct);
+			throw new RuntimeException("系统检接收到的供应商名称为空，系统无法发送消息至队列中！");
 		} else {
-			log.error("系统接收到的供应商名称非法");
-			throw new  RuntimeException("系统接收到的供应商名称非法");
+			flag = (Boolean) execute(supplierName, supplierProduct);
 		}
 		return flag;
+	}
+	/**
+	 * 执行调用
+	 * @return
+	 */
+	private Object execute(String name, SupplierProduct supplierProduct){
+		try {
+			Class<OriginalProductStreamSender> clazz = OriginalProductStreamSender.class;
+			Method method = clazz.getMethod(new StringBuilder(name).append(METHOD_SUFFIX).toString(), SupplierProduct.class);
+			return method.invoke(originalProductStreamSender, supplierProduct);
+		} catch (Throwable e) {
+			log.error("调度执行方法时因为供应商名称不存在而发生异常:"+e.getMessage(), e);
+			e.printStackTrace();
+			throw new RuntimeException("调度执行方法时因为供应商名称不存在而发生异常", e);
+		}
 	}
 }
