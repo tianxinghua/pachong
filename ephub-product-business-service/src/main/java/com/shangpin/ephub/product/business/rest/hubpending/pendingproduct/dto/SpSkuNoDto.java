@@ -18,6 +18,8 @@ public class SpSkuNoDto implements Serializable {
     private String supplierId;
     private String skuNo;
     private String supplierSkuNo;//供货商SKUNO
+    private String errorReason;  //
+    private int   sign;//生成是否成功标记  1:成功  0:失败
 
     @JsonProperty("supplierNo")
     public String getSupplierNo() {
@@ -50,5 +52,23 @@ public class SpSkuNoDto implements Serializable {
     @JsonProperty("supplierSkuNo")
     public void setSupplierSkuNo(String supplierSkuNo) {
         this.supplierSkuNo = supplierSkuNo;
+    }
+
+    @JsonProperty("errorReason")
+    public String getErrorReason() {
+        return errorReason;
+    }
+    @JsonProperty("errorReason")
+    public void setErrorReason(String errorReason) {
+        this.errorReason = errorReason;
+    }
+
+    @JsonProperty("sign")
+    public int getSign() {
+        return sign;
+    }
+    @JsonProperty("sign")
+    public void setSign(int sign) {
+        this.sign = sign;
     }
 }

@@ -42,6 +42,7 @@ public class PendingToHubController {
     public boolean addSkuOrSkuSupplierMapping(@RequestBody HubPendingDto dto){
         try {
             log.debug("HubPendingDto = "+ dto.toString());
+            pengingToHubService.addSkuOrSkuSupplierMapping(dto);
 
         } catch (Exception e) {
             e.printStackTrace();

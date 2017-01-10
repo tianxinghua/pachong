@@ -119,7 +119,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             }
         }
 
-        return false;
+        return true;
     }
 
     private void createHubData(SpuModelDto auditVO, List<Long> spuPendingIds) throws Exception{
@@ -255,6 +255,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
             HubSkuSupplierMapping hubSkuSupplierMapping = new HubSkuSupplierMapping();
             BeanUtils.copyProperties(skuPending,hubSkuSupplierMapping);
+            hubSkuSupplierMapping.setBarcode(skuPending.getSupplierBarcode());
             hubSkuSupplierMapping.setSkuNo(hubSku.getSkuNo());
             hubSkuSupplierMapping.setSupplierSelectState(DataSelectStatus.NOT_SELECT.getIndex().byteValue());
             HubSpuPending spuPendingTmp =  this.getHubSpuPendingById(skuPending.getSpuPendingId());
@@ -405,21 +406,27 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
         int i=0;
         int max=0;
-        Long maxCountSpuPendingId =0L;
+        Long maxCountSupplierSpuId =0L;
+        HubSpuPending spuPending = null;
         for(Long spuPendId:spuPendingIds){
-            HubSpuPendingPicCriteria criteria = new HubSpuPendingPicCriteria();
-            criteria.createCriteria().andSpuPendingIdEqualTo(spuPendId)
-                    .andPicHandleStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
-            i = hubSpuPendingPicMapper.countByExample(criteria);
-            if(i>max){
-                max = i;
-                maxCountSpuPendingId = spuPendId;
+            spuPending = this.getHubSpuPendingById(spuPendId);
+            if(null!=spuPending){
+
+                HubSpuPendingPicCriteria criteria = new HubSpuPendingPicCriteria();
+                criteria.createCriteria().andSupplierSpuIdEqualTo(spuPending.getSupplierSpuId())
+                        .andPicHandleStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
+                i = hubSpuPendingPicMapper.countByExample(criteria);
+                if(i>max){
+                    max = i;
+                    maxCountSupplierSpuId = spuPendId;
+                }
             }
         }
+
         HubSpuPendingPicCriteria criteria = new HubSpuPendingPicCriteria();
         criteria.setPageSize(20);
         criteria.setPageNo(1);
-        criteria.createCriteria().andSpuPendingIdEqualTo(maxCountSpuPendingId);
+        criteria.createCriteria().andSupplierSpuIdEqualTo(maxCountSupplierSpuId);
         List<HubSpuPendingPic> hubSpuPendingPics = hubSpuPendingPicMapper.selectByExample(criteria);
         Date date = new Date();
         String url = "";
