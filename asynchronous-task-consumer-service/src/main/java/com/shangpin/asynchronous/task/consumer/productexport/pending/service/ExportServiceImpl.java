@@ -28,6 +28,7 @@ import com.shangpin.asynchronous.task.consumer.productexport.pending.vo.PendingP
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
@@ -37,7 +38,14 @@ import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * <p>Title:ExportServiceImpl </p>
+ * <p>Description: 生成Excel文件并上传ftp </p>
+ * <p>Company: www.shangpin.com</p> 
+ * @author lubaijiang
+ * @date 2017年1月11日 下午2:48:16
+ *
+ */
 @Service
 @Slf4j
 public class ExportServiceImpl {
@@ -230,13 +238,46 @@ public class ExportServiceImpl {
 				}else if("seasonName".equals(rowTemplate[i])){
 					setRowOfSeasonName(row, product, cls, i); 
 				}else if("memo".equals(rowTemplate[i])){
-					if((null != product.getPicState() && PicState.UNHANDLED.getIndex() == product.getPicState()) || (null != product.getPicState() && PicState.HANDLE_ERROR.getIndex() == product.getPicState())){
+					if(null == product.getSpuModelState() || 1 != product.getSpuModelState()){
+						buffer = buffer.append("货号").append(comma);
+					}
+					if(null == product.getCatgoryState() || 1 != product.getCatgoryState()){
+						buffer = buffer.append("品类编号").append(comma);
+					}
+					if(null == product.getPicState() || 1 != product.getPicState()){
 			            buffer = buffer.append("图片").append(comma);
 			        }
-			        if(CatgoryState.PERFECT_MATCHED.equals(product.getCatgoryState())){
-			            buffer = buffer.append("品类").append(comma);
-			        }
-			        row.createCell(i).setCellValue(buffer.toString()); 
+					if(null == product.getSpuBrandState() || 1 != product.getSpuBrandState()){
+						buffer = buffer.append("品牌编号").append(comma);
+					}
+					if(null == product.getSpuGenderState() || 1 != product.getSpuGenderState()){
+						buffer = buffer.append("适应性别").append(comma);
+					}
+					if(null == product.getSpuSeasonState() || 1 != product.getSpuSeasonState()){
+						buffer = buffer.append("上市季节").append(comma);
+					}
+					if(null == product.getSpuColorState() || 1 != product.getSpuColorState()){
+						buffer = buffer.append("颜色").append(comma);
+					}
+					if(null == product.getSpSkuSizeState() || 1 != product.getSpSkuSizeState()){
+						buffer = buffer.append("尺码").append(comma);
+					}
+					log.info("不符合项："+buffer.toString()); 
+					row.createCell(i).setCellValue(buffer.toString()); 
+				}else if("spuState".equals(rowTemplate[i])){
+					if(SpuState.INFO_PECCABLE.getIndex() == product.getSpuState()){
+						row.createCell(i).setCellValue("信息待完善");
+					}else if(SpuState.INFO_IMPECCABLE.getIndex() == product.getSpuState()){
+						row.createCell(i).setCellValue("信息已完善");
+					}else if(SpuState.HANDLED.getIndex() == product.getSpuState()){
+						row.createCell(i).setCellValue("已处理");
+					}else if(SpuState.FILTER.getIndex() == product.getSpuState()){
+						row.createCell(i).setCellValue("过滤不处理");
+					}else if(SpuState.UNABLE_TO_PROCESS.getIndex() == product.getSpuState()){
+						row.createCell(i).setCellValue("无法处理");
+					}else if(SpuState.HANDLING.getIndex() == product.getSpuState()){
+						row.createCell(i).setCellValue("审核中");
+					}
 				}else{
 					String fileName = parSetName(rowTemplate[i]);
 					fieldSetMet = cls.getMethod(fileName);
