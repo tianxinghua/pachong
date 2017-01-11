@@ -26,4 +26,5 @@ public class HubTaskProductResponseDTO {
 	private String taskFtpFilePath;
 	private String resultFilePath;
     private Byte importType;
+    private String processInfo;
 }
