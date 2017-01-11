@@ -26,8 +26,6 @@ import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productexport.pending.vo.PendingProductDto;
 import com.shangpin.asynchronous.task.consumer.productexport.pending.vo.PendingProducts;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
-import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
-import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
