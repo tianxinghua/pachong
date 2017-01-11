@@ -501,6 +501,9 @@ public class PendingProductService implements IPendingProductService{
 		hubSpuTask.setTaskState((byte)TaskState.HANDLEING.getIndex());
 		hubSpuTask.setCreateTime(date);
 		hubSpuTask.setCreateUser(createUser); 
+		hubSpuTask.setTaskFtpFilePath("pending_export/"+createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
+		hubSpuTask.setSysFileName(createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
+		hubSpuTask.setResultFilePath("pending_export/"+createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
 		Long spuImportTaskId = spuImportGateway.insert(hubSpuTask);
 		hubSpuTask.setSpuImportTaskId(spuImportTaskId);
 		return hubSpuTask;

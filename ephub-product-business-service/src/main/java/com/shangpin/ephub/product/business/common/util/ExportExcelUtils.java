@@ -121,6 +121,41 @@ public class ExportExcelUtils {
 	        workbook.write(out);  
 	    }  
 
+	  public static void createSheet( HSSFWorkbook workbook,String title, String[] headers, String[] columns, List<Map<String, String>> result) throws Exception{  
+	        // 声明一个工作薄  
+	    
+	        // 生成一个表格  
+	        HSSFSheet sheet = workbook.createSheet(title);  
+	        
+	        // 设置表格默认列宽度为20个字节  
+	        sheet.setDefaultColumnWidth(20);  
+	        // 生成一个样式  
+	        HSSFCellStyle style = workbook.createCellStyle();  
+	        // 产生表格标题行  
+	        HSSFRow row = sheet.createRow(0);  
+	        for (int i = 0; i < headers.length; i++) {  
+	            HSSFCell cell = row.createCell(i);  
+	            cell.setCellStyle(style);  
+	            HSSFRichTextString text = new HSSFRichTextString(headers[i]);  
+	            cell.setCellValue(text);  
+	        }  
+	        // 遍历集合数据，产生数据行  
+	        if(result != null){  
+	            int index = 1;  
+	            for(Map<String, String> m:result){  
+	                row = sheet.createRow(index);  
+	                int cellIndex = 0;  
+	                for(String s:columns){  
+	                    HSSFCell cell = row.createCell(cellIndex);  
+	                    HSSFRichTextString richString = new HSSFRichTextString(m.get(s) == null ? "" : m.get(s).toString());  
+	                    cell.setCellValue(richString);  
+	                    cellIndex++;  
+	                }  
+	                index++;  
+	            }     
+	        }  
+	    }  
+	  
     /** 
      * 导出Excel的方法 
      * @param title excel中的sheet名称 

@@ -18,11 +18,12 @@ public class HubTaskProductResponseDTO {
 
 	private String taskNo;
 	private String localFileName;
-	private byte taskState;
+	private Byte taskState;
 	private String createTime;
 	private String createUser;
 	private String updateUser;
 	private String updateTime;
 	private String taskFtpFilePath;
 	private String resultFilePath;
+    private Byte importType;
 }
