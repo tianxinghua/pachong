@@ -101,7 +101,7 @@ public class PendingProductService implements IPendingProductService{
     	try {
     		PendingProducts products = findPendingProducts(pendingQuryDto);
     		products.setCreateUser(pendingQuryDto.getCreateUser());
-        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
+        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex());
         	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(products)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
@@ -116,7 +116,7 @@ public class PendingProductService implements IPendingProductService{
     		products.setCreateUser(pendingQuryDto.getCreateUser());
         	List<PendingProductDto> productList = findPengdingSpu(pendingQuryDto);
         	products.setProduts(productList); 
-        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
+        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex());
         	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex(),JsonUtil.serialize(products)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
@@ -494,12 +494,13 @@ public class PendingProductService implements IPendingProductService{
      * @param createUser
      * @return
      */
-    private HubSpuImportTaskDto saveTaskIntoMysql(String createUser){
+    private HubSpuImportTaskDto saveTaskIntoMysql(String createUser,int taskType){
     	HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
     	Date date = new Date();
 		hubSpuTask.setTaskNo(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date));
 		hubSpuTask.setTaskState((byte)TaskState.HANDLEING.getIndex());
 		hubSpuTask.setCreateTime(date);
+		hubSpuTask.setImportType((byte)taskType);
 		hubSpuTask.setCreateUser(createUser); 
 		hubSpuTask.setTaskFtpFilePath("pending_export/"+createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
 		hubSpuTask.setSysFileName(createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
