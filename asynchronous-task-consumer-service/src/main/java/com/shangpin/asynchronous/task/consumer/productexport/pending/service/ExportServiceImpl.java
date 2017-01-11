@@ -58,7 +58,6 @@ public class ExportServiceImpl {
         HSSFSheet sheet = wb.createSheet("产品信息");
         HSSFRow row = sheet.createRow(0);
         HSSFCellStyle  style = wb.createCellStyle();
-//        style.setAlignment(HorizontalAlignment.CENTER);//居中
         String[] row0 = TaskImportTemplate.getPendingSkuTemplate();
         for(int i= 0;i<row0.length;i++){
             HSSFCell cell = row.createCell(i);
@@ -98,15 +97,12 @@ public class ExportServiceImpl {
         HSSFSheet sheet = wb.createSheet("产品信息");
         HSSFRow row = sheet.createRow(0);
         HSSFCellStyle  style = wb.createCellStyle();
-//        style.setAlignment(HorizontalAlignment.CENTER);//居中
         String[] row0 = TaskImportTemplate.getPendingSpuTemplate();
         for(int i= 0;i<row0.length;i++){
             HSSFCell cell = row.createCell(i);
             cell.setCellValue(row0[i]);
             cell.setCellStyle(style);
         }
-        row.setHeight((short) 1500);
-		sheet.setColumnWidth(0, (36*150));
         try {
         	String[] rowTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
             if(null != products && null != products.getProduts() && products.getProduts().size()>0){
@@ -114,7 +110,9 @@ public class ExportServiceImpl {
                 for(PendingProductDto product : products.getProduts()){
                     try {
                         j++;
-                        row = sheet.createRow(j);                        
+                        row = sheet.createRow(j);  
+                        row.setHeight((short) 1500);
+                		sheet.setColumnWidth(0, (36*150));
                         insertProductSpuOfRow(row,product,rowTemplate);
                     } catch (Exception e) {
                     	 log.error("insertProductSpuOfRow异常："+e.getMessage(),e);
@@ -136,7 +134,7 @@ public class ExportServiceImpl {
 		FileOutputStream fout = null;
 		File file = null;
 		try {
-			file = new File(ftpProperties.getExportPath()+createUser+"_" + taskNo+".xls");
+			file = new File(ftpProperties.getLocalResultPath()+createUser+"_" + taskNo+".xls");
 			fout = new FileOutputStream(file);  
 	        wb.write(fout); 
 	        FTPClientUtil.uploadToExportPath(file, file.getName());
