@@ -188,7 +188,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
 
                         SpuPendingPicVO picVO = new SpuPendingPicVO();
-                        picVO.setSpuPendingId(picDto.getSpuPendingId());
+                        picVO.setSpuPendingId(null==picDto.getSpuPendingId()?0:picDto.getSpuPendingId());
                         picVO.setPicId(picDto.getSpuPendingPicId());
                         picVO.setSpPicUrl(picDto.getSpPicUrl());
                         picVOs.add(picVO);
