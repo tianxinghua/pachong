@@ -50,7 +50,6 @@ import com.shangpin.ephub.product.business.common.service.supplier.SupplierServi
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
-import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
@@ -458,33 +457,33 @@ public class PendingProductService implements IPendingProductService{
      * @param pendingProduct 待验证的产品，需要验证图片/品牌/颜色/货号等等是否不符合，如果不符合则需要返回
      * @param products 不符合项需要添加的List
      */
-    private void screenProduct(PendingQuryDto pendingQuryDto,PendingProductDto pendingProduct,List<PendingProductDto> products){
-        if(null != pendingQuryDto.getInconformities() && pendingQuryDto.getInconformities().size()>0){
-            for(Integer item : pendingQuryDto.getInconformities()){
-                if(item == ProductState.PICTURE_STATE.getIndex()){
-
-                }else if(item == ProductState.SPU_MODEL_STATE.getIndex()){
-
-                }else if(item == ProductState.CATGORY_STATE.getIndex()){
-
-                }else if(item == ProductState.SPU_BRAND_STATE.getIndex()){
-
-                }else if(item == ProductState.SPU_GENDER_STATE.getIndex()){
-
-                }else if(item == ProductState.SPU_SEASON_STATE.getIndex()){
-
-                }else if(item == ProductState.SPU_COLOR_STATE.getIndex()){
-
-                }else if(item == ProductState.MATERIAL_STATE.getIndex()){
-
-                }else if(item == ProductState.ORIGIN_STATE.getIndex()){
-
-                }else if(item == ProductState.SIZE_STATE.getIndex()){
-
-                }
-            }
-        }
-    }
+//    private void screenProduct(PendingQuryDto pendingQuryDto,PendingProductDto pendingProduct,List<PendingProductDto> products){
+//        if(null != pendingQuryDto.getInconformities() && pendingQuryDto.getInconformities().size()>0){
+//            for(Integer item : pendingQuryDto.getInconformities()){
+//                if(item == ProductState.PICTURE_STATE.getIndex()){
+//
+//                }else if(item == ProductState.SPU_MODEL_STATE.getIndex()){
+//
+//                }else if(item == ProductState.CATGORY_STATE.getIndex()){
+//
+//                }else if(item == ProductState.SPU_BRAND_STATE.getIndex()){
+//
+//                }else if(item == ProductState.SPU_GENDER_STATE.getIndex()){
+//
+//                }else if(item == ProductState.SPU_SEASON_STATE.getIndex()){
+//
+//                }else if(item == ProductState.SPU_COLOR_STATE.getIndex()){
+//
+//                }else if(item == ProductState.MATERIAL_STATE.getIndex()){
+//
+//                }else if(item == ProductState.ORIGIN_STATE.getIndex()){
+//
+//                }else if(item == ProductState.SIZE_STATE.getIndex()){
+//
+//                }
+//            }
+//        }
+//    }
     /**
      * 将任务记录保存到数据库
      * @param createUser
