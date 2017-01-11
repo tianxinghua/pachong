@@ -55,7 +55,12 @@ public class FTPClientUtil {
 			ftp.disconnect();
 		}
 		InputStream sbs = new FileInputStream(file);
-		ftp.changeWorkingDirectory(exportPath);
+		
+		boolean flag = ftp.changeWorkingDirectory(exportPath);
+		if(!flag){
+			ftp.makeDirectory(exportPath);
+			ftp.changeWorkingDirectory(exportPath);
+		}
 		ftp.storeFile(fileName, sbs);
 		sbs.close();
 		ftp.quit();
