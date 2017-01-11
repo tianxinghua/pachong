@@ -30,6 +30,7 @@ import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRul
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
 import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
 import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
+import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.HubResponseDto;
@@ -77,9 +78,9 @@ public class HubCheckService {
 
         HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<CategoryRequestDto>(request);
 
-        ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsCategoryUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {
+        ResponseEntity<HubResponseDto<FourLevelCategory>> entity = restTemplate.exchange(apiAddressProperties.getGmsCategoryUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<FourLevelCategory>>() {
         });
-        HubResponseDto<CategoryScreenSizeDom> body = entity.getBody();
+        HubResponseDto<FourLevelCategory> body = entity.getBody();
         log.info("查询categoryNo:"+categoryNo+"返回结果,{}",body);
         if(body.getIsSuccess()){
         	return true;
