@@ -224,7 +224,7 @@ public class HubSelectedService {
 			criteria.createCriteria().andSpuIdEqualTo(hubSpuId);
 			List<HubSpuPicDto> listPic = hubSpuPicGateWay.selectByCriteria(criteria);
 			int i = 1;
-			if (listPic == null && listPic.size() <= 0) {
+			if (listPic == null || listPic.size() <= 0) {
 				continue;
 			}
 			for (HubSpuPicDto pic : listPic) {
@@ -260,7 +260,7 @@ public class HubSelectedService {
 			criteria.createCriteria().andSpuIdEqualTo(hubSpuId);
 			List<HubSpuPicDto> listPic = hubSpuPicGateWay.selectByCriteria(criteria);
 			int i = 1;
-			if (listPic == null && listPic.size() <= 0) {
+			if (listPic == null || listPic.size() <= 0) {
 				continue;
 			}
 			for (HubSpuPicDto pic : listPic) {
