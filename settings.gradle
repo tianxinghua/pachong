@@ -22,28 +22,18 @@ include 'atelier-ostore-order'
 
 
 
-include 'efashion-order'
+
 include 'report'
 include 'picturedown'
 
-include 'dellogliostore'
-include 'stockMonti'
+
 include 'project-mq'
 include 'stockMontiHK'
 include 'stockclean'
 include 'OpenTest'
-include 'picturedown'
-include 'order-control'
-include 'tufano'
-include 'lungolivigno-order'
-include 'atelier-paolo-order'
-include 'GiBiLogic-stock'
-include 'spinnaker'
-include 'picturedown'
+
 include 'monnierfreres'
-include 'coltorti'
-include 'studio69'
-include 'smets-hk-stock'
-include 'smets-stock'
-include 'stefaniamode'
+include 'giglio'
+
+
 
