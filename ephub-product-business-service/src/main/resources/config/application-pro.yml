@@ -46,8 +46,8 @@ spring:
        port: 21
        userName: ftpuser2
        password: shangpin@123
-       ftpHubPath: /hub
-       ftpPendingPath: /pending
+       ftpHubPath: /hub/
+       ftpPendingPath: /pending/
   #mail: 
        #default-recipient: yan_xiao_bin@126.com
        #default-sender: yanxiaobin@shangpin.com
