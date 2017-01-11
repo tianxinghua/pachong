@@ -2,7 +2,9 @@ package com.shangpin.ephub.product.business.ui.hub.selected.controller;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -95,7 +97,9 @@ public class HubSelectedController {
 			response.setContentType("application/vnd.ms-excel");    
 	        response.setHeader("Content-Disposition", "attachment;filename="+"selected_product_" + System.currentTimeMillis()+".xls");    
 			OutputStream ouputStream = response.getOutputStream();
-			  
+			if(list==null||list.size()<=0){
+				return ;
+			}
 			HubSelectedService.exportExcel(list,ouputStream);
 			
 		} catch (Exception e) {

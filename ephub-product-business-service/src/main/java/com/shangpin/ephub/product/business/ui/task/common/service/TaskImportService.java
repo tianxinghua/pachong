@@ -131,6 +131,7 @@ public class TaskImportService {
         if(total<1){
             return null;
         }
+        hubSpuImportTaskCriteriaDto.setOrderByClause("update_time desc");
         List<HubSpuImportTaskDto>  list = spuImportGateway.selectByCriteria(hubSpuImportTaskCriteriaDto);
         HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = new HubTaskProductResponseWithPageDTO();
         List<HubTaskProductResponseDTO> responseList = convertTaskDTO2ResponseDTO(list);
